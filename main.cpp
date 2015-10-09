@@ -1,10 +1,20 @@
 #include <iostream>
 
 
+// QT libraries
+#include <QApplication>
+
+// Project headers
+#include "MainWindow.h"
+
+
 int main( int argc, char *argv[] )
 {
-    std::cout << "Initializing.." << std::endl;
+    QApplication a( argc, argv );
 
-    return 0;
+    MainWindow w;
+    w.show();
+
+    return a.exec();
 }
 
