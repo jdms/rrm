@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QDockWidget>
 
 class MainWindow : public QMainWindow
 {
@@ -16,6 +16,14 @@ class MainWindow : public QMainWindow
     protected:
 
         void createWindow();
+        void createMenuBar();
+        void create2DModule();
+        void create3DModule();
+
+    private:
+
+        QDockWidget *dc_2DModule;
+        QDockWidget *dc_3DModule;
 
 
 };
