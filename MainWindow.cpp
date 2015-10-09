@@ -1,4 +1,6 @@
 #include <QHBoxLayout>
+#include <QMenuBar>
+#include <QStatusBar>
 
 #include "MainWindow.h"
 #include "Canvas2D.h"
@@ -12,17 +14,32 @@ MainWindow::MainWindow( QWidget *parent) : QMainWindow( parent )
 
 void MainWindow::createWindow()
 {
-     this->setMinimumSize( 800, 600 );
-
+    this->setMinimumSize( 800, 600 );
 
     createMenuBar();
     create2DModule();
     create3DModule();
 
+    statusBar()->showMessage( "Status" );
+
 }
 
 void MainWindow::createMenuBar()
 {
+
+    QMenu *mn_file = menuBar()->addMenu( tr( "&File" ) );
+    mn_file->addMenu( "&New" );
+    mn_file->addMenu( "&Open" );
+    mn_file->addMenu( "&Save" );
+    mn_file->addMenu( "&Export" );
+    mn_file->addMenu( "E&xit" );
+
+    QMenu *mn_tools = menuBar()->addMenu( tr( "&Tools" ) );
+    mn_tools->addMenu( "&Compute" );
+
+    QMenu *mn_help = menuBar()->addMenu( tr( "&Help" ) );
+    mn_help->addMenu( "Contents" );
+    mn_help->addMenu( "&About" );
 
 
 }
