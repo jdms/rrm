@@ -24,22 +24,38 @@ void MainWindow::createWindow()
 
 }
 
+void MainWindow::createActions()
+{
+    ac_new = new QAction( tr( "&New" ), this );
+    ac_open = new QAction( tr( "&Open" ), this );
+    ac_save = new QAction( tr( "&Save" ), this );
+    ac_export = new QAction( tr( "&Export" ), this );
+    ac_exit = new QAction( tr( "E&xit" ), this );
+
+    ac_compute = new QAction( tr( "&Compute" ), this );
+
+    ac_contents = new QAction( tr( "Contents" ), this );
+    ac_about = new QAction( tr( "&About" ), this );
+
+
+}
+
 void MainWindow::createMenuBar()
 {
 
     QMenu *mn_file = menuBar()->addMenu( tr( "&File" ) );
-    mn_file->addMenu( "&New" );
-    mn_file->addMenu( "&Open" );
-    mn_file->addMenu( "&Save" );
-    mn_file->addMenu( "&Export" );
-    mn_file->addMenu( "E&xit" );
+    mn_file->addAction( "&New" );
+    mn_file->addAction( "&Open" );
+    mn_file->addAction( "&Save" );
+    mn_file->addAction( "&Export" );
+    mn_file->addAction( "E&xit" );
 
     QMenu *mn_tools = menuBar()->addMenu( tr( "&Tools" ) );
-    mn_tools->addMenu( "&Compute" );
+    mn_tools->addAction( "&Compute" );
 
     QMenu *mn_help = menuBar()->addMenu( tr( "&Help" ) );
-    mn_help->addMenu( "Contents" );
-    mn_help->addMenu( "&About" );
+    mn_help->addAction( "Contents" );
+    mn_help->addAction( "&About" );
 
 
 }
@@ -50,7 +66,7 @@ void MainWindow::create2DModule()
     dc_2DModule = new QDockWidget( this );
     dc_2DModule->setAllowedAreas( Qt::LeftDockWidgetArea );
 
-    Canvas2D *canvas2D = new Canvas2D();
+    Canvas2D *canvas2D = new Canvas2D( this );
 
     dc_2DModule->setWidget( canvas2D );
     addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );

@@ -19,12 +19,24 @@ class MainWindow : public QMainWindow
         void createMenuBar();
         void create2DModule();
         void create3DModule();
+        void createActions();
+
 
     private:
 
         QDockWidget *dc_2DModule;
         QDockWidget *dc_3DModule;
 
+        QAction *ac_new;
+        QAction *ac_open;
+        QAction *ac_save;
+        QAction *ac_export;
+        QAction *ac_exit;
+
+        QAction *ac_compute;
+
+        QAction *ac_contents;
+        QAction *ac_about;
 
 };
 
