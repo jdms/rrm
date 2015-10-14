@@ -4,8 +4,12 @@
 #include <vector>
 
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsItem>
+
 
 #include "InputSketch.h"
+
 
 using namespace std;
 
@@ -27,8 +31,16 @@ class HorizonController: public QGraphicsPathItem
         bool showIntersection() const;
         void showIntersection( bool option );
 
-
         bool isValid( QGraphicsScene *scene );
+
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+//        void HorizonController::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+    protected:
+
+        QPainterPath shape() const;
+
+
 
 
     protected:
@@ -37,8 +49,8 @@ class HorizonController: public QGraphicsPathItem
         bool show_intersection;
 
 
-        QPen color_inside;
-        QPen color_outside;
+        QColor color_inside;
+        QColor color_outside;
         Qt::PenStyle style_invisible;
 
         QPainterPath sketch;
@@ -46,6 +58,7 @@ class HorizonController: public QGraphicsPathItem
         vector< QPointF > intersections;
         vector< bool > are_inside;
         vector< bool > are_visible;
+
 
 };
 

@@ -1,18 +1,38 @@
+#include <QStyle>
+#include <QStyleOptionGraphicsItem>
+#include <QGraphicsScene>
+
 #include "HorizonController.h"
+
 
 HorizonController::HorizonController()
 {
     selected = false;
     show_intersection = true;
 
-    color_inside = QPen( QColor( 0, 0, 128 ) );
-    color_inside.setWidth( 2 );
-
-    color_outside = QPen( QColor( 187, 15, 32 ) );
-    color_outside.setWidth( 2 );
-
+    color_inside =QColor( 0, 0, 128 );
+    color_outside = QColor( 187, 15, 32 );
     style_invisible = Qt::DotLine;
 
+    setAcceptHoverEvents(true);
+    setFlags( QGraphicsItem::ItemIsSelectable );
+
+
+
+}
+
+
+QPainterPath HorizonController::shape() const
+{
+    QPainterPath path;
+
+    int ncurves = curves.size();
+    for( int i = 0; i < ncurves; ++i )
+    {
+        QPainterPath curve = curves.at( i );
+        path.addPath( curve );
+    }
+    return path;
 }
 
 
@@ -25,28 +45,42 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
         return;
 
 
+    if( option->state & QStyle::State_Selected )
+    {
+        color_inside = QColor( 0, 0, 230 );
+        color_outside = QColor( 237, 15, 32 );
+    }
+
+
+    QPen pen;
+
     // drawing all the curves contained in the horizon following its properties.
     int id = 0;
     for( auto crv : curves )
     {
 
 
+
+
+        pen.setColor( color_inside );
+        pen.setWidth( 2 );
+        pen.setStyle( Qt::SolidLine );
+
+
+
         // set different line pattern if the curve is non-visible.
 
-        color_inside.setStyle( Qt::SolidLine );
-
         if( show_intersection == true && are_visible.at( id ) == false )
-            color_inside.setStyle( style_invisible );
-
-        painter->setPen( color_inside );
-
-
+            pen.setStyle( style_invisible );
 
         // set different line pattern if the curve is outside of boundary.
 
         if( show_intersection == true && are_inside.at( id ) == false )
-            painter->setPen( color_outside );
+            pen.setColor( color_outside );
 
+
+
+        painter->setPen( pen );
         painter->drawPath( crv );
         id++;
 
@@ -70,6 +104,8 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
 
     }
 
+
+
 }
 
 
@@ -86,6 +122,7 @@ void HorizonController::setSketching( QPainterPath* curve )
     sketch = *curve;
 }
 
+
 bool HorizonController::isValid( QGraphicsScene *scene )
 {
 
@@ -97,6 +134,7 @@ bool HorizonController::isValid( QGraphicsScene *scene )
     // I have to get the inside and outside curves
     // I have to get the deleted curves
     // I have to fill all the respectives vectors
+    // Change QPainterPath to InputSketch
 
     QPainterPath ACurve, BCurve;
 
@@ -165,3 +203,16 @@ void HorizonController::showIntersection( bool option )
 }
 
 
+void HorizonController::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    this->scene()->clearSelection();
+    setSelected(true);
+//    myContextMenu->exec(event->screenPos());
+
+}
+
+//void HorizonController::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+//{
+//    cout << "Cliquei" << endl;
+//    QGraphicsPathItem::mousePressEvent(mouseEvent);
+//}

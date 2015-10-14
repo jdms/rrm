@@ -15,7 +15,7 @@ void SketchingScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
     }
 
-
+    QGraphicsScene::mousePressEvent( event );
     update();
 }
 
@@ -24,8 +24,10 @@ void SketchingScene::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
     if( event->buttons() == Qt::MouseButton::LeftButton )
     {
         sketch->add( event->scenePos() );
+
     }
 
+    QGraphicsScene::mouseMoveEvent( event );
     update();
 }
 
@@ -38,13 +40,21 @@ void SketchingScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
     horizonc->setSketching( &sketch->getSketch() );
 
     this->removeItem( sketch );
-    delete sketch;
-
     bool valid = horizonc->isValid( this );
 
-    if( valid == true )
-        this->addItem( horizonc );
+    if( valid == false ){
+        delete sketch;
+
+        QGraphicsScene::mouseReleaseEvent( event );
+        update();
+        return;
+    }
 
 
+    this->addItem( horizonc );
+
+    QGraphicsScene::mouseReleaseEvent( event );
     update();
+
+
 }

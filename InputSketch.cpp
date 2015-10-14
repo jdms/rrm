@@ -8,6 +8,8 @@ InputSketch::InputSketch():QGraphicsPathItem()
     is_visible = false;
     is_inside = false;
 
+    setAcceptTouchEvents(true);
+
 
 }
 
