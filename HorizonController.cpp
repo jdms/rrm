@@ -17,8 +17,6 @@ HorizonController::HorizonController()
     setAcceptHoverEvents(true);
     setFlags( QGraphicsItem::ItemIsSelectable );
 
-
-
 }
 
 

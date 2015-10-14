@@ -17,6 +17,7 @@ void MainWindow::createWindow()
     this->setMinimumSize( 800, 600 );
 
     createMenuBar();
+    createToolbar();
     create2DModule();
     create3DModule();
 
@@ -57,6 +58,16 @@ void MainWindow::createMenuBar()
     mn_help->addAction( "Contents" );
     mn_help->addAction( "&About" );
 
+
+}
+
+void MainWindow::createToolbar()
+{
+    tlb_section = addToolBar( tr( "Section" ) );
+    tlb_section->addAction( "&New" );
+    tlb_section->addAction( "&Open" );
+    tlb_section->addAction( "&Save" );
+    tlb_section->addAction( "&Export" );
 
 }
 

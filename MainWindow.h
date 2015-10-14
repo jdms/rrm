@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QToolBar>
 
 class MainWindow : public QMainWindow
 {
@@ -17,9 +18,11 @@ class MainWindow : public QMainWindow
 
         void createWindow();
         void createMenuBar();
+        void createActions();
+        void createToolbar();
+
         void create2DModule();
         void create3DModule();
-        void createActions();
 
 
     private:
@@ -37,6 +40,8 @@ class MainWindow : public QMainWindow
 
         QAction *ac_contents;
         QAction *ac_about;
+
+        QToolBar *tlb_section;
 
 };
 
