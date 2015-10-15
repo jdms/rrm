@@ -29,3 +29,12 @@ void Canvas2D::resizeEvent( QResizeEvent* re )
 {
     QGraphicsView::resizeEvent( re );
 }
+
+void Canvas2D::clear()
+{
+    scene->clear();
+    delete scene;
+
+    scene = new SketchingScene();
+    this->setScene( scene );
+}

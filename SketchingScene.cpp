@@ -2,8 +2,12 @@
 
 SketchingScene::SketchingScene( QObject *parent ): QGraphicsScene( parent )
 {
+    sketch = NULL;
+    horizonc = NULL;
 
 }
+
+
 
 void SketchingScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {

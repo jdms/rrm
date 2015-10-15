@@ -143,7 +143,7 @@ bool HorizonController::isValid( QGraphicsScene *scene )
     BCurve.moveTo( p0B );
 
 
-    for( float delta = 0.05f; delta < 0.5f; delta += 0.05f )
+    for( float delta = 0.01f; delta < 0.5f; delta += 0.01f )
     {
         QPointF pA = sketch.pointAtPercent( delta );
         ACurve.lineTo( pA );

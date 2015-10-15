@@ -15,6 +15,8 @@ class Canvas2D: public QGraphicsView
 
         Canvas2D( QWidget *parent = 0 );
 
+        void clear();
+
 
     protected:
 

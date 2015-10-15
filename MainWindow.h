@@ -4,6 +4,13 @@
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QToolBar>
+#include <QColorDialog>
+#include <QWidgetAction>
+#include <QToolButton>
+
+#include "Canvas2D.h"
+#include "Canvas3D.h"
+
 
 class MainWindow : public QMainWindow
 {
@@ -24,11 +31,23 @@ class MainWindow : public QMainWindow
         void create2DModule();
         void create3DModule();
 
+        void clearCanvas2D();
+
+    protected slots:
+
+        void newSection();
+
+//        void clearCanvas3D();
+//        void clearComputation();
+
+
 
     private:
 
         QDockWidget *dc_2DModule;
         QDockWidget *dc_3DModule;
+
+        Canvas2D *canvas2D;
 
         QAction *ac_new;
         QAction *ac_open;
@@ -41,7 +60,24 @@ class MainWindow : public QMainWindow
         QAction *ac_contents;
         QAction *ac_about;
 
+        QAction *ac_removeabove;
+        QAction *ac_removebelow;
+
+        QAction *ac_select;
+        QAction *ac_select1;
+        QAction *ac_grab;
+        QWidgetAction *ac_sketchcolor;
+
+
         QToolBar *tlb_section;
+        QToolBar *tlb_computation;
+        QToolBar *tlb_rules;
+        QToolBar *tlb_interaction;
+        QToolBar *tlb_customization;
+
+        QMenu *mn_pickercolor;
+        QColorDialog *cd_pickercolor;
+        QToolButton *tbt_colorsketch;
 
 };
 
