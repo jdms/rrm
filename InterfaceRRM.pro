@@ -13,7 +13,8 @@ SOURCES += \
     InputSketch.cpp \
     HorizonController.cpp \
     BoundaryController.cpp \
-    canvasComputation.cpp
+    canvasComputation.cpp \
+    FlowVisualizationController.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -23,4 +24,5 @@ HEADERS += \
     InputSketch.h \
     HorizonController.h \
     BoundaryController.h \
-    canvasComputation.h
+    canvasComputation.h \
+    FlowVisualizationController.h

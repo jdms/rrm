@@ -180,7 +180,6 @@ void MainWindow::create3DModule()
 
 
     Canvas3D *canvas3d = new Canvas3D( fmt, fr );
-//    canvas3d->setMinimumHeight( this->height()*0.5 );
     QHBoxLayout *hb_canvas3d = new QHBoxLayout( this );
     hb_canvas3d->addWidget( canvas3d );
 
@@ -194,7 +193,7 @@ void MainWindow::createComputationModule()
 {
     dc_computation = new QDockWidget( this );
     dc_computation->setAllowedAreas( Qt::RightDockWidgetArea );
-    dc_computation->setWindowTitle( "Computation" );
+    dc_computation->setWindowTitle( "Flow Visualization" );
 
 
     QFrame *fr = new QFrame( this );
