@@ -7,9 +7,11 @@
 #include <QColorDialog>
 #include <QWidgetAction>
 #include <QToolButton>
+#include <QHBoxLayout>
 
 #include "Canvas2D.h"
 #include "Canvas3D.h"
+#include "canvasComputation.h"
 
 
 class MainWindow : public QMainWindow
@@ -19,6 +21,7 @@ class MainWindow : public QMainWindow
     public:
 
         explicit MainWindow( QWidget *parent = 0 );
+        ~MainWindow();
 
 
     protected:
@@ -30,15 +33,34 @@ class MainWindow : public QMainWindow
 
         void create2DModule();
         void create3DModule();
+        void createComputationModule();
 
         void clearCanvas2D();
+//        void clearCanvas3D();
+//        void clearComputation();
+//        void resetToolbar();
+
 
     protected slots:
 
         void newSection();
+        void applyRemoveAbove();
+        void applyRemoveBelow();
 
-//        void clearCanvas3D();
-//        void clearComputation();
+        void pointerSelection();
+        void changeColorLine();
+
+        void doComputation();
+
+
+
+    signals:
+        void applyremoveabove();
+        void applyremovebelow();
+        void setColor( int R, int G, int B );
+
+        void selectMode();
+        void sketchingMode();
 
 
 
@@ -46,8 +68,10 @@ class MainWindow : public QMainWindow
 
         QDockWidget *dc_2DModule;
         QDockWidget *dc_3DModule;
+        QDockWidget *dc_computation;
 
         Canvas2D *canvas2D;
+        CanvasComputation *canvas_computation;
 
         QAction *ac_new;
         QAction *ac_open;
@@ -64,8 +88,6 @@ class MainWindow : public QMainWindow
         QAction *ac_removebelow;
 
         QAction *ac_select;
-        QAction *ac_select1;
-        QAction *ac_grab;
         QWidgetAction *ac_sketchcolor;
 
 
@@ -74,6 +96,7 @@ class MainWindow : public QMainWindow
         QToolBar *tlb_rules;
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
+
 
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;

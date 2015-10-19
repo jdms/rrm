@@ -5,17 +5,31 @@
 #include "HorizonController.h"
 
 
-HorizonController::HorizonController()
+HorizonController::HorizonController( QColor color ):QGraphicsPathItem()
 {
     selected = false;
     show_intersection = true;
 
-    color_inside =QColor( 0, 0, 128 );
+    color_inside = QColor( color.red(), color.green(), color.blue() );//0, 0, 128 );
     color_outside = QColor( 187, 15, 32 );
     style_invisible = Qt::DotLine;
 
+    rule_state = RuleType::REMOVE_ABOVE;
+
     setAcceptHoverEvents(true);
     setFlags( QGraphicsItem::ItemIsSelectable );
+
+
+
+}
+
+HorizonController::~HorizonController()
+{
+   curves.clear();
+   intersections.clear();
+   are_inside.clear();
+   are_visible.clear();
+
 
 }
 
@@ -43,10 +57,14 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
         return;
 
 
+    QColor cl_inside = color_inside;
+    QColor cl_outside = color_outside;
+
+
     if( option->state & QStyle::State_Selected )
     {
-        color_inside = QColor( 0, 0, 230 );
-        color_outside = QColor( 237, 15, 32 );
+        cl_inside = color_inside.light( 200 );
+        cl_outside = color_outside.light( 150 );
     }
 
 
@@ -57,13 +75,9 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
     for( auto crv : curves )
     {
 
-
-
-
-        pen.setColor( color_inside );
+        pen.setColor( cl_inside );
         pen.setWidth( 2 );
         pen.setStyle( Qt::SolidLine );
-
 
 
         // set different line pattern if the curve is non-visible.
@@ -74,7 +88,7 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
         // set different line pattern if the curve is outside of boundary.
 
         if( show_intersection == true && are_inside.at( id ) == false )
-            pen.setColor( color_outside );
+            pen.setColor( cl_outside );
 
 
 
@@ -127,8 +141,20 @@ bool HorizonController::isValid( QGraphicsScene *scene )
     // temporary
 
     // I have to verify if it is valid, if it is not return immediately
+
+
+    return true;
+
+}
+
+
+void HorizonController::applyRule()
+{
+    // temporary
+
+    // I have to verify if it is valid, if it is not return immediately
     // I have to smooth the curve
-    // I have to compute the intersections
+    // I have to compute the intersections using the state_rule
     // I have to get the inside and outside curves
     // I have to get the deleted curves
     // I have to fill all the respectives vectors
@@ -164,16 +190,13 @@ bool HorizonController::isValid( QGraphicsScene *scene )
     curves.push_back( ACurve );
     curves.push_back( BCurve );
 
-    are_inside.push_back( false );
+    are_inside.push_back( true );
     are_inside.push_back( true );
 
     are_visible.push_back( true );
     are_visible.push_back( false );
 
     intersections.push_back( p0B );
-
-    return true;
-
 }
 
 
@@ -201,6 +224,40 @@ void HorizonController::showIntersection( bool option )
 }
 
 
+void HorizonController::setRule( HorizonController::RuleType rt )
+{
+    rule_state = rt;
+}
+
+
+HorizonController::RuleType HorizonController::getRule() const
+{
+    return rule_state;
+}
+
+
+void HorizonController::setColor( int R, int G, int B )
+{
+    color_inside = QColor( R, G, B );
+}
+
+
+int HorizonController::type() const
+{
+    return HorizonController::ControllerType::HORIZON;
+}
+
+QColor HorizonController::getColor() const
+{
+    return color_inside;
+}
+
+
+void HorizonController::updateGeometry()
+{
+//    color_inside = QColor( 255, 255, 0 );
+}
+
 void HorizonController::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     this->scene()->clearSelection();
@@ -209,8 +266,3 @@ void HorizonController::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 }
 
-//void HorizonController::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-//{
-//    cout << "Cliquei" << endl;
-//    QGraphicsPathItem::mousePressEvent(mouseEvent);
-//}

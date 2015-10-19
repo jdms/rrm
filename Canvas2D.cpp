@@ -21,8 +21,22 @@ Canvas2D::Canvas2D( QWidget *parent ): QGraphicsView( parent )
     this->viewport()->grabGesture( Qt::SwipeGesture );
     this->viewport()->grabGesture( Qt::PanGesture );
 
-    this->setGeometry( this->parentWidget()->geometry() );
+//    this->setGeometry( this->parentWidget()->geometry() );
+    this->setMinimumSize( 600, 600 );
 
+
+    connect( parent, SIGNAL( applyremoveabove() ), scene, SLOT( applyRemoveAbove() ) );
+    connect( parent, SIGNAL( applyremovebelow() ), scene, SLOT( applyRemoveBelow() ) );
+    connect( parent, SIGNAL( setColor( int, int, int ) ), scene, SLOT( setColor( int, int, int ) ) );
+    connect( parent, SIGNAL( selectMode() ), scene, SLOT( setModeSelect() ) );
+    connect( parent, SIGNAL( sketchingMode() ), scene, SLOT( setModeSketching() ) );
+
+}
+
+Canvas2D::~Canvas2D()
+{
+    scene->clear();
+    delete scene;
 }
 
 void Canvas2D::resizeEvent( QResizeEvent* re )

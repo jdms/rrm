@@ -11,7 +11,9 @@ SOURCES += \
     Canvas3D.cpp \
     SketchingScene.cpp \
     InputSketch.cpp \
-    HorizonController.cpp
+    HorizonController.cpp \
+    BoundaryController.cpp \
+    canvasComputation.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -19,4 +21,6 @@ HEADERS += \
     Canvas3D.h \
     SketchingScene.h \
     InputSketch.h \
-    HorizonController.h
+    HorizonController.h \
+    BoundaryController.h \
+    canvasComputation.h

@@ -8,7 +8,7 @@
 
 #include "InputSketch.h"
 #include "HorizonController.h"
-
+#include "BoundaryController.h"
 
 class SketchingScene: public QGraphicsScene
 {
@@ -16,7 +16,14 @@ class SketchingScene: public QGraphicsScene
 
     public:
 
+        enum InteractionMode
+        {
+            SELECT,
+            SKETCHING,
+        };
+
         SketchingScene( QObject *parent = 0 );
+        ~SketchingScene();
 
         // virtual mouse methods
 
@@ -24,10 +31,39 @@ class SketchingScene: public QGraphicsScene
         void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
+        QColor getColor() const;
+
+
+    public slots:
+
+        void applyRemoveAbove();
+        void applyRemoveBelow();
+
+
+        void setColor( int R, int G, int B );
+        void getColor( int R, int G, int B );
+
+        void setModeSelect();
+        void setModeSketching();
+
+
+    protected:
+
+        void createBoundary();
+        void updateAllElements();
+
+
+
     private:
+
+        InteractionMode mode;
 
         InputSketch *sketch;
         HorizonController *horizonc;
+        BoundaryController *boundaryc;
+
+        QColor currentColor;
+
 
 };
 

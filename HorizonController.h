@@ -19,7 +19,23 @@ class HorizonController: public QGraphicsPathItem
 
     public:
 
-        HorizonController();
+
+        enum RuleType{
+            REMOVE_ABOVE,
+            REMOVE_BELOW,
+        };
+
+
+        // this next enum should be in object geological: it will be implemented yet.
+
+        enum ControllerType{
+            HORIZON,
+            BOUNDARY,
+        };
+
+
+        HorizonController( QColor color );
+        ~HorizonController();
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
@@ -33,13 +49,28 @@ class HorizonController: public QGraphicsPathItem
 
         bool isValid( QGraphicsScene *scene );
 
+        void setRule( HorizonController::RuleType rt );
+        HorizonController::RuleType getRule() const;
+        void applyRule();
+
+        virtual int type() const;
+
+        void setColor( int R, int G, int B );
+        QColor getColor() const;
+
+        void updateGeometry();
+
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-//        void HorizonController::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+
+    signals:
+
+        void sendColor( int R, int G, int B );
+
 
     protected:
 
         QPainterPath shape() const;
-
 
 
 
@@ -59,6 +90,7 @@ class HorizonController: public QGraphicsPathItem
         vector< bool > are_inside;
         vector< bool > are_visible;
 
+        RuleType rule_state;
 
 };
 

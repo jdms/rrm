@@ -12,7 +12,7 @@ class InputSketch : public QGraphicsPathItem
 
     public:
 
-        InputSketch();
+        InputSketch( QColor color );
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
@@ -32,6 +32,8 @@ class InputSketch : public QGraphicsPathItem
 
 
     protected:
+
+        QPen pen_color;
 
         QPainterPath curve;
         bool done;

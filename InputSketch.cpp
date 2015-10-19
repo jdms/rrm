@@ -1,12 +1,14 @@
 #include "InputSketch.h"
 
-InputSketch::InputSketch():QGraphicsPathItem()
+InputSketch::InputSketch( QColor color ):QGraphicsPathItem()
 {
     done = false;
     curve = QPainterPath();
 
     is_visible = false;
     is_inside = false;
+
+    pen_color = color;
 
     setAcceptTouchEvents(true);
 
@@ -17,7 +19,6 @@ void InputSketch::paint( QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
     painter->setRenderHint( QPainter::Antialiasing );
 
-    QPen pen_color( QColor( 0, 0, 0 ) );
     pen_color.setWidth( 1 );
 
 
