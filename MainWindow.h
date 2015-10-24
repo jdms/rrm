@@ -64,6 +64,7 @@ class MainWindow : public QMainWindow
 
 
 
+
     private:
 
         QDockWidget *dc_2DModule;

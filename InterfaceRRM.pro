@@ -3,6 +3,16 @@ QT += opengl
 
 TEMPLATE = app
 
+!host_build:QMAKE_MAC_SDK = macosx10.9
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+
+
+CONFIG += c++11
+unix:mac {
+    QXXFLAGS += -std=c++11 -mmacosx-version-min=10.9 -stdlib=libc++;
+}
+
 
 SOURCES += \
     main.cpp \
@@ -14,7 +24,8 @@ SOURCES += \
     HorizonController.cpp \
     BoundaryController.cpp \
     canvasComputation.cpp \
-    FlowVisualizationController.cpp
+    FlowVisualizationController.cpp \
+    VTKData.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -25,4 +36,9 @@ HEADERS += \
     HorizonController.h \
     BoundaryController.h \
     canvasComputation.h \
-    FlowVisualizationController.h
+    FlowVisualizationController.h \
+    VTKData.h
+
+DISTFILES += \
+    vertex_shader.vert \
+    fragment_shader.frag

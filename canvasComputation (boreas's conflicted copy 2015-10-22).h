@@ -8,7 +8,6 @@
 
 
 #include <QtOpenGL/QGLWidget>
-#include <QOpenGLFunctions_3_0>
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <QOpenGLShader>
@@ -46,7 +45,7 @@ inline std::string read_shader_file( const char *file_path )
 }
 
 
-class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_0
+class CanvasComputation: public QGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
 
@@ -61,8 +60,6 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_0
         void resetCamera();
         void resetVisualization();
 
-
-        void showData();
 
     protected:
 

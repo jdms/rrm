@@ -14,7 +14,7 @@ class InputSketch : public QGraphicsPathItem
 
         InputSketch( QColor color );
 
-        void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
+        void paint( QPainter *painter, const QStyleOptionGraphicsItem *option = 0, QWidget *w = 0 );
         QRectF boundingRect() const;
 
         void create( const QPointF& p );

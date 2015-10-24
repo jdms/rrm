@@ -5,6 +5,8 @@
 
 #include <QString>
 
+#include "VTKData.h"
+
 using namespace std;
 
 class FlowVisualizationController
@@ -14,12 +16,16 @@ class FlowVisualizationController
 
         FlowVisualizationController();
 
+        bool readData();
 
         void setVertices( vector< float > vertices );
         void getVertices(vector< float >& vertices ) const;
 
-        void setTriangles( vector< unsigned int > triangles );
-        void getTriangles( vector< unsigned int >& triangles ) const;
+        void setTriangles( vector< int > triangles );
+        void getTriangles( vector< unsigned int >& triangles );
+
+        void setBoundingBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
+        void getBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax ) const;
 
         void setColors( vector< float > colors );
         void getColors( vector< float >& colors ) const;
@@ -27,9 +33,29 @@ class FlowVisualizationController
         void setColorMap();
         void getColorMap() const;
 
-        void setProperties( QString property, int dim, vector< float > values );
-        void getProperties( QString& property, int& dim, vector< float >& values ) const;
+        void setPointProperties( vector< std::string > property , vector< int > dim, vector< float > values );
+        void getPointProperties( vector< std::string >& property, vector< int >& dim, vector< float >& values ) const;
 
+        void setCellsProperties( vector< std::string > property, vector< int > dim, vector< float > values );
+        void getCellsProperties( vector< std::string > & property, vector< int >& dim, vector< float >& values ) const;
+
+        void setCurrentProperty( std::string property );
+         std::string getCurrentProperty() const;
+
+        void transformInTriangles( vector< int > cell , vector< unsigned int> &triangles );
+
+        void clear();
+
+
+    protected:
+
+        enum VERTICESSHAPE { TETRAHEDRON = 4 };
+        enum VERTICESPROPERTY { SCALARS = 1, VECTORS = 3 };
+
+        std::map< std::string, int > property_map;
+        std::string current_property;
+
+        VTKData data;
 
 
 };

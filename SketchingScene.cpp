@@ -30,7 +30,7 @@ SketchingScene::~SketchingScene()
 void SketchingScene::createBoundary()
 {
 
-    boundaryc = new BoundaryController( this->sceneRect().width() - 900, this->sceneRect().height() - 700 );
+    boundaryc = new BoundaryController( this->sceneRect().width() - 600, this->sceneRect().height() - 400 );
     this->addItem( boundaryc );
 }
 
@@ -80,7 +80,8 @@ void SketchingScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 
     sketch->setDone( true );
     horizonc = new HorizonController( currentColor );
-    horizonc->setSketching( &sketch->getSketch() );
+    QPainterPath input = sketch->getSketch();
+    horizonc->setSketching( &input );
 
     this->removeItem( sketch );
     bool valid = horizonc->isValid( this );

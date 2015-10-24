@@ -3,12 +3,12 @@
 CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLWidget( format, parent )
 {
     this->makeCurrent();
-
-    flowvisualizationc = NULL;
     initializeOpenGLFunctions();
+
+//    flowvisualizationc = new FlowVisualizationController();
+    flowvisualizationc = NULL;
+
     resetSetup();
-
-
 
 }
 
@@ -233,20 +233,8 @@ void CanvasComputation::setupMatrices()
 }
 
 
-void CanvasComputation::showData()
-{
-    flowvisualizationc->readData();
-    sendMeshGPU();
-    setPositionModel();
-
-    updateGL();
-}
-
-
 void CanvasComputation::drawModel()
 {
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
     glBindVertexArray( vao_mesh );
 
     if( show_vertices == true )

@@ -283,5 +283,4 @@ void MainWindow::doComputation()
 {
     addDockWidget( Qt::RightDockWidgetArea, dc_computation );
     dc_computation->show();
-    canvas_computation->showData();
 }
