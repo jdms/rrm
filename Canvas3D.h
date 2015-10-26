@@ -5,7 +5,7 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLFunctions_3_0>
 
-class Canvas3D: public QGLWidget, protected QOpenGLFunctions_3_0
+class Canvas3D: public QGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 

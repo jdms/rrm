@@ -11,6 +11,11 @@ bool FlowVisualizationController::readData()
     std::string filename = std::string( "/Users/Clarissa/Downloads/results_example9coarse.vtk" );
     bool read_ok = data.readUnstructuredGridFile( filename );
 
+    data.setupData();
+
+    vector< float > colors;
+    getColors( colors );
+
     return read_ok;
 }
 
@@ -133,13 +138,32 @@ void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, floa
 
 void FlowVisualizationController::setColors( vector< float > colors )
 {
-
+//    data.getAttribute( );
 }
 
 
-void FlowVisualizationController::getColors( vector< float >& colors ) const
+void FlowVisualizationController::getColors( vector< float >& colors )
 {
 
+    int ncomp = 0;
+    vector< float > values;
+    vector< float > maxmin;
+
+    current_property = "Velocity";
+    current_property_type = "CELLS";
+
+    data.getAttribute( current_property, current_property_type, ncomp, values );
+    data.getMaxMinAttribute( current_property, current_property_type, ncomp, maxmin );
+
+    if( ncomp == 1 )
+    {
+
+    }
+
+    else if( ncomp == 3 )
+    {
+
+    }
 }
 
 
@@ -206,15 +230,17 @@ void FlowVisualizationController::getCellsProperties( vector< std::string >& pro
 }
 
 
-void FlowVisualizationController::setCurrentProperty( std::string property )
+void FlowVisualizationController::setCurrentProperty( std::string property, std::string type )
 {
     current_property = property;
+    current_property_type = type;
 }
 
 
- std::string FlowVisualizationController::getCurrentProperty() const
+ void FlowVisualizationController::getCurrentProperty( std::string& property, std::string& type ) const
 {
-    return current_property;
+    property = current_property;
+    type = current_property_type;
 }
 
 

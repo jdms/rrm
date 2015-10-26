@@ -201,7 +201,7 @@ void MainWindow::createComputationModule()
 
 
     QGLFormat fmt;
-    fmt.setVersion( 3, 0 );
+    fmt.setVersion( 3, 3 );
     fmt.setProfile( QGLFormat::CoreProfile);
 
     canvas_computation = new CanvasComputation( fmt, this );

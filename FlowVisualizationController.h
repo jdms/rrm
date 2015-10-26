@@ -28,7 +28,7 @@ class FlowVisualizationController
         void getBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax ) const;
 
         void setColors( vector< float > colors );
-        void getColors( vector< float >& colors ) const;
+        void getColors( vector< float >& colors );
 
         void setColorMap();
         void getColorMap() const;
@@ -39,8 +39,8 @@ class FlowVisualizationController
         void setCellsProperties( vector< std::string > property, vector< int > dim, vector< float > values );
         void getCellsProperties( vector< std::string > & property, vector< int >& dim, vector< float >& values ) const;
 
-        void setCurrentProperty( std::string property );
-         std::string getCurrentProperty() const;
+        void setCurrentProperty( std::string property , string type );
+        void getCurrentProperty( std::string& property, std::string& type ) const;
 
         void transformInTriangles( vector< int > cell , vector< unsigned int> &triangles );
 
@@ -54,6 +54,7 @@ class FlowVisualizationController
 
         std::map< std::string, int > property_map;
         std::string current_property;
+        std::string current_property_type;
 
         VTKData data;
 

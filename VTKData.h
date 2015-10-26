@@ -24,17 +24,22 @@ class VTKData
     public:
 
         enum CODESHAPE { TETRAHEDRON = 10 };
+        enum PROPERTYTYPE { POINTS, CELLS };
+        enum VALUEFORMAT { SCALARS, VECTORS };
 
 
         VTKData();
 
         bool readUnstructuredGridFile( std::string& filename );
+        void setupData();
 
         void getPoints( vector< float >& points ) const;
         void getCells( vector< int >& shape, vector< int >& index ) const;
-        void getAttributesPoints( vector< std::string > format, vector< std::string > name, vector< float > values ) const;
-        void getAttributesCells( vector< std::string > format, vector< std::string > name, vector< float > values ) const;
+        void getAttributesPoints( vector< std::string >& format, vector< std::string >& name, vector< float >& values ) const;
+        void getAttributesCells( vector< std::string >& format, vector< std::string >& name, vector< float >& values ) const;
 
+        void getAttribute( std::string name, std::string type, int& ncomp, vector< float >& values );
+        void getMaxMinAttribute( std::string name, std::string type, int& ncomp, vector< float >& maxmin );
 
 
     protected:
@@ -80,6 +85,17 @@ class VTKData
         vector< float > attribute_values;
         vector< float > attributecell_values;
 
+
+        int properties_id;
+        map< int, PROPERTYTYPE > properties_type;
+        map< int, std::string > properties_names;
+        map< int, std::string > properties_formats;
+        map< std::string, int > point_properties_index;
+        map< std::string, int > cells_properties_index;
+
+
+        vector< std::pair< float, float > > point_properties_maxmin;
+        vector< std::pair< float, float > >cells_properties_maxmin;
 
 
         int total_datavalues;

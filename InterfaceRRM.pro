@@ -8,7 +8,8 @@ TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 
-CONFIG += c++11
+CONFIG += -std=c++11 -stdlib=libc++
+
 unix:mac {
     QXXFLAGS += -std=c++11 -mmacosx-version-min=10.9 -stdlib=libc++;
 }
@@ -25,7 +26,8 @@ SOURCES += \
     BoundaryController.cpp \
     canvasComputation.cpp \
     FlowVisualizationController.cpp \
-    VTKData.cpp
+    VTKData.cpp \
+    ColorMap.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -37,8 +39,13 @@ HEADERS += \
     BoundaryController.h \
     canvasComputation.h \
     FlowVisualizationController.h \
-    VTKData.h
+    VTKData.h \
+    ColorMap.h
 
 DISTFILES += \
     vertex_shader.vert \
     fragment_shader.frag
+
+OTHER_FILES += \
+    fragment_shader.frag \
+    vertex_shader.vert
