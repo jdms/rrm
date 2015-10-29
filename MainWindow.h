@@ -8,6 +8,8 @@
 #include <QWidgetAction>
 #include <QToolButton>
 #include <QHBoxLayout>
+#include <QComboBox>
+#include <QLabel>
 
 #include "Canvas2D.h"
 #include "Canvas3D.h"
@@ -37,8 +39,10 @@ class MainWindow : public QMainWindow
 
         void clearCanvas2D();
 //        void clearCanvas3D();
-//        void clearComputation();
+        void clearComputation();
 //        void resetToolbar();
+
+        void createToolbarComputation();
 
 
     protected slots:
@@ -51,6 +55,9 @@ class MainWindow : public QMainWindow
         void changeColorLine();
 
         void doComputation();
+        void open_surface_file();
+        void create_mesh_volumetric();
+        void compute_property( int id );
 
 
 
@@ -98,6 +105,12 @@ class MainWindow : public QMainWindow
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
 
+
+        QMainWindow *mw_canvas_computation;
+        QToolBar *tlb_workflow_flow;
+        QAction *ac_open_surface;
+        QAction *ac_compute_volumetric;
+        QComboBox *cb_compute_property;
 
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;

@@ -23,6 +23,14 @@ class VTKData
 {
     public:
 
+
+        struct Cell
+        {
+            int id;
+            vector< int > vertices;
+        };
+
+
         enum CODESHAPE { TETRAHEDRON = 10 };
         enum PROPERTYTYPE { POINTS, CELLS };
         enum VALUEFORMAT { SCALARS, VECTORS };
@@ -40,7 +48,13 @@ class VTKData
 
         void getAttribute( std::string name, std::string type, int& ncomp, vector< float >& values );
         void getMaxMinAttribute( std::string name, std::string type, int& ncomp, vector< float >& maxmin );
+        void getMaxMinCoordinates(std::string name, std::string type, vector<float> &values );
 
+        int getNumberofPoints();
+
+        bool isEmpty();
+
+        //void clear();
 
     protected:
 
@@ -85,6 +99,7 @@ class VTKData
         vector< float > attribute_values;
         vector< float > attributecell_values;
 
+        bool is_empty;
 
         int properties_id;
         map< int, PROPERTYTYPE > properties_type;
@@ -95,8 +110,16 @@ class VTKData
 
 
         vector< std::pair< float, float > > point_properties_maxmin;
+        vector< std::pair< float, float > > point_properties_maxmin_X;
+        vector< std::pair< float, float > > point_properties_maxmin_Y;
+        vector< std::pair< float, float > > point_properties_maxmin_Z;
         vector< std::pair< float, float > >cells_properties_maxmin;
+        vector< std::pair< float, float > > cells_properties_maxmin_X;
+        vector< std::pair< float, float > > cells_properties_maxmin_Y;
+        vector< std::pair< float, float > > cells_properties_maxmin_Z;
 
+
+        vector< Cell *> vector_cells;
 
         int total_datavalues;
 

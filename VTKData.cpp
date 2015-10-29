@@ -3,6 +3,12 @@
 VTKData::VTKData()
 {
     properties_id = 0;
+    is_empty = true;
+}
+
+bool VTKData::isEmpty()
+{
+    return is_empty;
 }
 
 bool VTKData::getHeader( QRegExp RegExp, QString line, vector< std::string >& data )
@@ -70,11 +76,16 @@ bool VTKData::readUnstructuredGridFile( std::string& filename )
 
     }
 
+
+    is_empty = false;
+
     if( error == true )
     {
         std::cout << "-- Error: parsing fail." << std::endl << std::endl;
         return false;
     }
+
+
 
     return true;
 
@@ -110,40 +121,59 @@ void VTKData::setupData()
         else if( ncomp == 3 )
         {
 
-            int nelemens = (int) data.size()/3;
-            float minx = 0.0f, miny = 0.0f, minz = 0.0f;
-            float maxx = 0.0f, maxy = 0.0f, maxz = 0.0f;
+            if( data.empty() == true ) return;
 
-            for( int j = 0; j < nelemens; ++j )
+            int nelemens = (int) data.size()/3;
+
+            float min = data[ 0 ]*data[ 0 ] + data[ 1 ]*data[ 1 ] + data[ 2 ]*data[ 2 ];
+            float max = min;
+
+            float minx = data[ 0 ], miny = data[ 1 ], minz = data[ 2 ];
+            float maxx = minx, maxy = miny, maxz = minz;
+
+
+            for( int j = 3; j < nelemens; ++j )
             {
+                float norm =  data[ 3*j ]*data[ 3*j ] + data[ 3*j + 1 ]*data[ 3*j + 1 ] + data[ 3*j + 2 ]*data[ 3*j + 2 ];
+
+                if( norm <= min ) min = norm;
+                if( norm >= max ) max = norm;
+
                 if( data[ 3*j ] <= minx ) minx = data[ 3*j ];
                 if( data[ 3*j ] >= maxx ) maxx = data[ 3*j ];
 
-                if( data[ 3*j + 1 ] <= minx ) miny = data[ 3*j + 1 ];
-                if( data[ 3*j + 1 ] >= maxx ) maxy = data[ 3*j + 1 ];
+                if( data[ 3*j + 1 ] <= miny ) miny = data[ 3*j + 1];
+                if( data[ 3*j + 1 ] >= maxy ) maxy = data[ 3*j + 1 ];
 
-                if( data[ 3*j + 2 ] <= minx ) minz = data[ 3*j + 2 ];
-                if( data[ 3*j + 2 ] >= maxx ) maxz = data[ 3*j + 2 ];
-
-
+                if( data[ 3*j + 2 ] <= minz ) minz = data[ 3*j + 2 ];
+                if( data[ 3*j + 2 ] >= maxz ) maxz = data[ 3*j + 2 ];
             }
 
-            std::pair<float, float> minmax_x;
-            std::pair<float, float> minmax_y;
-            std::pair<float, float> minmax_z;
+            std::pair<float, float> minmax;
+            minmax.first = min;
+            minmax.second = max;
+            point_properties_maxmin.push_back( minmax );
 
-            minmax_x.first = minx;
-            minmax_x.second = maxx;
+            std::pair<float, float> minmax_X;
+            minmax_X.first = minx;
+            minmax_X.second = maxx;
 
-            minmax_y.first = miny;
-            minmax_y.second = maxy;
+            point_properties_maxmin_X.push_back( minmax_X );
 
-            minmax_z.first = minz;
-            minmax_z.second = maxz;
+            std::pair<float, float> minmax_Y;
+            minmax_Y.first = miny;
+            minmax_Y.second = maxy;
 
-            point_properties_maxmin.push_back( minmax_x );
-            point_properties_maxmin.push_back( minmax_y );
-            point_properties_maxmin.push_back( minmax_z );
+            point_properties_maxmin_Y.push_back( minmax_Y );
+
+
+            std::pair<float, float> minmax_Z;
+            minmax_Z.first = minz;
+            minmax_Z.second = maxz;
+
+            point_properties_maxmin_Z.push_back( minmax_Z );
+
+
         }
 
     }
@@ -160,7 +190,7 @@ void VTKData::setupData()
         if( ncomp == 1 )
         {
             auto itmin = std::min_element( data.begin(), data.end() );
-            auto itmax = std::min_element( data.begin(), data.end() );
+            auto itmax = std::max_element( data.begin(), data.end() );
 
             int idmin  = std::distance( data.begin(), itmin );
             int idmax = std::distance( data.begin(), itmax );
@@ -175,44 +205,80 @@ void VTKData::setupData()
 
         else if( ncomp == 3 )
         {
+            if( data.empty() == true ) return;
 
             int nelemens = (int) data.size()/3;
-            float minx = 0.0f, miny = 0.0f, minz = 0.0f;
-            float maxx = 0.0f, maxy = 0.0f, maxz = 0.0f;
 
-            for( int j = 0; j < nelemens; ++j )
+            float min = data[ 0 ]*data[ 0 ] + data[ 1 ]*data[ 1 ] + data[ 2 ]*data[ 2 ];
+            float max = min;
+
+            float minx = data[ 0 ], miny = data[ 1 ], minz = data[ 2 ];
+            float maxx = minx, maxy = miny, maxz = minz;
+
+
+            for( int j = 3; j < nelemens; ++j )
             {
+                float norm =  data[ 3*j ]*data[ 3*j ] + data[ 3*j + 1 ]*data[ 3*j + 1 ] + data[ 3*j + 2 ]*data[ 3*j + 2 ];
+
+                if( norm <= min ) min = norm;
+                if( norm >= max ) max = norm;
+
                 if( data[ 3*j ] <= minx ) minx = data[ 3*j ];
                 if( data[ 3*j ] >= maxx ) maxx = data[ 3*j ];
 
-                if( data[ 3*j + 1 ] <= minx ) miny = data[ 3*j + 1 ];
-                if( data[ 3*j + 1 ] >= maxx ) maxy = data[ 3*j + 1 ];
+                if( data[ 3*j + 1 ] <= miny ) miny = data[ 3*j + 1];
+                if( data[ 3*j + 1 ] >= maxy ) maxy = data[ 3*j + 1 ];
 
-                if( data[ 3*j + 2 ] <= minx ) minz = data[ 3*j + 2 ];
-                if( data[ 3*j + 2 ] >= maxx ) maxz = data[ 3*j + 2 ];
-
+                if( data[ 3*j + 2 ] <= minz ) minz = data[ 3*j + 2 ];
+                if( data[ 3*j + 2 ] >= maxz ) maxz = data[ 3*j + 2 ];
             }
 
+            std::pair<float, float> minmax;
+            minmax.first = min;
+            minmax.second = max;
+            cells_properties_maxmin.push_back( minmax );
 
-            std::pair<float, float> minmax_x;
-            std::pair<float, float> minmax_y;
-            std::pair<float, float> minmax_z;
+            std::pair<float, float> minmax_X;
+            minmax_X.first = minx;
+            minmax_X.second = maxx;
 
-            minmax_x.first = minx;
-            minmax_x.second = maxx;
+            cells_properties_maxmin_X.push_back( minmax_X );
 
-            minmax_y.first = miny;
-            minmax_y.second = maxy;
+            std::pair<float, float> minmax_Y;
+            minmax_Y.first = miny;
+            minmax_Y.second = maxy;
 
-            minmax_z.first = minz;
-            minmax_z.second = maxz;
+            cells_properties_maxmin_Y.push_back( minmax_Y );
 
-            cells_properties_maxmin.push_back( minmax_x );
-            cells_properties_maxmin.push_back( minmax_y );
-            cells_properties_maxmin.push_back( minmax_z );
+
+            std::pair<float, float> minmax_Z;
+            minmax_Z.first = minz;
+            minmax_Z.second = maxz;
+
+            cells_properties_maxmin_Z.push_back( minmax_Z );
+
         }
 
     }
+
+
+//    int ncellsvalues = cells_values.size();
+    
+//    for( int id = 0; id < ncellsvalues;  )
+//    {
+//        int nvertices = cells_values[ id ];
+//        Cell *cell = new Cell();
+//        cell->id = id++;
+
+
+//        for( int j = 0; j < nvertices; ++j )
+//        {
+//            cell->vertices.push_back( cells_values[ id ] );
+//            id++;
+//        }
+
+//        vector_cells.push_back( cell );
+//    }
 
 }
 
@@ -334,7 +400,6 @@ bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
 
             data_type = data[ 1 ].c_str();
             data_nvalues = data[ 2 ].c_str();
-//            data_format = data[ 3 ].c_str();
 
             state = UNSTRUCTUREDGRID_STATES::DATAVALUES;
             total_datavalues = 0;
@@ -394,6 +459,13 @@ bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
 
             if( std::atoi( data[ 0 ].c_str() ) != ( ndata - 1 ) )
                     return false;
+
+
+//            for( int j = 0; j < ndata; ++j )
+//            {
+//                float value = std::atoi( data.at( j ).c_str() );
+//                cells_values.push_back( value );
+//            }
 
             for( int j = 1; j < ndata; ++j )
             {
@@ -485,10 +557,6 @@ bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
             properties_names[ properties_id ] = data[ 1 ].c_str();
             properties_formats[ properties_id ] = data[ 2 ].c_str();
 
-            cout << "property " << data[ 1 ].c_str() << ", id = " << properties_id << endl;
-            cout << "property is from " << properties_type.at( properties_id ) << endl;
-            cout << "property name is " << properties_names.at( properties_id ) << endl;
-            cout << "property id is " << point_properties_index.at( data[ 1 ].c_str() ) << endl;
 
             if( attribute_type.back().compare( "SCALARS" ) == 0 )
             {
@@ -584,13 +652,6 @@ bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
         properties_names[ properties_id ] = data[ 1 ].c_str();
         properties_formats[ properties_id ] = data[ 2 ].c_str();
 
-
-        cout << "property " << data[ 1 ].c_str() << ", id = " << properties_id << endl;
-        cout << "property is from " << properties_type.at( properties_id ) << endl;
-        cout << "property name is " << properties_names.at( properties_id ) << endl;
-        cout << "property id is " << cells_properties_index.at( data[ 1 ].c_str() ) << endl;
-
-
         if( attributecell_type.back().compare( "SCALARS" ) == 0 )
             state = UNSTRUCTUREDGRID_STATES::LOOKUPTABLECELL;
         else
@@ -636,7 +697,6 @@ bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
 
         if( attributecell_type.back().compare( "SCALARS" ) == 0 && total_datavalues == std::atoi( cells_number_data.c_str() ) )
             return true;
-            //            state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELL;
 
         else if( attributecell_type.back().compare( "VECTORS" ) == 0 && ( total_datavalues == std::atoi( cells_number_data.c_str() ) ) )
             state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELL;
@@ -670,6 +730,9 @@ void VTKData::getCells( vector< int >& shape, vector< int >& index ) const
 
 void VTKData::getAttributesPoints( vector< std::string >& format, vector< std::string >& name, vector< float >& values ) const
 {
+
+    if( attribute_name.empty() == true ) return;
+
     format = attribute_type;
     name = attribute_name;
     values = attribute_values;
@@ -765,111 +828,133 @@ void VTKData::getMaxMinAttribute( std::string name, std::string type, int& ncomp
     {
         int idlocal = point_properties_index[ name ];
 
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
-        {
-            if( attribute_type[ i ] == "SCALARS" )
-                id++;
-            else if( attribute_type[ i ] == "VECTORS" )
-                id += 3;
-        }
 
-        if( attribute_type[ idlocal ] == "SCALARS" )
-        {
-            maxmin.push_back( point_properties_maxmin[ id ].first );
-            maxmin.push_back( point_properties_maxmin[ id ].second );
-        }
-
-        else if( attribute_type[ idlocal ] == "VECTORS" )
-        {
-            maxmin.push_back( point_properties_maxmin[ id ].first );
-            maxmin.push_back( point_properties_maxmin[ id ].second );
-
-            maxmin.push_back( point_properties_maxmin[ id + 1 ].first );
-            maxmin.push_back( point_properties_maxmin[ id + 1 ].second );
-
-            maxmin.push_back( point_properties_maxmin[ id + 2 ].first );
-            maxmin.push_back( point_properties_maxmin[ id + 2 ].second );
-        }
-
+        maxmin.push_back( point_properties_maxmin[ idlocal ].first );
+        maxmin.push_back( point_properties_maxmin[ idlocal ].second );
 
     }
 
     if( type == "CELLS" )
     {
         int idlocal = cells_properties_index[ name ];
-
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
-        {
-            if( attributecell_type[ i ] == "SCALARS" )
-                id++;
-            else if( attributecell_type[ i ] == "VECTORS" )
-                id += 3;
-        }
-
-        if( attributecell_type[ id ] == "SCALARS" )
-        {
-            maxmin.push_back( cells_properties_maxmin[ id ].first );
-            maxmin.push_back( cells_properties_maxmin[ id ].second );
-        }
-
-        else if( attributecell_type[ id ] == "VECTORS" )
-        {
-            maxmin.push_back( cells_properties_maxmin[ id ].first );
-            maxmin.push_back( cells_properties_maxmin[ id ].second );
-
-            maxmin.push_back( cells_properties_maxmin[ id + 1 ].first );
-            maxmin.push_back( cells_properties_maxmin[ id + 1 ].second );
-
-            maxmin.push_back( cells_properties_maxmin[ id + 2 ].first );
-            maxmin.push_back( cells_properties_maxmin[ id + 2 ].second );
-        }
-
+        maxmin.push_back( cells_properties_maxmin[ idlocal ].first );
+        maxmin.push_back( cells_properties_maxmin[ idlocal ].second );
 
     }
 
 
 }
 
+void VTKData::getMaxMinCoordinates( std::string name, std::string type, vector< float >& values )
+{
 
-/*
     if( type == "POINTS" )
     {
-        int id = point_properties_index[ name ];
-        int nattributes = std::atoi( attributes_number.c_str() );
+        int idlocal = point_properties_index[ name ];
+        if( attribute_type[ idlocal ] != "VECTORS" ) return;
 
-        if( attribute_format[ id ] == "SCALARS" )
+        int id = 0;
+        for( int i = 0; i < idlocal; ++i )
         {
-            ncomp = 1;
-            for( int i = 0; i < nattributes; ++i )
-                values.push_back( attribute_values[ nattributes*id + i ] );
+            if( attribute_type[ i ] == "VECTORS" )
+                id++;
         }
-        else if( attribute_format[ id ] == "VECTORS" )
-        {
-            ncomp = 3;
-            nattributes *= 3;
-            for( int i = 0; i < nattributes; ++i )
-                values.push_back( attribute_values[ nattributes*id + i ] );
-        }
+
+        float xmin = point_properties_maxmin_X[ id ].first;
+        float xmax = point_properties_maxmin_X[ id ].second;
+
+        float ymin = point_properties_maxmin_Y[ id ].first;
+        float ymax = point_properties_maxmin_Y[ id ].second;
+
+        float zmin = point_properties_maxmin_Z[ id ].first;
+        float zmax = point_properties_maxmin_Z[ id ].second;
+
+
+        values.push_back( xmin );
+        values.push_back( xmax );
+        values.push_back( ymin );
+        values.push_back( ymax );
+        values.push_back( zmin );
+        values.push_back( zmax );
 
     }
-    else if( type == "CELLS" )
+
+    if( type == "CELLS" )
     {
-        int id = cells_properties_index[ name ];
-        int nattributes = std::atoi( cells_number_data.c_str() );
 
-        if( attribute_format[ id ] == "SCALARS" )
+
+        int idlocal = cells_properties_index[ name ];
+        if( attributecell_type[ idlocal ] != "VECTORS" ) return;
+
+        int id = 0;
+        for( int i = 0; i < idlocal; ++i )
         {
-            for( int i = 0; i < nattributes; ++i )
-                values.push_back( attributecell_values[ nattributes*id + i ] );
-        }
-        if( attributecell_format[ id ] == "VECTORS" )
-        {
-            nattributes *= 3;
-            for( int i = 0; i < nattributes; ++i )
-                values.push_back( attributecell_values[ nattributes*id + i ] );
+            if( attributecell_type[ i ] == "VECTORS" )
+                id++;
         }
 
+        float xmin = cells_properties_maxmin_X[ id ].first;
+        float xmax = cells_properties_maxmin_X[ id ].second;
+
+        float ymin = cells_properties_maxmin_Y[ id ].first;
+        float ymax = cells_properties_maxmin_Y[ id ].second;
+
+        float zmin = cells_properties_maxmin_Z[ id ].first;
+        float zmax = cells_properties_maxmin_Z[ id ].second;
+
+
+        values.push_back( xmin );
+        values.push_back( xmax );
+        values.push_back( ymin );
+        values.push_back( ymax );
+        values.push_back( zmin );
+        values.push_back( zmax );
     }
+
+}
+
+int VTKData::getNumberofPoints()
+{
+    return std::atoi( data_nvalues.c_str() );
+}
+
+/*
+void VTKData::clear()
+{
+       attribute_type.clear();
+       attribute_name.clear();
+       attribute_format.clear();
+       lookuptable.clear();
+        attributecell_type.clear();
+        attributecell_name.clear();
+        attributecell_format.clear();
+        lookuptablecell.clear();
+
+       data_values.clear();
+       cells_values.clear();
+       celltype_values.clear();
+       attribute_values.clear();
+       attributecell_values.clear();
+
+       is_empty = true;
+
+        properties_type.clear();
+       properties_names.clear();
+       properties_formats.clear();
+       point_properties_index.clear();
+       cells_properties_index.clear();
+
+
+         point_properties_maxmin.clear();
+         point_properties_maxmin_X.clear();
+         point_properties_maxmin_Y.clear();
+         point_properties_maxmin_Z.clear();
+        cells_properties_maxmin.clear();
+         cells_properties_maxmin_X.clear();
+         cells_properties_maxmin_Y.clear();
+         cells_properties_maxmin_Z.clear();
+
+         total_datavalues = 0;
+         properties_id = 0;
+}
 */

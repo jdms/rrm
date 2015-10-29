@@ -6,7 +6,7 @@ SketchingScene::SketchingScene( QObject *parent ): QGraphicsScene( parent )
     horizonc = NULL;
     boundaryc = NULL;
 
-    mode = InteractionMode::SKETCHING;
+    mode = SketchingScene::InteractionMode::SKETCHING;
 
     createBoundary();
 
@@ -37,7 +37,7 @@ void SketchingScene::createBoundary()
 
 void SketchingScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
-    if( mode == SELECT )
+    if( mode == InteractionMode::SELECT )
         return;
 
     if( event->buttons() == Qt::MouseButton::LeftButton  )
@@ -57,7 +57,7 @@ void SketchingScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void SketchingScene::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 {
 
-    if( mode == SELECT )
+    if( mode == InteractionMode::SELECT )
         return;
 
 
@@ -75,7 +75,7 @@ void SketchingScene::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 void SketchingScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
 {
 
-    if( mode == SELECT )
+    if( mode == InteractionMode::SELECT )
         return;
 
     sketch->setDone( true );

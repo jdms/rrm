@@ -14,7 +14,7 @@ MainWindow::MainWindow( QWidget *parent) : QMainWindow( parent )
 
 MainWindow::~MainWindow()
 {
-    delete canvas2D;
+    canvas2D->clear();
 }
 
 void MainWindow::createWindow()
@@ -27,6 +27,7 @@ void MainWindow::createWindow()
     create2DModule();
     create3DModule();
     createComputationModule();
+    createToolbarComputation();
 
     emit setColor( 0, 0, 128 );
 
@@ -81,6 +82,9 @@ void MainWindow::createActions()
     ac_sketchcolor = new QWidgetAction( this );
     ac_sketchcolor->setDefaultWidget( cd_pickercolor );
 
+    ac_open_surface  = new QAction( tr( "Open Surface..." ), this );;
+    ac_compute_volumetric  = new QAction( tr( "Compute Volumetric..." ), this );;
+
 
     connect( ac_new, SIGNAL( triggered() ), this, SLOT( newSection() ) );
     connect( ac_removeabove, SIGNAL( triggered() ), this, SLOT( applyRemoveAbove() ) );
@@ -90,7 +94,9 @@ void MainWindow::createActions()
 
     connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
 
-
+    connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( open_surface_file() ) );
+    connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( create_mesh_volumetric() ) );
+    connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( compute_property( int ) ) );
 }
 
 void MainWindow::createMenuBar()
@@ -191,10 +197,11 @@ void MainWindow::create3DModule()
 
 void MainWindow::createComputationModule()
 {
+
+
     dc_computation = new QDockWidget( this );
     dc_computation->setAllowedAreas( Qt::RightDockWidgetArea );
     dc_computation->setWindowTitle( "Flow Visualization" );
-
 
     QFrame *fr = new QFrame( this );
     fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
@@ -211,8 +218,28 @@ void MainWindow::createComputationModule()
     hb_canvascomputation->addWidget( canvas_computation );
 
     fr->setLayout( hb_canvascomputation );
-    dc_computation->setWidget( fr );
+
+    mw_canvas_computation = new QMainWindow();
+    mw_canvas_computation->setCentralWidget( fr );
+
+    dc_computation->setWidget( mw_canvas_computation );
     dc_computation->setVisible( false );
+
+}
+
+void MainWindow::createToolbarComputation()
+{
+
+    QLabel *lb_name_property = new QLabel( tr( "Property" ) );
+    cb_compute_property = new QComboBox();
+
+    tlb_workflow_flow = addToolBar( tr( "Workflow" ) );
+    tlb_workflow_flow->addAction( ac_open_surface );
+    tlb_workflow_flow->addAction( ac_compute_volumetric );
+    tlb_workflow_flow->addWidget( lb_name_property );
+    tlb_workflow_flow->addWidget( cb_compute_property );
+
+    mw_canvas_computation->addToolBar( tlb_workflow_flow );
 
 }
 
@@ -221,7 +248,7 @@ void MainWindow::newSection()
 {
     clearCanvas2D();
 //    clearCanvas3D();
-//    clearComputation();
+    clearComputation();
 
     statusBar()->showMessage( "New section." );
 }
@@ -284,4 +311,28 @@ void MainWindow::doComputation()
     addDockWidget( Qt::RightDockWidgetArea, dc_computation );
     dc_computation->show();
     canvas_computation->showData();
+}
+
+
+
+void MainWindow::clearComputation()
+{
+    canvas_computation->resetSetup();
+    canvas_computation->updateGL();
+
+}
+
+void MainWindow::open_surface_file()
+{
+
+}
+
+void MainWindow::create_mesh_volumetric()
+{
+
+}
+
+void MainWindow::compute_property( int id )
+{
+
 }

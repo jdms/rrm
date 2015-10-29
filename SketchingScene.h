@@ -16,7 +16,7 @@ class SketchingScene: public QGraphicsScene
 
     public:
 
-        enum InteractionMode
+        enum class InteractionMode
         {
             SELECT,
             SKETCHING,

@@ -8,7 +8,7 @@ TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 
-CONFIG += -std=c++11 -stdlib=libc++
+CONFIG += c++11
 
 unix:mac {
     QXXFLAGS += -std=c++11 -mmacosx-version-min=10.9 -stdlib=libc++;

@@ -18,6 +18,14 @@
 #include <QOpenGLBuffer>
 #include <QVector3D>
 #include <QMouseEvent>
+#include <QMenu>
+#include <QAction>
+#include <QRadioButton>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QWidgetAction>
+#include <QCheckBox>
+#include <QActionGroup>
 
 #include "FlowVisualizationController.h"
 
@@ -57,7 +65,7 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         CanvasComputation( QGLFormat format, QWidget *parent = 0 );
 
 
-        void resetSetup();
+
         void resetData();
         void resetCamera();
         void resetVisualization();
@@ -75,34 +83,72 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void deleteBuffers();
 
         void sendMeshGPU();
-        void sendColorsGPU();
         void drawModel();
         void setupMatrices();
         void setPositionModel();
 
+        void createActions();
+        void createPopupMenu();
+        void createMenuProperties();
+        void createMenuColorMaps();
+        void createMenuRendering();
+        void createRenderingVectors(int id, std::string title , string type);
+        void fillMenuProperties();
 
         void mousePressEvent( QMouseEvent *m );
         void mouseMoveEvent( QMouseEvent *m );
         void wheelEvent( QWheelEvent *m );
 
 
+    public slots:
+
+        void resetSetup();
+        void setColorMap();
+        void setColorMapConstant();
+
+
+    protected slots:
+
+        void sendColorsGPU( std::string property = "", std::string type = "", int option = 0 );
+        void showPoints( bool option );
+        void showVolume( bool option );
+        void showWireframe( bool option );
+
+        void resetTransformations();
+
+
+    signals:
+
+        void sendProperty( std::string property, std::string type );
+        void sendVectorProperty( std::string property, std::string type, int option );
+
     private:
 
         GLuint program;
 
         GLuint vao_mesh;
+        GLuint *bf_mesh;
         GLuint bf_faces;
+        GLuint bf_lines;
         GLuint number_of_faces;
         GLuint number_of_vertices;
+        GLuint number_of_lines;
 
         bool show_vertices;
         bool show_faces;
+        bool show_lines;
 
         QVector3D previous_mouse;
         QVector3D rotation_axis;
         QVector3D translation_vector;
         QVector3D model_center;
         QMatrix4x4 pmatrix;
+
+        QMenu *mn_options;
+        QMenu *mn_properties;
+        QMenu *mn_vectors_rendering;
+        QMenu *mn_colormap;
+        QMenu *mn_options_vector;
 
 
         float alpha;
@@ -111,7 +157,24 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         float speed_mouse;
         float speed_rotation;
 
+        QAction *ac_reset_transformations;
+        QAction *ac_clear_all;
 
+        QWidgetAction *wa_properties;
+        QWidgetAction *wa_colormaps;
+        QWidgetAction *wa_rendering;
+        QWidgetAction *wa_options_vector;
+
+
+        vector< QRadioButton* > rd_properties;
+        vector< QRadioButton* > rd_colormaps;
+        vector< QRadioButton* > rd_options_vector;
+        QCheckBox *chk_show_points;
+        QCheckBox *chk_show_wireframe;
+        QCheckBox *chk_show_volume;
+
+        vector< QAction *> ac_properties;
+        vector< QMenu *> mn_vector_properties_points;
 
         FlowVisualizationController *flowvisualizationc;
 };
