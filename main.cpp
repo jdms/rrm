@@ -17,11 +17,6 @@ int main( int argc, char *argv[] )
     MainWindow w;
     w.show();
 
-    VTKData *data = new VTKData();
-
-//    std::string filename = std::string( "/Users/Clarissa/Downloads/results_example9coarse.vtk" );
-//    data->readUnstructuredGridFile(  filename );
-
     return a.exec();
 }
 

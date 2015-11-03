@@ -38,7 +38,7 @@ QPainterPath HorizonController::shape() const
 {
     QPainterPath path;
 
-    int ncurves = curves.size();
+    int ncurves = (int) curves.size();
     for( int i = 0; i < ncurves; ++i )
     {
         QPainterPath curve = curves.at( i );

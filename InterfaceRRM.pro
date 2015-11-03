@@ -27,7 +27,21 @@ SOURCES += \
     canvasComputation.cpp \
     FlowVisualizationController.cpp \
     VTKData.cpp \
-    ColorMap.cpp
+    ColorMap.cpp \
+    FlowProperty.cpp \
+    FlowComputation/edge.cpp \
+    FlowComputation/facet.cpp \
+    FlowComputation/graphedge.cpp \
+    FlowComputation/graphnode.cpp \
+    FlowComputation/linearfunc.cpp \
+    FlowComputation/mathzz.cpp \
+    FlowComputation/matrix.cpp \
+    FlowComputation/node.cpp \
+    FlowComputation/predicates.cxx \
+    FlowComputation/region.cpp \
+    FlowComputation/tetgen.cxx \
+    FlowComputation/tetrahedron.cpp \
+    FlowComputation/trifacet.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -40,7 +54,23 @@ HEADERS += \
     canvasComputation.h \
     FlowVisualizationController.h \
     VTKData.h \
-    ColorMap.h
+    ColorMap.h \
+    FlowProperty.h \
+    FlowComputation/edge.h \
+    FlowComputation/facet.h \
+    FlowComputation/graphedge.h \
+    FlowComputation/graphnode.h \
+    FlowComputation/linearfunc.h \
+    FlowComputation/mathzz.h \
+    FlowComputation/matrix.h \
+    FlowComputation/node.h \
+    FlowComputation/region.h \
+    FlowComputation/resource.h \
+    FlowComputation/samg.h \
+    FlowComputation/tetgen.h \
+    FlowComputation/tetrahedron.h \
+    FlowComputation/trifacet.h \
+    FlowComputation/well.h
 
 DISTFILES += \
     vertex_shader.vert \

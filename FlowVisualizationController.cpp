@@ -5,8 +5,7 @@
 
 FlowVisualizationController::FlowVisualizationController()
 {
-    current_property = "Velocity";
-    current_property_type = "POINTS";
+
 
 }
 
@@ -19,32 +18,10 @@ bool FlowVisualizationController::readData()
         cout << "You should clean before!" << endl;
 
     bool read_ok = data.readUnstructuredGridFile( filename );
-    data.setupData();
-
+    data.computeMaxMinProperties();
+    setCurrentProperty( 0 );
 
     return read_ok;
-}
-
-
-
-
-void FlowVisualizationController::setVertices( vector< float > vertices )
-{
-
-}
-
-
-void FlowVisualizationController::getVertices(vector< float >& vertices )
-{
-    if( data.isEmpty() == true ) return;
-
-    data.getPoints( vertices );
-}
-
-
-void FlowVisualizationController::setTriangles( vector< int > triangles )
-{
-
 }
 
 
@@ -52,99 +29,44 @@ void FlowVisualizationController::getVerticesCell( int idcell, std::vector< int 
 {
     if( data.isEmpty() == true ) return;
 
-//    vector< int > shape;
-//    vector< int > index;
-
-//    data.getCells( shape, index );
-//    int ncells = shape.size();
-
-//    int id = 0;
-//    int nvertices = 0;
-//    for( int i = 0; i < idcell; ++i  )
-//    {
-//        int cell_shape = shape[ i ];
-
-//        if ( cell_shape == VTKData::CODESHAPE::TETRAHEDRON )
-//            nvertices = FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON;
-
-//        id += nvertices;
-
-//    }
-
-//    if( idcell == 0 )
-//    {
-//        int cell_shape = shape[ 0 ];
-//        if ( cell_shape == VTKData::CODESHAPE::TETRAHEDRON )
-//            nvertices = FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON;
-//    }
-
-
-//    for( int i = id; i < nvertices + id; ++i )
-//        cell_vertices.push_back( index[ i ] );
-
-
-    vector< int > shape;
-    vector< int > index;
-
-    data.getCells( shape, index );
-    cell_vertices.push_back( index[ 4*idcell ] );
-    cell_vertices.push_back( index[ 4*idcell + 1 ] );
-    cell_vertices.push_back( index[ 4*idcell + 2 ] );
-    cell_vertices.push_back( index[ 4*idcell + 3 ] );
-
-
+    VTKData::Cell c;
+    data.getCell( idcell, c );
+    cell_vertices = c.vertices;
 
 }
+
 
 void FlowVisualizationController::getTriangles( vector< unsigned int >& triangles )
 {
 
     if( data.isEmpty() == true ) return;
 
-    vector< int > shape;
-    vector< int > index;
 
-    data.getCells( shape, index );
-    int ncells = shape.size();
+    vector< VTKData::Cell > cells;
+    data.getVectorCells( cells );
 
-
-    for( int i = 0; i < ncells; ++i  )
+    int ncells = (int) cells.size();
+    for( int i = 0; i < ncells; ++i )
     {
-//        int cell_shape = shape[ i ];
 
-//        int nvertices = 0;
-//        if ( cell_shape == VTKData::CODESHAPE::TETRAHEDRON ) nvertices = FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON;
-
-//        int id = nvertices*i;
-
-////        std::cout << "number of vertices for whole model = " << ncells << ", start vector = " << i << ", end vector = " << end << std::endl;
-
-//        std::vector< int > cell_vertices ( index.begin() + id,  index.begin() + id + nvertices  );
-//        transformInTriangles( cell_vertices, triangles );
-
-        int id = 4*i;
-        int nvertices = 4;
-        std::vector< int > cell_vertices ( index.begin() + id,  index.begin() + id + nvertices  );
+        vector< int > cell_vertices;
+        getVerticesCell( i, cell_vertices );
         transformInTriangles( cell_vertices, triangles );
-
 
     }
 
-}
 
+}
 
 
 void FlowVisualizationController::getWireframe( vector< unsigned int >& lines )
 {
     if( data.isEmpty() == true ) return;
 
-    vector< int > shape;
-    vector< int > index;
+    vector< VTKData::Cell > cells;
+    data.getVectorCells( cells );
 
-    data.getCells( shape, index );
-    int ncells = shape.size();
-
-
+    int ncells = (int) cells.size();
     for( int i = 0; i < ncells; ++i  )
     {
 
@@ -156,10 +78,11 @@ void FlowVisualizationController::getWireframe( vector< unsigned int >& lines )
     }
 }
 
+
 void FlowVisualizationController::transformInLines( std::vector< int > cell, vector< unsigned int >& triangles )
 {
 
-    int nvertices = cell.size();
+    int nvertices = (int) cell.size();
 
     if( nvertices == FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON )
     {
@@ -186,16 +109,12 @@ void FlowVisualizationController::transformInLines( std::vector< int > cell, vec
 
     }
 }
-
-
-
-
 
 
 void FlowVisualizationController::transformInTriangles( vector< int > cell, vector< unsigned int >& triangles )
 {
 
-    int nvertices = cell.size();
+    int nvertices = (int) cell.size();
 
     if( nvertices == FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON )
     {
@@ -222,9 +141,59 @@ void FlowVisualizationController::transformInTriangles( vector< int > cell, vect
 }
 
 
-void FlowVisualizationController::setBoundingBox( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax )
+void FlowVisualizationController::addPointProperty( std::string name, std::string format, std::string type, int ncoords, vector< float > values )
 {
+    FlowProperty p;
+    p.setName( name );
+    p.setFormat( format );
+    p.setType( type );
+    p.setNumberofComponents( ncoords );
+    p.setValues( values );
+
+    data.addPointFlowProperty( p );
+
 }
+
+void FlowVisualizationController::addCellProperty( std::string name, std::string format, std::string type, int ncoords, vector< float > values )
+{
+    FlowProperty p;
+    p.setName( name );
+    p.setFormat( format );
+    p.setType( type );
+    p.setNumberofComponents( ncoords );
+    p.setValues( values );
+
+    data.addCellFlowProperty( p );
+
+}
+
+
+void FlowVisualizationController::getPointProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
+{
+    FlowProperty p;
+
+    data.getPointFlowProperty( id, p );
+
+    p.getName( name );
+    p.getFormat( format );
+    p.getType( type );
+    ncoords = p.getNumberofComponents();
+
+}
+
+
+void FlowVisualizationController::getCellProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
+{
+    FlowProperty p;
+
+    data.getCellFlowProperty( id, p );
+
+    p.getName( name );
+    p.getFormat( format );
+    p.getType( type );
+    ncoords = p.getNumberofComponents();
+}
+
 
 
 void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax )
@@ -232,9 +201,9 @@ void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, floa
     if( data.isEmpty() == true ) return;
 
     vector< float > vertices;
-    data.getPoints( vertices );
+    data.getVectorPoints( vertices );
 
-    int nvertices = vertices.size()/3;
+    int nvertices = (int) vertices.size()/3;
     if( nvertices == 0 ) return;
 
     xmin = vertices[ 0 ]; xmax = vertices[ 0 ];
@@ -263,11 +232,38 @@ void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, floa
 }
 
 
-void FlowVisualizationController::setColors( vector< float > colors )
-{
-}
 
 void FlowVisualizationController::getColors( vector< float >& colors, int option  )
+{
+
+
+    if( current_property_type == "POINTS" )
+    {
+        if( option != 0 ){
+            getCoordinateColors( colors, option );
+            return;
+        }
+
+        getMagnitudeColors( colors );
+        return;
+    }
+    else if( current_property_type == "CELLS" )
+    {
+        if( option != 0 ){
+            getCoordinateColorsCells( colors, option );
+            return;
+        }
+
+        getMagnitudeColorsCells( colors );
+        return;
+    }
+
+
+
+}
+
+
+void FlowVisualizationController::getMagnitudeColors( vector< float >& colors )
 {
     if( data.isEmpty() == true ) return;
 
@@ -280,25 +276,104 @@ void FlowVisualizationController::getColors( vector< float >& colors, int option
     else
         map = COLORMAP::JET;
 
-    int ncomp = 0;
+    FlowProperty p;
+    data.getFlowProperty( current_property, current_property_type, p );
+
     vector< float > values;
-    vector< float > maxmin;
-
-    data.getAttribute( current_property, current_property_type, ncomp, values );
+    p.getValues( values );
 
 
-    if( current_property_type == "POINTS" )
+    float max = p.getMaximum();
+    float min = p.getMinimum();
+
+    int ncoords = p.getNumberofComponents();
+    if( ncoords == 1 )
+    {
+        int nvalues = (int) values.size();
+        for( int i = 0; i < nvalues; ++i )
+        {
+            QVector4D color = colormap.getColor( map, values[ i ], min, max );
+            colors.push_back( color.x() );
+            colors.push_back( color.y() );
+            colors.push_back( color.z() );
+
+        }
+    }
+    else if( ncoords == 3 )
     {
 
-
-        if( ncomp == 1 )
+        int nvalues = (int) values.size()/3;
+        for( int i = 0; i < nvalues; ++i )
         {
-            data.getMaxMinAttribute( current_property, current_property_type, ncomp, maxmin );
 
-            int nvalues = values.size();
+            float value = values[ 3*i ]*values[ 3*i ] + values[ 3*i + 1 ]*values[ 3*i + 1 ] + values[ 3*i + 2 ]*values[ 3*i + 2 ];
+            QVector4D color = colormap.getColor( map, value, min, max );
+            colors.push_back( color.x() );
+            colors.push_back( color.y() );
+            colors.push_back( color.z() );
+
+        }
+    }
+
+}
+
+
+void FlowVisualizationController::getCoordinateColors( vector< float >& colors, int option )
+{
+    if( data.isEmpty() == true ) return;
+
+    COLORMAP map;
+
+    if( current_colormap == "JET" )
+        map = COLORMAP::JET;
+    else if( current_colormap == "CONSTANT" )
+        map = COLORMAP::CONSTANT;
+    else
+        map = COLORMAP::JET;
+
+    FlowProperty p;
+    data.getFlowProperty( current_property, current_property_type, p );
+
+    vector< float > values;
+    p.getValues( values );
+    int nvalues = (int) values.size()/3;
+
+    float xmin, xmax, ymin, ymax, zmin, zmax;
+    p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
+
+
+    switch ( option )
+    {
+        case 1:
+        {
             for( int i = 0; i < nvalues; ++i )
             {
-                QVector4D color = colormap.getColor( map, values[ i ], maxmin[ 0 ], maxmin[ 1 ] );
+                QVector4D color = colormap.getColor( map, values[ 3*i ], xmin, xmax );
+                colors.push_back( color.x() );
+                colors.push_back( color.y() );
+                colors.push_back( color.z() );
+            }
+        }
+        break;
+        case 2:
+        {
+            for( int i = 0; i < nvalues; ++i )
+            {
+
+                QVector4D color = colormap.getColor( map, values[ 3*i + 1 ], ymin, ymax );
+                colors.push_back( color.x() );
+                colors.push_back( color.y() );
+                colors.push_back( color.z() );
+            }
+        }
+
+            break;
+        case 3:
+        {
+            for( int i = 0; i < nvalues; ++i )
+            {
+
+                QVector4D color = colormap.getColor( map, values[ 3*i + 2 ], zmin, zmax );
                 colors.push_back( color.x() );
                 colors.push_back( color.y() );
                 colors.push_back( color.z() );
@@ -306,420 +381,352 @@ void FlowVisualizationController::getColors( vector< float >& colors, int option
             }
 
         }
+        break;
 
-        else if( ncomp == 3 )
+
+        default:
+        break;
+
+    };
+
+
+}
+
+
+void FlowVisualizationController::getMagnitudeColorsCells( vector< float >& colors )
+{
+    if( data.isEmpty() == true ) return;
+
+    COLORMAP map;
+
+    if( current_colormap == "JET" )
+        map = COLORMAP::JET;
+    else if( current_colormap == "CONSTANT" )
+        map = COLORMAP::CONSTANT;
+    else
+        map = COLORMAP::JET;
+
+    FlowProperty p;
+    data.getFlowProperty( current_property, current_property_type, p );
+
+    vector< float > values;
+    p.getValues( values );
+
+
+    int npoints = data.getNumberofPoints();
+    colors.resize( 3*npoints );
+
+    float max = p.getMaximum();
+    float min = p.getMinimum();
+
+    int ncoords = p.getNumberofComponents();
+    if( ncoords == 1 )
+    {
+
+        int nvalues = (int) values.size();
+        for( int i = 0; i < nvalues; ++i )
         {
-            int nvalues = values.size()/3;
+            QVector4D color = colormap.getColor( map, values[ i ], min, max );
+            vector< int > vertices;
+            getVerticesCell( i, vertices );
 
-            if( option == 0 )
-            {
+            int id0 = vertices[ 0 ];
+            colors[ 3*id0 ] = color.x();
+            colors[ 3*id0 + 1 ] = color.y();
+            colors[ 3*id0 + 2 ] = color.z();
 
-                data.getMaxMinAttribute( current_property, current_property_type, ncomp, maxmin );
+            int id1 = vertices[ 1 ];
+            colors[ 3*id1 ] = color.x();
+            colors[ 3*id1 + 1 ] = color.y();
+            colors[ 3*id1 + 2 ] = color.z();
 
-                for( int i = 0; i < nvalues; ++i )
-                {
+            int id2 = vertices[ 2 ];
+            colors[ 3*id2 ] = color.x();
+            colors[ 3*id2 + 1 ] = color.y();
+            colors[ 3*id2 + 2 ] = color.z();
 
-                    float value = values[ 3*i ]*values[ 3*i ] + values[ 3*i + 1 ]*values[ 3*i + 1 ] + values[ 3*i + 2 ]*values[ 3*i + 2 ];
-                    QVector4D color = colormap.getColor( map, value, maxmin[ 0 ], maxmin[ 1 ] );
-                    colors.push_back( color.x() );
-                    colors.push_back( color.y() );
-                    colors.push_back( color.z() );
-
-                }
-
-
-            }
-
-            else if( option == 1 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i ], maxmin[ 0 ], maxmin[ 1 ] );
-                    colors.push_back( color.x() );
-                    colors.push_back( color.y() );
-                    colors.push_back( color.z() );
-
-                }
-
-
-            }
-
-            else if( option == 2 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i + 1 ], maxmin[ 2 ], maxmin[ 3 ] );
-                    colors.push_back( color.x() );
-                    colors.push_back( color.y() );
-                    colors.push_back( color.z() );
-
-                }
-
-
-            }
-
-            else if( option == 3 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i + 2 ], maxmin[ 4 ], maxmin[ 5 ] );
-                    colors.push_back( color.x() );
-                    colors.push_back( color.y() );
-                    colors.push_back( color.z() );
-
-                }
-
-
-            }
-
+            int id3 = vertices[ 3 ];
+            colors[ 3*id3 ] = color.x();
+            colors[ 3*id3 + 1 ] = color.y();
+            colors[ 3*id3 + 2 ] = color.z();
 
         }
 
     }
-
-    else if( current_property_type == "CELLS" )
+    else if( ncoords == 3 )
     {
+        int nvalues = (int) values.size()/3;
 
-        int npoints = data.getNumberofPoints();
-        colors.resize( 3*npoints );
-
-        if( ncomp == 1 )
+        for( int k = 0; k < nvalues; ++k )
         {
-            data.getMaxMinAttribute( current_property, current_property_type, ncomp, maxmin );
+            float value = values[ 3*k ]*values[ 3*k ] + values[ 3*k + 1 ]*values[ 3*k + 1 ] + values[ 3*k + 2 ]*values[ 3*k + 2 ];
+            QVector4D color = colormap.getColor( map, value, min, max );
+            vector< int > vertices;
+            getVerticesCell( k, vertices );
 
-            int nvalues = values.size();
+            int id0 = vertices[ 0 ];
+            colors[ 3*id0 ] = color.x();
+            colors[ 3*id0 + 1 ] = color.y();
+            colors[ 3*id0 + 2 ] = color.z();
+
+            int id1 = vertices[ 1 ];
+            colors[ 3*id1 ] = color.x();
+            colors[ 3*id1 + 1 ] = color.y();
+            colors[ 3*id1 + 2 ] = color.z();
+
+            int id2 = vertices[ 2 ];
+            colors[ 3*id2 ] = color.x();
+            colors[ 3*id2 + 1 ] = color.y();
+            colors[ 3*id2 + 2 ] = color.z();
+
+            int id3 = vertices[ 3 ];
+            colors[ 3*id3 ] = color.x();
+            colors[ 3*id3 + 1 ] = color.y();
+            colors[ 3*id3 + 2 ] = color.z();
+
+
+        }
+
+
+    }
+
+
+}
+
+
+void FlowVisualizationController::getCoordinateColorsCells( vector< float >& colors, int option )
+{
+
+    if( data.isEmpty() == true ) return;
+
+    COLORMAP map;
+
+    if( current_colormap == "JET" )
+        map = COLORMAP::JET;
+    else if( current_colormap == "CONSTANT" )
+        map = COLORMAP::CONSTANT;
+    else
+        map = COLORMAP::JET;
+
+    FlowProperty p;
+    data.getFlowProperty( current_property, current_property_type, p );
+
+    vector< float > values;
+    p.getValues( values );
+    int nvalues = (int) values.size()/3;
+
+    int npoints = data.getNumberofPoints();
+    colors.resize( 3*npoints );
+
+    vector< float > maxmin;
+    float xmin, xmax, ymin, ymax, zmin, zmax;
+    p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
+
+    switch( option )
+    {
+        case 1:
+        {
             for( int i = 0; i < nvalues; ++i )
             {
-                QVector4D color = colormap.getColor( map, values[ i ], maxmin[ 0 ], maxmin[ 1 ] );
+
+                QVector4D color = colormap.getColor( map, values[ 3*i ], xmin, xmax );
                 vector< int > vertices;
                 getVerticesCell( i, vertices );
 
                 int id0 = vertices[ 0 ];
-                color[ 3*id0 ] = color.x();
-                color[ 3*id0 + 1 ] = color.y();
-                color[ 3*id0 + 2 ] = color.z();
+                colors[ 3*id0 ] = color.x();
+                colors[ 3*id0 + 1 ] = color.y();
+                colors[ 3*id0 + 2 ] = color.z();
 
                 int id1 = vertices[ 1 ];
-                color[ 3*id1 ] = color.x();
-                color[ 3*id1 + 1 ] = color.y();
-                color[ 3*id1 + 2 ] = color.z();
+                colors[ 3*id1 ] = color.x();
+                colors[ 3*id1 + 1 ] = color.y();
+                colors[ 3*id1 + 2 ] = color.z();
 
                 int id2 = vertices[ 2 ];
-                color[ 3*id2 ] = color.x();
-                color[ 3*id2 + 1 ] = color.y();
-                color[ 3*id2 + 2 ] = color.z();
+                colors[ 3*id2 ] = color.x();
+                colors[ 3*id2 + 1 ] = color.y();
+                colors[ 3*id2 + 2 ] = color.z();
 
                 int id3 = vertices[ 3 ];
-                color[ 3*id3 ] = color.x();
-                color[ 3*id3 + 1 ] = color.y();
-                color[ 3*id3 + 2 ] = color.z();
-
-//                for( int j = 0; j < vertices.size(); ++j )
-//                {
-//                    int id = vertices[ j ];
-//                    colors[ 3*id ] = color.x();
-//                    colors[ 3*id + 1 ] = color.y();
-//                    colors[ 3*id + 2 ] = color.z();
-
-//                }
+                colors[ 3*id3 ] = color.x();
+                colors[ 3*id3 + 1 ] = color.y();
+                colors[ 3*id3 + 2 ] = color.z();
 
             }
 
         }
+        break;
 
-        else if( ncomp == 3 )
+        case 2:
         {
-            int nvalues = values.size()/3;
-
-            if( option == 0 )
+            for( int i = 0; i < nvalues; ++i )
             {
 
-                data.getMaxMinAttribute( current_property, current_property_type, ncomp, maxmin );
+                QVector4D color = colormap.getColor( map, values[ 3*i + 1 ], ymin, ymax );
+                vector< int > vertices;
+                getVerticesCell( i, vertices );
 
-                for( int k = 0; k < nvalues; ++k )
-                {
-                    float value = values[ 3*k ]*values[ 3*k ] + values[ 3*k + 1 ]*values[ 3*k + 1 ] + values[ 3*k + 2 ]*values[ 3*k + 2 ];
-                    QVector4D color = colormap.getColor( map, value, maxmin[ 0 ], maxmin[ 1 ] );
-                    vector< int > vertices;
-                    getVerticesCell( k, vertices );
+                int id0 = vertices[ 0 ];
+                colors[ 3*id0 ] = color.x();
+                colors[ 3*id0 + 1 ] = color.y();
+                colors[ 3*id0 + 2 ] = color.z();
 
-                    int id0 = vertices[ 0 ];
-                    color[ 3*id0 ] = color.x();
-                    color[ 3*id0 + 1 ] = color.y();
-                    color[ 3*id0 + 2 ] = color.z();
+                int id1 = vertices[ 1 ];
+                colors[ 3*id1 ] = color.x();
+                colors[ 3*id1 + 1 ] = color.y();
+                colors[ 3*id1 + 2 ] = color.z();
 
-                    int id1 = vertices[ 1 ];
-                    color[ 3*id1 ] = color.x();
-                    color[ 3*id1 + 1 ] = color.y();
-                    color[ 3*id1 + 2 ] = color.z();
+                int id2 = vertices[ 2 ];
+                colors[ 3*id2 ] = color.x();
+                colors[ 3*id2 + 1 ] = color.y();
+                colors[ 3*id2 + 2 ] = color.z();
 
-                    int id2 = vertices[ 2 ];
-                    color[ 3*id2 ] = color.x();
-                    color[ 3*id2 + 1 ] = color.y();
-                    color[ 3*id2 + 2 ] = color.z();
-
-                    int id3 = vertices[ 3 ];
-                    color[ 3*id3 ] = color.x();
-                    color[ 3*id3 + 1 ] = color.y();
-                    color[ 3*id3 + 2 ] = color.z();
-
-//                    for( int j = 0; j < vertices.size(); ++j )
-//                    {
-//                        int id = vertices[ j ];
-//                        colors[ 3*id ] = color.x();
-//                        colors[ 3*id + 1 ] = color.y();
-//                        colors[ 3*id + 2 ] = color.z();
-
-//                    }
-
-                }
-
-
-            }
-
-            else if( option == 1 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i ], maxmin[ 0 ], maxmin[ 1 ] );
-                    vector< int > vertices;
-                    getVerticesCell( i, vertices );
-
-                    int id0 = vertices[ 0 ];
-                    color[ 3*id0 ] = color.x();
-                    color[ 3*id0 + 1 ] = color.y();
-                    color[ 3*id0 + 2 ] = color.z();
-
-                    int id1 = vertices[ 1 ];
-                    color[ 3*id1 ] = color.x();
-                    color[ 3*id1 + 1 ] = color.y();
-                    color[ 3*id1 + 2 ] = color.z();
-
-                    int id2 = vertices[ 2 ];
-                    color[ 3*id2 ] = color.x();
-                    color[ 3*id2 + 1 ] = color.y();
-                    color[ 3*id2 + 2 ] = color.z();
-
-                    int id3 = vertices[ 3 ];
-                    color[ 3*id3 ] = color.x();
-                    color[ 3*id3 + 1 ] = color.y();
-                    color[ 3*id3 + 2 ] = color.z();
-
-
-//                    for( int j = 0; j < vertices.size(); ++j )
-//                    {
-//                        int id = vertices[ j ];
-//                        colors[ 3*id ] = color.x();
-//                        colors[ 3*id + 1 ] = color.y();
-//                        colors[ 3*id + 2 ] = color.z();
-
-//                    }
-                }
-
-
-            }
-
-
-            else if( option == 2 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i + 1 ], maxmin[ 2 ], maxmin[ 3 ] );
-                    vector< int > vertices;
-                    getVerticesCell( i, vertices );
-
-                    int id0 = vertices[ 0 ];
-                    color[ 3*id0 ] = color.x();
-                    color[ 3*id0 + 1 ] = color.y();
-                    color[ 3*id0 + 2 ] = color.z();
-
-                    int id1 = vertices[ 1 ];
-                    color[ 3*id1 ] = color.x();
-                    color[ 3*id1 + 1 ] = color.y();
-                    color[ 3*id1 + 2 ] = color.z();
-
-                    int id2 = vertices[ 2 ];
-                    color[ 3*id2 ] = color.x();
-                    color[ 3*id2 + 1 ] = color.y();
-                    color[ 3*id2 + 2 ] = color.z();
-
-                    int id3 = vertices[ 3 ];
-                    color[ 3*id3 ] = color.x();
-                    color[ 3*id3 + 1 ] = color.y();
-                    color[ 3*id3 + 2 ] = color.z();
-//                    for( int j = 0; j < vertices.size(); ++j )
-//                    {
-//                        int id = vertices[ j ];
-//                        colors[ 3*id ] = color.x();
-//                        colors[ 3*id + 1 ] = color.y();
-//                        colors[ 3*id + 2 ] = color.z();
-
-//                    }
-
-                }
-
-
-            }
-
-            else if( option == 3 )
-            {
-                data.getMaxMinCoordinates( current_property, current_property_type, maxmin );
-
-                for( int i = 0; i < nvalues; ++i )
-                {
-
-                    QVector4D color = colormap.getColor( map, values[ 3*i + 2 ], maxmin[ 4 ], maxmin[ 5 ] );
-                    vector< int > vertices;
-                    getVerticesCell( i, vertices );
-
-                    int id0 = vertices[ 0 ];
-                    color[ 3*id0 ] = color.x();
-                    color[ 3*id0 + 1 ] = color.y();
-                    color[ 3*id0 + 2 ] = color.z();
-
-                    int id1 = vertices[ 1 ];
-                    color[ 3*id1 ] = color.x();
-                    color[ 3*id1 + 1 ] = color.y();
-                    color[ 3*id1 + 2 ] = color.z();
-
-                    int id2 = vertices[ 2 ];
-                    color[ 3*id2 ] = color.x();
-                    color[ 3*id2 + 1 ] = color.y();
-                    color[ 3*id2 + 2 ] = color.z();
-
-                    int id3 = vertices[ 3 ];
-                    color[ 3*id3 ] = color.x();
-                    color[ 3*id3 + 1 ] = color.y();
-                    color[ 3*id3 + 2 ] = color.z();
-//                    for( int j = 0; j < vertices.size(); ++j )
-//                    {
-//                        int id = vertices[ j ];
-//                        colors[ 3*id ] = color.x();
-//                        colors[ 3*id + 1 ] = color.y();
-//                        colors[ 3*id + 2 ] = color.z();
-
-//                    }
-
-                }
-
+                int id3 = vertices[ 3 ];
+                colors[ 3*id3 ] = color.x();
+                colors[ 3*id3 + 1 ] = color.y();
+                colors[ 3*id3 + 2 ] = color.z();
 
             }
 
         }
+        break;
+
+        case 3:
+        {
+            for( int i = 0; i < nvalues; ++i )
+            {
+
+                QVector4D color = colormap.getColor( map, values[ 3*i + 2 ], zmin, zmax );
+                vector< int > vertices;
+                getVerticesCell( i, vertices );
+
+                int id0 = vertices[ 0 ];
+                colors[ 3*id0 ] = color.x();
+                colors[ 3*id0 + 1 ] = color.y();
+                colors[ 3*id0 + 2 ] = color.z();
+
+                int id1 = vertices[ 1 ];
+                colors[ 3*id1 ] = color.x();
+                colors[ 3*id1 + 1 ] = color.y();
+                colors[ 3*id1 + 2 ] = color.z();
+
+                int id2 = vertices[ 2 ];
+                colors[ 3*id2 ] = color.x();
+                colors[ 3*id2 + 1 ] = color.y();
+                colors[ 3*id2 + 2 ] = color.z();
+
+                int id3 = vertices[ 3 ];
+                colors[ 3*id3 ] = color.x();
+                colors[ 3*id3 + 1 ] = color.y();
+                colors[ 3*id3 + 2 ] = color.z();
+
+            }
+        }
+        break;
+
+    };
+
+}
+
+
+void FlowVisualizationController::getPointMaxMin(  FlowProperty p, vector< float >& maxmin )
+{
+
+
+    vector< float > values;
+    p.getValues( values );
+
+    int ncoords = p.getNumberofComponents();
+    if( ncoords == 1 )
+    {
+        maxmin.push_back( p.getMinimum() );
+        maxmin.push_back( p.getMaximum() );
+    }
+
+    else if( ncoords == 3 )
+    {
+
+        float xmin, xmax, ymin, ymax, zmin, zmax;
+        p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
+
+        maxmin.push_back( p.getMinimum() );
+        maxmin.push_back( p.getMaximum() );
+
+        maxmin.push_back( xmin );
+        maxmin.push_back( xmax );
+
+        maxmin.push_back( ymin );
+        maxmin.push_back( ymax );
+
+        maxmin.push_back( zmin );
+        maxmin.push_back( zmax );
 
     }
 
 }
 
 
-void FlowVisualizationController::setColorMap( std::string colormap )
+void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
 {
-    current_colormap = colormap;
-}
+    FlowProperty p;
+    data.getFlowProperty( current_property, "CELL", p );
 
+    vector< float > values;
+    p.getValues( values );
 
-std::string FlowVisualizationController::getColorMap()
-{
-    return current_colormap;
-}
+    int ncoords = p.getNumberofComponents();
+    if( ncoords == 1 )
+    {
+        maxmin.push_back( p.getMinimum() );
+        maxmin.push_back( p.getMaximum() );
+    }
 
+    else if( ncoords == 3 )
+    {
 
-void FlowVisualizationController::setPointProperties( vector< std::string > property, vector< int > dim, vector< float > values )
-{
-    data = VTKData();
-}
+        float xmin, xmax, ymin, ymax, zmin, zmax;
+        p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
 
+        maxmin.push_back( p.getMinimum() );
+        maxmin.push_back( p.getMaximum() );
 
-void FlowVisualizationController::getPointProperties( vector< std::string >& property, vector< int >& dim, vector< float >& values )
-{
+        maxmin.push_back( xmin );
+        maxmin.push_back( xmax );
 
-    if( data.isEmpty() == true ) return;
+        maxmin.push_back( ymin );
+        maxmin.push_back( ymax );
 
-
-    vector< std::string > format;
-    data.getAttributesPoints( format, property, values );
-
-    int npoints = property.size();
-
-    for( int i = 0; i < npoints; ++i ){
-
-        if( format[ i ].compare( "SCALARS" ) == 0 )
-            dim.push_back ( FlowVisualizationController::VERTICESPROPERTY::SCALARS );
-
-        else if( format[ i ].compare( "VECTORS" ) == 0 )
-            dim.push_back ( FlowVisualizationController::VERTICESPROPERTY::VECTORS );
+        maxmin.push_back( zmin );
+        maxmin.push_back( zmax );
 
     }
 
 }
 
 
-void FlowVisualizationController::setCellsProperties( vector< std::string > property, vector < int > dim, vector< float > values )
-{
-
-}
-
-
-void FlowVisualizationController::getCellsProperties( vector< std::string >& property, vector< int >& dim, vector< float >& values )
-{
-
-    if( data.isEmpty() == true ) return;
-
-    vector < std::string > format;
-    data.getAttributesCells( format, property, values );
-
-    int npoints = property.size();
-
-    for( int i = 0; i < npoints; ++i ){
-
-        if( format[ i ].compare( "SCALARS" ) == 0 )
-            dim.push_back ( VERTICESPROPERTY::SCALARS );
-
-        else if( format[ i ].compare( "VECTORS" ) == 0 )
-            dim.push_back ( VERTICESPROPERTY::VECTORS );
-
-    }
-}
-
-
-void FlowVisualizationController::setCurrentProperty( std::string property, std::string type )
-{
-    current_property = property;
-    current_property_type = type;
-}
-
-
- void FlowVisualizationController::getCurrentProperty( std::string& property, std::string& type )
-{
-    property = current_property;
-    type = current_property_type;
-}
-
- void FlowVisualizationController::setCurrentProperty( int property )
+ void FlowVisualizationController::setCurrentProperty( int id )
  {
-     vector< std::string > format;
-     vector< std::string > name;
-     vector< float > values;
 
-     data.getAttributesPoints( format, name, values );
-     if( name.empty() == true ) return;
-     current_property = name[ property ];
-     current_property_type = "POINTS";
+     int npproperties = data.getNumberofPointsProperties();
+     if( id >= 0 && id < npproperties )
+     {
+         FlowProperty p;
+         data.getPointFlowProperty( id, p );
+         p.getName( current_property );
+         current_property_type = "POINTS";
+         return;
+     }
+
+     int ncproperties = data.getNumberofCellsProperties();
+     if( id >= 0 && id < ncproperties )
+     {
+         FlowProperty p;
+         data.getCellFlowProperty( id, p );
+         p.getName( current_property );
+         current_property_type = "CELLS";
+         return;
+     }
 
  }
 
@@ -731,3 +738,187 @@ void FlowVisualizationController::clear()
      * data.clear();
      */
 }
+
+
+void FlowVisualizationController::openSurfaceFile( std::string filename )
+{
+
+    region.readsurfacemeshPOLY( (char *)filename.c_str() );
+}
+
+
+void FlowVisualizationController::computeVolumetricMesh()
+{
+    region.buildtetrahedralmesh();
+    region.flowpreparation();
+}
+
+
+void FlowVisualizationController::computeFlowProperties()
+{
+//    region.flowpreparation();
+    region.computepressure();
+    region.computevelocity();
+    region.flowdiagnostics();
+}
+
+
+void FlowVisualizationController::getSurface( vector< float > points, vector< unsigned int > edges )
+{
+    double *point_list;
+    int *edge_list;
+    int npoints = 0;
+    int nedges = 0;
+    region.getTrianglesList( npoints, &point_list, nedges, &edge_list );
+
+    for( int i = 0; i < npoints; ++i )
+        points.push_back( point_list[ i ] );
+
+    for( int i = 0; i < nedges; ++i )
+        edges.push_back( ( unsigned int ) edge_list[ i ] );
+}
+
+
+void FlowVisualizationController::getSurfaceBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax )
+{
+    if( data.isEmpty() == true ) return;
+
+
+    vector< float > vertices;
+    vector< unsigned int > edges;
+
+    getSurface( vertices, edges );
+
+    int npoints = (int) vertices.size()/3;
+    if( npoints == 0 ) return;
+
+    xmin = vertices[ 0 ]; xmax = vertices[ 0 ];
+    ymin = vertices[ 1 ]; ymax = vertices[ 1 ];
+    zmin = vertices[ 2 ]; zmax = vertices[ 2 ];
+
+    for( int i = 0; i < npoints; i++ )
+    {
+
+        float x = vertices[ 3*i ];
+        float y = vertices[ 3*i + 1 ];
+        float z = vertices[ 3*i + 2 ];
+
+        if( xmin >= x ) xmin = x;
+        if( xmax <= x ) xmax = x;
+
+
+        if( ymin >= y ) ymin = y;
+        if( ymax <= y ) ymax = y;
+
+        if( zmin >= z ) zmin = z;
+        if( zmax <= z ) zmax = z;
+
+    }
+
+}
+
+
+void FlowVisualizationController::updatePropertiesNamesVector()
+{
+    vector< FlowProperty > vector_props;
+    vector< std::string > names_ppoints;
+    vector< std::string > names_pcells;
+
+
+    data.getPointsFlowProperties( vector_props );
+
+    int count = 0;
+    int nprops = vector_props.size();
+    for( int i = 0; i < nprops; ++i )
+    {
+        FlowProperty& p = vector_props[ i ];
+        std::string name;
+        p.getName( name );
+        names_ppoints.push_back( name );
+
+        property_map[ count ] = p;
+        count++;
+
+    }
+
+    data.getCellsFlowProperties( vector_props );
+
+    nprops = vector_props.size();
+    for( int i = 0; i < nprops; ++i )
+    {
+        FlowProperty& p = vector_props[ i ];
+        std::string name;
+        p.getName( name );
+        names_pcells.push_back( name );
+
+        property_map[ count ] = p;
+        count++;
+    }
+
+    emit updateComboBox( names_ppoints, names_pcells );
+}
+
+
+void FlowVisualizationController::computePressure()
+{
+    region.computepressure();
+    updatePropertiesNamesVector();
+
+
+}
+
+
+void FlowVisualizationController::computeVelocity()
+{
+    region.computevelocity();
+    updatePropertiesNamesVector();
+}
+
+
+void FlowVisualizationController::computeTOF()
+{
+    region.flowdiagnostics();
+    updatePropertiesNamesVector();
+}
+
+
+void FlowVisualizationController::selectFlowProperty(int id, bool& option  )
+{
+    FlowProperty &p = property_map[ id ];
+    option = false;
+
+    std::string type;
+    p.getType( type );
+
+    if( type.compare( "VECTORS" ) == 0 )
+        option = true;
+
+}
+
+
+FlowProperty &FlowVisualizationController::getPropertyfromMap( int id )
+{
+    return property_map[ id ];
+}
+
+
+/*int n = in.numberoffacets;
+    tetgenio::facet* list = in.facetlist;
+    for( int i = 0; i < n; ++i )
+    {
+        tetgenio::facet f = list[ i ];
+        int np = f.numberofpolygons;
+        tetgenio::polygon *pl = f.polygonlist;
+        for( int j = 0; j < np; ++j )
+        {
+            tetgenio::polygon p = pl[ j ];
+            int nv = p.numberofvertices;
+            int *verticeslist = p.vertexlist;
+
+            for( int k = 0; k < nv; ++k )
+            {
+                int id = verticeslist[ k ];
+                int idj = 0;
+            }
+        }
+    }*/

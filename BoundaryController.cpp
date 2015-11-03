@@ -54,7 +54,7 @@ QRectF BoundaryController::boundingRect() const
 {
     QPainterPath path;
 
-    int ncurves = boundary.size();
+    int ncurves = (int) boundary.size();
     for( int i = 0; i < ncurves; ++i )
     {
         QPainterPath curve = boundary.at( i );

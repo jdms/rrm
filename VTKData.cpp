@@ -1,15 +1,16 @@
 #include "VTKData.h"
 
 VTKData::VTKData()
-{
-    properties_id = 0;
+{    
     is_empty = true;
 }
+
 
 bool VTKData::isEmpty()
 {
     return is_empty;
 }
+
 
 bool VTKData::getHeader( QRegExp RegExp, QString line, vector< std::string >& data )
 {
@@ -50,7 +51,7 @@ bool VTKData::getValues( QRegExp RegExp, QString line, vector< std::string > &da
 
 bool VTKData::readUnstructuredGridFile( std::string& filename )
 {
-
+/*
     std::ifstream file;
     file.open( filename.c_str() );
     if( !file.is_open() ) return false;
@@ -85,6 +86,48 @@ bool VTKData::readUnstructuredGridFile( std::string& filename )
         return false;
     }
 
+*/
+
+
+    std::ifstream file;
+    file.open( filename.c_str() );
+    if( !file.is_open() ) return false;
+
+
+    std::cout << "-- Begin: parsing file." << std::endl;
+
+
+    int error = 0;
+    FILE_STATES state =  FILE_STATES::HEADER0;
+
+
+    std::string line;
+    std::getline( file, line );
+
+    while ( !file.eof() ) {
+
+//        QString qline( line.c_str() );
+        int local_error = parseVTKData_new( file, state, /*qline*/line );
+
+
+        if( local_error != 2 ){
+            std::getline( file, line );
+            error = local_error;
+        }
+
+//        cout << line.c_str() << endl;
+    }
+
+
+    is_empty = false;
+
+    if( error == 0 )
+    {
+        std::cout << "-- Error: parsing fail." << std::endl << std::endl;
+        return false;
+    }
+
+    std::cout << "-- End: parsing ok." << std::endl << std::endl;
 
 
     return true;
@@ -92,869 +135,845 @@ bool VTKData::readUnstructuredGridFile( std::string& filename )
 }
 
 
-void VTKData::setupData()
+int VTKData::parseVTKData_new( std::ifstream& file, FILE_STATES &state, std::string&/*QString*/ line )
 {
-    int npointsattributes = attribute_name.size();
-    for( int i = 0; i < npointsattributes; ++i )
-    {
-        vector< float > data;
-        int ncomp = 0;
-        getAttribute( attribute_name[ i ], "POINTS", ncomp, data );
-
-
-        if( ncomp == 1 )
-        {
-            auto itmin = std::min_element( data.begin(), data.end() );
-            auto itmax = std::max_element( data.begin(), data.end() );
-
-            int idmin  = std::distance( data.begin(), itmin );
-            int idmax = std::distance( data.begin(), itmax );
-
-            std::pair<float, float> minmax;
-            minmax.first = data[ idmin ];
-            minmax.second = data[ idmax ];
-
-            point_properties_maxmin.push_back( minmax );
-        }
-
-
-        else if( ncomp == 3 )
-        {
-
-            if( data.empty() == true ) return;
-
-            int nelemens = (int) data.size()/3;
-
-            float min = data[ 0 ]*data[ 0 ] + data[ 1 ]*data[ 1 ] + data[ 2 ]*data[ 2 ];
-            float max = min;
-
-            float minx = data[ 0 ], miny = data[ 1 ], minz = data[ 2 ];
-            float maxx = minx, maxy = miny, maxz = minz;
-
-
-            for( int j = 3; j < nelemens; ++j )
-            {
-                float norm =  data[ 3*j ]*data[ 3*j ] + data[ 3*j + 1 ]*data[ 3*j + 1 ] + data[ 3*j + 2 ]*data[ 3*j + 2 ];
-
-                if( norm <= min ) min = norm;
-                if( norm >= max ) max = norm;
-
-                if( data[ 3*j ] <= minx ) minx = data[ 3*j ];
-                if( data[ 3*j ] >= maxx ) maxx = data[ 3*j ];
-
-                if( data[ 3*j + 1 ] <= miny ) miny = data[ 3*j + 1];
-                if( data[ 3*j + 1 ] >= maxy ) maxy = data[ 3*j + 1 ];
-
-                if( data[ 3*j + 2 ] <= minz ) minz = data[ 3*j + 2 ];
-                if( data[ 3*j + 2 ] >= maxz ) maxz = data[ 3*j + 2 ];
-            }
-
-            std::pair<float, float> minmax;
-            minmax.first = min;
-            minmax.second = max;
-            point_properties_maxmin.push_back( minmax );
-
-            std::pair<float, float> minmax_X;
-            minmax_X.first = minx;
-            minmax_X.second = maxx;
-
-            point_properties_maxmin_X.push_back( minmax_X );
-
-            std::pair<float, float> minmax_Y;
-            minmax_Y.first = miny;
-            minmax_Y.second = maxy;
-
-            point_properties_maxmin_Y.push_back( minmax_Y );
-
-
-            std::pair<float, float> minmax_Z;
-            minmax_Z.first = minz;
-            minmax_Z.second = maxz;
-
-            point_properties_maxmin_Z.push_back( minmax_Z );
-
-
-        }
-
-    }
-
-
-    int ncellsattributes = attributecell_name.size();
-    for( int i = 0; i < ncellsattributes; ++i )
-    {
-        vector< float > data;
-        int ncomp = 0;
-        getAttribute( attributecell_name[ i ], "CELLS", ncomp, data );
-
-
-        if( ncomp == 1 )
-        {
-            auto itmin = std::min_element( data.begin(), data.end() );
-            auto itmax = std::max_element( data.begin(), data.end() );
-
-            int idmin  = std::distance( data.begin(), itmin );
-            int idmax = std::distance( data.begin(), itmax );
-
-            std::pair<float, float> minmax;
-            minmax.first = data[ idmin ];
-            minmax.second = data[ idmax ];
-
-            cells_properties_maxmin.push_back( minmax );
-        }
-
-
-        else if( ncomp == 3 )
-        {
-            if( data.empty() == true ) return;
-
-            int nelemens = (int) data.size()/3;
-
-            float min = data[ 0 ]*data[ 0 ] + data[ 1 ]*data[ 1 ] + data[ 2 ]*data[ 2 ];
-            float max = min;
-
-            float minx = data[ 0 ], miny = data[ 1 ], minz = data[ 2 ];
-            float maxx = minx, maxy = miny, maxz = minz;
-
-
-            for( int j = 3; j < nelemens; ++j )
-            {
-                float norm =  data[ 3*j ]*data[ 3*j ] + data[ 3*j + 1 ]*data[ 3*j + 1 ] + data[ 3*j + 2 ]*data[ 3*j + 2 ];
-
-                if( norm <= min ) min = norm;
-                if( norm >= max ) max = norm;
-
-                if( data[ 3*j ] <= minx ) minx = data[ 3*j ];
-                if( data[ 3*j ] >= maxx ) maxx = data[ 3*j ];
-
-                if( data[ 3*j + 1 ] <= miny ) miny = data[ 3*j + 1];
-                if( data[ 3*j + 1 ] >= maxy ) maxy = data[ 3*j + 1 ];
-
-                if( data[ 3*j + 2 ] <= minz ) minz = data[ 3*j + 2 ];
-                if( data[ 3*j + 2 ] >= maxz ) maxz = data[ 3*j + 2 ];
-            }
-
-            std::pair<float, float> minmax;
-            minmax.first = min;
-            minmax.second = max;
-            cells_properties_maxmin.push_back( minmax );
-
-            std::pair<float, float> minmax_X;
-            minmax_X.first = minx;
-            minmax_X.second = maxx;
-
-            cells_properties_maxmin_X.push_back( minmax_X );
-
-            std::pair<float, float> minmax_Y;
-            minmax_Y.first = miny;
-            minmax_Y.second = maxy;
-
-            cells_properties_maxmin_Y.push_back( minmax_Y );
-
-
-            std::pair<float, float> minmax_Z;
-            minmax_Z.first = minz;
-            minmax_Z.second = maxz;
-
-            cells_properties_maxmin_Z.push_back( minmax_Z );
-
-        }
-
-    }
-
-
-//    int ncellsvalues = cells_values.size();
-    
-//    for( int id = 0; id < ncellsvalues;  )
-//    {
-//        int nvertices = cells_values[ id ];
-//        Cell *cell = new Cell();
-//        cell->id = id++;
-
-
-//        for( int j = 0; j < nvertices; ++j )
-//        {
-//            cell->vertices.push_back( cells_values[ id ] );
-//            id++;
-//        }
-
-//        vector_cells.push_back( cell );
-//    }
-
-}
-
-
-VTKData::UNSTRUCTUREDGRID_STATES VTKData::nextState( std::string type )
-{
-     if( type.compare( "STRUCTURED_POINTS" ) == 0 )
-     {
-
-     }
-
-     else if( type.compare( "STRUCTURED_GRID" ) == 0 )
-     {
-
-     }
-
-     else if ( type.compare( "UNSTRUCTURED_GRID" ) == 0 )
-     {
-         return UNSTRUCTUREDGRID_STATES::DATATYPE;
-     }
-
-     else if ( type.compare( "POLYDATA") == 0 )
-     {
-
-     }
-
-     else if ( type.compare( "RECTILINEAR_GRID" ) == 0 )
-     {
-
-     }
-
-     else if ( type.compare( "FIELD" ) == 0 )
-     {
-
-     }
-
-     else return UNSTRUCTUREDGRID_STATES::ATTRIBUTEDATA;
-
-}
-
-
-bool VTKData::parseVTKData( UNSTRUCTUREDGRID_STATES& state, QString line )
-{
-
     const QRegExp EXPHEADER0( "(?:\\s*)(?:vtk)(?:\\s*)(?:DataFile)(?:\\s*)(?:Version)(?:\\s*)(\\d*\\.\\d*)" );
-    const QRegExp EXPDATASET( "(?:\\s*)(?:DATASET)(?:\\s*)\\b(STRUCTURED_POINTS|STRUCTURED_GRID|UNSTRUCTURED_GRID|POLYDATA|RECTILINEAR_GRID|FIELD)\\b" );
     const QRegExp EXPFORMATFILE( "\\b(ASCII|BINARY)\\b" );
-//    const QRegExp EXPDATATYPE( "\\b(POINTS|VERTICES|LINES|POLYGONS|TRIANGLE_STRIPS)\\b(?:\\s*)(\\d+)(?:\\s*)\\b(bit|unsigned_char|char|unsigned_short|short|unsigned_int|int|unsigned_long|long|float|double)\\b" );
+    const QRegExp EXPDATASET( "(?:\\s*)(?:DATASET)(?:\\s*)\\b(STRUCTURED_POINTS|STRUCTURED_GRID|UNSTRUCTURED_GRID|POLYDATA|RECTILINEAR_GRID|FIELD)\\b" );
+
     const QRegExp EXPDATATYPE( "\\b(POINTS|VERTICES|LINES|POLYGONS|TRIANGLE_STRIPS)\\b(?:\\s*)(\\d+)" );
     const QRegExp EXPCELLINF( "(?:\\s*)(?:CELLS)(?:\\s*)(\\d+)(?:\\s*)(\\d+)" );
     const QRegExp EXPCELLTYPES( "(?:\\s*)(?:CELL_TYPES)(?:\\s*)(\\d+)(?:\\s*)" );
+
     const QRegExp EXPATTRIBUTEDATA( "(?:\\s*)(?:POINT_DATA)(?:\\s*)(\\d+)(?:\\s*)" );
     const QRegExp EXPLOOKUPTABLE( "(?:\\s*)(?:LOOKUP_TABLE)(?:\\s*)(\.+)(?:\\s*)" );
     const QRegExp EXPCELLDATAINF( "(?:\\s*)(?:CELL_DATA)(?:\\s*)(\\d+)(?:\\s*)" );
+
     const QRegExp EXPKVALUES( "\\s+" );
 
+    QString qline( line.c_str() );
     vector< std::string > data;
 
     switch( state )
     {
-        case UNSTRUCTUREDGRID_STATES::HEADER0:
+        case FILE_STATES::HEADER0:
         {
-            bool catched_data = getHeader( EXPHEADER0, line, data );
+            bool catched_data = getHeader( EXPHEADER0, qline, data );
             int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NHEADER0 ) )
-                return false;
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_HEADER0 ) )
+                return 0;
 
             file_version = data[ 1 ].c_str();
-            state = UNSTRUCTUREDGRID_STATES::HEADER1;
+            state = FILE_STATES::HEADER1;
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::HEADER1:
+        case FILE_STATES::HEADER1:
         {
-            file_comments = line.toStdString();
-            state = UNSTRUCTUREDGRID_STATES::HEADER2;
+            file_comments = qline.toStdString();
+            state = FILE_STATES::HEADER2;
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::HEADER2:
+        case FILE_STATES::HEADER2:
         {
 
-            bool catched_data = getHeader( EXPFORMATFILE, line, data );
+            bool catched_data = getHeader( EXPFORMATFILE, qline, data );
             int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NHEADER2 ) )
-                return false;
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_HEADER2 ) )
+                return 0;
 
             file_format = data[ 1 ].c_str();
-            state = UNSTRUCTUREDGRID_STATES::DATASET;
+            state = FILE_STATES::DATASET;
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::DATASET:
+        case FILE_STATES::DATASET:
         {
-            bool catched_data = getHeader( EXPDATASET, line, data );
+            bool catched_data = getHeader( EXPDATASET, qline, data );
             int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NDATASET ) )
-                return false;
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_DATASET ) )
+                return 0;
 
             dataset_type = data[ 1 ].c_str();
-            state = nextState( dataset_type );
+            state = readDataSetValues();
+
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::DATATYPE:
+        case FILE_STATES::POINTSINF:
         {
-            bool catched_data = getHeader( EXPDATATYPE, line, data );
+            bool catched_data = getHeader( EXPDATATYPE, qline, data );
             int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NDATATYPE ) )
-                return false;
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_POINTSINF ) )
+                return 0;
 
-            data_type = data[ 1 ].c_str();
-            data_nvalues = data[ 2 ].c_str();
+            format_points = data[ 1 ].c_str();
+            number_of_points = std::atoi( data[ 2 ].c_str() );
 
-            state = UNSTRUCTUREDGRID_STATES::DATAVALUES;
-            total_datavalues = 0;
+            state = FILE_STATES::POINTS_VALUES;
+
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::DATAVALUES:
+        case FILE_STATES::POINTS_VALUES:
         {
-            bool catched_data = getValues( EXPKVALUES, line, data );
-            int ndata = (int) data.size();
+
+
+            int id = 0;
+            while(  id < number_of_points && !file.eof() )
+            {
+
+
+                data.clear();
+                bool catched_data = getValues( EXPKVALUES, qline, data );
+                int ndata = (int) data.size();
+
+                if( ndata != FILE_NARGUMENTS::N_POINTSVALUES )
+                    return 0;
+
+                float x = std::atof( data[ 0 ].c_str() );
+                vector_points.push_back( x );
+
+                float y = std::atof( data[ 1 ].c_str() );
+                vector_points.push_back( y );
+
+                float z = std::atof( data[ 2 ].c_str() );
+                vector_points.push_back( z );
+
+                std::string stdline = qline.toStdString();
+                std::getline( file, stdline );
+                qline = QString( stdline.c_str() );
+                id++;
+            }
+
+
+
+            if( id == number_of_points )
+                state = FILE_STATES::CELLSINF;
+
+
+
+        }
+        break;
+
+        case FILE_STATES::CELLSINF:
+        {
+            bool catched_data = getHeader( EXPCELLINF, qline, data );
+            int ndata = (int) data.size() - 1 ;
+
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_CELLINF ) )
+                return 0;
+
+            number_of_cells = std::atoi( data[ 1 ].c_str() );
+            list_cells_size = std::atoi( data[ 2 ].c_str() );
+
+            state = FILE_STATES::CELLS_VALUES;
+             count_cells = 0;
+
+        }
+        break;
+
+        case FILE_STATES::CELLS_VALUES:
+        {
+
+
+
+            int id = 0;
+            while(  id < number_of_cells && !file.eof() )
+            {
+
+                data.clear();
+                bool catched_data = getValues( EXPKVALUES, qline, data );
+                int ndata = (int) data.size();
+
+                if( ndata == 0 )
+                    return 0;
+
+                int nvertices = std::atoi( data[ 0 ].c_str() );
+                if( nvertices != ( ndata - 1 ) )
+                    return 0;
+
+                int idc = vector_cells.size();
+
+                Cell cell;
+                cell.id = idc;
+
+                for( int i = 1; i < ndata; ++i  )
+                    cell.vertices.push_back( std::atoi( data[ i ].c_str() ) );
+
+                vector_cells.push_back( cell );
+
+                std::string stdline = qline.toStdString();
+                std::getline( file, stdline );
+                qline = QString( stdline.c_str() );
+                id++;
+            }
+
+
+            if( id == number_of_cells )
+                state = FILE_STATES::CELLSTYPES;
+
+
+        }
+        break;
+
+        case FILE_STATES::CELLSTYPES:
+        {
+            bool catched_data = getHeader( EXPCELLTYPES, qline, data );
+            int ndata = (int) data.size() - 1 ;
+
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_CELLTYPES ) )
+                return 0;
+
+            if( number_of_cells != std::atoi( data[ 1 ].c_str() ) )
+                return 0;
+
+            state = FILE_STATES::CELLSTYPES_VALUES;
+            count_cells = 0;
+
+        }
+        break;
+
+        case FILE_STATES::CELLSTYPES_VALUES:
+        {
+
+
+
+
+        int id = 0;
+        while(  id < number_of_cells && !file.eof() )
+        {
+
+            bool catched_data = getValues( EXPKVALUES, qline, data );
 
             if ( catched_data == false )
-                return false;
+                return 0;
+
+            vector_cells[ id ].type = std::atoi( data[ 0 ].c_str() );
 
 
-            for( int j = 0; j < ndata; ++j )
-            {
-                float value = std::atof( data.at( j ).c_str() );
-                data_values.push_back( value );
+            std::getline( file, line );
+            qline = QString( line.c_str() );
+            id++;
+        }
+
+
+             if( id == number_of_cells ){
+                state = FILE_STATES::POINTS_PROPERTIES;
+                return 2;
             }
-            total_datavalues++;
-
-            if( total_datavalues == std::atoi( data_nvalues.c_str() ) )
-                state = UNSTRUCTUREDGRID_STATES::CELLINF;
             else
-                return false;
+                return 0;
 
         }
             break;
 
-        case UNSTRUCTUREDGRID_STATES::CELLINF:
+        case FILE_STATES::POINTS_PROPERTIES:
         {
-            bool catched_data = getHeader( EXPCELLINF, line, data );
+            bool catched_data = getHeader( EXPATTRIBUTEDATA, qline, data );
             int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NCELLINF ) )
-                return false;
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_POINTS_PROPERTIES ) )
+                return 0;
 
-            cells_number = data[ 1 ].c_str();
-            listcells_size = data[ 2 ].c_str();
+            if( number_of_points != std::atoi( data[ 1 ].c_str() ) )
+                return 0;
 
-            state = UNSTRUCTUREDGRID_STATES::CELLINFVALUES;
-            total_datavalues = 0;
+            state = FILE_STATES::POINTS_PROPERTIES_TYPE;
+            count_properties = 0;
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::CELLINFVALUES:
+        case FILE_STATES::POINTS_PROPERTIES_TYPE:
         {
-            bool catched_data = getValues( EXPKVALUES, line, data );
+            if( visitPoints == 2 && visitCells == 2 )
+                return 1;
+
+            bool catched_data = getValues( EXPKVALUES, qline, data );
             int ndata = (int) data.size();
 
-            if ( catched_data == false )
-                return false;
+            if( ( catched_data == false ) || ( ndata <= 0 ||
+                                               ndata > FILE_NARGUMENTS::N_POINTS_PROPERTIES_TYPE ) )
+                return 0;
 
+            if( visitCells == 1 )
+                visitCells = 2;
 
-            if( std::atoi( data[ 0 ].c_str() ) != ( ndata - 1 ) )
-                    return false;
-
-
-//            for( int j = 0; j < ndata; ++j )
-//            {
-//                float value = std::atoi( data.at( j ).c_str() );
-//                cells_values.push_back( value );
-//            }
-
-            for( int j = 1; j < ndata; ++j )
-            {
-                float value = std::atoi( data.at( j ).c_str() );
-                cells_values.push_back( value );
+             if( data[ 0 ].compare( "SCALARS" ) == 0 ){
+                readScalars( data, "POINTS" );
+                state = FILE_STATES::LOOKUPTABLE;
+                count_properties++;
             }
-            total_datavalues++;
+            else if( data[ 0 ].compare( "VECTORS" ) == 0 ){
+                readVectors( data, "POINTS" );
+                state = FILE_STATES::POINTS_PROPERTIES_VALUES;                
+                count_properties++;
+            }
+            else{
+                state = FILE_STATES::CELLS_PROPERTIES;                
+                return 2;
+            }
 
-            if( total_datavalues == std::atoi( cells_number.c_str() ) )
-                state = UNSTRUCTUREDGRID_STATES::CELLTYPES;
-            else
-                return false;
+
+        }
+        break;
+
+        case FILE_STATES::LOOKUPTABLE:
+        {
+            bool catched_data = getHeader( EXPLOOKUPTABLE, qline, data );
+            int ndata = (int) data.size() - 1 ;
+
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_LOOKUPTABLE ) )
+                return 0;
+
+            lookuptable.push_back( data[ 1 ].c_str() );
+
+            state = FILE_STATES::POINTS_PROPERTIES_VALUES;
+
 
         }
             break;
 
-        case UNSTRUCTUREDGRID_STATES::CELLTYPES:
+        case FILE_STATES::POINTS_PROPERTIES_VALUES:
         {
-            bool catched_data = getHeader( EXPCELLTYPES, line, data );
-            int ndata = (int) data.size() - 1 ;
 
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NCELLTYPES ) )
-                return false;
+            int id = 0;
+            while(  id < number_of_points && !file.eof() )
+            {
 
-            cell_types = data[ 1 ].c_str();
+                data.clear();
+                bool catched_data = getValues( EXPKVALUES, qline, data );
+                int ndata = (int) data.size();
 
-            state = UNSTRUCTUREDGRID_STATES::CELLTYPEVALUES;
-            total_datavalues = 0;
+                if ( catched_data == false )
+                    return 0;
+
+                for( int j = 0; j < ndata; ++j )
+                    vector_point_properties[ count_properties - 1 ].addValue( std::atof( data[ j ].c_str() ) );
+
+                std::getline( file, line );
+                qline = QString( line.c_str() );
+                id++;
+            }
+
+
+            if( id == number_of_points )
+            {
+                state = FILE_STATES::POINTS_PROPERTIES_TYPE;
+                visitPoints = 1;
+                return 2;
+            }
+
+
+
 
         }
         break;
 
-        case UNSTRUCTUREDGRID_STATES::CELLTYPEVALUES:
+        case FILE_STATES::CELLS_PROPERTIES:
         {
-            bool catched_data = getValues( EXPKVALUES, line, data );
+            if( visitPoints == 2 && visitCells == 2 )
+                return 1;
+
+            bool catched_data = getHeader( EXPCELLDATAINF, qline, data );
+            int ndata = (int) data.size() - 1 ;
+
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_CELLS_PROPERTIES ) )
+            {
+                return 0;
+
+            }
+            if( number_of_cells != std::atoi( data[ 1 ].c_str() ) )
+                return 0;
+
+            if( visitPoints == 1 )
+                visitPoints = 2;
+
+            state = FILE_STATES::CELLS_PROPERTIES_TYPE;
+            count_properties = 0;
+
+        }
+        break;
+
+        case FILE_STATES::CELLS_PROPERTIES_TYPE:
+        {
+
+            if( visitPoints == 2 && visitCells == 2 )
+                return 1;
+
+
+            bool catched_data = getValues( EXPKVALUES, qline, data );
             int ndata = (int) data.size();
 
-            if ( catched_data == false )
-                return false;
+            if( ( catched_data == false ) || ( ndata <= 0 || ndata > FILE_NARGUMENTS::N_CELLS_PROPERTIES_TYPE ) )
+                return 0;
 
-            for( int j = 0; j < ndata; ++j )
-            {
-                float value = std::atoi( data.at( j ).c_str() );
-                celltype_values.push_back( value );
+            if( visitPoints == 1 )
+                visitPoints = 2;
+
+            if( data[ 0 ].compare( "SCALARS" ) == 0 ){
+                readScalars( data, "CELLS" );
+                state = FILE_STATES::LOOKUPTABLECELL;
+                count_properties++;
             }
-            total_datavalues++;
+            else if( data[ 0 ].compare( "VECTORS" ) == 0 ){
+                readVectors( data, "CELLS" );
+                state = FILE_STATES::CELLS_PROPERTIES_VALUES;
+                count_properties++;
 
-            if( total_datavalues == std::atoi( cell_types.c_str() ) )
-                state = UNSTRUCTUREDGRID_STATES::ATTRIBUTEDATA;
-            else
+            }
+            else{
+                state = FILE_STATES::POINTS_PROPERTIES;
+                return 2;
+            }
+
+        }
+        break;
+
+        case FILE_STATES::LOOKUPTABLECELL:
+        {
+            bool catched_data = getHeader( EXPLOOKUPTABLE, qline, data );
+            int ndata = (int) data.size() - 1 ;
+
+            if( ( catched_data == false ) || ( ndata != FILE_NARGUMENTS::N_LOOKUPTABLE ) )
                 return false;
+
+            lookuptablecell.push_back( data[ 1 ].c_str() );
+
+            state = FILE_STATES::CELLS_PROPERTIES_VALUES;
 
         }
             break;
 
-        case UNSTRUCTUREDGRID_STATES::ATTRIBUTEDATA:
+        case FILE_STATES::CELLS_PROPERTIES_VALUES:
         {
-            bool catched_data = getHeader( EXPATTRIBUTEDATA, line, data );
-            int ndata = (int) data.size() - 1 ;
-
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NATTRIBUTEDATA ) )
-                return false;
-
-            attributes_number = data[ 1 ].c_str();
-
-            state = UNSTRUCTUREDGRID_STATES::ATTRIBUTETYPE;
-            total_datavalues = 0;
-
-        }
-        break;
-
-        case UNSTRUCTUREDGRID_STATES::ATTRIBUTETYPE:
-        {
-            bool catched_data = getValues( EXPKVALUES, line, data );
-            int ndata = (int) data.size();
-
-            if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NATTRIBUTETYPE ) )
-                return false;
 
 
-            point_properties_index[ data[ 1 ].c_str() ] = attribute_name.size();
-
-            attribute_type.push_back( data[ 0 ].c_str() );
-            attribute_name.push_back( data[ 1 ].c_str() );
-            attribute_format.push_back( data[ 2 ].c_str() );
-
-
-            properties_type[ properties_id ] = PROPERTYTYPE::POINTS;
-            properties_names[ properties_id ] = data[ 1 ].c_str();
-            properties_formats[ properties_id ] = data[ 2 ].c_str();
-
-
-            if( attribute_type.back().compare( "SCALARS" ) == 0 )
+            int id = 0;
+            while(  id < number_of_cells && !file.eof() )
             {
-                state = UNSTRUCTUREDGRID_STATES::LOOKUPTABLE;
 
-            }else
-            {
-                state = UNSTRUCTUREDGRID_STATES::ATTRIBUTEVALUES;
+                data.clear();
+                bool catched_data = getValues( EXPKVALUES, qline, data );
+                int ndata = (int) data.size();
+
+                if ( catched_data == false )
+                    return 0;
+
+                for( int j = 0; j < ndata; ++j )
+                    vector_cell_properties[ count_properties - 1 ].addValue( std::atof( data[ j ].c_str() ) );
+
+                std::getline( file, line );
+                qline = QString( line.c_str() );
+                id++;
+
             }
 
-            total_datavalues = 0;
-            properties_id++;
+
+            if( id == number_of_cells ){
+                state = FILE_STATES::CELLS_PROPERTIES_TYPE;
+                visitCells = 1;
+                return 2;
+            }
+
 
         }
+
         break;
 
-    case UNSTRUCTUREDGRID_STATES::LOOKUPTABLE:
-    {
-        bool catched_data = getHeader( EXPLOOKUPTABLE, line, data );
-        int ndata = (int) data.size() - 1 ;
-
-        if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NLOOKUPTABLE ) )
-            return false;
-
-        lookuptable.push_back( data[ 1 ].c_str() );
-
-        state = UNSTRUCTUREDGRID_STATES::ATTRIBUTEVALUES;
-
-    }
-    break;
-
-    case UNSTRUCTUREDGRID_STATES::ATTRIBUTEVALUES:
-    {
-        bool catched_data = getValues( EXPKVALUES, line, data );
-        int ndata = (int) data.size();
-
-        if ( catched_data == false )
-            return false;
-
-        for( int j = 0; j < ndata; ++j )
-        {
-            float value = std::atof( data.at( j ).c_str() );
-            attribute_values.push_back( value );
-        }
-
-        total_datavalues++;
-
-        if( attribute_type.back().compare( "SCALARS" ) == 0 && total_datavalues == std::atoi( attributes_number.c_str() ) )
-            state = UNSTRUCTUREDGRID_STATES::ATTRIBUTETYPE;
-
-        else if( attribute_type.back().compare( "VECTORS" ) == 0 && ( total_datavalues == std::atoi( attributes_number.c_str() ) ) )
-            state = UNSTRUCTUREDGRID_STATES::CELLDATAINF;
-
-        else
-            return false;
-
-
-    }
-        break;
-
-    case UNSTRUCTUREDGRID_STATES::CELLDATAINF:
-    {
-        bool catched_data = getHeader( EXPCELLDATAINF, line, data );
-        int ndata = (int) data.size() - 1 ;
-
-        if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NCELLDATAINF ) )
-            return false;
-
-        cells_number_data = data[ 1 ].c_str();
-
-        state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELL;
-        total_datavalues = 0;
-
-    }
-    break;
-
-    case UNSTRUCTUREDGRID_STATES::ATTRIBUTECELL:
-    {
-        bool catched_data = getValues( EXPKVALUES, line, data );
-        int ndata = (int) data.size();
-
-        if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NATTRIBUTETYPE ) )
-            return false;
-
-        cells_properties_index[ data[ 1 ].c_str() ] = attributecell_name.size();
-
-        attributecell_type.push_back( data[ 0 ].c_str() );
-        attributecell_name.push_back( data[ 1 ].c_str() );
-        attributecell_format.push_back( data[ 2 ].c_str() );
-
-
-        properties_type[ properties_id ] = PROPERTYTYPE::CELLS;
-        properties_names[ properties_id ] = data[ 1 ].c_str();
-        properties_formats[ properties_id ] = data[ 2 ].c_str();
-
-        if( attributecell_type.back().compare( "SCALARS" ) == 0 )
-            state = UNSTRUCTUREDGRID_STATES::LOOKUPTABLECELL;
-        else
-            state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELVALUES;
-
-        total_datavalues = 0;
-        properties_id++;
-
-    }
-    break;
-
-    case UNSTRUCTUREDGRID_STATES::LOOKUPTABLECELL:
-    {
-        bool catched_data = getHeader( EXPLOOKUPTABLE, line, data );
-        int ndata = (int) data.size() - 1 ;
-
-        if( ( catched_data == false ) || ( ndata != UNSTRUCTUREDGRID_NARGUMENTS::NLOOKUPTABLE ) )
-            return false;
-
-        lookuptablecell.push_back( data[ 1 ].c_str() );
-
-        state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELVALUES;
-        total_datavalues = 0;
-
-    }
-    break;
-
-    case UNSTRUCTUREDGRID_STATES::ATTRIBUTECELVALUES:
-    {
-        bool catched_data = getValues( EXPKVALUES, line, data );
-        int ndata = (int) data.size();
-
-        if ( catched_data == false )
-            return false;
-
-        for( int j = 0; j < ndata; ++j )
-        {
-            float value = std::atof( data.at( j ).c_str() );
-            attributecell_values.push_back( value );
-        }
-
-        total_datavalues++;
-
-        if( attributecell_type.back().compare( "SCALARS" ) == 0 && total_datavalues == std::atoi( cells_number_data.c_str() ) )
-            return true;
-
-        else if( attributecell_type.back().compare( "VECTORS" ) == 0 && ( total_datavalues == std::atoi( cells_number_data.c_str() ) ) )
-            state = UNSTRUCTUREDGRID_STATES::ATTRIBUTECELL;
-
-        else
-            return false;
-
-
-    }
-        break;
         default:
             break;
+
     };
 
-    return true;
+    return 1;
 }
 
 
-void VTKData::getPoints( vector< float >& points ) const
-{
-    points = data_values;
-}
-
-
-void VTKData::getCells( vector< int >& shape, vector< int >& index ) const
-{
-    shape = celltype_values;
-    index = cells_values;
-}
-
-
-void VTKData::getAttributesPoints( vector< std::string >& format, vector< std::string >& name, vector< float >& values ) const
+void VTKData::readScalars( vector< std::string > data, std::string type )
 {
 
-    if( attribute_name.empty() == true ) return;
+    FlowProperty property;
 
-    format = attribute_type;
-    name = attribute_name;
-    values = attribute_values;
-
-}
+    property.setFormat( data[ 0 ].c_str() );
+    property.setName( data[ 1 ].c_str() );
+    property.setType( type );
 
 
-void VTKData::getAttributesCells( vector< std::string >& format, vector< std::string >& name, vector< float >& values ) const
-{
-    format = attributecell_type;
-    name = attributecell_name;
-    values = attributecell_values;
 
-}
+    if( data.size() > 3 )
+        property.setNumberofComponents( std::atoi( data[ 3 ].c_str() ) );
+    else
+        property.setNumberofComponents( 1 );
 
-
-void VTKData::getAttribute( std::string name, std::string type, int& ncomp, vector< float >& values )
-{
-
-    if( type == "POINTS" )
+    if( type.compare( "POINTS" ) == 0 )
     {
-        int idlocal = point_properties_index[ name ];
-        int nattributes = std::atoi( attributes_number.c_str() );
+        int id = (int) vector_point_properties.size();
+        property.setId( id );
 
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
-        {
-            if( attribute_type[ i ] == "SCALARS" )
-                id += nattributes;
-            else if( attribute_type[ i ] == "VECTORS" )
-                id += 3*nattributes;
-        }
+        ppoint_name_id[ data[ 1 ] ] = id;
+        vector_point_properties.push_back( property );
+    }
+    else if( type.compare( "CELLS" ) == 0 )
+    {
+        int id = (int) vector_cell_properties.size();
+        property.setId( id );
 
-        if( attribute_type[ idlocal ] == "SCALARS" )
-        {
-            ncomp = 1;
-            int total = id + nattributes;
-            for( int i = id; i < total; ++i )
-                values.push_back( attribute_values[ i ] );
-        }
-        else if( attribute_type[ idlocal ] == "VECTORS" )
-        {
-            ncomp = 3;
-            nattributes *= 3;
-            int total = id + nattributes;
-            for( int i = id; i < total; ++i )
-                values.push_back( attribute_values[ i ] );
-        }
-
-
+        pcell_name_id[ data[ 1 ] ] = id;
+        vector_cell_properties.push_back( property );
     }
 
-    if( type == "CELLS" )
+}
+
+
+void VTKData::readVectors( vector< std::string > data, std::string type )
+{
+
+    FlowProperty property;
+
+    property.setFormat( data[ 0 ].c_str() );
+    property.setName( data[ 1 ].c_str() );
+    property.setType( type );
+    property.setNumberofComponents( 3 );
+
+    if( type.compare( "POINTS" ) == 0 )
     {
-        int idlocal = cells_properties_index[ name ];
-        int nattributes = std::atoi( cells_number_data.c_str() );
+        int id = (int) vector_point_properties.size();
+        property.setId( id );
 
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
-        {
-            if( attributecell_type[ i ] == "SCALARS" )
-                id += nattributes;
-            else if( attributecell_type[ i ] == "VECTORS" )
-                id += 3*nattributes;
-        }
+        ppoint_name_id[ data[ 1 ] ] = id;
+        vector_point_properties.push_back( property );
+    }
+    else if( type.compare( "CELLS" ) == 0 )
+    {
+        int id = (int) vector_cell_properties.size();
+        property.setId( id );
 
-        if( attributecell_type[ idlocal ] == "SCALARS" )
-        {
-            ncomp = 1;
-            int total = id + nattributes;
-            for( int i = id; i < total; ++i )
-                values.push_back( attributecell_values[ i ] );
-        }
-        else if( attributecell_type[ idlocal ] == "VECTORS" )
-        {
-            ncomp = 3;
-            nattributes *= 3;
-            int total = id + nattributes;
-            for( int i = id; i < total; ++i )
-                values.push_back( attributecell_values[ i ] );
-        }
+        pcell_name_id[ data[ 1 ] ] = id;
+        vector_cell_properties.push_back( property );
+    }
+
+}
 
 
+VTKData::FILE_STATES VTKData::readDataSetValues()
+{
+
+    if ( dataset_type.compare( "UNSTRUCTURED_GRID" ) != 0 )
+        cout << "It still will be implemented!" << endl;
+    else
+        return FILE_STATES::POINTSINF;
+
+    return FILE_STATES::POINTS_PROPERTIES;
+
+}
+
+
+void VTKData::getFlowProperty( std::string name, std::string type, FlowProperty& property )
+{
+
+    if( type.compare( "POINTS" ) == 0 )
+    {
+        int id = ppoint_name_id[ name ];
+        property = vector_point_properties[ id ];
+    }
+    else if( type.compare( "CELLS" )  == 0 )
+    {
+        int id = pcell_name_id[ name ];
+        property = vector_cell_properties[ id ];
     }
 
 
 }
 
 
-void VTKData::getMaxMinAttribute( std::string name, std::string type, int& ncomp, vector< float >& maxmin )
+void VTKData::computeMaxMinProperties()
 {
-    if( type == "POINTS" )
-    {
-        int idlocal = point_properties_index[ name ];
+    int npointproperties = (int) vector_point_properties.size();
+    for( int i = 0; i < npointproperties; ++i )
+        computeMaxMinPointProperty( i );
 
-
-        maxmin.push_back( point_properties_maxmin[ idlocal ].first );
-        maxmin.push_back( point_properties_maxmin[ idlocal ].second );
-
-    }
-
-    if( type == "CELLS" )
-    {
-        int idlocal = cells_properties_index[ name ];
-        maxmin.push_back( cells_properties_maxmin[ idlocal ].first );
-        maxmin.push_back( cells_properties_maxmin[ idlocal ].second );
-
-    }
-
-
+    int ncellproperties = (int)  vector_cell_properties.size();
+    for( int i = 0; i < ncellproperties; ++i )
+        computeMaxMinCellProperty( i );
 }
 
-void VTKData::getMaxMinCoordinates( std::string name, std::string type, vector< float >& values )
+
+void VTKData::computeMaxMinPointProperty( int id )
 {
+    int nproperties = (int) vector_point_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
 
-    if( type == "POINTS" )
+
+    FlowProperty& p = vector_point_properties[ id ];
+    int ncoords = p.getNumberofComponents();
+
+    vector< float > values;
+    p.getValues( values );
+
+
+    if( ncoords == 1 )
     {
-        int idlocal = point_properties_index[ name ];
-        if( attribute_type[ idlocal ] != "VECTORS" ) return;
+        auto itmin = std::min_element( values.begin(), values.end() );
+        auto itmax = std::max_element( values.begin(), values.end() );
 
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
+        int idmin  = std::distance( values.begin(), itmin );
+        int idmax = std::distance( values.begin(), itmax );
+
+        p.setMinimum( values[ idmin ] );
+        p.setMaximum( values[ idmax ] );
+
+    }
+
+    if( ncoords == 3 )
+    {
+        int nvalues = (int) values.size()/3;
+
+        float min = values[ 0 ]*values[ 0 ] + values[ 1 ]*values[ 1 ] + values[ 2 ]*values[ 2 ];
+        float max = min;
+
+        float minx = values[ 0 ], miny = values[ 1 ], minz = values[ 2 ];
+        float maxx = minx, maxy = miny, maxz = minz;
+
+
+        for( int j = 3; j < nvalues; ++j )
         {
-            if( attribute_type[ i ] == "VECTORS" )
-                id++;
+            float norm =  values[ 3*j ]*values[ 3*j ] + values[ 3*j + 1 ]*values[ 3*j + 1 ] + values[ 3*j + 2 ]*values[ 3*j + 2 ];
+
+            if( norm <= min ) min = norm;
+            if( norm >= max ) max = norm;
+
+            if( values[ 3*j ] <= minx ) minx = values[ 3*j ];
+            if( values[ 3*j ] >= maxx ) maxx = values[ 3*j ];
+
+            if( values[ 3*j + 1 ] <= miny ) miny = values[ 3*j + 1];
+            if( values[ 3*j + 1 ] >= maxy ) maxy = values[ 3*j + 1 ];
+
+            if( values[ 3*j + 2 ] <= minz ) minz = values[ 3*j + 2 ];
+            if( values[ 3*j + 2 ] >= maxz ) maxz = values[ 3*j + 2 ];
         }
 
-        float xmin = point_properties_maxmin_X[ id ].first;
-        float xmax = point_properties_maxmin_X[ id ].second;
+        p.setMinimum( min );
+        p.setMaximum( max );
 
-        float ymin = point_properties_maxmin_Y[ id ].first;
-        float ymax = point_properties_maxmin_Y[ id ].second;
+        p.addMinimumCoordinate( minx );
+        p.addMaximumCoordinate( maxx );
 
-        float zmin = point_properties_maxmin_Z[ id ].first;
-        float zmax = point_properties_maxmin_Z[ id ].second;
+        p.addMinimumCoordinate( miny );
+        p.addMaximumCoordinate( maxy );
 
-
-        values.push_back( xmin );
-        values.push_back( xmax );
-        values.push_back( ymin );
-        values.push_back( ymax );
-        values.push_back( zmin );
-        values.push_back( zmax );
+        p.addMinimumCoordinate( minz );
+        p.addMaximumCoordinate( maxz );
 
     }
 
-    if( type == "CELLS" )
+
+}
+
+
+void VTKData::computeMaxMinCellProperty( int id )
+{
+    int nproperties = (int) vector_cell_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
+
+
+    FlowProperty& p = vector_cell_properties[ id ];
+    int ncoords = p.getNumberofComponents();
+
+    vector< float > values;
+    p.getValues( values );
+
+
+    if( ncoords == 1 )
     {
 
+        std::vector<float>::iterator teste = std::begin( values );
 
-        int idlocal = cells_properties_index[ name ];
-        if( attributecell_type[ idlocal ] != "VECTORS" ) return;
+        std::vector<float>::iterator itmin = std::min_element( values.begin(), values.end() );
+        std::vector<float>::iterator itmax = std::max_element( values.begin(), values.end() );
 
-        int id = 0;
-        for( int i = 0; i < idlocal; ++i )
+        int idmin  = std::distance( values.begin(), itmin );
+        int idmax = std::distance( values.begin(), itmax );
+
+        p.setMinimum( values[ idmin ] );
+        p.setMaximum( values[ idmax ] );
+
+    }
+
+    if( ncoords == 3 )
+    {
+        int nvalues = (int) values.size()/3;
+
+        float min = values[ 0 ]*values[ 0 ] + values[ 1 ]*values[ 1 ] + values[ 2 ]*values[ 2 ];
+        float max = min;
+
+        float minx = values[ 0 ], miny = values[ 1 ], minz = values[ 2 ];
+        float maxx = minx, maxy = miny, maxz = minz;
+
+
+        for( int j = 3; j < nvalues; ++j )
         {
-            if( attributecell_type[ i ] == "VECTORS" )
-                id++;
+            float norm =  values[ 3*j ]*values[ 3*j ] + values[ 3*j + 1 ]*values[ 3*j + 1 ] + values[ 3*j + 2 ]*values[ 3*j + 2 ];
+
+            if( norm <= min ) min = norm;
+            if( norm >= max ) max = norm;
+
+            if( values[ 3*j ] <= minx ) minx = values[ 3*j ];
+            if( values[ 3*j ] >= maxx ) maxx = values[ 3*j ];
+
+            if( values[ 3*j + 1 ] <= miny ) miny = values[ 3*j + 1];
+            if( values[ 3*j + 1 ] >= maxy ) maxy = values[ 3*j + 1 ];
+
+            if( values[ 3*j + 2 ] <= minz ) minz = values[ 3*j + 2 ];
+            if( values[ 3*j + 2 ] >= maxz ) maxz = values[ 3*j + 2 ];
         }
 
-        float xmin = cells_properties_maxmin_X[ id ].first;
-        float xmax = cells_properties_maxmin_X[ id ].second;
+        p.setMinimum( min );
+        p.setMaximum( max );
 
-        float ymin = cells_properties_maxmin_Y[ id ].first;
-        float ymax = cells_properties_maxmin_Y[ id ].second;
+        p.addMinimumCoordinate( minx );
+        p.addMaximumCoordinate( maxx );
 
-        float zmin = cells_properties_maxmin_Z[ id ].first;
-        float zmax = cells_properties_maxmin_Z[ id ].second;
+        p.addMinimumCoordinate( miny );
+        p.addMaximumCoordinate( maxy );
+
+        p.addMinimumCoordinate( minz );
+        p.addMaximumCoordinate( maxz );
+
+    }
 
 
-        values.push_back( xmin );
-        values.push_back( xmax );
-        values.push_back( ymin );
-        values.push_back( ymax );
-        values.push_back( zmin );
-        values.push_back( zmax );
+}
+
+
+void VTKData::getMaxMinMagnitudePointProperty( int id, vector< float >& maxmin )
+{
+    int nproperties = (int) vector_point_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
+
+    FlowProperty& p = vector_point_properties[ id ];
+    int ncomponents = p.getNumberofComponents();
+
+    if( ncomponents == 1 )
+    {
+        float min = p.getMinimum();
+        float max = p.getMaximum();
+
+        maxmin.push_back( min );
+        maxmin.push_back( max );
+    }
+    else if( ncomponents == 3 )
+    {
+        float min = p.getMinimum();
+        float max = p.getMaximum();
+
+        maxmin.push_back( min );
+        maxmin.push_back( max );
     }
 
 }
 
-int VTKData::getNumberofPoints()
+
+void VTKData::getMaxMinCoordinatePointProperty( int id, vector< float >& maxmin )
 {
-    return std::atoi( data_nvalues.c_str() );
+    int nproperties = (int) vector_point_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
+
+    FlowProperty& p = vector_point_properties[ id ];
+    int ncomponents = p.getNumberofComponents();
+
+    if( ncomponents != 3 )
+        return;
+
+    float xmin, xmax;
+    float ymin, ymax;
+    float zmin, zmax;
+
+    p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
+
+    maxmin.push_back( xmin );
+    maxmin.push_back( xmax );
+
+    maxmin.push_back( ymin );
+    maxmin.push_back( ymax );
+
+    maxmin.push_back( zmin );
+    maxmin.push_back( zmax );
+
 }
 
-/*
-void VTKData::clear()
+
+void VTKData::getMaxMinMagnitudeCellProperty( int id, vector< float >& maxmin )
 {
-       attribute_type.clear();
-       attribute_name.clear();
-       attribute_format.clear();
-       lookuptable.clear();
-        attributecell_type.clear();
-        attributecell_name.clear();
-        attributecell_format.clear();
-        lookuptablecell.clear();
+    int nproperties = (int) vector_cell_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
 
-       data_values.clear();
-       cells_values.clear();
-       celltype_values.clear();
-       attribute_values.clear();
-       attributecell_values.clear();
+    FlowProperty& p = vector_cell_properties[ id ];
+    int ncomponents = p.getNumberofComponents();
 
-       is_empty = true;
+    if( ncomponents == 1 )
+    {
+        float min = p.getMinimum();
+        float max = p.getMaximum();
 
-        properties_type.clear();
-       properties_names.clear();
-       properties_formats.clear();
-       point_properties_index.clear();
-       cells_properties_index.clear();
+        maxmin.push_back( min );
+        maxmin.push_back( max );
+    }
+    else if( ncomponents == 3 )
+    {
+        float min = p.getMinimum();
+        float max = p.getMaximum();
 
+        maxmin.push_back( min );
+        maxmin.push_back( max );
+    }
 
-         point_properties_maxmin.clear();
-         point_properties_maxmin_X.clear();
-         point_properties_maxmin_Y.clear();
-         point_properties_maxmin_Z.clear();
-        cells_properties_maxmin.clear();
-         cells_properties_maxmin_X.clear();
-         cells_properties_maxmin_Y.clear();
-         cells_properties_maxmin_Z.clear();
-
-         total_datavalues = 0;
-         properties_id = 0;
 }
-*/
+
+
+void VTKData::getMaxMinCoordinateCellProperty( int id, vector< float >& maxmin )
+{
+    int nproperties = (int) vector_cell_properties.size();
+    if( id < 0 || id >= nproperties )
+        return;
+
+    FlowProperty& p = vector_cell_properties[ id ];
+    int ncomponents = p.getNumberofComponents();
+
+    if( ncomponents != 3 )
+        return;
+
+    float xmin, xmax;
+    float ymin, ymax;
+    float zmin, zmax;
+
+    p.getMaxMinCoordinateProperty( xmin, xmax, ymin, ymax, zmin, zmax );
+
+    maxmin.push_back( xmin );
+    maxmin.push_back( xmax );
+
+    maxmin.push_back( ymin );
+    maxmin.push_back( ymax );
+
+    maxmin.push_back( zmin );
+    maxmin.push_back( zmax );
+
+}
+
+

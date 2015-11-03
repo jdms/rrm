@@ -14,7 +14,7 @@ MainWindow::MainWindow( QWidget *parent) : QMainWindow( parent )
 
 MainWindow::~MainWindow()
 {
-    canvas2D->clear();
+//    canvas2D->clear();
 }
 
 void MainWindow::createWindow()
@@ -86,6 +86,11 @@ void MainWindow::createActions()
     ac_compute_volumetric  = new QAction( tr( "Compute Volumetric..." ), this );;
 
 
+   ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );;
+   ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );;
+   ac_compute_tof = new QAction( tr( "Compute TOF" ), this );;
+
+
     connect( ac_new, SIGNAL( triggered() ), this, SLOT( newSection() ) );
     connect( ac_removeabove, SIGNAL( triggered() ), this, SLOT( applyRemoveAbove() ) );
     connect( ac_removebelow, SIGNAL( triggered() ), this, SLOT( applyRemoveBelow() ) );
@@ -94,9 +99,22 @@ void MainWindow::createActions()
 
     connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
 
-    connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( open_surface_file() ) );
-    connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( create_mesh_volumetric() ) );
-    connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( compute_property( int ) ) );
+    connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( openSurfaceFile() ) );
+    connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( createMeshVolumetric() ) );
+
+    connect( ac_compute_pressure, SIGNAL( triggered() ), this, SLOT( computePressure() ) );
+    connect( ac_compute_velocity, SIGNAL( triggered() ), this, SLOT( computeVelocity() ) );
+    connect( ac_compute_tof, SIGNAL( triggered() ), this, SLOT( computeTOF() ) );
+
+    cb_compute_property = new QComboBox();
+    cb_coloroption_vector = new QComboBox();
+    cb_coloroption_vector->addItem( "Magnitude" );
+    cb_coloroption_vector->addItem( "X" );
+    cb_coloroption_vector->addItem( "Y" );
+    cb_coloroption_vector->addItem( "Z" );
+    cb_coloroption_vector->setEnabled( false );
+
+    connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectProperty( int ) ) );
 }
 
 void MainWindow::createMenuBar()
@@ -231,13 +249,16 @@ void MainWindow::createToolbarComputation()
 {
 
     QLabel *lb_name_property = new QLabel( tr( "Property" ) );
-    cb_compute_property = new QComboBox();
 
     tlb_workflow_flow = addToolBar( tr( "Workflow" ) );
     tlb_workflow_flow->addAction( ac_open_surface );
     tlb_workflow_flow->addAction( ac_compute_volumetric );
+    tlb_workflow_flow->addAction( ac_compute_pressure );
+    tlb_workflow_flow->addAction( ac_compute_velocity );
+    tlb_workflow_flow->addAction( ac_compute_tof );
     tlb_workflow_flow->addWidget( lb_name_property );
     tlb_workflow_flow->addWidget( cb_compute_property );
+    tlb_workflow_flow->addWidget( cb_coloroption_vector );
 
     mw_canvas_computation->addToolBar( tlb_workflow_flow );
 
@@ -322,17 +343,73 @@ void MainWindow::clearComputation()
 
 }
 
-void MainWindow::open_surface_file()
+void MainWindow::openSurfaceFile()
 {
+    QString filename = QFileDialog::getOpenFileName( this );
+    if( filename.isEmpty() == true ) return;
+
+
+    QStringList list = filename.split( "\." );
+    QString name_of_file = list[ 0 ];
+    QString extension_of_file = list[ 1 ];
+
+
+//    cout << name_of_file.toStdString().c_str() << endl;
+//    cout << extension_of_file.toStdString().c_str() << endl;
+
+    emit sendSurfaceFile( name_of_file.toStdString() );
+}
+
+void MainWindow::createMeshVolumetric()
+{
+    emit computeVolume();
+}
+
+void MainWindow::selectProperty( int id )
+{
+    bool option = false;
+    emit selectFlowProperty( id, option );
+    cb_coloroption_vector->setEnabled( option );
+
+
+//    if( option == true ){
+//        int option_color = cb_coloroption_vector->currentIndex();
+//        canvas_computation->selectProperty( id, option, option_color );
+
+//    }
+//    else
+//        canvas_computation->selectProperty( id, option );
+
 
 }
 
-void MainWindow::create_mesh_volumetric()
+void MainWindow::computePressure()
 {
-
+    emit computePressureProperty();
 }
 
-void MainWindow::compute_property( int id )
+void MainWindow::computeVelocity()
 {
+
+    emit computeVelocityProperty();
+}
+
+void MainWindow::computeTOF()
+{
+    emit computeTOFProperty();
+}
+
+void MainWindow::updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells )
+{
+    cb_compute_property->clear();
+
+    int ndata = ppoints.size();
+    for( int i = 0; i < ndata; ++i )
+        cb_compute_property->addItem( ppoints[ i ].c_str() );
+
+    ndata = pcells.size();
+    for( int i = 0; i < ndata; ++i )
+        cb_compute_property->addItem( pcells[ i ].c_str() );
+
 
 }

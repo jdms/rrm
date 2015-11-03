@@ -72,6 +72,7 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
 
 
         void showData();
+        void selectProperty( int id, bool option, int option_color );
 
     protected:
 
@@ -86,6 +87,8 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void drawModel();
         void setupMatrices();
         void setPositionModel();
+        void sendSurfaceGPU();
+        void setSurfacePositionModel();
 
         void createActions();
         void createPopupMenu();
@@ -93,7 +96,11 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void createMenuColorMaps();
         void createMenuRendering();
         void createRenderingVectors(int id, std::string title , string type);
+
         void fillMenuProperties();
+        void fillMenuPointProperties();
+        void fillMenuCellProperties();
+
 
         void mousePressEvent( QMouseEvent *m );
         void mouseMoveEvent( QMouseEvent *m );
@@ -113,6 +120,7 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void showPoints( bool option );
         void showVolume( bool option );
         void showWireframe( bool option );
+
 
         void resetTransformations();
 

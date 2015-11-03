@@ -10,9 +10,21 @@ CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLW
 
     bf_mesh = new GLuint[ 2 ];
 
+
     resetSetup();
     createActions();
     createPopupMenu();
+
+    connect( parent, SIGNAL( sendSurfaceFile( std::string ) ), flowvisualizationc, SLOT( openSurfaceFile( std::string ) ) );
+    connect( parent, SIGNAL( computeVolume() ), flowvisualizationc, SLOT( computeVolumetricMesh() ) );
+    connect( parent, SIGNAL( computeFlowProperties() ), flowvisualizationc, SLOT( computeFlowProperties() ) );
+    connect( parent, SIGNAL( computePressureProperty() ), flowvisualizationc, SLOT( computePressure() ) );
+    connect( parent, SIGNAL( computeVelocityProperty() ), flowvisualizationc, SLOT( computeVelocity() ) );
+    connect( parent, SIGNAL( computeTOFProperty() ), flowvisualizationc, SLOT( computeTOF() ) );
+
+    connect( flowvisualizationc, SIGNAL( updateComboBox( std::vector< std::string >, std::vector< std::string > ) ), parent, SLOT( updateComboBox( std::vector< std::string >, std::vector< std::string > ) ) );
+    connect( parent, SIGNAL( selectFlowProperty( int, bool& ) ), flowvisualizationc, SLOT( selectFlowProperty( int, bool& ) ) );
+
 
 }
 
@@ -35,6 +47,7 @@ void CanvasComputation::createActions()
     chk_show_volume->setChecked( show_faces );
 
 
+
     connect( this, SIGNAL( sendProperty( std::string, std::string ) ), this, SLOT( sendColorsGPU( std::string, std::string ) ) );
     connect( chk_show_points, SIGNAL( clicked( bool ) ), this, SLOT( showPoints( bool ) ) );
     connect( chk_show_volume, SIGNAL( clicked( bool ) ), this, SLOT( showVolume( bool ) ) );
@@ -47,85 +60,88 @@ void CanvasComputation::createActions()
 
 void CanvasComputation::fillMenuProperties()
 {
-    vector< std::string > properties_names;
-    vector< int > dim;
-    vector< float > values;
 
-    flowvisualizationc->getPointProperties( properties_names, dim, values );
-    int nproperties = properties_names.size();
+    fillMenuPointProperties();
+    fillMenuCellProperties();
 
-    QActionGroup* ag_properties = new QActionGroup( this );
+}
+
+
+void CanvasComputation::fillMenuPointProperties()
+{
+
+    std::string name;
+    std::string format;
+    std::string type;
+    int ncoords = 0;
 
     mn_properties->addSection( "POINTS ATTRIBUTES" );
+    QActionGroup* ag_properties = new QActionGroup( this );
 
-    int idv = 0;
-    int id = 0;
-    for( int i = 0; i < nproperties; ++i )
+    int nproperties = flowvisualizationc->getNumberofPointsProperties();
+    for( int i = 0, ids = 0, idv = 0; i < nproperties; ++i )
     {
 
-        if( dim[ i ] == 1 )
+        flowvisualizationc->getPointProperty( i, name, format, type, ncoords );
+        if( ncoords == 1 )
         {
-            ac_properties.push_back( new QAction( tr( properties_names[ id ].c_str() ), this ) );
-            mn_properties->addAction( ac_properties[ id ] );
-            ag_properties->addAction( ac_properties[ id ] );
+            ac_properties.push_back( new QAction( tr( name.c_str() ), this ) );
+            mn_properties->addAction( ac_properties[ ids ] );
+            ag_properties->addAction( ac_properties[ ids ] );
 
-            connect( ac_properties[ id ], &QAction::triggered, [=](){ emit sendProperty( properties_names[ i ].c_str() , "POINTS" ); } );
-            id++;
+            connect( ac_properties[ ids ], &QAction::triggered, [=](){ emit sendProperty( name , type.c_str() ); } );
+            ids++;
 
         }
-
-        else if( dim[ i ] == 3 )
+        else if( ncoords == 3 )
         {
-
-            createRenderingVectors( idv, properties_names[ i ].c_str(), "POINTS" );
+            createRenderingVectors( idv, name, type.c_str() );
             idv++;
 
         }
 
+
+
     }
+}
 
-    properties_names.clear();
-    dim.clear();
-    values.clear();
+void CanvasComputation::fillMenuCellProperties()
+{
+    std::string name;
+    std::string format;
+    std::string type;
+    int ncoords = 0;
 
-    flowvisualizationc->getCellsProperties( properties_names, dim, values );
-    nproperties = properties_names.size();
-
-    int nactions = ac_properties.size();
-
-    QActionGroup* ag_properties_cells = new QActionGroup( this );
 
     mn_properties->addSection( "CELLS ATTRIBUTES" );
+    QActionGroup* ag_properties_cells = new QActionGroup( this );
 
-    id = 0;
-    for( int i = 0; i < nproperties; ++i )
+    int nactions = (int) ac_properties.size();
+    int nproperties = flowvisualizationc->getNumberofCellsProperties();
+    for( int i = 0, ids = 0, idv = 0; i < nproperties; ++i )
     {
 
-        if( dim[ i ] == 1 )
+        flowvisualizationc->getCellProperty( i, name, format, type, ncoords );
+        if( ncoords == 1 )
         {
-            ac_properties.push_back( new QAction( tr( properties_names[ i ].c_str() ), this ) );
-            mn_properties->addAction( ac_properties[ id + nactions ] );
-            ag_properties_cells->addAction( ac_properties[ id + nactions ] );
+            ac_properties.push_back( new QAction( tr( name.c_str() ), this ) );
+            mn_properties->addAction( ac_properties[ ids + nactions ] );
+            ag_properties_cells->addAction( ac_properties[ ids + nactions ] );
 
-            connect( ac_properties[ id + nactions ], &QAction::triggered, [=](){ emit sendProperty( properties_names[ i ].c_str() , "CELLS" ); } );
-            id++;
+            connect( ac_properties[ ids + nactions ], &QAction::triggered, [=](){ emit sendProperty( name , type.c_str() ); } );
+            ids++;
 
         }
-
-        else if( dim[ i ] == 3 )
+        else if( ncoords == 3 )
         {
-
-            createRenderingVectors( idv, properties_names[ i ].c_str(), "CELLS" );
+            createRenderingVectors( idv, name, type.c_str() );
             idv++;
 
         }
 
+
+
     }
-
-
-
-
-
 }
 
 
@@ -187,6 +203,8 @@ void CanvasComputation::createRenderingVectors( int id, std::string title, std::
     rd_options_vector.push_back( new QRadioButton( tr( "Y" ) ) );
     rd_options_vector.push_back( new QRadioButton( tr( "Z" ) ) );
 
+    id = (int) mn_vector_properties_points.size();
+
     QVBoxLayout *vb_layout = new QVBoxLayout( this );
     vb_layout->addWidget( rd_options_vector[ 4*id + 0 ] );
     vb_layout->addWidget( rd_options_vector[ 4*id + 1 ] );
@@ -200,9 +218,12 @@ void CanvasComputation::createRenderingVectors( int id, std::string title, std::
     wa_options_vector = new QWidgetAction( this );
     wa_options_vector->setDefaultWidget( gb_options_vector );
 
+
+
     mn_vector_properties_points.push_back( new QMenu() );
     mn_vector_properties_points[ id ]->addAction( wa_options_vector );
     mn_vector_properties_points[ id ]->setTitle( title.c_str() );
+
 
     mn_properties->addMenu( mn_vector_properties_points[ id ] );
 
@@ -326,10 +347,10 @@ void CanvasComputation::deleteBuffers()
     delete [] bf_mesh;
 
 
-    if( glIsBuffer( bf_faces ) == true )
+    if( glIsBuffer( bf_faces ) == GL_TRUE )
         glDeleteBuffers( 1, &bf_faces );
 
-    if( glIsVertexArray( vao_mesh ) == true )
+    if( glIsVertexArray( vao_mesh ) == GL_TRUE )
         glDeleteVertexArrays( 1, &vao_mesh );
 
 }
@@ -350,7 +371,7 @@ void CanvasComputation::sendMeshGPU()
 
         vector< GLfloat > vertices;
         flowvisualizationc->getVertices( vertices );
-        number_of_vertices = vertices.size();
+        number_of_vertices = (int) vertices.size();
 
         glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 0 ] );
         glBufferData( GL_ARRAY_BUFFER, number_of_vertices*sizeof( GL_FLOAT ), vertices.data(), GL_STATIC_DRAW );
@@ -359,7 +380,7 @@ void CanvasComputation::sendMeshGPU()
 
         vector< GLfloat > colors;
         flowvisualizationc->getColors( colors );
-        GLint ncolors = colors.size();
+        GLint ncolors = (int) colors.size();
 
         glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
         glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
@@ -421,7 +442,7 @@ void CanvasComputation::sendColorsGPU( std::string property, std::string type, i
         else
             flowvisualizationc->getColors( colors, option );
 
-        GLint ncolors = colors.size();
+        GLint ncolors = (GLint) colors.size();
 
         glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
         glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
@@ -498,12 +519,12 @@ void CanvasComputation::setupMatrices()
 
 void CanvasComputation::showData()
 {
-    flowvisualizationc->readData();
+//    flowvisualizationc->readData();
 
-    fillMenuProperties();
+//    fillMenuProperties();
 
-    sendMeshGPU();
-    setPositionModel();
+//    sendMeshGPU();
+//    setPositionModel();
 
     updateGL();
 }
@@ -604,10 +625,10 @@ void CanvasComputation::mousePressEvent( QMouseEvent *m )
     previous_mouse.setX( m->x() );
     previous_mouse.setY( m->y() );
 
-//    if( m->buttons() & Qt::RightButton )
-//    {
-//        mn_options->exec( m->globalPos() );
-//    }
+    if( m->buttons() & Qt::RightButton )
+    {
+        mn_options->exec( m->globalPos() );
+    }
 
 }
 
@@ -710,4 +731,79 @@ void CanvasComputation::setColorMapConstant()
     flowvisualizationc->setColorMap( "CONSTANT" );
     sendColorsGPU();
     updateGL();
+}
+
+
+void CanvasComputation::sendSurfaceGPU()
+{
+
+
+    glPointSize( 3.0f );
+    glGenVertexArrays( 1, &vao_mesh );
+    glBindVertexArray( vao_mesh );
+
+
+
+    glGenBuffers( 2, bf_mesh );
+
+
+        vector< GLfloat > vertices;
+        vector< GLuint > lines;
+        flowvisualizationc->getSurface( vertices, lines );
+
+
+        number_of_vertices = (GLuint)  vertices.size();
+
+        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 0 ] );
+        glBufferData( GL_ARRAY_BUFFER, number_of_vertices*sizeof( GL_FLOAT ), vertices.data(), GL_STATIC_DRAW );
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
+        glEnableVertexAttribArray( 0 );
+
+
+        if( lines.empty() == false )
+        {
+            number_of_lines = (GLint) lines.size();
+            glGenBuffers( 1, &bf_lines );
+            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_lines );
+            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( GLuint ) , lines.data(), GL_STATIC_DRAW );
+
+        }
+
+
+        glBindBuffer( GL_ARRAY_BUFFER, 0 );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+
+    glBindVertexArray( 0 );
+
+
+}
+
+
+void CanvasComputation::setSurfacePositionModel()
+{
+    float xm, xM, ym, yM, zm, zM;
+    flowvisualizationc->getSurfaceBoundingBox( xm, xM, ym, yM, zm, zM );
+
+    model_center.setX( ( xm + xM )*0.5f );
+    model_center.setY( ( ym + yM )*0.5f );
+    model_center.setZ( ( zm + zM )*0.5f );
+
+}
+
+
+void CanvasComputation::selectProperty( int id, bool option, int option_color )
+{
+    FlowProperty p = flowvisualizationc->getPropertyfromMap( id );
+    std::string name;
+    std::string type;
+
+   p.getName( name );
+   p.getType( type );
+   if( option == true )
+        sendColorsGPU( name, type, option_color );
+   else
+       sendColorsGPU();
+
+
 }

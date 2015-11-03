@@ -24,7 +24,7 @@ QVector4D ColorMap::getColor( COLORMAP map, float value, float low, float high )
 
 QVector4D ColorMap::getColor(const std::vector< QVector4D > &map, float value, float low, float high ) const
 {
-    int ncolors = map.size();
+    int ncolors = (int) map.size();
 
     if( low > high ) std::swap( low, high );
 

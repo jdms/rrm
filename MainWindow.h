@@ -10,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QLabel>
+#include <QFileDialog>
 
 #include "Canvas2D.h"
 #include "Canvas3D.h"
@@ -55,9 +56,19 @@ class MainWindow : public QMainWindow
         void changeColorLine();
 
         void doComputation();
-        void open_surface_file();
-        void create_mesh_volumetric();
-        void compute_property( int id );
+        void openSurfaceFile();
+        void createMeshVolumetric();
+        void selectProperty( int id );
+        void computePressure();
+        void computeVelocity();
+        void computeTOF();
+
+
+    public slots:
+
+        void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
+
+
 
 
 
@@ -69,6 +80,15 @@ class MainWindow : public QMainWindow
         void selectMode();
         void sketchingMode();
 
+        void sendSurfaceFile( std::string filename );
+        void computeVolume();
+
+
+        void computePressureProperty();
+        void computeVelocityProperty();
+        void computeTOFProperty();
+
+        void selectFlowProperty( int, bool& );
 
 
 
@@ -95,6 +115,10 @@ class MainWindow : public QMainWindow
         QAction *ac_removeabove;
         QAction *ac_removebelow;
 
+        QAction *ac_compute_pressure;
+        QAction *ac_compute_velocity;
+        QAction *ac_compute_tof;
+
         QAction *ac_select;
         QWidgetAction *ac_sketchcolor;
 
@@ -111,6 +135,7 @@ class MainWindow : public QMainWindow
         QAction *ac_open_surface;
         QAction *ac_compute_volumetric;
         QComboBox *cb_compute_property;
+        QComboBox *cb_coloroption_vector;
 
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;
