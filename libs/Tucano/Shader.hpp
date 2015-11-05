@@ -29,6 +29,8 @@
 #include <vector>
 #include <Eigen/Dense>
 
+
+
 using namespace std;
 
 namespace Tucano
@@ -44,7 +46,7 @@ namespace Tucano
 class Shader {
 
 private:
-
+	
     /// Stores an user mainteined identification for the shader. If the shader is created with the autoloader, the name is equal to the filename, without extensions.
     string shaderName;
 

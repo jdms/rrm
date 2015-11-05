@@ -116,8 +116,6 @@ void MainWindow::createActions()
     cb_coloroption_vector->setEnabled( false );
 
     connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectProperty( int ) ) );
-
-
 }
 
 
@@ -199,32 +197,6 @@ void MainWindow::create2DModule()
 
 }
 
-void MainWindow::create3DModule()
-{
-
-    dc_3DModule = new QDockWidget( this );
-    dc_3DModule->setAllowedAreas( Qt::RightDockWidgetArea );
-    dc_3DModule->setWindowTitle( "3D View" );
-
-    QGLFormat fmt;
-    fmt.setVersion( 3, 0 );
-    fmt.setProfile( QGLFormat::CoreProfile);
-
-
-    QFrame *fr = new QFrame( this );
-    fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
-
-
-    //Canvas3D *canvas3d = new Canvas3D( fmt, fr );
-    QHBoxLayout *hb_canvas3d = new QHBoxLayout( this );
-    //hb_canvas3d->addWidget( canvas3d );
-
-    fr->setLayout( hb_canvas3d );
-    dc_3DModule->setWidget( fr );
-    addDockWidget( Qt::RightDockWidgetArea, dc_3DModule );
-
-}
-
 void MainWindow::createComputationModule()
 {
 
@@ -237,9 +209,9 @@ void MainWindow::createComputationModule()
     fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
 
 
-    QGLFormat fmt;
-    fmt.setVersion( 3, 3 );
-    fmt.setProfile( QGLFormat::CoreProfile);
+//    QGLFormat fmt;
+//    fmt.setVersion( 3, 3 );
+//    fmt.setProfile( QGLFormat::CoreProfile);
 
 //    canvas_computation = new CanvasComputation( fmt, this );
 //    canvas_computation->setMinimumHeight( 350 );

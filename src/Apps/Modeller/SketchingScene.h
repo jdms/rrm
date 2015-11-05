@@ -1,7 +1,6 @@
 #ifndef SKETCHINGSCENE_H
 #define SKETCHINGSCENE_H
 
-#include <QtGui>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
@@ -51,8 +50,6 @@ class SketchingScene: public QGraphicsScene
 
         void createBoundary();
         void updateAllElements();
-
-
 
     private:
 

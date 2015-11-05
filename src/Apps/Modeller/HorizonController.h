@@ -8,14 +8,13 @@
 #include <QGraphicsItem>
 
 
-#include "../../Apps/Modeller/InputSketch.h"
+#include "Modeller/InputSketch.h"
 
 
 using namespace std;
 
 class HorizonController: public QGraphicsPathItem
 {
-
 
     public:
 

@@ -1,34 +1,33 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QDockWidget>
-#include <QToolBar>
-#include <QColorDialog>
-#include <QWidgetAction>
-#include <QToolButton>
-#include <QHBoxLayout>
-#include <QComboBox>
-#include <QLabel>
-#include <QFileDialog>
-#include <QDialog>
-#include <QToolBox>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QDialogButtonBox>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QWidgetAction>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QToolBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QDialogButtonBox>
 
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QStyle>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QStyle>
 
-#include <QtOpenGL/QGLFormat>
+#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 
 #include "Modeller/Canvas2D.h"
  /// ZHAO -----// ZHAO
 //#include "Simulator/canvasComputation.h"
 //#include "Simulator/Canvas3D.h"
  /// ZHAO -----// ZHAO
-
 
 class MainWindow : public QMainWindow
 {
@@ -38,7 +37,6 @@ class MainWindow : public QMainWindow
 
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
-
 
     protected:
 
@@ -73,7 +71,6 @@ class MainWindow : public QMainWindow
         void changeColorLine();
 
         /// ZHAO -----// ZHAO
-
 //        void doComputation();
 //        void openSurfaceFile();
 //        void openUserInputFile();
@@ -195,6 +192,9 @@ class MainWindow : public QMainWindow
         QAction *ac_wdwsketching;
         QAction *ac_window3d;
         QAction *ac_flowcomputation;
+
+        /// Sketching Surface and Extrusion
+        GLWidget *glWidget;
 
 };
 

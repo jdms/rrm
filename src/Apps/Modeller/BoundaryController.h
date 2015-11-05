@@ -11,7 +11,7 @@ using namespace std;
 
 class BoundaryController: public QGraphicsPathItem
 {
-
+	
     public:
 
         BoundaryController( int width, int height );

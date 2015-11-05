@@ -9,7 +9,7 @@ using namespace std;
 
 class InputSketch : public QGraphicsPathItem
 {
-
+	
     public:
 
         InputSketch( QColor color );
