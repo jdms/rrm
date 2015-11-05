@@ -21,6 +21,9 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
 
+/// CrossSection
+#include "Model/CrossSection.hpp"
+
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 
 #include "Modeller/Canvas2D.h"
@@ -90,17 +93,20 @@ class MainWindow : public QMainWindow
 
     public slots:
 
+        //void addCurve( QPolygonF& curve);
+
         //void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
 
     signals:
 
+
+    	/// CrossSection
         void applyremoveabove();
         void applyremovebelow();
         void setColor( int R, int G, int B );
 
         void selectMode();
         void sketchingMode();
-
         /// ZHAO -----// ZHAO
 
 //        void sendSurfaceFile( std::string filename );
@@ -192,6 +198,9 @@ class MainWindow : public QMainWindow
         QAction *ac_wdwsketching;
         QAction *ac_window3d;
         QAction *ac_flowcomputation;
+
+        /// CrossSection
+        RRM::CrossSection<qreal> cross_section_;
 
         /// Sketching Surface and Extrusion
         GLWidget *glWidget;

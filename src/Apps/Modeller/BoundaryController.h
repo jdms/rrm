@@ -17,6 +17,8 @@ class BoundaryController: public QGraphicsPathItem
         BoundaryController( int width, int height );
         ~BoundaryController();
 
+        void setNewBoundary (qreal x, qreal y,qreal width, qreal height);
+
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
 

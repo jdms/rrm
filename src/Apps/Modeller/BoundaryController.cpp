@@ -27,6 +27,19 @@ BoundaryController::~BoundaryController()
 }
 
 
+void BoundaryController::setNewBoundary (qreal x, qreal y,qreal width, qreal height)
+{
+
+	    boundary.clear();
+
+	    QPainterPath path0;
+
+	    path0.addRect(x,y,width,height);
+
+	    boundary.push_back( path0);
+
+}
+
 void BoundaryController::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
 {
 
