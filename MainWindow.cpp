@@ -29,6 +29,8 @@ void MainWindow::createWindow()
     createComputationModule();
     createToolbarComputation();
 
+    createInputDialog();
+
     emit setColor( 0, 0, 128 );
 
     statusBar()->showMessage( "Status" );
@@ -38,41 +40,41 @@ void MainWindow::createWindow()
 void MainWindow::createActions()
 {
     ac_new = new QAction( tr( "&New" ), this );
-    ac_new->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/page_white.png" ) );
+    ac_new->setIcon( QIcon( ":/images/icons/page_white.png" ) );
 
     ac_open = new QAction( tr( "&Open" ), this );
-    ac_open->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/folder.png" ) );
+    ac_open->setIcon( QIcon( ":/images/icons/folder.png" ) );
     ac_open->setDisabled( true );
 
     ac_save = new QAction( tr( "&Save" ), this );
-    ac_save->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/diskette.png" ) );
+    ac_save->setIcon( QIcon( ":/images/icons/diskette.png" ) );
     ac_save->setDisabled( true );
 
     ac_export = new QAction( tr( "&Export" ), this );
-    ac_export->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/document_export.png" ) );
+    ac_export->setIcon( QIcon( ":/images/icons/document_export.png" ) );
     ac_export->setDisabled( true );
 
     ac_exit = new QAction( tr( "E&xit" ), this );
-    ac_exit->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/door_out.png" ) );
+    ac_exit->setIcon( QIcon( ":/images/icons/door_out.png" ) );
 
     ac_compute = new QAction( tr( "&Compute" ), this );
-    ac_compute->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/sum.png" ) );
+    ac_compute->setIcon( QIcon( ":/images/icons/sum.png" ) );
 
     ac_contents = new QAction( tr( "Contents" ), this );
     ac_contents->setDisabled( true );
 
     ac_about = new QAction( tr( "&About" ), this );
 
-    ac_removeabove = new QAction( tr( "Remove Above" ), this );;
-    ac_removeabove->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/removeabove.png" ) );
+    ac_removeabove = new QAction( tr( "Remove Above Intersection" ), this );;
+    ac_removeabove->setIcon( QIcon( ":/images/icons/removeabove.png" ) );
     ac_removeabove->setCheckable( true );
 
-    ac_removebelow = new QAction( tr( "Remove Below" ), this );;
-    ac_removebelow->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/removebelow.png" ) );
+    ac_removebelow = new QAction( tr( "Remove Below Intersection" ), this );;
+    ac_removebelow->setIcon( QIcon( ":/images/icons/removebelow.png" ) );
     ac_removebelow->setCheckable( true );
 
     ac_select = new QAction( tr( "Select" ), this );;
-    ac_select->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/pointer.png" ) );
+    ac_select->setIcon( QIcon( ":/images/icons/pointer.png" ) );
     ac_select->setCheckable( true );
 
     cd_pickercolor = new QColorDialog();
@@ -82,14 +84,19 @@ void MainWindow::createActions()
     ac_sketchcolor = new QWidgetAction( this );
     ac_sketchcolor->setDefaultWidget( cd_pickercolor );
 
-    ac_open_surface  = new QAction( tr( "Open Surface..." ), this );;
-    ac_compute_volumetric  = new QAction( tr( "Compute Volumetric..." ), this );;
+    ac_open_surface = new QAction( tr( "Open Surface..." ), this );;
+    ac_open_userinput = new QAction( tr( "Open User Input..." ), this );;
+    ac_compute_volumetric  = new QAction( tr( "Volumetric Meshing..." ), this );;
 
 
-   ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );;
-   ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );;
-   ac_compute_tof = new QAction( tr( "Compute TOF" ), this );;
+   ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
+   ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
+   ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
 
+
+   ac_wdwsketching = new QAction( tr( "Window Sketching" ), this );
+   ac_window3d = new QAction( tr( "Window 3D" ), this );
+   ac_flowcomputation = new QAction( tr( "Window Flow Computation" ), this );
 
     connect( ac_new, SIGNAL( triggered() ), this, SLOT( newSection() ) );
     connect( ac_removeabove, SIGNAL( triggered() ), this, SLOT( applyRemoveAbove() ) );
@@ -100,6 +107,7 @@ void MainWindow::createActions()
     connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
 
     connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( openSurfaceFile() ) );
+    connect( ac_open_userinput, SIGNAL( triggered() ), this, SLOT( openUserInputFile() ) );
     connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( createMeshVolumetric() ) );
 
     connect( ac_compute_pressure, SIGNAL( triggered() ), this, SLOT( computePressure() ) );
@@ -115,7 +123,10 @@ void MainWindow::createActions()
     cb_coloroption_vector->setEnabled( false );
 
     connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectProperty( int ) ) );
+
+
 }
+
 
 void MainWindow::createMenuBar()
 {
@@ -129,6 +140,14 @@ void MainWindow::createMenuBar()
 
     QMenu *mn_tools = menuBar()->addMenu( tr( "&Tools" ) );
     mn_tools->addAction( ac_compute );
+
+    QMenu *mn_windows = menuBar()->addMenu( tr( "&Windows" ) );
+    mn_windows->addAction( ac_wdwsketching );
+    mn_windows->addAction( ac_window3d );
+    mn_windows->addAction( ac_flowcomputation );
+    ac_wdwsketching->setCheckable( true );
+    ac_window3d->setCheckable( true );
+    ac_flowcomputation->setCheckable( true );
 
     QMenu *mn_help = menuBar()->addMenu( tr( "&Help" ) );
     mn_help->addAction( ac_contents );
@@ -155,7 +174,7 @@ void MainWindow::createToolbar()
 
     tbt_colorsketch = new QToolButton;
     tbt_colorsketch->setPopupMode( QToolButton::MenuButtonPopup );
-    tbt_colorsketch->setIcon( QIcon( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/images/border_color.png" ) );
+    tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
 
     mn_pickercolor = new QMenu();
     mn_pickercolor->addAction( ac_sketchcolor );
@@ -242,22 +261,36 @@ void MainWindow::createComputationModule()
 
     dc_computation->setWidget( mw_canvas_computation );
     dc_computation->setVisible( false );
+    addDockWidget( Qt::RightDockWidgetArea, dc_computation );
+
 
 }
 
 void MainWindow::createToolbarComputation()
 {
 
-    QLabel *lb_name_property = new QLabel( tr( "Property" ) );
+    QLabel *lb_name_property = new QLabel( tr( "  Property  " ) );
+    QLabel *wd_space = new QLabel("  ");
 
     tlb_workflow_flow = addToolBar( tr( "Workflow" ) );
-    tlb_workflow_flow->addAction( ac_open_surface );
+
+    tlb_workflow_flow->addAction( ac_open_userinput );
+//    tlb_workflow_flow->addAction( ac_open_surface );
+    tlb_workflow_flow->addSeparator();
+
     tlb_workflow_flow->addAction( ac_compute_volumetric );
     tlb_workflow_flow->addAction( ac_compute_pressure );
     tlb_workflow_flow->addAction( ac_compute_velocity );
     tlb_workflow_flow->addAction( ac_compute_tof );
+
+    tlb_workflow_flow->addSeparator();
+
     tlb_workflow_flow->addWidget( lb_name_property );
     tlb_workflow_flow->addWidget( cb_compute_property );
+
+
+
+    tlb_workflow_flow->addWidget( wd_space );
     tlb_workflow_flow->addWidget( cb_coloroption_vector );
 
     mw_canvas_computation->addToolBar( tlb_workflow_flow );
@@ -283,6 +316,8 @@ void MainWindow::applyRemoveAbove()
     ac_removebelow->setChecked( false );
     emit applyremoveabove();
 
+    statusBar()->showMessage( "Applying remove above intersection" );
+
 }
 
 void MainWindow::applyRemoveBelow()
@@ -292,6 +327,8 @@ void MainWindow::applyRemoveBelow()
 
     ac_removeabove->setChecked( false );
     emit applyremovebelow();
+
+    statusBar()->showMessage( "Applying remove below intersection" );
 }
 
 void MainWindow::pointerSelection()
@@ -331,7 +368,6 @@ void MainWindow::doComputation()
 {
     addDockWidget( Qt::RightDockWidgetArea, dc_computation );
     dc_computation->show();
-    canvas_computation->showData();
 }
 
 
@@ -345,24 +381,47 @@ void MainWindow::clearComputation()
 
 void MainWindow::openSurfaceFile()
 {
+//    QString filename = QFileDialog::getOpenFileName( this );
+//    if( filename.isEmpty() == true ) return;
+
+//    statusBar()->showMessage( "Open surface file" );
+
+//    QStringList list = filename.split( "\." );
+//    QString name_of_file = list[ 0 ];
+//    QString extension_of_file = list[ 1 ];
+
+//    emit sendSurfaceFile( name_of_file.toStdString() );
+
+//    canvas_computation->showSurface();
+
+//    statusBar()->showMessage( "Surface file loaded" );
+}
+
+void MainWindow::openUserInputFile()
+{
+
+    dg_inputuser->show();
+
+    /*
+    statusBar()->showMessage( "Open user input file" );
+
     QString filename = QFileDialog::getOpenFileName( this );
     if( filename.isEmpty() == true ) return;
 
+    emit sendInputUserFile( filename.toStdString() );
 
-    QStringList list = filename.split( "\." );
-    QString name_of_file = list[ 0 ];
-    QString extension_of_file = list[ 1 ];
+    statusBar()->showMessage( "User input file loaded" );
+    */
 
 
-//    cout << name_of_file.toStdString().c_str() << endl;
-//    cout << extension_of_file.toStdString().c_str() << endl;
-
-    emit sendSurfaceFile( name_of_file.toStdString() );
 }
 
 void MainWindow::createMeshVolumetric()
 {
     emit computeVolume();
+    canvas_computation->showVolumetricGrid();
+
+    statusBar()->showMessage( "Volumetric meshing done" );
 }
 
 void MainWindow::selectProperty( int id )
@@ -386,17 +445,23 @@ void MainWindow::selectProperty( int id )
 void MainWindow::computePressure()
 {
     emit computePressureProperty();
+
+    statusBar()->showMessage( "Pressure computed" );
 }
 
 void MainWindow::computeVelocity()
 {
 
     emit computeVelocityProperty();
+
+    statusBar()->showMessage( "Velocity computed" );
 }
 
 void MainWindow::computeTOF()
 {
     emit computeTOFProperty();
+
+    statusBar()->showMessage( "TOF computed" );
 }
 
 void MainWindow::updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells )
@@ -412,4 +477,137 @@ void MainWindow::updateComboBox( std::vector< std::string > ppoints, std::vector
         cb_compute_property->addItem( pcells[ i ].c_str() );
 
 
+}
+
+
+void MainWindow::createInputDialog()
+{
+    dg_inputuser = new QDialog( this );
+    tb_inputuser = new QToolBox();
+
+    createWidgetInputFiles();
+    createWidgetInputTolerance();
+
+    tb_inputuser->addItem( wd_inputfiles, tr( "Input Files") );
+    tb_inputuser->addItem( wd_inputtolerance, tr( "Tolerance")  );
+
+    btns_inputdialog = new QDialogButtonBox(QDialogButtonBox::Ok
+                                           | QDialogButtonBox::Cancel);
+
+    QFrame *ln_inputdialog = new QFrame();
+    ln_inputdialog->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+
+    QVBoxLayout *vb_inputdialog = new QVBoxLayout();
+    vb_inputdialog->addWidget( tb_inputuser );
+    vb_inputdialog->addWidget( ln_inputdialog );
+    vb_inputdialog->addWidget( btns_inputdialog );
+
+    dg_inputuser->setLayout( vb_inputdialog );
+
+    connect( btn_finduserfile, SIGNAL( pressed() ), this, SLOT( findUserFile() ));
+    connect( btn_findsurfacefile, SIGNAL( pressed() ), this, SLOT( findSurfaceFile() ));
+    connect( btns_inputdialog, SIGNAL( accepted() ), this, SLOT( acceptInputUser() ));
+    connect( btns_inputdialog, SIGNAL( rejected() ), this, SLOT( rejectInputUser() ) );
+
+    connect( ac_wdwsketching, SIGNAL( toggled(bool) ), dc_2DModule, SLOT( setVisible(bool) ) );
+    connect( ac_window3d, SIGNAL( toggled(bool) ), dc_3DModule, SLOT( setVisible(bool) ) );
+    connect( ac_flowcomputation, SIGNAL( toggled(bool) ), dc_computation, SLOT( setVisible(bool) ) );
+
+
+}
+
+
+void MainWindow::createWidgetInputFiles()
+{
+    wd_inputfiles = new QWidget();
+
+    QLabel *lb_userfile = new QLabel( "User input: " );
+    edt_userfile = new QLineEdit();
+    btn_finduserfile = new QPushButton();
+
+    QLabel *lb_surfacefile = new QLabel( "Surface file: " );
+    edt_surfacefile = new QLineEdit();
+    btn_findsurfacefile = new QPushButton();
+
+    QHBoxLayout *hb_userfile = new QHBoxLayout();
+    hb_userfile->addWidget( lb_userfile );
+    hb_userfile->addWidget( edt_userfile );
+    hb_userfile->addWidget( btn_finduserfile );
+
+    QHBoxLayout *hb_surfacefile = new QHBoxLayout();
+    hb_surfacefile->addWidget( lb_surfacefile );
+    hb_surfacefile->addWidget( edt_surfacefile );
+    hb_surfacefile->addWidget( btn_findsurfacefile );
+
+    QVBoxLayout *vb_inputfiles = new QVBoxLayout();
+    vb_inputfiles->addLayout( hb_userfile );
+    vb_inputfiles->addLayout( hb_surfacefile );
+
+    wd_inputfiles->setLayout( vb_inputfiles );
+
+}
+
+void MainWindow::createWidgetInputTolerance()
+{
+    wd_inputtolerance = new QWidget();
+
+    QLabel *lb_tolerance = new QLabel( "User input: " );
+    edt_tolerance1 = new QLineEdit();
+    edt_tolerance2 = new QLineEdit();
+
+    QHBoxLayout *hb_toleranceinput = new QHBoxLayout();
+    hb_toleranceinput->addWidget( lb_tolerance );
+    hb_toleranceinput->addWidget( edt_tolerance1 );
+    hb_toleranceinput->addWidget( edt_tolerance2 );
+
+    wd_inputtolerance->setLayout( hb_toleranceinput );
+
+}
+
+void MainWindow::findUserFile()
+{
+    QString filename = QFileDialog::getOpenFileName( this );
+    if( filename.isEmpty() == true ) return;
+
+    edt_userfile->setText( filename );
+}
+
+void MainWindow::findSurfaceFile()
+{
+    QString filename = QFileDialog::getOpenFileName( this );
+    if( filename.isEmpty() == true ) return;
+
+    edt_surfacefile->setText( filename );
+
+
+}
+
+void MainWindow::acceptInputUser()
+{
+    QString filename_input = edt_userfile->text();
+    QString filename_surface = edt_surfacefile->text();
+
+    QStringList list = filename_surface.split( "\." );
+    QString name_of_file = list[ 0 ];
+    QString extension_of_file = list[ 1 ];
+
+    float tol1 = edt_tolerance1->text().toFloat();
+    float tol2 = edt_tolerance2->text().toFloat();
+
+    sendInputUser( filename_input.toStdString(), name_of_file.toStdString(), tol1, tol2  );
+    canvas_computation->showSurface();
+
+    statusBar()->showMessage( "Surface loaded" );
+
+    dg_inputuser->close();
+}
+
+void MainWindow::rejectInputUser()
+{
+    edt_userfile->clear();
+    edt_surfacefile->clear();
+    edt_tolerance1->clear();
+    edt_tolerance2->clear();
+
+    dg_inputuser->close();
 }

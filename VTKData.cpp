@@ -51,43 +51,6 @@ bool VTKData::getValues( QRegExp RegExp, QString line, vector< std::string > &da
 
 bool VTKData::readUnstructuredGridFile( std::string& filename )
 {
-/*
-    std::ifstream file;
-    file.open( filename.c_str() );
-    if( !file.is_open() ) return false;
-
-
-    std::cout << "-- Begin: parsing file." << std::endl;
-
-
-    bool error = false;
-    UNSTRUCTUREDGRID_STATES state =  UNSTRUCTUREDGRID_STATES::HEADER0;
-
-
-    std::string line;
-    std::getline( file, line );
-
-    while ( !file.eof() ) {
-
-        QString qline( line.c_str() );
-        bool local_error = !parseVTKData( state, qline );
-        error = ( error || local_error );
-
-        std::getline( file, line );
-
-    }
-
-
-    is_empty = false;
-
-    if( error == true )
-    {
-        std::cout << "-- Error: parsing fail." << std::endl << std::endl;
-        return false;
-    }
-
-*/
-
 
     std::ifstream file;
     file.open( filename.c_str() );
@@ -106,7 +69,6 @@ bool VTKData::readUnstructuredGridFile( std::string& filename )
 
     while ( !file.eof() ) {
 
-//        QString qline( line.c_str() );
         int local_error = parseVTKData_new( file, state, /*qline*/line );
 
 
@@ -115,7 +77,6 @@ bool VTKData::readUnstructuredGridFile( std::string& filename )
             error = local_error;
         }
 
-//        cout << line.c_str() << endl;
     }
 
 
@@ -680,6 +641,17 @@ VTKData::FILE_STATES VTKData::readDataSetValues()
 }
 
 
+void VTKData::addCell( int id, int type, vector< int >& vertices )
+{
+    Cell cell;
+    cell.id = id;
+    cell.type = type;
+    cell.vertices = vertices;
+
+    vector_cells.push_back( cell );
+
+}
+
 void VTKData::getFlowProperty( std::string name, std::string type, FlowProperty& property )
 {
 
@@ -977,3 +949,120 @@ void VTKData::getMaxMinCoordinateCellProperty( int id, vector< float >& maxmin )
 }
 
 
+void VTKData::writeFile( ofstream& file ) const
+{
+
+    file <<  "# vtk DataFile Version " << file_version.c_str() << endl;
+    file << file_comments.c_str() << endl;
+    file << file_format.c_str() << endl;
+    file << "DATASET " << dataset_type.c_str() << endl;
+    file << "POINTS " << number_of_points << " " << format_points.c_str() << endl;
+
+    int npoints = number_of_points/3;
+    for( int i = 0; i < npoints; ++i )
+        file << vector_points[ 3*i ] << " " << vector_points[ 3*i + 1 ] << " " << vector_points[ 3*i + 2 ] << endl;
+
+    file << endl;
+    file << "CELLS " << number_of_cells << " " << list_cells_size << endl;
+
+    for( int i = 0; i < number_of_cells; ++i )
+    {
+        Cell cell = vector_cells[ i ];
+        int nvertices = cell.vertices.size();
+
+        file << nvertices ;
+        for( int j = 0; j < nvertices; j++ )
+            file << " " << cell.vertices[ j ];
+
+    }
+
+
+    file << endl;
+    file << "CELL_TYPES " << number_of_cells << endl;
+
+    for( int i = 0; i < number_of_cells; ++i )
+    {
+        Cell cell = vector_cells[ i ];
+        file << cell.type ;
+    }
+
+
+    if( vector_point_properties.empty() == false )
+    {
+
+        int npproperties = vector_point_properties.size();
+        file << "POINT_DATA " << number_of_points << endl;
+
+        for( int i = 0; i < npproperties; ++i )
+        {
+            FlowProperty p = vector_point_properties[ i ];
+
+            std::string format;
+            p.getFormat( format );
+            std::string name;
+            p.getName( name );
+
+            file << format << " " << name << " double" << endl;
+
+            if( format.compare( "SCALARS" ) == 0 ){
+                file << "LOOKUP_TABLE" << lookuptable[ i ] << endl;
+
+                vector< float > values;
+                p.getValues( values );
+                for( int j = 0; j < number_of_points; ++j )
+                    file << values[ j ] << endl;
+
+            }
+            else if( format.compare( "VECTORS" ) == 0 ){
+
+                vector< float > values;
+                p.getValues( values );
+                for( int j = 0; j < number_of_points; ++j )
+                    file << values[ 3*j ] << " " << values[ 3*j + 1 ] << " " << values[ 3*j + 2 ] << endl;
+
+            }
+        }
+
+    }
+
+    file << endl;
+
+    if( vector_cell_properties.empty() == false )
+    {
+
+        int npproperties = vector_cell_properties.size();
+        file << "CELL_DATA " << number_of_cells << endl;
+
+        for( int i = 0; i < npproperties; ++i )
+        {
+            FlowProperty p = vector_cell_properties[ i ];
+
+            std::string format;
+            p.getFormat( format );
+            std::string name;
+            p.getName( name );
+
+            file << format << " " << name << " double" << endl;
+
+            if( format.compare( "SCALARS" ) == 0 ){
+                file << "LOOKUP_TABLE" << lookuptablecell[ i ] << endl;
+
+                vector< float > values;
+                p.getValues( values );
+                for( int j = 0; j < number_of_cells; ++j )
+                    file << values[ j ] << endl;
+
+            }
+            else if( format.compare( "VECTORS" ) == 0 ){
+
+                vector< float > values;
+                p.getValues( values );
+                for( int j = 0; j < number_of_cells; ++j )
+                    file << values[ 3*j ] << " " << values[ 3*j + 1 ] << " " << values[ 3*j + 2 ] << endl;
+
+            }
+        }
+
+    }
+
+}

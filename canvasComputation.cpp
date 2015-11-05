@@ -15,7 +15,9 @@ CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLW
     createActions();
     createPopupMenu();
 
+    connect( parent, SIGNAL( sendInputUser( std::string, std::string, float, float ) ), flowvisualizationc, SLOT( getUserInput( std::string, std::string, float, float ) ) );
     connect( parent, SIGNAL( sendSurfaceFile( std::string ) ), flowvisualizationc, SLOT( openSurfaceFile( std::string ) ) );
+    connect( parent, SIGNAL( sendInputUserFile( std::string ) ), flowvisualizationc, SLOT( openUserInputFile( std::string ) ) );
     connect( parent, SIGNAL( computeVolume() ), flowvisualizationc, SLOT( computeVolumetricMesh() ) );
     connect( parent, SIGNAL( computeFlowProperties() ), flowvisualizationc, SLOT( computeFlowProperties() ) );
     connect( parent, SIGNAL( computePressureProperty() ), flowvisualizationc, SLOT( computePressure() ) );
@@ -295,8 +297,9 @@ void CanvasComputation::paintGL()
 void CanvasComputation::initializeShaders()
 {
 
-    std::string vertex_shader_string = read_shader_file( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/vertex_shader.vert" );
-    std::string fragment_shader_string = read_shader_file( "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/fragment_shader.frag" );
+
+    std::string vertex_shader_string = read_shader_file( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/vertex_shader.vert" );
+    std::string fragment_shader_string = read_shader_file( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/fragment_shader.frag" );
 
     const char *vertex_shader_source = vertex_shader_string.c_str();
     const char *fragment_shader_source = fragment_shader_string.c_str();
@@ -388,7 +391,6 @@ void CanvasComputation::sendMeshGPU()
         glEnableVertexAttribArray( 1 );
 
 
-
         vector< GLuint > lines;
         flowvisualizationc->getWireframe( lines );
 
@@ -468,8 +470,6 @@ void CanvasComputation::setPositionModel()
     model_center.setY( ( ym + yM )*0.5f );
     model_center.setZ( ( zm + zM )*0.5f );
 
-//    float max_val = std::max( std::max( xM - xm, yM - ym ), ( zM - zm ) );
-//    diameter = sqrt( 2*max_val*max_val );
 }
 
 
@@ -503,7 +503,7 @@ void CanvasComputation::setupMatrices()
     QVector4D translation = QVector4D( translation_vector.x(), translation_vector.y(), 0.0f, 1.f );
     QMatrix4x4 translation_matrix;
     translation_matrix.setToIdentity();
-    translation_matrix.translate( QVector3D( -model_center.x() - translation.x(), -model_center.y() -  translation.y(), -model_center.z() - translation_vector.z() )  );
+    translation_matrix.translate( QVector3D( -model_center.x() - translation.x(), -model_center.y() -  translation.y(), -5*model_center.z()  )  );
     vmatrix = translation_matrix *vmatrix;
 
     QMatrix4x4 mmatrix;
@@ -517,14 +517,12 @@ void CanvasComputation::setupMatrices()
 }
 
 
-void CanvasComputation::showData()
+void CanvasComputation::showVolumetricGrid()
 {
 //    flowvisualizationc->readData();
-
 //    fillMenuProperties();
-
-//    sendMeshGPU();
-//    setPositionModel();
+    sendMeshGPU();
+    setPositionModel();
 
     updateGL();
 }
@@ -532,7 +530,6 @@ void CanvasComputation::showData()
 
 void CanvasComputation::drawModel()
 {
-//    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     glBindVertexArray( vao_mesh );
 
@@ -625,7 +622,7 @@ void CanvasComputation::mousePressEvent( QMouseEvent *m )
     previous_mouse.setX( m->x() );
     previous_mouse.setY( m->y() );
 
-    if( m->buttons() & Qt::RightButton )
+    if( ( m->buttons() & Qt::RightButton ) && ( m->modifiers() == Qt::ControlModifier ) )
     {
         mn_options->exec( m->globalPos() );
     }
@@ -749,7 +746,7 @@ void CanvasComputation::sendSurfaceGPU()
 
         vector< GLfloat > vertices;
         vector< GLuint > lines;
-        flowvisualizationc->getSurface( vertices, lines );
+        flowvisualizationc->getPointsSurface( vertices );
 
 
         number_of_vertices = (GLuint)  vertices.size();
@@ -760,6 +757,8 @@ void CanvasComputation::sendSurfaceGPU()
         glEnableVertexAttribArray( 0 );
 
 
+        flowvisualizationc->getWireframeSurface( lines );
+
         if( lines.empty() == false )
         {
             number_of_lines = (GLint) lines.size();
@@ -768,6 +767,20 @@ void CanvasComputation::sendSurfaceGPU()
             glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( GLuint ) , lines.data(), GL_STATIC_DRAW );
 
         }
+
+        vector< GLuint > faces;
+        flowvisualizationc->getTrianglesSurface( faces );
+
+        if( faces.empty() == false )
+        {
+            number_of_faces = (GLint) faces.size();
+
+            glGenBuffers( 1, &bf_faces );
+            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces );
+            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_faces*sizeof( GLuint ) , faces.data(), GL_STATIC_DRAW );
+
+        }
+
 
 
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
@@ -806,4 +819,11 @@ void CanvasComputation::selectProperty( int id, bool option, int option_color )
        sendColorsGPU();
 
 
+}
+
+void CanvasComputation::showSurface()
+{
+    sendSurfaceGPU();
+    setSurfacePositionModel();
+    updateGL();
 }

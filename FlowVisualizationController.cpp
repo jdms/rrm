@@ -5,8 +5,7 @@
 
 FlowVisualizationController::FlowVisualizationController()
 {
-
-
+    clear();
 }
 
 
@@ -84,7 +83,7 @@ void FlowVisualizationController::transformInLines( std::vector< int > cell, vec
 
     int nvertices = (int) cell.size();
 
-    if( nvertices == FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON )
+    if( nvertices == FlowVisualizationController::VERTICESSHAPE::NTETRAHEDRON )
     {
         triangles.push_back( ( unsigned int ) cell[ 0 ] );
         triangles.push_back( ( unsigned int ) cell[ 1 ] );
@@ -116,7 +115,7 @@ void FlowVisualizationController::transformInTriangles( vector< int > cell, vect
 
     int nvertices = (int) cell.size();
 
-    if( nvertices == FlowVisualizationController::VERTICESSHAPE::TETRAHEDRON )
+    if( nvertices == FlowVisualizationController::VERTICESSHAPE::NTETRAHEDRON )
     {
         triangles.push_back( ( unsigned int ) cell[ 0 ] );
         triangles.push_back( ( unsigned int ) cell[ 1 ] );
@@ -153,6 +152,7 @@ void FlowVisualizationController::addPointProperty( std::string name, std::strin
     data.addPointFlowProperty( p );
 
 }
+
 
 void FlowVisualizationController::addCellProperty( std::string name, std::string format, std::string type, int ncoords, vector< float > values )
 {
@@ -236,7 +236,7 @@ void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, floa
 void FlowVisualizationController::getColors( vector< float >& colors, int option  )
 {
 
-
+/*
     if( current_property_type == "POINTS" )
     {
         if( option != 0 ){
@@ -258,13 +258,128 @@ void FlowVisualizationController::getColors( vector< float >& colors, int option
         return;
     }
 
+*/
+
+
+    COLORMAP map;
+
+    if( current_colormap == "CONSTANT" )
+    {
+            map = COLORMAP::CONSTANT;
+            getColorConstant( map, colors );
+            return;
+    }
+    else if( current_colormap == "JET" )
+        map = COLORMAP::JET;
+    else
+        map = COLORMAP::JET;
+
+
+    if( current_property_type == "POINTS" )
+    {
+        if( option != 0 ){
+            getCoordinateColors( map, colors, option );
+            return;
+        }
+
+        getMagnitudeColors( map, colors );
+        return;
+    }
+    else if( current_property_type == "CELLS" )
+    {
+        if( option != 0 ){
+            getCoordinateColorsCells( map, colors, option );
+            return;
+        }
+
+        getMagnitudeColorsCells( map, colors );
+        return;
+    }
 
 
 }
 
 
-void FlowVisualizationController::getMagnitudeColors( vector< float >& colors )
+void FlowVisualizationController::getColorConstant( COLORMAP map, vector< float >& colors )
 {
+    if( current_property_type == "POINTS" )
+    {
+
+        int nvalues = (int) data.getNumberofPoints();
+        for( int i = 0; i < nvalues; ++i )
+        {
+            QVector4D color = colormap.getColor( map, 0, 0, 0 );
+            colors.push_back( color.x() );
+            colors.push_back( color.y() );
+            colors.push_back( color.z() );
+
+        }
+    }
+    else if( current_property_type == "CELLS" )
+    {
+        int npoints = data.getNumberofPoints();
+        colors.resize( 3*npoints );
+
+        for( int i = 0; i < npoints; ++i )
+        {
+
+            QVector4D color = colormap.getColor( map, 0, 0, 0 );
+
+            colors[ 3*i ] = color.x();
+            colors[ 3*i + 1 ] = color.y();
+            colors[ 3*i + 2 ] = color.z();
+
+        }
+
+       }
+}
+
+
+void FlowVisualizationController::getMagnitudeColors( COLORMAP map, vector< float >& colors )
+{
+    if( data.isEmpty() == true ) return;
+
+    FlowProperty p;
+    data.getFlowProperty( current_property, current_property_type, p );
+
+    vector< float > values;
+    p.getValues( values );
+
+
+    float max = p.getMaximum();
+    float min = p.getMinimum();
+
+    int ncoords = p.getNumberofComponents();
+    if( ncoords == 1 )
+    {
+        int nvalues = (int) values.size();
+        for( int i = 0; i < nvalues; ++i )
+        {
+            QVector4D color = colormap.getColor( map, values[ i ], min, max );
+            colors.push_back( color.x() );
+            colors.push_back( color.y() );
+            colors.push_back( color.z() );
+
+        }
+    }
+    else if( ncoords == 3 )
+    {
+
+        int nvalues = (int) values.size()/3;
+        for( int i = 0; i < nvalues; ++i )
+        {
+
+            float value = values[ 3*i ]*values[ 3*i ] + values[ 3*i + 1 ]*values[ 3*i + 1 ] + values[ 3*i + 2 ]*values[ 3*i + 2 ];
+            QVector4D color = colormap.getColor( map, value, min, max );
+            colors.push_back( color.x() );
+            colors.push_back( color.y() );
+            colors.push_back( color.z() );
+
+        }
+    }
+
+
+    /*
     if( data.isEmpty() == true ) return;
 
     COLORMAP map;
@@ -314,22 +429,22 @@ void FlowVisualizationController::getMagnitudeColors( vector< float >& colors )
 
         }
     }
-
+    */
 }
 
 
-void FlowVisualizationController::getCoordinateColors( vector< float >& colors, int option )
+void FlowVisualizationController::getCoordinateColors( COLORMAP map, vector< float >& colors, int option )
 {
     if( data.isEmpty() == true ) return;
 
-    COLORMAP map;
+//    COLORMAP map;
 
-    if( current_colormap == "JET" )
-        map = COLORMAP::JET;
-    else if( current_colormap == "CONSTANT" )
-        map = COLORMAP::CONSTANT;
-    else
-        map = COLORMAP::JET;
+//    if( current_colormap == "JET" )
+//        map = COLORMAP::JET;
+//    else if( current_colormap == "CONSTANT" )
+//        map = COLORMAP::CONSTANT;
+//    else
+//        map = COLORMAP::JET;
 
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
@@ -393,18 +508,18 @@ void FlowVisualizationController::getCoordinateColors( vector< float >& colors, 
 }
 
 
-void FlowVisualizationController::getMagnitudeColorsCells( vector< float >& colors )
+void FlowVisualizationController::getMagnitudeColorsCells( COLORMAP map, vector< float >& colors )
 {
     if( data.isEmpty() == true ) return;
 
-    COLORMAP map;
+//    COLORMAP map;
 
-    if( current_colormap == "JET" )
-        map = COLORMAP::JET;
-    else if( current_colormap == "CONSTANT" )
-        map = COLORMAP::CONSTANT;
-    else
-        map = COLORMAP::JET;
+//    if( current_colormap == "JET" )
+//        map = COLORMAP::JET;
+//    else if( current_colormap == "CONSTANT" )
+//        map = COLORMAP::CONSTANT;
+//    else
+//        map = COLORMAP::JET;
 
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
@@ -494,19 +609,19 @@ void FlowVisualizationController::getMagnitudeColorsCells( vector< float >& colo
 }
 
 
-void FlowVisualizationController::getCoordinateColorsCells( vector< float >& colors, int option )
+void FlowVisualizationController::getCoordinateColorsCells( COLORMAP map, vector< float >& colors, int option )
 {
 
     if( data.isEmpty() == true ) return;
 
-    COLORMAP map;
+//    COLORMAP map;
 
-    if( current_colormap == "JET" )
-        map = COLORMAP::JET;
-    else if( current_colormap == "CONSTANT" )
-        map = COLORMAP::CONSTANT;
-    else
-        map = COLORMAP::JET;
+//    if( current_colormap == "JET" )
+//        map = COLORMAP::JET;
+//    else if( current_colormap == "CONSTANT" )
+//        map = COLORMAP::CONSTANT;
+//    else
+//        map = COLORMAP::JET;
 
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
@@ -733,6 +848,8 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
 
 void FlowVisualizationController::clear()
 {
+    current_colormap = "CONSTANT";
+    property_map.clear();
     /*
      * property_map.clear();
      * data.clear();
@@ -744,12 +861,27 @@ void FlowVisualizationController::openSurfaceFile( std::string filename )
 {
 
     region.readsurfacemeshPOLY( (char *)filename.c_str() );
+    getTetgenioObject();
+
 }
 
+void FlowVisualizationController::openUserInputFile( std::string filename )
+{
+
+    region.tolerance(0.00001, 0.00001);
+    region.userinput( (char *) filename.c_str() );
+
+}
 
 void FlowVisualizationController::computeVolumetricMesh()
 {
     region.buildtetrahedralmesh();
+
+    std::vector< NODE > nodes = region.getnodelist();
+    std::vector< TETRAHEDRON > elements = region.getelementlist();
+
+    loadSurfaceData( nodes, elements );
+
     region.flowpreparation();
 }
 
@@ -769,25 +901,16 @@ void FlowVisualizationController::getSurface( vector< float > points, vector< un
     int *edge_list;
     int npoints = 0;
     int nedges = 0;
-    region.getTrianglesList( npoints, &point_list, nedges, &edge_list );
 
-    for( int i = 0; i < npoints; ++i )
-        points.push_back( point_list[ i ] );
-
-    for( int i = 0; i < nedges; ++i )
-        edges.push_back( ( unsigned int ) edge_list[ i ] );
 }
 
 
 void FlowVisualizationController::getSurfaceBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax )
 {
-    if( data.isEmpty() == true ) return;
 
 
     vector< float > vertices;
-    vector< unsigned int > edges;
-
-    getSurface( vertices, edges );
+    getPointsSurface( vertices );
 
     int npoints = (int) vertices.size()/3;
     if( npoints == 0 ) return;
@@ -902,23 +1025,137 @@ FlowProperty &FlowVisualizationController::getPropertyfromMap( int id )
 }
 
 
-/*int n = in.numberoffacets;
-    tetgenio::facet* list = in.facetlist;
-    for( int i = 0; i < n; ++i )
-    {
-        tetgenio::facet f = list[ i ];
-        int np = f.numberofpolygons;
-        tetgenio::polygon *pl = f.polygonlist;
-        for( int j = 0; j < np; ++j )
-        {
-            tetgenio::polygon p = pl[ j ];
-            int nv = p.numberofvertices;
-            int *verticeslist = p.vertexlist;
+void FlowVisualizationController::getTetgenioObject()
+{
+    region.getTetgenioObject( surface_file );
+}
 
-            for( int k = 0; k < nv; ++k )
-            {
-                int id = verticeslist[ k ];
-                int idj = 0;
-            }
+
+
+void FlowVisualizationController::getTrianglesSurface( vector< unsigned int >& triangles )
+{
+    int nfaces = surface_file.numberoffacets;
+    tetgenio::facet* faces = surface_file.facetlist;
+    for( int i = 0; i < nfaces; ++i )
+    {
+        tetgenio::facet f = faces[ i ];
+
+        int npolygons = f.numberofpolygons;
+        tetgenio::polygon *polygons = f.polygonlist;
+
+        for( int j = 0; j < npolygons; ++j )
+        {
+            tetgenio::polygon p = polygons[ j ];
+            int nvertices = p.numberofvertices;
+            int *vertices = p.vertexlist;
+
+            getTrianglesfromRectangles( nvertices, vertices, triangles );
         }
-    }*/
+
+    }
+
+}
+
+
+void FlowVisualizationController::getTrianglesfromRectangles( int nvertices, int* verticeslist, vector< unsigned int >& triangles  )
+{
+    if( nvertices != 4 ) return;
+
+    triangles.push_back( ( unsigned int )verticeslist[ 0 ] );
+    triangles.push_back( ( unsigned int )verticeslist[ 1 ] );
+    triangles.push_back( ( unsigned int )verticeslist[ 3 ] );
+
+    triangles.push_back( ( unsigned int )verticeslist[ 1 ] );
+    triangles.push_back( ( unsigned int )verticeslist[ 2 ] );
+    triangles.push_back( ( unsigned int )verticeslist[ 3 ] );
+
+}
+
+
+void FlowVisualizationController::getWireframeSurface( vector< unsigned int >& lines )
+{
+
+   int nfaces = surface_file.numberoffacets;
+   tetgenio::facet* faces = surface_file.facetlist;
+   for( int i = 0; i < nfaces; ++i )
+   {
+       tetgenio::facet f = faces[ i ];
+
+       int npolygons = f.numberofpolygons;
+       tetgenio::polygon *polygons = f.polygonlist;
+
+       for( int j = 0; j < npolygons; ++j )
+       {
+           tetgenio::polygon p = polygons[ j ];
+           int nvertices = p.numberofvertices;
+           int *vertices = p.vertexlist;
+
+           if( nvertices != 4 ) continue;
+
+           lines.push_back( vertices[ 0 ] );
+           lines.push_back( vertices[ 1 ] );
+
+           lines.push_back( vertices[ 1 ] );
+           lines.push_back( vertices[ 2 ] );
+
+           lines.push_back( vertices[ 2 ] );
+           lines.push_back( vertices[ 3 ] );
+
+           lines.push_back( vertices[ 3 ] );
+           lines.push_back( vertices[ 0 ] );
+
+       }
+
+   }
+
+}
+
+
+void FlowVisualizationController::getPointsSurface( vector< float >& vertices )
+{
+   int npoints = surface_file.numberofpoints;
+   double *points = surface_file.pointlist;
+
+   for( int i = 0; i < npoints; ++i )
+   {
+       vertices.push_back( (float)points[ 3*i ] );
+       vertices.push_back( (float)points[ 3*i + 1 ] );
+       vertices.push_back( (float)points[ 3*i + 2 ] );
+   }
+
+}
+
+
+void FlowVisualizationController::loadSurfaceData( std::vector< NODE > nodes, std::vector< TETRAHEDRON > elements )
+{
+
+    int npoints = nodes.size();
+    int ncells = elements.size();
+
+    for( int i = 0; i < npoints; ++i )
+        data.addVectorPoint( nodes[ i ].x(), nodes[ i ].y(), nodes[ i ].z() );
+
+    for( int i = 0; i < ncells; ++i )
+    {
+        TETRAHEDRON tet = elements[ i ];
+        vector< int > vertices;
+        vertices.push_back( tet.node( 0 ) );
+        vertices.push_back( tet.node( 1 ) );
+        vertices.push_back( tet.node( 2 ) );
+        vertices.push_back( tet.node( 3 ) );
+
+        data.addCell( i, 10, vertices );
+    }
+
+}
+
+void FlowVisualizationController::getUserInput( std::string file_user, std::string surface_file, float tol1, float tol2 )
+{
+    region.tolerance( tol1, tol2 );
+    region.userinput( (char *) file_user.c_str() );
+    region.readsurfacemeshPOLY( (char *)surface_file.c_str() );
+    getTetgenioObject();
+
+
+}
+

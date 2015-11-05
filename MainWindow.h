@@ -11,6 +11,12 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QFileDialog>
+#include <QDialog>
+#include <QToolBox>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QDialogButtonBox>
+
 
 #include "Canvas2D.h"
 #include "Canvas3D.h"
@@ -45,6 +51,10 @@ class MainWindow : public QMainWindow
 
         void createToolbarComputation();
 
+        void createInputDialog();
+        void createWidgetInputFiles();
+        void createWidgetInputTolerance();
+
 
     protected slots:
 
@@ -57,12 +67,18 @@ class MainWindow : public QMainWindow
 
         void doComputation();
         void openSurfaceFile();
+        void openUserInputFile();
         void createMeshVolumetric();
         void selectProperty( int id );
         void computePressure();
         void computeVelocity();
         void computeTOF();
 
+        void findUserFile();
+        void findSurfaceFile();
+
+        void acceptInputUser();
+        void rejectInputUser();
 
     public slots:
 
@@ -73,6 +89,7 @@ class MainWindow : public QMainWindow
 
 
     signals:
+
         void applyremoveabove();
         void applyremovebelow();
         void setColor( int R, int G, int B );
@@ -81,6 +98,7 @@ class MainWindow : public QMainWindow
         void sketchingMode();
 
         void sendSurfaceFile( std::string filename );
+        void sendInputUserFile( std::string filename );
         void computeVolume();
 
 
@@ -89,6 +107,9 @@ class MainWindow : public QMainWindow
         void computeTOFProperty();
 
         void selectFlowProperty( int, bool& );
+
+
+        void sendInputUser( std::string input_user, std::string surface_file, float tol1, float tol2 );
 
 
 
@@ -134,12 +155,32 @@ class MainWindow : public QMainWindow
         QToolBar *tlb_workflow_flow;
         QAction *ac_open_surface;
         QAction *ac_compute_volumetric;
+        QAction *ac_open_userinput;
         QComboBox *cb_compute_property;
         QComboBox *cb_coloroption_vector;
 
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;
         QToolButton *tbt_colorsketch;
+
+        QDialog* dg_inputuser;
+        QToolBox* tb_inputuser;
+
+        QWidget *wd_inputfiles;
+        QWidget *wd_inputtolerance;
+
+        QLineEdit *edt_userfile;
+        QPushButton *btn_finduserfile;
+        QLineEdit *edt_surfacefile;
+        QPushButton *btn_findsurfacefile;
+        QLineEdit *edt_tolerance1;
+        QLineEdit *edt_tolerance2;
+
+        QDialogButtonBox *btns_inputdialog;
+
+        QAction *ac_wdwsketching;
+        QAction *ac_window3d;
+        QAction *ac_flowcomputation;
 
 };
 

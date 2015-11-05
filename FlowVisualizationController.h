@@ -64,11 +64,12 @@ class FlowVisualizationController: public QObject
         void transformInTriangles( vector< int > cell , vector< unsigned int> &triangles );
         void transformInLines( std::vector< int > cell, vector< unsigned int >& triangles );
 
-
-        void getMagnitudeColors( vector< float >& colors );
-        void getCoordinateColors( vector< float >& colors, int option );
-        void getMagnitudeColorsCells( vector< float >& colors );
-        void getCoordinateColorsCells( vector< float >& colors, int option );
+\
+        void getColorConstant(COLORMAP map, vector< float >& colors );
+        void getMagnitudeColors( COLORMAP map, vector< float >& colors );
+        void getCoordinateColors( COLORMAP map, vector< float >& colors, int option );
+        void getMagnitudeColorsCells( COLORMAP map, vector< float >& colors );
+        void getCoordinateColorsCells( COLORMAP map, vector< float >& colors, int option );
 
 
 
@@ -90,12 +91,25 @@ class FlowVisualizationController: public QObject
         void updatePropertiesNamesVector();
         FlowProperty &getPropertyfromMap( int id );
 
+        void getTetgenioObject();
+
         void clear();
+
+        void getTrianglesSurface( vector< unsigned int >& triangles );
+        void getTrianglesfromRectangles( int nvertices, int* verticeslist, vector< unsigned int >& triangles  );
+        void getWireframeSurface( vector< unsigned int >& lines );
+        void getPointsSurface( vector< float >& vertices );
+
+
+    protected:
+
+        void loadSurfaceData( std::vector< NODE > nodes, std::vector< TETRAHEDRON > elements );
 
 
     public slots:
 
         void openSurfaceFile( std::string filename );
+        void openUserInputFile( std::string filename );
         void computeVolumetricMesh();
         void computeFlowProperties();
 
@@ -104,7 +118,7 @@ class FlowVisualizationController: public QObject
         void computeTOF();
 
         void selectFlowProperty( int id, bool& option );
-
+        void getUserInput( std::string file_user, std::string surface_file, float tol1, float tol2 );
 
 signals:
         void updateComboBox( vector< std::string> , vector< std::string > );
@@ -112,7 +126,7 @@ signals:
 
     protected:
 
-        enum VERTICESSHAPE { TETRAHEDRON = 4 };
+        enum VERTICESSHAPE { NTETRAHEDRON = 4 };
         enum VERTICESPROPERTY { SCALARS = 1, VECTORS = 3 };
 
         std::map< int, FlowProperty > property_map;
@@ -124,6 +138,7 @@ signals:
         ColorMap colormap;
 
         REGION region;
+        tetgenio surface_file;
 
 
 };

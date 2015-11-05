@@ -8,6 +8,7 @@
 #include <math.h>
 #include <iomanip>
 #include <float.h>
+#include <ostream>
 
 
 #include <QString>
@@ -64,8 +65,10 @@ public:
     inline const int getSizeofCellsList(){ return list_cells_size; }
 
 
+    inline void addVectorPoint( float x, float y, float z ){  vector_points.push_back( x );vector_points.push_back( y );vector_points.push_back( z );}
     inline void setVectorPoints( vector< float > points ){  vector_points = points; }
     inline const void getVectorPoints( vector< float >& points ){  points = vector_points; }
+
 
     inline void setPoint( int id, float x, float y, float z )
     {
@@ -94,6 +97,8 @@ public:
     inline void setVectorCells( vector< Cell > cells ){  vector_cells = cells; }
     inline const void getVectorCells( vector< Cell >& cells ){  cells = vector_cells; }
 
+
+    void addCell( int id, int type, vector< int >& vertices );
     inline void setCell( int id, Cell  cell )
     {
         if( vector_cells.empty() == true || id >= vector_cells.size() ) return;
@@ -162,6 +167,8 @@ public:
     void getMaxMinCoordinateCellProperty( int id, vector< float >& maxmin );
 
     bool isEmpty();
+
+    void writeFile( ofstream& file ) const;
 
 
 protected:

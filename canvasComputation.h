@@ -29,6 +29,11 @@
 
 #include "FlowVisualizationController.h"
 
+//#include "Eigen/Dense"
+//#include "Tucano/Trackball.hpp"
+//#include "Tucano/Shader.hpp"
+//#include "Tucano/BoundingBox3.hpp"
+
 
 using namespace std;
 
@@ -71,8 +76,9 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void resetVisualization();
 
 
-        void showData();
+        void showVolumetricGrid();
         void selectProperty( int id, bool option, int option_color );
+        void showSurface();
 
     protected:
 
@@ -185,6 +191,9 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         vector< QMenu *> mn_vector_properties_points;
 
         FlowVisualizationController *flowvisualizationc;
+
+//        Tucano::Trackball camera;
+//        Celer::BoundingBox3<float> box;
 };
 
 #endif // CANVASCOMPUTATION_H

@@ -3,7 +3,7 @@ QT += opengl
 
 TEMPLATE = app
 
-!host_build:QMAKE_MAC_SDK = macosx10.9
+#!host_build:QMAKE_MAC_SDK = macosx10.9
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -70,7 +70,8 @@ HEADERS += \
     FlowComputation/tetgen.h \
     FlowComputation/tetrahedron.h \
     FlowComputation/trifacet.h \
-    FlowComputation/well.h
+    FlowComputation/well.h \
+    samg.h \
 
 DISTFILES += \
     vertex_shader.vert \
@@ -79,3 +80,12 @@ DISTFILES += \
 OTHER_FILES += \
     fragment_shader.frag \
     vertex_shader.vert
+
+RESOURCES += \
+    images.qrc \
+    shaders.qrc
+
+win32: LIBS += -L$$PWD/ -lsamg_XP_6_2005 -samg_dyn_noomp
+
+INCLUDEPATH += $$PWD/  C:\Users\Clarissa\Dropbox\Work\Projects\RRM\Code\Interface\InterfaceRRM\Eigen\include\eigen3 $$PWD\Tucano
+DEPENDPATH += $$PWD/ C:\Users\Clarissa\Dropbox\Work\Projects\RRM\Code\Interface\InterfaceRRM\Eigen\include\eigen3 $$PWD\Tucano
