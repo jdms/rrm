@@ -1,4 +1,9 @@
-#include "Controller/MainWindow.h"
+#include <QHBoxLayout>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QStyle>
+
+#include "MainWindow.h"
 
 MainWindow::MainWindow( QWidget *parent) : QMainWindow( parent )
 {
@@ -14,11 +19,14 @@ void MainWindow::createWindow()
 {
     this->setMinimumSize( 800, 600 );
 
+    callComputationElements();
+
     createActions();
     createMenuBar();
     createToolbar();
+
     create2DModule();
-    create3DModule();
+//    create3DModule();
 
     emit setColor( 0, 0, 128 );
 
@@ -46,9 +54,6 @@ void MainWindow::createActions()
     ac_exit = new QAction( tr( "E&xit" ), this );
     ac_exit->setIcon( QIcon( ":/images/icons/door_out.png" ) );
 
-    ac_compute = new QAction( tr( "&Compute" ), this );
-    ac_compute->setIcon( QIcon( ":/images/icons/sum.png" ) );
-
     ac_contents = new QAction( tr( "Contents" ), this );
     ac_contents->setDisabled( true );
 
@@ -74,35 +79,52 @@ void MainWindow::createActions()
     ac_sketchcolor->setDefaultWidget( cd_pickercolor );
 
     ac_wdwsketching = new QAction( tr( "Window Sketching" ), this );
+    ac_wdwsketching->setCheckable( true );
+    ac_wdwsketching->setChecked( true );
     ac_window3d = new QAction( tr( "Window 3D" ), this );
+    ac_window3d->setCheckable( true );
+    ac_window3d->setChecked( true );
+
+    connect( ac_new, SIGNAL( triggered() ), this, SLOT( newSection() ) );
+    connect( ac_removeabove, SIGNAL( triggered() ), this, SLOT( applyRemoveAbove() ) );
+    connect( ac_removebelow, SIGNAL( triggered() ), this, SLOT( applyRemoveBelow() ) );
+    connect( ac_select, SIGNAL( triggered() ), this, SLOT( pointerSelection() ) );
+    connect( ac_exit, SIGNAL( triggered() ), this, SLOT( close() ) );
 
 
-    connect ( ac_new , SIGNAL( triggered() ) , this , SLOT( newSection() ) );
-    connect ( ac_removeabove , SIGNAL( triggered() ) , this , SLOT( applyRemoveAbove() ) );
-    connect ( ac_removebelow , SIGNAL( triggered() ) , this , SLOT( applyRemoveBelow() ) );
-    connect ( ac_select , SIGNAL( triggered() ) , this , SLOT( pointerSelection() ) );
-    connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
+}
 
-    /// BEGIN Heriot-Watt University
+void MainWindow::createActionsComputation()
+{
+
+    ac_compute = new QAction( tr( "&Compute" ), this );
+    ac_compute->setIcon( QIcon( ":/images/icons/sum.png" ) );
+    connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
+
+
+    ac_flowcomputation = new QAction( tr( "Window Flow Computation" ), this );
+    ac_flowcomputation->setCheckable( true );
+
+
     ac_open_surface = new QAction( tr( "Open Surface..." ), this );;
     ac_open_userinput = new QAction( tr( "Open User Input..." ), this );;
     ac_compute_volumetric  = new QAction( tr( "Volumetric Meshing..." ), this );;
 
-    ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
-    ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
-    ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
 
-    ac_flowcomputation = new QAction( tr( "Window Flow Computation" ), this );
+   ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
+   ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
+   ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
 
-    connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
-    connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( openSurfaceFile() ) );
+
     connect( ac_open_userinput, SIGNAL( triggered() ), this, SLOT( openUserInputFile() ) );
     connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( createMeshVolumetric() ) );
+
     connect( ac_compute_pressure, SIGNAL( triggered() ), this, SLOT( computePressure() ) );
     connect( ac_compute_velocity, SIGNAL( triggered() ), this, SLOT( computeVelocity() ) );
     connect( ac_compute_tof, SIGNAL( triggered() ), this, SLOT( computeTOF() ) );
 
     cb_compute_property = new QComboBox();
+    cb_compute_property->setMinimumWidth( 120 );
     cb_coloroption_vector = new QComboBox();
     cb_coloroption_vector->addItem( "Magnitude" );
     cb_coloroption_vector->addItem( "X" );
@@ -111,8 +133,11 @@ void MainWindow::createActions()
     cb_coloroption_vector->setEnabled( false );
 
     connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectProperty( int ) ) );
-    /// END Heriot-Watt University
+    connect( cb_coloroption_vector, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectColorVectorOption( int ) ) );
+
+
 }
+
 
 void MainWindow::createMenuBar()
 {
@@ -124,15 +149,19 @@ void MainWindow::createMenuBar()
     mn_file->addAction( ac_export );
     mn_file->addAction( ac_exit );
 
+    QMenu *mn_sketching = menuBar()->addMenu( tr( "&Sketching" ) );
+
     QMenu *mn_tools = menuBar()->addMenu( tr( "&Tools" ) );
     mn_tools->addAction( ac_compute );
 
     QMenu *mn_windows = menuBar()->addMenu( tr( "&Windows" ) );
     mn_windows->addAction( ac_wdwsketching );
-    mn_windows->addAction( ac_window3d );
-    mn_windows->addAction( ac_flowcomputation );
     ac_wdwsketching->setCheckable( true );
+    mn_windows->addAction( ac_window3d );
     ac_window3d->setCheckable( true );
+
+
+    mn_windows->addAction( ac_flowcomputation );
     ac_flowcomputation->setCheckable( true );
 
     QMenu *mn_help = menuBar()->addMenu( tr( "&Help" ) );
@@ -190,79 +219,45 @@ void MainWindow::create2DModule()
     dc_2DModule->setWidget( canvas2D );
     addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
 
+    connect( ac_wdwsketching, SIGNAL( toggled(bool) ), dc_2DModule, SLOT( setVisible(bool) ) );
+
 }
 
-void MainWindow::createComputationModule()
-{
-
-
-    dc_computation = new QDockWidget( this );
-    dc_computation->setAllowedAreas( Qt::RightDockWidgetArea );
-    dc_computation->setWindowTitle( "Flow Visualization" );
-
-    QFrame *fr = new QFrame( this );
-    fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
-
-
+//void MainWindow::create3DModule()
+//{
+//
+//    dc_3DModule = new QDockWidget( this );
+//    dc_3DModule->setAllowedAreas( Qt::RightDockWidgetArea );
+//    dc_3DModule->setWindowTitle( "3D View" );
+//
 //    QGLFormat fmt;
-//    fmt.setVersion( 3, 3 );
+//    fmt.setVersion( 3, 0 );
 //    fmt.setProfile( QGLFormat::CoreProfile);
+//
+//
+//    QFrame *fr = new QFrame( this );
+//    fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
+//
+//
+//    Canvas3D *canvas3d = new Canvas3D( fmt, fr );
+//    QHBoxLayout *hb_canvas3d = new QHBoxLayout( this );
+//    hb_canvas3d->addWidget( canvas3d );
+//
+//    fr->setLayout( hb_canvas3d );
+//    dc_3DModule->setWidget( fr );
+//    addDockWidget( Qt::RightDockWidgetArea, dc_3DModule );
+//
+//    connect( ac_window3d, SIGNAL( toggled(bool) ), dc_3DModule, SLOT( setVisible(bool) ) );
+//
+//}
 
-//    canvas_computation = new CanvasComputation( fmt, this );
-//    canvas_computation->setMinimumHeight( 350 );
-
-    QHBoxLayout *hb_canvascomputation = new QHBoxLayout( this );
-//    hb_canvascomputation->addWidget( canvas_computation );
-
-    fr->setLayout( hb_canvascomputation );
-
-    mw_canvas_computation = new QMainWindow();
-    mw_canvas_computation->setCentralWidget( fr );
-
-    dc_computation->setWidget( mw_canvas_computation );
-    dc_computation->setVisible( false );
-    addDockWidget( Qt::RightDockWidgetArea, dc_computation );
-
-
-}
-
-void MainWindow::createToolbarComputation()
-{
-
-    QLabel *lb_name_property = new QLabel( tr( "  Property  " ) );
-    QLabel *wd_space = new QLabel("  ");
-
-    tlb_workflow_flow = addToolBar( tr( "Workflow" ) );
-
-    tlb_workflow_flow->addAction( ac_open_userinput );
-//    tlb_workflow_flow->addAction( ac_open_surface );
-    tlb_workflow_flow->addSeparator();
-
-    tlb_workflow_flow->addAction( ac_compute_volumetric );
-    tlb_workflow_flow->addAction( ac_compute_pressure );
-    tlb_workflow_flow->addAction( ac_compute_velocity );
-    tlb_workflow_flow->addAction( ac_compute_tof );
-
-    tlb_workflow_flow->addSeparator();
-
-    tlb_workflow_flow->addWidget( lb_name_property );
-    tlb_workflow_flow->addWidget( cb_compute_property );
-
-
-
-    tlb_workflow_flow->addWidget( wd_space );
-    tlb_workflow_flow->addWidget( cb_coloroption_vector );
-
-    mw_canvas_computation->addToolBar( tlb_workflow_flow );
-
-}
 
 
 void MainWindow::newSection()
 {
     clearCanvas2D();
 //    clearCanvas3D();
-//    clearComputation();
+    clearComputation();
 
     statusBar()->showMessage( "New section." );
 }
@@ -323,4 +318,9 @@ void MainWindow::changeColorLine()
     emit setColor( c.red(), c.green(), c.blue() );
 
 }
+
+
+
+
+/////// ZHAO'S CODE
 

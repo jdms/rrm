@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Modeller/Canvas2D.h"
+#include "Simulator/canvasComputation.h"
+
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QToolBar>
@@ -16,21 +19,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QDialogButtonBox>
-
-#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QStyle>
-
-/// CrossSection
-#include "Model/CrossSection.hpp"
-
-#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
-
-#include "Modeller/Canvas2D.h"
-
- /// ZHAO -----// ZHAO
-#include "Simulator/canvasComputation.h"
- /// ZHAO -----// ZHAO
 
 class MainWindow : public QMainWindow
 {
@@ -41,20 +30,33 @@ class MainWindow : public QMainWindow
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 
+
     protected:
 
         void createWindow();
         void createMenuBar();
         void createActions();
+        void createActionsComputation();
         void createToolbar();
 
+
+
         void create2DModule();
-        void create3DModule();
+        //void create3DModule();
         void createComputationModule();
 
         void clearCanvas2D();
+//        void clearCanvas3D();
+        void clearComputation();
+//        void resetToolbar();
 
+
+        void callComputationElements();
         void createToolbarComputation();
+
+        void createInputDialog();
+        void createWidgetInputFiles();
+        void createWidgetInputTolerance();
 
 
     protected slots:
@@ -66,22 +68,54 @@ class MainWindow : public QMainWindow
         void pointerSelection();
         void changeColorLine();
 
+        void doComputation();
+        void openUserInputFile();
+        void createMeshVolumetric();
+        void selectProperty( int id );
+        void computePressure();
+        void computeVelocity();
+        void computeTOF();
+
+        void findUserFile();
+        void findSurfaceFile();
+
+        void acceptInputUser();
+        void rejectInputUser();
+
+        void selectColorVectorOption( int idc );
+
     public slots:
 
-        //void addCurve( QPolygonF& curve);
+        void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
 
-        //void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
+
+
+
 
     signals:
 
-
-    	/// CrossSection
         void applyremoveabove();
         void applyremovebelow();
         void setColor( int R, int G, int B );
 
         void selectMode();
         void sketchingMode();
+
+        void sendSurfaceFile( std::string filename );
+        void sendInputUserFile( std::string filename );
+        void computeVolume();
+
+
+        void computePressureProperty();
+        void computeVelocityProperty();
+        void computeTOFProperty();
+
+        void selectFlowProperty( int, bool& );
+
+
+        void sendInputUser( std::string input_user, std::string surface_file, float tol1, float tol2 );
+
+
 
     private:
 
@@ -90,6 +124,7 @@ class MainWindow : public QMainWindow
         QDockWidget *dc_computation;
 
         Canvas2D *canvas2D;
+        CanvasComputation *canvas_computation;
 
         QAction *ac_new;
         QAction *ac_open;
@@ -112,11 +147,13 @@ class MainWindow : public QMainWindow
         QAction *ac_select;
         QWidgetAction *ac_sketchcolor;
 
+
         QToolBar *tlb_section;
         QToolBar *tlb_computation;
         QToolBar *tlb_rules;
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
+
 
         QMainWindow *mw_canvas_computation;
         QToolBar *tlb_workflow_flow;
@@ -148,12 +185,6 @@ class MainWindow : public QMainWindow
         QAction *ac_wdwsketching;
         QAction *ac_window3d;
         QAction *ac_flowcomputation;
-
-        /// CrossSection
-        RRM::CrossSection<qreal> cross_section_;
-
-        /// Sketching Surface and Extrusion
-        GLWidget *glWidget;
 
 };
 

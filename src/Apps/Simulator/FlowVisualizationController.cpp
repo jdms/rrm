@@ -170,7 +170,7 @@ void FlowVisualizationController::addCellProperty( std::string name, std::string
 
 void FlowVisualizationController::getPointProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
 {
-    FlowProperty &p = data.getPointFlowProperty( id );
+    FlowProperty p = data.getPointFlowProperty( id );
 
     //data.getPointFlowProperty( id, p );
 
@@ -184,7 +184,7 @@ void FlowVisualizationController::getPointProperty( int id, std::string& name, s
 
 void FlowVisualizationController::getCellProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
 {
-    FlowProperty& p = data.getCellFlowProperty( id );
+    FlowProperty p = data.getCellFlowProperty( id );
 
 //    data.getCellFlowProperty( id, p );
 
@@ -780,7 +780,7 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
      int npproperties = data.getNumberofPointsProperties();
      if( id >= 0 && id < npproperties )
      {
-         FlowProperty &p = data.getPointFlowProperty( id );
+         FlowProperty p = data.getPointFlowProperty( id );
 //         data.getPointFlowProperty( id, p );
          p.getName( current_property );
          current_property_type = "POINTS";
@@ -790,7 +790,7 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
      int ncproperties = data.getNumberofCellsProperties();
      if( id >= 0 && id < ncproperties )
      {
-         FlowProperty &p = data.getCellFlowProperty( id );
+         FlowProperty p = data.getCellFlowProperty( id );
 //         data.getCellFlowProperty( id, p );
          p.getName( current_property );
          current_property_type = "CELLS";

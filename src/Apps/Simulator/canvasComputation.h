@@ -7,12 +7,10 @@
 #include <string>
 
 
-#include <GL/glew.h>
-
 #include <QtOpenGL/QGLWidget>
-//#include <QOpenGLFunctions_3_0>
-//#include <QOpenGLFunctions_3_3_Core>
-//#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_3_0>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
@@ -63,7 +61,7 @@ inline std::string read_shader_file( const char *file_path )
 }
 
 
-class CanvasComputation: public QGLWidget
+class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
 
