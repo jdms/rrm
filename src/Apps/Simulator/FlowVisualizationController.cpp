@@ -1,7 +1,6 @@
-#include "../../Apps/Simulator/FlowVisualizationController.h"
-
 #include <algorithm>
 
+#include "FlowVisualizationController.h"
 
 
 FlowVisualizationController::FlowVisualizationController()
@@ -171,9 +170,9 @@ void FlowVisualizationController::addCellProperty( std::string name, std::string
 
 void FlowVisualizationController::getPointProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
 {
-    FlowProperty p;
+    FlowProperty &p = data.getPointFlowProperty( id );
 
-    data.getPointFlowProperty( id, p );
+    //data.getPointFlowProperty( id, p );
 
     p.getName( name );
     p.getFormat( format );
@@ -185,9 +184,9 @@ void FlowVisualizationController::getPointProperty( int id, std::string& name, s
 
 void FlowVisualizationController::getCellProperty( int id, std::string& name, std::string& format, std::string& type, int& ncoords )
 {
-    FlowProperty p;
+    FlowProperty& p = data.getCellFlowProperty( id );
 
-    data.getCellFlowProperty( id, p );
+//    data.getCellFlowProperty( id, p );
 
     p.getName( name );
     p.getFormat( format );
@@ -237,35 +236,10 @@ void FlowVisualizationController::getBoundingBox( float& xmin, float& xmax, floa
 void FlowVisualizationController::getColors( vector< float >& colors, int option  )
 {
 
-/*
-    if( current_property_type == "POINTS" )
-    {
-        if( option != 0 ){
-            getCoordinateColors( colors, option );
-            return;
-        }
-
-        getMagnitudeColors( colors );
-        return;
-    }
-    else if( current_property_type == "CELLS" )
-    {
-        if( option != 0 ){
-            getCoordinateColorsCells( colors, option );
-            return;
-        }
-
-        getMagnitudeColorsCells( colors );
-        return;
-    }
-
-*/
-
-
     COLORMAP map;
 
     if( current_colormap == "CONSTANT" )
-    {
+    {        
             map = COLORMAP::CONSTANT;
             getColorConstant( map, colors );
             return;
@@ -300,39 +274,45 @@ void FlowVisualizationController::getColors( vector< float >& colors, int option
 
 }
 
+void FlowVisualizationController::getSurfaceColors( vector< float >& colors  )
+{
+
+    COLORMAP map;
+
+    if( current_colormap == "CONSTANT" )
+       map = COLORMAP::CONSTANT;
+
+    else if( current_colormap == "JET" )
+        map = COLORMAP::JET;
+    else
+        map = COLORMAP::JET;
+
+    int nvalues = (int) surface_file.numberofpoints;
+    for( int i = 0; i < nvalues; ++i )
+    {
+        QVector4D color = colormap.getColor( map, 0, 0, 0 );
+        colors.push_back( color.x() );
+        colors.push_back( color.y() );
+        colors.push_back( color.z() );
+
+    }
+
+}
+
 
 void FlowVisualizationController::getColorConstant( COLORMAP map, vector< float >& colors )
 {
-    if( current_property_type == "POINTS" )
+
+    int nvalues = (int) data.getNumberofPoints();    
+    for( int i = 0; i < nvalues; ++i )
     {
+        QVector4D color = colormap.getColor( map, 0, 0, 0 );
+        colors.push_back( color.x() );
+        colors.push_back( color.y() );
+        colors.push_back( color.z() );
 
-        int nvalues = (int) data.getNumberofPoints();
-        for( int i = 0; i < nvalues; ++i )
-        {
-            QVector4D color = colormap.getColor( map, 0, 0, 0 );
-            colors.push_back( color.x() );
-            colors.push_back( color.y() );
-            colors.push_back( color.z() );
-
-        }
     }
-    else if( current_property_type == "CELLS" )
-    {
-        int npoints = data.getNumberofPoints();
-        colors.resize( 3*npoints );
 
-        for( int i = 0; i < npoints; ++i )
-        {
-
-            QVector4D color = colormap.getColor( map, 0, 0, 0 );
-
-            colors[ 3*i ] = color.x();
-            colors[ 3*i + 1 ] = color.y();
-            colors[ 3*i + 2 ] = color.z();
-
-        }
-
-       }
 }
 
 
@@ -438,15 +418,6 @@ void FlowVisualizationController::getCoordinateColors( COLORMAP map, vector< flo
 {
     if( data.isEmpty() == true ) return;
 
-//    COLORMAP map;
-
-//    if( current_colormap == "JET" )
-//        map = COLORMAP::JET;
-//    else if( current_colormap == "CONSTANT" )
-//        map = COLORMAP::CONSTANT;
-//    else
-//        map = COLORMAP::JET;
-
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
 
@@ -512,15 +483,6 @@ void FlowVisualizationController::getCoordinateColors( COLORMAP map, vector< flo
 void FlowVisualizationController::getMagnitudeColorsCells( COLORMAP map, vector< float >& colors )
 {
     if( data.isEmpty() == true ) return;
-
-//    COLORMAP map;
-
-//    if( current_colormap == "JET" )
-//        map = COLORMAP::JET;
-//    else if( current_colormap == "CONSTANT" )
-//        map = COLORMAP::CONSTANT;
-//    else
-//        map = COLORMAP::JET;
 
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
@@ -614,15 +576,6 @@ void FlowVisualizationController::getCoordinateColorsCells( COLORMAP map, vector
 {
 
     if( data.isEmpty() == true ) return;
-
-//    COLORMAP map;
-
-//    if( current_colormap == "JET" )
-//        map = COLORMAP::JET;
-//    else if( current_colormap == "CONSTANT" )
-//        map = COLORMAP::CONSTANT;
-//    else
-//        map = COLORMAP::JET;
 
     FlowProperty p;
     data.getFlowProperty( current_property, current_property_type, p );
@@ -827,8 +780,8 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
      int npproperties = data.getNumberofPointsProperties();
      if( id >= 0 && id < npproperties )
      {
-         FlowProperty p;
-         data.getPointFlowProperty( id, p );
+         FlowProperty &p = data.getPointFlowProperty( id );
+//         data.getPointFlowProperty( id, p );
          p.getName( current_property );
          current_property_type = "POINTS";
          return;
@@ -837,8 +790,8 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
      int ncproperties = data.getNumberofCellsProperties();
      if( id >= 0 && id < ncproperties )
      {
-         FlowProperty p;
-         data.getCellFlowProperty( id, p );
+         FlowProperty &p = data.getCellFlowProperty( id );
+//         data.getCellFlowProperty( id, p );
          p.getName( current_property );
          current_property_type = "CELLS";
          return;
@@ -851,10 +804,7 @@ void FlowVisualizationController::clear()
 {
     current_colormap = "CONSTANT";
     property_map.clear();
-    /*
-     * property_map.clear();
-     * data.clear();
-     */
+    data.clear();
 }
 
 
@@ -895,15 +845,6 @@ void FlowVisualizationController::computeFlowProperties()
     region.flowdiagnostics();
 }
 
-
-void FlowVisualizationController::getSurface( vector< float > points, vector< unsigned int > edges )
-{
-    double *point_list;
-    int *edge_list;
-    int npoints = 0;
-    int nedges = 0;
-
-}
 
 
 void FlowVisualizationController::getSurfaceBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax )
@@ -950,9 +891,10 @@ void FlowVisualizationController::updatePropertiesNamesVector()
 
 
     data.getPointsFlowProperties( vector_props );
+    property_map.clear();
 
     int count = 0;
-    int nprops = vector_props.size();
+    int nprops = (int)vector_props.size();
     for( int i = 0; i < nprops; ++i )
     {
         FlowProperty& p = vector_props[ i ];
@@ -967,7 +909,7 @@ void FlowVisualizationController::updatePropertiesNamesVector()
 
     data.getCellsFlowProperties( vector_props );
 
-    nprops = vector_props.size();
+    nprops = (int)vector_props.size();
     for( int i = 0; i < nprops; ++i )
     {
         FlowProperty& p = vector_props[ i ];
@@ -986,6 +928,7 @@ void FlowVisualizationController::updatePropertiesNamesVector()
 void FlowVisualizationController::computePressure()
 {
     region.computepressure();
+    loadPressureData();
     updatePropertiesNamesVector();
 
 
@@ -995,6 +938,7 @@ void FlowVisualizationController::computePressure()
 void FlowVisualizationController::computeVelocity()
 {
     region.computevelocity();
+    loadVelocityData();
     updatePropertiesNamesVector();
 }
 
@@ -1002,6 +946,7 @@ void FlowVisualizationController::computeVelocity()
 void FlowVisualizationController::computeTOF()
 {
     region.flowdiagnostics();
+    loadTOFData();
     updatePropertiesNamesVector();
 }
 
@@ -1011,10 +956,10 @@ void FlowVisualizationController::selectFlowProperty(int id, bool& option  )
     FlowProperty &p = property_map[ id ];
     option = false;
 
-    std::string type;
-    p.getType( type );
+    std::string format;
+    p.getFormat( format );
 
-    if( type.compare( "VECTORS" ) == 0 )
+    if( format.compare( "VECTORS" ) == 0 )
         option = true;
 
 }
@@ -1127,11 +1072,239 @@ void FlowVisualizationController::getPointsSurface( vector< float >& vertices )
 }
 
 
+void FlowVisualizationController::loadPressureData()
+{
+    std::vector< NODE > nodes = region.getnodelist();
+
+    vector< float > values;
+    int npoints = (int)nodes.size();
+    for( int i = 0; i < npoints; ++i )
+        values.push_back( (float) nodes[ i ].P() );
+
+    auto itmin = std::min_element( values.begin(), values.end() );
+    auto itmax = std::max_element( values.begin(), values.end() );
+
+    int idmin  = std::distance( values.begin(), itmin );
+    int idmax = std::distance( values.begin(), itmax );
+
+    int id = data.getNumberofPointsProperties();
+
+    FlowProperty p;
+
+    p.setName( "Pressure" );
+    p.setFormat( "SCALARS" );
+    p.setType( "POINTS" );
+    p.setNumberofComponents( 1 );
+    p.setValues( values );
+    p.setId( id );
+    p.setMinimum( values[ idmin ] );
+    p.setMaximum( values[ idmax ] );
+
+    data.addPointFlowProperty( p );
+
+}
+
+
+void FlowVisualizationController::loadTOFData()
+{
+    std::vector< NODE > nodes = region.getnodelist();
+
+    vector< float > values;
+    int npoints = (int)nodes.size();
+    for( int i = 0; i < npoints; ++i )
+        values.push_back( (float) nodes[ i ].tof() );
+
+    auto itmin = std::min_element( values.begin(), values.end() );
+    auto itmax = std::max_element( values.begin(), values.end() );
+
+    int idmin  = std::distance( values.begin(), itmin );
+    int idmax = std::distance( values.begin(), itmax );
+
+    int id = data.getNumberofPointsProperties();
+
+    FlowProperty p;
+
+    p.setName( "TOF -- Points" );
+    p.setFormat( "SCALARS" );
+    p.setType( "POINTS" );
+    p.setNumberofComponents( 1 );
+    p.setValues( values );
+    p.setId( id );
+    p.setMinimum( values[ idmin ] );
+    p.setMaximum( values[ idmax ] );
+
+    data.addPointFlowProperty( p );
+
+
+
+    std::vector< TETRAHEDRON > elements = region.getelementlist();
+
+    vector< float > values1;
+    int ncells = (int)elements.size();
+    for( int i = 0; i < ncells; ++i )
+        values1.push_back( (float) elements[ i ].tof() );
+
+
+    itmin = std::min_element( values1.begin(), values1.end() );
+    itmax = std::max_element( values1.begin(), values1.end() );
+
+    idmin  = std::distance( values1.begin(), itmin );
+    idmax = std::distance( values1.begin(), itmax );
+
+    id = data.getNumberofCellsProperties();
+
+    FlowProperty p1;
+
+    p1.setName( "TOF -- Cells" );
+    p1.setFormat( "SCALARS" );
+    p1.setType( "CELLS" );
+    p1.setNumberofComponents( 1 );
+    p1.setValues( values1 );
+    p1.setId( id );
+    p1.setMinimum( values1[ idmin ] );
+    p1.setMaximum( values1[ idmax ] );
+
+    data.addCellFlowProperty( p1 );
+
+}
+
+
+void FlowVisualizationController::loadVelocityData()
+{
+
+    std::vector< NODE > nodes = region.getnodelist();
+
+    vector< float > values;
+    int npoints = (int)nodes.size();
+    for( int i = 0; i < npoints; ++i )
+    {
+        values.push_back( (float) nodes[ i ].Ux() );
+        values.push_back( (float) nodes[ i ].Uy() );
+        values.push_back( (float) nodes[ i ].Uz() );
+    }
+
+    int nvalues = (int) npoints/3;
+
+    float min = values[ 0 ]*values[ 0 ] + values[ 1 ]*values[ 1 ] + values[ 2 ]*values[ 2 ];
+    float max = min;
+
+    float minx = values[ 0 ], miny = values[ 1 ], minz = values[ 2 ];
+    float maxx = minx, maxy = miny, maxz = minz;
+
+
+    for( int j = 3; j < nvalues; ++j )
+    {
+        float norm =  values[ 3*j ]*values[ 3*j ] + values[ 3*j + 1 ]*values[ 3*j + 1 ] + values[ 3*j + 2 ]*values[ 3*j + 2 ];
+
+        if( norm <= min ) min = norm;
+        if( norm >= max ) max = norm;
+
+        if( values[ 3*j ] <= minx ) minx = values[ 3*j ];
+        if( values[ 3*j ] >= maxx ) maxx = values[ 3*j ];
+
+        if( values[ 3*j + 1 ] <= miny ) miny = values[ 3*j + 1];
+        if( values[ 3*j + 1 ] >= maxy ) maxy = values[ 3*j + 1 ];
+
+        if( values[ 3*j + 2 ] <= minz ) minz = values[ 3*j + 2 ];
+        if( values[ 3*j + 2 ] >= maxz ) maxz = values[ 3*j + 2 ];
+    }
+
+
+    int id = data.getNumberofPointsProperties();
+
+
+    FlowProperty p1;
+
+    p1.setName( "Velocity -- Points" );
+    p1.setFormat( "VECTORS" );
+    p1.setType( "POINTS" );
+    p1.setNumberofComponents( 3 );
+    p1.setValues( values );
+    p1.setId( id );
+    p1.setMinimum( min );
+    p1.setMaximum( max );
+
+    p1.addMinimumCoordinate( minx );
+    p1.addMaximumCoordinate( maxx );
+
+    p1.addMinimumCoordinate( miny );
+    p1.addMaximumCoordinate( maxy );
+
+    p1.addMinimumCoordinate( minz );
+    p1.addMaximumCoordinate( maxz );
+
+    data.addPointFlowProperty( p1 );
+
+
+
+    std::vector< TETRAHEDRON > elements = region.getelementlist();
+
+    vector< float > values1;
+    int ncells = (int)elements.size();
+    for( int i = 0; i < ncells; ++i ){
+        values1.push_back( (float) elements[ i ].Ux() );
+        values1.push_back( (float) elements[ i ].Uy() );
+        values1.push_back( (float) elements[ i ].Uz() );
+    }
+
+    nvalues = (int) ncells/3;
+
+    min = values1[ 0 ]*values1[ 0 ] + values1[ 1 ]*values1[ 1 ] + values1[ 2 ]*values1[ 2 ];
+    max = min;
+
+    minx = values1[ 0 ], miny = values1[ 1 ], minz = values1[ 2 ];
+    maxx = minx, maxy = miny, maxz = minz;
+
+
+    for( int j = 3; j < nvalues; ++j )
+    {
+        float norm =  values1[ 3*j ]*values1[ 3*j ] + values1[ 3*j + 1 ]*values1[ 3*j + 1 ] + values1[ 3*j + 2 ]*values1[ 3*j + 2 ];
+
+        if( norm <= min ) min = norm;
+        if( norm >= max ) max = norm;
+
+        if( values1[ 3*j ] <= minx ) minx = values1[ 3*j ];
+        if( values1[ 3*j ] >= maxx ) maxx = values1[ 3*j ];
+
+        if( values1[ 3*j + 1 ] <= miny ) miny = values1[ 3*j + 1];
+        if( values1[ 3*j + 1 ] >= maxy ) maxy = values1[ 3*j + 1 ];
+
+        if( values1[ 3*j + 2 ] <= minz ) minz = values1[ 3*j + 2 ];
+        if( values1[ 3*j + 2 ] >= maxz ) maxz = values1[ 3*j + 2 ];
+    }
+
+
+    id = data.getNumberofCellsProperties();
+
+    FlowProperty p;
+
+    p.setName( "Velocity -- Cells" );
+    p.setFormat( "VECTORS" );
+    p.setType( "CELLS" );
+    p.setNumberofComponents( 3 );
+    p.setValues( values1 );
+    p.setMinimum( min );
+    p.setMaximum( max );
+
+    p.addMinimumCoordinate( minx );
+    p.addMaximumCoordinate( maxx );
+
+    p.addMinimumCoordinate( miny );
+    p.addMaximumCoordinate( maxy );
+
+    p.addMinimumCoordinate( minz );
+    p.addMaximumCoordinate( maxz );
+
+    data.addCellFlowProperty( p );
+
+
+}
+
 void FlowVisualizationController::loadSurfaceData( std::vector< NODE > nodes, std::vector< TETRAHEDRON > elements )
 {
 
-    int npoints = nodes.size();
-    int ncells = elements.size();
+    int npoints = (int)nodes.size();
+    int ncells = (int)elements.size();
 
     for( int i = 0; i < npoints; ++i )
         data.addVectorPoint( nodes[ i ].x(), nodes[ i ].y(), nodes[ i ].z() );
@@ -1148,10 +1321,13 @@ void FlowVisualizationController::loadSurfaceData( std::vector< NODE > nodes, st
         data.addCell( i, 10, vertices );
     }
 
+    data.setEmpty( false );
+
 }
 
 void FlowVisualizationController::getUserInput( std::string file_user, std::string surface_file, float tol1, float tol2 )
 {
+
     region.tolerance( tol1, tol2 );
     region.userinput( (char *) file_user.c_str() );
     region.readsurfacemeshPOLY( (char *)surface_file.c_str() );
@@ -1160,3 +1336,7 @@ void FlowVisualizationController::getUserInput( std::string file_user, std::stri
 
 }
 
+void FlowVisualizationController::exportFile( std::string filename )
+{
+    data.writeFile( filename );
+}

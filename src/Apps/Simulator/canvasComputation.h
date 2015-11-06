@@ -7,10 +7,12 @@
 #include <string>
 
 
+#include <GL/glew.h>
+
 #include <QtOpenGL/QGLWidget>
-#include <QOpenGLFunctions_3_0>
-#include <QOpenGLFunctions_3_3_Core>
-#include <QOpenGLFunctions>
+//#include <QOpenGLFunctions_3_0>
+//#include <QOpenGLFunctions_3_3_Core>
+//#include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
@@ -26,8 +28,9 @@
 #include <QWidgetAction>
 #include <QCheckBox>
 #include <QActionGroup>
+#include <QFileDialog>
 
-#include "../../Apps/Simulator/FlowVisualizationController.h"
+#include "FlowVisualizationController.h"
 
 //#include "Eigen/Dense"
 //#include "Tucano/Trackball.hpp"
@@ -60,7 +63,7 @@ inline std::string read_shader_file( const char *file_path )
 }
 
 
-class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
+class CanvasComputation: public QGLWidget
 {
     Q_OBJECT
 
@@ -77,8 +80,11 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
 
 
         void showVolumetricGrid();
-        void selectProperty( int id, bool option, int option_color );
+        void selectProperty( int id, bool option, int option_color = 0 );
         void showSurface();
+
+        void fillMenuProperties();
+
 
     protected:
 
@@ -103,7 +109,7 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         void createMenuRendering();
         void createRenderingVectors(int id, std::string title , string type);
 
-        void fillMenuProperties();
+
         void fillMenuPointProperties();
         void fillMenuCellProperties();
 
@@ -122,10 +128,11 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
 
     protected slots:
 
-        void sendColorsGPU( std::string property = "", std::string type = "", int option = 0 );
+        void sendColorsGPU( std::string property, std::string type, int option = 0 );
         void showPoints( bool option );
         void showVolume( bool option );
         void showWireframe( bool option );
+        void exportFile();
 
 
         void resetTransformations();
@@ -153,7 +160,6 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
         bool show_lines;
 
         QVector3D previous_mouse;
-        QVector3D rotation_axis;
         QVector3D translation_vector;
         QVector3D model_center;
         QMatrix4x4 pmatrix;
@@ -173,6 +179,7 @@ class CanvasComputation: public QGLWidget, public QOpenGLFunctions_3_3_Core
 
         QAction *ac_reset_transformations;
         QAction *ac_clear_all;
+        QAction *ac_export;
 
         QWidgetAction *wa_properties;
         QWidgetAction *wa_colormaps;

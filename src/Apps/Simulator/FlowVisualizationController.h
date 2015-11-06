@@ -6,9 +6,9 @@
 #include <QObject>
 #include <QString>
 
-#include "../../Apps/Simulator/ColorMap.h"
-#include "../../Apps/Simulator/FlowComputation/region.h"
-#include "../../Apps/Simulator/VTKData.h"
+#include "VTKData.h"
+#include "ColorMap.h"
+#include "FlowComputation/region.h"
 
 using namespace std;
 
@@ -55,7 +55,7 @@ class FlowVisualizationController: public QObject
 
         void setColors( vector< float > colors );
         void getColors(vector< float >& colors , int option = 0 );
-
+        void getSurfaceColors( vector< float >& colors  );
 
         void getTriangles( vector< unsigned int >& triangles );
         void getWireframe( vector< unsigned int >& lines );
@@ -83,8 +83,6 @@ class FlowVisualizationController: public QObject
         inline const int getNumberofPointsProperties() { return data.getNumberofPointsProperties(); }
         inline const int getNumberofCellsProperties() { return data.getNumberofCellsProperties(); }
 
-
-        void getSurface( vector< float > points, vector< unsigned int > edges );
         void getSurfaceBoundingBox( float& xmin, float& xmax, float& ymin, float& ymax, float& zmin, float& zmax );
 
 
@@ -101,9 +99,14 @@ class FlowVisualizationController: public QObject
         void getPointsSurface( vector< float >& vertices );
 
 
+        void exportFile( std::string filename );
+
     protected:
 
         void loadSurfaceData( std::vector< NODE > nodes, std::vector< TETRAHEDRON > elements );
+        void loadPressureData();
+        void loadTOFData();
+        void loadVelocityData();
 
 
     public slots:
@@ -120,8 +123,9 @@ class FlowVisualizationController: public QObject
         void selectFlowProperty( int id, bool& option );
         void getUserInput( std::string file_user, std::string surface_file, float tol1, float tol2 );
 
+
 signals:
-        void updateComboBox( vector< std::string> , vector< std::string > );
+        void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
 
 
     protected:

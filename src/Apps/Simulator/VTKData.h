@@ -16,7 +16,7 @@
 #include <QRegularExpression>
 #include <QStringList>
 
-#include "../../Apps/Simulator/FlowProperty.h"
+#include "FlowProperty.h"
 
 using namespace std;
 
@@ -56,17 +56,17 @@ public:
     inline const std::string getFormatPoints(){ return format_points; }
 
     inline void setNumberofPoints( int np ){ number_of_points = np; }
-    inline const int getNumberofPoints(){ return number_of_points; }
+    inline const int getNumberofPoints(){ return (int)vector_points.size();}
 
     inline void setNumberofCells( int nc ){ number_of_cells = nc; }
-    inline const int getNumberofCells(){ return number_of_cells; }
+    inline const int getNumberofCells(){ return (int)vector_cells.size();; }
 
     inline void setSizeofCellsList( int sl ){ list_cells_size = sl; }
     inline const int getSizeofCellsList(){ return list_cells_size; }
 
 
     inline void addVectorPoint( float x, float y, float z ){  vector_points.push_back( x );vector_points.push_back( y );vector_points.push_back( z );}
-    inline void setVectorPoints( vector< float > points ){  vector_points = points; }
+    inline void setVectorPoints( vector< float > points ){  vector_points = points; number_of_points = (int)points.size(); }
     inline const void getVectorPoints( vector< float >& points ){  points = vector_points; }
 
 
@@ -94,7 +94,7 @@ public:
         z = vector_points[ 3*id + 2 ];
     }
 
-    inline void setVectorCells( vector< Cell > cells ){  vector_cells = cells; }
+    inline void setVectorCells( vector< Cell > cells ){  vector_cells = cells; number_of_cells = (int)vector_cells.size(); }
     inline const void getVectorCells( vector< Cell >& cells ){  cells = vector_cells; }
 
 
@@ -122,14 +122,8 @@ public:
     inline const void getCellsFlowProperties( vector< FlowProperty >& properties ){  properties = vector_cell_properties; }
 
 
-    inline void addPointFlowProperty( FlowProperty& property )
-    {
-        vector_point_properties.push_back( property );
-    }
-    inline void addCellFlowProperty( FlowProperty& property )
-    {
-        vector_cell_properties.push_back( property );
-    }
+    void addPointFlowProperty( FlowProperty& property );
+    void addCellFlowProperty( FlowProperty& property );
 
 
     inline void setPointFlowProperty( int id, FlowProperty property )
@@ -137,10 +131,10 @@ public:
         if( vector_point_properties.empty() == true || id >= vector_point_properties.size() ) return;
         vector_point_properties[ id ] = property;
     }
-    inline const void getPointFlowProperty( int id, FlowProperty& property )
+    inline /*void */FlowProperty getPointFlowProperty( int id/*, FlowProperty& property*/ )
     {
-        if( vector_point_properties.empty() == true || id >= vector_point_properties.size() ) return;
-        property = vector_point_properties[ id ];
+        if( vector_point_properties.empty() != true && id < vector_point_properties.size() )// return;
+        /*property = */ return vector_point_properties[ id ];
     }
 
 
@@ -149,10 +143,10 @@ public:
         if( vector_cell_properties.empty() == true || id >= vector_cell_properties.size() ) return;
         vector_cell_properties[ id ] = property;
     }
-    inline const void getCellFlowProperty( int id, FlowProperty& property )
+    inline /*void */FlowProperty getCellFlowProperty( int id/*, FlowProperty& property*/ )
     {
-        if( vector_cell_properties.empty() == true || id >= vector_cell_properties.size() ) return;
-        property = vector_cell_properties[ id ];
+        if( vector_cell_properties.empty() != true && id <= vector_cell_properties.size() )// return;
+       /* property = */ return vector_cell_properties[ id ];
     }
 
     void getFlowProperty( std::string name, std::string type, FlowProperty& property );
@@ -167,9 +161,10 @@ public:
     void getMaxMinCoordinateCellProperty( int id, vector< float >& maxmin );
 
     bool isEmpty();
+    inline void setEmpty( bool option ){ is_empty = option; }
 
-    void writeFile( ofstream& file ) const;
-
+    void writeFile( std::string filename ) const;
+    void clear();
 
 protected:
 

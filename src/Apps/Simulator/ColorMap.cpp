@@ -1,4 +1,4 @@
-#include "../../Apps/Simulator/ColorMap.h"
+#include "ColorMap.h"
 
 ColorMap::ColorMap()
 {
@@ -16,7 +16,7 @@ QVector4D ColorMap::getColor( COLORMAP map, float value, float low, float high )
             return getColor( _jet, value, low, high );
             break;
         default:
-            return QVector4D( 0.0f, 0.0, 1.0f, 1.0f );
+            return QVector4D( 0.7f, 0.7f, 0.7f, 1.0f );
             break;
 
     }

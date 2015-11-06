@@ -1,4 +1,4 @@
-#include "../../Apps/Simulator/FlowProperty.h"
+#include "FlowProperty.h"
 
 FlowProperty::FlowProperty()
 {

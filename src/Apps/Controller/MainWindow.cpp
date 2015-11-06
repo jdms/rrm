@@ -19,10 +19,6 @@ void MainWindow::createWindow()
     createToolbar();
     create2DModule();
     create3DModule();
-    createComputationModule();
-    createToolbarComputation();
-
-    //createInputDialog();
 
     emit setColor( 0, 0, 128 );
 
@@ -77,32 +73,31 @@ void MainWindow::createActions()
     ac_sketchcolor = new QWidgetAction( this );
     ac_sketchcolor->setDefaultWidget( cd_pickercolor );
 
+    ac_wdwsketching = new QAction( tr( "Window Sketching" ), this );
+    ac_window3d = new QAction( tr( "Window 3D" ), this );
+
+
+    connect ( ac_new , SIGNAL( triggered() ) , this , SLOT( newSection() ) );
+    connect ( ac_removeabove , SIGNAL( triggered() ) , this , SLOT( applyRemoveAbove() ) );
+    connect ( ac_removebelow , SIGNAL( triggered() ) , this , SLOT( applyRemoveBelow() ) );
+    connect ( ac_select , SIGNAL( triggered() ) , this , SLOT( pointerSelection() ) );
+    connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
+
+    /// BEGIN Heriot-Watt University
     ac_open_surface = new QAction( tr( "Open Surface..." ), this );;
     ac_open_userinput = new QAction( tr( "Open User Input..." ), this );;
     ac_compute_volumetric  = new QAction( tr( "Volumetric Meshing..." ), this );;
 
+    ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
+    ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
+    ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
 
-   ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
-   ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
-   ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
-
-
-   ac_wdwsketching = new QAction( tr( "Window Sketching" ), this );
-   ac_window3d = new QAction( tr( "Window 3D" ), this );
-   ac_flowcomputation = new QAction( tr( "Window Flow Computation" ), this );
-
-    connect( ac_new, SIGNAL( triggered() ), this, SLOT( newSection() ) );
-    connect( ac_removeabove, SIGNAL( triggered() ), this, SLOT( applyRemoveAbove() ) );
-    connect( ac_removebelow, SIGNAL( triggered() ), this, SLOT( applyRemoveBelow() ) );
-    connect( ac_select, SIGNAL( triggered() ), this, SLOT( pointerSelection() ) );
-    connect( ac_exit, SIGNAL( triggered() ), this, SLOT( close() ) );
+    ac_flowcomputation = new QAction( tr( "Window Flow Computation" ), this );
 
     connect( ac_compute, SIGNAL( triggered() ), this, SLOT( doComputation() ) );
-
     connect( ac_open_surface, SIGNAL( triggered() ), this, SLOT( openSurfaceFile() ) );
     connect( ac_open_userinput, SIGNAL( triggered() ), this, SLOT( openUserInputFile() ) );
     connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( createMeshVolumetric() ) );
-
     connect( ac_compute_pressure, SIGNAL( triggered() ), this, SLOT( computePressure() ) );
     connect( ac_compute_velocity, SIGNAL( triggered() ), this, SLOT( computeVelocity() ) );
     connect( ac_compute_tof, SIGNAL( triggered() ), this, SLOT( computeTOF() ) );
@@ -116,8 +111,8 @@ void MainWindow::createActions()
     cb_coloroption_vector->setEnabled( false );
 
     connect( cb_compute_property, SIGNAL( currentIndexChanged( int ) ) , this, SLOT( selectProperty( int ) ) );
+    /// END Heriot-Watt University
 }
-
 
 void MainWindow::createMenuBar()
 {

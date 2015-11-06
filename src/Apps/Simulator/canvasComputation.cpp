@@ -1,12 +1,22 @@
-#include "../../Apps/Simulator/canvasComputation.h"
+#include "canvasComputation.h"
 
 CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLWidget( format, parent )
 {
     this->makeCurrent();
 
-    flowvisualizationc = NULL;
+    flowvisualizationc = new FlowVisualizationController();
     mn_options = NULL;
-    initializeOpenGLFunctions();
+    //initializeOpenGLFunctions();
+
+	GLenum glewInitResult = glewInit ( );
+
+	//Check Glew Initialisation:
+	if ( GLEW_OK != glewInitResult )
+	{
+		std::cerr << "Error: " << glewGetErrorString ( glewInitResult ) << endl;
+		exit ( EXIT_FAILURE );
+	}
+
 
     bf_mesh = new GLuint[ 2 ];
 
@@ -35,6 +45,8 @@ void CanvasComputation::createActions()
 {
     ac_reset_transformations = new QAction( tr( "Reset View" ), this );
     ac_clear_all = new QAction( tr( "Clear All" ), this );
+    ac_export = new QAction( tr( "Export" ), this );
+
     wa_properties = new QWidgetAction( this );
     wa_colormaps = new QWidgetAction( this );
     wa_rendering = new QWidgetAction( this );
@@ -57,12 +69,14 @@ void CanvasComputation::createActions()
     connect( this, SIGNAL( sendVectorProperty( std::string, std::string, int ) ), this, SLOT( sendColorsGPU( std::string, std::string, int ) ) );
     connect( ac_reset_transformations, SIGNAL( triggered() ), this, SLOT( resetTransformations() ) );
     connect( ac_clear_all, SIGNAL( triggered() ), this, SLOT( resetSetup() ) );
+    connect( ac_export, SIGNAL( triggered() ), this, SLOT( exportFile() ) );
 
 }
 
 void CanvasComputation::fillMenuProperties()
 {
 
+    mn_properties->clear();
     fillMenuPointProperties();
     fillMenuCellProperties();
 
@@ -255,6 +269,8 @@ void CanvasComputation::createPopupMenu()
     mn_options->addSeparator();
     mn_options->addAction( ac_reset_transformations );
     mn_options->addAction( ac_clear_all );
+    mn_options->addSeparator();
+    mn_options->addAction( ac_export );
 
 }
 
@@ -363,6 +379,8 @@ void CanvasComputation::sendMeshGPU()
 {
 
 
+
+
     glPointSize( 3.0f );
     glGenVertexArrays( 1, &vao_mesh );
     glBindVertexArray( vao_mesh );
@@ -404,8 +422,6 @@ void CanvasComputation::sendMeshGPU()
         }
 
 
-
-
         vector< GLuint > faces;
         flowvisualizationc->getTriangles( faces );
 
@@ -432,7 +448,7 @@ void CanvasComputation::sendMeshGPU()
 
 void CanvasComputation::sendColorsGPU( std::string property, std::string type, int option )
 {
-    if( property != "" && type != "" )
+    if( property.empty() == false && type.empty() == false )
         flowvisualizationc->setCurrentProperty( property, type );
 
     glBindVertexArray( vao_mesh );
@@ -533,6 +549,7 @@ void CanvasComputation::drawModel()
 
     glBindVertexArray( vao_mesh );
 
+
     if( show_vertices == true )
         glDrawArrays( GL_POINTS, 0, number_of_vertices );
 
@@ -575,14 +592,19 @@ void CanvasComputation::resetData()
     model_center.setY( 0.0f );
     model_center.setZ( 0.0f );
 
+    rd_properties.clear();
+    rd_options_vector.clear();
+    ac_properties.clear();
+    mn_vector_properties_points.clear();
+
 //    deleteBuffers();
 
-    if( flowvisualizationc != NULL )
-    {
+//    if( flowvisualizationc != NULL )
+//    {
         flowvisualizationc->clear();
-        delete flowvisualizationc;
-    }
-    flowvisualizationc = new FlowVisualizationController();
+//        delete flowvisualizationc;
+//    }
+//    flowvisualizationc = new FlowVisualizationController();
 
 }
 
@@ -719,14 +741,14 @@ void CanvasComputation::resetTransformations()
 void CanvasComputation::setColorMap()
 {
     flowvisualizationc->setColorMap( "JET" );
-    sendColorsGPU();
+    sendColorsGPU( "", "" );
     updateGL();
 }
 
 void CanvasComputation::setColorMapConstant()
 {
     flowvisualizationc->setColorMap( "CONSTANT" );
-    sendColorsGPU();
+    sendColorsGPU( "", "" );
     updateGL();
 }
 
@@ -744,6 +766,8 @@ void CanvasComputation::sendSurfaceGPU()
     glGenBuffers( 2, bf_mesh );
 
 
+
+
         vector< GLfloat > vertices;
         vector< GLuint > lines;
         flowvisualizationc->getPointsSurface( vertices );
@@ -756,6 +780,14 @@ void CanvasComputation::sendSurfaceGPU()
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
         glEnableVertexAttribArray( 0 );
 
+        vector< GLfloat > colors;
+        flowvisualizationc->getSurfaceColors( colors );
+        GLint ncolors = (int) colors.size();
+
+        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
+        glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
+        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
+        glEnableVertexAttribArray( 1 );
 
         flowvisualizationc->getWireframeSurface( lines );
 
@@ -807,7 +839,7 @@ void CanvasComputation::setSurfacePositionModel()
 
 void CanvasComputation::selectProperty( int id, bool option, int option_color )
 {
-    FlowProperty p = flowvisualizationc->getPropertyfromMap( id );
+    FlowProperty& p = flowvisualizationc->getPropertyfromMap( id );
     std::string name;
     std::string type;
 
@@ -816,7 +848,7 @@ void CanvasComputation::selectProperty( int id, bool option, int option_color )
    if( option == true )
         sendColorsGPU( name, type, option_color );
    else
-       sendColorsGPU();
+       sendColorsGPU( name, type );
 
 
 }
@@ -826,4 +858,13 @@ void CanvasComputation::showSurface()
     sendSurfaceGPU();
     setSurfacePositionModel();
     updateGL();
+}
+
+void CanvasComputation::exportFile()
+{
+    QString selected_format = "";
+    QString fname_string = QFileDialog::getSaveFileName( this, tr( "Save File" ), "/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/inputs",
+                                                         "VTK files (*.vtk)", &selected_format );
+
+    flowvisualizationc->exportFile( fname_string.toStdString() );
 }

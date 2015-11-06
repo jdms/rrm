@@ -27,9 +27,9 @@
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 
 #include "Modeller/Canvas2D.h"
+
  /// ZHAO -----// ZHAO
-//#include "Simulator/canvasComputation.h"
-//#include "Simulator/Canvas3D.h"
+#include "Simulator/canvasComputation.h"
  /// ZHAO -----// ZHAO
 
 class MainWindow : public QMainWindow
@@ -53,15 +53,8 @@ class MainWindow : public QMainWindow
         void createComputationModule();
 
         void clearCanvas2D();
-//        void clearCanvas3D();
-//        void clearComputation();
-//        void resetToolbar();
 
         void createToolbarComputation();
-
-//        void createInputDialog();
-        void createWidgetInputFiles();
-        void createWidgetInputTolerance();
 
 
     protected slots:
@@ -72,24 +65,6 @@ class MainWindow : public QMainWindow
 
         void pointerSelection();
         void changeColorLine();
-
-        /// ZHAO -----// ZHAO
-//        void doComputation();
-//        void openSurfaceFile();
-//        void openUserInputFile();
-//        void createMeshVolumetric();
-//        void selectProperty( int id );
-//        void computePressure();
-//        void computeVelocity();
-//        void computeTOF();
-//
-//        void findUserFile();
-//        void findSurfaceFile();
-//
-//        void acceptInputUser();
-//        void rejectInputUser();
-
-        /// ZHAO -----// ZHAO
 
     public slots:
 
@@ -107,25 +82,6 @@ class MainWindow : public QMainWindow
 
         void selectMode();
         void sketchingMode();
-        /// ZHAO -----// ZHAO
-
-//        void sendSurfaceFile( std::string filename );
-//        void sendInputUserFile( std::string filename );
-//        void computeVolume();
-//
-//
-//        void computePressureProperty();
-//        void computeVelocityProperty();
-//        void computeTOFProperty();
-//
-//        void selectFlowProperty( int, bool& );
-//
-//
-//        void sendInputUser( std::string input_user, std::string surface_file, float tol1, float tol2 );
-
-        /// ZHAO -----// ZHAO
-
-
 
     private:
 
@@ -134,10 +90,6 @@ class MainWindow : public QMainWindow
         QDockWidget *dc_computation;
 
         Canvas2D *canvas2D;
-
-        /// ZHAO -----// ZHAO
-        //CanvasComputation *canvas_computation;
-        /// ZHAO -----// ZHAO
 
         QAction *ac_new;
         QAction *ac_open;
@@ -160,13 +112,11 @@ class MainWindow : public QMainWindow
         QAction *ac_select;
         QWidgetAction *ac_sketchcolor;
 
-
         QToolBar *tlb_section;
         QToolBar *tlb_computation;
         QToolBar *tlb_rules;
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
-
 
         QMainWindow *mw_canvas_computation;
         QToolBar *tlb_workflow_flow;

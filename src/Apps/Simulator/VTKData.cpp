@@ -1,4 +1,4 @@
-#include "../../Apps/Simulator/VTKData.h"
+#include "VTKData.h"
 
 VTKData::VTKData()
 {    
@@ -196,7 +196,7 @@ int VTKData::parseVTKData_new( std::ifstream& file, FILE_STATES &state, std::str
 
 
                 data.clear();
-                bool catched_data = getValues( EXPKVALUES, qline, data );
+                getValues( EXPKVALUES, qline, data );
                 int ndata = (int) data.size();
 
                 if( ndata != FILE_NARGUMENTS::N_POINTSVALUES )
@@ -254,7 +254,7 @@ int VTKData::parseVTKData_new( std::ifstream& file, FILE_STATES &state, std::str
             {
 
                 data.clear();
-                bool catched_data = getValues( EXPKVALUES, qline, data );
+                getValues( EXPKVALUES, qline, data );
                 int ndata = (int) data.size();
 
                 if( ndata == 0 )
@@ -264,7 +264,7 @@ int VTKData::parseVTKData_new( std::ifstream& file, FILE_STATES &state, std::str
                 if( nvertices != ( ndata - 1 ) )
                     return 0;
 
-                int idc = vector_cells.size();
+                int idc = (int)vector_cells.size();
 
                 Cell cell;
                 cell.id = idc;
@@ -652,6 +652,27 @@ void VTKData::addCell( int id, int type, vector< int >& vertices )
 
 }
 
+
+void VTKData::addPointFlowProperty( FlowProperty& property )
+{
+    int id = vector_point_properties.size();
+    vector_point_properties.push_back( property );
+    std::string name;
+    property.getName( name );
+    ppoint_name_id[ name ] = id;
+
+}
+
+void VTKData::addCellFlowProperty( FlowProperty& property )
+{
+    int id = vector_cell_properties.size();
+    vector_cell_properties.push_back( property );
+    std::string name;
+    property.getName( name );
+    pcell_name_id[ name ] = id;
+
+}
+
 void VTKData::getFlowProperty( std::string name, std::string type, FlowProperty& property )
 {
 
@@ -772,7 +793,6 @@ void VTKData::computeMaxMinCellProperty( int id )
     if( ncoords == 1 )
     {
 
-        std::vector<float>::iterator teste = std::begin( values );
 
         std::vector<float>::iterator itmin = std::min_element( values.begin(), values.end() );
         std::vector<float>::iterator itmax = std::max_element( values.begin(), values.end() );
@@ -949,8 +969,11 @@ void VTKData::getMaxMinCoordinateCellProperty( int id, vector< float >& maxmin )
 }
 
 
-void VTKData::writeFile( ofstream& file ) const
+void VTKData::writeFile( std::string filename ) const
 {
+    ofstream file;
+    file.open( filename.c_str() );
+    if( !file.is_open() ) return;
 
     file <<  "# vtk DataFile Version " << file_version.c_str() << endl;
     file << file_comments.c_str() << endl;
@@ -968,7 +991,7 @@ void VTKData::writeFile( ofstream& file ) const
     for( int i = 0; i < number_of_cells; ++i )
     {
         Cell cell = vector_cells[ i ];
-        int nvertices = cell.vertices.size();
+        int nvertices = (int) cell.vertices.size();
 
         file << nvertices ;
         for( int j = 0; j < nvertices; j++ )
@@ -990,7 +1013,7 @@ void VTKData::writeFile( ofstream& file ) const
     if( vector_point_properties.empty() == false )
     {
 
-        int npproperties = vector_point_properties.size();
+        int npproperties = (int) vector_point_properties.size();
         file << "POINT_DATA " << number_of_points << endl;
 
         for( int i = 0; i < npproperties; ++i )
@@ -1030,7 +1053,7 @@ void VTKData::writeFile( ofstream& file ) const
     if( vector_cell_properties.empty() == false )
     {
 
-        int npproperties = vector_cell_properties.size();
+        int npproperties = (int) vector_cell_properties.size();
         file << "CELL_DATA " << number_of_cells << endl;
 
         for( int i = 0; i < npproperties; ++i )
@@ -1065,4 +1088,34 @@ void VTKData::writeFile( ofstream& file ) const
 
     }
 
+}
+
+void VTKData::clear()
+{
+    file_version.clear();
+    file_comments.clear();
+    file_format.clear();
+    dataset_type.clear();
+
+    format_points.clear();
+    number_of_points = 0;
+    vector_points.clear();
+
+    number_of_cells = 0;
+    list_cells_size = 0;
+    vector_cells.clear();
+    count_cells = 0;
+
+    vector_point_properties.clear();
+    vector_cell_properties.clear();
+    ppoint_name_id.clear();
+    pcell_name_id.clear();
+    count_properties;
+
+    lookuptable.clear();
+    lookuptablecell.clear();
+
+    visitCells = 0;
+    visitPoints = 0;
+    is_empty = true;
 }
