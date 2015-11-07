@@ -315,9 +315,11 @@ void CanvasComputation::paintGL()
 void CanvasComputation::initializeShaders()
 {
 
+//    std::string vertex_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/vertex_shader.vert" );
+//    std::string fragment_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/fragment_shader.frag" );
 
-    std::string vertex_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/vertex_shader.vert" );
-    std::string fragment_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/fragment_shader.frag" );
+    std::string vertex_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/vertex_shader.vert" );
+    std::string fragment_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/fragment_shader.frag" );
 
     const char *vertex_shader_source = vertex_shader_string.c_str();
     const char *fragment_shader_source = fragment_shader_string.c_str();
