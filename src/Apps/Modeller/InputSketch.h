@@ -23,6 +23,7 @@ class InputSketch : public QGraphicsPathItem
 
 
         QPainterPath getSketch();
+        void setSketch( const QPainterPath& p);
         void setDone( bool option );
 
         bool isVisible() const;
@@ -30,6 +31,9 @@ class InputSketch : public QGraphicsPathItem
         void isVisible( bool option );
         void isInside( bool option );
 
+        QPainterPath shape() const;
+
+        void setPen( const QPen& pen );
 
     protected:
 

@@ -19,13 +19,13 @@ void InputSketch::paint( QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
     painter->setRenderHint( QPainter::Antialiasing );
 
-    pen_color.setWidth( 1 );
-
-
-    if( done == true ){
-        pen_color.setColor( QColor( 255, 0, 0 ) );
-        pen_color.setWidth( 2 );
-    }
+//    pen_color.setWidth( 5 );
+//
+//
+//    if( done == true ){
+//        pen_color.setColor( QColor( 255, 0, 0 ) );
+//        pen_color.setWidth( 5 );
+//    }
 
     painter->setPen( pen_color );
     painter->setBrush( Qt::NoBrush );
@@ -36,22 +36,25 @@ void InputSketch::paint( QPainter *painter, const QStyleOptionGraphicsItem *opti
 QRectF InputSketch::boundingRect() const
 {
 
-    return QRectF( -curve.boundingRect().width()/ 2, -curve.boundingRect().height()/ 2, curve.boundingRect().width(), curve.boundingRect().height());
+    return curve.boundingRect();
 
 }
 
 void InputSketch::create( const QPointF &p )
 {
+    this->prepareGeometryChange();
     curve.moveTo( p );
 }
 
 void InputSketch::add( const QPointF &p )
 {
+    this->prepareGeometryChange();
     curve.lineTo( p );
 }
 
 QRectF InputSketch::clear()
 {
+    this->prepareGeometryChange();
     QRectF rect = QRectF( -curve.boundingRect().width()/ 2, -curve.boundingRect().height()/ 2, curve.boundingRect().width(), curve.boundingRect().height());
     curve = QPainterPath();
     return rect;
@@ -87,4 +90,22 @@ void InputSketch::isInside( bool option )
 QPainterPath InputSketch::getSketch()
 {
     return curve;
+}
+
+/// Felipe
+void  InputSketch::setSketch( const QPainterPath& p)
+{
+    this->prepareGeometryChange();
+    curve = p;
+}
+
+QPainterPath InputSketch::shape() const
+{
+
+    return curve;
+}
+
+void InputSketch::setPen( const QPen& pen )
+{
+	pen_color = pen;
 }

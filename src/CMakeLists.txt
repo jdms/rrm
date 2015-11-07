@@ -40,7 +40,8 @@ include_directories(
     ## - CGAL-4.7.1
     ${CGAL_INCLUDE_DIRS}
     ## - Find Boost
-    ${CMAKE_CURRENT_SOURCE_DIR}  
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR} 
 )
 		
 ## Basic Libraries and Algorithms	

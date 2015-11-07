@@ -18,6 +18,8 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 /// OpenGL
 void GLWidget::initializeGL ( )
 {
+	this->makeCurrent();
+
 	/// Key event to GLWidget not o MainWindow ! | @QtDocumentation
 	setFocus ( );
 	/// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed. | @QtDocmentation
@@ -26,6 +28,7 @@ void GLWidget::initializeGL ( )
 
 	/// GLEW OpenGL
 	/// GLEW Initialisation:
+	glewExperimental = GL_TRUE;
 	GLenum glewInitResult = glewInit ( );
 
 	//Check Glew Initialisation:
@@ -126,6 +129,8 @@ void GLWidget::initializeGL ( )
 
 void GLWidget::reloadShaders ( )
 {
+	this->makeCurrent();
+
 	if ( cube_shader_ )
 	{
 		cube_shader_->reloadShaders ( );
@@ -138,6 +143,7 @@ void GLWidget::reloadShaders ( )
 
 void GLWidget::loadShaderByResources ( )
 {
+	this->makeCurrent();
 	//! Debug Version: to load the update shaders
 	qDebug ( ) << "Load by Resources ";
 
@@ -175,6 +181,7 @@ void GLWidget::loadShaderByResources ( )
 
 void GLWidget::loadShaders ( )
 {
+	this->makeCurrent();
 	//! Binary absolute location
 	QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
 
@@ -215,6 +222,8 @@ void GLWidget::loadShaders ( )
 
 void GLWidget::createSurfacePatch()
 {
+	this->makeCurrent();
+
 	patch_.clear ( );
 	box.reset();
 
@@ -264,6 +273,8 @@ void GLWidget::createSurfacePatch()
 
 void GLWidget::createSurfacePatchies( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width )
 {
+	this->makeCurrent();
+
 	patch_.clear ( );
 	box.reset();
 
@@ -332,6 +343,8 @@ void GLWidget::createSurfacePatchies( const std::vector<std::vector<Eigen::Vecto
 /// Left to Right
 void GLWidget::createPatch ( Eigen::Vector3f left , Eigen::Vector3f right , float step )
 {
+	this->makeCurrent();
+
 	float size = right.x ( ) - left.x ( );
 
 	float dx = size / 10;
@@ -388,9 +401,9 @@ void GLWidget::createPatch ( Eigen::Vector3f left , Eigen::Vector3f right , floa
 
 }
 
-
 void GLWidget::backGround()
 {
+	this->makeCurrent();
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
@@ -412,6 +425,7 @@ void GLWidget::backGround()
 
 void GLWidget::resizeGL ( int width , int height )
 {
+	this->makeCurrent();
 	/// What is you viewport size my friend ... =(
 	glViewport ( 0 , 0 , width , height );
 
@@ -421,6 +435,7 @@ void GLWidget::resizeGL ( int width , int height )
 /// Real Looping
 void GLWidget::paintGL ( )
 {
+	this->makeCurrent();
 
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -443,11 +458,12 @@ void GLWidget::paintGL ( )
 /// KeyInput
 void GLWidget::processMultiKeys ( )
 {
+	this->makeCurrent();
 }
 
 void GLWidget::keyPressEvent ( QKeyEvent * event )
 {
-
+	this->makeCurrent();
 	switch ( event->key ( ) )
 	{
 		case Qt::Key_F5:
@@ -471,12 +487,13 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 
 void GLWidget::keyReleaseEvent ( QKeyEvent * event )
 {
-
+	this->makeCurrent();
 }
 /// MouseInput
 void GLWidget::mousePressEvent ( QMouseEvent *event )
 {
 	setFocus ( );
+	this->makeCurrent();
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
 	if ( event->modifiers ( ) & Qt::ShiftModifier )
 	{
@@ -486,8 +503,8 @@ void GLWidget::mousePressEvent ( QMouseEvent *event )
 		}
 		else if ( event->button ( ) == Qt::RightButton )
 		{
-			sketch_.clear();
-			sketch_.push_back(Eigen::Vector3f(screen_pos.x(),screen_pos.y(),0.0f));
+//			sketch_.clear();
+//			sketch_.push_back(Eigen::Vector3f(screen_pos.x(),screen_pos.y(),0.0f));
 		}
 	}
 	else
@@ -504,6 +521,7 @@ void GLWidget::mousePressEvent ( QMouseEvent *event )
 
 void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 {
+	this->makeCurrent();
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
 	if ( ( event->modifiers ( ) & Qt::ShiftModifier )  )
 	{
@@ -514,7 +532,7 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 		}
 		if ( event->buttons ( ) & Qt::RightButton )
 		{
-			sketch_.push_back(Eigen::Vector3f(screen_pos.x(),screen_pos.y(),0.0f));
+//			sketch_.push_back(Eigen::Vector3f(screen_pos.x(),screen_pos.y(),0.0f));
 		}
 	}
 	else
@@ -538,6 +556,7 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 
 void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 {
+	this->makeCurrent();
 	if ( event->button ( ) == Qt::LeftButton )
 	{
 		camera.endTranslation ( );
@@ -547,9 +566,9 @@ void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 	{
 		//light_trackball.endRotation();
 
-		p.push_back(sketch_);
-
-		createSurfacePatchies(p,10.0f,100.0f, 500.0f);
+//		p.push_back(sketch_);
+//
+//		createSurfacePatchies(p,10.0f,100.0f, 500.0f);
 	}
 
 
@@ -558,7 +577,7 @@ void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 /// WheelInput
 void GLWidget::wheelEvent ( QWheelEvent *event )
 {
-
+	this->makeCurrent();
 	const int WHEEL_STEP = 120;
 
 	float pos = event->delta ( ) / float ( WHEEL_STEP );
@@ -585,6 +604,7 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 /// Drag and Drop
 void GLWidget::dragEnterEvent ( QDragEnterEvent *event )
 {
+	this->makeCurrent();
 	setBackgroundRole ( QPalette::Highlight );
 
 	event->acceptProposedAction ( );
@@ -598,11 +618,13 @@ void GLWidget::dragEnterEvent ( QDragEnterEvent *event )
 /// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
 void GLWidget::dragMoveEvent ( QDragMoveEvent *event )
 {
+	this->makeCurrent();
 	event->acceptProposedAction ( );
 }
 ///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
 void GLWidget::dropEvent ( QDropEvent *event )
 {
+	this->makeCurrent();
 	const QMimeData *mimeData = event->mimeData ( );
 	/// The mimeData object can contain one of the following objects: an image, HTML text, plain text, or a list of URLs.
 
@@ -623,6 +645,7 @@ void GLWidget::dropEvent ( QDropEvent *event )
 
 void GLWidget::dragLeaveEvent ( QDragLeaveEvent *event )
 {
+	this->makeCurrent();
 	event->accept ( );
 
 	qDebug ( ) << "Exit";

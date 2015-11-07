@@ -13,6 +13,10 @@ SketchingScene::SketchingScene( QObject *parent ): QGraphicsScene( parent )
     ghost_image = new QGraphicsPixmapItem ();
     this->addItem(ghost_image);
 
+
+
+    boundary_sketching_ = 1;
+
 }
 
 SketchingScene::~SketchingScene()
@@ -100,7 +104,7 @@ void SketchingScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
     }
 
-    //this->boundary_anchor_point_ = last_point_;
+    this->boundary_anchor_point_ = event->scenePos();
 	
     QGraphicsScene::mousePressEvent( event );
     update();
@@ -188,13 +192,8 @@ void SketchingScene::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
     if( mode == InteractionMode::SELECT )
         return;
 
-
     if( event->buttons() == Qt::MouseButton::LeftButton )
     {
-        sketch->add( event->scenePos() );
-
-    }
-
 	if ( boundary_sketching_ )
 	{
 		QLineF l;
@@ -226,15 +225,14 @@ void SketchingScene::mouseMoveEvent( QGraphicsSceneMouseEvent *event )
 			y1 = event->scenePos ( ).y ( );
 			y2 = boundary_anchor_point_.y ( );
 		}
-		///this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
+		this->boundaryc->setNewBoundary( x1 , y1 , x2 - x1 , y2 - y1 );
 	}
-
 	else
 	{
-
+		 sketch->add( event->scenePos() );
 	}
 
-
+    }
 
 
     QGraphicsScene::mouseMoveEvent( event );

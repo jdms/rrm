@@ -20,8 +20,6 @@ HorizonController::HorizonController( QColor color ):QGraphicsPathItem()
     setAcceptHoverEvents(true);
     setFlags( QGraphicsItem::ItemIsSelectable );
 
-
-
 }
 
 HorizonController::~HorizonController()
@@ -30,8 +28,6 @@ HorizonController::~HorizonController()
    intersections.clear();
    are_inside.clear();
    are_visible.clear();
-
-
 }
 
 

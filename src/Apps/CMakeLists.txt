@@ -4,8 +4,6 @@ include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-  
-set(CMAKE_BUILDTYPE Debug)
 
 ## Show all include directories
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
@@ -31,12 +29,15 @@ set( MODELLER_HEADERS   Modeller/Canvas2D.h
                         Modeller/HorizonController.h
                         Modeller/InputSketch.h   
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
-									
+                        Modeller/SketchBoardWidget/SketchBoard.hpp
+                        Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
    )
    
 set( MODELLER_MOC_HEADERS Modeller/Canvas2D.h
                         Modeller/SketchingScene.h
 						Modeller/ExtrusionWidget/OpenGLWidget.hpp
+					    Modeller/SketchBoardWidget/SketchBoard.hpp
+                        Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
 						)
 
 set( MODELLER_SOURCES Modeller/Canvas2D.cpp
@@ -45,7 +46,9 @@ set( MODELLER_SOURCES Modeller/Canvas2D.cpp
                         Modeller/InputSketch.cpp
                         Modeller/SketchingScene.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
-                        )
+                        Modeller/SketchBoardWidget/SketchBoard.cpp
+                        Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp
+   )
 ## Grab Simulator Source Files
 
 

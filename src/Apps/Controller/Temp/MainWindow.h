@@ -28,9 +28,14 @@
 
 #include "Modeller/Canvas2D.h"
 
- /// ZHAO -----// ZHAO
-#include "Simulator/canvasComputation.h"
- /// ZHAO -----// ZHAO
+#include "Modeller/SketchBoardWidget/SketchBoard.hpp"
+	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
+
+#include "Modeller/HorizonController.h"
+
+// /// ZHAO -----// ZHAO
+//#include "Simulator/canvasComputation.h"
+// /// ZHAO -----// ZHAO
 
 class MainWindow : public QMainWindow
 {
@@ -50,12 +55,8 @@ class MainWindow : public QMainWindow
 
         void create2DModule();
         void create3DModule();
-        void createComputationModule();
 
         void clearCanvas2D();
-
-        void createToolbarComputation();
-
 
     protected slots:
 
@@ -66,16 +67,31 @@ class MainWindow : public QMainWindow
         void pointerSelection();
         void changeColorLine();
 
+        /// CrossSection
+        void keyPressEvent ( QKeyEvent *e );
+        void mousePressEvent(QMouseEvent* event);
+        void wheelEvent(QWheelEvent* event);
+
     public slots:
 
         //void addCurve( QPolygonF& curve);
 
         //void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
 
+        void curve2DSlot ( QPolygonF polygon );
+        void smoothCurveSlot ( QPolygonF raw_sketch );
+        void renderSegments();
+        void newSessionSlot(QPixmap pixmap);
+        void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
+	void update3DExtrusion();
+
     signals:
 
+	void newBoundarySignal();
 
-    	/// CrossSection
+
+    signals:
+
         void applyremoveabove();
         void applyremovebelow();
         void setColor( int R, int G, int B );
@@ -83,13 +99,15 @@ class MainWindow : public QMainWindow
         void selectMode();
         void sketchingMode();
 
+    	/// CrossSection
+
+        void newBoundary();
+
     private:
 
         QDockWidget *dc_2DModule;
         QDockWidget *dc_3DModule;
         QDockWidget *dc_computation;
-
-        Canvas2D *canvas2D;
 
         QAction *ac_new;
         QAction *ac_open;
@@ -97,63 +115,57 @@ class MainWindow : public QMainWindow
         QAction *ac_export;
         QAction *ac_exit;
 
-        QAction *ac_compute;
-
         QAction *ac_contents;
         QAction *ac_about;
 
         QAction *ac_removeabove;
         QAction *ac_removebelow;
 
-        QAction *ac_compute_pressure;
-        QAction *ac_compute_velocity;
-        QAction *ac_compute_tof;
-
         QAction *ac_select;
         QWidgetAction *ac_sketchcolor;
 
         QToolBar *tlb_section;
-        QToolBar *tlb_computation;
         QToolBar *tlb_rules;
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
-
-        QMainWindow *mw_canvas_computation;
-        QToolBar *tlb_workflow_flow;
-        QAction *ac_open_surface;
-        QAction *ac_compute_volumetric;
-        QAction *ac_open_userinput;
-        QComboBox *cb_compute_property;
-        QComboBox *cb_coloroption_vector;
 
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;
         QToolButton *tbt_colorsketch;
 
-        QDialog* dg_inputuser;
-        QToolBox* tb_inputuser;
-
-        QWidget *wd_inputfiles;
-        QWidget *wd_inputtolerance;
-
-        QLineEdit *edt_userfile;
-        QPushButton *btn_finduserfile;
-        QLineEdit *edt_surfacefile;
-        QPushButton *btn_findsurfacefile;
-        QLineEdit *edt_tolerance1;
-        QLineEdit *edt_tolerance2;
-
-        QDialogButtonBox *btns_inputdialog;
-
         QAction *ac_wdwsketching;
         QAction *ac_window3d;
-        QAction *ac_flowcomputation;
 
-        /// CrossSection
+        /// CrossSection ////////////////////////////////////////////////////////////////////
         RRM::CrossSection<qreal> cross_section_;
 
+        QStatusBar			*status_bar_;
+        	QLabel			*status_text;
+
+        QAction *ac_newBoundary;
         /// Sketching Surface and Extrusion
         GLWidget *glWidget;
+
+	// Sketch Views
+	SketchBoard  		*sketch_board_;
+		SketchSession   *sketchSession_;
+
+	typedef RRM::CrossSection<qreal>                   CrossSection;
+	typedef CrossSection::Curve2D			   Curve2D;
+
+		// Model Testing
+	QPolygonF convert( Curve2D& curve)
+	{
+		QPolygonF p;
+
+		for(std::size_t i = 0; i < curve.size(); i++)
+		{
+			p.push_back(QPointF(curve[i].x(),curve[i].y()));
+		}
+		return p;
+	}
+
+
 
 };
 
