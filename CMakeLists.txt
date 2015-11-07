@@ -22,12 +22,5 @@ OPTION(BUILD_FULL_SUITE "Build RapidReservoir Suite" ON)
 #@see http://stackoverflow.com/questions/23878590/turn-off-eigen-alignment-in-the-pcl-build
 add_definitions(-DEIGEN_DONT_ALIGN)
 
-IF(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ELSEIF(WIN32)
-    if(MSVC)
-    endif(MSVC)
-ENDIF()    
-
 ## - Examples using and Qt
 add_subdirectory(src)

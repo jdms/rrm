@@ -24,6 +24,17 @@ else()
     message(FATAL_ERROR "CGAL is required.")
 endif()
 
+IF(UNIX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ELSEIF(WIN32)
+    if(MSVC)
+        FIND_LIBRARY(SMAG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SMAG )
+        message("CGAL is required." ${SMAG_LIBRARY})
+    endif(MSVC)
+ENDIF()    
+
+
+
 include_directories(
     #Eigen3
     ${EIGEN3_INCLUDE_DIR}
