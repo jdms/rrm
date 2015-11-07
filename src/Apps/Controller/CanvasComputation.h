@@ -24,7 +24,7 @@
 #include <QActionGroup>
 #include <QFileDialog>
 
-#include "FlowVisualizationController.h"
+#include "Simulator/FlowVisualizationController.h"
 
 //#include "Eigen/Dense"
 //#include "Tucano/Trackball.hpp"

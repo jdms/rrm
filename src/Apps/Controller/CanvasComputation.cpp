@@ -1,4 +1,4 @@
-#include "canvasComputation.h"
+#include "CanvasComputation.h"
 
 CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLWidget( format, parent )
 {
@@ -316,8 +316,8 @@ void CanvasComputation::initializeShaders()
 {
 
 
-    std::string vertex_shader_string = read_shader_file( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/vertex_shader.vert" );
-    std::string fragment_shader_string = read_shader_file( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/fragment_shader.frag" );
+    std::string vertex_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/vertex_shader.vert" );
+    std::string fragment_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/fragment_shader.frag" );
 
     const char *vertex_shader_source = vertex_shader_string.c_str();
     const char *fragment_shader_source = fragment_shader_string.c_str();

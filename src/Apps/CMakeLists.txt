@@ -13,13 +13,27 @@ endforeach()
 
 ## Grab Controller Source Files
 set( CONTROLLER_HEADERS Controller/MainWindow.h
-                        
+                        Controller/FlowComputationModule.h                       
+                        Controller/DialogInputFlowComputation.h
+                        Controller/CanvasComputation.h
+                        Controller/Sketching2DModule.h
+   )
+   
+set( CONTROLLER_MOC_HEADERS Controller/MainWindow.h
+                            Controller/FlowComputationModule.h                       
+                            Controller/DialogInputFlowComputation.h
+                            Controller/CanvasComputation.h
+                            Controller/Sketching2DModule.h
    )
 
 set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
-                        Controller/MainSimulator.cpp
-                        Controller/MainModeller.cpp                       
+                        ##Controller/MainSimulator.cpp
+                        ##Controller/MainModeller.cpp
+                        Controller/FlowComputationModule.cpp                       
+                        Controller/DialogInputFlowComputation.cpp
+                        Controller/CanvasComputation.cpp
+                        Controller/Sketching2DModule.cpp
    )
 
 ## Grab Modeller Source Files
@@ -53,7 +67,6 @@ set( MODELLER_SOURCES Modeller/Canvas2D.cpp
 
 
 set( SIMULATOR_HEADERS     
-    Simulator/canvasComputation.h 
     Simulator/FlowVisualizationController.h 
     Simulator/VTKData.h 
     Simulator/ColorMap.h 
@@ -77,12 +90,10 @@ set( SIMULATOR_HEADERS
     )
 
 set ( SIMULATOR_MOC_HEADERS
-    Simulator/canvasComputation.h 
     Simulator/FlowVisualizationController.h     
 )
 
-set( SIMULATOR_HEADERS     
-    Simulator/canvasComputation.cpp 
+set( SIMULATOR_SOURCES     
     Simulator/FlowVisualizationController.cpp 
     Simulator/VTKData.cpp 
     Simulator/ColorMap.cpp 
@@ -104,7 +115,7 @@ set( SIMULATOR_HEADERS
 
 
 ## Q_OBJECT files
-set( MOC_HEADERS ${CONTROLLER_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
+set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
 set( UI_SOURCES  )

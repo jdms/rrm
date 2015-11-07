@@ -1,22 +1,13 @@
 #ifndef SKETCHINGSCENE_H
 #define SKETCHINGSCENE_H
 
-#include <iostream>
-
-#include <QtCore/QDebug>
-
-#include <QtWidgets/QGraphicsScene>
-#include <QtWidgets/QGraphicsSceneMouseEvent>
-
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
-#include <QtCore/QMimeData>
-#include <QtCore/QUrl>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 
 
-#include "Modeller/BoundaryController.h"
-#include "Apps/Modeller/HorizonController.h"
-#include "Apps/Modeller/InputSketch.h"
+#include "InputSketch.h"
+#include "HorizonController.h"
+#include "BoundaryController.h"
 
 class SketchingScene: public QGraphicsScene
 {
@@ -39,11 +30,6 @@ class SketchingScene: public QGraphicsScene
         void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent *event );
 
-	void dragEnterEvent ( QGraphicsSceneDragDropEvent *event );
-	void dragMoveEvent 	( QGraphicsSceneDragDropEvent *event );
-	void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
-	void dropEvent 		( QGraphicsSceneDragDropEvent *event );
-
         QColor getColor() const;
 
 
@@ -52,22 +38,19 @@ class SketchingScene: public QGraphicsScene
         void applyRemoveAbove();
         void applyRemoveBelow();
 
-
         void setColor( int R, int G, int B );
         void getColor( int R, int G, int B );
 
         void setModeSelect();
         void setModeSketching();
 
-        // Skecting Felipe
-        bool initialization_with_image( const QPixmap& pixmap  );
-
-
 
     protected:
 
         void createBoundary();
         void updateAllElements();
+
+
 
     private:
 
@@ -78,13 +61,6 @@ class SketchingScene: public QGraphicsScene
         BoundaryController *boundaryc;
 
         QColor currentColor;
-
-        QGraphicsPixmapItem * ghost_image;
-
-
-        /// Sketching new Boundary
-        bool 	boundary_sketching_;
-        QPointF boundary_anchor_point_;
 
 
 };

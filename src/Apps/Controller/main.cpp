@@ -1,11 +1,11 @@
 #include <iostream>
 
 
-// QT libraries
-#include <QApplication>
-
 // Project headers
 #include "MainWindow.h"
+
+// QT libraries
+#include <QApplication>
 
 int main( int argc, char *argv[] )
 {

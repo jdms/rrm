@@ -2,7 +2,7 @@
 #define SKETCHING2DMODULE_H
 
 #include <QDockWidget>
-#include "Canvas2D.h"
+#include "Modeller/Canvas2D.h"
 
 class Sketching2DModule: public QDockWidget
 {

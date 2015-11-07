@@ -1,6 +1,9 @@
 #ifndef FLOWCOMPUTATIONMODULE_H
 #define FLOWCOMPUTATIONMODULE_H
 
+#include "CanvasComputation.h"
+#include "DialogInputFlowComputation.h"
+
 #include <QDockWidget>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -14,10 +17,6 @@
 #include <QToolBar>
 #include <QString>
 #include <QStringList>
-
-#include "canvasComputation.h"
-#include "DialogInputFlowComputation.h"
-
 
 class FlowComputationModule: public QDockWidget
 {
