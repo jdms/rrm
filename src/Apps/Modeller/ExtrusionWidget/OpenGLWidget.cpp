@@ -18,8 +18,6 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 /// OpenGL
 void GLWidget::initializeGL ( )
 {
-	this->makeCurrent();
-
 	/// Key event to GLWidget not o MainWindow ! | @QtDocumentation
 	setFocus ( );
 	/// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed. | @QtDocmentation
@@ -119,9 +117,10 @@ void GLWidget::initializeGL ( )
 
 	glBindVertexArray ( 0 );
 
-	createPatch ( Eigen::Vector3f ( -1.0 , 0.0 , 0.5 ) , Eigen::Vector3f ( 1.0 , 0.0 , 0.5 ) , 10 );
+	//createPatch ( Eigen::Vector3f ( -1.0 , 0.0 , 0.5 ) , Eigen::Vector3f ( 1.0 , 0.0 , 0.5 ) , 10 );
 
 	loadShaderByResources ( );
+
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
@@ -129,8 +128,6 @@ void GLWidget::initializeGL ( )
 
 void GLWidget::reloadShaders ( )
 {
-	this->makeCurrent();
-
 	if ( cube_shader_ )
 	{
 		cube_shader_->reloadShaders ( );
@@ -143,7 +140,6 @@ void GLWidget::reloadShaders ( )
 
 void GLWidget::loadShaderByResources ( )
 {
-	this->makeCurrent();
 	//! Debug Version: to load the update shaders
 	qDebug ( ) << "Load by Resources ";
 
@@ -164,10 +160,15 @@ void GLWidget::loadShaderByResources ( )
 //! Effect
 
 	//! Effects --
-	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+						     ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	cube_shader_->initialize ( );
+
+	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
+					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
+						       ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	patch_shader_->initialize ( );
 
 	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
 					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
@@ -181,7 +182,6 @@ void GLWidget::loadShaderByResources ( )
 
 void GLWidget::loadShaders ( )
 {
-	this->makeCurrent();
 	//! Binary absolute location
 	QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
 
@@ -210,6 +210,12 @@ void GLWidget::loadShaders ( )
 						     ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	cube_shader_->initialize ( );
 
+	//! Effects --
+	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
+					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
+						       ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	patch_shader_->initialize ( );
+
 	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
 					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
 						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ) , "" , "" );
@@ -222,8 +228,6 @@ void GLWidget::loadShaders ( )
 
 void GLWidget::createSurfacePatch()
 {
-	this->makeCurrent();
-
 	patch_.clear ( );
 	box.reset();
 
@@ -267,13 +271,13 @@ void GLWidget::createSurfacePatch()
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
 	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , &patch_[0] , GL_STATIC_DRAW );
 
+
 	update();
 
 }
 
-void GLWidget::createSurfacePatchies( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width )
+void GLWidget::createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal )
 {
-	this->makeCurrent();
 
 	patch_.clear ( );
 	box.reset();
@@ -281,56 +285,56 @@ void GLWidget::createSurfacePatchies( const std::vector<std::vector<Eigen::Vecto
 	std::size_t last;
 	std::size_t last_j;
 
-	std::cout << " Felipe " << sketch_.size() <<  std::endl;
+	stepz = volume_width / stepz;
 
-	for ( std::size_t it_patch = 0; it_patch < patchies.size(); it_patch++ )
+	//std::cout << " Felipe " << sketch_.size() <<  std::endl;
+
+	for ( std::size_t it_patch = 0; it_patch < patchies.size ( ); it_patch++ )
 	{
-		for ( float j = 0.0f; j < volume_width; j+=stepz )
+		for ( float j = 0.0f; j < volume_width; j += stepz )
+		{
+			for ( std::size_t i = 0; i < ( patchies[it_patch].size ( ) - stepx ); i += stepx )
 			{
-				for ( std::size_t i = 0; i < ( patchies[it_patch].size ( ) - stepx ); i+=stepx )
-				{
-					// In the Curve
-					std::cout << " Felipe " << patchies[it_patch][i] << std::endl;
+				// In the Curve
+				//std::cout << " Felipe " << patchies[it_patch][i] << std::endl;
 
-					patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )         , j       , patchies[it_patch][i].y ( ) ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( ) , patchies[it_patch][i].y ( ) ,j   ) );
 
-					patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) , j       , patchies[it_patch][i + stepx].y ( ) ) );
-					// In the Extrude
-					patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )         , j+stepz , patchies[it_patch][i].y ( ) ) );
-
-					patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) , j+stepz , patchies[it_patch][i + stepx].y ( ) ) );
-
-					last = i;
-
-				}
-
-				last_j = j;
-
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( )         , last_j       , patchies[it_patch][last].y ( ) ) );
-
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back().x ( ) , last_j       , patchies[it_patch].back().y ( ) ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) ,  patchies[it_patch][i + stepx].y ( ) ,  j  ) );
 				// In the Extrude
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( )         , last_j+stepz , patchies[it_patch][last].y ( ) ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( ) , patchies[it_patch][i].y ( ) , j + stepz   ) );
 
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back().x ( ) , last_j+stepz , patchies[it_patch].back().y ( ) ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) , patchies[it_patch][i + stepx].y ( ), j + stepz  ) );
+
+				last = i;
+
+			}
+//
+			if ( last > patchies[it_patch].size ( ) )
+			{
+				last -= stepx;
 			}
 
+			last_j = j;
 
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( ) , patchies[it_patch][last].y ( ), last_j   ) );
+
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back ( ).x ( ) , patchies[it_patch].back ( ).y ( ) , last_j   ) );
+			// In the Extrude
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( ) , patchies[it_patch][last].y ( ), last_j + stepz  ) );
+
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back ( ).x ( ) , patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
+		}
 
 	}
 
-	box.fromPointCloud(patch_.begin(),patch_.end());
 
-	std::cout << "Box Center " << box.center() << std::endl;
+	std::cout << "Box Center " << center << std::endl;
 
 	for ( std::size_t it = 0; it < patch_.size ( ); it++ )
 	{
-		patch_[it] = (patch_[it] - box.center())/box.diagonal();
+		patch_[it] = (patch_[it] - center)/diagonal;
 	}
-
-	box.fromPointCloud(patch_.begin(),patch_.end());
-
-	std::cout << "Box Diagonal " << box.diagonal() << std::endl;
 
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
@@ -341,10 +345,80 @@ void GLWidget::createSurfacePatchies( const std::vector<std::vector<Eigen::Vecto
 }
 
 /// Left to Right
+void GLWidget::createCube ( const Celer::BoundingBox3<float>& box )
+{
+
+	cube_.clear ( );
+
+
+	Eigen::Vector3f min_ = box.min();
+	Eigen::Vector3f max_ = box.max();
+
+
+	Eigen::Vector3f vertex_data[] =
+	{
+		//  Top Face
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		// Bottom Face
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+		// Front Face
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		// Back Face
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+		// Left Face
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		// Right Face
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+	};
+
+
+	std::copy( vertex_data	 , vertex_data + 24	, std::back_inserter ( cube_ ) );
+
+
+	Celer::BoundingBox3<float> b;
+
+	b.fromPointCloud(cube_.begin(),cube_.end());
+
+	std::cout << "Box Center Cube " << b.center() << std::endl;
+
+	for ( std::size_t it = 0; it < cube_.size ( ); it++ )
+	{
+		cube_[it] = (cube_[it] - b.center())/b.diagonal();
+	}
+
+	std::cout << "Box Center Cube " << b.center() << std::endl;
+
+	b.fromPointCloud(cube_.begin(),cube_.end());
+
+	/// Requesting Vertex Buffers to the GPU
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , &cube_[0] , GL_STATIC_DRAW );
+	// Set up generic attributes pointers
+
+}
+
+
+/// Left to Right
 void GLWidget::createPatch ( Eigen::Vector3f left , Eigen::Vector3f right , float step )
 {
-	this->makeCurrent();
-
 	float size = right.x ( ) - left.x ( );
 
 	float dx = size / 10;
@@ -403,7 +477,6 @@ void GLWidget::createPatch ( Eigen::Vector3f left , Eigen::Vector3f right , floa
 
 void GLWidget::backGround()
 {
-	this->makeCurrent();
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
@@ -425,7 +498,6 @@ void GLWidget::backGround()
 
 void GLWidget::resizeGL ( int width , int height )
 {
-	this->makeCurrent();
 	/// What is you viewport size my friend ... =(
 	glViewport ( 0 , 0 , width , height );
 
@@ -435,11 +507,24 @@ void GLWidget::resizeGL ( int width , int height )
 /// Real Looping
 void GLWidget::paintGL ( )
 {
-	this->makeCurrent();
-
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	backGround();
+
+	patch_shader_->bind ( );
+	/// 3rd attribute buffer : vertices
+	patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+	patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+	patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+	patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+	glBindVertexArray ( vertexArray_patch_ );
+	/// Draw the triangle !
+	glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
+
+	glBindVertexArray ( 0 );
+	patch_shader_->unbind ( );
+
+	///
 
 	cube_shader_->bind ( );
 	/// 3rd attribute buffer : vertices
@@ -447,9 +532,9 @@ void GLWidget::paintGL ( )
 	cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
 	cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 	cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-	glBindVertexArray ( vertexArray_patch_ );
+	glBindVertexArray ( vertexArray_cube_ );
 	/// Draw the triangle !
-	glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
+	glDrawArrays ( GL_LINES_ADJACENCY , 0 , cube_.size ( ) );
 
 	glBindVertexArray ( 0 );
 	cube_shader_->unbind ( );
@@ -458,12 +543,10 @@ void GLWidget::paintGL ( )
 /// KeyInput
 void GLWidget::processMultiKeys ( )
 {
-	this->makeCurrent();
 }
 
 void GLWidget::keyPressEvent ( QKeyEvent * event )
 {
-	this->makeCurrent();
 	switch ( event->key ( ) )
 	{
 		case Qt::Key_F5:
@@ -487,13 +570,11 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 
 void GLWidget::keyReleaseEvent ( QKeyEvent * event )
 {
-	this->makeCurrent();
 }
 /// MouseInput
 void GLWidget::mousePressEvent ( QMouseEvent *event )
 {
 	setFocus ( );
-	this->makeCurrent();
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
 	if ( event->modifiers ( ) & Qt::ShiftModifier )
 	{
@@ -521,7 +602,6 @@ void GLWidget::mousePressEvent ( QMouseEvent *event )
 
 void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 {
-	this->makeCurrent();
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
 	if ( ( event->modifiers ( ) & Qt::ShiftModifier )  )
 	{
@@ -556,7 +636,7 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 
 void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 {
-	this->makeCurrent();
+
 	if ( event->button ( ) == Qt::LeftButton )
 	{
 		camera.endTranslation ( );
@@ -577,7 +657,7 @@ void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 /// WheelInput
 void GLWidget::wheelEvent ( QWheelEvent *event )
 {
-	this->makeCurrent();
+
 	const int WHEEL_STEP = 120;
 
 	float pos = event->delta ( ) / float ( WHEEL_STEP );
@@ -604,7 +684,7 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 /// Drag and Drop
 void GLWidget::dragEnterEvent ( QDragEnterEvent *event )
 {
-	this->makeCurrent();
+
 	setBackgroundRole ( QPalette::Highlight );
 
 	event->acceptProposedAction ( );
@@ -618,13 +698,11 @@ void GLWidget::dragEnterEvent ( QDragEnterEvent *event )
 /// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
 void GLWidget::dragMoveEvent ( QDragMoveEvent *event )
 {
-	this->makeCurrent();
 	event->acceptProposedAction ( );
 }
 ///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
 void GLWidget::dropEvent ( QDropEvent *event )
 {
-	this->makeCurrent();
 	const QMimeData *mimeData = event->mimeData ( );
 	/// The mimeData object can contain one of the following objects: an image, HTML text, plain text, or a list of URLs.
 
@@ -645,7 +723,6 @@ void GLWidget::dropEvent ( QDropEvent *event )
 
 void GLWidget::dragLeaveEvent ( QDragLeaveEvent *event )
 {
-	this->makeCurrent();
 	event->accept ( );
 
 	qDebug ( ) << "Exit";

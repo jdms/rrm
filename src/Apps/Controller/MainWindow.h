@@ -1,13 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+/// Sketching Surface
+#include "Model/CrossSection.hpp"
 
+#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/Canvas2D.h"
-#include "CanvasComputation.h"
-//#include "Canvas3D.h"
-
-#include "Sketching2DModule.h"
-#include "FlowComputationModule.h"
+#include "Modeller/SketchBoardWidget/SketchBoard.hpp"
+	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
+#include "Modeller/HorizonController.h"
+#include "Modeller/Sketching2DModule.h"
+/// Simulator Volume
+#include "Simulator/CanvasComputation.h"
+#include "Simulator/FlowComputationModule.h"
 
 #include <QMainWindow>
 #include <QDockWidget>
@@ -26,6 +31,7 @@
 #include <QDialogButtonBox>
 #include <QStatusBar>
 
+#include <QtWidgets/QFormLayout>
 
 class MainWindow : public QMainWindow
 {
@@ -35,7 +41,6 @@ class MainWindow : public QMainWindow
 
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
-
 
     protected:
 
@@ -67,7 +72,27 @@ class MainWindow : public QMainWindow
         void newSection();
         void changeColorLine();
 
+        /// CrossSection
+        void keyPressEvent ( QKeyEvent *e );
+        void mousePressEvent(QMouseEvent* event);
+        void wheelEvent(QWheelEvent* event);
 
+    public slots:
+
+        //void addCurve( QPolygonF& curve);
+
+        //void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
+
+        void curve2DSlot ( QPolygonF polygon );
+        void smoothCurveSlot ( QPolygonF raw_sketch );
+        void renderSegments();
+        void newSessionSlot(QPixmap pixmap);
+        void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
+        void update3DExtrusion ( float stepx, float stepz, float lenght  );
+
+	void on_horizontalSlider_curve_valueChanged();
+	void on_horizontalSlider_surface_valueChanged();
+	void on_horizontalSlider_extrusion_valueChanged();
 
 
 
@@ -114,6 +139,50 @@ class MainWindow : public QMainWindow
 
 
         QAction *ac_window3d;
+
+
+        /// CrossSection ////////////////////////////////////////////////////////////////////
+        RRM::CrossSection<qreal> cross_section_;
+
+        QStatusBar			*status_bar_;
+        	QLabel			*status_text;
+
+        QAction *ac_newBoundary;
+        /// Sketching Surface and Extrusion
+        GLWidget *glWidget;
+        Eigen::Vector3f min_;
+        Eigen::Vector3f max_;
+
+	// Sketch Views
+	SketchBoard  		*sketch_board_;
+		SketchSession   *sketchSession_;
+
+	typedef RRM::CrossSection<qreal>                   CrossSection;
+	typedef CrossSection::Curve2D			   Curve2D;
+
+		// Model Testing
+	QPolygonF convert( Curve2D& curve)
+	{
+		QPolygonF p;
+
+		for(std::size_t i = 0; i < curve.size(); i++)
+		{
+			p.push_back(QPointF(curve[i].x(),curve[i].y()));
+		}
+		return p;
+	}
+
+	int scale_in;
+	int scale_out;
+
+	    QGroupBox *groupBox;
+	    QFormLayout *formLayout;
+	    QSlider *horizontalSlider_curve;
+	    QSlider *horizontalSlider_surface;
+	    QSlider *horizontalSlider_extrusion;
+	    QLabel *label;
+	    QLabel *label_2;
+	    QLabel *label_3;
 
 
 };

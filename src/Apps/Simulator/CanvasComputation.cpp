@@ -1,25 +1,20 @@
-#include "canvasComputation.h"
+#include "CanvasComputation.h"
 
-CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLWidget( format, parent )
+CanvasComputation::CanvasComputation( QWidget* parent ) : QOpenGLWidget ( parent )
 {
-    this->makeCurrent();
 
     flowvisualizationc = new FlowVisualizationController();
     mn_options = NULL;
-    initializeOpenGLFunctions();
-
-    bf_mesh = new GLuint[ 2 ];
-
 
     resetSetup();
     createActions();
     createPopupMenu();
 
     connect( parent, SIGNAL( sendInputUser( std::string, std::string, float, float ) ), flowvisualizationc, SLOT( getUserInput( std::string, std::string, float, float ) ) );
-    connect( parent, SIGNAL( sendSurfaceFile( std::string ) ), flowvisualizationc, SLOT( openSurfaceFile( std::string ) ) );
-    connect( parent, SIGNAL( sendInputUserFile( std::string ) ), flowvisualizationc, SLOT( openUserInputFile( std::string ) ) );
+//    connect( parent, SIGNAL( sendSurfaceFile( std::string ) ), flowvisualizationc, SLOT( openSurfaceFile( std::string ) ) );
+//    connect( parent, SIGNAL( sendInputUserFile( std::string ) ), flowvisualizationc, SLOT( openUserInputFile( std::string ) ) );
     connect( parent, SIGNAL( computeVolume() ), flowvisualizationc, SLOT( computeVolumetricMesh() ) );
-    connect( parent, SIGNAL( computeFlowProperties() ), flowvisualizationc, SLOT( computeFlowProperties() ) );
+//    connect( parent, SIGNAL( computeFlowProperties() ), flowvisualizationc, SLOT( computeFlowProperties() ) );
     connect( parent, SIGNAL( computePressureProperty() ), flowvisualizationc, SLOT( computePressure() ) );
     connect( parent, SIGNAL( computeVelocityProperty() ), flowvisualizationc, SLOT( computeVelocity() ) );
     connect( parent, SIGNAL( computeTOFProperty() ), flowvisualizationc, SLOT( computeTOF() ) );
@@ -27,6 +22,8 @@ CanvasComputation::CanvasComputation( QGLFormat format, QWidget* parent ) : QGLW
     connect( flowvisualizationc, SIGNAL( updateComboBox( std::vector< std::string >, std::vector< std::string > ) ), parent, SLOT( updateComboBox( std::vector< std::string >, std::vector< std::string > ) ) );
     connect( parent, SIGNAL( selectFlowProperty( int, bool& ) ), flowvisualizationc, SLOT( selectFlowProperty( int, bool& ) ) );
 
+    bf_vertices = 0;
+    bf_colors = 0;
 
 }
 
@@ -92,6 +89,7 @@ void CanvasComputation::fillMenuPointProperties()
         if( ncoords == 1 )
         {
             ac_properties.push_back( new QAction( tr( name.c_str() ), this ) );
+            cout << name << endl;
             mn_properties->addAction( ac_properties[ ids ] );
             ag_properties->addAction( ac_properties[ ids ] );
 
@@ -267,15 +265,28 @@ void CanvasComputation::createPopupMenu()
 
 void CanvasComputation::initializeGL()
 {
-    glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+
+    this->makeCurrent();
+
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
+
+    glClearColor( 1.0f, 1.0f, 0.0f, 1.0f );
     glEnable( GL_DEPTH_TEST );
 
+    bf_mesh = new GLuint[ 2 ];
     initializeShaders();
 }
 
 
 void CanvasComputation::resizeGL( int width, int height )
 {
+    this->makeCurrent();
+
     height = height? height:1;
     glViewport( 0, 0, (GLint) width, (GLint) height );
 
@@ -289,7 +300,6 @@ void CanvasComputation::resizeGL( int width, int height )
 
 void CanvasComputation::paintGL()
 {
-    this->makeCurrent();
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glUseProgram( program );
@@ -304,12 +314,23 @@ void CanvasComputation::initializeShaders()
 {
 
 
-    std::string vertex_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/HWU/vertex_shader.vert" );
-    std::string fragment_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/HWU/fragment_shader.frag" );
+#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
+	/* Do windows stuff */
+    std::string vertex_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/vertex_shader.vert" );
+    std::string fragment_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/fragment_shader.frag" );
+#elif defined(__linux__)               // Linux Directory Style
+	/* Do linux stuff */
+    std::string vertex_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/vertex_shader.vert" );
+    std::string fragment_shader_string = read_shader_file( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/fragment_shader.frag" );
+#else
+	/* Error, both can't be defined or undefined same time */
+	    std::cerr << "Operate System not supported !"
+	halt();
+#endif
+
 
     const char *vertex_shader_source = vertex_shader_string.c_str();
     const char *fragment_shader_source = fragment_shader_string.c_str();
-
 
     GLuint vertex_shader = glCreateShader( GL_VERTEX_SHADER );
     glShaderSource( vertex_shader, 1, &vertex_shader_source, NULL );
@@ -460,7 +481,7 @@ void CanvasComputation::sendColorsGPU( std::string property, std::string type, i
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 
-    updateGL();
+    update();
 
 
 
@@ -530,12 +551,14 @@ void CanvasComputation::showVolumetricGrid()
     sendMeshGPU();
     setPositionModel();
 
-    updateGL();
+    update();
 }
 
 
 void CanvasComputation::drawModel()
 {
+
+    if( number_of_vertices == 0 ) return;
 
     glBindVertexArray( vao_mesh );
 
@@ -587,14 +610,7 @@ void CanvasComputation::resetData()
     ac_properties.clear();
     mn_vector_properties_points.clear();
 
-//    deleteBuffers();
-
-//    if( flowvisualizationc != NULL )
-//    {
-        flowvisualizationc->clear();
-//        delete flowvisualizationc;
-//    }
-//    flowvisualizationc = new FlowVisualizationController();
+    flowvisualizationc->clear();
 
 }
 
@@ -678,7 +694,7 @@ void CanvasComputation::mouseMoveEvent( QMouseEvent *m )
     previous_mouse.setX( m->x() );
     previous_mouse.setY( m->y() );
 
-    updateGL();
+    update();
 
 }
 
@@ -696,7 +712,7 @@ void CanvasComputation::wheelEvent( QWheelEvent *m )
         else
             zoom *= 0.9f;
 
-        updateGL();
+        update();
 
     }
 }
@@ -704,20 +720,20 @@ void CanvasComputation::wheelEvent( QWheelEvent *m )
 void CanvasComputation::showPoints( bool option )
 {
     show_vertices = option;
-    updateGL();
+    update();
 }
 
 void CanvasComputation::showVolume( bool option )
 {
     show_faces = option;
-    updateGL();
+    update();
 }
 
 
 void CanvasComputation::showWireframe( bool option )
 {
     show_lines = option;
-    updateGL();
+    update();
 }
 
 
@@ -732,14 +748,14 @@ void CanvasComputation::setColorMap()
 {
     flowvisualizationc->setColorMap( "JET" );
     sendColorsGPU( "", "" );
-    updateGL();
+    update();
 }
 
 void CanvasComputation::setColorMapConstant()
 {
     flowvisualizationc->setColorMap( "CONSTANT" );
     sendColorsGPU( "", "" );
-    updateGL();
+    update();
 }
 
 
@@ -749,13 +765,10 @@ void CanvasComputation::sendSurfaceGPU()
 
     glPointSize( 3.0f );
     glGenVertexArrays( 1, &vao_mesh );
+
+
+    glGenBuffers( 1, &bf_vertices );
     glBindVertexArray( vao_mesh );
-
-
-
-    glGenBuffers( 2, bf_mesh );
-
-
 
 
         vector< GLfloat > vertices;
@@ -765,7 +778,9 @@ void CanvasComputation::sendSurfaceGPU()
 
         number_of_vertices = (GLuint)  vertices.size();
 
-        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 0 ] );
+
+
+        glBindBuffer( GL_ARRAY_BUFFER, bf_vertices );
         glBufferData( GL_ARRAY_BUFFER, number_of_vertices*sizeof( GL_FLOAT ), vertices.data(), GL_STATIC_DRAW );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
         glEnableVertexAttribArray( 0 );
@@ -774,7 +789,9 @@ void CanvasComputation::sendSurfaceGPU()
         flowvisualizationc->getSurfaceColors( colors );
         GLint ncolors = (int) colors.size();
 
-        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
+
+        glGenBuffers( 1, &bf_colors );
+        glBindBuffer( GL_ARRAY_BUFFER, bf_colors);
         glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
         glEnableVertexAttribArray( 1 );
@@ -809,7 +826,7 @@ void CanvasComputation::sendSurfaceGPU()
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
 
-    glBindVertexArray( 0 );
+//    glBindVertexArray( 0 );
 
 
 }
@@ -847,7 +864,7 @@ void CanvasComputation::showSurface()
 {
     sendSurfaceGPU();
     setSurfacePositionModel();
-    updateGL();
+    update();
 }
 
 void CanvasComputation::exportFile()
@@ -858,3 +875,5 @@ void CanvasComputation::exportFile()
 
     flowvisualizationc->exportFile( fname_string.toStdString() );
 }
+
+

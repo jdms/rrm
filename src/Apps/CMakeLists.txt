@@ -13,31 +13,22 @@ endforeach()
 
 ## Grab Controller Source Files
 set( CONTROLLER_HEADERS Controller/MainWindow.h
-                        Controller/FlowComputationModule.h                       
-                        Controller/DialogInputFlowComputation.h
-                        Controller/CanvasComputation.h
-                        Controller/Sketching2DModule.h
    )
    
 set( CONTROLLER_MOC_HEADERS Controller/MainWindow.h
-                            Controller/FlowComputationModule.h                       
-                            Controller/DialogInputFlowComputation.h
-                            Controller/CanvasComputation.h
-                            Controller/Sketching2DModule.h
+  
    )
 
 set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
+                        Controller/MainModeller.cpp
                         ##Controller/MainSimulator.cpp
-                        ##Controller/MainModeller.cpp
-                        Controller/FlowComputationModule.cpp                       
-                        Controller/DialogInputFlowComputation.cpp
-                        Controller/CanvasComputation.cpp
-                        Controller/Sketching2DModule.cpp
+                        
    )
 
 ## Grab Modeller Source Files
-set( MODELLER_HEADERS   Modeller/Canvas2D.h
+set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
+                        Modeller/Canvas2D.h
                         Modeller/SketchingScene.h
 						Modeller/BoundaryController.h
                         Modeller/HorizonController.h
@@ -47,14 +38,16 @@ set( MODELLER_HEADERS   Modeller/Canvas2D.h
                         Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
    )
    
-set( MODELLER_MOC_HEADERS Modeller/Canvas2D.h
-                        Modeller/SketchingScene.h
-						Modeller/ExtrusionWidget/OpenGLWidget.hpp
-					    Modeller/SketchBoardWidget/SketchBoard.hpp
-                        Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
+set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
+                          Modeller/Canvas2D.h
+                          Modeller/SketchingScene.h
+						  Modeller/ExtrusionWidget/OpenGLWidget.hpp
+					      Modeller/SketchBoardWidget/SketchBoard.hpp
+                          Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
 						)
 
-set( MODELLER_SOURCES Modeller/Canvas2D.cpp
+set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
+                        Modeller/Canvas2D.cpp
                         Modeller/BoundaryController.cpp
                         Modeller/HorizonController.cpp
                         Modeller/InputSketch.cpp
@@ -66,7 +59,10 @@ set( MODELLER_SOURCES Modeller/Canvas2D.cpp
 ## Grab Simulator Source Files
 
 
-set( SIMULATOR_HEADERS     
+set( SIMULATOR_HEADERS
+    Simulator/FlowComputationModule.h                       
+    Simulator/DialogInputFlowComputation.h
+    Simulator/CanvasComputation.h     
     Simulator/FlowVisualizationController.h 
     Simulator/VTKData.h 
     Simulator/ColorMap.h 
@@ -90,10 +86,16 @@ set( SIMULATOR_HEADERS
     )
 
 set ( SIMULATOR_MOC_HEADERS
+    Simulator/FlowComputationModule.h                       
+    Simulator/DialogInputFlowComputation.h
+    Simulator/CanvasComputation.h
     Simulator/FlowVisualizationController.h     
 )
 
-set( SIMULATOR_SOURCES     
+set( SIMULATOR_SOURCES    
+    Simulator/FlowComputationModule.cpp                       
+    Simulator/DialogInputFlowComputation.cpp
+    Simulator/CanvasComputation.cpp
     Simulator/FlowVisualizationController.cpp 
     Simulator/VTKData.cpp 
     Simulator/ColorMap.cpp 

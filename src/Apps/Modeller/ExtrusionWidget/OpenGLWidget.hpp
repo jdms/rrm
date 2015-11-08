@@ -9,7 +9,6 @@
 
 #include <iostream>
 
-
 #include <QtCore/QTimer>
 #include <QtCore/QTimeLine>
 #include <QtCore/QFile>
@@ -26,13 +25,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QOpenGLWidget>
 
-
 class GLWidget: public QOpenGLWidget
 {
 		Q_OBJECT
-
 	public:
-
 		// From QGLWidget
 		explicit GLWidget ( QWidget* parent = 0 );
 		void initializeGL ( );
@@ -55,9 +51,10 @@ class GLWidget: public QOpenGLWidget
 		void reloadShaders();
 
 		/// Left to Right
+		void createCube            ( const Celer::BoundingBox3<float>& box );
 		void createPatch           ( Eigen::Vector3f left, Eigen::Vector3f right, float step);
 		void createSurfacePatch    ( );
-		void createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width );
+		void createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal );
 
 
 	protected:
@@ -74,21 +71,23 @@ private:
 	
         Tucano::Trackball camera;
 
-        Tucano::Shader*   cube_shader_;
+
         Tucano::Shader*   background_;
 
         GLuint vertexArray_cube_;
         	GLuint vertexBuffer_cube_;
         	GLuint vertexCube_slot_;
+        std::vector<Eigen::Vector3f> cube_;
+        Tucano::Shader*   cube_shader_;
 
 	GLuint vertexArray_patch_;
 		GLuint vertexBuffer_patch_;
 		GLuint vertexPatch_slot_;
+	std::vector<Eigen::Vector3f> patch_;
+	Tucano::Shader*   patch_shader_;
 
         std::vector<Eigen::Vector3f> vertices;
 
-
-        std::vector<Eigen::Vector3f> patch_;
         std::vector<Eigen::Vector3f> sketch_;
 
         std::vector<std::vector<Eigen::Vector3f> > p;

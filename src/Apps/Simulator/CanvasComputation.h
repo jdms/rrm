@@ -10,7 +10,7 @@
 #include <string>
 
 
-#include <QtOpenGL/QGLWidget>
+#include <QtWidgets/QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QVector3D>
 #include <QMouseEvent>
@@ -57,14 +57,14 @@ inline std::string read_shader_file( const char *file_path )
 }
 
 
-class CanvasComputation: public QGLWidget/*, public QOpenGLFunctions_3_3_Core*/
+class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Core*/
 {
     Q_OBJECT
 
 
     public:
 
-        CanvasComputation( QGLFormat format, QWidget *parent = 0 );
+        CanvasComputation( QWidget *parent = 0 );
 
 
 

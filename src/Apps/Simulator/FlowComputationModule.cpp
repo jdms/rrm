@@ -55,12 +55,7 @@ void FlowComputationModule::createWindow()
     QFrame *fr = new QFrame( this );
     fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
 
-
-    QGLFormat fmt;
-    fmt.setVersion( 4, 1 );
-    fmt.setProfile( QGLFormat::CoreProfile);
-
-    canvas_computation = new CanvasComputation( fmt, this );
+    canvas_computation = new CanvasComputation( this );
     canvas_computation->setMinimumHeight( 350 );
 
     QHBoxLayout *hb_canvascomputation = new QHBoxLayout( this );
