@@ -111,7 +111,7 @@ void GLWidget::initializeGL ( )
 	/// Requesting Vertex Buffers to the GPU
 	glGenBuffers ( 1 , &vertexBuffer_patch_ );
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , &patch_[0] , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
 	// Set up generic attributes pointers
 	glEnableVertexAttribArray ( vertexPatch_slot_ );
 	glVertexAttribPointer ( vertexPatch_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
