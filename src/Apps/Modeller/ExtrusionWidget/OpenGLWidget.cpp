@@ -3,6 +3,7 @@
 GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 {
 	cube_shader_ = 0;
+	patch_shader_ = 0;
 	background_ = 0;
 
 	vertexArray_cube_ = 0;

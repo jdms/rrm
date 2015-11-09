@@ -507,9 +507,8 @@ namespace RRM
 			{
 				return false;
 			}
-			else if ( ( (current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION) ||
-																																			(current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION) ) &&
-																			(curve_slice.size ( ) <= 2) )
+			else if ( ( (current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION)   ||
+                                    (current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION) ) && (curve_slice.size ( ) <= 2) )
 			{
 				return false;
 			}
@@ -559,42 +558,6 @@ namespace RRM
 				//std::cout << DCELLog();
 			}
 
-//
-//				if ( (current_rule == GeologicRules::Sketch) )
-//				{
-//					if ( curve_slice.size ( ) == 2 )
-//					{
-//						Curve2D hanging_left;
-//						Curve2D normal;
-//						Curve2D hanging_right;
-//
-//						//std::cout << "Just Hanging : " << curve_all_indices[0] << " " << curve_all_indices[1] << std::endl;
-//						curve.curve.split ( curve_slice[0].index , curve_slice[1].index , hanging_left , normal , hanging_right );
-//						//std::cout << "Just Hanging : " << curve_all_indices.size() << std::endl;
-//
-//						Halfedge_handle h = d.create_loop ( );
-//						h->left_to_right = 1;
-//						h->opposite ( )->left_to_right = 0;
-//
-//						normal.front() = curve_slice[0].point;
-//						normal.back() = curve_slice[1].point;
-//
-//						h->segment.curve = normal;
-//						h->segment.curve.superSample ( 3.0 );
-//						h->is_visible = true;
-//						h->is_boundary = false;
-//
-//						//d.insert_halfedge(h,h->opposite());
-//						//std::cout << DCELLog();
-//						//std::cout << "Curve " << h->segment.curve.size() << std::endl;
-//
-//						return true;
-//					}
-//					else
-//					{
-//						return false;
-//					}
-//				}
 
 			for ( typename std::vector<CurveRules>::iterator it = curve_sew.begin(); it < curve_sew.end(); it++ )
 			{
@@ -610,7 +573,6 @@ namespace RRM
 
 					if ( !it->s->is_boundary )
 					{
-
 						/// Just segment the Surface
 						if ( (curve_all_indices.front() == it->curve_indices[0]) || (curve_all_indices.back() == it->curve_indices[0]))
 						{
@@ -669,7 +631,6 @@ namespace RRM
 				}
 				else if (it->segment_indices.size() == 2)
 				{
-
 					Curve2D hanging_left;
 					Curve2D middle;
 					Curve2D hanging_right;
@@ -803,18 +764,12 @@ namespace RRM
 							h2->is_visible = false;
 						}
 					}
-
 				}
 				else
 				{
 					std::cout << "Should never reach this point" << curve_indices.size() << std::endl;
 				}
-
 			}
-
-//
-
-			///
 			return false;
 		}
 

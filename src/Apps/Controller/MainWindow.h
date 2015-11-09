@@ -14,24 +14,27 @@
 #include "Simulator/CanvasComputation.h"
 #include "Simulator/FlowComputationModule.h"
 
-#include <QMainWindow>
-#include <QDockWidget>
-#include <QToolBar>
-#include <QColorDialog>
-#include <QWidgetAction>
-#include <QToolButton>
-#include <QHBoxLayout>
-#include <QComboBox>
-#include <QLabel>
-#include <QFileDialog>
-#include <QDialog>
-#include <QToolBox>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QDialogButtonBox>
-#include <QStatusBar>
-
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QWidgetAction>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QFormLayout>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QToolBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QDialogButtonBox>
+
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QStyle>
+
 
 class MainWindow : public QMainWindow
 {

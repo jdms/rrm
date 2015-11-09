@@ -9,31 +9,30 @@
 #include <vector>
 #include <string>
 
+#include <QtCore/QDebug>
 
 #include <QtWidgets/QOpenGLWidget>
 #include <QtWidgets/QApplication>
-#include <QMatrix4x4>
-#include <QVector3D>
-#include <QMouseEvent>
-#include <QMenu>
-#include <QAction>
-#include <QRadioButton>
-#include <QGroupBox>
-#include <QVBoxLayout>
-#include <QWidgetAction>
-#include <QCheckBox>
-#include <QActionGroup>
-#include <QFileDialog>
+#include <QtGui/QMouseEvent>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidgetAction>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QActionGroup>
+#include <QtWidgets/QFileDialog>
 
 #include "Simulator/FlowVisualizationController.h"
 
-//#include "Eigen/Dense"
+
 #include "Tucano/Trackball.hpp"
 #include "Tucano/Shader.hpp"
 #include "Tucano/BoundingBox3.hpp"
 
 
-class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Core*/
+class CanvasComputation: public QOpenGLWidget
 {
     Q_OBJECT
 
