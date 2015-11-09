@@ -310,9 +310,7 @@ void FlowVisualizationController::getColorConstant( COLORMAP map, vector< float 
         colors.push_back( color.x() );
         colors.push_back( color.y() );
         colors.push_back( color.z() );
-
     }
-
 }
 
 
