@@ -823,7 +823,7 @@ void CanvasComputation::sendSurfaceGPU ( )
 {
 
 	vector<GLfloat> vertices;
-	vector<GLuint> lines;
+
 	flowvisualizationc->getPointsSurface ( vertices );
 
 	number_of_vertices = (GLuint) vertices.size ( );
@@ -866,6 +866,17 @@ void CanvasComputation::sendSurfaceGPU ( )
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_face_ID_ );
 		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , faces.size ( ) * sizeof ( faces[0] ) , &faces[0] , GL_STATIC_DRAW );
 	}
+
+	vector<GLuint> lines;
+	flowvisualizationc->getWireframeSurface( lines );
+
+	if ( lines.empty ( ) == false )
+	{
+		number_of_lines = (GLint) lines.size ( );
+		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_Lines_ID_ );
+		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , number_of_lines * sizeof ( lines[0] ) , &lines[0] , GL_STATIC_DRAW );
+	}
+
 }
 
 void CanvasComputation::selectProperty ( int id , bool option , int option_color )
