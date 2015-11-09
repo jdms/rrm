@@ -33,31 +33,6 @@
 #include "Tucano/BoundingBox3.hpp"
 
 
-using namespace std;
-
-
-inline std::string read_shader_file( const char *file_path )
-{
-    std::string content;
-    std::ifstream fileStream( file_path, std::ios::in );
-
-    if( !fileStream.is_open() ) {
-        std::cerr << "Could not read file " << file_path << ". File does not exist." << std::endl;
-        return "";
-    }
-
-    std::string line = "";
-    while( !fileStream.eof() ) {
-        std::getline( fileStream, line );
-        content.append( line + "\n" );
-    }
-
-    fileStream.close();
-    return content;
-
-}
-
-
 class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Core*/
 {
     Q_OBJECT

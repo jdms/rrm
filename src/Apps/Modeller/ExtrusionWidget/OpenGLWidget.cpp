@@ -207,13 +207,12 @@ void GLWidget::loadShaders ( )
 					             ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
 						     ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	cube_shader_->initialize ( );
-
 	//! Effects --
 	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
 					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
 						       ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	patch_shader_->initialize ( );
-
+	// ! Blue BlackGround --
 	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
 					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
 						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ) , "" , "" );
@@ -296,13 +295,13 @@ void GLWidget::createSurfacePatchies ( const std::vector<std::vector<Eigen::Vect
 				// In the Curve
 				//std::cout << " Felipe " << patchies[it_patch][i] << std::endl;
 
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( ) , patchies[it_patch][i].y ( ) ,j   ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )         , patchies[it_patch][i].y ( )          , j   ) );
 
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) ,  patchies[it_patch][i + stepx].y ( ) ,  j  ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) ,  patchies[it_patch][i + stepx].y ( ) , j  ) );
 				// In the Extrude
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( ) , patchies[it_patch][i].y ( ) , j + stepz   ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )          , patchies[it_patch][i].y ( )         , j + stepz   ) );
 
-				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) , patchies[it_patch][i + stepx].y ( ), j + stepz  ) );
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( )  , patchies[it_patch][i + stepx].y ( ) , j + stepz  ) );
 
 				last = i;
 

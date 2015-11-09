@@ -287,55 +287,49 @@ void CanvasComputation::initializeGL ( )
 	glEnable ( GL_DEPTH_TEST );
 
 	bf_mesh = new GLuint[2];
-	initializeShaders ( );
-
 	/// Tucano
 
 	cube_.clear ( );
 
 	Eigen::Vector3f vertex_data[] =
 	{
-																	//  Top Face
-																	Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
-																	Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
-																	// Bottom Face
-																	Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ),
-																	Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
-																	// Front Face
-																	Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
-																	Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
-																	// Back Face
-																	Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
-																	Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ),
-																	// Right Face
-																	Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
-																	Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
-																	// Left Face
-																	Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , -0.0f , -1.0f ),
-																	Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ) };
+		//  Top Face
+		Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
+		Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
+		// Bottom Face
+		Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ),
+		Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
+		// Front Face
+		Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
+		Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
+		// Back Face
+		Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
+		Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ),
+		// Right Face
+		Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
+		Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
+		// Left Face
+		Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , -0.0f , -1.0f ),
+		Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ) };
 
 	Eigen::Vector3f vertex_data_strip[] =
 	{
-	// Top Face
-																	vertex_data[0], vertex_data[1], vertex_data[3], vertex_data[2],/* 0 - 5*/
-																	// Bottom Face
-																	vertex_data[4], vertex_data[5], vertex_data[7], vertex_data[6],/* 6 - 11 */
-																	// Front Face
-																	vertex_data[0], vertex_data[3], vertex_data[4], vertex_data[5],/* 12 - 17*/
-																	// Back Face
-																	vertex_data[1], vertex_data[7], vertex_data[2], vertex_data[6],/* 18 - 23*/
-																	// Right Face
-																	vertex_data[0], vertex_data[4], vertex_data[1], vertex_data[7],/* 24 - 29*/
-																	// Left Face
-																	vertex_data[2], vertex_data[6], vertex_data[3], vertex_data[5] /* 30 - 35*/
+		// Top Face
+		vertex_data[0], vertex_data[1], vertex_data[3], vertex_data[2],/* 0 - 5*/
+		// Bottom Face
+		vertex_data[4], vertex_data[5], vertex_data[7], vertex_data[6],/* 6 - 11 */
+		// Front Face
+		vertex_data[0], vertex_data[3], vertex_data[4], vertex_data[5],/* 12 - 17*/
+		// Back Face
+		vertex_data[1], vertex_data[7], vertex_data[2], vertex_data[6],/* 18 - 23*/
+		// Right Face
+		vertex_data[0], vertex_data[4], vertex_data[1], vertex_data[7],/* 24 - 29*/
+		// Left Face
+		vertex_data[2], vertex_data[6], vertex_data[3], vertex_data[5] /* 30 - 35*/
 	};
 
 	std::copy ( vertex_data_strip , vertex_data_strip + 24 , std::back_inserter ( cube_ ) );
 
-//	for( auto c : vertices )
-//	{
-//		std::cout << "Vertices : " << c << std::endl;
-//	}
 
 	glGenVertexArrays ( 1 , &vertexArray_cube_ );
 	glBindVertexArray ( vertexArray_cube_ );
@@ -495,11 +489,6 @@ void CanvasComputation::loadShaderByResources ( )
 
 void CanvasComputation::resizeGL ( int width , int height )
 {
-	this->makeCurrent ( );
-
-	height = height ? height : 1;
-	glViewport ( 0 , 0 , (GLint) width , (GLint) height );
-
 	glViewport ( 0 , 0 , width , height );
 
 	camera.setViewport ( Eigen::Vector2f ( (float) width , (float) height ) );
@@ -544,112 +533,12 @@ void CanvasComputation::paintGL ( )
 
 	glBindVertexArray ( 0 );
 	vtk_visualization_->unbind ( );
-
-//    	vtk_visualization_->bind ( );
-//    	/// 3rd attribute buffer : vertices
-//    	vtk_visualization_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//    	vtk_visualization_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//    	vtk_visualization_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//    	vtk_visualization_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//    	glBindVertexArray ( vertexArray_MESH_ );
-//    	/// Draw the triangle !
-////        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_face_ID_ );
-////        glDrawElements(GL_TRIANGLES, number_of_faces, GL_UNSIGNED_INT, NULL );
-//
-//    	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_Lines_ID_ );
-//    	glDrawElements(GL_LINES, number_of_lines, GL_UNSIGNED_INT, NULL );
-//
-//
-//    	glBindVertexArray ( 0 );
-//    	vtk_visualization_->unbind ( );
-
-//	cube_shader_->bind ( );
-//	/// 3rd attribute buffer : vertices
-//	cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//	cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//	cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//	cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//	glBindVertexArray ( vertexArray_cube_ );
-//	/// Draw the triangle !
-//	glDrawArrays ( GL_LINES_ADJACENCY , 0 , cube_.size ( ) );
-//
-//	glBindVertexArray ( 0 );
-//	cube_shader_->unbind ( );
-
 }
-
-void CanvasComputation::initializeShaders ( )
-{
-
-#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-	/* Do windows stuff */
-	std::string vertex_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/vertex_shader.vert" );
-	std::string fragment_shader_string = read_shader_file( "D:/Workspace/RRM/build-mscv2013_x32/build/bin/Shaders/HWU/fragment_shader.frag" );
-#elif defined(__linux__)               // Linux Directory Style
-	/* Do linux stuff */
-	std::string vertex_shader_string = read_shader_file ( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/vertex_shader.vert" );
-	std::string fragment_shader_string = read_shader_file ( "/media/d/Workspace/RRM/build-Linux_GCC-4.9_x64/build/bin/Shaders/fragment_shader.frag" );
-#else
-	/* Error, both can't be defined or undefined same time */
-	std::cerr << "Operate System not supported !"
-	halt();
-#endif
-
-	const char *vertex_shader_source = vertex_shader_string.c_str ( );
-	const char *fragment_shader_source = fragment_shader_string.c_str ( );
-
-	GLuint vertex_shader = glCreateShader ( GL_VERTEX_SHADER );
-	glShaderSource ( vertex_shader , 1 , &vertex_shader_source , NULL );
-	glCompileShader ( vertex_shader );
-
-	// verifying if the vertex compilation was ok
-
-	GLint params_vertex;
-	glGetShaderiv ( vertex_shader , GL_COMPILE_STATUS , &params_vertex );
-	if ( params_vertex == GL_FALSE )
-		cout << "Compile vertex failed!" << endl;
-
-	GLint fragment_shader = glCreateShader ( GL_FRAGMENT_SHADER );
-	glShaderSource ( fragment_shader , 1 , &fragment_shader_source , NULL );
-	glCompileShader ( fragment_shader );
-
-	// verifying if the fragment compilation was ok
-
-	GLint params_fragment;
-	glGetShaderiv ( fragment_shader , GL_COMPILE_STATUS , &params_fragment );
-	if ( params_fragment == GL_FALSE )
-		cout << "Compile fragment failed!" << endl;
-
-	program = glCreateProgram ( );
-	glAttachShader ( program , vertex_shader );
-	glAttachShader ( program , fragment_shader );
-
-	glLinkProgram ( program );
-	glUseProgram ( program );
-
-	glDeleteShader ( vertex_shader );
-	glDeleteShader ( fragment_shader );
-}
-
-void CanvasComputation::deleteBuffers ( )
-{
-
-	delete[] bf_mesh;
-
-	if ( glIsBuffer ( bf_faces ) == GL_TRUE )
-		glDeleteBuffers ( 1 , &bf_faces );
-
-	if ( glIsVertexArray ( vao_mesh ) == GL_TRUE )
-		glDeleteVertexArrays ( 1 , &vao_mesh );
-
-}
-
 void CanvasComputation::sendMeshGPU ( )
 {
 
 	vector<GLfloat> vertices;
-	//vector< GLuint > lines;
-//        flowvisualizationc->getPointsSurface( vertices );
+
 	flowvisualizationc->getVertices ( vertices );
 
 	number_of_vertices = (GLuint) vertices.size ( );
@@ -665,22 +554,11 @@ void CanvasComputation::sendMeshGPU ( )
 
 	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
 	{
-		std::cout << " Points " << vertices_[it] << std::endl;
-	}
-
-	std::cout << "Box Center Clarissa " << box.center ( ) << std::endl;
-
-	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
-	{
 		vertices_[it] = ( vertices_[it] - box.center ( ) ) / box.diagonal ( );
 	}
 
 	box.fromPointCloud ( vertices_.begin ( ) , vertices_.end ( ) );
 
-	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
-	{
-		std::cout << " Center " << vertices_[it] << std::endl;
-	}
 	/// Requesting Vertex Buffers to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_MESH_ );
 	glBufferData ( GL_ARRAY_BUFFER , vertices_.size ( ) * sizeof ( vertices_[0] ) , &vertices_[0] , GL_STATIC_DRAW );
@@ -695,7 +573,6 @@ void CanvasComputation::sendMeshGPU ( )
 	glBufferData ( GL_ARRAY_BUFFER , ncolors * sizeof ( GL_FLOAT ) , colors.data ( ) , GL_STATIC_DRAW );
 
 	vector<GLuint> faces;
-//	flowvisualizationc->getTrianglesSurface( faces );
 	flowvisualizationc->getTriangles ( faces );
 
 	if ( faces.empty ( ) == false )
@@ -714,115 +591,12 @@ void CanvasComputation::sendMeshGPU ( )
 		number_of_lines = (GLint) lines.size ( );
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_Lines_ID_ );
 		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , number_of_lines * sizeof ( lines[0] ) , &lines[0] , GL_STATIC_DRAW );
-
 	}
-
-//
-//
-//
-//    glPointSize( 3.0f );
-//    glGenVertexArrays( 1, &vao_mesh );
-//    glBindVertexArray( vao_mesh );
-//
-//
-//
-//    glGenBuffers( 2, bf_mesh );
-//
-//
-//        vector< GLfloat > vertices;
-//        flowvisualizationc->getVertices( vertices );
-//        number_of_vertices = (int) vertices.size();
-//
-//        std::vector<Eigen::Vector3f> v;
-//
-//        for ( std::size_t it = 0; it < vertices.size() - 3; it+=3 )
-//        {
-//        	v.push_back( Eigen::Vector3f( vertices[it], vertices[it+1], vertices[it+2] ) );
-//        }
-//
-//
-//	box.fromPointCloud(v.begin(),v.end());
-//
-//	std::cout << "Box Center " << box.center() << std::endl;
-//
-//	for ( std::size_t it = 0; it < v.size ( ); it++ )
-//	{
-//		v[it] = (v[it] - box.center())/box.diagonal();
-//	}
-//
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 0 ] );
-//        glBufferData( GL_ARRAY_BUFFER, number_of_vertices*sizeof( GL_FLOAT ), &v[0], GL_STATIC_DRAW );
-//        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-//        glEnableVertexAttribArray( 0 );
-//
-//        vector< GLfloat > colors;
-//        flowvisualizationc->getColors( colors );
-//        GLint ncolors = (int) colors.size();
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
-//        glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
-//        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-//        glEnableVertexAttribArray( 1 );
-//
-////
-////        vector< GLuint > lines;
-////        flowvisualizationc->getWireframe( lines );
-////
-////        if( lines.empty() == false )
-////        {
-////            number_of_lines = (GLint) lines.size();
-////            glGenBuffers( 1, &bf_lines );
-////            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_lines );
-////            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( GLuint ) , lines.data(), GL_STATIC_DRAW );
-////
-////        }
-////
-////
-////        vector< GLuint > faces;
-////        flowvisualizationc->getTriangles( faces );
-////
-////        if( faces.empty() == false )
-////        {
-////            number_of_faces = (GLint) faces.size();
-////
-////            glGenBuffers( 1, &bf_faces );
-////            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces );
-////            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_faces*sizeof( GLuint ) , faces.data(), GL_STATIC_DRAW );
-////
-////        }
-//
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, 0 );
-//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-//
-//
-//    glBindVertexArray( 0 );
 
 }
 
 void CanvasComputation::sendColorsGPU ( std::string property , std::string type , int option )
 {
-//    if( property.empty() == false && type.empty() == false )
-//        flowvisualizationc->setCurrentProperty( property, type );
-//
-//    glBindVertexArray( vao_mesh );
-//
-//        vector< GLfloat > colors;
-//
-//        if( option == 0 )
-//            flowvisualizationc->getColors( colors );
-//        else
-//            flowvisualizationc->getColors( colors, option );
-//
-//        GLint ncolors = (GLint) colors.size();
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, bf_mesh[ 1 ] );
-//        glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
-//        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-//        glEnableVertexAttribArray( 1 );
-//
-//    glBindBuffer( GL_ARRAY_BUFFER, 0 );
 
 	if ( property.empty ( ) == false && type.empty ( ) == false )
 		flowvisualizationc->setCurrentProperty ( property , type );
@@ -840,7 +614,6 @@ void CanvasComputation::sendColorsGPU ( std::string property , std::string type 
 	glBufferData ( GL_ARRAY_BUFFER , ncolors * sizeof ( GL_FLOAT ) , colors.data ( ) , GL_STATIC_DRAW );
 
 	update ( );
-
 }
 
 void CanvasComputation::showVolumetricGrid ( )
@@ -848,7 +621,6 @@ void CanvasComputation::showVolumetricGrid ( )
 //    flowvisualizationc->readData();
 //    fillMenuProperties();
 	sendMeshGPU ( );
-
 	update ( );
 }
 
@@ -874,12 +646,10 @@ void CanvasComputation::resetData ( )
 	mn_vector_properties_points.clear ( );
 
 	flowvisualizationc->clear ( );
-
 }
 
 void CanvasComputation::resetCamera ( )
 {
-
 	camera.reset ( );
 }
 
@@ -891,7 +661,6 @@ void CanvasComputation::resetVisualization ( )
 	show_vertices = true;
 	show_faces = true;
 	show_lines = true;
-
 }
 
 void CanvasComputation::mousePressEvent ( QMouseEvent *event )
@@ -988,19 +757,6 @@ void CanvasComputation::mouseReleaseEvent ( QMouseEvent *event )
 void CanvasComputation::wheelEvent ( QWheelEvent *event )
 {
 
-//    if( m->orientation() == Qt::Vertical )
-//    {
-//
-//        int delta = m->delta();
-//
-//        if( delta < 0 )
-//            zoom *= 1.1f;
-//        else
-//            zoom *= 0.9f;
-//
-//        update();
-//
-//    }
 	const int WHEEL_STEP = 120;
 
 	float pos = event->delta ( ) / float ( WHEEL_STEP );
@@ -1083,22 +839,11 @@ void CanvasComputation::sendSurfaceGPU ( )
 
 	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
 	{
-		std::cout << " Points " << vertices_[it] << std::endl;
-	}
-
-	std::cout << "Box Center Clarissa " << box.center ( ) << std::endl;
-
-	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
-	{
 		vertices_[it] = ( vertices_[it] - box.center ( ) ) / box.diagonal ( );
 	}
 
 	box.fromPointCloud ( vertices_.begin ( ) , vertices_.end ( ) );
 
-	for ( std::size_t it = 0; it < vertices_.size ( ); it++ )
-	{
-		std::cout << " Center " << vertices_[it] << std::endl;
-	}
 	/// Requesting Vertex Buffers to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_MESH_ );
 	glBufferData ( GL_ARRAY_BUFFER , vertices_.size ( ) * sizeof ( vertices_[0] ) , &vertices_[0] , GL_STATIC_DRAW );
@@ -1121,68 +866,6 @@ void CanvasComputation::sendSurfaceGPU ( )
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_face_ID_ );
 		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , faces.size ( ) * sizeof ( faces[0] ) , &faces[0] , GL_STATIC_DRAW );
 	}
-
-//
-//    glPointSize( 3.0f );
-//    glGenVertexArrays( 1, &vao_mesh );
-//
-//
-//    glGenBuffers( 1, &bf_vertices );
-//    glBindVertexArray( vao_mesh );
-//
-//
-//        vertices_.clear();
-//
-//	std::cout << "Box Center Clarissa " << box.center() << std::endl;
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, bf_vertices );
-//        glBufferData( GL_ARRAY_BUFFER, vertices_.size()*sizeof( GL_FLOAT ), &vertices_[0], GL_STATIC_DRAW );
-//        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-//        glEnableVertexAttribArray( 0 );
-//
-//        vector< GLfloat > colors;
-//        flowvisualizationc->getSurfaceColors( colors );
-//        GLint ncolors = (int) colors.size();
-//
-//
-//        glGenBuffers( 1, &bf_colors );
-//        glBindBuffer( GL_ARRAY_BUFFER, bf_colors);
-//        glBufferData( GL_ARRAY_BUFFER, ncolors*sizeof( GL_FLOAT ), colors.data(), GL_STATIC_DRAW );
-//        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-//        glEnableVertexAttribArray( 1 );
-//
-//        flowvisualizationc->getWireframeSurface( lines );
-//
-//        if( lines.empty() == false )
-//        {
-//            number_of_lines = (GLint) lines.size();
-//            glGenBuffers( 1, &bf_lines );
-//            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_lines );
-//            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( GLuint ) , lines.data(), GL_STATIC_DRAW );
-//
-//        }
-//
-//        vector< GLuint > faces;
-//        flowvisualizationc->getTrianglesSurface( faces );
-//
-//        if( faces.empty() == false )
-//        {
-//            number_of_faces = (GLint) faces.size();
-//
-//            glGenBuffers( 1, &bf_faces );
-//            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces );
-//            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_faces*sizeof( GLuint ) , faces.data(), GL_STATIC_DRAW );
-//
-//        }
-//
-//
-//
-//        glBindBuffer( GL_ARRAY_BUFFER, 0 );
-//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-//
-//
-////    glBindVertexArray( 0 );
-
 }
 
 void CanvasComputation::selectProperty ( int id , bool option , int option_color )

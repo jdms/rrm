@@ -43,7 +43,7 @@ void MainWindow::create3DModule ( )
 	QFrame *fr = new QFrame ( this );
 	fr->setFrameStyle ( QFrame::Box | QFrame::Sunken );
 
-	QVBoxLayout *hb_canvas3d = new QVBoxLayout ( this );
+	QVBoxLayout *hb_canvas3d = new QVBoxLayout (  );
 
 	fr->setLayout ( hb_canvas3d );
 	dc_3DModule->setWidget ( fr );
@@ -70,8 +70,8 @@ void MainWindow::create3DModule ( )
         formLayout->setObjectName(QStringLiteral("formLayout"));
         horizontalSlider_curve = new QSlider(groupBox);
         horizontalSlider_curve->setObjectName(QStringLiteral("horizontalSlider_curve"));
-        horizontalSlider_curve->setMinimum(2);
-        horizontalSlider_curve->setMaximum(20);
+        horizontalSlider_curve->setMinimum(1);
+        horizontalSlider_curve->setMaximum(10);
         horizontalSlider_curve->setOrientation(Qt::Horizontal);
 
         formLayout->setWidget(0, QFormLayout::FieldRole, horizontalSlider_curve);
@@ -89,7 +89,7 @@ void MainWindow::create3DModule ( )
         horizontalSlider_extrusion->setObjectName(QStringLiteral("horizontalSlider_extrusion"));
         horizontalSlider_extrusion->setMinimum(10);
         horizontalSlider_extrusion->setMaximum(1000);
-        horizontalSlider_extrusion->setSingleStep(10);
+        horizontalSlider_extrusion->setSingleStep(1);
         horizontalSlider_extrusion->setValue(500);
         horizontalSlider_extrusion->setOrientation(Qt::Horizontal);
 
