@@ -91,11 +91,8 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
         void deleteBuffers();
 
         void sendMeshGPU();
-        void drawModel();
-        void setupMatrices();
-        void setPositionModel();
         void sendSurfaceGPU();
-        void setSurfacePositionModel();
+
 
         void createActions();
         void createPopupMenu();
@@ -164,10 +161,6 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
         bool show_faces;
         bool show_lines;
 
-        QVector3D previous_mouse;
-        QVector3D translation_vector;
-        QVector3D model_center;
-        QMatrix4x4 pmatrix;
 
         QMenu *mn_options;
         QMenu *mn_properties;

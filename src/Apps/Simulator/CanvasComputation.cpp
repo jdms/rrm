@@ -367,8 +367,12 @@ void CanvasComputation::initializeGL()
 
 	glPointSize(10);
 
-	vertices_  = cube_;
+	vertices_.clear();
 
+	for( auto c : vertices_ )
+	{
+		std::cout << "Vertices : " << c << std::endl;
+	}
 
 	glGenVertexArrays ( 1 , &vertexArray_MESH_ );
 	glBindVertexArray ( vertexArray_MESH_ );
@@ -484,10 +488,6 @@ void CanvasComputation::resizeGL( int width, int height )
     height = height? height:1;
     glViewport( 0, 0, (GLint) width, (GLint) height );
 
-    pmatrix.setToIdentity();
-
-    // maybe change this projection matrix to ortho
-    pmatrix.perspective( 80.0f, (float) width/height, 0.001f, 1800.0f );
 
 	glViewport ( 0 , 0 , width , height );
 
@@ -507,32 +507,54 @@ void CanvasComputation::paintGL()
 //    drawModel();
 
 
-//	vtk_visualization_->bind ( );
-//	/// 3rd attribute buffer : vertices
-//	vtk_visualization_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//	vtk_visualization_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//	vtk_visualization_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//	vtk_visualization_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//	glBindVertexArray ( vertexArray_MESH_ );
-//	/// Draw the triangle !
-//	glDrawArrays ( GL_POINTS , 0 , vertices_.size ( ) );
+	vtk_visualization_->bind ( );
+	/// 3rd attribute buffer : vertices
+	vtk_visualization_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+	vtk_visualization_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+	vtk_visualization_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+	vtk_visualization_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+	glBindVertexArray ( vertexArray_MESH_);
+	/// Draw the triangle !
+
+	if (show_vertices)
+	{
+		glDrawArrays ( GL_POINTS , 0 , vertices_.size ( ) );
+	}
+
+	else if( show_faces )
+	{
+	        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_face_ID_ );
+	        glDrawElements(GL_TRIANGLES, number_of_faces, GL_UNSIGNED_INT, NULL );
+	}
+	else if( show_lines )
+	{
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_Lines_ID_ );
+		glDrawElements(GL_LINES, number_of_lines, GL_UNSIGNED_INT, NULL );
+	}else
+	{
+
+	}
+
+	glBindVertexArray ( 0 );
+	vtk_visualization_->unbind ( );
+
+//    	vtk_visualization_->bind ( );
+//    	/// 3rd attribute buffer : vertices
+//    	vtk_visualization_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+//    	vtk_visualization_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+//    	vtk_visualization_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+//    	vtk_visualization_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+//    	glBindVertexArray ( vertexArray_MESH_ );
+//    	/// Draw the triangle !
+////        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_face_ID_ );
+////        glDrawElements(GL_TRIANGLES, number_of_faces, GL_UNSIGNED_INT, NULL );
 //
-//	glBindVertexArray ( 0 );
-//	vtk_visualization_->unbind ( );
-
-    	vtk_visualization_->bind ( );
-    	/// 3rd attribute buffer : vertices
-    	vtk_visualization_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-    	vtk_visualization_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-    	vtk_visualization_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-    	vtk_visualization_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-    	glBindVertexArray ( vertexArray_MESH_ );
-    	/// Draw the triangle !
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_face_ID_ );
-        glDrawElements(GL_TRIANGLES, number_of_faces, GL_UNSIGNED_INT, NULL );
-
-    	glBindVertexArray ( 0 );
-    	vtk_visualization_->unbind ( );
+//    	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_Lines_ID_ );
+//    	glDrawElements(GL_LINES, number_of_lines, GL_UNSIGNED_INT, NULL );
+//
+//
+//    	glBindVertexArray ( 0 );
+//    	vtk_visualization_->unbind ( );
 
 
 //	cube_shader_->bind ( );
@@ -700,7 +722,7 @@ void CanvasComputation::sendMeshGPU()
         {
             number_of_lines = (GLint) lines.size();
             glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_Lines_ID_ );
-            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( GLuint ) , lines.data(), GL_STATIC_DRAW );
+            glBufferData( GL_ELEMENT_ARRAY_BUFFER, number_of_lines*sizeof( lines[0] ) , &lines[0], GL_STATIC_DRAW );
 
         }
 
@@ -822,103 +844,14 @@ void CanvasComputation::sendColorsGPU( std::string property, std::string type, i
 
 }
 
-
-void CanvasComputation::setPositionModel()
-{
-    float xm, xM, ym, yM, zm, zM;
-    flowvisualizationc->getBoundingBox( xm, xM, ym, yM, zm, zM );
-
-    model_center.setX( ( xm + xM )*0.5f );
-    model_center.setY( ( ym + yM )*0.5f );
-    model_center.setZ( ( zm + zM )*0.5f );
-
-}
-
-
-void CanvasComputation::setupMatrices()
-{
-
-    QVector3D up_direction( 0.0f, 1.0f, 0.0f );
-    QVector3D axis_beta( 1.0f, 0.0f, 0.0f );
-
-    QVector4D camera_position( 0.0f, 0.0f, zoom, 1.0f );
-    QVector4D camera_lookat( 0.0f, 0.0f, 0.0f, 0.0f );
-    QVector4D camera_up( up_direction.x(), up_direction.y(), up_direction.z(), 1.0f );
-
-
-    QMatrix4x4 rotation_matrix;
-    rotation_matrix.setToIdentity();
-    rotation_matrix.rotate( alpha, up_direction );
-    rotation_matrix.rotate( beta, axis_beta );
-
-
-    camera_position = rotation_matrix*camera_position;
-    camera_up = rotation_matrix*camera_up;
-
-
-    QMatrix4x4 vmatrix;
-    vmatrix.lookAt( QVector3D( camera_position.x(), camera_position.y(), camera_position.z() ),
-                    QVector3D( camera_lookat.x(), camera_lookat.y(), camera_lookat.z() ),
-                    QVector3D( camera_up.x(), camera_up.y(), camera_up.z() ) );
-
-
-    QVector4D translation = QVector4D( translation_vector.x(), translation_vector.y(), 0.0f, 1.f );
-    QMatrix4x4 translation_matrix;
-    translation_matrix.setToIdentity();
-    translation_matrix.translate( QVector3D( -model_center.x() - translation.x(), -model_center.y() -  translation.y(), -5*model_center.z()  )  );
-    vmatrix = translation_matrix *vmatrix;
-
-    QMatrix4x4 mmatrix;
-    mmatrix.setToIdentity();
-
-
-    QMatrix4x4 mvp = pmatrix * vmatrix * mmatrix;
-    GLint loc_mvp = glGetUniformLocation( program, "mvp_matrix" );
-    glUniformMatrix4fv( loc_mvp, 1, GL_FALSE, mvp.data() );
-
-}
-
-
 void CanvasComputation::showVolumetricGrid()
 {
 //    flowvisualizationc->readData();
 //    fillMenuProperties();
     sendMeshGPU();
-    setPositionModel();
 
     update();
 }
-
-
-void CanvasComputation::drawModel()
-{
-
-    if( number_of_vertices == 0 ) return;
-
-    glBindVertexArray( vao_mesh );
-
-
-    if( show_vertices == true )
-        glDrawArrays( GL_POINTS, 0, number_of_vertices );
-
-    if( show_faces == true )
-    {
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces );
-        glDrawElements(GL_TRIANGLES, number_of_faces, GL_UNSIGNED_INT, NULL );
-    }
-
-    if( show_lines == true )
-    {
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_lines );
-        glDrawElements(GL_LINES, number_of_lines, GL_UNSIGNED_INT, NULL );
-    }
-
-
-
-
-    glBindVertexArray( 0 );
-}
-
 
 void CanvasComputation::resetSetup()
 {
@@ -936,9 +869,6 @@ void CanvasComputation::resetData()
     number_of_vertices = 0;
     number_of_faces = 0;
     number_of_lines = 0;
-    model_center.setX( 0.0f );
-    model_center.setY( 0.0f );
-    model_center.setZ( 0.0f );
 
     rd_properties.clear();
     rd_options_vector.clear();
@@ -952,18 +882,8 @@ void CanvasComputation::resetData()
 
 void CanvasComputation::resetCamera()
 {
-    previous_mouse.setX( 0.0f );
-    previous_mouse.setY( 0.0f );
-    previous_mouse.setZ( 0.0f );
 
-    translation_vector.setX( 0.0f );
-    translation_vector.setY( 0.0f );
-    translation_vector.setZ( 0.0f );
-
-    alpha = 0.0f;
-    beta = 0.0f;
-    zoom = 1.0f;
-
+	camera.reset();
 }
 
 
@@ -982,13 +902,11 @@ void CanvasComputation::resetVisualization()
 
 void CanvasComputation::mousePressEvent( QMouseEvent *event )
 {
-//    previous_mouse.setX( m->x() );
-//    previous_mouse.setY( m->y() );
-//
-//    if( ( m->buttons() & Qt::RightButton ) && ( m->modifiers() == Qt::ControlModifier ) )
-//    {
-//        mn_options->exec( m->globalPos() );
-//    }
+
+    if( ( event->buttons() & Qt::RightButton ) && ( event->modifiers() == Qt::ControlModifier ) )
+    {
+        mn_options->exec( event->globalPos() );
+    }
 
     	    /// Tucano
 	setFocus ( );
@@ -1020,38 +938,6 @@ void CanvasComputation::mousePressEvent( QMouseEvent *event )
 void CanvasComputation::mouseMoveEvent( QMouseEvent *event )
 {
 
-
-//    int deltaX = m->x() - previous_mouse.x();
-//    int deltaY = m->y() - previous_mouse.y();
-//
-//
-//    if( m->buttons() & Qt::LeftButton )
-//    {
-//
-//        alpha -= speed_rotation*deltaX;
-//        if( alpha < 0.0f )
-//            alpha = 360.0f;
-//        else if( alpha > 360.0f )
-//            alpha = 0.0f;
-//
-//        beta -= speed_rotation*deltaY;
-//        if( beta < 0.0f )
-//            beta = 360.0f;
-//        if( beta > 360.0f )
-//            beta = 0.0f;
-//
-//    }
-//    else if( m->buttons() & Qt::RightButton )
-//    {
-//        float transX = translation_vector.x() - speed_mouse*deltaX;
-//        float transY = translation_vector.y() + speed_mouse*deltaY;
-//
-//        translation_vector.setX( transX );
-//        translation_vector.setY( transY );
-//    }
-//
-//    previous_mouse.setX( m->x() );
-//    previous_mouse.setY( m->y() );
 
     /// Tucano
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
@@ -1320,18 +1206,6 @@ void CanvasComputation::sendSurfaceGPU()
 }
 
 
-void CanvasComputation::setSurfacePositionModel()
-{
-    float xm, xM, ym, yM, zm, zM;
-    flowvisualizationc->getSurfaceBoundingBox( xm, xM, ym, yM, zm, zM );
-
-    model_center.setX( ( xm + xM )*0.5f );
-    model_center.setY( ( ym + yM )*0.5f );
-    model_center.setZ( ( zm + zM )*0.5f );
-
-}
-
-
 void CanvasComputation::selectProperty( int id, bool option, int option_color )
 {
     FlowProperty& p = flowvisualizationc->getPropertyfromMap( id );
@@ -1351,7 +1225,6 @@ void CanvasComputation::selectProperty( int id, bool option, int option_color )
 void CanvasComputation::showSurface()
 {
     sendSurfaceGPU();
-    setSurfacePositionModel();
     update();
 }
 
