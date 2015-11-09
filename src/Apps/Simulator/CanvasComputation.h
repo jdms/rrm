@@ -11,6 +11,7 @@
 
 
 #include <QtWidgets/QOpenGLWidget>
+#include <QtWidgets/QApplication>
 #include <QMatrix4x4>
 #include <QVector3D>
 #include <QMouseEvent>
@@ -27,9 +28,9 @@
 #include "Simulator/FlowVisualizationController.h"
 
 //#include "Eigen/Dense"
-//#include "Tucano/Trackball.hpp"
-//#include "Tucano/Shader.hpp"
-//#include "Tucano/BoundingBox3.hpp"
+#include "Tucano/Trackball.hpp"
+#include "Tucano/Shader.hpp"
+#include "Tucano/BoundingBox3.hpp"
 
 
 using namespace std;
@@ -110,7 +111,10 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
 
         void mousePressEvent( QMouseEvent *m );
         void mouseMoveEvent( QMouseEvent *m );
+        void mouseReleaseEvent ( QMouseEvent *event );
         void wheelEvent( QWheelEvent *m );
+
+        void keyPressEvent ( QKeyEvent * event );
 
 
     public slots:
@@ -118,7 +122,6 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
         void resetSetup();
         void setColorMap();
         void setColorMapConstant();
-
 
     protected slots:
 
@@ -130,6 +133,11 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
 
 
         void resetTransformations();
+
+
+        /// Tucano
+        void loadShaderByResources();
+        void reloadShaders ( );
 
 
     signals:
@@ -196,8 +204,31 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
 
         FlowVisualizationController *flowvisualizationc;
 
-//        Tucano::Trackball camera;
-//        Celer::BoundingBox3<float> box;
+        /// Tucano
+
+        GLuint vertexArray_cube_;
+        	GLuint vertexBuffer_cube_;
+        	GLuint vertexCube_slot_;
+
+	GLuint vertexArray_MESH_;
+		GLuint vertexBuffer_MESH_;
+		GLuint vertexMESH_Slot_;
+
+		GLuint vertexBuffer_face_ID_;
+		GLuint vertexBuffer_Lines_ID_;
+		GLuint vertexBuffer_colors_;
+		GLuint vertexColor_slot_;
+
+        std::vector<Eigen::Vector3f> cube_;
+        std::vector<Eigen::Vector3f> vertices_;
+
+        Tucano::Shader*   cube_shader_;
+
+        Tucano::Shader*   vtk_visualization_;
+
+        Tucano::Trackball camera;
+        Celer::BoundingBox3<float> box;
+
 };
 
 #endif // CANVASCOMPUTATION_H

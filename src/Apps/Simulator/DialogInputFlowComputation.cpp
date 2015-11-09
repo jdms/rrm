@@ -48,13 +48,13 @@ void DialogInputFlowComputation::createWidgetInputFiles()
 
     QLabel *lb_userfile = new QLabel( "User input: " );
     edt_userfile = new QLineEdit();
-    edt_userfile->setText( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/inputs/userinput_example9.txt");
+    edt_userfile->setText( "/media/d/Workspace/RRM/src/Apps/Simulator/inputs/userinput_example9.txt");
     btn_finduserfile = new QPushButton();
     btn_finduserfile->setIcon( QIcon( ":/images/icons/folder.png" ) );
 
     QLabel *lb_surfacefile = new QLabel( "Surface file: " );
     edt_surfacefile = new QLineEdit();
-    edt_surfacefile->setText( "C:/Users/Clarissa/Dropbox/Work/Projects/RRM/Code/Interface/InterfaceRRM/inputs/boxexample9coarse.poly");
+    edt_surfacefile->setText( "/media/d/Workspace/RRM/src/Apps/Simulator/inputs/boxexample9coarse.poly");
     btn_findsurfacefile = new QPushButton();
     btn_findsurfacefile->setIcon( QIcon( ":/images/icons/folder.png" ) );
 

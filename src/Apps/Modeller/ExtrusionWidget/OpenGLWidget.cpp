@@ -157,8 +157,6 @@ void GLWidget::loadShaderByResources ( )
 	halt();
 #endif
 
-//! Effect
-
 	//! Effects --
 	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
 					             ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
@@ -176,7 +174,7 @@ void GLWidget::loadShaderByResources ( )
         background_->initialize ( );
 
 	std::cout << " cube_shader_ " << cube_shader_->getShaderProgram ( ) << std::endl;
-	std::cout << " background_ "  << background_->getShaderProgram ( ) << std::endl;
+	std::cout << " background_ "  << background_->getShaderProgram  ( ) << std::endl;
 
 }
 
@@ -196,7 +194,7 @@ void GLWidget::loadShaders ( )
 	/* Do windows stuff */
 	QString shaderDirectory (shadersDir.path ()+"\\src\\Extrusion\\GUI\\Qt\\RCC\\Shaders\\");
 #elif defined(__linux__)               // Linux Directory Style
-	/* Do linux stuff */
+	/* Do Linux stuff */
 	QString shaderDirectory ( shadersDir.path ( ) + "/src/Extrusion/GUI/Qt/RCC/Shaders/" );
 #else
 	/* Error, both can't be defined or undefined same time */
