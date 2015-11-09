@@ -16,7 +16,7 @@ QVector4D ColorMap::getColor( COLORMAP map, float value, float low, float high )
             return getColor( _jet, value, low, high );
             break;
         default:
-            return QVector4D( 0.7f, 0.7f, 0.7f, 1.0f );
+            return QVector4D( 0.3f, 0.3f, 0.3f, 1.0f );
             break;
 
     }

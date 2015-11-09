@@ -348,7 +348,7 @@ void CanvasComputation::initializeGL ( )
 
 	loadShaderByResources ( );
 
-	glPointSize ( 10 );
+	glPointSize ( 3 );
 
 	vertices_.clear ( );
 
