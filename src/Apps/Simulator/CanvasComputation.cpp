@@ -516,12 +516,12 @@ void CanvasComputation::paintGL ( )
 		glDrawArrays ( GL_POINTS , 0 , vertices_.size ( ) );
 	}
 
-	else if ( show_faces )
+	if ( show_faces )
 	{
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_face_ID_ );
 		glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , NULL );
 	}
-	else if ( show_lines )
+	if ( show_lines )
 	{
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_Lines_ID_ );
 		glDrawElements ( GL_LINES , number_of_lines , GL_UNSIGNED_INT , NULL );
