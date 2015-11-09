@@ -419,6 +419,27 @@ void CanvasComputation::keyPressEvent ( QKeyEvent * event )
 	update ( );
 }
 
+void CanvasComputation::backGround()
+{
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	background_->bind();
+
+	background_->setUniform("viewportSize", width(), height() );
+
+	glBindVertexArray ( vertexArray_cube_ );
+	/// Draw the triangle !
+	glDrawArrays ( GL_POINTS , 0 , 1 );
+
+	glBindVertexArray ( 0 );
+
+	background_->unbind();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
 void CanvasComputation::reloadShaders ( )
 {
 	if ( cube_shader_ )
@@ -428,6 +449,10 @@ void CanvasComputation::reloadShaders ( )
 	if ( vtk_visualization_ )
 	{
 		vtk_visualization_->reloadShaders ( );
+	}
+	if ( background_ )
+	{
+		background_->reloadShaders ( );
 	}
 }
 
@@ -458,6 +483,11 @@ void CanvasComputation::loadShaderByResources ( )
 	vtk_visualization_ = new Tucano::Shader ( "vtk_visualization_" , ( shaderDirectory + "Shaders/HWU/vtk.vert" ).toStdString ( ) , ( shaderDirectory + "Shaders/HWU/vtk.frag" ).toStdString ( ) , "" , "" , "" );
 	vtk_visualization_->initialize ( );
 
+	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
+					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
+						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ) , "" , "" );
+        background_->initialize ( );
+
 	std::cout << " cube_shader_ Clarissa" << cube_shader_->getShaderProgram ( ) << std::endl;
 	std::cout << " vtk_visualization_ Clarissa" << vtk_visualization_->getShaderProgram ( ) << std::endl;
 
@@ -481,10 +511,7 @@ void CanvasComputation::paintGL ( )
 {
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-//    glUseProgram( program );
-//
-//    setupMatrices();
-//    drawModel();
+	backGround();
 
 	vtk_visualization_->bind ( );
 	/// 3rd attribute buffer : vertices

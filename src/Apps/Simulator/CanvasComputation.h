@@ -113,7 +113,6 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
 
         void keyPressEvent ( QKeyEvent * event );
 
-
     public slots:
 
         void resetSetup();
@@ -219,8 +218,11 @@ class CanvasComputation: public QOpenGLWidget/*, public QOpenGLFunctions_3_3_Cor
 
         Tucano::Shader*   vtk_visualization_;
 
+        Tucano::Shader*   background_;
+
         Tucano::Trackball camera;
         Celer::BoundingBox3<float> box;
+        void backGround();
 
 };
 
