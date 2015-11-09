@@ -306,6 +306,17 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 {
 	event->accept ( );
 
+
+	if ( event->key ( ) == Qt::Key_F1 )
+	{
+		this->sketchSession_->image->setVisible(false);
+	}
+
+	if ( event->key ( ) == Qt::Key_F2 )
+	{
+		this->sketchSession_->image->setVisible(true);
+	}
+
 	if ( event->key ( ) == Qt::Key_Up )
 	{
 		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::REMOVE_ABOVE_INTERSECTION );
@@ -340,7 +351,7 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 
 		QPainter painter ( &image );
 		this->sketchSession_->render ( &painter );
-		image.save ( "file_name.png" );
+		image.save ( "CrossSection.png" );
 
 		this->sketchSession_->image->setVisible ( true );
 

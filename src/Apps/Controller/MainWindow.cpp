@@ -1,21 +1,12 @@
-#include <QHBoxLayout>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QStyle>
-
 #include "MainWindow.h"
-
-//#include "mainwindowsimulation.cpp"
 
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
-
 	this->setFocusPolicy ( Qt::StrongFocus );
 	this->setFocus ( );
 	this->setAcceptDrops ( true );
 
 	this->setMinimumSize ( 800 , 600 );
-
 
 	createMenuBar ( );
 	createMainWindowActions ( );
@@ -34,13 +25,11 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	createFlowComputationModule ( );
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
-
-
 }
 
 MainWindow::~MainWindow ( )
 {
-//    canvas2D->clear();
+
 }
 
 void MainWindow::createWindow ( )
@@ -80,9 +69,9 @@ void MainWindow::createMainWindowToolbar ( )
 {
 	tlb_section = addToolBar ( tr ( "Section" ) );
 	tlb_section->addAction ( ac_new );
-	tlb_section->addAction ( ac_open );
-	tlb_section->addAction ( ac_save );
-	tlb_section->addAction ( ac_export );
+//	tlb_section->addAction ( ac_open );
+//	tlb_section->addAction ( ac_save );
+//	tlb_section->addAction ( ac_export );
 
 }
 
@@ -124,11 +113,6 @@ void MainWindow::newSection ( )
 
 void MainWindow::changeColorLine ( )
 {
-	mn_pickercolor->hide ( );
-
-	QColor c = cd_pickercolor->selectedColor ( );
-	dc_2DModule->emitColor ( c.red ( ) , c.green ( ) , c.blue ( ) );
-
 }
 
 void MainWindow::createSketchingMenuBar ( )
@@ -142,25 +126,25 @@ void MainWindow::createSketchingMenuBar ( )
 void MainWindow::createSketchingToolbar ( )
 {
 
-	tlb_rules = addToolBar ( tr ( "Rules" ) );
-	tlb_rules->addAction ( ac_removeabove );
-	tlb_rules->addAction ( ac_removebelow );
+//	tlb_rules = addToolBar ( tr ( "Rules" ) );
+//	tlb_rules->addAction ( ac_removeabove );
+//	tlb_rules->addAction ( ac_removebelow );
+//
+//	tbt_colorsketch = new QToolButton;
+//	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
+//	tbt_colorsketch->setIcon ( QIcon ( ":/images/icons/border_color.png" ) );
+//
+//	mn_pickercolor = new QMenu ( );
+//	mn_pickercolor->addAction ( ac_sketchcolor );
+//	tbt_colorsketch->setMenu ( mn_pickercolor );
+//
+//	tlb_customization = addToolBar ( tr ( "Customize" ) );
+//	tlb_customization->addAction ( ac_select );
+//	tlb_customization->addWidget ( tbt_colorsketch );
 
-	tbt_colorsketch = new QToolButton;
-	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
-	tbt_colorsketch->setIcon ( QIcon ( ":/images/icons/border_color.png" ) );
-
-	mn_pickercolor = new QMenu ( );
-	mn_pickercolor->addAction ( ac_sketchcolor );
-	tbt_colorsketch->setMenu ( mn_pickercolor );
-
-	tlb_customization = addToolBar ( tr ( "Customize" ) );
-	tlb_customization->addAction ( ac_select );
-	tlb_customization->addWidget ( tbt_colorsketch );
-
-	connect ( mn_pickercolor , SIGNAL( aboutToShow() ) , cd_pickercolor , SLOT( show() ) );
-	connect ( cd_pickercolor , SIGNAL( rejected() ) , mn_pickercolor , SLOT( hide() ) );
-	connect ( cd_pickercolor , SIGNAL( accepted() ) , this , SLOT( changeColorLine() ) );
+//	connect ( mn_pickercolor , SIGNAL( aboutToShow() ) , cd_pickercolor , SLOT( show() ) );
+//	connect ( cd_pickercolor , SIGNAL( rejected() ) , mn_pickercolor , SLOT( hide() ) );
+//	connect ( cd_pickercolor , SIGNAL( accepted() ) , this , SLOT( changeColorLine() ) );
 
 }
 
@@ -221,7 +205,6 @@ void MainWindow::createFlowComputationActions ( )
 	ac_flowcomputation = new QAction ( tr ( "Window Flow Computation" ) , this );
 	ac_flowcomputation->setCheckable ( true );
 	connect ( ac_flowcomputation , SIGNAL( toggled(bool) ) , dc_computation , SLOT( setVisible(bool) ) );
-
 }
 
 void MainWindow::create3DWindowMenuBar ( )
