@@ -10,6 +10,10 @@ ColorMap::ColorMap()
 
 QVector4D ColorMap::getColor( COLORMAP map, float value, float low, float high ) const
 {
+
+	if ( low == value && low == high )
+		return QVector4D(0.3f, 0.3f, 0.3f, 1.0f);
+
     switch ( map ) {
 
         case COLORMAP::JET:

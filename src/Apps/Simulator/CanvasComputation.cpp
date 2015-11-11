@@ -79,7 +79,7 @@ void CanvasComputation::createActions ( )
 
 void CanvasComputation::fillMenuProperties ( )
 {
-
+	ac_properties.clear();
 	mn_properties->clear ( );
 	fillMenuPointProperties ( );
 	fillMenuCellProperties ( );
@@ -173,6 +173,7 @@ void CanvasComputation::createMenuProperties ( )
 void CanvasComputation::createMenuColorMaps ( )
 {
 	rd_colormaps.push_back ( new QRadioButton ( tr ( "Jet" ) ) );
+	rd_colormaps[0]->setChecked(true);
 	rd_colormaps.push_back ( new QRadioButton ( tr ( "Constant" ) ) );
 
 	QVBoxLayout *vb_layout = new QVBoxLayout;
@@ -645,7 +646,10 @@ void CanvasComputation::resetData ( )
 	ac_properties.clear ( );
 	mn_vector_properties_points.clear ( );
 
+	vertices_.clear();
+
 	flowvisualizationc->clear ( );
+
 }
 
 void CanvasComputation::resetCamera ( )
@@ -666,7 +670,7 @@ void CanvasComputation::resetVisualization ( )
 void CanvasComputation::mousePressEvent ( QMouseEvent *event )
 {
 
-	if ( ( event->buttons ( ) & Qt::RightButton ) && ( event->modifiers ( ) == Qt::ControlModifier ) )
+	if ( ( event->buttons ( ) & Qt::RightButton )  )
 	{
 		mn_options->exec ( event->globalPos ( ) );
 	}

@@ -26,12 +26,14 @@ void FlowComputationModule::createActions()
     ac_open_surface = new QAction( tr( "Open Surface..." ), this );;
     ac_open_userinput = new QAction( tr( "Open User Input..." ), this );;
     ac_compute_volumetric  = new QAction( tr( "Volumetric Meshing..." ), this );;
-
+	ac_compute_volumetric->setEnabled( false );
 
     ac_compute_pressure = new QAction( tr( "Compute Pressure" ), this );
+	ac_compute_pressure->setEnabled(false);
     ac_compute_velocity = new QAction( tr( "Compute Velocity" ), this );
-    ac_compute_tof = new QAction( tr( "Compute TOF" ), this );
-
+	ac_compute_velocity->setEnabled(false);
+	ac_compute_tof = new QAction(tr("Compute TOF"), this);
+	ac_compute_tof->setEnabled(false);
 
     connect( ac_open_userinput, SIGNAL( triggered() ), dg_inputuser, SLOT( show() ) );
     connect( ac_compute_volumetric, SIGNAL( triggered() ), this, SLOT( createMeshVolumetric() ) );
@@ -116,12 +118,17 @@ void FlowComputationModule::createMeshVolumetric()
 {
     emit computeVolume();
     canvas_computation->showVolumetricGrid();
+	ac_compute_pressure->setEnabled(true);
+	ac_compute_volumetric->setEnabled( false );
 }
 
 
 void FlowComputationModule::computePressure()
 {
     emit computePressureProperty();
+	canvas_computation->fillMenuProperties();
+	ac_compute_pressure->setEnabled(false);
+	ac_compute_velocity->setEnabled(true);
 }
 
 
@@ -129,6 +136,8 @@ void FlowComputationModule::computeVelocity()
 {
     emit computeVelocityProperty();
     canvas_computation->fillMenuProperties();
+	ac_compute_velocity->setEnabled(false);
+	ac_compute_tof->setEnabled(true);
 }
 
 
@@ -136,6 +145,7 @@ void FlowComputationModule::computeTOF()
 {
     emit computeTOFProperty();
     canvas_computation->fillMenuProperties();
+	ac_compute_tof->setEnabled(false);
 
 }
 
@@ -160,6 +170,8 @@ void FlowComputationModule::selectProperty( int id )
 
 void FlowComputationModule::acceptInputUser()
 {
+	canvas_computation->resetSetup();
+
      QString userfile, surfacefile;
      float tol1, tol2;
 
@@ -172,6 +184,8 @@ void FlowComputationModule::acceptInputUser()
     sendInputUser( userfile.toStdString(), name_of_file.toStdString(), tol1, tol2  );
     canvas_computation->showSurface();
     dg_inputuser->close();
+
+	ac_compute_volumetric->setEnabled( true );
 
 }
 

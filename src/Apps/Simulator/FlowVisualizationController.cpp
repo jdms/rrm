@@ -799,8 +799,8 @@ void FlowVisualizationController::getCellMaxMin(  vector< float >& maxmin )
 
 
 void FlowVisualizationController::clear()
-{
-    current_colormap = "CONSTANT";
+{	
+    current_colormap = "JET";
     property_map.clear();
     data.clear();
 }
@@ -824,6 +824,7 @@ void FlowVisualizationController::openUserInputFile( std::string filename )
 
 void FlowVisualizationController::computeVolumetricMesh()
 {
+
     region.buildtetrahedralmesh();
 
     std::vector< NODE > nodes = region.getnodelist();
@@ -837,7 +838,6 @@ void FlowVisualizationController::computeVolumetricMesh()
 
 void FlowVisualizationController::computeFlowProperties()
 {
-//    region.flowpreparation();
     region.computepressure();
     region.computevelocity();
     region.flowdiagnostics();
