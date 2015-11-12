@@ -270,6 +270,8 @@ void FlowVisualizationController::getColors( vector< float >& colors, int option
         getMagnitudeColorsCells( map, colors );
         return;
     }
+	else 
+		getColorConstant(map, colors);
 
 
 }
@@ -303,7 +305,7 @@ void FlowVisualizationController::getSurfaceColors( vector< float >& colors  )
 void FlowVisualizationController::getColorConstant( COLORMAP map, vector< float >& colors )
 {
 
-    int nvalues = (int) data.getNumberofPoints();    
+    int nvalues = (int) data.getNumberofPoints()/3;    
     for( int i = 0; i < nvalues; ++i )
     {
         QVector4D color = colormap.getColor( map, 0, 0, 0 );
@@ -1122,7 +1124,7 @@ void FlowVisualizationController::loadTOFData()
 
     FlowProperty p;
 
-    p.setName( "TOF -- Points" );
+    p.setName( "TOF_Points " );
     p.setFormat( "SCALARS" );
     p.setType( "POINTS" );
     p.setNumberofComponents( 1 );
@@ -1153,7 +1155,7 @@ void FlowVisualizationController::loadTOFData()
 
     FlowProperty p1;
 
-    p1.setName( "TOF -- Cells" );
+    p1.setName( "TOF_Cells" );
     p1.setFormat( "SCALARS" );
     p1.setType( "CELLS" );
     p1.setNumberofComponents( 1 );
@@ -1213,7 +1215,7 @@ void FlowVisualizationController::loadVelocityData()
 
     FlowProperty p1;
 
-    p1.setName( "Velocity -- Points" );
+    p1.setName( "Velocity_Points" );
     p1.setFormat( "VECTORS" );
     p1.setType( "POINTS" );
     p1.setNumberofComponents( 3 );
@@ -1276,7 +1278,7 @@ void FlowVisualizationController::loadVelocityData()
 
     FlowProperty p;
 
-    p.setName( "Velocity -- Cells" );
+    p.setName( "Velocity_Cells" );
     p.setFormat( "VECTORS" );
     p.setType( "CELLS" );
     p.setNumberofComponents( 3 );

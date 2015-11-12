@@ -570,6 +570,8 @@ void CanvasComputation::sendMeshGPU ( )
 	flowvisualizationc->getColors ( colors );
 	GLint ncolors = (int) colors.size ( );
 
+	cout << "number of colors: " << ncolors << endl;
+
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_colors_ );
 	glBufferData ( GL_ARRAY_BUFFER , ncolors * sizeof ( GL_FLOAT ) , colors.data ( ) , GL_STATIC_DRAW );
 

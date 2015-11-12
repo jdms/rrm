@@ -975,20 +975,23 @@ void VTKData::writeFile( std::string filename ) const
     file.open( filename.c_str() );
     if( !file.is_open() ) return;
 
-    file <<  "# vtk DataFile Version " << file_version.c_str() << endl;
-    file << file_comments.c_str() << endl;
-    file << file_format.c_str() << endl;
-    file << "DATASET " << dataset_type.c_str() << endl;
-    file << "POINTS " << number_of_points << " " << format_points.c_str() << endl;
+    file <<  "# vtk DataFile Version 2.0" << endl;
+    file << "Unstructured Grid" << endl;
+	file << "ASCII" << endl;
+    file << "DATASET " << "UNSTRUCTURED_GRID" << endl;
 
-    int npoints = number_of_points/3;
+	int npoints = vector_points.size() / 3;
+	file << "POINTS " << npoints << " double" << endl;
+
     for( int i = 0; i < npoints; ++i )
         file << vector_points[ 3*i ] << " " << vector_points[ 3*i + 1 ] << " " << vector_points[ 3*i + 2 ] << endl;
 
     file << endl;
-    file << "CELLS " << number_of_cells << " " << list_cells_size << endl;
 
-    for( int i = 0; i < number_of_cells; ++i )
+	int size = vector_cells.size() * 5;
+	file << "CELLS " << vector_cells.size() << " " << size << endl;
+
+	for (int i = 0; i < vector_cells.size(); ++i)
     {
         Cell cell = vector_cells[ i ];
         int nvertices = (int) cell.vertices.size();
@@ -997,16 +1000,17 @@ void VTKData::writeFile( std::string filename ) const
         for( int j = 0; j < nvertices; j++ )
             file << " " << cell.vertices[ j ];
 
+		file << endl;
     }
 
 
     file << endl;
-    file << "CELL_TYPES " << number_of_cells << endl;
+    file << "CELL_TYPES " << vector_cells.size() << endl;
 
-    for( int i = 0; i < number_of_cells; ++i )
+    for( int i = 0; i < vector_cells.size(); ++i )
     {
         Cell cell = vector_cells[ i ];
-        file << cell.type ;
+        file << cell.type << endl;
     }
 
 
@@ -1014,7 +1018,8 @@ void VTKData::writeFile( std::string filename ) const
     {
 
         int npproperties = (int) vector_point_properties.size();
-        file << "POINT_DATA " << number_of_points << endl;
+		int npoints = vector_points.size() / 3;
+        file << "POINT_DATA " << npoints << endl;
 
         for( int i = 0; i < npproperties; ++i )
         {
@@ -1028,19 +1033,20 @@ void VTKData::writeFile( std::string filename ) const
             file << format << " " << name << " double" << endl;
 
             if( format.compare( "SCALARS" ) == 0 ){
-                file << "LOOKUP_TABLE" << lookuptable[ i ] << endl;
+                file << "LOOKUP_TABLE default" << endl;
 
                 vector< float > values;
                 p.getValues( values );
-                for( int j = 0; j < number_of_points; ++j )
+				for (int j = 0; j < values.size(); ++j)
                     file << values[ j ] << endl;
 
             }
             else if( format.compare( "VECTORS" ) == 0 ){
 
                 vector< float > values;
-                p.getValues( values );
-                for( int j = 0; j < number_of_points; ++j )
+                p.getValues( values ); 
+				int npoints = values.size() / 3;
+                for( int j = 0; j < npoints; ++j )
                     file << values[ 3*j ] << " " << values[ 3*j + 1 ] << " " << values[ 3*j + 2 ] << endl;
 
             }
@@ -1054,7 +1060,7 @@ void VTKData::writeFile( std::string filename ) const
     {
 
         int npproperties = (int) vector_cell_properties.size();
-        file << "CELL_DATA " << number_of_cells << endl;
+        file << "CELL_DATA " << vector_cells.size() << endl;
 
         for( int i = 0; i < npproperties; ++i )
         {
@@ -1068,11 +1074,11 @@ void VTKData::writeFile( std::string filename ) const
             file << format << " " << name << " double" << endl;
 
             if( format.compare( "SCALARS" ) == 0 ){
-                file << "LOOKUP_TABLE" << lookuptablecell[ i ] << endl;
+                file << "LOOKUP_TABLE default" << endl;
 
                 vector< float > values;
                 p.getValues( values );
-                for( int j = 0; j < number_of_cells; ++j )
+                for( int j = 0; j < vector_cells.size(); ++j )
                     file << values[ j ] << endl;
 
             }
@@ -1080,7 +1086,8 @@ void VTKData::writeFile( std::string filename ) const
 
                 vector< float > values;
                 p.getValues( values );
-                for( int j = 0; j < number_of_cells; ++j )
+				int npoints = values.size() / 3;
+				for (int j = 0; j < npoints; ++j)
                     file << values[ 3*j ] << " " << values[ 3*j + 1 ] << " " << values[ 3*j + 2 ] << endl;
 
             }
