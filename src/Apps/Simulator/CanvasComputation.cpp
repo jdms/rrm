@@ -832,13 +832,13 @@ void CanvasComputation::sendSurfaceGPU ( )
 
 	flowvisualizationc->getPointsSurface ( vertices );
 
-	number_of_vertices = (GLuint) vertices.size ( );
+	number_of_vertices = (GLuint) vertices.size ( )/3;
 
 	vertices_.clear ( );
 
-	for ( std::size_t it = 0; it < vertices.size ( ) - 3; it += 3 )
+	for ( std::size_t it = 0; it < number_of_vertices/*vertices.size ( ) - 3*/; it++/*it += 3*/ )
 	{
-		vertices_.push_back ( Eigen::Vector3f ( vertices[it] , vertices[it + 1] , vertices[it + 2] ) );
+		vertices_.push_back ( Eigen::Vector3f ( vertices[3*it] , vertices[3*it + 1] , vertices[3*it + 2] ) );
 	}
 
 	box.fromPointCloud ( vertices_.begin ( ) , vertices_.end ( ) );
