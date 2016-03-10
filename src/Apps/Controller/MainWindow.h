@@ -163,7 +163,7 @@ class MainWindow : public QMainWindow
 	typedef RRM::CrossSection<qreal>                   CrossSection;
 	typedef CrossSection::Curve2D			   Curve2D;
 
-		// Model Testing
+	// Model Testing
 	QPolygonF convert( Curve2D& curve)
 	{
 		QPolygonF p;

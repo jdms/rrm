@@ -31,7 +31,6 @@ CanvasComputation::CanvasComputation ( QWidget* parent ) :
 	cube_shader_ = 0;
 	vertexArray_cube_ = 0;
 	vertexBuffer_cube_ = 0;
-	/// PORRA ERA SO O SLOT QUE TAVA ERRADO !!!! Q MERDA !!!
 	vertexCube_slot_ = 0;
 
 	vtk_visualization_ = 0;
