@@ -328,15 +328,6 @@ namespace RRM
 			std::vector<Curve2D> segs =
 			{	c1,c2,c3};
 
-			std::cout << " ------- " << std::endl;
-
-//	        	for (std::size_t it = 0; it < 3; ++it)
-//	        	{
-//	        			std::cout << "Point2D " << segs[it].first() << std::endl;
-//	        			std::cout << "Point2D " << segs[it].last() << std::endl;
-//	        			std::cout << "Point2D " << segs[it].size() << std::endl;
-//	        	}
-
 			/// Deleting h2 faces, to keep the structure consistent
 			d.faces_erase(h2->face());
 			d.faces_erase(h2->opposite()->face());
@@ -368,41 +359,6 @@ namespace RRM
 			h2->opposite()->HBase::set_next(h1);
 			h2->opposite()->HBase::set_prev(h1);
 
-//			        Halfedge_handle h = hds->edges_push_back( Halfedge(), Halfedge());
-//			        h->HBase::set_next( h);
-//			        h->opposite()->HBase::set_next( h->opposite());
-//			        set_prev( h, h);
-//			        set_prev( h->opposite(), h->opposite());
-//			        set_vertex( h, vertices_push_back( Vertex()));
-//			        set_vertex( h->opposite(), get_vertex(h));
-//			        set_face( h, faces_push_back( Face()));
-//			        set_face( h->opposite(), faces_push_back( Face()));
-//			        set_face_halfedge( h);
-//			        set_face_halfedge( h->opposite());
-//			        set_vertex_halfedge( h);
-//			        return h;
-
-//				if ( h1->face ( ) == h2->opposite()->face ( ) )
-//				{
-//					while ( h1->next ( ) == h2->opposite ( ) )
-//					{
-//						h1 = h2->opposite ( );
-//						std::cout << h2->face ( )->name << std::endl;
-//						std::cout << h2->opposite ( )->face ( )->name << std::endl;
-//						std::cout << h1->left_to_right  << std::endl;
-//					}
-//				}
-
-//				std::cout << "Felipe " + h2->face()->name << std::endl;
-//				std::cout << "Felipe " + h2->opposite()->face()->name << std::endl;
-
-//				std::cout << DCELLog();
-
-//				h1->segmet = segment_1;
-//				h1->next()->segment = segment_2;
-//				h1->face()->name = "Out";
-//				h1->opposite()->face()->name = "Canonical";
-
 			return true;
 		}
 
@@ -414,8 +370,6 @@ namespace RRM
 		/// More precise/robust/fast algorithm from the geometry package is needed.
 		bool insertSegment( Stratigraphic curve, std::vector<Curve2D>& segments)
 		{
-
-//				std::cout << "Curve :" << curve.curve.size() << std::endl;
 
 			if ( curve.curve.size() < 5 )
 			{
@@ -455,11 +409,7 @@ namespace RRM
 
 					if ( s->is_visible )
 					{
-//							std::cout << "Segment : " << s->segment.curve.first() << std::endl;
-//							std::cout << "Segment : " << s->segment.curve.last()  << std::endl;
 						curve.curve.intersections ( s->segment.curve , curve_indices , curve_alpha , segment_indices , segment_alpha , intersection_points );
-//							std::cout << "Curve   Indices Size   : " << curve_indices.size() << std::endl;
-//							std::cout << "Segment Indices Size   : " << curve_indices.size() << std::endl;
 
 						if ( segment_indices.size ( ) > 2 )
 						{
@@ -524,8 +474,6 @@ namespace RRM
 			/// By using the geologic rules, we can choose which surface will be kept.
 			else
 			{
-				//std::cout << "More than 3: " << curve_all_indices.size() << " " << std::endl;
-
 				curve.curve.slices(curve_all_indices,curve_all_segments);
 
 				/// Assume the most left segment and the most right segment are hanging.
@@ -537,8 +485,6 @@ namespace RRM
 					std::cout << "More than 3: " << std::endl;
 					//return false;
 				}
-
-				//std::cout << "Size: " << curve_all_segments.size() << " " << std::endl;
 
 				for ( std::size_t it = 0; it < curve_slice.size( ) - 1; it++)
 				{
@@ -553,8 +499,8 @@ namespace RRM
 					h->segment.curve.superSample(3.0);
 					h->is_visible = true;
 					h->is_boundary = false;
-					//std::cout << "Curve " << h->segment.curve.size() << std::endl;
 				}
+				// DCEL log information
 				//std::cout << DCELLog();
 			}
 
@@ -713,7 +659,6 @@ namespace RRM
 						}
 
 						/// The input Curve Cross ! Apply Remove Above, Remove Below
-
 						bool rule_ = curve.curve[it->curve_indices[0]].y() > it->s->segment.curve[it->segment_indices[0]].y();
 
 						if ( current_rule == REMOVE_ABOVE_INTERSECTION )
@@ -798,7 +743,6 @@ namespace RRM
 		}
 
 	};
-
 }
 /* namespace RRM */
 

@@ -49,19 +49,9 @@ class GLWidget: public QOpenGLWidget
 		void loadShaderByResources();
 		void loadShaders();
 		void reloadShaders();
-
 		/// Left to Right
 		void createCube            ( const Celer::BoundingBox3<float>& box );
-		void createPatch           ( Eigen::Vector3f left, Eigen::Vector3f right, float step);
-		void createSurfacePatch    ( );
 		void createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal );
-
-
-	protected:
-		void dragEnterEvent ( QDragEnterEvent *event );
-		void dragMoveEvent ( QDragMoveEvent *event );
-		void dragLeaveEvent ( QDragLeaveEvent *event );
-		void dropEvent ( QDropEvent *event );
 
 	signals:
 

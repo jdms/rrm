@@ -13,14 +13,17 @@ endforeach()
 
 ## Grab Controller Source Files
 set( CONTROLLER_HEADERS Controller/MainWindow.h
+						Controller/About/AboutWidget.hpp
    )
    
 set( CONTROLLER_MOC_HEADERS Controller/MainWindow.h
+							Controller/About/AboutWidget.hpp
   
    )
 
 set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
+                        Controller/About/AboutWidget.cpp
                         Controller/MainModeller.cpp
                         ##Controller/MainSimulator.cpp
                         
@@ -120,7 +123,7 @@ set( SIMULATOR_SOURCES
 set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
-set( UI_SOURCES  )
+set( UI_SOURCES Controller/About/AboutWidget.ui )
 ## Resources
 set(RCC_SOURCES Controller/Resources/images.qrc)
 
@@ -135,7 +138,10 @@ IF(WIN32) # Check if we are on Windows
         message(STATUS "- MSVC: Enabled SSE2 support")
         add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS} ${MODELLER_SOURCES} ${MODELLER_HEADERS} ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
 		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Svg RRMGeometry ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
-		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+		# /SUBSYSTEM:CONSOLE DEBUG VERSION
+		# /SUBSYSTEM:WINDOWN RELEASE VERSION
+#		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
     elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
         message (FATAL_ERROR "GCC are not support on Windows !")
     else() # Nor MSVC or GCC (MinGW)

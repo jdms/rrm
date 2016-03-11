@@ -1,6 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+/// About
+#include "Controller/About/AboutWidget.hpp"
+
 /// Sketching Surface
 #include "Model/CrossSection.hpp"
 
@@ -101,6 +105,8 @@ class MainWindow : public QMainWindow
 
 
     private:
+
+	AboutWidget * aboutRRM;
 
         Sketching2DModule *dc_2DModule;
         QDockWidget *dc_3DModule;
