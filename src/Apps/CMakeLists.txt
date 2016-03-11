@@ -25,8 +25,7 @@ set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
                         Controller/About/AboutWidget.cpp
                         Controller/MainModeller.cpp
-                        ##Controller/MainSimulator.cpp
-                        
+                        Controller/MainFlow.cpp
    )
 
 ## Grab Modeller Source Files

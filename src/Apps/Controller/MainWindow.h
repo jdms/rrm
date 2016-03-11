@@ -101,9 +101,6 @@ class MainWindow : public QMainWindow
 	void on_horizontalSlider_surface_valueChanged();
 	void on_horizontalSlider_extrusion_valueChanged();
 
-
-
-
     private:
 
 	AboutWidget * aboutRRM;

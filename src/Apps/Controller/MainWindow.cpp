@@ -111,8 +111,8 @@ void MainWindow::createMainWindowActions ( )
 
 void MainWindow::newSection ( )
 {
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  /// THE VIEW
-	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   /// THE MODEL
+	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  /// The View
+	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   /// The  Model
 }
 
 void MainWindow::changeColorLine ( )
@@ -186,29 +186,6 @@ void MainWindow::createSketchingActions ( )
 	connect ( ac_select , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( pointerSelection( bool ) ) );
 	connect ( ac_wdwsketching , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( setVisible(bool) ) );
 
-}
-
-void MainWindow::createFlowComputationModule ( )
-{
-	dc_computation = new FlowComputationModule ( );
-	addDockWidget ( Qt::RightDockWidgetArea , dc_computation );
-
-}
-
-void MainWindow::createFlowComputationMenuBar ( )
-{
-
-	mn_windows->addAction ( ac_flowcomputation );
-	ac_flowcomputation->setCheckable ( true );
-
-}
-
-void MainWindow::createFlowComputationActions ( )
-{
-	// flow computation
-	ac_flowcomputation = new QAction ( tr ( "Window Flow Computation" ) , this );
-	ac_flowcomputation->setCheckable ( true );
-	connect ( ac_flowcomputation , SIGNAL( toggled(bool) ) , dc_computation , SLOT( setVisible(bool) ) );
 }
 
 void MainWindow::create3DWindowMenuBar ( )
