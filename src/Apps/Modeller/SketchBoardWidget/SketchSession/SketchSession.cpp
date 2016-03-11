@@ -228,7 +228,6 @@ void SketchSession::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 	}
 	else
 	{
-		/// Clarissa
 		sketch->clear ( );
 	}
 	update ( );
