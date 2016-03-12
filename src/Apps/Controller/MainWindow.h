@@ -86,10 +86,6 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-        //void addCurve( QPolygonF& curve);
-
-        //void updateComboBox( std::vector< std::string > ppoints, std::vector< std::string > pcells );
-
         void curve2DSlot ( QPolygonF polygon );
         void smoothCurveSlot ( QPolygonF raw_sketch );
         void renderSegments();
@@ -108,7 +104,6 @@ class MainWindow : public QMainWindow
         Sketching2DModule *dc_2DModule;
         QDockWidget *dc_3DModule;
         FlowComputationModule *dc_computation;
-
 
         QAction *ac_new;
         QAction *ac_open;
@@ -189,8 +184,6 @@ class MainWindow : public QMainWindow
 	    QLabel *label;
 	    QLabel *label_2;
 	    QLabel *label_3;
-
-
 };
 
 #endif // MAINWINDOW_H
