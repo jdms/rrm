@@ -1,4 +1,4 @@
-#ifndef ABOUTWIDGETIRESREADER_HPP_
+#ifndef ABOUTWIDGET_HPP_
 #define ABOUTWIDGET_HPP_
 
 #include <QDialog>
@@ -17,4 +17,4 @@ class AboutWidget : public QDialog
 
 };
 
-#endif /* ABOUTWIDGETIRESREADER_HPP_ */
+#endif /* ABOUTWIDGET_HPP_ */

@@ -111,8 +111,8 @@ void MainWindow::createMainWindowActions ( )
 
 void MainWindow::newSection ( )
 {
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  /// The View
-	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   /// The  Model
+	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
 }
 
 void MainWindow::changeColorLine ( )

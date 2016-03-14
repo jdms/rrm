@@ -1,11 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+/**
+ * @file MainWindow.h
+ * @author Felipe Moura de Carvalho
+ * @author Clarissa Coda
+ * @date 9 Sep 2015
+ * @brief RRM's Main GUI.
+ */
 
-/// About
+// About
 #include "Controller/About/AboutWidget.hpp"
 
-/// Sketching Surface
+// Sketching Surface
 #include "Model/CrossSection.hpp"
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
@@ -14,7 +21,7 @@
 	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
 #include "Modeller/HorizonController.h"
 #include "Modeller/Sketching2DModule.h"
-/// Simulator Volume
+// Simulator Volume
 #include "Simulator/CanvasComputation.h"
 #include "Simulator/FlowComputationModule.h"
 
@@ -40,6 +47,12 @@
 #include <QtWidgets/QStyle>
 
 
+/**
+ * @brief Main GUI and Controller of the Project
+ *
+ * GUI representing the Main Window of the Project.
+ * It also responsible make a bridge between Sketch Module and Extrusion Module
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -79,7 +92,7 @@ class MainWindow : public QMainWindow
         void newSection();
         void changeColorLine();
 
-        /// CrossSection
+        // CrossSection
         void keyPressEvent ( QKeyEvent *e );
         void mousePressEvent(QMouseEvent* event);
         void wheelEvent(QWheelEvent* event);
@@ -142,14 +155,14 @@ class MainWindow : public QMainWindow
         QAction *ac_window3d;
 
 
-        /// CrossSection ////////////////////////////////////////////////////////////////////
+        // CrossSection ////////////////////////////////////////////////////////////////////
         RRM::CrossSection<qreal> cross_section_;
 
         QStatusBar			*status_bar_;
         	QLabel			*status_text;
 
         QAction *ac_newBoundary;
-        /// Sketching Surface and Extrusion
+        // Sketching Surface and Extrusion
         GLWidget *glWidget;
         Eigen::Vector3f min_;
         Eigen::Vector3f max_;
