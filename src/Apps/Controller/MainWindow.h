@@ -4,8 +4,7 @@
 /**
  * @file MainWindow.h
  * @author Felipe Moura de Carvalho
- * @author Clarissa Coda
- * @date 9 Sep 2015
+ * @date Sep, 2015
  * @brief RRM's Main GUI.
  */
 

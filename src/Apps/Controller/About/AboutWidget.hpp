@@ -1,6 +1,14 @@
 #ifndef ABOUTWIDGET_HPP_
 #define ABOUTWIDGET_HPP_
 
+
+/**
+ * @file AboutWidget.h
+ * @author Felipe Moura de Carvalho
+ * @date $Date: 2005/04/14 14:16:20
+ * @brief RRM's Main GUI.
+ */
+
 #include <QDialog>
 
 #include "ui_AboutWidget.h"
