@@ -7,6 +7,10 @@
 
 using namespace std;
 
+/**!
+ * @brief The line defined by the user during the sketch processing.
+ */
+
 class InputSketch : public QGraphicsPathItem
 {
 	

@@ -10,6 +10,9 @@
 
 #include "Modeller/InputSketch.h"
 
+/**!
+ * @brief Future HorizoinController
+ */
 
 using namespace std;
 

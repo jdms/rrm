@@ -9,6 +9,10 @@
 #include "HorizonController.h"
 #include "BoundaryController.h"
 
+/**!
+ * @brief Qt extension of QGraphicsScene to allow sketch and visualize the stratigraphy
+ */
+
 class SketchingScene: public QGraphicsScene
 {
     Q_OBJECT

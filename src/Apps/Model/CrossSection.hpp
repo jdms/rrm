@@ -7,7 +7,7 @@
  *  TODO GeologicalCrossSection is Temporary Name !
  */
 
-/// C++ Libraries
+// C++ Libraries
 #include <iostream>
 #include <string>    // std::to_string
 #include <deque>     // std::deque
@@ -19,19 +19,19 @@
 #ifndef _CROSSSECTIONMESH_HPP_
 #define _CROSSSECTIONMESH_HPP_
 
-/// CurveNDimension
+// CurveNDimension
 #include "Core/Geometry/PolygonalCurve2D.hpp"
-/// Our Half-Edge items to DCEL
+// Our Half-Edge items to DCEL
 #include "Topology/CrossSection_Items.hpp"
-/// RRM Decorator
+// RRM Decorator
 #include "Topology/CrossSection_Decorator.hpp"
-/// @CGAL Library
+// @CGAL Library
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>
-/// Edge Iterator @see http://doc.cgal.org/4.7/HalfedgeDS/HalfedgeDS_2hds_prog_edge_iterator_8cpp-example.html
+// Edge Iterator @see http://doc.cgal.org/4.7/HalfedgeDS/HalfedgeDS_2hds_prog_edge_iterator_8cpp-example.html
 #include <CGAL/N_step_adaptor.h>
 
-/// Kernel
+// Kernel
 #include <CGAL/Simple_cartesian.h>
 
 #include "StratigraphicCurves.hpp"
@@ -57,7 +57,7 @@ namespace RRM
 			typedef PointN<Real, 2> Point2D;
 			typedef PolygonalCurve2D<Real> Curve2D;
 
-			typedef StratigraphicCurves<Real> Stratigraphic;
+			typedef StratigraphicCurves<Real>  Stratigraphic;
 			typedef StratigraphicSegment<Real> Segment;
 
 			typedef CGAL::Simple_cartesian<Real> Kernel;
@@ -143,7 +143,7 @@ namespace RRM
 
 					CurveSlice& operator= ( const CurveSlice& other )
 					{
-						/// Assign to all  member.
+						// Assign to all  member.
 						index = other.index;
 						point = other.point;
 
@@ -193,14 +193,14 @@ namespace RRM
 				current_rule = Sketch;
 			}
 
-			/// FIXME Create crossSection with boundary as argument.
+			// FIXME Create crossSection with boundary as argument.
 			CrossSection ( Real x , Real y , Real width , Real height )
 			{
 				is_ready = initialization ( x , y , width , height );
 				current_rule = Sketch;
 			}
-			/// FIXME Test whether the boundary is valid.
-			/// For while, testing with the input is a rectangle.
+			// FIXME Test whether the boundary is valid.
+			// For while, testing with the input is a rectangle.
 			bool initialization ( Real x , Real y , Real width , Real height )
 			{
 				// (x,y)   (width,y)    (width,height)
@@ -219,7 +219,7 @@ namespace RRM
 			return is_ready;
 		}
 
-		/// Seek and Destroy ! @see https://www.youtube.com/watch?v=6mdBw3SG5io
+		// How to create a proper ! @see https://www.youtube.com/watch?v=6mdBw3SG5io
 		virtual ~CrossSection ( )
 		{
 
@@ -251,22 +251,22 @@ namespace RRM
 
 		private:
 
-		/// FIXME Test whether is a close curve (2D) or a mainfold surface (3D).
-		/// @see https://en.wikipedia.org/wiki/Differentiable_manifold
+		// FIXME Test whether is a close curve (2D) or a mainfold surface (3D).
+		// @see https://en.wikipedia.org/wiki/Differentiable_manifold
 
-		/// The initial boundary is a Face with 2 halfedge
+		/// @brief The initial boundary is a Face with 2 halfedge
 		/// The end Points are repeated, thus, curve_1.end().point() == curve_2.begin().point()
 		/// Make life easy when translate.
 		///			            x
 		///                    / \
-			///                    \ /
+		///                    \ /
 		///                     x
 		/// Slice the curve in half: segment_1, segment_2
 		bool boundary ( std::vector<Point2D> segment_1, std::vector<Point2D> segment_2 )
 		{
 			if ( true )
 			{
-				/// Valid boundary
+				// Valid boundary
 				std::cout << "The boundary is closed, and size is :" << canonical_boundary.curve.size() << std::endl;
 
 			}
@@ -277,24 +277,24 @@ namespace RRM
 				return false;
 			}
 
-			/// Two Curve/Surface defining the boundary of the sketch.
+			// Two Curve/Surface defining the boundary of the sketch.
 			Segment canonical_boundary_segment_1;
 			Segment canonical_boundary_segment_2;
 
 			canonical_boundary_segment_1.curve.setCurve(segment_1);
 			canonical_boundary_segment_2.curve.setCurve(segment_2);
 
-			/// Fresh DCEL
+			// Fresh DCEL
 			topology_.clear();
-			///
-			/// *------
-			/// |      |
-			///  ------*
-			/// The Most important Class for CGAL. Ensure changes;
+			//
+			// *------
+			// |      |
+			//  ------*
+			// The Most important Class for CGAL. Ensure changes;
 			CrossSectionDecorator d(topology_);
-			/// First segment of the boundary
+			// First segment of the boundary
 			Halfedge_handle h1 = d.create_loop();
-			/// Second segment of the boundary
+			// Second segment of the boundary
 			Halfedge_handle h2 = d.create_loop();
 
 			h1->face()->name = "outside";
@@ -328,10 +328,10 @@ namespace RRM
 			std::vector<Curve2D> segs =
 			{	c1,c2,c3};
 
-			/// Deleting h2 faces, to keep the structure consistent
+			// Deleting h2 faces, to keep the structure consistent
 			d.faces_erase(h2->face());
 			d.faces_erase(h2->opposite()->face());
-			/// Grab h1 face information
+			// Grab h1 face information
 			d.set_face(h2,h1->opposite()->face());// inside
 			d.set_face(h2->opposite(),h1->face());// outside
 
@@ -343,31 +343,31 @@ namespace RRM
 			h2->segment.curve.superSample(3.0);
 			h2->is_visible = true;
 
-			/// Outside the boundary: face()->name == outside;
+			// Outside the boundary: face()->name == outside;
 			h1->HBase::set_next(h2->opposite());
 			h1->HBase::set_prev(h2->opposite());
 
-			/// Inside the boundary: face()->name == inside;
+			// Inside the boundary: face()->name == inside;
 			h1->opposite()->HBase::set_next(h2);
 			h1->opposite()->HBase::set_prev(h2);
 
-			/// Outside the boundary: face()->name == outside;
+			// Outside the boundary: face()->name == outside;
 			h2->HBase::set_next(h1->opposite());
 			h2->HBase::set_prev(h1->opposite());
 
-			/// Inside the boundary: face()->name == inside;
+			// Inside the boundary: face()->name == inside;
 			h2->opposite()->HBase::set_next(h1);
 			h2->opposite()->HBase::set_prev(h1);
 
 			return true;
 		}
 
-		/// A horizon as a input ( cut the boundary twice )
-		/// If the input curve have only one intersection point, that means,
-		/// the input is invalid;
+		// A horizon as a input ( cut the boundary twice )
+		// If the input curve have only one intersection point, that means,
+		// the input is invalid;
 
-		/// FIXME For while, it uses the closest segment point as intersection point.
-		/// More precise/robust/fast algorithm from the geometry package is needed.
+		// FIXME For while, it uses the closest segment point as intersection point.
+		// More precise/robust/fast algorithm from the geometry package is needed.
 		bool insertSegment( Stratigraphic curve, std::vector<Curve2D>& segments)
 		{
 
@@ -387,10 +387,10 @@ namespace RRM
 			std::vector<std::size_t> curve_indices;
 			std::vector<Real> curve_alpha;
 
-			/// Testing new slice
+			// Testing new slice
 			std::deque<Curve2D> curve_all_segments;
 
-			/// VERY IMPORTANT  --- need a decorator to ensure halfedge update
+			// VERY IMPORTANT  --- need a decorator to ensure halfedge update
 			Decorator d(topology_);
 			Segment_iterator s;
 
@@ -414,7 +414,7 @@ namespace RRM
 						if ( segment_indices.size ( ) > 2 )
 						{
 							std::cout << "More than 2 Intersections: " << curve_indices.size ( ) << std::endl;
-							/// unacceptable, just return false
+							// unacceptable, just return false
 							return false;
 						}
 
@@ -436,12 +436,12 @@ namespace RRM
 
 						curve_sew.push_back ( c );
 					}
-					//curve_sew.back().s->is_boundary = s->is_boundary;
+					// curve_sew.back().s->is_boundary = s->is_boundary;
 				}
 			}
 
-			/// Because the order of half-edge can vary. The segments are Left-Right, thus, the intersection.
-			/// Indices are also Left-Right.
+			// Because the order of half-edge can vary. The segments are Left-Right, thus, the intersection.
+			// Indices are also Left-Right.
 
 			std::sort(curve_slice.begin(),curve_slice.end(),std::less<CurveSlice>());
 
@@ -449,9 +449,9 @@ namespace RRM
 
 			std::sort(curve_all_indices.begin(),curve_all_indices.end(),std::less<std::size_t>());
 
-			/// Just Sketching. nothing to worry about.
-			/// One surface is generate.
-			/// One Face have to be split
+			// Just Sketching. nothing to worry about.
+			// One surface is generate.
+			// One Face have to be split
 
 			if ( (current_rule == GeologicRules::Sketch) && (curve_slice.size ( ) > 2))
 			{
@@ -463,27 +463,27 @@ namespace RRM
 				return false;
 			}
 
-			/// Just hanging or internal lines.
-			/// One intersection does not change the geometry. It does not create any new surface.
+			// Just hanging or internal lines.
+			// One intersection does not change the geometry. It does not create any new surface.
 			if ( curve_all_indices.size() <= 1)
 			{
 				return false;
 			}
-			/// Here, surfacing is crossing. We need to apply one rule, Above/Below
-			/// More than two intersections means the surface cross one or more surface.
-			/// By using the geologic rules, we can choose which surface will be kept.
+			// Here, surfacing is crossing. We need to apply one rule, Above/Below
+			// More than two intersections means the surface cross one or more surface.
+			// By using the geologic rules, we can choose which surface will be kept.
 			else
 			{
 				curve.curve.slices(curve_all_indices,curve_all_segments);
 
-				/// Assume the most left segment and the most right segment are hanging.
+			    // Assume the most left segment and the most right segment are hanging.
 				curve_all_segments.pop_front();
 				curve_all_segments.pop_back();
 
 				if ( curve_all_segments.size() == 1 )
 				{
 					std::cout << "More than 3: " << std::endl;
-					//return false;
+					// return false;
 				}
 
 				for ( std::size_t it = 0; it < curve_slice.size( ) - 1; it++)
@@ -501,7 +501,7 @@ namespace RRM
 					h->is_boundary = false;
 				}
 				// DCEL log information
-				//std::cout << DCELLog();
+				// std::cout << DCELLog();
 			}
 
 
@@ -519,7 +519,7 @@ namespace RRM
 
 					if ( !it->s->is_boundary )
 					{
-						/// Just segment the Surface
+						// Just segment the Surface
 						if ( (curve_all_indices.front() == it->curve_indices[0]) || (curve_all_indices.back() == it->curve_indices[0]))
 						{
 
@@ -590,8 +590,8 @@ namespace RRM
 
 					if ( !it->s->is_boundary )
 					{
-						/// Update the geometry only
-						/// Otherwise the curve will float ... But Segment the Curve
+						// Update the geometry only
+						// Otherwise the curve will float ... But Segment the Curve
 						if ( (curve_all_indices.front() == it->curve_indices[0]) && (curve_all_indices.back() == it->curve_indices[1]))
 						{
 
@@ -658,7 +658,7 @@ namespace RRM
 							continue;
 						}
 
-						/// The input Curve Cross ! Apply Remove Above, Remove Below
+						// The input Curve Cross ! Apply Remove Above, Remove Below
 						bool rule_ = curve.curve[it->curve_indices[0]].y() > it->s->segment.curve[it->segment_indices[0]].y();
 
 						if ( current_rule == REMOVE_ABOVE_INTERSECTION )
@@ -718,7 +718,7 @@ namespace RRM
 			return false;
 		}
 
-		/// Test whether the curve make the boundary split;
+		// Test whether the curve make the boundary split;
 		bool curve_against_boundary ( Stratigraphic& curve )
 		{
 			return false;

@@ -11,7 +11,11 @@
 #include <utility> // int
 
 
-/// FIXME Implement Traits to allow customization of the class.
+/*!
+ * @brief Vertex of the arrangements
+ * \todo Implement Traits to allow customization of the class.
+ */
+
 
 #include <CGAL/HalfedgeDS_vertex_base.h>
 #include <list>
@@ -22,10 +26,10 @@ namespace RRM
 {
 	namespace Topology
 	{
-		/// @see http://doc.cgal.org/4.7/HalfedgeDS/classCGAL_1_1HalfedgeDS__vertex__base.html
+		// @see http://doc.cgal.org/4.7/HalfedgeDS/classCGAL_1_1HalfedgeDS__vertex__base.html
 		template <class Refs, class Traits>
 		class Vertex : public CGAL::HalfedgeDS_vertex_base<Refs,
-								   CGAL::Tag_true /// Has reference to an incident half-edge.
+								   CGAL::Tag_true // Has reference to an incident half-edge.
 							          >
 		{
 			public:

@@ -11,11 +11,15 @@
 
 #include <list>
 
-
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 
 #include "Vertex.hpp"
 #include "Face.hpp"
+
+/*!
+ * @brief Halfedge of the Arrangements
+ * \todo Implement Traits to allow customization of the class.
+ */
 
 namespace RRM
 {

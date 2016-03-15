@@ -4,6 +4,10 @@
 #include <QDockWidget>
 #include "Modeller/Canvas2D.h"
 
+/**!
+ * @brief GUI container that holds the sketch window.
+ */
+
 class Sketching2DModule: public QDockWidget
 {
     Q_OBJECT

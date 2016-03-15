@@ -6,6 +6,9 @@
 
 #include "Modeller/SketchingScene.h"
 
+/**!
+ * @brief Qt GrapphicsView
+ */
 
 class Canvas2D: public QGraphicsView
 {

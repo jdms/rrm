@@ -11,7 +11,14 @@
 #include <limits>
 #include <cmath>
 
+
+
+
 namespace Math {
+
+/**!
+ * @brief Our own definition of Math constants
+ */
 
 class Constants {
 

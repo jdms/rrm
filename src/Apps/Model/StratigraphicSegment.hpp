@@ -13,7 +13,7 @@
 namespace RRM
 {
 	/// @brief The element of a halfedge.
-	/// FIXME
+	/// \TODO
 	/// The point at begin() (source) and the point at end() (target)
 	/// have the same geometry of the vertex that they point to.
 	/// Keep the curve id for history propose
@@ -52,11 +52,11 @@ namespace RRM
 
 			}
 		public:
-			/// TODO Index class, like Point Cloud Library
+			/// \TODO Index class, like Point Cloud Library
 			int curve_index;
-			/// FIXME The curve itself
+			// \TODO The curve itself
 			Curve2D curve;
-			/// Boundary edge;
+			// Boundary edge;
 
 	};
 

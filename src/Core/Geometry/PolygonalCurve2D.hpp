@@ -15,13 +15,16 @@
 #include "Core/Base/Constants.hpp"
 #include "PolygonalCurve/CurveN.hpp"
 
+
+/**!
+ * @brief Polygonal Curve. Our model representation of the Sketch curves.
+ */
 namespace RRM
 {
-
 	template < class Real >
 	class PolygonalCurve2D: public PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> >
 	{
-			/// TODO Infinity and Zero are for double
+			/// \TODO Infinity and Zero are for double
 		public:
 			typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Base;
 			typedef PolygonalCurve2D<Real> Self;
