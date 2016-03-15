@@ -1,19 +1,19 @@
 #include "MainWindow.h"
 
-/// Skecthing
+// Skecthing
 void MainWindow::create2DModule ( )
 {
 	dc_2DModule = new Sketching2DModule( this );
 	dc_2DModule->setWindowTitle ( "Sketching" );
 	addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
 
-	/// XXX Just the Canvas
+	// XXX Just the Canvas
 	this->sketch_board_ = new SketchBoard ( );
-	/// XXX GraphScene where we can add Entities ( Curves, Icons ... )
+	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
 	this->sketchSession_ = new SketchSession ( sketch_board_ );
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  /// The View
-	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   /// The Model
-	/// FIXME
+	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The Model
+	// FIXME
 	this->sketch_board_->setScene ( sketchSession_ );
 	this->setCentralWidget ( sketch_board_ );
 
@@ -49,7 +49,7 @@ void MainWindow::create3DModule ( )
 	dc_3DModule->setWidget ( fr );
 	addDockWidget ( Qt::RightDockWidgetArea , dc_3DModule );
 
-	/// Sketching
+	// Sketching
 	connect ( this->sketchSession_ , SIGNAL( curve2DSignal(QPolygonF) ) , this , SLOT( curve2DSlot(QPolygonF) ) );
 
 	connect ( this->sketchSession_ , SIGNAL( smoothSketchSignal(QPolygonF) ) , this , SLOT( smoothCurveSlot(QPolygonF) ) );
@@ -125,14 +125,14 @@ void MainWindow::newSessionSlot ( qreal x , qreal y , qreal width , qreal height
 {
 	std::cout << "New Boundary " << std::endl;
 
-	this->sketchSession_->initialization ( x , y , width , height ); /// THE VIEW
-	this->cross_section_.initialization ( x , y , width , height ); /// THE MODEL
+	this->sketchSession_->initialization ( x , y , width , height );// THE VIEW
+	this->cross_section_.initialization ( x , y , width , height ); // THE MODEL
 }
 
 void MainWindow::newSessionSlot ( QPixmap pixmap )
 {
-	this->sketchSession_->initialization_with_image ( pixmap );  /// THE VIEW
-	this->cross_section_.initialization ( pixmap.rect ( ).x ( ) ,    /// THE MODEL
+	this->sketchSession_->initialization_with_image ( pixmap );  // THE VIEW
+	this->cross_section_.initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
                                               pixmap.rect ( ).y ( ) ,
 					      pixmap.rect ( ).width ( ) ,
 					      pixmap.rect ( ).height ( ) );
@@ -154,7 +154,6 @@ void MainWindow::curve2DSlot ( QPolygonF polygon )
 	//cross_section_.insertCurve( curve );
 }
 
-/// Short Time
 void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
 {
 
@@ -204,7 +203,6 @@ void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
 	glWidget->createSurfacePatchies ( patches , stepx    , stepz   , lenght , box.center(), box.diagonal() );
 }
 
-/// Short time
 void MainWindow::renderSegments ( )
 {
 	RRM::CrossSection<qreal>::Segment_iterator it;
@@ -251,9 +249,9 @@ void MainWindow::renderSegments ( )
 	update ( );
 
 }
-/// FIXME , Call  Curve Engine.
-/// This function broke Model View, because the RRM::CrossSection<qreal>::Curve2D curve;
-/// It should call Curve Engine for curve algorithms.
+// FIXME , Call  Curve Engine.
+// This function broke Model View, because the RRM::CrossSection<qreal>::Curve2D curve;
+// It should call Curve Engine for curve algorithms.
 void MainWindow::smoothCurveSlot ( QPolygonF raw_sketch )
 {
 	std::vector<RRM::CrossSection<qreal>::Point2D> points;

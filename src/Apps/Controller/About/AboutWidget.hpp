@@ -1,5 +1,13 @@
-#ifndef ABOUTWIDGETIRESREADER_HPP_
+#ifndef ABOUTWIDGET_HPP_
 #define ABOUTWIDGET_HPP_
+
+
+/**
+ * @file AboutWidget.h
+ * @author Felipe Moura de Carvalho
+ * @date $Date: 2005/04/14 14:16:20
+ * @brief RRM's Main GUI.
+ */
 
 #include <QDialog>
 
@@ -17,4 +25,4 @@ class AboutWidget : public QDialog
 
 };
 
-#endif /* ABOUTWIDGETIRESREADER_HPP_ */
+#endif /* ABOUTWIDGET_HPP_ */
