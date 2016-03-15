@@ -23,6 +23,13 @@
 #include <Modeller/BoundaryController.h>
 #include <Modeller/InputSketch.h>
 
+
+/**
+ * @author Felipe Moura de Carvalho
+ * @date Sep, 2015
+ * @brief RRM's Main GUI.
+ */
+
 class SketchSession : public QGraphicsScene
 {
 	Q_OBJECT

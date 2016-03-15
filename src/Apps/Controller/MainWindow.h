@@ -45,13 +45,12 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
 
-
 /**
  * @brief Main GUI and Controller of the Project
- *
  * GUI representing the Main Window of the Project.
  * It also responsible make a bridge between Sketch Module and Extrusion Module
  */
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

@@ -5,6 +5,12 @@
 
 #include <QtWidgets/QGraphicsView>
 
+
+
+/**
+ * @brief GUI which provides a drawing area for sketching. Here, the user can input and visualize the statrigraphy
+ * */
+
 class SketchBoard : public QGraphicsView
 {
 	Q_OBJECT
