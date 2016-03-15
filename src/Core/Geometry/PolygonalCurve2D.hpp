@@ -16,8 +16,8 @@
 #include "PolygonalCurve/CurveN.hpp"
 
 
-/**!
- * @brief Polygonal Curve. Our model representation of the Sketch curves.
+/*!
+ * @brief  Wrapper to class PolygonalCurve, which represents curves built from the  concatenation of straight lines.
  */
 namespace RRM
 {

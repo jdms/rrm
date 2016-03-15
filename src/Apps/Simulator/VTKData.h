@@ -20,6 +20,12 @@
 
 using namespace std;
 
+/**!
+ *@brief  Temporary class to read and to store data from VTK files.
+ *                Data may be either geometric primitives (points, triangles, etc.) or flow property data.
+ *                It was used in the earlier stages of development to allow fast collaboration with the HWU team, which used VTK to store and visualize their data.
+ */
+
 class VTKData
 {
 
@@ -27,6 +33,9 @@ class VTKData
 
 public:
 
+   /**!
+    * @brief Struct to save the vertex list of a cell.
+    */
     struct Cell
     {
         int id;

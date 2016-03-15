@@ -27,7 +27,7 @@ void MainWindow::create2DModule ( )
 	this->status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
-	scale_in  = 10;
+	scale_in  =  10;
 	scale_out = -10;
 
 }

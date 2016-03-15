@@ -27,7 +27,7 @@
 /**
  * @author Felipe Moura de Carvalho
  * @date Sep, 2015
- * @brief RRM's Main GUI.
+ * @brief Scene graph. Here, the user can input and visualize the stratigraphy
  */
 
 class SketchSession : public QGraphicsScene

@@ -25,6 +25,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QOpenGLWidget>
 
+/**!
+ * @brief OpenGL window for 3D data visualization. Currently implements the extrusion.
+ */
+
 class GLWidget: public QOpenGLWidget
 {
 		Q_OBJECT

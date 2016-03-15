@@ -18,6 +18,11 @@
 #include <QString>
 #include <QStringList>
 
+
+/*!
+ * @brief Main interface for the flow computation/visualization plugin.
+ */
+
 class FlowComputationModule: public QDockWidget
 {
     Q_OBJECT

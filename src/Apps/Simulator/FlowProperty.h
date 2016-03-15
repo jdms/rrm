@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/**!
+ * @brief Class to describe the flow properties.
+ */
+
 class FlowProperty
 {
 
@@ -13,8 +17,6 @@ class FlowProperty
 
     enum TYPE_PROPERTY { POINTS, CELLS };
     enum FORMAT_PROPERTY { SCALARS, VECTORS };
-
-
 
         FlowProperty();
 

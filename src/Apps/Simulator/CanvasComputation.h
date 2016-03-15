@@ -31,6 +31,9 @@
 #include "Tucano/Shader.hpp"
 #include "Tucano/BoundingBox3.hpp"
 
+/**!
+ * @brief OpenGL window for 3D data visualization
+ */
 
 class CanvasComputation: public QOpenGLWidget
 {

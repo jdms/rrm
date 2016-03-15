@@ -13,6 +13,9 @@
 #include <QFileDialog>
 
 
+/**!
+ * @brief Dialog to allow to set flow related  parameters such as mesh triangulation tolerance, etc.
+ */
 
 class DialogInputFlowComputation: public QDialog
 {

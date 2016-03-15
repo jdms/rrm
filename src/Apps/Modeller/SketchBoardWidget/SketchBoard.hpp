@@ -8,7 +8,8 @@
 
 
 /**
- * @brief GUI which provides a drawing area for sketching. Here, the user can input and visualize the statrigraphy
+ * @brief Contains the scene (class SketchSession).
+ *
  * */
 
 class SketchBoard : public QGraphicsView

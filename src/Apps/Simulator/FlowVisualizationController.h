@@ -12,6 +12,10 @@
 
 using namespace std;
 
+/**!
+ * @brief Handles the communication between the main interface and the data classes.
+ */
+
 class FlowVisualizationController: public QObject
 {
     Q_OBJECT

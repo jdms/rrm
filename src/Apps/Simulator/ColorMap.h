@@ -82,6 +82,10 @@ static const double jet[256][3] = {
 
 enum class COLORMAP{ JET, CONSTANT };
 
+/**!
+ * @brief Pre-defined colormaps for 3D data visualization.
+ */
+
 class ColorMap
 {
 public:

@@ -5,7 +5,8 @@
 #include "Modeller/Canvas2D.h"
 
 /**!
- * @brief GUI container that holds the sketch window.
+ * @brief  brief  Embeds the sketching area into the main window.
+ *
  */
 
 class Sketching2DModule: public QDockWidget

@@ -12,7 +12,7 @@
 
 namespace RRM
 {
-	/// @brief The element of a halfedge.
+	/// @brief  Represents segments of polygonal curves (class StratigraphicCurve).
 	/// \TODO
 	/// The point at begin() (source) and the point at end() (target)
 	/// have the same geometry of the vertex that they point to.
