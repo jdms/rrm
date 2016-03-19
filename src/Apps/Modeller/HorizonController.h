@@ -42,7 +42,7 @@ class HorizonController: public QGraphicsPathItem
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
 
-        void setSketching( QPainterPath* curve );
+        void setSketching( const QPainterPath& curve );
 
         bool isSelected() const;
         void isSelected( bool option );

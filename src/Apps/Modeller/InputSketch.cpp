@@ -10,26 +10,25 @@ InputSketch::InputSketch( QColor color ):QGraphicsPathItem()
 
     pen_color = color;
 
-    setAcceptTouchEvents(true);
+	setFlag(QGraphicsItem::ItemIsSelectable);
 
+    setAcceptTouchEvents(true);
 
 }
 
-void InputSketch::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
+void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
-    painter->setRenderHint( QPainter::Antialiasing );
+	painter->setRenderHint ( QPainter::Antialiasing );
 
 //    pen_color.setWidth( 5 );
-//
-//
-//    if( done == true ){
-//        pen_color.setColor( QColor( 255, 0, 0 ) );
-//        pen_color.setWidth( 5 );
-//    }
 
-    painter->setPen( pen_color );
-    painter->setBrush( Qt::NoBrush );
-    painter->drawPath( curve );
+	pen_color.setColor ( QColor ( 255 , 0 , 0 ) );
+	pen_color.setWidth ( 3 );
+
+	painter->setPen ( pen_color );
+
+	painter->setBrush ( Qt::NoBrush );
+	painter->drawPath ( curve );
 
 }
 
@@ -92,7 +91,7 @@ QPainterPath InputSketch::getSketch()
     return curve;
 }
 
-/// Felipe
+/// Changed from original code
 void  InputSketch::setSketch( const QPainterPath& p)
 {
     this->prepareGeometryChange();
@@ -102,7 +101,11 @@ void  InputSketch::setSketch( const QPainterPath& p)
 QPainterPath InputSketch::shape() const
 {
 
-    return curve;
+	QPainterPath p;
+
+	p.addRect(curve.boundingRect());
+
+    return p;
 }
 
 void InputSketch::setPen( const QPen& pen )

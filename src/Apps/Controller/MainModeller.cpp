@@ -23,7 +23,7 @@ void MainWindow::create2DModule ( )
 
 	this->status_bar_ = new QStatusBar ( this );
 	this->status_text = new QLabel ( "Sketch" , this );
-	this->cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::Sketch );
+	this->cross_section_.changeRule ( RRM::GeologicRules::Sketch );
 	this->status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
@@ -234,10 +234,11 @@ void MainWindow::renderSegments ( )
 			QPolygonF p = convert ( it->segment.curve );
 			QPainterPath pa;
 
-			InputSketch* horizon = new InputSketch ( QColor ( 0 , 0 , 255 ) );
+			//InputSketch* horizon = new InputSketch ( QColor ( 0 , 0 , 255 ) );
+			HorizonController* horizon = new HorizonController(QColor(0, 0, 255));
 			pa.addPolygon ( p );
 
-			horizon->setSketch ( pa );
+			horizon->setSketching(pa);
 
 			horizon->setZValue(1);
 
@@ -317,19 +318,19 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 
 	if ( event->key ( ) == Qt::Key_Up )
 	{
-		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::REMOVE_ABOVE_INTERSECTION );
+		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
 		status_text->setText ( "Remove Above Intersection" );
 
 	}
 	else if ( event->key ( ) == Qt::Key_Down )
 	{
-		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::REMOVE_BELOW_INTERSECTION );
+		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
 		status_text->setText ( "Remove Below Intersection" );
 
 	}
 	else
 	{
-		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::Sketch );
+		cross_section_.changeRule ( RRM::GeologicRules::Sketch );
 		status_text->setText ( "Sketch" );
 	}
 
@@ -371,13 +372,13 @@ void MainWindow::mousePressEvent ( QMouseEvent* event )
 {
 	if ( event->buttons ( ) & Qt::MiddleButton )
 	{
-		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::REMOVE_BELOW_INTERSECTION );
+		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
 		status_text->setText ( "Remove Below Intersection" );
 	}
 
 	if ( event->buttons ( ) & Qt::RightButton )
 	{
-		cross_section_.changeRule ( RRM::CrossSection<qreal>::GeologicRules::REMOVE_ABOVE_INTERSECTION );
+		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
 		status_text->setText ( "Remove Above Intersection" );
 	}
 

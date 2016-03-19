@@ -8,7 +8,7 @@ SketchSession::SketchSession ( QObject *parent ) : QGraphicsScene ( parent )
 	image = new QGraphicsPixmapItem ( );
 	this->addItem ( image );
 
-	/// Clarissa
+	/// 
 	QPen pen;
 
 	pen.setColor ( QColor ( 255 , 100 , 70 ) );
@@ -19,7 +19,7 @@ SketchSession::SketchSession ( QObject *parent ) : QGraphicsScene ( parent )
 	this->addItem ( sketch );
 
 	this->sketch->setZValue(1);
-	/// Clarissa
+	/// 
 
 
 	QPen pen_boundary ( QColor ( 0 , 100 , 0 ) );
@@ -311,6 +311,7 @@ void SketchSession::dragEnterEvent ( QGraphicsSceneDragDropEvent * event )
 }
 	event->accept ( );
 }
+
 void SketchSession::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event )
 {
 	qDebug ( ) << "Leaving";
@@ -377,6 +378,7 @@ void SketchSession::updatePaths ( std::vector<QPainterPath>& paths )
 
 void SketchSession::removeInputSketch ( )
 {
+
 }
 
 void SketchSession::drawPolyLine ( std::vector<QPointF> points )

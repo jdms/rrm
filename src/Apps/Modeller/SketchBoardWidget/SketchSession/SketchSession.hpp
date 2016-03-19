@@ -92,7 +92,6 @@ private:
 
 		QGraphicsLineItem* boundary_diagonal_;
 
-
 	QVector<QPainterPath> paths_;
 	QPainterPath sketch_path;
 	QGraphicsPathItem* sketch_item;
@@ -105,7 +104,6 @@ private:
 	QGraphicsSvgItem *data_svg;
 
 	// Clarissa Interface
-
 	BoundaryController *boundaryc;
 	InputSketch*        sketch;
 

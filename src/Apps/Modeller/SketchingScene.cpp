@@ -81,7 +81,7 @@ void SketchingScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *event )
     sketch->setDone( true );
     horizonc = new HorizonController( currentColor );
     QPainterPath input = sketch->getSketch();
-    horizonc->setSketching( &input );
+    horizonc->setSketching( input );
 
     this->removeItem( sketch );
     bool valid = horizonc->isValid( this );

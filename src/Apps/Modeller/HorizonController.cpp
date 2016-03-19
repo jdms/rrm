@@ -58,7 +58,7 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
     QColor cl_outside = color_outside;
 
 
-    if( option->state & QStyle::State_Selected )
+   if ( isSelected() ) //if( option->state & QStyle::State_Selected )
     {
         cl_inside = color_inside.light( 200 );
         cl_outside = color_outside.light( 150 );
@@ -112,23 +112,20 @@ void HorizonController::paint( QPainter *painter, const QStyleOptionGraphicsItem
 
 
     }
-
-
-
+	
 }
 
 
 QRectF HorizonController::boundingRect() const
 {
-
     return QRectF( -sketch.boundingRect().width()/ 2, -sketch.boundingRect().height()/ 2, sketch.boundingRect().width(), sketch.boundingRect().height());
-
 }
 
 
-void HorizonController::setSketching( QPainterPath* curve )
+void HorizonController::setSketching( const QPainterPath& curve )
 {
-    sketch = *curve;
+    sketch = curve;
+	applyRule();
 }
 
 

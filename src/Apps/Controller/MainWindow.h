@@ -13,6 +13,7 @@
 
 // Sketching Surface
 #include "Model/CrossSection.hpp"
+#include "Model/CrossSectionTesting.hpp"
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/Canvas2D.h"
@@ -154,7 +155,7 @@ class MainWindow : public QMainWindow
 
 
         // CrossSection ////////////////////////////////////////////////////////////////////
-        RRM::CrossSection<qreal> cross_section_;
+        RRM::CrossSectionTesting<qreal> cross_section_;
 
         QStatusBar			*status_bar_;
         	QLabel			*status_text;

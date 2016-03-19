@@ -65,7 +65,6 @@ private:
 	
         Tucano::Trackball camera;
 
-
         Tucano::Shader*   background_;
 
         GLuint vertexArray_cube_;

@@ -36,15 +36,11 @@
 
 #include "StratigraphicCurves.hpp"
 #include "StratigraphicSegment.hpp"
-
-struct Traits
-{
-		std::string surname;
-};
+#include "Geology/GeologicRules.hpp"
 
 namespace RRM
 {
-	/// @brief Main class of the SBIM’s module. It stores the post-processed stratigraphy (represented as curves). It also contains the geological rules, which operate on the stratigraphy.
+	/// @brief Main class of the SBIM module. It stores the post-processed stratigraphy (represented as curves). It also contains the geological rules, which operate on the stratigraphy.
 	/// In out case, Polygonal Curves
 	/// This class, intent to be a CGAL::HalfedgeDS_decorator suitable to our application demands.
 	/// The particularities include: insert a curve give a geologic rules; keep history of input curves
@@ -80,15 +76,6 @@ namespace RRM
 
 			typedef typename std::vector<Segment>::iterator curves_iterator;
 
-
-
-			/*!
-			 *  @brief Enum that lists the geological rules’s types
-			 */
-			enum GeologicRules
-			{
-				Sketch, REMOVE_ABOVE_INTERSECTION, REMOVE_BELOW_INTERSECTION
-			};
 
 			/*!
 			 * @brief Struct to store curve segments that can be targeted by a geological rule.
