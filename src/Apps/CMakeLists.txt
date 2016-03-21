@@ -34,18 +34,22 @@ set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
                         Modeller/SketchingScene.h
 						Modeller/BoundaryController.h
                         Modeller/HorizonController.h
-                        Modeller/InputSketch.h   
+                        Modeller/InputSketch.h
+                        Modeller/SketchController.hpp   
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
                         Modeller/SketchBoardWidget/SketchBoard.hpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
+                        Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
    )
    
 set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
                           Modeller/Canvas2D.h
                           Modeller/SketchingScene.h
+                          Modeller/SketchController.hpp
 						  Modeller/ExtrusionWidget/OpenGLWidget.hpp
 					      Modeller/SketchBoardWidget/SketchBoard.hpp
                           Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
+                          Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
 						)
 
 set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
@@ -53,10 +57,12 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
                         Modeller/BoundaryController.cpp
                         Modeller/HorizonController.cpp
                         Modeller/InputSketch.cpp
+                        Modeller/SketchController.cpp
                         Modeller/SketchingScene.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
                         Modeller/SketchBoardWidget/SketchBoard.cpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp
+                        Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.cpp
    )
 ## Grab Simulator Source Files
 

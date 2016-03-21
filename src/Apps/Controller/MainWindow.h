@@ -19,6 +19,7 @@
 #include "Modeller/Canvas2D.h"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
+#include "Modeller/SketchController.hpp"
 #include "Modeller/HorizonController.h"
 #include "Modeller/Sketching2DModule.h"
 // Simulator Volume
@@ -169,6 +170,9 @@ class MainWindow : public QMainWindow
 	// Sketch Views
 	SketchBoard  		*sketch_board_;
 		SketchSession   *sketchSession_;
+
+	// SketchController
+	SketchController  	*sketch_controller_;
 
 	typedef RRM::CrossSection<qreal>                   CrossSection;
 	typedef CrossSection::Curve2D			   Curve2D;
