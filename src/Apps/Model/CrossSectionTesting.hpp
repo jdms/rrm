@@ -207,6 +207,8 @@ namespace RRM
 			segment_2 =
 			{	Point2D ( x , y ), Point2D ( x , height ), Point2D ( width , height )};
 
+			clear();
+
 			boundary(segment_1,segment_2);
 
 			//boundary_sketch(segment_1,segment_2);

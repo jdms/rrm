@@ -15,9 +15,10 @@ void MainWindow::create2DModule ( )
 	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The Model
 	// FIXME
 
+	this->sketch_board_->setScene ( sketchSession_ );
+
 	this->sketch_controller_ = new SketchController(&this->cross_section_,this->sketchSession_);
 
-	this->sketch_board_->setScene ( sketchSession_ );
 	//this->setCentralWidget ( sketch_board_ );
 
 	dc_2DModule->setWidget ( sketch_board_ );

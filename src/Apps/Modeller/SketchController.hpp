@@ -38,7 +38,14 @@ class SketchController : public QObject
 	public slots:
 
         	void newSessionSlot(QPixmap pixmap);
-        	void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
+        	void newSessionSlot(qreal x , qreal y, qreal width, qreal height);\
+
+        	void newSection ( )
+        	{
+        		this->sketch_view_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+        		this->cross_section_->initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
+        	}
+
 
 	private:
         	// The Model

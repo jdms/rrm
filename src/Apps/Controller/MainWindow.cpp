@@ -104,15 +104,15 @@ void MainWindow::createMainWindowActions ( )
 	aboutRRM = new AboutWidget( this );
 	connect(ac_about, SIGNAL(triggered()), aboutRRM, SLOT(show()));
 
-	connect ( ac_new , SIGNAL( triggered() ) , this , SLOT( newSection() ) );
+	connect ( ac_new , SIGNAL( triggered() ) , this->sketch_controller_ , SLOT( newSection() ) );
 	connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
 
 }
 
 void MainWindow::newSection ( )
 {
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
+//	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+//	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
 }
 
 void MainWindow::changeColorLine ( )
