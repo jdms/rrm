@@ -16,6 +16,8 @@
 #include "Model/CrossSectionTesting.hpp"
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
 
+#include "Modeller/HorizonController.h"
+
 
 class SketchController : public QObject
 {
@@ -28,24 +30,27 @@ class SketchController : public QObject
 
 		SketchController ( CrossSection* _cross_section, SketchSession* _sketch_view , QObject *parent = nullptr);
 
-	        QPolygonF covertCurveModel_to_CurveView ( Curve2D& _curve );
-	        Curve2D   covertCurveView_to_CurveModel ( QPolygonF _polygon );
-	        void smoothCurveSlot ( QPolygonF raw_sketch_line );
-	        void insertCurve( QPolygonF _raw_sketch_line );
+	        QPolygonF covertCurves ( Curve2D& _curve );
+	        Curve2D   covertCurves ( QPolygonF _polygon );
+
+	        void smoothCurve ( QPolygonF raw_sketch_line );
+
+	        void insertCurve ( QPolygonF _raw_sketch_line );
 
 	        virtual ~SketchController ( );
 
 	public slots:
 
-        	void newSessionSlot(QPixmap pixmap);
-        	void newSessionSlot(qreal x , qreal y, qreal width, qreal height);\
+		// By using a background image
+        	void newSession(QPixmap pixmap);
+        	// Sketching a new boundary
+        	void newSession(qreal x , qreal y, qreal width, qreal height);
 
         	void newSection ( )
         	{
         		this->sketch_view_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
         		this->cross_section_->initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
         	}
-
 
 	private:
         	// The Model

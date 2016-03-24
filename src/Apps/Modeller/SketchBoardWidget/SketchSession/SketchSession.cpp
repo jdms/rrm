@@ -360,9 +360,10 @@ void SketchSession::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	emit newSessionSignal ( pixmap );
 }
 
-void SketchSession::newBoundarySlot ( )
+void SketchSession::sketchNewBoundary ( )
 {
 	this->boundary_sketching_ = true;
+	std::cout << "New Boundary" << std::endl;
 }
 
 void SketchSession::smoothCurveSlot ( QPolygonF smooth_sketch )

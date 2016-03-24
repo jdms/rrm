@@ -31,6 +31,15 @@ void MainWindow::create2DModule ( )
 	this->status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
+//	// Sketching
+//	connect ( this->sketchSession_ , SIGNAL( curve2DSignal(QPolygonF) ) , this , SLOT( curve2DSlot(QPolygonF) ) );
+//
+//	connect ( this->sketchSession_ , SIGNAL( smoothSketchSignal(QPolygonF) ) , this , SLOT( smoothCurveSlot(QPolygonF) ) );
+//
+//	connect ( this->sketchSession_ , SIGNAL( newSessionSignal(QPixmap) ) , this , SLOT( newSessionSlot(QPixmap) ) );
+//
+//	connect ( this->sketchSession_ , SIGNAL( newSessionSignal(qreal,qreal,qreal,qreal) ) , this , SLOT( newSessionSlot(qreal,qreal,qreal,qreal) ) );
+//
 	scale_in  =  10;
 	scale_out = -10;
 
@@ -53,18 +62,6 @@ void MainWindow::create3DModule ( )
 	dc_3DModule->setWidget ( fr );
 	addDockWidget ( Qt::RightDockWidgetArea , dc_3DModule );
 
-	// Sketching
-	connect ( this->sketchSession_ , SIGNAL( curve2DSignal(QPolygonF) ) , this , SLOT( curve2DSlot(QPolygonF) ) );
-
-	connect ( this->sketchSession_ , SIGNAL( smoothSketchSignal(QPolygonF) ) , this , SLOT( smoothCurveSlot(QPolygonF) ) );
-
-	connect ( this->sketchSession_ , SIGNAL( newSessionSignal(QPixmap) ) , this , SLOT( newSessionSlot(QPixmap) ) );
-
-	connect ( this->sketchSession_ , SIGNAL( newSessionSignal(qreal,qreal,qreal,qreal) ) , this , SLOT( newSessionSlot(qreal,qreal,qreal,qreal) ) );
-
-	connect ( this->ac_newBoundary , SIGNAL( triggered() ) , this->sketchSession_ , SLOT( newBoundarySlot() ) );
-
-	renderSegments ( );
 
         groupBox = new QGroupBox(dc_3DModule);
         groupBox->setObjectName(QStringLiteral("groupBox"));
@@ -125,38 +122,23 @@ void MainWindow::create3DModule ( )
 
 }
 
-void MainWindow::newSessionSlot ( qreal x , qreal y , qreal width , qreal height )
-{
-	std::cout << "New Boundary " << std::endl;
+//void MainWindow::newSessionSlot ( qreal x , qreal y , qreal width , qreal height )
+//{
+//	std::cout << "New Boundary " << std::endl;
+//
+//	this->sketchSession_->initialization ( x , y , width , height );// THE VIEW
+//	this->cross_section_.initialization ( x , y , width , height ); // THE MODEL
+//}
+//
+//void MainWindow::newSessionSlot ( QPixmap pixmap )
+//{
+//	this->sketchSession_->initialization_with_image ( pixmap );  // THE VIEW
+//	this->cross_section_.initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
+//                                              pixmap.rect ( ).y ( ) ,
+//					      pixmap.rect ( ).width ( ) ,
+//					      pixmap.rect ( ).height ( ) );
+//}
 
-	this->sketchSession_->initialization ( x , y , width , height );// THE VIEW
-	this->cross_section_.initialization ( x , y , width , height ); // THE MODEL
-}
-
-void MainWindow::newSessionSlot ( QPixmap pixmap )
-{
-	this->sketchSession_->initialization_with_image ( pixmap );  // THE VIEW
-	this->cross_section_.initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
-                                              pixmap.rect ( ).y ( ) ,
-					      pixmap.rect ( ).width ( ) ,
-					      pixmap.rect ( ).height ( ) );
-}
-
-void MainWindow::curve2DSlot ( QPolygonF polygon )
-{
-
-	std::vector<RRM::CrossSection<qreal>::Point2D> curve;
-
-	curve.resize ( polygon.size ( ) );
-
-	for ( std::size_t i; i < polygon.size ( ); i++ )
-	{
-		curve[i][0] = polygon[i].x ( );
-		curve[i][1] = polygon[i].y ( );
-	}
-
-	//cross_section_.insertCurve( curve );
-}
 
 void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
 {
@@ -207,103 +189,6 @@ void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
 	glWidget->createSurfacePatchies ( patches , stepx    , stepz   , lenght , box.center(), box.diagonal() );
 }
 
-void MainWindow::renderSegments ( )
-{
-	RRM::CrossSection<qreal>::Segment_iterator it;
-	std::vector<QPainterPath> paths;
-
-	if ( this->sketchSession_->halfedges_ != nullptr )
-	{
-		/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
-		this->sketchSession_->removeItem ( this->sketchSession_->halfedges_ );
-		QList<QGraphicsItem *> children = this->sketchSession_->halfedges_->childItems ( );
-		if ( children.size ( ) > 0 )
-		{
-			qDeleteAll ( children );
-
-		}
-
-		delete this->sketchSession_->halfedges_;
-		this->sketchSession_->halfedges_ = 0;
-		this->sketchSession_->update ( );
-		this->sketch_board_->viewport ( )->update ( );
-	}
-
-	this->sketchSession_->halfedges_ = new QGraphicsItemGroup ( );
-
-	for ( it = cross_section_.topology_.halfedges_begin ( ); it != cross_section_.topology_.halfedges_end ( ); it++ )
-	{
-		if ( it->is_visible && !it->is_boundary )
-		{
-			QPolygonF p = convert ( it->segment.curve );
-			QPainterPath pa;
-
-			//InputSketch* horizon = new InputSketch ( QColor ( 0 , 0 , 255 ) );
-			HorizonController* horizon = new HorizonController(QColor(0, 0, 255));
-			pa.addPolygon ( p );
-
-			horizon->setSketching(pa);
-
-			horizon->setZValue(1);
-
-			this->sketchSession_->halfedges_->addToGroup ( horizon );
-		}
-	}
-
-	this->sketchSession_->addItem ( this->sketchSession_->halfedges_ );
-	update ( );
-
-}
-// FIXME , Call  Curve Engine.
-// This function broke Model View, because the RRM::CrossSection<qreal>::Curve2D curve;
-// It should call Curve Engine for curve algorithms.
-void MainWindow::smoothCurveSlot ( QPolygonF raw_sketch )
-{
-	std::vector<RRM::CrossSection<qreal>::Point2D> points;
-
-	points.resize ( raw_sketch.size ( ) );
-
-	for ( std::size_t i = 0; i < raw_sketch.size ( ); i++ )
-	{
-		points[i][0] = raw_sketch[i].x ( );
-		points[i][1] = raw_sketch[i].y ( );
-	}
-
-	RRM::CrossSection<qreal>::Curve2D curve;
-
-	curve.setCurve ( points );
-
-	curve.superSample ( (qreal) 3.0f );
-	curve.meanFilter ( );
-	curve.meanFilter ( );
-
-	std::cout << " Curve Size " << curve.size ( ) << std::endl;
-
-	raw_sketch.resize ( curve.size ( ) );
-
-	std::cout << " Raw Sketch Size " << raw_sketch.size ( ) << std::endl;
-
-	for ( std::size_t i = 0; i < raw_sketch.size ( ); i++ )
-	{
-		raw_sketch[i].setX ( curve[i][0] );
-		raw_sketch[i].setY ( curve[i][1] );
-	}
-
-	sketchSession_->smoothCurveSlot ( raw_sketch );
-
-	bool b = cross_section_.insertCurve ( curve );
-
-	if ( b )
-	{
-
-	}
-	else
-	{
-		sketchSession_->removeInputSketch ( );
-	}
-
-	renderSegments ( );
-}
 
 void MainWindow::keyPressEvent ( QKeyEvent *event )
 {
@@ -346,7 +231,6 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 	if ( event->key ( ) == Qt::Key_P )
 	{
 
-		std::cout << "Salvando !!!" << std::endl;
 		QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
 		image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
 
@@ -366,8 +250,6 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 	if ( event->key ( ) == Qt::Key_Space )
 	{
 		cross_section_.clear ( );
-
-		renderSegments ( );
 	}
 
 }

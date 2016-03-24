@@ -8,23 +8,27 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 
 	this->setMinimumSize ( 800 , 600 );
 
+	create3DModule ( );
+	create2DModule ( );
+
 	createMenuBar ( );
 	createMainWindowActions ( );
 	createMainWindowMenuBar ( );
 	createMainWindowToolbar ( );
 
-	create2DModule ( );
 	createSketchingActions ( );
 	createSketchingMenuBar ( );
 	createSketchingToolbar ( );
 
-	create3DModule ( );
 	create3DWindowActions ( );
 	create3DWindowMenuBar ( );
 
 	createFlowComputationModule ( );
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
+
+	connect ( this->ac_newBoundary , SIGNAL( triggered() ) , this->sketchSession_ , SLOT( sketchNewBoundary() ) );
+
 }
 
 MainWindow::~MainWindow ( )
@@ -109,11 +113,11 @@ void MainWindow::createMainWindowActions ( )
 
 }
 
-void MainWindow::newSection ( )
-{
-//	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-//	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
-}
+//void MainWindow::newSection ( )
+//{
+////	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+////	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
+//}
 
 void MainWindow::changeColorLine ( )
 {

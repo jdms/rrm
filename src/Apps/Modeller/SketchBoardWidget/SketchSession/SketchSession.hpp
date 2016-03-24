@@ -65,7 +65,7 @@ public slots:
 		bool initialization( qreal x , qreal y, qreal width, qreal height );
 		bool initialization_with_image( const QPixmap& pixmap  );
 		void updatePaths(std::vector<QPainterPath>& paths);
-		void newBoundarySlot();
+		void sketchNewBoundary();
 	signals:
 
 		void newSessionSignal   (QPixmap pixmap);

@@ -13,31 +13,41 @@ SketchController::SketchController ( CrossSection*   _cross_section,
 {
 	this->cross_section_ = _cross_section;
 	this->sketch_view_   = _sketch_view;
+
+	// Sketching
+
 }
 
 
-void SketchController::smoothCurveSlot ( QPolygonF raw_sketch )
+void SketchController::newSession ( qreal x , qreal y , qreal width , qreal height )
 {
+	std::cout << "New Boundary " << std::endl;
+
+	this->sketch_view_->initialization ( x , y , width , height );// THE VIEW
+	this->cross_section_->initialization ( x , y , width , height ); // THE MODEL
 }
 
-void SketchController::newSessionSlot ( QPixmap pixmap )
+void SketchController::newSession ( QPixmap pixmap )
 {
-}
-
-void SketchController::newSessionSlot ( qreal x , qreal y , qreal width , qreal height )
-{
+	this->sketch_view_->initialization_with_image ( pixmap );  // THE VIEW
+	this->cross_section_->initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
+                                               pixmap.rect ( ).y ( ) ,
+					       pixmap.rect ( ).width ( ) ,
+					       pixmap.rect ( ).height ( ) );
 }
 
 void SketchController::insertCurve ( QPolygonF _polygon )
 {
 }
 
-QPolygonF SketchController::covertCurveModel_to_CurveView ( Curve2D& _curve )
+QPolygonF SketchController::covertCurves ( Curve2D& _curve )
 {
+	return QPolygonF();
 }
 
-SketchController::Curve2D SketchController::covertCurveView_to_CurveModel ( QPolygonF _polygon )
+SketchController::Curve2D SketchController::covertCurves ( QPolygonF _polygon )
 {
+	return Curve2D();
 }
 
 SketchController::~SketchController ( )

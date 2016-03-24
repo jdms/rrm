@@ -89,7 +89,7 @@ class MainWindow : public QMainWindow
 
     protected slots:
 
-        void newSection();
+//        void newSection();
         void changeColorLine();
 
         // CrossSection
@@ -99,11 +99,8 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-        void curve2DSlot ( QPolygonF polygon );
-        void smoothCurveSlot ( QPolygonF raw_sketch );
-        void renderSegments();
-        void newSessionSlot(QPixmap pixmap);
-        void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
+//        void newSessionSlot(QPixmap pixmap);
+//        void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
         void update3DExtrusion ( float stepx, float stepz, float lenght  );
 
 	void on_horizontalSlider_curve_valueChanged();
@@ -177,17 +174,6 @@ class MainWindow : public QMainWindow
 	typedef RRM::CrossSection<qreal>                   CrossSection;
 	typedef CrossSection::Curve2D			   Curve2D;
 
-	// Model Testing
-	QPolygonF convert( Curve2D& curve)
-	{
-		QPolygonF p;
-
-		for(std::size_t i = 0; i < curve.size(); i++)
-		{
-			p.push_back(QPointF(curve[i].x(),curve[i].y()));
-		}
-		return p;
-	}
 
 	int scale_in;
 	int scale_out;
