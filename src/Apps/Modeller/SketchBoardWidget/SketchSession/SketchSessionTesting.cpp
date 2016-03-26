@@ -1,10 +1,8 @@
 #include "SketchSessionTesting.hpp"
 
 
-
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
-	is_ready = false;
 	boundary_ = 0;
 	/// Drag and Drop Feature
 	image = new QGraphicsPixmapItem ( );
@@ -16,12 +14,12 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	pen.setColor ( QColor ( 255 , 100 , 70 ) );
 	pen.setWidth ( 5 );
 
-	sketch = new InputSketch ( QColor ( 255 , 75 , 75 ) );
-	sketch->setPen ( pen );
-	this->addItem ( sketch );
 
-	this->sketch->setZValue(1);
-	/// 
+
+	input_sketch_ = new InputSketch ( QColor ( 255 , 75 , 75 ) );
+	input_sketch_->setPen ( pen );
+	this->addItem ( input_sketch_ );
+	this->input_sketch_->setZValue(1);
 
 
 	QPen pen_boundary ( QColor ( 0 , 100 , 0 ) );
@@ -39,7 +37,6 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	this->boundary_ = new QGraphicsRectItem ( );
 	this->boundary_->setPen ( pen_boundary );
 	this->boundary_->setBrush ( brush_boundary );
-	this->boundary_diagonal_ = new QGraphicsLineItem ( );
 	this->boundary_sketching_ = false;
 
 	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
@@ -52,13 +49,15 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	this->setBackgroundBrush ( QBrush ( gradient ) );
 
-	this->halfedges_ = new QGraphicsItemGroup ( );
-
-	this->addItem ( halfedges_ );
 
 }
 
-bool SketchSessionTesting::initialization_with_image ( const QPixmap& pixmap )
+SketchSessionTesting::~SketchSessionTesting ( )
+{
+
+}
+
+bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 {
 	// The bounding rectangle of the scene
 	// The scene rectangle defines the extent of the scene.
@@ -79,26 +78,6 @@ bool SketchSessionTesting::initialization_with_image ( const QPixmap& pixmap )
 	this->setSceneRect ( this->boundary_->rect ( ) );
 
 	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
-	if ( this->halfedges_ != nullptr )
-	{
-		this->removeItem ( this->halfedges_ );
-		QList<QGraphicsItem *> children = this->halfedges_->childItems ( );
-		if ( children.size ( ) > 0 )
-		{
-			qDeleteAll ( children );
-
-		}
-		delete this->halfedges_;
-		this->halfedges_ = 0;
-		this->update ( );
-	}
-
-	this->halfedges_ = nullptr;
-	input_line_group = nullptr;
-
-	this->halfedges_ = new QGraphicsItemGroup ( );
-	this->addItem ( halfedges_ );
-
 
 	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
 	gradient.setColorAt ( 1.0 , QColor::fromRgb ( 154.28 , 176.20, 199.16 ) );
@@ -129,25 +108,6 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 
 
 	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
-	if ( this->halfedges_ != nullptr )
-	{
-		this->removeItem ( this->halfedges_ );
-		QList<QGraphicsItem *> children = this->halfedges_->childItems ( );
-		if ( children.size ( ) > 0 )
-		{
-			qDeleteAll ( children );
-
-		}
-		delete this->halfedges_;
-		this->halfedges_ = 0;
-		this->update ( );
-	}
-
-	this->halfedges_ = nullptr;
-	input_line_group = nullptr;
-
-	this->halfedges_ = new QGraphicsItemGroup ( );
-	this->addItem ( halfedges_ );
 
 	int step = 20;
 
@@ -163,7 +123,17 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 	return true;
 }
 
-SketchSessionTesting::~SketchSessionTesting ( )
+void SketchSessionTesting::sketchNewBoundary ( )
+{
+	this->boundary_sketching_ = true;
+}
+
+void SketchSessionTesting::curveSmoothed ( QPolygonF raw_skecth_ )
+{
+
+}
+
+void SketchSessionTesting::removeInputSketch ( )
 {
 
 }
@@ -174,64 +144,20 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 	if ( event->buttons ( ) & Qt::LeftButton )
 	{
 		qDebug ( ) << " Item Grabbed " << event->buttonDownScenePos ( Qt::LeftButton );
+
 		last_point_ = event->buttonDownScenePos ( Qt::LeftButton );
-		input_line_.clear ( );
 
 		this->boundary_anchor_point_ = last_point_;
 
 		if ( ( this->boundary_sketching_ == false ) )
 		{
-			sketch->create ( event->scenePos ( ) );
+			input_sketch_->create ( event->scenePos ( ) );
 		}else
 		{
-			/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
-			if ( this->halfedges_ != nullptr )
-			{
-				this->removeItem ( this->halfedges_ );
-				QList<QGraphicsItem *> children = this->halfedges_->childItems ( );
-				if ( children.size ( ) > 0 )
-				{
-					qDeleteAll ( children );
-
-				}
-				delete this->halfedges_;
-				this->halfedges_ = 0;
-				this->update ( );
-			}
-
-			this->halfedges_ = nullptr;
-			input_line_group = nullptr;
-
-			this->halfedges_ = new QGraphicsItemGroup ( );
-			this->addItem ( halfedges_ );
 		}
 
 	}
 
-	update ( );
-}
-
-void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
-{
-
-	QPolygonF p ( input_line_ );
-
-	if ( !p.isClosed ( ) )
-	{
-		emit smoothSketchSignal ( p );
-	}
-
-	if ( this->boundary_sketching_ == true )
-	{
-		emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
-																		this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
-
-		this->boundary_sketching_ = false;
-	}
-	else
-	{
-		sketch->clear ( );
-	}
 	update ( );
 }
 
@@ -243,17 +169,12 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 
 		if ( this->boundary_sketching_ == false )
 		{
-			input_line_.push_back ( event->scenePos ( ) );
-			sketch->add ( event->scenePos ( ) );
+			input_sketch_->add ( event->scenePos ( ) );
 			last_point_ = event->scenePos ( );
 		}
 		else
 		{
 			/// To create a box by any direction
-			QLineF l;
-			l.setPoints ( boundary_anchor_point_ , event->scenePos ( ) );
-			this->boundary_diagonal_->setLine ( l );
-
 			qreal x1 = boundary_anchor_point_.x ( );
 			qreal y1 = boundary_anchor_point_.y ( );
 			qreal x2 = event->scenePos ( ).x ( );
@@ -288,6 +209,31 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 	update ( );
 }
 
+void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
+{
+
+
+	QPolygonF p;
+
+	if ( !p.isClosed ( ) )
+	{
+		emit smoothCurve( p );
+	}
+
+	if ( this->boundary_sketching_ == true )
+	{
+		emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
+																		this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
+
+		this->boundary_sketching_ = false;
+	}
+	else
+	{
+		input_sketch_->clear ( );
+	}
+	update ( );
+}
+
 void SketchSessionTesting::dragEnterEvent ( QGraphicsSceneDragDropEvent * event )
 {
 	if ( event->mimeData ( )->hasText ( ) )
@@ -308,10 +254,17 @@ void SketchSessionTesting::dragEnterEvent ( QGraphicsSceneDragDropEvent * event 
 		qDebug ( ) << "There is an image";
 	}
 
-	foreach (str, list){
-	qDebug() << "Mine Type "<< str;
-}
+//	foreach (str, list)
+//	{
+//		qDebug() << "Mine Type "<< str;
+//	}
 	event->accept ( );
+}
+
+void SketchSessionTesting::dragMoveEvent ( QGraphicsSceneDragDropEvent * event )
+{
+	/// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
+	//qDebug() << "Moving";
 }
 
 void SketchSessionTesting::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event )
@@ -321,11 +274,6 @@ void SketchSessionTesting::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event 
 /// Then, we invoke acceptProposedAction() on event, setting the drop action to the one proposed.
 /// Lastly, we emit the changed() signal, with the data that was dropped and its MIME type information as a parameter.
 /// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
-void SketchSessionTesting::dragMoveEvent ( QGraphicsSceneDragDropEvent * event )
-{
-	/// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
-	//qDebug() << "Moving";
-}
 ///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
 void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 {
@@ -360,31 +308,6 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	boundary_sketching_ = true;
 
 	emit newSessionSignal ( pixmap );
+
+	//initializationWithImage(pixmap);
 }
-
-void SketchSessionTesting::newBoundarySlot ( )
-{
-	this->boundary_sketching_ = true;
-}
-
-void SketchSessionTesting::smoothCurveSlot ( QPolygonF smooth_sketch )
-{
-	this->sketch_path.addPolygon ( smooth_sketch );
-	//sketch_item = this->addPath(sketch_path);
-}
-
-void SketchSessionTesting::updatePaths ( std::vector<QPainterPath>& paths )
-{
-
-}
-
-void SketchSessionTesting::removeInputSketch ( )
-{
-
-}
-
-void SketchSessionTesting::drawPolyLine ( std::vector<QPointF> points )
-{
-
-}
-

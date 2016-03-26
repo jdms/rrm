@@ -18,7 +18,7 @@
 #include <QtCore/QMimeData>
 #include <QtCore/QUrl>
 
-#include<QtCore/QVector>
+#include <QtCore/QVector>
 
 #include <Modeller/BoundaryController.h>
 #include <Modeller/InputSketch.h>
@@ -26,10 +26,12 @@
 
 /**
  * @author Felipe Moura de Carvalho
+ * @author Clarissa Marques
  * @date Sep, 2015
  * @brief Scene graph. Here, the user can input and visualize the stratigraphy
  */
 
+// TODO temporary name
 class SketchSessionTesting : public QGraphicsScene
 {
 	Q_OBJECT
@@ -38,7 +40,6 @@ public:
 	SketchSessionTesting( QObject *parent = 0 );
 	virtual ~SketchSessionTesting();
 
-    //void timerEvent(QTimerEvent*);
 	void mousePressEvent	(QGraphicsSceneMouseEvent* event);
 	void mouseMoveEvent 	(QGraphicsSceneMouseEvent* event);
 	void mouseReleaseEvent	(QGraphicsSceneMouseEvent* event);
@@ -48,64 +49,47 @@ public:
 	void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
 	void dropEvent 		( QGraphicsSceneDragDropEvent *event );
 
-	QGraphicsSvgItem *svg;
-	/// FIXME Helper object, used to remove the RAW SKETCH LINE
-	QGraphicsItemGroup *input_line_group;
-
 	void removeInputSketch();
 
 	void drawPolyLine( std::vector<QPointF> points);
 
-	QGraphicsItemGroup *halfedges_;
 	QGraphicsPixmapItem * image;
 
 public slots:
 
-		void smoothCurveSlot (  QPolygonF smooth_skecth);
+		// Ask Controller to smooth the raw sketch
+		void curveSmoothed (  QPolygonF curve_smoohted_);
 		bool initialization( qreal x , qreal y, qreal width, qreal height );
-		bool initialization_with_image( const QPixmap& pixmap  );
-		void updatePaths(std::vector<QPainterPath>& paths);
-		void newBoundarySlot();
+		bool initializationWithImage( const QPixmap& pixmap  );
+		// Notify the sketch module to draw a new rectangle boundary
+		void sketchNewBoundary();
 	signals:
 
+		// Notify the model, to reset the current arrangement of curves and set a new boundary, given an image
 		void newSessionSignal   (QPixmap pixmap);
+		// Notify the model, to reset the current arrangement of curves and set a new boundary, given sketch rectangle
 		void newSessionSignal   (qreal x, qreal y, qreal width, qreal height);
-		void curve2DSignal      (QPolygonF polygon );
-		void smoothSketchSignal (QPolygonF raw_sketch);
-
+		// Notify the model and provides a new sketch line
+		void newSketchLine      (QPolygonF polygon );
+		void smoothCurve 	(QPolygonF raw_skecth_ );
 
 private:
 
-	bool is_ready;
-
-	QVector<QPointF> 	input_line_;
-
-	QPointF				last_point_;
-
+	/// Rectangular Boundary
 	QGraphicsRectItem*	boundary_;
 		// The point where the we start draw the rectangle boundary_
 		QPointF boundary_anchor_point_;
-		// The size of the boundary_. Basically the mouse release event.
-		QPointF boundary_size_;
 
 		bool boundary_sketching_;
 
-		QGraphicsLineItem* boundary_diagonal_;
+		QPointF last_point_;
 
-	QVector<QPainterPath> paths_;
-	QPainterPath sketch_path;
-	QGraphicsPathItem* sketch_item;
-	QVector<QPainterPath> target_paths_;
-	///	Temporary container of point, know as Raw Sketching
-	/// std::vector<QPointF> input_sketching_;
 	QPen 	sketch_pen;
 	QBrush 	sketch_brush;
 
-	QGraphicsSvgItem *data_svg;
-
 	// Clarissa Interface
-	BoundaryController *boundaryc;
-	InputSketch*        sketch;
+	BoundaryController* boundaryc;
+	InputSketch*        input_sketch_;
 
 };
 

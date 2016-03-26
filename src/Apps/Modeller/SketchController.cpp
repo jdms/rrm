@@ -8,7 +8,7 @@
 #include "SketchController.hpp"
 
 SketchController::SketchController ( CrossSection*   _cross_section,
-			             SketchSession* _sketch_view ,
+			             SketchSessionTesting* _sketch_view ,
 				     QObject*        parent) : QObject(parent)
 {
 	this->cross_section_ = _cross_section;
@@ -18,18 +18,15 @@ SketchController::SketchController ( CrossSection*   _cross_section,
 
 }
 
-
 void SketchController::newSession ( qreal x , qreal y , qreal width , qreal height )
 {
-	std::cout << "New Boundary " << std::endl;
-
 	this->sketch_view_->initialization ( x , y , width , height );// THE VIEW
 	this->cross_section_->initialization ( x , y , width , height ); // THE MODEL
 }
 
 void SketchController::newSession ( QPixmap pixmap )
 {
-	this->sketch_view_->initialization_with_image ( pixmap );  // THE VIEW
+	this->sketch_view_->initializationWithImage ( pixmap );  // THE VIEW
 	this->cross_section_->initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
                                                pixmap.rect ( ).y ( ) ,
 					       pixmap.rect ( ).width ( ) ,

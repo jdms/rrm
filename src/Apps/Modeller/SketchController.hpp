@@ -15,6 +15,7 @@
 // Model CrossSection
 #include "Model/CrossSectionTesting.hpp"
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
+#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
 
 #include "Modeller/HorizonController.h"
 
@@ -28,7 +29,7 @@ class SketchController : public QObject
 		typedef RRM::CrossSectionTesting<qreal>            CrossSection;
 		typedef CrossSection::Curve2D			   Curve2D;
 
-		SketchController ( CrossSection* _cross_section, SketchSession* _sketch_view , QObject *parent = nullptr);
+		SketchController ( CrossSection* _cross_section, SketchSessionTesting* _sketch_view , QObject *parent = nullptr);
 
 	        QPolygonF covertCurves ( Curve2D& _curve );
 	        Curve2D   covertCurves ( QPolygonF _polygon );
@@ -56,7 +57,7 @@ class SketchController : public QObject
         	// The Model
         	CrossSection*   cross_section_;
         	// The View
-        	SketchSession* sketch_view_;
+        	SketchSessionTesting* sketch_view_;
 };
 
 #endif /* _SKETCHCONTROLLER_HPP_ */

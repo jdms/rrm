@@ -19,6 +19,7 @@
 #include "Modeller/Canvas2D.h"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
+	#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
 #include "Modeller/SketchController.hpp"
 #include "Modeller/HorizonController.h"
 #include "Modeller/Sketching2DModule.h"
@@ -166,7 +167,7 @@ class MainWindow : public QMainWindow
 
 	// Sketch Views
 	SketchBoard  		*sketch_board_;
-		SketchSession   *sketchSession_;
+		SketchSessionTesting   *sketchSession_;
 
 	// SketchController
 	SketchController  	*sketch_controller_;

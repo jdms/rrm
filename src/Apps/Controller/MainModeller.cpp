@@ -10,7 +10,7 @@ void MainWindow::create2DModule ( )
 	// XXX Just the Canvas
 	this->sketch_board_ = new SketchBoard ( );
 	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
-	this->sketchSession_ = new SketchSession ( sketch_board_ );
+	this->sketchSession_ = new SketchSessionTesting ( sketch_board_ );
 	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
 	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The Model
 	// FIXME
