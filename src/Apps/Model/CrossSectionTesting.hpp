@@ -35,6 +35,7 @@
 #include "StratigraphicCurves.hpp"
 #include "StratigraphicSegment.hpp"
 #include "Geology/GeologicRules.hpp"
+#include "IDManager.hpp"
 
 namespace RRM
 {
@@ -72,6 +73,8 @@ namespace RRM
 
 			typedef typename std::vector<Segment>::iterator curves_iterator;
 
+
+			IDManager id_manager_;
 
 			/*!
 			 * @brief Struct to store curve segments that can be targeted by a geological rule.
@@ -186,6 +189,17 @@ namespace RRM
 			{
 				is_ready = false;
 				current_rule = RRM::GeologicRules::Sketch;
+
+				id_manager_.initialize(10);
+
+				std::cout << "!-- freee ---!" << std::endl; // prints !!!Hello World!!!
+				std::copy(id_manager_.free_ids_.begin(),id_manager_.free_ids_.end(), std::ostream_iterator<unsigned int>(std::cout, " "));
+				std::cout << std::endl; // prints !!!Hello World!!!
+				std::cout << "!-- used ---!" << std::endl; // prints !!!Hello World!!!
+				std::copy(id_manager_.used_ids_.begin(),id_manager_.used_ids_.end(), std::ostream_iterator<unsigned int>(std::cout, " "));
+				std::cout << std::endl; // prints !!!Hello World!!!
+				std::cout << std::endl; // prints !!!Hello World!!!
+
 			}
 
 			// FIXME Create crossSection with boundary as argument.
@@ -210,8 +224,6 @@ namespace RRM
 			clear();
 
 			boundary(segment_1,segment_2);
-
-			//boundary_sketch(segment_1,segment_2);
 
 			return is_ready;
 		}
@@ -270,21 +282,19 @@ namespace RRM
 		// FIXME Test whether is a close curve (2D) or a mainfold surface (3D).
 		// @see https://en.wikipedia.org/wiki/Differentiable_manifold
 
-		/// @brief The initial boundary is a Face with 2 halfedge
-		/// The end Points are repeated, thus, curve_1.end().point() == curve_2.begin().point()
-		/// Make life easy when translate.
-		///			            x
-		///                    / \
-		///                    \ /
-		///                     x
-		/// Slice the curve in half: segment_1, segment_2
+		// @brief The initial boundary is a Face with 2 halfedge
+		// The end Points are repeated, thus, curve_1.end().point() == curve_2.begin().point()
+		// Make life easy when translate.
+		//			            x
+		//                    / \
+		//                    \ /
+		//                     x
+		// Slice the curve in half: segment_1, segment_2
 
 
 		void createSegment( Curve2D& _curve )
 		{
 		        Halfedge_handle h = topology_.edges_push_back( Halfedge(), Halfedge());
-			h->left_to_right = 1;
-			h->is_boundary = false;
 			h->opposite()->left_to_right = 0;
 			h->opposite()->is_boundary = false;
 			h->segment.curve = _curve;

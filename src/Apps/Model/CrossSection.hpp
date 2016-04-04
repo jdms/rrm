@@ -37,6 +37,7 @@
 #include "StratigraphicCurves.hpp"
 #include "StratigraphicSegment.hpp"
 #include "Geology/GeologicRules.hpp"
+#include "IDManager.hpp"
 
 namespace RRM
 {
@@ -75,7 +76,6 @@ namespace RRM
 			typedef typename DCEL::Face_iterator Face_iterator;
 
 			typedef typename std::vector<Segment>::iterator curves_iterator;
-
 
 			/*!
 			 * @brief Struct to store curve segments that can be targeted by a geological rule.
@@ -190,6 +190,7 @@ namespace RRM
 			{
 				is_ready = false;
 				current_rule = Sketch;
+
 			}
 
 			// FIXME Create crossSection with boundary as argument.

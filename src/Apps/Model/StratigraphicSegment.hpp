@@ -12,11 +12,11 @@
 
 namespace RRM
 {
-	/// @brief  Represents segments of polygonal curves (class StratigraphicCurve).
-	/// \TODO
-	/// The point at begin() (source) and the point at end() (target)
-	/// have the same geometry of the vertex that they point to.
-	/// Keep the curve id for history propose
+	// @brief  Represents segments of polygonal curves (class StratigraphicCurve).
+	// \TODO
+	// The point at begin() (source) and the point at end() (target)
+	// have the same geometry of the vertex that they point to.
+	// Keep the curve id for history propose
 	template < class Real >
 	class StratigraphicSegment
 	{
@@ -27,7 +27,7 @@ namespace RRM
 
 			StratigraphicSegment ( )
 			{
-				curve_index = -1;
+				curve_index = 0;
 			}
 			// COPY CONSTRUCTOR !!!
 			StratigraphicSegment ( const Self& segment )
@@ -39,22 +39,21 @@ namespace RRM
 
 			Self& operator=(const Self& other )
 			{
-				/// Assign to all  member.
+				// Assign to all  member.
 				this->curve_index = other.curve_index;
 				this->curve 	  = other.curve;
 
 				return *this;
 			}
 
-
 			virtual ~StratigraphicSegment ( )
 			{
 
 			}
 		public:
-			/// \TODO Index class, like Point Cloud Library
-			int curve_index;
-			// \TODO The curve itself
+			// TODO Index class, like Point Cloud Library
+			unsigned int curve_index;
+			// TODO The curve itself
 			Curve2D curve;
 			// Boundary edge;
 

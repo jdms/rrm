@@ -13,9 +13,9 @@
 
 namespace RRM
 {
-	/// @brief Represents the geometry of a geological object. The input sketch is assigned to class
+	// @brief Represents the geometry of a geological object. The input sketch is assigned to class
 	// As the CGAL::Arrangement_2_with_histoy its keep input curve for
-	/// further computation.
+	// further computation.
 	template< class Real >
 	class StratigraphicCurves
 	{
@@ -27,19 +27,20 @@ namespace RRM
 
 			StratigraphicCurves ( )
 			{
-				id_ = -1;
+				index = 0;
 			}
 
-			/// Copy Constructor
+			// Copy Constructor
 			StratigraphicCurves ( const Curve2D& curve )
 			{
-				id_ = -1;
+				index = 0;
 				this->curve = curve;
+				this->segments = segments;
 			}
 
 			StratigraphicCurves ( std::vector<Point2D> curve)
 			{
-				id_ = -1;
+				index = 0;
 				this->curve.setCurve(curve);
 			}
 
@@ -49,7 +50,7 @@ namespace RRM
 			}
 
 		public:
-			int id_;
+			unsigned int index;
 			Curve2D curve;
 			std::vector<Segment> segments;
 

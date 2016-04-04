@@ -30,7 +30,6 @@
  * @date Sep, 2015
  * @brief Scene graph. Here, the user can input and visualize the stratigraphy
  */
-
 // TODO temporary name
 class SketchSessionTesting : public QGraphicsScene
 {

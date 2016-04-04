@@ -66,7 +66,6 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
    )
 ## Grab Simulator Source Files
 
-
 set( SIMULATOR_HEADERS
     Simulator/FlowComputationModule.h                       
     Simulator/DialogInputFlowComputation.h
