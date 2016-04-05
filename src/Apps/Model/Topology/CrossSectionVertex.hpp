@@ -29,6 +29,7 @@ namespace RRM
 
 			CrossSectionVertex ( )
 			{
+
 			}
 
 			CrossSectionVertex ( const Point2D& p )

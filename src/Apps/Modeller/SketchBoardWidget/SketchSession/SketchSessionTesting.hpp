@@ -58,6 +58,7 @@ public slots:
 
 		// Ask Controller to smooth the raw sketch
 		void curveSmoothed (  QPolygonF curve_smoohted_);
+		void insertCurve   ( unsigned int _id , QPolygonF curve_);
 		bool initialization( qreal x , qreal y, qreal width, qreal height );
 		bool initializationWithImage( const QPixmap& pixmap  );
 		// Notify the sketch module to draw a new rectangle boundary
@@ -73,6 +74,10 @@ public slots:
 		void smoothCurve 	(QPolygonF raw_skecth_ );
 
 private:
+
+
+	std::map<unsigned int, QGraphicsPathItem* > curves_;
+	QVector<QPointF> 			    input_line_;
 
 	/// Rectangular Boundary
 	QGraphicsRectItem*	boundary_;

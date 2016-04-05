@@ -17,6 +17,8 @@
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
 
+#include "Model/Arrangment.hpp"
+
 #include "Modeller/HorizonController.h"
 
 
@@ -31,16 +33,16 @@ class SketchController : public QObject
 
 		SketchController ( CrossSection* _cross_section, SketchSessionTesting* _sketch_view , QObject *parent = nullptr);
 
-	        QPolygonF covertCurves ( Curve2D& _curve );
-	        Curve2D   covertCurves ( QPolygonF _polygon );
-
-	        void smoothCurve ( QPolygonF raw_sketch_line );
-
-	        void insertCurve ( QPolygonF _raw_sketch_line );
+	        QPolygonF convertCurves ( Curve2D& _curve );
+	        Curve2D   convertCurves ( QPolygonF _polygon );
 
 	        virtual ~SketchController ( );
 
 	public slots:
+
+		//void smoothCurve ( QPolygonF raw_sketch_line );
+
+        	void insertCurve ( QPolygonF _raw_sketch_line );
 
 		// By using a background image
         	void newSession(QPixmap pixmap);
@@ -56,6 +58,7 @@ class SketchController : public QObject
 	private:
         	// The Model
         	CrossSection*   cross_section_;
+        	RRM::Arrangment<qreal>  arrangment;
         	// The View
         	SketchSessionTesting* sketch_view_;
 };

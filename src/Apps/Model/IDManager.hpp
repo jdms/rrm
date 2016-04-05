@@ -35,6 +35,8 @@ class IDManager
 
 			max_id_ = _max_id;
 
+			free_ids_.clear();
+
 			std::vector<unsigned int> initial_ids ( _max_id );
 			std::iota ( initial_ids.begin ( ) , initial_ids.end ( ) , 1 );
 

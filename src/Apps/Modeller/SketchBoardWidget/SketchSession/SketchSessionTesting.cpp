@@ -133,6 +133,26 @@ void SketchSessionTesting::curveSmoothed ( QPolygonF raw_skecth_ )
 
 }
 
+void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
+{
+
+	InputSketch * curve = new InputSketch(Qt::blue);
+
+	QPainterPath p;
+
+	p.addPolygon(_curve);
+
+	curve->setSketch(p);
+
+	this->addItem(curve);
+
+	curves_[_id] = curve;
+
+	this->update();
+
+}
+
+
 void SketchSessionTesting::removeInputSketch ( )
 {
 
@@ -152,6 +172,7 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 		if ( ( this->boundary_sketching_ == false ) )
 		{
 			input_sketch_->create ( event->scenePos ( ) );
+			input_line_.clear();
 		}else
 		{
 		}
@@ -171,6 +192,7 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 		{
 			input_sketch_->add ( event->scenePos ( ) );
 			last_point_ = event->scenePos ( );
+			input_line_.push_back(event->scenePos ( ));
 		}
 		else
 		{
@@ -213,7 +235,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 {
 
 
-	QPolygonF p;
+	QPolygonF p(input_line_) ;
 
 	if ( !p.isClosed ( ) )
 	{

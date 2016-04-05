@@ -22,7 +22,6 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
 
 //    pen_color.setWidth( 5 );
 
-	pen_color.setColor ( QColor ( 255 , 0 , 0 ) );
 	pen_color.setWidth ( 3 );
 
 	painter->setPen ( pen_color );

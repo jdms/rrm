@@ -261,8 +261,6 @@ namespace RRM
 		{
 			createSegment(curve.curve);
 
-			std::cout << DCELLog() ;
-
 			return true;
 		}
 
@@ -294,14 +292,7 @@ namespace RRM
 
 		void createSegment( Curve2D& _curve )
 		{
-		        Halfedge_handle h = topology_.edges_push_back( Halfedge(), Halfedge());
-			h->opposite()->left_to_right = 0;
-			h->opposite()->is_boundary = false;
-			h->segment.curve = _curve;
-			h->segment.curve.superSample(3.0);
-			h->is_visible = true;
 
-			Vertex_handle v = topology_.vertices_push_back(Vertex());
 
 		}
 

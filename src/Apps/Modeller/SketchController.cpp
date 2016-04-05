@@ -14,6 +14,12 @@ SketchController::SketchController ( CrossSection*   _cross_section,
 	this->cross_section_ = _cross_section;
 	this->sketch_view_   = _sketch_view;
 
+	arrangment.initialize( );
+
+	arrangment.log();
+
+	connect ( this->sketch_view_ , SIGNAL( smoothCurve(QPolygonF) ) , this , SLOT( insertCurve(QPolygonF) ) );
+
 	// Sketching
 
 }
@@ -35,14 +41,22 @@ void SketchController::newSession ( QPixmap pixmap )
 
 void SketchController::insertCurve ( QPolygonF _polygon )
 {
+	Curve2D curve = convertCurves(_polygon);
+
+	unsigned int id = arrangment.insertCurve(curve);
+
+	sketch_view_->insertCurve(id,_polygon);
+
+	arrangment.log();
+
 }
 
-QPolygonF SketchController::covertCurves ( Curve2D& _curve )
+QPolygonF SketchController::convertCurves ( Curve2D& _curve )
 {
 	return QPolygonF();
 }
 
-SketchController::Curve2D SketchController::covertCurves ( QPolygonF _polygon )
+SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 {
 	return Curve2D();
 }
