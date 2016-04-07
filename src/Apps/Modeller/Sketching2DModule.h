@@ -2,7 +2,6 @@
 #define SKETCHING2DMODULE_H
 
 #include <QDockWidget>
-#include "Modeller/Canvas2D.h"
 
 /**!
  * @brief  brief  Embeds the sketching area into the main window.
@@ -46,7 +45,6 @@ class Sketching2DModule: public QDockWidget
 
     private:
 
-        Canvas2D *canvas2D;
 
 };
 

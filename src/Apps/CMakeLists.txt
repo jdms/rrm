@@ -30,11 +30,10 @@ set( CONTROLLER_SOURCES Controller/main.cpp
 
 ## Grab Modeller Source Files
 set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
-                        Modeller/Canvas2D.h
-                        Modeller/SketchingScene.h
-						Modeller/BoundaryController.h
-                        Modeller/HorizonController.h
                         Modeller/InputSketch.h
+                        Modeller/RRMItemCurve.h
+                        Modeller/StratigraphyItem.hpp
+                        Modeller/BoundaryItem.h
                         Modeller/SketchController.hpp   
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
                         Modeller/SketchBoardWidget/SketchBoard.hpp
@@ -43,8 +42,6 @@ set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
    )
    
 set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
-                          Modeller/Canvas2D.h
-                          Modeller/SketchingScene.h
                           Modeller/SketchController.hpp
 						  Modeller/ExtrusionWidget/OpenGLWidget.hpp
 					      Modeller/SketchBoardWidget/SketchBoard.hpp
@@ -53,12 +50,11 @@ set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
 						)
 
 set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
-                        Modeller/Canvas2D.cpp
-                        Modeller/BoundaryController.cpp
-                        Modeller/HorizonController.cpp
                         Modeller/InputSketch.cpp
+                        Modeller/RRMItemCurve.cpp
+                        Modeller/StratigraphyItem.cpp
+                        Modeller/BoundaryItem.cpp
                         Modeller/SketchController.cpp
-                        Modeller/SketchingScene.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
                         Modeller/SketchBoardWidget/SketchBoard.cpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp

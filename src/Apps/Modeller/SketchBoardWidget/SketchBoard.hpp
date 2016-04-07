@@ -4,7 +4,9 @@
 #define _SURFACE_HPP_
 
 #include <QtWidgets/QGraphicsView>
-
+#include <QtGui/QMouseEvent>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QSurfaceFormat>
 
 
 /**
@@ -21,7 +23,12 @@ public:
 	virtual ~SketchBoard();
 
 
+	void wheelEvent ( QWheelEvent *event );
+	void keyPressEvent ( QKeyEvent *event );
 private:
+
+	int scale_in_;
+	int scale_out_;
 
 };
 

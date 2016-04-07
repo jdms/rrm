@@ -30,7 +30,7 @@ SketchSession::SketchSession ( QObject *parent ) : QGraphicsScene ( parent )
 
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
-	boundaryc = new BoundaryController ( 0 , 0 );
+	boundaryc = new BoundaryItem ( 0 , 0 );
 	this->addItem ( boundaryc );
 
 	//this->addItem(this->boundary_);

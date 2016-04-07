@@ -20,9 +20,10 @@
 
 #include <QtCore/QVector>
 
-#include <Modeller/BoundaryController.h>
 #include <Modeller/InputSketch.h>
-
+#include <Modeller/RRMItemCurve.h>
+#include "Modeller/StratigraphyItem.hpp"
+#include "Modeller/BoundaryItem.h"
 
 /**
  * @author Felipe Moura de Carvalho
@@ -31,56 +32,63 @@
  * @brief Scene graph. Here, the user can input and visualize the stratigraphy
  */
 // TODO temporary name
-class SketchSessionTesting : public QGraphicsScene
+class SketchSessionTesting: public QGraphicsScene
 {
 	Q_OBJECT
-public:
+	public:
 
-	SketchSessionTesting( QObject *parent = 0 );
-	virtual ~SketchSessionTesting();
+		enum class InteractionMode
+		{
+			EDITING, SKETCHING,
+		};
 
-	void mousePressEvent	(QGraphicsSceneMouseEvent* event);
-	void mouseMoveEvent 	(QGraphicsSceneMouseEvent* event);
-	void mouseReleaseEvent	(QGraphicsSceneMouseEvent* event);
+		SketchSessionTesting ( QObject *parent = 0 );
+		virtual ~SketchSessionTesting ( );
 
-	void dragEnterEvent ( QGraphicsSceneDragDropEvent *event );
-	void dragMoveEvent 	( QGraphicsSceneDragDropEvent *event );
-	void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
-	void dropEvent 		( QGraphicsSceneDragDropEvent *event );
+		void mousePressEvent ( QGraphicsSceneMouseEvent* event );
+		void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
+		void mouseReleaseEvent ( QGraphicsSceneMouseEvent* event );
 
-	void removeInputSketch();
+		void dragEnterEvent ( QGraphicsSceneDragDropEvent *event );
+		void dragMoveEvent ( QGraphicsSceneDragDropEvent *event );
+		void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
+		void dropEvent ( QGraphicsSceneDragDropEvent *event );
 
-	void drawPolyLine( std::vector<QPointF> points);
+		void removeInputSketch ( );
 
-	QGraphicsPixmapItem * image;
+		void drawPolyLine ( std::vector<QPointF> points );
 
-public slots:
+		QGraphicsPixmapItem * image;
+
+	public slots:
 
 		// Ask Controller to smooth the raw sketch
-		void curveSmoothed (  QPolygonF curve_smoohted_);
-		void insertCurve   ( unsigned int _id , QPolygonF curve_);
-		bool initialization( qreal x , qreal y, qreal width, qreal height );
-		bool initializationWithImage( const QPixmap& pixmap  );
+		void curveSmoothed ( QPolygonF curve_smoohted_ );
+		void insertCurve ( unsigned int _id , QPolygonF curve_ );
+		bool initialization ( qreal x , qreal y , qreal width , qreal height );
+		bool initializationWithImage ( const QPixmap& pixmap );
 		// Notify the sketch module to draw a new rectangle boundary
-		void sketchNewBoundary();
+		void sketchNewBoundary ( );
+
+		void setEditMode();
+		void setSketchMode();
 	signals:
 
 		// Notify the model, to reset the current arrangement of curves and set a new boundary, given an image
-		void newSessionSignal   (QPixmap pixmap);
+		void newSessionSignal ( QPixmap pixmap );
 		// Notify the model, to reset the current arrangement of curves and set a new boundary, given sketch rectangle
-		void newSessionSignal   (qreal x, qreal y, qreal width, qreal height);
+		void newSessionSignal ( qreal x , qreal y , qreal width , qreal height );
 		// Notify the model and provides a new sketch line
-		void newSketchLine      (QPolygonF polygon );
-		void smoothCurve 	(QPolygonF raw_skecth_ );
+		void newSketchLine ( QPolygonF polygon );
+		void smoothCurve ( QPolygonF raw_skecth_ );
 
-private:
+	private:
 
+		std::map<unsigned int, QGraphicsPathItem*> curves_;
+		QVector<QPointF> input_line_;
 
-	std::map<unsigned int, QGraphicsPathItem* > curves_;
-	QVector<QPointF> 			    input_line_;
-
-	/// Rectangular Boundary
-	QGraphicsRectItem*	boundary_;
+		/// Rectangular Boundary
+		QGraphicsRectItem* boundary_;
 		// The point where the we start draw the rectangle boundary_
 		QPointF boundary_anchor_point_;
 
@@ -88,12 +96,14 @@ private:
 
 		QPointF last_point_;
 
-	QPen 	sketch_pen;
-	QBrush 	sketch_brush;
+		QPen sketch_pen;
+		QBrush sketch_brush;
 
-	// Clarissa Interface
-	BoundaryController* boundaryc;
-	InputSketch*        input_sketch_;
+		// Interface
+		BoundaryItem* boundaryc;
+		InputSketch* input_sketch_;
+
+		InteractionMode mode_;
 
 };
 

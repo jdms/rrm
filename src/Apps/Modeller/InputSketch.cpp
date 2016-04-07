@@ -1,4 +1,4 @@
-#include "Apps/Modeller/InputSketch.h"
+#include "InputSketch.h"
 
 InputSketch::InputSketch( QColor color ):QGraphicsPathItem()
 {

@@ -19,7 +19,7 @@
 
 #include "Model/Arrangment.hpp"
 
-#include "Modeller/HorizonController.h"
+#include "StratigraphyItem.hpp"
 
 
 class SketchController : public QObject

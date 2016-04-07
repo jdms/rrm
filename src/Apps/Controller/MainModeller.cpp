@@ -40,8 +40,6 @@ void MainWindow::create2DModule ( )
 //
 //	connect ( this->sketchSession_ , SIGNAL( newSessionSignal(qreal,qreal,qreal,qreal) ) , this , SLOT( newSessionSlot(qreal,qreal,qreal,qreal) ) );
 //
-	scale_in  =  10;
-	scale_out = -10;
 
 }
 
@@ -252,10 +250,16 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 		cross_section_.clear ( );
 	}
 
+	if ( event->key ( ) == Qt::Key_Escape)
+	{
+			sketchSession_->clearSelection();
+	}
+
 }
 
 void MainWindow::mousePressEvent ( QMouseEvent* event )
 {
+
 	if ( event->buttons ( ) & Qt::MiddleButton )
 	{
 		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
@@ -268,38 +272,8 @@ void MainWindow::mousePressEvent ( QMouseEvent* event )
 		status_text->setText ( "Remove Above Intersection" );
 	}
 
-	event->ignore ( );
-}
+	event->accept();
 
-void MainWindow::wheelEvent ( QWheelEvent *event )
-{
-
-	this->sketch_board_->setTransformationAnchor ( QGraphicsView::AnchorUnderMouse );
-	// Scale the view / do the zoom
-	double scaleFactor = 1.15;
-
-	if ( event->delta ( ) > 0 )
-	{
-		// Zoom in
-		if ( scale_in >= 0 )
-		{
-			this->sketch_board_->scale ( scaleFactor , scaleFactor );
-			scale_in  -= 1;
-			scale_out -= 1;
-		}
-
-	}
-	else
-	{
-		// Zooming out
-		if ( scale_out <= 0 )
-		{
-			scale_out += 1;
-			scale_in  += 1;
-	               this->sketch_board_->scale ( 1.0 / scaleFactor , 1.0 / scaleFactor );
-		}
-
-	}
 }
 
 void MainWindow::on_horizontalSlider_curve_valueChanged()

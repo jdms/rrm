@@ -3,17 +3,17 @@
 
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
+	mode_ = InteractionMode::EDITING;
+
 	boundary_ = 0;
 	/// Drag and Drop Feature
 	image = new QGraphicsPixmapItem ( );
 	this->addItem ( image );
 
-	/// 
 	QPen pen;
 
 	pen.setColor ( QColor ( 255 , 100 , 70 ) );
 	pen.setWidth ( 5 );
-
 
 
 	input_sketch_ = new InputSketch ( QColor ( 255 , 75 , 75 ) );
@@ -30,7 +30,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
-	boundaryc = new BoundaryController ( 0 , 0 );
+	boundaryc = new BoundaryItem ( 0 , 0 );
 	this->addItem ( boundaryc );
 
 	//this->addItem(this->boundary_);
@@ -49,7 +49,10 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	this->setBackgroundBrush ( QBrush ( gradient ) );
 
+	RRMItemCurve * r = new RRMItemCurve();
 
+	this->addItem(r);
+	r->setZValue(1);
 }
 
 SketchSessionTesting::~SketchSessionTesting ( )
@@ -136,7 +139,7 @@ void SketchSessionTesting::curveSmoothed ( QPolygonF raw_skecth_ )
 void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 {
 
-	InputSketch * curve = new InputSketch(Qt::blue);
+	StratigraphyItem * curve = new StratigraphyItem(Qt::green);
 
 	QPainterPath p;
 
@@ -150,8 +153,21 @@ void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 
 	this->update();
 
-}
+//	HorizonController * curve = new HorizonController ( Qt::blue );
+//
+//	QPainterPath p;
+//
+//	p.addPolygon ( _curve );
+//
+//	curve->setSketching( p );
+//
+//	this->addItem ( curve );
+//
+//	curves_[_id] = curve;
+//
+//	this->update ( );
 
+}
 
 void SketchSessionTesting::removeInputSketch ( )
 {
@@ -161,70 +177,95 @@ void SketchSessionTesting::removeInputSketch ( )
 void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 {
 
-	if ( event->buttons ( ) & Qt::LeftButton )
+	if ( mode_ == InteractionMode::EDITING )
 	{
-		qDebug ( ) << " Item Grabbed " << event->buttonDownScenePos ( Qt::LeftButton );
-
-		last_point_ = event->buttonDownScenePos ( Qt::LeftButton );
-
-		this->boundary_anchor_point_ = last_point_;
-
-		if ( ( this->boundary_sketching_ == false ) )
+		QGraphicsScene::mousePressEvent ( event );
+	}
+	else
+	{
+		if ( event->buttons ( ) & Qt::LeftButton )
 		{
-			input_sketch_->create ( event->scenePos ( ) );
-			input_line_.clear();
-		}else
-		{
+			qDebug ( ) << " Item Grabbed " << event->buttonDownScenePos ( Qt::LeftButton );
+
+			last_point_ = event->buttonDownScenePos ( Qt::LeftButton );
+
+			this->boundary_anchor_point_ = last_point_;
+
+			if ( ( this->boundary_sketching_ == false ) )
+			{
+				input_sketch_->create ( event->scenePos ( ) );
+				input_line_.clear ( );
+			}
+			else
+			{
+			}
+
 		}
-
 	}
 
 	update ( );
 }
 
+void SketchSessionTesting::setEditMode()
+{
+	mode_ = InteractionMode::EDITING;
+}
+void SketchSessionTesting::setSketchMode()
+{
+	mode_ = InteractionMode::SKETCHING;
+}
+
 void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 {
-	if ( event->buttons ( ) & Qt::LeftButton )
+
+	if ( mode_ == InteractionMode::EDITING )
 	{
-		//this->svg->setPos(event->scenePos());
-
-		if ( this->boundary_sketching_ == false )
+		QGraphicsScene::mouseMoveEvent ( event );
+	}
+	else
+	{
+		if ( event->buttons ( ) & Qt::LeftButton )
 		{
-			input_sketch_->add ( event->scenePos ( ) );
-			last_point_ = event->scenePos ( );
-			input_line_.push_back(event->scenePos ( ));
-		}
-		else
-		{
-			/// To create a box by any direction
-			qreal x1 = boundary_anchor_point_.x ( );
-			qreal y1 = boundary_anchor_point_.y ( );
-			qreal x2 = event->scenePos ( ).x ( );
-			qreal y2 = event->scenePos ( ).y ( );
+			//this->svg->setPos(event->scenePos());
 
-			if ( boundary_anchor_point_.x ( ) < event->scenePos ( ).x ( ) )
+			if ( this->boundary_sketching_ == false )
 			{
-				x1 = boundary_anchor_point_.x ( );
-				x2 = event->scenePos ( ).x ( );
+				input_sketch_->add ( event->scenePos ( ) );
+				last_point_ = event->scenePos ( );
+				input_line_.push_back ( event->scenePos ( ) );
 			}
 			else
 			{
-				x1 = event->scenePos ( ).x ( );
-				x2 = boundary_anchor_point_.x ( );
-			}
+				/// To create a box by any direction
+				qreal x1 = boundary_anchor_point_.x ( );
+				qreal y1 = boundary_anchor_point_.y ( );
+				qreal x2 = event->scenePos ( ).x ( );
+				qreal y2 = event->scenePos ( ).y ( );
 
-			if ( boundary_anchor_point_.y ( ) < event->scenePos ( ).y ( ) )
-			{
-				y1 = boundary_anchor_point_.y ( );
-				y2 = event->scenePos ( ).y ( );
+				if ( boundary_anchor_point_.x ( ) < event->scenePos ( ).x ( ) )
+				{
+					x1 = boundary_anchor_point_.x ( );
+					x2 = event->scenePos ( ).x ( );
+				}
+				else
+				{
+					x1 = event->scenePos ( ).x ( );
+					x2 = boundary_anchor_point_.x ( );
+				}
+
+				if ( boundary_anchor_point_.y ( ) < event->scenePos ( ).y ( ) )
+				{
+					y1 = boundary_anchor_point_.y ( );
+					y2 = event->scenePos ( ).y ( );
+				}
+				else
+				{
+					y1 = event->scenePos ( ).y ( );
+					y2 = boundary_anchor_point_.y ( );
+				}
+				this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
+				this->boundaryc->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
 			}
-			else
-			{
-				y1 = event->scenePos ( ).y ( );
-				y2 = boundary_anchor_point_.y ( );
-			}
-			this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
-			this->boundaryc->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
 		}
 	}
 
@@ -234,25 +275,33 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 {
 
-
-	QPolygonF p(input_line_) ;
-
-	if ( !p.isClosed ( ) )
+	if ( mode_ == InteractionMode::EDITING )
 	{
-		emit smoothCurve( p );
-	}
-
-	if ( this->boundary_sketching_ == true )
-	{
-		emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
-																		this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
-
-		this->boundary_sketching_ = false;
+		QGraphicsScene::mouseReleaseEvent ( event );
 	}
 	else
 	{
-		input_sketch_->clear ( );
+
+		QPolygonF p ( input_line_ );
+
+		if ( !p.isClosed ( ) )
+		{
+			emit smoothCurve ( p );
+		}
+
+		if ( this->boundary_sketching_ == true )
+		{
+			emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
+																			this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
+
+			this->boundary_sketching_ = false;
+		}
+		else
+		{
+			input_sketch_->clear ( );
+		}
 	}
+
 	update ( );
 }
 

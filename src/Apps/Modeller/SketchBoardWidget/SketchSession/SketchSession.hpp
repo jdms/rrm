@@ -20,10 +20,8 @@
 
 #include<QtCore/QVector>
 
-#include <Modeller/BoundaryController.h>
 #include <Modeller/InputSketch.h>
-
-
+#include "Modeller/BoundaryItem.h"
 /**
  * @author Felipe Moura de Carvalho
  * @date Sep, 2015
@@ -104,7 +102,7 @@ private:
 	QGraphicsSvgItem *data_svg;
 
 	// Clarissa Interface
-	BoundaryController *boundaryc;
+	BoundaryItem *boundaryc;
 	InputSketch*        sketch;
 
 };

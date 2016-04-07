@@ -16,12 +16,10 @@
 #include "Model/CrossSectionTesting.hpp"
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
-#include "Modeller/Canvas2D.h"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
 	#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
 #include "Modeller/SketchController.hpp"
-#include "Modeller/HorizonController.h"
 #include "Modeller/Sketching2DModule.h"
 // Simulator Volume
 #include "Simulator/CanvasComputation.h"
@@ -96,7 +94,6 @@ class MainWindow : public QMainWindow
         // CrossSection
         void keyPressEvent ( QKeyEvent *e );
         void mousePressEvent(QMouseEvent* event);
-        void wheelEvent(QWheelEvent* event);
 
     public slots:
 
@@ -176,8 +173,6 @@ class MainWindow : public QMainWindow
 	typedef CrossSection::Curve2D			   Curve2D;
 
 
-	int scale_in;
-	int scale_out;
 
 	    QGroupBox *groupBox;
 	    QFormLayout *formLayout;

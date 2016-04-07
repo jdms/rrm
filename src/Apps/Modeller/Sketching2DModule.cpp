@@ -13,12 +13,6 @@ void Sketching2DModule::createWindow()
 //    dc_2DModule = new QDockWidget( this );
     this->setAllowedAreas( Qt::LeftDockWidgetArea );
     this->setWindowTitle( "2D View" );
-
-    canvas2D = new Canvas2D( this );
-
-    this->setWidget( canvas2D );
-
-
 }
 
 void Sketching2DModule::createActions( QWidget* parent )
@@ -57,12 +51,9 @@ void Sketching2DModule::pointerSelection( bool flag )
 
     if( flag == false )
     {
-        canvas2D->setDragMode( QGraphicsView::NoDrag );
         emit sketchingMode();
         return;
     }
-
-    canvas2D->setDragMode( QGraphicsView::RubberBandDrag );
 
     emit selectMode();
 
@@ -90,5 +81,5 @@ void Sketching2DModule::emitModeSketching()
 
 void Sketching2DModule::clearCanvas2D()
 {
-    canvas2D->clear();
+
 }
