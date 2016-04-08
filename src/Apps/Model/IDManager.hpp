@@ -18,15 +18,32 @@ class IDManager
 {
 	public:
 		// 0 is the neutral element
+		typedef IDManager 					  Self;
 		typedef std::set<unsigned int, std::less<unsigned int > > id_list;
 
 		IDManager ( )
 		{
 			max_id_ = 0;
 		}
+
+		IDManager ( const Self& _id_manager )
+		{
+			*this = _id_manager;
+		}
+
 		~IDManager ( )
 		{
 
+		}
+
+		Self& operator=(const Self& other )
+		{
+			// Assign to all  member.
+			free_ids_ = other.free_ids_;
+			used_ids_ = other.used_ids_;
+			max_id_   = other.max_id_;
+
+			return *this;
 		}
 
 		void initialize( unsigned int _max_id )

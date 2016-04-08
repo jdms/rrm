@@ -5,8 +5,8 @@
  *      Author: felipe
  */
 
-#ifndef _VIEW_STATIGRAPHYCONTROLLER_HPP_
-#define _VIEW_STATIGRAPHYCONTROLLER_HPP_
+#ifndef _VIEW_STATIGRAPHYItem_HPP_
+#define _VIEW_STATIGRAPHYItem_HPP_
 
 #include <QPainter>
 #include <QGraphicsPathItem>
@@ -23,28 +23,26 @@ class StratigraphyItem : public QGraphicsPathItem
 	public:
 
 		StratigraphyItem( QColor color );
+
 		virtual ~StratigraphyItem ( );
 
 		void paint ( QPainter *painter , const QStyleOptionGraphicsItem *option = 0 , QWidget *w = 0 );
 		QRectF boundingRect ( ) const;
 
-		QPainterPath getSketch ( );
-		void setSketch ( const QPainterPath& p );
+		QPainterPath getSketch ( ) const;
+		void setSketch ( const QPainterPath& path );
+
+		void clear();
 
 		QPainterPath shape ( ) const;
 
 		void setPen ( const QPen& pen );
-
-	        void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 	protected:
 
 		QPen pen_color;
 
 		QPainterPath curve;
-
-
-
 };
 
-#endif /* _VIEW_STATIGRAPHYCONTROLLER_HPP_ */
+#endif /* _VIEW_STATIGRAPHYItem_HPP_ */

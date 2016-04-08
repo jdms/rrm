@@ -19,7 +19,6 @@ BoundaryItem::BoundaryItem ( int width , int height ) :	QGraphicsPathItem ( )
 
 	boundary.push_back ( path0 );
 	boundary.push_back ( path2 );
-
 }
 
 BoundaryItem::~BoundaryItem ( )

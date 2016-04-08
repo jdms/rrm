@@ -3,6 +3,11 @@
 #ifndef _SURFACE_HPP_
 #define _SURFACE_HPP_
 
+
+#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
+
+#include "Modeller/SketchController.hpp"
+
 #include <QtWidgets/QGraphicsView>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
@@ -29,6 +34,8 @@ private:
 
 	int scale_in_;
 	int scale_out_;
+
+	SketchSessionTesting   *sketchSession_;
 
 };
 

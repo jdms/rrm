@@ -31,7 +31,6 @@ set( CONTROLLER_SOURCES Controller/main.cpp
 ## Grab Modeller Source Files
 set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
                         Modeller/InputSketch.h
-                        Modeller/RRMItemCurve.h
                         Modeller/StratigraphyItem.hpp
                         Modeller/BoundaryItem.h
                         Modeller/SketchController.hpp   
@@ -51,7 +50,6 @@ set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
 
 set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
                         Modeller/InputSketch.cpp
-                        Modeller/RRMItemCurve.cpp
                         Modeller/StratigraphyItem.cpp
                         Modeller/BoundaryItem.cpp
                         Modeller/SketchController.cpp

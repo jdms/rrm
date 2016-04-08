@@ -1,18 +1,20 @@
 #include "InputSketch.h"
 
-InputSketch::InputSketch( QColor color ):QGraphicsPathItem()
+InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
 {
-    done = false;
-    curve = QPainterPath();
+	this->prepareGeometryChange ( );
 
-    is_visible = false;
-    is_inside = false;
+	done = false;
+	curve = QPainterPath ( );
 
-    pen_color = color;
+	is_visible = false;
+	is_inside = false;
 
-	setFlag(QGraphicsItem::ItemIsSelectable);
+	pen_color = color;
 
-    setAcceptTouchEvents(true);
+	setFlag ( QGraphicsItem::ItemIsSelectable );
+
+	setAcceptTouchEvents ( true );
 
 }
 
@@ -31,83 +33,109 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
 
 }
 
-QRectF InputSketch::boundingRect() const
+QRectF InputSketch::boundingRect ( ) const
 {
 
-    return curve.boundingRect();
+	return curve.boundingRect ( );
 
 }
 
-void InputSketch::create( const QPointF &p )
+void InputSketch::create ( const QPointF &p )
 {
-    this->prepareGeometryChange();
-    curve.moveTo( p );
+	this->prepareGeometryChange ( );
+	this->clear();
+	curve.moveTo ( p );
+	input_line_.push_back ( p );
 }
 
-void InputSketch::add( const QPointF &p )
+void InputSketch::add ( const QPointF &p )
 {
-    this->prepareGeometryChange();
-    curve.lineTo( p );
+	this->prepareGeometryChange ( );
+	curve.lineTo ( p );
+	input_line_.push_back ( p );
 }
 
-QRectF InputSketch::clear()
+void InputSketch::clear ( )
 {
-    this->prepareGeometryChange();
-    QRectF rect = QRectF( -curve.boundingRect().width()/ 2, -curve.boundingRect().height()/ 2, curve.boundingRect().width(), curve.boundingRect().height());
-    curve = QPainterPath();
-    return rect;
-
+	this->prepareGeometryChange ( );
+	curve = QPainterPath ( );
+	input_line_.clear ( );
 }
 
-void InputSketch::setDone( bool option )
+void InputSketch::setDone ( bool option )
 {
-    done = option;
+	done = option;
 }
 
-bool InputSketch::isVisible() const
+bool InputSketch::isVisible ( ) const
 {
-    return is_visible;
+	return is_visible;
 }
 
-
-bool InputSketch::isInside() const
+bool InputSketch::isInside ( ) const
 {
-    return is_inside;
+	return is_inside;
 }
 
-void InputSketch::isVisible( bool option )
+void InputSketch::isVisible ( bool option )
 {
-    is_visible = option;
+	is_visible = option;
 }
 
-void InputSketch::isInside( bool option )
+void InputSketch::isInside ( bool option )
 {
-    is_inside = option;
+	is_inside = option;
 }
 
-QPainterPath InputSketch::getSketch()
-{
-    return curve;
-}
 
 /// Changed from original code
-void  InputSketch::setSketch( const QPainterPath& p)
+void InputSketch::setSketch ( const QVector<QPointF> & _path )
 {
-    this->prepareGeometryChange();
-    curve = p;
+	this->prepareGeometryChange ( );
+
+	input_line_.clear();
+	input_line_ = QPolygonF(_path);
+
+	curve = QPainterPath();
+
+	curve.addPolygon(input_line_);
+}
+/// Changed from original code
+void InputSketch::setSketch ( const QPolygonF & _path )
+{
+	this->prepareGeometryChange ( );
+
+	input_line_.clear();
+	input_line_ = QPolygonF(_path);
+
+	curve = QPainterPath();
+
+	curve.addPolygon(input_line_);
 }
 
-QPainterPath InputSketch::shape() const
+
+/// Changed from original code
+QPolygonF InputSketch::getSketch ( ) const
 {
-
-	QPainterPath p;
-
-	p.addRect(curve.boundingRect());
-
-    return p;
+	return input_line_;
+}
+/// Changed from original code
+QPainterPath InputSketch::getCurve ( ) const
+{
+	return curve;
 }
 
-void InputSketch::setPen( const QPen& pen )
+QPainterPath InputSketch::shape ( ) const
+{
+
+	QPainterPath path;
+
+	path.addRect ( curve.boundingRect ( ) );
+
+	return path;
+}
+
+void InputSketch::setPen ( const QPen& pen )
 {
 	pen_color = pen;
 }

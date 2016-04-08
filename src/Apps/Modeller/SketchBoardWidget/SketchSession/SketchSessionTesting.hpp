@@ -20,8 +20,7 @@
 
 #include <QtCore/QVector>
 
-#include <Modeller/InputSketch.h>
-#include <Modeller/RRMItemCurve.h>
+#include "Modeller/InputSketch.h"
 #include "Modeller/StratigraphyItem.hpp"
 #include "Modeller/BoundaryItem.h"
 
@@ -29,8 +28,10 @@
  * @author Felipe Moura de Carvalho
  * @author Clarissa Marques
  * @date Sep, 2015
- * @brief Scene graph. Here, the user can input and visualize the stratigraphy
+ * @brief Scene graph. Yhe user can input and visualise stratigraphy curves
  */
+
+
 // TODO temporary name
 class SketchSessionTesting: public QGraphicsScene
 {
@@ -56,8 +57,6 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void removeInputSketch ( );
 
-		void drawPolyLine ( std::vector<QPointF> points );
-
 		QGraphicsPixmapItem * image;
 
 	public slots:
@@ -74,27 +73,27 @@ class SketchSessionTesting: public QGraphicsScene
 		void setSketchMode();
 	signals:
 
-		// Notify the model, to reset the current arrangement of curves and set a new boundary, given an image
+		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( QPixmap pixmap );
-		// Notify the model, to reset the current arrangement of curves and set a new boundary, given sketch rectangle
+		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
 		void newSessionSignal ( qreal x , qreal y , qreal width , qreal height );
 		// Notify the model and provides a new sketch line
 		void newSketchLine ( QPolygonF polygon );
+		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
 
 	private:
-
+		// Map between the sketch curves with the curve into the arrangement
 		std::map<unsigned int, QGraphicsPathItem*> curves_;
-		QVector<QPointF> input_line_;
-
-		/// Rectangular Boundary
-		QGraphicsRectItem* boundary_;
-		// The point where the we start draw the rectangle boundary_
-		QPointF boundary_anchor_point_;
-
-		bool boundary_sketching_;
 
 		QPointF last_point_;
+
+		/// Rectangular Boundary
+			QGraphicsRectItem* boundary_;
+			// The point where the we start draw the rectangle boundary_
+			QPointF boundary_anchor_point_;
+			// If is an new Boundary is requested
+			bool boundary_sketching_;
 
 		QPen sketch_pen;
 		QBrush sketch_brush;

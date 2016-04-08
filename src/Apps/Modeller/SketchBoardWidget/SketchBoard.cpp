@@ -35,6 +35,13 @@ SketchBoard::SketchBoard ( QWidget *parent ) :
 	scale_in_  =  10;
 	scale_out_ = -10;
 
+	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
+	this->sketchSession_ = new SketchSessionTesting ( this );
+	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
+
+
+	this->setScene ( sketchSession_ );
+
 }
 
 SketchBoard::~SketchBoard ( )
@@ -44,6 +51,68 @@ SketchBoard::~SketchBoard ( )
 
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
+
+
+		if ( event->key ( ) == Qt::Key_F1 )
+		{
+			this->sketchSession_->image->setVisible(false);
+		}
+
+		if ( event->key ( ) == Qt::Key_F2 )
+		{
+			this->sketchSession_->image->setVisible(true);
+		}
+
+		if ( event->key ( ) == Qt::Key_Up )
+		{
+			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
+			//status_text->setText ( "Remove Above Intersection" );
+			this->sketchSession_->setSketchMode();
+
+		}
+		else if ( event->key ( ) == Qt::Key_Down )
+		{
+			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
+			//status_text->setText ( "Remove Below Intersection" );
+			this->sketchSession_->setEditMode();
+
+		}
+		else
+		{
+			//cross_section_.changeRule ( RRM::GeologicRules::Sketch );
+			//status_text->setText ( "Sketch" );
+		}
+
+		if ( event->key ( ) == Qt::Key_P )
+		{
+
+			QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
+			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
+
+			this->sketchSession_->image->setVisible ( false );
+
+			QPainter painter ( &image );
+			this->sketchSession_->render ( &painter );
+			image.save ( "CrossSection.png" );
+
+			this->sketchSession_->image->setVisible ( true );
+
+	//		QString fileName = "RESULT_IMAGE.png";
+	//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
+	//		pixMap.save ( fileName );
+		}
+
+		if ( event->key ( ) == Qt::Key_Space )
+		{
+			//cross_section_.clear ( );
+		}
+
+		if ( event->key ( ) == Qt::Key_Escape)
+		{
+				sketchSession_->clearSelection();
+		}
+
+
 	QGraphicsView::keyPressEvent(event);
 }
 

@@ -27,8 +27,6 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
 
-	connect ( this->ac_newBoundary , SIGNAL( triggered() ) , this->sketchSession_ , SLOT( sketchNewBoundary() ) );
-
 }
 
 MainWindow::~MainWindow ( )

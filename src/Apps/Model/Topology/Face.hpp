@@ -15,14 +15,32 @@ namespace RRM
 	class Face
 	{
 		public:
+
+			typedef Face<Real>		Self;
+
 			Face ( )
 			{
 				id_ = 0;
 			}
-			virtual ~Face ( )
+
+			Face ( const Self& _face)
+			{
+				*this = _face;
+			}
+
+			~Face ( )
 			{
 
 			}
+
+			Self& operator=(const Self& other )
+			{
+				// Assign to all  member.
+				id_ = other.id_;
+
+				return *this;
+			}
+
 		public:
 			unsigned int id_;
 	};

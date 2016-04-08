@@ -3,7 +3,7 @@
 
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
-	mode_ = InteractionMode::EDITING;
+	mode_ = InteractionMode::SKETCHING;
 
 	boundary_ = 0;
 	/// Drag and Drop Feature
@@ -48,17 +48,225 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	gradient.setColorAt ( 0.0 , QColor::fromRgb ( 215 , 215 , 215 ) );
 
 	this->setBackgroundBrush ( QBrush ( gradient ) );
-
-	RRMItemCurve * r = new RRMItemCurve();
-
-	this->addItem(r);
-	r->setZValue(1);
 }
 
 SketchSessionTesting::~SketchSessionTesting ( )
 {
 
 }
+
+void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
+{
+
+	if ( mode_ == InteractionMode::EDITING )
+	{
+		QGraphicsScene::mousePressEvent ( event );
+		event->ignore();
+	}
+	else
+	{
+		if ( event->buttons ( ) & Qt::LeftButton )
+		{
+			qDebug ( ) << " Item Grabbed " << event->buttonDownScenePos ( Qt::LeftButton );
+
+			last_point_ = event->buttonDownScenePos ( Qt::LeftButton );
+
+			this->boundary_anchor_point_ = last_point_;
+
+			if ( ( this->boundary_sketching_ == false ) )
+			{
+				input_sketch_->create ( event->scenePos ( ) );
+			}
+			else
+			{
+			}
+
+		}
+	}
+
+	update ( );
+}
+
+void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
+{
+
+	if ( mode_ == InteractionMode::EDITING )
+	{
+		QGraphicsScene::mouseMoveEvent ( event );
+		event->ignore();
+	}
+	else
+	{
+		if ( event->buttons ( ) & Qt::LeftButton )
+		{
+			//this->svg->setPos(event->scenePos());
+
+			if ( this->boundary_sketching_ == false )
+			{
+				input_sketch_->add ( event->scenePos ( ) );
+				last_point_ = event->scenePos ( );
+			}
+			else
+			{
+				/// To create a box by any direction
+				qreal x1 = boundary_anchor_point_.x ( );
+				qreal y1 = boundary_anchor_point_.y ( );
+				qreal x2 = event->scenePos ( ).x ( );
+				qreal y2 = event->scenePos ( ).y ( );
+
+				if ( boundary_anchor_point_.x ( ) < event->scenePos ( ).x ( ) )
+				{
+					x1 = boundary_anchor_point_.x ( );
+					x2 = event->scenePos ( ).x ( );
+				}
+				else
+				{
+					x1 = event->scenePos ( ).x ( );
+					x2 = boundary_anchor_point_.x ( );
+				}
+
+				if ( boundary_anchor_point_.y ( ) < event->scenePos ( ).y ( ) )
+				{
+					y1 = boundary_anchor_point_.y ( );
+					y2 = event->scenePos ( ).y ( );
+				}
+				else
+				{
+					y1 = event->scenePos ( ).y ( );
+					y2 = boundary_anchor_point_.y ( );
+				}
+				this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
+				this->boundaryc->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
+			}
+		}
+	}
+
+	update ( );
+}
+
+void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
+{
+
+	if ( mode_ == InteractionMode::EDITING )
+	{
+		QGraphicsScene::mouseReleaseEvent ( event );
+		event->ignore();
+	}
+	else
+	{
+		QPolygonF p = input_sketch_->getSketch();
+
+
+		std::cout << " QPolygon " << std::endl;
+
+		StratigraphyItem *s = new StratigraphyItem(Qt::blue);
+
+		s->setSketch(input_sketch_->getCurve());
+
+		//QGraphicsLineItem * l= new QGraphicsLineItem(0,100,100,100);
+
+		this->addItem( s );
+
+
+		if ( !p.isClosed ( ) )
+		{
+			emit smoothCurve ( p );
+		}
+
+		if ( this->boundary_sketching_ == true )
+		{
+			emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
+																			this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
+
+			this->boundary_sketching_ = false;
+		}
+		else
+		{
+			input_sketch_->clear ( );
+		}
+	}
+
+	update ( );
+}
+
+void SketchSessionTesting::dragEnterEvent ( QGraphicsSceneDragDropEvent * event )
+{
+	if ( event->mimeData ( )->hasText ( ) )
+	{
+		event->acceptProposedAction ( );
+		qDebug ( ) << "Enter";
+	}
+	else
+	{
+		qDebug ( ) << "Not Text";
+	}
+
+	QStringList list = event->mimeData ( )->formats ( );
+
+	QString str;
+	if ( event->mimeData ( )->hasImage ( ) )
+	{
+		qDebug ( ) << "There is an image";
+	}
+
+//	foreach (str, list)
+//	{
+//		qDebug() << "Mine Type "<< str;
+//	}
+	event->accept ( );
+}
+
+void SketchSessionTesting::dragMoveEvent ( QGraphicsSceneDragDropEvent * event )
+{
+	/// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
+	//qDebug() << "Moving";
+}
+
+void SketchSessionTesting::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event )
+{
+	qDebug ( ) << "Leaving";
+}
+/// Then, we invoke acceptProposedAction() on event, setting the drop action to the one proposed.
+/// Lastly, we emit the changed() signal, with the data that was dropped and its MIME type information as a parameter.
+/// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
+///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
+void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
+{
+	const QMimeData *mimeData = event->mimeData ( );
+
+	QString text;
+
+	if ( event->mimeData ( )->hasUrls ( ) )
+	{
+		/// Its a list because I can drag and drop more than one file.
+		/// Since, I assume only one Image begin drag and droping, thus text=url will work;
+		/// @see http://doc.qt.io/qt-5/qurl.html#toLocalFile, I thing it works on Linux and Win32.
+		/// FIXME: I did not know, it was possible to apply more than one predicate for the for looping
+		QList<QUrl> urlList = mimeData->urls ( );
+		for ( int i = 0; i < urlList.size ( ) && i < 32; ++i )
+		{
+			qDebug ( ) << "Url path" << urlList.at ( i ).toLocalFile ( );
+			QString url = urlList.at ( i ).toLocalFile ( );
+			text = url;			// + QString("\n");
+		}
+	}
+
+	QString str = QDir::toNativeSeparators ( text );
+
+	qDebug ( ) << "Before Removing " << str;
+
+	/// @see http://www.qtcentre.org/threads/23100-QUrl-toLocalFile-not-working-as-exspected-under-Windows
+	QPixmap pixmap ( str );
+
+	qDebug ( ) << "After Removing " << str;
+
+	boundary_sketching_ = true;
+
+	emit newSessionSignal ( pixmap );
+
+	//initializationWithImage(pixmap);
+}
+
 
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 {
@@ -169,43 +377,6 @@ void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 
 }
 
-void SketchSessionTesting::removeInputSketch ( )
-{
-
-}
-
-void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
-{
-
-	if ( mode_ == InteractionMode::EDITING )
-	{
-		QGraphicsScene::mousePressEvent ( event );
-	}
-	else
-	{
-		if ( event->buttons ( ) & Qt::LeftButton )
-		{
-			qDebug ( ) << " Item Grabbed " << event->buttonDownScenePos ( Qt::LeftButton );
-
-			last_point_ = event->buttonDownScenePos ( Qt::LeftButton );
-
-			this->boundary_anchor_point_ = last_point_;
-
-			if ( ( this->boundary_sketching_ == false ) )
-			{
-				input_sketch_->create ( event->scenePos ( ) );
-				input_line_.clear ( );
-			}
-			else
-			{
-			}
-
-		}
-	}
-
-	update ( );
-}
-
 void SketchSessionTesting::setEditMode()
 {
 	mode_ = InteractionMode::EDITING;
@@ -215,170 +386,3 @@ void SketchSessionTesting::setSketchMode()
 	mode_ = InteractionMode::SKETCHING;
 }
 
-void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
-{
-
-	if ( mode_ == InteractionMode::EDITING )
-	{
-		QGraphicsScene::mouseMoveEvent ( event );
-	}
-	else
-	{
-		if ( event->buttons ( ) & Qt::LeftButton )
-		{
-			//this->svg->setPos(event->scenePos());
-
-			if ( this->boundary_sketching_ == false )
-			{
-				input_sketch_->add ( event->scenePos ( ) );
-				last_point_ = event->scenePos ( );
-				input_line_.push_back ( event->scenePos ( ) );
-			}
-			else
-			{
-				/// To create a box by any direction
-				qreal x1 = boundary_anchor_point_.x ( );
-				qreal y1 = boundary_anchor_point_.y ( );
-				qreal x2 = event->scenePos ( ).x ( );
-				qreal y2 = event->scenePos ( ).y ( );
-
-				if ( boundary_anchor_point_.x ( ) < event->scenePos ( ).x ( ) )
-				{
-					x1 = boundary_anchor_point_.x ( );
-					x2 = event->scenePos ( ).x ( );
-				}
-				else
-				{
-					x1 = event->scenePos ( ).x ( );
-					x2 = boundary_anchor_point_.x ( );
-				}
-
-				if ( boundary_anchor_point_.y ( ) < event->scenePos ( ).y ( ) )
-				{
-					y1 = boundary_anchor_point_.y ( );
-					y2 = event->scenePos ( ).y ( );
-				}
-				else
-				{
-					y1 = event->scenePos ( ).y ( );
-					y2 = boundary_anchor_point_.y ( );
-				}
-				this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
-				this->boundaryc->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
-			}
-		}
-	}
-
-	update ( );
-}
-
-void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
-{
-
-	if ( mode_ == InteractionMode::EDITING )
-	{
-		QGraphicsScene::mouseReleaseEvent ( event );
-	}
-	else
-	{
-
-		QPolygonF p ( input_line_ );
-
-		if ( !p.isClosed ( ) )
-		{
-			emit smoothCurve ( p );
-		}
-
-		if ( this->boundary_sketching_ == true )
-		{
-			emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
-																			this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
-
-			this->boundary_sketching_ = false;
-		}
-		else
-		{
-			input_sketch_->clear ( );
-		}
-	}
-
-	update ( );
-}
-
-void SketchSessionTesting::dragEnterEvent ( QGraphicsSceneDragDropEvent * event )
-{
-	if ( event->mimeData ( )->hasText ( ) )
-	{
-		event->acceptProposedAction ( );
-		qDebug ( ) << "Enter";
-	}
-	else
-	{
-		qDebug ( ) << "Not Text";
-	}
-
-	QStringList list = event->mimeData ( )->formats ( );
-
-	QString str;
-	if ( event->mimeData ( )->hasImage ( ) )
-	{
-		qDebug ( ) << "There is an image";
-	}
-
-//	foreach (str, list)
-//	{
-//		qDebug() << "Mine Type "<< str;
-//	}
-	event->accept ( );
-}
-
-void SketchSessionTesting::dragMoveEvent ( QGraphicsSceneDragDropEvent * event )
-{
-	/// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
-	//qDebug() << "Moving";
-}
-
-void SketchSessionTesting::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event )
-{
-	qDebug ( ) << "Leaving";
-}
-/// Then, we invoke acceptProposedAction() on event, setting the drop action to the one proposed.
-/// Lastly, we emit the changed() signal, with the data that was dropped and its MIME type information as a parameter.
-/// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
-///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
-void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
-{
-	const QMimeData *mimeData = event->mimeData ( );
-
-	QString text;
-
-	if ( event->mimeData ( )->hasUrls ( ) )
-	{
-		/// Its a list because I can drag and drop more than one file.
-		/// Since, I assume only one Image begin drag and droping, thus text=url will work;
-		/// @see http://doc.qt.io/qt-5/qurl.html#toLocalFile, I thing it works on Linux and Win32.
-		/// FIXME: I did not know, it was possible to apply more than one predicate for the for looping
-		QList<QUrl> urlList = mimeData->urls ( );
-		for ( int i = 0; i < urlList.size ( ) && i < 32; ++i )
-		{
-			qDebug ( ) << "Url path" << urlList.at ( i ).toLocalFile ( );
-			QString url = urlList.at ( i ).toLocalFile ( );
-			text = url;			// + QString("\n");
-		}
-	}
-
-	QString str = QDir::toNativeSeparators ( text );
-
-	qDebug ( ) << "Before Removing " << str;
-
-	/// @see http://www.qtcentre.org/threads/23100-QUrl-toLocalFile-not-working-as-exspected-under-Windows
-	QPixmap pixmap ( str );
-
-	qDebug ( ) << "After Removing " << str;
-
-	boundary_sketching_ = true;
-
-	emit newSessionSignal ( pixmap );
-
-	//initializationWithImage(pixmap);
-}

@@ -14,8 +14,9 @@
 namespace RRM
 {
 	// @brief Represents the geometry of a geological object. The input sketch is assigned to class
-	// As the CGAL::Arrangement_2_with_histoy its keep input curve for
-	// further computation.
+	// As the CGAL::Arrangement_2_with_histoy its keep input curve for further computation.
+
+
 	template< class Real >
 	class StratigraphicCurves
 	{

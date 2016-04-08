@@ -13,13 +13,9 @@
 
 // Sketching Surface
 #include "Model/CrossSection.hpp"
-#include "Model/CrossSectionTesting.hpp"
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
-	#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
-	#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
-#include "Modeller/SketchController.hpp"
 #include "Modeller/Sketching2DModule.h"
 // Simulator Volume
 #include "Simulator/CanvasComputation.h"
@@ -45,6 +41,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
+#include "../Model/CrossSection.hpp"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -97,9 +94,6 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-//        void newSessionSlot(QPixmap pixmap);
-//        void newSessionSlot(qreal x , qreal y, qreal width, qreal height);
-        void update3DExtrusion ( float stepx, float stepz, float lenght  );
 
 	void on_horizontalSlider_curve_valueChanged();
 	void on_horizontalSlider_surface_valueChanged();
@@ -151,7 +145,8 @@ class MainWindow : public QMainWindow
 
 
         // CrossSection ////////////////////////////////////////////////////////////////////
-        RRM::CrossSectionTesting<qreal> cross_section_;
+
+        RRM::CrossSection<qreal>  	cross_section__;
 
         QStatusBar			*status_bar_;
         	QLabel			*status_text;
@@ -164,7 +159,6 @@ class MainWindow : public QMainWindow
 
 	// Sketch Views
 	SketchBoard  		*sketch_board_;
-		SketchSessionTesting   *sketchSession_;
 
 	// SketchController
 	SketchController  	*sketch_controller_;

@@ -9,15 +9,8 @@ void MainWindow::create2DModule ( )
 
 	// XXX Just the Canvas
 	this->sketch_board_ = new SketchBoard ( );
-	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
-	this->sketchSession_ = new SketchSessionTesting ( sketch_board_ );
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The Model
-	// FIXME
 
-	this->sketch_board_->setScene ( sketchSession_ );
-
-	this->sketch_controller_ = new SketchController(&this->cross_section_,this->sketchSession_);
+	this->sketch_controller_ = new SketchController(this->cross_section__);
 
 	//this->setCentralWidget ( sketch_board_ );
 
@@ -27,7 +20,6 @@ void MainWindow::create2DModule ( )
 
 	this->status_bar_ = new QStatusBar ( this );
 	this->status_text = new QLabel ( "Sketch" , this );
-	this->cross_section_.changeRule ( RRM::GeologicRules::Sketch );
 	this->status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
@@ -138,142 +130,14 @@ void MainWindow::create3DModule ( )
 //}
 
 
-void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
-{
-
-	RRM::CrossSection<qreal>::Segment_iterator it;
-	std::vector<std::vector<Eigen::Vector3f> > patches;
-	std::vector<Eigen::Vector3f> temp;
-
-	for ( it = cross_section_.topology_.halfedges_begin ( ); it != cross_section_.topology_.halfedges_end ( ); it++ )
-	{
-
-		if( it->is_boundary )
-		{
-			min_ = Eigen::Vector3f (it->segment.curve.front().x(), it->segment.curve.front().y(),0.0);
-			max_ = Eigen::Vector3f (it->segment.curve.back().x() , it->segment.curve.back().y(),lenght);
-		}
-
-		else if ( it->is_visible )
-		{
-			temp.clear ( );
-			temp.resize ( it->segment.curve.size ( ) );
-
-			for ( std::size_t point = 0; point < it->segment.curve.size ( ); point++ )
-			{
-				if ( it->is_boundary)
-				{
-					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 1.0f );
-				}else
-				{
-					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 0.0f );
-				}
-			}
-
-			patches.push_back ( temp );
-		}
-	}
-
-	std::cout << "Update Extrusion";
-
-	std::vector<Eigen::Vector3f> points = { min_ , max_};
-
-	Celer::BoundingBox3<float> box;
-
-	box.fromPointCloud(points.begin(),points.end());
-
-	glWidget->createCube(box);
-						   // Curve  //Volume    Step Volume
-	glWidget->createSurfacePatchies ( patches , stepx    , stepz   , lenght , box.center(), box.diagonal() );
-}
-
-
 void MainWindow::keyPressEvent ( QKeyEvent *event )
 {
-	event->accept ( );
-
-
-	if ( event->key ( ) == Qt::Key_F1 )
-	{
-		this->sketchSession_->image->setVisible(false);
-	}
-
-	if ( event->key ( ) == Qt::Key_F2 )
-	{
-		this->sketchSession_->image->setVisible(true);
-	}
-
-	if ( event->key ( ) == Qt::Key_Up )
-	{
-		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
-		status_text->setText ( "Remove Above Intersection" );
-
-	}
-	else if ( event->key ( ) == Qt::Key_Down )
-	{
-		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
-		status_text->setText ( "Remove Below Intersection" );
-
-	}
-	else
-	{
-		cross_section_.changeRule ( RRM::GeologicRules::Sketch );
-		status_text->setText ( "Sketch" );
-	}
-
-	if ( event->key ( ) == Qt::Key_Q )
-	{
-		update3DExtrusion ( (float)horizontalSlider_curve->value(),(float)horizontalSlider_surface->value(), (float)horizontalSlider_extrusion->value() );
-	}
-
-	if ( event->key ( ) == Qt::Key_P )
-	{
-
-		QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
-		image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
-
-		this->sketchSession_->image->setVisible ( false );
-
-		QPainter painter ( &image );
-		this->sketchSession_->render ( &painter );
-		image.save ( "CrossSection.png" );
-
-		this->sketchSession_->image->setVisible ( true );
-
-//		QString fileName = "RESULT_IMAGE.png";
-//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
-//		pixMap.save ( fileName );
-	}
-
-	if ( event->key ( ) == Qt::Key_Space )
-	{
-		cross_section_.clear ( );
-	}
-
-	if ( event->key ( ) == Qt::Key_Escape)
-	{
-			sketchSession_->clearSelection();
-	}
-
+	event->ignore();
 }
 
 void MainWindow::mousePressEvent ( QMouseEvent* event )
 {
-
-	if ( event->buttons ( ) & Qt::MiddleButton )
-	{
-		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
-		status_text->setText ( "Remove Below Intersection" );
-	}
-
-	if ( event->buttons ( ) & Qt::RightButton )
-	{
-		cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
-		status_text->setText ( "Remove Above Intersection" );
-	}
-
-	event->accept();
-
+	event->ignore();
 }
 
 void MainWindow::on_horizontalSlider_curve_valueChanged()

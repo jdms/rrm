@@ -1,19 +1,15 @@
-/*
- * StratigraphyController.cpp
- *
- *  Created on: Apr 6, 2016
- *      Author: felipe
- */
-
 #include "StratigraphyItem.hpp"
 
-StratigraphyItem::StratigraphyItem ( QColor color ) :QGraphicsPathItem ( )
+StratigraphyItem::StratigraphyItem ( QColor color ) : QGraphicsPathItem ( )
 {
+	this->prepareGeometryChange ( );
+
 	curve = QPainterPath ( );
 
 	pen_color = color;
 
-	setFlag ( QGraphicsItem::ItemIsSelectable,true );
+	setFlag ( QGraphicsItem::ItemIsSelectable );
+	setFlag ( QGraphicsItem::ItemIsMovable );
 
 	setAcceptTouchEvents ( true );
 
@@ -24,29 +20,15 @@ StratigraphyItem::~StratigraphyItem ( )
 
 }
 
-QPainterPath StratigraphyItem::shape ( ) const
-{
-	QPainterPath p;
-	p.addRect(curve.boundingRect());
-	return p;
-}
-
-QRectF StratigraphyItem::boundingRect ( ) const
-{
-
-	return this->shape().boundingRect();
-
-}
-
 void StratigraphyItem::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
 	painter->setRenderHint ( QPainter::Antialiasing );
 
-	pen_color.setWidth ( 3 );
+	pen_color.setWidth ( 2 );
 
-	if ( this->isSelected ( ) )
+	if ( isSelected ( ) )
 	{
-		painter->setPen ( Qt::black );
+		painter->setPen ( Qt::green );
 	}
 	else
 	{
@@ -54,28 +36,43 @@ void StratigraphyItem::paint ( QPainter *painter , const QStyleOptionGraphicsIte
 	}
 
 	painter->setBrush ( Qt::NoBrush );
+	painter->drawPath ( curve );
 
-	painter->drawRect(curve.boundingRect ( ));
 }
 
-QPainterPath StratigraphyItem::getSketch ( )
+QRectF StratigraphyItem::boundingRect ( ) const
+{
+
+	return curve.boundingRect ( );
+
+}
+
+void  StratigraphyItem::clear ( )
+{
+	this->prepareGeometryChange ( );
+	curve = QPainterPath ( );
+
+}
+
+QPainterPath StratigraphyItem::getSketch ( ) const
 {
 	return curve;
 }
 
 /// Changed from original code
-void StratigraphyItem::setSketch ( const QPainterPath& p )
+void StratigraphyItem::setSketch ( const QPainterPath & _path )
 {
 	this->prepareGeometryChange ( );
-	curve = p;
+
+	curve = QPainterPath(_path);
+}
+
+QPainterPath StratigraphyItem::shape ( ) const
+{
+	return curve;
 }
 
 void StratigraphyItem::setPen ( const QPen& pen )
 {
 	pen_color = pen;
-}
-
-void StratigraphyItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-
 }

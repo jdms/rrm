@@ -1,6 +1,7 @@
 #ifndef INPUTSKETCH_H
 #define INPUTSKETCH_H
 
+#include <QtCore/QVector>
 #include <QPainter>
 #include <QGraphicsPathItem>
 #include <iostream>
@@ -23,11 +24,13 @@ class InputSketch : public QGraphicsPathItem
 
         void create( const QPointF& p );
         void add( const QPointF& p );
-        QRectF clear();
+        void clear();
 
 
-        QPainterPath getSketch();
-        void setSketch( const QPainterPath& p);
+        void setSketch(  const QVector<QPointF> & _path);
+        void setSketch(  const QPolygonF & _path);
+        QPolygonF    getSketch( ) const;
+        QPainterPath getCurve( ) const;
         void setDone( bool option );
 
         bool isVisible() const;
@@ -44,6 +47,8 @@ class InputSketch : public QGraphicsPathItem
         QPen pen_color;
 
         QPainterPath curve;
+        QPolygonF input_line_;
+
         bool done;
         bool is_visible;
         bool is_inside;
