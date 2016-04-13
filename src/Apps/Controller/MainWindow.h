@@ -163,11 +163,6 @@ class MainWindow : public QMainWindow
 	// SketchController
 	SketchController  	*sketch_controller_;
 
-	typedef RRM::CrossSection<qreal>                   CrossSection;
-	typedef CrossSection::Curve2D			   Curve2D;
-
-
-
 	    QGroupBox *groupBox;
 	    QFormLayout *formLayout;
 	    QSlider *horizontalSlider_curve;

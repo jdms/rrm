@@ -24,7 +24,7 @@ class SketchBoard : public QGraphicsView
 	Q_OBJECT
 
 public:
-	SketchBoard( QWidget *parent = 0 );
+	SketchBoard( RRM::CrossSection<qreal>& _cross_section,QWidget *parent = 0 );
 	virtual ~SketchBoard();
 
 
@@ -36,7 +36,7 @@ private:
 	int scale_out_;
 
 	SketchSessionTesting   *sketchSession_;
-
+	SketchController       *sketch_controller;
 };
 
 #endif /* _SURFACE_HPP_ */

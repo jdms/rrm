@@ -78,9 +78,11 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
 		void newSessionSignal ( qreal x , qreal y , qreal width , qreal height );
 		// Notify the model and provides a new sketch line
-		void newSketchLine ( QPolygonF polygon );
+		void newSketchCurve ( QPolygonF _sketch );
 		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
+		// Update the view with the new Cross Section configuration
+		void updateSBIM(std::map<unsigned int, QPolygonF> curves_);
 
 	private:
 		// Map between the sketch curves with the curve into the arrangement

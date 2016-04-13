@@ -2,8 +2,7 @@
 
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 
-SketchBoard::SketchBoard ( QWidget *parent ) :
-																QGraphicsView ( parent )
+SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *parent ) :	QGraphicsView ( parent )
 {
 
 // The following is just according to local coordinates centred at (0,0)
@@ -42,6 +41,10 @@ SketchBoard::SketchBoard ( QWidget *parent ) :
 
 	this->setScene ( sketchSession_ );
 
+	this->sketch_controller = new SketchController(_cross_section);
+
+	// Notify the controller the Sketch curve
+	connect ( this->sketchSession_ , SIGNAL( newSketchCurve(QPolygonF) ) , this->sketch_controller , SLOT( insertCurve(QPolygonF) ) );
 }
 
 SketchBoard::~SketchBoard ( )

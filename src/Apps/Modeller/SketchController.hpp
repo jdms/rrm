@@ -41,7 +41,7 @@ class SketchController : public QObject
 
 		//void smoothCurve ( QPolygonF raw_sketch_line );
 
-        	void insertCurve ( QPolygonF _raw_sketch_line );
+        	void insertCurve ( QPolygonF _raw_sketch_curve );
 
 		// By using a background image
         	void newSession(QPixmap pixmap);
@@ -52,6 +52,8 @@ class SketchController : public QObject
         	{
 //        		this->sketch_view_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
         	}
+        signals:
+		void updateSBIM(std::map<unsigned int, QPolygonF> curves_);
 
 	private:
         	// The Model

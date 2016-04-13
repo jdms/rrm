@@ -8,9 +8,7 @@ void MainWindow::create2DModule ( )
 	addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
 
 	// XXX Just the Canvas
-	this->sketch_board_ = new SketchBoard ( );
-
-	this->sketch_controller_ = new SketchController(this->cross_section__);
+	this->sketch_board_ = new SketchBoard ( cross_section__ );
 
 	//this->setCentralWidget ( sketch_board_ );
 

@@ -106,7 +106,6 @@ void MainWindow::createMainWindowActions ( )
 	aboutRRM = new AboutWidget( this );
 	connect(ac_about, SIGNAL(triggered()), aboutRRM, SLOT(show()));
 
-	connect ( ac_new , SIGNAL( triggered() ) , this->sketch_controller_ , SLOT( newSection() ) );
 	connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
 
 }

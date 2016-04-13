@@ -154,23 +154,11 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 	}
 	else
 	{
-		QPolygonF p = input_sketch_->getSketch();
+		QPolygonF new_curve = input_sketch_->getSketch();
 
-
-		std::cout << " QPolygon " << std::endl;
-
-		StratigraphyItem *s = new StratigraphyItem(Qt::blue);
-
-		s->setSketch(input_sketch_->getCurve());
-
-		//QGraphicsLineItem * l= new QGraphicsLineItem(0,100,100,100);
-
-		this->addItem( s );
-
-
-		if ( !p.isClosed ( ) )
+		if ( !new_curve.isClosed ( ) )
 		{
-			emit smoothCurve ( p );
+			emit newSketchCurve(new_curve);
 		}
 
 		if ( this->boundary_sketching_ == true )
