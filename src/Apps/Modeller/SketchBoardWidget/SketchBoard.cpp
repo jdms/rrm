@@ -44,7 +44,11 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 	this->sketch_controller = new SketchController(_cross_section);
 
 	// Notify the controller the Sketch curve
-	connect ( this->sketchSession_ , SIGNAL( newSketchCurve(QPolygonF) ) , this->sketch_controller , SLOT( insertCurve(QPolygonF) ) );
+	connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF) ) ,
+		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF) ) );
+
+	connect ( this->sketch_controller , SIGNAL( updateSBIM(std::map<unsigned int, QPolygonF> ) ) ,
+		  this->sketchSession_    , SLOT  ( updateSBIM(std::map<unsigned int, QPolygonF> ) ) );
 }
 
 SketchBoard::~SketchBoard ( )
@@ -71,14 +75,12 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
 			//status_text->setText ( "Remove Above Intersection" );
 			this->sketchSession_->setSketchMode();
-
 		}
 		else if ( event->key ( ) == Qt::Key_Down )
 		{
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
 			//status_text->setText ( "Remove Below Intersection" );
 			this->sketchSession_->setEditMode();
-
 		}
 		else
 		{

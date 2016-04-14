@@ -52,9 +52,13 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 SketchSessionTesting::~SketchSessionTesting ( )
 {
-
+	 for( auto& curves_iterator: this->view_curves_)
+	 {
+	        delete	curves_iterator.second;
+	 }
 }
 
+// View/Qt5 related functions
 void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 {
 
@@ -172,6 +176,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 		{
 			input_sketch_->clear ( );
 		}
+
 	}
 
 	update ( );
@@ -255,6 +260,17 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	//initializationWithImage(pixmap);
 }
 
+void SketchSessionTesting::clear()
+{
+	 // clear the map of curves
+	 // \todo clear all attributes
+	 for( auto& curve_iterator: this->view_curves_)
+	 {
+	        delete	curve_iterator.second;
+	 }
+
+	 this->view_curves_.clear();
+}
 
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 {
@@ -345,7 +361,7 @@ void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 
 	this->addItem(curve);
 
-	curves_[_id] = curve;
+	view_curves_[_id] = curve;
 
 	this->update();
 
@@ -369,8 +385,39 @@ void SketchSessionTesting::setEditMode()
 {
 	mode_ = InteractionMode::EDITING;
 }
+
 void SketchSessionTesting::setSketchMode()
 {
 	mode_ = InteractionMode::SKETCHING;
 }
 
+void SketchSessionTesting::updateSBIM(std::map<unsigned int, QPolygonF> _polycurves)
+{
+
+	for ( auto& polycurve_iterator : _polycurves )
+	{
+		// todo if the curve exist, update it only it have changed
+		if ( this->view_curves_.count(polycurve_iterator.first) )
+		{
+			std::cout << "The curve exist " <<  polycurve_iterator.first << std::endl;
+
+			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second);
+
+		}
+		// todo, create an appropriate QGraphicsItem from the new curve ( which geoObject it represent)
+		else
+		{
+			std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
+
+			StratigraphyItem * new_view_curve = new StratigraphyItem(Qt::black);
+			this->addItem(new_view_curve);
+
+			new_view_curve->setSketch(polycurve_iterator.second);
+			view_curves_[polycurve_iterator.first] = new_view_curve;
+		}
+
+		std::cout << " Size " << polycurve_iterator.second.size() << std::endl;
+	}
+
+	update();
+}

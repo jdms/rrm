@@ -3,7 +3,10 @@
 #ifndef _SKETCHSESSIONTESTING_HPP_
 #define _SKETCHSESSIONTESTING_HPP_
 
+
+// Standard C++11
 #include <iostream>
+#include <map>
 
 #include <QtCore/QDebug>
 
@@ -71,8 +74,11 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void setEditMode();
 		void setSketchMode();
-	signals:
+		void clear();
+		// Update the view with the new Cross Section configuration
+		void updateSBIM(std::map<unsigned int, QPolygonF> _polycurves);
 
+	signals:
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( QPixmap pixmap );
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
@@ -81,12 +87,10 @@ class SketchSessionTesting: public QGraphicsScene
 		void newSketchCurve ( QPolygonF _sketch );
 		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
-		// Update the view with the new Cross Section configuration
-		void updateSBIM(std::map<unsigned int, QPolygonF> curves_);
 
 	private:
 		// Map between the sketch curves with the curve into the arrangement
-		std::map<unsigned int, QGraphicsPathItem*> curves_;
+		std::map<unsigned int, StratigraphyItem*> view_curves_;
 
 		QPointF last_point_;
 

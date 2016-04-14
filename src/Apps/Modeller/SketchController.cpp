@@ -40,16 +40,46 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 
 	cross_section_.log();
 
+	std::map<unsigned int, QPolygonF> view_curves_;
+
+	QPolygonF view_curve;
+
+	for ( auto& curves_iterator: cross_section_.edges_ )
+	{
+		view_curve = this->convertCurves(curves_iterator.second.segment.curve);
+
+		view_curves_[curves_iterator.first] = view_curve;
+	}
+
+	emit updateSBIM(view_curves_);
+
 }
 
 QPolygonF SketchController::convertCurves ( Curve2D& _curve )
 {
-	return QPolygonF();
+	QPolygonF polygonal_curve;
+
+	polygonal_curve.resize(_curve.size());
+
+	for (std::size_t it = 0; it < _curve.size(); it++)
+	{
+		polygonal_curve[it] = QPointF(_curve[it].x(),_curve[it].y());
+	}
+
+	return polygonal_curve;
 }
 
 SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 {
-	return Curve2D();
+	Curve2D polygonal_curve;
+
+	for (std::size_t it = 0; it < _polygon.size(); it++)
+	{
+		// \fixme curvendemisional doenst have a clear interface over the its polyline ...
+		polygonal_curve.push_back( SketchController::Point2D(_polygon[it].x(),_polygon[it].y()) );
+	}
+
+	return polygonal_curve;
 }
 
 SketchController::~SketchController ( )

@@ -29,6 +29,7 @@ class SketchController : public QObject
 
 		typedef RRM::CrossSection<qreal>	     CrossSection;
 		typedef CrossSection::Curve2D		     Curve2D;
+		typedef CrossSection::Point2D		     Point2D;
 
 		SketchController ( RRM::CrossSection<qreal>& _cross_section, QObject *parent = nullptr);
 

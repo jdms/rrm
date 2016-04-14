@@ -28,6 +28,7 @@ namespace RRM
 			typedef CrossSection<Real>		Self;
 			typedef	StratigraphicSegment<Real>	Segment;
 			typedef typename Segment::Curve2D	Curve2D;
+			typedef typename Segment::Point2D	Point2D;
 
 			CrossSection ( )
 			{

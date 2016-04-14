@@ -30,7 +30,8 @@ class StratigraphyItem : public QGraphicsPathItem
 		QRectF boundingRect ( ) const;
 
 		QPainterPath getSketch ( ) const;
-		void setSketch ( const QPainterPath& path );
+		void setSketch ( const QPainterPath& _path );
+		void setSketch ( const QPolygonF&    _path );
 
 		void clear();
 
@@ -46,3 +47,4 @@ class StratigraphyItem : public QGraphicsPathItem
 };
 
 #endif /* _VIEW_STATIGRAPHYItem_HPP_ */
+

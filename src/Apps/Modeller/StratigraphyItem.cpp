@@ -67,6 +67,16 @@ void StratigraphyItem::setSketch ( const QPainterPath & _path )
 	curve = QPainterPath(_path);
 }
 
+/// Changed from original code
+void StratigraphyItem::setSketch ( const QPolygonF & _path )
+{
+	this->prepareGeometryChange ( );
+
+	curve = QPainterPath();
+
+	curve.addPolygon(_path);
+}
+
 QPainterPath StratigraphyItem::shape ( ) const
 {
 	return curve;
