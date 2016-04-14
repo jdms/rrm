@@ -27,6 +27,11 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
 
+
+	seismic_view_ = new RRM::SeismicView(this);
+
+	seismic_view_->show();
+
 }
 
 MainWindow::~MainWindow ( )

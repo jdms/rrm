@@ -10,15 +10,39 @@
 namespace RRM
 {
 
-	SeismicView::SeismicView ( )
+	SeismicView::SeismicView ( QWidget* parent ) : QGraphicsView(parent)
 	{
-		// TODO Auto-generated constructor stub
+		this->setRenderHint ( QPainter::Antialiasing , true );
+		this->setOptimizationFlags ( QGraphicsView::DontSavePainterState );
+		this->setViewportUpdateMode ( QGraphicsView::SmartViewportUpdate );
+		this->setTransformationAnchor ( QGraphicsView::AnchorUnderMouse );
+		this->setFocusPolicy ( Qt::StrongFocus );
+		this->setInteractive ( true );
+		this->setBackgroundRole ( QPalette::Base );
+		this->setAutoFillBackground ( true );
 
+		this->setViewportUpdateMode ( QGraphicsView::FullViewportUpdate );
+		this->viewport ( )->grabGesture ( Qt::PinchGesture );
+		this->viewport ( )->grabGesture ( Qt::SwipeGesture );
+
+		ui = new Ui::SeismicViewerWidget();
+		ui->setupUi ( this );
 	}
 
 	SeismicView::~SeismicView ( )
 	{
-		// TODO Auto-generated destructor stub
+
 	}
 
+	void SeismicView::wheelEvent ( QWheelEvent* event )
+	{
+	}
+
+	void SeismicView::keyPressEvent ( QKeyEvent* event )
+	{
+	}
+
+
 } /* namespace RRM */
+
+

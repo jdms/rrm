@@ -20,6 +20,8 @@ set( CONTROLLER_MOC_HEADERS Controller/MainWindow.h
 							Controller/About/AboutWidget.hpp
   
    )
+   
+set ( CONTROLLER_UI_SOURCES  Controller/About/AboutWidget.ui )  
 
 set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
@@ -27,6 +29,34 @@ set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainModeller.cpp
                         Controller/MainFlow.cpp
    )
+
+## todo , SBIM will be a huge module with all possible scenarios of sketch, 
+## aka: black screen, seismic, point cloud ...
+
+## Grab SBIM Sources Files
+set ( SBIM_HEADERS SBIM/SeismicSlice.hpp
+                   SBIM/SeismicVolume.hpp
+                   SBIM/SketchSeismic.hpp
+                   SBIM/SBIMSeismicController.hpp 
+                   # View
+                   SBIM/View/SeismicView.hpp
+                   SBIM/View/SeismicWindow.hpp
+                   )
+                   
+                   
+set ( SBIM_MOC_HEADERS  SBIM/View/SeismicView.hpp
+                        SBIM/View/SeismicWindow.hpp
+                        )
+                        
+set ( SBIM_UI_SOURCES  SBIM/View/SeismicView.ui)                       
+
+set ( SBIM_SOURCES SBIM/SeismicSlice.cpp
+                   SBIM/SeismicVolume.cpp
+                   SBIM/SketchSeismic.cpp 
+                   SBIM/SBIMSeismicController.cpp
+                   # View
+                   SBIM/View/SeismicView.cpp
+                   SBIM/View/SeismicWindow.cpp )
 
 ## Grab Modeller Source Files
 set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
@@ -118,10 +148,10 @@ set( SIMULATOR_SOURCES
 
 
 ## Q_OBJECT files
-set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
+set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
-set( UI_SOURCES Controller/About/AboutWidget.ui )
+set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES} )
 ## Resources
 set(RCC_SOURCES Controller/Resources/images.qrc)
 
@@ -134,7 +164,11 @@ IF(WIN32) # Check if we are on Windows
     if(MSVC) # Check if we are using the Visual Studio compiler
         add_definitions(/arch:SSE2)
         message(STATUS "- MSVC: Enabled SSE2 support")
-        add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS} ${MODELLER_SOURCES} ${MODELLER_HEADERS} ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
+        add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
+                                       ${SBIM_SOURCES} ${SBIM_HEADERS}      
+                                       ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
+                                       ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
+                                       ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
 		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Svg RRMGeometry ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
 		# /SUBSYSTEM:CONSOLE DEBUG VERSION
 		# /SUBSYSTEM:WINDOWN RELEASE VERSION
@@ -149,7 +183,11 @@ ELSEIF(UNIX)
     # Nothing special required for Linux
     message(STATUS "Build on Linux")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS} ${MODELLER_SOURCES} ${MODELLER_HEADERS} ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})	
+        add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
+                                       ${SBIM_SOURCES} ${SBIM_HEADERS}      
+                                       ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
+                                       ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
+                                       ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})	
     target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg RRMGeometry  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 ELSE() # Not Windows or Unix
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")

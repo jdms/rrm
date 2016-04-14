@@ -8,14 +8,29 @@
 #ifndef _SBIM_SEISMICVIEW_HPP_
 #define _SBIM_SEISMICVIEW_HPP_
 
+
+#include <QtWidgets/QGraphicsView>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QKeyEvent>
+
+#include "ui_SeismicView.h"
+
 namespace RRM
 {
 
-	class SeismicView
+	class SeismicView : public QGraphicsView
 	{
 		public:
-			SeismicView ( );
-			virtual ~SeismicView ( );
+			SeismicView ( QWidget* parent = 0);
+			~SeismicView ( );
+
+			void wheelEvent ( QWheelEvent *event );
+			void keyPressEvent ( QKeyEvent *event );
+		private:
+
+			Ui::SeismicViewerWidget * ui;
+
+
 	};
 
 } /* namespace RRM */

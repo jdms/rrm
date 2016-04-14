@@ -17,6 +17,8 @@
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 #include "Modeller/Sketching2DModule.h"
+
+#include "SBIM/View/SeismicView.hpp"
 // Simulator Volume
 #include "Simulator/CanvasComputation.h"
 #include "Simulator/FlowComputationModule.h"
@@ -171,6 +173,8 @@ class MainWindow : public QMainWindow
 	    QLabel *label;
 	    QLabel *label_2;
 	    QLabel *label_3;
+
+	RRM::SeismicView * seismic_view_;
 };
 
 #endif // MAINWINDOW_H
