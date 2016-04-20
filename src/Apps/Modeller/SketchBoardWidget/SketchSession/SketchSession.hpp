@@ -10,8 +10,6 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtWidgets/QGraphicsItem>
-#include <QtSvg/QGraphicsSvgItem>
-#include <QtSvg/QSvgRenderer>
 
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -46,7 +44,6 @@ public:
 	void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
 	void dropEvent 		( QGraphicsSceneDragDropEvent *event );
 
-	QGraphicsSvgItem *svg;
 	/// FIXME Helper object, used to remove the RAW SKETCH LINE
 	QGraphicsItemGroup *input_line_group;
 
@@ -98,8 +95,6 @@ private:
 	/// std::vector<QPointF> input_sketching_;
 	QPen 	sketch_pen;
 	QBrush 	sketch_brush;
-
-	QGraphicsSvgItem *data_svg;
 
 	// Clarissa Interface
 	BoundaryItem *boundaryc;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeismicViewerWidget</class>
- <widget class="QWidget" name="SeismicViewerWidget">
+ <class>SeismicWindowWidget</class>
+ <widget class="QWidget" name="SeismicWindowWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -16,6 +16,12 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>980</width>
+    <height>568</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -24,94 +30,43 @@
     <enum>QLayout::SetMinimumSize</enum>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox_Slices">
+    <widget class="QGroupBox" name="groupBox_Slice_Image_Preview">
      <property name="title">
-      <string>Selected Slices</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <string>Sketch Slices</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QToolButton" name="toolButton">
-        <property name="text">
-         <string>1</string>
+       <widget class="QScrollArea" name="scrollArea_Slice_Image_Preview">
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
-        <property name="checkable">
+        <property name="widgetResizable">
          <bool>true</bool>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_2">
-        <property name="text">
-         <string>2</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-        <property name="arrowType">
-         <enum>Qt::NoArrow</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_3">
-        <property name="text">
-         <string>3</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_4">
-        <property name="text">
-         <string>4</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_5">
-        <property name="text">
-         <string>5</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_6">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_7">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_8">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_9">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_10">
-        <property name="text">
-         <string>...</string>
-        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>722</width>
+           <height>88</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="layout_slice_image_preview_">
+          <item>
+           <widget class="QListWidget" name="listWidget"/>
+          </item>
+          <item>
+           <widget class="QFontComboBox" name="fontComboBox"/>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_2"/>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox"/>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -188,7 +143,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="title">
-        <string>Image Slices</string>
+        <string>Siesmic Images</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -196,11 +151,14 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QSlider" name="verticalSlider_seismic_slices_">
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>10</number>
           </property>
           <property name="tracking">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -209,7 +167,17 @@
            <bool>false</bool>
           </property>
           <property name="tickPosition">
-           <enum>QSlider::TicksBothSides</enum>
+           <enum>QSlider::TicksAbove</enum>
+          </property>
+          <property name="tickInterval">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_AddSlice">
+          <property name="text">
+           <string>Add Slice</string>
           </property>
          </widget>
         </item>

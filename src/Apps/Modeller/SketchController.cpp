@@ -23,6 +23,23 @@ SketchController::SketchController ( RRM::CrossSection<qreal>&   _cross_section,
 	// Sketching
 }
 
+
+SketchController::~SketchController ( )
+{
+	// TODO Auto-generated destructor stub
+}
+
+
+void SketchController::initialize ( const CrossSection& _cross_section )
+{
+
+}
+
+void SketchController::clear ( )
+{
+	this->cross_section_.clear();
+}
+
 void SketchController::newSession ( qreal x , qreal y , qreal width , qreal height )
 {
 //	this->cross_section_->initialization ( x , y , width , height ); // THE MODEL
@@ -420,10 +437,5 @@ SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 	}
 
 	return polygonal_curve;
-}
-
-SketchController::~SketchController ( )
-{
-	// TODO Auto-generated destructor stub
 }
 

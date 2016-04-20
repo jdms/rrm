@@ -262,8 +262,8 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 
 void SketchSessionTesting::clear()
 {
-	 // clear the map of curves
-	 // \todo clear all attributes
+	 /// clear the map of curves
+	 /// @todo clear all attributes
 	 for( auto& curve_iterator: this->view_curves_)
 	 {
 	        delete	curve_iterator.second;

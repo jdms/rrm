@@ -10,15 +10,19 @@
 namespace RRM
 {
 
-	SBIMSeismicController::SBIMSeismicController ( )
+	SBIMSeismicController::SBIMSeismicController ( QObject*  parent) : QObject(parent)
 	{
-		// TODO Auto-generated constructor stub
 
 	}
 
 	SBIMSeismicController::~SBIMSeismicController ( )
 	{
-		// TODO Auto-generated destructor stub
+
+	}
+
+	bool SBIMSeismicController::addSeismicSlice( unsigned int _seismic_slice_index )
+	{
+		return this->sketch_seismic_module_.addSeismicSlice(_seismic_slice_index);
 	}
 
 } /* namespace RRM */

@@ -10,15 +10,28 @@
 namespace RRM
 {
 
-	SketchSeismicModule::SketchSeismicModule ( )
+	SketchSeismicModule::SketchSeismicModule ()
 	{
-		// TODO Auto-generated constructor stub
-
+		this->current_slice_ = 0;
 	}
 
 	SketchSeismicModule::~SketchSeismicModule ( )
 	{
-		// TODO Auto-generated destructor stub
+
+	}
+
+	bool SketchSeismicModule::addSeismicSlice ( unsigned int _seismic_slice_index )
+	{
+		/// The slice already exist
+		if ( this->seismic_slices_.count( _seismic_slice_index ))
+		{
+			return false;
+		}
+		/// Add new CrossSection
+		else
+		{
+			this->seismic_slices_[_seismic_slice_index] = RRM::SeismicSlice<qreal>();
+		}
 	}
 
 } /* namespace RRM */

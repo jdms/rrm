@@ -8,7 +8,7 @@
 #ifndef _SBIM_SKETCHSEISMICMODULE_HPP_
 #define _SBIM_SKETCHSEISMICMODULE_HPP_
 
-#include <vector>
+#include <map>
 
 #include <QtCore/QtGlobal>
 
@@ -16,14 +16,26 @@
 
 namespace RRM
 {
-
+	/**
+	 * \brief SketchSiesmic manager.
+	 */
 	class SketchSeismicModule
 	{
 		public:
 			SketchSeismicModule ( );
-		       ~SketchSeismicModule ( );
+			~SketchSeismicModule ( );
+
+			bool setCurrentSlice ( unsigned int _index );
+
+			unsigned int currentSlice ( ) const;
+
+			bool addSeismicSlice ( unsigned int _seismic_slice );
+
+			unsigned int numberOfSeismicSlices ( ) const;
+
 		public:
-		      std::vector<SeismicSlice<qreal>> seismic_slices_;
+			unsigned int current_slice_;
+			std::map<unsigned int, RRM::SeismicSlice<qreal> > seismic_slices_;
 	};
 
 } /* namespace RRM */

@@ -13,10 +13,8 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QPixmap>
 
-#include "Model/CrossSection.hpp"
 // Model CrossSection
-#include "Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp"
-#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
+#include "Model/CrossSection.hpp"
 
 #include "StratigraphyItem.hpp"
 
@@ -33,18 +31,20 @@ class SketchController : public QObject
 
 		SketchController ( RRM::CrossSection<qreal>& _cross_section, QObject *parent = nullptr);
 
+		~SketchController ( );
+
+		void initialize ( const CrossSection& _cross_section );
+		void clear ( );
+
+
 	        QPolygonF convertCurves ( Curve2D& _curve );
 	        Curve2D   convertCurves ( QPolygonF _polygon );
-
-	        virtual ~SketchController ( );
 
 	        void crossSection_1 (RRM::CrossSection<double>& _cross_section, double scale = 100);
 	        void crossSection_2 (RRM::CrossSection<double>& _cross_section, double scale = 100);
 	        void crossSection_3 (RRM::CrossSection<double>& _cross_section, double scale = 100);
 
 	public slots:
-
-		//void smoothCurve ( QPolygonF raw_sketch_line );
 
         	void insertCurve ( QPolygonF _raw_sketch_curve );
 

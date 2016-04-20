@@ -9,18 +9,40 @@
 #define _SBIM_SBIMSEISMICCONTROLLER_HPP_
 
 
+#include <QtCore/QObject>
+
+#include "SBIM/SketchSeismicModule.hpp"
 
 namespace RRM
 {
 
-	class SBIMSeismicController
+	/**
+	 * \brief Controller to SBIM Seismic Module
+	 */
+
+	class SBIMSeismicController : public QObject
 	{
+		Q_OBJECT
+
 		public:
-			SBIMSeismicController ( );
+			SBIMSeismicController ( QObject *parent = nullptr );
 			~SBIMSeismicController ( );
 
-			// new cross Section
-			void addSliceSeismic();
+			/// new cross Section
+			bool setCurrentSeismicSlice( unsigned int _current);
+
+			/// It asks SketchModule to interpolate the curves
+			/// @return false if it fail
+			bool interpolateSketchies( );
+
+			bool addSeismicSlice( unsigned int _seismic_slice_index );
+			bool removeSeismicSlice( );
+			bool replaceSeismicSlice( );
+		public:
+
+			SketchSeismicModule sketch_seismic_module_;
+
+
 	};
 
 } /* namespace RRM */

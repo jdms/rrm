@@ -8,20 +8,6 @@
  * @brief RRM's Main GUI.
  */
 
-// About
-#include "Controller/About/AboutWidget.hpp"
-
-// Sketching Surface
-#include "Model/CrossSection.hpp"
-
-#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
-#include "Modeller/SketchBoardWidget/SketchBoard.hpp"
-#include "Modeller/Sketching2DModule.h"
-
-#include "SBIM/View/SeismicView.hpp"
-// Simulator Volume
-#include "Simulator/CanvasComputation.h"
-#include "Simulator/FlowComputationModule.h"
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QDockWidget>
@@ -43,7 +29,20 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
-#include "../Model/CrossSection.hpp"
+
+// About
+#include "Controller/About/AboutWidget.hpp"
+// Sketching Surface
+#include "Model/CrossSection.hpp"
+
+#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
+#include "Modeller/SketchBoardWidget/SketchBoard.hpp"
+#include "Modeller/Sketching2DModule.h"
+
+#include "SBIM/View/SeismicWindow.hpp"
+// Simulator Volume
+#include "Simulator/CanvasComputation.h"
+#include "Simulator/FlowComputationModule.h"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -174,7 +173,7 @@ class MainWindow : public QMainWindow
 	    QLabel *label_2;
 	    QLabel *label_3;
 
-	RRM::SeismicView * seismic_view_;
+	RRM::SeismicWindow * seismic_view_;
 };
 
 #endif // MAINWINDOW_H

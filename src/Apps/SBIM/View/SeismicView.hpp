@@ -13,15 +13,16 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsItem>
 
+#include <QtWidgets/QLabel>
+
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
-#include "ui_SeismicView.h"
 
 namespace RRM
 {
 
-	class SeismicView : public QWidget
+	class SeismicView : public QGraphicsView
 	{
 		Q_OBJECT
 
@@ -29,17 +30,8 @@ namespace RRM
 			SeismicView ( QWidget* parent = 0);
 			~SeismicView ( );
 
-			void wheelEvent ( QWheelEvent *event );
-			void keyPressEvent ( QKeyEvent *event );
-			void fitInView ( );
 		public:
-
-			Ui::SeismicViewerWidget * ui;
-
-			QGraphicsView  *image_viewer;
-
-			QGraphicsScene * scene;
-
+			QGraphicsScene* scene_;
 
 	};
 

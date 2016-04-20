@@ -46,9 +46,10 @@ set ( SBIM_HEADERS SBIM/SeismicSlice.hpp
                    
 set ( SBIM_MOC_HEADERS  SBIM/View/SeismicView.hpp
                         SBIM/View/SeismicWindow.hpp
+                        SBIM/SBIMSeismicController.hpp
                         )
                         
-set ( SBIM_UI_SOURCES  SBIM/View/SeismicView.ui)                       
+set ( SBIM_UI_SOURCES  SBIM/View/SeismicWindow.ui)                       
 
 set ( SBIM_SOURCES SBIM/SeismicSlice.cpp
                    SBIM/SeismicVolume.cpp

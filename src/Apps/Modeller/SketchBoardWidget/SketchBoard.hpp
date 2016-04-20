@@ -4,15 +4,14 @@
 #define _SURFACE_HPP_
 
 
-#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
-
-#include "Modeller/SketchController.hpp"
-
 #include <QtWidgets/QGraphicsView>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QSurfaceFormat>
 
+#include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
+
+#include "Modeller/SketchController.hpp"
 
 /**
  * @brief Contains the scene (class SketchSession).

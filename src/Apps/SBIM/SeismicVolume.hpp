@@ -11,7 +11,9 @@
 
 namespace RRM
 {
-
+	/** \brief  The class SeismicVolume is responsible to read images from a Seismic data.
+	 *          The images are on raw format.
+	 */
 	class SeismicVolume
 	{
 		public:
@@ -26,6 +28,7 @@ namespace RRM
 			void getSlice( int x, int y, int z);
 
 			void getTopSlice( );
+
 		public:
 
 
