@@ -9,11 +9,11 @@
  * @brief RRM's About GUI.
  */
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 
 /**
- * @brief GUI form with project informationm
+ * @brief GUI form with project information
  * Uses qt *.ui forms
  *
  */

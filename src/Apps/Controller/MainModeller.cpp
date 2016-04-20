@@ -110,24 +110,6 @@ void MainWindow::create3DModule ( )
 
 }
 
-//void MainWindow::newSessionSlot ( qreal x , qreal y , qreal width , qreal height )
-//{
-//	std::cout << "New Boundary " << std::endl;
-//
-//	this->sketchSession_->initialization ( x , y , width , height );// THE VIEW
-//	this->cross_section_.initialization ( x , y , width , height ); // THE MODEL
-//}
-//
-//void MainWindow::newSessionSlot ( QPixmap pixmap )
-//{
-//	this->sketchSession_->initialization_with_image ( pixmap );  // THE VIEW
-//	this->cross_section_.initialization ( pixmap.rect ( ).x ( ) ,   // THE MODEL
-//                                              pixmap.rect ( ).y ( ) ,
-//					      pixmap.rect ( ).width ( ) ,
-//					      pixmap.rect ( ).height ( ) );
-//}
-
-
 void MainWindow::keyPressEvent ( QKeyEvent *event )
 {
 	event->ignore();

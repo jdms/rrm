@@ -8,11 +8,15 @@
 #ifndef _TOPOLOGY_VERTEX_HPP_
 #define _TOPOLOGY_VERTEX_HPP_
 
+#include <set>
+
 #include "Model/StratigraphicSegment.hpp"
 
 namespace RRM
 {
 
+	// todo the Real need to be a geometry traits, with all geometry related
+	//	objects, aka, polycurve, point, vector ....
 	template < class Real>
 	class Vertex
 	{
@@ -43,11 +47,15 @@ namespace RRM
 				id_ = other.id_;
 				location_ = other.location_;
 
+				edges_ = other.edges_;
+
 				return *this;
 			}
 
 		public:
 			unsigned int id_;
+
+			std::set<unsigned int, std::less<unsigned int >> edges_;
 
 			Point2D location_;
 	};

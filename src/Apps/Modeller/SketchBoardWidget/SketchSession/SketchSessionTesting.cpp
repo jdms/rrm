@@ -391,7 +391,7 @@ void SketchSessionTesting::setSketchMode()
 	mode_ = InteractionMode::SKETCHING;
 }
 
-void SketchSessionTesting::updateSBIM(std::map<unsigned int, QPolygonF> _polycurves)
+void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
 
 	for ( auto& polycurve_iterator : _polycurves )
@@ -404,7 +404,7 @@ void SketchSessionTesting::updateSBIM(std::map<unsigned int, QPolygonF> _polycur
 			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second);
 
 		}
-		// todo, create an appropriate QGraphicsItem from the new curve ( which geoObject it represent)
+		// todo, create an appropriate QGraphicsItem from the new curve ( which geoObject which it represents)
 		else
 		{
 			std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
@@ -418,6 +418,23 @@ void SketchSessionTesting::updateSBIM(std::map<unsigned int, QPolygonF> _polycur
 
 		std::cout << " Size " << polycurve_iterator.second.size() << std::endl;
 	}
+
+
+	for (auto& vertice_iterator : _vertices)
+	{
+
+		// todo if the vertice exist, update it only it have changed
+		if ( this->view_vertices_.count(vertice_iterator.first) )
+		{
+
+		}else
+		{
+			QGraphicsEllipseItem* node = new QGraphicsEllipseItem(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
+			view_vertices_[vertice_iterator.first] = node;
+			this->addItem(node);
+		}
+	}
+
 
 	update();
 }

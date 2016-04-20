@@ -38,6 +38,10 @@ class SketchController : public QObject
 
 	        virtual ~SketchController ( );
 
+	        void crossSection_1 (RRM::CrossSection<double>& _cross_section, double scale = 100);
+	        void crossSection_2 (RRM::CrossSection<double>& _cross_section, double scale = 100);
+	        void crossSection_3 (RRM::CrossSection<double>& _cross_section, double scale = 100);
+
 	public slots:
 
 		//void smoothCurve ( QPolygonF raw_sketch_line );
@@ -54,11 +58,12 @@ class SketchController : public QObject
 //        		this->sketch_view_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
         	}
         signals:
-		void updateSBIM(std::map<unsigned int, QPolygonF> curves_);
+		void updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>&);
 
 	private:
         	// The Model
         	RRM::CrossSection<qreal>  cross_section_;
+        	int next;
         	// The View
 };
 

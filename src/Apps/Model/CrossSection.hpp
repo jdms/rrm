@@ -104,7 +104,7 @@ namespace RRM
 			std::map<unsigned int , Vertex<Real> > vertices_;
 			std::map<unsigned int , Edge<Real> >   edges_;
 			std::map<unsigned int , Face<Real> >   faces_;
-		private:
+		public:
 			IDManager vertex_index_;
 			IDManager face_index_;
 			IDManager edge_index_;

@@ -10,6 +10,9 @@
 
 
 #include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsItem>
+
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
@@ -18,17 +21,24 @@
 namespace RRM
 {
 
-	class SeismicView : public QGraphicsView
+	class SeismicView : public QWidget
 	{
+		Q_OBJECT
+
 		public:
 			SeismicView ( QWidget* parent = 0);
 			~SeismicView ( );
 
 			void wheelEvent ( QWheelEvent *event );
 			void keyPressEvent ( QKeyEvent *event );
-		private:
+			void fitInView ( );
+		public:
 
 			Ui::SeismicViewerWidget * ui;
+
+			QGraphicsView  *image_viewer;
+
+			QGraphicsScene * scene;
 
 
 	};

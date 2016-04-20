@@ -37,12 +37,12 @@ set( CONTROLLER_SOURCES Controller/main.cpp
 set ( SBIM_HEADERS SBIM/SeismicSlice.hpp
                    SBIM/SeismicVolume.hpp
                    SBIM/SketchSeismic.hpp
-                   SBIM/SBIMSeismicController.hpp 
+                   SBIM/SBIMSeismicController.hpp
+                   SBIM/SketchSeismicModule.hpp 
                    # View
                    SBIM/View/SeismicView.hpp
                    SBIM/View/SeismicWindow.hpp
                    )
-                   
                    
 set ( SBIM_MOC_HEADERS  SBIM/View/SeismicView.hpp
                         SBIM/View/SeismicWindow.hpp
@@ -54,6 +54,7 @@ set ( SBIM_SOURCES SBIM/SeismicSlice.cpp
                    SBIM/SeismicVolume.cpp
                    SBIM/SketchSeismic.cpp 
                    SBIM/SBIMSeismicController.cpp
+                   SBIM/SketchSeismicModule.cpp
                    # View
                    SBIM/View/SeismicView.cpp
                    SBIM/View/SeismicWindow.cpp )

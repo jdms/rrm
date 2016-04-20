@@ -8,6 +8,7 @@
 #ifndef _SBIM_SEISMICVOLUME_HPP_
 #define _SBIM_SEISMICVOLUME_HPP_
 
+
 namespace RRM
 {
 
@@ -15,7 +16,19 @@ namespace RRM
 	{
 		public:
 			SeismicVolume ( );
-			virtual ~SeismicVolume ( );
+			~SeismicVolume ( );
+
+			bool read( )
+			{
+				return true;
+			}
+
+			void getSlice( int x, int y, int z);
+
+			void getTopSlice( );
+		public:
+
+
 	};
 
 } /* namespace RRM */

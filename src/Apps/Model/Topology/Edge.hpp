@@ -11,6 +11,8 @@
 
 #include "Model/StratigraphicSegment.hpp"
 
+#include "Vertex.hpp"
+
 namespace RRM
 {
 
@@ -25,6 +27,9 @@ namespace RRM
 			Edge ( )
 			{
 				id_ = 0;
+				source_id_ = 0;
+				target_id_ = 0;
+				is_boudary_ = false;
 			}
 
 			Edge ( const Self& _edge)
@@ -32,7 +37,7 @@ namespace RRM
 				*this = _edge;
 			}
 
-			virtual ~Edge ( )
+			~Edge ( )
 			{
 
 			}
@@ -42,10 +47,12 @@ namespace RRM
 				// Assign to all  member.
 				this->id_ = other.id_;
 
-				this->source_ = other.source_;
-				this->target_ = other.source_;
+				this->source_id_ = other.source_id_;
+				this->target_id_ = other.target_id_;
 
 				this->segment = other.segment;
+
+				this->is_boudary_ = other.is_boudary_;
 
 				return *this;
 			}
@@ -55,8 +62,11 @@ namespace RRM
 			// Soon, segment will be smart_pointer.
 			Segment segment;
 
-			Vertex<Real> source_;
-			Vertex<Real> target_;
+			bool is_boudary_;
+
+			unsigned int source_id_;
+			unsigned int target_id_;
+
 	};
 
 } /* namespace RRM */

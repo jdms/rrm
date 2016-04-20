@@ -78,7 +78,6 @@ void GLWidget::initializeGL ( )
 
 	loadShaderByResources ( );
 
-
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
 }

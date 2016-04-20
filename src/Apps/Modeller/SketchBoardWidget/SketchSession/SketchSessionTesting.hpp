@@ -76,7 +76,7 @@ class SketchSessionTesting: public QGraphicsScene
 		void setSketchMode();
 		void clear();
 		// Update the view with the new Cross Section configuration
-		void updateSBIM(std::map<unsigned int, QPolygonF> _polycurves);
+		void updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
 	signals:
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
@@ -91,6 +91,9 @@ class SketchSessionTesting: public QGraphicsScene
 	private:
 		// Map between the sketch curves with the curve into the arrangement
 		std::map<unsigned int, StratigraphyItem*> view_curves_;
+
+		// Map between the sketch curves with the curve into the arrangement
+		std::map<unsigned int, QGraphicsEllipseItem*> view_vertices_;
 
 		QPointF last_point_;
 

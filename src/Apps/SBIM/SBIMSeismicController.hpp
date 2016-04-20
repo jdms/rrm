@@ -8,6 +8,8 @@
 #ifndef _SBIM_SBIMSEISMICCONTROLLER_HPP_
 #define _SBIM_SBIMSEISMICCONTROLLER_HPP_
 
+
+
 namespace RRM
 {
 
@@ -15,7 +17,10 @@ namespace RRM
 	{
 		public:
 			SBIMSeismicController ( );
-			virtual ~SBIMSeismicController ( );
+			~SBIMSeismicController ( );
+
+			// new cross Section
+			void addSliceSeismic();
 	};
 
 } /* namespace RRM */

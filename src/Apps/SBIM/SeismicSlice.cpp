@@ -10,15 +10,4 @@
 namespace RRM
 {
 
-	SeismicSlice::SeismicSlice ( )
-	{
-		// TODO Auto-generated constructor stub
-
-	}
-
-	SeismicSlice::~SeismicSlice ( )
-	{
-		// TODO Auto-generated destructor stub
-	}
-
 } /* namespace RRM */
