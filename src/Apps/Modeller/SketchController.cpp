@@ -23,12 +23,10 @@ SketchController::SketchController ( RRM::CrossSection<qreal>&   _cross_section,
 	// Sketching
 }
 
-
 SketchController::~SketchController ( )
 {
 	// TODO Auto-generated destructor stub
 }
-
 
 void SketchController::initialize ( const CrossSection& _cross_section )
 {
@@ -55,6 +53,9 @@ void SketchController::newSession ( QPixmap pixmap )
 
 void SketchController::insertCurve ( QPolygonF _polygon )
 {
+
+// insert the curve on the current crossSection and notify the view
+
 //	Curve2D curve = convertCurves(_polygon);
 //
 //	unsigned int id = cross_section_.insertCurve(curve);
@@ -99,6 +100,31 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 	emit updateSBIM(view_curves_,view_vertices_);
 }
 
+// updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
+void SketchController::updateSBIM (  )
+{
+	cross_section_.log();
+
+	std::map<unsigned int, QPolygonF> view_curves_;
+	std::map<unsigned int, QPointF>   view_vertices_;
+
+	QPolygonF view_curve;
+
+	for ( auto& curves_iterator: cross_section_.edges_ )
+	{
+		view_curve = this->convertCurves(curves_iterator.second.segment.curve);
+
+		view_curves_[curves_iterator.first] = view_curve;
+	}
+
+	for ( auto& vertex_iterator: cross_section_.vertices_ )
+	{
+
+		view_vertices_[vertex_iterator.first] = QPointF(vertex_iterator.second.location_.x(),vertex_iterator.second.location_.y());
+	}
+
+	emit updateSBIM(view_curves_,view_vertices_);
+}
 // Just Boundary
 void SketchController::crossSection_1 (RRM::CrossSection<double>& _cross_section,double _scale)
 {
@@ -146,7 +172,6 @@ void SketchController::crossSection_1 (RRM::CrossSection<double>& _cross_section
 	_cross_section.vertices_[v2.id_] = v2;
 
 }
-
 // Boundary + 1 Curve
 void SketchController::crossSection_2 (RRM::CrossSection<double>& _cross_section, double scale)
 {
@@ -411,6 +436,11 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 
 }
 
+void SketchController::setCrossSection(RRM::CrossSection<qreal>& _cross_section)
+{
+	this->cross_section_ = _cross_section;
+	this->updateSBIM();
+}
 
 QPolygonF SketchController::convertCurves ( Curve2D& _curve )
 {

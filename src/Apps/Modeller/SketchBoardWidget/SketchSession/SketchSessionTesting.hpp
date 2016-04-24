@@ -30,10 +30,9 @@
 /**
  * @author Felipe Moura de Carvalho
  * @author Clarissa Marques
- * @date Sep, 2015
- * @brief Scene graph. Yhe user can input and visualise stratigraphy curves
+ * @date   Sep, 2015
+ * @brief  Scene graph. The user can input and visualise stratigraphy curves
  */
-
 
 // TODO temporary name
 class SketchSessionTesting: public QGraphicsScene

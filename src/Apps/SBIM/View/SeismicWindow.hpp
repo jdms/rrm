@@ -17,8 +17,10 @@
 #include "ui_SeismicWindow.h"
 
 // RRM Includes
+#include "SBIM/SeismicSlice.hpp"
 #include "SBIM/SBIMSeismicController.hpp"
-#include "SeismicView.hpp"
+#include "SBIM/View/SeismicView.hpp"
+
 
 namespace RRM
 {
@@ -35,14 +37,17 @@ namespace RRM
 			void fitInView ( );
 
 		public slots:
-
 			bool addSeismicSlice ( );
 
 		public:
-			// View
-			Ui::SeismicWindowWidget * ui;
+			/// View
+			Ui::SeismicWindowWidget* ui;
 			SeismicView* seismic_viewer_;
-			// RRM Seismic Module
+
+			std::map<unsigned int , QGraphicsItem*> lines_checkpoint_;
+			std::map<unsigned int , QLabel*> sketch_images_;
+
+			/// RRM Seismic Module
 			SBIMSeismicController sketch_seismic_controller_;
 
 	};

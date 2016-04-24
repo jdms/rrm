@@ -36,7 +36,6 @@ set( CONTROLLER_SOURCES Controller/main.cpp
 ## Grab SBIM Sources Files
 set ( SBIM_HEADERS SBIM/SeismicSlice.hpp
                    SBIM/SeismicVolume.hpp
-                   SBIM/SketchSeismic.hpp
                    SBIM/SBIMSeismicController.hpp
                    SBIM/SketchSeismicModule.hpp 
                    # View
@@ -53,7 +52,6 @@ set ( SBIM_UI_SOURCES  SBIM/View/SeismicWindow.ui)
 
 set ( SBIM_SOURCES SBIM/SeismicSlice.cpp
                    SBIM/SeismicVolume.cpp
-                   SBIM/SketchSeismic.cpp 
                    SBIM/SBIMSeismicController.cpp
                    SBIM/SketchSeismicModule.cpp
                    # View

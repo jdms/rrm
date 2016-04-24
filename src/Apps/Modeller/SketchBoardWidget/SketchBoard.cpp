@@ -31,13 +31,15 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 	this->viewport ( )->grabGesture ( Qt::SwipeGesture );
 	this->viewport ( )->grabGesture ( Qt::PanGesture );
 
+	// Invert the Coordinate System to match with OpenGL. X increase Left->Right and Y Top->Down.
+	this->scale(1, -1);
+
 	scale_in_  =  10;
 	scale_out_ = -10;
 
 	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
 	this->sketchSession_ = new SketchSessionTesting ( this );
 	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-
 
 	this->setScene ( sketchSession_ );
 
@@ -150,4 +152,11 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 		}
 
 	}
+}
+
+void SketchBoard::setCrossSection(RRM::CrossSection<qreal>& _cross_section)
+{
+	this->sketch_controller->setCrossSection(_cross_section);
+
+	this->sketch_controller->updateSBIM();
 }

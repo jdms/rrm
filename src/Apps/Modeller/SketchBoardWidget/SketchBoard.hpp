@@ -29,7 +29,11 @@ public:
 
 	void wheelEvent ( QWheelEvent *event );
 	void keyPressEvent ( QKeyEvent *event );
-private:
+
+public slots:
+	void setCrossSection( RRM::CrossSection<qreal>& _cross_section );
+
+public:
 
 	int scale_in_;
 	int scale_out_;

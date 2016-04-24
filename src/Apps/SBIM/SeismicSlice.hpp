@@ -25,11 +25,11 @@ namespace RRM
 				this->log ( );
 				image_ = 0;
 			}
+
 			~SeismicSlice ( )
 			{
 
 			}
-
 			// It need to be tested, since this class will be stored in a stl:: container
 			// @see http://stackoverflow.com/questions/17311382/how-to-call-base-class-copy-constructor-from-a-derived-class-copy-constructor
 			SeismicSlice ( const Self& other ) : Base(other)

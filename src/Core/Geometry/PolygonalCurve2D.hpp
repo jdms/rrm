@@ -82,24 +82,24 @@ namespace RRM
 		    /// \param c1 (output) First segment.
 		    /// \param c2 (output) Second segment.
 		    /// \param c3 (output) Third segment.
-		    bool slices( std::vector<std::size_t>& indices, std::deque<Self>& segments) const
-		    {
-		    	segments.clear();
-		    	/// The end will be the [begin()+jump=indices[last],end()];
-		    	segments.resize(indices.size()+1);
-		    	/// Testing whether is out of range or not
-		        bool is_in_range = (indices.size() < this->size()) && (indices.size() < this->size());
-		        if( is_in_range )
-		        {
-		        	std::size_t jump = 0;
+			bool slices ( std::vector<std::size_t>& indices , std::deque<Self>& segments ) const
+			{
+				segments.clear ( );
+				/// The end will be the [begin()+jump=indices[last],end()];
+				segments.resize ( indices.size ( ) + 1 );
+				/// Testing whether is out of range or not
+				bool is_in_range = ( indices.size ( ) < this->size ( ) ) && ( indices.size ( ) < this->size ( ) );
+				if ( is_in_range )
+				{
+					std::size_t jump = 0;
 
-		        	for (std::size_t it = 0; it < indices.size(); ++it)
-		        	{
-		        		segments[it].setCurve(std::vector<Point2D>( this->pPoints.begin() + jump , this->pPoints.begin()+(indices[it]+1) ));
-		        		jump = indices[it];
+					for ( std::size_t it = 0; it < indices.size ( ); ++it )
+					{
+						segments[it].setCurve ( std::vector<Point2D> ( this->pPoints.begin ( ) + jump , this->pPoints.begin ( ) + ( indices[it] + 1 ) ) );
+						jump = indices[it];
 					}
 
-	        		segments[indices.size()].setCurve(std::vector<Point2D>( this->pPoints.begin() + jump , this->pPoints.end()) );
+					segments[indices.size ( )].setCurve ( std::vector<Point2D> ( this->pPoints.begin ( ) + jump , this->pPoints.end ( ) ) );
 
 //		        	for (std::size_t it = 0; it < indices.size() + 1; ++it)
 //		        	{
@@ -109,9 +109,9 @@ namespace RRM
 //		        			std::cout << "Point2D " << segments[it].size() << std::endl;
 //		        		}
 //		        	}
-		        }
-		        return is_in_range;
-		    }
+				}
+				return is_in_range;
+			}
 
 
 		public:
@@ -196,7 +196,10 @@ namespace RRM
 			///        this curve
 			/// \param prPoints (output) a std::vector, stores the intersection points.
 
-			bool intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve , std::vector<Point2D> &prPoints );
+			bool PolygonalCurve2D<Real>::intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve,
+		                                                                    std::vector<std::size_t>& _thisIndex,
+										    std::vector<std::size_t>& _testIndex,
+										    std::vector<Point2D> &prPoints )
 
 	};
 
@@ -433,9 +436,15 @@ namespace RRM
 	}
 
 	template < class Real >
-	bool PolygonalCurve2D<Real>::intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve , std::vector<Point2D> &prPoints )
-	{
+	bool PolygonalCurve2D<Real>::intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve,
+                                                                    std::vector<std::size_t>& _thisIndex,
+								    std::vector<std::size_t>& _testIndex,
+								    std::vector<Point2D> &prPoints )
+        {
 		prPoints.clear ( );
+
+		_thisIndex.clear();
+		_testIndex.clear();
 
 		std::vector<std::size_t> myIndex;
 		std::vector<Real> myAlphas;
@@ -485,12 +494,14 @@ namespace RRM
 			for ( std::size_t i = 0; i < auxMyIndex.size ( ); ++i )
 			{
 				this->insert ( auxMyIndex[i] + i + 1 , myMap[auxMyIndex[i]] );
+				_thisIndex.push_back(auxMyIndex[i] + i + 1);
 			}
 
 			std::sort ( auxTheirIndex.begin ( ) , auxTheirIndex.end ( ) );
 			for ( std::size_t i = 0; i < auxTheirIndex.size ( ); ++i )
 			{
 				testCurve.insert ( auxTheirIndex[i] + i + 1 , theirMap[auxTheirIndex[i]] );
+				_testIndex.push_back(auxTheirIndex[i] + i + 1);
 			}
 		}
 

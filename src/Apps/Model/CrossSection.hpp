@@ -20,11 +20,12 @@
 
 namespace RRM
 {
-	template < class Real>
+	template < class _Real>
 	class CrossSection
 	{
-
 		public:
+			/// \todo design a geometry trait for all model classes
+			typedef _Real		 		Real;
 			typedef CrossSection<Real>		Self;
 			typedef	StratigraphicSegment<Real>	Segment;
 			typedef typename Segment::Curve2D	Curve2D;

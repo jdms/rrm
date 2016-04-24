@@ -84,7 +84,6 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 			else
 			{
 			}
-
 		}
 	}
 

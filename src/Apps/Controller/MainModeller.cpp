@@ -14,6 +14,11 @@ void MainWindow::create2DModule ( )
 
 	dc_2DModule->setWidget ( sketch_board_ );
 
+	seismic_view_ = new RRM::SeismicWindow(this);
+
+	seismic_view_->show();
+	seismic_view_->fitInView();
+
 	addDockWidget ( Qt::LeftDockWidgetArea , dc_2DModule );
 
 	this->status_bar_ = new QStatusBar ( this );

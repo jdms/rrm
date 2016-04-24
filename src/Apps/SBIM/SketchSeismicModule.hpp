@@ -12,7 +12,7 @@
 
 #include <QtCore/QtGlobal>
 
-#include "SeismicSlice.hpp"
+#include "SBIM/SeismicSlice.hpp"
 
 namespace RRM
 {
@@ -22,6 +22,8 @@ namespace RRM
 	class SketchSeismicModule
 	{
 		public:
+			typedef RRM::SeismicSlice<qreal>::CrossSection CrossSection;
+
 			SketchSeismicModule ( );
 			~SketchSeismicModule ( );
 

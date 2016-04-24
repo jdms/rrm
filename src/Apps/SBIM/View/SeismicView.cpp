@@ -37,9 +37,7 @@ namespace RRM
 		QGraphicsRectItem * rect = new QGraphicsRectItem ( 0.0 , 0.0 , 640.0 , 480.0 );
 		QGraphicsLineItem * line = new QGraphicsLineItem ( 0.0 , 10.0 , 640.0 , 10.0 );
 		line->setFlags ( QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable );
-		rect->setPen ( QPen ( Qt::green ) );
 		this->scene_->addItem ( rect );
-		this->scene_->addItem ( line );
 
 		this->setScene(this->scene_);
 

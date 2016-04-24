@@ -497,8 +497,8 @@ namespace RRM
 
 					h->segment.curve = curve_all_segments[it];
 					h->segment.curve.superSample(3.0);
-					h->is_visible = true;
-					h->is_boundary = false;
+					h->is_visible    = true;
+					h->is_boundary   = false;
 				}
 				// DCEL log information
 				// std::cout << DCELLog();

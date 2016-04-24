@@ -25,10 +25,12 @@ namespace RRM
 		Q_OBJECT
 
 		public:
+			typedef SketchSeismicModule::CrossSection CrossSection;
+
 			SBIMSeismicController ( QObject *parent = nullptr );
 			~SBIMSeismicController ( );
 
-			/// new cross Section
+			/// New cross Section
 			bool setCurrentSeismicSlice( unsigned int _current);
 
 			/// It asks SketchModule to interpolate the curves
@@ -38,10 +40,10 @@ namespace RRM
 			bool addSeismicSlice( unsigned int _seismic_slice_index );
 			bool removeSeismicSlice( );
 			bool replaceSeismicSlice( );
+		signals:
+			void SetCrossSection(const CrossSection& _seismic_slice);
 		public:
-
 			SketchSeismicModule sketch_seismic_module_;
-
 
 	};
 
