@@ -110,6 +110,8 @@ class SketchSessionTesting: public QGraphicsScene
 		BoundaryItem* boundaryc;
 		InputSketch* input_sketch_;
 
+		std::vector<QColor> colors;
+
 		InteractionMode mode_;
 
 };

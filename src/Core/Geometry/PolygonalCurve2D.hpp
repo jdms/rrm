@@ -196,11 +196,10 @@ namespace RRM
 			///        this curve
 			/// \param prPoints (output) a std::vector, stores the intersection points.
 
-			bool PolygonalCurve2D<Real>::intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve,
-		                                                                    std::vector<std::size_t>& _thisIndex,
-										    std::vector<std::size_t>& _testIndex,
-										    std::vector<Point2D> &prPoints )
-
+			bool intersectionPolygonalCurve2D ( PolygonalCurve2D &testCurve,
+		                                            std::vector<std::size_t>& _thisIndex,
+							    std::vector<std::size_t>& _testIndex,
+							    std::vector<Point2D> &prPoints );
 	};
 
 	/// Default Constructor;

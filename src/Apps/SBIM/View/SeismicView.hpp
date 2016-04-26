@@ -18,6 +18,8 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
+#include <iostream>
+
 
 namespace RRM
 {
@@ -32,6 +34,7 @@ namespace RRM
 
 		public:
 			QGraphicsScene* scene_;
+			QGraphicsPixmapItem *overlayImage_;
 
 	};
 

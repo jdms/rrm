@@ -102,10 +102,10 @@ class MainWindow : public QMainWindow
 
     private:
 
+	// Information about the software
 	AboutWidget * aboutRRM;
 
-        Sketching2DModule *dc_2DModule;
-        QDockWidget *dc_3DModule;
+	// Flow Module
         FlowComputationModule *dc_computation;
 
         QAction *ac_new;
@@ -115,7 +115,6 @@ class MainWindow : public QMainWindow
         QAction *ac_exit;
         QAction *ac_contents;
         QAction *ac_about;
-
 
         QToolBar *tlb_section;
         QToolBar *tlb_rules;
@@ -145,25 +144,26 @@ class MainWindow : public QMainWindow
         QAction *ac_window3d;
 
 
-        // CrossSection ////////////////////////////////////////////////////////////////////
-
+        // Sketch Module CrossSection
+        Sketching2DModule *dc_2DModule;
         RRM::CrossSection<qreal>  	cross_section__;
+        SketchBoard  		*sketch_board_;
 
         QStatusBar			*status_bar_;
         	QLabel			*status_text;
 
         QAction *ac_newBoundary;
-        // Sketching Surface and Extrusion
+
+
+        Sketching2DModule *seismic_Module_;
+	RRM::SeismicWindow * seismic_view_;
+
+
+        // 3D Extrusion
+        QDockWidget *dc_3DModule;
         GLWidget *glWidget;
         Eigen::Vector3f min_;
         Eigen::Vector3f max_;
-
-	// Sketch Views
-	SketchBoard  		*sketch_board_;
-
-	// SketchController
-	SketchController  	*sketch_controller_;
-
 	    QGroupBox *groupBox;
 	    QFormLayout *formLayout;
 	    QSlider *horizontalSlider_curve;
@@ -173,7 +173,6 @@ class MainWindow : public QMainWindow
 	    QLabel *label_2;
 	    QLabel *label_3;
 
-	RRM::SeismicWindow * seismic_view_;
 };
 
 #endif // MAINWINDOW_H

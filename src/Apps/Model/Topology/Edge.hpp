@@ -29,7 +29,7 @@ namespace RRM
 				id_ = 0;
 				source_id_ = 0;
 				target_id_ = 0;
-				is_boudary_ = false;
+				is_boundary_ = false;
 			}
 
 			Edge ( const Self& _edge)
@@ -52,7 +52,7 @@ namespace RRM
 
 				this->segment = other.segment;
 
-				this->is_boudary_ = other.is_boudary_;
+				this->is_boundary_ = other.is_boundary_;
 
 				return *this;
 			}
@@ -62,7 +62,7 @@ namespace RRM
 			// Soon, segment will be smart_pointer.
 			Segment segment;
 
-			bool is_boudary_;
+			bool is_boundary_;
 
 			unsigned int source_id_;
 			unsigned int target_id_;

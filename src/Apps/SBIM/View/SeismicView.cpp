@@ -31,13 +31,18 @@ namespace RRM
 		this->viewport ( )->grabGesture ( Qt::PinchGesture );
 		this->viewport ( )->grabGesture ( Qt::SwipeGesture );
 
+		// Invert y direction to fit with opengl coordinate system
+		this->scale(1,-1);
 
 		this->scene_ = new QGraphicsScene(this);
 
-		QGraphicsRectItem * rect = new QGraphicsRectItem ( 0.0 , 0.0 , 640.0 , 480.0 );
-		QGraphicsLineItem * line = new QGraphicsLineItem ( 0.0 , 10.0 , 640.0 , 10.0 );
-		line->setFlags ( QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable );
-		this->scene_->addItem ( rect );
+		this->overlayImage_ = new QGraphicsPixmapItem();
+
+		overlayImage_->setZValue(0);
+
+		this->scene_->setSceneRect(0.0,0.0,640.0,480.0);
+
+		this->scene_->addItem ( overlayImage_ );
 
 		this->setScene(this->scene_);
 

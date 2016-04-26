@@ -49,8 +49,13 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 	connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF) ) ,
 		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF) ) );
 
+	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( qreal, qreal, qreal, qreal ) ) ,
+		  this->sketch_controller , SLOT  ( newSession ( qreal, qreal, qreal ,qreal  ) ) );
+
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,
 		  this->sketchSession_    , SLOT  ( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) );
+
+	this->sketch_controller->updateSBIM();
 }
 
 SketchBoard::~SketchBoard ( )

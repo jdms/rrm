@@ -21,6 +21,8 @@
 #include "SBIM/SBIMSeismicController.hpp"
 #include "SBIM/View/SeismicView.hpp"
 
+#include <iostream>
+
 
 namespace RRM
 {
@@ -34,7 +36,7 @@ namespace RRM
 
 			void wheelEvent ( QWheelEvent *event );
 			void keyPressEvent ( QKeyEvent *event );
-			void fitInView ( );
+			void showEvent( QShowEvent *);
 
 		public slots:
 			bool addSeismicSlice ( );
@@ -45,7 +47,7 @@ namespace RRM
 			SeismicView* seismic_viewer_;
 
 			std::map<unsigned int , QGraphicsItem*> lines_checkpoint_;
-			std::map<unsigned int , QLabel*> sketch_images_;
+			std::map<unsigned int , QPixmap*> sketch_images_;
 
 			/// RRM Seismic Module
 			SBIMSeismicController sketch_seismic_controller_;

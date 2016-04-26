@@ -37,7 +37,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	this->boundary_ = new QGraphicsRectItem ( );
 	this->boundary_->setPen ( pen_boundary );
 	this->boundary_->setBrush ( brush_boundary );
-	this->boundary_sketching_ = false;
+	this->boundary_sketching_ = true;
 
 	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
 	gradient.setColorAt ( 1.0 , QColor::fromRgb ( 170 , 170 , 170 ) );
@@ -48,6 +48,18 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	gradient.setColorAt ( 0.0 , QColor::fromRgb ( 215 , 215 , 215 ) );
 
 	this->setBackgroundBrush ( QBrush ( gradient ) );
+
+	colors.push_back(QColor(Qt::white));
+	colors.push_back(QColor(Qt::black));
+	colors.push_back(QColor(Qt::cyan));
+	colors.push_back(QColor(Qt::darkCyan));
+	colors.push_back(QColor(Qt::red));
+	colors.push_back(QColor(Qt::darkRed));
+	colors.push_back(QColor(Qt::magenta));
+	colors.push_back(QColor(Qt::darkMagenta));
+	colors.push_back(QColor(Qt::green));
+	colors.push_back(QColor(Qt::darkGreen));
+
 }
 
 SketchSessionTesting::~SketchSessionTesting ( )
@@ -315,11 +327,12 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 	// to determine the view's default scroll able area,
 	// and by QGraphicsScene to manage item indexing.
 
-	/// Creating and adding the boundary
+//	/// Creating and adding the boundary
+//	this->boundary_->setRect ( x , y , w - x , h - y );
+//	this->boundaryc->setNewBoundary ( x , y , w - x , h - y );
+	this->setSceneRect ( x , y , w , h );
 	this->boundary_->setRect ( x , y , w - x , h - y );
 	this->boundaryc->setNewBoundary ( x , y , w - x , h - y );
-	this->setSceneRect ( x , y , w - x , h - y );
-
 
 	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
 
@@ -350,19 +363,6 @@ void SketchSessionTesting::curveSmoothed ( QPolygonF raw_skecth_ )
 void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 {
 
-	StratigraphyItem * curve = new StratigraphyItem(Qt::green);
-
-	QPainterPath p;
-
-	p.addPolygon(_curve);
-
-	curve->setSketch(p);
-
-	this->addItem(curve);
-
-	view_curves_[_id] = curve;
-
-	this->update();
 
 //	HorizonController * curve = new HorizonController ( Qt::blue );
 //
@@ -425,7 +425,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		// todo if the vertice exist, update it only it have changed
 		if ( this->view_vertices_.count(vertice_iterator.first) )
 		{
-
+			view_vertices_[vertice_iterator.first]->setRect(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
 		}else
 		{
 			QGraphicsEllipseItem* node = new QGraphicsEllipseItem(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);

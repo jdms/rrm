@@ -61,9 +61,68 @@ namespace RRM
 				return *this;
 			}
 
+			void initialize( Real x , Real y , Real width , Real height )
+			{
+				clear();
+				boundary(x,y,width,height);
+			}
+
+
 			void initialize( )
 			{
 				clear();
+			}
+
+			/// Quad in coordinates  (x , y) (Default OpenGL Coordinate System)
+			void boundary ( Real x , Real y , Real width , Real height )
+			{
+				// (x,height)  (width, height)  (width,y)
+				//   v1----------*-----------v2
+				Curve2D segment_1;
+				segment_1.add(Point2D ( x , height ));
+				segment_1.add(Point2D ( width , height ));
+				segment_1.add(Point2D ( width , y ));
+				// (width,y)  (x,y)  (x,height)
+				//   v2----------*-----------v1
+				Curve2D segment_2;
+				segment_2.add(Point2D ( width , y ));
+				segment_2.add(Point2D ( x , y ));
+				segment_2.add(Point2D ( x , height ));
+
+				Edge<Real> e1;
+				e1.id_ = edge_index_.getID();;
+				e1.segment.curve = segment_1;
+				edges_[e1.id_] = e1;
+				e1.is_boundary_ = true;
+
+				Edge<Real> e2;
+				e2.id_ = edge_index_.getID();
+				e2.segment.curve = segment_2;
+				edges_[e2.id_] = e2;
+				e2.is_boundary_ = true;
+
+				Vertex<Real> v1;
+				v1.id_ = vertex_index_.getID();
+				v1.edges_.insert(e1.id_);
+				v1.edges_.insert(e2.id_);
+				v1.location_ = Point2D(x,height);
+				vertices_[v1.id_] = v1;
+
+				Vertex<Real> v2;
+				v2.id_ = vertex_index_.getID();
+				v2.edges_.insert(e1.id_);
+				v2.edges_.insert(e2.id_);
+				v2.location_ = Point2D ( width , y );
+				vertices_[v2.id_] = v2;
+
+				e1.source_id_ = v1.id_;
+				e1.target_id_ = v2.id_;
+
+				e2.source_id_ = v2.id_;
+				e2.target_id_ = v1.id_;
+
+				this->log();
+
 			}
 
 			unsigned int insertCurve( const Curve2D& _curve )

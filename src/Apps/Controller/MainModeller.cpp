@@ -3,27 +3,25 @@
 // Skecthing
 void MainWindow::create2DModule ( )
 {
+
+	// Sketch Module
+	sketch_board_ = new SketchBoard ( cross_section__ );
+
 	dc_2DModule = new Sketching2DModule( this );
-	dc_2DModule->setWindowTitle ( "Sketching" );
-	addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
-
-	// XXX Just the Canvas
-	this->sketch_board_ = new SketchBoard ( cross_section__ );
-
-	//this->setCentralWidget ( sketch_board_ );
-
+	dc_2DModule->setWindowTitle ( "Sketch View" );
 	dc_2DModule->setWidget ( sketch_board_ );
+	this->addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
 
+	// Seismic Module
+	seismic_Module_ = new Sketching2DModule( this );
 	seismic_view_ = new RRM::SeismicWindow(this);
+	seismic_Module_->setWindowTitle ( "Seismic View" );
+	seismic_Module_->setWidget(this->seismic_view_);
+	this->addDockWidget ( Qt::RightDockWidgetArea , seismic_Module_ );
 
-	seismic_view_->show();
-	seismic_view_->fitInView();
-
-	addDockWidget ( Qt::LeftDockWidgetArea , dc_2DModule );
-
-	this->status_bar_ = new QStatusBar ( this );
-	this->status_text = new QLabel ( "Sketch" , this );
-	this->status_bar_->addWidget ( status_text );
+	status_bar_ = new QStatusBar ( this );
+	status_text = new QLabel ( "Sketch" , this );
+	status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
 //	// Sketching
