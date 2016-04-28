@@ -1,7 +1,7 @@
 #ifndef SKETCHING2DMODULE_H
 #define SKETCHING2DMODULE_H
 
-#include <QDockWidget>
+#include <QtWidgets/QDockWidget>
 
 /**!
  * @brief  brief  Embeds the sketching area into the main window.

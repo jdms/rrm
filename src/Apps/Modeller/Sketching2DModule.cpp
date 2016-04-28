@@ -1,85 +1,77 @@
 #include "Sketching2DModule.h"
 
-Sketching2DModule::Sketching2DModule( QWidget* parent )
+Sketching2DModule::Sketching2DModule ( QWidget* parent )
 {
-    createWindow();
-    createActions( parent );
+	createWindow ( );
+	createActions ( parent );
 
-    emit setColor( 0, 0, 128 );
+	emit setColor ( 0 , 0 , 128 );
 }
 
-void Sketching2DModule::createWindow()
+void Sketching2DModule::createWindow ( )
 {
 //    dc_2DModule = new QDockWidget( this );
-    this->setAllowedAreas( Qt::LeftDockWidgetArea );
-    this->setWindowTitle( "2D View" );
+	this->setAllowedAreas ( Qt::LeftDockWidgetArea );
+	this->setWindowTitle ( "2D View" );
 }
 
-void Sketching2DModule::createActions( QWidget* parent )
+void Sketching2DModule::createActions ( QWidget* parent )
 {
 
 }
 
-void Sketching2DModule::applyRemoveAbove()
+void Sketching2DModule::applyRemoveAbove ( )
 {
 //    bool flag = ac_removeabove->isChecked();
 //    if( flag == false ) return;
 
-
 //    ac_removebelow->setChecked( false );
-    emit applyremoveabove();
-
+	emit applyremoveabove ( );
 //    statusBar()->showMessage( "Applying remove above intersection" );
 
 }
 
-
-void Sketching2DModule::applyRemoveBelow()
+void Sketching2DModule::applyRemoveBelow ( )
 {
 //    bool flag = ac_removebelow->isChecked();
 //    if( flag == false ) return;
 
 //    ac_removeabove->setChecked( false );
-    emit applyremovebelow();
+	emit applyremovebelow ( );
 
 //    statusBar()->showMessage( "Applying remove below intersection" );
 }
 
-void Sketching2DModule::pointerSelection( bool flag )
+void Sketching2DModule::pointerSelection ( bool flag )
 {
 //    bool flag = ac_select->isChecked();
 
-    if( flag == false )
-    {
-        emit sketchingMode();
-        return;
-    }
+	if ( flag == false )
+	{
+		emit sketchingMode ( );
+		return;
+	}
 
-    emit selectMode();
-
+	emit selectMode ( );
 }
 
-
-void Sketching2DModule::emitColor( int R, int G, int B )
+void Sketching2DModule::emitColor ( int R , int G , int B )
 {
 
-   emit setColor( R, G, B );
+	emit setColor ( R , G , B );
 }
 
-
-void Sketching2DModule::emitModeSelect()
+void Sketching2DModule::emitModeSelect ( )
 {
-    emit selectMode();
+	emit selectMode ( );
 }
 
-void Sketching2DModule::emitModeSketching()
+void Sketching2DModule::emitModeSketching ( )
 {
-     emit sketchingMode();
+	emit sketchingMode ( );
 }
 
-
-
-void Sketching2DModule::clearCanvas2D()
+void Sketching2DModule::clearCanvas2D ( )
 {
 
 }

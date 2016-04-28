@@ -84,8 +84,6 @@ namespace RRM
 		if ( sketch_seismic_controller_.addSeismicSlice(index,QPixmap()) )
 		{
 			this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , 48 * index , 640 , 48 * index ) );
-
-
 			// Save the current Scene Image
 			QImage image ( this->seismic_viewer_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
 			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
@@ -94,8 +92,14 @@ namespace RRM
 			this->seismic_viewer_->scene()->render ( &painter );
 
 			//QPixmap pix =  QPixmap::fromImage(image);
-
 			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
+
+			QByteArray bytes;
+			QBuffer buffer(&bytes);
+			buffer.open(QIODevice::ReadWrite);
+			pix.save(&buffer, "JPG");
+
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_ = std::vector<unsigned char> (bytes.constData(), bytes.constData() + bytes.size());
 
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second = pix;
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.initialize(0.0,0.0,pix.width(),pix.height());
@@ -126,7 +130,7 @@ namespace RRM
 		this->sketch_seismic_controller_.setCurrentSeismicSlice(index);
 
 		emit currentCrossSection(sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first,
-				            sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second);
+				            sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_);
 
 		std::cout << "row :" << this->ui->listWidget->row(item) << "  " <<  index << std::endl;
 	}

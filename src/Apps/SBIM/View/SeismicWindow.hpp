@@ -14,6 +14,9 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
+#include <QtCore/QBuffer>
+#include <QtCore/QByteArray>
+
 #include "ui_SeismicWindow.h"
 
 // RRM Includes
@@ -47,7 +50,7 @@ namespace RRM
 			void updateCrossSection (const CrossSection& _cross_section);
 
 		signals:
-			void currentCrossSection (const CrossSection& _seismic_slice, const QPixmap& _overlay_image );
+			void currentCrossSection (const CrossSection& _seismic_slice, const std::vector<unsigned char>& _overlay_image );
 		public:
 			/// View
 			Ui::SeismicWindowWidget* ui;

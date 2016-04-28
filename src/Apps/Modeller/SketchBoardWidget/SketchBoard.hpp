@@ -32,7 +32,7 @@ public:
 	void keyPressEvent ( QKeyEvent *event );
 
 public slots:
-	void setCrossSection( const CrossSection& _cross_section, const QPixmap& _overlay_image );
+	void setCrossSection(const CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image);
 
 signals:
 	void currentCrossSection( const CrossSection& _cross_section );

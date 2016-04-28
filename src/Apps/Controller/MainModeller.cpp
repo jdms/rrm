@@ -24,7 +24,7 @@ void MainWindow::create2DModule ( )
 	status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
-	connect ( this->seismic_view_ , SIGNAL( currentCrossSection(const CrossSection&, const QPixmap&) ) , this->sketch_board_ , SLOT( setCrossSection(const CrossSection& , const QPixmap&) ) );
+	connect ( this->seismic_view_ , SIGNAL( currentCrossSection(const CrossSection&, const std::vector<unsigned char>&) ) , this->sketch_board_ , SLOT( setCrossSection(const CrossSection& , const std::vector<unsigned char>&) ) );
 	connect ( this->sketch_board_ , SIGNAL( currentCrossSection(const CrossSection& ) ) , this->seismic_view_ , SLOT( updateCrossSection(const CrossSection& ) ) );
 
 //	// Sketching

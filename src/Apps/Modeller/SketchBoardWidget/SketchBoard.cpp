@@ -4,8 +4,6 @@
 
 SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *parent ) :	QGraphicsView ( parent )
 {
-// The following is just according to local coordinates centred at (0,0)
-
 	this->setRenderHint ( QPainter::Antialiasing , true );
 	this->setOptimizationFlags ( QGraphicsView::DontSavePainterState );
 	this->setViewportUpdateMode ( QGraphicsView::SmartViewportUpdate );
@@ -15,13 +13,12 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 	this->setBackgroundRole ( QPalette::Base );
 	this->setAutoFillBackground ( true );
 
-
 	this->setViewportUpdateMode ( QGraphicsView::FullViewportUpdate );
 	this->viewport ( )->grabGesture ( Qt::PinchGesture );
 	this->viewport ( )->grabGesture ( Qt::SwipeGesture );
 	this->viewport ( )->grabGesture ( Qt::PanGesture );
 
-	// Invert the Coordinate System to match with OpenGL. X increase Left->Right and Y Top->Down.
+	// Invert the Coordinate System to match with OpenGL. X increases Left->Right and Y Bottom->Up.
 	this->scale(1, -1);
 
 	scale_in_  =  10;
@@ -42,6 +39,7 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( qreal, qreal, qreal, qreal ) ) ,
 		  this->sketch_controller , SLOT  ( newSession ( qreal, qreal, qreal ,qreal  ) ) );
 
+	// Notify the view with the new configuration of Lines
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,
 		  this->sketchSession_    , SLOT  ( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) );
 
@@ -55,7 +53,6 @@ SketchBoard::~SketchBoard ( )
 
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
-
 		if ( event->key ( ) == Qt::Key_F1 )
 		{
 			this->sketchSession_->overlay_image_->setVisible(false);
@@ -65,7 +62,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		{
 			this->sketchSession_->overlay_image_->setVisible(true);
 		}
-
 		if ( event->key ( ) == Qt::Key_Up )
 		{
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
@@ -113,13 +109,11 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 				sketchSession_->clearSelection();
 		}
 
-
 	QGraphicsView::keyPressEvent(event);
 }
 
 void SketchBoard::wheelEvent ( QWheelEvent *event )
 {
-
 	this->setTransformationAnchor ( QGraphicsView::AnchorUnderMouse );
 	// Scale the view / do the zoom
 	double scaleFactor = 1.15;
@@ -133,7 +127,6 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 			scale_in_  -= 1;
 			scale_out_ -= 1;
 		}
-
 	}
 	else
 	{
@@ -144,24 +137,31 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 			scale_in_  += 1;
 	               this->scale ( 1.0 / scaleFactor , 1.0 / scaleFactor );
 		}
-
 	}
 }
 
-void SketchBoard::setCrossSection(const CrossSection& _cross_section, const QPixmap& _overlay_image)
+void SketchBoard::setCrossSection(const CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image)
 {
-
+	/// Notify the receiver with the current version of the CrossSection
 	emit currentCrossSection(this->sketch_controller->getCrossSection());
 
+	/// Delete all the scene and setup it with the incoming cross section
 	this->sketchSession_->clear();
-
 	//this->sketchSession_->initializationWithImage(_overlay_image);
-	this->sketchSession_->overlay_image_->setPixmap(_overlay_image);
 
+	 QPixmap pix;
+	 pix.loadFromData( _overlay_image.data(), _overlay_image.size());
+
+	/// Update the overlay image
+	this->sketchSession_->overlay_image_->setPixmap(pix);
+
+	/// Update the data structure
 	this->sketch_controller->setCrossSection(_cross_section);
 
+	/// Make the overlay image visible
 	this->sketchSession_->overlay_image_->setVisible(true);
 
+	/// Rebuild the Scene
 	this->sketch_controller->updateSBIM();
 
 }
