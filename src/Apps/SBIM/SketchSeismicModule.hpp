@@ -11,6 +11,7 @@
 #include <map>
 
 #include <QtCore/QtGlobal>
+#include <QtGui/QPixmap>
 
 #include "SBIM/SeismicSlice.hpp"
 
@@ -22,7 +23,8 @@ namespace RRM
 	class SketchSeismicModule
 	{
 		public:
-			typedef RRM::SeismicSlice<qreal>::CrossSection CrossSection;
+			typedef RRM::SeismicSlice<qreal> 	 	SeismicSlice;
+			typedef std::pair< SeismicSlice ,QPixmap>       SeismicPair;
 
 			SketchSeismicModule ( );
 			~SketchSeismicModule ( );
@@ -31,13 +33,14 @@ namespace RRM
 
 			unsigned int currentSlice ( ) const;
 
-			bool addSeismicSlice ( unsigned int _seismic_slice );
+			bool addSeismicSlice( unsigned int _seismic_slice_index, const QPixmap& _overlay_image );
 
 			unsigned int numberOfSeismicSlices ( ) const;
 
 		public:
 			unsigned int current_slice_;
-			std::map<unsigned int, RRM::SeismicSlice<qreal> > seismic_slices_;
+			std::map<unsigned int, SeismicPair > seismic_slices_;
+
 	};
 
 } /* namespace RRM */

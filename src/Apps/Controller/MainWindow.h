@@ -56,6 +56,8 @@ class MainWindow : public QMainWindow
 
     public:
 
+    	typedef  RRM::CrossSection<qreal>  CrossSection;
+
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 

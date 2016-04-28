@@ -5,8 +5,8 @@
  *      Author: felipe
  */
 
-#ifndef SRC_APPS_MODEL_TOPOLOGY_FACE_HPP_
-#define SRC_APPS_MODEL_TOPOLOGY_FACE_HPP_
+#ifndef _TOPOLOGY_FACE_HPP_
+#define _TOPOLOGY_FACE_HPP_
 
 namespace RRM
 {

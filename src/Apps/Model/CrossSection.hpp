@@ -33,7 +33,7 @@ namespace RRM
 
 			CrossSection ( )
 			{
-
+				id_ = 0;
 			}
 
 			CrossSection ( const Self& _cross_section )
@@ -58,6 +58,8 @@ namespace RRM
 				edges_    = other.edges_;
 				faces_    = other.faces_;
 
+				id_ 	  = 	other.id_;
+
 				return *this;
 			}
 
@@ -67,12 +69,10 @@ namespace RRM
 				boundary(x,y,width,height);
 			}
 
-
 			void initialize( )
 			{
 				clear();
 			}
-
 			/// Quad in coordinates  (x , y) (Default OpenGL Coordinate System)
 			void boundary ( Real x , Real y , Real width , Real height )
 			{
@@ -127,6 +127,26 @@ namespace RRM
 
 			unsigned int insertCurve( const Curve2D& _curve )
 			{
+
+				std::vector<std::size_t> _thisIndex;
+				std::vector<std::size_t> _testIndex;
+				std::vector<Point2D> prPoints;
+
+				Curve2D test = _curve;
+
+				for ( auto& edge_iterator: edges_ )
+				{
+					edge_iterator.second.segment.curve.intersectionPolygonalCurve2D(test,_thisIndex,_testIndex,prPoints );
+					for ( std::size_t it = 0; it < prPoints.size(); it++)
+					{
+						Vertex<Real> v;
+						v.id_ = vertex_index_.getID();
+						v.location_ = prPoints[it];
+						vertices_[v.id_] = v;
+					}
+				}
+
+
 				unsigned int id = edge_index_.getID();
 
 				std::cout << "---- id ----  " << id << std::endl;
@@ -164,10 +184,14 @@ namespace RRM
 			std::map<unsigned int , Vertex<Real> > vertices_;
 			std::map<unsigned int , Edge<Real> >   edges_;
 			std::map<unsigned int , Face<Real> >   faces_;
+
+			unsigned int id_;
 		public:
 			IDManager vertex_index_;
 			IDManager face_index_;
 			IDManager edge_index_;
+
+
 	};
 
 } /* namespace RRM */

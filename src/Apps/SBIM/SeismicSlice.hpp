@@ -23,7 +23,7 @@ namespace RRM
 			SeismicSlice ( ) : Base()
 			{
 				this->log ( );
-				image_ = 0;
+				image_  = std::vector<unsigned char>();
 			}
 
 			~SeismicSlice ( )
@@ -35,6 +35,14 @@ namespace RRM
 			SeismicSlice ( const Self& other ) : Base(other)
 			{
 				*this = other;
+			}
+
+			Self& operator=(const Base& other )
+			{
+				// @see http://stackoverflow.com/a/1226957
+				Base::operator =(other);
+
+				return *this;
 			}
 
 			Self& operator=(const Self& other )
@@ -49,7 +57,7 @@ namespace RRM
 
 		public:
 
-			unsigned int image_;
+			std::vector<unsigned char> image_;
 
 	};
 

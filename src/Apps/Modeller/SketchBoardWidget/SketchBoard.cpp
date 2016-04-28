@@ -4,17 +4,7 @@
 
 SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *parent ) :	QGraphicsView ( parent )
 {
-
 // The following is just according to local coordinates centred at (0,0)
-//
-//			                   |
-//					 -y        |
-//					  |        |
-//			  -x<---(0,0)--->x | height
-//					  |        |
-//					  y        |
-//			                   |
-//            <-----width----->
 
 	this->setRenderHint ( QPainter::Antialiasing , true );
 	this->setOptimizationFlags ( QGraphicsView::DontSavePainterState );
@@ -66,15 +56,14 @@ SketchBoard::~SketchBoard ( )
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
 
-
 		if ( event->key ( ) == Qt::Key_F1 )
 		{
-			this->sketchSession_->image->setVisible(false);
+			this->sketchSession_->overlay_image_->setVisible(false);
 		}
 
 		if ( event->key ( ) == Qt::Key_F2 )
 		{
-			this->sketchSession_->image->setVisible(true);
+			this->sketchSession_->overlay_image_->setVisible(true);
 		}
 
 		if ( event->key ( ) == Qt::Key_Up )
@@ -101,13 +90,13 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
 			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
 
-			this->sketchSession_->image->setVisible ( false );
+			this->sketchSession_->overlay_image_->setVisible ( false );
 
 			QPainter painter ( &image );
 			this->sketchSession_->render ( &painter );
 			image.save ( "CrossSection.png" );
 
-			this->sketchSession_->image->setVisible ( true );
+			this->sketchSession_->overlay_image_->setVisible ( true );
 
 	//		QString fileName = "RESULT_IMAGE.png";
 	//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
@@ -159,9 +148,20 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 	}
 }
 
-void SketchBoard::setCrossSection(RRM::CrossSection<qreal>& _cross_section)
+void SketchBoard::setCrossSection(const CrossSection& _cross_section, const QPixmap& _overlay_image)
 {
+
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
+
+	this->sketchSession_->clear();
+
+	//this->sketchSession_->initializationWithImage(_overlay_image);
+	this->sketchSession_->overlay_image_->setPixmap(_overlay_image);
+
 	this->sketch_controller->setCrossSection(_cross_section);
 
+	this->sketchSession_->overlay_image_->setVisible(true);
+
 	this->sketch_controller->updateSBIM();
+
 }

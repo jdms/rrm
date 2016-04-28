@@ -433,11 +433,16 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 	std::cout << " v4 " << _cross_section.vertices_[v4.id_].edges_.size() << std::endl;
 
 }
-
-void SketchController::setCrossSection(RRM::CrossSection<qreal>& _cross_section)
+/// @todo Create the appropriate boundary
+void SketchController::setCrossSection( const RRM::CrossSection<qreal>& _cross_section)
 {
 	this->cross_section_ = _cross_section;
 	this->updateSBIM();
+}
+
+SketchController::CrossSection SketchController::getCrossSection ( ) const
+{
+	return this->cross_section_;
 }
 
 QPolygonF SketchController::convertCurves ( Curve2D& _curve )

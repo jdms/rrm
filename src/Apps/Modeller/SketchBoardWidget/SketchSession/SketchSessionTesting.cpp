@@ -5,10 +5,9 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 {
 	mode_ = InteractionMode::SKETCHING;
 
-	boundary_ = 0;
 	/// Drag and Drop Feature
-	image = new QGraphicsPixmapItem ( );
-	this->addItem ( image );
+	overlay_image_ = new QGraphicsPixmapItem ( );
+	this->addItem ( overlay_image_ );
 
 	QPen pen;
 
@@ -21,33 +20,15 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	this->addItem ( input_sketch_ );
 	this->input_sketch_->setZValue(1);
 
-
-	QPen pen_boundary ( QColor ( 0 , 100 , 0 ) );
-	pen_boundary.setWidth ( 1 );
-	QBrush brush_boundary;
-	brush_boundary.setColor ( QColor ( 180 , 255 , 180 , 180 ) );
-	brush_boundary.setStyle ( Qt::SolidPattern );
-
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
-	boundaryc = new BoundaryItem ( 0 , 0 );
-	this->addItem ( boundaryc );
+	boundaryc_ = new BoundaryItem(0.0,0.0) ;
 
-	//this->addItem(this->boundary_);
-	this->boundary_ = new QGraphicsRectItem ( );
-	this->boundary_->setPen ( pen_boundary );
-	this->boundary_->setBrush ( brush_boundary );
+	this->addItem ( boundaryc_ );
+
 	this->boundary_sketching_ = true;
 
-	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
-	gradient.setColorAt ( 1.0 , QColor::fromRgb ( 170 , 170 , 170 ) );
-	gradient.setColorAt ( 0.8 , QColor::fromRgb ( 180 , 180 , 180 ) );
-	gradient.setColorAt ( 0.6 , QColor::fromRgb ( 190 , 190 , 190 ) );
-	gradient.setColorAt ( 0.4 , QColor::fromRgb ( 190 , 190 , 190 ) );
-	gradient.setColorAt ( 0.2 , QColor::fromRgb ( 210 , 210 , 210 ) );
-	gradient.setColorAt ( 0.0 , QColor::fromRgb ( 215 , 215 , 215 ) );
-
-	this->setBackgroundBrush ( QBrush ( gradient ) );
+	setUpBackground();
 
 	colors.push_back(QColor(Qt::white));
 	colors.push_back(QColor(Qt::black));
@@ -64,10 +45,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 SketchSessionTesting::~SketchSessionTesting ( )
 {
-	 for( auto& curves_iterator: this->view_curves_)
-	 {
-	        delete	curves_iterator.second;
-	 }
+	 clear();
 }
 
 // View/Qt5 related functions
@@ -150,8 +128,7 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 					y1 = event->scenePos ( ).y ( );
 					y2 = boundary_anchor_point_.y ( );
 				}
-				this->boundary_->setRect ( x1 , y1 , x2 - x1 , y2 - y1 );
-				this->boundaryc->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
+				this->boundaryc_->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
 			}
 		}
 	}
@@ -178,8 +155,10 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 
 		if ( this->boundary_sketching_ == true )
 		{
-			emit newSessionSignal ( this->boundary_->rect ( ).x ( ) , this->boundary_->rect ( ).y ( ) , this->boundary_->rect ( ).width ( ) + this->boundary_->rect ( ).x ( ) ,
-																			this->boundary_->rect ( ).height ( ) + this->boundary_->rect ( ).y ( ) );
+			emit newSessionSignal ( this->boundaryc_->boundingRect ( ).x( ) ,
+						this->boundaryc_->boundingRect ( ).y ( ) ,
+						this->boundaryc_->boundingRect ( ).width ( ) + this->boundaryc_->boundingRect( ).x ( ) ,
+						this->boundaryc_->boundingRect ( ).height ( ) + this->boundaryc_->boundingRect( ).y( ) );
 
 			this->boundary_sketching_ = false;
 		}
@@ -279,8 +258,19 @@ void SketchSessionTesting::clear()
 	 {
 	        delete	curve_iterator.second;
 	 }
+	 /// clear the map of curves
+	 /// @todo clear all attributes
+	 for( auto& vertex_iterator: this->view_vertices_)
+	 {
+	        delete	vertex_iterator.second;
+	 }
 
 	 this->view_curves_.clear();
+	 this->view_vertices_.clear();
+
+	 this->boundaryc_->setNewBoundary(0.0,0.0,0.0,0.0);
+
+	 update();
 }
 
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
@@ -292,28 +282,17 @@ bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 	// and by QGraphicsScene to manage item indexing.
 
 	/// Creating and adding the boundary
-	image->setPixmap ( pixmap );
+	overlay_image_->setPixmap ( pixmap );
 
 	qreal x = pixmap.rect ( ).x ( );
 	qreal y = pixmap.rect ( ).y ( );
 	qreal w = pixmap.rect ( ).width ( );
 	qreal h = pixmap.rect ( ).height ( );
 
-	this->boundary_->setRect ( x , y , w , h );
-	this->boundaryc->setNewBoundary ( x , y , w , h );
-	this->setSceneRect ( this->boundary_->rect ( ) );
+	this->boundaryc_->setNewBoundary ( x , y , w , h );
+	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
 
-	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
-
-	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
-	gradient.setColorAt ( 1.0 , QColor::fromRgb ( 154.28 , 176.20, 199.16 ) );
-	gradient.setColorAt ( 0.8 , QColor::fromRgb ( 180 , 180 , 180 ) );
-	gradient.setColorAt ( 0.6 , QColor::fromRgb ( 190 , 190 , 190 ) );
-	gradient.setColorAt ( 0.4 , QColor::fromRgb ( 190 , 190 , 190 ) );
-	gradient.setColorAt ( 0.2 , QColor::fromRgb ( 210 , 210 , 210 ) );
-	gradient.setColorAt ( 0.0 , QColor::fromRgb ( 215 , 215 , 215 ) );
-
-	this->setBackgroundBrush ( QBrush ( gradient ) );
+	setUpBackground();
 
 	return true;
 }
@@ -330,22 +309,11 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 //	/// Creating and adding the boundary
 //	this->boundary_->setRect ( x , y , w - x , h - y );
 //	this->boundaryc->setNewBoundary ( x , y , w - x , h - y );
-	this->setSceneRect ( x , y , w , h );
-	this->boundary_->setRect ( x , y , w - x , h - y );
-	this->boundaryc->setNewBoundary ( x , y , w - x , h - y );
+	this->boundaryc_->setNewBoundary ( x , y , w , h );
+	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
 
-	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
 
-	int step = 20;
-
-	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
-
-	for ( float radius = 0.0; radius <= 1.0; radius +=0.1)
-	{
-		gradient.setColorAt ( radius , QColor::fromRgb ( 154.28 + (radius*step) , 176.20 + (radius*step), 199.16 + (radius*step) ) );
-	}
-
-	this->setBackgroundBrush ( QBrush ( gradient ) );
+	setUpBackground();
 
 	return true;
 }
@@ -388,6 +356,22 @@ void SketchSessionTesting::setEditMode()
 void SketchSessionTesting::setSketchMode()
 {
 	mode_ = InteractionMode::SKETCHING;
+}
+
+void SketchSessionTesting::setUpBackground ( )
+{
+	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
+
+	int step = 20;
+
+	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
+
+	for ( float radius = 0.0; radius <= 1.0; radius +=0.1)
+	{
+		gradient.setColorAt ( radius , QColor::fromRgb ( 154.28 + (radius*step) , 176.20 + (radius*step), 199.16 + (radius*step) ) );
+	}
+
+	this->setBackgroundBrush ( QBrush ( gradient ) );
 }
 
 void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices)

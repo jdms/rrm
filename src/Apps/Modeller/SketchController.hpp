@@ -53,7 +53,8 @@ class SketchController : public QObject
 		// Sketching a new boundary
 		void newSession ( qreal x , qreal y , qreal width , qreal height );
 
-		void setCrossSection ( CrossSection& _cross_section );
+		void setCrossSection ( const CrossSection& _cross_section );
+		CrossSection getCrossSection ( ) const;
 
         	void updateSBIM( );
 

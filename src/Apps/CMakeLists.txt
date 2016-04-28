@@ -41,6 +41,7 @@ set ( SBIM_HEADERS SBIM/SeismicSlice.hpp
                    # View
                    SBIM/View/SeismicView.hpp
                    SBIM/View/SeismicWindow.hpp
+                   SBIM/View/SeismicThumbnailItem.hpp
                    )
                    
 set ( SBIM_MOC_HEADERS  SBIM/View/SeismicView.hpp
@@ -56,7 +57,8 @@ set ( SBIM_SOURCES SBIM/SeismicSlice.cpp
                    SBIM/SketchSeismicModule.cpp
                    # View
                    SBIM/View/SeismicView.cpp
-                   SBIM/View/SeismicWindow.cpp )
+                   SBIM/View/SeismicWindow.cpp 
+                   SBIM/View/SeismicThumbnailItem.cpp)
 
 ## Grab Modeller Source Files
 set( MODELLER_HEADERS   Modeller/Sketching2DModule.h

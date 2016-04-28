@@ -59,7 +59,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void removeInputSketch ( );
 
-		QGraphicsPixmapItem * image;
+		void setUpBackground();
 
 	public slots:
 
@@ -87,6 +87,8 @@ class SketchSessionTesting: public QGraphicsScene
 		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
 
+	public:
+		QGraphicsPixmapItem * overlay_image_;
 	private:
 		// Map between the sketch curves with the curve into the arrangement
 		std::map<unsigned int, StratigraphyItem*> view_curves_;
@@ -97,7 +99,6 @@ class SketchSessionTesting: public QGraphicsScene
 		QPointF last_point_;
 
 		/// Rectangular Boundary
-			QGraphicsRectItem* boundary_;
 			// The point where the we start draw the rectangle boundary_
 			QPointF boundary_anchor_point_;
 			// If is an new Boundary is requested
@@ -107,7 +108,7 @@ class SketchSessionTesting: public QGraphicsScene
 		QBrush sketch_brush;
 
 		// Interface
-		BoundaryItem* boundaryc;
+		BoundaryItem* boundaryc_;
 		InputSketch* input_sketch_;
 
 		std::vector<QColor> colors;

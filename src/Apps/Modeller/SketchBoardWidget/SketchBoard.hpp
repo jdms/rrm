@@ -3,7 +3,6 @@
 #ifndef _SURFACE_HPP_
 #define _SURFACE_HPP_
 
-
 #include <QtWidgets/QGraphicsView>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
@@ -23,6 +22,8 @@ class SketchBoard : public QGraphicsView
 	Q_OBJECT
 
 public:
+	typedef RRM::CrossSection<qreal> CrossSection;
+
 	SketchBoard( RRM::CrossSection<qreal>& _cross_section,QWidget *parent = 0 );
 	virtual ~SketchBoard();
 
@@ -31,7 +32,10 @@ public:
 	void keyPressEvent ( QKeyEvent *event );
 
 public slots:
-	void setCrossSection( RRM::CrossSection<qreal>& _cross_section );
+	void setCrossSection( const CrossSection& _cross_section, const QPixmap& _overlay_image );
+
+signals:
+	void currentCrossSection( const CrossSection& _cross_section );
 
 public:
 

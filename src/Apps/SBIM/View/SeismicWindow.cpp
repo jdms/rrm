@@ -24,22 +24,36 @@ namespace RRM
 
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
-		for (int it = 0; it < 10; it++ )
-		{
-			this->lines_checkpoint_[it] 	= new QGraphicsLineItem(0.0,48*it,640,48*it);
-			this->lines_checkpoint_[it]->setVisible(false);
-			this->seismic_viewer_->scene()->addItem(this->lines_checkpoint_[it]);
+//		QPixmap pix1 = QPixmap("/home/felipe/lastrevision-1.png");
+//
+//		pix1 = pix1.scaled(640,480,Qt::KeepAspectRatio,Qt::FastTransformation);
+//		QMatrix rm;
+//		rm.rotate(180);
+//		pix1 = pix1.transformed(rm);
+//
+//		this->seismic_viewer_->overlayImage_->setPixmap(pix1);
 
-			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
-			QIcon icon;
 
-			icon.addPixmap(pix);
-			QListWidgetItem * item = new QListWidgetItem(icon,"Slice");
-			this->ui->listWidget->addItem(item);
-		}
+//		for (int it = 0; it < 30; it+=3 )
+//		{
+//			this->lines_checkpoint_[it] 	= new QGraphicsLineItem(0.0,48*it,640,48*it);
+//			this->lines_checkpoint_[it]->setVisible(false);
+//			this->seismic_viewer_->scene()->addItem(this->lines_checkpoint_[it]);
+//
+//			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
+//			QIcon icon;
+//
+//			icon.addPixmap(pix);
+//			QListWidgetItem * item = new QListWidgetItem(icon,QString::number(it));
+//			item->setData(Qt::UserRole,it);
+//			this->ui->listWidget->insertItem(it,item);
+//		}
+
+		std::cout << this->ui->listWidget->count();
 
 		/// Added new slice
 		connect(this->ui->pushButton_AddSlice, SIGNAL (pressed()),this, SLOT(addSeismicSlice()) );
+		connect(this->ui->listWidget, SIGNAL (itemDoubleClicked(QListWidgetItem *)), this, SLOT(setCurrentSeismicSlice( QListWidgetItem * )) );
 	}
 
 	SeismicWindow::~SeismicWindow ( )
@@ -67,15 +81,61 @@ namespace RRM
 	{
 		int index = this->ui->verticalSlider_seismic_slices_->value();
 
-		this->sketch_seismic_controller_.addSeismicSlice(index-1);
+		if ( sketch_seismic_controller_.addSeismicSlice(index,QPixmap()) )
+		{
+			this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , 48 * index , 640 , 48 * index ) );
 
-		this->lines_checkpoint_[index-1]->setVisible(true);
+
+			// Save the current Scene Image
+			QImage image ( this->seismic_viewer_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
+			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
+
+			QPainter painter ( &image );
+			this->seismic_viewer_->scene()->render ( &painter );
+
+			//QPixmap pix =  QPixmap::fromImage(image);
+
+			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
+
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second = pix;
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.initialize(0.0,0.0,pix.width(),pix.height());
+
+			QIcon icon;
+			icon.addPixmap ( pix );
+			SeismicThumbnailItem * item = new SeismicThumbnailItem ( icon , QString::number ( index ) );
+			item->setData ( Qt::UserRole , index );
+
+			this->ui->listWidget->insertItem ( index , item );
+
+		}else
+		{
+			std::cout << "Slice Exist" << std::endl;
+		}
 
 		std::cout << " Cross Sections  "  << this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_.size() << std::endl;
 
 		return false;
 	}
 
+	void SeismicWindow::setCurrentSeismicSlice( QListWidgetItem * item )
+	{
+		QVariant qvPtr = item->data(Qt::UserRole);
+
+		int index = qvPtr.value<int>();
+
+		this->sketch_seismic_controller_.setCurrentSeismicSlice(index);
+
+		emit currentCrossSection(sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first,
+				            sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second);
+
+		std::cout << "row :" << this->ui->listWidget->row(item) << "  " <<  index << std::endl;
+	}
+
+	void SeismicWindow::updateCrossSection (const CrossSection& _cross_section)
+	{
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].first = _cross_section;
+
+	}
 
 } /* namespace RRM */
 
