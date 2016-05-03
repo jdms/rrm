@@ -26,7 +26,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	this->addItem ( boundaryc_ );
 
-	this->boundary_sketching_ = true;
+	this->boundary_sketching_ = false;
 
 	setUpBackground();
 
@@ -148,10 +148,6 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 	{
 		QPolygonF new_curve = input_sketch_->getSketch();
 
-		if ( !new_curve.isClosed ( ) )
-		{
-			emit newSketchCurve(new_curve);
-		}
 
 		if ( this->boundary_sketching_ == true )
 		{
@@ -164,6 +160,11 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 		}
 		else
 		{
+			if ( !new_curve.isClosed ( ) )
+			{
+				emit newSketchCurve(new_curve);
+			}
+
 			input_sketch_->clear ( );
 		}
 

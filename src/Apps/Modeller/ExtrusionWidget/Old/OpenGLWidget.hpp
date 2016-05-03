@@ -25,8 +25,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QOpenGLWidget>
 
-#include "ExtrusionController.hpp"
-
 /**!
  * @brief OpenGL window for 3D data visualization. Currently implements the extrusion.
  */
@@ -56,6 +54,8 @@ class GLWidget: public QOpenGLWidget
 		void loadShaders();
 		void reloadShaders();
 		/// Left to Right
+		void createCube            ( const Celer::BoundingBox3<float>& box );
+		void createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal );
 
 	signals:
 
@@ -71,21 +71,19 @@ private:
         GLuint vertexArray_cube_;
         	GLuint vertexBuffer_cube_;
         	GLuint vertexCube_slot_;
-        std::vector<Eigen::Vector4f> cube_;
+        std::vector<Eigen::Vector3f> cube_;
         Tucano::Shader*   cube_shader_;
 
         // The interpolated surface
 	GLuint vertexArray_patch_;
 		GLuint vertexBuffer_patch_;
 		GLuint vertexPatch_slot_;
-	std::vector<Eigen::Vector4f> patch_;
+	std::vector<Eigen::Vector3f> patch_;
 	Tucano::Shader*   patch_shader_;
 
-        std::vector<Eigen::Vector4f> vertices;
+        std::vector<Eigen::Vector3f> vertices;
 
         Celer::BoundingBox3<float> box;
-
-        RRM::ExtrusionController extrusion_controller_;
 
 };
 

@@ -489,6 +489,9 @@ namespace RRM
 				}
 			}
 
+			//_thisIndex = myIndex;
+			//_testIndex = theirIndex;
+
 			std::sort ( auxMyIndex.begin ( ) , auxMyIndex.end ( ) );
 			for ( std::size_t i = 0; i < auxMyIndex.size ( ); ++i )
 			{
@@ -501,6 +504,13 @@ namespace RRM
 			{
 				testCurve.insert ( auxTheirIndex[i] + i + 1 , theirMap[auxTheirIndex[i]] );
 				_testIndex.push_back(auxTheirIndex[i] + i + 1);
+				std::cout << "Test Curve Point" << testCurve[auxTheirIndex[i] + i + 1].x() << " - " << testCurve[auxTheirIndex[i] + i + 1].y() << std::endl;
+				std::cout << "Test Curve Point map" << theirMap[auxTheirIndex[i]].x() << " - " << theirMap[auxTheirIndex[i]].y() << std::endl;
+			}
+
+			for ( std::size_t i = 0; i < _testIndex.size ( ); ++i )
+			{
+				std::cout << "Test Index Point" << testCurve[_testIndex[i]].x() << " - " << testCurve[_testIndex[i]].y() << std::endl;
 			}
 		}
 

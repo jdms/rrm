@@ -46,17 +46,6 @@ void GLWidget::initializeGL ( )
 
 	vertices.clear ( );
 
-	extrusion_controller_.initialize(0.0,0.0,0.0,700.0,400.0,100.0);
-
-	std::vector<unsigned int> positions = {0,50,100};
-
-	std:vector<Eigen::Vector4f> x;
-
-	cube_ = extrusion_controller_.getPlanes( positions );
-
-	x = extrusion_controller_.getcubeMesh();
-
-	cube_.insert(cube_.end(),x.begin(),x.end());
 
 	glGenVertexArrays ( 1 , &vertexArray_cube_ );
 	glBindVertexArray ( vertexArray_cube_ );
@@ -64,10 +53,10 @@ void GLWidget::initializeGL ( )
 	/// Requesting Vertex Buffers to the GPU
 	glGenBuffers ( 1 , &vertexBuffer_cube_ );
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , vertices.size ( ) * sizeof ( vertices[0] ) , &vertices[0] , GL_STATIC_DRAW );
 	// Set up generic attributes pointers
 	glEnableVertexAttribArray ( vertexCube_slot_ );
-	glVertexAttribPointer ( vertexCube_slot_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+	glVertexAttribPointer ( vertexCube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
@@ -81,9 +70,11 @@ void GLWidget::initializeGL ( )
 	glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
 	/// Set up generic attributes pointers
 	glEnableVertexAttribArray ( vertexPatch_slot_ );
-	glVertexAttribPointer ( vertexPatch_slot_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+	glVertexAttribPointer ( vertexPatch_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
+	///createPatch ( Eigen::Vector3f ( -1.0 , 0.0 , 0.5 ) , Eigen::Vector3f ( 1.0 , 0.0 , 0.5 ) , 10 );
+	createCube(Celer::BoundingBox3<float>(-1.0,-1.0,-1.0,1.0,1.0,1.0));
 
 	loadShaderByResources ( );
 
@@ -188,6 +179,133 @@ void GLWidget::loadShaders ( )
 
 }
 
+void GLWidget::createSurfacePatchies ( const std::vector<std::vector<Eigen::Vector3f> >& patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal )
+{
+
+	patch_.clear ( );
+	box.reset();
+
+	std::size_t last;
+	std::size_t last_j;
+
+	stepz = volume_width / stepz;
+
+	for ( std::size_t it_patch = 0; it_patch < patchies.size ( ); it_patch++ )
+	{
+		for ( float j = 0.0f; j < volume_width; j += stepz )
+		{
+			for ( std::size_t i = 0; i < ( patchies[it_patch].size ( ) - stepx ); i += stepx )
+			{
+				// In the Curve
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )         , patchies[it_patch][i].y ( )          , j   ) );
+
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( ) ,  patchies[it_patch][i + stepx].y ( ) , j  ) );
+				// In the Extrude
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i].x ( )          , patchies[it_patch][i].y ( )         , j + stepz   ) );
+
+				patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][i + stepx].x ( )  , patchies[it_patch][i + stepx].y ( ) , j + stepz  ) );
+
+				last = i;
+
+			}
+//
+			if ( last > patchies[it_patch].size ( ) )
+			{
+				last -= stepx;
+			}
+
+			last_j = j;
+
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( ) , patchies[it_patch][last].y ( ), last_j   ) );
+
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back ( ).x ( ) , patchies[it_patch].back ( ).y ( ) , last_j   ) );
+			// In the Extrude
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch][last].x ( ) , patchies[it_patch][last].y ( ), last_j + stepz  ) );
+
+			patch_.push_back ( Eigen::Vector3f ( patchies[it_patch].back ( ).x ( ) , patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
+		}
+
+	}
+
+
+	std::cout << "Box Center " << center << std::endl;
+
+	for ( std::size_t it = 0; it < patch_.size ( ); it++ )
+	{
+		patch_[it] = (patch_[it] - center)/diagonal;
+	}
+
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , &patch_[0] , GL_STATIC_DRAW );
+
+	update();
+
+}
+
+/// Left to Right
+void GLWidget::createCube ( const Celer::BoundingBox3<float>& box )
+{
+	cube_.clear ( );
+
+	Eigen::Vector3f min_ = box.min();
+	Eigen::Vector3f max_ = box.max();
+
+	Eigen::Vector3f vertex_data[] =
+	{
+		//  Top Face
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		// Bottom Face
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+		// Front Face
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		// Back Face
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+		// Left Face
+		Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+		Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+		// Right Face
+		Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+		Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+	};
+
+	std::copy( vertex_data	 , vertex_data + 24	, std::back_inserter ( cube_ ) );
+
+	Celer::BoundingBox3<float> b;
+
+	b.fromPointCloud(cube_.begin(),cube_.end());
+
+	for ( std::size_t it = 0; it < cube_.size ( ); it++ )
+	{
+		cube_[it] = (cube_[it] - b.center())/b.diagonal();
+	}
+
+	std::cout << "Box Center Cube " << b.center() << std::endl;
+
+	b.fromPointCloud(cube_.begin(),cube_.end());
+
+	/// Requesting Vertex Buffers to the GPU
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , &cube_[0] , GL_STATIC_DRAW );
+	// Set up generic attributes pointers
+}
+
 void GLWidget::backGround()
 {
 	glDisable(GL_DEPTH_TEST);
@@ -224,18 +342,20 @@ void GLWidget::paintGL ( )
 
 	backGround();
 
-//	patch_shader_->bind ( );
-//	/// 3rd attribute buffer : vertices
-//	patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//	patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//	patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//	patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//	glBindVertexArray ( vertexArray_patch_ );
-//	/// Draw the triangle !
-//	glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
-//
-//	glBindVertexArray ( 0 );
-//	patch_shader_->unbind ( );
+	patch_shader_->bind ( );
+	/// 3rd attribute buffer : vertices
+	patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+	patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+	patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+	patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+	glBindVertexArray ( vertexArray_patch_ );
+	/// Draw the triangle !
+	glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
+
+	glBindVertexArray ( 0 );
+	patch_shader_->unbind ( );
+
+	///
 
 	cube_shader_->bind ( );
 	/// 3rd attribute buffer : vertices

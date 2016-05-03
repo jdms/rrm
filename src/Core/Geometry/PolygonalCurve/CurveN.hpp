@@ -261,9 +261,13 @@ public:
     /// Inserts a point at a given index.
     /// \param index the index.
     /// \param p point to be inserted.
-    virtual void insert( unsigned int index , const Point& p ) {
-        if( index < size()) pPoints.insert( pPoints.begin()+index , p ); else add(p) ;
-    }
+		virtual void insert ( unsigned int index , const Point& p )
+		{
+			if ( index < size ( ) )
+				pPoints.insert ( pPoints.begin ( ) + index , p );
+			else
+				add ( p );
+		}
 
     /// \brief copy part of the curve between indexes idxStart and idxEnd
     ///        inclusive if idxStart < idxEnd returns a reverse curve version

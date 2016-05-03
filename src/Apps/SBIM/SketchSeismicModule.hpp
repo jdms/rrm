@@ -39,6 +39,7 @@ namespace RRM
 
 		public:
 			unsigned int current_slice_;
+
 			std::map<unsigned int, SeismicPair > seismic_slices_;
 
 	};
