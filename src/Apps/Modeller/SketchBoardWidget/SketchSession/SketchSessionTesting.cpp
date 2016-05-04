@@ -283,6 +283,9 @@ bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 	// and by QGraphicsScene to manage item indexing.
 
 	/// Creating and adding the boundary
+
+	clear();
+
 	overlay_image_->setPixmap ( pixmap );
 
 	qreal x = pixmap.rect ( ).x ( );

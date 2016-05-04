@@ -46,9 +46,9 @@ void GLWidget::initializeGL ( )
 
 	vertices.clear ( );
 
-	extrusion_controller_.initialize(0.0,0.0,0.0,700.0,400.0,100.0);
+	extrusion_controller_.initialize(0.0,0.0,0.0,700.0,400.0,400.0);
 
-	std::vector<unsigned int> positions = {0,50,100};
+	std::vector<unsigned int> positions = {5,10,30,40,60,90};
 
 	std:vector<Eigen::Vector4f> x;
 
@@ -85,7 +85,9 @@ void GLWidget::initializeGL ( )
 
 	glBindVertexArray ( 0 );
 
+	// IMPORTANT FOR THE DEOLY VERSION
 	loadShaderByResources ( );
+	//loadShaders();
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
@@ -160,7 +162,7 @@ void GLWidget::loadShaders ( )
 	QString shaderDirectory (shadersDir.path ()+"\\src\\Extrusion\\GUI\\Qt\\RCC\\Shaders\\");
 #elif defined(__linux__)               // Linux Directory Style
 	/* Do Linux stuff */
-	QString shaderDirectory ( shadersDir.path ( ) + "/src/Extrusion/GUI/Qt/RCC/Shaders/" );
+	QString shaderDirectory ( shadersDir.path ( ) + "/src/Apps/Modeller/ExtrusionWidget/" );
 #else
 	/* Error, both can't be defined or undefined same time */
 	std::cout << "Operate System not supported !"

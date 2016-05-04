@@ -7,6 +7,8 @@
 
 #include "SeismicWindow.hpp"
 
+#include <iostream>
+
 namespace RRM
 {
 	// The parent destructor are responsible to delete all children
@@ -103,6 +105,7 @@ namespace RRM
 
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second = pix;
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.initialize(0.0,0.0,pix.width(),pix.height());
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.id_ = index;
 
 			QIcon icon;
 			icon.addPixmap ( pix );
@@ -127,18 +130,24 @@ namespace RRM
 
 		int index = qvPtr.value<int>();
 
-		this->sketch_seismic_controller_.setCurrentSeismicSlice(index);
+		std::cout << " Log Seismic --- Send " << std::endl;
+
+		 this->sketch_seismic_controller_.setCurrentSeismicSlice(index);
 
 		emit currentCrossSection(sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first,
-				            sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_);
+		    	                 sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_);
 
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.log();
 		std::cout << "row :" << this->ui->listWidget->row(item) << "  " <<  index << std::endl;
 	}
 
-	void SeismicWindow::updateCrossSection (const CrossSection& _cross_section)
+	void SeismicWindow::updateCrossSection ( CrossSection& _cross_section)
 	{
 		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].first = _cross_section;
 
+		std::cout << " Log Seismic --- Back " << std::endl;
+
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].first.log();
 	}
 
 } /* namespace RRM */

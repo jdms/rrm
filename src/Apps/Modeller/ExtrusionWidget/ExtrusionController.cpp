@@ -122,7 +122,8 @@ namespace RRM
 		std::vector<Eigen::Vector4f> cube;
 		for (auto position_iterator: slice_position)
 		{
-			float z = position_iterator/normalize_;
+			//float z = ((400/100)*(100-position_iterator))/normalize_;
+			float z = (normalize_z_/100)*(100-position_iterator);
 			z = z - center_.z();
 			// Front Face
 			cube.push_back(Eigen::Vector4f ( max_.x(), max_.y(), z, 1.0f ));

@@ -41,7 +41,7 @@ namespace RRM
 			bool removeSeismicSlice ( );
 			bool replaceSeismicSlice ( );
 		signals:
-			void SetCrossSection ( const CrossSection& _seismic_slice, const QPixmap& _overlay_image );
+			void SetCrossSection ( CrossSection& _seismic_slice, const QPixmap& _overlay_image );
 		public:
 			SketchSeismicModule sketch_seismic_module_;
 

@@ -137,6 +137,8 @@ namespace RRM
 				e2.source_id_ = v2.id_;
 				e2.target_id_ = v1.id_;
 
+				std::cout << " New Boundary " << std::endl;
+
 				this->log();
 
 			}
@@ -145,63 +147,63 @@ namespace RRM
 			unsigned int insertCurve( const Curve2D& _curve )
 			{
 
-				std::vector<std::size_t> thisIndex;
-				std::vector<std::size_t> testIndex;
-				std::vector<Point2D> prPoints;
+//				std::vector<std::size_t> thisIndex;
+//				std::vector<std::size_t> testIndex;
+//				std::vector<Point2D> prPoints;
+//
+//				std::vector<std::size_t> intersection_indices;
+//				std::vector<std::size_t> intersection_points;
+//
+//				Curve2D test = _curve;
+//
+//				for ( auto& edge_iterator: edges_ )
+//				{
+//					edge_iterator.second.segment.curve.intersectionPolygonalCurve2D(test,thisIndex,testIndex,prPoints );
+//					for ( std::size_t it = 0; it < prPoints.size(); it++)
+//					{
+////						Vertex<Real> v;
+////						v.id_ = vertex_index_.getID();
+////						v.location_ = prPoints[it];
+////						vertices_[v.id_] = v;
+//					}
+//
+//					intersection_indices.insert(intersection_indices.end(),testIndex.begin(),testIndex.end());
+//				}
+//
+//				std::sort(intersection_indices.begin(),intersection_indices.end(),std::less<std::size_t>());
+//
+//				std::deque<Curve2D> segments;
+//				segments.resize(3);
+//
+//				//test.split(intersection_indices[0],intersection_indices[1],segments[0],segments[1],segments[2]);
+//
+//				//segments.pop_front();
+//				//segments.pop_back();
+//
+//				std::cout << " size segment " << intersection_indices.size() << std::endl;
+//
+//				for ( auto& vertex_iterator: intersection_indices)
+//				{
+//					std::cout << " Vertex " << segments.size() << std::endl;
+//					Vertex<Real> v;
+//					v.id_ = vertex_index_.getID();
+//					v.location_ = test[vertex_iterator];
+//					vertices_[v.id_] = v;
+//
+//				}
 
-				std::vector<std::size_t> intersection_indices;
-				std::vector<std::size_t> intersection_points;
-
-				Curve2D test = _curve;
-
-				for ( auto& edge_iterator: edges_ )
-				{
-					edge_iterator.second.segment.curve.intersectionPolygonalCurve2D(test,thisIndex,testIndex,prPoints );
-					for ( std::size_t it = 0; it < prPoints.size(); it++)
-					{
-//						Vertex<Real> v;
-//						v.id_ = vertex_index_.getID();
-//						v.location_ = prPoints[it];
-//						vertices_[v.id_] = v;
-					}
-
-					intersection_indices.insert(intersection_indices.end(),testIndex.begin(),testIndex.end());
-				}
-
-				std::sort(intersection_indices.begin(),intersection_indices.end(),std::less<std::size_t>());
-
-				std::deque<Curve2D> segments;
-				segments.resize(3);
-
-				//test.split(intersection_indices[0],intersection_indices[1],segments[0],segments[1],segments[2]);
-
-				//segments.pop_front();
-				//segments.pop_back();
-
-				std::cout << " size segment " << intersection_indices.size() << std::endl;
-
-				for ( auto& vertex_iterator: intersection_indices)
-				{
-					std::cout << " Vertex " << segments.size() << std::endl;
-					Vertex<Real> v;
-					v.id_ = vertex_index_.getID();
-					v.location_ = test[vertex_iterator];
-					vertices_[v.id_] = v;
-
-				}
-
-
+//
 //				for ( auto& segment_iterator: segments)
 //				{
-//					unsigned int id = edge_index_.getID();
-//
+					unsigned int id = edge_index_.getID();
+
 //					std::cout << "---- id ----  " << segment_iterator.size() << std::endl;
-//
-//					Edge<Real> e;
-//
-//					e.segment.curve = segment_iterator;
-//
-//					edges_[id] = e;
+
+					Edge<Real> e;
+
+					e.segment.curve = _curve;
+
+					edges_[id] = e;
 //				}
 
 				return 0;

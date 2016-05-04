@@ -16,7 +16,8 @@ SketchController::SketchController ( RRM::CrossSection<qreal>&   _cross_section,
 
 	cross_section_.initialize( 0.0 , 0.0 , 700 , 400 );
 
-	cross_section_.log();
+	std::cout  << " Sketch Controller Initializer " << std::endl;
+ 	cross_section_.log();
 
 	next = 0;
 
@@ -105,8 +106,6 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
 void SketchController::updateSBIM (  )
 {
-	cross_section_.log();
-
 	std::map<unsigned int, QPolygonF> view_curves_;
 	std::map<unsigned int, QPointF>   view_vertices_;
 
@@ -434,13 +433,13 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 
 }
 /// @todo Create the appropriate boundary
-void SketchController::setCrossSection( const RRM::CrossSection<qreal>& _cross_section)
+void SketchController::setCrossSection( RRM::CrossSection<qreal>& _cross_section)
 {
 	this->cross_section_ = _cross_section;
 	this->updateSBIM();
 }
 
-SketchController::CrossSection SketchController::getCrossSection ( ) const
+SketchController::CrossSection SketchController::getCrossSection ( )
 {
 	return this->cross_section_;
 }

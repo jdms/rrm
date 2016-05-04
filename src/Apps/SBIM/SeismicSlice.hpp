@@ -22,6 +22,7 @@ namespace RRM
 
 			SeismicSlice ( ) : Base()
 			{
+				std::cout << "Slice Constructor" << std::endl;
 				this->log ( );
 				image_  = std::vector<unsigned char>();
 			}

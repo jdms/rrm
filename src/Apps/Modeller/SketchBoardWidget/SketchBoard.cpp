@@ -140,10 +140,21 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 	}
 }
 
-void SketchBoard::setCrossSection(const CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image)
+void SketchBoard::setCrossSection( CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image)
 {
 	/// Notify the receiver with the current version of the CrossSection
-	emit currentCrossSection(this->sketch_controller->getCrossSection());
+
+	std::cout << " Receive SketchBoard   " << std::endl;
+
+	_cross_section.log();
+
+	CrossSection temp = this->sketch_controller->getCrossSection();
+
+	std::cout << " Send SketchBoard   " << std::endl;
+
+	temp.log();
+
+	emit currentCrossSection(temp);
 
 	/// Delete all the scene and setup it with the incoming cross section
 	this->sketchSession_->clear();
@@ -153,13 +164,13 @@ void SketchBoard::setCrossSection(const CrossSection& _cross_section, const std:
 	 pix.loadFromData( _overlay_image.data(), _overlay_image.size());
 
 	/// Update the overlay image
-	this->sketchSession_->overlay_image_->setPixmap(pix);
+	//this->sketchSession_->overlay_image_->setPixmap(pix);
 
 	/// Update the data structure
 	this->sketch_controller->setCrossSection(_cross_section);
 
 	/// Make the overlay image visible
-	this->sketchSession_->overlay_image_->setVisible(true);
+	//this->sketchSession_->overlay_image_->setVisible(true);
 
 	/// Rebuild the Scene
 	this->sketch_controller->updateSBIM();

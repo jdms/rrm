@@ -47,10 +47,10 @@ namespace RRM
 		public slots:
 			bool addSeismicSlice ( );
 			void setCurrentSeismicSlice( QListWidgetItem * item );
-			void updateCrossSection (const CrossSection& _cross_section);
+			void updateCrossSection ( CrossSection& _cross_section);
 
 		signals:
-			void currentCrossSection (const CrossSection& _seismic_slice, const std::vector<unsigned char>& _overlay_image );
+			void currentCrossSection (CrossSection& _seismic_slice, const std::vector<unsigned char>& _overlay_image );
 		public:
 			/// View
 			Ui::SeismicWindowWidget* ui;
