@@ -25,15 +25,14 @@ class SketchController : public QObject
 
 	public:
 
-		typedef RRM::CrossSection<qreal>	     CrossSection;
+		typedef qreal				     Real;
+		typedef RRM::CrossSection<Real>	     	     CrossSection;
 		typedef CrossSection::Curve2D		     Curve2D;
 		typedef CrossSection::Point2D		     Point2D;
 
-		SketchController ( CrossSection& _cross_section , QObject *parent = nullptr );
+		SketchController ( QObject *parent = nullptr );
 
 		~SketchController ( );
-
-		void initialize ( const CrossSection& _cross_section );
 
 		void clear ( );
 
@@ -51,20 +50,16 @@ class SketchController : public QObject
 		// By using a background image
 		void newSession ( QPixmap pixmap );
 		// Sketching a new boundary
-		void newSession ( qreal x , qreal y , qreal width , qreal height );
+		void newSession ( Real x , Real y , Real width , Real height );
 
-		void setCrossSection (  CrossSection& _cross_section );
-		CrossSection getCrossSection ( ) ;
+		void setCrossSection ( const CrossSection& _cross_section );
+		CrossSection getCrossSection ( ) const ;
 
         	void updateSBIM( );
 
-        	void newSection ( )
-        	{
-//        		this->sketch_view_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-        	}
-
         signals:
-		void updateSBIM ( const std::map<unsigned int, QPolygonF>& , const std::map<unsigned int, QPointF>& );
+		void updateSBIM        ( const std::map<unsigned int, QPolygonF>& ,
+					 const std::map<unsigned int, QPointF>& );
 
 	private:
         	// The Model

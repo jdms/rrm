@@ -36,6 +36,9 @@ class GLWidget: public QOpenGLWidget
 		Q_OBJECT
 	public:
 		// From QGLWidget
+		typedef RRM::ExtrusionController::SeismicSlices SeismicSlices;
+
+
 		explicit GLWidget ( QWidget* parent = 0 );
 		void initializeGL ( );
 		void resizeGL ( int width , int height );
@@ -56,6 +59,13 @@ class GLWidget: public QOpenGLWidget
 		void loadShaders();
 		void reloadShaders();
 		/// Left to Right
+		void updateSeismicSlices ( const SeismicSlices& _seismic_slices);
+		bool extrusionInitialize ( float _x_min,
+					   float _y_min,
+					   float _z_min,
+					   float _x_max,
+					   float _y_max,
+					   float _z_max);
 
 	signals:
 

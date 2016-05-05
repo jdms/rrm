@@ -26,7 +26,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	this->addItem ( boundaryc_ );
 
-	this->boundary_sketching_ = false;
+	this->boundary_sketching_ = true;
 
 	setUpBackground();
 
@@ -423,5 +423,6 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 	}
 
 
+	setUpBackground();
 	update();
 }

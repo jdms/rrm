@@ -22,20 +22,22 @@ class SketchBoard : public QGraphicsView
 	Q_OBJECT
 
 public:
+	typedef SketchController::Real 	 	Real;
 	typedef SketchController::CrossSection  CrossSection;
 
-	SketchBoard( RRM::CrossSection<qreal>& _cross_section,QWidget *parent = 0 );
+	SketchBoard( QWidget *parent = 0 );
 	virtual ~SketchBoard();
-
 
 	void wheelEvent ( QWheelEvent *event );
 	void keyPressEvent ( QKeyEvent *event );
 
 public slots:
-	void setCrossSection( CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image);
+	void setCrossSection( const CrossSection& _cross_section );
+	/// default Scene
+	void newSession ( Real x , Real y , Real width , Real height );
 
 signals:
-	void currentCrossSection( CrossSection& _cross_section );
+	void currentCrossSection( const CrossSection& _cross_section );
 
 public:
 

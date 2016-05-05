@@ -10,9 +10,6 @@
 
 #include <map>
 
-#include <QtCore/QtGlobal>
-#include <QtGui/QPixmap>
-
 #include "SBIM/SeismicSlice.hpp"
 
 namespace RRM
@@ -20,27 +17,60 @@ namespace RRM
 	/**
 	 * \brief SketchSiesmic manager.
 	 */
+	template <class _Real>
 	class SketchSeismicModule
 	{
 		public:
-			typedef RRM::SeismicSlice<qreal> 	 	SeismicSlice;
-			typedef std::pair< SeismicSlice ,QPixmap>       SeismicPair;
+			typedef _Real					Real;
+			typedef RRM::SeismicSlice<Real> 	 	SeismicSlice;
+			typedef std::vector<unsigned char>	        RRMImage;
 
-			SketchSeismicModule ( );
-			~SketchSeismicModule ( );
+			SketchSeismicModule ( )
+			{
+				this->current_slice_ = 0;
+			}
+			~SketchSeismicModule ( )
+			{
 
-			bool setCurrentSlice ( unsigned int _index );
+			}
 
-			unsigned int currentSlice ( ) const;
+			bool setCurrentSlice ( unsigned int _index )
+			{
+				this->current_slice_ = _index;
+				return false;
+			}
 
-			bool addSeismicSlice( unsigned int _seismic_slice_index, const QPixmap& _overlay_image );
+			unsigned int currentSlice ( ) const
+			{
+				return this->current_slice_;
+			}
 
-			unsigned int numberOfSeismicSlices ( ) const;
+			bool addSeismicSlice( unsigned int _seismic_slice_index, const RRMImage& _overlay_image )
+			{
+				/// The slice already exist
+				if ( this->seismic_slices_.count( _seismic_slice_index ))
+				{
+					return false;
+				}
+				/// Add new CrossSection
+				else
+				{
+					this->seismic_slices_[_seismic_slice_index].id_    = _seismic_slice_index;
+					this->seismic_slices_[_seismic_slice_index].image_ = _overlay_image;
+				}
+
+				return true;
+			}
+
+			unsigned int numberOfSeismicSlices ( ) const
+			{
+				return	seismic_slices_.size();
+			}
 
 		public:
 			unsigned int current_slice_;
 
-			std::map<unsigned int, SeismicPair > seismic_slices_;
+			std::map<unsigned int, SeismicSlice > seismic_slices_;
 
 	};
 

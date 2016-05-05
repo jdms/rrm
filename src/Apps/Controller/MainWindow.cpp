@@ -8,8 +8,8 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 
 	this->setMinimumSize ( 800 , 600 );
 
-	create3DModule ( );
 	create2DModule ( );
+	create3DModule ( );
 
 	createMenuBar ( );
 	createMainWindowActions ( );

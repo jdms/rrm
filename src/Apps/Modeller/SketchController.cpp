@@ -7,31 +7,15 @@
 
 #include "SketchController.hpp"
 
-SketchController::SketchController ( RRM::CrossSection<qreal>&   _cross_section,
-				     QObject*        parent) : QObject(parent)
+SketchController::SketchController ( QObject*        parent) : QObject(parent)
 {
-
-
-	cross_section_ = _cross_section;
-
-	cross_section_.initialize( 0.0 , 0.0 , 700 , 400 );
-
-	std::cout  << " Sketch Controller Initializer " << std::endl;
- 	cross_section_.log();
-
 	next = 0;
-
 	// Sketching
 }
 
 SketchController::~SketchController ( )
 {
 	// TODO Auto-generated destructor stub
-}
-
-void SketchController::initialize ( const CrossSection& _cross_section )
-{
-
 }
 
 void SketchController::clear ( )
@@ -433,13 +417,13 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 
 }
 /// @todo Create the appropriate boundary
-void SketchController::setCrossSection( RRM::CrossSection<qreal>& _cross_section)
+void SketchController::setCrossSection( const RRM::CrossSection<qreal>& _cross_section)
 {
 	this->cross_section_ = _cross_section;
 	this->updateSBIM();
 }
 
-SketchController::CrossSection SketchController::getCrossSection ( )
+SketchController::CrossSection SketchController::getCrossSection ( ) const
 {
 	return this->cross_section_;
 }

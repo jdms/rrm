@@ -96,16 +96,9 @@ namespace RRM
 			//QPixmap pix =  QPixmap::fromImage(image);
 			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
 
-			QByteArray bytes;
-			QBuffer buffer(&bytes);
-			buffer.open(QIODevice::ReadWrite);
-			pix.save(&buffer, "JPG");
-
-			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_ = std::vector<unsigned char> (bytes.constData(), bytes.constData() + bytes.size());
-
-			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].second = pix;
-			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.initialize(0.0,0.0,pix.width(),pix.height());
-			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.id_ = index;
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].image_ = this->sketch_seismic_controller_.convertQPixmap2RRMImage(pix);
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].initialize(0.0,0.0,pix.width(),pix.height());
+			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].id_ = index;
 
 			QIcon icon;
 			icon.addPixmap ( pix );
@@ -134,20 +127,23 @@ namespace RRM
 
 		 this->sketch_seismic_controller_.setCurrentSeismicSlice(index);
 
-		emit currentCrossSection(sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first,
-		    	                 sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.image_);
+		emit currentCrossSection(sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index]);
 
-		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].first.log();
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index];
+
 		std::cout << "row :" << this->ui->listWidget->row(item) << "  " <<  index << std::endl;
 	}
 
-	void SeismicWindow::updateCrossSection ( CrossSection& _cross_section)
+	void SeismicWindow::updateCrossSection ( const CrossSection& _cross_section)
 	{
-		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].first = _cross_section;
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_] = _cross_section;
 
 		std::cout << " Log Seismic --- Back " << std::endl;
 
-		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].first.log();
+		// Notify the 3D viewer
+		emit currentSeismicSlices(this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_);
+
+		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].log();
 	}
 
 } /* namespace RRM */

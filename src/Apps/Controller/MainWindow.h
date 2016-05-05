@@ -148,7 +148,6 @@ class MainWindow : public QMainWindow
 
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
-        RRM::CrossSection<qreal>  	cross_section__;
         SketchBoard  		*sketch_board_;
 
         QStatusBar			*status_bar_;

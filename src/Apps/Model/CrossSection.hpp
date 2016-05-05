@@ -55,12 +55,13 @@ namespace RRM
 				edge_index_   = other.edge_index_;
 				face_index_   = other.face_index_;
 
-
 				vertices_ = other.vertices_;
 				edges_    = other.edges_;
 				faces_    = other.faces_;
 
 				id_ 	  = 	other.id_;
+
+				image_    = other.image_;
 
 				return *this;
 			}
@@ -210,7 +211,7 @@ namespace RRM
 			}
 
 
-			void log ( )
+			void log ( ) const
 			{
 				std::cout << "---- Size ---- " << std::endl;
 				std::cout << "- vertices --- " << vertices_.size()  << std::endl;
@@ -225,7 +226,9 @@ namespace RRM
 			std::map<unsigned int , Face<Real> >   faces_;
 
 			unsigned int id_;
-		public:
+
+			std::vector<unsigned char> image_;
+
 			IDManager vertex_index_;
 			IDManager face_index_;
 			IDManager edge_index_;

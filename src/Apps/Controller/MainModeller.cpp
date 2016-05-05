@@ -5,7 +5,11 @@ void MainWindow::create2DModule ( )
 {
 
 	// Sketch Module
-	sketch_board_ = new SketchBoard ( cross_section__ );
+
+	glWidget = new GLWidget ( this );
+
+	sketch_board_ = new SketchBoard ();
+	sketch_board_->newSession(0.0,0.0,700,400);
 
 	dc_2DModule = new Sketching2DModule( this );
 	dc_2DModule->setWindowTitle ( "Sketch View" );
@@ -24,10 +28,12 @@ void MainWindow::create2DModule ( )
 	status_bar_->addWidget ( status_text );
 	this->setStatusBar ( this->status_bar_ );
 
-	connect ( this->seismic_view_ , SIGNAL( currentCrossSection( CrossSection&, const std::vector<unsigned char>&) ) , this->sketch_board_ , SLOT( setCrossSection( CrossSection& , const std::vector<unsigned char>&) ) );
-	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( CrossSection& ) ) , this->seismic_view_ , SLOT( updateCrossSection( CrossSection& ) ) );
+	connect ( this->seismic_view_ , SIGNAL( currentCrossSection( const CrossSection&) ) , this->sketch_board_ , SLOT( setCrossSection( const CrossSection&) ) );
+	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->seismic_view_ , SLOT( updateCrossSection( const CrossSection& ) ) );
 
-//	// Sketching
+	connect ( this->seismic_view_ , SIGNAL( currentSeismicSlices( const SeismicSlices&) ) , this->glWidget , SLOT( updateSeismicSlices( const SeismicSlices&) ) );
+
+	// Sketching
 //	connect ( this->sketchSession_ , SIGNAL( curve2DSignal(QPolygonF) ) , this , SLOT( curve2DSlot(QPolygonF) ) );
 //
 //	connect ( this->sketchSession_ , SIGNAL( smoothSketchSignal(QPolygonF) ) , this , SLOT( smoothCurveSlot(QPolygonF) ) );
@@ -44,8 +50,6 @@ void MainWindow::create3DModule ( )
 	dc_3DModule = new QDockWidget ( this );
 	dc_3DModule->setAllowedAreas ( Qt::RightDockWidgetArea );
 	dc_3DModule->setWindowTitle ( "3D View" );
-
-	glWidget = new GLWidget ( this );
 
 	QFrame *fr = new QFrame ( this );
 	fr->setFrameStyle ( QFrame::Box | QFrame::Sunken );

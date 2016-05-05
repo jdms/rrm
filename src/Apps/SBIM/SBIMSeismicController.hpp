@@ -9,6 +9,9 @@
 #define _SBIM_SBIMSEISMICCONTROLLER_HPP_
 
 #include <QtCore/QObject>
+#include <QtCore/QBuffer>
+#include <QtCore/QByteArray>
+#include <QtGui/QPixmap>
 
 #include "SBIM/SketchSeismicModule.hpp"
 
@@ -24,8 +27,12 @@ namespace RRM
 		Q_OBJECT
 
 		public:
-			typedef RRM::SeismicSlice<qreal> 	    SeismicSlice;
-			typedef typename SeismicSlice::CrossSection CrossSection;
+
+			typedef std::vector<unsigned char> 	    RRMImage;
+
+			typedef RRM::SeismicSlice<qreal> 	      SeismicSlice;
+			typedef typename SeismicSlice::CrossSection   CrossSection;
+			typedef std::map<unsigned int, SeismicSlice > SeismicSlices;
 
 			SBIMSeismicController ( QObject *parent = nullptr );
 			~SBIMSeismicController ( );
@@ -40,10 +47,13 @@ namespace RRM
 			bool addSeismicSlice ( unsigned int _seismic_slice_index, const QPixmap& _overlay_image );
 			bool removeSeismicSlice ( );
 			bool replaceSeismicSlice ( );
+
+			/// Converters
+			RRMImage convertQPixmap2RRMImage (const QPixmap& _overlay_image);
 		signals:
-			void SetCrossSection ( CrossSection& _seismic_slice, const QPixmap& _overlay_image );
+			void SetCrossSection ( const CrossSection& _seismic_slice);
 		public:
-			SketchSeismicModule sketch_seismic_module_;
+			SketchSeismicModule<qreal> sketch_seismic_module_;
 
 	};
 

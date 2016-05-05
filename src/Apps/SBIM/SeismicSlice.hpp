@@ -24,7 +24,6 @@ namespace RRM
 			{
 				std::cout << "Slice Constructor" << std::endl;
 				this->log ( );
-				image_  = std::vector<unsigned char>();
 			}
 
 			~SeismicSlice ( )
@@ -51,14 +50,12 @@ namespace RRM
 				// @see http://stackoverflow.com/a/1226957
 				Base::operator =(other);
 				// Assign to all  member.
-				this->image_ = other.image_;
 
 				return *this;
 			}
 
 		public:
 
-			std::vector<unsigned char> image_;
 
 	};
 

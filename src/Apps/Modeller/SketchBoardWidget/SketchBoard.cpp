@@ -2,7 +2,7 @@
 
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 
-SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *parent ) :	QGraphicsView ( parent )
+SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 {
 	this->setRenderHint ( QPainter::Antialiasing , true );
 	this->setOptimizationFlags ( QGraphicsView::DontSavePainterState );
@@ -26,11 +26,10 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 
 	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
 	this->sketchSession_ = new SketchSessionTesting ( this );
-	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
 
 	this->setScene ( sketchSession_ );
 
-	this->sketch_controller = new SketchController(_cross_section);
+	this->sketch_controller = new SketchController();
 
 	// Notify the controller the Sketch curve
 	connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF) ) ,
@@ -49,6 +48,12 @@ SketchBoard::SketchBoard ( RRM::CrossSection<qreal>& _cross_section, QWidget *pa
 SketchBoard::~SketchBoard ( )
 {
 
+}
+
+void SketchBoard::newSession ( Real x , Real y , Real width , Real height )
+{
+	this->sketchSession_->initialization(x,y,width,height);
+	this->sketch_controller->newSession(x,y,width,height);
 }
 
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
@@ -140,37 +145,26 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 	}
 }
 
-void SketchBoard::setCrossSection( CrossSection& _cross_section, const std::vector<unsigned char>& _overlay_image)
+void SketchBoard::setCrossSection(const CrossSection& _cross_section)
 {
-	/// Notify the receiver with the current version of the CrossSection
-
-	std::cout << " Receive SketchBoard   " << std::endl;
-
-	_cross_section.log();
-
-	CrossSection temp = this->sketch_controller->getCrossSection();
-
-	std::cout << " Send SketchBoard   " << std::endl;
-
-	temp.log();
-
-	emit currentCrossSection(temp);
+	/// Notify the Module with the current CrossSection in the board
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
 
 	/// Delete all the scene and setup it with the incoming cross section
 	this->sketchSession_->clear();
 	//this->sketchSession_->initializationWithImage(_overlay_image);
 
 	 QPixmap pix;
-	 pix.loadFromData( _overlay_image.data(), _overlay_image.size());
+	 pix.loadFromData( _cross_section.image_.data(), _cross_section.image_.size());
 
 	/// Update the overlay image
-	//this->sketchSession_->overlay_image_->setPixmap(pix);
+	this->sketchSession_->overlay_image_->setPixmap(pix);
 
 	/// Update the data structure
 	this->sketch_controller->setCrossSection(_cross_section);
 
 	/// Make the overlay image visible
-	//this->sketchSession_->overlay_image_->setVisible(true);
+	this->sketchSession_->overlay_image_->setVisible(true);
 
 	/// Rebuild the Scene
 	this->sketch_controller->updateSBIM();

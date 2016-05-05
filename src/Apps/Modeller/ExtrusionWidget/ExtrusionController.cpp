@@ -10,17 +10,18 @@
 namespace RRM
 {
 
-	ExtrusionController::ExtrusionController ( )
+	ExtrusionController::ExtrusionController ( QObject* parent  ) : QObject(parent)
 	{
-		// TODO Auto-generated constructor stub
 
 	}
 
 	ExtrusionController::~ExtrusionController ( )
 	{
-		// TODO Auto-generated destructor stub
+
 	}
 
+
+	/// Use the extensions of the scene bounding box
 	bool  ExtrusionController:: initialize (  float _x_min,
 						  float _y_min,
 						  float _z_min,
@@ -28,48 +29,52 @@ namespace RRM
 						  float _y_max,
 						  float _z_max )
 	{
-		normalize_x_ = ( _x_max - _x_min);
-		normalize_y_ = ( _y_max - _y_min);
-		normalize_z_ = ( _z_max - _z_min);
+		scale_x_ = ( _x_max - _x_min);
+		scale_y_ = ( _y_max - _y_min);
+		scale_z_ = ( _z_max - _z_min);
 
-		if ( normalize_x_ > normalize_y_ )
+		if ( scale_x_ > scale_y_ )
 		{
-			if ( normalize_x_ > normalize_z_)
+			if ( scale_x_ > scale_z_)
 			{
-				normalize_ = normalize_x_;
+				scale_ = scale_x_;
 			}else
 			{
-				normalize_ = normalize_z_;
+				scale_ = scale_z_;
 			}
 
 		}else
 		{
-			if ( normalize_y_ > normalize_z_)
+			if ( scale_y_ > scale_z_)
 			{
-				normalize_ = normalize_y_;
+				scale_ = scale_y_;
 			}else
 			{
-				normalize_ = normalize_z_;
+				scale_ = scale_z_;
 			}
 		}
 
-		normalize_x_ /= normalize_;
-		normalize_y_ /= normalize_;
-		normalize_z_ /= normalize_;
+		scale_x_ /= scale_;
+		scale_y_ /= scale_;
+		scale_z_ /= scale_;
 
-		min_ = Eigen::Vector4f( _x_min/normalize_,
-				        _y_min/normalize_,
-					_z_min/normalize_,1.0f);
-		max_ = Eigen::Vector4f( _x_max/normalize_,
-					_y_max/normalize_,
-					_z_max/normalize_,1.0f);
+		min_ = Eigen::Vector4f(_x_min,_y_min,_z_min,1.0f);
+		max_ = Eigen::Vector4f(_x_max,_y_max,_z_max,1.0f);
 
 		center_ = Eigen::Vector4f( (max_.x()+min_.x())*0.5,
 					   (max_.y()+min_.y())*0.5,
-					   (max_.z()+min_.z())*0.5,1.0f);
+					   (max_.z()+min_.z())*0.5,0.0);
+		// scaling the center
+		center_ = center_ / scale_;
 
-		min_ = min_ - center_;
-		max_ = max_ - center_;
+		trasnform_matrix_ = Eigen::Affine3f::Identity();
+
+		trasnform_matrix_.translation() = -center_.head<3>();
+		trasnform_matrix_.scale (Eigen::Vector3f(1.0f/scale_,1.0f/scale_,1.0f/scale_));
+
+
+		min_ = trasnform_matrix_.matrix() * min_;
+		max_ = trasnform_matrix_.matrix() * max_;
 
 		return true;
 	}
@@ -122,8 +127,8 @@ namespace RRM
 		std::vector<Eigen::Vector4f> cube;
 		for (auto position_iterator: slice_position)
 		{
-			//float z = ((400/100)*(100-position_iterator))/normalize_;
-			float z = (normalize_z_/100)*(100-position_iterator);
+			//float z = ((400/100)*(100-position_iterator))/scale_;
+			float z = (scale_z_/100)*(100-position_iterator);
 			z = z - center_.z();
 			// Front Face
 			cube.push_back(Eigen::Vector4f ( max_.x(), max_.y(), z, 1.0f ));
@@ -134,6 +139,16 @@ namespace RRM
 
 
 		return cube;
+	}
+
+	void ExtrusionController::updateSeismicSlices ( const std::map<unsigned int, SeismicSlice >& _seismic_slices)
+	{
+		this->seismic_slices_ = _seismic_slices;
+
+		for ( auto seismic_iterator: this->seismic_slices_ )
+		{
+			std:: cout << "Extrusion Controller " << seismic_iterator.second.edges_.size() << std::endl;
+		}
 	}
 
 	std::vector<Eigen::Vector4f> ExtrusionController::sketchLinearInterpolation ( )

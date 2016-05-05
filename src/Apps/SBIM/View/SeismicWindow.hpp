@@ -16,6 +16,7 @@
 
 #include <QtCore/QBuffer>
 #include <QtCore/QByteArray>
+#include <QtGui/QPixmap>
 
 #include "ui_SeismicWindow.h"
 
@@ -35,7 +36,9 @@ namespace RRM
 		Q_OBJECT
 
 		public:
-			typedef SBIMSeismicController::CrossSection  CrossSection;
+			typedef SBIMSeismicController::CrossSection   CrossSection;
+			typedef SBIMSeismicController::SeismicSlice   SeismicSlice;
+			typedef SBIMSeismicController::SeismicSlices  SeismicSlices;
 
 			SeismicWindow ( QWidget* parent = 0 );
 			~SeismicWindow ( );
@@ -47,10 +50,14 @@ namespace RRM
 		public slots:
 			bool addSeismicSlice ( );
 			void setCurrentSeismicSlice( QListWidgetItem * item );
-			void updateCrossSection ( CrossSection& _cross_section);
+
+			// Receive the current working crossSection and update it on the controller
+			void updateCrossSection ( const CrossSection& _cross_section);
 
 		signals:
-			void currentCrossSection (CrossSection& _seismic_slice, const std::vector<unsigned char>& _overlay_image );
+			// Send the current working crossSection
+			void currentCrossSection  (const CrossSection& _cross_section);
+			void currentSeismicSlices (const SeismicSlices& _cross_section);
 		public:
 			/// View
 			Ui::SeismicWindowWidget* ui;
