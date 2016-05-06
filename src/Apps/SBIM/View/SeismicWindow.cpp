@@ -136,6 +136,13 @@ namespace RRM
 
 	void SeismicWindow::updateCrossSection ( const CrossSection& _cross_section)
 	{
+
+		/// Avoid insert the default CrossSection, aka. id_ == 0;
+		if ( _cross_section.id_ == 0 )
+		{
+			return;
+		}
+
 		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_] = _cross_section;
 
 		std::cout << " Log Seismic --- Back " << std::endl;

@@ -20,7 +20,6 @@ namespace RRM
 
 	}
 
-
 	/// Use the extensions of the scene bounding box
 	bool  ExtrusionController:: initialize (  float _x_min,
 						  float _y_min,
@@ -64,7 +63,7 @@ namespace RRM
 		center_ = Eigen::Vector4f( (max_.x()+min_.x())*0.5,
 					   (max_.y()+min_.y())*0.5,
 					   (max_.z()+min_.z())*0.5,0.0);
-		// scaling the center
+		// scaling the centre
 		center_ = center_ / scale_;
 
 		trasnform_matrix_ = Eigen::Affine3f::Identity();
@@ -81,7 +80,6 @@ namespace RRM
 
 	std::vector<Eigen::Vector4f> ExtrusionController::getcubeMesh ( )
 	{
-
 		std::vector<Eigen::Vector4f> cube;
 
 		cube =
@@ -116,6 +114,7 @@ namespace RRM
 			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
 			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
 			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+
 		};
 
 		return cube;
@@ -123,7 +122,6 @@ namespace RRM
 
 	std::vector<Eigen::Vector4f> ExtrusionController::getPlanes ( const std::vector<unsigned int>& slice_position )
 	{
-
 		std::vector<Eigen::Vector4f> cube;
 		for (auto position_iterator: slice_position)
 		{
@@ -136,7 +134,6 @@ namespace RRM
                         cube.push_back(Eigen::Vector4f ( max_.x(), min_.y(), z, 1.0f ));
 			cube.push_back(Eigen::Vector4f ( min_.x(), min_.y(), z, 1.0f ));
 		}
-
 
 		return cube;
 	}

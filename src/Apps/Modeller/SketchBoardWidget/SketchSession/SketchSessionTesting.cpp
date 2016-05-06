@@ -26,7 +26,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	this->addItem ( boundaryc_ );
 
-	this->boundary_sketching_ = true;
+	this->boundary_sketching_ = false;
 
 	setUpBackground();
 
@@ -386,7 +386,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		// todo if the curve exist, update it only it have changed
 		if ( this->view_curves_.count(polycurve_iterator.first) )
 		{
-			std::cout << "The curve exist " <<  polycurve_iterator.first << std::endl;
+			//std::cout << "The curve exist " <<  polycurve_iterator.first << std::endl;
 
 			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second);
 
@@ -394,7 +394,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		// todo, create an appropriate QGraphicsItem from the new curve ( which geoObject which it represents)
 		else
 		{
-			std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
+			//std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
 
 			StratigraphyItem * new_view_curve = new StratigraphyItem(Qt::black);
 			this->addItem(new_view_curve);
@@ -403,7 +403,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 			view_curves_[polycurve_iterator.first] = new_view_curve;
 		}
 
-		std::cout << " Size " << polycurve_iterator.second.size() << std::endl;
+		//std::cout << " Size " << polycurve_iterator.second.size() << std::endl;
 	}
 
 

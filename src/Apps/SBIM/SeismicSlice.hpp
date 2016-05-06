@@ -16,7 +16,6 @@ namespace RRM
 	class SeismicSlice: public RRM::CrossSection<Real>
 	{
 		public:
-
 			typedef RRM::CrossSection<Real>		Base;
 			typedef SeismicSlice<Real>		Self;
 
@@ -33,6 +32,13 @@ namespace RRM
 			// It need to be tested, since this class will be stored in a stl:: container
 			// @see http://stackoverflow.com/questions/17311382/how-to-call-base-class-copy-constructor-from-a-derived-class-copy-constructor
 			SeismicSlice ( const Self& other ) : Base(other)
+			{
+				*this = other;
+			}
+
+			// It need to be tested, since this class will be stored in a stl:: container
+			// @see http://stackoverflow.com/questions/17311382/how-to-call-base-class-copy-constructor-from-a-derived-class-copy-constructor
+			SeismicSlice ( const Base & other ) : Base(other)
 			{
 				*this = other;
 			}
@@ -55,7 +61,6 @@ namespace RRM
 			}
 
 		public:
-
 
 	};
 

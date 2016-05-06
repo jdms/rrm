@@ -29,6 +29,7 @@ namespace RRM
 			{
 				this->current_slice_ = 0;
 			}
+
 			~SketchSeismicModule ( )
 			{
 
@@ -48,7 +49,7 @@ namespace RRM
 			bool addSeismicSlice( unsigned int _seismic_slice_index, const RRMImage& _overlay_image )
 			{
 				/// The slice already exist
-				if ( this->seismic_slices_.count( _seismic_slice_index ))
+				if ( this->seismic_slices_.count( _seismic_slice_index ) || (_seismic_slice_index == 0) )
 				{
 					return false;
 				}
@@ -57,9 +58,13 @@ namespace RRM
 				{
 					this->seismic_slices_[_seismic_slice_index].id_    = _seismic_slice_index;
 					this->seismic_slices_[_seismic_slice_index].image_ = _overlay_image;
+
 				}
 
+				std::cout << " Index " << _seismic_slice_index << std::endl;
+
 				return true;
+
 			}
 
 			unsigned int numberOfSeismicSlices ( ) const

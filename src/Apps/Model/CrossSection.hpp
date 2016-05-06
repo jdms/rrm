@@ -109,20 +109,23 @@ namespace RRM
 				Edge<Real> e1;
 				e1.id_ = edge_index_.getID();;
 				e1.segment.curve = segment_1;
-				edges_[e1.id_] = e1;
 				e1.is_boundary_ = true;
+				/// add to list of edges
+				edges_[e1.id_] = e1;
 
 				Edge<Real> e2;
 				e2.id_ = edge_index_.getID();
 				e2.segment.curve = segment_2;
-				edges_[e2.id_] = e2;
 				e2.is_boundary_ = true;
+				/// add to list of edges
+				edges_[e2.id_] = e2;
 
 				Vertex<Real> v1;
 				v1.id_ = vertex_index_.getID();
 				v1.edges_.insert(e1.id_);
 				v1.edges_.insert(e2.id_);
 				v1.location_ = Point2D(x,height);
+				/// add to list of vertices
 				vertices_[v1.id_] = v1;
 
 				Vertex<Real> v2;
@@ -130,6 +133,7 @@ namespace RRM
 				v2.edges_.insert(e1.id_);
 				v2.edges_.insert(e2.id_);
 				v2.location_ = Point2D ( width , y );
+				/// add to list of vertices
 				vertices_[v2.id_] = v2;
 
 				e1.source_id_ = v1.id_;

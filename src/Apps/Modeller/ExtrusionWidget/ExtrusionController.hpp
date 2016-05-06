@@ -32,13 +32,11 @@ namespace RRM
 		public slots:
 			/// Initialize it with the bounding box of the scene
 			bool initialize     (  float _x_min,
-	                                                               float _y_min,
-								       float _z_min,
-								       float _x_max,
-								       float _y_max,
-								       float _z_max);
-
-
+					       float _y_min,
+					       float _z_min,
+					       float _x_max,
+					       float _y_max,
+					       float _z_max);
 
 			// All the geometry will have the following layout as:
 			// Linear
@@ -86,7 +84,7 @@ namespace RRM
 			Eigen::Vector4f center_;
 
 			// Used to normalize and centralize the object into the scene
-			float scale_;
+			float scale_ = 0.0f;
 			float scale_x_ = 0.0f;
 			float scale_y_ = 0.0f;
 			float scale_z_ = 0.0f;

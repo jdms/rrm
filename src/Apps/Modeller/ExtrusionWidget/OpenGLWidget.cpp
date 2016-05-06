@@ -382,6 +382,13 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
 {
 	this->extrusion_controller_.updateSeismicSlices(_seismic_slices);
+
+	for ( auto& slice_iterator: this->extrusion_controller_.seismic_slices_ )
+	{
+		for ( auto& curve_iterator: slice_iterator.second.edges_ )
+
+		std::cout << " Curve " << curve_iterator.first << " is boundary " <<   curve_iterator.second.is_boundary_ << std::endl;
+	}
 }
 
 
