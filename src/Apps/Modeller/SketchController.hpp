@@ -60,7 +60,6 @@ class SketchController : public QObject
         signals:
 		void updateSBIM        ( const std::map<unsigned int, QPolygonF>& ,
 					 const std::map<unsigned int, QPointF>& );
-
 	private:
         	// The Model
 		CrossSection cross_section_;

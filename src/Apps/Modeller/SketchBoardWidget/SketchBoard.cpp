@@ -35,8 +35,8 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 	connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF) ) ,
 		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF) ) );
 
-	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( qreal, qreal, qreal, qreal ) ) ,
-		  this->sketch_controller , SLOT  ( newSession ( qreal, qreal, qreal ,qreal  ) ) );
+	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( Real, Real, Real, Real ) ) ,
+		  this->sketch_controller , SLOT  ( newSession ( Real, Real, Real, Real ) ) );
 
 	// Notify the view with the new configuration of Lines
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,

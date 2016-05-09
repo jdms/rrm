@@ -56,6 +56,7 @@ class GLWidget: public QOpenGLWidget
 
 	 	void backGround();
 		void loadShaderByResources();
+		// Development propose
 		void loadShaders();
 		void reloadShaders();
 		/// Left to Right
@@ -65,7 +66,8 @@ class GLWidget: public QOpenGLWidget
 					   float _z_min,
 					   float _x_max,
 					   float _y_max,
-					   float _z_max);
+					   float _z_max );
+
 
 	signals:
 
@@ -73,10 +75,11 @@ class GLWidget: public QOpenGLWidget
 
 private:
 	
+        // Scene related attributes
         Tucano::Trackball camera;
-
         Tucano::Shader*   background_;
 
+        // Entity related attributes
         // Cube, representing the boudingBox of the Geological Model
         GLuint vertexArray_cube_;
         	GLuint vertexBuffer_cube_;
@@ -91,10 +94,14 @@ private:
 	std::vector<Eigen::Vector4f> patch_;
 	Tucano::Shader*   patch_shader_;
 
-        std::vector<Eigen::Vector4f> vertices;
+        // The sketch lines
+	GLuint lines_vertexArray_;
+		GLuint lines_vertexBuffer_;
+		GLuint lines_vertexSlot_;
+	std::vector<Eigen::Vector4f> lines_;
+	Tucano::Shader*   lines_shader_;
 
         Celer::BoundingBox3<float> box;
-
         RRM::ExtrusionController extrusion_controller_;
 
 };

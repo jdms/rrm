@@ -138,14 +138,86 @@ namespace RRM
 		return cube;
 	}
 
-	void ExtrusionController::updateSeismicSlices ( const std::map<unsigned int, SeismicSlice >& _seismic_slices)
+	std::vector<Eigen::Vector4f> ExtrusionController::getSketchLines ( )
+	{
+		std::vector<Eigen::Vector4f> cube;
+		cube =
+		{
+			//  Top Face
+			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
+			// Bottom Face
+			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+			// Front Face
+			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
+			// Back Face
+			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+			// Left Face
+			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
+			// Right Face
+			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
+			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+
+		};
+
+		return cube;
+	}
+
+	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices ( const std::map<unsigned int, SeismicSlice >& _seismic_slices)
 	{
 		this->seismic_slices_ = _seismic_slices;
 
-		for ( auto seismic_iterator: this->seismic_slices_ )
+		std::vector<Eigen::Vector4f> lines;
+
+		for ( auto slice_iterator: this->seismic_slices_ )
 		{
-			std:: cout << "Extrusion Controller " << seismic_iterator.second.edges_.size() << std::endl;
+			std:: cout << "Extrusion Controller " << slice_iterator.second.edges_.size() << std::endl;
+
+			for ( auto& edges_iterator: slice_iterator.second.edges_ )
+			{
+				std:: cout << "Curve Size" << edges_iterator.second.segment.curve.size() << std::endl;
+
+				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
+				{
+					float z = (scale_z_/100)*(100-10*slice_iterator.first);
+					z = z - center_.z();
+					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
+										edges_iterator.second.segment.curve[it].y(),
+										0.0,1.0);
+
+					Eigen::Vector4f point2 = Eigen::Vector4f(edges_iterator.second.segment.curve[it+1].x(),
+										edges_iterator.second.segment.curve[it+1].y(),
+										0.0,1.0);
+
+					point1 = trasnform_matrix_ * point1;
+					point2 = trasnform_matrix_ * point2;
+
+					point1[2] = z;
+					point2[2] = z;
+
+					lines.push_back(point1);
+					lines.push_back(point2);
+				}
+			}
 		}
+
+		return lines;
 	}
 
 	std::vector<Eigen::Vector4f> ExtrusionController::sketchLinearInterpolation ( )
@@ -159,3 +231,4 @@ namespace RRM
 	}
 
 } /* namespace RRM */
+

@@ -3,6 +3,7 @@
 
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
+
 	mode_ = InteractionMode::SKETCHING;
 
 	/// Drag and Drop Feature
@@ -41,12 +42,22 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	colors.push_back(QColor(Qt::green));
 	colors.push_back(QColor(Qt::darkGreen));
 
+	seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+
+	for ( int it = 0; it < 10; ++it )
+	{
+		std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
+	}
+
 }
 
 SketchSessionTesting::~SketchSessionTesting ( )
 {
 	 clear();
 }
+
+
+
 
 // View/Qt5 related functions
 void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )

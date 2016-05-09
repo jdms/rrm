@@ -27,6 +27,8 @@
 #include "Modeller/StratigraphyItem.hpp"
 #include "Modeller/BoundaryItem.h"
 
+#include "SBIM/SeismicVolume.hpp"
+
 /**
  * @author Felipe Moura de Carvalho
  * @author Clarissa Marques
@@ -39,6 +41,8 @@ class SketchSessionTesting: public QGraphicsScene
 {
 	Q_OBJECT
 	public:
+
+		typedef qreal			Real;
 
 		enum class InteractionMode
 		{
@@ -81,7 +85,7 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( QPixmap pixmap );
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
-		void newSessionSignal ( qreal x , qreal y , qreal width , qreal height );
+		void newSessionSignal ( Real x , Real y , Real width , Real height );
 		// Notify the model and provides a new sketch line
 		void newSketchCurve ( QPolygonF _sketch );
 		// Request the controller to Smooth a curve Segment
@@ -114,6 +118,11 @@ class SketchSessionTesting: public QGraphicsScene
 		std::vector<QColor> colors;
 
 		InteractionMode mode_;
+
+
+		/// Testing
+		RRM::SeismicVolume seismic_data_;
+
 
 };
 

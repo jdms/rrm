@@ -12,7 +12,7 @@ namespace RRM
 
 	SBIMSeismicController::SBIMSeismicController ( QObject*  parent) : QObject(parent)
 	{
-
+		//seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
 	}
 
 	SBIMSeismicController::~SBIMSeismicController ( )

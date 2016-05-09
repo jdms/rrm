@@ -61,12 +61,14 @@
 #version 430 core
 
 layout(lines) in;
-layout(lines, max_vertices=2) out;
+layout(line_strip, max_vertices=2) out;
+
 
 // For while, all transformations come from the Celer::Camera.
 uniform mat4 ModelMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
+
 
 in VertexData
 {
@@ -84,14 +86,6 @@ out VertexData
 
 void main(void)
 {
-	vec3 line_normal = normalize ( vec3(1.0,1.0,1.0) );
-
-	mat3 normalMatrix = mat3(ViewMatrix);
-	normalMatrix = inverse(normalMatrix);
-	normalMatrix = transpose(normalMatrix);
-
-	VertexOut.normal   =normalMatrix * face_normal;
-	VertexOut.color    = VertexIn[0].color;
 
 	VertexOut.vertice = VertexIn[0].vertice;
 	gl_Position = gl_in[0].gl_Position;

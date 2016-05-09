@@ -55,12 +55,13 @@ namespace RRM
 			/// Seismic Module
 			std::vector<Eigen::Vector4f> getcubeMesh ( );
 			std::vector<Eigen::Vector4f> getPlanes   ( const std::vector<unsigned int>& );
+			std::vector<Eigen::Vector4f> getSketchLines ( );
 
 			std::vector<Eigen::Vector4f> sketchLinearInterpolation ( );
 			// Radial Basis Function
 			std::vector<Eigen::Vector4f> sketchRBFInterpolation ( );
 			/// Take the current SBIM and normalize/update the 3D visualization
-			void updateSeismicSlices ( const SeismicSlices& _seismic_slices);
+			std::vector<Eigen::Vector4f> updateSeismicSlices ( const SeismicSlices& _seismic_slices);
 
 		signals:
 

@@ -8,6 +8,9 @@
 #ifndef _SBIM_SEISMICVOLUME_HPP_
 #define _SBIM_SEISMICVOLUME_HPP_
 
+#include <string>
+#include <iostream>
+#include <algorithm>
 
 namespace RRM
 {
@@ -20,10 +23,7 @@ namespace RRM
 			SeismicVolume ( );
 			~SeismicVolume ( );
 
-			bool read( )
-			{
-				return true;
-			}
+			bool read ( std::string _filepath );
 
 			void getSlice( int x, int y, int z);
 
@@ -31,6 +31,19 @@ namespace RRM
 
 		public:
 
+			/// FIXME Hard Coded Seismic data
+			/// TODO
+			unsigned short width  = 596;
+			unsigned short height = 291;
+			unsigned short depth  = 297;
+
+			unsigned short * seismic_short = nullptr;
+			unsigned short * id            = nullptr;
+			unsigned short * distance      = nullptr;
+
+			std::vector<float> seismic_data_;
+			std::vector<unsigned short> seismic_id_;
+			std::vector<unsigned short> seismic_distance_;
 
 	};
 

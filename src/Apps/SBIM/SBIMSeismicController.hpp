@@ -14,6 +14,7 @@
 #include <QtGui/QPixmap>
 
 #include "SBIM/SketchSeismicModule.hpp"
+#include "SBIM/SeismicVolume.hpp"
 
 namespace RRM
 {
@@ -53,6 +54,8 @@ namespace RRM
 		signals:
 			void SetCrossSection ( const CrossSection& _seismic_slice);
 		public:
+			//RRM::SeismicVolume seismic_data_;
+
 			SketchSeismicModule<qreal> sketch_seismic_module_;
 
 	};

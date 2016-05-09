@@ -23,7 +23,7 @@ void main(void)
 	normalMatrix = transpose(normalMatrix);
 
 	VertexOut.vertice  = ViewMatrix * vertices;
-	VertexOut.normal   = normalMatrix * normals;
+	VertexOut.normal   = normalMatrix * normals.xyz;
 	VertexOut.color    = vec4(1.0,0.0,0.0,1.0);
 
 	gl_Position = ProjectionMatrix * ViewMatrix * vertices;

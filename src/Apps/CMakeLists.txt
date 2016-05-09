@@ -69,7 +69,7 @@ set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
                         Modeller/ExtrusionWidget/ExtrusionController.hpp
                         Modeller/SketchBoardWidget/SketchBoard.hpp
-                        Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
+                        #Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
    )
    
@@ -78,7 +78,7 @@ set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
 						  Modeller/ExtrusionWidget/OpenGLWidget.hpp
 						  Modeller/ExtrusionWidget/ExtrusionController.hpp
 					      Modeller/SketchBoardWidget/SketchBoard.hpp
-                          Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
+                          #Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
                           Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
 						)
 
@@ -90,7 +90,7 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
                         Modeller/ExtrusionWidget/ExtrusionController.cpp
                         Modeller/SketchBoardWidget/SketchBoard.cpp
-                        Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp
+                        #Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.cpp
    )
 ## Grab Simulator Source Files
