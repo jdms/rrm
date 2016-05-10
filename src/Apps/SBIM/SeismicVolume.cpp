@@ -42,6 +42,7 @@ namespace RRM
 
 		unsigned long long size = width * height * depth;
 
+
 		this->seismic_short = new unsigned short[width * height * depth];
 		this->id 	    = new unsigned short[width * height * depth];
 		this->distance 	    = new unsigned short[width * height * depth];

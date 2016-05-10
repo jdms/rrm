@@ -44,10 +44,28 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
 
+	QImage image(seismic_data_.height, seismic_data_.width, QImage::Format_RGB32);
+
+	// Reading Seismic, Distance and ID
+	for ( int j = 0; j < seismic_data_.height; j++ )
+	{
+		for ( int k = 0; k < seismic_data_.width; k++ )
+		{
+			float f = this->seismic_data_.seismic_data_[(100 * seismic_data_.width * seismic_data_.height + j * seismic_data_.width + k)];
+			// http://stackoverflow.com/a/1914172
+			float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
+			int b = floor ( f2 == 1.0 ? 255 : f2 * 256.0 );
+			QColor c(b,b,b,255);
+			image.setPixel ( j , k , c.rgb());
+		}
+	}
+
 	for ( int it = 0; it < 10; ++it )
 	{
 		std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
 	}
+
+	this->overlay_image_->setPixmap(QPixmap::fromImage(image));
 
 }
 
