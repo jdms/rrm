@@ -63,5 +63,18 @@ namespace RRM
 		return SBIMSeismicController::RRMImage (bytes.constData(), bytes.constData() + bytes.size());
 	}
 
+	bool SBIMSeismicController::readSeismic ( std::string _filepath )
+	{
+		bool is_open = this->seismic_data_.read(_filepath);
+
+//		if( is_open )
+//		{
+//			for ( auto& slice_iterator: this->seismic_data_.images_slices_  )
+//			{
+//				std::cout << slice_iterator.size() << std::endl;
+//			}
+//		}
+
+	}
 
 } /* namespace RRM */

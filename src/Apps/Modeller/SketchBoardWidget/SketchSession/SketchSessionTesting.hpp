@@ -56,6 +56,8 @@ class SketchSessionTesting: public QGraphicsScene
 		void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
 		void mouseReleaseEvent ( QGraphicsSceneMouseEvent* event );
 
+		void keyPressEvent(QKeyEvent * keyEvent);
+
 		void dragEnterEvent ( QGraphicsSceneDragDropEvent *event );
 		void dragMoveEvent ( QGraphicsSceneDragDropEvent *event );
 		void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
@@ -118,10 +120,14 @@ class SketchSessionTesting: public QGraphicsScene
 		std::vector<QColor> colors;
 
 		InteractionMode mode_;
-
-
-		/// Testing
-		RRM::SeismicVolume seismic_data_;
+//
+//		int next = 0;
+//
+//		std::vector<QImage>  images;
+//		std::vector< std::vector<unsigned char> >  rrm_images_;
+//
+//		/// Testing
+//		RRM::SeismicVolume seismic_data_;
 
 
 };

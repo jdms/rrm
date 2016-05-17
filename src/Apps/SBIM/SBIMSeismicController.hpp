@@ -42,20 +42,21 @@ namespace RRM
 			bool setCurrentSeismicSlice ( unsigned int _index );
 
 			/// It asks SketchModule to interpolate the curves
-			/// @return false if it fail
+			/// @return false in case of all requirement are not met
 			bool interpolateSketchies ( );
 
 			bool addSeismicSlice ( unsigned int _seismic_slice_index, const QPixmap& _overlay_image );
 			bool removeSeismicSlice ( );
 			bool replaceSeismicSlice ( );
 
+			bool readSeismic ( std::string _filepath );
+
 			/// Converters
 			RRMImage convertQPixmap2RRMImage (const QPixmap& _overlay_image);
 		signals:
 			void SetCrossSection ( const CrossSection& _seismic_slice);
 		public:
-			//RRM::SeismicVolume seismic_data_;
-
+			RRM::SeismicVolume seismic_data_;
 			SketchSeismicModule<qreal> sketch_seismic_module_;
 
 	};

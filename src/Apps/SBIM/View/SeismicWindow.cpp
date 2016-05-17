@@ -26,6 +26,27 @@ namespace RRM
 
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
+		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+
+		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
+		{
+			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);
+
+			for ( int w = 0; w < sketch_seismic_controller_.seismic_data_.width; w++ )
+			{
+				for ( int d = 0; d < sketch_seismic_controller_.seismic_data_.depth; d++ )
+				{
+					int b = sketch_seismic_controller_.seismic_data_.images_slices_[h][d * sketch_seismic_controller_.seismic_data_.width + w];
+					QColor c ( b , b , b , 255 );
+					image.setPixel ( w , d , c.rgb ( ) );
+				}
+			}
+
+			sketch_images_[h+1] = QPixmap::fromImage(image);
+		}
+
+
+
 //		QPixmap pix1 = QPixmap("/home/felipe/lastrevision-1.png");
 //
 //		pix1 = pix1.scaled(640,480,Qt::KeepAspectRatio,Qt::FastTransformation);
@@ -85,7 +106,7 @@ namespace RRM
 
 		if ( sketch_seismic_controller_.addSeismicSlice(index,QPixmap()) )
 		{
-			this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , 48 * index , 640 , 48 * index ) );
+			this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , (480/297) * (index) , 640 , (480/297) * (index) ) );
 			// Save the current Scene Image
 			QImage image ( this->seismic_viewer_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
 			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
@@ -94,7 +115,7 @@ namespace RRM
 			this->seismic_viewer_->scene()->render ( &painter );
 
 			//QPixmap pix =  QPixmap::fromImage(image);
-			QPixmap pix = QPixmap("/home/felipe/lastrevision-1.png");
+			QPixmap pix = sketch_images_[index];
 
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].image_ = this->sketch_seismic_controller_.convertQPixmap2RRMImage(pix);
 			sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[index].initialize(0.0,0.0,pix.width(),pix.height());
@@ -106,6 +127,8 @@ namespace RRM
 			item->setData ( Qt::UserRole , index );
 
 			this->ui->listWidget->insertItem ( index , item );
+
+			this->seismic_viewer_->overlayImage_->setPixmap(pix);
 
 		}else
 		{

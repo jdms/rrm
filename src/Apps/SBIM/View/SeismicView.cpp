@@ -48,6 +48,35 @@ namespace RRM
 
 		this->setFixedSize(this->sceneRect().width(),this->sceneRect().height());
 
+		// -- Reading Seismic Data
+//		seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+//
+//		images = std::vector<QImage>(seismic_data_.width,QImage(seismic_data_.width, seismic_data_.depth, QImage::Format_RGB32));
+//
+//		// Reading Seismic, Distance and ID
+//		for ( int h = 0; h < seismic_data_.height; h++ )
+//		{
+//			for ( int w = 0; w < seismic_data_.width; w++ )
+//			{
+//				for ( int d = 0; d < seismic_data_.depth; d++ )
+//				{
+//					float f = this->seismic_data_.seismic_data_[(d * seismic_data_.width * seismic_data_.height + h * seismic_data_.width + w)];
+//					// http://stackoverflow.com/a/1914172
+//					float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
+//					int b = floor ( f2 == 1.0 ? 255 : f2 * 256.0 );
+//					QColor c(b,b,b,255);
+//					images[h].setPixel ( w , d , c.rgb());
+//				}
+//			}
+//		}
+//
+//		for ( int it = 0; it < 10; ++it )
+//		{
+//			std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
+//		}
+
+		//this->overlay_image_->setPixmap(QPixmap::fromImage(images[0]));
+
 	}
 
 	SeismicView::~SeismicView ( )

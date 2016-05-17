@@ -42,30 +42,34 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	colors.push_back(QColor(Qt::green));
 	colors.push_back(QColor(Qt::darkGreen));
 
-	seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+//	seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+////
+//	images = std::vector<QImage>(seismic_data_.height,QImage(seismic_data_.width, seismic_data_.depth, QImage::Format_RGB32));
+////	rrm_images_ = std::vector<std::vector<unsigned char>>(seismic_data_.height,std::vector<unsigned char>(seismic_data_.width * seismic_data_.depth));
+////	// Reading Seismic, Distance and ID
+//	for ( int h = 0; h < seismic_data_.height; h++ )
+//	{
+//		for ( int w = 0; w < seismic_data_.width; w++ )
+//		{
+//			for ( int d = 0; d < seismic_data_.depth; d++ )
+//			{
+////				float f = this->seismic_data_.seismic_data_[ ( d * seismic_data_.width * seismic_data_.height + h * seismic_data_.width + w )];
+////				// http://stackoverflow.com/a/1914172
+////				float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
+//				int b = seismic_data_.images_slices_[h][d * seismic_data_.width + w];
+//				QColor c ( b , b , b , 255 );
+//				images[h].setPixel ( w , d , c.rgb ( ) );
+//
+//			}
+//		}
+//	}
+//
+//	for ( int it = 0; it < 10; ++it )
+//	{
+//		std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
+//	}
 
-	QImage image(seismic_data_.height, seismic_data_.width, QImage::Format_RGB32);
-
-	// Reading Seismic, Distance and ID
-	for ( int j = 0; j < seismic_data_.height; j++ )
-	{
-		for ( int k = 0; k < seismic_data_.width; k++ )
-		{
-			float f = this->seismic_data_.seismic_data_[(100 * seismic_data_.width * seismic_data_.height + j * seismic_data_.width + k)];
-			// http://stackoverflow.com/a/1914172
-			float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
-			int b = floor ( f2 == 1.0 ? 255 : f2 * 256.0 );
-			QColor c(b,b,b,255);
-			image.setPixel ( j , k , c.rgb());
-		}
-	}
-
-	for ( int it = 0; it < 10; ++it )
-	{
-		std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
-	}
-
-	this->overlay_image_->setPixmap(QPixmap::fromImage(image));
+	//this->overlay_image_->setPixmap(QPixmap::fromImage(images[0]));
 
 }
 
@@ -74,12 +78,23 @@ SketchSessionTesting::~SketchSessionTesting ( )
 	 clear();
 }
 
+void SketchSessionTesting::keyPressEvent(QKeyEvent * keyEvent)
+{
 
+//	if (seismic_data_.height == next)
+//	{
+//		next = 0;
+//	}else
+//	{
+//		this->overlay_image_->setPixmap(QPixmap::fromImage(images[next]));
+//		next++;
+//	}
 
-
+}
 // View/Qt5 related functions
 void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 {
+
 
 	if ( mode_ == InteractionMode::EDITING )
 	{

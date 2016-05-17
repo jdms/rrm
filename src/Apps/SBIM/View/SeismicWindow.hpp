@@ -64,7 +64,7 @@ namespace RRM
 			SeismicView* seismic_viewer_;
 
 			std::map<unsigned int , QGraphicsItem*> lines_checkpoint_;
-			std::map<unsigned int , QPixmap*> sketch_images_;
+			std::map<unsigned int , QPixmap> sketch_images_;
 
 			/// RRM Seismic Module
 			SBIMSeismicController sketch_seismic_controller_;

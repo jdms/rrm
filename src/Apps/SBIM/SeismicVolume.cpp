@@ -42,7 +42,6 @@ namespace RRM
 
 		unsigned long long size = width * height * depth;
 
-
 		this->seismic_short = new unsigned short[width * height * depth];
 		this->id 	    = new unsigned short[width * height * depth];
 		this->distance 	    = new unsigned short[width * height * depth];
@@ -54,8 +53,7 @@ namespace RRM
 		std::vector<unsigned short> seismic_data_ ( ( width * height * depth * 3 ) );
 
 		// open the file:
-		std::ifstream is
-		{ _filepath.c_str ( ), std::ios::ate | std::ios::binary };
+		std::ifstream is { _filepath.c_str ( ), std::ios::ate | std::ios::binary };
 
 		// Stop eating new lines in binary mode!!!
 		is.unsetf ( std::ios::skipws );
@@ -75,22 +73,7 @@ namespace RRM
 			this->seismic_distance_[it] = seismic_data_[(it*3)+2];
 		}
 
-		// Reading Seismic, Distance and ID
-//		for ( int i = 0; i < depth; i++ )
-//		{
-//			for ( int j = 0; j < height; j++ )
-//			{
-//				for ( int k = 0; k < width; k++ )
-//				{
-//					uint tmp1 = fread ( &this->seismic_short[i * width * height + j * width + k] , sizeof(unsigned short) , 1 , file );
-//					uint tmp2 = fread ( &this->distance[i * width * height + j * width + k] , sizeof(unsigned short) , 1 , file );
-//					uint tmp3 = fread ( &this->id[i * width * height + j * width + k] , sizeof(unsigned short) , 1 , file );
-//				}
-//			}
-//		}
-
-		int pixel = this->seismic_short[0];
-
+		/// Normalization
 		auto bounds = std::minmax_element(this->seismic_data_.begin(),this->seismic_data_.end());
 
 		float total = (*bounds.second) - (*bounds.first);
@@ -100,15 +83,34 @@ namespace RRM
 			pixel_iterator = pixel_iterator/total;
 		}
 
-		for ( int it = 0; it < 10; ++it )
+
+		images_slices_ = std::vector<std::vector<unsigned char>> ( this->height , std::vector<unsigned char> ( this->width * this->depth ) );
+		// Reading Seismic, Distance and ID
+		for ( int h = 0; h < this->height; h++ )
 		{
-			std::cout << "RGB" << this->seismic_data_[it] << std::endl;
-			std::cout << "RGB ifstream" << seismic_data_[it * 3] << std::endl;
+			for ( int w = 0; w < this->width; w++ )
+			{
+				for ( int d = 0; d < this->depth; d++ )
+				{
+					float f = this->seismic_data_[ ( d * this->width * this->height + h * this->width + w )];
+					// http://stackoverflow.com/a/1914172
+					float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
+					unsigned char b = static_cast<unsigned char> (floor ( f2 == 1.0 ? 255 : f2 * 256 ));
+					images_slices_[h][d * this->width + w] = b;
+				}
+			}
+
 		}
 
-		std::cout << "Size " << fileSize << " " << ( 596 * 291 * 297 ) * sizeof(unsigned short) << std::endl;
+//		for ( int it = 0; it < 10; ++it )
+//		{
+//			std::cout << "RGB" << this->seismic_data_[it] << std::endl;
+//			std::cout << "RGB ifstream" << seismic_data_[it * 3] << std::endl;
+//		}
 
-		std::cout << "bounds " << (*bounds.first) << " - " << (*bounds.second) << std::endl;
+//		std::cout << "Size " << fileSize << " " << ( 596 * 291 * 297 ) * sizeof(unsigned short) << std::endl;
+//
+//		std::cout << "bounds " << (*bounds.first) << " - " << (*bounds.second) << std::endl;
 	}
 
 	void SeismicVolume::getTopSlice ( )
