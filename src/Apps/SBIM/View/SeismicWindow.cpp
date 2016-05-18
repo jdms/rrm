@@ -26,24 +26,24 @@ namespace RRM
 
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
-		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+//		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
 
-		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
-		{
-			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);
-
-			for ( int w = 0; w < sketch_seismic_controller_.seismic_data_.width; w++ )
-			{
-				for ( int d = 0; d < sketch_seismic_controller_.seismic_data_.depth; d++ )
-				{
-					int b = sketch_seismic_controller_.seismic_data_.images_slices_[h][d * sketch_seismic_controller_.seismic_data_.width + w];
-					QColor c ( b , b , b , 255 );
-					image.setPixel ( w , d , c.rgb ( ) );
-				}
-			}
-
-			sketch_images_[h+1] = QPixmap::fromImage(image);
-		}
+//		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
+//		{
+//			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);
+//
+//			for ( int w = 0; w < sketch_seismic_controller_.seismic_data_.width; w++ )
+//			{
+//				for ( int d = 0; d < sketch_seismic_controller_.seismic_data_.depth; d++ )
+//				{
+//					int b = sketch_seismic_controller_.seismic_data_.images_slices_[h][d * sketch_seismic_controller_.seismic_data_.width + w];
+//					QColor c ( b , b , b , 255 );
+//					image.setPixel ( w , d , c.rgb ( ) );
+//				}
+//			}
+//
+//			sketch_images_[h+1] = QPixmap::fromImage(image);
+//		}
 
 
 

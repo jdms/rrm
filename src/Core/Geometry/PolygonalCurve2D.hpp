@@ -408,9 +408,9 @@ namespace RRM
 		if ( cThisCurve.isClosed ( ) )
 			cThisCurve.add ( cThisCurve.atBegin ( ) );
 
-		for ( std::size_t i = 1; i < cThisCurve.size ( ); ++i )
+		for ( std::size_t i = 1; i < cThisCurve.size ( ); i++ )
 		{
-			for ( std::size_t j = 1; j < cTestCurve.size ( ); ++j )
+			for ( std::size_t j = 1; j < cTestCurve.size ( ); j++ )
 			{
 				Real uThis, uTest;
 				Point2D prPoint;
@@ -423,11 +423,12 @@ namespace RRM
 					thisAlphas.push_back ( uThis );
 					testAlphas.push_back ( uTest );
 					itersPoints.push_back ( prPoint );
-
-					if ( 1.0 - uThis <= Math::Constants::Epsilon )
-						++i;
-					if ( 1.0 - uTest <= Math::Constants::Epsilon )
-						++j;
+//
+					//TODO reseasch for a better solution for this situation
+//					if ( 1.0 - uThis <= Math::Constants::Epsilon )
+//						++i;
+//					if ( 1.0 - uTest <= Math::Constants::Epsilon )
+//						++j;
 				}
 			}
 		}
@@ -455,6 +456,8 @@ namespace RRM
 		{
 			std::vector<std::size_t> auxTheirIndex, auxMyIndex;
 			std::map<std::size_t, Point2D> myMap, theirMap;
+			std::vector<Point2D> myPoints, theirPoints;
+
 
 			/// The index has the same size. Do it for both curves.
 			for ( std::size_t i = 0; i < myIndex.size ( ); ++i )
@@ -471,6 +474,7 @@ namespace RRM
 				{
 					auxMyIndex.push_back ( myI );
 					myMap[myI] = prPoints[i];
+					myPoints.push_back(prPoints[i]);
 				}
 				else
 				{
@@ -482,6 +486,7 @@ namespace RRM
 				{
 					auxTheirIndex.push_back ( theirI );
 					theirMap[theirI] = prPoints[i];
+					theirPoints.push_back(prPoints[i]);
 				}
 				else
 				{
@@ -491,26 +496,27 @@ namespace RRM
 
 			//_thisIndex = myIndex;
 			//_testIndex = theirIndex;
-
+//
 			std::sort ( auxMyIndex.begin ( ) , auxMyIndex.end ( ) );
 			for ( std::size_t i = 0; i < auxMyIndex.size ( ); ++i )
 			{
-				this->insert ( auxMyIndex[i] + i + 1 , myMap[auxMyIndex[i]] );
+				this->insert ( auxMyIndex[i] + i + 1 , prPoints[i] );
+				std::cout << "myMap " <<  myMap[auxMyIndex[i]].x() << " - " << myMap[auxMyIndex[i]].y();
 				_thisIndex.push_back(auxMyIndex[i] + i + 1);
 			}
 
-			std::sort ( auxTheirIndex.begin ( ) , auxTheirIndex.end ( ) );
-			for ( std::size_t i = 0; i < auxTheirIndex.size ( ); ++i )
+//			std::sort ( auxTheirIndex.begin ( ) , auxTheirIndex.end ( ) );
+//			for ( std::size_t i = 0; i < auxTheirIndex.size ( ); ++i )
+//			{
+//				testCurve.insert ( auxTheirIndex[i] + i + 1 , theirMap[auxTheirIndex[i]] );
+//				_testIndex.push_back(auxTheirIndex[i] + i + 1);
+//				std::cout << "Test Curve Point" << testCurve[auxTheirIndex[i] + i + 1].x() << " - " << testCurve[auxTheirIndex[i] + i + 1].y() << std::endl;
+//				std::cout << "Test Curve Point map" << theirMap[auxTheirIndex[i]].x() << " - " << theirMap[auxTheirIndex[i]].y() << std::endl;
+//			}
+//
+			for ( std::size_t i = 0; i < _thisIndex.size ( ); ++i )
 			{
-				testCurve.insert ( auxTheirIndex[i] + i + 1 , theirMap[auxTheirIndex[i]] );
-				_testIndex.push_back(auxTheirIndex[i] + i + 1);
-				std::cout << "Test Curve Point" << testCurve[auxTheirIndex[i] + i + 1].x() << " - " << testCurve[auxTheirIndex[i] + i + 1].y() << std::endl;
-				std::cout << "Test Curve Point map" << theirMap[auxTheirIndex[i]].x() << " - " << theirMap[auxTheirIndex[i]].y() << std::endl;
-			}
-
-			for ( std::size_t i = 0; i < _testIndex.size ( ); ++i )
-			{
-				std::cout << "Test Index Point" << testCurve[_testIndex[i]].x() << " - " << testCurve[_testIndex[i]].y() << std::endl;
+				std::cout << "Test Index Point " << _thisIndex[i] << " _ "  << std::endl;
 			}
 		}
 

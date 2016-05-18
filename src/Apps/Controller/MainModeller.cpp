@@ -9,7 +9,8 @@ void MainWindow::create2DModule ( )
 	glWidget = new GLWidget ( this );
 
 	sketch_board_ = new SketchBoard ();
-	//sketch_board_->newSession(0.0,0.0,700,400);
+	// Default Sketch Window
+	sketch_board_->newSession(0.0,0.0,700,400);
 
 	dc_2DModule = new Sketching2DModule( this );
 	dc_2DModule->setWindowTitle ( "Sketch View" );

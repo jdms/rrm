@@ -113,7 +113,7 @@ void GLWidget::initializeGL ( )
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
 	// create the appropriate vertex buffer on the GPU
-	extrusionInitialize(0.0,0.0,0.0,700.0,400.0,400.0);
+	//extrusionInitialize(0.0,0.0,0.0,700.0,400.0,400.0);
 	loadShaders();
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
