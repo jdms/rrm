@@ -488,6 +488,7 @@ namespace RRM
 				else
 				{
 					prPoints[i] = this->at ( myI + nearIndex );
+					std::cout << " same point " << std::endl;
 
 				}
 
@@ -501,6 +502,7 @@ namespace RRM
 				else
 				{
 					prPoints[i] = testCurve.at ( theirI + nearIndex );
+					std::cout << " same point test curve " << std::endl;
 				}
 			}
 
@@ -526,9 +528,22 @@ namespace RRM
 						Real x1 = std::abs(std::get<1>(left).x() - std::get<2>(left).x());
 						Real x2 = std::abs(std::get<1>(right).x() - std::get<2>(left).x());
 
-						std::cout << x1 << "," << x2 << std::endl;
+						Real y1 = std::abs(std::get<1>(left).y() - std::get<2>(left).y());
+						Real y2 = std::abs(std::get<1>(right).y() - std::get<2>(left).y());
 
-						return x1 < x2;
+						/// Same coordinate - sort in y
+						if ( std::abs(x1 - x2) < Math::Constants::Epsilon )
+						{
+							std::cout << y1 << " y," << y2 << " = "<< x1-x2 << std::endl;
+							return y1 < y2;
+						}
+						/// sort in x
+						else
+						{
+							std::cout << x1 << " x," << x2 << " = "<< x1-x2 << std::endl;
+							return x1 < x2;
+						}
+
 					}
 
 					return ( std::get<0>(left) < std::get<0>(right));

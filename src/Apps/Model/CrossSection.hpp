@@ -163,7 +163,11 @@ namespace RRM
 				std::vector<std::pair<std::size_t,Point2D> > intersection_pair;
 
 				Curve2D test = _curve;
-//
+
+				/// The intersection has a limited precision. Using superSample as 3.0.
+				test.superSample(3.0);
+
+				//
 				for ( auto& edge_iterator: edges_ )
 				{
 					Curve2D c1;
