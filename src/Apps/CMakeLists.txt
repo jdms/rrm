@@ -187,7 +187,6 @@ IF(WIN32) # Check if we are on Windows
 ELSEIF(UNIX)
     # Nothing special required for Linux
     message(STATUS "Build on Linux")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
         add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
                                        ${SBIM_SOURCES} ${SBIM_HEADERS}      
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 

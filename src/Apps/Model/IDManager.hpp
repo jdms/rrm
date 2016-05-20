@@ -76,7 +76,7 @@ class IDManager
 
 		void returnID ( unsigned int _id )
 		{
-			assert( "It cannot return id 0" && ( ( _id == 0 ) || ( _id >= max_id_ ) ) );
+			assert( "It can not return id 0" && ( ( _id == 0 ) || ( _id >= max_id_ ) ) );
 
 			used_ids_.erase ( _id );
 			free_ids_.insert ( _id );

@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 #include "Core/Base/Constants.hpp"
 #include "PolygonalCurve/CurveN.hpp"
@@ -150,9 +151,7 @@ namespace RRM
 			Point2D intersectionSegments ( Point2D p1 , Point2D p2 , Point2D q1 , Point2D q2 , Real& alpha , Real& beta ) const;
 
 			//// FIXME Curve Related Functions
-
 			bool intersectSegmentPolygonalCurve2D ( Point2D p0 , Point2D p1 , Point2D &intrs ) const;
-
 
 			/// \brief finds all intersection between two curves.
 			///
@@ -200,6 +199,10 @@ namespace RRM
 		                                            std::vector<std::size_t>& _thisIndex,
 							    std::vector<std::size_t>& _testIndex,
 							    std::vector<Point2D> &prPoints );
+
+
+			/// Insert point to the curve and return the new indices.
+			void addPoints (std::vector<std::pair<std::size_t,Point2D> >& _intersection_points );
 	};
 
 	/// Default Constructor;
@@ -458,6 +461,9 @@ namespace RRM
 			std::map<std::size_t, Point2D> myMap, theirMap;
 			std::vector<Point2D> myPoints, theirPoints;
 
+			/// index, the point , closed point
+
+			std::vector<std::tuple<std::size_t,Point2D,Point2D> > myPair;
 
 			/// The index has the same size. Do it for both curves.
 			for ( std::size_t i = 0; i < myIndex.size ( ); ++i )
@@ -468,6 +474,7 @@ namespace RRM
 				std::size_t theirI = theirIndex[i];
 				Real theirAlpha = theirAlphas[i];
 
+
 				// avoiding repeated points
 				std::size_t nearIndex = ( myAlpha < 0.5 ) ? 0 : 1;
 				if ( ( this->at ( myI + nearIndex ) - prPoints[i] ).norm ( ) > Math::Constants::Epsilon )
@@ -475,10 +482,13 @@ namespace RRM
 					auxMyIndex.push_back ( myI );
 					myMap[myI] = prPoints[i];
 					myPoints.push_back(prPoints[i]);
+
+					myPair.push_back( std::make_tuple( myI, prPoints[i], this->at ( myI ) ) );
 				}
 				else
 				{
 					prPoints[i] = this->at ( myI + nearIndex );
+
 				}
 
 				nearIndex = ( theirAlpha < 0.5 ) ? 0 : 1;
@@ -495,14 +505,49 @@ namespace RRM
 			}
 
 			//_thisIndex = myIndex;
-			//_testIndex = theirIndex;
+			_testIndex = theirIndex;
 //
-			std::sort ( auxMyIndex.begin ( ) , auxMyIndex.end ( ) );
-			for ( std::size_t i = 0; i < auxMyIndex.size ( ); ++i )
+
+			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
 			{
-				this->insert ( auxMyIndex[i] + i + 1 , prPoints[i] );
-				std::cout << "myMap " <<  myMap[auxMyIndex[i]].x() << " - " << myMap[auxMyIndex[i]].y();
-				_thisIndex.push_back(auxMyIndex[i] + i + 1);
+				std::cout << std::get<0>(myPair[i]) << std::endl;
+			}
+
+			std::cout << " -- " << std::endl;
+
+			std::sort( myPair.begin(), myPair.end(),
+
+				  [](const std::tuple<std::size_t,Point2D,Point2D> &left, const std::tuple<std::size_t,Point2D,Point2D> &right)
+				  {
+
+					if ( std::get<0>(left) == std::get<0>(right) )
+					{
+
+						Real x1 = std::abs(std::get<1>(left).x() - std::get<2>(left).x());
+						Real x2 = std::abs(std::get<1>(right).x() - std::get<2>(left).x());
+
+						std::cout << x1 << "," << x2 << std::endl;
+
+						return x1 < x2;
+					}
+
+					return ( std::get<0>(left) < std::get<0>(right));
+
+				  }
+			);
+
+			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
+			{
+				std::cout <<  std::get<0>(myPair[i]) << std::endl;
+			}
+
+			std::cout << " -- " << std::endl;
+
+			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
+			{
+				this->insert ( std::get<0>(myPair[i]) + i + 1 , std::get<1>(myPair[i]) );
+//				std::cout << "myMap " <<  myMap[auxMyIndex[i]].x() << " - " << myMap[auxMyIndex[i]].y();
+				_thisIndex.push_back( std::get<0>(myPair[i]) + i + 1 );
 			}
 
 //			std::sort ( auxTheirIndex.begin ( ) , auxTheirIndex.end ( ) );
@@ -514,13 +559,58 @@ namespace RRM
 //				std::cout << "Test Curve Point map" << theirMap[auxTheirIndex[i]].x() << " - " << theirMap[auxTheirIndex[i]].y() << std::endl;
 //			}
 //
-			for ( std::size_t i = 0; i < _thisIndex.size ( ); ++i )
-			{
-				std::cout << "Test Index Point " << _thisIndex[i] << " _ "  << std::endl;
-			}
+//			for ( std::size_t i = 0; i < _thisIndex.size ( ); ++i )
+//			{
+//				std::cout << "Test Index Point " << _thisIndex[i] << " _ "  << std::endl;
+//			}
+			std::cout << "PolygonCurve2D intersected"  << std::endl;
+
+		}else
+		{
+			std::cout << "PolygonCurve2D no intersection"  << std::endl;
 		}
 
 		return intersected;
+	}
+
+
+	template < class Real >
+	void PolygonalCurve2D<Real>::addPoints (std::vector<std::pair<std::size_t,Point2D> >& _intersection_points )
+	{
+
+			std::vector<std::pair<std::size_t,Point2D> > temporary_pair = _intersection_points;
+
+			std::sort( temporary_pair.begin(), temporary_pair.end(),
+
+				  [](const std::pair<std::size_t,Point2D> &left, const std::pair<std::size_t,Point2D> &right)
+				  {
+					return left.first < right.first;
+				  }
+			);
+
+			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
+			{
+				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second.x() << "," << _intersection_points[it].second.y()
+										     << " Curve = " << this->at(_intersection_points[it].first).x()
+										     	     	    << ","
+										     	     	    << this->at(_intersection_points[it].first).y() << std::endl;
+			}
+
+			std::cout << " Shorted" << std::endl;
+
+			for ( std::size_t it = 0; it < temporary_pair.size(); it++)
+			{
+				//std::cout << temporary_pair[it].first << " = " << temporary_pair[it].second << std::endl;
+				this->insert(temporary_pair[it].first + it + 1,temporary_pair[it].second );
+				_intersection_points[it].first  = temporary_pair[it].first + it + 1;
+				_intersection_points[it].second = temporary_pair[it].second;
+			}
+
+			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
+			{
+				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second << std::endl;
+			}
+
 	}
 
 } /* namespace RRM */
