@@ -43,6 +43,8 @@ class StratigraphyItem : public QGraphicsPathItem
 
 		QPen pen_color;
 
+		QColor color_;
+
 		QPainterPath curve;
 };
 

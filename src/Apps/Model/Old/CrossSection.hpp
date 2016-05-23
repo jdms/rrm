@@ -469,7 +469,7 @@ namespace RRM
 			{
 				return false;
 			}
-			// Here, surfacing is crossing. We need to apply one rule, Above/Below
+			// Here, surface is crossing. We need to apply one rule, Above/Below
 			// More than two intersections means the surface cross one or more surface.
 			// By using the geologic rules, we can choose which surface will be kept.
 			else

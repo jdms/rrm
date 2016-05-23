@@ -615,6 +615,7 @@ namespace RRM
 
 			for ( std::size_t it = 0; it < temporary_pair.size(); it++)
 			{
+				// Test if it exist
 				//std::cout << temporary_pair[it].first << " = " << temporary_pair[it].second << std::endl;
 				this->insert(temporary_pair[it].first + it + 1,temporary_pair[it].second );
 				_intersection_points[it].first  = temporary_pair[it].first + it + 1;

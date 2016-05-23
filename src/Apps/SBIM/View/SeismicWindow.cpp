@@ -26,8 +26,9 @@ namespace RRM
 
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
+//		// testing seismic
 //		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
-
+//
 //		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
 //		{
 //			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);

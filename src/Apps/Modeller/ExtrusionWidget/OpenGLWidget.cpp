@@ -107,13 +107,13 @@ void GLWidget::initializeGL ( )
 
 	glBindVertexArray ( 0 );
 
-	// IMPORTANT FOR THE DEOLY VERSION
+	// IMPORTANT FOR THE DEPLOY VERSION
 	//loadShaderByResources ( );
 
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
 	// create the appropriate vertex buffer on the GPU
-	//extrusionInitialize(0.0,0.0,0.0,700.0,400.0,400.0);
+	extrusionInitialize(0.0,0.0,0.0,700.0,400.0,400.0);
 	loadShaders();
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
@@ -459,6 +459,8 @@ void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
 	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
 	glBindVertexArray ( 0 );
+
+	update();
 }
 
 
@@ -471,24 +473,24 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 {
 	this->extrusion_controller_.initialize(_x_min,_y_min,_z_min,_x_max,_y_max,_z_max);
 
-	std::vector<unsigned int> plane_positions = {5,10,30,40,60,90};
-
-	std:vector<Eigen::Vector4f> triangles;
-
-	/// Rebuild the scene bounding Box
-	cube_.clear();
-
-	cube_ = extrusion_controller_.getPlanes( plane_positions );
-
-	triangles = extrusion_controller_.getcubeMesh();
-
-	cube_.insert(cube_.end(),triangles.begin(),triangles.end());
-
-	/// Send the new meshes to the GPU
-	glBindVertexArray ( vertexArray_cube_ );
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
-	glBindVertexArray ( 0 );
+//	std::vector<unsigned int> plane_positions = {5,10,30,40,60,90};
+//
+//	std:vector<Eigen::Vector4f> triangles;
+//
+//	/// Rebuild the scene bounding Box
+//	cube_.clear();
+//
+//	cube_ = extrusion_controller_.getPlanes( plane_positions );
+//
+//	triangles = extrusion_controller_.getcubeMesh();
+//
+//	cube_.insert(cube_.end(),triangles.begin(),triangles.end());
+//
+//	/// Send the new meshes to the GPU
+//	glBindVertexArray ( vertexArray_cube_ );
+//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+//	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
+//	glBindVertexArray ( 0 );
 
 
 //	lines_ = triangles;

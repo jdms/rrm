@@ -6,10 +6,10 @@ StratigraphyItem::StratigraphyItem ( QColor color ) : QGraphicsPathItem ( )
 
 	curve = QPainterPath ( );
 
-	pen_color = color;
+	this->color_ = color;
 
 	setFlag ( QGraphicsItem::ItemIsSelectable );
-	setFlag ( QGraphicsItem::ItemIsMovable );
+	//setFlag ( QGraphicsItem::ItemIsMovable );
 
 	setAcceptTouchEvents ( true );
 
@@ -24,16 +24,21 @@ void StratigraphyItem::paint ( QPainter *painter , const QStyleOptionGraphicsIte
 {
 	painter->setRenderHint ( QPainter::Antialiasing );
 
-	pen_color.setWidth ( 2 );
+	pen_color.setCapStyle(Qt::RoundCap);
+	pen_color.setJoinStyle(Qt::RoundJoin);
 
 	if ( isSelected ( ) )
 	{
-		painter->setPen ( Qt::green );
+		pen_color.setWidth ( 3 );
+		pen_color.setColor( Qt::green );
 	}
 	else
 	{
-		painter->setPen ( pen_color );
+		pen_color.setWidth ( 2 );
+		pen_color.setColor ( this->color_ );
 	}
+
+	painter->setPen ( pen_color );
 
 	painter->setBrush ( Qt::NoBrush );
 	painter->drawPath ( curve );
@@ -65,6 +70,9 @@ void StratigraphyItem::setSketch ( const QPainterPath & _path )
 	this->prepareGeometryChange ( );
 
 	curve = QPainterPath(_path);
+
+
+	curve.setFillRule(Qt::OddEvenFill);
 }
 
 /// Changed from original code
@@ -75,11 +83,15 @@ void StratigraphyItem::setSketch ( const QPolygonF & _path )
 	curve = QPainterPath();
 
 	curve.addPolygon(_path);
+
+	curve.setFillRule(Qt::OddEvenFill);
 }
 
 QPainterPath StratigraphyItem::shape ( ) const
 {
-	return curve;
+	QPainterPathStroker stroker;
+	stroker.setWidth(10);
+	return stroker.createStroke(curve);
 }
 
 void StratigraphyItem::setPen ( const QPen& pen )
