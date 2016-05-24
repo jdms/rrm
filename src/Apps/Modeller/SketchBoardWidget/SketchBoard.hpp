@@ -35,7 +35,8 @@ public slots:
 	void setCrossSection( const CrossSection& _cross_section );
 	/// default Scene
 	void newSession ( Real x , Real y , Real width , Real height );
-
+	/// defaul Scene with Image
+	void newSession ( const QPixmap& _image );
 signals:
 	void currentCrossSection( const CrossSection& _cross_section );
 

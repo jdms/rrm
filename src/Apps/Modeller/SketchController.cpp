@@ -21,6 +21,7 @@ SketchController::~SketchController ( )
 void SketchController::clear ( )
 {
 	this->cross_section_.clear();
+	this->cross_section_.initialize(0.0,0.0,700,400);
 	updateSBIM();
 }
 

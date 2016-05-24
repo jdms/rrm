@@ -89,8 +89,9 @@ void StratigraphyItem::setSketch ( const QPolygonF & _path )
 
 QPainterPath StratigraphyItem::shape ( ) const
 {
+	// Right shape for picking
 	QPainterPathStroker stroker;
-	stroker.setWidth(10);
+	stroker.setWidth(20);
 	return stroker.createStroke(curve);
 }
 

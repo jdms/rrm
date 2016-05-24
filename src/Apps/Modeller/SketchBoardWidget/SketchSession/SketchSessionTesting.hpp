@@ -85,7 +85,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 	signals:
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
-		void newSessionSignal ( QPixmap pixmap );
+		void newSessionSignal ( const QPixmap& pixmap );
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
 		void newSessionSignal ( Real x , Real y , Real width , Real height );
 		// Notify the model and provides a new sketch line

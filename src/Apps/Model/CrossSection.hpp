@@ -11,6 +11,7 @@
 #include <map>
 #include <tuple>
 #include <algorithm>
+#include <list>
 
 #include "Topology/Vertex.hpp"
 #include "Topology/Edge.hpp"
@@ -33,6 +34,76 @@ namespace RRM
 			typedef typename Segment::Curve2D	Curve2D;
 			typedef typename Segment::Point2D	Point2D;
 
+			class IntersectionVertex
+			{
+				public:
+
+					IntersectionVertex( )
+					{
+						this->input_curve  	= 0;
+						this->source_curve 	= 0;
+						this->source_curve_id 	= 0;
+						this->location_     	= Point2D(0.0,0.0);
+						this->is_extreme   	= false;
+						this->vertex_id_ 		= 0;
+					}
+
+					IntersectionVertex( std::size_t  _input_curve,
+							    std::size_t  _source_curve,
+							    unsigned int _source_curve_id,
+							    Point2D _location,
+							    bool _is_extreme,
+							    unsigned int _id )
+					{
+						this->input_curve     = _input_curve;
+						this->source_curve    = _source_curve;
+						this->source_curve_id = _source_curve_id;
+						this->location_        = _location;
+						this->is_extreme      = _is_extreme;
+						this->vertex_id_      = _id;
+
+					}
+
+					IntersectionVertex ( const IntersectionVertex& other )
+					{
+						*this = other;
+					}
+
+					IntersectionVertex& operator= ( const IntersectionVertex& other )
+					{
+						this->input_curve     = other.input_curve;
+						this->source_curve    = other.source_curve;
+						this->source_curve_id = other.source_curve_id;
+						this->location_        = other.location_;
+						this->is_extreme      = other.is_extreme;
+
+						this->vertex_id_      = other.vertex_id_;
+
+						return *this;
+					}
+					bool operator< ( const IntersectionVertex& c ) const
+					{
+						return this->input_curve < c.input_curve;
+					}
+
+					bool operator> ( const IntersectionVertex& c ) const
+					{
+						return this->input_curve > c.input_curve;
+					}
+
+					std::size_t  input_curve;
+					std::size_t  source_curve;
+					unsigned int source_curve_id;
+					Point2D location_;
+					bool is_extreme;
+
+					// User to create the vertices
+					unsigned int vertex_id_;
+
+			};
+
+
+
 			CrossSection ( )
 			{
 				id_ = 0;
@@ -47,49 +118,6 @@ namespace RRM
 			{
 
 			}
-
-			struct IntersectionVertex
-			{
-					IntersectionVertex( std::size_t _input_curve,
-							    std::size_t _source_curve,
-							    Point2D _location,
-							    bool _is_extreme )
-					{
-						this->input_curve  = _input_curve;
-						this->source_curve = _source_curve;
-						this->location     = _location;
-						this->is_extreme   = _is_extreme;
-					}
-
-					IntersectionVertex ( const IntersectionVertex& other )
-					{
-						*this = other;
-					}
-
-					IntersectionVertex& operator= ( const IntersectionVertex& other )
-					{
-						this->input_curve  = other.input_curve;
-						this->source_curve = other.source_curve;
-						this->location     = other.location;
-						this->is_extreme   = other.is_extreme;
-
-						return *this;
-					}
-					bool operator< ( const IntersectionVertex& c ) const
-					{
-						return this->input_curve < c.input_curve;
-					}
-
-					bool operator> ( const IntersectionVertex& c ) const
-					{
-						return this->input_curve > c.input_curve;
-					}
-
-					std::size_t input_curve;
-					std::size_t source_curve;
-					Point2D location;
-					bool is_extreme;
-			};
 
 			/// Most important Operation
 			Self& operator=(const Self& other )
@@ -200,185 +228,129 @@ namespace RRM
 			unsigned int insertCurve( const Curve2D& _curve )
 			{
 
+				// PolygonalCurve2D output
 				std::vector<std::size_t> thisIndex;
-				std::vector<Real> thisAlphas;
+				std::vector<Real>        thisAlphas;
 				std::vector<std::size_t> testIndex;
-				std::vector<Real> testAlphas;
-
-				std::vector<Point2D> intersection_points;
-				std::vector<std::size_t> intersection_indices;
+				std::vector<Real> 	 testAlphas;
+				std::vector<Point2D>     intersection_points;
 
 				// Save all intersection vertex to later, sort it increase order.
-				std::map<unsigned int,IntersectionVertex> intersection_vertices;
-				std::size_t vertices_count = 0;
+				std::vector<IntersectionVertex> intersection_vertices;
 				// Save all intersection vertex to later, sort it increase order.
-				std::map<unsigned int,std::vector<IntersectionVertex>>  curve_slices;
+				std::vector<std::size_t>  intersected_edges;
 
 				std::vector<std::pair<std::size_t,Point2D> > intersection_pair;
 
-				Curve2D test = _curve;
+				Curve2D test;
 
-				/// The intersection has a limited precision. Using superSample as 3.0.
-				test.superSample(3.0);
+				/// The intersection has a limited precision. Using douglasPeuckerSimplify as 1.0
+				/// Increase precision in the upcoming releases.
+				if ( _curve.size() < 5 )
+				{
+					return 0;
+				}
 
-				Self temp = *this;
+				_curve.douglasPeuckerSimplify(test,1.0);
 
 				// Intersetion over the current CrossSection
 				for ( auto& edge_iterator: edges_ )
 				{
-					Curve2D c1;
-					Curve2D c2;
-					Curve2D c3;
-
-
 					for ( std::size_t it = 0 ; it < test.size() ; it++ )
 					{
 						std::cout << " Point : " << test[it].x() << " - " << test[it].y() << std::endl;
 					}
 					std::cout << " ---- "<< std::endl;
 
-					if ( edge_iterator.second.segment.curve.intersectionPolygonalCurve2D ( test , thisIndex , testIndex , intersection_points ) )
+					// Test input curve against the current Arrangement
+					// Find the intersection points
+					if ( edge_iterator.second.segment.curve.intersections ( test , thisIndex , thisAlphas, testIndex ,testAlphas, intersection_points ) )
 					{
 
 //						for ( std::size_t it = 0 ; it < edge_iterator.second.segment.curve.size() ; it++ )
 //						{
 //							std::cout << " Point : " << edge_iterator.second.segment.curve[it].x() << " - " << edge_iterator.second.segment.curve[it].y() << std::endl;
 //						}
-
-						if ( thisIndex.size ( ) > 2 )
+						if ( thisIndex.size ( ) == 2 )
 						{
-							// Case not accepted
-							return -1;
-						}
-						else if ( thisIndex.size ( ) == 2 )
-						{
-//
-//							edge_iterator.second.segment.curve.split ( thisIndex[0] , thisIndex[1] , c1 , c2 , c3 );
-//
-//							// before
-//							// (vs) - e - (vt)
-//							// C = c1;
-//							edge_iterator.second.segment.curve = c1;
-//							// after
-//							// (vs)- e - (v1) - e2 - (v2) - e3- (vt)
-////
-//							Edge<Real> e2;
-//							e2.id_ = edge_index_.getID();
-//							e2.segment.curve = c2;
-//
-//							Edge<Real> e3;
-//							e3.id_ = edge_index_.getID();
-//							e3.segment.curve = c3;
-//
-//							Vertex<Real> v1;
-//							v1.id_ = vertex_index_.getID();
-//							v1.location_ = intersection_points[0];
-//
-//							Vertex<Real> v2;
-//							v2.id_ = vertex_index_.getID();
-//							v2.location_ = intersection_points[1];
-//
-//							e2.source_id_ = v1.id_;
-//							e2.target_id_ = v2.id_;
-//
-//							e3.source_id_ = v2.id_;
-//							e3.target_id_ = edge_iterator.second.target_id_;
-//
-//							// Original edge
-//							edge_iterator.second.target_id_ = v1.id_;
-//
-//							v1.edges_.insert(edge_iterator.second.id_);
-//							v1.edges_.insert(e2.id_);
-//
-//							v2.edges_.insert(e2.id_);
-//							v2.edges_.insert(e3.id_);
-//
-//							// Updating (vt)
-//							vertices_[e3.target_id_].edges_.erase(edge_iterator.second.id_);
-//							vertices_[e3.target_id_].edges_.insert(e3.id_);
-//
-//							edges_[e2.id_] = e2;
-//							edges_[e3.id_] = e3;
-//
-//							vertices_[v1.id_] = v1;
-//							vertices_[v2.id_] = v2;
 
 
-							/// Input Curve Index/Point
 							for ( std::size_t it = 0; it < testIndex.size(); it++)
 							{
-								intersection_pair.push_back( std::make_pair(testIndex[it],intersection_points[it]) );
+								IntersectionVertex vi (testIndex[it],
+										      thisIndex[it],
+										      edge_iterator.second.id_,
+										      intersection_points[it],
+										      false,
+										      0);
+
+								intersection_vertices.push_back(vi);
 							}
 
+							intersected_edges.push_back(edge_iterator.second.id_);
 
 						}
 						else if ( thisIndex.size ( ) == 1 )
 						{
 
-//							edge_iterator.second.segment.curve.split ( thisIndex[0], c1 , c2 );
-//
-//							// before
-//							// (vs) - e - (vt)
-//							// C = c1;
-//							edge_iterator.second.segment.curve = c1;
-//							// after
-//							// (vs)- e - (v1) - e2 - (vt)
-////																						;
-//							Edge<Real> e2;
-//							e2.id_ = edge_index_.getID();
-//							e2.segment.curve = c2;
-//
-//							Vertex<Real> v1;
-//							v1.id_ = vertex_index_.getID();
-//							v1.location_ = intersection_points[0];
-//
-//							e2.source_id_ = v1.id_;
-//							e2.target_id_ = edge_iterator.second.target_id_;
-//
-//							// Original edge
-//							edge_iterator.second.target_id_ = v1.id_;
-//
-//							v1.edges_.insert(edge_iterator.second.id_);
-//							v1.edges_.insert(e2.id_);
-//
-//							// Updating (vt)
-//							vertices_[e2.target_id_].edges_.erase(edge_iterator.second.id_);
-//							vertices_[e2.target_id_].edges_.insert(e2.id_);
-//
-//							edges_[e2.id_] = e2;
-//							vertices_[v1.id_] = v1;
-
-							/// Input Curve Index/Point
 							for ( std::size_t it = 0; it < testIndex.size(); it++)
 							{
-								intersection_pair.push_back( std::make_pair(testIndex[it],intersection_points[it]) );
+
+								IntersectionVertex vi ( testIndex[it],
+										        thisIndex[it],
+										        edge_iterator.second.id_,
+										        intersection_points[it],
+										        false,
+										        0);
+
+								intersection_vertices.push_back(vi);
+
 							}
+
+							intersected_edges.push_back(edge_iterator.second.id_);
 
 						}
 						else
 						{
-							std::cout << " thisIndex " << thisIndex.size ( ) << std::endl;
-							continue;
+							// Case not accepted
+							std::cout << "Case not accepted" << std::endl;
+							return 0;
 						}
 
 					}else
 					{
 						/// no intersection
-						std::cout << " No intersection " << thisIndex.size ( ) << std::endl;
+						continue;
 					}
-
-					std::cout << " intersection_pair " << intersection_pair.size() << std::endl;
 
 				}
 
 				// Not a valid Curve
-				if ( intersection_pair.size () == 1 )
+				if ( intersection_vertices.size () == 1 )
 				{
-					*this = temp;
+					std::cout << " Only hanging Points " << thisIndex.size ( ) << std::endl;
 					return 0;
 				}
-				else if ( intersection_pair.size () == 2 )
+				else if ( intersection_vertices.size () >= 2 )
 				{
+
+					std::sort(intersection_vertices.begin(),intersection_vertices.end());
+
+					intersection_vertices.front().is_extreme = true;
+					intersection_vertices.back().is_extreme  = true;
+
+					for ( auto& vertex_iterator: intersection_vertices)
+					{
+						Vertex<Real> vertex;
+						vertex.id_ = vertex_index_.getID();
+						vertex.location_ = vertex_iterator.location_;
+
+						vertex_iterator.vertex_id_ = vertex.id_;
+
+						vertices_[vertex.id_] = vertex;
+
+						intersection_pair.push_back(std::make_pair(vertex_iterator.input_curve,vertex_iterator.location_));
+					}
 
 					std::cout << " Test Size " << test.size() << std::endl;
 
@@ -387,42 +359,200 @@ namespace RRM
 					std::cout << " after Test Size " << test.size() << std::endl;
 
 					std::deque<Curve2D> segments;
-					segments.resize(3);
 
-					test.split(intersection_pair[0].first,intersection_pair[1].first,segments[0],segments[1],segments[2]);
+					std::vector<std::size_t> indices;
+					// Extract pair element  http://stackoverflow.com/a/24642972
+					// Could use auto in lambda expression, with c++ > 11
+					std::transform(intersection_pair.begin(), intersection_pair.end(), std::back_inserter(indices), [](std::pair<std::size_t,Point2D> p) { return p.first; });
 
-					segments.pop_front();
-					segments.pop_back();
+					// Return the segments of the input curve at the intersection point index.
+					test.slices(indices,segments);
 
 					std::cout << " Segments Size " << segments.size() << std::endl;
 
-//					for ( auto& vertex_iterator: intersection_pair)
-//					{
-//						Vertex<Real> v;
-//						v.id_ = vertex_index_.getID();
-//						v.location_ = vertex_iterator.second;
-//						vertices_[v.id_] = v;
-//
-//					}
+					// There is no source
+					unsigned int last_edge;
+					Edge<Real> hanging_1;
+					hanging_1.id_ = edge_index_.getID();
+					hanging_1.segment.curve = segments.front();
+					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
+					edges_[hanging_1.id_] = hanging_1;
+					last_edge = hanging_1.id_;
 
-					for ( auto& segment_iterator: segments)
+					for ( std::size_t it = 0; it < intersection_vertices.size()-1; it++)
 					{
-						unsigned int id = edge_index_.getID();
-
-						std::cout << "---- id ----  " << segment_iterator.size() << std::endl;
-						std::cout << "---- Vertex ----  " << segment_iterator.front().x() << ", "<< segment_iterator.front().y() << std::endl;
-						std::cout << "---- Vertex ----  " << segment_iterator.back().x() << ", "<< segment_iterator.back().y() << std::endl;
-
 						Edge<Real> e;
-
-						e.segment.curve = segment_iterator;
-
-						edges_[id] = e;
+						e.id_ = edge_index_.getID();
+						e.segment.curve = segments[it+1];
+						e.source_id_ = intersection_vertices[it].vertex_id_;
+						e.target_id_ = intersection_vertices[it+1].vertex_id_;
+						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(e.id_);
+						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(last_edge);
+						edges_[e.id_] = e;
+						last_edge = e.id_;
 					}
+
+					// There is no target
+					Edge<Real> hanging_2;
+					hanging_2.id_ = edge_index_.getID();
+					hanging_2.segment.curve = segments.back();
+					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
+					edges_[hanging_2.id_] = hanging_2;
+					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(hanging_2.id_);
+					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(last_edge);
+
+					std::vector<IntersectionVertex> edge_vertices;
+
+					for ( auto edges_id_iterator: intersected_edges  )
+					{
+						// Take the vertices which cut the source edge.
+						for ( auto vertex_iterator: intersection_vertices)
+						{
+							if ( vertex_iterator.source_curve_id == edges_id_iterator)
+							{
+								edge_vertices.push_back(vertex_iterator);
+							}
+						}
+						// sort it
+						std::sort(edge_vertices.begin(),edge_vertices.end(),
+							  [](const IntersectionVertex& left,const IntersectionVertex& right)
+							  {
+								return left.source_curve < right.source_curve;
+							  });
+
+						if ( edge_vertices.size() == 1)
+						{
+
+							Curve2D c1;
+							Curve2D c2;
+								intersection_pair.clear();
+								for ( auto& vertex_iterator: edge_vertices)
+								{
+									intersection_pair.push_back(std::make_pair(vertex_iterator.source_curve,vertex_iterator.location_));
+								}
+
+								edges_[edge_vertices[0].source_curve_id].segment.curve.addPoints(intersection_pair);
+
+								indices.clear();
+								// Extract pair element  http://stackoverflow.com/a/24642972
+								// Could use auto in lambda expression, with c++ > 11
+								std::transform(intersection_pair.begin(), intersection_pair.end(), std::back_inserter(indices), [](std::pair<std::size_t,Point2D> p) { return p.first; });
+
+							edges_[edge_vertices[0].source_curve_id].segment.curve.split ( indices[0], c1 , c2 );
+							// before
+							// (vs) - e - (vt)
+							// C = c1;
+							edges_[edge_vertices[0].source_curve_id].segment.curve = c1;
+							// after
+							// (vs)- e - (v1) - e2 - (vt)
+																								;
+							Edge<Real> e2;
+							e2.id_ = edge_index_.getID();
+							e2.segment.curve = c2;
+
+							e2.source_id_ = edge_vertices[0].vertex_id_;
+							e2.target_id_ = edges_[edge_vertices[0].source_curve_id].target_id_;
+
+							// Original edge
+							edges_[edge_vertices[0].source_curve_id].target_id_ = edge_vertices[0].vertex_id_;
+
+							vertices_[edge_vertices[0].vertex_id_].edges_.insert(edge_vertices[0].source_curve_id);
+							vertices_[edge_vertices[0].vertex_id_].edges_.insert(e2.id_);
+
+							// Updating (vt)
+							vertices_[e2.target_id_].edges_.erase(edge_vertices[0].source_curve_id);
+							vertices_[e2.target_id_].edges_.insert(e2.id_);
+
+							edges_[e2.id_] = e2;
+
+						}else if ( edge_vertices.size() == 2)
+						{
+							Curve2D c1;
+							Curve2D c2;
+							Curve2D c3;
+
+								intersection_pair.clear();
+								for ( auto& vertex_iterator: edge_vertices)
+								{
+									intersection_pair.push_back(std::make_pair(vertex_iterator.source_curve,vertex_iterator.location_));
+								}
+
+								edges_[edge_vertices[0].source_curve_id].segment.curve.addPoints(intersection_pair);
+
+								indices.clear();
+								// Extract pair element  http://stackoverflow.com/a/24642972
+								// Could use auto in lambda expression, with c++ > 11
+								std::transform(intersection_pair.begin(), intersection_pair.end(), std::back_inserter(indices), [](std::pair<std::size_t,Point2D> p) { return p.first; });
+
+							edges_[edge_vertices[0].source_curve_id].segment.curve.split ( indices[0],indices[1], c1 , c2 , c3);
+
+							// before
+							// (vs) - e - (vt)
+							// C = c1;
+							edges_[edge_vertices[0].source_curve_id].segment.curve = c1;
+							// after
+							// (vs)- e - (v1) - e2 - (vt)
+							Edge<Real> e2;
+							e2.id_ = edge_index_.getID();
+							e2.segment.curve = c2;
+
+							Edge<Real> e3;
+							e3.id_ = edge_index_.getID();
+							e3.segment.curve = c3;
+
+
+							e2.source_id_ = edge_vertices[0].vertex_id_;
+							e2.target_id_ = edge_vertices[1].vertex_id_;
+
+							e3.source_id_ = edge_vertices[1].vertex_id_;
+							e3.target_id_ = edges_[edge_vertices[0].source_curve_id].target_id_;
+
+							// Original edge
+							edges_[edge_vertices[0].source_curve_id].target_id_ = edge_vertices[0].vertex_id_;
+
+							vertices_[edge_vertices[0].vertex_id_].edges_.insert(edge_vertices[0].source_curve_id);
+							vertices_[edge_vertices[0].vertex_id_].edges_.insert(e2.id_);
+
+							vertices_[edge_vertices[1].vertex_id_].edges_.insert(e2.id_);
+							vertices_[edge_vertices[1].vertex_id_].edges_.insert(e3.id_);
+
+//							// Updating (vt)
+							vertices_[e3.target_id_].edges_.erase(edge_vertices[0].source_curve_id);
+							vertices_[e3.target_id_].edges_.insert(e3.id_);
+
+							edges_[e2.id_] = e2;
+							edges_[e3.id_] = e3;
+
+
+						}else
+						{
+							std::cout << "Case not accepted" << std::endl;
+						}
+
+						edge_vertices.clear();
+
+					}
+
+
+				}
+				else
+				{
+					return 0;
+				}
+
+				for(auto& vertex_iterator: vertices_ )
+				{
+					// Case not accepted
+					std::cout << "Vertex Valence : " << vertex_iterator.second.edges_.size() << std::endl;
+					for ( auto edges_iterator: vertex_iterator.second.edges_ )
+					{
+						std::cout << "edges id : " << edges_iterator << std::endl;
+					}
+					std::cout << "---" << std::endl;
 				}
 
 				log();
-				return -1;
+				return 1;
 			}
 
 

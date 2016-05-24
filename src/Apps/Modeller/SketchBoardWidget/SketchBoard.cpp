@@ -36,7 +36,10 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF) ) );
 
 	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( Real, Real, Real, Real ) ) ,
-		  this->sketch_controller , SLOT  ( newSession ( Real, Real, Real, Real ) ) );
+		  this 			  , SLOT  ( newSession ( Real, Real, Real, Real ) ) );
+
+	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( const QPixmap& ) ) ,
+		  this 			  , SLOT  ( newSession ( const QPixmap& ) ) );
 
 	// Notify the view with the new configuration of Lines
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,
@@ -54,6 +57,15 @@ void SketchBoard::newSession ( Real x , Real y , Real width , Real height )
 {
 	this->sketchSession_->initialization(x,y,width,height);
 	this->sketch_controller->newSession(x,y,width,height);
+}
+
+void SketchBoard::newSession ( const QPixmap& _image )
+{
+	this->sketchSession_->initializationWithImage(_image);
+	this->sketch_controller->newSession(_image.rect ( ).x(),
+                                            _image.rect ( ).y(),
+					    _image.rect ( ).width(),
+					    _image.rect ( ).height());
 }
 
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
@@ -112,6 +124,7 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		if ( event->key ( ) == Qt::Key_Escape)
 		{
 				sketchSession_->clearSelection();
+				this->newSession(0.0,0.0,700.0,400.0);
 		}
 
 	QGraphicsView::keyPressEvent(event);

@@ -489,6 +489,8 @@ namespace RRM
 				{
 					prPoints[i] = this->at ( myI + nearIndex );
 					std::cout << " same point " << std::endl;
+					// Make it false until ensure robustness
+					return false;
 
 				}
 
@@ -503,6 +505,8 @@ namespace RRM
 				{
 					prPoints[i] = testCurve.at ( theirI + nearIndex );
 					std::cout << " same point test curve " << std::endl;
+					// Make it false until ensure robustness
+					return false;
 				}
 			}
 
@@ -578,7 +582,6 @@ namespace RRM
 //			{
 //				std::cout << "Test Index Point " << _thisIndex[i] << " _ "  << std::endl;
 //			}
-			std::cout << "PolygonCurve2D intersected"  << std::endl;
 
 		}else
 		{
@@ -595,23 +598,23 @@ namespace RRM
 
 			std::vector<std::pair<std::size_t,Point2D> > temporary_pair = _intersection_points;
 
-			std::sort( temporary_pair.begin(), temporary_pair.end(),
-
-				  [](const std::pair<std::size_t,Point2D> &left, const std::pair<std::size_t,Point2D> &right)
-				  {
-					return left.first < right.first;
-				  }
-			);
-
-			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
-			{
-				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second.x() << "," << _intersection_points[it].second.y()
-										     << " Curve = " << this->at(_intersection_points[it].first).x()
-										     	     	    << ","
-										     	     	    << this->at(_intersection_points[it].first).y() << std::endl;
-			}
-
-			std::cout << " Shorted" << std::endl;
+//			std::sort( temporary_pair.begin(), temporary_pair.end(),
+//
+//				  [](const std::pair<std::size_t,Point2D> &left, const std::pair<std::size_t,Point2D> &right)
+//				  {
+//					return left.first < right.first;
+//				  }
+//			);
+//
+//			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
+//			{
+//				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second.x() << "," << _intersection_points[it].second.y()
+//										     << " Curve = " << this->at(_intersection_points[it].first).x()
+//										     	     	    << ","
+//										     	     	    << this->at(_intersection_points[it].first).y() << std::endl;
+//			}
+//
+//			std::cout << " Shorted" << std::endl;
 
 			for ( std::size_t it = 0; it < temporary_pair.size(); it++)
 			{

@@ -330,17 +330,19 @@ bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 
 	clear();
 
-	overlay_image_->setPixmap ( pixmap );
-
 	qreal x = pixmap.rect ( ).x ( );
 	qreal y = pixmap.rect ( ).y ( );
 	qreal w = pixmap.rect ( ).width ( );
 	qreal h = pixmap.rect ( ).height ( );
 
-	this->boundaryc_->setNewBoundary ( x , y , w , h );
-	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
+	this->initialization( x , y , w , h );
 
-	setUpBackground();
+	overlay_image_->setPixmap ( pixmap );
+
+//	this->boundaryc_->setNewBoundary ( x , y , w , h );
+//	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
+
+//	setUpBackground();
 
 	return true;
 }
@@ -357,9 +359,12 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 //	/// Creating and adding the boundary
 //	this->boundary_->setRect ( x , y , w - x , h - y );
 //	this->boundaryc->setNewBoundary ( x , y , w - x , h - y );
+
+	// clean up the scene
+	this->clear();
+
 	this->boundaryc_->setNewBoundary ( x , y , w , h );
 	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
-
 
 	setUpBackground();
 
