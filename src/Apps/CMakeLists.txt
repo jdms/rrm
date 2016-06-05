@@ -95,6 +95,63 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
    )
 ## Grab Simulator Source Files
 
+
+set( SIMULATOR_HEADERS
+    Simulator/FlowComputationModule.h                       
+    Simulator/DialogInputFlowComputation.h
+    Simulator/CanvasComputation.h     
+    Simulator/FlowVisualizationController.h 
+    Simulator/VTKData.h 
+    Simulator/ColorMap.h 
+    Simulator/FlowProperty.h 
+    Simulator/FlowComputation/edge.h 
+    Simulator/FlowComputation/facet.h 
+    Simulator/FlowComputation/graphedge.h 
+    Simulator/FlowComputation/graphnode.h 
+    Simulator/FlowComputation/linearfunc.h 
+    Simulator/FlowComputation/mathzz.h 
+    Simulator/FlowComputation/matrix.h 
+    Simulator/FlowComputation/node.h 
+    Simulator/FlowComputation/region.h 
+    Simulator/FlowComputation/resource.h 
+    Simulator/FlowComputation/samg.h 
+    Simulator/FlowComputation/tetgen.h 
+    Simulator/FlowComputation/tetrahedron.h 
+    Simulator/FlowComputation/trifacet.h
+    Simulator/FlowComputation/well.h
+    Simulator/FlowComputation/samg.h
+    )
+
+set ( SIMULATOR_MOC_HEADERS
+    Simulator/FlowComputationModule.h                       
+    Simulator/DialogInputFlowComputation.h
+   Simulator/CanvasComputation.h
+    Simulator/FlowVisualizationController.h     
+)
+
+set( SIMULATOR_SOURCES    
+    Simulator/FlowComputationModule.cpp                       
+    Simulator/DialogInputFlowComputation.cpp
+    Simulator/CanvasComputation.cpp
+    Simulator/FlowVisualizationController.cpp 
+    Simulator/VTKData.cpp 
+    Simulator/ColorMap.cpp 
+    Simulator/FlowProperty.cpp 
+    Simulator/FlowComputation/edge.cpp 
+    Simulator/FlowComputation/facet.cpp 
+    Simulator/FlowComputation/graphedge.cpp 
+    Simulator/FlowComputation/graphnode.cpp 
+    Simulator/FlowComputation/linearfunc.cpp 
+    Simulator/FlowComputation/mathzz.cpp 
+    Simulator/FlowComputation/matrix.cpp 
+    Simulator/FlowComputation/node.cpp 
+    Simulator/FlowComputation/predicates.cxx 
+    Simulator/FlowComputation/region.cpp
+    Simulator/FlowComputation/tetgen.cxx
+    Simulator/FlowComputation/tetrahedron.cpp 
+    Simulator/FlowComputation/trifacet.cpp
+   )
+
 set( SIMULATOR_HEADERS
     Simulator/FlowComputationModule.h                       
     Simulator/DialogInputFlowComputation.h
@@ -153,7 +210,8 @@ set( SIMULATOR_SOURCES
 
 
 ## Q_OBJECT files
-set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  ${SIMULATOR_MOC_HEADERS} 
+set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS}  
+#${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
 set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES} )
@@ -172,9 +230,9 @@ IF(WIN32) # Check if we are on Windows
         add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
                                        ${SBIM_SOURCES} ${SBIM_HEADERS}      
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
-                                       ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
+                                       #${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
-		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Svg RRMGeometry ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
+		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Svg planin RRMGeometry ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
 		# /SUBSYSTEM:CONSOLE DEBUG VERSION
 		# /SUBSYSTEM:WINDOWN RELEASE VERSION
 #		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
@@ -190,9 +248,9 @@ ELSEIF(UNIX)
         add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
                                        ${SBIM_SOURCES} ${SBIM_HEADERS}      
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
-                                       ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
+                                       #${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})	
-    target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg RRMGeometry  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
+    target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg planin RRMGeometry  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 ELSE() # Not Windows or Unix
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
 ENDIF()

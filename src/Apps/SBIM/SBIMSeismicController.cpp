@@ -77,4 +77,11 @@ namespace RRM
 
 	}
 
+	const SBIMSeismicController::SeismicSlices& RRM::SBIMSeismicController::getSeismicSlices ( ) const
+	{
+		return this->sketch_seismic_module_.seismic_slices_;
+	}
+
 } /* namespace RRM */
+
+

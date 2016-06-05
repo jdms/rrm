@@ -102,8 +102,6 @@ namespace RRM
 
 			};
 
-
-
 			CrossSection ( )
 			{
 				id_ = 0;
@@ -134,6 +132,8 @@ namespace RRM
 				id_ 	  = 	other.id_;
 
 				image_    = other.image_;
+
+				viewPort_ = other.viewPort_;
 
 				return *this;
 			}
@@ -219,6 +219,9 @@ namespace RRM
 				vertices_[v2.id_] = v2;
 
 				std::cout << " New Boundary " << std::endl;
+
+				viewPort_.first  = Point2D(x,y);
+				viewPort_.second = Point2D(width,height);
 
 				this->log();
 
@@ -360,21 +363,20 @@ namespace RRM
 
 					std::deque<Curve2D> segments;
 
+					// Used into the segmentation of the input Curve
 					std::vector<std::size_t> indices;
 					// Extract pair element  http://stackoverflow.com/a/24642972
 					// Could use auto in lambda expression, with c++ > 11
 					std::transform(intersection_pair.begin(), intersection_pair.end(), std::back_inserter(indices), [](std::pair<std::size_t,Point2D> p) { return p.first; });
-
 					// Return the segments of the input curve at the intersection point index.
 					test.slices(indices,segments);
-
 					std::cout << " Segments Size " << segments.size() << std::endl;
-
 					// There is no source
 					unsigned int last_edge;
 					Edge<Real> hanging_1;
 					hanging_1.id_ = edge_index_.getID();
 					hanging_1.segment.curve = segments.front();
+					hanging_1.segment.curve.superSample(3.0);
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
 					edges_[hanging_1.id_] = hanging_1;
 					last_edge = hanging_1.id_;
@@ -384,6 +386,7 @@ namespace RRM
 						Edge<Real> e;
 						e.id_ = edge_index_.getID();
 						e.segment.curve = segments[it+1];
+						e.segment.curve.superSample(3.0);
 						e.source_id_ = intersection_vertices[it].vertex_id_;
 						e.target_id_ = intersection_vertices[it+1].vertex_id_;
 						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(e.id_);
@@ -396,6 +399,7 @@ namespace RRM
 					Edge<Real> hanging_2;
 					hanging_2.id_ = edge_index_.getID();
 					hanging_2.segment.curve = segments.back();
+					hanging_2.segment.curve.superSample(3.0);
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
 					edges_[hanging_2.id_] = hanging_2;
 					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(hanging_2.id_);
@@ -403,6 +407,7 @@ namespace RRM
 
 					std::vector<IntersectionVertex> edge_vertices;
 
+					/// Updating the CrossSection with new Configuration
 					for ( auto edges_id_iterator: intersected_edges  )
 					{
 						// Take the vertices which cut the source edge.
@@ -431,6 +436,7 @@ namespace RRM
 									intersection_pair.push_back(std::make_pair(vertex_iterator.source_curve,vertex_iterator.location_));
 								}
 
+								// Add the Point to the curve and get the new indices.
 								edges_[edge_vertices[0].source_curve_id].segment.curve.addPoints(intersection_pair);
 
 								indices.clear();
@@ -445,10 +451,12 @@ namespace RRM
 							edges_[edge_vertices[0].source_curve_id].segment.curve = c1;
 							// after
 							// (vs)- e - (v1) - e2 - (vt)
-																								;
+
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
+							e2.segment.curve.superSample(3.0);
+							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							e2.source_id_ = edge_vertices[0].vertex_id_;
 							e2.target_id_ = edges_[edge_vertices[0].source_curve_id].target_id_;
@@ -495,10 +503,14 @@ namespace RRM
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
+							e2.segment.curve.superSample(3.0);
+							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							Edge<Real> e3;
 							e3.id_ = edge_index_.getID();
 							e3.segment.curve = c3;
+							e3.segment.curve.superSample(3.0);
+							e3.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 
 							e2.source_id_ = edge_vertices[0].vertex_id_;
@@ -523,16 +535,31 @@ namespace RRM
 							edges_[e2.id_] = e2;
 							edges_[e3.id_] = e3;
 
-
 						}else
 						{
 							std::cout << "Case not accepted" << std::endl;
 						}
 
+						for(auto& vertex_iterator: vertices_ )
+						{
+							vertex_iterator.second.vertices_.clear();
+							for ( auto edges_iterator: vertex_iterator.second.edges_ )
+							{
+
+								if ( (edges_[edges_iterator].source_id_ != 0) and ((edges_[edges_iterator].source_id_ != vertex_iterator.second.id_)) )
+								{
+									vertex_iterator.second.vertices_.insert ( edges_[edges_iterator].source_id_ );
+								}
+								if ( (edges_[edges_iterator].target_id_ != 0 ) and (edges_[edges_iterator].target_id_ != vertex_iterator.second.id_))
+								{
+									vertex_iterator.second.vertices_.insert ( edges_[edges_iterator].target_id_ );
+								}
+
+							}
+						}
+
 						edge_vertices.clear();
-
 					}
-
 
 				}
 				else
@@ -540,13 +567,18 @@ namespace RRM
 					return 0;
 				}
 
+				std::cout << " New Configuration " << std::endl;
 				for(auto& vertex_iterator: vertices_ )
 				{
 					// Case not accepted
 					std::cout << "Vertex Valence : " << vertex_iterator.second.edges_.size() << std::endl;
+					for ( auto vit: vertex_iterator.second.vertices_ )
+					{
+						std::cout << "vertex id : " << vertex_iterator.second.id_ <<  " - " << vit << std::endl;
+					}
 					for ( auto edges_iterator: vertex_iterator.second.edges_ )
 					{
-						std::cout << "edges id : " << edges_iterator << std::endl;
+						std::cout << "edges id : " << edges_iterator << " s " << edges_[edges_iterator].source_id_ << " t " << edges_[edges_iterator].target_id_ << std::endl;
 					}
 					std::cout << "---" << std::endl;
 				}
@@ -577,6 +609,8 @@ namespace RRM
 			IDManager vertex_index_;
 			IDManager face_index_;
 			IDManager edge_index_;
+
+			std::pair<Point2D,Point2D> viewPort_;
 
 
 	};

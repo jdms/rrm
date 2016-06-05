@@ -23,7 +23,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>IRES Cutaway</string>
+   <string>RRM</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

@@ -50,7 +50,7 @@ class SketchController : public QObject
 		void newSession ( QPixmap pixmap );
 		// Sketching a new boundary
 		void newSession ( Real x , Real y , Real width , Real height );
-
+		//
 		void setCrossSection ( const CrossSection& _cross_section );
 		CrossSection getCrossSection ( ) const ;
 

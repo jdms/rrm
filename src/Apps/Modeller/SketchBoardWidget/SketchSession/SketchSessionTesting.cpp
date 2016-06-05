@@ -195,7 +195,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 
 		if ( this->boundary_sketching_ == true )
 		{
-			emit newSessionSignal ( this->boundaryc_->boundingRect ( ).x( ) ,
+			emit newBoundary(       this->boundaryc_->boundingRect ( ).x( ) ,
 						this->boundaryc_->boundingRect ( ).y ( ) ,
 						this->boundaryc_->boundingRect ( ).width ( ) + this->boundaryc_->boundingRect( ).x ( ) ,
 						this->boundaryc_->boundingRect ( ).height ( ) + this->boundaryc_->boundingRect( ).y( ) );
@@ -371,6 +371,12 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 	return true;
 }
 
+void SketchSessionTesting::setBoundary ( Real x , Real y , Real width , Real height )
+{
+	this->boundaryc_->setNewBoundary ( x , y , width , height );
+	//this->setSceneRect ( this->boundaryc_->boundingRect( ) );
+}
+
 void SketchSessionTesting::sketchNewBoundary ( )
 {
 	this->boundary_sketching_ = true;
@@ -467,7 +473,13 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		{
 			QGraphicsEllipseItem* node = new QGraphicsEllipseItem(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
 			view_vertices_[vertice_iterator.first] = node;
+
+			//QGraphicsTextItem* text = new QGraphicsTextItem(QString::number(vertice_iterator.first));
+//			text->setPos(vertice_iterator.second.x(),vertice_iterator.second.y());
+//			text->setRotation(180);
+//			this->addItem(text);
 			this->addItem(node);
+
 		}
 	}
 

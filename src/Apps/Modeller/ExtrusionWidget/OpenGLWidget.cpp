@@ -34,6 +34,83 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 		// Be careful on the assignment of each slot attributes
 		lines_vertexSlot_ = 0;
 		lines_shader_ = 0;
+
+	mesh_shader_ = 0;
+	vertexArray_MESH_ = 0;
+		positionBuffer_MESH_ = 0;
+			position_MESH_Slot_ = 0;
+		normalBuffer_MESH_ = 0;
+			normal_MESH_Slot_ = 1;
+		colorBuffer_MESH_ = 0;
+			color_MESH_Slot_ = 2;
+		// Element Array
+		vertexBuffer_MESH_face_ID_ = 0;
+
+	vertexArray_for_the_Cube_ = 0;
+		vertexBuffer_cube_8vertices_ = 0;
+		vertices_8slot_ = 0;
+		vertexBuffer_cube_8verticesIndices_ = 0;
+
+
+}
+
+
+void GLWidget::create8VerticesIndices ()
+{
+
+	vertices.clear();
+	indices.clear();
+
+	glGenVertexArrays ( 1 , &vertexArray_for_the_Cube_);
+	glBindVertexArray(vertexArray_for_the_Cube_);
+
+	// Care about the type: GL_DOUBLE or GL_FLOAT
+	GLfloat vertex_data_8[24] =
+	{
+	 // X Y Z
+	      1.0, 1.0, 1.0, // vertex 0
+	      1.0, 1.0,-1.0, // vertex 1
+	     -1.0, 1.0,-1.0, // vertex 2
+	     -1.0, 1.0, 1.0, // vertex 3
+
+	     1.0,-1.0, 1.0, // vertex 4
+	    -1.0,-1.0, 1.0, // vertex 5
+	    -1.0,-1.0,-1.0, // vertex 6
+	     1.0,-1.0,-1.0  // vertex 7
+	}; // 8 vertices with 3 components ( Real ) each.
+
+	// Care about the type: GL_INT
+	GLuint vertex_indices_8[] =
+	{
+	   // Top Face 		// Bottom
+	   0, 1, 2, 2, 3, 0,    4, 5, 6, 6, 7, 4,
+
+	   // Front 		// Back
+	   0, 3, 5, 5, 4, 0,   2, 1, 7, 7, 6, 2,
+
+	   // Right   	 	// Left
+	   0, 4, 7, 7, 1, 0,    2, 6, 5, 5, 3, 2
+	};// 2 Triangle per face.
+
+
+	std::copy( vertex_data_8   , vertex_data_8    + 24  , std::back_inserter ( vertices ) );
+	std::copy( vertex_indices_8, vertex_indices_8 + 36 , std::back_inserter ( indices ) );
+
+	/// Requesting Vertex Buffers to the GPU
+	glGenBuffers ( 1 , &vertexBuffer_cube_8vertices_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_8vertices_ );
+		glBufferData ( GL_ARRAY_BUFFER , vertices.size( ) * sizeof(vertices[0]) , vertices.data() , GL_STATIC_DRAW );
+		// Set up generic attributes pointers
+		glEnableVertexAttribArray(vertices_8slot_);
+		glVertexAttribPointer(vertices_8slot_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	/// Requesting Indices
+	glGenBuffers ( 1 , &vertexBuffer_cube_8verticesIndices_ );
+		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_cube_8verticesIndices_ );
+		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , indices.size( ) * sizeof(indices[0]) , indices.data() , GL_STATIC_DRAW );
+
+	glBindVertexArray(0);
+
 }
 
 /// OpenGL
@@ -64,18 +141,20 @@ void GLWidget::initializeGL ( )
 	// Enable blending
 	glEnable ( GL_BLEND );
 	glBlendFunc ( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
+	glEnable(GL_MULTISAMPLE);
 
+	/// BLACK SCREEN ----
 
 	glGenVertexArrays ( 1 , &vertexArray_cube_ );
 	glBindVertexArray ( vertexArray_cube_ );
 
-	/// Requesting Vertex Buffers to the GPU
-	glGenBuffers ( 1 , &vertexBuffer_cube_ );
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
-	// Set up generic attributes pointers
-	glEnableVertexAttribArray ( vertexCube_slot_ );
-	glVertexAttribPointer ( vertexCube_slot_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &vertexBuffer_cube_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+		// Set up generic attributes pointers
+		glEnableVertexAttribArray ( vertexCube_slot_ );
+		glVertexAttribPointer ( vertexCube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
@@ -83,16 +162,18 @@ void GLWidget::initializeGL ( )
 	glGenVertexArrays ( 1 , &vertexArray_patch_ );
 	glBindVertexArray ( vertexArray_patch_ );
 
-	/// Requesting Vertex Buffers to the GPU
-	glGenBuffers ( 1 , &vertexBuffer_patch_ );
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-	glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-	/// Set up generic attributes pointers
-	glEnableVertexAttribArray ( vertexPatch_slot_ );
-	glVertexAttribPointer ( vertexPatch_slot_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &vertexBuffer_patch_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+		/// Set up generic attributes pointers
+		glEnableVertexAttribArray ( vertexPatch_slot_ );
+		glVertexAttribPointer ( vertexPatch_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
+
+	/// SEISMIC ----
 	/// Vertex Array Lines Patch
 	glGenVertexArrays ( 1 , &lines_vertexArray_ );
 	glBindVertexArray ( lines_vertexArray_ );
@@ -113,10 +194,96 @@ void GLWidget::initializeGL ( )
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
 	// create the appropriate vertex buffer on the GPU
-	extrusionInitialize(0.0,0.0,0.0,700.0,400.0,400.0);
+
+	//596x291x297
+
+	glGenVertexArrays ( 1 , &vertexArray_MESH_ );
+	glBindVertexArray ( vertexArray_MESH_ );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &positionBuffer_MESH_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+
+		// Set up generic attributes pointers
+		glEnableVertexAttribArray ( position_MESH_Slot_ );
+		glVertexAttribPointer ( position_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &normalBuffer_MESH_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+
+		glEnableVertexAttribArray ( normal_MESH_Slot_ );
+		glVertexAttribPointer ( normal_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &colorBuffer_MESH_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+
+		glEnableVertexAttribArray ( color_MESH_Slot_ );
+		glVertexAttribPointer ( color_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &vertexBuffer_MESH_face_ID_ );
+		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+
+	glBindVertexArray ( 0 );
+
+
+	create8VerticesIndices();
+
+
+	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
+
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+
 	loadShaders();
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
+
+	/// Black Screen
+
+
+	std::vector<std::vector<Eigen::Vector3f> > v;
+
+	std::vector<Eigen::Vector3f>  poly;
+	std::vector<Eigen::Vector3f>  temp;
+
+	poly.push_back( Eigen::Vector3f ( -1.0 , 0.25 , 0.0 ) );
+	poly.push_back( Eigen::Vector3f ( 1.0 , 0.25 , 0.0 ) );
+
+	temp.push_back( Eigen::Vector3f ( -1.0 , -1.0 , 0.0 ) );
+	temp.push_back( Eigen::Vector3f ( 1.0 , -1.0 , 0.0 ) );
+
+	v.push_back(poly);
+	poly.clear();
+
+	poly.push_back( Eigen::Vector3f ( -1.0 , 0.5 , 0.0 ) );
+	poly.push_back( Eigen::Vector3f ( 1.0 , 0.5 , 0.0 ) );
+
+	temp.push_back( Eigen::Vector3f ( -1.0 , 1.0 , 2.0 ) );
+	temp.push_back( Eigen::Vector3f ( 1.0 , 1.0 , 2.0 ) );
+
+	v.push_back(poly);
+
+	// Create the bounding box in Image space
+	Celer::BoundingBox3<float> bbox;
+	bbox.fromPointCloud(temp.begin(),temp.end());
+
+//	this->extrusion_controller_.createBlackScreenCube(bbox,cube_);
+//
+//	this->extrusion_controller_.createBlackScreenExtrusionMesh( v, 1,1,2, bbox.center(), bbox.diagonal(), this->patch_ );
+//
+//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+//	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
+//	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+//
+//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+//	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
+//	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 }
 
@@ -133,6 +300,10 @@ void GLWidget::reloadShaders ( )
 	if ( background_ )
 	{
 		background_->reloadShaders ( );
+	}
+	if ( mesh_shader_ )
+	{
+		mesh_shader_->reloadShaders ( );
 	}
 }
 
@@ -176,11 +347,13 @@ void GLWidget::loadShaderByResources ( )
 						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
         background_->initialize ( );
 
+        mesh_shader_ = new Tucano::Shader ( "Seismic" , ( shaderDirectory + "Shaders/Seismic.vert" ).toStdString ( ) , ( shaderDirectory + "Shaders/Seismic.frag" ).toStdString ( ) , "" , "" , "" );
+        mesh_shader_->initialize ( );
+
 	std::cout << " cube_shader_ " << cube_shader_->getShaderProgram ( ) << std::endl;
 	std::cout << " background_ "  << background_->getShaderProgram  ( ) << std::endl;
 
 }
-
 
 // Development propose
 void GLWidget::loadShaders ( )
@@ -208,9 +381,9 @@ void GLWidget::loadShaders ( )
 #endif
 
 	//! Effects --
-	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+						     ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	cube_shader_->initialize ( );
 	//! Effects --
 	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
@@ -229,6 +402,12 @@ void GLWidget::loadShaders ( )
 					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
 						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ) , "" , "" );
         background_->initialize ( );
+
+
+        mesh_shader_ = new Tucano::Shader ( "Seismic" , ( shaderDirectory + "Shaders/Seismic.vert" ).toStdString ( ),
+					                ( shaderDirectory + "Shaders/Seismic.frag" ).toStdString ( ),
+							( shaderDirectory + "Shaders/Seismic.geom" ).toStdString ( ), "" , "" );
+        mesh_shader_->initialize ( );
 
 	std::cout << " cube_shader_ " << cube_shader_->getShaderProgram ( ) << std::endl;
 	std::cout << " background_ "  << background_->getShaderProgram ( ) << std::endl;
@@ -299,18 +478,80 @@ void GLWidget::paintGL ( )
 //	cube_shader_->unbind ( );
 
 
-	lines_shader_->bind ( );
-	/// 3rd attribute buffer : vertices
-	lines_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-	lines_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-	lines_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+	if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::Seismic )
+	{
+		glLineWidth(5.0);
+		if ( lines_.size() > 0 )
+		{
+			lines_shader_->bind ( );
+			/// 3rd attribute buffer : vertices
+			lines_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+			lines_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+			lines_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 
-	glBindVertexArray ( lines_vertexArray_ );
-	/// Draw the triangle !
-	glDrawArrays ( GL_LINES , 0 , lines_.size() );
+				glBindVertexArray ( lines_vertexArray_ );
+				/// Draw the triangle !
+				glDrawArrays ( GL_LINES , 0 , lines_.size() );
 
-	glBindVertexArray ( 0 );
-	lines_shader_->unbind ( );
+				glBindVertexArray ( 0 );
+			lines_shader_->unbind ( );
+		}
+
+		// Triangles
+		mesh_shader_->bind ( );
+		/// 3rd attribute buffer : vertices
+		mesh_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		mesh_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		mesh_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		mesh_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+
+			glBindVertexArray ( vertexArray_MESH_ );
+			/// Draw the triangle !
+				glDrawElements ( GL_TRIANGLES , this->facesGL_.size() , GL_UNSIGNED_INT , 0 );
+		//		mesh_shader_->setUniform ( "xcolor" , 0.0f,0.0f,0.0f );
+				//glDrawArrays ( GL_POINTS , 0 , this->vertex_.size ( ) );
+			glBindVertexArray ( 0 );
+		mesh_shader_->unbind ( );
+
+	}else if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::BlankScreen )
+	{
+
+		patch_shader_->bind ( );
+		/// 3rd attribute buffer : vertices
+		patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+		glBindVertexArray ( vertexArray_patch_ );
+		/// Draw the triangle !
+		glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
+
+		glBindVertexArray ( 0 );
+		patch_shader_->unbind ( );
+
+		cube_shader_->bind ( );
+		/// 3rd attribute buffer : vertices
+		cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+		glBindVertexArray ( vertexArray_cube_ );
+		/// Draw the triangle !
+		glDrawArrays ( GL_LINES_ADJACENCY , 0 , cube_.size() );
+
+		glBindVertexArray ( 0 );
+		cube_shader_->unbind ( );
+
+	}
+
+//	glPointSize(5.0);
+//	glBindVertexArray(vertexArray_for_the_Cube_);
+//		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_cube_8verticesIndices_);
+//	//	// Draw the triangle !
+//		glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, 0);
+//
+//	glBindVertexArray(0);
+
 
 }
 /// KeyInput
@@ -331,6 +572,12 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		case Qt::Key_R:
 		{
 			camera.reset ( );
+		}
+			break;
+
+		case Qt::Key_Space:
+		{
+			this->updateRendering();
 		}
 			break;
 
@@ -447,22 +694,56 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 	update ( );
 }
 
-
 /// Seismic Module
 void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
 {
+
+	this->extrusion_controller_.setSeismicSlices(_seismic_slices);
+
+}
+
+void GLWidget::updateRendering()
+{
 	this->lines_.clear();
-	this->lines_ = this->extrusion_controller_.updateSeismicSlices(_seismic_slices);
+
+	std::cout << this->extrusion_controller_.seismic_slices_.size() << std::endl;
+
+	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertex_,this->normal_,this->faces_);
 
 	/// Send the new meshes to the GPU
-	glBindVertexArray ( lines_vertexArray_ );
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
 	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
-	glBindVertexArray ( 0 );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+
+	//
+	this->facesGL_.clear();
+
+	for (auto f: this->faces_ )
+	{
+		this->facesGL_.push_back(GLuint(f));
+	}
+
+
+	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+
+	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+	glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
 
 	update();
 }
-
 
 bool GLWidget::extrusionInitialize ( float _x_min,
 				     float _y_min,
@@ -503,4 +784,27 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 	update();
 
 	return false;
+}
+
+/// BLACK SCREEN
+
+void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
+{
+	std::cout << "New Curve" << std::endl;
+
+	_cross_section.log();
+
+	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
+	this->extrusion_controller_.updateBlackScreenMesh(5,5,200,cube_,patch_);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	update();
+
 }

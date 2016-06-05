@@ -7,11 +7,13 @@ uniform mat4 ModelMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
 
+uniform vec3 xcolor;
+
 out vec3 fragColor;
 
 void main( void )
 {
     gl_Position = ProjectionMatrix * ViewMatrix *vec4( position, 1.0f );
-    fragColor = color;
+    fragColor = xcolor;
 }
 

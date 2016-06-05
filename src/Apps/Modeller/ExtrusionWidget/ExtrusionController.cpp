@@ -75,9 +75,173 @@ namespace RRM
 		min_ = trasnform_matrix_.matrix() * min_;
 		max_ = trasnform_matrix_.matrix() * max_;
 
+		 this->surfaces[4] = std::make_shared<PlanarSurface>();
+		 Point2 o, l;
+		 o.x = -1;
+		 l.x = 2;
+		 o.y = 3.0/4;
+		 l.y = 1.0/4;
+		 this->surfaces[4]->setOrigin(o);
+		 this->surfaces[4]->setLenght(l);
+
 		return true;
 	}
 
+	// Black Screen Module
+	void ExtrusionController::createBlackScreenExtrusionMesh( const std::vector<std::vector<Eigen::Vector3f> >& _patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal, std::vector<Eigen::Vector3f> &_patch)
+	{
+
+		_patch.clear();
+
+		std::size_t last;
+		std::size_t last_j;
+
+		stepz = volume_width / stepz;
+
+		for ( std::size_t it_patch = 0; it_patch < _patchies.size ( ); it_patch++ )
+		{
+			for ( float j = 0.0f; j < volume_width; j += stepz )
+			{
+				for ( std::size_t i = 0; i < ( _patchies[it_patch].size ( ) - stepx ); i += stepx )
+				{
+					// In the Curve
+					_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][i].x ( )         , _patchies[it_patch][i].y ( )          , j   ) );
+
+					_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][i + stepx].x ( ) ,  _patchies[it_patch][i + stepx].y ( ) , j  ) );
+					// In the Extrude
+					_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][i].x ( )          , _patchies[it_patch][i].y ( )         , j + stepz   ) );
+
+					_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][i + stepx].x ( )  , _patchies[it_patch][i + stepx].y ( ) , j + stepz  ) );
+
+					last = i;
+
+				}
+	//
+//				if ( last > _patchies[it_patch].size ( ) )
+//				{
+//					last -= stepx;
+//				}
+//
+//				last -= stepx;
+//
+//				last_j = j;
+//
+//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j   ) );
+//
+//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ) , last_j   ) );
+//				// In the Extrude
+//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j + stepz  ) );
+//
+//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
+			}
+
+		}
+
+
+		std::cout << "Box Center " << center << std::endl;
+
+		for ( std::size_t it = 0; it < _patch.size ( ); it++ )
+		{
+			_patch[it] = (_patch[it] - center)/diagonal;
+		}
+
+	}
+	/// Left to Right
+	void ExtrusionController::createBlackScreenCube ( const Celer::BoundingBox3<float>& _box, std::vector<Eigen::Vector3f>& _cube)
+	{
+		_cube.clear();
+
+		Eigen::Vector3f min_ = _box.min();
+		Eigen::Vector3f max_ = _box.max();
+
+		Eigen::Vector3f vertex_data[] =
+		{
+			//  Top Face
+			Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+			// Bottom Face
+			Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+			// Front Face
+			Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+			// Back Face
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+			// Left Face
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z() ),
+			Eigen::Vector3f ( max_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z() ),
+			Eigen::Vector3f ( max_.x(), min_.y(), max_.z() ),
+			// Right Face
+			Eigen::Vector3f ( min_.x(), max_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), max_.z() ),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z() ),
+		};
+
+		std::copy( vertex_data	 , vertex_data + 24	, std::back_inserter ( _cube ) );
+
+		for ( std::size_t it = 0; it < _cube.size ( ); it++ )
+		{
+			_cube[it] = ( _cube[it] - _box.center ( ) ) / _box.diagonal ( );
+		}
+
+	}
+
+	void ExtrusionController::setBlackScreenCrossSection (const CrossSection& _cross_section)
+	{
+		this->cross_section_ = _cross_section;
+	}
+
+	void ExtrusionController::updateBlackScreenMesh ( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch)
+	{
+
+		std::vector<std::vector<Eigen::Vector3f> > 	patchies;
+		std::vector<Eigen::Vector3f> 			patch;
+
+		Celer::BoundingBox3<float> 			box;
+
+		for ( auto edge: this->cross_section_.edges_ )
+		{
+			patch.clear ( );
+			patch.resize ( edge.second.segment.curve.size() );
+
+			if ( !edge.second.is_boundary_ )
+			{
+				for ( std::size_t p_it = 0; p_it < edge.second.segment.curve.size(); p_it++ )
+				{
+					patch[p_it] = Eigen::Vector3f ( edge.second.segment.curve[p_it].x(),edge.second.segment.curve[p_it].y(),1.0f);
+				}
+			}
+
+			patchies.push_back(patch);
+		}
+
+
+		std::vector<Eigen::Vector3f> points = { Eigen::Vector3f (cross_section_.viewPort_.first.x(), cross_section_.viewPort_.first.y(), 0.0f),
+							Eigen::Vector3f (cross_section_.viewPort_.second.x(), cross_section_.viewPort_.second.y(), volume_width) };
+		box.reset();
+
+		box.fromPointCloud(points.begin(),points.end());
+
+
+		if ( patchies.size() > 0)
+		{
+			createBlackScreenExtrusionMesh(patchies,stepx, stepz,volume_width,box.center(),box.diagonal(),_patch);
+		}
+		createBlackScreenCube(box,_cube);
+	}
+
+	// Seismic Module
 	std::vector<Eigen::Vector4f> ExtrusionController::getcubeMesh ( )
 	{
 		std::vector<Eigen::Vector4f> cube;
@@ -179,11 +343,17 @@ namespace RRM
 		return cube;
 	}
 
-	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices ( const std::map<unsigned int, SeismicSlice >& _seismic_slices)
+	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices (std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
 	{
-		this->seismic_slices_ = _seismic_slices;
+
+		vl.clear();
+		nl.clear();
+		fl.clear();
 
 		std::vector<Eigen::Vector4f> lines;
+
+		if ( this->seismic_slices_.size() < 1 )
+			return lines;
 
 		for ( auto slice_iterator: this->seismic_slices_ )
 		{
@@ -191,19 +361,19 @@ namespace RRM
 
 			for ( auto& edges_iterator: slice_iterator.second.edges_ )
 			{
-				std:: cout << "Curve Size" << edges_iterator.second.segment.curve.size() << std::endl;
+				//std:: cout << "Curve Size" << edges_iterator.second.segment.curve.size() << std::endl;
 
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
-					float z = (scale_z_/100)*(100-10*slice_iterator.first);
-					z = z - center_.z();
+					float z = (scale_z_)*(slice_iterator.first/scale_);
+					z = center_.z() - z;
 					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
-										edges_iterator.second.segment.curve[it].y(),
-										0.0,1.0);
+										 edges_iterator.second.segment.curve[it].y(),
+										 0.0,1.0);
 
 					Eigen::Vector4f point2 = Eigen::Vector4f(edges_iterator.second.segment.curve[it+1].x(),
-										edges_iterator.second.segment.curve[it+1].y(),
-										0.0,1.0);
+										 edges_iterator.second.segment.curve[it+1].y(),
+										 0.0,1.0);
 
 					point1 = trasnform_matrix_ * point1;
 					point2 = trasnform_matrix_ * point2;
@@ -213,11 +383,47 @@ namespace RRM
 
 					lines.push_back(point1);
 					lines.push_back(point2);
+
+					Eigen::Vector3d v(point1.x(),point1.z(),point1.y());
+
+					if ( edges_iterator.second.is_boundary_  )
+					{
+					}
+					else if ( edges_iterator.first == 4)
+					{
+						surfaces[edges_iterator.first]->addPoint ( v );
+					}
 				}
 			}
 		}
 
+		/* Do useful stuff. */
+		using VListType = std::vector<float>;
+		VListType s1_points, s2_points, s3_points, sn_points;
+		VListType s1_vlist, s2_vlist, s3_vlist, sn_vlist;
+
+		using FListType = std::vector<unsigned int>;
+		FListType s1_flist, s2_flist, s3_flist, sn_flist;
+
+		if ( surfaces[4]->surfaceIsSet() == false ) {
+			surfaces[4]->generateSurface();
+		}
+
+		surfaces[4]->getVertexList ( vl );
+		surfaces[4]->getNormalList ( nl );
+		surfaces[4]->getFaceList ( fl );
+
+
+		std::cout << "face Count " << fl.size() << std::endl;
+		std::cout << "Normal Count " << nl.size() << std::endl;
+		std::cout << "Vertex Count " << vl.size() << std::endl;
+
 		return lines;
+	}
+
+	void  ExtrusionController::setSeismicSlices ( const SeismicSlices& _seismic_slices)
+	{
+		this->seismic_slices_ = _seismic_slices;
 	}
 
 	std::vector<Eigen::Vector4f> ExtrusionController::sketchLinearInterpolation ( )

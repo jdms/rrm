@@ -26,7 +26,7 @@ namespace RRM
 
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
-//		// testing seismic
+////		testing seismic
 //		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
 //
 //		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
@@ -139,6 +139,11 @@ namespace RRM
 		std::cout << " Cross Sections  "  << this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_.size() << std::endl;
 
 		return false;
+	}
+
+	const SeismicWindow::SeismicSlices& SeismicWindow::getSeimicSlices() const
+	{
+		return this->sketch_seismic_controller_.getSeismicSlices();
 	}
 
 	void SeismicWindow::setCurrentSeismicSlice( QListWidgetItem * item )

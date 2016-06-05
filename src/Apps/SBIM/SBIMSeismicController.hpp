@@ -51,6 +51,8 @@ namespace RRM
 
 			bool readSeismic ( std::string _filepath );
 
+			const SeismicSlices& getSeismicSlices() const;
+
 			/// Converters
 			RRMImage convertQPixmap2RRMImage (const QPixmap& _overlay_image);
 		signals:

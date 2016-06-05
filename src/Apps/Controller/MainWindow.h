@@ -41,8 +41,8 @@
 
 #include "SBIM/View/SeismicWindow.hpp"
 // Simulator Volume
-#include "Simulator/CanvasComputation.h"
-#include "Simulator/FlowComputationModule.h"
+//#include "Simulator/CanvasComputation.h"
+//#include "Simulator/FlowComputationModule.h"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -101,6 +101,7 @@ class MainWindow : public QMainWindow
 	void on_horizontalSlider_curve_valueChanged();
 	void on_horizontalSlider_surface_valueChanged();
 	void on_horizontalSlider_extrusion_valueChanged();
+	void update3DExtrusion ( float stepx, float stepz, float lenght  );
 
     private:
 
@@ -108,7 +109,7 @@ class MainWindow : public QMainWindow
 	AboutWidget * aboutRRM;
 
 	// Flow Module
-        FlowComputationModule *dc_computation;
+        //FlowComputationModule *dc_computation;
 
         QAction *ac_new;
         QAction *ac_open;

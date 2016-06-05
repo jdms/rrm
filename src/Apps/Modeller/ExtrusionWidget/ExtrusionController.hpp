@@ -6,11 +6,16 @@
 
 #include <vector>
 #include <tuple>
+#include <map>
 #include <iostream>
 
 #include <QtCore/QObject>
 
 #include "SBIM/SeismicSlice.hpp"
+#include "Model/CrossSection.hpp"
+
+#include "Core/Geometry/Surface/Planin/planar_surface.hpp"
+#include "Core/Geometry/Surface/Planin/core.hpp"
 
 namespace RRM
 {
@@ -23,8 +28,10 @@ namespace RRM
 
 			enum Module { BlankScreen , Seismic };
 
-			typedef RRM::SeismicSlice<qreal> 	       SeismicSlice;
-			typedef std::map<unsigned int, SeismicSlice >  SeismicSlices;
+			typedef  RRM::CrossSection<qreal>   		CrossSection;
+
+			typedef RRM::SeismicSlice<qreal> 	       	SeismicSlice;
+			typedef std::map<unsigned int, SeismicSlice >  	SeismicSlices;
 
 			ExtrusionController ( QObject* parent = 0 );
 			virtual ~ExtrusionController ( );
@@ -37,6 +44,23 @@ namespace RRM
 					       float _x_max,
 					       float _y_max,
 					       float _z_max);
+
+
+			// Black Screen
+			void  setBlackScreenCrossSection	( const CrossSection& _cross_section );
+
+			void  createBlackScreenExtrusionMesh 	( const std::vector<std::vector<Eigen::Vector3f> >& _patchies,
+								  float stepx,
+								  float stepz,
+								  float volume_width,
+								  Eigen::Vector3f center,
+								  float diagonal,
+								  std::vector<Eigen::Vector3f> &_patch);
+
+			void  createBlackScreenCube 	( const Celer::BoundingBox3<float>& box,
+							  std::vector<Eigen::Vector3f>& _cube );
+
+			void updateBlackScreenMesh( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch);
 
 			// All the geometry will have the following layout as:
 			// Linear
@@ -61,7 +85,8 @@ namespace RRM
 			// Radial Basis Function
 			std::vector<Eigen::Vector4f> sketchRBFInterpolation ( );
 			/// Take the current SBIM and normalize/update the 3D visualization
-			std::vector<Eigen::Vector4f> updateSeismicSlices ( const SeismicSlices& _seismic_slices);
+			std::vector<Eigen::Vector4f> updateSeismicSlices ( std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl);
+			void setSeismicSlices ( const SeismicSlices& _seismic_slices);
 
 		signals:
 
@@ -77,6 +102,8 @@ namespace RRM
 
 			/// Black Screen Module
 			//  On Black Screen, only planes 0 and 1.0 exist
+			CrossSection cross_section_;
+			//std::vector<Eigen::Vector3f> patch_;
 
 			/// Seismic Module
 			std::map<unsigned int, SeismicSlice > seismic_slices_;
@@ -96,6 +123,10 @@ namespace RRM
 
 			Eigen::Vector4f min_;
                         Eigen::Vector4f max_;
+
+                        /// Planin Library
+                        std::map<unsigned int, PlanarSurface::Ptr> surfaces;
+
 	};
 
 } /* namespace RRM */

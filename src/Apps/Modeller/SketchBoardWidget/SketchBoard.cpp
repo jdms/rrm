@@ -41,11 +41,15 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( const QPixmap& ) ) ,
 		  this 			  , SLOT  ( newSession ( const QPixmap& ) ) );
 
+	connect ( this->sketchSession_    , SIGNAL( newBoundary ( Real, Real, Real, Real ) ) ,
+		  this 			  , SLOT  ( setBoundary ( Real, Real, Real, Real ) ) );
+
 	// Notify the view with the new configuration of Lines
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,
 		  this->sketchSession_    , SLOT  ( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) );
 
 	this->sketch_controller->updateSBIM();
+
 }
 
 SketchBoard::~SketchBoard ( )
@@ -68,6 +72,12 @@ void SketchBoard::newSession ( const QPixmap& _image )
 					    _image.rect ( ).height());
 }
 
+void SketchBoard::setBoundary ( Real x , Real y , Real width , Real height )
+{
+	this->sketch_controller->newSession(x,y,width,height);
+	this->sketchSession_->setBoundary(x,y,width-x,height-y);
+}
+
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
 		if ( event->key ( ) == Qt::Key_F1 )
@@ -85,14 +95,15 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			//status_text->setText ( "Remove Above Intersection" );
 			this->sketchSession_->setSketchMode();
 		}
-		else if ( event->key ( ) == Qt::Key_Down )
+		if ( event->key ( ) == Qt::Key_Down )
 		{
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
 			//status_text->setText ( "Remove Below Intersection" );
 			this->sketchSession_->setEditMode();
 		}
-		else
+		if ( event->key ( ) == Qt::Key_Q )
 		{
+			emit currentCrossSection(this->sketch_controller->getCrossSection());
 			//cross_section_.changeRule ( RRM::GeologicRules::Sketch );
 			//status_text->setText ( "Sketch" );
 		}
@@ -115,7 +126,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 	//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
 	//		pixMap.save ( fileName );
 		}
-
 		if ( event->key ( ) == Qt::Key_Space )
 		{
 			//cross_section_.clear ( );

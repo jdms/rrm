@@ -24,6 +24,7 @@ OPTION(BUILD_FULL_SUITE "Build RapidReservoir Suite" ON)
 IF(WIN32) # Check if we are on Windows
     if(MSVC) # Check if we are using the Visual Studio compiler
             elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
+            set(CMAKE_CXX_FLAGS "/Od /openmp /EHsc")
         message (FATAL_ERROR "GCC are not support on Windows !")
     else() # Nor MSVC or GCC (MinGW)
         message(FATAL_ERROR "You are using an unsupported Windows compiler! (Not MSVC or GCC)")
@@ -31,7 +32,7 @@ IF(WIN32) # Check if we are on Windows
 ELSEIF(UNIX)
     # Nothing special required for Linux
     message(STATUS "Build on Linux")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O2 -fopenmp")
 
 ELSE() # Not Windows or Unix
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")

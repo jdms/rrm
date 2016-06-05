@@ -1,9 +1,8 @@
 #version 430 compatibility
 
-layout(location = 0) in vec4 vertices;
-layout(location = 1) in vec4 normals;
-layout(location = 2) in vec4 colors;
-layout(location = 4) in vec4 slice_attributes;
+layout(location = 0) in vec3 vertices;
+layout(location = 1) in vec3 normals;
+layout(location = 2) in vec3 colors;
 
 out VertexData
 {
@@ -25,11 +24,11 @@ void main(void)
 	normalMatrix = transpose(normalMatrix);
 
 
-	VertexOut.vertice  = ViewMatrix * vertices;
+	VertexOut.vertice  = ViewMatrix * vec4(vertices,1.0);
 	VertexOut.normal   = normalMatrix * normals;
 	VertexOut.color    = vec4(1.0,0.0,0.0,1.0);
 
-	gl_Position = ProjectionMatrix * ViewMatrix * vertices;
+	gl_Position = ProjectionMatrix * ViewMatrix *vec4((vertices),1.0);
 
 }
 

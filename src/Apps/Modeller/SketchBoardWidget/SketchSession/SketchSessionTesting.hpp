@@ -83,6 +83,8 @@ class SketchSessionTesting: public QGraphicsScene
 		// Update the view with the new Cross Section configuration
 		void updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
+		void setBoundary ( Real x , Real y , Real width , Real height );
+
 	signals:
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( const QPixmap& pixmap );
@@ -92,6 +94,8 @@ class SketchSessionTesting: public QGraphicsScene
 		void newSketchCurve ( QPolygonF _sketch );
 		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
+
+		void newBoundary ( Real x , Real y , Real width , Real height );
 
 	public:
 		QGraphicsPixmapItem * overlay_image_;

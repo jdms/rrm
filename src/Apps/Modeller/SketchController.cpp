@@ -157,6 +157,9 @@ void SketchController::crossSection_1 (RRM::CrossSection<double>& _cross_section
 	_cross_section.vertices_[v1.id_] = v1;
 	_cross_section.vertices_[v2.id_] = v2;
 
+	_cross_section.viewPort_.first  = Point2D(v1.location_);
+	_cross_section.viewPort_.second = Point2D(v2.location_);
+
 }
 // Boundary + 1 Curve
 void SketchController::crossSection_2 (RRM::CrossSection<double>& _cross_section, double scale)
@@ -250,6 +253,9 @@ void SketchController::crossSection_2 (RRM::CrossSection<double>& _cross_section
 	_cross_section.vertices_[v2.id_] = v2;
 	_cross_section.vertices_[v3.id_] = v3;
 	_cross_section.vertices_[v4.id_] = v4;
+
+	_cross_section.viewPort_.first  = Point2D(v1.location_);
+	_cross_section.viewPort_.second = Point2D(v2.location_);
 
 }
 
@@ -406,6 +412,9 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 	_cross_section.vertices_[v4.id_] = v4;
 	_cross_section.vertices_[v5.id_] = v5;
 	_cross_section.vertices_[v6.id_] = v6;
+
+	_cross_section.viewPort_.first  = Point2D(v1.location_);
+	_cross_section.viewPort_.second = Point2D(v2.location_);
 
 
 	std::cout << " Source e6 " << _cross_section.vertices_[e6.source_id_].location_ << std::endl;

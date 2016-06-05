@@ -22,8 +22,8 @@ class SketchBoard : public QGraphicsView
 	Q_OBJECT
 
 public:
-	typedef SketchController::Real 	 	Real;
-	typedef SketchController::CrossSection  CrossSection;
+	typedef qreal		 	 	Real;
+	typedef RRM::CrossSection<Real>  	CrossSection;
 
 	SketchBoard( QWidget *parent = 0 );
 	virtual ~SketchBoard();
@@ -37,6 +37,9 @@ public slots:
 	void newSession ( Real x , Real y , Real width , Real height );
 	/// defaul Scene with Image
 	void newSession ( const QPixmap& _image );
+
+	void setBoundary ( Real x , Real y , Real width , Real height );
+
 signals:
 	void currentCrossSection( const CrossSection& _cross_section );
 

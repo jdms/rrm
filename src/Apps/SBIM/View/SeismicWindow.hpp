@@ -47,6 +47,8 @@ namespace RRM
 			void keyPressEvent ( QKeyEvent *event );
 			void showEvent( QShowEvent *);
 
+			const SeismicSlices& getSeimicSlices() const;
+
 		public slots:
 			bool addSeismicSlice ( );
 			void setCurrentSeismicSlice( QListWidgetItem * item );
@@ -58,6 +60,8 @@ namespace RRM
 			// Send the current working crossSection
 			void currentCrossSection  (const CrossSection& _cross_section);
 			void currentSeismicSlices (const SeismicSlices& _cross_section);
+
+
 		public:
 			/// View
 			Ui::SeismicWindowWidget* ui;

@@ -22,7 +22,7 @@ void MainWindow::create2DModule ( )
 	seismic_view_ = new RRM::SeismicWindow(this);
 	seismic_Module_->setWindowTitle ( "Seismic View" );
 	seismic_Module_->setWidget(this->seismic_view_);
-	this->addDockWidget ( Qt::RightDockWidgetArea , seismic_Module_ );
+	this->addDockWidget ( Qt::LeftDockWidgetArea , seismic_Module_ );
 
 	status_bar_ = new QStatusBar ( this );
 	status_text = new QLabel ( "Sketch" , this );
@@ -32,7 +32,12 @@ void MainWindow::create2DModule ( )
 	connect ( this->seismic_view_ , SIGNAL( currentCrossSection( const CrossSection&) ) , this->sketch_board_ , SLOT( setCrossSection( const CrossSection&) ) );
 	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->seismic_view_ , SLOT( updateCrossSection( const CrossSection& ) ) );
 
-	connect ( this->seismic_view_ , SIGNAL( currentSeismicSlices( const SeismicSlices&) ) , this->glWidget , SLOT( updateSeismicSlices( const SeismicSlices&) ) );
+	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->glWidget , SLOT( updateBlackScreen(const CrossSection&) ) );
+
+	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
+
+
+	//connect ( this->seismic_view_ , SIGNAL( currentSeismicSlices( const SeismicSlices&) ) , this->glWidget , SLOT( updateSeismicSlices( const SeismicSlices&) ) );
 
 	// Sketching
 //	connect ( this->sketchSession_ , SIGNAL( curve2DSignal(QPolygonF) ) , this , SLOT( curve2DSlot(QPolygonF) ) );
@@ -123,6 +128,11 @@ void MainWindow::create3DModule ( )
 
 void MainWindow::keyPressEvent ( QKeyEvent *event )
 {
+
+	std::cout << this->seismic_view_->getSeimicSlices().size() << std::endl;
+
+	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
+
 	event->ignore();
 }
 
@@ -145,3 +155,54 @@ void MainWindow::on_horizontalSlider_extrusion_valueChanged()
 {
 	//update3DExtrusion();
 }
+
+/// Short Time
+void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
+{
+
+	//RRM::CrossSection<qreal>::Segment_iterator it;
+	std::vector<std::vector<Eigen::Vector3f> > patches;
+	std::vector<Eigen::Vector3f> temp;
+//
+//	for ( it = cross_section_.topology_.halfedges_begin ( ); it != cross_section_.topology_.halfedges_end ( ); it++ )
+//	{
+//
+//		if( it->is_boundary )
+//		{
+//			min_ = Eigen::Vector3f (it->segment.curve.front().x(), it->segment.curve.front().y(),0.0);
+//			max_ = Eigen::Vector3f (it->segment.curve.back().x() , it->segment.curve.back().y(),lenght);
+//		}
+//
+//		else if ( it->is_visible )
+//		{
+//			temp.clear ( );
+//			temp.resize ( it->segment.curve.size ( ) );
+//
+//			for ( std::size_t point = 0; point < it->segment.curve.size ( ); point++ )
+//			{
+//				if ( it->is_boundary)
+//				{
+//					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 1.0f );
+//				}else
+//				{
+//					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 0.0f );
+//				}
+//			}
+//
+//			patches.push_back ( temp );
+//		}
+//	}
+
+	std::cout << "Update Extrusion";
+
+	std::vector<Eigen::Vector3f> points = { min_ , max_};
+
+	Celer::BoundingBox3<float> box;
+
+	box.fromPointCloud(points.begin(),points.end());
+
+//	glWidget->createCube(box);
+//						   // Curve  //Volume    Step Volume
+//	glWidget->createSurfacePatchies ( patches , stepx    , stepz   , lenght , box.center(), box.diagonal() );
+}
+

@@ -178,7 +178,7 @@ public:
     * @brief Returns the rotation (without the default part) as a quaternion
     * @return Rotation as quaternion
     */
-    virtual Eigen::Quaternion<float> getRotation (void)
+    Eigen::Quaternion<float> getRotation (void)
     {
         return quaternion*default_quaternion;
     }
@@ -482,7 +482,7 @@ public:
     /**
      * @brief Applies all trackball's transformations to the view matrix.
      */
-    virtual void updateViewMatrix (void)
+    void updateViewMatrix (void)
     {
         resetViewMatrix();
         rotate(default_quaternion);

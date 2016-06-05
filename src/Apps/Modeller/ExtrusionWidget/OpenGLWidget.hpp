@@ -37,6 +37,7 @@ class GLWidget: public QOpenGLWidget
 	public:
 		// From QGLWidget
 		typedef RRM::ExtrusionController::SeismicSlices SeismicSlices;
+		typedef RRM::ExtrusionController::CrossSection  CrossSection;
 
 
 		explicit GLWidget ( QWidget* parent = 0 );
@@ -52,14 +53,18 @@ class GLWidget: public QOpenGLWidget
 		void keyPressEvent ( QKeyEvent * event );
 		void keyReleaseEvent ( QKeyEvent * event );
 
+		void create8VerticesIndices ();
+
 	public slots:
 
 	 	void backGround();
+	 	// Deployed
 		void loadShaderByResources();
-		// Development propose
+		// Development
 		void loadShaders();
 		void reloadShaders();
-		/// Left to Right
+		// Seismic
+		void updateRendering();
 		void updateSeismicSlices ( const SeismicSlices& _seismic_slices);
 		bool extrusionInitialize ( float _x_min,
 					   float _y_min,
@@ -67,7 +72,8 @@ class GLWidget: public QOpenGLWidget
 					   float _x_max,
 					   float _y_max,
 					   float _z_max );
-
+		// Black Screen
+		void updateBlackScreen(const CrossSection& _cross_section);
 
 	signals:
 
@@ -75,25 +81,30 @@ class GLWidget: public QOpenGLWidget
 
 private:
 	
+
+        /// BLACK SCREEN
+
         // Scene related attributes
         Tucano::Trackball camera;
         Tucano::Shader*   background_;
-
         // Entity related attributes
         // Cube, representing the boudingBox of the Geological Model
         GLuint vertexArray_cube_;
         	GLuint vertexBuffer_cube_;
         	GLuint vertexCube_slot_;
-        std::vector<Eigen::Vector4f> cube_;
+        std::vector<Eigen::Vector3f> cube_;
         Tucano::Shader*   cube_shader_;
 
         // The interpolated surface
 	GLuint vertexArray_patch_;
 		GLuint vertexBuffer_patch_;
 		GLuint vertexPatch_slot_;
-	std::vector<Eigen::Vector4f> patch_;
+	std::vector<Eigen::Vector3f> patch_;
 	Tucano::Shader*   patch_shader_;
 
+	Celer::BoundingBox3<float> box;
+
+	/// SEISMIC MODULE
         // The sketch lines
 	GLuint lines_vertexArray_;
 		GLuint lines_vertexBuffer_;
@@ -101,9 +112,36 @@ private:
 	std::vector<Eigen::Vector4f> lines_;
 	Tucano::Shader*   lines_shader_;
 
-        Celer::BoundingBox3<float> box;
-        RRM::ExtrusionController extrusion_controller_;
+	Tucano::Shader*   mesh_shader_;
+	GLuint vertexArray_MESH_;
+		GLuint positionBuffer_MESH_;
+			GLuint position_MESH_Slot_;
+		GLuint normalBuffer_MESH_;
+			GLuint normal_MESH_Slot_;
+		GLuint colorBuffer_MESH_;
+			GLuint color_MESH_Slot_;
+		GLuint vertexBuffer_MESH_face_ID_;
+		GLuint number_of_faces;
+		std::vector<float> vertex_;
+		std::vector<float> normal_;
+		std::vector<std::size_t>  faces_;
+		std::vector<GLuint>  facesGL_;
+
+	std::vector<GLfloat > 		vertices;
+	std::vector<GLuint > 		indices;
+
+
+	/// Test
+	GLuint vertexArray_for_the_Cube_;
+		GLuint vertexBuffer_cube_8vertices_;
+		GLuint vertices_8slot_;
+		GLuint vertexBuffer_cube_8verticesIndices_;
+
+public:
+	RRM::ExtrusionController extrusion_controller_;
+
 
 };
 
 #endif
+
