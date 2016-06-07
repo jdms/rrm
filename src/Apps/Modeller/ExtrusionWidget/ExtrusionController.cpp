@@ -77,18 +77,20 @@ namespace RRM
 
 		 this->surfaces[4] = std::make_shared<PlanarSurface>();
 		 Point2 o, l;
-		 o.x = -1;
-		 l.x = 2;
-		 o.y = 3.0/4;
-		 l.y = 1.0/4;
+		 o.x = min_.x();
+		 l.x = max_.x()-min_.x();
+		 o.y = min_.z();
+		 l.y = max_.z()-min_.z();
+		 this->surfaces[4]->requestChangeDiscretization( 16,16 );
+
 		 this->surfaces[4]->setOrigin(o);
 		 this->surfaces[4]->setLenght(l);
 
 		return true;
 	}
 
-	// Black Screen Module
-	void ExtrusionController::createBlackScreenExtrusionMesh( const std::vector<std::vector<Eigen::Vector3f> >& _patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal, std::vector<Eigen::Vector3f> &_patch)
+	// Black Screen Module ---------->
+	void ExtrusionController::createBlackScreenExtrusionMesh ( const std::vector<std::vector<Eigen::Vector3f> >& _patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal, std::vector<Eigen::Vector3f> &_patch)
 	{
 
 		_patch.clear();
@@ -117,24 +119,23 @@ namespace RRM
 
 				}
 	//
-//				if ( last > _patchies[it_patch].size ( ) )
-//				{
-//					last -= stepx;
-//				}
-//
-//				last -= stepx;
-//
-//				last_j = j;
-//
-//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j   ) );
-//
-//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ) , last_j   ) );
-//				// In the Extrude
-//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j + stepz  ) );
-//
-//				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
-			}
+				if ( last > _patchies[it_patch].size ( ) )
+				{
+					last -= stepx;
+				}
 
+				last -= stepx;
+
+				last_j = j;
+
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j   ) );
+
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ) , last_j   ) );
+				// In the Extrude
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j + stepz  ) );
+
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
+			}
 		}
 
 
@@ -146,7 +147,7 @@ namespace RRM
 		}
 
 	}
-	/// Left to Right
+
 	void ExtrusionController::createBlackScreenCube ( const Celer::BoundingBox3<float>& _box, std::vector<Eigen::Vector3f>& _cube)
 	{
 		_cube.clear();
@@ -221,11 +222,9 @@ namespace RRM
 				{
 					patch[p_it] = Eigen::Vector3f ( edge.second.segment.curve[p_it].x(),edge.second.segment.curve[p_it].y(),1.0f);
 				}
+				patchies.push_back(patch);
 			}
-
-			patchies.push_back(patch);
 		}
-
 
 		std::vector<Eigen::Vector3f> points = { Eigen::Vector3f (cross_section_.viewPort_.first.x(), cross_section_.viewPort_.first.y(), 0.0f),
 							Eigen::Vector3f (cross_section_.viewPort_.second.x(), cross_section_.viewPort_.second.y(), volume_width) };
@@ -233,6 +232,7 @@ namespace RRM
 
 		box.fromPointCloud(points.begin(),points.end());
 
+		_patch.clear();
 
 		if ( patchies.size() > 0)
 		{
@@ -241,44 +241,43 @@ namespace RRM
 		createBlackScreenCube(box,_cube);
 	}
 
-	// Seismic Module
-	std::vector<Eigen::Vector4f> ExtrusionController::getcubeMesh ( )
+	// Seismic Module --------------->
+	std::vector<Eigen::Vector3f> ExtrusionController::getcubeMesh ( )
 	{
-		std::vector<Eigen::Vector4f> cube;
+		std::vector<Eigen::Vector3f> cube;
 
 		cube =
 		{
 			//  Top Face
-			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
+			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
+			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
 			// Bottom Face
-			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
+			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z()),
 			// Front Face
-			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
+//			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
+//			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
+//			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
+//			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
 			// Back Face
-			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z()),
 			// Left Face
-			Eigen::Vector4f ( max_.x(), max_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), min_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( max_.x(), min_.y(), max_.z(), 1.0f ),
+			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
+			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
+			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
+			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
 			// Right Face
-			Eigen::Vector4f ( min_.x(), max_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), max_.y(), min_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), max_.z(), 1.0f ),
-			Eigen::Vector4f ( min_.x(), min_.y(), min_.z(), 1.0f ),
-
+			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
+			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
+			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
+			Eigen::Vector3f ( min_.x(), min_.y(), min_.z())
 		};
 
 		return cube;
@@ -350,6 +349,12 @@ namespace RRM
 		nl.clear();
 		fl.clear();
 
+
+		std::cout << " back " << (scale_z_)*(294/scale_) << std::endl;
+		std::cout << " front " << (scale_z_)*(1/scale_) << std::endl;
+		std::cout << " min " << min_ << std::endl;
+		std::cout << " max " << max_ << std::endl;
+
 		std::vector<Eigen::Vector4f> lines;
 
 		if ( this->seismic_slices_.size() < 1 )
@@ -365,8 +370,8 @@ namespace RRM
 
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
-					float z = (scale_z_)*(slice_iterator.first/scale_);
-					z = center_.z() - z;
+					float z = ( max_.z() - ((slice_iterator.first-1)/scale_) );
+					//z = center_.z() - z;
 					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
 										 edges_iterator.second.segment.curve[it].y(),
 										 0.0,1.0);

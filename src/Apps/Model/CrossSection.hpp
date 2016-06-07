@@ -17,6 +17,7 @@
 #include "Topology/Edge.hpp"
 #include "Topology/Face.hpp"
 
+#include "RegionDetection.hpp"
 
 #include "Model/IDManager.hpp"
 
@@ -254,7 +255,10 @@ namespace RRM
 					return 0;
 				}
 
-				_curve.douglasPeuckerSimplify(test,1.0);
+				_curve.douglasPeuckerSimplify(test,0.5);
+				test.meanFilter();
+				test.meanFilter();
+				test.meanFilter();
 
 				// Intersetion over the current CrossSection
 				for ( auto& edge_iterator: edges_ )
@@ -378,6 +382,8 @@ namespace RRM
 					hanging_1.segment.curve = segments.front();
 					hanging_1.segment.curve.superSample(3.0);
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
+					hanging_1.is_enable_ = false;
+					hanging_1.is_visible_ = false;
 					edges_[hanging_1.id_] = hanging_1;
 					last_edge = hanging_1.id_;
 
@@ -401,6 +407,8 @@ namespace RRM
 					hanging_2.segment.curve = segments.back();
 					hanging_2.segment.curve.superSample(3.0);
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
+					hanging_2.is_enable_ = false;
+					hanging_2.is_visible_ = false;
 					edges_[hanging_2.id_] = hanging_2;
 					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(hanging_2.id_);
 					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(last_edge);
@@ -583,8 +591,41 @@ namespace RRM
 					std::cout << "---" << std::endl;
 				}
 
+				updateFaces();
+
 				log();
 				return 1;
+			}
+
+
+			void updateFaces()
+			{
+
+				RegionDetection regions;
+
+				for ( auto vertex_iterator: vertices_)
+				{
+					for ( auto path: vertex_iterator.second.edges_)
+					{
+						if ( edges_[path].is_visible_ and  edges_[path].is_enable_ )
+						{
+							if ( edges_[path].source_id_ == vertex_iterator.second.id_ )
+							{
+								RegionDetection::Path p(edges_[path].target_id_,0);
+								regions.vm_[vertex_iterator.second.id_].push_back(p);
+							}else
+							{
+								RegionDetection::Path p(edges_[path].source_id_,0);
+								regions.vm_[vertex_iterator.second.id_].push_back(p);
+							}
+
+						}
+
+						//std::cout << "vertex id : " << vertex_iterator.second.id_ <<  " - " << path << std::endl;
+					}
+				}
+
+				regions.printGraph(regions.vm_);
 			}
 
 

@@ -46,6 +46,13 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 		// Element Array
 		vertexBuffer_MESH_face_ID_ = 0;
 
+	// Entity
+	vertexArray_Seismic_cube_ = 0;
+		vertexBuffer_Seismic_cube_ = 0;
+		// Be careful on the assignment of each slot attributes
+		vertexSeismic_cube_slot_ = 0;
+		seismic_cube_shader_ = 0;
+
 	vertexArray_for_the_Cube_ = 0;
 		vertexBuffer_cube_8vertices_ = 0;
 		vertices_8slot_ = 0;
@@ -232,13 +239,26 @@ void GLWidget::initializeGL ( )
 
 	glBindVertexArray ( 0 );
 
+	glGenVertexArrays ( 1 , &vertexArray_Seismic_cube_ );
+	glBindVertexArray ( vertexArray_Seismic_cube_ );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &vertexBuffer_Seismic_cube_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+		// Set up generic attributes pointers
+		glEnableVertexAttribArray ( vertexSeismic_cube_slot_ );
+		glVertexAttribPointer ( vertexSeismic_cube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+	glBindVertexArray ( 0 );
+
 
 	create8VerticesIndices();
 
 
 	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
 
-	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
 
 	loadShaders();
 
@@ -305,6 +325,10 @@ void GLWidget::reloadShaders ( )
 	{
 		mesh_shader_->reloadShaders ( );
 	}
+	if ( seismic_cube_shader_ )
+	{
+		seismic_cube_shader_->reloadShaders ( );
+	}
 }
 
 void GLWidget::loadShaderByResources ( )
@@ -350,8 +374,10 @@ void GLWidget::loadShaderByResources ( )
         mesh_shader_ = new Tucano::Shader ( "Seismic" , ( shaderDirectory + "Shaders/Seismic.vert" ).toStdString ( ) , ( shaderDirectory + "Shaders/Seismic.frag" ).toStdString ( ) , "" , "" , "" );
         mesh_shader_->initialize ( );
 
-	std::cout << " cube_shader_ " << cube_shader_->getShaderProgram ( ) << std::endl;
-	std::cout << " background_ "  << background_->getShaderProgram  ( ) << std::endl;
+	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_cube_shader_->initialize ( );
 
 }
 
@@ -409,8 +435,11 @@ void GLWidget::loadShaders ( )
 							( shaderDirectory + "Shaders/Seismic.geom" ).toStdString ( ), "" , "" );
         mesh_shader_->initialize ( );
 
-	std::cout << " cube_shader_ " << cube_shader_->getShaderProgram ( ) << std::endl;
-	std::cout << " background_ "  << background_->getShaderProgram ( ) << std::endl;
+	//! Effects --
+	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_cube_shader_->initialize ( );
 
 }
 
@@ -480,7 +509,7 @@ void GLWidget::paintGL ( )
 
 	if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::Seismic )
 	{
-		glLineWidth(5.0);
+		glLineWidth(2.0);
 		if ( lines_.size() > 0 )
 		{
 			lines_shader_->bind ( );
@@ -513,6 +542,21 @@ void GLWidget::paintGL ( )
 			glBindVertexArray ( 0 );
 		mesh_shader_->unbind ( );
 
+
+		seismic_cube_shader_->bind ( );
+		/// 3rd attribute buffer : vertices
+		seismic_cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		seismic_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		seismic_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		seismic_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+			glBindVertexArray ( vertexArray_Seismic_cube_ );
+			/// Draw the triangle !
+			glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_cube_.size() );
+
+			glBindVertexArray ( 0 );
+		seismic_cube_shader_->unbind ( );
+
+
 	}else if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::BlankScreen )
 	{
 
@@ -522,11 +566,11 @@ void GLWidget::paintGL ( )
 		patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
 		patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 		patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-		glBindVertexArray ( vertexArray_patch_ );
-		/// Draw the triangle !
-		glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
+			glBindVertexArray ( vertexArray_patch_ );
+			/// Draw the triangle !
+			glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
 
-		glBindVertexArray ( 0 );
+			glBindVertexArray ( 0 );
 		patch_shader_->unbind ( );
 
 		cube_shader_->bind ( );
@@ -705,25 +749,26 @@ void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
 void GLWidget::updateRendering()
 {
 	this->lines_.clear();
-
-	std::cout << this->extrusion_controller_.seismic_slices_.size() << std::endl;
+	this->facesGL_.clear();
 
 	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertex_,this->normal_,this->faces_);
+
+	this->seismic_cube_ = this->extrusion_controller_.getcubeMesh();
 
 	/// Send the new meshes to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
 	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
-
 	//
-	this->facesGL_.clear();
-
 	for (auto f: this->faces_ )
 	{
 		this->facesGL_.push_back(GLuint(f));
 	}
 
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->seismic_cube_.size ( ) * sizeof ( this->seismic_cube_[0] ) , this->seismic_cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
 	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
@@ -736,7 +781,6 @@ void GLWidget::updateRendering()
 	glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
 	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
 
 	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
 	glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );

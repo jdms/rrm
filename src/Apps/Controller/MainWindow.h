@@ -101,7 +101,6 @@ class MainWindow : public QMainWindow
 	void on_horizontalSlider_curve_valueChanged();
 	void on_horizontalSlider_surface_valueChanged();
 	void on_horizontalSlider_extrusion_valueChanged();
-	void update3DExtrusion ( float stepx, float stepz, float lenght  );
 
     private:
 

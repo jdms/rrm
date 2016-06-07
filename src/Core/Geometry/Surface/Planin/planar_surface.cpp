@@ -400,7 +400,7 @@ bool PlanarSurface::getVertex2D( Natural index, Point2 &v ) {
 
     auto cast = []( Natural n ) -> double { return static_cast<double>(n); }; 
     v.x = origin[0] + cast(indices[0]) * lenght[0]/cast(nX_); 
-    v.y = origin[0] + cast(indices[1]) * lenght[0]/cast(nY_); 
+    v.y = origin[1] + cast(indices[1]) * lenght[1]/cast(nY_);
 
     /* std::cout << v.x << " " << v.y << std::endl; */ 
     /* std::cout << indices[0] << " " << indices[1] << std::endl; */ 

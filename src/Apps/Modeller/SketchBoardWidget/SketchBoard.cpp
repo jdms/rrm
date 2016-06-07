@@ -80,14 +80,18 @@ void SketchBoard::setBoundary ( Real x , Real y , Real width , Real height )
 
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
-		if ( event->key ( ) == Qt::Key_F1 )
+		if ( event->key ( ) == Qt::Key_F2 )
 		{
 			this->sketchSession_->overlay_image_->setVisible(false);
 		}
 
-		if ( event->key ( ) == Qt::Key_F2 )
+		if ( event->key ( ) == Qt::Key_F3 )
 		{
 			this->sketchSession_->overlay_image_->setVisible(true);
+		}
+		if ( event->key ( ) == Qt::Key_F4 )
+		{
+
 		}
 		if ( event->key ( ) == Qt::Key_Up )
 		{

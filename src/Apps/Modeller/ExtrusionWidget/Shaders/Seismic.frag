@@ -18,14 +18,14 @@ void main ( void )
 	float I = exp2(-2.0 * d * d);
 
 
-	vec3 lights[4];
+	vec3 lights[1];
 
-	lights[0] = vec3 ( 1.0 , 2.0 , 1.0 );
-	lights[1] = vec3 ( 1.0 , 2.0 , -1.0 );
-	lights[2] = vec3 ( -1.0 , 2.0 , -1.0 );
-	lights[3] = vec3 ( -1.0 , 2.0 , 1.0 );
+	lights[0] = vec3 ( 0.0 , 2.0 , 0.0 );
+//	lights[1] = vec3 ( 1.0 , 2.0 , -1.0 );
+//	lights[2] = vec3 ( -1.0 , 2.0 , -1.0 );
+//	lights[3] = vec3 ( -1.0 , 2.0 , 1.0 );
 
-	float num_lights = 4.0f;
+	float num_lights = 1.0f;
 
 	vec3 newNormal = VertexIn.normal;
 	vec3 newVert = VertexIn.vertice.xyz;
@@ -37,7 +37,7 @@ void main ( void )
 	vec3 light_dir = vec3 ( 0.0 , 0.0 , 1.0 );
 	vec3 eye_dir = normalize ( -newVert.xyz );
 
-	vec4 color_t = VertexIn.color;
+	vec4 color_t = vec4(0.7,0.5,0.0,1.0);//VertexIn.color;
 
 	vec4 la = vec4 ( 0.0 );
 	vec4 ld = vec4 ( 0.0 );
@@ -52,6 +52,6 @@ void main ( void )
 		ls += color_t * 0.6 * pow ( max ( 0.0 , dot ( eye_dir , ref ) ) , 5.0 );
 	}
 
-	outputColor = I * vec4(0.0, 0.0, 0.0, 1.0) + (1.0 - I) * vec4 ( la.rgb + ld.xyz + ls.rgb , 0.4 );
+	outputColor = I * vec4(0.0, 0.0, 0.0, 1.0) + (1.0 - I) * vec4(color_t);//vec4 ( la.rgb + ld.xyz + ls.rgb , 1.0 );
 }
 

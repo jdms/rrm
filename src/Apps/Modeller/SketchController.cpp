@@ -67,25 +67,7 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 //	cross_section_.log();
 	std::cout << "insert" << std::endl;
 
-	std::map<unsigned int, QPolygonF> view_curves_;
-	std::map<unsigned int, QPointF>   view_vertices_;
-//
-	QPolygonF view_curve;
-
-	for ( auto& curves_iterator: cross_section_.edges_ )
-	{
-		view_curve = this->convertCurves(curves_iterator.second.segment.curve);
-
-		view_curves_[curves_iterator.first] = view_curve;
-	}
-
-	for ( auto& vertex_iterator: cross_section_.vertices_ )
-	{
-
-		view_vertices_[vertex_iterator.first] = QPointF(vertex_iterator.second.location_.x(),vertex_iterator.second.location_.y());
-	}
-
-	emit updateSBIM(view_curves_,view_vertices_);
+	this->updateSBIM();
 }
 
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
@@ -98,9 +80,11 @@ void SketchController::updateSBIM (  )
 
 	for ( auto& curves_iterator: cross_section_.edges_ )
 	{
-		view_curve = this->convertCurves(curves_iterator.second.segment.curve);
-
-		view_curves_[curves_iterator.first] = view_curve;
+		if (curves_iterator.second.is_visible_)
+		{
+			view_curve = this->convertCurves(curves_iterator.second.segment.curve);
+			view_curves_[curves_iterator.first] = view_curve;
+		}
 	}
 
 	for ( auto& vertex_iterator: cross_section_.vertices_ )

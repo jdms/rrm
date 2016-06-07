@@ -134,6 +134,7 @@ void MainWindow::keyPressEvent ( QKeyEvent *event )
 	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
 
 	event->ignore();
+
 }
 
 void MainWindow::mousePressEvent ( QMouseEvent* event )
@@ -155,54 +156,3 @@ void MainWindow::on_horizontalSlider_extrusion_valueChanged()
 {
 	//update3DExtrusion();
 }
-
-/// Short Time
-void MainWindow::update3DExtrusion ( float stepx, float stepz, float lenght  )
-{
-
-	//RRM::CrossSection<qreal>::Segment_iterator it;
-	std::vector<std::vector<Eigen::Vector3f> > patches;
-	std::vector<Eigen::Vector3f> temp;
-//
-//	for ( it = cross_section_.topology_.halfedges_begin ( ); it != cross_section_.topology_.halfedges_end ( ); it++ )
-//	{
-//
-//		if( it->is_boundary )
-//		{
-//			min_ = Eigen::Vector3f (it->segment.curve.front().x(), it->segment.curve.front().y(),0.0);
-//			max_ = Eigen::Vector3f (it->segment.curve.back().x() , it->segment.curve.back().y(),lenght);
-//		}
-//
-//		else if ( it->is_visible )
-//		{
-//			temp.clear ( );
-//			temp.resize ( it->segment.curve.size ( ) );
-//
-//			for ( std::size_t point = 0; point < it->segment.curve.size ( ); point++ )
-//			{
-//				if ( it->is_boundary)
-//				{
-//					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 1.0f );
-//				}else
-//				{
-//					temp[point] = Eigen::Vector3f ( it->segment.curve[point].x ( ) , it->segment.curve[point].y ( ) , 0.0f );
-//				}
-//			}
-//
-//			patches.push_back ( temp );
-//		}
-//	}
-
-	std::cout << "Update Extrusion";
-
-	std::vector<Eigen::Vector3f> points = { min_ , max_};
-
-	Celer::BoundingBox3<float> box;
-
-	box.fromPointCloud(points.begin(),points.end());
-
-//	glWidget->createCube(box);
-//						   // Curve  //Volume    Step Volume
-//	glWidget->createSurfacePatchies ( patches , stepx    , stepz   , lenght , box.center(), box.diagonal() );
-}
-

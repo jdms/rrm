@@ -112,6 +112,12 @@ private:
 	std::vector<Eigen::Vector4f> lines_;
 	Tucano::Shader*   lines_shader_;
 
+        GLuint vertexArray_Seismic_cube_;
+        	GLuint vertexBuffer_Seismic_cube_;
+        	GLuint vertexSeismic_cube_slot_;
+        std::vector<Eigen::Vector3f> seismic_cube_;
+        Tucano::Shader*   seismic_cube_shader_;
+
 	Tucano::Shader*   mesh_shader_;
 	GLuint vertexArray_MESH_;
 		GLuint positionBuffer_MESH_;
@@ -122,14 +128,14 @@ private:
 			GLuint color_MESH_Slot_;
 		GLuint vertexBuffer_MESH_face_ID_;
 		GLuint number_of_faces;
-		std::vector<float> vertex_;
-		std::vector<float> normal_;
-		std::vector<std::size_t>  faces_;
-		std::vector<GLuint>  facesGL_;
+
+		std::vector<float> 		vertex_;
+		std::vector<float> 		normal_;
+		std::vector<std::size_t>  	faces_;
+		std::vector<GLuint>  		facesGL_;
 
 	std::vector<GLfloat > 		vertices;
 	std::vector<GLuint > 		indices;
-
 
 	/// Test
 	GLuint vertexArray_for_the_Cube_;

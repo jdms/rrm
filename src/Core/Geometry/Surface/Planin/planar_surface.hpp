@@ -534,8 +534,8 @@ bool PlanarSurface::getNormalList( NList &nlist )
     {
         getNormal(v, n); 
         nlist_omp[3*i + 0] = n.x; 
-        nlist_omp[3*i + 1] = n.y; 
-        nlist_omp[3*i + 2] = n.z; 
+        nlist_omp[3*i + 1] = n.z;
+        nlist_omp[3*i + 2] = n.y;
     }
 
     return true; 

@@ -26,10 +26,12 @@ namespace RRM
 
 			Edge ( )
 			{
-				id_ = 0;
-				source_id_ = 0;
-				target_id_ = 0;
-				is_boundary_ = false;
+				this->id_ = 0;
+				this->source_id_ = 0;
+				this->target_id_ = 0;
+				this->is_boundary_ = false;
+				this->is_visible_ = true;
+				this->is_enable_ = true;
 			}
 
 			Edge ( const Self& _edge)
@@ -53,6 +55,8 @@ namespace RRM
 				this->segment = other.segment;
 
 				this->is_boundary_ = other.is_boundary_;
+				this->is_visible_  = other.is_visible_;
+				this->is_enable_   = other.is_enable_;
 
 				return *this;
 			}
@@ -63,6 +67,8 @@ namespace RRM
 			Segment segment;
 
 			bool is_boundary_;
+			bool is_visible_;
+			bool is_enable_;
 
 			unsigned int source_id_;
 			unsigned int target_id_;
