@@ -831,7 +831,6 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 }
 
 /// BLACK SCREEN
-
 void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 {
 	std::cout << "New Curve" << std::endl;

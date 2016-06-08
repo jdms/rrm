@@ -75,6 +75,8 @@ namespace RRM
 //			}
 //		}
 
+		return is_open;
+
 	}
 
 	const SBIMSeismicController::SeismicSlices& RRM::SBIMSeismicController::getSeismicSlices ( ) const

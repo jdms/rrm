@@ -30,10 +30,9 @@ namespace RRM
 				curve_index = 0;
 			}
 			// COPY CONSTRUCTOR !!!
-			StratigraphicSegment ( const Self& segment )
+			StratigraphicSegment ( const Self& _segment )
 			{
-				this->curve_index = segment.curve_index;
-				this->curve 	  = segment.curve;
+				*this = _segment;
 
 			}
 

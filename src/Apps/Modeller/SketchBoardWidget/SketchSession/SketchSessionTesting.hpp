@@ -13,8 +13,6 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtWidgets/QGraphicsItem>
-#include <QtSvg/QGraphicsSvgItem>
-#include <QtSvg/QSvgRenderer>
 
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -28,6 +26,7 @@
 #include "Modeller/BoundaryItem.h"
 
 #include "SBIM/SeismicVolume.hpp"
+#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
 
 /**
  * @author Felipe Moura de Carvalho
@@ -43,29 +42,30 @@ class SketchSessionTesting: public QGraphicsScene
 	public:
 
 		typedef qreal			Real;
+		typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
+		typedef PointN<Real, 2> 					    Point2D;
 
 		enum class InteractionMode
 		{
-			EDITING, SKETCHING,
+			EDITING, SKETCHING, OVERSKETCHING
 		};
 
 		SketchSessionTesting ( QObject *parent = 0 );
 		virtual ~SketchSessionTesting ( );
 
+		void removeInputSketch ( );
+
+		void setUpBackground();
+
+	protected:
 		void mousePressEvent ( QGraphicsSceneMouseEvent* event );
 		void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
 		void mouseReleaseEvent ( QGraphicsSceneMouseEvent* event );
-
-		void keyPressEvent(QKeyEvent * keyEvent);
 
 		void dragEnterEvent ( QGraphicsSceneDragDropEvent *event );
 		void dragMoveEvent ( QGraphicsSceneDragDropEvent *event );
 		void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
 		void dropEvent ( QGraphicsSceneDragDropEvent *event );
-
-		void removeInputSketch ( );
-
-		void setUpBackground();
 
 	public slots:
 
@@ -77,9 +77,12 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify the sketch module to draw a new rectangle boundary
 		void sketchNewBoundary ( );
 
+		void newSktech();
+
 		void setEditMode();
 		void setSketchMode();
 		void clear();
+		void reset();
 		// Update the view with the new Cross Section configuration
 		void updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
@@ -120,6 +123,14 @@ class SketchSessionTesting: public QGraphicsScene
 		// Interface
 		BoundaryItem* boundaryc_;
 		InputSketch* input_sketch_;
+		InputSketch* current_sketch_;
+
+		Curve2D input_curve_;
+		Curve2D over_sketch_;
+		Curve2D rest_;
+
+		Curve2D 	convert(QPolygonF _curve );
+		QPolygonF 	convert(Curve2D	  _curve );
 
 		std::vector<QColor> colors;
 
@@ -137,3 +148,5 @@ class SketchSessionTesting: public QGraphicsScene
 };
 
 #endif /* _SKETCHSESSION_HPP_ */
+
+

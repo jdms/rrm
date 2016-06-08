@@ -132,13 +132,19 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		}
 		if ( event->key ( ) == Qt::Key_Space )
 		{
-			//cross_section_.clear ( );
+			sketchSession_->reset();
+			this->sketch_controller->clear();
 		}
 
 		if ( event->key ( ) == Qt::Key_Escape)
 		{
 				sketchSession_->clearSelection();
 				this->newSession(0.0,0.0,700.0,400.0);
+		}
+
+		if( event->key () == Qt::Key_I)
+		{
+			sketchSession_->newSktech();
 		}
 
 	QGraphicsView::keyPressEvent(event);

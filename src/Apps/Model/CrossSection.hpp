@@ -106,6 +106,8 @@ namespace RRM
 			CrossSection ( )
 			{
 				id_ = 0;
+				viewPort_.first = Point2D(0,0);
+				viewPort_.second = Point2D(700,400);
 			}
 
 			CrossSection ( const Self& _cross_section )
@@ -125,10 +127,12 @@ namespace RRM
 				vertex_index_ = other.vertex_index_;
 				edge_index_   = other.edge_index_;
 				face_index_   = other.face_index_;
+				curve_index_  = other.curve_index_;
 
 				vertices_ = other.vertices_;
 				edges_    = other.edges_;
 				faces_    = other.faces_;
+				curves_history_ = other.curves_history_;
 
 				id_ 	  = 	other.id_;
 
@@ -149,18 +153,17 @@ namespace RRM
 			{
 				clear();
 			}
-
 			void clear ( )
 			{
 				vertex_index_.initialize ( 1000 );
 				edge_index_.initialize ( 1000 );
 				face_index_.initialize ( 1000 );
+				curve_index_.initialize ( 1000 );
 
 				vertices_.clear ( );
 				edges_.clear ( );
 				faces_.clear ( );
-
-				id_ = 0;
+				curves_history_.clear ( );
 			}
 
 			/// Quad in coordinates  (x , y) (Default OpenGL Coordinate System)
@@ -374,6 +377,13 @@ namespace RRM
 					std::transform(intersection_pair.begin(), intersection_pair.end(), std::back_inserter(indices), [](std::pair<std::size_t,Point2D> p) { return p.first; });
 					// Return the segments of the input curve at the intersection point index.
 					test.slices(indices,segments);
+
+
+					// Curve History
+						Segment source_sketch;
+						source_sketch.curve_index = curve_index_.getID();
+						curves_history_[source_sketch.curve_index] = source_sketch;
+
 					std::cout << " Segments Size " << segments.size() << std::endl;
 					// There is no source
 					unsigned int last_edge;
@@ -381,6 +391,7 @@ namespace RRM
 					hanging_1.id_ = edge_index_.getID();
 					hanging_1.segment.curve = segments.front();
 					hanging_1.segment.curve.superSample(3.0);
+					hanging_1.segment.curve_index = source_sketch.curve_index;
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
 					hanging_1.is_enable_ = false;
 					hanging_1.is_visible_ = false;
@@ -393,6 +404,7 @@ namespace RRM
 						e.id_ = edge_index_.getID();
 						e.segment.curve = segments[it+1];
 						e.segment.curve.superSample(3.0);
+						e.segment.curve_index = source_sketch.curve_index;
 						e.source_id_ = intersection_vertices[it].vertex_id_;
 						e.target_id_ = intersection_vertices[it+1].vertex_id_;
 						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(e.id_);
@@ -406,6 +418,7 @@ namespace RRM
 					hanging_2.id_ = edge_index_.getID();
 					hanging_2.segment.curve = segments.back();
 					hanging_2.segment.curve.superSample(3.0);
+					hanging_2.segment.curve_index = source_sketch.curve_index;
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
 					hanging_2.is_enable_ = false;
 					hanging_2.is_visible_ = false;
@@ -597,7 +610,6 @@ namespace RRM
 				return 1;
 			}
 
-
 			void updateFaces()
 			{
 
@@ -605,20 +617,38 @@ namespace RRM
 
 				for ( auto vertex_iterator: vertices_)
 				{
-					for ( auto path: vertex_iterator.second.edges_)
+					int exist = 0;
+					for ( auto edge_iterator: vertex_iterator.second.edges_)
 					{
-						if ( edges_[path].is_visible_ and  edges_[path].is_enable_ )
+						if ( edges_[edge_iterator].is_visible_ and  edges_[edge_iterator].is_enable_ )
 						{
-							if ( edges_[path].source_id_ == vertex_iterator.second.id_ )
+							if ( edges_[edge_iterator].source_id_ == vertex_iterator.second.id_ )
 							{
-								RegionDetection::Path p(edges_[path].target_id_,0);
+								RegionDetection::Path p(edges_[edge_iterator].target_id_,0);
+								for ( auto path : regions.vm_[vertex_iterator.second.id_] )
+								{
+									if ( path.first == p.first )
+									{
+										p.second = exist;
+										exist++;
+										path.second = exist;
+									}
+								}
 								regions.vm_[vertex_iterator.second.id_].push_back(p);
 							}else
 							{
-								RegionDetection::Path p(edges_[path].source_id_,0);
+								RegionDetection::Path p(edges_[edge_iterator].source_id_,0);
+								for ( auto path : regions.vm_[vertex_iterator.second.id_] )
+								{
+									if ( path.first == p.first )
+									{
+										p.second = exist;
+										exist++;
+										path.second = exist;
+									}
+								}
 								regions.vm_[vertex_iterator.second.id_].push_back(p);
 							}
-
 						}
 
 						//std::cout << "vertex id : " << vertex_iterator.second.id_ <<  " - " << path << std::endl;
@@ -628,13 +658,13 @@ namespace RRM
 				regions.printGraph(regions.vm_);
 			}
 
-
 			void log ( ) const
 			{
 				std::cout << "---- Size ---- " << std::endl;
 				std::cout << "- vertices --- " << vertices_.size()  << std::endl;
 				std::cout << "- edges ------ " << edges_.size()     << std::endl;
 				std::cout << "- faces ------ " << faces_.size()     << std::endl;
+				std::cout << "--viewPort---- " << viewPort_.second.x() <<std::endl;
 				std::cout << "-------------- " << std::endl;
 			}
 
@@ -643,6 +673,8 @@ namespace RRM
 			std::map<unsigned int , Edge<Real> >   edges_;
 			std::map<unsigned int , Face<Real> >   faces_;
 
+			std::map<unsigned int , Segment >   curves_history_;
+
 			unsigned int id_;
 
 			std::vector<unsigned char> image_;
@@ -650,6 +682,8 @@ namespace RRM
 			IDManager vertex_index_;
 			IDManager face_index_;
 			IDManager edge_index_;
+
+			IDManager curve_index_;
 
 			std::pair<Point2D,Point2D> viewPort_;
 

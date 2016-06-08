@@ -6,26 +6,26 @@ find_package(GLEW REQUIRED)
 find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL)
 
 ## Find CGAL 4.7
-find_package(CGAL REQUIRED COMPONENTS Core Qt5 )
+#find_package(CGAL REQUIRED COMPONENTS Core Qt5 )
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND)
-    message("Found CGAL.")
-    include(${CGAL_USE_FILE})
-   
-    message("CGAL_CXX_FLAGS_INIT: ${CGAL_CXX_FLAGS_INIT}")
-    add_definitions(${CGAL_CXX_GLAFS_INIT})
-
-    message("CGAL_LIBRARY: ${CGAL_LIBRARY}")
-    message("CGAL_LIBRARIES: ${CGAL_LIBRARIES}")
-    message("CGAL_ImageIO_LIBRARY: ${CGAL_ImageIO_LIBRARY}")
-    message("CGAL_3RD_PARTY_LIBRARIES: ${CGAL_3RD_PARTY_LIBRARIES}")
-    
-else()
-    message(FATAL_ERROR "CGAL is required.")
-endif()
+#if(CGAL_FOUND AND CGAL_Qt5_FOUND)
+#    message("Found CGAL.")
+#    include(${CGAL_USE_FILE})
+#   
+#    message("CGAL_CXX_FLAGS_INIT: ${CGAL_CXX_FLAGS_INIT}")
+#    add_definitions(${CGAL_CXX_GLAFS_INIT})
+#
+#    message("CGAL_LIBRARY: ${CGAL_LIBRARY}")
+#    message("CGAL_LIBRARIES: ${CGAL_LIBRARIES}")
+#    message("CGAL_ImageIO_LIBRARY: ${CGAL_ImageIO_LIBRARY}")
+#    message("CGAL_3RD_PARTY_LIBRARIES: ${CGAL_3RD_PARTY_LIBRARIES}")
+#    
+#else()
+#    message(FATAL_ERROR "CGAL is required.")
+#endif()
 
 IF(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0")
 ELSEIF(WIN32)
     if(MSVC)
         FIND_LIBRARY(SAMG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SAMG )
@@ -49,7 +49,7 @@ include_directories(
     ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5OpenGL_INCLUDE_DIRS}
     ## - CGAL-4.7.1
-    ${CGAL_INCLUDE_DIRS}
+    #${CGAL_INCLUDE_DIRS}
     ## - Find Boost
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR} 

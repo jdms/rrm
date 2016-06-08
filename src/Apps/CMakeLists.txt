@@ -232,10 +232,10 @@ IF(WIN32) # Check if we are on Windows
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
                                        #${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
-		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Svg planin RRMGeometry ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
+		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
 		# /SUBSYSTEM:CONSOLE DEBUG VERSION
 		# /SUBSYSTEM:WINDOWN RELEASE VERSION
-#		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+        #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
 		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
     elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
         message (FATAL_ERROR "GCC are not support on Windows !")
@@ -250,7 +250,7 @@ ELSEIF(UNIX)
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
                                        #${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})	
-    target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg planin RRMGeometry  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
+    target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 ELSE() # Not Windows or Unix
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
 ENDIF()

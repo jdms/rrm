@@ -114,7 +114,6 @@ namespace RRM
 				return is_in_range;
 			}
 
-
 		public:
 			/// FIXME Line related functions
 
@@ -590,7 +589,6 @@ namespace RRM
 
 		return intersected;
 	}
-
 
 	template < class Real >
 	void PolygonalCurve2D<Real>::addPoints (std::vector<std::pair<std::size_t,Point2D> >& _intersection_points )

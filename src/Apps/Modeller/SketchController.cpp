@@ -20,8 +20,11 @@ SketchController::~SketchController ( )
 
 void SketchController::clear ( )
 {
-	this->cross_section_.clear();
-	this->cross_section_.initialize(0.0,0.0,700,400);
+	//this->cross_section_.clear();
+	this->cross_section_.initialize(this->cross_section_.viewPort_.first.x(),
+					this->cross_section_.viewPort_.first.y(),
+					this->cross_section_.viewPort_.second.x(),
+					this->cross_section_.viewPort_.second.y());
 	updateSBIM();
 }
 
@@ -46,7 +49,7 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 
 	Curve2D curve = convertCurves(_polygon);
 //
-	unsigned int id = cross_section_.insertCurve(curve);
+	cross_section_.insertCurve(curve);
 
 //	cross_section_.log();
 //
@@ -440,7 +443,7 @@ SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 {
 	Curve2D polygonal_curve;
 
-	for (std::size_t it = 0; it < _polygon.size(); it++)
+	for ( int it = 0; it < _polygon.size(); it++)
 	{
 		// \fixme curvendemisional doenst have a clear interface over the its polyline ...
 		polygonal_curve.push_back( SketchController::Point2D(_polygon[it].x(),_polygon[it].y()) );

@@ -53,6 +53,6 @@ float num_lights = 4.0f;
 
 	// I = 0.0;
 
-	outputColor = I * vec4(0.0, 0.0, 0.0, 1.0) + (1.0 - I) * vec4 ( la.rgb + ld.xyz + ls.rgb , 1.0 );
+	outputColor = I * vec4(0.0, 0.0, 0.0, 1.0) + (1.0 - I) * vec4 ( la.rgb + ld.xyz + ls.rgb , 0.5 );
 
 }

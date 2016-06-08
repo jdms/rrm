@@ -25,13 +25,15 @@ int main( int argc, char *argv[] )
     	return 0;
     }
 
-    	    QSurfaceFormat format;
-    	    format.setDepthBufferSize(24);
-    	    format.setVersion(3, 3);
-    	    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    	    format.setRenderableType(QSurfaceFormat::OpenGL);
-    	    format.setSamples(8);
-    	    QSurfaceFormat::setDefaultFormat(format);
+
+// fixme some how, systems with dual GPU don't work with this line.
+//    	    QSurfaceFormat format;
+//    	    format.setDepthBufferSize(24);
+//    	    format.setVersion(3, 3);
+//    	    format.setProfile(QSurfaceFormat::CompatibilityProfile);
+//    	    format.setRenderableType(QSurfaceFormat::OpenGL);
+//    	    format.setSamples(8);
+//    	    QSurfaceFormat::setDefaultFormat(format);
 
     MainWindow w;
     w.show();

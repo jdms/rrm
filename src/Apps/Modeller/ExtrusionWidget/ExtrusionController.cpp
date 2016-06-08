@@ -28,6 +28,10 @@ namespace RRM
 						  float _y_max,
 						  float _z_max )
 	{
+
+		_z_max *= 2.0f;
+		_z_min *= 2.0f;
+
 		scale_x_ = ( _x_max - _x_min);
 		scale_y_ = ( _y_max - _y_min);
 		scale_z_ = ( _z_max - _z_min);
@@ -75,16 +79,16 @@ namespace RRM
 		min_ = trasnform_matrix_.matrix() * min_;
 		max_ = trasnform_matrix_.matrix() * max_;
 
-		 this->surfaces[4] = std::make_shared<PlanarSurface>();
-		 Point2 o, l;
-		 o.x = min_.x();
-		 l.x = max_.x()-min_.x();
-		 o.y = min_.z();
-		 l.y = max_.z()-min_.z();
-		 this->surfaces[4]->requestChangeDiscretization( 16,16 );
-
-		 this->surfaces[4]->setOrigin(o);
-		 this->surfaces[4]->setLenght(l);
+//		 this->surfaces[4] = std::make_shared<PlanarSurface>();
+//		 Point2 o, l;
+//		 o.x = min_.x();
+//		 l.x = max_.x()-min_.x();
+//		 o.y = max_.z();
+//		 l.y = (max_.z()-min_.z());
+//		 this->surfaces[4]->requestChangeDiscretization( 16,16 );
+//
+//		 this->surfaces[4]->setOrigin(o);
+//		 this->surfaces[4]->setLenght(l);
 
 		return true;
 	}
@@ -289,7 +293,7 @@ namespace RRM
 		for (auto position_iterator: slice_position)
 		{
 			//float z = ((400/100)*(100-position_iterator))/scale_;
-			float z = (scale_z_/100)*(100-position_iterator);
+			float z = ( max_.z() - ((position_iterator)/scale_) );
 			z = z - center_.z();
 			// Front Face
 			cube.push_back(Eigen::Vector4f ( max_.x(), max_.y(), z, 1.0f ));
@@ -355,6 +359,26 @@ namespace RRM
 		std::cout << " min " << min_ << std::endl;
 		std::cout << " max " << max_ << std::endl;
 
+
+		 this->surfaces[2] = std::make_shared<PlanarSurface>();
+		 Point2 o, l;
+		 o.x = min_.x();
+		 l.x = (max_.x()-min_.x());
+		 o.y = min_.z();
+		 l.y = (max_.z()-min_.z());
+		 this->surfaces[2]->requestChangeDiscretization( 16,16 );
+
+		 this->surfaces[2]->setOrigin(o);
+		 this->surfaces[2]->setLenght(l);
+
+		 //
+		 this->surfaces[1] = std::make_shared<PlanarSurface>();
+
+		 this->surfaces[1]->requestChangeDiscretization( 16,16 );
+
+		 this->surfaces[1]->setOrigin(o);
+		 this->surfaces[1]->setLenght(l);
+
 		std::vector<Eigen::Vector4f> lines;
 
 		if ( this->seismic_slices_.size() < 1 )
@@ -362,15 +386,15 @@ namespace RRM
 
 		for ( auto slice_iterator: this->seismic_slices_ )
 		{
-			std:: cout << "Extrusion Controller " << slice_iterator.second.edges_.size() << std::endl;
+			std:: cout << "Extrusion Controller " << slice_iterator.first << std::endl;
 
 			for ( auto& edges_iterator: slice_iterator.second.edges_ )
 			{
-				//std:: cout << "Curve Size" << edges_iterator.second.segment.curve.size() << std::endl;
+				std:: cout << "Curve Size" << edges_iterator.second.segment.curve_index << std::endl;
 
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
-					float z = ( max_.z() - ((slice_iterator.first-1)/scale_) );
+					float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first-1))/scale_) );
 					//z = center_.z() - z;
 					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
 										 edges_iterator.second.segment.curve[it].y(),
@@ -394,9 +418,9 @@ namespace RRM
 					if ( edges_iterator.second.is_boundary_  )
 					{
 					}
-					else if ( edges_iterator.first == 4)
+					else if ( edges_iterator.second.is_visible_)
 					{
-						surfaces[edges_iterator.first]->addPoint ( v );
+						surfaces[edges_iterator.second.segment.curve_index]->addPoint ( v );
 					}
 				}
 			}
@@ -410,13 +434,13 @@ namespace RRM
 		using FListType = std::vector<unsigned int>;
 		FListType s1_flist, s2_flist, s3_flist, sn_flist;
 
-		if ( surfaces[4]->surfaceIsSet() == false ) {
-			surfaces[4]->generateSurface();
+		if ( surfaces[2]->surfaceIsSet() == false ) {
+			surfaces[2]->generateSurface();
 		}
 
-		surfaces[4]->getVertexList ( vl );
-		surfaces[4]->getNormalList ( nl );
-		surfaces[4]->getFaceList ( fl );
+		surfaces[2]->getVertexList ( vl );
+		surfaces[2]->getNormalList ( nl );
+		surfaces[2]->getFaceList ( fl );
 
 
 		std::cout << "face Count " << fl.size() << std::endl;

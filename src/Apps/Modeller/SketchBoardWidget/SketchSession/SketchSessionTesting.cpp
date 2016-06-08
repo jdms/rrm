@@ -4,7 +4,7 @@
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
 
-	mode_ = InteractionMode::SKETCHING;
+	mode_ = InteractionMode::OVERSKETCHING;
 
 	/// Drag and Drop Feature
 	overlay_image_ = new QGraphicsPixmapItem ( );
@@ -20,6 +20,11 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	input_sketch_->setPen ( pen );
 	this->addItem ( input_sketch_ );
 	this->input_sketch_->setZValue(1);
+
+	current_sketch_ = new InputSketch ( QColor ( 255 , 75 , 75 ) );
+	current_sketch_->setPen ( pen );
+	this->addItem ( current_sketch_ );
+	this->current_sketch_->setZValue(1);
 
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
@@ -78,7 +83,7 @@ SketchSessionTesting::~SketchSessionTesting ( )
 	 clear();
 }
 
-void SketchSessionTesting::keyPressEvent(QKeyEvent * keyEvent)
+void SketchSessionTesting::newSktech()
 {
 
 //	if (seismic_data_.height == next)
@@ -89,6 +94,19 @@ void SketchSessionTesting::keyPressEvent(QKeyEvent * keyEvent)
 //		this->overlay_image_->setPixmap(QPixmap::fromImage(images[next]));
 //		next++;
 //	}
+
+
+		QPolygonF new_curve = current_sketch_->getSketch();
+		emit newSketchCurve(new_curve);
+
+		std::cout << " Emit" << std::endl;
+
+		input_sketch_->clear ( );
+		current_sketch_->clear();
+
+		input_curve_.clear();
+		over_sketch_.clear();
+
 
 }
 // View/Qt5 related functions
@@ -188,7 +206,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 		QGraphicsScene::mouseReleaseEvent ( event );
 		event->ignore();
 	}
-	else
+	else if (mode_ == InteractionMode::SKETCHING)
 	{
 		QPolygonF new_curve = input_sketch_->getSketch();
 
@@ -212,6 +230,62 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 			input_sketch_->clear ( );
 		}
 
+	}else if (mode_ == InteractionMode::OVERSKETCHING)
+	{
+		QPolygonF new_curve = input_sketch_->getSketch();
+
+		// Sketch Too Short
+		if ( input_sketch_->getSketch().size() < 10 )
+		{
+			event->ignore();
+			return;
+		}
+
+		if ( current_sketch_->getSketch().size() == 0)
+		{
+			current_sketch_->create(new_curve[0]);
+		}
+
+//		else
+//		{
+//			QPointF p1 = new_curve.front();
+//
+//			QPointF p2 =current_sketch_->getSketch().back();
+//
+//			QLineF line(p1,p2);
+//
+//			if ( line.length() > 5 )
+//			{
+//				return;
+//			}
+//
+//		}
+
+		if ( input_curve_.size() == 0)
+		{
+			input_curve_ = convert(new_curve);
+		}
+		else
+		{
+			over_sketch_ = convert(new_curve);
+
+			input_curve_ = over_sketch_.overSketch(input_curve_,rest_, 1, 16);
+			input_curve_.douglasPeuckerSimplify(over_sketch_, 3);
+
+			input_curve_ = over_sketch_;
+
+			new_curve = convert(input_curve_);
+		}
+
+		current_sketch_->clear();
+		current_sketch_->create(new_curve[0]);
+
+		for( int p_it = 1; p_it < new_curve.size(); p_it++ )
+		{
+			current_sketch_->add(new_curve[p_it]);
+		}
+
+		input_sketch_->clear();
 	}
 
 	update ( );
@@ -295,27 +369,61 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	//initializationWithImage(pixmap);
 }
 
+
+void SketchSessionTesting::reset()
+{
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& curve_iterator : this->view_curves_ )
+	{
+		delete curve_iterator.second;
+	}
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& vertex_iterator : this->view_vertices_ )
+	{
+		delete vertex_iterator.second;
+	}
+
+	this->view_curves_.clear ( );
+	this->view_vertices_.clear ( );
+
+	input_sketch_->clear ( );
+	current_sketch_->clear ( );
+
+	input_curve_.clear ( );
+	over_sketch_.clear ( );
+
+	update ( );
+}
+
 void SketchSessionTesting::clear()
 {
-	 /// clear the map of curves
-	 /// @todo clear all attributes
-	 for( auto& curve_iterator: this->view_curves_)
-	 {
-	        delete	curve_iterator.second;
-	 }
-	 /// clear the map of curves
-	 /// @todo clear all attributes
-	 for( auto& vertex_iterator: this->view_vertices_)
-	 {
-	        delete	vertex_iterator.second;
-	 }
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& curve_iterator : this->view_curves_ )
+	{
+		delete curve_iterator.second;
+	}
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& vertex_iterator : this->view_vertices_ )
+	{
+		delete vertex_iterator.second;
+	}
 
-	 this->view_curves_.clear();
-	 this->view_vertices_.clear();
+	this->view_curves_.clear ( );
+	this->view_vertices_.clear ( );
 
-	 this->boundaryc_->setNewBoundary(0.0,0.0,0.0,0.0);
+	input_sketch_->clear ( );
+	current_sketch_->clear ( );
 
-	 update();
+	input_curve_.clear ( );
+	over_sketch_.clear ( );
+
+	this->boundaryc_->setNewBoundary ( 0.0 , 0.0 , 0.0 , 0.0 );
+
+	update ( );
 }
 
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
@@ -486,4 +594,29 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 
 	setUpBackground();
 	update();
+}
+/// Model Related Function
+SketchSessionTesting::Curve2D SketchSessionTesting::convert(QPolygonF _curve )
+{
+	Curve2D rrm_curve;
+
+	for( auto p : _curve )
+	{
+		rrm_curve.push_back( Point2D(p.x(),p.y()));
+	}
+
+	return rrm_curve;
+}
+
+/// Model Related Function
+QPolygonF SketchSessionTesting::convert(Curve2D _curve )
+{
+	QPolygonF qt_curve;
+
+	for( std::size_t p_it = 0; p_it < _curve.size(); p_it++ )
+	{
+		qt_curve.push_back( QPointF(_curve[p_it].x(),_curve[p_it].y()));
+	}
+
+	return qt_curve;
 }
