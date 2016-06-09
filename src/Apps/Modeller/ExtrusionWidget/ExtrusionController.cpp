@@ -128,7 +128,7 @@ namespace RRM
 					last -= stepx;
 				}
 
-				last -= stepx;
+				//last -= stepx;
 
 				last_j = j;
 
@@ -222,11 +222,15 @@ namespace RRM
 
 			if ( !edge.second.is_boundary_ )
 			{
-				for ( std::size_t p_it = 0; p_it < edge.second.segment.curve.size(); p_it++ )
+				if ( edge.second.is_visible_ && edge.second.is_enable_ )
 				{
-					patch[p_it] = Eigen::Vector3f ( edge.second.segment.curve[p_it].x(),edge.second.segment.curve[p_it].y(),1.0f);
+					for ( std::size_t p_it = 0; p_it < edge.second.segment.curve.size(); p_it++ )
+					{
+						patch[p_it] = Eigen::Vector3f ( edge.second.segment.curve[p_it].x(),edge.second.segment.curve[p_it].y(),1.0f);
+					}
+					patchies.push_back(patch);
 				}
-				patchies.push_back(patch);
+
 			}
 		}
 
@@ -246,46 +250,60 @@ namespace RRM
 	}
 
 	// Seismic Module --------------->
-	std::vector<Eigen::Vector3f> ExtrusionController::getcubeMesh ( )
+	std::vector<float> ExtrusionController::getCubeMesh ( )
 	{
-		std::vector<Eigen::Vector3f> cube;
-
-		cube =
+		std::vector<float> cube =
 		{
 			//  Top Face
-			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
-			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
-			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
-			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
+			max_.x(), max_.y(), max_.z(),1.0,
+			min_.x(), max_.y(), max_.z(),1.0,
+			max_.x(), max_.y(), min_.z(),1.0,
+			min_.x(), max_.y(), min_.z(),1.0,
 			// Bottom Face
-			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
-			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
-			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
-			Eigen::Vector3f ( min_.x(), min_.y(), min_.z()),
+			max_.x(), min_.y(), max_.z(),1.0,
+			min_.x(), min_.y(), max_.z(),1.0,
+			max_.x(), min_.y(), min_.z(),1.0,
+			min_.x(), min_.y(), min_.z(),1.0,
 			// Front Face
-//			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
-//			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
-//			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
-//			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
+			max_.x(), max_.y(), max_.z(),1.0,
+			min_.x(), max_.y(), max_.z(),1.0,
+			max_.x(), min_.y(), max_.z(),1.0,
+			min_.x(), min_.y(), max_.z(),1.0,
 			// Back Face
-			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
-			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
-			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
-			Eigen::Vector3f ( min_.x(), min_.y(), min_.z()),
+			max_.x(), max_.y(), min_.z(),1.0,
+			min_.x(), max_.y(), min_.z(),1.0,
+			max_.x(), min_.y(), min_.z(),1.0,
+			min_.x(), min_.y(), min_.z(),1.0,
 			// Left Face
-			Eigen::Vector3f ( max_.x(), max_.y(), min_.z()),
-			Eigen::Vector3f ( max_.x(), max_.y(), max_.z()),
-			Eigen::Vector3f ( max_.x(), min_.y(), min_.z()),
-			Eigen::Vector3f ( max_.x(), min_.y(), max_.z()),
+			max_.x(), max_.y(), min_.z(),1.0,
+			max_.x(), max_.y(), max_.z(),1.0,
+			max_.x(), min_.y(), min_.z(),1.0,
+			max_.x(), min_.y(), max_.z(),1.0,
 			// Right Face
-			Eigen::Vector3f ( min_.x(), max_.y(), max_.z()),
-			Eigen::Vector3f ( min_.x(), max_.y(), min_.z()),
-			Eigen::Vector3f ( min_.x(), min_.y(), max_.z()),
-			Eigen::Vector3f ( min_.x(), min_.y(), min_.z())
+			min_.x(), max_.y(), max_.z(),1.0,
+			min_.x(), max_.y(), min_.z(),1.0,
+			min_.x(), min_.y(), max_.z(),1.0,
+			min_.x(), min_.y(), min_.z(),1.0
 		};
 
 		return cube;
 	}
+
+	// Seismic Module --------------->
+	std::vector<float> ExtrusionController::getPlaneMesh ( float z )
+	{
+		std::vector<float> cube =
+		{
+			// Front Face
+			max_.x(), max_.y(), max_.z(),1.0,
+			min_.x(), max_.y(), max_.z(),1.0,
+			max_.x(), min_.y(), max_.z(),1.0,
+			min_.x(), min_.y(), max_.z(),1.0,
+		};
+
+		return cube;
+	}
+
 
 	std::vector<Eigen::Vector4f> ExtrusionController::getPlanes ( const std::vector<unsigned int>& slice_position )
 	{
@@ -359,25 +377,21 @@ namespace RRM
 		std::cout << " min " << min_ << std::endl;
 		std::cout << " max " << max_ << std::endl;
 
-
-		 this->surfaces[2] = std::make_shared<PlanarSurface>();
 		 Point2 o, l;
 		 o.x = min_.x();
 		 l.x = (max_.x()-min_.x());
 		 o.y = min_.z();
 		 l.y = (max_.z()-min_.z());
-		 this->surfaces[2]->requestChangeDiscretization( 16,16 );
 
-		 this->surfaces[2]->setOrigin(o);
-		 this->surfaces[2]->setLenght(l);
 
-		 //
-		 this->surfaces[1] = std::make_shared<PlanarSurface>();
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 {
+			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 32,32 );
+			 this->surfaces[surfaces_iterator]->setOrigin(o);
+			 this->surfaces[surfaces_iterator]->setLenght(l);
+		 }
 
-		 this->surfaces[1]->requestChangeDiscretization( 16,16 );
-
-		 this->surfaces[1]->setOrigin(o);
-		 this->surfaces[1]->setLenght(l);
 
 		std::vector<Eigen::Vector4f> lines;
 
@@ -386,11 +400,11 @@ namespace RRM
 
 		for ( auto slice_iterator: this->seismic_slices_ )
 		{
-			std:: cout << "Extrusion Controller " << slice_iterator.first << std::endl;
+			//std:: cout << "Extrusion Controller " << slice_iterator.first << std::endl;
 
 			for ( auto& edges_iterator: slice_iterator.second.edges_ )
 			{
-				std:: cout << "Curve Size" << edges_iterator.second.segment.curve_index << std::endl;
+				//std:: cout << "Curve Size" << edges_iterator.second.segment.curve_index << std::endl;
 
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
@@ -410,8 +424,12 @@ namespace RRM
 					point1[2] = z;
 					point2[2] = z;
 
-					lines.push_back(point1);
-					lines.push_back(point2);
+					if ( edges_iterator.second.is_visible_ && !edges_iterator.second.is_boundary_)
+					{
+						lines.push_back(point1);
+						lines.push_back(point2);
+					}
+
 
 					Eigen::Vector3d v(point1.x(),point1.z(),point1.y());
 
@@ -420,32 +438,64 @@ namespace RRM
 					}
 					else if ( edges_iterator.second.is_visible_)
 					{
-						surfaces[edges_iterator.second.segment.curve_index]->addPoint ( v );
+						if ( edges_iterator.second.segment.curve_index < 6 )
+						{
+							surfaces[edges_iterator.second.segment.curve_index]->addPoint ( v );
+						}
 					}
 				}
 			}
 		}
 
-		/* Do useful stuff. */
-		using VListType = std::vector<float>;
-		VListType s1_points, s2_points, s3_points, sn_points;
-		VListType s1_vlist, s2_vlist, s3_vlist, sn_vlist;
-
-		using FListType = std::vector<unsigned int>;
-		FListType s1_flist, s2_flist, s3_flist, sn_flist;
-
-		if ( surfaces[2]->surfaceIsSet() == false ) {
-			surfaces[2]->generateSurface();
-		}
-
-		surfaces[2]->getVertexList ( vl );
-		surfaces[2]->getNormalList ( nl );
-		surfaces[2]->getFaceList ( fl );
+		std::vector<float> vt;
+		std::vector<float> nt;
+		std::vector<std::size_t> ft;
+		std::size_t stride = 0;
 
 
-		std::cout << "face Count " << fl.size() << std::endl;
-		std::cout << "Normal Count " << nl.size() << std::endl;
-		std::cout << "Vertex Count " << vl.size() << std::endl;
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 {
+			 surfaces[surfaces_iterator]->generateSurface();
+
+			 if ( surfaces[surfaces_iterator]->surfaceIsSet()  )
+			 {
+
+					vt.clear();
+					nt.clear();
+					ft.clear();
+
+					surfaces[surfaces_iterator]->getVertexList ( vt );
+					surfaces[surfaces_iterator]->getNormalList ( nt );
+					surfaces[surfaces_iterator]->getFaceList ( ft );
+
+					vl.insert(vl.end(),vt.begin(),vt.end());
+					nl.insert(nl.end(),nt.begin(),nt.end());
+
+					for ( auto& index: ft)
+					{
+						index+=stride;
+					}
+
+					stride += static_cast<std::size_t>(vt.size()/3);
+
+					fl.insert(fl.end(),ft.begin(),ft.end());
+
+					std::cout << "stride" << stride << std::endl;
+
+					for ( auto i : fl )
+						std::cout << "index " << i << std::endl;
+
+					std::cout << "face Count " << fl.size() << std::endl;
+					std::cout << "Normal Count " << nl.size() << std::endl;
+					std::cout << "Vertex Count " << vl.size() << std::endl;
+			 }
+
+	 }
+
+
+//		std::cout << "face Count " << fl.size() << std::endl;
+//		std::cout << "Normal Count " << nl.size() << std::endl;
+//		std::cout << "Vertex Count " << vl.size() << std::endl;
 
 		return lines;
 	}

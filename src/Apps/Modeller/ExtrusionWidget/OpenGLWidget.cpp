@@ -15,11 +15,11 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 	background_ = 0;
 
 	// Entity
-	vertexArray_cube_ = 0;
-		vertexBuffer_cube_ = 0;
+	vertexArray_BlackScreen_cube_ = 0;
+		vertexBuffer_BlackScreen_cube_ = 0;
 		// Be careful on the assignment of each slot attributes
-		vertexCube_slot_ = 0;
-		cube_shader_ = 0;
+		position_BlackScreen_slot_ = 0;
+		blackScreen_cube_shader_ = 0;
 
 	// The interpolated surface
 	vertexArray_patch_ = 0;
@@ -50,8 +50,15 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 	vertexArray_Seismic_cube_ = 0;
 		vertexBuffer_Seismic_cube_ = 0;
 		// Be careful on the assignment of each slot attributes
-		vertexSeismic_cube_slot_ = 0;
+		position_seismic_cube_ = 0;
 		seismic_cube_shader_ = 0;
+
+	// Entity
+	vertexArray_Seismic_plane_ = 0;
+		vertexBuffer_Seismic_plane_ = 0;
+		// Be careful on the assignment of each slot attributes
+		position_seismic_plane_ = 0;
+		seismic_plane_shader_ = 0;
 
 	vertexArray_for_the_Cube_ = 0;
 		vertexBuffer_cube_8vertices_ = 0;
@@ -152,16 +159,16 @@ void GLWidget::initializeGL ( )
 
 	/// BLACK SCREEN ----
 
-	glGenVertexArrays ( 1 , &vertexArray_cube_ );
-	glBindVertexArray ( vertexArray_cube_ );
+	glGenVertexArrays ( 1 , &vertexArray_BlackScreen_cube_ );
+	glBindVertexArray ( vertexArray_BlackScreen_cube_ );
 
 		/// Requesting Vertex Buffers to the GPU
-		glGenBuffers ( 1 , &vertexBuffer_cube_ );
-		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+		glGenBuffers ( 1 , &vertexBuffer_BlackScreen_cube_);
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
 		// Set up generic attributes pointers
-		glEnableVertexAttribArray ( vertexCube_slot_ );
-		glVertexAttribPointer ( vertexCube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+		glEnableVertexAttribArray ( position_BlackScreen_slot_ );
+		glVertexAttribPointer ( position_BlackScreen_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
@@ -196,8 +203,8 @@ void GLWidget::initializeGL ( )
 	glBindVertexArray ( 0 );
 
 	// IMPORTANT FOR THE DEPLOY VERSION
-	loadShaderByResources ( );
-	//loadShaders();
+	//loadShaderByResources ( );
+	loadShaders();
 
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
@@ -248,8 +255,21 @@ void GLWidget::initializeGL ( )
 		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
 		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
 		// Set up generic attributes pointers
-		glEnableVertexAttribArray ( vertexSeismic_cube_slot_ );
-		glVertexAttribPointer ( vertexSeismic_cube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+		glEnableVertexAttribArray ( position_seismic_cube_ );
+		glVertexAttribPointer ( position_seismic_cube_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+	glBindVertexArray ( 0 );
+
+	glGenVertexArrays ( 1 , &vertexArray_Seismic_plane_ );
+	glBindVertexArray ( vertexArray_Seismic_plane_ );
+
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers ( 1 , &vertexBuffer_Seismic_plane_ );
+		glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
+		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+		// Set up generic attributes pointers
+		glEnableVertexAttribArray ( position_seismic_plane_ );
+		glVertexAttribPointer ( position_seismic_plane_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
@@ -259,7 +279,7 @@ void GLWidget::initializeGL ( )
 
 	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
 
-	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
@@ -308,9 +328,9 @@ void GLWidget::initializeGL ( )
 
 void GLWidget::reloadShaders ( )
 {
-	if ( cube_shader_ )
+	if ( blackScreen_cube_shader_ )
 	{
-		cube_shader_->reloadShaders ( );
+		blackScreen_cube_shader_->reloadShaders ( );
 	}
 	if ( lines_shader_ )
 	{
@@ -349,11 +369,11 @@ void GLWidget::loadShaderByResources ( )
 	halt();
 #endif
 
-	//! Effects --
-	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	cube_shader_->initialize ( );
+	//! Effects -_
+	blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/BlankScreenCube.vert" ).toStdString ( ),
+					             ( shaderDirectory + "Shaders/BlankScreenCube.frag" ).toStdString ( ),
+						     ( shaderDirectory + "Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
+	blackScreen_cube_shader_->initialize ( );
 	//! Effects --
 	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
 					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
@@ -377,6 +397,12 @@ void GLWidget::loadShaderByResources ( )
 					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
 								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	seismic_cube_shader_->initialize ( );
+
+	//! Effects --
+	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_plane_shader_->initialize ( );
 
 }
 
@@ -406,10 +432,10 @@ void GLWidget::loadShaders ( )
 #endif
 
 	//! Effects --
-	cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	cube_shader_->initialize ( );
+	blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/BlankScreenCube.vert" ).toStdString ( ),
+					             ( shaderDirectory + "Shaders/BlankScreenCube.frag" ).toStdString ( ),
+						     ( shaderDirectory + "Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
+	blackScreen_cube_shader_->initialize ( );
 	//! Effects --
 	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
 					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
@@ -440,6 +466,12 @@ void GLWidget::loadShaders ( )
 								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
 	seismic_cube_shader_->initialize ( );
 
+	//! Effects --
+	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_plane_shader_->initialize ( );
+
 }
 
 void GLWidget::backGround()
@@ -451,7 +483,7 @@ void GLWidget::backGround()
 
 	background_->setUniform("viewportSize", width(), height() );
 
-	glBindVertexArray ( vertexArray_cube_ );
+	glBindVertexArray ( vertexArray_BlackScreen_cube_ );
 	/// Draw the triangle !
 	glDrawArrays ( GL_POINTS , 0 , 1 );
 
@@ -548,6 +580,7 @@ void GLWidget::paintGL ( )
 		seismic_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+		seismic_cube_shader_->setUniform ( "color_lane" , 1.0f,0.0f,0.0f,1.0f );
 			glBindVertexArray ( vertexArray_Seismic_cube_ );
 			/// Draw the triangle !
 			glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_cube_.size() );
@@ -572,18 +605,18 @@ void GLWidget::paintGL ( )
 			glBindVertexArray ( 0 );
 		patch_shader_->unbind ( );
 
-		cube_shader_->bind ( );
+		blackScreen_cube_shader_->bind ( );
 		/// 3rd attribute buffer : vertices
-		cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-		cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-		cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-		cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-		glBindVertexArray ( vertexArray_cube_ );
+		blackScreen_cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		blackScreen_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		blackScreen_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		blackScreen_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+		glBindVertexArray ( vertexArray_BlackScreen_cube_ );
 		/// Draw the triangle !
-		glDrawArrays ( GL_LINES_ADJACENCY , 0 , cube_.size() );
+		glDrawArrays ( GL_LINES_ADJACENCY , 0 , blackScreen_cube_.size() );
 
 		glBindVertexArray ( 0 );
-		cube_shader_->unbind ( );
+		blackScreen_cube_shader_->unbind ( );
 
 	}
 
@@ -738,6 +771,11 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 }
 
 /// Seismic Module
+void GLWidget::setPlanePosition( int _index )
+{
+	this->plane_position = _index;
+}
+
 void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
 {
 
@@ -752,11 +790,18 @@ void GLWidget::updateRendering()
 
 	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertex_,this->normal_,this->faces_);
 
-	this->seismic_cube_ = this->extrusion_controller_.getcubeMesh();
+	this->seismic_cube_ = this->extrusion_controller_.getCubeMesh();
+
+	this->seismic_plane_ = this->extrusion_controller_.getPlaneMesh(0.0f);
 
 	/// Send the new meshes to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
 	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	/// Send the new meshes to the GPU
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->seismic_plane_.size ( ) * sizeof ( this->seismic_plane_[0] ) , this->seismic_plane_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	//
@@ -837,10 +882,10 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 	_cross_section.log();
 
 	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-	this->extrusion_controller_.updateBlackScreenMesh(5,5,200,cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(1,20,200,blackScreen_cube_,patch_);
 
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );

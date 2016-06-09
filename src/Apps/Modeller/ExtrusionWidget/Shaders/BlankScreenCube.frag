@@ -33,7 +33,7 @@ void main ( void )
 	vec3 light_dir = vec3 ( 0.0 , 0.0 , 1.0 );
 	vec3 eye_dir = normalize ( -newVert.xyz );
 
-	vec4 color_t = VertexIn.color;//vec4 ( 0.10 , 0.75 , 0.10 , 1.0 );
+	vec4 color_t = vec4 ( 0.10 , 0.75 , 0.10 , 1.0 );
 
 	vec4 la = vec4 ( 0.0 );
 	vec4 ld = vec4 ( 0.0 );
@@ -49,11 +49,11 @@ void main ( void )
 	}
 
 	float d = min ( dist[0] , min ( dist[1] , min ( dist[2] , dist[3] ) ) );
-	float I = exp2 ( -2.0 * d * d );
+	float I = exp2 ( -1.0 * d * d );
 
 	// I = 0.0;
 
-	outputColor = I * vec4 ( 0.0 , 0.0 , 0.0 , 1.0 ) + ( 1.0 - I ) * vec4 ( la.rgb + ld.xyz + ls.rgb , 0.5 );
+	outputColor = I * vec4 ( 0.0 , 0.0 , 0.0 , 1.0 ) + ( 1.0 - I ) * vec4 ( la.rgb + ld.xyz + ls.rgb , 0.2 );
 	//outputColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 }

@@ -105,6 +105,12 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			//status_text->setText ( "Remove Below Intersection" );
 			this->sketchSession_->setEditMode();
 		}
+		if ( event->key ( ) == Qt::Key_Right )
+		{
+			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
+			//status_text->setText ( "Remove Below Intersection" );
+			this->sketchSession_->setEditMode();
+		}
 		if ( event->key ( ) == Qt::Key_Q )
 		{
 			emit currentCrossSection(this->sketch_controller->getCrossSection());

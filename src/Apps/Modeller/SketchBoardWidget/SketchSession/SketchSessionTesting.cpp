@@ -369,7 +369,6 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	//initializationWithImage(pixmap);
 }
 
-
 void SketchSessionTesting::reset()
 {
 	/// clear the map of curves
@@ -513,6 +512,11 @@ void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 //
 //	this->update ( );
 
+}
+
+void SketchSessionTesting::setOverSketchingMode()
+{
+	mode_ = InteractionMode::OVERSKETCHING;
 }
 
 void SketchSessionTesting::setEditMode()

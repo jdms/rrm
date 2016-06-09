@@ -72,6 +72,8 @@ class GLWidget: public QOpenGLWidget
 					   float _x_max,
 					   float _y_max,
 					   float _z_max );
+		void setPlanePosition( int _index );
+
 		// Black Screen
 		void updateBlackScreen(const CrossSection& _cross_section);
 
@@ -89,11 +91,12 @@ private:
         Tucano::Shader*   background_;
         // Entity related attributes
         // Cube, representing the boudingBox of the Geological Model
-        GLuint vertexArray_cube_;
-        	GLuint vertexBuffer_cube_;
-        	GLuint vertexCube_slot_;
-        std::vector<Eigen::Vector3f> cube_;
-        Tucano::Shader*   cube_shader_;
+        GLuint vertexArray_BlackScreen_cube_;
+        	GLuint vertexBuffer_BlackScreen_cube_;
+        	/// layout ( location = 0) vec3 position
+        	GLuint position_BlackScreen_slot_;
+        std::vector<Eigen::Vector3f> blackScreen_cube_;
+        Tucano::Shader*   blackScreen_cube_shader_;
 
         // The interpolated surface
 	GLuint vertexArray_patch_;
@@ -114,9 +117,18 @@ private:
 
         GLuint vertexArray_Seismic_cube_;
         	GLuint vertexBuffer_Seismic_cube_;
-        	GLuint vertexSeismic_cube_slot_;
-        std::vector<Eigen::Vector3f> seismic_cube_;
+        	GLuint position_seismic_cube_;
+        std::vector<float> seismic_cube_;
         Tucano::Shader*   seismic_cube_shader_;
+
+
+	GLuint vertexArray_Seismic_plane_;
+		GLuint vertexBuffer_Seismic_plane_;
+		/// layout (location = 0) vec4 position
+		GLuint position_seismic_plane_;
+	std::vector<float> seismic_plane_;
+	Tucano::Shader*    seismic_plane_shader_;
+	int		   plane_position;
 
 	Tucano::Shader*   mesh_shader_;
 	GLuint vertexArray_MESH_;

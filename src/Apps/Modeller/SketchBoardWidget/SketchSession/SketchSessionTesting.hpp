@@ -81,6 +81,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void setEditMode();
 		void setSketchMode();
+		void setOverSketchingMode();
 		void clear();
 		void reset();
 		// Update the view with the new Cross Section configuration

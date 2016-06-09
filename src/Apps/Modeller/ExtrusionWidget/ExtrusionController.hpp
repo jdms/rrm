@@ -7,6 +7,7 @@
 #include <vector>
 #include <tuple>
 #include <map>
+#include <algorithm>
 #include <iostream>
 
 #include <QtCore/QObject>
@@ -77,7 +78,8 @@ namespace RRM
 			// - Colour     vec4
 			// - Attributes vec4
 			/// Seismic Module
-			std::vector<Eigen::Vector3f> getcubeMesh ( );
+			std::vector<float> getCubeMesh  ( );
+			std::vector<float> getPlaneMesh ( float z);
 			std::vector<Eigen::Vector4f> getPlanes   ( const std::vector<unsigned int>& );
 			std::vector<Eigen::Vector4f> getSketchLines ( );
 
