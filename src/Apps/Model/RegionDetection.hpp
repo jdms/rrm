@@ -11,6 +11,7 @@
 #include <iostream>
 //Algorithms
 #include <algorithm>
+#include <iterator>
 //Container
 #include <vector>
 #include <map>
@@ -78,7 +79,7 @@ namespace RRM
 				Cycle temp;
 				/// Reordering
 				temp = Cycle(it,_c.end());
-				std::copy (_c.begin(),it,back_inserter(temp));
+				std::copy (_c.begin(),it,std::back_inserter(temp));
 				_c = temp;
 			}
 
@@ -127,7 +128,7 @@ namespace RRM
 						it = std::find(cycles.begin(),cycles.end(),c);
 						it_inv = std::find(cycles.begin(),cycles.end(),c_inv);
 
-						if ( (it == cycles.end() ) and  (it_inv == cycles.end() ) )
+						if ( (it == cycles.end() ) &&  (it_inv == cycles.end() ) )
 						{
 							cycles.insert(c);
 						}

@@ -12,6 +12,7 @@
 #include <tuple>
 #include <algorithm>
 #include <list>
+#include <iostream>
 
 #include "Topology/Vertex.hpp"
 #include "Topology/Edge.hpp"
@@ -567,11 +568,11 @@ namespace RRM
 							for ( auto edges_iterator: vertex_iterator.second.edges_ )
 							{
 
-								if ( (edges_[edges_iterator].source_id_ != 0) and ((edges_[edges_iterator].source_id_ != vertex_iterator.second.id_)) )
+								if ( (edges_[edges_iterator].source_id_ != 0) && ((edges_[edges_iterator].source_id_ != vertex_iterator.second.id_)) )
 								{
 									vertex_iterator.second.vertices_.insert ( edges_[edges_iterator].source_id_ );
 								}
-								if ( (edges_[edges_iterator].target_id_ != 0 ) and (edges_[edges_iterator].target_id_ != vertex_iterator.second.id_))
+								if ( (edges_[edges_iterator].target_id_ != 0 ) && (edges_[edges_iterator].target_id_ != vertex_iterator.second.id_))
 								{
 									vertex_iterator.second.vertices_.insert ( edges_[edges_iterator].target_id_ );
 								}
@@ -620,7 +621,7 @@ namespace RRM
 					int exist = 0;
 					for ( auto edge_iterator: vertex_iterator.second.edges_)
 					{
-						if ( edges_[edge_iterator].is_visible_ and  edges_[edge_iterator].is_enable_ )
+						if ( edges_[edge_iterator].is_visible_ &&  edges_[edge_iterator].is_enable_ )
 						{
 							if ( edges_[edge_iterator].source_id_ == vertex_iterator.second.id_ )
 							{

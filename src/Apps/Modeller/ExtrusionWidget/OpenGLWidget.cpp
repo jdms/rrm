@@ -196,7 +196,8 @@ void GLWidget::initializeGL ( )
 	glBindVertexArray ( 0 );
 
 	// IMPORTANT FOR THE DEPLOY VERSION
-	//loadShaderByResources ( );
+	loadShaderByResources ( );
+	//loadShaders();
 
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
@@ -258,9 +259,7 @@ void GLWidget::initializeGL ( )
 
 	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
 
-	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
-
-	loadShaders();
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 

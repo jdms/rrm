@@ -32,7 +32,7 @@ namespace RRM
 			typedef std::vector<unsigned char> 	    RRMImage;
 
 			typedef RRM::SeismicSlice<qreal> 	      SeismicSlice;
-			typedef typename SeismicSlice::CrossSection   CrossSection;
+			typedef SeismicSlice::CrossSection   CrossSection;
 			typedef std::map<unsigned int, SeismicSlice > SeismicSlices;
 
 			SBIMSeismicController ( QObject *parent = nullptr );

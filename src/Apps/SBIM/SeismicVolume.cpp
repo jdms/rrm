@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
+#include <vector>
 #include<iterator>
 
 namespace RRM
@@ -111,6 +112,8 @@ namespace RRM
 //		std::cout << "Size " << fileSize << " " << ( 596 * 291 * 297 ) * sizeof(unsigned short) << std::endl;
 //
 //		std::cout << "bounds " << (*bounds.first) << " - " << (*bounds.second) << std::endl;
+		return true;
+
 	}
 
 	void SeismicVolume::getTopSlice ( )

@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 namespace RRM
 {
