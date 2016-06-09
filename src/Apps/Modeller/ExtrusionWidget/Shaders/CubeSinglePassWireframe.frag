@@ -53,7 +53,7 @@ void main ( void )
 
 	// I = 0.0;
 
-	outputColor = I * vec4 ( 0.0 , 0.0 , 0.0 , 1.0 ) + ( 1.0 - I ) * vec4 ( la.rgb + ld.xyz + ls.rgb , 0.5 );
+	outputColor = I * vec4 ( 0.0 , 0.0 , 0.0 , 1.0 ) + ( 1.0 - I ) * vec4 ( la.rgb + ld.xyz + ls.rgb , VertexIn.color.a );
 	//outputColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 }

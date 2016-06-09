@@ -59,6 +59,8 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 		// Be careful on the assignment of each slot attributes
 		position_seismic_plane_ = 0;
 		seismic_plane_shader_ = 0;
+		seismic_slice_plane_index = 0;
+		seismic_slice_plane_position = 0.0f;
 
 	vertexArray_for_the_Cube_ = 0;
 		vertexBuffer_cube_8vertices_ = 0;
@@ -269,7 +271,7 @@ void GLWidget::initializeGL ( )
 		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
 		// Set up generic attributes pointers
 		glEnableVertexAttribArray ( position_seismic_plane_ );
-		glVertexAttribPointer ( position_seismic_plane_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+		glVertexAttribPointer ( position_seismic_plane_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
 	glBindVertexArray ( 0 );
 
@@ -348,6 +350,10 @@ void GLWidget::reloadShaders ( )
 	{
 		seismic_cube_shader_->reloadShaders ( );
 	}
+	if ( seismic_plane_shader_ )
+	{
+		seismic_plane_shader_->reloadShaders ( );
+	}
 }
 
 void GLWidget::loadShaderByResources ( )
@@ -399,9 +405,9 @@ void GLWidget::loadShaderByResources ( )
 	seismic_cube_shader_->initialize ( );
 
 	//! Effects --
-	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
 	seismic_plane_shader_->initialize ( );
 
 }
@@ -467,9 +473,9 @@ void GLWidget::loadShaders ( )
 	seismic_cube_shader_->initialize ( );
 
 	//! Effects --
-	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
+					             	     	      ( shaderDirectory + "Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
+								      ( shaderDirectory + "Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
 	seismic_plane_shader_->initialize ( );
 
 }
@@ -573,6 +579,20 @@ void GLWidget::paintGL ( )
 			glBindVertexArray ( 0 );
 		mesh_shader_->unbind ( );
 
+		seismic_plane_shader_->bind ( );
+		/// 3rd attribute buffer : vertices
+		seismic_plane_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+		seismic_plane_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+		seismic_plane_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+		seismic_plane_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+		seismic_plane_shader_->setUniform ( "color_plane" , 0.0f,1.0f,0.0f,1.0f );
+		seismic_plane_shader_->setUniform ( "z" , this->seismic_slice_plane_position );
+			glBindVertexArray ( vertexArray_Seismic_plane_ );
+			/// Draw the triangle !
+			glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_plane_.size() );
+
+			glBindVertexArray ( 0 );
+		seismic_plane_shader_->unbind ( );
 
 		seismic_cube_shader_->bind ( );
 		/// 3rd attribute buffer : vertices
@@ -580,7 +600,7 @@ void GLWidget::paintGL ( )
 		seismic_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-		seismic_cube_shader_->setUniform ( "color_lane" , 1.0f,0.0f,0.0f,1.0f );
+		seismic_cube_shader_->setUniform ( "color_plane" , 1.0f,0.0f,0.0f,0.1f );
 			glBindVertexArray ( vertexArray_Seismic_cube_ );
 			/// Draw the triangle !
 			glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_cube_.size() );
@@ -773,7 +793,8 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 /// Seismic Module
 void GLWidget::setPlanePosition( int _index )
 {
-	this->plane_position = _index;
+	this->seismic_slice_plane_position = this->extrusion_controller_.slicePositon(_index);
+	update();
 }
 
 void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
@@ -790,18 +811,9 @@ void GLWidget::updateRendering()
 
 	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertex_,this->normal_,this->faces_);
 
-	this->seismic_cube_ = this->extrusion_controller_.getCubeMesh();
-
-	this->seismic_plane_ = this->extrusion_controller_.getPlaneMesh(0.0f);
-
 	/// Send the new meshes to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
 	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
-	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-	/// Send the new meshes to the GPU
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->seismic_plane_.size ( ) * sizeof ( this->seismic_plane_[0] ) , this->seismic_plane_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	//
@@ -809,10 +821,6 @@ void GLWidget::updateRendering()
 	{
 		this->facesGL_.push_back(GLuint(f));
 	}
-
-	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->seismic_cube_.size ( ) * sizeof ( this->seismic_cube_[0] ) , this->seismic_cube_.data() , GL_STATIC_DRAW );
-	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
 	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
@@ -841,6 +849,21 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 				     float _z_max )
 {
 	this->extrusion_controller_.initialize(_x_min,_y_min,_z_min,_x_max,_y_max,_z_max);
+
+
+	this->seismic_cube_ = this->extrusion_controller_.getCubeMesh();
+
+	this->seismic_plane_ = this->extrusion_controller_.getPlaneMesh(0.0f);
+	this->seismic_slice_plane_position = this->extrusion_controller_.slicePositon(this->seismic_slice_plane_index);
+
+	/// Send the new meshes to the GPU
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->seismic_plane_.size ( ) * sizeof ( this->seismic_plane_[0] ) , this->seismic_plane_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->seismic_cube_.size ( ) * sizeof ( this->seismic_cube_[0] ) , this->seismic_cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 //	std::vector<unsigned int> plane_positions = {5,10,30,40,60,90};
 //

@@ -290,7 +290,7 @@ namespace RRM
 	}
 
 	// Seismic Module --------------->
-	std::vector<float> ExtrusionController::getPlaneMesh ( float z )
+	std::vector<float> ExtrusionController::getPlaneMesh ( float _index )
 	{
 		std::vector<float> cube =
 		{
@@ -298,12 +298,16 @@ namespace RRM
 			max_.x(), max_.y(), max_.z(),1.0,
 			min_.x(), max_.y(), max_.z(),1.0,
 			max_.x(), min_.y(), max_.z(),1.0,
-			min_.x(), min_.y(), max_.z(),1.0,
+			min_.x(), min_.y(), max_.z(),1.0
 		};
 
 		return cube;
 	}
 
+	float ExtrusionController::slicePositon( int _index )
+	{
+		return ( max_.z() - (scale_z_*(2*(_index-1))/scale_) );
+	}
 
 	std::vector<Eigen::Vector4f> ExtrusionController::getPlanes ( const std::vector<unsigned int>& slice_position )
 	{
@@ -480,14 +484,14 @@ namespace RRM
 
 					fl.insert(fl.end(),ft.begin(),ft.end());
 
-					std::cout << "stride" << stride << std::endl;
-
-					for ( auto i : fl )
-						std::cout << "index " << i << std::endl;
-
-					std::cout << "face Count " << fl.size() << std::endl;
-					std::cout << "Normal Count " << nl.size() << std::endl;
-					std::cout << "Vertex Count " << vl.size() << std::endl;
+//					std::cout << "stride" << stride << std::endl;
+//
+//					for ( auto i : fl )
+//						std::cout << "index " << i << std::endl;
+//
+//					std::cout << "face Count " << fl.size() << std::endl;
+//					std::cout << "Normal Count " << nl.size() << std::endl;
+//					std::cout << "Vertex Count " << vl.size() << std::endl;
 			 }
 
 	 }

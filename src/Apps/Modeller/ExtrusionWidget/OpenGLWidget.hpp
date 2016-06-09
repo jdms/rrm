@@ -85,7 +85,6 @@ private:
 	
 
         /// BLACK SCREEN
-
         // Scene related attributes
         Tucano::Trackball camera;
         Tucano::Shader*   background_;
@@ -128,7 +127,8 @@ private:
 		GLuint position_seismic_plane_;
 	std::vector<float> seismic_plane_;
 	Tucano::Shader*    seismic_plane_shader_;
-	int		   plane_position;
+	float		   seismic_slice_plane_position;
+	int		   seismic_slice_plane_index;
 
 	Tucano::Shader*   mesh_shader_;
 	GLuint vertexArray_MESH_;

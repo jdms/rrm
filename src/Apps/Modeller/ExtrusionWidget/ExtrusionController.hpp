@@ -82,6 +82,7 @@ namespace RRM
 			std::vector<float> getPlaneMesh ( float z);
 			std::vector<Eigen::Vector4f> getPlanes   ( const std::vector<unsigned int>& );
 			std::vector<Eigen::Vector4f> getSketchLines ( );
+			float slicePositon( int _index );
 
 			std::vector<Eigen::Vector4f> sketchLinearInterpolation ( );
 			// Radial Basis Function

@@ -34,6 +34,8 @@ void MainWindow::create2DModule ( )
 
 	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->glWidget , SLOT( updateBlackScreen(const CrossSection&) ) );
 
+	connect ( this->seismic_view_->ui->verticalSlider_seismic_slices_ , SIGNAL( valueChanged(int)) , this->glWidget , SLOT( setPlanePosition(int) ) );
+
 	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
 
 
