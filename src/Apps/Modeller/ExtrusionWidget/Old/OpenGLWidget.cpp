@@ -504,3 +504,4 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 
 	update ( );
 }
+

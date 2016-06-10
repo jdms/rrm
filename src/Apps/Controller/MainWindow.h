@@ -36,6 +36,7 @@
 #include "Model/CrossSection.hpp"
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
+#include "Modeller/ExtrusionWidget/View3DModule.hpp"
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 #include "Modeller/Sketching2DModule.h"
 
@@ -90,13 +91,12 @@ class MainWindow : public QMainWindow
 
 //        void newSection();
         void changeColorLine();
-
+        void interpolate();
         // CrossSection
         void keyPressEvent ( QKeyEvent *e );
         void mousePressEvent(QMouseEvent* event);
 
     public slots:
-
 
 	void on_horizontalSlider_curve_valueChanged();
 	void on_horizontalSlider_surface_valueChanged();
@@ -161,18 +161,10 @@ class MainWindow : public QMainWindow
 
 
         // 3D Extrusion
-        QDockWidget *dc_3DModule;
+        View3DModule *dc_3DModule;
         GLWidget *glWidget;
         Eigen::Vector3f min_;
         Eigen::Vector3f max_;
-	    QGroupBox *groupBox;
-	    QFormLayout *formLayout;
-	    QSlider *horizontalSlider_curve;
-	    QSlider *horizontalSlider_surface;
-	    QSlider *horizontalSlider_extrusion;
-	    QLabel *label;
-	    QLabel *label_2;
-	    QLabel *label_3;
 
 };
 

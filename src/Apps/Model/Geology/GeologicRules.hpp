@@ -16,7 +16,7 @@ namespace RRM
 	 */
 	enum GeologicRules
 	{
-		Sketch, REMOVE_ABOVE_INTERSECTION, REMOVE_BELOW_INTERSECTION
+		Sketch, REMOVE_ABOVE_INTERSECTION, REMOVE_BELOW_INTERSECTION, FREE
 	};
 
 } /* namespace RRM */

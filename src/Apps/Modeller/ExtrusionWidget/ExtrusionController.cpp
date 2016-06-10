@@ -100,13 +100,12 @@ namespace RRM
 		_patch.clear();
 
 		std::size_t last;
-		std::size_t last_j;
 
 		stepz = volume_width / stepz;
 
 		for ( std::size_t it_patch = 0; it_patch < _patchies.size ( ); it_patch++ )
 		{
-			for ( float j = 0.0f; j < volume_width; j += stepz )
+			for ( float j = 0.0f; j <= volume_width-stepz; j += stepz )
 			{
 				for ( std::size_t i = 0; i < ( _patchies[it_patch].size ( ) - stepx ); i += stepx )
 				{
@@ -125,21 +124,24 @@ namespace RRM
 	//
 				if ( last > _patchies[it_patch].size ( ) )
 				{
-					last -= stepx;
+					last = _patchies[it_patch].size ( );
 				}
 
 				//last -= stepx;
+				if ( j > volume_width )
+				{
+					j = volume_width;
+				}
 
-				last_j = j;
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), j   ) );
 
-				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j   ) );
-
-				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ) , last_j   ) );
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ) , j   ) );
 				// In the Extrude
-				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), last_j + stepz  ) );
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), j + stepz  ) );
 
-				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), last_j + stepz  ) );
+				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), j + stepz  ) );
 			}
+
 		}
 
 
@@ -289,7 +291,6 @@ namespace RRM
 		return cube;
 	}
 
-	// Seismic Module --------------->
 	std::vector<float> ExtrusionController::getPlaneMesh ( float _index )
 	{
 		std::vector<float> cube =
@@ -388,7 +389,7 @@ namespace RRM
 		 l.y = (max_.z()-min_.z());
 
 
-		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
 		 {
 			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
 			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 32,32 );
@@ -457,7 +458,7 @@ namespace RRM
 		std::size_t stride = 0;
 
 
-		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
 		 {
 			 surfaces[surfaces_iterator]->generateSurface();
 

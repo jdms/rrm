@@ -547,6 +547,21 @@ void SketchSessionTesting::setUpBackground ( )
 
 void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& curve_iterator : this->view_curves_ )
+	{
+		delete curve_iterator.second;
+	}
+	/// clear the map of curves
+	/// @todo clear all attributes
+	for ( auto& vertex_iterator : this->view_vertices_ )
+	{
+		delete vertex_iterator.second;
+	}
+
+	this->view_curves_.clear ( );
+	this->view_vertices_.clear ( );
 
 	for ( auto& polycurve_iterator : _polycurves )
 	{

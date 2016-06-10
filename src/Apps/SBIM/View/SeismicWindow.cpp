@@ -27,25 +27,27 @@ namespace RRM
 		ui->seismic_viewer_frame_->addWidget(this->seismic_viewer_);
 
 		//testing seismic
-		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+//		this->sketch_seismic_controller_.readSeismic("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
+//
+//		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
+//		{
+//			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);
+//
+//			for ( int w = 0; w < sketch_seismic_controller_.seismic_data_.width; w++ )
+//			{
+//				for ( int d = 0; d < sketch_seismic_controller_.seismic_data_.depth; d++ )
+//				{
+//					int b = sketch_seismic_controller_.seismic_data_.images_slices_[h][d * sketch_seismic_controller_.seismic_data_.width + w];
+//					QColor c ( b , b , b , 255 );
+//					image.setPixel ( w , d , c.rgb ( ) );
+//				}
+//			}
+//
+//			sketch_images_[h+1] = QPixmap::fromImage(image);
+//		}
 
-		for ( int h = 0; h < sketch_seismic_controller_.seismic_data_.height; h++ )
-		{
-			QImage image = QImage(sketch_seismic_controller_.seismic_data_.width, sketch_seismic_controller_.seismic_data_.depth, QImage::Format_RGB32);
-
-			for ( int w = 0; w < sketch_seismic_controller_.seismic_data_.width; w++ )
-			{
-				for ( int d = 0; d < sketch_seismic_controller_.seismic_data_.depth; d++ )
-				{
-					int b = sketch_seismic_controller_.seismic_data_.images_slices_[h][d * sketch_seismic_controller_.seismic_data_.width + w];
-					QColor c ( b , b , b , 255 );
-					image.setPixel ( w , d , c.rgb ( ) );
-				}
-			}
-
-			sketch_images_[h+1] = QPixmap::fromImage(image);
-		}
-
+		this->seismic_viewer_->overlayImage_->setPixmap( sketch_images_[1] );
+		this->seismic_viewer_->overlayImage_->setPos((640-this->seismic_viewer_->overlayImage_->boundingRect().width())*0.5,-(this->seismic_viewer_->overlayImage_->boundingRect().height()-480)*0.5); //now sets the position
 
 
 //		QPixmap pix1 = QPixmap("/home/felipe/lastrevision-1.png");
@@ -76,8 +78,10 @@ namespace RRM
 		std::cout << this->ui->listWidget->count();
 
 		/// Added new slice
-		connect(this->ui->pushButton_AddSlice, SIGNAL (pressed()),this, SLOT(addSeismicSlice()) );
+		connect(this->ui->seismic_pushButton_AddSlice_, SIGNAL (pressed()),this, SLOT(addSeismicSlice()) );
 		connect(this->ui->listWidget, SIGNAL (itemDoubleClicked(QListWidgetItem *)), this, SLOT(setCurrentSeismicSlice( QListWidgetItem * )) );
+
+		connect(this->ui->seismic_slices_verticalSlider_, SIGNAL (valueChanged(int)),this, SLOT(updateSeismicImage(int)) );
 	}
 
 	SeismicWindow::~SeismicWindow ( )
@@ -94,20 +98,27 @@ namespace RRM
 	{
 
 	}
-
 	/// @see http://stackoverflow.com/a/17085612
 	void SeismicWindow::showEvent( QShowEvent *)
 	{
 		this->seismic_viewer_->fitInView(this->seismic_viewer_->sceneRect(), Qt::KeepAspectRatio);
 	}
 
+	void SeismicWindow::updateSeismicImage( int _index )
+	{
+		if ( sketch_images_.count ( _index ) > 0 )
+		{
+			this->seismic_viewer_->overlayImage_->setPixmap ( sketch_images_[_index] );
+		}
+	}
+
 	bool SeismicWindow::addSeismicSlice (  )
 	{
-		int index = this->ui->verticalSlider_seismic_slices_->value();
+		int index = this->ui->seismic_slices_verticalSlider_->value();
 
 		if ( sketch_seismic_controller_.addSeismicSlice(index,QPixmap()) )
 		{
-			this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , (480/297) * (index) , 640 , (480/297) * (index) ) );
+			//this->seismic_viewer_->scene ( )->addItem ( new QGraphicsLineItem ( 0.0 , (480/297) * (index) , 640 , (480/297) * (index) ) );
 			// Save the current Scene Image
 			QImage image ( this->seismic_viewer_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
 			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
@@ -129,7 +140,8 @@ namespace RRM
 
 			this->ui->listWidget->insertItem ( index , item );
 
-			this->seismic_viewer_->overlayImage_->setPixmap(pix);
+//			this->seismic_viewer_->overlayImage_->setPixmap(pix);
+//			this->seismic_viewer_->overlayImage_->setPos((640-this->seismic_viewer_->overlayImage_->boundingRect().width())*0.5,-(this->seismic_viewer_->overlayImage_->boundingRect().height()-480)*0.5); //now sets the position
 
 		}else
 		{

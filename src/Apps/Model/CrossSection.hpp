@@ -19,7 +19,6 @@
 #include "Topology/Face.hpp"
 
 #include "RegionDetection.hpp"
-
 #include "Model/IDManager.hpp"
 
 
@@ -47,7 +46,7 @@ namespace RRM
 						this->source_curve_id 	= 0;
 						this->location_     	= Point2D(0.0,0.0);
 						this->is_extreme   	= false;
-						this->vertex_id_ 		= 0;
+						this->vertex_id_ 	= 0;
 					}
 
 					IntersectionVertex( std::size_t  _input_curve,
@@ -264,6 +263,11 @@ namespace RRM
 				test.meanFilter();
 				test.meanFilter();
 
+				if ( test.back().x() < test.front().x())
+				{
+					test.reverse();
+				}
+
 				// Intersetion over the current CrossSection
 				for ( auto& edge_iterator: edges_ )
 				{
@@ -275,6 +279,11 @@ namespace RRM
 
 					// Test input curve against the current Arrangement
 					// Find the intersection points
+
+					if ( (!edge_iterator.second.is_visible_) && (!edge_iterator.second.is_enable_) )
+					{
+						continue;
+					}
 					if ( edge_iterator.second.segment.curve.intersections ( test , thisIndex , thisAlphas, testIndex ,testAlphas, intersection_points ) )
 					{
 
@@ -478,6 +487,7 @@ namespace RRM
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
 							e2.segment.curve.superSample(3.0);
+							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							e2.source_id_ = edge_vertices[0].vertex_id_;
@@ -494,6 +504,22 @@ namespace RRM
 							vertices_[e2.target_id_].edges_.insert(e2.id_);
 
 							edges_[e2.id_] = e2;
+
+
+							if ( (!edge_vertices[0].is_extreme) && (!edges_[e2.id_].is_boundary_) )
+							{
+//
+								if ( test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y() )
+								{
+									edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+									edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+									std::cout << " Cuted" << std::endl;
+								}else
+									edges_[e2.id_].is_visible_ = false;
+									edges_[e2.id_].is_enable_ = false;								{
+									std::cout << " Cuted" << std::endl;
+								}
+							}
 
 						}else if ( edge_vertices.size() == 2)
 						{
@@ -526,12 +552,14 @@ namespace RRM
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
 							e2.segment.curve.superSample(3.0);
+							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							Edge<Real> e3;
 							e3.id_ = edge_index_.getID();
 							e3.segment.curve = c3;
 							e3.segment.curve.superSample(3.0);
+							e3.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e3.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 
@@ -589,23 +617,23 @@ namespace RRM
 					return 0;
 				}
 
-				std::cout << " New Configuration " << std::endl;
-				for(auto& vertex_iterator: vertices_ )
-				{
-					// Case not accepted
-					std::cout << "Vertex Valence : " << vertex_iterator.second.edges_.size() << std::endl;
-					for ( auto vit: vertex_iterator.second.vertices_ )
-					{
-						std::cout << "vertex id : " << vertex_iterator.second.id_ <<  " - " << vit << std::endl;
-					}
-					for ( auto edges_iterator: vertex_iterator.second.edges_ )
-					{
-						std::cout << "edges id : " << edges_iterator << " s " << edges_[edges_iterator].source_id_ << " t " << edges_[edges_iterator].target_id_ << std::endl;
-					}
-					std::cout << "---" << std::endl;
-				}
-
-				updateFaces();
+//				std::cout << " New Configuration " << std::endl;
+//				for(auto& vertex_iterator: vertices_ )
+//				{
+//					// Case not accepted
+//					std::cout << "Vertex Valence : " << vertex_iterator.second.edges_.size() << std::endl;
+//					for ( auto vit: vertex_iterator.second.vertices_ )
+//					{
+//						std::cout << "vertex id : " << vertex_iterator.second.id_ <<  " - " << vit << std::endl;
+//					}
+//					for ( auto edges_iterator: vertex_iterator.second.edges_ )
+//					{
+//						std::cout << "edges id : " << edges_iterator << " s " << edges_[edges_iterator].source_id_ << " t " << edges_[edges_iterator].target_id_ << std::endl;
+//					}
+//					std::cout << "---" << std::endl;
+//				}
+//
+//				updateFaces();
 
 				log();
 				return 1;

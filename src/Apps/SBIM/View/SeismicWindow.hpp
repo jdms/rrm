@@ -52,6 +52,7 @@ namespace RRM
 		public slots:
 			bool addSeismicSlice ( );
 			void setCurrentSeismicSlice( QListWidgetItem * item );
+			void updateSeismicImage( int _index );
 
 			// Receive the current working crossSection and update it on the controller
 			void updateCrossSection ( const CrossSection& _cross_section);
@@ -67,7 +68,7 @@ namespace RRM
 			Ui::SeismicWindowWidget* ui;
 			SeismicView* seismic_viewer_;
 
-			std::map<unsigned int , QGraphicsItem*> lines_checkpoint_;
+			//std::map<unsigned int , QGraphicsItem*> lines_checkpoint_;
 			std::map<unsigned int , QPixmap> sketch_images_;
 
 			/// RRM Seismic Module

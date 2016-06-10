@@ -36,7 +36,7 @@
     <enum>QLayout::SetMinimumSize</enum>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox_Slice_Image_Preview">
+    <widget class="QGroupBox" name="seismic_groupBox_Slice_Image_Preview">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -190,7 +190,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="seismic_verticalLayout_">
      <item>
       <widget class="QPushButton" name="seismic_pushButton_interpolate">
        <property name="text">
@@ -199,7 +199,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_seismic_slices_">
+      <widget class="QGroupBox" name="seismic_slices_groupBox_">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -229,7 +229,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QSlider" name="verticalSlider_seismic_slices_">
+         <widget class="QSlider" name="seismic_slices_verticalSlider_">
           <property name="minimum">
            <number>1</number>
           </property>
@@ -257,7 +257,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_AddSlice">
+         <widget class="QSpinBox" name="seismic_slices_spinBox_">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>290</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="seismic_pushButton_AddSlice_">
           <property name="text">
            <string>Add Slice</string>
           </property>
@@ -271,5 +281,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>seismic_slices_verticalSlider_</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>seismic_slices_spinBox_</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>692</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>716</x>
+     <y>534</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>seismic_slices_spinBox_</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>seismic_slices_verticalSlider_</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>742</x>
+     <y>531</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>696</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

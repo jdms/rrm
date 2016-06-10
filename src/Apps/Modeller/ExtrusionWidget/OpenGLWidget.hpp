@@ -57,6 +57,10 @@ class GLWidget: public QOpenGLWidget
 
 	public slots:
 
+		void black_screen_stepx(int x);
+		void black_screen_stepz(int z);
+		void black_screen_volumeWidth(int w);
+
 	 	void backGround();
 	 	// Deployed
 		void loadShaderByResources();
@@ -85,6 +89,9 @@ private:
 	
 
         /// BLACK SCREEN
+        float stepx = 1;
+        float stepz = 20;
+        float volume_width = 400;
         // Scene related attributes
         Tucano::Trackball camera;
         Tucano::Shader*   background_;

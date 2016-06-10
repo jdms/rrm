@@ -513,12 +513,12 @@ namespace RRM
 			_testIndex = theirIndex;
 //
 
-			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
-			{
-				std::cout << std::get<0>(myPair[i]) << std::endl;
-			}
-
-			std::cout << " -- " << std::endl;
+//			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
+//			{
+//				std::cout << std::get<0>(myPair[i]) << std::endl;
+//			}
+//
+//			std::cout << " -- " << std::endl;
 
 			std::sort( myPair.begin(), myPair.end(),
 
@@ -554,12 +554,12 @@ namespace RRM
 				  }
 			);
 
-			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
-			{
-				std::cout <<  std::get<0>(myPair[i]) << std::endl;
-			}
+//			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
+//			{
+//				std::cout <<  std::get<0>(myPair[i]) << std::endl;
+//			}
 
-			std::cout << " -- " << std::endl;
+//			std::cout << " -- " << std::endl;
 
 			for ( std::size_t i = 0; i < myPair.size ( ); ++i )
 			{
@@ -623,10 +623,10 @@ namespace RRM
 				_intersection_points[it].second = temporary_pair[it].second;
 			}
 
-			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
-			{
-				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second << std::endl;
-			}
+//			for ( std::size_t it = 0; it < _intersection_points.size(); it++)
+//			{
+//				std::cout << _intersection_points[it].first << " = " << _intersection_points[it].second << std::endl;
+//			}
 
 	}
 

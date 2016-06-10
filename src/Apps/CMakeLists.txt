@@ -68,6 +68,7 @@ set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
                         Modeller/SketchController.hpp   
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
                         Modeller/ExtrusionWidget/ExtrusionController.hpp
+                        Modeller/ExtrusionWidget/View3DModule.hpp
                         Modeller/SketchBoardWidget/SketchBoard.hpp
                         #Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
@@ -77,6 +78,7 @@ set( MODELLER_MOC_HEADERS Modeller/Sketching2DModule.h
                           Modeller/SketchController.hpp
 						  Modeller/ExtrusionWidget/OpenGLWidget.hpp
 						  Modeller/ExtrusionWidget/ExtrusionController.hpp
+						  Modeller/ExtrusionWidget/View3DModule.hpp
 					      Modeller/SketchBoardWidget/SketchBoard.hpp
                           #Modeller/SketchBoardWidget/SketchSession/SketchSession.hpp
                           Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp
@@ -89,6 +91,7 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
                         Modeller/SketchController.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
                         Modeller/ExtrusionWidget/ExtrusionController.cpp
+                        Modeller/ExtrusionWidget/View3DModule.cpp
                         Modeller/SketchBoardWidget/SketchBoard.cpp
                         #Modeller/SketchBoardWidget/SketchSession/SketchSession.cpp
                         Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.cpp

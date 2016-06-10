@@ -281,7 +281,7 @@ void GLWidget::initializeGL ( )
 
 	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
 
-	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
@@ -600,7 +600,7 @@ void GLWidget::paintGL ( )
 		seismic_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
 		seismic_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-		seismic_cube_shader_->setUniform ( "color_plane" , 1.0f,0.0f,0.0f,0.1f );
+		seismic_cube_shader_->setUniform ( "color_plane" , 0.5f,0.5f,0.5f,0.2f );
 			glBindVertexArray ( vertexArray_Seismic_cube_ );
 			/// Draw the triangle !
 			glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_cube_.size() );
@@ -901,11 +901,10 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 {
 	std::cout << "New Curve" << std::endl;
-
 	_cross_section.log();
 
 	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-	this->extrusion_controller_.updateBlackScreenMesh(1,20,200,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
@@ -916,5 +915,52 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 	update();
+}
 
+
+
+void GLWidget::black_screen_stepx ( int x )
+{
+	this->stepx = static_cast<float>(x);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	update();
+}
+void GLWidget::black_screen_stepz ( int z )
+{
+	this->stepz = static_cast<float>(z);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	update();
+}
+void GLWidget::black_screen_volumeWidth ( int w )
+{
+	this->volume_width = static_cast<float>(w);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
+	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
+	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	update();
 }
