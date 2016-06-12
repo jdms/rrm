@@ -251,38 +251,44 @@ namespace RRM
 	// Seismic Module --------------->
 	std::vector<float> ExtrusionController::getCubeMesh ( )
 	{
+
+
+		float zmax = ( max_.z() - (scale_z_*(2*(1))/scale_) );
+		float zmin = ( max_.z() - (scale_z_*(2*(290))/scale_) );
+
+
 		std::vector<float> cube =
 		{
 			//  Top Face
-			max_.x(), max_.y(), max_.z(),1.0,
-			min_.x(), max_.y(), max_.z(),1.0,
-			max_.x(), max_.y(), min_.z(),1.0,
-			min_.x(), max_.y(), min_.z(),1.0,
+			max_.x(), max_.y(), zmax,1.0,
+			min_.x(), max_.y(), zmax,1.0,
+			max_.x(), max_.y(), zmin,1.0,
+			min_.x(), max_.y(), zmin,1.0,
 			// Bottom Face
-			max_.x(), min_.y(), max_.z(),1.0,
-			min_.x(), min_.y(), max_.z(),1.0,
-			max_.x(), min_.y(), min_.z(),1.0,
-			min_.x(), min_.y(), min_.z(),1.0,
+			max_.x(), min_.y(), zmax,1.0,
+			min_.x(), min_.y(), zmax,1.0,
+			max_.x(), min_.y(), zmin,1.0,
+			min_.x(), min_.y(), zmin,1.0,
 			// Front Face
-			max_.x(), max_.y(), max_.z(),1.0,
-			min_.x(), max_.y(), max_.z(),1.0,
-			max_.x(), min_.y(), max_.z(),1.0,
-			min_.x(), min_.y(), max_.z(),1.0,
+			max_.x(), max_.y(), zmax,1.0,
+			min_.x(), max_.y(), zmax,1.0,
+			max_.x(), min_.y(), zmax,1.0,
+			min_.x(), min_.y(), zmax,1.0,
 			// Back Face
-			max_.x(), max_.y(), min_.z(),1.0,
-			min_.x(), max_.y(), min_.z(),1.0,
-			max_.x(), min_.y(), min_.z(),1.0,
-			min_.x(), min_.y(), min_.z(),1.0,
+			max_.x(), max_.y(), zmin,1.0,
+			min_.x(), max_.y(), zmin,1.0,
+			max_.x(), min_.y(), zmin,1.0,
+			min_.x(), min_.y(), zmin,1.0,
 			// Left Face
-			max_.x(), max_.y(), min_.z(),1.0,
-			max_.x(), max_.y(), max_.z(),1.0,
-			max_.x(), min_.y(), min_.z(),1.0,
-			max_.x(), min_.y(), max_.z(),1.0,
+			max_.x(), max_.y(), zmin,1.0,
+			max_.x(), max_.y(), zmax,1.0,
+			max_.x(), min_.y(), zmin,1.0,
+			max_.x(), min_.y(), zmax,1.0,
 			// Right Face
-			min_.x(), max_.y(), max_.z(),1.0,
-			min_.x(), max_.y(), min_.z(),1.0,
-			min_.x(), min_.y(), max_.z(),1.0,
-			min_.x(), min_.y(), min_.z(),1.0
+			min_.x(), max_.y(), zmax,1.0,
+			min_.x(), max_.y(), zmin,1.0,
+			min_.x(), min_.y(), zmax,1.0,
+			min_.x(), min_.y(), zmin,1.0
 		};
 
 		return cube;
@@ -304,7 +310,7 @@ namespace RRM
 
 	float ExtrusionController::slicePositon( int _index )
 	{
-		return ( max_.z() - (scale_z_*(2*(_index-1))/scale_) );
+		return ( max_.z() - (scale_z_*(2*(_index))/scale_) );
 	}
 
 	std::vector<Eigen::Vector4f> ExtrusionController::getPlanes ( const std::vector<unsigned int>& slice_position )
@@ -379,17 +385,20 @@ namespace RRM
 		std::cout << " min " << min_ << std::endl;
 		std::cout << " max " << max_ << std::endl;
 
+		float zmax = ( max_.z() - (scale_z_*(2*(1))/scale_) );
+		float zmin = ( max_.z() - (scale_z_*(2*(290))/scale_) );
+
 		 Point2 o, l;
 		 o.x = min_.x();
 		 l.x = (max_.x()-min_.x());
-		 o.y = min_.z();
-		 l.y = (max_.z()-min_.z());
+		 o.y = zmin;
+		 l.y = (zmax - zmin);
 
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
 		 {
 			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
-			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 32,32 );
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 48,48 );
 			 this->surfaces[surfaces_iterator]->setOrigin(o);
 			 this->surfaces[surfaces_iterator]->setLenght(l);
 		 }
@@ -410,7 +419,7 @@ namespace RRM
 
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
-					float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first-1))/scale_) );
+					float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first))/scale_) );
 					//z = center_.z() - z;
 					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
 										 edges_iterator.second.segment.curve[it].y(),

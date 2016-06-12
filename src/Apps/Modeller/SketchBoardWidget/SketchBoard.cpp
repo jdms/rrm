@@ -50,9 +50,9 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 
 	this->sketch_controller->updateSBIM();
 
-
 	/// Interface
 	status_text = new QLabel ( "Sketch" , this );
+	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
 
 }
 

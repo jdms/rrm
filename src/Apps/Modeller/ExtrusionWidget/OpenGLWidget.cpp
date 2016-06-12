@@ -3,6 +3,20 @@
 GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 {
 
+	/// Internface
+
+        menu_module_type_ = new QMenu(this);
+        action_seismic_module_ = new QAction(tr ("Seismic Module"),menu_module_type_);
+        action_blankSceen_module_= new QAction( tr ("Black Screen"),menu_module_type_);
+
+        menu_module_type_->addSection ( tr ( "Module" ) );
+        menu_module_type_->addAction(action_seismic_module_);
+        menu_module_type_->addAction(action_blankSceen_module_);
+
+	connect ( action_seismic_module_ , SIGNAL( triggered()) ,this, SLOT(setSeismicModule()) );
+	connect ( action_blankSceen_module_ , SIGNAL (triggered()) ,this, SLOT(setBlackScreenModule()) );
+
+
 	// Mesh Layout:
 	// - Geometry   vec4  slot = 0
 	// - Normal     vec4  slot = 1
@@ -690,6 +704,12 @@ void GLWidget::keyReleaseEvent ( QKeyEvent * event )
 /// MouseInput
 void GLWidget::mousePressEvent ( QMouseEvent *event )
 {
+
+	if ( ( event->buttons ( ) & Qt::RightButton ) && ( event->modifiers ( ) & Qt::AltModifier )  )
+	{
+		menu_module_type_->exec ( event->globalPos ( ) );
+	}
+
 	setFocus ( );
 	Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
 	if ( event->modifiers ( ) & Qt::ShiftModifier )
@@ -791,6 +811,11 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 }
 
 /// Seismic Module
+void GLWidget::setSeismicModule()
+{
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
+}
+
 void GLWidget::setPlanePosition( int _index )
 {
 	this->seismic_slice_plane_position = this->extrusion_controller_.slicePositon(_index);
@@ -898,6 +923,13 @@ bool GLWidget::extrusionInitialize ( float _x_min,
 }
 
 /// BLACK SCREEN
+/// Seismic Module
+void GLWidget::setBlackScreenModule()
+{
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+}
+
+
 void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 {
 	std::cout << "New Curve" << std::endl;
@@ -916,8 +948,6 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 
 	update();
 }
-
-
 
 void GLWidget::black_screen_stepx ( int x )
 {

@@ -18,6 +18,11 @@
 #include <QtCore/QByteArray>
 #include <QtGui/QPixmap>
 
+
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtWidgets/QApplication>
+
 #include "ui_SeismicWindow.h"
 
 // RRM Includes

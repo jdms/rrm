@@ -23,6 +23,8 @@
 #include <QtGui/QKeyEvent>
 
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QOpenGLWidget>
 
 #include "ExtrusionController.hpp"
@@ -60,6 +62,7 @@ class GLWidget: public QOpenGLWidget
 		void black_screen_stepx(int x);
 		void black_screen_stepz(int z);
 		void black_screen_volumeWidth(int w);
+		void setBlackScreenModule();
 
 	 	void backGround();
 	 	// Deployed
@@ -68,6 +71,7 @@ class GLWidget: public QOpenGLWidget
 		void loadShaders();
 		void reloadShaders();
 		// Seismic
+		void setSeismicModule();
 		void updateRendering();
 		void updateSeismicSlices ( const SeismicSlices& _seismic_slices);
 		bool extrusionInitialize ( float _x_min,
@@ -87,6 +91,9 @@ class GLWidget: public QOpenGLWidget
 
 private:
 	
+        QMenu* menu_module_type_;
+        QAction* action_seismic_module_;
+        QAction* action_blankSceen_module_;
 
         /// BLACK SCREEN
         float stepx = 1;

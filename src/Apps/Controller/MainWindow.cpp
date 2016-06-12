@@ -110,22 +110,14 @@ void MainWindow::createMainWindowActions ( )
 
 }
 
-//void MainWindow::newSection ( )
-//{
-////	this->sketchSession_->initialization ( 0.0 , 0.0 , 700 , 400 );  // The View
-////	this->cross_section_.initialization ( 0.0 , 0.0 , 700 , 400 );   // The  Model
-//}
-
 void MainWindow::changeColorLine ( )
 {
 }
 
 void MainWindow::createSketchingMenuBar ( )
 {
-
 	mn_windows->addAction ( ac_wdwsketching );
 	ac_wdwsketching->setCheckable ( true );
-
 }
 
 void MainWindow::createSketchingToolbar ( )

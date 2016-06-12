@@ -110,7 +110,7 @@ namespace RRM
 				id_ = 0;
 				viewPort_.first = Point2D(0,0);
 				viewPort_.second = Point2D(700,400);
-				current_rule = GeologicRules::REMOVE_ABOVE_INTERSECTION;
+				current_rule = GeologicRules::Sketch;
 			}
 
 			CrossSection ( const Self& _cross_section )
