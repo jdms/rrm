@@ -100,6 +100,7 @@ namespace RRM
 		connect(this->ui->listWidget, SIGNAL (itemDoubleClicked(QListWidgetItem *)), this, SLOT(setCurrentSeismicSlice( QListWidgetItem * )) );
 
 		connect(this->ui->seismic_slices_verticalSlider_, SIGNAL (valueChanged(int)),this, SLOT(updateSeismicImage(int)) );
+		connect(this->ui->seismic_pushButton_clear_, SIGNAL (pressed()),this, SLOT(clear()) );
 	}
 
 	SeismicWindow::~SeismicWindow ( )
@@ -171,6 +172,12 @@ namespace RRM
 		return false;
 	}
 
+	void SeismicWindow::clear()
+	{
+		this->ui->listWidget->clear();
+		this->sketch_seismic_controller_.clear();
+	}
+
 	const SeismicWindow::SeismicSlices& SeismicWindow::getSeimicSlices() const
 	{
 		return this->sketch_seismic_controller_.getSeismicSlices();
@@ -202,14 +209,18 @@ namespace RRM
 			return;
 		}
 
-		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_] = _cross_section;
+		if ( this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_.count(_cross_section.id_)  != 0 )
+		{
+			this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_] = _cross_section;
+			std::cout << " Log Seismic --- Back " << std::endl;
 
-		std::cout << " Log Seismic --- Back " << std::endl;
+			// Notify the 3D viewer
+			emit currentSeismicSlices(this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_);
 
-		// Notify the 3D viewer
-		emit currentSeismicSlices(this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_);
+			this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].log();
+		}
 
-		this->sketch_seismic_controller_.sketch_seismic_module_.seismic_slices_[_cross_section.id_].log();
+
 	}
 
 } /* namespace RRM */

@@ -410,8 +410,10 @@ void GLWidget::loadShaderByResources ( )
 						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
         background_->initialize ( );
 
-        mesh_shader_ = new Tucano::Shader ( "Seismic" , ( shaderDirectory + "Shaders/Seismic.vert" ).toStdString ( ) , ( shaderDirectory + "Shaders/Seismic.frag" ).toStdString ( ) , "" , "" , "" );
-        mesh_shader_->initialize ( );
+		mesh_shader_ = new Tucano::Shader("Seismic", (shaderDirectory + "Shaders/Seismic.vert").toStdString(),
+													(shaderDirectory + "Shaders/Seismic.frag").toStdString(),
+													(shaderDirectory + "Shaders/Seismic.geom").toStdString(), "", "");
+		mesh_shader_->initialize();
 
 	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
 					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
@@ -491,6 +493,37 @@ void GLWidget::loadShaders ( )
 					             	     	      ( shaderDirectory + "Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
 								      ( shaderDirectory + "Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
 	seismic_plane_shader_->initialize ( );
+
+}
+
+void GLWidget::clear()
+{
+
+	lines_.clear();
+
+	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
+	glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	facesGL_.clear();
+	vertex_.clear();
+	normal_.clear();
+
+	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+	glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
+	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
 
 }
 

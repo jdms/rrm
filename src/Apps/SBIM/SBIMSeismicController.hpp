@@ -48,6 +48,7 @@ namespace RRM
 			bool addSeismicSlice ( unsigned int _seismic_slice_index, const QPixmap& _overlay_image );
 			bool removeSeismicSlice ( );
 			bool replaceSeismicSlice ( );
+			void clear();
 
 			bool readSeismic ( std::string _filepath );
 

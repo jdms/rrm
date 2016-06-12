@@ -14,7 +14,7 @@ noperspective in vec3 dist;
 void main ( void )
 {
 
-	float d = min(dist.x, min(dist.y, dist.z));
+	float d = min(dist[0], min(dist[1], dist[2]));
 	float I = exp2(-2.0 * d * d);
 
 

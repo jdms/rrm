@@ -30,32 +30,26 @@ void main(void)
 	vec2 p2 = WIN_SCALE * (gl_in[2].gl_Position.xy / gl_in[2].gl_Position.w);
 
 
-	float a = length ( p1 - p2 );
-	float b = length ( p2 - p0 );
-	float c = length ( p1 - p0 );
-
-	float alpha = acos ( ( b * b + c * c - a * a ) / ( 2.0 * b * c ) );
-	float beta = acos ( ( a * a + c * c - b * b ) / ( 2.0 * a * c ) );
-
-	float ha = abs ( c * sin ( beta ) );
-	float hb = abs ( c * sin ( alpha ) );
-	float hc = abs ( b * sin ( alpha ) );
-
+	vec2 v0 = p2-p1;
+	vec2 v1 = p2-p0;
+	vec2 v2 = p1-p0;
+	
+	float area = abs(v1.x*v2.y - v1.y * v2.x);
 
 	VertexOut.normal   = VertexIn[0].normal;
 	VertexOut.color    = VertexIn[0].color;
 
-	dist = vec3(ha, 0.0, 0.0);
+	dist = vec3(area/length(v0),0,0);
 	VertexOut.vertice    = VertexIn[0].vertice;
 	gl_Position = gl_in[0].gl_Position;
 	EmitVertex();
 
-	dist = vec3(0.0, hb, 0.0);
+	dist = vec3(0,area/length(v1),0);
 	VertexOut.vertice    = VertexIn[1].vertice;
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
 
-	dist = vec3(0.0, 0.0, hc);
+	dist = vec3(0,0,area/length(v2));
 	VertexOut.vertice    = VertexIn[2].vertice;
 	gl_Position = gl_in[2].gl_Position;
 	EmitVertex();

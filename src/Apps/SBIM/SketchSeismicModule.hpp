@@ -67,6 +67,11 @@ namespace RRM
 
 			}
 
+			void clear()
+			{
+				seismic_slices_.clear();
+			}
+
 			unsigned int numberOfSeismicSlices ( ) const
 			{
 				return	seismic_slices_.size();

@@ -65,6 +65,7 @@ class GLWidget: public QOpenGLWidget
 		void setBlackScreenModule();
 
 	 	void backGround();
+	 	void clear();
 	 	// Deployed
 		void loadShaderByResources();
 		// Development

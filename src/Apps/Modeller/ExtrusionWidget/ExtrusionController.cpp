@@ -398,7 +398,7 @@ namespace RRM
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
 		 {
 			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
-			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 48,48 );
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 16,16 );
 			 this->surfaces[surfaces_iterator]->setOrigin(o);
 			 this->surfaces[surfaces_iterator]->setLenght(l);
 		 }
@@ -417,9 +417,11 @@ namespace RRM
 			{
 				//std:: cout << "Curve Size" << edges_iterator.second.segment.curve_index << std::endl;
 
+				float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first))/scale_) );
+
 				for ( std::size_t it = 0; it < edges_iterator.second.segment.curve.size() -1 ; it++)
 				{
-					float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first))/scale_) );
+
 					//z = center_.z() - z;
 					Eigen::Vector4f point1 = Eigen::Vector4f(edges_iterator.second.segment.curve[it].x(),
 										 edges_iterator.second.segment.curve[it].y(),
@@ -439,10 +441,34 @@ namespace RRM
 					{
 						lines.push_back(point1);
 						lines.push_back(point2);
+
+						Eigen::Vector3d v(point1.x(),point1.z(),point1.y());
+
+						if ( edges_iterator.second.is_boundary_  )
+						{
+						}
+						else if ( edges_iterator.second.is_visible_)
+						{
+							if ( edges_iterator.second.segment.curve_index < 6 )
+							{
+								surfaces[edges_iterator.second.segment.curve_index]->addPoint ( v );
+							}
+						}
 					}
 
+				}
 
-					Eigen::Vector3d v(point1.x(),point1.z(),point1.y());
+
+				if ( edges_iterator.second.is_visible_ && !edges_iterator.second.is_boundary_)
+				{
+
+					Eigen::Vector4f point = Eigen::Vector4f(edges_iterator.second.segment.curve.back().x(),
+										edges_iterator.second.segment.curve.back().y(),
+															 0.0,1.0);
+					point = trasnform_matrix_ * point;
+					point[2] = z;
+
+					Eigen::Vector3d v(point.x(),point.z(),point.y());
 
 					if ( edges_iterator.second.is_boundary_  )
 					{
@@ -455,6 +481,7 @@ namespace RRM
 						}
 					}
 				}
+
 			}
 		}
 

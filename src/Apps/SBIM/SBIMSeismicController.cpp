@@ -51,6 +51,10 @@ namespace RRM
 	{
 		return false;
 	}
+	void SBIMSeismicController::clear()
+	{
+		this->sketch_seismic_module_.clear();
+	}
 
 	SBIMSeismicController::RRMImage SBIMSeismicController::convertQPixmap2RRMImage (const QPixmap& _overlay_image)
 	{

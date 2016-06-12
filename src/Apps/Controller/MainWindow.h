@@ -85,10 +85,8 @@ class MainWindow : public QMainWindow
         void createFlowComputationMenuBar();
         void createFlowComputationActions();
 
-
-
     protected slots:
-
+    	void clear();
 //        void newSection();
         void changeColorLine();
         void interpolate();

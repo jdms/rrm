@@ -56,6 +56,7 @@ namespace RRM
 
 		public slots:
 			bool addSeismicSlice ( );
+			void clear();
 			void setCurrentSeismicSlice( QListWidgetItem * item );
 			void updateSeismicImage( int _index );
 

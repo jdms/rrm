@@ -41,6 +41,11 @@ void MainWindow::create2DModule ( )
 	connect ( this->seismic_view_->ui->seismic_pushButton_interpolate , SIGNAL( clicked(bool) ) , this , SLOT( interpolate() ) );
 	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
 
+	/// Notify the 3D View to update the surfaces
+	connect ( this->seismic_view_->ui->seismic_pushButton_clear_ , SIGNAL( pressed() ) , this , SLOT( clear() ) );
+
+	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
+
 	//connect ( this->seismic_view_ , SIGNAL( currentSeismicSlices( const SeismicSlices&) ) , this->glWidget , SLOT( updateSeismicSlices( const SeismicSlices&) ) );
 
 	// Sketching
@@ -61,6 +66,11 @@ void MainWindow::interpolate( )
 
 	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
 	glWidget->updateRendering();
+}
+
+void MainWindow::clear()
+{
+	glWidget->clear();
 }
 
 void MainWindow::create3DModule ( )
