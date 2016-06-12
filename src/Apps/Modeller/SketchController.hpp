@@ -15,7 +15,7 @@
 
 // Model CrossSection
 #include "Model/CrossSection.hpp"
-
+#include "Model/Geology/GeologicRules.hpp"
 #include "StratigraphyItem.hpp"
 
 class SketchController : public QObject
@@ -44,8 +44,9 @@ class SketchController : public QObject
 
 	public slots:
 
-        	void insertCurve ( QPolygonF _raw_sketch_curve );
+		void setRule( RRM::GeologicRules _update_rule);
 
+        	void insertCurve ( QPolygonF _raw_sketch_curve );
 		// By using a background image
 		void newSession ( QPixmap pixmap );
 		// Sketching a new boundary

@@ -151,8 +151,6 @@ class MainWindow : public QMainWindow
         SketchBoard  		*sketch_board_;
 
         QStatusBar			*status_bar_;
-        	QLabel			*status_text;
-
         QAction *ac_newBoundary;
 
 

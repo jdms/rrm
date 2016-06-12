@@ -21,6 +21,8 @@
 #include "RegionDetection.hpp"
 #include "Model/IDManager.hpp"
 
+#include "Geology/GeologicRules.hpp"
+
 
 namespace RRM
 {
@@ -108,6 +110,7 @@ namespace RRM
 				id_ = 0;
 				viewPort_.first = Point2D(0,0);
 				viewPort_.second = Point2D(700,400);
+				current_rule = GeologicRules::REMOVE_ABOVE_INTERSECTION;
 			}
 
 			CrossSection ( const Self& _cross_section )
@@ -153,6 +156,7 @@ namespace RRM
 			{
 				clear();
 			}
+
 			void clear ( )
 			{
 				vertex_index_.initialize ( 1000 );
@@ -164,6 +168,11 @@ namespace RRM
 				edges_.clear ( );
 				faces_.clear ( );
 				curves_history_.clear ( );
+			}
+
+			void setRule( GeologicRules _new_rule )
+			{
+				this->current_rule = _new_rule;
 			}
 
 			/// Quad in coordinates  (x , y) (Default OpenGL Coordinate System)
@@ -505,21 +514,42 @@ namespace RRM
 
 							edges_[e2.id_] = e2;
 
+							/// Applying on rule
 
 							if ( (!edge_vertices[0].is_extreme) && (!edges_[e2.id_].is_boundary_) )
 							{
-//
-								if ( test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y() )
+//								/// REMOVE BELOW
+								if ( (test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y()) )
 								{
-									edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
-									edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
-									std::cout << " Cuted" << std::endl;
+
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+
 								}else
-									edges_[e2.id_].is_visible_ = false;
-									edges_[e2.id_].is_enable_ = false;								{
-									std::cout << " Cuted" << std::endl;
+								{
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+									}
 								}
+								/// REMOVE ABOVE
 							}
+
+
 
 						}else if ( edge_vertices.size() == 2)
 						{
@@ -584,6 +614,112 @@ namespace RRM
 
 							edges_[e2.id_] = e2;
 							edges_[e3.id_] = e3;
+
+
+							if ( ( !edge_vertices[0].is_extreme && !edge_vertices[1].is_extreme ) && ( !edges_[e2.id_].is_boundary_ ) )
+							{
+//								/// REMOVE BELOW
+								if ( ( test[edge_vertices[0].input_curve - 1].y ( ) > edge_vertices[0].location_.y ( ) ) )
+								{
+
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+
+										edges_[e3.id_].is_visible_ = false;
+										edges_[e3.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+
+								}
+
+//								/// REMOVE Above
+								else
+								{
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+
+										edges_[e3.id_].is_visible_ = false;
+										edges_[e3.id_].is_enable_ = false;
+									}
+								}
+
+							}else if ( (!edge_vertices[0].is_extreme) && (!edges_[e2.id_].is_boundary_) )
+							{
+//								/// REMOVE BELOW
+								if ( (test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y()) )
+								{
+
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+
+								}else
+								{
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[edge_vertices[0].source_curve_id].is_enable_ = false;
+										edges_[edge_vertices[0].source_curve_id].is_visible_ = false;
+									}
+								}
+								/// REMOVE ABOVE
+							}else if ( (!edge_vertices[1].is_extreme) && (!edges_[e2.id_].is_boundary_) )
+							{
+//								/// REMOVE BELOW
+								if ( (test[edge_vertices[1].input_curve-1].y() > edge_vertices[1].location_.y()) )
+								{
+
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[e3.id_].is_visible_ = false;
+										edges_[e3.id_].is_enable_ = false;
+									}
+
+								}else
+								{
+									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
+									{
+										edges_[e3.id_].is_visible_ = false;
+										edges_[e3.id_].is_enable_ = false;
+									}
+									else if ( current_rule == GeologicRules::REMOVE_ABOVE_INTERSECTION )
+									{
+										edges_[e2.id_].is_visible_ = false;
+										edges_[e2.id_].is_enable_ = false;
+									}
+								}
+								/// REMOVE ABOVE
+							}
+
 
 						}else
 						{
@@ -715,6 +851,8 @@ namespace RRM
 			IDManager curve_index_;
 
 			std::pair<Point2D,Point2D> viewPort_;
+
+			GeologicRules current_rule;
 
 
 	};

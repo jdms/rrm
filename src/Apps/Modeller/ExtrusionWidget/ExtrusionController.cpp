@@ -19,7 +19,6 @@ namespace RRM
 	{
 
 	}
-
 	/// Use the extensions of the scene bounding box
 	bool  ExtrusionController:: initialize (  float _x_min,
 						  float _y_min,
@@ -92,7 +91,6 @@ namespace RRM
 
 		return true;
 	}
-
 	// Black Screen Module ---------->
 	void ExtrusionController::createBlackScreenExtrusionMesh ( const std::vector<std::vector<Eigen::Vector3f> >& _patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal, std::vector<Eigen::Vector3f> &_patch)
 	{
@@ -250,7 +248,6 @@ namespace RRM
 		}
 		createBlackScreenCube(box,_cube);
 	}
-
 	// Seismic Module --------------->
 	std::vector<float> ExtrusionController::getCubeMesh ( )
 	{

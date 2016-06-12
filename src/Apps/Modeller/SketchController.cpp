@@ -7,7 +7,7 @@
 
 #include "SketchController.hpp"
 
-SketchController::SketchController ( QObject*        parent) : QObject(parent)
+SketchController::SketchController ( QObject* parent) : QObject(parent)
 {
 	next = 0;
 	// Sketching
@@ -26,6 +26,11 @@ void SketchController::clear ( )
 					this->cross_section_.viewPort_.second.x(),
 					this->cross_section_.viewPort_.second.y());
 	updateSBIM();
+}
+
+void SketchController::setRule( RRM::GeologicRules _update_rule)
+{
+	this->cross_section_.setRule(_update_rule);
 }
 
 void SketchController::newSession ( qreal x , qreal y , qreal width , qreal height )
@@ -72,7 +77,6 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 
 	this->updateSBIM();
 }
-
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
 void SketchController::updateSBIM (  )
 {

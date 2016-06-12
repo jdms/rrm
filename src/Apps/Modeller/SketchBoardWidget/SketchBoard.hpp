@@ -4,9 +4,11 @@
 #define _SURFACE_HPP_
 
 #include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QLabel>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QSurfaceFormat>
+
 
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
 
@@ -30,6 +32,9 @@ public:
 
 	void wheelEvent ( QWheelEvent *event );
 	void keyPressEvent ( QKeyEvent *event );
+
+	/// Interface
+	QLabel			*status_text;
 
 public slots:
 	void setCrossSection( const CrossSection& _cross_section );

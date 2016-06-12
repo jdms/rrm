@@ -25,8 +25,7 @@ void MainWindow::create2DModule ( )
 	this->addDockWidget ( Qt::LeftDockWidgetArea , seismic_Module_ );
 
 	status_bar_ = new QStatusBar ( this );
-	status_text = new QLabel ( "Sketch" , this );
-	status_bar_->addWidget ( status_text );
+	status_bar_->addWidget ( sketch_board_->status_text );
 	this->setStatusBar ( this->status_bar_ );
 
 	/// Black Screen Module

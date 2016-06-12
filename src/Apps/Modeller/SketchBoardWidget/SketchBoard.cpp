@@ -50,6 +50,10 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 
 	this->sketch_controller->updateSBIM();
 
+
+	/// Interface
+	status_text = new QLabel ( "Sketch" , this );
+
 }
 
 SketchBoard::~SketchBoard ( )
@@ -93,6 +97,22 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		{
 
 		}
+		if ( event->key ( ) == Qt::Key_F9 )
+		{
+			this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
+			status_text->setText ( "Sketch" );
+		}
+		if ( event->key ( ) == Qt::Key_F10 )
+		{
+			this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_BELOW_INTERSECTION);
+			status_text->setText ( "Remove Below Intersection");
+		}
+		if ( event->key ( ) == Qt::Key_F11 )
+		{
+			this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION);
+			status_text->setText ( "Remove Above Intersection" );
+		}
+
 		if ( event->key ( ) == Qt::Key_Up )
 		{
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
