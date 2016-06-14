@@ -27,6 +27,8 @@ class BoundaryItem: public QGraphicsPathItem
         QColor color;
         vector< QPainterPath > boundary;
 
+        QRectF bb2D_;
+
 };
 
 #endif // BOUNDARYCONTROLLER_H

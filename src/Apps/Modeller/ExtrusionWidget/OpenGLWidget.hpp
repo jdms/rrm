@@ -89,6 +89,7 @@ class GLWidget: public QOpenGLWidget
 	signals:
 
         void changed(const QMimeData *mimeData = 0);
+        void emitBlackScreenVisiblity(bool);
 
 private:
 	

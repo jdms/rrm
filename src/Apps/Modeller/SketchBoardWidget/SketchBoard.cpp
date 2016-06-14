@@ -217,7 +217,9 @@ void SketchBoard::setCrossSection(const CrossSection& _cross_section)
 	 pix.loadFromData( _cross_section.image_.data(), _cross_section.image_.size());
 
 	/// Update the overlay image
-	this->sketchSession_->overlay_image_->setPixmap(pix);
+	 this->sketchSession_->initializationWithImage(pix);
+
+	//this->sketchSession_->overlay_image_->setPixmap(pix);
 
 	/// Update the data structure
 	this->sketch_controller->setCrossSection(_cross_section);

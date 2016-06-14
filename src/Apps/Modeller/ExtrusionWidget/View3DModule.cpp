@@ -69,6 +69,13 @@ View3DModule::View3DModule ( QWidget* parent ) : QDockWidget(parent)
 
         this->hb_canvas3d->addWidget(this->groupBox);
 
+        groupBox->setVisible(false);
+
+}
+
+void View3DModule::setBlackScreenVisibility( bool _is_visible )
+{
+	groupBox->setVisible(_is_visible);
 }
 
 void View3DModule::emitColor ( int R , int G , int B )

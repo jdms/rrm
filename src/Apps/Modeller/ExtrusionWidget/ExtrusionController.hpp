@@ -78,6 +78,7 @@ namespace RRM
 			// - Colour     vec4
 			// - Attributes vec4
 			/// Seismic Module
+			void setResolution(int _resolution,std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl);
 			std::vector<float> getCubeMesh  ( );
 			std::vector<float> getPlaneMesh ( float z);
 			std::vector<Eigen::Vector4f> getPlanes   ( const std::vector<unsigned int>& );
@@ -128,8 +129,12 @@ namespace RRM
 			Eigen::Vector4f min_;
                         Eigen::Vector4f max_;
 
+
                         /// Planin Library
                         std::map<unsigned int, PlanarSurface::Ptr> surfaces;
+                        std::map<unsigned int, unsigned int> number_of_curves_;
+                        int resolution_;
+
 
 	};
 

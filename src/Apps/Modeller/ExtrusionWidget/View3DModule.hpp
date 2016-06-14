@@ -31,6 +31,7 @@ class View3DModule: public QDockWidget
 
     public slots:
         void emitColor( int R, int G, int B );
+        void setBlackScreenVisibility( bool );
 
     signals:
         void setColor( int R, int G, int B );

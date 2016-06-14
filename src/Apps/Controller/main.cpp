@@ -27,13 +27,13 @@ int main( int argc, char *argv[] )
 
 
 // fixme some how, systems with dual GPU don't work with this line.
-//    	    QSurfaceFormat format;
+    	    QSurfaceFormat format;
 //    	    format.setDepthBufferSize(24);
 //    	    format.setVersion(3, 3);
 //    	    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-//    	    format.setRenderableType(QSurfaceFormat::OpenGL);
-//    	    format.setSamples(8);
-//    	    QSurfaceFormat::setDefaultFormat(format);
+    	    format.setRenderableType(QSurfaceFormat::OpenGL);
+    	    format.setSamples(16);
+    	    QSurfaceFormat::setDefaultFormat(format);
 
     MainWindow w;
     w.show();

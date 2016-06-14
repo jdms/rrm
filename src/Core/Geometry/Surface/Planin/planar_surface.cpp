@@ -398,9 +398,13 @@ bool PlanarSurface::getVertex2D( Natural index, Point2 &v ) {
     IndicesType indices; 
     getVertexIndices(index, indices); 
 
-    auto cast = []( Natural n ) -> double { return static_cast<double>(n); }; 
-    v.x = origin[0] + cast(indices[0]) * lenght[0]/cast(nX_); 
-    v.y = origin[1] + cast(indices[1]) * lenght[1]/cast(nY_);
+    auto cast = []( Natural n ) -> double { return static_cast<double>(n); };
+
+//    v.x = origin[0] + cast(indices[0]) * lenght[0]/cast(nX_);
+//    v.y = origin[1] + cast(indices[1]) * lenght[1]/cast(nY_);
+    // FIXME changed by Felipe
+    v.x = origin[0] + cast(indices[0]) * lenght[0]/cast(nX_ - 1);
+    v.y = origin[1] + cast(indices[1]) * lenght[1]/cast(nY_ - 1);
 
     /* std::cout << v.x << " " << v.y << std::endl; */ 
     /* std::cout << indices[0] << " " << indices[1] << std::endl; */ 

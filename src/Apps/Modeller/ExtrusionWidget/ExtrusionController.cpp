@@ -18,6 +18,8 @@ namespace RRM
 		colors_.push_back(Eigen::Vector3f(190.0f/255.0f,186.0f/255.0f,218.0f/255.0f));
 		colors_.push_back(Eigen::Vector3f(251.0f/255.0f,128.0f/255.0f,114.0f/255.0f));
 		colors_.push_back(Eigen::Vector3f(128.0f/255.0f,177.0f/255.0f,211.0f/255.0f));
+
+		this->resolution_ = 16;
 	}
 
 	ExtrusionController::~ExtrusionController ( )
@@ -83,16 +85,24 @@ namespace RRM
 		min_ = trasnform_matrix_.matrix() * min_;
 		max_ = trasnform_matrix_.matrix() * max_;
 
-//		 this->surfaces[4] = std::make_shared<PlanarSurface>();
-//		 Point2 o, l;
-//		 o.x = min_.x();
-//		 l.x = max_.x()-min_.x();
-//		 o.y = max_.z();
-//		 l.y = (max_.z()-min_.z());
-//		 this->surfaces[4]->requestChangeDiscretization( 16,16 );
-//
-//		 this->surfaces[4]->setOrigin(o);
-//		 this->surfaces[4]->setLenght(l);
+
+		float zmax = ( max_.z() - (scale_z_*(2*(1))/scale_) );
+		float zmin = ( max_.z() - (scale_z_*(2*(290))/scale_) );
+
+		 Point2 o, l;
+		 o.x = min_.x();
+		 l.x = (max_.x()-min_.x());
+		 o.y = zmin;
+		 l.y = (zmax - zmin);
+
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 {
+			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( resolution_,resolution_ );
+			 this->surfaces[surfaces_iterator]->setOrigin(o);
+			 this->surfaces[surfaces_iterator]->setLenght(l);
+			 this->number_of_curves_[surfaces_iterator] = 0;
+		 }
 
 		return true;
 	}
@@ -254,6 +264,57 @@ namespace RRM
 		createBlackScreenCube(box,_cube);
 	}
 	// Seismic Module --------------->
+	void ExtrusionController::setResolution(int _resolution,std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
+	{
+		this->resolution_ = _resolution;
+
+		std::vector<float> vt;
+		std::vector<float> nt;
+		std::vector<std::size_t> ft;
+		std::size_t stride = 0;
+
+		vl.clear();
+		nl.clear();
+		fl.clear();
+
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
+		 {
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( resolution_,resolution_ );
+
+			 if ( surfaces[surfaces_iterator]->surfaceIsSet()  )
+			 {
+
+				 	vt.clear();
+					nt.clear();
+					ft.clear();
+
+					surfaces[surfaces_iterator]->getVertexList ( vt );
+					surfaces[surfaces_iterator]->getNormalList ( nt );
+					surfaces[surfaces_iterator]->getFaceList ( ft );
+
+					for ( auto& index: ft)
+					{
+						index+=stride;
+					}
+
+					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
+					{
+						nt[it+0] = colors_[surfaces_iterator].x();
+						nt[it+1] = colors_[surfaces_iterator].y();
+						nt[it+2] = colors_[surfaces_iterator].z();
+					}
+
+					vl.insert(vl.end(),vt.begin(),vt.end());
+					nl.insert(nl.end(),nt.begin(),nt.end());
+
+					stride += static_cast<std::size_t>(vt.size()/3);
+
+					fl.insert(fl.end(),ft.begin(),ft.end());
+			 }
+		 }
+
+
+	}
 	std::vector<float> ExtrusionController::getCubeMesh ( )
 	{
 
@@ -376,7 +437,7 @@ namespace RRM
 
 		return cube;
 	}
-
+	// Interpolation
 	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices (std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
 	{
 
@@ -400,12 +461,15 @@ namespace RRM
 		 l.y = (zmax - zmin);
 
 
+		 this->number_of_curves_.clear();
+
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
 			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
-			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 16,16 );
+			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( resolution_,resolution_ );
 			 this->surfaces[surfaces_iterator]->setOrigin(o);
 			 this->surfaces[surfaces_iterator]->setLenght(l);
+			 this->number_of_curves_[surfaces_iterator] = 0;
 		 }
 
 
@@ -416,11 +480,21 @@ namespace RRM
 
 		for ( auto slice_iterator: this->seismic_slices_ )
 		{
-			//std:: cout << "Extrusion Controller " << slice_iterator.first << std::endl;
+			// FIXME testing
+			unsigned int curve_index = 0;
 
 			for ( auto& edges_iterator: slice_iterator.second.edges_ )
 			{
-				//std:: cout << "Curve Size" << edges_iterator.second.segment.curve_index << std::endl;
+
+				// FIXME testing
+				if ( (edges_iterator.second.is_visible_) && (!edges_iterator.second.is_boundary_) && (edges_iterator.second.segment.curve_index < 6) )
+				{
+					 	if ( curve_index != edges_iterator.second.segment.curve_index )
+						{
+					 		this->number_of_curves_[edges_iterator.second.segment.curve_index] += 1;
+					 		curve_index = edges_iterator.second.segment.curve_index;
+						}
+				}
 
 				float z = ( max_.z() - (scale_z_*(2*(slice_iterator.first))/scale_) );
 
@@ -498,7 +572,11 @@ namespace RRM
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
-			 surfaces[surfaces_iterator]->generateSurface();
+
+			 if ( this->number_of_curves_[surfaces_iterator] >= 2)
+			 {
+				 surfaces[surfaces_iterator]->generateSurface();
+			 }
 
 			 if ( surfaces[surfaces_iterator]->surfaceIsSet()  )
 			 {

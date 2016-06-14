@@ -16,7 +16,6 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 	connect ( action_seismic_module_ , SIGNAL( triggered()) ,this, SLOT(setSeismicModule()) );
 	connect ( action_blankSceen_module_ , SIGNAL (triggered()) ,this, SLOT(setBlackScreenModule()) );
 
-
 	// Mesh Layout:
 	// - Geometry   vec4  slot = 0
 	// - Normal     vec4  slot = 1
@@ -142,7 +141,6 @@ void GLWidget::create8VerticesIndices ()
 	glBindVertexArray(0);
 
 }
-
 /// OpenGL
 void GLWidget::initializeGL ( )
 {
@@ -172,9 +170,9 @@ void GLWidget::initializeGL ( )
 	glEnable ( GL_BLEND );
 	glBlendFunc ( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
 	glEnable(GL_MULTISAMPLE);
+	glMinSampleShading(1.0f);
 
 	/// BLACK SCREEN ----
-
 	glGenVertexArrays ( 1 , &vertexArray_BlackScreen_cube_ );
 	glBindVertexArray ( vertexArray_BlackScreen_cube_ );
 
@@ -221,10 +219,6 @@ void GLWidget::initializeGL ( )
 	// IMPORTANT FOR THE DEPLOY VERSION
 	//loadShaderByResources ( );
 	loadShaders();
-
-	// Lost approximately 4 hours to figure out, that actually, my entire shader
-	// was correct, however I was trying to upload the line's geometry before
-	// create the appropriate vertex buffer on the GPU
 
 	//596x291x297
 
@@ -295,7 +289,7 @@ void GLWidget::initializeGL ( )
 
 	extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
 
-	this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+	this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
 
 	camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
 
@@ -728,6 +722,98 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		}
 			break;
 
+		case Qt::Key_F2:
+		{
+			this->facesGL_.clear();
+
+			this->extrusion_controller_.setResolution(8,this->vertex_,this->normal_,this->faces_);
+
+			for (auto f: this->faces_ )
+			{
+				this->facesGL_.push_back(GLuint(f));
+			}
+
+			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+			glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+			update();
+		}
+			break;
+		case Qt::Key_F3:
+		{
+			this->facesGL_.clear();
+
+			this->extrusion_controller_.setResolution(16,this->vertex_,this->normal_,this->faces_);
+
+			for (auto f: this->faces_ )
+			{
+				this->facesGL_.push_back(GLuint(f));
+			}
+
+			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+			glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+			update();
+		}
+			break;
+		case Qt::Key_F4:
+		{
+			this->facesGL_.clear();
+
+			this->extrusion_controller_.setResolution(32,this->vertex_,this->normal_,this->faces_);
+
+			for (auto f: this->faces_ )
+			{
+				this->facesGL_.push_back(GLuint(f));
+			}
+
+			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
+			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
+			glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
+			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+			update();
+
+		}
+			break;
+
 		default:
 			break;
 	}
@@ -798,11 +884,9 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 
 	update ( );
 }
-
 /// @see http://stackoverflow.com/questions/25426356/how-to-get-the-released-button-inside-mousereleaseevent-in-qt
 /// @Merlin069 There is no button pressed on the releaseEvent so the event->buttons()
 /// – Othman Benchekroun Aug 21 '14 at 12:38is equal to 0
-
 void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
 {
 
@@ -846,7 +930,6 @@ void GLWidget::wheelEvent ( QWheelEvent *event )
 
 	update ( );
 }
-
 /// Seismic Module
 void GLWidget::setSeismicModule()
 {
@@ -973,7 +1056,7 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 	_cross_section.log();
 
 	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,500,blackScreen_cube_,patch_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );

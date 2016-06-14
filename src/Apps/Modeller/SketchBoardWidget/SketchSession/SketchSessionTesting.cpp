@@ -9,6 +9,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	/// Drag and Drop Feature
 	overlay_image_ = new QGraphicsPixmapItem ( );
 	this->addItem ( overlay_image_ );
+	overlay_image_->setZValue(1);
 
 	QPen pen;
 
@@ -28,9 +29,9 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
-	boundaryc_ = new BoundaryItem(0.0,0.0,QColor(55,55,55,55)) ;
-
+	boundaryc_ = new BoundaryItem(0.0,0.0,QColor(55,55,55,255)) ;
 	this->addItem ( boundaryc_ );
+	boundaryc_->setZValue(-1);
 
 	this->boundary_sketching_ = false;
 
@@ -588,6 +589,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<uns
 			//std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
 
 			StratigraphyItem * new_view_curve = new StratigraphyItem(colors[polycurve_iterator.second.first]);
+			new_view_curve->setZValue(1);
 			this->addItem(new_view_curve);
 
 			new_view_curve->setSketch(polycurve_iterator.second.second);

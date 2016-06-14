@@ -15,7 +15,7 @@ void main ( void )
 {
 
 	float d = min(dist[0], min(dist[1], dist[2]));
-	float I = exp2(-2.0 * d * d);
+	float I = exp2(-1.0 * d * d);
 
 
 	vec3 lights[1];
@@ -52,6 +52,6 @@ void main ( void )
 		ls += color_t * 0.6 * pow ( max ( 0.0 , dot ( eye_dir , ref ) ) , 5.0 );
 	}
 
-	outputColor = I * vec4(0.0, 0.0, 0.0, 1.0) + (1.0 - I) * vec4(color_t);//vec4 ( la.rgb + ld.xyz + ls.rgb , 1.0 );
+	outputColor = I * vec4(vec3(color_t.xyz*(0.5)),1.0) + (1.0 - I) * vec4(color_t);//vec4 ( la.rgb + ld.xyz + ls.rgb , 1.0 );
 }
 
