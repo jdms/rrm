@@ -219,8 +219,8 @@ void GLWidget::initializeGL ( )
 	glBindVertexArray ( 0 );
 
 	// IMPORTANT FOR THE DEPLOY VERSION
-	loadShaderByResources ( );
-	//loadShaders();
+	//loadShaderByResources ( );
+	loadShaders();
 
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before

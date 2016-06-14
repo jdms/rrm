@@ -28,7 +28,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
-	boundaryc_ = new BoundaryItem(0.0,0.0) ;
+	boundaryc_ = new BoundaryItem(0.0,0.0,QColor(55,55,55,55)) ;
 
 	this->addItem ( boundaryc_ );
 
@@ -44,6 +44,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 //	128,177,211
 
 
+	colors.push_back(QColor(Qt::darkGreen));
 	colors.push_back(QColor(141,211,199));
 	colors.push_back(QColor(255,255,179));
 	colors.push_back(QColor(190,186,218));
@@ -597,26 +598,26 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<uns
 	}
 
 
-	for (auto& vertice_iterator : _vertices)
-	{
-
-		// todo if the vertice exist, update it only it have changed
-		if ( this->view_vertices_.count(vertice_iterator.first) )
-		{
-			view_vertices_[vertice_iterator.first]->setRect(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
-		}else
-		{
-			QGraphicsEllipseItem* node = new QGraphicsEllipseItem(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
-			view_vertices_[vertice_iterator.first] = node;
-
-			//QGraphicsTextItem* text = new QGraphicsTextItem(QString::number(vertice_iterator.first));
-//			text->setPos(vertice_iterator.second.x(),vertice_iterator.second.y());
-//			text->setRotation(180);
-//			this->addItem(text);
-			this->addItem(node);
-
-		}
-	}
+//	for (auto& vertice_iterator : _vertices)
+//	{
+//
+//		// todo if the vertice exist, update it only it have changed
+//		if ( this->view_vertices_.count(vertice_iterator.first) )
+//		{
+//			view_vertices_[vertice_iterator.first]->setRect(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
+//		}else
+//		{
+//			QGraphicsEllipseItem* node = new QGraphicsEllipseItem(vertice_iterator.second.x()-25,vertice_iterator.second.y()-25,50.0,50.0);
+//			view_vertices_[vertice_iterator.first] = node;
+//
+//			//QGraphicsTextItem* text = new QGraphicsTextItem(QString::number(vertice_iterator.first));
+////			text->setPos(vertice_iterator.second.x(),vertice_iterator.second.y());
+////			text->setRotation(180);
+////			this->addItem(text);
+//			this->addItem(node);
+//
+//		}
+//	}
 
 
 	setUpBackground();

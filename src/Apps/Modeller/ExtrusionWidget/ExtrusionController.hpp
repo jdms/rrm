@@ -110,6 +110,7 @@ namespace RRM
 
 			/// Seismic Module
 			std::map<unsigned int, SeismicSlice > seismic_slices_;
+			std::vector<Eigen::Vector3f> colors_;
 
 			// It used normalise the scene
 			Eigen::Vector4f center_;

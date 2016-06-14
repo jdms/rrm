@@ -34,7 +34,7 @@ void StratigraphyItem::paint ( QPainter *painter , const QStyleOptionGraphicsIte
 	}
 	else
 	{
-		pen_color.setWidth ( 2 );
+		pen_color.setWidth ( 4 );
 		pen_color.setColor ( this->color_ );
 	}
 

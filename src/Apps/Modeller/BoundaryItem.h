@@ -14,7 +14,7 @@ class BoundaryItem: public QGraphicsPathItem
 
     public:
 
-	BoundaryItem( int width, int height );
+	BoundaryItem( int width, int height, const QColor& _color =  QColor ( 180 , 255 , 180 , 100 ) );
         ~BoundaryItem();
 
         void setNewBoundary (qreal x, qreal y,qreal width, qreal height);
@@ -24,7 +24,7 @@ class BoundaryItem: public QGraphicsPathItem
 
 
     protected:
-
+        QColor color;
         vector< QPainterPath > boundary;
 
 };

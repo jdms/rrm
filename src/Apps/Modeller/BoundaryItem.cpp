@@ -1,6 +1,6 @@
 #include "BoundaryItem.h"
 
-BoundaryItem::BoundaryItem ( int width , int height ) :	QGraphicsPathItem ( )
+BoundaryItem::BoundaryItem ( int width , int height , const QColor& _color ) :	QGraphicsPathItem ( )
 {
 
 	this->prepareGeometryChange ( );
@@ -19,6 +19,8 @@ BoundaryItem::BoundaryItem ( int width , int height ) :	QGraphicsPathItem ( )
 
 	boundary.push_back ( path0 );
 	boundary.push_back ( path2 );
+
+	this->color = _color;
 }
 
 BoundaryItem::~BoundaryItem ( )
@@ -49,8 +51,8 @@ void BoundaryItem::paint ( QPainter *painter , const QStyleOptionGraphicsItem *o
 	QPen pen_color ( QColor ( 0 , 200 , 0 ) );
 	pen_color.setWidth ( 1 );
 	QBrush brush;
-	//brush.setColor ( QColor ( 180 , 255 , 180 , 100 ) );
-	brush.setColor ( QColor ( 240 , 240 , 240 , 100 ) );
+	brush.setColor ( this->color );
+	//brush.setColor ( QColor ( 240 , 240 , 240 , 100 ) );
 	brush.setStyle ( Qt::SolidPattern );
 
 	painter->setPen ( pen_color );

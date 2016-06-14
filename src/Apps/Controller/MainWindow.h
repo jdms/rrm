@@ -41,8 +41,8 @@
 #include "Modeller/Sketching2DModule.h"
 
 #include "SBIM/View/SeismicWindow.hpp"
-// Simulator Volume
-#include "Simulator/FlowWindow.h"
+// Flow Simulator
+//#include "Simulator/FlowWindow.h"
 //#include "Simulator/FlowComputationModule.h"
 
 /**

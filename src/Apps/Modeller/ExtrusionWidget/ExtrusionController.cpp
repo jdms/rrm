@@ -12,7 +12,12 @@ namespace RRM
 
 	ExtrusionController::ExtrusionController ( QObject* parent  ) : QObject(parent)
 	{
-
+		colors_.push_back(Eigen::Vector3f(0.0f,0.0f,0.0f));
+		colors_.push_back(Eigen::Vector3f(141.0f/255.0f,211.0f/255.0f,199.0f/255.0f));
+		colors_.push_back(Eigen::Vector3f(255.0f/255.0f,255.0f/255.0f,179.0f/255.0f));
+		colors_.push_back(Eigen::Vector3f(190.0f/255.0f,186.0f/255.0f,218.0f/255.0f));
+		colors_.push_back(Eigen::Vector3f(251.0f/255.0f,128.0f/255.0f,114.0f/255.0f));
+		colors_.push_back(Eigen::Vector3f(128.0f/255.0f,177.0f/255.0f,211.0f/255.0f));
 	}
 
 	ExtrusionController::~ExtrusionController ( )
@@ -395,7 +400,7 @@ namespace RRM
 		 l.y = (zmax - zmin);
 
 
-		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
 			 this->surfaces[surfaces_iterator] = std::make_shared<PlanarSurface>();
 			 this->surfaces[surfaces_iterator]->requestChangeDiscretization( 16,16 );
@@ -491,7 +496,7 @@ namespace RRM
 		std::size_t stride = 0;
 
 
-		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 8; surfaces_iterator++)
+		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
 			 surfaces[surfaces_iterator]->generateSurface();
 
@@ -506,13 +511,20 @@ namespace RRM
 					surfaces[surfaces_iterator]->getNormalList ( nt );
 					surfaces[surfaces_iterator]->getFaceList ( ft );
 
-					vl.insert(vl.end(),vt.begin(),vt.end());
-					nl.insert(nl.end(),nt.begin(),nt.end());
-
 					for ( auto& index: ft)
 					{
 						index+=stride;
 					}
+
+					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
+					{
+						nt[it+0] = colors_[surfaces_iterator].x();
+						nt[it+1] = colors_[surfaces_iterator].y();
+						nt[it+2] = colors_[surfaces_iterator].z();
+					}
+
+					vl.insert(vl.end(),vt.begin(),vt.end());
+					nl.insert(nl.end(),nt.begin(),nt.end());
 
 					stride += static_cast<std::size_t>(vt.size()/3);
 

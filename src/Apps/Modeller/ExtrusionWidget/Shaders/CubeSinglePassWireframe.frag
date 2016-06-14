@@ -49,7 +49,7 @@ void main ( void )
 	}
 
 	float d = min ( dist[0] , min ( dist[1] , min ( dist[2] , dist[3] ) ) );
-	float I = exp2 ( -0.1 * d * d );
+	float I = exp2 ( -0.5 * d * d );
 
 	// I = 0.0;
 

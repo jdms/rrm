@@ -210,11 +210,13 @@ set( SIMULATOR_SOURCES
 
 
 ## Q_OBJECT files
-set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS} ${SIMULATOR_MOC_HEADERS}  
-#${SIMULATOR_MOC_HEADERS} 
+set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS} 
+    #${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
-set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES} ${SIMULATOR_UI_SOURCES} )
+set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES} 
+    #${SIMULATOR_UI_SOURCES} 
+    )
 ## Resources
 set(RCC_SOURCES Controller/Resources/images.qrc)
 
@@ -248,7 +250,7 @@ ELSEIF(UNIX)
         add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
                                        ${SBIM_SOURCES} ${SBIM_HEADERS}      
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
-                                       ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
+                                       #${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})	
     target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 ELSE() # Not Windows or Unix
