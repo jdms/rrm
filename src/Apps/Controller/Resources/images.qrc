@@ -17,6 +17,7 @@
     <file>icons/sum.png</file>
   </qresource>
   <qresource prefix="logos">
+    <file>about/sponsors.png</file>
     <file>about/RRMparterns.png</file>
     <file>about/RRMsponsors.png</file>
     <file>about/ExxonMobil.png</file>

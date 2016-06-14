@@ -85,7 +85,7 @@ class SketchSessionTesting: public QGraphicsScene
 		void clear();
 		void reset();
 		// Update the view with the new Cross Section configuration
-		void updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
+		void updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
 		void setBoundary ( Real x , Real y , Real width , Real height );
 

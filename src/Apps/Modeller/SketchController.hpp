@@ -58,7 +58,7 @@ class SketchController : public QObject
         	void updateSBIM( );
 
         signals:
-		void updateSBIM        ( const std::map<unsigned int, QPolygonF>& ,
+		void updateSBIM        ( const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& ,
 					 const std::map<unsigned int, QPointF>& );
 	private:
         	// The Model

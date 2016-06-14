@@ -42,7 +42,7 @@
 
 #include "SBIM/View/SeismicWindow.hpp"
 // Simulator Volume
-//#include "Simulator/CanvasComputation.h"
+#include "Simulator/FlowWindow.h"
 //#include "Simulator/FlowComputationModule.h"
 
 /**

@@ -46,10 +46,11 @@ void BoundaryItem::paint ( QPainter *painter , const QStyleOptionGraphicsItem *o
 
 	painter->setRenderHint ( QPainter::Antialiasing );
 
-	QPen pen_color ( QColor ( 0 , 100 , 0 ) );
+	QPen pen_color ( QColor ( 0 , 200 , 0 ) );
 	pen_color.setWidth ( 1 );
 	QBrush brush;
-	brush.setColor ( QColor ( 180 , 255 , 180 , 100 ) );
+	//brush.setColor ( QColor ( 180 , 255 , 180 , 100 ) );
+	brush.setColor ( QColor ( 240 , 240 , 240 , 100 ) );
 	brush.setStyle ( Qt::SolidPattern );
 
 	painter->setPen ( pen_color );

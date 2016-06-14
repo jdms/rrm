@@ -36,11 +36,19 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	setUpBackground();
 
-	colors.push_back(QColor(Qt::white));
-	colors.push_back(QColor(Qt::black));
-	colors.push_back(QColor(Qt::cyan));
-	colors.push_back(QColor(Qt::darkCyan));
-	colors.push_back(QColor(Qt::red));
+/// qualitative pastel color @see http://colorbrewer2.org/
+//	141,211,199
+//	255,255,179
+//	190,186,218
+//	251,128,114
+//	128,177,211
+
+
+	colors.push_back(QColor(141,211,199));
+	colors.push_back(QColor(255,255,179));
+	colors.push_back(QColor(190,186,218));
+	colors.push_back(QColor(251,128,114));
+	colors.push_back(QColor(128,177,211));
 	colors.push_back(QColor(Qt::darkRed));
 	colors.push_back(QColor(Qt::magenta));
 	colors.push_back(QColor(Qt::darkMagenta));
@@ -545,7 +553,7 @@ void SketchSessionTesting::setUpBackground ( )
 	this->setBackgroundBrush ( QBrush ( gradient ) );
 }
 
-void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
+void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
 	/// clear the map of curves
 	/// @todo clear all attributes
@@ -570,7 +578,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		{
 			//std::cout << "The curve exist " <<  polycurve_iterator.first << std::endl;
 
-			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second);
+			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second.second);
 
 		}
 		// todo, create an appropriate QGraphicsItem from the new curve ( which geoObject which it represents)
@@ -578,10 +586,10 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, QPolygonF>& _
 		{
 			//std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
 
-			StratigraphyItem * new_view_curve = new StratigraphyItem(Qt::black);
+			StratigraphyItem * new_view_curve = new StratigraphyItem(colors[polycurve_iterator.second.first]);
 			this->addItem(new_view_curve);
 
-			new_view_curve->setSketch(polycurve_iterator.second);
+			new_view_curve->setSketch(polycurve_iterator.second.second);
 			view_curves_[polycurve_iterator.first] = new_view_curve;
 		}
 

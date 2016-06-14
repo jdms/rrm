@@ -45,8 +45,8 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 		  this 			  , SLOT  ( setBoundary ( Real, Real, Real, Real ) ) );
 
 	// Notify the view with the new configuration of Lines
-	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) ,
-		  this->sketchSession_    , SLOT  ( updateSBIM(const std::map<unsigned int, QPolygonF>&, const std::map<unsigned int, QPointF>& ) ) );
+	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >&, const std::map<unsigned int, QPointF>& ) ) ,
+		  this->sketchSession_    , SLOT  ( updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >&, const std::map<unsigned int, QPointF>& ) ) );
 
 	this->sketch_controller->updateSBIM();
 

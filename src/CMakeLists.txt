@@ -25,11 +25,11 @@ find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL)
 #endif()
 
 IF(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0")
 ELSEIF(WIN32)
     if(MSVC)
         FIND_LIBRARY(SAMG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SAMG )
-        message("CGAL is required." ${SAMG_LIBRARY})
+        message("SAMG Library." ${SAMG_LIBRARY})
     endif(MSVC)
 ENDIF()    
 

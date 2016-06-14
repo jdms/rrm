@@ -80,7 +80,7 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
 void SketchController::updateSBIM (  )
 {
-	std::map<unsigned int, QPolygonF> view_curves_;
+	std::map<unsigned int, std::pair<unsigned int,QPolygonF> > view_curves_;
 	std::map<unsigned int, QPointF>   view_vertices_;
 
 	QPolygonF view_curve;
@@ -90,7 +90,8 @@ void SketchController::updateSBIM (  )
 		if (curves_iterator.second.is_visible_)
 		{
 			view_curve = this->convertCurves(curves_iterator.second.segment.curve);
-			view_curves_[curves_iterator.first] = view_curve;
+			view_curves_[curves_iterator.first].first = curves_iterator.second.segment.curve_index;
+			view_curves_[curves_iterator.first].second = view_curve;
 		}
 	}
 
@@ -455,4 +456,5 @@ SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 
 	return polygonal_curve;
 }
+
 

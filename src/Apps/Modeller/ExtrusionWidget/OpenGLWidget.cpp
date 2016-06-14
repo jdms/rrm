@@ -7,7 +7,7 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 
         menu_module_type_ = new QMenu(this);
         action_seismic_module_ = new QAction(tr ("Seismic Module"),menu_module_type_);
-        action_blankSceen_module_= new QAction( tr ("Black Screen"),menu_module_type_);
+        action_blankSceen_module_= new QAction( tr ("Black Screen Module"),menu_module_type_);
 
         menu_module_type_->addSection ( tr ( "Module" ) );
         menu_module_type_->addAction(action_seismic_module_);
@@ -219,8 +219,8 @@ void GLWidget::initializeGL ( )
 	glBindVertexArray ( 0 );
 
 	// IMPORTANT FOR THE DEPLOY VERSION
-	//loadShaderByResources ( );
-	loadShaders();
+	loadShaderByResources ( );
+	//loadShaders();
 
 	// Lost approximately 4 hours to figure out, that actually, my entire shader
 	// was correct, however I was trying to upload the line's geometry before
@@ -367,6 +367,10 @@ void GLWidget::reloadShaders ( )
 	if ( seismic_plane_shader_ )
 	{
 		seismic_plane_shader_->reloadShaders ( );
+	}
+	if ( patch_shader_ )
+	{
+		patch_shader_->reloadShaders ( );
 	}
 }
 
