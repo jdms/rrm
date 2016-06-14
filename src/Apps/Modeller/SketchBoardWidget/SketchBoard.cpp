@@ -61,27 +61,6 @@ SketchBoard::~SketchBoard ( )
 
 }
 
-void SketchBoard::newSession ( Real x , Real y , Real width , Real height )
-{
-	this->sketchSession_->initialization(x,y,width,height);
-	this->sketch_controller->newSession(x,y,width,height);
-}
-
-void SketchBoard::newSession ( const QPixmap& _image )
-{
-	this->sketchSession_->initializationWithImage(_image);
-	this->sketch_controller->newSession(_image.rect ( ).x(),
-                                            _image.rect ( ).y(),
-					    _image.rect ( ).width(),
-					    _image.rect ( ).height());
-}
-
-void SketchBoard::setBoundary ( Real x , Real y , Real width , Real height )
-{
-	this->sketch_controller->newSession(x,y,width,height);
-	this->sketchSession_->setBoundary(x,y,width-x,height-y);
-}
-
 void SketchBoard::keyPressEvent ( QKeyEvent *event )
 {
 		if ( event->key ( ) == Qt::Key_F2 )
@@ -202,6 +181,33 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 	               this->scale ( 1.0 / scaleFactor , 1.0 / scaleFactor );
 		}
 	}
+}
+
+void SketchBoard::clear()
+{
+	sketchSession_->reset();
+	this->sketch_controller->clear();
+}
+
+void SketchBoard::newSession ( Real x , Real y , Real width , Real height )
+{
+	this->sketchSession_->initialization(x,y,width,height);
+	this->sketch_controller->newSession(x,y,width,height);
+}
+
+void SketchBoard::newSession ( const QPixmap& _image )
+{
+	this->sketchSession_->initializationWithImage(_image);
+	this->sketch_controller->newSession(_image.rect ( ).x(),
+                                            _image.rect ( ).y(),
+					    _image.rect ( ).width(),
+					    _image.rect ( ).height());
+}
+
+void SketchBoard::setBoundary ( Real x , Real y , Real width , Real height )
+{
+	this->sketch_controller->newSession(x,y,width,height);
+	this->sketchSession_->setBoundary(x,y,width-x,height-y);
 }
 
 void SketchBoard::setCrossSection(const CrossSection& _cross_section)

@@ -37,6 +37,8 @@ public:
 	QLabel			*status_text;
 
 public slots:
+	// clear
+	void clear();
 	void setCrossSection( const CrossSection& _cross_section );
 	/// default Scene
 	void newSession ( Real x , Real y , Real width , Real height );

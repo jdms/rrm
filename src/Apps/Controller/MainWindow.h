@@ -86,19 +86,16 @@ class MainWindow : public QMainWindow
         void createFlowComputationActions();
 
     protected slots:
+    	// CrossSection
     	void clear();
-//        void newSection();
+
         void changeColorLine();
+        // Seismic
         void interpolate();
-        // CrossSection
+
         void keyPressEvent ( QKeyEvent *e );
         void mousePressEvent(QMouseEvent* event);
 
-    public slots:
-
-	void on_horizontalSlider_curve_valueChanged();
-	void on_horizontalSlider_surface_valueChanged();
-	void on_horizontalSlider_extrusion_valueChanged();
 
     private:
 

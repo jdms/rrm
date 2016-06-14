@@ -98,19 +98,3 @@ void MainWindow::mousePressEvent ( QMouseEvent* event )
 {
 	event->ignore();
 }
-
-void MainWindow::on_horizontalSlider_curve_valueChanged()
-{
-	//update3DExtrusion();
-}
-
-void MainWindow::on_horizontalSlider_surface_valueChanged()
-{
-	//update3DExtrusion();
-}
-
-void MainWindow::on_horizontalSlider_extrusion_valueChanged()
-{
-	//update3DExtrusion();
-}
-

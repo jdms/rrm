@@ -267,10 +267,14 @@ namespace RRM
 					return 0;
 				}
 
-				_curve.douglasPeuckerSimplify(test,0.5);
+				test = _curve;
+
+				//_curve.douglasPeuckerSimplify(test,0.5);
+				std::cout << "CURVE SIZE" << test.size() << std::endl;
+				test.lineFilter(0.5,4);
 				test.meanFilter();
-				test.meanFilter();
-				test.meanFilter();
+				std::cout << "CURVE SIZE After" << test.size() << std::endl;
+
 
 				if ( test.back().x() < test.front().x())
 				{
@@ -280,12 +284,6 @@ namespace RRM
 				// Intersetion over the current CrossSection
 				for ( auto& edge_iterator: edges_ )
 				{
-					for ( std::size_t it = 0 ; it < test.size() ; it++ )
-					{
-						std::cout << " Point : " << test[it].x() << " - " << test[it].y() << std::endl;
-					}
-					std::cout << " ---- "<< std::endl;
-
 					// Test input curve against the current Arrangement
 					// Find the intersection points
 
@@ -296,14 +294,8 @@ namespace RRM
 					if ( edge_iterator.second.segment.curve.intersections ( test , thisIndex , thisAlphas, testIndex ,testAlphas, intersection_points ) )
 					{
 
-//						for ( std::size_t it = 0 ; it < edge_iterator.second.segment.curve.size() ; it++ )
-//						{
-//							std::cout << " Point : " << edge_iterator.second.segment.curve[it].x() << " - " << edge_iterator.second.segment.curve[it].y() << std::endl;
-//						}
 						if ( thisIndex.size ( ) == 2 )
 						{
-
-
 							for ( std::size_t it = 0; it < testIndex.size(); it++)
 							{
 								IntersectionVertex vi (testIndex[it],

@@ -104,10 +104,9 @@ void MainWindow::createMainWindowActions ( )
 
 	// About Widget
 	aboutRRM = new AboutWidget( this );
-	connect(ac_about, SIGNAL(triggered()), aboutRRM, SLOT(show()));
-
+	connect ( ac_about , SIGNAL( triggered() ) , aboutRRM , SLOT( show() ) );
 	connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
-
+	connect ( ac_new , SIGNAL( triggered(bool) ) , this->sketch_board_ , SLOT( clear() ) );
 }
 
 void MainWindow::changeColorLine ( )
