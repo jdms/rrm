@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QInputDialog>
+#include <QFrame>
 
 using namespace std;
 

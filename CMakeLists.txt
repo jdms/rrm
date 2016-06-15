@@ -41,7 +41,7 @@ ENDIF()
 
 #@see http://stackoverflow.com/questions/23878590/turn-off-eigen-alignment-in-the-pcl-build
 # 32/64 bits
-#add_definitions(-DEIGEN_DONT_ALIGN)
+add_definitions(-DEIGEN_DONT_ALIGN)
 
 ## - Examples using and Qt
 add_subdirectory(src)

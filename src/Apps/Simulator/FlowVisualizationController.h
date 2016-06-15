@@ -20,8 +20,8 @@ class FlowVisualizationController: public QObject
 
 
         inline void getTetgenParameter( std::string& cmd ) { region.getTetgenCommand( cmd );  }
-        inline void getViscosityParameter( float& vis ) { vis = region.getViscosityValue(); }
-        inline void getPermeabilityParameter( int& nperm, std::vector< double > &vperm ) { region.getPermeabilityValue( nperm, vperm );  }
+        inline void getPropertyArea( int& np, std::vector< double >& values ){ region.getPropertyArea( np, values ); }
+
         inline void getBoundariesValues( int& ndir, std::vector< double > &vdir )   { region.getBoundariesSurface( ndir, vdir );  }
         inline void getWellsParameter( int& nswells, std::vector< double > &vswells )  { region.getWells( nswells, vswells );}
         inline void getTofBoundaryParameter( int& ntfbound, std::vector< int > &vtfbound )  { region.getTofBoundaries( ntfbound, vtfbound ); }
@@ -33,6 +33,8 @@ class FlowVisualizationController: public QObject
         void getPressureValuesbyVertex(std::vector<double> &values );
         void getTOFValuesbyVertex( std::vector< double >& values );
         void getTOFValuesbyCell( std::vector< double >& values );
+        void getTracerValuesbyVertex( std::vector< double >& values );
+        void getTracerValuesbyCell( std::vector< double >& values );
 
 
         void getSurfaceFromCrossSection( /*RRM::CrossSection<double>& _cross_section*/ );
@@ -47,6 +49,7 @@ class FlowVisualizationController: public QObject
 
         void updateVolumetricMesh( Mesh* mesh );
         void updateMeshFromFile( Mesh* mesh  );
+        void updateMeshFromSurface( Mesh* mesh );
 
 
         std::vector< float > getVolumeVerticesfromNodeStructure( const std::vector< NODE >& nodes );
@@ -55,13 +58,15 @@ class FlowVisualizationController: public QObject
 
 
         void computeFlowProperties();
-        void computePressure();
-        void computeVelocity();
-        void computeTOF();
+
 
         std::vector< double > getVerticesPropertyValues(std::string name_of_property, std::string method, double &min, double &max );
         std::vector< double > getFacesPropertyValues( std::string name_of_property, std::string method, double& min, double& max );
         std::vector< double > vectorToScalarProperties( const std::vector< double >& values, std::string type, double& min , double& max  );
+
+
+        void getMeshVisualizationParameters( std::string& trianglecmd, double& meshscale, int resolutiontype, int& npartitionedge, double& lenghtedge );
+
 
         inline void setParent( QObject *p ){ controllerParent = p; }
         void setCounterProgressinData();
@@ -82,18 +87,13 @@ class FlowVisualizationController: public QObject
         inline void setToleranceValues( const float& tol1, const float& tol2 ){ region.tolerance( tol1, tol2 ); }
 
         void setTetgenCommand( std::string& cmd );
-        void setViscosityValue( double value );
-        void setPermeabilityValues( int n, std::vector< double > &values );
+        inline void setPropertyArea( const int& np, const std::vector< double >& values ){ region.setPropertyArea( np, values ); }
+
         void setBoundariesValues( int n, std::vector< double > &values );
         void setWellsValues( int n, std::vector< double > &values );
         void setTofBoundaryValues( int n, std::vector< double > &values );
         void setTrBoundaryValues( int n, std::vector< double > &values );
 
-
-
-//        void readfromFiles( const std::string& input_file, const std::string& mesh_file, std::string type, int option = -1 );
-//        void readMeshFile(const std::string &mesh_file, std::string type, int option = -1 );
-//        void readParametersFile( const std::string& input_file, int option = -1 );
 
         void readCornerPoint( bool read_file, const std::string& mesh_file );
         void readUnstructured( bool read_file,  const std::string& mesh_file, const std::string& type_of_file, const std::string& input_file  );
@@ -102,12 +102,21 @@ class FlowVisualizationController: public QObject
         void computeVolumetricMesh();
 
 
+        void increaseMeshScale();
+        void decreaseMeshScale();
+
+        void increaseNumberofEdges();
+        void decreaseNumberofEdges();
+
+        void increaseEdgeLength();
+        void decreaseEdgeLength();
 
 
     signals:
 
             void updateMesh();
             void updateVolumetricMesh();
+            void updatePolyMesh();
 
             void propertybyVertexComputed( std::string, std::string );
             void propertybyFaceComputed( std::string, std::string );

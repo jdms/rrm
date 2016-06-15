@@ -23,10 +23,10 @@ void FlowParametersBar::createDialogs()
     dsp_tolerance1->setValue( 0.000000001 );
     dsp_tolerance2->setValue( 0.0 );
 
-    dsp_viscosityvalue->setDecimals( 11 );
+//    dsp_viscosityvalue->setDecimals( 11 );
 
 
-    dg_permeability = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::SINGLEVALUE, "Permeability", this );
+    dg_permeability = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::SINGLEVALUE, "Property Area", this );
     dg_boundaries = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::BOUNDARY, "Surfaces Boundaries", this );
     dg_wells = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::WELL, "Wells", this );
     dg_tofboundary = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::TOFANDTRACER, "TOF Boundary", this );
@@ -39,7 +39,7 @@ void FlowParametersBar::createDialogs()
     connect( sp_notrboundaryvalues, SIGNAL( valueChanged(int) ), dg_trboundary, SLOT( reset() ) );
 
 
-    connect( dg_permeability, &FormPropertyValues::sendPropertyValues, this, [=]( int n, std::vector<double>& v ){ emit sendPermeabilityValues( n, v ); }  ) ;
+    connect( dg_permeability, &FormPropertyValues::sendPropertyValues, this, [=]( int n, std::vector<double>& v ){ emit sendPropertyArea( n, v ); }  ) ;
     connect( dg_boundaries, &FormPropertyValues::sendPropertyValues, this, [=]( int n, std::vector<double>& v ){ emit sendBoundariesValues( n, v ); }  ) ;
     connect( dg_wells, &FormPropertyValues::sendPropertyValues, this, [=]( int n, std::vector<double>& v ){ emit sendWellsValues( n, v ); }  ) ;\
     connect( dg_tofboundary, &FormPropertyValues::sendPropertyValues, this, [=]( int n, vector<double>& v ){ emit sendTOFBoundaryValues( n, v ); }  ) ;
@@ -55,15 +55,11 @@ void FlowParametersBar::setTetgenCommand( std::string cmd )
 }
 
 
-void FlowParametersBar::setViscosityValue( float vis )
+void FlowParametersBar::setPropertyAreaParameters( int np, std::vector< double > values )
 {
-    dsp_viscosityvalue->setValue( vis );
-}
-
-void FlowParametersBar::setPermeabilityParameter( int nperm, std::vector< double > vperm )
-{
-    sp_nopermeabilityvalues->setValue( nperm );
-    dg_permeability->setValues( vperm );
+    sp_nopermeabilityvalues->setValue( np );
+    dg_permeability->setNumberofValues( np );
+    dg_permeability->setValues( values );
     dg_permeability->create();
 }
 
@@ -71,6 +67,7 @@ void FlowParametersBar::setPermeabilityParameter( int nperm, std::vector< double
 void FlowParametersBar::setSurfaceBoundariesParameter( int nbound, std::vector< double > vbound )
 {
     sp_noboundaries->setValue( nbound );
+    dg_boundaries->setNumberofValues( nbound );
     dg_boundaries->setValues( vbound );
     dg_boundaries->create();
 }
@@ -79,6 +76,7 @@ void FlowParametersBar::setSurfaceBoundariesParameter( int nbound, std::vector< 
 void FlowParametersBar::setWellParameter( int nw, std::vector< double > vwell )
 {
     sp_nowells->setValue( nw );
+    dg_wells->setNumberofValues( nw );
     dg_wells->setValues( vwell );
     dg_wells->create();
 }
@@ -94,6 +92,7 @@ void FlowParametersBar::setTofBoundaryParameter( int ntfbound, std::vector< int 
 void FlowParametersBar::setTracerBoundaryParameter( int ntrbound, std::vector< int > vtrbound )
 {
     sp_notrboundaryvalues->setValue( ntrbound );
+    dg_trboundary->setNumberofValues( ntrbound );
     dg_trboundary->setValues( vtrbound );
     dg_trboundary->create();
 }
@@ -154,7 +153,6 @@ void FlowParametersBar::on_btb_acceptparameters_accepted()
 
     sendToleranceValues( dsp_tolerance1->value(), dsp_tolerance2->value() );
     sendTetgenCommand( edt_tetgencommand->text().toStdString() );
-    sendViscosityValue( dsp_viscosityvalue->value() );
 
     dg_permeability->sendValues();
     dg_boundaries->sendValues();
@@ -162,12 +160,14 @@ void FlowParametersBar::on_btb_acceptparameters_accepted()
     dg_tofboundary->sendValues();
     dg_trboundary->sendValues();
 
-//    emit rebuildTetrahedricalVolume();
+    closeBar();
+
 
 }
 
 void FlowParametersBar::on_btb_acceptparameters_rejected()
 {
+    closeBar();
 }
 
 void FlowParametersBar::on_btn_boundariesvalues_clicked()

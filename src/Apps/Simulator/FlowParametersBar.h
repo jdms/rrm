@@ -20,8 +20,9 @@ class FlowParametersBar : public QWidget,
         void createDialogs();
 
         void setTetgenCommand( std::string cmd );
-        void setViscosityValue( float vis );
-        void setPermeabilityParameter( int nperm, std::vector< double > vperm );
+        void setPropertyAreaParameters( int np, std::vector< double > values );
+
+
         void setSurfaceBoundariesParameter(int nbound, std::vector< double > vbound );
         void setWellParameter( int nw, std::vector< double > vwell );
         void setTofBoundaryParameter( int ntfbound, std::vector< int > vtfbound );
@@ -44,9 +45,8 @@ class FlowParametersBar : public QWidget,
 signals:
 
         void sendToleranceValues( const float& , const float& );
-        void sendTetgenCommand( const std::string& );
-        void sendViscosityValue( const double& );
-        void sendPermeabilityValues( int n, std::vector< double >& );
+        void sendTetgenCommand( std::string& );
+        void sendPropertyArea( const int& n, const std::vector< double >& );
         void sendBoundariesValues( int n, std::vector< double >& );
         void sendWellsValues( int n, std::vector< double >& );
 
@@ -56,6 +56,9 @@ signals:
 
         void readSurface();
         void rebuildTetrahedricalVolume();
+
+        void closeBar();
+
 
 private:
 

@@ -112,6 +112,7 @@ set( SIMULATOR_HEADERS
      Simulator/Mesh.h
      Simulator/NormalMovableCrossSectionFlow.h
      Simulator/OpenFlowFilesBar.h
+     Simulator/DialogMeshVisualizationParameters.h
      Simulator/ProgressCounter.h
      Simulator/FlowComputation/bsurface.h
      Simulator/FlowComputation/cpgelement.h
@@ -125,10 +126,12 @@ set( SIMULATOR_HEADERS
      Simulator/FlowComputation/linearfunc.h
      Simulator/FlowComputation/mathzz.h
      Simulator/FlowComputation/matrix.h
+     Simulator/FlowComputation/model.h
      Simulator/FlowComputation/meshinfo.h
      Simulator/FlowComputation/modelsurface.h
      Simulator/FlowComputation/node.h
      Simulator/FlowComputation/parasurface.h
+     Simulator/FlowComputation/propertyarea.h
      Simulator/FlowComputation/region.h
      Simulator/FlowComputation/samg.h
      Simulator/FlowComputation/segment.h
@@ -155,12 +158,14 @@ set ( SIMULATOR_MOC_HEADERS
      Simulator/NormalMovableCrossSectionFlow.h
      Simulator/OpenFlowFilesBar.h
      Simulator/ProgressCounter.h
+     Simulator/DialogMeshVisualizationParameters.h
 )
 
 set ( SIMULATOR_UI_SOURCES
     Simulator/FlowParametersBar.ui                       
     Simulator/NormalMovableCrossSectionFlow.ui
     Simulator/OpenFlowFilesBar.ui
+    Simulator/DialogMeshVisualizationParameters.ui
 )
 
 set( SIMULATOR_SOURCES    
@@ -177,6 +182,7 @@ set( SIMULATOR_SOURCES
      Simulator/Mesh.cpp
      Simulator/NormalMovableCrossSectionFlow.cpp
      Simulator/OpenFlowFilesBar.cpp
+     Simulator/DialogMeshVisualizationParameters.cpp
      Simulator/FlowComputation/bsurface.cpp
      Simulator/FlowComputation/cpgelement.cpp
      Simulator/FlowComputation/curve.cpp
@@ -189,11 +195,13 @@ set( SIMULATOR_SOURCES
      Simulator/FlowComputation/linearfunc.cpp
      Simulator/FlowComputation/mathzz.cpp
      Simulator/FlowComputation/matrix.cpp
+     Simulator/FlowComputation/model.cpp
      Simulator/FlowComputation/meshinfo.cpp
      Simulator/FlowComputation/modelsurface.cpp
      Simulator/FlowComputation/node.cpp
 	 Simulator/FlowComputation/predicates.cxx
      Simulator/FlowComputation/parasurface.cpp
+     Simulator/FlowComputation/propertyarea.cpp
      Simulator/FlowComputation/region.cpp
      Simulator/FlowComputation/segment.cpp
      Simulator/FlowComputation/skeleton.cpp
@@ -211,11 +219,11 @@ set( SIMULATOR_SOURCES
 
 ## Q_OBJECT files
 set( MOC_HEADERS ${CONTROLLER_MOC_HEADERS} ${SBIM_MOC_HEADERS} ${MODELLER_MOC_HEADERS} 
-    #${SIMULATOR_MOC_HEADERS} 
+    ${SIMULATOR_MOC_HEADERS} 
    )
 ## Qt Designer Ui files                 
 set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES} 
-    #${SIMULATOR_UI_SOURCES} 
+    ${SIMULATOR_UI_SOURCES} 
     )
 ## Resources
 set(RCC_SOURCES Controller/Resources/images.qrc)
@@ -237,8 +245,8 @@ IF(WIN32) # Check if we are on Windows
 		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
 		# /SUBSYSTEM:CONSOLE DEBUG VERSION
 		# /SUBSYSTEM:WINDOWN RELEASE VERSION
-        #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
-		set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+		#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
     elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
         message (FATAL_ERROR "GCC are not support on Windows !")
     else() # Nor MSVC or GCC (MinGW)

@@ -42,8 +42,8 @@
 
 #include "SBIM/View/SeismicWindow.hpp"
 // Flow Simulator
-//#include "Simulator/FlowWindow.h"
-//#include "Simulator/FlowComputationModule.h"
+#include "Simulator/FlowWindow.h"
+
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -158,7 +158,9 @@ class MainWindow : public QMainWindow
         GLWidget *glWidget;
         Eigen::Vector3f min_;
         Eigen::Vector3f max_;
+		QDockWidget *dc_computation;
 
+		FlowWindow *flowwindow;
 };
 
 #endif // MAINWINDOW_H

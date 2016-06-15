@@ -81,26 +81,23 @@ void FormPropertyValues::reset()
 
 void FormPropertyValues::setValues( vector<double> &v )
 {
-    reset();
 
-    if( type == PROPERTY_TYPE::SINGLEVALUE )
-        number_of_values = (int) v.size()/2;
+    if( vector_values.empty() == false )
+        reset();
 
-    else if( type == PROPERTY_TYPE::BOUNDARY )
-    {
-        int vector_size = v.size();
+//    if( type == PROPERTY_TYPE::SINGLEVALUE )
+//        number_of_values = (int) v.size()/6;
 
-        if( vector_size % 4 == 0 )
-            number_of_values = (int) v.size()/4;
-        else
-            number_of_values = (int) v.size();
+//    else if( type == PROPERTY_TYPE::BOUNDARY )
+//    {
+//        number_of_values = (int) v.size();
 
-    }
-    else if( type == PROPERTY_TYPE::WELL )
-        number_of_values = (int) v.size()/6;
+//    }
+//    else if( type == PROPERTY_TYPE::WELL )
+//        number_of_values = (int) v.size()/6;
 
-    else if( type == PROPERTY_TYPE::TOFANDTRACER )
-        number_of_values = (int) ( v.size() - 1 )/2;
+//    else if( type == PROPERTY_TYPE::TOFANDTRACER )
+//        number_of_values = (int) ( v.size() - 1 )/2;
 
     vector_values = v;
 
@@ -109,26 +106,22 @@ void FormPropertyValues::setValues( vector<double> &v )
 
 void FormPropertyValues::setValues( vector< int > &v )
 {
-    reset();
+    if( vector_values.empty() == false )
+        reset();
 
-    if( type == PROPERTY_TYPE::SINGLEVALUE )
-        number_of_values = (int) v.size()/2;
 
-    else if( type == PROPERTY_TYPE::BOUNDARY )
-    {
-        int vector_size = v.size();
+//    if( type == PROPERTY_TYPE::SINGLEVALUE )
+//        number_of_values = (int) v.size()/6;
 
-        if( vector_size % 4 == 0 )
-            number_of_values = (int) v.size()/4;
-        else
-            number_of_values = (int) v.size();
+//    else if( type == PROPERTY_TYPE::BOUNDARY )
+//    {
+//        number_of_values = (int) v.size();
+//    }
+//    else if( type == PROPERTY_TYPE::WELL )
+//        number_of_values = (int) v.size()/6;
 
-    }
-    else if( type == PROPERTY_TYPE::WELL )
-        number_of_values = (int) v.size()/6;
-
-    else if( type == PROPERTY_TYPE::TOFANDTRACER )
-        number_of_values = (int) ( v.size() - 1 )/2;
+//    else if( type == PROPERTY_TYPE::TOFANDTRACER )
+//        number_of_values = (int) ( v.size() - 1 )/2;
 
 
     std::size_t nvalues = v.size();
@@ -145,15 +138,19 @@ void FormPropertyValues::createSingleValueForm()
 {
 
     vector_edt_values.clear();
-    vector_edt_values.resize( 2*number_of_values );
+    vector_edt_values.resize( 6*number_of_values );
 
 
     if( vector_values.empty() == true )
     {
         for( int i = 0; i < number_of_values; ++i )
         {
-            vector_edt_values[ 2*i ] = new QLineEdit;
-            vector_edt_values[ 2*i + 1 ] = new QLineEdit;
+            vector_edt_values[ 6*i ] = new QLineEdit;
+            vector_edt_values[ 6*i + 1 ] = new QLineEdit;
+            vector_edt_values[ 6*i + 2 ] = new QLineEdit;
+            vector_edt_values[ 6*i + 3 ] = new QLineEdit;
+            vector_edt_values[ 6*i + 4 ] = new QLineEdit;
+            vector_edt_values[ 6*i + 5 ] = new QLineEdit;
         }
     }
     else if( vector_values.size() != vector_edt_values.size() )
@@ -163,40 +160,34 @@ void FormPropertyValues::createSingleValueForm()
 
         for( int i = 0, j = 0; i < number_of_values; ++i )
         {
-            vector_edt_values[ 2*i ] = new QLineEdit;
-            QString value0 = QString( "%1" ).arg( vector_values[ 2*i ] );
-            vector_edt_values[ 2*i ]->setText( value0 );
+            vector_edt_values[ 6*i ] = new QLineEdit;
+            QString value0 = QString( "%1" ).arg( vector_values[ 6*i ] );
+            vector_edt_values[ 6*i ]->setText( value0 );
 
-            vector_edt_values[ 2*i + 1 ] = new QLineEdit;
-            QString value1 = QString( "%1" ).arg( vector_values[ 2*i + 1 ] );
-            vector_edt_values[ 2*i + 1 ]->setText( value1 );
+            vector_edt_values[ 6*i + 1 ] = new QLineEdit;
+            QString value1 = QString( "%1" ).arg( vector_values[ 6*i + 1 ] );
+            vector_edt_values[ 6*i + 1 ]->setText( value1 );
+
+            vector_edt_values[ 6*i + 2 ] = new QLineEdit;
+            QString value2 = QString( "%1" ).arg( vector_values[ 6*i + 2 ] );
+            vector_edt_values[ 6*i + 2 ]->setText( value2 );
+
+            vector_edt_values[ 6*i + 3 ] = new QLineEdit;
+            QString value3 = QString( "%1" ).arg( vector_values[ 6*i + 3 ] );
+            vector_edt_values[ 6*i + 3 ]->setText( value3 );
+
+            vector_edt_values[ 6*i + 4 ] = new QLineEdit;
+            QString value4 = QString( "%1" ).arg( vector_values[ 6*i + 4 ] );
+            vector_edt_values[ 6*i + 4 ]->setText( value4 );
+
+            vector_edt_values[ 6*i + 5 ] = new QLineEdit;
+            QString value5 = QString( "%1" ).arg( vector_values[ 6*i + 5 ] );
+            vector_edt_values[ 6*i + 5 ]->setText( value5 );
         }
 
     }
 
 
-    /*
-    vector_edt_values.clear();
-    vector_edt_values.resize( number_of_values );
-
-    if( vector_values.empty() == true )
-    {
-        for( int i = 0; i < number_of_values; ++i )
-            vector_edt_values[ i ] = new QLineEdit;
-    }
-    else if( vector_values.size() != number_of_values )
-        return;
-    else
-    {
-        for( int i = 0; i < number_of_values; ++i )
-        {
-            vector_edt_values[ i ] = new QLineEdit;
-
-            QString value = QString( "%1" ).arg( vector_values[ i ] );
-            vector_edt_values[ i ]->setText( value );
-        }
-    }
-*/
 }
 
 
@@ -267,6 +258,7 @@ void FormPropertyValues::createBoundaryForm()
 
     if( vector_values.empty() == true )
     {
+
         for( int i = 0; i < number_of_values; ++i )
         {
             vector_edt_values[ 4*i ] = new QLineEdit;
@@ -274,9 +266,10 @@ void FormPropertyValues::createBoundaryForm()
             vector_edt_values[ 4*i + 2 ] = new QLineEdit;
             vector_edt_values[ 4*i + 3 ] = new QLineEdit;
         }
+
     }
-    else if( 4*vector_values.size() != vector_edt_values.size() )
-        return;
+//    else if( 4*vector_values.size() != vector_edt_values.size() )
+//        return;
     else
     {
 
@@ -287,28 +280,30 @@ void FormPropertyValues::createBoundaryForm()
             vector_edt_values[ 4*i + 2 ] = new QLineEdit;
             vector_edt_values[ 4*i + 3 ] = new QLineEdit;
 
+
+            vector_edt_values[ 4*i ]->setText( QString( "%1" ).arg( vector_values[ j ] ) );
+
             if( vector_values[ j ] == 1 )
             {
-                vector_edt_values[ 4*i ]->setText( QString( "%1" ).arg( vector_values[ j + 1 ] ) );
-                vector_edt_values[ 4*i + 1 ]->setEnabled( false );
-                vector_edt_values[ 4*i + 2 ]->setEnabled( false );
-                vector_edt_values[ 4*i + 3 ]->setEnabled( false );
-                j++;
+                vector_edt_values[ 4*i + 1 ]->setText( QString( "%1" ).arg( vector_values[ j + 1 ] ) );
+                j += 2;
             }
             else if( vector_values[ j ] == 2 )
             {
-                vector_edt_values[ 4*i ]->setText( QString( "%1" ).arg( vector_values[ j + 1 ] ) );
                 vector_edt_values[ 4*i + 1 ]->setText( QString( "%1" ).arg( vector_values[ j + 2 ] ) );
                 vector_edt_values[ 4*i + 2 ]->setText( QString( "%1" ).arg( vector_values[ j + 3 ] ) );
                 vector_edt_values[ 4*i + 3 ]->setText( QString( "%1" ).arg( vector_values[ j + 4 ] ) );
                 j += 4;
             }
+            else
+                j++;
 
         }
 
     }
 
 }
+
 
 void FormPropertyValues::createTofandTracerForm()
 {
@@ -370,12 +365,17 @@ void FormPropertyValues::viewSingleValueForm()
     }
 
 
+    QFrame* line = new QFrame();
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+
     int nrows = (int)number_of_values/2 + 4 ;
 
     for( int i = 0; i < number_of_values; ++i )
     {
         int row = (int)i/2;
-        int col = 7*( i%2 );
+        int col = 15*( i%2 );
 
         QString name = name_of_property.c_str();
         name = name + QString( " %1: " ).arg( i );
@@ -384,76 +384,42 @@ void FormPropertyValues::viewSingleValueForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Type "), row, col + 1 );
-        gl_layout->addWidget( vector_edt_values[ 2*i ], row, col + 2 );
+        gl_layout->addWidget( new QLabel( "Permeability "), row, col + 1 );
+        gl_layout->addWidget( vector_edt_values[ 6*i ], row, col + 2 );
 
-        gl_layout->addWidget( new QLabel( "Sign "), row, col + 3 );
-        gl_layout->addWidget( vector_edt_values[ 2*i + 1 ], row, col + 4 );
+        gl_layout->addWidget( new QLabel( "Porosity"), row, col + 3 );
+        gl_layout->addWidget( vector_edt_values[ 6*i + 1 ], row, col + 4 );
+
+        gl_layout->addWidget( new QLabel( "Viscosity "), row, col + 5 );
+        gl_layout->addWidget( vector_edt_values[ 6*i + 2 ], row, col + 6 );
+
+        gl_layout->addWidget( new QLabel( "X "), row, col + 7 );
+        gl_layout->addWidget( vector_edt_values[ 6*i + 3 ], row, col + 8 );
+
+        gl_layout->addWidget( new QLabel( "Y "), row, col + 9 );
+        gl_layout->addWidget( vector_edt_values[ 6*i + 4 ], row, col + 10 );
+
+        gl_layout->addWidget( new QLabel( "Z "), row, col + 11 );
+        gl_layout->addWidget( vector_edt_values[ 6*i + 5 ], row, col + 12 );
 
         if( col == 0 ){
-            gl_layout->addWidget( new QLabel( "   "), row, col + 5 );
-            gl_layout->addWidget( new QLabel( "   "), row, col + 6 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 13 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 14 );
         }
 
     }
 
+    gl_layout->addWidget( line, nrows, 0 , 1, 27 );
 
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows, 8 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 24 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows, 1 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 9 , 1, 4 );
 
     this->setLayout( gl_layout );
     this->show();
 
 
-    /*
-
-    if( gl_layout->isEmpty() == false )
-    {
-        while(!gl_layout->isEmpty()) {
-            QWidget *w = gl_layout->takeAt(0)->widget();
-            delete w;
-        }
-
-        delete gl_layout;
-        gl_layout = new QGridLayout();
-
-        createButton();
-
-
-        createSingleValueForm();
-    }
-
-
-    int nrows = (int)number_of_values/2 + 4 ;
-
-    for( int i = 0; i < number_of_values; ++i )
-    {
-        int row = (int)i/2;
-        int col = 3*( i%2 );
-
-        QString name = name_of_property.c_str();
-        name = name + QString( " %1: " ).arg( i );
-
-        QLabel* lb_name = new QLabel( name );
-
-        gl_layout->addWidget( lb_name, row, col );
-        gl_layout->addWidget( vector_edt_values[ i ], row, col + 1 );
-
-    }
-
-
-    if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows, 2 , 1, 4 );
-    else
-        gl_layout->addWidget( btb_buttons, nrows, 1 , 1, 4 );
-
-
-    this->setLayout( gl_layout );
-
-    this->show();
-    */
 }
 
 
@@ -475,6 +441,11 @@ void FormPropertyValues::viewWellForm()
         createWellForm();
     }
 
+
+    QFrame* line = new QFrame();
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
 
     int nrows = (int)number_of_values/2 + 4 ;
 
@@ -516,10 +487,13 @@ void FormPropertyValues::viewWellForm()
     }
 
 
+    gl_layout->addWidget( line, nrows, 0 , 1, 29 );
+
+
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows, 24 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 24 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows, 9 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 9 , 1, 4 );
 
     this->setLayout( gl_layout );
     this->show();
@@ -546,6 +520,11 @@ void FormPropertyValues::viewBoundaryForm()
     }
 
     int nrows = (int)number_of_values/2 + 4 ;
+
+    QFrame* line = new QFrame();
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
 
     for( int i = 0; i < number_of_values; ++i )
     {
@@ -582,10 +561,13 @@ void FormPropertyValues::viewBoundaryForm()
     }
 
 
+
+    gl_layout->addWidget( line, nrows, 0 , 1, 21 );
+
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows, 16 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 16 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows, 6 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 6 , 1, 4 );
 
     this->setLayout( gl_layout );
 
@@ -636,7 +618,10 @@ void FormPropertyValues::viewTofandTracerForm()
     hb_layout_toftracer->addWidget( vector_edt_values[ 0 ] );
     hb_layout_toftracer->addStretch();
 
-
+    QFrame* line = new QFrame();
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
 
     for( int i = 0; i < number_of_values; ++i )
     {
@@ -664,14 +649,22 @@ void FormPropertyValues::viewTofandTracerForm()
     }
 
 
+    gl_layout->addWidget( line, nrows , 0 , 1, 13 );
 
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows, 8 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 8 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows, 2 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 2 , 1, 4 );
 
+
+
+    QFrame* line1 = new QFrame();
+    line1->setObjectName(QString::fromUtf8("line"));
+    line1->setFrameShape(QFrame::HLine);
+    line1->setFrameShadow(QFrame::Sunken);
 
     vb_layout_toftracer->addLayout( hb_layout_toftracer );
+    vb_layout_toftracer->addWidget( line1 );
     vb_layout_toftracer->addLayout( gl_layout );
 
 

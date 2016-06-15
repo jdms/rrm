@@ -7,6 +7,7 @@
 
 #include <QOpenGLWidget>
 #include <QMouseEvent>
+#include <QFileDialog>
 
 
 #include "Eigen/Dense"
@@ -38,16 +39,17 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
 
 
-
     public slots:
 
 
         void updateMesh();
+        void updateMeshfromFile();
         void updateVolumetricMesh();
 
         void showVertices( bool status );
         void showEdges( bool status );
         void showFaces( bool status );
+        void showBoundingBox( bool status );
 
 
         void setVerticesColorbyProperty( std::string name, std::string method = "" );
@@ -61,6 +63,11 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void setCrossSectionNormalCoordinates( float X, float Y, float Z );
 
         inline void setCurrentDirectory( std::string current_dir ){ current_directory.clear(); current_directory = current_dir; }
+
+        void exportSurface();
+        void exportVolume();
+        void exportCornerPoint();
+
 
 
     protected:

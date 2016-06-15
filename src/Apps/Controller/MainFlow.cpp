@@ -2,8 +2,15 @@
 
 void MainWindow::createFlowComputationModule ( )
 {
-	//dc_computation = new FlowComputationModule ( );
-	//addDockWidget ( Qt::RightDockWidgetArea , dc_computation );
+
+	
+	 dc_computation = new QDockWidget ( );
+	
+	 flowwindow = new FlowWindow();
+	 dc_computation->setWidget(flowwindow);
+
+
+	 addDockWidget ( Qt::RightDockWidgetArea , dc_computation );
 
 }
 

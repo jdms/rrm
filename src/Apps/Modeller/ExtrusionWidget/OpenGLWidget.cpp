@@ -217,8 +217,8 @@ void GLWidget::initializeGL ( )
 	glBindVertexArray ( 0 );
 
 	// IMPORTANT FOR THE DEPLOY VERSION
-	//loadShaderByResources ( );
-	loadShaders();
+	loadShaderByResources ( );
+	//loadShaders();
 
 	//596x291x297
 
@@ -786,7 +786,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		{
 			this->facesGL_.clear();
 
-			this->extrusion_controller_.setResolution(32,this->vertex_,this->normal_,this->faces_);
+			this->extrusion_controller_.setResolution(64,this->vertex_,this->normal_,this->faces_);
 
 			for (auto f: this->faces_ )
 			{

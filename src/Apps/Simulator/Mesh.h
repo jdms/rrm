@@ -87,11 +87,13 @@ class Mesh
         void showVertices( bool status );
         void showEdges( bool status );
         void showFaces( bool status );
+        void showBoundingBox( bool status );
+
 
         bool showVertices() const;
         bool showEdges() const;
         bool showFaces() const;
-
+        bool showBoundingBox() const;
 
 
         void buildWireframeList();
@@ -124,6 +126,7 @@ class Mesh
         std::vector< unsigned int > faces;
         std::vector< unsigned int > wireframe;
         std::vector < float > normals_by_vertices;
+        std::vector< float > bounding_box;
 
         float max[ 3 ];
         float min[ 3 ];
@@ -150,6 +153,14 @@ class Mesh
         float coefBCrossSectionEquation;
         float coefCCrossSectionEquation;
         float coefDCrossSectionEquation;
+
+        Tucano::Shader* shader_bbox;
+
+        GLuint va_bbox;
+        GLuint bf_bbox_mesh;
+        GLuint number_lines_bbox;
+
+        bool show_bbox;
 
 };
 

@@ -103,12 +103,12 @@ void FlowWindow::createToolBar()
     connect( qexportvolume, SIGNAL( triggered(bool) ), this, SLOT( exportVolumeFile() ) );
 
 
-    qexportcornerpoint  = new QAction( "Export Volume", qtoolbarFlow );
+    qexportcornerpoint  = new QAction( "Export CornerPoint", qtoolbarFlow );
     connect( qexportcornerpoint, SIGNAL( triggered(bool) ), this, SLOT( exportCornerPointFile() ) );
 
 
     qclear = new QAction( "Clear", qtoolbarFlow );
-    connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas.clear(); } );
+    connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas.clear(); qexportcornerpoint->setEnabled( true ); } );
 
 
     qtoolbarFlow->addAction( qoopenfilesDialog );
@@ -150,6 +150,8 @@ void FlowWindow::createActions()
             type_of_file = file_type;
             mesh_method = method;
 
+            qexportcornerpoint->setEnabled( false );
+
         }
         else if( method == 2 )
         {
@@ -159,17 +161,19 @@ void FlowWindow::createActions()
             type_of_file = ".txt";
             mesh_method = method;
 
+            qexportcornerpoint->setEnabled( true );
+
         }
 
         qdockopenfilesBar->close();
-        canvas.updateMesh();
+//        canvas.updateMesh();
 
     } );
 
     connect( &parametersBar, &FlowParametersBar::readSurface, controller, [=]()
     {
         controller->reloadMesh( mesh_method, read_file,  file_of_mesh, type_of_file, file_of_parameters  );
-        canvas.updateMesh();
+//        canvas.updateMesh();
 
     } );
 
@@ -182,43 +186,48 @@ void FlowWindow::createActions()
 
     connect( &parametersBar, SIGNAL( sendToleranceValues( const float& , const float& ) ), controller, SLOT( setToleranceValues( const float& , const float& ) ) );
     connect( &parametersBar, SIGNAL( sendTetgenCommand( std::string& ) ), controller, SLOT( setTetgenCommand( std::string& ) ) );
-    connect( &parametersBar, SIGNAL( sendViscosityValue( const double& ) ), controller, SLOT( setViscosityValue( double ) ) );
 
-
-    connect( &parametersBar, SIGNAL( sendPermeabilityValues(  int, std::vector< double >& ) ), controller, SLOT( setPermeabilityValues(  int, std::vector< double >& ) ) );
+    connect( &parametersBar, SIGNAL( sendPropertyArea(  const int& , const std::vector< double >& ) ), controller, SLOT( setPropertyArea(  const int&, const std::vector< double >& ) ) );
     connect( &parametersBar, SIGNAL( sendBoundariesValues(  int, std::vector< double >& ) ), controller, SLOT( setBoundariesValues(  int, std::vector< double >& ) ) );
     connect( &parametersBar, SIGNAL( sendWellsValues(  int, std::vector< double >& ) ), controller, SLOT( setWellsValues(  int, std::vector< double >& ) ) );
 
-    connect( &parametersBar, SIGNAL( sendTOFBoundaryValues( int, std::vector< double >&  ) ), controller, SLOT( setTofBoundaryValues(  int, std::vector< double >& ) ) );
+    connect( &parametersBar, SIGNAL( sendTOFBoundaryValues( int, std::vector< double >&  ) ), controller, SLOT( setTofBoundaryValues( int, std::vector< double >& ) ) );
     connect( &parametersBar, SIGNAL( sendTrBoundaryValues(  int, std::vector< double >& ) ), controller, SLOT( setTrBoundaryValues(  int, std::vector< double >& ) ) );
 
 
-    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, this, [=]( float X, float Y, float Z ){ canvas.setCrossSectionNormalCoordinates( X, Y, Z ); } );
+    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, this, [=]( float X, float Y, float Z ){ canvas.setCrossSectionNormalCoordinates( X, Y, Z ); qdockcrosssectionnormalBar->close(); } );
     connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qdockcrosssectionnormalBar->close();  qshowMovingCrossSection->setChecked( false ); canvas.disableCrossSection(); } );
 
+    connect( &parametersBar, SIGNAL( closeBar() ), qdockparametersBar, SLOT( close() ) );
+
+
+    connect( controller, SIGNAL( updateMesh() ), &canvas, SLOT( updateMesh() ) );
+    connect( controller, SIGNAL( updateVolumetricMesh() ), &canvas, SLOT( updateVolumetricMesh() ) );
+    connect( controller, SIGNAL( updatePolyMesh() ), &canvas, SLOT( updateMeshfromFile() ) );
 }
 
 
 void FlowWindow::getCurrentDirectory()
 {
 
-    QDir app_dir = QDir( qApp->applicationDirPath() );
-    app_dir.cdUp();
+	//! Debug Version: to load the update shaders
+	qDebug() << "Load by Resources ";
+
+	QDir shadersDir = QDir(qApp->applicationDirPath());
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-    QString current_dir ( app_dir.path ()+"\\" );
-
+	/* Do windows stuff */
+	QString shaderDirectory (shadersDir.path ()+"\\");
 #elif defined(__linux__)               // Linux Directory Style
-    QString current_dir ( app_dir.path ( ) + "/" );
-
+	/* Do linux stuff */
+	QString shaderDirectory ( shadersDir.path ( ) + "/" );
 #else
-    /* Error, both can't be defined or undefined same time */
-    std::cout << "Operate System not supported !"
-    halt();
-
+	/* Error, both can't be defined or undefined same time */
+	std::cout << "Operate System not supported !"
+		halt();
 #endif
 
-    canvas.setCurrentDirectory( current_dir.toStdString() );
+	canvas.setCurrentDirectory(shaderDirectory.toStdString());
 
 
 }
@@ -227,9 +236,11 @@ void FlowWindow::getCurrentDirectory()
 void FlowWindow::updateParameterFields()
 {
     std::string cmd;
-    float vis = 0.0f;
-    int nperm = 0;
-    std::vector< double > vperm;
+
+    int np = 0;
+    std::vector< double > values;
+
+
     int nb = 0;
     std::vector< double > vbound;
     int nswells = 0;
@@ -239,18 +250,21 @@ void FlowWindow::updateParameterFields()
     int ntrbound = 0;
     std::vector< int > vtrbound;
 
-    int ntrsignal;
-    int ntfsignal;
+    std::string trianglecmd;
+    double meshscale = 0.0;
+    int resolutiontype = 1;
+    int npartitionedge = 1;
+    double lenghtedge = 0.5;
+
+    int ntrsignal = 1;
+    int ntfsignal = 1;
 
     controller->getTetgenParameter( cmd );
     parametersBar.setTetgenCommand( cmd.c_str() );
 
 
-    controller->getViscosityParameter( vis );
-    parametersBar.setViscosityValue( vis );
-
-    controller->getPermeabilityParameter( nperm, vperm );
-    parametersBar.setPermeabilityParameter( nperm, vperm );
+    controller->getPropertyArea( np, values );
+    parametersBar.setPropertyAreaParameters( np, values );
 
 
     controller->getBoundariesValues( nb, vbound );
@@ -265,6 +279,8 @@ void FlowWindow::updateParameterFields()
 
     controller->getTracerBoundaryParameter( ntrbound, vtrbound );
     parametersBar.setTracerBoundaryParameter( ntrbound, vtrbound );
+
+    controller->getMeshVisualizationParameters( trianglecmd, meshscale, resolutiontype, npartitionedge, lenghtedge );
 }
 
 
@@ -301,6 +317,7 @@ void FlowWindow::exportSurfaceFile()
     controller->exportSurfacetoVTK( filename.toStdString() );
 
 }
+
 
 void FlowWindow::exportVolumeFile()
 {

@@ -8,6 +8,7 @@ Mesh::Mesh()
     show_vertices = true;
     show_edges = false;
     show_faces = true;
+    show_bbox = true;
 
     apply_crosssection_clipping = false;
 }
@@ -243,6 +244,102 @@ void Mesh::buildBoundingBox()
         if( normalized_vertices[ i ]( 2 ) < min[ 2 ] ) min[ 2 ] = normalized_vertices[ i ]( 2 );
 
     }
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+//fim de 3)
+
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+//fim de 5)
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+//fim de 7)
+
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+
+
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( max[ 2 ] );
+
+
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( max[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+
+
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( min[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
+    bounding_box.push_back( min[ 0 ] );
+    bounding_box.push_back( max[ 1 ] );
+    bounding_box.push_back( min[ 2 ] );
 }
 
 
@@ -406,12 +503,24 @@ bool Mesh::showFaces() const
 }
 
 
+void Mesh::showBoundingBox( bool status )
+{
+    show_bbox = status;
+}
+
+
+bool Mesh::showBoundingBox() const
+{
+    return show_bbox;
+}
+
+
 void Mesh::initializeShader( std::string directory )
 {
 
 
-    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/vertex_mesh_shader.vert" ),
-                                                     ( directory + "shaders/fragment_mesh_shader.frag" ),
+    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "Shaders/Flow/vertex_mesh_shader.vert" ),
+                                                     ( directory + "Shaders/Flow/fragment_mesh_shader.frag" ),
                                                       "", "", "" ) ;
     shader_mesh->initialize();
 
@@ -446,6 +555,24 @@ void Mesh::initializeShader( std::string directory )
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
+    glBindVertexArray( 0 );
+
+
+    shader_bbox = new Tucano::Shader(  "shader_bbox", ( directory + "Shaders/Flow/vertex_bbox_shader.vert" ),
+                                                      ( directory + "Shaders/Flow/fragment_bbox_shader.frag" ), "", "", "" );
+    shader_bbox->initialize();
+
+    glGenVertexArrays( 1, &va_bbox );
+    glBindVertexArray( va_bbox );
+
+        glGenBuffers( 1, &bf_bbox_mesh );
+        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
+        glBufferData( GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
+        glEnableVertexAttribArray( 0 );
+
+
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 
 }
@@ -509,6 +636,14 @@ void Mesh::load()
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, vector_wireframe_size*sizeof( GLuint ), wireframe.data(), GL_STATIC_DRAW );
     }
 
+    if( bounding_box.empty() == false )
+    {
+        number_lines_bbox = bounding_box.size();
+
+        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
+        glBufferData( GL_ARRAY_BUFFER, bounding_box.size()*sizeof( GLfloat ), bounding_box.data(), GL_STATIC_DRAW );
+    }
+
 
 }
 
@@ -563,6 +698,29 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
 
 
     shader_mesh->unbind();
+
+
+
+    if( show_bbox == true )
+    {
+
+        glLineWidth( 4.0f );
+
+
+        shader_bbox->bind();
+        shader_bbox->setUniform( "mmatrix", M );
+        shader_bbox->setUniform( "vmatrix", V );
+        shader_bbox->setUniform( "pmatrix", P );
+
+        glBindVertexArray( va_bbox );
+
+            glDrawArrays( GL_LINES, 0, number_lines_bbox );
+
+        glBindVertexArray( 0 );
+
+    }
+
+    shader_bbox->unbind();
 }
 
 void Mesh::clear()
@@ -573,6 +731,8 @@ void Mesh::clear()
     faces.clear();
     wireframe.clear();
     normals_by_vertices.clear();
+    bounding_box.clear();
+
 
     max[ 0 ] = 0.0f;
     max[ 1 ] = 0.0f;
@@ -586,6 +746,7 @@ void Mesh::clear()
     show_vertices = true;
     show_edges = false;
     show_faces = true;
+    show_bbox = true;
 
     apply_crosssection_clipping = false;
 

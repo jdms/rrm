@@ -10,9 +10,13 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
 
 void FlowVisualizationController::readCornerPoint( bool read_file, const std::string& mesh_file )
 {
-    if( read_file == true )
-        region.readskeleton( (char *) mesh_file.c_str() );
-    else
+
+
+    if( read_file == true ){
+        std::string filename = mesh_file + ".txt";
+        region.readskeleton( (char *) filename.c_str() );
+    }
+        else
         getSurfaceFromCrossSection();
 
     region.cornerpointgrid();
@@ -29,11 +33,20 @@ void FlowVisualizationController::readUnstructured( bool read_file,  const std::
     region.userinput( (char *) input_file.c_str() );
 
     if( read_file == true && type_of_file.compare( "poly" ) == 0 )
+    {
         region.readsurfacemeshPOLY( (char *) mesh_file.c_str() );
+        emit updatePolyMesh();
+        volumetric_ok = false;
+
+        return;
+
+    }
     else if( read_file == true && type_of_file.compare( "txt" ) == 0 ){
+
         std::string all_filename = mesh_file + ".txt";
         region.readskeleton( (char *) all_filename.c_str() );
         region.unstructuredsurfacemesh();
+
     }
     else if( read_file == false ){
         getSurfaceFromCrossSection();
@@ -62,69 +75,10 @@ void FlowVisualizationController::reloadMesh( const int& type_of_mesh, bool read
 }
 
 
-
-//void FlowVisualizationController::readfromFiles( const std::string& input_file, const std::string& mesh_file, std::string type, int option )
-//{
-
-//    region.userinput( (char *) input_file.c_str() );
-
-//    if( true && type.compare( "POLY" ) == 0 )
-//        region.readsurfacemeshPOLY( (char *) mesh_file.c_str() );
-//    else if( true && type.compare( "txt" ) == 0 )
-//        region.readskeleton( (char *) mesh_file.c_str() );
-
-//    if( option == 1 )
-//        region.unstructuredsurfacemesh();
-//    else if( option == 2 )
-//        region.cornerpointgrid();
-
-//    volumetric_ok = false;
-
-//    emit updateMesh();
-//}
-
-
-//void FlowVisualizationController::readMeshFile( const std::string& mesh_file, std::string type, int option )
-//{
-
-//    if( true && type.compare( "POLY" ) == 0 )
-//        region.readsurfacemeshPOLY( (char *) mesh_file.c_str() );
-//    else if( true && type.compare( "txt" ) == 0 )
-//        region.readskeleton( (char *) mesh_file.c_str() );
-//    else if( false )
-//        getSurfaceFromCrossSection();
-
-//    if( option == 1 )
-//        region.unstructuredsurfacemesh();
-//    else if( option == 2 )
-//        region.cornerpointgrid();
-
-//    emit updateMesh();
-
-//    volumetric_ok = false;
-//}
-
-
-//void FlowVisualizationController::readParametersFile( const std::string& input_file, int option )
-//{
-
-//    region.userinput( (char *) input_file.c_str() );
-//    getSurfaceFromCrossSection();
-
-
-//    if( option == 1 )
-//        region.unstructuredsurfacemesh();
-//    else if( option == 2 )
-//        region.cornerpointgrid();
-
-//    emit updateMesh();
-
-//    volumetric_ok = false;
-
-
-
-//}
-
+void FlowVisualizationController::getMeshVisualizationParameters(std::string& trianglecmd, double &meshscale, int resolutiontype, int& npartitionedge, double& lenghtedge )
+{
+    region.getVisualizationParameters( trianglecmd, meshscale, resolutiontype, npartitionedge, lenghtedge);
+}
 
 
 void FlowVisualizationController::updateMeshFromFile( Mesh* mesh )
@@ -141,9 +95,29 @@ void FlowVisualizationController::updateMeshFromFile( Mesh* mesh )
    mesh->setFaces( faces );
    mesh->buildBoundingBox();
 
+
    mesh_ok = true;
 
 }
+
+
+void FlowVisualizationController::updateMeshFromSurface( Mesh* mesh )
+{
+
+    std::vector< float > vertices;
+    std::vector< unsigned int > faces;
+
+    region.getSurface( vertices, faces );
+
+    mesh->setMeshType( Mesh::TYPE::TRIANGLES );
+    mesh->setVertices( vertices );
+    mesh->setFaces( faces );
+    mesh->buildBoundingBox();
+
+   mesh_ok = true;
+
+}
+
 
 
 void FlowVisualizationController::setCounterProgressinData()
@@ -171,24 +145,6 @@ void FlowVisualizationController::computeVolumetricMesh()
 
     emit updateVolumetricMesh();
 
-
-/*
-    counter.start( 0, 2 );
-
-    region.buildtetrahedralmesh();
-
-    counter.update( 1 );
-
-    region.flowpreparation();
-
-    counter.update( 2 );
-
-    emit updateVolumetricMesh();
-
-    volumetric_ok = true;
-
-*/
-
 }
 
 
@@ -207,6 +163,7 @@ void FlowVisualizationController::updateVolumetricMesh( Mesh* mesh )
     mesh->setWireframe( edges );
     mesh->setFaces( faces );
     mesh->buildBoundingBox();
+
 
 
     volumetric_ok = true;
@@ -397,47 +354,47 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 void FlowVisualizationController::getSurfaceFromCrossSection( /*RRM::CrossSection<double>& _cross_section*/ )
 {
-//        int i, ny, j;
-//        ny = 6; //extrude 6 layers of nodes; depth = 1
+    int i, ny, j;
+    ny = 6; //extrude 6 layers of nodes; depth = 1
 
-//        vector< int > nu, nv;
-//        vector< double > positions;
-
-
-//        int number_of_surfaces = _cross_section.numberofedges();
+    vector< int > nu, nv;
+    vector< double > positions;
 
 
-//        for (auto& curve_iterator : _cross_section.edges_){//now is number of surfaces
-
-//            if (curve_iterator.second.is_boudary_ == false){ //only internal sketched
-
-//                int nu_ = curve_iterator.second.segment.curve.size();
-
-//                nu.push_back( nu_ );
-//                nv.push_back( ny );
+    int number_of_surfaces;// = _cross_section.numberofedges();
 
 
-//                for (j = 0; j < ny; j++){//output is firstly x direction then y direction for each surface
+//    for (auto& curve_iterator : _cross_section.edges_){//now is number of surfaces
 
-//                    for (std::size_t it = 0; it < nu_; it++){
+//        if (curve_iterator.second.is_boudary_ == false){ //only internal sketched
 
-//                        double x = curve_iterator.second.segment.curve[it].x();
-//                        double y = j;
-//                        double z = curve_iterator.second.segment.curve[it].y();
+//            int nu_ = curve_iterator.second.segment.curve.size();
+
+//            nu.push_back( nu_ );
+//            nv.push_back( ny );
 
 
-//                        positions.push_back( x );
-//                        positions.push_back( y );
-//                        positions.push_back( z );
+//            for (j = 0; j < ny; j++){//output is firstly x direction then y direction for each surface
 
-//                    }
+//                for (std::size_t it = 0; it < nu_; it++){
+
+//                    double x = curve_iterator.second.segment.curve[it].x();
+//                    double y = j;
+//                    double z = curve_iterator.second.segment.curve[it].y();
+
+
+//                    positions.push_back( x );
+//                    positions.push_back( y );
+//                    positions.push_back( z );
 
 //                }
+
 //            }
 //        }
+//    }
 
 
-//        region.readskeleton( number_of_surfaces, nu, nv, positions, 0 /* neighbor information missing*/ );
+    region.readskeleton( number_of_surfaces, nu, nv, positions );
 }
 
 
@@ -455,52 +412,15 @@ void FlowVisualizationController::computeFlowProperties()
     properties_computed = true;
 
     emit propertybyVertexComputed( "PRESSURE", "SCALAR" ) ;
-
     emit propertybyVertexComputed( "VELOCITY", "VECTOR" ) ;
+
     emit propertybyFaceComputed( "VELOCITY", "VECTOR" ) ;
+
     emit propertybyVertexComputed( "TOF", "SCALAR" ) ;
     emit propertybyFaceComputed( "TOF", "SCALAR" ) ;
 
-
-/*
-    counter.start( 0, 3 );
-
-    computePressure();
-
-    counter.update( 1 );
-
-    computeVelocity();
-
-    counter.update( 2 );
-
-    computeTOF();
-
-    counter.update( 3 );
-
-    properties_computed = true;
-
-
-*/
-}
-
-
-void FlowVisualizationController::computePressure()
-{
-//    region.computepressure();
-}
-
-
-void FlowVisualizationController::computeVelocity()
-{
-//    region.computevelocity();
-}
-
-
-void FlowVisualizationController::computeTOF()
-{
-//    region.flowdiagnostics();
-
-
+    emit propertybyVertexComputed( "TRACER", "SCALAR" ) ;
+    emit propertybyFaceComputed( "TRACER", "SCALAR" ) ;
 
 }
 
@@ -521,12 +441,19 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     {
         getPressureValuesbyVertex( values );
     }
+
     else if( name_of_property.compare( "TOF" ) == 0 )
         getTOFValuesbyVertex( values );
-    
-    
+
+    else if( name_of_property.compare( "TRACER" ) == 0 )
+        getTracerValuesbyVertex( values );
+
+
     std::vector< double > scalar_values;
     
+
+    if ( values.empty() == true ) return scalar_values;
+
     if( type.compare( "VECTOR" ) == 0 )
     {
         scalar_values = vectorToScalarProperties( values, method, min, max );
@@ -566,8 +493,14 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     else if( name_of_property.compare( "TOF" ) == 0 )
         getTOFValuesbyCell( values );
 
+    else if( name_of_property.compare( "TRACER" ) == 0 )
+        getTracerValuesbyCell( values );
+
 
     std::vector< double > scalar_values;
+
+
+    if ( values.empty() == true ) return scalar_values;
 
     if( type.compare( "VECTOR" ) == 0 )
     {
@@ -659,39 +592,14 @@ void FlowVisualizationController::setTetgenCommand( std::string& cmd )
 }
 
 
-void FlowVisualizationController::setViscosityValue( double value )
-{
-    region.setViscosityValue( value );
-}
-
-
-void FlowVisualizationController::setPermeabilityValues( int n, vector<double> &values )
-{
-//    std::size_t number_values = values.size();
-
-//    for( std::size_t it = 0; it < number_values; ++it )
-//        cout << values.at( it ) << endl;
-
-    region.setPermeabilityValue( n, values );
-}
-
-
 void FlowVisualizationController::setBoundariesValues( int nb, vector< double > &values )
 {
-//    std::size_t number_values = values.size();
-
-//    for( std::size_t it = 0; it < number_values; ++it )
-//        cout << "d: " << values.at( it ) << endl;
 
     region.setBoundariesSurface( nb, values );
 }
 
 void FlowVisualizationController::setWellsValues( int nw,  vector< double > &values )
 {
-//    std::size_t number_values = values.size();
-
-//    for( std::size_t it = 0; it < number_values; ++it )
-//        cout << "d: " << values.at( it ) << endl;
 
     region.setWells( nw, values );
 }
@@ -699,7 +607,6 @@ void FlowVisualizationController::setWellsValues( int nw,  vector< double > &val
 
 void FlowVisualizationController::setTofBoundaryValues( int n, vector< double > &values )
 {
-//    std::size_t number_values = n;//values.size()/2;
 
     vector< int > values_;
     int ntfsignal = values[ 0 ];
@@ -717,7 +624,6 @@ void FlowVisualizationController::setTofBoundaryValues( int n, vector< double > 
 
 void FlowVisualizationController::setTrBoundaryValues(int n, std::vector< double > &values )
 {
-//    std::size_t number_values = n;//values.size()/3;
 
     int ntrsignal = values[ 0 ];
 
@@ -766,6 +672,17 @@ void FlowVisualizationController::getTOFValuesbyCell( std::vector< double >& val
 }
 
 
+void FlowVisualizationController::getTracerValuesbyCell( std::vector< double >& values )
+{
+    region.getElementalsTracer( values );
+}
+
+void FlowVisualizationController::getTracerValuesbyVertex( std::vector< double >& values )
+{
+    region.getNodesTracer( values );
+}
+
+
 void FlowVisualizationController::exportSurfacetoVTK( const std::string& filename )
 {
     region.writeresult( (char *)filename.c_str() );
@@ -781,6 +698,42 @@ void FlowVisualizationController::exportVolumetoVTK( const std::string& filename
 void FlowVisualizationController::exportCornerPointtoVTK( const std::string& filename )
 {
     region.writecornerpointgridVTK( (char *)filename.c_str() );
+}
+
+
+void FlowVisualizationController::increaseMeshScale()
+{
+    region.increaseMeshScale();
+}
+
+
+void FlowVisualizationController::decreaseMeshScale()
+{
+    region.decreaseMeshScale();
+}
+
+
+void FlowVisualizationController::increaseNumberofEdges()
+{
+    region.increaseNumberofEdges();
+}
+
+
+void FlowVisualizationController::decreaseNumberofEdges()
+{
+    region.decreaseNumberofEdges();
+}
+
+
+void FlowVisualizationController::increaseEdgeLength()
+{
+    region.increaseEdgeLength();
+}
+
+
+void FlowVisualizationController::decreaseEdgeLength()
+{
+    region.decreaseEdgeLength();
 }
 
 

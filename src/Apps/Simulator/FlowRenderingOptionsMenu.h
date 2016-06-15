@@ -25,6 +25,8 @@ class FlowRenderingOptionsMenu: public QMenu
         inline bool showEdges(){ return chk_show_edges->isChecked(); }
         inline bool showFaces(){ return chk_show_faces->isChecked(); }
 
+        void clear();
+
 
     protected:
 
@@ -34,6 +36,7 @@ class FlowRenderingOptionsMenu: public QMenu
         void createVisualizationMenu();
         void createPropertiesMenu();
         void createColorMapMenu();
+        void createExportMenu();
 
 
     public slots:
@@ -59,12 +62,16 @@ class FlowRenderingOptionsMenu: public QMenu
         QCheckBox* chk_show_vertices;
         QCheckBox* chk_show_edges;
         QCheckBox* chk_show_faces;
+        QCheckBox* chk_show_bbox;
 
         QWidgetAction* wa_visualization_options;
 
         QMenu *mn_coloring_byvertex;
         QMenu *mn_coloring_byfaces;
 
+        QAction* ac_exportsurfacetovtk;
+        QAction* ac_exportvolumetovtk;
+        QAction* ac_exportcornerpointtovtk;
 
         std::vector< QMenu *> mn_vectorsproperties_byvertex;
         std::vector< QRadioButton *> rd_vectormethods_byvertex;

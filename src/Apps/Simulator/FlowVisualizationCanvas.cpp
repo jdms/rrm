@@ -148,6 +148,13 @@ void FlowVisualizationCanvas::showFaces( bool status )
 }
 
 
+void FlowVisualizationCanvas::showBoundingBox( bool status )
+{
+    mesh.showBoundingBox( status );
+    update();
+}
+
+
 void FlowVisualizationCanvas::setConstantColor()
 {
     QVector3D c = colormap.getConstantColor();
@@ -178,6 +185,8 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
     coloring_property_type = "VERTEX";
 
     values = controller->getVerticesPropertyValues( name, method, min, max );
+
+    if( values.empty() == true ) return;
 
     std::vector< float > colors;
 
@@ -210,6 +219,7 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
 
     values = controller->getFacesPropertyValues( name, method, min, max );
 
+    if( values.empty() == true ) return;
 
     int number_of_vertices = mesh.getNumberofVertices();
 
@@ -289,7 +299,7 @@ void FlowVisualizationCanvas::updateMesh()
     std::string current_colormap = rendering_menu->getCurrentColorMap();
 
 
-    controller->updateMeshFromFile( &mesh );    
+    controller->updateMeshFromSurface( &mesh );
 
     mesh.showVertices( show_vertices );
     mesh.showEdges( show_edges );
@@ -305,6 +315,33 @@ void FlowVisualizationCanvas::updateMesh()
 
 }
 
+
+void FlowVisualizationCanvas::updateMeshfromFile()
+{
+
+
+    bool show_vertices = rendering_menu->showVertices();
+    bool show_edges = rendering_menu->showEdges();
+    bool show_faces = rendering_menu->showFaces();
+
+    std::string current_colormap = rendering_menu->getCurrentColorMap();
+
+
+    controller->updateMeshFromFile( &mesh );
+
+    mesh.showVertices( show_vertices );
+    mesh.showEdges( show_edges );
+    mesh.showFaces( show_faces );
+
+    mesh.load();
+
+
+    if( current_colormap.compare( "CONSTANT" ) == 0 )
+        setConstantColor();
+    else if( current_colormap.compare( "JET" ) == 0 )
+        setJETColor();
+
+}
 
 void FlowVisualizationCanvas::updateVolumetricMesh()
 {
@@ -343,6 +380,8 @@ void FlowVisualizationCanvas::clear()
     apply_crosssection = false;
 
     camera.reset();
+
+    rendering_menu->clear();
 
     update();
 }
@@ -390,6 +429,39 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
 
     update();
 
+}
+
+
+void FlowVisualizationCanvas::exportSurface()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+                                                     ".vtk files (*.vtk)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    controller->exportSurfacetoVTK( filename.toStdString() );
+}
+
+
+void FlowVisualizationCanvas::exportVolume()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+                                                     ".vtk files (*.vtk)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    controller->exportVolumetoVTK( filename.toStdString() );
+}
+
+
+void FlowVisualizationCanvas::exportCornerPoint()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+                                                     ".vtk files (*.vtk)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    controller->exportCornerPointtoVTK( filename.toStdString() );
 }
 
 
@@ -534,52 +606,94 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_Up:
         {
-            float step = 1.0f;
-            crosssection.updatePosition( V, P, step );
 
-            float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
-            crosssection.getPlaneEquation( a, b, c, d );
-            mesh.setCrossSectionClippingEquation( a, b, c, d );
+            if( apply_crosssection == true )
+            {
+                float step = 1.0f;
+                crosssection.updatePosition( V, P, step );
+
+                float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
+                crosssection.getPlaneEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d );
+            }
+            else
+            {
+                controller->increaseMeshScale();
+            }
 
 
 
         }break;
         case Qt::Key_Down:
         {
-            float step = -1.0f;
-            crosssection.updatePosition( V, P, step );
 
-            float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
-            crosssection.getPlaneEquation( a, b, c, d );
-            mesh.setCrossSectionClippingEquation( a, b, c, d );
+            if( apply_crosssection == true )
+            {
+                float step = -1.0f;
+                crosssection.updatePosition( V, P, step );
 
+                float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
+                crosssection.getPlaneEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d );
 
+            }
+            else
+            {
+                controller->decreaseMeshScale();
+            }
 
         }break;
         case Qt::Key_Right:
         {
-            float step = 1.0f;
-            crosssection.updatePosition( V, P, step );
 
-            float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
-            crosssection.getPlaneEquation( a, b, c, d );
-            mesh.setCrossSectionClippingEquation( a, b, c, d );
+            if( apply_crosssection == true )
+            {
+                float step = 1.0f;
+                crosssection.updatePosition( V, P, step );
 
+                float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
+                crosssection.getPlaneEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d );
+
+            }
+            else
+            {
+                controller->increaseEdgeLength();
+            }
 
 
         }break;
         case Qt::Key_Left:
         {
-            float step = -1.0f;
-            crosssection.updatePosition( V, P, step );
 
-            float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
-            crosssection.getPlaneEquation( a, b, c, d );
-            mesh.setCrossSectionClippingEquation( a, b, c, d );
+            if( apply_crosssection == true )
+            {
+                float step = -1.0f;
+                crosssection.updatePosition( V, P, step );
+
+                float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
+                crosssection.getPlaneEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d );
+            }
+            else
+            {
+                controller->decreaseEdgeLength();
+            }
 
 
         }break;
 
+        case Qt::Key_Plus:
+        {
+            controller->increaseNumberofEdges();
+
+        }
+        break;
+
+        case Qt::Key_Minus:
+        {
+            controller->increaseNumberofEdges();
+        }break;
 
         default:
             break;

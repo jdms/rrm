@@ -14,12 +14,17 @@ void FlowRenderingOptionsMenu::create()
     createPropertiesMenu();
     createColorMapMenu();
     createVisualizationMenu();
+    createExportMenu();
 
 
     addMenu( mn_coloring_byvertex );
     addMenu( mn_coloring_byfaces );
     addAction ( wa_visualization_options );
     addAction ( wa_colormaps );
+    addSection( "Export" );
+    addAction( ac_exportsurfacetovtk );
+    addAction( ac_exportvolumetovtk );
+    addAction( ac_exportcornerpointtovtk );
 
 }
 
@@ -30,6 +35,13 @@ void FlowRenderingOptionsMenu::createActions( QWidget* parent ){
     connect( chk_show_vertices, SIGNAL( clicked( bool ) ), parent, SLOT( showVertices( bool ) ) );
     connect( chk_show_edges, SIGNAL( clicked( bool ) ), parent, SLOT( showEdges( bool ) ) );
     connect( chk_show_faces, SIGNAL( clicked( bool ) ), parent, SLOT( showFaces( bool ) ) );
+    connect( chk_show_bbox, SIGNAL( clicked( bool ) ), parent, SLOT( showBoundingBox( bool ) ) );
+
+
+
+    connect( ac_exportsurfacetovtk, SIGNAL( triggered( bool ) ), parent, SLOT( exportSurface() ) );
+    connect( ac_exportvolumetovtk, SIGNAL( triggered( bool ) ), parent, SLOT( exportVolume() ) );
+    connect( ac_exportcornerpointtovtk, SIGNAL( triggered( bool ) ), parent, SLOT( exportCornerPoint() ) );
 
 
 }
@@ -46,11 +58,15 @@ void FlowRenderingOptionsMenu::createVisualizationMenu()
     chk_show_faces = new QCheckBox ( tr ( "Show Volume" ) );
     chk_show_faces->setChecked ( true );
 
+    chk_show_bbox = new QCheckBox ( tr ( "Show Bounding Box" ) );
+    chk_show_bbox->setChecked ( true );
+
 
     QVBoxLayout *vb_layout = new QVBoxLayout;
     vb_layout->addWidget ( chk_show_vertices );
     vb_layout->addWidget ( chk_show_edges );
     vb_layout->addWidget ( chk_show_faces );
+    vb_layout->addWidget ( chk_show_bbox );
 
     QGroupBox *gb_visualization = new QGroupBox( "Rendering" );
     gb_visualization->setFlat ( true );
@@ -89,11 +105,24 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
 
 }
 
+
 void FlowRenderingOptionsMenu::createPropertiesMenu()
 {
     mn_coloring_byvertex = new QMenu ( tr ( "Vertex Properties" ) );
     mn_coloring_byfaces = new QMenu ( tr ( "Faces Properties" ) );
 }
+
+
+void FlowRenderingOptionsMenu::createExportMenu()
+{
+    ac_exportsurfacetovtk = new QAction( "Export Surface", this );
+    ac_exportvolumetovtk = new QAction( "Export Volume", this );
+    ac_exportcornerpointtovtk = new QAction( "Export CornerPoint", this );
+
+
+
+}
+
 
 void FlowRenderingOptionsMenu::addVertexProperty( std::string name, std::string dimension )
 {
@@ -208,3 +237,22 @@ std::string FlowRenderingOptionsMenu::getCurrentColorMap()
         return "JET";
 }
 
+
+void FlowRenderingOptionsMenu::clear()
+{
+
+    mn_vectorsproperties_byvertex.clear();
+    rd_vectormethods_byvertex.clear();
+    ac_vertex_property.clear();
+
+    mn_coloring_byvertex->clear();
+
+
+    mn_vectorsproperties_byface.clear();
+    rd_vectormethods_byface.clear();
+
+    ac_face_property.clear();
+
+    mn_coloring_byfaces->clear();
+
+}

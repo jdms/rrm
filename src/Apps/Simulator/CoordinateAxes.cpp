@@ -24,7 +24,7 @@ void CoordinateAxes::initShader( std::string directory )
 {
 
 
-    shader_axes = new Tucano::Shader( "shader_axes", ( directory + "shaders/vertex_instanced_shader.vert" ), ( directory + "shaders/fragment_shader.frag" ), "", "", "" );
+    shader_axes = new Tucano::Shader( "shader_axes", ( directory + "Shaders/Flow/vertex_instanced_shader.vert" ), ( directory + "Shaders/Flow/fragment_shader.frag" ), "", "", "" );
     shader_axes->initialize();
 
     current_directory = directory;

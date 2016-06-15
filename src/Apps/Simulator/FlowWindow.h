@@ -10,7 +10,7 @@
 
 #include "FlowParametersBar.h"
 #include "OpenFlowFilesBar.h"
-#include "NormalMovableCrossSectionFlow.h"
+#include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 
 class FlowWindow : public QMainWindow

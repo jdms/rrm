@@ -28,6 +28,7 @@ class NormalMovableCrossSectionFlow : public QWidget,
         void canceled();
 
 
+
 };
 
 #endif // NORMALMOVABLECROSSSECTIONFLOW_H
