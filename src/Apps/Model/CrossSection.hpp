@@ -271,7 +271,7 @@ namespace RRM
 
 				//_curve.douglasPeuckerSimplify(test,0.5);
 				std::cout << "CURVE SIZE" << test.size() << std::endl;
-				test.lineFilter(0.5,4);
+				test.lineFilter(0.1,4);
 				test.meanFilter();
 				std::cout << "CURVE SIZE After" << test.size() << std::endl;
 
