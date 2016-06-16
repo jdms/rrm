@@ -1,6 +1,9 @@
 #ifndef FLOWVISUALIZATIONCONTROLLER_H
 #define FLOWVISUALIZATIONCONTROLLER_H
 
+
+
+#include "Model/CrossSection.hpp"
 #include <vector>
 
 #include <QObject>
@@ -9,12 +12,14 @@
 #include "Mesh.h"
 #include "ProgressCounter.h"
 
+
 class FlowVisualizationController: public QObject
 {
     Q_OBJECT
 
     public:
 
+	
         FlowVisualizationController( QWidget* parent = 0 );
 
 
@@ -37,7 +42,7 @@ class FlowVisualizationController: public QObject
         void getTracerValuesbyCell( std::vector< double >& values );
 
 
-        void getSurfaceFromCrossSection( /*RRM::CrossSection<double>& _cross_section*/ );
+		void getSurfaceFromCrossSection(const RRM::CrossSection<qreal>& _cross_section);
 
 
 

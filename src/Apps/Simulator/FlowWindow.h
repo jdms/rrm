@@ -13,6 +13,8 @@
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 
+#include "Model/CrossSection.hpp"
+
 class FlowWindow : public QMainWindow
 {
     Q_OBJECT
@@ -37,7 +39,9 @@ class FlowWindow : public QMainWindow
         void exportSurfaceFile();
         void exportVolumeFile();
         void exportCornerPointFile();
-
+		inline void setCrossSection(const RRM::CrossSection<qreal>& c){ controller->getSurfaceFromCrossSection( c );  }
+	signals:
+		void getCrossSection();
 
     private:
 

@@ -6,18 +6,19 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
     mesh_ok = false;
     volumetric_ok = false;
     properties_computed = false;
+
 }
 
 void FlowVisualizationController::readCornerPoint( bool read_file, const std::string& mesh_file )
 {
 
 
-    if( read_file == true ){
-        std::string filename = mesh_file + ".txt";
-        region.readskeleton( (char *) filename.c_str() );
-    }
-        else
-        getSurfaceFromCrossSection();
+	if (read_file == true){
+		std::string filename = mesh_file + ".txt";
+		region.readskeleton((char *)filename.c_str());
+	}
+	else
+   //     getSurfaceFromCrossSection();
 
     region.cornerpointgrid();
 
@@ -49,7 +50,7 @@ void FlowVisualizationController::readUnstructured( bool read_file,  const std::
 
     }
     else if( read_file == false ){
-        getSurfaceFromCrossSection();
+        //getSurfaceFromCrossSection();
         region.unstructuredsurfacemesh();
     }
 
@@ -352,7 +353,7 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 
 
-void FlowVisualizationController::getSurfaceFromCrossSection( /*RRM::CrossSection<double>& _cross_section*/ )
+void FlowVisualizationController::getSurfaceFromCrossSection(const RRM::CrossSection<qreal>& _cross_section)
 {
     int i, ny, j;
     ny = 6; //extrude 6 layers of nodes; depth = 1
@@ -361,38 +362,45 @@ void FlowVisualizationController::getSurfaceFromCrossSection( /*RRM::CrossSectio
     vector< double > positions;
 
 
-    int number_of_surfaces;// = _cross_section.numberofedges();
+	_cross_section.log();
+
+	int number_of_surfaces = 0;
 
 
-//    for (auto& curve_iterator : _cross_section.edges_){//now is number of surfaces
 
-//        if (curve_iterator.second.is_boudary_ == false){ //only internal sketched
+    for (auto& curve_iterator : _cross_section.edges_){//now is number of surfaces
 
-//            int nu_ = curve_iterator.second.segment.curve.size();
-
-//            nu.push_back( nu_ );
-//            nv.push_back( ny );
+		if ((curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_)){ //only internal sketched
 
 
-//            for (j = 0; j < ny; j++){//output is firstly x direction then y direction for each surface
+			number_of_surfaces++;
+            int nu_ = curve_iterator.second.segment.curve.size();
 
-//                for (std::size_t it = 0; it < nu_; it++){
-
-//                    double x = curve_iterator.second.segment.curve[it].x();
-//                    double y = j;
-//                    double z = curve_iterator.second.segment.curve[it].y();
+            nu.push_back( nu_ );
+            nv.push_back( ny );
 
 
-//                    positions.push_back( x );
-//                    positions.push_back( y );
-//                    positions.push_back( z );
+            for (j = 0; j < ny; j++){//output is firstly x direction then y direction for each surface
 
-//                }
+                for (std::size_t it = 0; it < nu_; it++){
 
-//            }
-//        }
-//    }
+                    double x = curve_iterator.second.segment.curve[it].x();
+                    double y = j;
+                    double z = curve_iterator.second.segment.curve[it].y();
 
+
+                    positions.push_back( x );
+                    positions.push_back( y );
+                    positions.push_back( z );
+
+                }
+
+            }
+        }
+    }
+
+
+	std::cout << " numt" << number_of_surfaces  << std::endl;
 
     region.readskeleton( number_of_surfaces, nu, nv, positions );
 }

@@ -27,6 +27,11 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
 
+
+	connect( flowwindow, &FlowWindow::getCrossSection, this, [=](){  flowwindow->setCrossSection(sketch_board_->sketch_controller->getCrossSection());  });
+	//connect(this->sketch_board_, SIGNAL(currentCrossSection(const CrossSection&)), this->glWidget, SLOT(updateBlackScreen(const CrossSection&)));
+
+
 }
 
 MainWindow::~MainWindow ( )

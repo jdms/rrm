@@ -69,8 +69,8 @@ void FlowWindow::createToolBar()
     qtoolbarFlow = new QToolBar();
 
     qoopenfilesDialog = new QAction( "Open File", qtoolbarFlow );
-    connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
-
+    //connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
+	connect( qoopenfilesDialog, &QAction::triggered, this, [=](){ emit getCrossSection(); } ) ;
 
     qflowparametersDialog = new QAction( "Flow Input", qtoolbarFlow );
     connect( qflowparametersDialog, SIGNAL( triggered(bool) ), qdockparametersBar, SLOT( show() ) );
