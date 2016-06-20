@@ -7,11 +7,13 @@
 #include <QAction>
 #include <QStatusBar>
 #include <QProgressBar>
+#include <QKeyEvent>
 
 #include "FlowParametersBar.h"
 #include "OpenFlowFilesBar.h"
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
+#include "DialogMeshVisualizationParameters.h"
 
 #include "Model/CrossSection.hpp"
 
@@ -30,6 +32,10 @@ class FlowWindow : public QMainWindow
         void updateParameterFields();
         void getCurrentDirectory();
 
+        inline void setCrossSection( const RRM::CrossSection<qreal>& c){ controller->getSurfaceFromCrossSection( c ); }
+
+        void keyPressEvent( QKeyEvent *event );
+
 
     public slots:
 
@@ -39,8 +45,13 @@ class FlowWindow : public QMainWindow
         void exportSurfaceFile();
         void exportVolumeFile();
         void exportCornerPointFile();
-		inline void setCrossSection(const RRM::CrossSection<qreal>& c){ controller->getSurfaceFromCrossSection( c );  }
-	signals:
+
+        void updateVisualizationParameters();
+
+
+    signals:
+
+        void getSurfaceCrossSection();
 		void getCrossSection();
 
     private:
@@ -51,6 +62,8 @@ class FlowWindow : public QMainWindow
         QAction *qbuildvolumetricMesh;
         QAction *qcomputeFlowProperties;
         QAction *qshowMovingCrossSection;
+        QAction* qmeshresolution;
+        QAction* qreloadSurface;
         QAction *qclear;
 
         QAction *qexportsurface;
@@ -72,6 +85,9 @@ class FlowWindow : public QMainWindow
         QDockWidget * qdockcrosssectionnormalBar;
         NormalMovableCrossSectionFlow crosssectionnormalBar;
 
+        QDockWidget* qdockresolutionmesh;
+        DialogMeshVisualizationParameters resolutionmeshBar;
+
         QStatusBar* sb_statusbar;
         QProgressBar* pb_processprogress;
 
@@ -80,6 +96,8 @@ class FlowWindow : public QMainWindow
         std::string type_of_file;
         bool read_file;
         int mesh_method;
+
+        bool show_toolbar;
 };
 
 #endif // FLOWWINDOW_H

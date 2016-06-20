@@ -132,6 +132,8 @@ class MainWindow : public QMainWindow
         QColorDialog *cd_pickercolor;
         QToolButton *tbt_colorsketch;
 
+		// Seismic Module
+		QAction *ac_wdwseismic;
 
         QAction *ac_compute;
         QAction *ac_flowcomputation;
@@ -149,8 +151,8 @@ class MainWindow : public QMainWindow
         QAction *ac_newBoundary;
 
 
-        Sketching2DModule *seismic_Module_;
-	RRM::SeismicWindow * seismic_view_;
+		Sketching2DModule *dc_Seismic_Module_;
+	    RRM::SeismicWindow * seismic_view_;
 
 
         // 3D Extrusion

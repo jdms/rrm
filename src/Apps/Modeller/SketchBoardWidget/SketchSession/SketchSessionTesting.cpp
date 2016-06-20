@@ -223,12 +223,14 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 
 		if ( this->boundary_sketching_ == true )
 		{
+
+			this->boundary_sketching_ = false;
+
 			emit newBoundary(       this->boundaryc_->boundingRect ( ).x( ) ,
 						this->boundaryc_->boundingRect ( ).y ( ) ,
 						this->boundaryc_->boundingRect ( ).width ( ) + this->boundaryc_->boundingRect( ).x ( ) ,
 						this->boundaryc_->boundingRect ( ).height ( ) + this->boundaryc_->boundingRect( ).y( ) );
-
-			this->boundary_sketching_ = false;
+			
 		}
 		else
 		{
@@ -242,62 +244,78 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 
 	}else if (mode_ == InteractionMode::OVERSKETCHING)
 	{
-		QPolygonF new_curve = input_sketch_->getSketch();
 
-		// Sketch Too Short
-		if ( input_sketch_->getSketch().size() < 10 )
+		if (this->boundary_sketching_ == true)
 		{
-			event->ignore();
-			return;
-		}
 
-		if ( current_sketch_->getSketch().size() == 0)
+			this->boundary_sketching_ = false;
+
+			emit newBoundary(this->boundaryc_->boundingRect().x(),
+				this->boundaryc_->boundingRect().y(),
+				this->boundaryc_->boundingRect().width() + this->boundaryc_->boundingRect().x(),
+				this->boundaryc_->boundingRect().height() + this->boundaryc_->boundingRect().y());
+
+		}else
 		{
+			QPolygonF new_curve = input_sketch_->getSketch();
+
+			// Sketch Too Short
+			if (input_sketch_->getSketch().size() < 10)
+			{
+				event->ignore();
+				return;
+			}
+
+			if (current_sketch_->getSketch().size() == 0)
+			{
+				current_sketch_->create(new_curve[0]);
+			}
+
+			//		else
+			//		{
+			//			QPointF p1 = new_curve.front();
+			//
+			//			QPointF p2 =current_sketch_->getSketch().back();
+			//
+			//			QLineF line(p1,p2);
+			//
+			//			if ( line.length() > 5 )
+			//			{
+			//				return;
+			//			}
+			//
+			//		}
+
+			if (input_curve_.size() == 0)
+			{
+				input_curve_ = convert(new_curve);
+			}
+			else
+			{
+				over_sketch_ = convert(new_curve);
+
+				input_curve_ = over_sketch_.overSketch(input_curve_, rest_, 1, 16);
+				input_curve_.douglasPeuckerSimplify(over_sketch_, 1.0);
+
+				input_curve_ = over_sketch_;
+
+				new_curve = convert(input_curve_);
+			}
+
+			current_sketch_->clear();
 			current_sketch_->create(new_curve[0]);
+
+			for (int p_it = 1; p_it < new_curve.size(); p_it++)
+			{
+				current_sketch_->add(new_curve[p_it]);
+			}
+
+			input_sketch_->clear();
 		}
 
-//		else
-//		{
-//			QPointF p1 = new_curve.front();
-//
-//			QPointF p2 =current_sketch_->getSketch().back();
-//
-//			QLineF line(p1,p2);
-//
-//			if ( line.length() > 5 )
-//			{
-//				return;
-//			}
-//
-//		}
-
-		if ( input_curve_.size() == 0)
-		{
-			input_curve_ = convert(new_curve);
-		}
-		else
-		{
-			over_sketch_ = convert(new_curve);
-
-			input_curve_ = over_sketch_.overSketch(input_curve_,rest_, 1, 16);
-			input_curve_.douglasPeuckerSimplify(over_sketch_, 3);
-
-			input_curve_ = over_sketch_;
-
-			new_curve = convert(input_curve_);
 		}
 
-		current_sketch_->clear();
-		current_sketch_->create(new_curve[0]);
-
-		for( int p_it = 1; p_it < new_curve.size(); p_it++ )
-		{
-			current_sketch_->add(new_curve[p_it]);
-		}
-
-		input_sketch_->clear();
-	}
-
+		
 	update ( );
 }
 

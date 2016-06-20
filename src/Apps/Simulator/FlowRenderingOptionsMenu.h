@@ -25,6 +25,9 @@ class FlowRenderingOptionsMenu: public QMenu
         inline bool showEdges(){ return chk_show_edges->isChecked(); }
         inline bool showFaces(){ return chk_show_faces->isChecked(); }
 
+
+
+
         void clear();
 
 
@@ -37,7 +40,8 @@ class FlowRenderingOptionsMenu: public QMenu
         void createPropertiesMenu();
         void createColorMapMenu();
         void createExportMenu();
-
+        void createLoadMenu();
+        void createFlowActionsMenu();
 
     public slots:
 
@@ -55,6 +59,15 @@ class FlowRenderingOptionsMenu: public QMenu
 
         void setConstantColormap();
         void setJETColormap();
+
+        void reloadcrosssection();
+        void loadfile();
+        void editparameters();
+        void buildvolumetric();
+        void computeproperties();
+        void applycrosssection();
+
+        void clearAll();
 
 
     private:
@@ -89,6 +102,15 @@ class FlowRenderingOptionsMenu: public QMenu
         QRadioButton* rd_colormap_JET;
         QWidgetAction* wa_colormaps;
 
+
+        QAction* ac_reloadcrosssection;
+        QAction* ac_loadfile;
+        QAction* ac_editparameters;
+        QAction* ac_buildvolumetric;
+        QAction* ac_computeproperties;
+        QAction* ac_applycrosssection;
+
+        QAction* ac_clear;
 
 };
 

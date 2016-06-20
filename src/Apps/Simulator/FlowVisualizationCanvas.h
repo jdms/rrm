@@ -73,6 +73,8 @@ class FlowVisualizationCanvas: public QOpenGLWidget
     protected:
 
         void createActions();
+        void initializeShader();
+        void loadBackGround();
 
         void initializeGL() Q_DECL_OVERRIDE;
         void paintGL() Q_DECL_OVERRIDE;
@@ -109,6 +111,13 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         CoordinateAxes* axes;
 
         bool apply_crosssection;
+
+        Tucano::Shader*   background_;
+        GLuint vertexArray_cube_;
+        GLuint vertexBuffer_cube_;
+        GLuint vertexCube_slot_;
+
+        std::vector<Eigen::Vector3f> cube_;
 
 
 };

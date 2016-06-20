@@ -285,7 +285,7 @@ void FlowCrossSection::updatePosition( const Eigen::Affine3f& V, const Eigen::Ma
 void FlowCrossSection::initShader( std::string directory )
 {
 
-    shader_plane = new Tucano::Shader(  "shader_plane", ( directory + "Shaders/Flow/vertex_plane_shader.vert" ) , ( directory + "Shaders/Flow/fragment_plane_shader.frag" ), "", "", "" );
+    shader_plane = new Tucano::Shader(  "shader_plane", ( directory + "shaders/vertex_plane_shader.vert" ) , ( directory + "shaders/fragment_plane_shader.frag" ), "", "", "" );
     shader_plane->initialize();
 
     glGenVertexArrays( 1, &va_plane );

@@ -1,9 +1,8 @@
 #ifndef FLOWVISUALIZATIONCONTROLLER_H
 #define FLOWVISUALIZATIONCONTROLLER_H
 
-
-
 #include "Model/CrossSection.hpp"
+
 #include <vector>
 
 #include <QObject>
@@ -12,14 +11,12 @@
 #include "Mesh.h"
 #include "ProgressCounter.h"
 
-
 class FlowVisualizationController: public QObject
 {
     Q_OBJECT
 
     public:
 
-	
         FlowVisualizationController( QWidget* parent = 0 );
 
 
@@ -42,7 +39,7 @@ class FlowVisualizationController: public QObject
         void getTracerValuesbyCell( std::vector< double >& values );
 
 
-		void getSurfaceFromCrossSection(const RRM::CrossSection<qreal>& _cross_section);
+        void getSurfaceFromCrossSection( const RRM::CrossSection<qreal>& _cross_section );
 
 
 
@@ -70,7 +67,8 @@ class FlowVisualizationController: public QObject
         std::vector< double > vectorToScalarProperties( const std::vector< double >& values, std::string type, double& min , double& max  );
 
 
-        void getMeshVisualizationParameters( std::string& trianglecmd, double& meshscale, int resolutiontype, int& npartitionedge, double& lenghtedge );
+        void getMeshVisualizationParameters( std::string& trianglecmd, int& resolutiontype, int& npartitionedge, double& lenghtedge );
+        void setMeshVisualizationParameters( const std::string& trianglecmd, const int& resolutiontype, const int& npartitionedge, const double& lenghtedge );
 
 
         inline void setParent( QObject *p ){ controllerParent = p; }
@@ -85,6 +83,13 @@ class FlowVisualizationController: public QObject
         void exportSurfacetoVTK( const std::string& filename );
         void exportVolumetoVTK( const std::string& filename );
         void exportCornerPointtoVTK( const std::string& filename );
+
+
+        inline void emitSignaltoGetSurfaceCrossSection(){ emit getSurfaceCrossSection(); }
+        inline void emitSignaltoReadFile(){ emit readFile(); }
+        inline void emitSignaltoEditParameters(){ emit editParameters(); }
+        inline void emitSignaltoApplyCrossSection(){ emit applyCrossSection(); }
+        inline void emitSignaltoClearEverything(){ emit clearAll(); }
 
 
     public slots:
@@ -126,6 +131,14 @@ class FlowVisualizationController: public QObject
             void propertybyVertexComputed( std::string, std::string );
             void propertybyFaceComputed( std::string, std::string );
 
+            void getSurfaceCrossSection();
+            void readFile();
+            void editParameters();
+            void applyCrossSection();
+
+			void hideToolbar();
+
+            void clearAll();
 
     private:
 

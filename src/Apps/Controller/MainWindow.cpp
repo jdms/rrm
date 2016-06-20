@@ -122,6 +122,8 @@ void MainWindow::createSketchingMenuBar ( )
 {
 	mn_windows->addAction ( ac_wdwsketching );
 	ac_wdwsketching->setCheckable ( true );
+	mn_windows->addAction(ac_wdwseismic);
+	ac_wdwseismic->setCheckable(true);
 }
 
 void MainWindow::createSketchingToolbar ( )
@@ -177,11 +179,21 @@ void MainWindow::createSketchingActions ( )
 	ac_wdwsketching->setCheckable ( true );
 	ac_wdwsketching->setChecked ( true );
 
+	ac_wdwseismic = new QAction(tr("Window Seismic"), this);
+	ac_wdwseismic->setCheckable(true);
+	ac_wdwseismic->setChecked(true);
+
+//	ac_wdwflow = new QAction(tr("Flow Visualization Window "), this);
+//	ac_wdwflow->setCheckable(true);
+//	ac_wdwflow->setChecked(true);
+
+
 //	connect ( ac_removeabove , SIGNAL( triggered() ) , dc_2DModule , SLOT( applyRemoveAbove() ) );
 //	connect ( ac_removebelow , SIGNAL( triggered() ) , dc_2DModule , SLOT( applyRemoveBelow() ) );
 
 	connect ( ac_select , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( pointerSelection( bool ) ) );
 	connect ( ac_wdwsketching , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( setVisible(bool) ) );
+	connect(ac_wdwseismic, SIGNAL(toggled(bool)), dc_Seismic_Module_, SLOT(setVisible(bool)));
 
 }
 
@@ -197,6 +209,7 @@ void MainWindow::create3DWindowActions ( )
 	ac_window3d->setCheckable ( true );
 	ac_window3d->setChecked ( true );
 
+	
 	connect ( ac_window3d , SIGNAL( toggled(bool) ) , dc_3DModule , SLOT( setVisible(bool) ) );
 }
 

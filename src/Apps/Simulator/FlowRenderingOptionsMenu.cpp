@@ -10,21 +10,41 @@ FlowRenderingOptionsMenu::FlowRenderingOptionsMenu( QWidget* parent )
 void FlowRenderingOptionsMenu::create()
 {
 
-
+    createLoadMenu();
+    createFlowActionsMenu();
     createPropertiesMenu();
     createColorMapMenu();
     createVisualizationMenu();
     createExportMenu();
 
 
+    addSection( "" );
+
+    addAction( ac_reloadcrosssection );
+    addAction( ac_loadfile );
+    addAction( ac_editparameters );
+
+    addSection( "Flow Actions" );
+
+    addAction( ac_buildvolumetric );
+    addAction( ac_computeproperties );
+    addAction( ac_applycrosssection );
+
+    addSection( "Properties" );
+
     addMenu( mn_coloring_byvertex );
     addMenu( mn_coloring_byfaces );
     addAction ( wa_visualization_options );
     addAction ( wa_colormaps );
+
     addSection( "Export" );
+
     addAction( ac_exportsurfacetovtk );
     addAction( ac_exportvolumetovtk );
     addAction( ac_exportcornerpointtovtk );
+
+    ac_clear = new QAction( "Clear", this );
+    addAction( ac_clear );
 
 }
 
@@ -43,6 +63,31 @@ void FlowRenderingOptionsMenu::createActions( QWidget* parent ){
     connect( ac_exportvolumetovtk, SIGNAL( triggered( bool ) ), parent, SLOT( exportVolume() ) );
     connect( ac_exportcornerpointtovtk, SIGNAL( triggered( bool ) ), parent, SLOT( exportCornerPoint() ) );
 
+    connect( ac_reloadcrosssection, &QAction::triggered, this, [=](){ emit reloadcrosssection(); } );
+    connect( ac_loadfile,  &QAction::triggered, this, [=](){ emit loadfile(); } );
+    connect( ac_editparameters,  &QAction::triggered, this, [=](){ emit editparameters(); } );
+    connect( ac_buildvolumetric,  &QAction::triggered, this, [=](){ emit buildvolumetric(); } );
+    connect( ac_computeproperties,  &QAction::triggered, this, [=](){ emit computeproperties(); } );
+    connect( ac_applycrosssection,  &QAction::triggered, this, [=](){ emit applycrosssection(); } );
+
+    connect( ac_clear,  &QAction::triggered, this, [=](){ emit clearAll(); } );
+}
+
+
+void FlowRenderingOptionsMenu::createLoadMenu()
+{
+
+    ac_reloadcrosssection = new QAction( "Reload Surface", this );
+    ac_loadfile = new QAction( "Load File", this );
+    ac_editparameters = new QAction( "Edit Parameters", this );
+}
+
+
+void FlowRenderingOptionsMenu::createFlowActionsMenu()
+{
+    ac_buildvolumetric = new QAction( "Build Volumetric", this );
+    ac_computeproperties = new QAction( "Compute Property", this );
+    ac_applycrosssection = new QAction( "Create a CrossSection", this );
 
 }
 
@@ -118,8 +163,6 @@ void FlowRenderingOptionsMenu::createExportMenu()
     ac_exportsurfacetovtk = new QAction( "Export Surface", this );
     ac_exportvolumetovtk = new QAction( "Export Volume", this );
     ac_exportcornerpointtovtk = new QAction( "Export CornerPoint", this );
-
-
 
 }
 

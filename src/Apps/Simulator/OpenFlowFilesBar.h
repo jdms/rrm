@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QString>
 
-#include "ui_OpenFlowFilesBar.h"
+#include "ui_openflowfilesbar.h"
 
 
 class OpenFlowFilesBar : public QWidget,

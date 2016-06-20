@@ -13,6 +13,8 @@ FlowWindow::FlowWindow( QWidget *parent ) : QMainWindow( parent )
     mesh_method = 1;
     read_file = true;
 
+    show_toolbar = false;
+
 }
 
 void FlowWindow::createWindow()
@@ -34,6 +36,12 @@ void FlowWindow::createWindow()
     addDockWidget( Qt::BottomDockWidgetArea, qdockopenfilesBar );
 
 
+    qdockresolutionmesh = new QDockWidget( this );
+    qdockresolutionmesh->setAllowedAreas( Qt::BottomDockWidgetArea );
+    qdockresolutionmesh->setWidget( &resolutionmeshBar );
+    qdockresolutionmesh->setVisible( false );
+
+    addDockWidget( Qt::LeftDockWidgetArea, qdockresolutionmesh );
 
     qdockcrosssectionnormalBar = new QDockWidget( this );
     qdockcrosssectionnormalBar->setAllowedAreas( Qt::LeftDockWidgetArea );
@@ -68,12 +76,21 @@ void FlowWindow::createToolBar()
 
     qtoolbarFlow = new QToolBar();
 
+
+    qreloadSurface = new QAction( "Open File", qtoolbarFlow );
+    connect( qreloadSurface, &QAction::triggered, this, [=](){ emit getCrossSection(); } );
+
     qoopenfilesDialog = new QAction( "Open File", qtoolbarFlow );
-    //connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
-	connect( qoopenfilesDialog, &QAction::triggered, this, [=](){ emit getCrossSection(); } ) ;
+    connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
+
 
     qflowparametersDialog = new QAction( "Flow Input", qtoolbarFlow );
     connect( qflowparametersDialog, SIGNAL( triggered(bool) ), qdockparametersBar, SLOT( show() ) );
+
+
+    qmeshresolution  = new QAction( "Mesh Resolution", qtoolbarFlow );
+    connect( qmeshresolution, &QAction::triggered, this, [=](){ qdockresolutionmesh->show(); updateVisualizationParameters(); } );
+
 
 
     qbuildvolumetricMesh = new QAction( "Volumetric Mesh", qtoolbarFlow );
@@ -111,8 +128,10 @@ void FlowWindow::createToolBar()
     connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas.clear(); qexportcornerpoint->setEnabled( true ); } );
 
 
+	qtoolbarFlow->addAction( qreloadSurface );
     qtoolbarFlow->addAction( qoopenfilesDialog );
     qtoolbarFlow->addAction( qflowparametersDialog );
+    qtoolbarFlow->addAction( qmeshresolution );
     qtoolbarFlow->addAction( qbuildvolumetricMesh );
     qtoolbarFlow->addAction( qcomputeFlowProperties );
     qtoolbarFlow->addAction( qshowMovingCrossSection );
@@ -125,6 +144,7 @@ void FlowWindow::createToolBar()
 
 
     addToolBar( qtoolbarFlow );
+    qtoolbarFlow->setVisible( true );
 
 }
 
@@ -166,14 +186,12 @@ void FlowWindow::createActions()
         }
 
         qdockopenfilesBar->close();
-//        canvas.updateMesh();
 
     } );
 
     connect( &parametersBar, &FlowParametersBar::readSurface, controller, [=]()
     {
         controller->reloadMesh( mesh_method, read_file,  file_of_mesh, type_of_file, file_of_parameters  );
-//        canvas.updateMesh();
 
     } );
 
@@ -204,30 +222,56 @@ void FlowWindow::createActions()
     connect( controller, SIGNAL( updateMesh() ), &canvas, SLOT( updateMesh() ) );
     connect( controller, SIGNAL( updateVolumetricMesh() ), &canvas, SLOT( updateVolumetricMesh() ) );
     connect( controller, SIGNAL( updatePolyMesh() ), &canvas, SLOT( updateMeshfromFile() ) );
+
+
+    connect( controller, &FlowVisualizationController::getSurfaceCrossSection, this, [=](){ emit getSurfaceCrossSection(); } );
+    connect( controller, SIGNAL( readFile() ), qdockopenfilesBar, SLOT( show() ) );
+    connect( controller, SIGNAL( editParameters() ), qdockparametersBar, SLOT( show() ) );
+    connect( controller, SIGNAL( applyCrossSection() ), qdockcrosssectionnormalBar, SLOT( show() ) );
+
+	connect(controller, &FlowVisualizationController::hideToolbar, this, [=](){ show_toolbar = !show_toolbar; qtoolbarFlow->setVisible(show_toolbar);  });
+
+    connect( controller, &FlowVisualizationController::clearAll, this, [=](){
+        controller->clear(); canvas.clear(); qexportcornerpoint->setEnabled( true );
+    } );
+
+    connect( &resolutionmeshBar, &DialogMeshVisualizationParameters::sendVisualizationParameters, this, [=]( const std::string& cmd, const std::string& method, const float &value ) {
+
+        if( method.compare( "PARTITION" ) == 0 )
+            controller->setMeshVisualizationParameters( cmd, 1, value, -1 );
+        else if( method.compare( "EDGELENGHT" ) == 0 )
+            controller->setMeshVisualizationParameters( cmd, 2, -1, value );
+
+        qdockresolutionmesh->close();
+
+
+    } );
+
+    connect( &resolutionmeshBar, SIGNAL( closeBar() ), qdockresolutionmesh, SLOT( close() ) );
+
 }
+
 
 
 void FlowWindow::getCurrentDirectory()
 {
 
-	//! Debug Version: to load the update shaders
-	qDebug() << "Load by Resources ";
-
-	QDir shadersDir = QDir(qApp->applicationDirPath());
+    QDir app_dir = QDir( qApp->applicationDirPath() );
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-	/* Do windows stuff */
-	QString shaderDirectory (shadersDir.path ()+"\\");
+    QString current_dir ( app_dir.path ()+"\\" );
+
 #elif defined(__linux__)               // Linux Directory Style
-	/* Do linux stuff */
-	QString shaderDirectory ( shadersDir.path ( ) + "/" );
+    QString current_dir ( app_dir.path ( ) + "/" );
+
 #else
-	/* Error, both can't be defined or undefined same time */
-	std::cout << "Operate System not supported !"
-		halt();
+    /* Error, both can't be defined or undefined same time */
+    std::cout << "Operate System not supported !"
+    halt();
+
 #endif
 
-	canvas.setCurrentDirectory(shaderDirectory.toStdString());
+    canvas.setCurrentDirectory( current_dir.toStdString() );
 
 
 }
@@ -250,15 +294,6 @@ void FlowWindow::updateParameterFields()
     int ntrbound = 0;
     std::vector< int > vtrbound;
 
-    std::string trianglecmd;
-    double meshscale = 0.0;
-    int resolutiontype = 1;
-    int npartitionedge = 1;
-    double lenghtedge = 0.5;
-
-    int ntrsignal = 1;
-    int ntfsignal = 1;
-
     controller->getTetgenParameter( cmd );
     parametersBar.setTetgenCommand( cmd.c_str() );
 
@@ -280,9 +315,30 @@ void FlowWindow::updateParameterFields()
     controller->getTracerBoundaryParameter( ntrbound, vtrbound );
     parametersBar.setTracerBoundaryParameter( ntrbound, vtrbound );
 
-    controller->getMeshVisualizationParameters( trianglecmd, meshscale, resolutiontype, npartitionedge, lenghtedge );
+
 }
 
+
+void FlowWindow::updateVisualizationParameters()
+{
+
+
+    std::string trianglecmd;
+    double meshscale = 0.0;
+    int resolutiontype = 1;
+    int npartitionedge = 1;
+    double lenghtedge = 0.5;
+
+    controller->getMeshVisualizationParameters( trianglecmd, resolutiontype, npartitionedge, lenghtedge );
+
+    if( resolutiontype == 1 )
+        resolutionmeshBar.setVisualizationParameters( trianglecmd, "PARTITION", npartitionedge, lenghtedge );
+    else if( resolutiontype == 2 )
+        resolutionmeshBar.setVisualizationParameters( trianglecmd, "EDGELENGHT", npartitionedge, lenghtedge );
+
+
+
+}
 
 
 void FlowWindow::startProgressBar( const unsigned int& min, const unsigned int& max )
@@ -341,4 +397,26 @@ void FlowWindow::exportCornerPointFile()
 
     controller->exportCornerPointtoVTK( filename.toStdString() );
 
+}
+
+
+void FlowWindow::keyPressEvent( QKeyEvent *event )
+{
+
+
+    switch( event->key() )
+    {
+
+        case Qt::Key_H:
+        {
+            show_toolbar =!show_toolbar;
+            qtoolbarFlow->setVisible( show_toolbar );
+        } break;
+        default:
+            break;
+
+
+    }
+
+    update();
 }

@@ -98,18 +98,6 @@ void Mesh::setConstantColor( const float r, const float g, const float b )
 void Mesh::setColor( const std::vector< float >& colors  )
 {
 
-//    int number_of_vertices = getNumberofVertices();
-
-//    std::vector <float> color;
-//    color.resize( 3*number_of_vertices );
-
-//    for( int i = 0; i < number_of_vertices; ++i )
-//    {
-//        color[ 3*i ] = r;
-//        color[ 3*i + 1 ] = g;
-//        color[ 3*i + 2 ] = b;
-//    }
-
 
     glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
     glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
@@ -684,8 +672,13 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
     }
     if( show_edges == true )
     {
+        shader_mesh->setUniform( "edge", GL_TRUE );
+
+
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
         glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
+        shader_mesh->setUniform( "edge", GL_FALSE );
+
     }
     if( show_faces == true )
     {

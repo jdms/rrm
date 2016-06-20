@@ -15,14 +15,16 @@ void MainWindow::create2DModule ( )
 	dc_2DModule = new Sketching2DModule( this );
 	dc_2DModule->setWindowTitle ( "Sketch View" );
 	dc_2DModule->setWidget ( sketch_board_ );
-	this->addDockWidget( Qt::LeftDockWidgetArea, dc_2DModule );
+	dc_2DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
+	this->addDockWidget( Qt::TopDockWidgetArea, dc_2DModule );
 
 	// Seismic Module
-	seismic_Module_ = new Sketching2DModule( this );
+	dc_Seismic_Module_ = new Sketching2DModule(this);
 	seismic_view_ = new RRM::SeismicWindow(this);
-	seismic_Module_->setWindowTitle ( "Seismic View" );
-	seismic_Module_->setWidget(this->seismic_view_);
-	this->addDockWidget ( Qt::LeftDockWidgetArea , seismic_Module_ );
+	dc_Seismic_Module_->setWindowTitle("Seismic View");
+	dc_Seismic_Module_->setWidget(this->seismic_view_);
+	dc_Seismic_Module_->setAllowedAreas(Qt::AllDockWidgetAreas);
+	this->addDockWidget(Qt::BottomDockWidgetArea, dc_Seismic_Module_);
 
 	status_bar_ = new QStatusBar ( this );
 	status_bar_->addWidget ( sketch_board_->status_text );
@@ -79,9 +81,10 @@ void MainWindow::create3DModule ( )
 	dc_3DModule->setAllowedAreas ( Qt::RightDockWidgetArea );
 	dc_3DModule->setWindowTitle ( "3D View" );
 
-	addDockWidget ( Qt::RightDockWidgetArea , dc_3DModule );
+	addDockWidget ( Qt::BottomDockWidgetArea, dc_3DModule );
 
         dc_3DModule->hb_canvas3d->addWidget ( glWidget );
+		dc_3DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
 
         connect ( this->dc_3DModule->horizontalSlider_curve, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepx(int) ) );
         connect ( this->dc_3DModule->horizontalSlider_surface, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepz(int) ) );

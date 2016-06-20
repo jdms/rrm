@@ -9,9 +9,12 @@ FlowVisualizationCanvas::FlowVisualizationCanvas( QWidget *parent )
 
 void FlowVisualizationCanvas::setOpenGLFormat()
 {
+	/*
     format.setVersion( 4, 1 );
     format.setProfile( QSurfaceFormat::CompatibilityProfile );
+    format.setSamples(16);
     setFormat( format );
+	*/
 }
 
 
@@ -26,6 +29,15 @@ void FlowVisualizationCanvas::createRenderingMenu()
 
     connect( rendering_menu, &FlowRenderingOptionsMenu::setConstantColormap, this, [=](){ setConstantColor(); }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setJETColor(); }  );
+
+    connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){ controller->emitSignaltoGetSurfaceCrossSection(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ controller->emitSignaltoReadFile(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ controller->emitSignaltoEditParameters(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::buildvolumetric, this, [=](){ controller->computeVolumetricMesh(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::computeproperties, this, [=](){ controller->computeFlowProperties(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ controller->emitSignaltoApplyCrossSection(); }  );
+
+    connect( rendering_menu, &FlowRenderingOptionsMenu::clearAll, this, [=](){ controller->emitSignaltoClearEverything(); }  );
 
 }
 
@@ -55,6 +67,8 @@ void FlowVisualizationCanvas::initializeGL()
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LESS );
 
+//    glMinSampleShading(1.0f);
+
 
     camera.setPerspectiveMatrix ( 60.0 , (float) this->width()/(float) this->height() , 0.1f , 10000.0f );
 
@@ -62,12 +76,103 @@ void FlowVisualizationCanvas::initializeGL()
     crosssection.initShader( current_directory );
 
 
-    axes = new CoordinateAxes();
-    axes->load();
-    axes->initShader( current_directory );
+//    axes = new CoordinateAxes();
+ //   axes->load();
+ //   axes->initShader( current_directory );
+
+    initializeShader();
+
+
+}
+
+
+void FlowVisualizationCanvas::initializeShader()
+{
+    background_ = new Tucano::Shader ( "BackGround" , ( current_directory + "Shaders/DummyQuad.vert" ),
+                                       ( current_directory + "Shaders/DummyQuad.frag" ),
+                                       ( current_directory + "Shaders/DummyQuad.geom" ), "" , "" );
+    background_->initialize ( );
+
+
+    cube_.clear ( );
+
+    Eigen::Vector3f vertex_data[] =
+    {
+        //  Top Face
+        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
+        Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
+        // Bottom Face
+        Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ),
+        Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
+        // Front Face
+        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
+        Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
+        // Back Face
+        Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
+        Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ),
+        // Right Face
+        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
+        Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
+        // Left Face
+        Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , -0.0f , -1.0f ),
+        Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ) };
+
+    Eigen::Vector3f vertex_data_strip[] =
+    {
+        // Top Face
+        vertex_data[0], vertex_data[1], vertex_data[3], vertex_data[2],/* 0 - 5*/
+        // Bottom Face
+        vertex_data[4], vertex_data[5], vertex_data[7], vertex_data[6],/* 6 - 11 */
+        // Front Face
+        vertex_data[0], vertex_data[3], vertex_data[4], vertex_data[5],/* 12 - 17*/
+        // Back Face
+        vertex_data[1], vertex_data[7], vertex_data[2], vertex_data[6],/* 18 - 23*/
+        // Right Face
+        vertex_data[0], vertex_data[4], vertex_data[1], vertex_data[7],/* 24 - 29*/
+        // Left Face
+        vertex_data[2], vertex_data[6], vertex_data[3], vertex_data[5] /* 30 - 35*/
+    };
 
 
 
+    std::copy ( vertex_data_strip , vertex_data_strip + 24 , std::back_inserter ( cube_ ) );
+
+
+    glGenVertexArrays ( 1 , &vertexArray_cube_ );
+    glBindVertexArray ( vertexArray_cube_ );
+
+    /// Requesting Vertex Buffers to the GPU
+    glGenBuffers ( 1 , &vertexBuffer_cube_ );
+    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
+    glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , &cube_[0] , GL_STATIC_DRAW );
+
+    glEnableVertexAttribArray ( vertexCube_slot_ );
+    glVertexAttribPointer ( vertexCube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+    glBindVertexArray ( 0 );
+
+
+}
+
+void FlowVisualizationCanvas::loadBackGround()
+{
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    background_->bind();
+
+    background_->setUniform("viewportSize", width(), height() );
+
+    glBindVertexArray ( vertexArray_cube_ );
+    /// Draw the triangle !
+    glDrawArrays ( GL_POINTS , 0 , 1 );
+
+    glBindVertexArray ( 0 );
+
+    background_->unbind();
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 }
 
 
@@ -75,6 +180,12 @@ void FlowVisualizationCanvas::initializeGL()
 void FlowVisualizationCanvas::paintGL()
 {
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+//    glEnable( GL_SAMPLE_SHADING );
+
+
+
+    loadBackGround();
 
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
@@ -111,9 +222,10 @@ void FlowVisualizationCanvas::paintGL()
     V1( 1, 3 ) = T( 1 );
     V1( 2, 3 ) = T( 2 );
 
-    axes->draw( V1 );
+    //axes->draw( V1 );
 
 
+//    glDisable( GL_SAMPLE_SHADING );
 
 }
 
@@ -537,7 +649,22 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_C:
         {
-//            visible_colorbar = !visible_colorbar;
+            emit controller->getSurfaceCrossSection();
+        } break;
+
+        case Qt::Key_F:
+        {
+            emit controller->readFile();
+        } break;
+
+        case Qt::Key_E:
+        {
+            emit controller->editParameters();
+        } break;
+
+        case Qt::Key_P:
+        {
+            emit controller->applyCrossSection();
         } break;
 
         case Qt::Key_X:
@@ -695,6 +822,16 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
         {
             controller->increaseNumberofEdges();
         }break;
+
+        case Qt::Key_Delete:
+        {
+            emit controller->clearAll();
+        } break;
+
+		case Qt::Key_H:
+		{
+			emit controller->hideToolbar();
+		} break;
 
         default:
             break;

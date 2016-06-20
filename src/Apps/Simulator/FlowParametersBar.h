@@ -5,7 +5,7 @@
 
 #include <QWidget>
 
-#include "ui_FlowParametersBar.h"
+#include "ui_flowparametersbar.h"
 #include "FormPropertyValues.h"
 
 

@@ -9,7 +9,7 @@ OpenFlowFilesBar::OpenFlowFilesBar(QWidget *parent) :
 
 
     QDir app_dir = QDir( qApp->applicationDirPath() );
-    app_dir.cdUp();
+    
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
     QString current_dir ( app_dir.path ()+"\\" );
@@ -25,8 +25,8 @@ OpenFlowFilesBar::OpenFlowFilesBar(QWidget *parent) :
 #endif
 
 
-    edt_inputparameters->setText( current_dir + "inputs/userinput_box.txt" );
-    edt_inputmesh->setText( current_dir + "inputs/box.poly" );
+    edt_inputparameters->setText( current_dir + "inputs/userinput_simplechannel.txt" );
+    edt_inputmesh->setText( current_dir + "inputs/simplechannel.poly" );
 
     edt_tolerance1->setEnabled( false );
     edt_tolerance2->setEnabled( false );
@@ -117,8 +117,8 @@ void OpenFlowFilesBar::on_btb_inputfiles_accepted()
 
 void OpenFlowFilesBar::on_btb_inputfiles_rejected()
 {
-    edt_inputmesh->clear();
-    edt_inputparameters->clear();
+//    edt_inputmesh->clear();
+//    edt_inputparameters->clear();
 
     closeBar();
 }
