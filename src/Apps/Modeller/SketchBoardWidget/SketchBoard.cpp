@@ -2,6 +2,13 @@
 
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 
+
+#include <QtCore/QDir>
+#include <QtWidgets/QApplication>
+
+// Flow Simulator 
+#include "Simulator/FlowComputation/region.h"
+
 SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 {
 	this->setRenderHint ( QPainter::Antialiasing , true );
@@ -150,6 +157,54 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		if( event->key () == Qt::Key_I)
 		{
 			sketchSession_->newSktech();
+		}
+		/// Zhao Testing
+
+		if  (event->key() == Qt::Key_S)
+		{
+			std::cout << "Saving Sktech Lines" << std::endl;
+			sketch_controller->getCrossSection().outputsketchlines(sketch_controller->getCrossSection(), "lines.txt");
+		}
+
+		if (event->key() == Qt::Key_X)
+		{
+			std::cout << "Saving Skeleton Surfaces" << std::endl;
+			sketch_controller->getCrossSection().extrudeandoutputskeleton(sketch_controller->getCrossSection(), "D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+
+			//! Debug Version: to load the update shaders
+			qDebug() << "Load by Resources ";
+
+			QDir shadersDir = QDir(qApp->applicationDirPath());
+
+#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
+			/* Do windows stuff */
+			QString shaderDirectory(shadersDir.path() + "\\");
+#elif defined(__linux__)               // Linux Directory Style
+			/* Do linux stuff */
+			QString shaderDirectory(shadersDir.path() + "/");
+#else
+			/* Error, both can't be defined or undefined same time */
+			std::cout << "Operate System not supported !"
+				halt();
+#endif
+
+		
+			REGION region;
+			region.tolerance(0.000000001, 0.0);
+			/*
+			char * c = (shaderDirectory + "inputs/userinput_internalchannel_bsurface.txt").toStdString().c_str();
+
+			char * s = (shaderDirectory + "surface.txt").toStdString().c_str();
+			*/
+
+			region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_internalchannel_bsurface.txt");
+			region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+			//region.unstructuredsurfacemesh();
+			region.cornerpointgrid();
+			//region.writesurfacemeshVTK("surface.vtk");
+			//region.unstructuredvolumemesh();
+			//region.writevolumemesh("crossSection.vtk");
+			region.writecornerpointgridVTK("CornerPointCrossSection.vtk");
 		}
 
 	QGraphicsView::keyPressEvent(event);

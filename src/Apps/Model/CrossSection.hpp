@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <list>
 #include <iostream>
+#include<fstream>
 
 #include "Topology/Vertex.hpp"
 #include "Topology/Edge.hpp"
@@ -22,7 +23,6 @@
 #include "Model/IDManager.hpp"
 
 #include "Geology/GeologicRules.hpp"
-
 
 namespace RRM
 {
@@ -111,6 +111,7 @@ namespace RRM
 				viewPort_.first = Point2D(0,0);
 				viewPort_.second = Point2D(700,400);
 				current_rule = GeologicRules::Sketch;
+				sampling_ = 3.0;
 			}
 
 			CrossSection ( const Self& _cross_section )
@@ -178,20 +179,21 @@ namespace RRM
 			/// Quad in coordinates  (x , y) (Default OpenGL Coordinate System)
 			void boundary ( Real x , Real y , Real width , Real height )
 			{
+
 				// (x,height)  (width, height)  (width,y)
 				//   v1----------*-----------v2
 				Curve2D segment_1;
 				segment_1.add(Point2D ( x , height ));
 				segment_1.add(Point2D ( width , height ));
 				segment_1.add(Point2D ( width , y ));
-				segment_1.superSample(3.0);
+				segment_1.superSample(sampling_);
 				// (width,y)  (x,y)  (x,height)
 				//   v2----------*-----------v1
 				Curve2D segment_2;
 				segment_2.add(Point2D ( width , y ));
 				segment_2.add(Point2D ( x , y ));
 				segment_2.add(Point2D ( x , height ));
-				segment_2.superSample(3.0);
+				segment_2.superSample(sampling_);
 
 				Edge<Real> e1;
 				e1.id_ = edge_index_.getID();;
@@ -271,7 +273,7 @@ namespace RRM
 
 				//_curve.douglasPeuckerSimplify(test,0.5);
 				std::cout << "CURVE SIZE" << test.size() << std::endl;
-				test.lineFilter(0.1,4);
+				test.lineFilter(1.0,2);
 				test.meanFilter();
 				std::cout << "CURVE SIZE After" << test.size() << std::endl;
 
@@ -401,7 +403,7 @@ namespace RRM
 					Edge<Real> hanging_1;
 					hanging_1.id_ = edge_index_.getID();
 					hanging_1.segment.curve = segments.front();
-					hanging_1.segment.curve.superSample(3.0);
+					hanging_1.segment.curve.superSample(sampling_);
 					hanging_1.segment.curve_index = source_sketch.curve_index;
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
 					hanging_1.is_enable_ = false;
@@ -414,7 +416,7 @@ namespace RRM
 						Edge<Real> e;
 						e.id_ = edge_index_.getID();
 						e.segment.curve = segments[it+1];
-						e.segment.curve.superSample(3.0);
+						e.segment.curve.superSample(sampling_);
 						e.segment.curve_index = source_sketch.curve_index;
 						e.source_id_ = intersection_vertices[it].vertex_id_;
 						e.target_id_ = intersection_vertices[it+1].vertex_id_;
@@ -428,7 +430,7 @@ namespace RRM
 					Edge<Real> hanging_2;
 					hanging_2.id_ = edge_index_.getID();
 					hanging_2.segment.curve = segments.back();
-					hanging_2.segment.curve.superSample(3.0);
+					hanging_2.segment.curve.superSample(sampling_);
 					hanging_2.segment.curve_index = source_sketch.curve_index;
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
 					hanging_2.is_enable_ = false;
@@ -487,7 +489,7 @@ namespace RRM
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
-							e2.segment.curve.superSample(3.0);
+							e2.segment.curve.superSample(sampling_);
 							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
@@ -573,14 +575,14 @@ namespace RRM
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
-							e2.segment.curve.superSample(3.0);
+							e2.segment.curve.superSample(sampling_);
 							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							Edge<Real> e3;
 							e3.id_ = edge_index_.getID();
 							e3.segment.curve = c3;
-							e3.segment.curve.superSample(3.0);
+							e3.segment.curve.superSample(sampling_);
 							e3.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e3.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
@@ -825,6 +827,125 @@ namespace RRM
 				std::cout << "-------------- " << std::endl;
 			}
 
+			void outputsketchlines(RRM::CrossSection<double>& _cross_section, char* file){
+				//output points from source to target (along +x direction)
+				std::ofstream output;
+				output.open(file);
+				int i;
+				int number_lines_ = 0;
+
+				for (auto& curve_iterator : _cross_section.edges_)
+				{
+					if ( (curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_ ==  true))
+					{
+						number_lines_++;
+					}
+				}
+
+				output << number_lines_ << std::endl;
+				for (auto& curve_iterator : _cross_section.edges_)
+				{
+					if ((curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_ == true))
+					 {
+						output << curve_iterator.second.segment.curve.size() << std::endl;
+						for (std::size_t it = 0; it < curve_iterator.second.segment.curve.size(); it++)
+						{
+							output << curve_iterator.second.segment.curve[it].x() << " " << curve_iterator.second.segment.curve[it].y() << std::endl;
+						}
+					}
+				}
+			}
+
+			void extrudeandoutputskeleton(RRM::CrossSection<double>& _cross_section, char* file)
+			{
+			
+				std::ofstream output;
+				output.open(file);
+				int i, ny, j;
+				ny = 6; //extrude 6 layers of nodes; depth = 1
+				int number_points_ = 0; //number of surfaces
+				std::vector<unsigned int> number_edges_; //number of surfaces
+				int number_lines_ = curves_history_.size(); //number of surfaces
+								
+				output << number_lines_ << std::endl;
+
+
+				for (auto& history_iterator : _cross_section.curves_history_)
+				{
+
+					number_points_ = 0;
+					number_edges_.clear(); //number of surfaces
+
+					for (auto& edge_iterator : _cross_section.edges_)
+					{//now is number of surfaces
+						if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
+						{ //only internal sketched
+							number_edges_.push_back(edge_iterator.second.id_);
+							number_points_ += edge_iterator.second.segment.curve.size();
+						}
+					}
+
+					number_points_ -= (number_edges_.size()-1);
+					
+					output << number_points_ << " " << ny << std::endl; //nx and ny of the surface
+
+					for ( j = 0; j < ny; j++ ) //output is firstly x direction then y direction for each surface
+					{
+						for (unsigned int id = 0; id < number_edges_.size() - 1; id++)
+						{ //now is number of surfaces
+							int edge_id = number_edges_[id];
+							for (std::size_t it = 0; it < _cross_section.edges_[edge_id].segment.curve.size() - 1; it++)
+							{
+								output << _cross_section.edges_[edge_id].segment.curve[it].x() << " " << j*100 << " " << _cross_section.edges_[edge_id].segment.curve[it].y() << std::endl;
+							}
+						}
+
+						for (std::size_t it = 0; it < _cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
+						{
+							output << _cross_section.edges_[number_edges_.back()].segment.curve[it].x() << " " << j*100 << " " << _cross_section.edges_[number_edges_.back()].segment.curve[it].y() << std::endl;
+						}
+
+					}
+
+				}
+				output.close();
+			
+
+				/*
+				std::ofstream output;
+				output.open(file);
+				int i, ny, j;
+				ny = 6; //extrude 6 layers of nodes; depth = 1
+				int number_lines_ = 0; //number of surfaces
+
+				for (auto& curve_iterator : _cross_section.edges_)
+				{
+					if ((curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_ == true))
+					{
+						number_lines_++;
+					}
+				}
+
+				output << number_lines_ << std::endl;
+
+				for (auto& curve_iterator : _cross_section.edges_)
+				{//now is number of surfaces
+					if ((curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_ == true))
+					 { //only internal sketched
+						output << curve_iterator.second.segment.curve.size() << " "<<ny<< std::endl; //nx and ny of the surface
+						for (j = 0; j < ny; j++)//output is firstly x direction then y direction for each surface
+						{
+							for (std::size_t it = 0; it < curve_iterator.second.segment.curve.size(); it++)
+							{
+								output << curve_iterator.second.segment.curve[it].x() << " "<<j<<" " << curve_iterator.second.segment.curve[it].y() << std::endl;
+							}
+						}
+					}
+				}
+				*/
+				
+			}
+
 		public:
 			std::map<unsigned int , Vertex<Real> > vertices_;
 			std::map<unsigned int , Edge<Real> >   edges_;
@@ -843,6 +964,7 @@ namespace RRM
 			IDManager curve_index_;
 
 			std::pair<Point2D,Point2D> viewPort_;
+			Real sampling_ ;
 
 			GeologicRules current_rule;
 

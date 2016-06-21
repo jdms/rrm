@@ -171,8 +171,8 @@ namespace RRM
 	{
 		_cube.clear();
 
-		Eigen::Vector3f min_ = _box.min();
-		Eigen::Vector3f max_ = _box.max();
+		Eigen::Vector3f min_ = _box.Min();
+		Eigen::Vector3f max_ = _box.Max();
 
 		Eigen::Vector3f vertex_data[] =
 		{
