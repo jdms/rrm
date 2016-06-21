@@ -83,12 +83,12 @@ void MainWindow::create3DModule ( )
 
 	addDockWidget ( Qt::BottomDockWidgetArea, dc_3DModule );
 
-        dc_3DModule->hb_canvas3d->addWidget ( glWidget );
-		dc_3DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
+    dc_3DModule->hb_canvas3d->addWidget ( glWidget );
+	dc_3DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-        connect ( this->dc_3DModule->horizontalSlider_curve, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepx(int) ) );
-        connect ( this->dc_3DModule->horizontalSlider_surface, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepz(int) ) );
-        connect ( this->dc_3DModule->horizontalSlider_extrusion, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_volumeWidth(int) ) );
+    connect ( this->dc_3DModule->horizontalSlider_curve, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepx(int) ) );
+    connect ( this->dc_3DModule->horizontalSlider_surface, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_stepz(int) ) );
+    connect ( this->dc_3DModule->horizontalSlider_extrusion, SIGNAL( valueChanged(int) ) , this->glWidget , SLOT( black_screen_volumeWidth(int) ) );
 
 }
 

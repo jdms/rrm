@@ -26,12 +26,6 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	createFlowComputationModule ( );
 	createFlowComputationActions ( );
 	createFlowComputationMenuBar ( );
-
-
-	connect( flowwindow, &FlowWindow::getCrossSection, this, [=](){  flowwindow->setCrossSection(sketch_board_->sketch_controller->getCrossSection());  });
-	//connect(this->sketch_board_, SIGNAL(currentCrossSection(const CrossSection&)), this->glWidget, SLOT(updateBlackScreen(const CrossSection&)));
-
-
 }
 
 MainWindow::~MainWindow ( )
@@ -63,11 +57,11 @@ void MainWindow::createMainWindowMenuBar ( )
 {
 
 	mn_file->addAction ( ac_new );
-	mn_file->addAction ( ac_open );
-	mn_file->addAction ( ac_save );
-	mn_file->addAction ( ac_export );
+	//mn_file->addAction ( ac_open );
+	//mn_file->addAction ( ac_save );
+	//mn_file->addAction ( ac_export );
 	mn_file->addAction ( ac_exit );
-	mn_help->addAction ( ac_contents );
+	//mn_help->addAction ( ac_contents );
 	mn_help->addAction ( ac_about );
 
 }
@@ -87,23 +81,23 @@ void MainWindow::createMainWindowActions ( )
 	ac_new = new QAction ( tr ( "&New" ) , this );
 	ac_new->setIcon ( QIcon ( ":/images/icons/page_white.png" ) );
 
-	ac_open = new QAction ( tr ( "&Open" ) , this );
-	ac_open->setIcon ( QIcon ( ":/images/icons/folder.png" ) );
-	ac_open->setDisabled ( true );
+	//ac_open = new QAction ( tr ( "&Open" ) , this );
+	//ac_open->setIcon ( QIcon ( ":/images/icons/folder.png" ) );
+	//ac_open->setDisabled ( true );
 
-	ac_save = new QAction ( tr ( "&Save" ) , this );
-	ac_save->setIcon ( QIcon ( ":/images/icons/diskette.png" ) );
-	ac_save->setDisabled ( true );
+	//ac_save = new QAction ( tr ( "&Save" ) , this );
+	//ac_save->setIcon ( QIcon ( ":/images/icons/diskette.png" ) );
+	//ac_save->setDisabled ( true );
 
-	ac_export = new QAction ( tr ( "&Export" ) , this );
-	ac_export->setIcon ( QIcon ( ":/images/icons/document_export.png" ) );
-	ac_export->setDisabled ( true );
+	//ac_export = new QAction ( tr ( "&Export" ) , this );
+	//ac_export->setIcon ( QIcon ( ":/images/icons/document_export.png" ) );
+	//ac_export->setDisabled ( true );
 
 	ac_exit = new QAction ( tr ( "E&xit" ) , this );
 	ac_exit->setIcon ( QIcon ( ":/images/icons/door_out.png" ) );
 
-	ac_contents = new QAction ( tr ( "Contents" ) , this );
-	ac_contents->setDisabled ( true );
+	//ac_contents = new QAction ( tr ( "Contents" ) , this );
+	//ac_contents->setDisabled ( true );
 
 	ac_about = new QAction ( tr ( "&About" ) , this );
 
@@ -153,27 +147,27 @@ void MainWindow::createSketchingToolbar ( )
 
 void MainWindow::createSketchingActions ( )
 {
-	ac_removeabove = new QAction ( tr ( "Remove Above Intersection" ) , this );
+	//ac_removeabove = new QAction ( tr ( "Remove Above Intersection" ) , this );
 
-	ac_removeabove->setIcon ( QIcon ( ":/images/icons/removeabove.png" ) );
-	ac_removeabove->setCheckable ( true );
+	//ac_removeabove->setIcon ( QIcon ( ":/images/icons/removeabove.png" ) );
+	//ac_removeabove->setCheckable ( true );
 
-	ac_removebelow = new QAction ( tr ( "Remove Below Intersection" ) , this );
+	//ac_removebelow = new QAction ( tr ( "Remove Below Intersection" ) , this );
 
-	ac_removebelow->setIcon ( QIcon ( ":/images/icons/removebelow.png" ) );
-	ac_removebelow->setCheckable ( true );
+	//ac_removebelow->setIcon ( QIcon ( ":/images/icons/removebelow.png" ) );
+	//ac_removebelow->setCheckable ( true );
 
 	ac_select = new QAction ( tr ( "Select" ) , this );
 
 	ac_select->setIcon ( QIcon ( ":/images/icons/pointer.png" ) );
 	ac_select->setCheckable ( true );
 
-	cd_pickercolor = new QColorDialog ( );
-	cd_pickercolor->setWindowFlags ( Qt::Widget );
-	cd_pickercolor->setCurrentColor ( QColor ( 0 , 0 , 128 ) );
+	//cd_pickercolor = new QColorDialog ( );
+	//cd_pickercolor->setWindowFlags ( Qt::Widget );
+	//cd_pickercolor->setCurrentColor ( QColor ( 0 , 0 , 128 ) );
 
-	ac_sketchcolor = new QWidgetAction ( this );
-	ac_sketchcolor->setDefaultWidget ( cd_pickercolor );
+	//ac_sketchcolor = new QWidgetAction ( this );
+	//ac_sketchcolor->setDefaultWidget ( cd_pickercolor );
 
 	ac_wdwsketching = new QAction ( tr ( "Window Sketching" ) , this );
 	ac_wdwsketching->setCheckable ( true );
@@ -208,8 +202,7 @@ void MainWindow::create3DWindowActions ( )
 	ac_window3d = new QAction ( tr ( "Window 3D" ) , this );
 	ac_window3d->setCheckable ( true );
 	ac_window3d->setChecked ( true );
-
-	
+		
 	connect ( ac_window3d , SIGNAL( toggled(bool) ) , dc_3DModule , SLOT( setVisible(bool) ) );
 }
 

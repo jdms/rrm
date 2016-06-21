@@ -41,6 +41,7 @@
 #include "Modeller/Sketching2DModule.h"
 
 #include "SBIM/View/SeismicWindow.hpp"
+
 // Flow Simulator
 #include "Simulator/FlowWindow.h"
 
@@ -64,23 +65,25 @@ class MainWindow : public QMainWindow
 
     protected:
 
+		// MainWindow Releated Widgets
         void createWindow();
         void createMenuBar();
         void createMainWindowMenuBar();
         void createMainWindowToolbar();
         void createMainWindowActions();
 
+		// Windows 3D Module Releated Widgets
         void create3DModule();
         void create3DWindowMenuBar();
         void create3DWindowActions();
 
-
+		// SBIM Releated Module Widgets
         void create2DModule();
         void createSketchingMenuBar();
         void createSketchingToolbar();
         void createSketchingActions();
-
-
+		
+		// FLow Module Releated Widgets
         void createFlowComputationModule();
         void createFlowComputationMenuBar();
         void createFlowComputationActions();
@@ -88,8 +91,8 @@ class MainWindow : public QMainWindow
     protected slots:
     	// CrossSection
     	void clear();
-
         void changeColorLine();
+
         // Seismic
         void interpolate();
 
@@ -98,70 +101,54 @@ class MainWindow : public QMainWindow
 
 
     private:
+		// Information about the Software
+		AboutWidget * aboutRRM;
 
-	// Information about the software
-	AboutWidget * aboutRRM;
+		QStatusBar			*status_bar_;
 
-	// Flow Module
-        //FlowComputationModule *dc_computation;
+		QMenu *mn_file;
+	        QAction *ac_exit;
 
-        QAction *ac_new;
-        QAction *ac_open;
-        QAction *ac_save;
-        QAction *ac_export;
-        QAction *ac_exit;
-        QAction *ac_contents;
-        QAction *ac_about;
+		QMenu *mn_help;
+			QAction *ac_about;
 
         QToolBar *tlb_section;
         QToolBar *tlb_rules;
         QToolBar *tlb_interaction;
         QToolBar *tlb_customization;
-
-        QMenu *mn_file;
+		        
         QMenu *mn_sketching;
+			QAction *ac_newBoundary;
+			QAction *ac_new;
+			QAction *ac_select;
+
         QMenu *mn_windows;
-        QMenu *mn_help;
+	        QAction *ac_wdwsketching;
+			QAction *ac_wdwseismic;
+			QAction *ac_window3d;
+			QAction *ac_flowcomputation;
+			
 
-        QAction *ac_removeabove;
-        QAction *ac_removebelow;
-        QAction *ac_select;
-        QAction *ac_wdwsketching;
         QWidgetAction *ac_sketchcolor;
-        QMenu *mn_pickercolor;
-        QColorDialog *cd_pickercolor;
-        QToolButton *tbt_colorsketch;
-
-		// Seismic Module
-		QAction *ac_wdwseismic;
-
-        QAction *ac_compute;
-        QAction *ac_flowcomputation;
-        QToolBar *tlb_computation;
-		
-        QAction *ac_window3d;
-		
+			QMenu *mn_pickercolor;
+			QColorDialog *cd_pickercolor;
+			QToolButton *tbt_colorsketch;
+							
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
         SketchBoard  		*sketch_board_;
-
-        QStatusBar			*status_bar_;
-        QAction *ac_newBoundary;
-
+        
 		// Seismic Module
 		Sketching2DModule *dc_Seismic_Module_;
-	    RRM::SeismicWindow * seismic_view_;
+			RRM::SeismicWindow * seismic_view_;
 
-
-        // 3D Extrusion
+		// 3D Extrusion
         View3DModule *dc_3DModule;
-        GLWidget *glWidget;
-        Eigen::Vector3f min_;
-        Eigen::Vector3f max_;
+			GLWidget *glWidget;
+		
+		// Flow Module
 		QDockWidget *dc_computation;
-
-		// Flow Windows
-		FlowWindow *flowwindow;
+			FlowWindow *flowwindow;
 };
 
 #endif // MAINWINDOW_H
