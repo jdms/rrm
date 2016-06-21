@@ -138,11 +138,9 @@ class MainWindow : public QMainWindow
         QAction *ac_compute;
         QAction *ac_flowcomputation;
         QToolBar *tlb_computation;
-
-
+		
         QAction *ac_window3d;
-
-
+		
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
         SketchBoard  		*sketch_board_;
@@ -150,7 +148,7 @@ class MainWindow : public QMainWindow
         QStatusBar			*status_bar_;
         QAction *ac_newBoundary;
 
-
+		// Seismic Module
 		Sketching2DModule *dc_Seismic_Module_;
 	    RRM::SeismicWindow * seismic_view_;
 
@@ -162,6 +160,7 @@ class MainWindow : public QMainWindow
         Eigen::Vector3f max_;
 		QDockWidget *dc_computation;
 
+		// Flow Windows
 		FlowWindow *flowwindow;
 };
 

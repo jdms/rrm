@@ -61,7 +61,9 @@ namespace RRM
 			void  createBlackScreenCube 	( const Celer::BoundingBox3<float>& box,
 							  std::vector<Eigen::Vector3f>& _cube );
 
-			void updateBlackScreenMesh( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch);
+			void updateBlackScreenMesh( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch );
+
+			void exportBlankScreen(const std::string& _file_name, int _extrusion_size);
 
 			// All the geometry will have the following layout as:
 			// Linear

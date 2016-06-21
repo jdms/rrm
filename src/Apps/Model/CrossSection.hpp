@@ -272,10 +272,10 @@ namespace RRM
 				test = _curve;
 
 				//_curve.douglasPeuckerSimplify(test,0.5);
-				std::cout << "CURVE SIZE" << test.size() << std::endl;
+				std::cout << "CURVE SIZE Before " << test.size() << std::endl;
 				test.lineFilter(1.0,2);
-				test.meanFilter();
-				std::cout << "CURVE SIZE After" << test.size() << std::endl;
+				//test.meanFilter();
+				std::cout << "CURVE SIZE After " << test.size() << std::endl;
 
 
 				if ( test.back().x() < test.front().x())
@@ -375,11 +375,11 @@ namespace RRM
 						intersection_pair.push_back(std::make_pair(vertex_iterator.input_curve,vertex_iterator.location_));
 					}
 
-					std::cout << " Test Size " << test.size() << std::endl;
+					//std::cout << " Test Size " << test.size() << std::endl;
 
 					test.addPoints(intersection_pair);
 
-					std::cout << " after Test Size " << test.size() << std::endl;
+					//std::cout << " after Test Size " << test.size() << std::endl;
 
 					std::deque<Curve2D> segments;
 
@@ -403,7 +403,7 @@ namespace RRM
 					Edge<Real> hanging_1;
 					hanging_1.id_ = edge_index_.getID();
 					hanging_1.segment.curve = segments.front();
-					hanging_1.segment.curve.superSample(sampling_);
+					//hanging_1.segment.curve.superSample(sampling_);
 					hanging_1.segment.curve_index = source_sketch.curve_index;
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
 					hanging_1.is_enable_ = false;
@@ -416,7 +416,7 @@ namespace RRM
 						Edge<Real> e;
 						e.id_ = edge_index_.getID();
 						e.segment.curve = segments[it+1];
-						e.segment.curve.superSample(sampling_);
+						//e.segment.curve.superSample(sampling_);
 						e.segment.curve_index = source_sketch.curve_index;
 						e.source_id_ = intersection_vertices[it].vertex_id_;
 						e.target_id_ = intersection_vertices[it+1].vertex_id_;
@@ -430,7 +430,7 @@ namespace RRM
 					Edge<Real> hanging_2;
 					hanging_2.id_ = edge_index_.getID();
 					hanging_2.segment.curve = segments.back();
-					hanging_2.segment.curve.superSample(sampling_);
+					//hanging_2.segment.curve.superSample(sampling_);
 					hanging_2.segment.curve_index = source_sketch.curve_index;
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
 					hanging_2.is_enable_ = false;
@@ -489,7 +489,7 @@ namespace RRM
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
-							e2.segment.curve.superSample(sampling_);
+							//e2.segment.curve.superSample(sampling_);
 							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
@@ -575,14 +575,14 @@ namespace RRM
 							Edge<Real> e2;
 							e2.id_ = edge_index_.getID();
 							e2.segment.curve = c2;
-							e2.segment.curve.superSample(sampling_);
+							//e2.segment.curve.superSample(sampling_);
 							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 
 							Edge<Real> e3;
 							e3.id_ = edge_index_.getID();
 							e3.segment.curve = c3;
-							e3.segment.curve.superSample(sampling_);
+							//e3.segment.curve.superSample(sampling_);
 							e3.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e3.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
 

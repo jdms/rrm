@@ -37,7 +37,7 @@ class GLWidget: public QOpenGLWidget
 {
 		Q_OBJECT
 	public:
-		// From QGLWidget
+		
 		typedef RRM::ExtrusionController::SeismicSlices SeismicSlices;
 		typedef RRM::ExtrusionController::CrossSection  CrossSection;
 
@@ -85,7 +85,7 @@ class GLWidget: public QOpenGLWidget
 
 		// Black Screen
 		void updateBlackScreen(const CrossSection& _cross_section);
-
+		
 	signals:
 
         void changed(const QMimeData *mimeData = 0);

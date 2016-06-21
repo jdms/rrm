@@ -221,7 +221,6 @@ namespace RRM
 	{
 		this->cross_section_ = _cross_section;
 	}
-
 	void ExtrusionController::updateBlackScreenMesh ( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch)
 	{
 
@@ -263,6 +262,75 @@ namespace RRM
 		}
 		createBlackScreenCube(box,_cube);
 	}
+
+	void ExtrusionController::exportBlankScreen(const std::string& _file_name, int _extrusion_size)
+	{
+
+		std::ofstream output;
+		output.open(_file_name);
+
+		ExtrusionController::CrossSection cross_section = this->cross_section_;
+					
+		int number_points_ = 0; /// Number of point per sketch 
+		std::vector<unsigned int> number_edges_; // Number of Sketch Segments
+		// Number of Internal Surface
+		int number_lines_ = cross_section.curves_history_.size(); //number of surfaces
+
+		output << number_lines_ << std::endl;
+		
+		float diagonal = std::pow((cross_section.viewPort_.first.x() - cross_section.viewPort_.second.x()), 2) + std::pow((cross_section.viewPort_.first.y() - cross_section.viewPort_.second.y()), 2);
+
+		diagonal = std::sqrt(diagonal);
+
+		std::cout << "Diagonal " << diagonal << std::endl;
+
+		for (auto& history_iterator : cross_section.curves_history_)
+		{
+
+			number_points_ = 0;
+			number_edges_.clear(); //number of surfaces
+
+			for (auto& edge_iterator : cross_section.edges_)
+			{//now is number of surfaces
+				if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
+				{ //only internal sketched
+					number_edges_.push_back(edge_iterator.second.id_);
+					edge_iterator.second.segment.curve.chaikinFilter(5);
+					number_points_ += edge_iterator.second.segment.curve.size();
+				}
+			}
+
+			number_points_ -= (number_edges_.size() - 1);
+
+			output << number_points_ << " " << _extrusion_size << std::endl; //nx and ny of the surface
+
+			float extrusion_step = 0;
+
+			for (int j = 0; j < _extrusion_size; j++) //output is firstly x direction then y direction for each surface
+			{
+				for (unsigned int id = 0; id < number_edges_.size() - 1; id++)
+				{ //now is number of surfaces
+					int edge_id = number_edges_[id];
+					for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size() - 1; it++)
+					{
+						output << cross_section.edges_[edge_id].segment.curve[it].x() << " " << j + extrusion_step << " " << cross_section.edges_[edge_id].segment.curve[it].y() << std::endl;
+					}
+				}
+
+				for (std::size_t it = 0; it < cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
+				{
+					output << cross_section.edges_[number_edges_.back()].segment.curve[it].x() << " " << j + extrusion_step << " " << cross_section.edges_[number_edges_.back()].segment.curve[it].y() << std::endl;
+				}
+
+				extrusion_step += ( diagonal * 0.01);
+			}
+
+		}
+		output.close();
+
+
+	}
+
 	// Seismic Module --------------->
 	void ExtrusionController::setResolution(int _resolution,std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
 	{

@@ -8,6 +8,7 @@
 
 // Flow Simulator 
 #include "Simulator/FlowComputation/region.h"
+#include "Modeller/ExtrusionWidget/ExtrusionController.hpp"
 
 SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 {
@@ -169,25 +170,12 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		if (event->key() == Qt::Key_X)
 		{
 			std::cout << "Saving Skeleton Surfaces" << std::endl;
-			sketch_controller->getCrossSection().extrudeandoutputskeleton(sketch_controller->getCrossSection(), "D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+			//sketch_controller->getCrossSection().extrudeandoutputskeleton(sketch_controller->getCrossSection(), "D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
 
-			//! Debug Version: to load the update shaders
-			qDebug() << "Load by Resources ";
+			RRM::ExtrusionController ex;
 
-			QDir shadersDir = QDir(qApp->applicationDirPath());
-
-#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-			/* Do windows stuff */
-			QString shaderDirectory(shadersDir.path() + "\\");
-#elif defined(__linux__)               // Linux Directory Style
-			/* Do linux stuff */
-			QString shaderDirectory(shadersDir.path() + "/");
-#else
-			/* Error, both can't be defined or undefined same time */
-			std::cout << "Operate System not supported !"
-				halt();
-#endif
-
+			ex.setBlackScreenCrossSection(sketch_controller->getCrossSection());
+			ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt", 40);
 		
 			REGION region;
 			region.tolerance(0.000000001, 0.0);
