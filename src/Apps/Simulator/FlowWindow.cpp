@@ -77,10 +77,10 @@ void FlowWindow::createToolBar()
     qtoolbarFlow = new QToolBar();
 
 
-    qreloadSurface = new QAction( "Open File", qtoolbarFlow );
+    qreloadSurface = new QAction( "Surface from Skecth", qtoolbarFlow );
     connect( qreloadSurface, &QAction::triggered, this, [=](){ emit getCrossSection(); } );
 
-    qoopenfilesDialog = new QAction( "Open File", qtoolbarFlow );
+    qoopenfilesDialog = new QAction( "Surface from a File", qtoolbarFlow );
     connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
 
 

@@ -17,6 +17,10 @@ class FlowVisualizationController: public QObject
 
     public:
 
+    typedef qreal		 	 	Real;
+    typedef RRM::CrossSection<Real>  	CrossSection;
+
+
         FlowVisualizationController( QWidget* parent = 0 );
 
 
@@ -39,7 +43,7 @@ class FlowVisualizationController: public QObject
         void getTracerValuesbyCell( std::vector< double >& values );
 
 
-        void getSurfaceFromCrossSection( const RRM::CrossSection<qreal>& _cross_section );
+        void getSurfaceFromCrossSection(const CrossSection& cross_section );
 
 
 
