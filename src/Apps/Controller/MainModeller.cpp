@@ -14,7 +14,7 @@ void MainWindow::create2DModule ( )
 
 	dc_2DModule = new Sketching2DModule( this );
 	dc_2DModule->setWindowTitle ( "Sketch View" );
-	dc_2DModule->setWidget ( sketch_board_ );
+	dc_2DModule->setCentralWidget ( sketch_board_ );
 	dc_2DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
 	this->addDockWidget( Qt::TopDockWidgetArea, dc_2DModule );
 

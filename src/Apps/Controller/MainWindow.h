@@ -114,14 +114,16 @@ class MainWindow : public QMainWindow
 
         QToolBar *tlb_section;
         QToolBar *tlb_rules;
+			QAction *ac_removeabove;
+			QAction *ac_removebelow;
         QToolBar *tlb_interaction;
+			QAction *ac_select;
         QToolBar *tlb_customization;
 		        
         QMenu *mn_sketching;
 			QAction *ac_newBoundary;
 			QAction *ac_new;
-			QAction *ac_select;
-
+			
         QMenu *mn_windows;
 	        QAction *ac_wdwsketching;
 			QAction *ac_wdwseismic;

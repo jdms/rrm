@@ -8,9 +8,18 @@ Sketching2DModule::Sketching2DModule ( QWidget* parent )
 	emit setColor ( 0 , 0 , 128 );
 }
 
+void Sketching2DModule::setCentralWidget(QWidget * _centra_widget)
+{
+	main_widget_->setCentralWidget(_centra_widget);
+
+}
+
 void Sketching2DModule::createWindow ( )
 {
 //    dc_2DModule = new QDockWidget( this );
+	this->main_widget_ = new QMainWindow();
+	this->setWidget(this->main_widget_);
+	//this->setTitleBarWidget(this->main_widget_);
 	this->setAllowedAreas ( Qt::LeftDockWidgetArea );
 	this->setWindowTitle ( "2D View" );
 }

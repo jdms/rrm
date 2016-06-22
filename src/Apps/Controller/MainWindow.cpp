@@ -122,10 +122,9 @@ void MainWindow::createSketchingMenuBar ( )
 
 void MainWindow::createSketchingToolbar ( )
 {
-
-//	tlb_rules = addToolBar ( tr ( "Rules" ) );
-//	tlb_rules->addAction ( ac_removeabove );
-//	tlb_rules->addAction ( ac_removebelow );
+	tlb_rules = dc_2DModule->main_widget_->addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
+	tlb_rules->addAction ( ac_removeabove );
+	tlb_rules->addAction ( ac_removebelow );
 //
 	tbt_colorsketch = new QToolButton;
 	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
@@ -147,15 +146,14 @@ void MainWindow::createSketchingToolbar ( )
 
 void MainWindow::createSketchingActions ( )
 {
-	//ac_removeabove = new QAction ( tr ( "Remove Above Intersection" ) , this );
+	ac_removeabove = new QAction ( tr ( "Remove Above Intersection" ) , this );
 
-	//ac_removeabove->setIcon ( QIcon ( ":/images/icons/removeabove.png" ) );
-	//ac_removeabove->setCheckable ( true );
+	ac_removeabove->setIcon ( QIcon ( ":/images/icons/removeabove.png" ) );
+	ac_removeabove->setCheckable ( true );
 
-	//ac_removebelow = new QAction ( tr ( "Remove Below Intersection" ) , this );
-
-	//ac_removebelow->setIcon ( QIcon ( ":/images/icons/removebelow.png" ) );
-	//ac_removebelow->setCheckable ( true );
+	ac_removebelow = new QAction ( tr ( "Remove Below Intersection" ) , this );
+	ac_removebelow->setIcon ( QIcon ( ":/images/icons/removebelow.png" ) );
+	ac_removebelow->setCheckable ( true );
 
 	ac_select = new QAction ( tr ( "Select" ) , this );
 

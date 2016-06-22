@@ -2,6 +2,7 @@
 #define SKETCHING2DMODULE_H
 
 #include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainwindow>
 
 /**!
  * @brief  brief  Embeds the sketching area into the main window.
@@ -17,9 +18,10 @@ class Sketching2DModule: public QDockWidget
         Sketching2DModule( QWidget* parent );
 
         void clearCanvas2D();
+		void setCentralWidget(QWidget * _centra_widget);
+		QMainWindow * main_widget_;
 
     protected:
-
         void createWindow();
         void createActions( QWidget* parent );
 
@@ -44,8 +46,7 @@ class Sketching2DModule: public QDockWidget
 
 
     private:
-
-
+				
 };
 
 #endif // SKETCHING2DMODULE_H
