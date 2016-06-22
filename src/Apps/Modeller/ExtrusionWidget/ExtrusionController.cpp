@@ -295,7 +295,7 @@ namespace RRM
 				if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
 				{ //only internal sketched
 					number_edges_.push_back(edge_iterator.second.id_);
-					edge_iterator.second.segment.curve.chaikinFilter(5);
+					edge_iterator.second.segment.curve.chaikinFilter(3);
 					number_points_ += edge_iterator.second.segment.curve.size();
 				}
 			}
@@ -322,7 +322,7 @@ namespace RRM
 					output << cross_section.edges_[number_edges_.back()].segment.curve[it].x() << " " << j + extrusion_step << " " << cross_section.edges_[number_edges_.back()].segment.curve[it].y() << std::endl;
 				}
 
-				extrusion_step += ( diagonal * 0.01);
+				extrusion_step += ( diagonal * 0.5);
 			}
 
 		}

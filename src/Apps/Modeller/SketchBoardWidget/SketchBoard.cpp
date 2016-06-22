@@ -175,7 +175,7 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			RRM::ExtrusionController ex;
 
 			ex.setBlackScreenCrossSection(sketch_controller->getCrossSection());
-			ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt", 40);
+			ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt", 3);
 		
 			REGION region;
 			region.tolerance(0.000000001, 0.0);

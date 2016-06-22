@@ -127,21 +127,21 @@ void MainWindow::createSketchingToolbar ( )
 //	tlb_rules->addAction ( ac_removeabove );
 //	tlb_rules->addAction ( ac_removebelow );
 //
-//	tbt_colorsketch = new QToolButton;
-//	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
-//	tbt_colorsketch->setIcon ( QIcon ( ":/images/icons/border_color.png" ) );
+	tbt_colorsketch = new QToolButton;
+	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
+	tbt_colorsketch->setIcon ( QIcon ( ":/images/icons/border_color.png" ) );
 //
-//	mn_pickercolor = new QMenu ( );
-//	mn_pickercolor->addAction ( ac_sketchcolor );
-//	tbt_colorsketch->setMenu ( mn_pickercolor );
+	mn_pickercolor = new QMenu ( );
+	mn_pickercolor->addAction ( ac_sketchcolor );
+	tbt_colorsketch->setMenu ( mn_pickercolor );
 //
-//	tlb_customization = addToolBar ( tr ( "Customize" ) );
-//	tlb_customization->addAction ( ac_select );
-//	tlb_customization->addWidget ( tbt_colorsketch );
+	tlb_customization = addToolBar ( tr ( "Customize" ) );
+	tlb_customization->addAction ( ac_select );
+	tlb_customization->addWidget ( tbt_colorsketch );
 
-//	connect ( mn_pickercolor , SIGNAL( aboutToShow() ) , cd_pickercolor , SLOT( show() ) );
-//	connect ( cd_pickercolor , SIGNAL( rejected() ) , mn_pickercolor , SLOT( hide() ) );
-//	connect ( cd_pickercolor , SIGNAL( accepted() ) , this , SLOT( changeColorLine() ) );
+	connect ( mn_pickercolor , SIGNAL( aboutToShow() ) , cd_pickercolor , SLOT( show() ) );
+	connect ( cd_pickercolor , SIGNAL( rejected() ) , mn_pickercolor , SLOT( hide() ) );
+	connect ( cd_pickercolor , SIGNAL( accepted() ) , this , SLOT( changeColorLine() ) );
 
 }
 
@@ -162,12 +162,12 @@ void MainWindow::createSketchingActions ( )
 	ac_select->setIcon ( QIcon ( ":/images/icons/pointer.png" ) );
 	ac_select->setCheckable ( true );
 
-	//cd_pickercolor = new QColorDialog ( );
-	//cd_pickercolor->setWindowFlags ( Qt::Widget );
-	//cd_pickercolor->setCurrentColor ( QColor ( 0 , 0 , 128 ) );
+	cd_pickercolor = new QColorDialog ( );
+	cd_pickercolor->setWindowFlags ( Qt::Widget );
+	cd_pickercolor->setCurrentColor ( QColor ( 0 , 0 , 128 ) );
 
-	//ac_sketchcolor = new QWidgetAction ( this );
-	//ac_sketchcolor->setDefaultWidget ( cd_pickercolor );
+	ac_sketchcolor = new QWidgetAction ( this );
+	ac_sketchcolor->setDefaultWidget ( cd_pickercolor );
 
 	ac_wdwsketching = new QAction ( tr ( "Window Sketching" ) , this );
 	ac_wdwsketching->setCheckable ( true );
