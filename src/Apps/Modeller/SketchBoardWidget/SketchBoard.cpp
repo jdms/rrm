@@ -175,24 +175,35 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			RRM::ExtrusionController ex;
 
 			ex.setBlackScreenCrossSection(sketch_controller->getCrossSection());
-			ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt", 3);
+			ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces3.rrms", 3);
 		
 			REGION region;
-			region.tolerance(0.000000001, 0.0);
-			/*
-			char * c = (shaderDirectory + "inputs/userinput_internalchannel_bsurface.txt").toStdString().c_str();
-
-			char * s = (shaderDirectory + "surface.txt").toStdString().c_str();
-			*/
-
-			region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_internalchannel_bsurface.txt");
-			region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+			//region.tolerance(0.000000001, 0.0);
+			//region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_internalchannel_bsurface.txt");
+			//region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
 			//region.unstructuredsurfacemesh();
-			region.cornerpointgrid();
+			//region.cornerpointgrid();
 			//region.writesurfacemeshVTK("surface.vtk");
 			//region.unstructuredvolumemesh();
 			//region.writevolumemesh("crossSection.vtk");
-			region.writecornerpointgridVTK("CornerPointCrossSection.vtk");
+			//region.writecornerpointgridVTK("CornerPointCrossSection.vtk");
+
+
+			/// Unstructured 
+			region.tolerance(0.000000001, 0.0);
+			region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_surfaces.txt");
+			region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces3.rrms");
+			region.unstructuredsurfacemesh();
+			//region.writesurfacemeshVTK("model3trisurfacemeshtry2.vtk");
+			region.unstructuredvolumemesh();
+			//region.writevolumemesh("surfacestry.vtk");
+			region.modelpreparation();
+			region.steadystateflowsolver();
+			region.flowdiagnostics();
+			region.writeresult("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\results_surfaces3_try.vtk");
+
+
+
 		}
 
 	QGraphicsView::keyPressEvent(event);
