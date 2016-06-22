@@ -360,9 +360,13 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 
 
-void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection &cross_section )
+void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection &_cross_section )
 {
 
+	//@see http://stackoverflow.com/questions/16436514/binary-no-operator-found-which-takes-a-left-hand-operand-of-type-const-st
+	// Cant use operator[] on a const map
+
+	CrossSection cross_section = _cross_section;
 
     vector< int > nu, nv;
     vector< double > positions;
