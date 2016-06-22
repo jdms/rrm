@@ -360,8 +360,92 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 
 
-void FlowVisualizationController::getSurfaceFromCrossSection( const RRM::CrossSection<qreal>& _cross_section )
+void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection &cross_section )
 {
+
+
+    vector< int > nu, nv;
+    vector< double > positions;
+
+    int _extrusion_size = 3;
+    int number_points_ = 0; /// Number of point per sketch
+
+    std::vector<unsigned int> number_edges_; // Number of Sketch Segments
+
+    // Number of Internal Surface
+    int number_lines_ = cross_section.curves_history_.size(); //number of surfaces
+
+    float diagonal = std::pow((cross_section.viewPort_.first.x() - cross_section.viewPort_.second.x()), 2) + std::pow((cross_section.viewPort_.first.y() - cross_section.viewPort_.second.y()), 2);
+    diagonal = std::sqrt(diagonal);
+
+
+//    std::cout << "Diagonal " << diagonal << std::endl;
+
+    for (auto& history_iterator : cross_section.curves_history_)
+    {
+
+        number_points_ = 0;
+        number_edges_.clear(); //number of surfaces
+
+        for (auto& edge_iterator : cross_section.edges_)
+        {//now is number of surfaces
+            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
+            { //only internal sketched
+                number_edges_.push_back(edge_iterator.second.id_);
+                //edge_iterator.second.segment.curve.chaikinFilter(3);
+                number_points_ += edge_iterator.second.segment.curve.size();
+            }
+        }
+
+        number_points_ -= (number_edges_.size() - 1);
+
+
+        nu.push_back( number_points_ );
+        nv.push_back( _extrusion_size );
+
+
+        float extrusion_step = 0;
+
+        for (int j = 0; j < _extrusion_size; j++) //output is firstly x direction then y direction for each surface
+        {
+
+            for (unsigned int id = 0; id < number_edges_.size() - 1; id++)
+            { //now is number of surfaces
+
+                unsigned int edge_id = number_edges_[id];
+
+
+                for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size() - 1; it++)
+                {
+
+                    positions.push_back( cross_section.edges_[edge_id].segment.curve[it].x() );
+                    positions.push_back( j + extrusion_step );
+                    positions.push_back( cross_section.edges_[edge_id].segment.curve[it].y() );
+
+
+                }
+            }
+
+            for (std::size_t it = 0; it < cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
+            {
+
+
+                positions.push_back( cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
+                positions.push_back(  j + extrusion_step );
+                positions.push_back( cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
+
+            }
+
+            extrusion_step += ( diagonal * 0.5);
+        }
+
+    }
+
+
+    region.readskeleton( number_lines_, nu, nv, positions );
+
+
+    /*
     int i, ny, j;
        ny = 6; //extrude 6 layers of nodes; depth = 1
 
@@ -410,7 +494,7 @@ void FlowVisualizationController::getSurfaceFromCrossSection( const RRM::CrossSe
        std::cout << " numt" << number_of_surfaces  << std::endl;
 
        region.readskeleton( number_of_surfaces, nu, nv, positions );
-
+*/
 }
 
 
