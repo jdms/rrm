@@ -13,6 +13,11 @@
     <file>icons/pointer.png</file>
     <file>icons/removeabove.png</file>
     <file>icons/removebelow.png</file>
+    <file>icons/sketchmode.png</file>
+    <file>icons/removebelowintersection.png</file>
+    <file>icons/removeaboveintersection.png</file>
+    <file>icons/regionPointmode.png</file>
+    <file>icons/regionPointer.png</file>
     <file>icons/select.png</file>
     <file>icons/sum.png</file>
   </qresource>
@@ -25,3 +30,4 @@
     <file>about/Statoil_logo.png</file>
   </qresource>
 </RCC>
+

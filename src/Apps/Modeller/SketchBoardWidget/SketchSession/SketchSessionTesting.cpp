@@ -4,6 +4,8 @@
 SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene ( parent )
 {
 
+	this->coordinates_ = new QLabel();
+	
 	mode_ = InteractionMode::OVERSKETCHING;
 
 	/// Drag and Drop Feature
@@ -86,11 +88,27 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 
 	//this->overlay_image_->setPixmap(QPixmap::fromImage(images[0]));
 
+
+	/// FIXME Region Point
+	region_pointer_ = new QGraphicsPixmapItem();
+
+	QPixmap pointer(":/images/icons/regionPointer.png");
+
+	region_pointer_->setPixmap(pointer);
+
+	this->addItem(region_pointer_);
+
+	region_pointers_ = new QGraphicsItemGroup();
+
+	region_pointers_->setVisible(false);
+
+	this->addItem(region_pointers_);
 }
 
 SketchSessionTesting::~SketchSessionTesting ( )
 {
 	 clear();
+	 
 }
 
 void SketchSessionTesting::newSktech()
@@ -122,9 +140,15 @@ void SketchSessionTesting::newSktech()
 // View/Qt5 related functions
 void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 {
-
-
-	if ( mode_ == InteractionMode::EDITING )
+	if (mode_ == InteractionMode::REGION_POINT)
+	{
+		QGraphicsPixmapItem * temp_pix_item = new QGraphicsPixmapItem();
+		QPixmap temp_pixmap(":/images/icons/regionPointer.png");
+		temp_pix_item->setPixmap(temp_pixmap);
+		temp_pix_item->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
+		region_pointers_->addToGroup(temp_pix_item);
+		region_points_.push_back(event->scenePos());
+	}else if ( mode_ == InteractionMode::EDITING )
 	{
 		QGraphicsScene::mousePressEvent ( event );
 		event->ignore();
@@ -155,7 +179,14 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 {
 
-	if ( mode_ == InteractionMode::EDITING )
+	QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(event->scenePos().y());
+	this->coordinates_->setText(mouse_coordiante);
+
+	if (mode_ == InteractionMode::REGION_POINT)
+	{
+		region_pointer_->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
+	}
+	else if ( mode_ == InteractionMode::EDITING )
 	{
 		QGraphicsScene::mouseMoveEvent ( event );
 		event->ignore();
@@ -211,7 +242,11 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 {
 
-	if ( mode_ == InteractionMode::EDITING )
+	if (mode_ == InteractionMode::REGION_POINT)
+	{
+		
+	}
+	else if (mode_ == InteractionMode::EDITING)
 	{
 		QGraphicsScene::mouseReleaseEvent ( event );
 		event->ignore();
@@ -271,21 +306,6 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 				current_sketch_->create(new_curve[0]);
 			}
 
-			//		else
-			//		{
-			//			QPointF p1 = new_curve.front();
-			//
-			//			QPointF p2 =current_sketch_->getSketch().back();
-			//
-			//			QLineF line(p1,p2);
-			//
-			//			if ( line.length() > 5 )
-			//			{
-			//				return;
-			//			}
-			//
-			//		}
-
 			if (input_curve_.size() == 0)
 			{
 				input_curve_ = convert(new_curve);
@@ -313,9 +333,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 			input_sketch_->clear();
 		}
 
-		}
-
-		
+	}
 	update ( );
 }
 
@@ -356,10 +374,12 @@ void SketchSessionTesting::dragLeaveEvent ( QGraphicsSceneDragDropEvent * event 
 {
 	qDebug ( ) << "Leaving";
 }
+
 /// Then, we invoke acceptProposedAction() on event, setting the drop action to the one proposed.
 /// Lastly, we emit the changed() signal, with the data that was dropped and its MIME type information as a parameter.
 /// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
 ///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
+
 void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 {
 	const QMimeData *mimeData = event->mimeData ( );
@@ -399,58 +419,86 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 
 void SketchSessionTesting::reset()
 {
-	/// clear the map of curves
-	/// @todo clear all attributes
-	for ( auto& curve_iterator : this->view_curves_ )
+
+	if (mode_ == InteractionMode::REGION_POINT)
 	{
-		delete curve_iterator.second;
+		// Clear Region Point
+		clearRegionMode();
+		this->region_pointers_->setVisible(true);
+		this->region_pointer_->setVisible(true);
 	}
-	/// clear the map of curves
-	/// @todo clear all attributes
-	for ( auto& vertex_iterator : this->view_vertices_ )
+	else
 	{
-		delete vertex_iterator.second;
+		/// clear the map of curves
+		/// @todo clear all attributes
+		for (auto& curve_iterator : this->view_curves_)
+		{
+			delete curve_iterator.second;
+		}
+		/// clear the map of curves
+		/// @todo clear all attributes
+		for (auto& vertex_iterator : this->view_vertices_)
+		{
+			delete vertex_iterator.second;
+		}
+
+		this->view_curves_.clear();
+		this->view_vertices_.clear();
+
+		input_sketch_->clear();
+		current_sketch_->clear();
+
+		input_curve_.clear();
+		over_sketch_.clear();
+
+		clearRegionMode();
+
+		update();
 	}
-
-	this->view_curves_.clear ( );
-	this->view_vertices_.clear ( );
-
-	input_sketch_->clear ( );
-	current_sketch_->clear ( );
-
-	input_curve_.clear ( );
-	over_sketch_.clear ( );
-
-	update ( );
 }
 
 void SketchSessionTesting::clear()
 {
-	/// clear the map of curves
-	/// @todo clear all attributes
-	for ( auto& curve_iterator : this->view_curves_ )
-	{
-		delete curve_iterator.second;
+
+	if (mode_ == InteractionMode::REGION_POINT)
+	{		
+		// Clear Region Point
+		clearRegionMode();
+		this->region_pointers_->setVisible(true);
+		this->region_pointer_->setVisible(true);
 	}
-	/// clear the map of curves
-	/// @todo clear all attributes
-	for ( auto& vertex_iterator : this->view_vertices_ )
+	else
 	{
-		delete vertex_iterator.second;
+		/// clear the map of curves
+		/// @todo clear all attributes
+		for (auto& curve_iterator : this->view_curves_)
+		{
+			delete curve_iterator.second;
+		}
+		/// clear the map of curves
+		/// @todo clear all attributes
+		for (auto& vertex_iterator : this->view_vertices_)
+		{
+			delete vertex_iterator.second;
+		}
+
+		this->view_curves_.clear();
+		this->view_vertices_.clear();
+
+		input_sketch_->clear();
+		current_sketch_->clear();
+
+		input_curve_.clear();
+		over_sketch_.clear();
+
+		this->boundaryc_->setNewBoundary(0.0, 0.0, 0.0, 0.0);\
+
+		clearRegionMode();
+
+		update();
 	}
 
-	this->view_curves_.clear ( );
-	this->view_vertices_.clear ( );
-
-	input_sketch_->clear ( );
-	current_sketch_->clear ( );
-
-	input_curve_.clear ( );
-	over_sketch_.clear ( );
-
-	this->boundaryc_->setNewBoundary ( 0.0 , 0.0 , 0.0 , 0.0 );
-
-	update ( );
+	
 }
 
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
@@ -544,17 +592,52 @@ void SketchSessionTesting::insertCurve( unsigned int _id ,QPolygonF _curve )
 
 void SketchSessionTesting::setOverSketchingMode()
 {
+	clearRegionMode();
 	mode_ = InteractionMode::OVERSKETCHING;
 }
 
 void SketchSessionTesting::setEditMode()
 {
+	clearRegionMode();
 	mode_ = InteractionMode::EDITING;
 }
 
 void SketchSessionTesting::setSketchMode()
 {
+	clearRegionMode();
 	mode_ = InteractionMode::SKETCHING;
+}
+
+void SketchSessionTesting::setRegionMode()
+{
+	clearRegionMode();
+	mode_ = InteractionMode::REGION_POINT;
+	this->region_pointers_->setVisible(true);
+	this->region_pointers_->setVisible(true);
+}
+
+void SketchSessionTesting::clearRegionMode()
+{
+
+	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
+	if (this->region_pointers_ != nullptr)
+	{
+		QList<QGraphicsItem *> children = this->region_pointers_->childItems();
+		if (children.size() > 0)
+		{
+			qDeleteAll(children);
+		}
+		this->update();
+	}
+
+	this->region_pointer_->setVisible(false);
+	this->region_pointers_->setVisible(false);
+	region_points_.clear();
+}
+
+SketchSessionTesting::InteractionMode SketchSessionTesting::mode() const
+{
+	return this->mode_;
 }
 
 void SketchSessionTesting::setUpBackground ( )
@@ -565,9 +648,9 @@ void SketchSessionTesting::setUpBackground ( )
 
 	QRadialGradient gradient ( (qreal) width ( ) / 2.0 , (qreal) height ( ) / 2.0 , this->width ( ) );
 
-	for ( float radius = 0.0; radius <= 1.0; radius +=0.1)
+	for ( float radius = 0.0f; radius <= 1.0f; radius +=0.1f)
 	{
-		gradient.setColorAt ( radius , QColor::fromRgb ( 154.28 + (radius*step) , 176.20 + (radius*step), 199.16 + (radius*step) ) );
+		gradient.setColorAt ( radius , QColor::fromRgb ( 154.28f + (radius*step) , 176.20f + (radius*step), 199.16f + (radius*step) ) );
 	}
 
 	this->setBackgroundBrush ( QBrush ( gradient ) );
@@ -655,7 +738,6 @@ SketchSessionTesting::Curve2D SketchSessionTesting::convert(QPolygonF _curve )
 
 	return rrm_curve;
 }
-
 /// Model Related Function
 QPolygonF SketchSessionTesting::convert(Curve2D _curve )
 {
@@ -668,3 +750,5 @@ QPolygonF SketchSessionTesting::convert(Curve2D _curve )
 
 	return qt_curve;
 }
+
+

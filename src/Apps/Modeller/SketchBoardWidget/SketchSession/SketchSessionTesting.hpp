@@ -13,6 +13,7 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtWidgets/QGraphicsItem>
+#include <QtWidgets/QLabel>
 
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -47,7 +48,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 		enum class InteractionMode
 		{
-			EDITING, SKETCHING, OVERSKETCHING
+			EDITING, SKETCHING, OVERSKETCHING, REGION_POINT
 		};
 
 		SketchSessionTesting ( QObject *parent = 0 );
@@ -56,6 +57,11 @@ class SketchSessionTesting: public QGraphicsScene
 		void removeInputSketch ( );
 
 		void setUpBackground();
+
+		QLabel * coordinates_;
+
+		InteractionMode mode() const;
+
 
 	protected:
 		void mousePressEvent ( QGraphicsSceneMouseEvent* event );
@@ -81,6 +87,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void setEditMode();
 		void setSketchMode();
+		void setRegionMode();
 		void setOverSketchingMode();
 		void clear();
 		void reset();
@@ -136,6 +143,12 @@ class SketchSessionTesting: public QGraphicsScene
 		std::vector<QColor> colors;
 
 		InteractionMode mode_;
+		
+		/// FIXME Region Point
+		void clearRegionMode();
+		QGraphicsPixmapItem * region_pointer_;
+		std::vector<QPointF>  region_points_;
+		QGraphicsItemGroup * region_pointers_;
 //
 //		int next = 0;
 //

@@ -37,7 +37,6 @@
 
 #include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/ExtrusionWidget/View3DModule.hpp"
-#include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 #include "Modeller/Sketching2DModule.h"
 
 #include "SBIM/View/SeismicWindow.hpp"
@@ -104,26 +103,18 @@ class MainWindow : public QMainWindow
 		// Information about the Software
 		AboutWidget * aboutRRM;
 
-		QStatusBar			*status_bar_;
+		//QStatusBar			*status_bar_;
 
 		QMenu *mn_file;
 	        QAction *ac_exit;
 
 		QMenu *mn_help;
 			QAction *ac_about;
-
-        QToolBar *tlb_section;
-        QToolBar *tlb_rules;
-			QAction *ac_removeabove;
-			QAction *ac_removebelow;
+			        
         QToolBar *tlb_interaction;
 			QAction *ac_select;
         QToolBar *tlb_customization;
-		        
-        QMenu *mn_sketching;
-			QAction *ac_newBoundary;
-			QAction *ac_new;
-			
+		
         QMenu *mn_windows;
 	        QAction *ac_wdwsketching;
 			QAction *ac_wdwseismic;
@@ -138,8 +129,7 @@ class MainWindow : public QMainWindow
 							
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
-        SketchBoard  		*sketch_board_;
-        
+                
 		// Seismic Module
 		Sketching2DModule *dc_Seismic_Module_;
 			RRM::SeismicWindow * seismic_view_;

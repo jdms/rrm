@@ -59,7 +59,7 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 	this->sketch_controller->updateSBIM();
 
 	/// Interface
-	status_text = new QLabel ( "Sketch" , this );
+	status_text_ = new QLabel ( "Sketch" , this );
 	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
 
 }
@@ -86,18 +86,15 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		}
 		if ( event->key ( ) == Qt::Key_F9 )
 		{
-			this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
-			status_text->setText ( "Sketch" );
+			this->setModeSketch();
 		}
 		if ( event->key ( ) == Qt::Key_F10 )
 		{
-			this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_BELOW_INTERSECTION);
-			status_text->setText ( "Remove Below Intersection");
+			this->setModeRemoveBelowIntersection();
 		}
 		if ( event->key ( ) == Qt::Key_F11 )
 		{
-			this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION);
-			status_text->setText ( "Remove Above Intersection" );
+			this->setModeRemoveAboveIntersection();
 		}
 
 		if ( event->key ( ) == Qt::Key_Up )
@@ -145,8 +142,15 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		}
 		if ( event->key ( ) == Qt::Key_Space )
 		{
-			sketchSession_->reset();
-			this->sketch_controller->clear();
+			if (sketchSession_->mode() == SketchSessionTesting::InteractionMode::REGION_POINT)
+			{
+				sketchSession_->reset();
+			}
+			else
+			{
+				sketchSession_->reset();
+				this->sketch_controller->clear();
+			}
 		}
 
 		if ( event->key ( ) == Qt::Key_Escape)
@@ -194,6 +198,8 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			region.tolerance(0.000000001, 0.0);
 			region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_surfaces.txt");
 			region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces3.rrms");
+	
+		
 			region.unstructuredsurfacemesh();
 			//region.writesurfacemeshVTK("model3trisurfacemeshtry2.vtk");
 			region.unstructuredvolumemesh();
@@ -233,9 +239,34 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 		{
 			scale_out_ += 1;
 			scale_in_  += 1;
-	               this->scale ( 1.0 / scaleFactor , 1.0 / scaleFactor );
+	        this->scale ( 1.0 / scaleFactor , 1.0 / scaleFactor );
 		}
 	}
+}
+
+
+void SketchBoard::setModeSketch()
+{
+	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
+	this->sketchSession_->setOverSketchingMode();
+	status_text_->setText("Sketch");
+}
+void SketchBoard::setModeRegionPoint()
+{
+	this->sketchSession_->setRegionMode();
+	status_text_->setText("Select Region Points");
+}
+void SketchBoard::setModeRemoveAboveIntersection()
+{
+	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION);
+	this->sketchSession_->setOverSketchingMode();
+	status_text_->setText("Remove Above Intersection");
+}
+void SketchBoard::setModeRemoveBelowIntersection()
+{
+	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_BELOW_INTERSECTION);
+	this->sketchSession_->setOverSketchingMode();
+	status_text_->setText("Remove Below Intersection");
 }
 
 void SketchBoard::clear()

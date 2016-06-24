@@ -33,9 +33,6 @@ public:
 	void wheelEvent ( QWheelEvent *event );
 	void keyPressEvent ( QKeyEvent *event );
 
-	/// Interface
-	QLabel			*status_text;
-
 public slots:
 	// clear
 	void clear();
@@ -47,6 +44,11 @@ public slots:
 
 	void setBoundary ( Real x , Real y , Real width , Real height );
 
+	void setModeSketch();
+	void setModeRegionPoint();
+	void setModeRemoveAboveIntersection();
+	void setModeRemoveBelowIntersection();
+	
 signals:
 	void currentCrossSection( const CrossSection& _cross_section );
 
@@ -54,6 +56,8 @@ public:
 
 	int scale_in_;
 	int scale_out_;
+
+	QLabel * status_text_;
 
 	SketchSessionTesting   *sketchSession_;
 	SketchController       *sketch_controller;

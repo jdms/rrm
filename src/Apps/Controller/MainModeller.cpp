@@ -3,21 +3,15 @@
 // Skecthing
 void MainWindow::create2DModule ( )
 {
-
 	// Sketch Module
-
 	glWidget = new GLWidget ( this );
 
-	sketch_board_ = new SketchBoard ();
-	// Default Sketch Window
-	sketch_board_->newSession(0.0,0.0,700,400);
 
 	dc_2DModule = new Sketching2DModule( this );
-	dc_2DModule->setWindowTitle ( "Sketch View" );
-	dc_2DModule->setCentralWidget ( sketch_board_ );
 	dc_2DModule->setAllowedAreas(Qt::AllDockWidgetAreas);
 	this->addDockWidget( Qt::TopDockWidgetArea, dc_2DModule );
 
+	
 	// Seismic Module
 	dc_Seismic_Module_ = new Sketching2DModule(this);
 	seismic_view_ = new RRM::SeismicWindow(this);
@@ -26,17 +20,19 @@ void MainWindow::create2DModule ( )
 	dc_Seismic_Module_->setAllowedAreas(Qt::AllDockWidgetAreas);
 	this->addDockWidget(Qt::BottomDockWidgetArea, dc_Seismic_Module_);
 
-	status_bar_ = new QStatusBar ( this );
-	status_bar_->addWidget ( sketch_board_->status_text );
-	this->setStatusBar ( this->status_bar_ );
+
+	// Embedded on Sketch2DModule 
+	//status_bar_ = new QStatusBar ( this );
+	//status_bar_->addWidget ( sketch_board_->status_text );
+	//this->setStatusBar ( this->status_bar_ );
 
 	/// Black Screen Module
-	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->glWidget , SLOT( updateBlackScreen(const CrossSection&) ) );
+	connect(this->dc_2DModule->sketch_board_, SIGNAL(currentCrossSection(const CrossSection&)), this->glWidget, SLOT(updateBlackScreen(const CrossSection&)));
 	/// Seismic Module
 	/// Equip the Sketch Board with the current slice CrossSection
-	connect ( this->seismic_view_ , SIGNAL( currentCrossSection( const CrossSection&) ) , this->sketch_board_ , SLOT( setCrossSection( const CrossSection&) ) );
+	connect(this->seismic_view_, SIGNAL(currentCrossSection(const CrossSection&)), this->dc_2DModule->sketch_board_, SLOT(setCrossSection(const CrossSection&)));
 	/// Notify the Seismic Module with the new CrossSection configuration
-	connect ( this->sketch_board_ , SIGNAL( currentCrossSection( const CrossSection& ) ) , this->seismic_view_ , SLOT( updateCrossSection( const CrossSection& ) ) );
+	connect(this->dc_2DModule->sketch_board_, SIGNAL(currentCrossSection(const CrossSection&)), this->seismic_view_, SLOT(updateCrossSection(const CrossSection&)));
 	/// Notify the 3D the current slice position
 	connect ( this->seismic_view_->ui->seismic_slices_verticalSlider_ , SIGNAL( valueChanged(int)) , this->glWidget , SLOT( setPlanePosition(int) ) );
 	/// Notify the 3D View to update the surfaces
@@ -54,7 +50,7 @@ void MainWindow::interpolate( )
 {
 	std::cout << this->seismic_view_->getSeimicSlices().size() << std::endl;
 
-	this->seismic_view_->updateCrossSection(this->sketch_board_->sketch_controller->getCrossSection());
+	this->seismic_view_->updateCrossSection(this->dc_2DModule->sketch_board_->sketch_controller->getCrossSection());
 
 	glWidget->updateSeismicSlices(this->seismic_view_->getSeimicSlices());
 	glWidget->updateRendering();

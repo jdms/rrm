@@ -42,12 +42,12 @@ void MainWindow::createMenuBar ( )
 {
 	mn_file = menuBar ( )->addMenu ( tr ( "&File" ) );
 
-	mn_sketching = menuBar ( )->addMenu ( tr ( "&Sketching" ) );
+	//mn_sketching = menuBar ( )->addMenu ( tr ( "&Sketching" ) );
 
-	ac_newBoundary = new QAction ( tr ( "Sketch a New Boundary" ) , this );
-	ac_newBoundary->setShortcut ( QKeySequence ( tr ( "Ctrl+B" ) ) );
+	//ac_newBoundary = new QAction ( tr ( "Sketch a New Boundary" ) , this );
+	//ac_newBoundary->setShortcut ( QKeySequence ( tr ( "Ctrl+B" ) ) );
 
-	mn_sketching->addAction ( ac_newBoundary );
+	//mn_sketching->addAction ( ac_newBoundary );
 
 	mn_windows = menuBar ( )->addMenu ( tr ( "&Windows" ) );
 	mn_help = menuBar ( )->addMenu ( tr ( "&Help" ) );
@@ -56,7 +56,7 @@ void MainWindow::createMenuBar ( )
 void MainWindow::createMainWindowMenuBar ( )
 {
 
-	mn_file->addAction ( ac_new );
+	//mn_file->addAction ( ac_new );
 	//mn_file->addAction ( ac_open );
 	//mn_file->addAction ( ac_save );
 	//mn_file->addAction ( ac_export );
@@ -68,8 +68,7 @@ void MainWindow::createMainWindowMenuBar ( )
 
 void MainWindow::createMainWindowToolbar ( )
 {
-	tlb_section = addToolBar ( tr ( "Section" ) );
-	tlb_section->addAction ( ac_new );
+
 //	tlb_section->addAction ( ac_open );
 //	tlb_section->addAction ( ac_save );
 //	tlb_section->addAction ( ac_export );
@@ -78,8 +77,6 @@ void MainWindow::createMainWindowToolbar ( )
 
 void MainWindow::createMainWindowActions ( )
 {
-	ac_new = new QAction ( tr ( "&New" ) , this );
-	ac_new->setIcon ( QIcon ( ":/images/icons/page_white.png" ) );
 
 	//ac_open = new QAction ( tr ( "&Open" ) , this );
 	//ac_open->setIcon ( QIcon ( ":/images/icons/folder.png" ) );
@@ -105,7 +102,7 @@ void MainWindow::createMainWindowActions ( )
 	aboutRRM = new AboutWidget( this );
 	connect ( ac_about , SIGNAL( triggered() ) , aboutRRM , SLOT( show() ) );
 	connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
-	connect ( ac_new , SIGNAL( triggered(bool) ) , this->sketch_board_ , SLOT( clear() ) );
+	//connect ( ac_new , SIGNAL( triggered(bool) ) , this->sketch_board_ , SLOT( clear() ) );
 }
 
 void MainWindow::changeColorLine ( )
@@ -122,9 +119,6 @@ void MainWindow::createSketchingMenuBar ( )
 
 void MainWindow::createSketchingToolbar ( )
 {
-	tlb_rules = dc_2DModule->main_widget_->addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
-	tlb_rules->addAction ( ac_removeabove );
-	tlb_rules->addAction ( ac_removebelow );
 //
 	tbt_colorsketch = new QToolButton;
 	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
@@ -134,7 +128,7 @@ void MainWindow::createSketchingToolbar ( )
 	mn_pickercolor->addAction ( ac_sketchcolor );
 	tbt_colorsketch->setMenu ( mn_pickercolor );
 //
-	tlb_customization = addToolBar ( tr ( "Customize" ) );
+	tlb_customization = dc_2DModule->getMainWidow()->addToolBar(tr("Customize"));
 	tlb_customization->addAction ( ac_select );
 	tlb_customization->addWidget ( tbt_colorsketch );
 
@@ -146,14 +140,6 @@ void MainWindow::createSketchingToolbar ( )
 
 void MainWindow::createSketchingActions ( )
 {
-	ac_removeabove = new QAction ( tr ( "Remove Above Intersection" ) , this );
-
-	ac_removeabove->setIcon ( QIcon ( ":/images/icons/removeabove.png" ) );
-	ac_removeabove->setCheckable ( true );
-
-	ac_removebelow = new QAction ( tr ( "Remove Below Intersection" ) , this );
-	ac_removebelow->setIcon ( QIcon ( ":/images/icons/removebelow.png" ) );
-	ac_removebelow->setCheckable ( true );
 
 	ac_select = new QAction ( tr ( "Select" ) , this );
 
