@@ -83,6 +83,8 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify the sketch module to draw a new rectangle boundary
 		void sketchNewBoundary ( );
 
+		void setColor(const QColor& _color);
+
 		void newSktech();
 
 		void setEditMode();
@@ -118,6 +120,8 @@ class SketchSessionTesting: public QGraphicsScene
 		std::map<unsigned int, QGraphicsEllipseItem*> view_vertices_;
 
 		QPointF last_point_;
+
+		QColor current_color_;
 
 		/// Rectangular Boundary
 			// The point where the we start draw the rectangle boundary_

@@ -139,3 +139,8 @@ void InputSketch::setPen ( const QPen& pen )
 {
 	pen_color = pen;
 }
+
+void InputSketch::setColor(const QColor& _color)
+{
+	pen_color.setColor(_color);
+}

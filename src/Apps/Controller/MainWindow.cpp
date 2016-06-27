@@ -119,39 +119,12 @@ void MainWindow::createSketchingMenuBar ( )
 
 void MainWindow::createSketchingToolbar ( )
 {
-//
-	tbt_colorsketch = new QToolButton;
-	tbt_colorsketch->setPopupMode ( QToolButton::MenuButtonPopup );
-	tbt_colorsketch->setIcon ( QIcon ( ":/images/icons/border_color.png" ) );
-//
-	mn_pickercolor = new QMenu ( );
-	mn_pickercolor->addAction ( ac_sketchcolor );
-	tbt_colorsketch->setMenu ( mn_pickercolor );
-//
-	tlb_customization = dc_2DModule->getMainWidow()->addToolBar(tr("Customize"));
-	tlb_customization->addAction ( ac_select );
-	tlb_customization->addWidget ( tbt_colorsketch );
 
-	connect ( mn_pickercolor , SIGNAL( aboutToShow() ) , cd_pickercolor , SLOT( show() ) );
-	connect ( cd_pickercolor , SIGNAL( rejected() ) , mn_pickercolor , SLOT( hide() ) );
-	connect ( cd_pickercolor , SIGNAL( accepted() ) , this , SLOT( changeColorLine() ) );
 
 }
 
 void MainWindow::createSketchingActions ( )
 {
-
-	ac_select = new QAction ( tr ( "Select" ) , this );
-
-	ac_select->setIcon ( QIcon ( ":/images/icons/pointer.png" ) );
-	ac_select->setCheckable ( true );
-
-	cd_pickercolor = new QColorDialog ( );
-	cd_pickercolor->setWindowFlags ( Qt::Widget );
-	cd_pickercolor->setCurrentColor ( QColor ( 0 , 0 , 128 ) );
-
-	ac_sketchcolor = new QWidgetAction ( this );
-	ac_sketchcolor->setDefaultWidget ( cd_pickercolor );
 
 	ac_wdwsketching = new QAction ( tr ( "Window Sketching" ) , this );
 	ac_wdwsketching->setCheckable ( true );
@@ -168,8 +141,7 @@ void MainWindow::createSketchingActions ( )
 
 //	connect ( ac_removeabove , SIGNAL( triggered() ) , dc_2DModule , SLOT( applyRemoveAbove() ) );
 //	connect ( ac_removebelow , SIGNAL( triggered() ) , dc_2DModule , SLOT( applyRemoveBelow() ) );
-
-	connect ( ac_select , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( pointerSelection( bool ) ) );
+		
 	connect ( ac_wdwsketching , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( setVisible(bool) ) );
 	connect(ac_wdwseismic, SIGNAL(toggled(bool)), dc_Seismic_Module_, SLOT(setVisible(bool)));
 

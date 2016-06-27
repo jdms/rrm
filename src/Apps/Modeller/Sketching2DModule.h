@@ -6,6 +6,9 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QMainwindow>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QWidgetAction>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolButton>
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
@@ -59,17 +62,26 @@ class Sketching2DModule: public QDockWidget
     private:
 
 		QToolBar *tlb_section;
-				QAction *ac_newBoundary;
-				QAction *ac_new;
-				/// Temporary
-				QAction * ac_region_point_;
+			QAction *ac_newBoundary;
+			QAction *ac_new;
+			/// Temporary
+			QAction * ac_region_point_;
 
 		QToolBar *tlb_rules;
 			QActionGroup *action_group_rules_;
 			QAction *ac_removeabove;
 			QAction *ac_removebelow;
 			QAction *ac_sketch;
+
+		QToolBar *tlb_interaction;
+			QAction *ac_select;
 			
+		QToolBar *tlb_customization;
+			QWidgetAction *ac_sketchcolor;
+			QMenu *mn_pickercolor;
+			QColorDialog *cd_pickercolor;
+			QToolButton *tbt_colorsketch;
+
 		QLabel * label_status_bar_text_;
 		QMainWindow * mainWidonw_widget_;
 };

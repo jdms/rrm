@@ -74,10 +74,35 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tlb_rules->addAction(ac_removeabove);
 	tlb_rules->addAction(ac_removebelow);
 	tlb_rules->addAction(ac_region_point_);
-
-	// Section
+		
 	tlb_section = this->mainWidonw_widget_->addToolBar(tr("Section"));
 	tlb_section->addAction(ac_new);
+
+	ac_select = new QAction(tr("Select"), this);
+
+	ac_select->setIcon(QIcon(":/images/icons/pointer.png"));
+	ac_select->setCheckable(true);
+
+	// Costumization
+	cd_pickercolor = new QColorDialog();
+	cd_pickercolor->setWindowFlags(Qt::Widget);
+	cd_pickercolor->setCurrentColor(QColor(0, 0, 128));
+
+	ac_sketchcolor = new QWidgetAction(this);
+	ac_sketchcolor->setDefaultWidget(cd_pickercolor);
+	
+	tbt_colorsketch = new QToolButton;
+	tbt_colorsketch->setPopupMode(QToolButton::MenuButtonPopup);
+	tbt_colorsketch->setIcon(QIcon(":/images/icons/border_color.png"));
+	
+	mn_pickercolor = new QMenu();
+	mn_pickercolor->addAction(ac_sketchcolor);
+	tbt_colorsketch->setMenu(mn_pickercolor);
+	
+	tlb_customization = getMainWidow()->addToolBar(tr("Customize"));
+	tlb_customization->addAction(ac_select);
+	tlb_customization->addWidget(tbt_colorsketch);
+
 }
 
 void Sketching2DModule::createConnections()
@@ -86,6 +111,15 @@ void Sketching2DModule::createConnections()
 	connect(Sketching2DModule::ac_removeabove, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeRemoveAboveIntersection(); } });
 	connect(Sketching2DModule::ac_sketch, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeSketch(); } });
 	connect(Sketching2DModule::ac_region_point_, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeRegionPoint(); } });
+	// Color
+	connect(Sketching2DModule::mn_pickercolor, &QMenu::aboutToShow, Sketching2DModule::cd_pickercolor, &QColorDialog::show );
+	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::rejected, Sketching2DModule::mn_pickercolor, &QMenu::hide);
+	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::rejected, Sketching2DModule::mn_pickercolor, &QMenu::hide);
+	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::colorSelected, [=](const QColor& _color){ sketch_board_->sketchSession_->setColor(_color); mn_pickercolor->hide(); });
+
+	// Selection
+	connect(Sketching2DModule::ac_select, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeEdition(); } });
+	
 }
 
 QMainWindow * Sketching2DModule::getMainWidow()

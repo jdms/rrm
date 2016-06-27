@@ -251,11 +251,6 @@ void SketchBoard::setModeSketch()
 	this->sketchSession_->setOverSketchingMode();
 	status_text_->setText("Sketch");
 }
-void SketchBoard::setModeRegionPoint()
-{
-	this->sketchSession_->setRegionMode();
-	status_text_->setText("Select Region Points");
-}
 void SketchBoard::setModeRemoveAboveIntersection()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION);
@@ -266,6 +261,16 @@ void SketchBoard::setModeRemoveBelowIntersection()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_BELOW_INTERSECTION);
 	this->sketchSession_->setOverSketchingMode();
+	status_text_->setText("Remove Below Intersection");
+}
+void SketchBoard::setModeRegionPoint()
+{
+	this->sketchSession_->setRegionMode();
+	status_text_->setText("Select Region Points");
+}
+void SketchBoard::setModeEdition()
+{
+	this->sketchSession_->setEditMode();
 	status_text_->setText("Remove Below Intersection");
 }
 

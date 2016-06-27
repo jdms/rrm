@@ -48,6 +48,7 @@ public slots:
 	void setModeRegionPoint();
 	void setModeRemoveAboveIntersection();
 	void setModeRemoveBelowIntersection();
+	void setModeEdition();
 	
 signals:
 	void currentCrossSection( const CrossSection& _cross_section );

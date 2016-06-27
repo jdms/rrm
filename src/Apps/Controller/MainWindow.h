@@ -110,23 +110,14 @@ class MainWindow : public QMainWindow
 
 		QMenu *mn_help;
 			QAction *ac_about;
-			        
-        QToolBar *tlb_interaction;
-			QAction *ac_select;
-        QToolBar *tlb_customization;
-		
+			                		
         QMenu *mn_windows;
 	        QAction *ac_wdwsketching;
 			QAction *ac_wdwseismic;
 			QAction *ac_window3d;
 			QAction *ac_flowcomputation;
-			
-
-        QWidgetAction *ac_sketchcolor;
-			QMenu *mn_pickercolor;
-			QColorDialog *cd_pickercolor;
-			QToolButton *tbt_colorsketch;
-							
+	
+					
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
                 

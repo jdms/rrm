@@ -13,23 +13,22 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	this->addItem ( overlay_image_ );
 	overlay_image_->setZValue(1);
 
+	// Default Color
+	this->current_color_ = QColor(255, 75, 75);
+
 	QPen pen;
+	pen.setColor(this->current_color_);
+	pen.setWidth ( 3 );
 
-	pen.setColor ( QColor ( 255 , 100 , 70 ) );
-	pen.setWidth ( 5 );
-
-
-	input_sketch_ = new InputSketch ( QColor ( 255 , 75 , 75 ) );
+	input_sketch_ = new InputSketch ( this->current_color_ );
 	input_sketch_->setPen ( pen );
 	this->addItem ( input_sketch_ );
 	this->input_sketch_->setZValue(1);
 
-	current_sketch_ = new InputSketch ( QColor ( 255 , 75 , 75 ) );
+	current_sketch_ = new InputSketch ( this->current_color_ );
 	current_sketch_->setPen ( pen );
 	this->addItem ( current_sketch_ );
 	this->current_sketch_->setZValue(1);
-
-	sketch_pen.setColor ( QColor ( 187 , 15 , 32 ) );
 
 	boundaryc_ = new BoundaryItem(0.0,0.0,QColor(55,55,55,255)) ;
 	this->addItem ( boundaryc_ );
@@ -148,6 +147,7 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 		temp_pix_item->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
 		region_pointers_->addToGroup(temp_pix_item);
 		region_points_.push_back(event->scenePos());
+
 	}else if ( mode_ == InteractionMode::EDITING )
 	{
 		QGraphicsScene::mousePressEvent ( event );
@@ -172,7 +172,7 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 			}
 		}
 	}
-
+	event->ignore();
 	update ( );
 }
 
@@ -185,6 +185,7 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 	if (mode_ == InteractionMode::REGION_POINT)
 	{
 		region_pointer_->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
+		
 	}
 	else if ( mode_ == InteractionMode::EDITING )
 	{
@@ -234,8 +235,10 @@ void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 				this->boundaryc_->setNewBoundary ( x1 , y1 , x2 - x1 , y2 - y1 );
 			}
 		}
-	}
 
+		
+	}
+	event->ignore();
 	update ( );
 }
 
@@ -334,6 +337,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 		}
 
 	}
+	event->ignore();
 	update ( );
 }
 
@@ -415,6 +419,13 @@ void SketchSessionTesting::dropEvent ( QGraphicsSceneDragDropEvent * event )
 	emit newSessionSignal ( pixmap );
 
 	//initializationWithImage(pixmap);
+}
+
+void SketchSessionTesting::setColor(const QColor& _color)
+{
+	current_color_ = _color;
+	input_sketch_->setColor(_color);
+	current_sketch_->setColor(_color);
 }
 
 void SketchSessionTesting::reset()
