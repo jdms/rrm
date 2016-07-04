@@ -107,12 +107,19 @@ namespace RRM
 		return true;
 	}
 	// Black Screen Module ---------->
-	void ExtrusionController::createBlackScreenExtrusionMesh ( const std::vector<std::vector<Eigen::Vector3f> >& _patchies, float stepx, float stepz, float volume_width, Eigen::Vector3f center, float diagonal, std::vector<Eigen::Vector3f> &_patch)
+	void ExtrusionController::createBlackScreenExtrusionMesh(const std::vector<std::vector<Eigen::Vector3f> >& _patchies, const std::vector<std::vector<Eigen::Vector3f> >& _colors,
+		float stepx, 
+		float stepz, 
+		float volume_width, 
+		Eigen::Vector3f center, 
+		float diagonal, 
+		std::vector<Eigen::Vector3f> &_patch, std::vector<Eigen::Vector3f> &_color)
 	{
 
 		_patch.clear();
+		_color.clear();
 
-		std::size_t last;
+		std::size_t last = 0;
 
 		stepz = volume_width / stepz;
 
@@ -132,6 +139,16 @@ namespace RRM
 					_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][i + stepx].x ( )  , _patchies[it_patch][i + stepx].y ( ) , j + stepz  ) );
 
 					last = i;
+					// Colors
+					// In the Curve
+					_color.push_back(Eigen::Vector3f(_colors[it_patch][i].x(), _colors[it_patch][i].y(), _colors[it_patch][i].z()));
+
+					_color.push_back(Eigen::Vector3f(_colors[it_patch][i + stepx].x(), _colors[it_patch][i + stepx].y(), _colors[it_patch][i + stepx].z()));
+					// In the Extrude
+					_color.push_back(Eigen::Vector3f(_colors[it_patch][i].x(), _colors[it_patch][i].y(), _colors[it_patch][i].z()));
+
+					_color.push_back(Eigen::Vector3f(_colors[it_patch][i + stepx].x(), _colors[it_patch][i + stepx].y(), _colors[it_patch][i + stepx].z()));
+
 
 				}
 	//
@@ -153,6 +170,15 @@ namespace RRM
 				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch][last].x ( ) , _patchies[it_patch][last].y ( ), j + stepz  ) );
 
 				_patch.push_back ( Eigen::Vector3f ( _patchies[it_patch].back ( ).x ( ) , _patchies[it_patch].back ( ).y ( ), j + stepz  ) );
+
+				// Colors
+				_color.push_back(Eigen::Vector3f(_colors[it_patch][last].x(), _colors[it_patch][last].y(), _colors[it_patch][last].z()));
+
+				_color.push_back(Eigen::Vector3f(_colors[it_patch].back().x(), _colors[it_patch].back().y(), _colors[it_patch].back().z()));
+				// In the Extrude
+				_color.push_back(Eigen::Vector3f(_colors[it_patch][last].x(), _colors[it_patch][last].y(), _colors[it_patch][last].z()));
+
+				_color.push_back(Eigen::Vector3f(_colors[it_patch].back().x(), _colors[it_patch].back().y(), _colors[it_patch].back().z()));
 			}
 
 		}
@@ -221,10 +247,12 @@ namespace RRM
 	{
 		this->cross_section_ = _cross_section;
 	}
-	void ExtrusionController::updateBlackScreenMesh ( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch)
+	void ExtrusionController::updateBlackScreenMesh(float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube, std::vector<Eigen::Vector3f> &_patch, std::vector<Eigen::Vector3f> &_color)
 	{
 
 		std::vector<std::vector<Eigen::Vector3f> > 	patchies;
+		std::vector<std::vector<Eigen::Vector3f> > 	colors;
+		std::vector<Eigen::Vector3f> 			color;
 		std::vector<Eigen::Vector3f> 			patch;
 
 		Celer::BoundingBox3<float> 			box;
@@ -233,6 +261,8 @@ namespace RRM
 		{
 			patch.clear ( );
 			patch.resize ( edge.second.segment.curve.size() );
+			color.clear();
+			color.resize(edge.second.segment.curve.size());
 
 			if ( !edge.second.is_boundary_ )
 			{
@@ -241,8 +271,11 @@ namespace RRM
 					for ( std::size_t p_it = 0; p_it < edge.second.segment.curve.size(); p_it++ )
 					{
 						patch[p_it] = Eigen::Vector3f ( edge.second.segment.curve[p_it].x(),edge.second.segment.curve[p_it].y(),1.0f);
+
+						color[p_it] = Eigen::Vector3f(edge.second.r, edge.second.g, edge.second.b);
 					}
 					patchies.push_back(patch);
+					colors.push_back(color);
 				}
 
 			}
@@ -258,7 +291,7 @@ namespace RRM
 
 		if ( patchies.size() > 0)
 		{
-			createBlackScreenExtrusionMesh(patchies,stepx, stepz,volume_width,box.center(),box.diagonal(),_patch);
+			createBlackScreenExtrusionMesh(patchies,colors,stepx, stepz,volume_width,box.center(),box.diagonal(),_patch,_color);
 		}
 		createBlackScreenCube(box,_cube);
 	}
@@ -332,18 +365,21 @@ namespace RRM
 	}
 
 	// Seismic Module --------------->
-	void ExtrusionController::setResolution(int _resolution,std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
+	void ExtrusionController::setResolution(int _resolution, std::vector<float>& vl, std::vector<float>& nl, std::vector<float>& cl, std::vector<std::size_t>& fl)
 	{
 		this->resolution_ = _resolution;
 
 		std::vector<float> vt;
 		std::vector<float> nt;
+		std::vector<float> ct;
 		std::vector<std::size_t> ft;
 		std::size_t stride = 0;
 
 		vl.clear();
 		nl.clear();
+		cl.clear();
 		fl.clear();
+		
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
@@ -355,10 +391,13 @@ namespace RRM
 				 	vt.clear();
 					nt.clear();
 					ft.clear();
+					ct.clear();
 
 					surfaces[surfaces_iterator]->getVertexList ( vt );
 					surfaces[surfaces_iterator]->getNormalList ( nt );
 					surfaces[surfaces_iterator]->getFaceList ( ft );
+
+					ct.resize(nt.size());
 
 					for ( auto& index: ft)
 					{
@@ -367,13 +406,14 @@ namespace RRM
 
 					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
 					{
-						nt[it+0] = colors_[surfaces_iterator].x();
-						nt[it+1] = colors_[surfaces_iterator].y();
-						nt[it+2] = colors_[surfaces_iterator].z();
+						ct[it+0] = colors_[surfaces_iterator].x();
+						ct[it+1] = colors_[surfaces_iterator].y();
+						ct[it+2] = colors_[surfaces_iterator].z();
 					}
 
 					vl.insert(vl.end(),vt.begin(),vt.end());
 					nl.insert(nl.end(),nt.begin(),nt.end());
+					cl.insert(cl.end(),ct.begin(),ct.end());
 
 					stride += static_cast<std::size_t>(vt.size()/3);
 
@@ -506,13 +546,13 @@ namespace RRM
 		return cube;
 	}
 	// Interpolation
-	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices (std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl)
+	std::vector<Eigen::Vector4f> ExtrusionController::updateSeismicSlices(std::vector<float>& vl, std::vector<float>& nl, std::vector<float>& cl, std::vector<std::size_t>& fl)
 	{
 
 		vl.clear();
 		nl.clear();
 		fl.clear();
-
+		cl.clear();
 
 		std::cout << " back " << (scale_z_)*(294/scale_) << std::endl;
 		std::cout << " front " << (scale_z_)*(1/scale_) << std::endl;
@@ -634,9 +674,9 @@ namespace RRM
 
 		std::vector<float> vt;
 		std::vector<float> nt;
+		std::vector<float> ct;
 		std::vector<std::size_t> ft;
 		std::size_t stride = 0;
-
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
@@ -652,10 +692,13 @@ namespace RRM
 					vt.clear();
 					nt.clear();
 					ft.clear();
+					ct.clear();
 
 					surfaces[surfaces_iterator]->getVertexList ( vt );
 					surfaces[surfaces_iterator]->getNormalList ( nt );
 					surfaces[surfaces_iterator]->getFaceList ( ft );
+
+					ct.resize(nt.size());
 
 					for ( auto& index: ft)
 					{
@@ -664,13 +707,14 @@ namespace RRM
 
 					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
 					{
-						nt[it+0] = colors_[surfaces_iterator].x();
-						nt[it+1] = colors_[surfaces_iterator].y();
-						nt[it+2] = colors_[surfaces_iterator].z();
+						ct[it+0] = colors_[surfaces_iterator].x();
+						ct[it+1] = colors_[surfaces_iterator].y();
+						ct[it+2] = colors_[surfaces_iterator].z();
 					}
 
 					vl.insert(vl.end(),vt.begin(),vt.end());
 					nl.insert(nl.end(),nt.begin(),nt.end());
+					cl.insert(cl.end(),ct.begin(),ct.end());
 
 					stride += static_cast<std::size_t>(vt.size()/3);
 

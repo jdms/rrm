@@ -144,3 +144,8 @@ void InputSketch::setColor(const QColor& _color)
 {
 	pen_color.setColor(_color);
 }
+
+QColor InputSketch::getColor() const
+{
+	return pen_color.color();
+}

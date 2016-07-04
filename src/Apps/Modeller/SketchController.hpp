@@ -46,7 +46,7 @@ class SketchController : public QObject
 
 		void setRule( RRM::GeologicRules _update_rule);
 
-        	void insertCurve ( QPolygonF _raw_sketch_curve );
+        void insertCurve ( QPolygonF _raw_sketch_curve, QColor _color );
 		// By using a background image
 		void newSession ( QPixmap pixmap );
 		// Sketching a new boundary
@@ -55,10 +55,10 @@ class SketchController : public QObject
 		void setCrossSection ( const CrossSection& _cross_section );
 		CrossSection getCrossSection ( ) const ;
 
-        	void updateSBIM( );
+        void updateSBIM( );
 
         signals:
-		void updateSBIM        ( const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& ,
+		void updateSBIM        ( const std::map<unsigned int, std::pair<QColor,QPolygonF> >& ,
 					 const std::map<unsigned int, QPointF>& );
 	private:
         	// The Model

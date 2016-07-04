@@ -42,6 +42,7 @@ class InputSketch : public QGraphicsPathItem
 
         void setPen( const QPen& pen );
 		void setColor(const QColor& _color);
+		QColor getColor() const;
 		
     protected:
 

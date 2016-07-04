@@ -243,7 +243,7 @@ namespace RRM
 			}
 
 			/// Insert the curve without any restriction
-			unsigned int insertCurve( const Curve2D& _curve )
+			unsigned int insertCurve( const Curve2D& _curve ,  _Real _r, _Real _g, _Real _b)
 			{
 
 				// PolygonalCurve2D output
@@ -408,6 +408,7 @@ namespace RRM
 					hanging_1.target_id_ = intersection_vertices.front().vertex_id_;
 					hanging_1.is_enable_ = false;
 					hanging_1.is_visible_ = false;
+					hanging_1.setColor(_r,_g,_b);
 					edges_[hanging_1.id_] = hanging_1;
 					last_edge = hanging_1.id_;
 
@@ -422,6 +423,7 @@ namespace RRM
 						e.target_id_ = intersection_vertices[it+1].vertex_id_;
 						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(e.id_);
 						vertices_[intersection_vertices[it].vertex_id_].edges_.insert(last_edge);
+						e.setColor(_r,_g,_b);
 						edges_[e.id_] = e;
 						last_edge = e.id_;
 					}
@@ -435,6 +437,7 @@ namespace RRM
 					hanging_2.source_id_ = intersection_vertices.back().vertex_id_;
 					hanging_2.is_enable_ = false;
 					hanging_2.is_visible_ = false;
+					hanging_2.setColor(_r,_g,_b);
 					edges_[hanging_2.id_] = hanging_2;
 					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(hanging_2.id_);
 					vertices_[intersection_vertices.back().vertex_id_].edges_.insert(last_edge);
@@ -495,6 +498,7 @@ namespace RRM
 
 							e2.source_id_ = edge_vertices[0].vertex_id_;
 							e2.target_id_ = edges_[edge_vertices[0].source_curve_id].target_id_;
+							e2.setColor(edges_[edge_vertices[0].source_curve_id].r,edges_[edge_vertices[0].source_curve_id].g,edges_[edge_vertices[0].source_curve_id].b);
 
 							// Original edge
 							edges_[edge_vertices[0].source_curve_id].target_id_ = edge_vertices[0].vertex_id_;
@@ -577,7 +581,8 @@ namespace RRM
 							e2.segment.curve = c2;
 							//e2.segment.curve.superSample(sampling_);
 							e2.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
-							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
+							e2.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;\
+							e2.setColor(edges_[edge_vertices[0].source_curve_id].r,edges_[edge_vertices[0].source_curve_id].g,edges_[edge_vertices[0].source_curve_id].b);
 
 							Edge<Real> e3;
 							e3.id_ = edge_index_.getID();
@@ -585,6 +590,7 @@ namespace RRM
 							//e3.segment.curve.superSample(sampling_);
 							e3.segment.curve_index = edges_[edge_vertices[0].source_curve_id].segment.curve_index;
 							e3.is_boundary_ = edges_[edge_vertices[0].source_curve_id].is_boundary_;
+							e3.setColor(edges_[edge_vertices[0].source_curve_id].r,edges_[edge_vertices[0].source_curve_id].g,edges_[edge_vertices[0].source_curve_id].b);
 
 
 							e2.source_id_ = edge_vertices[0].vertex_id_;

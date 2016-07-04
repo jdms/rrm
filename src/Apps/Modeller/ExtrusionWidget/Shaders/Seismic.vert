@@ -25,7 +25,7 @@ void main ( void )
 
 	VertexOut.vertice = ViewMatrix * vec4(position,1.0f);
 	VertexOut.normal = normalMatrix * normal;
-	VertexOut.color = vec4 ( normal , 1.0 );
+	VertexOut.color = vec4 ( color , 1.0 );
 
 	gl_Position = ProjectionMatrix * ViewMatrix * vec4 ( position , 1.0f );
 }

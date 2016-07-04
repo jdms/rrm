@@ -37,7 +37,8 @@ float num_lights = 4.0f;
 //
 //	vec4 color_t = color_pastel;//vec4 ( 0.10 , 0.75 , 0.10 , 1.0 );
 
-	vec4 color_t = vec4 ( 0.75 , 0.75 , 1.0 , 1.0 );
+	//vec4 color_t = vec4 ( 0.75 , 0.75 , 1.0 , 1.0 );
+	vec4 color_t = VertexIn.color;
 
 	vec4 la = vec4 ( 0.0 );
 	vec4 ld = vec4 ( 0.0 );

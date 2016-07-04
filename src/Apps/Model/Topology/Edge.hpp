@@ -32,6 +32,10 @@ namespace RRM
 				this->is_boundary_ = false;
 				this->is_visible_ = true;
 				this->is_enable_ = true;
+
+				r =  0.5;
+				g = 0.5;
+				b = 0.5;
 			}
 
 			Edge ( const Self& _edge)
@@ -58,7 +62,18 @@ namespace RRM
 				this->is_visible_  = other.is_visible_;
 				this->is_enable_   = other.is_enable_;
 
+				this->r  = other.r;
+				this->g = other.g;
+				this->b = other.b;
+
 				return *this;
+			}
+
+			void setColor(Real _r, Real _g, Real _b )
+			{
+				this->r  = _r;
+				this->g = _g;
+				this->b =_b;
 			}
 
 		public:
@@ -69,6 +84,10 @@ namespace RRM
 			bool is_boundary_;
 			bool is_visible_;
 			bool is_enable_;
+
+			Real r;
+			Real g;
+			Real b;
 
 			unsigned int source_id_;
 			unsigned int target_id_;

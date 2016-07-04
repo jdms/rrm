@@ -67,6 +67,8 @@ class GLWidget: public QOpenGLWidget
 	 	void backGround();
 	 	void clear();
 	 	// Deployed
+		void loadShaderByQtResources();
+	 	// Deployed
 		void loadShaderByResources();
 		// Development
 		void loadShaders();
@@ -117,6 +119,10 @@ private:
 	GLuint vertexArray_patch_;
 		GLuint vertexBuffer_patch_;
 		GLuint vertexPatch_slot_;
+		GLuint vertexBuffer_patch_color = 0;
+		GLuint patch_Color_Slot_ = 2;
+
+	std::vector<Eigen::Vector3f> colorBS_;
 	std::vector<Eigen::Vector3f> patch_;
 	Tucano::Shader*   patch_shader_;
 
@@ -157,8 +163,9 @@ private:
 		GLuint vertexBuffer_MESH_face_ID_;
 		GLuint number_of_faces;
 
-		std::vector<float> 		vertex_;
-		std::vector<float> 		normal_;
+		std::vector<float> 		vertexGL_;
+		std::vector<float> 		normalGL_;
+		std::vector<float> 		colorGL_;
 		std::vector<std::size_t>  	faces_;
 		std::vector<GLuint>  		facesGL_;
 

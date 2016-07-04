@@ -50,18 +50,18 @@ namespace RRM
 			// Black Screen
 			void  setBlackScreenCrossSection	( const CrossSection& _cross_section );
 
-			void  createBlackScreenExtrusionMesh 	( const std::vector<std::vector<Eigen::Vector3f> >& _patchies,
+			void  createBlackScreenExtrusionMesh(const std::vector<std::vector<Eigen::Vector3f> >& _patchies, const std::vector<std::vector<Eigen::Vector3f> >& _colors,
 								  float stepx,
 								  float stepz,
 								  float volume_width,
 								  Eigen::Vector3f center,
 								  float diagonal,
-								  std::vector<Eigen::Vector3f> &_patch);
+								  std::vector<Eigen::Vector3f> &_patch, std::vector<Eigen::Vector3f> &_color);
 
 			void  createBlackScreenCube 	( const Celer::BoundingBox3<float>& box,
 							  std::vector<Eigen::Vector3f>& _cube );
 
-			void updateBlackScreenMesh( float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube,std::vector<Eigen::Vector3f> &_patch );
+			void updateBlackScreenMesh(float stepx, float stepz, float volume_width, std::vector<Eigen::Vector3f>& _cube, std::vector<Eigen::Vector3f> &_patch, std::vector<Eigen::Vector3f> &_color);
 
 			void exportBlankScreen(const std::string& _file_name, int _extrusion_size);
 
@@ -80,7 +80,7 @@ namespace RRM
 			// - Colour     vec4
 			// - Attributes vec4
 			/// Seismic Module
-			void setResolution(int _resolution,std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl);
+			void setResolution(int _resolution, std::vector<float>& vl, std::vector<float>& nl, std::vector<float>& cl,std::vector<std::size_t>& fl);
 			std::vector<float> getCubeMesh  ( );
 			std::vector<float> getPlaneMesh ( float z);
 			std::vector<Eigen::Vector4f> getPlanes   ( const std::vector<unsigned int>& );
@@ -91,7 +91,7 @@ namespace RRM
 			// Radial Basis Function
 			std::vector<Eigen::Vector4f> sketchRBFInterpolation ( );
 			/// Take the current SBIM and normalize/update the 3D visualization
-			std::vector<Eigen::Vector4f> updateSeismicSlices ( std::vector<float>& vl,std::vector<float>& nl,std::vector<std::size_t>& fl);
+			std::vector<Eigen::Vector4f> updateSeismicSlices(std::vector<float>& vl, std::vector<float>& nl, std::vector<float>& cl,std::vector<std::size_t>& fl);
 			void setSeismicSlices ( const SeismicSlices& _seismic_slices);
 
 		signals:

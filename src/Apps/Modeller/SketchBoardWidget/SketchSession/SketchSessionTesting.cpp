@@ -124,7 +124,7 @@ void SketchSessionTesting::newSktech()
 
 
 		QPolygonF new_curve = current_sketch_->getSketch();
-		emit newSketchCurve(new_curve);
+		emit newSketchCurve(new_curve, current_sketch_->getColor());
 
 		std::cout << " Emit" << std::endl;
 
@@ -274,7 +274,7 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 		{
 			if ( !new_curve.isClosed ( ) )
 			{
-				emit newSketchCurve(new_curve);
+				emit newSketchCurve(new_curve,input_sketch_->getColor());
 			}
 
 			input_sketch_->clear ( );
@@ -667,7 +667,7 @@ void SketchSessionTesting::setUpBackground ( )
 	this->setBackgroundBrush ( QBrush ( gradient ) );
 }
 
-void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
+void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<QColor,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
 	/// clear the map of curves
 	/// @todo clear all attributes
@@ -692,6 +692,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<uns
 		{
 			//std::cout << "The curve exist " <<  polycurve_iterator.first << std::endl;
 
+			view_curves_[polycurve_iterator.first]->setPen(QPen(polycurve_iterator.second.first));
 			view_curves_[polycurve_iterator.first]->setSketch(polycurve_iterator.second.second);
 
 		}
@@ -700,7 +701,7 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<uns
 		{
 			//std::cout << " It's a new curve " << polycurve_iterator.first << std::endl;
 
-			StratigraphyItem * new_view_curve = new StratigraphyItem(colors[polycurve_iterator.second.first]);
+			StratigraphyItem * new_view_curve = new StratigraphyItem(polycurve_iterator.second.first);
 			new_view_curve->setZValue(1);
 			this->addItem(new_view_curve);
 

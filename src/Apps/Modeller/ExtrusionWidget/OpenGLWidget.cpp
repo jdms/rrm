@@ -39,6 +39,11 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 		vertexBuffer_patch_ = 0;
 		// Be careful on the assignment of each slot attributes
 		vertexPatch_slot_ = 0;
+
+		vertexBuffer_patch_color = 0;
+		// Be careful on the assignment of each slot attributes
+		patch_Color_Slot_ = 2;
+
 		patch_shader_ = 0;
 
         // The sketch lines
@@ -198,6 +203,14 @@ void GLWidget::initializeGL ( )
 		glEnableVertexAttribArray ( vertexPatch_slot_ );
 		glVertexAttribPointer ( vertexPatch_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
+		/// Requesting Vertex Buffers to the GPU
+		glGenBuffers(1, &vertexBuffer_patch_color);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
+		glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+		/// Set up generic attributes pointers
+		glEnableVertexAttribArray(patch_Color_Slot_);
+		glVertexAttribPointer(patch_Color_Slot_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	glBindVertexArray ( 0 );
 
 
@@ -219,7 +232,7 @@ void GLWidget::initializeGL ( )
 	// IMPORTANT FOR THE DEPLOY VERSION
 	loadShaderByResources ( );
 	//loadShaders();
-
+	//loadShaderByQtResources();
 	//596x291x297
 
 	glGenVertexArrays ( 1 , &vertexArray_MESH_ );
@@ -368,6 +381,48 @@ void GLWidget::reloadShaders ( )
 	}
 }
 
+void GLWidget::loadShaderByQtResources()
+{
+
+	//! Effects -_
+	blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" ,   QString(":/Shaders/BlankScreenCube.vert" ).toStdString ( ),
+							 	 	 	 	 	 	 	 	 	     QString(":/Shaders/BlankScreenCube.frag" ).toStdString ( ),
+																     QString(":/Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
+	blackScreen_cube_shader_->initialize ( );
+	//! Effects --
+	patch_shader_ = new Tucano::Shader ( "Patch" ,  QString(":/Shaders/SinglePassWireframe.vert" ).toStdString ( ),
+					               	       	       	       	       	       	       	   QString(":/Shaders/SinglePassWireframe.frag" ).toStdString ( ),
+						       	       	       	       	       	       	            QString(":/Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	patch_shader_->initialize ( );
+	//! Effects --
+	lines_shader_ = new Tucano::Shader ( "Lines" , QString(":/Shaders/SketchCurve.vert" ).toStdString ( ),
+					               	       	       	       	       	       	        QString(":/Shaders/SketchCurve.frag" ).toStdString ( ),
+													QString(":/Shaders/SketchCurve.geom" ).toStdString ( ));
+	lines_shader_->initialize ( );
+
+	background_ = new Tucano::Shader ( "BackGround" , QString(":/Shaders/DummyQuad.vert" ).toStdString ( ),
+					                  	  	  	  	  	  	  	    QString(":/Shaders/DummyQuad.frag" ).toStdString ( ),
+														    QString(":/Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
+        background_->initialize ( );
+
+		mesh_shader_ = new Tucano::Shader("Seismic",  QString(":/Shaders/Seismic.vert").toStdString(),
+						  	  	  	  	  	  	  	  	    QString(":/Shaders/Seismic.frag").toStdString(),
+														    QString(":/Shaders/Seismic.geom").toStdString(), "", "");
+		mesh_shader_->initialize();
+
+	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , QString(":/Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
+					             	     	      	      	      	      	      	      	      	      	      	    QString(":/Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
+																	    QString(":/Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
+	seismic_cube_shader_->initialize ( );
+
+	//! Effects --
+	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane", QString(":/Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
+					             	     	      	      	      	      	      	      	      	      	      	     QString(":/Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
+																	      QString(":/Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
+	seismic_plane_shader_->initialize ( );
+
+}
+
 void GLWidget::loadShaderByResources ( )
 {
 	//! Debug Version: to load the update shaders
@@ -504,19 +559,20 @@ void GLWidget::clear()
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	facesGL_.clear();
-	vertex_.clear();
-	normal_.clear();
+	vertexGL_.clear();
+	normalGL_.clear();
+	colorGL_.clear();
 
 	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBufferData(GL_ARRAY_BUFFER, this->normalGL_.size() * sizeof (this->normalGL_[0]), this->normalGL_.data(), GL_STATIC_DRAW);
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
@@ -726,7 +782,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		{
 			this->facesGL_.clear();
 
-			this->extrusion_controller_.setResolution(8,this->vertex_,this->normal_,this->faces_);
+			this->extrusion_controller_.setResolution(8, this->vertexGL_, this->normalGL_,this->colorGL_,this->faces_);
 
 			for (auto f: this->faces_ )
 			{
@@ -734,15 +790,15 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 			}
 
 			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
@@ -756,7 +812,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		{
 			this->facesGL_.clear();
 
-			this->extrusion_controller_.setResolution(16,this->vertex_,this->normal_,this->faces_);
+			this->extrusion_controller_.setResolution(16, this->vertexGL_, this->normalGL_, this->colorGL_,this->faces_);
 
 			for (auto f: this->faces_ )
 			{
@@ -764,15 +820,15 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 			}
 
 			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
@@ -786,7 +842,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 		{
 			this->facesGL_.clear();
 
-			this->extrusion_controller_.setResolution(32,this->vertex_,this->normal_,this->faces_);
+			this->extrusion_controller_.setResolution(32, this->vertexGL_, this->normalGL_, this->colorGL_, this->faces_);
 
 			for (auto f: this->faces_ )
 			{
@@ -794,15 +850,15 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 			}
 
 			glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+			glBufferData(GL_ARRAY_BUFFER, this->vertexGL_.size() * sizeof (this->vertexGL_[0]), this->vertexGL_.data(), GL_STATIC_DRAW);
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData(GL_ARRAY_BUFFER, this->normalGL_.size() * sizeof (this->normalGL_[0]), this->normalGL_.data(), GL_STATIC_DRAW);
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-			glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+			glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
 			glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 			glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
@@ -954,7 +1010,7 @@ void GLWidget::updateRendering()
 	this->lines_.clear();
 	this->facesGL_.clear();
 
-	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertex_,this->normal_,this->faces_);
+	this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertexGL_, this->normalGL_,this->colorGL_,this->faces_);
 
 	/// Send the new meshes to the GPU
 	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
@@ -968,15 +1024,15 @@ void GLWidget::updateRendering()
 	}
 
 	glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->vertex_.size() * sizeof ( this->vertex_[0] ) , this->vertex_.data() , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-	glBufferData ( GL_ARRAY_BUFFER , this->normal_.size() * sizeof ( this->normal_[0] ) , this->normal_.data() , GL_STATIC_DRAW );
+	glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
 	glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
 	glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
@@ -1053,10 +1109,10 @@ void GLWidget::setBlackScreenModule()
 void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 {
 	std::cout << "New Curve" << std::endl;
-	_cross_section.log();
+	//_cross_section.log();
 
 	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,500,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,500,blackScreen_cube_,this->patch_,this->colorBS_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
@@ -1066,13 +1122,21 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
+	glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	std::cout << "ColorBS Size" << this->colorBS_.size() << std::endl;
+	std::cout << "Patch Size" << this->patch_.size() <<std::endl;
+
 	update();
 }
 
 void GLWidget::black_screen_stepx ( int x )
 {
 	this->stepx = static_cast<float>(x);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
@@ -1087,7 +1151,7 @@ void GLWidget::black_screen_stepx ( int x )
 void GLWidget::black_screen_stepz ( int z )
 {
 	this->stepz = static_cast<float>(z);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
@@ -1102,7 +1166,7 @@ void GLWidget::black_screen_stepz ( int z )
 void GLWidget::black_screen_volumeWidth ( int w )
 {
 	this->volume_width = static_cast<float>(w);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );

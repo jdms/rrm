@@ -47,14 +47,14 @@ void SketchController::newSession ( QPixmap pixmap )
 //					       pixmap.rect ( ).height ( ) );
 }
 
-void SketchController::insertCurve ( QPolygonF _polygon )
+void SketchController::insertCurve(QPolygonF _raw_sketch_curve, QColor _color)
 {
 
 // insert the curve on the current crossSection and notify the view
 
-	Curve2D curve = convertCurves(_polygon);
+	Curve2D curve = convertCurves(_raw_sketch_curve);
 //
-	cross_section_.insertCurve(curve);
+	cross_section_.insertCurve(curve, _color.redF(), _color.greenF(), _color.blueF());
 
 //	cross_section_.log();
 //
@@ -80,18 +80,19 @@ void SketchController::insertCurve ( QPolygonF _polygon )
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
 void SketchController::updateSBIM (  )
 {
-	std::map<unsigned int, std::pair<unsigned int,QPolygonF> > view_curves_;
+	std::map<unsigned int, std::pair<QColor, QPolygonF> > view_curves_;
 	std::map<unsigned int, QPointF>   view_vertices_;
 
-	QPolygonF view_curve;
+	std::pair<QColor,QPolygonF> view_curve;
 
 	for ( auto& curves_iterator: cross_section_.edges_ )
 	{
 		if (curves_iterator.second.is_visible_)
 		{
-			view_curve = this->convertCurves(curves_iterator.second.segment.curve);
+			view_curve.first = QColor::fromRgbF(curves_iterator.second.r, curves_iterator.second.g, curves_iterator.second.b);
+			view_curve.second = this->convertCurves(curves_iterator.second.segment.curve);
 			view_curves_[curves_iterator.first].first = curves_iterator.second.segment.curve_index;
-			view_curves_[curves_iterator.first].second = view_curve;
+			view_curves_[curves_iterator.first] = view_curve;
 		}
 	}
 

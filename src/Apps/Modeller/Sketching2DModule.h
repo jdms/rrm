@@ -11,6 +11,8 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolButton>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QHBoxLayout>
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
 
 /**!

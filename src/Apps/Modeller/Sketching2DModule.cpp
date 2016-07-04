@@ -35,8 +35,12 @@ void Sketching2DModule::createWindow ( )
 	// Default Sketch Window
 	sketch_board_->newSession(0.0, 0.0, 700, 400);
 	this->mainWidonw_widget_->setCentralWidget(sketch_board_);
-	this->mainWidonw_widget_->statusBar()->addWidget(sketch_board_->sketchSession_->coordinates_);
+
+	sketch_board_->status_text_->setAlignment(Qt::AlignLeft);
+	sketch_board_->sketchSession_->coordinates_->setAlignment(Qt::AlignRight);
+
 	this->mainWidonw_widget_->statusBar()->addWidget(sketch_board_->status_text_);
+	this->mainWidonw_widget_->statusBar()->addPermanentWidget(sketch_board_->sketchSession_->coordinates_);
 }
 
 void Sketching2DModule::createActions ( QWidget* parent )

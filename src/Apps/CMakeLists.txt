@@ -226,7 +226,7 @@ set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES}
     ${SIMULATOR_UI_SOURCES} 
     )
 ## Resources
-set(RCC_SOURCES Controller/Resources/images.qrc)
+set(RCC_SOURCES Controller/Resources/images.qrc Modeller/ExtrusionWidget/shaderresources.qrc )
 
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS})
 QT5_WRAP_UI (UI_HEADERS ${UI_SOURCES})

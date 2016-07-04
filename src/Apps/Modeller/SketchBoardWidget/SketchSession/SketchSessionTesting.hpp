@@ -94,7 +94,7 @@ class SketchSessionTesting: public QGraphicsScene
 		void clear();
 		void reset();
 		// Update the view with the new Cross Section configuration
-		void updateSBIM(const std::map<unsigned int, std::pair<unsigned int,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
+		void updateSBIM(const std::map<unsigned int, std::pair<QColor,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
 		void setBoundary ( Real x , Real y , Real width , Real height );
 
@@ -104,7 +104,7 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
 		void newSessionSignal ( Real x , Real y , Real width , Real height );
 		// Notify the model and provides a new sketch line
-		void newSketchCurve ( QPolygonF _sketch );
+		void newSketchCurve ( QPolygonF _sketch , QColor _color );
 		// Request the controller to Smooth a curve Segment
 		void smoothCurve ( QPolygonF raw_skecth_ );
 
