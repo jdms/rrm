@@ -379,7 +379,6 @@ namespace RRM
 		nl.clear();
 		cl.clear();
 		fl.clear();
-		
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
@@ -406,9 +405,9 @@ namespace RRM
 
 					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
 					{
-						ct[it+0] = colors_[surfaces_iterator].x();
-						ct[it+1] = colors_[surfaces_iterator].y();
-						ct[it+2] = colors_[surfaces_iterator].z();
+						ct[it + 0] = this->curves_colors[surfaces_iterator].x();
+						ct[it + 1] = this->curves_colors[surfaces_iterator].y();
+						ct[it + 2] = this->curves_colors[surfaces_iterator].z();
 					}
 
 					vl.insert(vl.end(),vt.begin(),vt.end());
@@ -568,8 +567,8 @@ namespace RRM
 		 o.y = zmin;
 		 l.y = (zmax - zmin);
 
-
 		 this->number_of_curves_.clear();
+		 this->curves_colors.clear();
 
 		 for ( std::size_t surfaces_iterator = 1; surfaces_iterator < 6; surfaces_iterator++)
 		 {
@@ -600,6 +599,8 @@ namespace RRM
 					 	if ( curve_index != edges_iterator.second.segment.curve_index )
 						{
 					 		this->number_of_curves_[edges_iterator.second.segment.curve_index] += 1;
+							this->curves_colors[edges_iterator.second.segment.curve_index] = Eigen::Vector3f(edges_iterator.second.r, edges_iterator.second.g, edges_iterator.second.b);
+
 					 		curve_index = edges_iterator.second.segment.curve_index;
 						}
 				}
@@ -707,9 +708,9 @@ namespace RRM
 
 					for ( std::size_t it = 0; it < nt.size()-3; it+=3 )
 					{
-						ct[it+0] = colors_[surfaces_iterator].x();
-						ct[it+1] = colors_[surfaces_iterator].y();
-						ct[it+2] = colors_[surfaces_iterator].z();
+						ct[it + 0] = this->curves_colors[surfaces_iterator].x();
+						ct[it + 1] = this->curves_colors[surfaces_iterator].y();
+						ct[it + 2] = this->curves_colors[surfaces_iterator].z();
 					}
 
 					vl.insert(vl.end(),vt.begin(),vt.end());

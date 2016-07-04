@@ -247,7 +247,8 @@ void SketchSessionTesting::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
 
 	if (mode_ == InteractionMode::REGION_POINT)
 	{
-		
+		//emit regionPoints(region_points_);
+		//region_points_.clear();
 	}
 	else if (mode_ == InteractionMode::EDITING)
 	{

@@ -109,6 +109,9 @@ class SketchSessionTesting: public QGraphicsScene
 		void smoothCurve ( QPolygonF raw_skecth_ );
 
 		void newBoundary ( Real x , Real y , Real width , Real height );
+		// Notify 3D Solver with region points
+		void regionPoints(std::vector<QPointF> _region_points);
+		
 
 	public:
 		QGraphicsPixmapItem * overlay_image_;

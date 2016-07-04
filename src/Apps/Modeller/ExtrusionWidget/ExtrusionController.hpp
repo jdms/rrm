@@ -135,6 +135,7 @@ namespace RRM
                         /// Planin Library
                         std::map<unsigned int, PlanarSurface::Ptr> surfaces;
                         std::map<unsigned int, unsigned int> number_of_curves_;
+						std::map<unsigned int, Eigen::Vector3f> curves_colors;
                         int resolution_;
 
 
