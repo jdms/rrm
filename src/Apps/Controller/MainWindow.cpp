@@ -143,7 +143,9 @@ void MainWindow::createSketchingActions ( )
 //	connect ( ac_removebelow , SIGNAL( triggered() ) , dc_2DModule , SLOT( applyRemoveBelow() ) );
 		
 	connect ( ac_wdwsketching , SIGNAL( toggled(bool) ) , dc_2DModule , SLOT( setVisible(bool) ) );
+		connect(dc_2DModule, &Sketching2DModule::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
 	connect(ac_wdwseismic, SIGNAL(toggled(bool)), dc_Seismic_Module_, SLOT(setVisible(bool)));
+		connect(dc_Seismic_Module_, &Sketching2DModule::visibilityChanged, ac_wdwseismic, &QAction::setChecked);
 
 }
 
@@ -160,5 +162,6 @@ void MainWindow::create3DWindowActions ( )
 	ac_window3d->setChecked ( true );
 		
 	connect ( ac_window3d , SIGNAL( toggled(bool) ) , dc_3DModule , SLOT( setVisible(bool) ) );
+	connect(dc_3DModule, &View3DModule::visibilityChanged, ac_window3d, &QAction::setChecked);
 }
 

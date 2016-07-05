@@ -20,19 +20,19 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	pen.setColor(this->current_color_);
 	pen.setWidth ( 3 );
 
+	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 55, 55, 255));
+	this->addItem(boundaryc_);
+	boundaryc_->setZValue(1);
+
 	input_sketch_ = new InputSketch ( this->current_color_ );
 	input_sketch_->setPen ( pen );
 	this->addItem ( input_sketch_ );
-	this->input_sketch_->setZValue(1);
+	this->input_sketch_->setZValue(2);
 
 	current_sketch_ = new InputSketch ( this->current_color_ );
 	current_sketch_->setPen ( pen );
 	this->addItem ( current_sketch_ );
-	this->current_sketch_->setZValue(1);
-
-	boundaryc_ = new BoundaryItem(0.0,0.0,QColor(55,55,55,255)) ;
-	this->addItem ( boundaryc_ );
-	boundaryc_->setZValue(-1);
+	this->current_sketch_->setZValue(2);
 
 	this->boundary_sketching_ = false;
 

@@ -82,10 +82,10 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tlb_section = this->mainWidonw_widget_->addToolBar(tr("Section"));
 	tlb_section->addAction(ac_new);
 
-	ac_select = new QAction(tr("Select"), this);
+	//ac_select = new QAction(tr("Select"), this);
 
-	ac_select->setIcon(QIcon(":/images/icons/pointer.png"));
-	ac_select->setCheckable(true);
+	//ac_select->setIcon(QIcon(":/images/icons/pointer.png"));
+	//ac_select->setCheckable(true);
 
 	// Costumization
 	cd_pickercolor = new QColorDialog();
@@ -104,7 +104,7 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tbt_colorsketch->setMenu(mn_pickercolor);
 	
 	tlb_customization = getMainWidow()->addToolBar(tr("Customize"));
-	tlb_customization->addAction(ac_select);
+	//tlb_customization->addAction(ac_select);
 	tlb_customization->addWidget(tbt_colorsketch);
 
 }
@@ -122,7 +122,8 @@ void Sketching2DModule::createConnections()
 	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::colorSelected, [=](const QColor& _color){ sketch_board_->sketchSession_->setColor(_color); mn_pickercolor->hide(); });
 
 	// Selection
-	connect(Sketching2DModule::ac_select, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeEdition(); } });
+	//connect(Sketching2DModule::ac_select, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeEdition(); } });
+	connect(Sketching2DModule::ac_new, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::clear);
 	
 }
 

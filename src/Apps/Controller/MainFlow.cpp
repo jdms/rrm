@@ -25,6 +25,7 @@ void MainWindow::createFlowComputationActions ( )
 	ac_flowcomputation->setCheckable ( true );
 
 	connect ( ac_flowcomputation , SIGNAL( toggled(bool) ) , dc_computation , SLOT( setVisible(bool) ) );
+	connect(dc_computation, &QDockWidget::visibilityChanged, ac_flowcomputation, &QAction::setChecked);
 	connect(flowwindow, &FlowWindow::getCrossSection, this, [=](){  flowwindow->setCrossSection(dc_2DModule->sketch_board_->sketch_controller->getCrossSection());  });
 }
 

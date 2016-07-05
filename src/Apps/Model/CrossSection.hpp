@@ -269,7 +269,11 @@ namespace RRM
 					return 0;
 				}
 
-				test = _curve;
+				// Curve2D tmp; 
+				// tmp = _curve; 
+				// tmp.catmull(test, 0.5);
+
+				test = _curve; 
 
 				//_curve.douglasPeuckerSimplify(test,0.5);
 				std::cout << "CURVE SIZE Before " << test.size() << std::endl;
@@ -354,6 +358,11 @@ namespace RRM
 					std::cout << " Only hanging Points " << thisIndex.size ( ) << std::endl;
 					return 0;
 				}
+				else if ( (current_rule == GeologicRules::Sketch) && (intersection_vertices.size() > 2) )
+				{
+					std::cout << " Sketch Rules. Surface do no cross " << thisIndex.size() << std::endl;
+					return 0;
+				}                 
 				else if ( intersection_vertices.size () >= 2 )
 				{
 

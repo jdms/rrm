@@ -1281,10 +1281,14 @@ public:
         real dist0 = curve.projectPoint( p0 , index0 , u0 , pr0 ) ;
         real dist1 = curve.projectPoint( p1 , index1 , u1 , pr1 ) ;
 
-        std::cout << "dist0" << dist0 << std::endl;
-        std::cout << "dist1" << dist1 << std::endl;
+//        std::cout << "dist0" << dist0 << std::endl;
+//        std::cout << "dist1" << dist1 << std::endl;
 
+        // TODO: in a perfect world, variable 'tolerance' should be variable 'err'.
+        // Why not here?
+        real tolerance = 1E-01;
         if( u0 > u1 )
+        if ( (dist0 < aproximationFactor*err && dist1 < aproximationFactor*err)  )
         {
             prTmp = pr0;
             uTmp = u0;
@@ -1301,9 +1305,9 @@ public:
             this->reverse();
         }
 
-        if ( (u1 - u0) < err )
+        if ( (u1 - u0) < tolerance )
         if ( (dist0 > aproximationFactor*err && dist1 < aproximationFactor*err)  )
-        if ( std::fabs(u1-1) < 2*err )
+        if ( std::fabs(u1-1) < 2*tolerance )
         {
                 prTmp = pr0;
                 uTmp = u0;
@@ -1318,26 +1322,28 @@ public:
                 index1 = indexTmp;
                 dist1 = distTmp;
                 this->reverse();
+//                std::cout << "d0 > approx*err && d1 < approx*error" << std::endl;
         }
 
-//        if ( (u1 - u0) < err )
-//        if ( (dist0 < aproximationFactor*err && dist1 > aproximationFactor*err)  )
-//        if ( std::fabs(u0-0) < 2*err )
-//        {
-//                prTmp = pr0;
-//                uTmp = u0;
-//                indexTmp = index0;
-//                distTmp = dist0;
-//                pr0 = pr1;
-//                u0 = u1;
-//                index0 = index1;
-//                dist0 = dist1;
-//                pr1 = prTmp;
-//                u1 = uTmp;
-//                index1 = indexTmp;
-//                dist1 = distTmp;
-//                this->reverse();
-//        }
+        if ( (u1 - u0) < tolerance )
+        if ( (dist0 < aproximationFactor*err && dist1 > aproximationFactor*err)  )
+        if ( std::fabs(u0-0) < 2*tolerance )
+        {
+                prTmp = pr0;
+                uTmp = u0;
+                indexTmp = index0;
+                distTmp = dist0;
+                pr0 = pr1;
+                u0 = u1;
+                index0 = index1;
+                dist0 = dist1;
+                pr1 = prTmp;
+                u1 = uTmp;
+                index1 = indexTmp;
+                dist1 = distTmp;
+                this->reverse();
+//                std::cout << "d0 < approx*err && d1 > approx*error" << std::endl;
+        }
 
         PolygonalCurve<real,dim,Point,Vector> A , B , C , curveTmp0 , curveTmp1  ;
 
@@ -1346,11 +1352,13 @@ public:
             curve.split( pr1 , rest , curveTmp0 , false , err );
             this->join( curveTmp0 , err );
             curveTmp0 = (*this);
+//            std::cout << "d0 > approx*err && d1 < approx*error" << std::endl;
         }
         else if( dist0 < aproximationFactor*err && dist1 > aproximationFactor*err   )
         {
             curve.split( pr0 , curveTmp0 , rest , false , err );
             curveTmp0.join( (*this) , err ) ;
+//            std::cout << "d0 < approx*err && d1 > approx*error" << std::endl;
         }
         else if  ( (dist0 > aproximationFactor*err) && (dist1 > aproximationFactor*err) )
         {
