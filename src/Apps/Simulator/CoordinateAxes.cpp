@@ -24,7 +24,7 @@ void CoordinateAxes::initShader( std::string directory )
 {
 
 
-    shader_axes = new Tucano::Shader( "shader_axes", ( directory + "Shaders/Flow/vertex_instanced_shader.vert" ), ( directory + "Shaders/Flow/fragment_shader.frag" ), "", "", "" );
+    shader_axes = new Tucano::Shader( "shader_axes", ( directory + "shaders/vertex_instanced_shader.vert" ), ( directory + "shaders/fragment_shader.frag" ), "", "", "" );
     shader_axes->initialize();
 
     current_directory = directory;
@@ -328,14 +328,26 @@ void CoordinateAxes::loadCylinderAxes()
 }
 
 
-void CoordinateAxes::draw( const Eigen::Affine3f& V/*, const Eigen::Matrix4f& P*/ )
+void CoordinateAxes::draw( const Eigen::Matrix3f& R, const Eigen::Vector3f& T )
 {
+
+
+
+    Eigen::Affine3f V;
+    V.setIdentity();
+
+    for( int i = 0; i < 3; ++i )
+        for( int j = 0; j < 3; ++j )
+            V( i, j ) = R( i, j );
+
+    V( 0, 3 ) = T( 0 );
+    V( 1, 3 ) = T( 1 );
+    V( 2, 3 ) = T( 2 );
 
 
     Eigen::Affine3f matrix;
     matrix.setIdentity();
     matrix.translate( Eigen::Vector3f( 3.1f, -1.7f, 0.0f ) );
-
 
 
     QMatrix4x4 Q;

@@ -51,9 +51,9 @@ option(BUILD_DAISY_EXAMPLE_5B "" OFF)
 if(MSVC)
 # Flag '/EHsc': the mere fact of including <iostream> yields warning C4530 in VS2013, which relates to exception handling. 
 # The flag '/EHsc' seems to be necessary to make VS2013 behave sanely. 
-    set(CMAKE_CXX_FLAGS "/Od /openmp /EHsc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O2 -fopenmp")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
 endif()
 
 

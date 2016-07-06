@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <QWidget>
+#include <QFileDialog>
 
 #include "ui_flowparametersbar.h"
 #include "FormPropertyValues.h"
@@ -19,14 +20,14 @@ class FlowParametersBar : public QWidget,
 
         void createDialogs();
 
-        void setTetgenCommand( std::string cmd );
-        void setPropertyAreaParameters( int np, std::vector< double > values );
-
-
+       void setPropertyAreaParameters( int np, std::vector< double > values );
         void setSurfaceBoundariesParameter(int nbound, std::vector< double > vbound );
         void setWellParameter( int nw, std::vector< double > vwell );
         void setTofBoundaryParameter( int ntfbound, std::vector< int > vtfbound );
         void setTracerBoundaryParameter(int ntrbound, std::vector< int > vtrbound );
+
+        void clear();
+
 
     private slots:
 
@@ -34,29 +35,22 @@ class FlowParametersBar : public QWidget,
         void on_btn_tfboundaryvalues_clicked();
         void on_btn_trboundaryvalues_clicked();
         void on_btb_acceptparameters_accepted();
-
         void on_btb_acceptparameters_rejected();
-
-
         void on_btn_boundariesvalues_clicked();
-
         void on_btn_wellsvalues_clicked();
+        void on_btn_inputparameters_clicked();
+        void on_btn_loadparameterfile_clicked();
 
 signals:
 
-        void sendToleranceValues( const float& , const float& );
-        void sendTetgenCommand( std::string& );
+
         void sendPropertyArea( const int& n, const std::vector< double >& );
         void sendBoundariesValues( int n, std::vector< double >& );
         void sendWellsValues( int n, std::vector< double >& );
-
-
         void sendTOFBoundaryValues( int n, std::vector< double >& );
         void sendTrBoundaryValues( int n, std::vector< double >& );
 
-        void readSurface();
-        void rebuildTetrahedricalVolume();
-
+        void readParameterFile( const std::string& input_file );
         void closeBar();
 
 

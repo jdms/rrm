@@ -1,6 +1,11 @@
 find_package(Eigen3 REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
+find_package(GLEW REQUIRED	)
+#find_library(GLEW glew32 "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32")
+set( GLEW_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/include" )
+set( GLEW_LIBRARY "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32/glew32.lib" )
+message( "Glew Include DIR: " ${GLEW_INCLUDE_DIR} )
+message( "Glew Library: " ${GLEW_LIBRARY} )
 
 ## It asks for Qt5_DIR
 find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL)
@@ -33,6 +38,8 @@ ELSEIF(WIN32)
     endif(MSVC)
 ENDIF()    
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc /FS" CACHE STRING "" FORCE)
+message("Current compiler flags: " ${CMAKE_CXX_FLAGS})
 
 
 include_directories(

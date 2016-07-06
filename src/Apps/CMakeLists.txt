@@ -114,6 +114,7 @@ set( SIMULATOR_HEADERS
      Simulator/OpenFlowFilesBar.h
      Simulator/DialogMeshVisualizationParameters.h
      Simulator/ProgressCounter.h
+     Simulator/HelpDialog.h
      Simulator/FlowComputation/bsurface.h
      Simulator/FlowComputation/cpgelement.h
      Simulator/FlowComputation/curve.h
@@ -158,6 +159,7 @@ set ( SIMULATOR_MOC_HEADERS
      Simulator/NormalMovableCrossSectionFlow.h
      Simulator/OpenFlowFilesBar.h
      Simulator/ProgressCounter.h
+     Simulator/HelpDialog.h
      Simulator/DialogMeshVisualizationParameters.h
 )
 
@@ -165,6 +167,7 @@ set ( SIMULATOR_UI_SOURCES
     Simulator/FlowParametersBar.ui                       
     Simulator/NormalMovableCrossSectionFlow.ui
     Simulator/OpenFlowFilesBar.ui
+    Simulator/HelpDialog.ui
     Simulator/DialogMeshVisualizationParameters.ui
 )
 
@@ -182,6 +185,7 @@ set( SIMULATOR_SOURCES
      Simulator/Mesh.cpp
      Simulator/NormalMovableCrossSectionFlow.cpp
      Simulator/OpenFlowFilesBar.cpp
+     Simulator/HelpDialog.cpp
      Simulator/DialogMeshVisualizationParameters.cpp
      Simulator/FlowComputation/bsurface.cpp
      Simulator/FlowComputation/cpgelement.cpp
@@ -199,7 +203,7 @@ set( SIMULATOR_SOURCES
      Simulator/FlowComputation/meshinfo.cpp
      Simulator/FlowComputation/modelsurface.cpp
      Simulator/FlowComputation/node.cpp
-	 Simulator/FlowComputation/predicates.cxx
+     Simulator/FlowComputation/predicates.cxx
      Simulator/FlowComputation/parasurface.cpp
      Simulator/FlowComputation/propertyarea.cpp
      Simulator/FlowComputation/region.cpp

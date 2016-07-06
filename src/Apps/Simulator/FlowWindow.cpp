@@ -1,20 +1,13 @@
 #include "FlowWindow.h"
 
-FlowWindow::FlowWindow( QWidget *parent ) : QMainWindow( parent )
+FlowWindow::FlowWindow( QWidget *parent ) //: QDockWidget/*QMainWindow( parent )*/
 {
     createWindow();
     createToolBar();
     createActions();
     getCurrentDirectory();
 
-    file_of_parameters.clear();
-    file_of_mesh.clear();
-    type_of_file.clear();
-    mesh_method = 1;
-    read_file = true;
-
-    show_toolbar = false;
-
+    reset();
 }
 
 void FlowWindow::createWindow()
@@ -26,14 +19,6 @@ void FlowWindow::createWindow()
     qdockparametersBar->setVisible( false );
 
     addDockWidget( Qt::LeftDockWidgetArea, qdockparametersBar );
-
-
-    qdockopenfilesBar = new QDockWidget( this );
-    qdockopenfilesBar->setAllowedAreas( Qt::BottomDockWidgetArea );
-    qdockopenfilesBar->setWidget( &openfilesBar );
-    qdockopenfilesBar->setVisible( false );
-
-    addDockWidget( Qt::BottomDockWidgetArea, qdockopenfilesBar );
 
 
     qdockresolutionmesh = new QDockWidget( this );
@@ -51,6 +36,8 @@ void FlowWindow::createWindow()
 
 
 
+
+
     sb_statusbar = new QStatusBar();
     this->setStatusBar( sb_statusbar );
 
@@ -60,91 +47,146 @@ void FlowWindow::createWindow()
 
 
     controller = new FlowVisualizationController( this );
-    canvas.setController( controller );
+    canvas = new FlowVisualizationCanvas( this );
+    canvas->setController( controller );
 
     controller->setParent( this );
     controller->setCounterProgressinData();
 
 
-    canvas.setMinimumSize( 1024, 600 );
-    this->setCentralWidget( &canvas );
+    canvas->show();//setMinimumSize( 300, 300 );
+    this->setCentralWidget( canvas );
 }
 
 
 void FlowWindow::createToolBar()
 {
 
+
     qtoolbarFlow = new QToolBar();
 
 
-    qreloadSurface = new QAction( "Surface from Skecth", qtoolbarFlow );
-    connect( qreloadSurface, &QAction::triggered, this, [=](){ emit getCrossSection(); } );
+    qreloadSurface = new QAction( "Surface from Sketch", qtoolbarFlow );
+    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+    connect( qreloadSurface, SIGNAL( triggered() ), this, SLOT( loadSurfacesfromSketch() ) );
 
-    qoopenfilesDialog = new QAction( "Surface from a File", qtoolbarFlow );
-    connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), qdockopenfilesBar, SLOT( show() ) );
+    qoopenfilesDialog = new QAction( "Surface from File", qtoolbarFlow );
+    qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
+    connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), this, SLOT( loadSurfacesfromFile() ) );
 
-
-    qflowparametersDialog = new QAction( "Flow Input", qtoolbarFlow );
+    qflowparametersDialog = new QAction( "User Input", qtoolbarFlow );
+    qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
     connect( qflowparametersDialog, SIGNAL( triggered(bool) ), qdockparametersBar, SLOT( show() ) );
 
 
-    qmeshresolution  = new QAction( "Mesh Resolution", qtoolbarFlow );
-    connect( qmeshresolution, &QAction::triggered, this, [=](){ qdockresolutionmesh->show(); updateVisualizationParameters(); } );
+    qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
+    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpointgrid.png"));
+    connect( qbuildCornerPoint, &QAction::triggered, this, [=](){ controller->generateCornerPoint(); qcomputeFlowProperties->setEnabled( false ); } );
 
+    qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructuredgrid.png"));
+    connect( qbuildUnstructured, &QAction::triggered, this, [=](){ controller->generateUnstructured(); qcomputeFlowProperties->setEnabled( true ); } );
 
-
-    qbuildvolumetricMesh = new QAction( "Volumetric Mesh", qtoolbarFlow );
-    connect( qbuildvolumetricMesh, &QAction::triggered, this, [=](){ if( controller->isMeshOk() == false || controller->isVolumetricOk() == true ) return;
-                                                                     controller->computeVolumetricMesh();
-                                                                     canvas.updateVolumetricMesh();  }  );
 
     qcomputeFlowProperties = new QAction( "Compute Properties", qtoolbarFlow );
-    connect( qcomputeFlowProperties, &QAction::triggered, this, [=](){  if( controller->isVolumetricOk() == false || controller->arePropertiesComputed() == true ) return;
+    qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));
+    connect( qcomputeFlowProperties, &QAction::triggered, this, [=](){  //if( controller->isVolumetricOk() == false || controller->arePropertiesComputed() == true ) return;
                                                                         controller->computeFlowProperties(); }  );
 
     qshowMovingCrossSection = new QAction( "CrossSection", qtoolbarFlow );
+    qshowMovingCrossSection->setIcon(QIcon(":/images/icons/clippingplane.png"));
     qshowMovingCrossSection->setCheckable( true );
     connect( qshowMovingCrossSection, &QAction::toggled, this, [=]( bool option ){ if( option == true )
                                                                                     qdockcrosssectionnormalBar->show();
                                                                                    else{
-                                                                                    canvas.disableCrossSection();
+                                                                                    canvas->disableCrossSection();
                                                                                     qdockcrosssectionnormalBar->close();
                                                                                     } } );
 
 
-    qexportsurface  = new QAction( "Export Surface", qtoolbarFlow );
+
+    qexportsurface  = new QAction( "Surface to VTK", qtoolbarFlow );
     connect( qexportsurface, SIGNAL( triggered(bool) ), this, SLOT( exportSurfaceFile() ) );
 
 
-    qexportvolume  = new QAction( "Export Volume", qtoolbarFlow );
+    qexportvolume  = new QAction( "Volume to VTK", qtoolbarFlow );
     connect( qexportvolume, SIGNAL( triggered(bool) ), this, SLOT( exportVolumeFile() ) );
 
 
-    qexportcornerpoint  = new QAction( "Export CornerPoint", qtoolbarFlow );
+    qexportcornerpoint  = new QAction( "CornerPoint to VTK", qtoolbarFlow );
     connect( qexportcornerpoint, SIGNAL( triggered(bool) ), this, SLOT( exportCornerPointFile() ) );
+
+    qexportresults  = new QAction( "Results to VTK", qtoolbarFlow );
+    connect( qexportresults, SIGNAL( triggered(bool) ), this, SLOT( exportResultstoFile() ) );
+
+
+    mn_export = new QMenu( "Export", this );
+    mn_export->addAction(qexportsurface);
+    mn_export->addAction(qexportvolume);
+    mn_export->addAction(qexportcornerpoint);
+    mn_export->addAction(qexportresults);
+
+    tbn_export = new QToolButton();
+    tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
+    tbn_export->setMenu( mn_export );
+    tbn_export->setPopupMode( QToolButton::InstantPopup );
+
+
+
+    mn_coloring_byvertex = new QMenu ( tr ( "Vertex Properties" ) );
+    tbn_coloringbyvertex = new QToolButton();
+    tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/byvertex.png"));
+    tbn_coloringbyvertex->setMenu( mn_coloring_byvertex );
+    tbn_coloringbyvertex->setPopupMode( QToolButton::InstantPopup );
+
+
+    mn_coloring_byfaces = new QMenu ( tr ( "Faces Properties" ) );
+    tbn_coloringbyface = new QToolButton();
+    tbn_coloringbyface->setIcon(QIcon(":/images/icons/byface.png"));
+    tbn_coloringbyface->setMenu( mn_coloring_byfaces );
+    tbn_coloringbyface->setPopupMode( QToolButton::InstantPopup );
+
+
 
 
     qclear = new QAction( "Clear", qtoolbarFlow );
-    connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas.clear(); qexportcornerpoint->setEnabled( true ); } );
+    qclear->setIcon(QIcon(":/images/icons/clear.png"));
+    connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas->clear(); qexportcornerpoint->setEnabled( true ); parametersBar.clear(); } );
 
 
-	qtoolbarFlow->addAction( qreloadSurface );
+    qhelp = new QAction( "Help", qtoolbarFlow );
+    qhelp->setIcon(QIcon(":/images/icons/information.png"));
+    connect( qhelp, &QAction::triggered, this, [=](){ help.show(); } );
+
+    qtoolbarFlow->addAction( qreloadSurface );
     qtoolbarFlow->addAction( qoopenfilesDialog );
     qtoolbarFlow->addAction( qflowparametersDialog );
-    qtoolbarFlow->addAction( qmeshresolution );
-    qtoolbarFlow->addAction( qbuildvolumetricMesh );
+
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction( qbuildCornerPoint );
+    qtoolbarFlow->addAction( qbuildUnstructured );
+
+    qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction( qcomputeFlowProperties );
+    qtoolbarFlow->addWidget( tbn_coloringbyvertex );
+    qtoolbarFlow->addWidget( tbn_coloringbyface );
+
+    qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction( qshowMovingCrossSection );
 
-    qtoolbarFlow->addAction( qexportsurface );
-    qtoolbarFlow->addAction( qexportvolume );
-    qtoolbarFlow->addAction( qexportcornerpoint );
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addWidget( tbn_export );
 
+    qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction( qclear );
 
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction( qhelp );
 
     addToolBar( qtoolbarFlow );
     qtoolbarFlow->setVisible( true );
+
+
 
 }
 
@@ -152,58 +194,9 @@ void FlowWindow::createToolBar()
 void FlowWindow::createActions()
 {
 
-    connect( &openfilesBar, SIGNAL( closeBar() ), qdockopenfilesBar, SLOT( close() ) );
 
-    connect( &openfilesBar, &OpenFlowFilesBar::emitParametersandMeshFiles, this, [=]( const int& method, bool read,  const std::string& file_mesh, const std::string& file_type, const std::string& input_file )
-    {
-        if( controller->isMeshOk() == true ) return;
+    connect( &parametersBar, SIGNAL(readParameterFile( const std::string& ) ), this, SLOT( readUserInputFile( const std::string& ) ) );
 
-        read_file = read;
-
-        if( method == 1 )
-        {
-            controller->readUnstructured( read, file_mesh, file_type, input_file  );
-            updateParameterFields();
-
-            file_of_parameters = input_file;
-            file_of_mesh = file_mesh;
-            type_of_file = file_type;
-            mesh_method = method;
-
-            qexportcornerpoint->setEnabled( false );
-
-        }
-        else if( method == 2 )
-        {
-            controller->readCornerPoint( read, file_mesh );
-
-            file_of_mesh = file_mesh;
-            type_of_file = ".txt";
-            mesh_method = method;
-
-            qexportcornerpoint->setEnabled( true );
-
-        }
-
-        qdockopenfilesBar->close();
-
-    } );
-
-    connect( &parametersBar, &FlowParametersBar::readSurface, controller, [=]()
-    {
-        controller->reloadMesh( mesh_method, read_file,  file_of_mesh, type_of_file, file_of_parameters  );
-
-    } );
-
-
-    connect( &openfilesBar, SIGNAL( emitTolerancesValues( float, float ) ), controller, SLOT( setToleranceValues( float, float ) ) );
-
-
-
-    connect( &parametersBar, &FlowParametersBar::rebuildTetrahedricalVolume, controller, [=](){ controller->computeVolumetricMesh(); } );
-
-    connect( &parametersBar, SIGNAL( sendToleranceValues( const float& , const float& ) ), controller, SLOT( setToleranceValues( const float& , const float& ) ) );
-    connect( &parametersBar, SIGNAL( sendTetgenCommand( std::string& ) ), controller, SLOT( setTetgenCommand( std::string& ) ) );
 
     connect( &parametersBar, SIGNAL( sendPropertyArea(  const int& , const std::vector< double >& ) ), controller, SLOT( setPropertyArea(  const int&, const std::vector< double >& ) ) );
     connect( &parametersBar, SIGNAL( sendBoundariesValues(  int, std::vector< double >& ) ), controller, SLOT( setBoundariesValues(  int, std::vector< double >& ) ) );
@@ -213,27 +206,37 @@ void FlowWindow::createActions()
     connect( &parametersBar, SIGNAL( sendTrBoundaryValues(  int, std::vector< double >& ) ), controller, SLOT( setTrBoundaryValues(  int, std::vector< double >& ) ) );
 
 
-    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, this, [=]( float X, float Y, float Z ){ canvas.setCrossSectionNormalCoordinates( X, Y, Z ); qdockcrosssectionnormalBar->close(); } );
-    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qdockcrosssectionnormalBar->close();  qshowMovingCrossSection->setChecked( false ); canvas.disableCrossSection(); } );
+    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, this, [=]( float X, float Y, float Z ){ canvas->setCrossSectionNormalCoordinates( X, Y, Z ); qdockcrosssectionnormalBar->close(); } );
+    connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qdockcrosssectionnormalBar->close();  qshowMovingCrossSection->setChecked( false ); canvas->disableCrossSection(); } );
 
     connect( &parametersBar, SIGNAL( closeBar() ), qdockparametersBar, SLOT( close() ) );
 
 
-    connect( controller, SIGNAL( updateMesh() ), &canvas, SLOT( updateMesh() ) );
-    connect( controller, SIGNAL( updateVolumetricMesh() ), &canvas, SLOT( updateVolumetricMesh() ) );
-    connect( controller, SIGNAL( updatePolyMesh() ), &canvas, SLOT( updateMeshfromFile() ) );
+    connect( controller, SIGNAL( updateMesh() ), canvas, SLOT( updateMesh() ) );
+    connect( controller, SIGNAL( updateVolumetricMesh() ), canvas, SLOT( updateVolumetricMesh() ) );
+    connect( controller, SIGNAL( updatePolyMesh() ), canvas, SLOT( updateMeshfromFile() ) );
+    connect( controller, SIGNAL( updateCornerPoint() ), canvas, SLOT( updateCornerPoint() ) );
 
 
-    connect( controller, &FlowVisualizationController::getSurfaceCrossSection, this, [=](){ emit getSurfaceCrossSection(); } );
-    connect( controller, SIGNAL( readFile() ), qdockopenfilesBar, SLOT( show() ) );
-    connect( controller, SIGNAL( editParameters() ), qdockparametersBar, SLOT( show() ) );
-    connect( controller, SIGNAL( applyCrossSection() ), qdockcrosssectionnormalBar, SLOT( show() ) );
+    connect( canvas, &FlowVisualizationCanvas::getSurfaceCrossSection, this, [=](){ emit getCrossSection(); } );
+    connect( canvas, &FlowVisualizationCanvas::readSurfacefromFile, this, [=](){ loadSurfacesfromFile(); } );
+    connect( canvas, &FlowVisualizationCanvas::buildcornerpoint, this, [=](){ controller->generateCornerPoint(); qcomputeFlowProperties->setEnabled( false ); } );
+    connect( canvas, &FlowVisualizationCanvas::buildunstructured, this, [=](){ controller->generateUnstructured(); qcomputeFlowProperties->setEnabled( true ); } );
+
+
+
+    connect( canvas, SIGNAL( editParameters() ), qdockparametersBar, SLOT( show() ) );
+    connect( canvas, SIGNAL( applyCrossSection() ), qdockcrosssectionnormalBar, SLOT( show() ) );
+
 
 	connect(controller, &FlowVisualizationController::hideToolbar, this, [=](){ show_toolbar = !show_toolbar; qtoolbarFlow->setVisible(show_toolbar);  });
 
     connect( controller, &FlowVisualizationController::clearAll, this, [=](){
-        controller->clear(); canvas.clear(); qexportcornerpoint->setEnabled( true );
+        controller->clear(); canvas->clear(); qexportcornerpoint->setEnabled( true );
     } );
+
+
+    connect( controller, SIGNAL( updateMesh(  const Mesh::TYPE&, const std::vector< double >&, const std::vector< unsigned int >&  ) ), canvas, SLOT( updateMesh(  const Mesh::TYPE&, const std::vector< double >&, const std::vector< unsigned int >&  ) ) );
 
     connect( &resolutionmeshBar, &DialogMeshVisualizationParameters::sendVisualizationParameters, this, [=]( const std::string& cmd, const std::string& method, const float &value ) {
 
@@ -248,6 +251,119 @@ void FlowWindow::createActions()
     } );
 
     connect( &resolutionmeshBar, SIGNAL( closeBar() ), qdockresolutionmesh, SLOT( close() ) );
+
+
+    connect( controller, SIGNAL( propertybyVertexComputed( std::string, std::string ) ), this, SLOT( addVertexProperty( std::string, std::string ) ) );
+    connect( controller, SIGNAL( propertybyFaceComputed( std::string, std::string ) ), this, SLOT( addFaceProperty( std::string, std::string ) ) );
+
+    connect( controller, SIGNAL(updateColors( const std::vector< float >& ) ), canvas, SLOT( setColors( const std::vector< float >& ) ) );
+
+}
+
+
+void FlowWindow::addVertexProperty( std::string name, std::string dimension )
+{
+
+    if( dimension.compare( "VECTOR" ) == 0 )
+    {
+        int id = mn_vectorsproperties_byvertex.size();
+
+        mn_vectorsproperties_byvertex.push_back( new QMenu( tr( name.c_str() ) ) );
+
+        rd_vectormethods_byvertex.push_back ( new QRadioButton ( tr ( "X" ) ) );
+        rd_vectormethods_byvertex.push_back ( new QRadioButton ( tr ( "Y" ) ) );
+        rd_vectormethods_byvertex.push_back ( new QRadioButton ( tr ( "Z" ) ) );
+        rd_vectormethods_byvertex.push_back ( new QRadioButton ( tr ( "Magnitude" ) ) );
+
+        QVBoxLayout *vb_layout = new QVBoxLayout ( this );
+        vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 0 ] );
+        vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 1 ] );
+        vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 2 ] );
+        vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 3 ] );
+
+        QGroupBox *gb_vectormethods = new QGroupBox ();
+        gb_vectormethods->setFlat ( true );
+        gb_vectormethods->setLayout ( vb_layout );
+
+        wa_vectormethods_byvertex = new QWidgetAction ( this );
+        wa_vectormethods_byvertex->setDefaultWidget ( gb_vectormethods );
+
+
+        mn_vectorsproperties_byvertex[ id ]->addAction( wa_vectormethods_byvertex );
+
+
+        connect ( rd_vectormethods_byvertex[ 4*id + 0 ] , &QRadioButton::clicked, [=](){ canvas->setVerticesColorbyProperty( name.c_str(), "COORDX" ); } );
+        connect ( rd_vectormethods_byvertex[ 4*id + 1 ] , &QRadioButton::clicked, [=](){ canvas->setVerticesColorbyProperty( name.c_str(), "COORDY" ); } );
+        connect ( rd_vectormethods_byvertex[ 4*id + 2 ] , &QRadioButton::clicked, [=](){ canvas->setVerticesColorbyProperty( name.c_str(), "COORDZ" ); } );
+        connect ( rd_vectormethods_byvertex[ 4*id + 3 ] , &QRadioButton::clicked, [=](){ canvas->setVerticesColorbyProperty( name.c_str(), "LENGTH" ); } );
+
+        mn_coloring_byvertex->addMenu( mn_vectorsproperties_byvertex[ id ] );
+
+    }
+    else if( dimension.compare( "SCALAR" ) == 0 )
+    {
+        ac_vertex_property.push_back( new QAction( tr( name.c_str() ) , this ) );
+        mn_coloring_byvertex->addAction( ac_vertex_property.back() );
+
+        connect ( ac_vertex_property.back() , &QAction::triggered ,[=](){ canvas->setVerticesColorbyProperty( name.c_str() ); } );
+
+
+    }
+
+
+
+}
+
+
+void FlowWindow::addFaceProperty( std::string name, std::string dimension )
+{
+
+    if( dimension.compare( "VECTOR" ) == 0 )
+    {
+        int id = mn_vectorsproperties_byface.size();
+
+        mn_vectorsproperties_byface.push_back( new QMenu( tr( name.c_str() ) ) );
+
+        rd_vectormethods_byface.push_back ( new QRadioButton ( tr ( "X" ) ) );
+        rd_vectormethods_byface.push_back ( new QRadioButton ( tr ( "Y" ) ) );
+        rd_vectormethods_byface.push_back ( new QRadioButton ( tr ( "Z" ) ) );
+        rd_vectormethods_byface.push_back ( new QRadioButton ( tr ( "Magnitude" ) ) );
+
+        QVBoxLayout *vb_layout = new QVBoxLayout ( this );
+        vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 0 ] );
+        vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 1 ] );
+        vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 2 ] );
+        vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 3 ] );
+
+        QGroupBox *gb_vectormethods = new QGroupBox ();
+        gb_vectormethods->setFlat ( true );
+        gb_vectormethods->setLayout ( vb_layout );
+
+        wa_vectormethods_byface = new QWidgetAction ( this );
+        wa_vectormethods_byface->setDefaultWidget ( gb_vectormethods );
+
+
+        mn_vectorsproperties_byface[ id ]->addAction( wa_vectormethods_byface );
+
+
+        connect ( rd_vectormethods_byface[ 4*id + 0 ] , &QRadioButton::clicked, [=](){ canvas->setFacesColorbyProperty( name.c_str(), "COORDX" ); } );
+        connect ( rd_vectormethods_byface[ 4*id + 1 ] , &QRadioButton::clicked, [=](){ canvas->setFacesColorbyProperty( name.c_str(), "COORDY" ); } );
+        connect ( rd_vectormethods_byface[ 4*id + 2 ] , &QRadioButton::clicked, [=](){ canvas->setFacesColorbyProperty( name.c_str(), "COORDZ" ); } );
+        connect ( rd_vectormethods_byface[ 4*id + 3 ] , &QRadioButton::clicked, [=](){ canvas->setFacesColorbyProperty( name.c_str(), "LENGTH" ); } );
+
+        mn_coloring_byfaces->addMenu( mn_vectorsproperties_byface[ id ] );
+
+    }
+    else if( dimension.compare( "SCALAR" ) == 0 )
+    {
+        ac_face_property.push_back( new QAction( tr( name.c_str() ) , this ) );
+        mn_coloring_byfaces->addAction( ac_face_property.back() );
+
+        connect ( ac_face_property.back() , &QAction::triggered ,[=](){ canvas->setFacesColorbyProperty( name.c_str() ); } );
+
+
+    }
+
 
 }
 
@@ -271,20 +387,83 @@ void FlowWindow::getCurrentDirectory()
 
 #endif
 
-    canvas.setCurrentDirectory( current_dir.toStdString() );
+    canvas->setCurrentDirectory( current_dir.toStdString() );
 
+
+}
+
+
+
+void FlowWindow::loadSurfacesfromSketch()
+{
+
+//    controller->clear();
+    emit getCrossSection();
+
+}
+
+
+void FlowWindow::loadSurfacesfromFile()
+{
+
+    QString selected_format = "";
+    QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./inputs/",
+                                                     ".skt files (*.skt)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+
+
+
+    QStringList listofnames = filename.split( "\." );
+    QString name_of_file = listofnames[ 0 ];
+    QString extension_of_file = listofnames[ 1 ];
+
+    type_of_file = extension_of_file.toStdString();
+
+    if( extension_of_file.compare( "poly" ) == 0 )
+    {
+
+
+        file_of_mesh = name_of_file.toStdString();
+        controller->readPolyFiles( file_of_mesh );
+
+
+    }
+    else if( extension_of_file.compare( "skt" ) == 0 ){
+
+        file_of_mesh = filename.toStdString();
+        controller->readSkeletonFiles( file_of_mesh );
+
+    }
+
+}
+
+
+
+void FlowWindow::setCrossSection( const RRM::CrossSection<qreal>& c ){
+
+    controller->getSurfacesFromCrossSection( c );
+
+}
+
+
+void FlowWindow::readUserInputFile( const std::string& input_file )
+{
+
+
+    controller->readInputParameters( input_file  );
+    updateParameterFields();
+
+    file_of_parameters = input_file;
 
 }
 
 
 void FlowWindow::updateParameterFields()
 {
-    std::string cmd;
 
     int np = 0;
     std::vector< double > values;
-
-
     int nb = 0;
     std::vector< double > vbound;
     int nswells = 0;
@@ -293,9 +472,6 @@ void FlowWindow::updateParameterFields()
     std::vector< int > vtfbound;
     int ntrbound = 0;
     std::vector< int > vtrbound;
-
-    controller->getTetgenParameter( cmd );
-    parametersBar.setTetgenCommand( cmd.c_str() );
 
 
     controller->getPropertyArea( np, values );
@@ -324,7 +500,6 @@ void FlowWindow::updateVisualizationParameters()
 
 
     std::string trianglecmd;
-    double meshscale = 0.0;
     int resolutiontype = 1;
     int npartitionedge = 1;
     double lenghtedge = 0.5;
@@ -400,6 +575,18 @@ void FlowWindow::exportCornerPointFile()
 }
 
 
+
+void FlowWindow::exportResultstoFile()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./results/",
+                                                     ".vtk files (*.vtk)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    controller->exportResultstoVTK( filename.toStdString() );
+}
+
+
 void FlowWindow::keyPressEvent( QKeyEvent *event )
 {
 
@@ -419,4 +606,13 @@ void FlowWindow::keyPressEvent( QKeyEvent *event )
     }
 
     update();
+}
+
+void FlowWindow::reset()
+{
+    file_of_parameters.clear();
+    file_of_mesh.clear();
+    type_of_file.clear();
+
+    show_toolbar = false;
 }

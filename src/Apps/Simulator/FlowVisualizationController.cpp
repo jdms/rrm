@@ -6,73 +6,93 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
     mesh_ok = false;
     volumetric_ok = false;
     properties_computed = false;
+    user_input_ok = false;
+
+    current_method = MESHING_METHOD::UNSTRUCTURED;
+
 }
 
-void FlowVisualizationController::readCornerPoint( bool read_file, const std::string& mesh_file )
+
+
+
+void FlowVisualizationController::readPolyFiles( const std::string& mesh_file )
 {
 
+    if( mesh_ok == true ) return;
 
-    if( read_file == true ){
-        std::string filename = mesh_file + ".txt";
-        region.readskeleton( (char *) filename.c_str() );
-    }
+    region.readsurfacemeshPOLY( (char *) mesh_file.c_str() );
+    emit updatePolyMesh();
+    mesh_ok = true;
+}
 
- //       else
- //       getSurfaceFromCrossSection();
 
-    region.cornerpointgrid();
+void FlowVisualizationController::readSkeletonFiles( const std::string& all_filename/*, std::vector< double >& positions, std::vector< unsigned int >& faces */ )
+{
 
-    emit updateMesh();
+    if( mesh_ok == true ) return;
 
-    volumetric_ok = false;
+    std::vector< int > nu;
+    std::vector< int > nv;
+    std::vector< double > positions;
 
+//    region.readskeleton( (char *) all_filename.c_str(), nu, nv, positions );
+
+    region.readskeleton( (char *) all_filename.c_str() );
+    region.getSkeleton( nu, nv, positions );
+
+    std::vector< unsigned int > faces;
+    faces = getSkeletonFaces( nu, nv, positions );
+    if( faces.empty() == true ) return;
+
+
+    mesh_ok = true;
+    emit updateMesh( Mesh::TYPE::QUADRILATERAL, positions, faces );
 
 }
 
-void FlowVisualizationController::readUnstructured( bool read_file,  const std::string& mesh_file, const std::string& type_of_file, const std::string& input_file  )
+
+void FlowVisualizationController::readInputParameters( const std::string& input_file )
 {
     region.userinput( (char *) input_file.c_str() );
+    user_input_ok = true;
+}
 
-    if( read_file == true && type_of_file.compare( "poly" ) == 0 )
-    {
-        region.readsurfacemeshPOLY( (char *) mesh_file.c_str() );
 
-        emit updatePolyMesh();
-        volumetric_ok = false;
+void FlowVisualizationController::generateCornerPoint()
+{
 
-        return;
 
-    }
-    else if( read_file == true && type_of_file.compare( "txt" ) == 0 ){
+    if( mesh_ok == false || user_input_ok == false ) return;
 
-        std::string all_filename = mesh_file + ".txt";
-        region.readskeleton( (char *) all_filename.c_str() );
-        region.unstructuredsurfacemesh();
+    counter.start( 0, 2 );
+    region.cornerpointgrid();
+    counter.update( 1 );
+    emit updateCornerPoint();
+    counter.update( 2 );
 
-    }
-    else if( read_file == false ){
-        //getSurfaceFromCrossSection();
-        region.unstructuredsurfacemesh();
-    }
-
-    emit updateMesh();
-
-    volumetric_ok = false;
-
+    volumetric_ok = true;
 
 }
 
-void FlowVisualizationController::reloadMesh( const int& type_of_mesh, bool read_file,  const std::string& mesh_file, const std::string& type_of_file, const std::string& input_file  )
+
+void FlowVisualizationController::generateUnstructured()
 {
 
-    if( type_of_mesh == 2 )
-    {
-        readCornerPoint( read_file, mesh_file );
-    }
-    else if ( type_of_mesh == 1 )
-    {
-        readUnstructured( read_file, mesh_file, type_of_file, input_file );
-    }
+    if( mesh_ok == false || user_input_ok == false ) return;
+
+
+    counter.start( 0, 4 );
+    region.unstructuredsurfacemesh();
+    counter.update( 1 );
+    region.unstructuredvolumemesh();
+    counter.update( 2 );
+    region.modelpreparation();
+    counter.update( 3 );
+    emit updateVolumetricMesh();
+    counter.update( 4 );
+
+    volumetric_ok = true;
+
 
 }
 
@@ -87,6 +107,7 @@ void FlowVisualizationController::setMeshVisualizationParameters( const std::str
 {
     region.setVisualizationParameters( trianglecmd, resolutiontype, npartitionedge, lenghtedge);
 }
+
 
 
 void FlowVisualizationController::updateMeshFromFile( Mesh* mesh )
@@ -104,7 +125,6 @@ void FlowVisualizationController::updateMeshFromFile( Mesh* mesh )
    mesh->buildBoundingBox();
 
 
-   mesh_ok = true;
 
 }
 
@@ -122,7 +142,25 @@ void FlowVisualizationController::updateMeshFromSurface( Mesh* mesh )
     mesh->setFaces( faces );
     mesh->buildBoundingBox();
 
-   mesh_ok = true;
+
+}
+
+
+void FlowVisualizationController::updateCornerPointFromSurface( Mesh* mesh )
+{
+
+    std::vector< float > vertices;
+    std::vector< unsigned int > faces;
+    std::vector< unsigned int > edges;
+
+    region.getCornerPoint( vertices, edges, faces );
+
+    mesh->setMeshType( Mesh::TYPE::QUADRILATERAL );
+    mesh->setVertices( vertices );
+    mesh->setWireframe( edges );
+    mesh->setFaces( faces );
+    mesh->buildBoundingBox();
+
 
 }
 
@@ -136,24 +174,6 @@ void FlowVisualizationController::setCounterProgressinData()
     connect( &counter, SIGNAL( updateProcess( const unsigned int& ) ), controllerParent, SLOT( updateProgressBar( const unsigned int& ) ) );
 }
 
-
-
-void FlowVisualizationController::computeVolumetricMesh()
-{
-
-    counter.start( 0, 2 );
-
-    region.unstructuredvolumemesh();
-
-    counter.update( 1 );
-
-    region.modelpreparation();
-
-    counter.update( 2 );
-
-    emit updateVolumetricMesh();
-
-}
 
 
 void FlowVisualizationController::updateVolumetricMesh( Mesh* mesh )
@@ -360,61 +380,63 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 
 
-void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection &_cross_section )
+void FlowVisualizationController::getSurfacesFromCrossSection( const CrossSection &_cross_section )
 {
 
-	//@see http://stackoverflow.com/questions/16436514/binary-no-operator-found-which-takes-a-left-hand-operand-of-type-const-st
-	// Cant use operator[] on a const map
+    CrossSection cross_section = _cross_section;
 
-	CrossSection cross_section = _cross_section;
 
+    std::vector< double > positions;
     vector< int > nu, nv;
-    vector< double > positions;
 
-    int _extrusion_size = 3;
-    int number_points_ = 0; /// Number of point per sketch
+    int extrusion_size = 3;
+    int number_points = 0; /// Number of point per sketch
 
     std::vector<unsigned int> number_edges_; // Number of Sketch Segments
+    std::vector< float > colors;
 
     // Number of Internal Surface
-    int number_lines_ = cross_section.curves_history_.size(); //number of surfaces
+    int number_of_surfaces = cross_section.curves_history_.size();
 
     float diagonal = std::pow((cross_section.viewPort_.first.x() - cross_section.viewPort_.second.x()), 2) + std::pow((cross_section.viewPort_.first.y() - cross_section.viewPort_.second.y()), 2);
     diagonal = std::sqrt(diagonal);
 
 
-//    std::cout << "Diagonal " << diagonal << std::endl;
 
     for (auto& history_iterator : cross_section.curves_history_)
     {
 
-        number_points_ = 0;
+        number_points = 0;
         number_edges_.clear(); //number of surfaces
 
-        for (auto& edge_iterator : cross_section.edges_)
-        {//now is number of surfaces
-            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
-            { //only internal sketched
+        for ( auto& edge_iterator : cross_section.edges_ )
+        {
+            //now is number of surfaces
+
+            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) &&
+                (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
+            {
+                //only internal sketched
                 number_edges_.push_back(edge_iterator.second.id_);
-                //edge_iterator.second.segment.curve.chaikinFilter(3);
-                number_points_ += edge_iterator.second.segment.curve.size();
+                edge_iterator.second.segment.curve.chaikinFilter(3);
+                number_points += edge_iterator.second.segment.curve.size();
             }
         }
 
-        number_points_ -= (number_edges_.size() - 1);
+        number_points -= (number_edges_.size() - 1);
 
-
-        nu.push_back( number_points_ );
-        nv.push_back( _extrusion_size );
+        nu.push_back( number_points );
+        nv.push_back( extrusion_size );
 
 
         float extrusion_step = 0;
 
-        for (int j = 0; j < _extrusion_size; j++) //output is firstly x direction then y direction for each surface
+        for (int j = 0; j < extrusion_size; j++) //output is firstly x direction then y direction for each surface
         {
 
             for (unsigned int id = 0; id < number_edges_.size() - 1; id++)
-            { //now is number of surfaces
+            {
+                //now is number of surfaces
 
                 unsigned int edge_id = number_edges_[id];
 
@@ -422,9 +444,15 @@ void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection 
                 for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size() - 1; it++)
                 {
 
+//                    his->curves_colors[edges_iterator.second.segment.curve_index] = Eigen::Vector3f(edges_iterator.second.r, edges_iterator.second.g, edges_iterator.second.b);
+
                     positions.push_back( cross_section.edges_[edge_id].segment.curve[it].x() );
                     positions.push_back( j + extrusion_step );
                     positions.push_back( cross_section.edges_[edge_id].segment.curve[it].y() );
+
+                    colors.push_back( cross_section.edges_[edge_id].r );
+                    colors.push_back( cross_section.edges_[edge_id].g );
+                    colors.push_back( cross_section.edges_[edge_id].b );
 
 
                 }
@@ -434,9 +462,14 @@ void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection 
             {
 
 
-                positions.push_back( cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
-                positions.push_back(  j + extrusion_step );
-                positions.push_back( cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
+                positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
+                positions.push_back( (float) j + extrusion_step );
+                positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
+
+                colors.push_back( cross_section.edges_[number_edges_.back()].r );
+                colors.push_back( cross_section.edges_[number_edges_.back()].g );
+                colors.push_back( cross_section.edges_[number_edges_.back()].b );
+
 
             }
 
@@ -445,86 +478,92 @@ void FlowVisualizationController::getSurfaceFromCrossSection(const CrossSection 
 
     }
 
+    std::vector< unsigned int > faces;
+    region.setSkeleton( number_of_surfaces, nu, nv, positions );
+    faces = getSkeletonFaces( nu, nv, positions );
 
-    region.readskeleton( number_lines_, nu, nv, positions );
+    if( faces.empty() == true ) return;
 
-
-    /*
-    int i, ny, j;
-       ny = 6; //extrude 6 layers of nodes; depth = 1
-
-       vector< int > nu, nv;
-       vector< double > positions;
-
-
-       _cross_section.log();
-
-       int number_of_surfaces = 0;
+    mesh_ok = true;
+    emit updateMesh( Mesh::TYPE::QUADRILATERAL, positions, faces );
+    emit updateColors( colors );
 
 
-
-       for (auto& curve_iterator : _cross_section.edges_){//now is number of surfaces
-
-           if ((curve_iterator.second.is_boundary_ == false) && (curve_iterator.second.is_visible_ )){ //only internal sketched
+}
 
 
-               number_of_surfaces++;
-               int nu_ = curve_iterator.second.segment.curve.size();
-
-               nu.push_back( nu_ );
-               nv.push_back( ny );
+std::vector< unsigned int > FlowVisualizationController::getSkeletonFaces( const std::vector< int >& nu_list, const std::vector< int >&nv_list, const std::vector< double >& positions )
+{
 
 
-               for (j = 0; j < ny; j++){//output is firstly x direction then y direction for each surface
+    std::vector< unsigned int > faces;
 
-                   for (std::size_t it = 0; it < nu_; it++){
+    unsigned int number_lines_ = nu_list.size();
+    int offset = 0;
 
-                       double x = curve_iterator.second.segment.curve[it].x();
-                       double y = j;
-                       double z = curve_iterator.second.segment.curve[it].y();
+    for( unsigned int k = 0; k < number_lines_; ++k  )
+    {
 
-
-                       positions.push_back( x );
-                       positions.push_back( y );
-                       positions.push_back( z );
-
-                   }
-
-               }
-           }
-       }
+        int nu_number = nu_list[ k ];
+        int nv_number = nv_list[ k ];
 
 
-       std::cout << " numt" << number_of_surfaces  << std::endl;
+        for(  unsigned int j = 0; j < nv_number - 1; ++j )
+        {
+            for( unsigned int i = 0; i < nu_number - 1 ; ++i )
+            {
 
-       region.readskeleton( number_of_surfaces, nu, nv, positions );
-*/
+                unsigned int id0 = j*nu_number + i + offset;
+                unsigned int id1 = j*nu_number + ( i + 1 ) + offset;
+                unsigned int id2 = ( j + 1 )*nu_number + ( i + 1 ) + offset;
+                unsigned int id3 = ( j + 1 )*nu_number + i  + offset;
+
+                faces.push_back( id0 );
+                faces.push_back( id1 );
+                faces.push_back( id2 );
+                faces.push_back( id3 );
+
+
+            }
+        }
+        offset += nu_number*nv_number;
+
+    }
+
+    return faces;
 }
 
 
 void FlowVisualizationController::computeFlowProperties()
 {
 
+    if( volumetric_ok == false || mesh_ok == false ) return;
+
 
     counter.start( 0, 3 );
-
     region.steadystateflowsolver();
+    counter.update( 1 );
     region.flowdiagnostics();
+    counter.update( 2 );
+
+    emit propertybyVertexComputed( "PRESSURE", "SCALAR" ) ;
+    emit propertybyVertexComputed( "TOF", "SCALAR" ) ;
+    emit propertybyVertexComputed( "TRACER", "SCALAR" ) ;
+
+    emit propertybyFaceComputed( "PERMEABILITY", "SCALAR" ) ;
+    emit propertybyFaceComputed( "VELOCITY", "VECTOR" ) ;
+
 
     counter.update( 3 );
 
     properties_computed = true;
 
-    emit propertybyVertexComputed( "PRESSURE", "SCALAR" ) ;
-    emit propertybyVertexComputed( "VELOCITY", "VECTOR" ) ;
 
-    emit propertybyFaceComputed( "VELOCITY", "VECTOR" ) ;
 
-    emit propertybyVertexComputed( "TOF", "SCALAR" ) ;
-    emit propertybyFaceComputed( "TOF", "SCALAR" ) ;
+    //    emit propertybyVertexComputed( "VELOCITY", "VECTOR" ) ;
+    //    emit propertybyFaceComputed( "TOF", "SCALAR" ) ;
+    //    emit propertybyFaceComputed( "TRACER", "SCALAR" ) ;
 
-    emit propertybyVertexComputed( "TRACER", "SCALAR" ) ;
-    emit propertybyFaceComputed( "TRACER", "SCALAR" ) ;
 
 }
 
@@ -539,19 +578,21 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     if( name_of_property.compare( "VELOCITY" ) == 0 )
     {
         type = "VECTOR";
-        getVelocityValuesbyVertex( values );
+        region.getNodesVelocity( values );
     }
     else if ( name_of_property.compare( "PRESSURE" ) == 0 )
     {
-        getPressureValuesbyVertex( values );
+        region.getPressureValues( values );
     }
 
     else if( name_of_property.compare( "TOF" ) == 0 )
-        getTOFValuesbyVertex( values );
-
+    {
+        region.getNodesTOF( values );
+    }
     else if( name_of_property.compare( "TRACER" ) == 0 )
-        getTracerValuesbyVertex( values );
-
+    {
+        region.getNodesTracer( values );
+    }
 
 
     std::vector< double > scalar_values;
@@ -592,14 +633,22 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     if( name_of_property.compare( "VELOCITY" ) == 0 )
     {
         type = "VECTOR";
-        getVelocityValuesbyCell( values );
+        region.getElementalsVelocity( values );
+    }
+    else if ( name_of_property.compare( "PERMEABILITY" ) == 0 )
+    {
+        region.getPermeabilityValues( values );
     }
 
-    else if( name_of_property.compare( "TOF" ) == 0 )
-        getTOFValuesbyCell( values );
 
-    else if( name_of_property.compare( "TRACER" ) == 0 )
-        getTracerValuesbyCell( values );
+    else if( name_of_property.compare( "TOF" ) == 0 )
+    {
+        region.getElementalsTOF( values );
+    }
+
+    else if( name_of_property.compare( "TRACER" ) == 0 ){
+        region.getElementalsTracer( values );
+    }
 
 
     std::vector< double > scalar_values;
@@ -632,9 +681,10 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
 std::vector< double > FlowVisualizationController::vectorToScalarProperties(const std::vector<double> &values, std::string type, double& min , double& max  )
 {
-    std::vector< double > scalar_values;
     
     int number_of_vertices = (int)values.size()/3;
+    std::vector< double > scalar_values;
+
 
     if( type.compare( "COORDX" ) == 0 )
     {
@@ -697,6 +747,12 @@ void FlowVisualizationController::setTetgenCommand( std::string& cmd )
 }
 
 
+void FlowVisualizationController::setTriangleCommand( std::string& cmd )
+{
+    region.setTriangleCommand( cmd.c_str() );
+}
+
+
 void FlowVisualizationController::setBoundariesValues( int nb, vector< double > &values )
 {
 
@@ -719,8 +775,7 @@ void FlowVisualizationController::setTofBoundaryValues( int n, vector< double > 
 
     for( std::size_t it = 0; it < n; ++it )
     {
-        values_.push_back( (int)values.at( 2*it + 1 ) );
-        values_.push_back( (int)values.at( 2*it + 2 ) );
+        values_.push_back( (int)values.at( /*2**/it + 1 ) );
     }
 
     region.setTofBoundaries( n, ntfsignal, values_ );
@@ -736,9 +791,7 @@ void FlowVisualizationController::setTrBoundaryValues(int n, std::vector< double
 
     for( std::size_t it = 0; it < n; ++it )
     {
-        cout << "trb: " << values.at( 2*it + 1 ) << ", " << values.at( 2*it + 2 ) << endl;
-        values_.push_back( (int)values.at( 2*it + 1) );
-        values_.push_back( (int)values.at( 2*it + 2 ) );
+        values_.push_back( (int)values.at( /*2**/it + 1) );
     }
 
     region.setTracerBoundaries( n, ntrsignal, values_ );
@@ -747,50 +800,9 @@ void FlowVisualizationController::setTrBoundaryValues(int n, std::vector< double
 
 
 
-void FlowVisualizationController::getVelocityValuesbyVertex( std::vector< double >& values )
-{
-    region.getNodesVelocity( values );
-}
-
-
-void FlowVisualizationController::getVelocityValuesbyCell( std::vector< double >& values )
-{
-    region.getElementalsVelocity( values );
-}
-
-
-void FlowVisualizationController::getPressureValuesbyVertex( std::vector< double >& values )
-{
-    region.getPressureValues( values );
-}
-
-
-void FlowVisualizationController::getTOFValuesbyVertex( std::vector< double >& values )
-{
-    region.getNodesTOF( values );
-}
-
-
-void FlowVisualizationController::getTOFValuesbyCell( std::vector< double >& values )
-{
-    region.getElementalsTOF( values );
-}
-
-
-void FlowVisualizationController::getTracerValuesbyCell( std::vector< double >& values )
-{
-    region.getElementalsTracer( values );
-}
-
-void FlowVisualizationController::getTracerValuesbyVertex( std::vector< double >& values )
-{
-    region.getNodesTracer( values );
-}
-
-
 void FlowVisualizationController::exportSurfacetoVTK( const std::string& filename )
 {
-    region.writeresult( (char *)filename.c_str() );
+    region.writesurfacemeshVTK( (char *)filename.c_str() );
 }
 
 
@@ -806,15 +818,9 @@ void FlowVisualizationController::exportCornerPointtoVTK( const std::string& fil
 }
 
 
-void FlowVisualizationController::increaseMeshScale()
+void FlowVisualizationController::exportResultstoVTK( const std::string& filename )
 {
-    region.increaseMeshScale();
-}
-
-
-void FlowVisualizationController::decreaseMeshScale()
-{
-    region.decreaseMeshScale();
+    region.writeresult( (char*)filename.c_str() );
 }
 
 
@@ -845,6 +851,7 @@ void FlowVisualizationController::decreaseEdgeLength()
 void FlowVisualizationController::clear()
 {
     mesh_ok = false;
+    user_input_ok = false;
     volumetric_ok = false;
     properties_computed = false;
     region.clearregion();

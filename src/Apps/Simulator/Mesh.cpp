@@ -6,12 +6,31 @@
 Mesh::Mesh()
 {
     show_vertices = true;
-    show_edges = false;
+    show_edges = true;
     show_faces = true;
     show_bbox = true;
 
     apply_crosssection_clipping = false;
 }
+
+
+void Mesh::setVertices( const std::vector< float >& v )
+{
+    vertices.clear();
+    std::copy( v.begin(), v.end(), std::back_inserter( vertices ) );
+}
+
+
+void Mesh::setVertice( int id, float x, float y, float z ){
+
+    if ( isValidVertice( id ) == false ) return;
+
+    vertices[ 3*id ] = x ;
+    vertices[ 3*id + 1 ] = y ;
+    vertices[ 3*id + 2 ] = z ;
+
+}
+
 
 void Mesh::getVertice( int id, float& x, float& y, float& z )
 {
@@ -37,6 +56,13 @@ void Mesh::setEdge( int id, const std::vector< unsigned int >& e )
 }
 
 
+void Mesh::setWireframe( const std::vector< unsigned int >& w )
+{
+    wireframe.clear();
+    std::copy( w.begin(), w.end(), std::back_inserter( wireframe ) );
+}
+
+
 void Mesh::setFace( int id, const std::vector< unsigned int >& f )
 {
 
@@ -47,6 +73,14 @@ void Mesh::setFace( int id, const std::vector< unsigned int >& f )
     {
         faces[ vertices_number*id + i ] = f[ i ];
     }
+
+}
+
+
+void Mesh::setFaces( const std::vector< unsigned int >& f ){
+
+    faces.clear();
+    std::copy( f.begin(), f.end(), std::back_inserter( faces ) );
 
 }
 
@@ -74,31 +108,31 @@ std::vector< unsigned int > Mesh::getFace( int id )
 
 void Mesh::setConstantColor( const float r, const float g, const float b )
 {
-
     int number_of_vertices = getNumberofVertices();
 
-    std::vector <float> color;
-    color.resize( 3*number_of_vertices );
+//    std::vector <float> color;
+    colors.clear();
+    colors.resize( 3*number_of_vertices );
 
     for( int i = 0; i < number_of_vertices; ++i )
     {
-        color[ 3*i ] = r;
-        color[ 3*i + 1 ] = g;
-        color[ 3*i + 2 ] = b;
+        colors[ 3*i ] = r;
+        colors[ 3*i + 1 ] = g;
+        colors[ 3*i + 2 ] = b;
     }
 
 
 
     glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, color.size()*sizeof( GLfloat ), color.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
 
 }
 
 
-void Mesh::setColor( const std::vector< float >& colors  )
+void Mesh::setColor( const std::vector< float >& vcolors  )
 {
 
-
+    colors = vcolors;
     glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
     glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
 
@@ -115,6 +149,7 @@ void Mesh::setCrossSectionClippingEquation( const float& a, const float& b, cons
     coefCCrossSectionEquation = c;
     coefDCrossSectionEquation = d;
 }
+
 
 void Mesh::disableCrossSection()
 {
@@ -197,7 +232,6 @@ void Mesh::buildBoundingBox()
     if( vertices.empty() == true ) return;
 
     number_of_vertices = getNumberofVertices();
-//    int vector_vertices_size = number_of_vertices * 3;
 
     vector< Eigen::Vector3f > normalized_vertices;
     for( unsigned int it = 0; it < number_of_vertices; ++it )
@@ -507,8 +541,8 @@ void Mesh::initializeShader( std::string directory )
 {
 
 
-    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "Shaders/Flow/vertex_mesh_shader.vert" ),
-                                                     ( directory + "Shaders/Flow/fragment_mesh_shader.frag" ),
+    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/vertex_mesh_shader.vert" ),
+                                                     ( directory + "shaders/fragment_mesh_shader.frag" ),
                                                       "", "", "" ) ;
     shader_mesh->initialize();
 
@@ -546,8 +580,8 @@ void Mesh::initializeShader( std::string directory )
     glBindVertexArray( 0 );
 
 
-    shader_bbox = new Tucano::Shader(  "shader_bbox", ( directory + "Shaders/Flow/vertex_bbox_shader.vert" ),
-                                                      ( directory + "Shaders/Flow/fragment_bbox_shader.frag" ), "", "", "" );
+    shader_bbox = new Tucano::Shader(  "shader_bbox", ( directory + "shaders/vertex_bbox_shader.vert" ),
+                                                      ( directory + "shaders/fragment_bbox_shader.frag" ), "", "", "" );
     shader_bbox->initialize();
 
     glGenVertexArrays( 1, &va_bbox );
@@ -605,10 +639,10 @@ void Mesh::load()
 
     if( triangles.empty() == false )
     {
-        vector_faces_size = (int) triangles.size();
+        vector_triangles_size = (int) triangles.size();
 
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vector_faces_size*sizeof( GLuint ), triangles.data(), GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vector_triangles_size*sizeof( GLuint ), triangles.data(), GL_STATIC_DRAW );
     }
 
 
@@ -633,10 +667,16 @@ void Mesh::load()
     }
 
 
+    if( colors.empty() == false )
+    {
+        glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
+        glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
+    }
+
 }
 
 
-void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
+void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale  )
 {
 
     if( vertices.empty() == true ) return;
@@ -650,6 +690,7 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
     shader_mesh->setUniform( "mmatrix", M );
     shader_mesh->setUniform( "vmatrix", V );
     shader_mesh->setUniform( "pmatrix", P );
+    shader_mesh->setUniform( "scale", scale );
 
     glBindVertexArray( va_mesh );
 
@@ -672,18 +713,20 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
     }
     if( show_edges == true )
     {
+        glLineWidth( 2.0f );
         shader_mesh->setUniform( "edge", GL_TRUE );
 
 
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
         glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
+
         shader_mesh->setUniform( "edge", GL_FALSE );
 
     }
     if( show_faces == true )
     {
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-        glDrawElements( GL_TRIANGLES, vector_faces_size, GL_UNSIGNED_INT, 0 );
+        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
     }
 
     glBindVertexArray( 0 );
@@ -704,6 +747,7 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
         shader_bbox->setUniform( "mmatrix", M );
         shader_bbox->setUniform( "vmatrix", V );
         shader_bbox->setUniform( "pmatrix", P );
+        shader_bbox->setUniform( "scale", scale );
 
         glBindVertexArray( va_bbox );
 
@@ -715,6 +759,7 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P )
 
     shader_bbox->unbind();
 }
+
 
 void Mesh::clear()
 {
@@ -748,3 +793,68 @@ void Mesh::clear()
     coefCCrossSectionEquation = 0.0f;
     coefDCrossSectionEquation = 0.0f;
 }
+
+void Mesh::resetBuffers()
+{
+    deleteShaders();
+
+    if( va_mesh )
+    {
+        glDeleteVertexArrays( 1, &va_mesh );
+        if( bf_vertices_mesh )
+            glDeleteBuffers(1, &bf_vertices_mesh);
+        if( bf_faces_mesh )
+            glDeleteBuffers(1, &bf_faces_mesh);
+        if( bf_wireframe_mesh )
+            glDeleteBuffers(1, &bf_wireframe_mesh);
+        if( bf_colors_mesh )
+            glDeleteBuffers(1, &bf_colors_mesh);
+
+    }
+
+    if( va_bbox )
+    {
+        glDeleteVertexArrays( 1, &va_bbox );
+        if( bf_bbox_mesh )
+            glDeleteBuffers(1, &bf_bbox_mesh);
+    }
+
+
+    va_mesh = 0;
+    bf_vertices_mesh = 0;
+    bf_faces_mesh = 0;
+    bf_wireframe_mesh = 0;
+    bf_colors_mesh = 0;
+
+    number_of_vertices = 0;
+    vector_triangles_size = 0;
+    vector_wireframe_size = 0;
+
+
+
+    va_bbox = 0;
+    bf_bbox_mesh = 0;
+    number_lines_bbox = 0;
+
+
+
+}
+
+void Mesh::deleteShaders()
+{
+
+    if (shader_mesh)
+    {
+        delete (shader_mesh);
+        shader_mesh = nullptr;
+    }
+
+    if (shader_bbox)
+    {
+        delete(shader_bbox);
+        shader_bbox = nullptr;
+    }
+
+}
+
+

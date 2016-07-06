@@ -16,6 +16,7 @@
 #include <QtWidgets/QWidgetAction>
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
@@ -132,6 +133,11 @@ class MainWindow : public QMainWindow
 		// Flow Module
 		QDockWidget *dc_computation;
 			FlowWindow *flowwindow;
+
+
+            QVBoxLayout* vb_canvas;
 };
+
+
 
 #endif // MAINWINDOW_H

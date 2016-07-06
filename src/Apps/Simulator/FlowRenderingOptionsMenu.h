@@ -63,7 +63,8 @@ class FlowRenderingOptionsMenu: public QMenu
         void reloadcrosssection();
         void loadfile();
         void editparameters();
-        void buildvolumetric();
+        void buildcornerpoint();
+        void buildunstructured();
         void computeproperties();
         void applycrosssection();
 
@@ -106,9 +107,11 @@ class FlowRenderingOptionsMenu: public QMenu
         QAction* ac_reloadcrosssection;
         QAction* ac_loadfile;
         QAction* ac_editparameters;
-        QAction* ac_buildvolumetric;
+        QAction* ac_buildcornerpoint;
+        QAction* ac_buildunstructured;
         QAction* ac_computeproperties;
         QAction* ac_applycrosssection;
+        QAction* ac_exportresultstovtk;
 
         QAction* ac_clear;
 

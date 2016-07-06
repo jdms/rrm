@@ -5,6 +5,7 @@ FlowParametersBar::FlowParametersBar(QWidget *parent) :
     QWidget(parent)
 {
     setupUi( this );
+
     this->setLayout( vl_mainlayout );
 
     createDialogs();
@@ -13,17 +14,12 @@ FlowParametersBar::FlowParametersBar(QWidget *parent) :
 void FlowParametersBar::createDialogs()
 {
 
-
-    dsp_tolerance1->setMinimumWidth( 80 );
-    dsp_tolerance2->setMinimumWidth( 80 );
-
-    dsp_tolerance1->setDecimals( 11 );
-    dsp_tolerance2->setDecimals( 11 );
-
-    dsp_tolerance1->setValue( 0.000000001 );
-    dsp_tolerance2->setValue( 0.0 );
-
-//    dsp_viscosityvalue->setDecimals( 11 );
+    btn_inputparameters->setIcon(QIcon(":/images/icons/folder.png"));
+    btn_boundariesvalues->setIcon(QIcon(":/images/icons/pencil--plus.png"));
+    btn_permeabilityvalues->setIcon(QIcon(":/images/icons/pencil--plus.png"));
+    btn_tfboundaryvalues->setIcon(QIcon(":/images/icons/pencil--plus.png"));
+    btn_trboundaryvalues->setIcon(QIcon(":/images/icons/pencil--plus.png"));
+    btn_wellsvalues->setIcon(QIcon(":/images/icons/pencil--plus.png"));
 
 
     dg_permeability = new FormPropertyValues( FormPropertyValues::PROPERTY_TYPE::SINGLEVALUE, "Property Area", this );
@@ -48,11 +44,6 @@ void FlowParametersBar::createDialogs()
 
 }
 
-
-void FlowParametersBar::setTetgenCommand( std::string cmd )
-{
-    edt_tetgencommand->setText( cmd.c_str() );
-}
 
 
 void FlowParametersBar::setPropertyAreaParameters( int np, std::vector< double > values )
@@ -85,9 +76,11 @@ void FlowParametersBar::setWellParameter( int nw, std::vector< double > vwell )
 void FlowParametersBar::setTofBoundaryParameter( int ntfbound, std::vector< int > vtfbound )
 {
     sp_notfboundaryvalues->setValue( ntfbound );
+    dg_tofboundary->setNumberofValues( ntfbound );
     dg_tofboundary->setValues( vtfbound );
     dg_tofboundary->create();
 }
+
 
 void FlowParametersBar::setTracerBoundaryParameter( int ntrbound, std::vector< int > vtrbound )
 {
@@ -96,6 +89,7 @@ void FlowParametersBar::setTracerBoundaryParameter( int ntrbound, std::vector< i
     dg_trboundary->setValues( vtrbound );
     dg_trboundary->create();
 }
+
 
 void FlowParametersBar::on_btn_permeabilityvalues_clicked()
 {
@@ -130,6 +124,7 @@ void FlowParametersBar::on_btn_tfboundaryvalues_clicked()
     dg_tofboundary->viewTofandTracerForm();
 }
 
+
 void FlowParametersBar::on_btn_trboundaryvalues_clicked()
 {
     int value_sp = sp_notrboundaryvalues->value();
@@ -149,10 +144,6 @@ void FlowParametersBar::on_btn_trboundaryvalues_clicked()
 
 void FlowParametersBar::on_btb_acceptparameters_accepted()
 {
-    emit readSurface();
-
-    sendToleranceValues( dsp_tolerance1->value(), dsp_tolerance2->value() );
-    sendTetgenCommand( edt_tetgencommand->text().toStdString() );
 
     dg_permeability->sendValues();
     dg_boundaries->sendValues();
@@ -165,10 +156,12 @@ void FlowParametersBar::on_btb_acceptparameters_accepted()
 
 }
 
+
 void FlowParametersBar::on_btb_acceptparameters_rejected()
 {
     closeBar();
 }
+
 
 void FlowParametersBar::on_btn_boundariesvalues_clicked()
 {
@@ -187,6 +180,7 @@ void FlowParametersBar::on_btn_boundariesvalues_clicked()
 
 }
 
+
 void FlowParametersBar::on_btn_wellsvalues_clicked()
 {
     int value_sp = sp_nowells->value();
@@ -201,4 +195,42 @@ void FlowParametersBar::on_btn_wellsvalues_clicked()
     }
 
     dg_wells->viewWellForm();
+}
+
+
+void FlowParametersBar::on_btn_inputparameters_clicked()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./inputs/",
+                                                     ".ui files (*.ui)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    edt_inputparameters->setText( filename );
+}
+
+
+void FlowParametersBar::on_btn_loadparameterfile_clicked()
+{
+    if( edt_inputparameters->text().isEmpty() == true ) return;
+
+    emit readParameterFile( edt_inputparameters->text().toStdString() );
+}
+
+void FlowParametersBar::clear()
+{
+    edt_inputparameters->clear();
+
+    sp_noboundaries->setValue( 0 );
+    sp_nopermeabilityvalues->setValue( 0 );
+    sp_notfboundaryvalues->setValue( 0 );
+    sp_notrboundaryvalues->setValue( 0 );
+    sp_nowells->setValue( 0 );
+
+    dg_permeability->reset();
+    dg_boundaries->reset();
+    dg_tofboundary->reset();
+    dg_trboundary->reset();
+    dg_wells->reset();
+
+
 }

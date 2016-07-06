@@ -46,10 +46,13 @@ public:
 
     void init();
     void load();
-    void draw( const Eigen::Affine3f &V, const Eigen::Matrix4f &P );
+    void draw( const Eigen::Affine3f &V, const Eigen::Matrix4f &P, const float& scale  );
 
     void initShader( std::string directory );
     void clear();
+
+    void resetBuffers();
+    void deleteShaders();
 
 
 

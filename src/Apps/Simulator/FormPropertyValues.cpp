@@ -8,6 +8,9 @@ FormPropertyValues::FormPropertyValues( QWidget *parent )
     hb_layout_toftracer = new QHBoxLayout();
     vb_layout_toftracer = new QVBoxLayout();
 
+    vector_values.clear();
+    vector_edt_values.clear();
+
     createButton();
 }
 
@@ -85,20 +88,6 @@ void FormPropertyValues::setValues( vector<double> &v )
     if( vector_values.empty() == false )
         reset();
 
-//    if( type == PROPERTY_TYPE::SINGLEVALUE )
-//        number_of_values = (int) v.size()/6;
-
-//    else if( type == PROPERTY_TYPE::BOUNDARY )
-//    {
-//        number_of_values = (int) v.size();
-
-//    }
-//    else if( type == PROPERTY_TYPE::WELL )
-//        number_of_values = (int) v.size()/6;
-
-//    else if( type == PROPERTY_TYPE::TOFANDTRACER )
-//        number_of_values = (int) ( v.size() - 1 )/2;
-
     vector_values = v;
 
 }
@@ -108,20 +97,6 @@ void FormPropertyValues::setValues( vector< int > &v )
 {
     if( vector_values.empty() == false )
         reset();
-
-
-//    if( type == PROPERTY_TYPE::SINGLEVALUE )
-//        number_of_values = (int) v.size()/6;
-
-//    else if( type == PROPERTY_TYPE::BOUNDARY )
-//    {
-//        number_of_values = (int) v.size();
-//    }
-//    else if( type == PROPERTY_TYPE::WELL )
-//        number_of_values = (int) v.size()/6;
-
-//    else if( type == PROPERTY_TYPE::TOFANDTRACER )
-//        number_of_values = (int) ( v.size() - 1 )/2;
 
 
     std::size_t nvalues = v.size();
@@ -195,19 +170,16 @@ void FormPropertyValues::createWellForm()
 {
 
     vector_edt_values.clear();
-    vector_edt_values.resize( 6*number_of_values );
+    vector_edt_values.resize( 3*number_of_values );
 
 
     if( vector_values.empty() == true )
     {
         for( int i = 0; i < number_of_values; ++i )
         {
-            vector_edt_values[ 6*i ] = new QLineEdit;
-            vector_edt_values[ 6*i + 1 ] = new QLineEdit;
-            vector_edt_values[ 6*i + 2 ] = new QLineEdit;
-            vector_edt_values[ 6*i + 3 ] = new QLineEdit;
-            vector_edt_values[ 6*i + 4 ] = new QLineEdit;
-            vector_edt_values[ 6*i + 5 ] = new QLineEdit;
+            vector_edt_values[ 3*i ] = new QLineEdit;
+            vector_edt_values[ 3*i + 1 ] = new QLineEdit;
+            vector_edt_values[ 3*i + 2 ] = new QLineEdit;
 
         }
     }
@@ -218,29 +190,17 @@ void FormPropertyValues::createWellForm()
         for( int i = 0; i < number_of_values; ++i )
         {
 
-            vector_edt_values[ 6*i ] = new QLineEdit;
-            QString value0 = QString( "%1" ).arg( vector_values[ 6*i ] );
-            vector_edt_values[ 6*i ]->setText( value0 );
+            vector_edt_values[ 3*i ] = new QLineEdit;
+            QString value0 = QString( "%1" ).arg( vector_values[ 3*i ] );
+            vector_edt_values[ 3*i ]->setText( value0 );
 
-            vector_edt_values[ 6*i + 1 ] = new QLineEdit;
-            QString value1 = QString( "%1" ).arg( vector_values[ 6*i + 1 ] );
-            vector_edt_values[ 6*i + 1 ]->setText( value1 );
+            vector_edt_values[ 3*i + 1 ] = new QLineEdit;
+            QString value1 = QString( "%1" ).arg( vector_values[ 3*i + 1 ] );
+            vector_edt_values[ 3*i + 1 ]->setText( value1 );
 
-            vector_edt_values[ 6*i + 2 ] = new QLineEdit;
-            QString value2 = QString( "%1" ).arg( vector_values[ 6*i + 2 ] );
-            vector_edt_values[ 6*i + 2 ]->setText( value2 );
-
-            vector_edt_values[ 6*i + 3 ] = new QLineEdit;
-            QString value3 = QString( "%1" ).arg( vector_values[ 6*i + 3 ] );
-            vector_edt_values[ 6*i + 3 ]->setText( value3 );
-
-            vector_edt_values[ 6*i + 4 ] = new QLineEdit;
-            QString value4 = QString( "%1" ).arg( vector_values[ 6*i + 4 ] );
-            vector_edt_values[ 6*i + 4 ]->setText( value4 );
-
-            vector_edt_values[ 6*i + 5 ] = new QLineEdit;
-            QString value5 = QString( "%1" ).arg( vector_values[ 6*i + 5 ] );
-            vector_edt_values[ 6*i + 5 ]->setText( value5 );
+            vector_edt_values[ 3*i + 2 ] = new QLineEdit;
+            QString value2 = QString( "%1" ).arg( vector_values[ 3*i + 2 ] );
+            vector_edt_values[ 3*i + 2 ]->setText( value2 );
 
         }
     }
@@ -268,8 +228,7 @@ void FormPropertyValues::createBoundaryForm()
         }
 
     }
-//    else if( 4*vector_values.size() != vector_edt_values.size() )
-//        return;
+
     else
     {
 
@@ -310,7 +269,7 @@ void FormPropertyValues::createTofandTracerForm()
 
 
     vector_edt_values.clear();
-    vector_edt_values.resize( 2*number_of_values + 1 );
+    vector_edt_values.resize( number_of_values + 1 );
 
 
     if( vector_values.empty() == true )
@@ -320,8 +279,7 @@ void FormPropertyValues::createTofandTracerForm()
 
         for( int i = 0; i < number_of_values; ++i )
         {
-            vector_edt_values[ 2*i + 1 ] = new QLineEdit;
-            vector_edt_values[ 2*i + 2 ] = new QLineEdit;
+            vector_edt_values[ i + 1 ] = new QLineEdit;
 
         }
     }
@@ -336,10 +294,8 @@ void FormPropertyValues::createTofandTracerForm()
         for( int i = 0; i < number_of_values; ++i )
         {
 
-            vector_edt_values[ 2*i + 1 ] = new QLineEdit;
-            vector_edt_values[ 2*i + 1 ]->setText( QString( "%1" ).arg( vector_values[ 2*i + 1 ] ) );
-            vector_edt_values[ 2*i + 2 ] = new QLineEdit;
-            vector_edt_values[ 2*i + 2 ]->setText( QString( "%1" ).arg( vector_values[ 2*i + 2] ) );
+            vector_edt_values[ i + 1 ] = new QLineEdit;
+            vector_edt_values[ i + 1 ]->setText( QString( "%1" ).arg( vector_values[ /*2**/i + 1 ] ) );
 
         }
     }
@@ -396,7 +352,7 @@ void FormPropertyValues::viewSingleValueForm()
         gl_layout->addWidget( new QLabel( "X "), row, col + 7 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 3 ], row, col + 8 );
 
-        gl_layout->addWidget( new QLabel( "Y "), row, col + 9 );
+        gl_layout->addWidget( new QLabel( "Y"), row, col + 9 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 4 ], row, col + 10 );
 
         gl_layout->addWidget( new QLabel( "Z "), row, col + 11 );
@@ -452,7 +408,7 @@ void FormPropertyValues::viewWellForm()
     for( int i = 0; i < number_of_values; ++i )
     {
         int row = (int)i/2;
-        int col = 15*( i%2 );
+        int col = 9*( i%2 );
 
         QString name = name_of_property.c_str();
         name = name + QString( " %1: " ).arg( i );
@@ -461,39 +417,31 @@ void FormPropertyValues::viewWellForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Type "), row, col + 1 );
-        gl_layout->addWidget( vector_edt_values[ 6*i ], row, col + 2 );
+        gl_layout->addWidget( new QLabel( "Value "), row, col + 1 );
+        gl_layout->addWidget( vector_edt_values[ 3*i ], row, col + 2 );
 
-        gl_layout->addWidget( new QLabel( "Sign "), row, col + 3 );
-        gl_layout->addWidget( vector_edt_values[ 6*i + 1 ], row, col + 4 );
+        gl_layout->addWidget( new QLabel( "U"), row, col + 3 );
+        gl_layout->addWidget( vector_edt_values[ 3*i + 1 ], row, col + 4 );
 
-        gl_layout->addWidget( new QLabel( "Value"), row, col + 5 );
-        gl_layout->addWidget( vector_edt_values[ 6*i + 2 ], row, col + 6 );
+        gl_layout->addWidget( new QLabel( "V"), row, col + 5 );
+        gl_layout->addWidget( vector_edt_values[ 3*i + 2 ], row, col + 6 );
 
-        gl_layout->addWidget( new QLabel( "X "), row, col + 7 );
-        gl_layout->addWidget( vector_edt_values[ 6*i + 3 ], row, col + 8 );
-
-        gl_layout->addWidget( new QLabel( "Y "), row, col + 9 );
-        gl_layout->addWidget( vector_edt_values[ 6*i + 4 ], row, col + 10 );
-
-        gl_layout->addWidget( new QLabel( "Z "), row, col + 11 );
-        gl_layout->addWidget( vector_edt_values[ 6*i + 5 ], row, col + 12 );
 
         if( col == 0 ){
-            gl_layout->addWidget( new QLabel( "   "), row, col + 13 );
-            gl_layout->addWidget( new QLabel( "   "), row, col + 14 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 7 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 8 );
         }
 
     }
 
 
-    gl_layout->addWidget( line, nrows, 0 , 1, 29 );
+    gl_layout->addWidget( line, nrows, 0 , 1, 17 );
 
 
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows + 1, 24 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 12 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows + 1, 9 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 4 , 1, 4 );
 
     this->setLayout( gl_layout );
     this->show();
@@ -565,7 +513,7 @@ void FormPropertyValues::viewBoundaryForm()
     gl_layout->addWidget( line, nrows, 0 , 1, 21 );
 
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows + 1, 16 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 15 , 1, 4 );
     else
         gl_layout->addWidget( btb_buttons, nrows + 1, 6 , 1, 4 );
 
@@ -626,7 +574,7 @@ void FormPropertyValues::viewTofandTracerForm()
     for( int i = 0; i < number_of_values; ++i )
     {
         int row = (int)i/2 ;
-        int col = 7*( i%2 );
+        int col = 5*( i%2 );
 
 
         QString name = name_of_property.c_str();
@@ -636,15 +584,12 @@ void FormPropertyValues::viewTofandTracerForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Type"), row, col + 1 );
-        gl_layout->addWidget( vector_edt_values[ 2*i + 1 ], row, col + 2 );
-
-        gl_layout->addWidget( new QLabel( "Mark"), row, col + 3 );
-        gl_layout->addWidget( vector_edt_values[ 2*i + 2 ], row, col + 4 );
+        gl_layout->addWidget( new QLabel( "Mark"), row, col + 1 );
+        gl_layout->addWidget( vector_edt_values[ i + 1 ], row, col + 2 );
 
         if( col == 0 ){
-            gl_layout->addWidget( new QLabel( "   "), row, col + 5 );
-            gl_layout->addWidget( new QLabel( "   "), row, col + 6 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 3 );
+            gl_layout->addWidget( new QLabel( "   "), row, col + 4 );
         }
     }
 
@@ -652,9 +597,9 @@ void FormPropertyValues::viewTofandTracerForm()
     gl_layout->addWidget( line, nrows , 0 , 1, 13 );
 
     if( number_of_values > 1 )
-        gl_layout->addWidget( btb_buttons, nrows + 1, 8 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 4 , 1, 4 );
     else
-        gl_layout->addWidget( btb_buttons, nrows + 1, 2 , 1, 4 );
+        gl_layout->addWidget( btb_buttons, nrows + 1, 2 , 1, 2 );
 
 
 

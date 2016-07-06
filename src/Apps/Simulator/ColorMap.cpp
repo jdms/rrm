@@ -81,7 +81,7 @@ QVector3D ColorMap::getColor( COLORMAP map, float value, float low, float high )
             return getColor( jet, value, low, high );
             break;
         default:
-            return QVector3D( 1.0f, 0.0f, 0.0f );
+            return QVector3D( 0.85f, 0.85f, 0.85f );
             break;
 
     }
@@ -93,8 +93,17 @@ QVector3D ColorMap::getColor(const std::vector< QVector3D > &map, float value, f
 
     if( low > high ) std::swap( low, high );
 
-    int index = std::fabs( ( value - low )/ ( high - low )*ncolors );
-    index = index % ncolors;
+//    int index = std::fabs( ( value - low )*ncolors/ ( high - low ) );
+//    index = index % ncolors;
+
+    int index = 0;
+
+    if( high - low > FLT_EPSILON )
+        index = std::fabs( ( value - low )/ ( high - low ) )*( ncolors - 1 );
+
+//    index = index % ncolors;
+
+
 
     return map[ index ];
 
@@ -102,7 +111,7 @@ QVector3D ColorMap::getColor(const std::vector< QVector3D > &map, float value, f
 
 QVector3D ColorMap::getConstantColor() const
 {
-    return QVector3D( 1.0f, 0.0f, 0.0f );
+    return QVector3D( 0.85f, 0.85f, 0.85f );
 }
 
 
@@ -112,7 +121,7 @@ std::vector< QVector3D > ColorMap::getColors( COLORMAP cm, unsigned int& nc ) co
     {
         nc = 1;
         std::vector< QVector3D > c;
-        c.push_back( QVector3D( 1.0f, 0.0f, 0.0f ) );
+        c.push_back( QVector3D( 0.85f, 0.85f, 0.85f ) );
         return c;
     }
     else if( cm == COLORMAP::JET )

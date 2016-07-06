@@ -29,11 +29,13 @@ class FlowVisualizationCanvas: public QOpenGLWidget
     public:
 
         FlowVisualizationCanvas( QWidget *parent = 0 );
-
+        ~FlowVisualizationCanvas();
 
         void setOpenGLFormat();
         void setController( FlowVisualizationController *c );
         void createRenderingMenu();
+
+
 
         void clear();
 
@@ -41,10 +43,12 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
     public slots:
 
+        void updateMesh(  const Mesh::TYPE& type, std::vector< double > positions, std::vector< unsigned int > faces );
 
         void updateMesh();
         void updateMeshfromFile();
         void updateVolumetricMesh();
+        void updateCornerPoint();
 
         void showVertices( bool status );
         void showEdges( bool status );
@@ -67,7 +71,20 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void exportSurface();
         void exportVolume();
         void exportCornerPoint();
+        void exportResults();
 
+        void setColors( const std::vector< float >& colors );
+
+
+    signals:
+
+        void getSurfaceCrossSection();
+        void buildcornerpoint();
+        void buildunstructured();
+        void computeFlowProperties();
+        void editParameters();
+        void readSurfacefromFile();
+        void applyCrossSection();
 
 
     protected:
@@ -99,7 +116,6 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         const float speed_zoom = 0.1f;
 
         Mesh mesh;
-        FlowCrossSection crosssection;
         ColorMap colormap;
 
         FlowRenderingOptionsMenu* rendering_menu;
@@ -108,16 +124,19 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         std::string coloring_property_method;
         std::string coloring_property_type;
 
-        CoordinateAxes* axes;
+        bool show_axis;
+        CoordinateAxes axes;
+
+        float scale;
 
         bool apply_crosssection;
+        FlowCrossSection crosssection;
 
-        Tucano::Shader*   background_;
-        GLuint vertexArray_cube_;
-        GLuint vertexBuffer_cube_;
-        GLuint vertexCube_slot_;
+        Tucano::Shader*   background;
+        GLuint va_background;
+        GLuint vb_background;
 
-        std::vector<Eigen::Vector3f> cube_;
+
 
 
 };

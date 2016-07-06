@@ -9,6 +9,8 @@ void MainWindow::createFlowComputationModule ( )
 	 dc_computation->setWidget(flowwindow);
 	 dc_computation->setAllowedAreas(Qt::AllDockWidgetAreas);
 
+     dc_computation->setWindowTitle( "Flow Diagnostic View" );
+     dc_computation->setVisible( false );
 	 addDockWidget ( Qt::RightDockWidgetArea , dc_computation );
 }
 

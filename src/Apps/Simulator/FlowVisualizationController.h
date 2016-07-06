@@ -17,8 +17,11 @@ class FlowVisualizationController: public QObject
 
     public:
 
-    typedef qreal		 	 	Real;
-    typedef RRM::CrossSection<Real>  	CrossSection;
+        typedef qreal		 	 	Real;
+        typedef RRM::CrossSection<Real>  	CrossSection;
+
+
+        enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
 
 
         FlowVisualizationController( QWidget* parent = 0 );
@@ -26,6 +29,8 @@ class FlowVisualizationController: public QObject
 
 
         inline void getTetgenParameter( std::string& cmd ) { region.getTetgenCommand( cmd );  }
+        inline void getTriangleParameter( std::string& cmd ) { region.getTriangleCommand( cmd );  }
+
         inline void getPropertyArea( int& np, std::vector< double >& values ){ region.getPropertyArea( np, values ); }
 
         inline void getBoundariesValues( int& ndir, std::vector< double > &vdir )   { region.getBoundariesSurface( ndir, vdir );  }
@@ -34,17 +39,8 @@ class FlowVisualizationController: public QObject
         inline void getTracerBoundaryParameter( int& ntrbound, std::vector< int > &vtrbound )  { region.getTracerBoundaries( ntrbound, vtrbound ); }
 
 
-        void getVelocityValuesbyVertex( std::vector<double>& values );
-        void getVelocityValuesbyCell( std::vector<double>& values );
-        void getPressureValuesbyVertex(std::vector<double> &values );
-        void getTOFValuesbyVertex( std::vector< double >& values );
-        void getTOFValuesbyCell( std::vector< double >& values );
-        void getTracerValuesbyVertex( std::vector< double >& values );
-        void getTracerValuesbyCell( std::vector< double >& values );
 
-
-        void getSurfaceFromCrossSection(const CrossSection& cross_section );
-
+        void getSurfacesFromCrossSection( const CrossSection& cross_section );
 
 
         std::vector< float > getMeshVerticesfromFile( const tetgenio& obj );
@@ -56,6 +52,8 @@ class FlowVisualizationController: public QObject
         void updateVolumetricMesh( Mesh* mesh );
         void updateMeshFromFile( Mesh* mesh  );
         void updateMeshFromSurface( Mesh* mesh );
+        void updateCornerPointFromSurface( Mesh* mesh );
+
 
 
         std::vector< float > getVolumeVerticesfromNodeStructure( const std::vector< NODE >& nodes );
@@ -64,6 +62,12 @@ class FlowVisualizationController: public QObject
 
 
         void computeFlowProperties();
+
+
+        std::vector< unsigned int > getSkeletonFaces( const std::vector< int >& nu_list, const std::vector< int >&nv_list, const std::vector< double >& positions );
+
+        void readPolyFiles( const std::string& mesh_file );
+        void readSkeletonFiles( const std::string& all_filename/*, std::vector< double >& positions, std::vector< unsigned int >& faces  */);
 
 
         std::vector< double > getVerticesPropertyValues(std::string name_of_property, std::string method, double &min, double &max );
@@ -78,7 +82,6 @@ class FlowVisualizationController: public QObject
         inline void setParent( QObject *p ){ controllerParent = p; }
         void setCounterProgressinData();
 
-        bool isMeshOk(){ return mesh_ok; }
         bool isVolumetricOk(){ return volumetric_ok; }
         bool arePropertiesComputed() { return properties_computed; }
 
@@ -87,7 +90,10 @@ class FlowVisualizationController: public QObject
         void exportSurfacetoVTK( const std::string& filename );
         void exportVolumetoVTK( const std::string& filename );
         void exportCornerPointtoVTK( const std::string& filename );
+        void exportResultstoVTK( const std::string& filename );
 
+
+        void FlowVisualizationController::outputResults( const std::string& filename );
 
         inline void emitSignaltoGetSurfaceCrossSection(){ emit getSurfaceCrossSection(); }
         inline void emitSignaltoReadFile(){ emit readFile(); }
@@ -101,6 +107,8 @@ class FlowVisualizationController: public QObject
         inline void setToleranceValues( const float& tol1, const float& tol2 ){ region.tolerance( tol1, tol2 ); }
 
         void setTetgenCommand( std::string& cmd );
+        void setTriangleCommand( std::string& cmd );
+
         inline void setPropertyArea( const int& np, const std::vector< double >& values ){ region.setPropertyArea( np, values ); }
 
         void setBoundariesValues( int n, std::vector< double > &values );
@@ -109,15 +117,13 @@ class FlowVisualizationController: public QObject
         void setTrBoundaryValues( int n, std::vector< double > &values );
 
 
-        void readCornerPoint( bool read_file, const std::string& mesh_file );
-        void readUnstructured( bool read_file,  const std::string& mesh_file, const std::string& type_of_file, const std::string& input_file  );
-        void reloadMesh( const int& type_of_mesh, bool read_file,  const std::string& mesh_file, const std::string& type_of_file, const std::string& input_file  );
-
-        void computeVolumetricMesh();
+        void readInputParameters( const std::string& input_file );
 
 
-        void increaseMeshScale();
-        void decreaseMeshScale();
+
+        void generateCornerPoint();
+        void generateUnstructured();
+
 
         void increaseNumberofEdges();
         void decreaseNumberofEdges();
@@ -125,12 +131,17 @@ class FlowVisualizationController: public QObject
         void increaseEdgeLength();
         void decreaseEdgeLength();
 
+        inline void setCurrentMethod( const FlowVisualizationController::MESHING_METHOD& t ){ current_method = t; }
+        inline  FlowVisualizationController::MESHING_METHOD setCurrentMethod(){ return current_method; }
+
 
     signals:
 
             void updateMesh();
+            void updateMesh(  const Mesh::TYPE&, const std::vector< double >&, const std::vector< unsigned int >&  );
             void updateVolumetricMesh();
             void updatePolyMesh();
+            void updateCornerPoint();
 
             void propertybyVertexComputed( std::string, std::string );
             void propertybyFaceComputed( std::string, std::string );
@@ -141,6 +152,8 @@ class FlowVisualizationController: public QObject
             void applyCrossSection();
 
 			void hideToolbar();
+
+            void updateColors( const std::vector< float >& );
 
             void clearAll();
 
@@ -155,7 +168,10 @@ class FlowVisualizationController: public QObject
 
         bool mesh_ok;
         bool volumetric_ok;
+        bool user_input_ok;
         bool properties_computed;
+
+        MESHING_METHOD current_method;
 
 };
 

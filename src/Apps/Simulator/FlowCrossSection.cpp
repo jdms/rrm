@@ -349,37 +349,39 @@ void FlowCrossSection::load()
 
 }
 
-void FlowCrossSection::draw( const Eigen::Affine3f &V, const Eigen::Matrix4f &P )
+void FlowCrossSection::draw( const Eigen::Affine3f &V, const Eigen::Matrix4f &P, const float& scale )
 {
 
-    Eigen::Affine3f M;
-    M.setIdentity();
+//    Eigen::Affine3f M;
+//    M.setIdentity();
 
 
-    shader_plane->bind();
-    shader_plane->setUniform( "mmatrix", M );
-    shader_plane->setUniform( "vmatrix", V );
-    shader_plane->setUniform( "pmatrix", P );
+//    shader_plane->bind();
+//    shader_plane->setUniform( "mmatrix", M );
+//    shader_plane->setUniform( "vmatrix", V );
+//    shader_plane->setUniform( "pmatrix", P );
+//    shader_plane->setUniform( "scale", scale );
 
-    glBindVertexArray( va_plane );
-
-
-        glLineWidth( 4.0f );
-
-        shader_plane->setUniform( "in_color", Eigen::Vector3f( 1.0f, 1.0f, 0.0f ) );
-
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_plane );
-        glDrawElements( GL_LINES, number_of_lines, GL_UNSIGNED_INT, 0 );
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+//    glBindVertexArray( va_plane );
 
 
-        shader_plane->setUniform( "in_color", Eigen::Vector3f( 0.0f, 0.0f, 0.0f ) );
-        glPointSize( 4.0f );
-        glDrawArrays( GL_POINTS, 0, number_of_vertices );
+//        glLineWidth( 4.0f );
 
-    glBindVertexArray( 0 );
+//        shader_plane->setUniform( "in_color", Eigen::Vector3f( 1.0f, 1.0f, 0.0f ) );
+////        shader_plane->setUniform( "scale", scale );
 
-    shader_plane->unbind();
+//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_plane );
+//        glDrawElements( GL_LINES, number_of_lines, GL_UNSIGNED_INT, 0 );
+//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+
+//        shader_plane->setUniform( "in_color", Eigen::Vector3f( 0.0f, 0.0f, 0.0f ) );
+//        glPointSize( 4.0f );
+//        glDrawArrays( GL_POINTS, 0, number_of_vertices );
+
+//    glBindVertexArray( 0 );
+
+//    shader_plane->unbind();
 
 
 }
@@ -415,3 +417,54 @@ void FlowCrossSection::clear()
     number_of_faces = 0;
     number_of_lines = 0;
 }
+
+
+void FlowCrossSection::resetBuffers()
+{
+    deleteShaders();
+
+    if( va_plane )
+    {
+        glDeleteVertexArrays( 1, &va_plane );
+        if( bf_vertices_plane )
+            glDeleteBuffers(1, &bf_vertices_plane);
+        if( bf_faces_plane )
+            glDeleteBuffers(1, &bf_faces_plane);
+        if( bf_wireframe_plane )
+            glDeleteBuffers(1, &bf_wireframe_plane);
+        if( bf_colors_plane )
+            glDeleteBuffers(1, &bf_colors_plane);
+        if( bf_normals_plane )
+            glDeleteBuffers(1, &bf_normals_plane);
+
+    }
+
+
+    va_plane = 0;
+    bf_vertices_plane = 0;
+    bf_faces_plane = 0;
+    bf_wireframe_plane = 0;
+    bf_colors_plane = 0;
+    bf_normals_plane = 0;
+
+    number_of_vertices = 0;
+    number_of_faces = 0;
+    number_of_lines = 0;
+
+
+}
+
+void FlowCrossSection::deleteShaders()
+{
+
+    if (shader_plane)
+    {
+        delete (shader_plane);
+        shader_plane = nullptr;
+    }
+
+
+}
+
+
+

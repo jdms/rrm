@@ -21,46 +21,31 @@ class Mesh
 
 
         Mesh();
+
         inline Mesh( TYPE t ){ mesh_type = t; }
-
-
         inline void setMeshType( TYPE t ){ mesh_type = t; }
 
 
 
-        inline void setVertices( const std::vector< float >& v ){ vertices.clear();
-                                                      std::copy( v.begin(), v.end(), std::back_inserter( vertices ) );  }
-
-        inline void setVertice( int id, float x, float y, float z ){ if ( isValidVertice( id ) == false ) return;
-                                                                     vertices[ 3*id ] = x ;
-                                                                     vertices[ 3*id + 1 ] = y ;
-                                                                     vertices[ 3*id + 2 ] = z ; }
+        void setVertices( const std::vector< float >& v );
+        void setVertice( int id, float x, float y, float z );
 
         void getVertice( int id, float& x, float& y, float& z );
-
         inline std::vector< float > getVertices(){ return vertices; }
 
 
-
-
-        inline void setWireframe( const std::vector< unsigned int >& w ){ wireframe.clear();
-                                                              std::copy( w.begin(), w.end(), std::back_inserter( wireframe ) ); }
-
+        void setWireframe( const std::vector< unsigned int >& w );
         void setEdge( int id, const std::vector< unsigned int >& e );
 
 
-        inline void setFaces( const std::vector< unsigned int >& f ){ faces.clear();
-                                                          std::copy( f.begin(), f.end(), std::back_inserter( faces ) );  }
-
+        void setFaces( const std::vector< unsigned int >& f );
         void setFace( int id, const std::vector< unsigned int >& f );
-
         inline std::vector< unsigned int > getFaces(){ return faces; }
-
         std::vector< unsigned int > getFace( int id );
 
 
         void setConstantColor( const float r, const float g, const float b );
-        void setColor( const std::vector< float >& colors  );
+        void setColor( const std::vector< float >& vcolors  );
 
 
         void setCrossSectionClippingEquation( const float& a, const float& b, const float& c, const float& d );
@@ -112,10 +97,13 @@ class Mesh
 
 
         void load();
-        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P );
+        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale  );
         void initializeShader( std::string directory );
 
         void clear();
+
+        void resetBuffers();
+        void deleteShaders();
 
 
     protected:
@@ -127,6 +115,7 @@ class Mesh
         std::vector< unsigned int > wireframe;
         std::vector < float > normals_by_vertices;
         std::vector< float > bounding_box;
+        std::vector< float > colors;
 
         float max[ 3 ];
         float min[ 3 ];
@@ -140,7 +129,7 @@ class Mesh
         GLuint bf_colors_mesh;
 
         GLuint number_of_vertices;
-        GLuint vector_faces_size;
+        GLuint vector_triangles_size;
         GLuint vector_wireframe_size;
 
         bool show_vertices;

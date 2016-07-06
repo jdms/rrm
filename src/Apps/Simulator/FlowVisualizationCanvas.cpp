@@ -2,19 +2,20 @@
 
 FlowVisualizationCanvas::FlowVisualizationCanvas( QWidget *parent )
 {
-    setOpenGLFormat();
+//    setOpenGLFormat();
     createRenderingMenu();
+
+    show_axis = true;
 
 }
 
+
 void FlowVisualizationCanvas::setOpenGLFormat()
 {
-	/*
     format.setVersion( 4, 1 );
     format.setProfile( QSurfaceFormat::CompatibilityProfile );
     format.setSamples(16);
     setFormat( format );
-	*/
 }
 
 
@@ -30,12 +31,13 @@ void FlowVisualizationCanvas::createRenderingMenu()
     connect( rendering_menu, &FlowRenderingOptionsMenu::setConstantColormap, this, [=](){ setConstantColor(); }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setJETColor(); }  );
 
-    connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){ controller->emitSignaltoGetSurfaceCrossSection(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ controller->emitSignaltoReadFile(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ controller->emitSignaltoEditParameters(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::buildvolumetric, this, [=](){ controller->computeVolumetricMesh(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){  emit getSurfaceCrossSection(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ emit readSurfacefromFile(); } );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::buildcornerpoint, this, [=](){ emit buildcornerpoint(); } );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::buildunstructured, this, [=](){ emit buildunstructured(); } );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ emit editParameters(); }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::computeproperties, this, [=](){ controller->computeFlowProperties(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ controller->emitSignaltoApplyCrossSection(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ emit applyCrossSection(); }  );
 
     connect( rendering_menu, &FlowRenderingOptionsMenu::clearAll, this, [=](){ controller->emitSignaltoClearEverything(); }  );
 
@@ -50,8 +52,10 @@ void FlowVisualizationCanvas::setController( FlowVisualizationController *c )
 
 }
 
+
 void FlowVisualizationCanvas::initializeGL()
 {
+
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -61,24 +65,27 @@ void FlowVisualizationCanvas::initializeGL()
     }
 
 
+    makeCurrent();
+
     glClearColor ( 0.89f , 0.89f , 1.0f , 1.0f );
 
     glEnable( GL_MULTISAMPLE );
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LESS );
 
-//    glMinSampleShading(1.0f);
-
 
     camera.setPerspectiveMatrix ( 60.0 , (float) this->width()/(float) this->height() , 0.1f , 10000.0f );
 
     mesh.initializeShader( current_directory );
-    crosssection.initShader( current_directory );
+//    crosssection.initShader( current_directory );
 
 
 //    axes = new CoordinateAxes();
- //   axes->load();
- //   axes->initShader( current_directory );
+
+//    axes.load();
+//    axes.initShader( current_directory );
+
+    mesh.load();
 
     initializeShader();
 
@@ -88,88 +95,43 @@ void FlowVisualizationCanvas::initializeGL()
 
 void FlowVisualizationCanvas::initializeShader()
 {
-    background_ = new Tucano::Shader ( "BackGround" , ( current_directory + "Shaders/DummyQuad.vert" ),
+    background = new Tucano::Shader ( "BackGround" , ( current_directory + "Shaders/DummyQuad.vert" ),
                                        ( current_directory + "Shaders/DummyQuad.frag" ),
                                        ( current_directory + "Shaders/DummyQuad.geom" ), "" , "" );
-    background_->initialize ( );
+    background->initialize ( );
 
 
-    cube_.clear ( );
-
-    Eigen::Vector3f vertex_data[] =
-    {
-        //  Top Face
-        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
-        Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
-        // Bottom Face
-        Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ),
-        Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
-        // Front Face
-        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ),
-        Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
-        // Back Face
-        Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ),
-        Eigen::Vector3f ( -1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ),
-        // Right Face
-        Eigen::Vector3f ( 1.0f , 1.0f , 1.0f ), Eigen::Vector3f ( 1.0f , -1.0f , 1.0f ),
-        Eigen::Vector3f ( 1.0f , -1.0f , -1.0f ), Eigen::Vector3f ( 1.0f , 1.0f , -1.0f ),
-        // Left Face
-        Eigen::Vector3f ( -1.0f , 1.0f , -1.0f ), Eigen::Vector3f ( -1.0f , -0.0f , -1.0f ),
-        Eigen::Vector3f ( -1.0f , -1.0f , 1.0f ), Eigen::Vector3f ( -1.0f , 1.0f , 1.0f ) };
-
-    Eigen::Vector3f vertex_data_strip[] =
-    {
-        // Top Face
-        vertex_data[0], vertex_data[1], vertex_data[3], vertex_data[2],/* 0 - 5*/
-        // Bottom Face
-        vertex_data[4], vertex_data[5], vertex_data[7], vertex_data[6],/* 6 - 11 */
-        // Front Face
-        vertex_data[0], vertex_data[3], vertex_data[4], vertex_data[5],/* 12 - 17*/
-        // Back Face
-        vertex_data[1], vertex_data[7], vertex_data[2], vertex_data[6],/* 18 - 23*/
-        // Right Face
-        vertex_data[0], vertex_data[4], vertex_data[1], vertex_data[7],/* 24 - 29*/
-        // Left Face
-        vertex_data[2], vertex_data[6], vertex_data[3], vertex_data[5] /* 30 - 35*/
-    };
-
-
-
-    std::copy ( vertex_data_strip , vertex_data_strip + 24 , std::back_inserter ( cube_ ) );
-
-
-    glGenVertexArrays ( 1 , &vertexArray_cube_ );
-    glBindVertexArray ( vertexArray_cube_ );
+    glGenVertexArrays ( 1 , &va_background );
+    glBindVertexArray ( va_background );
 
     /// Requesting Vertex Buffers to the GPU
-    glGenBuffers ( 1 , &vertexBuffer_cube_ );
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , &cube_[0] , GL_STATIC_DRAW );
+    glGenBuffers ( 1 , &vb_background );
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_background );
+    glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
 
-    glEnableVertexAttribArray ( vertexCube_slot_ );
-    glVertexAttribPointer ( vertexCube_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+    glEnableVertexAttribArray ( 0 );
+    glVertexAttribPointer ( 0 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
     glBindVertexArray ( 0 );
 
 
 }
 
+
 void FlowVisualizationCanvas::loadBackGround()
 {
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    glDisable( GL_DEPTH_TEST );
+    glDepthMask( GL_FALSE );
 
-    background_->bind();
+    background->bind();
 
-    background_->setUniform("viewportSize", width(), height() );
+    background->setUniform( "viewportSize", width(), height() );
 
-    glBindVertexArray ( vertexArray_cube_ );
-    /// Draw the triangle !
-    glDrawArrays ( GL_POINTS , 0 , 1 );
-
+    glBindVertexArray ( va_background );
+        glDrawArrays ( GL_POINTS , 0 , 1 );
     glBindVertexArray ( 0 );
 
-    background_->unbind();
+    background->unbind();
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -179,11 +141,9 @@ void FlowVisualizationCanvas::loadBackGround()
 
 void FlowVisualizationCanvas::paintGL()
 {
+    makeCurrent();
+
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-//    glEnable( GL_SAMPLE_SHADING );
-
-
 
     loadBackGround();
 
@@ -191,51 +151,49 @@ void FlowVisualizationCanvas::paintGL()
     Eigen::Matrix4f P = camera.getProjectionMatrix();
 
 
-    if( apply_crosssection == true )
-    {
-        glEnable( GL_BLEND );
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
-        crosssection.draw( V, P );
-
-        glDisable( GL_BLEND );
-
-    }
 
 
+//    if( show_axis == true ){
+
+//        Eigen::Matrix3f R = camera.getRotationMatrix();
+//        Eigen::Vector3f T = camera.getTranslationMatrix();
 
 
-    mesh.draw( V, P );
+//        axes.draw( R, T );
+
+//    }
 
 
 
-    Eigen::Matrix3f R = camera.getRotationMatrix();
-    Eigen::Vector3f T = camera.getTranslationMatrix();
-    Eigen::Affine3f V1;
-    V1.setIdentity();
+//    if( apply_crosssection == true )
+//    {
+//        glEnable( GL_BLEND );
+//        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-    for( int i = 0; i < 3; ++i )
-        for( int j = 0; j < 3; ++j )
-            V1( i, j ) = R( i, j );
+//        crosssection.draw( V, P, scale );
 
-    V1( 0, 3 ) = T( 0 );
-    V1( 1, 3 ) = T( 1 );
-    V1( 2, 3 ) = T( 2 );
+//        glDisable( GL_BLEND );
 
-    //axes->draw( V1 );
+//    }
 
 
-//    glDisable( GL_SAMPLE_SHADING );
+    mesh.draw( V, P, scale );
+
 
 }
 
 
 void FlowVisualizationCanvas::resizeGL( int width, int height )
 {
+    makeCurrent();
+
     glViewport ( 0 , 0 , width , height );
 
     camera.setViewport ( Eigen::Vector2f ( (float) width , (float) height ) );
     camera.setPerspectiveMatrix ( camera.getFovy ( ) , (float) width / (float) height , 0.1f , 100.0f );
+
+    scale = 1.5*(float)width/(float)height;
+
 
 }
 
@@ -290,20 +248,25 @@ void FlowVisualizationCanvas::setJETColor()
 
 void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std::string method )
 {
-    std::vector < double > values;
-    double min = 0.0, max = 0.0;
+
+    glShadeModel(GL_SMOOTH);
+
 
     coloring_property_name = name;
     coloring_property_method = method;
     coloring_property_type = "VERTEX";
 
+
+    std::vector < double > values;
+    double min = 0.0, max = 0.0;
     values = controller->getVerticesPropertyValues( name, method, min, max );
 
     if( values.empty() == true ) return;
 
-    std::vector< float > colors;
 
     int number_of_vertices = mesh.getNumberofVertices();
+    std::vector< float > colors;
+
 
     for( int i = 0; i < number_of_vertices; ++i )
     {
@@ -319,20 +282,34 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
 }
 
 
+
+void FlowVisualizationCanvas::setColors( const std::vector< float >& colors )
+{
+
+    glShadeModel(GL_SMOOTH);
+
+   mesh.setColor( colors );
+    update();
+
+}
+
+
 void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::string method )
 {
-    std::vector < double > values;
-    double min = 0.0, max = 0.0;
 
+    glShadeModel(GL_FLAT);
 
     coloring_property_name = name;
     coloring_property_method = method;
     coloring_property_type = "FACE";
 
 
+    std::vector < double > values;
+    double min = 0.0, max = 0.0;
     values = controller->getFacesPropertyValues( name, method, min, max );
 
     if( values.empty() == true ) return;
+
 
     int number_of_vertices = mesh.getNumberofVertices();
 
@@ -342,10 +319,14 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
 
     int number_of_faces = mesh.getNumberofFaces();
 
+
+    // get the color for each face and attribute it for its vertices.
+
     for( int i = 0; i < number_of_faces; ++i )
     {
 
         QVector3D c = colormap.getColor( ColorMap::COLORMAP::JET, values[ i ], min, max );
+
         vector< unsigned int > vertices_of_face = mesh.getFace( i );
         int number_of_vertices_by_face = vertices_of_face.size();
 
@@ -356,7 +337,6 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
             colors[ 3*id ] = c.x();
             colors[ 3*id + 1 ] = c.y();
             colors[ 3*id + 2 ] = c.z();
-
 
         }
 
@@ -429,9 +409,9 @@ void FlowVisualizationCanvas::updateMesh()
 }
 
 
-void FlowVisualizationCanvas::updateMeshfromFile()
-{
 
+void FlowVisualizationCanvas::updateCornerPoint()
+{
 
     bool show_vertices = rendering_menu->showVertices();
     bool show_edges = rendering_menu->showEdges();
@@ -440,7 +420,7 @@ void FlowVisualizationCanvas::updateMeshfromFile()
     std::string current_colormap = rendering_menu->getCurrentColorMap();
 
 
-    controller->updateMeshFromFile( &mesh );
+    controller->updateCornerPointFromSurface( &mesh );
 
     mesh.showVertices( show_vertices );
     mesh.showEdges( show_edges );
@@ -456,8 +436,18 @@ void FlowVisualizationCanvas::updateMeshfromFile()
 
 }
 
-void FlowVisualizationCanvas::updateVolumetricMesh()
+
+void FlowVisualizationCanvas::updateMesh( const Mesh::TYPE& type, std::vector< double > positions, std::vector< unsigned int > faces )
 {
+
+
+    std::vector<float> vertices ( positions.begin(), positions.end() );
+
+    mesh.setMeshType( type );
+    mesh.setVertices( vertices );
+    mesh.setFaces( faces );
+    mesh.buildBoundingBox();
+
 
     bool show_vertices = rendering_menu->showVertices();
     bool show_edges = rendering_menu->showEdges();
@@ -466,13 +456,68 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
     std::string current_colormap = rendering_menu->getCurrentColorMap();
 
 
-    controller->updateVolumetricMesh( &mesh );
+    mesh.showVertices( show_vertices );
+    mesh.showEdges( show_edges );
+    mesh.showFaces( show_faces );
+
     mesh.load();
+
+
+    if( current_colormap.compare( "CONSTANT" ) == 0 )
+        setConstantColor();
+    else if( current_colormap.compare( "JET" ) == 0 )
+        setJETColor();
+
+
+    update();
+}
+
+
+void FlowVisualizationCanvas::updateMeshfromFile()
+{
+
+
+    controller->updateMeshFromFile( &mesh );
+
+    bool show_vertices = rendering_menu->showVertices();
+    bool show_edges = rendering_menu->showEdges();
+    bool show_faces = rendering_menu->showFaces();
+
+    std::string current_colormap = rendering_menu->getCurrentColorMap();
+
 
     mesh.showVertices( show_vertices );
     mesh.showEdges( show_edges );
     mesh.showFaces( show_faces );
 
+    mesh.load();
+
+
+    if( current_colormap.compare( "CONSTANT" ) == 0 )
+        setConstantColor();
+    else if( current_colormap.compare( "JET" ) == 0 )
+        setJETColor();
+
+}
+
+
+void FlowVisualizationCanvas::updateVolumetricMesh()
+{
+
+    controller->updateVolumetricMesh( &mesh );
+
+    bool show_vertices = rendering_menu->showVertices();
+    bool show_edges = rendering_menu->showEdges();
+    bool show_faces = rendering_menu->showFaces();
+
+    std::string current_colormap = rendering_menu->getCurrentColorMap();
+
+
+    mesh.showVertices( show_vertices );
+    mesh.showEdges( show_edges );
+    mesh.showFaces( show_faces );
+
+    mesh.load();
 
     if( current_colormap.compare( "CONSTANT" ) == 0 )
         setConstantColor();
@@ -577,6 +622,16 @@ void FlowVisualizationCanvas::exportCornerPoint()
     controller->exportCornerPointtoVTK( filename.toStdString() );
 }
 
+void FlowVisualizationCanvas::exportResults()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./results/",
+                                                     ".vtk files (*.vtk)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    controller->exportResultstoVTK( filename.toStdString() );
+}
+
 
 void FlowVisualizationCanvas::mousePressEvent(QMouseEvent *event)
 {
@@ -637,6 +692,13 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
     switch( event->key() )
     {
 
+
+        case Qt::Key_A:
+        {
+            show_axis = !show_axis;
+
+        } break;
+
         case Qt::Key_U:
         {
 //            reloadShaders();
@@ -680,10 +742,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 mesh.setCrossSectionClippingEquation( a, b, c, d );
 
             }
-            else
-            {
-//                visible_axes = !visible_axes;
-            }
+
 
 
         } break;
@@ -702,10 +761,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 crosssection.getPlaneEquation( a, b, c, d );
                 mesh.setCrossSectionClippingEquation( a, b, c, d );
             }
-            else
-            {
-//                visible_axes = !visible_axes;
-            }
+
 
 
         } break;
@@ -724,10 +780,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 mesh.setCrossSectionClippingEquation( a, b, c, d );
 
             }
-            else
-            {
-//                visible_axes = !visible_axes;
-            }
 
 
         } break;
@@ -743,10 +795,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
                 mesh.setCrossSectionClippingEquation( a, b, c, d );
-            }
-            else
-            {
-                controller->increaseMeshScale();
             }
 
 
@@ -765,10 +813,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 mesh.setCrossSectionClippingEquation( a, b, c, d );
 
             }
-            else
-            {
-                controller->decreaseMeshScale();
-            }
+
 
         }break;
         case Qt::Key_Right:
@@ -840,5 +885,12 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
     }
 
     update();
+}
+
+
+
+FlowVisualizationCanvas::~FlowVisualizationCanvas()
+{
+    mesh.resetBuffers();
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>460</width>
-    <height>639</height>
+    <width>852</width>
+    <height>787</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,11 +24,63 @@
     <rect>
      <x>20</x>
      <y>0</y>
-     <width>427</width>
+     <width>603</width>
      <height>590</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="vl_mainlayout">
+    <item>
+     <widget class="Line" name="ln_sidebar">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="hl_fileparameters">
+      <item>
+       <widget class="QLabel" name="lb_inputparameters">
+        <property name="text">
+         <string>Parameters File</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edt_inputparameters"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_inputparameters">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_loadparameterfile">
+        <property name="text">
+         <string>Load</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <widget class="QGroupBox" name="gb_parameters">
       <property name="title">
@@ -40,7 +92,7 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="3" column="2">
+         <item row="0" column="2">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QSpinBox" name="sp_nopermeabilityvalues"/>
@@ -60,7 +112,7 @@
            </item>
           </layout>
          </item>
-         <item row="5" column="2">
+         <item row="2" column="2">
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QSpinBox" name="sp_nowells"/>
@@ -80,7 +132,7 @@
            </item>
           </layout>
          </item>
-         <item row="6" column="2">
+         <item row="3" column="2">
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
             <widget class="QSpinBox" name="sp_notfboundaryvalues"/>
@@ -100,85 +152,42 @@
            </item>
           </layout>
          </item>
-         <item row="7" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QSpinBox" name="sp_notrboundaryvalues"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_trboundaryvalues">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="5" column="1">
+         <item row="2" column="1">
           <widget class="QLabel" name="lb_wells">
            <property name="text">
             <string>Wells</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="1" column="1">
           <widget class="QLabel" name="lb_boundaries">
            <property name="text">
             <string>Surface Boundaries</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="0" column="1">
           <widget class="QLabel" name="lb_permeability">
            <property name="text">
             <string>Properties Area</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="4" column="1">
           <widget class="QLabel" name="lb_trboundary">
            <property name="text">
             <string>Tracer Boundary</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="lb_tetgencmd">
-           <property name="text">
-            <string>Command</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="lb_tolerance1">
-           <property name="text">
-            <string>Tolerance</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
+         <item row="3" column="1">
           <widget class="QLabel" name="lb_tfboundary">
            <property name="text">
             <string>TOF Boundary</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="3">
-          <widget class="QDoubleSpinBox" name="dsp_tolerance2"/>
-         </item>
-         <item row="1" column="2" colspan="2">
-          <widget class="QLineEdit" name="edt_tetgencommand"/>
-         </item>
-         <item row="0" column="2">
-          <widget class="QDoubleSpinBox" name="dsp_tolerance1"/>
-         </item>
-         <item row="4" column="2">
+         <item row="1" column="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -202,13 +211,33 @@
            </item>
           </layout>
          </item>
+         <item row="4" column="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QSpinBox" name="sp_notrboundaryvalues"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_trboundaryvalues">
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="Line" name="ln_sidebar">
+     <widget class="Line" name="line">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
