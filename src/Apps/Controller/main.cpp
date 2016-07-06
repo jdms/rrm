@@ -14,7 +14,8 @@ int main( int argc, char *argv[] )
 
     /// Selecting the Desktop Driver instead the software one
     /// @see https://forum.qt.io/topic/51574/opengl-dynamic-selected-driver/3
-    app.setAttribute(Qt::AA_UseDesktopOpenGL);
+	app.setAttribute(Qt::AA_UseDesktopOpenGL);
+	app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 
     bool testingNativeDriver = app.testAttribute(Qt::AA_UseDesktopOpenGL);
 
