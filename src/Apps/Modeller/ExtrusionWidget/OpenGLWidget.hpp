@@ -21,6 +21,7 @@
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QOpenGLContext>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QAction>
@@ -43,7 +44,9 @@ class GLWidget: public QOpenGLWidget
 
 
 		explicit GLWidget ( QWidget* parent = 0 );
-		void initializeGL ( );
+		~GLWidget();
+		void resetBuffers();
+		virtual void initializeGL ( );
 		void resizeGL ( int width , int height );
 
 		void paintGL ( );
@@ -73,6 +76,7 @@ class GLWidget: public QOpenGLWidget
 		// Development
 		void loadShaders();
 		void reloadShaders();
+		void deleteShaders();
 		// Seismic
 		void setSeismicModule();
 		void updateRendering();

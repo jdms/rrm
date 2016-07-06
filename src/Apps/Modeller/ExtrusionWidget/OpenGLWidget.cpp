@@ -88,6 +88,162 @@ GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 
 }
 
+GLWidget::~GLWidget()
+{
+	resetBuffers();
+}
+
+void GLWidget::resetBuffers()
+{
+	std::cout << " Reseting Buffers ";
+
+	deleteShaders();
+
+	if (vertexArray_BlackScreen_cube_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_BlackScreen_cube_);
+
+		if (vertexBuffer_BlackScreen_cube_)
+		{
+			glDeleteBuffers(1, &vertexBuffer_BlackScreen_cube_);
+		}
+	}
+
+	if (vertexArray_patch_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_patch_);
+		if (vertexBuffer_patch_)
+		{
+			glDeleteBuffers(1, &vertexBuffer_patch_);
+		}
+		if (vertexBuffer_patch_color)
+		{
+			glDeleteBuffers(1, &vertexBuffer_patch_color);
+		}
+	}
+
+	if (lines_vertexArray_)
+	{
+		glDeleteVertexArrays(1, &lines_vertexArray_);
+		if (lines_vertexBuffer_)
+		{
+			glDeleteBuffers(1, &lines_vertexBuffer_);
+		}
+	}
+
+	if (vertexArray_MESH_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_MESH_);
+		if (vertexArray_MESH_)
+		{
+			glDeleteBuffers(1, &positionBuffer_MESH_);
+		}
+		if (normalBuffer_MESH_)
+		{
+			glDeleteBuffers(1, &normalBuffer_MESH_);
+		}
+		if (colorBuffer_MESH_)
+		{
+			glDeleteBuffers(1, &colorBuffer_MESH_);
+		}
+	}
+
+	if (vertexArray_Seismic_cube_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_Seismic_cube_);
+		if (vertexBuffer_Seismic_cube_)
+		{
+			glDeleteBuffers(1, &vertexBuffer_Seismic_cube_);
+		}
+	}
+
+	if (vertexArray_Seismic_plane_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_Seismic_plane_);
+		if (vertexBuffer_Seismic_plane_)
+		{
+			glDeleteBuffers(1, &vertexBuffer_Seismic_plane_);
+		}
+	}
+
+	if (vertexArray_for_the_Cube_)
+	{
+		glDeleteVertexArrays(1, &vertexArray_for_the_Cube_);
+		if (vertexBuffer_cube_8vertices_)
+		{
+			glDeleteBuffers(1, &vertexBuffer_cube_8vertices_);
+		}
+	}
+
+	// Mesh Layout:
+	// - Geometry   vec4  slot = 0
+	// - Normal     vec4  slot = 1
+	// - Colour     vec4  slot = 2
+	// - Attributes vec4  slot = 3
+
+	// [v0,v1,v2,v3,n0,n1,n2,n3,c0,c1,c2,c4,att0,att1,att2,att3]
+
+	// Scene
+	background_ = 0;
+
+	// Entity
+	vertexArray_BlackScreen_cube_ = 0;
+	vertexBuffer_BlackScreen_cube_ = 0;
+	// Be careful on the assignment of each slot attributes
+	position_BlackScreen_slot_ = 0;
+	blackScreen_cube_shader_ = 0;
+
+	// The interpolated surface
+	vertexArray_patch_ = 0;
+	vertexBuffer_patch_ = 0;
+	// Be careful on the assignment of each slot attributes
+	vertexPatch_slot_ = 0;
+
+	vertexBuffer_patch_color = 0;
+	// Be careful on the assignment of each slot attributes
+	patch_Color_Slot_ = 2;
+
+	patch_shader_ = 0;
+
+	// The sketch lines
+	lines_vertexArray_ = 0;
+	lines_vertexBuffer_ = 0;
+	// Be careful on the assignment of each slot attributes
+	lines_vertexSlot_ = 0;
+	lines_shader_ = 0;
+
+	mesh_shader_ = 0;
+	vertexArray_MESH_ = 0;
+	positionBuffer_MESH_ = 0;
+	position_MESH_Slot_ = 0;
+	normalBuffer_MESH_ = 0;
+	normal_MESH_Slot_ = 1;
+	colorBuffer_MESH_ = 0;
+	color_MESH_Slot_ = 2;
+	// Element Array
+	vertexBuffer_MESH_face_ID_ = 0;
+
+	// Entity
+	vertexArray_Seismic_cube_ = 0;
+	vertexBuffer_Seismic_cube_ = 0;
+	// Be careful on the assignment of each slot attributes
+	position_seismic_cube_ = 0;
+	seismic_cube_shader_ = 0;
+
+	// Entity
+	vertexArray_Seismic_plane_ = 0;
+	vertexBuffer_Seismic_plane_ = 0;
+	// Be careful on the assignment of each slot attributes
+	position_seismic_plane_ = 0;
+	seismic_plane_shader_ = 0;
+	seismic_slice_plane_index = 0;
+	seismic_slice_plane_position = 0.0f;
+
+	vertexArray_for_the_Cube_ = 0;
+	vertexBuffer_cube_8vertices_ = 0;
+	vertices_8slot_ = 0;
+	vertexBuffer_cube_8verticesIndices_ = 0;
+}
 
 void GLWidget::create8VerticesIndices ()
 {
@@ -149,6 +305,8 @@ void GLWidget::create8VerticesIndices ()
 /// OpenGL
 void GLWidget::initializeGL ( )
 {
+	//@see http://www.qtcentre.org/threads/61312-Issue-placing-a-QOpenGLWidget-in-a-QDockWidget
+	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::resetBuffers);
 	/// Key event to GLWidget not o MainWindow ! | @QtDocumentation
 	setFocus ( );
 	/// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed. | @QtDocmentation
@@ -347,6 +505,8 @@ void GLWidget::initializeGL ( )
 //	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
 //	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
+	updateRendering();
+
 }
 
 void GLWidget::reloadShaders ( )
@@ -378,6 +538,45 @@ void GLWidget::reloadShaders ( )
 	if ( patch_shader_ )
 	{
 		patch_shader_->reloadShaders ( );
+	}
+}
+
+void GLWidget::deleteShaders()
+{
+	if (blackScreen_cube_shader_)
+	{
+		delete (blackScreen_cube_shader_);
+		blackScreen_cube_shader_ = nullptr;
+	}
+	if (lines_shader_)
+	{
+		delete(lines_shader_);
+		lines_shader_ = nullptr;
+	}
+	if (background_)
+	{
+		delete(background_);
+		background_ = nullptr;
+	}
+	if (mesh_shader_)
+	{
+		delete(mesh_shader_);
+		mesh_shader_ = nullptr;
+	}
+	if (seismic_cube_shader_)
+	{
+		delete(seismic_cube_shader_);
+		seismic_cube_shader_ = nullptr;
+	}
+	if (seismic_plane_shader_)
+	{
+		delete(seismic_plane_shader_);
+		seismic_plane_shader_ = nullptr;
+	}
+	if (patch_shader_)
+	{
+		delete(patch_shader_);
+		patch_shader_ = nullptr;
 	}
 }
 

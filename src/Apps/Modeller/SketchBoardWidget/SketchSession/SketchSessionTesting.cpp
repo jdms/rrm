@@ -8,11 +8,6 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	
 	mode_ = InteractionMode::OVERSKETCHING;
 
-	/// Drag and Drop Feature
-	overlay_image_ = new QGraphicsPixmapItem ( );
-	this->addItem ( overlay_image_ );
-	overlay_image_->setZValue(1);
-
 	// Default Color
 	this->current_color_ = QColor(255, 75, 75);
 
@@ -20,9 +15,14 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	pen.setColor(this->current_color_);
 	pen.setWidth ( 3 );
 
+	/// Drag and Drop Feature
+	overlay_image_ = new QGraphicsPixmapItem();
+	this->addItem(overlay_image_);
+	overlay_image_->setZValue(1);
+
 	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 55, 55, 255));
 	this->addItem(boundaryc_);
-	boundaryc_->setZValue(1);
+	boundaryc_->setZValue(0);
 
 	input_sketch_ = new InputSketch ( this->current_color_ );
 	input_sketch_->setPen ( pen );
