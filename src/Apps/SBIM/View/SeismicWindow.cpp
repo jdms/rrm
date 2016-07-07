@@ -43,7 +43,7 @@ namespace RRM
             halt();
         #endif
 
-
+            /*
         //testing seismic
         this->sketch_seismic_controller_.readSeismic((shaderDirectory+"Seismic/vol3comp_ushort_seismic-dist-id_596x291x297.raw").toStdString());
 
@@ -63,7 +63,7 @@ namespace RRM
 
             sketch_images_[h+1] = QPixmap::fromImage(image);
         }
-
+	*/
         this->seismic_viewer_->overlayImage_->setPixmap( sketch_images_[1] );
         this->seismic_viewer_->overlayImage_->setPos((640-this->seismic_viewer_->overlayImage_->boundingRect().width())*0.5,-(this->seismic_viewer_->overlayImage_->boundingRect().height()-480)*0.5); //now sets the position
 

@@ -8,6 +8,9 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QSurfaceFormat>
+#include <QtGUI/QTransform>
+
+#include <QtWidgets/QFileDialog>
 
 
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
@@ -43,6 +46,8 @@ public slots:
 	void newSession ( const QPixmap& _image );
 
 	void setBoundary ( Real x , Real y , Real width , Real height );
+	void screenShot();
+	void newBoundary();
 
 	void setModeSketch();
 	void setModeRegionPoint();

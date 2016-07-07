@@ -34,7 +34,7 @@ namespace RRM
 				this->is_enable_ = true;
 
 				r =  0.5;
-				g = 0.5;
+				g = 1.0;
 				b = 0.5;
 			}
 

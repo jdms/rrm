@@ -20,7 +20,7 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	this->addItem(overlay_image_);
 	overlay_image_->setZValue(1);
 
-	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 55, 55, 255));
+	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55,55, 55, 255));
 	this->addItem(boundaryc_);
 	boundaryc_->setZValue(0);
 
@@ -569,7 +569,7 @@ bool SketchSessionTesting::initialization ( qreal x , qreal y , qreal w , qreal 
 void SketchSessionTesting::setBoundary ( Real x , Real y , Real width , Real height )
 {
 	this->boundaryc_->setNewBoundary ( x , y , width , height );
-	//this->setSceneRect ( this->boundaryc_->boundingRect( ) );
+	this->setSceneRect ( this->boundaryc_->boundingRect( ) );
 }
 
 void SketchSessionTesting::sketchNewBoundary ( )

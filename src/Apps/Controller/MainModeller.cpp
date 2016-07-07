@@ -19,6 +19,7 @@ void MainWindow::create2DModule ( )
 	dc_Seismic_Module_->setWidget(this->seismic_view_);
 	dc_Seismic_Module_->setAllowedAreas(Qt::AllDockWidgetAreas);
 	this->addDockWidget(Qt::BottomDockWidgetArea, dc_Seismic_Module_);
+	dc_Seismic_Module_->setVisible(false);
 
 
 	// Embedded on Sketch2DModule 

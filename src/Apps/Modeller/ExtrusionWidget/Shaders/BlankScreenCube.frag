@@ -33,7 +33,7 @@ void main ( void )
 	vec3 light_dir = vec3 ( 0.0 , 0.0 , 1.0 );
 	vec3 eye_dir = normalize ( -newVert.xyz );
 
-	vec4 color_t = vec4 ( 0.10 , 0.75 , 0.10 , 1.0 );
+	vec4 color_t = vec4 ( 0.90, 0.90 , 0.90 , 1.0 );
 
 	vec4 la = vec4 ( 0.0 );
 	vec4 ld = vec4 ( 0.0 );

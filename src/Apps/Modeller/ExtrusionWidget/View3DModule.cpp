@@ -69,7 +69,7 @@ View3DModule::View3DModule ( QWidget* parent ) : QDockWidget(parent)
 
         this->hb_canvas3d->addWidget(this->groupBox);
 
-        groupBox->setVisible(true);
+        groupBox->setVisible(false);
 
 }
 

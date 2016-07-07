@@ -21,11 +21,12 @@
         <file>icons/select.png</file>
         <file>icons/sum.png</file>
         <file>icons/pencil--plus.png</file>
+        <file>icons/Camera.png</file>
+        <file>icons/NewBoundary.png</file>
         <file>icons/surfacesfromfile.png</file>
         <file>icons/surfacesfromsketch.png</file>
         <file>icons/userinput.png</file>
         <file>icons/cornerpointgrid.png</file>
-        <file>images.qrc</file>
         <file>icons/computeproperties.png</file>
         <file>icons/clippingplane.png</file>
         <file>icons/import.png</file>

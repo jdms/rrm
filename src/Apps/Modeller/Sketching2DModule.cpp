@@ -49,6 +49,13 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	ac_new = new QAction(tr("&New"), this);
 	ac_new->setIcon(QIcon(":/images/icons/page_white.png"));
 
+	// Section
+	ac_newBoundary = new QAction(tr("&New Boundary"), this);
+	ac_newBoundary->setIcon(QIcon(":/images/icons/NewBoundary.png"));
+
+	ac_screenShot = new QAction(tr("&Screenshot"), this);
+	ac_screenShot->setIcon(QIcon(":/images/icons/Camera.png"));
+
 	ac_removeabove = new QAction(tr("Remove Above Intersection"), this);
 	ac_removeabove->setIcon(QIcon(":/images/icons/removeaboveintersection.png"));
 	ac_removeabove->setCheckable(true);
@@ -77,10 +84,12 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tlb_rules->addAction(ac_sketch);
 	tlb_rules->addAction(ac_removeabove);
 	tlb_rules->addAction(ac_removebelow);
-	tlb_rules->addAction(ac_region_point_);
+	//tlb_rules->addAction(ac_region_point_);
 		
 	tlb_section = this->mainWidonw_widget_->addToolBar(tr("Section"));
 	tlb_section->addAction(ac_new);
+	tlb_section->addAction(ac_newBoundary);
+	tlb_section->addAction(ac_screenShot);
 
 	//ac_select = new QAction(tr("Select"), this);
 
@@ -124,7 +133,9 @@ void Sketching2DModule::createConnections()
 	// Selection
 	//connect(Sketching2DModule::ac_select, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeEdition(); } });
 	connect(Sketching2DModule::ac_new, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::clear);
-	
+	connect(Sketching2DModule::ac_screenShot, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::screenShot);
+	connect(Sketching2DModule::ac_newBoundary, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::newBoundary);
+
 }
 
 QMainWindow * Sketching2DModule::getMainWidow()

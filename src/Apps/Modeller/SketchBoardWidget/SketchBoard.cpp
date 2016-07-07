@@ -125,17 +125,7 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		if ( event->key ( ) == Qt::Key_P )
 		{
 
-			QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
-			image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
-
-			this->sketchSession_->overlay_image_->setVisible ( false );
-
-			QPainter painter ( &image );
-			this->sketchSession_->render ( &painter );
-			image.save ( "CrossSection.png" );
-
-			this->sketchSession_->overlay_image_->setVisible ( true );
-
+			this->screenShot();
 	//		QString fileName = "RESULT_IMAGE.png";
 	//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
 	//		pixMap.save ( fileName );
@@ -150,6 +140,7 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			{
 				sketchSession_->reset();
 				this->sketch_controller->clear();
+				emit currentCrossSection(this->sketch_controller->getCrossSection());
 			}
 		}
 
@@ -162,6 +153,7 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		if( event->key () == Qt::Key_I)
 		{
 			sketchSession_->newSktech();
+			emit currentCrossSection(this->sketch_controller->getCrossSection());
 		}
 		/// Zhao Testing
 
@@ -278,6 +270,32 @@ void SketchBoard::clear()
 {
 	sketchSession_->reset();
 	this->sketch_controller->clear();
+}
+
+void SketchBoard::screenShot()
+{
+	QString filename = QFileDialog::getSaveFileName(this,"Save CrossSection Image","",tr("Images (*.png )"));
+
+	QImage imageFile;
+	QImage image ( this->sketchSession_->sceneRect ( ).size ( ).toSize ( ) , QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
+	image.fill ( Qt::transparent );                      		                        // Start all pixels transparent
+
+	this->sketchSession_->overlay_image_->setVisible ( false );
+
+	QPainter painter ( &image );
+	this->sketchSession_->render ( &painter );
+
+	QTransform myTransform;
+	myTransform.rotate(-180);
+	imageFile = image.transformed(myTransform);
+
+	imageFile.save ( filename );
+
+	this->sketchSession_->overlay_image_->setVisible ( true );
+}
+void SketchBoard::newBoundary()
+{
+	this->sketchSession_->sketchNewBoundary();
 }
 
 void SketchBoard::newSession ( Real x , Real y , Real width , Real height )

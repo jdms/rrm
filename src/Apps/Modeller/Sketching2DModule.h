@@ -65,6 +65,7 @@ class Sketching2DModule: public QDockWidget
 
 		QToolBar *tlb_section;
 			QAction *ac_newBoundary;
+			QAction *ac_screenShot;
 			QAction *ac_new;
 			/// Temporary
 			QAction * ac_region_point_;

@@ -241,16 +241,20 @@ IF(WIN32) # Check if we are on Windows
     if(MSVC) # Check if we are using the Visual Studio compiler
         add_definitions(/arch:SSE2)
         message(STATUS "- MSVC: Enabled SSE2 support")
-        add_executable(${PROJECT_NAME} ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
+        
+       	# /SUBSYSTEM:CONSOLE DEBUG VERSION
+		# /SUBSYSTEM:WINDOWN RELEASE VERSION
+        #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+		#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+        
+        add_executable(${PROJECT_NAME} 
+        							   ${CONTROLLER_SOURCES} ${CONTROLLER_HEADERS}
                                        ${SBIM_SOURCES} ${SBIM_HEADERS}      
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
                                        ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
 		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::OpenGL Qt5::Widgets planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
-		# /SUBSYSTEM:CONSOLE DEBUG VERSION
-		# /SUBSYSTEM:WINDOWN RELEASE VERSION
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
-		#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+
     elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
         message (FATAL_ERROR "GCC are not support on Windows !")
     else() # Nor MSVC or GCC (MinGW)
