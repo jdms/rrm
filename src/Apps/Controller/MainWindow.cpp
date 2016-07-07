@@ -113,8 +113,8 @@ void MainWindow::createSketchingMenuBar ( )
 {
 	mn_windows->addAction ( ac_wdwsketching );
 	ac_wdwsketching->setCheckable ( true );
-	mn_windows->addAction(ac_wdwseismic);
-	ac_wdwseismic->setCheckable(true);
+	//mn_windows->addAction(ac_wdwseismic);
+	//ac_wdwseismic->setCheckable(false);
 }
 
 void MainWindow::createSketchingToolbar ( )

@@ -142,6 +142,7 @@ QMainWindow * Sketching2DModule::getMainWidow()
 {
 	return mainWidonw_widget_;
 }
+
 QLabel * Sketching2DModule::getStatusBarText()
 {
 	return label_status_bar_text_;

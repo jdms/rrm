@@ -506,6 +506,7 @@ void GLWidget::initializeGL ( )
 //	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
 	updateRendering();
+	updateBlackScreen(this->cross_section_);
 
 }
 
@@ -1307,6 +1308,9 @@ void GLWidget::setBlackScreenModule()
 
 void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 {
+
+	this->cross_section_ = _cross_section;
+
 	std::cout << "New Curve" << std::endl;
 	//_cross_section.log();
 

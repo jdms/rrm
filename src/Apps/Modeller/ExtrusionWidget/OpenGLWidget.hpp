@@ -107,6 +107,9 @@ private:
         float stepx = 1;
         float stepz = 20;
         float volume_width = 400;
+
+
+        CrossSection cross_section_;
         // Scene related attributes
         Tucano::Trackball camera;
         Tucano::Shader*   background_;
