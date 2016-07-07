@@ -171,6 +171,10 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 			{
 			}
 		}
+		else if (event->buttons() & Qt::RightButton )
+		{
+			newSktech();
+		}
 	}
 	event->ignore();
 	update ( );

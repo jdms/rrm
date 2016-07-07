@@ -48,6 +48,7 @@ public slots:
 	void setBoundary ( Real x , Real y , Real width , Real height );
 	void screenShot();
 	void newBoundary();
+	void newSketch();
 
 	void setModeSketch();
 	void setModeRegionPoint();

@@ -80,10 +80,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		{
 			this->sketchSession_->overlay_image_->setVisible(true);
 		}
-		if ( event->key ( ) == Qt::Key_F4 )
-		{
-
-		}
 		if ( event->key ( ) == Qt::Key_F9 )
 		{
 			this->setModeSketch();
@@ -96,7 +92,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 		{
 			this->setModeRemoveAboveIntersection();
 		}
-
 		if ( event->key ( ) == Qt::Key_Up )
 		{
 			//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
@@ -121,15 +116,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			//cross_section_.changeRule ( RRM::GeologicRules::Sketch );
 			//status_text->setText ( "Sketch" );
 		}
-
-		if ( event->key ( ) == Qt::Key_P )
-		{
-
-			this->screenShot();
-	//		QString fileName = "RESULT_IMAGE.png";
-	//		QPixmap pixMap = QPixmap::grabWidget ( this->sketch_board_ );
-	//		pixMap.save ( fileName );
-		}
 		if ( event->key ( ) == Qt::Key_Space )
 		{
 			if (sketchSession_->mode() == SketchSessionTesting::InteractionMode::REGION_POINT)
@@ -143,20 +129,12 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 				emit currentCrossSection(this->sketch_controller->getCrossSection());
 			}
 		}
-
 		if ( event->key ( ) == Qt::Key_Escape)
 		{
 				sketchSession_->clearSelection();
 				this->newSession(0.0,0.0,700.0,400.0);
 		}
-
-		if( event->key () == Qt::Key_I)
-		{
-			sketchSession_->newSktech();
-			emit currentCrossSection(this->sketch_controller->getCrossSection());
-		}
 		/// Zhao Testing
-
 		if  (event->key() == Qt::Key_S)
 		{
 			std::cout << "Saving Sktech Lines" << std::endl;
@@ -200,9 +178,6 @@ void SketchBoard::keyPressEvent ( QKeyEvent *event )
 			region.steadystateflowsolver();
 			region.flowdiagnostics();
 			region.writeresult("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\results_surfaces3_try.vtk");
-
-
-
 		}
 
 	QGraphicsView::keyPressEvent(event);
@@ -272,6 +247,12 @@ void SketchBoard::clear()
 	this->sketch_controller->clear();
 }
 
+void SketchBoard::newSketch()
+{
+	sketchSession_->newSktech();
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
+}
+
 void SketchBoard::screenShot()
 {
 	QString filename = QFileDialog::getSaveFileName(this,"Save CrossSection Image","",tr("Images (*.png )"));
@@ -293,6 +274,7 @@ void SketchBoard::screenShot()
 
 	this->sketchSession_->overlay_image_->setVisible ( true );
 }
+
 void SketchBoard::newBoundary()
 {
 	this->sketchSession_->sketchNewBoundary();

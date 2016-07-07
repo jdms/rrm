@@ -526,7 +526,7 @@ namespace RRM
 							if ( (!edge_vertices[0].is_extreme) && (!edges_[e2.id_].is_boundary_) )
 							{
 //								/// REMOVE BELOW
-								if ( (test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y()) )
+								if ( (test[edge_vertices[0].input_curve-1].y() > c1[indices[0]-1].y()) )
 								{
 
 									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
@@ -628,7 +628,7 @@ namespace RRM
 							if ( ( !edge_vertices[0].is_extreme && !edge_vertices[1].is_extreme ) && ( !edges_[e2.id_].is_boundary_ ) )
 							{
 //								/// REMOVE BELOW
-								if ( ( test[edge_vertices[0].input_curve - 1].y ( ) > edge_vertices[0].location_.y ( ) ) )
+								if ((test[edge_vertices[0].input_curve - 1].y() > c1[indices[0] - 1].y()))
 								{
 
 									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
@@ -668,7 +668,7 @@ namespace RRM
 							}else if ( (!edge_vertices[0].is_extreme) && (!edges_[e2.id_].is_boundary_) )
 							{
 //								/// REMOVE BELOW
-								if ( (test[edge_vertices[0].input_curve-1].y() > edge_vertices[0].location_.y()) )
+								if ((test[edge_vertices[0].input_curve - 1].y() > c1[indices[0] - 1].y()))
 								{
 
 									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
@@ -699,7 +699,7 @@ namespace RRM
 							}else if ( (!edge_vertices[1].is_extreme) && (!edges_[e2.id_].is_boundary_) )
 							{
 //								/// REMOVE BELOW
-								if ( (test[edge_vertices[1].input_curve-1].y() > edge_vertices[1].location_.y()) )
+								if ((test[edge_vertices[0].input_curve - 1].y() > c1[indices[0] - 1].y()))
 								{
 
 									if ( current_rule == GeologicRules::REMOVE_BELOW_INTERSECTION )
