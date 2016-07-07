@@ -532,7 +532,13 @@ bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 
 	this->initialization( x , y , w , h );
 
-	overlay_image_->setPixmap ( pixmap );
+	QPixmap temp;
+
+	QTransform myTransform;
+	myTransform.scale(1, -1);
+	temp = pixmap.transformed(myTransform);
+
+	overlay_image_->setPixmap ( temp );
 
 //	this->boundaryc_->setNewBoundary ( x , y , w , h );
 //	this->setSceneRect ( this->boundaryc_->boundingRect( ) );

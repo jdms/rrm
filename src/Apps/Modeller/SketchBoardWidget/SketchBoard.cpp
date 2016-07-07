@@ -286,7 +286,7 @@ void SketchBoard::screenShot()
 	this->sketchSession_->render ( &painter );
 
 	QTransform myTransform;
-	myTransform.rotate(-180);
+	myTransform.scale(-1,-1);
 	imageFile = image.transformed(myTransform);
 
 	imageFile.save ( filename );
