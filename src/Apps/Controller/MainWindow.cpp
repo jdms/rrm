@@ -5,7 +5,8 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	this->setFocusPolicy ( Qt::StrongFocus );
 	this->setFocus ( );
 	this->setAcceptDrops ( true );
-
+	this->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks | QMainWindow::GroupedDragging);
+	this->setDockNestingEnabled(true);
 	this->setMinimumSize ( 800 , 600 );
 
 	create2DModule ( );
