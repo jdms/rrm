@@ -1315,7 +1315,7 @@ void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
 	//_cross_section.log();
 
 	this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,500,blackScreen_cube_,this->patch_,this->colorBS_);
+	this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,this->volume_width,this->blackScreen_cube_,this->patch_,this->colorBS_);
 
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
 	glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );

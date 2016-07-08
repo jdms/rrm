@@ -40,8 +40,10 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 	this->sketch_controller = new SketchController();
 
 	// Notify the controller the Sketch curve
-	connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF,QColor) ) ,
-		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF,QColor) ) );
+	//connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF,QColor) ) ,
+//		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF,QColor) ) );
+
+	connect(this->sketchSession_, &SketchSessionTesting::newSketchCurve, [=](QPolygonF p, QColor c) { this->sketch_controller->insertCurve(p, c); emit currentCrossSection(this->sketch_controller->getCrossSection()); });
 
 	connect ( this->sketchSession_    , SIGNAL( newSessionSignal ( Real, Real, Real, Real ) ) ,
 		  this 			  , SLOT  ( newSession ( Real, Real, Real, Real ) ) );
@@ -55,7 +57,7 @@ SketchBoard::SketchBoard ( QWidget *parent ) :	QGraphicsView ( parent )
 	// Notify the view with the new configuration of Lines
 	connect ( this->sketch_controller , SIGNAL( updateSBIM(const std::map<unsigned int, std::pair<QColor,QPolygonF> >&, const std::map<unsigned int, QPointF>& ) ) ,
 			  this->sketchSession_,       SLOT( updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >&, const std::map<unsigned int, QPointF>&)));
-
+	
 	this->sketch_controller->updateSBIM();
 
 	/// Interface
@@ -211,7 +213,6 @@ void SketchBoard::wheelEvent ( QWheelEvent *event )
 	}
 }
 
-
 void SketchBoard::setModeSketch()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
@@ -245,6 +246,7 @@ void SketchBoard::clear()
 {
 	sketchSession_->reset();
 	this->sketch_controller->clear();
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
 }
 
 void SketchBoard::newSketch()

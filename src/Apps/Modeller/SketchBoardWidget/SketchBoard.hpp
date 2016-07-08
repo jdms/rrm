@@ -35,7 +35,7 @@ public:
 
 	void wheelEvent ( QWheelEvent *event );
 	void keyPressEvent ( QKeyEvent *event );
-
+	
 public slots:
 	// clear
 	void clear();
