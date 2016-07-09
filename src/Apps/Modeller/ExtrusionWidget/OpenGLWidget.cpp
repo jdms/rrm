@@ -1349,6 +1349,10 @@ void GLWidget::black_screen_stepx ( int x )
 	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
+	glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	update();
 }
 void GLWidget::black_screen_stepz ( int z )
@@ -1364,6 +1368,10 @@ void GLWidget::black_screen_stepz ( int z )
 	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
 
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
+	glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	update();
 }
 void GLWidget::black_screen_volumeWidth ( int w )
@@ -1378,6 +1386,10 @@ void GLWidget::black_screen_volumeWidth ( int w )
 	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
 	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
+	glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	update();
 }

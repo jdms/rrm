@@ -391,19 +391,21 @@ void FlowVisualizationController::getSurfacesFromCrossSection( const CrossSectio
 
     int extrusion_size = 3;
     int number_points = 0; /// Number of point per sketch
+	int total_number_points = 0; 
 
     std::vector<unsigned int> number_edges_; // Number of Sketch Segments
     std::vector< float > colors;
 
     // Number of Internal Surface
-    int number_of_surfaces = cross_section.curves_history_.size();
+    //int number_of_surfaces = cross_section.curves_history_.size();
+	int number_of_surfaces = 0;
 
     float diagonal = std::pow((cross_section.viewPort_.first.x() - cross_section.viewPort_.second.x()), 2) + std::pow((cross_section.viewPort_.first.y() - cross_section.viewPort_.second.y()), 2);
     diagonal = std::sqrt(diagonal);
 
 
 
-    for (auto& history_iterator : cross_section.curves_history_)
+    // for (auto& history_iterator : cross_section.curves_history_)
     {
 
         number_points = 0;
@@ -413,67 +415,97 @@ void FlowVisualizationController::getSurfacesFromCrossSection( const CrossSectio
         {
             //now is number of surfaces
 
-            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true) &&
-                (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
+            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true))
+				// && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
             {
                 //only internal sketched
                 number_edges_.push_back(edge_iterator.second.id_);
                 edge_iterator.second.segment.curve.chaikinFilter(3);
                 number_points += edge_iterator.second.segment.curve.size();
+
+				nu.push_back(number_points);
+				nv.push_back(extrusion_size);
+				total_number_points += number_points*extrusion_size;
+				number_points = 0;
+				++number_of_surfaces;
             }
         }
 
-        number_points -= (number_edges_.size() - 1);
-
-        nu.push_back( number_points );
-        nv.push_back( extrusion_size );
+//        number_points -= (number_edges_.size() - 1);
 
 
-        float extrusion_step = 0;
+		float extrusion_step = (diagonal * 0.5);
 
-        for (int j = 0; j < extrusion_size; j++) //output is firstly x direction then y direction for each surface
-        {
+/*
+		int index = j*nu[k] + i + offset;
 
-            for (unsigned int id = 0; id < number_edges_.size() - 1; id++)
+		double x = position[3 * index];
+		double y = position[3 * index + 1];
+		double z = position[3 * index + 2];
+*/
+		int index = 0; 
+		int offset = 0; 
+		
+		positions.resize(3*total_number_points); 
+		colors.resize(3*total_number_points);
+
+            for (unsigned int id = 0; id < number_edges_.size(); id++)
             {
                 //now is number of surfaces
 
                 unsigned int edge_id = number_edges_[id];
 
 
-                for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size() - 1; it++)
-                {
+                for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size(); it++)
+
+				{
+
+					for (int j = 0; j < extrusion_size; j++) //output is firstly x direction then y direction for each surface
+					
+					{
 
 //                    his->curves_colors[edges_iterator.second.segment.curve_index] = Eigen::Vector3f(edges_iterator.second.r, edges_iterator.second.g, edges_iterator.second.b);
 
-                    positions.push_back( cross_section.edges_[edge_id].segment.curve[it].x() );
-                    positions.push_back( j + extrusion_step );
-                    positions.push_back( cross_section.edges_[edge_id].segment.curve[it].y() );
+                    //positions.push_back( cross_section.edges_[edge_id].segment.curve[it].x() );
+                    //positions.push_back( j + extrusion_step );
+                    //positions.push_back( cross_section.edges_[edge_id].segment.curve[it].y() );
 
-                    colors.push_back( cross_section.edges_[edge_id].r );
-                    colors.push_back( cross_section.edges_[edge_id].g );
-                    colors.push_back( cross_section.edges_[edge_id].b );
+                    //colors.push_back( cross_section.edges_[edge_id].r );
+                    //colors.push_back( cross_section.edges_[edge_id].g );
+                    //colors.push_back( cross_section.edges_[edge_id].b );
 
+					index = j*cross_section.edges_[edge_id].segment.curve.size() + it + offset; 
 
+					positions[3*index +0] = (cross_section.edges_[edge_id].segment.curve[it].x());
+					positions[3*index +1] = (j * extrusion_step);
+					positions[3*index +2] = (cross_section.edges_[edge_id].segment.curve[it].y());
+
+					colors[3*index +0] = (cross_section.edges_[edge_id].r);
+					colors[3*index +1] = (cross_section.edges_[edge_id].g);
+					colors[3*index +2] = (cross_section.edges_[edge_id].b);
+
+					
                 }
             }
 
-            for (std::size_t it = 0; it < cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
-            {
+			offset += cross_section.edges_[edge_id].segment.curve.size() * extrusion_size;
+
+            //for (std::size_t it = 0; it < cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
+            //{
 
 
-                positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
-                positions.push_back( (float) j + extrusion_step );
-                positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
+            //    positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
+            //    positions.push_back( (float) j + extrusion_step );
+            //    positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
 
-                colors.push_back( cross_section.edges_[number_edges_.back()].r );
-                colors.push_back( cross_section.edges_[number_edges_.back()].g );
-                colors.push_back( cross_section.edges_[number_edges_.back()].b );
+            //    colors.push_back( cross_section.edges_[number_edges_.back()].r );
+            //    colors.push_back( cross_section.edges_[number_edges_.back()].g );
+            //    colors.push_back( cross_section.edges_[number_edges_.back()].b );
 
 
-            }
+            //}
 
-            extrusion_step += ( diagonal * 0.5);
+            //extrusion_step += ( diagonal * 0.5);
         }
 
     }

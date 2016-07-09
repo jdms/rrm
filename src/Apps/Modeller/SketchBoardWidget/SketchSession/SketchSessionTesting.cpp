@@ -18,9 +18,9 @@ SketchSessionTesting::SketchSessionTesting ( QObject *parent ) : QGraphicsScene 
 	/// Drag and Drop Feature
 	overlay_image_ = new QGraphicsPixmapItem();
 	this->addItem(overlay_image_);
-	overlay_image_->setZValue(1);
+	overlay_image_->setZValue(0);
 
-	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55,55, 55, 255));
+	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55,100, 55, 75));
 	this->addItem(boundaryc_);
 	boundaryc_->setZValue(0);
 
@@ -133,6 +133,18 @@ void SketchSessionTesting::newSktech()
 
 		input_curve_.clear();
 		over_sketch_.clear();
+
+
+		std::random_device rd; // obtain a random number from hardware
+		std::mt19937 eng(rd()); // seed the generator
+		std::uniform_int_distribution<unsigned int> distr(0, 255);
+
+		int r = distr(eng);  // generates number in the range 1..6
+		int g = distr(eng);  // generates number in the range 1..6
+		int b = distr(eng);  // generates number in the range 1..6
+
+
+		setColor(QColor(r, g, b));
 
 
 }
