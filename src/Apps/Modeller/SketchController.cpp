@@ -25,6 +25,10 @@ void SketchController::clear ( )
 					this->cross_section_.viewPort_.first.y(),
 					this->cross_section_.viewPort_.second.x(),
 					this->cross_section_.viewPort_.second.y());
+
+	this->cross_section_redo_ = this->cross_section_;
+	this->cross_section_undo_ = this->cross_section_;
+
 	updateSBIM();
 }
 
@@ -36,6 +40,8 @@ void SketchController::setRule( RRM::GeologicRules _update_rule)
 void SketchController::newSession ( qreal x , qreal y , qreal width , qreal height )
 {
 	cross_section_.initialize ( x , y , width , height ); // THE MODEL
+	this->cross_section_redo_ = this->cross_section_;
+	this->cross_section_undo_ = this->cross_section_;
 	updateSBIM();
 }
 
@@ -54,7 +60,20 @@ void SketchController::insertCurve(QPolygonF _raw_sketch_curve, QColor _color)
 
 	Curve2D curve = convertCurves(_raw_sketch_curve);
 //
-	cross_section_.insertCurve(curve, _color.redF(), _color.greenF(), _color.blueF());
+	CrossSection tmp = this->cross_section_;
+
+	unsigned int result = cross_section_.insertCurve(curve, _color.redF(), _color.greenF(), _color.blueF());
+
+	if (result == 1)
+	{
+		this->cross_section_redo_ = cross_section_;
+		this->cross_section_undo_ = tmp;
+
+		std::cout << "insert" << std::endl;
+
+		this->updateSBIM();
+	}
+	
 
 //	cross_section_.log();
 //
@@ -73,13 +92,12 @@ void SketchController::insertCurve(QPolygonF _raw_sketch_curve, QColor _color)
 //
 //	next++;
 //	cross_section_.log();
-	std::cout << "insert" << std::endl;
 
-	this->updateSBIM();
 }
 // updateSBIM with the new crossSection. Emit a Signal updateSBIM at the end to notify the view
 void SketchController::updateSBIM (  )
 {
+
 	std::map<unsigned int, std::pair<QColor, QPolygonF> > view_curves_;
 	std::map<unsigned int, QPointF>   view_vertices_;
 
@@ -423,12 +441,28 @@ void SketchController::crossSection_3(RRM::CrossSection<double>& _cross_section,
 void SketchController::setCrossSection( const RRM::CrossSection<qreal>& _cross_section)
 {
 	this->cross_section_ = _cross_section;
+
+	this->cross_section_redo_ = this->cross_section_;
+	this->cross_section_undo_ = this->cross_section_;
+
 	this->updateSBIM();
 }
 
 SketchController::CrossSection SketchController::getCrossSection ( ) const
 {
 	return this->cross_section_;
+}
+
+void SketchController::undo()
+{
+	this->cross_section_ = cross_section_undo_;
+	this->updateSBIM();
+}
+
+void SketchController::redo()
+{
+	this->cross_section_ = this->cross_section_redo_;
+	this->updateSBIM();
 }
 
 QPolygonF SketchController::convertCurves ( Curve2D& _curve )

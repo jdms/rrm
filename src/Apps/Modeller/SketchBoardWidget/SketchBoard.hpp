@@ -50,6 +50,9 @@ public slots:
 	void newBoundary();
 	void newSketch();
 
+	void undo();
+	void redo();
+
 	void setModeSketch();
 	void setModeRegionPoint();
 	void setModeRemoveAboveIntersection();

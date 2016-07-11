@@ -93,6 +93,7 @@ class SketchSessionTesting: public QGraphicsScene
 		void setRegionMode();
 		void setOverSketchingMode();
 		void clear();
+		void clearSketch();
 		void reset();
 		// Update the view with the new Cross Section configuration
 		void updateSBIM(const std::map<unsigned int, std::pair<QColor,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices);

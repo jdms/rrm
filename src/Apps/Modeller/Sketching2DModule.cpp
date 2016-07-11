@@ -53,6 +53,16 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	ac_insertCurve = new QAction(tr("&Insert Curve"), this);
 	ac_insertCurve->setIcon(QIcon(":/images/icons/InsertCurve.png"));
 	ac_insertCurve->setShortcut(Qt::Key_I);
+
+	ac_denyCurve = new QAction(tr("&Undo Curve"), this);
+	ac_denyCurve->setIcon(QIcon(":/images/icons/denyCurve.png"));
+
+	ac_undo = new QAction(tr("&Undo"), this);
+	ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
+
+	ac_redo = new QAction(tr("&Redo"), this);
+	ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
+
 	// Section
 	ac_newBoundary = new QAction(tr("&New Boundary"), this);
 	ac_newBoundary->setIcon(QIcon(":/images/icons/NewBoundary.png"));
@@ -97,6 +107,9 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tlb_section->addAction(ac_newBoundary);
 	tlb_section->addAction(ac_screenShot);
 	tlb_section->addAction(ac_insertCurve);
+	tlb_section->addAction(ac_denyCurve);
+	tlb_section->addAction(ac_undo);
+	tlb_section->addAction(ac_redo);
 
 	//ac_select = new QAction(tr("Select"), this);
 
@@ -143,6 +156,11 @@ void Sketching2DModule::createConnections()
 	connect(Sketching2DModule::ac_screenShot, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::screenShot);
 	connect(Sketching2DModule::ac_newBoundary, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::newBoundary);
 	connect(Sketching2DModule::ac_insertCurve, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::newSketch);
+
+	connect(Sketching2DModule::ac_denyCurve, &QAction::triggered, Sketching2DModule::sketch_board_->sketchSession_, &SketchSessionTesting::clearSketch);
+
+	connect(Sketching2DModule::ac_undo, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::undo);
+	connect(Sketching2DModule::ac_redo, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::redo);
 
 
 }

@@ -34,7 +34,7 @@ class SketchController : public QObject
 		~SketchController ( );
 
 		void clear ( );
-
+		
 	        QPolygonF convertCurves ( Curve2D& _curve );
 	        Curve2D   convertCurves ( QPolygonF _polygon );
 
@@ -43,6 +43,10 @@ class SketchController : public QObject
 		void crossSection_3 ( CrossSection& _cross_section , double scale = 100 );
 
 	public slots:
+
+		/// Modifies
+		void undo();
+		void redo();
 
 		void setRule( RRM::GeologicRules _update_rule);
 
@@ -63,6 +67,8 @@ class SketchController : public QObject
 	private:
         	// The Model
 		CrossSection cross_section_;
+		CrossSection cross_section_undo_;
+		CrossSection cross_section_redo_;
         	int next;
         	// The View
 };

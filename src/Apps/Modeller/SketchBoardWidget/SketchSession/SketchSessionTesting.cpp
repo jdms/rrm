@@ -529,6 +529,18 @@ void SketchSessionTesting::clear()
 	
 }
 
+
+void SketchSessionTesting::clearSketch()
+{
+	input_sketch_->clear();
+	current_sketch_->clear();
+
+	input_curve_.clear();
+	over_sketch_.clear();
+
+	update();
+}
+
 bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 {
 	// The bounding rectangle of the scene

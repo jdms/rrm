@@ -249,6 +249,19 @@ void SketchBoard::clear()
 	emit currentCrossSection(this->sketch_controller->getCrossSection());
 }
 
+void SketchBoard::undo()
+{
+	this->sketch_controller->undo();
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
+}
+
+void SketchBoard::redo()
+{
+	this->sketch_controller->redo();
+	emit currentCrossSection(this->sketch_controller->getCrossSection());
+	
+}
+
 void SketchBoard::newSketch()
 {
 	sketchSession_->newSktech();

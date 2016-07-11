@@ -68,6 +68,9 @@ class Sketching2DModule: public QDockWidget
 			QAction *ac_screenShot;
 			QAction *ac_new;
 			QAction *ac_insertCurve;
+			QAction *ac_denyCurve;
+			QAction *ac_undo;
+			QAction *ac_redo;
 			/// Temporary
 			QAction * ac_region_point_;
 
