@@ -74,7 +74,8 @@ class GLWidget: public QOpenGLWidget
 	 	// Deployed
 		void loadShaderByResources();
 		// Development
-		void loadShaders();
+		void loadShadersDebug();
+		void loadShaders( const QString& shaderDirectory );
 		void reloadShaders();
 		void deleteShaders();
 		// Seismic

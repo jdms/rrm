@@ -389,7 +389,7 @@ void GLWidget::initializeGL ( )
 
 	// IMPORTANT FOR THE DEPLOY VERSION
 	loadShaderByResources ( );
-	//loadShaders();
+	//loadShadersDebug();
 	//loadShaderByQtResources();
 	//596x291x297
 
@@ -603,12 +603,12 @@ void GLWidget::loadShaderByQtResources()
 	background_ = new Tucano::Shader ( "BackGround" , QString(":/Shaders/DummyQuad.vert" ).toStdString ( ),
 					                  	  	  	  	  	  	  	    QString(":/Shaders/DummyQuad.frag" ).toStdString ( ),
 														    QString(":/Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
-        background_->initialize ( );
+    background_->initialize ( );
 
-		mesh_shader_ = new Tucano::Shader("Seismic",  QString(":/Shaders/Seismic.vert").toStdString(),
+	mesh_shader_ = new Tucano::Shader("Seismic",  QString(":/Shaders/Seismic.vert").toStdString(),
 						  	  	  	  	  	  	  	  	    QString(":/Shaders/Seismic.frag").toStdString(),
 														    QString(":/Shaders/Seismic.geom").toStdString(), "", "");
-		mesh_shader_->initialize();
+	mesh_shader_->initialize();
 
 	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , QString(":/Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
 					             	     	      	      	      	      	      	      	      	      	      	    QString(":/Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
@@ -642,47 +642,12 @@ void GLWidget::loadShaderByResources ( )
 	halt();
 #endif
 
-	//! Effects -_
-	blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/BlankScreenCube.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/BlankScreenCube.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
-	blackScreen_cube_shader_->initialize ( );
-	//! Effects --
-	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
-					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
-						       ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	patch_shader_->initialize ( );
-	//! Effects --
-	lines_shader_ = new Tucano::Shader ( "Lines" , ( shaderDirectory + "Shaders/SketchCurve.vert" ).toStdString ( ),
-					               ( shaderDirectory + "Shaders/SketchCurve.frag" ).toStdString ( ),
-						       ( shaderDirectory + "Shaders/SketchCurve.geom" ).toStdString ( ));
-	lines_shader_->initialize ( );
-
-	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
-					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
-						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
-        background_->initialize ( );
-
-		mesh_shader_ = new Tucano::Shader("Seismic", (shaderDirectory + "Shaders/Seismic.vert").toStdString(),
-													(shaderDirectory + "Shaders/Seismic.frag").toStdString(),
-													(shaderDirectory + "Shaders/Seismic.geom").toStdString(), "", "");
-		mesh_shader_->initialize();
-
-	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	seismic_cube_shader_->initialize ( );
-
-	//! Effects --
-	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
-	seismic_plane_shader_->initialize ( );
+	this->loadShaders(shaderDirectory);
 
 }
 
 // Development propose
-void GLWidget::loadShaders ( )
+void GLWidget::loadShadersDebug ( )
 {
 	//! Binary absolute location
 	QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
@@ -706,47 +671,52 @@ void GLWidget::loadShaders ( )
 	halt();
 #endif
 
+	this->loadShaders(shaderDirectory);
+
+}
+
+void GLWidget::loadShaders(const QString& shaderDirectory)
+{
 	//! Effects --
-	blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" , ( shaderDirectory + "Shaders/BlankScreenCube.vert" ).toStdString ( ),
-					             ( shaderDirectory + "Shaders/BlankScreenCube.frag" ).toStdString ( ),
-						     ( shaderDirectory + "Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
-	blackScreen_cube_shader_->initialize ( );
+	blackScreen_cube_shader_ = new Tucano::Shader("Cube", (shaderDirectory + "Shaders/BlankScreenCube.vert").toStdString(),
+		(shaderDirectory + "Shaders/BlankScreenCube.frag").toStdString(),
+		(shaderDirectory + "Shaders/BlankScreenCube.geom").toStdString(), "", "");
+	blackScreen_cube_shader_->initialize();
 	//! Effects --
-	patch_shader_ = new Tucano::Shader ( "Patch" , ( shaderDirectory + "Shaders/SinglePassWireframe.vert" ).toStdString ( ),
-					               ( shaderDirectory + "Shaders/SinglePassWireframe.frag" ).toStdString ( ),
-						       ( shaderDirectory + "Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	patch_shader_->initialize ( );
+	patch_shader_ = new Tucano::Shader("Patch", (shaderDirectory + "Shaders/SinglePassWireframe.vert").toStdString(),
+		(shaderDirectory + "Shaders/SinglePassWireframe.frag").toStdString(),
+		(shaderDirectory + "Shaders/SinglePassWireframe.geom").toStdString(), "", "");
+	patch_shader_->initialize();
 	//! Effects --
-	lines_shader_ = new Tucano::Shader ( "Lines" , ( shaderDirectory + "Shaders/SketchCurve.vert" ).toStdString ( ),
-					               ( shaderDirectory + "Shaders/SketchCurve.frag" ).toStdString ( ),
-						       ( shaderDirectory + "Shaders/SketchCurve.geom" ).toStdString ( ));
-	lines_shader_->initialize ( );
+	lines_shader_ = new Tucano::Shader("Lines", (shaderDirectory + "Shaders/SketchCurve.vert").toStdString(),
+		(shaderDirectory + "Shaders/SketchCurve.frag").toStdString(),
+		(shaderDirectory + "Shaders/SketchCurve.geom").toStdString());
+	lines_shader_->initialize();
 
 
 	// ! Blue BlackGround --
-	background_ = new Tucano::Shader ( "BackGround" , ( shaderDirectory + "Shaders/DummyQuad.vert" ).toStdString ( ),
-					                  ( shaderDirectory + "Shaders/DummyQuad.frag" ).toStdString ( ),
-						          ( shaderDirectory + "Shaders/DummyQuad.geom" ).toStdString ( ) , "" , "" );
-        background_->initialize ( );
+	background_ = new Tucano::Shader("BackGround", (shaderDirectory + "Shaders/DummyQuad.vert").toStdString(),
+		(shaderDirectory + "Shaders/DummyQuad.frag").toStdString(),
+		(shaderDirectory + "Shaders/DummyQuad.geom").toStdString(), "", "");
+	background_->initialize();
 
 
-        mesh_shader_ = new Tucano::Shader ( "Seismic" , ( shaderDirectory + "Shaders/Seismic.vert" ).toStdString ( ),
-					                ( shaderDirectory + "Shaders/Seismic.frag" ).toStdString ( ),
-							( shaderDirectory + "Shaders/Seismic.geom" ).toStdString ( ), "" , "" );
-        mesh_shader_->initialize ( );
-
-	//! Effects --
-	seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , ( shaderDirectory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-	seismic_cube_shader_->initialize ( );
+	mesh_shader_ = new Tucano::Shader("Seismic", (shaderDirectory + "Shaders/Seismic.vert").toStdString(),
+		(shaderDirectory + "Shaders/Seismic.frag").toStdString(),
+		(shaderDirectory + "Shaders/Seismic.geom").toStdString(), "", "");
+	mesh_shader_->initialize();
 
 	//! Effects --
-	seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane",( shaderDirectory + "Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
-					             	     	      ( shaderDirectory + "Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
-								      ( shaderDirectory + "Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
-	seismic_plane_shader_->initialize ( );
+	seismic_cube_shader_ = new Tucano::Shader("Seismic  Cube", (shaderDirectory + "Shaders/CubeSinglePassWireframe.vert").toStdString(),
+		(shaderDirectory + "Shaders/CubeSinglePassWireframe.frag").toStdString(),
+		(shaderDirectory + "Shaders/CubeSinglePassWireframe.geom").toStdString(), "", "");
+	seismic_cube_shader_->initialize();
 
+	//! Effects --
+	seismic_plane_shader_ = new Tucano::Shader("Seismic  Plane", (shaderDirectory + "Shaders/SeismicSlicePlane.vert").toStdString(),
+		(shaderDirectory + "Shaders/SeismicSlicePlane.frag").toStdString(),
+		(shaderDirectory + "Shaders/SeismicSlicePlane.geom").toStdString(), "", "");
+	seismic_plane_shader_->initialize();
 }
 
 void GLWidget::clear()
