@@ -9,7 +9,7 @@ View3DModule::View3DModule ( QWidget* parent ) : QDockWidget(parent)
 	QFrame *fr = new QFrame ( this );
 	fr->setFrameStyle ( QFrame::Box | QFrame::Sunken );
 
-	this->hb_canvas3d = new QVBoxLayout (this);
+	this->hb_canvas3d = new QVBoxLayout ();
 
 	fr->setLayout ( hb_canvas3d );
 	this->setWidget ( fr );
