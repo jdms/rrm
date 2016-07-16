@@ -473,7 +473,8 @@ QPolygonF SketchController::convertCurves ( Curve2D& _curve )
 
 	for (std::size_t it = 0; it < _curve.size(); it++)
 	{
-		polygonal_curve[it] = QPointF(_curve[it].x(),_curve[it].y());
+		// RRM coordinate System to Qt
+		polygonal_curve[it] = QPointF(_curve[it].x(),-1*_curve[it].y());
 	}
 
 	return polygonal_curve;
@@ -486,7 +487,8 @@ SketchController::Curve2D SketchController::convertCurves ( QPolygonF _polygon )
 	for ( int it = 0; it < _polygon.size(); it++)
 	{
 		// \fixme curvendemisional doenst have a clear interface over the its polyline ...
-		polygonal_curve.push_back( SketchController::Point2D(_polygon[it].x(),_polygon[it].y()) );
+		// RRM coordinate System to Qt
+		polygonal_curve.push_back( SketchController::Point2D(_polygon[it].x(),-1*_polygon[it].y()) );
 	}
 
 	return polygonal_curve;

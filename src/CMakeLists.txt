@@ -9,7 +9,7 @@ find_package(GLEW REQUIRED)
 # message( "Glew Library: " ${GLEW_LIBRARY} )
 
 ## It asks for Qt5_DIR
-find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL)
+find_package(Qt5 COMPONENTS Core Gui Svg Widgets OpenGL)
 
 ## Find CGAL 4.7
 #find_package(CGAL REQUIRED COMPONENTS Core Qt5 )

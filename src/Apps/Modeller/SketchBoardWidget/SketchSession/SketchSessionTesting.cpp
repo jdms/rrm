@@ -519,7 +519,7 @@ void SketchSessionTesting::clear()
 		input_curve_.clear();
 		over_sketch_.clear();
 
-		this->boundaryc_->setNewBoundary(0.0, 0.0, 0.0, 0.0);\
+		this->boundaryc_->setNewBoundary(0.0, 0.0, 0.0, 0.0);
 
 		clearRegionMode();
 
@@ -560,13 +560,7 @@ bool SketchSessionTesting::initializationWithImage ( const QPixmap& pixmap )
 
 	this->initialization( x , y , w , h );
 
-	QPixmap temp;
-
-	QTransform myTransform;
-	myTransform.scale(1, -1);
-	temp = pixmap.transformed(myTransform);
-
-	overlay_image_->setPixmap ( temp );
+	overlay_image_->setPixmap ( pixmap );
 
 //	this->boundaryc_->setNewBoundary ( x , y , w , h );
 //	this->setSceneRect ( this->boundaryc_->boundingRect( ) );

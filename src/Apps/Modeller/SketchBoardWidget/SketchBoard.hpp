@@ -3,12 +3,15 @@
 #ifndef _SURFACE_HPP_
 #define _SURFACE_HPP_
 
+#include <QtCore/QtMath>
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QLabel>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QSurfaceFormat>
 #include <QtGUI/QTransform>
+#include <QtSVG/QSvgGenerator>
+
 
 #include <QtWidgets/QFileDialog>
 
@@ -47,6 +50,10 @@ public slots:
 
 	void setBoundary ( Real x , Real y , Real width , Real height );
 	void screenShot();
+	/// SVG Image
+	void saveVector(const  QString& _filename);
+	/// Raster Image
+	void saveRaster(const  QString& _filename);
 	void newBoundary();
 	void newSketch();
 
