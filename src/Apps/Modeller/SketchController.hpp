@@ -37,11 +37,6 @@ class SketchController : public QObject
 		
 	        QPolygonF convertCurves ( Curve2D& _curve );
 	        Curve2D   convertCurves ( QPolygonF _polygon );
-
-		void crossSection_1 ( CrossSection& _cross_section , double scale = 100 );
-		void crossSection_2 ( CrossSection& _cross_section , double scale = 100 );
-		void crossSection_3 ( CrossSection& _cross_section , double scale = 100 );
-
 	public slots:
 
 		/// Modifies

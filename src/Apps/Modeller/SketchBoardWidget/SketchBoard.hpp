@@ -1,10 +1,10 @@
 // Data created August 6, 2015
-
 #ifndef _SURFACE_HPP_
 #define _SURFACE_HPP_
 
 #include <QtCore/QtMath>
 #include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QLabel>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
@@ -12,12 +12,7 @@
 #include <QtGUI/QTransform>
 #include <QtSVG/QSvgGenerator>
 
-
-#include <QtWidgets/QFileDialog>
-
-
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
-
 #include "Modeller/SketchController.hpp"
 
 /**
@@ -59,6 +54,8 @@ public slots:
 
 	void undo();
 	void redo();
+	void zoomIn();
+	void zoomOut();
 
 	void setModeSketch();
 	void setModeRegionPoint();
@@ -73,6 +70,7 @@ public:
 
 	int scale_in_;
 	int scale_out_;
+	double scaleFactor = 1.15;
 
 	QLabel * status_text_;
 

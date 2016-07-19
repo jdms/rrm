@@ -63,6 +63,10 @@ class Sketching2DModule: public QDockWidget
 
     private:
 
+		/// View
+		QAction * ac_zoomIn;
+		QAction * ac_zoomOut;
+
 		QToolBar *tlb_section;
 			QAction *ac_newBoundary;
 			QAction *ac_screenShot;

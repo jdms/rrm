@@ -5,7 +5,7 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 	this->setFocusPolicy ( Qt::StrongFocus );
 	this->setFocus ( );
 	this->setAcceptDrops ( true );
-	this->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks | QMainWindow::GroupedDragging);
+	this->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks);
 	this->setDockNestingEnabled(true);
 	this->setMinimumSize ( 800 , 600 );
 
@@ -50,7 +50,7 @@ void MainWindow::createMenuBar ( )
 
 	//mn_sketching->addAction ( ac_newBoundary );
 
-	mn_windows = menuBar ( )->addMenu ( tr ( "&Windows" ) );
+	mn_windows = menuBar ( )->addMenu ( tr ( "&View" ) );
 	mn_help = menuBar ( )->addMenu ( tr ( "&Help" ) );
 }
 

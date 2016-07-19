@@ -195,7 +195,7 @@ void SketchSessionTesting::mousePressEvent ( QGraphicsSceneMouseEvent* event )
 void SketchSessionTesting::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 {
 
-	QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(event->scenePos().y());
+	QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(-event->scenePos().y());
 	this->coordinates_->setText(mouse_coordiante);
 
 	if (mode_ == InteractionMode::REGION_POINT)

@@ -33,6 +33,7 @@ void Sketching2DModule::createWindow ( )
 	
 	sketch_board_ = new SketchBoard();
 	// Default Sketch Window
+	// Use Qt Coordinates
 	sketch_board_->newSession(0.0, 0.0, 700, 400);
 	this->mainWidonw_widget_->setCentralWidget(sketch_board_);
 
@@ -45,6 +46,15 @@ void Sketching2DModule::createWindow ( )
 
 void Sketching2DModule::createActions ( QWidget* parent )
 {
+	// View
+	ac_zoomIn = new QAction(tr("&Zoom In"), this);
+	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
+	ac_zoomIn->setShortcut(QKeySequence::ZoomIn);
+		
+	ac_zoomOut = new QAction(tr("&Zoom Out"), this);
+	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
+	ac_zoomOut->setShortcut(QKeySequence::ZoomOut);
+
 	// Section
 	ac_new = new QAction(tr("&New"), this);
 	ac_new->setIcon(QIcon(":/images/icons/page_white.png"));
@@ -90,6 +100,10 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	
 	tlb_rules = this->mainWidonw_widget_->addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
 	action_group_rules_ = new QActionGroup(tlb_rules);
+
+	// View
+	this->addAction(ac_zoomOut);
+	this->addAction(ac_zoomIn);
 
 	action_group_rules_->addAction(ac_removeabove);
 	action_group_rules_->addAction(ac_removebelow);
@@ -162,6 +176,9 @@ void Sketching2DModule::createConnections()
 	connect(Sketching2DModule::ac_undo, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::undo);
 	connect(Sketching2DModule::ac_redo, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::redo);
 
+	// View
+	connect(Sketching2DModule::ac_zoomIn, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::zoomIn);
+	connect(Sketching2DModule::ac_zoomOut, &QAction::triggered, Sketching2DModule::sketch_board_, &SketchBoard::zoomOut);
 
 }
 
