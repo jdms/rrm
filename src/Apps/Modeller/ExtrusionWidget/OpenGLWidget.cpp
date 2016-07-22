@@ -626,7 +626,7 @@ void GLWidget::loadShaderByQtResources()
 void GLWidget::loadShaderByResources ( )
 {
 	//! Debug Version: to load the update shaders
-	qDebug ( ) << "Load by Resources ";
+	qDebug ( ) << "Load by Resources ======";
 
 	QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
 
@@ -641,6 +641,8 @@ void GLWidget::loadShaderByResources ( )
 	std::cout << "Operate System not supported !"
 	halt();
 #endif
+
+	qDebug() << "shaderDirectory = " << shaderDirectory;
 
 	this->loadShaders(shaderDirectory);
 

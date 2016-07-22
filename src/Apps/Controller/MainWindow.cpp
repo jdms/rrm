@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
 	this->setFocusPolicy ( Qt::StrongFocus );

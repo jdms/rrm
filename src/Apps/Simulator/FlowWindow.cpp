@@ -371,7 +371,6 @@ void FlowWindow::addFaceProperty( std::string name, std::string dimension )
 
 void FlowWindow::getCurrentDirectory()
 {
-
     QDir app_dir = QDir( qApp->applicationDirPath() );
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style

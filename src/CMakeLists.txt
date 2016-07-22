@@ -9,26 +9,7 @@ find_package(GLEW REQUIRED)
 # message( "Glew Library: " ${GLEW_LIBRARY} )
 
 ## It asks for Qt5_DIR
-find_package(Qt5 COMPONENTS Core Gui Svg Widgets OpenGL)
-
-## Find CGAL 4.7
-#find_package(CGAL REQUIRED COMPONENTS Core Qt5 )
-
-#if(CGAL_FOUND AND CGAL_Qt5_FOUND)
-#    message("Found CGAL.")
-#    include(${CGAL_USE_FILE})
-#   
-#    message("CGAL_CXX_FLAGS_INIT: ${CGAL_CXX_FLAGS_INIT}")
-#    add_definitions(${CGAL_CXX_GLAFS_INIT})
-#
-#    message("CGAL_LIBRARY: ${CGAL_LIBRARY}")
-#    message("CGAL_LIBRARIES: ${CGAL_LIBRARIES}")
-#    message("CGAL_ImageIO_LIBRARY: ${CGAL_ImageIO_LIBRARY}")
-#    message("CGAL_3RD_PARTY_LIBRARIES: ${CGAL_3RD_PARTY_LIBRARIES}")
-#    
-#else()
-#    message(FATAL_ERROR "CGAL is required.")
-#endif()
+find_package(Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL)
 
 IF(UNIX)
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0")
@@ -41,7 +22,6 @@ ENDIF()
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc /FS" CACHE STRING "" FORCE)
 message("Current compiler flags: " ${CMAKE_CXX_FLAGS})
-
 
 include_directories(
     #Eigen3
