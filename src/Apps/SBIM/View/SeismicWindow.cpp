@@ -28,7 +28,7 @@ namespace RRM
 
 
         //! Debug Version: to load the update shaders
-        qDebug ( ) << "Load by Resources ";
+        
         QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
 
         #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style

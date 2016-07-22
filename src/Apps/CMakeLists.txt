@@ -230,7 +230,9 @@ set( UI_SOURCES ${CONTROLLER_UI_SOURCES} ${SBIM_UI_SOURCES}
     ${SIMULATOR_UI_SOURCES} 
     )
 ## Resources
-set(RCC_SOURCES Controller/Resources/images.qrc Modeller/ExtrusionWidget/shaderresources.qrc )
+set(RCC_SOURCES Controller/Resources/images.qrc 
+				Modeller/ExtrusionWidget/shaderresources.qrc 
+				)
 
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS})
 QT5_WRAP_UI (UI_HEADERS ${UI_SOURCES})
@@ -253,7 +255,7 @@ IF(WIN32) # Check if we are on Windows
                                        ${MODELLER_SOURCES} ${MODELLER_HEADERS} 
                                        ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
                                        ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS})
-		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Svg planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
+		target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::Core Qt5::Help Qt5::OpenGL Qt5::Widgets Qt5::Svg planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
 
     elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
         message (FATAL_ERROR "GCC are not support on Windows !")
