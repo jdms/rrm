@@ -1,10 +1,9 @@
 // Data created August 6, 2015
+
 #ifndef _SURFACE_HPP_
 #define _SURFACE_HPP_
 
-#include <QtCore/QtMath>
 #include <QtWidgets/QGraphicsView>
-#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QLabel>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
@@ -12,13 +11,17 @@
 #include <QtGUI/QTransform>
 #include <QtSVG/QSvgGenerator>
 
+#include <QtWidgets/QFileDialog>
+
+
 #include "Modeller/SketchBoardWidget/SketchSession/SketchSessionTesting.hpp"
+
 #include "Modeller/SketchController.hpp"
 
 /**
- * @brief Contains the scene (class SketchSession).
- *
- * */
+* @brief Contains the scene (class SketchSession).
+*
+* */
 
 class SketchBoard : public QGraphicsView
 {
@@ -28,27 +31,27 @@ public:
 	typedef qreal		 	 	Real;
 	typedef RRM::CrossSection<Real>  	CrossSection;
 
-	SketchBoard( QWidget *parent = 0 );
+	SketchBoard(QWidget *parent = 0);
 	virtual ~SketchBoard();
 
-	void wheelEvent ( QWheelEvent *event );
-	void keyPressEvent ( QKeyEvent *event );
-	
-public slots:
+	void wheelEvent(QWheelEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+
+	public slots:
 	// clear
 	void clear();
-	void setCrossSection( const CrossSection& _cross_section );
+	void setCrossSection(const CrossSection& _cross_section);
 	/// default Scene
-	void newSession ( Real x , Real y , Real width , Real height );
+	void newSession(Real x, Real y, Real width, Real height);
 	/// defaul Scene with Image
-	void newSession ( const QPixmap& _image );
+	void newSession(const QPixmap& _image);
 
-	void setBoundary ( Real x , Real y , Real width , Real height );
+	void setBoundary(Real x, Real y, Real width, Real height);
 	void screenShot();
-	/// SVG Image
-	void saveVector(const  QString& _filename);
-	/// Raster Image
-	void saveRaster(const  QString& _filename);
+		/// SVG Image
+		void saveVector(const  QString& _filename);
+		/// Raster Image
+		void saveRaster(const  QString& _filename);
 	void newBoundary();
 	void newSketch();
 
@@ -62,9 +65,9 @@ public slots:
 	void setModeRemoveAboveIntersection();
 	void setModeRemoveBelowIntersection();
 	void setModeEdition();
-	
+
 signals:
-	void currentCrossSection( const CrossSection& _cross_section );
+	void currentCrossSection(const CrossSection& _cross_section);
 
 public:
 

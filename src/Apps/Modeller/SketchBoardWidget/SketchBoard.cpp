@@ -1,5 +1,14 @@
 // Data created August 6, 2015
+
 #include "Modeller/SketchBoardWidget/SketchBoard.hpp"
+
+
+#include <QtCore/QDir>
+#include <QtWidgets/QApplication>
+
+// Flow Simulator 
+#include "Simulator/FlowComputation/region.h"
+#include "Modeller/ExtrusionWidget/ExtrusionController.hpp"
 
 SketchBoard::SketchBoard(QWidget *parent) : QGraphicsView(parent)
 {
@@ -18,9 +27,12 @@ SketchBoard::SketchBoard(QWidget *parent) : QGraphicsView(parent)
 	this->viewport()->grabGesture(Qt::PanGesture);
 
 	// Invert the Coordinate System to match with OpenGL. X increases Left->Right and Y Bottom->Up.
+	this->scale(1, -1);
+
 	scale_in_ = 10;
 	scale_out_ = -10;
 	scaleFactor = 1.15;
+
 
 	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
 	this->sketchSession_ = new SketchSessionTesting(this);
@@ -30,17 +42,17 @@ SketchBoard::SketchBoard(QWidget *parent) : QGraphicsView(parent)
 	this->sketch_controller = new SketchController();
 
 	// Notify the controller the Sketch curve
+	//connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF,QColor) ) ,
+	//		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF,QColor) ) );
+
 	connect(this->sketchSession_, &SketchSessionTesting::newSketchCurve, [=](QPolygonF p, QColor c) { this->sketch_controller->insertCurve(p, c); emit currentCrossSection(this->sketch_controller->getCrossSection()); });
 
-	// Notify the controller with a new Session Scene
 	connect(this->sketchSession_, SIGNAL(newSessionSignal(Real, Real, Real, Real)),
 		this, SLOT(newSession(Real, Real, Real, Real)));
 
-	// Notify the controller with a new Session Scene using image
 	connect(this->sketchSession_, SIGNAL(newSessionSignal(const QPixmap&)),
 		this, SLOT(newSession(const QPixmap&)));
 
-	// Notify the controller with a new Session with a new boundary
 	connect(this->sketchSession_, SIGNAL(newBoundary(Real, Real, Real, Real)),
 		this, SLOT(setBoundary(Real, Real, Real, Real)));
 
@@ -53,6 +65,7 @@ SketchBoard::SketchBoard(QWidget *parent) : QGraphicsView(parent)
 	/// Interface
 	status_text_ = new QLabel("Sketch", this);
 	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
+
 }
 
 SketchBoard::~SketchBoard()
@@ -66,6 +79,7 @@ void SketchBoard::keyPressEvent(QKeyEvent *event)
 	{
 		this->sketchSession_->overlay_image_->setVisible(false);
 	}
+
 	if (event->key() == Qt::Key_F3)
 	{
 		this->sketchSession_->overlay_image_->setVisible(true);
@@ -82,9 +96,29 @@ void SketchBoard::keyPressEvent(QKeyEvent *event)
 	{
 		this->setModeRemoveAboveIntersection();
 	}
+	if (event->key() == Qt::Key_Up)
+	{
+		//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION );
+		//status_text->setText ( "Remove Above Intersection" );
+		this->sketchSession_->setSketchMode();
+	}
+	if (event->key() == Qt::Key_Down)
+	{
+		//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
+		//status_text->setText ( "Remove Below Intersection" );
+		this->sketchSession_->setEditMode();
+	}
+	if (event->key() == Qt::Key_Right)
+	{
+		//cross_section_.changeRule ( RRM::GeologicRules::REMOVE_BELOW_INTERSECTION );
+		//status_text->setText ( "Remove Below Intersection" );
+		this->sketchSession_->setEditMode();
+	}
 	if (event->key() == Qt::Key_Q)
 	{
 		emit currentCrossSection(this->sketch_controller->getCrossSection());
+		//cross_section_.changeRule ( RRM::GeologicRules::Sketch );
+		//status_text->setText ( "Sketch" );
 	}
 	if (event->key() == Qt::Key_Space)
 	{
@@ -98,6 +132,56 @@ void SketchBoard::keyPressEvent(QKeyEvent *event)
 			this->sketch_controller->clear();
 			emit currentCrossSection(this->sketch_controller->getCrossSection());
 		}
+	}
+	if (event->key() == Qt::Key_Escape)
+	{
+		sketchSession_->clearSelection();
+		this->newSession(0.0, 0.0, 700.0, 400.0);
+	}
+	/// Zhao Testing
+	if (event->key() == Qt::Key_S)
+	{
+		std::cout << "Saving Sktech Lines" << std::endl;
+		sketch_controller->getCrossSection().outputsketchlines(sketch_controller->getCrossSection(), "lines.txt");
+	}
+
+	if (event->key() == Qt::Key_X)
+	{
+		std::cout << "Saving Skeleton Surfaces" << std::endl;
+		//sketch_controller->getCrossSection().extrudeandoutputskeleton(sketch_controller->getCrossSection(), "D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+
+		RRM::ExtrusionController ex;
+
+		ex.setBlackScreenCrossSection(sketch_controller->getCrossSection());
+		ex.exportBlankScreen("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces3.rrms", 3);
+
+		REGION region;
+		//region.tolerance(0.000000001, 0.0);
+		//region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_internalchannel_bsurface.txt");
+		//region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces.txt");
+		//region.unstructuredsurfacemesh();
+		//region.cornerpointgrid();
+		//region.writesurfacemeshVTK("surface.vtk");
+		//region.unstructuredvolumemesh();
+		//region.writevolumemesh("crossSection.vtk");
+		//region.writecornerpointgridVTK("CornerPointCrossSection.vtk");
+
+
+
+		/// Unstructured 
+		region.tolerance(0.000000001, 0.0);
+		region.userinput("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\userinput_surfaces.txt");
+		region.readskeleton("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\surfaces3.rrms");
+
+
+		region.unstructuredsurfacemesh();
+		//region.writesurfacemeshVTK("model3trisurfacemeshtry2.vtk");
+		region.unstructuredvolumemesh();
+		//region.writevolumemesh("surfacestry.vtk");
+		region.modelpreparation();
+		region.steadystateflowsolver();
+		region.flowdiagnostics();
+		region.writeresult("D:\\Workspace\\RRM\\build-msvc2013_x32\\build\\bin\\results_surfaces3_try.vtk");
 	}
 
 	QGraphicsView::keyPressEvent(event);
@@ -115,28 +199,6 @@ void SketchBoard::wheelEvent(QWheelEvent *event)
 	{
 		// Zooming out
 		this->zoomOut();
-	}
-}
-
-void SketchBoard::zoomIn()
-{
-	// Zoom in
-	if (scale_in_ >= 0)
-	{
-		this->scale(scaleFactor, scaleFactor);
-		scale_in_ -= 1;
-		scale_out_ -= 1;
-	}
-}
-
-void SketchBoard::zoomOut()
-{
-	// Zooming out
-	if (scale_out_ <= 0)
-	{
-		scale_out_ += 1;
-		scale_in_ += 1;
-		this->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
 	}
 }
 
@@ -193,6 +255,28 @@ void SketchBoard::redo()
 
 }
 
+void SketchBoard::zoomIn()
+{
+	// Zoom in
+	if (scale_in_ >= 0)
+	{
+		this->scale(scaleFactor, scaleFactor);
+		scale_in_ -= 1;
+		scale_out_ -= 1;
+	}
+}
+
+void SketchBoard::zoomOut()
+{
+	// Zooming out
+	if (scale_out_ <= 0)
+	{
+		scale_out_ += 1;
+		scale_in_ += 1;
+		this->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+	}
+}
+
 void SketchBoard::newSketch()
 {
 	sketchSession_->newSktech();
@@ -227,15 +311,20 @@ void SketchBoard::screenShot()
 
 void SketchBoard::saveRaster(const QString& _fileName)
 {
+	QImage imageFile;
 	QImage image(this->sketchSession_->sceneRect().size().toSize(), QImage::Format_ARGB32);  // Create the image with the exact size of the shrunk scene
-	image.fill(Qt::transparent); // Fill it witg transparent pixels
+	image.fill(Qt::transparent);                      		                        // Start all pixels transparent
 
 	this->sketchSession_->overlay_image_->setVisible(false);
 
 	QPainter painter(&image);
 	this->sketchSession_->render(&painter);
 
-	image.save(_fileName);
+	QTransform myTransform;
+	myTransform.scale(1, -1);
+	imageFile = image.transformed(myTransform);
+
+	imageFile.save(_fileName);
 
 	this->sketchSession_->overlay_image_->setVisible(true);
 }
@@ -252,6 +341,12 @@ void SketchBoard::saveVector(const  QString& _fileName)
 	svgGen.setDescription(tr("SVG output of Rapid Reservoir Modelling software"));
 
 	QPainter painter(&svgGen);
+	
+	painter.scale(1.0, -1.0);
+	QPointF	translationOffset;
+	translationOffset.setX(0.0);
+	translationOffset.setY(-this->sketchSession_->height());
+	painter.translate(translationOffset);
 
 	this->sketchSession_->render(&painter);
 }
@@ -263,29 +358,22 @@ void SketchBoard::newBoundary()
 
 void SketchBoard::newSession(Real x, Real y, Real width, Real height)
 {
-	//@FIXME get all the geometry information from CrossSection Arrangment
-	//this->sketchSession_->initialization(x,y,width,height);
-	this->sketch_controller->newSession(x, -y, width, -height);
-	this->sketchSession_->initialization(this->sketch_controller->getCrossSection().viewPort_.first.x(), -this->sketch_controller->getCrossSection().viewPort_.first.y(),
-										 this->sketch_controller->getCrossSection().viewPort_.second.x(), -this->sketch_controller->getCrossSection().viewPort_.second.y());
+	this->sketchSession_->initialization(x, y, width, height);
+	this->sketch_controller->newSession(x, y, width, height);
 }
 
 void SketchBoard::newSession(const QPixmap& _image)
 {
-	//@FIXME get all the geometry information from CrossSection Arrangment
-	//this->sketchSession_->initializationWithImage(_image);
-	this->sketch_controller->newSession(_image.rect().x(),
-									   -_image.rect().y(),
-										_image.rect().width(),
-									   -_image.rect().height());
 	this->sketchSession_->initializationWithImage(_image);
-
+	this->sketch_controller->newSession(_image.rect().x(),
+		_image.rect().y(),
+		_image.rect().width(),
+		_image.rect().height());
 }
 
 void SketchBoard::setBoundary(Real x, Real y, Real width, Real height)
 {
-	//@FIXME get all the geometry information from CrossSection Arrangment
-	this->sketch_controller->newSession(x, -y, width, -height);
+	this->sketch_controller->newSession(x, y, width, height);
 	this->sketchSession_->setBoundary(x, y, width - x, height - y);
 }
 
@@ -303,6 +391,8 @@ void SketchBoard::setCrossSection(const CrossSection& _cross_section)
 
 	/// Update the overlay image
 	this->sketchSession_->initializationWithImage(pix);
+
+	//this->sketchSession_->overlay_image_->setPixmap(pix);
 
 	/// Update the data structure
 	this->sketch_controller->setCrossSection(_cross_section);

@@ -1,14 +1,14 @@
 #include "Sketching2DModule.h"
 
-Sketching2DModule::Sketching2DModule ( QWidget* parent )
+Sketching2DModule::Sketching2DModule(QWidget* parent)
 {
-	createWindow ( );
-	createActions ( parent );
+	createWindow();
+	createActions(parent);
 	createConnections();
 
 	ac_sketch->setChecked(true);
-			
-	emit setColor ( 0.0f , 0.0f , 128.0f );
+
+	emit setColor(0.0f, 0.0f, 128.0f);
 }
 
 void Sketching2DModule::setCentralWidget(QWidget * _centra_widget)
@@ -20,17 +20,17 @@ void Sketching2DModule::setCentralWidget(QWidget * _centra_widget)
 
 }
 
-void Sketching2DModule::createWindow ( )
+void Sketching2DModule::createWindow()
 {
 	this->mainWidonw_widget_ = new QMainWindow();
 	this->setWidget(this->mainWidonw_widget_);
-	this->setAllowedAreas ( Qt::LeftDockWidgetArea );
+	this->setAllowedAreas(Qt::LeftDockWidgetArea);
 	this->setWindowTitle("Sketch View");
 
 	// StatusBar Text	
 	//this->label_status_bar_text_ = new QLabel();
 	//this->mainWidonw_widget_->statusBar()->addWidget(label_status_bar_text_);
-	
+
 	sketch_board_ = new SketchBoard();
 	// Default Sketch Window
 	// Use Qt Coordinates
@@ -44,13 +44,13 @@ void Sketching2DModule::createWindow ( )
 	this->mainWidonw_widget_->statusBar()->addPermanentWidget(sketch_board_->sketchSession_->coordinates_);
 }
 
-void Sketching2DModule::createActions ( QWidget* parent )
+void Sketching2DModule::createActions(QWidget* parent)
 {
 	// View
 	ac_zoomIn = new QAction(tr("&Zoom In"), this);
 	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
 	ac_zoomIn->setShortcut(QKeySequence::ZoomIn);
-		
+
 	ac_zoomOut = new QAction(tr("&Zoom Out"), this);
 	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
 	ac_zoomOut->setShortcut(QKeySequence::ZoomOut);
@@ -97,7 +97,7 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	ac_region_point_ = new QAction(tr("Set Region Point"), this);
 	ac_region_point_->setIcon(QIcon(":/images/icons/regionPointmode.png"));
 	ac_region_point_->setCheckable(true);
-	
+
 	tlb_rules = this->mainWidonw_widget_->addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
 	action_group_rules_ = new QActionGroup(tlb_rules);
 
@@ -115,7 +115,7 @@ void Sketching2DModule::createActions ( QWidget* parent )
 	tlb_rules->addAction(ac_removeabove);
 	tlb_rules->addAction(ac_removebelow);
 	//tlb_rules->addAction(ac_region_point_);
-		
+
 	tlb_section = this->mainWidonw_widget_->addToolBar(tr("Section"));
 	tlb_section->addAction(ac_new);
 	tlb_section->addAction(ac_newBoundary);
@@ -137,15 +137,15 @@ void Sketching2DModule::createActions ( QWidget* parent )
 
 	ac_sketchcolor = new QWidgetAction(this);
 	ac_sketchcolor->setDefaultWidget(cd_pickercolor);
-	
+
 	tbt_colorsketch = new QToolButton;
 	tbt_colorsketch->setPopupMode(QToolButton::MenuButtonPopup);
 	tbt_colorsketch->setIcon(QIcon(":/images/icons/border_color.png"));
-	
+
 	mn_pickercolor = new QMenu();
 	mn_pickercolor->addAction(ac_sketchcolor);
 	tbt_colorsketch->setMenu(mn_pickercolor);
-	
+
 	tlb_customization = getMainWidow()->addToolBar(tr("Customize"));
 	//tlb_customization->addAction(ac_select);
 	tlb_customization->addWidget(tbt_colorsketch);
@@ -159,7 +159,7 @@ void Sketching2DModule::createConnections()
 	connect(Sketching2DModule::ac_sketch, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeSketch(); } });
 	connect(Sketching2DModule::ac_region_point_, &QAction::toggled, [=](bool isToogled) { if (isToogled) { this->sketch_board_->setModeRegionPoint(); } });
 	// Color
-	connect(Sketching2DModule::mn_pickercolor, &QMenu::aboutToShow, Sketching2DModule::cd_pickercolor, &QColorDialog::show );
+	connect(Sketching2DModule::mn_pickercolor, &QMenu::aboutToShow, Sketching2DModule::cd_pickercolor, &QColorDialog::show);
 	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::rejected, Sketching2DModule::mn_pickercolor, &QMenu::hide);
 	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::rejected, Sketching2DModule::mn_pickercolor, &QMenu::hide);
 	connect(Sketching2DModule::cd_pickercolor, &QColorDialog::colorSelected, [=](const QColor& _color){ sketch_board_->sketchSession_->setColor(_color); mn_pickercolor->hide(); });
@@ -192,58 +192,58 @@ QLabel * Sketching2DModule::getStatusBarText()
 	return label_status_bar_text_;
 }
 
-void Sketching2DModule::applyRemoveAbove ( )
+void Sketching2DModule::applyRemoveAbove()
 {
-//    bool flag = ac_removeabove->isChecked();
-//    if( flag == false ) return;
+	//    bool flag = ac_removeabove->isChecked();
+	//    if( flag == false ) return;
 
-//    ac_removebelow->setChecked( false );
-	emit applyremoveabove ( );
-//    statusBar()->showMessage( "Applying remove above intersection" );
+	//    ac_removebelow->setChecked( false );
+	emit applyremoveabove();
+	//    statusBar()->showMessage( "Applying remove above intersection" );
 
 }
 
-void Sketching2DModule::applyRemoveBelow ( )
+void Sketching2DModule::applyRemoveBelow()
 {
-//    bool flag = ac_removebelow->isChecked();
-//    if( flag == false ) return;
+	//    bool flag = ac_removebelow->isChecked();
+	//    if( flag == false ) return;
 
-//    ac_removeabove->setChecked( false );
-	emit applyremovebelow ( );
+	//    ac_removeabove->setChecked( false );
+	emit applyremovebelow();
 
-//    statusBar()->showMessage( "Applying remove below intersection" );
+	//    statusBar()->showMessage( "Applying remove below intersection" );
 }
 
-void Sketching2DModule::pointerSelection ( bool flag )
+void Sketching2DModule::pointerSelection(bool flag)
 {
-//    bool flag = ac_select->isChecked();
+	//    bool flag = ac_select->isChecked();
 
-	if ( flag == false )
+	if (flag == false)
 	{
-		emit sketchingMode ( );
+		emit sketchingMode();
 		return;
 	}
 
-	emit selectMode ( );
+	emit selectMode();
 }
 
-void Sketching2DModule::emitColor ( int R , int G , int B )
+void Sketching2DModule::emitColor(int R, int G, int B)
 {
 
-	emit setColor ( R , G , B );
+	emit setColor(R, G, B);
 }
 
-void Sketching2DModule::emitModeSelect ( )
+void Sketching2DModule::emitModeSelect()
 {
-	emit selectMode ( );
+	emit selectMode();
 }
 
-void Sketching2DModule::emitModeSketching ( )
+void Sketching2DModule::emitModeSketching()
 {
-	emit sketchingMode ( );
+	emit sketchingMode();
 }
 
-void Sketching2DModule::clearCanvas2D ( )
+void Sketching2DModule::clearCanvas2D()
 {
 
 }
