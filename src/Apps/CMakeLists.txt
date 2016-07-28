@@ -115,6 +115,8 @@ set( SIMULATOR_HEADERS
      Simulator/DialogMeshVisualizationParameters.h
      Simulator/ProgressCounter.h
      Simulator/HelpDialog.h
+     Simulator/ColorBar.h
+     Simulator/PoreVolumeResultsForm.h
      Simulator/FlowComputation/bsurface.h
      Simulator/FlowComputation/cpgelement.h
      Simulator/FlowComputation/curve.h
@@ -161,6 +163,8 @@ set ( SIMULATOR_MOC_HEADERS
      Simulator/ProgressCounter.h
      Simulator/HelpDialog.h
      Simulator/DialogMeshVisualizationParameters.h
+     Simulator/ColorBar.h
+     Simulator/PoreVolumeResultsForm.h
 )
 
 set ( SIMULATOR_UI_SOURCES
@@ -187,6 +191,8 @@ set( SIMULATOR_SOURCES
      Simulator/OpenFlowFilesBar.cpp
      Simulator/HelpDialog.cpp
      Simulator/DialogMeshVisualizationParameters.cpp
+     Simulator/ColorBar.cpp
+     Simulator/PoreVolumeResultsForm.cpp
      Simulator/FlowComputation/bsurface.cpp
      Simulator/FlowComputation/cpgelement.cpp
      Simulator/FlowComputation/curve.cpp
