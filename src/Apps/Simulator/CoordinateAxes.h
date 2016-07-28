@@ -28,6 +28,9 @@ class CoordinateAxes
         void reloadShader();
         void initShader( std::string directory );
 
+        void resetBuffers();
+        void deleteShaders();
+
 
     protected:
 

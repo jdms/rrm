@@ -352,12 +352,13 @@ void CoordinateAxes::draw( const Eigen::Matrix3f& R, const Eigen::Vector3f& T )
 
     QMatrix4x4 Q;
     Q.perspective( 60.0 , (float) 1024/(float) 600 , 0.1f , 10000.0f );
-
+//    Q.ortho( 0, 1024, 0, 600, 0.1, 1000 );
 
     Eigen::Matrix4f P1;
     for( int i = 0; i < 4; ++i )
         for( int j = 0; j < 4; ++j )
             P1( i, j ) = Q( i, j );
+
 
 
 
@@ -388,3 +389,49 @@ void CoordinateAxes::draw( const Eigen::Matrix3f& R, const Eigen::Vector3f& T )
 
 
 }
+
+
+void CoordinateAxes::resetBuffers()
+{
+    deleteShaders();
+
+    if( va_coneaxes )
+    {
+        glDeleteVertexArrays( 1, &va_coneaxes );
+        if( bf_faces_coneaxes )
+            glDeleteBuffers(1, &bf_faces_coneaxes);
+
+    }
+
+    if( va_cylinderaxes )
+    {
+        glDeleteVertexArrays( 1, &va_cylinderaxes );
+        if( bf_faces_cylinderaxes )
+            glDeleteBuffers(1, &bf_faces_cylinderaxes);
+
+    }
+
+
+    va_coneaxes = 0;
+    bf_faces_coneaxes = 0;
+    bf_faces_cylinderaxes = 0;
+    va_cylinderaxes = 0;;
+
+    nfaces_cone = 0;
+    nfaces_cylinder = 0;
+
+
+}
+
+void CoordinateAxes::deleteShaders()
+{
+
+    if (shader_axes)
+    {
+        delete (shader_axes);
+        shader_axes = nullptr;
+    }
+
+
+}
+

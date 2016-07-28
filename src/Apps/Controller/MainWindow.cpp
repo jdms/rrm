@@ -63,7 +63,7 @@ void MainWindow::createMainWindowMenuBar ( )
 	//mn_file->addAction ( ac_save );
 	//mn_file->addAction ( ac_export );
 	mn_file->addAction ( ac_exit );
-	//mn_help->addAction ( ac_contents );
+    mn_help->addAction ( ac_contents );
 	mn_help->addAction ( ac_about );
 
 }
@@ -95,7 +95,7 @@ void MainWindow::createMainWindowActions ( )
 	ac_exit = new QAction ( tr ( "E&xit" ) , this );
 	ac_exit->setIcon ( QIcon ( ":/images/icons/door_out.png" ) );
 
-	//ac_contents = new QAction ( tr ( "Contents" ) , this );
+    ac_contents = new QAction ( tr ( "Contents" ) , this );
 	//ac_contents->setDisabled ( true );
 
 	ac_about = new QAction ( tr ( "&About" ) , this );
@@ -103,6 +103,7 @@ void MainWindow::createMainWindowActions ( )
 	// About Widget
 	aboutRRM = new AboutWidget( this );
 	connect ( ac_about , SIGNAL( triggered() ) , aboutRRM , SLOT( show() ) );
+    connect ( ac_contents , SIGNAL( triggered() ) , &help , SLOT( show() ) );
 	connect ( ac_exit , SIGNAL( triggered() ) , this , SLOT( close() ) );
 	//connect ( ac_new , SIGNAL( triggered(bool) ) , this->sketch_board_ , SLOT( clear() ) );
 }

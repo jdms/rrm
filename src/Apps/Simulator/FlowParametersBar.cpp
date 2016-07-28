@@ -145,13 +145,16 @@ void FlowParametersBar::on_btn_trboundaryvalues_clicked()
 void FlowParametersBar::on_btb_acceptparameters_accepted()
 {
 
+    closeBarandAccept();
+
     dg_permeability->sendValues();
-    dg_boundaries->sendValues();
+//    dg_boundaries->sendValues();
     dg_wells->sendValues();
     dg_tofboundary->sendValues();
     dg_trboundary->sendValues();
 
-    closeBar();
+
+
 
 
 }

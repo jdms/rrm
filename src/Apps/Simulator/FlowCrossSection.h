@@ -68,6 +68,7 @@ public:
 
     QVector3D normal;
     QVector3D center;
+    QVector3D center1;
     QVector3D position;
 
     SENSE sense;

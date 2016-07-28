@@ -17,6 +17,8 @@ class NormalMovableCrossSectionFlow : public QWidget,
         explicit NormalMovableCrossSectionFlow(QWidget *parent = 0);
         ~NormalMovableCrossSectionFlow();
 
+        void clear();
+
     private slots:
 
         void on_btn_acceptnormal_accepted();

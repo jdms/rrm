@@ -35,15 +35,20 @@ void FlowRenderingOptionsMenu::create()
 
     addMenu( mn_coloring_byvertex );
     addMenu( mn_coloring_byfaces );
+
+    addSeparator();
+
     addAction ( wa_visualization_options );
-    addAction ( wa_colormaps );
 
-    addSection( "Export" );
+    addSeparator();
 
-    addAction( ac_exportsurfacetovtk );
-    addAction( ac_exportvolumetovtk );
-    addAction( ac_exportcornerpointtovtk );
-    addAction( ac_exportresultstovtk );
+    addMenu ( mn_colormaps );
+
+    addSeparator();
+
+    addMenu( mn_export );
+
+    addSeparator();
 
     ac_clear = new QAction( "Clear", this );
     addAction( ac_clear );
@@ -118,12 +123,11 @@ void FlowRenderingOptionsMenu::createVisualizationMenu()
     vb_layout->addWidget ( chk_show_faces );
     vb_layout->addWidget ( chk_show_bbox );
 
-    QGroupBox *gb_visualization = new QGroupBox( "Rendering" );
-    gb_visualization->setFlat ( true );
-    gb_visualization->setLayout ( vb_layout );
+    QWidget *wd_visualization = new QWidget();
+    wd_visualization->setLayout ( vb_layout );
 
     wa_visualization_options = new QWidgetAction ( this );
-    wa_visualization_options->setDefaultWidget ( gb_visualization );
+    wa_visualization_options->setDefaultWidget ( wd_visualization );
 
 }
 
@@ -133,14 +137,38 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
 
     rd_colormap_constant = new QRadioButton( tr ( "Constant" ) );
     rd_colormap_JET = new QRadioButton( tr ( "JET" ) );
+    rd_colormap_hot = new QRadioButton( tr ( "Hot" ) );
+    rd_colormap_cool = new QRadioButton( tr ( "Cool" ) );
+    rd_colormap_parula = new QRadioButton( tr ( "Parula" ) );
+    rd_colormap_spring = new QRadioButton( tr ( "Spring" ) );
+    rd_colormap_summer = new QRadioButton( tr ( "Summer" ) );
+    rd_colormap_copper = new QRadioButton( tr ( "Copper" ) );
+    rd_colormap_polar = new QRadioButton( tr ( "Polar" ) );
+    rd_colormap_winter = new QRadioButton( tr ( "Winter" ) );
 
     rd_colormap_constant->setChecked( true );
     rd_colormap_JET->setChecked( false );
+    rd_colormap_hot->setChecked( false );
+    rd_colormap_cool->setChecked( false );
+    rd_colormap_parula->setChecked( false );
+    rd_colormap_spring->setChecked( false );
+    rd_colormap_summer->setChecked( false );
+    rd_colormap_copper->setChecked( false );
+    rd_colormap_polar->setChecked( false );
+    rd_colormap_winter->setChecked(  false );
 
 
     QVBoxLayout *vb_layout = new QVBoxLayout;
     vb_layout->addWidget ( rd_colormap_constant );
     vb_layout->addWidget ( rd_colormap_JET );
+    vb_layout->addWidget ( rd_colormap_hot );
+    vb_layout->addWidget ( rd_colormap_cool );
+    vb_layout->addWidget ( rd_colormap_parula );
+    vb_layout->addWidget ( rd_colormap_spring );
+    vb_layout->addWidget ( rd_colormap_summer );
+    vb_layout->addWidget ( rd_colormap_copper );
+    vb_layout->addWidget ( rd_colormap_polar );
+    vb_layout->addWidget ( rd_colormap_winter );
 
     QGroupBox *gb_colormaps = new QGroupBox ( "Colormaps ");
     gb_colormaps->setFlat ( true );
@@ -149,9 +177,20 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
     wa_colormaps = new QWidgetAction ( this );
     wa_colormaps->setDefaultWidget ( gb_colormaps );
 
+    mn_colormaps = new QMenu( tr( "Colormaps" ) );
+    mn_colormaps->addAction( wa_colormaps );
+
 
     connect ( rd_colormap_constant , &QRadioButton::toggled , this , [=](){ emit setConstantColormap(); } );
     connect ( rd_colormap_JET, &QRadioButton::toggled , this , [=](){ emit setJETColormap(); } );
+    connect ( rd_colormap_hot, &QRadioButton::toggled , this , [=](){ emit seHotColormap(); } );
+    connect ( rd_colormap_cool, &QRadioButton::toggled , this , [=](){ emit setCoolColormap(); } );
+    connect ( rd_colormap_parula, &QRadioButton::toggled , this , [=](){ emit setParulaColormap(); } );
+    connect ( rd_colormap_spring, &QRadioButton::toggled , this , [=](){ emit setSpringColormap(); } );
+    connect ( rd_colormap_summer, &QRadioButton::toggled , this , [=](){ emit setSummerColormap(); } );
+    connect ( rd_colormap_copper, &QRadioButton::toggled , this , [=](){ emit setCopperColormap(); } );
+    connect ( rd_colormap_polar, &QRadioButton::toggled , this , [=](){ emit setPolarColormap(); } );
+    connect ( rd_colormap_winter, &QRadioButton::toggled , this , [=](){ emit setWinterColormap(); } );
 
 }
 
@@ -165,11 +204,18 @@ void FlowRenderingOptionsMenu::createPropertiesMenu()
 
 void FlowRenderingOptionsMenu::createExportMenu()
 {
+
+
     ac_exportsurfacetovtk = new QAction( "Export Surface", this );
     ac_exportvolumetovtk = new QAction( "Export Volume", this );
     ac_exportcornerpointtovtk = new QAction( "Export CornerPoint", this );
     ac_exportresultstovtk = new QAction( "Export Results", this );
 
+    mn_export = new QMenu( "Export" );
+    mn_export->addAction( ac_exportsurfacetovtk );
+    mn_export->addAction( ac_exportvolumetovtk );
+    mn_export->addAction( ac_exportcornerpointtovtk );
+    mn_export->addAction( ac_exportresultstovtk );
 }
 
 
@@ -193,12 +239,13 @@ void FlowRenderingOptionsMenu::addVertexProperty( std::string name, std::string 
         vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 2 ] );
         vb_layout->addWidget ( rd_vectormethods_byvertex[ 4*id + 3 ] );
 
-        QGroupBox *gb_vectormethods = new QGroupBox ();
-        gb_vectormethods->setFlat ( true );
-        gb_vectormethods->setLayout ( vb_layout );
+
+        QWidget *wd_vectormethods = new QWidget();
+        wd_vectormethods->setLayout ( vb_layout );
+
 
         wa_vectormethods_byvertex = new QWidgetAction ( this );
-        wa_vectormethods_byvertex->setDefaultWidget ( gb_vectormethods );
+        wa_vectormethods_byvertex->setDefaultWidget ( wd_vectormethods );
 
 
         mn_vectorsproperties_byvertex[ id ]->addAction( wa_vectormethods_byvertex );
@@ -246,12 +293,12 @@ void FlowRenderingOptionsMenu::addFaceProperty( std::string name, std::string di
         vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 2 ] );
         vb_layout->addWidget ( rd_vectormethods_byface[ 4*id + 3 ] );
 
-        QGroupBox *gb_vectormethods = new QGroupBox ();
-        gb_vectormethods->setFlat ( true );
-        gb_vectormethods->setLayout ( vb_layout );
+        QWidget *wd_vectormethods = new QWidget();
+        wd_vectormethods->setLayout ( vb_layout );
+
 
         wa_vectormethods_byface = new QWidgetAction ( this );
-        wa_vectormethods_byface->setDefaultWidget ( gb_vectormethods );
+        wa_vectormethods_byface->setDefaultWidget ( wd_vectormethods );
 
 
         mn_vectorsproperties_byface[ id ]->addAction( wa_vectormethods_byface );
@@ -277,6 +324,8 @@ void FlowRenderingOptionsMenu::addFaceProperty( std::string name, std::string di
 
 
 }
+
+
 std::string FlowRenderingOptionsMenu::getCurrentColorMap()
 {
     if( rd_colormap_constant->isChecked() == true )
@@ -284,6 +333,32 @@ std::string FlowRenderingOptionsMenu::getCurrentColorMap()
 
     else if( rd_colormap_JET->isChecked() == true )
         return "JET";
+
+    else if( rd_colormap_hot->isChecked() == true )
+        return "JET";
+
+    else if( rd_colormap_cool->isChecked() == true )
+        return "COOL";
+
+    else if( rd_colormap_parula->isChecked() == true )
+        return "PARULA";
+
+    else if( rd_colormap_spring->isChecked() == true )
+        return "SPRING";
+
+    else if( rd_colormap_summer->isChecked() == true )
+        return "SUMMER";
+
+    else if( rd_colormap_copper->isChecked() == true )
+        return "COPPER";
+
+    else if( rd_colormap_polar->isChecked() == true )
+        return "POLAR";
+
+    else if( rd_colormap_winter->isChecked() == true )
+        return "WINTER";
+
+
 }
 
 

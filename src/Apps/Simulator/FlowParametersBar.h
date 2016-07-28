@@ -52,7 +52,7 @@ signals:
 
         void readParameterFile( const std::string& input_file );
         void closeBar();
-
+        void closeBarandAccept();
 
 private:
 

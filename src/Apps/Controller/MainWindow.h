@@ -44,6 +44,7 @@
 
 // Flow Simulator
 #include "Simulator/FlowWindow.h"
+#include "Simulator/HelpDialog.h"
 
 
 /**
@@ -106,36 +107,39 @@ class MainWindow : public QMainWindow
 
 		//QStatusBar			*status_bar_;
 
-		QMenu *mn_file;
-	        QAction *ac_exit;
+        QMenu *mn_file;
 
-		QMenu *mn_help;
-			QAction *ac_about;
-			                		
+        QAction *ac_exit;
+
+        QMenu *mn_help;
+        QAction *ac_contents;
+        QAction *ac_about;
+
         QMenu *mn_windows;
-	        QAction *ac_wdwsketching;
-			QAction *ac_wdwseismic;
-			QAction *ac_window3d;
-			QAction *ac_flowcomputation;
-	
-					
+        QAction *ac_wdwsketching;
+        QAction *ac_wdwseismic;
+        QAction *ac_window3d;
+        QAction *ac_flowcomputation;
+
+
         // Sketch Module CrossSection
         Sketching2DModule *dc_2DModule;
-                
-		// Seismic Module
-		Sketching2DModule *dc_Seismic_Module_;
-			RRM::SeismicWindow * seismic_view_;
 
-		// 3D Extrusion
+        // Seismic Module
+        Sketching2DModule *dc_Seismic_Module_;
+        RRM::SeismicWindow * seismic_view_;
+
+        // 3D Extrusion
         View3DModule *dc_3DModule;
-			GLWidget *glWidget;
-		
-		// Flow Module
-		QDockWidget *dc_computation;
-			FlowWindow *flowwindow;
+        GLWidget *glWidget;
 
+        // Flow Module
+        QDockWidget *dc_computation;
+        FlowWindow *flowwindow;
 
-            QVBoxLayout* vb_canvas;
+        QVBoxLayout* vb_canvas;
+
+        HelpDialog help;
 };
 
 

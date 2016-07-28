@@ -27,10 +27,6 @@ class FlowRenderingOptionsMenu: public QMenu
 
 
 
-
-        void clear();
-
-
     protected:
 
         void create();
@@ -47,7 +43,7 @@ class FlowRenderingOptionsMenu: public QMenu
 
         void addVertexProperty( std::string name, std::string dimension );
         void addFaceProperty( std::string name, std::string dimension );
-
+		void clear();
 
 
     signals:
@@ -59,6 +55,14 @@ class FlowRenderingOptionsMenu: public QMenu
 
         void setConstantColormap();
         void setJETColormap();
+        void seHotColormap();
+        void setCoolColormap();
+        void setParulaColormap();
+        void setSpringColormap();
+        void setSummerColormap();
+        void setCopperColormap();
+        void setPolarColormap();
+        void setWinterColormap();
 
         void reloadcrosssection();
         void loadfile();
@@ -83,6 +87,7 @@ class FlowRenderingOptionsMenu: public QMenu
         QMenu *mn_coloring_byvertex;
         QMenu *mn_coloring_byfaces;
 
+        QMenu* mn_export;
         QAction* ac_exportsurfacetovtk;
         QAction* ac_exportvolumetovtk;
         QAction* ac_exportcornerpointtovtk;
@@ -98,9 +103,17 @@ class FlowRenderingOptionsMenu: public QMenu
         QWidgetAction* wa_vectormethods_byface;
         std::vector<QAction* > ac_face_property;
 
-
+        QMenu* mn_colormaps;
         QRadioButton* rd_colormap_constant;
         QRadioButton* rd_colormap_JET;
+        QRadioButton* rd_colormap_hot;
+        QRadioButton* rd_colormap_cool;
+        QRadioButton* rd_colormap_parula;
+        QRadioButton* rd_colormap_spring;
+        QRadioButton* rd_colormap_summer;
+        QRadioButton* rd_colormap_copper;
+        QRadioButton* rd_colormap_polar;
+        QRadioButton* rd_colormap_winter;
         QWidgetAction* wa_colormaps;
 
 

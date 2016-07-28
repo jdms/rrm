@@ -4,7 +4,6 @@
 
 #include <GL/glew.h>
 
-
 #include <QOpenGLWidget>
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -20,6 +19,8 @@
 #include "FlowRenderingOptionsMenu.h"
 #include "CoordinateAxes.h"
 #include "FlowCrossSection.h"
+#include "Colorbar.h"
+//#include "PointMarkers.h"
 
 
 class FlowVisualizationCanvas: public QOpenGLWidget
@@ -59,12 +60,13 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void setVerticesColorbyProperty( std::string name, std::string method = "" );
         void setFacesColorbyProperty( std::string name, std::string method = "" );
 
-
         void setConstantColor();
-        void setJETColor();
+        void setColorMap();
+
 
         void disableCrossSection();
         void setCrossSectionNormalCoordinates( float X, float Y, float Z );
+
 
         inline void setCurrentDirectory( std::string current_dir ){ current_directory.clear(); current_directory = current_dir; }
 
@@ -74,6 +76,16 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void exportResults();
 
         void setColors( const std::vector< float >& colors );
+        void setCurrentColormap( const ColorMap::COLORMAP& cm );
+
+        inline void setColorBar( ColorBar* cb ){ colorbar = cb; }
+
+        void setPointMarkers( const std::vector< QColor >& colors, const std::vector<double> &pos );
+        inline void disablePointMarkers( bool option ){ show_pointmarkers = option; update(); }
+
+
+        void setAleatoryColorMap();
+
 
 
     signals:
@@ -137,7 +149,13 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         GLuint vb_background;
 
 
+        ColorMap::COLORMAP current_colormap;
+        bool show_colorbar;
+        ColorBar* colorbar;
 
+
+//        PointMarkers pointmarkers;
+        bool show_pointmarkers;
 
 };
 

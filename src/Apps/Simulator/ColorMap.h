@@ -12,7 +12,7 @@ class ColorMap
     public:
 
 
-        enum class COLORMAP{ JET, CONSTANT };
+        enum class COLORMAP{ JET, HOT, COOL, PARULA, SPRING, SUMMER, COPPER, POLAR, WINTER, CONSTANT };
 
 
         ColorMap();
@@ -25,6 +25,14 @@ class ColorMap
     protected:
 
         std::vector< QVector3D > jet;
+        std::vector< QVector3D > hot;
+        std::vector< QVector3D > cool;
+        std::vector< QVector3D > parula;
+        std::vector< QVector3D > spring;
+        std::vector< QVector3D > summer;
+        std::vector< QVector3D > copper;
+        std::vector< QVector3D > polar;
+        std::vector< QVector3D > winter;
 
 };
 

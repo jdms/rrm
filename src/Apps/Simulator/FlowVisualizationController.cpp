@@ -1,3 +1,4 @@
+
 #include "FlowVisualizationController.h"
 
 
@@ -9,10 +10,9 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
     user_input_ok = false;
 
     current_method = MESHING_METHOD::UNSTRUCTURED;
+//    region.resetStandardValues();
 
 }
-
-
 
 
 void FlowVisualizationController::readPolyFiles( const std::string& mesh_file )
@@ -35,7 +35,6 @@ void FlowVisualizationController::readSkeletonFiles( const std::string& all_file
     std::vector< int > nv;
     std::vector< double > positions;
 
-//    region.readskeleton( (char *) all_filename.c_str(), nu, nv, positions );
 
     region.readskeleton( (char *) all_filename.c_str() );
     region.getSkeleton( nu, nv, positions );
@@ -231,6 +230,7 @@ std::vector< float > FlowVisualizationController::getMeshVerticesfromFile( const
     {
         tetgenio::facet f = faces_list[ i ];
 
+
         int number_of_polygons = f.numberofpolygons;
         tetgenio::polygon *polygons_list = f.polygonlist;
 
@@ -380,147 +380,236 @@ std::vector< unsigned int > FlowVisualizationController::getVolumeCellsfromTetra
 
 
 
-void FlowVisualizationController::getSurfacesFromCrossSection( const CrossSection &_cross_section )
+// -- Begin jd
+using CurveType = RRM::PolygonalCurve2D<double>; //decltype(cross_section.edges_[0].segment.curve);
+//    cross_section.edges_[0].segment.a;
+
+struct Colour {
+    double r;
+    double g;
+    double b;
+};
+
+struct SegmentedCurve {
+    bool is_segmented = false;
+    bool has_visible_segment = false;
+    size_t nsegments = 0;
+    size_t isegments = 0;
+    std::vector<CurveType> edges;
+    std::vector<Colour> colours;
+    std::vector<int> segment_ids;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
+
+
+void FlowVisualizationController::getSurfacesFromCrossSection(const CrossSection &_cross_section)
 {
 
     CrossSection cross_section = _cross_section;
-
+    std::cout << "Got into getSurfaceFromCrossSection\n";
 
     std::vector< double > positions;
     vector< int > nu, nv;
 
     int extrusion_size = 3;
-    int number_points = 0; /// Number of point per sketch
-	int total_number_points = 0; 
+    /* int number_points = 0; /// Number of point per sketch */
+    int total_number_points = 0;
 
     std::vector<unsigned int> number_edges_; // Number of Sketch Segments
     std::vector< float > colors;
 
     // Number of Internal Surface
     //int number_of_surfaces = cross_section.curves_history_.size();
-	int number_of_surfaces = 0;
+    int number_of_surfaces = 0;
 
     float diagonal = std::pow((cross_section.viewPort_.first.x() - cross_section.viewPort_.second.x()), 2) + std::pow((cross_section.viewPort_.first.y() - cross_section.viewPort_.second.y()), 2);
     diagonal = std::sqrt(diagonal);
 
+    //    using CurveType = RRM::PolygonalCurve2D<Real>; //decltype(cross_section.edges_[0].segment.curve);
+    ////    cross_section.edges_[0].segment.a;
 
+    //    struct Colour {
+    //        double r;
+    //        double g;
+    //        double b;
+    //    };
 
-    // for (auto& history_iterator : cross_section.curves_history_)
+    //    struct SegmentedCurve {
+    //        bool is_segmented = false;
+    //        bool has_visible_segment = false;
+    //        size_t nsegments = 0;
+    //        std::vector<CurveType> edges;
+    //        std::vector<Colour> colours;
+    //        std::vector<int> segment_ids;
+
+    //    public:
+    //        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    //    };
+
+    /* vector<SegmentedCurve> curves; */
+    /* curves.resize(cross_section.curves_history_.size()); */
+    std::map<int, SegmentedCurve> curves;
+    int index;
+    bool visible;
+
+    // Prepare an intermediate data structure to process the sketches
+    //    // for (auto& history_iterator : cross_section.curves_history_)
+
+    std::cout << "Building local data structure.\n";
+    for (auto& e : cross_section.edges_)
     {
+        if (e.second.is_boundary_ == false) {
+            index = e.second.segment.curve_index;
+            std::cout << "Current edge curve index: " << index << std::endl;
 
-        number_points = 0;
-        number_edges_.clear(); //number of surfaces
+            // smooth it out...
+            e.second.segment.curve.chaikinFilter(3);
 
-        for ( auto& edge_iterator : cross_section.edges_ )
-        {
-            //now is number of surfaces
+            visible = e.second.is_visible_;
+            std::cout << "     Edge is visible: " << visible << std::endl;
+            curves[index].is_segmented |= (visible == false);
+            std::cout << "     Curve (" << index << ") is segmented: " << curves[index].is_segmented << std::endl;
+            curves[index].has_visible_segment |= visible;
+            std::cout << "     Curve (" << index << ") has at least one visible segment so far: " << curves[index].has_visible_segment << std::endl;
 
-            if ((edge_iterator.second.is_boundary_ == false) && (edge_iterator.second.is_visible_ == true))
-				// && (edge_iterator.second.segment.curve_index == history_iterator.second.curve_index))
-            {
-                //only internal sketched
-                number_edges_.push_back(edge_iterator.second.id_);
-                edge_iterator.second.segment.curve.chaikinFilter(3);
-                number_points += edge_iterator.second.segment.curve.size();
 
-				nu.push_back(number_points);
-				nv.push_back(extrusion_size);
-				total_number_points += number_points*extrusion_size;
-				number_points = 0;
-				++number_of_surfaces;
+            if (visible) {
+                curves[index].segment_ids.push_back(e.second.id_);
+                std::cout << "     Processing edge (" << e.second.id_ << ") in curve: " << index << std::endl;
+                curves[index].edges.push_back(e.second.segment.curve);
+                curves[index].colours.push_back(Colour{ e.second.r, e.second.g, e.second.b });
+                total_number_points += e.second.segment.curve.size() * extrusion_size;
+                curves[index].nsegments++;
             }
-        }
-
-//        number_points -= (number_edges_.size() - 1);
-
-
-		float extrusion_step = (diagonal * 0.5);
-
-/*
-		int index = j*nu[k] + i + offset;
-
-		double x = position[3 * index];
-		double y = position[3 * index + 1];
-		double z = position[3 * index + 2];
-*/
-		int index = 0; 
-		int offset = 0; 
-		
-		positions.resize(3*total_number_points); 
-		colors.resize(3*total_number_points);
-
-            for (unsigned int id = 0; id < number_edges_.size(); id++)
-            {
-                //now is number of surfaces
-
-                unsigned int edge_id = number_edges_[id];
-
-
-                for (std::size_t it = 0; it < cross_section.edges_[edge_id].segment.curve.size(); it++)
-
-				{
-
-					for (int j = 0; j < extrusion_size; j++) //output is firstly x direction then y direction for each surface
-					
-					{
-
-//                    his->curves_colors[edges_iterator.second.segment.curve_index] = Eigen::Vector3f(edges_iterator.second.r, edges_iterator.second.g, edges_iterator.second.b);
-
-                    //positions.push_back( cross_section.edges_[edge_id].segment.curve[it].x() );
-                    //positions.push_back( j + extrusion_step );
-                    //positions.push_back( cross_section.edges_[edge_id].segment.curve[it].y() );
-
-                    //colors.push_back( cross_section.edges_[edge_id].r );
-                    //colors.push_back( cross_section.edges_[edge_id].g );
-                    //colors.push_back( cross_section.edges_[edge_id].b );
-
-					index = j*cross_section.edges_[edge_id].segment.curve.size() + it + offset; 
-
-					positions[3*index +0] = (cross_section.edges_[edge_id].segment.curve[it].x());
-					positions[3*index +1] = (j * extrusion_step);
-					positions[3*index +2] = (cross_section.edges_[edge_id].segment.curve[it].y());
-
-					colors[3*index +0] = (cross_section.edges_[edge_id].r);
-					colors[3*index +1] = (cross_section.edges_[edge_id].g);
-					colors[3*index +2] = (cross_section.edges_[edge_id].b);
-
-					
-                }
+            else {
+                curves[index].isegments++;
+                std::cout << "     Ignoring current edge.\n";
             }
 
-			offset += cross_section.edges_[edge_id].segment.curve.size() * extrusion_size;
+            std::cout << "     So far " << curves[index].nsegments << " segments were visible in curve " << index << std::endl;
+            std::cout << "     So far " << curves[index].isegments << " segments were invisible in curve " << index << std::endl;
 
-            //for (std::size_t it = 0; it < cross_section.edges_[number_edges_.back()].segment.curve.size(); it++)
-            //{
-
-
-            //    positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].x() );
-            //    positions.push_back( (float) j + extrusion_step );
-            //    positions.push_back( (float) cross_section.edges_[number_edges_.back()].segment.curve[it].y() );
-
-            //    colors.push_back( cross_section.edges_[number_edges_.back()].r );
-            //    colors.push_back( cross_section.edges_[number_edges_.back()].g );
-            //    colors.push_back( cross_section.edges_[number_edges_.back()].b );
-
-
-            //}
-
-            //extrusion_step += ( diagonal * 0.5);
         }
-
     }
 
+    // assemble the list of surfaces generators to be sent to Zhao's implementation
+    std::vector<CurveType> processed_curves;
+    CurveType current_curve;
+    std::vector<Colour> processed_curves_colours;
+
+    double tolerance = 1E-01;
+    total_number_points = 0;
+
+    for (auto &c : curves)
+    {
+        std::cout << "Got a raw_curve with index:  " << c.first << std::endl << std::flush;
+
+        if (c.second.has_visible_segment == false)
+        {
+            std::cout << "Ignoring invisible curve.\n";
+            continue;
+        }
+
+        // if the curve is entire, put all segments together.
+        if (c.second.isegments == 2)
+        {
+            std::cout << "Got a curve that I hope is entire, and has " << c.second.nsegments << " segments. \n";
+            current_curve.clear();
+            for (int s = 0; s < c.second.nsegments; ++s)
+            {
+                current_curve.join(c.second.edges[s], tolerance);
+            }
+
+            nu.push_back(current_curve.size());
+            std::cout << "     Nu size:" << current_curve.size() << std::endl << std::flush;
+            nv.push_back(extrusion_size);
+            std::cout << "     Nv size:" << extrusion_size << std::endl << std::flush;
+
+            total_number_points += current_curve.size() * extrusion_size;
+            processed_curves.push_back(current_curve);
+            processed_curves_colours.push_back(c.second.colours[0]);
+        }
+        else // if ( c.second.isegments != 2 )
+        {
+            std::cout << "Got a curve is not entire, going to process " << c.second.nsegments << " segments. \n";
+            for (int s = 0; s < c.second.nsegments; ++s)
+            {
+                nu.push_back(c.second.edges[s].size());
+                std::cout << "     Nu size:" << c.second.edges[s].size() << std::endl << std::flush;
+                nv.push_back(extrusion_size);
+                std::cout << "     Nv size:" << extrusion_size << std::endl << std::flush;
+
+                total_number_points += c.second.edges[s].size() * extrusion_size;
+                processed_curves.push_back(c.second.edges[s]);
+                processed_curves_colours.push_back(c.second.colours[s]);
+            }
+
+        }
+    }
+
+    number_of_surfaces = processed_curves.size();
+    std::cout << "Num curves == num colours? " << (processed_curves.size() == processed_curves_colours.size()) << std::endl << std::flush;
+
+
+
+    /* number_points = 0; */
+
+    float extrusion_step = 0; // (diagonal * 0.5);
+    index = 0;
+    int offset = 0;
+
+    std::cout << "Preparing points and colors vectors with 3 * " << total_number_points << " entries.\n" << std::flush;
+    positions.resize(3 * total_number_points);
+    colors.resize(3 * total_number_points);
+
+    for (int k = 0; k < processed_curves.size(); ++k)
+    {
+        auto &c = processed_curves[k];
+        extrusion_step = 0;
+        for (int j = 0; j < extrusion_size; j++)
+
+        {
+            for (int i = 0; i < c.size(); ++i)
+            {
+                index = j*c.size() + i + offset;
+
+                positions[3 * index + 0] = c[i].x(); //(cross_section.edges_[edge_id].segment.curve[it].x());
+                positions[3 * index + 1] = (j + extrusion_step);
+                positions[3 * index + 2] = c[i].y(); //(cross_section.edges_[edge_id].segment.curve[it].y());
+
+                colors[3 * index + 0] = processed_curves_colours[k].r; //(cross_section.edges_[edge_id].r);
+                colors[3 * index + 1] = processed_curves_colours[k].g; //(cross_section.edges_[edge_id].g);
+                colors[3 * index + 2] = processed_curves_colours[k].b; //(cross_section.edges_[edge_id].b);
+                std::cout << "Element (" << index << "): "
+                    << "x = " << c[i].x()
+                    << ", y = " << j + extrusion_step
+                    << ", z = " << c[i].y()
+                    << std::endl << std::flush;
+            }
+            extrusion_step += (diagonal * 0.5);
+        }
+        offset += c.size() * extrusion_size;
+    }
+
+
+    std::cout << "------ Post processing...---------\n" << std::flush;
     std::vector< unsigned int > faces;
-    region.setSkeleton( number_of_surfaces, nu, nv, positions );
-    faces = getSkeletonFaces( nu, nv, positions );
+std:cout << "Setting skeleton: " << std::flush;
+    this->region.setSkeleton(number_of_surfaces, nu, nv, positions);
 
-    if( faces.empty() == true ) return;
+    std::cout << "done. \n" << std::flush;
 
-    mesh_ok = true;
-    emit updateMesh( Mesh::TYPE::QUADRILATERAL, positions, faces );
-    emit updateColors( colors );
+    std::cout << "Getting skeleton: " << std::flush;
+    faces = this->getSkeletonFaces(nu, nv, positions);
+    std::cout << "done.\n" << std::flush;
 
+    if (faces.empty() == true) return;
 
+    this->mesh_ok = true;
+    emit this->updateMesh(Mesh::TYPE::QUADRILATERAL, positions, faces);
+    emit this->updateColors(colors);
 }
 
 
@@ -569,7 +658,10 @@ std::vector< unsigned int > FlowVisualizationController::getSkeletonFaces( const
 void FlowVisualizationController::computeFlowProperties()
 {
 
-    if( volumetric_ok == false || mesh_ok == false ) return;
+    if( volumetric_ok == false || mesh_ok == false || properties_computed == true ) return;
+
+
+    emit clearPropertiesMenu();
 
 
     counter.start( 0, 3 );
@@ -578,12 +670,14 @@ void FlowVisualizationController::computeFlowProperties()
     region.flowdiagnostics();
     counter.update( 2 );
 
-    emit propertybyVertexComputed( "PRESSURE", "SCALAR" ) ;
+    emit propertybyVertexComputed( "Corrected Pressure", "SCALAR" ) ;
     emit propertybyVertexComputed( "TOF", "SCALAR" ) ;
-    emit propertybyVertexComputed( "TRACER", "SCALAR" ) ;
+    emit propertybyVertexComputed( "Tracer", "SCALAR" ) ;
 
-    emit propertybyFaceComputed( "PERMEABILITY", "SCALAR" ) ;
-    emit propertybyFaceComputed( "VELOCITY", "VECTOR" ) ;
+    emit propertybyFaceComputed( "Permeability", "SCALAR" ) ;
+    emit propertybyFaceComputed( "Velocity", "VECTOR" ) ;
+
+    emit setaColorMap();
 
 
     counter.update( 3 );
@@ -600,19 +694,66 @@ void FlowVisualizationController::computeFlowProperties()
 }
 
 
+void FlowVisualizationController::showRegions()
+{
+
+
+    std::vector< double > positions;
+    std::vector< int > regions;
+    std::set< int > idregions;
+    region.getRegionsPositions( positions, regions, idregions );
+
+
+    std::vector< double > values = region.porevolume();
+
+    std::random_device rd;
+    std::mt19937 seed(rd());
+    std::uniform_int_distribution<unsigned int> distr(0, 255);
+
+
+    int number_of_colors = idregions.size();
+
+    std::map< int, QColor > mapidtocolors;
+    std::vector< QColor > colors;
+    std::set<int>::iterator it;
+
+    for (it=idregions.begin(); it!=idregions.end(); ++it)
+    {
+        int r = distr( seed );
+        int g = distr( seed );
+        int b = distr( seed );
+
+        colors.push_back( QColor( r, g, b ) );
+        mapidtocolors[ *it ] = QColor( r, g, b );
+    }
+
+
+
+    std::vector< QColor > cellscolors;
+    for( int i = 0; i < regions.size(); ++i )
+    {
+        cellscolors.push_back( mapidtocolors[ regions[i] ] );
+    }
+
+
+    emit showPointMarkers( cellscolors, positions );
+    emit showPoreVolumeResults( colors, values );
+
+}
+
 
 std::vector< double > FlowVisualizationController::getVerticesPropertyValues( std::string name_of_property, std::string method, double& min, double& max )
 {
 
     std::string type = "SCALAR";
     std::vector< double > values;
-    
-    if( name_of_property.compare( "VELOCITY" ) == 0 )
+
+    if( name_of_property.compare( "Velocity" ) == 0 )
     {
         type = "VECTOR";
         region.getNodesVelocity( values );
     }
-    else if ( name_of_property.compare( "PRESSURE" ) == 0 )
+    else if ( name_of_property.compare( "Corrected Pressure" ) == 0 )
     {
         region.getPressureValues( values );
     }
@@ -621,14 +762,14 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     {
         region.getNodesTOF( values );
     }
-    else if( name_of_property.compare( "TRACER" ) == 0 )
+    else if( name_of_property.compare( "Tracer" ) == 0 )
     {
         region.getNodesTracer( values );
     }
 
 
     std::vector< double > scalar_values;
-    
+
 
     if ( values.empty() == true ) return scalar_values;
 
@@ -639,18 +780,18 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     else
     {
         scalar_values = values;
-        
+
         std::vector< double >::iterator itmin = std::min_element( scalar_values.begin(), scalar_values.end() );
         std::vector< double >::iterator itmax = std::max_element( scalar_values.begin(), scalar_values.end() );
-    
+
         int idmin = std::distance( scalar_values.begin(), itmin );
         int idmax = std::distance( scalar_values.begin(), itmax );
-    
+
         min = scalar_values[ idmin ];
         max = scalar_values[ idmax ];
     }
-    
-    
+
+
     return scalar_values;
 }
 
@@ -662,12 +803,12 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     std::string type = "SCALAR";
     std::vector< double > values;
 
-    if( name_of_property.compare( "VELOCITY" ) == 0 )
+    if( name_of_property.compare( "Velocity" ) == 0 )
     {
         type = "VECTOR";
         region.getElementalsVelocity( values );
     }
-    else if ( name_of_property.compare( "PERMEABILITY" ) == 0 )
+    else if ( name_of_property.compare( "Permeability" ) == 0 )
     {
         region.getPermeabilityValues( values );
     }
@@ -678,7 +819,7 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         region.getElementalsTOF( values );
     }
 
-    else if( name_of_property.compare( "TRACER" ) == 0 ){
+    else if( name_of_property.compare( "Tracer" ) == 0 ){
         region.getElementalsTracer( values );
     }
 
@@ -713,7 +854,7 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
 std::vector< double > FlowVisualizationController::vectorToScalarProperties(const std::vector<double> &values, std::string type, double& min , double& max  )
 {
-    
+
     int number_of_vertices = (int)values.size()/3;
     std::vector< double > scalar_values;
 
@@ -725,7 +866,7 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
         {
             scalar_values.push_back( values[ 3*i ] );
         }
-        
+
     }
     else if( type.compare( "COORDY" ) == 0 )
     {
@@ -733,11 +874,11 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
         {
             scalar_values.push_back( values[ 3*i + 1 ] );
         }
-        
+
     }
     else if( type.compare( "COORDZ" ) == 0 )
     {
-        
+
         for( int i = 0; i < number_of_vertices; ++i )
         {
             scalar_values.push_back( values[ 3*i + 2 ] );
@@ -758,7 +899,7 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
 
         }
     }
-    
+
     std::vector< double >::iterator itmin = std::min_element( scalar_values.begin(), scalar_values.end() );
     std::vector< double >::iterator itmax = std::max_element( scalar_values.begin(), scalar_values.end() );
 
@@ -767,9 +908,9 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
 
     min = scalar_values[ idmin ];
     max = scalar_values[ idmax ];
-    
+
     return scalar_values;
-    
+
 }
 
 
@@ -785,16 +926,36 @@ void FlowVisualizationController::setTriangleCommand( std::string& cmd )
 }
 
 
+void FlowVisualizationController::setPropertyArea( const int& np, const std::vector< double >& values )
+{
+    if( values.empty() == true )
+        region.setPropertyArea( 0, values );
+    else
+        region.setPropertyArea( np, values );
+
+}
+
+
 void FlowVisualizationController::setBoundariesValues( int nb, vector< double > &values )
 {
 
-    region.setBoundariesSurface( nb, values );
+    if( values.empty() == true )
+        region.setBoundariesSurface( 0, values );
+    else
+        region.setBoundariesSurface( nb, values );
+
+//
 }
 
 void FlowVisualizationController::setWellsValues( int nw,  vector< double > &values )
 {
 
-    region.setWells( nw, values );
+    if( values.empty() == true )
+        region.setWells( 0, values );
+    else
+        region.setWells( nw, values );
+
+
 }
 
 
@@ -802,12 +963,20 @@ void FlowVisualizationController::setTofBoundaryValues( int n, vector< double > 
 {
 
     vector< int > values_;
+
+    if( values.empty() == true )
+    {
+        region.setTofBoundaries( 0, 1, values_ );
+        return;
+    }
+
+
     int ntfsignal = values[ 0 ];
 
 
     for( std::size_t it = 0; it < n; ++it )
     {
-        values_.push_back( (int)values.at( /*2**/it + 1 ) );
+        values_.push_back( (int)values.at( it + 1 ) );
     }
 
     region.setTofBoundaries( n, ntfsignal, values_ );
@@ -816,10 +985,18 @@ void FlowVisualizationController::setTofBoundaryValues( int n, vector< double > 
 
 void FlowVisualizationController::setTrBoundaryValues(int n, std::vector< double > &values )
 {
+    vector< int > values_;
+
+    if( values.empty() == true )
+    {
+        region.setTracerBoundaries( 0, 1, values_ );
+        return;
+    }
+
 
     int ntrsignal = values[ 0 ];
 
-     vector< int > values_;
+
 
     for( std::size_t it = 0; it < n; ++it )
     {
@@ -847,6 +1024,12 @@ void FlowVisualizationController::exportVolumetoVTK( const std::string& filename
 void FlowVisualizationController::exportCornerPointtoVTK( const std::string& filename )
 {
     region.writecornerpointgridVTK( (char *)filename.c_str() );
+}
+
+
+void FlowVisualizationController::exportCornerPointtoGRDECL( const std::string& filename )
+{
+    region.writecornerpointgrideclipse( (char *)filename.c_str() );
 }
 
 
@@ -887,4 +1070,6 @@ void FlowVisualizationController::clear()
     volumetric_ok = false;
     properties_computed = false;
     region.clearregion();
+//    region.resetStandardValues();
 }
+

@@ -32,3 +32,10 @@ void NormalMovableCrossSectionFlow::on_btn_acceptnormal_rejected()
     emit canceled();
 
 }
+
+void NormalMovableCrossSectionFlow::clear()
+{
+    edt_normalCoordX->clear();
+    edt_normalCoordY->clear();
+    edt_normalCoordZ->clear();
+}

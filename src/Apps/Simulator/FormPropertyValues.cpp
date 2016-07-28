@@ -8,6 +8,7 @@ FormPropertyValues::FormPropertyValues( QWidget *parent )
     hb_layout_toftracer = new QHBoxLayout();
     vb_layout_toftracer = new QVBoxLayout();
 
+
     vector_values.clear();
     vector_edt_values.clear();
 
@@ -340,22 +341,22 @@ void FormPropertyValues::viewSingleValueForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Permeability "), row, col + 1 );
+        gl_layout->addWidget( new QLabel( "Permeability (mD)"), row, col + 1 );
         gl_layout->addWidget( vector_edt_values[ 6*i ], row, col + 2 );
 
         gl_layout->addWidget( new QLabel( "Porosity"), row, col + 3 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 1 ], row, col + 4 );
 
-        gl_layout->addWidget( new QLabel( "Viscosity "), row, col + 5 );
+        gl_layout->addWidget( new QLabel( "Viscosity (cP)"), row, col + 5 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 2 ], row, col + 6 );
 
-        gl_layout->addWidget( new QLabel( "X "), row, col + 7 );
+        gl_layout->addWidget( new QLabel( "X(m)"), row, col + 7 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 3 ], row, col + 8 );
 
-        gl_layout->addWidget( new QLabel( "Y"), row, col + 9 );
+        gl_layout->addWidget( new QLabel( "Y(m)"), row, col + 9 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 4 ], row, col + 10 );
 
-        gl_layout->addWidget( new QLabel( "Z "), row, col + 11 );
+        gl_layout->addWidget( new QLabel( "Z(m)"), row, col + 11 );
         gl_layout->addWidget( vector_edt_values[ 6*i + 5 ], row, col + 12 );
 
         if( col == 0 ){
@@ -417,7 +418,7 @@ void FormPropertyValues::viewWellForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Value "), row, col + 1 );
+        gl_layout->addWidget( new QLabel( "Corrected Pressure (Bar)"), row, col + 1 );
         gl_layout->addWidget( vector_edt_values[ 3*i ], row, col + 2 );
 
         gl_layout->addWidget( new QLabel( "U"), row, col + 3 );
@@ -584,7 +585,7 @@ void FormPropertyValues::viewTofandTracerForm()
 
         gl_layout->addWidget( lb_name, row, col );
 
-        gl_layout->addWidget( new QLabel( "Mark"), row, col + 1 );
+        gl_layout->addWidget( new QLabel( "Well"), row, col + 1 );
         gl_layout->addWidget( vector_edt_values[ i + 1 ], row, col + 2 );
 
         if( col == 0 ){
@@ -643,7 +644,11 @@ void FormPropertyValues::on_accept_values()
 
     for( std::size_t it = 0; it < total_number_values; ++it )
     {
-        float value = vector_edt_values.at( it )->text().toFloat();
+        float value = 0.0;
+
+        if( vector_edt_values.at( it )->text().isEmpty() == false )
+            value = vector_edt_values.at( it )->text().toFloat();
+
         vector_values[ it ] = value;
     }
 

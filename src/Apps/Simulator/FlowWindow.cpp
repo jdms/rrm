@@ -21,12 +21,12 @@ void FlowWindow::createWindow()
     addDockWidget( Qt::LeftDockWidgetArea, qdockparametersBar );
 
 
-    qdockresolutionmesh = new QDockWidget( this );
-    qdockresolutionmesh->setAllowedAreas( Qt::BottomDockWidgetArea );
-    qdockresolutionmesh->setWidget( &resolutionmeshBar );
-    qdockresolutionmesh->setVisible( false );
+//    qdockresolutionmesh = new QDockWidget( this );
+//    qdockresolutionmesh->setAllowedAreas( Qt::BottdomDockWidgetArea );
+//    qdockresolutionmesh->setWidget( &resolutionmeshBar );
+//    qdockresolutionmesh->setVisible( false );
 
-    addDockWidget( Qt::LeftDockWidgetArea, qdockresolutionmesh );
+//    addDockWidget( Qt::LeftDockWidgetArea, qdockresolutionmesh );
 
     qdockcrosssectionnormalBar = new QDockWidget( this );
     qdockcrosssectionnormalBar->setAllowedAreas( Qt::LeftDockWidgetArea );
@@ -47,20 +47,33 @@ void FlowWindow::createWindow()
 
 
     controller = new FlowVisualizationController( this );
-    canvas = new FlowVisualizationCanvas( this );
-    canvas->setController( controller );
-
     controller->setParent( this );
     controller->setCounterProgressinData();
 
+    canvas = new FlowVisualizationCanvas( this );
+    canvas->setController( controller );
+    canvas->setColorBar( &colorbar );
 
-    canvas->show();//setMinimumSize( 300, 300 );
-    this->setCentralWidget( canvas );
+
+
+    hb_mainwindow = new QHBoxLayout( this );
+    hb_mainwindow->addWidget( canvas );
+    hb_mainwindow->addWidget( &colorbar );
+
+    QWidget *wd_main = new QWidget( this );
+    wd_main->setLayout( hb_mainwindow );
+
+
+    this->setCentralWidget( wd_main );
+
+    colorbar.setSize( canvas->height() , 25 );
+
 }
 
 
 void FlowWindow::createToolBar()
 {
+
 
 
     qtoolbarFlow = new QToolBar();
@@ -80,11 +93,11 @@ void FlowWindow::createToolBar()
 
 
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
-    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpointgrid.png"));
+    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpoint (2).png"));
     connect( qbuildCornerPoint, &QAction::triggered, this, [=](){ controller->generateCornerPoint(); qcomputeFlowProperties->setEnabled( false ); } );
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
-    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructuredgrid.png"));
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructured1 (2).png"));
     connect( qbuildUnstructured, &QAction::triggered, this, [=](){ controller->generateUnstructured(); qcomputeFlowProperties->setEnabled( true ); } );
 
 
@@ -105,16 +118,18 @@ void FlowWindow::createToolBar()
 
 
 
-    qexportsurface  = new QAction( "Surface to VTK", qtoolbarFlow );
+    qexportsurface  = new QAction( "Unstructured Surface Mesh to VTK", qtoolbarFlow );
     connect( qexportsurface, SIGNAL( triggered(bool) ), this, SLOT( exportSurfaceFile() ) );
 
 
-    qexportvolume  = new QAction( "Volume to VTK", qtoolbarFlow );
+    qexportvolume  = new QAction( "Unstructured Volume Mesh to VTK", qtoolbarFlow );
     connect( qexportvolume, SIGNAL( triggered(bool) ), this, SLOT( exportVolumeFile() ) );
 
 
-    qexportcornerpoint  = new QAction( "CornerPoint to VTK", qtoolbarFlow );
-    connect( qexportcornerpoint, SIGNAL( triggered(bool) ), this, SLOT( exportCornerPointFile() ) );
+    qexportcornerpointVTK  = new QAction( "Corner-Point Grid to VTK", qtoolbarFlow );
+    connect( qexportcornerpointVTK, &QAction::triggered, this, [=](){ exportCornerPointFile( "VTK" ); } );
+    qexportcornerpointGRDECL  = new QAction( "Corner-Point Grid to GRDECL", qtoolbarFlow );
+    connect( qexportcornerpointGRDECL, &QAction::triggered, this, [=](){ exportCornerPointFile( "GRDECL" ); } );
 
     qexportresults  = new QAction( "Results to VTK", qtoolbarFlow );
     connect( qexportresults, SIGNAL( triggered(bool) ), this, SLOT( exportResultstoFile() ) );
@@ -123,7 +138,8 @@ void FlowWindow::createToolBar()
     mn_export = new QMenu( "Export", this );
     mn_export->addAction(qexportsurface);
     mn_export->addAction(qexportvolume);
-    mn_export->addAction(qexportcornerpoint);
+    mn_export->addAction(qexportcornerpointVTK);
+    mn_export->addAction(qexportcornerpointGRDECL);
     mn_export->addAction(qexportresults);
 
     tbn_export = new QToolButton();
@@ -146,12 +162,129 @@ void FlowWindow::createToolBar()
     tbn_coloringbyface->setMenu( mn_coloring_byfaces );
     tbn_coloringbyface->setPopupMode( QToolButton::InstantPopup );
 
+    mn_colormaps = new QMenu ( tr ( "Colormaps" ) );
+    tbn_colormaps = new QToolButton();
+    tbn_colormaps->setIcon(QIcon(":/images/icons/colormap.png"));
+    tbn_colormaps->setMenu( mn_colormaps );
+    tbn_colormaps->setPopupMode( QToolButton::InstantPopup );
 
 
+    ac_constant = new QAction( "Constant", qtoolbarFlow );
+    ac_jet = new QAction( "Jet", qtoolbarFlow );
+    ac_hot = new QAction( "Hot", qtoolbarFlow );
+    ac_cool = new QAction( "Cool", qtoolbarFlow );
+    ac_parula = new QAction( "Parula", qtoolbarFlow );
+    ac_spring = new QAction( "Spring", qtoolbarFlow );
+    ac_summer = new QAction( "Summer", qtoolbarFlow );
+    ac_copper = new QAction( "Copper", qtoolbarFlow );
+    ac_polar = new QAction( "Polar", qtoolbarFlow );
+    ac_winter = new QAction( "Winter", qtoolbarFlow );
 
+    ac_constant->setCheckable( true );
+    ac_jet->setCheckable( true );
+    ac_hot->setCheckable( true );
+    ac_cool->setCheckable( true );
+    ac_parula->setCheckable( true );
+    ac_spring->setCheckable( true );
+    ac_summer->setCheckable( true );
+    ac_copper->setCheckable( true );
+    ac_polar->setCheckable( true );
+    ac_winter->setCheckable( true );
+
+
+    connect( ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::CONSTANT ); ac_jet->setChecked( false ); ac_hot->setChecked( false );
+                                                                                                                        ac_cool->setChecked( false ); ac_parula->setChecked( false );
+                                                                                                                        ac_spring->setChecked( false ); ac_summer->setChecked( false );
+                                                                                                                        ac_copper->setChecked( false ); ac_polar->setChecked( false );
+                                                                                                                        ac_winter->setChecked( false );
+
+
+    } );
+    connect( ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::JET ); ac_constant->setChecked( false ); ac_hot->setChecked( false );
+                                                                                                            ac_cool->setChecked( false ); ac_parula->setChecked( false );
+                                                                                                            ac_spring->setChecked( false ); ac_summer->setChecked( false );
+                                                                                                            ac_copper->setChecked( false ); ac_polar->setChecked( false );
+                                                                                                            ac_winter->setChecked( false );
+} );
+    connect( ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::HOT );  ac_constant->setChecked( false ); ac_jet->setChecked( false );
+                                                                                                                ac_cool->setChecked( false ); ac_parula->setChecked( false );
+                                                                                                                ac_spring->setChecked( false ); ac_summer->setChecked( false );
+                                                                                                                ac_copper->setChecked( false ); ac_polar->setChecked( false );
+                                                                                                                ac_winter->setChecked( false );
+    } );
+    connect( ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::COOL ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_parula->setChecked( false );
+        ac_spring->setChecked( false ); ac_summer->setChecked( false );
+        ac_copper->setChecked( false ); ac_polar->setChecked( false );
+        ac_winter->setChecked( false );
+} );
+    connect( ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::PARULA ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_spring->setChecked( false ); ac_summer->setChecked( false );
+        ac_copper->setChecked( false ); ac_polar->setChecked( false );
+        ac_winter->setChecked( false );
+    } );
+
+    connect( ac_spring, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::SPRING ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_parula->setChecked( false ); ac_summer->setChecked( false );
+        ac_copper->setChecked( false ); ac_polar->setChecked( false );
+        ac_winter->setChecked( false );
+    } );
+    connect( ac_summer, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::SUMMER ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_parula->setChecked( false ); ac_spring->setChecked( false );
+        ac_copper->setChecked( false ); ac_polar->setChecked( false );
+        ac_winter->setChecked( false );
+    } );
+    connect( ac_copper, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::COPPER );  ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_parula->setChecked( false ); ac_spring->setChecked( false );
+        ac_summer->setChecked( false ); ac_polar->setChecked( false );
+        ac_winter->setChecked( false );
+    } );
+    connect( ac_polar, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::POLAR ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_parula->setChecked( false ); ac_spring->setChecked( false );
+        ac_summer->setChecked( false ); ac_copper->setChecked( false );
+        ac_winter->setChecked( false );
+    } );
+    connect( ac_winter, &QAction::triggered, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::WINTER ); ac_constant->setChecked( false ); ac_jet->setChecked( false );
+        ac_hot->setChecked( false ); ac_cool->setChecked( false );
+        ac_parula->setChecked( false ); ac_spring->setChecked( false );
+        ac_summer->setChecked( false ); ac_copper->setChecked( false );
+        ac_polar->setChecked( false );
+    } );
+
+
+    mn_colormaps->addAction( ac_constant );
+    mn_colormaps->addAction( ac_jet );
+    mn_colormaps->addAction( ac_hot );
+    mn_colormaps->addAction( ac_cool );
+    mn_colormaps->addAction( ac_parula );
+    mn_colormaps->addAction( ac_spring );
+    mn_colormaps->addAction( ac_summer );
+    mn_colormaps->addAction( ac_copper );
+    mn_colormaps->addAction( ac_polar );
+    mn_colormaps->addAction( ac_winter );
+
+
+    ac_showregions = new QAction( "Show Pore Volumes", qtoolbarFlow );
+    ac_showregions->setIcon(QIcon(":/images/icons/porevolume4.png"));
+    ac_showregions->setCheckable( true );
+    connect( ac_showregions, &QAction::triggered, this, [=]( bool option ){ if( option == true ) { controller->showRegions(); }
+                                                                                                  else{ /*canvas->disablePointMarkers( false ); */ porevolumeform.close(); } } );
     qclear = new QAction( "Clear", qtoolbarFlow );
     qclear->setIcon(QIcon(":/images/icons/clear.png"));
-    connect( qclear, &QAction::triggered, this, [=](){ controller->clear(); canvas->clear(); qexportcornerpoint->setEnabled( true ); parametersBar.clear(); } );
+    connect( qclear, &QAction::triggered, this, [=](){ controller->clear();
+                                                       canvas->clear();
+                                                       qexportcornerpointVTK->setEnabled( true );
+                                                       qexportcornerpointGRDECL->setEnabled( true );
+                                                       parametersBar.clear();
+                                                       crosssectionnormalBar.clear();
+                                                       qcomputeFlowProperties->setEnabled( true );
+                                                       reset();
+    } );
 
 
     qhelp = new QAction( "Help", qtoolbarFlow );
@@ -170,24 +303,29 @@ void FlowWindow::createToolBar()
     qtoolbarFlow->addAction( qcomputeFlowProperties );
     qtoolbarFlow->addWidget( tbn_coloringbyvertex );
     qtoolbarFlow->addWidget( tbn_coloringbyface );
+    qtoolbarFlow->addAction( ac_showregions );
 
     qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction( qshowMovingCrossSection );
 
     qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addWidget( tbn_colormaps );
     qtoolbarFlow->addWidget( tbn_export );
-
-    qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction( qclear );
 
     qtoolbarFlow->addSeparator();
-    qtoolbarFlow->addAction( qhelp );
+//    qtoolbarFlow->addAction( qhelp );
 
     addToolBar( qtoolbarFlow );
     qtoolbarFlow->setVisible( true );
 
+}
 
 
+void FlowWindow::resizeEvent(QResizeEvent *event)
+{
+    QSize size = event->size();
+    colorbar.setSize( canvas->height(), 25 );
 }
 
 
@@ -209,6 +347,8 @@ void FlowWindow::createActions()
     connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, this, [=]( float X, float Y, float Z ){ canvas->setCrossSectionNormalCoordinates( X, Y, Z ); qdockcrosssectionnormalBar->close(); } );
     connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qdockcrosssectionnormalBar->close();  qshowMovingCrossSection->setChecked( false ); canvas->disableCrossSection(); } );
 
+
+    connect( &parametersBar, &FlowParametersBar::closeBarandAccept, this, [=](){ qdockparametersBar->close(); controller->setReadInput( true );} );
     connect( &parametersBar, SIGNAL( closeBar() ), qdockparametersBar, SLOT( close() ) );
 
 
@@ -232,31 +372,36 @@ void FlowWindow::createActions()
 	connect(controller, &FlowVisualizationController::hideToolbar, this, [=](){ show_toolbar = !show_toolbar; qtoolbarFlow->setVisible(show_toolbar);  });
 
     connect( controller, &FlowVisualizationController::clearAll, this, [=](){
-        controller->clear(); canvas->clear(); qexportcornerpoint->setEnabled( true );
+        controller->clear(); canvas->clear(); qexportcornerpointVTK->setEnabled( true ); qexportcornerpointGRDECL->setEnabled( true );
     } );
 
 
     connect( controller, SIGNAL( updateMesh(  const Mesh::TYPE&, const std::vector< double >&, const std::vector< unsigned int >&  ) ), canvas, SLOT( updateMesh(  const Mesh::TYPE&, const std::vector< double >&, const std::vector< unsigned int >&  ) ) );
 
-    connect( &resolutionmeshBar, &DialogMeshVisualizationParameters::sendVisualizationParameters, this, [=]( const std::string& cmd, const std::string& method, const float &value ) {
+//    connect( &resolutionmeshBar, &DialogMeshVisualizationParameters::sendVisualizationParameters, this, [=]( const std::string& cmd, const std::string& method, const float &value ) {
 
-        if( method.compare( "PARTITION" ) == 0 )
-            controller->setMeshVisualizationParameters( cmd, 1, value, -1 );
-        else if( method.compare( "EDGELENGHT" ) == 0 )
-            controller->setMeshVisualizationParameters( cmd, 2, -1, value );
+//        if( method.compare( "PARTITION" ) == 0 )
+//            controller->setMeshVisualizationParameters( cmd, 1, value, -1 );
+//        else if( method.compare( "EDGELENGHT" ) == 0 )
+//            controller->setMeshVisualizationParameters( cmd, 2, -1, value );
 
-        qdockresolutionmesh->close();
+//        qdockresolutionmesh->close();
 
 
-    } );
+//    } );
 
-    connect( &resolutionmeshBar, SIGNAL( closeBar() ), qdockresolutionmesh, SLOT( close() ) );
+//    connect( &resolutionmeshBar, SIGNAL( closeBar() ), qdockresolutionmesh, SLOT( close() ) );
 
 
     connect( controller, SIGNAL( propertybyVertexComputed( std::string, std::string ) ), this, SLOT( addVertexProperty( std::string, std::string ) ) );
     connect( controller, SIGNAL( propertybyFaceComputed( std::string, std::string ) ), this, SLOT( addFaceProperty( std::string, std::string ) ) );
 
     connect( controller, SIGNAL(updateColors( const std::vector< float >& ) ), canvas, SLOT( setColors( const std::vector< float >& ) ) );
+
+	connect( controller, SIGNAL( clearPropertiesMenu() ), this, SLOT( clearPropertiesMenu() ) );
+	
+    connect( controller, SIGNAL( showPoreVolumeResults(  const std::vector< QColor >&, const std::vector< double > ) ), &porevolumeform, SLOT( setResults(  const std::vector< QColor >&, const std::vector< double >& ) ) );
+
 
 }
 
@@ -371,6 +516,7 @@ void FlowWindow::addFaceProperty( std::string name, std::string dimension )
 
 void FlowWindow::getCurrentDirectory()
 {
+
     QDir app_dir = QDir( qApp->applicationDirPath() );
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
@@ -387,6 +533,7 @@ void FlowWindow::getCurrentDirectory()
 #endif
 
     canvas->setCurrentDirectory( current_dir.toStdString() );
+//    help.setCurrentDirectory( current_dir.toStdString() );
 
 
 }
@@ -396,7 +543,9 @@ void FlowWindow::getCurrentDirectory()
 void FlowWindow::loadSurfacesfromSketch()
 {
 
-//    controller->clear();
+    controller->clear();
+    canvas->clear();
+
     emit getCrossSection();
 
 }
@@ -404,6 +553,9 @@ void FlowWindow::loadSurfacesfromSketch()
 
 void FlowWindow::loadSurfacesfromFile()
 {
+
+    controller->clear();
+    canvas->clear();
 
     QString selected_format = "";
     QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./inputs/",
@@ -498,17 +650,17 @@ void FlowWindow::updateVisualizationParameters()
 {
 
 
-    std::string trianglecmd;
-    int resolutiontype = 1;
-    int npartitionedge = 1;
-    double lenghtedge = 0.5;
+//    std::string trianglecmd;
+//    int resolutiontype = 1;
+//    int npartitionedge = 1;
+//    double lenghtedge = 0.5;
 
-    controller->getMeshVisualizationParameters( trianglecmd, resolutiontype, npartitionedge, lenghtedge );
+//    controller->getMeshVisualizationParameters( trianglecmd, resolutiontype, npartitionedge, lenghtedge );
 
-    if( resolutiontype == 1 )
-        resolutionmeshBar.setVisualizationParameters( trianglecmd, "PARTITION", npartitionedge, lenghtedge );
-    else if( resolutiontype == 2 )
-        resolutionmeshBar.setVisualizationParameters( trianglecmd, "EDGELENGHT", npartitionedge, lenghtedge );
+//    if( resolutiontype == 1 )
+//        resolutionmeshBar.setVisualizationParameters( trianglecmd, "PARTITION", npartitionedge, lenghtedge );
+//    else if( resolutiontype == 2 )
+//        resolutionmeshBar.setVisualizationParameters( trianglecmd, "EDGELENGHT", npartitionedge, lenghtedge );
 
 
 
@@ -551,25 +703,45 @@ void FlowWindow::exportSurfaceFile()
 
 void FlowWindow::exportVolumeFile()
 {
-    QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
-    if( filename.isEmpty() == true ) return;
 
-    controller->exportVolumetoVTK( filename.toStdString() );
+
+        QString selected_format = "";
+        QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+                                                         ".vtk files (*.vtk)", &selected_format );
+        if( filename.isEmpty() == true ) return;
+
+        controller->exportVolumetoVTK( filename.toStdString() );
+
 
 }
 
 
 
-void FlowWindow::exportCornerPointFile()
+void FlowWindow::exportCornerPointFile( const std::string format )
 {
+    if( format.compare( "VTK" ) == 0 )
+    {
+
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
                                                      ".vtk files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
     controller->exportCornerPointtoVTK( filename.toStdString() );
+
+    }
+
+    else if( format.compare( "GRDECL" ) == 0 )
+    {
+        QString selected_format = "";
+        QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+                                                         ".grdecl files (*.grdecl)", &selected_format );
+        if( filename.isEmpty() == true ) return;
+
+        controller->exportCornerPointtoGRDECL( filename.toStdString() );
+
+    }
+
 
 }
 
@@ -584,6 +756,24 @@ void FlowWindow::exportResultstoFile()
 
     controller->exportResultstoVTK( filename.toStdString() );
 }
+
+void FlowWindow::clearPropertiesMenu()
+{
+	mn_vectorsproperties_byvertex.clear();
+    rd_vectormethods_byvertex.clear();
+    ac_vertex_property.clear();
+	
+    mn_coloring_byvertex->clear();
+	
+	
+    mn_vectorsproperties_byface.clear();
+    rd_vectormethods_byface.clear();
+	
+    ac_face_property.clear();
+	
+    mn_coloring_byfaces->clear();
+}
+
 
 
 void FlowWindow::keyPressEvent( QKeyEvent *event )
@@ -613,5 +803,5 @@ void FlowWindow::reset()
     file_of_mesh.clear();
     type_of_file.clear();
 
-    show_toolbar = false;
+//    show_toolbar = false;
 }

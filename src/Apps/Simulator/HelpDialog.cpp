@@ -9,59 +9,309 @@ HelpDialog::HelpDialog(QWidget *parent) :
     setupUi(this);
 
     setWindowTitle("Contents");
-    createListItems();
-    createViewContents();
+
+    tw_guide->setMaximumWidth( 300 );
+
+    QHBoxLayout *hb_generalcontents  = new QHBoxLayout();
+    hb_generalcontents->addWidget( lw_contentsitems );
+    tb_generalguide->setLayout( hb_generalcontents );
+
+
+    QHBoxLayout *hb_specificcontents  = new QHBoxLayout();
+    hb_specificcontents->addWidget( lw_userguide );
+    tb_specificguide->setLayout( hb_specificcontents );
+
+    QHBoxLayout *hb_contents = new QHBoxLayout();
+    hb_contents->addWidget( tw_guide );
+    hb_contents->addWidget( gv_contents );
+
+
+    this->setLayout( hb_contents );
+
 
 }
 
-void HelpDialog::createListItems()
-{
-    lw_contentsitems->addItems( QStringList()
-            << "Number of regions of different permeability or porosity (edit by user)."
-            << "Permeability, porosity, viscosity values and region node coordinates x y z (edit by user)"
-            << "Total number of wells."
-            << "Well number, corrected pressure, well locations (u, v)"
-            << "Total number of TOF boundaries"
-            << "TOF sign"
-            << "TOF boundary well"
-            << "Total number of Tracer boundaries"
-            << "Tracer sign"
-            << "Tracer boundary well"
-      );
-}
-
-void HelpDialog::createViewContents()
-{
-}
 
 HelpDialog::~HelpDialog()
 {
 //    delete ui;
 }
 
-void HelpDialog::on_lw_contentsitems_clicked(const QModelIndex &index)
+void HelpDialog::on_lw_userguide_clicked(const QModelIndex &index)
 {
-    te_contentsview->clear();
+
+
+    scene.clear();
 
     if( index.row() == 0 )
-        te_contentsview->setText("1st entry is the total number of regions of different permeability or porosity or viscosity.");
-    else if( index.row() == 1 )
-        te_contentsview->setText("Values of each region are in one row. 1st entry is permeability value in unit mD (1mD=10^-15m^2); 2nd entry is porosity value and 3rd entry is viscosity value in cP (1cp = 0.001pa*s). The region node coordinates are of any node inside this region to help identify this region when generating volume mesh. The x, z coordinates can be read from the sketch window. Because this is simple extraction, the y coordinate can be any positive number smaller than the extraction length.");
-    else if( index.row() == 2 )
-        te_contentsview->setText("At least 2 wells");
-    else if( index.row() == 3 )
-        te_contentsview->setText("1st entry is the numbering of the wells (start from 0). 2nd entry is the corrected pressure of the well. 3rd and 4th entries are parametric locations of the wells. 0, 0 and 1, 1 are at the two corners of the model (0, 1 or 1, 0 can also be used). Currently wells can only be defined at the 4 corners.");
-    else if( index.row() == 4 )
-        te_contentsview->setText("If 0, time-of-flight is not calculated.");
-    else if( index.row() == 5 )
-        te_contentsview->setText("1 means forward TOF, -1 means backward TOF");
-    else if( index.row() == 6 )
-        te_contentsview->setText("1st entry is the TOF boundary ordering (start from 0), 2nd entry is the well number of the TOF boundary");
-    else if( index.row() == 7 )
-        te_contentsview->setText("If 0, tracer is not calculated.");
-    else if( index.row() == 8 )
-        te_contentsview->setText("1 means forward Tracer, -1 means backward TOF");
-    else if( index.row() == 9 )
-        te_contentsview->setText("1st entry is the Tracer boundary ordering (start from 0), 2nd entry is the well number of the Tracer boundary");
+    {
+
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/ch1.How to sketch and get the surfaces from Sketch.png" )  );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 1 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch2.How to get the surfaces from file_DPR.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 2 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch3.How to edit the user input parameters_DPR_Page_1_Page_1.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 3 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch3.How to edit the user input parameters_DPR_Page_1_Page_2.png"  ));
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 4 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch4.User input form_DPR_Page_1_Page_1.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 5 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch4.User input form_DPR_Page_1_Page_2.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 6 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch4.User input form_DPR_Page_1_Page_3.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 7 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch4.User input form_DPR_Page_1_Page_4.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    if( index.row() == 8 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch5.Mesh Generation_DPR.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    if( index.row() == 9 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch6.Flow Diagnostics_DPR.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    if( index.row() == 10 )
+    {
+        QImage image(  QString(  QString(current_directory.c_str()) + "manual/ch7.Pore Volume.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    if( index.row() == 11 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/ch8.CrossSection feature_DPR.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    if( index.row() == 12 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/ch9.Export  options_DPR.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+
+
+    gv_contents->setScene( &scene );
+    gv_contents->show();
+
+}
+
+
+
+void HelpDialog::on_lw_contentsitems_clicked(const QModelIndex &index)
+{
+
+
+    scene.clear();
+
+    if( index.row() == 0 )
+    {///*Quick Manual to Sketching View Interface_DPR_Page_1.png*/
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Sketch_ReadMe-NoSVG-1 (dragged).png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 1 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Sketch_ReadMe-NoSVG-2 (dragged).png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 2 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Sketch_ReadMe-NoSVG-3 (dragged).png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+      if( index.row() == 3 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Quick Manual to Flow Diagnostic View Interface_DPR_Page_1.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 4 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Quick Manual to Flow Diagnostic View Interface_DPR_Page_2.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+    if( index.row() == 5 )
+    {
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/Quick Manual to Flow Diagnostic View Interface_DPR_Page_3.png" ) );
+
+        if(image.isNull())
+        {
+            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+            return;
+        }
+
+        scene.addPixmap( QPixmap::fromImage( image ) );
+    }
+//    if( index.row() == 6 )
+//    {
+//        QImage image( QString(  QString(current_directory.c_str()) + "manual/Quick Manual to Flow Diagnostic View Interface_DPR_Page_4.png" ) );
+
+//        if(image.isNull())
+//        {
+//            std::cout << "Image Viewer, Error Displaying image" << std::endl;;
+//            return;
+//        }
+
+//        scene.addPixmap( QPixmap::fromImage( image ) );
+//    }
+
+
+    gv_contents->setScene( &scene );
+    gv_contents->show();
 
 }

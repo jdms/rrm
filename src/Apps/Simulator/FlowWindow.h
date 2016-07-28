@@ -9,12 +9,15 @@
 #include <QProgressBar>
 #include <QKeyEvent>
 #include <QToolButton>
+#include <QResizeEvent>
 
 #include "FlowParametersBar.h"
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "DialogMeshVisualizationParameters.h"
 #include "HelpDialog.h"
+#include "ColorBar.h"
+#include "PoreVolumeResultsForm.h"
 
 #include "Model/CrossSection.hpp"
 
@@ -37,6 +40,8 @@ class FlowWindow : public  QMainWindow
         void setCrossSection( const RRM::CrossSection<qreal>& c );
         void keyPressEvent( QKeyEvent *event );
 
+        void resizeEvent(QResizeEvent *event);
+
 
     protected:
 
@@ -56,13 +61,15 @@ class FlowWindow : public  QMainWindow
 
         void exportSurfaceFile();
         void exportVolumeFile();
-        void exportCornerPointFile();
+        void exportCornerPointFile( const std::string format );
         void exportResultstoFile();
 
         void updateVisualizationParameters();
 
         void addVertexProperty( std::string name, std::string dimension );
         void addFaceProperty( std::string name, std::string dimension );
+
+        void clearPropertiesMenu();
 
     signals:
 
@@ -85,7 +92,8 @@ class FlowWindow : public  QMainWindow
 
         QAction *qexportsurface;
         QAction *qexportvolume;
-        QAction *qexportcornerpoint;
+        QAction *qexportcornerpointVTK;
+        QAction *qexportcornerpointGRDECL;
         QAction* qexportresults;
 
 
@@ -107,8 +115,8 @@ class FlowWindow : public  QMainWindow
         QDockWidget * qdockcrosssectionnormalBar;
         NormalMovableCrossSectionFlow crosssectionnormalBar;
 
-        QDockWidget* qdockresolutionmesh;
-        DialogMeshVisualizationParameters resolutionmeshBar;
+//        QDockWidget* qdockresolutionmesh;
+//        DialogMeshVisualizationParameters resolutionmeshBar;
 
         QStatusBar* sb_statusbar;
         QProgressBar* pb_processprogress;
@@ -137,6 +145,26 @@ class FlowWindow : public  QMainWindow
         HelpDialog help;
 
         bool show_toolbar;
+
+        QHBoxLayout *hb_mainwindow;
+        ColorBar colorbar;
+        QToolButton* tbn_colormaps;
+        QMenu* mn_colormaps;
+
+        QAction* ac_constant;
+        QAction* ac_jet;
+        QAction* ac_hot;
+        QAction* ac_cool;
+        QAction* ac_parula;
+        QAction* ac_spring;
+        QAction* ac_summer;
+        QAction* ac_copper;
+        QAction* ac_polar;
+        QAction* ac_winter;
+
+        QAction* ac_showregions;
+
+        PoreVolumeResultsForm porevolumeform;
 
 
 };

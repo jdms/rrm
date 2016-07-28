@@ -4,12 +4,15 @@
 #include "Model/CrossSection.hpp"
 
 #include <vector>
+#include <random>
 
 #include <QObject>
+#include <QColor>
 
 #include "FlowComputation/region.h"
 #include "Mesh.h"
 #include "ProgressCounter.h"
+
 
 class FlowVisualizationController: public QObject
 {
@@ -67,7 +70,7 @@ class FlowVisualizationController: public QObject
         std::vector< unsigned int > getSkeletonFaces( const std::vector< int >& nu_list, const std::vector< int >&nv_list, const std::vector< double >& positions );
 
         void readPolyFiles( const std::string& mesh_file );
-        void readSkeletonFiles( const std::string& all_filename/*, std::vector< double >& positions, std::vector< unsigned int >& faces  */);
+        void readSkeletonFiles( const std::string& all_filename );
 
 
         std::vector< double > getVerticesPropertyValues(std::string name_of_property, std::string method, double &min, double &max );
@@ -90,6 +93,7 @@ class FlowVisualizationController: public QObject
         void exportSurfacetoVTK( const std::string& filename );
         void exportVolumetoVTK( const std::string& filename );
         void exportCornerPointtoVTK( const std::string& filename );
+        void exportCornerPointtoGRDECL( const std::string& filename );
         void exportResultstoVTK( const std::string& filename );
 
 
@@ -102,6 +106,9 @@ class FlowVisualizationController: public QObject
         inline void emitSignaltoClearEverything(){ emit clearAll(); }
 
 
+        inline void setReadInput( bool option ){ region.resetStandardValues(); user_input_ok = option; }
+
+
     public slots:
 
         inline void setToleranceValues( const float& tol1, const float& tol2 ){ region.tolerance( tol1, tol2 ); }
@@ -109,7 +116,7 @@ class FlowVisualizationController: public QObject
         void setTetgenCommand( std::string& cmd );
         void setTriangleCommand( std::string& cmd );
 
-        inline void setPropertyArea( const int& np, const std::vector< double >& values ){ region.setPropertyArea( np, values ); }
+        void setPropertyArea( const int& np, const std::vector< double >& values );
 
         void setBoundariesValues( int n, std::vector< double > &values );
         void setWellsValues( int n, std::vector< double > &values );
@@ -118,7 +125,6 @@ class FlowVisualizationController: public QObject
 
 
         void readInputParameters( const std::string& input_file );
-
 
 
         void generateCornerPoint();
@@ -134,6 +140,8 @@ class FlowVisualizationController: public QObject
         inline void setCurrentMethod( const FlowVisualizationController::MESHING_METHOD& t ){ current_method = t; }
         inline  FlowVisualizationController::MESHING_METHOD setCurrentMethod(){ return current_method; }
 
+
+        void showRegions();
 
     signals:
 
@@ -151,11 +159,17 @@ class FlowVisualizationController: public QObject
             void editParameters();
             void applyCrossSection();
 
-			void hideToolbar();
+            void hideToolbar();
 
             void updateColors( const std::vector< float >& );
 
             void clearAll();
+
+            void clearPropertiesMenu();
+            void showPointMarkers( const std::vector< QColor >& , const std::vector< double >& );
+
+            void showPoreVolumeResults( const std::vector< QColor >& colors, const std::vector< double >& );
+            void setaColorMap();
 
     private:
 
@@ -176,3 +190,4 @@ class FlowVisualizationController: public QObject
 };
 
 #endif // FLOWVISUALIZATIONCONTROLLER_H
+
