@@ -93,11 +93,11 @@ void FlowWindow::createToolBar()
 
 
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
-    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpoint (2).png"));
+    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpoint.png"));
     connect( qbuildCornerPoint, &QAction::triggered, this, [=](){ controller->generateCornerPoint(); qcomputeFlowProperties->setEnabled( false ); } );
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
-    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructured1 (2).png"));
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructured.png"));
     connect( qbuildUnstructured, &QAction::triggered, this, [=](){ controller->generateUnstructured(); qcomputeFlowProperties->setEnabled( true ); } );
 
 
