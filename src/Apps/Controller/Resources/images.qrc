@@ -40,17 +40,10 @@
         <file>icons/byface.png</file>
         <file>icons/byvertex.png</file>
         <file>icons/unstructuredgrid.png</file>
-        <file>icons/porevolume_.png</file>
         <file>icons/colormap.png</file>
-        <file>icons/cornerpoint(3).png</file>
-        <file>icons/unstructured1(2).png</file>
-        <file>icons/porevolume3.png</file>
-        <file>icons/porevolume1.png</file>
-        <file>icons/unstructured3.png</file>
-        <file>icons/cornerpoint3.png</file>
         <file>icons/porevolume4.png</file>
-        <file>icons/unstructured1 (2).png</file>
-        <file>icons/cornerpoint (2).png</file>
+        <file>icons/cornerpoint.png</file>
+        <file>icons/unstructured.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>
