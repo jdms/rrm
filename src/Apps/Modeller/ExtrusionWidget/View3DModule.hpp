@@ -2,6 +2,7 @@
 #define VIEW3DMODULE_H
 
 #include <QtWidgets/QApplication>
+#include <QWidget>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QFormLayout>
@@ -9,18 +10,25 @@
 
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QSlider>
+#include <QMainWindow>
+
+
+#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
+
 /**!
  * @brief  brief  Embeds the sketching area into the main window.
  *
  */
 
-class View3DModule: public QDockWidget
+class View3DModule: public QMainWindow
 {
     Q_OBJECT
 
     public:
 
-    View3DModule( QWidget* parent );
+    GLWidget *glWidget;
+
+    View3DModule( QWidget* parent = 0 );
 
     QVBoxLayout *hb_canvas3d;
     QSlider *horizontalSlider_curve;

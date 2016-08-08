@@ -20,7 +20,7 @@
 *
 */
 
-class Sketching2DModule : public QDockWidget
+class Sketching2DModule : public QMainWindow
 {
 	Q_OBJECT
 
@@ -29,9 +29,9 @@ public:
 	Sketching2DModule(QWidget* parent);
 
 	void clearCanvas2D();
-	void setCentralWidget(QWidget * _centra_widget);
+//	void setCentralWidget(QWidget * _centra_widget);
 
-	QMainWindow * getMainWidow();
+//	QMainWindow * getMainWidow();
 	QLabel      * getStatusBarText();
 	// Sketch Module CrossSection
 	SketchBoard  		*sketch_board_;
@@ -94,7 +94,7 @@ private:
 	QToolButton *tbt_colorsketch;
 
 	QLabel * label_status_bar_text_;
-	QMainWindow * mainWidonw_widget_;
+//	QMainWindow * mainWidonw_widget_;
 };
 
 #endif // SKETCHING2DMODULE_H

@@ -36,7 +36,7 @@
 // Sketching Surface
 #include "Model/CrossSection.hpp"
 
-#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
+//#include "Modeller/ExtrusionWidget/OpenGLWidget.hpp"
 #include "Modeller/ExtrusionWidget/View3DModule.hpp"
 #include "Modeller/Sketching2DModule.h"
 
@@ -66,33 +66,33 @@ class MainWindow : public QMainWindow
 
     protected:
 
-		// MainWindow Releated Widgets
         void createWindow();
+        void createActions();
         void createMenuBar();
-        void createMainWindowMenuBar();
-        void createMainWindowToolbar();
         void createMainWindowActions();
 
-		// Windows 3D Module Releated Widgets
-        void create3DModule();
+        void createSeismicModule();
+        void createSeismicgActions();
+
+        void createFlowDiagnosticsModule();
+        void createFlowDiagnosticsMenuBar();
+        void createFlowDiagnosticsActions();
+
+
+        void create3DViewModule();
         void create3DWindowMenuBar();
         void create3DWindowActions();
 
-		// SBIM Releated Module Widgets
-        void create2DModule();
+        void createSketchingModule();
         void createSketchingMenuBar();
-        void createSketchingToolbar();
         void createSketchingActions();
-		
-		// FLow Module Releated Widgets
-        void createFlowComputationModule();
-        void createFlowComputationMenuBar();
-        void createFlowComputationActions();
+
+
 
     protected slots:
+
     	// CrossSection
     	void clear();
-        void changeColorLine();
 
         // Seismic
         void interpolate();
@@ -102,13 +102,11 @@ class MainWindow : public QMainWindow
 
 
     private:
-		// Information about the Software
+
+        // Information about the Software
 		AboutWidget * aboutRRM;
 
-		//QStatusBar			*status_bar_;
-
         QMenu *mn_file;
-
         QAction *ac_exit;
 
         QMenu *mn_help;
@@ -118,28 +116,33 @@ class MainWindow : public QMainWindow
         QMenu *mn_windows;
         QAction *ac_wdwsketching;
         QAction *ac_wdwseismic;
-        QAction *ac_window3d;
-        QAction *ac_flowcomputation;
+        QAction *ac_3dview;
+        QAction *ac_flowdiagnostics;
 
 
-        // Sketch Module CrossSection
-        Sketching2DModule *dc_2DModule;
+        // Sketching Module
+        QDockWidget* dw_sketching;
+        Sketching2DModule *dc_Sketching_Module;
 
         // Seismic Module
-        Sketching2DModule *dc_Seismic_Module_;
-        RRM::SeismicWindow * seismic_view_;
+        Sketching2DModule *dc_Seismic_Module;
+        RRM::SeismicWindow * seismic_window;
 
-        // 3D Extrusion
-        View3DModule *dc_3DModule;
-        GLWidget *glWidget;
+        // 3D View Module
+        QDockWidget* dw_3dview;
+        View3DModule *dc_3DView_Module;
 
-        // Flow Module
-        QDockWidget *dc_computation;
-        FlowWindow *flowwindow;
+        // Flow Diagnostics Module
+        QDockWidget* dw_flowdiagnostics;
+        FlowWindow *flowdiagnostics_window;
 
-        QVBoxLayout* vb_canvas;
 
         HelpDialog help;
+
+
+
+
+
 };
 
 

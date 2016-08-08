@@ -26,8 +26,6 @@ set ( CONTROLLER_UI_SOURCES  Controller/About/AboutWidget.ui )
 set( CONTROLLER_SOURCES Controller/main.cpp
                         Controller/MainWindow.cpp
                         Controller/About/AboutWidget.cpp
-                        Controller/MainModeller.cpp
-                        Controller/MainFlow.cpp
    )
 
 ## todo , SBIM will be a huge module with all possible scenarios of sketch, 

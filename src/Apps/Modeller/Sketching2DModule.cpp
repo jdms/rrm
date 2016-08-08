@@ -11,48 +11,31 @@ Sketching2DModule::Sketching2DModule(QWidget* parent)
 	emit setColor(0.0f, 0.0f, 128.0f);
 }
 
-void Sketching2DModule::setCentralWidget(QWidget * _centra_widget)
-{
-	if (mainWidonw_widget_)
-	{
-		mainWidonw_widget_->setCentralWidget(_centra_widget);
-	}
-
-}
 
 void Sketching2DModule::createWindow()
 {
-	this->mainWidonw_widget_ = new QMainWindow();
-	this->setWidget(this->mainWidonw_widget_);
-	this->setAllowedAreas(Qt::LeftDockWidgetArea);
-	this->setWindowTitle("Sketch View");
+    this->setWindowTitle("Sketch View");
 
-	// StatusBar Text	
-	//this->label_status_bar_text_ = new QLabel();
-	//this->mainWidonw_widget_->statusBar()->addWidget(label_status_bar_text_);
-
-	sketch_board_ = new SketchBoard();
-	// Default Sketch Window
-	// Use Qt Coordinates
+    sketch_board_ = new SketchBoard();
 	sketch_board_->newSession(0.0, 0.0, 700, 400);
-	this->mainWidonw_widget_->setCentralWidget(sketch_board_);
+
+    setCentralWidget( sketch_board_ );
 
 	sketch_board_->status_text_->setAlignment(Qt::AlignLeft);
 	sketch_board_->sketchSession_->coordinates_->setAlignment(Qt::AlignRight);
 
-	this->mainWidonw_widget_->statusBar()->addWidget(sketch_board_->status_text_);
-	this->mainWidonw_widget_->statusBar()->addPermanentWidget(sketch_board_->sketchSession_->coordinates_);
+    statusBar()->addWidget(sketch_board_->status_text_);
+    statusBar()->addPermanentWidget(sketch_board_->sketchSession_->coordinates_);
+
 }
 
 void Sketching2DModule::createActions(QWidget* parent)
 {
 	// View
 	ac_zoomIn = new QAction(tr("&Zoom In"), this);
-	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
 	ac_zoomIn->setShortcut(QKeySequence::ZoomIn);
 
 	ac_zoomOut = new QAction(tr("&Zoom Out"), this);
-	//ac_zoomIn->setIcon(QIcon(":/images/icons/page_white.png"));
 	ac_zoomOut->setShortcut(QKeySequence::ZoomOut);
 
 	// Section
@@ -98,17 +81,17 @@ void Sketching2DModule::createActions(QWidget* parent)
 	ac_region_point_->setIcon(QIcon(":/images/icons/regionPointmode.png"));
 	ac_region_point_->setCheckable(true);
 
-	tlb_rules = this->mainWidonw_widget_->addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
+    tlb_rules = addToolBar(tr("Rules"));//addToolBar ( tr ( "Rules" ) );
 	action_group_rules_ = new QActionGroup(tlb_rules);
 
 	// View
 	this->addAction(ac_zoomOut);
 	this->addAction(ac_zoomIn);
 
-	action_group_rules_->addAction(ac_removeabove);
-	action_group_rules_->addAction(ac_removebelow);
-	action_group_rules_->addAction(ac_sketch);
-	action_group_rules_->addAction(ac_region_point_);
+    action_group_rules_->addAction( ac_removeabove );
+    action_group_rules_->addAction( ac_removebelow );
+    action_group_rules_->addAction( ac_sketch );
+    action_group_rules_->addAction( ac_region_point_ );
 	action_group_rules_->setExclusive(true);
 
 	tlb_rules->addAction(ac_sketch);
@@ -116,19 +99,14 @@ void Sketching2DModule::createActions(QWidget* parent)
 	tlb_rules->addAction(ac_removebelow);
 	//tlb_rules->addAction(ac_region_point_);
 
-	tlb_section = this->mainWidonw_widget_->addToolBar(tr("Section"));
-	tlb_section->addAction(ac_new);
-	tlb_section->addAction(ac_newBoundary);
-	tlb_section->addAction(ac_screenShot);
-	tlb_section->addAction(ac_insertCurve);
-	tlb_section->addAction(ac_denyCurve);
-	tlb_section->addAction(ac_undo);
-	tlb_section->addAction(ac_redo);
-
-	//ac_select = new QAction(tr("Select"), this);
-
-	//ac_select->setIcon(QIcon(":/images/icons/pointer.png"));
-	//ac_select->setCheckable(true);
+    tlb_section = addToolBar(tr("Section"));
+    tlb_section->addAction( ac_new );
+    tlb_section->addAction( ac_newBoundary );
+    tlb_section->addAction( ac_screenShot );
+    tlb_section->addAction( ac_insertCurve );
+    tlb_section->addAction( ac_denyCurve );
+    tlb_section->addAction( ac_undo );
+    tlb_section->addAction( ac_redo );
 
 	// Costumization
 	cd_pickercolor = new QColorDialog();
@@ -146,8 +124,7 @@ void Sketching2DModule::createActions(QWidget* parent)
 	mn_pickercolor->addAction(ac_sketchcolor);
 	tbt_colorsketch->setMenu(mn_pickercolor);
 
-	tlb_customization = getMainWidow()->addToolBar(tr("Customize"));
-	//tlb_customization->addAction(ac_select);
+    tlb_customization = addToolBar(tr("Customize"));
 	tlb_customization->addWidget(tbt_colorsketch);
 
 }
@@ -182,11 +159,6 @@ void Sketching2DModule::createConnections()
 
 }
 
-QMainWindow * Sketching2DModule::getMainWidow()
-{
-	return mainWidonw_widget_;
-}
-
 QLabel * Sketching2DModule::getStatusBarText()
 {
 	return label_status_bar_text_;
@@ -194,30 +166,16 @@ QLabel * Sketching2DModule::getStatusBarText()
 
 void Sketching2DModule::applyRemoveAbove()
 {
-	//    bool flag = ac_removeabove->isChecked();
-	//    if( flag == false ) return;
-
-	//    ac_removebelow->setChecked( false );
 	emit applyremoveabove();
-	//    statusBar()->showMessage( "Applying remove above intersection" );
-
 }
 
 void Sketching2DModule::applyRemoveBelow()
 {
-	//    bool flag = ac_removebelow->isChecked();
-	//    if( flag == false ) return;
-
-	//    ac_removeabove->setChecked( false );
 	emit applyremovebelow();
-
-	//    statusBar()->showMessage( "Applying remove below intersection" );
 }
 
-void Sketching2DModule::pointerSelection(bool flag)
+void Sketching2DModule::pointerSelection( bool flag )
 {
-	//    bool flag = ac_select->isChecked();
-
 	if (flag == false)
 	{
 		emit sketchingMode();
