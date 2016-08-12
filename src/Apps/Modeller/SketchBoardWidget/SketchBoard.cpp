@@ -10,68 +10,84 @@
 #include "Simulator/FlowComputation/region.h"
 #include "Modeller/ExtrusionWidget/ExtrusionController.hpp"
 
-SketchBoard::SketchBoard(QWidget *parent) : QGraphicsView(parent)
+SketchBoard::SketchBoard( QWidget *parent ) : QGraphicsView(parent)
 {
-	this->setRenderHint(QPainter::Antialiasing, true);
-	this->setOptimizationFlags(QGraphicsView::DontSavePainterState);
-	this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-	this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	this->setFocusPolicy(Qt::StrongFocus);
-	this->setInteractive(true);
-	this->setBackgroundRole(QPalette::Base);
-	this->setAutoFillBackground(true);
-
-	this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-	this->viewport()->grabGesture(Qt::PinchGesture);
-	this->viewport()->grabGesture(Qt::SwipeGesture);
-	this->viewport()->grabGesture(Qt::PanGesture);
-
-	// Invert the Coordinate System to match with OpenGL. X increases Left->Right and Y Bottom->Up.
-	this->scale(1, -1);
-
-	scale_in_ = 10;
-	scale_out_ = -10;
-	scaleFactor = 1.15;
-
-
-	// XXX GraphScene where we can add Entities ( Curves, Icons ... )
-	this->sketchSession_ = new SketchSessionTesting(this);
-
-	this->setScene(sketchSession_);
-
-	this->sketch_controller = new SketchController();
-
-	// Notify the controller the Sketch curve
-	//connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF,QColor) ) ,
-	//		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF,QColor) ) );
-
-	connect(this->sketchSession_, &SketchSessionTesting::newSketchCurve, [=](QPolygonF p, QColor c) { this->sketch_controller->insertCurve(p, c); emit currentCrossSection(this->sketch_controller->getCrossSection()); });
-
-	connect(this->sketchSession_, SIGNAL(newSessionSignal(Real, Real, Real, Real)),
-		this, SLOT(newSession(Real, Real, Real, Real)));
-
-	connect(this->sketchSession_, SIGNAL(newSessionSignal(const QPixmap&)),
-		this, SLOT(newSession(const QPixmap&)));
-
-	connect(this->sketchSession_, SIGNAL(newBoundary(Real, Real, Real, Real)),
-		this, SLOT(setBoundary(Real, Real, Real, Real)));
-
-	// Notify the view with the new configuration of Lines
-	connect(this->sketch_controller, SIGNAL(updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >&, const std::map<unsigned int, QPointF>&)),
-		this->sketchSession_, SLOT(updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >&, const std::map<unsigned int, QPointF>&)));
-
-	this->sketch_controller->updateSBIM();
-
-	/// Interface
-	status_text_ = new QLabel("Sketch", this);
-	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
-
+    setup();
+    createActions();
 }
+
 
 SketchBoard::~SketchBoard()
 {
 
 }
+
+
+void SketchBoard::setup()
+{
+
+    lb_coordinates = new QLabel();
+
+    setRenderHint( QPainter::Antialiasing, true );
+    setOptimizationFlags( QGraphicsView::DontSavePainterState );
+    setViewportUpdateMode( QGraphicsView::SmartViewportUpdate );
+    setTransformationAnchor( QGraphicsView::AnchorUnderMouse );
+    setFocusPolicy( Qt::StrongFocus );
+    setInteractive( true );
+    setBackgroundRole( QPalette::Base );
+    setAutoFillBackground( true );
+
+    setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
+    viewport()->grabGesture( Qt::PinchGesture );
+    viewport()->grabGesture( Qt::SwipeGesture );
+    viewport()->grabGesture( Qt::PanGesture );
+
+    // Invert the Coordinate System to match with OpenGL. X increases Left->Right and Y Bottom->Up.
+    scale( 1, -1 );
+
+    scale_in_ = 10;
+    scale_out_ = -10;
+    scaleFactor = 1.15;
+
+    // XXX GraphScene where we can add Entities ( Curves, Icons ... )
+    sketchSession_ = new SketchSessionTesting( this );
+
+    setScene( sketchSession_ );
+
+    sketch_controller = new SketchController();
+    sketch_controller->updateSBIM();
+    sketch_controller->setRule( RRM::GeologicRules::Sketch );
+
+
+}
+
+
+void SketchBoard::createActions()
+{
+
+    // Notify the controller the Sketch curve
+    //connect ( this->sketchSession_    , SIGNAL( newSketchCurve(QPolygonF,QColor) ) ,
+    //		  this->sketch_controller , SLOT  ( insertCurve(QPolygonF,QColor) ) );
+
+    connect(this->sketchSession_, &SketchSessionTesting::newSketchCurve, [=](QPolygonF p, QColor c) { this->sketch_controller->insertCurve(p, c); emit currentCrossSection(this->sketch_controller->getCrossSection()); });
+
+    connect(this->sketchSession_, SIGNAL(newSessionSignal(Real, Real, Real, Real)),
+        this, SLOT(newSession(Real, Real, Real, Real)));
+
+    connect(this->sketchSession_, SIGNAL(newSessionSignal(const QPixmap&)),
+        this, SLOT(newSession(const QPixmap&)));
+
+    connect(this->sketchSession_, SIGNAL(newBoundary(Real, Real, Real, Real)),
+        this, SLOT(setBoundary(Real, Real, Real, Real)));
+
+    // Notify the view with the new configuration of Lines
+    connect(this->sketch_controller, SIGNAL(updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >&, const std::map<unsigned int, QPointF>&)),
+        this->sketchSession_, SLOT(updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >&, const std::map<unsigned int, QPointF>&)));
+
+
+
+}
+
 
 void SketchBoard::keyPressEvent(QKeyEvent *event)
 {
@@ -206,33 +222,33 @@ void SketchBoard::setModeSketch()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::Sketch);
 	this->sketchSession_->setOverSketchingMode();
-	status_text_->setText("Sketch");
+//	status_text_->setText("Sketch");
 }
 
 void SketchBoard::setModeRemoveAboveIntersection()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_ABOVE_INTERSECTION);
 	this->sketchSession_->setOverSketchingMode();
-	status_text_->setText("Remove Above Intersection");
+//	status_text_->setText("Remove Above Intersection");
 }
 
 void SketchBoard::setModeRemoveBelowIntersection()
 {
 	this->sketch_controller->setRule(RRM::GeologicRules::REMOVE_BELOW_INTERSECTION);
 	this->sketchSession_->setOverSketchingMode();
-	status_text_->setText("Remove Below Intersection");
+//	status_text_->setText("Remove Below Intersection");
 }
 
 void SketchBoard::setModeRegionPoint()
 {
 	this->sketchSession_->setRegionMode();
-	status_text_->setText("Select Region Points");
+//	status_text_->setText("Select Region Points");
 }
 
 void SketchBoard::setModeEdition()
 {
 	this->sketchSession_->setEditMode();
-	status_text_->setText("Remove Below Intersection");
+//    status_text_->setText("Remove Below Intersection");
 }
 
 void SketchBoard::clear()
@@ -402,5 +418,11 @@ void SketchBoard::setCrossSection(const CrossSection& _cross_section)
 
 	/// Rebuild the Scene
 	this->sketch_controller->updateSBIM();
+
+}
+
+void SketchBoard::updateCoordinates( float posx, float posy )
+{
+    lb_coordinates->setText( QString( "%1, %2" ).arg( posx ).arg( posy ) );
 
 }

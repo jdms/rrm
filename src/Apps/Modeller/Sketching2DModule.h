@@ -24,77 +24,62 @@ class Sketching2DModule : public QMainWindow
 {
 	Q_OBJECT
 
-public:
+    public:
 
-	Sketching2DModule(QWidget* parent);
+        SketchBoard* sketching_canvas;
 
-	void clearCanvas2D();
-//	void setCentralWidget(QWidget * _centra_widget);
-
-//	QMainWindow * getMainWidow();
-	QLabel      * getStatusBarText();
-	// Sketch Module CrossSection
-	SketchBoard  		*sketch_board_;
-
-protected:
-	void createWindow();
-	void createActions(QWidget* parent);
-	void createConnections();
-
-	public slots:
-
-	void applyRemoveAbove();
-	void applyRemoveBelow();
-	void pointerSelection(bool flag);
-
-	void emitColor(int R, int G, int B);
-	void emitModeSelect();
-	void emitModeSketching();
+        Sketching2DModule(QWidget* parent);
 
 
-signals:
-	void setColor(float, float, float);
-	void applyremoveabove();
-	void applyremovebelow();
-	void setColor(int R, int G, int B);
-	void selectMode();
-	void sketchingMode();
+    protected:
+        void createWindow();
+        void createActions();
+        void createConnections();
 
 
-private:
+    signals:
 
-	/// View
-	QAction * ac_zoomIn;
-	QAction * ac_zoomOut;
+        void setColor(float, float, float);
 
-	QToolBar *tlb_section;
-	QAction *ac_newBoundary;
-	QAction *ac_screenShot;
-	QAction *ac_new;
-	QAction *ac_insertCurve;
-	QAction *ac_denyCurve;
-	QAction *ac_undo;
-	QAction *ac_redo;
-	/// Temporary
-	QAction * ac_region_point_;
 
-	QToolBar *tlb_rules;
-	QActionGroup *action_group_rules_;
-	QAction *ac_removeabove;
-	QAction *ac_removebelow;
-	QAction *ac_sketch;
 
-	QToolBar *tlb_interaction;
-	QAction *ac_select;
+    private:
 
-	QToolBar *tlb_customization;
-	QWidgetAction *ac_sketchcolor;
-	QMenu *mn_pickercolor;
-	QColorDialog *cd_pickercolor;
-	QToolButton *tbt_colorsketch;
+        /// View
+        QAction * ac_zoom_in;
+        QAction * ac_zoom_out;
 
-	QLabel * label_status_bar_text_;
-//	QMainWindow * mainWidonw_widget_;
+        QToolBar *tlb_section;
+        QAction *ac_new_boundary;
+        QAction *ac_screenshot;
+        QAction *ac_new;
+        QAction *ac_add_sketch;
+        QAction *ac_deny_curve;
+        QAction *ac_undo;
+        QAction *ac_redo;
+
+
+        /// Temporary
+        QAction * ac_region_point;
+
+        QToolBar *tlb_rules;
+        QActionGroup *action_group_rules;
+        QAction *ac_removeabove;
+        QAction *ac_removebelow;
+        QAction *ac_sketch;
+
+        QToolBar *tlb_interaction;
+        QAction *ac_select;
+
+        QToolBar *tlb_customization;
+        QWidgetAction *ac_sketchcolor;
+        QMenu *mn_pickercolor;
+        QColorDialog *cd_pickercolor;
+        QToolButton *tbt_colorsketch;
+
+
+        QLabel* lb_statusbar_status;
+
 };
 
 #endif // SKETCHING2DMODULE_H

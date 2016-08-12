@@ -27,58 +27,76 @@ class SketchBoard : public QGraphicsView
 {
 	Q_OBJECT
 
-public:
-	typedef qreal		 	 	Real;
-	typedef RRM::CrossSection<Real>  	CrossSection;
+    public:
+        typedef qreal		 	 	Real;
+        typedef RRM::CrossSection<Real>  	CrossSection;
 
-	SketchBoard(QWidget *parent = 0);
-	virtual ~SketchBoard();
+        SketchBoard(QWidget *parent = 0);
+        virtual ~SketchBoard();
 
-	void wheelEvent(QWheelEvent *event);
-	void keyPressEvent(QKeyEvent *event);
 
-	public slots:
-	// clear
-	void clear();
-	void setCrossSection(const CrossSection& _cross_section);
-	/// default Scene
-	void newSession(Real x, Real y, Real width, Real height);
-	/// defaul Scene with Image
-	void newSession(const QPixmap& _image);
+    protected:
 
-	void setBoundary(Real x, Real y, Real width, Real height);
-	void screenShot();
-		/// SVG Image
-		void saveVector(const  QString& _filename);
-		/// Raster Image
-		void saveRaster(const  QString& _filename);
-	void newBoundary();
-	void newSketch();
+        void setup();
+        void createActions();
 
-	void undo();
-	void redo();
-	void zoomIn();
-	void zoomOut();
 
-	void setModeSketch();
-	void setModeRegionPoint();
-	void setModeRemoveAboveIntersection();
-	void setModeRemoveBelowIntersection();
-	void setModeEdition();
+        void wheelEvent(QWheelEvent *event);
+        void keyPressEvent(QKeyEvent *event);
 
-signals:
-	void currentCrossSection(const CrossSection& _cross_section);
 
-public:
+    public slots:
+        // clear
+        void clear();
+        void setCrossSection(const CrossSection& _cross_section);
 
-	int scale_in_;
-	int scale_out_;
-	double scaleFactor = 1.15;
+        /// default Scene
+        void newSession(Real x, Real y, Real width, Real height);
 
-	QLabel * status_text_;
+        /// defaul Scene with Image
+        void newSession(const QPixmap& _image);
 
-	SketchSessionTesting   *sketchSession_;
-	SketchController       *sketch_controller;
+        void setBoundary(Real x, Real y, Real width, Real height);
+        void screenShot();
+
+        /// SVG Image
+        void saveVector(const  QString& _filename);
+
+        /// Raster Image
+        void saveRaster(const  QString& _filename);
+        void newBoundary();
+        void newSketch();
+
+        void undo();
+        void redo();
+        void zoomIn();
+        void zoomOut();
+
+        void setModeSketch();
+        void setModeRegionPoint();
+        void setModeRemoveAboveIntersection();
+        void setModeRemoveBelowIntersection();
+        void setModeEdition();
+
+        void updateCoordinates( float posx, float posy );
+
+        // inline void setController( Controller& cont ){ scene->setController( cont); }
+
+
+    signals:
+        void currentCrossSection(const CrossSection& _cross_section);
+
+    public:
+
+        int scale_in_;
+        int scale_out_;
+        double scaleFactor = 1.15;
+
+//        QLabel * status_text_;
+        QLabel* lb_coordinates;
+
+        SketchSessionTesting   *sketchSession_;
+        SketchController       *sketch_controller;
 };
 
 #endif /* _SURFACE_HPP_ */

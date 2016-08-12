@@ -4,104 +4,12 @@
 SketchSessionTesting::SketchSessionTesting(QObject *parent) : QGraphicsScene(parent)
 {
 
-	this->coordinates_ = new QLabel();
-
-	mode_ = InteractionMode::OVERSKETCHING;
-
-	// Default Color
-	this->current_color_ = QColor(255, 75, 75);
-
-	QPen pen;
-	pen.setColor(this->current_color_);
-	pen.setWidth(3);
-
-	/// Drag and Drop Feature
-	overlay_image_ = new QGraphicsPixmapItem();
-	this->addItem(overlay_image_);
-	overlay_image_->setZValue(0);
-
-	boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 100, 55, 75));
-	this->addItem(boundaryc_);
-	boundaryc_->setZValue(0);
-
-	input_sketch_ = new InputSketch(this->current_color_);
-	input_sketch_->setPen(pen);
-	this->addItem(input_sketch_);
-	this->input_sketch_->setZValue(2);
-
-	current_sketch_ = new InputSketch(this->current_color_);
-	current_sketch_->setPen(pen);
-	this->addItem(current_sketch_);
-	this->current_sketch_->setZValue(2);
-
-	this->boundary_sketching_ = false;
-
-	setUpBackground();
-
-	/// qualitative pastel color @see http://colorbrewer2.org/
-	//	141,211,199
-	//	255,255,179
-	//	190,186,218
-	//	251,128,114
-	//	128,177,211
+    connect( this, SIGNAL( sendCoordinates( float, float ) ), this->parent(), SLOT( updateCoordinates( float, float ) ) );
 
 
-	colors.push_back(QColor(Qt::darkGreen));
-	colors.push_back(QColor(141, 211, 199));
-	colors.push_back(QColor(255, 255, 179));
-	colors.push_back(QColor(190, 186, 218));
-	colors.push_back(QColor(251, 128, 114));
-	colors.push_back(QColor(128, 177, 211));
-	colors.push_back(QColor(Qt::darkRed));
-	colors.push_back(QColor(Qt::magenta));
-	colors.push_back(QColor(Qt::darkMagenta));
-	colors.push_back(QColor(Qt::green));
-	colors.push_back(QColor(Qt::darkGreen));
-
-	//	seismic_data_.read("/media/d/Temp/vol3comp_ushort_seismic-dist-id_596x291x297.raw");
-	////
-	//	images = std::vector<QImage>(seismic_data_.height,QImage(seismic_data_.width, seismic_data_.depth, QImage::Format_RGB32));
-	////	rrm_images_ = std::vector<std::vector<unsigned char>>(seismic_data_.height,std::vector<unsigned char>(seismic_data_.width * seismic_data_.depth));
-	////	// Reading Seismic, Distance and ID
-	//	for ( int h = 0; h < seismic_data_.height; h++ )
-	//	{
-	//		for ( int w = 0; w < seismic_data_.width; w++ )
-	//		{
-	//			for ( int d = 0; d < seismic_data_.depth; d++ )
-	//			{
-	////				float f = this->seismic_data_.seismic_data_[ ( d * seismic_data_.width * seismic_data_.height + h * seismic_data_.width + w )];
-	////				// http://stackoverflow.com/a/1914172
-	////				float f2 = std::max ( 0.0f , std::min ( 1.0f , f ) );
-	//				int b = seismic_data_.images_slices_[h][d * seismic_data_.width + w];
-	//				QColor c ( b , b , b , 255 );
-	//				images[h].setPixel ( w , d , c.rgb ( ) );
-	//
-	//			}
-	//		}
-	//	}
-	//
-	//	for ( int it = 0; it < 10; ++it )
-	//	{
-	//		std::cout << "sketching" << seismic_data_.seismic_data_[it] << std::endl;
-	//	}
-
-	//this->overlay_image_->setPixmap(QPixmap::fromImage(images[0]));
+    setup();
 
 
-	/// FIXME Region Point
-	region_pointer_ = new QGraphicsPixmapItem();
-
-	QPixmap pointer(":/images/icons/regionPointer.png");
-
-	region_pointer_->setPixmap(pointer);
-
-	this->addItem(region_pointer_);
-
-	region_pointers_ = new QGraphicsItemGroup();
-
-	region_pointers_->setVisible(false);
-
-	this->addItem(region_pointers_);
 }
 
 SketchSessionTesting::~SketchSessionTesting()
@@ -110,17 +18,93 @@ SketchSessionTesting::~SketchSessionTesting()
 
 }
 
-void SketchSessionTesting::newSktech()
+
+
+void SketchSessionTesting::initScene()
+{
+    clear();
+    sketches.clear();
+}
+
+
+
+
+
+void SketchSessionTesting::setup()
 {
 
-	//	if (seismic_data_.height == next)
-	//	{
-	//		next = 0;
-	//	}else
-	//	{
-	//		this->overlay_image_->setPixmap(QPixmap::fromImage(images[next]));
-	//		next++;
-	//	}
+    mode_ = InteractionMode::OVERSKETCHING;
+
+    // Default Color
+    this->current_color_ = QColor(255, 75, 75);
+
+    QPen pen;
+    pen.setColor(this->current_color_);
+    pen.setWidth(3);
+
+    /// Drag and Drop Feature
+    overlay_image_ = new QGraphicsPixmapItem();
+    this->addItem(overlay_image_);
+    overlay_image_->setZValue(0);
+
+    boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 100, 55, 75));
+    this->addItem(boundaryc_);
+    boundaryc_->setZValue(0);
+
+    input_sketch_ = new InputSketch(this->current_color_);
+    input_sketch_->setPen(pen);
+    this->addItem(input_sketch_);
+    this->input_sketch_->setZValue(2);
+
+    current_sketch_ = new InputSketch(this->current_color_);
+    current_sketch_->setPen(pen);
+    this->addItem(current_sketch_);
+    this->current_sketch_->setZValue(2);
+
+    this->boundary_sketching_ = false;
+
+    setUpBackground();
+
+    /// qualitative pastel color @see http://colorbrewer2.org/
+    //	141,211,199
+    //	255,255,179
+    //	190,186,218
+    //	251,128,114
+    //	128,177,211
+
+
+//	colors.push_back(QColor(Qt::darkGreen));
+//	colors.push_back(QColor(141, 211, 199));
+//	colors.push_back(QColor(255, 255, 179));
+//	colors.push_back(QColor(190, 186, 218));
+//	colors.push_back(QColor(251, 128, 114));
+//	colors.push_back(QColor(128, 177, 211));
+//	colors.push_back(QColor(Qt::darkRed));
+//	colors.push_back(QColor(Qt::magenta));
+//	colors.push_back(QColor(Qt::darkMagenta));
+//	colors.push_back(QColor(Qt::green));
+//	colors.push_back(QColor(Qt::darkGreen));
+
+
+    /// FIXME Region Point
+    region_pointer_ = new QGraphicsPixmapItem();
+
+    QPixmap pointer(":/images/icons/regionPointer.png");
+
+    region_pointer_->setPixmap(pointer);
+
+    this->addItem(region_pointer_);
+
+    region_pointers_ = new QGraphicsItemGroup();
+
+    region_pointers_->setVisible(false);
+
+    this->addItem(region_pointers_);
+}
+
+
+void SketchSessionTesting::newSktech()
+{
 
 
 	QPolygonF new_curve = current_sketch_->getSketch();
@@ -149,6 +133,7 @@ void SketchSessionTesting::newSktech()
 
 }
 // View/Qt5 related functions
+
 void SketchSessionTesting::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	if (mode_ == InteractionMode::REGION_POINT)
@@ -193,11 +178,15 @@ void SketchSessionTesting::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	update();
 }
 
+
 void SketchSessionTesting::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
 
-	QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(event->scenePos().y());
-	this->coordinates_->setText(mouse_coordiante);
+    emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
+
+//    QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(event->scenePos().y());
+//    this->coordinates_->setText(mouse_coordiante);
+
 
 	if (mode_ == InteractionMode::REGION_POINT)
 	{
@@ -258,6 +247,7 @@ void SketchSessionTesting::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	event->ignore();
 	update();
 }
+
 
 void SketchSessionTesting::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
@@ -361,6 +351,7 @@ void SketchSessionTesting::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 	update();
 }
 
+
 void SketchSessionTesting::dragEnterEvent(QGraphicsSceneDragDropEvent * event)
 {
 	if (event->mimeData()->hasText())
@@ -388,11 +379,13 @@ void SketchSessionTesting::dragEnterEvent(QGraphicsSceneDragDropEvent * event)
 	event->accept();
 }
 
+
 void SketchSessionTesting::dragMoveEvent(QGraphicsSceneDragDropEvent * event)
 {
 	/// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
 	//qDebug() << "Moving";
 }
+
 
 void SketchSessionTesting::dragLeaveEvent(QGraphicsSceneDragDropEvent * event)
 {
@@ -403,6 +396,7 @@ void SketchSessionTesting::dragLeaveEvent(QGraphicsSceneDragDropEvent * event)
 /// Lastly, we emit the changed() signal, with the data that was dropped and its MIME type information as a parameter.
 /// For dragMoveEvent(), we just accept the proposed QDragMoveEvent object, event, with acceptProposedAction().
 ///The DropArea class's implementation of dropEvent() extracts the event's mime data and displays it accordingly.
+
 
 void SketchSessionTesting::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
@@ -441,12 +435,14 @@ void SketchSessionTesting::dropEvent(QGraphicsSceneDragDropEvent * event)
 	//initializationWithImage(pixmap);
 }
 
+
 void SketchSessionTesting::setColor(const QColor& _color)
 {
 	current_color_ = _color;
 	input_sketch_->setColor(_color);
 	current_sketch_->setColor(_color);
 }
+
 
 void SketchSessionTesting::reset()
 {
@@ -487,6 +483,7 @@ void SketchSessionTesting::reset()
 		update();
 	}
 }
+
 
 void SketchSessionTesting::clear()
 {
@@ -544,6 +541,7 @@ void SketchSessionTesting::clearSketch()
 	update();
 }
 
+
 bool SketchSessionTesting::initializationWithImage(const QPixmap& pixmap)
 {
 	// The bounding rectangle of the scene
@@ -561,7 +559,7 @@ bool SketchSessionTesting::initializationWithImage(const QPixmap& pixmap)
 	qreal w = pixmap.rect().width();
 	qreal h = pixmap.rect().height();
 
-	this->initialization(x, y, w, h);
+    this->initialization(x, y, w, h);
 
 	QPixmap temp;
 
@@ -578,6 +576,7 @@ bool SketchSessionTesting::initializationWithImage(const QPixmap& pixmap)
 
 	return true;
 }
+
 
 bool SketchSessionTesting::initialization(qreal x, qreal y, qreal w, qreal h)
 {
@@ -603,21 +602,19 @@ bool SketchSessionTesting::initialization(qreal x, qreal y, qreal w, qreal h)
 	return true;
 }
 
+
 void SketchSessionTesting::setBoundary(Real x, Real y, Real width, Real height)
 {
 	this->boundaryc_->setNewBoundary(x, y, width, height);
 	this->setSceneRect(this->boundaryc_->boundingRect());
 }
 
+
 void SketchSessionTesting::sketchNewBoundary()
 {
 	this->boundary_sketching_ = true;
 }
 
-void SketchSessionTesting::curveSmoothed(QPolygonF raw_skecth_)
-{
-
-}
 
 void SketchSessionTesting::insertCurve(unsigned int _id, QPolygonF _curve)
 {
@@ -639,11 +636,13 @@ void SketchSessionTesting::insertCurve(unsigned int _id, QPolygonF _curve)
 
 }
 
+
 void SketchSessionTesting::setOverSketchingMode()
 {
 	clearRegionMode();
 	mode_ = InteractionMode::OVERSKETCHING;
 }
+
 
 void SketchSessionTesting::setEditMode()
 {
@@ -651,11 +650,13 @@ void SketchSessionTesting::setEditMode()
 	mode_ = InteractionMode::EDITING;
 }
 
+
 void SketchSessionTesting::setSketchMode()
 {
 	clearRegionMode();
 	mode_ = InteractionMode::SKETCHING;
 }
+
 
 void SketchSessionTesting::setRegionMode()
 {
@@ -664,6 +665,7 @@ void SketchSessionTesting::setRegionMode()
 	this->region_pointers_->setVisible(true);
 	this->region_pointers_->setVisible(true);
 }
+
 
 void SketchSessionTesting::clearRegionMode()
 {
@@ -684,10 +686,12 @@ void SketchSessionTesting::clearRegionMode()
 	region_points_.clear();
 }
 
+
 SketchSessionTesting::InteractionMode SketchSessionTesting::mode() const
 {
 	return this->mode_;
 }
+
 
 void SketchSessionTesting::setUpBackground()
 {
@@ -704,6 +708,7 @@ void SketchSessionTesting::setUpBackground()
 
 	this->setBackgroundBrush(QBrush(gradient));
 }
+
 
 void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
@@ -777,6 +782,8 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<QCo
 	update();
 }
 /// Model Related Function
+
+
 SketchSessionTesting::Curve2D SketchSessionTesting::convert(QPolygonF _curve)
 {
 	Curve2D rrm_curve;
@@ -788,6 +795,8 @@ SketchSessionTesting::Curve2D SketchSessionTesting::convert(QPolygonF _curve)
 
 	return rrm_curve;
 }
+
+
 /// Model Related Function
 QPolygonF SketchSessionTesting::convert(Curve2D _curve)
 {

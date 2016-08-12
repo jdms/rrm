@@ -59,7 +59,6 @@ class SketchSessionTesting: public QGraphicsScene
 
 		void setUpBackground();
 
-		QLabel * coordinates_;
 
 		InteractionMode mode() const;
 
@@ -74,10 +73,42 @@ class SketchSessionTesting: public QGraphicsScene
 		void dragLeaveEvent ( QGraphicsSceneDragDropEvent *event );
 		void dropEvent ( QGraphicsSceneDragDropEvent *event );
 
+
+        void setup();
+
 	public slots:
 
-		// Ask Controller to smooth the raw sketch
-		void curveSmoothed ( QPolygonF curve_smoohted_ );
+
+        // Refactoring
+
+        inline void setCurrentMode( const InteractionMode& mode ){ current_mode = mode; }
+        inline const InteractionMode currentMode(){ return current_mode; }
+
+        void initScene();
+//        void getScene();
+
+//        void createBoundary();
+//        void addImagetoBoundary();
+
+//        void addSketching();
+//        void addSelectionRegionPoints();
+
+        inline void setCurrentColor( const QColor& color ){ current_color = color; }
+        inline const QColor currentColor(){ return current_color; }
+
+
+        // End Refactoring
+
+
+
+
+
+
+
+
+
+
+
 		void insertCurve ( unsigned int _id , QPolygonF curve_ );
 		bool initialization ( qreal x , qreal y , qreal width , qreal height );
 		bool initializationWithImage ( const QPixmap& pixmap );
@@ -98,10 +129,14 @@ class SketchSessionTesting: public QGraphicsScene
 		// Update the view with the new Cross Section configuration
 		void updateSBIM(const std::map<unsigned int, std::pair<QColor,QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices);
 
+        //inline void setController( Controller& cont ){ controller = cont; }
+
 		void setBoundary ( Real x , Real y , Real width , Real height );
 
+
 	signals:
-		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
+
+        // Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( const QPixmap& pixmap );
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
 		void newSessionSignal ( Real x , Real y , Real width , Real height );
@@ -113,12 +148,31 @@ class SketchSessionTesting: public QGraphicsScene
 		void newBoundary ( Real x , Real y , Real width , Real height );
 		// Notify 3D Solver with region points
 		void regionPoints(std::vector<QPointF> _region_points);
-		
+
+        void sendCoordinates( float, float );
+
 
 	public:
-		QGraphicsPixmapItem * overlay_image_;
+
+        QGraphicsPixmapItem * overlay_image_;
+
+
 	private:
-		// Map between the sketch curves with the curve into the arrangement
+
+        // Refactoring
+
+
+        InteractionMode current_mode;
+        QColor current_color;
+
+        std::vector< StratigraphyItem > sketches;
+        BoundaryItem *boundary;
+
+
+        // End Refactoring
+
+
+        // Map between the sketch curves with the curve into the arrangement
 		std::map<unsigned int, StratigraphyItem*> view_curves_;
 
 		// Map between the sketch curves with the curve into the arrangement
@@ -134,8 +188,6 @@ class SketchSessionTesting: public QGraphicsScene
 			// If is an new Boundary is requested
 			bool boundary_sketching_;
 
-		QPen sketch_pen;
-		QBrush sketch_brush;
 
 		// Interface
 		BoundaryItem* boundaryc_;
@@ -158,14 +210,7 @@ class SketchSessionTesting: public QGraphicsScene
 		QGraphicsPixmapItem * region_pointer_;
 		std::vector<QPointF>  region_points_;
 		QGraphicsItemGroup * region_pointers_;
-//
-//		int next = 0;
-//
-//		std::vector<QImage>  images;
-//		std::vector< std::vector<unsigned char> >  rrm_images_;
-//
-//		/// Testing
-//		RRM::SeismicVolume seismic_data_;
+
 
 
 };
