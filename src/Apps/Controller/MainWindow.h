@@ -101,6 +101,7 @@ class MainWindow : public QMainWindow
         void mousePressEvent(QMouseEvent* event);
 
 
+
     private:
 
         // Information about the Software
@@ -122,10 +123,10 @@ class MainWindow : public QMainWindow
 
         // Sketching Module
         QDockWidget* dw_sketching;
-        Sketching2DModule *dc_Sketching_Module;
+        SketchingWindow *dc_Sketching_Module;
 
         // Seismic Module
-        Sketching2DModule *dc_Seismic_Module;
+        SketchingWindow *dc_Seismic_Module;
         RRM::SeismicWindow * seismic_window;
 
         // 3D View Module

@@ -121,7 +121,7 @@ void SketchController::updateSBIM (  )
 		view_vertices_[vertex_iterator.first] = QPointF(vertex_iterator.second.location_.x(),vertex_iterator.second.location_.y());
 	}
 
-	emit updateSBIM(view_curves_,view_vertices_);
+//	emit updateSBIM(view_curves_,view_vertices_);
 }
 
 /// @todo Create the appropriate boundary

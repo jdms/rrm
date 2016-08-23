@@ -12,6 +12,7 @@ SketchSessionTesting::SketchSessionTesting(QObject *parent) : QGraphicsScene(par
 
 }
 
+
 SketchSessionTesting::~SketchSessionTesting()
 {
 	clear();
@@ -19,21 +20,30 @@ SketchSessionTesting::~SketchSessionTesting()
 }
 
 
-
-void SketchSessionTesting::initScene()
-{
-    clear();
-    sketches.clear();
-}
-
-
-
-
-
 void SketchSessionTesting::setup()
 {
 
+    current_mode  = InteractionMode::OVERSKETCHING;
+
+    sketch = new InputSketch( QColor( 255, 75, 75 ) );
+    addItem( sketch );
+
+
+    boundary = new BoundaryItem( 0.0, 0.0 );
+    boundary->setZValue( 0 );
+    this->addItem( boundary );
+
+
+
+
+
+
+
+
+
+
     mode_ = InteractionMode::OVERSKETCHING;
+
 
     // Default Color
     this->current_color_ = QColor(255, 75, 75);
@@ -47,21 +57,30 @@ void SketchSessionTesting::setup()
     this->addItem(overlay_image_);
     overlay_image_->setZValue(0);
 
+
+
+
+    /* felipe's code
+
     boundaryc_ = new BoundaryItem(0.0, 0.0, QColor(55, 100, 55, 75));
     this->addItem(boundaryc_);
     boundaryc_->setZValue(0);
 
     input_sketch_ = new InputSketch(this->current_color_);
     input_sketch_->setPen(pen);
-    this->addItem(input_sketch_);
-    this->input_sketch_->setZValue(2);
+    input_sketch_->setZValue(2);
+
 
     current_sketch_ = new InputSketch(this->current_color_);
     current_sketch_->setPen(pen);
-    this->addItem(current_sketch_);
+//    this->addItem(current_sketch_);
     this->current_sketch_->setZValue(2);
 
+    */
+
     this->boundary_sketching_ = false;
+
+
 
     setUpBackground();
 
@@ -93,18 +112,532 @@ void SketchSessionTesting::setup()
 
     region_pointer_->setPixmap(pointer);
 
-    this->addItem(region_pointer_);
+//    this->addItem(region_pointer_);
 
     region_pointers_ = new QGraphicsItemGroup();
 
     region_pointers_->setVisible(false);
 
-    this->addItem(region_pointers_);
+//    this->addItem(region_pointers_);
+
+
 }
+
+
+void SketchSessionTesting::addSketching()
+{
+
+    if( sketch != NULL )
+    {
+        emit addSkecthing( sketch );
+
+        sketch = new InputSketch( QColor( 255, 75, 75 ) );
+        addItem( sketch );
+
+
+    }
+
+
+
+}
+
+
+void SketchSessionTesting::mousePressEvent( QGraphicsSceneMouseEvent* event )
+{
+
+
+    std::cout << "SketchSessionTesting::mousePressEvent coord" << std::endl;
+    std::cout << event->scenePos().x() << ", " << event->scenePos().y() << std::endl;
+
+
+    if ( event->buttons() & Qt::LeftButton )
+    {
+
+        if( current_mode == InteractionMode::BOUNDARY )
+        {
+            boundary_anchor = event->buttonDownScenePos( Qt::LeftButton );
+
+        }
+        else
+        {
+
+            current_mode = InteractionMode::OVERSKETCHING;
+
+            temp_sketch = new InputSketch( QColor(255, 75, 75) );
+            temp_sketch->create( event->scenePos() );
+
+            addItem( temp_sketch );
+
+        }
+
+    }
+
+
+    else if (event->buttons() & Qt::RightButton )
+    {
+        current_mode = InteractionMode::INSERTING;
+        addSketching();
+
+    }
+
+
+    QGraphicsScene::mousePressEvent( event );
+    update();
+
+
+/* FELIPE'S CODE
+
+    if (mode_ == InteractionMode::REGION_POINT)
+    {
+        QGraphicsPixmapItem * temp_pix_item = new QGraphicsPixmapItem();
+        QPixmap temp_pixmap(":/images/icons/regionPointer.png");
+        temp_pix_item->setPixmap(temp_pixmap);
+        temp_pix_item->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
+        region_pointers_->addToGroup(temp_pix_item);
+        region_points_.push_back(event->scenePos());
+
+    }
+    else if (mode_ == InteractionMode::EDITING)
+    {
+        QGraphicsScene::mousePressEvent(event);
+        event->ignore();
+    }
+    else
+    {
+        if (event->buttons() & Qt::LeftButton)
+        {
+            qDebug() << " Item Grabbed " << event->buttonDownScenePos(Qt::LeftButton);
+
+            last_point_ = event->buttonDownScenePos(Qt::LeftButton);
+
+            this->boundary_anchor_point_ = last_point_;
+
+            if ((this->boundary_sketching_ == false))
+            {
+                input_sketch_->create(event->scenePos());
+            }
+            else
+            {
+            }
+        }
+        else if (event->buttons() & Qt::RightButton)
+        {
+            newSktech();
+        }
+    }
+    event->ignore();
+
+
+    update();
+
+
+*/
+
+
+}
+
+
+void SketchSessionTesting::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+{
+
+    emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
+
+
+
+    if ( event->buttons() & Qt::LeftButton )
+    {
+
+        if( current_mode == InteractionMode::OVERSKETCHING )
+            temp_sketch->add( event->scenePos() );
+
+        else if( current_mode == InteractionMode::BOUNDARY )
+        {
+            int w = event->scenePos().x() - boundary_anchor.x();
+            int h = event->scenePos().y() - boundary_anchor.y();
+
+            setSceneRect( boundary_anchor.x(), boundary_anchor.y(), w,  h );
+            boundary->setNewBoundary( boundary_anchor.x(), boundary_anchor.y(), w,  h );
+
+
+        }
+
+
+
+    }
+
+
+    QGraphicsScene::mouseMoveEvent( event );
+    update();
+
+
+/* FELIPE'S CODE
+
+    if (mode_ == InteractionMode::REGION_POINT)
+    {
+        region_pointer_->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
+
+    }
+    else if (mode_ == InteractionMode::EDITING)
+    {
+        QGraphicsScene::mouseMoveEvent(event);
+        event->ignore();
+    }
+    else
+    {
+        if (event->buttons() & Qt::LeftButton)
+        {
+            //this->svg->setPos(event->scenePos());
+
+            if (this->boundary_sketching_ == false)
+            {
+                input_sketch_->add(event->scenePos());
+                last_point_ = event->scenePos();
+            }
+            else
+            {
+                /// To create a box by any direction
+                qreal x1 = boundary_anchor_point_.x();
+                qreal y1 = boundary_anchor_point_.y();
+                qreal x2 = event->scenePos().x();
+                qreal y2 = event->scenePos().y();
+
+                if (boundary_anchor_point_.x() < event->scenePos().x())
+                {
+                    x1 = boundary_anchor_point_.x();
+                    x2 = event->scenePos().x();
+                }
+                else
+                {
+                    x1 = event->scenePos().x();
+                    x2 = boundary_anchor_point_.x();
+                }
+
+                if (boundary_anchor_point_.y() < event->scenePos().y())
+                {
+                    y1 = boundary_anchor_point_.y();
+                    y2 = event->scenePos().y();
+                }
+                else
+                {
+                    y1 = event->scenePos().y();
+                    y2 = boundary_anchor_point_.y();
+                }
+                this->boundaryc_->setNewBoundary(x1, y1, x2 - x1, y2 - y1);
+                setSceneRect( boundary->boundingRect() );
+            }
+        }
+
+
+    }
+    event->ignore();
+
+
+
+    update();
+
+    */
+
+
+
+}
+
+
+void SketchSessionTesting::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
+{
+
+    if ( current_mode == InteractionMode::OVERSKETCHING  )
+    {
+
+        sketch->addSegment( *temp_sketch );
+        removeItem( temp_sketch );
+
+        if( temp_sketch != NULL )
+        {
+            delete temp_sketch;
+            temp_sketch = NULL;
+        }
+
+    }
+
+    else if( current_mode == InteractionMode::BOUNDARY )
+    {
+        int w = event->scenePos().x() - boundary_anchor.x();
+        int h = event->scenePos().y() - boundary_anchor.y();
+
+        setSceneRect( boundary_anchor.x(), boundary_anchor.y(), w, h );
+        boundary->setNewBoundary( boundary_anchor.x(), boundary_anchor.y(), w, h );
+
+
+    }
+
+
+    QGraphicsScene::mouseReleaseEvent( event );
+    update();
+
+
+
+/* FELIPE'S CODE
+
+    if (mode_ == InteractionMode::REGION_POINT)
+    {
+        //emit regionPoints(region_points_);
+        //region_points_.clear();
+    }
+    else if (mode_ == InteractionMode::EDITING)
+    {
+        QGraphicsScene::mouseReleaseEvent(event);
+        event->ignore();
+    }
+    else if (mode_ == InteractionMode::SKETCHING)
+    {
+        QPolygonF new_curve = input_sketch_->getSketch();
+
+
+        if (this->boundary_sketching_ == true)
+        {
+
+            this->boundary_sketching_ = false;
+
+            emit newBoundary(this->boundaryc_->boundingRect().x(),
+                this->boundaryc_->boundingRect().y(),
+                this->boundaryc_->boundingRect().width() + this->boundaryc_->boundingRect().x(),
+                this->boundaryc_->boundingRect().height() + this->boundaryc_->boundingRect().y());
+
+        }
+        else
+        {
+            if (!new_curve.isClosed())
+            {
+                emit newSketchCurve(new_curve, input_sketch_->getColor());
+            }
+
+            input_sketch_->clear();
+        }
+
+    }
+    else if (mode_ == InteractionMode::OVERSKETCHING)
+    {
+
+        if (this->boundary_sketching_ == true)
+        {
+
+            this->boundary_sketching_ = false;
+
+            emit newBoundary(this->boundaryc_->boundingRect().x(),
+                this->boundaryc_->boundingRect().y(),
+                this->boundaryc_->boundingRect().width() + this->boundaryc_->boundingRect().x(),
+                this->boundaryc_->boundingRect().height() + this->boundaryc_->boundingRect().y());
+
+        }
+        else
+        {
+            QPolygonF new_curve = input_sketch_->getSketch();
+
+            // Sketch Too Short
+            if (input_sketch_->getSketch().size() < 10)
+            {
+                event->ignore();
+                return;
+            }
+
+            if (current_sketch_->getSketch().size() == 0)
+            {
+                current_sketch_->create(new_curve[0]);
+            }
+
+            if (input_curve_.size() == 0)
+            {
+                input_curve_ = convert(new_curve);
+            }
+            else
+            {
+                over_sketch_ = convert(new_curve);
+
+                input_curve_ = over_sketch_.overSketch(input_curve_, rest_, 1, 16);
+                input_curve_.douglasPeuckerSimplify(over_sketch_, 1.0);
+
+                input_curve_ = over_sketch_;
+
+                new_curve = convert(input_curve_);
+            }
+
+            current_sketch_->clear();
+            current_sketch_->create(new_curve[0]);
+
+            for (int p_it = 1; p_it < new_curve.size(); p_it++)
+            {
+                current_sketch_->add(new_curve[p_it]);
+            }
+
+            input_sketch_->clear();
+        }
+
+    }
+    event->ignore();
+
+    update();
+
+      */
+
+
+}
+
+
+void SketchSessionTesting::dragEnterEvent( QGraphicsSceneDragDropEvent * event )
+{
+
+    event->accept();
+
+    /* FELIPE'S CODE
+
+    if (event->mimeData()->hasText())
+    {
+        event->acceptProposedAction();
+        qDebug() << "Enter";
+    }
+    else
+    {
+        qDebug() << "Not Text";
+    }
+
+    QStringList list = event->mimeData()->formats();
+
+    QString str;
+    if (event->mimeData()->hasImage())
+    {
+        qDebug() << "There is an image";
+    }
+
+    //	foreach (str, list)
+    //	{
+    //		qDebug() << "Mine Type "<< str;
+    //	}
+    event->accept();
+
+    */
+
+}
+
+
+void SketchSessionTesting::dropEvent( QGraphicsSceneDragDropEvent * event )
+{
+
+    const QMimeData *mime_data = event->mimeData();
+
+
+    if ( mime_data->hasUrls() == false )
+        return;
+
+
+    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
+    url_file = QDir::toNativeSeparators( url_file );
+
+    boundary->setBackGroundImage( url_file );
+
+//    QPixmap background( url_file );
+//    addPixmap( background );
+
+
+
+
+    /* FELIPE'S CODE
+
+    const QMimeData *mimeData = event->mimeData();
+
+    QString text;
+
+    if (event->mimeData()->hasUrls())
+    {
+        /// Its a list because I can drag and drop more than one file.
+        /// Since, I assume only one Image begin drag and droping, thus text=url will work;
+        /// @see http://doc.qt.io/qt-5/qurl.html#toLocalFile, I thing it works on Linux and Win32.
+        /// FIXME: I did not know, it was possible to apply more than one predicate for the for looping
+        QList<QUrl> urlList = mimeData->urls();
+        for (int i = 0; i < urlList.size() && i < 32; ++i)
+        {
+            qDebug() << "Url path" << urlList.at(i).toLocalFile();
+            QString url = urlList.at(i).toLocalFile();
+            text = url;			// + QString("\n");
+        }
+    }
+
+    QString str = QDir::toNativeSeparators(text);
+
+    qDebug() << "Before Removing " << str;
+
+    /// @see http://www.qtcentre.org/threads/23100-QUrl-toLocalFile-not-working-as-exspected-under-Windows
+    QPixmap pixmap(str);
+
+    qDebug() << "After Removing " << str;
+
+    boundary_sketching_ = true;
+
+    emit newSessionSignal(pixmap);
+
+    //initializationWithImage(pixmap);
+
+    */
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void SketchSessionTesting::initScene()
+{
+    clear();
+    sketches.clear();
+
+}
+
+
 
 
 void SketchSessionTesting::newSktech()
 {
+
+/* FELIPE'S CODE
 
 
 	QPolygonF new_curve = current_sketch_->getSketch();
@@ -129,228 +662,13 @@ void SketchSessionTesting::newSktech()
 
 
 	setColor(QColor(r, g, b));
-
+*/
 
 }
 // View/Qt5 related functions
 
-void SketchSessionTesting::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-	if (mode_ == InteractionMode::REGION_POINT)
-	{
-		QGraphicsPixmapItem * temp_pix_item = new QGraphicsPixmapItem();
-		QPixmap temp_pixmap(":/images/icons/regionPointer.png");
-		temp_pix_item->setPixmap(temp_pixmap);
-		temp_pix_item->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
-		region_pointers_->addToGroup(temp_pix_item);
-		region_points_.push_back(event->scenePos());
 
-	}
-	else if (mode_ == InteractionMode::EDITING)
-	{
-		QGraphicsScene::mousePressEvent(event);
-		event->ignore();
-	}
-	else
-	{
-		if (event->buttons() & Qt::LeftButton)
-		{
-			qDebug() << " Item Grabbed " << event->buttonDownScenePos(Qt::LeftButton);
-
-			last_point_ = event->buttonDownScenePos(Qt::LeftButton);
-
-			this->boundary_anchor_point_ = last_point_;
-
-			if ((this->boundary_sketching_ == false))
-			{
-				input_sketch_->create(event->scenePos());
-			}
-			else
-			{
-			}
-		}
-		else if (event->buttons() & Qt::RightButton)
-		{
-			newSktech();
-		}
-	}
-	event->ignore();
-	update();
-}
-
-
-void SketchSessionTesting::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-
-    emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
-
-//    QString mouse_coordiante = QString::number(event->scenePos().x()) + ", " + QString::number(event->scenePos().y());
-//    this->coordinates_->setText(mouse_coordiante);
-
-
-	if (mode_ == InteractionMode::REGION_POINT)
-	{
-		region_pointer_->setPos(event->scenePos().x() - region_pointer_->pixmap().width()*0.5, event->scenePos().y() - region_pointer_->pixmap().height()*0.5);
-
-	}
-	else if (mode_ == InteractionMode::EDITING)
-	{
-		QGraphicsScene::mouseMoveEvent(event);
-		event->ignore();
-	}
-	else
-	{
-		if (event->buttons() & Qt::LeftButton)
-		{
-			//this->svg->setPos(event->scenePos());
-
-			if (this->boundary_sketching_ == false)
-			{
-				input_sketch_->add(event->scenePos());
-				last_point_ = event->scenePos();
-			}
-			else
-			{
-				/// To create a box by any direction
-				qreal x1 = boundary_anchor_point_.x();
-				qreal y1 = boundary_anchor_point_.y();
-				qreal x2 = event->scenePos().x();
-				qreal y2 = event->scenePos().y();
-
-				if (boundary_anchor_point_.x() < event->scenePos().x())
-				{
-					x1 = boundary_anchor_point_.x();
-					x2 = event->scenePos().x();
-				}
-				else
-				{
-					x1 = event->scenePos().x();
-					x2 = boundary_anchor_point_.x();
-				}
-
-				if (boundary_anchor_point_.y() < event->scenePos().y())
-				{
-					y1 = boundary_anchor_point_.y();
-					y2 = event->scenePos().y();
-				}
-				else
-				{
-					y1 = event->scenePos().y();
-					y2 = boundary_anchor_point_.y();
-				}
-				this->boundaryc_->setNewBoundary(x1, y1, x2 - x1, y2 - y1);
-			}
-		}
-
-
-	}
-	event->ignore();
-	update();
-}
-
-
-void SketchSessionTesting::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
-{
-
-	if (mode_ == InteractionMode::REGION_POINT)
-	{
-		//emit regionPoints(region_points_);
-		//region_points_.clear();
-	}
-	else if (mode_ == InteractionMode::EDITING)
-	{
-		QGraphicsScene::mouseReleaseEvent(event);
-		event->ignore();
-	}
-	else if (mode_ == InteractionMode::SKETCHING)
-	{
-		QPolygonF new_curve = input_sketch_->getSketch();
-
-
-		if (this->boundary_sketching_ == true)
-		{
-
-			this->boundary_sketching_ = false;
-
-			emit newBoundary(this->boundaryc_->boundingRect().x(),
-				this->boundaryc_->boundingRect().y(),
-				this->boundaryc_->boundingRect().width() + this->boundaryc_->boundingRect().x(),
-				this->boundaryc_->boundingRect().height() + this->boundaryc_->boundingRect().y());
-
-		}
-		else
-		{
-			if (!new_curve.isClosed())
-			{
-				emit newSketchCurve(new_curve, input_sketch_->getColor());
-			}
-
-			input_sketch_->clear();
-		}
-
-	}
-	else if (mode_ == InteractionMode::OVERSKETCHING)
-	{
-
-		if (this->boundary_sketching_ == true)
-		{
-
-			this->boundary_sketching_ = false;
-
-			emit newBoundary(this->boundaryc_->boundingRect().x(),
-				this->boundaryc_->boundingRect().y(),
-				this->boundaryc_->boundingRect().width() + this->boundaryc_->boundingRect().x(),
-				this->boundaryc_->boundingRect().height() + this->boundaryc_->boundingRect().y());
-
-		}
-		else
-		{
-			QPolygonF new_curve = input_sketch_->getSketch();
-
-			// Sketch Too Short
-			if (input_sketch_->getSketch().size() < 10)
-			{
-				event->ignore();
-				return;
-			}
-
-			if (current_sketch_->getSketch().size() == 0)
-			{
-				current_sketch_->create(new_curve[0]);
-			}
-
-			if (input_curve_.size() == 0)
-			{
-				input_curve_ = convert(new_curve);
-			}
-			else
-			{
-				over_sketch_ = convert(new_curve);
-
-				input_curve_ = over_sketch_.overSketch(input_curve_, rest_, 1, 16);
-				input_curve_.douglasPeuckerSimplify(over_sketch_, 1.0);
-
-				input_curve_ = over_sketch_;
-
-				new_curve = convert(input_curve_);
-			}
-
-			current_sketch_->clear();
-			current_sketch_->create(new_curve[0]);
-
-			for (int p_it = 1; p_it < new_curve.size(); p_it++)
-			{
-				current_sketch_->add(new_curve[p_it]);
-			}
-
-			input_sketch_->clear();
-		}
-
-	}
-	event->ignore();
-	update();
-}
-
+/*
 
 void SketchSessionTesting::dragEnterEvent(QGraphicsSceneDragDropEvent * event)
 {
@@ -434,18 +752,38 @@ void SketchSessionTesting::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 	//initializationWithImage(pixmap);
 }
+*/
+
+
+
+void SketchSessionTesting::dragMoveEvent(QGraphicsSceneDragDropEvent * event)
+{
+    /// @see http://doc.qt.io/qt-5/qmimedata.html#hasImage
+    //qDebug() << "Moving";
+}
+
+
+void SketchSessionTesting::dragLeaveEvent(QGraphicsSceneDragDropEvent * event)
+{
+    qDebug() << "Leaving";
+}
 
 
 void SketchSessionTesting::setColor(const QColor& _color)
 {
 	current_color_ = _color;
+    /*felipe's code
+
 	input_sketch_->setColor(_color);
 	current_sketch_->setColor(_color);
+
+    */
 }
 
 
 void SketchSessionTesting::reset()
 {
+
 
 	if (mode_ == InteractionMode::REGION_POINT)
 	{
@@ -472,16 +810,21 @@ void SketchSessionTesting::reset()
 		this->view_curves_.clear();
 		this->view_vertices_.clear();
 
+        /* felipe's code
+
 		input_sketch_->clear();
 		current_sketch_->clear();
 
 		input_curve_.clear();
 		over_sketch_.clear();
 
+        */
+
 		clearRegionMode();
 
 		update();
 	}
+
 }
 
 
@@ -513,13 +856,18 @@ void SketchSessionTesting::clear()
 		this->view_curves_.clear();
 		this->view_vertices_.clear();
 
+        /* felipe's code
 		input_sketch_->clear();
 		current_sketch_->clear();
 
 		input_curve_.clear();
 		over_sketch_.clear();
 
-		this->boundaryc_->setNewBoundary(0.0, 0.0, 0.0, 0.0); \
+      this->boundaryc_->setNewBoundary(0.0, 0.0, 0.0, 0.0);
+      setSceneRect( boundary->boundingRect() );
+*/
+
+
 
 			clearRegionMode();
 
@@ -527,11 +875,15 @@ void SketchSessionTesting::clear()
 	}
 
 
+
+
 }
 
 
 void SketchSessionTesting::clearSketch()
 {
+    /* felipe's code
+
 	input_sketch_->clear();
 	current_sketch_->clear();
 
@@ -539,6 +891,10 @@ void SketchSessionTesting::clearSketch()
 	over_sketch_.clear();
 
 	update();
+
+    */
+
+
 }
 
 
@@ -551,6 +907,10 @@ bool SketchSessionTesting::initializationWithImage(const QPixmap& pixmap)
 	// and by QGraphicsScene to manage item indexing.
 
 	/// Creating and adding the boundary
+    ///
+    ///
+
+    std::cout << "SketchSessionTesting::initializationWithImage" << std::endl;
 
 	clear();
 
@@ -594,8 +954,27 @@ bool SketchSessionTesting::initialization(qreal x, qreal y, qreal w, qreal h)
 	// clean up the scene
 	this->clear();
 
+
+
+    setSceneRect( x, y, w , h );
+//    boundary->setNewBoundary( x, y, w , h );
+
+
+    std::cout << "SketchSessionTesting::initialization: coord" << std::endl;
+//    std::cout << x << ", " << y << std::endl;
+    std::cout << sceneRect().x()  << ", " << sceneRect().y() << ", " << sceneRect().width() << ", " << sceneRect().height() << std::endl;
+
+
+
+    /* FELIPE'S CODE
+
+
 	this->boundaryc_->setNewBoundary(x, y, w, h);
-	this->setSceneRect(this->boundaryc_->boundingRect());
+    this->setSceneRect(this->boundaryc_->boundingRect());
+
+    */
+
+
 
 	setUpBackground();
 
@@ -605,14 +984,21 @@ bool SketchSessionTesting::initialization(qreal x, qreal y, qreal w, qreal h)
 
 void SketchSessionTesting::setBoundary(Real x, Real y, Real width, Real height)
 {
+
+    boundary->setNewBoundary( x, y, width, height );
+    setSceneRect( boundary->boundingRect() );
+
+    /* FELIPE'S CODE
 	this->boundaryc_->setNewBoundary(x, y, width, height);
 	this->setSceneRect(this->boundaryc_->boundingRect());
+    */
 }
 
 
 void SketchSessionTesting::sketchNewBoundary()
 {
-	this->boundary_sketching_ = true;
+    current_mode = InteractionMode::BOUNDARY;
+//	this->boundary_sketching_ = true;
 }
 
 
@@ -670,6 +1056,7 @@ void SketchSessionTesting::setRegionMode()
 void SketchSessionTesting::clearRegionMode()
 {
 
+
 	/// @see http://www.qtcentre.org/threads/3322-Delete-all-members-in-a-QGraphicsItemGroup
 	if (this->region_pointers_ != nullptr)
 	{
@@ -684,6 +1071,8 @@ void SketchSessionTesting::clearRegionMode()
 	this->region_pointer_->setVisible(false);
 	this->region_pointers_->setVisible(false);
 	region_points_.clear();
+
+
 }
 
 
@@ -712,6 +1101,8 @@ void SketchSessionTesting::setUpBackground()
 
 void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<QColor, QPolygonF> >& _polycurves, const std::map<unsigned int, QPointF>& _vertices)
 {
+
+
 	/// clear the map of curves
 	/// @todo clear all attributes
 	for (auto& curve_iterator : this->view_curves_)
@@ -780,6 +1171,9 @@ void SketchSessionTesting::updateSBIM(const std::map<unsigned int, std::pair<QCo
 
 	setUpBackground();
 	update();
+
+
+
 }
 /// Model Related Function
 

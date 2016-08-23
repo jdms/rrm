@@ -6,6 +6,8 @@
 #include <QGraphicsPathItem>
 #include <iostream>
 
+#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
+
 using namespace std;
 
 /**!
@@ -14,8 +16,16 @@ using namespace std;
 
 class InputSketch : public QGraphicsPathItem
 {
+
 	
     public:
+
+
+        typedef qreal			Real;
+        typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
+        typedef PointN<Real, 2> 					    Point2D;
+
+
 
         InputSketch( QColor color );
 
@@ -24,6 +34,7 @@ class InputSketch : public QGraphicsPathItem
 
         void create( const QPointF& p );
         void add( const QPointF& p );
+        void addSegment( const InputSketch& segment );
         void clear();
 
 
@@ -43,6 +54,11 @@ class InputSketch : public QGraphicsPathItem
         void setPen( const QPen& pen );
 		void setColor(const QColor& _color);
 		QColor getColor() const;
+
+
+        InputSketch::Curve2D convert(QPolygonF _curve);
+        QPolygonF convert(Curve2D _curve);
+
 		
     protected:
 
@@ -54,6 +70,9 @@ class InputSketch : public QGraphicsPathItem
         bool done;
         bool is_visible;
         bool is_inside;
+
+
+
 
 };
 

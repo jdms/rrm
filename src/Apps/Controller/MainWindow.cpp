@@ -14,6 +14,8 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
     createActions();
     createMenuBar();
 
+
+
 }
 
 
@@ -31,6 +33,8 @@ void MainWindow::createWindow()
     createSeismicModule();
     create3DViewModule();
     createFlowDiagnosticsModule();
+
+    std::cout << "MainWindow : " << width() << ", " << height() << std::endl;
 
 
     aboutRRM = new AboutWidget( this );
@@ -93,8 +97,8 @@ void MainWindow::createSketchingModule()
     dw_sketching = new QDockWidget();
     dw_sketching->setWindowTitle( "Sketching Window" );
 
-    dc_Sketching_Module = new Sketching2DModule( this );
-    dw_sketching->setWidget( dc_Sketching_Module );
+    dc_sketching_module = new SketchingWindow( this );
+    dw_sketching->setWidget( dc_sketching_module );
 
     dw_sketching->setAllowedAreas( Qt::AllDockWidgetAreas );
     this->addDockWidget( Qt::TopDockWidgetArea, dw_sketching );
@@ -126,10 +130,10 @@ void MainWindow::createSketchingActions()
     connect( dw_sketching, &QDockWidget::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
 
     /// Black Screen Module
-    connect( dc_Sketching_Module->sketching_canvas, SIGNAL( currentCrossSection( const CrossSection& ) ), dc_3DView_Module->glWidget, SLOT( updateBlackScreen( const CrossSection& ) ) );
+    connect( dc_sketching_module->sketching_canvas, SIGNAL( currentCrossSection( const CrossSection& ) ), dc_3DView_Module->glWidget, SLOT( updateBlackScreen( const CrossSection& ) ) );
 
     /// Notify the Seismic Module with the new CrossSection configuration
-    connect( dc_Sketching_Module->sketching_canvas, SIGNAL( currentCrossSection( const CrossSection& ) ), seismic_window, SLOT( updateCrossSection( const CrossSection& ) ) );
+    connect( dc_sketching_module->sketching_canvas, SIGNAL( currentCrossSection( const CrossSection& ) ), seismic_window, SLOT( updateCrossSection( const CrossSection& ) ) );
 
 
 
@@ -143,7 +147,7 @@ void MainWindow::createSeismicModule()
     QDockWidget* dw_seismic = new QDockWidget();
     dw_seismic->setWindowTitle( "Sketching Window" );
 
-    dc_Seismic_Module = new Sketching2DModule( this );
+    dc_Seismic_Module = new SketchingWindow( this );
     dw_seismic->setWidget( dc_Seismic_Module );
 
     dw_seismic->setAllowedAreas( Qt::AllDockWidgetAreas );
@@ -159,10 +163,10 @@ void MainWindow::createSeismicModule()
 void MainWindow::createSeismicgActions()
 {
     connect( ac_wdwseismic, SIGNAL( toggled( bool ) ), dc_Seismic_Module, SLOT( setVisible( bool ) ) );
-//		connect( dc_Seismic_Module, &Sketching2DModule::visibilityChanged, ac_wdwseismic, &QAction::setChecked);
+//		connect( dc_Seismic_Module, &SketchingWindow::visibilityChanged, ac_wdwseismic, &QAction::setChecked);
 
     /// Equip the Sketch Board with the current slice CrossSection
-    connect( seismic_window, SIGNAL(currentCrossSection(const CrossSection&)), dc_Sketching_Module->sketching_canvas, SLOT( setCrossSection( const CrossSection& ) ) );
+    connect( seismic_window, SIGNAL(currentCrossSection(const CrossSection&)), dc_sketching_module->sketching_canvas, SLOT( setCrossSection( const CrossSection& ) ) );
 
     /// Notify the 3D the current slice position
     connect( seismic_window->ui->seismic_slices_verticalSlider_ , SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( setPlanePosition( int ) ) );
@@ -250,7 +254,7 @@ void MainWindow::createFlowDiagnosticsActions()
 
     connect ( ac_flowdiagnostics , SIGNAL( toggled(bool) ) , dw_flowdiagnostics , SLOT( setVisible(bool) ) );
     connect( dw_flowdiagnostics, &QDockWidget::visibilityChanged, ac_flowdiagnostics, &QAction::setChecked );
-    connect( flowdiagnostics_window, &FlowWindow::getCrossSection, this, [=](){ flowdiagnostics_window->setCrossSection( dc_Sketching_Module->sketching_canvas->sketch_controller->getCrossSection() ); } );
+    connect( flowdiagnostics_window, &FlowWindow::getCrossSection, this, [=](){ flowdiagnostics_window->setCrossSection( dc_sketching_module->sketching_canvas->sketch_controller->getCrossSection() ); } );
 
 }
 
@@ -262,7 +266,7 @@ void MainWindow::interpolate( )
     // precisa????
     std::cout << seismic_window->getSeimicSlices().size() << std::endl;
 
-    seismic_window->updateCrossSection( dc_Sketching_Module->sketching_canvas->sketch_controller->getCrossSection() ) ;
+    seismic_window->updateCrossSection( dc_sketching_module->sketching_canvas->sketch_controller->getCrossSection() ) ;
 
     dc_3DView_Module->glWidget->updateSeismicSlices( seismic_window->getSeimicSlices() );
     dc_3DView_Module->glWidget->updateRendering();
@@ -289,4 +293,3 @@ void MainWindow::mousePressEvent ( QMouseEvent* event )
 {
     event->ignore();
 }
-

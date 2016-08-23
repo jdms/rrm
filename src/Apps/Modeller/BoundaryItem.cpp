@@ -1,94 +1,82 @@
 #include "BoundaryItem.h"
 
-BoundaryItem::BoundaryItem ( int width , int height , const QColor& _color ) :	QGraphicsPathItem ( )
+#include <iostream>
+
+BoundaryItem::BoundaryItem ( int width , int height /*, const QColor& _color*/ ) :	QGraphicsPathItem ( )
 {
-
-//	this->prepareGeometryChange ( );
-
-//	QPainterPath path0;
-//	path0.moveTo ( -width * 0.5 , height * 0.5 );
-//	path0.lineTo ( width * 0.5 , height * 0.5 );
-//	path0.lineTo ( width * 0.5 , height * 0.5 );
-//	path0.lineTo ( width * 0.5 , -height * 0.5 );
-//
-//	QPainterPath path2;
-//	path2.moveTo ( width * 0.5 , -height * 0.5 );
-//	path2.lineTo ( -width * 0.5 , -height * 0.5 );
-//	path2.lineTo ( -width * 0.5 , -height * 0.5 );
-//	path2.lineTo ( -width * 0.5 , height * 0.5 );
-//
-//	boundary.push_back ( path0 );
-//	boundary.push_back ( path2 );
 
 	this->prepareGeometryChange ( );
 
-	boundary.clear ( );
+    boundary.setRect( 0, 0, width, height );
+    image_position = QPointF( 0, 0 );
 
-	QPainterPath path0;
-
-	path0.addRect ( 0 , 0 , width , height );
-
-	boundary.push_back ( path0 );
-
-	bb2D_.setRect(0,0,width,height);
-
-	this->color = _color;
 }
 
 BoundaryItem::~BoundaryItem ( )
 {
-	boundary.clear ( );
+//	boundary.clear ( );
 }
+
 
 void BoundaryItem::setNewBoundary ( qreal x , qreal y , qreal width , qreal height )
 {
 
-	this->prepareGeometryChange ( );
 
-	boundary.clear ( );
+    this->prepareGeometryChange ( );
+    boundary.setRect( x, y, width, height );
 
-	QPainterPath path0;
-
-	path0.addRect ( x , y , width , height );
-
-	bb2D_.setRect(x,y,width,height);
-
-	boundary.push_back ( path0 );
+    image_position = QPointF( boundary.bottomLeft().x(), boundary.bottomLeft().y() );
+    loadBackGroud();
 
 }
+
 
 void BoundaryItem::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
 
-	painter->setRenderHint ( QPainter::Antialiasing );
+    painter->setRenderHint ( QPainter::Antialiasing );
 
-	QPen pen_color ( QColor ( 0 , 200 , 0 ) );
-	pen_color.setWidth ( 1 );
-	QBrush brush;
-	brush.setColor ( this->color );
-	//brush.setColor ( QColor ( 240 , 0 , 0 , 100 ) );
-	brush.setStyle ( Qt::SolidPattern );
 
-	painter->setPen ( pen_color );
-	painter->setBrush ( brush );
-//
-//	for ( auto crv : boundary )
-//		painter->drawPath ( crv );
+    QPen pen_color ( QColor ( 0 , 200 , 0 ) );
+    pen_color.setWidth ( 1 );
 
-	painter->drawRect(bb2D_);
+    QBrush brush;
+    brush.setColor ( QColor( 55, 100, 55, 75 ) );
+    brush.setStyle ( Qt::SolidPattern );
+
+
+    if( background_image.isNull() == false )
+    {
+        brush.setTextureImage( background_image  );
+        painter->setBrushOrigin( image_position.x(), image_position.y() );
+    }
+    painter->setBrush( brush );
+    painter->setPen ( pen_color );
+    painter->drawRect( boundary );
+
 
 }
 
+
+void BoundaryItem::setBackGroundImage( const QString& url )
+{
+    image_file = url;
+    loadBackGroud();
+}
+
+
+void BoundaryItem::loadBackGroud()
+{
+
+    if( image_file.isEmpty() || image_file.isNull() ) return;
+
+    background_image.load( image_file );
+    background_image = background_image.scaled( abs( int ( boundary.width() ) ), abs( int ( boundary.height() ) ) );
+    background_image = background_image.mirrored( false, true );
+}
+
+
 QRectF BoundaryItem::boundingRect ( ) const
 {
-	QPainterPath path;
-
-	int ncurves = (int) boundary.size ( );
-	for ( int i = 0; i < ncurves; ++i )
-	{
-		QPainterPath curve = boundary.at ( i );
-		path.addPath ( curve );
-	}
-
-	return path.boundingRect ( );
+    return boundary;
 }

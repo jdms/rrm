@@ -49,7 +49,7 @@ class SketchSessionTesting: public QGraphicsScene
 
 		enum class InteractionMode
 		{
-			EDITING, SKETCHING, OVERSKETCHING, REGION_POINT
+            OVERSKETCHING, INSERTING, BOUNDARY, EDITING, SKETCHING, REGION_POINT
 		};
 
 		SketchSessionTesting ( QObject *parent = 0 );
@@ -64,7 +64,12 @@ class SketchSessionTesting: public QGraphicsScene
 
 
 	protected:
-		void mousePressEvent ( QGraphicsSceneMouseEvent* event );
+
+        void setup();
+        void addSketching();
+
+
+        void mousePressEvent ( QGraphicsSceneMouseEvent* event );
 		void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
 		void mouseReleaseEvent ( QGraphicsSceneMouseEvent* event );
 
@@ -74,15 +79,15 @@ class SketchSessionTesting: public QGraphicsScene
 		void dropEvent ( QGraphicsSceneDragDropEvent *event );
 
 
-        void setup();
+
 
 	public slots:
 
 
         // Refactoring
 
-        inline void setCurrentMode( const InteractionMode& mode ){ current_mode = mode; }
-        inline const InteractionMode currentMode(){ return current_mode; }
+//        inline void setCurrentMode( const InteractionMode& mode ){ current_mode = mode; }
+//        inline const InteractionMode currentMode(){ return current_mode; }
 
         void initScene();
 //        void getScene();
@@ -136,6 +141,11 @@ class SketchSessionTesting: public QGraphicsScene
 
 	signals:
 
+        void addSkecthing( InputSketch* );
+        void sendCoordinates( float, float );
+
+
+
         // Notify the controller, to reset the current arrangement of curves and set a new boundary, with the given an image
 		void newSessionSignal ( const QPixmap& pixmap );
 		// Notify the controller, to reset the current arrangement of curves and set a new boundary, with sketched rectangle
@@ -149,7 +159,7 @@ class SketchSessionTesting: public QGraphicsScene
 		// Notify 3D Solver with region points
 		void regionPoints(std::vector<QPointF> _region_points);
 
-        void sendCoordinates( float, float );
+
 
 
 	public:
@@ -163,10 +173,20 @@ class SketchSessionTesting: public QGraphicsScene
 
 
         InteractionMode current_mode;
-        QColor current_color;
 
         std::vector< StratigraphyItem > sketches;
+
         BoundaryItem *boundary;
+        QPointF boundary_anchor;
+
+        InputSketch *temp_sketch;
+        InputSketch *sketch;
+
+
+        QColor current_color;
+
+
+
 
 
         // End Refactoring

@@ -51,7 +51,6 @@ void SketchBoard::setup()
 
     // XXX GraphScene where we can add Entities ( Curves, Icons ... )
     sketchSession_ = new SketchSessionTesting( this );
-
     setScene( sketchSession_ );
 
     sketch_controller = new SketchController();
@@ -59,6 +58,7 @@ void SketchBoard::setup()
     sketch_controller->setRule( RRM::GeologicRules::Sketch );
 
 
+    centerOn( 0, 0 );
 }
 
 
@@ -151,8 +151,11 @@ void SketchBoard::keyPressEvent(QKeyEvent *event)
 	}
 	if (event->key() == Qt::Key_Escape)
 	{
+        /* FELIPE'S CODE
+
 		sketchSession_->clearSelection();
 		this->newSession(0.0, 0.0, 700.0, 400.0);
+        */
 	}
 	/// Zhao Testing
 	if (event->key() == Qt::Key_S)
@@ -374,27 +377,45 @@ void SketchBoard::newBoundary()
 
 void SketchBoard::newSession(Real x, Real y, Real width, Real height)
 {
-	this->sketchSession_->initialization(x, y, width, height);
-	this->sketch_controller->newSession(x, y, width, height);
+
+    std::cout << "SketchBoard::newSession: coord" << std::endl;
+    std::cout << x << ", " << y << std::endl;
+
+    this->sketchSession_->initialization( x, y, width, height );
+//    this->sketch_controller->newSession(x, y, width, height);
 }
 
 void SketchBoard::newSession(const QPixmap& _image)
 {
+
+
+    std::cout << "SketchBoard::newSession: image" << std::endl;
+
+    /* FELIPE'S CODE
 	this->sketchSession_->initializationWithImage(_image);
 	this->sketch_controller->newSession(_image.rect().x(),
 		_image.rect().y(),
 		_image.rect().width(),
 		_image.rect().height());
+
+        */
 }
 
 void SketchBoard::setBoundary(Real x, Real y, Real width, Real height)
 {
-	this->sketch_controller->newSession(x, y, width, height);
+    std::cout << "SketchBoard::setBoundary" << std::endl;
+
+    /* FELIPE'S CODE
+
+    this->sketch_controller->newSession(x, y, width, height);
 	this->sketchSession_->setBoundary(x, y, width - x, height - y);
+    */
 }
 
 void SketchBoard::setCrossSection(const CrossSection& _cross_section)
 {
+    std::cout << "SketchBoard::setCrossSection" << std::endl;
+
 	/// Notify the Module with the current CrossSection in the board
 	emit currentCrossSection(this->sketch_controller->getCrossSection());
 
