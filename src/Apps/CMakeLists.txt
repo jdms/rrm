@@ -67,6 +67,8 @@ set( MODELLER_HEADERS   Modeller/Sketching2DModule.h
                         Modeller/ExtrusionWidget/OpenGLWidget.hpp
                         Modeller/ExtrusionWidget/ExtrusionController.hpp
                         Modeller/ExtrusionWidget/View3DModule.hpp
+                        Modeller/ExtrusionWidget/BoundingBox3D.h
+                        Modeller/ExtrusionWidget/CrossPlane.h
                         Modeller/SketchBoardWidget/SketchBoard.hpp
                         Modeller/SketchingCanvas.h
                         Modeller/SketchingScene.h
@@ -94,6 +96,8 @@ set( MODELLER_SOURCES   Modeller/Sketching2DModule.cpp
                         Modeller/ExtrusionWidget/OpenGLWidget.cpp
                         Modeller/ExtrusionWidget/ExtrusionController.cpp
                         Modeller/ExtrusionWidget/View3DModule.cpp
+                        Modeller/ExtrusionWidget/BoundingBox3D.cpp
+                        Modeller/ExtrusionWidget/CrossPlane.cpp
                         Modeller/SketchBoardWidget/SketchBoard.cpp
                         Modeller/SketchingCanvas.cpp
                         Modeller/SketchingScene.cpp

@@ -4,8 +4,6 @@ SketchingCanvas::SketchingCanvas( QWidget* parent ): QGraphicsView( parent )
 {
     setup();
     createConnections();
-
-
 }
 
 
@@ -76,7 +74,7 @@ void SketchingCanvas::wheelEvent( QWheelEvent *event )
 {
 
     // Scale the view
-    double scaleFactor = 1.02;
+    double scaleFactor = 1.5;
 
     if( event->delta() > 0 )
     {

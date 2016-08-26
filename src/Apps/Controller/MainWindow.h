@@ -123,7 +123,7 @@ class MainWindow : public QMainWindow
 
         // Sketching Module
         QDockWidget* dw_sketching;
-        SketchingWindow *dc_Sketching_Module;
+        SketchingWindow *dc_sketching_module;
 
         // Seismic Module
         SketchingWindow *dc_Seismic_Module;

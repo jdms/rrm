@@ -31,11 +31,15 @@ class View3DModule: public QMainWindow
     View3DModule( QWidget* parent = 0 );
 
     QVBoxLayout *hb_canvas3d;
-    QSlider *horizontalSlider_curve;
-    QSlider *horizontalSlider_surface;
-    QSlider *horizontalSlider_extrusion;
+    QSlider *hs_curve_resolution;
+    QSlider *hs_surface_resolution;
+    QSlider *hs_extrusion;
 
     protected:
+
+        void createWindow();
+
+
 
     public slots:
         void emitColor( int R, int G, int B );

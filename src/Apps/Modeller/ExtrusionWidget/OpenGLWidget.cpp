@@ -3,166 +3,439 @@
 GLWidget::GLWidget ( QWidget* parent ) : QOpenGLWidget ( parent )
 {
 
-    /// Internface
+    createMenu();
+    init();
 
-        menu_module_type_ = new QMenu(this);
-        action_seismic_module_ = new QAction(tr ("Seismic Module"),menu_module_type_);
-        action_blankSceen_module_= new QAction( tr ("Black Screen Module"),menu_module_type_);
-
-        menu_module_type_->addSection ( tr ( "Module" ) );
-        menu_module_type_->addAction(action_seismic_module_);
-        menu_module_type_->addAction(action_blankSceen_module_);
-
-    connect ( action_seismic_module_ , SIGNAL( triggered()) ,this, SLOT(setSeismicModule()) );
-    connect ( action_blankSceen_module_ , SIGNAL (triggered()) ,this, SLOT(setBlackScreenModule()) );
-
-    // Mesh Layout:
-    // - Geometry   vec4  slot = 0
-    // - Normal     vec4  slot = 1
-    // - Colour     vec4  slot = 2
-    // - Attributes vec4  slot = 3
-
-    // [v0,v1,v2,v3,n0,n1,n2,n3,c0,c1,c2,c4,att0,att1,att2,att3]
-
-    // Scene
-    background_ = 0;
-
-    // Entity
-    vertexArray_BlackScreen_cube_ = 0;
-        vertexBuffer_BlackScreen_cube_ = 0;
-        // Be careful on the assignment of each slot attributes
-        position_BlackScreen_slot_ = 0;
-        blackScreen_cube_shader_ = 0;
-
-    // The interpolated surface
-    vertexArray_patch_ = 0;
-        vertexBuffer_patch_ = 0;
-        // Be careful on the assignment of each slot attributes
-        vertexPatch_slot_ = 0;
-
-        vertexBuffer_patch_color = 0;
-        // Be careful on the assignment of each slot attributes
-        patch_Color_Slot_ = 2;
-
-        patch_shader_ = 0;
-
-        // The sketch lines
-    lines_vertexArray_ = 0;
-        lines_vertexBuffer_ = 0;
-        // Be careful on the assignment of each slot attributes
-        lines_vertexSlot_ = 0;
-        lines_shader_ = 0;
-
-    mesh_shader_ = 0;
-    vertexArray_MESH_ = 0;
-        positionBuffer_MESH_ = 0;
-            position_MESH_Slot_ = 0;
-        normalBuffer_MESH_ = 0;
-            normal_MESH_Slot_ = 1;
-        colorBuffer_MESH_ = 0;
-            color_MESH_Slot_ = 2;
-        // Element Array
-        vertexBuffer_MESH_face_ID_ = 0;
-
-    // Entity
-    vertexArray_Seismic_cube_ = 0;
-        vertexBuffer_Seismic_cube_ = 0;
-        // Be careful on the assignment of each slot attributes
-        position_seismic_cube_ = 0;
-        seismic_cube_shader_ = 0;
-
-    // Entity
-    vertexArray_Seismic_plane_ = 0;
-        vertexBuffer_Seismic_plane_ = 0;
-        // Be careful on the assignment of each slot attributes
-        position_seismic_plane_ = 0;
-        seismic_plane_shader_ = 0;
-        seismic_slice_plane_index = 0;
-        seismic_slice_plane_position = 0.0f;
-
-    vertexArray_for_the_Cube_ = 0;
-        vertexBuffer_cube_8vertices_ = 0;
-        vertices_8slot_ = 0;
-        vertexBuffer_cube_8verticesIndices_ = 0;
-
+    extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+    stepx = 1;
+    stepz = 20;
+    volume_width = 400;
 
 }
+
 
 GLWidget::~GLWidget()
 {
     resetBuffers();
 }
 
+
+
+
+void GLWidget::createMenu()
+{
+    module_menu = new QMenu( this );
+
+    ac_seismic_module = new QAction( tr ("Seismic Module"), module_menu );
+    ac_blankscreen_module = new QAction( tr ("Black Screen Module"), module_menu );
+
+    module_menu->addSection ( tr ( "Module" ) );
+    module_menu->addAction( ac_seismic_module );
+    module_menu->addAction( ac_blankscreen_module );
+
+    connect ( ac_seismic_module , SIGNAL( triggered() ), this, SLOT( setSeismicModule() ) );
+    connect ( ac_blankscreen_module , SIGNAL( triggered() ), this, SLOT( setBlackScreenModule() ) );
+
+}
+
+
+void GLWidget::init()
+{
+
+
+    shader_background = 0;
+
+
+    // bounding box in the blanckscreen module
+    shader_boundingbox_blankscreen = 0;
+    va_boundingbox_blankscreen = 0;
+    vb_boundingbox_blankscreen = 0;
+    slot_boundingbox_vertex = 0;
+
+
+    // interpolated surface
+    shader_interpolated_surface = 0;
+    va_interpolated_surface = 0;
+    vb_surface_vertices = 0;
+    vb_surface_color = 0;
+    slot_surface_vertex = 0;
+    slot_surface_color = 2;
+
+
+
+    // The seismic sketches
+    shader_seimisc_sketches = 0;
+    va_seismic_sketches = 0;
+    vb_seismic_sketches_vertex = 0;
+    slot_seismic_sketches_vertex = 0;
+
+
+
+    // The seismic meshes
+    shader_seismic_mesh = 0;
+    va_seismic_mesh = 0;
+    vb_seismic_mesh_vertex = 0;
+    vb_seismic_mesh_color = 0;
+    vb_seismic_mesh_normal = 0;
+    vb_seismic_mesh_idfaces = 0;
+    slot_seismic_mesh_vertex = 0;
+    slot_seismic_mesh_normal = 1;
+    slot_seismic_mesh_color = 2;
+
+
+
+    // bounding box seismic
+    shader_boundingbox_seismic = 0;
+    va_boundingbox_seismic = 0;
+    vb_boundingbox_seismic_vertex = 0;
+    slot_boundingbox_seismic_vertex = 0;
+
+
+    // plane slice seismic
+    shader_plane_seismic = 0;
+    va_plane_seismic = 0;
+    vb_plane_seismic_vertex = 0;
+    slot_plane_seismic_vertex = 0;
+    seismic_plane_sliceid = 0;
+    seismic_plane_slice_position = 0.0f;
+
+
+
+    vertexArray_for_the_Cube_ = 0;
+    vertexBuffer_cube_8vertices_ = 0;
+    vertices_8slot_ = 0;
+    vertexBuffer_cube_8verticesIndices_ = 0;
+
+
+}
+
+
+void GLWidget::clear()
+{
+
+
+    seismic_sketches.clear();
+    seismic_mesh_faces.clear();
+    seismic_mesh_vertices.clear();
+    seismic_mesh_normals.clear();
+    seismic_mesh_colors.clear();
+
+
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_sketches_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_sketches.size() * sizeof ( seismic_sketches[0] ) , seismic_sketches.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_vertices.size() * sizeof ( seismic_mesh_vertices[0] ) , seismic_mesh_vertices.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_normal );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_normals.size() * sizeof ( seismic_mesh_normals[0] ) , seismic_mesh_normals.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_color );
+    glBufferData(GL_ARRAY_BUFFER, seismic_mesh_normals.size() * sizeof (seismic_mesh_normals[0]), seismic_mesh_normals.data(), GL_STATIC_DRAW);
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_seismic_mesh_idfaces );
+    glBufferData ( GL_ELEMENT_ARRAY_BUFFER , seismic_mesh_faces.size() * sizeof ( seismic_mesh_faces[0] )  , seismic_mesh_faces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+
+}
+
+
+
+
+
+void GLWidget::initializeGL ( )
+{
+
+    connect( context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::resetBuffers );
+
+    setFocus();
+    setMouseTracking ( true );
+    setFocusPolicy ( Qt::StrongFocus );
+
+
+
+    glewExperimental = GL_TRUE;
+    GLenum glewInitResult = glewInit();
+
+    if ( GLEW_OK != glewInitResult )
+    {
+        std::cerr << "Error: " << glewGetErrorString ( glewInitResult ) << endl;
+        exit ( EXIT_FAILURE );
+    }
+
+
+
+    glClearColor ( 0.0f , 0.0 , 1.0 , 1.0f );
+    glEnable ( GL_DEPTH_TEST );
+    glDisable ( GL_CULL_FACE );
+    glEnable ( GL_BLEND );
+    glBlendFunc ( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
+    glEnable(GL_MULTISAMPLE);
+    glMinSampleShading(1.0f);
+
+
+
+
+    createBlankScreenBuffers();
+    createSeismicBuffers();
+
+
+    loadShaderByResources();
+
+
+
+    create8VerticesIndices();
+    extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
+
+
+
+    camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height ( ) , 0.1f , 100.0f );
+
+
+    updateRendering();
+    updateBlackScreen( cross_section_ );
+
+
+}
+
+
+void GLWidget::resizeGL ( int width , int height )
+{
+
+    glViewport ( 0 , 0 , width , height );
+
+    camera.setViewport( Eigen::Vector2f ( (float) width , (float) height ) );
+    camera.setPerspectiveMatrix( camera.getFovy() , (float) width/(float)height , 0.1f , 100.0f );
+
+}
+
+
+void GLWidget::paintGL ( )
+{
+    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+
+    background();
+
+
+    if ( extrusion_controller_.module_ == RRM::ExtrusionController::Seismic )
+    {
+        renderSeismic();
+    }
+    else if ( extrusion_controller_.module_ == RRM::ExtrusionController::BlankScreen )
+    {
+        renderBlankScreen();
+    }
+
+
+}
+
+
+
+
+
+
+void GLWidget::createBlankScreenBuffers()
+{
+
+
+    glGenVertexArrays ( 1 , &va_boundingbox_blankscreen );
+    glBindVertexArray ( va_boundingbox_blankscreen );
+
+        glGenBuffers ( 1 , &vb_boundingbox_blankscreen);
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_blankscreen );
+            glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_boundingbox_vertex );
+        glVertexAttribPointer ( slot_boundingbox_vertex , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+    glBindVertexArray ( 0 );
+
+
+
+
+    glGenVertexArrays ( 1 , &va_interpolated_surface );
+    glBindVertexArray ( va_interpolated_surface );
+
+        glGenBuffers ( 1 , &vb_surface_vertices );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_surface_vertices );
+            glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_surface_vertex );
+        glVertexAttribPointer ( slot_surface_vertex , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+
+        glGenBuffers(1, &vb_surface_color);
+        glBindBuffer(GL_ARRAY_BUFFER, vb_surface_color);
+            glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(slot_surface_color);
+        glVertexAttribPointer(slot_surface_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray ( 0 );
+
+
+}
+
+
+void GLWidget::createSeismicBuffers()
+{
+
+
+    glGenVertexArrays ( 1 , &va_seismic_sketches );
+    glBindVertexArray ( va_seismic_sketches );
+
+        glGenBuffers ( 1 , &vb_seismic_sketches_vertex );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_sketches_vertex );
+            glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_seismic_sketches_vertex );
+        glVertexAttribPointer ( slot_seismic_sketches_vertex , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+    glBindVertexArray ( 0 );
+
+
+
+
+    glGenVertexArrays ( 1 , &va_seismic_mesh );
+    glBindVertexArray ( va_seismic_mesh );
+
+
+        glGenBuffers ( 1 , &vb_seismic_mesh_vertex );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_vertex );
+            glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_seismic_mesh_vertex );
+        glVertexAttribPointer ( slot_seismic_mesh_vertex , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+
+        glGenBuffers ( 1 , &vb_seismic_mesh_normal );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_normal );
+            glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_seismic_mesh_normal );
+        glVertexAttribPointer ( slot_seismic_mesh_normal , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+
+        glGenBuffers ( 1 , &vb_seismic_mesh_color );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_color );
+            glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_seismic_mesh_color );
+        glVertexAttribPointer ( slot_seismic_mesh_color , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+
+        glGenBuffers ( 1 , &vb_seismic_mesh_idfaces );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_seismic_mesh_idfaces );
+            glBufferData ( GL_ELEMENT_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
+
+
+    glBindVertexArray ( 0 );
+
+
+
+
+    glGenVertexArrays ( 1 , &va_boundingbox_seismic );
+    glBindVertexArray ( va_boundingbox_seismic );
+
+        glGenBuffers ( 1 , &vb_boundingbox_seismic_vertex );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_seismic_vertex );
+            glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_boundingbox_seismic_vertex );
+        glVertexAttribPointer ( slot_boundingbox_seismic_vertex , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+    glBindVertexArray ( 0 );
+
+
+    glGenVertexArrays ( 1 , &va_plane_seismic );
+    glBindVertexArray ( va_plane_seismic );
+
+        glGenBuffers ( 1 , &vb_plane_seismic_vertex );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_plane_seismic_vertex );
+            glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( slot_plane_seismic_vertex );
+        glVertexAttribPointer ( slot_plane_seismic_vertex , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+
+    glBindVertexArray ( 0 );
+
+
+}
+
+
 void GLWidget::resetBuffers()
 {
+
+
     std::cout << " Reseting Buffers ";
+
 
     deleteShaders();
 
-    if (vertexArray_BlackScreen_cube_)
-    {
-        glDeleteVertexArrays(1, &vertexArray_BlackScreen_cube_);
 
-        if (vertexBuffer_BlackScreen_cube_)
+    if (va_boundingbox_blankscreen)
+    {
+        glDeleteVertexArrays(1, &va_boundingbox_blankscreen);
+
+        if (vb_boundingbox_blankscreen)
         {
-            glDeleteBuffers(1, &vertexBuffer_BlackScreen_cube_);
+            glDeleteBuffers(1, &vb_boundingbox_blankscreen);
         }
     }
 
-    if (vertexArray_patch_)
+    if (va_interpolated_surface)
     {
-        glDeleteVertexArrays(1, &vertexArray_patch_);
-        if (vertexBuffer_patch_)
+        glDeleteVertexArrays(1, &va_interpolated_surface);
+        if (vb_surface_vertices)
         {
-            glDeleteBuffers(1, &vertexBuffer_patch_);
+            glDeleteBuffers(1, &vb_surface_vertices);
         }
-        if (vertexBuffer_patch_color)
+        if (vb_surface_color)
         {
-            glDeleteBuffers(1, &vertexBuffer_patch_color);
+            glDeleteBuffers(1, &vb_surface_color);
         }
     }
 
-    if (lines_vertexArray_)
+    if (va_seismic_sketches)
     {
-        glDeleteVertexArrays(1, &lines_vertexArray_);
-        if (lines_vertexBuffer_)
+        glDeleteVertexArrays(1, &va_seismic_sketches);
+        if (vb_seismic_sketches_vertex)
         {
-            glDeleteBuffers(1, &lines_vertexBuffer_);
+            glDeleteBuffers(1, &vb_seismic_sketches_vertex);
         }
     }
 
-    if (vertexArray_MESH_)
+    if (va_seismic_mesh)
     {
-        glDeleteVertexArrays(1, &vertexArray_MESH_);
-        if (vertexArray_MESH_)
+        glDeleteVertexArrays(1, &va_seismic_mesh);
+        if (vb_seismic_mesh_vertex)
         {
-            glDeleteBuffers(1, &positionBuffer_MESH_);
+            glDeleteBuffers(1, &vb_seismic_mesh_vertex);
         }
-        if (normalBuffer_MESH_)
+        if (vb_seismic_mesh_normal)
         {
-            glDeleteBuffers(1, &normalBuffer_MESH_);
+            glDeleteBuffers(1, &vb_seismic_mesh_normal);
         }
-        if (colorBuffer_MESH_)
+        if (vb_seismic_mesh_color)
         {
-            glDeleteBuffers(1, &colorBuffer_MESH_);
+            glDeleteBuffers(1, &vb_seismic_mesh_color);
         }
     }
 
-    if (vertexArray_Seismic_cube_)
+    if (va_boundingbox_seismic)
     {
-        glDeleteVertexArrays(1, &vertexArray_Seismic_cube_);
-        if (vertexBuffer_Seismic_cube_)
+        glDeleteVertexArrays(1, &va_boundingbox_seismic);
+        if (vb_boundingbox_seismic_vertex)
         {
-            glDeleteBuffers(1, &vertexBuffer_Seismic_cube_);
+            glDeleteBuffers(1, &vb_boundingbox_seismic_vertex);
         }
     }
 
-    if (vertexArray_Seismic_plane_)
+    if (va_plane_seismic)
     {
-        glDeleteVertexArrays(1, &vertexArray_Seismic_plane_);
-        if (vertexBuffer_Seismic_plane_)
+        glDeleteVertexArrays(1, &va_plane_seismic);
+        if (vb_plane_seismic_vertex)
         {
-            glDeleteBuffers(1, &vertexBuffer_Seismic_plane_);
+            glDeleteBuffers(1, &vb_plane_seismic_vertex);
         }
     }
 
@@ -181,69 +454,10 @@ void GLWidget::resetBuffers()
     // - Colour     vec4  slot = 2
     // - Attributes vec4  slot = 3
 
-    // [v0,v1,v2,v3,n0,n1,n2,n3,c0,c1,c2,c4,att0,att1,att2,att3]
+    init();
 
-    // Scene
-    background_ = 0;
-
-    // Entity
-    vertexArray_BlackScreen_cube_ = 0;
-    vertexBuffer_BlackScreen_cube_ = 0;
-    // Be careful on the assignment of each slot attributes
-    position_BlackScreen_slot_ = 0;
-    blackScreen_cube_shader_ = 0;
-
-    // The interpolated surface
-    vertexArray_patch_ = 0;
-    vertexBuffer_patch_ = 0;
-    // Be careful on the assignment of each slot attributes
-    vertexPatch_slot_ = 0;
-
-    vertexBuffer_patch_color = 0;
-    // Be careful on the assignment of each slot attributes
-    patch_Color_Slot_ = 2;
-
-    patch_shader_ = 0;
-
-    // The sketch lines
-    lines_vertexArray_ = 0;
-    lines_vertexBuffer_ = 0;
-    // Be careful on the assignment of each slot attributes
-    lines_vertexSlot_ = 0;
-    lines_shader_ = 0;
-
-    mesh_shader_ = 0;
-    vertexArray_MESH_ = 0;
-    positionBuffer_MESH_ = 0;
-    position_MESH_Slot_ = 0;
-    normalBuffer_MESH_ = 0;
-    normal_MESH_Slot_ = 1;
-    colorBuffer_MESH_ = 0;
-    color_MESH_Slot_ = 2;
-    // Element Array
-    vertexBuffer_MESH_face_ID_ = 0;
-
-    // Entity
-    vertexArray_Seismic_cube_ = 0;
-    vertexBuffer_Seismic_cube_ = 0;
-    // Be careful on the assignment of each slot attributes
-    position_seismic_cube_ = 0;
-    seismic_cube_shader_ = 0;
-
-    // Entity
-    vertexArray_Seismic_plane_ = 0;
-    vertexBuffer_Seismic_plane_ = 0;
-    // Be careful on the assignment of each slot attributes
-    position_seismic_plane_ = 0;
-    seismic_plane_shader_ = 0;
-    seismic_slice_plane_index = 0;
-    seismic_slice_plane_position = 0.0f;
-
-    vertexArray_for_the_Cube_ = 0;
-    vertexBuffer_cube_8vertices_ = 0;
-    vertices_8slot_ = 0;
-    vertexBuffer_cube_8verticesIndices_ = 0;
 }
+
 
 void GLWidget::create8VerticesIndices ()
 {
@@ -302,333 +516,17 @@ void GLWidget::create8VerticesIndices ()
     glBindVertexArray(0);
 
 }
-/// OpenGL
-void GLWidget::initializeGL ( )
-{
-    //@see http://www.qtcentre.org/threads/61312-Issue-placing-a-QOpenGLWidget-in-a-QDockWidget
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::resetBuffers);
-    /// Key event to GLWidget not o MainWindow ! | @QtDocumentation
-    setFocus ( );
-    /// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed. | @QtDocmentation
-    setMouseTracking ( true );
-    setFocusPolicy ( Qt::StrongFocus );
-
-    /// GLEW OpenGL
-    /// GLEW Initialisation:
-    glewExperimental = GL_TRUE;
-    GLenum glewInitResult = glewInit ( );
-
-    //Check Glew Initialisation:
-    if ( GLEW_OK != glewInitResult )
-    {
-        std::cerr << "Error: " << glewGetErrorString ( glewInitResult ) << endl;
-        exit ( EXIT_FAILURE );
-    }
-
-    glClearColor ( 0.0f , 0.0 , 1.0 , 1.0f );
-    glEnable ( GL_DEPTH_TEST );
-
-    glDisable ( GL_CULL_FACE );
-    // Enable blending
-    glEnable ( GL_BLEND );
-    glBlendFunc ( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
-    glEnable(GL_MULTISAMPLE);
-    glMinSampleShading(1.0f);
-
-    /// BLACK SCREEN ----
-    glGenVertexArrays ( 1 , &vertexArray_BlackScreen_cube_ );
-    glBindVertexArray ( vertexArray_BlackScreen_cube_ );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &vertexBuffer_BlackScreen_cube_);
-        glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        // Set up generic attributes pointers
-        glEnableVertexAttribArray ( position_BlackScreen_slot_ );
-        glVertexAttribPointer ( position_BlackScreen_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-    glBindVertexArray ( 0 );
-
-    /// Vertex Array Surface Patch
-    glGenVertexArrays ( 1 , &vertexArray_patch_ );
-    glBindVertexArray ( vertexArray_patch_ );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &vertexBuffer_patch_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-        /// Set up generic attributes pointers
-        glEnableVertexAttribArray ( vertexPatch_slot_ );
-        glVertexAttribPointer ( vertexPatch_slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers(1, &vertexBuffer_patch_color);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
-        glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
-        /// Set up generic attributes pointers
-        glEnableVertexAttribArray(patch_Color_Slot_);
-        glVertexAttribPointer(patch_Color_Slot_, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray ( 0 );
 
 
-    /// SEISMIC ----
-    /// Vertex Array Lines Patch
-    glGenVertexArrays ( 1 , &lines_vertexArray_ );
-    glBindVertexArray ( lines_vertexArray_ );
-
-    /// Requesting Vertex Buffers to the GPU
-    glGenBuffers ( 1 , &lines_vertexBuffer_ );
-    glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
-    glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-    /// Set up generic attributes pointers
-    glEnableVertexAttribArray ( lines_vertexSlot_ );
-    glVertexAttribPointer ( lines_vertexSlot_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-    glBindVertexArray ( 0 );
-
-    // IMPORTANT FOR THE DEPLOY VERSION
-    loadShaderByResources ( );
-    //loadShadersDebug();
-    //loadShaderByQtResources();
-    //596x291x297
-
-    glGenVertexArrays ( 1 , &vertexArray_MESH_ );
-    glBindVertexArray ( vertexArray_MESH_ );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &positionBuffer_MESH_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-
-        // Set up generic attributes pointers
-        glEnableVertexAttribArray ( position_MESH_Slot_ );
-        glVertexAttribPointer ( position_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &normalBuffer_MESH_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-
-        glEnableVertexAttribArray ( normal_MESH_Slot_ );
-        glVertexAttribPointer ( normal_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &colorBuffer_MESH_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-
-        glEnableVertexAttribArray ( color_MESH_Slot_ );
-        glVertexAttribPointer ( color_MESH_Slot_ , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &vertexBuffer_MESH_face_ID_ );
-        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-        glBufferData ( GL_ELEMENT_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );
-
-    glBindVertexArray ( 0 );
-
-    glGenVertexArrays ( 1 , &vertexArray_Seismic_cube_ );
-    glBindVertexArray ( vertexArray_Seismic_cube_ );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &vertexBuffer_Seismic_cube_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        // Set up generic attributes pointers
-        glEnableVertexAttribArray ( position_seismic_cube_ );
-        glVertexAttribPointer ( position_seismic_cube_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-    glBindVertexArray ( 0 );
-
-    glGenVertexArrays ( 1 , &vertexArray_Seismic_plane_ );
-    glBindVertexArray ( vertexArray_Seismic_plane_ );
-
-        /// Requesting Vertex Buffers to the GPU
-        glGenBuffers ( 1 , &vertexBuffer_Seismic_plane_ );
-        glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
-        glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        // Set up generic attributes pointers
-        glEnableVertexAttribArray ( position_seismic_plane_ );
-        glVertexAttribPointer ( position_seismic_plane_ , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
-
-    glBindVertexArray ( 0 );
 
 
-    create8VerticesIndices();
 
-
-    extrusionInitialize(0.0,0.0,0.0,596.0,291.0,297.0);
-
-    this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
-
-    camera.setPerspectiveMatrix ( 60.0 , (float) this->width ( ) / (float) this->height ( ) , 0.1f , 100.0f );
-
-    /// Black Screen
-
-
-    std::vector<std::vector<Eigen::Vector3f> > v;
-
-    std::vector<Eigen::Vector3f>  poly;
-    std::vector<Eigen::Vector3f>  temp;
-
-    poly.push_back( Eigen::Vector3f ( -1.0 , 0.25 , 0.0 ) );
-    poly.push_back( Eigen::Vector3f ( 1.0 , 0.25 , 0.0 ) );
-
-    temp.push_back( Eigen::Vector3f ( -1.0 , -1.0 , 0.0 ) );
-    temp.push_back( Eigen::Vector3f ( 1.0 , -1.0 , 0.0 ) );
-
-    v.push_back(poly);
-    poly.clear();
-
-    poly.push_back( Eigen::Vector3f ( -1.0 , 0.5 , 0.0 ) );
-    poly.push_back( Eigen::Vector3f ( 1.0 , 0.5 , 0.0 ) );
-
-    temp.push_back( Eigen::Vector3f ( -1.0 , 1.0 , 2.0 ) );
-    temp.push_back( Eigen::Vector3f ( 1.0 , 1.0 , 2.0 ) );
-
-    v.push_back(poly);
-
-    // Create the bounding box in Image space
-    Celer::BoundingBox3<float> bbox;
-    bbox.fromPointCloud(temp.begin(),temp.end());
-
-//	this->extrusion_controller_.createBlackScreenCube(bbox,cube_);
-//
-//	this->extrusion_controller_.createBlackScreenExtrusionMesh( v, 1,1,2, bbox.center(), bbox.diagonal(), this->patch_ );
-//
-//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-//	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
-//	glBindBuffer ( GL_ARRAY_BUFFER , 0);
-//
-//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-//	glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
-//	glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    updateRendering();
-    updateBlackScreen(this->cross_section_);
-
-}
-
-void GLWidget::reloadShaders ( )
-{
-    if ( blackScreen_cube_shader_ )
-    {
-        blackScreen_cube_shader_->reloadShaders ( );
-    }
-    if ( lines_shader_ )
-    {
-        lines_shader_->reloadShaders ( );
-    }
-    if ( background_ )
-    {
-        background_->reloadShaders ( );
-    }
-    if ( mesh_shader_ )
-    {
-        mesh_shader_->reloadShaders ( );
-    }
-    if ( seismic_cube_shader_ )
-    {
-        seismic_cube_shader_->reloadShaders ( );
-    }
-    if ( seismic_plane_shader_ )
-    {
-        seismic_plane_shader_->reloadShaders ( );
-    }
-    if ( patch_shader_ )
-    {
-        patch_shader_->reloadShaders ( );
-    }
-}
-
-void GLWidget::deleteShaders()
-{
-    if (blackScreen_cube_shader_)
-    {
-        delete (blackScreen_cube_shader_);
-        blackScreen_cube_shader_ = nullptr;
-    }
-    if (lines_shader_)
-    {
-        delete(lines_shader_);
-        lines_shader_ = nullptr;
-    }
-    if (background_)
-    {
-        delete(background_);
-        background_ = nullptr;
-    }
-    if (mesh_shader_)
-    {
-        delete(mesh_shader_);
-        mesh_shader_ = nullptr;
-    }
-    if (seismic_cube_shader_)
-    {
-        delete(seismic_cube_shader_);
-        seismic_cube_shader_ = nullptr;
-    }
-    if (seismic_plane_shader_)
-    {
-        delete(seismic_plane_shader_);
-        seismic_plane_shader_ = nullptr;
-    }
-    if (patch_shader_)
-    {
-        delete(patch_shader_);
-        patch_shader_ = nullptr;
-    }
-}
-
-void GLWidget::loadShaderByQtResources()
+void GLWidget::loadShaderByResources()
 {
 
-    //! Effects -_
-    blackScreen_cube_shader_ = new Tucano::Shader ( "Cube" ,   QString(":/Shaders/BlankScreenCube.vert" ).toStdString ( ),
-                                                                     QString(":/Shaders/BlankScreenCube.frag" ).toStdString ( ),
-                                                                     QString(":/Shaders/BlankScreenCube.geom" ).toStdString ( ) , "" , "" );
-    blackScreen_cube_shader_->initialize ( );
-    //! Effects --
-    patch_shader_ = new Tucano::Shader ( "Patch" ,  QString(":/Shaders/SinglePassWireframe.vert" ).toStdString ( ),
-                                                                                       QString(":/Shaders/SinglePassWireframe.frag" ).toStdString ( ),
-                                                                                    QString(":/Shaders/SinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-    patch_shader_->initialize ( );
-    //! Effects --
-    lines_shader_ = new Tucano::Shader ( "Lines" , QString(":/Shaders/SketchCurve.vert" ).toStdString ( ),
-                                                                                    QString(":/Shaders/SketchCurve.frag" ).toStdString ( ),
-                                                    QString(":/Shaders/SketchCurve.geom" ).toStdString ( ));
-    lines_shader_->initialize ( );
 
-    background_ = new Tucano::Shader ( "BackGround" , QString(":/Shaders/DummyQuad.vert" ).toStdString ( ),
-                                                                    QString(":/Shaders/DummyQuad.frag" ).toStdString ( ),
-                                                            QString(":/Shaders/DummyQuad.geom" ).toStdString ( ), "" , "" );
-    background_->initialize ( );
+    QDir shadersDir = QDir ( qApp->applicationDirPath() ) ;
 
-    mesh_shader_ = new Tucano::Shader("Seismic",  QString(":/Shaders/Seismic.vert").toStdString(),
-                                                            QString(":/Shaders/Seismic.frag").toStdString(),
-                                                            QString(":/Shaders/Seismic.geom").toStdString(), "", "");
-    mesh_shader_->initialize();
-
-    seismic_cube_shader_ = new Tucano::Shader ( "Seismic  Cube" , QString(":/Shaders/CubeSinglePassWireframe.vert" ).toStdString ( ),
-                                                                                                                        QString(":/Shaders/CubeSinglePassWireframe.frag" ).toStdString ( ),
-                                                                        QString(":/Shaders/CubeSinglePassWireframe.geom" ).toStdString ( ) , "" , "" );
-    seismic_cube_shader_->initialize ( );
-
-    //! Effects --
-    seismic_plane_shader_ = new Tucano::Shader ( "Seismic  Plane", QString(":/Shaders/SeismicSlicePlane.vert" ).toStdString ( ),
-                                                                                                                         QString(":/Shaders/SeismicSlicePlane.frag" ).toStdString ( ),
-                                                                          QString(":/Shaders/SeismicSlicePlane.geom" ).toStdString ( ) , "" , "" );
-    seismic_plane_shader_->initialize ( );
-
-}
-
-void GLWidget::loadShaderByResources ( )
-{
-    //! Debug Version: to load the update shaders
-    qDebug ( ) << "Load by Resources ======";
-
-    QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
     /* Do windows stuff */
@@ -642,291 +540,508 @@ void GLWidget::loadShaderByResources ( )
     halt();
 #endif
 
-    qDebug() << "shaderDirectory = " << shaderDirectory;
 
-    this->loadShaders(shaderDirectory);
-
-}
-
-// Development propose
-void GLWidget::loadShadersDebug ( )
-{
-    //! Binary absolute location
-    QDir shadersDir = QDir ( qApp->applicationDirPath ( ) );
-
-    //! Debug Version: to load the update shaders
-    qDebug ( ) << "Directory " << shadersDir.path ( );
-    shadersDir.cdUp ( );
-    shadersDir.cdUp ( );
-    shadersDir.cdUp ( );
-    qDebug ( ) << "Directory " << shadersDir.path ( );
-
-#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-    /* Do windows stuff */
-    QString shaderDirectory (shadersDir.path ()+"\\src\\Extrusion\\GUI\\Qt\\RCC\\Shaders\\");
-#elif defined(__linux__)               // Linux Directory Style
-    /* Do Linux stuff */
-    QString shaderDirectory ( shadersDir.path ( ) + "/src/Apps/Modeller/ExtrusionWidget/" );
-#else
-    /* Error, both can't be defined or undefined same time */
-    std::cout << "Operate System not supported !"
-    halt();
-#endif
-
-    this->loadShaders(shaderDirectory);
+    loadShaders(shaderDirectory);
 
 }
 
-void GLWidget::loadShaders(const QString& shaderDirectory)
+
+void GLWidget::loadShaders( const QString& shaderDirectory )
 {
-    //! Effects --
-    blackScreen_cube_shader_ = new Tucano::Shader("Cube", (shaderDirectory + "Shaders/BlankScreenCube.vert").toStdString(),
+
+    shader_boundingbox_blankscreen = new Tucano::Shader( "Cube", (shaderDirectory + "Shaders/BlankScreenCube.vert").toStdString(),
         (shaderDirectory + "Shaders/BlankScreenCube.frag").toStdString(),
         (shaderDirectory + "Shaders/BlankScreenCube.geom").toStdString(), "", "");
-    blackScreen_cube_shader_->initialize();
-    //! Effects --
-    patch_shader_ = new Tucano::Shader("Patch", (shaderDirectory + "Shaders/SinglePassWireframe.vert").toStdString(),
+    shader_boundingbox_blankscreen->initialize();
+
+
+    shader_interpolated_surface = new Tucano::Shader("Patch", (shaderDirectory + "Shaders/SinglePassWireframe.vert").toStdString(),
         (shaderDirectory + "Shaders/SinglePassWireframe.frag").toStdString(),
         (shaderDirectory + "Shaders/SinglePassWireframe.geom").toStdString(), "", "");
-    patch_shader_->initialize();
-    //! Effects --
-    lines_shader_ = new Tucano::Shader("Lines", (shaderDirectory + "Shaders/SketchCurve.vert").toStdString(),
+    shader_interpolated_surface->initialize();
+
+
+    shader_seimisc_sketches = new Tucano::Shader("Lines", (shaderDirectory + "Shaders/SketchCurve.vert").toStdString(),
         (shaderDirectory + "Shaders/SketchCurve.frag").toStdString(),
         (shaderDirectory + "Shaders/SketchCurve.geom").toStdString());
-    lines_shader_->initialize();
+    shader_seimisc_sketches->initialize();
 
 
-    // ! Blue BlackGround --
-    background_ = new Tucano::Shader("BackGround", (shaderDirectory + "Shaders/DummyQuad.vert").toStdString(),
+    shader_background = new Tucano::Shader("BackGround", (shaderDirectory + "Shaders/DummyQuad.vert").toStdString(),
         (shaderDirectory + "Shaders/DummyQuad.frag").toStdString(),
         (shaderDirectory + "Shaders/DummyQuad.geom").toStdString(), "", "");
-    background_->initialize();
+    shader_background->initialize();
 
 
-    mesh_shader_ = new Tucano::Shader("Seismic", (shaderDirectory + "Shaders/Seismic.vert").toStdString(),
+    shader_seismic_mesh = new Tucano::Shader("Seismic", (shaderDirectory + "Shaders/Seismic.vert").toStdString(),
         (shaderDirectory + "Shaders/Seismic.frag").toStdString(),
         (shaderDirectory + "Shaders/Seismic.geom").toStdString(), "", "");
-    mesh_shader_->initialize();
+    shader_seismic_mesh->initialize();
 
-    //! Effects --
-    seismic_cube_shader_ = new Tucano::Shader("Seismic  Cube", (shaderDirectory + "Shaders/CubeSinglePassWireframe.vert").toStdString(),
+
+    shader_boundingbox_seismic = new Tucano::Shader("Seismic  Cube", (shaderDirectory + "Shaders/CubeSinglePassWireframe.vert").toStdString(),
         (shaderDirectory + "Shaders/CubeSinglePassWireframe.frag").toStdString(),
         (shaderDirectory + "Shaders/CubeSinglePassWireframe.geom").toStdString(), "", "");
-    seismic_cube_shader_->initialize();
+    shader_boundingbox_seismic->initialize();
 
-    //! Effects --
-    seismic_plane_shader_ = new Tucano::Shader("Seismic  Plane", (shaderDirectory + "Shaders/SeismicSlicePlane.vert").toStdString(),
+
+    shader_plane_seismic = new Tucano::Shader("Seismic  Plane", (shaderDirectory + "Shaders/SeismicSlicePlane.vert").toStdString(),
         (shaderDirectory + "Shaders/SeismicSlicePlane.frag").toStdString(),
         (shaderDirectory + "Shaders/SeismicSlicePlane.geom").toStdString(), "", "");
-    seismic_plane_shader_->initialize();
+    shader_plane_seismic->initialize();
 }
 
-void GLWidget::clear()
+
+void GLWidget::reloadShaders ( )
 {
 
-    lines_.clear();
-
-    glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
-    glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    facesGL_.clear();
-    vertexGL_.clear();
-    normalGL_.clear();
-    colorGL_.clear();
-
-    glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-    glBufferData(GL_ARRAY_BUFFER, this->normalGL_.size() * sizeof (this->normalGL_[0]), this->normalGL_.data(), GL_STATIC_DRAW);
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-    glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
-
-}
-
-void GLWidget::backGround()
-{
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    background_->bind();
-
-    background_->setUniform("viewportSize", width(), height() );
-
-    glBindVertexArray ( vertexArray_BlackScreen_cube_ );
-    /// Draw the triangle !
-    glDrawArrays ( GL_POINTS , 0 , 1 );
-
-    glBindVertexArray ( 0 );
-
-    background_->unbind();
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-}
-
-void GLWidget::resizeGL ( int width , int height )
-{
-    /// What  for the view port transformation. keeping it updated !
-    glViewport ( 0 , 0 , width , height );
-
-    camera.setViewport ( Eigen::Vector2f ( (float) width , (float) height ) );
-    camera.setPerspectiveMatrix ( camera.getFovy ( ) , (float) width / (float) height , 0.1f , 100.0f );
-}
-/// Real Looping
-void GLWidget::paintGL ( )
-{
-    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    backGround();
-
-//	patch_shader_->bind ( );
-//	/// 3rd attribute buffer : vertices
-//	patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//	patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//	patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//	patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//	glBindVertexArray ( vertexArray_patch_ );
-//	/// Draw the triangle !
-//	glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
-//
-//	glBindVertexArray ( 0 );
-//	patch_shader_->unbind ( );
-
-
-//	cube_shader_->bind ( );
-//	/// 3rd attribute buffer : vertices
-//	cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-//	cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-//	cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-//	cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-//	glBindVertexArray ( vertexArray_cube_ );
-//	/// Draw the triangle !
-//	glDrawArrays ( GL_LINES_ADJACENCY , 0 , cube_.size ( ) );
-//
-//	glBindVertexArray ( 0 );
-//	cube_shader_->unbind ( );
-
-
-    if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::Seismic )
+    if ( shader_boundingbox_blankscreen )
     {
-        glLineWidth(2.0);
-        if ( lines_.size() > 0 )
-        {
-            lines_shader_->bind ( );
-            /// 3rd attribute buffer : vertices
-            lines_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-            lines_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-            lines_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-
-                glBindVertexArray ( lines_vertexArray_ );
-                /// Draw the triangle !
-                glDrawArrays ( GL_LINES , 0 , lines_.size() );
-
-                glBindVertexArray ( 0 );
-            lines_shader_->unbind ( );
-        }
-
-        // Triangles
-        mesh_shader_->bind ( );
-        /// 3rd attribute buffer : vertices
-        mesh_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-        mesh_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-        mesh_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-        mesh_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-
-            glBindVertexArray ( vertexArray_MESH_ );
-            /// Draw the triangle !
-                glDrawElements ( GL_TRIANGLES , this->facesGL_.size() , GL_UNSIGNED_INT , 0 );
-        //		mesh_shader_->setUniform ( "xcolor" , 0.0f,0.0f,0.0f );
-                //glDrawArrays ( GL_POINTS , 0 , this->vertex_.size ( ) );
-            glBindVertexArray ( 0 );
-        mesh_shader_->unbind ( );
-
-        seismic_plane_shader_->bind ( );
-        /// 3rd attribute buffer : vertices
-        seismic_plane_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-        seismic_plane_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-        seismic_plane_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-        seismic_plane_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-        seismic_plane_shader_->setUniform ( "color_plane" , 0.0f,1.0f,0.0f,1.0f );
-        seismic_plane_shader_->setUniform ( "z" , this->seismic_slice_plane_position );
-            glBindVertexArray ( vertexArray_Seismic_plane_ );
-            /// Draw the triangle !
-            glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_plane_.size() );
-
-            glBindVertexArray ( 0 );
-        seismic_plane_shader_->unbind ( );
-
-        seismic_cube_shader_->bind ( );
-        /// 3rd attribute buffer : vertices
-        seismic_cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-        seismic_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-        seismic_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-        seismic_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-        seismic_cube_shader_->setUniform ( "color_plane" , 0.5f,0.5f,0.5f,0.2f );
-            glBindVertexArray ( vertexArray_Seismic_cube_ );
-            /// Draw the triangle !
-            glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_cube_.size() );
-
-            glBindVertexArray ( 0 );
-        seismic_cube_shader_->unbind ( );
-
-
-    }else if ( this->extrusion_controller_.module_ == RRM::ExtrusionController::BlankScreen )
-    {
-
-        patch_shader_->bind ( );
-        /// 3rd attribute buffer : vertices
-        patch_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-        patch_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-        patch_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-        patch_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-            glBindVertexArray ( vertexArray_patch_ );
-            /// Draw the triangle !
-            glDrawArrays ( GL_LINES_ADJACENCY , 0 , patch_.size ( ) );
-
-            glBindVertexArray ( 0 );
-        patch_shader_->unbind ( );
-
-        blackScreen_cube_shader_->bind ( );
-        /// 3rd attribute buffer : vertices
-        blackScreen_cube_shader_->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
-        blackScreen_cube_shader_->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
-        blackScreen_cube_shader_->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
-        blackScreen_cube_shader_->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
-        glBindVertexArray ( vertexArray_BlackScreen_cube_ );
-        /// Draw the triangle !
-        glDrawArrays ( GL_LINES_ADJACENCY , 0 , blackScreen_cube_.size() );
-
-        glBindVertexArray ( 0 );
-        blackScreen_cube_shader_->unbind ( );
-
+        shader_boundingbox_blankscreen->reloadShaders ( );
     }
 
-//	glPointSize(5.0);
-//	glBindVertexArray(vertexArray_for_the_Cube_);
-//		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer_cube_8verticesIndices_);
-//	//	// Draw the triangle !
-//		glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, 0);
-//
-//	glBindVertexArray(0);
+    if ( shader_seimisc_sketches )
+    {
+        shader_seimisc_sketches->reloadShaders ( );
+    }
 
+    if ( shader_background )
+    {
+        shader_background->reloadShaders ( );
+    }
+
+    if ( shader_seismic_mesh )
+    {
+        shader_seismic_mesh->reloadShaders ( );
+    }
+
+    if ( shader_boundingbox_seismic )
+    {
+        shader_boundingbox_seismic->reloadShaders ( );
+    }
+
+    if ( shader_plane_seismic )
+    {
+        shader_plane_seismic->reloadShaders ( );
+    }
+
+    if ( shader_interpolated_surface )
+    {
+        shader_interpolated_surface->reloadShaders ( );
+    }
 
 }
-/// KeyInput
-void GLWidget::processMultiKeys ( )
+
+
+void GLWidget::deleteShaders()
 {
+
+
+    if ( shader_background )
+    {
+        delete( shader_background );
+        shader_background = nullptr;
+    }
+
+
+
+    if ( shader_boundingbox_blankscreen )
+    {
+        delete ( shader_boundingbox_blankscreen );
+        shader_boundingbox_blankscreen = nullptr;
+    }
+
+    if ( shader_interpolated_surface )
+    {
+        delete( shader_interpolated_surface );
+        shader_interpolated_surface = nullptr;
+    }
+
+
+
+
+    if ( shader_seimisc_sketches )
+    {
+        delete( shader_seimisc_sketches );
+        shader_seimisc_sketches = nullptr;
+    }
+
+    if ( shader_seismic_mesh )
+    {
+        delete( shader_seismic_mesh );
+        shader_seismic_mesh = nullptr;
+    }
+
+    if ( shader_boundingbox_seismic )
+    {
+        delete( shader_boundingbox_seismic );
+        shader_boundingbox_seismic = nullptr;
+    }
+
+    if ( shader_plane_seismic )
+    {
+        delete( shader_plane_seismic );
+        shader_plane_seismic = nullptr;
+    }
+
+
 }
+
+
+
+
+
+void GLWidget::background()
+{
+
+    glDisable( GL_DEPTH_TEST );
+    glDepthMask( GL_FALSE );
+
+    shader_background->bind();
+
+    shader_background->setUniform( "viewportSize", width(), height() );
+
+    glBindVertexArray ( va_boundingbox_blankscreen );
+        glDrawArrays ( GL_POINTS , 0 , 1 );
+    glBindVertexArray ( 0 );
+
+    shader_background->unbind();
+
+    glEnable( GL_DEPTH_TEST );
+    glDepthMask( GL_TRUE );
+
+
+}
+
+
+void GLWidget::renderBlankScreen()
+{
+
+    shader_interpolated_surface->bind ( );
+
+    shader_interpolated_surface->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+    shader_interpolated_surface->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+    shader_interpolated_surface->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+    shader_interpolated_surface->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+
+    glBindVertexArray ( va_interpolated_surface );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , interpolated_surfaces.size() );
+    glBindVertexArray ( 0 );
+
+    shader_interpolated_surface->unbind ( );
+
+
+
+    shader_boundingbox_blankscreen->bind ( );
+    /// 3rd attribute buffer : vertices
+    shader_boundingbox_blankscreen->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+    shader_boundingbox_blankscreen->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+    shader_boundingbox_blankscreen->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+    shader_boundingbox_blankscreen->setUniform ( "WIN_SCALE" , (float) width ( ) , (float) height ( ) );
+
+    glBindVertexArray ( va_boundingbox_blankscreen );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , boundingbox_blankscreen.size() );
+    glBindVertexArray ( 0 );
+
+    shader_boundingbox_blankscreen->unbind ( );
+
+}
+
+
+void GLWidget::renderSeismic()
+{
+
+    glLineWidth(2.0);
+
+    if ( seismic_sketches.size() > 0 )
+    {
+        shader_seimisc_sketches->bind ( );
+        shader_seimisc_sketches->setUniform ( "ModelMatrix" , camera.getViewMatrix ( ) );
+        shader_seimisc_sketches->setUniform ( "ViewMatrix" , camera.getViewMatrix ( ) );
+        shader_seimisc_sketches->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix ( ) );
+
+        glBindVertexArray ( va_seismic_sketches );
+            glDrawArrays ( GL_LINES , 0 , seismic_sketches.size() );
+        glBindVertexArray ( 0 );
+
+        shader_seimisc_sketches->unbind ( );
+    }
+
+
+    // Triangles
+    shader_seismic_mesh->bind ( );
+    shader_seismic_mesh->setUniform ( "ModelMatrix" , camera.getViewMatrix() );
+    shader_seismic_mesh->setUniform ( "ViewMatrix" , camera.getViewMatrix() );
+    shader_seismic_mesh->setUniform ( "ProjectionMatrix" , camera.getProjectionMatrix() );
+    shader_seismic_mesh->setUniform ( "WIN_SCALE" , (float) width() , (float) height() );
+
+    glBindVertexArray ( va_seismic_mesh );
+        glDrawElements ( GL_TRIANGLES , seismic_mesh_faces.size() , GL_UNSIGNED_INT , 0 );
+    glBindVertexArray ( 0 );
+
+    shader_seismic_mesh->unbind ( );
+
+
+
+    shader_plane_seismic->bind ( );
+    shader_plane_seismic->setUniform ( "ModelMatrix", camera.getViewMatrix() );
+    shader_plane_seismic->setUniform ( "ViewMatrix", camera.getViewMatrix() );
+    shader_plane_seismic->setUniform ( "ProjectionMatrix", camera.getProjectionMatrix() );
+    shader_plane_seismic->setUniform ( "WIN_SCALE", (float) width() , (float) height() );
+    shader_plane_seismic->setUniform ( "color_plane", 0.0f, 1.0f, 0.0f, 1.0f );
+    shader_plane_seismic->setUniform ( "z" , seismic_plane_slice_position );
+
+    glBindVertexArray ( va_plane_seismic );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , seismic_plane.size() );
+    glBindVertexArray ( 0 );
+
+    shader_plane_seismic->unbind ( );
+
+
+
+    shader_boundingbox_seismic->bind ( );
+    shader_boundingbox_seismic->setUniform ( "ModelMatrix", camera.getViewMatrix() );
+    shader_boundingbox_seismic->setUniform ( "ViewMatrix", camera.getViewMatrix() );
+    shader_boundingbox_seismic->setUniform ( "ProjectionMatrix", camera.getProjectionMatrix() );
+    shader_boundingbox_seismic->setUniform ( "WIN_SCALE" , (float) width(), (float) height() );
+    shader_boundingbox_seismic->setUniform ( "color_plane" , 0.5f, 0.5f, 0.5f, 0.2f );
+
+
+    glBindVertexArray ( va_boundingbox_blankscreen );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , boundingbox_seismic.size() );
+    glBindVertexArray ( 0 );
+
+
+    shader_boundingbox_seismic->unbind ( );
+
+}
+
+
+
+
+
+
+bool GLWidget::extrusionInitialize ( float _x_min, float _y_min, float _z_min, float _x_max, float _y_max,
+
+                                     float _z_max )
+{
+
+    extrusion_controller_.initialize( _x_min, _y_min, _z_min, _x_max, _y_max, _z_max );
+    boundingbox_seismic = extrusion_controller_.getCubeMesh();
+    seismic_plane = extrusion_controller_.getPlaneMesh( 0.0f );
+    seismic_plane_slice_position = extrusion_controller_.slicePositon( seismic_plane_sliceid );
+
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_plane_seismic_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_plane.size() * sizeof ( seismic_plane[0] ), seismic_plane.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_seismic_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , boundingbox_seismic.size ( ) * sizeof ( boundingbox_seismic[0] ) , boundingbox_seismic.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+
+    update();
+
+    return false;
+
+}
+
+
+
+void GLWidget::black_screen_stepx( int x )
+{
+
+    stepx = static_cast< float >( x );
+    extrusion_controller_.updateBlackScreenMesh( stepx, stepz, volume_width, boundingbox_blankscreen, interpolated_surfaces, interpolated_surfaces_colors );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_blankscreen );
+    glBufferData ( GL_ARRAY_BUFFER , boundingbox_blankscreen.size() * sizeof ( boundingbox_blankscreen[0] ) , boundingbox_blankscreen.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_surface_vertices );
+    glBufferData ( GL_ARRAY_BUFFER , interpolated_surfaces.size () * sizeof ( interpolated_surfaces[0] ) , interpolated_surfaces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vb_surface_color);
+    glBufferData(GL_ARRAY_BUFFER, interpolated_surfaces_colors.size() * sizeof (interpolated_surfaces_colors[0]), interpolated_surfaces_colors.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    update();
+
+}
+
+
+void GLWidget::black_screen_stepz ( int z )
+{
+
+    stepz = static_cast<float>( z );
+    extrusion_controller_.updateBlackScreenMesh( stepx, stepz, volume_width, boundingbox_blankscreen, interpolated_surfaces, interpolated_surfaces_colors );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_blankscreen );
+    glBufferData ( GL_ARRAY_BUFFER , boundingbox_blankscreen.size() * sizeof ( boundingbox_blankscreen[0] ) , boundingbox_blankscreen.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_surface_vertices );
+    glBufferData ( GL_ARRAY_BUFFER , interpolated_surfaces.size() * sizeof ( interpolated_surfaces[0] ) , interpolated_surfaces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vb_surface_color);
+    glBufferData(GL_ARRAY_BUFFER, interpolated_surfaces_colors.size() * sizeof (interpolated_surfaces_colors[0]), interpolated_surfaces_colors.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    update();
+
+}
+
+
+void GLWidget::black_screen_volumeWidth ( int w )
+{
+
+    volume_width = static_cast< float >( w );
+    extrusion_controller_.updateBlackScreenMesh( stepx, stepz, volume_width, boundingbox_blankscreen, interpolated_surfaces, interpolated_surfaces_colors );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_blankscreen );
+    glBufferData ( GL_ARRAY_BUFFER , boundingbox_blankscreen.size ( ) * sizeof ( boundingbox_blankscreen[0] ) , boundingbox_blankscreen.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_surface_vertices );
+    glBufferData ( GL_ARRAY_BUFFER , interpolated_surfaces.size ( ) * sizeof ( interpolated_surfaces[0] ) , interpolated_surfaces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vb_surface_color);
+    glBufferData(GL_ARRAY_BUFFER, interpolated_surfaces_colors.size() * sizeof (interpolated_surfaces_colors[0]), interpolated_surfaces_colors.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    update();
+
+}
+
+
+
+void GLWidget::setPlanePosition( int _index )
+{
+    seismic_plane_slice_position = extrusion_controller_.slicePositon( _index );
+    update();
+}
+
+
+
+
+
+
+void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
+{
+
+    extrusion_controller_.setSeismicSlices( _seismic_slices );
+
+}
+
+
+void GLWidget::updateRendering()
+{
+
+
+    seismic_sketches.clear();
+    seismic_mesh_faces.clear();
+
+    seismic_sketches = extrusion_controller_.updateSeismicSlices( seismic_mesh_vertices, seismic_mesh_normals, seismic_mesh_colors, list_of_faces);
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_sketches_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_sketches.size ( ) * sizeof ( seismic_sketches[0] ) , seismic_sketches.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+
+    for (auto f: list_of_faces )
+    {
+        seismic_mesh_faces.push_back( GLuint( f ) );
+    }
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_vertices.size() * sizeof ( seismic_mesh_vertices[0] ) , seismic_mesh_vertices.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_normal );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_normals.size() * sizeof ( seismic_mesh_normals[0] ) , seismic_mesh_normals.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_color );
+    glBufferData(GL_ARRAY_BUFFER, seismic_mesh_colors.size() * sizeof (seismic_mesh_colors[0]), seismic_mesh_colors.data(), GL_STATIC_DRAW);
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_seismic_mesh_idfaces );
+    glBufferData ( GL_ELEMENT_ARRAY_BUFFER , seismic_mesh_faces.size() * sizeof ( seismic_mesh_faces[0] )  , seismic_mesh_faces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+
+    update();
+
+
+}
+
+
+void GLWidget::updateSeismicResolution( int res )
+{
+
+    seismic_mesh_faces.clear();
+
+    extrusion_controller_.setResolution( res, seismic_mesh_vertices, seismic_mesh_normals, seismic_mesh_colors, list_of_faces );
+
+    for (auto f: list_of_faces )
+    {
+        seismic_mesh_faces.push_back( GLuint( f ) );
+    }
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_vertex );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_vertices.size() * sizeof ( seismic_mesh_vertices[0] ) , seismic_mesh_vertices.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_normal );
+    glBufferData ( GL_ARRAY_BUFFER , seismic_mesh_normals.size() * sizeof ( seismic_mesh_normals[0] ) , seismic_mesh_normals.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_seismic_mesh_color );
+    glBufferData(GL_ARRAY_BUFFER, seismic_mesh_colors.size() * sizeof (seismic_mesh_colors[0]), seismic_mesh_colors.data(), GL_STATIC_DRAW);
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_seismic_mesh_idfaces );
+    glBufferData ( GL_ELEMENT_ARRAY_BUFFER , seismic_mesh_faces.size() * sizeof ( seismic_mesh_faces[0] )  , seismic_mesh_faces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+    update();
+
+}
+
+
+void GLWidget::updateBlackScreen( const CrossSection& _cross_section )
+{
+
+    cross_section_ = _cross_section;
+
+    extrusion_controller_.setBlackScreenCrossSection( _cross_section );
+    extrusion_controller_.updateBlackScreenMesh( stepx, stepz, volume_width, boundingbox_blankscreen, interpolated_surfaces, interpolated_surfaces_colors );
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_boundingbox_blankscreen );
+    glBufferData ( GL_ARRAY_BUFFER , boundingbox_blankscreen.size ( ) * sizeof ( boundingbox_blankscreen[0] ) , boundingbox_blankscreen.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_surface_vertices );
+    glBufferData ( GL_ARRAY_BUFFER , interpolated_surfaces.size ( ) * sizeof ( interpolated_surfaces[0] ) , interpolated_surfaces.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0);
+
+    glBindBuffer( GL_ARRAY_BUFFER, vb_surface_color );
+    glBufferData( GL_ARRAY_BUFFER, interpolated_surfaces_colors.size() * sizeof ( interpolated_surfaces_colors[0]), interpolated_surfaces_colors.data(), GL_STATIC_DRAW );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+
+
+    update();
+}
+
+
+
+
+
+
 
 void GLWidget::keyPressEvent ( QKeyEvent * event )
 {
@@ -936,182 +1051,116 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
         {
             reloadShaders ( );
         }
-            break;
+        break;
 
         case Qt::Key_R:
         {
             camera.reset ( );
         }
-            break;
+        break;
 
         case Qt::Key_Space:
         {
-            this->updateRendering();
+            updateRendering();
         }
-            break;
+        break;
 
         case Qt::Key_F2:
         {
-            this->facesGL_.clear();
-
-            this->extrusion_controller_.setResolution(8, this->vertexGL_, this->normalGL_,this->colorGL_,this->faces_);
-
-            for (auto f: this->faces_ )
-            {
-                this->facesGL_.push_back(GLuint(f));
-            }
-
-            glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-            glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-            glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-            glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-            glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
-
-            update();
+            updateSeismicResolution( 8 );
         }
-            break;
+        break;
+
+
         case Qt::Key_F3:
         {
-            this->facesGL_.clear();
-
-            this->extrusion_controller_.setResolution(16, this->vertexGL_, this->normalGL_, this->colorGL_,this->faces_);
-
-            for (auto f: this->faces_ )
-            {
-                this->facesGL_.push_back(GLuint(f));
-            }
-
-            glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-            glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-            glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-            glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-            glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
-
-            update();
+            updateSeismicResolution( 16 );
         }
-            break;
+        break;
+
+
         case Qt::Key_F4:
         {
-            this->facesGL_.clear();
-
-            this->extrusion_controller_.setResolution(32, this->vertexGL_, this->normalGL_, this->colorGL_, this->faces_);
-
-            for (auto f: this->faces_ )
-            {
-                this->facesGL_.push_back(GLuint(f));
-            }
-
-            glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-            glBufferData(GL_ARRAY_BUFFER, this->vertexGL_.size() * sizeof (this->vertexGL_[0]), this->vertexGL_.data(), GL_STATIC_DRAW);
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-            glBufferData(GL_ARRAY_BUFFER, this->normalGL_.size() * sizeof (this->normalGL_[0]), this->normalGL_.data(), GL_STATIC_DRAW);
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-            glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-            glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
-
-            update();
-
+            updateSeismicResolution( 32 );
         }
-            break;
+        break;
 
         default:
             break;
+
+
     }
 
     update ( );
 }
 
-void GLWidget::keyReleaseEvent ( QKeyEvent * event )
-{
-}
-/// MouseInput
+
 void GLWidget::mousePressEvent ( QMouseEvent *event )
 {
 
-    if ( ( event->buttons ( ) & Qt::RightButton ) && ( event->modifiers ( ) & Qt::AltModifier )  )
+    setFocus();
+
+
+    if ( ( event->buttons() & Qt::RightButton ) && ( event->modifiers() & Qt::AltModifier )  )
     {
-        menu_module_type_->exec ( event->globalPos ( ) );
+        module_menu->exec ( event->globalPos ( ) );
     }
 
-    setFocus ( );
-    Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
-    if ( event->modifiers ( ) & Qt::ShiftModifier )
+
+
+    Eigen::Vector2f screen_pos ( event->x() , event->y() );
+
+    if ( event->modifiers() & Qt::ShiftModifier )
     {
-        if ( event->button ( ) == Qt::LeftButton )
+        if ( event->button() == Qt::LeftButton )
         {
-            camera.translateCamera ( screen_pos );
+            camera.translateCamera( screen_pos );
         }
-        else if ( event->button ( ) == Qt::RightButton )
-        {
-        }
+
     }
     else
     {
-        if ( event->button ( ) == Qt::LeftButton )
+        if ( event->button() == Qt::LeftButton )
         {
-            camera.rotateCamera ( screen_pos );
+            camera.rotateCamera( screen_pos );
         }
     }
 
-    update ( );
+
+    update();
+
 }
+
 
 void GLWidget::mouseMoveEvent ( QMouseEvent *event )
 {
-    Eigen::Vector2f screen_pos ( event->x ( ) , event->y ( ) );
-    if ( ( event->modifiers ( ) & Qt::ShiftModifier )  )
+
+    Eigen::Vector2f screen_pos ( event->x() , event->y() );
+
+
+    if ( ( event->modifiers() & Qt::ShiftModifier )  )
     {
 
-        if ( event->buttons ( ) & Qt::LeftButton )
+        if ( event->buttons() & Qt::LeftButton )
         {
             camera.translateCamera ( screen_pos );
         }
-        if ( event->buttons ( ) & Qt::RightButton )
-        {
-        }
+
     }
     else
     {
-        if ( event->buttons ( ) & Qt::LeftButton )
+        if ( event->buttons() & Qt::LeftButton )
         {
             camera.rotateCamera ( screen_pos );
         }
-        if ( event->buttons ( ) & Qt::RightButton )
-        {
-            //light_trackball.rotateCamera(screen_pos);
-        }
+
     }
 
-    update ( );
+    update( );
 }
+
+
+
 /// @see http://stackoverflow.com/questions/25426356/how-to-get-the-released-button-inside-mousereleaseevent-in-qt
 /// @Merlin069 There is no button pressed on the releaseEvent so the event->buttons()
 /// – Othman Benchekroun Aug 21 '14 at 12:38is equal to 0
@@ -1123,245 +1172,38 @@ void GLWidget::mouseReleaseEvent ( QMouseEvent *event )
         camera.endTranslation ( );
         camera.endRotation ( );
     }
-    if ( (event->button() == Qt::RightButton) )
-    {
-        //light_trackball.endRotation();
-    }
-
 
     update ( );
+
 }
-/// WheelInput
+
+
 void GLWidget::wheelEvent ( QWheelEvent *event )
 {
 
     const int WHEEL_STEP = 120;
+    float pos = event->delta()/float( WHEEL_STEP );
 
-    float pos = event->delta ( ) / float ( WHEEL_STEP );
 
-    if ( event->modifiers ( ) & Qt::ShiftModifier ) // change FOV
+    if ( event->modifiers ( ) & Qt::ShiftModifier )
     {
         camera.incrementFov ( pos );
     }
-    else // change ZOOM
+
+    else
     {
-        if ( ( pos > 0 ) )
+        if ( pos > 0 )
         {
             camera.increaseZoom ( 1.05f );
         }
 
         else if ( pos < 0 )
         {
-            camera.increaseZoom ( 1.0f / 1.05f );
+            camera.increaseZoom ( 1.0f/1.05f );
         }
     }
 
-    update ( );
-}
-/// Seismic Module
-void GLWidget::setSeismicModule()
-{
-    this->extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
-}
-
-void GLWidget::setPlanePosition( int _index )
-{
-    this->seismic_slice_plane_position = this->extrusion_controller_.slicePositon(_index);
     update();
 }
 
-void GLWidget::updateSeismicSlices ( const SeismicSlices& _seismic_slices )
-{
 
-    this->extrusion_controller_.setSeismicSlices(_seismic_slices);
-
-}
-
-void GLWidget::updateRendering()
-{
-    this->lines_.clear();
-    this->facesGL_.clear();
-
-    this->lines_ = this->extrusion_controller_.updateSeismicSlices(this->vertexGL_, this->normalGL_,this->colorGL_,this->faces_);
-
-    /// Send the new meshes to the GPU
-    glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
-    glBufferData ( GL_ARRAY_BUFFER , lines_.size ( ) * sizeof ( lines_[0] ) , lines_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    //
-    for (auto f: this->faces_ )
-    {
-        this->facesGL_.push_back(GLuint(f));
-    }
-
-    glBindBuffer ( GL_ARRAY_BUFFER , positionBuffer_MESH_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->vertexGL_.size() * sizeof ( this->vertexGL_[0] ) , this->vertexGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ARRAY_BUFFER , normalBuffer_MESH_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->normalGL_.size() * sizeof ( this->normalGL_[0] ) , this->normalGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ARRAY_BUFFER , colorBuffer_MESH_ );
-    glBufferData(GL_ARRAY_BUFFER, this->colorGL_.size() * sizeof (this->colorGL_[0]), this->colorGL_.data(), GL_STATIC_DRAW);
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vertexBuffer_MESH_face_ID_ );
-    glBufferData ( GL_ELEMENT_ARRAY_BUFFER , this->facesGL_.size() * sizeof ( this->facesGL_[0] )  , this->facesGL_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
-
-    update();
-}
-
-bool GLWidget::extrusionInitialize ( float _x_min,
-                     float _y_min,
-                     float _z_min,
-                     float _x_max,
-                     float _y_max,
-                     float _z_max )
-{
-    this->extrusion_controller_.initialize(_x_min,_y_min,_z_min,_x_max,_y_max,_z_max);
-
-
-    this->seismic_cube_ = this->extrusion_controller_.getCubeMesh();
-
-    this->seismic_plane_ = this->extrusion_controller_.getPlaneMesh(0.0f);
-    this->seismic_slice_plane_position = this->extrusion_controller_.slicePositon(this->seismic_slice_plane_index);
-
-    /// Send the new meshes to the GPU
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_plane_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->seismic_plane_.size ( ) * sizeof ( this->seismic_plane_[0] ) , this->seismic_plane_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_Seismic_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , this->seismic_cube_.size ( ) * sizeof ( this->seismic_cube_[0] ) , this->seismic_cube_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-//	std::vector<unsigned int> plane_positions = {5,10,30,40,60,90};
-//
-//	std:vector<Eigen::Vector4f> triangles;
-//
-//	/// Rebuild the scene bounding Box
-//	cube_.clear();
-//
-//	cube_ = extrusion_controller_.getPlanes( plane_positions );
-//
-//	triangles = extrusion_controller_.getcubeMesh();
-//
-//	cube_.insert(cube_.end(),triangles.begin(),triangles.end());
-//
-//	/// Send the new meshes to the GPU
-//	glBindVertexArray ( vertexArray_cube_ );
-//	glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_cube_ );
-//	glBufferData ( GL_ARRAY_BUFFER , cube_.size ( ) * sizeof ( cube_[0] ) , cube_.data() , GL_STATIC_DRAW );
-//	glBindVertexArray ( 0 );
-
-
-//	lines_ = triangles;
-//	/// Send the new meshes to the GPU
-//	glBindVertexArray ( lines_vertexArray_ );
-//	glBindBuffer ( GL_ARRAY_BUFFER , lines_vertexBuffer_ );
-//	glBufferData ( GL_ARRAY_BUFFER , triangles.size ( ) * sizeof ( triangles[0] ) , triangles.data() , GL_STATIC_DRAW );
-//	glBindVertexArray ( 0 );
-
-    update();
-
-    return false;
-}
-
-/// BLACK SCREEN
-/// Seismic Module
-void GLWidget::setBlackScreenModule()
-{
-    this->extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
-}
-
-
-void GLWidget::updateBlackScreen(const CrossSection& _cross_section)
-{
-
-    this->cross_section_ = _cross_section;
-
-    std::cout << "New Curve" << std::endl;
-    //_cross_section.log();
-
-    this->extrusion_controller_.setBlackScreenCrossSection(_cross_section);
-    this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,this->volume_width,this->blackScreen_cube_,this->patch_,this->colorBS_);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-    glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
-    glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-    std::cout << "ColorBS Size" << this->colorBS_.size() << std::endl;
-    std::cout << "Patch Size" << this->patch_.size() <<std::endl;
-
-    update();
-}
-
-void GLWidget::black_screen_stepx ( int x )
-{
-    this->stepx = static_cast<float>(x);
-    this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-    glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
-    glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    update();
-}
-void GLWidget::black_screen_stepz ( int z )
-{
-    this->stepz = static_cast<float>(z);
-    this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-    glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
-    glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    update();
-}
-void GLWidget::black_screen_volumeWidth ( int w )
-{
-    this->volume_width = static_cast<float>(w);
-    this->extrusion_controller_.updateBlackScreenMesh(stepx,stepz,volume_width,blackScreen_cube_,patch_,colorBS_);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_BlackScreen_cube_ );
-    glBufferData ( GL_ARRAY_BUFFER , blackScreen_cube_.size ( ) * sizeof ( blackScreen_cube_[0] ) , blackScreen_cube_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer ( GL_ARRAY_BUFFER , vertexBuffer_patch_ );
-    glBufferData ( GL_ARRAY_BUFFER , patch_.size ( ) * sizeof ( patch_[0] ) , patch_.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_patch_color);
-    glBufferData(GL_ARRAY_BUFFER, this->colorBS_.size() * sizeof (this->colorBS_[0]), this->colorBS_.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    update();
-}

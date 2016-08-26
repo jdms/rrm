@@ -37,6 +37,7 @@
 class GLWidget: public QOpenGLWidget
 {
         Q_OBJECT
+
     public:
 
         typedef RRM::ExtrusionController::SeismicSlices SeismicSlices;
@@ -45,148 +46,208 @@ class GLWidget: public QOpenGLWidget
 
         explicit GLWidget ( QWidget* parent = 0 );
         ~GLWidget();
-        void resetBuffers();
+
         virtual void initializeGL ( );
         void resizeGL ( int width , int height );
-
         void paintGL ( );
-        void processMultiKeys ( );
+
+        void updateSeismicResolution( int res );
+
+
+    public slots:
+
+
+        void black_screen_stepx( int x );
+        void black_screen_stepz( int z );
+        void black_screen_volumeWidth( int w );
+
+
+        void background();
+        void clear();
+
+
+        inline void setBlackScreenModule()
+        {
+            extrusion_controller_.module_ = RRM::ExtrusionController::BlankScreen;
+        }
+
+        inline void setSeismicModule()
+        {
+            extrusion_controller_.module_ = RRM::ExtrusionController::Seismic;
+        }
+
+
+
+        void updateRendering();
+        void updateBlackScreen( const CrossSection& _cross_section );
+        void updateSeismicSlices ( const SeismicSlices& _seismic_slices );
+        bool extrusionInitialize ( float _x_min, float _y_min, float _z_min, float _x_max, float _y_max, float _z_max );
+        void setPlanePosition( int _index );
+
+
+
+    signals:
+
+        void emitBlackScreenVisiblity( bool );
+
+
+    protected:
+
+
+        void createMenu();
+        void init();
+
+        void renderBlankScreen();
+        void renderSeismic();
+
+
+
+        void loadShaderByResources();
+        void loadShaders( const QString& shaderDirectory );
+        void reloadShaders();
+        void deleteShaders();
+
+
+        void createBlankScreenBuffers();
+        void createSeismicBuffers();
+        void create8VerticesIndices ();
+        void resetBuffers();
+
+
+
         void mousePressEvent ( QMouseEvent *event );
         void mouseMoveEvent ( QMouseEvent *event );
         void mouseReleaseEvent ( QMouseEvent *event );
         void wheelEvent ( QWheelEvent *e );
+
         void keyPressEvent ( QKeyEvent * event );
-        void keyReleaseEvent ( QKeyEvent * event );
 
-        void create8VerticesIndices ();
 
-    public slots:
 
-        void black_screen_stepx(int x);
-        void black_screen_stepz(int z);
-        void black_screen_volumeWidth(int w);
-        void setBlackScreenModule();
+    public:
 
-        void backGround();
-        void clear();
-        // Deployed
-        void loadShaderByQtResources();
-        // Deployed
-        void loadShaderByResources();
-        // Development
-        void loadShadersDebug();
-        void loadShaders( const QString& shaderDirectory );
-        void reloadShaders();
-        void deleteShaders();
-        // Seismic
-        void setSeismicModule();
-        void updateRendering();
-        void updateSeismicSlices ( const SeismicSlices& _seismic_slices);
-        bool extrusionInitialize ( float _x_min,
-                       float _y_min,
-                       float _z_min,
-                       float _x_max,
-                       float _y_max,
-                       float _z_max );
-        void setPlanePosition( int _index );
+        RRM::ExtrusionController extrusion_controller_;
 
-        // Black Screen
-        void updateBlackScreen(const CrossSection& _cross_section);
 
-    signals:
 
-        void changed(const QMimeData *mimeData = 0);
-        void emitBlackScreenVisiblity(bool);
+    private:
 
-private:
-
-        QMenu* menu_module_type_;
-        QAction* action_seismic_module_;
-        QAction* action_blankSceen_module_;
+        QMenu* module_menu;
+        QAction* ac_seismic_module;
+        QAction* ac_blankscreen_module;
 
         /// BLACK SCREEN
-        float stepx = 1;
-        float stepz = 20;
-        float volume_width = 400;
+        float stepx;
+        float stepz;
+        float volume_width;
 
         CrossSection cross_section_;
-        // Scene related attributes
+
+
         Tucano::Trackball camera;
-        Tucano::Shader*   background_;
-        // Entity related attributes
-        // Cube, representing the boudingBox of the Geological Model
-        GLuint vertexArray_BlackScreen_cube_;
-            GLuint vertexBuffer_BlackScreen_cube_;
-            /// layout ( location = 0) vec3 position
-            GLuint position_BlackScreen_slot_;
-        std::vector<Eigen::Vector3f> blackScreen_cube_;
-        Tucano::Shader*   blackScreen_cube_shader_;
+        Tucano::Shader*   shader_background;
+
+
+
+        // Represent the boudingBox of the Geological Model
+        Tucano::Shader*   shader_boundingbox_blankscreen;
+
+        GLuint va_boundingbox_blankscreen;
+        GLuint vb_boundingbox_blankscreen;
+        GLuint slot_boundingbox_vertex;
+
+        std::vector<Eigen::Vector3f> boundingbox_blankscreen;
+
+
 
         // The interpolated surface
-    GLuint vertexArray_patch_;
-        GLuint vertexBuffer_patch_;
-        GLuint vertexPatch_slot_;
-        GLuint vertexBuffer_patch_color = 0;
-        GLuint patch_Color_Slot_ = 2;
+        Tucano::Shader*   shader_interpolated_surface;
 
-    std::vector<Eigen::Vector3f> colorBS_;
-    std::vector<Eigen::Vector3f> patch_;
-    Tucano::Shader*   patch_shader_;
+        GLuint va_interpolated_surface;
+        GLuint vb_surface_vertices;
+        GLuint vb_surface_color;
+        GLuint slot_surface_vertex;
+        GLuint slot_surface_color;
 
-    Celer::BoundingBox3<float> box;
-
-    /// SEISMIC MODULE
-        // The sketch lines
-    GLuint lines_vertexArray_;
-        GLuint lines_vertexBuffer_;
-        GLuint lines_vertexSlot_;
-    std::vector<Eigen::Vector4f> lines_;
-    Tucano::Shader*   lines_shader_;
-
-        GLuint vertexArray_Seismic_cube_;
-            GLuint vertexBuffer_Seismic_cube_;
-            GLuint position_seismic_cube_;
-        std::vector<float> seismic_cube_;
-        Tucano::Shader*   seismic_cube_shader_;
+        std::vector<Eigen::Vector3f> interpolated_surfaces_colors;
+        std::vector<Eigen::Vector3f> interpolated_surfaces;
+        Celer::BoundingBox3<float> box;
 
 
-    GLuint vertexArray_Seismic_plane_;
-        GLuint vertexBuffer_Seismic_plane_;
-        /// layout (location = 0) vec4 position
-        GLuint position_seismic_plane_;
-    std::vector<float> seismic_plane_;
-    Tucano::Shader*    seismic_plane_shader_;
-    float		   seismic_slice_plane_position;
-    int		   seismic_slice_plane_index;
 
-    Tucano::Shader*   mesh_shader_;
-    GLuint vertexArray_MESH_;
-        GLuint positionBuffer_MESH_;
-            GLuint position_MESH_Slot_;
-        GLuint normalBuffer_MESH_;
-            GLuint normal_MESH_Slot_;
-        GLuint colorBuffer_MESH_;
-            GLuint color_MESH_Slot_;
-        GLuint vertexBuffer_MESH_face_ID_;
+        /// SEISMIC MODULE
+
+
+        // The sketches seismic
+        Tucano::Shader*   shader_seimisc_sketches;
+
+        GLuint va_seismic_sketches;
+        GLuint vb_seismic_sketches_vertex;
+        GLuint slot_seismic_sketches_vertex;
+
+        std::vector<Eigen::Vector4f> seismic_sketches;
+
+
+
+        // The boundingbox seismic
+        Tucano::Shader*   shader_boundingbox_seismic;
+
+        GLuint va_boundingbox_seismic;
+        GLuint vb_boundingbox_seismic_vertex;
+        GLuint slot_boundingbox_seismic_vertex;
+
+        std::vector<float> boundingbox_seismic;
+
+
+
+        // The plane slice seismic
+        Tucano::Shader*    shader_plane_seismic;
+
+        GLuint va_plane_seismic;
+        GLuint vb_plane_seismic_vertex;
+        GLuint slot_plane_seismic_vertex;
+
+        std::vector<float> seismic_plane;
+
+        float seismic_plane_slice_position;
+        int	seismic_plane_sliceid;
+
+
+
+
+        // The mesh seismic
+        Tucano::Shader*   shader_seismic_mesh;
+
+        GLuint va_seismic_mesh;
+        GLuint vb_seismic_mesh_vertex;
+        GLuint vb_seismic_mesh_normal;
+        GLuint vb_seismic_mesh_color;
+        GLuint vb_seismic_mesh_idfaces;
+        GLuint slot_seismic_mesh_vertex;
+        GLuint slot_seismic_mesh_normal;
+        GLuint slot_seismic_mesh_color;
+
+
+        std::vector<float> seismic_mesh_vertices;
+        std::vector<float> seismic_mesh_normals;
+        std::vector<float> seismic_mesh_colors;
+        std::vector<GLuint> seismic_mesh_faces;
+        std::vector<std::size_t> list_of_faces;
+
         GLuint number_of_faces;
 
-        std::vector<float> 		vertexGL_;
-        std::vector<float> 		normalGL_;
-        std::vector<float> 		colorGL_;
-        std::vector<std::size_t>  	faces_;
-        std::vector<GLuint>  		facesGL_;
 
-    std::vector<GLfloat > 		vertices;
-    std::vector<GLuint > 		indices;
 
-    /// Test
-    GLuint vertexArray_for_the_Cube_;
+        std::vector<GLfloat > vertices;
+        std::vector<GLuint > indices;
+
+        /// Test
+        GLuint vertexArray_for_the_Cube_;
         GLuint vertexBuffer_cube_8vertices_;
         GLuint vertices_8slot_;
         GLuint vertexBuffer_cube_8verticesIndices_;
 
-public:
-    RRM::ExtrusionController extrusion_controller_;
+
 
 
 };

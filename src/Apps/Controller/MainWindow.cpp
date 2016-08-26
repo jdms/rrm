@@ -14,8 +14,6 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
     createActions();
     createMenuBar();
 
-
-
 }
 
 
@@ -33,9 +31,6 @@ void MainWindow::createWindow()
     createSeismicModule();
     create3DViewModule();
     createFlowDiagnosticsModule();
-
-    std::cout << "MainWindow : " << width() << ", " << height() << std::endl;
-
 
     aboutRRM = new AboutWidget( this );
 
@@ -214,9 +209,9 @@ void MainWindow::create3DWindowActions()
     connect ( ac_3dview , SIGNAL( toggled( bool ) ) , dw_3dview , SLOT( setVisible( bool ) ) );
     connect( dw_3dview, &QDockWidget::visibilityChanged, ac_3dview, &QAction::setChecked );
 
-    connect ( dc_3DView_Module->horizontalSlider_curve, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_stepx( int ) ) );
-    connect ( dc_3DView_Module->horizontalSlider_surface, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_stepz( int ) ) );
-    connect ( dc_3DView_Module->horizontalSlider_extrusion, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_volumeWidth( int ) ) );
+    connect ( dc_3DView_Module->hs_curve_resolution, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_stepx( int ) ) );
+    connect ( dc_3DView_Module->hs_surface_resolution, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_stepz( int ) ) );
+    connect ( dc_3DView_Module->hs_extrusion, SIGNAL( valueChanged( int ) ) , dc_3DView_Module->glWidget , SLOT( black_screen_volumeWidth( int ) ) );
 
 }
 
