@@ -1,0 +1,76 @@
+#ifndef BOUNDINGBOX3D_HPP
+#define BOUNDINGBOX3D_HPP
+
+
+#include <iostream>
+#include <vector>
+
+
+#include <QString>
+#include <QVector3D>
+
+
+#include "Eigen/Dense"
+#include "Tucano/Trackball.hpp"
+#include "Tucano/Shader.hpp"
+
+
+#include "model_new/BoundaryRenderable.h"
+
+
+
+class BoundingBox3D: public BoundaryRenderable
+{
+
+	public:
+	
+
+        BoundingBox3D( int w, int h, int d = 400 );
+		
+        void initData();
+        void init();
+        void create();
+
+
+		void resetBuffers();
+		void initBuffers();
+        void loadBuffers( const std::vector< float >& wireframe );
+		
+		void resetShaders();
+		void initShaders();
+		void reloadShaders();
+		
+				
+        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
+		
+		
+        inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
+		
+        inline int getWidth(){ return width; }
+        inline int getHeight(){ return height; }
+        inline int getDepth(){ return depth;  }
+
+        void update();
+
+    protected:
+
+
+        int width;
+        int height;
+        int depth;
+
+		Tucano::Shader* shader_boundingbox;
+		
+		GLuint va_boundingbox;
+		GLuint vb_vertices;
+		GLuint slot_vertices;
+        GLuint number_of_lines;
+
+        QString shader_directory;
+
+
+		
+		
+};
+
+#endif
