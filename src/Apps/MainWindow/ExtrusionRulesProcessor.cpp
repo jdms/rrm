@@ -162,7 +162,7 @@ namespace RRM
         return initialized_; 
     }
 
-    bool ExtrusionRulesProcessor::getSurfaceIndex( const size_t controller_index, size_t &index ) 
+    bool ExtrusionRulesProcessor::getSurfaceIndex( const size_t controller_index, size_t &index ) const
     {
         auto iter = dictionary_.find(controller_index);  
 
@@ -184,7 +184,8 @@ namespace RRM
             return false; 
         }
 
-        return container_[index]->getID(); 
+        PlanarSurface::Ptr sptr(container_[index]);
+        return sptr->getID(); 
     }
 
     bool ExtrusionRulesProcessor::addSurface( const std::vector<Point3> &curve, size_t given_index, 
