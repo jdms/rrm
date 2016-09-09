@@ -196,6 +196,7 @@ void Controller::undo()
 {
 
     bool undo_ok = rules_processor.undo();
+    update();
 
 }
 
@@ -203,6 +204,7 @@ void Controller::undo()
 void Controller::redo()
 {
     bool redo_ok = rules_processor.redo();
+    update();
 }
 
 
@@ -229,7 +231,8 @@ void Controller::update()
 //        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
 
 
-//        strat->
+//        strat->updateCurve( current_crosssection, curve_vertices );
+        strat->updateSurface( surface_vertices, surface_faces );
 
 
     }

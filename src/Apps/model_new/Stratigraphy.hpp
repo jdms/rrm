@@ -26,6 +26,8 @@ class Stratigraphy
 
         inline void addCurve( const float& d, Stratigraphy::Curve2D const& c ){ curves_list[ d ] = c; crosssections_list.push_back( d ); }
         inline Stratigraphy::Curve2D getCurve( const float& d ){ return curves_list[ d ]; }
+        inline void updateCurve( const float& d, Stratigraphy::Curve2D const& c ){ curves_list[ d ] = c; crosssections_list.push_back( d ); }
+
 
         inline std::vector< float > getCrossections(){ return crosssections_list; }
 
@@ -34,6 +36,14 @@ class Stratigraphy
 
         inline void setId( unsigned int id ){ index = id; }
         inline unsigned int getId(){ return index; }
+
+
+        inline void updateSurface( const std::vector< Stratigraphy::Point2D >& vertices,  const std::vector< unsigned int >& faces )
+        {
+            surface_vertices = vertices;
+            surface_faces = faces;
+        }
+        inline void updateSurfaceWireframe( const std::vector< unsigned int >& edges ){ surface_edges = edges; }
 
 
 	protected:
@@ -45,9 +55,9 @@ class Stratigraphy
 
         std::map< float, Stratigraphy::Curve2D > curves_list;
 
-        std::vector< float > surface_vertices;
+        std::vector< Stratigraphy::Point2D > surface_vertices;
         std::vector< unsigned int > surface_faces;
-        std::vector< unsigned int > surface_wireframe;
+        std::vector< unsigned int > surface_edges;
 
 
 };
