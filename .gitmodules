@@ -1,0 +1,3 @@
+[submodule "src/Core/Geometry/Surface/planinlib"]
+	path = src/Core/Geometry/Surface/planinlib
+	url = https://ccoda@bitbucket.org/jdms/planinlib.git
