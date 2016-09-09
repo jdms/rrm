@@ -46,6 +46,28 @@ class Stratigraphy
         inline void updateSurfaceWireframe( const std::vector< unsigned int >& edges ){ surface_edges = edges; }
 
 
+
+        inline std::vector< Stratigraphy::Point2D > getSurfaceVertices(){ return surface_vertices; }
+
+        inline std::vector< float > getSurfaceVerticestoOpenGL()
+        {
+            std::vector< float > vertices;
+            int number_of_vertices = surface_vertices.size();
+
+            for ( int i = 0; i < number_of_vertices; ++i )
+            {
+                vertices.push_back( surface_vertices[ i ].x() );
+                vertices.push_back( surface_vertices[ i ].y() );
+                vertices.push_back( surface_vertices[ i ].z() );
+
+            }
+            return vertices;
+        }
+
+        inline std::vector< unsigned int > getSurfaceFaces(){ return surface_faces; }
+        inline std::vector< unsigned int > getSurfaceEdges(){ return surface_edges; }
+
+
 	protected:
 	
 

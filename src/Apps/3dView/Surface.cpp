@@ -100,11 +100,11 @@ void Surface::initBuffers()
 void Surface::loadBuffers()
 {
 	
-	std::vector< float > vertices;
-	std::vector< float > colors;
-	std::vector< float > normals;
-	std::vector< unsigned int > wireframes;
-	std::vector< unsigned int > faces;
+    std::vector< float > vertices = strat->getSurfaceVerticestoOpenGL();
+    std::vector< float > colors;
+    std::vector< float > normals;
+    std::vector< unsigned int > wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int > faces = strat->getSurfaceFaces();
 		   
 
 	number_of_vertices = vertices.size();
