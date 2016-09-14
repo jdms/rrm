@@ -219,20 +219,20 @@ void Controller::update()
     {
 
 
-        std::vector< Stratigraphy::Point2D > curve_vertices;
+        std::vector< float > curve_vertices;
         std::vector< unsigned int > curve_edges;
 
-        std::vector< Stratigraphy::Point2D > surface_vertices;
+        std::vector< float > surface_vertices;
         std::vector< unsigned int > surface_faces;
 
 
         Stratigraphy* strat = stratigraphics_list[ i ];
-//        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-//        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
+        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
 
 
 //        strat->updateCurve( current_crosssection, curve_vertices );
-        strat->updateSurface( surface_vertices, surface_faces );
+//        strat->updateSurface( surface_vertices, surface_faces );
 
 
     }

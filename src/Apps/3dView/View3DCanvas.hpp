@@ -37,7 +37,7 @@ class View3DCanvas: public QOpenGLWidget
         ~View3DCanvas();
 
 
-        inline void setScene( Scene* sc ){ scene = sc; connect( scene, SIGNAL( updateScene() ), this, SLOT( update() ) ); }
+        inline void setScene( Scene* sc ){ scene = sc; connect( scene, SIGNAL( updatedScene() ), this, SLOT( update() ) ); }
 
 
     public slots:

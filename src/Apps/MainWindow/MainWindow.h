@@ -65,16 +65,6 @@ class MainWindow : public QMainWindow
 
     protected:
 
-
-        Scene* scene;
-        Controller* controller;
-
-
-
-
-
-    protected:
-
         void createWindow();
         void createActions();
         void createMenuBar();
@@ -106,9 +96,15 @@ class MainWindow : public QMainWindow
         void initProgram();
 
 
-    private:
+    protected:
 
-		AboutWidget * aboutRRM;
+
+        Scene* scene;
+        Controller* controller;
+
+        bool scene_initialized;
+
+
 
         QMenu *mn_file;
         QAction *ac_exit;
@@ -133,16 +129,17 @@ class MainWindow : public QMainWindow
         QDockWidget* dw_3dview;
         View3DWindow *view3d_window;
 
+
         // Flow Diagnostics Module
         QDockWidget* dw_flowdiagnostics;
         FlowWindow *flowdiagnostics_window;
 
 
         HelpDialog help;
+        AboutWidget * aboutRRM;
 
 
 
-        bool scene_initialized;
 
 
 };

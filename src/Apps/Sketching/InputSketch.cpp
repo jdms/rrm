@@ -4,8 +4,6 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
 {
 	this->prepareGeometryChange ( );
 
-//	done = false;
-//	curve = QPainterPath ( );
 
 	is_visible = false;
 	is_inside = false;
@@ -30,7 +28,6 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
 
 	painter->setBrush ( Qt::NoBrush );
     painter->drawPolyline( points_list );
-//	painter->drawPath ( curve );
 
 }
 
@@ -38,7 +35,7 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
 QRectF InputSketch::boundingRect ( ) const
 {
 
-    return points_list.boundingRect();//curve.boundingRect ( );
+    return points_list.boundingRect();
 
 }
 
@@ -47,7 +44,6 @@ void InputSketch::create ( const QPointF &p )
 {
 	this->prepareGeometryChange ( );
 	this->clear();
-//	curve.moveTo ( p );
 	points_list.push_back ( p );
 }
 
@@ -55,42 +51,16 @@ void InputSketch::create ( const QPointF &p )
 void InputSketch::add ( const QPointF &p )
 {
 	this->prepareGeometryChange ( );
-//	curve.lineTo ( p );
 	points_list.push_back ( p );
 }
 
 
-//void InputSketch::addSegment( const InputSketch& segment )
-//{
 
-
-//    QPolygonF cpy_polygon_segment = segment.getSketch();
-
-//    if( this->points_list.size() < 10 )
-//    {
-
-//        this->setSketch( cpy_polygon_segment );
-//        return;
-//    }
-
-
-//    Curve2D over_sketch = PolyQtUtils::qPolyginFToCurve2D( cpy_polygon_segment );
-//    Curve2D connected_sketches = PolyQtUtils::qPolyginFToCurve2D( this->points_list );
-//    Curve2D final, rest;
-
-//    connected_sketches = over_sketch.overSketch( connected_sketches, rest, 1, 16 );
-//    connected_sketches.douglasPeuckerSimplify( final, 1.0 );
-
-//    this->setSketch( PolyQtUtils::curve2DToQPolyginF( final ) );
-
-
-//}
 
 
 void InputSketch::clear ( )
 {
 	this->prepareGeometryChange ( );
-//	curve = QPainterPath ( );
 	points_list.clear ( );
 }
 
@@ -132,9 +102,6 @@ void InputSketch::setSketch ( const QVector<QPointF> & _path )
     this->points_list.clear();
     this->points_list = QPolygonF(_path);
 
-//    this->curve = QPainterPath();
-
-//    this->curve.addPolygon(points_list);
 }
 
 
@@ -146,8 +113,6 @@ void InputSketch::setSketch ( const QPolygonF & _path )
     points_list.clear();
     points_list = QPolygonF(_path);
 
-//    curve = QPainterPath();
-//    curve.addPolygon( points_list );
 }
 
 
@@ -158,19 +123,12 @@ QPolygonF InputSketch::getSketch ( ) const
 }
 
 
-///// Changed from original code
-//QPainterPath InputSketch::getCurve ( ) const
-//{
-//	return curve;
-//}
-
-
 QPainterPath InputSketch::shape ( ) const
 {
 
 	QPainterPath path;
 
-    path.addRect ( /*curve*/points_list.boundingRect ( ) );
+    path.addRect ( points_list.boundingRect ( ) );
 
 	return path;
 }

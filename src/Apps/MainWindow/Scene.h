@@ -53,7 +53,7 @@ class Scene: public QGraphicsScene
     public slots:
 
 
-        inline void setCurrentMode( const Scene::InteractionMode& mode ){ std::cout << "-- Testing: Scene::setCurrentMode() " << std::endl; current_mode = mode; }
+        inline void setCurrentMode( const Scene::InteractionMode& mode ){ current_mode = mode; }
         inline const InteractionMode currentMode(){ return current_mode; }
 
 
@@ -78,7 +78,7 @@ class Scene: public QGraphicsScene
 
         void sendCoordinates( float, float );
         void insertSkecthing( InputSketch* );
-
+        void updatedScene();
 
 
 
@@ -88,6 +88,7 @@ class Scene: public QGraphicsScene
 
 
         void createVolume3D();
+        void editBoundary( int x, int y, int w, int h );
 
 
         void addCrossSectionToScene();
@@ -96,7 +97,6 @@ class Scene: public QGraphicsScene
 
 
         void setBackGround();
-        void createConnections();
         void newSketch();
 
 

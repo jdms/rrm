@@ -32,7 +32,11 @@ class View3DWindow: public QMainWindow
 
         View3DWindow( QWidget* parent = 0 );
 
-        inline void setScene( Scene* scene ){ canvas3d->setScene( scene ); }
+        inline void setScene( Scene* scene )
+        {
+            canvas3d->setScene( scene );
+            connect( scene, SIGNAL( updatedScene() ), canvas3d, SLOT( update() ) );
+        }
 
 
     protected:

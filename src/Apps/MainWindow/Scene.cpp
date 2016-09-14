@@ -24,13 +24,6 @@ void Scene::init()
 }
 
 
-void Scene::createConnections()
-{
-//    connect( this, SIGNAL( sendCoordinates( float, float ) ), this->parent(), SLOT( updateCoordinates( float, float ) ) );
-//    connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) );
-}
-
-
 
 void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height )
 {
@@ -107,23 +100,6 @@ void Scene::createBoundary()
     addBoundaryToScene();
 
 
-
-/*
-
-//    if( controller->hasCrossSection() == false )
-//        createCrossSection( 0.0f );
-
-
-//    boundary = new BoundaryItem2D( boundary_width, boundary_height );
-
-//    bool ok = controller->addBoundary( boundary );
-//    if( ok == false  ) return;
-
-//    addBoundaryToScene();
-
-*/
-
-
 }
 
 
@@ -149,19 +125,18 @@ void Scene::addBoundaryToScene()
 
 
 
-/*
-//    addItem( boundary );
-//    setSceneRect( boundary->boundingRect() );
-*/
-
-
-
     boundary3D->setGeoData( b );
 
 }
 
 
+void Scene::editBoundary( int x, int y, int w, int h )
+{
+    controller->editBoundary( x, y, w,  h );
+    setSceneRect( boundary->boundingRect() );
 
+    boundary3D->update();
+}
 
 
 
@@ -262,6 +237,8 @@ void Scene::updateScene()
 //    boundary3D->update();
 
 
+
+    emit updatedScene();
 
 }
 
@@ -394,10 +371,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         int h = event->scenePos().y() - boundary_anchor.y();
 
 
-        controller->editBoundary( boundary_anchor.x(), boundary_anchor.y(), w,  h );
-//        boundary->edit( boundary_anchor.x(), boundary_anchor.y(), w,  h );
-        this->setSceneRect( boundary->boundingRect() );
-
+        editBoundary( boundary_anchor.x(), boundary_anchor.y(), w, h );
 
         current_mode = InteractionMode::OVERSKETCHING;
 
@@ -405,6 +379,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
+    emit updatedScene();
 
 
 }

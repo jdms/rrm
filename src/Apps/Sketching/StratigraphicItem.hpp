@@ -49,9 +49,6 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 
 	
 	protected:
-		
-
-		Stratigraphy* strat;
 
 		
         QPolygonF points;
