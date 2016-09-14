@@ -84,13 +84,13 @@ namespace RRM
         /* Get mesh, pcl and curves for visualization */
 
         template<typename VertexList, typename FaceList>
-        bool getInteriorPCL( VertexList &vlist, FaceList &flist ) const; 
+        bool getInteriorPCL( VertexList &vlist, FaceList &flist ); 
 
         template<typename VertexList, typename FaceList>
-        bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ) const;
+        bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist );
 
         template<typename VertexList, typename EdgeList>
-        bool getCurve( size_t surface_id, VertexList &vlist, EdgeList &elist ) const; 
+        bool getCurve( size_t surface_id, VertexList &vlist, EdgeList &elist ); 
 
 
         /* End methods to interface with GUI */
@@ -118,7 +118,7 @@ namespace RRM
 
         void requestChangeDiscretization( size_t discretization_WIDTH, size_t discretization_DEPTH ); 
 
-        bool getSurfaceIndex( const size_t controller_index, size_t &container_index );
+        bool getSurfaceIndex( const size_t controller_index, size_t &container_index ) const;
 
         bool getSurfaceID( const size_t controller_index, PlanarSurface::SurfaceId &surface_id );
 
@@ -160,7 +160,7 @@ namespace RRM
     }
 
     template<typename VertexList, typename FaceList>
-    bool ExtrusionRulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist) const
+    bool ExtrusionRulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist)
     {
         size_t index; 
         if ( getSurfaceIndex(surface_index, index) == false )
@@ -172,21 +172,21 @@ namespace RRM
     }
 
     template<typename VertexList, typename FaceList>
-    bool ExtrusionRulesProcessor::getInteriorPCL( VertexList &vlist, FaceList &flist ) const
+    bool ExtrusionRulesProcessor::getInteriorPCL( VertexList &vlist, FaceList &flist )
     {
         return false;
     }
 
     template<typename VertexList, typename EdgeList>
-    bool ExtrusionRulesProcessor::getCurve(size_t surface_id, VertexList &vlist, EdgeList &elist) const
+    bool ExtrusionRulesProcessor::getCurve(size_t surface_id, VertexList &vlist, EdgeList &elist)
     {
         size_t index; 
-        if ( getSurfaceIndex(surface_index, index) == false )
+        if ( getSurfaceIndex(surface_id, index) == false )
         {
             return false; 
         }
 
-        auto sptr = container_[index]; 
+        PlanarSurface::Ptr sptr( container_[index] ); 
 
         vlist.resize( sptr->getNumX() );
         elist.clear(); 
