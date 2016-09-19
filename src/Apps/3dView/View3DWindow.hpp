@@ -44,32 +44,15 @@ class View3DWindow: public QMainWindow
         void createWindow();
 
 
-
-    public slots:
-
-        void setBlackScreenVisibility( bool );
-
-
     signals:
 
         void initializeScene();
-
 
 
     public:
 
         View3DCanvas *canvas3d;
 
-        QVBoxLayout *hb_canvas3d;
-        QSlider *hs_curve_resolution;
-        QSlider *hs_surface_resolution;
-        QSlider *hs_extrusion;
-
-
-
-    private:
-
-	    QGroupBox *groupBox;
 
 
 };

@@ -20,7 +20,7 @@ std::vector<bool> PolyQtUtils::containsPoints( const Curve2D & c,
     for( int i = 0 ; i < points.size() ; ++i )
     {
         QPointF p = PolyQtUtils::Point2DToQPointF( points[ i ] );
-        isInside[ i ] = ( pol.containsPoint( p ,fr) );
+        isInside[ i ] = ( pol.containsPoint( p ,fr ) );
     }
     
 	return isInside ;
@@ -39,7 +39,7 @@ QPolygonF PolyQtUtils::curve2DToQPolyginF( const Curve2D &c )
 	return pol;
 }
 
-PolyQtUtils::Curve2D PolyQtUtils::qPolyginFToCurve2D( const QPolygonF &pol )
+Curve2D PolyQtUtils::qPolyginFToCurve2D( const QPolygonF &pol )
 {
     Curve2D c ;
 	
@@ -59,7 +59,7 @@ QPointF PolyQtUtils::Point2DToQPointF( const Point2D & p )
     return QPointF( p.x() , p.y() ) ;
 }
 
-PolyQtUtils::Point2D PolyQtUtils::QPointFToPoint2D( const QPointF &p )
+Point2D PolyQtUtils::QPointFToPoint2D( const QPointF &p )
 {
     return Point2D( p.x() , p.y() ) ;
 }

@@ -5,28 +5,30 @@ class Boundary
 {
 	public: 
 	
-        Boundary():origin_x(0), origin_y(0), width(0), height(0), depth(0){}
+        Boundary():origin_x( 0.0f ), origin_y( 0.0f ), origin_z( 0.0f ), width( 0.0f ), height( 0.0f ), depth( 0.0f ){}
 
-        void edit( int x, int y, int w, int h ){ origin_x = x; origin_y = y;
-                                                 width = w; height = h;      }
+        void edit( const float& x, const float& y, const float& z, const float& w, const float& h, const float& d ){ origin_x = x; origin_y = y; origin_z = z;
+                                                 width = w; height = h; depth = d;      }
 		
 
-        inline int getX(){ return origin_x; }
-        inline int getY(){ return origin_y; }
-        inline int getWidth(){ return width; }
-        inline int getHeight(){ return height; }
-        inline int getDepth(){ return depth; }
-        inline void getOrigin( int& x, int &y ){ x = origin_x; y = origin_y; }
+        inline float getX(){ return origin_x; }
+        inline float getY(){ return origin_y; }
+        inline float getZ(){ return origin_z; }
+        inline float getWidth(){ return width; }
+        inline float getHeight(){ return height; }
+        inline float getDepth(){ return depth; }
+        inline void getOrigin( float& x, float &y, float& z ){ x = origin_x; y = origin_y; z = origin_z; }
 
 
     protected:
 
-        int origin_x;
-        int origin_y;
+        float origin_x;
+        float origin_y;
+        float origin_z;
 
-        int width;
-        int height;
-        int depth;
+        float width;
+        float height;
+        float depth;
 		
 };
 

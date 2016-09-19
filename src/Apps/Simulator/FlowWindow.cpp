@@ -287,9 +287,9 @@ void FlowWindow::createToolBar()
     } );
 
 
-    qhelp = new QAction( "Help", qtoolbarFlow );
-    qhelp->setIcon(QIcon(":/images/icons/information.png"));
-    connect( qhelp, &QAction::triggered, this, [=](){ help.show(); } );
+//    qhelp = new QAction( "Help", qtoolbarFlow );
+//    qhelp->setIcon(QIcon(":/images/icons/information.png"));
+//    connect( qhelp, &QAction::triggered, this, [=](){ help.show(); } );
 
     qtoolbarFlow->addAction( qreloadSurface );
     qtoolbarFlow->addAction( qoopenfilesDialog );

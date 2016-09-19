@@ -28,7 +28,7 @@ class GradientBackgroundShader
 		void reloadShaders();
 		
 		
-        void draw( int width, int height );
+        void draw( const int& width, const int& height );
 	
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 	

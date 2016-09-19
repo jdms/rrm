@@ -23,12 +23,6 @@ class InputSketch : public QGraphicsPathItem
     public:
 
 
-        typedef qreal			Real;
-        typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
-        typedef PointN<Real, 2> 					    Point2D;
-
-
-
         InputSketch( QColor color );
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option = 0, QWidget *w = 0 );
@@ -52,7 +46,7 @@ class InputSketch : public QGraphicsPathItem
         QPainterPath shape() const;
 
         void setPen( const QPen& pen );
-		void setColor(const QColor& _color);
+        void setColor( const QColor& _color);
 		QColor getColor() const;
 
 

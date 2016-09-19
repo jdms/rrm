@@ -4,7 +4,7 @@
 
 
 
-BoundingBox3D::BoundingBox3D( int w, int h, int d ): width( w ), height( h ), depth( d )
+BoundingBox3D::BoundingBox3D( float w, float h, float d ): width( w ), height( h ), depth( d )
 {
     initData();
     init();
@@ -39,14 +39,14 @@ void BoundingBox3D::init()
 void BoundingBox3D::create()
 {
 
-    QVector3D A( -0.5f*width, -0.5f*height,  0.5f*depth );
-    QVector3D B(  0.5f*width, -0.5f*height,  0.5f*depth );
-    QVector3D C(  0.5f*width,  0.5f*height,  0.5f*depth );
-    QVector3D D( -0.5f*width,  0.5f*height,  0.5f*depth );
-    QVector3D E( -0.5f*width, -0.5f*height, -0.5f*depth );
-    QVector3D F(  0.5f*width, -0.5f*height, -0.5f*depth );
-    QVector3D G(  0.5f*width,  0.5f*height, -0.5f*depth );
-    QVector3D H( -0.5f*width,  0.5f*height, -0.5f*depth );
+    Eigen::Vector3f A( -0.5f*width, -0.5f*height,  0.5f*depth );
+    Eigen::Vector3f B(  0.5f*width, -0.5f*height,  0.5f*depth );
+    Eigen::Vector3f C(  0.5f*width,  0.5f*height,  0.5f*depth );
+    Eigen::Vector3f D( -0.5f*width,  0.5f*height,  0.5f*depth );
+    Eigen::Vector3f E( -0.5f*width, -0.5f*height, -0.5f*depth );
+    Eigen::Vector3f F(  0.5f*width, -0.5f*height, -0.5f*depth );
+    Eigen::Vector3f G(  0.5f*width,  0.5f*height, -0.5f*depth );
+    Eigen::Vector3f H( -0.5f*width,  0.5f*height, -0.5f*depth );
 
 
     std::vector< Eigen::Vector3f > wireframe_eigen;
@@ -55,60 +55,52 @@ void BoundingBox3D::create()
 
     // TOP
 
-    wireframe_eigen.push_back( Eigen::Vector3f( C.x(), C.y(), C.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( D.x(), D.y(), D.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( G.x(), G.y(), G.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( H.x(), H.y(), H.z() ) );
+    wireframe_eigen.push_back( C );
+    wireframe_eigen.push_back( D );
+    wireframe_eigen.push_back( G );
+    wireframe_eigen.push_back( H );
 
 
     // BOTTOM
 
-    wireframe_eigen.push_back( Eigen::Vector3f( B.x(), B.y(), B.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( A.x(), A.y(), A.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( F.x(), F.y(), F.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( E.x(), E.y(), E.z() ) );
+    wireframe_eigen.push_back( B );
+    wireframe_eigen.push_back( A );
+    wireframe_eigen.push_back( F );
+    wireframe_eigen.push_back( E );
 
 
     // FRONT
 
-    wireframe_eigen.push_back( Eigen::Vector3f( C.x(), C.y(), C.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( D.x(), D.y(), D.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( B.x(), B.y(), B.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( A.x(), A.y(), A.z() ) );
+    wireframe_eigen.push_back( C );
+    wireframe_eigen.push_back( D );
+    wireframe_eigen.push_back( B );
+    wireframe_eigen.push_back( A );
 
 
     // BACK
 
-    wireframe_eigen.push_back( Eigen::Vector3f( G.x(), G.y(), G.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( F.x(), F.y(), F.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( H.x(), H.y(), H.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( E.x(), E.y(), E.z() ) );
+    wireframe_eigen.push_back( G );
+    wireframe_eigen.push_back( F );
+    wireframe_eigen.push_back( H );
+    wireframe_eigen.push_back( E );
 
 
     // RIGHT
 
-    wireframe_eigen.push_back( Eigen::Vector3f( G.x(), G.y(), G.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( C.x(), C.y(), C.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( F.x(), F.y(), F.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( B.x(), B.y(), B.z() ) );
+    wireframe_eigen.push_back( G );
+    wireframe_eigen.push_back( C );
+    wireframe_eigen.push_back( F );
+    wireframe_eigen.push_back( B );
 
 
     // LEFT
 
-    wireframe_eigen.push_back( Eigen::Vector3f( D.x(), D.y(), D.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( H.x(), H.y(), H.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( A.x(), A.y(), A.z() ) );
-    wireframe_eigen.push_back( Eigen::Vector3f( E.x(), E.y(), E.z() ) );
-
-
-
-
-    Celer::BoundingBox3< float > bbox_mesh;
-    bbox_mesh.fromPointCloud( wireframe_eigen.begin(), wireframe_eigen.end() );
+    wireframe_eigen.push_back( D );
+    wireframe_eigen.push_back( H );
+    wireframe_eigen.push_back( A );
+    wireframe_eigen.push_back( E );
 
     int number_of_vertices = (int) wireframe_eigen.size();
-    for( int it = 0; it < number_of_vertices; ++it )
-        wireframe_eigen[ it ] = ( wireframe_eigen[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
 
 
 

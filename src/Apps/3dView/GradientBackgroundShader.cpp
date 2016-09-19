@@ -87,7 +87,7 @@ void GradientBackgroundShader::reloadShaders()
 }
 
 
-void GradientBackgroundShader::draw( int width, int height )
+void GradientBackgroundShader::draw( const int& width, const int& height )
 {
 
     glDisable( GL_DEPTH_TEST );

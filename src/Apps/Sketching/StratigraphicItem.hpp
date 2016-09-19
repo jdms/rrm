@@ -9,8 +9,9 @@
 
 #include "Sketching/PolyQtUtils.hpp"
 
-//#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
-
+#include "Eigen/Dense"
+#include "Tucano/Trackball.hpp"
+#include "Tucano/Shader.hpp"
 
 
 class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
@@ -18,11 +19,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 
 	public:
 
-        typedef qreal			Real;
-        typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
-        typedef PointN<Real, 2> 					    Point2D;
 
-	
 		StratigraphicItem();
 		
 		
@@ -46,6 +43,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		inline void setColor( const QColor& c ){ current_color = c; }
 		inline QColor setColor(){ return current_color; }
 		
+        void update( const Eigen::Affine3f &m, const float& d );
 
 	
 	protected:

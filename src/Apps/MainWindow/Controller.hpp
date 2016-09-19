@@ -11,6 +11,8 @@
 
 #include "MainWindow/ExtrusionRulesProcessor.hpp"
 
+#include "3dView/Model3DUtils.hpp"
+
 
 class Controller: public QObject
 {
@@ -28,18 +30,22 @@ class Controller: public QObject
 
         void addCrossSection( const float& d = 0.0f );
         inline bool hasCrossSection(){ return !( crosssections_list.empty() ); }
+        float getCurrentCrossSection(){ return current_crosssection; }
 
 
-        bool addBoundary( int w, int h );
-        void editBoundary( int x, int y, int w, int h );
+        bool addBoundary( const float& w, const float& h, const float& d );
+        void editBoundary( const float& x, const float& y, const float& w, const float& h, const float& d );
         Boundary* getCurrentBoundary();
 
 
 
-        bool addCurve( Stratigraphy::Curve2D curve );
+        bool addCurve( const Curve2D &curve );
         bool addStratigraphy();
 		bool interpolateStratigraphy();
         Stratigraphy* getCurrentStratigraphy();
+
+
+        void setRulesProcessorBoundingBox( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
 
 
 

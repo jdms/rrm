@@ -21,7 +21,10 @@
 #include "3dView/Surface.h"
 #include "3dView/BoundingBox3D.h"
 
-#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
+#include "3dView/Model3DUtils.hpp"
+
+//#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
+#include "Core/Geometry/PolygonalCurve2D.hpp"
 
 
 class Scene: public QGraphicsScene
@@ -32,10 +35,6 @@ class Scene: public QGraphicsScene
 	public:
 
 
-
-        typedef qreal			Real;
-        typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
-        typedef PointN<Real, 2> 					    Point2D;
 
         enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY };
 	
@@ -88,7 +87,7 @@ class Scene: public QGraphicsScene
 
 
         void createVolume3D();
-        void editBoundary( int x, int y, int w, int h );
+        void editBoundary( const int& x, const int& y, const int& w, const int& h );
 
 
         void addCrossSectionToScene();
@@ -98,6 +97,15 @@ class Scene: public QGraphicsScene
 
         void setBackGround();
         void newSketch();
+
+        void updateSpace3D( const int& width, const int& height, const int& depth );
+
+        Eigen::Vector3f scene2Dto3D( const Point2D& p );
+        Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
+        Point2D scene3Dto2D( const Eigen::Vector3f& p );
+        Curve2D scene2Dto3D( const Curve2D& c );
+        Curve2D scene3Dto2D( const Curve2D& c );
+
 
 
         void mousePressEvent( QGraphicsSceneMouseEvent* event );
@@ -125,6 +133,13 @@ class Scene: public QGraphicsScene
         QPointF boundary_anchor;
 
         QColor current_color;
+
+        Eigen::Affine3f m_2dto3d;
+        Eigen::Affine3f m_3dto2d;
+
+        int int_width;
+        int int_height;
+        int int_depth;
 
 
         std::vector< StratigraphicItem* > stratigraphics_list;

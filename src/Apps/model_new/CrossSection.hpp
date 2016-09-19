@@ -12,58 +12,59 @@
 class CrossSection
 {
 
-public:
+    public:
 
-    CrossSection(){ boundary = nullptr; }
+        CrossSection(){ boundary = nullptr; }
 
-    inline bool isEmpty(){ return stratigraphy_list.empty(); }
-    inline bool hasBoundary(){ if( boundary == nullptr ) return false; return true; }
-
-
-    inline void setBoundary( Boundary* const& bd ){ boundary = bd; }
-    inline Boundary* getBoundary(){ return boundary; }
+        inline bool isEmpty(){ return curves.empty(); }
+        inline bool hasBoundary(){ if( boundary == nullptr ) return false; return true; }
 
 
-    inline void setDepth( const float& d ){ depth = d; }
-    inline float getDepth(){ return depth; }
+        inline void setBoundary( Boundary* const& bd ){ boundary = bd; }
+        inline Boundary* getBoundary(){ return boundary; }
 
 
-    inline void addStratigraphy( Stratigraphy* strat )
-    {
-        Stratigraphy::Curve2D c = strat->getCurve( depth );
-        curves.push_back( c );
-
-//        stratigraphies[ c ] = strat;
-    }
+        inline void setDepth( const float& d ){ depth = d; }
+        inline float getDepth(){ return depth; }
 
 
-    inline Stratigraphy* getStratigraphy( unsigned int id ){ return stratigraphy_list[ id ]; }
+        inline void addStratigraphy( Stratigraphy* const& strat )
+        {
+            Curve2D* c = strat->getCurve( depth );
+            curves.push_back( c );
+
+            stratigraphies[ c ] = strat;
+        }
 
 
-    inline void getIntersections( Stratigraphy* strat )
-    {
-        Stratigraphy::Curve2D c = strat->getCurve( depth );
+        inline Stratigraphy* getStratigraphy( const unsigned int& id )
+        {
+            Curve2D* c = curves[ id ];
+            return stratigraphies[ c ];
+        }
 
-//        intersections.getIntersections( c, );
-    }
-
-
-
-
-protected:
-
-    Boundary* boundary;
-    std::vector< Stratigraphy* > stratigraphy_list;
+        inline void getIntersections( Stratigraphy* const& strat, std::vector< Curve2D* >& sec_curves, std::vector< std::vector < Point2D > >& points )
+        {
+            Curve2D* c = strat->getCurve( depth );
+            intersections.getIntersections( c, sec_curves, points );
+        }
 
 
 
-    Intersection intersections;
-    std::vector< Stratigraphy::Curve2D > curves;
-    std::map< Stratigraphy::Curve2D, Stratigraphy* > stratigraphies;
+
+    protected:
+
+
+        float depth;
+        Boundary* boundary;
+
+        Intersection intersections;
+        std::vector< Curve2D* > curves;
+        std::map< Curve2D*, Stratigraphy* > stratigraphies;
 
 
 
-    float depth;
+
 };
 
 

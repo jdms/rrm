@@ -2,9 +2,38 @@
 
 Surface::Surface()
 {
-	slot_vertices = 0;
-	slot_normals = 1 ;
-	slot_colors = 2;	
+    initData();
+    init();
+}
+
+
+
+void Surface::init()
+{
+    initShaders();
+    initBuffers();
+}
+
+
+void Surface::initData()
+{
+    slot_vertices = 0;
+    slot_normals = 1 ;
+    slot_colors = 2;
+
+
+    shader_surface = nullptr;
+
+    va_surface = 0;
+    vb_vertices = 0;
+    vb_normals = 0;
+    vb_colors = 0;
+    vb_wireframes = 0;
+    vb_faces = 0;
+
+    number_of_lines = 0;
+    number_of_vertices = 0;
+    number_of_faces = 0;
 }
 
 
@@ -63,22 +92,22 @@ void Surface::initBuffers()
 		glGenBuffers ( 1 , &vb_vertices );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
 			glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-		glEnableVertexAttribArray ( slot_vertices );
-		glVertexAttribPointer ( slot_vertices , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( 0 );
+        glVertexAttribPointer ( 0 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 		
 		glGenBuffers ( 1 , &vb_normals );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
 			glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-		glEnableVertexAttribArray ( slot_normals );
-		glVertexAttribPointer ( slot_normals , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( 2 );
+        glVertexAttribPointer ( 2 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 
 		glGenBuffers ( 1 , &vb_colors );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_colors );
 		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-		glEnableVertexAttribArray ( slot_colors );
-		glVertexAttribPointer ( slot_colors , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( 1 );
+        glVertexAttribPointer ( 1 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 			
 		glGenBuffers( 1, &vb_wireframes );
@@ -100,31 +129,28 @@ void Surface::initBuffers()
 void Surface::loadBuffers()
 {
 	
-    std::vector< float > vertices = strat->getSurfaceVerticestoOpenGL();
+    std::vector< float > vertices = strat->getSurfaceVertices();
     std::vector< float > colors;
     std::vector< float > normals;
     std::vector< unsigned int > wireframes = strat->getSurfaceEdges();
     std::vector< unsigned int > faces = strat->getSurfaceFaces();
 		   
 
-	number_of_vertices = vertices.size();
+    number_of_vertices = vertices.size()/3;
     glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
     glBufferData ( GL_ARRAY_BUFFER , vertices.size ( ) * sizeof ( GLfloat ) , vertices.data() , GL_STATIC_DRAW );
-    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 	
 
 	if( colors.empty() == false )
 	{
 		glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
 		glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(), GL_STATIC_DRAW );
-		glBindBuffer( GL_ARRAY_BUFFER, 0 );
 	}
 	
 	if( normals.empty() == false )
 	{
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
 		glBufferData ( GL_ARRAY_BUFFER , normals.size() * sizeof ( GLfloat )  , normals.data() , GL_STATIC_DRAW );
-		glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 	}
 	
     if( wireframes.empty() == false )
@@ -132,8 +158,7 @@ void Surface::loadBuffers()
 		number_of_lines = (GLuint) wireframes.size();
 		
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_wireframes );
-			glBufferData ( GL_ELEMENT_ARRAY_BUFFER , wireframes.size() * sizeof ( GLuint )  , wireframes.data() , GL_STATIC_DRAW );
-		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+        glBufferData ( GL_ELEMENT_ARRAY_BUFFER , wireframes.size() * sizeof ( GLuint )  , wireframes.data() , GL_STATIC_DRAW );
 		
 	}
     
@@ -143,7 +168,6 @@ void Surface::loadBuffers()
 		
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_faces );
 		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , faces.size() * sizeof ( GLuint )  , faces.data() , GL_STATIC_DRAW );
-		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
 	
 	}
 	
@@ -166,8 +190,10 @@ void Surface::resetShaders()
 void Surface::initShaders()
 {
 	
-    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/BlankScreenCube.vert" ).toStdString(), ( shader_directory + "Shaders/BlankScreenCube.frag").toStdString(),
-                                                     ( shader_directory + "Shaders/BlankScreenCube.geom" ).toStdString(), "", "" );
+    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
+                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
+                                          "", "", "" ) ;
+
     shader_surface->initialize();
 	
 }
@@ -186,26 +212,43 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 	Eigen::Affine3f M;
     M.setIdentity();
 	
-    shader_surface->bind ( );
-    
-	shader_surface->setUniform ( "ModelMatrix" , M );
-    shader_surface->setUniform ( "ViewMatrix" , V );
-    shader_surface->setUniform ( "ProjectionMatrix" , P );
-    shader_surface->setUniform ( "WIN_SCALE" , (float) width, (float) height );
+
+    float scale = 1.5*(float)width/(float)height;
+
+    shader_surface->bind();
+
+
+    shader_surface->bind();
+    shader_surface->setUniform( "mmatrix", M );
+    shader_surface->setUniform( "vmatrix", V );
+    shader_surface->setUniform( "pmatrix", P );
+    shader_surface->setUniform( "scale", scale );
 	
+
+
+    glPointSize( 5.0f );
+    glBindVertexArray( va_surface );
 	
-	// not ideal, just adapting to current code
-    if( number_of_faces > 0 )
-	{
-		glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-	}
-	else 
-	{
-		glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
-	}
+        // not ideal, just adapting to current code
+        if( number_of_faces > 0 )
+        {
+            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+        }
+        else
+        {
+            glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
+        }
 	
     glBindVertexArray ( 0 );
 	
     shader_surface->unbind ( );	
 	
+}
+
+
+void Surface::update()
+{
+    loadBuffers();
 }

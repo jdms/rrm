@@ -15,7 +15,7 @@
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "DialogMeshVisualizationParameters.h"
-#include "HelpDialog.h"
+//#include "HelpDialog.h"
 #include "ColorBar.h"
 #include "PoreVolumeResultsForm.h"
 
@@ -85,7 +85,7 @@ class FlowWindow : public  QMainWindow
         QAction *qshowMovingCrossSection;
         QAction* qreloadSurface;
         QAction *qclear;
-        QAction *qhelp;
+//        QAction *qhelp;
 
         QAction* qbuildCornerPoint;
         QAction* qbuildUnstructured;
@@ -142,7 +142,7 @@ class FlowWindow : public  QMainWindow
         QWidgetAction* wa_vectormethods_byface;
         std::vector<QAction* > ac_face_property;
 
-        HelpDialog help;
+//        HelpDialog help;
 
         bool show_toolbar;
 

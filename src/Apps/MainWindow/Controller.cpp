@@ -8,9 +8,13 @@
 
 Controller::Controller()
 {
-    current_reconstruction = ReconstructionMode::EXTRUSION;
 
+    current_reconstruction = ReconstructionMode::EXTRUSION;
     rules_processor.init();
+
+    current_crosssection = 0.0f;
+    current_stratigraphy = 0;
+
 
 }
 
@@ -31,7 +35,7 @@ void Controller::addCrossSection( const float& d )
 
 
 
-bool Controller::addBoundary( int w, int h )
+bool Controller::addBoundary( const float& w, const float& h, const float& d )
 {
 
     if( crosssections_list.empty() == true ) return false;
@@ -48,13 +52,10 @@ bool Controller::addBoundary( int w, int h )
         boundary_data = cross_section->getBoundary();
     }
 
-    boundary_data->edit( 0, 0, w, h );
+    boundary_data->edit( 0, 0, 0, w, h, d );
     cross_section->setBoundary( boundary_data );
 
 
-
-    rules_processor.setOrigin( 0, 0, 0 );
-    rules_processor.setLenght( w, h, 400 );
 
 
     return true;
@@ -62,14 +63,14 @@ bool Controller::addBoundary( int w, int h )
 }
 
 
-void Controller::editBoundary( int x, int y, int w, int h )
+void Controller::editBoundary( const float &x, const float &y, const float &w, const float &h, const float &d )
 {
 
     CrossSection* cross_section = crosssections_list[ current_crosssection ];
     Boundary* boundary_data = cross_section->getBoundary();
 
 
-    boundary_data->edit( x, y, w, h );
+    boundary_data->edit( x, y, current_crosssection, w, h, d );
 
 
     update();
@@ -88,10 +89,18 @@ Boundary* Controller::getCurrentBoundary()
 
 
 
+void Controller::setRulesProcessorBoundingBox( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
+{
+
+    rules_processor.setOrigin( orig_x, orig_y, orig_z );
+    rules_processor.setLenght( width, height, depth );
+
+
+}
 
 
 
-bool Controller::addCurve( Stratigraphy::Curve2D curve )
+bool Controller::addCurve( const Curve2D& curve )
 {
 
     if( stratigraphics_list.empty() == true )
@@ -99,6 +108,10 @@ bool Controller::addCurve( Stratigraphy::Curve2D curve )
 
     Stratigraphy* strat = stratigraphics_list[ current_stratigraphy ];
     strat->addCurve( current_crosssection, curve );
+
+
+    CrossSection* cross_section = crosssections_list[ current_crosssection ];
+    cross_section->addStratigraphy( strat );
 
 
     return true;
@@ -135,14 +148,15 @@ Stratigraphy* Controller::getCurrentStratigraphy()
 bool Controller::interpolateStratigraphy()
 {
 
+    std::cout << "-- Interpolate Stratigraphy" << std::endl;
 
     if( stratigraphics_list.empty() == true ) return false;
 
     Stratigraphy* strat = stratigraphics_list[ current_stratigraphy ];
-    Stratigraphy::Curve2D& c = strat->getCurve( current_crosssection );
+    Curve2D* c = strat->getCurve( current_crosssection );
 
 
-    rules_processor.update( c, strat->getId() );
+//    rules_processor.update( c, strat->getId() );
 
 
     bool can_undo = rules_processor.canUndo();
@@ -162,6 +176,9 @@ bool Controller::interpolateStratigraphy()
 
 void Controller::setCurrentStratigraphicRule( const std::string& rule )
 {
+
+    std::cout << "-- Setting rule: " << rule.c_str() << std::endl;
+
 
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
@@ -213,11 +230,12 @@ void Controller::update()
 {
 
 
+    std::cout << "-- Updating scene after applying rule" << std::endl;
+
     int number_of_stratigrapies = (int)stratigraphics_list.size();
 
     for( int i = 0; i < number_of_stratigrapies; ++i )
     {
-
 
         std::vector< float > curve_vertices;
         std::vector< unsigned int > curve_edges;
@@ -227,15 +245,44 @@ void Controller::update()
 
 
         Stratigraphy* strat = stratigraphics_list[ i ];
-        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
+//        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+//        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
 
 
-//        strat->updateCurve( current_crosssection, curve_vertices );
-//        strat->updateSurface( surface_vertices, surface_faces );
+        surface_vertices.push_back( -0.5f );
+        surface_vertices.push_back( 0.0f );
+        surface_vertices.push_back( 0.5f + i*0.1f);
+
+        surface_vertices.push_back( 0.5f );
+        surface_vertices.push_back( 0.0f );
+        surface_vertices.push_back( 0.5f + i*0.1f);
+
+        surface_vertices.push_back( 0.5f );
+        surface_vertices.push_back( 0.0f );
+        surface_vertices.push_back( -0.5f + i*0.1f);
+
+
+        surface_vertices.push_back( -0.5f );
+        surface_vertices.push_back( 0.0f );
+        surface_vertices.push_back( -0.5f + i*0.1f);
+
+        surface_faces.push_back( 0 );
+        surface_faces.push_back( 1 );
+        surface_faces.push_back( 2 );
+
+        surface_faces.push_back( 2 );
+        surface_faces.push_back( 3 );
+        surface_faces.push_back( 1 );
+
+
+//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+        strat->updateSurface( surface_vertices, surface_faces );
 
 
     }
+
+
+    // provavelmente recalcular as intersecoes novamente para cada cross section.
 
 
     emit updateScene();

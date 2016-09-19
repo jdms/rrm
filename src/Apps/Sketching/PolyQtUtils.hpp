@@ -4,18 +4,12 @@
 
 #include <QPolygonF>
 
-#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
+#include "Core/Geometry/PolygonalCurve2D.hpp"
 
 /// \brief collection of methods to use QT polyline library facilities
 class PolyQtUtils
 {
 public:
-
-
-        typedef qreal			Real;
-        typedef PolygonalCurve<Real, 2, PointN<Real, 2>, VectorN<Real, 2> > Curve2D;
-        typedef PointN<Real, 2> 					    Point2D;
-
 
 
     /// \brief a simple facade for containsPoint of Qt Polygon

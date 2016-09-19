@@ -17,7 +17,8 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 	
 	painter->setPen( pen_curve );
 	painter->setBrush( Qt::NoBrush );
-	painter->drawPath( curve );
+//	painter->drawPath( curve );
+    painter->drawPolyline( points );
 		
 }
 
@@ -64,20 +65,21 @@ void StratigraphicItem::addSegment( const InputSketch& segment )
 		return;
 	}
 	
-    Curve2D over_sketch = PolyQtUtils::qPolyginFToCurve2D( cpy_polygon_segment );// convert( cpy_polygon_segment );
-    Curve2D connected_sketches = PolyQtUtils::qPolyginFToCurve2D( points ); //convert( points );
+    Curve2D over_sketch = PolyQtUtils::qPolyginFToCurve2D( cpy_polygon_segment );
+    Curve2D connected_sketches = PolyQtUtils::qPolyginFToCurve2D( points );
     Curve2D final, rest;
 	
     connected_sketches = over_sketch.overSketch( connected_sketches, rest, 1 , 16 );
     connected_sketches.douglasPeuckerSimplify( final, 1.0 );
 	
-    copySegment( PolyQtUtils::curve2DToQPolyginF( final )/*convert( final )*/ );
+    copySegment( PolyQtUtils::curve2DToQPolyginF( final ) );
 }
 
 
 void StratigraphicItem::clear()
 {
 	prepareGeometryChange();
+
 	curve = QPainterPath();
 	points.clear();
 	
@@ -92,3 +94,29 @@ void StratigraphicItem::copySegment( const QPolygonF& s )
     curve.addPolygon( points );
 	
 }
+
+
+void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
+{
+
+    Curve2D* c = strat->getCurve( d );
+    points.clear();
+
+
+    unsigned int number_of_points = c->size();
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Point2D p = c->at( i );
+        Eigen::Vector4f p4d( p.x(), p.y(), d, 1.0f );
+
+        p4d = m*p4d;
+
+        points.push_back( QPointF( p4d.x(), p4d.y() ) );
+
+    }
+
+
+
+}
+

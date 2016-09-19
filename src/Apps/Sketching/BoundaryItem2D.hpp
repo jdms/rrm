@@ -11,6 +11,10 @@
 #include "model_new/BoundaryRenderable.h"
 
 
+#include "Eigen/Dense"
+#include "Tucano/Trackball.hpp"
+#include "Tucano/Shader.hpp"
+
 using namespace std;
 
 
@@ -23,13 +27,13 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
         BoundaryItem2D();
         ~BoundaryItem2D();
 
-        void edit ( qreal x, qreal y,qreal width, qreal height );
+        void edit( const qreal& x, const qreal& y, const qreal& width, const qreal& height );
         void setBackGroundImage( const QString& url );
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
 
-        void update();
+        void update( const Eigen::Affine3f &m );
         void load();
 
 

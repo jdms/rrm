@@ -38,7 +38,7 @@ class CrossPlane
 	
 		Tucano::Shader* shader_plane;
 		
-        GLuint va_curves;
+        GLuint va_plane;
         GLuint vb_vertices;
         GLuint slot_vertices;
 		GLuint number_of_lines;

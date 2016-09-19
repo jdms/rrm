@@ -2,17 +2,17 @@
 
 #include <iostream>
 
-BoundaryItem2D::BoundaryItem2D ()
+BoundaryItem2D::BoundaryItem2D()
 {
 
-	prepareGeometryChange ( );
+    prepareGeometryChange();
 
 //    boundary.setRect( 0, 0, width, height );
 //    image_position = QPointF( 0, 0 );
 
 }
 
-BoundaryItem2D::~BoundaryItem2D ( )
+BoundaryItem2D::~BoundaryItem2D()
 {
 }
 
@@ -20,7 +20,9 @@ BoundaryItem2D::~BoundaryItem2D ( )
 void BoundaryItem2D::load()
 {
 
-    prepareGeometryChange ( );
+    // retirar
+
+    prepareGeometryChange();
 
     boundary.setRect( 0, 0, bd->getWidth(), bd->getHeight() );
     image_position = QPointF( 0, 0 );
@@ -28,14 +30,14 @@ void BoundaryItem2D::load()
 }
 
 
-void BoundaryItem2D::edit ( qreal x , qreal y , qreal width , qreal height )
+void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, const qreal& height )
 {
 
 
     prepareGeometryChange();
     boundary.setRect( x, y, width, height );
 
-    image_position = QPointF(boundary.bottomLeft().x(), boundary.bottomLeft().y() );
+    image_position = QPointF( boundary.bottomLeft().x(), boundary.bottomLeft().y() );
     loadBackGroud();
 
 }
@@ -93,8 +95,21 @@ QRectF BoundaryItem2D::boundingRect ( ) const
 }
 
 
-void BoundaryItem2D::update()
+void BoundaryItem2D::update( const Eigen::Affine3f& m )
 {
-    boundary.setRect( bd->getX(), bd->getY(), bd->getWidth(), bd->getHeight() );
+    prepareGeometryChange();
+
+    Eigen::Vector4f A( bd->getX(),  bd->getY(), 0.0f, 1.0f );
+    Eigen::Vector4f B( bd->getX() + bd->getWidth(),  bd->getY() + bd->getHeight(), 0.0f, 1.0f );
+
+    A = m*A;
+    B = m*B;
+
+    int width = B.x() - A.x();
+    int height = B.y() - A.y();
+
+    boundary.setRect( A.x(), A.y(), width, height );
+    image_position = QPointF( 0, 0 );
+
 }
 

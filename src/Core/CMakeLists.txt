@@ -8,7 +8,6 @@ include_directories (
 add_subdirectory(Base)
 add_subdirectory(Geometry)
 
-#add_subdirectory(Geometry/Surface/Planin)
 add_subdirectory(Geometry/Surface/planinlib)
 
 

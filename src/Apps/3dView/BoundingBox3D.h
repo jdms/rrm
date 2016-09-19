@@ -25,7 +25,7 @@ class BoundingBox3D: public BoundaryRenderable
 	public:
 	
 
-        BoundingBox3D( int w, int h, int d = 400 );
+        BoundingBox3D( float w, float h, float d = 0.5 );
 		
         void initData();
         void init();
@@ -46,18 +46,18 @@ class BoundingBox3D: public BoundaryRenderable
 		
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 		
-        inline int getWidth(){ return width; }
-        inline int getHeight(){ return height; }
-        inline int getDepth(){ return depth;  }
+        inline float getWidth(){ return width; }
+        inline float getHeight(){ return height; }
+        inline float getDepth(){ return depth;  }
 
         void update();
 
     protected:
 
 
-        int width;
-        int height;
-        int depth;
+        float width;
+        float height;
+        float depth;
 
 		Tucano::Shader* shader_boundingbox;
 		

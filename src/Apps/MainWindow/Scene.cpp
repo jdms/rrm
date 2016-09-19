@@ -9,6 +9,12 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 {
     boundary3D = 0;
     boundary = 0;
+    int_width = 0;
+    int_height = 0;
+    int_depth = 400;
+
+    sketch = 0;
+    temp_sketch = 0;
 
     current_color = QColor( 255, 75, 75 );
 }
@@ -17,8 +23,14 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 void Scene::init()
 {
 
+    if( views().empty() == true ) return;
+    QGraphicsView* view = views()[0];
+
+    updateSpace3D( 0.8f*view->width(), 0.8f*view->height(), int_depth );
+
     createVolume3D();
     createBoundary();
+
     newSketch();
 
 }
@@ -31,6 +43,26 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
     if( boundary3D != 0 )
         boundary3D->draw( V, P, width, height );
 
+    int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* s = surfaces_list[ i ];
+        s->draw( V, P, width, height );
+    }
+
+
+}
+
+
+void Scene::updateSpace3D( const int& width, const int& height, const int& depth )
+{
+
+    int_width = width;
+    int_height = height;
+    int_depth = depth;
+
+    m_2dto3d = Model3DUtils::normalizePointCloud( -0.5f*int_width, 0.5f*int_width, -0.5f*int_height, 0.5f*int_height, -0.5f*int_depth, 0.5f*int_depth );
+    m_3dto2d = m_2dto3d.inverse();
 
 }
 
@@ -43,15 +75,17 @@ void Scene::createVolume3D()
     if( boundary3D != 0 || views().empty() == true ) return;
 
 
-    QGraphicsView* view = views()[0];
+    Eigen::Vector3f min( -0.5f*int_width, -0.5f*int_height, -0.5f*int_depth );
+    Eigen::Vector3f max(  0.5f*int_width,  0.5f*int_height,  0.5f*int_depth );
 
-    int boundary_width = 0.8f*view->width();
-    int boundary_height = 0.8f*view->height();
-    int depth = 400;
+    min = Scene::scene2Dto3D( min );
+    max = Scene::scene2Dto3D( max );
 
-    boundary3D = new BoundingBox3D( boundary_width, boundary_height, depth );
+
+    Eigen::Vector3f dim = max - min;
+
+    boundary3D = new BoundingBox3D( dim.x(), dim.y(), dim.z() );
     boundary3D->create();
-
 
 }
 
@@ -63,7 +97,6 @@ void Scene::createCrossSection( const float& d )
 {
 
     controller->addCrossSection( d );
-
     addCrossSectionToScene();
 
 }
@@ -82,7 +115,6 @@ void Scene::addCrossSectionToScene()
 
 
 
-
 void Scene::createBoundary()
 {
 
@@ -93,7 +125,7 @@ void Scene::createBoundary()
 
 
 
-    bool ok = controller->addBoundary( boundary3D->getWidth(), boundary3D->getHeight() );
+    bool ok = controller->addBoundary( boundary3D->getWidth(), boundary3D->getHeight(), boundary3D->getDepth() );
     if( ok == false  ) return;
 
 
@@ -113,29 +145,56 @@ void Scene::addBoundaryToScene()
 
     boundary = new BoundaryItem2D();
     boundary->setGeoData( b );
-    boundary->load();
+    boundary->update( m_3dto2d );
+
 
     addItem( boundary );
     setSceneRect( boundary->boundingRect() );
 
 
-
-
     // criar boundary no 3d, e setar o dado geologico
 
 
-
     boundary3D->setGeoData( b );
+    boundary3D->update();
+
+
 
 }
 
 
-void Scene::editBoundary( int x, int y, int w, int h )
+void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
 {
-    controller->editBoundary( x, y, w,  h );
-    setSceneRect( boundary->boundingRect() );
 
+
+    updateSpace3D( w, h, int_depth );
+
+
+    Eigen::Vector3f p( x, y, 0.0f );
+    Eigen::Vector3f p1( x + w, y + h, 0.0f );
+
+
+    p  = scene2Dto3D( p );
+    p1 = scene2Dto3D( p1 );
+
+    float width  = ( p1 - p ).x();
+    float height = ( p1 - p ).y();
+    float depth = boundary3D->getDepth();
+
+
+
+    controller->editBoundary( p.x(), p.y(), width, height, depth );
+
+
+    boundary->update( m_3dto2d );
+    setSceneRect( boundary->boundingRect() );
     boundary3D->update();
+
+
+    controller->setRulesProcessorBoundingBox( 0.0f, 0.0f, 0.0f, (int)boundary3D->getWidth(), (int)boundary3D->getHeight(), (int)boundary3D->getDepth() );
+
+
+
 }
 
 
@@ -147,7 +206,10 @@ void Scene::addCurve()
     current_mode = InteractionMode::INSERTING;
 
 
-    bool add_ok = controller->addCurve( PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() ) );
+    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
+    c = Scene::scene2Dto3D( c );
+
+    bool add_ok = controller->addCurve( c );
     if( add_ok == false )
     {
         removeItem( sketch );
@@ -175,7 +237,10 @@ void Scene::addStratigraphyToScene()
     stratigraphics_list.push_back( sketch );
     surfaces_list.push_back( strat3D );
 
+
     newSketch();
+
+    controller->addStratigraphy();
 
 }
 
@@ -230,12 +295,98 @@ void Scene::updateColor( const QColor& color )
 
 
 
+
+
+Eigen::Vector3f Scene::scene2Dto3D( const Point2D &p )
+{
+    Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
+
+    p_cpy = m_2dto3d.matrix()*p_cpy;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
+
+}
+
+
+Eigen::Vector3f Scene::scene2Dto3D( const Eigen::Vector3f& p )
+{
+    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
+
+    p_cpy = m_2dto3d.matrix()*p_cpy;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );;
+
+}
+
+
+Point2D Scene::scene3Dto2D( const Eigen::Vector3f& p )
+{
+    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
+
+    p_cpy = m_3dto2d.matrix()*p_cpy;
+    return Point2D( p_cpy.x(), p_cpy.y() );
+
+}
+
+
+Curve2D Scene::scene2Dto3D( const Curve2D& c )
+{
+
+    Curve2D c3d;
+    unsigned int number_of_points = c.size();
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Eigen::Vector3f p( scene2Dto3D( c.at( i ) ) );
+        c3d.add( Point2D( p.x(), p.y() ) );
+    }
+
+    return c3d;
+
+}
+
+
+Curve2D Scene::scene3Dto2D( const Curve2D &c )
+{
+
+    Curve2D c2d;
+    unsigned int number_of_points = c.size();
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Point2D p = c.at( i );
+        c2d.add( scene3Dto2D( Eigen::Vector3f( p.x(), p.y(), 0.0f ) ) );
+    }
+
+    return c2d;
+
+}
+
+
+
+
+
+
 void Scene::updateScene()
 {
 
 //    boundary->update();
 //    boundary3D->update();
 
+    float d = controller->getCurrentCrossSection();
+
+    unsigned int number_of_stratigraphies = stratigraphics_list.size();
+    for( int i = 0; i < number_of_stratigraphies; ++i )
+    {
+        StratigraphicItem* strat = stratigraphics_list[ i ];
+        strat->update( m_3dto2d, d );
+    }
+
+
+    unsigned int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* surface = surfaces_list[ i ];
+        surface->update();
+    }
 
 
     emit updatedScene();
@@ -248,7 +399,7 @@ void Scene::updateScene()
 void Scene::savetoRasterImage( const QString& filename )
 {
 
-    QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );  // Create the image with the exact size of the shrunk scene
+    QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
     image.fill( Qt::transparent );
 
     QPainter painter( &image );
@@ -305,9 +456,10 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
     }
 
-    else if (event->buttons() & Qt::RightButton )
+    else if ( event->buttons() & Qt::RightButton )
     {
         addCurve();
+        controller->interpolateStratigraphy();
     }
 
     QGraphicsScene::mousePressEvent( event );
@@ -379,7 +531,8 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
-    emit updatedScene();
+
+//    emit updatedScene();
 
 
 }

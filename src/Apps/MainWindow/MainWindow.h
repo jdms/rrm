@@ -37,11 +37,7 @@
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
 
-
-#include "Simulator/FlowWindow.h"
-#include "Simulator/HelpDialog.h"
-
-
+#include "HelpDialog.h"
 #include "Controller.hpp"
 
 
@@ -57,7 +53,6 @@ class MainWindow : public QMainWindow
 
     public:
 
-    	typedef  RRM::CrossSection<qreal>  CrossSection;
 
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
@@ -69,12 +64,6 @@ class MainWindow : public QMainWindow
         void createActions();
         void createMenuBar();
         void createMainWindowActions();
-
-
-        void createFlowDiagnosticsModule();
-        void createFlowDiagnosticsMenuBar();
-        void createFlowDiagnosticsActions();
-
 
         void create3DViewModule();
         void create3DWindowMenuBar();
@@ -117,7 +106,6 @@ class MainWindow : public QMainWindow
         QAction *ac_wdwsketching;
         QAction *ac_wdwseismic;
         QAction *ac_3dview;
-        QAction *ac_flowdiagnostics;
 
 
         // Sketching Module
@@ -128,11 +116,6 @@ class MainWindow : public QMainWindow
         // 3D View Module
         QDockWidget* dw_3dview;
         View3DWindow *view3d_window;
-
-
-        // Flow Diagnostics Module
-        QDockWidget* dw_flowdiagnostics;
-        FlowWindow *flowdiagnostics_window;
 
 
         HelpDialog help;

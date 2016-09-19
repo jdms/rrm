@@ -30,7 +30,11 @@ class Surface: public StratigraphyRenderable
 		void resetShaders();
 		void initShaders();
 		void reloadShaders();
+
+        void update();
 		
+        void initData();
+        void init();
 				
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
 		
