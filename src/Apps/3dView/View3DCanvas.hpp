@@ -43,7 +43,7 @@ class View3DCanvas: public QOpenGLWidget
         inline void setScene( Scene* sc ){
 
             scene = sc;
-            setCurrentDirectory();
+			scene->setCurrentDirectory(shader_directory.toStdString());
 
             connect( scene, SIGNAL( updatedScene() ), this, SLOT( update() ) );
             connect( scene, &Scene::initContext, this, &View3DCanvas::initContextScene );

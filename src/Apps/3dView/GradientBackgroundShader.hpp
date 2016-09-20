@@ -26,6 +26,8 @@ class GradientBackgroundShader
 		void resetShaders();
 		void initShaders();
 		void reloadShaders();
+
+		void init();
 		
 		
         void draw( const int& width, const int& height );

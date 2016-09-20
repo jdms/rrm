@@ -294,9 +294,7 @@ void Scene::addStratigraphyToScene()
     sketch->setGeoData( strat );
 
 
-    int id = surfaces_list.size();
-
-    Surface* strat3D = new Surface( id );
+    Surface* strat3D = new Surface();
     strat3D->setGeoData( strat );
     strat3D->setCurrentDirectory( shader_directory.toStdString() );
 
@@ -492,7 +490,7 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         controller->interpolateStratigraphy();
 
         newSketch();
-        controller->addStratigraphy();
+       controller->addStratigraphy();
 
     }
 

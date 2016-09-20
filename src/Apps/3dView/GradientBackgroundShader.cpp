@@ -4,10 +4,16 @@
 
 GradientBackgroundShader::GradientBackgroundShader()
 {
-    initBuffers();
-    initShaders();
+
 }
 
+
+
+void GradientBackgroundShader::init()
+{
+	initBuffers();
+	initShaders();
+}
 
 
 void GradientBackgroundShader::resetBuffers()

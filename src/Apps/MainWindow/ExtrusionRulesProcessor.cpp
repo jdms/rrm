@@ -185,7 +185,9 @@ namespace RRM
         }
 
         PlanarSurface::Ptr sptr(container_[index]);
-        return sptr->getID(); 
+        surface_id = sptr->getID();
+
+		return false; 
     }
 
     bool ExtrusionRulesProcessor::addSurface( const std::vector<Point3> &curve, size_t given_index, 

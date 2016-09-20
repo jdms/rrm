@@ -2,9 +2,9 @@ find_package(Eigen3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
-find_library(GLEW glew32 "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32")
-set( GLEW_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/include" )
-set( GLEW_LIBRARY "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32/glew32.lib" )
+# find_library(GLEW glew32 "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32")
+# set( GLEW_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/include" )
+# set( GLEW_LIBRARY "${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32/glew32.lib" )
 message( "Glew Include DIR: " ${GLEW_INCLUDE_DIR} )
 message( "Glew Library: " ${GLEW_LIBRARY} )
 

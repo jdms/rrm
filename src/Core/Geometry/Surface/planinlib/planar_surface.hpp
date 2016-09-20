@@ -131,9 +131,9 @@ class PlanarSurface {
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
 
-        bool getNumX() const; 
-        bool getNumY() const; 
-        bool getNumVertices() const; 
+        size_t getNumX() const; 
+        size_t getNumY() const; 
+        size_t getNumVertices() const; 
 
         template<typename CoordinatesList>
         bool getRawHeightMap( CoordinatesList &vertices );

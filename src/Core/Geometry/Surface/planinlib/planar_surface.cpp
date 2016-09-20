@@ -673,17 +673,17 @@ bool PlanarSurface::getHeight( Natural i, Natural j, double &height )
     return getHeight( getVertexIndex(i, j), height );
 }
 
-bool PlanarSurface::getNumX() const
+size_t PlanarSurface::getNumX() const
 {
     return nX_; 
 }
 
-bool PlanarSurface::getNumY() const
+size_t PlanarSurface::getNumY() const
 {
     return nY_; 
 }
 
-bool PlanarSurface::getNumVertices() const
+size_t PlanarSurface::getNumVertices() const
 {
     return num_vertices_;
 }

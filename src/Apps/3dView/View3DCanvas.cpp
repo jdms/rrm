@@ -51,7 +51,7 @@ void View3DCanvas::setCurrentDirectory()
 
 
     shader_directory = current_dir;
-    scene->setCurrentDirectory( shader_directory.toStdString() );
+    
 
 }
 
@@ -60,7 +60,7 @@ void View3DCanvas::setCurrentDirectory()
 
 void View3DCanvas::initializeGL ( )
 {
-
+	setCurrentDirectory();
     connect( context(), &QOpenGLContext::aboutToBeDestroyed, this, &View3DCanvas::resetBuffers );
 
 
@@ -99,7 +99,10 @@ void View3DCanvas::initializeGL ( )
 
 
     background = new GradientBackgroundShader();
-    background->setCurrentDirectory( shader_directory.toStdString() );
+	background->setCurrentDirectory(shader_directory.toStdString());
+	background->init();
+
+    
 
 //    Surface *s0 = new Surface( 0 );
 //    Surface *s1 = new Surface( 1 );
