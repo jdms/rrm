@@ -269,6 +269,7 @@ void Controller::update()
 //        {
 //            surface_vertices.push_back( c->at(k).x() );
 //            surface_vertices.push_back( c->at(k).y() );
+//            surface_vertices.push_back( 0.0f );
 //        }
 
 //        surface_vertices.push_back( -0.2f );
