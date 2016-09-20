@@ -45,7 +45,8 @@ class Controller: public QObject
         Stratigraphy* getCurrentStratigraphy();
 
 
-        void setRulesProcessorBoundingBox( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
+        void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
+        void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
 
 
 

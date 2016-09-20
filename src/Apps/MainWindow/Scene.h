@@ -46,7 +46,7 @@ class Scene: public QGraphicsScene
         void drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
 
         inline void setController( Controller* const& c ){ controller = c; connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) ); }
-
+        inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 
 
     public slots:
@@ -70,6 +70,10 @@ class Scene: public QGraphicsScene
 
 
         void undoLastSketch();
+        void initGLContext();
+
+
+
 
 
 
@@ -78,6 +82,7 @@ class Scene: public QGraphicsScene
         void sendCoordinates( float, float );
         void insertSkecthing( InputSketch* );
         void updatedScene();
+        void initContext();
 
 
 
@@ -145,6 +150,8 @@ class Scene: public QGraphicsScene
         std::vector< StratigraphicItem* > stratigraphics_list;
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
         std::vector< Surface* > surfaces_list;
+
+        QString shader_directory;
 	
 };
 

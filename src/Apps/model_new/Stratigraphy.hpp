@@ -37,16 +37,25 @@ class Stratigraphy
 
         inline void updateSurface( const std::vector< float >& vertices,  const std::vector< unsigned int >& faces )
         {
-            surface_vertices = vertices;
-            surface_faces = faces;
+
+            surface_vertices.clear();
+            surface_faces.clear();
+
+            surface_vertices.assign( vertices.begin(), vertices.end() );
+            surface_faces.assign( faces.begin(), faces.end() );
+
         }
-        inline void updateSurfaceWireframe( const std::vector< unsigned int >& edges ){ surface_edges = edges; }
+        inline void updateSurfaceWireframe( const std::vector< unsigned int >& edges )
+        {
+            surface_edges.clear();
+            surface_edges.assign( edges.begin(), edges.end() );
+        }
 
 
 
-        inline std::vector< float > getSurfaceVertices(){ return surface_vertices; }
-        inline std::vector< unsigned int > getSurfaceFaces(){ return surface_faces; }
-        inline std::vector< unsigned int > getSurfaceEdges(){ return surface_edges; }
+        inline std::vector< float >& getSurfaceVertices(){ return surface_vertices; }
+        inline std::vector< unsigned int >& getSurfaceFaces(){ return surface_faces; }
+        inline std::vector< unsigned int >& getSurfaceEdges(){ return surface_edges; }
 
 
 	protected:

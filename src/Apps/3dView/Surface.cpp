@@ -1,17 +1,25 @@
 #include "Surface.h"
 
+
 Surface::Surface()
 {
-    initData();
-    init();
+    is_initialized = false;
 }
 
+Surface::Surface( int id_ )
+{
+    is_initialized = false;
+    id = id_;
+}
 
 
 void Surface::init()
 {
+    initData();
     initShaders();
     initBuffers();
+
+    is_initialized = true;
 }
 
 
@@ -92,22 +100,22 @@ void Surface::initBuffers()
 		glGenBuffers ( 1 , &vb_vertices );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
 			glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        glEnableVertexAttribArray ( 0 );
-        glVertexAttribPointer ( 0 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( slot_vertices );
+        glVertexAttribPointer ( slot_vertices , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 		
 		glGenBuffers ( 1 , &vb_normals );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
 			glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        glEnableVertexAttribArray ( 2 );
-        glVertexAttribPointer ( 2 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( slot_normals );
+        glVertexAttribPointer ( slot_normals , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 
 		glGenBuffers ( 1 , &vb_colors );
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_colors );
 		glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-        glEnableVertexAttribArray ( 1 );
-        glVertexAttribPointer ( 1 , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glEnableVertexAttribArray ( slot_colors );
+        glVertexAttribPointer ( slot_colors , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 		
 			
 		glGenBuffers( 1, &vb_wireframes );
@@ -129,28 +137,53 @@ void Surface::initBuffers()
 void Surface::loadBuffers()
 {
 	
-    std::vector< float > vertices = strat->getSurfaceVertices();
+    std::vector< float >& vertices = strat->getSurfaceVertices();
     std::vector< float > colors;
     std::vector< float > normals;
-    std::vector< unsigned int > wireframes = strat->getSurfaceEdges();
-    std::vector< unsigned int > faces = strat->getSurfaceFaces();
-		   
+    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
+
+
+//    std::vector< float > vertices;
+//    std::vector< float > colors;
+//    std::vector< float > normals;
+//    std::vector< unsigned int > wireframes;
+//    std::vector< unsigned int > faces;
+
+//    vertices.push_back( 0.2f );
+//    vertices.push_back( 0.0f + id*0.1f );
+//    vertices.push_back( 0.0f );
+
+
+
+
 
     number_of_vertices = vertices.size()/3;
+
+
+//    for( unsigned int i = 0; i < number_of_vertices; ++i )
+//    {
+//        std::cout << " vertice " << i << ": " << vertices[ 3*i ] << ", " << vertices[ 3*i + 1 ]  << ", " << vertices[ 3*i + 2 ]  << std::endl;
+//    }
+
+
     glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
-    glBufferData ( GL_ARRAY_BUFFER , vertices.size ( ) * sizeof ( GLfloat ) , vertices.data() , GL_STATIC_DRAW );
+    glBufferData ( GL_ARRAY_BUFFER , vertices.size() * sizeof ( float ) , vertices.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 	
 
 	if( colors.empty() == false )
 	{
 		glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
 		glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(), GL_STATIC_DRAW );
+        glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 	}
 	
 	if( normals.empty() == false )
 	{
 		glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
 		glBufferData ( GL_ARRAY_BUFFER , normals.size() * sizeof ( GLfloat )  , normals.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 	}
 	
     if( wireframes.empty() == false )
@@ -159,6 +192,7 @@ void Surface::loadBuffers()
 		
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_wireframes );
         glBufferData ( GL_ELEMENT_ARRAY_BUFFER , wireframes.size() * sizeof ( GLuint )  , wireframes.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
 		
 	}
     
@@ -168,6 +202,7 @@ void Surface::loadBuffers()
 		
 		glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_faces );
 		glBufferData ( GL_ELEMENT_ARRAY_BUFFER , faces.size() * sizeof ( GLuint )  , faces.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
 	
 	}
 	
@@ -190,9 +225,14 @@ void Surface::resetShaders()
 void Surface::initShaders()
 {
 	
+//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
+//                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
+//                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
+
     shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
                                                     ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
-                                          "", "", "" ) ;
+                                                     "", "", "" ) ;
+
 
     shader_surface->initialize();
 	
@@ -215,35 +255,44 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 
     float scale = 1.5*(float)width/(float)height;
 
+
+//    std::cout << "Drawing Strat " << strat->getId() << std::endl;
+
+
+
     shader_surface->bind();
 
 
-    shader_surface->bind();
     shader_surface->setUniform( "mmatrix", M );
     shader_surface->setUniform( "vmatrix", V );
     shader_surface->setUniform( "pmatrix", P );
     shader_surface->setUniform( "scale", scale );
-	
+
+    shader_surface->setUniform( "index", (int)strat->getId() );
 
 
-    glPointSize( 5.0f );
+//    shader_surface->setUniform ( "ModelMatrix" , V );
+//    shader_surface->setUniform ( "ViewMatrix" , V );
+//    shader_surface->setUniform ( "ProjectionMatrix" , P );
+//    shader_surface->setUniform ( "WIN_SCALE" , (float) width , (float) height );
+
+
+    glPointSize( 4.0f );
+
     glBindVertexArray( va_surface );
-	
-        // not ideal, just adapting to current code
-        if( number_of_faces > 0 )
-        {
-            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-        }
-        else
-        {
-            glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
-        }
-	
+//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+//        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+            glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
+
     glBindVertexArray ( 0 );
+
 	
-    shader_surface->unbind ( );	
+
+	
+    shader_surface->unbind();
+
+
 	
 }
 

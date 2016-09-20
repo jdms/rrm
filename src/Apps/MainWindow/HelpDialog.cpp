@@ -26,7 +26,7 @@ HelpDialog::HelpDialog(QWidget *parent) :
     hb_contents->addWidget( gv_contents );
 
 
-    this->setLayout( hb_contents );
+    setLayout( hb_contents );
 
 
 }

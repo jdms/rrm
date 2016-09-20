@@ -10,7 +10,6 @@ Controller::Controller()
 {
 
     current_reconstruction = ReconstructionMode::EXTRUSION;
-    rules_processor.init();
 
     current_crosssection = 0.0f;
     current_stratigraphy = 0;
@@ -34,14 +33,15 @@ void Controller::addCrossSection( const float& d )
 
 
 
-
 bool Controller::addBoundary( const float& w, const float& h, const float& d )
 {
 
     if( crosssections_list.empty() == true ) return false;
 
+
     CrossSection* cross_section = crosssections_list[ current_crosssection ];
     Boundary* boundary_data;
+
 
     if( cross_section->hasBoundary() == false )
     {
@@ -52,10 +52,9 @@ bool Controller::addBoundary( const float& w, const float& h, const float& d )
         boundary_data = cross_section->getBoundary();
     }
 
+
     boundary_data->edit( 0, 0, 0, w, h, d );
     cross_section->setBoundary( boundary_data );
-
-
 
 
     return true;
@@ -71,7 +70,6 @@ void Controller::editBoundary( const float &x, const float &y, const float &w, c
 
 
     boundary_data->edit( x, y, current_crosssection, w, h, d );
-
 
     update();
 
@@ -89,14 +87,26 @@ Boundary* Controller::getCurrentBoundary()
 
 
 
-void Controller::setRulesProcessorBoundingBox( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
+void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
+{
+
+    rules_processor.init();
+    rules_processor.setOrigin( orig_x, orig_y, orig_z );
+    rules_processor.setLenght( width, height, depth );
+    rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
+
+
+}
+
+
+void Controller::editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
 {
 
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
 
-
 }
+
 
 
 
@@ -150,13 +160,15 @@ bool Controller::interpolateStratigraphy()
 
     std::cout << "-- Interpolate Stratigraphy" << std::endl;
 
+
     if( stratigraphics_list.empty() == true ) return false;
+
 
     Stratigraphy* strat = stratigraphics_list[ current_stratigraphy ];
     Curve2D* c = strat->getCurve( current_crosssection );
 
 
-//    rules_processor.update( c, strat->getId() );
+    rules_processor.update( *c, strat->getId() );
 
 
     bool can_undo = rules_processor.canUndo();
@@ -169,6 +181,7 @@ bool Controller::interpolateStratigraphy()
 
     update();
     return true;
+
 }
 
 
@@ -245,37 +258,46 @@ void Controller::update()
 
 
         Stratigraphy* strat = stratigraphics_list[ i ];
-//        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-//        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
+        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
 
 
-        surface_vertices.push_back( -0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( 0.5f + i*0.1f);
+//        Curve2D* c = strat->getCurve( current_crosssection );
 
-        surface_vertices.push_back( 0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( 0.5f + i*0.1f);
+//        int npoints = c->size();
+//        for( int k = 0; k < npoints; ++k )
+//        {
+//            surface_vertices.push_back( c->at(k).x() );
+//            surface_vertices.push_back( c->at(k).y() );
+//        }
 
-        surface_vertices.push_back( 0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( -0.5f + i*0.1f);
+//        surface_vertices.push_back( -0.2f );
+//        surface_vertices.push_back( -0.2 + i*0.05f );
+//        surface_vertices.push_back( 0.2f );
 
+//        surface_vertices.push_back( 0.2f );
+//        surface_vertices.push_back( -0.2 + i*0.05f );
+//        surface_vertices.push_back( 0.2f );
 
-        surface_vertices.push_back( -0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( -0.5f + i*0.1f);
-
-        surface_faces.push_back( 0 );
-        surface_faces.push_back( 1 );
-        surface_faces.push_back( 2 );
-
-        surface_faces.push_back( 2 );
-        surface_faces.push_back( 3 );
-        surface_faces.push_back( 1 );
+//        surface_vertices.push_back( 0.2f );
+//        surface_vertices.push_back( -0.2 + i*0.05f );
+//        surface_vertices.push_back( -0.2f  );
 
 
-//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+//        surface_vertices.push_back( -0.2f );
+//        surface_vertices.push_back( -0.2 + i*0.05f );
+//        surface_vertices.push_back( -0.2f );
+
+//        surface_faces.push_back( 0 );
+//        surface_faces.push_back( 1 );
+//        surface_faces.push_back( 2 );
+
+//        surface_faces.push_back( 2 );
+//        surface_faces.push_back( 3 );
+//        surface_faces.push_back( 0 );
+
+
+        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
         strat->updateSurface( surface_vertices, surface_faces );
 
 

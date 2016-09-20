@@ -15,6 +15,9 @@
 #include <QtGui/QKeyEvent>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
+#include <QDir>
+#include <QCoreApplication>
+
 
 
 #include "Mainwindow/Scene.h"
@@ -38,8 +41,13 @@ class View3DCanvas: public QOpenGLWidget
 
 
         inline void setScene( Scene* sc ){
+
             scene = sc;
+            setCurrentDirectory();
+
             connect( scene, SIGNAL( updatedScene() ), this, SLOT( update() ) );
+            connect( scene, &Scene::initContext, this, &View3DCanvas::initContextScene );
+
         }
 
 
@@ -47,6 +55,8 @@ class View3DCanvas: public QOpenGLWidget
 
 
         void clear();
+        void initContextScene();
+
 
 
     signals:
@@ -73,6 +83,8 @@ class View3DCanvas: public QOpenGLWidget
 
         void keyPressEvent ( QKeyEvent * event );
 
+        void setCurrentDirectory();
+
 
 
 
@@ -84,9 +96,11 @@ class View3DCanvas: public QOpenGLWidget
         Tucano::Trackball camera;
         GradientBackgroundShader* background;
 
+        QString shader_directory;
 
+        std::vector <Surface*> surfaces;
 
-};
+        };
 
 #endif
 

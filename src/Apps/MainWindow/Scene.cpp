@@ -20,6 +20,8 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 }
 
 
+
+
 void Scene::init()
 {
 
@@ -33,8 +35,42 @@ void Scene::init()
 
     newSketch();
 
+
 }
 
+
+void Scene::initGLContext()
+{
+
+//    if( boundary3D->initialized() == false )
+//        boundary3D->init();
+
+    int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* s = surfaces_list[ i ];
+        if( s->initialized() == false )
+            s->init();
+    }
+
+
+}
+
+
+
+
+
+void Scene::updateSpace3D( const int& width, const int& height, const int& depth )
+{
+
+    int_width = width;
+    int_height = height;
+    int_depth = depth;
+
+    m_2dto3d = Model3DUtils::normalizePointCloud( -0.5f*int_width, 0.5f*int_width, -0.5f*int_height, 0.5f*int_height, -0.5f*int_depth, 0.5f*int_depth );
+    m_3dto2d = m_2dto3d.inverse();
+
+}
 
 
 void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height )
@@ -54,17 +90,35 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 }
 
 
-void Scene::updateSpace3D( const int& width, const int& height, const int& depth )
+
+void Scene::updateScene()
 {
 
-    int_width = width;
-    int_height = height;
-    int_depth = depth;
+//    boundary->update();
+//    boundary3D->update();
 
-    m_2dto3d = Model3DUtils::normalizePointCloud( -0.5f*int_width, 0.5f*int_width, -0.5f*int_height, 0.5f*int_height, -0.5f*int_depth, 0.5f*int_depth );
-    m_3dto2d = m_2dto3d.inverse();
+    float d = controller->getCurrentCrossSection();
+
+    unsigned int number_of_stratigraphies = stratigraphics_list.size();
+    for( int i = 0; i < number_of_stratigraphies; ++i )
+    {
+        StratigraphicItem* strat = stratigraphics_list[ i ];
+        strat->update( m_3dto2d, d );
+    }
+
+
+    unsigned int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* surface = surfaces_list[ i ];
+        surface->update();
+    }
+
+
+    emit updatedScene();
 
 }
+
 
 
 
@@ -84,11 +138,17 @@ void Scene::createVolume3D()
 
     Eigen::Vector3f dim = max - min;
 
+
     boundary3D = new BoundingBox3D( dim.x(), dim.y(), dim.z() );
+    boundary3D->setCurrentDirectory( shader_directory.toStdString() );
+    boundary3D->init();
     boundary3D->create();
 
-}
 
+    controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+
+
+}
 
 
 
@@ -158,8 +218,6 @@ void Scene::addBoundaryToScene()
     boundary3D->setGeoData( b );
     boundary3D->update();
 
-
-
 }
 
 
@@ -191,11 +249,13 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     boundary3D->update();
 
 
-    controller->setRulesProcessorBoundingBox( 0.0f, 0.0f, 0.0f, (int)boundary3D->getWidth(), (int)boundary3D->getHeight(), (int)boundary3D->getDepth() );
+    controller->editRulesProcessor( -0.5f*width, -0.5f*height, -0.5*depth, width, height, depth );
 
 
 
 }
+
+
 
 
 
@@ -230,17 +290,18 @@ void Scene::addStratigraphyToScene()
     sketch->setGeoData( strat );
 
 
-    Surface* strat3D = new Surface();
+    int id = surfaces_list.size();
+
+    Surface* strat3D = new Surface( id );
     strat3D->setGeoData( strat );
+    strat3D->setCurrentDirectory( shader_directory.toStdString() );
 
 
     stratigraphics_list.push_back( sketch );
     surfaces_list.push_back( strat3D );
 
 
-    newSketch();
-
-    controller->addStratigraphy();
+    emit initContext();
 
 }
 
@@ -296,7 +357,6 @@ void Scene::updateColor( const QColor& color )
 
 
 
-
 Eigen::Vector3f Scene::scene2Dto3D( const Point2D &p )
 {
     Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
@@ -335,7 +395,7 @@ Curve2D Scene::scene2Dto3D( const Curve2D& c )
 
     for( int i = 0; i < number_of_points; ++i )
     {
-        Eigen::Vector3f p( scene2Dto3D( c.at( i ) ) );
+        Eigen::Vector3f p = scene2Dto3D( c.at( i ) );
         c3d.add( Point2D( p.x(), p.y() ) );
     }
 
@@ -360,38 +420,6 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 
 }
 
-
-
-
-
-
-void Scene::updateScene()
-{
-
-//    boundary->update();
-//    boundary3D->update();
-
-    float d = controller->getCurrentCrossSection();
-
-    unsigned int number_of_stratigraphies = stratigraphics_list.size();
-    for( int i = 0; i < number_of_stratigraphies; ++i )
-    {
-        StratigraphicItem* strat = stratigraphics_list[ i ];
-        strat->update( m_3dto2d, d );
-    }
-
-
-    unsigned int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
-    {
-        Surface* surface = surfaces_list[ i ];
-        surface->update();
-    }
-
-
-    emit updatedScene();
-
-}
 
 
 
@@ -460,6 +488,10 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         addCurve();
         controller->interpolateStratigraphy();
+
+        newSketch();
+        controller->addStratigraphy();
+
     }
 
     QGraphicsScene::mousePressEvent( event );
@@ -532,7 +564,6 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     QGraphicsScene::mouseReleaseEvent( event );
     update();
 
-//    emit updatedScene();
 
 
 }
