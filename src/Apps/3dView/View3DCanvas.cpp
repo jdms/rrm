@@ -21,10 +21,20 @@ void View3DCanvas::clear()
 }
 
 
+void View3DCanvas::initContextScene()
+{
+    makeCurrent();
+
+    scene->initGLContext();
+
+}
+
+
 void View3DCanvas::initializeGL ( )
 {
 
     connect( context(), &QOpenGLContext::aboutToBeDestroyed, this, &View3DCanvas::resetBuffers );
+
 
     setFocus();
     setMouseTracking ( true );
@@ -54,10 +64,29 @@ void View3DCanvas::initializeGL ( )
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
 
-    background = new GradientBackgroundShader();
+
 
 
     emit openglInitialized();
+
+
+    background = new GradientBackgroundShader();
+
+//    Surface *s0 = new Surface( 0 );
+//    Surface *s1 = new Surface( 1 );
+//    Surface *s2 = new Surface( 2 );
+//    Surface *s3 = new Surface( 3 );
+
+//    s0->loadBuffers();
+//    s1->loadBuffers();
+//    s2->loadBuffers();
+//    s3->loadBuffers();
+
+//    surfaces.push_back( s0 );
+//    surfaces.push_back( s1 );
+//    surfaces.push_back( s2 );
+//    surfaces.push_back( s3 );
+
 
 
 }
@@ -84,6 +113,9 @@ void View3DCanvas::paintGL ( )
     if( scene != nullptr )
         scene->drawScene3D( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 
+
+//    for( int i = 0; i < surfaces.size(); ++i )
+//        surfaces[ i ]->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 }
 
 
@@ -163,6 +195,7 @@ void View3DCanvas::mousePressEvent ( QMouseEvent *event )
             camera.rotateCamera( screen_pos );
         }
     }
+
 
 
     update();

@@ -152,7 +152,7 @@ void MainWindow::create3DViewModule()
     dw_3dview->setWidget( view3d_window );
 
     dw_3dview->setAllowedAreas( Qt::AllDockWidgetAreas );
-    this->addDockWidget( Qt::BottomDockWidgetArea, dw_3dview );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_3dview );
 
 }
 

@@ -2,7 +2,7 @@
 
 InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
 {
-	this->prepareGeometryChange ( );
+    prepareGeometryChange ( );
 
 
 	is_visible = false;
@@ -42,15 +42,15 @@ QRectF InputSketch::boundingRect ( ) const
 
 void InputSketch::create ( const QPointF &p )
 {
-	this->prepareGeometryChange ( );
-	this->clear();
+    prepareGeometryChange ( );
+    clear();
 	points_list.push_back ( p );
 }
 
 
 void InputSketch::add ( const QPointF &p )
 {
-	this->prepareGeometryChange ( );
+    prepareGeometryChange ( );
 	points_list.push_back ( p );
 }
 
@@ -60,7 +60,7 @@ void InputSketch::add ( const QPointF &p )
 
 void InputSketch::clear ( )
 {
-	this->prepareGeometryChange ( );
+    prepareGeometryChange ( );
 	points_list.clear ( );
 }
 
@@ -97,10 +97,10 @@ void InputSketch::isInside ( bool option )
 /// Changed from original code
 void InputSketch::setSketch ( const QVector<QPointF> & _path )
 {
-    this->prepareGeometryChange ( );
+    prepareGeometryChange ( );
 
-    this->points_list.clear();
-    this->points_list = QPolygonF(_path);
+    points_list.clear();
+    points_list = QPolygonF(_path);
 
 }
 

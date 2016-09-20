@@ -17,7 +17,6 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 	
 	painter->setPen( pen_curve );
 	painter->setBrush( Qt::NoBrush );
-//	painter->drawPath( curve );
     painter->drawPolyline( points );
 		
 }
@@ -42,7 +41,6 @@ void StratigraphicItem::create( const QPointF& p )
 	prepareGeometryChange();
 	clear();
 	
-	curve.moveTo( p );
 	points.push_back( p );	
 }
 
@@ -50,7 +48,6 @@ void StratigraphicItem::create( const QPointF& p )
 void StratigraphicItem::add( const QPointF& p )
 {
 	prepareGeometryChange();
-	curve.lineTo( p );
 	points.push_back( p );
 }
 
@@ -80,7 +77,6 @@ void StratigraphicItem::clear()
 {
 	prepareGeometryChange();
 
-	curve = QPainterPath();
 	points.clear();
 	
 }
@@ -91,8 +87,7 @@ void StratigraphicItem::copySegment( const QPolygonF& s )
 	clear();
 	
 	points = QPolygonF( s );
-    curve.addPolygon( points );
-	
+
 }
 
 

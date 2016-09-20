@@ -249,22 +249,22 @@ void Controller::update()
 //        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
 
 
-        surface_vertices.push_back( -0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( 0.5f + i*0.1f);
+        surface_vertices.push_back( -0.02f );
+        surface_vertices.push_back( -0.2 + i*0.001f );
+        surface_vertices.push_back( 0.02f );
 
-        surface_vertices.push_back( 0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( 0.5f + i*0.1f);
+        surface_vertices.push_back( 0.02f );
+        surface_vertices.push_back( -0.2 + i*0.001f );
+        surface_vertices.push_back( 0.02f );
 
-        surface_vertices.push_back( 0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( -0.5f + i*0.1f);
+        surface_vertices.push_back( 0.02f );
+        surface_vertices.push_back( -0.2 + i*0.001f );
+        surface_vertices.push_back( -0.02f  );
 
 
-        surface_vertices.push_back( -0.5f );
-        surface_vertices.push_back( 0.0f );
-        surface_vertices.push_back( -0.5f + i*0.1f);
+        surface_vertices.push_back( -0.02f );
+        surface_vertices.push_back( -0.2 + i*0.001f );
+        surface_vertices.push_back( -0.02f );
 
         surface_faces.push_back( 0 );
         surface_faces.push_back( 1 );

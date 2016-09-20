@@ -95,23 +95,9 @@ std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< Eigen
 	
 	
 	dim /= scale;
-	
-	//dimx /= scale;
-	//dimy /= scale;
-	//dimz /= scale;
-	
 	max /= scale;
-	
-	//maxx /= scale;
-	//maxy /= scale;
-	//maxz /= scale;
-		
 	min /= scale;
-	
-	//minx /= scale;
-	//miny /= scale;
-	//minz /= scale;
-		
+
     Eigen::Vector4f center = Eigen::Vector4f( ( max.x() + min.x() )*0.5f,( max.y() + min.y() )*0.5f,( max.z() + min.z() )*0.5f, 0.0f  );
 	Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
 	

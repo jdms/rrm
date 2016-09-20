@@ -45,6 +45,7 @@ class BoundingBox3D: public BoundaryRenderable
 		
 		
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
+        inline bool initialized(){ return is_initialized;}
 		
         inline float getWidth(){ return width; }
         inline float getHeight(){ return height; }
@@ -67,6 +68,7 @@ class BoundingBox3D: public BoundaryRenderable
         GLuint number_of_lines;
 
         QString shader_directory;
+        bool is_initialized;
 
 
 		

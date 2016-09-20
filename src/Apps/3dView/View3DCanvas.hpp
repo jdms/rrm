@@ -40,6 +40,7 @@ class View3DCanvas: public QOpenGLWidget
         inline void setScene( Scene* sc ){
             scene = sc;
             connect( scene, SIGNAL( updatedScene() ), this, SLOT( update() ) );
+            connect( scene, &Scene::initContext, this, &View3DCanvas::initContextScene );
         }
 
 
@@ -47,6 +48,8 @@ class View3DCanvas: public QOpenGLWidget
 
 
         void clear();
+        void initContextScene();
+
 
 
     signals:
@@ -85,6 +88,8 @@ class View3DCanvas: public QOpenGLWidget
         GradientBackgroundShader* background;
 
 
+
+        std::vector <Surface*> surfaces;
 
 };
 

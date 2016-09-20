@@ -6,9 +6,10 @@
 
 BoundingBox3D::BoundingBox3D( float w, float h, float d ): width( w ), height( h ), depth( d )
 {
-    initData();
-    init();
+//    initData();
+//    init();
 
+    is_initialized = false;
 }
 
 
@@ -30,8 +31,11 @@ void BoundingBox3D::initData()
 void BoundingBox3D::init()
 {
 
+    initData();
     initShaders();
     initBuffers();
+
+    is_initialized = true;
 
 }
 
@@ -212,7 +216,7 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     shader_boundingbox->setUniform ( "WIN_SCALE" , (float) width, (float) height );
 
     glBindVertexArray ( va_boundingbox );
-    glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
     glBindVertexArray ( 0 );
 
     shader_boundingbox->unbind ( );

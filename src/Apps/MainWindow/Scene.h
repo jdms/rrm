@@ -70,6 +70,10 @@ class Scene: public QGraphicsScene
 
 
         void undoLastSketch();
+        void initGLContext();
+
+
+
 
 
 
@@ -78,6 +82,7 @@ class Scene: public QGraphicsScene
         void sendCoordinates( float, float );
         void insertSkecthing( InputSketch* );
         void updatedScene();
+        void initContext();
 
 
 

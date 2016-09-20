@@ -31,7 +31,29 @@ void Scene::init()
     createVolume3D();
     createBoundary();
 
+//    Surface *s = new Surface( 2 );
+//    s->loadBuffers();
+//    surfaces_list.push_back( s );
+
     newSketch();
+
+}
+
+
+
+void Scene::initGLContext()
+{
+    if( boundary3D->initialized() == false )
+        boundary3D->init();
+
+    int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* s = surfaces_list[ i ];
+        if( s->initialized() == false )
+            s->init();
+    }
+
 
 }
 
@@ -85,7 +107,12 @@ void Scene::createVolume3D()
     Eigen::Vector3f dim = max - min;
 
     boundary3D = new BoundingBox3D( dim.x(), dim.y(), dim.z() );
+
+//    emit initContext();
+    boundary3D->init();
     boundary3D->create();
+
+
 
 }
 
@@ -157,6 +184,8 @@ void Scene::addBoundaryToScene()
 
     boundary3D->setGeoData( b );
     boundary3D->update();
+
+//    emit initContext();
 
 
 
@@ -233,14 +262,12 @@ void Scene::addStratigraphyToScene()
     Surface* strat3D = new Surface();
     strat3D->setGeoData( strat );
 
+    emit initContext();
 
     stratigraphics_list.push_back( sketch );
     surfaces_list.push_back( strat3D );
 
 
-    newSketch();
-
-    controller->addStratigraphy();
 
 }
 
@@ -460,6 +487,10 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         addCurve();
         controller->interpolateStratigraphy();
+
+        newSketch();
+        controller->addStratigraphy();
+
     }
 
     QGraphicsScene::mousePressEvent( event );
@@ -532,7 +563,6 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     QGraphicsScene::mouseReleaseEvent( event );
     update();
 
-//    emit updatedScene();
 
 
 }
