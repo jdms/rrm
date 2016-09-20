@@ -156,8 +156,6 @@ void Surface::loadBuffers()
 
 
 
-
-
     number_of_vertices = vertices.size()/3;
 
 
@@ -276,14 +274,14 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 //    shader_surface->setUniform ( "ProjectionMatrix" , P );
 //    shader_surface->setUniform ( "WIN_SCALE" , (float) width , (float) height );
 
-
     glPointSize( 4.0f );
 
     glBindVertexArray( va_surface );
 
 //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
 //        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-            glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
+
+        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
 
     glBindVertexArray ( 0 );
 

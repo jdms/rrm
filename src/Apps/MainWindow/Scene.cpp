@@ -33,6 +33,10 @@ void Scene::init()
     createVolume3D();
     createBoundary();
 
+//    Surface *s = new Surface( 2 );
+//    s->loadBuffers();
+//    surfaces_list.push_back( s );
+
     newSketch();
 
 
@@ -144,7 +148,6 @@ void Scene::createVolume3D()
     boundary3D->init();
     boundary3D->create();
 
-
     controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
 
@@ -217,6 +220,7 @@ void Scene::addBoundaryToScene()
 
     boundary3D->setGeoData( b );
     boundary3D->update();
+
 
 }
 
@@ -296,10 +300,8 @@ void Scene::addStratigraphyToScene()
     strat3D->setGeoData( strat );
     strat3D->setCurrentDirectory( shader_directory.toStdString() );
 
-
     stratigraphics_list.push_back( sketch );
     surfaces_list.push_back( strat3D );
-
 
     emit initContext();
 

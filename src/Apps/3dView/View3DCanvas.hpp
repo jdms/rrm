@@ -100,7 +100,8 @@ class View3DCanvas: public QOpenGLWidget
 
         std::vector <Surface*> surfaces;
 
-        };
+};
+
 
 #endif
 
