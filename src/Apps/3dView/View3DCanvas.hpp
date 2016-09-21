@@ -47,6 +47,7 @@ class View3DCanvas: public QOpenGLWidget
 
             connect( scene, SIGNAL( updatedScene() ), this, SLOT( update() ) );
             connect( scene, &Scene::initContext, this, &View3DCanvas::initContextScene );
+            connect( scene, &Scene::updateContext, this, &View3DCanvas::updateContextScene );
 
         }
 
@@ -56,6 +57,7 @@ class View3DCanvas: public QOpenGLWidget
 
         void clear();
         void initContextScene();
+        void updateContextScene();
 
 
 

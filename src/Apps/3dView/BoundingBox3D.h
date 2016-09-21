@@ -41,7 +41,7 @@ class BoundingBox3D: public BoundaryRenderable
 		void reloadShaders();
 		
 				
-        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
+        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
 		
 		
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }

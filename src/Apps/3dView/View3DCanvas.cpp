@@ -25,9 +25,14 @@ void View3DCanvas::clear()
 void View3DCanvas::initContextScene()
 {
     makeCurrent();
-
     scene->initGLContext();
+}
 
+
+void View3DCanvas::updateContextScene()
+{
+    makeCurrent();
+    scene->updateGLContext();
 }
 
 
@@ -102,23 +107,6 @@ void View3DCanvas::initializeGL ( )
 	background->setCurrentDirectory(shader_directory.toStdString());
 	background->init();
 
-    
-
-//    Surface *s0 = new Surface( 0 );
-//    Surface *s1 = new Surface( 1 );
-//    Surface *s2 = new Surface( 2 );
-//    Surface *s3 = new Surface( 3 );
-
-//    s0->loadBuffers();
-//    s1->loadBuffers();
-//    s2->loadBuffers();
-//    s3->loadBuffers();
-
-//    surfaces.push_back( s0 );
-//    surfaces.push_back( s1 );
-//    surfaces.push_back( s2 );
-//    surfaces.push_back( s3 );
-
 
 
 }
@@ -145,9 +133,6 @@ void View3DCanvas::paintGL ( )
     if( scene != nullptr )
         scene->drawScene3D( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 
-
-//    for( int i = 0; i < surfaces.size(); ++i )
-//        surfaces[ i ]->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 }
 
 
@@ -177,6 +162,9 @@ void View3DCanvas::reloadShaders ( )
 
 void View3DCanvas::keyPressEvent ( QKeyEvent * event )
 {
+
+    makeCurrent();
+
     switch ( event->key ( ) )
     {
         case Qt::Key_F5:
@@ -208,6 +196,7 @@ void View3DCanvas::mousePressEvent ( QMouseEvent *event )
 {
 
     setFocus();
+    makeCurrent();
 
 
     Eigen::Vector2f screen_pos ( event->x(), event->y() );
@@ -238,6 +227,8 @@ void View3DCanvas::mousePressEvent ( QMouseEvent *event )
 void View3DCanvas::mouseMoveEvent ( QMouseEvent *event )
 {
 
+    makeCurrent();
+
     Eigen::Vector2f screen_pos ( event->x() , event->y() );
 
 
@@ -265,6 +256,8 @@ void View3DCanvas::mouseMoveEvent ( QMouseEvent *event )
 
 void View3DCanvas::mouseReleaseEvent ( QMouseEvent *event )
 {
+
+    makeCurrent();
 
     if ( event->button ( ) == Qt::LeftButton )
     {

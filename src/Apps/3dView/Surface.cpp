@@ -251,7 +251,7 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     M.setIdentity();
 	
 
-    float scale = 1.5*(float)width/(float)height;
+    float scale = (float)1.5*width/(float)height;
 
 
 //    std::cout << "Drawing Strat " << strat->getId() << std::endl;
@@ -269,19 +269,19 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     shader_surface->setUniform( "index", (int)strat->getId() );
 
 
-//    shader_surface->setUniform ( "ModelMatrix" , V );
-//    shader_surface->setUniform ( "ViewMatrix" , V );
-//    shader_surface->setUniform ( "ProjectionMatrix" , P );
-//    shader_surface->setUniform ( "WIN_SCALE" , (float) width , (float) height );
+//    shader_surface->setUniform( "ModelMatrix" , V );
+//    shader_surface->setUniform( "ViewMatrix" , V );
+//    shader_surface->setUniform( "ProjectionMatrix" , P );
+//    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
 
     glPointSize( 4.0f );
 
     glBindVertexArray( va_surface );
 
-//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-//        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
+//        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
 
     glBindVertexArray ( 0 );
 

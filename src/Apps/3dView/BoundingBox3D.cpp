@@ -6,9 +6,6 @@
 
 BoundingBox3D::BoundingBox3D( float w, float h, float d ): width( w ), height( h ), depth( d )
 {
-//    initData();
-//    init();
-
     is_initialized = false;
 }
 
@@ -51,6 +48,16 @@ void BoundingBox3D::create()
     Eigen::Vector3f F(  0.5f*width, -0.5f*height, -0.5f*depth );
     Eigen::Vector3f G(  0.5f*width,  0.5f*height, -0.5f*depth );
     Eigen::Vector3f H( -0.5f*width,  0.5f*height, -0.5f*depth );
+
+
+//    Eigen::Vector3f A( -width, -height,  depth );
+//    Eigen::Vector3f B(  width, -height,  depth );
+//    Eigen::Vector3f C(  width,  height,  depth );
+//    Eigen::Vector3f D( -width,  height,  depth );
+//    Eigen::Vector3f E( -width, -height, -depth );
+//    Eigen::Vector3f F(  width, -height, -depth );
+//    Eigen::Vector3f G(  width,  height, -depth );
+//    Eigen::Vector3f H( -width,  height, -depth );
 
 
     std::vector< Eigen::Vector3f > wireframe_eigen;
@@ -202,7 +209,7 @@ void BoundingBox3D::reloadShaders()
 
 
 
-void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height )
+void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h )
 {
 
     Eigen::Affine3f M;
@@ -213,7 +220,7 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     shader_boundingbox->setUniform ( "ModelMatrix" , M );
     shader_boundingbox->setUniform ( "ViewMatrix" , V );
     shader_boundingbox->setUniform ( "ProjectionMatrix" , P );
-    shader_boundingbox->setUniform ( "WIN_SCALE" , (float) width, (float) height );
+    shader_boundingbox->setUniform ( "WIN_SCALE" , (float) w, (float) h );
 
     glBindVertexArray ( va_boundingbox );
         glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );

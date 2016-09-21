@@ -43,6 +43,23 @@ void Scene::init()
 }
 
 
+
+void Scene::updateGLContext()
+{
+
+    unsigned int number_of_surfaces = surfaces_list.size();
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        Surface* surface = surfaces_list[ i ];
+        surface->update();
+    }
+
+
+
+}
+
+
+
 void Scene::initGLContext()
 {
 
@@ -71,7 +88,7 @@ void Scene::updateSpace3D( const int& width, const int& height, const int& depth
     int_height = height;
     int_depth = depth;
 
-    m_2dto3d = Model3DUtils::normalizePointCloud( -0.5f*int_width, 0.5f*int_width, -0.5f*int_height, 0.5f*int_height, -0.5f*int_depth, 0.5f*int_depth );
+    m_2dto3d = Model3DUtils::normalizePointCloud(  -0.5f*int_width, 0.5f*int_width, -0.5f*int_height, 0.5f*int_height, -0.5f*int_depth, 0.5f*int_depth );
     m_3dto2d = m_2dto3d.inverse();
 
 }
@@ -111,13 +128,7 @@ void Scene::updateScene()
     }
 
 
-    unsigned int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
-    {
-        Surface* surface = surfaces_list[ i ];
-        surface->update();
-    }
-
+    emit updateContext();
 
     emit updatedScene();
 
@@ -148,7 +159,7 @@ void Scene::createVolume3D()
     boundary3D->init();
     boundary3D->create();
 
-    controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+    controller->initRulesProcessor( min.x(), min.z(), min.y(), dim.x(), dim.z(), dim.y() );
 
 
 }

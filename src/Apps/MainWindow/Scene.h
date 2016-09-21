@@ -71,6 +71,7 @@ class Scene: public QGraphicsScene
 
         void undoLastSketch();
         void initGLContext();
+        void updateGLContext();
 
 
 
@@ -83,6 +84,8 @@ class Scene: public QGraphicsScene
         void insertSkecthing( InputSketch* );
         void updatedScene();
         void initContext();
+        void updateContext();
+
 
 
 

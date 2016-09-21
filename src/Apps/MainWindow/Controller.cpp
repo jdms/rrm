@@ -90,9 +90,10 @@ Boundary* Controller::getCurrentBoundary()
 void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
 {
 
-    rules_processor.init();
+
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
+    rules_processor.init();
     rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
 
 
@@ -299,7 +300,7 @@ void Controller::update()
 //        surface_faces.push_back( 0 );
 
 
-        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
         strat->updateSurface( surface_vertices, surface_faces );
 
 
