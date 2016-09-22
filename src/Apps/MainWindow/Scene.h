@@ -43,6 +43,8 @@ class Scene: public QGraphicsScene
         Scene( QObject* parent = 0 );
         void init();
 
+        void defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z, int width, int height, int depth );
+
         void drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
 
         inline void setController( Controller* const& c ){ controller = c; connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) ); }
@@ -57,7 +59,7 @@ class Scene: public QGraphicsScene
 
 
         void createCrossSection( const float& d = 0.0f );
-        void createBoundary();
+        void createSketchingBoundary();
         void addCurve();
 
 
@@ -106,7 +108,10 @@ class Scene: public QGraphicsScene
         void setBackGround();
         void newSketch();
 
-        void updateSpace3D( const int& width, const int& height, const int& depth );
+        void updateTransformationsMatrices();
+        void testingMatrices();
+
+
 
         Eigen::Vector3f scene2Dto3D( const Point2D& p );
         Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
@@ -136,7 +141,7 @@ class Scene: public QGraphicsScene
         InputSketch *temp_sketch;
         StratigraphicItem *sketch;
 
-        BoundaryItem2D *boundary;
+        BoundaryItem2D *sketching_boundary;
         BoundingBox3D *boundary3D;
         QPointF boundary_anchor;
 
@@ -145,9 +150,13 @@ class Scene: public QGraphicsScene
         Eigen::Affine3f m_2dto3d;
         Eigen::Affine3f m_3dto2d;
 
-        int int_width;
-        int int_height;
-        int int_depth;
+
+        int qtscene_origin_x;
+        int qtscene_origin_y;
+        int qtscene_origin_z;
+        int qtscene_width;
+        int qtscene_height;
+        int qtscene_depth;
 
 
         std::vector< StratigraphicItem* > stratigraphics_list;

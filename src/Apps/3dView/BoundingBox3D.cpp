@@ -4,7 +4,7 @@
 
 
 
-BoundingBox3D::BoundingBox3D( float w, float h, float d ): width( w ), height( h ), depth( d )
+BoundingBox3D::BoundingBox3D( float min_x, float min_y, float min_z, float w, float h, float d ): minx( min_x ), miny( min_y ), minz( min_z ), width( w ), height( h ), depth( d )
 {
     is_initialized = false;
 }
@@ -50,14 +50,14 @@ void BoundingBox3D::create()
     Eigen::Vector3f H( -0.5f*width,  0.5f*height, -0.5f*depth );
 
 
-//    Eigen::Vector3f A( -width, -height,  depth );
-//    Eigen::Vector3f B(  width, -height,  depth );
-//    Eigen::Vector3f C(  width,  height,  depth );
-//    Eigen::Vector3f D( -width,  height,  depth );
-//    Eigen::Vector3f E( -width, -height, -depth );
-//    Eigen::Vector3f F(  width, -height, -depth );
-//    Eigen::Vector3f G(  width,  height, -depth );
-//    Eigen::Vector3f H( -width,  height, -depth );
+//    Eigen::Vector3f A( minx, miny,  minz + depth );
+//    Eigen::Vector3f B(  minx + width, miny,  minz + depth );
+//    Eigen::Vector3f C(  minx + width,  miny + height,  minz + depth );
+//    Eigen::Vector3f D( minx,  miny + height,  minz + depth );
+//    Eigen::Vector3f E( minx, miny, minz );
+//    Eigen::Vector3f F(  minx + width, miny, minz );
+//    Eigen::Vector3f G(  minx + width,  miny + height, minz );
+//    Eigen::Vector3f H( minx,  miny + height, minz );
 
 
     std::vector< Eigen::Vector3f > wireframe_eigen;
@@ -215,12 +215,17 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     Eigen::Affine3f M;
     M.setIdentity();
 
+
+    float scale = (float)1.5*width/(float)height;
+
     shader_boundingbox->bind ( );
     
     shader_boundingbox->setUniform ( "ModelMatrix" , M );
     shader_boundingbox->setUniform ( "ViewMatrix" , V );
     shader_boundingbox->setUniform ( "ProjectionMatrix" , P );
     shader_boundingbox->setUniform ( "WIN_SCALE" , (float) w, (float) h );
+
+    shader_boundingbox->setUniform ( "scale" , scale );
 
     glBindVertexArray ( va_boundingbox );
         glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );

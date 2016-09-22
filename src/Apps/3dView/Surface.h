@@ -29,6 +29,7 @@ class Surface: public StratigraphyRenderable
 		void resetBuffers();
 		void initBuffers();
 		void loadBuffers();
+        void loadBuffers( const std::vector< float >& vertices );
 		
 		void resetShaders();
 		void initShaders();

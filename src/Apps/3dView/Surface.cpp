@@ -137,22 +137,22 @@ void Surface::initBuffers()
 void Surface::loadBuffers()
 {
 	
-    std::vector< float >& vertices = strat->getSurfaceVertices();
-    std::vector< float > colors;
-    std::vector< float > normals;
-    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
-    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
-
-
-//    std::vector< float > vertices;
+//    std::vector< float >& vertices = strat->getSurfaceVertices();
 //    std::vector< float > colors;
 //    std::vector< float > normals;
-//    std::vector< unsigned int > wireframes;
-//    std::vector< unsigned int > faces;
+//    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+//    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
-//    vertices.push_back( 0.2f );
-//    vertices.push_back( 0.0f + id*0.1f );
-//    vertices.push_back( 0.0f );
+
+    std::vector< float > vertices;
+    std::vector< float > colors;
+    std::vector< float > normals;
+    std::vector< unsigned int > wireframes;
+    std::vector< unsigned int > faces;
+
+    vertices.push_back( 0.2f );
+    vertices.push_back( 0.0f + id*0.1f );
+    vertices.push_back( 0.0f );
 
 
 
@@ -168,7 +168,22 @@ void Surface::loadBuffers()
     glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
     glBufferData ( GL_ARRAY_BUFFER , vertices.size() * sizeof ( float ) , vertices.data() , GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    for( unsigned int i = 0; i < number_of_vertices; ++i )
+    {
+        colors.push_back( 1.0f );
+        colors.push_back( 0.0f );
+        colors.push_back( 0.0f );
+    }
 	
+
+    for( unsigned int i = 0; i < number_of_vertices; ++i )
+    {
+        normals.push_back( 1.0f );
+        normals.push_back( 0.0f );
+        normals.push_back( 0.0f );
+    }
+
 
 	if( colors.empty() == false )
 	{
@@ -206,6 +221,80 @@ void Surface::loadBuffers()
 	
 		
 }
+
+
+
+void Surface::loadBuffers( const std::vector< float >& vertices )
+{
+
+
+    std::vector< float > colors;
+    std::vector< float > normals;
+    std::vector< unsigned int > wireframes;
+    std::vector< unsigned int > faces;
+
+
+    number_of_vertices = vertices.size()/3;
+
+
+
+    glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
+    glBufferData ( GL_ARRAY_BUFFER , vertices.size() * sizeof ( float ) , vertices.data() , GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+    for( unsigned int i = 0; i < number_of_vertices; ++i )
+    {
+        colors.push_back( 1.0f );
+        colors.push_back( 0.0f );
+        colors.push_back( 0.0f );
+    }
+
+
+    for( unsigned int i = 0; i < number_of_vertices; ++i )
+    {
+        normals.push_back( 1.0f );
+        normals.push_back( 0.0f );
+        normals.push_back( 0.0f );
+    }
+
+
+    if( colors.empty() == false )
+    {
+        glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
+        glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(), GL_STATIC_DRAW );
+        glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+    }
+
+    if( normals.empty() == false )
+    {
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
+        glBufferData ( GL_ARRAY_BUFFER , normals.size() * sizeof ( GLfloat )  , normals.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+    }
+
+    if( wireframes.empty() == false )
+    {
+        number_of_lines = (GLuint) wireframes.size();
+
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_wireframes );
+        glBufferData ( GL_ELEMENT_ARRAY_BUFFER , wireframes.size() * sizeof ( GLuint )  , wireframes.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+    }
+
+    if( faces.empty() == false )
+    {
+        number_of_faces = (GLuint) faces.size();
+
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , vb_faces );
+        glBufferData ( GL_ELEMENT_ARRAY_BUFFER , faces.size() * sizeof ( GLuint )  , faces.data() , GL_STATIC_DRAW );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER , 0 );
+
+    }
+
+
+}
+
 
 
 void Surface::resetShaders()
@@ -266,22 +355,22 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     shader_surface->setUniform( "pmatrix", P );
     shader_surface->setUniform( "scale", scale );
 
-    shader_surface->setUniform( "index", (int)strat->getId() );
+    shader_surface->setUniform( "index", id );
 
 
-//    shader_surface->setUniform( "ModelMatrix" , V );
+//    shader_surface->setUniform( "ModelMatrix" , M );
 //    shader_surface->setUniform( "ViewMatrix" , V );
 //    shader_surface->setUniform( "ProjectionMatrix" , P );
 //    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
 
-    glPointSize( 4.0f );
+    glPointSize( 10.0f );
 
     glBindVertexArray( va_surface );
 
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+//        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-//        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
+        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
 
     glBindVertexArray ( 0 );
 

@@ -7,9 +7,6 @@ BoundaryItem2D::BoundaryItem2D()
 
     prepareGeometryChange();
 
-//    boundary.setRect( 0, 0, width, height );
-//    image_position = QPointF( 0, 0 );
-
 }
 
 BoundaryItem2D::~BoundaryItem2D()
@@ -24,7 +21,7 @@ void BoundaryItem2D::load()
 
     prepareGeometryChange();
 
-    boundary.setRect( 0, 0, bd->getWidth(), bd->getHeight() );
+    boundary.setRect( origin_x, origin_y, width, height );
     image_position = QPointF( 0, 0 );
 
 }
@@ -53,8 +50,8 @@ void BoundaryItem2D::paint ( QPainter *painter , const QStyleOptionGraphicsItem 
     pen_color.setWidth ( 1 );
 
     QBrush brush;
-    brush.setColor ( QColor( 55, 100, 55, 75 ) );
-    brush.setStyle ( Qt::SolidPattern );
+    brush.setColor( QColor( 55, 100, 55, 75 ) );
+    brush.setStyle( Qt::SolidPattern );
 
 
     if( background_image.isNull() == false )
@@ -97,9 +94,11 @@ QRectF BoundaryItem2D::boundingRect ( ) const
 
 void BoundaryItem2D::update( const Eigen::Affine3f& m )
 {
+
     prepareGeometryChange();
 
-    Eigen::Vector4f A( bd->getX(),  bd->getY(), 0.0f, 1.0f );
+
+    Eigen::Vector4f A( bd->getX(),                   bd->getY(),                   0.0f, 1.0f );
     Eigen::Vector4f B( bd->getX() + bd->getWidth(),  bd->getY() + bd->getHeight(), 0.0f, 1.0f );
 
     A = m*A;
@@ -110,6 +109,7 @@ void BoundaryItem2D::update( const Eigen::Affine3f& m )
 
     boundary.setRect( A.x(), A.y(), width, height );
     image_position = QPointF( 0, 0 );
+
 
 }
 

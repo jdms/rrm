@@ -32,18 +32,18 @@ std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< float
 	float dimz = maxz - minz;
 	
 	float scale = std::max( std::max( dimx, dimy ), dimz );
-	
-	dimx /= scale;
-	dimy /= scale;
-	dimz /= scale;
-	
-	maxx /= scale;
-	maxy /= scale;
-	maxz /= scale;
+
+    dimx /= scale;
+    dimy /= scale;
+    dimz /= scale;
+
+    maxx /= scale;
+    maxy /= scale;
+    maxz /= scale;
 		
-	minx /= scale;
-	miny /= scale;
-	minz /= scale;
+    minx /= scale;
+    miny /= scale;
+    minz /= scale;
 		
 	Eigen::Vector4f center = Eigen::Vector4f( ( maxx + minx )*0.5f,( maxy + miny )*0.5f,( maxz + minz )*0.5f, 0.0f  );
 	Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
@@ -93,10 +93,8 @@ std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< Eigen
 	
     float scale = std::max( std::max( dim.x(), dim.y() ), dim.z() );
 	
-	
-	dim /= scale;
-	max /= scale;
-	min /= scale;
+    max /= scale;
+    min /= scale;
 
     Eigen::Vector4f center = Eigen::Vector4f( ( max.x() + min.x() )*0.5f,( max.y() + min.y() )*0.5f,( max.z() + min.z() )*0.5f, 0.0f  );
 	Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
@@ -129,24 +127,20 @@ Eigen::Affine3f Model3DUtils::normalizePointCloud( float minx, float maxx, float
 	float dimz = maxz - minz;
 	
 	float scale = std::max( std::max( dimx, dimy ), dimz );
-	
-	dimx /= scale;
-	dimy /= scale;
-	dimz /= scale;
-	
-	maxx /= scale;
-	maxy /= scale;
-	maxz /= scale;
-		
-	minx /= scale;
-	miny /= scale;
-	minz /= scale;
-		
-	Eigen::Vector4f center = Eigen::Vector4f( ( maxx + minx )*0.5f,( maxy + miny )*0.5f,( maxz + minz )*0.5f, 0.0f  );
-	Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
-	
-	matrix.translation() = -center.head< 3 >();
-	matrix.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
+
+    maxx /= scale;
+    maxy /= scale;
+    maxz /= scale;
+
+    minx /= scale;
+    miny /= scale;
+    minz /= scale;
+
+    Eigen::Vector4f center = Eigen::Vector4f( ( maxx + minx )*0.5f,( maxy + miny )*0.5f,( maxz + minz )*0.5f, 0.0f  );
+    Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
+
+    matrix.translation() = -center.head< 3 >();
+    matrix.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
 	
 	return matrix;
 	

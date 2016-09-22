@@ -37,12 +37,35 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
         void load();
 
 
+        void setOriginX( int orig_x ){ origin_x = orig_x; }
+        void setOriginY( int orig_y ){ origin_y = orig_y; }
+
+
+        int getOriginX(){ return origin_x; }
+        int getOriginY(){ return origin_y; }
+
+
+        void setWidth( int w ){ width = w; }
+        void setHeight( int h ){ height = h; }
+
+
+        int getWidth(){ return width; }
+        int getHeight(){ return height; }
+
+
     protected:
 
         void loadBackGroud();
 
 
     protected:
+
+
+        int origin_x;
+        int origin_y;
+
+        int width;
+        int height;
 
         QRectF boundary;
         QString image_file;

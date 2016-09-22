@@ -25,7 +25,7 @@ class BoundingBox3D: public BoundaryRenderable
 	public:
 	
 
-        BoundingBox3D( float w, float h, float d = 0.5 );
+        BoundingBox3D( float min_x, float min_y, float min_z, float w, float h, float d = 0.5f );
 		
         void initData();
         void init();
@@ -71,7 +71,9 @@ class BoundingBox3D: public BoundaryRenderable
         bool is_initialized;
 
 
-		
+        float minx;
+        float miny;
+        float minz;
 		
 };
 
