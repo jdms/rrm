@@ -40,24 +40,14 @@ void BoundingBox3D::init()
 void BoundingBox3D::create()
 {
 
-    Eigen::Vector3f A( -0.5f*width, -0.5f*height,  0.5f*depth );
-    Eigen::Vector3f B(  0.5f*width, -0.5f*height,  0.5f*depth );
-    Eigen::Vector3f C(  0.5f*width,  0.5f*height,  0.5f*depth );
-    Eigen::Vector3f D( -0.5f*width,  0.5f*height,  0.5f*depth );
-    Eigen::Vector3f E( -0.5f*width, -0.5f*height, -0.5f*depth );
-    Eigen::Vector3f F(  0.5f*width, -0.5f*height, -0.5f*depth );
-    Eigen::Vector3f G(  0.5f*width,  0.5f*height, -0.5f*depth );
-    Eigen::Vector3f H( -0.5f*width,  0.5f*height, -0.5f*depth );
-
-
-//    Eigen::Vector3f A( minx, miny,  minz + depth );
-//    Eigen::Vector3f B(  minx + width, miny,  minz + depth );
-//    Eigen::Vector3f C(  minx + width,  miny + height,  minz + depth );
-//    Eigen::Vector3f D( minx,  miny + height,  minz + depth );
-//    Eigen::Vector3f E( minx, miny, minz );
-//    Eigen::Vector3f F(  minx + width, miny, minz );
-//    Eigen::Vector3f G(  minx + width,  miny + height, minz );
-//    Eigen::Vector3f H( minx,  miny + height, minz );
+    Eigen::Vector3f A( minx, miny,  minz + depth );
+    Eigen::Vector3f B(  minx + width, miny,  minz + depth );
+    Eigen::Vector3f C(  minx + width,  miny + height,  minz + depth );
+    Eigen::Vector3f D( minx,  miny + height,  minz + depth );
+    Eigen::Vector3f E( minx, miny, minz );
+    Eigen::Vector3f F(  minx + width, miny, minz );
+    Eigen::Vector3f G(  minx + width,  miny + height, minz );
+    Eigen::Vector3f H( minx,  miny + height, minz );
 
 
     std::vector< Eigen::Vector3f > wireframe_eigen;
@@ -151,16 +141,16 @@ void BoundingBox3D::resetBuffers()
 void BoundingBox3D::initBuffers()
 {
 
-    glGenVertexArrays ( 1 , &va_boundingbox );
-    glBindVertexArray ( va_boundingbox );
+    glGenVertexArrays( 1 , &va_boundingbox );
+    glBindVertexArray( va_boundingbox );
 
-    glGenBuffers ( 1 , &vb_vertices );
-    glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
-    glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-    glEnableVertexAttribArray ( slot_vertices );
-    glVertexAttribPointer ( slot_vertices , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+    glGenBuffers( 1 , &vb_vertices );
+    glBindBuffer( GL_ARRAY_BUFFER , vb_vertices );
+    glBufferData( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+    glEnableVertexAttribArray( slot_vertices );
+    glVertexAttribPointer( slot_vertices , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
-    glBindVertexArray ( 0 );
+    glBindVertexArray( 0 );
 
 }
 
@@ -216,22 +206,22 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     M.setIdentity();
 
 
-    float scale = (float)1.5*width/(float)height;
+//    float scale = (float)1.5*width/(float)height;
 
-    shader_boundingbox->bind ( );
+    shader_boundingbox->bind();
     
-    shader_boundingbox->setUniform ( "ModelMatrix" , M );
-    shader_boundingbox->setUniform ( "ViewMatrix" , V );
-    shader_boundingbox->setUniform ( "ProjectionMatrix" , P );
-    shader_boundingbox->setUniform ( "WIN_SCALE" , (float) w, (float) h );
+    shader_boundingbox->setUniform( "ModelMatrix", M );
+    shader_boundingbox->setUniform( "ViewMatrix",  V );
+    shader_boundingbox->setUniform( "ProjectionMatrix", P );
+    shader_boundingbox->setUniform( "WIN_SCALE", (float) w, (float) h );
 
-    shader_boundingbox->setUniform ( "scale" , scale );
+//    shader_boundingbox->setUniform( "scale", scale );
 
-    glBindVertexArray ( va_boundingbox );
-        glDrawArrays ( GL_LINES_ADJACENCY , 0 , number_of_lines );
-    glBindVertexArray ( 0 );
+    glBindVertexArray( va_boundingbox );
+        glDrawArrays( GL_LINES_ADJACENCY , 0 , number_of_lines );
+    glBindVertexArray( 0 );
 
-    shader_boundingbox->unbind ( );
+    shader_boundingbox->unbind();
 
 }
 
@@ -239,9 +229,15 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
 void BoundingBox3D::update()
 {
-    width = bd->getWidth();
+
+    minx = bd->getX();
+    miny = bd->getY();
+    minz = bd->getZ();
+
+
+    width  = bd->getWidth();
     height = bd->getHeight();
-    depth = bd->getDepth();
+    depth  = bd->getDepth();
 
     create();
 

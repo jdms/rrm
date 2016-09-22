@@ -31,9 +31,10 @@ void Scene::init()
 
     createVolume3D();
     createSketchingBoundary();
+    newSketch();
 
 
-    testingMatrices();
+//    testingMatrices();
 
 
     update();
@@ -82,7 +83,9 @@ void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z,
 
 void Scene::updateTransformationsMatrices()
 {
-    m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_width, qtscene_origin_y, qtscene_height, qtscene_origin_z, qtscene_depth );
+    m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
+                                                  qtscene_origin_y, qtscene_origin_y + qtscene_height,
+                                                  qtscene_origin_z, qtscene_origin_z + qtscene_depth );
     m_3dto2d = m_2dto3d.inverse();
 }
 
@@ -95,16 +98,19 @@ void Scene::testingMatrices()
     /// \brief update
     /// creating the 3d volume
     ///
+    ///
+
+    surfaces_list.clear();
 
 
-    Eigen::Vector3f A( 0.0f,          0.0f,           qtscene_depth );
-    Eigen::Vector3f B( qtscene_width, 0.0f,           qtscene_depth );
-    Eigen::Vector3f C( qtscene_width, qtscene_height, qtscene_depth );
-    Eigen::Vector3f D( 0.0f,          qtscene_height, qtscene_depth );
-    Eigen::Vector3f E( 0.0f,          0.0f,           0.0f );
-    Eigen::Vector3f F( qtscene_width, 0.0f,           0.0f );
-    Eigen::Vector3f G( qtscene_width, qtscene_height, 0.0f );
-    Eigen::Vector3f H( 0.0f         , qtscene_height, 0.0f );
+    Eigen::Vector3f A( qtscene_origin_x,                 qtscene_origin_y,                  qtscene_origin_z + qtscene_depth );
+    Eigen::Vector3f B( qtscene_origin_x + qtscene_width, qtscene_origin_y,                  qtscene_origin_z + qtscene_depth );
+    Eigen::Vector3f C( qtscene_origin_x + qtscene_width, qtscene_origin_y + qtscene_height, qtscene_origin_z + qtscene_depth );
+    Eigen::Vector3f D( qtscene_origin_x,                 qtscene_origin_y + qtscene_height, qtscene_origin_z + qtscene_depth );
+    Eigen::Vector3f E( qtscene_origin_x,                 qtscene_origin_y,                  qtscene_origin_z );
+    Eigen::Vector3f F( qtscene_origin_x + qtscene_width, qtscene_origin_y,                  qtscene_origin_z );
+    Eigen::Vector3f G( qtscene_origin_x + qtscene_width, qtscene_origin_y + qtscene_height, qtscene_origin_z );
+    Eigen::Vector3f H( qtscene_origin_x,                 qtscene_origin_y + qtscene_height, qtscene_origin_z );
 
 
 
@@ -212,10 +218,10 @@ void Scene::testingMatrices()
     ///
 
 
-    Eigen::Vector3f P1( 0.0f,          0.0f,           0.5f*qtscene_depth );
-    Eigen::Vector3f P2( qtscene_width, 0.0f,           0.5f*qtscene_depth );
-    Eigen::Vector3f P3( qtscene_width, qtscene_height, 0.5f*qtscene_depth );
-    Eigen::Vector3f P4( 0.0f,          qtscene_height, 0.5f*qtscene_depth );
+    Eigen::Vector3f P1( qtscene_origin_x,                   qtscene_origin_y,                     qtscene_origin_z + 0.5f*qtscene_depth );
+    Eigen::Vector3f P2( qtscene_origin_x + qtscene_width,   qtscene_origin_y,                     qtscene_origin_z + 0.5f*qtscene_depth );
+    Eigen::Vector3f P3( qtscene_origin_x + qtscene_width,   qtscene_origin_y + qtscene_height,    qtscene_origin_z + 0.5f*qtscene_depth );
+    Eigen::Vector3f P4( qtscene_origin_x,                   qtscene_origin_y + qtscene_height,    qtscene_origin_z + 0.5f*qtscene_depth );
 
 
     P1 = scene2Dto3D( P1 );
@@ -268,6 +274,8 @@ void Scene::testingMatrices()
     addEllipse( PI4.x(),  PI4.y(), 10, 10 );
 
 
+
+
 }
 
 
@@ -278,10 +286,9 @@ void Scene::testingMatrices()
 void Scene::createVolume3D()
 {
 
-    if( boundary3D != 0 || views().empty() == true ) return;
 
-    Eigen::Vector3f min( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z );
-    Eigen::Vector3f max( qtscene_width,    qtscene_height,   qtscene_depth );
+    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
+    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
     min = Scene::scene2Dto3D( min );
     max = Scene::scene2Dto3D( max );
@@ -295,10 +302,8 @@ void Scene::createVolume3D()
     boundary3D->create();
 
 
-    /*
+    controller->initRulesProcessor( min.x(), min.z(), min.y(), dim.x(), dim.z(), dim.z() );
 
-    controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-*/
 
 }
 
@@ -330,15 +335,18 @@ void Scene::addCrossSectionToScene()
 void Scene::createSketchingBoundary()
 {
 
+    if( controller->hasCrossSection() == false )
+        createCrossSection( 0.0f );
 
 
-//    if( controller->hasCrossSection() == false )
-//        createCrossSection( 0.0f );
+    Eigen::Vector3f origin;
+    Eigen::Vector3f dimension;
 
+    boundary3D->getMinimum(   origin.x(),    origin.y(),    origin.z() );
+    boundary3D->getDimension( dimension.x(), dimension.y(), dimension.z() );
 
-
-//    bool ok = controller->addBoundary( boundary3D->getWidth(), boundary3D->getHeight(), boundary3D->getDepth() );
-//    if( ok == false  ) return;
+    bool ok = controller->addBoundary( origin.x(), origin.y(), origin.z(), dimension.x(), dimension.y(), dimension.z() );
+    if( ok == false  ) return;
 
 
     addBoundaryToScene();
@@ -354,43 +362,18 @@ void Scene::addBoundaryToScene()
         delete sketching_boundary;
 
 
+    Boundary* b = controller->getCurrentBoundary();
+    boundary3D->setGeoData( b );
+
     sketching_boundary = new BoundaryItem2D();
-    sketching_boundary->setOriginX( qtscene_origin_x );
-    sketching_boundary->setOriginY( qtscene_origin_y );
+    sketching_boundary->setGeoData( b );
+    sketching_boundary->update( m_3dto2d );
 
-    sketching_boundary->setWidth( qtscene_width );
-    sketching_boundary->setHeight( qtscene_height );
 
-    sketching_boundary->load();
 
     addItem( sketching_boundary );
     setSceneRect( sketching_boundary->boundingRect() );
 
-
-
-
-
-    /*
-    Boundary* b = controller->getCurrentBoundary();
-
-    if( boundary != 0 )
-        delete boundary;
-
-    boundary = new BoundaryItem2D();
-    boundary->setGeoData( b );
-    boundary->update( m_3dto2d );
-
-
-    addItem( boundary );
-    setSceneRect( boundary->boundingRect() );
-
-
-    // criar boundary no 3d, e setar o dado geologico
-
-
-    boundary3D->setGeoData( b );
-    boundary3D->update();
-*/
 
 }
 
@@ -399,35 +382,35 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 {
 
 
-    /*
+    defineVolumeQtCoordinates( x, y, qtscene_origin_z, w, h, qtscene_depth );
 
-    updateSpace3D( w, h, int_depth );
+    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
+    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
+    min = Scene::scene2Dto3D( min );
+    max = Scene::scene2Dto3D( max );
 
-    Eigen::Vector3f p( x, y, 0.0f );
-    Eigen::Vector3f p1( x + w, y + h, 0.0f );
-
-
-    p  = scene2Dto3D( p );
-    p1 = scene2Dto3D( p1 );
-
-    float width  = ( p1 - p ).x();
-    float height = ( p1 - p ).y();
-    float depth = boundary3D->getDepth();
+    Eigen::Vector3f dim = max - min;
 
 
+    controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
-    controller->editBoundary( p.x(), p.y(), width, height, depth );
 
-
-    boundary->update( m_3dto2d );
-    setSceneRect( boundary->boundingRect() );
+    Boundary* b = controller->getCurrentBoundary();
+    boundary3D->setGeoData( b );
     boundary3D->update();
 
 
-//    controller->updateRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+    sketching_boundary->setGeoData( b );
+    sketching_boundary->update( m_3dto2d );
+    setSceneRect( sketching_boundary->boundingRect() );
 
-    */
+
+//    testingMatrices();
+
+//    controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+
+
 
 }
 
@@ -520,12 +503,12 @@ void Scene::updateScene()
 
     float d = controller->getCurrentCrossSection();
 
-//    unsigned int number_of_stratigraphies = stratigraphics_list.size();
-//    for( int i = 0; i < number_of_stratigraphies; ++i )
-//    {
-//        StratigraphicItem* strat = stratigraphics_list[ i ];
-//        strat->update( m_3dto2d, d );
-//    }
+    unsigned int number_of_stratigraphies = stratigraphics_list.size();
+    for( int i = 0; i < number_of_stratigraphies; ++i )
+    {
+        StratigraphicItem* strat = stratigraphics_list[ i ];
+        strat->update( m_3dto2d, d );
+    }
 
 
     emit updateContext();
@@ -620,8 +603,10 @@ Eigen::Vector3f Scene::scene2Dto3D( const Eigen::Vector3f& p )
 {
     Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
 
+
+
     p_cpy = m_2dto3d.matrix()*p_cpy;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 
 }
 

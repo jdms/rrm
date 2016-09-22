@@ -4,6 +4,7 @@
 Surface::Surface()
 {
     is_initialized = false;
+    id = 0;
 }
 
 Surface::Surface( int id_ )
@@ -137,32 +138,22 @@ void Surface::initBuffers()
 void Surface::loadBuffers()
 {
 	
-//    std::vector< float >& vertices = strat->getSurfaceVertices();
-//    std::vector< float > colors;
-//    std::vector< float > normals;
-//    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
-//    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
-
-
-    std::vector< float > vertices;
+    std::vector< float >& vertices = strat->getSurfaceVertices();
     std::vector< float > colors;
     std::vector< float > normals;
-    std::vector< unsigned int > wireframes;
-    std::vector< unsigned int > faces;
-
-    vertices.push_back( 0.2f );
-    vertices.push_back( 0.0f + id*0.1f );
-    vertices.push_back( 0.0f );
-
+    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
 
     number_of_vertices = vertices.size()/3;
 
+    for( int i = 0; i < number_of_vertices; ++i )
+    {
+        vertices[ 3*i ] += minx;
+        vertices[ 3*i + 1 ] += miny;
+        vertices[ 3*i + 2 ] += minz;
 
-//    for( unsigned int i = 0; i < number_of_vertices; ++i )
-//    {
-//        std::cout << " vertice " << i << ": " << vertices[ 3*i ] << ", " << vertices[ 3*i + 1 ]  << ", " << vertices[ 3*i + 2 ]  << std::endl;
-//    }
+    }
 
 
     glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
@@ -312,13 +303,13 @@ void Surface::resetShaders()
 void Surface::initShaders()
 {
 	
-//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
-//                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
-//                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
+    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
+                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
+                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
 
-    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
-                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
-                                                     "", "", "" ) ;
+//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
+//                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
+//                                                     "", "", "" ) ;
 
 
     shader_surface->initialize();
@@ -340,7 +331,7 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     M.setIdentity();
 	
 
-    float scale = (float)1.5*width/(float)height;
+//    float scale = (float)1.5*width/(float)height;
 
 
 //    std::cout << "Drawing Strat " << strat->getId() << std::endl;
@@ -350,27 +341,27 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     shader_surface->bind();
 
 
-    shader_surface->setUniform( "mmatrix", M );
-    shader_surface->setUniform( "vmatrix", V );
-    shader_surface->setUniform( "pmatrix", P );
-    shader_surface->setUniform( "scale", scale );
+//    shader_surface->setUniform( "mmatrix", M );
+//    shader_surface->setUniform( "vmatrix", V );
+//    shader_surface->setUniform( "pmatrix", P );
+//    shader_surface->setUniform( "scale", scale );
 
-    shader_surface->setUniform( "index", id );
+//    shader_surface->setUniform( "index", id );
 
 
-//    shader_surface->setUniform( "ModelMatrix" , M );
-//    shader_surface->setUniform( "ViewMatrix" , V );
-//    shader_surface->setUniform( "ProjectionMatrix" , P );
-//    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
+    shader_surface->setUniform( "ModelMatrix" , M );
+    shader_surface->setUniform( "ViewMatrix" , V );
+    shader_surface->setUniform( "ProjectionMatrix" , P );
+    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
 
     glPointSize( 10.0f );
 
     glBindVertexArray( va_surface );
 
-//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-//        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
+//        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
 
     glBindVertexArray ( 0 );
 

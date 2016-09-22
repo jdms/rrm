@@ -51,6 +51,21 @@ class BoundingBox3D: public BoundaryRenderable
         inline float getHeight(){ return height; }
         inline float getDepth(){ return depth;  }
 
+        inline void getMinimum( float& min_x, float& min_y, float& min_z )
+        {
+            min_x = minx;
+            min_y = miny;
+            min_z = minz;
+        }
+
+        inline void getDimension( float& w, float& h, float& d )
+        {
+            w = width;
+            h = height;
+            d = depth;
+        }
+
+
         void update();
 
     protected:

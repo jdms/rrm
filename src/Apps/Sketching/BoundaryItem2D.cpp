@@ -104,8 +104,8 @@ void BoundaryItem2D::update( const Eigen::Affine3f& m )
     A = m*A;
     B = m*B;
 
-    int width = B.x() - A.x();
-    int height = B.y() - A.y();
+    int width  = ( int )( B.x() - A.x() );
+    int height = ( int )( B.y() - A.y() );
 
     boundary.setRect( A.x(), A.y(), width, height );
     image_position = QPointF( 0, 0 );

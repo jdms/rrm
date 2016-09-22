@@ -33,7 +33,7 @@ void Controller::addCrossSection( const float& d )
 
 
 
-bool Controller::addBoundary( const float& w, const float& h, const float& d )
+bool Controller::addBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth )
 {
 
     if( crosssections_list.empty() == true ) return false;
@@ -53,7 +53,7 @@ bool Controller::addBoundary( const float& w, const float& h, const float& d )
     }
 
 
-    boundary_data->edit( 0, 0, 0, w, h, d );
+    boundary_data->edit( origin_x, origin_y, origin_z, width, height, depth );
     cross_section->setBoundary( boundary_data );
 
 
@@ -62,14 +62,15 @@ bool Controller::addBoundary( const float& w, const float& h, const float& d )
 }
 
 
-void Controller::editBoundary( const float &x, const float &y, const float &w, const float &h, const float &d )
+void Controller::editBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth )
 {
 
     CrossSection* cross_section = crosssections_list[ current_crosssection ];
     Boundary* boundary_data = cross_section->getBoundary();
 
 
-    boundary_data->edit( x, y, current_crosssection, w, h, d );
+    boundary_data->edit( origin_x, origin_y, origin_z, width, height, depth );
+    cross_section->setBoundary( boundary_data );
 
     update();
 
@@ -260,7 +261,7 @@ void Controller::update()
 
         Stratigraphy* strat = stratigraphics_list[ i ];
         rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-        rules_processor.getMesh( strat->getId(), surface_vertices, surface_faces );
+        rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
 
 
 //        Curve2D* c = strat->getCurve( current_crosssection );

@@ -33,8 +33,8 @@ class Controller: public QObject
         float getCurrentCrossSection(){ return current_crosssection; }
 
 
-        bool addBoundary( const float& w, const float& h, const float& d );
-        void editBoundary( const float& x, const float& y, const float& w, const float& h, const float& d );
+        bool addBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth );
+        void editBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth );
         Boundary* getCurrentBoundary();
 
 
