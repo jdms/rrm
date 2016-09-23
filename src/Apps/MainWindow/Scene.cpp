@@ -527,8 +527,6 @@ void Scene::updateScene()
 void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height )
 {
 
-    if( boundary3D != 0 )
-        boundary3D->draw( V, P, width, height );
 
     int number_of_surfaces = surfaces_list.size();
     for( int i = 0; i < number_of_surfaces; ++i )
@@ -537,6 +535,9 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
         s->draw( V, P, width, height );
     }
 
+
+    if( boundary3D != 0 )
+        boundary3D->draw( V, P, width, height );
 
 }
 
