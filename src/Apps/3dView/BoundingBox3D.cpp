@@ -40,78 +40,45 @@ void BoundingBox3D::init()
 void BoundingBox3D::create()
 {
 
-    Eigen::Vector3f A( minx, miny,  minz + depth );
-    Eigen::Vector3f B(  minx + width, miny,  minz + depth );
-    Eigen::Vector3f C(  minx + width,  miny + height,  minz + depth );
-    Eigen::Vector3f D( minx,  miny + height,  minz + depth );
-    Eigen::Vector3f E( minx, miny, minz );
-    Eigen::Vector3f F(  minx + width, miny, minz );
-    Eigen::Vector3f G(  minx + width,  miny + height, minz );
-    Eigen::Vector3f H( minx,  miny + height, minz );
+    Eigen::Vector3f min( minx, miny, minz );
+    Eigen::Vector3f max( minx + width, miny + height, minz + depth );
 
 
-    std::vector< Eigen::Vector3f > wireframe_eigen;
+    std::vector< float > wireframe =
+            {
+                //  Top Face
+                max.x(), max.y(), max.z(), 1.0f,
+                min.x(), max.y(), max.z(), 1.0f,
+                max.x(), max.y(), min.z(), 1.0f,
+                min.x(), max.y(), min.z(), 1.0f,
+                // Bottom Face
+                max.x(), min.y(), max.z(), 1.0f,
+                min.x(), min.y(), max.z(), 1.0f,
+                max.x(), min.y(), min.z(), 1.0f,
+                min.x(), min.y(), min.z(), 1.0f,
+                // Front Face
+                max.x(), max.y(), max.z(), 1.0f,
+                min.x(), max.y(), max.z(), 1.0f,
+                max.x(), min.y(), max.z(), 1.0f,
+                min.x(), min.y(), max.z(), 1.0f,
+                // Back Face
+                max.x(), max.y(), min.z(), 1.0f,
+                min.x(), max.y(), min.z(), 1.0f,
+                max.x(), min.y(), min.z(), 1.0f,
+                min.x(), min.y(), min.z(), 1.0f,
+                // Left Face
+                max.x(), max.y(), min.z(), 1.0f,
+                max.x(), max.y(), max.z(), 1.0f,
+                max.x(), min.y(), min.z(), 1.0f,
+                max.x(), min.y(), max.z(), 1.0f,
+                // Right Face
+                min.x(), max.y(), max.z(), 1.0f,
+                min.x(), max.y(), min.z(), 1.0f,
+                min.x(), min.y(), max.z(), 1.0f,
+                min.x(), min.y(), min.z(), 1.0f
+            };
 
 
-
-    // TOP
-
-    wireframe_eigen.push_back( C );
-    wireframe_eigen.push_back( D );
-    wireframe_eigen.push_back( G );
-    wireframe_eigen.push_back( H );
-
-
-    // BOTTOM
-
-    wireframe_eigen.push_back( B );
-    wireframe_eigen.push_back( A );
-    wireframe_eigen.push_back( F );
-    wireframe_eigen.push_back( E );
-
-
-    // FRONT
-
-    wireframe_eigen.push_back( C );
-    wireframe_eigen.push_back( D );
-    wireframe_eigen.push_back( B );
-    wireframe_eigen.push_back( A );
-
-
-    // BACK
-
-    wireframe_eigen.push_back( G );
-    wireframe_eigen.push_back( F );
-    wireframe_eigen.push_back( H );
-    wireframe_eigen.push_back( E );
-
-
-    // RIGHT
-
-    wireframe_eigen.push_back( G );
-    wireframe_eigen.push_back( C );
-    wireframe_eigen.push_back( F );
-    wireframe_eigen.push_back( B );
-
-
-    // LEFT
-
-    wireframe_eigen.push_back( D );
-    wireframe_eigen.push_back( H );
-    wireframe_eigen.push_back( A );
-    wireframe_eigen.push_back( E );
-
-    int number_of_vertices = (int) wireframe_eigen.size();
-
-
-
-    std::vector< float > wireframe;
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-    {
-        wireframe.push_back( wireframe_eigen[ it ].x() );
-        wireframe.push_back( wireframe_eigen[ it ].y() );
-        wireframe.push_back( wireframe_eigen[ it ].z() );
-    }
 
     loadBuffers( wireframe );
 
@@ -148,7 +115,7 @@ void BoundingBox3D::initBuffers()
     glBindBuffer( GL_ARRAY_BUFFER , vb_vertices );
     glBufferData( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
     glEnableVertexAttribArray( slot_vertices );
-    glVertexAttribPointer( slot_vertices , 3 , GL_FLOAT , GL_FALSE , 0 , 0 );
+    glVertexAttribPointer( slot_vertices , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
     glBindVertexArray( 0 );
 
@@ -184,8 +151,8 @@ void BoundingBox3D::resetShaders()
 void BoundingBox3D::initShaders()
 {
 
-    shader_boundingbox = new Tucano::Shader( "BoundingBox3D", ( shader_directory + "Shaders/BlankScreenCube.vert" ).toStdString(), ( shader_directory + "Shaders/BlankScreenCube.frag").toStdString(),
-                                             ( shader_directory + "Shaders/BlankScreenCube.geom" ).toStdString(), "", "" );
+    shader_boundingbox = new Tucano::Shader( "BoundingBox3D", ( shader_directory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString(), ( shader_directory + "Shaders/CubeSinglePassWireframe.frag").toStdString(),
+                                             ( shader_directory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString(), "", "" );
     shader_boundingbox->initialize();
 
 }
@@ -214,8 +181,8 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     shader_boundingbox->setUniform( "ViewMatrix",  V );
     shader_boundingbox->setUniform( "ProjectionMatrix", P );
     shader_boundingbox->setUniform( "WIN_SCALE", (float) w, (float) h );
-
-    shader_boundingbox->setUniform( "scale", scale );
+    shader_boundingbox->setUniform ( "color_plane" , 0.5f, 0.5f, 0.5f, 0.2f );
+//    shader_boundingbox->setUniform( "scale", scale );
 
     glBindVertexArray( va_boundingbox );
         glDrawArrays( GL_LINES_ADJACENCY , 0 , number_of_lines );

@@ -294,13 +294,13 @@ void Surface::resetShaders()
 void Surface::initShaders()
 {
 	
-//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
-//                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
-//                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
+    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
+                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
+                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
 
-    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
-                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
-                                                     "", "", "" ) ;
+//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
+//                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
+//                                                     "", "", "" ) ;
 
 
     shader_surface->initialize();
@@ -332,18 +332,19 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     shader_surface->bind();
 
 
-    shader_surface->setUniform( "mmatrix", M );
-    shader_surface->setUniform( "vmatrix", V );
-    shader_surface->setUniform( "pmatrix", P );
-    shader_surface->setUniform( "scale", scale );
+//    shader_surface->setUniform( "mmatrix", M );
+//    shader_surface->setUniform( "vmatrix", V );
+//    shader_surface->setUniform( "pmatrix", P );
+//    shader_surface->setUniform( "scale", scale );
 
-//    shader_surface->setUniform( "index", id );
+////    shader_surface->setUniform( "index", id );
 
 
-//    shader_surface->setUniform( "ModelMatrix" , M );
-//    shader_surface->setUniform( "ViewMatrix" , V );
-//    shader_surface->setUniform( "ProjectionMatrix" , P );
-//    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
+    shader_surface->setUniform( "ModelMatrix" , M );
+    shader_surface->setUniform( "ViewMatrix" , V );
+    shader_surface->setUniform( "ProjectionMatrix" , P );
+    shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
+//    shader_surface->setUniform( "scale", scale );
 
     glPointSize( 10.0f );
 
