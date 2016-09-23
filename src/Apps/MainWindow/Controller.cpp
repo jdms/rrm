@@ -265,9 +265,24 @@ void Controller::update()
         rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
 
 
-//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+
+
+        Curve2D* c = strat->getCurve( current_crosssection ) ;
+
+        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+        strat->updateCurveWireframe( curve_edges );
         strat->updateSurface( surface_vertices, surface_faces );
 
+
+        /* testing wih the original curve
+
+        Curve2D* c = strat->getCurve( current_crosssection ) ;
+
+        strat->updateCurve( current_crosssection, *c );
+        strat->updateCurveWireframe( curve_edges );
+        strat->updateSurface( surface_vertices, surface_faces );
+
+        */
 
     }
 

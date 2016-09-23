@@ -188,26 +188,28 @@ namespace RRM
 
         PlanarSurface::Ptr sptr( container_[index] ); 
 
-        vlist.resize( sptr->getNumX() );
+        vlist.resize( 2 * sptr->getNumX() );
         elist.clear(); 
 
         double height, previous_height; 
         bool status, previous_status; 
 
         sptr->getHeight(0, 0, height);
-        vlist[0] = height; 
+        vlist[0] = origin_.x;
+        vlist[1] = height;
 
         for ( size_t i = 1; i < sptr->getNumX(); ++i )
         {
             status          = sptr->getHeight(    i, 0, height);
             previous_status = sptr->getHeight(i - 1, 0, previous_height);
 
-            vlist[i] = height; 
+            vlist[2*i + 0] = origin_.x + (float)(i) * lenght_.x / ( (float)(sptr->getNumX() - 1) );
+            vlist[2*i + 1] = height;
 
             if ( status || previous_status )
             {
-                elist.push_back(i); 
-                elist.push_back(i + 1); 
+                elist.push_back(i - 1);
+                elist.push_back(i);
             }
         }
 

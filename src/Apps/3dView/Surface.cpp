@@ -141,7 +141,7 @@ void Surface::loadBuffers()
     std::vector< float >& vertices = strat->getSurfaceVertices();
     std::vector< float > colors;
     std::vector< float > normals;
-    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int > wireframes;// = strat->getSurfaceEdges();
     std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
 
@@ -212,7 +212,7 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
 
     std::vector< float > colors;
     std::vector< float > normals;
-    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int > wireframes;  // = strat->getSurfaceEdges();
     std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
 

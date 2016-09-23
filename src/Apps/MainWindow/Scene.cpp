@@ -33,13 +33,7 @@ void Scene::init()
     createSketchingBoundary();
     newSketch();
 
-
-//    testingMatrices();
-
-
     update();
-
-
 
 }
 
@@ -432,6 +426,17 @@ void Scene::addCurve()
 
 
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
+
+
+    unsigned int number_of_points = c.size();
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Point2D p = c.at( i );
+        std::cout << "pontos qt bfore" << i << " : " << p.x() << ", " << p.y() << "\n" << std::flush;
+    }
+
+
     c = Scene::scene2DtoPlanin( c );
 
     bool add_ok = controller->addCurve( c );

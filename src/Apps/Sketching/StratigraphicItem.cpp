@@ -17,7 +17,8 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 	
 	painter->setPen( pen_curve );
 	painter->setBrush( Qt::NoBrush );
-    painter->drawPolyline( points );
+//    painter->drawPolyline( points );
+    painter->drawPath( curve );
 		
 }
 
@@ -41,7 +42,8 @@ void StratigraphicItem::create( const QPointF& p )
 	prepareGeometryChange();
 	clear();
 	
-	points.push_back( p );	
+    points.push_back( p );
+    curve.moveTo( p );
 }
 
 
@@ -49,6 +51,7 @@ void StratigraphicItem::add( const QPointF& p )
 {
 	prepareGeometryChange();
 	points.push_back( p );
+    curve.lineTo( p );
 }
 
 
@@ -84,15 +87,17 @@ void StratigraphicItem::clear()
 	prepareGeometryChange();
 
 	points.clear();
+    curve = QPainterPath();
 	
 }
 
 
 void StratigraphicItem::copySegment( const QPolygonF& s )
 {
-	clear();
+    clear();
 	
 	points = QPolygonF( s );
+    curve.addPolygon( points );
 
 }
 
@@ -100,7 +105,9 @@ void StratigraphicItem::copySegment( const QPolygonF& s )
 void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
 {
 
+
     Curve2D* c = strat->getCurve( d );
+
     points.clear();
 
 
@@ -111,12 +118,93 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
         Point2D p = c->at( i );
         Eigen::Vector4f p4d( p.x(), p.y(), d, 1.0f );
 
+        std::cout << "pontos 3d bfore" << i << ": " << p4d.x() << ", " << p4d.y() << "\n" << std::flush;
+
         p4d = m*p4d;
 
+        std::cout << "pontos qt after" << i << " : " << p4d.x() << ", " << p4d.y() << "\n" << std::flush;
         points.push_back( QPointF( p4d.x(), p4d.y() ) );
 
     }
 
+    curve = QPainterPath();
+
+    std::vector< unsigned int >& edges = strat->getCurveEdges();
+
+    unsigned int id0 =0;
+    unsigned int id1 =0;
+
+    unsigned int nedges = edges.size()/2;
+
+    for( int i = 0; i < nedges; ++i )
+    {
+        id0 = edges[ 2*i ];
+        id1 = edges[ 2*i + 1 ];
+
+
+        curve.moveTo( points[ id0 ] );
+        curve.lineTo( points[ id1 ] );
+
+    }
+
+
+
+//    for( int i = 1; i < nedges; ++i )
+//    {
+//        unsigned int id = edges[ i ];
+
+//        if(  id != previous_id )
+//            curve.lineTo( points[ id ] );
+//        else
+//            curve.moveTo( points[ id ] );
+
+//        previous_id = id;
+
+//    }
+
+
+    /* testing subpath with the original curve
+     *
+     *     Curve2D* c = strat->getCurve( d );
+
+    points.clear();
+
+
+    unsigned int number_of_points = c->size();
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Point2D p = c->at( i );
+        Eigen::Vector4f p4d( p.x(), p.y(), d, 1.0f );
+
+        std::cout << "pontos 3d bfore" << i << ": " << p4d.x() << ", " << p4d.y() << "\n" << std::flush;
+
+        p4d = m*p4d;
+
+        std::cout << "pontos qt after" << i << " : " << p4d.x() << ", " << p4d.y() << "\n" << std::flush;
+        points.push_back( QPointF( p4d.x(), p4d.y() ) );
+
+    }
+
+    curve = QPainterPath();
+
+
+    unsigned int previous_id = 0;
+    curve.moveTo( points[ previous_id ] );
+
+
+    for( int i = 1; i < number_of_points; ++i )
+    {
+        if( i != 6 )
+            curve.lineTo( points[ i ] );
+        else{
+            i += 7;
+            curve.moveTo( points[ i] );
+        }
+    }
+
+     *
+     * */
 
 
 }

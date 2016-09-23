@@ -45,17 +45,18 @@ class Stratigraphy
             surface_faces.assign( faces.begin(), faces.end() );
 
         }
-        inline void updateSurfaceWireframe( const std::vector< unsigned int >& edges )
+        inline void updateCurveWireframe( const std::vector< unsigned int >& edges )
         {
-            surface_edges.clear();
-            surface_edges.assign( edges.begin(), edges.end() );
+            curve_edges.clear();
+            curve_edges.assign( edges.begin(), edges.end() );
         }
 
 
+        inline std::vector< unsigned int >& getCurveEdges(){ return curve_edges; }
 
         inline std::vector< float >& getSurfaceVertices(){ return surface_vertices; }
         inline std::vector< unsigned int >& getSurfaceFaces(){ return surface_faces; }
-        inline std::vector< unsigned int >& getSurfaceEdges(){ return surface_edges; }
+
 
 
 	protected:
@@ -67,9 +68,11 @@ class Stratigraphy
 
         std::map< float, Curve2D > curves_list;
 
+        std::vector< unsigned int > curve_edges;
+
         std::vector< float > surface_vertices;
         std::vector< unsigned int > surface_faces;
-        std::vector< unsigned int > surface_edges;
+
 
 
 };
