@@ -302,7 +302,7 @@ void Scene::createVolume3D()
     boundary3D->create();
 
 
-    controller->initRulesProcessor( min.x(), min.z(), min.y(), dim.x(), dim.z(), dim.z() );
+    controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.z(), dim.z() );
 
 
 }
