@@ -164,5 +164,24 @@ Curve2D Model3DUtils::convertToCurve2D( const std::vector< float >& v )
     return curve;
 }
 
-	
-	
+		
+ Eigen::Vector3f Model3DUtils::normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
+{
+
+    float dimx = M.x() - m.x();
+    float dimy = M.y() - m.y();
+    float dimz = M.z() - m.z();
+
+
+    float scale = std::max( std::max( dimx, dimy ), dimz );
+
+
+    Eigen::Vector3f center = Eigen::Vector3f( ( M.x() + m.x() )*0.5f,( M.y() + m.y() )*0.5f,( M.z() + m.z() )*0.5f  );
+    Eigen::Vector3f cpy( p.x(), p.y(), p.z() );
+
+    cpy -= center;
+    cpy /= scale;
+
+
+    return cpy;
+}

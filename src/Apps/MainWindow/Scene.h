@@ -121,6 +121,16 @@ class Scene: public QGraphicsScene
 
 
 
+
+        Eigen::Vector3f scene2DtoPlanin( const Point2D &p );
+        Eigen::Vector3f scene2DtoPlanin( const Eigen::Vector3f& p );
+        Curve2D scene2DtoPlanin( const Curve2D& c );
+        Point2D scenePlaninto2D( const Eigen::Vector3f& p );
+        Curve2D scenePlaninto2D( const Curve2D &c );
+
+
+
+
         void mousePressEvent( QGraphicsSceneMouseEvent* event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
@@ -149,6 +159,8 @@ class Scene: public QGraphicsScene
 
         Eigen::Affine3f m_2dto3d;
         Eigen::Affine3f m_3dto2d;
+        Eigen::Affine3f m_2dtoplanin;
+        Eigen::Affine3f m_planinto2d;
 
 
         int qtscene_origin_x;

@@ -35,7 +35,7 @@ class Surface: public StratigraphyRenderable
 		void initShaders();
 		void reloadShaders();
 
-        void update();
+        void update( const Eigen::Vector3f& c );
 		
         void initData();
         void init();

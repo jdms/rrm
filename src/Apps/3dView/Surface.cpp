@@ -212,8 +212,8 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
 
     std::vector< float > colors;
     std::vector< float > normals;
-    std::vector< unsigned int > wireframes;
-    std::vector< unsigned int > faces;
+    std::vector< unsigned int >& wireframes = strat->getSurfaceEdges();
+    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
 
     number_of_vertices = vertices.size()/3;
@@ -366,7 +366,25 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 }
 
 
-void Surface::update()
+void Surface::update( const Eigen::Vector3f& c )
 {
-    loadBuffers();
+
+    std::vector< float > vertices_planin = strat->getSurfaceVertices();
+    std::vector< float > vertices;
+
+    int npoints = (int)vertices_planin.size()/3;
+
+    for( int i = 0; i < npoints; ++i )
+    {
+        Eigen::Vector3f p( vertices_planin[ 3*i ], vertices_planin[ 3*i + 1 ], vertices_planin[ 3*i + 2 ] );
+        p -= c;
+
+        vertices.push_back( p.x() );
+        vertices.push_back( p.y() );
+        vertices.push_back( p.z() );
+
+    }
+
+    loadBuffers( vertices );
+
 }

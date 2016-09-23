@@ -21,6 +21,7 @@ class Model3DUtils
     static Curve2D convertToCurve2D( const std::vector< float >& v );
 
 
+    static Eigen::Vector3f normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m );
 
 
 

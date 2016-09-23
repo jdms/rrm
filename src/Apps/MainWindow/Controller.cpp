@@ -260,45 +260,9 @@ void Controller::update()
 
 
         Stratigraphy* strat = stratigraphics_list[ i ];
+
         rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
         rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
-
-
-//        Curve2D* c = strat->getCurve( current_crosssection );
-
-//        int npoints = c->size();
-//        for( int k = 0; k < npoints; ++k )
-//        {
-//            surface_vertices.push_back( c->at(k).x() );
-//            surface_vertices.push_back( c->at(k).y() );
-//            surface_vertices.push_back( 0.0f );
-//        }
-
-//        surface_vertices.push_back( -0.2f );
-//        surface_vertices.push_back( -0.2 + i*0.05f );
-//        surface_vertices.push_back( 0.2f );
-
-//        surface_vertices.push_back( 0.2f );
-//        surface_vertices.push_back( -0.2 + i*0.05f );
-//        surface_vertices.push_back( 0.2f );
-
-//        surface_vertices.push_back( 0.2f );
-//        surface_vertices.push_back( -0.2 + i*0.05f );
-//        surface_vertices.push_back( -0.2f  );
-
-
-//        surface_vertices.push_back( -0.2f );
-//        surface_vertices.push_back( -0.2 + i*0.05f );
-//        surface_vertices.push_back( -0.2f );
-
-
-//        surface_faces.push_back( 0 );
-//        surface_faces.push_back( 1 );
-//        surface_faces.push_back( 2 );
-
-//        surface_faces.push_back( 2 );
-//        surface_faces.push_back( 3 );
-//        surface_faces.push_back( 0 );
 
 
 //        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
