@@ -8,7 +8,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include "model_new/Boundary.hpp"
+#include "Model/Boundary.hpp"
 
 
 using namespace std;

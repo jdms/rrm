@@ -14,6 +14,21 @@ BoundaryItem2D::~BoundaryItem2D()
 }
 
 
+
+void BoundaryItem2D::clear()
+{
+    origin_x = 0;
+    origin_y = 0;
+    width = 0;
+    height = 0;
+
+    boundary.setCoords( 0, 0, 0, 0 );
+    image_file.clear();
+    background_image = QImage();
+    image_position = QPointF( 0.0f, 0.0f );
+}
+
+
 void BoundaryItem2D::load()
 {
 
@@ -40,7 +55,7 @@ void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, c
 }
 
 
-void BoundaryItem2D::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
+void BoundaryItem2D::paint( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
 
     painter->setRenderHint ( QPainter::Antialiasing );
@@ -86,7 +101,7 @@ void BoundaryItem2D::loadBackGroud()
 }
 
 
-QRectF BoundaryItem2D::boundingRect ( ) const
+QRectF BoundaryItem2D::boundingRect() const
 {
     return boundary;
 }

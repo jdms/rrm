@@ -64,6 +64,7 @@ class Scene: public QGraphicsScene
 
 
         void updateColor( const QColor& color );
+        void clearScene();
         void updateScene();
 
 

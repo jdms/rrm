@@ -128,7 +128,7 @@ void MainWindow::createSketchingActions()
     connect ( sketching_window, SIGNAL( updateStratigraphicRule( const std::string& ) ) , controller, SLOT( setCurrentStratigraphicRule( const std::string& ) ) );
     connect ( sketching_window, SIGNAL( undo() ), controller , SLOT( undo() ) );
     connect ( sketching_window, SIGNAL( redo() ), controller , SLOT( redo() ) );
-
+    connect ( sketching_window, SIGNAL( clear() ), scene , SLOT( clearScene() ) );
 
     connect ( sketching_window, SIGNAL( addStratigraphy() ), scene , SLOT( addCurve() ) );
     connect ( sketching_window, SIGNAL( undoLastSketch() ), scene , SLOT( undoLastSketch() ) );

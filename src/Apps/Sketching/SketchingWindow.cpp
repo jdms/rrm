@@ -125,6 +125,8 @@ void SketchingWindow::createConnections()
     connect( ac_removebelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below" ); } );
     connect( ac_sketch, &QAction::triggered, [=](){ emit updateStratigraphicRule( "SKETCHING" ); lb_statusbar_status->setText( "Sketch" ); } );
 
+
+    connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );
     connect( ac_undo, &QAction::triggered, [=](){ emit undo(); } );
     connect( ac_redo, &QAction::triggered, [=](){ emit redo(); } );
 

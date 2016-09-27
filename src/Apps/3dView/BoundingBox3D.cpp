@@ -193,6 +193,28 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 }
 
 
+void BoundingBox3D::clear()
+{
+    width = 0.0f;
+    height = 0.0f;
+    depth = 0.0f;
+
+    resetBuffers();
+    resetShaders();
+
+    va_boundingbox = 0;
+    vb_vertices = 0;
+    number_of_lines = 0;
+
+    is_initialized = false;
+
+
+    minx = 0.0f;
+    miny = 0.0f;
+    minz = 0.0f;
+
+}
+
 
 void BoundingBox3D::update()
 {

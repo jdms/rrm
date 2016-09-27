@@ -4,7 +4,7 @@
 #include <QGraphicsPathItem>
 #include <QPolygonF>
 
-#include "model_new/StratigraphyRenderable.hpp"
+#include "Model/StratigraphyRenderable.hpp"
 #include "Sketching/InputSketch.h"
 
 #include "Sketching/PolyQtUtils.hpp"

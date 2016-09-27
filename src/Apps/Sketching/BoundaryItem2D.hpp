@@ -8,7 +8,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include "model_new/BoundaryRenderable.h"
+#include "Model/BoundaryRenderable.h"
 
 
 #include "Eigen/Dense"
@@ -33,6 +33,7 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
 
+        void clear();
         void update( const Eigen::Affine3f &m );
         void load();
 

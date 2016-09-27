@@ -15,7 +15,7 @@
 #include "Tucano/Shader.hpp"
 
 
-#include "model_new/BoundaryRenderable.h"
+#include "Model/BoundaryRenderable.h"
 
 
 
@@ -66,7 +66,9 @@ class BoundingBox3D: public BoundaryRenderable
         }
 
 
+        void clear();
         void update();
+
 
     protected:
 

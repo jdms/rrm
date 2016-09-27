@@ -406,8 +406,6 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     setSceneRect( sketching_boundary->boundingRect() );
 
 
-//    testingMatrices();
-
 //    controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
 
@@ -429,14 +427,6 @@ void Scene::addCurve()
 
 
     unsigned int number_of_points = c.size();
-
-    for( int i = 0; i < number_of_points; ++i )
-    {
-        Point2D p = c.at( i );
-        std::cout << "pontos qt bfore" << i << " : " << p.x() << ", " << p.y() << "\n" << std::flush;
-    }
-
-
     c = Scene::scene2DtoPlanin( c );
 
     bool add_ok = controller->addCurve( c );
@@ -503,7 +493,80 @@ void Scene::undoLastSketch()
 
 
 
+void Scene::clearScene()
+{
 
+
+    current_mode = InteractionMode::OVERSKETCHING;
+
+
+    current_color  = QColor( 255, 75, 75 );
+
+
+    qtscene_origin_x = 0;
+    qtscene_origin_y = 0;
+    qtscene_origin_z  = 0;
+    qtscene_width  = 0;
+    qtscene_height = 0;
+    qtscene_depth = 0;
+
+
+
+    m_2dto3d = Eigen::Affine3f::Identity();;
+    m_3dto2d = Eigen::Affine3f::Identity();;
+    m_2dtoplanin = Eigen::Affine3f::Identity();;
+    m_planinto2d = Eigen::Affine3f::Identity();;
+
+
+    boundary_anchor = QPointF( 0.0f, 0.0f );
+
+
+    stratigraphics_list.clear();
+    crosssections3d_list.clear();
+    surfaces_list.clear();
+
+    if( controller != 0 )
+        controller->clear();
+
+    if( temp_sketch = 0 )
+    {
+        temp_sketch->clear();
+        delete temp_sketch;
+    }
+
+    if( sketch != 0 )
+    {
+        sketch->clear();
+        delete sketch;
+    }
+
+    if( sketching_boundary != 0 )
+    {
+        sketching_boundary->clear();
+        delete sketching_boundary;
+    }
+
+    if( boundary3D != 0 )
+    {
+        boundary3D->clear();
+        delete boundary3D;
+    }
+
+
+
+    clear();
+
+    boundary3D = 0;
+    sketching_boundary = 0;
+    sketch = 0;
+    temp_sketch = 0;
+
+
+    init();
+
+    emit updatedScene();
+
+}
 
 
 void Scene::updateScene()
@@ -671,9 +734,6 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 
 
 
-//===
-
-
 Eigen::Vector3f Scene::scene2DtoPlanin( const Point2D &p )
 {
     Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
@@ -745,16 +805,6 @@ Curve2D Scene::scenePlaninto2D( const Curve2D &c )
     return c2d;
 
 }
-
-
-
-//===
-
-
-
-
-
-
 
 
 

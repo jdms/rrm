@@ -1,6 +1,6 @@
 #include "Controller.hpp"
 
-#include "model_new/Boundary.hpp"
+#include "Model/Boundary.hpp"
 
 #include "Core/Geometry/PolygonalCurve2D.hpp"
 
@@ -160,9 +160,6 @@ Stratigraphy* Controller::getCurrentStratigraphy()
 bool Controller::interpolateStratigraphy()
 {
 
-    std::cout << "-- Interpolate Stratigraphy" << std::endl;
-
-
     if( stratigraphics_list.empty() == true ) return false;
 
 
@@ -191,9 +188,6 @@ bool Controller::interpolateStratigraphy()
 
 void Controller::setCurrentStratigraphicRule( const std::string& rule )
 {
-
-    std::cout << "-- Setting rule: " << rule.c_str() << std::endl;
-
 
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
@@ -241,11 +235,24 @@ void Controller::redo()
 
 
 
+
+void Controller::clear()
+{
+    current_reconstruction = ReconstructionMode::EXTRUSION;
+
+    current_crosssection = 0.0f;
+    current_stratigraphy = 0;
+
+    stratigraphics_list.clear();
+    crosssections_list.clear();
+
+}
+
+
+
 void Controller::update()
 {
 
-
-    std::cout << "-- Updating scene after applying rule" << std::endl;
 
     int number_of_stratigrapies = (int)stratigraphics_list.size();
 
@@ -273,16 +280,6 @@ void Controller::update()
         strat->updateCurveWireframe( curve_edges );
         strat->updateSurface( surface_vertices, surface_faces );
 
-
-        /* testing wih the original curve
-
-        Curve2D* c = strat->getCurve( current_crosssection ) ;
-
-        strat->updateCurve( current_crosssection, *c );
-        strat->updateCurveWireframe( curve_edges );
-        strat->updateSurface( surface_vertices, surface_faces );
-
-        */
 
     }
 

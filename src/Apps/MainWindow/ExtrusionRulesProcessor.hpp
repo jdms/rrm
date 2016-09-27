@@ -9,7 +9,7 @@
 //#include "Core/Geometry/Surface/Planin/planar_surface.hpp"
 //#include "Core/Geometry/Surface/Planin/core.hpp"
 
-#include "Model/Geology/GeologicRules.hpp"
+#include "Model/GeologicRules.hpp"
 
 #include "Core/Geometry/Surface/planinlib/srules.hpp"
 #include "Core/Geometry/Surface/planinlib/planar_surface.hpp"

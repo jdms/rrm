@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Sketching/BoundaryItem2D.hpp"
-#include "model_new/CrossSection.hpp"
+#include "Model/CrossSection.hpp"
 #include "Sketching/StratigraphicItem.hpp"
 
 #include "MainWindow/ExtrusionRulesProcessor.hpp"
@@ -60,6 +60,7 @@ class Controller: public QObject
         void redo();
 
 
+        void clear();
         void update();
 
 

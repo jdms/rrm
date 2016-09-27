@@ -325,19 +325,7 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     float scale = (float)1.5*width/(float)height;
 
 
-//    std::cout << "Drawing Strat " << strat->getId() << std::endl;
-
-
-
     shader_surface->bind();
-
-
-//    shader_surface->setUniform( "mmatrix", M );
-//    shader_surface->setUniform( "vmatrix", V );
-//    shader_surface->setUniform( "pmatrix", P );
-//    shader_surface->setUniform( "scale", scale );
-
-////    shader_surface->setUniform( "index", id );
 
 
     shader_surface->setUniform( "ModelMatrix" , M );
@@ -352,8 +340,6 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
         glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-
-//        glDrawArrays ( GL_POINTS , 0 , number_of_vertices );
 
     glBindVertexArray ( 0 );
 
