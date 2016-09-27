@@ -110,8 +110,6 @@ class Scene: public QGraphicsScene
         void newSketch();
 
         void updateTransformationsMatrices();
-        void testingMatrices();
-
 
 
         Eigen::Vector3f scene2Dto3D( const Point2D& p );

@@ -182,7 +182,6 @@ void BoundingBox3D::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     shader_boundingbox->setUniform( "ProjectionMatrix", P );
     shader_boundingbox->setUniform( "WIN_SCALE", (float) w, (float) h );
     shader_boundingbox->setUniform ( "color_plane" , 0.5f, 0.5f, 0.5f, 0.2f );
-//    shader_boundingbox->setUniform( "scale", scale );
 
     glBindVertexArray( va_boundingbox );
         glDrawArrays( GL_LINES_ADJACENCY , 0 , number_of_lines );

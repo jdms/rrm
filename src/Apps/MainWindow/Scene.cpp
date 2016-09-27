@@ -69,11 +69,8 @@ void Scene::updateTransformationsMatrices()
 
     m_3dto2d = m_2dto3d.inverse();
 
-    Eigen::Vector4f origin = Eigen::Vector4f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z, 1.0f );
-    origin = m_2dto3d.matrix()*origin;
-
-
     float scale = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth );
+
 
     m_planinto2d = Eigen::Affine3f::Identity();
     m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
@@ -85,198 +82,6 @@ void Scene::updateTransformationsMatrices()
 }
 
 
-void Scene::testingMatrices()
-{
-
-
-    ///
-    /// \brief update
-    /// creating the 3d volume
-    ///
-    ///
-
-    surfaces_list.clear();
-
-
-    Eigen::Vector3f A( qtscene_origin_x,                 qtscene_origin_y,                  qtscene_origin_z + qtscene_depth );
-    Eigen::Vector3f B( qtscene_origin_x + qtscene_width, qtscene_origin_y,                  qtscene_origin_z + qtscene_depth );
-    Eigen::Vector3f C( qtscene_origin_x + qtscene_width, qtscene_origin_y + qtscene_height, qtscene_origin_z + qtscene_depth );
-    Eigen::Vector3f D( qtscene_origin_x,                 qtscene_origin_y + qtscene_height, qtscene_origin_z + qtscene_depth );
-    Eigen::Vector3f E( qtscene_origin_x,                 qtscene_origin_y,                  qtscene_origin_z );
-    Eigen::Vector3f F( qtscene_origin_x + qtscene_width, qtscene_origin_y,                  qtscene_origin_z );
-    Eigen::Vector3f G( qtscene_origin_x + qtscene_width, qtscene_origin_y + qtscene_height, qtscene_origin_z );
-    Eigen::Vector3f H( qtscene_origin_x,                 qtscene_origin_y + qtscene_height, qtscene_origin_z );
-
-
-
-    A = scene2Dto3D( A );
-    B = scene2Dto3D( B );
-    C = scene2Dto3D( C );
-    D = scene2Dto3D( D );
-    E = scene2Dto3D( E );
-    F = scene2Dto3D( F );
-    G = scene2Dto3D( G );
-    H = scene2Dto3D( H );
-
-
-    std::vector < float > vA;
-    std::vector < float > vB;
-    std::vector < float > vC;
-    std::vector < float > vD;
-    std::vector < float > vE;
-    std::vector < float > vF;
-    std::vector < float > vG;
-    std::vector < float > vH;
-
-    vA.push_back( A.x() );
-    vA.push_back( A.y() );
-    vA.push_back( A.z() );
-
-    vB.push_back( B.x() );
-    vB.push_back( B.y() );
-    vB.push_back( B.z() );
-
-    vC.push_back( C.x() );
-    vC.push_back( C.y() );
-    vC.push_back( C.z() );
-
-    vD.push_back( D.x() );
-    vD.push_back( D.y() );
-    vD.push_back( D.z() );
-
-    vE.push_back( E.x() );
-    vE.push_back( E.y() );
-    vE.push_back( E.z() );
-
-    vF.push_back( F.x() );
-    vF.push_back( F.y() );
-    vF.push_back( F.z() );
-
-    vG.push_back( G.x() );
-    vG.push_back( G.y() );
-    vG.push_back( G.z() );
-
-    vH.push_back( H.x() );
-    vH.push_back( H.y() );
-    vH.push_back( H.z() );
-
-
-
-    Surface* sA = new Surface( 0 );
-    sA->init();
-    sA->loadBuffers( vA );
-
-    Surface* sB = new Surface( 1 );
-    sB->init();
-    sB->loadBuffers( vB );
-
-    Surface* sC = new Surface( 2 );
-    sC->init();
-    sC->loadBuffers( vC );
-
-    Surface* sD = new Surface( 3 );
-    sD->init();
-    sD->loadBuffers( vD );
-
-    Surface* sE = new Surface( 4 );
-    sE->init();
-    sE->loadBuffers( vE );
-
-
-    Surface* sF = new Surface( 5 );
-    sF->init();
-    sF->loadBuffers( vF );
-
-    Surface* sG = new Surface( 6 );
-    sG->init();
-    sG->loadBuffers( vG );
-
-    Surface* sH = new Surface( 7 );
-    sH->init();
-    sH->loadBuffers( vH );
-
-
-
-    surfaces_list.push_back( sA );
-    surfaces_list.push_back( sB );
-    surfaces_list.push_back( sC );
-    surfaces_list.push_back( sD );
-    surfaces_list.push_back( sE );
-    surfaces_list.push_back( sF );
-    surfaces_list.push_back( sG );
-    surfaces_list.push_back( sH );
-
-
-    ///
-    /// \brief update
-    /// creating a cross section
-    ///
-
-
-    Eigen::Vector3f P1( qtscene_origin_x,                   qtscene_origin_y,                     qtscene_origin_z + 0.5f*qtscene_depth );
-    Eigen::Vector3f P2( qtscene_origin_x + qtscene_width,   qtscene_origin_y,                     qtscene_origin_z + 0.5f*qtscene_depth );
-    Eigen::Vector3f P3( qtscene_origin_x + qtscene_width,   qtscene_origin_y + qtscene_height,    qtscene_origin_z + 0.5f*qtscene_depth );
-    Eigen::Vector3f P4( qtscene_origin_x,                   qtscene_origin_y + qtscene_height,    qtscene_origin_z + 0.5f*qtscene_depth );
-
-
-    P1 = scene2Dto3D( P1 );
-    P2 = scene2Dto3D( P2 );
-    P3 = scene2Dto3D( P3 );
-    P4 = scene2Dto3D( P4 );
-
-
-
-    std::vector < float > vCrossSection;
-
-    vCrossSection.push_back( P1.x() );
-    vCrossSection.push_back( P1.y() );
-    vCrossSection.push_back( P1.z() );
-    vCrossSection.push_back( P2.x() );
-    vCrossSection.push_back( P2.y() );
-    vCrossSection.push_back( P2.z() );
-    vCrossSection.push_back( P3.x() );
-    vCrossSection.push_back( P3.y() );
-    vCrossSection.push_back( P3.z() );
-    vCrossSection.push_back( P4.x() );
-    vCrossSection.push_back( P4.y() );
-    vCrossSection.push_back( P4.z() );
-
-
-    Surface* sCrossSection = new Surface( 8 );
-    sCrossSection->init();
-    sCrossSection->loadBuffers( vCrossSection );
-
-
-
-    surfaces_list.push_back( sCrossSection );
-
-    ///
-    /// \brief update
-    /// mapping this cross section in qt
-    ///
-
-
-    Point2D PI1 = scene3Dto2D( P1 );
-    Point2D PI2 = scene3Dto2D( P2 );
-    Point2D PI3 = scene3Dto2D( P3 );
-    Point2D PI4 = scene3Dto2D( P4 );
-
-
-
-    addEllipse( PI1.x(),  PI1.y(), 10, 10 );
-    addEllipse( PI2.x(),  PI2.y(), 10, 10 );
-    addEllipse( PI3.x(),  PI3.y(), 10, 10 );
-    addEllipse( PI4.x(),  PI4.y(), 10, 10 );
-
-
-
-
-}
-
-
-
-
-
 
 void Scene::createVolume3D()
 {
@@ -285,13 +90,13 @@ void Scene::createVolume3D()
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
-    Eigen::Vector3f min1 = Scene::scene2Dto3D( min );
-    Eigen::Vector3f max1 = Scene::scene2Dto3D( max );
+    min = Scene::scene2Dto3D( min );
+    max = Scene::scene2Dto3D( max );
 
-    Eigen::Vector3f dim1 = max1 - min1;
+    Eigen::Vector3f dim = max - min;
 
 
-    boundary3D = new BoundingBox3D( min1.x(), min1.y(), min1.z(), dim1.x(), dim1.y(), dim1.z() );
+    boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
     boundary3D->setCurrentDirectory( shader_directory.toStdString() );
     boundary3D->init();
     boundary3D->create();
@@ -299,8 +104,6 @@ void Scene::createVolume3D()
 
 
     float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-
 
     controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
@@ -382,7 +185,12 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 {
 
 
-    defineVolumeQtCoordinates( x, y, qtscene_origin_z, w, h, qtscene_depth );
+    int origin_x = qtscene_origin_x - x;
+    int origin_y = qtscene_origin_y - y;
+
+
+    defineVolumeQtCoordinates( origin_x, origin_y, qtscene_origin_z, w, h, qtscene_depth );
+
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
@@ -406,7 +214,10 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     setSceneRect( sketching_boundary->boundingRect() );
 
 
-//    controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+
+    controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+
 
 
 
