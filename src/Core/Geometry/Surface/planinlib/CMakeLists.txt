@@ -41,38 +41,38 @@ mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 ###############################################
 # Allow doxygen to build documentation.  
 ###############################################
-option(BUILD_DOCS "" ON) 
+option(BUILD_DOCS "" OFF)
 
 
 ###############################################
 # Build a simple test program.  
 ###############################################
-option(BUILD_MAIN "" ON)
+option(BUILD_MAIN "" OFF)
 
 
 ###############################################
 # Tools.  
 ###############################################
-option(BUILD_UTILITY_UPDATE_MESH "" ON)
-option(BUILD_UTILITY_BUILD_MESH "" ON)
-option(BUILD_UTILITY_REMOVE_ABOVE "" ON)
-option(BUILD_UTILITY_REMOVE_BELOW "" ON)
+option(BUILD_UTILITY_UPDATE_MESH "" OFF)
+option(BUILD_UTILITY_BUILD_MESH "" OFF)
+option(BUILD_UTILITY_REMOVE_ABOVE "" OFF)
+option(BUILD_UTILITY_REMOVE_BELOW "" OFF)
 
 
 ###############################################
 # Examples and tests. 
 ###############################################
-option(BUILD_DAISY_EXAMPLE_2A "" ON)
-option(BUILD_DAISY_EXAMPLE_2B "" ON)
+option(BUILD_DAISY_EXAMPLE_2A "" OFF)
+option(BUILD_DAISY_EXAMPLE_2B "" OFF)
 
-option(BUILD_DAISY_EXAMPLE_3A "" ON)
-option(BUILD_DAISY_EXAMPLE_3B "" ON)
+option(BUILD_DAISY_EXAMPLE_3A "" OFF)
+option(BUILD_DAISY_EXAMPLE_3B "" OFF)
 
-option(BUILD_DAISY_EXAMPLE_4A "" ON)
-option(BUILD_DAISY_EXAMPLE_4B "" ON)
+option(BUILD_DAISY_EXAMPLE_4A "" OFF)
+option(BUILD_DAISY_EXAMPLE_4B "" OFF)
 
-option(BUILD_DAISY_EXAMPLE_5A "" ON)
-option(BUILD_DAISY_EXAMPLE_5B "" ON)
+option(BUILD_DAISY_EXAMPLE_5A "" OFF)
+option(BUILD_DAISY_EXAMPLE_5B "" OFF)
 
 
 ###############################################
