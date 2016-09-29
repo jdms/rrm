@@ -52,6 +52,8 @@ public:
 
     }
 
+    inline void clear(){ intersections.clear(); }
+
 
 
 

@@ -76,6 +76,8 @@ class Scene: public QGraphicsScene
         void initGLContext();
         void updateGLContext();
 
+        void removeStratigraphyFromScene( unsigned int id );
+
 
 
 
@@ -170,9 +172,10 @@ class Scene: public QGraphicsScene
         int qtscene_depth;
 
 
-        std::vector< StratigraphicItem* > stratigraphics_list;
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
-        std::vector< Surface* > surfaces_list;
+
+        std::map< unsigned int, StratigraphicItem* > stratigraphics_list;
+        std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
 	

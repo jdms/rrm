@@ -268,17 +268,31 @@ void Controller::update()
 
         Stratigraphy* strat = stratigraphics_list[ i ];
 
-        rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-        rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
+
+        bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+        bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
+
+
+        if( getcurve_ok == true )
+        {
+            strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+            strat->updateCurveWireframe( curve_edges );
+        }
+
+        if( getmesh_ok == true )
+        {
+            strat->updateSurface( surface_vertices, surface_faces );
+        }
 
 
 
+        if( ( getcurve_ok == false ) || ( getmesh_ok  == false) )
+        {
 
-        Curve2D* c = strat->getCurve( current_crosssection ) ;
-
-        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
-        strat->updateCurveWireframe( curve_edges );
-        strat->updateSurface( surface_vertices, surface_faces );
+            strat->clear();
+//            unsigned int id = strat->getId();
+//            emit removeStratigraphy( id );
+        }
 
 
     }
