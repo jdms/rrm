@@ -23,7 +23,7 @@
 #define __CAMERA__
 
 #include "Misc.hpp"
-#include <Eigen/include/eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <ctgmath> 
 
 namespace Tucano

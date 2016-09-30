@@ -30,7 +30,7 @@
 // including Eigen's headers in the "CMakeLists.txt" file.  
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#include <Eigen/Dense> //"eigen3/Eigen/Dense"
+#include <Eigen/Dense>
 #pragma GCC diagnostic pop 
 
 /* #include "prettyprint.hpp" */ //debug 
