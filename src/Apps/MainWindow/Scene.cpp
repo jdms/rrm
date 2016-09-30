@@ -265,14 +265,27 @@ void Scene::addStratigraphyToScene()
     strat3D->setGeoData( strat );
     strat3D->setCurrentDirectory( shader_directory.toStdString() );
 
-    stratigraphics_list.push_back( sketch );
-    surfaces_list.push_back( strat3D );
+
+    unsigned int id = strat->getId();
+
+    stratigraphics_list[ id ] = sketch;
+    surfaces_list[ id ] = strat3D;
+
 
     emit initContext();
 
 }
 
 
+
+void Scene::removeStratigraphyFromScene( unsigned int id )
+{
+
+    stratigraphics_list.erase( id );
+    surfaces_list.erase( id );
+//    emit updatedScene();
+
+}
 
 
 

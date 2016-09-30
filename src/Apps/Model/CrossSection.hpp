@@ -50,6 +50,11 @@ class CrossSection
         }
 
 
+        inline void clear()
+        {
+            curves.clear();
+            stratigraphies.clear();
+        }
 
 
     protected:

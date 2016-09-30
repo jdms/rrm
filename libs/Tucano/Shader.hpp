@@ -27,7 +27,7 @@
 
 #include <fstream>
 #include <vector>
-#include <Eigen/Dense>
+#include <Eigen/include/eigen3/Eigen/Dense>
 
 
 

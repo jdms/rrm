@@ -1,19 +1,18 @@
 project(RRM)
 
+###############################################
+# Main source -- Apps Directory
+###############################################
+
 include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-
-## Show all include directories
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-  message(STATUS "dir='${dir}'")
-endforeach()
-
-
-## Grab MainWindow Files
-
+    
+###############################################
+# Main source -- MainWindow SubDirectory
+###############################################
+  
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/Scene.h
                         MainWindow/Controller.hpp
@@ -44,7 +43,10 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 
 
 
-## Grab Sketching Files
+###############################################
+# Main source -- Sketching SubDirectory
+###############################################
+
 set( SKETCHING_HEADERS Sketching/StratigraphicItem.hpp
                        Sketching/InputSketch.h
                        Sketching/PolyQtUtils.hpp
@@ -66,7 +68,10 @@ set( SKETCHING_SOURCES  Sketching/StratigraphicItem.cpp
                         Sketching/SketchingCanvas.cpp )
 
 
-## Grab 3DView Files
+###############################################
+# Main source -- 3dView SubDirectory
+###############################################
+
 set( 3DVIEW_HEADERS 3dView/BoundingBox3D.h
                        3dView/CrossPlane.h
                        3dView/View3DCanvas.hpp
@@ -91,9 +96,10 @@ set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
 
 
 
+###############################################
+# Main source -- Model SubDirectory
+###############################################
 
-
-## Grab 3DView Files
 set( MODEL_HEADERS Model/Boundary.hpp
                    Model/BoundaryRenderable.h
                    Model/CrossSection.hpp
@@ -102,83 +108,79 @@ set( MODEL_HEADERS Model/Boundary.hpp
                    Model/Stratigraphy.hpp )
 
 
+				   
 
 
-set( MODEL_SOURCES  )
-
-
-
+###############################################
+# Wrapping Qt Elements
+###############################################
 
 ## Q_OBJECT files
 set( MOC_HEADERS ${MAINWINDOW_MOC_HEADERS} ${SKETCHING_MOC_HEADERS} ${3DVIEW_MOC_HEADERS} )
 
-
 ## Qt Designer Ui files
 set( UI_SOURCES ${MAINWINDOW_UI_SOURCES} )
-
 
 ## Resources
 set( RCC_SOURCES Resources/images.qrc )
 
 
-
-QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS})
-QT5_WRAP_UI (UI_HEADERS ${UI_SOURCES})
-QT5_ADD_RESOURCES(RCC_HEADERS ${RCC_SOURCES})
-
+QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
+QT5_WRAP_UI( UI_HEADERS ${UI_SOURCES} )
+QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 
 
-IF(WIN32) # Check if we are on Windows
-
-    if(MSVC) # Check if we are using the Visual Studio compiler
-
-        add_definitions(/arch:SSE2)
-
-        message(STATUS "- MSVC: Enabled SSE2 support")
+				   
+###############################################
+# ADD TO EXECUTABLE AND LINK
+###############################################
 
 
-        add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
-                                       ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
-                                       ${3DVIEW_SOURCES} ${3DVIEW_HEADERS}
-                                       ${MODEL_SOURCES} ${MODEL_HEADERS}
-                                       ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
+add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
+							   ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
+                               ${3DVIEW_SOURCES} ${3DVIEW_HEADERS}
+                               ${MODEL_SOURCES} ${MODEL_HEADERS}
+                               ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
 
 
-
-        target_link_libraries(${PROJECT_NAME} Qt5::WinMain Qt5::Gui Qt5::Core Qt5::Help Qt5::OpenGL Qt5::Widgets Qt5::Svg planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY} )
-
-
-
-    elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
-        message (FATAL_ERROR "GCC are not support on Windows !")
-
-    else() # Nor MSVC or GCC (MinGW)
-        message(FATAL_ERROR "You are using an unsupported Windows compiler! (Not MSVC or GCC)")
-
-    endif()
-
-
-ELSEIF(UNIX)
-
-    # Nothing special required for Linux
-    message(STATUS "Build on Linux")
-
-        add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
-                                       ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
-                                       ${3DVIEW_SOURCES} ${3DVIEW_HEADERS}
-                                       ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
-
-
-        target_link_libraries(${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg planin RRMGeometry ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
-
-
-ELSE() # Not Windows or Unix
-  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-
-
-ENDIF()
+target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets 
+                                       Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ${GLEW_LIBRARY}
+                                        planin RRMGeometry )
 
 
 
 
+######################################################
+# CUSTOM COMMANDS: COPYING AUX FILES TO EXECUTABLE DIR
+######################################################
+
+
+add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/files/shaders ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders )
+
+
+add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/files/manual ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/manual )
+
+
+add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/files/inputs ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/inputs )
+
+add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/models )
+
+
+
+
+
+if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
+
+    add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+else()
+
+    message( SEND_ERROR "Couldn't find dlls folder, please copy your own dlls to executable directory" )
+
+endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 

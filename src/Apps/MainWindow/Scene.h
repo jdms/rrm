@@ -23,8 +23,7 @@
 
 #include "3dView/Model3DUtils.hpp"
 
-//#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
-#include "Core/Geometry/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
 class Scene: public QGraphicsScene
@@ -75,6 +74,8 @@ class Scene: public QGraphicsScene
         void undoLastSketch();
         void initGLContext();
         void updateGLContext();
+
+        void removeStratigraphyFromScene( unsigned int id );
 
 
 
@@ -170,9 +171,10 @@ class Scene: public QGraphicsScene
         int qtscene_depth;
 
 
-        std::vector< StratigraphicItem* > stratigraphics_list;
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
-        std::vector< Surface* > surfaces_list;
+
+        std::map< unsigned int, StratigraphicItem* > stratigraphics_list;
+        std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
 	

@@ -9,7 +9,7 @@
 #include "Tucano/Shader.hpp"
 
 
-#include "Core/Geometry/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 class Model3DUtils
 {

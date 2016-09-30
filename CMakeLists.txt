@@ -1,49 +1,161 @@
-cmake_minimum_required ( VERSION 3.0 )
+cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
 
-project (RRM)
-
-MESSAGE(STATUS "Platform : " ${CMAKE_SYSTEM})
-
-# where cmake will search for FINDME.cmake 
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/Files/CMake)
-
-SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib/ )
-SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/build/lib/ )
-SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/build/lib/ )
-
-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin/ )
-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/build/bin/ )
-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/build/bin/ )
-
-set(CMAKE_BUILD_TYPE Debug)
-# From FreeCAD CMakeLists.txt 
-OPTION(BUILD_FULL_SUITE "Build RapidReservoir Suite" ON)
+project( RRM )
 
 
-# @see http://www.cmake.org/Wiki/CMake/Tutorials/Qt
-IF(WIN32) # Check if we are on Windows
-    if(MSVC) # Check if we are using the Visual Studio compiler
-            elseif(CMAKE_COMPILER_IS_GNUCXX)  # MinGW on Windows
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc /FS" CACHE STRING "" FORCE)
-        message (FATAL_ERROR "GCC are not support on Windows !")
-    else() # Nor MSVC or GCC (MinGW)
-        message(FATAL_ERROR "You are using an unsupported Windows compiler! (Not MSVC or GCC)")
+#####################################################################
+# Options 
+#####################################################################
+
+set( CMAKE_BUILD_TYPE DEBUG )
+OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
+
+
+###############################################
+# Compiler flags (we support Clang (3.7+), 
+# Gcc (4.8+) and VS2013 (revision 5+)). 
+###############################################
+
+IF( WIN32 ) 
+    
+    if( MSVC )
+        elseif( CMAKE_COMPILER_IS_GNUCXX )  # MinGW on Windows
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc " CACHE STRING "" )
+	else() # Nor MSVC or GCC (MinGW)
+        message( FATAL_ERROR "You are using an unsupported Windows compiler! (Not MSVC or GCC)" )
     endif()
-ELSEIF(UNIX)
-    # Nothing special required for Linux
-    message(STATUS "Build on Linux")
-    #set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O2 -fopenmp")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0 -fopenmp" CACHE STRING "" FORCE)
+	
+ELSEIF( UNIX )    
+ 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g3 -O0 -fopenmp" CACHE STRING "" )
 
-ELSE() # Not Windows or Unix
+ELSE() 
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
 ENDIF()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc /FS" CACHE STRING "" FORCE)
 
-#@see http://stackoverflow.com/questions/23878590/turn-off-eigen-alignment-in-the-pcl-build
-# 32/64 bits
-add_definitions(-DEIGEN_DONT_ALIGN)
 
-## - Examples using and Qt
-add_subdirectory(src)
+###############################################
+# Output CMake 
+###############################################
+
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake )
+
+
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+
+
+################################################
+## External libraries
+################################################
+
+
+
+#TUCANO AND PLANIN LIBRARIES
+
+
+
+find_package( OpenGL REQUIRED )
+if( OpenGL_FOUND )
+    include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
+endif( OpenGL_FOUND )
+
+
+find_package( EIGEN3 REQUIRED )
+if( EIGEN3_FOUND )
+    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+    add_definitions( -DEIGEN_DONT_ALIGN )
+endif( EIGEN3_FOUND )
+
+find_package( GLEW REQUIRED )
+if( GLEW_FOUND )
+    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+endif( GLEW_FOUND )
+
+
+find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+if( Qt5COMPONENTS_FOUND )
+    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+endif( Qt5COMPONENTS_FOUND )
+
+
+
+
+
+include_directories( ${CMAKE_SOURCE_DIR}/libs )
+include_directories( "./" )
+
+add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
+
+
+###############################################
+# Main source
+###############################################
+
+add_subdirectory( src )
+
+
+
+
+
+
+
+################################################
+## Testing: Trying to set the libraries directories
+##
+
+#OPTION( OWN_LIBRARIES "Use predefined libraies directories" ON )
+
+#if( OWN_LIBRARIES )
+
+
+#    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/include FORCE )
+#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32/glew32.lib FORCE )
+#    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+
+
+#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen/include/eigen3 FORCE )
+#    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+
+
+#    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" FORCE )
+#    include_directories( SYSTEM ${Qt5_DIR} )
+#    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+
+
+
+#else()
+
+
+#    find_package( EIGEN3 REQUIRED )
+#    if( EIGEN3_FOUND )
+#        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+#        add_definitions( -DEIGEN_DONT_ALIGN )
+#    endif( EIGEN3_FOUND )
+
+#    find_package( GLEW REQUIRED )
+#    if( GLEW_FOUND )
+#        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+#    endif( GLEW_FOUND )
+
+
+#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+#    if( Qt5COMPONENTS_FOUND )
+#        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+#    endif( Qt5COMPONENTS_FOUND )
+
+
+#endif( OWN_LIBRARIES )
+
+################################################

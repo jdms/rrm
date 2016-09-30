@@ -5,16 +5,15 @@
 #include <vector>
 #include <map>
 
-//#include "Core/Geometry/Surface/Planin/srules.hpp"
-//#include "Core/Geometry/Surface/Planin/planar_surface.hpp"
-//#include "Core/Geometry/Surface/Planin/core.hpp"
 
 #include "Model/GeologicRules.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
-#include "Core/Geometry/Surface/planinlib/srules.hpp"
-#include "Core/Geometry/Surface/planinlib/planar_surface.hpp"
-#include "Core/Geometry/PolygonalCurve2D.hpp"
-#include "Core/Geometry/Surface/planinlib/core.hpp"
+#include "./libs/PlanInLib/srules.hpp"
+#include "./libs/PlanInLib/planar_surface.hpp"
+#include "./libs/PlanInLib/core.hpp"
+
+
 
 
 //TODO: create a base virtual class BaseRulesProcessor

@@ -7,8 +7,7 @@
 #include <QtGlobal>
 
 
-//#include "Core/Geometry/PolygonalCurve/CurveN.hpp"
-#include "Core/Geometry/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
 class Stratigraphy
@@ -57,6 +56,17 @@ class Stratigraphy
         inline std::vector< float >& getSurfaceVertices(){ return surface_vertices; }
         inline std::vector< unsigned int >& getSurfaceFaces(){ return surface_faces; }
 
+        inline void clear()
+        {
+            crosssections_list.clear();
+
+            curves_list.clear();
+            curve_edges.clear();
+
+            surface_vertices.clear();
+            surface_faces.clear();
+        }
+
 
 
 	protected:
@@ -67,7 +77,6 @@ class Stratigraphy
         std::vector< float > crosssections_list;
 
         std::map< float, Curve2D > curves_list;
-
         std::vector< unsigned int > curve_edges;
 
         std::vector< float > surface_vertices;

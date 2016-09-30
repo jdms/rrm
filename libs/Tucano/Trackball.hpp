@@ -23,7 +23,7 @@
 #ifndef __TRACKBALL__
 #define __TRACKBALL__
 
-#include <Eigen/Dense>
+#include <Eigen/include/eigen3/Eigen/Dense>
 #include <cmath>
 
 #include "Camera.hpp"

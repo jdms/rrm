@@ -1,0 +1,21 @@
+number of regions of different permeability or porosity
+1
+permeability m^2 (1mD=10^-15m^2) and porosity and viscosity (1cp = 0.001pa*s) values; region node coordinates
+200 0.2 1 500 50 20
+Tobal number of wells
+2
+well number, corrected pressure, u v
+0 500 0 0
+1 1 1 1 
+Tobal number of TOF boundaries
+1
+TOF sign forward (1) or backward (-1) tof
+1
+tofboundary number, number of well
+0 0
+Total number of tracer boundary
+0
+Tracer sign
+0
+tracerboundary number, type, number of well
+0

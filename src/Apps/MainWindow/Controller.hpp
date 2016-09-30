@@ -70,6 +70,7 @@ class Controller: public QObject
         void updateScene();
         void enableUndo( bool option );
         void enableRedo( bool option );
+        void removeStratigraphy( unsigned int id );
 		
 
     protected:

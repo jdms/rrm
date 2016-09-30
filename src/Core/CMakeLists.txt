@@ -1,14 +1,14 @@
-message(STATUS "Core Lbirary ")
+project(RRM)
 
-include_directories (
+###############################################
+# Main source -- Core Directory
+###############################################
+
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_subdirectory(Base)
-add_subdirectory(Geometry)
-
-add_subdirectory(Geometry/Surface/planinlib)
-
-
-
+  )
+  
+#add_subdirectory( Geology )
+add_subdirectory( Geometry )
+add_subdirectory( Base )

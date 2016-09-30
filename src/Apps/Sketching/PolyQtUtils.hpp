@@ -4,7 +4,7 @@
 
 #include <QPolygonF>
 
-#include "Core/Geometry/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 /// \brief collection of methods to use QT polyline library facilities
 class PolyQtUtils

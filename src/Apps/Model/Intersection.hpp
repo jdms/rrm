@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include "Core/Geometry/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
 class Intersection
@@ -51,6 +51,8 @@ public:
         }
 
     }
+
+    inline void clear(){ intersections.clear(); }
 
 
 
