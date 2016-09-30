@@ -34,30 +34,14 @@
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
-# In repository we don't need to have:
-# Compiled object files
-*.o
 
 # Generated MOC, resource and UI files
 moc_*.cpp
 qrc_*.cpp
 ui_*.h
 
-# .log files (usually created by QtTest - thanks to VestniK)
-*.log
-
-# Built windows .exe and linux binaries
-# NOTE: PROJECT is a your project's name, analog of PROJECT.exe in Linux
-*.exe
-*.dll
-PROJECT
-
 # Windows-specific files
-Thumbs.db
 desktop.ini
-# Mac-specific things (thanks to Michael Aaron Safyan)
-.DS_Store
 
 # Editors temporary files 
 *~
