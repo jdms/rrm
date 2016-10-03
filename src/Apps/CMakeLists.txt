@@ -180,7 +180,7 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
 else()
 
-    message( SEND_ERROR "Couldn't find dlls folder, please copy your own dlls to executable directory" )
+    message( "Couldn't find dlls folder, please copy your own dlls to executable directory" )
 
 endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
