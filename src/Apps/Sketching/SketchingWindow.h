@@ -87,6 +87,11 @@ class SketchingWindow : public QMainWindow
         QAction *ac_removeabove;
         QAction *ac_removebelow;
         QAction *ac_sketch;
+        QAction *ac_removeaboveintersection;
+        QAction *ac_removebelowintersection;
+        QAction *ac_sketchabove;
+        QAction *ac_sketchbelow;
+        QAction *ac_sketchbetween;
 
         QToolBar *tlb_interaction;
 
