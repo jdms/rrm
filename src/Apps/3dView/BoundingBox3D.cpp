@@ -151,8 +151,8 @@ void BoundingBox3D::resetShaders()
 void BoundingBox3D::initShaders()
 {
 
-    shader_boundingbox = new Tucano::Shader( "BoundingBox3D", ( shader_directory + "Shaders/CubeSinglePassWireframe.vert" ).toStdString(), ( shader_directory + "Shaders/CubeSinglePassWireframe.frag").toStdString(),
-                                             ( shader_directory + "Shaders/CubeSinglePassWireframe.geom" ).toStdString(), "", "" );
+    shader_boundingbox = new Tucano::Shader( "BoundingBox3D", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ).toStdString(), ( shader_directory + "shaders/CubeSinglePassWireframe.frag").toStdString(),
+                                             ( shader_directory + "shaders/CubeSinglePassWireframe.geom" ).toStdString(), "", "" );
     shader_boundingbox->initialize();
 
 }

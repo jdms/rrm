@@ -66,8 +66,8 @@ void GradientBackgroundShader::resetShaders()
 void GradientBackgroundShader::initShaders()
 {
 
-    shader_background = new Tucano::Shader( "Background", ( shader_directory + "Shaders/DummyQuad.vert" ).toStdString(), ( shader_directory + "Shaders/DummyQuad.frag").toStdString(),
-                                            ( shader_directory + "Shaders/DummyQuad.geom" ).toStdString(), "", "" );
+    shader_background = new Tucano::Shader( "Background", ( shader_directory + "shaders/DummyQuad.vert" ).toStdString(), ( shader_directory + "shaders/DummyQuad.frag").toStdString(),
+                                            ( shader_directory + "shaders/DummyQuad.geom" ).toStdString(), "", "" );
 
 
     shader_background->initialize ( );

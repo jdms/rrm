@@ -71,8 +71,8 @@ void CrossPlane::resetShaders()
 void CrossPlane::initShaders()
 {
 	
-    shader_plane = new Tucano::Shader( "CrossPlane", ( shader_directory + "Shaders/BlankScreenCube.vert" ).toStdString(), ( shader_directory + "Shaders/BlankScreenCube.frag").toStdString(),
-                                                     ( shader_directory + "Shaders/BlankScreenCube.geom" ).toStdString(), "", "" );
+    shader_plane = new Tucano::Shader( "CrossPlane", ( shader_directory + "shaders/BlankScreenCube.vert" ).toStdString(), ( shader_directory + "shaders/BlankScreenCube.frag").toStdString(),
+                                                     ( shader_directory + "shaders/BlankScreenCube.geom" ).toStdString(), "", "" );
     shader_plane->initialize();
 	
 }

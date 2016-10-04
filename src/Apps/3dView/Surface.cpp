@@ -294,12 +294,12 @@ void Surface::resetShaders()
 void Surface::initShaders()
 {
 	
-    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/Seismic.vert" ).toStdString(),
-                                                    ( shader_directory + "Shaders/Seismic.frag" ).toStdString(),
-                                                    ( shader_directory + "Shaders/Seismic.geom" ).toStdString(), "", "" ) ;
+    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "shaders/Seismic.vert" ).toStdString(),
+                                                    ( shader_directory + "shaders/Seismic.frag" ).toStdString(),
+                                                    ( shader_directory + "shaders/Seismic.geom" ).toStdString(), "", "" ) ;
 
-//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "Shaders/vertex_mesh_shader.vert" ).toStdString(),
-//                                                    ( shader_directory + "Shaders/fragment_mesh_shader.frag" ).toStdString(),
+//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "shaders/vertex_mesh_shader.vert" ).toStdString(),
+//                                                    ( shader_directory + "shaders/fragment_mesh_shader.frag" ).toStdString(),
 //                                                     "", "", "" ) ;
 
 

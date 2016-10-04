@@ -38,7 +38,7 @@ ENDIF()
 # Output CMake 
 ###############################################
 
-set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake )
+set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
@@ -52,27 +52,56 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 ################################################
 
 
+include_directories( ${CMAKE_SOURCE_DIR}/libs )
+include_directories( "./" )
 
-#TUCANO AND PLANIN LIBRARIES
 
+OPTION( OWN_LIBRARIES "Use predefined libraies directories" ON )
+
+if( OWN_LIBRARIES )
+
+    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
+    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/win32/glew32.lib )
+    find_package( GLEW REQUIRED )
+    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+
+
+    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+    find_package( EIGEN3 REQUIRED )
+    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+    add_definitions( -DEIGEN_DONT_ALIGN )
+
+
+#    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
+#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+#    include_directories( SYSTEM ${Qt5_DIR} )
+#    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+
+    
+else()
+
+    find_package( EIGEN3 REQUIRED )
+    if( EIGEN3_FOUND )
+        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+        add_definitions( -DEIGEN_DONT_ALIGN )
+    endif( EIGEN3_FOUND )
+
+    find_package( GLEW REQUIRED )
+    if( GLEW_FOUND )
+        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+    endif( GLEW_FOUND )
+
+
+endif( OWN_LIBRARIES )
 
 
 find_package( OpenGL REQUIRED )
 if( OpenGL_FOUND )
     include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 endif( OpenGL_FOUND )
-
-
-find_package( EIGEN3 REQUIRED )
-if( EIGEN3_FOUND )
-    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-    add_definitions( -DEIGEN_DONT_ALIGN )
-endif( EIGEN3_FOUND )
-
-find_package( GLEW REQUIRED )
-if( GLEW_FOUND )
-    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-endif( GLEW_FOUND )
 
 
 find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
@@ -84,12 +113,6 @@ if( Qt5COMPONENTS_FOUND )
 endif( Qt5COMPONENTS_FOUND )
 
 
-
-
-
-include_directories( ${CMAKE_SOURCE_DIR}/libs )
-include_directories( "./" )
-
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
@@ -99,63 +122,3 @@ add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
 
 add_subdirectory( src )
 
-
-
-
-
-
-
-################################################
-## Testing: Trying to set the libraries directories
-##
-
-#OPTION( OWN_LIBRARIES "Use predefined libraies directories" ON )
-
-#if( OWN_LIBRARIES )
-
-
-#    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/include FORCE )
-#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/glew-1.13.0/lib/Release/Win32/glew32.lib FORCE )
-#    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-
-
-#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen/include/eigen3 FORCE )
-#    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-
-
-#    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" FORCE )
-#    include_directories( SYSTEM ${Qt5_DIR} )
-#    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-
-
-
-#else()
-
-
-#    find_package( EIGEN3 REQUIRED )
-#    if( EIGEN3_FOUND )
-#        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-#        add_definitions( -DEIGEN_DONT_ALIGN )
-#    endif( EIGEN3_FOUND )
-
-#    find_package( GLEW REQUIRED )
-#    if( GLEW_FOUND )
-#        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-#    endif( GLEW_FOUND )
-
-
-#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#    if( Qt5COMPONENTS_FOUND )
-#        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-#    endif( Qt5COMPONENTS_FOUND )
-
-
-#endif( OWN_LIBRARIES )
-
-################################################

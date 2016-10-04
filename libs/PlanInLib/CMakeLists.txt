@@ -111,10 +111,10 @@ endif(BUILD_DOCS)
 ###############################################
 
 # Eigen is mainly used as a wrapper for Lapack. 
-find_package(Eigen3 REQUIRED) 
-if (Eigen3_FOUND) 
-    include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
-endif(Eigen3_FOUND) 
+find_package( EIGEN3 REQUIRED)
+if (EIGEN3_FOUND)
+    include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
+endif(EIGEN3_FOUND)
 
 
 ###############################################
