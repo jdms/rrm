@@ -53,9 +53,23 @@ include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
 
-OPTION( OWN_LIBRARIES "Use predefined libraies directories" OFF )
+OPTION( OWN_LIBRARIES "Use predefined libraies directories" ON )
 
-if( OWN_LIBRARIES )
+if( OWN_LIBRARIES AND WIN32 )
+
+    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
+    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+    include_directories( SYSTEM ${Qt5_DIR} )
+    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+
+
+    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
+    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/win32/glew32.lib )
+    find_package( GLEW REQUIRED )
+    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
 
     set( Eigen3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
@@ -64,27 +78,15 @@ if( OWN_LIBRARIES )
     add_definitions( -DEIGEN_DONT_ALIGN )
 
 
-    if( WIN32 )
 
-        set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-        set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/win32/glew32.lib )
-        find_package( GLEW REQUIRED )
-        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-
-        set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
-        find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-        include_directories( SYSTEM ${Qt5_DIR} )
-        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-
-    endif( WIN32 )
+elseif( OWN_LIBRARIES AND UNIX )
 
 
+    set( Eigen3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+    find_package( Eigen3 REQUIRED )
+    include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
+    add_definitions( -DEIGEN_DONT_ALIGN )
 
-    
-else()
 
     find_package( Eigen3 REQUIRED )
     if( Eigen3_FOUND )
@@ -98,7 +100,44 @@ else()
     endif( GLEW_FOUND )
 
 
-endif( OWN_LIBRARIES )
+    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+    if( Qt5COMPONENTS_FOUND )
+        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+    endif( Qt5COMPONENTS_FOUND )
+
+
+
+
+else( OWN_LIBRARIES AND WIN32 )
+
+
+    find_package( Eigen3 REQUIRED )
+    if( Eigen3_FOUND )
+        include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
+        add_definitions( -DEIGEN_DONT_ALIGN )
+    endif( Eigen3_FOUND )
+
+    find_package( GLEW REQUIRED )
+    if( GLEW_FOUND )
+        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+    endif( GLEW_FOUND )
+
+
+    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+    if( Qt5COMPONENTS_FOUND )
+        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+    endif( Qt5COMPONENTS_FOUND )
+
+
+endif( OWN_LIBRARIES AND WIN32 )
+
+
 
 
 
@@ -107,13 +146,7 @@ if( OpenGL_FOUND )
     include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 endif( OpenGL_FOUND )
 
-find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-if( Qt5COMPONENTS_FOUND )
-    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-endif( Qt5COMPONENTS_FOUND )
+
 
 
 
