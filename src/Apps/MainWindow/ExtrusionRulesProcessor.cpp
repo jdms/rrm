@@ -92,7 +92,7 @@ namespace RRM
             setOrigin( 0., 0., 0. );
         }
 
-        if ( got_lenght_ = false ) { 
+        if ( got_lenght_ == false ) { 
             setLenght( 1., 1., 1. );
         }
 
@@ -132,23 +132,62 @@ namespace RRM
         return true; 
     }
 
-    bool ExtrusionRulesProcessor::canUndo() const
+    bool ExtrusionRulesProcessor::canUndo() 
     {
+        if ( container_.size() > 0 )
+        {
+            return true;
+        }
+
         return false;
     }
 
     bool ExtrusionRulesProcessor::undo()
     {
-        return false;
+        if ( canUndo() == false )
+        {
+            return false; 
+        }
+
+        PlanarSurface::Ptr last_sptr; 
+        container_.popLastSurface(last_sptr);
+
+        State last_state = applied_geologic_rules_.back(); 
+        applied_geologic_rules_.pop_back(); 
+
+        size_t last_surface_index = inserted_surfaces_indices_.back(); 
+        inserted_surfaces_indices_.pop_back(); 
+
+        undoed_surfaces_stack_.push_back(last_sptr); 
+        undoed_surfaces_indices_.push_back(last_surface_index); 
+        undoed_geologic_rules_.push_back(last_state); 
+
+        auto iter = dictionary_.find(last_surface_index); 
+        dictionary_.erase(iter); 
+
+        return true;
     }
 
-    bool ExtrusionRulesProcessor::canRedo() const
+    bool ExtrusionRulesProcessor::canRedo() 
     {
+        if ( undoed_geologic_rules_.size() > 0 )
+        {
+            return true;
+        }
+
         return false;
     }
 
     bool ExtrusionRulesProcessor::redo()
     {
+        return false; 
+
+        PlanarSurface::Ptr undoed_sptr = undoed_surfaces_stack_.back(); 
+        undoed_surfaces_stack_.pop_back(); 
+
+        current_state_ = undoed_geologic_rules_.back();
+        undoed_geologic_rules_.pop_back(); 
+
         return false;
     }
 
@@ -222,14 +261,13 @@ namespace RRM
             }
         }
 
-        if ( status = false )
+        if ( status == false )
         {
             return false; 
         }
 
 
         /* Create a surface */
-
         PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(true);
 
         sptr->setOrigin(origin_); 
@@ -238,36 +276,51 @@ namespace RRM
         sptr->generateSurface(); 
 
 
-        /* Execute action */
+        /* Execute selected Geologic Rule */
+        return executeAction(sptr, given_index, lbounds, ubounds); 
+    }
 
+
+    bool ExtrusionRulesProcessor::executeAction( 
+            PlanarSurface::Ptr &sptr, 
+            size_t given_index, 
+            std::vector<size_t> lbounds, 
+            std::vector<size_t> ubounds
+            )
+    {
         size_t index;
+        bool status; 
+
+        if ( current_state_ == State::SKETCHING )
+        {
+            status = container_.addSurface(sptr, index, ubounds, lbounds);
+        }
+        else
+        {
+            status = container_.addSurface(sptr, index); 
+        }
+
         switch ( current_state_ ) 
         { 
             case State::SKETCHING: 
-                status = container_.addSurface(sptr, index, ubounds, lbounds);
                 break; 
 
-
             case State::RA_SKETCHING: 
-                status = container_.addSurface(sptr, index); 
                 if ( status == true )
                     container_.removeAbove();
                 break; 
 
             case State::RAI_SKETCHING:
-                status = container_.addSurface(sptr, index);
                 if ( status == true )
                     container_.removeAboveIntersection(); 
                 break;
 
             case State::RB_SKETCHING:
-                status = container_.addSurface(sptr, index);
                 if ( status == true )
                     container_.removeBelow(); 
                 break;
 
             case State::RBI_SKETCHING:
-                status = container_.addSurface(sptr, index);
                 if ( status == true )
                     container_.removeBelowIntersection(); 
                 break;
@@ -279,8 +332,11 @@ namespace RRM
 
         if ( status == true ) { 
             dictionary_[given_index] = index; 
+            inserted_surfaces_indices_.push_back(given_index); 
+            applied_geologic_rules_.push_back(current_state_); 
         }
 
         return status;
     }
-} /* namespace RRM */
+
+}; /* namespace RRM */

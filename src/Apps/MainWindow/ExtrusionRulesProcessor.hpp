@@ -73,10 +73,10 @@ namespace RRM
                 std::vector<size_t> upper_bound_ids
             );
 
-        bool canUndo() const;
+        bool canUndo();
         bool undo();
 
-        bool canRedo() const;
+        bool canRedo();
         bool redo();
 
 
@@ -96,11 +96,13 @@ namespace RRM
 
     private:
         class SRules container_;
+        std::vector<State> applied_geologic_rules_; 
 
         using ControllerSurfaceIndex = size_t; 
         using ContainerSurfaceIndex = size_t; 
 
         std::map<ControllerSurfaceIndex, ContainerSurfaceIndex> dictionary_;
+        std::vector<ControllerSurfaceIndex> inserted_surfaces_indices_; 
 
         Point3 origin_, lenght_; 
 
@@ -112,8 +114,11 @@ namespace RRM
         bool got_origin_ = false; 
         bool got_lenght_ = false;
 
+        State current_state_ = State::SKETCHING;
 
-        State current_state_ = State::UNDEFINED;
+        std::vector<PlanarSurface::Ptr> undoed_surfaces_stack_; 
+        std::vector<size_t> undoed_surfaces_indices_;
+        std::vector<State> undoed_geologic_rules_;
 
         void requestChangeDiscretization( size_t discretization_WIDTH, size_t discretization_DEPTH ); 
 
@@ -126,6 +131,13 @@ namespace RRM
                 size_t index, 
                 std::vector<size_t> lb_id = std::vector<size_t>(), 
                 std::vector<size_t> ub_id = std::vector<size_t>() 
+            );
+
+        bool executeAction( 
+                PlanarSurface::Ptr &sptr, 
+                size_t index, 
+                std::vector<size_t> lb_id, 
+                std::vector<size_t> ub_id
             );
     };
 
