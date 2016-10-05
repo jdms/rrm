@@ -47,6 +47,7 @@ class Surface: public StratigraphyRenderable
 		
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
         inline bool initialized(){ return is_initialized; }
+        inline bool visible(){ return is_visible; }
 		
 		
     protected:
@@ -72,6 +73,7 @@ class Surface: public StratigraphyRenderable
 
         QString shader_directory;
         bool is_initialized;
+        bool is_visible;
 		
 		
 };

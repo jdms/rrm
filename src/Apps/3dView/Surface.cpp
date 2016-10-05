@@ -21,6 +21,7 @@ void Surface::init()
     initBuffers();
 
     is_initialized = true;
+    is_visible = true;
 }
 
 
@@ -317,6 +318,9 @@ void Surface::reloadShaders()
 
 void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height )
 {
+
+
+    if( is_visible == false ) return;
 	
 	Eigen::Affine3f M;
     M.setIdentity();
@@ -359,7 +363,14 @@ void Surface::update( const Eigen::Vector3f& c )
     std::vector< float > vertices_planin = strat->getSurfaceVertices();
     std::vector< float > vertices;
 
+
     int npoints = (int)vertices_planin.size()/3;
+
+    if( npoints == 0 )
+    {
+        is_visible = false;
+        return;
+    }
 
     for( int i = 0; i < npoints; ++i )
     {
