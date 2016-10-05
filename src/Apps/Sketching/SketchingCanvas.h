@@ -6,7 +6,7 @@
 #include <QWheelEvent>
 #include <QFileDialog>
 
-#include "Mainwindow/Scene.h"
+#include "MainWindow/Scene.h"
 
 class SketchingCanvas: public QGraphicsView
 {

@@ -20,7 +20,7 @@
 
 
 
-#include "Mainwindow/Scene.h"
+#include "MainWindow/Scene.h"
 #include "GradientBackgroundShader.hpp"
 
 

@@ -12,7 +12,7 @@
 
 
 
-#include "Mainwindow/Controller.hpp"
+#include "MainWindow/Controller.hpp"
 
 #include "Sketching/StratigraphicItem.hpp"
 #include "Sketching/InputSketch.h"

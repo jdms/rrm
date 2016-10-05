@@ -32,7 +32,7 @@
 #include <QtWidgets/QStyle>
 
 
-#include "Mainwindow/About/AboutWidget.hpp"
+#include "MainWindow/About/AboutWidget.hpp"
 
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
