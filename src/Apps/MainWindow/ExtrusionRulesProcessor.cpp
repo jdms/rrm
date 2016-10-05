@@ -248,10 +248,22 @@ namespace RRM
                 break; 
 
 
+            case State::RA_SKETCHING: 
+                status = container_.addSurface(sptr, index); 
+                if ( status == true )
+                    container_.removeAbove();
+                break; 
+
             case State::RAI_SKETCHING:
                 status = container_.addSurface(sptr, index);
                 if ( status == true )
                     container_.removeAboveIntersection(); 
+                break;
+
+            case State::RB_SKETCHING:
+                status = container_.addSurface(sptr, index);
+                if ( status == true )
+                    container_.removeBelow(); 
                 break;
 
             case State::RBI_SKETCHING:
