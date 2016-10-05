@@ -72,9 +72,9 @@ if( OWN_LIBRARIES AND WIN32 )
     include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
 
-    set( Eigen3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-    find_package( Eigen3 REQUIRED )
-    include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
+    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+    find_package( EIGEN3 REQUIRED )
+    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
     add_definitions( -DEIGEN_DONT_ALIGN )
 
 
