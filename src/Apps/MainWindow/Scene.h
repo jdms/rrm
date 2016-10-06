@@ -77,6 +77,8 @@ class Scene: public QGraphicsScene
 
         void removeStratigraphyFromScene( unsigned int id );
 
+        inline void setRandomColor( bool status ){ random_color = status; }
+
 
 
 
@@ -155,6 +157,7 @@ class Scene: public QGraphicsScene
         BoundingBox3D *boundary3D;
         QPointF boundary_anchor;
 
+        bool random_color;
         QColor current_color;
 
         Eigen::Affine3f m_2dto3d;

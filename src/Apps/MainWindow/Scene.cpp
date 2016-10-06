@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include <random>
+
 #include <QUrl>
 #include <QDir>
 #include <QDebug>
@@ -14,6 +16,7 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
     temp_sketch = 0;
 
     current_color = QColor( 255, 75, 75 );
+    random_color = true;
 }
 
 
@@ -294,6 +297,23 @@ void Scene::removeStratigraphyFromScene( unsigned int id )
 void Scene::newSketch()
 {
 
+
+    if( random_color == true )
+    {
+
+        std::random_device rd;
+        std::mt19937 eng( rd() );
+        std::uniform_int_distribution< unsigned int > distr( 0, 255 );
+
+        int r = distr( eng );
+        int g = distr( eng );
+        int b = distr( eng );
+
+        current_color = QColor( r, g, b );
+
+    }
+
+
     sketch = new StratigraphicItem();
     sketch->setColor( current_color );
     addItem( sketch );
@@ -478,11 +498,14 @@ void Scene::updateColor( const QColor& color )
 
     current_color = color;
 
+
     if( temp_sketch != NULL )
-        temp_sketch->setColor( color );
+        temp_sketch->setColor( current_color );
 
     if( sketch != NULL )
-        sketch->setColor( color );
+        sketch->setColor( current_color );
+
+    random_color = false;
 
     update();
 

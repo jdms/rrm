@@ -64,6 +64,7 @@ class SketchingWindow : public QMainWindow
         void setCurrentMode( const Scene::InteractionMode& );
         void updateColor( const QColor& c );
 
+        void setRandomColor ( bool );
 
 
 

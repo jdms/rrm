@@ -1,5 +1,6 @@
 #include "SketchingWindow.h"
 
+
 SketchingWindow::SketchingWindow( QWidget* parent )
 {
 	createWindow();
@@ -186,7 +187,8 @@ void SketchingWindow::createConnections()
     connect( ac_new_boundary, &QAction::triggered, [=](){ emit setCurrentMode( Scene::InteractionMode::BOUNDARY ); } );
 
 
-
+    connect( ac_randomcolor, &QAction::triggered, [=]( bool status ){ emit setRandomColor( status ); } );
 
 
 }
+
