@@ -890,18 +890,31 @@ bool PlanarSurface::project( Point3 &p ) {
     return f->project(p); 
 }
 
-void PlanarSurface::pruneBoundingLists() { 
-    for ( auto it = upper_bound_.begin(); it != upper_bound_.end(); ++it ) 
+void PlanarSurface::pruneBoundingLists()
+{
+    auto itu = upper_bound_.begin();
+    while ( itu != upper_bound_.end() )
     {
-        if ( it->expired() ) { 
-            upper_bound_.erase(it); 
+        if ( itu->expired() )
+        {
+            itu = upper_bound_.erase(itu);
+        }
+        else
+        {
+            ++itu;
         }
     }
 
-    for ( auto it = lower_bound_.begin(); it != lower_bound_.end(); ++it ) 
+    auto itl = lower_bound_.begin();
+    while ( itl != lower_bound_.end() )
     {
-        if ( it->expired() ) { 
-            lower_bound_.erase(it); 
+        if ( itl->expired() )
+        {
+            itl = lower_bound_.erase(itl);
+        }
+        else
+        {
+            ++itl;
         }
     }
 

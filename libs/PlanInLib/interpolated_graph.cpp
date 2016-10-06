@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -39,11 +39,16 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
     ++num_instances_; 
 
     surface_is_set_ = rhs.surface_is_set_; 
+
     f = rhs.f; 
+
     upper_bound_ = rhs.upper_bound_; 
     lower_bound_ = rhs.lower_bound_; 
 
     dependency_list_ = rhs.dependency_list_; 
+    auto iter = dependency_list_.find(rhs.id_); 
+    dependency_list_.erase(iter); 
+    dependency_list_.insert(id_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
 }
@@ -51,7 +56,9 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
 InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_) 
 { 
     surface_is_set_ = rhs.surface_is_set_; 
+
     f = std::move(rhs.f); 
+
     upper_bound_ = std::move(rhs.upper_bound_); 
     lower_bound_ = std::move(rhs.lower_bound_); 
 
@@ -368,17 +375,29 @@ bool InterpolatedGraph::project( Point3 &p )
 
 void InterpolatedGraph::pruneBoundingLists() 
 {
-    for ( auto it = upper_bound_.begin(); it != upper_bound_.end(); ++it ) 
+    auto itu = upper_bound_.begin();
+    while ( itu != upper_bound_.end() )
     {
-        if ( it->expired() ) { 
-            upper_bound_.erase(it); 
+        if ( itu->expired() ) 
+        {
+            itu = upper_bound_.erase(itu);
+        }
+        else
+        {
+            ++itu;
         }
     }
 
-    for ( auto it = lower_bound_.begin(); it != lower_bound_.end(); ++it ) 
+    auto itl = lower_bound_.begin();
+    while ( itl != lower_bound_.end() )
     {
-        if ( it->expired() ) { 
-            lower_bound_.erase(it); 
+        if ( itl->expired() ) 
+        {
+            itl = lower_bound_.erase(itl);
+        }
+        else
+        {
+            ++itl;
         }
     }
 }
