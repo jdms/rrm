@@ -145,6 +145,15 @@ void Surface::loadBuffers()
     std::vector< unsigned int >& faces = strat->getSurfaceFaces();
 
 
+    if( vertices.empty() == true )
+    {
+        is_visible = false;
+        return;
+    }
+    else
+        is_visible = true;
+
+
     number_of_vertices = vertices.size()/3;
 
     glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
@@ -310,10 +319,6 @@ void Surface::initShaders()
                                                     ( shader_directory + "shaders/Seismic.frag" ).toStdString(),
                                                     ( shader_directory + "shaders/Seismic.geom" ).toStdString(), "", "" ) ;
 
-//    shader_surface = new Tucano::Shader( "Surface", ( shader_directory + "shaders/vertex_mesh_shader.vert" ).toStdString(),
-//                                                    ( shader_directory + "shaders/fragment_mesh_shader.frag" ).toStdString(),
-//                                                     "", "", "" ) ;
-
 
     shader_surface->initialize();
 	
@@ -335,10 +340,8 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 	
 	Eigen::Affine3f M;
     M.setIdentity();
+    M.translate( origin );
 	
-
-    float scale = (float)1.5*width/(float)height;
-
 
     shader_surface->bind();
 
@@ -347,7 +350,6 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     shader_surface->setUniform( "ViewMatrix" , V );
     shader_surface->setUniform( "ProjectionMatrix" , P );
     shader_surface->setUniform( "WIN_SCALE" , (float) width , (float) height );
-//    shader_surface->setUniform( "scale", scale );
 
     glPointSize( 10.0f );
 
@@ -358,7 +360,6 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 
     glBindVertexArray ( 0 );
 
-	
 
 	
     shader_surface->unbind();
@@ -371,31 +372,9 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 void Surface::update( const Eigen::Vector3f& c )
 {
 
-    std::vector< float > vertices_planin = strat->getSurfaceVertices();
 
+    origin = ( -1 )*c;
+    loadBuffers();
 
-
-    int npoints = (int)vertices_planin.size()/3;
-    if( npoints == 0 )
-    {
-        is_visible = false;
-        return;
-    }
-    else
-        is_visible = true;
-
-    std::vector< float > vertices;
-    for( int i = 0; i < npoints; ++i )
-    {
-        Eigen::Vector3f p( vertices_planin[ 3*i ], vertices_planin[ 3*i + 1 ], vertices_planin[ 3*i + 2 ] );
-        p -= c;
-
-        vertices.push_back( p.x() );
-        vertices.push_back( p.y() );
-        vertices.push_back( p.z() );
-
-    }
-
-    loadBuffers( vertices );
 
 }

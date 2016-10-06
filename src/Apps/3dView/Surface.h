@@ -85,6 +85,7 @@ class Surface: public StratigraphyRenderable
         bool is_visible;
 
         std::vector< float > colors;
+        Eigen::Vector3f origin;
 		
 		
 };

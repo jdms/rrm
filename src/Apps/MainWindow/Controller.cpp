@@ -216,7 +216,7 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
 
     for( unsigned int i = 0; i < selected.size(); ++i )
     {
-        std::cout << "Item " << selected[ i ] << "selected." << std::endl;
+        std::cout << "Item " << selected[ i ] << " selected." << std::endl;
     }
 
 
@@ -273,8 +273,6 @@ void Controller::update()
 
 
         Stratigraphy* strat = stratigraphics_list[ i ];
-
-
         bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
         bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
 
