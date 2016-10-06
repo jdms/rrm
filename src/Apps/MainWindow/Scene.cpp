@@ -514,6 +514,24 @@ void Scene::updateColor( const QColor& color )
 
 
 
+std::vector< unsigned int > Scene::getAllSelectedItems()
+{
+
+    std::vector< unsigned int > id_items;
+
+    QList< QGraphicsItem* > items = selectedItems();
+    QList< QGraphicsItem* >::iterator it;
+
+    for ( it = items.begin(); it != items.end(); ++it ){
+        StratigraphicItem* s = (StratigraphicItem*) (*it);
+        id_items.push_back( s->getId() );
+    }
+    return id_items;
+
+}
+
+
+
 
 Eigen::Vector3f Scene::scene2Dto3D( const Point2D &p )
 {

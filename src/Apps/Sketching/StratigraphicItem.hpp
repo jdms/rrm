@@ -28,9 +28,11 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
 		void addSegment( const InputSketch& segment );	
 		void copySegment( const QPolygonF& s );
-		
-		void clear();
-		
+
+        void clear();
+        void update( const Eigen::Affine3f &m, const float& d );
+
+
 		QRectF boundingRect() const;
         QPainterPath shape() const;
 
@@ -38,14 +40,12 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w );
 
 		
-		inline QPolygonF getCurve(){ return points; }
-		
 		inline void setColor( const QColor& c ){ current_color = c; }
 		inline QColor setColor(){ return current_color; }
 		
-        void update( const Eigen::Affine3f &m, const float& d );
 
-        inline void getId() const { strat->getId(); }
+        inline unsigned int getId() const { return strat->getId(); }
+        inline QPolygonF getCurve(){ return points; }
 
 	
 	protected:

@@ -372,17 +372,19 @@ void Surface::update( const Eigen::Vector3f& c )
 {
 
     std::vector< float > vertices_planin = strat->getSurfaceVertices();
-    std::vector< float > vertices;
+
 
 
     int npoints = (int)vertices_planin.size()/3;
-
     if( npoints == 0 )
     {
         is_visible = false;
         return;
     }
+    else
+        is_visible = true;
 
+    std::vector< float > vertices;
     for( int i = 0; i < npoints; ++i )
     {
         Eigen::Vector3f p( vertices_planin[ 3*i ], vertices_planin[ 3*i + 1 ], vertices_planin[ 3*i + 2 ] );

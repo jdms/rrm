@@ -186,7 +186,7 @@ bool Controller::interpolateStratigraphy()
 
 
 
-void Controller::setCurrentStratigraphicRule( const std::string& rule )
+void Controller::setCurrentStratigraphicRule( const std::string& rule, const std::vector< unsigned int >& selected  )
 {
 
     if( rule.compare( "SKETCHING" ) == 0 )
@@ -212,6 +212,12 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule )
 
     if( rule.compare( "DR_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DR_SKETCHING );
+
+
+    for( unsigned int i = 0; i < selected.size(); ++i )
+    {
+        std::cout << "Item " << selected[ i ] << "selected." << std::endl;
+    }
 
 
 }
@@ -276,11 +282,8 @@ void Controller::update()
 
         if( ( getcurve_ok == false ) || ( getmesh_ok  == false ) )
         {
-
             strat->clear();
             continue;
-//            unsigned int id = strat->getId();
-//            emit removeStratigraphy( id );
         }
 
 

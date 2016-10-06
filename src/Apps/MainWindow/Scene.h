@@ -79,7 +79,7 @@ class Scene: public QGraphicsScene
 
         inline void setRandomColor( bool status ){ random_color = status; }
 
-
+        std::vector< unsigned int > getAllSelectedItems();
 
 
 
