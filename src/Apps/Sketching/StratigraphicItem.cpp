@@ -3,6 +3,10 @@
 StratigraphicItem::StratigraphicItem()
 {
 	prepareGeometryChange();
+
+    setFlag( QGraphicsItem::ItemIsSelectable );
+    setAcceptTouchEvents ( true );
+
 }
 
 
@@ -13,7 +17,13 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
     QPen pen_curve;
 	
 	pen_curve.setWidth( 3 );
-	pen_curve.setColor( current_color );
+
+    if ( isSelected ( ) )
+    {
+        pen_curve.setColor( Qt::red );
+    }
+    else
+        pen_curve.setColor( current_color );
 	
 	painter->setPen( pen_curve );
 	painter->setBrush( Qt::NoBrush );

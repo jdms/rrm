@@ -45,6 +45,8 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
         void update( const Eigen::Affine3f &m, const float& d );
 
+        inline void getId() const { strat->getId(); }
+
 	
 	protected:
 
