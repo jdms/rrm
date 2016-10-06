@@ -97,6 +97,7 @@ class SketchingWindow : public QMainWindow
 
         QToolBar *tlb_customization;
         QAction *ac_screenshot;
+        QAction *ac_randomcolor;
         QWidgetAction *ac_sketchcolor;
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;

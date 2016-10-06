@@ -48,6 +48,9 @@ class Surface: public StratigraphyRenderable
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
         inline bool initialized(){ return is_initialized; }
         inline bool visible(){ return is_visible; }
+
+
+        inline void setCurrentColor( float r, float g, float b ){ color.push_back( r ); color.push_back( g ); color.push_back( b ); }
 		
 		
     protected:
@@ -74,6 +77,8 @@ class Surface: public StratigraphyRenderable
         QString shader_directory;
         bool is_initialized;
         bool is_visible;
+
+        std::vector< float > color;
 		
 		
 };

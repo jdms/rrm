@@ -121,6 +121,11 @@ void SketchingWindow::createActions()
 
 
 	// Costumization
+
+    ac_randomcolor = new QAction( tr("&Random Color" ), this );
+    ac_randomcolor ->setCheckable( true );
+
+
 	cd_pickercolor = new QColorDialog();
     cd_pickercolor->setWindowFlags( Qt::Widget );
     cd_pickercolor->setCurrentColor( QColor( 0, 0, 128 ) );
@@ -133,6 +138,7 @@ void SketchingWindow::createActions()
     tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
 
 	mn_pickercolor = new QMenu();
+    mn_pickercolor->addAction( ac_randomcolor );
     mn_pickercolor->addAction( ac_sketchcolor );
     tbt_colorsketch->setMenu( mn_pickercolor );
 
