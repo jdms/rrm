@@ -50,7 +50,13 @@ class Surface: public StratigraphyRenderable
         inline bool visible(){ return is_visible; }
 
 
-        inline void setCurrentColor( float r, float g, float b ){ color.push_back( r ); color.push_back( g ); color.push_back( b ); }
+        inline void setCurrentColor( float r, float g, float b )
+        {
+            colors.push_back( r );
+            colors.push_back( g );
+            colors.push_back( b );
+        }
+        inline void setCurrentColor( const std::vector< float >& c ){  colors = c; }
 		
 		
     protected:
@@ -78,7 +84,7 @@ class Surface: public StratigraphyRenderable
         bool is_initialized;
         bool is_visible;
 
-        std::vector< float > color;
+        std::vector< float > colors;
 		
 		
 };

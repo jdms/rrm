@@ -140,7 +140,6 @@ void Surface::loadBuffers()
 {
 	
     std::vector< float >& vertices = strat->getSurfaceVertices();
-    std::vector< float > colors;
     std::vector< float > normals;
     std::vector< unsigned int > wireframes;// = strat->getSurfaceEdges();
     std::vector< unsigned int >& faces = strat->getSurfaceFaces();
@@ -152,13 +151,6 @@ void Surface::loadBuffers()
     glBufferData ( GL_ARRAY_BUFFER , vertices.size() * sizeof ( float ) , vertices.data() , GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
-    for( unsigned int i = 0; i < number_of_vertices; ++i )
-    {
-        colors.push_back( 1.0f );
-        colors.push_back( 0.0f );
-        colors.push_back( 0.0f );
-    }
-	
 
     for( unsigned int i = 0; i < number_of_vertices; ++i )
     {
@@ -167,9 +159,24 @@ void Surface::loadBuffers()
         normals.push_back( 0.0f );
     }
 
+    if( colors.size() == 3 )
+    {
+
+        for( unsigned int i = 1; i < number_of_vertices; ++i )
+        {
+            colors.push_back( colors[ 0 ] );
+            colors.push_back( colors[ 1 ] );
+            colors.push_back( colors[ 2 ] );
+        }
+
+    }
 
 	if( colors.empty() == false )
 	{
+
+        int number_of_colors = colors.size()/3;
+
+
 		glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
 		glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(), GL_STATIC_DRAW );
         glBindBuffer ( GL_ARRAY_BUFFER , 0 );
@@ -211,7 +218,6 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
 {
 
 
-    std::vector< float > colors;
     std::vector< float > normals;
     std::vector< unsigned int > wireframes;  // = strat->getSurfaceEdges();
     std::vector< unsigned int >& faces = strat->getSurfaceFaces();
@@ -225,13 +231,6 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
     glBufferData ( GL_ARRAY_BUFFER , vertices.size() * sizeof ( float ) , vertices.data() , GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
-    for( unsigned int i = 0; i < number_of_vertices; ++i )
-    {
-        colors.push_back( 1.0f );
-        colors.push_back( 0.0f );
-        colors.push_back( 0.0f );
-    }
-
 
     for( unsigned int i = 0; i < number_of_vertices; ++i )
     {
@@ -240,6 +239,18 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
         normals.push_back( 0.0f );
     }
 
+
+    if( colors.size() == 3 )
+    {
+
+        for( unsigned int i = 1; i < number_of_vertices; ++i )
+        {
+            colors.push_back( colors[ 0 ] );
+            colors.push_back( colors[ 1 ] );
+            colors.push_back( colors[ 2 ] );
+        }
+
+    }
 
     if( colors.empty() == false )
     {

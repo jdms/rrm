@@ -284,20 +284,9 @@ void Controller::update()
         }
 
 
-
-//        if( getcurve_ok == true )
-//        {
-            strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
-            strat->updateCurveWireframe( curve_edges );
-//        }
-
-//        if( getmesh_ok == true )
-//        {
-            strat->updateSurface( surface_vertices, surface_faces );
-//        }
-
-
-
+        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+        strat->updateCurveWireframe( curve_edges );
+        strat->updateSurface( surface_vertices, surface_faces );
 
     }
 

@@ -264,7 +264,7 @@ void Scene::addStratigraphyToScene()
     Surface* strat3D = new Surface();
     strat3D->setGeoData( strat );
     strat3D->setCurrentDirectory( shader_directory.toStdString() );
-    strat3D->setCurrentColor( current_color.red(), current_color.green(), current_color.blue() );
+    strat3D->setCurrentColor( current_color.redF(), current_color.greenF(), current_color.blueF() );
 
 
     unsigned int id = strat->getId();
