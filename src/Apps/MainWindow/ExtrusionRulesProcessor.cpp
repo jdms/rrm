@@ -180,15 +180,21 @@ namespace RRM
 
     bool ExtrusionRulesProcessor::redo()
     {
-        return false; 
+        if ( canRedo() == false )
+        {
+            return false;
+        }
 
         PlanarSurface::Ptr undoed_sptr = undoed_surfaces_stack_.back(); 
         undoed_surfaces_stack_.pop_back(); 
 
+        size_t surface_index = undoed_surfaces_indices_.back();
+        undoed_surfaces_indices_.pop_back();
+
         current_state_ = undoed_geologic_rules_.back();
         undoed_geologic_rules_.pop_back(); 
 
-        return false;
+        return executeAction(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
     }
 
 
@@ -275,6 +281,12 @@ namespace RRM
         sptr->addPoints(curve); 
         sptr->generateSurface(); 
 
+        if ( undoed_surfaces_stack_.empty() == false )
+        {
+            undoed_surfaces_stack_.clear();
+            undoed_surfaces_indices_.clear();
+            undoed_geologic_rules_.clear();
+        }
 
         /* Execute selected Geologic Rule */
         return executeAction(sptr, given_index, lbounds, ubounds); 
@@ -339,4 +351,4 @@ namespace RRM
         return status;
     }
 
-}; /* namespace RRM */
+} /* namespace RRM */
