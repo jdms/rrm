@@ -207,6 +207,11 @@ namespace RRM
         return initialized_; 
     }
 
+    std::vector<size_t> ExtrusionRulesProcessor::getActiveSurfaces()
+    {
+        return inserted_surfaces_indices_; 
+    }
+
     bool ExtrusionRulesProcessor::getSurfaceIndex( const size_t controller_index, size_t &index ) const
     {
         auto iter = dictionary_.find(controller_index);  

@@ -35,6 +35,8 @@ namespace RRM
 
         bool isInitialized() const;
 
+        std::vector<size_t> getActiveSurfaces(); 
+
 
         /* Change the model's properties */
 
@@ -90,7 +92,6 @@ namespace RRM
 
         template<typename VertexList, typename EdgeList>
         bool getCurve( size_t surface_id, VertexList &vlist, EdgeList &elist ); 
-
 
         /* End methods to interface with GUI */
 
