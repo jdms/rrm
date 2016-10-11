@@ -136,10 +136,9 @@ bool Controller::addStratigraphy()
 {
 
     Stratigraphy* strat = new Stratigraphy();
-    current_stratigraphy = (int) stratigraphics_list.size();
 
-    strat->setId( current_stratigraphy );
-    stratigraphics_list.push_back( strat );
+    current_stratigraphy = strat->getId();
+    stratigraphics_list[ current_stratigraphy ] = strat;
 
     return true;
 
@@ -167,7 +166,8 @@ bool Controller::interpolateStratigraphy()
     Curve2D* c = strat->getCurve( current_crosssection );
 
 
-    rules_processor.update( *c, strat->getId() );
+    bool status_ok = rules_processor.update( *c, strat->getId() );
+    if( status_ok == false ) return false;
 
 
     bool can_undo = rules_processor.canUndo();
@@ -260,9 +260,50 @@ void Controller::update()
 {
 
 
-    int number_of_stratigrapies = (int)stratigraphics_list.size();
+//    std::vector< unsigned int > updated_surfaces = rules_processor.getUpdatedSurfaces();
+//    int number_of_changed_elements = (int) updated_surfaces.size();
 
-    for( int i = 0; i < number_of_stratigrapies; ++i )
+//    for( int i = 0; i < number_of_changed_elements; ++i )
+//    {
+
+//        std::vector< float > curve_vertices;
+//        std::vector< unsigned int > curve_edges;
+
+//        std::vector< float > surface_vertices;
+//        std::vector< unsigned int > surface_faces;
+
+
+//        unsigned int id_planin = updated_surfaces[ i ];
+//        unsigned int id = index_stratigraphy_map[ id_planin ];
+
+//        Stratigraphy* strat = stratigraphics_list[ id ];
+//        bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+//        bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
+
+
+
+//        if( ( getcurve_ok == false ) || ( getmesh_ok  == false ) )
+//        {
+//            strat->clear();
+//            continue;
+//        }
+
+
+//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+//        strat->updateCurveWireframe( curve_edges );
+//        strat->updateSurface( surface_vertices, surface_faces );
+
+//    }
+
+
+    // provavelmente recalcular as intersecoes novamente para cada cross section.
+
+
+    std::vector< size_t > updated_surfaces = rules_processor.getActiveSurfaces();
+    int number_of_changed_elements = (int) updated_surfaces.size();
+
+
+    for( int i = 0; i < number_of_changed_elements; ++i )
     {
 
         std::vector< float > curve_vertices;
@@ -271,8 +312,9 @@ void Controller::update()
         std::vector< float > surface_vertices;
         std::vector< unsigned int > surface_faces;
 
+        size_t id_planin = updated_surfaces[ i ];
 
-        Stratigraphy* strat = stratigraphics_list[ i ];
+        Stratigraphy* strat = stratigraphics_list[ (unsigned int ) id_planin ];
         bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
         bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
 
@@ -289,10 +331,49 @@ void Controller::update()
         strat->updateCurveWireframe( curve_edges );
         strat->updateSurface( surface_vertices, surface_faces );
 
+
     }
 
 
     // provavelmente recalcular as intersecoes novamente para cada cross section.
+
+
+
+
+//    std::map< unsigned int, Stratigraphy* >::iterator it;
+
+//    for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+//    {
+
+//        std::vector< float > curve_vertices;
+//        std::vector< unsigned int > curve_edges;
+
+//        std::vector< float > surface_vertices;
+//        std::vector< unsigned int > surface_faces;
+
+
+//        Stratigraphy* strat = it->second;
+//        bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
+//        bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
+
+
+
+//        if( ( getcurve_ok == false ) || ( getmesh_ok  == false ) )
+//        {
+//            strat->clear();
+//            continue;
+//        }
+
+
+//        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
+//        strat->updateCurveWireframe( curve_edges );
+//        strat->updateSurface( surface_vertices, surface_faces );
+
+//    }
+
+
+//    // provavelmente recalcular as intersecoes novamente para cada cross section.
+
 
 
     emit updateScene();

@@ -10,6 +10,8 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
+
+
 class Stratigraphy
 {
 
@@ -17,7 +19,7 @@ class Stratigraphy
 
 
 
-        Stratigraphy(){}
+        Stratigraphy(){ index = number_of_stratigraphies; number_of_stratigraphies++; }
 		
 
         inline void addCurve( const float& d, Curve2D const& c ){ curves_list[ d ] = c; crosssections_list.push_back( d ); }
@@ -27,10 +29,8 @@ class Stratigraphy
 
         inline std::vector< float > getCrossections(){ return crosssections_list; }
 
-		inline bool isEmpty(){ return curves_list.empty(); }
-	
 
-        inline void setId( const unsigned int& id ){ index = id; }
+        inline bool isEmpty(){ return curves_list.empty(); }
         inline unsigned int getId(){ return index; }
 
 
@@ -73,6 +73,7 @@ class Stratigraphy
 	
 
         unsigned int index;
+        static unsigned int number_of_stratigraphies;
 
         std::vector< float > crosssections_list;
 
@@ -83,8 +84,12 @@ class Stratigraphy
         std::vector< unsigned int > surface_faces;
 
 
-
 };
 
 
+
+
 #endif
+
+
+
