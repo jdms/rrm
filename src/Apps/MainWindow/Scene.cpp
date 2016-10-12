@@ -66,6 +66,9 @@ void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z,
 
 void Scene::updateTransformationsMatrices()
 {
+
+    /*
+
     m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
                                                   qtscene_origin_y, qtscene_origin_y + qtscene_height,
                                                   qtscene_origin_z, qtscene_origin_z + qtscene_depth );
@@ -80,7 +83,54 @@ void Scene::updateTransformationsMatrices()
 
     m_2dtoplanin = Eigen::Affine3f::Identity();
     m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
+*/
 
+
+    m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
+                                                     qtscene_origin_y, qtscene_origin_y + qtscene_height,
+                                                     qtscene_origin_z, qtscene_origin_z + qtscene_depth );
+
+       m_3dto2d = m_2dto3d.inverse();
+
+
+
+
+       float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+
+
+
+       Eigen::Vector4f orig_qt = Eigen::Vector4f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z, 1.0f );
+
+       m_2dtoplanin = Eigen::Affine3f::Identity();
+       m_2dtoplanin.translation() = -Eigen::Vector3f( orig_qt.x(), orig_qt.y(), orig_qt.z() )/L ;
+       m_2dtoplanin.scale( Eigen::Vector3f( 1/L, 1/L, 1/L ) );
+
+
+       m_planinto2d = m_2dtoplanin.inverse();
+
+   //    Eigen::Vector4f orig_pl = m_2dtoplanin.matrix()*orig_qt;
+
+
+   //    m_planinto2d = Eigen::Affine3f::Identity();
+   //    m_planinto2d.translation() = L*Eigen::Vector3f( orig_pl.x(), orig_pl.y(), orig_pl.z() ) ;
+   //    m_planinto2d.scale( Eigen::Vector3f( L, L, L ) );
+
+
+
+
+
+
+   /*
+       m_planinto2d = Eigen::Affine3f::Identity();
+       m_planinto2d.translate( Eigen::Vector3f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z ) );
+       m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
+
+
+       m_2dtoplanin = Eigen::Affine3f::Identity();
+       m_2dtoplanin.translate( Eigen::Vector3f( -qtscene_origin_x, -qtscene_origin_y, -qtscene_origin_z ) );
+       m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
+
+   */
 
 }
 
@@ -90,13 +140,44 @@ void Scene::createVolume3D()
 {
 
 
+//    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
+//    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
+
+//    min = Scene::scene2Dto3D( min );
+//    max = Scene::scene2Dto3D( max );
+
+//    Eigen::Vector3f dim = max - min;
+
+
+//    boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+//    boundary3D->setCurrentDirectory( shader_directory.toStdString() );
+//    boundary3D->init();
+//    boundary3D->create();
+
+
+
+//    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+
+//    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+
+
+
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
+
+    Eigen::Vector3f min_pl = Scene::scene2DtoPlanin( min );
+    Eigen::Vector3f max_pl = Scene::scene2DtoPlanin( max );
+    Eigen::Vector3f dim_pl = max_pl - min_pl;
+
+
+
     min = Scene::scene2Dto3D( min );
     max = Scene::scene2Dto3D( max );
-
     Eigen::Vector3f dim = max - min;
+
+
+
 
 
     boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
@@ -106,9 +187,10 @@ void Scene::createVolume3D()
 
 
 
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+    controller->initRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
 
-    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+//    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+//    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
 
 }
@@ -187,7 +269,7 @@ void Scene::addBoundaryToScene()
 void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
 {
 
-
+/*
     int origin_x = qtscene_origin_x - x;
     int origin_y = qtscene_origin_y - y;
 
@@ -220,6 +302,46 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
 
     controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+
+
+*/
+
+
+    defineVolumeQtCoordinates( x, /*-1**/y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
+
+
+    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
+    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
+
+
+    Eigen::Vector3f min_pl = Scene::scene2DtoPlanin( min );
+    Eigen::Vector3f max_pl = Scene::scene2DtoPlanin( max );
+    Eigen::Vector3f dim_pl = max_pl - min_pl;
+
+
+
+    min = Scene::scene2Dto3D( min );
+    max = Scene::scene2Dto3D( max );
+    Eigen::Vector3f dim = max - min;
+
+
+    controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+
+
+    Boundary* b = controller->getCurrentBoundary();
+    boundary3D->setGeoData( b );
+    boundary3D->update();
+
+
+    sketching_boundary->setGeoData( b );
+    sketching_boundary->update( m_3dto2d );
+    setSceneRect( sketching_boundary->boundingRect() );
+
+
+    controller->editRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
+//min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z()
+//    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+//    controller->editRulesProcessor( min.x(), min.y(), min.z(), qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
 
 
@@ -341,11 +463,11 @@ void Scene::undoLastSketch()
 void Scene::clearScene()
 {
 
-
     current_mode = InteractionMode::OVERSKETCHING;
 
 
     current_color  = QColor( 255, 75, 75 );
+    random_color = true;
 
 
     qtscene_origin_x = 0;
@@ -398,7 +520,6 @@ void Scene::clearScene()
     }
 
 
-
     clear();
 
     boundary3D = 0;
@@ -418,21 +539,22 @@ void Scene::updateScene()
 {
 
 //    boundary->update();
-//    boundary3D->update();
+    boundary3D->update();
 
     float d = controller->getCurrentCrossSection();
 
-    unsigned int number_of_stratigraphies = stratigraphics_list.size();
-    for( int i = 0; i < number_of_stratigraphies; ++i )
+    std::map< unsigned int, StratigraphicItem* >::iterator it;
+    for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
-        StratigraphicItem* strat = stratigraphics_list[ i ];
+        StratigraphicItem* strat = it->second;
         strat->update( m_planinto2d, d );
     }
 
 
     emit updateContext();
-
     emit updatedScene();
+
+    update();
 
 }
 
@@ -442,9 +564,11 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 
 
     int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
+    std::map< unsigned int, Surface* >::iterator it;
+
+    for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
     {
-        Surface* s = surfaces_list[ i ];
+        Surface* s = it->second;
         s->draw( V, P, width, height );
     }
 
@@ -462,6 +586,7 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 void Scene::updateGLContext()
 {
 
+/*
     float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
     Eigen::Vector3f center( 0.5f*qtscene_width/L, 0.5f*qtscene_height/L, 0.5f*qtscene_depth/L ) ;
 
@@ -472,6 +597,20 @@ void Scene::updateGLContext()
         surface->update( center );
     }
 
+*/
+
+
+    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
+    Eigen::Vector3f center( 0.5f*qtscene_width, 0.5f*qtscene_height, 0.5f*qtscene_depth ) ;
+
+    center = Scene::scene2DtoPlanin( center );
+
+    std::map< unsigned int, Surface* >::iterator it;
+    for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
+    {
+        Surface* s = it->second;
+        s->update( center );
+    }
 
 
 }
@@ -482,11 +621,15 @@ void Scene::initGLContext()
 
 
     int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
+
+    std::map< unsigned int, Surface* >::iterator it;
+
+    for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
     {
-        Surface* s = surfaces_list[ i ];
+        Surface* s = it->second;
         if( s->initialized() == false )
             s->init();
+
     }
 
 
@@ -602,18 +745,29 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 
 Eigen::Vector3f Scene::scene2DtoPlanin( const Point2D &p )
 {
+
+    /*
     Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
 
     //p_cpy = m_2dtoplanin.matrix()*p_cpy;
     float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
     p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
+*/
 
+    Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
+
+    p_cpy = m_2dtoplanin.matrix()*p_cpy;
+    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
+    //    p_cpy = p_cpy/L;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
 
 Eigen::Vector3f Scene::scene2DtoPlanin( const Eigen::Vector3f& p )
 {
+
+    /*
     Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
 
 
@@ -622,7 +776,17 @@ Eigen::Vector3f Scene::scene2DtoPlanin( const Eigen::Vector3f& p )
     float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
     p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
+*/
 
+
+    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
+
+
+
+    p_cpy = m_2dtoplanin.matrix()*p_cpy;
+    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
+    //    p_cpy = p_cpy/L;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
 
@@ -786,6 +950,7 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
+    /*
     if ( current_mode == InteractionMode::OVERSKETCHING  )
     {
 
@@ -815,7 +980,38 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
+*/
 
+
+    if ( current_mode == InteractionMode::OVERSKETCHING  )
+    {
+
+        if( temp_sketch == NULL ) return;
+
+
+        sketch->addSegment( *temp_sketch );
+        removeItem( temp_sketch );
+
+        delete temp_sketch;
+        temp_sketch = NULL;
+
+    }
+
+    else if( current_mode == InteractionMode::BOUNDARY )
+    {
+
+        int w = event->scenePos().x() - boundary_anchor.x();
+        int h = -event->scenePos().y() + boundary_anchor.y();
+
+
+        editBoundary( boundary_anchor.x(), height() - boundary_anchor.y(), w, h );
+
+        current_mode = InteractionMode::OVERSKETCHING;
+
+    }
+
+    QGraphicsScene::mouseReleaseEvent( event );
+    update();
 
 
 }

@@ -106,6 +106,7 @@ void Controller::editRulesProcessor( const float& orig_x, const float& orig_y, c
 
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
+    rules_processor.init();
 
 }
 
@@ -173,7 +174,7 @@ bool Controller::interpolateStratigraphy()
     bool can_undo = rules_processor.canUndo();
     emit enableUndo( can_undo );
 
-    bool can_redo = rules_processor.canUndo();
+    bool can_redo = rules_processor.canRedo();
     emit enableRedo( can_redo );
 
 
@@ -205,13 +206,40 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
     if( rule.compare( "DA_SKETCHING" ) == 0 )
+    {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DA_SKETCHING );
 
+        std::vector< size_t > allowed_surfaces;
+//        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+//        if( da_ok == false ) return;
+
+        emit waitingSelection( allowed_surfaces );
+
+    }
+
     if( rule.compare( "DB_SKETCHING" ) == 0 )
+    {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DB_SKETCHING );
+        std::vector< size_t > allowed_surfaces;
+//        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+//        if( db_ok == false ) return;
+
+        emit waitingSelection( allowed_surfaces );
+
+    }
 
     if( rule.compare( "DR_SKETCHING" ) == 0 )
+    {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DR_SKETCHING );
+
+        std::vector< size_t > allowed_surfaces;
+//        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+//        if( db_ok == false ) return;
+
+        emit waitingSelection( allowed_surfaces );
+
+    }
+
 
 
     for( unsigned int i = 0; i < selected.size(); ++i )
@@ -230,6 +258,13 @@ void Controller::undo()
     bool undo_ok = rules_processor.undo();
     update();
 
+
+    bool can_undo = rules_processor.canUndo();
+    emit enableUndo( can_undo );
+
+    bool can_redo = rules_processor.canRedo();
+    emit enableRedo( can_redo );
+
 }
 
 
@@ -237,6 +272,14 @@ void Controller::redo()
 {
     bool redo_ok = rules_processor.redo();
     update();
+
+
+    bool can_undo = rules_processor.canUndo();
+    emit enableUndo( can_undo );
+
+    bool can_redo = rules_processor.canRedo();
+    emit enableRedo( can_redo );
+
 }
 
 
