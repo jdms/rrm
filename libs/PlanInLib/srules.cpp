@@ -26,6 +26,10 @@
 /* #include <iostream> */ 
 /* using namespace std; */ 
 
+bool SRules::empty()
+{
+    return container.empty(); 
+}
 
 std::size_t SRules::size() 
 { 
@@ -585,6 +589,16 @@ bool SRules::defineBelow( std::size_t surface_index )
     }
 
     return defineBelow( container[surface_index] );
+}
+
+bool SRules::weakEntireSurfaceCheck( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return weakEntireSurfaceCheck( container[surface_index] ); 
 }
 
 bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s ) 

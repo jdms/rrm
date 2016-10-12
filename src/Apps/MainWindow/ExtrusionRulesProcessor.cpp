@@ -137,25 +137,37 @@ namespace RRM
 
     bool ExtrusionRulesProcessor::defineAbove( size_t surface_index )
     {
+        ContainerSurfaceIndex index;
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false; 
+        }
 
+        return container_.defineAbove(index); 
     }
 
 
     void ExtrusionRulesProcessor::stopDefineAbove()
     {
-
+        container_.stopDefineAbove(); 
     }
 
 
     bool ExtrusionRulesProcessor::defineBelow( size_t surface_index )
     {
+        ContainerSurfaceIndex index;
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false; 
+        }
 
+        return container_.defineBelow(index); 
     }
 
 
     void ExtrusionRulesProcessor::stopDefineBelow()
     {
-
+        container_.stopDefineBelow(); 
     }
 
 
@@ -241,9 +253,30 @@ namespace RRM
     }
 
 
-    bool ExtrusionRulesProcessor::requestDefineRegion( std::vector<size_t> eligible_surfaces )
+    bool ExtrusionRulesProcessor::requestDefineRegion( std::vector<size_t> &eligible_surfaces )
     {
+        if ( container_.empty() )
+        {
+            return false; 
+        }
 
+        eligible_surfaces.clear(); 
+        ControllerSurfaceIndex output_index; 
+        ContainerSurfaceIndex index; 
+
+        for ( size_t i = 0; i < inserted_surfaces_indices_.size(); ++i )
+        {
+            output_index = inserted_surfaces_indices_[i]; 
+            if ( getSurfaceIndex(output_index, index) == false )
+                continue; 
+
+            if ( container_.weakEntireSurfaceCheck(index) )
+            {
+                eligible_surfaces.push_back(output_index); 
+            }
+        }
+
+        return !eligible_surfaces.empty(); 
     }
 
 

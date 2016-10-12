@@ -45,7 +45,7 @@ namespace RRM
         // be used as input either for an `defineAbove()` or a `defineBelow()`.
         // Return: true if at least one elegible surface was found.
         //
-        bool requestDefineRegion( std::vector<size_t> eligible_surfaces );
+        bool requestDefineRegion( std::vector<size_t> &eligible_surfaces );
 
 
 
