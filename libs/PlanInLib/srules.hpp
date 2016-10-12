@@ -64,6 +64,8 @@ class SRules
          * \return Size of the container. 
          */
         std::size_t size(); 
+
+        bool empty(); 
         
         /** \brief Translates a PlanarSurface's SurfaceId to the surface's index in the container. 
          *
@@ -204,6 +206,8 @@ class SRules
 
         bool defineAbove( std::size_t surface_index ); 
         bool defineBelow( std::size_t surface_index ); 
+
+        bool weakEntireSurfaceCheck( std::size_t surface_index ); 
 
 
     private: 
