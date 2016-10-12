@@ -210,6 +210,9 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DA_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
+        allowed_surfaces.push_back( 0 );
+        allowed_surfaces.push_back( 1 );
+
 //        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
 //        if( da_ok == false ) return;
 
@@ -221,6 +224,8 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
     {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DB_SKETCHING );
         std::vector< size_t > allowed_surfaces;
+        allowed_surfaces.push_back( 0 );
+        allowed_surfaces.push_back( 1 );
 //        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
 //        if( db_ok == false ) return;
 
@@ -233,6 +238,8 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DR_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
+        allowed_surfaces.push_back( 0 );
+        allowed_surfaces.push_back( 1 );
 //        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
 //        if( db_ok == false ) return;
 

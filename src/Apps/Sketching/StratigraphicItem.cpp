@@ -4,7 +4,7 @@ StratigraphicItem::StratigraphicItem()
 {
 	prepareGeometryChange();
 
-    setFlag( QGraphicsItem::ItemIsSelectable );
+//    setFlag( QGraphicsItem::ItemIsSelectable );
     setAcceptTouchEvents ( true );
 
 }

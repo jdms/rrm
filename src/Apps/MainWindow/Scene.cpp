@@ -41,9 +41,12 @@ void Scene::init()
 }
 
 
-
-
-
+void Scene::setController( Controller* const& c )
+{
+    controller = c;
+    connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) );
+    connect( controller, SIGNAL( waitingSelection( const std::vector< size_t >& ) ), this, SLOT( setModeSelection( const std::vector< size_t >& ) ) );
+}
 
 
 
@@ -656,6 +659,33 @@ void Scene::updateColor( const QColor& color )
 
 
 
+void Scene::setModeSelection( const std::vector< size_t >& allowed_selection )
+{
+
+     std::map< unsigned int, StratigraphicItem* >::iterator it;
+
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    {
+        StratigraphicItem* strat = it->second;
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+    }
+
+    size_t number_allowed_surfaces = allowed_selection.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_selection[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+        strat->setColor( QColor( 255, 255, 0 ) );
+
+    }
+
+    current_mode = InteractionMode::SELECTION;
+
+    update();
+
+}
+
 
 std::vector< unsigned int > Scene::getAllSelectedItems()
 {
@@ -902,11 +932,20 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
     else if ( event->buttons() & Qt::RightButton )
     {
-        addCurve();
-        controller->interpolateStratigraphy();
 
-        newSketch();
-       controller->addStratigraphy();
+        if( current_mode == InteractionMode::SELECTION )
+        {
+            std::cout << "Selection mode" << std::endl;
+        }
+
+        else
+        {
+            addCurve();
+            controller->interpolateStratigraphy();
+
+            newSketch();
+           controller->addStratigraphy();
+        }
 
     }
 
