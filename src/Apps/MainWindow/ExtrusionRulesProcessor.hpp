@@ -37,6 +37,18 @@ namespace RRM
 
         std::vector<size_t> getActiveSurfaces(); 
 
+        //
+        // brief:
+        // Verifies whether ir is possible to define a new 'drawing' region,
+        // either above or below.
+        // Argument: `eligible_surfaces` stores the indices of surfaces that can
+        // be used as input either for an `defineAbove()` or a `defineBelow()`.
+        // Return: true if at least one elegible surface was found.
+        //
+        bool requestDefineRegion( std::vector<size_t> eligible_surfaces );
+
+
+
 
         /* Change the model's properties */
 
@@ -61,6 +73,36 @@ namespace RRM
 
 
         /* Query or modify the automatum state */
+
+
+        //
+        // brief:
+        // Define new input region above surface which index is `surface_index`.
+        //
+        bool defineAbove( size_t surface_index );
+
+
+        //
+        // brief:
+        // Clear any previous `defineAbove()` call.
+        // Safe to call anytime.
+        //
+        void stopDefineAbove();
+
+        //
+        // brief:
+        // Define new input region below surface which index is `surface_index`.
+        //
+        bool defineBelow( size_t surface_index );
+
+        //
+        // brief:
+        // Clear any previous `defineBelow()` call.
+        // Safe to call anytime.
+        //
+        void stopDefineBelow();
+
+
 
         bool update( const State s ); 
 
