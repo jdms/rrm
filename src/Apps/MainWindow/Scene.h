@@ -35,15 +35,14 @@ class Scene: public QGraphicsScene
 
 
 
-        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY };
+        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTION };
 	
 
 
         Scene( QObject* parent = 0 );
+
         void init();
-
         void defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z, int width, int height, int depth );
-
         void drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& width, const int& height );
 
         void setController( Controller* const& c );
@@ -79,6 +78,7 @@ class Scene: public QGraphicsScene
 
         inline void setRandomColor( bool status ){ random_color = status; }
 
+        void setModeSelection( const std::vector< size_t >& );
         std::vector< unsigned int > getAllSelectedItems();
 
 
@@ -158,6 +158,7 @@ class Scene: public QGraphicsScene
         QPointF boundary_anchor;
 
         bool random_color;
+        bool mode_selection;
         QColor current_color;
 
         Eigen::Affine3f m_2dto3d;
