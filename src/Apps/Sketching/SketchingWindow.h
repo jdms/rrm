@@ -84,7 +84,8 @@ class SketchingWindow : public QMainWindow
 
 
         QToolBar *tlb_rules;
-        QActionGroup *action_group_rules;
+        QActionGroup *ag_sketching_rules;
+        QActionGroup *ag_remove_rules;
         QAction *ac_removeabove;
         QAction *ac_removebelow;
         QAction *ac_sketch;
@@ -92,7 +93,6 @@ class SketchingWindow : public QMainWindow
         QAction *ac_removebelowintersection;
         QAction *ac_sketchabove;
         QAction *ac_sketchbelow;
-        QAction *ac_sketchbetween;
 
         QToolBar *tlb_interaction;
 

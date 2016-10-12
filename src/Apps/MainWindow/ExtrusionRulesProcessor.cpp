@@ -132,6 +132,34 @@ namespace RRM
         return true; 
     }
 
+
+
+
+    bool ExtrusionRulesProcessor::defineAbove( size_t surface_index )
+    {
+
+    }
+
+
+    void ExtrusionRulesProcessor::stopDefineAbove()
+    {
+
+    }
+
+
+    bool ExtrusionRulesProcessor::defineBelow( size_t surface_index )
+    {
+
+    }
+
+
+    void ExtrusionRulesProcessor::stopDefineBelow()
+    {
+
+    }
+
+
+
     bool ExtrusionRulesProcessor::canUndo() 
     {
         if ( container_.size() > 0 )
@@ -211,6 +239,13 @@ namespace RRM
     {
         return inserted_surfaces_indices_; 
     }
+
+
+    bool ExtrusionRulesProcessor::requestDefineRegion( std::vector<size_t> eligible_surfaces )
+    {
+
+    }
+
 
     bool ExtrusionRulesProcessor::getSurfaceIndex( const size_t controller_index, size_t &index ) const
     {

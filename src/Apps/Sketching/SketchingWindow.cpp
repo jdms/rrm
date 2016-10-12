@@ -37,33 +37,20 @@ void SketchingWindow::createActions()
     ac_removebelow->setCheckable( true );
 
 
-    //===
-
     ac_removeaboveintersection = new QAction( tr( "Remove Above Intersection" ), this );
     ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
-    ac_removeaboveintersection->setChecked( true );
 
     ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
     ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
     ac_removebelowintersection->setCheckable( true );
-    ac_removebelowintersection->setChecked( true );
 
     ac_sketchabove = new QAction( tr( "Sketch Above" ), this );
     ac_sketchabove->setCheckable( true );
-    ac_sketchabove->setChecked( true );
-
 
     ac_sketchbelow = new QAction( tr( "Sketch Below" ), this );
     ac_sketchbelow->setCheckable( true );
-    ac_sketchbelow->setChecked( true );
 
-
-    ac_sketchbetween = new QAction( tr( "Sketch Between" ), this );
-    ac_sketchbetween->setCheckable( true );
-    ac_sketchbetween->setChecked( true );
-
-    //===
 
     ac_sketch = new QAction( tr( "Sketch" ), this );
     ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
@@ -71,23 +58,32 @@ void SketchingWindow::createActions()
     ac_sketch->setChecked( true );
 
 
-    action_group_rules = new QActionGroup( this );
-    action_group_rules->addAction( ac_removeabove );
-    action_group_rules->addAction( ac_removeaboveintersection );
-    action_group_rules->addAction( ac_removebelow );
-    action_group_rules->addAction( ac_removebelowintersection );
-    action_group_rules->addAction( ac_sketch );
-    action_group_rules->addAction( ac_sketchabove );
-    action_group_rules->addAction( ac_sketchbelow );
-    action_group_rules->addAction( ac_sketchbetween );
-    action_group_rules->setExclusive( true );
+
+
+
+    ag_sketching_rules = new QActionGroup( this );
+    ag_sketching_rules->addAction( ac_sketch );
+    ag_sketching_rules->addAction( ac_sketchabove );
+    ag_sketching_rules->addAction( ac_sketchbelow );
+    ag_sketching_rules->setExclusive( false );
+
+
+    ag_remove_rules = new QActionGroup( this );
+    ag_remove_rules->addAction( ac_removeabove );
+    ag_remove_rules->addAction( ac_removeaboveintersection );
+    ag_remove_rules->addAction( ac_removebelow );
+    ag_remove_rules->addAction( ac_removebelowintersection );
+    ag_remove_rules->setExclusive( true );
 
 
     tlb_rules = addToolBar( tr("Rules") );
-    tlb_rules->addActions( action_group_rules->actions() );
+    tlb_rules->addActions( ag_sketching_rules->actions() );
+    tlb_rules->addSeparator();
+    tlb_rules->addActions( ag_remove_rules->actions() );
 
 
-    // New/Edit scene
+
+
     ac_new = new QAction( tr( "&New" ), this );
     ac_new->setIcon( QIcon( ":/images/icons/page_white.png" ) );
     ac_new->setShortcut( Qt::Key_N );
@@ -116,6 +112,7 @@ void SketchingWindow::createActions()
     tlb_section->addAction( ac_new_boundary );
     tlb_section->addAction( ac_add_sketch );
     tlb_section->addAction( ac_deny_curve );
+    tlb_section->addSeparator();
     tlb_section->addAction( ac_undo );
     tlb_section->addAction( ac_redo );
 
@@ -167,7 +164,6 @@ void SketchingWindow::createConnections()
     connect( ac_removebelowintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
     connect( ac_sketchabove, &QAction::triggered, [=](){ emit updateStratigraphicRule( "DA_SKETCHING" ); lb_statusbar_status->setText( "Sketching Above" ); } );
     connect( ac_sketchbelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "DB_SKETCHING" ); lb_statusbar_status->setText( "Sketching Below" ); } );
-    connect( ac_sketchbetween, &QAction::triggered, [=](){ emit updateStratigraphicRule( "DR_SKETCHING" ); lb_statusbar_status->setText( "Sketching Between" ); } );
 
 
     connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );
