@@ -214,9 +214,10 @@ bool SRules::popLastSurface( PlanarSurface::Ptr &surface )
     }
 
     dictionary.erase( container.back()->getID() ); 
-    // Make sure that we make a *copy* of the last surface (and not of the 
-    // last surface's pointer) before popping it from the container. 
-    surface = std::make_shared<PlanarSurface>( *(container.back()) ); 
+    // Make sure that we make a *copy* (or call a move operation, if available)
+    // of the last surface (and not of the last surface's pointer)
+    // before popping it from the container.
+    surface = std::make_shared<PlanarSurface>( std::move(*container.back()) );
     surface->clearBoundingLists(); 
 
     container.pop_back(); 
@@ -311,7 +312,9 @@ bool SRules::removeAbove( PlanarSurface::Ptr sptr )
     bool status = false; 
     for ( auto s : container ) 
     {
-        if ( s->surfaceIsSet() == true  ) {
+        if ( !s->weakLiesBelowCheck(sptr) )
+        if ( s->surfaceIsSet() == true  ) 
+        {
             status |= boundaryAwareRemoveAbove(sptr, s); 
         }
     }
@@ -406,7 +409,9 @@ bool SRules::removeBelow( PlanarSurface::Ptr sptr )
     bool status = false; 
     for ( auto s : container ) 
     {
-        if ( s->surfaceIsSet() == true ) { 
+        if ( !s->weakLiesAboveCheck(sptr) )
+        if ( s->surfaceIsSet() == true ) 
+        { 
             status |= boundaryAwareRemoveBelow(sptr, s); 
         }
     }
@@ -522,6 +527,65 @@ bool SRules::defineBelow( PlanarSurface::Ptr sptr )
     return true; 
 }
 
+bool SRules::removeAbove( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return removeAbove( container[surface_index] );
+}
+
+bool SRules::removeAboveIntersection( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return removeAboveIntersection( container[surface_index] );
+}
+
+bool SRules::removeBelow( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return removeBelow( container[surface_index] );
+}
+
+bool SRules::removeBelowIntersection( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return removeBelowIntersection( container[surface_index] );
+}
+
+bool SRules::defineAbove( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return defineAbove( container[surface_index] );
+}
+
+bool SRules::defineBelow( std::size_t surface_index )
+{
+    if ( surface_index >= size() )
+    {
+        return false;
+    }
+
+    return defineBelow( container[surface_index] );
+}
 
 bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s ) 
 {

@@ -37,6 +37,12 @@ class Interpolant2D
     public: 
         Interpolant2D( Kernel k = Kernel(), unsigned int poly_dim = 3 ); 
 
+        Interpolant2D( const Interpolant2D & ) = default; 
+        Interpolant2D& operator=( const Interpolant2D & ) = default;
+
+        Interpolant2D( Interpolant2D && ) = default; 
+        Interpolant2D& operator=( Interpolant2D && ) = default; 
+
         double operator()( double x, double y ); 
         double operator()( Point2 &p ); 
 

@@ -30,8 +30,8 @@
 unsigned long int PlanarSurface::num_instances_ = 1; 
 unsigned long int PlanarSurface::global_discretization_state_ = 1; 
 
-PlanarSurface::Natural PlanarSurface::discretization_X = 32; 
-PlanarSurface::Natural PlanarSurface::discretization_Y = 32; 
+PlanarSurface::Natural PlanarSurface::discretization_X = 64;
+PlanarSurface::Natural PlanarSurface::discretization_Y = 64;
 
 Point3 PlanarSurface::origin = {{{ 0.0, 0.0, 0.0, 0.0 }}}; 
 Point3 PlanarSurface::lenght = {{{ 1.0, 1.0, 1.0, 1.0 }}}; 
@@ -264,7 +264,7 @@ bool PlanarSurface::weakEntireSurfaceCheck()
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub) private(height, status) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub) private(height, status) default(none) reduction(&&: isEntireSurface)
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
         status = getHeight(i, height); 
@@ -279,10 +279,10 @@ bool PlanarSurface::weakEntireSurfaceCheck()
             }
         }
 
-        isEntireSurface = isEntireSurface && status; 
+        isEntireSurface = isEntireSurface && status;
     }
 
-    return isEntireSurface; 
+    return isEntireSurface;
 }
 
 bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_surface, PlanarSurface::Ptr &upper_surface ) 

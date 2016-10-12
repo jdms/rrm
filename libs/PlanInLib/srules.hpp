@@ -196,6 +196,15 @@ class SRules
         bool defineAbove( PlanarSurface::Ptr sptr ); 
         bool defineBelow( PlanarSurface::Ptr sptr ); 
 
+        bool removeAbove( std::size_t surface_index ); 
+        bool removeAboveIntersection( std::size_t surface_index ); 
+
+        bool removeBelow( std::size_t surface_index ); 
+        bool removeBelowIntersection( std::size_t surface_index ); 
+
+        bool defineAbove( std::size_t surface_index ); 
+        bool defineBelow( std::size_t surface_index ); 
+
 
     private: 
         ContainerType container; 
