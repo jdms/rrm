@@ -231,22 +231,21 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
 
-    if( rule.compare( "RA_SKETCHING" ) == 0 )
+    else if( rule.compare( "RA_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RA_SKETCHING );
 
-    if( rule.compare( "RAI_SKETCHING" ) == 0 )
+    else if( rule.compare( "RAI_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RAI_SKETCHING );
 
-    if( rule.compare( "RB_SKETCHING" ) == 0 )
+    else if( rule.compare( "RB_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RB_SKETCHING );
 
-    if( rule.compare( "RBI_SKETCHING" ) == 0 )
+    else if( rule.compare( "RBI_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
 
     if( rule.compare( "DA_SKETCHING" ) == 0 )
     {
-        rules_processor.update( RRM::ExtrusionRulesProcessor::State::DA_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
         bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
@@ -259,7 +258,6 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
 
     if( rule.compare( "DB_SKETCHING" ) == 0 )
     {
-        rules_processor.update( RRM::ExtrusionRulesProcessor::State::DB_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
         bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
@@ -272,7 +270,6 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
 
     if( rule.compare( "DR_SKETCHING" ) == 0 )
     {
-        rules_processor.update( RRM::ExtrusionRulesProcessor::State::DR_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
         bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
