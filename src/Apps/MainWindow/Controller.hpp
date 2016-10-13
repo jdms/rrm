@@ -44,6 +44,7 @@ class Controller: public QObject
 		bool interpolateStratigraphy();
         Stratigraphy* getCurrentStratigraphy();
 
+        bool defineRegion( const std::vector< size_t >& surfaces );
 
         void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
         void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
@@ -87,6 +88,8 @@ class Controller: public QObject
         std::map< float, CrossSection* > crosssections_list;
         RRM::ExtrusionRulesProcessor rules_processor;
 
+
+        std::string save_rule;
 };
 
 
