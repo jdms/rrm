@@ -162,8 +162,8 @@ void SketchingWindow::createConnections()
     connect( ac_sketch, &QAction::triggered, [=](){ emit updateStratigraphicRule( "SKETCHING" ); lb_statusbar_status->setText( "Sketch" ); } );
     connect( ac_removeaboveintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RAI_SKETCHING" );  lb_statusbar_status->setText( "Remove Above Intersection" ); } );
     connect( ac_removebelowintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
-    connect( ac_sketchabove, &QAction::triggered, [=](){ emit updateStratigraphicRule( "DA_SKETCHING" ); lb_statusbar_status->setText( "Sketching Above" ); } );
-    connect( ac_sketchbelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "DB_SKETCHING" ); lb_statusbar_status->setText( "Sketching Below" ); } );
+    connect( ac_sketchabove, &QAction::triggered, [=]( bool status ){ emit updateStratigraphicRule( "DA_SKETCHING", status ); lb_statusbar_status->setText( "Sketching Above" ); } );
+    connect( ac_sketchbelow, &QAction::triggered, [=]( bool status ){ emit updateStratigraphicRule( "DB_SKETCHING", status ); lb_statusbar_status->setText( "Sketching Below" ); } );
 
 
     connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );

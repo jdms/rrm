@@ -125,10 +125,8 @@ void MainWindow::createSketchingActions()
     connect( dw_sketching, &QDockWidget::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
 
 
-//    connect ( sketching_window, SIGNAL( updateStratigraphicRule( const std::string& ) ) , controller, SLOT( setCurrentStratigraphicRule( const std::string& ) ) );
-    connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, [=]( const std::string& rule ){
-                                                                                                std::vector< size_t > items = scene->getAllSelectedItems();
-                                                                                                controller->setCurrentStratigraphicRule( rule, items ); } );
+    connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, [=]( const std::string& rule, bool status ){
+                                                                                                controller->setCurrentStratigraphicRule( rule, status ); } );
 
 
     connect ( sketching_window, SIGNAL( undo() ), controller , SLOT( undo() ) );

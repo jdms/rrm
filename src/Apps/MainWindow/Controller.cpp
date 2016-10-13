@@ -167,17 +167,6 @@ bool Controller::interpolateStratigraphy()
     Curve2D* c = strat->getCurve( current_crosssection );
 
 
-//    bool status_ok;
-
-//    if( ( save_rule.compare( "DA_SKETCHING" ) == 0  ) || ( save_rule.compare( "DB_SKETCHING" ) == 0 )
-//            || ( save_rule.compare( "DR_SKETCHING" ) == 0 ) )
-//    {
-//        status_ok = rules_processor.update( *c );
-//    }
-//    else
-//        status_ok = rules_processor.update( *c, strat->getId() );
-
-
     bool status_ok = rules_processor.update( *c, strat->getId() );
     if( status_ok == false ) return false;
 
@@ -187,7 +176,6 @@ bool Controller::interpolateStratigraphy()
 
     bool can_redo = rules_processor.canRedo();
     emit enableRedo( can_redo );
-
 
 
     update();
@@ -206,23 +194,23 @@ bool Controller::defineRegion( const std::vector< size_t >& surfaces )
     }
 
 
-    if( save_rule.compare( "DB_SKETCHING" ) == 0 )
+    else if( save_rule.compare( "DB_SKETCHING" ) == 0 )
     {
         rules_processor.defineBelow( surfaces[ 0 ] );
 
     }
 
 
-    if( save_rule.compare( "DR_SKETCHING" ) == 0 )
-    {
-    }
+//    if( save_rule.compare( "DR_SKETCHING" ) == 0 )
+//    {
+//    }
 
     return true;
 }
 
 
 
-void Controller::setCurrentStratigraphicRule( const std::string& rule, const std::vector< size_t >& selected  )
+void Controller::setCurrentStratigraphicRule( const std::string& rule, bool status  )
 {
 
     save_rule = rule;
@@ -244,8 +232,14 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
 
-    if( rule.compare( "DA_SKETCHING" ) == 0 )
+    else if( rule.compare( "DA_SKETCHING" ) == 0  )
     {
+
+        if( status == false )
+        {
+            rules_processor.stopDefineAbove();
+            return;
+        }
 
         std::vector< size_t > allowed_surfaces;
         bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
@@ -255,9 +249,14 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
 
     }
 
-
-    if( rule.compare( "DB_SKETCHING" ) == 0 )
+    else if( rule.compare( "DB_SKETCHING" ) == 0 )
     {
+
+        if( status == false )
+        {
+            rules_processor.stopDefineBelow();
+            return;
+        }
 
         std::vector< size_t > allowed_surfaces;
         bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
@@ -267,17 +266,6 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
 
     }
 
-
-    if( rule.compare( "DR_SKETCHING" ) == 0 )
-    {
-
-        std::vector< size_t > allowed_surfaces;
-        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-        if( db_ok == false ) return;
-
-        emit waitingSelection( allowed_surfaces );
-
-    }
 
 
 }
