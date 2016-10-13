@@ -167,6 +167,17 @@ bool Controller::interpolateStratigraphy()
     Curve2D* c = strat->getCurve( current_crosssection );
 
 
+//    bool status_ok;
+
+//    if( ( save_rule.compare( "DA_SKETCHING" ) == 0  ) || ( save_rule.compare( "DB_SKETCHING" ) == 0 )
+//            || ( save_rule.compare( "DR_SKETCHING" ) == 0 ) )
+//    {
+//        status_ok = rules_processor.update( *c );
+//    }
+//    else
+//        status_ok = rules_processor.update( *c, strat->getId() );
+
+
     bool status_ok = rules_processor.update( *c, strat->getId() );
     if( status_ok == false ) return false;
 
@@ -186,9 +197,36 @@ bool Controller::interpolateStratigraphy()
 
 
 
+bool Controller::defineRegion( const std::vector< size_t >& surfaces )
+{
+
+    if( save_rule.compare( "DA_SKETCHING" ) == 0 )
+    {
+        rules_processor.defineAbove( surfaces[ 0 ] );
+    }
+
+
+    if( save_rule.compare( "DB_SKETCHING" ) == 0 )
+    {
+        rules_processor.defineBelow( surfaces[ 0 ] );
+
+    }
+
+
+    if( save_rule.compare( "DR_SKETCHING" ) == 0 )
+    {
+    }
+
+    return true;
+}
+
+
 
 void Controller::setCurrentStratigraphicRule( const std::string& rule, const std::vector< unsigned int >& selected  )
 {
+
+    save_rule = rule;
+
 
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
@@ -205,53 +243,43 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, const std
     if( rule.compare( "RBI_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
+
     if( rule.compare( "DA_SKETCHING" ) == 0 )
     {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DA_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
-        allowed_surfaces.push_back( 0 );
-        allowed_surfaces.push_back( 1 );
-
-//        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-//        if( da_ok == false ) return;
+        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+        if( da_ok == false ) return;
 
         emit waitingSelection( allowed_surfaces );
 
     }
+
 
     if( rule.compare( "DB_SKETCHING" ) == 0 )
     {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DB_SKETCHING );
+
         std::vector< size_t > allowed_surfaces;
-        allowed_surfaces.push_back( 0 );
-        allowed_surfaces.push_back( 1 );
-//        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-//        if( db_ok == false ) return;
+        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+        if( db_ok == false ) return;
 
         emit waitingSelection( allowed_surfaces );
 
     }
+
 
     if( rule.compare( "DR_SKETCHING" ) == 0 )
     {
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::DR_SKETCHING );
 
         std::vector< size_t > allowed_surfaces;
-        allowed_surfaces.push_back( 0 );
-        allowed_surfaces.push_back( 1 );
-//        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-//        if( db_ok == false ) return;
+        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
+        if( db_ok == false ) return;
 
         emit waitingSelection( allowed_surfaces );
 
-    }
-
-
-
-    for( unsigned int i = 0; i < selected.size(); ++i )
-    {
-        std::cout << "Item " << selected[ i ] << " selected." << std::endl;
     }
 
 
