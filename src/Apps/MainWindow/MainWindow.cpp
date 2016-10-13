@@ -127,7 +127,7 @@ void MainWindow::createSketchingActions()
 
 //    connect ( sketching_window, SIGNAL( updateStratigraphicRule( const std::string& ) ) , controller, SLOT( setCurrentStratigraphicRule( const std::string& ) ) );
     connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, [=]( const std::string& rule ){
-                                                                                                std::vector< unsigned int > items = scene->getAllSelectedItems();
+                                                                                                std::vector< size_t > items = scene->getAllSelectedItems();
                                                                                                 controller->setCurrentStratigraphicRule( rule, items ); } );
 
 
