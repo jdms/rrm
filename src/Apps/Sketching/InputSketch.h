@@ -38,6 +38,10 @@ class InputSketch : public QGraphicsPathItem
 
         void setDone( bool option );
 
+
+        inline bool isValid(){ if( points_list.size() < 5 ) return false; return true; }
+
+
         bool isVisible() const;
         bool isInside() const;
         void isVisible( bool option );
