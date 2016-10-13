@@ -54,7 +54,7 @@ class Controller: public QObject
     public slots:
 
 
-        void setCurrentStratigraphicRule( const std::string& rule, const std::vector< size_t >& selected );
+        void setCurrentStratigraphicRule( const std::string& rule, bool status = true );
 
 
         void undo();

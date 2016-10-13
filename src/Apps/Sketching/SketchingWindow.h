@@ -57,7 +57,7 @@ class SketchingWindow : public QMainWindow
         void undo();
         void redo();
         void clear();
-        void updateStratigraphicRule( const std::string&  );
+        void updateStratigraphicRule( const std::string&, bool status = true  );
 
         void addStratigraphy();
         void undoLastSketch();
