@@ -687,17 +687,17 @@ void Scene::setModeSelection( const std::vector< size_t >& allowed_selection )
 }
 
 
-std::vector< unsigned int > Scene::getAllSelectedItems()
+std::vector< size_t > Scene::getAllSelectedItems()
 {
 
-    std::vector< unsigned int > id_items;
+    std::vector< size_t > id_items;
 
     QList< QGraphicsItem* > items = selectedItems();
     QList< QGraphicsItem* >::iterator it;
 
     for ( it = items.begin(); it != items.end(); ++it ){
         StratigraphicItem* s = (StratigraphicItem*) (*it);
-        id_items.push_back( s->getId() );
+        id_items.push_back( (size_t) s->getId() );
     }
     return id_items;
 
@@ -742,9 +742,9 @@ Curve2D Scene::scene2Dto3D( const Curve2D& c )
 {
 
     Curve2D c3d;
-    unsigned int number_of_points = c.size();
+    size_t number_of_points = c.size();
 
-    for( int i = 0; i < number_of_points; ++i )
+    for( size_t i = 0; i < number_of_points; ++i )
     {
         Eigen::Vector3f p = scene2Dto3D( c.at( i ) );
         c3d.add( Point2D( p.x(), p.y() ) );
@@ -759,9 +759,9 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 {
 
     Curve2D c2d;
-    unsigned int number_of_points = c.size();
+    size_t number_of_points = c.size();
 
-    for( int i = 0; i < number_of_points; ++i )
+    for( size_t i = 0; i < number_of_points; ++i )
     {
         Point2D p = c.at( i );
         c2d.add( scene3Dto2D( Eigen::Vector3f( p.x(), p.y(), 0.0f ) ) );
@@ -825,9 +825,9 @@ Curve2D Scene::scene2DtoPlanin( const Curve2D& c )
 {
 
     Curve2D c3d;
-    unsigned int number_of_points = c.size();
+    size_t number_of_points = c.size();
 
-    for( int i = 0; i < number_of_points; ++i )
+    for( size_t i = 0; i < number_of_points; ++i )
     {
         Eigen::Vector3f p = scene2DtoPlanin( c.at( i ) );
         c3d.add( Point2D( p.x(), p.y() ) );
@@ -854,9 +854,9 @@ Curve2D Scene::scenePlaninto2D( const Curve2D &c )
 {
 
     Curve2D c2d;
-    unsigned int number_of_points = c.size();
+    size_t number_of_points = c.size();
 
-    for( int i = 0; i < number_of_points; ++i )
+    for( size_t i = 0; i < number_of_points; ++i )
     {
         Point2D p = c.at( i );
         c2d.add( scenePlaninto2D( Eigen::Vector3f( p.x(), p.y(), 0.0f ) ) );
@@ -1046,7 +1046,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     {
         std::cout << "Selection mode" << std::endl;
 
-        std::vector< unsigned int > id_items = getAllSelectedItems();
+        std::vector< size_t > id_items = getAllSelectedItems();
         if( id_items.empty() == true ) return;
 
         controller->defineRegion( id_items );
