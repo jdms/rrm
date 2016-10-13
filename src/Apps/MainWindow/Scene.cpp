@@ -1019,6 +1019,8 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         if( temp_sketch == NULL ) return;
 
+        if( temp_sketch->isValid() == false ) return;
+
 
         sketch->addSegment( *temp_sketch );
         removeItem( temp_sketch );
@@ -1027,6 +1029,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         temp_sketch = NULL;
 
     }
+
 
     else if( current_mode == InteractionMode::BOUNDARY )
     {
