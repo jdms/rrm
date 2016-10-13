@@ -44,7 +44,7 @@ public:
     {
         std::vector< ResultIntersection > res = intersections[ c ];
 
-        for( int i = 0; i < res.size(); ++i )
+        for( size_t i = 0; i < res.size(); ++i )
         {
             curves.push_back( res[ i ].second );
             points.push_back( res[ i ].intersection_points );

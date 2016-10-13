@@ -120,9 +120,9 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
     points.clear();
 
 
-    unsigned int number_of_points = c->size();
+    size_t number_of_points = c->size();
 
-    for( int i = 0; i < number_of_points; ++i )
+    for( size_t i = 0; i < number_of_points; ++i )
     {
         Point2D p = c->at( i );
 
@@ -134,6 +134,32 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
     }
 
     curve = QPainterPath();
+
+
+    std::vector< unsigned int >& edges = strat->getCurveEdges();
+
+    unsigned int id0 =0;
+    unsigned int id1 =0;
+    unsigned int last_id = 10000;
+
+    size_t nedges = edges.size()/2;
+
+    for( size_t i = 0; i < nedges; ++i )
+    {
+
+        id0 = edges[ 2*i ];
+        id1 = edges[ 2*i + 1 ];
+
+        if( last_id != id0 )
+            curve.moveTo( points[ id0 ] );
+        else
+            curve.lineTo( points[ id1 ] );
+
+        last_id = id1;
+    }
+
+   /*
+
 
     std::vector< unsigned int >& edges = strat->getCurveEdges();
 
@@ -153,7 +179,7 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
 
     }
 
-
+    */
 
 }
 

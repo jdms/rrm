@@ -222,7 +222,7 @@ bool Controller::defineRegion( const std::vector< size_t >& surfaces )
 
 
 
-void Controller::setCurrentStratigraphicRule( const std::string& rule, const std::vector< unsigned int >& selected  )
+void Controller::setCurrentStratigraphicRule( const std::string& rule, const std::vector< size_t >& selected  )
 {
 
     save_rule = rule;
