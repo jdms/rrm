@@ -7,6 +7,31 @@ StratigraphicItem::StratigraphicItem()
     setFlag( QGraphicsItem::ItemIsSelectable, false );
     setAcceptTouchEvents ( true );
 
+    initSetup();
+}
+
+
+void StratigraphicItem::initSetup()
+{
+
+    under_operation = false;
+    is_allowed = false;
+    is_unallowed = false;
+    is_selected = false;
+
+
+    pen_allowed.setColor( Qt::yellow );
+    pen_allowed.setWidth( 5 );
+
+    pen_unallowed.setColor( Qt::gray );
+    pen_unallowed.setWidth( 3 );
+
+    pen_selected.setColor( Qt::red );
+    pen_selected.setWidth( 5 );
+
+//    pen_normal.setColor( current_color );
+//    pen_normal.setWidth( 3 );
+
 }
 
 
@@ -14,18 +39,28 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 {
 	painter->setRenderHint( QPainter::Antialiasing );
 	
-    QPen pen_curve;
-	
-	pen_curve.setWidth( 3 );
 
-    if ( isSelected ( ) )
+    if( under_operation == false )
     {
-        pen_curve.setColor( Qt::red );
+        pen_normal.setColor( current_color );
+        pen_normal.setWidth( 3 );
+        painter->setPen( pen_normal );
     }
     else
-        pen_curve.setColor( current_color );
-	
-	painter->setPen( pen_curve );
+    {
+
+        if( is_allowed == true )
+            painter->setPen( pen_allowed );
+
+        else if( is_unallowed == true )
+            painter->setPen( pen_unallowed );
+
+
+        if ( is_selected )
+            painter->setPen( pen_selected );
+    }
+
+
 	painter->setBrush( Qt::NoBrush );
     painter->drawPath( curve );
 		

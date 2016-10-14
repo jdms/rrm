@@ -185,18 +185,18 @@ bool Controller::interpolateStratigraphy()
 
 
 
-bool Controller::defineRegion( const std::vector< size_t >& surfaces )
+bool Controller::defineRegion( const std::vector< size_t >& selections )
 {
 
     if( save_rule.compare( "DA_SKETCHING" ) == 0 )
     {
-        rules_processor.defineAbove( surfaces[ 0 ] );
+        rules_processor.defineAbove( selections[ 0 ] );
     }
 
 
     else if( save_rule.compare( "DB_SKETCHING" ) == 0 )
     {
-        rules_processor.defineBelow( surfaces[ 0 ] );
+        rules_processor.defineBelow( selections[ 0 ] );
 
     }
 
@@ -245,7 +245,7 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, bool stat
         bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
         if( da_ok == false ) return;
 
-        emit waitingSelection( allowed_surfaces );
+        emit waitingSelection( true, allowed_surfaces );
 
     }
 
@@ -262,7 +262,7 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, bool stat
         bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
         if( db_ok == false ) return;
 
-        emit waitingSelection( allowed_surfaces );
+        emit waitingSelection( true, allowed_surfaces );
 
     }
 

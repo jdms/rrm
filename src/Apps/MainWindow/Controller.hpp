@@ -44,7 +44,7 @@ class Controller: public QObject
 		bool interpolateStratigraphy();
         Stratigraphy* getCurrentStratigraphy();
 
-        bool defineRegion( const std::vector< size_t >& surfaces );
+        bool defineRegion( const std::vector< size_t >& selections );
 
         void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
         void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
@@ -72,7 +72,7 @@ class Controller: public QObject
         void enableUndo( bool option );
         void enableRedo( bool option );
         void removeStratigraphy( unsigned int id );
-        void waitingSelection( const std::vector< size_t >& );
+        void waitingSelection( bool, const std::vector< size_t >& );
 		
 
     protected:

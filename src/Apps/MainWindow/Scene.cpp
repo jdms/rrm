@@ -45,7 +45,7 @@ void Scene::setController( Controller* const& c )
 {
     controller = c;
     connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) );
-    connect( controller, SIGNAL( waitingSelection( const std::vector< size_t >& ) ), this, SLOT( setModeSelection( const std::vector< size_t >& ) ) );
+    connect( controller, SIGNAL( waitingSelection( bool, const std::vector< size_t >& ) ), this, SLOT( setModeSelection( bool, const std::vector< size_t >& ) ) );
 }
 
 
@@ -659,32 +659,64 @@ void Scene::updateColor( const QColor& color )
 
 
 
-void Scene::setModeSelection( const std::vector< size_t >& allowed_selection )
+void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed_selection )
 {
+
+    current_mode = InteractionMode::SELECTION;
+
+
 
     std::map< unsigned int, StratigraphicItem* >::iterator it;
 
-    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    if( option == false )
     {
-        StratigraphicItem* strat = it->second;
-        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+        {
+            StratigraphicItem* strat = it->second;
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+            strat->setUnderOperation( false );
+        }
+    }
+    else
+    {
+
+
+        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+        {
+            StratigraphicItem* strat = it->second;
+            strat->setUnderOperation( true );
+            strat->setAllowed( false );
+        }
+
+        size_t number_allowed_surfaces = allowed_selection.size();
+        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+        {
+            size_t id = allowed_selection[ i ];
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            strat->setAllowed( true );
+        }
+
     }
 
-    size_t number_allowed_surfaces = allowed_selection.size();
-    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
-    {
-        size_t id = allowed_selection[ i ];
-        StratigraphicItem* strat = stratigraphics_list[ id ];
-        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
-        strat->setColor( QColor( 255, 255, 0 ) );
-
-    }
-
-    current_mode = InteractionMode::SELECTION;
 
     update();
 
 }
+
+
+//void Scene::unmarkNonSelected( std::vector< size_t >& id_items )
+//{
+//    size_t number_items = id_items.size();
+
+//    for( size_t i = 0; i < number_items; ++i )
+//    {
+//        StratigraphicItem* strat =
+
+//    }
+
+//}
+
 
 
 std::vector< size_t > Scene::getAllSelectedItems()
@@ -698,10 +730,13 @@ std::vector< size_t > Scene::getAllSelectedItems()
     for ( it = items.begin(); it != items.end(); ++it ){
         StratigraphicItem* s = (StratigraphicItem*) (*it);
         id_items.push_back( (size_t) s->getId() );
+        s->setSelection( true );
     }
     return id_items;
 
 }
+
+
 
 
 
@@ -1053,8 +1088,12 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         if( id_items.empty() == true ) return;
 
         controller->defineRegion( id_items );
+//        unmarkNonSelected( id_items );
+
 
         current_mode = InteractionMode::OVERSKETCHING;
+
+
 
     }
 
