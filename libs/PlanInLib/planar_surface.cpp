@@ -521,6 +521,82 @@ bool PlanarSurface::weakLiesBelowCheck( PlanarSurface::WeakPtr s )
     return weakLiesBelowCheck(sp); 
 }
 
+bool PlanarSurface::weakLiesAboveOrEqualsCheck( PlanarSurface::Ptr &sp ) 
+{
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    if ( ( sp == nullptr ) || ( sp->surfaceIsSet() == false ) ) { 
+        return false; 
+    }
+
+    bool lies_above = true; 
+
+    updateDiscretization(); 
+    double height, s_height; 
+    double tolerance = getTolerance(); 
+
+    auto num_vertices_omp = num_vertices_; 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance) private(height, s_height) default(none) reduction(&&: lies_above) 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        getHeight(i, height); 
+        sp->getHeight(i, s_height); 
+
+        lies_above = lies_above && (height > s_height - tolerance); 
+    }
+
+    return lies_above; 
+}
+
+bool PlanarSurface::weakLiesAboveOrEqualsCheck( PlanarSurface::WeakPtr s ) 
+{
+    PlanarSurface::Ptr sp = s.lock(); 
+
+    return weakLiesAboveOrEqualsCheck(sp); 
+}
+
+bool PlanarSurface::weakLiesBelowOrEqualsCheck( PlanarSurface::Ptr &sp ) 
+{
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    if ( ( sp == nullptr ) || ( sp->surfaceIsSet() == false ) ) { 
+        return false; 
+    }
+
+    bool lies_below = true; 
+
+    updateDiscretization(); 
+    double height, s_height; 
+    double tolerance = getTolerance(); 
+
+    auto num_vertices_omp = num_vertices_; 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance) private(height, s_height) default(none) reduction(&&: lies_below) 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        getHeight(i, height); 
+        sp->getHeight(i, s_height); 
+
+        lies_below = lies_below && (height < s_height + tolerance ); 
+    }
+
+    return lies_below; 
+}
+
+bool PlanarSurface::weakLiesBelowOrEqualsCheck( PlanarSurface::WeakPtr s ) 
+{
+    PlanarSurface::Ptr sp = s.lock(); 
+
+    return weakLiesBelowOrEqualsCheck(sp); 
+}
+
 bool PlanarSurface::getVertex2D( Natural index, Point2 &v ) { 
     if ( rangeCheck(index) == false ) { 
         return false; 
