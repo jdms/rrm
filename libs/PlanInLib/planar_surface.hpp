@@ -122,6 +122,12 @@ class PlanarSurface {
         bool weakLiesBelowCheck( PlanarSurface::Ptr &s ); 
         bool weakLiesBelowCheck( PlanarSurface::WeakPtr s ); 
 
+        bool weakLiesAboveOrEqualsCheck( PlanarSurface::Ptr &s ); 
+        bool weakLiesAboveOrEqualsCheck( PlanarSurface::WeakPtr s ); 
+
+        bool weakLiesBelowOrEqualsCheck( PlanarSurface::Ptr &s ); 
+        bool weakLiesBelowOrEqualsCheck( PlanarSurface::WeakPtr s ); 
+
         bool getVertex2D( Natural index, Point2 &v );
         bool getVertex3D( Natural index, Point3 &v );
 

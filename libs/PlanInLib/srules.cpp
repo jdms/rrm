@@ -636,22 +636,22 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
     if ( define_above_ && define_below_ ) 
     { 
-        if ( !to_remove_surface->weakLiesBelowCheck(lower_bound_) )  
-            if ( !to_remove_surface->weakLiesAboveCheck(upper_bound_) ) { 
+        if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
+            if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                 to_remove_surface->removeAbove(base_surface); 
                 status |= true;
             }
     }
     else if ( define_above_ ) 
     {
-        if ( !to_remove_surface->weakLiesBelowCheck(lower_bound_) ) { 
+        if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
             to_remove_surface->removeAbove(base_surface); 
             status |= true;
         }
     }
     else if ( define_below_ ) 
     { 
-        if ( !to_remove_surface->weakLiesAboveCheck(upper_bound_) ) { 
+        if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
             to_remove_surface->removeAbove(base_surface); 
             status |= true; 
         }
@@ -671,8 +671,8 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 
     if ( define_above_ && define_below_ ) 
     { 
-        if ( !to_remove_surface->weakLiesBelowCheck(lower_bound_) )  
-            if ( !to_remove_surface->weakLiesAboveCheck(upper_bound_) ) { 
+        if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
+            if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                 to_remove_surface->removeBelow(base_surface); 
                 status |= true;
             }
@@ -680,7 +680,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 
     else if ( define_above_ ) 
     { 
-        if ( !to_remove_surface->weakLiesBelowCheck(lower_bound_) ) { 
+        if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
             to_remove_surface->removeBelow(base_surface); 
             status |= true;
         }
@@ -688,7 +688,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 
     else if ( define_below_ ) 
     { 
-        if ( !to_remove_surface->weakLiesAboveCheck(upper_bound_) ) { 
+        if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
             to_remove_surface->removeBelow(base_surface); 
             status |= true; 
         }
