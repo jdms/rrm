@@ -705,17 +705,17 @@ void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed
 }
 
 
-void Scene::unmarkNonSelected( std::vector< size_t >& id_items )
-{
-    size_t number_items = id_items.size();
+//void Scene::unmarkNonSelected( std::vector< size_t >& id_items )
+//{
+//    size_t number_items = id_items.size();
 
-    for( size_t i = 0; i < number_items; ++i )
-    {
-        StratigraphicItem* strat =
+//    for( size_t i = 0; i < number_items; ++i )
+//    {
+//        StratigraphicItem* strat =
 
-    }
+//    }
 
-}
+//}
 
 
 
@@ -1088,7 +1088,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         if( id_items.empty() == true ) return;
 
         controller->defineRegion( id_items );
-        unmarkNonSelected( id_items );
+//        unmarkNonSelected( id_items );
 
 
         current_mode = InteractionMode::OVERSKETCHING;
