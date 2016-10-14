@@ -5,7 +5,7 @@
  *      Author: felipe
  */
 
-#include "Arrangement2D.hpp"
+#include "../Arrangement_2D/Arrangement2D.hpp"
 
 void Arrangement2D::boundary(Real x, Real y, Real width, Real height)
 {

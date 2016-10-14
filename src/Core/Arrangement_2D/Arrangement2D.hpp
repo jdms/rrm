@@ -14,10 +14,10 @@
 #include <algorithm>
 #include <iterator>
 
+#include "../Arrangement_2D/PolygonalCurve2.hpp"
 #include "Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-#include "PolygonalCurve2.hpp"
 
 
 typedef unsigned long long Natural;
