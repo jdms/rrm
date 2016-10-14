@@ -22,6 +22,8 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 
 		StratigraphicItem();
 		
+
+        void initSetup();
 		
 		void create( const QPointF& p );
 		void add( const QPointF& p );
@@ -45,7 +47,12 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
 
         inline unsigned int getId() const { return strat->getId(); }
-        inline QPolygonF getCurve(){ return points; }
+        inline QPolygonF getCurve(){ return points; }\
+
+
+        inline void setSelection( bool option ){ is_selected = option;  }
+        inline void setAllowed( bool option ){ is_allowed = option; is_unallowed = !option; }
+        inline void setUnderOperation( bool option ){ under_operation = option; }
 
 	
 	protected:
@@ -55,6 +62,16 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		QPainterPath curve;
 
 		QColor current_color;
+        QPen pen_allowed;
+        QPen pen_unallowed;
+        QPen pen_selected;
+        QPen pen_normal;
+
+        bool under_operation;
+        bool is_allowed;
+        bool is_unallowed;
+        bool is_selected;
+
 };
 
 
