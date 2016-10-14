@@ -1,4 +1,5 @@
-Project(Arrangement2D)
+Project(Arrangement_2D)
+
 
 file(
   GLOB ARRANGEMENT_HEADERS
@@ -13,4 +14,4 @@ file(
 message(${ARRANGEMENT_SOURCES})
 
 add_library( ${PROJECT_NAME} STATIC ${ARRANGEMENT_HEADERS} ${ARRANGEMENT_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Constants  )
+target_link_libraries( ${PROJECT_NAME} RRMBase  )

@@ -447,6 +447,10 @@ void Scene::newSketch()
 
     current_mode = InteractionMode::OVERSKETCHING;
 
+    sketchlib_.beginSketch(this->curve_visitor_);
+    this->sketchlib_item = new InputSketch(Qt::gray);
+    addItem(this->sketchlib_item);
+
 }
 
 
@@ -1056,6 +1060,12 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         if( temp_sketch->isValid() == false ) return;
 
+
+        Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
+
+        sketchlib_.addStroke(c);
+
+        sketchlib_item->setSketch( PolyQtUtils::curve2DToQPolyginF( sketchlib_.getCurrentSketch() ) );
 
         sketch->addSegment( *temp_sketch );
         removeItem( temp_sketch );

@@ -11,4 +11,4 @@ file(
   )
 
 add_library( ${PROJECT_NAME} STATIC ${SKETCHLIB_HEADERS} ${SKETCHLIB_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Constants  )
+target_link_libraries( ${PROJECT_NAME} RRMBase  )
