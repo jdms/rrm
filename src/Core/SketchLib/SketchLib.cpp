@@ -10,46 +10,78 @@
 namespace RRM
 {
 
-    SketchLib::SketchLib ( )
+    Curve2D SketchLib::getCurrentSketch( ) const
     {
-        // TODO Auto-generated constructor stub
-
+        return this->current_supporting_curve_;
     }
 
     void SketchLib::clear ( )
     {
+        this->current_supporting_curve_.clear();
+        this->previous_supporting_curve_.clear();
+        this->swap_curve_.clear();
     }
 
-    void SketchLib::beginSketch ( const Curve2D& curve )
+    void SketchLib::reset ( )
     {
+        this->current_supporting_curve_.clear();
     }
 
     void SketchLib::undo ( )
     {
+        this->swap_curve_ = this->current_supporting_curve_;
+        this->current_supporting_curve_ = previous_supporting_curve_;
     }
 
     void SketchLib::redo ( )
     {
+        this->current_supporting_curve_ = this->swap_curve_;
     }
 
-    void SketchLib::endSketch ( )
+    void SketchLib::beginSketch ( Curve2D& _curve )
     {
+        this->reset();
+        this->current_supporting_curve_ = _curve;
     }
 
-    void SketchLib::addStroke ( const Curve2D& _point , double _tolerance )
+    void SketchLib::beginSketch (  )
     {
+        this->reset();
     }
 
-    void SketchLib::pointRedution ( const Curve2D& _curve , const double tolerance )
+    bool SketchLib::addStroke ( const Curve2D& _curve )
     {
-    }
+        Curve2D simplify;
+        Curve2D stroke;
+        Curve2D rest;
 
-    void SketchLib::subDivision ( )
-    {
+        if ( this->current_supporting_curve_.size() == 0 )
+        {
+            this->current_supporting_curve_.join(_curve);
+        }
+        else
+        {
+            stroke = _curve;
+
+            previous_supporting_curve_ = current_supporting_curve_;
+
+            current_supporting_curve_ = stroke.overSketch( current_supporting_curve_, rest, 1 , 16 );
+
+            current_supporting_curve_.douglasPeuckerSimplify(simplify, 1.0);
+
+            current_supporting_curve_ = simplify;
+
+        }
+
+        std::cout << this->current_supporting_curve_.size() << std::endl;
+
+        return true;
     }
 
     void SketchLib::defaultFilter ( )
     {
+
     }
 
 } /* namespace RRM */
+

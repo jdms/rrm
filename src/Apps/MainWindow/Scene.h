@@ -26,6 +26,9 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
+#include "Core/Arrangement_2D/Arrangement_2D.hpp"
+#include "Core/SketchLib/SketchLib.hpp"
+
 class Scene: public QGraphicsScene
 {
 	Q_OBJECT
@@ -35,7 +38,7 @@ class Scene: public QGraphicsScene
 
 
 
-        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTION };
+        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTION, DEBUG };
 	
 
 
@@ -181,6 +184,13 @@ class Scene: public QGraphicsScene
         std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
+
+        /// Sketch Lib Testing
+        InputSketch     * sketchlib_item;
+        RRM::Arrangement_2D arr;
+        RRM::SketchLib      sketchlib_;
+        Curve2D curve_visitor_;
+
 	
 };
 

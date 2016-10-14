@@ -8,7 +8,7 @@
 #ifndef _SKETCHLIB_HPP_
 #define _SKETCHLIB_HPP_
 
-#include "Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 #include <vector>
 
 namespace RRM
@@ -19,31 +19,29 @@ namespace RRM
 
             using Natural = unsigned long long int;
 
-            SketchLib  ( );
+             SketchLib ( ) = default;
             ~SketchLib ( ) = default;
+
+            Curve2D getCurrentSketch() const;
 
             // Default Sketch Path Input
             void clear( );
-                void beginSketch( const Curve2D& curve );
+            void reset( );
+                void beginSketch( Curve2D& _curve );
+                void beginSketch( );
                 void undo( );
                 void redo( );
-                void endSketch( );
             // Default LineString Input
-                void addStroke( const Curve2D& _point, double _tolerance );
-
-                // Using Douglas Peucker Simplify
-                void pointRedution(const Curve2D& _curve,const double tolerance);
-                void subDivision();
+                bool addStroke( const Curve2D& _curve );
 
             private:
                 // Reduce the frequency of the input path
                 void defaultFilter();
 
-                Curve2D                 main_sketch_curve_;
-                std::vector<Curve2D>    main_sketch_subcurves_;
-                Natural                 last_sub_curves_;
-                Natural                 current_sub_curves_;
-                Curve2D                 stroke_path_;
+                Curve2D                 current_supporting_curve_;
+                Curve2D                 swap_curve_;
+                Curve2D                 previous_supporting_curve_;
+
     };
 
 } /* namespace RRM */
