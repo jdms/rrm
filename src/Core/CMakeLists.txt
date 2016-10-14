@@ -12,3 +12,5 @@ include_directories(
 #add_subdirectory( Geology )
 add_subdirectory( Geometry )
 add_subdirectory( Base )
+add_subdirectory( SketchLib )
+add_subdirectory( Arrangement_2 )
