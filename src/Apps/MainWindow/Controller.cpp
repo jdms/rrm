@@ -185,6 +185,25 @@ bool Controller::interpolateStratigraphy()
 
 
 
+bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
+{
+    save_rule = "DA_SKETCHING";
+    return rules_processor.requestDefineRegion( allowed );
+
+}
+
+
+bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
+{
+
+    save_rule = "DB_SKETCHING";
+    return rules_processor.requestDefineRegion( allowed );
+
+}
+
+
+
+
 bool Controller::defineRegion( const std::vector< size_t >& selections )
 {
 
@@ -200,21 +219,14 @@ bool Controller::defineRegion( const std::vector< size_t >& selections )
 
     }
 
-
-//    if( save_rule.compare( "DR_SKETCHING" ) == 0 )
-//    {
-//    }
-
     return true;
+
 }
 
 
 
-void Controller::setCurrentStratigraphicRule( const std::string& rule, bool status  )
+void Controller::setStratigraphicRule( const std::string& rule )
 {
-
-    save_rule = rule;
-
 
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
@@ -231,44 +243,8 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, bool stat
     else if( rule.compare( "RBI_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
-
-    else if( rule.compare( "DA_SKETCHING" ) == 0  )
-    {
-
-        if( status == false )
-        {
-            rules_processor.stopDefineAbove();
-            return;
-        }
-
-        std::vector< size_t > allowed_surfaces;
-        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-        if( da_ok == false ) return;
-
-        emit waitingSelection( true, allowed_surfaces );
-
-    }
-
-    else if( rule.compare( "DB_SKETCHING" ) == 0 )
-    {
-
-        if( status == false )
-        {
-            rules_processor.stopDefineBelow();
-            return;
-        }
-
-        std::vector< size_t > allowed_surfaces;
-        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-        if( db_ok == false ) return;
-
-        emit waitingSelection( true, allowed_surfaces );
-
-    }
-
-
-
 }
+
 
 
 

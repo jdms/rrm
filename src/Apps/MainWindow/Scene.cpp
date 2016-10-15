@@ -32,6 +32,11 @@ void Scene::init()
     defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, 400 );
 
 
+
+    defining_above = false;
+    defining_below = false;
+
+
     createVolume3D();
     createSketchingBoundary();
     newSketch();
@@ -45,7 +50,6 @@ void Scene::setController( Controller* const& c )
 {
     controller = c;
     connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) );
-    connect( controller, SIGNAL( waitingSelection( bool, const std::vector< size_t >& ) ), this, SLOT( setModeSelection( bool, const std::vector< size_t >& ) ) );
 }
 
 
@@ -659,63 +663,141 @@ void Scene::updateColor( const QColor& color )
 
 
 
-void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed_selection )
+
+void Scene::enableSketchingAboveRegion( bool option )
 {
 
-    current_mode = InteractionMode::SELECTION;
 
+
+    if( option == true )
+        defineSketchingAboveRegion();
+    else
+        stopSketchingAboveRegion();
+
+}
+
+
+void Scene::enableSketchingBelowRegion( bool option )
+{
+
+    if( option == true )
+        defineSketchingBelowRegion();
+    else
+        stopSketchingBelowRegion();
+
+}
+
+
+
+
+void Scene::defineSketchingAboveRegion()
+{
+
+
+    allowed_above_surfaces.clear();
+    bool sketchingabove_ok = controller->defineSketchingAbove( allowed_above_surfaces );
+    if( ( sketchingabove_ok == false ) || ( allowed_above_surfaces.empty() == true  ) ) return;
 
 
     std::map< unsigned int, StratigraphicItem* >::iterator it;
-
-    if( option == false )
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
-        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
-        {
-            StratigraphicItem* strat = it->second;
-            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
-            strat->setUnderOperation( false );
-        }
-    }
-    else
-    {
-
-
-        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
-        {
-            StratigraphicItem* strat = it->second;
-            strat->setUnderOperation( true );
-            strat->setAllowed( false );
-        }
-
-        size_t number_allowed_surfaces = allowed_selection.size();
-        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
-        {
-            size_t id = allowed_selection[ i ];
-            StratigraphicItem* strat = stratigraphics_list[ id ];
-            strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
-            strat->setAllowed( true );
-        }
-
+        StratigraphicItem* strat = it->second;
+        strat->setUnderOperation( true );
     }
 
 
+    size_t number_allowed_surfaces = allowed_above_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_above_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+        strat->setAllowed( true );
+    }
+
+
+    current_mode = InteractionMode::SELECTION;
+    defining_above = true;
+
+    update();
+}
+
+
+void Scene::stopSketchingAboveRegion()
+{
+
+    size_t number_allowed_surfaces = allowed_above_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_above_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        strat->setAllowed( false );
+        strat->setSelection( false );
+    }
+
+    current_mode = InteractionMode::OVERSKETCHING;
+    defining_above = false;
     update();
 
 }
 
 
-//void Scene::unmarkNonSelected( std::vector< size_t >& id_items )
-//{
-//    size_t number_items = id_items.size();
+void Scene::defineSketchingBelowRegion()
+{
 
-//    for( size_t i = 0; i < number_items; ++i )
-//    {
-//        StratigraphicItem* strat =
+    allowed_below_surfaces.clear();
+    bool sketchingbelow_ok = controller->defineSketchingBelow( allowed_below_surfaces );
+    if( ( sketchingbelow_ok == false )  || ( allowed_below_surfaces.empty() == true  ) ) return;
 
-//    }
 
-//}
+    std::map< unsigned int, StratigraphicItem* >::iterator it;
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    {
+        StratigraphicItem* strat = it->second;
+        strat->setUnderOperation( true );
+    }
+
+
+    size_t number_allowed_surfaces = allowed_below_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_below_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+        strat->setAllowed( true );
+    }
+
+
+    current_mode = InteractionMode::SELECTION;
+    defining_below = true;
+    update();
+
+}
+
+
+void Scene::stopSketchingBelowRegion()
+{
+
+    size_t number_allowed_surfaces = allowed_below_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_below_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        strat->setAllowed( false );
+        strat->setSelection( false );
+    }
+
+
+    current_mode = InteractionMode::OVERSKETCHING;
+    defining_below = false;
+    update();
+
+}
+
+
 
 
 
@@ -737,6 +819,54 @@ std::vector< size_t > Scene::getAllSelectedItems()
 }
 
 
+void Scene::setUnallowed()
+{
+
+    if( defining_above == true ){
+
+        size_t number_allowed_surfaces = allowed_above_surfaces.size();
+        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+        {
+            size_t id = allowed_above_surfaces[ i ];
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+
+            if( strat->isSelected() ) continue;
+
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+            strat->setAllowed( false );
+        }
+
+    }
+    if( defining_below == true ){
+
+        size_t number_allowed_surfaces = allowed_below_surfaces.size();
+        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+        {
+            size_t id = allowed_below_surfaces[ i ];
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+
+            if( strat->isSelected() ) continue;
+
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+            strat->setAllowed( false );
+        }
+
+    }
+}
+
+
+
+void Scene::stopOperations()
+{
+
+    std::map< unsigned int, StratigraphicItem* >::iterator it;
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    {
+        StratigraphicItem* strat = it->second;
+        strat->setUnderOperation( false );
+    }
+
+}
 
 
 
@@ -1088,8 +1218,6 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         if( id_items.empty() == true ) return;
 
         controller->defineRegion( id_items );
-//        unmarkNonSelected( id_items );
-
 
         current_mode = InteractionMode::OVERSKETCHING;
 
