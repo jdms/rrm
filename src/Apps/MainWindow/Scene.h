@@ -86,13 +86,14 @@ class Scene: public QGraphicsScene
 
 
         void setUnallowed();
+        void startOperations();
         void stopOperations();
 
 
 
-        void defineSketchingAboveRegion();
+        bool defineSketchingAboveRegion();
         void stopSketchingAboveRegion();
-        void defineSketchingBelowRegion();
+        bool defineSketchingBelowRegion();
         void stopSketchingBelowRegion();
 
 
