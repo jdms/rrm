@@ -56,6 +56,10 @@ class Scene: public QGraphicsScene
         inline const InteractionMode currentMode(){ return current_mode; }
 
 
+        void enableSketchingAboveRegion( bool );
+        void enableSketchingBelowRegion( bool );
+
+
         void createCrossSection( const float& d = 0.0f );
         void createSketchingBoundary();
         void addCurve();
@@ -78,9 +82,18 @@ class Scene: public QGraphicsScene
 
         inline void setRandomColor( bool status ){ random_color = status; }
 
-        void setModeSelection( bool option, const std::vector< size_t >& allowed_selection = std::vector< size_t >() );
         std::vector< size_t > getAllSelectedItems();
 
+
+        void setUnallowed();
+        void stopOperations();
+
+
+
+        void defineSketchingAboveRegion();
+        void stopSketchingAboveRegion();
+        void defineSketchingBelowRegion();
+        void stopSketchingBelowRegion();
 
 
 
@@ -173,6 +186,16 @@ class Scene: public QGraphicsScene
         int qtscene_width;
         int qtscene_height;
         int qtscene_depth;
+
+
+        bool defining_above;
+        bool defining_below;
+
+        size_t id_above;
+        size_t id_below;
+
+        std::vector< size_t > allowed_above_surfaces;
+        std::vector< size_t > allowed_below_surfaces;
 
 
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
