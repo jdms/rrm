@@ -29,8 +29,6 @@ void StratigraphicItem::initSetup()
     pen_selected.setColor( Qt::red );
     pen_selected.setWidth( 5 );
 
-//    pen_normal.setColor( current_color );
-//    pen_normal.setWidth( 3 );
 
 }
 

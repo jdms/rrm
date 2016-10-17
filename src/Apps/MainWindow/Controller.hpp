@@ -47,7 +47,8 @@ class Controller: public QObject
         bool defineSketchingAbove( std::vector< size_t >& allowed );
         bool defineSketchingBelow( std::vector< size_t >& allowed );
 
-        bool defineRegion( const std::vector< size_t >& selections );
+        bool defineRegionAbove( const std::vector< size_t >& selections );
+        bool defineRegionBelow( const std::vector< size_t >& selections );
 
         void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
         void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );

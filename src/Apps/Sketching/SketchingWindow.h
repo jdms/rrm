@@ -49,6 +49,7 @@ class SketchingWindow : public QMainWindow
 
         inline void enableUndo( bool option ){ ac_undo->setEnabled( option ); }
         inline void enableRedo( bool option ){ ac_redo->setEnabled( option ); }
+        inline void enableSketching( bool option ){ ac_sketch->setChecked( option ); }
         inline void uncheckRemoveRules()
         {
             ac_sketch->setChecked( false );

@@ -185,6 +185,8 @@ bool Controller::interpolateStratigraphy()
 
 
 
+
+
 bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 {
     save_rule = "DA_SKETCHING";
@@ -204,7 +206,7 @@ bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 
 
 
-bool Controller::defineRegion( const std::vector< size_t >& selections )
+bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
 
     if( save_rule.compare( "DA_SKETCHING" ) == 0 )
@@ -213,7 +215,15 @@ bool Controller::defineRegion( const std::vector< size_t >& selections )
     }
 
 
-    else if( save_rule.compare( "DB_SKETCHING" ) == 0 )
+    return true;
+
+}
+
+
+bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
+{
+
+    if( save_rule.compare( "DB_SKETCHING" ) == 0 )
     {
         rules_processor.defineBelow( selections[ 0 ] );
 
@@ -222,6 +232,7 @@ bool Controller::defineRegion( const std::vector< size_t >& selections )
     return true;
 
 }
+
 
 
 
