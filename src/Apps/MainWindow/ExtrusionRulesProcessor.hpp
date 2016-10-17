@@ -33,6 +33,32 @@ namespace RRM
             DR_SKETCHING // Define region
         };
 
+        enum class GeologicRule : int {
+            UNDEFINED = -1,
+            SKETCH,
+            REMOVE_ABOVE,
+            REMOVE_ABOVE_INTERSECTION,
+            REMOVE_BELOW,
+            REMOVE_BELOW_INTERSECTION
+        };
+
+        enum class Region : int {
+            UNDEFINED = -1,
+            NO_SELECTION,
+            BOUNDED_ABOVE,
+            BOUNDED_BELOW,
+            BOUNDED
+        };
+
+        struct StateDescriptor
+        {
+            State state_ = State::UNDEFINED;
+            bool bounded_above_ = false;
+            size_t upper_boundary_ = 0;
+            bool bounded_below_ = false;
+            size_t lower_boundary_ = 0;
+        };
+
         bool isInitialized() const;
 
         std::vector<size_t> getActiveSurfaces(); 
@@ -158,10 +184,20 @@ namespace RRM
         bool got_lenght_ = false;
 
         State current_state_ = State::SKETCHING;
+        StateDescriptor current_;
 
         std::vector<PlanarSurface::Ptr> undoed_surfaces_stack_; 
         std::vector<size_t> undoed_surfaces_indices_;
         std::vector<State> undoed_geologic_rules_;
+
+        std::vector<StateDescriptor> past_states_;
+        std::vector<StateDescriptor> undoed_states_;
+
+        bool bounded_above_ = false;
+        ControllerSurfaceIndex upper_boundary_;
+
+        bool bounded_below_ = false;
+        ControllerSurfaceIndex lower_boundary_;
 
         void requestChangeDiscretization( size_t discretization_WIDTH, size_t discretization_DEPTH ); 
 
