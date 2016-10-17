@@ -10,76 +10,40 @@
 namespace RRM
 {
 
-    Curve2D SketchLib::getCurrentSketch( ) const
-    {
-        return this->current_supporting_curve_;
-    }
 
-    void SketchLib::clear ( )
-    {
-        this->current_supporting_curve_.clear();
-        this->previous_supporting_curve_.clear();
-        this->swap_curve_.clear();
-    }
-
-    void SketchLib::reset ( )
-    {
-        this->current_supporting_curve_.clear();
-    }
-
-    void SketchLib::undo ( )
-    {
-        this->swap_curve_ = this->current_supporting_curve_;
-        this->current_supporting_curve_ = previous_supporting_curve_;
-    }
-
-    void SketchLib::redo ( )
-    {
-        this->current_supporting_curve_ = this->swap_curve_;
-    }
-
-    void SketchLib::beginSketch ( Curve2D& _curve )
-    {
-        this->reset();
-        this->current_supporting_curve_ = _curve;
-    }
-
-    void SketchLib::beginSketch (  )
-    {
-        this->reset();
-    }
-
-    bool SketchLib::addStroke ( const Curve2D& _curve )
+    bool SketchLib::overSketching ( Curve2D& _curve , const Curve2D& _stroke)
     {
         Curve2D simplify;
         Curve2D stroke;
         Curve2D rest;
 
-        if ( this->current_supporting_curve_.size() == 0 )
+        if ( _stroke.size() < 7)
         {
-            this->current_supporting_curve_.join(_curve);
+            return false;
+        }
+
+        if ( _curve.size() == 0 )
+        {
+            _curve.join(_stroke);
         }
         else
         {
-            stroke = _curve;
+            stroke = _stroke;
 
-            previous_supporting_curve_ = current_supporting_curve_;
+            _curve = stroke.overSketch( _curve, rest, 1 , 16 );
 
-            current_supporting_curve_ = stroke.overSketch( current_supporting_curve_, rest, 1 , 16 );
-
-            current_supporting_curve_.douglasPeuckerSimplify(simplify, 1.0);
-
-            current_supporting_curve_ = simplify;
-
+            this->defaultFilter(_curve);
         }
-
-        std::cout << this->current_supporting_curve_.size() << std::endl;
+       // std::cout << this->current_supporting_curve_.size() << std::endl;
 
         return true;
     }
 
-    void SketchLib::defaultFilter ( )
+    void SketchLib::defaultFilter ( Curve2D& _curve )
     {
+
+        Curve2D tmp = _curve;
+        tmp.douglasPeuckerSimplify(_curve, 1.0);
 
     }
 

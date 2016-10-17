@@ -10,7 +10,7 @@
 
 namespace RRM{
 
-    void Arrangement_2D::boundary(Real x, Real y, Real width, Real height)
+    void Arrangement_2D::setBoundary(Real x, Real y, Real width, Real height)
     {
         Real  sampling = 7.0;
 
@@ -35,6 +35,14 @@ namespace RRM{
             segment_2.index = std::numeric_limits<unsigned long long int>::max()-2;
 
             this->curve_cache[segment_2.index] = segment_2;
+
+
+            std::cout << "Boundary Created" <<  curve_cache.size() << std::endl;
+
+            std::cout << "Boundary Created X" <<  x << std::endl;
+            std::cout << "Boundary Created Y" <<  y << std::endl;
+            std::cout << "Boundary Created W" <<  width << std::endl;
+            std::cout << "Boundary Created H" <<  height << std::endl;
 
     }
 
@@ -166,6 +174,8 @@ namespace RRM{
 
         this->curve_cache[new_curve.index] = new_curve;
 
+        this->log();
+
         return true;
     }
 
@@ -200,18 +210,18 @@ namespace RRM{
 
     void Arrangement_2D::log ( )
     {
-    //    std::cout << " Last Curve Log " << std::endl;
-    //    std::cout << " Index::   " <<  last_curve_ << std::endl;
-    //    std::cout << " Below   " <<  lower_bound_.size() << std::endl;
-    //    for(auto c: lower_bound_)
-    //    {
-    //        std::cout << c << std::endl;
-    //    }
-    //    std::cout << " Above   " <<  upper_bound_.size() << std::endl;
-    //    for(auto c: upper_bound_)
-    //    {
-    //            std::cout << c << std::endl;
-    //    }
+        std::cout << " Last Curve Log " << std::endl;
+        std::cout << " Index::   " <<  last_curve_ << std::endl;
+        std::cout << " Below   " <<  lower_bound_.size() << std::endl;
+        for(auto c: lower_bound_)
+        {
+            std::cout << c << std::endl;
+        }
+        std::cout << " Above   " <<  upper_bound_.size() << std::endl;
+        for(auto c: upper_bound_)
+        {
+                std::cout << c << std::endl;
+        }
     }
 
 }

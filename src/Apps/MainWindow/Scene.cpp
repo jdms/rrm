@@ -17,6 +17,8 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 
     current_color = QColor( 255, 75, 75 );
     random_color = true;
+
+    index = 0;
 }
 
 
@@ -237,11 +239,12 @@ void Scene::createSketchingBoundary()
     boundary3D->getDimension( dimension.x(), dimension.y(), dimension.z() );
 
     bool ok = controller->addBoundary( origin.x(), origin.y(), origin.z(), dimension.x(), dimension.y(), dimension.z() );
+
     if( ok == false  ) return;
 
 
-    addBoundaryToScene();
 
+    addBoundaryToScene();
 
 }
 
@@ -259,7 +262,6 @@ void Scene::addBoundaryToScene()
     sketching_boundary = new BoundaryItem2D();
     sketching_boundary->setGeoData( b );
     sketching_boundary->update( m_3dto2d );
-
 
 
     addItem( sketching_boundary );
@@ -369,6 +371,10 @@ void Scene::addCurve()
     c = Scene::scene2DtoPlanin( c );
 
     bool add_ok = controller->addCurve( c );
+    // Clear the sketch curve
+    this->curve_visitor_.clear();
+
+
     if( add_ok == false )
     {
         removeItem( sketch );
@@ -447,7 +453,6 @@ void Scene::newSketch()
 
     current_mode = InteractionMode::OVERSKETCHING;
 
-    sketchlib_.beginSketch(this->curve_visitor_);
     this->sketchlib_item = new InputSketch(Qt::gray);
     addItem(this->sketchlib_item);
 
@@ -1063,9 +1068,9 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
 
-        sketchlib_.addStroke(c);
+        sketchlib_.overSketching(curve_visitor_,c);
 
-        sketchlib_item->setSketch( PolyQtUtils::curve2DToQPolyginF( sketchlib_.getCurrentSketch() ) );
+        sketchlib_item->setSketch( PolyQtUtils::curve2DToQPolyginF( curve_visitor_ ) );
 
         sketch->addSegment( *temp_sketch );
         removeItem( temp_sketch );

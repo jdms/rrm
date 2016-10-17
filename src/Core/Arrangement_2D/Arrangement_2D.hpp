@@ -123,7 +123,7 @@ namespace RRM
 
             ~Arrangement_2D ( ) = default;
 
-            void boundary ( Real x , Real y , Real width , Real height );
+            void setBoundary ( Real x , Real y , Real width , Real height );
 
             bool insert ( const Curve2D &c , Natural id );
 
