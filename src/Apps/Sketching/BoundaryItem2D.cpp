@@ -17,11 +17,6 @@ BoundaryItem2D::~BoundaryItem2D()
 
 void BoundaryItem2D::clear()
 {
-    origin_x = 0;
-    origin_y = 0;
-    width = 0;
-    height = 0;
-
     boundary.setCoords( 0, 0, 0, 0 );
     image_file.clear();
     background_image = QImage();
@@ -29,17 +24,17 @@ void BoundaryItem2D::clear()
 }
 
 
-void BoundaryItem2D::load()
-{
+//void BoundaryItem2D::load()
+//{
 
-    // retirar
+//    // retirar
 
-    prepareGeometryChange();
+//    prepareGeometryChange();
 
-    boundary.setRect( origin_x, origin_y, width, height );
-    image_position = QPointF( 0, 0 );
+//    boundary.setRect( origin_x, origin_y, width, height );
+//    image_position = QPointF( 0, 0 );
 
-}
+//}
 
 
 void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, const qreal& height )

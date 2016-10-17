@@ -58,7 +58,7 @@ void SketchingWindow::createActions()
     ac_removebelow->setCheckable( true );
 
     ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
-    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
+    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removeBelowintersection.png" ) );
     ac_removebelowintersection->setCheckable( true );
 
 

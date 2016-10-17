@@ -664,6 +664,8 @@ void Scene::updateColor( const QColor& color )
 
 
 
+
+
 void Scene::enableSketchingAboveRegion( bool option )
 {
 
@@ -701,10 +703,10 @@ void Scene::enableSketchingBelowRegion( bool option )
 
 
 
-
+/// if it is ok to sketching above it highlited the allowed sketches and wait the user
+/// selected on of the highlited sketches
 bool Scene::defineSketchingAboveRegion()
 {
-
 
     allowed_above_surfaces.clear();
     bool sketchingabove_ok = controller->defineSketchingAbove( allowed_above_surfaces );
@@ -724,11 +726,12 @@ bool Scene::defineSketchingAboveRegion()
     }
 
 
-    current_mode = InteractionMode::SELECTION;
+    current_mode = InteractionMode::SELECTING_ABOVE;
     defining_above = true;
-    update();
 
+    update();
     return true;
+
 }
 
 
@@ -752,6 +755,18 @@ void Scene::stopSketchingAboveRegion()
 
     if( defining_below == false )
         stopOperations();
+    else
+    {
+        size_t number_selected_surfaces = selected_below_surfaces.size();
+        for ( size_t i = 0; i < number_selected_surfaces; ++i )
+        {
+            size_t id = selected_below_surfaces[ i ];
+
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            strat->setSelection( true );
+        }
+    }
 
     current_mode = InteractionMode::OVERSKETCHING;
     defining_above = false;
@@ -763,6 +778,10 @@ void Scene::stopSketchingAboveRegion()
 }
 
 
+
+
+/// if it is ok to sketching below it highlited the allowed sketches and wait the user
+/// selected on of the highlited sketches
 bool Scene::defineSketchingBelowRegion()
 {
 
@@ -784,7 +803,7 @@ bool Scene::defineSketchingBelowRegion()
     }
 
 
-    current_mode = InteractionMode::SELECTION;
+    current_mode = InteractionMode::SELECTING_BELOW;
     defining_below = true;
     update();
 
@@ -801,9 +820,6 @@ void Scene::stopSketchingBelowRegion()
     {
         size_t id = allowed_below_surfaces[ i ];
 
-        if ( id == id_above )
-            continue;
-
         StratigraphicItem* strat = stratigraphics_list[ id ];
         strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
         strat->setAllowed( false );
@@ -814,6 +830,18 @@ void Scene::stopSketchingBelowRegion()
     if( defining_above == false )
     {
         stopOperations();
+    }
+    else
+    {
+        size_t number_selected_surfaces = selected_above_surfaces.size();
+        for ( size_t i = 0; i < number_selected_surfaces; ++i )
+        {
+            size_t id = selected_above_surfaces[ i ];
+
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            strat->setSelection( true );
+        }
     }
 
 
@@ -828,8 +856,7 @@ void Scene::stopSketchingBelowRegion()
 
 
 
-
-void Scene::setUnallowed()
+void Scene::setUnallowedAbove()
 {
 
     if( defining_above == true ){
@@ -847,6 +874,13 @@ void Scene::setUnallowed()
         }
 
     }
+
+}
+
+
+void Scene::setUnallowedBelow()
+{
+
     if( defining_below == true ){
 
         size_t number_allowed_surfaces = allowed_below_surfaces.size();
@@ -866,6 +900,8 @@ void Scene::setUnallowed()
 }
 
 
+
+/// Allow to select sketches
 void Scene::startOperations()
 {
 
@@ -879,6 +915,7 @@ void Scene::startOperations()
 }
 
 
+/// Stop to select sketches
 void Scene::stopOperations()
 {
 
@@ -890,6 +927,7 @@ void Scene::stopOperations()
     }
 
 }
+
 
 
 
@@ -1255,22 +1293,36 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     }
 
 
-    else if( current_mode == InteractionMode::SELECTION )
+    else if( current_mode == InteractionMode::SELECTING_ABOVE )
     {
-        std::cout << "Selection mode" << std::endl;
 
-        std::vector< size_t > id_items = getAllSelectedItems();
-        if( id_items.empty() == true ) return;
+        selected_above_surfaces = getAllSelectedItems();
+        if( selected_above_surfaces.empty() == true ) return;
 
-        controller->defineRegion( id_items );
-
-        setUnallowed();
+        controller->defineRegionAbove( selected_above_surfaces );
+        setUnallowedAbove();
 
         current_mode = InteractionMode::OVERSKETCHING;
-
+        emit enableSketching( true );
 
 
     }
+
+
+    else if( current_mode == InteractionMode::SELECTING_BELOW )
+    {
+
+        selected_below_surfaces = getAllSelectedItems();
+        if( selected_below_surfaces.empty() == true ) return;
+
+        controller->defineRegionBelow( selected_below_surfaces );
+        setUnallowedBelow();
+
+        current_mode = InteractionMode::OVERSKETCHING;
+        emit enableSketching( true );
+
+    }
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();

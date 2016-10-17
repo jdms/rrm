@@ -147,6 +147,8 @@ void MainWindow::createSketchingActions()
     connect( controller, SIGNAL( enableUndo( bool ) ) , sketching_window, SLOT( enableUndo( bool ) ) );
     connect( controller, SIGNAL( enableRedo( bool ) ) , sketching_window, SLOT( enableRedo( bool ) ) );
 
+    connect( scene, &Scene::enableSketching, sketching_window, &SketchingWindow::enableSketching );
+
 }
 
 

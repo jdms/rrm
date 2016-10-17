@@ -35,7 +35,7 @@ class Scene: public QGraphicsScene
 
 
 
-        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTION };
+        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTING_ABOVE, SELECTING_BELOW };
 	
 
 
@@ -85,7 +85,8 @@ class Scene: public QGraphicsScene
         std::vector< size_t > getAllSelectedItems();
 
 
-        void setUnallowed();
+        void setUnallowedAbove();
+        void setUnallowedBelow();
         void startOperations();
         void stopOperations();
 
@@ -105,6 +106,7 @@ class Scene: public QGraphicsScene
         void updatedScene();
         void initContext();
         void updateContext();
+        void enableSketching( bool );
 
 
 
@@ -197,6 +199,8 @@ class Scene: public QGraphicsScene
 
         std::vector< size_t > allowed_above_surfaces;
         std::vector< size_t > allowed_below_surfaces;
+        std::vector< size_t > selected_above_surfaces;
+        std::vector< size_t > selected_below_surfaces;
 
 
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
