@@ -29,21 +29,7 @@ void SketchingWindow::createWindow()
 void SketchingWindow::createActions()
 {
 
-    // Section
-    ac_removeabove = new QAction( tr( "Remove Above" ), this );
-    ac_removeabove->setCheckable( true );
 
-    ac_removebelow = new QAction(tr( "Remove Below" ), this );
-    ac_removebelow->setCheckable( true );
-
-
-    ac_removeaboveintersection = new QAction( tr( "Remove Above Intersection" ), this );
-    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
-    ac_removeaboveintersection->setCheckable( true );
-
-    ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
-    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
-    ac_removebelowintersection->setCheckable( true );
 
     ac_sketchabove = new QAction( tr( "Sketch Above" ), this );
     ac_sketchabove->setCheckable( true );
@@ -58,17 +44,38 @@ void SketchingWindow::createActions()
     ac_sketch->setChecked( true );
 
 
+    // Section
+    ac_removeabove = new QAction( tr( "Remove Above" ), this );
+    ac_removeabove->setCheckable( true );
+
+
+    ac_removeaboveintersection = new QAction( tr( "Remove Above Intersection" ), this );
+    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
+    ac_removeaboveintersection->setCheckable( true );
+
+
+    ac_removebelow = new QAction(tr( "Remove Below" ), this );
+    ac_removebelow->setCheckable( true );
+
+    ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
+    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
+    ac_removebelowintersection->setCheckable( true );
+
 
 
 
     ag_sketching_rules = new QActionGroup( this );
-    ag_sketching_rules->addAction( ac_sketch );
     ag_sketching_rules->addAction( ac_sketchabove );
     ag_sketching_rules->addAction( ac_sketchbelow );
     ag_sketching_rules->setExclusive( false );
 
 
+    QAction* ac_separator = new QAction( this );
+    ac_separator->setSeparator( true );
+
     ag_remove_rules = new QActionGroup( this );
+    ag_remove_rules->addAction( ac_sketch );
+    ag_remove_rules->addAction( ac_separator );
     ag_remove_rules->addAction( ac_removeabove );
     ag_remove_rules->addAction( ac_removeaboveintersection );
     ag_remove_rules->addAction( ac_removebelow );
@@ -157,13 +164,17 @@ void SketchingWindow::createConnections()
 
 
 
-    connect( ac_removeabove, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RA_SKETCHING" );  lb_statusbar_status->setText( "Remove Above" ); } );
-    connect( ac_removebelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RB_SKETCHING" ); lb_statusbar_status->setText( "Remove Below" ); } );
+    connect( ac_sketchabove, &QAction::triggered, [=]( bool status ){ emit defineSketchingAbove( status ); lb_statusbar_status->setText( "Sketching Above" ); uncheckRemoveRules(); } );
+    connect( ac_sketchbelow, &QAction::triggered, [=]( bool status ){ emit defineSketchingBelow( status ); lb_statusbar_status->setText( "Sketching Below" ); uncheckRemoveRules(); } );
+
+
     connect( ac_sketch, &QAction::triggered, [=](){ emit updateStratigraphicRule( "SKETCHING" ); lb_statusbar_status->setText( "Sketch" ); } );
+
+
+    connect( ac_removeabove, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RA_SKETCHING" );  lb_statusbar_status->setText( "Remove Above" ); } );
     connect( ac_removeaboveintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RAI_SKETCHING" );  lb_statusbar_status->setText( "Remove Above Intersection" ); } );
+    connect( ac_removebelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RB_SKETCHING" ); lb_statusbar_status->setText( "Remove Below" ); } );
     connect( ac_removebelowintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
-    connect( ac_sketchabove, &QAction::triggered, [=]( bool status ){ emit updateStratigraphicRule( "DA_SKETCHING", status ); lb_statusbar_status->setText( "Sketching Above" ); } );
-    connect( ac_sketchbelow, &QAction::triggered, [=]( bool status ){ emit updateStratigraphicRule( "DB_SKETCHING", status ); lb_statusbar_status->setText( "Sketching Below" ); } );
 
 
     connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );
