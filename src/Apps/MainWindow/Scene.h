@@ -26,7 +26,6 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-#include "Core/Arrangement_2D/Arrangement_2D.hpp"
 #include "Core/SketchLib/SketchLib.hpp"
 
 class Scene: public QGraphicsScene
@@ -187,9 +186,9 @@ class Scene: public QGraphicsScene
 
         /// Sketch Lib Testing
         InputSketch     * sketchlib_item;
-        RRM::Arrangement_2D arr;
         RRM::SketchLib      sketchlib_;
         Curve2D curve_visitor_;
+        unsigned long long int index;
 
 	
 };

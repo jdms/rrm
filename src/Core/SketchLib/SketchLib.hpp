@@ -11,8 +11,11 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 #include <vector>
 
+
 namespace RRM
 {
+    // \brief Tentative class to handle input sketches. Meanwhile, it provides functions
+    // to perform naive over sketch and filters to smooth hand drawn strokes.
     class SketchLib
     {
         public:
@@ -22,25 +25,16 @@ namespace RRM
              SketchLib ( ) = default;
             ~SketchLib ( ) = default;
 
-            Curve2D getCurrentSketch() const;
+            // \brief Naive implementation of over sketch
+            // Edit a curve which is result of the over sketch with a given stroke.
+            // \param _curve  Curve to be edit. If the curve is empty, append the stroke to it.
+            // \param _stroke The piece of curve used to over sketch.
+            bool overSketching( Curve2D& _curve, const Curve2D& _stroke );
 
-            // Default Sketch Path Input
-            void clear( );
-            void reset( );
-                void beginSketch( Curve2D& _curve );
-                void beginSketch( );
-                void undo( );
-                void redo( );
             // Default LineString Input
-                bool addStroke( const Curve2D& _curve );
-
             private:
-                // Reduce the frequency of the input path
-                void defaultFilter();
-
-                Curve2D                 current_supporting_curve_;
-                Curve2D                 swap_curve_;
-                Curve2D                 previous_supporting_curve_;
+                // Standard smooth filter
+                void defaultFilter(Curve2D& _curve);
 
     };
 
