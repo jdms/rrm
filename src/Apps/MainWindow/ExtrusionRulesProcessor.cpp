@@ -129,6 +129,7 @@ namespace RRM
         }
 
         current_state_ = s; 
+        current_.state_ = s;
         return true; 
     }
 
@@ -143,12 +144,20 @@ namespace RRM
             return false; 
         }
 
+//        current_.region_ = Region::BOUNDED_BELOW;
+//        current_.lower_bound_ = PlanarSurface::WeakPtr();
+
+        bounded_below_ = true;
+        lower_boundary_ = surface_index;
+
+
         return container_.defineAbove(index); 
     }
 
 
     void ExtrusionRulesProcessor::stopDefineAbove()
     {
+        bounded_above_ = false;
         container_.stopDefineAbove(); 
     }
 
@@ -161,12 +170,16 @@ namespace RRM
             return false; 
         }
 
-        return container_.defineBelow(index); 
+        bounded_above_ = true;
+        upper_boundary_ = surface_index;
+
+        return container_.defineBelow(index);
     }
 
 
     void ExtrusionRulesProcessor::stopDefineBelow()
     {
+        bounded_below_ = false;
         container_.stopDefineBelow(); 
     }
 
@@ -202,6 +215,12 @@ namespace RRM
         undoed_surfaces_indices_.push_back(last_surface_index); 
         undoed_geologic_rules_.push_back(last_state); 
 
+        StateDescriptor last = past_states_.back();
+        past_states_.pop_back();
+
+        undoed_states_.push_back(last);
+
+
         auto iter = dictionary_.find(last_surface_index); 
         dictionary_.erase(iter); 
 
@@ -232,7 +251,24 @@ namespace RRM
         undoed_surfaces_indices_.pop_back();
 
         current_state_ = undoed_geologic_rules_.back();
-        undoed_geologic_rules_.pop_back(); 
+        undoed_geologic_rules_.pop_back();
+
+        current_ = undoed_states_.back();
+        undoed_states_.pop_back();
+
+        bounded_above_ = current_.bounded_above_;
+        upper_boundary_ = current_.upper_boundary_;
+        if ( bounded_above_ )
+        {
+            defineBelow(upper_boundary_);
+        }
+
+        bounded_below_ = current_.bounded_below_;
+        lower_boundary_ = current_.lower_boundary_;
+        if ( bounded_below_)
+        {
+            defineAbove(lower_boundary_);
+        }
 
         return executeAction(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
     }
@@ -419,6 +455,14 @@ namespace RRM
             dictionary_[given_index] = index; 
             inserted_surfaces_indices_.push_back(given_index); 
             applied_geologic_rules_.push_back(current_state_); 
+
+            current_.state_ = current_state_;
+            current_.bounded_above_ = bounded_above_;
+            current_.upper_boundary_ = upper_boundary_;
+            current_.bounded_below_ = bounded_below_;
+            current_.lower_boundary_ = lower_boundary_;
+
+            past_states_.push_back(current_);
         }
 
         return status;
