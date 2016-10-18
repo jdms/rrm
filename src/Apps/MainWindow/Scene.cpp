@@ -742,10 +742,6 @@ void Scene::stopSketchingAboveRegion()
     for ( size_t i = 0; i < number_allowed_surfaces; ++i )
     {
         size_t id = allowed_above_surfaces[ i ];
-
-        if ( id == id_below )
-            continue;
-
         StratigraphicItem* strat = stratigraphics_list[ id ];
         strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
         strat->setAllowed( false );
@@ -754,7 +750,9 @@ void Scene::stopSketchingAboveRegion()
 
 
     if( defining_below == false )
+    {
         stopOperations();
+    }
     else
     {
         size_t number_selected_surfaces = selected_below_surfaces.size();
@@ -768,10 +766,11 @@ void Scene::stopSketchingAboveRegion()
         }
     }
 
+
+    controller->stopSketchingAbove();
+    allowed_above_surfaces.clear();
     current_mode = InteractionMode::OVERSKETCHING;
     defining_above = false;
-    id_above = 100000;
-
 
     update();
 
@@ -845,10 +844,10 @@ void Scene::stopSketchingBelowRegion()
     }
 
 
-
+    controller->stopSketchingBelow();
+    allowed_below_surfaces.clear();
     current_mode = InteractionMode::OVERSKETCHING;
     defining_below = false;
-    id_below = 100000;
     update();
 
 }

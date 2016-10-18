@@ -54,6 +54,8 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
         inline void setAllowed( bool option ){ is_allowed = option; is_unallowed = !option; }
         inline void setUnderOperation( bool option ){ under_operation = option; }
 
+
+        QList< QPolygonF > getSubCurves();
 	
 	protected:
 

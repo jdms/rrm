@@ -189,7 +189,7 @@ bool Controller::interpolateStratigraphy()
 
 bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 {
-    save_rule = "DA_SKETCHING";
+
     return rules_processor.requestDefineRegion( allowed );
 
 }
@@ -198,7 +198,6 @@ bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 {
 
-    save_rule = "DB_SKETCHING";
     return rules_processor.requestDefineRegion( allowed );
 
 }
@@ -209,12 +208,7 @@ bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
 
-    if( save_rule.compare( "DA_SKETCHING" ) == 0 )
-    {
-        rules_processor.defineAbove( selections[ 0 ] );
-    }
-
-
+    rules_processor.defineAbove( selections[ 0 ] );
     return true;
 
 }
@@ -223,11 +217,26 @@ bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 {
 
-    if( save_rule.compare( "DB_SKETCHING" ) == 0 )
-    {
-        rules_processor.defineBelow( selections[ 0 ] );
+    rules_processor.defineBelow( selections[ 0 ] );
 
-    }
+    return true;
+
+}
+
+
+bool Controller::stopSketchingAbove()
+{
+
+    rules_processor.stopDefineAbove();
+    return true;
+
+}
+
+
+bool Controller::stopSketchingBelow()
+{
+
+    rules_processor.stopDefineBelow();
 
     return true;
 

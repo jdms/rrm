@@ -50,6 +50,12 @@ class Controller: public QObject
         bool defineRegionAbove( const std::vector< size_t >& selections );
         bool defineRegionBelow( const std::vector< size_t >& selections );
 
+
+
+        bool stopSketchingAbove();
+        bool stopSketchingBelow();
+
+
         void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
         void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
 
@@ -93,7 +99,6 @@ class Controller: public QObject
         RRM::ExtrusionRulesProcessor rules_processor;
 
 
-        std::string save_rule;
 };
 
 
