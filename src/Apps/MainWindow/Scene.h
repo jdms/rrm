@@ -26,6 +26,9 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
+// @Felipe
+#include "Core/Arrangement_2D/Arrangement_2D.hpp"
+
 class Scene: public QGraphicsScene
 {
 	Q_OBJECT
@@ -207,6 +210,11 @@ class Scene: public QGraphicsScene
         std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
+
+
+        // @Felipe
+        RRM::Arrangement_2D arr;
+        unsigned long long int index = 0;
 	
 };
 
