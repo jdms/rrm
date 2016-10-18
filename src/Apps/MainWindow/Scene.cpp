@@ -265,6 +265,11 @@ void Scene::addBoundaryToScene()
     sketching_boundary->update( m_3dto2d );
 
 
+    // @Felipe
+    arr.setBoundary(sketching_boundary->getOriginX(),
+                    sketching_boundary->getOriginY(),
+                    sketching_boundary->getWidth(),
+                    sketching_boundary->getHeight());
 
     addItem( sketching_boundary );
     setSceneRect( sketching_boundary->boundingRect() );
@@ -368,6 +373,8 @@ void Scene::addCurve()
 
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
 
+    // @Felipe
+    arr.insert(c,index++);
 
     unsigned int number_of_points = c.size();
     c = Scene::scene2DtoPlanin( c );
@@ -378,7 +385,6 @@ void Scene::addCurve()
         removeItem( sketch );
         return;
     }
-
 
     addStratigraphyToScene();
 
@@ -534,6 +540,9 @@ void Scene::clearScene()
     sketch = 0;
     temp_sketch = 0;
 
+    //@Felipe
+
+    arr.clear();
 
     init();
 

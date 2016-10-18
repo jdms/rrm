@@ -145,7 +145,7 @@ add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets 
                                        Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ${GLEW_LIBRARY}
-                                        planin RRMGeometry )
+                                        planin RRMGeometry Arrangement_2D)
 
 
 

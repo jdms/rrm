@@ -12,3 +12,5 @@ include_directories(
 #add_subdirectory( Geology )
 add_subdirectory( Geometry )
 add_subdirectory( Base )
+#@Felipe
+add_subdirectory(Arrangement_2D)
