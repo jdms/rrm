@@ -194,8 +194,6 @@ class Scene: public QGraphicsScene
         bool defining_above;
         bool defining_below;
 
-        size_t id_above;
-        size_t id_below;
 
         std::vector< size_t > allowed_above_surfaces;
         std::vector< size_t > allowed_below_surfaces;

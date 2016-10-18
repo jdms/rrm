@@ -16,7 +16,7 @@ void StratigraphicItem::initSetup()
 
     under_operation = false;
     is_allowed = false;
-    is_unallowed = false;
+    is_unallowed = true;
     is_selected = false;
 
 
@@ -61,7 +61,8 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 
 	painter->setBrush( Qt::NoBrush );
     painter->drawPath( curve );
-		
+
+
 }
 
 
@@ -121,6 +122,12 @@ void StratigraphicItem::addSegment( const InputSketch& segment )
     connected_sketches.douglasPeuckerSimplify( final, 1.0 );
 	
     copySegment( PolyQtUtils::curve2DToQPolyginF( final ) );
+}
+
+
+QList< QPolygonF > StratigraphicItem::getSubCurves()
+{
+    return curve.toSubpathPolygons();
 }
 
 
@@ -191,28 +198,5 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
         last_id = id1;
     }
 
-   /*
-
-
-    std::vector< unsigned int >& edges = strat->getCurveEdges();
-
-    unsigned int id0 =0;
-    unsigned int id1 =0;
-
-    unsigned int nedges = edges.size()/2;
-
-    for( int i = 0; i < nedges; ++i )
-    {
-        id0 = edges[ 2*i ];
-        id1 = edges[ 2*i + 1 ];
-
-
-        curve.moveTo( points[ id0 ] );
-        curve.lineTo( points[ id1 ] );
-
-    }
-
-    */
-
-}
+ }
 
