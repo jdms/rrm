@@ -85,6 +85,8 @@ class Scene: public QGraphicsScene
         std::vector< size_t > getAllSelectedItems();
 
 
+        void setBackGroundImage( const QString& url );
+
         void setUnallowedAbove();
         void setUnallowedBelow();
         void startOperations();
@@ -207,6 +209,7 @@ class Scene: public QGraphicsScene
         std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
+        QImage background_image;
 	
 };
 

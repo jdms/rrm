@@ -44,9 +44,6 @@ void BoundingBox3D::create()
     Eigen::Vector3f max( minx + width, miny + height, minz + depth );
 
 
-//    std::cout << "Boundary 3d: origin( " << minx << ", "  <<  miny << ", " <<  minz << "), dimension: ( " << width << ", " <<  height << ", " <<depth << ") " << std::endl;
-
-
     std::vector< float > wireframe =
             {
                 //  Top Face
@@ -218,8 +215,6 @@ void BoundingBox3D::clear()
 
 void BoundingBox3D::update()
 {
-
-    std::cout << "passei aqui" << std::endl;
 
     minx = bd->getX();
     miny = bd->getY();
