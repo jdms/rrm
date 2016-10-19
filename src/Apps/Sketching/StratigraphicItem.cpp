@@ -29,6 +29,11 @@ void StratigraphicItem::initSetup()
     pen_selected.setColor( Qt::red );
     pen_selected.setWidth( 5 );
 
+    teste.setCapStyle( Qt::RoundCap );
+    teste.setCurveThreshold( 0.5 );
+    teste.setDashPattern( Qt::SolidLine );
+    teste.setJoinStyle( Qt::RoundJoin );
+
 
 }
 
@@ -47,20 +52,23 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
     else
     {
 
-        if( is_allowed == true )
+
+        if ( is_selected )
+            painter->setPen( pen_selected );
+
+        else if( is_allowed == true )
             painter->setPen( pen_allowed );
 
         else if( is_unallowed == true )
             painter->setPen( pen_unallowed );
 
-
-        if ( is_selected )
-            painter->setPen( pen_selected );
     }
 
 
 	painter->setBrush( Qt::NoBrush );
-    painter->drawPath( curve );
+
+    QPainterPath outline_curve = teste.createStroke( curve );
+    painter->drawPath( outline_curve );
 
 
 }
@@ -74,9 +82,7 @@ QRectF StratigraphicItem::boundingRect() const
 
 QPainterPath StratigraphicItem::shape() const
 {
-	QPainterPath p;
-	p.addRect( curve.boundingRect() );
-    return p;
+    return curve;
 }
 
 
