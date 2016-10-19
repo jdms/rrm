@@ -268,6 +268,7 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
 */
+
     defineVolumeQtCoordinates( x,y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
 
@@ -492,6 +493,9 @@ void Scene::clearScene()
 
 void Scene::updateScene()
 {
+
+
+    sketching_boundary->update( m_3dto2d );
 
     float d = controller->getCurrentCrossSection();
 
@@ -1090,6 +1094,21 @@ std::vector< size_t > Scene::getAllSelectedItems()
 
 
 
+void Scene::setBackGroundImage( const QString& url )
+{
+
+    background_image = QImage();
+    background_image.load( url );
+//    background_image = background_image.scaled( abs( int ( boundary.width() ) ), abs( int ( boundary.height() ) ) );
+//    background_image = background_image.mirrored( false, true );
+
+//    setBackgroundBrush(  background_image );
+    update();
+
+}
+
+
+
 
 void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
@@ -1291,10 +1310,14 @@ void Scene::dropEvent( QGraphicsSceneDragDropEvent *event )
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
     url_file = QDir::toNativeSeparators( url_file );
 
-    sketching_boundary->setBackGroundImage( url_file );
+    this->addPixmap( QPixmap( url_file ) );
+//    editBoundary(
+//    sketching_boundary->setBackGroundImage( url_file );
+//    setBackGroundImage( url_file );
 
 
 }
+
 
 
 void Scene::dragMoveEvent( QGraphicsSceneDragDropEvent * event )
