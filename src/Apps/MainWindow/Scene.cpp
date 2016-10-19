@@ -29,7 +29,12 @@ void Scene::init()
     if( views().empty() == true ) return;
     QGraphicsView* view = views()[0];
 
-    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, 400 );
+
+    int max_value =  std::max( (int)view->width()*0.8f, (int)view->height()*0.8f );
+    int min_value =  std::min( (int)view->width()*0.8f, (int)view->height()*0.8f );
+
+    int teste = 200*(max_value/min_value);
+    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ teste );
 
 
 
@@ -57,6 +62,7 @@ void Scene::setController( Controller* const& c )
 void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z, int width, int height, int depth )
 {
 
+
     qtscene_origin_x = origin_x;
     qtscene_origin_y = origin_y;
     qtscene_origin_z = origin_z;
@@ -73,24 +79,6 @@ void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z,
 
 void Scene::updateTransformationsMatrices()
 {
-
-    /*
-
-    m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
-                                                  qtscene_origin_y, qtscene_origin_y + qtscene_height,
-                                                  qtscene_origin_z, qtscene_origin_z + qtscene_depth );
-
-    m_3dto2d = m_2dto3d.inverse();
-
-    float scale = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth );
-
-
-    m_planinto2d = Eigen::Affine3f::Identity();
-    m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
-
-    m_2dtoplanin = Eigen::Affine3f::Identity();
-    m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
-*/
 
 
     m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
@@ -115,29 +103,6 @@ void Scene::updateTransformationsMatrices()
 
     m_planinto2d = m_2dtoplanin.inverse();
 
-    //    Eigen::Vector4f orig_pl = m_2dtoplanin.matrix()*orig_qt;
-
-
-    //    m_planinto2d = Eigen::Affine3f::Identity();
-    //    m_planinto2d.translation() = L*Eigen::Vector3f( orig_pl.x(), orig_pl.y(), orig_pl.z() ) ;
-    //    m_planinto2d.scale( Eigen::Vector3f( L, L, L ) );
-
-
-
-
-
-
-    /*
-       m_planinto2d = Eigen::Affine3f::Identity();
-       m_planinto2d.translate( Eigen::Vector3f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z ) );
-       m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
-
-
-       m_2dtoplanin = Eigen::Affine3f::Identity();
-       m_2dtoplanin.translate( Eigen::Vector3f( -qtscene_origin_x, -qtscene_origin_y, -qtscene_origin_z ) );
-       m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
-
-   */
 
 }
 
@@ -146,27 +111,28 @@ void Scene::updateTransformationsMatrices()
 void Scene::createVolume3D()
 {
 
-
-    //    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-    //    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-    //    min = Scene::scene2Dto3D( min );
-    //    max = Scene::scene2Dto3D( max );
-
-    //    Eigen::Vector3f dim = max - min;
+/*
+        Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
+        Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
 
-    //    boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-    //    boundary3D->setCurrentDirectory( shader_directory.toStdString() );
-    //    boundary3D->init();
-    //    boundary3D->create();
+        min = Scene::scene2Dto3D( min );
+        max = Scene::scene2Dto3D( max );
+
+        Eigen::Vector3f dim = max - min;
+
+
+        boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
+        boundary3D->setCurrentDirectory( shader_directory.toStdString() );
+        boundary3D->init();
+        boundary3D->create();
 
 
 
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+        float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+        controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
-    //    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
+*/
 
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
@@ -185,19 +151,13 @@ void Scene::createVolume3D()
 
 
 
-
-
     boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
     boundary3D->setCurrentDirectory( shader_directory.toStdString() );
-    boundary3D->init();
-    boundary3D->create();
-
-
 
     controller->initRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
 
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-    //    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+    emit initContext();
+
 
 
 }
@@ -259,6 +219,7 @@ void Scene::addBoundaryToScene()
 
     Boundary* b = controller->getCurrentBoundary();
     boundary3D->setGeoData( b );
+    boundary3D->update();
 
     sketching_boundary = new BoundaryItem2D();
     sketching_boundary->setGeoData( b );
@@ -277,21 +238,19 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 {
 
     /*
-    int origin_x = qtscene_origin_x - x;
-    int origin_y = qtscene_origin_y - y;
-
-
-    defineVolumeQtCoordinates( origin_x, origin_y, qtscene_origin_z, w, h, qtscene_depth );
+    defineVolumeQtCoordinates( x, y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
+
+
     min = Scene::scene2Dto3D( min );
     max = Scene::scene2Dto3D( max );
-
     Eigen::Vector3f dim = max - min;
 
+    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
 
     controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
@@ -306,15 +265,10 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     setSceneRect( sketching_boundary->boundingRect() );
 
 
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
     controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
 
-
 */
-
-
-    defineVolumeQtCoordinates( x, /*-1**/y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
+    defineVolumeQtCoordinates( x,y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
@@ -337,19 +291,13 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
     Boundary* b = controller->getCurrentBoundary();
     boundary3D->setGeoData( b );
-    boundary3D->update();
 
 
     sketching_boundary->setGeoData( b );
-    sketching_boundary->update( m_3dto2d );
     setSceneRect( sketching_boundary->boundingRect() );
 
 
     controller->editRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
-    //min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z()
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-    //    controller->editRulesProcessor( min.x(), min.y(), min.z(), qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
 
 
 
@@ -545,9 +493,6 @@ void Scene::clearScene()
 void Scene::updateScene()
 {
 
-    //    boundary->update();
-    boundary3D->update();
-
     float d = controller->getCurrentCrossSection();
 
     std::map< unsigned int, StratigraphicItem* >::iterator it;
@@ -593,24 +538,11 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 void Scene::updateGLContext()
 {
 
-    /*
+
+    boundary3D->update();
+
     float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
     Eigen::Vector3f center( 0.5f*qtscene_width/L, 0.5f*qtscene_height/L, 0.5f*qtscene_depth/L ) ;
-
-    unsigned int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
-    {
-        Surface* surface = surfaces_list[ i ];
-        surface->update( center );
-    }
-
-*/
-
-
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    Eigen::Vector3f center( 0.5f*qtscene_width, 0.5f*qtscene_height, 0.5f*qtscene_depth ) ;
-
-    center = Scene::scene2DtoPlanin( center );
 
     std::map< unsigned int, Surface* >::iterator it;
     for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
@@ -626,8 +558,12 @@ void Scene::updateGLContext()
 void Scene::initGLContext()
 {
 
+    if( boundary3D->initialized() == false )
+    {
+        boundary3D->init();
+        boundary3D->create();
+    }
 
-    int number_of_surfaces = surfaces_list.size();
 
     std::map< unsigned int, Surface* >::iterator it;
 
