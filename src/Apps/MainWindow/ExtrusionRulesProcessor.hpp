@@ -113,6 +113,9 @@ namespace RRM
         //
         void stopDefineBelow();
 
+        bool defineAboveIsActive(); 
+        bool defineBelowIsActive();
+
         void removeAbove();
         void removeAboveIntersection();
 
