@@ -1295,11 +1295,14 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     else if( current_mode == InteractionMode::SELECTING_ABOVE )
     {
 
+        selected_above_surfaces.clear();
         selected_above_surfaces = getAllSelectedItems();
         if( selected_above_surfaces.empty() == true ) return;
 
         controller->defineRegionAbove( selected_above_surfaces );
         setUnallowedAbove();
+
+        StratigraphicItem* s = stratigraphics_list[ selected_above_surfaces[ 0 ] ];
 
         current_mode = InteractionMode::OVERSKETCHING;
         emit enableSketching( true );
@@ -1311,6 +1314,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     else if( current_mode == InteractionMode::SELECTING_BELOW )
     {
 
+        selected_below_surfaces.clear();
         selected_below_surfaces = getAllSelectedItems();
         if( selected_below_surfaces.empty() == true ) return;
 

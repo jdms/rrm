@@ -2,6 +2,7 @@
 #define STRATIGRAPHICITEM_HPP
 
 #include <QGraphicsPathItem>
+#include <QPainterPathStroker>
 #include <QPolygonF>
 
 #include "Model/StratigraphyRenderable.hpp"
@@ -62,6 +63,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
         QPolygonF points;
 		QPainterPath curve;
+        QPainterPathStroker teste;
 
 		QColor current_color;
         QPen pen_allowed;

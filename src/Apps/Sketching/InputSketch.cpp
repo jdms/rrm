@@ -9,6 +9,9 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
 	is_inside = false;
 
 	pen_color = color;
+    pen_color.setCapStyle( Qt::RoundCap );
+    pen_color.setJoinStyle( Qt::RoundJoin );
+
 
 	setFlag ( QGraphicsItem::ItemIsSelectable );
 	setAcceptTouchEvents ( true );

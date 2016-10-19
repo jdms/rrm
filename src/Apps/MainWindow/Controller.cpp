@@ -208,8 +208,7 @@ bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
 
-    rules_processor.defineAbove( selections[ 0 ] );
-    return true;
+    return rules_processor.defineAbove( selections[ 0 ] );
 
 }
 
@@ -217,9 +216,8 @@ bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 {
 
-    rules_processor.defineBelow( selections[ 0 ] );
+    return rules_processor.defineBelow( selections[ 0 ] );
 
-    return true;
 
 }
 
