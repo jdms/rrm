@@ -164,17 +164,17 @@ void SketchingWindow::createConnections()
 
 
 
-    connect( ac_sketchabove, &QAction::triggered, [=]( bool status ){ emit defineSketchingAbove( status ); lb_statusbar_status->setText( "Sketching Above" ); uncheckRemoveRules(); } );
-    connect( ac_sketchbelow, &QAction::triggered, [=]( bool status ){ emit defineSketchingBelow( status ); lb_statusbar_status->setText( "Sketching Below" ); uncheckRemoveRules(); } );
+    connect( ac_sketchabove, &QAction::toggled, [=]( bool status ){ emit defineSketchingAbove( status ); lb_statusbar_status->setText( "Sketching Above" ); uncheckRemoveRules(); } );
+    connect( ac_sketchbelow, &QAction::toggled, [=]( bool status ){ emit defineSketchingBelow( status ); lb_statusbar_status->setText( "Sketching Below" ); uncheckRemoveRules(); } );
 
 
-    connect( ac_sketch, &QAction::triggered, [=](){ emit updateStratigraphicRule( "SKETCHING" ); lb_statusbar_status->setText( "Sketch" ); } );
+    connect( ac_sketch, &QAction::toggled, [=](){ emit updateStratigraphicRule( "SKETCHING" ); lb_statusbar_status->setText( "Sketch" ); } );
 
 
-    connect( ac_removeabove, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RA_SKETCHING" );  lb_statusbar_status->setText( "Remove Above" ); } );
-    connect( ac_removeaboveintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RAI_SKETCHING" );  lb_statusbar_status->setText( "Remove Above Intersection" ); } );
-    connect( ac_removebelow, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RB_SKETCHING" ); lb_statusbar_status->setText( "Remove Below" ); } );
-    connect( ac_removebelowintersection, &QAction::triggered, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
+    connect( ac_removeabove, &QAction::toggled, [=](){ emit updateStratigraphicRule( "RA_SKETCHING" );  lb_statusbar_status->setText( "Remove Above" ); } );
+    connect( ac_removeaboveintersection, &QAction::toggled, [=](){ emit updateStratigraphicRule( "RAI_SKETCHING" );  lb_statusbar_status->setText( "Remove Above Intersection" ); } );
+    connect( ac_removebelow, &QAction::toggled, [=](){ emit updateStratigraphicRule( "RB_SKETCHING" ); lb_statusbar_status->setText( "Remove Below" ); } );
+    connect( ac_removebelowintersection, &QAction::toggled, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
 
 
     connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );
