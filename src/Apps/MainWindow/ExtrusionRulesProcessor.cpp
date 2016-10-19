@@ -167,6 +167,15 @@ namespace RRM
         container_.stopDefineAbove(); 
     }
 
+    bool ExtrusionRulesProcessor::defineAboveIsActive()
+    {
+        return current_.lower_boundary_;
+    }
+
+    bool ExtrusionRulesProcessor::defineBelowIsActive()
+    {
+        return current_.upper_boundary_;
+    }
 
     bool ExtrusionRulesProcessor::defineBelow( size_t surface_index )
     {
@@ -332,6 +341,86 @@ namespace RRM
             if ( container_.weakEntireSurfaceCheck(index) )
             {
                 eligible_surfaces.push_back(output_index); 
+            }
+        }
+
+        return !eligible_surfaces.empty(); 
+    }
+
+    bool ExtrusionRulesProcessor::requestDefineAbove( std::vector<size_t> &eligible_surfaces )
+    {
+        if ( container_.empty() )
+        {
+            return false; 
+        }
+
+        eligible_surfaces.clear(); 
+        ControllerSurfaceIndex output_index; 
+        ContainerSurfaceIndex index; 
+
+        for ( size_t i = 0; i < inserted_surfaces_indices_.size(); ++i )
+        {
+            output_index = inserted_surfaces_indices_[i]; 
+            if ( getSurfaceIndex(output_index, index) == false )
+                continue; 
+
+            if ( container_.weakEntireSurfaceCheck(index) )
+            {
+                if ( defineBelowIsActive() )
+                {
+                    ContainerSurfaceIndex boundary_index; 
+                    getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index); 
+
+                    if ( container_[index]->weakLiesBelowOrEqualsCheck(container_[boundary_index]) )
+                    {
+                        eligible_surfaces.push_back(output_index); 
+                    }
+                }
+                else
+                {
+                    eligible_surfaces.push_back(output_index); 
+                }
+
+            }
+        }
+
+        return !eligible_surfaces.empty(); 
+    }
+
+    bool ExtrusionRulesProcessor::requestDefineBelow( std::vector<size_t> &eligible_surfaces )
+    {
+        if ( container_.empty() )
+        {
+            return false; 
+        }
+
+        eligible_surfaces.clear(); 
+        ControllerSurfaceIndex output_index; 
+        ContainerSurfaceIndex index; 
+
+        for ( size_t i = 0; i < inserted_surfaces_indices_.size(); ++i )
+        {
+            output_index = inserted_surfaces_indices_[i]; 
+            if ( getSurfaceIndex(output_index, index) == false )
+                continue; 
+
+            if ( container_.weakEntireSurfaceCheck(index) )
+            {
+                if ( defineAboveIsActive() )
+                {
+                    ContainerSurfaceIndex boundary_index; 
+                    getSurfaceIndex(inserted_surfaces_indices_[current_.lower_boundary_], boundary_index); 
+
+                    if ( container_[index]->weakLiesAboveOrEqualsCheck(container_[boundary_index]) )
+                    {
+                        eligible_surfaces.push_back(output_index); 
+                    }
+                }
+                else
+                {
+                    eligible_surfaces.push_back(output_index); 
+                }
+
             }
         }
 
