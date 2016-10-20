@@ -1070,6 +1070,10 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         sketchlib_.overSketching(curve_visitor_,c);
 
+        sketchlib_.ensure_x_monotonicity(curve_visitor_);
+
+        std::cout <<  "Monotone " << curve_visitor_.size() << std::endl;
+
         sketchlib_item->setSketch( PolyQtUtils::curve2DToQPolyginF( curve_visitor_ ) );
 
         sketch->addSegment( *temp_sketch );

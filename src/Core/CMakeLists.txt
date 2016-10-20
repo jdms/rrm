@@ -13,4 +13,3 @@ include_directories(
 add_subdirectory( Geometry )
 add_subdirectory( Base )
 add_subdirectory( SketchLib )
-add_subdirectory( Arrangement_2D )

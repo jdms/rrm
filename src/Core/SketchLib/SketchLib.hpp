@@ -31,6 +31,14 @@ namespace RRM
             // \param _stroke The piece of curve used to over sketch.
             bool overSketching( Curve2D& _curve, const Curve2D& _stroke );
 
+            bool ensure_x_monotonicity ( Curve2D& _curve );
+
+            bool is_x_monotonic_curve ( const Curve2D&              _curve,
+                   std::map<std::size_t,std::vector<std::size_t> >& _x_monotone_subcurves,
+                   std::vector<std::size_t>&                        _left_to_right_x_monotone_subcurves,
+                   std::vector<std::size_t>&                        _right_to_left_x_monotone_subcurves
+                   ) const;
+
             // Default LineString Input
             private:
                 // Standard smooth filter
