@@ -606,4 +606,87 @@ namespace RRM
         return status;
     }
 
+        size_t ExtrusionRulesProcessor::getLegacyMeshes( std::vector<double> &positions, std::vector<size_t> &nu, std::vector<size_t> &nv )
+        {
+            if ( container_.size() == 0 ) 
+            {
+                return 0;
+            }
+
+            using Curve = std::vector<Point3>; 
+            using CurveContainer = std::vector<Curve>;
+            CurveContainer curves; 
+
+            size_t num_extrusion_steps = numJ_; 
+
+            // Process curves ... 
+
+            Point3 p; 
+            bool valid_vertex; 
+            bool has_curve = false; 
+            for ( size_t k = 0; k < container_.size(); ++k )
+            {
+                curves.push_back( Curve() ); 
+                auto &curve = curves.back(); 
+                auto &sptr = container_[k]; 
+
+                for ( size_t i = 0; i < numI_; ++ i )
+                {
+                    valid_vertex = sptr->getVertex3D(sptr->getVertexIndex(i, 0), p); 
+                    if ( valid_vertex )
+                    {
+                        curve.push_back(p);
+                        has_curve = true; 
+                    }
+                    else
+                    {
+                        if ( has_curve ) 
+                        {
+                            nu.push_back(curve.size());
+                            nv.push_back(num_extrusion_steps);
+                            curves.push_back( Curve() );
+                            curve = curves.back(); 
+                            has_curve = false; 
+                        }
+                    }
+                }
+
+                if ( has_curve )
+                {
+                    nu.push_back(curve.size());
+                    nv.push_back(num_extrusion_steps);
+                    has_curve = false; 
+                }
+            }
+
+
+            // Build Zhao's data structure
+
+            size_t num_surfaces = curves.size(); 
+            double extrusion_step = lenght_.z/static_cast<double>(num_extrusion_steps); 
+            size_t offset = 0; 
+            size_t index = 0; 
+
+            for ( size_t k = 0; k < num_surfaces; ++k )
+            {
+                // Get surface/curve number k
+                auto &curve = curves[k]; 
+
+                for ( size_t j = 0; j < num_extrusion_steps+1; ++j )
+                {
+                    for ( size_t i = 0; i < curve.size() ; ++i )
+                    {
+                        index = j*curve.size() + i + offset; 
+
+                        positions[ 3*index + 0 ] = curve[i].x; 
+                        positions[ 3*index + 1 ] = static_cast<double>(j)*extrusion_step; 
+                        positions[ 3*index + 2 ] = curve[i].y; 
+                    }
+                }
+                offset += curve.size() * num_extrusion_steps; 
+            }
+
+            return num_surfaces;
+        }
+
 } /* namespace RRM */
