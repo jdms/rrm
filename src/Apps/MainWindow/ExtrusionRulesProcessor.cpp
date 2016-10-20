@@ -296,12 +296,13 @@ namespace RRM
         StateDescriptor state_before_redo_ = current_;
         current_ = undoed_states_.back();
         undoed_states_.pop_back();
-
-        enforceDefineRegion(); 
+        enforceDefineRegion();
 
         bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
 
         current_ = state_before_redo_;
+        enforceDefineRegion();
+
         return status;
     }
 
@@ -529,10 +530,18 @@ namespace RRM
         {
             status &= defineBelow(current_.upper_boundary_);
         }
+        else
+        {
+            stopDefineBelow();
+        }
 
         if ( current_.bounded_below_)
         {
             status &= defineAbove(current_.lower_boundary_);
+        }
+        else
+        {
+            stopDefineAbove();
         }
 
         return status; 
