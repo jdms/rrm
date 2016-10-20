@@ -29,7 +29,7 @@ namespace RRM{
             segment_1.supporting_curve.lineFilter(sampling, 3);
             segment_1.is_boundary_ = true;
             segment_1.subcurves.push_back(segment_1.supporting_curve);
-            segment_1.index = std::numeric_limits<unsigned long long int>::max()-1;
+            segment_1.index = std::numeric_limits<Natural>::max()-1;
 
             this->curve_cache[segment_1.index] = segment_1;
 
@@ -40,7 +40,7 @@ namespace RRM{
             segment_2.supporting_curve.lineFilter(sampling, 3);
             segment_2.is_boundary_ = true;
             segment_2.subcurves.push_back(segment_2.supporting_curve);
-            segment_2.index = std::numeric_limits<unsigned long long int>::max()-2;
+            segment_2.index = std::numeric_limits<Natural>::max()-2;
 
             this->curve_cache[segment_2.index] = segment_2;
 
@@ -182,7 +182,18 @@ namespace RRM{
 
         this->curve_cache[new_curve.index] = new_curve;
 
-        this->log();
+        std::cout << " Last Curve Log " << std::endl;
+        std::cout << " Index::   " <<  last_curve_.index << std::endl;
+        std::cout << " Below   " <<  lower_bound_.size() << std::endl;
+        for(auto c: lower_bound_)
+        {
+            std::cout << c << std::endl;
+        }
+        std::cout << " Above   " <<  upper_bound_.size() << std::endl;
+        for(auto c: upper_bound_)
+        {
+                std::cout << c << std::endl;
+        }
 
         return true;
     }
@@ -202,8 +213,11 @@ namespace RRM{
             for ( auto curve : new_curves.second )
             {
                 this->curve_cache[new_curves.first].subcurves.push_back(PolyCurve2D(curve));
+                this->curve_cache[new_curves.first].index = new_curves.first;
             }
         }
+
+        this->log();
     }
     // RRM interface
     std::vector<Natural>Arrangement_2D::getLastCurveLowerBound() const
@@ -224,19 +238,10 @@ namespace RRM{
 
     void Arrangement_2D::log ( )
     {
-        std::cout << " Last Curve Log " << std::endl;
-        std::cout << " Index::   " <<  last_curve_.index << std::endl;
-        std::cout << " Below   " <<  lower_bound_.size() << std::endl;
-        for(auto c: lower_bound_)
-        {
-            std::cout << c << std::endl;
-        }
-        std::cout << " Above   " <<  upper_bound_.size() << std::endl;
-        for(auto c: upper_bound_)
-        {
-                std::cout << c << std::endl;
-        }
+        std::cout << " -- Arrangement Log -- " << std::endl;
+        std::cout << " -- size -- " << curve_cache.size() << std::endl;
     }
 
 }
+
 

@@ -214,6 +214,7 @@ class Scene: public QGraphicsScene
 
         // @Felipe
         RRM::Arrangement_2D arr;
+        Curve2D arr_c;
         unsigned long long int index = 0;
 	
 };

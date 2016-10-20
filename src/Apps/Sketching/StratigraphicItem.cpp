@@ -68,6 +68,7 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 	painter->setBrush( Qt::NoBrush );
 
     QPainterPath outline_curve = teste.createStroke( curve );
+
     painter->drawPath( outline_curve );
 
 
@@ -135,6 +136,8 @@ QList< QPolygonF > StratigraphicItem::getSubCurves()
 {
     return curve.toSubpathPolygons();
 }
+
+
 
 
 void StratigraphicItem::clear()
