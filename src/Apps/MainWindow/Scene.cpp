@@ -373,8 +373,8 @@ void Scene::addCurve()
 
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
 
-    // @Felipe
-    arr.insert(c,index++);
+    arr_c = c;
+
 
     unsigned int number_of_points = c.size();
     c = Scene::scene2DtoPlanin( c );
@@ -387,6 +387,8 @@ void Scene::addCurve()
     }
 
     addStratigraphyToScene();
+
+    //controller->get
 
 }
 
@@ -1192,6 +1194,35 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
         addCurve();
         controller->interpolateStratigraphy();
+
+        // @Felipe
+        // Get the intersection information
+        arr.insert(arr_c,controller->getCurrentStratigraphy()->getId());
+
+
+        std::map<unsigned int,std::vector<Curve2D>> curve_map;
+        QList<QPolygonF> strat_map;
+
+        Curve2D temp;
+
+        for ( auto strat_it: stratigraphics_list)
+        {
+            strat_map = strat_it.second->getSubCurves();
+
+            std::cout << "QPolygon List Size " << strat_map.size() << std::endl;
+
+            for ( auto curve_it: strat_map )
+            {
+                temp = PolyQtUtils::qPolyginFToCurve2D(curve_it);
+
+                std::cout << "QPolygon Size " << strat_it.second->getId() << " - "  <<  temp.size() << std::endl;
+                curve_map[strat_it.second->getId()].push_back(temp);
+            }
+        }
+
+        arr.updateSubcurves(curve_map);
+
+
 
         newSketch();
         controller->addStratigraphy();
