@@ -140,6 +140,7 @@ class PlanarSurface {
         size_t getNumX() const; 
         size_t getNumY() const; 
         size_t getNumVertices() const; 
+        Natural getVertexIndex( Natural i, Natural j );
 
         template<typename CoordinatesList>
         bool getRawHeightMap( CoordinatesList &vertices );
@@ -236,7 +237,6 @@ class PlanarSurface {
 
         /* Methods */ 
         bool rangeCheck( Natural i, Natural j );
-        Natural getVertexIndex( Natural i, Natural j );
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
