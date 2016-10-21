@@ -31,7 +31,7 @@ namespace RRM
             // \param _stroke The piece of curve used to over sketch.
             bool overSketching( Curve2D& _curve, const Curve2D& _stroke );
 
-            bool ensure_x_monotonicity ( Curve2D& _curve );
+            void ensure_x_monotonicity ( Curve2D& _curve ) const;
 
             bool is_x_monotonic_curve ( const Curve2D&              _curve,
                    std::map<std::size_t,std::vector<std::size_t> >& _x_monotone_subcurves,
