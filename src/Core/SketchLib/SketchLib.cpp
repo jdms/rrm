@@ -47,28 +47,97 @@ namespace RRM
 
     }
 
-    bool SketchLib::ensure_x_monotonicity ( Curve2D& _curve )
+    /// \brief Ensure x_monotonicity of the curve
+    /// Modify the curve, thus is is granted to be one x monotone curve
+    /// \param Curve to be filters
+    void SketchLib::ensure_x_monotonicity ( Curve2D& _curve ) const
     {
-        std::vector<std::size_t> left_to_right_x_monotone_subcurves;
-        std::vector<std::size_t> right_to_left_x_monotone_subcurves;
         std::map<std::size_t,std::vector<std::size_t> > x_monotone_subcurves;
 
-        bool result = this->is_x_monotonic_curve(_curve,
-                                                 x_monotone_subcurves,
-                                                 left_to_right_x_monotone_subcurves,
-                                                 right_to_left_x_monotone_subcurves
-                                                 );
+        std::vector<std::size_t> lr;
+        std::vector<std::size_t> rl;
 
-        Curve2D tmp;
+        this->is_x_monotonic_curve(_curve,x_monotone_subcurves,lr,rl);
 
-        for (auto it: left_to_right_x_monotone_subcurves)
+        // The total amount of subcurves which is oriented left to right
+        std::size_t left_to_right = 0;
+        // The total amount of subcurves which is oriented right to left
+        std::size_t right_to_left = 0;
+        // The result Curve
+        Curve2D     result_curve;
+        // All points of the subsequent sub cuves have to be larger/smaller then
+        // the target_point.x()
+        Point2D     target_point;
+        // Use to update the target_point
+        std::size_t current_size = 0;
+
+
+        // Find the large orientation of the curve
+        for ( auto subcurve : x_monotone_subcurves )
         {
-            tmp.add(_curve[it]);
+            if ( _curve[subcurve.second[1]].x() > _curve[subcurve.second[0]].x()  )
+            {
+               left_to_right += subcurve.second.size();
+            }else
+            {
+               right_to_left += subcurve.second.size();
+            }
         }
 
-        _curve = tmp;
+        target_point      =  _curve[x_monotone_subcurves.begin()->second.front()];
+        current_size      = result_curve.size();
 
-        return result;
+        // Grab all left to right segments
+        if ( left_to_right > right_to_left )
+        {
+            for ( auto subcurve : x_monotone_subcurves )
+            {
+                if ( _curve[subcurve.second[1]].x() > _curve[subcurve.second[0]].x()  )
+                {
+                    for(auto it : subcurve.second)
+                    {
+                        if ( _curve[it].x() > target_point.x() )
+                        {
+                            result_curve.add((_curve[it]));
+                        }
+                    }
+
+                    if ( result_curve.size() > current_size )
+                    {
+                        target_point =  _curve[subcurve.second.back()];
+                        current_size += result_curve.size();
+                    }
+                }
+
+            }
+
+        }
+        // Grab all right to left segments
+        else
+        {
+            for ( auto subcurve : x_monotone_subcurves )
+            {
+                if ( ! (_curve[subcurve.second[1]].x() > _curve[subcurve.second[0]].x())  )
+                {
+                    for(auto it : subcurve.second)
+                    {
+                        if ( !(_curve[it].x() > target_point.x()) )
+                        {
+                            result_curve.add((_curve[it]));
+                        }
+                    }
+
+                    if ( result_curve.size() > current_size )
+                    {
+                        target_point =  _curve[subcurve.second.back()];
+                        current_size += result_curve.size();
+                    }
+                }
+
+            }
+        }
+
+        _curve = result_curve;
 
     }
 
