@@ -621,9 +621,12 @@ namespace RRM
 
             // Process curves ... 
 
-            Point3 p; 
-            bool valid_vertex; 
+            Point3 p;
+            double unused; 
+            bool vertex_is_valid, prev_vertex_is_valid, next_vertex_is_valid; 
             bool has_curve = false; 
+            size_t index, prev_index, next_index; 
+
             for ( size_t k = 0; k < container_.size(); ++k )
             {
                 curves.push_back( Curve() ); 
@@ -632,15 +635,25 @@ namespace RRM
 
                 for ( size_t i = 0; i < numI_; ++ i )
                 {
-                    valid_vertex = sptr->getVertex3D(sptr->getVertexIndex(i, 0), p); 
-                    if ( valid_vertex )
+                    auto size = container_.size(); 
+
+                    prev_index = sptr->getVertexIndex( (i-1 > 0 ? i-1 : i), 0 ); 
+                    index = sptr->getVertexIndex( i, 0 ); 
+                    next_index = sptr->getVertexIndex( (i+1 < size ? i+1 : i), 0 ); 
+
+                    prev_vertex_is_valid = sptr->getHeight(prev_index, unused); 
+                    vertex_is_valid = sptr->getVertex3D(index, p); 
+                    next_vertex_is_valid = sptr->getHeight(next_index, unused); 
+
+                    if ( prev_vertex_is_valid || vertex_is_valid || next_vertex_is_valid )
                     {
                         curve.push_back(p);
                         has_curve = true; 
                     }
-                    else
+
+                    if ( vertex_is_valid == false )
                     {
-                        if ( has_curve ) 
+                        if ( has_curve && prev_vertex_is_valid ) 
                         {
                             nu.push_back(curve.size());
                             nv.push_back(num_extrusion_steps);
@@ -665,7 +678,6 @@ namespace RRM
             size_t num_surfaces = curves.size(); 
             double extrusion_step = lenght_.z/static_cast<double>(num_extrusion_steps); 
             size_t offset = 0; 
-            size_t index = 0; 
 
             for ( size_t k = 0; k < num_surfaces; ++k )
             {
