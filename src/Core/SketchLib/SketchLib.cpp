@@ -145,7 +145,7 @@ namespace RRM
     }
 
 // -------------------- OverSketching -----------------------------------------
-    bool SketchLib::defaultOverSketching ( Curve2D& _curve , const Curve2D& _stroke)
+    bool SketchLib::overSketching ( Curve2D& _curve , const Curve2D& _stroke)
     {
         Curve2D simplify;
         Curve2D stroke;
