@@ -11,34 +11,7 @@ namespace RRM
 {
 
 
-    bool SketchLib::overSketching ( Curve2D& _curve , const Curve2D& _stroke)
-    {
-        Curve2D simplify;
-        Curve2D stroke;
-        Curve2D rest;
-
-        if ( _stroke.size() < 7)
-        {
-            return false;
-        }
-
-        if ( _curve.size() == 0 )
-        {
-            _curve.join(_stroke);
-        }
-        else
-        {
-            stroke = _stroke;
-
-            _curve = stroke.overSketch( _curve, rest, 1 , 16 );
-
-            this->defaultFilter(_curve);
-        }
-       // std::cout << this->current_supporting_curve_.size() << std::endl;
-
-        return true;
-    }
-
+// -------------------- Filters -----------------------------------------------
     void SketchLib::defaultFilter ( Curve2D& _curve )
     {
 
@@ -46,7 +19,6 @@ namespace RRM
         tmp.douglasPeuckerSimplify(_curve, 1.0);
 
     }
-
 
     bool SketchLib::is_x_monotonic_curve ( const Curve2D&                                      _curve,
                                                    std::map<std::size_t,std::vector<std::size_t> >& _x_monotone_subcurves ) const
@@ -83,7 +55,6 @@ namespace RRM
         // current_index == 0 means the curve is x_monotone
         return ( current_index == 0 );
     }
-
 
     bool SketchLib::ensure_x_monotonicity ( Curve2D& _curve ) const
     {
@@ -170,9 +141,41 @@ namespace RRM
         }
 
         _curve = result_curve;
-
+        return true;
     }
 
+// -------------------- OverSketching -----------------------------------------
+    bool SketchLib::defaultOverSketching ( Curve2D& _curve , const Curve2D& _stroke)
+    {
+        Curve2D simplify;
+        Curve2D stroke;
+        Curve2D rest;
+
+        if ( _stroke.size() < 7)
+        {
+            return false;
+        }
+
+        if ( _curve.size() == 0 )
+        {
+            _curve.join(_stroke);
+        }
+        else
+        {
+            stroke = _stroke;
+
+            _curve = stroke.overSketch( _curve, rest, 1 , 16 );
+
+            this->defaultFilter(_curve);
+        }
+       // std::cout << this->current_supporting_curve_.size() << std::endl;
+
+        return true;
+    }
+
+// -------------------- Fitting -----------------------------------------------
+
+// -------------------- Gesture -----------------------------------------------
 
 } /* namespace RRM */
 
