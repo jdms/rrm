@@ -22,13 +22,11 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
 
 void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
-	painter->setRenderHint ( QPainter::Antialiasing );
-
 
 	pen_color.setWidth ( 3 );
 
+    painter->setRenderHint ( QPainter::Antialiasing );
 	painter->setPen ( pen_color );
-
 	painter->setBrush ( Qt::NoBrush );
     painter->drawPolyline( points_list );
 
@@ -46,8 +44,10 @@ QRectF InputSketch::boundingRect ( ) const
 void InputSketch::create ( const QPointF &p )
 {
     prepareGeometryChange ( );
-    clear();
+
+    points_list.clear();
 	points_list.push_back ( p );
+    curve.moveTo( p );
 }
 
 
@@ -55,6 +55,7 @@ void InputSketch::add ( const QPointF &p )
 {
     prepareGeometryChange ( );
 	points_list.push_back ( p );
+    curve.lineTo( p );
 }
 
 
@@ -65,6 +66,7 @@ void InputSketch::clear ( )
 {
     prepareGeometryChange ( );
 	points_list.clear ( );
+    curve = QPainterPath();
 }
 
 
@@ -97,7 +99,6 @@ void InputSketch::isInside ( bool option )
 }
 
 
-/// Changed from original code
 void InputSketch::setSketch ( const QVector<QPointF> & _path )
 {
     prepareGeometryChange ( );
@@ -108,7 +109,6 @@ void InputSketch::setSketch ( const QVector<QPointF> & _path )
 }
 
 
-/// Changed from original code
 void InputSketch::setSketch ( const QPolygonF & _path )
 {
     prepareGeometryChange ( );
@@ -119,21 +119,36 @@ void InputSketch::setSketch ( const QPolygonF & _path )
 }
 
 
-/// Changed from original code
 QPolygonF InputSketch::getSketch ( ) const
 {
     return points_list;
 }
 
 
-QPainterPath InputSketch::shape ( ) const
+void InputSketch::process( const QPointF& p )
 {
 
-	QPainterPath path;
+    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( points_list );
+    Curve2D whole_curve = PolyQtUtils::qPolyginFToCurve2D( curve.toFillPolygon() );
 
-    path.addRect ( points_list.boundingRect ( ) );
 
-	return path;
+    sketchlib_.overSketching( whole_curve, c );
+    sketchlib_.ensure_x_monotonicity( whole_curve );
+
+    curve = QPainterPath();
+    curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( whole_curve ) );
+
+    curve.moveTo( p );
+    points_list.clear();
+    points_list.push_back( p );
+
+
+}
+
+
+QPainterPath InputSketch::shape ( ) const
+{
+    return curve;
 }
 
 
