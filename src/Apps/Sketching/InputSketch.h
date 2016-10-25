@@ -9,7 +9,8 @@
 
 #include "Sketching/PolyQtUtils.hpp"
 
-#include "Core/SketchLib/SketchLib.hpp"
+#include "./libs/SketchLibrary/SketchLib.hpp"
+
 
 using namespace std;
 

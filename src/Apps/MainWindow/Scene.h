@@ -26,7 +26,7 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-#include "Core/SketchLib/SketchLib.hpp"
+//#include "./libs/SketchLibrary/SketchLib.hpp"
 
 class Scene: public QGraphicsScene
 {
