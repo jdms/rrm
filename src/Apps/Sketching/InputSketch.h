@@ -9,6 +9,8 @@
 
 #include "Sketching/PolyQtUtils.hpp"
 
+#include "Core/SketchLib/SketchLib.hpp"
+
 using namespace std;
 
 
@@ -19,7 +21,7 @@ using namespace std;
 class InputSketch : public QGraphicsPathItem
 {
 
-	
+
     public:
 
 
@@ -30,11 +32,12 @@ class InputSketch : public QGraphicsPathItem
 
         void create( const QPointF& p );
         void add( const QPointF& p );
+        void process( const QPointF& p );
         void clear();
 
         void setSketch( const QVector<QPointF> & _path );
         void setSketch( const QPolygonF & _path );
-        QPolygonF    getSketch( ) const;
+        QPolygonF getSketch( ) const;
 
         void setDone( bool option );
 
@@ -51,19 +54,23 @@ class InputSketch : public QGraphicsPathItem
 
         void setPen( const QPen& pen );
         void setColor( const QColor& _color);
-		QColor getColor() const;
+        QColor getColor() const;
 
 
-		
+
     protected:
 
         QPen pen_color;
 
         QPolygonF points_list;
+        QPainterPath curve;
+
 
         bool done;
         bool is_visible;
         bool is_inside;
+
+        RRM::SketchLib sketchlib_;
 
 
 

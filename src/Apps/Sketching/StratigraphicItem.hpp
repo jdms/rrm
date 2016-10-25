@@ -47,7 +47,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
 
         inline unsigned int getId() const { return strat->getId(); }
-        inline QPolygonF getCurve(){ return points; }\
+        inline QPolygonF getCurve(){ return points; }
 
 
         inline void setSelection( bool option ){ is_selected = option;  }
