@@ -13,7 +13,7 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
     sketching_boundary = 0;
 
     sketch = 0;
-    temp_sketch = 0;
+    temp_sketch = NULL;
 
     current_color = QColor( 255, 75, 75 );
     random_color = true;
@@ -364,20 +364,18 @@ void Scene::addCurve()
     current_mode = InteractionMode::INSERTING;
 
 
-    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
+    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
 
 
     unsigned int number_of_points = c.size();
     c = Scene::scene2DtoPlanin( c );
 
     bool add_ok = controller->addCurve( c );
-    // Clear the sketch curve
-    this->curve_visitor_.clear();
 
 
     if( add_ok == false )
     {
-        removeItem( sketch );
+        removeItem( temp_sketch );
         return;
     }
 
@@ -392,7 +390,6 @@ void Scene::addStratigraphyToScene()
 
 
     Stratigraphy* strat = controller->getCurrentStratigraphy();
-    sketch->setGeoData( strat );
 
 
     Surface* strat3D = new Surface();
@@ -403,7 +400,12 @@ void Scene::addStratigraphyToScene()
 
     unsigned int id = strat->getId();
 
-    stratigraphics_list[ id ] = sketch;
+    stratigraphics_list[ id ] = new StratigraphicItem();
+    stratigraphics_list[ id ]->setColor( current_color );
+    stratigraphics_list[ id ]->setGeoData( strat );
+
+    addItem( stratigraphics_list[ id ] );
+
     surfaces_list[ id ] = strat3D;
 
 
@@ -428,7 +430,6 @@ void Scene::removeStratigraphyFromScene( unsigned int id )
 void Scene::newSketch()
 {
 
-
     if( random_color == true )
     {
 
@@ -445,25 +446,26 @@ void Scene::newSketch()
     }
 
 
-    sketch = new StratigraphicItem();
-    sketch->setColor( current_color );
-    addItem( sketch );
+    if( temp_sketch != NULL )
+    {
+        removeItem( temp_sketch );
+        delete temp_sketch;
+    }
 
     temp_sketch = NULL;
+    temp_sketch = new InputSketch( current_color );
+    addItem( temp_sketch );
+
 
     current_mode = InteractionMode::OVERSKETCHING;
 
-    this->sketchlib_item = new InputSketch(Qt::gray);
-    addItem(this->sketchlib_item);
+
 
 }
 
 
 void Scene::undoLastSketch()
 {
-
-    if( sketch != NULL )
-        sketch->clear();
 
     if( temp_sketch != NULL )
         temp_sketch->clear();
@@ -507,17 +509,17 @@ void Scene::clearScene()
     if( controller != 0 )
         controller->clear();
 
-    if( temp_sketch = 0 )
+    if( temp_sketch == NULL )
     {
         temp_sketch->clear();
         delete temp_sketch;
     }
 
-    if( sketch != 0 )
-    {
-        sketch->clear();
-        delete sketch;
-    }
+//    if( sketch != 0 )
+//    {
+//        sketch->clear();
+//        delete sketch;
+//    }
 
     if( sketching_boundary != 0 )
     {
@@ -536,8 +538,7 @@ void Scene::clearScene()
 
     boundary3D = 0;
     sketching_boundary = 0;
-    sketch = 0;
-    temp_sketch = 0;
+    temp_sketch = NULL;
 
 
     init();
@@ -657,8 +658,8 @@ void Scene::updateColor( const QColor& color )
     if( temp_sketch != NULL )
         temp_sketch->setColor( current_color );
 
-    if( sketch != NULL )
-        sketch->setColor( current_color );
+//    if( sketch != NULL )
+//        sketch->setColor( current_color );
 
     random_color = false;
 
@@ -713,18 +714,6 @@ void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed
 
 }
 
-
-//void Scene::unmarkNonSelected( std::vector< size_t >& id_items )
-//{
-//    size_t number_items = id_items.size();
-
-//    for( size_t i = 0; i < number_items; ++i )
-//    {
-//        StratigraphicItem* strat =
-
-//    }
-
-//}
 
 
 
@@ -966,9 +955,7 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         else if( current_mode == InteractionMode::OVERSKETCHING )
         {
 
-            temp_sketch = new InputSketch( current_color );
             temp_sketch->create( event->scenePos() );
-            addItem( temp_sketch );
 
         }
 
@@ -1025,62 +1012,13 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
-    /*
-    if ( current_mode == InteractionMode::OVERSKETCHING  )
-    {
-
-        if( temp_sketch == NULL ) return;
-
-
-        sketch->addSegment( *temp_sketch );
-        removeItem( temp_sketch );
-
-        delete temp_sketch;
-        temp_sketch = NULL;
-
-    }
-
-    else if( current_mode == InteractionMode::BOUNDARY )
-    {
-
-        int w = event->scenePos().x() - boundary_anchor.x();
-        int h = event->scenePos().y() - boundary_anchor.y();
-
-
-        editBoundary( boundary_anchor.x(), boundary_anchor.y(), w, h );
-
-        current_mode = InteractionMode::OVERSKETCHING;
-
-    }
-
-    QGraphicsScene::mouseReleaseEvent( event );
-    update();
-*/
 
 
     if ( current_mode == InteractionMode::OVERSKETCHING  )
     {
 
-        if( temp_sketch == NULL ) return;
 
-        if( temp_sketch->isValid() == false ) return;
-
-
-        Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
-
-        sketchlib_.overSketching(curve_visitor_,c);
-
-        sketchlib_.ensure_x_monotonicity(curve_visitor_);
-
-        std::cout <<  "Monotone " << curve_visitor_.size() << std::endl;
-
-        sketchlib_item->setSketch( PolyQtUtils::curve2DToQPolyginF( curve_visitor_ ) );
-
-        sketch->addSegment( *temp_sketch );
-        removeItem( temp_sketch );
-
-        delete temp_sketch;
-        temp_sketch = NULL;
+        temp_sketch->process( event->scenePos() );
 
     }
 
@@ -1107,7 +1045,6 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         if( id_items.empty() == true ) return;
 
         controller->defineRegion( id_items );
-//        unmarkNonSelected( id_items );
 
 
         current_mode = InteractionMode::OVERSKETCHING;

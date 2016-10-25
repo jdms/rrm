@@ -164,7 +164,7 @@ namespace RRM
         // Help in alternate between x_monotone_segments orientation
         for ( std::size_t it = 1; it < _curve.size ( ); it++ )
         {
-            if (  ( _curve[it].x( ) >= _curve[it - 1].x( ) )   xor ( is_current_segment ) )
+            if (  ( _curve[it].x( ) >= _curve[it - 1].x( ) ) ^ ( is_current_segment ) )
             {
                 _x_monotone_subcurves[current_index].push_back (it - 1);
 
