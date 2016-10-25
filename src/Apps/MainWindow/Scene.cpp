@@ -17,6 +17,10 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 
     current_color = QColor( 255, 75, 75 );
     random_color = true;
+
+
+    background_image = new QGraphicsPixmapItem();
+    addItem( background_image );
 }
 
 
@@ -110,30 +114,6 @@ void Scene::updateTransformationsMatrices()
 
 void Scene::createVolume3D()
 {
-
-/*
-        Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-        Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-
-        min = Scene::scene2Dto3D( min );
-        max = Scene::scene2Dto3D( max );
-
-        Eigen::Vector3f dim = max - min;
-
-
-        boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-        boundary3D->setCurrentDirectory( shader_directory.toStdString() );
-        boundary3D->init();
-        boundary3D->create();
-
-
-
-        float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-        controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-*/
-
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
@@ -237,37 +217,6 @@ void Scene::addBoundaryToScene()
 void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
 {
 
-    /*
-    defineVolumeQtCoordinates( x, y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
-
-
-    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-
-
-    min = Scene::scene2Dto3D( min );
-    max = Scene::scene2Dto3D( max );
-    Eigen::Vector3f dim = max - min;
-
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-    controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-
-
-    Boundary* b = controller->getCurrentBoundary();
-    boundary3D->setGeoData( b );
-    boundary3D->update();
-
-
-    sketching_boundary->setGeoData( b );
-    sketching_boundary->update( m_3dto2d );
-    setSceneRect( sketching_boundary->boundingRect() );
-
-
-    controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-*/
 
     defineVolumeQtCoordinates( x,y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
@@ -396,7 +345,17 @@ void Scene::newSketch()
     sketch->setColor( current_color );
     addItem( sketch );
 
+
+    if( temp_sketch != NULL )
+    {
+        removeItem( temp_sketch );
+        delete temp_sketch;
+    }
+
     temp_sketch = NULL;
+    temp_sketch = new InputSketch( current_color );
+    addItem( temp_sketch );
+
 
     current_mode = InteractionMode::OVERSKETCHING;
 
@@ -941,46 +900,18 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 Eigen::Vector3f Scene::scene2DtoPlanin( const Point2D &p )
 {
 
-    /*
-    Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
-
-    //p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    p_cpy = p_cpy/L;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-*/
-
     Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
 
     p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    //    p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
 
 Eigen::Vector3f Scene::scene2DtoPlanin( const Eigen::Vector3f& p )
 {
-
-    /*
     Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-
-
-    //p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    p_cpy = p_cpy/L;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-*/
-
-
-    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-
 
     p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    //    p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
@@ -1096,13 +1027,17 @@ std::vector< size_t > Scene::getAllSelectedItems()
 
 void Scene::setBackGroundImage( const QString& url )
 {
+    QPixmap image = QPixmap( url );
 
-    background_image = QImage();
-    background_image.load( url );
-//    background_image = background_image.scaled( abs( int ( boundary.width() ) ), abs( int ( boundary.height() ) ) );
-//    background_image = background_image.mirrored( false, true );
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
 
-//    setBackgroundBrush(  background_image );
+    editBoundary( image.rect().x(), image.rect().y(), image.rect().width(), image.rect().height() );
+
+
+    background_image->setPixmap( image );
+
     update();
 
 }
@@ -1124,7 +1059,7 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         else if( current_mode == InteractionMode::OVERSKETCHING )
         {
 
-            temp_sketch = new InputSketch( current_color );
+//            temp_sketch = new InputSketch( current_color );
             temp_sketch->create( event->scenePos() );
             addItem( temp_sketch );
 
@@ -1223,12 +1158,14 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         if( temp_sketch->isValid() == false ) return;
 
+        temp_sketch->process( event->scenePos() );
 
-        sketch->addSegment( *temp_sketch );
-        removeItem( temp_sketch );
 
-        delete temp_sketch;
-        temp_sketch = NULL;
+//        sketch->addSegment( *temp_sketch );
+//        removeItem( temp_sketch );
+
+//        delete temp_sketch;
+//        temp_sketch = NULL;
 
     }
 
@@ -1240,7 +1177,7 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         int h = -event->scenePos().y() + boundary_anchor.y();
 
 
-        editBoundary( boundary_anchor.x(), height() - boundary_anchor.y(), w, h );
+        editBoundary( boundary_anchor.x(), /*height() - */boundary_anchor.y(), w - boundary_anchor.x(), h - boundary_anchor.y() );
 
         current_mode = InteractionMode::OVERSKETCHING;
 
@@ -1310,10 +1247,11 @@ void Scene::dropEvent( QGraphicsSceneDragDropEvent *event )
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
     url_file = QDir::toNativeSeparators( url_file );
 
-    this->addPixmap( QPixmap( url_file ) );
+//    this->addPixmap( QPixmap( url_file ) );
 //    editBoundary(
 //    sketching_boundary->setBackGroundImage( url_file );
-//    setBackGroundImage( url_file );
+
+    setBackGroundImage( url_file );
 
 
 }

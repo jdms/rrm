@@ -8,6 +8,7 @@
 #include <QtWidgets/QGraphicsView>
 #include <QMimeData>
 #include <QString>
+#include <QGraphicsPixmapItem>
 #include <QSvgGenerator>
 
 
@@ -209,7 +210,7 @@ class Scene: public QGraphicsScene
         std::map< unsigned int, Surface* > surfaces_list;
 
         QString shader_directory;
-        QImage background_image;
+        QGraphicsPixmapItem *background_image;
 	
 };
 

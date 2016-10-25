@@ -30,11 +30,12 @@ class InputSketch : public QGraphicsPathItem
 
         void create( const QPointF& p );
         void add( const QPointF& p );
+        void process( const QPointF& p );
         void clear();
 
         void setSketch( const QVector<QPointF> & _path );
         void setSketch( const QPolygonF & _path );
-        QPolygonF    getSketch( ) const;
+        QPolygonF getSketch( ) const;
 
         void setDone( bool option );
 
@@ -60,6 +61,8 @@ class InputSketch : public QGraphicsPathItem
         QPen pen_color;
 
         QPolygonF points_list;
+        QPainterPath curve;
+
 
         bool done;
         bool is_visible;
