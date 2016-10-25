@@ -29,7 +29,7 @@ namespace RRM
             //  Edit a curve by over sketching it with a given stroke.
             // \param _curve  Curve to be edit. If the curve is empty, return the stroke itself.
             // \param _stroke The piece of curve used to over sketching.
-            bool defaultOverSketching( Curve2D& _curve, const Curve2D& _stroke );
+            bool overSketching( Curve2D& _curve, const Curve2D& _stroke );
 
             /// \brief Return all x_monotone sub curve of the curve.
             /// Return all x-monotone sub-curve of the given curve.
