@@ -8,7 +8,7 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
     setAcceptDrops( true );
     setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks );
     setDockNestingEnabled( true );
-    setMinimumSize ( 800 , 600 );
+    setMinimumSize ( 1000, 800 );//800 , 600 );
 
     createWindow();
     createActions();

@@ -8,6 +8,7 @@
 #include <QtWidgets/QGraphicsView>
 #include <QMimeData>
 #include <QString>
+#include <QGraphicsPixmapItem>
 #include <QSvgGenerator>
 
 
@@ -26,7 +27,6 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-// @Felipe
 #include "Core/Arrangement_2D/Arrangement_2D.hpp"
 
 class Scene: public QGraphicsScene
@@ -87,6 +87,8 @@ class Scene: public QGraphicsScene
 
         std::vector< size_t > getAllSelectedItems();
 
+
+        void setBackGroundImage( const QString& url );
 
         void setUnallowedAbove();
         void setUnallowedBelow();
@@ -212,9 +214,8 @@ class Scene: public QGraphicsScene
         QString shader_directory;
 
 
-        // @Felipe
         RRM::Arrangement_2D arrangement;
-//        Curve2D arr_c;
+        QGraphicsPixmapItem *background_image;
 	
 };
 

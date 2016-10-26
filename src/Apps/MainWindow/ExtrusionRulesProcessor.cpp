@@ -296,12 +296,13 @@ namespace RRM
         StateDescriptor state_before_redo_ = current_;
         current_ = undoed_states_.back();
         undoed_states_.pop_back();
-
-        enforceDefineRegion(); 
+        enforceDefineRegion();
 
         bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
 
         current_ = state_before_redo_;
+        enforceDefineRegion();
+
         return status;
     }
 
@@ -529,10 +530,18 @@ namespace RRM
         {
             status &= defineBelow(current_.upper_boundary_);
         }
+        else
+        {
+            stopDefineBelow();
+        }
 
         if ( current_.bounded_below_)
         {
             status &= defineAbove(current_.lower_boundary_);
+        }
+        else
+        {
+            stopDefineAbove();
         }
 
         return status; 
@@ -596,5 +605,115 @@ namespace RRM
 
         return status;
     }
+
+        size_t ExtrusionRulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+        {
+            if ( container_.size() == 0 ) 
+            {
+                return 0;
+            }
+
+            size_t depth_discretization = (num_extrusion_steps > 0) ? num_extrusion_steps + 1 : 2;
+
+            using Curve = std::vector<Point3>; 
+            using CurveContainer = std::vector<Curve>;
+            CurveContainer curves; 
+
+            container_[0]->updateDiscretization();
+            size_t size = container_[0]->getNumX();
+
+            // Process curves ... 
+
+            Point3 p;
+            double unused; 
+            bool vertex_is_valid, prev_vertex_is_valid, next_vertex_is_valid; 
+            bool has_curve = false; 
+            size_t index, prev_index, next_index; 
+
+            size_t container_size = 0;
+
+            for ( size_t k = 0; k < container_.size(); ++k )
+            {
+                Curve curve;
+                auto &sptr = container_[k]; 
+
+                for ( size_t i = 0; i < size; ++ i )
+                {
+
+
+                    prev_index = sptr->getVertexIndex( (i-1 > 0 ? i-1 : i), 0 ); 
+                    index = sptr->getVertexIndex( i, 0 ); 
+                    next_index = sptr->getVertexIndex( (i+1 < size ? i+1 : i), 0 ); 
+
+                    prev_vertex_is_valid = sptr->getHeight(prev_index, unused); 
+                    vertex_is_valid = sptr->getVertex3D(index, p); 
+                    next_vertex_is_valid = sptr->getHeight(next_index, unused); 
+
+                    if ( prev_vertex_is_valid || vertex_is_valid || next_vertex_is_valid )
+                    {
+                        curve.push_back(p);
+                        has_curve = true; 
+                    }
+
+                    if ( vertex_is_valid == false )
+                    {
+                        if ( has_curve && prev_vertex_is_valid ) 
+                        {
+                            nu.push_back(curve.size());
+                            nv.push_back(depth_discretization);
+                            container_size += 3*curve.size()*(depth_discretization);
+                            has_curve = false;
+
+                            curves.push_back( std::move(curve) );
+                            curve = Curve();
+                        }
+                    }
+                }
+
+                if ( has_curve )
+                {
+                    container_size += 3*curve.size()*(depth_discretization);
+                    nu.push_back(curve.size());
+                    nv.push_back(depth_discretization);
+
+                    curves.push_back( std::move(curve) );
+                    has_curve = false;
+                }
+            }
+
+
+            // Build Zhao's data structure
+
+            size_t num_surfaces = curves.size(); 
+            double extrusion_step = lenght_.z/static_cast<double>(depth_discretization); 
+            size_t offset = 0; 
+
+            points.resize(container_size);
+
+            /* std::cout << num_surfaces << std::endl; */ 
+            for ( size_t k = 0; k < num_surfaces; ++k )
+            {
+                // Get surface/curve number k
+                auto &curve = curves[k]; 
+                /* std::cout << nu[k] << " " << nv[k] << std::endl << std::flush; */ 
+
+                for ( size_t j = 0; j < depth_discretization; ++j )
+                {
+                    for ( size_t i = 0; i < curve.size() ; ++i )
+                    {
+                        index = j*curve.size() + i + offset; 
+
+                        points[ 3*index + 0 ] = curve[i].x; 
+                        points[ 3*index + 1 ] = static_cast<double>(j)*extrusion_step; 
+                        points[ 3*index + 2 ] = curve[i].z;
+
+                        /* std::cout << points[ 3*index + 0 ]  << " " << points[ 3*index + 1 ] << " " << points[ 3*index + 2 ] << std::endl << std::flush; */
+                    }
+                }
+                offset += curve.size() * depth_discretization; 
+            }
+
+            return num_surfaces;
+        }
 
 } /* namespace RRM */

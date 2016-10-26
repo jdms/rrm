@@ -167,6 +167,8 @@ namespace RRM
 
         /* End methods to interface with GUI */
 
+        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps = 1 );
+
     private:
         class SRules container_;
 
