@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <tuple>
 
-#include "Core/Base/Constants/Constants.hpp"
+#include "./src/Core/Base/Constants/Constants.hpp"
 #include "PolygonalCurve/CurveN.hpp"
 
 

@@ -324,7 +324,6 @@ void Controller::clear()
 void Controller::update()
 {
 
-
     std::map< unsigned int, Stratigraphy* >::iterator it;
 
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )

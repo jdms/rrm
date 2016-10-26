@@ -43,20 +43,27 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 	painter->setRenderHint( QPainter::Antialiasing );
 	
 
+    QBrush brush;
+
     if( under_operation == false )
     {
         pen_normal.setColor( current_color );
         pen_normal.setWidth( 3 );
         painter->setPen( pen_normal );
+
+        brush = Qt::NoBrush;
+
     }
     else
     {
 
+        brush = QBrush( current_color );
 
         if ( is_selected )
+        {
             painter->setPen( pen_selected );
-
-        else if( is_allowed == true )
+        }
+        if( is_allowed == true )
             painter->setPen( pen_allowed );
 
         else if( is_unallowed == true )
@@ -64,12 +71,14 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 
     }
 
-
-	painter->setBrush( Qt::NoBrush );
-
+    painter->setBrush( brush );
     QPainterPath outline_curve = teste.createStroke( curve );
 
     painter->drawPath( outline_curve );
+
+
+
+
 
 
 }
@@ -153,7 +162,6 @@ std::vector< Curve2D > StratigraphicItem::getSubCurves2D()
     return subcurves2d;
 
 }
-
 
 
 void StratigraphicItem::clear()

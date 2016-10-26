@@ -82,17 +82,12 @@ if( OWN_LIBRARIES AND WIN32 )
 elseif( OWN_LIBRARIES AND UNIX )
 
 
-    set( Eigen3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
     find_package( Eigen3 REQUIRED )
-    include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
-    add_definitions( -DEIGEN_DONT_ALIGN )
-
-
-    find_package( Eigen3 REQUIRED )
-    if( Eigen3_FOUND )
-        include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
+    if( EIGEN3_FOUND )
+        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
         add_definitions( -DEIGEN_DONT_ALIGN )
-    endif( Eigen3_FOUND )
+    endif( EIGEN3_FOUND )
 
     find_package( GLEW REQUIRED )
     if( GLEW_FOUND )
@@ -111,13 +106,13 @@ elseif( OWN_LIBRARIES AND UNIX )
 
 
 
-else( OWN_LIBRARIES AND WIN32 )
+else( OWN_LIBRARIES )
 
 
     find_package( Eigen3 REQUIRED )
     if( Eigen3_FOUND )
         include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
-        add_definitions( -DEIGEN_DONT_ALIGN )
+        #add_definitions( -DEIGEN_DONT_ALIGN )
     endif( Eigen3_FOUND )
 
     find_package( GLEW REQUIRED )
@@ -151,6 +146,8 @@ endif( OpenGL_FOUND )
 
 
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
+add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
+
 
 
 ###############################################

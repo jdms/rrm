@@ -96,3 +96,8 @@ slprj/
 
 # Session info
 octave-workspace
+
+#Eclipse Settings Files
+.settings
+.project
+.cproject

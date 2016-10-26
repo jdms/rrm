@@ -24,18 +24,6 @@ void BoundaryItem2D::clear()
 }
 
 
-//void BoundaryItem2D::load()
-//{
-
-//    // retirar
-
-//    prepareGeometryChange();
-
-//    boundary.setRect( origin_x, origin_y, width, height );
-//    image_position = QPointF( 0, 0 );
-
-//}
-
 
 void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, const qreal& height )
 {
@@ -44,8 +32,8 @@ void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, c
     prepareGeometryChange();
     boundary.setRect( x, y, width, height );
 
-    image_position = QPointF( boundary.bottomLeft().x(), boundary.bottomLeft().y() );
-    loadBackGroud();
+//    image_position = QPointF( boundary.bottomLeft().x(), boundary.bottomLeft().y() );
+//    loadBackGroud();
 
 }
 
@@ -67,7 +55,7 @@ void BoundaryItem2D::paint( QPainter *painter , const QStyleOptionGraphicsItem *
     if( background_image.isNull() == false )
     {
         brush.setTextureImage( background_image  );
-        painter->setBrushOrigin( image_position.x(), image_position.y() );
+//        painter->setBrushOrigin( image_position.x(), image_position.y() );
     }
 
     painter->setBrush( brush );
