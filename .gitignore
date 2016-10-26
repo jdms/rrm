@@ -57,7 +57,7 @@ ui_*.h
 *.moc
 Makefile*
 *build-*
-
+*.cbp
 
 # Windows-specific files#
 #########################
