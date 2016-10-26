@@ -8,9 +8,11 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
     is_visible = false;
     is_inside = false;
 
-    pen_color = color;
+
+	pen_color = color;
     pen_color.setCapStyle( Qt::RoundCap );
     pen_color.setJoinStyle( Qt::RoundJoin );
+
 
 
     setFlag ( QGraphicsItem::ItemIsSelectable );
@@ -30,6 +32,7 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
     painter->setBrush ( Qt::NoBrush );
     painter->drawPath( curve );
 
+
 }
 
 
@@ -45,8 +48,6 @@ void InputSketch::create ( const QPointF &p )
 {
     prepareGeometryChange ( );
 
-//    points_list.clear();
-//    points_list.push_back ( p );
     curve.moveTo( p );
 }
 
@@ -54,7 +55,6 @@ void InputSketch::create ( const QPointF &p )
 void InputSketch::add ( const QPointF &p )
 {
     prepareGeometryChange ( );
-//    points_list.push_back ( p );
     curve.lineTo( p );
 }
 
@@ -65,7 +65,6 @@ void InputSketch::add ( const QPointF &p )
 void InputSketch::clear ( )
 {
     prepareGeometryChange ( );
-//    points_list.clear ( );
     curve = QPainterPath();
 }
 
@@ -164,8 +163,7 @@ void InputSketch::process( const QPointF& p )
     std::cout << "criei uma nova curva, tamanho = " << whole_curve.size() << std::endl;
     std::cout << "Adicionei um subpath comecando em p\n" << std::endl;
 
-//    points_list.clear();
-//    points_list.push_back( p );
+
 
 
 }

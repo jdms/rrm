@@ -115,6 +115,9 @@ namespace RRM
     {
         container_.clear(); 
         dictionary_.clear(); 
+        current_.bounded_below_ = false; 
+        current_.bounded_above_ = false; 
+        current_.state_ = State::UNDEFINED; 
     }
 
     bool ExtrusionRulesProcessor::update(State s)
@@ -128,11 +131,9 @@ namespace RRM
             return false; 
         }
 
-        current_state_ = s; 
+        current_.state_ = s;
         return true; 
     }
-
-
 
 
     bool ExtrusionRulesProcessor::defineAbove( size_t surface_index )
@@ -143,15 +144,38 @@ namespace RRM
             return false; 
         }
 
-        return container_.defineAbove(index); 
+        // Do not accept surface as boundary if it was alread
+        // used as an upper boundary
+        if ( current_.bounded_above_ == true )
+        {
+            if ( current_.upper_boundary_ == surface_index )
+            {
+                return false;
+            }
+        }
+
+        current_.bounded_below_ = container_.defineAbove(index); 
+        current_.lower_boundary_ = surface_index;
+
+        return current_.bounded_below_; 
     }
 
 
     void ExtrusionRulesProcessor::stopDefineAbove()
     {
+        current_.bounded_above_ = false;
         container_.stopDefineAbove(); 
     }
 
+    bool ExtrusionRulesProcessor::defineAboveIsActive()
+    {
+        return current_.lower_boundary_;
+    }
+
+    bool ExtrusionRulesProcessor::defineBelowIsActive()
+    {
+        return current_.upper_boundary_;
+    }
 
     bool ExtrusionRulesProcessor::defineBelow( size_t surface_index )
     {
@@ -161,15 +185,48 @@ namespace RRM
             return false; 
         }
 
-        return container_.defineBelow(index); 
+        // Do not accept surface as boundary if it was alread
+        // used as a lower boundary
+        if ( current_.bounded_below_ == true )
+        {
+            if ( current_.lower_boundary_ == surface_index )
+            {
+                return false;
+            }
+        }
+        current_.bounded_above_ = container_.defineBelow(index);
+        current_.upper_boundary_ = surface_index;
+
+        return current_.bounded_above_; 
     }
 
 
     void ExtrusionRulesProcessor::stopDefineBelow()
     {
+        current_.bounded_below_ = false;
         container_.stopDefineBelow(); 
     }
 
+
+    void ExtrusionRulesProcessor::removeAbove()
+    {
+        current_.state_ = State::RA_SKETCHING;
+    }
+
+    void ExtrusionRulesProcessor::removeAboveIntersection()
+    {
+        current_.state_ = State::RAI_SKETCHING; 
+    }
+
+    void ExtrusionRulesProcessor::removeBelow()
+    {
+        current_.state_ = State::RB_SKETCHING;
+    }
+
+    void ExtrusionRulesProcessor::removeBelowIntersection()
+    {
+        current_.state_ = State::RBI_SKETCHING; 
+    } 
 
 
     bool ExtrusionRulesProcessor::canUndo() 
@@ -192,15 +249,20 @@ namespace RRM
         PlanarSurface::Ptr last_sptr; 
         container_.popLastSurface(last_sptr);
 
-        State last_state = applied_geologic_rules_.back(); 
-        applied_geologic_rules_.pop_back(); 
-
         size_t last_surface_index = inserted_surfaces_indices_.back(); 
         inserted_surfaces_indices_.pop_back(); 
 
+        StateDescriptor last = past_states_.back();
+        past_states_.pop_back();
+
+        current_.bounded_above_ = last.bounded_above_;
+        current_.bounded_below_ = last.bounded_below_;
+        enforceDefineRegion();
+
         undoed_surfaces_stack_.push_back(last_sptr); 
         undoed_surfaces_indices_.push_back(last_surface_index); 
-        undoed_geologic_rules_.push_back(last_state); 
+
+        undoed_states_.push_back(last);
 
         auto iter = dictionary_.find(last_surface_index); 
         dictionary_.erase(iter); 
@@ -210,7 +272,7 @@ namespace RRM
 
     bool ExtrusionRulesProcessor::canRedo() 
     {
-        if ( undoed_geologic_rules_.size() > 0 )
+        if ( undoed_surfaces_stack_.size() > 0 )
         {
             return true;
         }
@@ -231,10 +293,17 @@ namespace RRM
         size_t surface_index = undoed_surfaces_indices_.back();
         undoed_surfaces_indices_.pop_back();
 
-        current_state_ = undoed_geologic_rules_.back();
-        undoed_geologic_rules_.pop_back(); 
+        StateDescriptor state_before_redo_ = current_;
+        current_ = undoed_states_.back();
+        undoed_states_.pop_back();
+        enforceDefineRegion();
 
-        return executeAction(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
+        bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
+
+        current_ = state_before_redo_;
+        enforceDefineRegion();
+
+        return status;
     }
 
 
@@ -273,6 +342,86 @@ namespace RRM
             if ( container_.weakEntireSurfaceCheck(index) )
             {
                 eligible_surfaces.push_back(output_index); 
+            }
+        }
+
+        return !eligible_surfaces.empty(); 
+    }
+
+    bool ExtrusionRulesProcessor::requestDefineAbove( std::vector<size_t> &eligible_surfaces )
+    {
+        if ( container_.empty() )
+        {
+            return false; 
+        }
+
+        eligible_surfaces.clear(); 
+        ControllerSurfaceIndex output_index; 
+        ContainerSurfaceIndex index; 
+
+        for ( size_t i = 0; i < inserted_surfaces_indices_.size(); ++i )
+        {
+            output_index = inserted_surfaces_indices_[i]; 
+            if ( getSurfaceIndex(output_index, index) == false )
+                continue; 
+
+            if ( container_.weakEntireSurfaceCheck(index) )
+            {
+                if ( defineBelowIsActive() )
+                {
+                    ContainerSurfaceIndex boundary_index; 
+                    getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index); 
+
+                    if ( container_[index]->weakLiesBelowOrEqualsCheck(container_[boundary_index]) )
+                    {
+                        eligible_surfaces.push_back(output_index); 
+                    }
+                }
+                else
+                {
+                    eligible_surfaces.push_back(output_index); 
+                }
+
+            }
+        }
+
+        return !eligible_surfaces.empty(); 
+    }
+
+    bool ExtrusionRulesProcessor::requestDefineBelow( std::vector<size_t> &eligible_surfaces )
+    {
+        if ( container_.empty() )
+        {
+            return false; 
+        }
+
+        eligible_surfaces.clear(); 
+        ControllerSurfaceIndex output_index; 
+        ContainerSurfaceIndex index; 
+
+        for ( size_t i = 0; i < inserted_surfaces_indices_.size(); ++i )
+        {
+            output_index = inserted_surfaces_indices_[i]; 
+            if ( getSurfaceIndex(output_index, index) == false )
+                continue; 
+
+            if ( container_.weakEntireSurfaceCheck(index) )
+            {
+                if ( defineAboveIsActive() )
+                {
+                    ContainerSurfaceIndex boundary_index; 
+                    getSurfaceIndex(inserted_surfaces_indices_[current_.lower_boundary_], boundary_index); 
+
+                    if ( container_[index]->weakLiesAboveOrEqualsCheck(container_[boundary_index]) )
+                    {
+                        eligible_surfaces.push_back(output_index); 
+                    }
+                }
+                else
+                {
+                    eligible_surfaces.push_back(output_index); 
+                }
+
             }
         }
 
@@ -358,15 +507,47 @@ namespace RRM
         {
             undoed_surfaces_stack_.clear();
             undoed_surfaces_indices_.clear();
-            undoed_geologic_rules_.clear();
+            undoed_states_.clear(); 
         }
 
         /* Execute selected Geologic Rule */
-        return executeAction(sptr, given_index, lbounds, ubounds); 
+        return commitSurface(sptr, given_index, lbounds, ubounds); 
     }
 
+    void ExtrusionRulesProcessor::registerState(ControllerSurfaceIndex given_index, ContainerSurfaceIndex index)
+    {
+            dictionary_[given_index] = index; 
+            inserted_surfaces_indices_.push_back(given_index); 
 
-    bool ExtrusionRulesProcessor::executeAction( 
+            undoed_states_.push_back(current_);
+    }
+
+    bool ExtrusionRulesProcessor::enforceDefineRegion()
+    {
+        bool status = true; 
+
+        if ( current_.bounded_above_ )
+        {
+            status &= defineBelow(current_.upper_boundary_);
+        }
+        else
+        {
+            stopDefineBelow();
+        }
+
+        if ( current_.bounded_below_)
+        {
+            status &= defineAbove(current_.lower_boundary_);
+        }
+        else
+        {
+            stopDefineAbove();
+        }
+
+        return status; 
+    }
+
+    bool ExtrusionRulesProcessor::commitSurface( 
             PlanarSurface::Ptr &sptr, 
             size_t given_index, 
             std::vector<size_t> lbounds, 
@@ -376,7 +557,7 @@ namespace RRM
         size_t index;
         bool status; 
 
-        if ( current_state_ == State::SKETCHING )
+        if ( current_.state_ == State::SKETCHING )
         {
             status = container_.addSurface(sptr, index, ubounds, lbounds);
         }
@@ -385,7 +566,7 @@ namespace RRM
             status = container_.addSurface(sptr, index); 
         }
 
-        switch ( current_state_ ) 
+        switch ( current_.state_ ) 
         { 
             case State::SKETCHING: 
                 break; 
@@ -418,10 +599,121 @@ namespace RRM
         if ( status == true ) { 
             dictionary_[given_index] = index; 
             inserted_surfaces_indices_.push_back(given_index); 
-            applied_geologic_rules_.push_back(current_state_); 
+
+            past_states_.push_back(current_);
         }
 
         return status;
     }
+
+        size_t ExtrusionRulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+        {
+            if ( container_.size() == 0 ) 
+            {
+                return 0;
+            }
+
+            size_t depth_discretization = (num_extrusion_steps > 0) ? num_extrusion_steps + 1 : 2;
+
+            using Curve = std::vector<Point3>; 
+            using CurveContainer = std::vector<Curve>;
+            CurveContainer curves; 
+
+            container_[0]->updateDiscretization();
+            size_t size = container_[0]->getNumX();
+
+            // Process curves ... 
+
+            Point3 p;
+            double unused; 
+            bool vertex_is_valid, prev_vertex_is_valid, next_vertex_is_valid; 
+            bool has_curve = false; 
+            size_t index, prev_index, next_index; 
+
+            size_t container_size = 0;
+
+            for ( size_t k = 0; k < container_.size(); ++k )
+            {
+                Curve curve;
+                auto &sptr = container_[k]; 
+
+                for ( size_t i = 0; i < size; ++ i )
+                {
+
+
+                    prev_index = sptr->getVertexIndex( (i-1 > 0 ? i-1 : i), 0 ); 
+                    index = sptr->getVertexIndex( i, 0 ); 
+                    next_index = sptr->getVertexIndex( (i+1 < size ? i+1 : i), 0 ); 
+
+                    prev_vertex_is_valid = sptr->getHeight(prev_index, unused); 
+                    vertex_is_valid = sptr->getVertex3D(index, p); 
+                    next_vertex_is_valid = sptr->getHeight(next_index, unused); 
+
+                    if ( prev_vertex_is_valid || vertex_is_valid || next_vertex_is_valid )
+                    {
+                        curve.push_back(p);
+                        has_curve = true; 
+                    }
+
+                    if ( vertex_is_valid == false )
+                    {
+                        if ( has_curve && prev_vertex_is_valid ) 
+                        {
+                            nu.push_back(curve.size());
+                            nv.push_back(depth_discretization);
+                            container_size += 3*curve.size()*(depth_discretization);
+                            has_curve = false;
+
+                            curves.push_back( std::move(curve) );
+                            curve = Curve();
+                        }
+                    }
+                }
+
+                if ( has_curve )
+                {
+                    container_size += 3*curve.size()*(depth_discretization);
+                    nu.push_back(curve.size());
+                    nv.push_back(depth_discretization);
+
+                    curves.push_back( std::move(curve) );
+                    has_curve = false;
+                }
+            }
+
+
+            // Build Zhao's data structure
+
+            size_t num_surfaces = curves.size(); 
+            double extrusion_step = lenght_.z/static_cast<double>(depth_discretization); 
+            size_t offset = 0; 
+
+            points.resize(container_size);
+
+            /* std::cout << num_surfaces << std::endl; */ 
+            for ( size_t k = 0; k < num_surfaces; ++k )
+            {
+                // Get surface/curve number k
+                auto &curve = curves[k]; 
+                /* std::cout << nu[k] << " " << nv[k] << std::endl << std::flush; */ 
+
+                for ( size_t j = 0; j < depth_discretization; ++j )
+                {
+                    for ( size_t i = 0; i < curve.size() ; ++i )
+                    {
+                        index = j*curve.size() + i + offset; 
+
+                        points[ 3*index + 0 ] = curve[i].x; 
+                        points[ 3*index + 1 ] = static_cast<double>(j)*extrusion_step; 
+                        points[ 3*index + 2 ] = curve[i].z;
+
+                        /* std::cout << points[ 3*index + 0 ]  << " " << points[ 3*index + 1 ] << " " << points[ 3*index + 2 ] << std::endl << std::flush; */
+                    }
+                }
+                offset += curve.size() * depth_discretization; 
+            }
+
+            return num_surfaces;
+        }
 
 } /* namespace RRM */

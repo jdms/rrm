@@ -44,7 +44,17 @@ class Controller: public QObject
 		bool interpolateStratigraphy();
         Stratigraphy* getCurrentStratigraphy();
 
-        bool defineRegion( const std::vector< size_t >& selections );
+        bool defineSketchingAbove( std::vector< size_t >& allowed );
+        bool defineSketchingBelow( std::vector< size_t >& allowed );
+
+        bool defineRegionAbove( const std::vector< size_t >& selections );
+        bool defineRegionBelow( const std::vector< size_t >& selections );
+
+
+
+        bool stopSketchingAbove();
+        bool stopSketchingBelow();
+
 
         void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
         void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
@@ -54,7 +64,7 @@ class Controller: public QObject
     public slots:
 
 
-        void setCurrentStratigraphicRule( const std::string& rule, bool status = true );
+        void setStratigraphicRule( const std::string& rule );
 
 
         void undo();
@@ -89,7 +99,6 @@ class Controller: public QObject
         RRM::ExtrusionRulesProcessor rules_processor;
 
 
-        std::string save_rule;
 };
 
 

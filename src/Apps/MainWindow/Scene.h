@@ -8,6 +8,7 @@
 #include <QtWidgets/QGraphicsView>
 #include <QMimeData>
 #include <QString>
+#include <QGraphicsPixmapItem>
 #include <QSvgGenerator>
 
 
@@ -37,7 +38,7 @@ class Scene: public QGraphicsScene
 
 
 
-        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTION, DEBUG };
+        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTING_ABOVE, SELECTING_BELOW };
 	
 
 
@@ -56,6 +57,10 @@ class Scene: public QGraphicsScene
 
         inline void setCurrentMode( const Scene::InteractionMode& mode ){ current_mode = mode; }
         inline const InteractionMode currentMode(){ return current_mode; }
+
+
+        void enableSketchingAboveRegion( bool );
+        void enableSketchingBelowRegion( bool );
 
 
         void createCrossSection( const float& d = 0.0f );
@@ -80,9 +85,22 @@ class Scene: public QGraphicsScene
 
         inline void setRandomColor( bool status ){ random_color = status; }
 
-        void setModeSelection( bool option, const std::vector< size_t >& allowed_selection = std::vector< size_t >() );
         std::vector< size_t > getAllSelectedItems();
 
+
+        void setBackGroundImage( const QString& url );
+
+        void setUnallowedAbove();
+        void setUnallowedBelow();
+        void startOperations();
+        void stopOperations();
+
+
+
+        bool defineSketchingAboveRegion();
+        void stopSketchingAboveRegion();
+        bool defineSketchingBelowRegion();
+        void stopSketchingBelowRegion();
 
 
 
@@ -93,6 +111,7 @@ class Scene: public QGraphicsScene
         void updatedScene();
         void initContext();
         void updateContext();
+        void enableSketching( bool );
 
 
 
@@ -177,6 +196,16 @@ class Scene: public QGraphicsScene
         int qtscene_depth;
 
 
+        bool defining_above;
+        bool defining_below;
+
+
+        std::vector< size_t > allowed_above_surfaces;
+        std::vector< size_t > allowed_below_surfaces;
+        std::vector< size_t > selected_above_surfaces;
+        std::vector< size_t > selected_below_surfaces;
+
+
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
 
         std::map< unsigned int, StratigraphicItem* > stratigraphics_list;
@@ -184,12 +213,7 @@ class Scene: public QGraphicsScene
 
         QString shader_directory;
 
-        /// Sketch Lib Testing
-        InputSketch     * sketchlib_item;
-        RRM::SketchLib      sketchlib_;
-        Curve2D curve_visitor_;
-        unsigned long long int index;
-
+        QGraphicsPixmapItem *background_image;
 	
 };
 

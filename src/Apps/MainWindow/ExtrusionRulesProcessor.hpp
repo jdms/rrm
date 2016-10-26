@@ -33,6 +33,14 @@ namespace RRM
             DR_SKETCHING // Define region
         };
 
+        enum class Region : int {
+            UNDEFINED = -1,
+            NO_SELECTION,
+            BOUNDED_ABOVE,
+            BOUNDED_BELOW,
+            BOUNDED
+        };
+
         bool isInitialized() const;
 
         std::vector<size_t> getActiveSurfaces(); 
@@ -46,6 +54,9 @@ namespace RRM
         // Return: true if at least one elegible surface was found.
         //
         bool requestDefineRegion( std::vector<size_t> &eligible_surfaces );
+
+        bool requestDefineAbove( std::vector<size_t> &eligible_surfaces );
+        bool requestDefineBelow( std::vector<size_t> &eligible_surfaces );
 
 
 
@@ -102,7 +113,26 @@ namespace RRM
         //
         void stopDefineBelow();
 
+        bool defineAboveIsActive(); 
+        bool defineBelowIsActive();
 
+        void removeAbove();
+        void removeAboveIntersection();
+
+        void removeBelow();
+        void removeBelowIntersection(); 
+
+        bool insertSurface( const std::vector<float> &point_data, size_t surface_id ); 
+
+        bool insertSurface( const std::vector<float> &point_data, size_t surface_id, 
+                const std::vector<size_t> lower_bound_ids, const std::vector<float> upper_bound_ids );
+
+        template<typename CurveType>
+        bool insertSurface( const CurveType &curve, size_t id );
+
+        template<typename CurveType>
+        bool insertSurface( const CurveType &curve, size_t id, 
+                std::vector<size_t> lower_bound_ids, std::vector<size_t> upper_bound_ids ); 
 
         bool update( const State s ); 
 
@@ -137,32 +167,58 @@ namespace RRM
 
         /* End methods to interface with GUI */
 
+        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps = 1 );
+
     private:
         class SRules container_;
-        std::vector<State> applied_geologic_rules_; 
 
+        // New type names for clarity
         using ControllerSurfaceIndex = size_t; 
         using ContainerSurfaceIndex = size_t; 
 
+        // The history
         std::map<ControllerSurfaceIndex, ContainerSurfaceIndex> dictionary_;
         std::vector<ControllerSurfaceIndex> inserted_surfaces_indices_; 
 
+        // Model properties
         Point3 origin_, lenght_; 
 
         size_t numI_, numJ_; 
         size_t max_discretization_level_; 
         size_t level_I_, level_J_;
 
+        // Class status
         bool initialized_ = false;
         bool got_origin_ = false; 
         bool got_lenght_ = false;
 
-        State current_state_ = State::SKETCHING;
 
+        enum class InternalState : int {
+            UNDEFINED = -1,
+            TRUNCATE_SKETCH,
+            REMOVE_ABOVE,
+            REMOVE_ABOVE_INTERSECTION,
+            REMOVE_BELOW,
+            REMOVE_BELOW_INTERSECTION
+        };
+
+        struct StateDescriptor
+        {
+            State state_ = State::UNDEFINED;
+            bool bounded_above_ = false;
+            size_t upper_boundary_ = 0;
+            bool bounded_below_ = false;
+            size_t lower_boundary_ = 0;
+        };
+        StateDescriptor current_;
+
+        // Undo stack
         std::vector<PlanarSurface::Ptr> undoed_surfaces_stack_; 
         std::vector<size_t> undoed_surfaces_indices_;
-        std::vector<State> undoed_geologic_rules_;
+        std::vector<StateDescriptor> undoed_states_;
+        std::vector<StateDescriptor> past_states_;
 
+        // Helper methods
         void requestChangeDiscretization( size_t discretization_WIDTH, size_t discretization_DEPTH ); 
 
         bool getSurfaceIndex( const size_t controller_index, size_t &container_index ) const;
@@ -176,7 +232,11 @@ namespace RRM
                 std::vector<size_t> ub_id = std::vector<size_t>() 
             );
 
-        bool executeAction( 
+        void registerState(ControllerSurfaceIndex given_index, ContainerSurfaceIndex index); 
+
+        bool enforceDefineRegion(); 
+
+        bool commitSurface( 
                 PlanarSurface::Ptr &sptr, 
                 size_t index, 
                 std::vector<size_t> lb_id, 
@@ -211,6 +271,20 @@ namespace RRM
         }
 
         return addSurface( curve, id, lower_bound_id, upper_bound_id ); 
+    }
+
+
+    template<typename CurveType>
+    bool insertSurface( const CurveType &curve, size_t id )
+    {
+        return update(curve, id);
+    }
+
+    template<typename CurveType>
+    bool insertSurface( const CurveType &curve, size_t id, 
+            std::vector<size_t> lower_bound_ids, std::vector<size_t> upper_bound_ids )
+    {
+        return update( curve, id, std::move(lower_bound_ids), std::move(upper_bound_ids) );
     }
 
     template<typename VertexList, typename FaceList>

@@ -185,36 +185,66 @@ bool Controller::interpolateStratigraphy()
 
 
 
-bool Controller::defineRegion( const std::vector< size_t >& selections )
+
+
+bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 {
 
-    if( save_rule.compare( "DA_SKETCHING" ) == 0 )
-    {
-        rules_processor.defineAbove( selections[ 0 ] );
-    }
+    return rules_processor.requestDefineRegion( allowed );
+
+}
 
 
-    else if( save_rule.compare( "DB_SKETCHING" ) == 0 )
-    {
-        rules_processor.defineBelow( selections[ 0 ] );
+bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
+{
 
-    }
+    return rules_processor.requestDefineRegion( allowed );
 
-
-//    if( save_rule.compare( "DR_SKETCHING" ) == 0 )
-//    {
-//    }
-
-    return true;
 }
 
 
 
-void Controller::setCurrentStratigraphicRule( const std::string& rule, bool status  )
+
+bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
 
-    save_rule = rule;
+    return rules_processor.defineAbove( selections[ 0 ] );
 
+}
+
+
+bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
+{
+
+    return rules_processor.defineBelow( selections[ 0 ] );
+
+
+}
+
+
+bool Controller::stopSketchingAbove()
+{
+
+    rules_processor.stopDefineAbove();
+    return true;
+
+}
+
+
+bool Controller::stopSketchingBelow()
+{
+
+    rules_processor.stopDefineBelow();
+
+    return true;
+
+}
+
+
+
+
+void Controller::setStratigraphicRule( const std::string& rule )
+{
 
     if( rule.compare( "SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
@@ -231,44 +261,8 @@ void Controller::setCurrentStratigraphicRule( const std::string& rule, bool stat
     else if( rule.compare( "RBI_SKETCHING" ) == 0 )
         rules_processor.update( RRM::ExtrusionRulesProcessor::State::RBI_SKETCHING );
 
-
-    else if( rule.compare( "DA_SKETCHING" ) == 0  )
-    {
-
-        if( status == false )
-        {
-            rules_processor.stopDefineAbove();
-            return;
-        }
-
-        std::vector< size_t > allowed_surfaces;
-        bool da_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-        if( da_ok == false ) return;
-
-        emit waitingSelection( true, allowed_surfaces );
-
-    }
-
-    else if( rule.compare( "DB_SKETCHING" ) == 0 )
-    {
-
-        if( status == false )
-        {
-            rules_processor.stopDefineBelow();
-            return;
-        }
-
-        std::vector< size_t > allowed_surfaces;
-        bool db_ok = rules_processor.requestDefineRegion( allowed_surfaces );
-        if( db_ok == false ) return;
-
-        emit waitingSelection( true, allowed_surfaces );
-
-    }
-
-
-
 }
+
 
 
 
@@ -321,49 +315,6 @@ void Controller::clear()
 
 void Controller::update()
 {
-
-
-    /*
-    std::vector< size_t > updated_surfaces = rules_processor.getActiveSurfaces();
-    int number_of_changed_elements = (int) updated_surfaces.size();
-
-
-    for( int i = 0; i < number_of_changed_elements; ++i )
-    {
-
-        std::vector< float > curve_vertices;
-        std::vector< unsigned int > curve_edges;
-
-        std::vector< float > surface_vertices;
-        std::vector< unsigned int > surface_faces;
-
-        size_t id_planin = updated_surfaces[ i ];
-
-        Stratigraphy* strat = stratigraphics_list[ (unsigned int ) id_planin ];
-        bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-        bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
-
-
-
-        if( ( getcurve_ok == false ) || ( getmesh_ok  == false ) )
-        {
-            strat->clear();
-            continue;
-        }
-
-
-        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
-        strat->updateCurveWireframe( curve_edges );
-        strat->updateSurface( surface_vertices, surface_faces );
-
-
-    }
-
-
-    // provavelmente recalcular as intersecoes novamente para cada cross section.
-
-*/
-
 
     std::map< unsigned int, Stratigraphy* >::iterator it;
 

@@ -2,6 +2,7 @@
 #define STRATIGRAPHICITEM_HPP
 
 #include <QGraphicsPathItem>
+#include <QPainterPathStroker>
 #include <QPolygonF>
 
 #include "Model/StratigraphyRenderable.hpp"
@@ -54,12 +55,16 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
         inline void setAllowed( bool option ){ is_allowed = option; is_unallowed = !option; }
         inline void setUnderOperation( bool option ){ under_operation = option; }
 
+
+        QList< QPolygonF > getSubCurves();
+        std::vector< Curve2D > getSubCurves2D();
 	
 	protected:
 
 		
         QPolygonF points;
 		QPainterPath curve;
+        QPainterPathStroker teste;
 
 		QColor current_color;
         QPen pen_allowed;
