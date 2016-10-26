@@ -162,9 +162,5 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
     add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
                         ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
-else()
-
-    message( "Couldn't find dlls folder, please copy your own dlls to executable directory" )
-
 endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
