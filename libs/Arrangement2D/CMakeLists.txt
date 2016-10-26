@@ -11,7 +11,7 @@ file(
   "*.cpp"
   )
 
-message(${ARRANGEMENT_SOURCES})
+#message(${ARRANGEMENT_SOURCES})
 
 add_library( ${PROJECT_NAME} STATIC ${ARRANGEMENT_HEADERS} ${ARRANGEMENT_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} RRMBase  )

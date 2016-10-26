@@ -97,21 +97,6 @@ set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
 
 
 ###############################################
-# Main source -- Model SubDirectory
-###############################################
-
-set( MODEL_HEADERS Model/Boundary.hpp
-                   Model/BoundaryRenderable.h
-                   Model/CrossSection.hpp
-                   Model/StratigraphyRenderable.hpp
-                   Model/Intersection.hpp
-                   Model/Stratigraphy.hpp )
-
-
-				   
-
-
-###############################################
 # Wrapping Qt Elements
 ###############################################
 
@@ -139,13 +124,12 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
 							   ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS}
-                               ${MODEL_SOURCES} ${MODEL_HEADERS}
                                ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets 
                                        Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ${GLEW_LIBRARY}
-                                        planin RRMGeometry Arrangement_2D SketchLib)
+                                        planin RRMGeometry Arrangement_2D SketchLib )
 
 
 

@@ -12,7 +12,7 @@
 #include "Tucano/Shader.hpp"
 
 
-#include "Model/StratigraphyRenderable.hpp"
+#include "./src/Core/Geology/Models/StratigraphyRenderable.hpp"
 
 
 class Surface: public StratigraphyRenderable

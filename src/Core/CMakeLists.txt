@@ -9,7 +9,6 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
   
-#add_subdirectory( Geology )
+add_subdirectory( Geology )
 add_subdirectory( Geometry )
 add_subdirectory( Base )
-add_subdirectory(Arrangement_2D)

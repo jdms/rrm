@@ -53,7 +53,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
 
-OPTION( OWN_LIBRARIES "Use predefined libraies directories" ON )
+OPTION( OWN_LIBRARIES "Use predefined libraries directories" ON )
 
 if( OWN_LIBRARIES AND WIN32 )
 
@@ -147,6 +147,7 @@ endif( OpenGL_FOUND )
 
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
 add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
+add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
 
 
 

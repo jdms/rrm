@@ -27,7 +27,7 @@
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-#include "Core/Arrangement_2D/Arrangement_2D.hpp"
+#include "./libs/Arrangement2D/Arrangement_2D.hpp"
 
 class Scene: public QGraphicsScene
 {

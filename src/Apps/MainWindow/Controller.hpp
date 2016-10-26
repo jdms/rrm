@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Sketching/BoundaryItem2D.hpp"
-#include "Model/CrossSection.hpp"
+#include "./src/Core/Geology/Models/CrossSection.hpp"
 #include "Sketching/StratigraphicItem.hpp"
 
 #include "MainWindow/ExtrusionRulesProcessor.hpp"
