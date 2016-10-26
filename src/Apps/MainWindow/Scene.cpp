@@ -385,6 +385,7 @@ void Scene::undoLastSketch()
 void Scene::clearScene()
 {
 
+
     current_mode = InteractionMode::OVERSKETCHING;
 
 
@@ -414,6 +415,13 @@ void Scene::clearScene()
     crosssections3d_list.clear();
     surfaces_list.clear();
 
+    allowed_above_surfaces.clear();
+    allowed_below_surfaces.clear();
+
+    selected_above_surfaces.clear();
+    selected_below_surfaces.clear();
+
+
     if( controller != 0 )
         controller->clear();
 
@@ -422,12 +430,6 @@ void Scene::clearScene()
         temp_sketch->clear();
         delete temp_sketch;
     }
-
-//    if( sketch != 0 )
-//    {
-//        sketch->clear();
-//        delete sketch;
-//    }
 
     if( sketching_boundary != 0 )
     {
@@ -442,16 +444,14 @@ void Scene::clearScene()
     }
 
 
-    clear();
-
     boundary3D = 0;
     sketching_boundary = 0;
     temp_sketch = NULL;
 
-    //@Felipe
 
     arrangement.clear();
 
+    clear();
     init();
 
     emit updatedScene();
@@ -1171,8 +1171,6 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         controller->defineRegionAbove( selected_above_surfaces );
         setUnallowedAbove();
 
-        StratigraphicItem* s = stratigraphics_list[ selected_above_surfaces[ 0 ] ];
-
         current_mode = InteractionMode::OVERSKETCHING;
         emit enableSketching( true );
 
@@ -1223,10 +1221,6 @@ void Scene::dropEvent( QGraphicsSceneDragDropEvent *event )
 
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
     url_file = QDir::toNativeSeparators( url_file );
-
-//    this->addPixmap( QPixmap( url_file ) );
-//    editBoundary(
-//    sketching_boundary->setBackGroundImage( url_file );
 
     setBackGroundImage( url_file );
 

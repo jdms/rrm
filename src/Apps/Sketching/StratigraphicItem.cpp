@@ -63,7 +63,7 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
         {
             painter->setPen( pen_selected );
         }
-        if( is_allowed == true )
+        else if( is_allowed == true )
             painter->setPen( pen_allowed );
 
         else if( is_unallowed == true )
@@ -111,33 +111,6 @@ void StratigraphicItem::add( const QPointF& p )
 	prepareGeometryChange();
 	points.push_back( p );
     curve.lineTo( p );
-}
-
-
-void StratigraphicItem::addSegment( const InputSketch& segment )
-{
-	QPolygonF cpy_polygon_segment = segment.getSketch();
-	
-
-    if( cpy_polygon_segment.size() < 5 )
-    {
-        return;
-    }
-
-    if( points.size() < 10 )
-	{
-		copySegment( cpy_polygon_segment );
-		return;
-	}
-	
-    Curve2D over_sketch = PolyQtUtils::qPolyginFToCurve2D( cpy_polygon_segment );
-    Curve2D connected_sketches = PolyQtUtils::qPolyginFToCurve2D( points );
-    Curve2D final, rest;
-	
-    connected_sketches = over_sketch.overSketch( connected_sketches, rest, 1 , 16 );
-    connected_sketches.douglasPeuckerSimplify( final, 1.0 );
-	
-    copySegment( PolyQtUtils::curve2DToQPolyginF( final ) );
 }
 
 
