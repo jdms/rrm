@@ -8,7 +8,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include "Model/BoundaryRenderable.h"
+#include "./src/Core/Geology/Models/BoundaryRenderable.h"
 
 
 #include "Eigen/Dense"

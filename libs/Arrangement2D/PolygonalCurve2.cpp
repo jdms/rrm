@@ -1,4 +1,4 @@
-#include "../Arrangement_2D/PolygonalCurve2.hpp"
+#include "../Arrangement2D/PolygonalCurve2.hpp"
 
 
 namespace RRM

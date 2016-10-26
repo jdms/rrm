@@ -1,6 +1,6 @@
 #include "Controller.hpp"
 
-#include "Model/Boundary.hpp"
+#include "./src/Core/Geology/Models/Boundary.hpp"
 
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 

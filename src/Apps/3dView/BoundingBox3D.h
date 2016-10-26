@@ -15,7 +15,7 @@
 #include "Tucano/Shader.hpp"
 
 
-#include "Model/BoundaryRenderable.h"
+#include "./src/Core/Geology/Models/BoundaryRenderable.h"
 
 
 

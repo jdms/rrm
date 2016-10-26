@@ -15,7 +15,8 @@
 #include <iterator>
 
 #include "PolygonalCurve2.hpp"
-#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+#include "./src/Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+
 
 typedef unsigned int Natural;
 typedef double Real;

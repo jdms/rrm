@@ -5,7 +5,7 @@
 #include <QPainterPathStroker>
 #include <QPolygonF>
 
-#include "Model/StratigraphyRenderable.hpp"
+#include "./src/Core/Geology/Models/StratigraphyRenderable.hpp"
 #include "Sketching/InputSketch.h"
 
 #include "Sketching/PolyQtUtils.hpp"
