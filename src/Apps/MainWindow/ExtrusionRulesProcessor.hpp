@@ -6,7 +6,6 @@
 #include <map>
 
 
-#include "Model/GeologicRules.hpp"
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 #include "./libs/PlanInLib/srules.hpp"
