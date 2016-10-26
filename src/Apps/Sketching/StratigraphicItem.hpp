@@ -57,6 +57,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 
 
         QList< QPolygonF > getSubCurves();
+        std::vector< Curve2D > getSubCurves2D();
 	
 	protected:
 
