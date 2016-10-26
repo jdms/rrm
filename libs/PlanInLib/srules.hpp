@@ -214,11 +214,14 @@ class SRules
         ContainerType container; 
         MapType dictionary; 
 
-        PlanarSurface::Ptr lower_bound_; 
+        PlanarSurface::WeakPtr lower_bound_; 
         bool define_above_ = false; 
 
-        PlanarSurface::Ptr upper_bound_; 
+        PlanarSurface::WeakPtr upper_bound_; 
         bool define_below_ = false; 
+
+        bool defineAboveIsActive();
+        bool defineBelowIsActive();
 
         bool isValidSurface( const PlanarSurface::Ptr &sptr ); 
         bool weakEntireSurfaceCheck( const PlanarSurface::Ptr &sptr ); 

@@ -49,6 +49,15 @@ class SketchingWindow : public QMainWindow
 
         inline void enableUndo( bool option ){ ac_undo->setEnabled( option ); }
         inline void enableRedo( bool option ){ ac_redo->setEnabled( option ); }
+        inline void enableSketching( bool option ){ ac_sketch->setChecked( option ); }
+        inline void uncheckRemoveRules()
+        {
+            ac_sketch->setChecked( false );
+            ac_removeabove->setChecked( false );
+            ac_removeaboveintersection->setChecked( false );
+            ac_removebelow->setChecked( false );
+            ac_removebelowintersection->setChecked( false );
+        }
 
 
 
@@ -57,7 +66,9 @@ class SketchingWindow : public QMainWindow
         void undo();
         void redo();
         void clear();
-        void updateStratigraphicRule( const std::string&, bool status = true  );
+        void updateStratigraphicRule( const std::string& );
+        void defineSketchingAbove( bool );
+        void defineSketchingBelow( bool );
 
         void addStratigraphy();
         void undoLastSketch();

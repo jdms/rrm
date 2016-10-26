@@ -18,7 +18,6 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
     current_color = QColor( 255, 75, 75 );
     random_color = true;
 
-    index = 0;
 }
 
 
@@ -31,7 +30,17 @@ void Scene::init()
     if( views().empty() == true ) return;
     QGraphicsView* view = views()[0];
 
-    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, 400 );
+
+    int max_value =  std::max( (int)view->width()*0.8f, (int)view->height()*0.8f );
+    int min_value =  std::min( (int)view->width()*0.8f, (int)view->height()*0.8f );
+
+    int teste = 200*(max_value/min_value);
+    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ teste );
+
+
+
+    defining_above = false;
+    defining_below = false;
 
 
     createVolume3D();
@@ -47,13 +56,13 @@ void Scene::setController( Controller* const& c )
 {
     controller = c;
     connect( controller, SIGNAL( updateScene() ), this, SLOT( updateScene() ) );
-    connect( controller, SIGNAL( waitingSelection( bool, const std::vector< size_t >& ) ), this, SLOT( setModeSelection( bool, const std::vector< size_t >& ) ) );
 }
 
 
 
 void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z, int width, int height, int depth )
 {
+
 
     qtscene_origin_x = origin_x;
     qtscene_origin_y = origin_y;
@@ -71,24 +80,6 @@ void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z,
 
 void Scene::updateTransformationsMatrices()
 {
-
-    /*
-
-    m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
-                                                  qtscene_origin_y, qtscene_origin_y + qtscene_height,
-                                                  qtscene_origin_z, qtscene_origin_z + qtscene_depth );
-
-    m_3dto2d = m_2dto3d.inverse();
-
-    float scale = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth );
-
-
-    m_planinto2d = Eigen::Affine3f::Identity();
-    m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
-
-    m_2dtoplanin = Eigen::Affine3f::Identity();
-    m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
-*/
 
 
     m_2dto3d = Model3DUtils::normalizePointCloud( qtscene_origin_x, qtscene_origin_x + qtscene_width,
@@ -113,29 +104,6 @@ void Scene::updateTransformationsMatrices()
 
     m_planinto2d = m_2dtoplanin.inverse();
 
-    //    Eigen::Vector4f orig_pl = m_2dtoplanin.matrix()*orig_qt;
-
-
-    //    m_planinto2d = Eigen::Affine3f::Identity();
-    //    m_planinto2d.translation() = L*Eigen::Vector3f( orig_pl.x(), orig_pl.y(), orig_pl.z() ) ;
-    //    m_planinto2d.scale( Eigen::Vector3f( L, L, L ) );
-
-
-
-
-
-
-    /*
-       m_planinto2d = Eigen::Affine3f::Identity();
-       m_planinto2d.translate( Eigen::Vector3f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z ) );
-       m_planinto2d.scale( Eigen::Vector3f( scale, scale, scale ) );
-
-
-       m_2dtoplanin = Eigen::Affine3f::Identity();
-       m_2dtoplanin.translate( Eigen::Vector3f( -qtscene_origin_x, -qtscene_origin_y, -qtscene_origin_z ) );
-       m_2dtoplanin.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
-
-   */
 
 }
 
@@ -143,29 +111,6 @@ void Scene::updateTransformationsMatrices()
 
 void Scene::createVolume3D()
 {
-
-
-    //    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-    //    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-    //    min = Scene::scene2Dto3D( min );
-    //    max = Scene::scene2Dto3D( max );
-
-    //    Eigen::Vector3f dim = max - min;
-
-
-    //    boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-    //    boundary3D->setCurrentDirectory( shader_directory.toStdString() );
-    //    boundary3D->init();
-    //    boundary3D->create();
-
-
-
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-    //    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
@@ -183,19 +128,13 @@ void Scene::createVolume3D()
 
 
 
-
-
     boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
     boundary3D->setCurrentDirectory( shader_directory.toStdString() );
-    boundary3D->init();
-    boundary3D->create();
-
-
 
     controller->initRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
 
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-    //    controller->initRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
+    emit initContext();
+
 
 
 }
@@ -258,6 +197,7 @@ void Scene::addBoundaryToScene()
 
     Boundary* b = controller->getCurrentBoundary();
     boundary3D->setGeoData( b );
+    boundary3D->update();
 
     sketching_boundary = new BoundaryItem2D();
     sketching_boundary->setGeoData( b );
@@ -274,45 +214,8 @@ void Scene::addBoundaryToScene()
 void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
 {
 
-    /*
-    int origin_x = qtscene_origin_x - x;
-    int origin_y = qtscene_origin_y - y;
 
-
-    defineVolumeQtCoordinates( origin_x, origin_y, qtscene_origin_z, w, h, qtscene_depth );
-
-
-    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-    min = Scene::scene2Dto3D( min );
-    max = Scene::scene2Dto3D( max );
-
-    Eigen::Vector3f dim = max - min;
-
-
-    controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-
-
-    Boundary* b = controller->getCurrentBoundary();
-    boundary3D->setGeoData( b );
-    boundary3D->update();
-
-
-    sketching_boundary->setGeoData( b );
-    sketching_boundary->update( m_3dto2d );
-    setSceneRect( sketching_boundary->boundingRect() );
-
-
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-    controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-
-*/
-
-
-    defineVolumeQtCoordinates( x, /*-1**/y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
+    defineVolumeQtCoordinates( x,y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
@@ -335,19 +238,13 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
     Boundary* b = controller->getCurrentBoundary();
     boundary3D->setGeoData( b );
-    boundary3D->update();
 
 
     sketching_boundary->setGeoData( b );
-    sketching_boundary->update( m_3dto2d );
     setSceneRect( sketching_boundary->boundingRect() );
 
 
     controller->editRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
-    //min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z()
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-    //    controller->editRulesProcessor( min.x(), min.y(), min.z(), qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
 
 
 
@@ -452,6 +349,7 @@ void Scene::newSketch()
         delete temp_sketch;
     }
 
+
     temp_sketch = NULL;
     temp_sketch = new InputSketch( current_color );
     addItem( temp_sketch );
@@ -551,8 +449,8 @@ void Scene::clearScene()
 void Scene::updateScene()
 {
 
-    //    boundary->update();
-    boundary3D->update();
+
+    sketching_boundary->update( m_3dto2d );
 
     float d = controller->getCurrentCrossSection();
 
@@ -599,24 +497,11 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 void Scene::updateGLContext()
 {
 
-    /*
+
+    boundary3D->update();
+
     float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
     Eigen::Vector3f center( 0.5f*qtscene_width/L, 0.5f*qtscene_height/L, 0.5f*qtscene_depth/L ) ;
-
-    unsigned int number_of_surfaces = surfaces_list.size();
-    for( int i = 0; i < number_of_surfaces; ++i )
-    {
-        Surface* surface = surfaces_list[ i ];
-        surface->update( center );
-    }
-
-*/
-
-
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    Eigen::Vector3f center( 0.5f*qtscene_width, 0.5f*qtscene_height, 0.5f*qtscene_depth ) ;
-
-    center = Scene::scene2DtoPlanin( center );
 
     std::map< unsigned int, Surface* >::iterator it;
     for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
@@ -632,8 +517,12 @@ void Scene::updateGLContext()
 void Scene::initGLContext()
 {
 
+    if( boundary3D->initialized() == false )
+    {
+        boundary3D->init();
+        boundary3D->create();
+    }
 
-    int number_of_surfaces = surfaces_list.size();
 
     std::map< unsigned int, Surface* >::iterator it;
 
@@ -669,46 +558,114 @@ void Scene::updateColor( const QColor& color )
 
 
 
-void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed_selection )
+
+
+
+void Scene::enableSketchingAboveRegion( bool option )
 {
 
-    current_mode = InteractionMode::SELECTION;
+    bool region_ok = true;
 
-
-
-    std::map< unsigned int, StratigraphicItem* >::iterator it;
-
-    if( option == false )
+    if( option == true )
     {
-        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
-        {
-            StratigraphicItem* strat = it->second;
-            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
-            strat->setUnderOperation( false );
-        }
+        region_ok = defineSketchingAboveRegion();
+    }
+
+    if( option == false || region_ok == false )
+    {
+        stopSketchingAboveRegion();
+    }
+
+}
+
+
+void Scene::enableSketchingBelowRegion( bool option )
+{
+
+    bool region_ok = true;
+
+    if( option == true )
+    {
+        region_ok = defineSketchingBelowRegion();
+    }
+
+    if( option == false || region_ok == false )
+    {
+        stopSketchingBelowRegion();
+    }
+
+}
+
+
+
+/// if it is ok to sketching above it highlited the allowed sketches and wait the user
+/// selected on of the highlited sketches
+bool Scene::defineSketchingAboveRegion()
+{
+
+    allowed_above_surfaces.clear();
+    bool sketchingabove_ok = controller->defineSketchingAbove( allowed_above_surfaces );
+    if( ( sketchingabove_ok == false ) || ( allowed_above_surfaces.empty() == true  ) ) return false;
+
+
+    startOperations();
+
+
+    size_t number_allowed_surfaces = allowed_above_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_above_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+        strat->setAllowed( true );
+    }
+
+
+    current_mode = InteractionMode::SELECTING_ABOVE;
+    defining_above = true;
+
+    update();
+    return true;
+
+}
+
+
+void Scene::stopSketchingAboveRegion()
+{
+
+    size_t number_allowed_surfaces = allowed_above_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_above_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        strat->setAllowed( false );
+        strat->setSelection( false );
+    }
+
+
+    if( defining_below == false )
+    {
+        stopOperations();
     }
     else
     {
-
-
-        for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+        size_t number_selected_surfaces = selected_below_surfaces.size();
+        for ( size_t i = 0; i < number_selected_surfaces; ++i )
         {
-            StratigraphicItem* strat = it->second;
-            strat->setUnderOperation( true );
-            strat->setAllowed( false );
-        }
+            size_t id = selected_below_surfaces[ i ];
 
-        size_t number_allowed_surfaces = allowed_selection.size();
-        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
-        {
-            size_t id = allowed_selection[ i ];
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
-            strat->setAllowed( true );
+            strat->setSelection( true );
         }
-
     }
 
+
+    controller->stopSketchingAbove();
+    allowed_above_surfaces.clear();
+    current_mode = InteractionMode::OVERSKETCHING;
+    defining_above = false;
 
     update();
 
@@ -717,23 +674,153 @@ void Scene::setModeSelection( bool option,  const std::vector< size_t >& allowed
 
 
 
-std::vector< size_t > Scene::getAllSelectedItems()
+/// if it is ok to sketching below it highlited the allowed sketches and wait the user
+/// selected on of the highlited sketches
+bool Scene::defineSketchingBelowRegion()
 {
 
-    std::vector< size_t > id_items;
+    allowed_below_surfaces.clear();
+    bool sketchingbelow_ok = controller->defineSketchingBelow( allowed_below_surfaces );
+    if( ( sketchingbelow_ok == false )  || ( allowed_below_surfaces.empty() == true  ) ) return false;
 
-    QList< QGraphicsItem* > items = selectedItems();
-    QList< QGraphicsItem* >::iterator it;
 
-    for ( it = items.begin(); it != items.end(); ++it ){
-        StratigraphicItem* s = (StratigraphicItem*) (*it);
-        id_items.push_back( (size_t) s->getId() );
-        s->setSelection( true );
+     startOperations();
+
+
+    size_t number_allowed_surfaces = allowed_below_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_below_surfaces[ i ];
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+        strat->setAllowed( true );
     }
-    return id_items;
+
+
+    current_mode = InteractionMode::SELECTING_BELOW;
+    defining_below = true;
+    update();
+
+    return true;
 
 }
 
+
+void Scene::stopSketchingBelowRegion()
+{
+
+    size_t number_allowed_surfaces = allowed_below_surfaces.size();
+    for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+    {
+        size_t id = allowed_below_surfaces[ i ];
+
+        StratigraphicItem* strat = stratigraphics_list[ id ];
+        strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        strat->setAllowed( false );
+        strat->setSelection( false );
+    }
+
+
+    if( defining_above == false )
+    {
+        stopOperations();
+    }
+    else
+    {
+        size_t number_selected_surfaces = selected_above_surfaces.size();
+        for ( size_t i = 0; i < number_selected_surfaces; ++i )
+        {
+            size_t id = selected_above_surfaces[ i ];
+
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            strat->setSelection( true );
+        }
+    }
+
+
+    controller->stopSketchingBelow();
+    allowed_below_surfaces.clear();
+    current_mode = InteractionMode::OVERSKETCHING;
+    defining_below = false;
+    update();
+
+}
+
+
+
+
+void Scene::setUnallowedAbove()
+{
+
+    if( defining_above == true ){
+
+        size_t number_allowed_surfaces = allowed_above_surfaces.size();
+        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+        {
+            size_t id = allowed_above_surfaces[ i ];
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+
+            if( strat->isSelected() ) continue;
+
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+            strat->setAllowed( false );
+        }
+
+    }
+
+}
+
+
+void Scene::setUnallowedBelow()
+{
+
+    if( defining_below == true ){
+
+        size_t number_allowed_surfaces = allowed_below_surfaces.size();
+        for ( size_t i = 0; i < number_allowed_surfaces; ++i )
+        {
+            size_t id = allowed_below_surfaces[ i ];
+            StratigraphicItem* strat = stratigraphics_list[ id ];
+
+            if( strat->isSelected() ) continue;
+
+            strat->setFlag( QGraphicsItem::ItemIsSelectable, false );
+            strat->setAllowed( false );
+        }
+
+    }
+
+}
+
+
+
+/// Allow to select sketches
+void Scene::startOperations()
+{
+
+    std::map< unsigned int, StratigraphicItem* >::iterator it;
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    {
+        StratigraphicItem* strat = it->second;
+        strat->setUnderOperation( true );
+    }
+
+}
+
+
+/// Stop to select sketches
+void Scene::stopOperations()
+{
+
+    std::map< unsigned int, StratigraphicItem* >::iterator it;
+    for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    {
+        StratigraphicItem* strat = it->second;
+        strat->setUnderOperation( false );
+    }
+
+}
 
 
 
@@ -809,46 +896,18 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 Eigen::Vector3f Scene::scene2DtoPlanin( const Point2D &p )
 {
 
-    /*
-    Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
-
-    //p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    p_cpy = p_cpy/L;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-*/
-
     Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
 
     p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    //    p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
 
 Eigen::Vector3f Scene::scene2DtoPlanin( const Eigen::Vector3f& p )
 {
-
-    /*
     Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-
-
-    //p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    p_cpy = p_cpy/L;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-*/
-
-
-    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-
 
     p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    //    float L = std::max( std::max(qtscene_width, qtscene_height), qtscene_depth);
-    //    p_cpy = p_cpy/L;
     return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
 }
 
@@ -941,6 +1000,47 @@ void Scene::savetoVectorImage( const QString& filename )
 
 
 
+
+std::vector< size_t > Scene::getAllSelectedItems()
+{
+
+    std::vector< size_t > id_items;
+
+    QList< QGraphicsItem* > items = selectedItems();
+    QList< QGraphicsItem* >::iterator it;
+
+    for ( it = items.begin(); it != items.end(); ++it ){
+        StratigraphicItem* s = (StratigraphicItem*) (*it);
+        id_items.push_back( (size_t) s->getId() );
+        s->setSelection( true );
+    }
+    return id_items;
+
+}
+
+
+
+
+void Scene::setBackGroundImage( const QString& url )
+{
+    QPixmap image = QPixmap( url );
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
+
+    editBoundary( image.rect().x(), image.rect().y(), image.rect().width(), image.rect().height() );
+
+
+    background_image->setPixmap( image );
+
+    update();
+
+}
+
+
+
+
 void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
 
@@ -954,6 +1054,7 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
         else if( current_mode == InteractionMode::OVERSKETCHING )
         {
+
 
             temp_sketch->create( event->scenePos() );
 
@@ -1030,28 +1131,47 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         int h = -event->scenePos().y() + boundary_anchor.y();
 
 
-        editBoundary( boundary_anchor.x(), height() - boundary_anchor.y(), w, h );
+        editBoundary( boundary_anchor.x(), /*height() - */boundary_anchor.y(), w - boundary_anchor.x(), h - boundary_anchor.y() );
 
         current_mode = InteractionMode::OVERSKETCHING;
 
     }
 
 
-    else if( current_mode == InteractionMode::SELECTION )
+    else if( current_mode == InteractionMode::SELECTING_ABOVE )
     {
-        std::cout << "Selection mode" << std::endl;
 
-        std::vector< size_t > id_items = getAllSelectedItems();
-        if( id_items.empty() == true ) return;
+        selected_above_surfaces.clear();
+        selected_above_surfaces = getAllSelectedItems();
+        if( selected_above_surfaces.empty() == true ) return;
 
-        controller->defineRegion( id_items );
+        controller->defineRegionAbove( selected_above_surfaces );
+        setUnallowedAbove();
 
+        StratigraphicItem* s = stratigraphics_list[ selected_above_surfaces[ 0 ] ];
 
         current_mode = InteractionMode::OVERSKETCHING;
-
+        emit enableSketching( true );
 
 
     }
+
+
+    else if( current_mode == InteractionMode::SELECTING_BELOW )
+    {
+
+        selected_below_surfaces.clear();
+        selected_below_surfaces = getAllSelectedItems();
+        if( selected_below_surfaces.empty() == true ) return;
+
+        controller->defineRegionBelow( selected_below_surfaces );
+        setUnallowedBelow();
+
+        current_mode = InteractionMode::OVERSKETCHING;
+        emit enableSketching( true );
+
+    }
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
@@ -1081,10 +1201,15 @@ void Scene::dropEvent( QGraphicsSceneDragDropEvent *event )
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
     url_file = QDir::toNativeSeparators( url_file );
 
-    sketching_boundary->setBackGroundImage( url_file );
+//    this->addPixmap( QPixmap( url_file ) );
+//    editBoundary(
+//    sketching_boundary->setBackGroundImage( url_file );
+
+    setBackGroundImage( url_file );
 
 
 }
+
 
 
 void Scene::dragMoveEvent( QGraphicsSceneDragDropEvent * event )

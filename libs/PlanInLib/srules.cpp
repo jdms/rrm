@@ -49,6 +49,34 @@ PlanarSurface::Ptr& SRules::operator[]( std::size_t surface_index )
     return container[surface_index]; 
 }
 
+bool SRules::defineAboveIsActive()
+{
+    if ( define_above_ == true )
+    {
+        if ( lower_bound_.expired() == true )
+        {
+            lower_bound_ = PlanarSurface::WeakPtr();
+            define_above_ = false;
+        }
+    }
+
+    return define_above_;
+}
+
+bool SRules::defineBelowIsActive()
+{
+    if ( define_below_ == true )
+    {
+        if ( upper_bound_.expired() == true )
+        {
+            upper_bound_ = PlanarSurface::WeakPtr();
+            define_below_ = false;
+        }
+    }
+
+    return define_below_;
+}
+
 bool SRules::isValidSurface( const PlanarSurface::Ptr &sptr ) { 
     return ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() != false ) ); 
 }
@@ -95,12 +123,12 @@ bool SRules::addSurface( PlanarSurface::Ptr &sptr, size_t &surface_index )
     // The surface is logically acceptable. 
     //
 
-    if ( define_above_ == true ) {
+    if ( defineAboveIsActive() == true ) {
         /* cout << "Someone was defined above!\n"; */ 
         sptr->removeBelow(lower_bound_); 
     }
 
-    if ( define_below_ == true ) { 
+    if ( defineBelowIsActive() == true ) { 
         /* cout << "Someone was defined below!\n"; */ 
         sptr->removeAbove(upper_bound_); 
     }
@@ -248,7 +276,7 @@ bool SRules::defineAbove()
 }
 
 void SRules::stopDefineAbove() { 
-    lower_bound_ = nullptr; 
+    lower_bound_ = PlanarSurface::WeakPtr(); 
     define_above_ = false; 
 }
 
@@ -262,7 +290,7 @@ bool SRules::defineBelow()
 }
 
 void SRules::stopDefineBelow() { 
-    upper_bound_ = nullptr;
+    upper_bound_ = PlanarSurface::WeakPtr();
     define_below_ = false; 
 }
 
@@ -509,7 +537,7 @@ bool SRules::defineAbove( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    lower_bound_ = sptr; 
+    lower_bound_ = PlanarSurface::WeakPtr(sptr); 
     define_above_ = true; 
     return true; 
 }
@@ -526,7 +554,7 @@ bool SRules::defineBelow( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    upper_bound_ = sptr; 
+    upper_bound_ = PlanarSurface::WeakPtr(sptr); 
     define_below_ = true; 
     return true; 
 }
@@ -606,20 +634,20 @@ bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s )
     bool status = false; 
     /* cout << "Check for entire surface: "; */ 
 
-    if ( define_above_ && define_below_ ) 
+    if ( defineAboveIsActive() && defineBelowIsActive() ) 
     {
         status |= s->weakBoundedEntireSurfaceCheck( lower_bound_, upper_bound_ ); 
         /* cout << " defined above and below: " << status << endl; */ 
 
     }
-    else if ( define_above_ ) 
+    else if ( defineAboveIsActive() ) 
     {
-        status |= s->weakBoundedEntireSurfaceCheck( lower_bound_, PlanarSurface::Ptr() ); 
+        status |= s->weakBoundedEntireSurfaceCheck( lower_bound_, PlanarSurface::WeakPtr() ); 
         /* cout << " defined above: " << status << endl; */ 
     }
-    else if ( define_below_ ) 
+    else if ( defineBelowIsActive() ) 
     {
-        status |= s->weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr(), upper_bound_ ); 
+        status |= s->weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr(), upper_bound_ ); 
         /* cout << " defined below: " << status << endl; */ 
     }
     else 
@@ -634,7 +662,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 {
     bool status = false; 
 
-    if ( define_above_ && define_below_ ) 
+    if ( defineAboveIsActive() && defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
@@ -642,14 +670,14 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                 status |= true;
             }
     }
-    else if ( define_above_ ) 
+    else if ( defineAboveIsActive() ) 
     {
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
             to_remove_surface->removeAbove(base_surface); 
             status |= true;
         }
     }
-    else if ( define_below_ ) 
+    else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
             to_remove_surface->removeAbove(base_surface); 
@@ -657,7 +685,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
         }
     }
     else 
-    { // if ( !define_above_ && !define_below_ ) { 
+    { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
         to_remove_surface->removeAbove(base_surface); 
         status |= true; 
     }
@@ -669,7 +697,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 {
     bool status = false; 
 
-    if ( define_above_ && define_below_ ) 
+    if ( defineAboveIsActive() && defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
@@ -678,7 +706,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
             }
     }
 
-    else if ( define_above_ ) 
+    else if ( defineAboveIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
             to_remove_surface->removeBelow(base_surface); 
@@ -686,7 +714,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
         }
     }
 
-    else if ( define_below_ ) 
+    else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
             to_remove_surface->removeBelow(base_surface); 
@@ -695,7 +723,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     }
 
     else 
-    { // if ( !define_above_ && !define_below_ ) { 
+    { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
         to_remove_surface->removeBelow(base_surface); 
         status |= true; 
     }

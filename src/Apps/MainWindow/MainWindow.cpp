@@ -8,7 +8,7 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
     setAcceptDrops( true );
     setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks );
     setDockNestingEnabled( true );
-    setMinimumSize ( 800 , 600 );
+    setMinimumSize ( 1000, 800 );//800 , 600 );
 
     createWindow();
     createActions();
@@ -125,8 +125,11 @@ void MainWindow::createSketchingActions()
     connect( dw_sketching, &QDockWidget::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
 
 
-    connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, [=]( const std::string& rule, bool status ){
-                                                                                                controller->setCurrentStratigraphicRule( rule, status ); } );
+    connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, controller, &Controller::setStratigraphicRule );
+
+
+    connect ( sketching_window, &SketchingWindow::defineSketchingAbove, scene, &Scene::enableSketchingAboveRegion );
+    connect ( sketching_window, &SketchingWindow::defineSketchingBelow, scene, &Scene::enableSketchingBelowRegion );
 
 
     connect ( sketching_window, SIGNAL( undo() ), controller , SLOT( undo() ) );
@@ -143,6 +146,8 @@ void MainWindow::createSketchingActions()
 
     connect( controller, SIGNAL( enableUndo( bool ) ) , sketching_window, SLOT( enableUndo( bool ) ) );
     connect( controller, SIGNAL( enableRedo( bool ) ) , sketching_window, SLOT( enableRedo( bool ) ) );
+
+    connect( scene, &Scene::enableSketching, sketching_window, &SketchingWindow::enableSketching );
 
 }
 

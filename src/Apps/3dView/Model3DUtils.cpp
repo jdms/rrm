@@ -126,21 +126,14 @@ Eigen::Affine3f Model3DUtils::normalizePointCloud( float minx, float maxx, float
 	float dimy = maxy - miny;
 	float dimz = maxz - minz;
 	
-	float scale = std::max( std::max( dimx, dimy ), dimz );
+    float L = std::max( std::max( dimx, dimy ), dimz );
 
-    maxx /= scale;
-    maxy /= scale;
-    maxz /= scale;
 
-    minx /= scale;
-    miny /= scale;
-    minz /= scale;
+    Eigen::Vector3f center = Eigen::Vector3f( (maxx + minx)*0.5f/L, (maxy + miny)*0.5f/L, (maxz + minz)*0.5f/L );
 
-    Eigen::Vector4f center = Eigen::Vector4f( ( maxx + minx )*0.5f,( maxy + miny )*0.5f,( maxz + minz )*0.5f, 0.0f  );
     Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
-
-    matrix.translation() = -center.head< 3 >();
-    matrix.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
+    matrix.translation() = -center;
+    matrix.scale( Eigen::Vector3f( 1.0f/L, 1.0f/L, 1.0f/L ) );
 	
 	return matrix;
 	
