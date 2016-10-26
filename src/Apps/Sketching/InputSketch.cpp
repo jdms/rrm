@@ -132,9 +132,6 @@ void InputSketch::process( const QPointF& p )
     Curve2D whole_curve = PolyQtUtils::qPolyginFToCurve2D( curve.toFillPolygon() );
 
 
-    sketchlib_.overSketching( whole_curve, c );
-    sketchlib_.ensure_x_monotonicity( whole_curve );
-
     curve = QPainterPath();
     curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( whole_curve ) );
 

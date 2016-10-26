@@ -147,14 +147,14 @@ QList< QPolygonF > StratigraphicItem::getSubCurves()
 
 
 
-std::vector< Curve2D > StratigraphicItem::getSubCurves()
+std::vector< Curve2D > StratigraphicItem::getSubCurves2D()
 {
     QList< QPolygonF > subcurves = getSubCurves();
 
     size_t number_subcurves = subcurves.size();
 
     std::vector< Curve2D > subcurves2d;
-    for( size_t i = 0; i  < number_subccurves; ++i )
+    for( size_t i = 0; i  < number_subcurves; ++i )
     {
         subcurves2d.push_back( PolyQtUtils::qPolyginFToCurve2D( subcurves[ i ] ) );
     }
