@@ -179,7 +179,6 @@ class Scene: public QGraphicsScene
         QPointF boundary_anchor;
 
         bool random_color;
-        bool mode_selection;
         QColor current_color;
 
         Eigen::Affine3f m_2dto3d;

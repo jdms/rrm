@@ -29,7 +29,6 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		void create( const QPointF& p );
 		void add( const QPointF& p );
 		
-		void addSegment( const InputSketch& segment );	
 		void copySegment( const QPolygonF& s );
 
         void clear();

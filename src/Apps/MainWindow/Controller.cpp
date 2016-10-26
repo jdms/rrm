@@ -317,6 +317,8 @@ void Controller::clear()
     stratigraphics_list.clear();
     crosssections_list.clear();
 
+    rules_processor.clear();
+
 }
 
 
