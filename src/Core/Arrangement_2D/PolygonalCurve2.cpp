@@ -65,7 +65,7 @@ namespace RRM
         {
             for ( std::size_t it = 1; it < _curve.size(); it++ )
            {
-                if ( !((_curve[it].x() >= _curve[it-1].x()) xor ( is_x_monotone_segment))  )
+                if ( !((_curve[it].x() >= _curve[it-1].x()) ^( is_x_monotone_segment))  )
                 {
                     x_monotone_subcurves[current_index].push_back(it);
                 }else
@@ -82,7 +82,7 @@ namespace RRM
         {
             for ( std::size_t it = 1; it < _curve.size(); it++ )
            {
-                if ( !((_curve[it].x() <=  _curve[it-1].x()) xor (is_x_monotone_segment)) )
+                if ( !((_curve[it].x() <=  _curve[it-1].x()) ^ (is_x_monotone_segment)) )
                 {
                     x_monotone_subcurves[current_index].push_back ( it );
                 }

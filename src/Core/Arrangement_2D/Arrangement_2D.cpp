@@ -158,23 +158,31 @@ namespace RRM{
             upper_bound_.clear();
             lower_bound_.clear();
 
-            // Out/In  --- In/Out
-            // The desired segment lies In<->In
-            if ( intersection_points[0].where_ == RELATIVE_POSITION::Above )
+
+                 // Out/In  --- In/Out
+                 // The desired segment lies In<->In
+
+            if (intersection_points[0].arr_curve_.index < std::numeric_limits<Natural>::max()-2)
             {
-                lower_bound_.push_back(intersection_points[0].arr_curve_.index);
-            }else
+                if ( (intersection_points[0].where_ == RELATIVE_POSITION::Above)  )
+                {
+                    lower_bound_.push_back(intersection_points[0].arr_curve_.index);
+                }else
+                {
+                    upper_bound_.push_back(intersection_points[0].arr_curve_.index);
+                }
+            }
+            if (intersection_points[1].arr_curve_.index < std::numeric_limits<Natural>::max()-2)
             {
-                upper_bound_.push_back(intersection_points[0].arr_curve_.index);
+                if ( intersection_points[1].where_ == RELATIVE_POSITION::Above )
+                {
+                    upper_bound_.push_back(intersection_points[1].arr_curve_.index);
+                }else
+                {
+                    lower_bound_.push_back(intersection_points[1].arr_curve_.index);
+                }
             }
 
-            if ( intersection_points[1].where_ == RELATIVE_POSITION::Above )
-            {
-                upper_bound_.push_back(intersection_points[1].arr_curve_.index);
-            }else
-            {
-                lower_bound_.push_back(intersection_points[1].arr_curve_.index);
-            }
 
         }
 

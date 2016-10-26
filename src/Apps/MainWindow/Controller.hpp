@@ -41,7 +41,9 @@ class Controller: public QObject
 
         bool addCurve( const Curve2D &curve );
         bool addStratigraphy();
-		bool interpolateStratigraphy();
+        bool interpolateStratigraphy( const std::vector< unsigned int >& lower_bound = std::vector< unsigned int >(),
+                                      const std::vector< unsigned int >& upper_bound = std::vector< unsigned int >() );
+
         Stratigraphy* getCurrentStratigraphy();
 
         bool defineSketchingAbove( std::vector< size_t >& allowed );
