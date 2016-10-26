@@ -265,11 +265,10 @@ void Scene::addBoundaryToScene()
     sketching_boundary->update( m_3dto2d );
 
 
-    // @Felipe
-    arr.setBoundary(sketching_boundary->getOriginX(),
-                    sketching_boundary->getOriginY(),
-                    sketching_boundary->getWidth(),
-                    sketching_boundary->getHeight());
+    arrangement.setBoundary( sketching_boundary->getOriginX(), sketching_boundary->getOriginY(),
+                             sketching_boundary->getWidth(), sketching_boundary->getHeight() );
+
+
 
     addItem( sketching_boundary );
     setSceneRect( sketching_boundary->boundingRect() );
@@ -281,45 +280,8 @@ void Scene::addBoundaryToScene()
 void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
 {
 
-    /*
-    int origin_x = qtscene_origin_x - x;
-    int origin_y = qtscene_origin_y - y;
 
-
-    defineVolumeQtCoordinates( origin_x, origin_y, qtscene_origin_z, w, h, qtscene_depth );
-
-
-    Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
-    Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
-
-    min = Scene::scene2Dto3D( min );
-    max = Scene::scene2Dto3D( max );
-
-    Eigen::Vector3f dim = max - min;
-
-
-    controller->editBoundary( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
-
-
-    Boundary* b = controller->getCurrentBoundary();
-    boundary3D->setGeoData( b );
-    boundary3D->update();
-
-
-    sketching_boundary->setGeoData( b );
-    sketching_boundary->update( m_3dto2d );
-    setSceneRect( sketching_boundary->boundingRect() );
-
-
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-    controller->editRulesProcessor( 0, 0, 0, qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-
-*/
-
-
-    defineVolumeQtCoordinates( x, /*-1**/y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
+    defineVolumeQtCoordinates( x, y, qtscene_origin_z, abs( w ), abs( h ), qtscene_depth );
 
 
     Eigen::Vector3f min( qtscene_origin_x,                  qtscene_origin_y,                   qtscene_origin_z );
@@ -351,11 +313,6 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 
     controller->editRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
-    //min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z()
-    //    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-    //    controller->editRulesProcessor( min.x(), min.y(), min.z(), qtscene_width/L, qtscene_height/L, qtscene_depth/L );
-
-
 
 
 }
@@ -363,17 +320,13 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 
 
-
 void Scene::addCurve()
 {
-
 
     current_mode = InteractionMode::INSERTING;
 
 
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
-
-    arr_c = c;
 
 
     unsigned int number_of_points = c.size();
@@ -386,9 +339,9 @@ void Scene::addCurve()
         return;
     }
 
+
     addStratigraphyToScene();
 
-    //controller->get
 
 }
 
@@ -398,6 +351,14 @@ void Scene::addStratigraphyToScene()
 
 
     Stratigraphy* strat = controller->getCurrentStratigraphy();
+    unsigned int id = strat->getId();
+
+
+    float depth_current = controller->getCurrentCrossSection();
+    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( sketch->getCurve() );
+    arrangement.insert( c, id );
+
+
     sketch->setGeoData( strat );
 
 
@@ -407,7 +368,6 @@ void Scene::addStratigraphyToScene()
     strat3D->setCurrentColor( current_color.redF(), current_color.greenF(), current_color.blueF() );
 
 
-    unsigned int id = strat->getId();
 
     stratigraphics_list[ id ] = sketch;
     surfaces_list[ id ] = strat3D;
@@ -544,7 +504,7 @@ void Scene::clearScene()
 
     //@Felipe
 
-    arr.clear();
+    arrangement.clear();
 
     init();
 
@@ -561,13 +521,17 @@ void Scene::updateScene()
 
     float d = controller->getCurrentCrossSection();
 
+    std::map< unsigned int, std::vector< Curve2D > > curve_map;
     std::map< unsigned int, StratigraphicItem* >::iterator it;
+
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
         StratigraphicItem* strat = it->second;
         strat->update( m_planinto2d, d );
+        curve_map[ strat->getId() ] = strat->getSubCurves2D();
     }
 
+    arrangement.updateSubcurves( curve_map );
 
     emit updateContext();
     emit updatedScene();
@@ -1193,39 +1157,16 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
 
         addCurve();
-        controller->interpolateStratigraphy();
 
-        // @Felipe
-        // Get the intersection information
-        arr.insert(arr_c,controller->getCurrentStratigraphy()->getId());
+        std::vector< unsigned int > lower_bound = arrangement.getLastCurveLowerBound();
+        std::vector< unsigned int > upper_bound = arrangement.getLastCurveUpperBound();
 
 
-        std::map<unsigned int,std::vector<Curve2D>> curve_map;
-        QList<QPolygonF> strat_map;
-
-        Curve2D temp;
-
-        for ( auto strat_it: stratigraphics_list)
-        {
-            strat_map = strat_it.second->getSubCurves();
-
-            std::cout << "QPolygon List Size " << strat_map.size() << std::endl;
-
-            for ( auto curve_it: strat_map )
-            {
-                temp = PolyQtUtils::qPolyginFToCurve2D(curve_it);
-
-                std::cout << "QPolygon Size " << strat_it.second->getId() << " - "  <<  temp.size() << std::endl;
-                curve_map[strat_it.second->getId()].push_back(temp);
-            }
-        }
-
-        arr.updateSubcurves(curve_map);
-
-
+        controller->interpolateStratigraphy( lower_bound, upper_bound );
 
         newSketch();
         controller->addStratigraphy();
+
     }
 
     QGraphicsScene::mousePressEvent( event );
