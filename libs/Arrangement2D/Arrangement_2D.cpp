@@ -72,11 +72,11 @@ namespace RRM{
 
         std::map<std::size_t,std::vector<std::size_t> > curves;
 
-        if ( !new_curve.supporting_curve.is_x_monotonic_curve(_c,curves) )
-        {
-            //std::cout << "Not x monotonic curve" << std::endl;
-            return false;
-        }
+//        if ( !new_curve.supporting_curve.is_x_monotonic_curve(_c,curves) )
+//        {
+//            //std::cout << "Not x monotonic curve" << std::endl;
+//            return false;
+//        }
 
         // New Curve to be analysed
         // The Curve Arrangement
