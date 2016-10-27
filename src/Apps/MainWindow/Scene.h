@@ -81,8 +81,6 @@ class Scene: public QGraphicsScene
         void initGLContext();
         void updateGLContext();
 
-        void removeStratigraphyFromScene( unsigned int id );
-
         inline void setRandomColor( bool status ){ random_color = status; }
 
         std::vector< size_t > getAllSelectedItems();
@@ -90,16 +88,18 @@ class Scene: public QGraphicsScene
 
         void setBackGroundImage( const QString& url );
 
-        void setUnallowedAbove();
-        void setUnallowedBelow();
-        void startOperations();
-        void stopOperations();
+        void disallowCurves( const std::vector< size_t >& curves_id );
+//        void setUnallowedAbove();
+//        void setUnallowedBelow();
+//        void startOperations();
+//        void stopOperations();
 
 
+        void setSelectionMode( const bool status );
 
-        bool defineSketchingAboveRegion();
+        void defineSketchingAboveRegion();
         void stopSketchingAboveRegion();
-        bool defineSketchingBelowRegion();
+        void defineSketchingBelowRegion();
         void stopSketchingBelowRegion();
 
 
@@ -207,8 +207,8 @@ class Scene: public QGraphicsScene
 
         std::vector< int/*CrossSections3D**/ > crosssections3d_list;
 
-        std::map< unsigned int, StratigraphicItem* > stratigraphics_list;
-        std::map< unsigned int, Surface* > surfaces_list;
+        std::map< size_t, StratigraphicItem* > stratigraphics_list;
+        std::map< size_t, Surface* > surfaces_list;
 
         QString shader_directory;
 

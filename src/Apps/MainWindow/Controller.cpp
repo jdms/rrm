@@ -14,7 +14,6 @@ Controller::Controller()
     current_crosssection = 0.0f;
     current_stratigraphy = 0;
 
-
 }
 
 
@@ -157,7 +156,7 @@ Stratigraphy* Controller::getCurrentStratigraphy()
 }
 
 
-bool Controller::interpolateStratigraphy( const std::vector< unsigned int >& lower_bound, const std::vector< unsigned int >& upper_bound )
+bool Controller::interpolateStratigraphy( const std::vector< size_t >& lower_bound, const std::vector< size_t >& upper_bound )
 {
 
     if( stratigraphics_list.empty() == true ) return false;
@@ -174,6 +173,7 @@ bool Controller::interpolateStratigraphy( const std::vector< unsigned int >& low
 
     else
         status_ok = rules_processor.update( *c, strat->getId(), lower_bound, upper_bound );
+
 
 
     if( status_ok == false ) return false;
@@ -197,8 +197,7 @@ bool Controller::interpolateStratigraphy( const std::vector< unsigned int >& low
 
 bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 {
-
-    return rules_processor.requestDefineRegion( allowed );
+    return rules_processor.requestDefineAbove( allowed );
 
 }
 
@@ -206,7 +205,7 @@ bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 {
 
-    return rules_processor.requestDefineRegion( allowed );
+    return rules_processor.requestDefineBelow( allowed );
 
 }
 
@@ -215,7 +214,9 @@ bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 
 bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
+    if( selections.empty() == true ) return false;
 
+    std::cout << "-- Started sketch above... " << std::endl;
     return rules_processor.defineAbove( selections[ 0 ] );
 
 }
@@ -224,6 +225,9 @@ bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 {
 
+    if( selections.empty() == true ) return false;
+
+    std::cout << "-- Started sketch below... " << std::endl;
     return rules_processor.defineBelow( selections[ 0 ] );
 
 
@@ -232,7 +236,7 @@ bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 
 bool Controller::stopSketchingAbove()
 {
-
+    std::cout << "-- Stopped sketch above... " << std::endl;
     rules_processor.stopDefineAbove();
     return true;
 
@@ -241,6 +245,8 @@ bool Controller::stopSketchingAbove()
 
 bool Controller::stopSketchingBelow()
 {
+
+    std::cout << "-- Stopped sketch below... " << std::endl;
 
     rules_processor.stopDefineBelow();
 
@@ -326,16 +332,16 @@ void Controller::clear()
 void Controller::update()
 {
 
-    std::map< unsigned int, Stratigraphy* >::iterator it;
+    std::map< size_t, Stratigraphy* >::iterator it;
 
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
 
         std::vector< float > curve_vertices;
-        std::vector< unsigned int > curve_edges;
+        std::vector< size_t > curve_edges;
 
         std::vector< float > surface_vertices;
-        std::vector< unsigned int > surface_faces;
+        std::vector< size_t > surface_faces;
 
 
         Stratigraphy* strat = it->second;

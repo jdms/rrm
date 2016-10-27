@@ -41,6 +41,7 @@ class SketchingWindow : public QMainWindow
         void createWindow();
         void createActions();
         void createConnections();
+        void resetButtons();
 
 
 

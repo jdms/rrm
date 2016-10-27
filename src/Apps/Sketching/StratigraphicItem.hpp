@@ -46,13 +46,14 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		inline QColor setColor(){ return current_color; }
 		
 
-        inline unsigned int getId() const { return strat->getId(); }
+        inline size_t getId() const { return strat->getId(); }
         inline QPolygonF getCurve(){ return points; }
 
 
         inline void setSelection( bool option ){ is_selected = option;  }
-        inline void setAllowed( bool option ){ is_allowed = option; is_unallowed = !option; }
-        inline void setUnderOperation( bool option ){ under_operation = option; }
+        inline bool getSelection(){ return is_selected; }
+        inline void setAllowed( bool option ){ setFlag( QGraphicsItem::ItemIsSelectable, option ); is_allowed = option; }
+        inline void setUnderOperation( bool option ){ under_operation = option; if( option == false ){ is_allowed = false; is_selected = false; } }
 
 
         QList< QPolygonF > getSubCurves();
@@ -63,17 +64,15 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		
         QPolygonF points;
 		QPainterPath curve;
-        QPainterPathStroker teste;
+        QPainterPathStroker custom_stroker;
 
 		QColor current_color;
         QPen pen_allowed;
-        QPen pen_unallowed;
         QPen pen_selected;
         QPen pen_normal;
 
         bool under_operation;
         bool is_allowed;
-        bool is_unallowed;
         bool is_selected;
 
 };

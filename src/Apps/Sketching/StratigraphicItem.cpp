@@ -16,23 +16,20 @@ void StratigraphicItem::initSetup()
 
     under_operation = false;
     is_allowed = false;
-    is_unallowed = true;
     is_selected = false;
 
 
     pen_allowed.setColor( Qt::yellow );
     pen_allowed.setWidth( 5 );
 
-    pen_unallowed.setColor( Qt::gray );
-    pen_unallowed.setWidth( 3 );
-
     pen_selected.setColor( Qt::red );
     pen_selected.setWidth( 5 );
 
-    teste.setCapStyle( Qt::RoundCap );
-    teste.setCurveThreshold( 0.5 );
-    teste.setDashPattern( Qt::SolidLine );
-    teste.setJoinStyle( Qt::RoundJoin );
+
+    custom_stroker.setCapStyle( Qt::RoundCap );
+    custom_stroker.setCurveThreshold( 0.1 );
+    custom_stroker.setDashPattern( Qt::SolidLine );
+    custom_stroker.setJoinStyle( Qt::RoundJoin );
 
 
 }
@@ -40,45 +37,37 @@ void StratigraphicItem::initSetup()
 
 void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w )
 {
+
 	painter->setRenderHint( QPainter::Antialiasing );
 	
 
     QBrush brush;
+    QPen pen;
+    pen.setColor( current_color );
+    pen.setWidth( 3 );
 
-    if( under_operation == false )
+
+
+    if( under_operation == true )
     {
-        pen_normal.setColor( current_color );
-        pen_normal.setWidth( 3 );
-        painter->setPen( pen_normal );
-
-        brush = Qt::NoBrush;
-
-    }
-    else
-    {
-
-        brush = QBrush( current_color );
-
-        if ( is_selected )
+        if( is_selected == true )
         {
-            painter->setPen( pen_selected );
+            pen = pen_selected;
         }
-        else if( is_allowed == true )
-            painter->setPen( pen_allowed );
-
-        else if( is_unallowed == true )
-            painter->setPen( pen_unallowed );
+        else if( is_allowed )
+        {
+            pen = pen_allowed;
+        }
 
     }
 
+
+
+    painter->setPen( pen );
     painter->setBrush( brush );
-    QPainterPath outline_curve = teste.createStroke( curve );
+    QPainterPath outline_curve = custom_stroker.createStroke( curve );
 
     painter->drawPath( outline_curve );
-
-
-
-
 
 
 }

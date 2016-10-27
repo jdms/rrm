@@ -177,7 +177,7 @@ void SketchingWindow::createConnections()
     connect( ac_removebelowintersection, &QAction::toggled, [=](){ emit updateStratigraphicRule( "RBI_SKETCHING" ); lb_statusbar_status->setText( "Remove Below Intersection" ); } );
 
 
-    connect( ac_new, &QAction::triggered, [=](){ emit clear(); } );
+    connect( ac_new, &QAction::triggered, [=](){ emit clear(); resetButtons(); } );
     connect( ac_undo, &QAction::triggered, [=](){ emit undo(); } );
     connect( ac_redo, &QAction::triggered, [=](){ emit redo(); } );
 
@@ -199,3 +199,23 @@ void SketchingWindow::createConnections()
 
 }
 
+
+void SketchingWindow::resetButtons()
+{
+
+
+    ac_undo->setEnabled( true );
+    ac_redo->setEnabled( true );
+
+    ac_removeabove->setChecked( false );
+    ac_removebelow->setChecked( false );
+    ac_removeaboveintersection->setChecked( false );
+    ac_removebelowintersection->setChecked( false );
+    ac_sketchabove->setChecked( false );
+    ac_sketchbelow->setChecked( false );
+    ac_sketch->setChecked( true );
+
+
+    ac_randomcolor->setChecked( true );
+
+}
