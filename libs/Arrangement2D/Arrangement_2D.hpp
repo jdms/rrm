@@ -18,7 +18,7 @@
 #include "./src/Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
-typedef unsigned int Natural;
+typedef size_t Natural;
 typedef double Real;
 typedef RRM::PolygonalCurve2 PolyCurve2D;
 
