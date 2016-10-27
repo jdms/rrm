@@ -41,8 +41,8 @@ class Controller: public QObject
 
         bool addCurve( const Curve2D &curve );
         bool addStratigraphy();
-        bool interpolateStratigraphy( const std::vector< unsigned int >& lower_bound = std::vector< unsigned int >(),
-                                      const std::vector< unsigned int >& upper_bound = std::vector< unsigned int >() );
+        bool interpolateStratigraphy( const std::vector< size_t >& lower_bound = std::vector< size_t >(),
+                                      const std::vector< size_t >& upper_bound = std::vector< size_t >() );
 
         Stratigraphy* getCurrentStratigraphy();
 
@@ -83,7 +83,7 @@ class Controller: public QObject
         void updateScene();
         void enableUndo( bool option );
         void enableRedo( bool option );
-        void removeStratigraphy( unsigned int id );
+        void removeStratigraphy( size_t id );
         void waitingSelection( bool, const std::vector< size_t >& );
 		
 
@@ -93,10 +93,10 @@ class Controller: public QObject
         ReconstructionMode current_reconstruction;
 	
         float current_crosssection;
-        unsigned int current_stratigraphy;
+        size_t current_stratigraphy;
 	
-        std::map< unsigned int, Stratigraphy* > stratigraphics_list;
-        std::map< unsigned int, unsigned int > index_stratigraphy_map;
+        std::map< size_t, Stratigraphy* > stratigraphics_list;
+        std::map< size_t, size_t > index_stratigraphy_map;
         std::map< float, CrossSection* > crosssections_list;
         RRM::ExtrusionRulesProcessor rules_processor;
 
