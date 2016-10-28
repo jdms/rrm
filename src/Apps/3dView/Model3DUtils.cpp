@@ -158,7 +158,7 @@ Curve2D Model3DUtils::convertToCurve2D( const std::vector< float >& v )
 }
 
 		
- Eigen::Vector3f Model3DUtils::normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
+Eigen::Vector3f Model3DUtils::normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
 {
 
     float dimx = M.x() - m.x();
@@ -178,3 +178,5 @@ Curve2D Model3DUtils::convertToCurve2D( const std::vector< float >& v )
 
     return cpy;
 }
+
+
