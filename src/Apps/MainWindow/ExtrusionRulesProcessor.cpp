@@ -115,9 +115,18 @@ namespace RRM
     {
         container_.clear(); 
         dictionary_.clear(); 
-        current_.bounded_below_ = false; 
-        current_.bounded_above_ = false; 
-        current_.state_ = State::UNDEFINED; 
+        inserted_surfaces_indices_.clear();
+
+        current_ = StateDescriptor(); 
+
+        undoed_surfaces_stack_.clear();
+        undoed_states_.clear(); 
+        past_states_.clear();
+
+        got_origin_ = false; 
+        got_lenght_ = false; 
+
+        init(); 
     }
 
     bool ExtrusionRulesProcessor::update(State s)
