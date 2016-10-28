@@ -31,10 +31,10 @@ class Stratigraphy
 
 
         inline bool isEmpty(){ return curves_list.empty(); }
-        inline unsigned int getId(){ return index; }
+        inline size_t getId(){ return index; }
 
 
-        inline void updateSurface( const std::vector< float >& vertices,  const std::vector< unsigned int >& faces )
+        inline void updateSurface( const std::vector< float >& vertices,  const std::vector< size_t >& faces )
         {
 
             surface_vertices.clear();
@@ -44,7 +44,7 @@ class Stratigraphy
             surface_faces.assign( faces.begin(), faces.end() );
 
         }
-        inline void updateCurveWireframe( const std::vector< unsigned int >& edges )
+        inline void updateCurveWireframe( const std::vector< size_t >& edges )
         {
             curve_edges.clear();
             curve_edges.assign( edges.begin(), edges.end() );
@@ -72,16 +72,16 @@ class Stratigraphy
 	protected:
 	
 
-        unsigned int index;
-        static unsigned int number_of_stratigraphies;
+        size_t index;
+        static size_t number_of_stratigraphies;
 
         std::vector< float > crosssections_list;
 
         std::map< float, Curve2D > curves_list;
-        std::vector< unsigned int > curve_edges;
+        std::vector< size_t > curve_edges;
 
         std::vector< float > surface_vertices;
-        std::vector< unsigned int > surface_faces;
+        std::vector< size_t > surface_faces;
 
 
 };

@@ -6,7 +6,7 @@ StratigraphicItem::StratigraphicItem()
 
     setFlag( QGraphicsItem::ItemIsSelectable, false );
     setAcceptTouchEvents ( true );
-
+    setBoundingRegionGranularity( 0.9 );
     initSetup();
 }
 
@@ -27,7 +27,7 @@ void StratigraphicItem::initSetup()
 
 
     custom_stroker.setCapStyle( Qt::RoundCap );
-    custom_stroker.setCurveThreshold( 0.1 );
+    custom_stroker.setCurveThreshold( 0.9 );
     custom_stroker.setDashPattern( Qt::SolidLine );
     custom_stroker.setJoinStyle( Qt::RoundJoin );
 
