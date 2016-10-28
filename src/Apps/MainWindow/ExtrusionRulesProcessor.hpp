@@ -208,6 +208,8 @@ namespace RRM
             size_t upper_boundary_ = 0;
             bool bounded_below_ = false;
             size_t lower_boundary_ = 0;
+            std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ {};
+            std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ {};
         };
         StateDescriptor current_;
 
@@ -234,6 +236,8 @@ namespace RRM
         void registerState(ControllerSurfaceIndex given_index, ContainerSurfaceIndex index); 
 
         bool enforceDefineRegion(); 
+
+        bool parseTruncateSurfaces( std::vector<size_t> &truncate_lower_boundary, std::vector<size_t> &truncate_upper_boundary );
 
         bool commitSurface( 
                 PlanarSurface::Ptr &sptr, 
