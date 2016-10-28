@@ -28,7 +28,6 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
         ~BoundaryItem2D();
 
         void edit( const qreal& x, const qreal& y, const qreal& width, const qreal& height );
-        void setBackGroundImage( const QString& url );
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
         QRectF boundingRect() const;
@@ -45,17 +44,11 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
         int getHeight() const { return boundary.height(); }
 
 
-    protected:
-
-        void loadBackGroud();
-
 
     protected:
 
 
         QRectF boundary;
-        QString image_file;
-        QImage background_image;
         QPointF image_position;
 
 };

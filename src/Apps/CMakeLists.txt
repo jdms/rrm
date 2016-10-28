@@ -122,8 +122,8 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 
 
 add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
-							   ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
-                               ${3DVIEW_SOURCES} ${3DVIEW_HEADERS}
+                               ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
+                               ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} ${GEOLOGY_HEADERS}
                                ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
 
 
@@ -131,8 +131,9 @@ target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets
                                        Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ${GLEW_LIBRARY}
                                         planin RRMGeometry Arrangement_2D SketchLib )
 
+#target_include_directories( ${PROJECT_NAME} PUBLIC ${RRMGeology}/Models )
 
-
+#add_custom_target( ${PROJECT_NAME} )
 
 ######################################################
 # CUSTOM COMMANDS: COPYING AUX FILES TO EXECUTABLE DIR

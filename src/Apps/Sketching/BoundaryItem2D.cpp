@@ -18,8 +18,6 @@ BoundaryItem2D::~BoundaryItem2D()
 void BoundaryItem2D::clear()
 {
     boundary.setCoords( 0, 0, 0, 0 );
-    image_file.clear();
-    background_image = QImage();
     image_position = QPointF( 0.0f, 0.0f );
 }
 
@@ -31,9 +29,6 @@ void BoundaryItem2D::edit( const qreal& x, const qreal& y, const qreal& width, c
 
     prepareGeometryChange();
     boundary.setRect( x, y, width, height );
-
-//    image_position = QPointF( boundary.bottomLeft().x(), boundary.bottomLeft().y() );
-//    loadBackGroud();
 
 }
 
@@ -52,35 +47,11 @@ void BoundaryItem2D::paint( QPainter *painter , const QStyleOptionGraphicsItem *
     brush.setStyle( Qt::SolidPattern );
 
 
-    if( background_image.isNull() == false )
-    {
-        brush.setTextureImage( background_image  );
-//        painter->setBrushOrigin( image_position.x(), image_position.y() );
-    }
-
     painter->setBrush( brush );
     painter->setPen ( pen_color );
     painter->drawRect( boundary );
 
 
-}
-
-
-void BoundaryItem2D::setBackGroundImage( const QString& url )
-{
-    image_file = url;
-    loadBackGroud();
-}
-
-
-void BoundaryItem2D::loadBackGroud()
-{
-
-    if( image_file.isEmpty() || image_file.isNull() ) return;
-
-    background_image.load( image_file );
-    background_image = background_image.scaled( abs( int ( boundary.width() ) ), abs( int ( boundary.height() ) ) );
-    background_image = background_image.mirrored( false, true );
 }
 
 
@@ -106,7 +77,6 @@ void BoundaryItem2D::update( const Eigen::Affine3f& m )
     int height = ( int )( B.y() - A.y() );
 
     boundary.setRect( A.x(), A.y(), width, height );
-    image_position = QPointF( 0, 0 );
 
 
 }
