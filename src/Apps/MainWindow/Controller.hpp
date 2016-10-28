@@ -46,6 +46,10 @@ class Controller: public QObject
 
         Stratigraphy* getCurrentStratigraphy();
 
+        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
+
+
         bool defineSketchingAbove( std::vector< size_t >& allowed );
         bool defineSketchingBelow( std::vector< size_t >& allowed );
 

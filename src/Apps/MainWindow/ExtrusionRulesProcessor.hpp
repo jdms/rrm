@@ -208,8 +208,8 @@ namespace RRM
             size_t upper_boundary_ = 0;
             bool bounded_below_ = false;
             size_t lower_boundary_ = 0;
-            std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ {};
-            std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ {};
+            std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ = std::vector<ControllerSurfaceIndex>();
+            std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ = std::vector<ControllerSurfaceIndex>();
         };
         StateDescriptor current_;
 
