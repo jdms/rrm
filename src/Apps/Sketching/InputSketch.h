@@ -42,10 +42,6 @@ class InputSketch : public QGraphicsPathItem
 
         void setDone( bool option );
 
-
-        inline bool isValid(){ if( points_list.size() < 5 ) return false; return true; }
-
-
         bool isVisible() const;
         bool isInside() const;
         void isVisible( bool option );
@@ -62,10 +58,9 @@ class InputSketch : public QGraphicsPathItem
     protected:
 
         QPen pen_color;
+        QPainterPathStroker custom_stroker;
 
-        QPolygonF points_list;
         QPainterPath curve;
-
 
         bool done;
         bool is_visible;

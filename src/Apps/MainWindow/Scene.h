@@ -25,9 +25,9 @@
 #include "3dView/Model3DUtils.hpp"
 
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
-
-
 #include "./libs/Arrangement2D/Arrangement_2D.hpp"
+
+
 
 class Scene: public QGraphicsScene
 {
@@ -89,12 +89,6 @@ class Scene: public QGraphicsScene
         void setBackGroundImage( const QString& url );
 
         void disallowCurves( const std::vector< size_t >& curves_id );
-//        void setUnallowedAbove();
-//        void setUnallowedBelow();
-//        void startOperations();
-//        void stopOperations();
-
-
         void setSelectionMode( const bool status );
 
         void defineSketchingAboveRegion();
@@ -145,11 +139,11 @@ class Scene: public QGraphicsScene
 
 
 
-        Eigen::Vector3f scene2DtoPlanin( const Point2D &p );
-        Eigen::Vector3f scene2DtoPlanin( const Eigen::Vector3f& p );
-        Curve2D scene2DtoPlanin( const Curve2D& c );
-        Point2D scenePlaninto2D( const Eigen::Vector3f& p );
-        Curve2D scenePlaninto2D( const Curve2D &c );
+//        Eigen::Vector3f scene2DtoPlanin( const Point2D &p );
+//        Eigen::Vector3f scene2DtoPlanin( const Eigen::Vector3f& p );
+//        Curve2D scene2DtoPlanin( const Curve2D& c );
+//        Point2D scenePlaninto2D( const Eigen::Vector3f& p );
+//        Curve2D scenePlaninto2D( const Curve2D &c );
 
 
 

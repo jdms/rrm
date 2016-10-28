@@ -28,8 +28,9 @@ void Scene::init()
 
 
     if( views().empty() == true ) return;
-    QGraphicsView* view = views()[0];
 
+
+    QGraphicsView* view = views()[0];
 
     int max_value =  std::max( (int)view->width()*0.8f, (int)view->height()*0.8f );
     int min_value =  std::min( (int)view->width()*0.8f, (int)view->height()*0.8f );
@@ -37,6 +38,9 @@ void Scene::init()
     int teste = 200*(max_value/min_value);
     defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ teste );
 
+
+    background_image = new QGraphicsPixmapItem();
+    addItem( background_image );
 
 
     defining_above = false;
@@ -88,23 +92,6 @@ void Scene::updateTransformationsMatrices()
 
     m_3dto2d = m_2dto3d.inverse();
 
-
-
-
-    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
-
-
-
-    Eigen::Vector4f orig_qt = Eigen::Vector4f( qtscene_origin_x, qtscene_origin_y, qtscene_origin_z, 1.0f );
-
-    m_2dtoplanin = Eigen::Affine3f::Identity();
-    m_2dtoplanin.translation() = -Eigen::Vector3f( orig_qt.x(), orig_qt.y(), orig_qt.z() )/L ;
-    m_2dtoplanin.scale( Eigen::Vector3f( 1/L, 1/L, 1/L ) );
-
-
-    m_planinto2d = m_2dtoplanin.inverse();
-
-
 }
 
 
@@ -116,22 +103,16 @@ void Scene::createVolume3D()
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
 
-    Eigen::Vector3f min_pl = Scene::scene2DtoPlanin( min );
-    Eigen::Vector3f max_pl = Scene::scene2DtoPlanin( max );
-    Eigen::Vector3f dim_pl = max_pl - min_pl;
-
-
-
     min = Scene::scene2Dto3D( min );
     max = Scene::scene2Dto3D( max );
     Eigen::Vector3f dim = max - min;
 
 
-
     boundary3D = new BoundingBox3D( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
     boundary3D->setCurrentDirectory( shader_directory.toStdString() );
 
-    controller->initRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
+    controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z());
+
 
     emit initContext();
 
@@ -226,12 +207,6 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     Eigen::Vector3f max( qtscene_origin_x + qtscene_width,  qtscene_origin_y + qtscene_height,  qtscene_origin_z + qtscene_depth );
 
 
-    Eigen::Vector3f min_pl = Scene::scene2DtoPlanin( min );
-    Eigen::Vector3f max_pl = Scene::scene2DtoPlanin( max );
-    Eigen::Vector3f dim_pl = max_pl - min_pl;
-
-
-
     min = Scene::scene2Dto3D( min );
     max = Scene::scene2Dto3D( max );
     Eigen::Vector3f dim = max - min;
@@ -248,8 +223,10 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     setSceneRect( sketching_boundary->boundingRect() );
 
 
-    controller->editRulesProcessor( min_pl.x(), min_pl.y(), min_pl.z(), dim_pl.x(), dim_pl.y(), dim_pl.z() );
+    controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
+    arrangement.setBoundary( sketching_boundary->getOriginX(), sketching_boundary->getOriginY(),
+                             sketching_boundary->getWidth(), sketching_boundary->getHeight() );
 
 }
 
@@ -266,7 +243,7 @@ void Scene::addCurve()
 
 
     size_t number_of_points = c.size();
-    c = Scene::scene2DtoPlanin( c );
+    c = Scene::scene2Dto3D( c );
 
     bool add_ok = controller->addCurve( c );
 
@@ -458,7 +435,7 @@ void Scene::updateScene()
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
         StratigraphicItem* strat = it->second;
-        strat->update( m_planinto2d, d );
+        strat->update( m_3dto2d, d );
 
         curve_map[ strat->getId() ] = strat->getSubCurves2D();
     }
@@ -550,8 +527,6 @@ void Scene::updateColor( const QColor& color )
     if( temp_sketch != NULL )
         temp_sketch->setColor( current_color );
 
-//    if( sketch != NULL )
-//        sketch->setColor( current_color );
 
     random_color = false;
 
@@ -911,75 +886,6 @@ Curve2D Scene::scene3Dto2D( const Curve2D &c )
 
 
 
-Eigen::Vector3f Scene::scene2DtoPlanin( const Point2D &p )
-{
-
-    Eigen::Vector4f p_cpy( p.x(), p.y(), 0.0f, 1.0f );
-
-    p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-}
-
-
-Eigen::Vector3f Scene::scene2DtoPlanin( const Eigen::Vector3f& p )
-{
-    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-    p_cpy = m_2dtoplanin.matrix()*p_cpy;
-    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
-}
-
-
-
-Curve2D Scene::scene2DtoPlanin( const Curve2D& c )
-{
-
-    Curve2D c3d;
-    size_t number_of_points = c.size();
-
-    for( size_t i = 0; i < number_of_points; ++i )
-    {
-        Eigen::Vector3f p = scene2DtoPlanin( c.at( i ) );
-        c3d.add( Point2D( p.x(), p.y() ) );
-    }
-
-    return c3d;
-
-}
-
-
-
-Point2D Scene::scenePlaninto2D( const Eigen::Vector3f& p )
-{
-    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
-
-    p_cpy = m_planinto2d.matrix()*p_cpy;
-    return Point2D( p_cpy.x(), p_cpy.y() );
-
-}
-
-
-
-Curve2D Scene::scenePlaninto2D( const Curve2D &c )
-{
-
-    Curve2D c2d;
-    size_t number_of_points = c.size();
-
-    for( size_t i = 0; i < number_of_points; ++i )
-    {
-        Point2D p = c.at( i );
-        c2d.add( scenePlaninto2D( Eigen::Vector3f( p.x(), p.y(), 0.0f ) ) );
-    }
-
-    return c2d;
-
-}
-
-
-
-
-
 void Scene::savetoRasterImage( const QString& filename )
 {
 
@@ -1048,7 +954,6 @@ void Scene::setBackGroundImage( const QString& url )
     image = image.transformed( myTransform );
 
     editBoundary( image.rect().x(), image.rect().y(), image.rect().width(), image.rect().height() );
-
 
     background_image->setPixmap( image );
 
@@ -1152,11 +1057,20 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     else if( current_mode == InteractionMode::BOUNDARY )
     {
 
-        int w = event->scenePos().x() - boundary_anchor.x();
-        int h = -event->scenePos().y() + boundary_anchor.y();
+        int minx = std::min( boundary_anchor.x(), event->scenePos().x() );
+        int miny = std::min( boundary_anchor.y(), event->scenePos().y() );
+
+        int maxx = std::max( boundary_anchor.x(), event->scenePos().x() );
+        int maxy = std::max( boundary_anchor.y(), event->scenePos().y() );
 
 
-        editBoundary( boundary_anchor.x(), /*height() - */boundary_anchor.y(), w - boundary_anchor.x(), h - boundary_anchor.y() );
+        int w = maxx - minx;
+        int h = maxy - miny;
+
+        std::cout << "Editing boundary: orig( " <<  boundary_anchor.x() << ", "  << boundary_anchor.y() << " ), width = " << w << ", height = " <<  h << "\n" << std::flush;
+
+
+        editBoundary( minx, miny, w, h );
 
         current_mode = InteractionMode::OVERSKETCHING;
 
