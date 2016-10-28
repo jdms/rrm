@@ -255,8 +255,9 @@ namespace RRM
         StateDescriptor last = past_states_.back();
         past_states_.pop_back();
 
-        current_.bounded_above_ = last.bounded_above_;
-        current_.bounded_below_ = last.bounded_below_;
+        /* current_.bounded_above_ = last.bounded_above_; */
+        /* current_.bounded_below_ = last.bounded_below_; */
+        current_ = last; 
         enforceDefineRegion();
 
         undoed_surfaces_stack_.push_back(last_sptr); 
@@ -297,10 +298,19 @@ namespace RRM
         current_ = undoed_states_.back();
         undoed_states_.pop_back();
         enforceDefineRegion();
+        
+        std::vector<size_t> lbounds, ubounds;
+        bool status = parseTruncateSurfaces(lbounds, ubounds); 
 
-        bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>());
+        if ( status == true )
+        {
+            status = commitSurface(undoed_sptr, surface_index, lbounds, ubounds); 
+        }
 
-        current_ = state_before_redo_;
+
+        /* bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>()); */
+
+        /* current_ = state_before_redo_; */
         enforceDefineRegion();
 
         return status;
@@ -466,8 +476,69 @@ namespace RRM
             return false; 
         }
 
-        bool status = true; 
+        /* bool status = true; */ 
+        /* std::vector<size_t> lbounds, ubounds; */
+
+        /* for ( auto &i : lbound_indices ) */ 
+        /* { */
+        /*     size_t j; */
+        /*     status &= getSurfaceIndex(i, j); */
+
+        /*     if ( status ) { */ 
+        /*         lbounds.push_back(j); */ 
+        /*     } */
+        /* } */
+
+        /* for ( auto &i : ubound_indices ) */
+        /* { */
+        /*     size_t j; */
+        /*     status &= getSurfaceIndex(i, j); */
+
+        /*     if ( status ) { */ 
+        /*         ubounds.push_back(j); */ 
+        /*     } */
+        /* } */
+
+        /* if ( status == false ) */
+        /* { */
+        /*     return false; */ 
+        /* } */
+        current_.truncate_lower_boundary_ = lbound_indices; 
+        current_.truncate_upper_boundary_ = ubound_indices; 
+
         std::vector<size_t> lbounds, ubounds;
+        bool status = parseTruncateSurfaces(lbounds, ubounds); 
+        if ( status == false )
+        {
+            return false; 
+        }
+
+        /* Create a surface */
+        PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(true);
+
+        sptr->setOrigin(origin_); 
+        sptr->setLenght(lenght_); 
+        sptr->addPoints(curve); 
+        sptr->generateSurface(); 
+
+        if ( undoed_surfaces_stack_.empty() == false )
+        {
+            undoed_surfaces_stack_.clear();
+            undoed_surfaces_indices_.clear();
+            undoed_states_.clear(); 
+        }
+
+        /* Execute selected Geologic Rule */
+        return commitSurface(sptr, given_index, lbounds, ubounds); 
+    }
+        
+    bool ExtrusionRulesProcessor::parseTruncateSurfaces( std::vector<size_t> &lbounds, std::vector<size_t> &ubounds )
+    {
+        bool status = true; 
+        /* std::vector<size_t> lbounds, ubounds; */
+
+        auto & lbound_indices = current_.truncate_lower_boundary_;
+        auto & ubound_indices = current_.truncate_upper_boundary_; 
 
         for ( auto &i : lbound_indices ) 
         {
@@ -489,29 +560,12 @@ namespace RRM
             }
         }
 
-        if ( status == false )
-        {
-            return false; 
-        }
+        /* if ( status == false ) */
+        /* { */
+        /*     return false; */ 
+        /* } */
 
-
-        /* Create a surface */
-        PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(true);
-
-        sptr->setOrigin(origin_); 
-        sptr->setLenght(lenght_); 
-        sptr->addPoints(curve); 
-        sptr->generateSurface(); 
-
-        if ( undoed_surfaces_stack_.empty() == false )
-        {
-            undoed_surfaces_stack_.clear();
-            undoed_surfaces_indices_.clear();
-            undoed_states_.clear(); 
-        }
-
-        /* Execute selected Geologic Rule */
-        return commitSurface(sptr, given_index, lbounds, ubounds); 
+        return status;
     }
 
     void ExtrusionRulesProcessor::registerState(ControllerSurfaceIndex given_index, ContainerSurfaceIndex index)
@@ -639,8 +693,6 @@ namespace RRM
 
                 for ( size_t i = 0; i < size; ++ i )
                 {
-
-
                     prev_index = sptr->getVertexIndex( (i-1 > 0 ? i-1 : i), 0 ); 
                     index = sptr->getVertexIndex( i, 0 ); 
                     next_index = sptr->getVertexIndex( (i+1 < size ? i+1 : i), 0 ); 
