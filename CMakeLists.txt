@@ -76,6 +76,8 @@ if( OWN_LIBRARIES AND WIN32 )
     find_package( EIGEN3 REQUIRED )
     include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
     add_definitions( -DEIGEN_DONT_ALIGN )
+	
+	find_library( SAMG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SAMG )
 
 
 
