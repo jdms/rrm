@@ -178,19 +178,20 @@ void Scene::addBoundaryToScene()
 
     Boundary* b = controller->getCurrentBoundary();
     boundary3D->setGeoData( b );
-    boundary3D->update();
+//    boundary3D->update();
 
     sketching_boundary = new BoundaryItem2D();
     sketching_boundary->setGeoData( b );
     sketching_boundary->update( m_3dto2d );
+    addItem( sketching_boundary );
+    setSceneRect( sketching_boundary->boundingRect() );
+
 
 
     arrangement.setBoundary( sketching_boundary->getOriginX(), sketching_boundary->getOriginY(),
                              sketching_boundary->getWidth(), sketching_boundary->getHeight() );
 
 
-    addItem( sketching_boundary );
-    setSceneRect( sketching_boundary->boundingRect() );
 
 
 }
@@ -220,6 +221,7 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 
     sketching_boundary->setGeoData( b );
+    sketching_boundary->update( m_3dto2d );
     setSceneRect( sketching_boundary->boundingRect() );
 
 
@@ -425,7 +427,7 @@ void Scene::updateScene()
 {
 
 
-    sketching_boundary->update( m_3dto2d );
+//    sketching_boundary->update( m_3dto2d );
 
     float d = controller->getCurrentCrossSection();
 
