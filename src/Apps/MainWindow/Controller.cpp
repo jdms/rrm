@@ -192,7 +192,7 @@ bool Controller::interpolateStratigraphy( const std::vector< size_t >& lower_bou
 }
 
 
-size_t Controller::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+size_t Controller::sendLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
     return rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 }

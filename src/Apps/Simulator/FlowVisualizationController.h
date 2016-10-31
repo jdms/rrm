@@ -32,6 +32,8 @@ class FlowVisualizationController: public QWidget
 
 
         void readSkeletonFiles( const std::string& filename );
+        void setSkeletonData( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
         void buildSurfaceSkeleton( std::vector< double >& positions, std::vector< unsigned int >& faces );
 
         void readInputParameters( const std::string& input_file );

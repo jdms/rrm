@@ -424,7 +424,6 @@ void FlowWindow::getCurrentDirectory()
 #endif
 
     canvas->setCurrentDirectory( current_dir.toStdString() );
-//    help.setCurrentDirectory( current_dir.toStdString() );
 
 
 }
@@ -437,7 +436,15 @@ void FlowWindow::loadSurfacesfromSketch()
     controller->clear();
     canvas->clear();
 
-    emit getCrossSection();
+    std::vector< size_t > nu;
+    std::vector< size_t > nv;
+    std::vector< double > points;
+    size_t num_extrusion_steps = 1;
+
+
+    emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+    controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
+    canvas->updateMesh();
 
 }
 
@@ -468,15 +475,6 @@ void FlowWindow::loadSurfacesfromFile()
         canvas->updateMesh();
 
     }
-
-}
-
-
-
-void FlowWindow::setCrossSection( /*const RRM::CrossSection<qreal>& c*/ ){
-
-//    controller->getSurfacesFromCrossSection( c );
-//    canvas->updateMesh();
 
 }
 
