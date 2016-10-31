@@ -702,7 +702,7 @@ namespace RRM
 
                 for ( size_t i = 0; i < size; ++ i )
                 {
-                    prev_index = sptr->getVertexIndex( (i-1 > 0 ? i-1 : i), 0 ); 
+                    prev_index = sptr->getVertexIndex( (static_cast<long int>(i)-1 > 0 ? i-1 : i), 0 );
                     index = sptr->getVertexIndex( i, 0 ); 
                     next_index = sptr->getVertexIndex( (i+1 < size ? i+1 : i), 0 ); 
 
