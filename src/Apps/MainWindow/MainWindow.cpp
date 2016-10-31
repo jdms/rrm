@@ -37,6 +37,7 @@ void MainWindow::createWindow()
 
     createSketchingModule();
     create3DViewModule();
+    createFlowDiagnosticsModule();
 
     aboutRRM = new AboutWidget( this );
 
@@ -50,6 +51,8 @@ void MainWindow::createActions()
     createMainWindowActions();
     createSketchingActions();
     create3DWindowActions();
+
+    createFlowDiagnosticsActions();
 
 }
 
@@ -188,6 +191,28 @@ void MainWindow::create3DWindowActions()
 
 
 }
+
+
+void MainWindow::createFlowDiagnosticsModule()
+{
+    dw_flowdiagnostics = new QDockWidget();
+    dw_flowdiagnostics->setWindowTitle( "Flow Diagnostics Window" );
+
+    flow_window = new FlowWindow ( this );
+    dw_flowdiagnostics->setWidget( flow_window );
+
+    dw_flowdiagnostics->setAllowedAreas( Qt::AllDockWidgetAreas );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_flowdiagnostics );
+}
+
+
+
+void MainWindow::createFlowDiagnosticsActions()
+{
+
+    connect( flow_window, &FlowWindow::getLegacyMeshes, controller, &Controller::sendLegacyMeshes );
+}
+
 
 
 

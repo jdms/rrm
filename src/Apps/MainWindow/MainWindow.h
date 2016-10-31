@@ -36,9 +36,13 @@
 
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
+#include "Simulator/FlowWindow.h"
+
 
 #include "HelpDialog.h"
 #include "Controller.hpp"
+
+
 
 
 /**
@@ -72,6 +76,10 @@ class MainWindow : public QMainWindow
         void createSketchingModule();
         void createSketchingMenuBar();
         void createSketchingActions();
+
+        void createFlowDiagnosticsModule();
+        void createFlowDiagnosticsActions();
+
 
 
 
@@ -116,6 +124,14 @@ class MainWindow : public QMainWindow
         // 3D View Module
         QDockWidget* dw_3dview;
         View3DWindow *view3d_window;
+
+
+        //Flow Diagostics Module
+
+        QDockWidget* dw_flowdiagnostics;
+        FlowWindow *flow_window;
+
+
 
 
         HelpDialog help;

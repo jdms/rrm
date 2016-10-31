@@ -17,7 +17,6 @@
 #include "ColorBar.h"
 #include "PoreVolumeResultsForm.h"
 
-//#include "Model/CrossSection.hpp"
 
 class FlowWindow : public  QMainWindow
 {
@@ -35,9 +34,7 @@ class FlowWindow : public  QMainWindow
         void getCurrentDirectory();
 
 
-        void setCrossSection( /*const RRM::CrossSection<qreal>& c */);
         void keyPressEvent( QKeyEvent *event );
-
         void resizeEvent(QResizeEvent *event);
 
 
@@ -57,10 +54,6 @@ class FlowWindow : public  QMainWindow
         void startProgressBar( const unsigned int& min, const unsigned int& max );
         void updateProgressBar( const unsigned int& value );
 
-//        void exportSurfaceFile();
-//        void exportVolumeFile();
-//        void exportCornerPointFile( const std::string format );
-//        void exportResultstoFile();
 
         void addVertexProperty( std::string name, std::string dimension );
         void addFaceProperty( std::string name, std::string dimension );
@@ -73,12 +66,11 @@ class FlowWindow : public  QMainWindow
         void acceptUserParameters();
         void clear();
 
-//        void computeFlowProperties();
 
     signals:
 
         void getSurfaceCrossSection();
-		void getCrossSection();
+        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
     private:
 
