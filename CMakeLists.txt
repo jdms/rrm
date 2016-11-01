@@ -62,7 +62,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
 
-option( x64 "Compiling 64bits" ON )
+option( x64 "Compiling 64bits" OFF )
 if( x64 )
         set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64 )
         set( QT_DIR "C:/Qt/5.6/msvc2013_64" )
