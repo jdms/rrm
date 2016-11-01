@@ -3,6 +3,20 @@
 
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
+    init();
+}
+
+
+MainWindow::~MainWindow()
+{
+
+}
+
+
+
+void MainWindow::init()
+{
+
     setFocusPolicy( Qt::StrongFocus );
     setFocus();
     setAcceptDrops( true );
@@ -16,15 +30,7 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 
     scene_initialized = false;
 
-
 }
-
-
-MainWindow::~MainWindow()
-{
-
-}
-
 
 
 void MainWindow::createWindow()
@@ -43,8 +49,6 @@ void MainWindow::createWindow()
 }
 
 
-
-
 void MainWindow::createActions()
 {
     createMainWindowActions();
@@ -52,6 +56,7 @@ void MainWindow::createActions()
     create3DWindowActions();
 
 }
+
 
 
 void MainWindow::createMainWindowActions ( )
@@ -67,6 +72,7 @@ void MainWindow::createMainWindowActions ( )
     connect( ac_about, SIGNAL( triggered() ) , aboutRRM, SLOT( show() ) );
     connect( ac_contents, SIGNAL( triggered() ) , &help, SLOT( show() ) );
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );
+
 }
 
 
@@ -87,6 +93,7 @@ void MainWindow::createMenuBar()
     create3DWindowMenuBar();
 
 }
+
 
 
 
@@ -153,6 +160,8 @@ void MainWindow::createSketchingActions()
 
 
 
+
+
 void MainWindow::create3DViewModule()
 {
     dw_3dview = new QDockWidget();
@@ -183,7 +192,7 @@ void MainWindow::create3DWindowActions()
     connect ( ac_3dview , SIGNAL( toggled( bool ) ) , dw_3dview , SLOT( setVisible( bool ) ) );
 
     connect( dw_3dview, &QDockWidget::visibilityChanged, ac_3dview, &QAction::setChecked );
-    connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initProgram() ) );
+    connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
 
 
 
@@ -191,7 +200,9 @@ void MainWindow::create3DWindowActions()
 
 
 
-void MainWindow::initProgram()
+
+
+void MainWindow::initScene()
 {
 
     if( scene_initialized == true ) return;

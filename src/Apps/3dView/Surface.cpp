@@ -141,8 +141,8 @@ void Surface::loadBuffers()
 	
     std::vector< float >& vertices = strat->getSurfaceVertices();
     std::vector< float > normals;
-    std::vector< unsigned int > wireframes;// = strat->getSurfaceEdges();
-    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
+    std::vector< size_t > wireframes;// = strat->getSurfaceEdges();
+    std::vector< size_t >& faces = strat->getSurfaceFaces();
 
 
     if( vertices.empty() == true )
@@ -228,8 +228,8 @@ void Surface::loadBuffers( const std::vector< float >& vertices )
 
 
     std::vector< float > normals;
-    std::vector< unsigned int > wireframes;  // = strat->getSurfaceEdges();
-    std::vector< unsigned int >& faces = strat->getSurfaceFaces();
+    std::vector< size_t > wireframes;  // = strat->getSurfaceEdges();
+    std::vector< size_t >& faces = strat->getSurfaceFaces();
 
 
     number_of_vertices = vertices.size()/3;

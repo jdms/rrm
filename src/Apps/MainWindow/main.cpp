@@ -8,7 +8,7 @@
 
 
 
-unsigned int Stratigraphy::number_of_stratigraphies = 0;
+size_t Stratigraphy::number_of_stratigraphies = 0;
 
 int main( int argc, char *argv[] )
 {

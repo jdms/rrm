@@ -52,7 +52,7 @@ QRectF InputSketch::boundingRect ( ) const
 
 void InputSketch::create ( const QPointF &p )
 {
-    prepareGeometryChange ( );
+    prepareGeometryChange( );
 
     curve.moveTo( p );
 }
@@ -60,6 +60,7 @@ void InputSketch::create ( const QPointF &p )
 
 void InputSketch::add ( const QPointF &p )
 {
+
     prepareGeometryChange ( );
     curve.lineTo( p );
 }
@@ -132,9 +133,10 @@ QPolygonF InputSketch::getSketch ( ) const
 void InputSketch::process( const QPointF& p )
 {
 
-//    std::cout << "\nEntrei em process" << std::endl;
 
     QList< QPolygonF > subpaths = curve.toSubpathPolygons();
+
+
     if( subpaths.size() < 2 ) return;
 
 

@@ -53,6 +53,18 @@ class InputSketch : public QGraphicsPathItem
         void setColor( const QColor& _color);
         QColor getColor() const;
 
+        inline bool isEmpty()
+        {
+            if( curve.toSubpathPolygons().empty() == true )
+                return true;
+
+            QList< QPolygonF > subcurves = curve.toSubpathPolygons();
+            if ( subcurves[ 0 ].isEmpty() == true ) return true;
+            if ( subcurves[ 0 ].size() < 5 ) return true;
+
+            return false;
+        }
+
 
 
     protected:
