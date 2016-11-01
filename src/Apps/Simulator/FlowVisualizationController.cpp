@@ -166,7 +166,7 @@ void FlowVisualizationController::computeFlowProperties()
 
 
     code_interface.init();
-    code_interface.flowdiagnostics();
+    code_interface.computeProperties();
 
     emit clearPropertiesMenu();
 
@@ -345,11 +345,11 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         }
         else if( name_of_property.compare( "Backward Tracer" ) == 0 )
         {
-            code_interface.geBackwardTracer( values );
+            code_interface.getCPGMaxBackwardTracer( values );
         }
         else if( name_of_property.compare( "Tracer" ) == 0 )
         {
-            code_interface.getTracer( values );
+            code_interface.getCPGMaxForwardTracer( values );
         }
 
     }

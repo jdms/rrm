@@ -552,7 +552,7 @@ void FlowWindow::buildCornerPoint()
 
     controller->generateCornerPoint();
     canvas->updateCornerPoint();
-    qcomputeFlowProperties->setEnabled( false );
+
 }
 
 
@@ -561,7 +561,6 @@ void FlowWindow::buildUnstructured()
 
    controller->generateUnstructured();
    canvas->updateVolumetricMesh();
-   qcomputeFlowProperties->setEnabled( true );
 }
 
 
