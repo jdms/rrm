@@ -142,7 +142,10 @@ void Surface::loadBuffers()
     std::vector< float >& vertices = strat->getSurfaceVertices();
     std::vector< float > normals;
     std::vector< size_t > wireframes;// = strat->getSurfaceEdges();
-    std::vector< size_t >& faces = strat->getSurfaceFaces();
+    std::vector< size_t >& faces_size_t = strat->getSurfaceFaces();
+
+    std::vector< unsigned int > faces;
+    faces.assign( faces_size_t.begin(), faces_size_t.end() );
 
 
     if( vertices.empty() == true )
