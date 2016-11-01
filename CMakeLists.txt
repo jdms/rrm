@@ -1,14 +1,22 @@
+#####################################################################
+# Preliminaries
+#####################################################################
+
 cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
 
 project( RRM )
 
 
-#####################################################################
-# Options
-#####################################################################
 
-set( CMAKE_BUILD_TYPE DEBUG )
-OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
+
+######################################################################
+## Options
+######################################################################
+
+set( CMAKE_BUILD_TYPE Release )
+option( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
+
+
 
 
 #####################################################################
@@ -16,19 +24,21 @@ OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 # VS2013 (revision 5+) ).
 #####################################################################
 
-IF( WIN32 )
+if( WIN32 )
 
     if( MSVC )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-    endif()
+    endif( MSVC )
 
-ELSEIF( UNIX )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+elseif( UNIX )
 
-ELSE()
-  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-ENDIF()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
 
+else()
+
+    message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
+
+endif( WIN32 )
 
 
 ###############################################
@@ -36,7 +46,6 @@ ENDIF()
 ###############################################
 
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
@@ -53,61 +62,69 @@ include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
 
-OPTION( OWN_LIBRARIES "Use predefined libraries directories" ON )
+option( x64 "Compiling 64bits" ON )
+if( x64 )
+        set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64 )
+        set( QT_DIR "C:/Qt/5.6/msvc2013_64" )
+else()
+        set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32 )
+        set( QT_DIR "C:/Qt/5.6/msvc2013" )
 
-if( OWN_LIBRARIES AND WIN32 )
-
-    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
-    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-    include_directories( SYSTEM ${Qt5_DIR} )
-    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+endif( x64 )
 
 
-    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
-    find_package( GLEW REQUIRED )
-    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+option( RRM_PKG_LIBRARIES "Use predefined libraries directories" ON )
+if( RRM_PKG_LIBRARIES )
+
+        if( WIN32 )
+
+                set( Qt5_DIR ${QT_DIR}/lib/cmake/Qt5 )
+                find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+                include_directories( SYSTEM ${Qt5_DIR} )
+                include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+                include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+                include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+                include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 
 
-    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-    find_package( EIGEN3 REQUIRED )
-    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-    add_definitions( -DEIGEN_DONT_ALIGN )
+                set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
+                set( GLEW_LIBRARY ${GLEW_DIR}/glew32.lib )
+                find_package( GLEW REQUIRED )
+                include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
 
-
-elseif( OWN_LIBRARIES AND UNIX )
-
-
-    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-    find_package( Eigen3 REQUIRED )
-    if( EIGEN3_FOUND )
-        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-        add_definitions( -DEIGEN_DONT_ALIGN )
-    endif( EIGEN3_FOUND )
-
-    find_package( GLEW REQUIRED )
-    if( GLEW_FOUND )
-        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-    endif( GLEW_FOUND )
+                set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+                find_package( EIGEN3 REQUIRED )
+                include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+                add_definitions( -DEIGEN_DONT_ALIGN )
 
 
-    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-    if( Qt5COMPONENTS_FOUND )
-        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-    endif( Qt5COMPONENTS_FOUND )
+        elseif( UNIX )
+
+                set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+                find_package( Eigen3 REQUIRED )
+                if( EIGEN3_FOUND )
+                        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+                        add_definitions( -DEIGEN_DONT_ALIGN )
+                endif( EIGEN3_FOUND )
+
+                find_package( GLEW REQUIRED )
+                if( GLEW_FOUND )
+                        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+                endif( GLEW_FOUND )
 
 
+                find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+                if( Qt5COMPONENTS_FOUND )
+                        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+                        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+                        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+                        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+                endif( Qt5COMPONENTS_FOUND )
 
+                endif( WIN32 )
 
-else( OWN_LIBRARIES )
-
+else()
 
     find_package( Eigen3 REQUIRED )
     if( Eigen3_FOUND )
@@ -130,19 +147,13 @@ else( OWN_LIBRARIES )
     endif( Qt5COMPONENTS_FOUND )
 
 
-endif( OWN_LIBRARIES AND WIN32 )
-
-
-
+endif( RRM_PKG_LIBRARIES )
 
 
 find_package( OpenGL REQUIRED )
 if( OpenGL_FOUND )
     include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 endif( OpenGL_FOUND )
-
-
-
 
 
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
@@ -159,25 +170,19 @@ add_subdirectory( src )
 
 
 
-######################################################################
-## Preliminaries
-######################################################################
+
 
 #cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
 
 #project( RRM )
 
 
+######################################################################
+## Options
+######################################################################
 
-
-#######################################################################
-### Options
-#######################################################################
-
-#set( CMAKE_BUILD_TYPE Release )
-#option( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
-
-
+#set( CMAKE_BUILD_TYPE DEBUG )
+#OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 
 ######################################################################
@@ -185,21 +190,19 @@ add_subdirectory( src )
 ## VS2013 (revision 5+) ).
 ######################################################################
 
-#if( WIN32 )
+#IF( WIN32 )
 
 #    if( MSVC )
 #        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-#    endif( MSVC )
+#    endif()
 
-#elseif( UNIX )
+#ELSEIF( UNIX )
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
 
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+#ELSE()
+#  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
+#ENDIF()
 
-#else()
-
-#    message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-
-#endif( WIN32 )
 
 
 ################################################
@@ -207,6 +210,7 @@ add_subdirectory( src )
 ################################################
 
 #set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+
 
 #set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
 #set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
@@ -223,74 +227,66 @@ add_subdirectory( src )
 #include_directories( "./" )
 
 
-#option( x64 "Compiling 64bits" OFF )
-#if( x64 )
-#        set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64 )
-#        set( QT_DIR "C:/Qt/5.6/msvc2013_64" )
-#else()
-#        set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32 )
-#        set( QT_DIR "C:/Qt/5.6/msvc2013" )
+#OPTION( OWN_LIBRARIES "Use predefined libraries directories" ON )
 
-#endif( x64 )
+#if( OWN_LIBRARIES AND WIN32 )
 
-
-#option( RRM_PKG_LIBRARIES "Use predefined libraries directories" ON )
-#if( RRM_PKG_LIBRARIES )
-
-#        if( WIN32 )
-
-#                set( Qt5_DIR ${QT_DIR}/lib/cmake/Qt5 )
-#                find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#                include_directories( SYSTEM ${Qt5_DIR} )
-#                include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#                include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#                include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#                include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+#    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
+#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+#    include_directories( SYSTEM ${Qt5_DIR} )
+#    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+#    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 
 
-#                set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-#                set( GLEW_LIBRARY ${GLEW_DIR}/glew32.lib )
-#                find_package( GLEW REQUIRED )
-#                include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+#    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
+#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
+#    find_package( GLEW REQUIRED )
+#    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
 
-#                set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-#                find_package( EIGEN3 REQUIRED )
-#                include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-#                add_definitions( -DEIGEN_DONT_ALIGN )
+#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+#    find_package( EIGEN3 REQUIRED )
+#    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+#    add_definitions( -DEIGEN_DONT_ALIGN )
 
 
-#        elseif( UNIX )
 
-#                set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-#                find_package( Eigen3 REQUIRED )
-#                if( EIGEN3_FOUND )
-#                        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-#                        add_definitions( -DEIGEN_DONT_ALIGN )
-#                endif( EIGEN3_FOUND )
-
-#                find_package( GLEW REQUIRED )
-#                if( GLEW_FOUND )
-#                        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-#                endif( GLEW_FOUND )
+#elseif( OWN_LIBRARIES AND UNIX )
 
 
-#                find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#                if( Qt5COMPONENTS_FOUND )
-#                        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#                        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#                        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#                        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-#                endif( Qt5COMPONENTS_FOUND )
+#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+#    find_package( Eigen3 REQUIRED )
+#    if( EIGEN3_FOUND )
+#        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+#        add_definitions( -DEIGEN_DONT_ALIGN )
+#    endif( EIGEN3_FOUND )
 
-#		endif( WIN32 )
+#    find_package( GLEW REQUIRED )
+#    if( GLEW_FOUND )
+#        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
+#    endif( GLEW_FOUND )
 
-#else()
+
+#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
+#    if( Qt5COMPONENTS_FOUND )
+#        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+#        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+#    endif( Qt5COMPONENTS_FOUND )
+
+
+
+
+#else( OWN_LIBRARIES )
+
 
 #    find_package( Eigen3 REQUIRED )
 #    if( Eigen3_FOUND )
 #        include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
-#        #add_definitions( -DEIGEN_DONT_ALIGN )
+#        add_definitions( -DEIGEN_DONT_ALIGN )
 #    endif( Eigen3_FOUND )
 
 #    find_package( GLEW REQUIRED )
@@ -308,13 +304,19 @@ add_subdirectory( src )
 #    endif( Qt5COMPONENTS_FOUND )
 
 
-#endif( RRM_PKG_LIBRARIES )
+#endif( OWN_LIBRARIES AND WIN32 )
+
+
+
 
 
 #find_package( OpenGL REQUIRED )
 #if( OpenGL_FOUND )
 #    include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 #endif( OpenGL_FOUND )
+
+
+
 
 
 #add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
@@ -328,10 +330,6 @@ add_subdirectory( src )
 ################################################
 
 #add_subdirectory( src )
-
-
-
-
 
 
 
