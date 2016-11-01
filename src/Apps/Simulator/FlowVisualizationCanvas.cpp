@@ -483,6 +483,7 @@ void FlowVisualizationCanvas::disableCrossSection( bool status )
 
 }
 
+
 void FlowVisualizationCanvas::setCurrentColormap( const ColorMap::COLORMAP& cm )
 {
     current_colormap = cm;
@@ -494,10 +495,19 @@ void FlowVisualizationCanvas::updateMesh()
 {
 
 
-    std::vector< float > vertices;
+    std::vector< double > vertices_double;
     std::vector< unsigned int > faces;
 
-    controller->updateSurfaces( vertices, faces );
+    controller->buildSurfaceSkeleton( vertices_double, faces );
+
+    std::vector< float > vertices;
+    vertices.assign( vertices_double.begin(), vertices_double.end() );
+
+    mesh.setMeshType( Mesh::TYPE::QUADRILATERAL );
+    mesh.setVertices( vertices );
+    mesh.setFaces( faces );
+    mesh.buildBoundingBox();
+
 
     mesh.showVertices( rendering_menu->showVertices() );
     mesh.showEdges( rendering_menu->showEdges() );
@@ -510,6 +520,8 @@ void FlowVisualizationCanvas::updateMesh()
         setConstantColor();
     else
         setColorMap();
+
+    update();
 
 }
 
@@ -519,11 +531,22 @@ void FlowVisualizationCanvas::updateCornerPoint()
 {
 
 
-    std::vector< float > vertices;
+    std::vector< float > vertices_double;
     std::vector< unsigned int > edges;
     std::vector< unsigned int > faces ;
 
-    controller->updateCornerPoint( vertices, edges, faces );
+    controller->updateCornerPoint( vertices_double, edges, faces );
+
+
+    std::vector< float > vertices;
+    vertices.assign( vertices_double.begin(), vertices_double.end() );
+
+    mesh.setMeshType( Mesh::TYPE::QUADRILATERAL );
+    mesh.setVertices( vertices );
+    mesh.setWireframe( edges );
+    mesh.setFaces( faces );
+    mesh.buildBoundingBox();
+
 
     mesh.showVertices( rendering_menu->showVertices() );
     mesh.showEdges( rendering_menu->showEdges() );
@@ -537,6 +560,8 @@ void FlowVisualizationCanvas::updateCornerPoint()
         setConstantColor();
     else
         setColorMap();
+
+    update();
 
 }
 
@@ -546,13 +571,18 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
 {
 
 
-
     std::vector< float > vertices;
     std::vector< unsigned int > edges;
     std::vector< unsigned int > faces ;
 
 
     controller->updateVolumetricMesh( vertices, edges, faces );
+
+    mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
+    mesh.setVertices( vertices );
+    mesh.setWireframe( edges );
+    mesh.setFaces( faces );
+    mesh.buildBoundingBox();
 
 
     mesh.showVertices( rendering_menu->showVertices() );
@@ -566,6 +596,9 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
         setConstantColor();
     else
         setColorMap();
+
+
+    update();
 
 
 }
