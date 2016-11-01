@@ -221,7 +221,7 @@ bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
     if( selections.empty() == true ) return false;
 
-    std::cout << "-- Started sketch above... " << std::endl;
+//    std::cout << "-- Started sketch above... " << std::endl;
     return rules_processor.defineAbove( selections[ 0 ] );
 
 }
@@ -232,7 +232,7 @@ bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 
     if( selections.empty() == true ) return false;
 
-    std::cout << "-- Started sketch below... " << std::endl;
+//    std::cout << "-- Started sketch below... " << std::endl;
     return rules_processor.defineBelow( selections[ 0 ] );
 
 
@@ -241,7 +241,7 @@ bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 
 bool Controller::stopSketchingAbove()
 {
-    std::cout << "-- Stopped sketch above... " << std::endl;
+//    std::cout << "-- Stopped sketch above... " << std::endl;
     rules_processor.stopDefineAbove();
     return true;
 
@@ -251,7 +251,7 @@ bool Controller::stopSketchingAbove()
 bool Controller::stopSketchingBelow()
 {
 
-    std::cout << "-- Stopped sketch below... " << std::endl;
+//    std::cout << "-- Stopped sketch below... " << std::endl;
 
     rules_processor.stopDefineBelow();
 

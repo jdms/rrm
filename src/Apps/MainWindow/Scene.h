@@ -13,6 +13,7 @@
 
 
 
+
 #include "MainWindow/Controller.hpp"
 
 #include "Sketching/StratigraphicItem.hpp"
@@ -115,6 +116,8 @@ class Scene: public QGraphicsScene
     protected:
 
 
+        void initData();
+
         void createVolume3D();
         void editBoundary( const int& x, const int& y, const int& w, const int& h );
 
@@ -137,17 +140,6 @@ class Scene: public QGraphicsScene
         Curve2D scene3Dto2D( const Curve2D& c );
 
 
-
-
-//        Eigen::Vector3f scene2DtoPlanin( const Point2D &p );
-//        Eigen::Vector3f scene2DtoPlanin( const Eigen::Vector3f& p );
-//        Curve2D scene2DtoPlanin( const Curve2D& c );
-//        Point2D scenePlaninto2D( const Eigen::Vector3f& p );
-//        Curve2D scenePlaninto2D( const Curve2D &c );
-
-
-
-
         void mousePressEvent( QGraphicsSceneMouseEvent* event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
@@ -166,7 +158,6 @@ class Scene: public QGraphicsScene
         Controller *controller;
 
         InputSketch *temp_sketch;
-        StratigraphicItem *sketch;
 
         BoundaryItem2D *sketching_boundary;
         BoundingBox3D *boundary3D;
@@ -177,8 +168,6 @@ class Scene: public QGraphicsScene
 
         Eigen::Affine3f m_2dto3d;
         Eigen::Affine3f m_3dto2d;
-        Eigen::Affine3f m_2dtoplanin;
-        Eigen::Affine3f m_planinto2d;
 
 
         int qtscene_origin_x;
@@ -205,7 +194,6 @@ class Scene: public QGraphicsScene
         std::map< size_t, Surface* > surfaces_list;
 
         QString shader_directory;
-
 
         RRM::Arrangement_2D arrangement;
         QGraphicsPixmapItem *background_image;

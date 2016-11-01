@@ -171,7 +171,7 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
     curve = QPainterPath();
 
 
-    std::vector< unsigned int >& edges = strat->getCurveEdges();
+    std::vector< size_t >& edges = strat->getCurveEdges();
 
     unsigned int id0 =0;
     unsigned int id1 =0;

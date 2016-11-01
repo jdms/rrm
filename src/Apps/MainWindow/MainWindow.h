@@ -60,6 +60,9 @@ class MainWindow : public QMainWindow
 
     protected:
 
+
+        void init();
+
         void createWindow();
         void createActions();
         void createMenuBar();
@@ -82,16 +85,19 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-        void initProgram();
+        void initScene();
 
 
     protected:
 
 
+        bool scene_initialized;
+
         Scene* scene;
         Controller* controller;
 
-        bool scene_initialized;
+        HelpDialog help;
+        AboutWidget * aboutRRM;
 
 
 
@@ -116,12 +122,6 @@ class MainWindow : public QMainWindow
         // 3D View Module
         QDockWidget* dw_3dview;
         View3DWindow *view3d_window;
-
-
-        HelpDialog help;
-        AboutWidget * aboutRRM;
-
-
 
 
 
