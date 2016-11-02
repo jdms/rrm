@@ -172,7 +172,7 @@ namespace RRM
 
     void ExtrusionRulesProcessor::stopDefineAbove()
     {
-        current_.bounded_above_ = false;
+        current_.bounded_below_ = false;
         container_.stopDefineAbove(); 
     }
 
@@ -184,6 +184,11 @@ namespace RRM
     bool ExtrusionRulesProcessor::defineBelowIsActive()
     {
         return current_.upper_boundary_;
+    }
+
+    ExtrusionRulesProcessor::State ExtrusionRulesProcessor::currentGelogicRule()
+    {
+        return current_.state_;
     }
 
     bool ExtrusionRulesProcessor::defineBelow( size_t surface_index )
@@ -212,7 +217,7 @@ namespace RRM
 
     void ExtrusionRulesProcessor::stopDefineBelow()
     {
-        current_.bounded_below_ = false;
+        current_.bounded_above_ = false;
         container_.stopDefineBelow(); 
     }
 
@@ -264,9 +269,9 @@ namespace RRM
         StateDescriptor last = past_states_.back();
         past_states_.pop_back();
 
-        /* current_.bounded_above_ = last.bounded_above_; */
-        /* current_.bounded_below_ = last.bounded_below_; */
-        current_ = last; 
+        current_.bounded_above_ = last.bounded_above_;
+        current_.bounded_below_ = last.bounded_below_;
+        /* current_ = last; */ 
         enforceDefineRegion();
 
         undoed_surfaces_stack_.push_back(last_sptr); 
@@ -319,7 +324,7 @@ namespace RRM
 
         /* bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>()); */
 
-        /* current_ = state_before_redo_; */
+        current_ = state_before_redo_;
         enforceDefineRegion();
 
         return status;
@@ -389,7 +394,11 @@ namespace RRM
                 if ( defineBelowIsActive() )
                 {
                     ContainerSurfaceIndex boundary_index; 
-                    getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index); 
+
+                    if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    {
+                        continue;
+                    }
 
                     if ( container_[index]->weakLiesBelowOrEqualsCheck(container_[boundary_index]) )
                     {
@@ -429,7 +438,11 @@ namespace RRM
                 if ( defineAboveIsActive() )
                 {
                     ContainerSurfaceIndex boundary_index; 
-                    getSurfaceIndex(inserted_surfaces_indices_[current_.lower_boundary_], boundary_index); 
+
+                    if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    {
+                        continue;
+                    }
 
                     if ( container_[index]->weakLiesAboveOrEqualsCheck(container_[boundary_index]) )
                     {

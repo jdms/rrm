@@ -115,6 +115,8 @@ namespace RRM
         bool defineAboveIsActive(); 
         bool defineBelowIsActive();
 
+        State currentGelogicRule();
+
         void removeAbove();
         void removeAboveIntersection();
 
