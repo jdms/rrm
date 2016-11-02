@@ -40,8 +40,8 @@ class Interpolant2D
         Interpolant2D( const Interpolant2D & ) = default; 
         Interpolant2D& operator=( const Interpolant2D & ) = default;
 
-        Interpolant2D( Interpolant2D && ) = default; 
-        Interpolant2D& operator=( Interpolant2D && ) = default; 
+  //      Interpolant2D( Interpolant2D && ) = default; 
+    //    Interpolant2D& operator=( Interpolant2D && ) = default; 
 
         double operator()( double x, double y ); 
         double operator()( Point2 &p ); 

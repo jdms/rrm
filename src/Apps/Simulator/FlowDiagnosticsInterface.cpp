@@ -527,19 +527,19 @@ void FlowDiagnosticsInterface::getCPGVolumeCells( std::vector< unsigned int >& c
 
 
 void FlowDiagnosticsInterface::exportSurfacetoVTK( const std::string& filename ){
-    region.writesurfacemeshVTK(filename.c_str());
+	region.writesurfacemeshVTK(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportCornerPointtoVTK( const std::string& filename ){
-    region.writecornerpointgridVTK(filename.c_str());
+	region.writecornerpointgridVTK(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportCornerPointtoGRDECL( const std::string& filename ){
-    region.writecornerpointgridGRDECL((char*)filename.c_str());
+	region.writecornerpointgridGRDECL(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportResultstoVTK( const std::string& filename ){
-    region.writeresult((char*)filename.c_str());
+	region.writeresult(const_cast<char *>(filename.c_str()));
 }
 
 
