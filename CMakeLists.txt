@@ -8,12 +8,11 @@ project( RRM )
 
 
 
-
 ######################################################################
 ## Options
 ######################################################################
 
-set( CMAKE_BUILD_TYPE Release )
+set( CMAKE_BUILD_TYPE Debug )
 option( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 
@@ -62,7 +61,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
 
-option( x64 "Compiling 64bits" OFF )
+option( x64 "Compiling 64bits" ON )
 if( x64 )
         set( GLEW_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64 )
         set( QT_DIR "C:/Qt/5.6/msvc2013_64" )

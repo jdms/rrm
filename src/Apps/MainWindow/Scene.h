@@ -10,6 +10,8 @@
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QSvgGenerator>
+#include <QRegion>
+#include <QTransform>
 
 
 
@@ -66,7 +68,7 @@ class Scene: public QGraphicsScene
 
         void createCrossSection( const float& d = 0.0f );
         void createSketchingBoundary();
-        void addCurve();
+        bool addCurve();
 
 
         void updateColor( const QColor& color );
@@ -197,6 +199,8 @@ class Scene: public QGraphicsScene
 
         RRM::Arrangement_2D arrangement;
         QGraphicsPixmapItem *background_image;
+
+        QTransform mA;
 	
 };
 

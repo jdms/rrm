@@ -154,6 +154,11 @@ void MainWindow::createSketchingActions()
     connect( controller, SIGNAL( enableUndo( bool ) ) , sketching_window, SLOT( enableUndo( bool ) ) );
     connect( controller, SIGNAL( enableRedo( bool ) ) , sketching_window, SLOT( enableRedo( bool ) ) );
 
+    connect( controller, SIGNAL( changeStratigraphyRulesStatus( const std::string& ) ) , sketching_window, SLOT( changeStratigraphyRulesStatus(const std::string& ) ) );
+    connect( controller, SIGNAL( changeDefineRegionStatus( const bool, const bool ) ) , sketching_window, SLOT( changeDefineRegionStatus( const bool, const bool ) ) );
+
+
+
     connect( scene, &Scene::enableSketching, sketching_window, &SketchingWindow::enableSketching );
 
 }
@@ -193,6 +198,7 @@ void MainWindow::create3DWindowActions()
 
     connect( dw_3dview, &QDockWidget::visibilityChanged, ac_3dview, &QAction::setChecked );
     connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
+    connect( view3d_window, SIGNAL( changeResolution( const int, const int ) ), controller, SLOT( changeResolution( const int, const int ) ) );
 
 
 

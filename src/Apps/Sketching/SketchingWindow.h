@@ -68,6 +68,10 @@ class SketchingWindow : public QMainWindow
         inline void enableRedo( bool option ){ ac_redo->setEnabled( option ); }
         inline void enableSketching( bool option ){ ac_sketch->setChecked( option ); }
 
+        void changeDefineRegionStatus( const bool above, const bool below );
+        void changeStratigraphyRulesStatus( const std::string& rule );
+
+
 
 
     signals:
