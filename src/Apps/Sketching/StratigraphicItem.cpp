@@ -25,11 +25,12 @@ void StratigraphicItem::initSetup()
     pen_selected.setColor( Qt::red );
     pen_selected.setWidth( 5 );
 
+    setPath( curve );
 
-    custom_stroker.setCapStyle( Qt::RoundCap );
-    custom_stroker.setCurveThreshold( 0.9 );
-    custom_stroker.setDashPattern( Qt::SolidLine );
-    custom_stroker.setJoinStyle( Qt::RoundJoin );
+//    custom_stroker.setCapStyle( Qt::RoundCap );
+//    custom_stroker.setCurveThreshold( 0.9 );
+//    custom_stroker.setDashPattern( Qt::SolidLine );
+//    custom_stroker.setJoinStyle( Qt::RoundJoin );
 
 
 }
@@ -65,9 +66,9 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
 
     painter->setPen( pen );
     painter->setBrush( brush );
-    QPainterPath outline_curve = custom_stroker.createStroke( curve );
+//    QPainterPath outline_curve = custom_stroker.createStroke( curve );
 
-    painter->drawPath( outline_curve );
+    painter->drawPath( /*outline_*/curve );
 
 
 }
@@ -146,35 +147,21 @@ void StratigraphicItem::copySegment( const QPolygonF& s )
 }
 
 
-void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
+void StratigraphicItem::update( const QTransform& m, const float &d )
 {
 
 
     Curve2D* c = strat->getCurve( d );
 
     points.clear();
-
-
-    size_t number_of_points = c->size();
-
-    for( size_t i = 0; i < number_of_points; ++i )
-    {
-        Point2D p = c->at( i );
-
-        Eigen::Vector4f p4d( p.x(), p.y(), d, 1.0f );
-        p4d = m*p4d;
-
-        points.push_back( QPointF( p4d.x(), p4d.y() ) );
-
-    }
-
+    points = PolyQtUtils::curve2DToQPolyginF( *c );
     curve = QPainterPath();
 
 
     std::vector< size_t >& edges = strat->getCurveEdges();
 
-    unsigned int id0 =0;
-    unsigned int id1 =0;
+    unsigned int id0 = 0;
+    unsigned int id1 = 0;
     unsigned int last_id = 10000;
 
     size_t nedges = edges.size()/2;
@@ -186,12 +173,18 @@ void StratigraphicItem::update( const Eigen::Affine3f& m, const float &d )
         id1 = edges[ 2*i + 1 ];
 
         if( last_id != id0 )
-            curve.moveTo( points[ id0 ] );
+            curve.moveTo( QPointF( points[ id0 ].x()*m.m11() + m.dx(),
+                                   points[ id0 ].y()*m.m22() + m.dy() ) );
         else
-            curve.lineTo( points[ id1 ] );
+            curve.lineTo( QPointF( points[ id1 ].x()*m.m11() + m.dx(),
+                                   points[ id1 ].y()*m.m22() + m.dy() ) );
+
 
         last_id = id1;
     }
 
+
+
+    setPath( curve );
  }
 

@@ -89,13 +89,14 @@ void SketchingWindow::createRulesActions()
 {
 
 
-    ac_sketch = new QAction( tr( "S" ), this );
+    ac_sketch = new QAction( tr( "TS" ), this );
 //    ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
     ac_sketch->setCheckable( true );
-    ac_sketch->setChecked( true );
+
 
     ac_removeabove = new QAction( tr( "RA" ), this );
     ac_removeabove->setCheckable( true );
+    ac_removeabove->setChecked( true );
 
 
     ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
@@ -116,12 +117,13 @@ void SketchingWindow::createRulesActions()
     ac_separator->setSeparator( true );
 
     ag_remove_rules = new QActionGroup( this );
-    ag_remove_rules->addAction( ac_sketch );
-    ag_remove_rules->addAction( ac_separator );
+
     ag_remove_rules->addAction( ac_removeabove );
     ag_remove_rules->addAction( ac_removeaboveintersection );
     ag_remove_rules->addAction( ac_removebelow );
     ag_remove_rules->addAction( ac_removebelowintersection );
+    ag_remove_rules->addAction( ac_separator );
+    ag_remove_rules->addAction( ac_sketch );
     ag_remove_rules->setExclusive( true );
 
 
@@ -237,13 +239,13 @@ void SketchingWindow::resetActions()
     ac_undo->setEnabled( true );
     ac_redo->setEnabled( true );
 
-    ac_removeabove->setChecked( false );
+    ac_removeabove->setChecked( true );
     ac_removebelow->setChecked( false );
     ac_removeaboveintersection->setChecked( false );
     ac_removebelowintersection->setChecked( false );
     ac_sketchabove->setChecked( false );
     ac_sketchbelow->setChecked( false );
-    ac_sketch->setChecked( true );
+    ac_sketch->setChecked( false );
 
     tbt_colorsketch->setChecked( false );
 
@@ -291,6 +293,43 @@ void SketchingWindow::createConnections()
 }
 
 
+
+
+void SketchingWindow::changeDefineRegionStatus( const bool above, const bool below )
+{
+    ac_sketchabove->setChecked( above );
+    ac_sketchbelow->setChecked( below );
+
+}
+
+
+
+void SketchingWindow::changeStratigraphyRulesStatus( const std::string& rule )
+{
+
+
+    if( rule.compare( "SKETCHING" ) == 0 )
+    {
+        ac_sketch->toggle();
+    }
+    else if( rule.compare( "RA_SKETCHING" ) == 0 )
+    {
+        ac_removeabove->toggle();
+    }
+    else if( rule.compare( "RAI_SKETCHING" ) == 0 )
+    {
+        ac_removeaboveintersection->toggle();
+    }
+    else if( rule.compare( "RB_SKETCHING" ) == 0 )
+    {
+        ac_removebelow->toggle();
+    }
+    else if( rule.compare( "RBI_SKETCHING" ) == 0 )
+    {
+        ac_removebelowintersection->toggle();
+    }
+
+}
 
 
 

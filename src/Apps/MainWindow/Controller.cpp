@@ -94,7 +94,7 @@ void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, c
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
     rules_processor.init();
-    rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
+    rules_processor.update( RRM::ExtrusionRulesProcessor::State::RA_SKETCHING );
 
 
 }
@@ -283,6 +283,16 @@ void Controller::setStratigraphicRule( const std::string& rule )
 }
 
 
+void Controller::changeResolution( const int numI_ , const int numJ_ )
+{
+
+    size_t numI = numI_;
+    size_t numJ = numJ_;
+
+    rules_processor.requestChangeDiscretizationLevel( numI, numJ );
+    update();
+
+}
 
 
 void Controller::undo()

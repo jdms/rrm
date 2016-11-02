@@ -45,12 +45,12 @@ namespace RRM{
             this->curve_cache[segment_2.index] = segment_2;
 
 
-            std::cout << "Boundary Created" <<  curve_cache.size() << std::endl;
+//            std::cout << "Boundary Created" <<  curve_cache.size() << "\n" <<  std::flush;
 
-            std::cout << "Boundary Created X" <<  x << std::endl;
-            std::cout << "Boundary Created Y" <<  y << std::endl;
-            std::cout << "Boundary Created W" <<  width << std::endl;
-            std::cout << "Boundary Created H" <<  height << std::endl;
+//            std::cout << "Boundary Created X" <<  x << "\n" <<  std::flush;
+//            std::cout << "Boundary Created Y" <<  y << "\n" <<  std::flush;
+//            std::cout << "Boundary Created W" <<  width << "\n" <<  std::flush;
+//            std::cout << "Boundary Created H" <<  height << "\n" <<  std::flush;
 
     }
 
@@ -126,9 +126,9 @@ namespace RRM{
             }
         }
 
-        if ( intersection_points.size ( ) == 1 )
+        if ( intersection_points.size ( ) <= 1 )
         {
-            std::cout << "One Intersection" << std::endl;
+//            std::cout << "One Intersection" << std::endl;
             return false;
         }
 
@@ -190,18 +190,18 @@ namespace RRM{
 
         this->curve_cache[new_curve.index] = new_curve;
 
-        std::cout << " Last Curve Log " << std::endl;
-        std::cout << " Index::   " <<  last_curve_.index << std::endl;
-        std::cout << " Below   " <<  lower_bound_.size() << std::endl;
-        for(auto c: lower_bound_)
-        {
-            std::cout << c << std::endl;
-        }
-        std::cout << " Above   " <<  upper_bound_.size() << std::endl;
-        for(auto c: upper_bound_)
-        {
-                std::cout << c << std::endl;
-        }
+//        std::cout << " Last Curve Log " << std::endl;
+//        std::cout << " Index::   " <<  last_curve_.index << std::endl;
+//        std::cout << " Below   " <<  lower_bound_.size() << std::endl;
+//        for(auto c: lower_bound_)
+//        {
+//            std::cout << c << std::endl;
+//        }
+//        std::cout << " Above   " <<  upper_bound_.size() << std::endl;
+//        for(auto c: upper_bound_)
+//        {
+//                std::cout << c << std::endl;
+//        }
 
         return true;
     }
@@ -246,8 +246,8 @@ namespace RRM{
 
     void Arrangement_2D::log ( )
     {
-        std::cout << " -- Arrangement Log -- " << std::endl;
-        std::cout << " -- size -- " << curve_cache.size() << std::endl;
+//        std::cout << " -- Arrangement Log -- " << std::endl;
+//        std::cout << " -- size -- " << curve_cache.size() << std::endl;
     }
 
 }

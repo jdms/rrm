@@ -28,8 +28,8 @@ void Scene::init()
     int max_value =  std::max( (int)view->width()*0.8f, (int)view->height()*0.8f );
     int min_value =  std::min( (int)view->width()*0.8f, (int)view->height()*0.8f );
 
-    int teste = 200*(max_value/min_value);
-    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ teste );
+    int depth = 200*(max_value/min_value);
+    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ depth );
 
 
     background_image = new QGraphicsPixmapItem();
@@ -77,10 +77,6 @@ void Scene::initData()
     defining_above = false;
     defining_below = false;
 
-
-    stratigraphics_list.clear();
-    crosssections3d_list.clear();
-    surfaces_list.clear();
 
     allowed_above_surfaces.clear();
     allowed_below_surfaces.clear();
@@ -134,6 +130,19 @@ void Scene::updateTransformationsMatrices()
 
     m_3dto2d = m_2dto3d.inverse();
 
+
+
+
+    float L = std::max( std::max( qtscene_width, qtscene_height ), qtscene_depth );
+    QPointF center ( (  2*qtscene_origin_x + qtscene_width )*0.5/L, ( 2*qtscene_origin_y + qtscene_height )* 0.5/L );
+
+
+    mA = QTransform();
+    mA.translate( -center.x(), -center.y() );
+    mA.scale( 1/L, 1/L );
+    mA = mA.inverted();
+
+
 }
 
 
@@ -177,7 +186,7 @@ void Scene::createCrossSection( const float& d )
 void Scene::addCrossSectionToScene()
 {
 
-    // criar um crosssection desenhavel: ira desenhar um plano e as curvas dentro
+    // criar um crosssection desenhavl: ira desenhar um plano e as curvas dentro
 
     crosssections3d_list.push_back( 0 );
 
@@ -276,27 +285,33 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 
 
-void Scene::addCurve()
+bool Scene::addCurve()
 {
 
     current_mode = InteractionMode::INSERTING;
 
 
-    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
-
-
-    size_t number_of_points = c.size();
-    c = Scene::scene2Dto3D( c );
+    Curve2D c_qt = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
+    Curve2D c = Scene::scene2Dto3D( c_qt );
 
     bool add_ok = controller->addCurve( c );
-
-
     if( add_ok == false )
     {
         removeItem( temp_sketch );
-        return;
+        return false;
     }
 
+
+    Stratigraphy* strat = controller->getCurrentStratigraphy();
+    size_t id = strat->getId();
+
+    add_ok = arrangement.insert( c_qt, id );
+    if( add_ok == false )
+    {
+        removeItem( temp_sketch );
+        newSketch();
+        return false;
+    }
 
     addStratigraphyToScene();
 
@@ -310,11 +325,6 @@ void Scene::addStratigraphyToScene()
 
     Stratigraphy* strat = controller->getCurrentStratigraphy();
     size_t id = strat->getId();
-
-
-    float depth_current = controller->getCurrentCrossSection();
-    Curve2D c = PolyQtUtils::qPolyginFToCurve2D( temp_sketch->getSketch() );
-    arrangement.insert( c, id );
 
 
     Surface* strat3D = new Surface();
@@ -390,7 +400,11 @@ void Scene::undoLastSketch()
 void Scene::clearScene()
 {
 
-    if( controller != 0 )
+    stratigraphics_list.clear();
+    crosssections3d_list.clear();
+    surfaces_list.clear();
+
+    if( controller != NULL )
         controller->clear();
 
     if( temp_sketch == NULL )
@@ -399,13 +413,13 @@ void Scene::clearScene()
         delete temp_sketch;
     }
 
-    if( sketching_boundary != 0 )
+    if( sketching_boundary != NULL )
     {
         sketching_boundary->clear();
         delete sketching_boundary;
     }
 
-    if( boundary3D != 0 )
+    if( boundary3D != NULL )
     {
         boundary3D->clear();
         delete boundary3D;
@@ -434,7 +448,7 @@ void Scene::updateScene()
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
         StratigraphicItem* strat = it->second;
-        strat->update( m_3dto2d, d );
+        strat->update( mA/*m_3dto2d*/, d );
 
         curve_map[ strat->getId() ] = strat->getSubCurves2D();
     }
@@ -550,7 +564,6 @@ void Scene::enableSketchingAboveRegion( bool option )
     bool define_above = controller->defineSketchingAbove( allowed_above_surfaces );
     if( define_above == false )
     {
-        stopSketchingAboveRegion();
         return;
     }
 
@@ -569,19 +582,13 @@ void Scene::defineSketchingAboveRegion()
 
     size_t number_allowed_surfaces = allowed_above_surfaces.size();
 
-//    std::cout << "-- Define sketch above... " << std::endl;
-//    std::cout << "\t * " << number_allowed_surfaces << " allowed Curves: ";
-
     for ( size_t i = 0; i < number_allowed_surfaces; ++i )
     {
         size_t id = allowed_above_surfaces[ i ];
         StratigraphicItem* strat = stratigraphics_list[ id ];
         strat->setAllowed( true );
-
-//        std::cout << id << ", ";
     }
 
-//    std::cout << "\n";
 
     current_mode = InteractionMode::SELECTING_ABOVE;
     defining_above = true;
@@ -604,27 +611,18 @@ void Scene::stopSketchingAboveRegion()
     }
     else{
 
-//        std::cout << "-- Stop only sketch above... " << std::endl;
-
         size_t number_allowed_surfaces = allowed_above_surfaces.size();
 
-//        std::cout << "\t * Turning off " << number_allowed_surfaces << "  Curves: ";
 
         for ( size_t i = 0; i < number_allowed_surfaces; ++i )
         {
             size_t id = allowed_above_surfaces[ i ];
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( false );
-//            std::cout << id << ", ";
         }
-
-//        std::cout << "\n";
-
 
 
         size_t number_selected_surfaces = selected_below_surfaces.size();
-
-//        std::cout << "\t Still on * " << number_selected_surfaces << " selected curves from sketch below: ";
 
 
         for ( size_t i = 0; i < number_selected_surfaces; ++i )
@@ -635,10 +633,8 @@ void Scene::stopSketchingAboveRegion()
             strat->setUnderOperation( true );
             strat->setSelection( true );
 
-//            std::cout << id << ", ";
         }
 
-//        std::cout << "\n";
     }
 
     defining_above = false;
@@ -673,7 +669,6 @@ void Scene::enableSketchingBelowRegion( bool option )
     bool define_below = controller->defineSketchingBelow( allowed_below_surfaces );
     if( define_below == false )
     {
-//        stopSketchingBelowRegion();
         return;
     }
 
@@ -691,20 +686,13 @@ void Scene::defineSketchingBelowRegion()
     setSelectionMode( true );
     size_t number_allowed_surfaces = allowed_below_surfaces.size();
 
-//    std::cout << "-- Define sketch below... " << std::endl;
-//    std::cout << "\t * " << number_allowed_surfaces << " allowed Curves: ";
-
 
     for ( size_t i = 0; i < number_allowed_surfaces; ++i )
     {
         size_t id = allowed_below_surfaces[ i ];
         StratigraphicItem* strat = stratigraphics_list[ id ];
         strat->setAllowed( true );
-//        std::cout << id << ", ";
     }
-
-//    std::cout << "\n";
-
 
     current_mode = InteractionMode::SELECTING_BELOW;
     defining_below = true;
@@ -727,12 +715,7 @@ void Scene::stopSketchingBelowRegion()
     else
     {
 
-//        std::cout << "-- Stop only sketch below... " << std::endl;
-
         size_t number_allowed_surfaces = allowed_below_surfaces.size();
-
-//        std::cout << "\t * Turning off " << number_allowed_surfaces << "  Curves: ";
-
 
 
         for ( size_t i = 0; i < number_allowed_surfaces; ++i )
@@ -741,15 +724,8 @@ void Scene::stopSketchingBelowRegion()
 
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( false );
-//            std::cout << id << ", ";
         }
-
-//        std::cout << "\n";
-
         size_t number_selected_surfaces = selected_above_surfaces.size();
-
-
-//        std::cout << "\t Still on * " << number_selected_surfaces << " selected curves from sketch above: ";
 
 
         for ( size_t i = 0; i < number_selected_surfaces; ++i )
@@ -759,10 +735,8 @@ void Scene::stopSketchingBelowRegion()
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( true );
             strat->setSelection( true );
-//            std::cout << id << ", ";
         }
 
-//        std::cout << "\n";
 
     }
 
@@ -987,7 +961,9 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         if( temp_sketch->isEmpty() ) return;
 
 
-        addCurve();
+        bool add_ok = addCurve();
+        if( add_ok == false )
+            return;
 
         // should be fixed
         std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
@@ -1057,8 +1033,8 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         int maxy = std::max( boundary_anchor.y(), event->scenePos().y() );
 
 
-        int w = maxx - minx;
-        int h = maxy - miny;
+        int w = std::abs( maxx - minx );
+        int h = std::abs( maxy - miny );
 
 
         editBoundary( minx, miny, w, h );
@@ -1079,6 +1055,43 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         disallowCurves( allowed_above_surfaces );
 
 
+
+//        int id = selected_above_surfaces[ 0 ];
+//        StratigraphicItem* strat0 = stratigraphics_list[ id ];
+////        QPainterPath path0 = strat0->getPath();
+//        QPolygonF path0 = strat0->getCurve();
+//        QRegion r0( path0.toPolygon() );
+
+
+
+////        QPainterPath path1;
+//        QPolygonF path1;
+
+//        if( selected_below_surfaces.empty() == true ){
+//            path1 = QPolygonF( sketching_boundary->boundingRect() );
+////            path1 = QPainterPath();
+////            path1.addPolygon( QPolygonF( sketching_boundary->boundingRect() ) );
+//        }
+//        else
+//        {
+//            int id1 = selected_below_surfaces[ 0 ];
+//            StratigraphicItem* strat1 = stratigraphics_list[ id1 ];
+////            path1 = strat1->getPath();
+//            path1 = strat1->getCurve();
+//        }
+
+//        QRegion r1( path1.toPolygon() );
+
+//        QRegion teste = r1.xored( r0 );
+
+//        QPainterPath path;
+//        path.addRegion( teste );
+//        addPath( path, QPen( QColor( Qt::blue ) ), QBrush( QColor( Qt::white ) ) );
+
+
+
+
+
         current_mode = InteractionMode::OVERSKETCHING;
         emit enableSketching( true );
 
@@ -1095,6 +1108,9 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
         controller->defineRegionBelow( selected_below_surfaces );
         disallowCurves( allowed_below_surfaces );
+
+
+
 
 
         current_mode = InteractionMode::OVERSKETCHING;

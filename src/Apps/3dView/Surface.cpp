@@ -343,7 +343,6 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 	
 	Eigen::Affine3f M;
     M.setIdentity();
-//    M.translate( origin );
 	
 
     shader_surface->bind();

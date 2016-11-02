@@ -14,10 +14,10 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
     pen_color.setJoinStyle( Qt::RoundJoin );
 
 
-    custom_stroker.setCapStyle( Qt::RoundCap );
-    custom_stroker.setCurveThreshold( 0.9 );
-    custom_stroker.setDashPattern( Qt::SolidLine );
-    custom_stroker.setJoinStyle( Qt::RoundJoin );
+//    custom_stroker.setCapStyle( Qt::RoundCap );
+//    custom_stroker.setCurveThreshold( 0.9 );
+//    custom_stroker.setDashPattern( Qt::SolidLine );
+//    custom_stroker.setJoinStyle( Qt::RoundJoin );
 
     setFlag ( QGraphicsItem::ItemIsSelectable );
     setAcceptTouchEvents ( true );
@@ -36,7 +36,12 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
     painter->setBrush ( Qt::NoBrush );
 
     QPainterPath outline_curve = custom_stroker.createStroke( curve );
-    painter->drawPath( outline_curve );
+
+//    if( curve.toSubpathPolygons().isEmpty() == true ) return;
+
+//    painter->drawPolyline( curve.toSubpathPolygons()[0] );
+    painter->drawPath( curve/*outline_curve*/ );
+
 
 
 }
@@ -109,6 +114,7 @@ void InputSketch::setSketch ( const QVector<QPointF> & _path )
 {
     prepareGeometryChange ( );
 
+    curve.addPolygon( _path );
 
 }
 
@@ -126,7 +132,12 @@ void InputSketch::setSketch ( const QPolygonF & _path )
 QPolygonF InputSketch::getSketch ( ) const
 {
 
-    return curve.toFillPolygon();
+////    std::cout << "Polygon is close? " << curve.toFillPolygon().isClosed() << "\n" << std::flush;
+    if( curve.toSubpathPolygons().isEmpty() == true ) return QPolygonF();
+
+    return curve.toSubpathPolygons()[ 0 ];//toFillPolygon();
+
+//    return curve1;
 }
 
 
@@ -139,33 +150,13 @@ void InputSketch::process( const QPointF& p )
 
     if( subpaths.size() < 2 ) return;
 
-
-//    std::cout << "Passei pelo numero de subpaths: " << subpaths.size() << std::endl;
-
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 1 ] );
     Curve2D whole_curve = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 0 ] );
 
-    size_t original_curve_size = whole_curve.size();
-//    std::cout << "curva original, tamanho = " << whole_curve.size() << std::endl;
-
-
     bool oversketch_ok = sketchlib_.overSketching( whole_curve, c );
-//    sketchlib_.ensure_x_monotonicity( whole_curve );
-    size_t oversketched_curve_size = whole_curve.size();
-
-
-//    std::cout << "Passei pelo oversketching, whole_curve = " << whole_curve.size() << std::endl;
-
-
 
     curve = QPainterPath();
     curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( whole_curve ) );
-
-
-//    std::cout << "criei uma nova curva, tamanho = " << whole_curve.size() << std::endl;
-//    std::cout << "Adicionei um subpath comecando em p\n" << std::endl;
-
-
 
 
 }
