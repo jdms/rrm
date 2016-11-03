@@ -29,13 +29,13 @@
    <item>
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="region_attributes">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-33</y>
         <width>365</width>
         <height>177</height>
        </rect>
@@ -52,14 +52,14 @@
          <item>
           <widget class="QToolButton" name="toolButton_Region_Add">
            <property name="text">
-            <string>...</string>
+            <string>+</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QToolButton" name="toolButton_Region_Del">
            <property name="text">
-            <string>...</string>
+            <string>-</string>
            </property>
           </widget>
          </item>
