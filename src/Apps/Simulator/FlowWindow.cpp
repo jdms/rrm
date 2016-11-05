@@ -38,7 +38,7 @@ void FlowWindow::createWindow()
 
     controller = new FlowVisualizationController( this );
 
-    canvas = new FlowVisualizationCanvas( this );
+	canvas = new FlowVisualizationCanvas(this, this->getCurrentDirectory());
     canvas->setController( controller );
     canvas->setColorBar( &colorbar );
 
@@ -405,7 +405,7 @@ void FlowWindow::addFaceProperty( std::string name, std::string dimension )
 
 
 
-void FlowWindow::getCurrentDirectory()
+QString FlowWindow::getCurrentDirectory()
 {
 
     QDir app_dir = QDir( qApp->applicationDirPath() );
@@ -423,9 +423,9 @@ void FlowWindow::getCurrentDirectory()
 
 #endif
 
-    canvas->setCurrentDirectory( current_dir.toStdString() );
+    //canvas->setCurrentDirectory( current_dir.toStdString() );
 
-
+	return current_dir;
 }
 
 
@@ -549,7 +549,7 @@ void FlowWindow::acceptUserParameters()
 
 void FlowWindow::buildCornerPoint()
 {
-
+    std::cout << "FlowWindow buildCornerPoint" << std::endl;
     controller->generateCornerPoint();
     canvas->updateCornerPoint();
 

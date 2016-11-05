@@ -31,7 +31,7 @@ class FlowWindow : public  QMainWindow
         void createActions();
 
         void updateParameterFields();
-        void getCurrentDirectory();
+        QString getCurrentDirectory();
 
 
         void keyPressEvent( QKeyEvent *event );

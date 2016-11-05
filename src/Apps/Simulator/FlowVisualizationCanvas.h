@@ -29,7 +29,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
     public:
 
-        FlowVisualizationCanvas( QWidget *parent = 0 );
+		FlowVisualizationCanvas(QWidget *parent, QString _current_dir);
         ~FlowVisualizationCanvas();
 
         void setOpenGLFormat();

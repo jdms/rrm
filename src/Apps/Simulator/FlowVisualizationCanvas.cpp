@@ -1,13 +1,18 @@
 #include "FlowVisualizationCanvas.h"
 
-FlowVisualizationCanvas::FlowVisualizationCanvas( QWidget *parent )
+FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir)
 {
-    createRenderingMenu();
+    
 
     show_axis = true;
 //    show_colorbar = false;
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
+
+	this->current_directory = _current_dir.toStdString();
+	
+	std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
+	createRenderingMenu();
 
 }
 
@@ -109,12 +114,11 @@ void FlowVisualizationCanvas::initializeGL()
     else
         setColorMap();
 
-    axes.load();
+    
     axes.initShader( current_directory );
+	axes.load();
 
     mesh.load();
-
-
     initializeShader();
 
 
@@ -555,6 +559,7 @@ void FlowVisualizationCanvas::updateCornerPoint()
 
     mesh.load();
 
+    std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();

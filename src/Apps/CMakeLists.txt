@@ -107,6 +107,7 @@ set( SIMULATOR_HEADERS
 					 Simulator/CoordinateAxes.h
 					 Simulator/FlowCrossSection.h
 					 Simulator/FlowParametersBar.h
+					 Simulator/FlowParametersBar_new.h
 					 Simulator/FlowRenderingOptionsMenu.h
 					 Simulator/FlowVisualizationCanvas.h
 					 Simulator/FlowVisualizationController.h   
@@ -157,6 +158,7 @@ set( SIMULATOR_HEADERS
 
 set ( SIMULATOR_MOC_HEADERS
 					 Simulator/FlowParametersBar.h
+					 Simulator/FlowParametersBar_new.h
 					 Simulator/FlowRenderingOptionsMenu.h
 					 Simulator/FlowVisualizationCanvas.h
 					 Simulator/FlowVisualizationController.h   
@@ -170,8 +172,9 @@ set ( SIMULATOR_MOC_HEADERS
 
 set ( SIMULATOR_UI_SOURCES
 					Simulator/FlowParametersBar.ui                       
+					Simulator/FormPropertyValues.ui
 					Simulator/NormalMovableCrossSectionFlow.ui
-                                        Simulator/OpenFlowFilesBar.ui )
+                    Simulator/OpenFlowFilesBar.ui )
 
 set( SIMULATOR_SOURCES    
 					 Simulator/Ply/ply.c
@@ -179,6 +182,7 @@ set( SIMULATOR_SOURCES
 					 Simulator/CoordinateAxes.cpp
 					 Simulator/FlowCrossSection.cpp
 					 Simulator/FlowParametersBar.cpp
+					 Simulator/FlowParametersBar_new.cpp
 					 Simulator/FlowRenderingOptionsMenu.cpp
 					 Simulator/FlowVisualizationCanvas.cpp
 					 Simulator/FlowVisualizationController.cpp   

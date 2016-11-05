@@ -35,7 +35,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-33</y>
+        <y>0</y>
         <width>365</width>
         <height>177</height>
        </rect>
@@ -47,17 +47,20 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_Region">
          <item>
-          <widget class="QComboBox" name="comboBox__Region"/>
+          <widget class="QComboBox" name="comboBox_Region"/>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_Region_Add">
-           <property name="text">
-            <string>+</string>
+          <widget class="QSpinBox" name="spinBox_Number_of_Regions">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_Region_Del">
+          <widget class="QToolButton" name="toolButton_Region_Accept">
            <property name="text">
             <string>-</string>
            </property>
@@ -66,7 +69,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox__Region">
+        <widget class="QGroupBox" name="groupBox_Region">
          <property name="title">
           <string>Region Attributes</string>
          </property>
@@ -78,27 +81,12 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_Region_Porosity"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="spinBox_Region_Viscosity"/>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_Region_Porosity">
             <property name="text">
              <string>Porostiy</string>
             </property>
            </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBox_Region_Permiability"/>
-          </item>
-          <item row="3" column="2">
-           <widget class="QSpinBox" name="spinBox_Region_Point_Y"/>
-          </item>
-          <item row="3" column="3">
-           <widget class="QSpinBox" name="spinBox_Region_Point_Z"/>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_Region_Permiability">
@@ -114,8 +102,23 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Permiability"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Porosity"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Viscosity"/>
+          </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_Region_Point_X"/>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_X"/>
+          </item>
+          <item row="3" column="2">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Y"/>
+          </item>
+          <item row="3" column="3">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Z"/>
           </item>
          </layout>
         </widget>
@@ -138,17 +141,20 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_Well">
          <item>
-          <widget class="QComboBox" name="comboBox_2"/>
+          <widget class="QComboBox" name="comboBox_Well"/>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_3">
-           <property name="text">
-            <string>...</string>
+          <widget class="QSpinBox" name="spinBox_Number_of_Wells">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_4">
+          <widget class="QToolButton" name="toolButton_Well_Accept">
            <property name="text">
             <string>...</string>
            </property>
@@ -179,9 +185,6 @@
           <item row="2" column="1">
            <widget class="QSpinBox" name="spinBox_Well_Sign"/>
           </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_Well_Pressure"/>
-          </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="spinBox_Well_Type"/>
           </item>
@@ -191,6 +194,9 @@
              <string>Type</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Well_Pressure"/>
           </item>
          </layout>
         </widget>
