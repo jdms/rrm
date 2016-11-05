@@ -77,11 +77,22 @@ void FormPropertyValues::createRegionPropertiesForm( const int np )
     vector_poros_values.clear();
     vector_visc_values.clear();
 
+	vector_positions_values.resize(3 * np);
+	vector_perm_values.resize(np);
+	vector_poros_values.resize(np);
+	vector_visc_values.resize(np);
 
-    vector_positions_values = std::vector< QLineEdit* >( 3*np, new QLineEdit );
-    vector_perm_values = std::vector< QLineEdit* >( np, new QLineEdit );
-    vector_poros_values = std::vector< QLineEdit* >( np, new QLineEdit );
-    vector_visc_values = std::vector< QLineEdit* >( np, new QLineEdit );
+
+	for (int i = 0; i < np; i++)
+	{
+		vector_positions_values[3 * i + 0] = new QLineEdit();
+		vector_positions_values[3 * i + 1] = new QLineEdit();
+		vector_positions_values[3 * i + 2] = new QLineEdit();
+		vector_perm_values[i]  = new QLineEdit();
+		vector_poros_values[i] = new QLineEdit();
+		vector_visc_values[i]  = new QLineEdit();
+	}
+
 
 }
 
@@ -131,12 +142,17 @@ void FormPropertyValues::createWellForm( const int nw )
     vector_valuewell_values.clear();
     vector_sign_values.clear();
 
+	vector_type_values.resize(nw);
+	vector_valuewell_values.resize(nw);
+	vector_sign_values.resize(nw);
 
-    vector_type_values = std::vector< QLineEdit* >( nw, new QLineEdit );
-    vector_valuewell_values = std::vector< QLineEdit* >( nw, new QLineEdit );
-    vector_sign_values = std::vector< QLineEdit* >( nw, new QLineEdit );
-
-
+	for (int i = 0; i < nw; i++)
+	{
+		vector_type_values[i] = new QLineEdit();
+		vector_valuewell_values[i] = new QLineEdit();
+		vector_sign_values[i] = new QLineEdit();
+	}
+	    
 }
 
 

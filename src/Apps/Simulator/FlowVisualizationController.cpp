@@ -91,8 +91,11 @@ void FlowVisualizationController::readInputParameters( const std::string& input_
 void FlowVisualizationController::generateCornerPoint()
 {
 
+    std::cout << " Going to Build Volumetric "  << mesh_ok << user_input_ok << std::endl;
+
     if( mesh_ok == false || user_input_ok == false ) return;
 
+    std::cout << " Going to Build Volumetric " << std::endl;
     code_interface.buildCPGVolumetricMesh();
     volumetric_ok = true;
 
@@ -451,11 +454,13 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
 
 void FlowVisualizationController::setPropertyArea( const int np, const std::vector< double >& values , const std::vector< double >& perm, const std::vector< double >& poros, const std::vector< double >& visc )
 {
-
+    code_interface.setNumberofRegions(np);
     for( int i = 0; i < np; ++i )
     {
         code_interface.setRegion( i, values[ 3*i ], values[ 3*i + 1 ], values[ 3*i +2 ], perm[ i ], poros[ i ], visc[ i ] );
     }
+
+    user_input_ok = true;
 
 }
 
@@ -480,6 +485,7 @@ void FlowVisualizationController::getPropertyArea( int& np, std::vector< double 
 
 void FlowVisualizationController::setWellsValues( const int nw,  const std::vector< unsigned int >& type, const std::vector< double >& value, const std::vector< int >& sign )
 {
+    code_interface.setNumberofWells(nw);
     for( int i = 0; i < nw; ++i )
     {
         code_interface.setWell( i, type[ i ], value[ i ], sign[ i ] );

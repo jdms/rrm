@@ -18,13 +18,21 @@ void FlowDiagnosticsInterface::setNumberofRegions( unsigned int regions_number )
 
 void FlowDiagnosticsInterface::setRegion( unsigned int id, double x, double y, double z, double perm,
                                           double poros, double visc ){
+
+    std::cout << "Rgion id " << id << "\n " << std::flush;
     PROPERTYAREA p;
     p.x(x);
+    std::cout << "setou x\n" << std::flush;
     p.y(y);
+    std::cout << "setou y\n " << std::flush;
     p.z(z);
+    std::cout << "setou z\n " << std::flush;
     p.perm(perm);
+    std::cout << "setou perm\n " << std::flush;
     p.porosity(poros);
+    std::cout << "setou poro\n " << std::flush;
     p.viscosity(visc);
+    std::cout << "setou visc\n " << std::flush;
     region.modifypropertyarea(id, p);
 }
 
@@ -401,12 +409,15 @@ void FlowDiagnosticsInterface::getVolumeCells( std::vector< unsigned int >& cell
 void FlowDiagnosticsInterface::getCPGVolumeVertices( std::vector< float >& vertices )
 {
 
+    std::cout << " size nodelist " << region.nodelist.size() << std::endl;
 
     for (int i = 0; i < region.nodelist.size(); i++){
         vertices.push_back((float)region.nodelist[i].x());
         vertices.push_back((float)region.nodelist[i].y());
         vertices.push_back((float)region.nodelist[i].z());
+        std::cout << " x " << (float)region.nodelist[i].x() << std::endl;
     }
+
 
 }
 
