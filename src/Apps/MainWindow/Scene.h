@@ -51,6 +51,12 @@ class Scene: public QGraphicsScene
         void setController( Controller* const& c );
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 
+		Eigen::Vector3f scene2Dto3D(const Point2D& p);
+		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
+		Point2D scene3Dto2D(const Eigen::Vector3f& p);
+		Curve2D scene2Dto3D(const Curve2D& c);
+		Curve2D scene3Dto2D(const Curve2D& c);
+
 
     public slots:
 
@@ -130,11 +136,7 @@ class Scene: public QGraphicsScene
         void updateTransformationsMatrices();
 
 
-        Eigen::Vector3f scene2Dto3D( const Point2D& p );
-        Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
-        Point2D scene3Dto2D( const Eigen::Vector3f& p );
-        Curve2D scene2Dto3D( const Curve2D& c );
-        Curve2D scene3Dto2D( const Curve2D& c );
+
 
 
 

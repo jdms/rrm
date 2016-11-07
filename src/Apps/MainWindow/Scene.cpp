@@ -1013,7 +1013,10 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
-    emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
+	Eigen::Vector3f p = scene2Dto3D(Point2D(event->scenePos().x(), event->scenePos().y()));
+	emit sendCoordinates(p.x(), p.y());
+
+    //emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
 
 
     if ( event->buttons() & Qt::LeftButton )

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "./FlowComputation/region.h"
+#include "FlowComputation/region.h"
 
 class FlowDiagnosticsInterface
 {
@@ -18,7 +18,7 @@ class FlowDiagnosticsInterface
         FlowDiagnosticsInterface();
 
         /// \brief Load default values -- refers to: ( Zhao's document ) Please include a Function to load default values for user inputs
-        void loadDefaultValues();
+        void loadDefaultValues(int);
 
         /// \brief Set regions properties as user inputs -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity,
         ///		   viscosity and x, y, z for each region (this can be same as before)
