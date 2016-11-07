@@ -35,7 +35,9 @@ class SketchingCanvas: public QGraphicsView
         inline void insertSketch(){ scene->addCurve(); }
         inline void undoLastSketch(){ scene->undoLastSketch(); }
         inline void updateColor( const QColor& color ){ scene->updateColor( color ); }
-        inline void addScene( Scene* const& sc ){ scene = sc; setScene( scene ); }
+        inline void addScene( Scene* const& sc ){ scene = sc; setScene( scene ); 
+		connect(this->scene, &Scene::sendCoordinates, this, &SketchingCanvas::updateCoordinates);
+		}
 
 
 
