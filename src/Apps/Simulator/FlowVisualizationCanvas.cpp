@@ -323,8 +323,8 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
 
     unsigned int nc = 0;
     colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
-//    colorbar.setMinValue( min );
-//    colorbar.setMaxValue( max );
+    //colorbar->setMinValue( min );
+    //colorbar->setMaxValue( max );
     show_colorbar = true;
 
 
