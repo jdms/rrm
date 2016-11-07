@@ -569,8 +569,8 @@ void Mesh::initializeShader( std::string directory )
     glGenBuffers( 1, &bf_colors_mesh );
     glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
     glBufferData( GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-    glEnableVertexAttribArray( 1 );
+    glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, NULL );
+    glEnableVertexAttribArray( 2 );
 
 
 
@@ -715,12 +715,14 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
     {
         glLineWidth( 2.0f );
         shader_mesh->setUniform( "edge", GL_TRUE );
+		shader_mesh->setUniform("index", 6);
 
 
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
         glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
 
         shader_mesh->setUniform( "edge", GL_FALSE );
+		shader_mesh->setUniform("index", 1);
 
     }
     if( show_faces == true )

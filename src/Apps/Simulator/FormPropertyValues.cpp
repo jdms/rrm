@@ -109,10 +109,10 @@ void FormPropertyValues::createRegionPropertiesForm( const int np, const std::ve
         vector_positions_values[ 3*i ]->setText( value0 );
 
         QString value1 = QString( "%1" ).arg( positions[ 3*i + 1 ] );
-        vector_positions_values[ 3*i + 2 ]->setText( value1 );
+        vector_positions_values[ 3*i + 1 ]->setText( value1 );
 
         QString value2 = QString( "%1" ).arg( positions[ 3*i + 2 ] );
-        vector_positions_values[ 3*i + 1 ]->setText( value2 );
+        vector_positions_values[ 3*i + 2 ]->setText( value2 );
 
 
         QString perm_str = QString( "%1" ).arg( perm[ i ] );

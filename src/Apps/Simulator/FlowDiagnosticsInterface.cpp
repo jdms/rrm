@@ -162,6 +162,7 @@ void FlowDiagnosticsInterface::getSurfaceSkeleton( unsigned int& surfaces_number
 
 
 void FlowDiagnosticsInterface::init(){
+	region.wellmethod(2);
     if (region.meshinfo_type() == 1){ //unstructured
         region.tetrahedralmesh_postprocessCVFE();
         region.properties_tetcvfe();
@@ -196,10 +197,7 @@ void FlowDiagnosticsInterface::buildCPGVolumetricMesh(){
 }
 
 void FlowDiagnosticsInterface::getPressure( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].P());
-    }
+    values = region.getpressure();
 }
 
 
