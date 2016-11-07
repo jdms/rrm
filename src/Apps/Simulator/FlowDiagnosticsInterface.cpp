@@ -4,9 +4,14 @@
 FlowDiagnosticsInterface::FlowDiagnosticsInterface(){}
 
 
-void FlowDiagnosticsInterface::loadDefaultValues()
+void FlowDiagnosticsInterface::loadDefaultValues(int i)// 1 for unstructured 2 for cpg
 {
-    region.RRMdefaultvalues();
+	if (i == 1){
+		region.RRMdefaultvalues_unstructured();
+	}
+	else if (i == 2){
+		region.RRMdefaultvalues_cpg();
+	}
 }
 
 
@@ -184,9 +189,7 @@ void FlowDiagnosticsInterface::computeProperties(){
 }
 
 
-void FlowDiagnosticsInterface::buildVolumetricMesh()
-{
-	this->loadDefaultValues();
+void FlowDiagnosticsInterface::buildVolumetricMesh(){
     region.meshinfo_type(1);
     region.unstructuredsurfacemesh();
     region.unstructuredvolumemesh();
@@ -204,78 +207,48 @@ void FlowDiagnosticsInterface::getPressure( std::vector< double >& values ) {
 
 
 void FlowDiagnosticsInterface::getVelocitybyVertices( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].Ux());
-        values.push_back(region.nodevector()[i].Uy());
-        values.push_back(region.nodevector()[i].Uz());
-    }
+	values = region.getvelocity_nodes();
 }
 
 
 void FlowDiagnosticsInterface::getVelocitybyCells( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.elementvector().size(); i++){
-        values.push_back(region.elementvector()[i].Ux());
-        values.push_back(region.elementvector()[i].Uy());
-        values.push_back(region.elementvector()[i].Uz());
-    }
+	values = region.getvelocity_elements();
 }
 
 void FlowDiagnosticsInterface::getBackwardTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].tof_back());
-    }
+	values = region.getbackwardtof();
 }
 
 
 void FlowDiagnosticsInterface::getForwardTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].tof());
-    }
+	values = region.getforwardtof();
 }
 
 
 void FlowDiagnosticsInterface::getTotalTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].tof_total());
-    }
+	values = region.gettotaltof();
 }
 
 
 void FlowDiagnosticsInterface::getMaxBackwardTracer( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].markmaxtracer_back());
-    }
+	values = region.getmaxbackwardtracer();
 }
 
 
 void FlowDiagnosticsInterface::getMaxForwardTracer( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].markmaxtracer());
-    }
+	values = region.getmaxforwardtracer();
 }
 
 
 void FlowDiagnosticsInterface::getPermeability( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.nodevector().size(); i++){
-        values.push_back(region.nodevector()[i].markmaxtracer());
-    }
+	values = region.getpermeability_nodes();
+	//values=region.getpermeability_elements();
 }
 
 
 
 void FlowDiagnosticsInterface::getRegionId( std::vector< int >& regions_id ) {
-    int i;
-    for (i = 0; i < region.elementvector().size(); i++){
-        regions_id.push_back(region.elementvector()[i].markregion());
-    }
+	regions_id = region.getregionid();
 }
 
 

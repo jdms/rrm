@@ -58,7 +58,7 @@ void main( void )
 
     else if( index == 8 )
         out_color = vec4( 1.0f, 0.7f, 0.0f, 1.0f );
-
+out_color = vec4(vec3(in_color,1.0);
 
 //    out_color = vec4( /*ambient_albedo + diffuse + specular*/in_color, 1.0f );
 

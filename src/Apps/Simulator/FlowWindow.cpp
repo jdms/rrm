@@ -443,6 +443,9 @@ void FlowWindow::loadSurfacesfromSketch()
 
 
     emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+
+
+
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
 

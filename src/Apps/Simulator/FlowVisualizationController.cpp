@@ -11,7 +11,7 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
 
     current_method = MESHING_METHOD::UNSTRUCTURED;
 
-    code_interface.loadDefaultValues();
+    code_interface.loadDefaultValues(1);
 
 }
 
