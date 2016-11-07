@@ -184,7 +184,9 @@ void FlowDiagnosticsInterface::computeProperties(){
 }
 
 
-void FlowDiagnosticsInterface::buildVolumetricMesh(){
+void FlowDiagnosticsInterface::buildVolumetricMesh()
+{
+	this->loadDefaultValues();
     region.meshinfo_type(1);
     region.unstructuredsurfacemesh();
     region.unstructuredvolumemesh();
