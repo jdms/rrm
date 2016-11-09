@@ -241,6 +241,11 @@ void Mesh::buildBoundingBox()
     bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
 
 
+	std::cout << "Min - Max " << std::endl;
+	std::cout << bbox_mesh.Min() << std::endl;
+	std::cout << bbox_mesh.Max() << std::endl;
+
+
     for( unsigned int it = 0; it < number_of_vertices; ++it )
         normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
 

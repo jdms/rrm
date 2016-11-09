@@ -1014,7 +1014,8 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
 	Eigen::Vector3f p = scene2Dto3D(Point2D(event->scenePos().x(), event->scenePos().y()));
-	emit sendCoordinates(p.x(), p.y());
+	Point2D pb = scene3Dto2D(p);
+	emit sendCoordinates(pb.x(), pb.y());
 
     //emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
 
@@ -1163,3 +1164,20 @@ void Scene::dragLeaveEvent( QGraphicsSceneDragDropEvent * event )
     event->accept();
 }
 
+
+void Scene::send2Dto3DMatrix(Eigen::Affine3f& p_2d_to_3d)
+{
+	p_2d_to_3d = this->m_2dto3d;
+
+	std::cout << "-- Scene --" << std::endl;
+	std::cout << this->m_2dto3d.matrix() << std::endl;
+
+}
+void Scene::send3Dto2DMatrix(Eigen::Affine3f& p_3d_to_2d)
+{
+	p_3d_to_2d = this->m_3dto2d;
+	std::cout << "-- Scene --" << std::endl;
+	std::cout << this->m_3dto2d.matrix() << std::endl;
+	
+
+}

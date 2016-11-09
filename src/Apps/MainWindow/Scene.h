@@ -102,7 +102,9 @@ class Scene: public QGraphicsScene
         void defineSketchingBelowRegion();
         void stopSketchingBelowRegion();
 
-
+	
+		void send2Dto3DMatrix(Eigen::Affine3f& p_2d_to_3d);
+		void send3Dto2DMatrix(Eigen::Affine3f& p_3d_to_2d);
 
     signals:
 
