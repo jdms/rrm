@@ -14,6 +14,8 @@
 #include "ProgressCounter.h"
 #include "FlowDiagnosticsInterface.hpp"
 
+#include <Eigen/Dense>
+
 class FlowVisualizationController: public QWidget
 {
     Q_OBJECT
@@ -82,6 +84,14 @@ class FlowVisualizationController: public QWidget
         void exportResultstoVTK();
 
 
+		void setScene2Dto3D(const Eigen::Affine3f& m);
+		void setScene3Dto2D(const Eigen::Affine3f& m);
+
+		Eigen::Vector3f scene2Dto3D(const Eigen::Vector2f& p);
+		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
+		Eigen::Vector3f scene3Dto2D(const Eigen::Vector3f& p);
+
+
 
     signals:
 
@@ -109,6 +119,9 @@ class FlowVisualizationController: public QWidget
 
         MESHING_METHOD current_method;
         FlowDiagnosticsInterface code_interface;
+
+		Eigen::Affine3f m_2dto3d;
+		Eigen::Affine3f m_3dto2d;
 
 };
 

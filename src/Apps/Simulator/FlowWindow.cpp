@@ -441,13 +441,24 @@ void FlowWindow::loadSurfacesfromSketch()
     std::vector< double > points;
     size_t num_extrusion_steps = 1;
 
+	Eigen::Affine3f m2D_to_3D;
+	Eigen::Affine3f m3D_to_2D;
 
     emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
+	emit get2Dto3DMatrix(m2D_to_3D);
+	emit get3Dto2DMatrix(m3D_to_2D);
 
+	controller->setScene2Dto3D(m2D_to_3D);
+	controller->setScene3Dto2D(m3D_to_2D);
 
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
+
+
+	std::cout << "-- FlowWindow --" << std::endl;
+	std::cout << m2D_to_3D.matrix() << std::endl;
+	std::cout << m3D_to_2D.matrix() << std::endl;
 
 }
 

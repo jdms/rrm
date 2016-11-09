@@ -50,9 +50,9 @@ void FlowVisualizationController::buildSurfaceSkeleton( std::vector< double >& p
         int nv_number = nv_list[ k ];
 
 
-        for(  unsigned int j = 0; j < nv_number - 1; ++j )
+        for(   int j = 0; j < nv_number - 1; ++j )
         {
-            for( unsigned int i = 0; i < nu_number - 1 ; ++i )
+            for(  int i = 0; i < nu_number - 1 ; ++i )
             {
 
                 unsigned int id0 = j*nu_number + i + offset;
@@ -157,7 +157,26 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
     unsigned int surfaces_number = ( unsigned int) nu.size();
 //    unsigned int extrusion_size = ( unsigned int) num_extrusion_steps;
 
-    code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
+	std::vector<double> scaled_points;
+	scaled_points.resize(points.size());
+	Eigen::Vector3f v; Eigen::Vector3f sv;
+
+	for (auto i = 0; i <= (points.size() - 3); i+=3)
+	{
+		v[0] = static_cast<float>(points[i + 0]);
+		v[1] = static_cast<float>(points[i + 2]);
+		v[2] = static_cast<float>(points[i + 1]);
+
+		sv = this->scene3Dto2D(v);
+		std::cout << sv << std::endl;
+
+		scaled_points[i + 0] = static_cast<double>(sv[0]);
+		scaled_points[i + 1] = static_cast<double>(sv[2]);
+		scaled_points[i + 2] = static_cast<double>(sv[1]);
+	}
+
+    //code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
+	code_interface.setSkeletonData(surfaces_number, nu_uint, nv_uint, scaled_points);
 
 }
 
@@ -231,7 +250,7 @@ void FlowVisualizationController::getRegionsColor( std::vector< QColor >& color_
 
 
     std::map< int, QColor > color_by_region;
-    for( int i = 0; i < regions_id.size(); ++i )
+    for( unsigned int i = 0; i < regions_id.size(); ++i )
     {
         int id = regions_id[ i ];
 
@@ -242,7 +261,7 @@ void FlowVisualizationController::getRegionsColor( std::vector< QColor >& color_
         color_by_region[ id ] = QColor( r, g, b );
     }
 
-    for( int i = 0; i < idregion_by_cell.size(); ++i )
+    for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
     {
         int id = idregion_by_cell[ i ];
         color_by_cells.push_back( color_by_region[ id ] );
@@ -587,3 +606,28 @@ void FlowVisualizationController::clear()
     code_interface.clear();
 }
 
+void FlowVisualizationController::setScene2Dto3D(const Eigen::Affine3f& m)
+{
+	this->m_2dto3d = m;
+}
+void FlowVisualizationController::setScene3Dto2D(const Eigen::Affine3f& m)
+{
+	this->m_3dto2d = m;
+
+}
+
+Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector2f& p)
+{
+	return Eigen::Vector3f();
+}
+Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector3f& p)
+{
+	return Eigen::Vector3f();
+}
+Eigen::Vector3f FlowVisualizationController::scene3Dto2D(const Eigen::Vector3f& p)
+{
+	Eigen::Vector4f p_cpy(p.x(), p.y(), p.z(), 1.0f);
+
+	p_cpy = m_3dto2d.matrix()*p_cpy;
+	return Eigen::Vector3f(p_cpy.x(), p_cpy.y(), p_cpy.z());
+}

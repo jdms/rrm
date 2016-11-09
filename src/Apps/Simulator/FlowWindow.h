@@ -71,6 +71,8 @@ class FlowWindow : public  QMainWindow
 
         void getSurfaceCrossSection();
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+		void   get2Dto3DMatrix(Eigen::Affine3f&);
+		void   get3Dto2DMatrix(Eigen::Affine3f&);
 
     private:
 
