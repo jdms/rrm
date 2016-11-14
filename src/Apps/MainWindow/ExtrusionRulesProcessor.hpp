@@ -207,9 +207,9 @@ namespace RRM
         {
             State state_ = State::UNDEFINED;
             bool bounded_above_ = false;
-            size_t upper_boundary_ = 0;
+            ControllerSurfaceIndex upper_boundary_ = 0;
             bool bounded_below_ = false;
-            size_t lower_boundary_ = 0;
+            ControllerSurfaceIndex lower_boundary_ = 0;
             std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ = std::vector<ControllerSurfaceIndex>();
             std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ = std::vector<ControllerSurfaceIndex>();
         };
