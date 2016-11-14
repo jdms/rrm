@@ -155,7 +155,7 @@ namespace RRM
 
         // Do not accept surface as boundary if it was alread
         // used as an upper boundary
-        if ( current_.bounded_above_ == true )
+        if ( defineBelowIsActive() == true )
         {
             if ( current_.upper_boundary_ == surface_index )
             {
@@ -165,6 +165,8 @@ namespace RRM
 
         current_.bounded_below_ = container_.defineAbove(index); 
         current_.lower_boundary_ = surface_index;
+
+        std::cout << "Lower boundary id: " << surface_index << std::endl;
 
         return current_.bounded_below_; 
     }
@@ -201,7 +203,7 @@ namespace RRM
 
         // Do not accept surface as boundary if it was alread
         // used as a lower boundary
-        if ( current_.bounded_below_ == true )
+        if ( defineAboveIsActive() == true )
         {
             if ( current_.lower_boundary_ == surface_index )
             {
@@ -210,6 +212,8 @@ namespace RRM
         }
         current_.bounded_above_ = container_.defineBelow(index);
         current_.upper_boundary_ = surface_index;
+
+        std::cout << "Upper boundary id: " << surface_index << std::endl;
 
         return current_.bounded_above_; 
     }
@@ -396,7 +400,7 @@ namespace RRM
                     std::cout << "Define Below is active.\n"; 
                     ContainerSurfaceIndex boundary_index; 
 
-                    if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    if ( getSurfaceIndex(current_.upper_boundary_, boundary_index) == false )
                     {
                     std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
                         std::cout << "Got wrong id. \n"; 
@@ -454,7 +458,7 @@ namespace RRM
                     std::cout << "Define Below is active.\n"; 
                     ContainerSurfaceIndex boundary_index; 
 
-                    if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    if ( getSurfaceIndex(current_.lower_boundary_, boundary_index) == false )
                     {
                     std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
                         std::cout << "Got wrong id. \n"; 
