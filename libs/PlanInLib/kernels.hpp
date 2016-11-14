@@ -30,5 +30,7 @@
 #include "thinplatespline23.hpp"
 #include "thinplatespline24.hpp"
 
+#include "cubic.hpp"
+
 #endif
 
