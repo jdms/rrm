@@ -178,12 +178,12 @@ namespace RRM
 
     bool ExtrusionRulesProcessor::defineAboveIsActive()
     {
-        return current_.lower_boundary_;
+        return current_.bounded_below_;
     }
 
     bool ExtrusionRulesProcessor::defineBelowIsActive()
     {
-        return current_.upper_boundary_;
+        return current_.bounded_above_;
     }
 
     ExtrusionRulesProcessor::State ExtrusionRulesProcessor::currentGelogicRule()
@@ -393,9 +393,19 @@ namespace RRM
             {
                 if ( defineBelowIsActive() )
                 {
+                    std::cout << "Define Below is active.\n"; 
                     ContainerSurfaceIndex boundary_index; 
 
                     if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    {
+                    std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
+                        std::cout << "Got wrong id. \n"; 
+                        continue;
+                    }
+
+                    std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
+
+                    if ( index == boundary_index )
                     {
                         continue;
                     }
@@ -403,6 +413,10 @@ namespace RRM
                     if ( container_[index]->weakLiesBelowOrEqualsCheck(container_[boundary_index]) )
                     {
                         eligible_surfaces.push_back(output_index); 
+                    }
+                    else
+                    {
+                        std::cout << " --> Not eligible\n"; 
                     }
                 }
                 else
@@ -437,9 +451,18 @@ namespace RRM
             {
                 if ( defineAboveIsActive() )
                 {
+                    std::cout << "Define Below is active.\n"; 
                     ContainerSurfaceIndex boundary_index; 
 
                     if ( getSurfaceIndex(inserted_surfaces_indices_[current_.upper_boundary_], boundary_index) == false )
+                    {
+                    std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
+                        std::cout << "Got wrong id. \n"; 
+                        continue;
+                    }
+
+                    std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; 
+                    if ( index == boundary_index )
                     {
                         continue;
                     }
@@ -447,6 +470,10 @@ namespace RRM
                     if ( container_[index]->weakLiesAboveOrEqualsCheck(container_[boundary_index]) )
                     {
                         eligible_surfaces.push_back(output_index); 
+                    }
+                    else
+                    {
+                        std::cout << " --> Not eligible\n"; 
                     }
                 }
                 else
