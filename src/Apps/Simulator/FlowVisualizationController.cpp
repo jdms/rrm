@@ -203,7 +203,7 @@ void FlowVisualizationController::computeFlowProperties()
         emit propertybyVertexComputed( "Max Forward Tracer", "SCALAR" ) ;
 
         emit propertybyFaceComputed( "Velocity", "VECTOR" );
-        emit propertybyFaceComputed( "Permeability", "SCALAR" );
+        emit propertybyVertexComputed( "Permeability", "SCALAR" );
 
     }
 
@@ -304,7 +304,10 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     {
         code_interface.getMaxForwardTracer( values );
     }
-
+    else if( name_of_property.compare( "Permeability" ) == 0 )
+   {
+       code_interface.getPermeability( values );
+   }
 
 
 
@@ -339,10 +342,6 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         {
             type = "VECTOR";
             code_interface.getVelocitybyCells( values );
-        }
-         else if( name_of_property.compare( "Permeability" ) == 0 )
-        {
-            code_interface.getPermeability( values );
         }
 
     }
