@@ -11,12 +11,13 @@
 #include <QToolButton>
 #include <QResizeEvent>
 
-#include "FlowParametersBar.h"
+//#include "FlowParametersBar.h"
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "ColorBar.h"
 #include "PoreVolumeResultsForm.h"
 
+#include "FlowParametersBar_new.h"
 
 class FlowWindow : public  QMainWindow
 {
@@ -102,7 +103,7 @@ class FlowWindow : public  QMainWindow
 
 
         QDockWidget *qdockparametersBar;
-        FlowParametersBar parametersBar;
+        FlowParametersBar_new parametersBar;
 
 
         FlowVisualizationCanvas *canvas;

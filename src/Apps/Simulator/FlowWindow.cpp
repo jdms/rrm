@@ -250,7 +250,8 @@ void FlowWindow::createActions()
 
 
     connect( &parametersBar, SIGNAL( readParameterFile( const std::string& ) ), this, SLOT( readUserInputFile( const std::string& ) ) );
-    connect( &parametersBar, &FlowParametersBar::closeBarandAccept, this, &FlowWindow::acceptUserParameters );
+	// New Gui
+    //connect( &parametersBar, &FlowParametersBar::closeBarandAccept, this, &FlowWindow::acceptUserParameters );
     connect( &parametersBar, SIGNAL( closeBar() ), qdockparametersBar, SLOT( close() ) );
 
 
@@ -268,7 +269,7 @@ void FlowWindow::createActions()
     connect( canvas, &FlowVisualizationCanvas::getSurfaceCrossSection, this, &FlowWindow::loadSurfacesfromSketch );
     connect( canvas, &FlowVisualizationCanvas::readSurfacefromFile, this, &FlowWindow::loadSurfacesfromFile ); 
     connect( canvas, &FlowVisualizationCanvas::buildcornerpoint, this, &FlowWindow::buildCornerPoint );
-    connect( canvas, &FlowVisualizationCanvas::buildunstructured, this, &FlowWindow::buildUnstructured );
+	connect(canvas, &FlowVisualizationCanvas::buildunstructured, this, [=]{ acceptUserParameters(), buildCornerPoint(); });
 //	connect( canvas, &FlowVisualizationCanvas::computeFlowProperties, this, &FlowWindow::computeFlowProperties );
 
 
