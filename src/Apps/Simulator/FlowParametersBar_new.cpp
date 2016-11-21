@@ -203,6 +203,21 @@ void FlowParametersBar_new::mousePressEvent(QMouseEvent *event)
 
 }
 
+
+void FlowParametersBar_new::new_gui_reset()
+{
+	doubleSpinBox_Region_Permiability->setValue(1.0);
+	doubleSpinBox_Region_Porosity->setValue(1.0);
+	doubleSpinBox_Region_Viscosity->setValue(1.0);
+	doubleSpinBox_Region_Point_X->setValue(0.0);
+	doubleSpinBox_Region_Point_Y->setValue(0.0);
+	doubleSpinBox_Region_Point_Z->setValue(0.0);
+
+	doubleSpinBox_Well_Pressure->setValue(0);
+	spinBox_Well_Sign->setValue(1);
+	spinBox_Well_Type->setValue(1);
+}
+
 void FlowParametersBar_new::new_gui_clear()
 {
 	positions_values.clear();
@@ -216,19 +231,31 @@ void FlowParametersBar_new::new_gui_clear()
 
 	comboBox_Region->clear();
 	comboBox_Well->clear();
+
+	this->new_gui_reset();
 }
 
-/// Region
+/// Slot used to grab Region Point
+void FlowParametersBar_new::set_region_point(double x, double y, double z)
+{
+	positions_values[comboBox_Region->currentIndex()][0] = x;
+	positions_values[comboBox_Region->currentIndex()][1] = y;
+	positions_values[comboBox_Region->currentIndex()][2] = z;
 
+	this->updateRegionWidget(comboBox_Region->currentIndex());
+}
+
+
+/// Grab current Region Information
 void FlowParametersBar_new::getPropertyAreaParameters_new(int& np, std::vector< double >& positions, std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc)
 {
+	/// Ensure number of regions
+	np = this->number_of_regions_;
 
 	perm.resize(this->number_of_regions_);
 	poros.resize(this->number_of_regions_);
 	visc.resize(this->number_of_regions_);
 	positions.resize(3 * this->number_of_regions_);
-
-	np = this->number_of_regions_;
 
 	for (auto it = 0; it < this->number_of_regions_; it++)
 	{
@@ -243,7 +270,10 @@ void FlowParametersBar_new::getPropertyAreaParameters_new(int& np, std::vector< 
 
 void FlowParametersBar_new::loadRegions(const int np, const std::vector< double >& positions, const std::vector< double >& perm, const std::vector< double >& poros, const std::vector< double >& visc)
 {
+	/// Update the GUI
 	spinBox_Number_of_Regions->setValue(np);
+
+	/// Update the Model
 	this->number_of_regions_ = np;
 
 	for (auto it = 0; it < this->number_of_regions_ ; it++)
@@ -256,9 +286,11 @@ void FlowParametersBar_new::loadRegions(const int np, const std::vector< double 
 		positions_values[it].z() = positions[it*3+2];
 	}
 
+	/// Update the GUI based on the model
 	this->createRegions();
 }
 
+/// Populate the combo box
 void FlowParametersBar_new::createRegions( )
 {
 	QStringList l;
@@ -267,12 +299,16 @@ void FlowParametersBar_new::createRegions( )
 	{
 		l.push_back("Region " + QString::number(i + 1));
 	}
+	
+	this->number_of_regions_ = spinBox_Number_of_Regions->value();
 
 	comboBox_Region->clear();
 	comboBox_Region->insertItems(0, l);
+	/// Update the GUI using the current region information
 	this->updateRegionWidget(comboBox_Region->currentIndex());
 }
 
+/// Update the GUI using the current region information
 void FlowParametersBar_new::updateRegionWidget(const int index)
 {
 	doubleSpinBox_Region_Permiability->setValue(perm_values[index]);
@@ -283,16 +319,8 @@ void FlowParametersBar_new::updateRegionWidget(const int index)
 	doubleSpinBox_Region_Point_Z->setValue(positions_values[index].z());
 }
 
-/// Well
-void FlowParametersBar_new::set_region_point(double x, double y, double z)
-{
-	positions_values[comboBox_Region->currentIndex()][0] = x;
-	positions_values[comboBox_Region->currentIndex()][1] = y;
-	positions_values[comboBox_Region->currentIndex()][2] = z;
-
-	this->updateRegionWidget(comboBox_Region->currentIndex());
-}
-
+/// --- Well Information
+/// Load Well Information from a File
 void FlowParametersBar_new::loadWells(const int nw, const std::vector< unsigned int >& type, const std::vector< double >& pressure, const std::vector< int >& sign)
 {
 	this->number_of_wells_ = nw;
@@ -309,9 +337,18 @@ void FlowParametersBar_new::loadWells(const int nw, const std::vector< unsigned 
 	this->createWells();
 }
 
+
+/// Grab current Well information
 void FlowParametersBar_new::getWellParameter_new(int& nw, std::vector< unsigned int >& type, std::vector< double >& pressure, std::vector< int >& sign)
 {
+
+	/// Ensure correct number of Well
 	nw = this->number_of_wells_;
+
+	type.resize(this->number_of_wells_);
+	pressure.resize(this->number_of_wells_);
+	sign.resize(this->number_of_wells_);
+
 
 	for (auto it = 0; it < nw; it++)
 	{
@@ -328,6 +365,9 @@ void FlowParametersBar_new::createWells()
 	{
 		l.push_back("Well " + QString::number(i + 1));
 	}
+
+	this->number_of_wells_ = spinBox_Number_of_Wells->value();
+
 	comboBox_Well->clear();
 	comboBox_Well->insertItems(0, l);
 	this->updateWellsWidget(comboBox_Well->currentIndex());

@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>382</width>
-        <height>283</height>
+        <width>365</width>
+        <height>183</height>
        </rect>
       </property>
       <attribute name="label">
@@ -78,10 +78,10 @@
           <string>Region Attributes</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_Region_Viscosity">
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_Region_Point">
             <property name="text">
-             <string>Viscosity</string>
+             <string>Region Point</string>
             </property>
            </widget>
           </item>
@@ -92,30 +92,17 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_Region_Viscosity">
+            <property name="text">
+             <string>Viscosity</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_Region_Permiability">
             <property name="text">
              <string>Permiability</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_Region_Point">
-            <property name="text">
-             <string>Region Point</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Permiability">
-            <property name="minimum">
-             <double>1.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>1000.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>100.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -135,6 +122,26 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Permiability">
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>100.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_X">
+            <property name="maximum">
+             <double>100000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Viscosity">
             <property name="minimum">
@@ -148,8 +155,8 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_X">
+          <item row="3" column="3">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Z">
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>
@@ -162,12 +169,18 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="3">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Z">
-            <property name="maximum">
-             <double>100000.000000000000000</double>
+          <item row="4" column="1">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -179,8 +192,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>382</width>
-        <height>283</height>
+        <width>365</width>
+        <height>157</height>
        </rect>
       </property>
       <attribute name="label">
@@ -290,6 +303,19 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -318,6 +344,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

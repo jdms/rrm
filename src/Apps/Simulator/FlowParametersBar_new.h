@@ -90,6 +90,7 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		std::size_t					  number_of_wells_;
 
 		void new_gui_clear();
+		void new_gui_reset();
 
 		/// Using new flowlib model, those variable whould be:  
 		/// "Property Name 1" - 0 dimension scalar , property["permiability"] = 1.0;

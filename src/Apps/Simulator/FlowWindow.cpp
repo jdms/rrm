@@ -565,6 +565,12 @@ void FlowWindow::acceptUserParameters()
 void FlowWindow::buildCornerPoint()
 {
     std::cout << "FlowWindow buildCornerPoint" << std::endl;
+
+	if (controller->isUserInputOk() == false)
+	{
+		acceptUserParameters();
+	}
+
     controller->generateCornerPoint();
     canvas->updateCornerPoint();
 
@@ -573,6 +579,13 @@ void FlowWindow::buildCornerPoint()
 
 void FlowWindow::buildUnstructured()
 {
+
+   std::cout << "FlowWindow buildUnstructured" << std::endl;
+  
+   if (controller->isUserInputOk() == false)
+   {
+	   acceptUserParameters();
+   }
 
    controller->generateUnstructured();
    canvas->updateVolumetricMesh();

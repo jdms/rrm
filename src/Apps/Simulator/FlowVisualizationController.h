@@ -64,7 +64,9 @@ class FlowVisualizationController: public QWidget
         void clear();
 
 
-        bool isVolumetricOk(){ return volumetric_ok; }
+        bool isVolumetricOk(){ return this->volumetric_ok; }
+		bool isUserInputOk() { return this->user_input_ok; }
+		bool isMeshOk()      { return this->mesh_ok; }
         bool arePropertiesComputed() { return properties_computed; }
 
         void getRegionsColor( std::vector< QColor >& color_by_cells );
@@ -126,4 +128,5 @@ class FlowVisualizationController: public QWidget
 };
 
 #endif // FLOWVISUALIZATIONCONTROLLER_H
+
 
