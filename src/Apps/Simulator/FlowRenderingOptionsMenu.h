@@ -64,18 +64,18 @@ class FlowRenderingOptionsMenu: public QMenu
         void setPolarColormap();
         void setWinterColormap();
 
-        void reloadcrosssection();
-        void loadfile();
-        void editparameters();
-        void buildcornerpoint();
-        void buildunstructured();
-        void computeproperties();
-        void applycrosssection();
+        //void reloadcrosssection();
+        //void loadfile();
+        //void editparameters();
+        //void buildcornerpoint();
+        //void buildunstructured();
+        //void computeproperties();
+        //void applycrosssection();
 
-        void exportSurfacetoVTK();
-        void exportVolumetoVTK();
-        void exportCornerPointtoVTK();
-        void exportResultstoVTK();
+        //void exportSurfacetoVTK();
+        //void exportVolumetoVTK();
+        //void exportCornerPointtoVTK();
+        //void exportResultstoVTK();
 
         void clearAll();
 
@@ -92,10 +92,10 @@ class FlowRenderingOptionsMenu: public QMenu
         QMenu *mn_coloring_byvertex;
         QMenu *mn_coloring_byfaces;
 
-        QMenu* mn_export;
-        QAction* ac_exportsurfacetovtk;
-        QAction* ac_exportvolumetovtk;
-        QAction* ac_exportcornerpointtovtk;
+        //QMenu* mn_export;
+        //QAction* ac_exportsurfacetovtk;
+        //QAction* ac_exportvolumetovtk;
+        //QAction* ac_exportcornerpointtovtk;
 
         std::vector< QMenu *> mn_vectorsproperties_byvertex;
         std::vector< QRadioButton *> rd_vectormethods_byvertex;
@@ -122,14 +122,14 @@ class FlowRenderingOptionsMenu: public QMenu
         QWidgetAction* wa_colormaps;
 
 
-        QAction* ac_reloadcrosssection;
-        QAction* ac_loadfile;
-        QAction* ac_editparameters;
-        QAction* ac_buildcornerpoint;
-        QAction* ac_buildunstructured;
-        QAction* ac_computeproperties;
-        QAction* ac_applycrosssection;
-        QAction* ac_exportresultstovtk;
+        //QAction* ac_reloadcrosssection;
+        //QAction* ac_loadfile;
+        //QAction* ac_editparameters;
+        //QAction* ac_buildcornerpoint;
+        //QAction* ac_buildunstructured;
+        //QAction* ac_computeproperties;
+        //QAction* ac_applycrosssection;
+        //QAction* ac_exportresultstovtk;
 
         QAction* ac_clear;
 

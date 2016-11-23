@@ -47,19 +47,19 @@ void FlowVisualizationCanvas::createRenderingMenu()
     connect( rendering_menu, &FlowRenderingOptionsMenu::setPolarColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::POLAR ); setColorMap(); }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setWinterColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::WINTER ); setColorMap(); }  );
 
-    connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){  emit getSurfaceCrossSection(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ emit readSurfacefromFile(); } );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::buildcornerpoint, this, [=](){ emit buildcornerpoint(); } );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::buildunstructured, this, [=](){ emit buildunstructured(); } );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ emit editParameters(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::computeproperties, this, [=](){ controller->computeFlowProperties(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ emit applyCrossSection(); }  );
+    //connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){  emit getSurfaceCrossSection(); }  );
+    //connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ emit readSurfacefromFile(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::buildcornerpoint, this, [=](){ emit buildcornerpoint(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::buildunstructured, this, [=](){ emit buildunstructured(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ emit editParameters(); }  );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::computeproperties, this, [=](){ controller->computeFlowProperties(); }  );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ emit applyCrossSection(); }  );
 
 
-    connect( rendering_menu, &FlowRenderingOptionsMenu::exportSurfacetoVTK, this, [=](){  controller->exportSurfacetoVTK(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::exportVolumetoVTK, this, [=](){ controller->exportVolumetoVTK(); } );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::exportCornerPointtoVTK, this, [=](){ controller->exportCornerPointtoVTK(); } );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::exportResultstoVTK, this, [=](){ controller->exportResultstoVTK(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportSurfacetoVTK, this, [=](){  controller->exportSurfacetoVTK(); }  );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportVolumetoVTK, this, [=](){ controller->exportVolumetoVTK(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportCornerPointtoVTK, this, [=](){ controller->exportCornerPointtoVTK(); } );
+   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportResultstoVTK, this, [=](){ controller->exportResultstoVTK(); } );
 
 
 

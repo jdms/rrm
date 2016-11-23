@@ -20,16 +20,16 @@ void FlowRenderingOptionsMenu::create()
 
     addSection( "" );
 
-    addAction( ac_reloadcrosssection );
-    addAction( ac_loadfile );
-    addAction( ac_editparameters );
+    //addAction( ac_reloadcrosssection );
+    //addAction( ac_loadfile );
+    //addAction( ac_editparameters );
 
-    addSection( "Flow Actions" );
+    //addSection( "Flow Actions" );
 
-    addAction( ac_buildcornerpoint );
-    addAction( ac_buildunstructured );
-    addAction( ac_computeproperties );
-    addAction( ac_applycrosssection );
+    //addAction( ac_buildcornerpoint );
+    //addAction( ac_buildunstructured );
+    //addAction( ac_computeproperties );
+    //addAction( ac_applycrosssection );
 
     addSection( "Properties" );
 
@@ -46,7 +46,7 @@ void FlowRenderingOptionsMenu::create()
 
     addSeparator();
 
-    addMenu( mn_export );
+    //addMenu( mn_export );
 
     addSeparator();
 
@@ -66,19 +66,19 @@ void FlowRenderingOptionsMenu::createActions( QWidget* parent ){
 
 
 
-    connect( ac_exportsurfacetovtk, &QAction::triggered, this, [=](){ emit exportSurfacetoVTK(); } );
-    connect( ac_exportvolumetovtk, &QAction::triggered, this, [=](){ emit exportVolumetoVTK(); } );
-    connect( ac_exportcornerpointtovtk, &QAction::triggered, this, [=](){ emit exportCornerPointtoVTK(); } );
-    connect( ac_exportresultstovtk, &QAction::triggered, this, [=](){ emit exportResultstoVTK(); } );
+    //connect( ac_exportsurfacetovtk, &QAction::triggered, this, [=](){ emit exportSurfacetoVTK(); } );
+    //connect( ac_exportvolumetovtk, &QAction::triggered, this, [=](){ emit exportVolumetoVTK(); } );
+    //connect( ac_exportcornerpointtovtk, &QAction::triggered, this, [=](){ emit exportCornerPointtoVTK(); } );
+    //connect( ac_exportresultstovtk, &QAction::triggered, this, [=](){ emit exportResultstoVTK(); } );
 
 
-    connect( ac_reloadcrosssection, &QAction::triggered, this, [=](){ emit reloadcrosssection(); } );
-    connect( ac_loadfile,  &QAction::triggered, this, [=](){ emit loadfile(); } );
-    connect( ac_editparameters,  &QAction::triggered, this, [=](){ emit editparameters(); } );
-    connect( ac_buildcornerpoint,  &QAction::triggered, this, [=](){ emit buildcornerpoint(); } );
-    connect( ac_buildunstructured,  &QAction::triggered, this, [=](){ emit buildunstructured(); } );
-    connect( ac_computeproperties,  &QAction::triggered, this, [=](){ emit computeproperties(); } );
-    connect( ac_applycrosssection,  &QAction::triggered, this, [=](){ emit applycrosssection(); } );
+    //connect( ac_reloadcrosssection, &QAction::triggered, this, [=](){ emit reloadcrosssection(); } );
+    //connect( ac_loadfile,  &QAction::triggered, this, [=](){ emit loadfile(); } );
+    //connect( ac_editparameters,  &QAction::triggered, this, [=](){ emit editparameters(); } );
+    //connect( ac_buildcornerpoint,  &QAction::triggered, this, [=](){ emit buildcornerpoint(); } );
+    //connect( ac_buildunstructured,  &QAction::triggered, this, [=](){ emit buildunstructured(); } );
+    //connect( ac_computeproperties,  &QAction::triggered, this, [=](){ emit computeproperties(); } );
+    //connect( ac_applycrosssection,  &QAction::triggered, this, [=](){ emit applycrosssection(); } );
 
 
 
@@ -90,18 +90,18 @@ void FlowRenderingOptionsMenu::createActions( QWidget* parent ){
 void FlowRenderingOptionsMenu::createLoadMenu()
 {
 
-    ac_reloadcrosssection = new QAction( "Reload Surface", this );
-    ac_loadfile = new QAction( "Load File", this );
-    ac_editparameters = new QAction( "Edit Parameters", this );
+    //ac_reloadcrosssection = new QAction( "Reload Surface", this );
+    //ac_loadfile = new QAction( "Load File", this );
+    //ac_editparameters = new QAction( "Edit Parameters", this );
 }
 
 
 void FlowRenderingOptionsMenu::createFlowActionsMenu()
 {
-    ac_buildcornerpoint = new QAction( "Generate Corner Point Grid", this );
-    ac_buildunstructured = new QAction( "Generate Unstructured Grid", this );
-    ac_computeproperties = new QAction( "Compute Properties", this );
-    ac_applycrosssection = new QAction( "Create a CrossSection", this );
+    //ac_buildcornerpoint = new QAction( "Generate Corner Point Grid", this );
+    //ac_buildunstructured = new QAction( "Generate Unstructured Grid", this );
+    //ac_computeproperties = new QAction( "Compute Properties", this );
+    //ac_applycrosssection = new QAction( "Create a CrossSection", this );
 
 }
 
@@ -210,16 +210,16 @@ void FlowRenderingOptionsMenu::createExportMenu()
 {
 
 
-    ac_exportsurfacetovtk = new QAction( "Export Surface", this );
-    ac_exportvolumetovtk = new QAction( "Export Volume", this );
-    ac_exportcornerpointtovtk = new QAction( "Export CornerPoint", this );
-    ac_exportresultstovtk = new QAction( "Export Results", this );
+    //ac_exportsurfacetovtk = new QAction( "Export Surface", this );
+    //ac_exportvolumetovtk = new QAction( "Export Volume", this );
+    //ac_exportcornerpointtovtk = new QAction( "Export CornerPoint", this );
+    //ac_exportresultstovtk = new QAction( "Export Results", this );
 
-    mn_export = new QMenu( "Export" );
-    mn_export->addAction( ac_exportsurfacetovtk );
-    mn_export->addAction( ac_exportvolumetovtk );
-    mn_export->addAction( ac_exportcornerpointtovtk );
-    mn_export->addAction( ac_exportresultstovtk );
+    //mn_export = new QMenu( "Export" );
+    //mn_export->addAction( ac_exportsurfacetovtk );
+    //mn_export->addAction( ac_exportvolumetovtk );
+    //mn_export->addAction( ac_exportcornerpointtovtk );
+    //mn_export->addAction( ac_exportresultstovtk );
 }
 
 
