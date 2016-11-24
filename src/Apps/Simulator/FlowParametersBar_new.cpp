@@ -32,7 +32,7 @@ void FlowParametersBar_new::createDialogs()
 
 	/// New GUI ---->
 	//// REGION
-	connect(toolButton_Region_Accept, &QToolButton::clicked, this, &FlowParametersBar_new::createRegions);
+	connect(spinBox_Number_of_Regions, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &FlowParametersBar_new::createRegions);
 	connect(comboBox_Region, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](){ updateRegionWidget(comboBox_Region->currentIndex()); });
 
 	//@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
@@ -44,7 +44,7 @@ void FlowParametersBar_new::createDialogs()
 	connect(doubleSpinBox_Region_Point_Z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][2] = doubleSpinBox_Region_Point_Z->value(); });
 			
 	//// WELL
-	connect(toolButton_Well_Accept, &QToolButton::clicked, this, &FlowParametersBar_new::createWells);
+	connect(spinBox_Number_of_Wells, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &FlowParametersBar_new::createWells);
 	connect(comboBox_Well, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](){ updateWellsWidget(comboBox_Well->currentIndex()); });
 
 	//@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
@@ -216,10 +216,15 @@ void FlowParametersBar_new::new_gui_reset()
 	doubleSpinBox_Well_Pressure->setValue(0);
 	spinBox_Well_Sign->setValue(1);
 	spinBox_Well_Type->setValue(1);
+
+	spinBox_Number_of_Regions->setValue(0);
+	spinBox_Number_of_Wells->setValue(0);
 }
 
 void FlowParametersBar_new::new_gui_clear()
 {
+
+	/// Reset all dictionaries
 	positions_values.clear();
 	perm_values.clear();
 	poros_values.clear();
@@ -229,6 +234,7 @@ void FlowParametersBar_new::new_gui_clear()
 	well_pressure.clear();
 	well_signs.clear();
 
+	/// Reset all Gui Values
 	comboBox_Region->clear();
 	comboBox_Well->clear();
 
