@@ -185,7 +185,12 @@ void FlowDiagnosticsInterface::init(){
 void FlowDiagnosticsInterface::computeProperties(){
     region.steadystateflowsolver();
     region.flowdiagnostics();
-    region.derivedquantities_all();
+	//if (region.meshinfo_type() == 1){ //only triggered when we can visualise them.
+	//	region.derivedquantities_all();
+	//}
+	//else if (region.meshinfo_type() == 2){
+	//	region.derivedquantities_cpgfv();
+	//}
 }
 
 
