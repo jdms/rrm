@@ -67,7 +67,7 @@ class Controller: public QObject
     public slots:
 
 
-        size_t sendLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
         void setStratigraphicRule( const std::string& rule );
 
