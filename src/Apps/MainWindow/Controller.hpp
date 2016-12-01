@@ -91,6 +91,7 @@ class Controller: public QObject
         void waitingSelection( bool, const std::vector< size_t >& );
         void changeStratigraphyRulesStatus( const std::string& );
         void changeDefineRegionStatus( const bool, const bool );
+        void pickingRegion( bool );
 		
 
     protected:

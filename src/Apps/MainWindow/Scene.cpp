@@ -10,7 +10,6 @@
 Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 {
     initData();
-
 }
 
 
@@ -114,6 +113,7 @@ void Scene::defineVolumeQtCoordinates( int origin_x, int origin_y, int origin_z,
     qtscene_height = height;
     qtscene_depth  = depth;
 
+    emit updateBoundGeometry( width, height , depth );
 
     updateTransformationsMatrices();
 
@@ -163,6 +163,7 @@ void Scene::createVolume3D()
     boundary3D->setCurrentDirectory( shader_directory.toStdString() );
 
     controller->initRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z());
+
 
 
     emit initContext();
@@ -215,6 +216,7 @@ void Scene::createSketchingBoundary()
 
 
 
+
     addBoundaryToScene();
 
 }
@@ -245,6 +247,8 @@ void Scene::addBoundaryToScene()
 
 
 }
+
+
 
 
 void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h )
@@ -279,6 +283,7 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
     arrangement.setBoundary( sketching_boundary->getOriginX(), sketching_boundary->getOriginY(),
                              sketching_boundary->getWidth(), sketching_boundary->getHeight() );
+
 
 }
 
@@ -483,7 +488,32 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 }
 
 
+void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+{
 
+
+    controller->getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+
+
+    std::size_t number_of_points = ( std::size_t ) points.size()/3;
+
+
+    Eigen::Vector3f v; Eigen::Vector3f sv;
+    for ( auto i = 0; i < number_of_points; ++i )
+    {
+        v[ 0 ] = static_cast<float>( points[ 3*i + 0 ] );
+        v[ 1 ] = static_cast<float>( points[ 3*i + 2 ] );
+        v[ 2 ] = static_cast<float>( points[ 3*i + 1 ] );
+
+        sv = scene3DtoPlane( v );
+
+        points[ 3*i + 0 ] = static_cast<double>( sv[ 0 ] );
+        points[ 3*i + 1 ] = static_cast<double>( sv[ 2 ] );
+        points[ 3*i + 2 ] = static_cast<double>( sv[ 1 ] );
+    }
+
+
+}
 
 
 
@@ -878,6 +908,16 @@ Point2D Scene::scene3Dto2D( const Eigen::Vector3f& p )
 }
 
 
+Eigen::Vector3f Scene::scene3DtoPlane( const Eigen::Vector3f& p )
+{
+    Eigen::Vector4f p_cpy( p.x(), p.y(), p.z(), 1.0f );
+
+    p_cpy = m_3dto2d.matrix()*p_cpy;
+    return Eigen::Vector3f( p_cpy.x(), p_cpy.y(), p_cpy.z() );
+
+}
+
+
 Curve2D Scene::scene2Dto3D( const Curve2D& c )
 {
 
@@ -1042,6 +1082,7 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
 
 
+
     if ( event->buttons() & Qt::LeftButton )
     {
 
@@ -1053,14 +1094,19 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
         else if( current_mode == InteractionMode::BOUNDARY )
         {
 
-            int w = event->scenePos().x() - boundary_anchor.x();
-            int h = event->scenePos().y() - boundary_anchor.y();
+
+            int w = event->scenePos().x() - boundary_anchor.x() ;
+            int h = event->scenePos().y() - boundary_anchor.y() ;
 
             sketching_boundary->edit( boundary_anchor.x(), boundary_anchor.y(), w,  h );
+            emit updateBoundGeometry( std::abs( w ), std::abs( h ) , qtscene_depth );
 
         }
 
     }
+
+
+
 
     QGraphicsScene::mouseMoveEvent( event );
     update();
@@ -1091,7 +1137,8 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         int h = std::abs( maxy - miny );
 
 
-        editBoundary( minx, miny, w, h );
+        editBoundary( 0, 0, w, h );
+
 
         current_mode = InteractionMode::OVERSKETCHING;
 
@@ -1198,6 +1245,10 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     }
 
 
+    else if( current_mode == InteractionMode::SELECTING_REGION )
+    {
+        emit sendRegionPoint( event->scenePos().x(), event->scenePos().y(), qtscene_depth );
+    }
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
