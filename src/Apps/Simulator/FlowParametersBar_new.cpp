@@ -36,6 +36,10 @@ void FlowParametersBar_new::createDialogs()
 	connect(comboBox_Region, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](){ updateRegionWidget(comboBox_Region->currentIndex()); });
 
 	//@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
+
+	connect(horizontalSlider_Permiability, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=](){ doubleSpinBox_Region_Permiability->setValue(std::log10((4.0 - ((0.07) * static_cast<double>(horizontalSlider_Permiability->value()))))); });
+
+
 	connect(doubleSpinBox_Region_Permiability, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ perm_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Permiability->value(); });
 	connect(doubleSpinBox_Region_Porosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ poros_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Porosity->value(); });
 	connect(doubleSpinBox_Region_Viscosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ visc_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Viscosity->value(); });
