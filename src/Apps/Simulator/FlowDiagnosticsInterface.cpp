@@ -267,6 +267,7 @@ void FlowDiagnosticsInterface::getCPGPressure( std::vector< double >& values ) {
     int i;
     for (i = 0; i < region.cpgelementvector().size(); i++){
         values.push_back(region.cpgelementvector()[i].press());
+		std::cout << "Pressure " << region.cpgelementvector()[i].press() << std::endl;
     }
 }
 

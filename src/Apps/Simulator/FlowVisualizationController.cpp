@@ -9,7 +9,7 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
     properties_computed = false;
     user_input_ok = false;
 
-    current_method = MESHING_METHOD::UNSTRUCTURED;
+    current_method = MESHING_METHOD::CORNERPOINT;
 
     code_interface.loadDefaultValues(1);
 
