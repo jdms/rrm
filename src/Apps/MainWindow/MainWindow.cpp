@@ -3,6 +3,20 @@
 
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
+    init();
+}
+
+
+MainWindow::~MainWindow()
+{
+
+}
+
+
+
+void MainWindow::init()
+{
+
     setFocusPolicy( Qt::StrongFocus );
     setFocus();
     setAcceptDrops( true );
@@ -16,15 +30,7 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 
     scene_initialized = false;
 
-
 }
-
-
-MainWindow::~MainWindow()
-{
-
-}
-
 
 
 void MainWindow::createWindow()
@@ -44,8 +50,6 @@ void MainWindow::createWindow()
 }
 
 
-
-
 void MainWindow::createActions()
 {
     createMainWindowActions();
@@ -55,6 +59,7 @@ void MainWindow::createActions()
     createFlowDiagnosticsActions();
 
 }
+
 
 
 void MainWindow::createMainWindowActions ( )
@@ -70,6 +75,7 @@ void MainWindow::createMainWindowActions ( )
     connect( ac_about, SIGNAL( triggered() ) , aboutRRM, SLOT( show() ) );
     connect( ac_contents, SIGNAL( triggered() ) , &help, SLOT( show() ) );
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );
+
 }
 
 
@@ -90,6 +96,7 @@ void MainWindow::createMenuBar()
     create3DWindowMenuBar();
 
 }
+
 
 
 
@@ -150,9 +157,16 @@ void MainWindow::createSketchingActions()
     connect( controller, SIGNAL( enableUndo( bool ) ) , sketching_window, SLOT( enableUndo( bool ) ) );
     connect( controller, SIGNAL( enableRedo( bool ) ) , sketching_window, SLOT( enableRedo( bool ) ) );
 
+    connect( controller, SIGNAL( changeStratigraphyRulesStatus( const std::string& ) ) , sketching_window, SLOT( changeStratigraphyRulesStatus(const std::string& ) ) );
+    connect( controller, SIGNAL( changeDefineRegionStatus( const bool, const bool ) ) , sketching_window, SLOT( changeDefineRegionStatus( const bool, const bool ) ) );
+
+
+
     connect( scene, &Scene::enableSketching, sketching_window, &SketchingWindow::enableSketching );
 
 }
+
+
 
 
 
@@ -186,7 +200,8 @@ void MainWindow::create3DWindowActions()
     connect ( ac_3dview , SIGNAL( toggled( bool ) ) , dw_3dview , SLOT( setVisible( bool ) ) );
 
     connect( dw_3dview, &QDockWidget::visibilityChanged, ac_3dview, &QAction::setChecked );
-    connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initProgram() ) );
+    connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
+    connect( view3d_window, SIGNAL( changeResolution( const int, const int ) ), controller, SLOT( changeResolution( const int, const int ) ) );
 
 
 
@@ -219,7 +234,9 @@ void MainWindow::createFlowDiagnosticsActions()
 
 
 
-void MainWindow::initProgram()
+
+
+void MainWindow::initScene()
 {
 
     if( scene_initialized == true ) return;

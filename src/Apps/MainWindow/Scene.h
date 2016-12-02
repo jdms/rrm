@@ -10,6 +10,9 @@
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QSvgGenerator>
+#include <QRegion>
+#include <QTransform>
+
 
 
 
@@ -71,7 +74,7 @@ class Scene: public QGraphicsScene
 
         void createCrossSection( const float& d = 0.0f );
         void createSketchingBoundary();
-        void addCurve();
+        bool addCurve();
 
 
         void updateColor( const QColor& color );
@@ -123,6 +126,8 @@ class Scene: public QGraphicsScene
     protected:
 
 
+        void initData();
+
         void createVolume3D();
         void editBoundary( const int& x, const int& y, const int& w, const int& h );
 
@@ -137,17 +142,6 @@ class Scene: public QGraphicsScene
 
         void updateTransformationsMatrices();
 
-
-
-
-
-
-
-//        Eigen::Vector3f scene2DtoPlanin( const Point2D &p );
-//        Eigen::Vector3f scene2DtoPlanin( const Eigen::Vector3f& p );
-//        Curve2D scene2DtoPlanin( const Curve2D& c );
-//        Point2D scenePlaninto2D( const Eigen::Vector3f& p );
-//        Curve2D scenePlaninto2D( const Curve2D &c );
 
 
 
@@ -170,7 +164,6 @@ class Scene: public QGraphicsScene
         Controller *controller;
 
         InputSketch *temp_sketch;
-        StratigraphicItem *sketch;
 
         BoundaryItem2D *sketching_boundary;
         BoundingBox3D *boundary3D;
@@ -181,8 +174,6 @@ class Scene: public QGraphicsScene
 
         Eigen::Affine3f m_2dto3d;
         Eigen::Affine3f m_3dto2d;
-        Eigen::Affine3f m_2dtoplanin;
-        Eigen::Affine3f m_planinto2d;
 
 
         int qtscene_origin_x;
@@ -210,9 +201,10 @@ class Scene: public QGraphicsScene
 
         QString shader_directory;
 
-
         RRM::Arrangement_2D arrangement;
         QGraphicsPixmapItem *background_image;
+
+        QTransform mA;
 	
 };
 

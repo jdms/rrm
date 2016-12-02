@@ -94,7 +94,7 @@ void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, c
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
     rules_processor.init();
-    rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
+    rules_processor.update( RRM::ExtrusionRulesProcessor::State::RA_SKETCHING );
 
 
 }
@@ -209,9 +209,7 @@ bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
 
 bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 {
-
     return rules_processor.requestDefineBelow( allowed );
-
 }
 
 
@@ -221,7 +219,7 @@ bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
     if( selections.empty() == true ) return false;
 
-    std::cout << "-- Started sketch above... " << std::endl;
+    std::cout << "-- Started sketch above... \n" << std::flush;
     return rules_processor.defineAbove( selections[ 0 ] );
 
 }
@@ -232,7 +230,7 @@ bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 
     if( selections.empty() == true ) return false;
 
-    std::cout << "-- Started sketch below... " << std::endl;
+    std::cout << "-- Started sketch below... \n" << std::flush;
     return rules_processor.defineBelow( selections[ 0 ] );
 
 
@@ -241,7 +239,7 @@ bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 
 bool Controller::stopSketchingAbove()
 {
-    std::cout << "-- Stopped sketch above... " << std::endl;
+    std::cout << "-- Stopped sketch above...\n" << std::flush;
     rules_processor.stopDefineAbove();
     return true;
 
@@ -251,7 +249,7 @@ bool Controller::stopSketchingAbove()
 bool Controller::stopSketchingBelow()
 {
 
-    std::cout << "-- Stopped sketch below... " << std::endl;
+    std::cout << "-- Stopped sketch below... \n" << std::flush;
 
     rules_processor.stopDefineBelow();
 
@@ -283,6 +281,16 @@ void Controller::setStratigraphicRule( const std::string& rule )
 }
 
 
+void Controller::changeResolution( const int numI_ , const int numJ_ )
+{
+
+    size_t numI = numI_;
+    size_t numJ = numJ_;
+
+    rules_processor.requestChangeDiscretizationLevel( numI, numJ );
+    update();
+
+}
 
 
 void Controller::undo()

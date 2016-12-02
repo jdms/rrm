@@ -22,6 +22,7 @@
 *
 */
 
+
 class SketchingWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -32,33 +33,44 @@ class SketchingWindow : public QMainWindow
 
         SketchingWindow( QWidget* parent = 0 );
 
-        inline void setScene( Scene* const& scene ){ sketching_canvas->addScene( scene ); }
-
 
 
     protected:
 
+
+        void init();
+
         void createWindow();
+
         void createActions();
+        void createDefineSketchRegionsActions();
+        void createRulesActions();
+        void createNewActions();
+        void createEditActions();
+
+        void createColorActions();
+        void createMiscActions();
+
+
         void createConnections();
-        void resetButtons();
+        void resetActions();
 
 
 
 
     public slots:
 
+
+        inline void setScene( Scene* const& scene ){ sketching_canvas->addScene( scene ); }
+
+
         inline void enableUndo( bool option ){ ac_undo->setEnabled( option ); }
         inline void enableRedo( bool option ){ ac_redo->setEnabled( option ); }
         inline void enableSketching( bool option ){ ac_sketch->setChecked( option ); }
-        inline void uncheckRemoveRules()
-        {
-            ac_sketch->setChecked( false );
-            ac_removeabove->setChecked( false );
-            ac_removeaboveintersection->setChecked( false );
-            ac_removebelow->setChecked( false );
-            ac_removebelowintersection->setChecked( false );
-        }
+
+        void changeDefineRegionStatus( const bool above, const bool below );
+        void changeStratigraphyRulesStatus( const std::string& rule );
+
 
 
 
@@ -103,14 +115,16 @@ class SketchingWindow : public QMainWindow
         QAction *ac_sketch;
         QAction *ac_removeaboveintersection;
         QAction *ac_removebelowintersection;
+
+        QToolBar *tlb_sketchregions;
         QAction *ac_sketchabove;
         QAction *ac_sketchbelow;
 
         QToolBar *tlb_interaction;
+        QToolBar *tlb_edit;
 
         QToolBar *tlb_customization;
         QAction *ac_screenshot;
-        QAction *ac_randomcolor;
         QWidgetAction *ac_sketchcolor;
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;

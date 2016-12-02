@@ -70,7 +70,7 @@ class Controller: public QObject
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
         void setStratigraphicRule( const std::string& rule );
-
+        void changeResolution( const int numI_, const int numJ_ );
 
         void undo();
         void redo();
@@ -88,6 +88,8 @@ class Controller: public QObject
         void enableRedo( bool option );
         void removeStratigraphy( size_t id );
         void waitingSelection( bool, const std::vector< size_t >& );
+        void changeStratigraphyRulesStatus( const std::string& );
+        void changeDefineRegionStatus( const bool, const bool );
 		
 
     protected:

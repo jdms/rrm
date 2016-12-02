@@ -51,10 +51,10 @@ class Stratigraphy
         }
 
 
-        inline std::vector< unsigned int >& getCurveEdges(){ return curve_edges; }
+        inline std::vector< size_t >& getCurveEdges(){ return curve_edges; }
 
         inline std::vector< float >& getSurfaceVertices(){ return surface_vertices; }
-        inline std::vector< unsigned int >& getSurfaceFaces(){ return surface_faces; }
+        inline std::vector< size_t >& getSurfaceFaces(){ return surface_faces; }
 
         inline void clear()
         {

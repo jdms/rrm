@@ -30,8 +30,8 @@
 unsigned long int PlanarSurface::num_instances_ = 1; 
 unsigned long int PlanarSurface::global_discretization_state_ = 1; 
 
-PlanarSurface::Natural PlanarSurface::discretization_X = 64;
-PlanarSurface::Natural PlanarSurface::discretization_Y = 64;
+PlanarSurface::Natural PlanarSurface::discretization_X = 512;
+PlanarSurface::Natural PlanarSurface::discretization_Y = 16;
 
 Point3 PlanarSurface::origin = {{{ 0.0, 0.0, 0.0, 0.0 }}}; 
 Point3 PlanarSurface::lenght = {{{ 1.0, 1.0, 1.0, 1.0 }}}; 
@@ -56,7 +56,7 @@ void PlanarSurface::updateDiscretization()
     nX_ = 2*discretization_X + 1; 
     nY_ = 2*discretization_Y + 1; 
     num_vertices_ = nX_ * nY_; 
-    tolerance = 0.9 * std::max( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
+    tolerance = 0.9 * std::min( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
     /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "\n --> tolerance: " << tolerance << std::endl; */ 
 
     /* if ( this_discretization_state_ < global_discretization_state_ ) */ 

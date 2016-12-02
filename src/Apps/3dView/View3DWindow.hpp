@@ -3,15 +3,11 @@
 
 
 #include <QMainWindow>
-//#include <QWidget>
-//#include <QtWidgets/QApplication>
-//#include <QtWidgets/QDockWidget>
+#include <QWidget>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QFormLayout>
-#include <QtWidgets/QLabel>
-
-#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QSlider>
+#include <QtWidgets/QGridLayout>
+#include <QLabel>
 
 
 
@@ -47,11 +43,14 @@ class View3DWindow: public QMainWindow
     signals:
 
         void initializeScene();
+        void changeResolution( const int, const int );
 
 
     public:
 
         View3DCanvas *canvas3d;
+        QSlider* sl_resolution_numI;
+        QSlider* sl_resolution_numJ;
 
 
 

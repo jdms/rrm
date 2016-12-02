@@ -41,13 +41,38 @@ class ThinPlateSpline22 : public BasisFunction2D
                 return -r2/2; 
             }
 
-            return ( r2*log( sqrt(r2) ) ); 
+            return ( r2*log( r2 )/2 ); 
         }
 
         unsigned int get_order() const  
         {
             return order; 
         }
+
+        double Dx( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            if ( r < epsilon )
+            {
+                return -x1;
+            }
+
+            return x1*(2*log(r) + 1);
+        }
+
+        double Dy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            if ( r < epsilon )
+            {
+                return -x2;
+            }
+
+            return x2*(2*log(r) + 1);
+        }
+
 
     private: 
         static const unsigned int order = 2; 

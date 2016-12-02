@@ -21,61 +21,83 @@
 /******************************************************************************/
 
 
-#ifndef __INTERPOLANT_2D__
-#define __INTERPOLANT_2D__
+#ifndef __CUBIC__
+#define __CUBIC__
 
-#include <vector> 
+#include <cmath> 
+/* #include <iostream> */ //debug
 
-#include "core.hpp" // Dummy definitions to be replaced by the project's definitions. 
-#include "kernels.hpp"
-#include "polynomial.hpp" 
+#include "basis_function_2d.hpp" 
 
-using Kernel = Cubic; 
-
-class Interpolant2D 
-{ 
+class Cubic : public BasisFunction2D 
+{
     public: 
-        Interpolant2D( Kernel k = Kernel(), unsigned int poly_dim = 3 ); 
+        double operator()( double x1, double x2 ) const  
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        Interpolant2D( const Interpolant2D & ) = default; 
-        Interpolant2D& operator=( const Interpolant2D & ) = default;
+            return r*r*r;
+        }
 
+        unsigned int get_order() const  
+        {
+            return order; 
+        }
 
-  //      Interpolant2D( Interpolant2D && ) = default; 
-    //    Interpolant2D& operator=( Interpolant2D && ) = default; 
+        double Dx( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
+            return 3*r*x1;
+        }
 
-        double operator()( double x, double y ); 
-        double operator()( Point2 &p ); 
+        double Dy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        double Dx( double x, double y ); 
-        double Dx( Point2 &p ); 
+            return 3*r*x2;
+        }
 
-        double Dy( double x, double y ); 
-        double Dy( Point2 &p ); 
+        double Dxx( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        bool interpolantIsSet(); 
-        int isSmooth(); 
+            if ( r < epsilon )
+            {
+                return 3*(r + x1);
+            }
 
-        bool addPointEvaluation( const Point2 &p, double feval ); 
-        bool addPointEvaluation( Point2 &&p, double feval ); 
-        bool addPointEvaluations( std::vector<Point2> &points, std::vector<double> &fevals ); 
+            return 3*(r + x1*x1/r);
+        }
 
-        bool interpolate(); 
+        double Dxy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        void clear(); 
+            if ( r < epsilon )
+            {
+                return r/2;
+            }
 
-    private:
-        Kernel k_; 
-        unsigned int dim_; 
-        unsigned int poly_dim_; 
+            return 3*x1*x2/r;
+        }
 
-        std::vector<Point2> points_;
-        std::vector<double> fevals_; 
-        std::vector<double> weights_; 
+        double Dyy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        bool interpolant_is_set_ = false;  
+            if ( r < epsilon )
+            {
+                return 3*(r + x2);
+            }
+
+            return 3*(r + x2*x2/r);
+        }
+
+    private: 
+        static const unsigned int order = 1; 
+        double epsilon = 1E-9; 
 };
 
+#endif 
 
-#endif
