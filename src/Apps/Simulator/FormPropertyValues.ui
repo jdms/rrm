@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>382</width>
-        <height>223</height>
+        <width>419</width>
+        <height>206</height>
        </rect>
       </property>
       <attribute name="label">
@@ -102,7 +102,7 @@
           <item row="1" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Porosity">
             <property name="minimum">
-             <double>0.000000000000000</double>
+             <double>0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>0.350000000000000</double>
@@ -117,17 +117,23 @@
           </item>
           <item row="0" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Permiability">
+            <property name="suffix">
+             <string> millidarcy (mD)</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
             <property name="minimum">
-             <double>-1000000.000000000000000</double>
+             <double>0.001000000000000</double>
             </property>
             <property name="maximum">
-             <double>100000000.000000000000000</double>
+             <double>10000.000000000000000</double>
             </property>
             <property name="singleStep">
-             <double>0.070000000000000</double>
+             <double>0.001000000000000</double>
             </property>
             <property name="value">
-             <double>0.000000000000000</double>
+             <double>0.001000000000000</double>
             </property>
            </widget>
           </item>
@@ -140,14 +146,20 @@
           </item>
           <item row="2" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Viscosity">
+            <property name="suffix">
+             <string> centipode (cP)</string>
+            </property>
             <property name="minimum">
-             <double>1.000000000000000</double>
+             <double>0.100000000000000</double>
             </property>
             <property name="maximum">
              <double>1.000000000000000</double>
             </property>
             <property name="singleStep">
-             <double>0.000000000000000</double>
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -181,10 +193,46 @@
           <item row="0" column="2">
            <widget class="QSlider" name="horizontalSlider_Permiability">
             <property name="minimum">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="maximum">
              <number>100</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QSpinBox" name="spinBox_test">
+            <property name="minimum">
+             <number>-40</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QSlider" name="horizontalSlider_Porosity">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QSlider" name="horizontalSlider_Viscosity">
+            <property name="maximum">
+             <number>99</number>
+            </property>
+            <property name="value">
+             <number>99</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -372,5 +420,22 @@
  <resources>
   <include location="../Resources/images.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>horizontalSlider_Permiability</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_test</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
