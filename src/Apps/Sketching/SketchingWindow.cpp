@@ -10,6 +10,13 @@ SketchingWindow::SketchingWindow( QWidget* parent )
 
 void SketchingWindow::init()
 {
+
+    mouse_x = 0;
+    mouse_y = 0;
+    bd_width = 0;
+    bd_height = 0;
+    bd_depth = 0;
+
     createWindow();
     createActions();
     createConnections();
@@ -25,10 +32,15 @@ void SketchingWindow::createWindow()
     sketching_canvas = new SketchingCanvas();
     setCentralWidget( sketching_canvas );
 
+    str_geometry = QString( "x: %1, y: %2 | w: %3, h: %4, d: %5" ).arg( mouse_x ).arg( mouse_y ).arg( bd_width ).arg( bd_height ).arg( bd_depth );
+
     lb_statusbar_status = new QLabel();
+    lb_boundary_geometry = new QLabel( str_geometry );
+
+
 
     statusBar()->addWidget( lb_statusbar_status );
-    statusBar()->addPermanentWidget( sketching_canvas->lb_coordinates );
+    statusBar()->addPermanentWidget( lb_boundary_geometry );
 
 }
 
@@ -156,6 +168,7 @@ void SketchingWindow::createEditActions()
     ac_new_boundary = new QAction( tr( "&Edit Boundary" ), this );
     ac_new_boundary->setIcon( QIcon( ":/images/icons/NewBoundary.png" ) );
     ac_new_boundary->setShortcut( QKeySequence::New );
+
 
     ac_add_sketch = new QAction( tr( "&Insert Curve" ), this );
     ac_add_sketch->setIcon( QIcon( ":/images/icons/InsertCurve.png" ) );
@@ -288,6 +301,7 @@ void SketchingWindow::createConnections()
     connect( ac_new_boundary, &QAction::triggered, [=](){ emit setCurrentMode( Scene::InteractionMode::BOUNDARY ); } );
 
 
+
     connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status ){ emit setRandomColor( !status ); } );
 
 }
@@ -333,4 +347,30 @@ void SketchingWindow::changeStratigraphyRulesStatus( const std::string& rule )
 
 
 
+void SketchingWindow::updateMousePosition( const float mx, const float my )
+{
 
+    mouse_x = mx;
+    mouse_y = my;
+
+    str_geometry = QString( "x: %1, y: %2 | w: %3, h: %4, d: %5" ).arg( mouse_x ).arg( mouse_y ).arg( bd_width ).arg( bd_height ).arg( bd_depth );
+    lb_boundary_geometry->setText( str_geometry );
+
+
+}
+
+
+
+void SketchingWindow::updateBoundaryDimensions( const int w, const int h, const int d )
+{
+
+    bd_width = w;
+    bd_height = h;
+    bd_depth = d;
+
+
+    str_geometry = QString( "x: %1, y: %2 | w: %3, h: %4, d: %5" ).arg( mouse_x ).arg( mouse_y ).arg( bd_width ).arg( bd_height ).arg( bd_depth );
+    lb_boundary_geometry->setText( str_geometry );
+
+
+}

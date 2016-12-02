@@ -15,7 +15,6 @@
 
 
 
-
 #include "MainWindow/Controller.hpp"
 
 #include "Sketching/StratigraphicItem.hpp"
@@ -41,7 +40,7 @@ class Scene: public QGraphicsScene
 
 
 
-        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTING_ABOVE, SELECTING_BELOW };
+        enum class InteractionMode { OVERSKETCHING, INSERTING, BOUNDARY, SELECTING_ABOVE, SELECTING_BELOW, SELECTING_REGION };
 	
 
 
@@ -54,11 +53,20 @@ class Scene: public QGraphicsScene
         void setController( Controller* const& c );
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 
-		Eigen::Vector3f scene2Dto3D(const Point2D& p);
-		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
-		Point2D scene3Dto2D(const Eigen::Vector3f& p);
-		Curve2D scene2Dto3D(const Curve2D& c);
-		Curve2D scene3Dto2D(const Curve2D& c);
+//		Eigen::Vector3f scene2Dto3D(const Point2D& p);
+//		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
+//		Point2D scene3Dto2D(const Eigen::Vector3f& p);
+//		Curve2D scene2Dto3D(const Curve2D& c);
+//		Curve2D scene3Dto2D(const Curve2D& c);
+
+//        Eigen::Vector3f scene2Dto3D( const Point2D& p );
+//        Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
+
+//        Point2D scene3Dto2D( const Eigen::Vector3f& p );
+//        Eigen::Vector3f scene3DtoPlane( const Eigen::Vector3f& p );
+
+//        Curve2D scene2Dto3D( const Curve2D& c );
+//        Curve2D scene3Dto2D( const Curve2D& c );
 
 
     public slots:
@@ -105,9 +113,20 @@ class Scene: public QGraphicsScene
         void defineSketchingBelowRegion();
         void stopSketchingBelowRegion();
 
-	
-		void send2Dto3DMatrix(Eigen::Affine3f& p_2d_to_3d);
-		void send3Dto2DMatrix(Eigen::Affine3f& p_3d_to_2d);
+
+//		void send2Dto3DMatrix(Eigen::Affine3f& p_2d_to_3d);
+//		void send3Dto2DMatrix(Eigen::Affine3f& p_3d_to_2d);
+
+        inline void enablePickingRegion( bool status )
+        {
+            if( status ) current_mode = InteractionMode::SELECTING_REGION;
+            else current_mode = InteractionMode::OVERSKETCHING;
+        }
+
+
+        void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
+
 
     signals:
 
@@ -117,6 +136,9 @@ class Scene: public QGraphicsScene
         void initContext();
         void updateContext();
         void enableSketching( bool );
+        void updateBoundGeometry( const int w, const int h, const int d );
+        void sendRegionPoint( const int x, const int y, const int z );
+
 
 
 
@@ -143,7 +165,14 @@ class Scene: public QGraphicsScene
         void updateTransformationsMatrices();
 
 
+        Eigen::Vector3f scene2Dto3D( const Point2D& p );
+        Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
 
+        Point2D scene3Dto2D( const Eigen::Vector3f& p );
+        Eigen::Vector3f scene3DtoPlane( const Eigen::Vector3f& p );
+
+        Curve2D scene2Dto3D( const Curve2D& c );
+        Curve2D scene3Dto2D( const Curve2D& c );
 
 
         void mousePressEvent( QGraphicsSceneMouseEvent* event );
