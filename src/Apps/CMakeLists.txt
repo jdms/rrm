@@ -101,133 +101,133 @@ set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
 					
 					
 set( SIMULATOR_HEADERS
-					 Simulator/Ply/ply.h
-					 Simulator/auxiliar.h
-					 Simulator/ColorMap.h
-					 Simulator/CoordinateAxes.h
-					 Simulator/FlowCrossSection.h
-					 Simulator/FlowParametersBar.h
-					 Simulator/FlowParametersBar_new.h
-					 Simulator/FlowRenderingOptionsMenu.h
-					 Simulator/FlowVisualizationCanvas.h
-					 Simulator/FlowVisualizationController.h   
-					 Simulator/FlowWindow.h
-					 Simulator/FormPropertyValues.h
-					 Simulator/Mesh.h
-					 Simulator/NormalMovableCrossSectionFlow.h
-					 Simulator/OpenFlowFilesBar.h
-					 Simulator/ProgressCounter.h
-					 Simulator/ColorBar.h
-					 Simulator/FlowDiagnosticsInterface.hpp
-					 Simulator/PoreVolumeResultsForm.h
-					 Simulator/FlowComputation/bsurface.h
-					 Simulator/FlowComputation/cpgelement.h
-					 Simulator/FlowComputation/curve.h
-					 Simulator/FlowComputation/edge.h
-					 Simulator/FlowComputation/facet.h
-					 Simulator/FlowComputation/geosurface.h
-					 Simulator/FlowComputation/graph.h
-					 Simulator/FlowComputation/graphedge.h
-					 Simulator/FlowComputation/graphnode.h
-					 Simulator/FlowComputation/linearfunc.h
-					 Simulator/FlowComputation/mathzz.h
-					 Simulator/FlowComputation/matrix.h
-					 Simulator/FlowComputation/model.h
-					 Simulator/FlowComputation/meshinfo.h
-					 Simulator/FlowComputation/modelsurface.h
-					 Simulator/FlowComputation/node.h
-					 Simulator/FlowComputation/parasurface.h
-					 Simulator/FlowComputation/propertyarea.h
-					 Simulator/FlowComputation/region.h
-					 Simulator/FlowComputation/samg.h
-					 Simulator/FlowComputation/segment.h
-					 Simulator/FlowComputation/skeleton.h
-					 Simulator/FlowComputation/tetgen.h
-					 Simulator/FlowComputation/tetrahedron.h
-					 Simulator/FlowComputation/tofb.h
-					 Simulator/FlowComputation/tracerb.h
-					 Simulator/FlowComputation/triangle.h
-					 Simulator/FlowComputation/trifacet.h
-					 Simulator/FlowComputation/usermanual.h
-					 Simulator/FlowComputation/uvline.h
-					 Simulator/FlowComputation/uvnode.h
-					 Simulator/FlowComputation/well.h
-					 Simulator/FlowComputation/cpgface.h
-					 Simulator/FlowComputation/flowb.h
-					 Simulator/FlowComputation/row.h )
+                 Simulator/Ply/ply.h
+                 Simulator/auxiliar.h
+                 Simulator/ColorMap.h
+                 Simulator/CoordinateAxes.h
+                 Simulator/FlowCrossSection.h
+                 Simulator/FlowParametersBar.h
+                 Simulator/FlowParametersBar_new.h
+                 Simulator/FlowRenderingOptionsMenu.h
+                 Simulator/FlowVisualizationCanvas.h
+                 Simulator/FlowVisualizationController.h
+                 Simulator/FlowWindow.h
+                 Simulator/FormPropertyValues.h
+                 Simulator/Mesh.h
+                 Simulator/NormalMovableCrossSectionFlow.h
+                 Simulator/OpenFlowFilesBar.h
+                 Simulator/ProgressCounter.h
+                 Simulator/ColorBar.h
+                 Simulator/FlowDiagnosticsInterface.hpp
+                 Simulator/PoreVolumeResultsForm.h
+                 Simulator/FlowComputation/bsurface.h
+                 Simulator/FlowComputation/cpgelement.h
+                 Simulator/FlowComputation/curve.h
+                 Simulator/FlowComputation/edge.h
+                 Simulator/FlowComputation/facet.h
+                 Simulator/FlowComputation/geosurface.h
+                 Simulator/FlowComputation/graph.h
+                 Simulator/FlowComputation/graphedge.h
+                 Simulator/FlowComputation/graphnode.h
+                 Simulator/FlowComputation/linearfunc.h
+                 Simulator/FlowComputation/mathzz.h
+                 Simulator/FlowComputation/matrix.h
+                 Simulator/FlowComputation/model.h
+                 Simulator/FlowComputation/meshinfo.h
+                 Simulator/FlowComputation/modelsurface.h
+                 Simulator/FlowComputation/node.h
+                 Simulator/FlowComputation/parasurface.h
+                 Simulator/FlowComputation/propertyarea.h
+                 Simulator/FlowComputation/region.h
+                 Simulator/FlowComputation/samg.h
+                 Simulator/FlowComputation/segment.h
+                 Simulator/FlowComputation/skeleton.h
+                 Simulator/FlowComputation/tetgen.h
+                 Simulator/FlowComputation/tetrahedron.h
+                 Simulator/FlowComputation/tofb.h
+                 Simulator/FlowComputation/tracerb.h
+                 Simulator/FlowComputation/triangle.h
+                 Simulator/FlowComputation/trifacet.h
+                 Simulator/FlowComputation/usermanual.h
+                 Simulator/FlowComputation/uvline.h
+                 Simulator/FlowComputation/uvnode.h
+                 Simulator/FlowComputation/well.h
+                 Simulator/FlowComputation/cpgface.h
+                 Simulator/FlowComputation/flowb.h
+                 Simulator/FlowComputation/row.h )
 
 set ( SIMULATOR_MOC_HEADERS
-					 Simulator/FlowParametersBar.h
-					 Simulator/FlowParametersBar_new.h
-					 Simulator/FlowRenderingOptionsMenu.h
-					 Simulator/FlowVisualizationCanvas.h
-					 Simulator/FlowVisualizationController.h   
-					 Simulator/FlowWindow.h
-					 Simulator/FormPropertyValues.h
-					 Simulator/NormalMovableCrossSectionFlow.h
-					 Simulator/OpenFlowFilesBar.h
-					 Simulator/ProgressCounter.h
-					 Simulator/ColorBar.h
-					 Simulator/PoreVolumeResultsForm.h )
+                Simulator/FlowParametersBar.h
+                Simulator/FlowParametersBar_new.h
+                Simulator/FlowRenderingOptionsMenu.h
+                Simulator/FlowVisualizationCanvas.h
+                Simulator/FlowVisualizationController.h
+                Simulator/FlowWindow.h
+                Simulator/FormPropertyValues.h
+                Simulator/NormalMovableCrossSectionFlow.h
+                Simulator/OpenFlowFilesBar.h
+                Simulator/ProgressCounter.h
+                Simulator/ColorBar.h
+                Simulator/PoreVolumeResultsForm.h )
 
 set ( SIMULATOR_UI_SOURCES
-					Simulator/FlowParametersBar.ui                       
-					Simulator/FormPropertyValues.ui
-					Simulator/NormalMovableCrossSectionFlow.ui
-                    Simulator/OpenFlowFilesBar.ui )
+                Simulator/FlowParametersBar.ui
+                Simulator/FormPropertyValues.ui
+                Simulator/NormalMovableCrossSectionFlow.ui
+                Simulator/OpenFlowFilesBar.ui )
 
 set( SIMULATOR_SOURCES    
-					 Simulator/Ply/ply.c
-					 Simulator/ColorMap.cpp
-					 Simulator/CoordinateAxes.cpp
-					 Simulator/FlowCrossSection.cpp
-					 Simulator/FlowParametersBar.cpp
-					 Simulator/FlowParametersBar_new.cpp
-					 Simulator/FlowRenderingOptionsMenu.cpp
-					 Simulator/FlowVisualizationCanvas.cpp
-					 Simulator/FlowVisualizationController.cpp   
-					 Simulator/FlowWindow.cpp
-					 Simulator/FormPropertyValues.cpp
-					 Simulator/Mesh.cpp
-					 Simulator/NormalMovableCrossSectionFlow.cpp
-					 Simulator/OpenFlowFilesBar.cpp
-					 Simulator/ColorBar.cpp
-					 Simulator/PoreVolumeResultsForm.cpp
-					 Simulator/FlowDiagnosticsInterface.cpp
-					 Simulator/FlowComputation/bsurface.cpp
-					 Simulator/FlowComputation/cpgelement.cpp
-					 Simulator/FlowComputation/curve.cpp
-					 Simulator/FlowComputation/edge.cpp
-					 Simulator/FlowComputation/facet.cpp
-					 Simulator/FlowComputation/geosurface.cpp
-					 Simulator/FlowComputation/graph.cpp
-					 Simulator/FlowComputation/graphedge.cpp
-					 Simulator/FlowComputation/graphnode.cpp
-					 Simulator/FlowComputation/linearfunc.cpp
-					 Simulator/FlowComputation/mathzz.cpp
-					 Simulator/FlowComputation/matrix.cpp
-					 Simulator/FlowComputation/model.cpp
-					 Simulator/FlowComputation/meshinfo.cpp
-					 Simulator/FlowComputation/modelsurface.cpp
-					 Simulator/FlowComputation/node.cpp
-					 Simulator/FlowComputation/predicates.cxx
-					 Simulator/FlowComputation/parasurface.cpp
-					 Simulator/FlowComputation/propertyarea.cpp
-					 Simulator/FlowComputation/region.cpp
-					 Simulator/FlowComputation/segment.cpp
-					 Simulator/FlowComputation/skeleton.cpp
-					 Simulator/FlowComputation/tetgen.cxx
-					 Simulator/FlowComputation/tetrahedron.cpp
-					 Simulator/FlowComputation/tofb.cpp
-					 Simulator/FlowComputation/tracerb.cpp
-					 Simulator/FlowComputation/triangle.c
-					 Simulator/FlowComputation/trifacet.cpp
-					 Simulator/FlowComputation/uvline.cpp
-					 Simulator/FlowComputation/uvnode.cpp
-					 Simulator/FlowComputation/well.cpp
-					 Simulator/FlowComputation/cpgface.cpp
-					 Simulator/FlowComputation/flowb.cpp
-					 Simulator/FlowComputation/row.cpp )
+                Simulator/Ply/ply.c
+                Simulator/ColorMap.cpp
+                Simulator/CoordinateAxes.cpp
+                Simulator/FlowCrossSection.cpp
+                Simulator/FlowParametersBar.cpp
+                Simulator/FlowParametersBar_new.cpp
+                Simulator/FlowRenderingOptionsMenu.cpp
+                Simulator/FlowVisualizationCanvas.cpp
+                Simulator/FlowVisualizationController.cpp
+                Simulator/FlowWindow.cpp
+                Simulator/FormPropertyValues.cpp
+                Simulator/Mesh.cpp
+                Simulator/NormalMovableCrossSectionFlow.cpp
+                Simulator/OpenFlowFilesBar.cpp
+                Simulator/ColorBar.cpp
+                Simulator/PoreVolumeResultsForm.cpp
+                Simulator/FlowDiagnosticsInterface.cpp
+                Simulator/FlowComputation/bsurface.cpp
+                Simulator/FlowComputation/cpgelement.cpp
+                Simulator/FlowComputation/curve.cpp
+                Simulator/FlowComputation/edge.cpp
+                Simulator/FlowComputation/facet.cpp
+                Simulator/FlowComputation/geosurface.cpp
+                Simulator/FlowComputation/graph.cpp
+                Simulator/FlowComputation/graphedge.cpp
+                Simulator/FlowComputation/graphnode.cpp
+                Simulator/FlowComputation/linearfunc.cpp
+                Simulator/FlowComputation/mathzz.cpp
+                Simulator/FlowComputation/matrix.cpp
+                Simulator/FlowComputation/model.cpp
+                Simulator/FlowComputation/meshinfo.cpp
+                Simulator/FlowComputation/modelsurface.cpp
+                Simulator/FlowComputation/node.cpp
+                Simulator/FlowComputation/predicates.cxx
+                Simulator/FlowComputation/parasurface.cpp
+                Simulator/FlowComputation/propertyarea.cpp
+                Simulator/FlowComputation/region.cpp
+                Simulator/FlowComputation/segment.cpp
+                Simulator/FlowComputation/skeleton.cpp
+                Simulator/FlowComputation/tetgen.cxx
+                Simulator/FlowComputation/tetrahedron.cpp
+                Simulator/FlowComputation/tofb.cpp
+                Simulator/FlowComputation/tracerb.cpp
+                Simulator/FlowComputation/triangle.c
+                Simulator/FlowComputation/trifacet.cpp
+                Simulator/FlowComputation/uvline.cpp
+                Simulator/FlowComputation/uvnode.cpp
+                Simulator/FlowComputation/well.cpp
+                Simulator/FlowComputation/cpgface.cpp
+                Simulator/FlowComputation/flowb.cpp
+                Simulator/FlowComputation/row.cpp )
 					
 					
 
@@ -259,13 +259,12 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
-							   ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS} 
-							   ${GEOLOGY_HEADERS}
+                               ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}
+                               ${GEOLOGY_HEADERS}
                                ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
 
 
-target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg 
-									   ${OPENGL_LIBRARIES} ${GLEW_LIBRARY} ${SAMG_LIBRARY}
+target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}
                                         planin RRMGeometry Arrangement_2D SketchLib )
 
 
@@ -294,8 +293,19 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 
 if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
-    add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
-                        ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+#    if( x64 )
+
+#        add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
+#                            ${CMAKE_SOURCE_DIR}/files/dlls/x64 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+#    else()
+
+        add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
+                            ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+#    endif( x64 )
+
+
 
 endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 

@@ -33,14 +33,15 @@
 
 
 #include "MainWindow/About/AboutWidget.hpp"
+#include "HelpDialog.h"
+#include "Controller.hpp"
 
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
 #include "Simulator/FlowWindow.h"
 
 
-#include "HelpDialog.h"
-#include "Controller.hpp"
+
 
 
 
@@ -63,6 +64,9 @@ class MainWindow : public QMainWindow
 
 
     protected:
+
+
+        void init();
 
         void createWindow();
         void createActions();
@@ -90,16 +94,19 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-        void initProgram();
+        void initScene();
 
 
     protected:
 
 
+        bool scene_initialized;
+
         Scene* scene;
         Controller* controller;
 
-        bool scene_initialized;
+        HelpDialog help;
+        AboutWidget * aboutRRM;
 
 
 
@@ -132,10 +139,6 @@ class MainWindow : public QMainWindow
         FlowWindow *flow_window;
 
 
-
-
-        HelpDialog help;
-        AboutWidget * aboutRRM;
 
 
 

@@ -28,4 +28,4 @@ set( GEOLOGY_SOURCES  )
 						
 
 add_library( ${PROJECT_NAME} STATIC ${GEOLOGY_HEADERS} )
-set_target_properties( ${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C )
+set_target_properties( ${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX )

@@ -13,6 +13,7 @@
 #include "Eigen/Dense"
 #include "Tucano/Trackball.hpp"
 #include "Tucano/Shader.hpp"
+#include <QTransform>
 
 
 class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
@@ -32,7 +33,7 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 		void copySegment( const QPolygonF& s );
 
         void clear();
-        void update( const Eigen::Affine3f &m, const float& d );
+        void update(const QTransform &m, const float& d );
 
 
 		QRectF boundingRect() const;
@@ -48,6 +49,8 @@ class StratigraphicItem: public QGraphicsPathItem, public StratigraphyRenderable
 
         inline size_t getId() const { return strat->getId(); }
         inline QPolygonF getCurve(){ return points; }
+
+        inline QPainterPath getPath() const { return curve; }
 
 
         inline void setSelection( bool option ){ is_selected = option;  }
