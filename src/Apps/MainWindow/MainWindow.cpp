@@ -210,7 +210,7 @@ void MainWindow::createFlowDiagnosticsModule()
 void MainWindow::createFlowDiagnosticsActions()
 {
 
-    connect( flow_window, &FlowWindow::getLegacyMeshes, controller, &Controller::sendLegacyMeshes );
+    connect( flow_window, &FlowWindow::getLegacyMeshes, controller, &Controller::getLegacyMeshes );
 
 	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
 	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
