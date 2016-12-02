@@ -566,6 +566,8 @@ void FlowWindow::buildCornerPoint()
 {
     std::cout << "FlowWindow buildCornerPoint" << std::endl;
 
+	controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::CORNERPOINT);
+
 	if (controller->isUserInputOk() == false)
 	{
 		acceptUserParameters();
@@ -581,6 +583,8 @@ void FlowWindow::buildUnstructured()
 {
 
    std::cout << "FlowWindow buildUnstructured" << std::endl;
+
+   controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::UNSTRUCTURED);
   
    if (controller->isUserInputOk() == false)
    {
