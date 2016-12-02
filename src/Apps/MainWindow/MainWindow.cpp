@@ -126,6 +126,7 @@ void MainWindow::createSketchingMenuBar()
 void MainWindow::createSketchingActions()
 {
 
+
     ac_wdwsketching = new QAction ( tr ( "Window Sketching" ) , this );
     ac_wdwsketching->setCheckable ( true );
     ac_wdwsketching->setChecked ( true );
@@ -154,15 +155,21 @@ void MainWindow::createSketchingActions()
     connect ( sketching_window, SIGNAL( setRandomColor( bool ) ), scene, SLOT( setRandomColor ( bool ) ) );
 
 
+
     connect( controller, SIGNAL( enableUndo( bool ) ) , sketching_window, SLOT( enableUndo( bool ) ) );
     connect( controller, SIGNAL( enableRedo( bool ) ) , sketching_window, SLOT( enableRedo( bool ) ) );
 
     connect( controller, SIGNAL( changeStratigraphyRulesStatus( const std::string& ) ) , sketching_window, SLOT( changeStratigraphyRulesStatus(const std::string& ) ) );
     connect( controller, SIGNAL( changeDefineRegionStatus( const bool, const bool ) ) , sketching_window, SLOT( changeDefineRegionStatus( const bool, const bool ) ) );
 
+    connect( controller, SIGNAL( pickingRegion( bool ) ) , scene, SLOT( enablePickingRegion( bool ) ) );
+
 
 
     connect( scene, &Scene::enableSketching, sketching_window, &SketchingWindow::enableSketching );
+    connect( scene, &Scene::sendCoordinates, sketching_window, &SketchingWindow::updateMousePosition );
+    connect( scene, &Scene::updateBoundGeometry, sketching_window, &SketchingWindow::updateBoundaryDimensions );
+
 
 }
 
@@ -203,8 +210,6 @@ void MainWindow::create3DWindowActions()
     connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
     connect( view3d_window, SIGNAL( changeResolution( const int, const int ) ), controller, SLOT( changeResolution( const int, const int ) ) );
 
-
-
 }
 
 
@@ -227,8 +232,8 @@ void MainWindow::createFlowDiagnosticsActions()
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, controller, &Controller::getLegacyMeshes );
 
-	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
-	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
+//	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
+//	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
 }
 
 

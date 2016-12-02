@@ -155,28 +155,28 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
     std::vector< unsigned int> nv_uint( nv.begin(), nv.end() );
 
     unsigned int surfaces_number = ( unsigned int) nu.size();
-//    unsigned int extrusion_size = ( unsigned int) num_extrusion_steps;
+////    unsigned int extrusion_size = ( unsigned int) num_extrusion_steps;
 
-	std::vector<double> scaled_points;
-	scaled_points.resize(points.size());
-	Eigen::Vector3f v; Eigen::Vector3f sv;
+//	std::vector<double> scaled_points;
+//	scaled_points.resize(points.size());
+//	Eigen::Vector3f v; Eigen::Vector3f sv;
 
-	for (auto i = 0; i <= (points.size() - 3); i+=3)
-	{
-		v[0] = static_cast<float>(points[i + 0]);
-		v[1] = static_cast<float>(points[i + 2]);
-		v[2] = static_cast<float>(points[i + 1]);
+//	for (auto i = 0; i <= (points.size() - 3); i+=3)
+//	{
+//		v[0] = static_cast<float>(points[i + 0]);
+//		v[1] = static_cast<float>(points[i + 2]);
+//		v[2] = static_cast<float>(points[i + 1]);
 
-		sv = this->scene3Dto2D(v);
-		std::cout << sv << std::endl;
+//		sv = this->scene3Dto2D(v);
+//		std::cout << sv << std::endl;
 
-		scaled_points[i + 0] = static_cast<double>(sv[0]);
-		scaled_points[i + 1] = static_cast<double>(sv[2]);
-		scaled_points[i + 2] = static_cast<double>(sv[1]);
-	}
+//		scaled_points[i + 0] = static_cast<double>(sv[0]);
+//		scaled_points[i + 1] = static_cast<double>(sv[2]);
+//		scaled_points[i + 2] = static_cast<double>(sv[1]);
+//	}
 
-    //code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
-	code_interface.setSkeletonData(surfaces_number, nu_uint, nv_uint, scaled_points);
+    code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
+//	code_interface.setSkeletonData(surfaces_number, nu_uint, nv_uint, scaled_points);
 
 }
 
@@ -619,28 +619,28 @@ void FlowVisualizationController::clear()
     code_interface.clear();
 }
 
-void FlowVisualizationController::setScene2Dto3D(const Eigen::Affine3f& m)
-{
-	this->m_2dto3d = m;
-}
-void FlowVisualizationController::setScene3Dto2D(const Eigen::Affine3f& m)
-{
-	this->m_3dto2d = m;
+//void FlowVisualizationController::setScene2Dto3D(const Eigen::Affine3f& m)
+//{
+//	this->m_2dto3d = m;
+//}
+//void FlowVisualizationController::setScene3Dto2D(const Eigen::Affine3f& m)
+//{
+//	this->m_3dto2d = m;
 
-}
+//}
 
-Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector2f& p)
-{
-	return Eigen::Vector3f();
-}
-Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector3f& p)
-{
-	return Eigen::Vector3f();
-}
-Eigen::Vector3f FlowVisualizationController::scene3Dto2D(const Eigen::Vector3f& p)
-{
-	Eigen::Vector4f p_cpy(p.x(), p.y(), p.z(), 1.0f);
+//Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector2f& p)
+//{
+//	return Eigen::Vector3f();
+//}
+//Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector3f& p)
+//{
+//	return Eigen::Vector3f();
+//}
+//Eigen::Vector3f FlowVisualizationController::scene3Dto2D(const Eigen::Vector3f& p)
+//{
+//	Eigen::Vector4f p_cpy(p.x(), p.y(), p.z(), 1.0f);
 
-	p_cpy = m_3dto2d.matrix()*p_cpy;
-	return Eigen::Vector3f(p_cpy.x(), p_cpy.y(), p_cpy.z());
-}
+//	p_cpy = m_3dto2d.matrix()*p_cpy;
+//	return Eigen::Vector3f(p_cpy.x(), p_cpy.y(), p_cpy.z());
+//}

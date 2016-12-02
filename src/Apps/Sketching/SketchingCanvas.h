@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QWheelEvent>
 #include <QFileDialog>
+#include <QMouseEvent>
 
 #include "MainWindow/Scene.h"
 

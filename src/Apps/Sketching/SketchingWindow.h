@@ -71,7 +71,8 @@ class SketchingWindow : public QMainWindow
         void changeDefineRegionStatus( const bool above, const bool below );
         void changeStratigraphyRulesStatus( const std::string& rule );
 
-
+        void updateMousePosition( const float mx, const float my );
+        void updateBoundaryDimensions( const int w, const int h, const int d );
 
 
     signals:
@@ -89,7 +90,6 @@ class SketchingWindow : public QMainWindow
         void updateColor( const QColor& c );
 
         void setRandomColor ( bool );
-
 
 
     private:
@@ -131,6 +131,15 @@ class SketchingWindow : public QMainWindow
         QToolButton *tbt_colorsketch;
 
         QLabel* lb_statusbar_status;
+        QLabel* lb_boundary_geometry;
+
+        QString str_geometry;
+        float mouse_x;
+        float mouse_y;
+        int bd_width;
+        int bd_height;
+        int bd_depth;
+
 
 
 };

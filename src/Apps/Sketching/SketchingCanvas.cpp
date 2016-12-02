@@ -83,6 +83,7 @@ void SketchingCanvas::screenshot()
 }
 
 
+
 void SketchingCanvas::wheelEvent( QWheelEvent *event )
 {
 

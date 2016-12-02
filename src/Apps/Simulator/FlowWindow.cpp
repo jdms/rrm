@@ -447,11 +447,11 @@ void FlowWindow::loadSurfacesfromSketch()
 
     emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
-	emit get2Dto3DMatrix(m2D_to_3D);
-	emit get3Dto2DMatrix(m3D_to_2D);
+//	emit get2Dto3DMatrix(m2D_to_3D);
+//	emit get3Dto2DMatrix(m3D_to_2D);
 
-	controller->setScene2Dto3D(m2D_to_3D);
-	controller->setScene3Dto2D(m3D_to_2D);
+//	controller->setScene2Dto3D(m2D_to_3D);
+//	controller->setScene3Dto2D(m3D_to_2D);
 
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
