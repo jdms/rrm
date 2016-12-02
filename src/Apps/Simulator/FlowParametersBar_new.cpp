@@ -10,6 +10,23 @@ FlowParametersBar_new::FlowParametersBar_new(QWidget *parent) :
 
     createDialogs();
 
+	// Creating Fix Well
+
+	this->well_types[0] = 1;
+	this->well_pressure[0] = 400;
+	this->well_signs[0] = 1;
+
+	this->well_types[1] = 1;
+	this->well_pressure[1] = 300;
+	this->well_signs[1] = -1;
+
+	this->spinBox_Number_of_Wells->setValue(2);
+	this->spinBox_Number_of_Wells->setEnabled(false);
+	this->createWells();
+
+	this->spinBox_Well_Type->setReadOnly(true);
+	this->spinBox_Well_Sign->setReadOnly(true);
+	
 }
 
 void FlowParametersBar_new::createDialogs()
@@ -37,7 +54,30 @@ void FlowParametersBar_new::createDialogs()
 
 	//@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
 
-	connect(horizontalSlider_Permiability, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=](){ doubleSpinBox_Region_Permiability->setValue(std::log10((4.0 - ((0.07) * static_cast<double>(horizontalSlider_Permiability->value()))))); });
+	connect(horizontalSlider_Permiability, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
+	{ 
+		double ex = -3.0 + (0.07)*static_cast<double>(horizontalSlider_Permiability->value());  
+		double p = std::pow(10, ex);
+		std::cout << "Step " << horizontalSlider_Permiability->value()  << " 10^" << ex << "= " << p << std::endl;
+		doubleSpinBox_Region_Permiability->setValue(p);
+	});
+
+	connect(horizontalSlider_Porosity, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
+	{
+		double ex = 0.01 + (0.0034)*static_cast<double>(horizontalSlider_Porosity->value());
+		double p = std::pow(10, ex);
+		std::cout << "Step " << horizontalSlider_Permiability->value() << " 10^" << ex << "= " << p << std::endl;
+		doubleSpinBox_Region_Porosity->setValue(ex);
+	});
+
+	connect(horizontalSlider_Viscosity, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
+	{
+		double ex = 0.01 + (0.01)*static_cast<double>(horizontalSlider_Viscosity->value());
+		double p = std::pow(10, ex);
+		std::cout << "Step " << horizontalSlider_Permiability->value() << " 10^" << ex << "= " << p << std::endl;
+		doubleSpinBox_Region_Viscosity->setValue(ex);
+	});
+
 
 
 	connect(doubleSpinBox_Region_Permiability, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ perm_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Permiability->value(); });

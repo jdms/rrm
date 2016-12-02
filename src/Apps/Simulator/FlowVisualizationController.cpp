@@ -184,8 +184,22 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
 void FlowVisualizationController::computeFlowProperties()
 {
 
-    if( volumetric_ok == false || mesh_ok == false || properties_computed == true ) return;
+    if( volumetric_ok == false || mesh_ok == false ) return;
 
+	std::cout << "Computing Proterties" << std::endl; 
+	if (current_method == MESHING_METHOD::UNSTRUCTURED)
+	{
+		std::cout << "MESHING_METHOD::UNSTRUCTURED" << std::endl; 
+	}
+	else if (current_method == MESHING_METHOD::CORNERPOINT)
+	{
+		std::cout << "MESHING_METHOD::CORNERPOINT" << std::endl;
+	}else
+	{
+		std::cout << "Should not Reach This Point" << std::endl;
+		return;
+	}
+	
 
     code_interface.init();
     code_interface.computeProperties();
