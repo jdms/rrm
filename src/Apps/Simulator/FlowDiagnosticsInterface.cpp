@@ -264,51 +264,32 @@ void FlowDiagnosticsInterface::getFlowDiagnosticInformation(){
 
 
 void FlowDiagnosticsInterface::getCPGPressure( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].press());
-		//std::cout << "Pressure " << region.cpgelementvector()[i].press() << std::endl;
-    }
+	values = region.getpressure_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].tof());
-    }
+	values = region.getforwardtof_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGBackwardTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].tof_back());
-    }
+	values = region.getbackwardtof_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGTotalTOF( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].tof_total());
-    }
+	values = region.gettotaltof_cpg();
 }
 
 
 //void FlowDiagnosticsInterface::getTracer( std::vector< double >& values ) {}
 void FlowDiagnosticsInterface::getCPGMaxForwardTracer(std::vector< double >& values) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].markmaxtracer());
-    }
+	values = region.getmaxforwardtracer_cpg();
 }
 
 void FlowDiagnosticsInterface::getCPGMaxBackwardTracer( std::vector< double >& values ) {
-    int i;
-    for (i = 0; i < region.cpgelementvector().size(); i++){
-        values.push_back(region.cpgelementvector()[i].markmaxtracer_back());
-    }
+	values = region.getmaxbackwardtracer_cpg();
 }
 
 
