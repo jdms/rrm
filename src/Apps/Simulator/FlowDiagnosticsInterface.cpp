@@ -27,17 +27,17 @@ void FlowDiagnosticsInterface::setRegion( unsigned int id, double x, double y, d
     std::cout << "Rgion id " << id << "\n " << std::flush;
     PROPERTYAREA p;
     p.x(x);
- //   std::cout << "setou x\n" << std::flush;
+    //std::cout << "set x\n" << std::flush;
     p.y(y);
-//    std::cout << "setou y\n " << std::flush;
+    //std::cout << "set y\n " << std::flush;
     p.z(z);
-//    std::cout << "setou z\n " << std::flush;
+    //std::cout << "set z\n " << std::flush;
     p.perm(perm);
-//    std::cout << "setou perm\n " << std::flush;
+    //std::cout << "set perm\n " << std::flush;
     p.porosity(poros);
-//    std::cout << "setou poro\n " << std::flush;
+    //std::cout << "set poro\n " << std::flush;
     p.viscosity(visc);
-//    std::cout << "setou visc\n " << std::flush;
+    //std::cout << "set visc\n " << std::flush;
     region.modifypropertyarea(id, p);
 }
 
