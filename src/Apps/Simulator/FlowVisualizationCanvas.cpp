@@ -153,6 +153,11 @@ void FlowVisualizationCanvas::initializeShader()
 
 }
 
+/// Debug Purpose
+void FlowVisualizationCanvas::reloadShader()
+{
+	mesh.reloadShader();
+}
 
 void FlowVisualizationCanvas::loadBackGround()
 {
@@ -212,7 +217,7 @@ void FlowVisualizationCanvas::paintGL()
     }
 
 
-    mesh.draw( V, P, scale );
+	mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
 
 
 //    if( show_colorbar == true )

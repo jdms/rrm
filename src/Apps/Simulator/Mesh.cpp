@@ -541,16 +541,31 @@ bool Mesh::showBoundingBox() const
     return show_bbox;
 }
 
+void Mesh::reloadShader()
+{
+    shader_mesh->reloadShaders();
+}
 
 void Mesh::initializeShader( std::string directory )
 {
 
 
-    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/vertex_mesh_shader.vert" ),
-                                                     ( directory + "shaders/fragment_mesh_shader.frag" ),
-                                                      "", "", "" ) ;
-    shader_mesh->initialize();
+    //shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/vertex_mesh_shader.vert" ),
+    //                                                 ( directory + "shaders/fragment_mesh_shader.frag" ),
+    //                                                  "", "", "" ) ;
+    //shader_mesh->initialize();
 
+	shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
+													 (directory + "shaders/FlowDefault.frag"),
+													 (directory + "shaders/FlowDefault.geom"),
+	                                                  "", "") ;
+	shader_mesh->initialize();
+
+        //shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
+								//						 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
+        //                                                 ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
+        //                                                  "", "") ;
+        //shader_mesh->initialize();
 
     glGenVertexArrays( 1, &va_mesh );
     glBindVertexArray( va_mesh );
@@ -681,7 +696,7 @@ void Mesh::load()
 }
 
 
-void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale  )
+void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale , const float width, const float height )
 {
 
     if( vertices.empty() == true ) return;
@@ -692,10 +707,16 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
     M.setIdentity();
 
     shader_mesh->bind();
-    shader_mesh->setUniform( "mmatrix", M );
-    shader_mesh->setUniform( "vmatrix", V );
-    shader_mesh->setUniform( "pmatrix", P );
-    shader_mesh->setUniform( "scale", scale );
+    //shader_mesh->setUniform( "mmatrix", M );
+    //shader_mesh->setUniform( "vmatrix", V );
+    //shader_mesh->setUniform( "pmatrix", P );
+    //shader_mesh->setUniform( "scale", scale );
+
+	shader_mesh->setUniform("WIN_SCALE", width, height);
+
+	shader_mesh->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+	shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+	shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
 
     glBindVertexArray( va_mesh );
 
@@ -706,30 +727,30 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_mesh->setUniform( "ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation );
 
     }
-    else
-    {
-        shader_mesh->setUniform( "ClipPlane", 0.0f, 0.0f, 0.0f, 0.0f );
-        glDisable(GL_CLIP_DISTANCE0);
-    }
+  //  else
+  //  {
+  //      shader_mesh->setUniform( "ClipPlane", 0.0f, 0.0f, 0.0f, 0.0f );
+  //      glDisable(GL_CLIP_DISTANCE0);
+  //  }
 
-    if( show_vertices == true )
-    {
-        glDrawArrays( GL_POINTS, 0, number_of_vertices );
-    }
-    if( show_edges == true )
-    {
-        glLineWidth( 2.0f );
-        shader_mesh->setUniform( "edge", GL_TRUE );
-		shader_mesh->setUniform("index", 6);
+  //  if( show_vertices == true )
+  //  {
+  //      glDrawArrays( GL_POINTS, 0, number_of_vertices );
+  //  }
+  //  if( show_edges == true )
+  //  {
+  //      glLineWidth( 2.0f );
+  //      shader_mesh->setUniform( "edge", GL_TRUE );
+		//shader_mesh->setUniform("index", 6);
 
 
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
-        glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
+  //      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
+  //      glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
 
-        shader_mesh->setUniform( "edge", GL_FALSE );
-		shader_mesh->setUniform("index", 1);
+  //      shader_mesh->setUniform( "edge", GL_FALSE );
+		//shader_mesh->setUniform("index", 1);
 
-    }
+  //  }
     if( show_faces == true )
     {
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
@@ -754,7 +775,7 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_bbox->setUniform( "mmatrix", M );
         shader_bbox->setUniform( "vmatrix", V );
         shader_bbox->setUniform( "pmatrix", P );
-        shader_bbox->setUniform( "scale", scale );
+        shader_bbox->setUniform( "scale", 1.0 );
 
         glBindVertexArray( va_bbox );
 

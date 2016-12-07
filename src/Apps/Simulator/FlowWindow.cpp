@@ -2,6 +2,8 @@
 
 FlowWindow::FlowWindow( QWidget *parent )
 {
+	setFocusPolicy(Qt::StrongFocus);
+
     createWindow();
     createToolBar();
     createActions();
@@ -672,7 +674,13 @@ void FlowWindow::keyPressEvent( QKeyEvent *event )
         case Qt::Key_T:
         {
             qtoolbarFlow->setVisible( true );
-        }
+		}
+		break;
+		case Qt::Key_F5:
+		{
+			canvas->reloadShader();
+			std::cout << "Reload Shader " << std::endl;
+		}
         break;
 
         default:

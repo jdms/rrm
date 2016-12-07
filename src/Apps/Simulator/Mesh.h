@@ -97,8 +97,10 @@ class Mesh
 
 
         void load();
-        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale  );
+		void draw(const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale, const float width, const float height);
         void initializeShader( std::string directory );
+
+        void reloadShader();
 
         void clear();
 
