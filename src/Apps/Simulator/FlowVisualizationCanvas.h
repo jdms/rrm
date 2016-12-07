@@ -85,6 +85,10 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void setAleatoryColorMap();
 
 
+		/// Debug Purpose
+		void reloadShader();
+
+
 
     signals:
 
