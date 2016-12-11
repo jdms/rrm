@@ -23,7 +23,7 @@ class CoordinateAxes
         void init();
         void load();
 
-        void draw( const Eigen::Matrix3f& R, const Eigen::Vector3f& T );
+		void draw(const Eigen::Affine3f& V, const Eigen::Matrix4f& P);
 
         void reloadShader();
         void initShader( std::string directory );
