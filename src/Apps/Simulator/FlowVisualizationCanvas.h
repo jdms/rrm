@@ -127,6 +127,11 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         std::string current_directory;
 
         Tucano::Trackball camera;
+		Tucano::Trackball coordinate_axis_;
+		GLfloat aspect_ratio_;
+		GLfloat width_;
+		GLfloat height_;
+
         const float speed_zoom = 0.1f;
 
         Mesh mesh;

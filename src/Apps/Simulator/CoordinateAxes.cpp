@@ -58,7 +58,7 @@ void CoordinateAxes::loadConeAxes()
     vector< unsigned int > faces;
 
 
-    readPlyFile( ( current_directory + "Models/cone.ply" ), vertices, colors, faces, normals );
+    readPlyFile( ( current_directory + "models/cone.ply" ), vertices, colors, faces, normals );
 
 
     glGenVertexArrays( 1, &va_coneaxes );
@@ -328,44 +328,44 @@ void CoordinateAxes::loadCylinderAxes()
 }
 
 
-void CoordinateAxes::draw( const Eigen::Matrix3f& R, const Eigen::Vector3f& T )
+void CoordinateAxes::draw(const Eigen::Affine3f& V, const Eigen::Matrix4f& P)
 {
 
 
 
-    Eigen::Affine3f V;
-    V.setIdentity();
+    //Eigen::Affine3f V;
+    //V.setIdentity();
 
-    for( int i = 0; i < 3; ++i )
-        for( int j = 0; j < 3; ++j )
-            V( i, j ) = R( i, j );
+    //for( int i = 0; i < 3; ++i )
+    //    for( int j = 0; j < 3; ++j )
+    //        V( i, j ) = R( i, j );
 
-    V( 0, 3 ) = T( 0 );
-    V( 1, 3 ) = T( 1 );
-    V( 2, 3 ) = T( 2 );
-
-
-    Eigen::Affine3f matrix;
-    matrix.setIdentity();
-    matrix.translate( Eigen::Vector3f( 3.1f, -1.7f, 0.0f ) );
+    //V( 0, 3 ) = T( 0 );
+    //V( 1, 3 ) = T( 1 );
+    //V( 2, 3 ) = T( 2 );
 
 
-    QMatrix4x4 Q;
-    Q.perspective( 60.0 , (float) 1024/(float) 600 , 0.1f , 10000.0f );
+    //Eigen::Affine3f matrix;
+    //matrix.setIdentity();
+    //matrix.translate( Eigen::Vector3f( 3.1f, -1.7f, 0.0f ) );
+
+
+    //QMatrix4x4 Q;
+    //Q.perspective( 60.0 , (float) 1024/(float) 600 , 0.1f , 10000.0f );
 //    Q.ortho( 0, 1024, 0, 600, 0.1, 1000 );
 
-    Eigen::Matrix4f P1;
-    for( int i = 0; i < 4; ++i )
-        for( int j = 0; j < 4; ++j )
-            P1( i, j ) = Q( i, j );
+    //Eigen::Matrix4f P1;
+    //for( int i = 0; i < 4; ++i )
+    //    for( int j = 0; j < 4; ++j )
+    //        P1( i, j ) = Q( i, j );
 
 
 
 
     shader_axes->bind();
 
-    shader_axes->setUniform( "vmatrix", matrix*V );
-    shader_axes->setUniform( "pmatrix", P1 );
+    shader_axes->setUniform( "vmatrix", V );
+    shader_axes->setUniform( "pmatrix", P );
 
         glBindVertexArray( va_coneaxes );
 
