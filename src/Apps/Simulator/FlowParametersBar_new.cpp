@@ -70,7 +70,7 @@ void FlowParametersBar_new::createDialogs()
 
 	connect(horizontalSlider_Viscosity, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
 	{
-		double ex = 0.01 + (0.01)*static_cast<double>(horizontalSlider_Viscosity->value());
+		double ex = 0.1 + (0.1)*static_cast<double>(horizontalSlider_Viscosity->value());
 		doubleSpinBox_Region_Viscosity->setValue(ex);
 	});
 
@@ -279,9 +279,9 @@ void FlowParametersBar_new::new_gui_clear()
 	poros_values.clear();
 	visc_values.clear();
 
-	well_types.clear();
-	well_pressure.clear();
-	well_signs.clear();
+	//well_types.clear();
+	//well_pressure.clear();
+	//well_signs.clear();
 
 	/// Reset all Gui Values
 	comboBox_Region->clear();
@@ -293,9 +293,12 @@ void FlowParametersBar_new::new_gui_clear()
 /// Slot used to grab Region Point
 void FlowParametersBar_new::set_region_point(double x, double y, double z)
 {
+	/// Coordinate System for FlowDiagnostic is  <x, z, y>
 	positions_values[comboBox_Region->currentIndex()][0] = x;
-	positions_values[comboBox_Region->currentIndex()][1] = y;
-	positions_values[comboBox_Region->currentIndex()][2] = z;
+	// Z
+	positions_values[comboBox_Region->currentIndex()][1] = z;
+	// Y
+	positions_values[comboBox_Region->currentIndex()][2] = y;
 
 	this->updateRegionWidget(comboBox_Region->currentIndex());
 }

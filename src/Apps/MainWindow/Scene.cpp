@@ -1045,7 +1045,12 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         {
             temp_sketch->create( event->scenePos() );
         }
+		else if (current_mode == InteractionMode::SELECTING_REGION)
+		{
+			emit sendRegionPoint(event->scenePos().x(), event->scenePos().y(), qtscene_depth);
+		}
 
+		emit sendRegionPoint(event->scenePos().x(), event->scenePos().y(), qtscene_depth);
 
     }
 

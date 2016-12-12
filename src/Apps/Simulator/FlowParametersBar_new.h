@@ -51,18 +51,18 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		/// Regions
 		void updateRegionWidget(const int index);
 		void createRegions();
+		
 
 		/// Wells
 		void updateWellsWidget(const int index);
 		void createWells();
 
     signals:
-
-
-
         void readParameterFile( const std::string& input_file );
         void closeBar();
         void closeBarandAccept();
+		
+		
 
 	
 
