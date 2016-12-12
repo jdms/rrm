@@ -701,3 +701,10 @@ void FlowWindow::reset()
     type_of_file.clear();
 
 }
+
+
+void FlowWindow::regionPoint(int x, int y, int z)
+{
+	// Z is fixed
+	this->parametersBar.set_region_point(static_cast<double>(x),static_cast<double>(y),350.0);
+}

@@ -67,6 +67,7 @@ class FlowWindow : public  QMainWindow
         void acceptUserParameters();
         void clear();
 
+		void regionPoint(int x, int y, int z);
 
     signals:
 

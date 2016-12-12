@@ -210,24 +210,24 @@ void FlowVisualizationCanvas::paintGL()
 
 	mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
 
+	/// Coordinate Axes enviroment setup
+
 	GLdouble integral = 0.0;
 	
 	integral = std::trunc(static_cast<GLdouble>(width()*0.1));
 	GLsizei w = static_cast<GLsizei>(integral);
 	integral = std::trunc(static_cast<GLdouble>(height()*0.1));
 	GLsizei h = static_cast<GLsizei>(integral);
-
+	
 	glViewport(0, 0, w, h*aspect_ratio_);
 	
     //if( show_colorbar == true )
     //    colorbar.draw();
-
-	std::cout << coordinate_axis_.getProjectionMatrix();
 	if( true )
 	{
 		axes.draw(coordinate_axis_.getViewMatrix(), coordinate_axis_.getProjectionMatrix());
 	}
-
+	/// Return to the original viewport
 	glViewport(0, 0, width(), height());
 }
 
@@ -250,8 +250,6 @@ void FlowVisualizationCanvas::resizeGL( int width, int height )
 	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
 
     scale = 1.5*(float)width/(float)height;
-
-
 }
 
 
