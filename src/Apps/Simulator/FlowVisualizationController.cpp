@@ -349,6 +349,7 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
     std::string type = "SCALAR";
     std::vector< double > values;
+	std::vector< double > replicate_values;
 
     if( current_method == MESHING_METHOD::UNSTRUCTURED ) // Unstructure Volumetric Mesh
     {
@@ -362,30 +363,42 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
     else if( current_method == MESHING_METHOD::CORNERPOINT ) // Corner Point Mesh  // by cell
     {
+		
         if ( name_of_property.compare( "Corrected Pressure" ) == 0 )
         {
-            code_interface.getCPGPressure( values );
+			code_interface.getCPGPressure(replicate_values);
         }
         else if( name_of_property.compare( "Backward TOF" ) == 0 )
         {
-            code_interface.getCPGBackwardTOF( values );
+			code_interface.getCPGBackwardTOF(replicate_values);
         }
         else if( name_of_property.compare( "Total TOF" ) == 0 )
         {
-            code_interface.getCPGTotalTOF( values );
+			code_interface.getCPGTotalTOF(replicate_values);
         }
         else if( name_of_property.compare( "TOF" ) == 0 )
         {
-            code_interface.getCPGTOF( values );
+			code_interface.getCPGTOF(replicate_values);
         }
         else if( name_of_property.compare( "Backward Tracer" ) == 0 )
         {
-            code_interface.getCPGMaxBackwardTracer( values );
+			code_interface.getCPGMaxBackwardTracer(replicate_values);
         }
         else if( name_of_property.compare( "Tracer" ) == 0 )
         {
-            code_interface.getCPGMaxForwardTracer( values );
+			code_interface.getCPGMaxForwardTracer(replicate_values);
         }
+
+		values.resize(replicate_values.size() * 6);
+		for (auto i = 0; i < replicate_values.size(); i++)
+		{
+			values[i * 6 + 0] = replicate_values[i];
+			values[i * 6 + 1] = replicate_values[i];
+			values[i * 6 + 2] = replicate_values[i];
+			values[i * 6 + 3] = replicate_values[i];
+			values[i * 6 + 4] = replicate_values[i];
+			values[i * 6 + 5] = replicate_values[i];
+		}
 
     }
 
