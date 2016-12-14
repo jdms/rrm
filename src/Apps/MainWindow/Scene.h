@@ -30,6 +30,8 @@
 #include "./libs/Arrangement2D/Arrangement_2D.hpp"
 
 
+// New FlowInterface
+#include "Sketching/RegionItem.hpp"
 
 class Scene: public QGraphicsScene
 {

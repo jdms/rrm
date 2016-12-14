@@ -48,6 +48,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 ###############################################
 
 set( SKETCHING_HEADERS Sketching/StratigraphicItem.hpp
+                       Sketching/RegionItem.hpp
                        Sketching/InputSketch.h
                        Sketching/PolyQtUtils.hpp
                        Sketching/BoundaryItem2D.hpp
@@ -61,6 +62,7 @@ set( SKETCHING_MOC_HEADERS  Sketching/SketchingWindow.h
 
 
 set( SKETCHING_SOURCES  Sketching/StratigraphicItem.cpp
+                        Sketching/RegionItem.cpp
                         Sketching/InputSketch.cpp
                         Sketching/PolyQtUtils.cpp
                         Sketching/BoundaryItem2D.cpp
