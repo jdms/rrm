@@ -10,6 +10,12 @@
 Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 {
     initData();
+
+	RRM::RegionItem * r = new RRM::RegionItem();
+
+	r->setPos(100, 100);
+
+	this->addItem(r);
 }
 
 
