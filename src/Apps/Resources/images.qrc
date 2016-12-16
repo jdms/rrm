@@ -11,9 +11,9 @@
         <file>icons/new.png</file>
         <file>icons/page_white.png</file>
         <file>icons/pointer.png</file>
-        <file>icons/removeabove.png</file>
-        <file>icons/removebelow.png</file>
         <file>icons/sketchmode.png</file>
+        <file>icons/removebelow.png</file>
+        <file>icons/removeabove.png</file>
         <file>icons/removebelowintersection.png</file>
         <file>icons/removeaboveintersection.png</file>
         <file>icons/regionPointmode.png</file>
@@ -44,6 +44,7 @@
         <file>icons/porevolume4.png</file>
         <file>icons/cornerpoint.png</file>
         <file>icons/unstructured.png</file>
+        <file>icons/diamondRegion.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>

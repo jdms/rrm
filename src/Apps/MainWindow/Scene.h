@@ -73,7 +73,6 @@ class Scene: public QGraphicsScene
 
     public slots:
 
-
         inline void setCurrentMode( const Scene::InteractionMode& mode ){ current_mode = mode; }
         inline const InteractionMode currentMode(){ return current_mode; }
 
@@ -236,6 +235,9 @@ class Scene: public QGraphicsScene
         QGraphicsPixmapItem *background_image;
 
         QTransform mA;
+
+		private:
+			std::map<int, RRM::RegionItem* > flow_regions;
 	
 };
 
