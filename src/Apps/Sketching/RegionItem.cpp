@@ -1,9 +1,8 @@
-/*
- * RegionItem.cpp
- *
- *  Created on: Dec 13, 2016
- *      Author: felipe
- */
+/**
+*  @file    RegionItem.hpp
+*  @author  Felipe Moura de Carvalho (fmourade)
+*  @date    13/12/2016
+*/
 
 #include "RegionItem.hpp"
 
@@ -17,31 +16,50 @@ namespace RRM
 
 	RegionItem::RegionItem() : QGraphicsItem()
 	{
+		this->setup();
+	}
+
+	RegionItem::RegionItem(int _id)
+	{
+		this->setup();
+		this->id_ = _id;
+	}
+
+	void RegionItem::setup()
+	{
+		/// QGraphicsItem setup
 		setFlag(ItemIsMovable);
 		setFlag(ItemSendsGeometryChanges);
 		setCacheMode(DeviceCoordinateCache);
 		setZValue(1);
+		/// Region setup
+		this->id_ = -1;
 	}
 
 	QRectF RegionItem::boundingRect() const
 	{
-		qreal adjust = 5;
-
+	
 		QPolygon poly;
-		poly << QPoint(0, -20);
-		poly << QPoint(25, 0);
-		poly << QPoint(0, 20);
-		poly << QPoint(-25, 0); 
+		poly << QPoint(0, -30);
+		poly << QPoint(15, 0);
+		poly << QPoint(0, 30);
+		poly << QPoint(-15, 0); 
 
 		return poly.boundingRect();
-
-		//return QRectF(-10 - adjust, -10 - adjust, 23 + adjust, 23 + adjust);
+		
 	}
 
 	QPainterPath RegionItem::shape() const
 	{
 		QPainterPath path;
-		path.addEllipse(-10, -10, 20, 20);
+
+		QPolygon poly;
+		poly << QPoint(0, -12);
+		poly << QPoint(10, 0);
+		poly << QPoint(0, 12);
+		poly << QPoint(-10, 0);
+
+		path.addPolygon(poly);
 		return path;
 	}
 
@@ -49,12 +67,8 @@ namespace RRM
 	{
 		painter->setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing, true);
 		painter->setRenderHints(QPainter::TextAntialiasing, true);
-		// Revert QGraphicsView Scale to the default coordinate System.
+		//@XXX Revert QGraphicsView Scale to the default coordinate System.
 		painter->scale(1, -1);
-		// Shadow
-		//painter->setPen(Qt::NoPen);
-		//painter->setBrush(Qt::darkGray);
-		//painter->drawEllipse(-7, -7, 20, 20);
 
 		QRadialGradient gradient(-3, -3, 10);
 		if (option->state & QStyle::State_Sunken) {
@@ -79,19 +93,18 @@ namespace RRM
 
 		painter->drawPolygon(poly);
 
-		//painter->drawEllipse(-0, -0, 20, 20);
+		painter->drawEllipse(QPoint(0, -18), 3, 3);
 
 		painter->setFont(QFont("Arial", 8, QFont::Bold));
-
 		// I have used the .adjusted() to make the text centralized on the diamond.
-		painter->drawText(poly.boundingRect().adjusted(poly.boundingRect().width()*(-0.05), poly.boundingRect().height()*(-0.1), 0, 0), Qt::AlignCenter, QObject::tr("9"));
+		painter->drawText(poly.boundingRect().adjusted(poly.boundingRect().width()*(-0.05), poly.boundingRect().height()*(-0.1), 0, 0), Qt::AlignCenter,QString::number(this->id_));
 		
 	}
 
 	QVariant RegionItem::itemChange(GraphicsItemChange change, const QVariant &value)
 	{
 		switch (change) {
-		case ItemPositionHasChanged:
+		case ItemPositionHasChanged:		
 			break;
 		default:
 			break;
@@ -110,5 +123,15 @@ namespace RRM
 	{
 		update();
 		QGraphicsItem::mouseReleaseEvent(event);
+	}
+
+	// Region setup
+	void RegionItem::setID(const int _id)
+	{
+		this->id_ = _id;
+	}
+	int RegionItem::getID() const
+	{
+		return this->id_;
 	}
 }

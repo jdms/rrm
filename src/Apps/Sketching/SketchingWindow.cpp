@@ -59,20 +59,19 @@ void SketchingWindow::createActions()
     tlb_rules = addToolBar( tr("Rules") );
     createRulesActions();
 
-
     tlb_edit = addToolBar( tr( "Edit" ) );
     createEditActions();
-
-
 
     tlb_customization = addToolBar( tr( "Customize" ) );
     createColorActions();
     createMiscActions();
 
+
+	toobar_flow_diagnostic = new QToolBar(tr("Flow Diagnostic"));
+	insertToolBar(tlb_rules, toobar_flow_diagnostic);
+	createFlowDiagnosticAction();
+	
 }
-
-
-
 
 
 void SketchingWindow::createDefineSketchRegionsActions()
@@ -102,25 +101,27 @@ void SketchingWindow::createRulesActions()
 
 
     ac_sketch = new QAction( tr( "TS" ), this );
-//    ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
+    ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
     ac_sketch->setCheckable( true );
 
 
     ac_removeabove = new QAction( tr( "RA" ), this );
+	ac_removeabove->setIcon(QIcon(":/images/icons/removeabove.png"));
     ac_removeabove->setCheckable( true );
     ac_removeabove->setChecked( true );
 
 
     ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
-//    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
+    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
 
 
     ac_removebelow = new QAction(tr( "RB" ), this );
+	ac_removebelow->setIcon(QIcon(":/images/icons/removebelow.png"));
     ac_removebelow->setCheckable( true );
 
     ac_removebelowintersection = new QAction( tr( "RBI" ), this );
-//    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
+    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
     ac_removebelowintersection->setCheckable( true );
 
 
@@ -240,6 +241,28 @@ void SketchingWindow::createMiscActions()
     ac_screenshot->setShortcut( Qt::Key_P );
 
     tlb_customization->addAction( ac_screenshot );
+
+}
+
+
+void SketchingWindow::createFlowDiagnosticAction()
+{
+	ac_flow_diagnostic_regionPicking = new QAction(tr("&Region Picking"), toobar_flow_diagnostic);
+	ac_flow_diagnostic_regionPicking->setIcon(QIcon(":/images/icons/diamondRegion.png"));
+	ac_flow_diagnostic_regionPicking->setShortcut(Qt::Key_R);
+	ac_flow_diagnostic_regionPicking->setCheckable(true);
+	ac_flow_diagnostic_regionPicking->setChecked(false);
+
+	toobar_flow_diagnostic->addAction(ac_flow_diagnostic_regionPicking);
+
+	connect(ac_flow_diagnostic_regionPicking, &QAction::toggled,[=](bool is_checked)
+	{
+		tlb_section->setEnabled(!is_checked);
+		tlb_sketchregions->setEnabled(!is_checked);
+		tlb_rules->setEnabled(!is_checked);
+		tlb_edit->setEnabled(!is_checked);
+	}
+	);
 
 }
 

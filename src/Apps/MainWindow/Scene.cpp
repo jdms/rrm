@@ -11,11 +11,14 @@ Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 {
     initData();
 
-	RRM::RegionItem * r = new RRM::RegionItem();
+	flow_regions[1] = new RRM::RegionItem(1);
+	flow_regions[2] = new RRM::RegionItem(2);
+	flow_regions[3] = new RRM::RegionItem(3);
 
-	r->setPos(100, 100);
-
-	this->addItem(r);
+	this->addItem(flow_regions[1]);
+	this->addItem(flow_regions[2]);
+	this->addItem(flow_regions[3]);
+	
 }
 
 
@@ -1092,9 +1095,9 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 
 	Eigen::Vector3f p = scene2Dto3D(Point2D(event->scenePos().x(), event->scenePos().y()));
 	Point2D pb = scene3Dto2D(p);
-	emit sendCoordinates(pb.x(), pb.y());
+	//emit sendCoordinates(pb.x(), pb.y());
 
-    //emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
+    emit sendCoordinates( event->scenePos().x(), event->scenePos().y() );
 
 
 

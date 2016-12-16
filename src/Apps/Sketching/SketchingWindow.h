@@ -55,7 +55,7 @@ class SketchingWindow : public QMainWindow
         void createConnections();
         void resetActions();
 
-
+		void createFlowDiagnosticAction();
 
 
     public slots:
@@ -140,8 +140,8 @@ class SketchingWindow : public QMainWindow
         int bd_height;
         int bd_depth;
 
-
-
+		QToolBar *toobar_flow_diagnostic;
+		QAction *ac_flow_diagnostic_regionPicking;
 };
 
 #endif // SKETCHING2DMODULE_H
