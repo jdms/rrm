@@ -67,14 +67,15 @@ class FlowWindow : public  QMainWindow
         void acceptUserParameters();
         void clear();
 
-		void regionPoint(int x, int y, int z);
-
+		void regionPoints(const std::map<int, Eigen::Vector3f>& region_points);
+		
     signals:
 
         void getSurfaceCrossSection();
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 //		void   get2Dto3DMatrix(Eigen::Affine3f&);
 //		void   get3Dto2DMatrix(Eigen::Affine3f&);
+		void getNumberOfRegions(int _number_of_regions);
 
     private:
 

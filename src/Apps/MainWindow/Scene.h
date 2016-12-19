@@ -73,7 +73,21 @@ class Scene: public QGraphicsScene
 
     public slots:
 
-        inline void setCurrentMode( const Scene::InteractionMode& mode ){ current_mode = mode; }
+        inline void setCurrentMode( const Scene::InteractionMode& mode )
+		{ 
+			current_mode = mode; 
+			if (current_mode == InteractionMode::SELECTING_REGION)
+			{
+				createRegions(this->number_of_flow_regions_);
+				is_region_visible = true;
+				regionVisibility(true);
+			}else
+			{
+				createRegions(this->number_of_flow_regions_);
+				is_region_visible = false;
+				regionVisibility(false);
+			}
+		}
         inline const InteractionMode currentMode(){ return current_mode; }
 
 
@@ -127,7 +141,8 @@ class Scene: public QGraphicsScene
 
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
-
+		void createRegions(int number_of_regions);
+		void regionVisibility(bool _is_visible);
 
     signals:
 
@@ -138,7 +153,8 @@ class Scene: public QGraphicsScene
         void updateContext();
         void enableSketching( bool );
         void updateBoundGeometry( const int w, const int h, const int d );
-        void sendRegionPoint( const int x, const int y, const int z );
+		/// Connection with Flow Diagnostic
+        void sendRegionPoints( const std::map<int, Eigen::Vector3f> & region_point);
 
 
 
@@ -237,7 +253,10 @@ class Scene: public QGraphicsScene
         QTransform mA;
 
 		private:
-			std::map<int, RRM::RegionItem* > flow_regions;
+			std::map<int, RRM::RegionItem* > flow_regions_;
+			void initRegions();
+			int number_of_flow_regions_;
+			bool is_region_visible;
 	
 };
 

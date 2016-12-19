@@ -10,15 +10,6 @@
 Scene::Scene( QObject* parent ): QGraphicsScene( parent )
 {
     initData();
-
-	flow_regions[1] = new RRM::RegionItem(1);
-	flow_regions[2] = new RRM::RegionItem(2);
-	flow_regions[3] = new RRM::RegionItem(3);
-
-	this->addItem(flow_regions[1]);
-	this->addItem(flow_regions[2]);
-	this->addItem(flow_regions[3]);
-	
 }
 
 
@@ -97,6 +88,9 @@ void Scene::initData()
     temp_sketch = NULL;
     sketching_boundary = NULL;
     boundary3D = NULL;
+
+	this->is_region_visible = false;
+	this->initRegions();
 
 }
 
@@ -1056,32 +1050,37 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         }
 		else if (current_mode == InteractionMode::SELECTING_REGION)
 		{
-			emit sendRegionPoint(event->scenePos().x(), event->scenePos().y(), qtscene_depth);
-		}
-
-		emit sendRegionPoint(event->scenePos().x(), event->scenePos().y(), qtscene_depth);
+			event->ignore();
+		} 
 
     }
-
     else if ( event->buttons() & Qt::RightButton )
     {
 
-        if( temp_sketch->isEmpty() ) return;
+		if (current_mode == InteractionMode::OVERSKETCHING)
+		{
+
+			if (temp_sketch->isEmpty()) return;
 
 
-        bool add_ok = addCurve();
-        if( add_ok == false )
-            return;
+			bool add_ok = addCurve();
+			if (add_ok == false)
+				return;
 
-        // should be fixed
-        std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
-        std::vector< size_t > lower_bound = arrangement.getLastCurveUpperBound();
+			// should be fixed
+			std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
+			std::vector< size_t > lower_bound = arrangement.getLastCurveUpperBound();
 
 
-        controller->interpolateStratigraphy( lower_bound, upper_bound );
+			controller->interpolateStratigraphy(lower_bound, upper_bound);
 
-        newSketch();
-        controller->addStratigraphy();
+			newSketch();
+			controller->addStratigraphy();
+		}
+		else if (current_mode == InteractionMode::SELECTING_REGION)
+		{
+			event->ignore();
+		}
 
     }
 
@@ -1119,8 +1118,11 @@ void Scene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
             sketching_boundary->edit( boundary_anchor.x(), boundary_anchor.y(), w,  h );
             emit updateBoundGeometry( std::abs( w ), std::abs( h ) , qtscene_depth );
 
-        }
-
+		}
+		else if (current_mode == InteractionMode::SELECTING_REGION)
+		{
+			event->ignore();
+		}
     }
 
 
@@ -1265,7 +1267,14 @@ void Scene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     else if( current_mode == InteractionMode::SELECTING_REGION )
     {
-        emit sendRegionPoint( event->scenePos().x(), event->scenePos().y(), qtscene_depth );
+		std::map<int, Eigen::Vector3f> region_points;
+
+		for (auto index : flow_regions_)
+		{
+			region_points[index.first] = Eigen::Vector3f(index.second->pos().x(), index.second->pos().y(),350.0);
+		}
+
+		emit sendRegionPoints(region_points);
     }
 
     QGraphicsScene::mouseReleaseEvent( event );
@@ -1331,3 +1340,49 @@ void Scene::dragLeaveEvent( QGraphicsSceneDragDropEvent * event )
 	
 
 //}
+
+/// Flow regions releated functions
+void Scene::createRegions(int number_of_regions)
+{	
+
+	regionVisibility(false);
+
+	this->number_of_flow_regions_ = number_of_regions;
+
+	for (auto index = 0; index < number_of_regions; index++)
+	{
+		if (!flow_regions_.count(index))
+		{
+			flow_regions_[index] = new RRM::RegionItem(index + 1);
+			this->addItem(flow_regions_[index]);
+			flow_regions_[index]->setPos((flow_regions_[index]->boundingRect().width() * index), sketching_boundary->boundingRect().height());
+		}
+		else
+		{
+			flow_regions_[index]->setVisible(true);
+		}
+	}
+	regionVisibility(is_region_visible);
+}
+
+/// Flow regions releated functions
+void Scene::regionVisibility(bool _is_visible)
+{
+	for (auto index = 0; index < number_of_flow_regions_; index++)
+	{
+		if (flow_regions_.count(index))
+		{
+			flow_regions_[index]->setVisible(_is_visible);
+		}		
+	}
+}
+
+/// 
+/// Flow regions releated functions
+void Scene::initRegions( )
+{
+	for (auto index : flow_regions_)
+	{	
+		index.second->setPos((index.second->boundingRect().width() * index.first), sketching_boundary->boundingRect().height());
+	}
+}

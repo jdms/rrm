@@ -261,6 +261,14 @@ void SketchingWindow::createFlowDiagnosticAction()
 		tlb_sketchregions->setEnabled(!is_checked);
 		tlb_rules->setEnabled(!is_checked);
 		tlb_edit->setEnabled(!is_checked);
+		if (is_checked)
+		{
+			emit setCurrentMode(Scene::InteractionMode::SELECTING_REGION);
+		}
+		else
+		{
+			emit setCurrentMode(Scene::InteractionMode::OVERSKETCHING);
+		}
 	}
 	);
 

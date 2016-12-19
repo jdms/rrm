@@ -171,7 +171,9 @@ void MainWindow::createSketchingActions()
     connect( scene, &Scene::updateBoundGeometry, sketching_window, &SketchingWindow::updateBoundaryDimensions );
 
 
-	connect( scene, &Scene::sendRegionPoint, flow_window, &FlowWindow::regionPoint);
+	connect(scene, &Scene::sendRegionPoints, flow_window, &FlowWindow::regionPoints);
+
+	connect(flow_window, &FlowWindow::getNumberOfRegions, scene, &Scene::createRegions);
 
 }
 
