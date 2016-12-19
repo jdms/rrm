@@ -241,7 +241,7 @@ void FlowParametersBar_new::clear()
 
 void FlowParametersBar_new::mousePressEvent(QMouseEvent *event)
 {
-	//set_region_point(event->x(), event->y(), 0.0);
+	
 
 }
 
@@ -291,15 +291,20 @@ void FlowParametersBar_new::new_gui_clear()
 }
 
 /// Slot used to grab Region Point
-void FlowParametersBar_new::set_region_point(double x, double y, double z)
+void FlowParametersBar_new::setRegionPoints(const std::map<int, Eigen::Vector3f>& region_points)
 {
 	/// Coordinate System for FlowDiagnostic is  <x, z, y>
-	positions_values[comboBox_Region->currentIndex()][0] = x;
-	// Z
-	positions_values[comboBox_Region->currentIndex()][1] = z;
-	// Y
-	positions_values[comboBox_Region->currentIndex()][2] = y;
+	/// @FIXEME Be Careful about the coordinate sytems
+	for (auto index : region_points)
+	{
+		// 
+		positions_values[index.first][0] = index.second.x();
+		// Z
+		positions_values[index.first][2] = index.second.y();
+		// Y
+		positions_values[index.first][1] = index.second.z();
 
+	}
 	this->updateRegionWidget(comboBox_Region->currentIndex());
 }
 
@@ -364,6 +369,8 @@ void FlowParametersBar_new::createRegions( )
 	comboBox_Region->insertItems(0, l);
 	/// Update the GUI using the current region information
 	this->updateRegionWidget(comboBox_Region->currentIndex());
+
+	emit numberRegions(spinBox_Number_of_Regions->value());
 }
 
 /// Update the GUI using the current region information

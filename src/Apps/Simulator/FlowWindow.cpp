@@ -293,7 +293,8 @@ void FlowWindow::createActions()
 	connect( &crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qshowMovingCrossSection->setChecked( false ); } );
 
 
-
+	//Region Signal
+	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit getNumberOfRegions(_number_of_regions); });
 
 }
 
@@ -703,8 +704,8 @@ void FlowWindow::reset()
 }
 
 
-void FlowWindow::regionPoint(int x, int y, int z)
+void FlowWindow::regionPoints(const std::map<int,Eigen::Vector3f>& region_points)
 {
 	// Z is fixed
-	this->parametersBar.set_region_point(static_cast<double>(x),static_cast<double>(y),350.0);
+	this->parametersBar.setRegionPoints(region_points);
 }

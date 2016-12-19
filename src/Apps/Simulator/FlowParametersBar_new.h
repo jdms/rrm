@@ -36,7 +36,7 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 
 		void mousePressEvent(QMouseEvent *event);
 	public slots:
-		void set_region_point(double x, double y, double z);
+		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
     private slots:
 
         void on_btn_inputparameters_clicked();
@@ -61,6 +61,7 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
         void readParameterFile( const std::string& input_file );
         void closeBar();
         void closeBarandAccept();
+		void numberRegions(int number_of_regions);
 		
 		
 
