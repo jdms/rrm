@@ -266,7 +266,7 @@ add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
                                ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}
                                ${GEOLOGY_HEADERS}
-                               ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} )
+                               ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} Resources/rrm.rc)
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}

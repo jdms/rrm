@@ -53,5 +53,6 @@
         <file>about/ExxonMobil.png</file>
         <file>about/PETROBRAS.png</file>
         <file>about/Statoil_logo.png</file>
+		<file>about/rrm.png</file>
     </qresource>
 </RCC>

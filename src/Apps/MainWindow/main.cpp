@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QApplication>
 #include <QtGui/QSurfaceFormat>
+#include <QtGui/QIcon>
 
 
 #include "MainWindow.h"
@@ -14,8 +15,13 @@ int main( int argc, char *argv[] )
 {
 
 
-    QApplication app( argc, argv );
+	QApplication app(argc, argv);
 
+	/// Added icon on main window
+	QIcon appIcon;
+	appIcon.addFile(":/logos/about/rrm.png");
+	app.setWindowIcon(appIcon);
+	
 
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
     app.setAttribute( Qt::AA_DontCreateNativeWidgetSiblings );
