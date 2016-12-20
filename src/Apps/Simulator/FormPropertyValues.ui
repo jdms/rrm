@@ -37,7 +37,7 @@
         <x>0</x>
         <y>0</y>
         <width>382</width>
-        <height>229</height>
+        <height>223</height>
        </rect>
       </property>
       <attribute name="label">
@@ -139,6 +139,18 @@
           </item>
           <item row="3" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_X">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="frame">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>
@@ -165,6 +177,18 @@
           </item>
           <item row="3" column="3">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Z">
+            <property name="frame">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>false</bool>
+            </property>
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>
@@ -172,6 +196,15 @@
           </item>
           <item row="3" column="2">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Point_Y">
+            <property name="frame">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
             <property name="maximum">
              <double>100000.000000000000000</double>
             </property>

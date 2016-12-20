@@ -23,7 +23,7 @@ void MainWindow::init()
     setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs | QMainWindow::AllowTabbedDocks );
     setDockNestingEnabled( true );
     setMinimumSize ( 1000, 800 );
-
+	setWindowTitle("Rapid Reservoir Modelling");
     createWindow();
     createActions();
     createMenuBar();
