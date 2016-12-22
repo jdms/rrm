@@ -30,6 +30,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
+#include <QKeyEvent>
 
 
 #include "MainWindow/About/AboutWidget.hpp"
@@ -37,7 +38,7 @@
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
 
-#include "HelpDialog.h"
+#include "Help/HelpDialog.h"
 #include "Controller.hpp"
 
 
@@ -75,6 +76,15 @@ class MainWindow : public QMainWindow
         void createSketchingModule();
         void createSketchingMenuBar();
         void createSketchingActions();
+
+
+        void keyPressEvent( QKeyEvent *event );
+
+
+    signals:
+
+        void saveAsCPS3( const std::string& filename );
+        void saveAsIrapGrid( const std::string& filename );
 
 
 
