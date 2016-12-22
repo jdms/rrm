@@ -70,6 +70,11 @@ class Scene: public QGraphicsScene
 //        Curve2D scene2Dto3D( const Curve2D& c );
 //        Curve2D scene3Dto2D( const Curve2D& c );
 
+<<<<<<< HEAD
+=======
+
+    public slots:
+>>>>>>> origin/feature-petrel_export
 
     public slots:
 
@@ -140,6 +145,8 @@ class Scene: public QGraphicsScene
 
 
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+        void exportToCPS3( const std::string& filename );
+        void exportToIrapGrid( const std::string& filename );
 
 		void createRegions(int number_of_regions);
 		void regionVisibility(bool _is_visible);
