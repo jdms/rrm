@@ -73,6 +73,9 @@ void MainWindow::createMainWindowActions ( )
     connect( ac_contents, SIGNAL( triggered() ) , &help, SLOT( show() ) );
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );
 
+    connect( this, SIGNAL( saveAsCPS3( const std::string& ) ) , scene, SLOT( exportToCPS3( const std::string& ) ) );
+    connect( this, SIGNAL( saveAsIrapGrid( const std::string& ) ) , scene, SLOT( exportToIrapGrid( const std::string& ) ) );
+
 }
 
 
@@ -230,4 +233,41 @@ void MainWindow::initScene()
 
 void MainWindow::clear()
 {
+}
+
+
+void MainWindow::keyPressEvent( QKeyEvent *event )
+{
+
+    switch ( event->key() )
+    {
+        case Qt::Key_E:
+        {
+
+            QString selected_format = "";
+            QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "bin/exported/",
+                                                                 "CPS3 files (*.csp3);;Irap Classic Grid (*.irapg)", &selected_format );
+            if( filename.isEmpty() == true ) return;
+
+            if( selected_format == QString( "CPS3 files (*.csp3)" ) )
+            {
+                emit saveAsCPS3( filename.toStdString() );
+            }
+
+            else if( selected_format == QString( "Irap Classic Grid (*.irapg)" ) )
+            {
+                emit saveAsIrapGrid( filename.toStdString() );
+            }
+
+
+        }
+        break;
+
+        default:
+            break;
+
+
+    };
+
+
 }

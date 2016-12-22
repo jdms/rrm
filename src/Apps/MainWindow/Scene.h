@@ -54,6 +54,7 @@ class Scene: public QGraphicsScene
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 
 
+
     public slots:
 
 
@@ -106,6 +107,8 @@ class Scene: public QGraphicsScene
 
 
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+        void exportToCPS3( const std::string& filename );
+        void exportToIrapGrid( const std::string& filename );
 
 
     signals:
