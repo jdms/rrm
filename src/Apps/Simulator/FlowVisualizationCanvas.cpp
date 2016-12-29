@@ -106,7 +106,8 @@ void FlowVisualizationCanvas::initializeGL()
 	aspect_ratio_ = static_cast<GLfloat>(this->width()) / static_cast<GLfloat>(this->height());
 
 	camera.setPerspectiveMatrix(60.0, aspect_ratio_, 0.1f, 10000.0f);
-	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
+	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);	
+	coordinate_axis_.reset();
 	coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     mesh.initializeShader( current_directory );

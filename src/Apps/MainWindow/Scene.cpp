@@ -1377,7 +1377,6 @@ void Scene::regionVisibility(bool _is_visible)
 	}
 }
 
-/// 
 /// Flow regions releated functions
 void Scene::initRegions( )
 {
