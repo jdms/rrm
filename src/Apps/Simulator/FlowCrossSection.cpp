@@ -280,7 +280,8 @@ void FlowCrossSection::updatePosition( const QVector3D& updated )
 
 
     QVector3D direction_vector = updated - QVector3D( position.x(), position.y(), position.z() );
-    float step = direction_vector.length()*0.003;
+    //float step = direction_vector.length()*0.003;
+	float step = direction_vector.length();
 
     float dot = QVector3D::dotProduct( direction_vector, QVector3D( 1.0f, 1.0f, 0.0f ) );
     bool same_direction = ( dot > 0.0f )? true:false;

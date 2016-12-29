@@ -9,6 +9,8 @@ Mesh::Mesh()
     show_edges = true;
     show_faces = true;
     show_bbox = true;
+	this->centre_ = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+
 
     apply_crosssection_clipping = false;
 }
@@ -139,7 +141,7 @@ void Mesh::setColor( const std::vector< float >& vcolors  )
 }
 
 
-void Mesh::setCrossSectionClippingEquation( const float& a, const float& b, const float& c, const float& d )
+void Mesh::setCrossSectionClippingEquation(const float& a, const float& b, const float& c, const float& d, Eigen::Vector3f _centre)
 {
 
     apply_crosssection_clipping = true;
@@ -717,14 +719,16 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 	shader_mesh->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
 	shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
 	shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
-
+	shader_mesh->setUniform("isClip", GL_FALSE);
     glBindVertexArray( va_mesh );
 
 
     if( apply_crosssection_clipping == true )
     {
         glEnable(GL_CLIP_DISTANCE0);
-        shader_mesh->setUniform( "ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation );
+		shader_mesh->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
+        shader_mesh->setUniform( "ClipPlaneCentre", this->centre_);
+		shader_mesh->setUniform("isClip", GL_TRUE);
 
     }
   //  else

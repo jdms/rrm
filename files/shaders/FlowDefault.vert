@@ -9,8 +9,6 @@ uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
 uniform vec4  ClipPlane;
 
-out float gl_ClipDistance[1];
-
 out VertexData
 {
     vec4 vertice;
@@ -25,13 +23,12 @@ void main ( void )
     normalMatrix = inverse ( normalMatrix );
     normalMatrix = transpose ( normalMatrix );
 
-        VertexOut.vertice = ViewMatrix * vec4( position,1.0f);
+        VertexOut.vertice = vec4( position,1.0f);
     VertexOut.normal = normalMatrix * normal;
     VertexOut.color = vec4 ( color , 1.0 );
 
         gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4 ( position , 1.0f );
 
-        gl_ClipDistance[0] = dot( ModelMatrix * vec4( position, 1.0 ), ClipPlane);
 }
 
 
