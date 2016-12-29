@@ -38,8 +38,8 @@ int main( int argc, char *argv[] )
 	/// Create a defaut OpenGL context to use toward the application
     QSurfaceFormat format;
     format.setDepthBufferSize( 24 );
-    format.setVersion( 4, 1 );
-    format.setProfile( QSurfaceFormat::CompatibilityProfile );
+    //format.setVersion( 4, 1 );
+    //format.setProfile( QSurfaceFormat::CompatibilityProfile );
     format.setRenderableType( QSurfaceFormat::OpenGL );
     format.setSamples( 16 );
     QSurfaceFormat::setDefaultFormat( format );

@@ -110,8 +110,7 @@ set( SIMULATOR_HEADERS
                  Simulator/auxiliar.h
                  Simulator/ColorMap.h
                  Simulator/CoordinateAxes.h
-                 Simulator/FlowCrossSection.h
-                 Simulator/FlowParametersBar.h
+                 Simulator/FlowCrossSection.h                 
                  Simulator/FlowParametersBar_new.h
                  Simulator/FlowRenderingOptionsMenu.h
                  Simulator/FlowVisualizationCanvas.h
@@ -162,7 +161,6 @@ set( SIMULATOR_HEADERS
                  Simulator/FlowComputation/row.h )
 
 set ( SIMULATOR_MOC_HEADERS
-                Simulator/FlowParametersBar.h
                 Simulator/FlowParametersBar_new.h
                 Simulator/FlowRenderingOptionsMenu.h
                 Simulator/FlowVisualizationCanvas.h
@@ -175,8 +173,7 @@ set ( SIMULATOR_MOC_HEADERS
                 Simulator/ColorBar.h
                 Simulator/PoreVolumeResultsForm.h )
 
-set ( SIMULATOR_UI_SOURCES
-                Simulator/FlowParametersBar.ui
+set ( SIMULATOR_UI_SOURCES               
                 Simulator/FormPropertyValues.ui
                 Simulator/NormalMovableCrossSectionFlow.ui
                 Simulator/OpenFlowFilesBar.ui )
@@ -186,7 +183,6 @@ set( SIMULATOR_SOURCES
                 Simulator/ColorMap.cpp
                 Simulator/CoordinateAxes.cpp
                 Simulator/FlowCrossSection.cpp
-                Simulator/FlowParametersBar.cpp
                 Simulator/FlowParametersBar_new.cpp
                 Simulator/FlowRenderingOptionsMenu.cpp
                 Simulator/FlowVisualizationCanvas.cpp

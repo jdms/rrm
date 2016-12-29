@@ -48,7 +48,7 @@ class Mesh
         void setColor( const std::vector< float >& vcolors  );
 
 
-        void setCrossSectionClippingEquation( const float& a, const float& b, const float& c, const float& d );
+		void setCrossSectionClippingEquation( const float& a, const float& b, const float& c, const float& d , Eigen::Vector3f _centre);
         void disableCrossSection();
 
 
@@ -144,6 +144,7 @@ class Mesh
         float coefBCrossSectionEquation;
         float coefCCrossSectionEquation;
         float coefDCrossSectionEquation;
+		Eigen::Vector3f centre_;
 
         Tucano::Shader* shader_bbox;
 

@@ -4,6 +4,11 @@ layout( triangles ) in;
 layout( triangle_strip, max_vertices = 3 ) out;
 
 uniform vec2 WIN_SCALE;
+uniform vec4 ClipPlane;
+uniform vec3 ClipPlaneCentre;
+uniform bool isClip;
+
+uniform mat4 ViewMatrix;
 
 noperspective out vec3 dist;
 
@@ -22,6 +27,42 @@ out VertexData
 } VertexOut;
 
 
+bool userClipImplicit(vec4 plane , vec3 p )
+{
+    float fx = plane.x*p.x + plane.y*p.y + plane.z*p.z + plane.w;
+
+    if ( fx >= 0 )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+    return false;
+
+}
+
+bool userClip ( vec3 n , vec3 c , vec3 p )
+{
+
+    vec3 pc = p - c;
+
+    float d = dot ( pc , n );
+
+    if ( d >= 0 )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+    return false;
+}
+
 
 void main(void)
 {
@@ -39,29 +80,73 @@ void main(void)
     VertexOut.normal   = VertexIn[0].normal;
     VertexOut.color    = VertexIn[0].color;
 
-    dist = vec3(area/length(v0),0,0);
-    VertexOut.vertice    = VertexIn[0].vertice;
-    gl_Position = gl_in[0].gl_Position;
+    bool clipped = false;
 
-    gl_ClipDistance[0] = gl_in[0].gl_ClipDistance[0];
+    if ( isClip )
+    {
+        if ( userClipImplicit(ClipPlane,VertexIn[0].vertice.xyz) ||
+             userClipImplicit(ClipPlane,VertexIn[1].vertice.xyz) ||
+             userClipImplicit(ClipPlane,VertexIn[2].vertice.xyz))
+        {
+            clipped = true;
+        }else
+        {
+            clipped = false;
+        }
+
+    }else
+    {
+        clipped = false;
+    }
+
+
+    /// First Vertex
+    dist = vec3(area/length(v0),0,0);
+    VertexOut.vertice    = ViewMatrix * VertexIn[0].vertice;
+
+    if ( clipped )
+    {
+        gl_Position = vec4(0.0,0.0,0.0,1.0);
+    }else
+    {
+        gl_Position = gl_in[0].gl_Position;
+    }
+
+
     EmitVertex();
 
+    /// Second Vertex
     VertexOut.color    = VertexIn[1].color;
 
     dist = vec3(0,area/length(v1),0);
-    VertexOut.vertice    = VertexIn[1].vertice;
-    gl_Position = gl_in[1].gl_Position;
+    VertexOut.vertice    = ViewMatrix * VertexIn[1].vertice;
 
-    gl_ClipDistance[0] = gl_in[1].gl_ClipDistance[0];
+    if ( clipped )
+    {
+        gl_Position = vec4(0.0,0.0,0.0,1.0);
+    }else
+    {
+        gl_Position = gl_in[1].gl_Position;
+    }
+
+
     EmitVertex();
 
+    /// Third Vertex
     VertexOut.color    = VertexIn[2].color;
 
     dist = vec3(0,0,area/length(v2));
-    VertexOut.vertice    = VertexIn[2].vertice;
-    gl_Position = gl_in[2].gl_Position;
+    VertexOut.vertice    = ViewMatrix * VertexIn[2].vertice;
 
-    gl_ClipDistance[0] = gl_in[2].gl_ClipDistance[0];
+    if ( clipped )
+    {
+        gl_Position = vec4(0.0,0.0,0.0,1.0);
+    }else
+    {
+        gl_Position = gl_in[2].gl_Position;
+    }
+
+
     EmitVertex();
 
 

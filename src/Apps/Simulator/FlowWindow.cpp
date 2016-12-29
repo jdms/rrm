@@ -44,8 +44,8 @@ void FlowWindow::createWindow()
     canvas->setController( controller );
     canvas->setColorBar( &colorbar );
 
-
-    hb_mainwindow = new QHBoxLayout( this );
+	/// Remove this from contructor prevent the warning menssage
+    hb_mainwindow = new QHBoxLayout(  );
     hb_mainwindow->addWidget( canvas );
     hb_mainwindow->addWidget( &colorbar );
 
@@ -54,7 +54,7 @@ void FlowWindow::createWindow()
     wd_main->setLayout( hb_mainwindow );
 
 
-    this->setCentralWidget( wd_main );
+	this->setCentralWidget(wd_main);
 
     colorbar.setSize( canvas->height() , 25 );
 

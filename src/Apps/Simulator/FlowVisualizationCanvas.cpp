@@ -9,7 +9,8 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
 
-	this->current_directory = _current_dir.toStdString();
+	//this->current_directory = _current_dir.toStdString();
+	this->current_directory = "D:\\Workspace\\RRM\\files\\";
 	
 	std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
 	createRenderingMenu();
@@ -443,7 +444,7 @@ void FlowVisualizationCanvas::setCrossSectionNormalCoordinates( float X, float Y
 
     float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
     crosssection.getPlaneEquation( a, b, c, d );
-    mesh.setCrossSectionClippingEquation( a, b, c, d );
+    mesh.setCrossSectionClippingEquation( a, b, c, d , Eigen::Vector3f().UnitX());
 
     update();
 }
@@ -698,7 +699,7 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
 
         float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
         crosssection.getPlaneEquation( a, b, c, d );
-        mesh.setCrossSectionClippingEquation( a, b, c, d );
+		mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
     }
 
@@ -770,6 +771,7 @@ void FlowVisualizationCanvas::wheelEvent( QWheelEvent *event )
 
 void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 {
+	this->makeCurrent();
 
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
@@ -792,6 +794,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_U:
         {
+			mesh.reloadShader();
 //            reloadShaders();
         } break;
 
@@ -833,7 +836,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -853,7 +856,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -871,7 +874,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d ,Eigen::Vector3f().UnitX());
 
             }
 
@@ -888,7 +891,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -904,7 +907,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -920,7 +923,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -936,7 +939,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
