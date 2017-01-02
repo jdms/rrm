@@ -81,11 +81,11 @@ void FlowWindow::createToolBar()
 
 
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
-    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cornerpoint.png"));
+    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
     connect( qbuildCornerPoint, &QAction::triggered, this, &FlowWindow::buildCornerPoint );
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
-    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructured.png"));
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));
     connect( qbuildUnstructured, &QAction::triggered, this, &FlowWindow::buildUnstructured );
 
 
@@ -96,7 +96,7 @@ void FlowWindow::createToolBar()
 
 
     qshowMovingCrossSection = new QAction( "CrossSection", qtoolbarFlow );
-    qshowMovingCrossSection->setIcon(QIcon(":/images/icons/clippingplane.png"));
+    qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
     qshowMovingCrossSection->setCheckable( true );
     connect( qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible );
 	connect( qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection );
@@ -137,70 +137,65 @@ void FlowWindow::createToolBar()
 	
     mn_coloring_byvertex = new QMenu ( tr ( "Vertex Properties" ) );
     tbn_coloringbyvertex = new QToolButton();
-    tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/byvertex.png"));
+    tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/vertex.png"));
     tbn_coloringbyvertex->setMenu( mn_coloring_byvertex );
     tbn_coloringbyvertex->setPopupMode( QToolButton::InstantPopup );
 
 
     mn_coloring_byfaces = new QMenu ( tr ( "Faces Properties" ) );
     tbn_coloringbyface = new QToolButton();
-    tbn_coloringbyface->setIcon(QIcon(":/images/icons/byface.png"));
+    tbn_coloringbyface->setIcon(QIcon(":/images/icons/properties.png"));
     tbn_coloringbyface->setMenu( mn_coloring_byfaces );
     tbn_coloringbyface->setPopupMode( QToolButton::InstantPopup );
 
     mn_colormaps = new QMenu ( tr ( "Colormaps" ) );
-    tbn_colormaps = new QToolButton();
+	tbn_colormaps = new QToolButton();
     tbn_colormaps->setIcon(QIcon(":/images/icons/colormap.png"));
     tbn_colormaps->setMenu( mn_colormaps );
     tbn_colormaps->setPopupMode( QToolButton::InstantPopup );
 
+	QActionGroup* ag_colormaps = new QActionGroup(mn_colormaps);
+	ag_colormaps->setExclusive(true);
 
-    ac_constant = new QAction( "Constant", qtoolbarFlow );
-    ac_jet = new QAction( "Jet", qtoolbarFlow );
-    ac_hot = new QAction( "Hot", qtoolbarFlow );
-    ac_cool = new QAction( "Cool", qtoolbarFlow );
-    ac_parula = new QAction( "Parula", qtoolbarFlow );
-    ac_spring = new QAction( "Spring", qtoolbarFlow );
-    ac_summer = new QAction( "Summer", qtoolbarFlow );
-    ac_copper = new QAction( "Copper", qtoolbarFlow );
-    ac_polar = new QAction( "Polar", qtoolbarFlow );
-    ac_winter = new QAction( "Winter", qtoolbarFlow );
+	ac_constant = new QAction("Constant", ag_colormaps);
+	ac_constant->setCheckable(true);	
+	ac_constant->setChecked(true);
+	ac_jet = new QAction("Jet", ag_colormaps);
+	ac_jet->setCheckable(true);
+	ac_hot = new QAction("Hot", ag_colormaps);
+	ac_hot->setCheckable(true);
+	ac_cool = new QAction("Cool", ag_colormaps);
+	ac_cool->setCheckable(true);
+	ac_parula = new QAction("Parula", ag_colormaps);
+	ac_parula->setCheckable(true);
+	ac_spring = new QAction("Spring", ag_colormaps);
+	ac_spring->setCheckable(true);
+	ac_summer = new QAction("Summer", ag_colormaps);
+	ac_summer->setCheckable(true);
+	ac_copper = new QAction("Copper", ag_colormaps);
+	ac_copper->setCheckable(true);
+	ac_polar = new QAction("Polar", ag_colormaps);
+	ac_polar->setCheckable(true);
+	ac_winter = new QAction("Winter", ag_colormaps);
+	ac_winter->setCheckable(true);
 
+	mn_colormaps->addActions(ag_colormaps->actions());
 
-    QActionGroup* ag_colormaps = new QActionGroup( this );
-    ag_colormaps->setExclusive( true );
+	connect(ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); std::cout << "Toggled"; });
+	connect(ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::JET); });
+	connect(ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::HOT);  });
+	connect(ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL); });
+	connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
 
-    ag_colormaps->addAction( ac_constant );
-    ag_colormaps->addAction( ac_jet );
-    ag_colormaps->addAction( ac_hot );
-    ag_colormaps->addAction( ac_cool );
-    ag_colormaps->addAction( ac_parula );
-    ag_colormaps->addAction( ac_spring );
-    ag_colormaps->addAction( ac_summer );
-    ag_colormaps->addAction( ac_copper );
-    ag_colormaps->addAction( ac_polar );
-    ag_colormaps->addAction( ac_winter );
-
-
-
-    connect( ac_constant, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::CONSTANT ); } );
-    connect( ac_jet, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::JET ); } );
-    connect( ac_hot, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::HOT ); } );
-    connect( ac_cool, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::COOL ); } );
-    connect( ac_parula, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::PARULA ); } );
-
-    connect( ac_spring, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::SPRING ); } );
-    connect( ac_summer, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::SUMMER ); } );
-    connect( ac_copper, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::COPPER ); } );
-    connect( ac_polar, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::POLAR ); } );
-    connect( ac_winter, &QAction::toggled, this, [=](){ canvas->setCurrentColormap( ColorMap::COLORMAP::WINTER ); } );
-
-
-    mn_colormaps->addActions( ag_colormaps->actions() );
+	connect(ac_spring, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SPRING); });
+	connect(ac_summer, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SUMMER); });
+	connect(ac_copper, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COPPER); });
+	connect(ac_polar, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::POLAR); });
+	connect(ac_winter, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::WINTER); });
 
 
     ac_showregions = new QAction( "Show Pore Volumes", qtoolbarFlow );
-    ac_showregions->setIcon(QIcon(":/images/icons/porevolume4.png"));
+    ac_showregions->setIcon(QIcon(":/images/icons/porus.png"));
     ac_showregions->setCheckable( true );
     connect( ac_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
 	connect( ac_showregions, &QAction::toggled, canvas, &FlowVisualizationCanvas::showRegions );
