@@ -174,9 +174,8 @@ void MainWindow::createSketchingActions()
     connect( scene, &Scene::updateBoundGeometry, sketching_window, &SketchingWindow::updateBoundaryDimensions );
 
 
-	connect(scene, &Scene::sendRegionPoints, flow_window, &FlowWindow::regionPoints);
+    connect( sketching_window, SIGNAL( exportSurfaces() ), this, SLOT(  exportTo() ) );
 
-	connect(flow_window, &FlowWindow::getNumberOfRegions, scene, &Scene::createRegions);
 
 }
 
@@ -239,6 +238,9 @@ void MainWindow::createFlowDiagnosticsActions()
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, scene, &Scene::getLegacyMeshes );
 
+    connect(scene, &Scene::sendRegionPoints, flow_window, &FlowWindow::regionPoints);
+    connect(flow_window, &FlowWindow::getNumberOfRegions, scene, &Scene::createRegions);
+
 //	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
 //	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
 }
@@ -268,6 +270,30 @@ void MainWindow::clear()
 }
 
 
+
+void MainWindow::exportTo()
+{
+
+
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "bin/exported/",
+                                                         "CPS3 files (*.csp3);;Irap Classic Grid (*.irapg)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    if( selected_format == QString( "CPS3 files (*.csp3)" ) )
+    {
+        emit saveAsCPS3( filename.toStdString() );
+    }
+
+    else if( selected_format == QString( "Irap Classic Grid (*.irapg)" ) )
+    {
+        emit saveAsIrapGrid( filename.toStdString() );
+    }
+
+
+}
+
+
 void MainWindow::keyPressEvent( QKeyEvent *event )
 {
 
@@ -276,21 +302,7 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
         case Qt::Key_E:
         {
 
-            QString selected_format = "";
-            QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "bin/exported/",
-                                                                 "CPS3 files (*.csp3);;Irap Classic Grid (*.irapg)", &selected_format );
-            if( filename.isEmpty() == true ) return;
-
-            if( selected_format == QString( "CPS3 files (*.csp3)" ) )
-            {
-                emit saveAsCPS3( filename.toStdString() );
-            }
-
-            else if( selected_format == QString( "Irap Classic Grid (*.irapg)" ) )
-            {
-                emit saveAsIrapGrid( filename.toStdString() );
-            }
-
+            exportTo();
 
         }
         break;

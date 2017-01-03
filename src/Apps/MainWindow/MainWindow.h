@@ -34,8 +34,6 @@
 
 
 #include "MainWindow/About/AboutWidget.hpp"
-#include "HelpDialog.h"
-#include "Controller.hpp"
 
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
@@ -105,6 +103,8 @@ class MainWindow : public QMainWindow
 
     public slots:
 
+
+        void exportTo();
         void initScene();
 
 
