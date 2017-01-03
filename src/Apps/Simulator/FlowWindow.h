@@ -11,7 +11,6 @@
 #include <QToolButton>
 #include <QResizeEvent>
 
-//#include "FlowParametersBar.h"
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "ColorBar.h"

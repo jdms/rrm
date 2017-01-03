@@ -39,14 +39,6 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
     private slots:
 
-        void on_btn_inputparameters_clicked();
-        void on_btn_loadparameterfile_clicked();
-
-        void on_btn_regionproperties_clicked();
-        void on_btn_wellsvalues_clicked();
-
-        void on_btb_acceptparameters_accepted();
-        void on_btb_acceptparameters_rejected();
 
 		/// Regions
 		void updateRegionWidget(const int index);

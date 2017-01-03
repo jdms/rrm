@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>382</width>
-        <height>223</height>
+        <width>387</width>
+        <height>219</height>
        </rect>
       </property>
       <attribute name="label">
@@ -276,7 +276,7 @@
         <x>0</x>
         <y>0</y>
         <width>382</width>
-        <height>197</height>
+        <height>217</height>
        </rect>
       </property>
       <attribute name="label">
@@ -406,10 +406,23 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="edt_inputparameters"/>
+       <widget class="QLineEdit" name="edit_inputparameters">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btn_inputparameters">
+       <widget class="QPushButton" name="button_inputparameters">
         <property name="maximumSize">
          <size>
           <width>50</width>
