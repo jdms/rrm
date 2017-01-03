@@ -70,11 +70,7 @@ class Scene: public QGraphicsScene
 //        Curve2D scene2Dto3D( const Curve2D& c );
 //        Curve2D scene3Dto2D( const Curve2D& c );
 
-<<<<<<< HEAD
-=======
 
-    public slots:
->>>>>>> origin/feature-petrel_export
 
     public slots:
 
