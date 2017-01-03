@@ -21,10 +21,9 @@ class FlowRenderingOptionsMenu: public QMenu
         FlowRenderingOptionsMenu( QWidget* parent );
 
         std::string getCurrentColorMap();
-        inline bool showVertices(){ return chk_show_vertices->isChecked(); }
-        inline bool showEdges(){ return chk_show_edges->isChecked(); }
-        inline bool showFaces(){ return chk_show_faces->isChecked(); }
-
+        //inline bool showVertices(){ return chk_show_vertices->isChecked(); }
+        //inline bool showEdges(){ return chk_show_edges->isChecked(); }
+        //inline bool showFaces(){ return chk_show_faces->isChecked(); }
 
 
     protected:
@@ -82,9 +81,9 @@ class FlowRenderingOptionsMenu: public QMenu
 
     private:
 
-        QCheckBox* chk_show_vertices;
-        QCheckBox* chk_show_edges;
-        QCheckBox* chk_show_faces;
+		//QCheckBox* chk_show_vertices;
+		//QCheckBox* chk_show_edges;
+		//QCheckBox* chk_show_faces;
         QCheckBox* chk_show_bbox;
 
         QWidgetAction* wa_visualization_options;
