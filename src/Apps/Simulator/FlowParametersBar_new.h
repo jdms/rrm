@@ -73,9 +73,13 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		void loadWells(const int nw, const std::vector< unsigned int >& type, const std::vector< double >& value, const std::vector< int >& sign);
 
 		std::map< int, Eigen::Vector3d > positions_values;
-		std::map< int, double > perm_values;
-		std::map< int, double > poros_values;
-		std::map< int, double > visc_values;
+		std::map< int, double > permeability_values;
+		std::map< int, double > porosity_values;
+		std::map< int, double > viscosity_values;
+
+		std::map< int, int > permeability_slider_values;
+		std::map< int, int > porosity_slider_values;
+		std::map< int, int > viscosity_slider_values;
 
 		std::map< int, unsigned int > well_types;
 		std::map< int, double >		  well_pressure;

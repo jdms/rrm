@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>387</width>
-        <height>219</height>
+        <width>382</width>
+        <height>227</height>
        </rect>
       </property>
       <attribute name="label">
@@ -101,6 +101,12 @@
           </item>
           <item row="1" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Porosity">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
             <property name="minimum">
              <double>0.010000000000000</double>
             </property>
@@ -117,6 +123,12 @@
           </item>
           <item row="0" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Permeability">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
             <property name="suffix">
              <string> (mD)</string>
             </property>
@@ -158,6 +170,12 @@
           </item>
           <item row="2" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBox_Region_Viscosity">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
             <property name="suffix">
              <string> (cP)</string>
             </property>
@@ -276,7 +294,7 @@
         <x>0</x>
         <y>0</y>
         <width>382</width>
-        <height>217</height>
+        <height>197</height>
        </rect>
       </property>
       <attribute name="label">
