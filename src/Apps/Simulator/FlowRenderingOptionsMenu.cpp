@@ -59,9 +59,9 @@ void FlowRenderingOptionsMenu::create()
 void FlowRenderingOptionsMenu::createActions( QWidget* parent ){
 
 
-    connect( chk_show_vertices, SIGNAL( clicked( bool ) ), parent, SLOT( showVertices( bool ) ) );
-    connect( chk_show_edges, SIGNAL( clicked( bool ) ), parent, SLOT( showEdges( bool ) ) );
-    connect( chk_show_faces, SIGNAL( clicked( bool ) ), parent, SLOT( showFaces( bool ) ) );
+    //connect( chk_show_vertices, SIGNAL( clicked( bool ) ), parent, SLOT( showVertices( bool ) ) );
+    //connect( chk_show_edges, SIGNAL( clicked( bool ) ), parent, SLOT( showEdges( bool ) ) );
+    //connect( chk_show_faces, SIGNAL( clicked( bool ) ), parent, SLOT( showFaces( bool ) ) );
     connect( chk_show_bbox, SIGNAL( clicked( bool ) ), parent, SLOT( showBoundingBox( bool ) ) );
 
 
@@ -108,23 +108,23 @@ void FlowRenderingOptionsMenu::createFlowActionsMenu()
 
 void FlowRenderingOptionsMenu::createVisualizationMenu()
 {
-    chk_show_vertices = new QCheckBox ( tr ( "Show Points" ) );
-    chk_show_vertices->setChecked ( false );
+    //chk_show_vertices = new QCheckBox ( tr ( "Show Points" ) );
+    //chk_show_vertices->setChecked ( false );
 
-    chk_show_edges = new QCheckBox ( tr ( "Show WireFrame" ) );
-    chk_show_edges->setChecked ( true );
+    //chk_show_edges = new QCheckBox ( tr ( "Show WireFrame" ) );
+    //chk_show_edges->setChecked ( true );
 
-    chk_show_faces = new QCheckBox ( tr ( "Show Volume" ) );
-    chk_show_faces->setChecked ( true );
+    //chk_show_faces = new QCheckBox ( tr ( "Show Volume" ) );
+    //chk_show_faces->setChecked ( true );
 
     chk_show_bbox = new QCheckBox ( tr ( "Show Bounding Box" ) );
     chk_show_bbox->setChecked ( true );
 
 
     QVBoxLayout *vb_layout = new QVBoxLayout;
-    vb_layout->addWidget ( chk_show_vertices );
-    vb_layout->addWidget ( chk_show_edges );
-    vb_layout->addWidget ( chk_show_faces );
+    //vb_layout->addWidget ( chk_show_vertices );
+    //vb_layout->addWidget ( chk_show_edges );
+    //vb_layout->addWidget ( chk_show_faces );
     vb_layout->addWidget ( chk_show_bbox );
 
     QWidget *wd_visualization = new QWidget();

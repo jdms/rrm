@@ -532,9 +532,6 @@ void FlowVisualizationCanvas::updateMesh()
     mesh.buildBoundingBox();
 
 
-    mesh.showVertices( rendering_menu->showVertices() );
-    mesh.showEdges( rendering_menu->showEdges() );
-    mesh.showFaces( rendering_menu->showFaces() );
 
     mesh.load();
 
@@ -577,9 +574,9 @@ void FlowVisualizationCanvas::updateCornerPoint()
     mesh.buildBoundingBox();
 
 
-    mesh.showVertices( rendering_menu->showVertices() );
-    mesh.showEdges( rendering_menu->showEdges() );
-    mesh.showFaces( rendering_menu->showFaces() );
+    //mesh.showVertices( rendering_menu->showVertices() );
+    //mesh.showEdges( rendering_menu->showEdges() );
+    //mesh.showFaces( rendering_menu->showFaces() );
 
 
     mesh.load();
@@ -615,9 +612,9 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
     mesh.buildBoundingBox();
 
 
-    mesh.showVertices( rendering_menu->showVertices() );
-    mesh.showEdges( rendering_menu->showEdges() );
-    mesh.showFaces( rendering_menu->showFaces() );
+    //mesh.showVertices( rendering_menu->showVertices() );
+    //mesh.showEdges( rendering_menu->showEdges() );
+    //mesh.showFaces( rendering_menu->showFaces() );
 
 
     mesh.load();
