@@ -93,6 +93,7 @@ void Scene::initData()
     boundary3D = NULL;
 
 	this->is_region_visible = false;
+	this->number_of_flow_regions_ = 0;
 	this->initRegions();
 
 }
@@ -1528,6 +1529,7 @@ void Scene::createRegions(int number_of_regions)
 			flow_regions_[index]->setVisible(true);
 		}
 	}
+
 	regionVisibility(is_region_visible);
 }
 
@@ -1543,12 +1545,17 @@ void Scene::regionVisibility(bool _is_visible)
 	}
 }
 
-/// 
 /// Flow regions releated functions
 void Scene::initRegions( )
 {
-	for (auto index : flow_regions_)
-	{	
-		index.second->setPos((index.second->boundingRect().width() * index.first), sketching_boundary->boundingRect().height());
-	}
+	if (this->number_of_flow_regions_ != 0)
+	{
+		for (auto index = 0; index < this->number_of_flow_regions_; index++)
+		{
+			if (this->flow_regions_.count(index))
+			{
+				flow_regions_[index]->setPos((flow_regions_[index]->boundingRect().width() * index), sketching_boundary->boundingRect().height());
+			}
+		}
+	}		
 }

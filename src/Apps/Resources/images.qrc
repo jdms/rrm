@@ -45,6 +45,12 @@
         <file>icons/cornerpoint.png</file>
         <file>icons/unstructured.png</file>
         <file>icons/diamondRegion.png</file>
+		<file>icons/unstructural.png</file>
+		<file>icons/cpgridmesh.png</file>
+		<file>icons/cross.png</file>
+		<file>icons/porus.png</file>
+		<file>icons/properties.png</file>
+		<file>icons/vertex.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>

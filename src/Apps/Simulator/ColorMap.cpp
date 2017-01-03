@@ -56,6 +56,22 @@ ColorMap::ColorMap()
                QVector3D( 0.0, 0.3636, 0.8182 ), QVector3D( 0.0, 0.4545, 0.7727 ), QVector3D( 0.0, 0.5455, 0.7273 ), QVector3D( 0.0, 0.6364, 0.6818 ),
                QVector3D( 0.0, 0.7273, 0.6364 ), QVector3D( 0.0, 0.8182, 0.5909 ), QVector3D( 0.0, 0.9091, 0.5455 ), QVector3D( 0.0, 1.0, 0.5 ) };
 
+	/// @see http://colorbrewer2.org/#type=qualitative&scheme=Set3&n=12
+	qualitative = {
+		QVector3D(41.0f / 255.0f, 211.0f / 255.0f, 199.0f / 255.0f),
+		QVector3D(255.0f / 255.0f, 255.0f / 255.0f, 179.0f / 255.0f),
+		QVector3D(190.0f / 255.0f, 186.0f / 255.0f, 218.0f / 255.0f),
+		QVector3D(251.0f / 255.0f, 128.0f / 255.0f, 114.0f / 255.0f),
+		QVector3D(128.0f / 255.0f, 177.0f / 255.0f, 211.0f / 255.0f),
+		QVector3D(253.0f / 255.0f, 180.0f / 255.0f, 98.0f / 255.0f),
+		QVector3D(179.0f / 255.0f, 222.0f / 255.0f, 105.0f / 255.0f),
+		QVector3D(252.0f / 255.0f, 205.0f / 255.0f, 229.0f / 255.0f),
+		QVector3D(217.0f / 255.0f, 217.0f / 255.0f, 217.0f / 255.0f),
+		QVector3D(188.0f / 255.0f, 128.0f / 255.0f, 189.0f / 255.0f),
+		QVector3D(204.0f / 255.0f, 235.0f / 255.0f, 197.0f / 255.0f),
+		QVector3D(255.0f / 255.0f, 237.0f / 255.0f, 111.0f / 255.0)
+	};
+
 }
 
 
@@ -90,6 +106,9 @@ QVector3D ColorMap::getColor( COLORMAP map, float value, float low, float high )
         case COLORMAP::WINTER:
             return getColor( winter, value, low, high );
             break;
+		case COLORMAP::QUALITATIVE:
+			return getColor(qualitative, value, low, high);
+			break;
         default:
             return QVector3D( 0.85f, 0.85f, 0.85f );
             break;
@@ -172,6 +191,11 @@ std::vector< QVector3D > ColorMap::getColors( COLORMAP cm, unsigned int& nc ) co
             nc = winter.size();
             return winter;
         } break;
+		case COLORMAP::QUALITATIVE:
+		{
+			nc = qualitative.size();
+			return qualitative;
+		} break;
         default:
         {
             nc = 1;

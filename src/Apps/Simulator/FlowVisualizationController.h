@@ -13,6 +13,7 @@
 #include "Mesh.h"
 #include "ProgressCounter.h"
 #include "FlowDiagnosticsInterface.hpp"
+#include "ColorMap.h"
 
 #include <Eigen/Dense>
 
@@ -124,6 +125,8 @@ class FlowVisualizationController: public QWidget
 
 //		Eigen::Affine3f m_2dto3d;
 //		Eigen::Affine3f m_3dto2d;
+
+		ColorMap colormap;
 
 };
 

@@ -12,7 +12,7 @@ class ColorMap
     public:
 
 
-        enum class COLORMAP{ JET, HOT, COOL, PARULA, SPRING, SUMMER, COPPER, POLAR, WINTER, CONSTANT };
+        enum class COLORMAP{ JET, HOT, COOL, PARULA, SPRING, SUMMER, COPPER, POLAR, WINTER, CONSTANT, QUALITATIVE };
 
 
         ColorMap();
@@ -33,6 +33,8 @@ class ColorMap
         std::vector< QVector3D > copper;
         std::vector< QVector3D > polar;
         std::vector< QVector3D > winter;
+		/// @see http://colorbrewer2.org/#type=qualitative&scheme=Set3&n=12
+		std::vector< QVector3D > qualitative;
 
 };
 

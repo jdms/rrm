@@ -9,9 +9,10 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
 
-	this->current_directory = _current_dir.toStdString();
+	//this->current_directory = _current_dir.toStdString();
+	this->current_directory = "D:\\Workspace\\RRM\\files\\";
 	
-	std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
+	//std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
 	createRenderingMenu();
 
 }
@@ -37,15 +38,15 @@ void FlowVisualizationCanvas::createRenderingMenu()
     connect( rendering_menu, &FlowRenderingOptionsMenu::coloringFacebyVectorProperty, this, [=]( std::string name, std::string method ){ setFacesColorbyProperty( name, method ); }  );
 
     connect( rendering_menu, &FlowRenderingOptionsMenu::setConstantColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::CONSTANT ); setConstantColor();  }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::JET ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::seHotColormap , this, [=](){ setCurrentColormap( ColorMap::COLORMAP::HOT ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setCoolColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COOL ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setParulaColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::PARULA ); setColorMap();  }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setSpringColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SPRING ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setSummerColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SUMMER ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setCopperColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COPPER ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setPolarColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::POLAR ); setColorMap(); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setWinterColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::WINTER ); setColorMap(); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::JET );  }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::seHotColormap , this, [=](){ setCurrentColormap( ColorMap::COLORMAP::HOT );  }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setCoolColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COOL ); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setParulaColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::PARULA );   }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setSpringColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SPRING );  }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setSummerColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SUMMER );  }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setCopperColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COPPER ); }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setPolarColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::POLAR );  }  );
+    connect( rendering_menu, &FlowRenderingOptionsMenu::setWinterColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::WINTER );  }  );
 
     //connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){  emit getSurfaceCrossSection(); }  );
     //connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ emit readSurfacefromFile(); } );
@@ -106,7 +107,8 @@ void FlowVisualizationCanvas::initializeGL()
 	aspect_ratio_ = static_cast<GLfloat>(this->width()) / static_cast<GLfloat>(this->height());
 
 	camera.setPerspectiveMatrix(60.0, aspect_ratio_, 0.1f, 10000.0f);
-	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
+	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);	
+	coordinate_axis_.reset();
 	coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     mesh.initializeShader( current_directory );
@@ -442,7 +444,7 @@ void FlowVisualizationCanvas::setCrossSectionNormalCoordinates( float X, float Y
 
     float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
     crosssection.getPlaneEquation( a, b, c, d );
-    mesh.setCrossSectionClippingEquation( a, b, c, d );
+    mesh.setCrossSectionClippingEquation( a, b, c, d , Eigen::Vector3f().UnitX());
 
     update();
 }
@@ -582,7 +584,7 @@ void FlowVisualizationCanvas::updateCornerPoint()
 
     mesh.load();
 
-    std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
+    //std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();
@@ -697,7 +699,7 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
 
         float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
         crosssection.getPlaneEquation( a, b, c, d );
-        mesh.setCrossSectionClippingEquation( a, b, c, d );
+		mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
     }
 
@@ -769,6 +771,7 @@ void FlowVisualizationCanvas::wheelEvent( QWheelEvent *event )
 
 void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 {
+	this->makeCurrent();
 
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
@@ -791,6 +794,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_U:
         {
+			mesh.reloadShader();
 //            reloadShaders();
         } break;
 
@@ -832,7 +836,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -852,7 +856,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -870,7 +874,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+                mesh.setCrossSectionClippingEquation( a, b, c, d ,Eigen::Vector3f().UnitX());
 
             }
 
@@ -887,7 +891,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -903,7 +907,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -919,7 +923,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -935,7 +939,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-                mesh.setCrossSectionClippingEquation( a, b, c, d );
+				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
