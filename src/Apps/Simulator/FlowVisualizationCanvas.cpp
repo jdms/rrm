@@ -9,8 +9,8 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
 
-	//this->current_directory = _current_dir.toStdString();
-	this->current_directory = "D:\\Workspace\\RRM\\files\\";
+	this->current_directory = _current_dir.toStdString();
+	//this->current_directory = "D:\\Workspace\\RRM\\files\\";
 	
 	//std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
 	createRenderingMenu();
