@@ -12,7 +12,7 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 	//this->current_directory = _current_dir.toStdString();
 	this->current_directory = "D:\\Workspace\\RRM\\files\\";
 	
-	std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
+	//std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
 	createRenderingMenu();
 
 }
@@ -584,7 +584,7 @@ void FlowVisualizationCanvas::updateCornerPoint()
 
     mesh.load();
 
-    std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
+    //std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();

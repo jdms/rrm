@@ -197,7 +197,7 @@ void FlowWindow::createToolBar()
     ac_showregions = new QAction( "Show Pore Volumes", qtoolbarFlow );
     ac_showregions->setIcon(QIcon(":/images/icons/porus.png"));
     ac_showregions->setCheckable( true );
-    connect( ac_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
+    //connect( ac_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
 	connect( ac_showregions, &QAction::toggled, canvas, &FlowVisualizationCanvas::showRegions );
 
     qclear = new QAction( "Clear", qtoolbarFlow );
@@ -455,9 +455,9 @@ void FlowWindow::loadSurfacesfromSketch()
     canvas->updateMesh();
 
 
-	std::cout << "-- FlowWindow --" << std::endl;
-	std::cout << m2D_to_3D.matrix() << std::endl;
-	std::cout << m3D_to_2D.matrix() << std::endl;
+	//std::cout << "-- FlowWindow --" << std::endl;
+	//std::cout << m2D_to_3D.matrix() << std::endl;
+	//std::cout << m3D_to_2D.matrix() << std::endl;
 
 }
 

@@ -247,38 +247,18 @@ void FlowVisualizationController::computeFlowProperties()
 
 void FlowVisualizationController::getRegionsColor( std::vector< QColor >& color_by_cells )
 {
-
-
     std::vector< int > idregion_by_cell;
     code_interface.getRegionId( idregion_by_cell );
 
+	auto min_max = std::minmax_element(idregion_by_cell.begin(), idregion_by_cell.end());
 
-    std::vector< int > regions_id = idregion_by_cell;
-    auto last = std::unique( regions_id.begin(), regions_id.end() );
-    regions_id.erase( last, regions_id.end() );
-
-
-    std::random_device rd;
-    std::mt19937 seed(rd());
-    std::uniform_int_distribution< unsigned int > distr( 0, 255 );
-
-
-    std::map< int, QColor > color_by_region;
-    for( unsigned int i = 0; i < regions_id.size(); ++i )
-    {
-        int id = regions_id[ i ];
-
-        int r = distr( seed );
-        int g = distr( seed );
-        int b = distr( seed );
-
-        color_by_region[ id ] = QColor( r, g, b );
-    }
+	QVector3D c;
 
     for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
     {
-        int id = idregion_by_cell[ i ];
-        color_by_cells.push_back( color_by_region[ id ] );
+		c = colormap.getColor(ColorMap::COLORMAP::QUALITATIVE, idregion_by_cell[i], *min_max.first, *min_max.second);
+
+		color_by_cells.push_back(QColor::fromRgbF(c.x(),c.y(),c.z(),1.0));
     }
 
 }
