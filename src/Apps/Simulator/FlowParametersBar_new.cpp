@@ -61,30 +61,39 @@ void FlowParametersBar_new::createDialogs()
 	{ 
 		double ex = -3.0 + (0.07)*static_cast<double>(horizontalSlider_Permeability->value());
 		double p = std::pow(10, ex);
-		std::cout << "Step " << horizontalSlider_Permeability->value() << " 10^" << ex << "= " << p << std::endl;
+		//std::cout << "Step " << horizontalSlider_Permeability->value() << " 10^" << ex << "= " << p << std::endl;
 		doubleSpinBox_Region_Permeability->setValue(p);
+		permeability_slider_values[comboBox_Region->currentIndex()] = horizontalSlider_Permeability->value();
 	});
 
 	connect(horizontalSlider_Porosity, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
 	{
 		double ex = 0.01 + (0.0034)*static_cast<double>(horizontalSlider_Porosity->value());
 		doubleSpinBox_Region_Porosity->setValue(ex);
+		porosity_slider_values[comboBox_Region->currentIndex()] = horizontalSlider_Porosity->value();
 	});
 
 	connect(horizontalSlider_Viscosity, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
 	{
 		double ex = 0.1 + (0.1)*static_cast<double>(horizontalSlider_Viscosity->value());
 		doubleSpinBox_Region_Viscosity->setValue(ex);
+		viscosity_slider_values[comboBox_Region->currentIndex()] = horizontalSlider_Viscosity->value();
 	});
 
-
-
-	//connect(doubleSpinBox_Region_Permeability, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ perm_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Permeability->value(); });
-	//connect(doubleSpinBox_Region_Porosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ poros_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Porosity->value(); });
-	//connect(doubleSpinBox_Region_Viscosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ visc_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Viscosity->value(); });
-	//connect(doubleSpinBox_Region_Point_X, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][0] = doubleSpinBox_Region_Point_X->value(); });
-	//connect(doubleSpinBox_Region_Point_Y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][1] = doubleSpinBox_Region_Point_Y->value(); });
-	//connect(doubleSpinBox_Region_Point_Z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][2] = doubleSpinBox_Region_Point_Z->value(); });
+	connect(doubleSpinBox_Region_Permeability, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=]()
+	{
+		permeability_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Permeability->value(); 
+		
+	});
+	connect(doubleSpinBox_Region_Porosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=]()
+	{ 
+		porosity_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Porosity->value(); 
+		
+	});
+	connect(doubleSpinBox_Region_Viscosity, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ viscosity_values[comboBox_Region->currentIndex()] = doubleSpinBox_Region_Viscosity->value(); });
+	connect(doubleSpinBox_Region_Point_X, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][0] = doubleSpinBox_Region_Point_X->value(); });
+	connect(doubleSpinBox_Region_Point_Y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][1] = doubleSpinBox_Region_Point_Y->value(); });
+	connect(doubleSpinBox_Region_Point_Z, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [=](){ positions_values[comboBox_Region->currentIndex()][2] = doubleSpinBox_Region_Point_Z->value(); });
 			
 	//// WELL
 	connect(spinBox_Number_of_Wells, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &FlowParametersBar_new::createWells);
@@ -177,9 +186,9 @@ void FlowParametersBar_new::new_gui_clear()
 
 	/// Reset all dictionaries
 	//positions_values.clear();
-	//perm_values.clear();
-	//poros_values.clear();
-	//visc_values.clear();
+	//permeability_values.clear();
+	//porosity_values.clear();
+	//viscosity_values.clear();
 
 	//well_types.clear();
 	//well_pressure.clear();
@@ -224,9 +233,9 @@ void FlowParametersBar_new::getPropertyAreaParameters_new(int& np, std::vector< 
 
 	for (auto it = 0; it < this->number_of_regions_; it++)
 	{
-		perm[it] = perm_values[it];
-		poros[it] = poros_values[it];
-		visc[it] = visc_values[it];
+		perm[it] = permeability_values[it];
+		poros[it] = porosity_values[it];
+		visc[it] = viscosity_values[it];
 		positions[it * 3 + 0] = positions_values[it].x();
 		positions[it * 3 + 1] = positions_values[it].y();
 		positions[it * 3 + 2] = positions_values[it].z();
@@ -243,9 +252,9 @@ void FlowParametersBar_new::loadRegions(const int np, const std::vector< double 
 
 	for (auto it = 0; it < this->number_of_regions_ ; it++)
 	{
-		perm_values[it]      = perm[it];
-		poros_values[it]	 = poros[it];
-		visc_values[it]		 = visc[it];
+		permeability_values[it]      = perm[it];
+		porosity_values[it]			 = poros[it];
+		viscosity_values[it]		 = visc[it];
 		positions_values[it].x() = positions[it*3+0];
 		positions_values[it].y() = positions[it*3+1];
 		positions_values[it].z() = positions[it*3+2];
@@ -264,7 +273,7 @@ void FlowParametersBar_new::createRegions( )
 	{
 		l.push_back("Region " + QString::number(i + 1));
 
-		if (perm_values.count(i) == 0)
+		if (permeability_values.count(i) == 0)
 		{
 			horizontalSlider_Permeability->setValue(75);
 			emit horizontalSlider_Permeability->valueChanged(75);
@@ -273,9 +282,12 @@ void FlowParametersBar_new::createRegions( )
 			horizontalSlider_Viscosity->setValue(9);
 			emit horizontalSlider_Viscosity->valueChanged(9);
 
-			perm_values[i] = doubleSpinBox_Region_Permeability->value();
-			poros_values[i] = doubleSpinBox_Region_Porosity->value();
-			visc_values[i] = doubleSpinBox_Region_Viscosity->value();
+			permeability_values[i] = doubleSpinBox_Region_Permeability->value();
+			permeability_slider_values[i] = 75;
+			porosity_values[i] = doubleSpinBox_Region_Porosity->value();
+			porosity_slider_values[i] = 88;
+ 			viscosity_values[i] = doubleSpinBox_Region_Viscosity->value();
+			viscosity_slider_values[i] = 9;
 			positions_values[i].x() = 0.0;
 			positions_values[i].y() = 0.0;
 			positions_values[i].z() = 0.0;
@@ -297,9 +309,12 @@ void FlowParametersBar_new::createRegions( )
 void FlowParametersBar_new::updateRegionWidget(const int index)
 {
 
-	doubleSpinBox_Region_Permeability->setValue(perm_values[index]);
-	doubleSpinBox_Region_Porosity->setValue(poros_values[index]);
-	doubleSpinBox_Region_Viscosity->setValue(visc_values[index]);
+	doubleSpinBox_Region_Permeability->setValue(permeability_values[index]);
+	horizontalSlider_Permeability->setValue(permeability_slider_values[index]);
+	doubleSpinBox_Region_Porosity->setValue(porosity_values[index]);
+	horizontalSlider_Porosity->setValue(porosity_slider_values[index]);
+	doubleSpinBox_Region_Viscosity->setValue(viscosity_values[index]);
+	horizontalSlider_Viscosity->setValue(viscosity_slider_values[index]);
 	doubleSpinBox_Region_Point_X->setValue(positions_values[index].x());
 	doubleSpinBox_Region_Point_Y->setValue(positions_values[index].y());
 	doubleSpinBox_Region_Point_Z->setValue(positions_values[index].z());
