@@ -38,7 +38,7 @@ void View3DWindow::createWindow()
     QVBoxLayout* vb_canvas3d = new QVBoxLayout();
     vb_canvas3d->setContentsMargins( 0, 0, 0, 0 );
     vb_canvas3d->setSpacing( 0 );
-    vb_canvas3d->addWidget( fr );
+//    vb_canvas3d->addWidget( fr );
     vb_canvas3d->addWidget( canvas3d );
 
 

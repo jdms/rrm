@@ -7,6 +7,8 @@
 BoundingBox3D::BoundingBox3D( float min_x, float min_y, float min_z, float w, float h, float d ): minx( min_x ), miny( min_y ), minz( min_z ), width( w ), height( h ), depth( d )
 {
     is_initialized = false;
+    initData();
+
 }
 
 
@@ -28,7 +30,6 @@ void BoundingBox3D::initData()
 void BoundingBox3D::init()
 {
 
-    initData();
     initShaders();
     initBuffers();
 
@@ -89,6 +90,8 @@ void BoundingBox3D::create()
 void BoundingBox3D::resetBuffers()
 {
 
+    resetShaders();
+
     if( va_boundingbox != 0 )
     {
         glDeleteVertexArrays( 1, &va_boundingbox );
@@ -143,6 +146,8 @@ void BoundingBox3D::resetShaders()
     {
         delete( shader_boundingbox );
         shader_boundingbox = nullptr;
+
+        is_initialized = false;
     }
 
 }

@@ -7,7 +7,7 @@ project( RRM )
 # Options
 #####################################################################
 
-set( CMAKE_BUILD_TYPE DEBUG )
+set( CMAKE_BUILD_TYPE RELEASE )
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 
