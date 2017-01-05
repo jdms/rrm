@@ -261,7 +261,7 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 ###############################################
 
 
-add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
+add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
                                ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}

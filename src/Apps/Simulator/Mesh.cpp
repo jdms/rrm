@@ -557,17 +557,19 @@ void Mesh::initializeShader( std::string directory )
     //                                                  "", "", "" ) ;
     //shader_mesh->initialize();
 
-	shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
-													 (directory + "shaders/FlowDefault.frag"),
-													 (directory + "shaders/FlowDefault.geom"),
-	                                                  "", "") ;
-	shader_mesh->initialize();
 
-        //shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
-								//						 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
-        //                                                 ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
-        //                                                  "", "") ;
-        //shader_mesh->initialize();
+    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
+                                                     (directory + "shaders/FlowDefault.frag"),
+                                                     (directory + "shaders/FlowDefault.geom"),
+                                                      "", "") ;
+    shader_mesh->initialize();
+
+//        shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
+//														 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
+//                                                         ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
+//                                                          "", "") ;
+//        shader_mesh->initialize();
+
 
     glGenVertexArrays( 1, &va_mesh );
     glBindVertexArray( va_mesh );

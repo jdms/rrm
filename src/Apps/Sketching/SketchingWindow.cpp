@@ -108,12 +108,12 @@ void SketchingWindow::createRulesActions()
     ac_removeabove = new QAction( tr( "RA" ), this );
 	ac_removeabove->setIcon(QIcon(":/images/icons/removeabove.png"));
     ac_removeabove->setCheckable( true );
-    ac_removeabove->setChecked( true );
 
 
     ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
     ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
+    ac_removeaboveintersection->setChecked( true );
 
 
     ac_removebelow = new QAction(tr( "RB" ), this );
@@ -288,9 +288,9 @@ void SketchingWindow::resetActions()
     ac_undo->setEnabled( true );
     ac_redo->setEnabled( true );
 
-    ac_removeabove->setChecked( true );
+    ac_removeabove->setChecked( false );
     ac_removebelow->setChecked( false );
-    ac_removeaboveintersection->setChecked( false );
+    ac_removeaboveintersection->setChecked( true );
     ac_removebelowintersection->setChecked( false );
     ac_sketchabove->setChecked( false );
     ac_sketchbelow->setChecked( false );

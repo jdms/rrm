@@ -107,9 +107,9 @@ void FlowVisualizationCanvas::initializeGL()
 	aspect_ratio_ = static_cast<GLfloat>(this->width()) / static_cast<GLfloat>(this->height());
 
 	camera.setPerspectiveMatrix(60.0, aspect_ratio_, 0.1f, 10000.0f);
-	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);	
-	coordinate_axis_.reset();
-	coordinate_axis_.increaseZoom(2.0f*1.05f);
+//	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
+//	coordinate_axis_.reset();
+//	coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     mesh.initializeShader( current_directory );
     crosssection.initShader( current_directory );
@@ -121,8 +121,8 @@ void FlowVisualizationCanvas::initializeGL()
         setColorMap();
 
     
-    axes.initShader( current_directory );
-	axes.load();
+//    axes.initShader( current_directory );
+//	axes.load();
 
     mesh.load();
     initializeShader();
@@ -214,23 +214,23 @@ void FlowVisualizationCanvas::paintGL()
 
 	/// Coordinate Axes enviroment setup
 
-	GLdouble integral = 0.0;
+//	GLdouble integral = 0.0;
 	
-	integral = std::trunc(static_cast<GLdouble>(width()*0.1));
-	GLsizei w = static_cast<GLsizei>(integral);
-	integral = std::trunc(static_cast<GLdouble>(height()*0.1));
-	GLsizei h = static_cast<GLsizei>(integral);
+//	integral = std::trunc(static_cast<GLdouble>(width()*0.1));
+//	GLsizei w = static_cast<GLsizei>(integral);
+//	integral = std::trunc(static_cast<GLdouble>(height()*0.1));
+//	GLsizei h = static_cast<GLsizei>(integral);
 	
-	glViewport(0, 0, w, h*aspect_ratio_);
+//	glViewport(0, 0, w, h*aspect_ratio_);
 	
-    //if( show_colorbar == true )
-    //    colorbar.draw();
-	if( true )
-	{
-		axes.draw(coordinate_axis_.getViewMatrix(), coordinate_axis_.getProjectionMatrix());
-	}
-	/// Return to the original viewport
-	glViewport(0, 0, width(), height());
+//    //if( show_colorbar == true )
+//    //    colorbar.draw();
+//	if( true )
+//	{
+//		axes.draw(coordinate_axis_.getViewMatrix(), coordinate_axis_.getProjectionMatrix());
+//	}
+//	/// Return to the original viewport
+//	glViewport(0, 0, width(), height());
 }
 
 
@@ -248,8 +248,8 @@ void FlowVisualizationCanvas::resizeGL( int width, int height )
     camera.setViewport ( Eigen::Vector2f ( this->width_ , this->height_ ) );
     camera.setPerspectiveMatrix ( camera.getFovy ( ) , (float) width / (float) height , 0.1f , 100.0f );
 
-	coordinate_axis_.setViewport(Eigen::Vector2f(this->width_, this->height_));
-	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
+//	coordinate_axis_.setViewport(Eigen::Vector2f(this->width_, this->height_));
+//	coordinate_axis_.setOrthographicMatrix(-1.0f, 1.0f, -1.0f, 1.0, 0.1f, 100.0f);
 
     scale = 1.5*(float)width/(float)height;
 }
@@ -538,8 +538,8 @@ void FlowVisualizationCanvas::updateMesh()
 	camera.reset();
 	camera.increaseZoom(2.0f*1.05f);
 
-	coordinate_axis_.reset();
-	coordinate_axis_.increaseZoom(2.0f*1.05f);
+//	coordinate_axis_.reset();
+//	coordinate_axis_.increaseZoom(2.0f*1.05f);
 
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
@@ -667,7 +667,7 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
 
 	else if (event->buttons() & Qt::LeftButton)
 	{
-		coordinate_axis_.rotateCamera(mouse_pos);
+//		coordinate_axis_.rotateCamera(mouse_pos);
 		camera.rotateCamera(mouse_pos);
 	}
         
@@ -733,8 +733,8 @@ void FlowVisualizationCanvas::mouseReleaseEvent( QMouseEvent *event )
     {
         camera.endTranslation();
         camera.endRotation();
-		coordinate_axis_.endRotation();
-		coordinate_axis_.endTranslation();
+//		coordinate_axis_.endRotation();
+//		coordinate_axis_.endTranslation();
     }
 
     update();
@@ -799,8 +799,8 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
         {
             camera.reset();
 			camera.increaseZoom(2.0f*1.05f);
-			coordinate_axis_.reset();
-			coordinate_axis_.increaseZoom(2.0f*1.05f);
+//			coordinate_axis_.reset();
+//			coordinate_axis_.increaseZoom(2.0f*1.05f);
         } break;
 
         case Qt::Key_L:
