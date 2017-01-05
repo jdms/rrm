@@ -65,10 +65,10 @@ class FlowVisualizationController: public QWidget
         void clear();
 
 
-        bool isVolumetricOk(){ return this->volumetric_ok; }
+		bool isVolumetricBuilt(){ return this->is_volumetric_built; }
 		bool isUserInputOk() { return this->user_input_ok; }
-		bool isMeshOk()      { return this->mesh_ok; }
-        bool arePropertiesComputed() { return properties_computed; }
+		bool isSurfaceLoaded()      { return this->is_surface_loaded; }
+		bool arePropertiesComputed() { return are_properties_computed; }
 
         void getRegionsColor( std::vector< QColor >& color_by_cells );
 
@@ -107,7 +107,15 @@ class FlowVisualizationController: public QWidget
 
         void clearPropertiesMenu();
         void clearAll();
-
+		
+		/// Enable Mesh Build / Disable other
+		void surfaceLoaded();
+		/// Enable Compute Properties and Pores Volume / Disable other
+		void unstructuredMeshBuilt();
+		/// Enable Compute Properties / Disable other
+		void cornerPointMeshBuilt();
+		
+		void propertiesComputed();
 
 
     private:
@@ -115,10 +123,10 @@ class FlowVisualizationController: public QWidget
 
         ProgressCounter counter;
 
-        bool mesh_ok;
-        bool volumetric_ok;
+        bool is_surface_loaded;
+		bool is_volumetric_built;
         bool user_input_ok;
-        bool properties_computed;
+		bool are_properties_computed;
 
         MESHING_METHOD current_method;
         FlowDiagnosticsInterface code_interface;

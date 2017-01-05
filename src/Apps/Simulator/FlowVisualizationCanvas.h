@@ -109,14 +109,14 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
         void initializeGL() Q_DECL_OVERRIDE;
         void paintGL() Q_DECL_OVERRIDE;
-        void resizeGL( int width, int height );
+		void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
-        void mouseMoveEvent( QMouseEvent *event );
-        void mousePressEvent(QMouseEvent *event);
-        void mouseReleaseEvent( QMouseEvent *event );
-        void wheelEvent( QWheelEvent *event );
+		void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 
-        void keyPressEvent( QKeyEvent *event );
+		void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 
     private:

@@ -40,6 +40,7 @@ int main( int argc, char *argv[] )
     format.setDepthBufferSize( 24 );
     //format.setVersion( 4, 1 );
     //format.setProfile( QSurfaceFormat::CompatibilityProfile );
+	format.setProfile(QSurfaceFormat::OpenGLContextProfile::CompatibilityProfile);
     format.setRenderableType( QSurfaceFormat::OpenGL );
     format.setSamples( 16 );
     QSurfaceFormat::setDefaultFormat( format );

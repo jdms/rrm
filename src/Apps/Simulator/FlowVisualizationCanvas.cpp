@@ -1,6 +1,6 @@
 #include "FlowVisualizationCanvas.h"
 
-FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir)
+FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir) : QOpenGLWidget(parent)
 {
     
 
@@ -84,6 +84,7 @@ void FlowVisualizationCanvas::setController( FlowVisualizationController *c )
 
 void FlowVisualizationCanvas::initializeGL()
 {
+	makeCurrent();
 
 
     glewExperimental = GL_TRUE;
@@ -92,16 +93,14 @@ void FlowVisualizationCanvas::initializeGL()
     {
         fprintf ( stderr , "Error: %s\n" , glewGetErrorString ( err ) );
     }
-
-
-    makeCurrent();
-
+	 
     glClearColor ( 1.0f , 1.0f , 1.0f , 1.0f );
 
-    glEnable( GL_MULTISAMPLE );
+    //glEnable( GL_MULTISAMPLE );
     glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LESS );
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glEnable(GL_TEXTURE_2D);
+    //glDepthFunc( GL_LESS );
+    //glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 
 	aspect_ratio_ = static_cast<GLfloat>(this->width()) / static_cast<GLfloat>(this->height());
@@ -185,10 +184,12 @@ void FlowVisualizationCanvas::loadBackGround()
 }
 
 
-
 void FlowVisualizationCanvas::paintGL()
 {
-    makeCurrent();
+	makeCurrent();
+	//  Reset OpenGL state for overlays.
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LINE_SMOOTH);
 
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 

@@ -4,12 +4,12 @@
 
 FlowVisualizationController::FlowVisualizationController( QWidget *parent )
 {
-    mesh_ok = false;
-    volumetric_ok = false;
-    properties_computed = false;
+    is_surface_loaded = false;
+    is_volumetric_built = false;
+    are_properties_computed = false;
     user_input_ok = false;
 
-    current_method = MESHING_METHOD::CORNERPOINT;
+	current_method = MESHING_METHOD::UNSTRUCTURED;
 
     code_interface.loadDefaultValues(1);
 
@@ -21,7 +21,7 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
 void FlowVisualizationController::readSkeletonFiles( const std::string& filename )
 {
 
-    if( mesh_ok == true ) return;
+    if( is_surface_loaded == true ) return;
 
 
     code_interface.readSkeletonFile( filename );
@@ -72,7 +72,7 @@ void FlowVisualizationController::buildSurfaceSkeleton( std::vector< double >& p
 
     }
 
-    mesh_ok = true;
+    is_surface_loaded = true;
 
 }
 
@@ -91,13 +91,13 @@ void FlowVisualizationController::readInputParameters( const std::string& input_
 void FlowVisualizationController::generateCornerPoint()
 {
 
-    std::cout << " Going to Build Volumetric "  << mesh_ok << user_input_ok << std::endl;
+    std::cout << " Going to Build Volumetric "  << is_surface_loaded << user_input_ok << std::endl;
 
-    if( mesh_ok == false || user_input_ok == false ) return;
+    if( is_surface_loaded == false || user_input_ok == false ) return;
 
     std::cout << " Going to Build Volumetric " << std::endl;
     code_interface.buildCPGVolumetricMesh();
-    volumetric_ok = true;
+    is_volumetric_built = true;
 
 }
 
@@ -105,11 +105,11 @@ void FlowVisualizationController::generateCornerPoint()
 void FlowVisualizationController::generateUnstructured()
 {
 
-    if( mesh_ok == false || user_input_ok == false ) return;
+    if( is_surface_loaded == false || user_input_ok == false ) return;
 
 
     code_interface.buildVolumetricMesh();
-    volumetric_ok = true;
+    is_volumetric_built = true;
 
 
 }
@@ -132,7 +132,7 @@ void FlowVisualizationController::updateCornerPoint( std::vector< float >& verti
      code_interface.getCPGVolumeVertices( vertices );
      code_interface.getCPGVolumeEdges( edges );
      code_interface.getCPGVolumeCells( faces );
-     volumetric_ok = true;
+     is_volumetric_built = true;
 }
 
 
@@ -143,7 +143,7 @@ void FlowVisualizationController::updateVolumetricMesh( std::vector< float >& ve
     code_interface.getVolumeVertices( vertices );
     code_interface.getVolumeEdges( edges );
     code_interface.getVolumeCells( faces );
-    volumetric_ok = true;
+    is_volumetric_built = true;
 
 }
 
@@ -184,7 +184,7 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
 void FlowVisualizationController::computeFlowProperties()
 {
 
-    if( volumetric_ok == false || mesh_ok == false ) return;
+    if( is_volumetric_built == false || is_surface_loaded == false ) return;
 
 	std::cout << "Computing Proterties" << std::endl; 
 	if (current_method == MESHING_METHOD::UNSTRUCTURED)
@@ -237,7 +237,7 @@ void FlowVisualizationController::computeFlowProperties()
 
 
 
-    properties_computed = true;
+    are_properties_computed = true;
 
 
 
@@ -605,10 +605,10 @@ void FlowVisualizationController::exportResultstoVTK()
 
 void FlowVisualizationController::clear()
 {
-    mesh_ok = false;
+    is_surface_loaded = false;
     user_input_ok = false;
-    volumetric_ok = false;
-    properties_computed = false;
+    is_volumetric_built = false;
+    are_properties_computed = false;
     code_interface.clear();
 }
 
