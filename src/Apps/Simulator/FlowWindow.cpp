@@ -48,8 +48,7 @@ void FlowWindow::createWindow()
     hb_mainwindow = new QHBoxLayout(  );
     hb_mainwindow->addWidget( canvas );
     hb_mainwindow->addWidget( &colorbar );
-
-
+	
     QWidget *wd_main = new QWidget( this );
     wd_main->setLayout( hb_mainwindow );
 
@@ -69,55 +68,42 @@ void FlowWindow::createToolBar()
 
     qreloadSurface = new QAction( "Surface from Sketch", qtoolbarFlow );
     qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
-    connect( qreloadSurface, SIGNAL( triggered() ), this, SLOT( loadSurfacesfromSketch() ) );
-
+    
     qoopenfilesDialog = new QAction( "Surface from File", qtoolbarFlow );
     qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
-    connect( qoopenfilesDialog, SIGNAL( triggered(bool) ), this, SLOT( loadSurfacesfromFile() ) );
+    
 
     qflowparametersDialog = new QAction( "User Input", qtoolbarFlow );
     qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
-    connect( qflowparametersDialog, SIGNAL( triggered(bool) ), qdockparametersBar, SLOT( show() ) );
+    
 
 
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
     qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
-    connect( qbuildCornerPoint, &QAction::triggered, this, &FlowWindow::buildCornerPoint );
+	qbuildCornerPoint->setEnabled(false);
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
-    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));
-    connect( qbuildUnstructured, &QAction::triggered, this, &FlowWindow::buildUnstructured );
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));    
+	qbuildUnstructured->setEnabled(false);
 
 
     qcomputeFlowProperties = new QAction( "Compute Properties", qtoolbarFlow );
-    qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));
-    connect( qcomputeFlowProperties, &QAction::triggered, controller, &FlowVisualizationController::computeFlowProperties  );
+    qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));    
+	qcomputeFlowProperties->setEnabled(false);
 
 
 
     qshowMovingCrossSection = new QAction( "CrossSection", qtoolbarFlow );
     qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
     qshowMovingCrossSection->setCheckable( true );
-    connect( qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible );
-	connect( qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection );
 
-
-    qexportsurface  = new QAction( "Unstructured Surface Mesh to VTK", qtoolbarFlow );
-    connect( qexportsurface, SIGNAL( triggered(bool) ), controller, SLOT( exportSurfacetoVTK() ) );
-
-    qexportvolume  = new QAction( "Unstructured Volume Mesh to VTK", qtoolbarFlow );
-    connect( qexportvolume, SIGNAL( triggered(bool) ), controller, SLOT( exportVolumetoVTK() ) );
-
-    qexportcornerpointVTK  = new QAction( "Corner-Point Grid to VTK", qtoolbarFlow );
-    connect( qexportcornerpointVTK, SIGNAL( triggered(bool) ), controller, SLOT( exportCornerPointtoVTK() ) );
-
-    qexportcornerpointGRDECL  = new QAction( "Corner-Point Grid to GRDECL", qtoolbarFlow );
-    connect( qexportcornerpointGRDECL,SIGNAL( triggered(bool) ), controller, SLOT( exportCornerPointtoGRDECL() ) );
-
-    qexportresults  = new QAction( "Results to VTK", qtoolbarFlow );
-    connect( qexportresults, SIGNAL( triggered(bool) ), controller, SLOT( exportResultstoVTK() ) );
-
-
+	/// Exporters
+    qexportsurface			 = new QAction( "Unstructured Surface Mesh to VTK", qtoolbarFlow );
+    qexportvolume			 = new QAction( "Unstructured Volume Mesh to VTK", qtoolbarFlow );
+    qexportcornerpointVTK	 = new QAction( "Corner-Point Grid to VTK", qtoolbarFlow );  
+    qexportcornerpointGRDECL = new QAction( "Corner-Point Grid to GRDECL", qtoolbarFlow );
+    qexportresults			 = new QAction( "Results to VTK", qtoolbarFlow );
+    
     mn_export = new QMenu( "Export", this );
     mn_export->addAction(qexportsurface);
     mn_export->addAction(qexportvolume);
@@ -125,21 +111,19 @@ void FlowWindow::createToolBar()
     mn_export->addAction(qexportcornerpointGRDECL);
     mn_export->addAction(qexportresults);
 
-
     tbn_export = new QToolButton();
     tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
     tbn_export->setMenu( mn_export );
     tbn_export->setPopupMode( QToolButton::InstantPopup );
-
-
-
+	tbn_export->setEnabled(false);
 	
-	
+	/// Properties
     mn_coloring_byvertex = new QMenu ( tr ( "Vertex Properties" ) );
     tbn_coloringbyvertex = new QToolButton();
     tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/vertex.png"));
     tbn_coloringbyvertex->setMenu( mn_coloring_byvertex );
     tbn_coloringbyvertex->setPopupMode( QToolButton::InstantPopup );
+	tbn_coloringbyvertex->setEnabled(false);
 
 
     mn_coloring_byfaces = new QMenu ( tr ( "Faces Properties" ) );
@@ -147,6 +131,7 @@ void FlowWindow::createToolBar()
     tbn_coloringbyface->setIcon(QIcon(":/images/icons/properties.png"));
     tbn_coloringbyface->setMenu( mn_coloring_byfaces );
     tbn_coloringbyface->setPopupMode( QToolButton::InstantPopup );
+	tbn_coloringbyface->setEnabled(false);
 
     mn_colormaps = new QMenu ( tr ( "Colormaps" ) );
 	tbn_colormaps = new QToolButton();
@@ -181,29 +166,17 @@ void FlowWindow::createToolBar()
 
 	mn_colormaps->addActions(ag_colormaps->actions());
 
-	connect(ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); std::cout << "Toggled"; });
-	connect(ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::JET); });
-	connect(ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::HOT);  });
-	connect(ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL); });
-	connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
-
-	connect(ac_spring, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SPRING); });
-	connect(ac_summer, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SUMMER); });
-	connect(ac_copper, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COPPER); });
-	connect(ac_polar, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::POLAR); });
-	connect(ac_winter, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::WINTER); });
-
-
     ac_showregions = new QAction( "Show Pore Volumes", qtoolbarFlow );
     ac_showregions->setIcon(QIcon(":/images/icons/porus.png"));
     ac_showregions->setCheckable( true );
     //connect( ac_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
-	connect( ac_showregions, &QAction::toggled, canvas, &FlowVisualizationCanvas::showRegions );
+	
+	ac_showregions->setEnabled(false);
 
     qclear = new QAction( "Clear", qtoolbarFlow );
-    qclear->setIcon(QIcon(":/images/icons/clear.png"));
-    connect( qclear, &QAction::triggered, this, &FlowWindow::clear );
+    qclear->setIcon(QIcon(":/images/icons/clear.png"));  
 
+	/// ToolBar setUp
 
     qtoolbarFlow->addAction( qreloadSurface );
     qtoolbarFlow->addAction( qoopenfilesDialog );
@@ -245,6 +218,93 @@ void FlowWindow::resizeEvent(QResizeEvent *event)
 void FlowWindow::createActions()
 {
 
+	/// FlowWindo ToolBar		
+		connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
+		connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
+		{
+			loadSurfacesfromFile();
+			qbuildCornerPoint->setEnabled(true);
+			qbuildUnstructured->setEnabled(true);
+			qreloadSurface->setEnabled(false);
+		});
+		connect(qreloadSurface, &QAction::triggered, this, [=]() 
+		{ 
+			this->loadSurfacesfromSketch();
+			/// Now we can build the volumetric mesh
+			qbuildCornerPoint->setEnabled(true);
+			qbuildUnstructured->setEnabled(true);
+			qreloadSurface->setEnabled(false);
+			qoopenfilesDialog->setEnabled(false);
+		});
+		connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
+		{
+			/// Now we can Compute
+			/// @FIXME catch execption from HWU mesh generator
+			this->buildCornerPoint();
+			qcomputeFlowProperties->setEnabled(true);
+			qbuildCornerPoint->setEnabled(false);
+			qbuildUnstructured->setEnabled(false);
+		});
+
+		connect(qbuildUnstructured, &QAction::triggered, this, [=]()
+		{
+			/// Now we can Compute and see region Identifications
+			/// @FIXME catch execption from HWU mesh generator
+			this->buildUnstructured();
+			qcomputeFlowProperties->setEnabled(true);
+			ac_showregions->setEnabled(true);
+			qbuildCornerPoint->setEnabled(false);
+			qbuildUnstructured->setEnabled(false);			
+		});
+		connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
+		{			
+			/// Now we can visualize the properties and export
+			/// @FIXME catch execption from HWU mesh generator
+			controller->computeFlowProperties();
+			qcomputeFlowProperties->setEnabled(false);
+			tbn_export->setEnabled(true);
+			tbn_coloringbyvertex->setEnabled(true);
+			tbn_coloringbyface->setEnabled(true);
+		});
+
+		/// Clear
+		connect(qclear, &QAction::triggered, this, [=]()
+		{
+			this->clear();			
+			tbn_export->setEnabled(false);
+			tbn_coloringbyvertex->setEnabled(false);
+			tbn_coloringbyface->setEnabled(false);
+			qreloadSurface->setEnabled(true);
+			qoopenfilesDialog->setEnabled(true);
+			ac_showregions->setEnabled(false);
+		});
+
+		/// Region ID
+		connect(ac_showregions, &QAction::toggled, canvas, &FlowVisualizationCanvas::showRegions);
+	
+		/// Exporters
+		connect(qexportsurface, SIGNAL(triggered(bool)), controller, SLOT(exportSurfacetoVTK()));
+		connect(qexportvolume, SIGNAL(triggered(bool)), controller, SLOT(exportVolumetoVTK()));
+		connect(qexportcornerpointVTK, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoVTK()));
+		connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+		connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+
+		// CrossSection
+		connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
+		connect(qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection);
+
+		/// ColorMap
+		connect(ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); });
+		connect(ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::JET); });
+		connect(ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::HOT);  });
+		connect(ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL); });
+		connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
+
+		connect(ac_spring, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SPRING); });
+		connect(ac_summer, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SUMMER); });
+		connect(ac_copper, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COPPER); });
+		connect(ac_polar, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::POLAR); });
+		connect(ac_winter, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::WINTER); });
 
     connect( &parametersBar, SIGNAL( readParameterFile( const std::string& ) ), this, SLOT( readUserInputFile( const std::string& ) ) );
 	// New Gui
@@ -263,19 +323,11 @@ void FlowWindow::createActions()
 
 
 
-    connect( canvas, &FlowVisualizationCanvas::getSurfaceCrossSection, this, &FlowWindow::loadSurfacesfromSketch );
-    connect( canvas, &FlowVisualizationCanvas::readSurfacefromFile, this, &FlowWindow::loadSurfacesfromFile ); 
-    connect( canvas, &FlowVisualizationCanvas::buildcornerpoint, this, &FlowWindow::buildCornerPoint );
-	connect(canvas, &FlowVisualizationCanvas::buildunstructured, this, [=]{ acceptUserParameters(), buildCornerPoint(); });
-//	connect( canvas, &FlowVisualizationCanvas::computeFlowProperties, this, &FlowWindow::computeFlowProperties );
-
-
-    qcomputeFlowProperties = new QAction( "Compute Properties", qtoolbarFlow );
-    qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));
-    connect( qcomputeFlowProperties, &QAction::triggered, controller, &FlowVisualizationController::computeFlowProperties  );
-
-	
-	
+//  connect( canvas, &FlowVisualizationCanvas::getSurfaceCrossSection, this, &FlowWindow::loadSurfacesfromSketch );
+//  connect( canvas, &FlowVisualizationCanvas::readSurfacefromFile, this, &FlowWindow::loadSurfacesfromFile ); 
+//  connect( canvas, &FlowVisualizationCanvas::buildcornerpoint, this, &FlowWindow::buildCornerPoint );
+//	connect(canvas, &FlowVisualizationCanvas::buildunstructured, this, [=]{ acceptUserParameters(), buildCornerPoint(); });
+//  connect( canvas, &FlowVisualizationCanvas::computeFlowProperties, this, &FlowWindow::computeFlowProperties );
 
     connect( canvas, &FlowVisualizationCanvas::editParameters, qdockparametersBar, &QDockWidget::show );
     connect( canvas, &FlowVisualizationCanvas::applyCrossSection, qdockcrosssectionnormalBar, &QDockWidget::show );
@@ -626,11 +678,11 @@ void FlowWindow::clear()
     controller->clear();
     canvas->clear();
 	clearPropertiesMenu();
-    qexportcornerpointVTK->setEnabled( true );
-    qexportcornerpointGRDECL->setEnabled( true );
+    //qexportcornerpointVTK->setEnabled( true );
+    //qexportcornerpointGRDECL->setEnabled( true );
     parametersBar.clear();
     crosssectionnormalBar.clear();
-    qcomputeFlowProperties->setEnabled( true );
+    //qcomputeFlowProperties->setEnabled( true );
 	reset();
 }
 
