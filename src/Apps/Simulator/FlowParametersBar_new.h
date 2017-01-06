@@ -7,10 +7,7 @@
 #include <QFileDialog>
 #include <QMouseEvent>
 
-#include "ui_flowparametersbar.h"
 #include "FormPropertyValues.h"
-
-
 
 #include "ui_FormPropertyValues.h"
 

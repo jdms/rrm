@@ -106,8 +106,7 @@ set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
 					
 					
 set( SIMULATOR_HEADERS
-                 Simulator/Ply/ply.h
-                 Simulator/auxiliar.h
+                 Simulator/tinyobjloader/tiny_obj_loader.h
                  Simulator/ColorMap.h
                  Simulator/CoordinateAxes.h
                  Simulator/FlowCrossSection.h                 
@@ -178,8 +177,8 @@ set ( SIMULATOR_UI_SOURCES
                 Simulator/NormalMovableCrossSectionFlow.ui
                 Simulator/OpenFlowFilesBar.ui )
 
-set( SIMULATOR_SOURCES    
-                Simulator/Ply/ply.c
+set( SIMULATOR_SOURCES                
+                Simulator/tinyobjloader/tiny_obj_loader.cc   
                 Simulator/ColorMap.cpp
                 Simulator/CoordinateAxes.cpp
                 Simulator/FlowCrossSection.cpp

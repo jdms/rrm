@@ -7,6 +7,8 @@
 
 class ColorBar: public QWidget
 {
+	Q_OBJECT
+
     public:
 
         ColorBar();

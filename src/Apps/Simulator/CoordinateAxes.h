@@ -1,18 +1,12 @@
 #ifndef COORDINATEAXES_H
 #define COORDINATEAXES_H
 
-
-#include <QtCore/QDebug>
-#include <QtWidgets/QApplication>
-#include <QDir>
-
 #include "Eigen/Dense"
 #include "Tucano/Trackball.hpp"
 #include "Tucano/Shader.hpp"
 #include "Tucano/BoundingBox3.hpp"
 
-#include "auxiliar.h"
-
+#include "tinyobjloader/tiny_obj_loader.h"
 
 class CoordinateAxes
 {
