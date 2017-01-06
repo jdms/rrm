@@ -69,11 +69,6 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
         inline void setCurrentDirectory( std::string current_dir ){ current_directory.clear(); current_directory = current_dir; }
 
-//        void exportSurface();
-//        void exportVolume();
-//        void exportCornerPoint();
-//        void exportResults();
-
         void setColors( const std::vector< float >& colors );
         void setCurrentColormap( const ColorMap::COLORMAP& cm );
 
@@ -91,12 +86,6 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
 
     signals:
-
-        void getSurfaceCrossSection();
-        void buildcornerpoint();
-        void buildunstructured();
-        void editParameters();
-        void readSurfacefromFile();
         void applyCrossSection();
         void clearAll();
 

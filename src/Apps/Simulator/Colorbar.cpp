@@ -1,6 +1,6 @@
 #include "ColorBar.h"
 
-ColorBar::ColorBar()
+ColorBar::ColorBar() : QWidget()
 {
 
     colors.push_back( QVector3D( 0.5, 0.5, 0.5 ) );

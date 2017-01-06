@@ -321,15 +321,6 @@ void FlowWindow::createActions()
     connect( controller, SIGNAL( propertybyVertexComputed( std::string, std::string ) ), this, SLOT( addVertexProperty( std::string, std::string ) ) );
     connect( controller, SIGNAL( propertybyFaceComputed( std::string, std::string ) ), this, SLOT( addFaceProperty( std::string, std::string ) ) );
 
-
-
-//  connect( canvas, &FlowVisualizationCanvas::getSurfaceCrossSection, this, &FlowWindow::loadSurfacesfromSketch );
-//  connect( canvas, &FlowVisualizationCanvas::readSurfacefromFile, this, &FlowWindow::loadSurfacesfromFile ); 
-//  connect( canvas, &FlowVisualizationCanvas::buildcornerpoint, this, &FlowWindow::buildCornerPoint );
-//	connect(canvas, &FlowVisualizationCanvas::buildunstructured, this, [=]{ acceptUserParameters(), buildCornerPoint(); });
-//  connect( canvas, &FlowVisualizationCanvas::computeFlowProperties, this, &FlowWindow::computeFlowProperties );
-
-    connect( canvas, &FlowVisualizationCanvas::editParameters, qdockparametersBar, &QDockWidget::show );
     connect( canvas, &FlowVisualizationCanvas::applyCrossSection, qdockcrosssectionnormalBar, &QDockWidget::show );
     connect( canvas, &FlowVisualizationCanvas::clearAll, this, &FlowWindow::clear );
 
