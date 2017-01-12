@@ -12,39 +12,36 @@ class CoordinateAxes
 {
     public:
 
-        CoordinateAxes();
+		CoordinateAxes(); 
+		~CoordinateAxes();
 
         void init();
         void load();
 
-		void draw(const Eigen::Affine3f& V, const Eigen::Matrix4f& P);
+		void draw(const Eigen::Quaternion<float>& _orientation, const Eigen::Vector4f& _viewport);
 
         void reloadShader();
+
         void initShader( std::string directory );
 
-        void resetBuffers();
-        void deleteShaders();
-
-
-    protected:
-
-
-
-        void loadConeAxes();
-        void loadCylinderAxes();
-
+		void resetBuffers();
 
     private:
 
+		void requestOpenGLResources();
+		void releaseOpenGLResources();
+
         Tucano::Shader* shader_axes; // create a shader to shader_axis, since there will be shaders only to axes
+		Eigen::Affine3f viewMatrix_;
+		Eigen::Matrix4f projetionMatrix;
 
-        GLuint va_coneaxes;
-        GLuint bf_faces_coneaxes;
-        GLint nfaces_cone;
+        GLuint vertex_array_coneaxes;
+			GLuint vertex_buffer_faces_indices;
+			GLuint vertex_buffer_vertices;
+			GLuint vertex_buffer_normals;
+			GLuint vertex_buffer_colors;
 
-        GLuint va_cylinderaxes;
-        GLuint bf_faces_cylinderaxes;
-        GLint nfaces_cylinder;
+		int indices_size_;
 
         std::string current_directory;
 

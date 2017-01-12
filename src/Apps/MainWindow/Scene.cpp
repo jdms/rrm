@@ -43,6 +43,8 @@ void Scene::init()
     createSketchingBoundary();
     newSketch();
 
+	this->createRegions(this->number_of_flow_regions_);
+
     update();
 
 }
@@ -90,7 +92,7 @@ void Scene::initData()
     boundary3D = NULL;
 
 	this->is_region_visible = false;
-	this->number_of_flow_regions_ = 0;
+	
 	this->initRegions();
 
 }
@@ -436,6 +438,7 @@ void Scene::clearScene()
 
     arrangement.clear();
 
+	clearRegions();
 
     clear();
     initData();
@@ -1392,4 +1395,14 @@ void Scene::initRegions( )
 			}
 		}
 	}		
+}
+
+void Scene::clearRegions()
+{
+	for (auto region : flow_regions_)
+	{
+		delete region.second;
+	}
+
+	flow_regions_.clear();
 }
