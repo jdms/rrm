@@ -255,6 +255,7 @@ class Scene: public QGraphicsScene
 		private:
 			std::map<int, RRM::RegionItem* > flow_regions_;
 			void initRegions();
+			void clearRegions();
 			int number_of_flow_regions_;
 			bool is_region_visible;
 	

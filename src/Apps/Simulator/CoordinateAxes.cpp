@@ -2,605 +2,265 @@
 
 CoordinateAxes::CoordinateAxes()
 {
-    //init();
+
 }
 
+
+CoordinateAxes::~CoordinateAxes()
+{
+	resetBuffers();
+}
 
 void CoordinateAxes::init()
 {
-    //va_coneaxes = 0;
-    //bf_faces_coneaxes = 0;
-    //nfaces_cone = 0;
-
-    //va_cylinderaxes = 0;
-    //bf_faces_cylinderaxes = 0;
-    //nfaces_cylinder = 0;
-
+	vertex_array_coneaxes = 0;
+	vertex_buffer_faces_indices = 0;
+	vertex_buffer_vertices = 0;
+	vertex_buffer_normals = 0;
+	vertex_buffer_colors = 0;
 }
-
 
 void CoordinateAxes::initShader( std::string directory )
 {
-
-
-    //shader_axes = new Tucano::Shader( "shader_axes", ( directory + "shaders/vertex_instanced_shader.vert" ), ( directory + "shaders/fragment_shader.frag" ), "", "", "" );
-    //shader_axes->initialize();
+	shader_axes = new Tucano::Shader("shader_axes", (directory + "shaders/orientationAxes.vert"), (directory + "shaders/orientationAxes.frag"), (directory + "shaders/orientationAxes.geom"), "", "");
+    shader_axes->initialize();
 
     current_directory = directory;
 
-}
+	float left		 = -1.0f;
+	float right		 =  1.0f;
+	float bottom	 = -1.0f;
+	float top		 =  1.0f; 
+	float near_plane = 0.1f;
+	float far_plane  = 100.0f;
 
+	this->projetionMatrix = Eigen::Matrix4f::Zero();
+
+	projetionMatrix(0, 0) = 2.0f / (right - left);
+	projetionMatrix(1, 1) = 2.0f / (top - bottom);
+	projetionMatrix(2, 2) = -2.0f / (far_plane - near_plane);
+	projetionMatrix(3, 3) = 1.0f;
+	projetionMatrix(0, 3) = -(right + left) / (right - left);
+	projetionMatrix(1, 3) = -(top + bottom) / (top - bottom);
+	projetionMatrix(2, 3) = -(far_plane + near_plane) / (far_plane - near_plane);
+
+	/// The correct manner to defaine an identity matrix
+	this->viewMatrix_ = Eigen::Affine3f::Identity();
+	this->viewMatrix_.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
+	this->viewMatrix_.rotate(Eigen::Quaternion<float>::Identity());
+}
 
 void CoordinateAxes::reloadShader()
 {
-   //if( shader_axes )
-   //     shader_axes->reloadShaders();
-}
-
-
-static void PrintInfo(const tinyobj::attrib_t &attrib, const std::vector<tinyobj::shape_t>& shapes, const std::vector<tinyobj::material_t>& materials, bool triangulate = true)
-{
-	std::cout << "# of vertices  : " << (attrib.vertices.size() / 3) << std::endl;
-	std::cout << "# of normals   : " << (attrib.normals.size() / 3) << std::endl;
-	std::cout << "# of texcoords : " << (attrib.texcoords.size() / 2) << std::endl;
-
-	std::cout << "# of shapes    : " << shapes.size() << std::endl;
-	std::cout << "# of materials : " << materials.size() << std::endl;
-
-	for (size_t v = 0; v < attrib.vertices.size() / 3; v++) {
-		printf("  v[%ld] = (%f, %f, %f)\n", v,
-			static_cast<const double>(attrib.vertices[3 * v + 0]),
-			static_cast<const double>(attrib.vertices[3 * v + 1]),
-			static_cast<const double>(attrib.vertices[3 * v + 2]));
-	}
-
-	for (size_t v = 0; v < attrib.normals.size() / 3; v++) {
-		printf("  n[%ld] = (%f, %f, %f)\n", v,
-			static_cast<const double>(attrib.normals[3 * v + 0]),
-			static_cast<const double>(attrib.normals[3 * v + 1]),
-			static_cast<const double>(attrib.normals[3 * v + 2]));
-	}
-
-	for (size_t v = 0; v < attrib.texcoords.size() / 2; v++) {
-		printf("  uv[%ld] = (%f, %f)\n", v,
-			static_cast<const double>(attrib.texcoords[2 * v + 0]),
-			static_cast<const double>(attrib.texcoords[2 * v + 1]));
-	}
-
-	for (size_t i = 0; i < shapes.size(); i++) {
-		printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
-		printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
-
-		if (triangulate)
-		{
-			printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
-			assert((shapes[i].mesh.indices.size() % 3) == 0);
-			for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-				tinyobj::index_t i0 = shapes[i].mesh.indices[3 * f + 0];
-				tinyobj::index_t i1 = shapes[i].mesh.indices[3 * f + 1];
-				tinyobj::index_t i2 = shapes[i].mesh.indices[3 * f + 2];
-				printf("  idx[%ld] = %d/%d/%d, %d/%d/%d, %d/%d/%d. mat_id = %d\n", f,
-					i0.vertex_index, i0.normal_index, i0.texcoord_index,
-					i1.vertex_index, i1.normal_index, i1.texcoord_index,
-					i2.vertex_index, i2.normal_index, i2.texcoord_index,
-					shapes[i].mesh.material_ids[f]);
-			}
-		}
-		else {
-			for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
-				tinyobj::index_t idx = shapes[i].mesh.indices[f];
-				printf("  idx[%ld] = %d/%d/%d\n", f, idx.vertex_index, idx.normal_index, idx.texcoord_index);
-			}
-
-			printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
-			assert(shapes[i].mesh.material_ids.size() == shapes[i].mesh.num_face_vertices.size());
-			for (size_t m = 0; m < shapes[i].mesh.material_ids.size(); m++) {
-				printf("  material_id[%ld] = %d\n", m,
-					shapes[i].mesh.material_ids[m]);
-			}
-
-		}
-
-		printf("shape[%ld].num_faces: %ld\n", i, shapes[i].mesh.num_face_vertices.size());
-		for (size_t v = 0; v < shapes[i].mesh.num_face_vertices.size(); v++) {
-			printf("  num_vertices[%ld] = %ld\n", v,
-				static_cast<long>(shapes[i].mesh.num_face_vertices[v]));
-		}
-
-		//printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
-		//assert((shapes[i].mesh.positions.size() % 3) == 0);
-		//for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-		//  printf("  v[%ld] = (%f, %f, %f)\n", v,
-		//    static_cast<const double>(shapes[i].mesh.positions[3*v+0]),
-		//    static_cast<const double>(shapes[i].mesh.positions[3*v+1]),
-		//    static_cast<const double>(shapes[i].mesh.positions[3*v+2]));
-		//}
-
-		printf("shape[%ld].num_tags: %ld\n", i, shapes[i].mesh.tags.size());
-		for (size_t t = 0; t < shapes[i].mesh.tags.size(); t++) {
-			printf("  tag[%ld] = %s ", t, shapes[i].mesh.tags[t].name.c_str());
-			printf(" ints: [");
-			for (size_t j = 0; j < shapes[i].mesh.tags[t].intValues.size(); ++j)
-			{
-				printf("%ld", static_cast<long>(shapes[i].mesh.tags[t].intValues[j]));
-				if (j < (shapes[i].mesh.tags[t].intValues.size() - 1))
-				{
-					printf(", ");
-				}
-			}
-			printf("]");
-
-			printf(" floats: [");
-			for (size_t j = 0; j < shapes[i].mesh.tags[t].floatValues.size(); ++j)
-			{
-				printf("%f", static_cast<const double>(shapes[i].mesh.tags[t].floatValues[j]));
-				if (j < (shapes[i].mesh.tags[t].floatValues.size() - 1))
-				{
-					printf(", ");
-				}
-			}
-			printf("]");
-
-			printf(" strings: [");
-			for (size_t j = 0; j < shapes[i].mesh.tags[t].stringValues.size(); ++j)
-			{
-				printf("%s", shapes[i].mesh.tags[t].stringValues[j].c_str());
-				if (j < (shapes[i].mesh.tags[t].stringValues.size() - 1))
-				{
-					printf(", ");
-				}
-			}
-			printf("]");
-			printf("\n");
-		}
-	}
-
-	for (size_t i = 0; i < materials.size(); i++) {
-		printf("material[%ld].name = %s\n", i, materials[i].name.c_str());
-		printf("  material.Ka = (%f, %f ,%f)\n", static_cast<const double>(materials[i].ambient[0]), static_cast<const double>(materials[i].ambient[1]), static_cast<const double>(materials[i].ambient[2]));
-		printf("  material.Kd = (%f, %f ,%f)\n", static_cast<const double>(materials[i].diffuse[0]), static_cast<const double>(materials[i].diffuse[1]), static_cast<const double>(materials[i].diffuse[2]));
-		printf("  material.Ks = (%f, %f ,%f)\n", static_cast<const double>(materials[i].specular[0]), static_cast<const double>(materials[i].specular[1]), static_cast<const double>(materials[i].specular[2]));
-		printf("  material.Tr = (%f, %f ,%f)\n", static_cast<const double>(materials[i].transmittance[0]), static_cast<const double>(materials[i].transmittance[1]), static_cast<const double>(materials[i].transmittance[2]));
-		printf("  material.Ke = (%f, %f ,%f)\n", static_cast<const double>(materials[i].emission[0]), static_cast<const double>(materials[i].emission[1]), static_cast<const double>(materials[i].emission[2]));
-		printf("  material.Ns = %f\n", static_cast<const double>(materials[i].shininess));
-		printf("  material.Ni = %f\n", static_cast<const double>(materials[i].ior));
-		printf("  material.dissolve = %f\n", static_cast<const double>(materials[i].dissolve));
-		printf("  material.illum = %d\n", materials[i].illum);
-		printf("  material.map_Ka = %s\n", materials[i].ambient_texname.c_str());
-		printf("  material.map_Kd = %s\n", materials[i].diffuse_texname.c_str());
-		printf("  material.map_Ks = %s\n", materials[i].specular_texname.c_str());
-		printf("  material.map_Ns = %s\n", materials[i].specular_highlight_texname.c_str());
-		printf("  material.map_bump = %s\n", materials[i].bump_texname.c_str());
-		printf("  material.map_d = %s\n", materials[i].alpha_texname.c_str());
-		printf("  material.disp = %s\n", materials[i].displacement_texname.c_str());
-		std::map<std::string, std::string>::const_iterator it(materials[i].unknown_parameter.begin());
-		std::map<std::string, std::string>::const_iterator itEnd(materials[i].unknown_parameter.end());
-
-		for (; it != itEnd; it++) {
-			printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
-		}
-		printf("\n");
+	if (shader_axes)
+	{
+		shader_axes->reloadShaders();
 	}
 }
-
 
 void CoordinateAxes::load()
 {
 
-	std::string filename = current_directory + "models/cornell_box.obj";
+	std::string filename = current_directory + "models/coordinateSystem.obj";
 	std::string material_path = current_directory + "models/";
 
 	std::cout << "Loading " << filename << std::endl;
 
-	
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 	std::string err;
 
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str(), material_path.c_str())) {
+	//// For Vertex Buffer Intervealed @see https://www.khronos.org/opengl/wiki/Vertex_Specification_Best_Practices
+	/// (VNC-VNC-VNC ...)
+
+	std::vector<GLfloat> attributes;
+	std::vector<int> indices;
+
+
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str(), material_path.c_str())) 
+	{
 		throw std::runtime_error(err);
 	}
 	else
 	{
-		std::cout << "# of shapes    : " << shapes.size() << std::endl;
-		std::cout << "# of materials : " << materials.size() << std::endl;
-		PrintInfo(attrib, shapes, materials, true);
+		attributes.clear();
+		attributes.resize(attrib.vertices.size()*3);
+
+		for ( auto shape : shapes) 
+		{
+			// Loop over faces(polygon)			
+			std::cout << "# of shapes  name  : " << shape.name << std::endl;
+			for (auto i : shape.mesh.indices)
+			{
+				indices.push_back(i.vertex_index);
+			}
+
+			size_t index_offset = 0;
+
+			for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) 
+			{
+				size_t fv = shape.mesh.num_face_vertices[f];
+				// Loop over vertices in the face.
+				for (size_t v = 0; v < fv; v++) 
+				{
+					// access to vertex
+					/// Use idx.vertex_index             | Use idx.vertex_index
+					tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+					attributes[9 * idx.vertex_index + 0] = attrib.vertices[3 * idx.vertex_index + 0];
+					attributes[9 * idx.vertex_index + 1] = attrib.vertices[3 * idx.vertex_index + 1];
+					attributes[9 * idx.vertex_index + 2] = attrib.vertices[3 * idx.vertex_index + 2];
+					///	Use idx.vertex_index			 | Use idx.normal_index
+					attributes[9 * idx.vertex_index + 3] = attrib.normals[3 * idx.normal_index + 0];
+					attributes[9 * idx.vertex_index + 4] = attrib.normals[3 * idx.normal_index + 1];
+					attributes[9 * idx.vertex_index + 5] = attrib.normals[3 * idx.normal_index + 2];
+					///	Use idx.vertex_index			 | shape.mesh.material_ids[f]
+					attributes[9 * idx.vertex_index + 6] = materials[shape.mesh.material_ids[f]].diffuse[0];
+					attributes[9 * idx.vertex_index + 7] = materials[shape.mesh.material_ids[f]].diffuse[1];
+					attributes[9 * idx.vertex_index + 8] = materials[shape.mesh.material_ids[f]].diffuse[2];
+				}
+				index_offset += fv;
+			}
+		}
+
 	}
+		//std::cout << "# Indices  : " << indices.size() << std::endl;
+		//std::cout << "# Vertices : " << attrib.vertices.size() << std::endl;
+	for (auto m : materials)
+	{
+		std::cout << "# Materials Name : " << m.name << std::endl;
+		std::cout << "# Materia Ambient  KA: " << m.ambient[0] << "," << m.ambient[1] << "," << m.ambient[2] << "," << std::endl;
+		std::cout << "# Materia Diffuse  KD: " << m.diffuse[0] << "," << m.diffuse[1] << "," << m.diffuse[2] << "," << std::endl;
+		std::cout << "# Materia Specular KS: " << m.specular[0] << "," << m.specular[1] << "," << m.specular[2] << "," << std::endl;
+	}
+	
+	// If exit, clean up the buffer on the server side (OpenGL - GPU) and in the client side (C++ buffers id)
+	this->requestOpenGLResources();
 
+	glBindVertexArray(vertex_array_coneaxes);
 
+		//// - Vertex Information  (v.layout = 0, n.layout = 1, c.layout = 2)
+		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_vertices);
+		glBufferData(GL_ARRAY_BUFFER, attributes.size() * sizeof(attributes[0]), attributes.data(), GL_STATIC_DRAW);
 
-    //loadCylinderAxes();
-    //loadConeAxes();
+		/// Size of the per vertex attributes, aka (Vertex(V), Normal(N), Color(C)), each 3 floats
+		int size_of_vertice = 3 * sizeof(float); 
+		/// Size of per triagle attributes [ (V.x,V.y,V.z;N.x,N.y,N.z;C.x,C.y,C.z) ], each 3 floats to vertice, 3 to normal, and 3 to color
+		int size_of_struct  = 3 * size_of_vertice;
 
+		////! @link - http://www.opengl.org/wiki/Vertex_Specification
+		//// Assign for vertex attribute location 0 - 3 
+		for (int location = 0; location < 3; location++)
+		{
+			glEnableVertexAttribArray(location);
+			glVertexAttribPointer(location, 3, GL_FLOAT, GL_FALSE, size_of_struct, reinterpret_cast<void*>(size_of_vertice * location));
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertex_buffer_faces_indices);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
+		indices_size_ = indices.size();
+
+	glBindVertexArray(0);
 }
-
-
-void CoordinateAxes::loadConeAxes()
+void CoordinateAxes::draw( const Eigen::Quaternion<float>& _orientation, const Eigen::Vector4f& _viewport)
 {
 
+	/// Coordinate Axes enviroment setup
 
+	float integral = 0.0f;
 
-    //vector< float > vertices;
-    //vector< float > colors;
-    //vector< float > normals;
-    //vector< unsigned int > faces;
+	integral = std::trunc(static_cast<float>(_viewport[2]*0.1f));
+	GLsizei w = static_cast<GLsizei>(integral);
+	integral = std::trunc(static_cast<float>(_viewport[3]*0.1f));
+	GLsizei h = static_cast<GLsizei>(integral);
 
+	float aspect_ratio_ = static_cast<float>(w) / static_cast<float>(h);
 
-    //readPlyFile( ( current_directory + "models/cone.ply" ), vertices, colors, faces, normals );
+	h = static_cast<GLsizei>(h*aspect_ratio_);
 
+	glViewport(0, 0, w, h);
 
-    //glGenVertexArrays( 1, &va_coneaxes );
-    //glBindVertexArray( va_coneaxes );
+	this->viewMatrix_ = Eigen::Affine3f::Identity();
+	this->viewMatrix_.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
+	this->viewMatrix_.rotate(Eigen::Quaternion<float>::Identity());
+	this->viewMatrix_.rotate(_orientation);
+	
 
+	shader_axes->bind();
 
+	shader_axes->setUniform("ModelMatrix", this->viewMatrix_.Identity());
+	shader_axes->setUniform("ViewMatrix", this->viewMatrix_);
+	shader_axes->setUniform("ProjectionMatrix", this->projetionMatrix);
 
-    //    if( vertices.empty() == false )
-    //    {
+		glBindVertexArray(vertex_array_coneaxes);
 
-    //        size_t vvertices_size = vertices.size();
-    //        GLint nvertices =  (GLint) vvertices_size/3;
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertex_buffer_faces_indices);
+			glDrawElements(GL_TRIANGLES, indices_size_, GL_UNSIGNED_INT, 0);
 
+		glBindVertexArray(0);
 
-    //        vector< Eigen::Vector3f > vertices_eigen;
-    //        for( int it = 0; it < nvertices; ++it )
-    //            vertices_eigen.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
+	shader_axes->unbind();
 
-    //        Celer::BoundingBox3< float > box;
-    //        box.fromPointCloud( vertices_eigen.begin(), vertices_eigen.end() );
-
-
-    //        for( int it = 0; it < nvertices; ++it )
-    //            vertices_eigen[ it ] = ( vertices_eigen[ it ] - box.center() )/box.diagonal();
-
-    //        box.fromPointCloud( vertices_eigen.begin(), vertices_eigen.end() );
-
-
-    //        GLuint bf_points_coneaxes;
-    //        glGenBuffers( 1, &bf_points_coneaxes );
-    //        glBindBuffer( GL_ARRAY_BUFFER, bf_points_coneaxes );
-    //        glBufferData( GL_ARRAY_BUFFER, vvertices_size*sizeof( GLfloat ), vertices_eigen.data(), GL_STATIC_DRAW );
-    //        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_TRUE, 0, NULL );
-    //        glEnableVertexAttribArray( 0 );
-
-    //    }
-
-
-    //    if( faces.empty() == false )
-    //    {
-    //        std::size_t vfaces_size = faces.size();
-    //        nfaces_cone = (GLint) vfaces_size;
-
-    //        glGenBuffers( 1, &bf_faces_coneaxes );
-    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_coneaxes );
-    //        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vfaces_size*sizeof( GLuint ), faces.data(), GL_STATIC_DRAW );
-
-    //    }
-
-
-    //    if( normals.empty() == false )
-    //    {
-
-    //        std::size_t vnormals_size = normals.size();
-
-    //        GLuint bf_normals_coneaxes;
-    //        glGenBuffers( 1, &bf_normals_coneaxes );
-    //        glBindBuffer( GL_ARRAY_BUFFER, bf_normals_coneaxes );
-    //        glBufferData( GL_ARRAY_BUFFER, vnormals_size*sizeof(  GLfloat ), normals.data(), GL_STATIC_DRAW );
-    //        glVertexAttribPointer( 2, 3, GL_FLOAT, GL_TRUE, 0, NULL );
-    //        glEnableVertexAttribArray( 2 );
-    //    }
-
-
-    //    const std::size_t NAXES = 3;
-
-    //    Eigen::Affine3f* M = new Eigen::Affine3f[ NAXES ];
-
-    //    for( std::size_t it = 0; it < NAXES; ++it )
-    //    {
-    //        Eigen::Affine3f matrix;
-    //        matrix.setIdentity();
-
-    //        if( it == 0 )
-    //        {
-    //            matrix.translate( Eigen::Vector3f( 0.0f, 0.38f, 0.0f ) );
-    //            matrix.rotate( Eigen::AngleAxisf( (float)M_PI, Eigen::Vector3f( 1.0f, 0.0f, 0.0f ) ) );
-    //        }
-    //        else if( it == 1 )
-    //        {
-    //            matrix.translate( Eigen::Vector3f( 0.38f , 0.0f, 0.0f ) );
-    //            matrix.rotate( Eigen::AngleAxisf( (float)M_PI*0.5f, Eigen::Vector3f( 0.0f, 0.0f, 1.0f ) ) );
-    //        }
-    //        else
-    //        {
-    //            matrix.translate( Eigen::Vector3f( 0.0f , 0.0f, 0.38f ) );
-    //            matrix.rotate( Eigen::AngleAxisf((float) -M_PI*0.5f, Eigen::Vector3f( 1.0f, 0.0f, 0.0f ) ) );
-    //        }
-
-    //        matrix.scale(  Eigen::Vector3f( 0.08f, 0.18f, 0.08f )  );
-
-
-    //        M[ it ] = matrix;
-    //    }
-
-    //    GLuint bf_mmatrix_axes;
-    //    glGenBuffers( 1, &bf_mmatrix_axes );
-    //    glBindBuffer( GL_ARRAY_BUFFER, bf_mmatrix_axes );
-    //    glBufferData( GL_ARRAY_BUFFER, NAXES*sizeof( Eigen::Affine3f ), &M[ 0 ], GL_STATIC_DRAW );
-
-    //    glEnableVertexAttribArray( 3 );
-    //    glVertexAttribPointer( 3, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)0 );
-
-    //    glEnableVertexAttribArray(4);
-    //    glVertexAttribPointer( 4, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( sizeof( Eigen::Vector4f ) ) );
-
-    //    glEnableVertexAttribArray( 5 );
-    //    glVertexAttribPointer( 5, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( 2 * sizeof( Eigen::Vector4f ) ) );
-
-    //    glEnableVertexAttribArray( 6 );
-    //    glVertexAttribPointer( 6, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( 3 * sizeof( Eigen::Vector4f ) ) );
-
-    //    glVertexAttribDivisor( 3, 1 );
-    //    glVertexAttribDivisor( 4, 1 );
-    //    glVertexAttribDivisor( 5, 1 );
-    //    glVertexAttribDivisor( 6, 1 );
-
-
-    //    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    //    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-
-
-    //glBindVertexArray( 0 );
-
+	w = static_cast<GLsizei>(_viewport[2]);
+	h = static_cast<GLsizei>(_viewport[3]);
+	
+	glViewport(0, 0, w, h);
 
 }
-
-
-void CoordinateAxes::loadCylinderAxes()
-{
-
-
-    //vector< float > vertices;
-    //vector< float > colors;
-    //vector< float > normals;
-    //vector< unsigned int > faces;
-
-
-    //readPlyFile( ( current_directory + "Models/cylinder.ply" ), vertices, colors, faces, normals );
-
-
-    //glGenVertexArrays( 1, &va_cylinderaxes );
-    //glBindVertexArray( va_cylinderaxes );
-
-
-
-    //    if( vertices.empty() == false )
-    //    {
-
-    //        size_t vvertices_size = vertices.size();
-    //        GLint nvertices =  (GLint) vvertices_size/3;
-
-
-    //        vector< Eigen::Vector3f > vertices_eigen;
-    //        for( int it = 0; it < nvertices; ++it )
-    //            vertices_eigen.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
-
-    //        Celer::BoundingBox3< float > box;
-    //        box.fromPointCloud( vertices_eigen.begin(), vertices_eigen.end() );
-
-
-    //        for( int it = 0; it < nvertices; ++it )
-    //            vertices_eigen[ it ] = ( vertices_eigen[ it ] - box.center() )/box.diagonal();
-
-    //        box.fromPointCloud( vertices_eigen.begin(), vertices_eigen.end() );
-
-
-    //        GLuint bf_points_cylinderaxes;
-    //        glGenBuffers( 1, &bf_points_cylinderaxes );
-    //        glBindBuffer( GL_ARRAY_BUFFER, bf_points_cylinderaxes );
-    //        glBufferData( GL_ARRAY_BUFFER, vvertices_size*sizeof( GLfloat ), vertices_eigen.data(), GL_STATIC_DRAW );
-    //        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_TRUE, 0, NULL );
-    //        glEnableVertexAttribArray( 0 );
-
-    //    }
-
-
-    //    if( faces.empty() == false )
-    //    {
-    //        std::size_t vfaces_size = faces.size();
-    //        nfaces_cylinder = (GLint) vfaces_size;
-
-    //        glGenBuffers( 1, &bf_faces_cylinderaxes );
-    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_cylinderaxes );
-    //        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vfaces_size*sizeof( GLuint ), faces.data(), GL_STATIC_DRAW );
-
-    //    }
-
-
-    //    if( normals.empty() == false )
-    //    {
-
-    //        std::size_t vnormals_size = normals.size();
-
-    //        GLuint bf_normals_cylinderaxes;
-    //        glGenBuffers( 1, &bf_normals_cylinderaxes );
-    //        glBindBuffer( GL_ARRAY_BUFFER, bf_normals_cylinderaxes );
-    //        glBufferData( GL_ARRAY_BUFFER, vnormals_size*sizeof(  GLfloat ), normals.data(), GL_STATIC_DRAW );
-    //        glVertexAttribPointer( 2, 3, GL_FLOAT, GL_TRUE, 0, NULL );
-    //        glEnableVertexAttribArray( 2 );
-    //    }
-
-
-
-    //    const std::size_t NAXES = 3;
-
-    //    Eigen::Affine3f* M = new Eigen::Affine3f[ NAXES ];
-
-    //    for( std::size_t it = 0; it < NAXES; ++it )
-    //    {
-    //        Eigen::Affine3f matrix;
-    //        matrix.setIdentity();
-
-
-    //        Eigen::Vector3f vector_translation( 0.0f, 0.0f, 0.0f );
-    //        if( it == 0 )
-    //            vector_translation[ 1 ] += 0.18f;
-
-    //        else if( it == 1 )
-    //            vector_translation[ 0 ] += 0.18f;
-
-    //        else
-    //            vector_translation[ 2 ] += 0.18f;
-
-    //        matrix.translate( vector_translation );
-
-    //        Eigen::Vector3f axis_rotation( 0.0f, 0.0f, 0.0f );
-    //        axis_rotation[ it ] = 1.0f;
-
-    //        matrix.rotate( Eigen::AngleAxisf( (float)0.5f*M_PI, axis_rotation ) );
-    //        matrix.scale( Eigen::Vector3f( 0.032f, 0.032f, 0.8f ) );
-
-    //        M[ it ] = matrix;
-    //    }
-
-
-    //    GLuint bf_mmatrix_axes;
-    //    glGenBuffers( 1, &bf_mmatrix_axes );
-    //    glBindBuffer( GL_ARRAY_BUFFER, bf_mmatrix_axes );
-    //    glBufferData( GL_ARRAY_BUFFER, NAXES*sizeof( Eigen::Affine3f ), &M[ 0 ], GL_STATIC_DRAW );
-
-    //    glEnableVertexAttribArray( 3 );
-    //    glVertexAttribPointer( 3, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)0 );
-
-    //    glEnableVertexAttribArray(4);
-    //    glVertexAttribPointer( 4, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( sizeof( Eigen::Vector4f ) ) );
-
-    //    glEnableVertexAttribArray( 5 );
-    //    glVertexAttribPointer( 5, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( 2 * sizeof( Eigen::Vector4f ) ) );
-
-    //    glEnableVertexAttribArray( 6 );
-    //    glVertexAttribPointer( 6, 4, GL_FLOAT, GL_FALSE, sizeof( Eigen::Affine3f ), (GLvoid*)( 3 * sizeof( Eigen::Vector4f ) ) );
-
-    //    glVertexAttribDivisor( 3, 1 );
-    //    glVertexAttribDivisor( 4, 1 );
-    //    glVertexAttribDivisor( 5, 1 );
-    //    glVertexAttribDivisor( 6, 1 );
-
-
-    //    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    //    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-
-
-    //glBindVertexArray( 0 );
-
-
-}
-
-
-void CoordinateAxes::draw(const Eigen::Affine3f& V, const Eigen::Matrix4f& P)
-{
-
-
-
-    //Eigen::Affine3f V;
-    //V.setIdentity();
-
-    //for( int i = 0; i < 3; ++i )
-    //    for( int j = 0; j < 3; ++j )
-    //        V( i, j ) = R( i, j );
-
-    //V( 0, 3 ) = T( 0 );
-    //V( 1, 3 ) = T( 1 );
-    //V( 2, 3 ) = T( 2 );
-
-
-    //Eigen::Affine3f matrix;
-    //matrix.setIdentity();
-    //matrix.translate( Eigen::Vector3f( 3.1f, -1.7f, 0.0f ) );
-
-
-    //QMatrix4x4 Q;
-    //Q.perspective( 60.0 , (float) 1024/(float) 600 , 0.1f , 10000.0f );
-//    Q.ortho( 0, 1024, 0, 600, 0.1, 1000 );
-
-    //Eigen::Matrix4f P1;
-    //for( int i = 0; i < 4; ++i )
-    //    for( int j = 0; j < 4; ++j )
-    //        P1( i, j ) = Q( i, j );
-
-
-
-
-    //shader_axes->bind();
-
-    //shader_axes->setUniform( "vmatrix", V );
-    //shader_axes->setUniform( "pmatrix", P );
-
-    //    glBindVertexArray( va_coneaxes );
-
-
-    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_coneaxes );
-    //        glDrawElementsInstanced( GL_TRIANGLES, nfaces_cone, GL_UNSIGNED_INT, 0, 3 );
-
-    //    glBindVertexArray( 0 );
-
-
-    //    glBindVertexArray( va_cylinderaxes );
-
-
-    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_cylinderaxes );
-    //        glDrawElementsInstanced( GL_TRIANGLES, nfaces_cylinder, GL_UNSIGNED_INT, 0, 3 );
-
-
-    //    glBindVertexArray( 0 );
-
-    //shader_axes->unbind();
-
-
-}
-
 
 void CoordinateAxes::resetBuffers()
 {
-    //deleteShaders();
+	/// Delete Shaders
+	if (shader_axes)
+	{
+		shader_axes->deleteShaders();
+		shader_axes = nullptr;
+	}
 
-    //if( va_coneaxes )
-    //{
-    //    glDeleteVertexArrays( 1, &va_coneaxes );
-    //    if( bf_faces_coneaxes )
-    //        glDeleteBuffers(1, &bf_faces_coneaxes);
+	this->releaseOpenGLResources();
+}
 
-    //}
+void CoordinateAxes::requestOpenGLResources()
+{
+	this->releaseOpenGLResources();
 
-    //if( va_cylinderaxes )
-    //{
-    //    glDeleteVertexArrays( 1, &va_cylinderaxes );
-    //    if( bf_faces_cylinderaxes )
-    //        glDeleteBuffers(1, &bf_faces_cylinderaxes);
-
-    //}
-
-
-    //va_coneaxes = 0;
-    //bf_faces_coneaxes = 0;
-    //bf_faces_cylinderaxes = 0;
-    //va_cylinderaxes = 0;;
-
-    //nfaces_cone = 0;
-    //nfaces_cylinder = 0;
-
+	// Cuboid
+	glGenVertexArrays(1, &vertex_array_coneaxes);		// Vertex Array
+		glGenBuffers(1, &vertex_buffer_faces_indices);  // Face Indices
+		glGenBuffers(1, &vertex_buffer_vertices);		// Vertices
+		glGenBuffers(1, &vertex_buffer_normals);		// Normals
+		glGenBuffers(1, &vertex_buffer_colors);			// Colors
 
 }
 
-void CoordinateAxes::deleteShaders()
+void CoordinateAxes::releaseOpenGLResources()
 {
+	if (vertex_array_coneaxes)
+	{
+		glDeleteVertexArrays(1, &vertex_array_coneaxes);
 
-    //if (shader_axes)
-    //{
-    //    delete (shader_axes);
-    //    shader_axes = nullptr;
-    //}
+		/// face indices
+		if (vertex_buffer_faces_indices)
+		{
+			glDeleteBuffers(1, &vertex_buffer_faces_indices);
+		}
+		/// vertices
+		if (vertex_buffer_vertices)
+		{
+			glDeleteBuffers(1, &vertex_buffer_vertices);
+		}
+		/// normals
+		if (vertex_buffer_normals)
+		{
+			glDeleteBuffers(1, &vertex_buffer_normals);
+		}
+		/// colors
+		if (vertex_buffer_colors)
+		{
+			glDeleteBuffers(1, &vertex_buffer_colors);
+		}
+	}
 
-
+	this->init();
 }
 
