@@ -61,7 +61,7 @@ void CoordinateAxes::reloadShader()
 void CoordinateAxes::load()
 {
 
-	std::string filename = current_directory + "models/coordinateSystem.obj";
+	std::string filename = current_directory + "models/orientationaxes.obj";
 	std::string material_path = current_directory + "models/";
 
 	std::cout << "Loading " << filename << std::endl;
@@ -86,6 +86,9 @@ void CoordinateAxes::load()
 	{
 		attributes.clear();
 		attributes.resize(attrib.vertices.size()*3);
+
+		/// Assume the model as a whole. 
+		/// @todo take the cone tip of the axis as a reference to a Axis letters.
 
 		for ( auto shape : shapes) 
 		{
