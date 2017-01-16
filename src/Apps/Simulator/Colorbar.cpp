@@ -13,6 +13,8 @@ ColorBar::ColorBar() : QWidget()
 	y = 30;
 	length = 300;
 	width = 20;
+	
+	this->label_step = 10;
 
 	this->setMaximumWidth(width + 60);
 	this->setMaximumHeight(length + 60);
@@ -36,18 +38,21 @@ void ColorBar::paintEvent( QPaintEvent *event )
 {
 
 
-    if( colors.empty() == true ) return;
-
+	if (colors.empty() == true)
+	{
+		return;
+	}
+	else
+	{
+		
+	}
 
     QPainter painter(this);
     QBrush brush;
     QLinearGradient gradient( QPointF( x, y ), QPointF( x, length ) );
 
-
     int number_of_colors = colors.size() - 1;
-
-
-
+	
     if( number_of_colors == 0 )
         number_of_colors = 1;
 
@@ -68,21 +73,21 @@ void ColorBar::paintEvent( QPaintEvent *event )
         position += step;
     }
 
-	
 	QRect rect(x, y, width, length);
-	int left = rect.left() + rect.width() + 10;
-
-	float text_step = rect.height() / 10;
+	int left = rect.left() + rect.width() + this->label_step;
 
 	QFontMetrics fm(painter.font());
+
+	float text_step = (rect.height() - fm.height()) / (this->label_step - 1);
+
 
 	painter.drawText(left, rect.top() - fm.height(), "Max");
 	//painter.drawText(left, rect.top() + rect.height() / 2, "50.0%");
 	painter.drawText(left, rect.top() + rect.height() + fm.height(), "Min");
 
-	float label_valeu = (max - min) / rect.height();
+	float label_valeu = (max - min) / (this->label_step - 1);
 
-	for (auto i = 0; i < 10; i ++)
+	for (auto i = 0; i < this->label_step; i++)
 	{
 		//painter.drawText(left, rect.top(), QString("%1").arg(value));
 		painter.drawText(left, rect.top() + i*text_step + fm.height(), QString("%1").arg(max - i*label_valeu));
@@ -111,10 +116,12 @@ void ColorBar::paintEvent( QPaintEvent *event )
 }
 
 
-void ColorBar::updateColorMap( const std::vector < QVector3D >& c, float _min, float _max/*, const std::vector< double >& v */)
+void ColorBar::updateColorMap(const std::vector < QVector3D >& c, float _min, float _max, int label_step)
 {
     colors = c;
-//    values = v;
+	// The color is paint top down.
+	std::reverse(colors.begin(), colors.end());
+	this->label_step = label_step;
     min = _min;
     max = _max;
 

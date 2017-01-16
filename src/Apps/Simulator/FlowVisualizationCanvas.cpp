@@ -438,7 +438,8 @@ void FlowVisualizationCanvas::showRegions()
 {
 
     std::vector< QColor > colors;
-    controller->getRegionsColor( colors );
+	std::vector<int> ids;
+    controller->getRegionsColor( colors , current_colormap, ids);
 
     int number_of_vertices = mesh.getNumberofVertices();
 
@@ -470,6 +471,11 @@ void FlowVisualizationCanvas::showRegions()
         }
 
     }
+
+	auto min_max = std::minmax_element(ids.begin(), ids.end());
+	unsigned int nc;
+
+	colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
 
     mesh.setColor( meshcolors );
     update();
