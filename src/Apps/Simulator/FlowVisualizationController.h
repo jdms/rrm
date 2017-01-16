@@ -70,7 +70,7 @@ class FlowVisualizationController: public QWidget
 		bool isSurfaceLoaded()      { return this->is_surface_loaded; }
 		bool arePropertiesComputed() { return are_properties_computed; }
 
-        void getRegionsColor( std::vector< QColor >& color_by_cells );
+		void getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& ids_);
 
 
     public slots:

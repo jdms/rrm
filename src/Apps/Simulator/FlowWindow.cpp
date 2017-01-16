@@ -145,8 +145,8 @@ void FlowWindow::createToolBar()
 	ac_constant = new QAction("Constant", ag_colormaps);
 	ac_constant->setCheckable(true);	
 	ac_constant->setChecked(true);
-	ac_jet = new QAction("Jet", ag_colormaps);
-	ac_jet->setCheckable(true);
+	ac_cool_to_warm = new QAction("Cool to Warm", ag_colormaps);
+	ac_cool_to_warm->setCheckable(true);
 	ac_hot = new QAction("Hot", ag_colormaps);
 	ac_hot->setCheckable(true);
 	ac_cool = new QAction("Cool", ag_colormaps);
@@ -163,6 +163,8 @@ void FlowWindow::createToolBar()
 	ac_polar->setCheckable(true);
 	ac_winter = new QAction("Winter", ag_colormaps);
 	ac_winter->setCheckable(true);
+	ac_jet = new QAction("Jet", ag_colormaps);
+	ac_jet->setCheckable(true);
 
 	mn_colormaps->addActions(ag_colormaps->actions());
 
@@ -274,13 +276,26 @@ void FlowWindow::createActions()
 			tbn_export->setEnabled(false);
 			tbn_coloringbyvertex->setEnabled(false);
 			tbn_coloringbyface->setEnabled(false);
+			qcomputeFlowProperties->setEnabled(false);
 			qreloadSurface->setEnabled(true);
 			qoopenfilesDialog->setEnabled(true);
 			ac_showregions->setEnabled(false);
+			// Reset Color Map
+			ac_constant->trigger();				
 		});
 
 		/// Region ID
-		connect(ac_showregions, &QAction::toggled, canvas, &FlowVisualizationCanvas::showRegions);
+		connect(ac_showregions, &QAction::toggled, [=](bool is_toggled)
+		{
+			if (is_toggled)
+			{
+				canvas->showRegions();
+			}
+			else
+			{
+				canvas->setConstantColor();
+			}
+		});
 	
 		/// Exporters
 		connect(qexportsurface, SIGNAL(triggered(bool)), controller, SLOT(exportSurfacetoVTK()));
@@ -288,14 +303,15 @@ void FlowWindow::createActions()
 		connect(qexportcornerpointVTK, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoVTK()));
 		connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
 		connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+		connect(qexportresults, SIGNAL(triggered(bool)), controller, SLOT(exportResultstoVTK()));
 
 		// CrossSection
 		connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
 		connect(qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection);
 
 		/// ColorMap
-		connect(ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); });
-		connect(ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::JET); });
+		connect(ac_constant, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); });		
+		connect(ac_cool_to_warm, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM); });
 		connect(ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::HOT);  });
 		connect(ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL); });
 		connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
@@ -305,6 +321,7 @@ void FlowWindow::createActions()
 		connect(ac_copper, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COPPER); });
 		connect(ac_polar, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::POLAR); });
 		connect(ac_winter, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::WINTER); });
+		connect(ac_jet, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::JET); });
 
     connect( &parametersBar, SIGNAL( readParameterFile( const std::string& ) ), this, SLOT( readUserInputFile( const std::string& ) ) );
 	// New Gui

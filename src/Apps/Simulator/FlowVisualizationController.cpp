@@ -245,10 +245,12 @@ void FlowVisualizationController::computeFlowProperties()
 }
 
 
-void FlowVisualizationController::getRegionsColor( std::vector< QColor >& color_by_cells )
+void FlowVisualizationController::getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids)
 {
     std::vector< int > idregion_by_cell;
     code_interface.getRegionId( idregion_by_cell );
+
+	_ids = idregion_by_cell;
 
 	auto min_max = std::minmax_element(idregion_by_cell.begin(), idregion_by_cell.end());
 
@@ -256,7 +258,7 @@ void FlowVisualizationController::getRegionsColor( std::vector< QColor >& color_
 
     for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
     {
-		c = colormap.getColor(ColorMap::COLORMAP::QUALITATIVE, idregion_by_cell[i], *min_max.first, *min_max.second);
+		c = colormap.getColor(current_colormap, idregion_by_cell[i], *min_max.first, *min_max.second);
 
 		color_by_cells.push_back(QColor::fromRgbF(c.x(),c.y(),c.z(),1.0));
     }
