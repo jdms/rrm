@@ -7,11 +7,6 @@
 #include <QFileDialog>
 #include <QMouseEvent>
 
-#include "ui_flowparametersbar.h"
-#include "FormPropertyValues.h"
-
-
-
 #include "ui_FormPropertyValues.h"
 
 #include <Eigen/Dense>
@@ -33,12 +28,10 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
         void getWellParameter( int& nw,  std::vector< unsigned int >& type, std::vector< double >& value, std::vector< int >& sign );
 
         void clear();
-
-		void mousePressEvent(QMouseEvent *event);
+		
 	public slots:
 		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
     private slots:
-
 
 		/// Regions
 		void updateRegionWidget(const int index);
@@ -54,17 +47,8 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
         void closeBar();
         void closeBarandAccept();
 		void numberRegions(int number_of_regions);
-		
-		
-
-	
 
     private:
-
-		FormPropertyValues* dg_regionsproperties;
-		FormPropertyValues* dg_wells;
-
-
 
 		/// New Gui -->
 		void getPropertyAreaParameters_new(int& np, std::vector< double >& positions, std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc);
@@ -86,8 +70,8 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		std::map< int, int >		  well_signs;
 		std::size_t					  number_of_wells_;
 
-		void new_gui_clear();
-		void new_gui_reset();
+		void newGUIClear();
+		void newGUIReset();
 
 		/// Using new flowlib model, those variable whould be:  
 		/// "Property Name 1" - 0 dimension scalar , property["permiability"] = 1.0;

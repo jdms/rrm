@@ -277,15 +277,15 @@ void MainWindow::exportTo()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "bin/exported/",
-                                                         "CPS3 files (*.csp3);;Irap Classic Grid (*.irapg)", &selected_format );
+                                                         "CPS3 files (*.CPS3);;Irap Classic Grid (*.IRAPG)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
-    if( selected_format == QString( "CPS3 files (*.csp3)" ) )
+    if( selected_format == QString( "CPS3 files (*.CPS3)" ) )
     {
         emit saveAsCPS3( filename.toStdString() );
     }
 
-    else if( selected_format == QString( "Irap Classic Grid (*.irapg)" ) )
+    else if( selected_format == QString( "Irap Classic Grid (*.IRAPG)" ) )
     {
         emit saveAsIrapGrid( filename.toStdString() );
     }
