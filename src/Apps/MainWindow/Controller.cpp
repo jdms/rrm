@@ -94,7 +94,7 @@ void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, c
     rules_processor.setOrigin( orig_x, orig_y, orig_z );
     rules_processor.setLenght( width, height, depth );
     rules_processor.init();
-    rules_processor.update( RRM::ExtrusionRulesProcessor::State::RA_SKETCHING );
+    rules_processor.update( RRM::ExtrusionRulesProcessor::State::SKETCHING );
 
 
 }
