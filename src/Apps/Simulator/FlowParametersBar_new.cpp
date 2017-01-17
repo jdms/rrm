@@ -139,6 +139,11 @@ void FlowParametersBar_new::getWellParameter( int& nw,  std::vector< unsigned in
 	getWellParameter_new(nw, type, value, sign);
 }
 
+int FlowParametersBar_new::getNumberOfRegions()
+{
+	return this->number_of_regions_;
+}
+
 void FlowParametersBar_new::clear()
 {
 	edit_inputparameters->clear();
@@ -221,7 +226,7 @@ void FlowParametersBar_new::getPropertyAreaParameters_new(int& np, std::vector< 
 	visc.resize(this->number_of_regions_);
 	positions.resize(3 * this->number_of_regions_);
 
-	for (std::size_t it = 0; it < this->number_of_regions_; it++)
+	for (int it = 0; it < this->number_of_regions_; it++)
 	{
 		perm[it] = permeability_values[it];
 		poros[it] = porosity_values[it];
@@ -240,7 +245,7 @@ void FlowParametersBar_new::loadRegions(const int np, const std::vector< double 
 	/// Update the Model
 	this->number_of_regions_ = np;
 
-	for ( std::size_t it = 0; it < this->number_of_regions_ ; it++)
+	for ( int it = 0; it < this->number_of_regions_ ; it++)
 	{
 		permeability_values[it]      = perm[it];
 		porosity_values[it]			 = poros[it];
