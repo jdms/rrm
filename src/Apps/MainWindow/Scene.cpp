@@ -512,14 +512,14 @@ void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &n
     for ( auto i = 0; i < number_of_points; ++i )
     {
         v[ 0 ] = static_cast<float>( points[ 3*i + 0 ] );
-        v[ 1 ] = static_cast<float>( points[ 3*i + 2 ] );
-        v[ 2 ] = static_cast<float>( points[ 3*i + 1 ] );
+        v[ 1 ] = static_cast<float>( points[ 3*i + 1 ] );
+        v[ 2 ] = static_cast<float>( points[ 3*i + 2 ] );
 
         sv = scene3DtoPlane( v );
 
         points[ 3*i + 0 ] = static_cast<double>( sv[ 0 ] );
-        points[ 3*i + 1 ] = static_cast<double>( sv[ 2 ] );
-        points[ 3*i + 2 ] = static_cast<double>( sv[ 1 ] );
+        points[ 3*i + 1 ] = static_cast<double>( sv[ 1 ] );
+        points[ 3*i + 2 ] = static_cast<double>( sv[ 2 ] );
     }
 
 
@@ -1227,7 +1227,29 @@ void Scene::exportToIrapGrid( const std::string& filename )
 }
 
 
+void Scene::finishCurve()
+{
 
+    if (temp_sketch->isEmpty()) return;
+
+
+    bool add_ok = addCurve();
+    if (add_ok == false)
+        return;
+
+    // should be fixed
+    std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
+    std::vector< size_t > lower_bound = arrangement.getLastCurveUpperBound();
+
+
+    controller->interpolateStratigraphy(lower_bound, upper_bound);
+
+    newSketch();
+    controller->addStratigraphy();
+
+
+
+}
 
 void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
@@ -1252,25 +1274,11 @@ void Scene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     else if ( event->buttons() & Qt::RightButton )
     {
 
-		if (current_mode == InteractionMode::OVERSKETCHING)
+        if (current_mode == InteractionMode::OVERSKETCHING )
 		{
 
-			if (temp_sketch->isEmpty()) return;
+            finishCurve();
 
-
-			bool add_ok = addCurve();
-			if (add_ok == false)
-				return;
-
-			// should be fixed
-			std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
-			std::vector< size_t > lower_bound = arrangement.getLastCurveUpperBound();
-
-
-			controller->interpolateStratigraphy(lower_bound, upper_bound);
-
-			newSketch();
-			controller->addStratigraphy();
 		}
 		else if (current_mode == InteractionMode::SELECTING_REGION)
 		{

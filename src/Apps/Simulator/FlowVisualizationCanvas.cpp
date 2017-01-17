@@ -171,12 +171,8 @@ void FlowVisualizationCanvas::initializeShader()
 /// Debug Purpose
 void FlowVisualizationCanvas::reloadShader()
 {
-<<<<<<< HEAD
-    mesh.reloadShader();
-=======
 	mesh.reloadShader();
-	axes.reloadShader();
->>>>>>> feature-integration-flowdiagnostic-newgui
+    axes.reloadShader();
 }
 
 void FlowVisualizationCanvas::loadBackGround()
@@ -780,13 +776,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_U:
         {
-<<<<<<< HEAD
-            mesh.reloadShader();
-//            reloadShaders();
-=======
-//			mesh.reloadShader();
 			this->reloadShader();
->>>>>>> feature-integration-flowdiagnostic-newgui
         } break;
 
         case Qt::Key_R:

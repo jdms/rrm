@@ -114,7 +114,6 @@ void SketchingWindow::createRulesActions()
     ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
     ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
-    ac_removeaboveintersection->setChecked( true );
 
 
     ac_removebelow = new QAction(tr( "RB" ), this );

@@ -150,7 +150,7 @@ void MainWindow::createSketchingActions()
     connect ( sketching_window, SIGNAL( redo() ), controller , SLOT( redo() ) );
     connect ( sketching_window, SIGNAL( clear() ), scene , SLOT( clearScene() ) );
 
-    connect ( sketching_window, SIGNAL( addStratigraphy() ), scene , SLOT( addCurve() ) );
+    connect ( sketching_window, SIGNAL( addStratigraphy() ), scene , SLOT( finishCurve() ) );
     connect ( sketching_window, SIGNAL( undoLastSketch() ), scene , SLOT( undoLastSketch() ) );
     connect ( sketching_window, SIGNAL( updateColor( const QColor& ) ), scene , SLOT( updateColor( const QColor& ) ) );
     connect ( sketching_window, SIGNAL( setCurrentMode( const Scene::InteractionMode& ) ), scene , SLOT( setCurrentMode( const Scene::InteractionMode& ) ) );

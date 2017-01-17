@@ -76,6 +76,9 @@ class Scene: public QGraphicsScene
         inline const InteractionMode currentMode(){ return current_mode; }
 
 
+
+        void finishCurve();
+
         void enableSketchingAboveRegion( bool );
         void enableSketchingBelowRegion( bool );
 
@@ -160,6 +163,7 @@ class Scene: public QGraphicsScene
 
         void setBackGround();
         void newSketch();
+
 
         void updateTransformationsMatrices();
 
