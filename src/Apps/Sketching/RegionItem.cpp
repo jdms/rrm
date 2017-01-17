@@ -93,7 +93,8 @@ namespace RRM
 
 		painter->drawPolygon(poly);
 
-		painter->drawEllipse(QPoint(0, -18), 3, 3);
+		/// FIMEX maybe be useful in the future
+		//painter->drawEllipse(QPoint(0, -18), 3, 3);
 
 		painter->setFont(QFont("Arial", 8, QFont::Bold));
 		// I have used the .adjusted() to make the text centralized on the diamond.

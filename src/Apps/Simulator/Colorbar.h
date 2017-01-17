@@ -7,11 +7,13 @@
 
 class ColorBar: public QWidget
 {
+	Q_OBJECT
+
     public:
 
         ColorBar();
         void setSize( const int& l, const int& w );
-        void updateColorMap( const std::vector < QVector3D >& c/*, const std::vector< double >& v*/, float m, float M );
+		void updateColorMap(const std::vector < QVector3D >& c/*, const std::vector< double >& v*/, float _min, float _max, int label_step = 10);
         void clear();
 
     protected:
@@ -21,12 +23,14 @@ class ColorBar: public QWidget
         std::vector< QVector3D > colors;
         std::vector< double > values;
 
+	private:
         int x;
         int y;
         int width;
         int length;
         float min;
         float max;
+		float label_step;
 };
 
 

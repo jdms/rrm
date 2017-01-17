@@ -46,6 +46,8 @@ void Scene::init()
     createSketchingBoundary();
     newSketch();
 
+	this->createRegions(this->number_of_flow_regions_);
+
     update();
 
 }
@@ -93,7 +95,7 @@ void Scene::initData()
     boundary3D = NULL;
 
 	this->is_region_visible = false;
-	this->number_of_flow_regions_ = 0;
+	
 	this->initRegions();
 
 }
@@ -439,6 +441,7 @@ void Scene::clearScene()
 
     arrangement.clear();
 
+	clearRegions();
 
     clear();
     initData();
@@ -1129,7 +1132,7 @@ void Scene::exportToCPS3( const std::string& filename )
         surface_filename = QString( filename.c_str() );
 
         if( number_surfaces > 1 )
-            surface_filename.replace( QString(".csp3"), QString("%1.csp3").arg( k ) );
+            surface_filename.replace( QString(".CPS3"), QString("%1.CPS3").arg( k ) );
 
         exporter.writeGridData( surface_filename.toStdString() );
         exporter.clearData();
@@ -1210,7 +1213,7 @@ void Scene::exportToIrapGrid( const std::string& filename )
         surface_filename = QString( filename.c_str() );
 
         if( number_surfaces > 1 )
-            surface_filename.replace( QString(".irapg"), QString("%1.irapg").arg( k ) );
+            surface_filename.replace( QString(".IRAPG"), QString("%1.IRAPG").arg( k ) );
 
         exporter.writeGridData( surface_filename.toStdString() );
         exporter.clearData();
@@ -1503,4 +1506,14 @@ void Scene::initRegions( )
 			}
 		}
 	}		
+}
+
+void Scene::clearRegions()
+{
+	for (auto region : flow_regions_)
+	{
+		delete region.second;
+	}
+
+	flow_regions_.clear();
 }

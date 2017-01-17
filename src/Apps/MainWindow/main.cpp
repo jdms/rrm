@@ -24,7 +24,6 @@ int main( int argc, char *argv[] )
 	
 
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
-    app.setAttribute( Qt::AA_DontCreateNativeWidgetSiblings );
 
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )
@@ -37,12 +36,16 @@ int main( int argc, char *argv[] )
 
 	/// Create a defaut OpenGL context to use toward the application
     QSurfaceFormat format;
-    format.setDepthBufferSize( 24 );
+    format.setDepthBufferSize( 16 );
+	format.setStencilBufferSize ( 8 );
+	format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+	format.setOptions(QSurfaceFormat::DeprecatedFunctions);
     //format.setVersion( 4, 1 );
     //format.setProfile( QSurfaceFormat::CompatibilityProfile );
+	format.setProfile(QSurfaceFormat::OpenGLContextProfile::CompatibilityProfile);
     format.setRenderableType( QSurfaceFormat::OpenGL );
-    format.setSamples( 16 );
-    QSurfaceFormat::setDefaultFormat( format );
+    format.setSamples( 8 );
+	QSurfaceFormat::setDefaultFormat( format );
 
 	/// Lauch the application
     MainWindow w;

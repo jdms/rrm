@@ -146,7 +146,7 @@ class FlowWindow : public  QMainWindow
         QMenu* mn_colormaps;
 
         QAction* ac_constant;
-        QAction* ac_jet;
+		QAction* ac_cool_to_warm;
         QAction* ac_hot;
         QAction* ac_cool;
         QAction* ac_parula;
@@ -155,6 +155,7 @@ class FlowWindow : public  QMainWindow
         QAction* ac_copper;
         QAction* ac_polar;
         QAction* ac_winter;
+		QAction* ac_jet;
 
         QAction* ac_showregions;
 
