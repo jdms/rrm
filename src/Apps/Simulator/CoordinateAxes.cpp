@@ -23,6 +23,7 @@ void CoordinateAxes::init()
 void CoordinateAxes::initShader( std::string directory )
 {
 	shader_axes = new Tucano::Shader("shader_axes", (directory + "shaders/orientationAxes.vert"), (directory + "shaders/orientationAxes.frag"), (directory + "shaders/orientationAxes.geom"), "", "");
+	//shader_axes = new Tucano::Shader("shader_axes", ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.vert"), ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.frag"), ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.geom"), "", "");
     shader_axes->initialize();
 
     current_directory = directory;
@@ -114,6 +115,13 @@ void CoordinateAxes::load()
 					attributes[9 * idx.vertex_index + 1] = attrib.vertices[3 * idx.vertex_index + 1];
 					attributes[9 * idx.vertex_index + 2] = attrib.vertices[3 * idx.vertex_index + 2];
 					///	Use idx.vertex_index			 | Use idx.normal_index
+
+	/*				if (shape.name == "Cube.001")
+					{
+						std::cout << "normal.x " << attrib.normals[3 * idx.normal_index + 0] << std::endl;
+						std::cout << "normal.y " << attrib.normals[3 * idx.normal_index + 1] << std::endl;
+						std::cout << "normal.z " << attrib.normals[3 * idx.normal_index + 2] << std::endl;
+					}*/
 					attributes[9 * idx.vertex_index + 3] = attrib.normals[3 * idx.normal_index + 0];
 					attributes[9 * idx.vertex_index + 4] = attrib.normals[3 * idx.normal_index + 1];
 					attributes[9 * idx.vertex_index + 5] = attrib.normals[3 * idx.normal_index + 2];
@@ -165,6 +173,7 @@ void CoordinateAxes::load()
 
 	glBindVertexArray(0);
 }
+
 void CoordinateAxes::draw( const Eigen::Quaternion<float>& _orientation, const Eigen::Vector4f& _viewport)
 {
 
