@@ -238,8 +238,11 @@ void MainWindow::createFlowDiagnosticsActions()
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, scene, &Scene::getLegacyMeshes );
 
-    connect(scene, &Scene::sendRegionPoints, flow_window, &FlowWindow::regionPoints);
-    connect(flow_window, &FlowWindow::getNumberOfRegions, scene, &Scene::createRegions);
+	/// Send region coordinates
+    connect(scene, &Scene::sendRegionPoints,  flow_window, &FlowWindow::regionPoints);
+	/// Get number of region to ensure consistence
+	connect(scene, &Scene::requestNumberOfRegion, [=](){ scene->createRegions(flow_window->getNumberOfRegions()); });
+    connect(flow_window, &FlowWindow::sendNumberOfRegions, scene, &Scene::createRegions);
 
 //	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
 //	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);

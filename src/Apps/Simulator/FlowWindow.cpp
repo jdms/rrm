@@ -222,21 +222,24 @@ void FlowWindow::createActions()
 
 	/// FlowWindo ToolBar		
 		connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
+		/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
 		connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
 		{
-			loadSurfacesfromFile();
+			/// Clear Scene
+			qclear->trigger();
+			this->loadSurfacesfromFile();
 			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);
-			qreloadSurface->setEnabled(false);
+			qbuildUnstructured->setEnabled(true);	
 		});
+		/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
 		connect(qreloadSurface, &QAction::triggered, this, [=]() 
 		{ 
+			/// Clear Scene
+			qclear->trigger();
 			this->loadSurfacesfromSketch();
 			/// Now we can build the volumetric mesh
 			qbuildCornerPoint->setEnabled(true);
 			qbuildUnstructured->setEnabled(true);
-			qreloadSurface->setEnabled(false);
-			qoopenfilesDialog->setEnabled(false);
 		});
 		connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
 		{
@@ -349,7 +352,7 @@ void FlowWindow::createActions()
 
 
 	//Region Signal
-	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit getNumberOfRegions(_number_of_regions); });
+	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
 
 }
 
@@ -758,9 +761,15 @@ void FlowWindow::reset()
 
 }
 
-
+/// Flow Parameters Widget
 void FlowWindow::regionPoints(const std::map<int,Eigen::Vector3f>& region_points)
 {
 	// Z is fixed
 	this->parametersBar.setRegionPoints(region_points);
 }
+
+int FlowWindow::getNumberOfRegions()
+{
+	return parametersBar.getNumberOfRegions();
+}
+

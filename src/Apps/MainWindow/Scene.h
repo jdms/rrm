@@ -141,6 +141,7 @@ class Scene: public QGraphicsScene
         void updateBoundGeometry( const int w, const int h, const int d );
 		/// Connection with Flow Diagnostic
         void sendRegionPoints( const std::map<int, Eigen::Vector3f> & region_point);
+		void requestNumberOfRegion();
 
 
 
