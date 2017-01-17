@@ -783,11 +783,11 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_bbox->setUniform( "pmatrix", P );
         shader_bbox->setUniform( "scale", 1.0 );
 
-        glBindVertexArray( va_bbox );
+        //glBindVertexArray( va_bbox );
 
-            glDrawArrays( GL_LINES, 0, number_lines_bbox );
+        //    glDrawArrays( GL_LINES, 0, number_lines_bbox );
 
-        glBindVertexArray( 0 );
+        //glBindVertexArray( 0 );
 
     }
 

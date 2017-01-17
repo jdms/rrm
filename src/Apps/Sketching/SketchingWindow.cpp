@@ -103,6 +103,7 @@ void SketchingWindow::createRulesActions()
     ac_sketch = new QAction( tr( "TS" ), this );
     ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
     ac_sketch->setCheckable( true );
+    ac_sketch->setChecked( true );
 
 
     ac_removeabove = new QAction( tr( "RA" ), this );
@@ -290,11 +291,11 @@ void SketchingWindow::resetActions()
 
     ac_removeabove->setChecked( false );
     ac_removebelow->setChecked( false );
-    ac_removeaboveintersection->setChecked( true );
+    ac_removeaboveintersection->setChecked( false );
     ac_removebelowintersection->setChecked( false );
     ac_sketchabove->setChecked( false );
     ac_sketchbelow->setChecked( false );
-    ac_sketch->setChecked( false );
+    ac_sketch->setChecked( true );
 
     tbt_colorsketch->setChecked( false );
 

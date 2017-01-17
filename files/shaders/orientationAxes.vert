@@ -11,8 +11,8 @@ uniform mat4 ProjectionMatrix;
 
 out VertexData
 {
-    vec4 vertice;
-    vec3 normal;
+    vec3 vertice;
+     vec3 normal;
     vec4 color;
 }VertexOut;
 
@@ -22,11 +22,12 @@ void main ( void )
     normalMatrix = inverse ( normalMatrix );
     normalMatrix = transpose ( normalMatrix );
 
-    VertexOut.vertice = vec4 ( position , 1.0f );
-    VertexOut.normal = normalMatrix * normal;
+    vec4 v = ViewMatrix * vec4 ( position , 1.0f );
+    VertexOut.vertice =  vec3(v)/ v.w;
+    VertexOut.normal =  normalMatrix * normal;
     VertexOut.color = vec4 ( color , 1.0 );
 
-    gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4 ( position , 1.0f );
+    gl_Position = ProjectionMatrix * ViewMatrix *  vec4 ( position , 1.0f );
 
 }
 
