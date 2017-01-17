@@ -46,7 +46,10 @@ void Scene::init()
     createSketchingBoundary();
     newSketch();
 
-	this->createRegions(this->number_of_flow_regions_);
+	/// Calls createRegions
+	emit requestNumberOfRegion();
+	this->initRegions();
+	
 
     update();
 
@@ -94,9 +97,8 @@ void Scene::initData()
     sketching_boundary = NULL;
     boundary3D = NULL;
 
+	this->number_of_flow_regions_ = 0;
 	this->is_region_visible = false;
-	
-	this->initRegions();
 
 }
 
