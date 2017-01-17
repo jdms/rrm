@@ -17,19 +17,21 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/Scene.h
                         MainWindow/Controller.hpp
                         MainWindow/ExtrusionRulesProcessor.hpp
-                        MainWindow/HelpDialog.h
+                        MainWindow/Exporter/CPS3Exporter.hpp
+                        MainWindow/Exporter/IrapGridExporter.hpp
+                        MainWindow/Help/HelpDialog.h
                         MainWindow/About/AboutWidget.hpp )
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
                             MainWindow/Scene.h
                             MainWindow/Controller.hpp
-                            MainWindow/HelpDialog.h
+                            MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
 
 
 set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
-                            MainWindow/HelpDialog.ui )
+                            MainWindow/Help/HelpDialog.ui )
 
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
@@ -37,7 +39,9 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/Scene.cpp
                         MainWindow/Controller.cpp
                         MainWindow/ExtrusionRulesProcessor.cpp
-                        MainWindow/HelpDialog.cpp
+                        MainWindow/Exporter/CPS3Exporter.cpp
+                        MainWindow/Exporter/IrapGridExporter.cpp
+                        MainWindow/Help/HelpDialog.cpp
                         MainWindow/About/AboutWidget.cpp )
 
 
@@ -256,7 +260,7 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 ###############################################
 
 
-add_executable(${PROJECT_NAME} ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
+add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
                                ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}

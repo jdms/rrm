@@ -76,6 +76,9 @@ void MainWindow::createMainWindowActions ( )
     connect( ac_contents, SIGNAL( triggered() ) , &help, SLOT( show() ) );
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );
 
+    connect( this, SIGNAL( saveAsCPS3( const std::string& ) ) , scene, SLOT( exportToCPS3( const std::string& ) ) );
+    connect( this, SIGNAL( saveAsIrapGrid( const std::string& ) ) , scene, SLOT( exportToIrapGrid( const std::string& ) ) );
+
 }
 
 
@@ -171,9 +174,8 @@ void MainWindow::createSketchingActions()
     connect( scene, &Scene::updateBoundGeometry, sketching_window, &SketchingWindow::updateBoundaryDimensions );
 
 
-	connect(scene, &Scene::sendRegionPoints, flow_window, &FlowWindow::regionPoints);
+    connect( sketching_window, SIGNAL( exportSurfaces() ), this, SLOT(  exportTo() ) );
 
-	connect(flow_window, &FlowWindow::getNumberOfRegions, scene, &Scene::createRegions);
 
 }
 
@@ -236,6 +238,12 @@ void MainWindow::createFlowDiagnosticsActions()
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, scene, &Scene::getLegacyMeshes );
 
+	/// Send region coordinates
+    connect(scene, &Scene::sendRegionPoints,  flow_window, &FlowWindow::regionPoints);
+	/// Get number of region to ensure consistence
+	connect(scene, &Scene::requestNumberOfRegion, [=](){ scene->createRegions(flow_window->getNumberOfRegions()); });
+    connect(flow_window, &FlowWindow::sendNumberOfRegions, scene, &Scene::createRegions);
+
 //	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
 //	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
 }
@@ -262,4 +270,51 @@ void MainWindow::initScene()
 
 void MainWindow::clear()
 {
+}
+
+
+
+void MainWindow::exportTo()
+{
+
+
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "bin/exported/",
+                                                         "CPS3 files (*.CPS3);;Irap Classic Grid (*.IRAPG)", &selected_format );
+    if( filename.isEmpty() == true ) return;
+
+    if( selected_format == QString( "CPS3 files (*.CPS3)" ) )
+    {
+        emit saveAsCPS3( filename.toStdString() );
+    }
+
+    else if( selected_format == QString( "Irap Classic Grid (*.IRAPG)" ) )
+    {
+        emit saveAsIrapGrid( filename.toStdString() );
+    }
+
+
+}
+
+
+void MainWindow::keyPressEvent( QKeyEvent *event )
+{
+
+    switch ( event->key() )
+    {
+        case Qt::Key_E:
+        {
+
+            exportTo();
+
+        }
+        break;
+
+        default:
+            break;
+
+
+    };
+
+
 }

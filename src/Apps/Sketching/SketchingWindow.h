@@ -90,6 +90,7 @@ class SketchingWindow : public QMainWindow
         void updateColor( const QColor& c );
 
         void setRandomColor ( bool );
+        void exportSurfaces();
 
 
     private:
@@ -142,6 +143,8 @@ class SketchingWindow : public QMainWindow
 
 		QToolBar *toobar_flow_diagnostic;
 		QAction *ac_flow_diagnostic_regionPicking;
+
+        QAction *ac_export;
 };
 
 #endif // SKETCHING2DMODULE_H

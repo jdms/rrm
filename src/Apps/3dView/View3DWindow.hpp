@@ -44,6 +44,7 @@ class View3DWindow: public QMainWindow
 
         void initializeScene();
         void changeResolution( const int, const int );
+        void exportToCPS3();
 
 
     public:
