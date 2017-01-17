@@ -1076,7 +1076,7 @@ void Scene::exportToCPS3( const std::string& filename )
     std::vector<size_t> nv_list; // surfaces number: or height
     size_t num_extrusion_steps = 5;
 
-    controller->getLegacyMeshes( points_list, nu_list, nv_list, num_extrusion_steps );
+    getLegacyMeshes( points_list, nu_list, nv_list, num_extrusion_steps );
 
 
     CPS3Exporter exporter;
@@ -1157,7 +1157,7 @@ void Scene::exportToIrapGrid( const std::string& filename )
     std::vector<size_t> nv_list; // surfaces number: or height
     size_t num_extrusion_steps = 5;
 
-    controller->getLegacyMeshes( points_list, nu_list, nv_list, num_extrusion_steps );
+    getLegacyMeshes( points_list, nu_list, nv_list, num_extrusion_steps );
 
 
     IrapGridExporter exporter;
