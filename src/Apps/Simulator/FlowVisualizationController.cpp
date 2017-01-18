@@ -223,12 +223,12 @@ void FlowVisualizationController::computeFlowProperties()
 
     else if( current_method == MESHING_METHOD::CORNERPOINT ) // Corner Point Mesh
     {
-        emit propertybyFaceComputed( "Corrected Pressure", "SCALAR" ) ;
-        emit propertybyFaceComputed( "Backward TOF", "SCALAR" ) ;
-        emit propertybyFaceComputed( "Total TOF", "SCALAR" ) ;
+		emit propertybyVertexComputed("Corrected Pressure", "SCALAR");
+		emit propertybyVertexComputed("Backward TOF", "SCALAR");
+		emit propertybyVertexComputed("Total TOF", "SCALAR");
 
-        emit propertybyFaceComputed( "Max Backward Tracer", "SCALAR" ) ;
-        emit propertybyFaceComputed( "Max Forward Tracer", "SCALAR" ) ;
+		emit propertybyVertexComputed("Max Backward Tracer", "SCALAR");
+		emit propertybyVertexComputed("Max Forward Tracer", "SCALAR");
     }
 
 
@@ -317,8 +317,9 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
         int idmax = std::distance( values.begin(), itmax );
 
         min = values[ idmin ];
+		std::cout << "Min : " << min << std::endl;
         max = values[ idmax ];
-
+		std::cout << "Max : " << max << std::endl;
     }
 
     return values;
