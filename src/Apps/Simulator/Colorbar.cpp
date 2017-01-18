@@ -16,7 +16,7 @@ ColorBar::ColorBar() : QWidget()
 	
 	this->label_step = 10;
 
-	this->setMaximumWidth(width + 80);
+	this->setMaximumWidth(width + 100);
 	this->setMaximumHeight(length + 60);
 
 }
