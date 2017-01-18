@@ -53,7 +53,7 @@ void FlowDiagnosticsInterface::getRegion( unsigned int id, double& x, double& y,
     x = region.propertyarea(id).x();
     y = region.propertyarea(id).y();
     z = region.propertyarea(id).z();
-    perm = region.propertyarea(id).perm();
+	perm = region.propertyarea(id).perm()/0.987e-15;
     poros = region.propertyarea(id).porosity();
     visc = region.propertyarea(id).viscosity();
     //double porevolume = region.propertyarea(id).porevolume();
