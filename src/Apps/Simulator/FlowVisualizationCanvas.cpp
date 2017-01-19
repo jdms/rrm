@@ -969,3 +969,8 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 
 //    colorbar.resetBuffers();
 }
+
+float FlowVisualizationCanvas::getDepth() const
+{
+	return mesh.getDepth();
+}

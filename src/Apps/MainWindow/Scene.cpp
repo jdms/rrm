@@ -290,6 +290,15 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
     setSceneRect( sketching_boundary->boundingRect() );
 
 
+	/// @FIXME Everytime the setSceneRect is invoked, the regions neeed to be restarted. 
+	/// clear region delete the scene regionItems
+	this->clearRegions();
+	/// request the number of regions from flow interface
+	emit requestNumberOfRegion();
+	/// create/set the regions based on the new boundary and current number of regions
+	this->initRegions();
+
+
     controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
 
     arrangement.setBoundary( sketching_boundary->getOriginX(), sketching_boundary->getOriginY(),

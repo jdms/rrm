@@ -208,10 +208,31 @@ void FlowParametersBar_new::setRegionPoints(const std::map<int, Eigen::Vector3f>
 		// Z
 		positions_values[index.first][2] = index.second.y();
 		// Y
-		positions_values[index.first][1] = index.second.z();
+		positions_values[index.first][1] = this->depth_;
 
 	}
 	this->updateRegionWidget(comboBox_Region->currentIndex());
+}
+
+
+void FlowParametersBar_new::setRegionDepth(const float _depth)
+{
+	this->depth_ = _depth;
+
+	/// Coordinate System for FlowDiagnostic is  <x, z, y>
+	/// @FIXEME Be Careful about the coordinate sytems
+	for (auto index : positions_values)
+	{
+		// 
+		positions_values[index.first][0] = positions_values[index.first][0];
+		// Z
+		positions_values[index.first][2] = positions_values[index.first][2];
+		// Y
+		positions_values[index.first][1] = this->depth_;
+
+	}
+	this->updateRegionWidget(comboBox_Region->currentIndex());
+
 }
 
 
