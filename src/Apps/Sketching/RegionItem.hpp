@@ -18,9 +18,10 @@
 #ifndef _SKETCHING_REGIONITEM_HPP_
 #define _SKETCHING_REGIONITEM_HPP_
 
+#include <iostream>
+
 #include <QtWidgets/QGraphicsItem>
 #include <QtCore/QList>
-
 
 namespace RRM
 {

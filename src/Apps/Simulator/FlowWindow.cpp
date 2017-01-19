@@ -517,6 +517,7 @@ void FlowWindow::loadSurfacesfromSketch()
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
 
+	this->parametersBar.setRegionDepth(canvas->getDepth());
 
 	//std::cout << "-- FlowWindow --" << std::endl;
 	//std::cout << m2D_to_3D.matrix() << std::endl;

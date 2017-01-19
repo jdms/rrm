@@ -33,6 +33,7 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		
 	public slots:
 		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
+		void setRegionDepth(const float _depth);
     private slots:
 
 		/// Regions
@@ -86,6 +87,9 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		std::vector<double> viscosity_;    // size = n
 		std::vector<double> positions_;    // size = 3*n
 		int					number_of_regions_;
+
+		/// Depth of region in 3D. This value is calculated in the Mesh.cpp int the function buildBoundingBox()
+		float depth_;
 };
 
 #endif // FLOWPARAMETERSBAR_H
