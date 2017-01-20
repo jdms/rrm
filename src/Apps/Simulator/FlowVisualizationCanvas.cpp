@@ -970,6 +970,7 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 //    colorbar.resetBuffers();
 }
 
+/// Get the current boundingobx depth in the extrusion framework
 float FlowVisualizationCanvas::getDepth() const
 {
 	return mesh.getDepth();

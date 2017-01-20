@@ -227,7 +227,6 @@ void Mesh::buildTrianglesFacesList( vector< unsigned int >& triangles )
 
 }
 
-
 float Mesh::getDepth() const
 {
 	return this->depth_;

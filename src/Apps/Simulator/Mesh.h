@@ -106,7 +106,7 @@ class Mesh
 
         void resetBuffers();
         void deleteShaders();
-
+		/// get the correct depth from the model in QGraphicsScene coordinates
 		float getDepth() const;
 
 

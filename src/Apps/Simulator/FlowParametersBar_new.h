@@ -33,6 +33,7 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		
 	public slots:
 		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
+
 		void setRegionDepth(const float _depth);
     private slots:
 
