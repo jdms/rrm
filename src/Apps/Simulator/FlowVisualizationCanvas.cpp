@@ -172,7 +172,7 @@ void FlowVisualizationCanvas::initializeShader()
 void FlowVisualizationCanvas::reloadShader()
 {
 	mesh.reloadShader();
-    axes.reloadShader();
+	axes.reloadShader();
 }
 
 void FlowVisualizationCanvas::loadBackGround()
@@ -202,14 +202,20 @@ void FlowVisualizationCanvas::paintGL()
 
     loadBackGround();
 
+	Eigen::Quaternionf q(Eigen::AngleAxisf(-0.5*M_PI, Eigen::Vector3f::UnitX()));
+	Eigen::Affine3f M;
+	M.setIdentity();
+	M.rotate(q);
+
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
 
+	V = V * M;
 
     if( apply_crosssection == true )
     {
         glEnable( GL_BLEND );
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         crosssection.draw( V, P, scale );
 
