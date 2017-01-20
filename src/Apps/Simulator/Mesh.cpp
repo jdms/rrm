@@ -249,7 +249,7 @@ void Mesh::buildBoundingBox()
 
 
     for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
+		normalized_vertices[it] = (normalized_vertices[it] - bbox_mesh.center()) / (bbox_mesh.diagonal()*0.25f);
 
 
     max[ 0 ] = normalized_vertices[ 0 ]( 0 );
@@ -643,7 +643,7 @@ void Mesh::load()
 
 
     for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
+        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/(bbox_mesh.diagonal()*0.25f);
 
     bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
 
@@ -783,11 +783,11 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_bbox->setUniform( "pmatrix", P );
         shader_bbox->setUniform( "scale", 1.0 );
 
-        //glBindVertexArray( va_bbox );
+        glBindVertexArray( va_bbox );
 
-        //    glDrawArrays( GL_LINES, 0, number_lines_bbox );
+            glDrawArrays( GL_LINES, 0, number_lines_bbox );
 
-        //glBindVertexArray( 0 );
+        glBindVertexArray( 0 );
 
     }
 
