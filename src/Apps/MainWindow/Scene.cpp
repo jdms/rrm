@@ -291,7 +291,7 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 
 	/// @FIXME Everytime the setSceneRect is invoked, the regions neeed to be restarted. 
-	/// clear region delete the scene regionItems
+	/// Clear region. It deletes the scene regionItems
 	this->clearRegions();
 	/// request the number of regions from flow interface
 	emit requestNumberOfRegion();

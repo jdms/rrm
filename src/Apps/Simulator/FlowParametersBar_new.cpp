@@ -211,6 +211,7 @@ void FlowParametersBar_new::setRegionPoints(const std::map<int, Eigen::Vector3f>
 		positions_values[index.first][1] = this->depth_;
 
 	}
+
 	this->updateRegionWidget(comboBox_Region->currentIndex());
 }
 
