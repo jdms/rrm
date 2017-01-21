@@ -24,6 +24,8 @@ FlowParametersBar_new::FlowParametersBar_new(QWidget *parent) :
 
 	this->spinBox_Well_Type->setReadOnly(true);
 	this->spinBox_Well_Sign->setReadOnly(true);
+
+	this->number_of_regions_ = 0;
 	
 }
 
