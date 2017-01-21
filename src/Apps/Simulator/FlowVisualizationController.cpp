@@ -104,13 +104,14 @@ void FlowVisualizationController::generateCornerPoint()
 
 void FlowVisualizationController::generateUnstructured()
 {
+    std::cout << " Going to Build Unstructured "  << is_surface_loaded << user_input_ok << std::endl;
 
     if( is_surface_loaded == false || user_input_ok == false ) return;
 
 
     code_interface.buildVolumetricMesh();
     is_volumetric_built = true;
-
+std::cout << " Finish to Build Unstructured "  << is_surface_loaded << user_input_ok << std::endl;
 
 }
 
@@ -210,37 +211,45 @@ void FlowVisualizationController::computeFlowProperties()
     if( current_method == MESHING_METHOD::UNSTRUCTURED ) // Unstructure Volumetric Mesh
     {
         emit propertybyVertexComputed( "Corrected Pressure", "SCALAR" ) ;
-        emit propertybyVertexComputed( "Backward TOF", "SCALAR" ) ;
         emit propertybyVertexComputed( "Forward TOF", "SCALAR" ) ;
+        emit propertybyVertexComputed( "Backward TOF", "SCALAR" ) ;
         emit propertybyVertexComputed( "Total TOF", "SCALAR" ) ;
-        emit propertybyVertexComputed( "Max Backward Tracer", "SCALAR" ) ;
-        emit propertybyVertexComputed( "Max Forward Tracer", "SCALAR" ) ;
-
-        emit propertybyFaceComputed( "Velocity", "VECTOR" );
+        emit propertybyVertexComputed( "Backward Tracer", "SCALAR" ) ;
+        emit propertybyVertexComputed( "Forward Tracer", "SCALAR" ) ;
+        emit propertybyVertexComputed( "Maximum Tracer", "SCALAR" ) ;
+        emit propertybyVertexComputed( "Velocity", "VECTOR" );
         emit propertybyVertexComputed( "Permeability", "SCALAR" );
+
+        emit propertybyFaceComputed( "Permeability", "SCALAR" );
+//        emit propertybyFaceComputed( "Porosity", "SCALAR" );
+        emit propertybyFaceComputed( "Velocity", "VECTOR" );
+
 
     }
 
     else if( current_method == MESHING_METHOD::CORNERPOINT ) // Corner Point Mesh
     {
-		emit propertybyFaceComputed("Corrected Pressure", "SCALAR");
-		emit propertybyFaceComputed("Backward TOF", "SCALAR");
-		emit propertybyFaceComputed("Total TOF", "SCALAR");
 
-		emit propertybyFaceComputed("Max Backward Tracer", "SCALAR");
-		emit propertybyFaceComputed("Max Forward Tracer", "SCALAR");
+        emit propertybyFaceComputed( "Corrected Pressure", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Forward TOF", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Backward TOF", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Total TOF", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Backward Tracer", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Forward Tracer", "SCALAR" ) ;
+        emit propertybyFaceComputed( "Maximum Tracer", "SCALAR" ) ;
+
+
+        emit propertybyFaceComputed( "Permeability", "SCALAR" );
+//        emit propertybyFaceComputed( "Porosity", "SCALAR" );
+//        emit propertybyFaceComputed( "Velocity", "VECTOR" );
+
     }
 
 
 
     emit setColorMap();
 
-
-
     are_properties_computed = true;
-
-
-
 
 }
 
@@ -276,53 +285,88 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     std::vector< double > values;
 
 
-    if ( name_of_property.compare( "Corrected Pressure" ) == 0 )
-    {
-        code_interface.getPressure( values );
-    }
-    else if( name_of_property.compare( "Backward TOF" ) == 0 )
-    {
-        code_interface.getBackwardTOF( values );
-    }
-    else if( name_of_property.compare( "Forward TOF" ) == 0 )
-    {
-        code_interface.getForwardTOF( values );
-    }
-    else if( name_of_property.compare( "Total TOF" ) == 0 )
-    {
-        code_interface.getTotalTOF( values );
-    }
-    else if( name_of_property.compare( "Max Backward Tracer" ) == 0 )
-    {
-        code_interface.getMaxBackwardTracer( values );
-    }
-    else if( name_of_property.compare( "Max Forward Tracer" ) == 0 )
-    {
-        code_interface.getMaxForwardTracer( values );
-    }
-    else if( name_of_property.compare( "Permeability" ) == 0 )
-   {
-       code_interface.getPermeability( values );
-   }
-
-
-
-    if ( values.empty() == false )
+    if( current_method == MESHING_METHOD::UNSTRUCTURED ) // Unstructure Volumetric Mesh
     {
 
-        std::vector< double >::iterator itmin = std::min_element( values.begin(), values.end() );
-        std::vector< double >::iterator itmax = std::max_element( values.begin(), values.end() );
+        if ( name_of_property.compare( "Corrected Pressure" ) == 0 )
+        {
+            code_interface.getPressure( values );
+        }
+        else if( name_of_property.compare( "Backward TOF" ) == 0 )
+        {
+            code_interface.getBackwardTOF( values );
+        }
+        else if( name_of_property.compare( "Forward TOF" ) == 0 )
+        {
+            code_interface.getForwardTOF( values );
+        }
+        else if( name_of_property.compare( "Total TOF" ) == 0 )
+        {
+            code_interface.getTotalTOF( values );
+        }
+        else if( name_of_property.compare( "Backward Tracer" ) == 0 )
+        {
+            code_interface.getMaxBackwardTracer( values );
+        }
+        else if( name_of_property.compare( "Forward Tracer" ) == 0 )
+        {
+            code_interface.getMaxForwardTracer( values );
+        }
+        else if( name_of_property.compare( "Maximum Tracer" ) == 0 )
+        {
+            code_interface.getMaxForwardTracer( values );
+        }
+        else if( name_of_property.compare( "Permeability" ) == 0 )
+        {
+            code_interface.getPermeabilitybyVertices( values );
+        }
 
-        int idmin = std::distance( values.begin(), itmin );
-        int idmax = std::distance( values.begin(), itmax );
+        else if( name_of_property.compare( "Velocity" ) == 0 )
+        {
+            type = "VECTOR";
+            code_interface.getVelocitybyVertices( values );
+        }
 
-        min = values[ idmin ];
-		std::cout << "Min : " << min << std::endl;
-        max = values[ idmax ];
-		std::cout << "Max : " << max << std::endl;
     }
 
-    return values;
+
+    else if( current_method == MESHING_METHOD::CORNERPOINT ) // Corner Point Mesh  // by cell
+    {
+        // not developed yet
+    }
+
+
+    std::vector< double > scalar_values;
+    if ( values.empty() == true ) return scalar_values;
+
+
+    if( type.compare( "VECTOR" ) == 0 )
+    {
+        scalar_values = vectorToScalarProperties( values, method, min, max );
+    }
+    else
+    {
+
+
+//    if ( values.empty() == false )
+//    {
+        scalar_values = values;
+
+        std::vector< double >::iterator itmin = std::min_element( scalar_values.begin(), scalar_values.end() );
+        std::vector< double >::iterator itmax = std::max_element( scalar_values.begin(), scalar_values.end() );
+
+        int idmin = std::distance( scalar_values.begin(), itmin );
+        int idmax = std::distance( scalar_values.begin(), itmax );
+
+        min = scalar_values[ idmin ];
+        std::cout << "Min : " << min << std::endl;
+        max = scalar_values[ idmax ];
+        std::cout << "Max : " << max << std::endl;
+
+
+    }
+
+    return scalar_values;
 
 }
 
@@ -334,9 +378,19 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     std::vector< double > values;
 	std::vector< double > replicate_values;
 
+
     if( current_method == MESHING_METHOD::UNSTRUCTURED ) // Unstructure Volumetric Mesh
     {
-        if ( name_of_property.compare( "Velocity" ) == 0 )
+
+        if ( name_of_property.compare( "Permeability" ) == 0 )
+        {
+            code_interface.getPermeabilitybyCells( values );
+        }
+        else if ( name_of_property.compare( "Porosity" ) == 0 ) // <= missing
+        {
+
+        }
+        else if ( name_of_property.compare( "Velocity" ) == 0 )
         {
             type = "VECTOR";
             code_interface.getVelocitybyCells( values );
@@ -346,50 +400,65 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
     else if( current_method == MESHING_METHOD::CORNERPOINT ) // Corner Point Mesh  // by cell
     {
-		
+
         if ( name_of_property.compare( "Corrected Pressure" ) == 0 )
         {
-			code_interface.getCPGPressure(replicate_values);
+            code_interface.getCPGPressure(replicate_values);
         }
         else if( name_of_property.compare( "Backward TOF" ) == 0 )
         {
-			code_interface.getCPGBackwardTOF(replicate_values);
+            code_interface.getCPGBackwardTOF(replicate_values);
+        }
+        else if( name_of_property.compare( "Forward TOF" ) == 0 )
+        {
+            code_interface.getCPGTOF(replicate_values);
         }
         else if( name_of_property.compare( "Total TOF" ) == 0 )
         {
-			code_interface.getCPGTotalTOF(replicate_values);
-        }
-        else if( name_of_property.compare( "TOF" ) == 0 )
-        {
-			code_interface.getCPGTOF(replicate_values);
+            code_interface.getCPGTotalTOF(replicate_values);
         }
         else if( name_of_property.compare( "Backward Tracer" ) == 0 )
         {
-			code_interface.getCPGMaxBackwardTracer(replicate_values);
+            code_interface.getCPGMaxBackwardTracer(replicate_values);
         }
-        else if( name_of_property.compare( "Tracer" ) == 0 )
+        else if( name_of_property.compare( "Forward Tracer" ) == 0 )
         {
-			code_interface.getCPGMaxForwardTracer(replicate_values);
+            code_interface.getCPGMaxForwardTracer(replicate_values);
         }
 
-		values.resize(replicate_values.size() * 6);
-		for (auto i = 0; i < replicate_values.size(); i++)
-		{
-			values[i * 6 + 0] = replicate_values[i];
-			values[i * 6 + 1] = replicate_values[i];
-			values[i * 6 + 2] = replicate_values[i];
-			values[i * 6 + 3] = replicate_values[i];
-			values[i * 6 + 4] = replicate_values[i];
-			values[i * 6 + 5] = replicate_values[i];
-		}
+        else if( name_of_property.compare( "Permeability" ) == 0 )
+        {
+            code_interface.getCPGPermeability(replicate_values);
+        }
+
+//        else if( name_of_property.compare( "Porosity" ) == 0 )
+//        {
+//            code_interface.getCPGMaxForwardTracer(replicate_values);
+//        }
+//        else if ( name_of_property.compare( "Velocity" ) == 0 )
+//        {
+//            type = "VECTOR";
+//            code_interface.getVelocitybyCells( values );
+//        }
+
+
+        values.resize(replicate_values.size() * 6);
+        for (auto i = 0; i < replicate_values.size(); i++)
+        {
+            values[i * 6 + 0] = replicate_values[i];
+            values[i * 6 + 1] = replicate_values[i];
+            values[i * 6 + 2] = replicate_values[i];
+            values[i * 6 + 3] = replicate_values[i];
+            values[i * 6 + 4] = replicate_values[i];
+            values[i * 6 + 5] = replicate_values[i];
+        }
 
     }
 
 
     std::vector< double > scalar_values;
-
-
     if ( values.empty() == true ) return scalar_values;
+
 
     if( type.compare( "VECTOR" ) == 0 )
     {
@@ -575,7 +644,7 @@ void FlowVisualizationController::exportCornerPointtoVTK()
     if( filename.isEmpty() == true ) return;
 
 
-     code_interface.exportCornerPointtoGRDECL( filename.toStdString() );
+     code_interface.exportCornerPointtoVTK( filename.toStdString() );
 }
 
 
@@ -584,7 +653,7 @@ void FlowVisualizationController::exportCornerPointtoGRDECL()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
+                                                     ".GRDECL files (*.grdecl)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
      code_interface.exportCornerPointtoGRDECL( filename.toStdString() );

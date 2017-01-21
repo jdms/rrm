@@ -220,6 +220,7 @@ void FlowDiagnosticsInterface::getVelocitybyCells( std::vector< double >& values
 	values = region.getvelocity_elements();
 }
 
+
 void FlowDiagnosticsInterface::getBackwardTOF( std::vector< double >& values ) {
 	values = region.getbackwardtof();
 }
@@ -245,10 +246,17 @@ void FlowDiagnosticsInterface::getMaxForwardTracer( std::vector< double >& value
 }
 
 
-void FlowDiagnosticsInterface::getPermeability( std::vector< double >& values ) {
-	values = region.getpermeability_nodes();
-	//values=region.getpermeability_elements();
+void FlowDiagnosticsInterface::getPermeabilitybyCells( std::vector< double >& values ) {
+//	values = region.getpermeability_nodes();
+    values=region.getpermeability_elements();
 }
+
+
+void FlowDiagnosticsInterface::getPermeabilitybyVertices( std::vector< double >& values ) {
+    values = region.getpermeability_nodes();
+//    values=region.getpermeability_elements();
+}
+
 
 
 
@@ -292,6 +300,10 @@ void FlowDiagnosticsInterface::getCPGMaxBackwardTracer( std::vector< double >& v
 	values = region.getmaxbackwardtracer_cpg();
 }
 
+
+void FlowDiagnosticsInterface::getCPGPermeability( std::vector< double >& values ) {
+    values=region.getpermeability_elements_cpg();
+}
 
 void FlowDiagnosticsInterface::getSurfaceVertices( std::vector< float >& vertices ) const {}
 

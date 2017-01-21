@@ -161,7 +161,14 @@ class FlowDiagnosticsInterface
 
         /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Permeability ).
-        void getPermeability( std::vector< double >& values ) ;
+        void getPermeabilitybyCells( std::vector< double >& values ) ;
+
+
+        /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
+        ///        and required by Zhao's document ( output Permeability ).
+        void getPermeabilitybyVertices( std::vector< double >& values ) ;
+
+        void getCPGPermeability( std::vector< double >& values );
 
 
         /// \brief Get region id by cell (only) -- refers to: new code (from writeresult_unstructured), optional

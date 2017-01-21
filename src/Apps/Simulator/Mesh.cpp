@@ -124,9 +124,9 @@ void Mesh::setConstantColor( const float r, const float g, const float b )
     }
 
 
-
-    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
+    loadColorsbyVertices();
+//    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
+//    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
 
 }
 
@@ -135,8 +135,8 @@ void Mesh::setColor( const std::vector< float >& vcolors  )
 {
 
     colors = vcolors;
-    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
+//    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
+//    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
 
 }
 
@@ -552,23 +552,13 @@ void Mesh::initializeShader( std::string directory )
 {
 
 
-    //shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/vertex_mesh_shader.vert" ),
-    //                                                 ( directory + "shaders/fragment_mesh_shader.frag" ),
-    //                                                  "", "", "" ) ;
-    //shader_mesh->initialize();
-
-
     shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
                                                      (directory + "shaders/FlowDefault.frag"),
                                                      (directory + "shaders/FlowDefault.geom"),
                                                       "", "") ;
     shader_mesh->initialize();
 
-//        shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
-//														 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
-//                                                         ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
-//                                                          "", "") ;
-//        shader_mesh->initialize();
+
 
 
     glGenVertexArrays( 1, &va_mesh );
@@ -620,6 +610,344 @@ void Mesh::initializeShader( std::string directory )
 
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
+
+}
+
+
+
+
+void Mesh::getTrianglesfromQuadrilaterals( unsigned int id, std::vector< unsigned int >& triangles )
+{
+    triangles.push_back( ( unsigned int )faces[ 4*id ] );
+    triangles.push_back( ( unsigned int )faces[ 4*id + 1 ] );
+    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
+
+    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
+    triangles.push_back( ( unsigned int )faces[ 4*id + 3 ] );
+    triangles.push_back( ( unsigned int )faces[ 4*id ] );
+
+}
+
+
+void Mesh::getTrianglesfromTetrahedros( unsigned int id, std::vector< unsigned int >& triangles )
+{
+
+    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
+
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
+
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
+
+    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
+    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
+
+}
+
+
+void Mesh::getTrianglesfromHexahedros( unsigned int id, std::vector< unsigned int >& triangles )
+{
+
+
+}
+
+
+void Mesh::getCoordfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  )
+{
+
+    std::size_t vertices_number = triangles.size();
+
+    auto i = 0;
+    unsigned int id = 0;
+    for( i = 0; i < vertices_number; ++i )
+    {
+
+
+        id = triangles[ i ];
+        vertices_coord.push_back( vertices[ 3*id ] );
+        vertices_coord.push_back( vertices[ 3*id + 1 ] );
+        vertices_coord.push_back( vertices[ 3*id + 2 ] );
+
+    }
+
+
+}
+
+
+void Mesh::getColorsfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  )
+{
+    std::size_t vertices_number = triangles.size();
+    for( auto i = 0; i < vertices_number; ++i )
+    {
+
+        unsigned int id = triangles[ i ];
+        vertices_coord.push_back( colors[ 3*id ] );
+        vertices_coord.push_back( colors[ 3*id + 1 ] );
+        vertices_coord.push_back( colors[ 3*id + 2 ] );
+
+    }
+
+
+
+}
+
+
+void Mesh::setColorinFace( std::vector< unsigned int > triangles, float r, float g, float b, std::vector< float >& colors_coord  )
+{
+    std::size_t colors_number = triangles.size();
+    for( auto i = 0; i < colors_number; ++i )
+    {
+
+        colors_coord.push_back( r );
+        colors_coord.push_back( g );
+        colors_coord.push_back( b );
+
+    }
+
+}
+
+
+void Mesh::loadColorsbyVertices()
+{
+
+
+    std::vector< float > output_colors;
+//    std::vector< unsigned int > colors_id;
+
+    if( mesh_type == TYPE::TRIANGLES )
+    {
+//        std::size_t faces_number = faces.size()/3;
+//        for( auto i = 0; i < faces_number; ++i )
+//        {
+
+            getColorsfromIndex( faces, output_colors );
+
+//        }
+    }
+
+    else if( mesh_type == TYPE::QUADRILATERAL )
+    {
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromQuadrilaterals( i, colors_id );
+            getColorsfromIndex( colors_id, output_colors );
+
+        }
+
+    }
+
+    else if( mesh_type == TYPE::TETRAHEDRAL )
+    {
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromTetrahedros( i, colors_id );
+            getColorsfromIndex( colors_id, output_colors );
+
+        }
+
+    }
+
+    else if( mesh_type == TYPE::HEXAHEDRAL )
+    {
+
+        std::size_t faces_number = faces.size()/8;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromHexahedros( i, colors_id );
+            getColorsfromIndex( colors_id, output_colors );
+
+        }
+
+    }
+
+    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
+    glBufferData( GL_ARRAY_BUFFER, output_colors.size()*sizeof( GLfloat ), output_colors.data(), GL_STATIC_DRAW );
+
+
+}
+
+
+void Mesh::loadColorsbyFaces()
+{
+
+    std::vector< float > output_colors;
+
+
+    if( mesh_type == TYPE::TRIANGLES )
+    {
+        std::size_t faces_number = faces.size()/3;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+            output_colors.push_back( colors[ 3*i ] );
+            output_colors.push_back( colors[ 3*i + 1 ] );
+            output_colors.push_back( colors[ 3*i + 2 ] );
+        }
+    }
+
+    else if( mesh_type == TYPE::QUADRILATERAL )
+    {
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromQuadrilaterals( i, colors_id );
+            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
+
+        }
+
+    }
+
+    else if( mesh_type == TYPE::TETRAHEDRAL )
+    {
+
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromTetrahedros( i, colors_id );
+            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
+
+        }
+
+    }
+
+    else if( mesh_type == TYPE::HEXAHEDRAL )
+    {
+
+        std::size_t faces_number = faces.size()/8;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > colors_id;
+            getTrianglesfromHexahedros( i, colors_id );
+            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
+
+        }
+
+    }
+
+    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
+    glBufferData( GL_ARRAY_BUFFER, output_colors.size()*sizeof( GLfloat ), output_colors.data(), GL_STATIC_DRAW );
+
+
+}
+
+
+void Mesh::loadVertices()
+{
+
+    if( vertices.empty() == true ) return;
+
+    std::cout << "loadVertices"  << std::endl;
+
+    std::vector< float > triangles;
+
+
+    if( mesh_type == TYPE::TRIANGLES )
+    {
+        std::size_t faces_number = faces.size()/3;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            getCoordfromIndex( faces, triangles );
+
+        }
+    }
+    else if( mesh_type == TYPE::QUADRILATERAL )
+    {
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > triangles_id;
+            getTrianglesfromQuadrilaterals( i, triangles_id );
+            getCoordfromIndex( triangles_id, triangles );
+
+        }
+
+    }
+    else if( mesh_type == TYPE::TETRAHEDRAL )
+    {
+
+        std::size_t faces_number = faces.size()/4;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+            std::vector< unsigned int > triangles_id;
+            getTrianglesfromTetrahedros( i, triangles_id );
+            getCoordfromIndex( triangles_id, triangles );
+
+        }
+
+    }
+
+    else if( mesh_type == TYPE::HEXAHEDRAL )
+    {
+
+        std::size_t faces_number = faces.size()/8;
+        for( auto i = 0; i < faces_number; ++i )
+        {
+
+            std::vector< unsigned int > triangles_id;
+            getTrianglesfromHexahedros( i, triangles_id );
+            getCoordfromIndex( triangles_id, triangles );
+
+        }
+
+    }
+
+
+
+    number_of_vertices = triangles.size()/3;
+    int vector_vertices_size = number_of_vertices * 3;
+
+
+    vector< Eigen::Vector3f > normalized_vertices;
+    for( unsigned int it = 0; it < number_of_vertices; ++it )
+        normalized_vertices.push_back( Eigen::Vector3f( triangles[ 3*it ], triangles[ 3*it + 1 ], triangles[ 3*it + 2 ] ) );
+
+    Celer::BoundingBox3< float > bbox_mesh;
+    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
+
+
+    for( unsigned int it = 0; it < number_of_vertices; ++it )
+        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/(bbox_mesh.diagonal()*0.25f);
+
+    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
+
+    vector_triangles_size = (int) normalized_vertices.size();
+
+    glBindBuffer( GL_ARRAY_BUFFER, bf_vertices_mesh );
+    glBufferData( GL_ARRAY_BUFFER, vector_triangles_size*sizeof( normalized_vertices[0] ), normalized_vertices.data(), GL_STATIC_DRAW );
+
+
+    if( bounding_box.empty() == false )
+    {
+        number_lines_bbox = bounding_box.size();
+
+        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
+        glBufferData( GL_ARRAY_BUFFER, bounding_box.size()*sizeof( GLfloat ), bounding_box.data(), GL_STATIC_DRAW );
+    }
 
 }
 
@@ -711,10 +1039,6 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
     M.setIdentity();
 
     shader_mesh->bind();
-    //shader_mesh->setUniform( "mmatrix", M );
-    //shader_mesh->setUniform( "vmatrix", V );
-    //shader_mesh->setUniform( "pmatrix", P );
-    //shader_mesh->setUniform( "scale", scale );
 
 	shader_mesh->setUniform("WIN_SCALE", width, height);
 
@@ -733,34 +1057,15 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 		shader_mesh->setUniform("isClip", GL_TRUE);
 
     }
-  //  else
-  //  {
-  //      shader_mesh->setUniform( "ClipPlane", 0.0f, 0.0f, 0.0f, 0.0f );
-  //      glDisable(GL_CLIP_DISTANCE0);
-  //  }
-
-  //  if( show_vertices == true )
-  //  {
-  //      glDrawArrays( GL_POINTS, 0, number_of_vertices );
-  //  }
-  //  if( show_edges == true )
-  //  {
-  //      glLineWidth( 2.0f );
-  //      shader_mesh->setUniform( "edge", GL_TRUE );
-		//shader_mesh->setUniform("index", 6);
-
-
-  //      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
-  //      glDrawElements( GL_LINES, vector_wireframe_size, GL_UNSIGNED_INT, 0 );
-
-  //      shader_mesh->setUniform( "edge", GL_FALSE );
-		//shader_mesh->setUniform("index", 1);
 
   //  }
     if( show_faces == true )
     {
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
+//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
+//        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
+
+            glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
+
     }
 
     glBindVertexArray( 0 );

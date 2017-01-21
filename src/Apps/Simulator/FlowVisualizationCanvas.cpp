@@ -133,7 +133,7 @@ void FlowVisualizationCanvas::initializeGL()
     axes.initShader( current_directory );
     axes.load();
 
-    mesh.load();
+    mesh.loadVertices();
     initializeShader();
 
 
@@ -330,6 +330,7 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
     }
 
     mesh.setColor( colors );
+    mesh.loadColorsbyVertices();
 
     unsigned int nc = 0;
     colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
@@ -347,14 +348,14 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
 void FlowVisualizationCanvas::setColors( const std::vector< float >& colors )
 {
 
-    glShadeModel(GL_SMOOTH);
+//    glShadeModel(GL_SMOOTH);
 
-   mesh.setColor( colors );
+//   mesh.setColor( colors );
 
-//   show_colorbar = false;
+////   show_colorbar = false;
 
 
-    update();
+//    update();
 
 }
 
@@ -379,7 +380,7 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
     int number_of_vertices = mesh.getNumberofVertices();
 
     std::vector< float > colors;
-    colors.resize( 3*number_of_vertices );
+//    colors.resize( 3*number_of_vertices );
 
 
     int number_of_faces = mesh.getNumberofFaces();
@@ -392,18 +393,23 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
 
         QVector3D c = colormap.getColor( current_colormap, values[ i ], min, max );
 
-        vector< unsigned int > vertices_of_face = mesh.getFace( i );
-        int number_of_vertices_by_face = vertices_of_face.size();
+
+        colors.push_back( c.x() );
+        colors.push_back( c.y() );
+        colors.push_back( c.z() );
+
+//        vector< unsigned int > vertices_of_face = mesh.getFace( i );
+//        int number_of_vertices_by_face = vertices_of_face.size();
 
 
-        for( int j = 0; j < number_of_vertices_by_face; ++j )
-        {
-            unsigned int id = vertices_of_face[ j ];
-            colors[ 3*id ] = c.x();
-            colors[ 3*id + 1 ] = c.y();
-            colors[ 3*id + 2 ] = c.z();
+//        for( int j = 0; j < number_of_vertices_by_face; ++j )
+//        {
+//            unsigned int id = vertices_of_face[ j ];
+//            colors[ 3*id ] = c.x();
+//            colors[ 3*id + 1 ] = c.y();
+//            colors[ 3*id + 2 ] = c.z();
 
-        }
+//        }
 
     }
 
@@ -415,6 +421,7 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
     colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
 
     mesh.setColor( colors );
+    mesh.loadColorsbyFaces();
     update();
 
 }
@@ -451,7 +458,7 @@ void FlowVisualizationCanvas::showRegions()
     int number_of_vertices = mesh.getNumberofVertices();
 
     std::vector< float > meshcolors;
-    meshcolors.resize( 3*number_of_vertices );
+//    meshcolors.resize( 3*number_of_vertices );
 
 
     int number_of_faces = mesh.getNumberofFaces();
@@ -464,18 +471,18 @@ void FlowVisualizationCanvas::showRegions()
 
 
         QVector3D c( colors[i].red(),colors[i].green(), colors[i].blue() );
-        vector< unsigned int > vertices_of_face = mesh.getFace( i );
-        int number_of_vertices_by_face = vertices_of_face.size();
+//        vector< unsigned int > vertices_of_face = mesh.getFace( i );
+//        int number_of_vertices_by_face = vertices_of_face.size();
 
 
-        for( int j = 0; j < number_of_vertices_by_face; ++j )
-        {
-            unsigned int id = vertices_of_face[ j ];
-            meshcolors[ 3*id ] = c.x()/255;
-            meshcolors[ 3*id + 1 ] = c.y()/255;
-            meshcolors[ 3*id + 2 ] = c.z()/255;
+//        for( int j = 0; j < number_of_vertices_by_face; ++j )
+//        {
+//            unsigned int id = vertices_of_face[ j ];
+            meshcolors.push_back( c.x()/255 );
+            meshcolors.push_back( c.y()/255 );
+            meshcolors.push_back( c.z()/255 );
 
-        }
+//        }
 
     }
 
@@ -485,6 +492,7 @@ void FlowVisualizationCanvas::showRegions()
     colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
 
     mesh.setColor( meshcolors );
+    mesh.loadColorsbyFaces();
     update();
 
 }
@@ -530,7 +538,7 @@ void FlowVisualizationCanvas::updateMesh()
 
 
 
-    mesh.load();
+    mesh.loadVertices();
 
     camera.reset();
     camera.increaseZoom(2.0f*1.05f);
@@ -574,7 +582,7 @@ void FlowVisualizationCanvas::updateCornerPoint()
     //mesh.showFaces( rendering_menu->showFaces() );
 
 
-    mesh.load();
+    mesh.loadVertices();
 
     //std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
 
@@ -612,7 +620,7 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
     //mesh.showFaces( rendering_menu->showFaces() );
 
 
-    mesh.load();
+    mesh.loadVertices();
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();

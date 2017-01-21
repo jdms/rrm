@@ -108,6 +108,31 @@ class Mesh
         void deleteShaders();
 
 
+        void getTrianglesfromQuadrilaterals( unsigned int id, std::vector< unsigned int >& triangles );
+
+        void getTrianglesfromTetrahedros( unsigned int id, std::vector< unsigned int >& triangles );
+
+
+        void getTrianglesfromHexahedros( unsigned int id, std::vector< unsigned int >& triangles );
+
+
+        void getCoordfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  );
+
+
+        void getColorsfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  );
+
+
+        void setColorinFace( std::vector< unsigned int > triangles, float r, float g, float b, std::vector< float >& colors_coord  );
+
+        void loadColorsbyVertices();
+
+
+        void loadColorsbyFaces();
+
+
+        void loadVertices();
+
+
     protected:
 
         TYPE mesh_type;
