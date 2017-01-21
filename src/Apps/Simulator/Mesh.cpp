@@ -10,7 +10,7 @@ Mesh::Mesh()
     show_faces = true;
     show_bbox = true;
 	this->centre_ = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
-
+	float depth_ = 0.0f;
 
     apply_crosssection_clipping = false;
 }
@@ -227,6 +227,10 @@ void Mesh::buildTrianglesFacesList( vector< unsigned int >& triangles )
 
 }
 
+float Mesh::getDepth() const
+{
+	return this->depth_;
+}
 
 void Mesh::buildBoundingBox()
 {
@@ -239,13 +243,20 @@ void Mesh::buildBoundingBox()
     for( unsigned int it = 0; it < number_of_vertices; ++it )
         normalized_vertices.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
 
+	/// Here is where the bounding box "y" (depth) can be grab.
+	/// For some reason the bounding box location in 3D varies
     Celer::BoundingBox3< float > bbox_mesh;
     bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
 
 
 	std::cout << "Min - Max " << std::endl;
 	std::cout << bbox_mesh.Min() << std::endl;
-	std::cout << bbox_mesh.Max() << std::endl;
+	std::cout << bbox_mesh.Max() << std::endl;	
+
+
+	std::cout << ( bbox_mesh.Min().y() ) + ( bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f  << std::endl;
+
+	this->depth_ = (bbox_mesh.Min().y()) + ((bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f);
 
 
     for( unsigned int it = 0; it < number_of_vertices; ++it )

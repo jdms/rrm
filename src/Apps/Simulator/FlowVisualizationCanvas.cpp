@@ -217,6 +217,7 @@ void FlowVisualizationCanvas::paintGL()
         glEnable( GL_BLEND );
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		scale = 1.0f;
         crosssection.draw( V, P, scale );
 
         glDisable( GL_BLEND );
@@ -975,4 +976,10 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 
 
 //    colorbar.resetBuffers();
+}
+
+/// Get the current boundingobx depth in the extrusion framework
+float FlowVisualizationCanvas::getDepth() const
+{
+	return mesh.getDepth();
 }

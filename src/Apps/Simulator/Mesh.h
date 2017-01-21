@@ -106,6 +106,8 @@ class Mesh
 
         void resetBuffers();
         void deleteShaders();
+		/// get the correct depth from the model in QGraphicsScene coordinates
+		float getDepth() const;
 
 
         void getTrianglesfromQuadrilaterals( unsigned int id, std::vector< unsigned int >& triangles );
@@ -178,6 +180,9 @@ class Mesh
         GLuint number_lines_bbox;
 
         bool show_bbox;
+
+		/// get the correctly depth value
+		float depth_;
 
 };
 
