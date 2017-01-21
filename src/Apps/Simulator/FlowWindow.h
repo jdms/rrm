@@ -11,6 +11,8 @@
 #include <QToolButton>
 #include <QResizeEvent>
 
+#include <QtWidgets/QMessageBox>
+
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "ColorBar.h"
