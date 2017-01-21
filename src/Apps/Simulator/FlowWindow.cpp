@@ -81,6 +81,8 @@ void FlowWindow::createToolBar()
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
     qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
 	qbuildCornerPoint->setEnabled(false);
+	//qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
+	//							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
     qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));    
@@ -243,12 +245,24 @@ void FlowWindow::createActions()
 		});
 		connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
 		{
-			/// Now we can Compute
-			/// @FIXME catch execption from HWU mesh generator
-			this->buildCornerPoint();
-			qcomputeFlowProperties->setEnabled(true);
-			qbuildCornerPoint->setEnabled(false);
-			qbuildUnstructured->setEnabled(false);
+
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::warning(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?",	QMessageBox::Yes | QMessageBox::No);
+
+			if (reply == QMessageBox::Yes) {
+				qDebug() << "Yes was clicked";
+				/// Now we can Compute
+				/// @FIXME catch execption from HWU mesh generator
+				this->buildCornerPoint();
+				qcomputeFlowProperties->setEnabled(true);
+				qbuildCornerPoint->setEnabled(false);
+				qbuildUnstructured->setEnabled(false);
+
+			}
+			else {
+				qDebug() << "Yes was *not* clicked";
+			}
+
 		});
 
 		connect(qbuildUnstructured, &QAction::triggered, this, [=]()
