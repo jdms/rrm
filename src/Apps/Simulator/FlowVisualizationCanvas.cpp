@@ -490,7 +490,8 @@ void FlowVisualizationCanvas::showRegions()
     auto min_max = std::minmax_element(ids.begin(), ids.end());
     unsigned int nc;
 
-    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
+    //colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
+    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), (*min_max.first) + 1, (*min_max.second)+1, 1);
 
     mesh.setColor( meshcolors );
     mesh.loadColorsbyFaces();

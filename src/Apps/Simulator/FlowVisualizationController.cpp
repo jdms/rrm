@@ -615,7 +615,7 @@ void FlowVisualizationController::exportSurfacetoVTK()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
+                                                     ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
     code_interface.exportSurfacetoVTK( filename.toStdString() );
@@ -627,7 +627,7 @@ void FlowVisualizationController::exportVolumetoVTK()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
+                                                     ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
 
@@ -640,7 +640,7 @@ void FlowVisualizationController::exportCornerPointtoVTK()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
+                                                     ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
 
@@ -665,7 +665,7 @@ void FlowVisualizationController::exportResultstoVTK()
 
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
-                                                     ".vtk files (*.vtk)", &selected_format );
+                                                     ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
 
