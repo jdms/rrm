@@ -35,10 +35,10 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;About - Rapid Reservoir Modelling&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rapid Reservoir Modelling - v. 2.1&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Team&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Imperial College London, United Kingdom&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Mrs Margaret &amp;quot;Daisy&amp;quot; Rood&lt;br/&gt;Dr Carl Jacquemy&lt;br /&gt;Prof Matthew Jackson&lt;br /&gt;Prof Gary Hampson&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Mrs Margaret &amp;quot;Daisy&amp;quot; Rood&lt;br /&gt;Dr Carl Jacquemyn&lt;br /&gt;Prof Matthew Jackson&lt;br /&gt;Prof Gary Hampson&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;University of Calgary, Canada&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Dr Felipe Moura de Carvalho&lt;br /&gt;Dr Clarissa Coda Marques Machado Silva&lt;br /&gt;Dr Julio Daniel Machado Silva&lt;br /&gt;Prof Mario Costa Sousa&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Heriot-Watt University , United Kingdom&lt;/span&gt;&lt;/p&gt;
@@ -54,7 +54,7 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/logos/about/RRMparterns.png</pixmap>
+        <pixmap resource="../../Resources/images.qrc">:/logos/about/RRMparterns.png</pixmap>
        </property>
       </widget>
      </item>
@@ -66,14 +66,14 @@ p, li { white-space: pre-wrap; }
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap>:/logos/about/sponsors.png</pixmap>
+      <pixmap resource="../../Resources/images.qrc">:/logos/about/sponsors.png</pixmap>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../Resources/images.qrc"/>
+  <include location="../../Resources/images.qrc"/>
  </resources>
  <connections/>
 </ui>

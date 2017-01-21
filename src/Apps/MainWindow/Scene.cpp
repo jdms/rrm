@@ -503,7 +503,7 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
 
-
+//    num_extrusion_steps = num_extrusion_steps_default;
     controller->getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
 
@@ -514,14 +514,14 @@ void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &n
     for ( auto i = 0; i < number_of_points; ++i )
     {
         v[ 0 ] = static_cast<float>( points[ 3*i + 0 ] );
-        v[ 1 ] = static_cast<float>( points[ 3*i + 1 ] );
-        v[ 2 ] = static_cast<float>( points[ 3*i + 2 ] );
+        v[ 1 ] = static_cast<float>( points[ 3*i + 2 ] );
+        v[ 2 ] = static_cast<float>( points[ 3*i + 1 ] );
 
         sv = scene3DtoPlane( v );
 
         points[ 3*i + 0 ] = static_cast<double>( sv[ 0 ] );
-        points[ 3*i + 1 ] = static_cast<double>( sv[ 1 ] );
-        points[ 3*i + 2 ] = static_cast<double>( sv[ 2 ] );
+        points[ 3*i + 1 ] = static_cast<double>( sv[ 2 ] );
+        points[ 3*i + 2 ] = static_cast<double>( sv[ 1 ] );
     }
 
 
