@@ -247,7 +247,7 @@ void FlowWindow::createActions()
 		{
 
 			QMessageBox::StandardButton reply;
-			reply = QMessageBox::warning(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?",	QMessageBox::Yes | QMessageBox::No);
+			reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?",	QMessageBox::Yes | QMessageBox::No);
 
 			if (reply == QMessageBox::Yes) {
 				qDebug() << "Yes was clicked";
@@ -263,6 +263,29 @@ void FlowWindow::createActions()
 				qDebug() << "Yes was *not* clicked";
 			}
 
+			//QMessageBox msgBox;
+			//msgBox.setText("Corner Point Mesh Generator");
+			//msgBox.setInformativeText("Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?");
+			//msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No );
+			//msgBox.setDefaultButton(QMessageBox::Yes);
+			//msgBox.setIcon(QMessageBox::Information);
+			//int result = msgBox.exec();
+
+			//if (result == QMessageBox::Yes) 
+			//{
+			//	qDebug() << "Yes was clicked";
+			//	/// Now we can Compute
+			//	/// @FIXME catch execption from HWU mesh generator
+			//	this->buildCornerPoint();
+			//	qcomputeFlowProperties->setEnabled(true);
+			//	qbuildCornerPoint->setEnabled(false);
+			//	qbuildUnstructured->setEnabled(false);
+
+			//}
+			//else 
+			//{
+			//	qDebug() << "Yes was *not* clicked";
+			//}
 		});
 
 		connect(qbuildUnstructured, &QAction::triggered, this, [=]()
