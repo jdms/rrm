@@ -518,6 +518,8 @@ void FlowWindow::loadSurfacesfromSketch()
     canvas->updateMesh();
 
 
+	this->parametersBar.setRegionDepth(canvas->getDepth());
+
 	//std::cout << "-- FlowWindow --" << std::endl;
 	//std::cout << m2D_to_3D.matrix() << std::endl;
 	//std::cout << m3D_to_2D.matrix() << std::endl;
