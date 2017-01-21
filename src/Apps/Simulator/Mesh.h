@@ -23,7 +23,7 @@ class Mesh
         Mesh();
 
         inline Mesh( TYPE t ){ mesh_type = t; }
-        inline void setMeshType( TYPE t ){ mesh_type = t; }
+        void setMeshType( TYPE t );//{ mesh_type = t; }
 
 
 
@@ -150,6 +150,8 @@ class Mesh
         float min[ 3 ];
 
         Tucano::Shader* shader_mesh;
+        Tucano::Shader* shader_mesh_cornerpoint;
+        Tucano::Shader* shader;
 
         GLuint va_mesh;
         GLuint bf_vertices_mesh;
