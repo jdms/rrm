@@ -16,6 +16,11 @@ Mesh::Mesh()
 }
 
 
+void Mesh::setMeshType( Mesh::TYPE t )
+{
+    mesh_type = t;
+}
+
 void Mesh::setVertices( const std::vector< float >& v )
 {
     vertices.clear();
@@ -557,6 +562,7 @@ bool Mesh::showBoundingBox() const
 void Mesh::reloadShader()
 {
     shader_mesh->reloadShaders();
+    shader_mesh_cornerpoint->reloadShaders();
 }
 
 void Mesh::initializeShader( std::string directory )
@@ -571,6 +577,16 @@ void Mesh::initializeShader( std::string directory )
 
 
 
+    shader_mesh_cornerpoint = new Tucano::Shader( "shader_mesh_cornerpoint", ( directory + "shaders/FlowQuadrilaterals.vert" ),
+                                                     (directory + "shaders/FlowQuadrilaterals.frag"),
+                                                     (directory + "shaders/FlowQuadrilaterals.geom"),
+                                                      "", "") ;
+
+
+
+    shader_mesh_cornerpoint->initialize();
+
+//    shader = shader_mesh;
 
     glGenVertexArrays( 1, &va_mesh );
     glBindVertexArray( va_mesh );
@@ -629,13 +645,20 @@ void Mesh::initializeShader( std::string directory )
 
 void Mesh::getTrianglesfromQuadrilaterals( unsigned int id, std::vector< unsigned int >& triangles )
 {
+//    triangles.push_back( ( unsigned int )faces[ 4*id ] );
+//    triangles.push_back( ( unsigned int )faces[ 4*id + 1 ] );
+//    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
+
+//    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
+//    triangles.push_back( ( unsigned int )faces[ 4*id + 3 ] );
+//    triangles.push_back( ( unsigned int )faces[ 4*id ] );
+
+
+
     triangles.push_back( ( unsigned int )faces[ 4*id ] );
     triangles.push_back( ( unsigned int )faces[ 4*id + 1 ] );
-    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
-
-    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
     triangles.push_back( ( unsigned int )faces[ 4*id + 3 ] );
-    triangles.push_back( ( unsigned int )faces[ 4*id ] );
+    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
 
 }
 
@@ -1049,41 +1072,82 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
     Eigen::Affine3f M;
     M.setIdentity();
 
-    shader_mesh->bind();
 
-	shader_mesh->setUniform("WIN_SCALE", width, height);
-
-	shader_mesh->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
-	shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
-	shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
-	shader_mesh->setUniform("isClip", GL_FALSE);
-    glBindVertexArray( va_mesh );
-
-
-    if( apply_crosssection_clipping == true )
+    if( mesh_type == TYPE::QUADRILATERAL )
     {
-        glEnable(GL_CLIP_DISTANCE0);
-		shader_mesh->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
-        shader_mesh->setUniform( "ClipPlaneCentre", this->centre_);
-		shader_mesh->setUniform("isClip", GL_TRUE);
+        shader_mesh_cornerpoint->bind();
+
+        shader_mesh_cornerpoint->setUniform("WIN_SCALE", width, height);
+        shader_mesh_cornerpoint->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+        shader_mesh_cornerpoint->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+        shader_mesh_cornerpoint->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+        shader_mesh_cornerpoint->setUniform("isClip", GL_FALSE);
+        glBindVertexArray( va_mesh );
+
+
+        if( apply_crosssection_clipping == true )
+        {
+            glEnable(GL_CLIP_DISTANCE0);
+            shader_mesh_cornerpoint->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
+            shader_mesh_cornerpoint->setUniform( "ClipPlaneCentre", this->centre_);
+            shader_mesh_cornerpoint->setUniform("isClip", GL_TRUE);
+
+        }
+
+      //  }
+        if( show_faces == true )
+        {
+    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
+    //        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
+
+                glDrawArrays ( GL_LINES_ADJACENCY , 0 , vector_triangles_size );
+
+        }
+
+        glBindVertexArray( 0 );
+
+        shader_mesh_cornerpoint->unbind();
+
+    }
+    else
+    {
+
+        shader_mesh->bind();
+
+        shader_mesh->setUniform("WIN_SCALE", width, height);
+
+        shader_mesh->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+        shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+        shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+        shader_mesh->setUniform("isClip", GL_FALSE);
+        glBindVertexArray( va_mesh );
+
+
+        if( apply_crosssection_clipping == true )
+        {
+            glEnable(GL_CLIP_DISTANCE0);
+            shader_mesh->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
+            shader_mesh->setUniform( "ClipPlaneCentre", this->centre_);
+            shader_mesh->setUniform("isClip", GL_TRUE);
+
+        }
+
+      //  }
+        if( show_faces == true )
+        {
+    //        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
+    //        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
+
+                glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
+
+        }
+
+        glBindVertexArray( 0 );
+        shader_mesh->unbind();
 
     }
 
-  //  }
-    if( show_faces == true )
-    {
-//        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-//        glDrawElements( GL_TRIANGLES, vector_triangles_size, GL_UNSIGNED_INT, 0 );
 
-            glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
-
-    }
-
-    glBindVertexArray( 0 );
-
-
-
-    shader_mesh->unbind();
 
 
 
@@ -1192,6 +1256,11 @@ void Mesh::deleteShaders()
     if (shader_mesh)
     {
         delete (shader_mesh);
+        shader_mesh = nullptr;
+    }
+    if (shader_mesh_cornerpoint)
+    {
+        delete (shader_mesh_cornerpoint);
         shader_mesh = nullptr;
     }
 
