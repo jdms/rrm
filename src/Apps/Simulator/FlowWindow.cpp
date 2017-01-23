@@ -538,7 +538,7 @@ void FlowWindow::loadSurfacesfromSketch()
     std::vector< size_t > nu;
     std::vector< size_t > nv;
     std::vector< double > points;
-    size_t num_extrusion_steps = 4;
+    size_t num_extrusion_steps = 1;
 
 	Eigen::Affine3f m2D_to_3D;
 	Eigen::Affine3f m3D_to_2D;
