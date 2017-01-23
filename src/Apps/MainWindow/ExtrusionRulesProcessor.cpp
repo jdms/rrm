@@ -735,7 +735,7 @@ namespace RRM
             double unused; 
             bool vertex_is_valid, prev_vertex_is_valid, next_vertex_is_valid; 
             bool has_curve = false; 
-            size_t index, prev_index, next_index; 
+            size_t index, prev_index, next_index;
 
             size_t container_size = 0;
 
@@ -790,7 +790,7 @@ namespace RRM
             // Build Zhao's data structure
 
             size_t num_surfaces = curves.size(); 
-            double extrusion_step = lenght_.z/static_cast<double>(depth_discretization); 
+            double extrusion_step = lenght_.z/(static_cast<double>(depth_discretization) - 1.0);
             size_t offset = 0; 
 
             points.resize(container_size);
@@ -815,7 +815,7 @@ namespace RRM
                         /* std::cout << points[ 3*index + 0 ]  << " " << points[ 3*index + 1 ] << " " << points[ 3*index + 2 ] << std::endl << std::flush; */
                     }
                 }
-                offset += curve.size() * depth_discretization; 
+                offset += curve.size() * depth_discretization;
             }
 
             return num_surfaces;
