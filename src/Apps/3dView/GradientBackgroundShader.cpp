@@ -30,6 +30,8 @@ void GradientBackgroundShader::resetBuffers()
 
     va_background = 0;
     vb_background = 0;
+
+    init();
 }
 
 

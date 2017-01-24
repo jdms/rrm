@@ -98,6 +98,10 @@ void Surface::resetBuffers()
     number_of_lines = 0;
     number_of_vertices = 0;
     number_of_faces = 0;
+
+    initShaders();
+    initBuffers();
+    loadBuffers();
 	
 	
 }
@@ -322,7 +326,7 @@ void Surface::resetShaders()
         delete( shader_surface );
         shader_surface = nullptr;
 
-        is_initialized = false;
+//        is_initialized = false;
 
     }
 	
