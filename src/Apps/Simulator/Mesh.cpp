@@ -10,7 +10,7 @@ Mesh::Mesh()
     show_faces = true;
     show_bbox = true;
 	this->centre_ = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
-
+	float depth_ = 0.0f;
 
     apply_crosssection_clipping = false;
 }
@@ -227,6 +227,10 @@ void Mesh::buildTrianglesFacesList( vector< unsigned int >& triangles )
 
 }
 
+float Mesh::getDepth() const
+{
+	return this->depth_;
+}
 
 void Mesh::buildBoundingBox()
 {
@@ -239,17 +243,24 @@ void Mesh::buildBoundingBox()
     for( unsigned int it = 0; it < number_of_vertices; ++it )
         normalized_vertices.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
 
+	/// Here is where the bounding box "y" (depth) can be grab.
+	/// For some reason the bounding box location in 3D varies
     Celer::BoundingBox3< float > bbox_mesh;
     bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
 
 
 	std::cout << "Min - Max " << std::endl;
 	std::cout << bbox_mesh.Min() << std::endl;
-	std::cout << bbox_mesh.Max() << std::endl;
+	std::cout << bbox_mesh.Max() << std::endl;	
+
+
+	std::cout << ( bbox_mesh.Min().y() ) + ( bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f  << std::endl;
+
+	this->depth_ = (bbox_mesh.Min().y()) + ((bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f);
 
 
     for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
+		normalized_vertices[it] = (normalized_vertices[it] - bbox_mesh.center()) / (bbox_mesh.diagonal()*0.25f);
 
 
     max[ 0 ] = normalized_vertices[ 0 ]( 0 );
@@ -557,17 +568,19 @@ void Mesh::initializeShader( std::string directory )
     //                                                  "", "", "" ) ;
     //shader_mesh->initialize();
 
-	shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
-													 (directory + "shaders/FlowDefault.frag"),
-													 (directory + "shaders/FlowDefault.geom"),
-	                                                  "", "") ;
-	shader_mesh->initialize();
 
-        //shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
-								//						 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
-        //                                                 ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
-        //                                                  "", "") ;
-        //shader_mesh->initialize();
+    shader_mesh = new Tucano::Shader( "shader_mesh", ( directory + "shaders/FlowDefault.vert" ),
+                                                     (directory + "shaders/FlowDefault.frag"),
+                                                     (directory + "shaders/FlowDefault.geom"),
+                                                      "", "") ;
+    shader_mesh->initialize();
+
+//        shader_mesh = new Tucano::Shader( "shader_mesh", ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.vert" ),
+//														 ("D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.frag"),
+//                                                         ( "D:\\Workspace\\RRM\\files\\shaders\\FlowDefault.geom" ),
+//                                                          "", "") ;
+//        shader_mesh->initialize();
+
 
     glGenVertexArrays( 1, &va_mesh );
     glBindVertexArray( va_mesh );
@@ -641,7 +654,7 @@ void Mesh::load()
 
 
     for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/bbox_mesh.diagonal();
+        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/(bbox_mesh.diagonal()*0.25f);
 
     bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
 
@@ -781,11 +794,11 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_bbox->setUniform( "pmatrix", P );
         shader_bbox->setUniform( "scale", 1.0 );
 
-        //glBindVertexArray( va_bbox );
+        glBindVertexArray( va_bbox );
 
-        //    glDrawArrays( GL_LINES, 0, number_lines_bbox );
+            glDrawArrays( GL_LINES, 0, number_lines_bbox );
 
-        //glBindVertexArray( 0 );
+        glBindVertexArray( 0 );
 
     }
 

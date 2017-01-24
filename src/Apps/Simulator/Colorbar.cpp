@@ -16,7 +16,7 @@ ColorBar::ColorBar() : QWidget()
 	
 	this->label_step = 10;
 
-	this->setMaximumWidth(width + 60);
+	this->setMaximumWidth(width + 100);
 	this->setMaximumHeight(length + 60);
 
 }
@@ -78,7 +78,7 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
 	QFontMetrics fm(painter.font());
 
-	float text_step = (rect.height() - fm.height()) / (this->label_step - 1);
+	float text_step = (rect.height() - 2*fm.height()) / (this->label_step - 1);
 
 
 	painter.drawText(left, rect.top() - fm.height(), "Max");
@@ -87,10 +87,18 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
 	float label_valeu = (max - min) / (this->label_step - 1);
 
+	QString number;
+
 	for (auto i = 0; i < this->label_step; i++)
 	{
 		//painter.drawText(left, rect.top(), QString("%1").arg(value));
-		painter.drawText(left, rect.top() + i*text_step + fm.height(), QString("%1").arg(max - i*label_valeu));
+		number = QString::number(max - i*label_valeu);
+		if (number.size() > 4)
+		{
+			number = QString::number(max - i*label_valeu,'e',2);
+		}
+
+		painter.drawText(left, rect.top() + i*text_step + fm.height(), number);
 	}
 
     //if( colors.size() == 1 )

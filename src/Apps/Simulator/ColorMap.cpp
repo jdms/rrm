@@ -112,7 +112,7 @@ ColorMap::ColorMap()
 }
 
 
-QVector3D ColorMap::getColor( COLORMAP map, float value, float low, float high ) const
+QVector3D ColorMap::getColor(COLORMAP map, double value, double low, double high) const
 {
     switch ( map ) {
 
@@ -157,17 +157,22 @@ QVector3D ColorMap::getColor( COLORMAP map, float value, float low, float high )
 }
 
 
-QVector3D ColorMap::getColor(const std::vector< QVector3D > &map, float value, float low, float high ) const
+QVector3D ColorMap::getColor(const std::vector< QVector3D > &map, double value, double low, double high) const
 {
     int ncolors = (int) map.size() - 1;
 
-    if( low > high ) std::swap( low, high );
+	if (low > high)
+	{
+		std::swap(low, high);
+	}
 
 
     int index = 0;
-
-    if( high - low > FLT_EPSILON )
-        index = std::fabs( ( value - low )/ ( high - low ) )*( ncolors );
+	/// Preventing division by Zero
+	if (high - low > std::numeric_limits<double>::epsilon() )
+	{
+		index = static_cast<int>(std::fabs((value - low) / (high - low))*( static_cast<double>(ncolors) ));
+	}
 
 
     return map[ index ];

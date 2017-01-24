@@ -81,6 +81,8 @@ void FlowWindow::createToolBar()
     qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
     qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
 	qbuildCornerPoint->setEnabled(false);
+	//qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
+	//							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
 
     qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
     qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));    
@@ -222,30 +224,68 @@ void FlowWindow::createActions()
 
 	/// FlowWindo ToolBar		
 		connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
+		/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
 		connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
 		{
-			loadSurfacesfromFile();
+			/// Clear Scene
+			qclear->trigger();
+			this->loadSurfacesfromFile();
 			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);
-			qreloadSurface->setEnabled(false);
+			qbuildUnstructured->setEnabled(true);	
 		});
+		/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
 		connect(qreloadSurface, &QAction::triggered, this, [=]() 
 		{ 
+			/// Clear Scene
+			qclear->trigger();
 			this->loadSurfacesfromSketch();
 			/// Now we can build the volumetric mesh
 			qbuildCornerPoint->setEnabled(true);
 			qbuildUnstructured->setEnabled(true);
-			qreloadSurface->setEnabled(false);
-			qoopenfilesDialog->setEnabled(false);
 		});
 		connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
 		{
-			/// Now we can Compute
-			/// @FIXME catch execption from HWU mesh generator
-			this->buildCornerPoint();
-			qcomputeFlowProperties->setEnabled(true);
-			qbuildCornerPoint->setEnabled(false);
-			qbuildUnstructured->setEnabled(false);
+
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?",	QMessageBox::Yes | QMessageBox::No);
+
+			if (reply == QMessageBox::Yes) {
+				qDebug() << "Yes was clicked";
+				/// Now we can Compute
+				/// @FIXME catch execption from HWU mesh generator
+				this->buildCornerPoint();
+				qcomputeFlowProperties->setEnabled(true);
+				qbuildCornerPoint->setEnabled(false);
+				qbuildUnstructured->setEnabled(false);
+
+			}
+			else {
+				qDebug() << "Yes was *not* clicked";
+			}
+
+			//QMessageBox msgBox;
+			//msgBox.setText("Corner Point Mesh Generator");
+			//msgBox.setInformativeText("Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?");
+			//msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No );
+			//msgBox.setDefaultButton(QMessageBox::Yes);
+			//msgBox.setIcon(QMessageBox::Information);
+			//int result = msgBox.exec();
+
+			//if (result == QMessageBox::Yes) 
+			//{
+			//	qDebug() << "Yes was clicked";
+			//	/// Now we can Compute
+			//	/// @FIXME catch execption from HWU mesh generator
+			//	this->buildCornerPoint();
+			//	qcomputeFlowProperties->setEnabled(true);
+			//	qbuildCornerPoint->setEnabled(false);
+			//	qbuildUnstructured->setEnabled(false);
+
+			//}
+			//else 
+			//{
+			//	qDebug() << "Yes was *not* clicked";
+			//}
 		});
 
 		connect(qbuildUnstructured, &QAction::triggered, this, [=]()
@@ -349,7 +389,7 @@ void FlowWindow::createActions()
 
 
 	//Region Signal
-	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit getNumberOfRegions(_number_of_regions); });
+	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
 
 }
 
@@ -514,6 +554,8 @@ void FlowWindow::loadSurfacesfromSketch()
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
 
+
+	this->parametersBar.setRegionDepth(canvas->getDepth());
 
 	//std::cout << "-- FlowWindow --" << std::endl;
 	//std::cout << m2D_to_3D.matrix() << std::endl;
@@ -758,9 +800,15 @@ void FlowWindow::reset()
 
 }
 
-
+/// Flow Parameters Widget
 void FlowWindow::regionPoints(const std::map<int,Eigen::Vector3f>& region_points)
 {
 	// Z is fixed
 	this->parametersBar.setRegionPoints(region_points);
 }
+
+int FlowWindow::getNumberOfRegions()
+{
+	return parametersBar.getNumberOfRegions();
+}
+

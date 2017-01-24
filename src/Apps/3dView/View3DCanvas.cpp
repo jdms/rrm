@@ -9,8 +9,21 @@ View3DCanvas::View3DCanvas ( QWidget* parent ) : QOpenGLWidget ( parent )
 
 View3DCanvas::~View3DCanvas()
 {
-    resetBuffers();
+//    resetBuffers();
+
+
+    makeCurrent();
+
+    if( background )
+        background->resetBuffers();
+
+    if( scene != nullptr )
+        scene->resetBuffers();
+
+//    std::cout << "entrei pra resetar\n" <<std::flush;
+
 }
+
 
 
 
@@ -66,7 +79,7 @@ void View3DCanvas::setCurrentDirectory()
 void View3DCanvas::initializeGL ( )
 {
 	setCurrentDirectory();
-    connect( context(), &QOpenGLContext::aboutToBeDestroyed, this, &View3DCanvas::resetBuffers );
+//    connect( context(), &QOpenGLContext::aboutToBeDestroyed, this, &View3DCanvas::resetBuffers );
 
 
     setFocus();
@@ -84,6 +97,8 @@ void View3DCanvas::initializeGL ( )
     }
 
 
+    makeCurrent();
+
 
     glClearColor ( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_DEPTH_TEST );
@@ -92,7 +107,6 @@ void View3DCanvas::initializeGL ( )
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     glEnable( GL_MULTISAMPLE );
     glMinSampleShading( 1.0f );
-
 
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
@@ -140,10 +154,14 @@ void View3DCanvas::paintGL ( )
 
 void View3DCanvas::resetBuffers()
 {
+    makeCurrent();
+
 
     if( background )
         background->resetBuffers();
 
+    if( scene != nullptr )
+        scene->resetBuffers();
 
 }
 

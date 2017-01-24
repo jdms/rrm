@@ -55,21 +55,6 @@ class Scene: public QGraphicsScene
         void setController( Controller* const& c );
         inline void setCurrentDirectory( const std::string& directory ){ shader_directory = QString( directory.c_str() ); }
 
-//		Eigen::Vector3f scene2Dto3D(const Point2D& p);
-//		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
-//		Point2D scene3Dto2D(const Eigen::Vector3f& p);
-//		Curve2D scene2Dto3D(const Curve2D& c);
-//		Curve2D scene3Dto2D(const Curve2D& c);
-
-//        Eigen::Vector3f scene2Dto3D( const Point2D& p );
-//        Eigen::Vector3f scene2Dto3D( const Eigen::Vector3f& p );
-
-//        Point2D scene3Dto2D( const Eigen::Vector3f& p );
-//        Eigen::Vector3f scene3DtoPlane( const Eigen::Vector3f& p );
-
-//        Curve2D scene2Dto3D( const Curve2D& c );
-//        Curve2D scene3Dto2D( const Curve2D& c );
-
 
     public slots:
 
@@ -110,8 +95,10 @@ class Scene: public QGraphicsScene
 
 
         void undoLastSketch();
+
         void initGLContext();
         void updateGLContext();
+        void resetBuffers();
 
         inline void setRandomColor( bool status ){ random_color = status; }
 
@@ -129,9 +116,6 @@ class Scene: public QGraphicsScene
         void stopSketchingBelowRegion();
 
 
-//		void send2Dto3DMatrix(Eigen::Affine3f& p_2d_to_3d);
-//		void send3Dto2DMatrix(Eigen::Affine3f& p_3d_to_2d);
-
         inline void enablePickingRegion( bool status )
         {
             if( status ) current_mode = InteractionMode::SELECTING_REGION;
@@ -140,6 +124,8 @@ class Scene: public QGraphicsScene
 
 
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+        void exportToCPS3( const std::string& filename );
+        void exportToIrapGrid( const std::string& filename );
 
 		void createRegions(int number_of_regions);
 		void regionVisibility(bool _is_visible);
@@ -155,10 +141,7 @@ class Scene: public QGraphicsScene
         void updateBoundGeometry( const int w, const int h, const int d );
 		/// Connection with Flow Diagnostic
         void sendRegionPoints( const std::map<int, Eigen::Vector3f> & region_point);
-
-
-
-
+		void requestNumberOfRegion();
 
 
 

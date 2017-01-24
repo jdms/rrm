@@ -30,11 +30,10 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
+#include <QKeyEvent>
 
 
 #include "MainWindow/About/AboutWidget.hpp"
-#include "HelpDialog.h"
-#include "Controller.hpp"
 
 #include "3dView/View3DWindow.hpp"
 #include "Sketching/SketchingWindow.h"
@@ -43,7 +42,8 @@
 
 
 
-
+#include "Help/HelpDialog.h"
+#include "Controller.hpp"
 
 
 /**
@@ -86,6 +86,15 @@ class MainWindow : public QMainWindow
 
 
 
+        void keyPressEvent( QKeyEvent *event );
+
+
+    signals:
+
+        void saveAsCPS3( const std::string& filename );
+        void saveAsIrapGrid( const std::string& filename );
+
+
 
     protected slots:
 
@@ -94,6 +103,8 @@ class MainWindow : public QMainWindow
 
     public slots:
 
+
+        void exportTo();
         void initScene();
 
 
