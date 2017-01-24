@@ -68,12 +68,20 @@ void MainWindow::createMainWindowActions ( )
     ac_exit = new QAction( tr ( "E&xit" ) , this );
     ac_exit->setIcon( QIcon( ":/images/icons/door_out.png" ) );
 
-    ac_contents = new QAction( tr ( "Contents" ), this );
+    ac_rrmGuide = new QAction( tr ( "RRM Guide" ), this );
     ac_about = new QAction( tr ( "&About" ) , this );
 
 
     connect( ac_about, SIGNAL( triggered() ) , aboutRRM, SLOT( show() ) );
-    connect( ac_contents, SIGNAL( triggered() ) , &help, SLOT( show() ) );
+	connect(ac_rrmGuide, &QAction::triggered, [=]()
+	{
+		QDir dir;
+		qDebug() << dir.currentPath() << "Help !!";
+		/// The QFileInfo class provides system-independent file information. 
+		/// @see http://doc.qt.io/qt-5/qfileinfo.html#absoluteFilePath
+		QFileInfo file_info(dir.currentPath() + "/documentation/rrm-guide.pdf");
+		QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
+	});
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );
 
     connect( this, SIGNAL( saveAsCPS3( const std::string& ) ) , scene, SLOT( exportToCPS3( const std::string& ) ) );
@@ -91,7 +99,7 @@ void MainWindow::createMenuBar()
     mn_windows = menuBar()->addMenu ( tr ( "&View" ) );
 
     mn_help = menuBar()->addMenu ( tr ( "&Help" ) );
-    mn_help->addAction( ac_contents );
+    mn_help->addAction( ac_rrmGuide );
     mn_help->addAction( ac_about );
 
 

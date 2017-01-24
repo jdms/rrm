@@ -49,20 +49,25 @@ void SketchingWindow::createActions()
 {
 
     tlb_section = addToolBar( tr( "New" ) );
+	tlb_section->setIconSize(QSize(32, 32));
     createNewActions();
 
 
     tlb_sketchregions = addToolBar( tr( "SketchRegions" ) );
+	tlb_sketchregions->setIconSize(QSize(32, 32));
     createDefineSketchRegionsActions();
 
 
     tlb_rules = addToolBar( tr("Rules") );
+	tlb_rules->setIconSize(QSize(32, 32));
     createRulesActions();
 
     tlb_edit = addToolBar( tr( "Edit" ) );
+	tlb_edit->setIconSize(QSize(32, 32));
     createEditActions();
 
     tlb_customization = addToolBar( tr( "Customize" ) );
+	tlb_customization->setIconSize(QSize(32, 32));
     createColorActions();
     createMiscActions();
 
@@ -77,10 +82,12 @@ void SketchingWindow::createActions()
 void SketchingWindow::createDefineSketchRegionsActions()
 {
 
-    ac_sketchabove = new QAction( tr( "SA" ), this );
+    ac_sketchabove = new QAction( tr( "Sketch Above" ), this );
+	ac_sketchabove->setIcon(QIcon(":/images/icons/sketchabove.png"));
     ac_sketchabove->setCheckable( true );
 
-    ac_sketchbelow = new QAction( tr( "SB" ), this );
+    ac_sketchbelow = new QAction( tr( "Sketch Below" ), this );
+	ac_sketchbelow->setIcon(QIcon(":/images/icons/sketchbelow.png"));
     ac_sketchbelow->setCheckable( true );
 
 
@@ -91,6 +98,7 @@ void SketchingWindow::createDefineSketchRegionsActions()
 
 
     tlb_sketchregions->addActions( ag_sketching_rules->actions() );
+	tlb_sketchregions->setIconSize(QSize(32, 32));
 
 }
 
@@ -100,28 +108,28 @@ void SketchingWindow::createRulesActions()
 {
 
 
-    ac_sketch = new QAction( tr( "TS" ), this );
+    ac_sketch = new QAction( tr( "Truncate Sketch" ), this );
     ac_sketch->setIcon( QIcon( ":/images/icons/sketchmode.png" ) );
     ac_sketch->setCheckable( true );
     ac_sketch->setChecked( true );
 
 
-    ac_removeabove = new QAction( tr( "RA" ), this );
+    ac_removeabove = new QAction( tr( "Remove Above" ), this );
 	ac_removeabove->setIcon(QIcon(":/images/icons/removeabove.png"));
     ac_removeabove->setCheckable( true );
 
 
-    ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
+    ac_removeaboveintersection = new QAction( tr( "Remove Above Intersection" ), this );
     ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
     ac_removeaboveintersection->setChecked( true );
 
 
-    ac_removebelow = new QAction(tr( "RB" ), this );
+    ac_removebelow = new QAction(tr( "Remove Below" ), this );
 	ac_removebelow->setIcon(QIcon(":/images/icons/removebelow.png"));
     ac_removebelow->setCheckable( true );
 
-    ac_removebelowintersection = new QAction( tr( "RBI" ), this );
+    ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
     ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
     ac_removebelowintersection->setCheckable( true );
 
