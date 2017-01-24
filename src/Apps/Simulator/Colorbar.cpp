@@ -154,7 +154,10 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
         QFontMetrics fm(painter.font());
 
-        float text_step = (rect.height() - 2*fm.height()) / (colors.size() - 1);
+
+        int ncolors = (colors.size() - 1);
+        if( ncolors == 0 ) ncolors = 1;
+        float text_step = (rect.height() - 2*fm.height()) / ncolors;
 
 
         painter.drawText(left, rect.top() - fm.height(), "Max");

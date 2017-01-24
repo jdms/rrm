@@ -384,9 +384,6 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
     int number_of_vertices = mesh.getNumberofVertices();
 
     std::vector< float > colors;
-//    colors.resize( 3*number_of_vertices );
-
-
     int number_of_faces = mesh.getNumberofFaces();
 
 
@@ -414,6 +411,7 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
     std::vector< double > values_;
     for( std::map< double, QVector3D>::iterator it = unique_values.begin(); it != unique_values.end(); ++it )
     {
+        std::cout << "setFacesColors in Canvas poros = " << it->first << std::endl;
          values_.push_back( it->first);
          colors_.push_back( it->second);
     }
