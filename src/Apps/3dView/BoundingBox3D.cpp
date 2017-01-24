@@ -105,6 +105,10 @@ void BoundingBox3D::resetBuffers()
     va_boundingbox = 0;
     vb_vertices = 0;
 
+    initShaders();
+    initBuffers();
+    create();
+
 }
 
 
@@ -147,7 +151,7 @@ void BoundingBox3D::resetShaders()
         delete( shader_boundingbox );
         shader_boundingbox = nullptr;
 
-        is_initialized = false;
+//        is_initialized = false;
     }
 
 }

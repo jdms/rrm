@@ -83,6 +83,8 @@ class MainWindow : public QMainWindow
 
         void createFlowDiagnosticsModule();
         void createFlowDiagnosticsActions();
+        void createFlowDiagnosticsMenuBar();
+
 
 
 
@@ -148,6 +150,7 @@ class MainWindow : public QMainWindow
 
         QDockWidget* dw_flowdiagnostics;
         FlowWindow *flow_window;
+        QAction *ac_flowwindow;
 
 
 

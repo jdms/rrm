@@ -97,6 +97,7 @@ void MainWindow::createMenuBar()
 
     createSketchingMenuBar();
     create3DWindowMenuBar();
+    createFlowDiagnosticsMenuBar();
 
 }
 
@@ -136,7 +137,12 @@ void MainWindow::createSketchingActions()
 
 
     connect( ac_wdwsketching , SIGNAL( toggled( bool ) ), dw_sketching , SLOT( setVisible( bool ) ) );
-    connect( dw_sketching, &QDockWidget::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
+//    connect( dw_sketching, &QDockWidget::visibilityChanged, ac_wdwsketching, &QAction::setChecked );
+    connect( dw_sketching, &QDockWidget::visibilityChanged, [=]()
+    {
+        if( dw_sketching->isActiveWindow() && dw_sketching->isHidden()  )
+            ac_wdwsketching->setChecked( false );
+    });
 
 
     connect ( sketching_window, &SketchingWindow::updateStratigraphicRule, controller, &Controller::setStratigraphicRule );
@@ -211,8 +217,12 @@ void MainWindow::create3DWindowActions()
     ac_3dview->setChecked ( true );
 
     connect ( ac_3dview , SIGNAL( toggled( bool ) ) , dw_3dview , SLOT( setVisible( bool ) ) );
+    connect( dw_3dview, &QDockWidget::visibilityChanged, [=]()
+    {
+        if( dw_3dview->isActiveWindow() && dw_3dview->isHidden()  )
+            ac_3dview->setChecked( false );
+    });
 
-    connect( dw_3dview, &QDockWidget::visibilityChanged, ac_3dview, &QAction::setChecked );
     connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
     connect( view3d_window, SIGNAL( changeResolution( const int, const int ) ), controller, SLOT( changeResolution( const int, const int ) ) );
 
@@ -229,12 +239,35 @@ void MainWindow::createFlowDiagnosticsModule()
 
     dw_flowdiagnostics->setAllowedAreas( Qt::AllDockWidgetAreas );
     addDockWidget( Qt::BottomDockWidgetArea, dw_flowdiagnostics );
+
+    ac_flowwindow  = new QAction ( tr ( "Flow Diagnostics Window" ) , this );
+    ac_flowwindow->setCheckable ( true );
+    ac_flowwindow->setChecked ( true );
+
+
+
+
 }
 
+
+void MainWindow::createFlowDiagnosticsMenuBar()
+{
+
+     mn_windows->addAction ( ac_flowwindow );
+}
 
 
 void MainWindow::createFlowDiagnosticsActions()
 {
+
+
+
+    connect ( ac_flowwindow , SIGNAL( toggled( bool ) ) , dw_flowdiagnostics , SLOT( setVisible( bool ) ) );
+    connect( dw_flowdiagnostics, &QDockWidget::visibilityChanged, [=]()
+    {
+        if( dw_flowdiagnostics->isActiveWindow() && dw_flowdiagnostics->isHidden()  )
+            ac_flowwindow->setChecked( false );
+    });
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, scene, &Scene::getLegacyMeshes );
 
@@ -244,8 +277,6 @@ void MainWindow::createFlowDiagnosticsActions()
 	connect(scene, &Scene::requestNumberOfRegion, [=](){ scene->createRegions(flow_window->getNumberOfRegions()); });
     connect(flow_window, &FlowWindow::sendNumberOfRegions, scene, &Scene::createRegions);
 
-//	connect(flow_window, &FlowWindow::get2Dto3DMatrix, scene, &Scene::send2Dto3DMatrix);
-//	connect(flow_window, &FlowWindow::get3Dto2DMatrix, scene, &Scene::send3Dto2DMatrix);
 }
 
 
@@ -322,3 +353,4 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
 
 }
+

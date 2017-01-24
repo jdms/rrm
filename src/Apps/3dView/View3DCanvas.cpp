@@ -14,11 +14,11 @@ View3DCanvas::~View3DCanvas()
 
     makeCurrent();
 
-    if( background )
-        background->resetBuffers();
+//    if( background )
+//        background->resetBuffers();
 
-    if( scene != nullptr )
-        scene->resetBuffers();
+//    if( scene != nullptr )
+//        scene->resetBuffers();
 
 //    std::cout << "entrei pra resetar\n" <<std::flush;
 
@@ -119,9 +119,12 @@ void View3DCanvas::initializeGL ( )
 
     background = new GradientBackgroundShader();
 	background->setCurrentDirectory(shader_directory.toStdString());
-	background->init();
+    background->init();
 
+//    scene->resetBuffers();
+//    background->resetBuffers();
 
+    resetBuffers();
 
 }
 
@@ -160,8 +163,10 @@ void View3DCanvas::resetBuffers()
     if( background )
         background->resetBuffers();
 
-    if( scene != nullptr )
+    if( scene )
         scene->resetBuffers();
+
+    update();
 
 }
 

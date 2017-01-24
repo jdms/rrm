@@ -56,6 +56,7 @@ class SketchingWindow : public QMainWindow
         void resetActions();
 
 		void createFlowDiagnosticAction();
+        void closeEvent(QCloseEvent *event);
 
 
     public slots:
@@ -91,6 +92,8 @@ class SketchingWindow : public QMainWindow
 
         void setRandomColor ( bool );
         void exportSurfaces();
+
+        void onclose();
 
 
     private:

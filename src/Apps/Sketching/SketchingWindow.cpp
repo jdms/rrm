@@ -411,3 +411,8 @@ void SketchingWindow::updateBoundaryDimensions( const int w, const int h, const 
 
 
 }
+
+void SketchingWindow::closeEvent(QCloseEvent *event)
+{
+    std::cout << "fechei?" << std::endl;
+}
