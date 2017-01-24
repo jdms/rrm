@@ -26,12 +26,14 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QDialogButtonBox>
-
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
 #include <QKeyEvent>
 
+#include <QtGui/QDesktopServices>
+#include <QtCore/QFileInfo>
+#include <QtCore/QUrl>
 
 #include "MainWindow/About/AboutWidget.hpp"
 
@@ -127,7 +129,7 @@ class MainWindow : public QMainWindow
         QAction *ac_exit;
 
         QMenu *mn_help;
-        QAction *ac_contents;
+        QAction *ac_rrmGuide;
         QAction *ac_about;
 
         QMenu *mn_windows;
