@@ -24,6 +24,8 @@ FlowParametersBar_new::FlowParametersBar_new(QWidget *parent) :
 
 	this->spinBox_Well_Type->setReadOnly(true);
 	this->spinBox_Well_Sign->setReadOnly(true);
+
+	this->number_of_regions_ = 0;
 	
 }
 
@@ -139,6 +141,11 @@ void FlowParametersBar_new::getWellParameter( int& nw,  std::vector< unsigned in
 	getWellParameter_new(nw, type, value, sign);
 }
 
+int FlowParametersBar_new::getNumberOfRegions()
+{
+	return this->number_of_regions_;
+}
+
 void FlowParametersBar_new::clear()
 {
 	edit_inputparameters->clear();
@@ -203,10 +210,32 @@ void FlowParametersBar_new::setRegionPoints(const std::map<int, Eigen::Vector3f>
 		// Z
 		positions_values[index.first][2] = index.second.y();
 		// Y
-		positions_values[index.first][1] = index.second.z();
+		positions_values[index.first][1] = this->depth_;
+
+	}
+
+	this->updateRegionWidget(comboBox_Region->currentIndex());
+}
+
+
+void FlowParametersBar_new::setRegionDepth(const float _depth)
+{
+	this->depth_ = _depth;
+
+	/// Coordinate System for FlowDiagnostic is  <x, z, y>
+	/// @FIXEME Be Careful about the coordinate sytems
+	for (auto index : positions_values)
+	{
+		// 
+		positions_values[index.first][0] = positions_values[index.first][0];
+		// Z
+		positions_values[index.first][2] = positions_values[index.first][2];
+		// Y
+		positions_values[index.first][1] = this->depth_;
 
 	}
 	this->updateRegionWidget(comboBox_Region->currentIndex());
+
 }
 
 
@@ -221,7 +250,7 @@ void FlowParametersBar_new::getPropertyAreaParameters_new(int& np, std::vector< 
 	visc.resize(this->number_of_regions_);
 	positions.resize(3 * this->number_of_regions_);
 
-	for (std::size_t it = 0; it < this->number_of_regions_; it++)
+	for (int it = 0; it < this->number_of_regions_; it++)
 	{
 		perm[it] = permeability_values[it];
 		poros[it] = porosity_values[it];
@@ -240,7 +269,7 @@ void FlowParametersBar_new::loadRegions(const int np, const std::vector< double 
 	/// Update the Model
 	this->number_of_regions_ = np;
 
-	for ( std::size_t it = 0; it < this->number_of_regions_ ; it++)
+	for ( int it = 0; it < this->number_of_regions_ ; it++)
 	{
 		permeability_values[it]      = perm[it];
 		porosity_values[it]			 = poros[it];

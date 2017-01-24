@@ -2,18 +2,18 @@
 
 FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir) : QOpenGLWidget(parent)
 {
-    
+
 
     show_axis = true;
 //    show_colorbar = false;
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
 
-	this->current_directory = _current_dir.toStdString();
-	//this->current_directory = "D:\\Workspace\\RRM\\files\\";
-	
-	//std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
-	createRenderingMenu();
+    this->current_directory = _current_dir.toStdString();
+    //this->current_directory = "D:\\Workspace\\RRM\\files\\";
+
+    //std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
+    createRenderingMenu();
 
 }
 
@@ -65,7 +65,7 @@ void FlowVisualizationCanvas::createRenderingMenu()
 
 
     connect( rendering_menu, &FlowRenderingOptionsMenu::clearAll, this, [=](){ emit clearAll(); }  );
-	
+
 }
 
 
@@ -91,34 +91,34 @@ void FlowVisualizationCanvas::initializeGL()
     {
         fprintf ( stderr , "Error: %s\n" , glewGetErrorString ( err ) );
     }
-	 
+
     glClearColor ( 1.0f , 1.0f , 1.0f , 1.0f );
 
     glEnable( GL_MULTISAMPLE );
     glEnable( GL_DEPTH_TEST );
-	glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
     //glDepthFunc( GL_LESS );
     //glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 
-	GLint bufs;
-	GLint samples;
+    GLint bufs;
+    GLint samples;
 
-	GLint minor;
-	GLint major;
+    GLint minor;
+    GLint major;
 
-	glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
-	glGetIntegerv(GL_SAMPLES, &samples);
+    glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
+    glGetIntegerv(GL_SAMPLES, &samples);
 
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
 
-	qDebug("Have %d buffers and %d samples", bufs, samples);
+    qDebug("Have %d buffers and %d samples", bufs, samples);
 
-	qDebug("Have %d Minor and %d Major", minor, major);
+    qDebug("Have %d Minor and %d Major", minor, major);
 
-		
-	//coordinate_axis_.increaseZoom(2.0f*1.05f);
+
+    //coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     mesh.initializeShader( current_directory );
     crosssection.initShader( current_directory );
@@ -129,9 +129,9 @@ void FlowVisualizationCanvas::initializeGL()
     else
         setColorMap();
 
-    
+
     axes.initShader( current_directory );
-	axes.load();
+    axes.load();
 
     mesh.load();
     initializeShader();
@@ -197,20 +197,27 @@ void FlowVisualizationCanvas::loadBackGround()
 
 void FlowVisualizationCanvas::paintGL()
 {
-	
+
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     loadBackGround();
 
+	Eigen::Quaternionf q(Eigen::AngleAxisf(-0.5*M_PI, Eigen::Vector3f::UnitX()));
+	Eigen::Affine3f M;
+	M.setIdentity();
+	M.rotate(q);
+
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
 
+	V = V * M;
 
     if( apply_crosssection == true )
     {
         glEnable( GL_BLEND );
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		scale = 1.0f;
         crosssection.draw( V, P, scale );
 
         glDisable( GL_BLEND );
@@ -218,24 +225,24 @@ void FlowVisualizationCanvas::paintGL()
     }
 
 
-	mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
+    mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
 
-	if( true )
-	{
-		axes.draw(camera.getRotation(), camera.getViewport());
-	}
-	
+    if( true )
+    {
+        axes.draw(camera.getRotation(), camera.getViewport());
+    }
+
 }
 
 
 void FlowVisualizationCanvas::resizeGL( int width, int height )
 {
-    
+
     glViewport ( 0 , 0 , width , height );
 
-	camera.setViewport(Eigen::Vector2f(static_cast<float>(width), static_cast<float>(height)));
+    camera.setViewport(Eigen::Vector2f(static_cast<float>(width), static_cast<float>(height)));
     camera.setPerspectiveMatrix ( camera.getFovy ( ) , (float) width / (float) height , 0.1f , 100.0f );
-	
+
     scale = 1.5*(float)width/(float)height;
 }
 
@@ -439,7 +446,7 @@ void FlowVisualizationCanvas::showRegions()
 {
 
     std::vector< QColor > colors;
-	std::vector<int> ids;
+    std::vector<int> ids;
     controller->getRegionsColor( colors , current_colormap, ids);
 
     int number_of_vertices = mesh.getNumberofVertices();
@@ -473,10 +480,10 @@ void FlowVisualizationCanvas::showRegions()
 
     }
 
-	auto min_max = std::minmax_element(ids.begin(), ids.end());
-	unsigned int nc;
+    auto min_max = std::minmax_element(ids.begin(), ids.end());
+    unsigned int nc;
 
-	colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
+    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
 
     mesh.setColor( meshcolors );
     update();
@@ -526,10 +533,10 @@ void FlowVisualizationCanvas::updateMesh()
 
     mesh.load();
 
-	camera.reset();
-	camera.increaseZoom(2.0f*1.05f);
-	
-	//coordinate_axis_.increaseZoom(2.0f*1.05f);
+    camera.reset();
+    camera.increaseZoom(2.0f*1.05f);
+
+    //coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();
@@ -649,16 +656,16 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
     Eigen::Vector2f mouse_pos( event->x(), event->y() );
 
 
-	if ((event->modifiers() & Qt::ShiftModifier) && (event->buttons() & Qt::LeftButton))
-	{
-		camera.translateCamera(mouse_pos);
-	} 
+    if ((event->modifiers() & Qt::ShiftModifier) && (event->buttons() & Qt::LeftButton))
+    {
+        camera.translateCamera(mouse_pos);
+    }
 
-	else if (event->buttons() & Qt::LeftButton)
-	{
-		camera.rotateCamera(mouse_pos);
-	}
-        
+    else if (event->buttons() & Qt::LeftButton)
+    {
+        camera.rotateCamera(mouse_pos);
+    }
+
 
     else if ( event->buttons() & Qt::RightButton )
     {
@@ -684,7 +691,7 @@ void FlowVisualizationCanvas::mouseMoveEvent( QMouseEvent *event )
 
         float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
         crosssection.getPlaneEquation( a, b, c, d );
-		mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
     }
 
@@ -702,10 +709,10 @@ void FlowVisualizationCanvas::mousePressEvent(QMouseEvent *event)
     setFocus();
 
     if( ( event->modifiers() & Qt::ShiftModifier ) && (event->button ( ) == Qt::LeftButton ) )
-	{
-		camera.translateCamera(mouse_pos);
-	}
-        
+    {
+        camera.translateCamera(mouse_pos);
+    }
+
     if( ( event->buttons() & Qt::RightButton ) /*&& ( event->modifiers() == Qt::ControlModifier )*/ )
     {
         rendering_menu->exec( event->globalPos() );
@@ -738,11 +745,11 @@ void FlowVisualizationCanvas::wheelEvent( QWheelEvent *event )
     {
         if( pos > 0 ){
             camera.increaseZoom( 1.05f );
-			//coordinate_axis_.increaseZoom(1.05f);
+            //coordinate_axis_.increaseZoom(1.05f);
         }
         else if( pos < 0 ){
             camera.increaseZoom( 1.0f/1.05f );
-			//coordinate_axis_.increaseZoom(1.0f/1.05f);
+            //coordinate_axis_.increaseZoom(1.0f/1.05f);
         }
 
 
@@ -754,7 +761,7 @@ void FlowVisualizationCanvas::wheelEvent( QWheelEvent *event )
 
 void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 {
-	
+
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
 
@@ -776,14 +783,14 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_U:
         {
-//			mesh.reloadShader();
 			this->reloadShader();
+
         } break;
 
         case Qt::Key_R:
         {
             camera.reset();
-			camera.increaseZoom(2.0f*1.05f);
+            camera.increaseZoom(2.0f*1.05f);
         } break;
 
         case Qt::Key_L:
@@ -836,7 +843,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+                mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -871,7 +878,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+                mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -887,7 +894,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+                mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -903,7 +910,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+                mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
 
@@ -919,7 +926,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
                 float a = 0.0f, b = 0.0f , c = 0.0f , d = 0.0f;
                 crosssection.getPlaneEquation( a, b, c, d );
-				mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+                mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
             }
 
 
@@ -964,3 +971,8 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 //    colorbar.resetBuffers();
 }
 
+/// Get the current boundingobx depth in the extrusion framework
+float FlowVisualizationCanvas::getDepth() const
+{
+	return mesh.getDepth();
+}

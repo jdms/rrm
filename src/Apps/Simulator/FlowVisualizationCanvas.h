@@ -83,7 +83,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 		/// Debug Purpose
 		void reloadShader();
 
-
+		float getDepth() const;
 
     signals:
         void applyCrossSection();

@@ -111,10 +111,10 @@ void SketchingWindow::createRulesActions()
     ac_removeabove->setCheckable( true );
 
 
-
     ac_removeaboveintersection = new QAction( tr( "RAI" ), this );
     ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
     ac_removeaboveintersection->setCheckable( true );
+    ac_removeaboveintersection->setChecked( true );
 
 
     ac_removebelow = new QAction(tr( "RB" ), this );
@@ -241,7 +241,12 @@ void SketchingWindow::createMiscActions()
     ac_screenshot->setIcon( QIcon( ":/images/icons/Camera.png" ) );
     ac_screenshot->setShortcut( Qt::Key_P );
 
+    ac_export = new QAction( tr( "&Export" ), this );
+    ac_export->setIcon( QIcon( ":/images/icons/document_export.png" ) );
+    ac_export->setShortcut( Qt::Key_E );
+
     tlb_customization->addAction( ac_screenshot );
+    tlb_customization->addAction( ac_export );
 
 }
 
@@ -286,7 +291,7 @@ void SketchingWindow::resetActions()
 
     ac_removeabove->setChecked( false );
     ac_removebelow->setChecked( false );
-    ac_removeaboveintersection->setChecked( false );
+    ac_removeaboveintersection->setChecked( true );
     ac_removebelowintersection->setChecked( false );
     ac_sketchabove->setChecked( false );
     ac_sketchbelow->setChecked( false );
@@ -327,6 +332,7 @@ void SketchingWindow::createConnections()
     connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c ){ tbt_colorsketch->setChecked( true ); emit updateColor( c ); } );
 
     connect( ac_screenshot, &QAction::triggered, sketching_canvas, &SketchingCanvas::screenshot );
+    connect( ac_export, &QAction::triggered,  [=](){ emit exportSurfaces(); } );
 
     connect( ac_add_sketch, &QAction::triggered, [=](){ emit addStratigraphy(); } );
     connect( ac_deny_curve, &QAction::triggered, [=](){ emit undoLastSketch(); } );

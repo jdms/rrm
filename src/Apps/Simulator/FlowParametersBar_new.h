@@ -27,10 +27,14 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
         void setWellParameter( const int nw,  const std::vector< unsigned int >& type, const std::vector< double >& value, const std::vector< int >& sign );
         void getWellParameter( int& nw,  std::vector< unsigned int >& type, std::vector< double >& value, std::vector< int >& sign );
 
+		int getNumberOfRegions();
+
         void clear();
 		
 	public slots:
 		void setRegionPoints(const std::map<int,Eigen::Vector3f>& region_points);
+
+		void setRegionDepth(const float _depth);
     private slots:
 
 		/// Regions
@@ -83,7 +87,10 @@ class FlowParametersBar_new : public QWidget, private Ui::FormPropertyValues
 		std::vector<double> porosity_;     // size = n
 		std::vector<double> viscosity_;    // size = n
 		std::vector<double> positions_;    // size = 3*n
-		std::size_t			number_of_regions_;
+		int					number_of_regions_;
+
+		/// Depth of region in 3D. This value is calculated in the Mesh.cpp int the function buildBoundingBox()
+		float depth_;
 };
 
 #endif // FLOWPARAMETERSBAR_H

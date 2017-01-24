@@ -5,18 +5,23 @@ Surface::Surface()
 {
     is_initialized = false;
     id = 0;
+
+    initData();
 }
 
 Surface::Surface( int id_ )
 {
     is_initialized = false;
     id = id_;
+
+    initData();
+
 }
 
 
 void Surface::init()
 {
-    initData();
+
     initShaders();
     initBuffers();
 
@@ -49,6 +54,7 @@ void Surface::initData()
 
 void Surface::resetBuffers()
 {
+    resetShaders();
 	
 	if( va_surface != 0 )
 	{
@@ -81,12 +87,17 @@ void Surface::resetBuffers()
 		
     }
 		
+
 	va_surface = 0;	
 	vb_vertices = 0;	
 	vb_normals = 0;
 	vb_colors = 0;
 	vb_wireframes = 0;
 	vb_faces = 0;
+
+    number_of_lines = 0;
+    number_of_vertices = 0;
+    number_of_faces = 0;
 	
 	
 }
@@ -310,6 +321,9 @@ void Surface::resetShaders()
     {
         delete( shader_surface );
         shader_surface = nullptr;
+
+        is_initialized = false;
+
     }
 	
 }
