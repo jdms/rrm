@@ -66,47 +66,47 @@ void FlowWindow::createToolBar()
     qtoolbarFlow = new QToolBar();
 
 
-    qreloadSurface = new QAction( "Surface from Sketch", qtoolbarFlow );
+    qreloadSurface = new QAction( tr("Surface from Sketch"), qtoolbarFlow );
     qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
     
-    qoopenfilesDialog = new QAction( "Surface from File", qtoolbarFlow );
+	qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
     qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
     
 
-    qflowparametersDialog = new QAction( "User Input", qtoolbarFlow );
+	qflowparametersDialog = new QAction(tr("User Input"), qtoolbarFlow);
     qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
     
 
 
-    qbuildCornerPoint = new QAction( "Corner Point", qtoolbarFlow );
+	qbuildCornerPoint = new QAction(tr("Corner Point"), qtoolbarFlow);
     qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
 	qbuildCornerPoint->setEnabled(false);
 	//qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
 	//							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
 
-    qbuildUnstructured = new QAction( "Unstructured", qtoolbarFlow );
+	qbuildUnstructured = new QAction(tr("Unstructured"), qtoolbarFlow);
     qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));    
 	qbuildUnstructured->setEnabled(false);
 
 
-    qcomputeFlowProperties = new QAction( "Compute Properties", qtoolbarFlow );
+	qcomputeFlowProperties = new QAction(tr("Compute Properties"), qtoolbarFlow);
     qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));    
 	qcomputeFlowProperties->setEnabled(false);
 
 
 
-    qshowMovingCrossSection = new QAction( "CrossSection", qtoolbarFlow );
+	qshowMovingCrossSection = new QAction(tr("CrossSection"), qtoolbarFlow);
     qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
     qshowMovingCrossSection->setCheckable( true );
 
 	/// Exporters
-    qexportsurface			 = new QAction( "Unstructured Surface Mesh to VTK", qtoolbarFlow );
-    qexportvolume			 = new QAction( "Unstructured Volume Mesh to VTK", qtoolbarFlow );
-    qexportcornerpointVTK	 = new QAction( "Corner-Point Grid to VTK", qtoolbarFlow );  
-    qexportcornerpointGRDECL = new QAction( "Corner-Point Grid to GRDECL", qtoolbarFlow );
-    qexportresults			 = new QAction( "Results to VTK", qtoolbarFlow );
+	qexportsurface           = new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
+	qexportvolume            = new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
+	qexportcornerpointVTK    = new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
+	qexportcornerpointGRDECL = new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
+	qexportresults			 = new QAction(tr("Results to VTK"), qtoolbarFlow);
     
-    mn_export = new QMenu( "Export", this );
+	mn_export = new QMenu(tr("Export"), this);
     mn_export->addAction(qexportsurface);
     mn_export->addAction(qexportvolume);
     mn_export->addAction(qexportcornerpointVTK);
@@ -144,40 +144,40 @@ void FlowWindow::createToolBar()
 	QActionGroup* ag_colormaps = new QActionGroup(mn_colormaps);
 	ag_colormaps->setExclusive(true);
 
-	ac_constant = new QAction("Constant", ag_colormaps);
+	ac_constant = new QAction(tr("Constant"), ag_colormaps);
 	ac_constant->setCheckable(true);	
 	ac_constant->setChecked(true);
-	ac_cool_to_warm = new QAction("Cool to Warm", ag_colormaps);
+	ac_cool_to_warm = new QAction(tr("Cool to Warm"), ag_colormaps);
 	ac_cool_to_warm->setCheckable(true);
-	ac_hot = new QAction("Hot", ag_colormaps);
+	ac_hot = new QAction(tr("Hot"), ag_colormaps);
 	ac_hot->setCheckable(true);
-	ac_cool = new QAction("Cool", ag_colormaps);
+	ac_cool = new QAction(tr("Cool"), ag_colormaps);
 	ac_cool->setCheckable(true);
-	ac_parula = new QAction("Parula", ag_colormaps);
+	ac_parula = new QAction(tr("Parula"), ag_colormaps);
 	ac_parula->setCheckable(true);
-	ac_spring = new QAction("Spring", ag_colormaps);
+	ac_spring = new QAction(tr("Spring"), ag_colormaps);
 	ac_spring->setCheckable(true);
-	ac_summer = new QAction("Summer", ag_colormaps);
+	ac_summer = new QAction(tr("Summer"), ag_colormaps);
 	ac_summer->setCheckable(true);
-	ac_copper = new QAction("Copper", ag_colormaps);
+	ac_copper = new QAction(tr("Copper"), ag_colormaps);
 	ac_copper->setCheckable(true);
-	ac_polar = new QAction("Polar", ag_colormaps);
+	ac_polar = new QAction(tr("Polar"), ag_colormaps);
 	ac_polar->setCheckable(true);
-	ac_winter = new QAction("Winter", ag_colormaps);
+	ac_winter = new QAction(tr("Winter"), ag_colormaps);
 	ac_winter->setCheckable(true);
-	ac_jet = new QAction("Jet", ag_colormaps);
+	ac_jet = new QAction(tr("Jet"), ag_colormaps);
 	ac_jet->setCheckable(true);
 
 	mn_colormaps->addActions(ag_colormaps->actions());
 
-    ac_showregions = new QAction( "Show Pore Volumes", qtoolbarFlow );
+	ac_showregions = new QAction(tr("Show Pore Volumes"), qtoolbarFlow);
     ac_showregions->setIcon(QIcon(":/images/icons/porus.png"));
     ac_showregions->setCheckable( true );
     //connect( ac_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
 	
 	ac_showregions->setEnabled(false);
 
-    qclear = new QAction( "Clear", qtoolbarFlow );
+	qclear = new QAction(tr("Clear"), qtoolbarFlow);
     qclear->setIcon(QIcon(":/images/icons/clear.png"));  
 
 	/// ToolBar setUp
@@ -247,7 +247,7 @@ void FlowWindow::createActions()
 		{
 
 			QMessageBox::StandardButton reply;
-			reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?",	QMessageBox::Yes | QMessageBox::No);
+			reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
 
 			if (reply == QMessageBox::Yes) {
 				qDebug() << "Yes was clicked";
