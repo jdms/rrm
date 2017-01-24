@@ -49,14 +49,14 @@ unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
 
 
 void FlowDiagnosticsInterface::getRegion( unsigned int id, double& x, double& y, double& z, double& perm,
-                                          double &poros, double& visc ) {
+                                          double &poros, double& visc, double &porevolume ) {
     x = region.propertyarea(id).x();
     y = region.propertyarea(id).y();
     z = region.propertyarea(id).z();
 	perm = region.propertyarea(id).perm()/0.987e-15;
     poros = region.propertyarea(id).porosity();
     visc = region.propertyarea(id).viscosity();
-    //double porevolume = region.propertyarea(id).porevolume();
+    porevolume = region.propertyarea(id).porevolume();
 }
 
 
@@ -256,8 +256,6 @@ void FlowDiagnosticsInterface::getPermeabilitybyVertices( std::vector< double >&
     values = region.getpermeability_nodes();
 //    values=region.getpermeability_elements();
 }
-
-
 
 
 void FlowDiagnosticsInterface::getRegionId( std::vector< int >& regions_id ) {

@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <random>
+#include <set>
+#include <map>
 
 #include <QWidget>
 #include <QColor>
@@ -14,6 +16,7 @@
 #include "ProgressCounter.h"
 #include "FlowDiagnosticsInterface.hpp"
 #include "ColorMap.h"
+
 
 #include <Eigen/Dense>
 
@@ -70,7 +73,8 @@ class FlowVisualizationController: public QWidget
 		bool isSurfaceLoaded()      { return this->is_surface_loaded; }
 		bool arePropertiesComputed() { return are_properties_computed; }
 
-		void getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& ids_);
+        std::map< double, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, std::vector< double >& values, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids);
+//        std::map< int, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& ids_);
 
 
     public slots:

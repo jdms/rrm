@@ -143,7 +143,7 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
     rd_colormap_JET = new QRadioButton( tr ( "JET" ) );
     rd_colormap_hot = new QRadioButton( tr ( "Hot" ) );
     rd_colormap_cool = new QRadioButton( tr ( "Cool" ) );
-    rd_colormap_parula = new QRadioButton( tr ( "Parula" ) );
+//    rd_colormap_parula = new QRadioButton( tr ( "Parula" ) );
     rd_colormap_spring = new QRadioButton( tr ( "Spring" ) );
     rd_colormap_summer = new QRadioButton( tr ( "Summer" ) );
     rd_colormap_copper = new QRadioButton( tr ( "Copper" ) );
@@ -154,7 +154,7 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
     rd_colormap_JET->setChecked( false );
     rd_colormap_hot->setChecked( false );
     rd_colormap_cool->setChecked( false );
-    rd_colormap_parula->setChecked( false );
+//    rd_colormap_parula->setChecked( false );
     rd_colormap_spring->setChecked( false );
     rd_colormap_summer->setChecked( false );
     rd_colormap_copper->setChecked( false );
@@ -167,7 +167,7 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
     vb_layout->addWidget ( rd_colormap_JET );
     vb_layout->addWidget ( rd_colormap_hot );
     vb_layout->addWidget ( rd_colormap_cool );
-    vb_layout->addWidget ( rd_colormap_parula );
+//    vb_layout->addWidget ( rd_colormap_parula );
     vb_layout->addWidget ( rd_colormap_spring );
     vb_layout->addWidget ( rd_colormap_summer );
     vb_layout->addWidget ( rd_colormap_copper );
@@ -189,7 +189,7 @@ void FlowRenderingOptionsMenu::createColorMapMenu()
     connect ( rd_colormap_JET, &QRadioButton::toggled , this , [=](){ emit setJETColormap(); } );
     connect ( rd_colormap_hot, &QRadioButton::toggled , this , [=](){ emit seHotColormap(); } );
     connect ( rd_colormap_cool, &QRadioButton::toggled , this , [=](){ emit setCoolColormap(); } );
-    connect ( rd_colormap_parula, &QRadioButton::toggled , this , [=](){ emit setParulaColormap(); } );
+//    connect ( rd_colormap_parula, &QRadioButton::toggled , this , [=](){ emit setParulaColormap(); } );
     connect ( rd_colormap_spring, &QRadioButton::toggled , this , [=](){ emit setSpringColormap(); } );
     connect ( rd_colormap_summer, &QRadioButton::toggled , this , [=](){ emit setSummerColormap(); } );
     connect ( rd_colormap_copper, &QRadioButton::toggled , this , [=](){ emit setCopperColormap(); } );
@@ -344,8 +344,8 @@ std::string FlowRenderingOptionsMenu::getCurrentColorMap()
     else if( rd_colormap_cool->isChecked() == true )
         return "COOL";
 
-    else if( rd_colormap_parula->isChecked() == true )
-        return "PARULA";
+//    else if( rd_colormap_parula->isChecked() == true )
+//        return "PARULA";
 
     else if( rd_colormap_spring->isChecked() == true )
         return "SPRING";

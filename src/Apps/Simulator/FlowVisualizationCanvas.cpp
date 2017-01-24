@@ -1,4 +1,5 @@
 #include "FlowVisualizationCanvas.h"
+#include <map>
 
 FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir) : QOpenGLWidget(parent)
 {
@@ -41,7 +42,7 @@ void FlowVisualizationCanvas::createRenderingMenu()
     connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::JET );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::seHotColormap , this, [=](){ setCurrentColormap( ColorMap::COLORMAP::HOT );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setCoolColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COOL ); }  );
-    connect( rendering_menu, &FlowRenderingOptionsMenu::setParulaColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::PARULA );   }  );
+//    connect( rendering_menu, &FlowRenderingOptionsMenu::setParulaColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::PARULA );   }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setSpringColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SPRING );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setSummerColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SUMMER );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setCopperColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COPPER ); }  );
@@ -334,6 +335,8 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
     mesh.loadColorsbyVertices();
 
     unsigned int nc = 0;
+
+
     colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
     //colorbar->setMinValue( min );
     //colorbar->setMaxValue( max );
@@ -389,38 +392,45 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
 
     // get the color for each face and attribute it for its vertices.
 
+    std::map< double, QVector3D> unique_values;
     for( int i = 0; i < number_of_faces; ++i )
     {
 
         QVector3D c = colormap.getColor( current_colormap, values[ i ], min, max );
 
-
         colors.push_back( c.x() );
         colors.push_back( c.y() );
         colors.push_back( c.z() );
 
-//        vector< unsigned int > vertices_of_face = mesh.getFace( i );
-//        int number_of_vertices_by_face = vertices_of_face.size();
 
-
-//        for( int j = 0; j < number_of_vertices_by_face; ++j )
-//        {
-//            unsigned int id = vertices_of_face[ j ];
-//            colors[ 3*id ] = c.x();
-//            colors[ 3*id + 1 ] = c.y();
-//            colors[ 3*id + 2 ] = c.z();
-
-//        }
+        unique_values[ values[ i ] ] = c;
 
     }
 
-//    colorbar.setMinValue( min );
-//    colorbar.setMaxValue( max );
+
+    std::vector< QVector3D > colors_;
+
+
+    std::vector< double > values_;
+    for( std::map< double, QVector3D>::iterator it = unique_values.begin(); it != unique_values.end(); ++it )
+    {
+         values_.push_back( it->first);
+         colors_.push_back( it->second);
+    }
+
     show_colorbar = true;
 
-    unsigned int nc = 0;
-    colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
 
+    std::vector< int > ids;
+    if( name.compare( "Porosity" ) == 0 )
+    {
+        colorbar->updateColorMap( colors_, ids, values_ );
+    }
+    else
+    {
+        unsigned int nc = 0;
+        colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
+    }
     mesh.setColor( colors );
     mesh.loadColorsbyFaces();
     update();
@@ -453,45 +463,50 @@ void FlowVisualizationCanvas::showRegions()
 {
 
     std::vector< QColor > colors;
+    std::vector< double > values;
     std::vector<int> ids;
-    controller->getRegionsColor( colors , current_colormap, ids);
-
-    int number_of_vertices = mesh.getNumberofVertices();
-
-    std::vector< float > meshcolors;
-//    meshcolors.resize( 3*number_of_vertices );
+    std::map< double, QVector3D> unique_colors = controller->getRegionsColor( colors , values, current_colormap, ids);
 
 
     int number_of_faces = mesh.getNumberofFaces();
 
-
-    // get the color for each face and attribute it for its vertices.
-
+    std::vector< float > meshcolors;
     for( int i = 0; i < number_of_faces; ++i )
     {
 
-
         QVector3D c( colors[i].red(),colors[i].green(), colors[i].blue() );
-//        vector< unsigned int > vertices_of_face = mesh.getFace( i );
-//        int number_of_vertices_by_face = vertices_of_face.size();
 
-
-//        for( int j = 0; j < number_of_vertices_by_face; ++j )
-//        {
-//            unsigned int id = vertices_of_face[ j ];
-            meshcolors.push_back( c.x()/255 );
-            meshcolors.push_back( c.y()/255 );
-            meshcolors.push_back( c.z()/255 );
-
-//        }
+        meshcolors.push_back( c.x()/255 );
+        meshcolors.push_back( c.y()/255 );
+        meshcolors.push_back( c.z()/255 );
 
     }
+
+
+
+    std::vector< QVector3D > colors_;
+    values.clear();
+    for( std::map< double, QVector3D>::iterator it = unique_colors.begin(); it != unique_colors.end(); ++it )
+    {
+        values.push_back( it->first);
+         colors_.push_back( it->second);
+    }
+
+    values.
+
+    std::cout << "number of colors = " << unique_colors.size() << std::flush;
+        std::cout << "\n" << std::flush;
+
+    colorbar->updateColorMap( colors_, ids, values );
+
 
     auto min_max = std::minmax_element(ids.begin(), ids.end());
     unsigned int nc;
 
-    //colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
-    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), (*min_max.first) + 1, (*min_max.second)+1, 1);
+
+
+//    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
+    //colorbar->updateColorMap(colormap.getColors(current_colormap, nc), (*min_max.first) + 1, (*min_max.second)+1, 1);
 
     mesh.setColor( meshcolors );
     mesh.loadColorsbyFaces();
@@ -963,7 +978,7 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
 void FlowVisualizationCanvas::setAleatoryColorMap()
 {
-    setCurrentColormap( ColorMap::COLORMAP::JET );
+    setCurrentColormap( ColorMap::COLORMAP::COOL_TO_WARM );
     setColorMap();
 }
 
