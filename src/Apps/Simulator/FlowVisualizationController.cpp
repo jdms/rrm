@@ -469,6 +469,8 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         values_permeability[ i ] = perm;
         values_porosity[ i ] = poros;
 
+
+        std::cout << "getFacesPropertyValues in FlowVisualizationController poros = " << poros << std::endl;
     }
 
 
@@ -493,6 +495,8 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
             {
                 int id = cells_regions[ i ];
                 values.push_back( values_porosity[ id ] );
+
+                std::cout << "id = " << id << " getFacesPropertyValues values_porosity[ id ] poros = " <<  values_porosity[ id ] << std::endl;
             }
 
         }
