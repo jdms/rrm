@@ -128,9 +128,9 @@ QVector3D ColorMap::getColor( COLORMAP map, float value, float low, float high )
         case COLORMAP::COOL:
             return getColor( cool, value, low, high );
             break;
-        case COLORMAP::PARULA:
-            return getColor( parula, value, low, high );
-            break;
+//        case COLORMAP::PARULA:
+//            return getColor( parula, value, low, high );
+//            break;
         case COLORMAP::SPRING:
             return getColor( spring, value, low, high );
             break;
@@ -206,11 +206,11 @@ std::vector< QVector3D > ColorMap::getColors( COLORMAP cm, unsigned int& nc ) co
             nc = cool.size();
             return cool;
         }    break;
-        case COLORMAP::PARULA:
-        {
-            nc = parula.size();
-            return parula;
-        }    break;
+//        case COLORMAP::PARULA:
+//        {
+//            nc = parula.size();
+//            return parula;
+//        }    break;
         case COLORMAP::SPRING:
         {
             nc = spring.size();

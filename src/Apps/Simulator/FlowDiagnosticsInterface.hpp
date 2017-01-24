@@ -35,7 +35,7 @@ class FlowDiagnosticsInterface
         unsigned int getNumberofRegions() const ;
 
         void getRegion( unsigned int id, double& x, double& y, double& z, double& perm,
-                        double &poros, double& visc ) ;
+                        double &poros, double& visc, double &porevolume ) ;
 
 
         /// \brief Clean all the regions
