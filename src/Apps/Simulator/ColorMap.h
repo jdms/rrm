@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <QVector3D>
-
+#include <limits>
 
 class ColorMap
 {
@@ -17,8 +17,8 @@ class ColorMap
 
         ColorMap();
 
-        QVector3D getColor( COLORMAP map, float value, float low, float high ) const;
-        QVector3D getColor( const std::vector< QVector3D >& map, float value, float low, float high ) const ;
+        QVector3D getColor( COLORMAP map, double value, double low, double high ) const;
+		QVector3D getColor(const std::vector< QVector3D >& map, double value, double low, double high) const;
         QVector3D getConstantColor() const;
         std::vector< QVector3D > getColors( COLORMAP cm, unsigned int& nc ) const;
 
