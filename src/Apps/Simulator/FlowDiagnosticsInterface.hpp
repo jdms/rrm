@@ -95,6 +95,8 @@ class FlowDiagnosticsInterface
 
 
 
+        void setVolumeDimensions( double width, double height, double depth );
+
 
 
         /// \brief A kind of pre-processing or preparation to compute properties -- refers to: last code, optional
@@ -115,6 +117,7 @@ class FlowDiagnosticsInterface
 
 
 
+        void getPoreVolumebyRegion( std::vector< double >& values );
 
 
 
@@ -168,6 +171,10 @@ class FlowDiagnosticsInterface
         ///        and required by Zhao's document ( output Permeability ).
         void getPermeabilitybyVertices( std::vector< double >& values ) ;
 
+
+        void getPorosity( std::vector< double >& values ) ;
+
+
         void getCPGPermeability( std::vector< double >& values );
 
 
@@ -193,6 +200,9 @@ class FlowDiagnosticsInterface
         void getCPGPressure( std::vector< double >& values ) ;
 
 
+        void getCPGPorosity( std::vector< double >& values ) ;
+
+
         /// \brief Get tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
         void getCPGTOF( std::vector< double >& values );
 
@@ -214,6 +224,8 @@ class FlowDiagnosticsInterface
         //void geBackwardTracer( std::vector< double >& values );
         void getCPGMaxBackwardTracer(std::vector< double >& values);
 
+
+        void getCPGVelocity(std::vector< double >& values);
 
 
         /// \brief Get vertices and faces of the reparametrized surface -- it is required by the gui.

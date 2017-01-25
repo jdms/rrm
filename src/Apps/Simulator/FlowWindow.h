@@ -71,6 +71,11 @@ class FlowWindow : public  QMainWindow
 		void regionPoints(const std::map<int, Eigen::Vector3f>& region_points);
 		/// Will emit a signal sendNumberOfRegions
 		int getNumberOfRegions();
+
+        void setVolumeDimensions( double width_, double height_, double depth_ )
+        {
+            controller->setVolumeDimensions( width_, height_, depth_ );
+        }
 		
     signals:
 
