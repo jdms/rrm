@@ -68,7 +68,7 @@ void MainWindow::createMainWindowActions ( )
     ac_exit = new QAction( tr ( "E&xit" ) , this );
     ac_exit->setIcon( QIcon( ":/images/icons/door_out.png" ) );
 
-    ac_rrmGuide = new QAction( tr ( "RRM Guide" ), this );
+    ac_rrmGuide = new QAction( tr ( "RRM Manual" ), this );
     ac_about = new QAction( tr ( "&About" ) , this );
 
 
@@ -79,7 +79,7 @@ void MainWindow::createMainWindowActions ( )
 		qDebug() << dir.currentPath() << "Help !!";
 		/// The QFileInfo class provides system-independent file information. 
 		/// @see http://doc.qt.io/qt-5/qfileinfo.html#absoluteFilePath
-		QFileInfo file_info(dir.currentPath() + "/documentation/rrm-guide.pdf");
+        QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
 		QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
 	});
     connect( ac_exit, SIGNAL( triggered() ) , this, SLOT( close() ) );

@@ -613,10 +613,8 @@ void Scene::resetBuffers()
     for( it = surfaces_list.begin(); it != surfaces_list.end(); ++it )
     {
         Surface* s = it->second;
-//         std::cout << "for" << std::endl;
         if( s->initialized() == true )
         {
-//            std::cout << "reset?" << std::endl;
             s->resetBuffers();
         }
     }
