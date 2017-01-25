@@ -285,6 +285,8 @@ void MainWindow::createFlowDiagnosticsActions()
 	connect(scene, &Scene::requestNumberOfRegion, [=](){ scene->createRegions(flow_window->getNumberOfRegions()); });
     connect(flow_window, &FlowWindow::sendNumberOfRegions, scene, &Scene::createRegions);
 
+    connect( scene, &Scene::volumeDimensions, flow_window, &FlowWindow::setVolumeDimensions );
+
 }
 
 

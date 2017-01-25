@@ -77,6 +77,12 @@ class FlowVisualizationController: public QWidget
 //        std::map< int, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& ids_);
 
 
+        void setVolumeDimensions( double width_, double height_, double depth_ )
+        {
+            code_interface.setVolumeDimensions( width_, height_, depth_ );
+        }
+
+
     public slots:
 
 

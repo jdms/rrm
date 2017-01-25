@@ -146,6 +146,7 @@ class Scene: public QGraphicsScene
         void sendRegionPoints( const std::map<int, Eigen::Vector3f> & region_point);
 		void requestNumberOfRegion();
 
+        void volumeDimensions( double width_, double height_, double depth_ );
 
 
     protected:

@@ -512,12 +512,15 @@ void Scene::drawScene3D( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
 
-//    num_extrusion_steps = num_extrusion_steps_default;
     controller->getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
 
     std::size_t number_of_points = ( std::size_t ) points.size()/3;
 
+
+    double xmax = 0.0, xmin = 0.0;
+    double ymax = 0.0, ymin = 0.0;
+    double zmax = 0.0, zmin = 0.0;
 
     Eigen::Vector3f v; Eigen::Vector3f sv;
     for ( auto i = 0; i < number_of_points; ++i )
@@ -528,10 +531,25 @@ void Scene::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &n
 
         sv = scene3DtoPlane( v );
 
-        points[ 3*i + 0 ] = static_cast<double>( sv[ 0 ] );
-        points[ 3*i + 1 ] = static_cast<double>( sv[ 2 ] );
-        points[ 3*i + 2 ] = static_cast<double>( sv[ 1 ] );
+        double x = points[ 3*i + 0 ] = static_cast<double>( sv[ 0 ] );
+        double y = points[ 3*i + 1 ] = static_cast<double>( sv[ 2 ] );
+        double z = points[ 3*i + 2 ] = static_cast<double>( sv[ 1 ] );
+
+
+        if( x > xmax ) xmax = x;
+        if( x < xmin ) xmin = x;
+
+        if( y > ymax ) ymax = y;
+        if( y < ymin ) ymin = y;
+
+
+        if( z > zmax ) zmax = z;
+        if( z < zmin ) zmin = z;
+
+
     }
+
+    emit volumeDimensions( xmax, ymax, zmax );
 
 
 }

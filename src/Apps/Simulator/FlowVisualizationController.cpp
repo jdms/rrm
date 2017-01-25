@@ -156,29 +156,9 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
     std::vector< unsigned int> nv_uint( nv.begin(), nv.end() );
 
     unsigned int surfaces_number = ( unsigned int) nu.size();
-////    unsigned int extrusion_size = ( unsigned int) num_extrusion_steps;
 
-//	std::vector<double> scaled_points;
-//	scaled_points.resize(points.size());
-//	Eigen::Vector3f v; Eigen::Vector3f sv;
-
-//	for (auto i = 0; i <= (points.size() - 3); i+=3)
-//	{
-//		v[0] = static_cast<float>(points[i + 0]);
-//		v[1] = static_cast<float>(points[i + 2]);
-//		v[2] = static_cast<float>(points[i + 1]);
-
-//		sv = this->scene3Dto2D(v);
-//		std::cout << sv << std::endl;
-
-//		scaled_points[i + 0] = static_cast<double>(sv[0]);
-//		scaled_points[i + 1] = static_cast<double>(sv[2]);
-//		scaled_points[i + 2] = static_cast<double>(sv[1]);
-//	}
 
     code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
-//	code_interface.setSkeletonData(surfaces_number, nu_uint, nv_uint, scaled_points);
-
 }
 
 
@@ -257,12 +237,6 @@ void FlowVisualizationController::computeFlowProperties()
 
 std::map< double, QVector3D> FlowVisualizationController::getRegionsColor(std::vector< QColor >& color_by_cells, std::vector< double >& values, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids)
 {
-
-    typedef std::function<bool( std::pair< unsigned int, double>,std::pair< unsigned int, double> )> comparator;
-    comparator compfunctor =
-            []( std::pair< unsigned int, double> elem1 ,std::pair< unsigned int, double> elem2 ){ return elem1.second < elem2.second; };
-
-
 
 
     int num_regions = code_interface.getNumberofRegions();
@@ -489,6 +463,8 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         }
         else if( name_of_property.compare( "Porosity" ) == 0 )
         {
+//            code_interface.getPorosity( replicate_values );
+
             std::vector< int > cells_regions;
             code_interface.getRegionId( cells_regions );
             for( auto i = 0; i < cells_regions.size(); ++i )
@@ -538,6 +514,8 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
         else if( name_of_property.compare( "Porosity" ) == 0 )
         {
+//            code_interface.getCPGPorosity( replicate_values );
+
             std::vector< int > cells_regions;
             code_interface.getRegionId( cells_regions );
             for( auto i = 0; i < cells_regions.size(); ++i )
@@ -551,11 +529,11 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         }
 
 
-        //        else if ( name_of_property.compare( "Velocity" ) == 0 )
-//        {
+        else if ( name_of_property.compare( "Velocity" ) == 0 )
+        {
 //            type = "VECTOR";
-//            code_interface.getVelocitybyCells( values );
-//        }
+//            code_interface.getCPGVelocity( replicate_values );
+        }
 
 
         values.resize(replicate_values.size() * 6);
@@ -640,7 +618,7 @@ std::vector< double > FlowVisualizationController::vectorToScalarProperties(cons
             double y = values[ 3*i + 1 ];
             double z = values[ 3*i + 2 ];
 
-            double length = x*x + y*y + z*z;
+            double length = sqrt(x*x + y*y + z*z);
 
             scalar_values.push_back( length );
 

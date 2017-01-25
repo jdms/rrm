@@ -32,11 +32,11 @@ void FlowDiagnosticsInterface::setRegion( unsigned int id, double x, double y, d
     //std::cout << "set y\n " << std::flush;
     p.z(z);
     //std::cout << "set z\n " << std::flush;
-    p.perm(perm);
+    p.perm(perm*0.987e-15);
     //std::cout << "set perm\n " << std::flush;
     p.porosity(poros);
     //std::cout << "set poro\n " << std::flush;
-    p.viscosity(visc);
+    p.viscosity(visc*1.0e-3);
     //std::cout << "set visc\n " << std::flush;
     region.modifypropertyarea(id, p);
 }
@@ -182,6 +182,13 @@ void FlowDiagnosticsInterface::init(){
     }
 }
 
+
+void FlowDiagnosticsInterface::setVolumeDimensions( double width, double height, double depth )
+{
+
+}
+
+
 void FlowDiagnosticsInterface::computeProperties(){
     region.steadystateflowsolver();
     region.flowdiagnostics();
@@ -254,8 +261,19 @@ void FlowDiagnosticsInterface::getPermeabilitybyCells( std::vector< double >& va
 
 void FlowDiagnosticsInterface::getPermeabilitybyVertices( std::vector< double >& values ) {
     values = region.getpermeability_nodes();
-//    values=region.getpermeability_elements();
 }
+
+void FlowDiagnosticsInterface::getPorosity( std::vector< double >& values )
+{
+
+}
+
+
+void FlowDiagnosticsInterface::getPoreVolumebyRegion( std::vector< double >& values )
+{
+
+}
+
 
 
 void FlowDiagnosticsInterface::getRegionId( std::vector< int >& regions_id ) {
@@ -289,7 +307,6 @@ void FlowDiagnosticsInterface::getCPGTotalTOF( std::vector< double >& values ) {
 }
 
 
-//void FlowDiagnosticsInterface::getTracer( std::vector< double >& values ) {}
 void FlowDiagnosticsInterface::getCPGMaxForwardTracer(std::vector< double >& values) {
 	values = region.getmaxforwardtracer_cpg();
 }
@@ -303,7 +320,20 @@ void FlowDiagnosticsInterface::getCPGPermeability( std::vector< double >& values
     values=region.getpermeability_elements_cpg();
 }
 
+
+void FlowDiagnosticsInterface::getCPGPorosity( std::vector< double >& values )
+{
+
+}
+
+void FlowDiagnosticsInterface::getCPGVelocity( std::vector< double >& values )
+{
+
+}
+
+
 void FlowDiagnosticsInterface::getSurfaceVertices( std::vector< float >& vertices ) const {}
+
 
 void FlowDiagnosticsInterface::getSurfaceFaces( std::vector< unsigned int >& faces ) const {}
 
@@ -354,6 +384,7 @@ void FlowDiagnosticsInterface::getVolumeEdges( std::vector< unsigned int >& edge
 
 
 }
+
 
 void FlowDiagnosticsInterface::getVolumeCells( std::vector< unsigned int >& cells )
 {
