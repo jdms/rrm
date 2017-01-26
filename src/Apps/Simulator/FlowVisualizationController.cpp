@@ -195,6 +195,7 @@ void FlowVisualizationController::computeFlowProperties()
         emit propertybyVertexComputed( "Backward TOF", "SCALAR" ) ;
         emit propertybyVertexComputed( "Total TOF", "SCALAR" ) ;
         emit propertybyVertexComputed( "Maximum Tracer", "SCALAR" ) ;
+
 //        emit propertybyVertexComputed( "Velocity", "VECTOR" );
 //        emit propertybyVertexComputed( "Permeability", "SCALAR" );
 //        emit propertybyVertexComputed( "Backward Tracer", "SCALAR" ) ;
@@ -216,13 +217,15 @@ void FlowVisualizationController::computeFlowProperties()
         emit propertybyFaceComputed( "Total TOF", "SCALAR" ) ;
 
         emit propertybyFaceComputed( "Permeability", "SCALAR" );
+        emit propertybyFaceComputed( "Porosity", "SCALAR" );
 
 //        emit propertybyFaceComputed( "Backward Tracer", "SCALAR" ) ;
 //        emit propertybyFaceComputed( "Forward Tracer", "SCALAR" ) ;
 //        emit propertybyFaceComputed( "Maximum Tracer", "SCALAR" ) ;
-
-        emit propertybyFaceComputed( "Porosity", "SCALAR" );
 //        emit propertybyFaceComputed( "Velocity", "VECTOR" );
+
+
+
 
     }
 
@@ -238,36 +241,22 @@ void FlowVisualizationController::computeFlowProperties()
 std::map< double, QVector3D> FlowVisualizationController::getRegionsColor(std::vector< QColor >& color_by_cells, std::vector< double >& values, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids)
 {
 
-
-    int num_regions = code_interface.getNumberofRegions();
-
-
-    for( unsigned int i = 0; i < num_regions; ++i )
-    {
-        double x = 0;
-        double y = 0;
-        double z = 0;
-        double perm = 0;
-        double poros = 0;
-        double visc = 0;
-        double porevolume = 0;
-
-        code_interface.getRegion( i, x, y, z, perm, poros, visc, porevolume );
-        values.push_back( porevolume );
-
-        std::cout << "region id = " << i << ", porevolume = " << porevolume << std::endl;
-
-    }
-
-
-    auto min_max = std::minmax_element( values.begin(), values.end() );
     std::map< double, QVector3D> unique_colors;
 
+    std::size_t num_regions = code_interface.getNumberofRegions();
+
+    std::vector<double> pore_volumes;
+    code_interface.getPoreVolumebyRegion( pore_volumes );
+
+    if( num_regions != pore_volumes.size() ) return unique_colors;
+
+
+    auto min_max = std::minmax_element( pore_volumes.begin(), pore_volumes.end() );
 
     for( unsigned int i = 0; i < num_regions; ++i )
     {
-        QVector3D c = colormap.getColor(current_colormap, values[ i ], *min_max.first, *min_max.second);
-        unique_colors[ values[ i ] ] = c;
+        QVector3D c = colormap.getColor(current_colormap, pore_volumes[ i ], *min_max.first, *min_max.second);
+        unique_colors[ pore_volumes[ i ] ] = c;
     }
 
     std::vector< int > idregion_by_cell;
@@ -275,8 +264,7 @@ std::map< double, QVector3D> FlowVisualizationController::getRegionsColor(std::v
 
     for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
     {
-//		c = colormap.getColor(current_colormap, idregion_by_cell[i], *min_max.first, *min_max.second);
-        QVector3D c = unique_colors[ values[ idregion_by_cell[ i ] ] ];
+        QVector3D c = unique_colors[ pore_volumes[ idregion_by_cell[ i ] ] ];
         color_by_cells.push_back(QColor::fromRgbF(c.x(),c.y(),c.z(),1.0));
 
     }
@@ -425,27 +413,27 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     std::vector< double > values;
 	std::vector< double > replicate_values;
 
-    int nregions = code_interface.getNumberofRegions();
-    std::map< int, double > values_porosity;
-    std::map< int, double > values_permeability;
+//    int nregions = code_interface.getNumberofRegions();
+//    std::map< int, double > values_porosity;
+//    std::map< int, double > values_permeability;
 
 
-    for( auto i = 0; i < nregions; ++i )
-    {
-        double poros = 0.0f;
-        double perm = 0.0f;
-        double visc = 0.0f;
-        double pore = 0.0f;
-        double x, y, z;
+//    for( auto i = 0; i < nregions; ++i )
+//    {
+//        double poros = 0.0f;
+//        double perm = 0.0f;
+//        double visc = 0.0f;
+//        double pore = 0.0f;
+//        double x, y, z;
 
-        code_interface.getRegion( i, x, y, z, perm, poros, visc, pore );
+//        code_interface.getRegion( i, x, y, z, perm, poros, visc, pore );
 
-        values_permeability[ i ] = perm;
-        values_porosity[ i ] = poros;
+//        values_permeability[ i ] = perm;
+//        values_porosity[ i ] = poros;
 
 
-        std::cout << "getFacesPropertyValues in FlowVisualizationController poros = " << poros << std::endl;
-    }
+//        std::cout << "getFacesPropertyValues in FlowVisualizationController poros = " << poros << std::endl;
+//    }
 
 
 
@@ -463,17 +451,17 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         }
         else if( name_of_property.compare( "Porosity" ) == 0 )
         {
-//            code_interface.getPorosity( replicate_values );
+            code_interface.getPorosity( values );
 
-            std::vector< int > cells_regions;
-            code_interface.getRegionId( cells_regions );
-            for( auto i = 0; i < cells_regions.size(); ++i )
-            {
-                int id = cells_regions[ i ];
-                values.push_back( values_porosity[ id ] );
+//            std::vector< int > cells_regions;
+//            code_interface.getRegionId( cells_regions );
+//            for( auto i = 0; i < cells_regions.size(); ++i )
+//            {
+//                int id = cells_regions[ i ];
+//                values.push_back( values_porosity[ id ] );
 
-                std::cout << "id = " << id << " getFacesPropertyValues values_porosity[ id ] poros = " <<  values_porosity[ id ] << std::endl;
-            }
+//                std::cout << "id = " << id << " getFacesPropertyValues values_porosity[ id ] poros = " <<  values_porosity[ id ] << std::endl;
+//            }
 
         }
 
@@ -514,17 +502,17 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
 
         else if( name_of_property.compare( "Porosity" ) == 0 )
         {
-//            code_interface.getCPGPorosity( replicate_values );
+            code_interface.getCPGPorosity( replicate_values );
 
-            std::vector< int > cells_regions;
-            code_interface.getRegionId( cells_regions );
-            for( auto i = 0; i < cells_regions.size(); ++i )
-            {
-                int id = cells_regions[ i ];
-                replicate_values.push_back( values_porosity[ id ] );
+//            std::vector< int > cells_regions;
+//            code_interface.getRegionId( cells_regions );
+//            for( auto i = 0; i < cells_regions.size(); ++i )
+//            {
+//                int id = cells_regions[ i ];
+//                replicate_values.push_back( values_porosity[ id ] );
 
-                std::cout << "porosity values = " << values_porosity[ id ] << std::endl;
-            }
+//                std::cout << "porosity values = " << values_porosity[ id ] << std::endl;
+//            }
 
         }
 
