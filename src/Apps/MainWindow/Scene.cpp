@@ -648,9 +648,6 @@ void Scene::updateColor( const QColor& color )
 void Scene::enableSketchingAboveRegion( bool option )
 {
 
-//    std::cout << "\n-- Enabling define above = " << option << "\n"  << std::flush;
-//    std::cout << "\t-- Define above = " << option << ", define below = "  << defining_below << "\n" << std::flush;
-
 
     if( option == false )
     {
@@ -678,8 +675,6 @@ void Scene::defineSketchingAboveRegion()
     setSelectionMode( true );
 
     size_t number_allowed_surfaces = allowed_above_surfaces.size();
-//    std::cout << "\t-- Surfaces (above) are allowed = " << number_allowed_surfaces << std::flush;
-//    std::cout << "\t\t-- Allowed (above) surfaces = " << std::flush;
 
     for ( size_t i = 0; i < number_allowed_surfaces; ++i )
     {
@@ -690,7 +685,6 @@ void Scene::defineSketchingAboveRegion()
         strat->setAllowed( true );
     }
 
-//    std::cout << "\n" << std::flush;
 
     current_mode = InteractionMode::SELECTING_ABOVE;
     defining_above = true;
@@ -709,7 +703,6 @@ void Scene::stopSketchingAboveRegion()
 
     if( defining_below == false )
     {
-//        std::cout << "\t-- Above and Below are false... \n" << std::flush;
         setSelectionMode( false );
     }
     else{
@@ -718,15 +711,9 @@ void Scene::stopSketchingAboveRegion()
         size_t number_allowed_surfaces = allowed_above_surfaces.size();
 
 
-//        std::cout << "\t-- Stop only define above, below is still on\n" << std::flush;
-//        std::cout << "\t-- Allowed (above) surfaces to be stopped = " << number_allowed_surfaces << "\n" << std::flush;
-//        std::cout << "\t\t-- Stopped surfaces = " << std::flush;
-
         for ( size_t i = 0; i < number_allowed_surfaces; ++i )
         {
             size_t id = allowed_above_surfaces[ i ];
-
-//            std::cout << id << ", " << std::flush;
 
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( false );

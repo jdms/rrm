@@ -185,7 +185,7 @@ void FlowDiagnosticsInterface::init(){
 
 void FlowDiagnosticsInterface::setVolumeDimensions( double width, double height, double depth )
 {
-
+    region.setvolumedimension(width, height, depth);
 }
 
 
@@ -265,13 +265,13 @@ void FlowDiagnosticsInterface::getPermeabilitybyVertices( std::vector< double >&
 
 void FlowDiagnosticsInterface::getPorosity( std::vector< double >& values )
 {
-
+    values = region.getporosity_elements();
 }
 
 
 void FlowDiagnosticsInterface::getPoreVolumebyRegion( std::vector< double >& values )
 {
-
+    values = region.getporevolume();
 }
 
 
@@ -323,7 +323,7 @@ void FlowDiagnosticsInterface::getCPGPermeability( std::vector< double >& values
 
 void FlowDiagnosticsInterface::getCPGPorosity( std::vector< double >& values )
 {
-
+    values = region.getporosity_elements_cpg();
 }
 
 void FlowDiagnosticsInterface::getCPGVelocity( std::vector< double >& values )
