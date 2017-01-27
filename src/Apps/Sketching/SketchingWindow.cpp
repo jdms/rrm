@@ -120,7 +120,7 @@ void SketchingWindow::createRulesActions()
 
 
     ac_removeaboveintersection = new QAction( tr( "Remove Above Intersection" ), this );
-    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersection.png" ) );
+    ac_removeaboveintersection->setIcon( QIcon( ":/images/icons/removeaboveintersecion.png" ) );
     ac_removeaboveintersection->setCheckable( true );
 
 
@@ -129,7 +129,7 @@ void SketchingWindow::createRulesActions()
     ac_removebelow->setCheckable( true );
 
     ac_removebelowintersection = new QAction( tr( "Remove Below Intersection" ), this );
-    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersection.png" ) );
+    ac_removebelowintersection->setIcon( QIcon( ":/images/icons/removebelowintersecion.png" ) );
     ac_removebelowintersection->setCheckable( true );
 
 
@@ -175,12 +175,12 @@ void SketchingWindow::createEditActions()
 
 
     ac_new_boundary = new QAction( tr( "&Edit Boundary" ), this );
-    ac_new_boundary->setIcon( QIcon( ":/images/icons/NewBoundary.png" ) );
+    ac_new_boundary->setIcon( QIcon( ":/images/icons/newBoundary.png" ) );
     ac_new_boundary->setShortcut( QKeySequence::New );
 
 
     ac_add_sketch = new QAction( tr( "&Insert Curve" ), this );
-    ac_add_sketch->setIcon( QIcon( ":/images/icons/InsertCurve.png" ) );
+    ac_add_sketch->setIcon( QIcon( ":/images/icons/insertCurve.png" ) );
     ac_add_sketch->setShortcut( Qt::Key_I );
 
     ac_deny_curve = new QAction( tr( "&Undo Curve" ), this );
@@ -267,6 +267,7 @@ void SketchingWindow::createFlowDiagnosticAction()
 	ac_flow_diagnostic_regionPicking->setChecked(false);
 
 	toobar_flow_diagnostic->addAction(ac_flow_diagnostic_regionPicking);
+	toobar_flow_diagnostic->setIconSize(QSize(32, 32));
 
 	connect(ac_flow_diagnostic_regionPicking, &QAction::toggled,[=](bool is_checked)
 	{
