@@ -11,6 +11,7 @@ FlowWindow::FlowWindow( QWidget *parent )
 
     reset();
     are_regionsdefined = false;
+    is_cornerpoint = false;
 }
 
 void FlowWindow::createWindow()
@@ -294,6 +295,8 @@ void FlowWindow::createActions()
 			//{
 			//	qDebug() << "Yes was *not* clicked";
 			//}
+
+            is_cornerpoint = true;
 		});
 
 		connect(qbuildUnstructured, &QAction::triggered, this, [=]()
@@ -302,9 +305,12 @@ void FlowWindow::createActions()
 			/// @FIXME catch execption from HWU mesh generator
 			this->buildUnstructured();
 			qcomputeFlowProperties->setEnabled(true);
-			ac_showregions->setEnabled(true);
+            ac_showregions->setEnabled(false);
 			qbuildCornerPoint->setEnabled(false);
-			qbuildUnstructured->setEnabled(false);			
+            qbuildUnstructured->setEnabled(false);
+
+            is_cornerpoint = false;
+
 		});
 		connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
 		{			
@@ -315,6 +321,10 @@ void FlowWindow::createActions()
 			tbn_export->setEnabled(true);
 			tbn_coloringbyvertex->setEnabled(true);
 			tbn_coloringbyface->setEnabled(true);
+
+            if( is_cornerpoint == false )
+                ac_showregions->setEnabled( true );
+
 		});
 
 		/// Clear
