@@ -82,7 +82,6 @@ set( SKETCHING_SOURCES  Sketching/StratigraphicItem.cpp
 ###############################################
 
 set( 3DVIEW_HEADERS 3dView/BoundingBox3D.h
-                       3dView/CrossPlane.h
                        3dView/View3DCanvas.hpp
                        3dView/Surface.h
                        3dView/View3DWindow.hpp
@@ -96,7 +95,6 @@ set( 3DVIEW_MOC_HEADERS  3dView/View3DCanvas.hpp
 
 
 set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
-                    3dView/CrossPlane.cpp
                     3dView/View3DCanvas.cpp
                     3dView/Surface.cpp
                     3dView/View3DWindow.cpp
@@ -114,7 +112,7 @@ set( SIMULATOR_HEADERS
                  Simulator/ColorMap.h
                  Simulator/CoordinateAxes.h
                  Simulator/FlowCrossSection.h                 
-                 Simulator/FlowParametersBar_new.h
+                 Simulator/FlowParametersBar.h
                  Simulator/FlowRenderingOptionsMenu.h
                  Simulator/FlowVisualizationCanvas.h
                  Simulator/FlowVisualizationController.h
@@ -122,7 +120,6 @@ set( SIMULATOR_HEADERS
                  Simulator/FormPropertyValues.h
                  Simulator/Mesh.h
                  Simulator/NormalMovableCrossSectionFlow.h
-                 Simulator/OpenFlowFilesBar.h
                  Simulator/ProgressCounter.h
                  Simulator/ColorBar.h
                  Simulator/FlowDiagnosticsInterface.hpp
@@ -164,29 +161,27 @@ set( SIMULATOR_HEADERS
                  Simulator/FlowComputation/row.h )
 
 set ( SIMULATOR_MOC_HEADERS
-                Simulator/FlowParametersBar_new.h
+                Simulator/FlowParametersBar.h
                 Simulator/FlowRenderingOptionsMenu.h
                 Simulator/FlowVisualizationCanvas.h
                 Simulator/FlowVisualizationController.h
                 Simulator/FlowWindow.h
                 Simulator/FormPropertyValues.h
                 Simulator/NormalMovableCrossSectionFlow.h
-                Simulator/OpenFlowFilesBar.h
                 Simulator/ProgressCounter.h
                 Simulator/ColorBar.h
                 Simulator/PoreVolumeResultsForm.h )
 
 set ( SIMULATOR_UI_SOURCES               
                 Simulator/FormPropertyValues.ui
-                Simulator/NormalMovableCrossSectionFlow.ui
-                Simulator/OpenFlowFilesBar.ui )
+                Simulator/NormalMovableCrossSectionFlow.ui )
 
 set( SIMULATOR_SOURCES                
                 Simulator/tinyobjloader/tiny_obj_loader.cc   
                 Simulator/ColorMap.cpp
                 Simulator/CoordinateAxes.cpp
                 Simulator/FlowCrossSection.cpp
-                Simulator/FlowParametersBar_new.cpp
+                Simulator/FlowParametersBar.cpp
                 Simulator/FlowRenderingOptionsMenu.cpp
                 Simulator/FlowVisualizationCanvas.cpp
                 Simulator/FlowVisualizationController.cpp
@@ -194,7 +189,6 @@ set( SIMULATOR_SOURCES
                 Simulator/FormPropertyValues.cpp
                 Simulator/Mesh.cpp
                 Simulator/NormalMovableCrossSectionFlow.cpp
-                Simulator/OpenFlowFilesBar.cpp
                 Simulator/ColorBar.cpp
                 Simulator/PoreVolumeResultsForm.cpp
                 Simulator/FlowDiagnosticsInterface.cpp

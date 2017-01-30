@@ -29,8 +29,7 @@ class PoreVolumeResultsForm: public QDialog
         QTableWidget *tbw_results;
         QGridLayout* gdl_porevolume;
 
-//        QLabel* lb_text;
-//        QLabel* lb_value;
+
 };
 
 

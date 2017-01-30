@@ -13,17 +13,12 @@ void PoreVolumeResultsForm::createWindow()
     hb_results->addWidget( tbw_results );
 	
     this->setLayout( hb_results );
-	
-/*
-    gdl_porevolume = new QGridLayout( this );
-    this->setLayout( gdl_porevolume )*/;
+
 }
 
 void PoreVolumeResultsForm::setResults( const std::vector< QColor >& colors, const std::vector< double >& values )
 {
 
-	
-//	int number_of_regions = values.size();
     int number_of_regions = colors.size();
     tbw_results->clear();
     tbw_results->setRowCount( number_of_regions );

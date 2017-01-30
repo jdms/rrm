@@ -44,7 +44,6 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
     public slots:
 
-//        void updateMesh(  const Mesh::TYPE& type, std::vector< double > positions, std::vector< unsigned int > faces );
 
         void updateMesh();
         void updateVolumetricMesh();

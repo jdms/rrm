@@ -23,7 +23,6 @@ void CoordinateAxes::init()
 void CoordinateAxes::initShader( std::string directory )
 {
 	shader_axes = new Tucano::Shader("shader_axes", (directory + "shaders/orientationAxes.vert"), (directory + "shaders/orientationAxes.frag"), (directory + "shaders/orientationAxes.geom"), "", "");
-	//shader_axes = new Tucano::Shader("shader_axes", ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.vert"), ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.frag"), ("D:\\Workspace\\RRM\\files\\shaders\\orientationAxes.geom"), "", "");
     shader_axes->initialize();
 
     current_directory = directory;
@@ -65,8 +64,6 @@ void CoordinateAxes::load()
 	std::string filename = current_directory + "models/orientationaxes.obj";
 	std::string material_path = current_directory + "models/";
 
-	std::cout << "Loading " << filename << std::endl;
-
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
@@ -94,7 +91,6 @@ void CoordinateAxes::load()
 		for ( auto shape : shapes) 
 		{
 			// Loop over faces(polygon)			
-			std::cout << "# of shapes  name  : " << shape.name << std::endl;
 			for (auto i : shape.mesh.indices)
 			{
 				indices.push_back(i.vertex_index);
@@ -116,12 +112,6 @@ void CoordinateAxes::load()
 					attributes[9 * idx.vertex_index + 2] = attrib.vertices[3 * idx.vertex_index + 2];
 					///	Use idx.vertex_index			 | Use idx.normal_index
 
-	/*				if (shape.name == "Cube.001")
-					{
-						std::cout << "normal.x " << attrib.normals[3 * idx.normal_index + 0] << std::endl;
-						std::cout << "normal.y " << attrib.normals[3 * idx.normal_index + 1] << std::endl;
-						std::cout << "normal.z " << attrib.normals[3 * idx.normal_index + 2] << std::endl;
-					}*/
 					attributes[9 * idx.vertex_index + 3] = attrib.normals[3 * idx.normal_index + 0];
 					attributes[9 * idx.vertex_index + 4] = attrib.normals[3 * idx.normal_index + 1];
 					attributes[9 * idx.vertex_index + 5] = attrib.normals[3 * idx.normal_index + 2];
@@ -135,17 +125,6 @@ void CoordinateAxes::load()
 		}
 
 	}
-		//std::cout << "# Indices  : " << indices.size() << std::endl;
-		//std::cout << "# Vertices : " << attrib.vertices.size() << std::endl;
-	for (auto m : materials)
-	{
-		std::cout << "# Materials Name : " << m.name << std::endl;
-		std::cout << "# Materia Ambient  KA: " << m.ambient[0] << "," << m.ambient[1] << "," << m.ambient[2] << "," << std::endl;
-		std::cout << "# Materia Diffuse  KD: " << m.diffuse[0] << "," << m.diffuse[1] << "," << m.diffuse[2] << "," << std::endl;
-		std::cout << "# Materia Specular KS: " << m.specular[0] << "," << m.specular[1] << "," << m.specular[2] << "," << std::endl;
-	}
-	
-	// If exit, clean up the buffer on the server side (OpenGL - GPU) and in the client side (C++ buffers id)
 	this->requestOpenGLResources();
 
 	glBindVertexArray(vertex_array_coneaxes);

@@ -21,9 +21,6 @@ class FlowRenderingOptionsMenu: public QMenu
         FlowRenderingOptionsMenu( QWidget* parent );
 
         std::string getCurrentColorMap();
-        //inline bool showVertices(){ return chk_show_vertices->isChecked(); }
-        //inline bool showEdges(){ return chk_show_edges->isChecked(); }
-        //inline bool showFaces(){ return chk_show_faces->isChecked(); }
 
 
     protected:
@@ -63,27 +60,12 @@ class FlowRenderingOptionsMenu: public QMenu
         void setPolarColormap();
         void setWinterColormap();
 
-        //void reloadcrosssection();
-        //void loadfile();
-        //void editparameters();
-        //void buildcornerpoint();
-        //void buildunstructured();
-        //void computeproperties();
-        //void applycrosssection();
-
-        //void exportSurfacetoVTK();
-        //void exportVolumetoVTK();
-        //void exportCornerPointtoVTK();
-        //void exportResultstoVTK();
-
         void clearAll();
 
 
     private:
 
-		//QCheckBox* chk_show_vertices;
-		//QCheckBox* chk_show_edges;
-		//QCheckBox* chk_show_faces;
+
         QCheckBox* chk_show_bbox;
 
         QWidgetAction* wa_visualization_options;
@@ -91,10 +73,6 @@ class FlowRenderingOptionsMenu: public QMenu
         QMenu *mn_coloring_byvertex;
         QMenu *mn_coloring_byfaces;
 
-        //QMenu* mn_export;
-        //QAction* ac_exportsurfacetovtk;
-        //QAction* ac_exportvolumetovtk;
-        //QAction* ac_exportcornerpointtovtk;
 
         std::vector< QMenu *> mn_vectorsproperties_byvertex;
         std::vector< QRadioButton *> rd_vectormethods_byvertex;
@@ -120,15 +98,6 @@ class FlowRenderingOptionsMenu: public QMenu
         QRadioButton* rd_colormap_winter;
         QWidgetAction* wa_colormaps;
 
-
-        //QAction* ac_reloadcrosssection;
-        //QAction* ac_loadfile;
-        //QAction* ac_editparameters;
-        //QAction* ac_buildcornerpoint;
-        //QAction* ac_buildunstructured;
-        //QAction* ac_computeproperties;
-        //QAction* ac_applycrosssection;
-        //QAction* ac_exportresultstovtk;
 
         QAction* ac_clear;
 

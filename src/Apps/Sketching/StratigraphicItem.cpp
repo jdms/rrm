@@ -27,11 +27,6 @@ void StratigraphicItem::initSetup()
 
     setPath( curve );
 
-//    custom_stroker.setCapStyle( Qt::RoundCap );
-//    custom_stroker.setCurveThreshold( 0.9 );
-//    custom_stroker.setDashPattern( Qt::SolidLine );
-//    custom_stroker.setJoinStyle( Qt::RoundJoin );
-
 
 }
 
@@ -47,8 +42,6 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
     pen.setColor( current_color );
     pen.setWidth( 3 );
 
-
-
     if( under_operation == true )
     {
         if( is_selected == true )
@@ -63,13 +56,9 @@ void StratigraphicItem::paint( QPainter* painter, const QStyleOptionGraphicsItem
     }
 
 
-
     painter->setPen( pen );
     painter->setBrush( brush );
-//    QPainterPath outline_curve = custom_stroker.createStroke( curve );
-
-    painter->drawPath( /*outline_*/curve );
-
+    painter->drawPath( curve );
 
 }
 

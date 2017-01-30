@@ -77,7 +77,6 @@ void GradientBackgroundShader::initShaders()
 
     glGenVertexArrays ( 1 , &va_background );
     glBindVertexArray ( va_background );
-    /// Requesting Vertex Buffers to the GPU
     glGenBuffers ( 1 , &vb_background );
     glBindBuffer ( GL_ARRAY_BUFFER , vb_background );
     glBufferData ( GL_ARRAY_BUFFER , 0 , 0 , GL_STATIC_DRAW );

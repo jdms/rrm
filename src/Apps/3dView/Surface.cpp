@@ -325,9 +325,6 @@ void Surface::resetShaders()
     {
         delete( shader_surface );
         shader_surface = nullptr;
-
-//        is_initialized = false;
-
     }
 	
 }
@@ -392,8 +389,5 @@ void Surface::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
 void Surface::update( const Eigen::Vector3f& c )
 {
 
-//    origin = ( -1 )*c;
     loadBuffers();
-
-
 }

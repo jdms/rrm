@@ -76,7 +76,7 @@ void MainWindow::createMainWindowActions ( )
 	connect(ac_rrmGuide, &QAction::triggered, [=]()
 	{
 		QDir dir;
-		qDebug() << dir.currentPath() << "Help !!";
+//		qDebug() << dir.currentPath() << "Help !!";
 		/// The QFileInfo class provides system-independent file information. 
 		/// @see http://doc.qt.io/qt-5/qfileinfo.html#absoluteFilePath
         QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
@@ -233,6 +233,7 @@ void MainWindow::create3DWindowActions()
 
     connect( view3d_window, SIGNAL( initializeScene() ), this, SLOT( initScene() ) );
     connect( view3d_window, SIGNAL( changeResolution( const int, const int ) ), controller, SLOT( changeResolution( const int, const int ) ) );
+//    connect ( sketching_window, SIGNAL( clear() ), view3d_window , SLOT( clearScene() ) );
 
 }
 
@@ -319,11 +320,12 @@ void MainWindow::exportTo()
 {
 
 
+
     QString selected_format = "";
-//    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "/bin/exported/",
+//    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./exported/",
 //                                                         "CPS3 files (*.CPS3);;Irap Classic Grid (*.IRAPG)", &selected_format );
 
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "/bin/exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./exported/irapg/",
                                                          "Irap Classic Grid (*.IRAPG)", &selected_format );
 
     if( filename.isEmpty() == true ) return;

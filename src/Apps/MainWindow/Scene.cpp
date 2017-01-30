@@ -31,7 +31,7 @@ void Scene::init()
     int min_value =  std::min( (int)view->width()*0.8f, (int)view->height()*0.8f );
 
     int depth = 200*(max_value/min_value);
-    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, /*400*/ depth );
+    defineVolumeQtCoordinates( 0, 0, 0, (int)view->width()*0.8f, (int)view->height()*0.8f, depth );
 
 
     background_image = new QGraphicsPixmapItem();
@@ -48,7 +48,7 @@ void Scene::init()
 
 	/// Calls createRegions
 	emit requestNumberOfRegion();
-	this->initRegions();
+    initRegions();
 	
 
     update();
@@ -97,8 +97,8 @@ void Scene::initData()
     sketching_boundary = NULL;
     boundary3D = NULL;
 
-	this->number_of_flow_regions_ = 0;
-	this->is_region_visible = false;
+    number_of_flow_regions_ = 0;
+    is_region_visible = false;
 
 }
 
@@ -292,11 +292,11 @@ void Scene::editBoundary( const int &x, const int &y, const int &w, const int &h
 
 	/// @FIXME Everytime the setSceneRect is invoked, the regions neeed to be restarted. 
 	/// Clear region. It deletes the scene regionItems
-	this->clearRegions();
+    clearRegions();
 	/// request the number of regions from flow interface
 	emit requestNumberOfRegion();
 	/// create/set the regions based on the new boundary and current number of regions
-	this->initRegions();
+    initRegions();
 
 
     controller->editRulesProcessor( min.x(), min.y(), min.z(), dim.x(), dim.y(), dim.z() );
@@ -474,7 +474,7 @@ void Scene::updateScene()
     for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
     {
         StratigraphicItem* strat = it->second;
-        strat->update( mA/*m_3dto2d*/, d );
+        strat->update( mA, d );
 
         curve_map[ strat->getId() ] = strat->getSubCurves2D();
     }
@@ -723,14 +723,9 @@ void Scene::stopSketchingAboveRegion()
 
         size_t number_selected_surfaces = selected_below_surfaces.size();
 
-//        std::cout << "\n\t-- Reselect (below) surfaces = " << number_selected_surfaces << "\n"  << std::flush;
-//        std::cout << "\t\t-- Below surfaces = " << std::flush;
-
-
         for ( size_t i = 0; i < number_selected_surfaces; ++i )
         {
             size_t id = selected_below_surfaces[ i ];
-//            std::cout << id << ", " << std::flush;
 
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( true );
@@ -738,7 +733,6 @@ void Scene::stopSketchingAboveRegion()
 
         }
 
-//        std::cout << "\n" << std::flush;
     }
 
     defining_above = false;
@@ -763,8 +757,6 @@ void Scene::stopSketchingAboveRegion()
 void Scene::enableSketchingBelowRegion( bool option )
 {
 
-//    std::cout << "\n-- Enabling define below = " << option << "\n"  << std::flush;
-//    std::cout << "\t-- Define above = " << defining_above << ", define below = "  << option << "\n" << std::flush;
 
     if( option == false )
     {
@@ -792,9 +784,6 @@ void Scene::defineSketchingBelowRegion()
     setSelectionMode( true );
     size_t number_allowed_surfaces = allowed_below_surfaces.size();
 
-//    std::cout << "\t-- Surfaces (below) are allowed = " << number_allowed_surfaces << std::flush;
-//    std::cout << "\t\t-- Allowed (below) surfaces = " << std::flush;
-
 
     for ( size_t i = 0; i < number_allowed_surfaces; ++i )
     {
@@ -805,7 +794,6 @@ void Scene::defineSketchingBelowRegion()
         strat->setAllowed( true );
     }
 
-//    std::cout << "\n" << std::flush;
 
     current_mode = InteractionMode::SELECTING_BELOW;
     defining_below = true;
@@ -823,17 +811,12 @@ void Scene::stopSketchingBelowRegion()
 
     if( defining_above == false )
     {
-//        std::cout << "\t-- Above and Below are false... \n" << std::flush;
         setSelectionMode( false );
     }
     else
     {
 
         size_t number_allowed_surfaces = allowed_below_surfaces.size();
-
-//        std::cout << "\t-- Stop only define below, above is still on\n" << std::flush;
-//        std::cout << "\t-- Allowed (below) surfaces to be stopped = " << number_allowed_surfaces << "\n" << std::flush;
-//        std::cout << "\t\t-- Stopped surfaces = " << std::flush;
 
         for ( size_t i = 0; i < number_allowed_surfaces; ++i )
         {
@@ -845,21 +828,16 @@ void Scene::stopSketchingBelowRegion()
         }
 
         size_t number_selected_surfaces = selected_above_surfaces.size();
-//        std::cout << "\n\t-- Reselect (above) surfaces = " << number_selected_surfaces << "\n"  << std::flush;
-//        std::cout << "\t\t-- Above surfaces = " << std::flush;
 
         for ( size_t i = 0; i < number_selected_surfaces; ++i )
         {
             size_t id = selected_above_surfaces[ i ];
-//            std::cout << id << ", " << std::flush;
 
             StratigraphicItem* strat = stratigraphics_list[ id ];
             strat->setUnderOperation( true );
             strat->setAllowed( true );
             strat->setSelection( true );
         }
-
-//        std::cout << "\n" << std::flush;
 
 
     }
@@ -884,9 +862,6 @@ void Scene::disallowCurves( const std::vector< size_t >& curves_id )
 
     size_t number_allowed = curves_id.size();
 
-//    std::cout << "\n\t-- Not allow surfaces anymore = " << std::flush;
-
-
     for ( size_t i = 0; i < number_allowed; ++i )
     {
         size_t id = curves_id[ i ];
@@ -895,14 +870,11 @@ void Scene::disallowCurves( const std::vector< size_t >& curves_id )
         StratigraphicItem* strat = stratigraphics_list[ id ];
         if( strat->getSelection() ) continue;
 
-//        std::cout << id << ", " << std::flush;
-
         strat->setAllowed( false );
         strat->setSelection( false );
         strat->setUnderOperation( false );
 
     }
-//    std::cout << "\n" << std::flush;
 
 }
 
@@ -910,9 +882,6 @@ void Scene::disallowCurves( const std::vector< size_t >& curves_id )
 /// Allow to select sketches
 void Scene::setSelectionMode( const bool status )
 {
-
-//    std::cout << "\t-- Set selection mode to all ... " << status << "\n" << std::flush;
-
 
     std::map< size_t, StratigraphicItem* >::iterator it;
     for ( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )

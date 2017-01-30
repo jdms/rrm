@@ -9,19 +9,6 @@ View3DCanvas::View3DCanvas ( QWidget* parent ) : QOpenGLWidget ( parent )
 
 View3DCanvas::~View3DCanvas()
 {
-//    resetBuffers();
-
-
-    makeCurrent();
-
-//    if( background )
-//        background->resetBuffers();
-
-//    if( scene != nullptr )
-//        scene->resetBuffers();
-
-//    std::cout << "entrei pra resetar\n" <<std::flush;
-
 }
 
 
@@ -120,9 +107,6 @@ void View3DCanvas::initializeGL ( )
     background = new GradientBackgroundShader();
 	background->setCurrentDirectory(shader_directory.toStdString());
     background->init();
-
-//    scene->resetBuffers();
-//    background->resetBuffers();
 
     resetBuffers();
 

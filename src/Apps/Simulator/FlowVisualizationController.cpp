@@ -20,14 +20,8 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
 
 void FlowVisualizationController::readSkeletonFiles( const std::string& filename )
 {
-
     if( is_surface_loaded == true ) return;
-
-
     code_interface.readSkeletonFile( filename );
-    // chmar funcao para desenhar a superficie
-
-
 }
 
 
@@ -91,11 +85,7 @@ void FlowVisualizationController::readInputParameters( const std::string& input_
 void FlowVisualizationController::generateCornerPoint()
 {
 
-    std::cout << " Going to Build Volumetric "  << is_surface_loaded << user_input_ok << std::endl;
-
     if( is_surface_loaded == false || user_input_ok == false ) return;
-
-    std::cout << " Going to Build Volumetric " << std::endl;
     code_interface.buildCPGVolumetricMesh();
     is_volumetric_built = true;
 
@@ -104,14 +94,10 @@ void FlowVisualizationController::generateCornerPoint()
 
 void FlowVisualizationController::generateUnstructured()
 {
-    std::cout << " Going to Build Unstructured "  << is_surface_loaded << user_input_ok << std::endl;
 
     if( is_surface_loaded == false || user_input_ok == false ) return;
-
-
     code_interface.buildVolumetricMesh();
     is_volumetric_built = true;
-std::cout << " Finish to Build Unstructured "  << is_surface_loaded << user_input_ok << std::endl;
 
 }
 
@@ -167,19 +153,18 @@ void FlowVisualizationController::computeFlowProperties()
 
     if( is_volumetric_built == false || is_surface_loaded == false ) return;
 
-	std::cout << "Computing Proterties" << std::endl; 
-	if (current_method == MESHING_METHOD::UNSTRUCTURED)
-	{
-		std::cout << "MESHING_METHOD::UNSTRUCTURED" << std::endl; 
-	}
-	else if (current_method == MESHING_METHOD::CORNERPOINT)
-	{
-		std::cout << "MESHING_METHOD::CORNERPOINT" << std::endl;
-	}else
-	{
-		std::cout << "Should not Reach This Point" << std::endl;
-		return;
-	}
+//	if (current_method == MESHING_METHOD::UNSTRUCTURED)
+//	{
+//		std::cout << "MESHING_METHOD::UNSTRUCTURED" << std::endl;
+//	}
+//	else if (current_method == MESHING_METHOD::CORNERPOINT)
+//	{
+//		std::cout << "MESHING_METHOD::CORNERPOINT" << std::endl;
+//	}else
+//	{
+//		std::cout << "Should not Reach This Point" << std::endl;
+//		return;
+//	}
 	
 
     code_interface.init();
@@ -269,41 +254,6 @@ std::map< double, QVector3D> FlowVisualizationController::getRegionsColor(std::v
 
     }
 
-    /*
-
-    std::vector< int > idregion_by_cell;
-    code_interface.getRegionId( idregion_by_cell );
-
-    for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
-    {
-        QVector3D c = unique_colors[ idregion_by_cell[ i ] ];
-        color_by_cells.push_back(QColor::fromRgbF(c.x(),c.y(),c.z(),1.0));
-
-    }
-
-
-
-    std::vector< int > idregion_by_cell;
-    code_interface.getRegionId( idregion_by_cell );
-
-	_ids = idregion_by_cell;
-
-	auto min_max = std::minmax_element(idregion_by_cell.begin(), idregion_by_cell.end());
-
-	QVector3D c;
-    std::map< int, QVector3D> unique_colors;
-
-    for( unsigned int i = 0; i < idregion_by_cell.size(); ++i )
-    {
-		c = colormap.getColor(current_colormap, idregion_by_cell[i], *min_max.first, *min_max.second);
-
-		color_by_cells.push_back(QColor::fromRgbF(c.x(),c.y(),c.z(),1.0));
-        unique_colors[ idregion_by_cell[i] ] = c;
-
-    }
-
-*/
-
 
     return unique_colors;
 
@@ -382,9 +332,6 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
     else
     {
 
-
-//    if ( values.empty() == false )
-//    {
         scalar_values = values;
 
         std::vector< double >::iterator itmin = std::min_element( scalar_values.begin(), scalar_values.end() );
@@ -394,9 +341,7 @@ std::vector< double > FlowVisualizationController::getVerticesPropertyValues( st
         int idmax = std::distance( scalar_values.begin(), itmax );
 
         min = scalar_values[ idmin ];
-        std::cout << "Min : " << min << std::endl;
         max = scalar_values[ idmax ];
-        std::cout << "Max : " << max << std::endl;
 
 
     }
@@ -412,28 +357,6 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
     std::string type = "SCALAR";
     std::vector< double > values;
 	std::vector< double > replicate_values;
-
-//    int nregions = code_interface.getNumberofRegions();
-//    std::map< int, double > values_porosity;
-//    std::map< int, double > values_permeability;
-
-
-//    for( auto i = 0; i < nregions; ++i )
-//    {
-//        double poros = 0.0f;
-//        double perm = 0.0f;
-//        double visc = 0.0f;
-//        double pore = 0.0f;
-//        double x, y, z;
-
-//        code_interface.getRegion( i, x, y, z, perm, poros, visc, pore );
-
-//        values_permeability[ i ] = perm;
-//        values_porosity[ i ] = poros;
-
-
-//        std::cout << "getFacesPropertyValues in FlowVisualizationController poros = " << poros << std::endl;
-//    }
 
 
 
@@ -452,16 +375,6 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         else if( name_of_property.compare( "Porosity" ) == 0 )
         {
             code_interface.getPorosity( values );
-
-//            std::vector< int > cells_regions;
-//            code_interface.getRegionId( cells_regions );
-//            for( auto i = 0; i < cells_regions.size(); ++i )
-//            {
-//                int id = cells_regions[ i ];
-//                values.push_back( values_porosity[ id ] );
-
-//                std::cout << "id = " << id << " getFacesPropertyValues values_porosity[ id ] poros = " <<  values_porosity[ id ] << std::endl;
-//            }
 
         }
 
@@ -504,23 +417,12 @@ std::vector< double > FlowVisualizationController::getFacesPropertyValues( std::
         {
             code_interface.getCPGPorosity( replicate_values );
 
-//            std::vector< int > cells_regions;
-//            code_interface.getRegionId( cells_regions );
-//            for( auto i = 0; i < cells_regions.size(); ++i )
-//            {
-//                int id = cells_regions[ i ];
-//                replicate_values.push_back( values_porosity[ id ] );
-
-//                std::cout << "porosity values = " << values_porosity[ id ] << std::endl;
-//            }
-
         }
 
 
         else if ( name_of_property.compare( "Velocity" ) == 0 )
         {
-//            type = "VECTOR";
-//            code_interface.getCPGVelocity( replicate_values );
+
         }
 
 
@@ -698,7 +600,7 @@ void FlowVisualizationController::exportSurfacetoVTK()
 {
 
     QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/surfaces/",
                                                      ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
@@ -710,7 +612,7 @@ void FlowVisualizationController::exportVolumetoVTK()
 {
 
     QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/unstructured/",
                                                      ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
@@ -723,7 +625,7 @@ void FlowVisualizationController::exportCornerPointtoVTK()
 {
 
     QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/corner-point/",
                                                      ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
@@ -736,7 +638,7 @@ void FlowVisualizationController::exportCornerPointtoGRDECL()
 {
 
     QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/corner-point/",
                                                      ".GRDECL files (*.grdecl)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
@@ -748,7 +650,7 @@ void FlowVisualizationController::exportResultstoVTK()
 {
 
     QString selected_format = "";
-    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/",
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Export File" ), "./exported/results/",
                                                      ".VTK files (*.vtk)", &selected_format );
     if( filename.isEmpty() == true ) return;
 
@@ -768,28 +670,3 @@ void FlowVisualizationController::clear()
     code_interface.clear();
 }
 
-//void FlowVisualizationController::setScene2Dto3D(const Eigen::Affine3f& m)
-//{
-//	this->m_2dto3d = m;
-//}
-//void FlowVisualizationController::setScene3Dto2D(const Eigen::Affine3f& m)
-//{
-//	this->m_3dto2d = m;
-
-//}
-
-//Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector2f& p)
-//{
-//	return Eigen::Vector3f();
-//}
-//Eigen::Vector3f FlowVisualizationController::scene2Dto3D(const Eigen::Vector3f& p)
-//{
-//	return Eigen::Vector3f();
-//}
-//Eigen::Vector3f FlowVisualizationController::scene3Dto2D(const Eigen::Vector3f& p)
-//{
-//	Eigen::Vector4f p_cpy(p.x(), p.y(), p.z(), 1.0f);
-
-//	p_cpy = m_3dto2d.matrix()*p_cpy;
-//	return Eigen::Vector3f(p_cpy.x(), p_cpy.y(), p_cpy.z());
-//}

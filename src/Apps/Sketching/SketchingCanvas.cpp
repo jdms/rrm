@@ -3,7 +3,6 @@
 SketchingCanvas::SketchingCanvas( QWidget* parent ): QGraphicsView( parent )
 {
     setup();
-//    createConnections();
 }
 
 
@@ -12,26 +11,14 @@ void SketchingCanvas::setup()
 
 
     setRenderHint( QPainter::Antialiasing, true );
-//    setOptimizationFlags( QGraphicsView::DontSavePainterState );
-//    setViewportUpdateMode( QGraphicsView::SmartViewportUpdate );
     setTransformationAnchor( QGraphicsView::AnchorUnderMouse );
-//    setFocusPolicy( Qt::StrongFocus );
-//    setInteractive( true );
-//    setBackgroundRole( QPalette::Base );
-//    setAutoFillBackground( true );
-
     setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
-//    viewport()->grabGesture( Qt::PinchGesture );
-//    viewport()->grabGesture( Qt::SwipeGesture );
-//    viewport()->grabGesture( Qt::PanGesture );
-
 
 
     setBackGround();
     scale( 1, -1 );
 
     lb_coordinates = new QLabel();
-
 
 }
 
@@ -68,7 +55,7 @@ void SketchingCanvas::screenshot()
 {
 
     QString selectedFilter;
-    QString name_of_file = QFileDialog::getSaveFileName( this, tr( "Save Image" ), "", tr( "PNG (*.png);;SVG (*.svg)" ), &selectedFilter );
+    QString name_of_file = QFileDialog::getSaveFileName( this, tr( "Save Image" ), "./screenshots/", tr( "PNG (*.png);;SVG (*.svg)" ), &selectedFilter );
 
 
     if( selectedFilter == "PNG (*.png)" )
