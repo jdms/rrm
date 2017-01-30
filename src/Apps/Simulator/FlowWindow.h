@@ -168,6 +168,7 @@ class FlowWindow : public  QMainWindow
 
         PoreVolumeResultsForm porevolumeform;
         bool are_regionsdefined;
+        bool is_cornerpoint;
 
 
 };
