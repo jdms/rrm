@@ -14,11 +14,6 @@ InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
     pen_color.setJoinStyle( Qt::RoundJoin );
 
 
-//    custom_stroker.setCapStyle( Qt::RoundCap );
-//    custom_stroker.setCurveThreshold( 0.9 );
-//    custom_stroker.setDashPattern( Qt::SolidLine );
-//    custom_stroker.setJoinStyle( Qt::RoundJoin );
-
     setFlag ( QGraphicsItem::ItemIsSelectable );
     setAcceptTouchEvents ( true );
 
@@ -34,13 +29,7 @@ void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *op
     painter->setRenderHint ( QPainter::Antialiasing );
     painter->setPen ( pen_color );
     painter->setBrush ( Qt::NoBrush );
-
-    QPainterPath outline_curve = custom_stroker.createStroke( curve );
-
-//    if( curve.toSubpathPolygons().isEmpty() == true ) return;
-
-//    painter->drawPolyline( curve.toSubpathPolygons()[0] );
-    painter->drawPath( curve/*outline_curve*/ );
+    painter->drawPath( curve );
 
 
 

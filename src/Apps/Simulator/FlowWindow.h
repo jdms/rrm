@@ -18,7 +18,7 @@
 #include "ColorBar.h"
 #include "PoreVolumeResultsForm.h"
 
-#include "FlowParametersBar_new.h"
+#include "FlowParametersBar.h"
 
 class FlowWindow : public  QMainWindow
 {
@@ -81,8 +81,6 @@ class FlowWindow : public  QMainWindow
 
         void getSurfaceCrossSection();
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
-//		void   get2Dto3DMatrix(Eigen::Affine3f&);
-//		void   get3Dto2DMatrix(Eigen::Affine3f&);
 		void sendNumberOfRegions(int _number_of_regions);
 
     private:
@@ -113,7 +111,7 @@ class FlowWindow : public  QMainWindow
 
 
         QDockWidget *qdockparametersBar;
-        FlowParametersBar_new parametersBar;
+        FlowParametersBar parametersBar;
 
 
         FlowVisualizationCanvas *canvas;
@@ -169,6 +167,7 @@ class FlowWindow : public  QMainWindow
         QAction* ac_showregions;
 
         PoreVolumeResultsForm porevolumeform;
+        bool are_regionsdefined;
 
 
 };

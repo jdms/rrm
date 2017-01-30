@@ -38,13 +38,6 @@ int main( int argc, char *argv[] )
     QSurfaceFormat format;
     format.setDepthBufferSize( 16 );
 
-//	format.setStencilBufferSize ( 8 );
-//	format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-//	format.setOptions(QSurfaceFormat::DeprecatedFunctions);
-    //format.setVersion( 4, 1 );
-    //format.setProfile( QSurfaceFormat::CompatibilityProfile );
-//	format.setProfile(QSurfaceFormat::OpenGLContextProfile::CompatibilityProfile);
-//    format.setRenderableType( QSurfaceFormat::OpenGL );
 
     format.setSamples( 8 );
 	QSurfaceFormat::setDefaultFormat( format );

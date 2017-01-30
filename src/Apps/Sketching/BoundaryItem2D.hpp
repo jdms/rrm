@@ -34,7 +34,6 @@ class BoundaryItem2D: public QGraphicsPathItem, public BoundaryRenderable
 
         void clear();
         void update( const Eigen::Affine3f &m );
-//        void load();
 
 
         int getOriginX() const { return boundary.x(); }

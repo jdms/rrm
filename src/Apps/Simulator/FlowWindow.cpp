@@ -10,6 +10,7 @@ FlowWindow::FlowWindow( QWidget *parent )
     getCurrentDirectory();
 
     reset();
+    are_regionsdefined = false;
 }
 
 void FlowWindow::createWindow()
@@ -230,8 +231,11 @@ void FlowWindow::createActions()
 			/// Clear Scene
 			qclear->trigger();
 			this->loadSurfacesfromFile();
-			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);	
+            if( are_regionsdefined == true )
+            {
+                qbuildCornerPoint->setEnabled(true);
+                qbuildUnstructured->setEnabled(true);
+            }
 		});
 		/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
 		connect(qreloadSurface, &QAction::triggered, this, [=]() 
@@ -239,10 +243,14 @@ void FlowWindow::createActions()
 			/// Clear Scene
 			qclear->trigger();
 			this->loadSurfacesfromSketch();
-			/// Now we can build the volumetric mesh
-			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);
-		});
+            /// Now we can build the volumetric mesh
+
+            if( are_regionsdefined == true )
+            {
+                qbuildCornerPoint->setEnabled(true);
+                qbuildUnstructured->setEnabled(true);
+            }
+        });
 		connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
 		{
 
@@ -250,7 +258,7 @@ void FlowWindow::createActions()
 			reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
 
 			if (reply == QMessageBox::Yes) {
-				qDebug() << "Yes was clicked";
+//				qDebug() << "Yes was clicked";
 				/// Now we can Compute
 				/// @FIXME catch execption from HWU mesh generator
 				this->buildCornerPoint();
@@ -260,7 +268,7 @@ void FlowWindow::createActions()
 
 			}
 			else {
-				qDebug() << "Yes was *not* clicked";
+                qDebug() << "Yes was *not* clicked";
 			}
 
 			//QMessageBox msgBox;
@@ -321,7 +329,8 @@ void FlowWindow::createActions()
 			qoopenfilesDialog->setEnabled(true);
 			ac_showregions->setEnabled(false);
 			// Reset Color Map
-			ac_constant->trigger();				
+            ac_constant->trigger();
+
 		});
 
 		/// Region ID
@@ -329,7 +338,8 @@ void FlowWindow::createActions()
 		{
 			if (is_toggled)
 			{
-				canvas->showRegions();
+                canvas->showRegions();
+
 			}
 			else
 			{
@@ -354,7 +364,7 @@ void FlowWindow::createActions()
 		connect(ac_cool_to_warm, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM); });
 		connect(ac_hot, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::HOT);  });
 		connect(ac_cool, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::COOL); });
-		connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
+//		connect(ac_parula, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::PARULA); });
 
 		connect(ac_spring, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SPRING); });
 		connect(ac_summer, &QAction::triggered, this, [=](){ canvas->setCurrentColormap(ColorMap::COLORMAP::SUMMER); });
@@ -389,7 +399,7 @@ void FlowWindow::createActions()
 
 
 	//Region Signal
-	connect(&parametersBar, &FlowParametersBar_new::numberRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
+    connect(&parametersBar, &FlowParametersBar::numberRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
 
 }
 
@@ -545,21 +555,12 @@ void FlowWindow::loadSurfacesfromSketch()
 
     emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
-//	emit get2Dto3DMatrix(m2D_to_3D);
-//	emit get3Dto2DMatrix(m3D_to_2D);
-
-//	controller->setScene2Dto3D(m2D_to_3D);
-//	controller->setScene3Dto2D(m3D_to_2D);
-
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
     canvas->updateMesh();
 
 
 	this->parametersBar.setRegionDepth(canvas->getDepth());
 
-	//std::cout << "-- FlowWindow --" << std::endl;
-	//std::cout << m2D_to_3D.matrix() << std::endl;
-	//std::cout << m3D_to_2D.matrix() << std::endl;
 
 }
 
@@ -664,8 +665,6 @@ void FlowWindow::acceptUserParameters()
 
 void FlowWindow::buildCornerPoint()
 {
-    std::cout << "FlowWindow buildCornerPoint" << std::endl;
-
 	controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::CORNERPOINT);
 
 	if (controller->isUserInputOk() == false)
@@ -681,8 +680,6 @@ void FlowWindow::buildCornerPoint()
 
 void FlowWindow::buildUnstructured()
 {
-
-   std::cout << "FlowWindow buildUnstructured" << std::endl;
 
    controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::UNSTRUCTURED);
   
@@ -722,17 +719,13 @@ void FlowWindow::updateProgressBar( const unsigned int& value )
 
 
 
-
 void FlowWindow::clear()
 {
     controller->clear();
     canvas->clear();
 	clearPropertiesMenu();
-    //qexportcornerpointVTK->setEnabled( true );
-    //qexportcornerpointGRDECL->setEnabled( true );
     parametersBar.clear();
     crosssectionnormalBar.clear();
-    //qcomputeFlowProperties->setEnabled( true );
 	reset();
 }
 
@@ -777,7 +770,6 @@ void FlowWindow::keyPressEvent( QKeyEvent *event )
 		case Qt::Key_F5:
 		{
 			canvas->reloadShader();
-			std::cout << "Reload Shader " << std::endl;
 		}
         break;
 
@@ -805,6 +797,11 @@ void FlowWindow::regionPoints(const std::map<int,Eigen::Vector3f>& region_points
 {
 	// Z is fixed
 	this->parametersBar.setRegionPoints(region_points);
+
+    are_regionsdefined = true;
+
+    qbuildCornerPoint->setEnabled(true);
+    qbuildUnstructured->setEnabled(true);
 }
 
 int FlowWindow::getNumberOfRegions()

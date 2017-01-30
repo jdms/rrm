@@ -218,43 +218,28 @@ bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
 bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
 {
     if( selections.empty() == true ) return false;
-
-    std::cout << "-- Started sketch above... \n" << std::flush;
     return rules_processor.defineAbove( selections[ 0 ] );
-
 }
 
 
 bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
 {
-
     if( selections.empty() == true ) return false;
-
-    std::cout << "-- Started sketch below... \n" << std::flush;
     return rules_processor.defineBelow( selections[ 0 ] );
-
-
 }
 
 
 bool Controller::stopSketchingAbove()
 {
-    std::cout << "-- Stopped sketch above...\n" << std::flush;
     rules_processor.stopDefineAbove();
     return true;
-
 }
 
 
 bool Controller::stopSketchingBelow()
 {
-
-    std::cout << "-- Stopped sketch below... \n" << std::flush;
-
     rules_processor.stopDefineBelow();
-
     return true;
-
 }
 
 
@@ -375,11 +360,6 @@ void Controller::update()
         strat->updateSurface( surface_vertices, surface_faces );
 
     }
-
-
-    // provavelmente recalcular as intersecoes novamente para cada cross section.
-
-
 
     emit updateScene();
 

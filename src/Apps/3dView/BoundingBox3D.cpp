@@ -150,8 +150,6 @@ void BoundingBox3D::resetShaders()
     {
         delete( shader_boundingbox );
         shader_boundingbox = nullptr;
-
-//        is_initialized = false;
     }
 
 }

@@ -24,20 +24,13 @@ void FlowDiagnosticsInterface::setNumberofRegions( unsigned int regions_number )
 void FlowDiagnosticsInterface::setRegion( unsigned int id, double x, double y, double z, double perm,
                                           double poros, double visc ){
 
-    std::cout << "Rgion id " << id << "\n " << std::flush;
     PROPERTYAREA p;
     p.x(x);
-    //std::cout << "set x\n" << std::flush;
     p.y(y);
-    //std::cout << "set y\n " << std::flush;
     p.z(z);
-    //std::cout << "set z\n " << std::flush;
     p.perm(perm*0.987e-15);
-    //std::cout << "set perm\n " << std::flush;
     p.porosity(poros);
-    //std::cout << "set poro\n " << std::flush;
     p.viscosity(visc*1.0e-3);
-    //std::cout << "set visc\n " << std::flush;
     region.modifypropertyarea(id, p);
 }
 
@@ -254,7 +247,6 @@ void FlowDiagnosticsInterface::getMaxForwardTracer( std::vector< double >& value
 
 
 void FlowDiagnosticsInterface::getPermeabilitybyCells( std::vector< double >& values ) {
-//	values = region.getpermeability_nodes();
     values=region.getpermeability_elements();
 }
 
@@ -410,7 +402,6 @@ void FlowDiagnosticsInterface::getVolumeCells( std::vector< unsigned int >& cell
 void FlowDiagnosticsInterface::getCPGVolumeVertices( std::vector< float >& vertices )
 {
 
-    std::cout << " size nodelist " << region.nodelist.size() << std::endl;
 
     for (int i = 0; i < region.nodelist.size(); i++){
         vertices.push_back((float)region.nodelist[i].x());

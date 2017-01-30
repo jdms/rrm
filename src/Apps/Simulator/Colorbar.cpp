@@ -69,9 +69,6 @@ void ColorBar::paintEvent( QPaintEvent *event )
         {
             gradient.setColorAt( id ,  QColor::fromRgbF( colors[ i ].x(), colors[ i ].y(), colors[ i ].z(), 1) );
 
-            //float value = max - i*value_step;
-            //painter.drawText( x + width + 5, y + 7 + position, QString("%1").arg( value ) );
-
             id += id_step;
             position += step;
         }
@@ -85,7 +82,6 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
 
         painter.drawText(left, rect.top() - fm.height(), "Max");
-        //painter.drawText(left, rect.top() + rect.height() / 2, "50.0%");
         painter.drawText(left, rect.top() + rect.height() + fm.height(), "Min");
 
         float label_valeu = (max - min) / (this->label_step - 1);
@@ -94,7 +90,6 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
         for (auto i = 0; i < this->label_step; i++)
         {
-            //painter.drawText(left, rect.top(), QString("%1").arg(value));
             number = QString::number(max - i*label_valeu);
             if (number.size() > 4)
             {
@@ -104,15 +99,6 @@ void ColorBar::paintEvent( QPaintEvent *event )
             painter.drawText(left, rect.top() + i*text_step + fm.height(), number);
         }
 
-        //if( colors.size() == 1 )
-        //    painter.drawText( x + width + 5, length - 3, QString("%1").arg( min ) );
-        //else
-        //    painter.drawText( x + width + 5, y + position - 3, QString("%1").arg( min ) );
-
-
-        //brush = QBrush( gradient );
-        //painter.fillRect(x, y, width, length, brush);
-
         QPen pen;
         pen.setCapStyle(Qt::RoundCap);
         pen.setJoinStyle(Qt::RoundJoin);
@@ -121,17 +107,14 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
         painter.setPen(pen);
         painter.setBrush(QBrush(gradient));
-        painter.drawRect(x, y, width, length/*length*/);
+        painter.drawRect(x, y, width, length);
 
     }
     else
     {
 
 
-        qreal step = (qreal)(1.0/colors.size()); /*length/ colors.size();*/
-        std::cout << "number of colors = " << colors.size() << ", sttep = " << step << std::flush;
-        std::cout << "\n" << std::flush;
-
+        qreal step = (qreal)(1.0/colors.size());
 
         qreal dl = 0 ;
         qreal step_text = (qreal)( length/colors.size());
@@ -139,11 +122,6 @@ void ColorBar::paintEvent( QPaintEvent *event )
         {
             gradient.setColorAt( dl ,  QColor::fromRgbF( colors[ i ].x(), colors[ i ].y(), colors[ i ].z(), 1) );
             gradient.setColorAt( dl + step ,  QColor::fromRgbF( colors[ i ].x(), colors[ i ].y(), colors[ i ].z(), 1) );
-//            painter.drawText( x + width + 5, i*step_text, QString("%1").arg( values[ i ] ) );
-
-            std::cout << "dl: " << dl << ", color " << i << ", color: " << colors[ i ].x() << ", " << colors[ i ].y() << ", " << colors[ i ].z() << std::flush;
-            std::cout << "\n" << std::flush;
-
             dl += step;
         }
 
@@ -181,7 +159,7 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
         painter.setPen(pen);
         painter.setBrush(QBrush(gradient));
-        painter.drawRect(x, y, width, length/*length*/);
+        painter.drawRect(x, y, width, length);
 
 
     }

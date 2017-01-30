@@ -14,7 +14,7 @@ class ColorBar: public QWidget
 
         ColorBar();
         void setSize( const int& l, const int& w );
-		void updateColorMap(const std::vector < QVector3D >& c/*, const std::vector< double >& v*/, float _min, float _max, int label_step = 10);
+        void updateColorMap(const std::vector < QVector3D >& c, float _min, float _max, int label_step = 10);
         void updateColorMap( const std::vector < QVector3D >& c, const std::vector< int >& ids_, const std::vector< double >& values_ );
         void clear();
 

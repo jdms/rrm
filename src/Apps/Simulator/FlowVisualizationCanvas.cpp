@@ -4,16 +4,11 @@
 FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _current_dir) : QOpenGLWidget(parent)
 {
 
-
     show_axis = true;
-//    show_colorbar = false;
 
     current_colormap = ColorMap::COLORMAP::CONSTANT;
-
     this->current_directory = _current_dir.toStdString();
-    //this->current_directory = "D:\\Workspace\\RRM\\files\\";
 
-    //std::cout << "Current Directory !!!!!!! " << this->current_directory << std::endl;
     createRenderingMenu();
 
 }
@@ -21,10 +16,7 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 
 void FlowVisualizationCanvas::setOpenGLFormat()
 {
-    //format.setVersion( 4, 1 );
-    //format.setProfile( QSurfaceFormat::CompatibilityProfile );
-    //format.setSamples(16);
-    //setFormat( format );
+
 }
 
 
@@ -42,28 +34,11 @@ void FlowVisualizationCanvas::createRenderingMenu()
     connect( rendering_menu, &FlowRenderingOptionsMenu::setJETColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::JET );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::seHotColormap , this, [=](){ setCurrentColormap( ColorMap::COLORMAP::HOT );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setCoolColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COOL ); }  );
-//    connect( rendering_menu, &FlowRenderingOptionsMenu::setParulaColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::PARULA );   }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setSpringColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SPRING );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setSummerColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::SUMMER );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setCopperColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::COPPER ); }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setPolarColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::POLAR );  }  );
     connect( rendering_menu, &FlowRenderingOptionsMenu::setWinterColormap, this, [=](){ setCurrentColormap( ColorMap::COLORMAP::WINTER );  }  );
-
-    //connect( rendering_menu, &FlowRenderingOptionsMenu::reloadcrosssection, this, [=](){  emit getSurfaceCrossSection(); }  );
-    //connect( rendering_menu, &FlowRenderingOptionsMenu::loadfile, this, [=](){ emit readSurfacefromFile(); } );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::buildcornerpoint, this, [=](){ emit buildcornerpoint(); } );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::buildunstructured, this, [=](){ emit buildunstructured(); } );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::editparameters, this, [=]( ){ emit editParameters(); }  );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::computeproperties, this, [=](){ controller->computeFlowProperties(); }  );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::applycrosssection, this, [=](){ emit applyCrossSection(); }  );
-
-
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportSurfacetoVTK, this, [=](){  controller->exportSurfacetoVTK(); }  );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportVolumetoVTK, this, [=](){ controller->exportVolumetoVTK(); } );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportCornerPointtoVTK, this, [=](){ controller->exportCornerPointtoVTK(); } );
-   // connect( rendering_menu, &FlowRenderingOptionsMenu::exportResultstoVTK, this, [=](){ controller->exportResultstoVTK(); } );
-
-
 
     connect( rendering_menu, &FlowRenderingOptionsMenu::clearAll, this, [=](){ emit clearAll(); }  );
 
@@ -98,8 +73,6 @@ void FlowVisualizationCanvas::initializeGL()
     glEnable( GL_MULTISAMPLE );
     glEnable( GL_DEPTH_TEST );
     glEnable(GL_TEXTURE_2D);
-    //glDepthFunc( GL_LESS );
-    //glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 
     GLint bufs;
@@ -119,7 +92,6 @@ void FlowVisualizationCanvas::initializeGL()
     qDebug("Have %d Minor and %d Major", minor, major);
 
 
-    //coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     mesh.initializeShader( current_directory );
     crosssection.initShader( current_directory );
@@ -281,8 +253,6 @@ void FlowVisualizationCanvas::setConstantColor()
     QVector3D c = colormap.getConstantColor();
     mesh.setConstantColor( c.x(), c.y(), c.z() );
 
-//    show_colorbar = false;
-
     update();
 }
 
@@ -338,8 +308,6 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
 
 
     colorbar->updateColorMap( colormap.getColors( current_colormap, nc ), min, max );
-    //colorbar->setMinValue( min );
-    //colorbar->setMaxValue( max );
     show_colorbar = true;
 
 
@@ -351,15 +319,6 @@ void FlowVisualizationCanvas::setVerticesColorbyProperty( std::string name, std:
 
 void FlowVisualizationCanvas::setColors( const std::vector< float >& colors )
 {
-
-//    glShadeModel(GL_SMOOTH);
-
-//   mesh.setColor( colors );
-
-////   show_colorbar = false;
-
-
-//    update();
 
 }
 
@@ -411,7 +370,6 @@ void FlowVisualizationCanvas::setFacesColorbyProperty( std::string name, std::st
     std::vector< double > values_;
     for( std::map< double, QVector3D>::iterator it = unique_values.begin(); it != unique_values.end(); ++it )
     {
-        std::cout << "setFacesColors in Canvas poros = " << it->first << std::endl;
          values_.push_back( it->first);
          colors_.push_back( it->second);
     }
@@ -490,21 +448,7 @@ void FlowVisualizationCanvas::showRegions()
          colors_.push_back( it->second);
     }
 
-    values.
-
-    std::cout << "number of colors = " << unique_colors.size() << std::flush;
-        std::cout << "\n" << std::flush;
-
     colorbar->updateColorMap( colors_, ids, values );
-
-
-    auto min_max = std::minmax_element(ids.begin(), ids.end());
-    unsigned int nc;
-
-
-
-//    colorbar->updateColorMap(colormap.getColors(current_colormap, nc), 1, (*min_max.second) + 1, (*min_max.second)+1);
-    //colorbar->updateColorMap(colormap.getColors(current_colormap, nc), (*min_max.first) + 1, (*min_max.second)+1, 1);
 
     mesh.setColor( meshcolors );
     mesh.loadColorsbyFaces();
@@ -558,7 +502,6 @@ void FlowVisualizationCanvas::updateMesh()
     camera.reset();
     camera.increaseZoom(2.0f*1.05f);
 
-    //coordinate_axis_.increaseZoom(2.0f*1.05f);
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();
@@ -591,15 +534,8 @@ void FlowVisualizationCanvas::updateCornerPoint()
     mesh.setFaces( faces );
     mesh.buildBoundingBox();
 
-
-    //mesh.showVertices( rendering_menu->showVertices() );
-    //mesh.showEdges( rendering_menu->showEdges() );
-    //mesh.showFaces( rendering_menu->showFaces() );
-
-
     mesh.loadVertices();
 
-    //std::cout << "vertices_double.size()" <<vertices_double.size() << "\n" <<std::flush;
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
         setConstantColor();
@@ -628,13 +564,6 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
     mesh.setWireframe( edges );
     mesh.setFaces( faces );
     mesh.buildBoundingBox();
-
-
-    //mesh.showVertices( rendering_menu->showVertices() );
-    //mesh.showEdges( rendering_menu->showEdges() );
-    //mesh.showFaces( rendering_menu->showFaces() );
-
-
     mesh.loadVertices();
 
     if( current_colormap == ColorMap::COLORMAP::CONSTANT )
@@ -735,7 +664,7 @@ void FlowVisualizationCanvas::mousePressEvent(QMouseEvent *event)
         camera.translateCamera(mouse_pos);
     }
 
-    if( ( event->buttons() & Qt::RightButton ) /*&& ( event->modifiers() == Qt::ControlModifier )*/ )
+    if( ( event->buttons() & Qt::RightButton ) )
     {
         rendering_menu->exec( event->globalPos() );
     }
@@ -767,11 +696,9 @@ void FlowVisualizationCanvas::wheelEvent( QWheelEvent *event )
     {
         if( pos > 0 ){
             camera.increaseZoom( 1.05f );
-            //coordinate_axis_.increaseZoom(1.05f);
         }
         else if( pos < 0 ){
             camera.increaseZoom( 1.0f/1.05f );
-            //coordinate_axis_.increaseZoom(1.0f/1.05f);
         }
 
 
@@ -799,7 +726,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_C:
         {
-//            show_colorbar = !show_colorbar;
         } break;
 
 
@@ -812,26 +738,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
         {
             camera.reset();
             camera.increaseZoom(2.0f*1.05f);
-        } break;
-
-        case Qt::Key_L:
-        {
-//            emit controller->getSurfaceCrossSection();
-        } break;
-
-        case Qt::Key_F:
-        {
-//            emit controller->readFile();
-        } break;
-
-        case Qt::Key_E:
-        {
-//            emit controller->editParameters();
-        } break;
-
-        case Qt::Key_P:
-        {
-//            emit controller->applyCrossSection();
         } break;
 
         case Qt::Key_X:
@@ -847,8 +753,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
                 mesh.setCrossSectionClippingEquation( a, b, c, d, Eigen::Vector3f().UnitX());
 
             }
-
-
 
         } break;
 
@@ -959,10 +863,6 @@ void FlowVisualizationCanvas::keyPressEvent( QKeyEvent *event )
             emit controller->clearAll();
         } break;
 
-        case Qt::Key_H:
-        {
-//            emit controller->showToolbarhideToolbar( false );
-        } break;
 
         default:
             break;
@@ -987,9 +887,6 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
     crosssection.resetBuffers();
     axes.resetBuffers();
 
-
-
-//    colorbar.resetBuffers();
 }
 
 /// Get the current boundingobx depth in the extrusion framework

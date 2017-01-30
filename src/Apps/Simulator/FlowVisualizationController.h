@@ -27,8 +27,6 @@ class FlowVisualizationController: public QWidget
     public:
 
         typedef qreal		 	 	Real;
-//        typedef RRM::CrossSection<Real>  	CrossSection;
-
 
         enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
 
@@ -50,7 +48,7 @@ class FlowVisualizationController: public QWidget
         void updateSurfaces( std::vector< float >& vertices, std::vector< unsigned int >& faces );
         void updateCornerPoint( std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces );
         void updateVolumetricMesh( std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces );
-        void getSurfacesFromCrossSection(/*const CrossSection &_cross_section*/);
+        void getSurfacesFromCrossSection();
 
         void computeFlowProperties();
 
@@ -74,7 +72,6 @@ class FlowVisualizationController: public QWidget
 		bool arePropertiesComputed() { return are_properties_computed; }
 
         std::map< double, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, std::vector< double >& values, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids);
-//        std::map< int, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, ColorMap::COLORMAP current_colormap, std::vector<int>& ids_);
 
 
         void setVolumeDimensions( double width_, double height_, double depth_ )
@@ -95,15 +92,6 @@ class FlowVisualizationController: public QWidget
         void exportCornerPointtoVTK();
         void exportCornerPointtoGRDECL();
         void exportResultstoVTK();
-
-
-//		void setScene2Dto3D(const Eigen::Affine3f& m);
-//		void setScene3Dto2D(const Eigen::Affine3f& m);
-
-//		Eigen::Vector3f scene2Dto3D(const Eigen::Vector2f& p);
-//		Eigen::Vector3f scene2Dto3D(const Eigen::Vector3f& p);
-//		Eigen::Vector3f scene3Dto2D(const Eigen::Vector3f& p);
-
 
 
     signals:
@@ -140,9 +128,6 @@ class FlowVisualizationController: public QWidget
 
         MESHING_METHOD current_method;
         FlowDiagnosticsInterface code_interface;
-
-//		Eigen::Affine3f m_2dto3d;
-//		Eigen::Affine3f m_3dto2d;
 
 		ColorMap colormap;
 
