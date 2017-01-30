@@ -5,17 +5,14 @@
         <file>icons/folder.png</file>
         <file>icons/new.png</file>
         <file>icons/page_white.png</file>
-        <file>icons/sketchmode.png</file>
         <file>icons/removebelow.png</file>
         <file>icons/removeabove.png</file>
-        <file>icons/removebelowintersection.png</file>
-        <file>icons/removeaboveintersection.png</file>
         <file>icons/Camera.png</file>
-        <file>icons/InsertCurve.png</file>
+        <file>icons/insertCurve.png</file>
         <file>icons/denyCurve.png</file>
         <file>icons/undo.png</file>
         <file>icons/redo.png</file>
-        <file>icons/NewBoundary.png</file>
+        <file>icons/newBoundary.png</file>
         <file>icons/surfacesfromfile.png</file>
         <file>icons/surfacesfromsketch.png</file>
         <file>icons/userinput.png</file>
@@ -31,6 +28,9 @@
         <file>icons/vertex.png</file>
         <file>icons/sketchabove.png</file>
         <file>icons/sketchbelow.png</file>
+        <file>icons/removeaboveintersecion.png</file>
+        <file>icons/removebelowintersecion.png</file>
+        <file>icons/sketchmode.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>
