@@ -61,6 +61,7 @@
 
 #include "Help/HelpDialog.h"
 #include "Controller.hpp"
+#include "Canvas3D.h"
 
 
 /**
@@ -179,6 +180,8 @@ class MainWindow : public QMainWindow
     private:
 
         Ui::MainWindow *ui;
+        Canvas3D *canvas3d;
+        QSlider* sl_depth_csection;
 
 
 

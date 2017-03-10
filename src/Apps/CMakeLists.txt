@@ -20,6 +20,8 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/CrossSection.h
                         MainWindow/Object.h
                         MainWindow/Region1.h
+                        MainWindow/Canvas3D.h
+                        MainWindow/Scene3D.h
                         MainWindow/ExtrusionRulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
@@ -30,6 +32,7 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
                             MainWindow/Scene.h
                             MainWindow/Controller.hpp
+                            MainWindow/Canvas3D.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
 
@@ -43,6 +46,8 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/MainWindow.cpp
                         MainWindow/Scene.cpp
                         MainWindow/Controller.cpp
+                        MainWindow/Canvas3D.cpp
+                        MainWindow/Scene3D.cpp
                         MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
