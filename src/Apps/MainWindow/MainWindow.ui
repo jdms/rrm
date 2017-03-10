@@ -77,6 +77,45 @@
         <attribute name="title">
          <string>Edition</string>
         </attribute>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>10</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>10</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -86,7 +125,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="hl_mainwindow">
        <item>
         <widget class="QTreeView" name="tv_object_tree">
          <property name="maximumSize">
@@ -96,9 +135,6 @@
           </size>
          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QOpenGLWidget" name="openGLWidget"/>
        </item>
       </layout>
      </item>

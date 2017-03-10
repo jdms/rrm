@@ -39,6 +39,7 @@
 #include <iostream>
 #include <map>
 
+#include "Scene3D.h"
 #include "Volume.h"
 #include "CrossSection.h"
 #include "Object.h"
@@ -102,13 +103,15 @@ class Controller: public QObject
 //            registerSolver();
         }
 
+        inline void setScene( Scene3D* sc_ ){ scene = sc_; }
+
         inline void addInputVolume()
         {
             //TODO: create visualization volume
             //TODO: add in object tree, etc
             input_volume.initialize();
 
-//            scene.addVolume( input_volume );
+            scene->addVolume( &input_volume );
 //            object_tree.add( input_volume, "INPUT VOLUME" );
         }
 
@@ -168,7 +171,7 @@ class Controller: public QObject
                 depth_of_cross_sections[ depth_ ] = new CrossSection1();
                 setCurrentCrossSection( depth_ );
 
-//            scene.addCrossSection( depth_of_cross_sections[ depth_ ] );
+            scene->addCrossSection( depth_of_cross_sections[ depth_ ] );
 //            object_tree.add( depth_of_cross_sections[ depth_ ], "CrossSection" );
 
             }
@@ -239,7 +242,7 @@ class Controller: public QObject
             current_object = obj->getId();
             objects[ current_object ] = obj;
 
-//            scene.addObject( obj );
+            scene->addObject( obj );
 //            object_tree.add( obj, "Object" );
         }
 
@@ -393,7 +396,7 @@ class Controller: public QObject
 
             regions[ id_ ] = rg_;
 
-//            scene.addRegion( rg_ );
+            scene->addRegion( rg_ );
 //            object_tree.add( rg_, "Region" );
         }
 
@@ -502,6 +505,8 @@ class Controller: public QObject
 
     protected:
 
+        Scene3D *scene;
+
         Volume input_volume;
 
         double current_cross_section;
@@ -510,7 +515,6 @@ class Controller: public QObject
         Object::TYPE current_object_type = Object::TYPE::Stratigraphy;
         size_t current_object;
         std::map< std::size_t, Object* > objects;
-
 
         std::map< std::size_t, Region1* > regions;
 
