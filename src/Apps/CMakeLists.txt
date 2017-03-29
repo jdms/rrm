@@ -14,14 +14,15 @@ include_directories (
 ###############################################
   
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
+                        MainWindow/Canvas3D.h
                         MainWindow/Scene.h
                         MainWindow/Controller.hpp
                         MainWindow/Volume.h
                         MainWindow/CrossSection.h
                         MainWindow/Object.h
                         MainWindow/Region1.h
-                        MainWindow/Canvas3D.h
                         MainWindow/Scene3D.h
+                        MainWindow/SketchCanvas.h
                         MainWindow/ExtrusionRulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
@@ -30,9 +31,11 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
+                            MainWindow/Canvas3D.h
                             MainWindow/Scene.h
                             MainWindow/Controller.hpp
-                            MainWindow/Canvas3D.h
+                            MainWindow/Scene3D.h
+                            MainWindow/SketchCanvas.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
 
@@ -48,6 +51,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/Controller.cpp
                         MainWindow/Canvas3D.cpp
                         MainWindow/Scene3D.cpp
+                        MainWindow/SketchCanvas.cpp
                         MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
@@ -305,6 +309,7 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
 #        add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
 #                            ${CMAKE_SOURCE_DIR}/files/dlls/x64 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
 
 #    else()
 

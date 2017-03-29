@@ -20,7 +20,7 @@
  */
 
 #include "MainWindow.h"
-#include "MainWindow/ExtrusionRulesProcessor.hpp"
+//#include "MainWindow/ExtrusionRulesProcessor.hpp"
 
 #include "ui_MainWindow.h"
 
@@ -52,11 +52,9 @@ void MainWindow::init()
     setMinimumSize ( 1000, 800 );
     setWindowTitle( "Rapid Reservoir Modelling" );
 
-    Scene3D scene;
 
     controller = new Controller();
     controller->setScene( &scene );
-    controller->init();
 
     canvas3d = new Canvas3D();
     canvas3d->setScene( &scene );
@@ -65,8 +63,23 @@ void MainWindow::init()
     sl_depth_csection = new QSlider( Qt::Vertical );
     ui->hl_mainwindow->addWidget( sl_depth_csection );
 
+
     connect( sl_depth_csection, &QSlider::sliderReleased, [=](){ std::cout << "Slider released."
-                                                                           << std::endl; } );
+                                                                           << std::endl;
+                                                          dw_sketch_canvas->setVisible( true ); } );
+
+
+
+    canvas2d = new SketchCanvas();
+    canvas2d->setMaximumHeight( 200 );
+
+    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
+    dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketch_canvas->setWidget( canvas2d );
+    dw_sketch_canvas->setVisible( false );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
+
+    controller->init();
 
 
     /*
@@ -407,3 +420,9 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
 }
 
+
+
+void MainWindow::on_btn_viewtree_toggled( bool checked )
+{
+    ui->tv_object_tree->setVisible( checked );
+}

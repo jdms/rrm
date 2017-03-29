@@ -1,7 +1,8 @@
 #ifndef CANVAS3D_H
 #define CANVAS3D_H
 
-#include <GL/glew.h>
+
+#include "Scene3D.h"
 
 #include <QtWidgets/QOpenGLWidget>
 #include <QOpenGLContext>
@@ -9,7 +10,6 @@
 #include <QtGui/QKeyEvent>
 
 
-#include "Scene3D.h"
 
 
 class Canvas3D: public QOpenGLWidget
