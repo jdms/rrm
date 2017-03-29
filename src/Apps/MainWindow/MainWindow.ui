@@ -33,7 +33,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -44,15 +44,21 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>239</width>
+           <width>260</width>
            <height>25</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="btn_viewtree">
             <property name="text">
-             <string>PushButton</string>
+             <string>View Object Tree</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

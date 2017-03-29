@@ -60,8 +60,9 @@
 
 
 #include "Help/HelpDialog.h"
-#include "Controller.hpp"
 #include "Canvas3D.h"
+#include "Controller.hpp"
+#include "SketchCanvas.h"
 
 
 /**
@@ -77,8 +78,9 @@ class MainWindow;
 
 
 class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+    {
+        Q_OBJECT
+
 
     public:
 
@@ -110,8 +112,6 @@ class MainWindow : public QMainWindow
         void createFlowDiagnosticsMenuBar();
 
 
-
-
         void keyPressEvent( QKeyEvent *event );
 
 
@@ -140,6 +140,7 @@ class MainWindow : public QMainWindow
 //        bool scene_initialized;
 
 //        Scene* scene;
+
         Controller* controller;
 
 //        HelpDialog help;
@@ -177,11 +178,20 @@ class MainWindow : public QMainWindow
 //        QAction *ac_flowwindow;
 
 
+    private slots:
+
+        void on_btn_viewtree_toggled( bool checked );
+
     private:
 
         Ui::MainWindow *ui;
-        Canvas3D *canvas3d;
         QSlider* sl_depth_csection;
+
+        Scene3D scene;
+        Canvas3D *canvas3d;
+
+        QDockWidget* dw_sketch_canvas;
+        SketchCanvas *canvas2d;
 
 
 
