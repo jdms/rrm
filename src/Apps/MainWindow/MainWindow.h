@@ -63,6 +63,7 @@
 #include "Canvas3D.h"
 #include "Controller.hpp"
 #include "SketchCanvas.h"
+#include "SketchScene.h"
 
 
 /**
@@ -95,6 +96,11 @@ class MainWindow : public QMainWindow
         void init();
 
         void createWindow();
+        void setupWindowProperties();
+
+
+
+
         void createActions();
         void createMenuBar();
         void createMainWindowActions();
@@ -136,47 +142,47 @@ class MainWindow : public QMainWindow
 
     protected:
 
-
-//        bool scene_initialized;
-
-//        Scene* scene;
-
         Controller* controller;
 
-//        HelpDialog help;
-//        AboutWidget * aboutRRM;
+/*
+        bool scene_initialized;
+        Scene* scene;
+
+        HelpDialog help;
+        AboutWidget * aboutRRM;
 
 
 
-//        QMenu *mn_file;
-//        QAction *ac_exit;
+        QMenu *mn_file;
+        QAction *ac_exit;
 
-//        QMenu *mn_help;
-//        QAction *ac_rrmGuide;
-//        QAction *ac_about;
+        QMenu *mn_help;
+        QAction *ac_rrmGuide;
+        QAction *ac_about;
 
-//        QMenu *mn_windows;
-//        QAction *ac_wdwsketching;
-//        QAction *ac_wdwseismic;
-//        QAction *ac_3dview;
-
-
-//        // Sketching Module
-//        QDockWidget* dw_sketching;
-//        SketchingWindow *sketching_window;
+        QMenu *mn_windows;
+        QAction *ac_wdwsketching;
+        QAction *ac_wdwseismic;
+        QAction *ac_3dview;
 
 
-//        // 3D View Module
-//        QDockWidget* dw_3dview;
-//        View3DWindow *view3d_window;
+        // Sketching Module
+        QDockWidget* dw_sketching;
+        SketchingWindow *sketching_window;
 
 
-//        //Flow Diagostics Module
+        // 3D View Module
+        QDockWidget* dw_3dview;
+        View3DWindow *view3d_window;
 
-//        QDockWidget* dw_flowdiagnostics;
-//        FlowWindow *flow_window;
-//        QAction *ac_flowwindow;
 
+        //Flow Diagostics Module
+
+        QDockWidget* dw_flowdiagnostics;
+        FlowWindow *flow_window;
+        QAction *ac_flowwindow;
+
+*/
 
     private slots:
 
@@ -187,11 +193,12 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
         QSlider* sl_depth_csection;
 
-        Scene3D scene;
+        Scene3D scene3d;
         Canvas3D *canvas3d;
 
         QDockWidget* dw_sketch_canvas;
         SketchCanvas *canvas2d;
+        SketchScene sketch_scene;
 
 
 

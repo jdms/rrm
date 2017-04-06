@@ -23,6 +23,9 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/Region1.h
                         MainWindow/Scene3D.h
                         MainWindow/SketchCanvas.h
+                        MainWindow/SketchScene.h
+                        MainWindow/VolumeItemWrapper.h
+                        MainWindow/ObjectItemWrap.h
                         MainWindow/ExtrusionRulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
@@ -35,6 +38,7 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
                             MainWindow/Scene.h
                             MainWindow/Controller.hpp
                             MainWindow/Scene3D.h
+                            MainWindow/SketchScene.h
                             MainWindow/SketchCanvas.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
@@ -52,6 +56,9 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/Canvas3D.cpp
                         MainWindow/Scene3D.cpp
                         MainWindow/SketchCanvas.cpp
+                        MainWindow/SketchScene.cpp
+                        MainWindow/VolumeItemWrapper.cpp
+                        MainWindow/ObjectItemWrap.cpp
                         MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
@@ -66,7 +73,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 ###############################################
 
 set( SKETCHING_HEADERS Sketching/StratigraphicItem.hpp
-                       Sketching/InputSketch.h
+                       Sketching/Inputsketch.h
                        Sketching/PolyQtUtils.hpp
                        Sketching/BoundaryItem2D.hpp
                        Sketching/SketchingWindow.h
@@ -80,7 +87,7 @@ set( SKETCHING_MOC_HEADERS  Sketching/SketchingWindow.h
 
 
 set( SKETCHING_SOURCES  Sketching/StratigraphicItem.cpp                    
-                        Sketching/InputSketch.cpp
+                        Sketching/Inputsketch.cpp
                         Sketching/PolyQtUtils.cpp
                         Sketching/BoundaryItem2D.cpp
                         Sketching/SketchingWindow.cpp
