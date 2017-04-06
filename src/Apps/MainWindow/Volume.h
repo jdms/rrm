@@ -106,9 +106,9 @@ class Volume
             origin_y = 0.0f;
             origin_z = 0.0f;
 
-            width = 1.0f;
-            height = 1.0f;
-            depth = 1.0f;
+            width = 500.0f;
+            height = 500.0f;
+            depth = 500.0f;
 
             is_visible = true;
         }

@@ -29,13 +29,192 @@
 
 Controller::Controller()
 {
+/*
+    current_reconstruction = ReconstructionMode::EXTRUSION;
+    current_crosssection = 0.0f;
+    current_stratigraphy = 0;
+*/
+}
 
-//    current_reconstruction = ReconstructionMode::EXTRUSION;
+void Controller::init()
+{
+    addInputVolume();
+    setCurrentCrossSection( input_volume.getDepth() );
 
-//    current_crosssection = 0.0f;
-//    current_stratigraphy = 0;
+    createObject();
+}
+
+
+void Controller::addInputVolume()
+{
+    //TODO: create visualization volume
+    //TODO: add in object tree, etc
+
+    input_volume.initialize();
+    scene3d->addVolume( &input_volume );
+    sketch_scene->setVolume( &input_volume );
+
+    //object_tree.add( input_volume, "INPUT VOLUME" );
+}
+
+
+
+void Controller::addCurrentCrossSectionToList()
+{
+//    if( isCrossSectionAdded( current_depth_csection ) == true ) return;
+//    addCrossSectionofDepth( current_depth_csection );
+}
+
+void Controller::setCurrentCrossSection( double depth_ )
+{
+    if( isValidCrossSection( depth_ ) == false )
+    {
+        std::cout << "Cross-section out of range" <<std::endl;
+        return;
+    }
+
+    current_depth_csection = depth_;
+
+    updateScenesWithCurrentCrossSection();    //    viewCrossSection();
+
+//    sketch_scene->init();
+
+//    std::cout << "-- Current depth of cross-section is " << current_depth_csection << "\n\n"
+//              << std::flush;
 
 }
+
+bool Controller::getCurrentCrossSectionDimensions( double& width_, double& height_ )
+{
+    if( isCrossSectionAdded( current_depth_csection ) == false )
+        return false;
+
+    CrossSection1& csection_ = depth_of_cross_sections[ current_depth_csection ];
+    csection_.getDimensions( width_, height_ );
+    return true;
+}
+
+
+
+bool Controller::setNameofObjectofId( std::size_t id_, const std::string& name_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    obj->setName( name_ );
+    return true;
+}
+
+bool Controller::getNameofObjectofId( std::size_t id_, std::string& name_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    name_ = obj->getName();
+    return true;
+}
+
+bool Controller::setVisibilityofObjectofId( std::size_t id_, bool option )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    obj->setVisibility( option );
+    return true;
+}
+
+bool Controller::getVisibilityofObjectofId( std::size_t id_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    return obj->getVisibility();
+}
+
+void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
+{
+    if( isValidObject( current_object ) == false ) return;
+
+    Object* obj_ = objects[ current_object ];
+    obj_->addInputCurve( current_depth_csection, curve_ );
+
+    addCurrentObjectToCurrentCrossSection();
+    setCurrentCrossSectionAsUsed();
+
+    addCurrentObjectToScenes();
+
+
+
+    std::cout << "Curve added to Object " << obj_->getId() << "\n\n"  << std::flush;
+    std::cout << " -- Object: " << obj_->getId() << " has now " << obj_->getNumberofInputCurves()
+              << " input curves\n"  << std::flush;
+
+    std::vector< double > csections = obj_->getAllCrossSectionsRelatedtoObject();
+    std::cout << " -- Used Cross-Sections by the object: " << csections.size() << "\n\n"
+              <<  std::flush;
+
+
+    std::cout << "The program has in total " << depth_of_cross_sections.size() << " cross-sections: \n"
+              << std::flush;
+
+    for( auto const &it : depth_of_cross_sections )
+    {
+        std::set< Object* > objs_ = (it.second).getObjectsReferenced();
+        std::cout << "\t*depth " << it.first << " has " << objs_.size() << " objects\n" << std::flush;
+    }
+
+    std::cout << "\n" << std::flush;
+
+}
+
+bool Controller::getAllInputCurvesofCurrentObject( std::vector< Curve2D >& input_curves_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* obj_ = objects[ current_object ];
+    input_curves_ = obj_->getAllInputCurves();
+    return true;
+
+}
+
+std::size_t Controller::getNumberofInputCurvesinObjectofId( std::size_t id_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj_ = objects[ id_ ];
+    return obj_->getNumberofInputCurves();
+}
+
+bool Controller::getAllCrossSectionsRelatedtoCurrentObject( std::vector< double >& cross_sections_related_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* obj_ = objects[ current_object ];
+    cross_sections_related_ = obj_->getAllCrossSectionsRelatedtoObject();
+    return true;
+}
+
+bool Controller::setPathCurvetoCurrentObject( const Curve2D& path_curve_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* obj_ = objects[ current_object ];
+    obj_->setPathCurve( path_curve_ );
+    return true;
+}
+
+bool Controller::getPathCurveofCurrentObject( Curve2D& path_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* obj_ = objects[ current_object ];
+    path_ =  obj_->getPathCurve();
+    return true;
+}
+
+
+
+
 
 
 

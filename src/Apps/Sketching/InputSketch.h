@@ -96,13 +96,12 @@ class InputSketch : public QGraphicsPathItem
         QPainterPathStroker custom_stroker;
 
         QPainterPath curve;
-        QPolygonF curve1;
 
         bool done;
         bool is_visible;
         bool is_inside;
 
-        RRM::SketchLib sketchlib_;
+        RRM::SketchLib sketchlib;
 
 
 

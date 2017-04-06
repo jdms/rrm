@@ -3,6 +3,9 @@
 
 #include <QtWidgets/QGraphicsView>
 
+#include "SketchScene.h"
+
+
 class SketchCanvas: public QGraphicsView
 {
     Q_OBJECT

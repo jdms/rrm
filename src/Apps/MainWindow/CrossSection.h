@@ -3,12 +3,13 @@
 
 #include <iostream>
 #include <cmath>
-#include <vector>
+#include <set>
 
 
 //TODO: remove this typedef later
 //typedef int Object;
 
+#include "Volume.h"
 #include "Object.h"
 
 
@@ -21,38 +22,42 @@ class CrossSection1
             initialize();
         }
 
+        inline void setVolume( Volume* vol_ ){ volume = vol_; }
+        inline Volume* const& getVolume(){ return volume; }
+
+
         inline void setDimensions( double width_, double height_ )
         {
-            width = std::fabs( width_ );
-            height = std::fabs( height_ );
+            setWidth( width_ );
+            setHeight( height_ );
         }
 
         inline void getDimensions( double& width_, double& height_ ) const
         {
-            width_ = width;
-            height_ = height;
+            width_ = volume->getWidth();
+            height_ = volume->getHeight();
         }
 
 
         inline void setWidth( double width_ )
         {
-            width = std::fabs( width_ );
+            volume->setWidth( std::fabs( width_ ) );
         }
 
         inline double getWidth() const
         {
-            return width;
+            return volume->getWidth();
         }
 
 
         inline void setHeight( double height_ )
         {
-            height = std::fabs( height_ );
+            volume->setHeight( std::fabs( height_ ) );
         }
 
         inline double getHeight() const
         {
-            return height;
+            return volume->getHeight();
         }
 
 
@@ -67,17 +72,18 @@ class CrossSection1
         }
 
 
-        inline void setObjectsReferenced( const std::vector< Object* >& objects_ )
+        inline void setObjectsReferenced( const std::set< Object* >& objects_ )
         {
             objects_referenced = objects_;
         }
 
-        inline void addObjectReferenced( Object* const& object_ )
+        inline void addObjectReferenced( Object* object_ )
         {
-            objects_referenced.push_back( object_ );
+            objects_referenced.insert( object_ );
         }
 
 
+/*
         inline Object* getObjectReferencedofId( std::size_t id_ ) const
         {
             try
@@ -91,8 +97,9 @@ class CrossSection1
                           << e.what() << "'\n";
             }
         }
+*/
 
-        inline const std::vector< Object* >& getObjectsReferenced() const
+        inline const std::set< Object* >& getObjectsReferenced() const
         {
             return objects_referenced;
         }
@@ -101,7 +108,6 @@ class CrossSection1
         inline void initialize()
         {
             clear();
-            setDefaultValues();
         }
 
 
@@ -114,23 +120,14 @@ class CrossSection1
 
         }
 
-        inline void setDefaultValues()
-        {
-            width = 1.0f;
-            height = 1.0f;
-
-            z_coordinate = 1.0f;
-        }
 
 
     protected:
 
-        double width;
-        double height;
-
+        Volume* volume;
         double z_coordinate;
 
-        std::vector< Object* > objects_referenced;
+        std::set< Object* > objects_referenced;
 
 };
 

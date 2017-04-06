@@ -8,8 +8,8 @@
 #include <exception>
 
 //FIXME: remove this typedef later
-typedef int Curve2d;
-
+//typedef int Curve2d;
+#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 //TODO: clear whatever variable before performing the set
 
@@ -124,14 +124,24 @@ class Object
         }
 */
 
-        inline void addInputCurve( double _depth, Curve2d* const& _curve )
+        inline void addInputCurve( double _depth, const Curve2D& _curve )
         {
             input_curves[ _depth ] = _curve;
         }
 
-        inline Curve2d* const& getInputCurveofCrossSection( double _depth )
+        inline void addInputEdges( double _depth, const std::vector< std::size_t >& edges_ )
+        {
+            input_edges[ _depth ] = edges_;
+        }
+
+        inline Curve2D& getInputCurveofCrossSection( double _depth )
         {
             return input_curves[ _depth ];
+        }
+
+        inline std::vector< std::size_t > getInputEdgesofCrossSection( double _depth )
+        {
+            return input_edges[ _depth ];
         }
 
         inline std::vector< double > getAllCrossSectionsRelatedtoObject() const
@@ -143,13 +153,23 @@ class Object
             return depth_cross_sections_;
         }
 
-        inline std::vector< Curve2d* > getAllInputCurves() const
+        inline std::vector< Curve2D > getAllInputCurves() const
         {
-            std::vector< Curve2d* > input_curves_;
+            std::vector< Curve2D > input_curves_;
             for( auto const &it : input_curves) {
                 input_curves_.push_back( it.second );
             }
             return input_curves_;
+        }
+
+
+        inline std::vector< std::vector< std::size_t > > getAllInputEdges()
+        {
+            std::vector< std::vector< std::size_t > > input_edges_;
+            for( auto const &it : input_edges ) {
+                input_edges_.push_back( it.second );
+            }
+            return input_edges_;
         }
 
         inline std::size_t getNumberofInputCurves() const
@@ -158,12 +178,12 @@ class Object
         }
 
 
-        inline void setPathCurve( const Curve2d& _path )
+        inline void setPathCurve( const Curve2D& _path )
         {
             path_curve = _path;
         }
 
-        inline const Curve2d& getPathCurve() const
+        inline const Curve2D& getPathCurve() const
         {
             return path_curve;
         }
@@ -179,22 +199,18 @@ class Object
 
         inline void clear()
         {
-//            depth_of_cross_sections.clear();
             input_curves.clear();
-
-            //FIXME: clean curve2d
-            path_curve = 0;
+            path_curve.clear();
 
         }
 
         inline void initialize()
         {
 
-            //TODO: incremental id using static variable
-            index = 0;
-
             clear();
             setDefaultValues();
+
+            ++index;
 
         }
 
@@ -203,15 +219,14 @@ class Object
 
         TYPE type;
 
-        std::size_t index;
+        static std::size_t index;
         bool is_visible;
 
         std::string name;
-//        std::vector< double > depth_of_cross_sections;
 
-//        std::vector< Curve2d* > input_curves;
-        std::map< double,  Curve2d* > input_curves;
-        Curve2d path_curve;
+        std::map< double,  Curve2D > input_curves;
+        std::map< double,  std::vector< std::size_t > > input_edges;
+        Curve2D path_curve;
 
 };
 

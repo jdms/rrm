@@ -42,44 +42,22 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
 
-    setFocusPolicy( Qt::StrongFocus );
-    setFocus();
-    setAcceptDrops( true );
-    setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs |
-                    QMainWindow::AllowTabbedDocks );
-
-    setDockNestingEnabled( true );
-    setMinimumSize ( 1000, 800 );
-    setWindowTitle( "Rapid Reservoir Modelling" );
+    setupWindowProperties();
+    createWindow();
 
 
     controller = new Controller();
-    controller->setScene( &scene );
-
-    canvas3d = new Canvas3D();
-    canvas3d->setScene( &scene );
-    ui->hl_mainwindow->addWidget( canvas3d );
-
-    sl_depth_csection = new QSlider( Qt::Vertical );
-    ui->hl_mainwindow->addWidget( sl_depth_csection );
-
-
-    connect( sl_depth_csection, &QSlider::sliderReleased, [=](){ std::cout << "Slider released."
-                                                                           << std::endl;
-                                                          dw_sketch_canvas->setVisible( true ); } );
-
-
-
-    canvas2d = new SketchCanvas();
-    canvas2d->setMaximumHeight( 200 );
-
-    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
-    dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketch_canvas->setWidget( canvas2d );
-    dw_sketch_canvas->setVisible( false );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
-
+    controller->setScene3D( &scene3d );
+    controller->setSketchScene( &sketch_scene );
     controller->init();
+
+
+    //TODO: create a method to initalize data
+    double w = 0.0f, h = 0.0f, d = 0.0f;
+    controller->getInputVolumeDimensions( w, h, d );
+
+    sl_depth_csection->setMinimum( 0 );
+    sl_depth_csection->setMaximum( (int)d );
 
 
     /*
@@ -94,8 +72,61 @@ void MainWindow::init()
 }
 
 
+void MainWindow::setupWindowProperties()
+{
+    setFocusPolicy( Qt::StrongFocus );
+    setFocus();
+    setAcceptDrops( true );
+    setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs |
+                    QMainWindow::AllowTabbedDocks );
+
+    setDockNestingEnabled( true );
+}
+
+
 void MainWindow::createWindow()
 {
+
+    setMinimumSize( 1000, 800 );
+    setWindowTitle( "Rapid Reservoir Modelling" );
+
+    //TODO: add methods to create module 3d and 2d
+    canvas3d = new Canvas3D();
+    canvas3d->setScene( &scene3d );
+
+    canvas2d = new SketchCanvas();
+    canvas2d->setScene( &sketch_scene );
+    canvas2d->setMaximumHeight( 350 );
+
+    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
+    dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketch_canvas->setWidget( canvas2d );
+    dw_sketch_canvas->setVisible( true );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
+
+
+    sl_depth_csection = new QSlider( Qt::Vertical );
+
+
+    ui->hl_mainwindow->addWidget( canvas3d );
+    ui->hl_mainwindow->addWidget( sl_depth_csection );
+
+
+    connect( sl_depth_csection, &QSlider::sliderReleased, [=](){
+                      dw_sketch_canvas->setVisible( true );
+                      controller->setCurrentCrossSection( (double)sl_depth_csection->value() ); } );
+
+
+
+    connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
+
+//                                                controller->addCurrentCrossSectionToList();
+                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
+
+
+
+    connect( &sketch_scene, &SketchScene::createNewObject, [=](){
+                                                controller->createObject(); } );
 
     /*
 

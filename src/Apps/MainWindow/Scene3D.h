@@ -31,11 +31,11 @@ class Scene3D: public QObject
             return true;
         }
 
-        inline bool addObject( const Object* object_ ){ return true; }
-        inline bool addCrossSection( const CrossSection1* csection_ ){ return true; }
+        inline bool addObject( Object* object_ ){ return true; }
+//        inline bool addCrossSection( const CrossSection1* csection_ ){ return true; }
         inline bool addRegion( const Region1* region_ ){ return true; }
 
-        inline bool setContext( QOpenGLContext* cnt_ ){ context = cnt_; }
+        inline void setContext( QOpenGLContext* cnt_ ){ context = cnt_; }
 
     protected:
 
