@@ -77,7 +77,7 @@ class CrossSection1
             objects_referenced = objects_;
         }
 
-        inline void addObjectReferenced( Object* object_ )
+        inline void addObjectReferenced( Object* const& object_ )
         {
             objects_referenced.insert( object_ );
         }

@@ -135,7 +135,7 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
 {
     if( isValidObject( current_object ) == false ) return;
 
-    Object* obj_ = objects[ current_object ];
+    Object* const& obj_ = objects[ current_object ];
     obj_->addInputCurve( current_depth_csection, curve_ );
 
     addCurrentObjectToCurrentCrossSection();
@@ -171,7 +171,7 @@ bool Controller::getAllInputCurvesofCurrentObject( std::vector< Curve2D >& input
 {
     if( isValidObject( current_object ) == false ) return false;
 
-    Object* obj_ = objects[ current_object ];
+    Object* const& obj_ = objects[ current_object ];
     input_curves_ = obj_->getAllInputCurves();
     return true;
 
@@ -189,7 +189,7 @@ bool Controller::getAllCrossSectionsRelatedtoCurrentObject( std::vector< double 
 {
     if( isValidObject( current_object ) == false ) return false;
 
-    Object* obj_ = objects[ current_object ];
+    Object* const& obj_ = objects[ current_object ];
     cross_sections_related_ = obj_->getAllCrossSectionsRelatedtoObject();
     return true;
 }
@@ -198,7 +198,7 @@ bool Controller::setPathCurvetoCurrentObject( const Curve2D& path_curve_ )
 {
     if( isValidObject( current_object ) == false ) return false;
 
-    Object* obj_ = objects[ current_object ];
+    Object* const& obj_ = objects[ current_object ];
     obj_->setPathCurve( path_curve_ );
     return true;
 }
@@ -207,7 +207,7 @@ bool Controller::getPathCurveofCurrentObject( Curve2D& path_ )
 {
     if( isValidObject( current_object ) == false ) return false;
 
-    Object* obj_ = objects[ current_object ];
+    Object* const& obj_ = objects[ current_object ];
     path_ =  obj_->getPathCurve();
     return true;
 }

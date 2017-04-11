@@ -35,7 +35,7 @@ class Object
 
         inline std::size_t getId() const
         {
-            return index;
+            return id;
         }
 
         inline void setType( const Object::TYPE _type )
@@ -189,6 +189,17 @@ class Object
         }
 
 
+        inline const std::vector< float >& getSurfaceVertices()
+        {
+            return surface_vertices;
+        }
+
+        inline const std::vector< std::size_t >& getSurfaceFaces()
+        {
+            return surface_faces;
+        }
+
+
         inline void setDefaultValues()
         {
             type = TYPE::Stratigraphy;
@@ -210,6 +221,7 @@ class Object
             clear();
             setDefaultValues();
 
+            id = index;
             ++index;
 
         }
@@ -219,6 +231,7 @@ class Object
 
         TYPE type;
 
+        std::size_t id;
         static std::size_t index;
         bool is_visible;
 
@@ -227,6 +240,10 @@ class Object
         std::map< double,  Curve2D > input_curves;
         std::map< double,  std::vector< std::size_t > > input_edges;
         Curve2D path_curve;
+
+        std::vector< float > surface_vertices;
+        std::vector< std::size_t > surface_faces;
+
 
 };
 

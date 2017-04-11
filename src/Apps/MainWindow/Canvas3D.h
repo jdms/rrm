@@ -9,7 +9,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
-
+#include<Tucano/Trackball.hpp>
 
 
 class Canvas3D: public QOpenGLWidget
@@ -20,7 +20,14 @@ class Canvas3D: public QOpenGLWidget
 
         Canvas3D();
 
-        inline void setScene( Scene3D* sc_ ){ scene = sc_;  scene->setContext( this->context() ); }
+        inline void setScene( Scene3D* sc_ ){ scene = sc_;  }
+        inline void shareContext()
+        {
+//            context()->doneCurrent();
+            scene->setContext( context() );
+        }
+
+
 
     protected:
 
@@ -28,9 +35,25 @@ class Canvas3D: public QOpenGLWidget
         void resizeGL( int width , int height );
         void paintGL();
 
+
+        void reloadShaders();
+        void resetBuffers();
+
+
+        void mousePressEvent( QMouseEvent *event );
+        void mouseMoveEvent( QMouseEvent *event );
+        void mouseReleaseEvent( QMouseEvent *event );
+        void wheelEvent( QWheelEvent *e );
+
+        void keyPressEvent( QKeyEvent * event );
+
+
     protected:
 
+        Tucano::Trackball camera;
+
         Scene3D *scene;
+
 
 };
 

@@ -89,11 +89,23 @@ class MainWindow : public QMainWindow
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 
+        inline void run_app()
+        {
+            controller->init();
+            double w = 0.0f, h = 0.0f, d = 0.0f;
+            controller->getInputVolumeDimensions( w, h, d );
+
+            sl_depth_csection->setMinimum( 0 );
+            sl_depth_csection->setMaximum( (int)d );
+        }
+
 
     protected:
 
 
         void init();
+
+        void getCurrentDirectory();
 
         void createWindow();
         void setupWindowProperties();
