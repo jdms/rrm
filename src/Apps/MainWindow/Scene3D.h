@@ -3,6 +3,8 @@
 
 
 #include <vector>
+#include <string>
+
 
 
 #include <GL/glew.h>
@@ -11,10 +13,12 @@
 #include "Object.h"
 #include "Region1.h"
 #include "CrossSection.h"
-
+#include "VolumeOpenGLWrap.h"
+#include "ObjectOpenGLWrapper.h"
 
 #include <QObject>
 #include <QOpenGLContext>
+
 
 class Scene3D: public QObject
 {
@@ -25,23 +29,36 @@ class Scene3D: public QObject
 
         Scene3D();
 
-        inline bool addVolume( const Volume* volume_ )
-        {
-            volumes.push_back( volume_ );
-            return true;
-        }
+        inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_; }
 
-        inline bool addObject( Object* object_ ){ return true; }
-//        inline bool addCrossSection( const CrossSection1* csection_ ){ return true; }
+        bool addVolume(  Volume* const& volume_ );
+
+        bool addObject( Object* const& object_ );
+
         inline bool addRegion( const Region1* region_ ){ return true; }
 
-        inline void setContext( QOpenGLContext* cnt_ ){ context = cnt_; }
+        inline void setContext( QOpenGLContext* cnt_ )
+        {
+            context = cnt_;
+            surfacegl = cnt_->surface();
+        }
+
+
+        void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
+                   const int& h_ );
+
+
 
     protected:
 
-        QOpenGLContext* context;
+        std::string current_directory;
 
-        std::vector< const Volume* > volumes;
+        QOpenGLContext* context;
+        QSurface* surfacegl;
+
+        VolumeOpenGLWrap* input_volume;
+        std::map< std::size_t, ObjectOpenGLWrapper* > object_list;
+
 
 
 

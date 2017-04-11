@@ -401,7 +401,7 @@ class Controller: public QObject
 
         inline void addCurrentObjectToScenes()
         {
-            Object* obj = objects[ current_object ];
+            Object* const& obj = objects[ current_object ];
             scene3d->addObject( obj );
             sketch_scene->addObject( obj );
             //object_tree.add( obj, "Object" );
@@ -410,7 +410,7 @@ class Controller: public QObject
         inline void addCurrentObjectToCurrentCrossSection()
         {
             CrossSection1& csection_ = depth_of_cross_sections[ current_depth_csection ];
-            Object* obj_ = objects[ current_object ];
+            Object* const& obj_ = objects[ current_object ];
             csection_.addObjectReferenced( obj_ );
         }
 

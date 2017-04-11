@@ -38,13 +38,14 @@ int main( int argc, char *argv[] )
 
 	QApplication app(argc, argv);
 
-	/// Added icon on main window
 	QIcon appIcon;
 	appIcon.addFile(":/logos/about/rrm.png");
 	app.setWindowIcon(appIcon);
 	
 
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
+    app.setAttribute( Qt::AA_ShareOpenGLContexts );
+
 
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )
@@ -54,18 +55,33 @@ int main( int argc, char *argv[] )
     	return 0;
     }
 
-
-	/// Create a defaut OpenGL context to use toward the application
     QSurfaceFormat format;
     format.setDepthBufferSize( 16 );
-
-
     format.setSamples( 8 );
-	QSurfaceFormat::setDefaultFormat( format );
 
-	/// Lauch the application
+    QSurfaceFormat::setDefaultFormat( format );
+
+/*
+    QOpenGLContext* ctx1 = new QOpenGLContext();
+    ctx1->setFormat( format );
+    ctx1->create();
+
+    QOpenGLContext* ctx2 = new QOpenGLContext();
+    ctx2->setFormat( ctx1->format() );
+    ctx2->setShareContext( ctx1 );
+    ctx2->create();
+
+    bool are_ctx_shared = QOpenGLContext::areSharing( ctx1, ctx2 );
+
+    std::cout << "Context are being shared? " << are_ctx_shared << "\n\n" << std::flush;
+*/
+
+
     MainWindow w;
     w.show();
+
+    w.run_app();
+
 
     return app.exec();
 }

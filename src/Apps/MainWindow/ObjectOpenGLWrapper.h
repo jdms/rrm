@@ -1,20 +1,18 @@
-#ifndef VOLUMEOPENGLWRAP_H
-#define VOLUMEOPENGLWRAP_H
+#ifndef OBJECTOPENGLWRAPPER_H
+#define OBJECTOPENGLWRAPPER_H
 
 #include <string>
 
-
-#include "Volume.h"
+#include "Object.h"
 #include "Tucano/Shader.hpp"
 #include "3dView/Model3DUtils.hpp"
 
 
-
-class VolumeOpenGLWrap
+class ObjectOpenGLWrapper
 {
     public:
 
-        VolumeOpenGLWrap();
+        ObjectOpenGLWrapper();
 
 
         inline void setShaderDirectory( const std::string& directory_ )
@@ -22,7 +20,8 @@ class VolumeOpenGLWrap
             shader_directory = directory_;
         }
 
-        void setVolumeRaw( Volume* const &vol_ );
+        inline void setObjectRaw( Object* const &obj_ ){}
+
 
         inline void init()
         {
@@ -36,27 +35,29 @@ class VolumeOpenGLWrap
             resetBuffers();
 
             init();
-            createVolumeBox();
+
+            reloadBuffers();
         }
 
         void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                   const int& h_ );
+
 
         inline void reloadShaders()
         {
             shader->reloadShaders();
         }
 
-        inline void reloadBuffers( const std::vector< float >& wireframe_ )
+        inline void reloadBuffers()
         {
-            nlines = (GLuint) wireframe_.size()/NCOORD;
-
-            glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices );
-            glBufferData ( GL_ARRAY_BUFFER , wireframe_.size() * sizeof ( GLfloat ) ,
-                                             wireframe_.data() , GL_STATIC_DRAW );
-            glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
+            reloadVertices( object->getSurfaceVertices() );
+            reloadFaces( object->getSurfaceFaces() );
         }
+
+
+        void reloadVertices( const std::vector< float >& vertices_ );
+        void reloadFaces( const std::vector< std::size_t >& faces_sizet_ );
+        void reloadColors( const std::vector< float >& colors_ );
 
 
     private:
@@ -67,20 +68,25 @@ class VolumeOpenGLWrap
         void resetShaders();
         void resetBuffers();
 
-        void createVolumeBox();
 
         static const int NCOORD = 3;
-        Volume* volume;
+        Object* object;
+
 
     protected:
 
-        GLuint va_volume;
+        GLuint va_object;
         GLuint vb_vertices;
-        GLuint nlines;
+        GLuint vb_normals;
+        GLuint vb_colors;
+        GLuint vb_faces;
+
+        GLuint nvertices;
+        GLuint nfaces;
 
         std::string shader_directory;
         Tucano::Shader* shader;
 
 };
 
-#endif // VOLUMEOPENGLWRAP_H
+#endif // OBJECTOPENGLWRAPPER_H

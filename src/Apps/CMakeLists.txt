@@ -26,7 +26,9 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/SketchScene.h
                         MainWindow/VolumeItemWrapper.h
                         MainWindow/ObjectItemWrap.h
-                        MainWindow/ExtrusionRulesProcessor.hpp
+                        MainWindow/VolumeOpenGLWrap.h
+                        MainWindow/ObjectOpenGLWrapper.h
+#                        MainWindow/ExtrusionRulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Help/HelpDialog.h
@@ -59,7 +61,9 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/SketchScene.cpp
                         MainWindow/VolumeItemWrapper.cpp
                         MainWindow/ObjectItemWrap.cpp
-                        MainWindow/ExtrusionRulesProcessor.cpp
+                        MainWindow/VolumeOpenGLWrap.cpp
+                        MainWindow/ObjectOpenGLWrapper.cpp
+#                        MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
                         MainWindow/Help/HelpDialog.cpp
@@ -273,7 +277,6 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 ###############################################
 # ADD TO EXECUTABLE AND LINK
 ###############################################
-
 
 add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}

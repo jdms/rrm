@@ -49,15 +49,15 @@ void MainWindow::init()
     controller = new Controller();
     controller->setScene3D( &scene3d );
     controller->setSketchScene( &sketch_scene );
-    controller->init();
+//    controller->init();
 
 
-    //TODO: create a method to initalize data
-    double w = 0.0f, h = 0.0f, d = 0.0f;
-    controller->getInputVolumeDimensions( w, h, d );
+//    //TODO: create a method to initalize data
+//    double w = 0.0f, h = 0.0f, d = 0.0f;
+//    controller->getInputVolumeDimensions( w, h, d );
 
-    sl_depth_csection->setMinimum( 0 );
-    sl_depth_csection->setMaximum( (int)d );
+//    sl_depth_csection->setMinimum( 0 );
+//    sl_depth_csection->setMaximum( (int)d );
 
 
     /*
@@ -112,6 +112,9 @@ void MainWindow::createWindow()
     ui->hl_mainwindow->addWidget( sl_depth_csection );
 
 
+    getCurrentDirectory();
+
+
     connect( sl_depth_csection, &QSlider::sliderReleased, [=](){
                       dw_sketch_canvas->setVisible( true );
                       controller->setCurrentCrossSection( (double)sl_depth_csection->value() ); } );
@@ -128,6 +131,9 @@ void MainWindow::createWindow()
     connect( &sketch_scene, &SketchScene::createNewObject, [=](){
                                                 controller->createObject(); } );
 
+
+
+
     /*
 
     controller = new Controller();
@@ -141,6 +147,30 @@ void MainWindow::createWindow()
 
     aboutRRM = new AboutWidget( this );
     */
+
+}
+
+
+void MainWindow::getCurrentDirectory()
+{
+
+    QDir app_dir = QDir( qApp->applicationDirPath() );
+
+#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
+    QString current_dir ( app_dir.path ()+"\\" );
+
+#elif defined(__linux__)               // Linux Directory Style
+    QString current_dir ( app_dir.path ( ) + "/" );
+
+#else
+    /* Error, both can't be defined or undefined same time */
+    std::cout << "Operate System not supported !"
+    halt();
+
+#endif
+
+    scene3d.setCurrentDirectory( current_dir.toStdString() );
+    //canvas->setCurrentDirectory( current_dir.toStdString() );
 
 }
 
