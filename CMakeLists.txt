@@ -164,11 +164,11 @@ include(ExternalProject)  ## needed
 
 set(BUILD_USING_OPENMP ON)
 
-set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod/)
+set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 
 set(STRATMOD_CMAKE_ARGS 
     -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-    -DBUILD_SHARED_LIBRARY=ON
+    -DBUILD_SHARED_LIBRARY=OFF
     )
 
 if(BUILD_USING_OPENMP AND APPLE)
@@ -189,13 +189,19 @@ ExternalProject_Add(
 #    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
 #endif()
 
-set(STRATMODLIB ${STRATMOD_SOURCE}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX})
+set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
-add_library(stratmod SHARED IMPORTED)
-set_property(TARGET stratmod PROPERTY IMPORTED_LOCATION ${STRATMODLIB})
+#ExternalProject_Get_Property(StratModLibBuild binary_dir)
+#set(STRATMODLIB "${binary_dir}/Release/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
+message(WARNING ${STRATMODLIB})
+#message(FATAL_ERROR ${binary_dir})
+
+add_library(stratmod STATIC IMPORTED)
+set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
 add_dependencies(stratmod StratModLibBuild)
 include_directories(${STRATMOD_SOURCE})
 
+message(WARNING stratmod)
 
 
 ###############################################
