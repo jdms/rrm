@@ -46,10 +46,19 @@ void ObjectItemWrap::clear()
 
 void ObjectItemWrap::setObjectRaw( Object* obj_, const double depth_  )
 {
+    object = obj_;
+    updateCrossSection( depth_ );
+}
+
+void ObjectItemWrap::updateCrossSection( double depth_ )
+{
+
+    std::cout << "Updating object(ObjectItemWrap)" << object->getId() << " in scene2d\n" << std::flush;
+
     clear();
 
-    Curve2D c_ = obj_->getInputCurveofCrossSection( depth_ );
-    std::vector< std::size_t > edges_ = obj_->getInputEdgesofCrossSection( depth_ );
+    Curve2D c_ = object->getInputCurveofCrossSection( depth_ );
+    std::vector< std::size_t > edges_ = object->getInputEdgesofCrossSection( depth_ );
 
     QPolygonF points_ = PolyQtUtils::curve2DToQPolyginF( c_ );
 
@@ -81,6 +90,6 @@ void ObjectItemWrap::setObjectRaw( Object* obj_, const double depth_  )
     }
 
     setPath( curve );
-
+    update();
 
 }

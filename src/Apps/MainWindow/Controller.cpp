@@ -212,11 +212,124 @@ bool Controller::getPathCurveofCurrentObject( Curve2D& path_ )
     return true;
 }
 
+bool Controller::interpolate()
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* const& obj_ = objects[ current_object ];
+    std::vector< Curve2D > curves_ = obj_->getAllCurves();
+
+    std::cout << "Object " << current_object << " interpolated\n" << std::flush;
+
+//    bool interpolate_ok = rules_processor.addSurface( curves_, obj_->getId() );
+//    if( interpolate_ok == false ) return false;
+
+    createObject();
+    return true;
+}
 
 
 
+void Controller::updateRule( const std::string &rule_ )
+{
+
+    if( rule_.compare( "RA_SKETCHING" ) == 0 )
+    {
+//        rules_processor.update( State::RA_SKETCHING );
+        std::cout << "Remove above\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RAI_SKETCHING" ) == 0 )
+    {
+//        rules_processor.update( State::RAI_SKETCHING );
+        std::cout << "Remove above intersection\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RB_SKETCHING" ) == 0 )
+    {
+//        rules_processor.update( State::RB_SKETCHING );
+        std::cout << "Remove below\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RBI_SKETCHING" ) == 0 )
+    {
+//        rules_processor.update( State::RBI_SKETCHING );
+        std::cout << "Remove below intersection\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "SKETCHING" ) == 0 )
+    {
+//        rules_processor.update( State::SKETCHING );
+        std::cout << "Sketching \n\n" <<std::flush;
+
+    }
+
+}
+
+void Controller::defineSketchAbove( bool status_ )
+{
+    if( status_ == true )
+    {
+//        rules_processor.defineAbove();
+        std::cout << "Defining above \n\n" <<std::flush;
+    }
+    else
+    {
+//        rules_processor.stopDefineAbove();
+        std::cout << "Stop define above \n\n" <<std::flush;
+    }
+}
+
+void Controller::defineSketchBelow( bool status_ )
+{
+    if( status_ == true )
+    {
+//        rules_processor.defineBelow();
+        std::cout << "Defining below \n\n" <<std::flush;
+    }
+    else
+    {
+//        rules_processor.stopDefineBelow();
+        std::cout << "Stop define below \n\n" <<std::flush;
+    }
+}
 
 
+void Controller::updateObjects()
+{
+
+    std::cout << "Updating objects in controller\n\n" << std::flush;
+    for( auto &it_: objects )
+    {
+
+//        std::vector< double > curve_vertices;
+//        std::vector< double > curve_edges;
+
+//        std::vector< double > surface_vertices;
+//        std::vector< std::size_t > surface_faces;
+
+
+        Object* obj_ = it_.second;
+        std::vector< double > csections_ = obj_->getAllCrossSectionsRelatedtoObject();
+
+        for( auto d_: csections_ )
+        {
+//            bool getcurve_ok = rules_processor.getCurve( obj_->getId(), d_, curve_vertices,
+//                                                         curve_edges );
+//            obj_->addInputCurve( d_, curve_vertices );
+//            obj_->addInputEdges( d_, curve_edges );
+        }
+
+
+//        bool getmesh_ok = rules_processor.getMesh( obj_->getId(), surface_vertices, surface_faces );
+//        if( getmesh_ok  == false )
+//        {
+//            obj_->clear();
+//            continue;
+//        }
+
+//        obj_->updateCurveWireframe( curve_edges );
+//        obj_->updateSurface( surface_vertices, surface_faces );
+
+    }
+
+}
 
 
 //void Controller::addCrossSection( const float& d )

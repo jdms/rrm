@@ -20,7 +20,10 @@ class ObjectOpenGLWrapper
             shader_directory = directory_;
         }
 
-        inline void setObjectRaw( Object* const &obj_ ){}
+        inline void setObjectRaw( Object* const &obj_ )
+        {
+            object = obj_;
+        }
 
 
         inline void init()

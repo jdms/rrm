@@ -122,17 +122,31 @@ void MainWindow::createWindow()
 
 
     connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-
-//                                                controller->addCurrentCrossSectionToList();
                                                  controller->addInputCurvetoCurrentObject( c_ ); } );
 
 
 
-    connect( &sketch_scene, &SketchScene::createNewObject, [=](){
-                                                controller->createObject(); } );
+    connect( &sketch_scene, &SketchScene::interpolateObject, [=](){
+                                                controller->interpolate();
+
+                                                emit enableUndo( controller->canUndo() );
+                                                emit enableRedo( controller->canRedo() );
+                                                emit updateScenes();
+                                                std::cout << "Ordered to update secenes\n" <<
+                                                             std::flush; } );
 
 
+    connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
+    connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
 
+
+    QShortcut* undo_ = new QShortcut( QKeySequence::Undo, this );
+
+    ac_undo = new QAction( "Undo", this );
+//    ac_undo->setShortcut( QKeySequence(/*undo_*/ );
+
+    connect( undo_, &QShortcut::activated, ac_undo, &QAction::trigger );
+    connect( ac_undo, &QAction::triggered, [=](){ undo(); } );
 
     /*
 
@@ -462,21 +476,91 @@ void MainWindow::exportTo()
 void MainWindow::keyPressEvent( QKeyEvent *event )
 {
 
-//    switch ( event->key() )
-//    {
-//        case Qt::Key_E:
-//        {
+    switch ( event->key() )
+    {
 
+        case Qt::Key_A:
+        {
+
+            if( event->modifiers() & Qt::AltModifier )
+            {
+                controller->defineSketchAbove( false );
+            }
+
+            else if( event->modifiers() & Qt::ControlModifier )
+            {
+                controller->updateRule( "RA_SKETCHING" );
+            }
+
+            else if( event->modifiers() & Qt::ShiftModifier )
+            {
+                controller->updateRule( "RAI_SKETCHING" );
+            }
+
+            else
+            {
+                controller->defineSketchAbove( true );
+            }
+        }
+        break;
+
+        case Qt::Key_B:
+        {
+            if( event->modifiers() & Qt::AltModifier )
+            {
+                controller->defineSketchBelow( false );
+            }
+
+            else if( event->modifiers() & Qt::ControlModifier )
+            {
+                controller->updateRule( "RB_SKETCHING" );
+            }
+
+            else if( event->modifiers() & Qt::ShiftModifier )
+            {
+                controller->updateRule( "RBI_SKETCHING" );
+            }
+
+            else
+            {
+                controller->defineSketchBelow( true );
+            }
+        }
+        break;
+
+
+        case Qt::Key_E:
+        {
 //            exportTo();
+        }
+        break;
 
-//        }
-//        break;
+        case Qt::Key_I:
+        {
+            controller->interpolate();
 
-//        default:
-//            break;
+            emit enableUndo( controller->canUndo() );
+            emit enableRedo( controller->canRedo() );
+
+            emit updateScenes();
+            std::cout << "Ordered to update secenes\n"  << std::flush;
+        }
+        break;
 
 
-//    };
+
+        case Qt::Key_S:
+        {
+            controller->updateRule( "SKETCHING" );
+
+        }
+
+
+        default:
+            break;
+
+
+    };
 
 
 }
@@ -486,4 +570,11 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 void MainWindow::on_btn_viewtree_toggled( bool checked )
 {
     ui->tv_object_tree->setVisible( checked );
+}
+
+
+void MainWindow::undo()
+{
+    controller->undo();
+
 }

@@ -60,6 +60,8 @@ class Controller: public QObject
 
 
         enum class ReconstructionMode { EXTRUSION, INTERPOLATION };
+        enum class SketchStatus { ABOVE, BELOW, NONE };
+        enum class RuleStatus { RA_SKETCHING, RAI_SKETCHING, RB_SKETCHING, RBI_SKETCHING };
 
 
         Controller();
@@ -167,14 +169,7 @@ class Controller: public QObject
 
 
 
-        inline void createObject()
-        {
-            Object* obj = new Object( current_object_type );
-            current_object = obj->getId();
-            objects[ current_object ] = obj;
 
-            std::cout << "Object " << current_object << " created\n\n" << std::endl;
-        }
 
         inline void setTypeCurrentObject( Object::TYPE type_ )
         {
@@ -238,6 +233,7 @@ class Controller: public QObject
             return true;
         }
 
+        bool interpolate();
 
 
         inline void addRegion()
@@ -327,6 +323,37 @@ class Controller: public QObject
         }
 
 
+        void updateRule( const std::string &rule_ );
+
+        void updateObjects();
+
+        void defineSketchAbove( bool status_ );
+
+        void defineSketchBelow( bool status_ );
+
+        inline bool undo()
+        {
+//            bool undo_done = rules_processor.stopDefineBelow();
+            std::cout << "Trying undo" << std::flush;
+            return true;
+        }
+
+
+
+        inline bool canUndo()
+        {
+        //    rules_processor.canUndo();
+            std::cout << "Enabling undo \n"  << std::flush;
+            return true;
+        }
+
+        inline bool canRedo()
+        {
+        //    rules_processor.canRedo();
+            std::cout << "Enabling redo \n"  << std::flush;
+            return true;
+        }
+
     private:
 
         inline void addCrossSectionofDepth( double depth_ )
@@ -381,6 +408,14 @@ class Controller: public QObject
         }
 
 
+        inline void createObject()
+        {
+            Object* obj = new Object( current_object_type );
+            current_object = obj->getId();
+            objects[ current_object ] = obj;
+
+            std::cout << "Object " << current_object << " created\n\n" << std::endl;
+        }
 
         inline bool isValidObject( std::size_t id_ )
         {
@@ -413,6 +448,9 @@ class Controller: public QObject
             Object* const& obj_ = objects[ current_object ];
             csection_.addObjectReferenced( obj_ );
         }
+
+
+
 
 
 

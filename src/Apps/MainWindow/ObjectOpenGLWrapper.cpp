@@ -66,6 +66,8 @@ void ObjectOpenGLWrapper::initBuffers()
 
 void ObjectOpenGLWrapper::reloadVertices( const std::vector< float >& vertices_ )
 {
+    if( vertices_.empty() == true ) return;
+
     std::vector< float > unit_vertices_ = Model3DUtils::normalizePointCloud( vertices_ );
 
     nvertices = unit_vertices_.size()/NCOORD;
@@ -79,6 +81,8 @@ void ObjectOpenGLWrapper::reloadVertices( const std::vector< float >& vertices_ 
 
 void ObjectOpenGLWrapper::reloadFaces( const std::vector< std::size_t >& faces_sizet_ )
 {
+    if( faces_sizet_.empty() == true ) return;
+
     std::vector< unsigned int > faces_;
     faces_.assign( faces_sizet_.begin(), faces_sizet_.end() );
 
