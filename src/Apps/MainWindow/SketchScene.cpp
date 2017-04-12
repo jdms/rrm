@@ -39,7 +39,13 @@ void SketchScene::finishSketch()
 bool SketchScene::acceptSketch( Curve2D& curve_ )
 {
     curve_ = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketch() );
-    return true;//arrangement.insert( curve_, id );
+
+    //arrangement.insert( curve_, id );
+//    std::vector< size_t > upper_bound = arrangement.getLastCurveLowerBound();
+//    std::vector< size_t > lower_bound = arrangement.getLastCurveUpperBound();
+//    controller->interpolateStratigraphy(lower_bound, upper_bound);
+
+    return true;
 }
 
 
@@ -70,6 +76,23 @@ void SketchScene::addObject( Object* obj_ )
 
 
 
+
+    update();
+}
+
+
+void SketchScene::updateScene()
+{
+    std::cout << "Updating objects in scene2d\n\n" << std::flush;
+
+    for( auto &it_: object_list )
+    {
+
+        ObjectItemWrap* obj_= it_.second;
+        obj_->updateCrossSection( csection.getZCoordinate() );
+    }
+
+    std::cout << "\n" << std::flush;
 
     update();
 }
@@ -157,6 +180,6 @@ void SketchScene::sketchingInteractions( QGraphicsSceneMouseEvent* event )
 
     else if( event->type () == QEvent::GraphicsSceneMouseDoubleClick )
     {
-        emit createNewObject();
+        emit interpolateObject();
     }
 }

@@ -23,6 +23,8 @@
 
 std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< float >& points )
 {
+    if( points.empty() == true ) return points;
+
 	float maxx, minx;
 	float maxy, miny;
 	float maxz, minz;

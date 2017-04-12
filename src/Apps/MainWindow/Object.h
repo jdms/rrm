@@ -172,6 +172,20 @@ class Object
             return input_edges_;
         }
 
+        inline std::vector< Curve2D > getAllCurves() const
+        {
+            std::vector< Curve2D > curves_;
+            for( auto const &it : input_curves) {
+                curves_.push_back( it.second );
+            }
+
+
+            if( path_curve.isEmpty() != false )
+                curves_.push_back( path_curve );
+
+            return curves_;
+        }
+
         inline std::size_t getNumberofInputCurves() const
         {
             return input_curves.size();

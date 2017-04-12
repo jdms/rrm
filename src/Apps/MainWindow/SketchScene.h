@@ -91,10 +91,15 @@ class SketchScene: public QGraphicsScene
 
 
 
+    public slots:
+
+        void updateScene();
+
+
     signals:
 
         void curveAccepted( Curve2D c_ );
-        void createNewObject();
+        void interpolateObject();
 
 
 

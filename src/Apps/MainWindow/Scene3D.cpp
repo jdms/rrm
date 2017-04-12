@@ -47,3 +47,16 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
         (it.second)->draw( V_, P_, w_, h_ );
 
 }
+
+
+void Scene3D::updateScene()
+{
+
+    std::cout << "Updating objects in scene3d\n\n" << std::flush;
+
+    for( auto &it_: object_list )
+    {
+        ObjectOpenGLWrapper* obj_ = it_.second;
+        obj_->reloadBuffers();
+    }
+}

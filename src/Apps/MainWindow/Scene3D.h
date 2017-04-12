@@ -49,6 +49,11 @@ class Scene3D: public QObject
 
 
 
+    public slots:
+
+        void updateScene();
+
+
     protected:
 
         std::string current_directory;

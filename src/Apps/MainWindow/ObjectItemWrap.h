@@ -24,12 +24,16 @@ class ObjectItemWrap: public QGraphicsPathItem
 
         void clear();
         void setObjectRaw( Object* obj_, const double depth_ );
+        void updateCrossSection( double depth_ );
 
     private:
 
         void setupPens();
 
     protected:
+
+
+        Object* object;
 
         QPainterPath curve;
         std::set<QPointF> intersection_points;

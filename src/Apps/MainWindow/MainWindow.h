@@ -44,7 +44,10 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QStyle>
+
 #include <QKeyEvent>
+#include <QKeySequence>
+#include <QShortcut>
 
 #include <QtGui/QDesktopServices>
 #include <QtCore/QFileInfo>
@@ -138,11 +141,18 @@ class MainWindow : public QMainWindow
         void saveAsCPS3( const std::string& filename );
         void saveAsIrapGrid( const std::string& filename );
 
+        bool enableUndo( bool );
+        bool enableRedo( bool );
+
+        void updateScenes();
+
 
 
     protected slots:
 
         void clear();
+        void undo();
+
 
 
     public slots:
@@ -211,6 +221,9 @@ class MainWindow : public QMainWindow
         QDockWidget* dw_sketch_canvas;
         SketchCanvas *canvas2d;
         SketchScene sketch_scene;
+
+        QAction* ac_undo;
+        QAction* ac_redo;
 
 
 
