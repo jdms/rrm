@@ -154,6 +154,51 @@ add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
 
 
 ###############################################
+# Preliminary support for stratmod library
+###############################################
+
+# include_directories(/usr/include/openmpi)
+# set(HypreLibs HYPRE HYPRE_sstruct_ls HYPRE_parcsr_ls HYPRE_IJ_mv mpi mpi++)
+
+include(ExternalProject)  ## needed
+
+set(BUILD_USING_OPENMP ON)
+
+set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod/)
+
+set(STRATMOD_CMAKE_ARGS 
+    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+    -DBUILD_SHARED_LIBRARY=ON
+    )
+
+if(BUILD_USING_OPENMP AND APPLE)
+    set(STRATMOD_CMAKE_ARGS -DBUILD_USING_OPENMP=ON -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
+endif()
+
+ExternalProject_Add(
+    StratModLibBuild
+    DOWNLOAD_COMMAND git submodule update --init
+    UPDATE_COMMAND git submodule update -f
+    SOURCE_DIR ${STRATMOD_SOURCE}
+    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
+    )
+
+#if(MSVC)
+#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/stratmod.lib)
+#else()
+#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
+#endif()
+
+set(STRATMODLIB ${STRATMOD_SOURCE}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+add_library(stratmod SHARED IMPORTED)
+set_property(TARGET stratmod PROPERTY IMPORTED_LOCATION ${STRATMODLIB})
+add_dependencies(stratmod StratModLibBuild)
+include_directories(${STRATMOD_SOURCE})
+
+
+
+###############################################
 # Main source
 ###############################################
 

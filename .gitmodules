@@ -1,0 +1,3 @@
+[submodule "libs/stratmod"]
+	path = libs/stratmod
+	url = https://bitbucket.org/jdms/stratmod.git
