@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -30,8 +30,8 @@
 unsigned long int PlanarSurface::num_instances_ = 1; 
 unsigned long int PlanarSurface::global_discretization_state_ = 1; 
 
-PlanarSurface::Natural PlanarSurface::discretization_X = 512;
-PlanarSurface::Natural PlanarSurface::discretization_Y = 16;
+PlanarSurface::Natural PlanarSurface::discretization_X = 32; 
+PlanarSurface::Natural PlanarSurface::discretization_Y = 32; 
 
 Point3 PlanarSurface::origin = {{{ 0.0, 0.0, 0.0, 0.0 }}}; 
 Point3 PlanarSurface::lenght = {{{ 1.0, 1.0, 1.0, 1.0 }}}; 
@@ -56,7 +56,7 @@ void PlanarSurface::updateDiscretization()
     nX_ = 2*discretization_X + 1; 
     nY_ = 2*discretization_Y + 1; 
     num_vertices_ = nX_ * nY_; 
-    tolerance = 0.9 * std::min( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
+    tolerance = 0.9 * std::max( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
     /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "\n --> tolerance: " << tolerance << std::endl; */ 
 
     /* if ( this_discretization_state_ < global_discretization_state_ ) */ 
@@ -264,7 +264,7 @@ bool PlanarSurface::weakEntireSurfaceCheck()
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub) private(height, status) default(none) reduction(&&: isEntireSurface)
+    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub) private(height, status) default(none) reduction(&&: isEntireSurface) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
         status = getHeight(i, height); 
@@ -279,10 +279,10 @@ bool PlanarSurface::weakEntireSurfaceCheck()
             }
         }
 
-        isEntireSurface = isEntireSurface && status;
+        isEntireSurface = isEntireSurface && status; 
     }
 
-    return isEntireSurface;
+    return isEntireSurface; 
 }
 
 bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_surface, PlanarSurface::Ptr &upper_surface ) 
@@ -635,6 +635,8 @@ bool PlanarSurface::getVertex3D( Natural index, Point3 &v ) {
 
 double PlanarSurface::getTolerance() 
 {
+    updateDiscretization();
+
     return tolerance; 
 }
 
@@ -749,18 +751,23 @@ bool PlanarSurface::getHeight( Natural i, Natural j, double &height )
     return getHeight( getVertexIndex(i, j), height );
 }
 
-size_t PlanarSurface::getNumX() const
+std::size_t PlanarSurface::getNumX()
 {
+    updateDiscretization(); 
+
     return nX_; 
 }
 
-size_t PlanarSurface::getNumY() const
+std::size_t PlanarSurface::getNumY()
 {
+    updateDiscretization(); 
     return nY_; 
 }
 
-size_t PlanarSurface::getNumVertices() const
+std::size_t PlanarSurface::getNumVertices()
 {
+    updateDiscretization(); 
+
     return num_vertices_;
 }
 
@@ -966,12 +973,12 @@ bool PlanarSurface::project( Point3 &p ) {
     return f->project(p); 
 }
 
-void PlanarSurface::pruneBoundingLists()
+void PlanarSurface::pruneBoundingLists() 
 {
     auto itu = upper_bound_.begin();
     while ( itu != upper_bound_.end() )
     {
-        if ( itu->expired() )
+        if ( itu->expired() ) 
         {
             itu = upper_bound_.erase(itu);
         }
@@ -984,7 +991,7 @@ void PlanarSurface::pruneBoundingLists()
     auto itl = lower_bound_.begin();
     while ( itl != lower_bound_.end() )
     {
-        if ( itl->expired() )
+        if ( itl->expired() ) 
         {
             itl = lower_bound_.erase(itl);
         }
@@ -995,7 +1002,7 @@ void PlanarSurface::pruneBoundingLists()
     }
 
     f->pruneBoundingLists(); 
-} 
+}
 
 void PlanarSurface::clearBoundingLists() 
 {

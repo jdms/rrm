@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -24,12 +24,12 @@
 #ifndef __PLANAR_SURFACE__
 #define __PLANAR_SURFACE__
 
-#include <omp.h>
-
 #include <array>
 #include <vector> 
 #include <list> 
 #include <memory> 
+
+#include "use_openmp.hpp"
 
 #include "interpolated_graph.hpp"
 #include "triangle_soup_wrapper.hpp" 
@@ -66,11 +66,11 @@ class PlanarSurface {
         bool addPoint( Point3 &&p ); 
         bool addPoints( const std::vector<Point3> &points ); 
 
-        template<typename __Point3__>
-        bool addPoint( __Point3__ &&p ); 
+        template<typename Point3Type>
+        bool addPoint( Point3Type &&p ); 
 
-        template<typename __Point3__>
-        bool addPoints( const std::vector<__Point3__> &points); 
+        template<typename Point3Type>
+        bool addPoints( const std::vector<Point3Type> &points); 
 
         static void setOrigin( const Point3 &o ); 
         static void setOrigin( Point3 &&o ); 
@@ -137,9 +137,9 @@ class PlanarSurface {
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
 
-        size_t getNumX() const; 
-        size_t getNumY() const; 
-        size_t getNumVertices() const; 
+        std::size_t getNumX(); 
+        std::size_t getNumY(); 
+        std::size_t getNumVertices(); 
         Natural getVertexIndex( Natural i, Natural j );
 
         template<typename CoordinatesList>
@@ -242,14 +242,14 @@ class PlanarSurface {
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
 };
 
-template<typename __Point3__>
-bool PlanarSurface::addPoint( __Point3__ &&p ) 
+template<typename Point3Type>
+bool PlanarSurface::addPoint( Point3Type &&p ) 
 { 
     return f->addPoint(p);
 }
 
-template<typename __Point3__>
-bool PlanarSurface::addPoints( const std::vector<__Point3__> &points)
+template<typename Point3Type>
+bool PlanarSurface::addPoints( const std::vector<Point3Type> &points)
 {
     return f->addPoints(points);
 }
