@@ -48,6 +48,10 @@ class Scene3D: public QObject
                    const int& h_ );
 
 
+    signals:
+
+        void updateCanvas();
+
 
     public slots:
 

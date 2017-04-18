@@ -20,13 +20,12 @@ class Canvas3D: public QOpenGLWidget
 
         Canvas3D();
 
-        inline void setScene( Scene3D* sc_ ){ scene = sc_;  }
+        inline void setScene( Scene3D* sc_ ){ scene = sc_;  connect( scene, SIGNAL( updateCanvas() ),
+                                                                     this, SLOT( update() ) ); }
         inline void shareContext()
         {
-//            context()->doneCurrent();
             scene->setContext( context() );
         }
-
 
 
     protected:

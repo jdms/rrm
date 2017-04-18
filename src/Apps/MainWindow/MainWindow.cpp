@@ -132,21 +132,31 @@ void MainWindow::createWindow()
                                                 emit enableUndo( controller->canUndo() );
                                                 emit enableRedo( controller->canRedo() );
                                                 emit updateScenes();
-                                                std::cout << "Ordered to update secenes\n" <<
+                                                std::cout << "Ordered to update scenes\n" <<
                                                              std::flush; } );
 
+
+    connect( &sketch_scene, &SketchScene::updateVolumeRawGeometry, [=]( double w_, double h_ ) {
+                                                controller->setInputVolumeDimensions( w_, h_ );
+                                                emit updateScenes();
+                                                } );
 
     connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
     connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
 
 
-    QShortcut* undo_ = new QShortcut( QKeySequence::Undo, this );
+
 
     ac_undo = new QAction( "Undo", this );
 //    ac_undo->setShortcut( QKeySequence(/*undo_*/ );
 
+    QShortcut* undo_ = new QShortcut( QKeySequence::Undo, this );
     connect( undo_, &QShortcut::activated, ac_undo, &QAction::trigger );
     connect( ac_undo, &QAction::triggered, [=](){ undo(); } );
+
+
+    ac_discard_sketch = new QAction( "Discard", this );
+    connect( ac_discard_sketch, &QAction::triggered, &sketch_scene, &SketchScene::clearSketch );
 
     /*
 

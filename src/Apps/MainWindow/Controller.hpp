@@ -121,6 +121,11 @@ class Controller: public QObject
             input_volume.setDimensions( width_, height_, depth_ );
         }
 
+        inline void setInputVolumeDimensions( double width_, double height_ )
+        {
+            input_volume.setDimensions( width_, height_, input_volume.getDepth() );
+        }
+
         inline void getInputVolumeDimensions( double& width_, double& height_, double& depth_ ) const
         {
             input_volume.getDimensions( width_, height_, depth_ );

@@ -1,9 +1,14 @@
+#include <QMimeData>
+#include <QUrl>
+#include <QDir>
+
 #include "SketchScene.h"
 
 SketchScene::SketchScene( QObject* parent )
 {
     sketch = new InputSketch( QColor( 255, 0, 0 ) );
-    addItem( sketch );
+    csection_image = new QGraphicsPixmapItem();
+
 }
 
 
@@ -11,13 +16,17 @@ void SketchScene::resetData()
 {
     object_list.clear();
 
-    removeItem( sketch );
     removeItem( &volume );
+    removeItem( sketch );
+    removeItem( csection_image );
 
     clear();
 
-    addItem( sketch );
+
+
+    addItem( csection_image );
     addItem( &volume );
+    addItem( sketch );
 
     setSceneRect( volume.boundingRect() );
     update();
@@ -56,6 +65,7 @@ void SketchScene::clearSketch()
 }
 
 
+
 void SketchScene::addObject( Object* obj_ )
 {
     ObjectItemWrap* obj_wrapper_;
@@ -81,18 +91,30 @@ void SketchScene::addObject( Object* obj_ )
 }
 
 
+void SketchScene::setImagetoCrossSection( const QString& url_ )
+{
+//    QTransform matrix_;
+//    matrix_.scale( 1, -1 );
+
+    QPixmap image_ = QPixmap( url_ );
+    csection_image->setPixmap( image_ );
+
+    emit updateVolumeRawGeometry( image_.rect().width(), image_.rect().height() );
+
+    update();
+}
+
+
 void SketchScene::updateScene()
 {
-    std::cout << "Updating objects in scene2d\n\n" << std::flush;
+    volume.update();
+    setSceneRect( volume.boundingRect() );
 
     for( auto &it_: object_list )
     {
-
         ObjectItemWrap* obj_= it_.second;
         obj_->updateCrossSection( csection.getZCoordinate() );
     }
-
-    std::cout << "\n" << std::flush;
 
     update();
 }
@@ -106,6 +128,10 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     if( current_interaction == UserInteraction::SKETCHING )
     {
         sketchingInteractions( event );
+    }
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    {
+        boundary_anchor = event->buttonDownScenePos( Qt::LeftButton );
     }
 
 
@@ -121,7 +147,14 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
         sketchingInteractions( event );
     }
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    {
+        int w_ = event->scenePos().x() - boundary_anchor.x() ;
+        int h_ = event->scenePos().y() - boundary_anchor.y() ;
 
+        volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
+                             std::abs( h_) ) ;
+    }
 
     QGraphicsScene::mouseMoveEvent( event );
     update();
@@ -134,6 +167,13 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     if( current_interaction == UserInteraction::SKETCHING )
     {
         sketchingInteractions( event );
+    }
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    {
+        double w_ = ( double )std::abs( event->scenePos().x() - boundary_anchor.x() );
+        double h_ = ( double )std::abs( event->scenePos().y() - boundary_anchor.y() );
+
+        emit updateVolumeRawGeometry( w_, h_ );
     }
 
     QGraphicsScene::mouseReleaseEvent( event );
@@ -176,10 +216,46 @@ void SketchScene::sketchingInteractions( QGraphicsSceneMouseEvent* event )
     else if( event->type() == QEvent::GraphicsSceneMouseRelease )
     {
         sketch->process( event->scenePos() );
+        setModeSketching();
     }
 
     else if( event->type () == QEvent::GraphicsSceneMouseDoubleClick )
     {
         emit interpolateObject();
     }
+}
+
+
+
+
+void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
+{
+    event->accept();
+}
+
+
+void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
+{
+    event->accept();
+}
+
+
+void SketchScene::dragLeaveEvent( QGraphicsSceneDragDropEvent* event )
+{
+    event->accept();
+}
+
+
+void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event )
+{
+
+    const QMimeData *mime_data = event->mimeData();
+
+    if ( mime_data->hasUrls() == false )
+        return;
+
+    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
+    url_file = QDir::toNativeSeparators( url_file );
+
+    setImagetoCrossSection( url_file );
 }
