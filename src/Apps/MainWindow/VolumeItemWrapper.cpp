@@ -28,9 +28,10 @@ QRectF VolumeItemWrapper::boundingRect() const
 }
 
 
-void VolumeItemWrapper::setVolumeRaw( const Volume* vol_ )
+void VolumeItemWrapper::setVolumeRaw( Volume* const &vol_ )
 {
     boundary.clear();
+    volume = vol_;
 
     double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
     double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
@@ -40,4 +41,10 @@ void VolumeItemWrapper::setVolumeRaw( const Volume* vol_ )
 
     QRectF rect_( ox_, oy_, w_, h_ );
     boundary = QPolygonF( rect_ );
+}
+
+void VolumeItemWrapper::editGeometry( int ox_, int oy_, int w_, int h_ )
+{
+    boundary.clear();
+    boundary = QPolygonF( QRectF( QPointF( ox_, oy_ ), QSizeF( w_, h_ ) ) );
 }

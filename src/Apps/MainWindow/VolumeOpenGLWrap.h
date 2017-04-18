@@ -58,6 +58,7 @@ class VolumeOpenGLWrap
 
         }
 
+        inline void update(){ createVolumeBox(); }
 
     private:
 

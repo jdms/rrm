@@ -224,6 +224,7 @@ class MainWindow : public QMainWindow
 
         QAction* ac_undo;
         QAction* ac_redo;
+        QAction* ac_discard_sketch;
 
 
 

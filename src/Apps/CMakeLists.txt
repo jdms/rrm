@@ -28,6 +28,7 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/ObjectItemWrap.h
                         MainWindow/VolumeOpenGLWrap.h
                         MainWindow/ObjectOpenGLWrapper.h
+                        MainWindow/TreeItem.h
 #                        MainWindow/ExtrusionRulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
@@ -63,6 +64,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/ObjectItemWrap.cpp
                         MainWindow/VolumeOpenGLWrap.cpp
                         MainWindow/ObjectOpenGLWrapper.cpp
+                        MainWindow/TreeItem.cpp
 #                        MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp

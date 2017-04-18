@@ -53,10 +53,13 @@ void Scene3D::updateScene()
 {
 
     std::cout << "Updating objects in scene3d\n\n" << std::flush;
+    input_volume->update();
 
     for( auto &it_: object_list )
     {
         ObjectOpenGLWrapper* obj_ = it_.second;
         obj_->reloadBuffers();
     }
+
+    emit updateCanvas();
 }
