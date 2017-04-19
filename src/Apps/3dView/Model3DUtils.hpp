@@ -23,14 +23,13 @@
 #ifndef MODEL3DUTILS_HPP
 #define MODEL3DUTILS_HPP
 
+#include <random>
+
+
 #include <QtGlobal>
 #include <vector>
 
 #include "Eigen/Dense"
-#include "Tucano/Trackball.hpp"
-#include "Tucano/Shader.hpp"
-
-
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 class Model3DUtils
@@ -40,10 +39,33 @@ class Model3DUtils
 	static std::vector< float > normalizePointCloud( const std::vector< float >& points );
     static std::vector< float > normalizePointCloud( const std::vector< Eigen::Vector3f >& points );
     static Eigen::Affine3f normalizePointCloud( float minx, float maxx, float miny, float maxy, float minz, float maxz );
+    static Eigen::Vector3f normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m );
     static Curve2D convertToCurve2D( const std::vector< float >& v );
 
+    inline static int randomIntNumber( std::size_t min_, std::size_t max_ )
+    {
+        std::random_device rd;
+        std::mt19937 eng( rd() );
+        std::uniform_int_distribution< size_t > distr( min_, max_ );
+        return distr( eng );
+    }
 
-    static Eigen::Vector3f normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m );
+    inline static void randomColor( int& r_, int& g_, int& b_ )
+    {
+
+        std::random_device rd;
+        std::mt19937 eng( rd() );
+        std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+        r_ = distr( eng );
+        b_ = distr( eng );
+        g_ = distr( eng );
+
+    }
+
+
+
+    private:
 
 
 

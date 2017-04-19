@@ -47,7 +47,7 @@
 
 #include "Scene3D.h"
 #include "SketchScene.h"
-
+#include "ObjectTree.h"
 
 
 
@@ -112,7 +112,7 @@ class Controller: public QObject
 
         inline void setSketchScene( SketchScene* sc_ ){ sketch_scene = sc_; }
 
-
+        inline void setObjectTree( ObjectTree* const& tree_ ){ object_tree = tree_; }
 
         void addInputVolume();
 
@@ -170,8 +170,6 @@ class Controller: public QObject
         {
             return depth_of_cross_sections.size();
         }
-
-
 
 
 
@@ -249,7 +247,7 @@ class Controller: public QObject
             regions[ id_ ] = rg_;
 
             scene3d->addRegion( rg_ );
-            //object_tree.add( rg_, "Region" );
+            //object_tree->add( rg_, "Region" );
         }
 
         inline bool setRegionPointPositionofId( std::size_t id_, double x_, double y_, double z_ )
@@ -338,7 +336,7 @@ class Controller: public QObject
 
         inline bool undo()
         {
-//            bool undo_done = rules_processor.stopDefineBelow();
+//            bool undo_done = rules_processorundo();
             std::cout << "Trying undo" << std::flush;
             return true;
         }
@@ -442,9 +440,13 @@ class Controller: public QObject
         inline void addCurrentObjectToScenes()
         {
             Object* const& obj = objects[ current_object ];
+
             scene3d->addObject( obj );
             sketch_scene->addObject( obj );
-            //object_tree.add( obj, "Object" );
+
+            ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::OBJECT,
+                                                       obj->getId() );
+            object_tree->addObject( item );
         }
 
         inline void addCurrentObjectToCurrentCrossSection()
@@ -493,6 +495,7 @@ class Controller: public QObject
 
         Scene3D *scene3d;
         SketchScene* sketch_scene;
+        ObjectTree* object_tree;
 
         Volume input_volume;
 

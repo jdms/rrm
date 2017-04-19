@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
+#include <QColor>
 
 #include "Volume.h"
 #include "VolumeItemWrapper.h"
@@ -82,17 +83,18 @@ class SketchScene: public QGraphicsScene
         void sketchingInteractions( QGraphicsSceneMouseEvent* event );
 
 
-
     public slots:
 
 
         void clearSketch();
 
         void updateScene();
+        void screenshot();
 
         inline void setModeSketching(){ current_interaction = UserInteraction::SKETCHING; }
         inline void setModeBoundaryEditing(){ current_interaction = UserInteraction::EDITING_BOUNDARY; }
         inline void setModeSelecting(){ current_interaction = UserInteraction::SELECTING; }
+        inline void setCurrentColor( const QColor& c_ ){ current_color = c_; sketch->setColor( c_ ); }
 
 
     signals:
@@ -105,12 +107,14 @@ class SketchScene: public QGraphicsScene
     protected:
 
 
+        void savetoRasterImage( const QString& filename );
+        void savetoVectorImage( const QString& filename );
 
 
 
     protected:
 
-        UserInteraction current_interaction = UserInteraction::EDITING_BOUNDARY;
+        UserInteraction current_interaction = UserInteraction::SKETCHING;
         InputSketch *sketch;
         QPointF boundary_anchor;
 
@@ -119,6 +123,8 @@ class SketchScene: public QGraphicsScene
         QGraphicsPixmapItem* csection_image;
 
         std::map< std::size_t, ObjectItemWrap* > object_list;
+
+        QColor current_color;
 
 
 

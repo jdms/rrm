@@ -18,6 +18,7 @@
 
 #include <QObject>
 #include <QOpenGLContext>
+#include <QColor>
 
 
 class Scene3D: public QObject
@@ -56,6 +57,7 @@ class Scene3D: public QObject
     public slots:
 
         void updateScene();
+        inline void setCurrentColor( const QColor& c_ ){ current_color = c_; }
 
 
     protected:
@@ -67,6 +69,8 @@ class Scene3D: public QObject
 
         VolumeOpenGLWrap* input_volume;
         std::map< std::size_t, ObjectOpenGLWrapper* > object_list;
+
+        QColor current_color;
 
 
 

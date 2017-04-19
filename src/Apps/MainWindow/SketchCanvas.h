@@ -14,6 +14,7 @@ class SketchCanvas: public QGraphicsView
 
         SketchCanvas( QWidget* parent = 0 );
 
+
 };
 
 #endif // SKETCHCANVAS_H

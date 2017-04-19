@@ -2,14 +2,11 @@
 
 ObjectItemWrap::ObjectItemWrap()
 {
-    setupPens();
 }
 
 
 void ObjectItemWrap::setupPens()
 {
-    current_color = QColor( Qt::blue );
-
     visible_subpaths_pen.setColor( current_color );
     visible_subpaths_pen.setStyle( Qt::SolidLine );
     visible_subpaths_pen.setCapStyle( Qt::RoundCap );
@@ -52,8 +49,6 @@ void ObjectItemWrap::setObjectRaw( Object* obj_, const double depth_  )
 
 void ObjectItemWrap::updateCrossSection( double depth_ )
 {
-
-    std::cout << "Updating object(ObjectItemWrap)" << object->getId() << " in scene2d\n" << std::flush;
 
     clear();
 

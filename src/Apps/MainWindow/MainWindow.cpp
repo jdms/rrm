@@ -49,15 +49,7 @@ void MainWindow::init()
     controller = new Controller();
     controller->setScene3D( &scene3d );
     controller->setSketchScene( &sketch_scene );
-//    controller->init();
-
-
-//    //TODO: create a method to initalize data
-//    double w = 0.0f, h = 0.0f, d = 0.0f;
-//    controller->getInputVolumeDimensions( w, h, d );
-
-//    sl_depth_csection->setMinimum( 0 );
-//    sl_depth_csection->setMaximum( (int)d );
+    controller->setObjectTree( object_tree );
 
 
     /*
@@ -107,9 +99,16 @@ void MainWindow::createWindow()
 
     sl_depth_csection = new QSlider( Qt::Vertical );
 
+    object_tree = new ObjectTree( this );
+    object_tree->setMaximumWidth( 200 );
+    object_tree->setHeaderLabel( "Objects" );
+    object_tree->setColumnCount( 1 );
 
+
+    ui->hl_mainwindow->addWidget( object_tree );
     ui->hl_mainwindow->addWidget( canvas3d );
     ui->hl_mainwindow->addWidget( sl_depth_csection );
+
 
 
     getCurrentDirectory();
@@ -119,21 +118,28 @@ void MainWindow::createWindow()
                       dw_sketch_canvas->setVisible( true );
                       controller->setCurrentCrossSection( (double)sl_depth_csection->value() ); } );
 
+// TODO: uncomment these lines as the interface is ready
+//    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){
+//                                                 randomColor( !status_ );
+//    } );
+
+//    connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
+//                                                 tbt_colorsketch->setChecked( true );
+//                                                 randomColor( false, c_ ); } );
 
 
     connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
+                                                 controller->addInputCurvetoCurrentObject( c_ );
+                                                 } );
 
 
 
     connect( &sketch_scene, &SketchScene::interpolateObject, [=](){
                                                 controller->interpolate();
-
                                                 emit enableUndo( controller->canUndo() );
                                                 emit enableRedo( controller->canRedo() );
                                                 emit updateScenes();
-                                                std::cout << "Ordered to update scenes\n" <<
-                                                             std::flush; } );
+                                                randomColor( true );  } );
 
 
     connect( &sketch_scene, &SketchScene::updateVolumeRawGeometry, [=]( double w_, double h_ ) {
@@ -147,6 +153,8 @@ void MainWindow::createWindow()
 
 
 
+
+
     ac_undo = new QAction( "Undo", this );
 //    ac_undo->setShortcut( QKeySequence(/*undo_*/ );
 
@@ -155,8 +163,13 @@ void MainWindow::createWindow()
     connect( ac_undo, &QAction::triggered, [=](){ undo(); } );
 
 
-    ac_discard_sketch = new QAction( "Discard", this );
+    ac_discard_sketch = new QAction( "Discard sketch", this );
     connect( ac_discard_sketch, &QAction::triggered, &sketch_scene, &SketchScene::clearSketch );
+
+
+    ac_screenshot = new QAction( "Screenshot", this );
+    connect( ac_screenshot, &QAction::triggered, &sketch_scene, &SketchScene::screenshot );
+
 
     /*
 
@@ -198,6 +211,19 @@ void MainWindow::getCurrentDirectory()
 
 }
 
+
+void MainWindow::run_app()
+{
+    controller->init();
+
+    double w = 0.0f, h = 0.0f, d = 0.0f;
+    controller->getInputVolumeDimensions( w, h, d );
+
+    sl_depth_csection->setMinimum( 0 );
+    sl_depth_csection->setMaximum( (int)d );
+
+    randomColor( true );
+}
 
 void MainWindow::createActions()
 {
@@ -541,6 +567,7 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
         case Qt::Key_E:
         {
+            ac_screenshot->trigger();
 //            exportTo();
         }
         break;
@@ -573,13 +600,6 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
     };
 
 
-}
-
-
-
-void MainWindow::on_btn_viewtree_toggled( bool checked )
-{
-    ui->tv_object_tree->setVisible( checked );
 }
 
 

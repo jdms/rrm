@@ -47,14 +47,12 @@ void Controller::init()
 
 void Controller::addInputVolume()
 {
-    //TODO: create visualization volume
-    //TODO: add in object tree, etc
-
     input_volume.initialize();
     scene3d->addVolume( &input_volume );
     sketch_scene->setVolume( &input_volume );
 
-    //object_tree.add( input_volume, "INPUT VOLUME" );
+    ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
+    object_tree->addInputVolume( item );
 }
 
 
@@ -140,22 +138,7 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
 
     addCurrentObjectToCurrentCrossSection();
     setCurrentCrossSectionAsUsed();
-
     addCurrentObjectToScenes();
-
-
-
-    std::cout << "Curve added to Object " << obj_->getId() << "\n\n"  << std::flush;
-    std::cout << " -- Object: " << obj_->getId() << " has now " << obj_->getNumberofInputCurves()
-              << " input curves\n"  << std::flush;
-
-    std::vector< double > csections = obj_->getAllCrossSectionsRelatedtoObject();
-    std::cout << " -- Used Cross-Sections by the object: " << csections.size() << "\n\n"
-              <<  std::flush;
-
-
-    std::cout << "The program has in total " << depth_of_cross_sections.size() << " cross-sections: \n"
-              << std::flush;
 
     for( auto const &it : depth_of_cross_sections )
     {

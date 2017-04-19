@@ -67,6 +67,7 @@
 #include "Controller.hpp"
 #include "SketchCanvas.h"
 #include "SketchScene.h"
+#include "ObjectTree.h"
 
 
 /**
@@ -92,14 +93,20 @@ class MainWindow : public QMainWindow
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 
-        inline void run_app()
-        {
-            controller->init();
-            double w = 0.0f, h = 0.0f, d = 0.0f;
-            controller->getInputVolumeDimensions( w, h, d );
+        void run_app();
 
-            sl_depth_csection->setMinimum( 0 );
-            sl_depth_csection->setMaximum( (int)d );
+        inline void randomColor( bool status, QColor c_ = QColor( 255, 0, 0 ) )
+        {
+            QColor color = c_;
+
+            if( status == true ){
+                int r_ = 0, g_ = 0, b_ = 0;
+                Model3DUtils::randomColor( r_, g_, b_ );
+                color = QColor( r_, g_, b_ );
+            }
+
+            sketch_scene.setCurrentColor( color );
+            scene3d.setCurrentColor( color );
         }
 
 
@@ -112,7 +119,6 @@ class MainWindow : public QMainWindow
 
         void createWindow();
         void setupWindowProperties();
-
 
 
 
@@ -131,7 +137,6 @@ class MainWindow : public QMainWindow
         void createFlowDiagnosticsModule();
         void createFlowDiagnosticsActions();
         void createFlowDiagnosticsMenuBar();
-
 
         void keyPressEvent( QKeyEvent *event );
 
@@ -165,6 +170,7 @@ class MainWindow : public QMainWindow
     protected:
 
         Controller* controller;
+
 
 /*
         bool scene_initialized;
@@ -206,14 +212,13 @@ class MainWindow : public QMainWindow
 
 */
 
-    private slots:
 
-        void on_btn_viewtree_toggled( bool checked );
 
-    private:
+private:
 
         Ui::MainWindow *ui;
         QSlider* sl_depth_csection;
+        ObjectTree* object_tree;
 
         Scene3D scene3d;
         Canvas3D *canvas3d;
@@ -225,6 +230,9 @@ class MainWindow : public QMainWindow
         QAction* ac_undo;
         QAction* ac_redo;
         QAction* ac_discard_sketch;
+        QAction* ac_screenshot;
+
+
 
 
 
