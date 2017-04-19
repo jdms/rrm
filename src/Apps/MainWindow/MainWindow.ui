@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>1411</width>
+      <width>1421</width>
       <height>981</height>
      </rect>
     </property>
@@ -131,18 +131,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="hl_mainwindow">
-       <item>
-        <widget class="QTreeView" name="tv_object_tree">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QHBoxLayout" name="hl_mainwindow"/>
      </item>
     </layout>
    </widget>

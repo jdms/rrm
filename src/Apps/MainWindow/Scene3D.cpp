@@ -23,14 +23,12 @@ bool Scene3D::addObject( Object* const& object_ )
     context->makeCurrent( surfacegl );
 
     ObjectOpenGLWrapper* obj_ = new ObjectOpenGLWrapper();
+    obj_->setConstantColor( current_color.red(), current_color.green(), current_color.blue() );
     obj_->setShaderDirectory( current_directory );
     obj_->init();
     obj_->setObjectRaw( object_ );
 
     object_list[ object_->getId() ] = obj_;
-
-    std::cout << "Number of wrappers of objects created so far: " << object_list.size() <<
-                 "\n\n" << std::flush;
 
     return true;
 
@@ -51,8 +49,6 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
 
 void Scene3D::updateScene()
 {
-
-    std::cout << "Updating objects in scene3d\n\n" << std::flush;
     input_volume->update();
 
     for( auto &it_: object_list )

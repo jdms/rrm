@@ -26,6 +26,8 @@ class ObjectItemWrap: public QGraphicsPathItem
         void setObjectRaw( Object* obj_, const double depth_ );
         void updateCrossSection( double depth_ );
 
+        void setColor( const QColor& c_ ){ current_color = c_; setupPens(); }
+
     private:
 
         void setupPens();

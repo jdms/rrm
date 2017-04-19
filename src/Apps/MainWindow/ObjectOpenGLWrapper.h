@@ -3,9 +3,12 @@
 
 #include <string>
 
+
 #include "Object.h"
 #include "Tucano/Shader.hpp"
 #include "3dView/Model3DUtils.hpp"
+
+
 
 
 class ObjectOpenGLWrapper
@@ -57,6 +60,21 @@ class ObjectOpenGLWrapper
             reloadFaces( object->getSurfaceFaces() );
         }
 
+
+        inline void setConstantColor( int r_, int g_, int b_ )
+        {
+            std::vector< float > colors( 3*nvertices );
+
+            for( std::size_t i = 0; i < nvertices; ++i )
+            {
+                colors[ 3*i ] = r_/255.f;
+                colors[ 3*i + 1 ] = g_/255.f;
+                colors[ 3*i + 2 ] = b_/255.f;
+            }
+
+            reloadColors( colors );
+
+        }
 
         void reloadVertices( const std::vector< float >& vertices_ );
         void reloadFaces( const std::vector< std::size_t >& faces_sizet_ );
