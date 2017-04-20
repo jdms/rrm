@@ -16,7 +16,7 @@ include_directories (
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/Scene.h
                         MainWindow/Controller.hpp
-                        MainWindow/ExtrusionRulesProcessor.hpp
+                        MainWindow/RulesProcessor.hpp
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Help/HelpDialog.h
@@ -38,7 +38,6 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/MainWindow.cpp
                         MainWindow/Scene.cpp
                         MainWindow/Controller.cpp
-                        MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
                         MainWindow/Help/HelpDialog.cpp

@@ -20,7 +20,7 @@
  */
 
 #include "MainWindow.h"
-#include "MainWindow/ExtrusionRulesProcessor.hpp"
+#include "MainWindow/RulesProcessor.hpp"
 
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {

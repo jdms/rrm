@@ -31,7 +31,7 @@
 #include "./src/Core/Geology/Models/CrossSection.hpp"
 #include "Sketching/StratigraphicItem.hpp"
 
-#include "MainWindow/ExtrusionRulesProcessor.hpp"
+#include "MainWindow/RulesProcessor.hpp"
 
 #include "3dView/Model3DUtils.hpp"
 
@@ -43,6 +43,18 @@ class Controller: public QObject
 
 	public: 
 	
+    enum class State : int {
+        UNDEFINED = -1,
+        NO_GEOLOGIC_RULE,
+        REMOVE_ABOVE, // Remove above
+        REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+        REMOVE_BELOW, // Remove below
+        REMOVE_BELOW_INTERSECTION, // Remove below intersection
+        DEFINE_ABOVE, // Define above
+        DEFINE_BELOW, // Define below
+        DEFINE_REGION // Define region
+    };
+
 
 		enum class ReconstructionMode { EXTRUSION, INTERPOLATION };
 		
@@ -126,7 +138,7 @@ class Controller: public QObject
         std::map< size_t, Stratigraphy* > stratigraphics_list;
         std::map< size_t, size_t > index_stratigraphy_map;
         std::map< float, CrossSection* > crosssections_list;
-        RRM::ExtrusionRulesProcessor rules_processor;
+        RRM::RulesProcessor rules_processor;
 
 
 };
