@@ -39,127 +39,180 @@ namespace RRM
 {
     class RulesProcessor {
 
-    public:
+        public:
 
-        inline RulesProcessor(){}
-        inline ~RulesProcessor(){}
+            std::vector<std::size_t> getSurfaces();
 
-        inline std::vector<std::size_t> getSurfaces(){ return std::vector<std::size_t>(); }
+            //
+            // brief:
+            // Verifies whether ir is possible to define a new 'drawing' region,
+            // either above or below.
+            // Argument: `eligible_surfaces` stores the indices of surfaces that can
+            // be used as input either for an `defineAbove()` or a `defineBelow()`.
+            // Return: true if at least one elegible surface was found.
+            //
+            /* bool requestDefineRegion( std::vector<size_t> &eligible_surfaces ); */
 
-        //
-        // brief:
-        // Verifies whether ir is possible to define a new 'drawing' region,
-        // either above or below.
-        // Argument: `eligible_surfaces` stores the indices of surfaces that can
-        // be used as input either for an `defineAbove()` or a `defineBelow()`.
-        // Return: true if at least one elegible surface was found.
-        //
-        /* bool requestDefineRegion( std::vector<size_t> &eligible_surfaces ); */
-
-        inline bool requestCreateAbove( std::vector<size_t> &eligible_surfaces ){ return false; }
-        inline bool requestCreateBelow( std::vector<size_t> &eligible_surfaces ){ return false; }
+            bool requestCreateAbove( std::vector<size_t> &eligible_surfaces );
+            bool requestCreateBelow( std::vector<size_t> &eligible_surfaces );
 
 
 
 
-        /* Change the model's properties */
+            /* Change the model's properties */
 
 
 
-        inline bool setLowResolution(){ return false; }
+            bool setLowResolution();
 
-        inline bool setMediumResolution(){ return false; }
+            bool setMediumResolution();
 
-        inline bool setHighResolution(){ return false; }
-
-
-        inline void setOrigin( double opengl_x, double opengl_y, double opengl_z ){}
-
-        inline bool setLenght( double opengl_x, double opengl_y, double opengl_z ){ return false; }
+            bool setHighResolution();
 
 
-        /* Begin methods to interface with GUI */
+            void setOrigin( double opengl_x, double opengl_y, double opengl_z );
+
+            bool setLenght( double opengl_x, double opengl_y, double opengl_z );
 
 
-        /* Clean up */
-        inline void clear(){}
+            /* Begin methods to interface with GUI */
 
 
-        /* Query or modify the automatum state */
+            /* Clean up */
+            void clear();
 
 
-        //
-        // brief:
-        // Define new input region above surface which index is `surface_index`.
-        //
-        inline bool defineAbove( size_t surface_index ){ return false; }
+            /* Query or modify the automatum state */
 
 
-        //
-        // brief:
-        // Clear any previous `defineAbove()` call.
-        // Safe to call anytime.
-        //
-        inline void stopDefineAbove(){}
-
-        //
-        // brief:
-        // Define new input region below surface which index is `surface_index`.
-        //
-        inline bool defineBelow( size_t surface_index ){ return false; }
-
-        //
-        // brief:
-        // Clear any previous `defineBelow()` call.
-        // Safe to call anytime.
-        //
-        inline void stopDefineBelow(){}
-
-        inline bool defineAboveIsActive(){ return false; }
-        inline bool defineBelowIsActive(){ return false; }
+            //
+            // brief:
+            // Define new input region above surface which index is `surface_index`.
+            //
+            bool defineAbove( size_t surface_index );
 
 
-        inline void removeAbove(){}
-        inline void removeAboveIntersection(){}
+            //
+            // brief:
+            // Clear any previous `defineAbove()` call.
+            // Safe to call anytime.
+            //
+            void stopDefineAbove();
 
-        inline void removeBelow(){}
-        inline void removeBelowIntersection(){}
+            //
+            // brief:
+            // Define new input region below surface which index is `surface_index`.
+            //
+            bool defineBelow( size_t surface_index );
 
+            //
+            // brief:
+            // Clear any previous `defineBelow()` call.
+            // Safe to call anytime.
+            //
+            void stopDefineBelow();
 
-        template<typename CurveType>
-        inline bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves ){ return false; }
-
-
-        template<typename CurveType>
-        inline bool createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path ){ return false; }
-
-
-        inline bool canUndo(){ return false; }
-        inline bool undo(){ return false; }
-
-        inline bool canRedo(){ return false; }
-        inline bool redo(){ return false; }
-
-
-        /* Get mesh, pcl and curves for visualization */
-
-
-        template<typename VertexList, typename FaceList>
-        inline bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ){ return false; }
-
-        template<typename VertexList, typename EdgeList>
-        inline bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ){ return false; }
+            bool defineAboveIsActive();
+            bool defineBelowIsActive();
 
 
+            void removeAbove();
+            void removeAboveIntersection();
 
-        /* End methods to interface with GUI */
+            void removeBelow();
+            void removeBelowIntersection();
 
 
-    private:
+            template<typename CurveType>
+            bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves );
 
-        StratigraphyModeller modeller;
+
+            template<typename CurveType>
+            bool createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path );
+
+
+            bool canUndo();
+            bool undo();
+
+            bool canRedo();
+            bool redo();
+
+
+            /* Get mesh, pcl and curves for visualization */
+
+
+            template<typename VertexList, typename FaceList>
+            bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist );
+
+            template<typename VertexList, typename EdgeList>
+            bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist );
+
+
+
+            /* End methods to interface with GUI */
+
+
+        private:
+
+            StratigraphyModeller modeller_;
 
     };
+
+    template<typename CurveType>
+    bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves ) 
+    {
+        std::vector<double> surface; 
+        size_t num_cross_sections = 0;
+
+        for ( auto &curve_tuple : curves )
+        {
+            num_cross_sections++; 
+
+            auto &in_curve = std::get<0>(curve_tuple);
+            auto &in_curve_depth = std::get<1>(curve_tuple);
+
+            for ( size_t i = 0; i < in_curve.size(); ++i ) 
+            {
+                surface.push_back(in_curve[i].x());
+                surface.push_back(in_curve[i].y());
+                surface.push_back(in_curve_depth);
+            }
+        }
+
+        bool status = false;
+
+        if ( num_cross_sections > 1 )
+        {
+            status = modeller_.insertExtrudedSurface( surface_index, surface ); 
+        }
+
+        else if ( num_cross_sections == 1 )
+        {
+            status = modeller_.insertSurface( surface_index, surface ); 
+        }
+
+        return status;
+    }
+
+    template<typename CurveType>
+    bool RulesProcessor::createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path )
+    {
+        return false;
+    }
+
+
+    template<typename VertexList, typename FaceList>
+    bool RulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist)
+    {
+        return modeller_.getMesh(surface_index, vlist, flist); 
+
+    }
+
+    template<typename VertexList, typename EdgeList>
+    bool RulesProcessor::getCrossSection(size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist)
+    {
+        return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
+    }
 
 } // End of Namespace RRM
 
