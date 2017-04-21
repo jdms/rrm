@@ -50,6 +50,7 @@ void Controller::addInputVolume()
     input_volume.initialize();
     scene3d->addVolume( &input_volume );
     sketch_scene->setVolume( &input_volume );
+    path_scene->setVolume( &input_volume );
 
     ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
     object_tree->addInputVolume( item );
@@ -200,14 +201,29 @@ bool Controller::interpolate()
     if( isValidObject( current_object ) == false ) return false;
 
     Object* const& obj_ = objects[ current_object ];
-    std::vector< Curve2D > curves_ = obj_->getAllCurves();
+    std::vector< std::tuple< Curve2D, std::size_t > > curves_ = obj_->getAllCurves();
 
     std::cout << "Object " << current_object << " interpolated\n" << std::flush;
 
-//    bool interpolate_ok = rules_processor.addSurface( curves_, obj_->getId() );
+    bool interpolate_ok = false;
+
+    if( obj_->getType() == Object::TYPE::Stratigraphy )
+    {
+        interpolate_ok = rules_processor.createSurface( obj_->getId(), curves_ );
+    }
+    else if( obj_->getType() == Object::TYPE::Channel )
+    {
+        Curve2D path_ = obj_->getPathCurve();
+        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
+        interpolate_ok = rules_processor.createChannel( obj_->getId(), curve_, path_ );
+    }
+
 //    if( interpolate_ok == false ) return false;
 
+
+    updateObjects();
     createObject();
+
     return true;
 }
 
@@ -218,59 +234,78 @@ void Controller::updateRule( const std::string &rule_ )
 
     if( rule_.compare( "RA_SKETCHING" ) == 0 )
     {
-//        rules_processor.update( State::RA_SKETCHING );
+        rules_processor.removeAbove();
         std::cout << "Remove above\n\n" <<std::flush;
     }
     else if( rule_.compare( "RAI_SKETCHING" ) == 0 )
     {
-//        rules_processor.update( State::RAI_SKETCHING );
+        rules_processor.removeAboveIntersection();
         std::cout << "Remove above intersection\n\n" <<std::flush;
     }
     else if( rule_.compare( "RB_SKETCHING" ) == 0 )
     {
-//        rules_processor.update( State::RB_SKETCHING );
+        rules_processor.removeBelow();
         std::cout << "Remove below\n\n" <<std::flush;
     }
     else if( rule_.compare( "RBI_SKETCHING" ) == 0 )
     {
-//        rules_processor.update( State::RBI_SKETCHING );
+        rules_processor.removeBelowIntersection();
         std::cout << "Remove below intersection\n\n" <<std::flush;
     }
-    else if( rule_.compare( "SKETCHING" ) == 0 )
-    {
-//        rules_processor.update( State::SKETCHING );
-        std::cout << "Sketching \n\n" <<std::flush;
-
-    }
 
 }
 
-void Controller::defineSketchAbove( bool status_ )
+
+
+bool Controller::enableCreateAbove( bool status_ )
 {
     if( status_ == true )
     {
-//        rules_processor.defineAbove();
-        std::cout << "Defining above \n\n" <<std::flush;
+        std::vector< std::size_t > objects_;
+         bool ok_ = rules_processor.requestCreateAbove( objects_ );
+
+         objects_.push_back( 1 );
+         sketch_scene->setAllowedObjects( objects_ );
+
+         std::cout << "Enabling define above \n\n" <<std::flush;
+        return true;
     }
-    else
-    {
-//        rules_processor.stopDefineAbove();
-        std::cout << "Stop define above \n\n" <<std::flush;
-    }
+
+    rules_processor.stopDefineAbove();
+    return false;
 }
 
-void Controller::defineSketchBelow( bool status_ )
+
+
+
+void Controller::defineSketchAbove( std::size_t surface_id_ )
+{
+    rules_processor.defineAbove( surface_id_ );
+    std::cout << "Defining above " << surface_id_ << "\n\n" <<std::flush;
+}
+
+
+
+bool Controller::enableCreateBelow( bool status_ )
 {
     if( status_ == true )
     {
-//        rules_processor.defineBelow();
-        std::cout << "Defining below \n\n" <<std::flush;
+        std::vector< std::size_t > objects_;
+        bool ok = rules_processor.requestCreateBelow( objects_ );
+
+        sketch_scene->setAllowedObjects( objects_ );
+        std::cout << "Enabling define below \n\n" <<std::flush;
+        return true;
     }
-    else
-    {
-//        rules_processor.stopDefineBelow();
-        std::cout << "Stop define below \n\n" <<std::flush;
-    }
+
+    rules_processor.stopDefineBelow();
+    return false;
+}
+
+void Controller::defineSketchBelow( std::size_t surface_id_ )
+{
+    rules_processor.defineBelow( surface_id_ );
+    std::cout << "Defining below " << surface_id_ << "\n\n" <<std::flush;
 }
 
 
@@ -278,27 +313,29 @@ void Controller::updateObjects()
 {
 
     std::cout << "Updating objects in controller\n\n" << std::flush;
+
     for( auto &it_: objects )
     {
 
-//        std::vector< double > curve_vertices;
-//        std::vector< double > curve_edges;
+//        Object* obj_ = it_.second;
+//        std::vector< double > csections_ = obj_->getAllCrossSectionsRelatedtoObject();
+
+//        for( auto d_: csections_ )
+//        {
+//            std::vector< double > curve_vertices;
+//            std::vector< std::size_t > curve_edges;
+
+//            //TODO: change depth to std::size_t
+//            rules_processor.getCrossSection( obj_->getId(), ( std::size_t )d_, curve_vertices,
+//                                             curve_edges );
+
+//            //TODO: change addInputCurve to updateInputCurve
+//            obj_->addInputCurve( d_, Model3DUtils::convertToCurve2D( curve_vertices ) );
+//            obj_->addInputEdges( d_, curve_edges );
+//        }
 
 //        std::vector< double > surface_vertices;
 //        std::vector< std::size_t > surface_faces;
-
-
-        Object* obj_ = it_.second;
-        std::vector< double > csections_ = obj_->getAllCrossSectionsRelatedtoObject();
-
-        for( auto d_: csections_ )
-        {
-//            bool getcurve_ok = rules_processor.getCurve( obj_->getId(), d_, curve_vertices,
-//                                                         curve_edges );
-//            obj_->addInputCurve( d_, curve_vertices );
-//            obj_->addInputEdges( d_, curve_edges );
-        }
-
 
 //        bool getmesh_ok = rules_processor.getMesh( obj_->getId(), surface_vertices, surface_faces );
 //        if( getmesh_ok  == false )
@@ -307,7 +344,6 @@ void Controller::updateObjects()
 //            continue;
 //        }
 
-//        obj_->updateCurveWireframe( curve_edges );
 //        obj_->updateSurface( surface_vertices, surface_faces );
 
     }

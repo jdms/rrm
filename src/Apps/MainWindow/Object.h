@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <exception>
+#include <tuple>
 
 //FIXME: remove this typedef later
 //typedef int Curve2d;
@@ -124,7 +125,7 @@ class Object
         }
 */
 
-        inline void addInputCurve( double _depth, const Curve2D& _curve )
+        inline void addInputCurve( double _depth, Curve2D const& _curve )
         {
             input_curves[ _depth ] = _curve;
         }
@@ -172,16 +173,12 @@ class Object
             return input_edges_;
         }
 
-        inline std::vector< Curve2D > getAllCurves() const
+        inline std::vector< std::tuple< Curve2D, std::size_t > > getAllCurves() const
         {
-            std::vector< Curve2D > curves_;
+            std::vector< std::tuple< Curve2D, std::size_t > > curves_;
             for( auto const &it : input_curves) {
-                curves_.push_back( it.second );
+                curves_.push_back( std::make_tuple( it.second, it.first ) );
             }
-
-
-            if( path_curve.isEmpty() != false )
-                curves_.push_back( path_curve );
 
             return curves_;
         }
@@ -202,8 +199,18 @@ class Object
             return path_curve;
         }
 
+        inline void updateSurface( const std::vector< double >& vertices_,
+                                   const std::vector< std::size_t > faces_ )
+        {
+            surface_vertices.clear();
+            surface_faces.clear();
 
-        inline const std::vector< float >& getSurfaceVertices()
+            surface_vertices.assign( vertices_.begin(), vertices_.end() );
+            surface_faces.assign( faces_.begin(), faces_.end() );
+        }
+
+
+        inline const std::vector< double >& getSurfaceVertices()
         {
             return surface_vertices;
         }
@@ -255,7 +262,7 @@ class Object
         std::map< double,  std::vector< std::size_t > > input_edges;
         Curve2D path_curve;
 
-        std::vector< float > surface_vertices;
+        std::vector< double > surface_vertices;
         std::vector< std::size_t > surface_faces;
 
 

@@ -2,18 +2,19 @@
 
 ObjectItemWrap::ObjectItemWrap()
 {
+    setFlag( QGraphicsItem::ItemIsSelectable, false );
 }
 
 
 void ObjectItemWrap::setupPens()
 {
-    visible_subpaths_pen.setColor( current_color );
+
     visible_subpaths_pen.setStyle( Qt::SolidLine );
     visible_subpaths_pen.setCapStyle( Qt::RoundCap );
     visible_subpaths_pen.setJoinStyle( Qt::RoundJoin );
     visible_subpaths_pen.setWidth( 3 );
 
-    hidden_subpaths_pen.setColor( current_color );
+
     hidden_subpaths_pen.setStyle( Qt::DotLine );
     hidden_subpaths_pen.setCapStyle( Qt::RoundCap );
     hidden_subpaths_pen.setJoinStyle( Qt::RoundJoin );
@@ -23,6 +24,9 @@ void ObjectItemWrap::setupPens()
 
 void ObjectItemWrap::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w )
 {
+
+    visible_subpaths_pen.setColor( temp_color );
+    hidden_subpaths_pen.setColor( temp_color );
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( visible_subpaths_pen );

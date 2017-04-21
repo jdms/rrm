@@ -40,7 +40,7 @@ class Model3DUtils
     static std::vector< float > normalizePointCloud( const std::vector< Eigen::Vector3f >& points );
     static Eigen::Affine3f normalizePointCloud( float minx, float maxx, float miny, float maxy, float minz, float maxz );
     static Eigen::Vector3f normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m );
-    static Curve2D convertToCurve2D( const std::vector< float >& v );
+    static Curve2D convertToCurve2D( const std::vector< double > &v );
 
     inline static int randomIntNumber( std::size_t min_, std::size_t max_ )
     {

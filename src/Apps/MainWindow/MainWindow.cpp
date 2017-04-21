@@ -49,6 +49,7 @@ void MainWindow::init()
     controller = new Controller();
     controller->setScene3D( &scene3d );
     controller->setSketchScene( &sketch_scene );
+    controller->setPathScene( &scene_path );
     controller->setObjectTree( object_tree );
 
 
@@ -90,11 +91,24 @@ void MainWindow::createWindow()
     canvas2d->setScene( &sketch_scene );
     canvas2d->setMaximumHeight( 350 );
 
+
     dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
     dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketch_canvas->setWidget( canvas2d );
     dw_sketch_canvas->setVisible( true );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
+
+
+    canvas_path = new CanvasPath();
+    canvas_path->setScenePath( &scene_path );
+    canvas_path->setMaximumSize(350, 200 );
+
+    dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
+    dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketch_path_canvas->setWidget( canvas_path );
+    dw_sketch_path_canvas->setVisible( true );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_path_canvas );
+
 
 
     sl_depth_csection = new QSlider( Qt::Vertical );
@@ -142,14 +156,31 @@ void MainWindow::createWindow()
                                                 randomColor( true );  } );
 
 
-    connect( &sketch_scene, &SketchScene::updateVolumeRawGeometry, [=]( double w_, double h_ ) {
-                                                controller->setInputVolumeDimensions( w_, h_ );
+    connect( &sketch_scene, &SketchScene::updateVolumeWidthHeight, [=]( double w_, double h_ ) {
+                                                controller->setInputVolumeWidthHeight( w_, h_ );
                                                 emit updateScenes();
                                                 } );
+
+
+    connect( &scene_path, &PathScene::updateVolumeWidthDepth, [=]( double w_, double d_ ) {
+                                                controller->setInputVolumeWidthDepth( w_, d_ );
+                                                emit updateScenes();
+                                                } );
+
+
+    connect( &scene_path, &PathScene::curveAccepted, [=]( const Curve2D& c_ ){
+                                                 controller->setPathCurvetoCurrentObject( c_ );
+                                                 } );
+
 
     connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
     connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
 
+
+
+//    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) {
+//                                       ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* > item_;
+//                                       controller->selectObject( obj_->getId() ); } );
 
 
 
@@ -520,7 +551,8 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
             if( event->modifiers() & Qt::AltModifier )
             {
-                controller->defineSketchAbove( false );
+                controller->enableCreateAbove( false );
+//                controller->defineSketchAbove( false );
             }
 
             else if( event->modifiers() & Qt::ControlModifier )
@@ -535,7 +567,7 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
             else
             {
-                controller->defineSketchAbove( true );
+                controller->enableCreateAbove( true );
             }
         }
         break;
@@ -544,7 +576,7 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
         {
             if( event->modifiers() & Qt::AltModifier )
             {
-                controller->defineSketchBelow( false );
+                controller->enableCreateBelow( false );
             }
 
             else if( event->modifiers() & Qt::ControlModifier )
@@ -559,7 +591,7 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
             else
             {
-                controller->defineSketchBelow( true );
+                controller->enableCreateBelow( true );
             }
         }
         break;

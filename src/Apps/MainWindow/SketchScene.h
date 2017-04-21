@@ -26,6 +26,8 @@ class SketchScene: public QGraphicsScene
         inline void setVolume( Volume* const &vol_ )
         {
             volume.setVolumeRaw( vol_ );
+            setSceneRect( volume.boundingRect() );
+
             addItem( csection_image );
             addItem( &volume );
             addItem( sketch );
@@ -41,17 +43,11 @@ class SketchScene: public QGraphicsScene
         inline void setCrossSection( const CrossSection1& csection_ )
         {
             csection = csection_;
-//            drawCrossSection();
             drawCrossSectionObjects();
             drawCrossSectionRegions();
             update();
         }
-        inline void drawCrossSection()
-        {
-//            drawCrossSectionObjects();
-//            drawCrossSectionRegions();
-//            update();
-        }
+
         inline void drawCrossSectionObjects()
         {
             std::set< Object* > objects_ = csection.getObjectsReferenced();
@@ -64,6 +60,29 @@ class SketchScene: public QGraphicsScene
         {
         }
 
+        inline void setAllowedObjects( const std::vector< std::size_t >& allowed_ )
+        {
+            allowed_objects = allowed_;
+
+            for( std::size_t id_: allowed_ )
+            {
+                object_list[ id_ ]->setState( ObjectItemWrap::State::ALLOWED );
+            }
+            update();
+        }
+
+
+        inline void disallowObjects()
+        {
+            for( std::size_t id_: allowed_objects )
+            {
+                if( id_ == surface_selected ) continue;
+                object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+            }
+
+            allowed_objects.clear();
+            update();
+        }
 
         void finishSketch();
         bool acceptSketch( Curve2D& curve_ );
@@ -101,7 +120,7 @@ class SketchScene: public QGraphicsScene
 
         void curveAccepted( Curve2D c_ );
         void interpolateObject();
-        void updateVolumeRawGeometry( double w_, double h_ );
+        void updateVolumeWidthHeight( double w_, double h_ );
 
 
     protected:
@@ -123,6 +142,8 @@ class SketchScene: public QGraphicsScene
         QGraphicsPixmapItem* csection_image;
 
         std::map< std::size_t, ObjectItemWrap* > object_list;
+        std::vector< std::size_t > allowed_objects;
+        std::size_t surface_selected = 10000;
 
         QColor current_color;
 

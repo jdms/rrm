@@ -1,8 +1,8 @@
 #include "VolumeItemWrapper.h"
 
-VolumeItemWrapper::VolumeItemWrapper()
+VolumeItemWrapper::VolumeItemWrapper( const Section& sec_ )
 {
-
+    section = sec_;
 }
 
 void VolumeItemWrapper::paint( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
@@ -39,7 +39,13 @@ void VolumeItemWrapper::setVolumeRaw( Volume* const &vol_ )
     vol_->getOrigin( ox_, oy_, oz_ );
     vol_->getDimensions( w_, h_, d_ );
 
-    QRectF rect_( ox_, oy_, w_, h_ );
+    double width_ = w_;
+    double height_ = h_;
+
+    if( section == Section::XZ )
+        height_ = d_;
+
+    QRectF rect_( ox_, oy_, width_, height_ );
     boundary = QPolygonF( rect_ );
 }
 

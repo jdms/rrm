@@ -30,7 +30,10 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/ObjectOpenGLWrapper.h
                         MainWindow/ObjectTreeItem.h
                         MainWindow/ObjectTree.h
-#                        MainWindow/ExtrusionRulesProcessor.hpp
+                        MainWindow/RulesProcessor.hpp
+                        MainWindow/CanvasPath.h
+                        MainWindow/PathScene.h
+                        MainWindow/CrossSectionItemWrapper.h
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Help/HelpDialog.h
@@ -45,7 +48,8 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
                             MainWindow/SketchScene.h
                             MainWindow/SketchCanvas.h
                             MainWindow/ObjectTree.h
-#                            MainWindow/ObjectTreeItem.h
+                            MainWindow/CanvasPath.h
+                            MainWindow/PathScene.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
 
@@ -69,6 +73,9 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/ObjectOpenGLWrapper.cpp
                         MainWindow/TreeItem.cpp
                         MainWindow/ObjectTree.cpp
+                        MainWindow/CanvasPath.cpp
+                        MainWindow/PathScene.cpp
+                        MainWindow/CrossSectionItemWrapper.cpp
 #                        MainWindow/ExtrusionRulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
