@@ -153,35 +153,36 @@ add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
 
 
 
-################################################
-## Preliminary support for stratmod library
-################################################
 
-## include_directories(/usr/include/openmpi)
-## set(HypreLibs HYPRE HYPRE_sstruct_ls HYPRE_parcsr_ls HYPRE_IJ_mv mpi mpi++)
+###############################################
+# Preliminary support for stratmod library
+###############################################
 
-# include(ExternalProject)  ## needed
+# include_directories(/usr/include/openmpi)
+# set(HypreLibs HYPRE HYPRE_sstruct_ls HYPRE_parcsr_ls HYPRE_IJ_mv mpi mpi++)
 
-#set(BUILD_USING_OPENMP ON)
+include(ExternalProject)  ## needed
 
-#set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
+set(BUILD_USING_OPENMP ON)
 
-#set(STRATMOD_CMAKE_ARGS
-#    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-#    -DBUILD_SHARED_LIBRARY=OFF
-#    )
+set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 
-#if(BUILD_USING_OPENMP AND APPLE)
-#    set(STRATMOD_CMAKE_ARGS -DBUILD_USING_OPENMP=ON -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
-#endif()
+set(STRATMOD_CMAKE_ARGS
+    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+    -DBUILD_SHARED_LIBRARY=OFF
+    )
 
-#ExternalProject_Add(
-#    StratModLibBuild
-#    DOWNLOAD_COMMAND git submodule update --init
-#    UPDATE_COMMAND git submodule update -f
-#    SOURCE_DIR ${STRATMOD_SOURCE}
-#    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
-#    )
+if(BUILD_USING_OPENMP AND APPLE)
+    set(STRATMOD_CMAKE_ARGS -DBUILD_USING_OPENMP=ON -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
+endif()
+
+ExternalProject_Add(
+    StratModLibBuild
+    DOWNLOAD_COMMAND git submodule update --init
+    UPDATE_COMMAND git submodule update -f
+    SOURCE_DIR ${STRATMOD_SOURCE}
+    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
+    )
 
 #if(MSVC)
 #    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/stratmod.lib)
@@ -189,13 +190,19 @@ add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
 #    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
 #endif()
 
-#add_library(stratmod STATIC IMPORTED)
-#set_property(TARGET stratmod PROPERTY IMPORTED_LOCATION ${STRATMODLIB})
-#add_dependencies(stratmod StratModLibBuild)
-#include_directories(${STRATMOD_SOURCE})
+set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
+#ExternalProject_Get_Property(StratModLibBuild binary_dir)
+#set(STRATMODLIB "${binary_dir}/Release/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
+message(WARNING ${STRATMODLIB})
+#message(FATAL_ERROR ${binary_dir})
 
-#message(STATUS "STRATMOD PATH:" ${STRATMODLIB})
+add_library(stratmod STATIC IMPORTED)
+set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
+add_dependencies(stratmod StratModLibBuild)
+include_directories(${STRATMOD_SOURCE})
+
+message(WARNING stratmod)
 
 ###############################################
 # Main source
