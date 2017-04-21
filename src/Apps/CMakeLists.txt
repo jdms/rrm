@@ -76,7 +76,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/CanvasPath.cpp
                         MainWindow/PathScene.cpp
                         MainWindow/CrossSectionItemWrapper.cpp
-#                        MainWindow/ExtrusionRulesProcessor.cpp
+                        MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
                         MainWindow/Help/HelpDialog.cpp
@@ -300,7 +300,7 @@ add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}
-                                        planin RRMGeometry Arrangement_2D SketchLib )
+                                        planin stratmod RRMGeometry Arrangement_2D SketchLib )
 
 
 ######################################################

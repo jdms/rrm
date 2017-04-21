@@ -546,7 +546,7 @@ class Controller: public QObject
 
         std::map< std::size_t, Region1* > regions;
 
-        RRM::RulesProcessor rules_processor;
+        RulesProcessor rules_processor;
 
         //        SolverRegistration register_solver;
 
