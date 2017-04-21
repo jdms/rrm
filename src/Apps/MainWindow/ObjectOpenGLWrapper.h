@@ -56,7 +56,11 @@ class ObjectOpenGLWrapper
 
         inline void reloadBuffers()
         {
-            reloadVertices( object->getSurfaceVertices() );
+
+            std::vector< double > vertices_double_ = object->getSurfaceVertices();
+            std::vector< float > vertices_( vertices_double_.begin(), vertices_double_.end() );
+
+            reloadVertices( vertices_ );
             reloadFaces( object->getSurfaceFaces() );
         }
 

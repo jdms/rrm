@@ -75,6 +75,7 @@ void SketchScene::addObject( Object* obj_ )
     {
         obj_wrapper_ = new ObjectItemWrap();
         obj_wrapper_->setColor( current_color );
+        obj_wrapper_->setState( ObjectItemWrap::State::NONE );
         addItem( obj_wrapper_ );
 
         object_list[ obj_->getId() ] = obj_wrapper_;
@@ -100,7 +101,7 @@ void SketchScene::setImagetoCrossSection( const QString& url_ )
     QPixmap image_ = QPixmap( url_ );
     csection_image->setPixmap( image_ );
 
-    emit updateVolumeRawGeometry( image_.rect().width(), image_.rect().height() );
+    emit updateVolumeWidthHeight( image_.rect().width(), image_.rect().height() );
 
     update();
 }
@@ -229,8 +230,27 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         double w_ = ( double )std::abs( event->scenePos().x() - boundary_anchor.x() );
         double h_ = ( double )std::abs( event->scenePos().y() - boundary_anchor.y() );
 
-        emit updateVolumeRawGeometry( w_, h_ );
+        emit updateVolumeWidthHeight( w_, h_ );
     }
+    else if( current_interaction == UserInteraction::SELECTING )
+    {
+
+        QList< QGraphicsItem* > items = selectedItems();
+        if( items.empty() == false )
+        {
+            ObjectItemWrap* s = (ObjectItemWrap*) (items.at( 0 ) );
+            s->setState( ObjectItemWrap::State::SELECTED );
+            surface_selected = s->getId();
+
+            std::cout << "Selected surface " << s->getId() << "\n\n" << std::flush;
+            current_interaction = UserInteraction::SKETCHING;
+
+            disallowObjects();
+
+        }
+
+    }
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
@@ -261,6 +281,10 @@ void SketchScene::sketchingInteractions( QGraphicsSceneMouseEvent* event )
         else if( event->buttons() & Qt::RightButton )
         {
             finishSketch();
+        }
+        else if( event->buttons() & Qt::MiddleButton )
+        {
+            current_interaction = UserInteraction::SELECTING;
         }
     }
 

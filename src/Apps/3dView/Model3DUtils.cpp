@@ -164,7 +164,7 @@ Eigen::Affine3f Model3DUtils::normalizePointCloud( float minx, float maxx, float
 }
 
 
-Curve2D Model3DUtils::convertToCurve2D( const std::vector< float >& v )
+Curve2D Model3DUtils::convertToCurve2D( const std::vector< double >& v )
 {
 
     Curve2D curve;

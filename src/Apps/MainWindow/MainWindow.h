@@ -67,6 +67,8 @@
 #include "Controller.hpp"
 #include "SketchCanvas.h"
 #include "SketchScene.h"
+#include "CanvasPath.h"
+#include "PathScene.h"
 #include "ObjectTree.h"
 
 
@@ -221,7 +223,11 @@ private:
         ObjectTree* object_tree;
 
         Scene3D scene3d;
-        Canvas3D *canvas3d;
+        Canvas3D* canvas3d;
+
+        QDockWidget* dw_sketch_path_canvas;
+        PathScene scene_path;
+        CanvasPath* canvas_path;
 
         QDockWidget* dw_sketch_canvas;
         SketchCanvas *canvas2d;

@@ -28,6 +28,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include <set>
 
 //#include "Sketching/BoundaryItem2D.hpp"
 //#include "./src/Core/Geology/Models/CrossSection.hpp"
@@ -37,7 +38,7 @@
 
 //#include "3dView/Model3DUtils.hpp"
 
-
+#include "MainWindow/RulesProcessor.hpp"
 
 
 #include "Volume.h"
@@ -47,6 +48,7 @@
 
 #include "Scene3D.h"
 #include "SketchScene.h"
+#include "PathScene.h"
 #include "ObjectTree.h"
 
 
@@ -108,11 +110,15 @@ class Controller: public QObject
 
         void init();
 
-        inline void setScene3D( Scene3D* sc_ ){ scene3d = sc_; }
+        inline void setScene3D( Scene3D* const& sc_ ){ scene3d = sc_; }
 
-        inline void setSketchScene( SketchScene* sc_ ){ sketch_scene = sc_; }
+        inline void setSketchScene( SketchScene* const& sc_ ){ sketch_scene = sc_; }
+
+        inline void setPathScene( PathScene* const& sc_ ){ path_scene = sc_; }
 
         inline void setObjectTree( ObjectTree* const& tree_ ){ object_tree = tree_; }
+
+
 
         void addInputVolume();
 
@@ -121,9 +127,14 @@ class Controller: public QObject
             input_volume.setDimensions( width_, height_, depth_ );
         }
 
-        inline void setInputVolumeDimensions( double width_, double height_ )
+        inline void setInputVolumeWidthHeight( double width_, double height_ )
         {
             input_volume.setDimensions( width_, height_, input_volume.getDepth() );
+        }
+
+        inline void setInputVolumeWidthDepth( double width_, double depth_ )
+        {
+            input_volume.setDimensions( width_, input_volume.getHeight(), depth_ );
         }
 
         inline void getInputVolumeDimensions( double& width_, double& height_, double& depth_ ) const
@@ -238,6 +249,9 @@ class Controller: public QObject
 
         bool interpolate();
 
+        void updateObjects();
+
+
 
         inline void addRegion()
         {
@@ -326,36 +340,52 @@ class Controller: public QObject
         }
 
 
+
         void updateRule( const std::string &rule_ );
 
-        void updateObjects();
 
-        void defineSketchAbove( bool status_ );
 
-        void defineSketchBelow( bool status_ );
+
+        bool enableCreateAbove( bool status_ );
+
+        bool enableCreateBelow( bool status_ );
+
+
+        void defineSketchAbove( std::size_t surface_id_ );
+
+        void defineSketchBelow( std::size_t surface_id_ );
+
+
 
         inline bool undo()
         {
-//            bool undo_done = rules_processorundo();
+            bool undo_done = rules_processor.undo();
+            updateObjects();
             std::cout << "Trying undo" << std::flush;
-            return true;
+            return undo_done;
         }
 
+        inline bool redo()
+        {
+            bool redo_done = rules_processor.redo();
+            updateObjects();
+            std::cout << "Trying redo" << std::flush;
+            return redo_done;
+        }
 
 
         inline bool canUndo()
         {
-        //    rules_processor.canUndo();
             std::cout << "Enabling undo \n"  << std::flush;
-            return true;
+            return rules_processor.canUndo();
         }
 
         inline bool canRedo()
         {
-        //    rules_processor.canRedo();
             std::cout << "Enabling redo \n"  << std::flush;
-            return true;
+            return rules_processor.canRedo();
         }
+
 
     private:
 
@@ -377,7 +407,13 @@ class Controller: public QObject
 
         inline void setCurrentCrossSectionAsUsed()
         {
-            used_cross_sections.push_back( current_depth_csection );
+            path_scene->addCrossSection( current_depth_csection );
+            used_cross_sections.insert( current_depth_csection );
+        }
+
+        inline std::set< double > getCrossSections() const
+        {
+             return used_cross_sections;
         }
 
         inline bool isValidCrossSection( double depth_ )
@@ -495,19 +531,22 @@ class Controller: public QObject
 
         Scene3D *scene3d;
         SketchScene* sketch_scene;
+        PathScene* path_scene;
         ObjectTree* object_tree;
 
         Volume input_volume;
 
         double current_depth_csection;
         std::map< double, CrossSection1 > depth_of_cross_sections;
-        std::vector< double > used_cross_sections;
+        std::set< double > used_cross_sections;
 
         Object::TYPE current_object_type = Object::TYPE::Stratigraphy;
         std::size_t current_object;
         std::map< std::size_t, Object* > objects;
 
         std::map< std::size_t, Region1* > regions;
+
+        RRM::RulesProcessor rules_processor;
 
         //        SolverRegistration register_solver;
 
