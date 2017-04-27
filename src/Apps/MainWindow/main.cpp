@@ -30,7 +30,6 @@
 
 
 std::size_t Object::index = 0;
-//size_t Stratigraphy::number_of_stratigraphies = 0;
 
 int main( int argc, char *argv[] )
 {
@@ -60,21 +59,6 @@ int main( int argc, char *argv[] )
     format.setSamples( 8 );
 
     QSurfaceFormat::setDefaultFormat( format );
-
-/*
-    QOpenGLContext* ctx1 = new QOpenGLContext();
-    ctx1->setFormat( format );
-    ctx1->create();
-
-    QOpenGLContext* ctx2 = new QOpenGLContext();
-    ctx2->setFormat( ctx1->format() );
-    ctx2->setShareContext( ctx1 );
-    ctx2->create();
-
-    bool are_ctx_shared = QOpenGLContext::areSharing( ctx1, ctx2 );
-
-    std::cout << "Context are being shared? " << are_ctx_shared << "\n\n" << std::flush;
-*/
 
 
     MainWindow w;

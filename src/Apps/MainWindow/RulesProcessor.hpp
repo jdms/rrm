@@ -30,7 +30,7 @@
 
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
-#include "stratigraphy_modeller.hpp"
+#include "stratmod/stratigraphy_modeller.hpp"
 
 
 
@@ -39,6 +39,9 @@
     class RulesProcessor {
 
         public:
+
+            RulesProcessor();
+            ~RulesProcessor() = default;
 
             std::vector<std::size_t> getSurfaces();
 
@@ -75,6 +78,11 @@
 
 
             /* Begin methods to interface with GUI */
+
+
+            std::size_t getWidthResolution();
+
+            std::size_t getDepthResolution();
 
 
             /* Clean up */
@@ -123,7 +131,7 @@
 
 
             template<typename CurveType>
-            bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves );
+            bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves );
 
 
             template<typename CurveType>
@@ -155,10 +163,12 @@
 
             StratigraphyModeller modeller_;
 
+            struct { double x, y, z; } origin_, lenght_;
+
     };
 
     template<typename CurveType>
-    bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves )
+    bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
     {
         std::vector<double> surface;
         size_t num_cross_sections = 0;
@@ -182,12 +192,12 @@
 
         if ( num_cross_sections > 1 )
         {
-            status = modeller_.insertExtrudedSurface( surface_index, surface );
+            status = modeller_.insertSurface( surface_index, surface );
         }
 
         else if ( num_cross_sections == 1 )
         {
-            status = modeller_.insertSurface( surface_index, surface );
+            status = modeller_.insertExtrudedSurface( surface_index, surface );
         }
 
         return status;

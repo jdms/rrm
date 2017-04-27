@@ -30,26 +30,18 @@
 #include <map>
 #include <set>
 
-//#include "Sketching/BoundaryItem2D.hpp"
-//#include "./src/Core/Geology/Models/CrossSection.hpp"
-//#include "Sketching/StratigraphicItem.hpp"
-
-//#include "MainWindow/ExtrusionRulesProcessor.hpp"
-
-//#include "3dView/Model3DUtils.hpp"
-
 #include "MainWindow/RulesProcessor.hpp"
 
 
-#include "Volume.h"
-#include "CrossSection.h"
-#include "Object.h"
-#include "Region1.h"
+#include "Core/Geology/Models/Volume.h"
+#include "Core/Geology/Models/CrossSection.h"
+#include "Core/Geology/Models/Object.h"
+#include "Core/Geology/Models/Region1.h"
 
-#include "Scene3D.h"
-#include "SketchScene.h"
-#include "PathScene.h"
-#include "ObjectTree.h"
+#include "3dView/Scene3D.h"
+#include "Sketching/SketchScene.h"
+#include "Sketching/PathScene.h"
+#include "Object_Tree/ObjectTree.h"
 
 
 
@@ -62,51 +54,12 @@ class Controller: public QObject
 
 
         enum class ReconstructionMode { EXTRUSION, INTERPOLATION };
-        enum class SketchStatus { ABOVE, BELOW, NONE };
+        enum class RequestRegion { ABOVE, BELOW, NONE };
         enum class RuleStatus { RA_SKETCHING, RAI_SKETCHING, RB_SKETCHING, RBI_SKETCHING };
 
 
         Controller();
 
-        /*
-
-                void addCrossSection( const float& d = 0.0f );
-                inline bool hasCrossSection(){ return !( crosssections_list.empty() ); }
-                float getCurrentCrossSection(){ return current_crosssection; }
-
-
-                bool addBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth );
-                void editBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth );
-                Boundary* getCurrentBoundary();
-
-
-
-                bool addCurve( const Curve2D &curve );
-                bool addStratigraphy();
-                bool interpolateStratigraphy( const std::vector< size_t >& lower_bound = std::vector< size_t >(),
-                                              const std::vector< size_t >& upper_bound = std::vector< size_t >() );
-
-                Stratigraphy* getCurrentStratigraphy();
-
-
-                bool defineSketchingAbove( std::vector< size_t >& allowed );
-                bool defineSketchingBelow( std::vector< size_t >& allowed );
-
-                bool defineRegionAbove( const std::vector< size_t >& selections );
-                bool defineRegionBelow( const std::vector< size_t >& selections );
-
-
-
-                bool stopSketchingAbove();
-                bool stopSketchingBelow();
-
-
-                void initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
-                void editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth );
-
-*/
-
-        /**/
 
         void init();
 
@@ -359,18 +312,24 @@ class Controller: public QObject
 
         inline bool undo()
         {
-            bool undo_done = rules_processor.undo();
-            updateObjects();
             std::cout << "Trying undo" << std::flush;
-            return undo_done;
+
+            bool undo_done = rules_processor.undo();
+            if( undo_done == false ) return false;
+
+            updateObjects();
+            return true;
         }
 
         inline bool redo()
         {
-            bool redo_done = rules_processor.redo();
-            updateObjects();
             std::cout << "Trying redo" << std::flush;
-            return redo_done;
+
+            bool redo_done = rules_processor.redo();
+            if( redo_done == false ) return false;
+
+            updateObjects();
+            return true;
         }
 
 
@@ -387,22 +346,32 @@ class Controller: public QObject
         }
 
 
+
+        inline void setupDepthResolution( std::size_t& disc_depth_ )
+        {
+            disc_depth_ = rules_processor.getDepthResolution();
+            disc_depth = disc_depth_;
+            step_depth = (double) (input_volume.getDepth()/disc_depth_);
+        }
+
+        inline std::size_t rowIndexfromDepth( double depth_ )
+        {
+            return std::size_t ( depth_ ) / disc_depth;
+        }
+
+        inline double depthFromRowIndex( std::size_t index_ )
+        {
+            return (double)index_*step_depth;
+        }
+
+        void sendSelectedSurface( const std::size_t& id_ );
+
+        void clear();
+
     private:
 
         inline void addCrossSectionofDepth( double depth_ )
         {
-//            //TODO: create visualization cross_section
-//            //TODO: add in object tree, etc
-
-//            if( isValidCrossSection( depth_ ) == false )
-//            {
-//                std::cout << "Cross-section out of range" <<std::endl;
-//                return;
-//            }
-
-//            depth_of_cross_sections[ depth_ ] = new CrossSection1();
-//            depth_of_cross_sections[ depth_ ].setVolume( &input_volume );
-//            updateScenesWithCurrentCrossSection();
         }
 
         inline void setCurrentCrossSectionAsUsed()
@@ -429,12 +398,29 @@ class Controller: public QObject
 
         inline void updateScenesWithCurrentCrossSection()
         {
-//            if( isCrossSectionAdded( current_depth_csection ) == false ) return;
-//            depth_of_cross_sections[ current_depth_csection ] = CrossSection1();
-            depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
-
             sketch_scene->resetData();
+
+            depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
             sketch_scene->setCrossSection( depth_of_cross_sections[ current_depth_csection ] );
+
+            for( auto it_: objects )
+            {
+                std::vector< float > curve_vertices;
+                std::vector< std::size_t > curve_edges;
+                bool has_curve = rules_processor.getCrossSection( it_.first, rowIndexfromDepth( current_depth_csection ),
+                                                 curve_vertices, curve_edges );
+
+                if( has_curve == false )continue;
+
+                std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
+                it_.second->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
+                it_.second->addInputEdges( current_depth_csection, curve_edges );
+
+                sketch_scene->addObject( it_.second );
+            }
+
+
+
         }
 
         inline bool isCrossSectionAdded( double depth_ )
@@ -452,8 +438,6 @@ class Controller: public QObject
             Object* obj = new Object( current_object_type );
             current_object = obj->getId();
             objects[ current_object ] = obj;
-
-            std::cout << "Object " << current_object << " created\n\n" << std::endl;
         }
 
         inline bool isValidObject( std::size_t id_ )
@@ -493,7 +477,18 @@ class Controller: public QObject
         }
 
 
+        inline void initRulesProcessor()
+        {
+            double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
+            double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
 
+            input_volume.getOrigin( ox_, oy_, oz_ );
+            input_volume.getDimensions( w_, h_, d_ );
+
+            rules_processor.setOrigin( ox_, oy_, oz_ );
+            rules_processor.setLenght(  w_, h_, d_ );
+            rules_processor.removeAbove();
+        }
 
 
 
@@ -535,6 +530,9 @@ class Controller: public QObject
         ObjectTree* object_tree;
 
         Volume input_volume;
+        std::size_t disc_width = 10;
+        std::size_t disc_depth = 10;
+        double step_depth = 10;
 
         double current_depth_csection;
         std::map< double, CrossSection1 > depth_of_cross_sections;
@@ -546,53 +544,14 @@ class Controller: public QObject
 
         std::map< std::size_t, Region1* > regions;
 
+        RuleStatus current_rule = RuleStatus::RA_SKETCHING;
+        RequestRegion current_region = RequestRegion::NONE;
         RulesProcessor rules_processor;
+
 
         //        SolverRegistration register_solver;
 
         /**/
-
-    public slots:
-
-
-        //        size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
-
-        //        void setStratigraphicRule( const std::string& rule );
-        //        void changeResolution( const int numI_, const int numJ_ );
-
-        //        void undo();
-        //        void redo();
-
-
-        //        void clear();
-        //        void update();
-
-
-
-    signals:
-
-        //        void updateScene();
-        //        void enableUndo( bool option );
-        //        void enableRedo( bool option );
-        //        void removeStratigraphy( size_t id );
-        //        void waitingSelection( bool, const std::vector< size_t >& );
-        //        void changeStratigraphyRulesStatus( const std::string& );
-        //        void changeDefineRegionStatus( const bool, const bool );
-        //        void pickingRegion( bool );
-
-
-    protected:
-
-
-        //        ReconstructionMode current_reconstruction;
-
-        //        float current_crosssection;
-        //        size_t current_stratigraphy;
-
-        //        std::map< size_t, Stratigraphy* > stratigraphics_list;
-        //        std::map< size_t, size_t > index_stratigraphy_map;
-        //        std::map< float, CrossSection* > crosssections_list;
-        //        RRM::ExtrusionRulesProcessor rules_processor;
 
 
 };
