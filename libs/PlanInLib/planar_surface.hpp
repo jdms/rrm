@@ -28,6 +28,9 @@
 #include <vector> 
 #include <list> 
 #include <memory> 
+#include <type_traits>
+
+#include "use_openmp.hpp"
 
 #include "use_openmp.hpp"
 
@@ -272,14 +275,20 @@ bool PlanarSurface::getVertexList( VList &vlist )
     auto num_vertices_omp = num_vertices_; 
     auto &cmap_omp = coordinates_map_; 
 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(vlist_omp, cmap_omp) firstprivate(num_vertices_omp) private(v) default(none)
-    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    if ( num_vertices_ > 0 )
     {
-        getVertex3D(i, v);
-        vlist_omp[3*i + 0] = v[cmap_omp[0]]; 
-        vlist_omp[3*i + 1] = v[cmap_omp[1]]; 
-        vlist_omp[3*i + 2] = v[cmap_omp[2]]; 
+        using OutRealType = typename std::remove_reference< decltype( vlist[0] ) >::type;
+
+        /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+        #pragma omp parallel for shared(vlist_omp, cmap_omp) firstprivate(num_vertices_omp) private(v) default(none)
+        for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+        {
+            getVertex3D(i, v);
+            vlist_omp[3*i + 0] = static_cast<OutRealType>( v[cmap_omp[0]] ); 
+            vlist_omp[3*i + 1] = static_cast<OutRealType>( v[cmap_omp[1]] ); 
+            vlist_omp[3*i + 2] = static_cast<OutRealType>( v[cmap_omp[2]] ); 
+        }
+
     }
 
     return true; 

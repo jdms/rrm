@@ -7,7 +7,7 @@ project( RRM )
 # Options
 #####################################################################
 
-set( CMAKE_BUILD_TYPE RELEASE )
+set( CMAKE_BUILD_TYPE DEBUG )
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 
@@ -150,6 +150,7 @@ endif( OpenGL_FOUND )
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
 add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
 add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
+
 
 
 

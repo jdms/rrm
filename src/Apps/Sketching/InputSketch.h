@@ -61,9 +61,13 @@ class InputSketch : public QGraphicsPathItem
 
         void setSketch( const QVector<QPointF> & _path );
         void setSketch( const QPolygonF & _path );
-        QPolygonF getSketch( ) const;
+        QPolygonF getSketch() const;
 
-        void setDone( bool option );
+        QPolygonF getSketchFunctionGraph() const;
+        static void clip( QPolygonF& pol_, int xmin_, int xmax_, int ymin_, int ymax_ );
+
+
+        void setDone();
 
         bool isVisible() const;
         bool isInside() const;
@@ -96,13 +100,12 @@ class InputSketch : public QGraphicsPathItem
         QPainterPathStroker custom_stroker;
 
         QPainterPath curve;
-        QPolygonF curve1;
 
-        bool done;
+        bool created;
         bool is_visible;
         bool is_inside;
 
-        RRM::SketchLib sketchlib_;
+        RRM::SketchLib sketchlib;
 
 
 

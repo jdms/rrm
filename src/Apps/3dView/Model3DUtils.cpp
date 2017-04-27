@@ -23,6 +23,8 @@
 
 std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< float >& points )
 {
+    if( points.empty() == true ) return points;
+
 	float maxx, minx;
 	float maxy, miny;
 	float maxz, minz;
@@ -86,6 +88,76 @@ std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< float
 		
 	return normalized_points;
 	
+}
+
+
+std::vector< float > Model3DUtils::normalizePointCloud( const std::vector< double >& points )
+{
+    if( points.empty() == true ) return std::vector< float >();
+
+    double maxx, minx;
+    double maxy, miny;
+    double maxz, minz;
+
+    int number_of_points = (int)points.size()/3;
+
+    maxx = points[ 0 ];
+    minx = points[ 0 ];
+    maxy = points[ 1 ];
+    miny = points[ 1 ];
+    maxz = points[ 2 ];
+    minz = points[ 2 ];
+
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        if( points[ 3*i ] >= maxx ) maxx = points[ 3*i ];
+        if( points[ 3*i ] <= minx ) minx = points[ 3*i ];
+
+        if( points[ 3*i + 1 ] >= maxy ) maxy = points[ 3*i + 1 ];
+        if( points[ 3*i + 1 ] <= miny ) miny = points[ 3*i + 1 ];
+
+        if( points[ 3*i + 2 ] >= maxz ) maxz = points[ 3*i + 2 ];
+        if( points[ 3*i + 2 ] <= minz ) minz = points[ 3*i + 2 ];
+    }
+
+    double dimx = maxx - minx;
+    double dimy = maxy - miny;
+    double dimz = maxz - minz;
+
+    double scale = std::max( std::max( dimx, dimy ), dimz );
+
+    dimx /= scale;
+    dimy /= scale;
+    dimz /= scale;
+
+    maxx /= scale;
+    maxy /= scale;
+    maxz /= scale;
+
+    minx /= scale;
+    miny /= scale;
+    minz /= scale;
+
+    Eigen::Vector4f center = Eigen::Vector4f( ( maxx + minx )*0.5f,( maxy + miny )*0.5f,( maxz + minz )*0.5f, 0.0f  );
+    Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
+
+    matrix.translation() = -center.head< 3 >();
+    matrix.scale( Eigen::Vector3f( 1.0f/scale, 1.0f/scale, 1.0f/scale ) );
+
+
+    std::vector< float > normalized_points;
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Eigen::Vector4f p( ( float )points[ 3*i ], ( float )points[ 3*i + 1 ],( float ) points[ 3*i + 2 ], 1.0f );
+        p = matrix*p;
+
+        normalized_points.push_back( p.x() );
+        normalized_points.push_back( p.y() );
+        normalized_points.push_back( p.z() );
+    }
+
+    return normalized_points;
+
 }
 
 
@@ -162,7 +234,7 @@ Eigen::Affine3f Model3DUtils::normalizePointCloud( float minx, float maxx, float
 }
 
 
-Curve2D Model3DUtils::convertToCurve2D( const std::vector< float >& v )
+Curve2D Model3DUtils::convertToCurve2D( const std::vector< double >& v )
 {
 
     Curve2D curve;

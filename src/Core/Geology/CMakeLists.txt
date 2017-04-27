@@ -18,11 +18,10 @@ set( CMAKE_BUILD_TYPE Debug )
 include_directories("./")
 include_directories("./Models")
 
-set( GEOLOGY_HEADERS Models/Boundary.hpp
-                     Models/BoundaryRenderable.h
-                     Models/CrossSection.hpp
-                     Models/Stratigraphy.hpp
-                     Models/StratigraphyRenderable.hpp )
+set( GEOLOGY_HEADERS Models/Object.h
+                     Models/CrossSection.h
+                     Models/Region1.h
+                     Models/Volume.h )
 set( GEOLOGY_SOURCES  )
 
 						

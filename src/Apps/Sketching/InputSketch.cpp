@@ -19,96 +19,88 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "InputSketch.h"
+#include "Inputsketch.h"
 
-InputSketch::InputSketch ( QColor color ) :QGraphicsPathItem ( )
+InputSketch::InputSketch( QColor color ) :QGraphicsPathItem()
 {
-    prepareGeometryChange ( );
-
+    prepareGeometryChange();
 
     is_visible = false;
     is_inside = false;
 
-
+    created = false;
 	pen_color = color;
     pen_color.setCapStyle( Qt::RoundCap );
     pen_color.setJoinStyle( Qt::RoundJoin );
 
-
-    setFlag ( QGraphicsItem::ItemIsSelectable );
-    setAcceptTouchEvents ( true );
-
-
 }
 
 
-void InputSketch::paint ( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
+void InputSketch::paint( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
+    pen_color.setWidth( 3 );
 
-    pen_color.setWidth ( 3 );
-
-    painter->setRenderHint ( QPainter::Antialiasing );
-    painter->setPen ( pen_color );
-    painter->setBrush ( Qt::NoBrush );
+    painter->setRenderHint( QPainter::Antialiasing );
+    painter->setPen( pen_color );
+    painter->setBrush( Qt::NoBrush );
     painter->drawPath( curve );
-
-
-
 }
 
 
-QRectF InputSketch::boundingRect ( ) const
+QRectF InputSketch::boundingRect() const
 {
-
     return curve.boundingRect();
-
 }
 
 
-void InputSketch::create ( const QPointF &p )
+void InputSketch::create( const QPointF &p )
 {
-    prepareGeometryChange( );
+    if( created == true ) return;
 
+    prepareGeometryChange();
     curve.moveTo( p );
+
+    created = true;
 }
 
 
-void InputSketch::add ( const QPointF &p )
+void InputSketch::add( const QPointF &p )
 {
+    if( created == false ) return;
 
-    prepareGeometryChange ( );
+    prepareGeometryChange();
     curve.lineTo( p );
 }
 
 
-
-
-
-void InputSketch::clear ( )
+void InputSketch::clear( )
 {
     prepareGeometryChange ( );
     curve = QPainterPath();
+
+    created = false;
+
 }
 
 
-void InputSketch::setDone ( bool option )
+void InputSketch::setDone ()
 {
-    done = option;
+    created = false;
 }
 
 
-bool InputSketch::isVisible ( ) const
+bool InputSketch::isVisible() const
 {
     return is_visible;
 }
 
 
-bool InputSketch::isInside ( ) const
+bool InputSketch::isInside() const
 {
     return is_inside;
 }
 
-void InputSketch::isVisible ( bool option )
+void InputSketch::isVisible( bool option )
 {
     is_visible = option;
 }
@@ -123,7 +115,6 @@ void InputSketch::isInside ( bool option )
 void InputSketch::setSketch ( const QVector<QPointF> & _path )
 {
     prepareGeometryChange ( );
-
     curve.addPolygon( _path );
 
 }
@@ -131,7 +122,7 @@ void InputSketch::setSketch ( const QVector<QPointF> & _path )
 
 void InputSketch::setSketch ( const QPolygonF & _path )
 {
-    prepareGeometryChange ( );
+    prepareGeometryChange();
 
     curve = QPainterPath();
     curve.addPolygon( _path );
@@ -139,31 +130,76 @@ void InputSketch::setSketch ( const QPolygonF & _path )
 }
 
 
-QPolygonF InputSketch::getSketch ( ) const
+QPolygonF InputSketch::getSketch() const
+{
+    if( curve.toSubpathPolygons().isEmpty() == true ) return QPolygonF();
+    return curve.toSubpathPolygons()[ 0 ];
+}
+
+
+QPolygonF InputSketch::getSketchFunctionGraph() const
+{
+   QPolygonF curve_ =  getSketch();
+   QPolygonF curve1_;
+
+   if( curve_.size() < 2 ) return curve_;
+
+   curve1_.append( curve_[ 0 ] );
+
+   if( curve_[ 0 ].x() <= curve_[ 1 ].x() )
+   {
+       for( auto i = 0; i < curve_.size() - 1; ++i )
+       {
+            if( curve_[ i ].x() >= curve_[ i + 1 ].x() ) continue;
+            curve1_.append( curve_[ i + 1 ] );
+       }
+
+    }
+   else if( curve_[ 0 ].x() >= curve_[ 1 ].x() )
+   {
+       for( auto i = 0; i < curve_.size() - 1; ++i )
+       {
+            if( curve_[ i ].x() <= curve_[ i + 1 ].x() ) continue;
+            curve1_.append( curve_[ i + 1 ] );
+       }
+
+   }
+
+   return curve1_;
+}
+
+
+void InputSketch::clip( QPolygonF& pol_, int xmin_, int xmax_, int ymin_, int ymax_ )
 {
 
-////    std::cout << "Polygon is close? " << curve.toFillPolygon().isClosed() << "\n" << std::flush;
-    if( curve.toSubpathPolygons().isEmpty() == true ) return QPolygonF();
+    for( int i = 0; i < pol_.size(); ++i )
+    {
+         QPointF p = pol_.at( i );
 
-    return curve.toSubpathPolygons()[ 0 ];//toFillPolygon();
+         if( ( ( p.x() < xmin_ ) || ( p.x() > xmax_ ) ) ||
+                 ( ( p.y() < ymin_ ) || ( p.y() > ymax_ ) ) )
+         {
+             pol_.removeOne( p );
+             i -= 1;
+         }
 
-//    return curve1;
+    }
+
 }
 
 
 void InputSketch::process( const QPointF& p )
 {
-
+    //TODO: review the constants
 
     QList< QPolygonF > subpaths = curve.toSubpathPolygons();
-
-
     if( subpaths.size() < 2 ) return;
+    if( subpaths[ 0 ].size() < 3 ) return;
 
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 1 ] );
     Curve2D whole_curve = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 0 ] );
 
-    bool oversketch_ok = sketchlib_.overSketching( whole_curve, c );
+    bool oversketch_ok = sketchlib.overSketching( whole_curve, c );
 
     curve = QPainterPath();
     curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( whole_curve ) );
@@ -172,7 +208,7 @@ void InputSketch::process( const QPointF& p )
 }
 
 
-QPainterPath InputSketch::shape ( ) const
+QPainterPath InputSketch::shape() const
 {
     return curve;
 }
@@ -184,9 +220,9 @@ void InputSketch::setPen ( const QPen& pen )
 }
 
 
-void InputSketch::setColor(const QColor& _color)
+void InputSketch::setColor( const QColor& _color )
 {
-    pen_color.setColor(_color);
+    pen_color.setColor( _color );
 }
 
 

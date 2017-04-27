@@ -294,7 +294,7 @@ class FlowDiagnosticsInterface
 
     private:
 
-        REGION region;
+        REGION region1;
 		
 };
 

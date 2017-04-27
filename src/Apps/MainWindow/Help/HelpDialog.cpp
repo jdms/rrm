@@ -67,7 +67,7 @@ void HelpDialog::on_lw_userguide_clicked(const QModelIndex &index)
     if( index.row() == 0 )
     {
 
-        QImage image( QString(  QString(current_directory.c_str()) + "manual/ch1.How to sketch and get the surfaces from Sketch.png" )  );
+        QImage image( QString(  QString(current_directory.c_str()) + "manual/ch1.How to sketch and get the surfaces from sketch.png" )  );
 
         if(image.isNull())
         {

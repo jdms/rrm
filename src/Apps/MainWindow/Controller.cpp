@@ -21,361 +21,396 @@
 
 #include "Controller.hpp"
 
-#include "./src/Core/Geology/Models/Boundary.hpp"
-
-#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
-
-
 
 Controller::Controller()
 {
 
-    current_reconstruction = ReconstructionMode::EXTRUSION;
+    scene3d = nullptr;
+    sketch_scene = nullptr;
+    path_scene = nullptr;
+    object_tree = nullptr;
 
-    current_crosssection = 0.0f;
-    current_stratigraphy = 0;
+    disc_width = 10;
+    disc_depth = 10;
+    step_depth = 10;
+
+    current_depth_csection = 0.0f;
+
+    current_object_type = Object::TYPE::Stratigraphy;
+    current_object = 0;
+
+    RuleStatus::RA_SKETCHING;
+
+}
+
+void Controller::init()
+{
+    addInputVolume();
+    initRulesProcessor();
+
+    setCurrentCrossSection( input_volume.getDepth() );
+
+    createObject();
 
 }
 
 
-
-
-void Controller::addCrossSection( const float& d )
+void Controller::addInputVolume()
 {
+    input_volume.initialize();
+    scene3d->addVolume( &input_volume );
+    sketch_scene->setVolume( &input_volume );
+    path_scene->setVolume( &input_volume );
 
-    CrossSection* cross_section = new CrossSection();
-    cross_section->setDepth( d );
-
-    crosssections_list[ d ] = cross_section;
-    current_crosssection = d;
-
+    ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
+    object_tree->addInputVolume( item );
 }
 
 
 
-bool Controller::addBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth )
+void Controller::addCurrentCrossSectionToList()
 {
 
-    if( crosssections_list.empty() == true ) return false;
+}
 
-
-    CrossSection* cross_section = crosssections_list[ current_crosssection ];
-    Boundary* boundary_data;
-
-
-    if( cross_section->hasBoundary() == false )
+void Controller::setCurrentCrossSection( double depth_ )
+{
+    if( isValidCrossSection( depth_ ) == false )
     {
-        boundary_data = new Boundary();
+        std::cout << "Cross-section out of range" <<std::endl;
+        return;
     }
-    else
+
+    current_depth_csection = depth_;
+    updateScenesWithCurrentCrossSection();
+
+
+}
+
+bool Controller::getCurrentCrossSectionDimensions( double& width_, double& height_ )
+{
+    if( isCrossSectionAdded( current_depth_csection ) == false )
+        return false;
+
+    CrossSection1& csection_ = depth_of_cross_sections[ current_depth_csection ];
+    csection_.getDimensions( width_, height_ );
+    return true;
+}
+
+
+
+bool Controller::setNameofObjectofId( std::size_t id_, const std::string& name_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    obj->setName( name_ );
+    return true;
+}
+
+bool Controller::getNameofObjectofId( std::size_t id_, std::string& name_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    name_ = obj->getName();
+    return true;
+}
+
+bool Controller::setVisibilityofObjectofId( std::size_t id_, bool option )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    obj->setVisibility( option );
+    return true;
+}
+
+bool Controller::getVisibilityofObjectofId( std::size_t id_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj = objects[ id_ ];
+    return obj->getVisibility();
+}
+
+void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
+{
+    if( isValidObject( current_object ) == false ) return;
+
+    Object* const& obj_ = objects[ current_object ];
+    obj_->addInputCurve( current_depth_csection, curve_ );
+
+    addCurrentObjectToCurrentCrossSection();
+    setCurrentCrossSectionAsUsed();
+    addCurrentObjectToScenes();
+
+}
+
+bool Controller::getAllInputCurvesofCurrentObject( std::vector< Curve2D >& input_curves_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* const& obj_ = objects[ current_object ];
+    input_curves_ = obj_->getAllInputCurves();
+    return true;
+
+}
+
+std::size_t Controller::getNumberofInputCurvesinObjectofId( std::size_t id_ )
+{
+    if( isValidObject( id_ ) == false ) return false;
+
+    Object* obj_ = objects[ id_ ];
+    return obj_->getNumberofInputCurves();
+}
+
+bool Controller::getAllCrossSectionsRelatedtoCurrentObject( std::vector< double >& cross_sections_related_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* const& obj_ = objects[ current_object ];
+    cross_sections_related_ = obj_->getAllCrossSectionsRelatedtoObject();
+    return true;
+}
+
+bool Controller::setPathCurvetoCurrentObject( const Curve2D& path_curve_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* const& obj_ = objects[ current_object ];
+    obj_->setPathCurve( path_curve_ );
+    return true;
+}
+
+bool Controller::getPathCurveofCurrentObject( Curve2D& path_ )
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+
+    Object* const& obj_ = objects[ current_object ];
+    path_ =  obj_->getPathCurve();
+    return true;
+}
+
+bool Controller::interpolate()
+{
+
+    if( isValidObject( current_object ) == false ) return false;
+
+    Object* const& obj_ = objects[ current_object ];
+    std::vector< std::tuple< Curve2D, double > > curves_ = obj_->getAllCurves();
+
+
+    bool interpolate_ok = false;
+
+    if( obj_->getType() == Object::TYPE::Stratigraphy )
     {
-        boundary_data = cross_section->getBoundary();
+        interpolate_ok = rules_processor.createSurface( obj_->getId(), curves_ );
+    }
+    else if( obj_->getType() == Object::TYPE::Channel )
+    {
+        Curve2D path_ = obj_->getPathCurve();
+        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
+        interpolate_ok = rules_processor.createChannel( obj_->getId(), curve_, path_ );
     }
 
-
-    boundary_data->edit( origin_x, origin_y, origin_z, width, height, depth );
-    cross_section->setBoundary( boundary_data );
+    if( interpolate_ok == false ) return false;
 
 
-    return true;
-
-}
-
-
-void Controller::editBoundary( const float& origin_x, const float& origin_y, const float& origin_z, const float& width, const float& height, const float& depth )
-{
-
-    CrossSection* cross_section = crosssections_list[ current_crosssection ];
-    Boundary* boundary_data = cross_section->getBoundary();
-
-
-    boundary_data->edit( origin_x, origin_y, origin_z, width, height, depth );
-    cross_section->setBoundary( boundary_data );
-
-    update();
-
-}
-
-
-Boundary* Controller::getCurrentBoundary()
-{
-
-    CrossSection* cross_section = crosssections_list[ current_crosssection ];
-    return cross_section->getBoundary();
-
-}
-
-
-
-
-void Controller::initRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
-{
-
-//    rules_processor.setOrigin( orig_x, orig_y, orig_z );
-//    rules_processor.setLenght( width, height, depth );
-
-}
-
-
-void Controller::editRulesProcessor( const float& orig_x, const float& orig_y, const float& orig_z, const float& width, const float& height, const float& depth )
-{
-
-//    rules_processor.setOrigin( orig_x, orig_y, orig_z );
-//    rules_processor.setLenght( width, height, depth );
-
-}
-
-
-
-
-bool Controller::addCurve( const Curve2D& curve )
-{
-
-    if( stratigraphics_list.empty() == true )
-        addStratigraphy();
-
-    Stratigraphy* strat = stratigraphics_list[ current_stratigraphy ];
-    strat->addCurve( current_crosssection, curve );
-
-
-    CrossSection* cross_section = crosssections_list[ current_crosssection ];
-    cross_section->addStratigraphy( strat );
-
+    updateObjects();
+    createObject();
 
     return true;
 
-
 }
 
 
-bool Controller::addStratigraphy()
+
+void Controller::updateRule( const std::string &rule_ )
 {
 
-    Stratigraphy* strat = new Stratigraphy();
-
-    current_stratigraphy = strat->getId();
-    stratigraphics_list[ current_stratigraphy ] = strat;
-
-    return true;
-
+    if( rule_.compare( "RA_SKETCHING" ) == 0 )
+    {
+        rules_processor.removeAbove();
+        std::cout << "Remove above\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RAI_SKETCHING" ) == 0 )
+    {
+        rules_processor.removeAboveIntersection();
+        std::cout << "Remove above intersection\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RB_SKETCHING" ) == 0 )
+    {
+        rules_processor.removeBelow();
+        std::cout << "Remove below\n\n" <<std::flush;
+    }
+    else if( rule_.compare( "RBI_SKETCHING" ) == 0 )
+    {
+        rules_processor.removeBelowIntersection();
+        std::cout << "Remove below intersection\n\n" <<std::flush;
+    }
 
 }
 
 
-Stratigraphy* Controller::getCurrentStratigraphy()
+
+bool Controller::enableCreateAbove( bool status_ )
+{
+    if( status_ == true )
+    {
+        std::vector< std::size_t > objects_;
+
+        bool ok_ = rules_processor.requestCreateAbove( objects_ );
+        sketch_scene->setAllowedObjects( objects_ );
+        current_region = RequestRegion::ABOVE;
+        return true;
+    }
+
+    rules_processor.stopDefineAbove();
+    return false;
+}
+
+
+
+void Controller::defineSketchAbove( std::size_t surface_id_ )
+{
+    rules_processor.defineAbove( surface_id_ );
+    current_region = RequestRegion::NONE;
+}
+
+
+
+bool Controller::enableCreateBelow( bool status_ )
+{
+    if( status_ == true )
+    {
+        std::vector< std::size_t > objects_;
+        bool ok = rules_processor.requestCreateBelow( objects_ );
+
+        sketch_scene->setAllowedObjects( objects_ );
+        current_region = RequestRegion::BELOW;
+        return true;
+    }
+
+    rules_processor.stopDefineBelow();
+    return false;
+}
+
+void Controller::defineSketchBelow( std::size_t surface_id_ )
+{
+    rules_processor.defineBelow( surface_id_ );
+    current_region = RequestRegion::NONE;
+}
+
+
+void Controller::sendSelectedSurface( const std::size_t& id_ )
+{
+    if( current_region == RequestRegion::ABOVE )
+        rules_processor.defineAbove( id_ );
+    else if( current_region == RequestRegion::BELOW )
+        rules_processor.defineBelow( id_ );
+
+}
+
+void Controller::updateObjects()
 {
 
-    if( stratigraphics_list.empty() == true ) return 0;
+    for( auto &it_: objects )
+    {
 
-    return stratigraphics_list[ current_stratigraphy ];
+        Object* obj_ = it_.second;
+        std::vector< double > csections_ = obj_->getAllCrossSectionsRelatedtoObject();
 
-}
+        for( auto d_: csections_ )
+        {
+            std::vector< float > curve_vertices;
+            std::vector< std::size_t > curve_edges;
 
+            bool getcurve_ok = rules_processor.getCrossSection( obj_->getId(),
+                                              rowIndexfromDepth( d_ ), curve_vertices, curve_edges );
 
-bool Controller::interpolateStratigraphy( const std::vector< size_t >& lower_bound, const std::vector< size_t >& upper_bound )
-{
-
-    if( stratigraphics_list.empty() == true ) return false;
-
-
-    Stratigraphy* strat = stratigraphics_list[ current_stratigraphy ];
-    Curve2D* c = strat->getCurve( current_crosssection );
-
-
-//    bool status_ok;
-
-//    if( ( lower_bound.empty() == true ) && ( upper_bound.empty() == true ) )
-//        status_ok = rules_processor.update( *c, strat->getId() );
-
-//    else
-//        status_ok = rules_processor.update( *c, strat->getId(), lower_bound, upper_bound );
+            if( getcurve_ok  == false )
+            {
+                std::cout << "Curve not valid \n\n" << std::flush;
+                obj_->clearCurve( d_ );
+                continue;
+            }
 
 
+            //TODO: change addInputCurve to updateInputCurve
+            std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
+            obj_->addInputCurve( d_, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
+            obj_->addInputEdges( d_, curve_edges );
+        }
 
-//    if( status_ok == false ) return false;
-
-
-//    bool can_undo = rules_processor.canUndo();
-//    emit enableUndo( can_undo );
-
-//    bool can_redo = rules_processor.canRedo();
-//    emit enableRedo( can_redo );
-
-
-    update();
-    return true;
-
-}
+        std::vector< float > surface_vertices;
+        std::vector< std::size_t > surface_faces;
 
 
-size_t Controller::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
-{
-    return 0;//rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
-}
+        bool getmesh_ok = rules_processor.getMesh( obj_->getId(), surface_vertices, surface_faces );
+        if( getmesh_ok  == false )
+        {
+            std::cout << "Mesh not valid \n\n" << std::flush;
+            obj_->clearSurface();
+        }
 
+        std::vector< double > surface_vertices1( surface_vertices.begin(), surface_vertices.end() );
+        obj_->updateSurface( surface_vertices1, surface_faces );
 
-
-
-bool Controller::defineSketchingAbove( std::vector< size_t >& allowed )
-{
-    return false;//rules_processor.requestDefineAbove( allowed );
+    }
 
 }
-
-
-bool Controller::defineSketchingBelow( std::vector< size_t >& allowed )
-{
-    return false;//rules_processor.requestDefineBelow( allowed );
-}
-
-
-
-
-bool Controller::defineRegionAbove( const std::vector< size_t >& selections )
-{
-    if( selections.empty() == true ) return false;
-    return true;//rules_processor.defineAbove( selections[ 0 ] );
-}
-
-
-bool Controller::defineRegionBelow( const std::vector< size_t >& selections )
-{
-    if( selections.empty() == true ) return false;
-    return true;//rules_processor.defineBelow( selections[ 0 ] );
-}
-
-
-bool Controller::stopSketchingAbove()
-{
-//    rules_processor.stopDefineAbove();
-    return true;
-}
-
-
-bool Controller::stopSketchingBelow()
-{
-//    rules_processor.stopDefineBelow();
-    return true;
-}
-
-
-
-
-void Controller::setStratigraphicRule( const std::string& rule )
-{
-
-//    if( rule.compare( "RA_SKETCHING" ) == 0 )
-//        rules_processor.removeAbove();
-
-//    else if( rule.compare( "RAI_SKETCHING" ) == 0 )
-//        rules_processor.removeAboveIntersection();
-
-//    else if( rule.compare( "RB_SKETCHING" ) == 0 )
-//        rules_processor.removeBelow();
-
-//    else if( rule.compare( "RBI_SKETCHING" ) == 0 )
-//        rules_processor.removeBelowIntersection();
-
-}
-
-
-void Controller::changeResolution( const int numI_ , const int numJ_ )
-{
-
-    size_t numI = numI_;
-    size_t numJ = numJ_;
-
-//    rules_processor.requestChangeDiscretizationLevel( numI, numJ );
-    update();
-
-}
-
-
-void Controller::undo()
-{
-
-//    bool undo_ok = rules_processor.undo();
-//    update();
-
-
-//    bool can_undo = rules_processor.canUndo();
-//    emit enableUndo( can_undo );
-
-//    bool can_redo = rules_processor.canRedo();
-//    emit enableRedo( can_redo );
-
-}
-
-
-void Controller::redo()
-{
-//    bool redo_ok = rules_processor.redo();
-    update();
-
-
-//    bool can_undo = rules_processor.canUndo();
-//    emit enableUndo( can_undo );
-
-//    bool can_redo = rules_processor.canRedo();
-//    emit enableRedo( can_redo );
-
-}
-
-
-
 
 void Controller::clear()
 {
-    current_reconstruction = ReconstructionMode::EXTRUSION;
 
-    current_crosssection = 0.0f;
-    current_stratigraphy = 0;
+    //    if( scene3d != nullptr )
+    //        scene3d->clearScene();
 
-    stratigraphics_list.clear();
-    crosssections_list.clear();
-
-//    rules_processor.clear();
-
-}
+    //    if( sketch_scene != nullptr )
+    //        sketch_scene->clearScene();
 
 
+    //    if( path_scene != nullptr )
+    //        path_scene->clearScene();
 
-void Controller::update()
-{
 
-    std::map< size_t, Stratigraphy* >::iterator it;
+    object_tree->clear();
 
-    for( it = stratigraphics_list.begin(); it != stratigraphics_list.end(); ++it )
+    input_volume.clear();
+    disc_width = 10;
+    disc_depth = 10;
+    step_depth = 10;
+
+    current_depth_csection = 0;
+    used_cross_sections.clear();
+
+    current_object_type = Object::TYPE::Stratigraphy;
+    current_object = 0;
+
+    for( auto &it: depth_of_cross_sections )
     {
-
-        std::vector< float > curve_vertices;
-        std::vector< size_t > curve_edges;
-
-        std::vector< float > surface_vertices;
-        std::vector< size_t > surface_faces;
-
-
-        Stratigraphy* strat = it->second;
-//        bool getcurve_ok = rules_processor.getCurve( strat->getId(), curve_vertices, curve_edges );
-//        bool getmesh_ok = rules_processor.getMesh ( strat->getId(), surface_vertices, surface_faces );
-
-
-
-//        if( ( getcurve_ok == false ) || ( getmesh_ok  == false ) )
-//        {
-//            strat->clear();
-//            continue;
-//        }
-
-
-        strat->updateCurve( current_crosssection, Model3DUtils::convertToCurve2D( curve_vertices ) );
-        strat->updateCurveWireframe( curve_edges );
-        strat->updateSurface( surface_vertices, surface_faces );
-
+        (it.second).clear();
     }
-
-    emit updateScene();
-
+    depth_of_cross_sections.clear();
 
 
+    for( auto &it: objects )
+    {
+        (it.second)->clear();
+        delete it.second;
+    }
+    objects.clear();
+
+    for( auto &it: regions )
+    {
+        (it.second)->clear();
+        delete it.second;
+    }
+    regions.clear();
+
+    current_rule = RuleStatus::RA_SKETCHING;
+    rules_processor.clear();
 }
+
