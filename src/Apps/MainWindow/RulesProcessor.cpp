@@ -58,12 +58,12 @@ std::size_t RulesProcessor::getDepthResolution()
 
 bool RulesProcessor::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
 { 
-    return modeller_.requestDefineAbove(eligible_surfaces);
+    return modeller_.requestCreateAbove(eligible_surfaces);
 }
 
 bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
 { 
-    return modeller_.requestDefineBelow(eligible_surfaces);
+    return modeller_.requestCreateBelow(eligible_surfaces);
 }
 
 
@@ -132,7 +132,7 @@ void RulesProcessor::clear()
 //
 bool RulesProcessor::defineAbove( size_t surface_index )
 { 
-    return modeller_.defineAbove(surface_index); 
+    return modeller_.createAbove(surface_index); 
 }
 
 
@@ -143,7 +143,7 @@ bool RulesProcessor::defineAbove( size_t surface_index )
 //
 void RulesProcessor::stopDefineAbove()
 {
-    return modeller_.stopDefineAbove();
+    return modeller_.stopCreateAbove();
 }
 
 //
@@ -152,7 +152,7 @@ void RulesProcessor::stopDefineAbove()
 //
 bool RulesProcessor::defineBelow( size_t surface_index )
 { 
-    return modeller_.defineBelow(surface_index); 
+    return modeller_.createBelow(surface_index); 
 }
 
 //
@@ -162,17 +162,17 @@ bool RulesProcessor::defineBelow( size_t surface_index )
 //
 void RulesProcessor::stopDefineBelow()
 {
-    modeller_.stopDefineBelow();
+    modeller_.stopCreateBelow();
 }
 
 bool RulesProcessor::defineAboveIsActive()
 { 
-    return modeller_.defineAboveIsActive(); 
+    return modeller_.createAboveIsActive(); 
 }
 
 bool RulesProcessor::defineBelowIsActive()
 { 
-    return modeller_.defineBelowIsActive();
+    return modeller_.createBelowIsActive();
 }
 
 
