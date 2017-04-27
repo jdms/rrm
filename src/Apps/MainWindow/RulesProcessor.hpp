@@ -193,12 +193,12 @@
 
         if ( num_cross_sections > 1 )
         {
-            status = modeller_.insertSurface( surface_index, surface );
+            status = modeller_.createSurface( surface_index, surface );
         }
 
         else if ( num_cross_sections == 1 )
         {
-            status = modeller_.insertExtrudedSurface( surface_index, surface );
+            status = modeller_.createExtrudedSurface( surface_index, surface );
         }
 
         return status;

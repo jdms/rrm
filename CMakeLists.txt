@@ -7,7 +7,10 @@ project( RRM )
 # Options
 #####################################################################
 
-set( CMAKE_BUILD_TYPE DEBUG )
+set(RRM_BUILD_TYPE "Release" CACHE STRING
+    "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
+set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 
@@ -170,10 +173,16 @@ set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 set(STRATMOD_CMAKE_ARGS 
     -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
     -DBUILD_SHARED_LIBRARY=OFF
+    -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
     )
 
 if(BUILD_USING_OPENMP AND APPLE)
-    set(STRATMOD_CMAKE_ARGS -DBUILD_USING_OPENMP=ON -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
+    set(STRATMOD_CMAKE_ARGS 
+        -DBUILD_USING_OPENMP=ON 
+        -DBUILD_SHARED_LIBRARY=OFF
+        -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
+        )
 endif()
 
 ExternalProject_Add(
