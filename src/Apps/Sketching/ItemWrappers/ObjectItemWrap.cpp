@@ -67,6 +67,11 @@ void ObjectItemWrap::clearCurve()
 void ObjectItemWrap::setObjectRaw( Object* obj_, const double depth_  )
 {
     object = obj_;
+
+    int red_ = 0, green_ = 0, blue_ = 0;
+    object->getColor( red_, green_, blue_ );
+    current_color.setRgb( red_, green_, blue_ );
+
     updateCrossSection( depth_ );
 }
 

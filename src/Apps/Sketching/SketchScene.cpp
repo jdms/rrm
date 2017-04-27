@@ -130,9 +130,7 @@ void SketchScene::addObject( Object* obj_ )
     auto search = object_list.find( obj_->getId() );
     if( search == object_list.end() )
     {
-        obj_wrapper_ = new ObjectItemWrap();
-        obj_wrapper_->setColor( current_color );
-        obj_wrapper_->setState( ObjectItemWrap::State::NONE );
+        obj_wrapper_ = new ObjectItemWrap();        
         addItem( obj_wrapper_ );
 
         object_list[ obj_->getId() ] = obj_wrapper_;
@@ -142,6 +140,7 @@ void SketchScene::addObject( Object* obj_ )
 
 
     obj_wrapper_->setObjectRaw( obj_, csection.getZCoordinate() );
+    obj_wrapper_->setState( ObjectItemWrap::State::NONE );
 
     update();
 }
@@ -247,8 +246,8 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         if( current_interaction == UserInteraction::SKETCHING )
         {
             sketch = new InputSketch( current_color );
-            addItem( sketch );
             sketch->create( event->scenePos() );
+            addItem( sketch );
         }
 
         else if( current_interaction == UserInteraction::EDITING_BOUNDARY )

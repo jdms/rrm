@@ -48,7 +48,7 @@ class SketchScene: public QGraphicsScene
         inline void init(){}
 
 
-        inline void setCrossSection( const CrossSection1& csection_ )
+        inline void setCrossSection( const CrossSection& csection_ )
         {
             csection = csection_;
             drawCrossSectionObjects();
@@ -89,6 +89,13 @@ class SketchScene: public QGraphicsScene
             }
 
             allowed_objects.clear();
+            update();
+        }
+
+
+        inline void unselectObject( const std::size_t id_ )
+        {
+            object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
             update();
         }
 
@@ -147,7 +154,7 @@ class SketchScene: public QGraphicsScene
         InputSketch *sketch;
         QPointF boundary_anchor;
 
-        CrossSection1 csection;
+        CrossSection csection;
         VolumeItemWrapper volume;
         QGraphicsPixmapItem* csection_image;
 

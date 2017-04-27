@@ -49,7 +49,6 @@ MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )//, ui( new U
 
 MainWindow::~MainWindow()
 {
-//    delete ui;
 }
 
 
@@ -211,12 +210,26 @@ void MainWindow::createWindow()
     ac_sketch_above = new QAction( "Sketch Above", this );
     ac_sketch_above->setCheckable( true );
     connect( ac_sketch_above, &QAction::triggered,
-             [=]( bool status_ ){ controller->enableCreateAbove( status_ ); } );
+             [=]( bool status_ ){
+                                bool define_above = controller->enableCreateAbove( status_ );
+                                if( define_above == false )
+                                {
+                                    std::size_t id_ = controller->getUpperSurface();
+                                    sketch_scene.unselectObject( id_ );
+                                }
+
+    } );
 
     ac_sketch_below = new QAction( "Sketch Below", this );
     ac_sketch_below->setCheckable( true );
     connect( ac_sketch_below, &QAction::triggered,
-             [=]( bool status_ ){ controller->enableCreateBelow( status_ ); } );
+             [=]( bool status_ ){ bool define_below = controller->enableCreateBelow( status_ );
+                                  if( define_below == false )
+                                  {
+                                      std::size_t id_ = controller->getLowerSurface();
+                                      sketch_scene.unselectObject( id_ );
+                                  }
+    } );
 
 
 
@@ -266,13 +279,18 @@ void MainWindow::createWindow()
     connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
 
     connect( &sketch_scene, &SketchScene::interpolateObject, [=](){
-                                                controller->interpolate();
-                                                emit updateScenes();
+                                                bool created = controller->interpolate();
+                                                if( created == true )
+                                                {
+                                                    randomColor( true );
+                                                    controller->createObject();
+                                                }
 
                                                 ac_undo->setEnabled( controller->canUndo() );
                                                 ac_redo->setEnabled( controller->canRedo() );
 
-                                                randomColor( true );  } );
+                                                emit updateScenes();
+                                            } );
 
 
     cd_pickercolor = new QColorDialog();
@@ -411,6 +429,9 @@ void MainWindow::getCurrentDirectory()
 
 void MainWindow::run_app()
 {
+
+    randomColor( true );
+
     controller->init();
 
     std::size_t depth_ = 1;
@@ -419,9 +440,6 @@ void MainWindow::run_app()
     sl_depth_csection->setMinimum( 0 );
     sl_depth_csection->setMaximum( (int)depth_ );
     sl_depth_csection->setValue( depth_ );
-
-    randomColor( true );
-
 
     canvas2d->update();
     canvas3d->update();
