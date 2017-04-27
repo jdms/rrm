@@ -37,6 +37,7 @@ class Model3DUtils
 	public:
 	
 	static std::vector< float > normalizePointCloud( const std::vector< float >& points );
+    static std::vector< float > normalizePointCloud( const std::vector< double >& points );
     static std::vector< float > normalizePointCloud( const std::vector< Eigen::Vector3f >& points );
     static Eigen::Affine3f normalizePointCloud( float minx, float maxx, float miny, float maxy, float minz, float maxz );
     static Eigen::Vector3f normalizePointCloud( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m );

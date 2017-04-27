@@ -14,42 +14,19 @@ include_directories (
 ###############################################
   
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
-                        MainWindow/Canvas3D.h
-                        MainWindow/Scene.h
                         MainWindow/Controller.hpp
-                        MainWindow/Volume.h
-                        MainWindow/CrossSection.h
-                        MainWindow/Object.h
-                        MainWindow/Region1.h
-                        MainWindow/Scene3D.h
-                        MainWindow/SketchCanvas.h
-                        MainWindow/SketchScene.h
-                        MainWindow/VolumeItemWrapper.h
-                        MainWindow/ObjectItemWrap.h
-                        MainWindow/VolumeOpenGLWrap.h
-                        MainWindow/ObjectOpenGLWrapper.h
-                        MainWindow/ObjectTreeItem.h
-                        MainWindow/ObjectTree.h
                         MainWindow/RulesProcessor.hpp
-                        MainWindow/CanvasPath.h
-                        MainWindow/PathScene.h
-                        MainWindow/CrossSectionItemWrapper.h
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
+                        MainWindow/Object_Tree/ObjectTreeItem.h
+                        MainWindow/Object_Tree/ObjectTree.h
                         MainWindow/Help/HelpDialog.h
                         MainWindow/About/AboutWidget.hpp )
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
-                            MainWindow/Canvas3D.h
-                            MainWindow/Scene.h
                             MainWindow/Controller.hpp
-                            MainWindow/Scene3D.h
-                            MainWindow/SketchScene.h
-                            MainWindow/SketchCanvas.h
-                            MainWindow/ObjectTree.h
-                            MainWindow/CanvasPath.h
-                            MainWindow/PathScene.h
+                            MainWindow/Object_Tree/ObjectTree.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
 
@@ -61,24 +38,12 @@ set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/MainWindow.cpp
-                        MainWindow/Scene.cpp
                         MainWindow/Controller.cpp
-                        MainWindow/Canvas3D.cpp
-                        MainWindow/Scene3D.cpp
-                        MainWindow/SketchCanvas.cpp
-                        MainWindow/SketchScene.cpp
-                        MainWindow/VolumeItemWrapper.cpp
-                        MainWindow/ObjectItemWrap.cpp
-                        MainWindow/VolumeOpenGLWrap.cpp
-                        MainWindow/ObjectOpenGLWrapper.cpp
-                        MainWindow/TreeItem.cpp
-                        MainWindow/ObjectTree.cpp
-                        MainWindow/CanvasPath.cpp
-                        MainWindow/PathScene.cpp
-                        MainWindow/CrossSectionItemWrapper.cpp
                         MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
+                        MainWindow/Object_Tree/ObjectTreeItem.cpp
+                        MainWindow/Object_Tree/ObjectTree.cpp
                         MainWindow/Help/HelpDialog.cpp
                         MainWindow/About/AboutWidget.cpp )
 
@@ -89,52 +54,60 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 # Main source -- Sketching SubDirectory
 ###############################################
 
-set( SKETCHING_HEADERS Sketching/StratigraphicItem.hpp
-                       Sketching/Inputsketch.h
-                       Sketching/PolyQtUtils.hpp
-                       Sketching/BoundaryItem2D.hpp
-                       Sketching/SketchingWindow.h
-                       Sketching/SketchingCanvas.h 
-                       Sketching/RegionItem.hpp )
+set( SKETCHING_HEADERS        Sketching/Inputsketch.h
+                              Sketching/CanvasPath.h
+                              Sketching/PathScene.h
+                              Sketching/SketchCanvas.h
+                              Sketching/SketchScene.h
+                              Sketching/ItemWrappers/ObjectItemWrap.h
+                              Sketching/ItemWrappers/VolumeItemWrapper.h
+                              Sketching/ItemWrappers/CrossSectionItemWrapper.h
+                              Sketching/ItemWrappers/RegionItem.hpp
+                              Sketching/PolyQtUtils.hpp )
 
 
-set( SKETCHING_MOC_HEADERS  Sketching/SketchingWindow.h						
-                            Sketching/SketchingCanvas.h  )
+set( SKETCHING_MOC_HEADERS    Sketching/CanvasPath.h
+                              Sketching/PathScene.h
+                              Sketching/SketchCanvas.h
+                              Sketching/SketchScene.h )
 
 
 
-set( SKETCHING_SOURCES  Sketching/StratigraphicItem.cpp                    
-                        Sketching/Inputsketch.cpp
-                        Sketching/PolyQtUtils.cpp
-                        Sketching/BoundaryItem2D.cpp
-                        Sketching/SketchingWindow.cpp
-                        Sketching/SketchingCanvas.cpp
-                        Sketching/RegionItem.cpp )
+set( SKETCHING_SOURCES        Sketching/Inputsketch.cpp
+                              Sketching/CanvasPath.cpp
+                              Sketching/PathScene.cpp
+                              Sketching/SketchCanvas.cpp
+                              Sketching/SketchScene.cpp
+                              Sketching/ItemWrappers/ObjectItemWrap.cpp
+                              Sketching/ItemWrappers/VolumeItemWrapper.cpp
+                              Sketching/ItemWrappers/RegionItem.cpp
+                              Sketching/PolyQtUtils.cpp )
 
 
 ###############################################
 # Main source -- 3dView SubDirectory
 ###############################################
 
-set( 3DVIEW_HEADERS 3dView/BoundingBox3D.h
-                       3dView/View3DCanvas.hpp
-                       3dView/Surface.h
-                       3dView/View3DWindow.hpp
+set( 3DVIEW_HEADERS    3dView/Canvas3D.h
+                       3dView/Scene3D.h
                        3dView/Model3DUtils.hpp
+                       3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
+                       3dView/OpenGLWrappers/VolumeOpenGLWrap.h
+                       Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
                        3dView/GradientBackgroundShader.hpp )
 
 
-set( 3DVIEW_MOC_HEADERS  3dView/View3DCanvas.hpp
-                         3dView/View3DWindow.hpp )
+set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
+                         3dView/Scene3D.h )
 
 
 
-set( 3DVIEW_SOURCES 3dView/BoundingBox3D.cpp
-                    3dView/View3DCanvas.cpp
-                    3dView/Surface.cpp
-                    3dView/View3DWindow.cpp
-                    3dView/Model3DUtils.cpp
-                    3dView/GradientBackgroundShader.cpp )
+set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
+                        3dView/Scene3D.cpp
+                        3dView/Model3DUtils.cpp
+                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
+                        3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
+                        3dView/GradientBackgroundShader.cpp )
 
 
 ###############################################

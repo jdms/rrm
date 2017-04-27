@@ -32,45 +32,26 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QFormLayout>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QFileDialog>
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QToolBox>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QStyle>
+#include <QScreen>
 
 #include <QKeyEvent>
 #include <QKeySequence>
 #include <QShortcut>
 
-#include <QtGui/QDesktopServices>
-#include <QtCore/QFileInfo>
-#include <QtCore/QUrl>
-
-//#include "MainWindow/About/AboutWidget.hpp"
-
-//#include "3dView/View3DWindow.hpp"
-//#include "Sketching/SketchingWindow.h"
-//#include "Simulator/FlowWindow.h"
-
-
-
 
 #include "Help/HelpDialog.h"
-#include "Canvas3D.h"
-#include "Controller.hpp"
-#include "SketchCanvas.h"
-#include "SketchScene.h"
-#include "CanvasPath.h"
-#include "PathScene.h"
-#include "ObjectTree.h"
+#include "Object_Tree/ObjectTree.h"
 
+#include "Controller.hpp"
+#include "Sketching/SketchCanvas.h"
+#include "Sketching/SketchScene.h"
+#include "Sketching/CanvasPath.h"
+#include "Sketching/PathScene.h"
+
+#include "3dView/Canvas3D.h"
+#include "3dView/Scene3d.h"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -83,8 +64,9 @@ namespace Ui {
 class MainWindow;
 }
 
+#include "ui_MainWindow.h"
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, private Ui::MainWindow
     {
         Q_OBJECT
 
@@ -122,23 +104,15 @@ class MainWindow : public QMainWindow
         void createWindow();
         void setupWindowProperties();
 
+        void create3dSection();
+        void createObjectTreeSection();
+        void createSketchSection();
 
 
         void createActions();
         void createMenuBar();
         void createMainWindowActions();
 
-        void create3DViewModule();
-        void create3DWindowMenuBar();
-        void create3DWindowActions();
-
-        void createSketchingModule();
-        void createSketchingMenuBar();
-        void createSketchingActions();
-
-        void createFlowDiagnosticsModule();
-        void createFlowDiagnosticsActions();
-        void createFlowDiagnosticsMenuBar();
 
         void keyPressEvent( QKeyEvent *event );
 
@@ -158,7 +132,6 @@ class MainWindow : public QMainWindow
     protected slots:
 
         void clear();
-        void undo();
 
 
 
@@ -166,7 +139,6 @@ class MainWindow : public QMainWindow
 
 
         void exportTo();
-        void initScene();
 
 
     protected:
@@ -174,52 +146,19 @@ class MainWindow : public QMainWindow
         Controller* controller;
 
 
-/*
-        bool scene_initialized;
-        Scene* scene;
-
-        HelpDialog help;
-        AboutWidget * aboutRRM;
-
-
-
-        QMenu *mn_file;
-        QAction *ac_exit;
-
-        QMenu *mn_help;
-        QAction *ac_rrmGuide;
-        QAction *ac_about;
-
-        QMenu *mn_windows;
-        QAction *ac_wdwsketching;
-        QAction *ac_wdwseismic;
-        QAction *ac_3dview;
-
-
-        // Sketching Module
-        QDockWidget* dw_sketching;
-        SketchingWindow *sketching_window;
-
-
-        // 3D View Module
-        QDockWidget* dw_3dview;
-        View3DWindow *view3d_window;
-
-
-        //Flow Diagostics Module
-
-        QDockWidget* dw_flowdiagnostics;
-        FlowWindow *flow_window;
-        QAction *ac_flowwindow;
-
-*/
-
-
-
 private:
 
-        Ui::MainWindow *ui;
+//        Ui::MainWindow *ui;
+
+        int app_height;
+        int app_width;
+
+        int app_orig_x;
+        int app_orig_y;
+
         QSlider* sl_depth_csection;
+
+        QDockWidget* dw_object_tree;
         ObjectTree* object_tree;
 
         Scene3D scene3d;
@@ -235,12 +174,36 @@ private:
 
         QAction* ac_undo;
         QAction* ac_redo;
-        QAction* ac_discard_sketch;
+
         QAction* ac_screenshot;
+        QAction* ac_clear;
 
 
+        QAction* ac_stratigraphy;
+        QAction* ac_channel;
+        QActionGroup* ag_surface_type;
+
+        QAction* ac_sketch_above;
+        QAction* ac_sketch_below;
+
+        QAction* ac_remove_above;
+        QAction* ac_remove_above_int;
+        QAction* ac_remove_below;
+        QAction* ac_remove_below_int;
+        QActionGroup* ag_stratigraphy_rules;
+
+        QAction* ac_discard_sketch;
+        QAction* ac_commit_sketch;
+        QAction* ac_interpolate;
 
 
+        QWidgetAction *ac_sketchcolor;
+        QMenu *mn_pickercolor;
+        QColorDialog *cd_pickercolor;
+        QToolButton *tbt_colorsketch;
+
+        QToolBar* tb_general;
+        QToolBar* tb_sketch;
 
 
 };

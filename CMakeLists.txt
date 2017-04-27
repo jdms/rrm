@@ -179,7 +179,7 @@ endif()
 ExternalProject_Add(
     StratModLibBuild
     DOWNLOAD_COMMAND git submodule update --init
-    UPDATE_COMMAND git submodule update -f
+    UPDATE_COMMAND git submodule update
     SOURCE_DIR ${STRATMOD_SOURCE}
     CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
     )
