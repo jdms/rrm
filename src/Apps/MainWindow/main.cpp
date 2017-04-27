@@ -29,8 +29,7 @@
 #include "MainWindow.h"
 
 
-
-size_t Stratigraphy::number_of_stratigraphies = 0;
+std::size_t Object::index = 0;
 
 int main( int argc, char *argv[] )
 {
@@ -38,13 +37,14 @@ int main( int argc, char *argv[] )
 
 	QApplication app(argc, argv);
 
-	/// Added icon on main window
 	QIcon appIcon;
 	appIcon.addFile(":/logos/about/rrm.png");
 	app.setWindowIcon(appIcon);
 	
 
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
+    app.setAttribute( Qt::AA_ShareOpenGLContexts );
+
 
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )
@@ -54,18 +54,18 @@ int main( int argc, char *argv[] )
     	return 0;
     }
 
-
-	/// Create a defaut OpenGL context to use toward the application
     QSurfaceFormat format;
     format.setDepthBufferSize( 16 );
-
-
     format.setSamples( 8 );
-	QSurfaceFormat::setDefaultFormat( format );
 
-	/// Lauch the application
+    QSurfaceFormat::setDefaultFormat( format );
+
+
     MainWindow w;
     w.show();
+
+    w.run_app();
+
 
     return app.exec();
 }

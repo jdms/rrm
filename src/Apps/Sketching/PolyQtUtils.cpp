@@ -64,7 +64,7 @@ Curve2D PolyQtUtils::qPolyginFToCurve2D( const QPolygonF &pol )
 {
     Curve2D c ;
 	
-    int start = ( pol.isClosed() ) ? 1 : 0 ;
+    std::size_t start = ( pol.isClosed() ) ? 1 : 0 ;
     
     for( size_t i = start ; i < pol.size() ; ++i )
         c.add( QPointFToPoint2D( pol[ i ] ) );

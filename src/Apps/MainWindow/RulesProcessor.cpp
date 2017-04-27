@@ -19,12 +19,32 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "RulesProcessor.hpp"
+//namespace RRM
+//{}
 
+RulesProcessor::RulesProcessor()
+{
+    modeller_.useOpenGLCoordinateSystem();
+}
 
 std::vector<std::size_t> RulesProcessor::getSurfaces()
 { 
-    return modeller_.getCurrentSurfaces(); 
+    return modeller_.getSurfacesIndices();
 }
+
+
+std::size_t RulesProcessor::getWidthResolution()
+{
+    return modeller_.getDiscretizationWidth();
+}
+
+
+std::size_t RulesProcessor::getDepthResolution()
+{
+    return modeller_.getDiscretizationDepth();
+}
+
 
 //
 // brief:
@@ -38,12 +58,12 @@ std::vector<std::size_t> RulesProcessor::getSurfaces()
 
 bool RulesProcessor::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
 { 
-    return modeller_.requestCreateAbove(eligible_surfaces);
+    return modeller_.requestDefineAbove(eligible_surfaces);
 }
 
 bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
 { 
-    return modeller_.requestCreateBelow(eligible_surfaces); 
+    return modeller_.requestDefineBelow(eligible_surfaces);
 }
 
 
@@ -55,28 +75,41 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 bool RulesProcessor::setLowResolution()
 { 
-    return modeller_.requestChangeDiscretization(16, 16); 
+    return modeller_.tryChangeDiscretization(16, 16);
 }
 
 bool RulesProcessor::setMediumResolution()
 { 
-    return modeller_.requestChangeDiscretization(64, 64); 
+    return modeller_.tryChangeDiscretization(64, 64);
 }
 
 bool RulesProcessor::setHighResolution()
 {   
-    return modeller_.requestChangeDiscretization(128, 128); 
+    return modeller_.tryChangeDiscretization(128, 128);
 }
 
 
 void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_z )
 {
+    origin_.x = opengl_x;
+    origin_.y = opengl_y;
+    origin_.z = opengl_z;
+
     modeller_.setOrigin(opengl_x, opengl_y, opengl_z);
 }
 
 bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_z )
 { 
-    return modeller_.setOrigin(opengl_x, opengl_y, opengl_z); 
+    if ( modeller_.setLenght(opengl_x, opengl_y, opengl_z) == false )
+    {
+        return false;
+    }
+
+    lenght_.x = opengl_x;
+    lenght_.y = opengl_y;
+    lenght_.z = opengl_z;
+
+    return true;
 }
 
 
@@ -139,7 +172,7 @@ bool RulesProcessor::defineAboveIsActive()
 
 bool RulesProcessor::defineBelowIsActive()
 { 
-    return modeller_defineBelowIsActive(); 
+    return modeller_.defineBelowIsActive();
 }
 
 
@@ -185,6 +218,7 @@ bool RulesProcessor::redo()
     return modeller_.redo(); 
 }
 
+//{} // namespace RRM
 
 
 

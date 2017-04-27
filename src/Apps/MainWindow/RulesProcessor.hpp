@@ -29,17 +29,20 @@
 
 
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
-
-#include "stratigraphy_modeller.hpp" 
-
+#include "stratmod/stratigraphy_modeller.hpp"
 
 
-//TODO: create a base virtual class BaseRulesProcessor
-namespace RRM
-{
+
+//namespace RRM
+//{}
+
     class RulesProcessor {
 
         public:
+
+
+            RulesProcessor();
+            ~RulesProcessor() = default;
 
             std::vector<std::size_t> getSurfaces();
 
@@ -76,6 +79,11 @@ namespace RRM
 
 
             /* Begin methods to interface with GUI */
+
+
+            std::size_t getWidthResolution();
+
+            std::size_t getDepthResolution();
 
 
             /* Clean up */
@@ -124,7 +132,8 @@ namespace RRM
 
 
             template<typename CurveType>
-            bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves );
+
+            bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves );
 
 
             template<typename CurveType>
@@ -155,23 +164,24 @@ namespace RRM
         private:
 
             StratigraphyModeller modeller_;
+            struct { double x, y, z; } origin_, lenght_;
 
     };
 
     template<typename CurveType>
-    bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, std::size_t  > > &curves ) 
+    bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
     {
-        std::vector<double> surface; 
+        std::vector<double> surface;
         size_t num_cross_sections = 0;
 
         for ( auto &curve_tuple : curves )
         {
-            num_cross_sections++; 
+            num_cross_sections++;
 
             auto &in_curve = std::get<0>(curve_tuple);
             auto &in_curve_depth = std::get<1>(curve_tuple);
 
-            for ( size_t i = 0; i < in_curve.size(); ++i ) 
+            for ( size_t i = 0; i < in_curve.size(); ++i )
             {
                 surface.push_back(in_curve[i].x());
                 surface.push_back(in_curve[i].y());
@@ -183,12 +193,12 @@ namespace RRM
 
         if ( num_cross_sections > 1 )
         {
-            status = modeller_.insertExtrudedSurface( surface_index, surface ); 
+            status = modeller_.insertSurface( surface_index, surface );
         }
 
         else if ( num_cross_sections == 1 )
         {
-            status = modeller_.insertSurface( surface_index, surface ); 
+            status = modeller_.insertExtrudedSurface( surface_index, surface );
         }
 
         return status;
@@ -204,8 +214,8 @@ namespace RRM
     template<typename VertexList, typename FaceList>
     bool RulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist)
     {
-        return modeller_.getMesh(surface_index, vlist, flist); 
 
+        return modeller_.getMesh(surface_index, vlist, flist);
     }
 
     template<typename VertexList, typename EdgeList>
@@ -214,6 +224,6 @@ namespace RRM
         return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
     }
 
-} // End of Namespace RRM
+//{} // End of Namespace RRM
 
 #endif

@@ -23,13 +23,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-/**
- * @file MainWindow.h
- * @author Felipe Moura de Carvalho
- * @date Sep, 2015
- * @brief RRM's Main GUI.
- */
-
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QDockWidget>
@@ -39,36 +32,26 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QFormLayout>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QFileDialog>
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QToolBox>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QStyle>
+#include <QScreen>
+
 #include <QKeyEvent>
-
-#include <QtGui/QDesktopServices>
-#include <QtCore/QFileInfo>
-#include <QtCore/QUrl>
-
-#include "MainWindow/About/AboutWidget.hpp"
-
-#include "3dView/View3DWindow.hpp"
-#include "Sketching/SketchingWindow.h"
-#include "Simulator/FlowWindow.h"
-
-
+#include <QKeySequence>
+#include <QShortcut>
 
 
 #include "Help/HelpDialog.h"
-#include "Controller.hpp"
+#include "Object_Tree/ObjectTree.h"
 
+#include "Controller.hpp"
+#include "Sketching/SketchCanvas.h"
+#include "Sketching/SketchScene.h"
+#include "Sketching/CanvasPath.h"
+#include "Sketching/PathScene.h"
+
+#include "3dView/Canvas3D.h"
+#include "3dView/Scene3d.h"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -76,9 +59,17 @@
  * It also responsible make a bridge between Sketch Module and Extrusion Module
  */
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+
+namespace Ui {
+class MainWindow;
+}
+
+#include "ui_MainWindow.h"
+
+class MainWindow : public QMainWindow, private Ui::MainWindow
+    {
+        Q_OBJECT
+
 
     public:
 
@@ -86,30 +77,41 @@ class MainWindow : public QMainWindow
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 
+        void run_app();
+
+        inline void randomColor( bool status, QColor c_ = QColor( 255, 0, 0 ) )
+        {
+            QColor color = c_;
+
+            if( status == true ){
+                int r_ = 0, g_ = 0, b_ = 0;
+                Model3DUtils::randomColor( r_, g_, b_ );
+                color = QColor( r_, g_, b_ );
+            }
+
+            sketch_scene.setCurrentColor( color );
+            scene3d.setCurrentColor( color );
+        }
+
 
     protected:
 
 
         void init();
 
+        void getCurrentDirectory();
+
         void createWindow();
+        void setupWindowProperties();
+
+        void create3dSection();
+        void createObjectTreeSection();
+        void createSketchSection();
+
+
         void createActions();
         void createMenuBar();
         void createMainWindowActions();
-
-        void create3DViewModule();
-        void create3DWindowMenuBar();
-        void create3DWindowActions();
-
-        void createSketchingModule();
-        void createSketchingMenuBar();
-        void createSketchingActions();
-
-        void createFlowDiagnosticsModule();
-        void createFlowDiagnosticsActions();
-        void createFlowDiagnosticsMenuBar();
-
-
 
 
         void keyPressEvent( QKeyEvent *event );
@@ -120,6 +122,11 @@ class MainWindow : public QMainWindow
         void saveAsCPS3( const std::string& filename );
         void saveAsIrapGrid( const std::string& filename );
 
+        bool enableUndo( bool );
+        bool enableRedo( bool );
+
+        void updateScenes();
+
 
 
     protected slots:
@@ -127,59 +134,76 @@ class MainWindow : public QMainWindow
         void clear();
 
 
+
     public slots:
 
 
         void exportTo();
-        void initScene();
 
 
     protected:
 
-
-        bool scene_initialized;
-
-        Scene* scene;
         Controller* controller;
 
-        HelpDialog help;
-        AboutWidget * aboutRRM;
+
+private:
+
+//        Ui::MainWindow *ui;
+
+        int app_height;
+        int app_width;
+
+        int app_orig_x;
+        int app_orig_y;
+
+        QSlider* sl_depth_csection;
+
+        QDockWidget* dw_object_tree;
+        ObjectTree* object_tree;
+
+        Scene3D scene3d;
+        Canvas3D* canvas3d;
+
+        QDockWidget* dw_sketch_path_canvas;
+        PathScene scene_path;
+        CanvasPath* canvas_path;
+
+        QDockWidget* dw_sketch_canvas;
+        SketchCanvas *canvas2d;
+        SketchScene sketch_scene;
+
+        QAction* ac_undo;
+        QAction* ac_redo;
+
+        QAction* ac_screenshot;
+        QAction* ac_clear;
 
 
+        QAction* ac_stratigraphy;
+        QAction* ac_channel;
+        QActionGroup* ag_surface_type;
 
-        QMenu *mn_file;
-        QAction *ac_exit;
+        QAction* ac_sketch_above;
+        QAction* ac_sketch_below;
 
-        QMenu *mn_help;
-        QAction *ac_rrmGuide;
-        QAction *ac_about;
+        QAction* ac_remove_above;
+        QAction* ac_remove_above_int;
+        QAction* ac_remove_below;
+        QAction* ac_remove_below_int;
+        QActionGroup* ag_stratigraphy_rules;
 
-        QMenu *mn_windows;
-        QAction *ac_wdwsketching;
-        QAction *ac_wdwseismic;
-        QAction *ac_3dview;
-
-
-        // Sketching Module
-        QDockWidget* dw_sketching;
-        SketchingWindow *sketching_window;
-
-
-        // 3D View Module
-        QDockWidget* dw_3dview;
-        View3DWindow *view3d_window;
+        QAction* ac_discard_sketch;
+        QAction* ac_commit_sketch;
+        QAction* ac_interpolate;
 
 
-        //Flow Diagostics Module
+        QWidgetAction *ac_sketchcolor;
+        QMenu *mn_pickercolor;
+        QColorDialog *cd_pickercolor;
+        QToolButton *tbt_colorsketch;
 
-        QDockWidget* dw_flowdiagnostics;
-        FlowWindow *flow_window;
-        QAction *ac_flowwindow;
-
-
-
-
-
+        QToolBar* tb_general;
+        QToolBar* tb_sketch;
 
 
 };
