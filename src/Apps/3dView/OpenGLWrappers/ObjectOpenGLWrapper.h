@@ -26,6 +26,9 @@ class ObjectOpenGLWrapper
         inline void setObjectRaw( Object* const &obj_ )
         {
             object = obj_;
+            int red_ = 0, green_ = 0, blue_ = 0;
+            object->getColor( red_, green_, blue_ );
+            setConstantColor( red_, green_, blue_ );
         }
 
 

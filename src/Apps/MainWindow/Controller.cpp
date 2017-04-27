@@ -92,7 +92,7 @@ bool Controller::getCurrentCrossSectionDimensions( double& width_, double& heigh
     if( isCrossSectionAdded( current_depth_csection ) == false )
         return false;
 
-    CrossSection1& csection_ = depth_of_cross_sections[ current_depth_csection ];
+    CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
     csection_.getDimensions( width_, height_ );
     return true;
 }
@@ -218,8 +218,7 @@ bool Controller::interpolate()
     if( interpolate_ok == false ) return false;
 
 
-    updateObjects();
-    createObject();
+    updateObjects();    
 
     return true;
 
@@ -307,10 +306,16 @@ void Controller::defineSketchBelow( std::size_t surface_id_ )
 void Controller::sendSelectedSurface( const std::size_t& id_ )
 {
     if( current_region == RequestRegion::ABOVE )
+    {
+        boundering_above = id_;
         rules_processor.defineAbove( id_ );
-    else if( current_region == RequestRegion::BELOW )
-        rules_processor.defineBelow( id_ );
+    }
 
+    else if( current_region == RequestRegion::BELOW )
+    {
+        boundering_below = id_;
+        rules_processor.defineBelow( id_ );
+    }
 }
 
 void Controller::updateObjects()

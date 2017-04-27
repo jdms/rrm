@@ -70,6 +70,22 @@ class Object
             return is_visible;
         }
 
+        inline void setColor( int red_, int green_, int blue_ )
+        {
+            color.red = red_;
+            color.green = green_;
+            color.blue = blue_;
+        }
+
+
+        inline void getColor( int& red_, int& green_, int& blue_ )
+        {
+            red_   = color.red ;
+            green_ = color.green;
+            blue_  = color.blue ;
+        }
+
+
         inline void addInputCurve( double _depth, Curve2D const& _curve )
         {
             input_curves[ _depth ] = _curve;
@@ -232,6 +248,9 @@ class Object
 
     protected:
 
+        struct Color { int red, green, blue; } color;
+
+
         TYPE type;
 
         std::size_t id;
@@ -246,6 +265,9 @@ class Object
 
         std::vector< double > surface_vertices;
         std::vector< std::size_t > surface_faces;
+
+
+
 
 
 };

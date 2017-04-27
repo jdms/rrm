@@ -9,11 +9,11 @@
 #include "Object.h"
 
 
-class CrossSection1
+class CrossSection
 {
     public:
 
-        CrossSection1()
+        CrossSection()
         {
             initialize();
         }

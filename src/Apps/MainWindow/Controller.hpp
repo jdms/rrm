@@ -146,6 +146,14 @@ class Controller: public QObject
         }
 
 
+        inline void createObject()
+        {
+            Object* obj = new Object( current_object_type );
+            obj->setColor( current_color.red, current_color.green, current_color.blue );
+
+            current_object = obj->getId();
+            objects[ current_object ] = obj;
+        }
 
 
         inline void setTypeCurrentObject( Object::TYPE type_ )
@@ -376,7 +384,20 @@ class Controller: public QObject
 
         void sendSelectedSurface( const std::size_t& id_ );
 
+        inline std::size_t getUpperSurface(){ return boundering_above; }
+
+        inline std::size_t getLowerSurface(){ return boundering_below; }
+
         void clear();
+
+
+        inline void setCurrentColor( int r_, int g_, int b_ )
+        {
+            current_color.red =   r_;
+            current_color.green = g_;
+            current_color.blue =  b_;
+        }
+
 
     private:
 
@@ -443,12 +464,6 @@ class Controller: public QObject
         }
 
 
-        inline void createObject()
-        {
-            Object* obj = new Object( current_object_type );
-            current_object = obj->getId();
-            objects[ current_object ] = obj;
-        }
 
         inline bool isValidObject( std::size_t id_ )
         {
@@ -481,7 +496,7 @@ class Controller: public QObject
 
         inline void addCurrentObjectToCurrentCrossSection()
         {
-            CrossSection1& csection_ = depth_of_cross_sections[ current_depth_csection ];
+            CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
             Object* const& obj_ = objects[ current_object ];
             csection_.addObjectReferenced( obj_ );
         }
@@ -534,6 +549,9 @@ class Controller: public QObject
 
     protected:
 
+
+        struct Color { int red, green, blue; } current_color;
+
         Scene3D *scene3d;
         SketchScene* sketch_scene;
         PathScene* path_scene;
@@ -545,7 +563,7 @@ class Controller: public QObject
         double step_depth = 10;
 
         double current_depth_csection;
-        std::map< double, CrossSection1 > depth_of_cross_sections;
+        std::map< double, CrossSection > depth_of_cross_sections;
         std::set< double > used_cross_sections;
 
         Object::TYPE current_object_type = Object::TYPE::Stratigraphy;
@@ -558,6 +576,8 @@ class Controller: public QObject
         RequestRegion current_region = RequestRegion::NONE;
         RulesProcessor rules_processor;
 
+        std::size_t boundering_above;
+        std::size_t boundering_below;
 
         //        SolverRegistration register_solver;
 

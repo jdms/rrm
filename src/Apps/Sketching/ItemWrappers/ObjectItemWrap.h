@@ -39,7 +39,10 @@ class ObjectItemWrap: public QGraphicsPathItem
         {
             switch ( st_ ) {
             case State::NONE:
-                temp_color = current_color;
+                {
+                    temp_color = current_color;
+                    setFlag( QGraphicsItem::ItemIsSelectable, false );
+                }
                 break;
 
             case State::ALLOWED:

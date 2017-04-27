@@ -34,7 +34,7 @@ bool Scene3D::addObject( Object* const& object_ )
     obj_wrapper_->setShaderDirectory( current_directory );
     obj_wrapper_->init();
     obj_wrapper_->setObjectRaw( object_ );
-    obj_wrapper_->setConstantColor( current_color.red(), current_color.green(), current_color.blue() );
+//    obj_wrapper_->setConstantColor( current_color.red(), current_color.green(), current_color.blue() );
 
     double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
     double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;

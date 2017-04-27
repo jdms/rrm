@@ -89,6 +89,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
                 color = QColor( r_, g_, b_ );
             }
 
+            controller->setCurrentColor( color.red(), color.green(), color.blue() );
             sketch_scene.setCurrentColor( color );
             scene3d.setCurrentColor( color );
         }
