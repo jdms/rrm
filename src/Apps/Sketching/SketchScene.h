@@ -51,8 +51,8 @@ class SketchScene: public QGraphicsScene
         inline void setCrossSection( const CrossSection& csection_ )
         {
             csection = csection_;
-            drawCrossSectionObjects();
-            drawCrossSectionRegions();
+//            drawCrossSectionObjects();
+//            drawCrossSectionRegions();
             update();
         }
 
