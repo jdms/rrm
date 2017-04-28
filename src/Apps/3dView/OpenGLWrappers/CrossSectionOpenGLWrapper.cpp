@@ -81,6 +81,7 @@ void CrossSectionOpenGLWrapper::draw( const Eigen::Affine3f& V_, const Eigen::Ma
     shader->setUniform( "ViewMatrix" , V_ );
     shader->setUniform( "ProjectionMatrix" , P_ );
     shader->setUniform( "WIN_SCALE" , (float) w_ , (float) h_ );
+    shader->setUniform( "color_plane", 0.5f, 0.5f, 0.5f, 0.2f );
 
         glBindVertexArray( va_csection );
         glDrawArrays ( GL_LINES_ADJACENCY , 0 , nvertices );

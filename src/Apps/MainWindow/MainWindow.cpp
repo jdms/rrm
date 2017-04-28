@@ -105,10 +105,11 @@ void MainWindow::createWindow()
     getCurrentDirectory();
 
 
-    connect( sl_depth_csection, &QSlider::sliderReleased, [=](){
+    connect( sl_depth_csection, &QSlider::sliderMoved, [=](){
                    dw_sketch_canvas->setVisible( true );
                    double depth_ = controller->depthFromRowIndex( (std::size_t )sl_depth_csection->value() );
-                   controller->setCurrentCrossSection( depth_ ); } );
+                   controller->setCurrentCrossSection( depth_ );
+                   emit updateScenes();} );
 
 
 
