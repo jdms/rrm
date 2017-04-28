@@ -212,7 +212,9 @@ bool Controller::interpolate()
     {
         Curve2D path_ = obj_->getPathCurve();
         Curve2D curve_ = std::get<0>( curves_[ 0 ] );
-        interpolate_ok = rules_processor.createChannel( obj_->getId(), curve_, path_ );
+//        interpolate_ok = rules_processor.extrudeAlongPath( obj_->getId(), curve_,
+//                                                           current_depth_csection, path_ );
+                //createChannel( obj_->getId(), curve_, path_ );
     }
 
     if( interpolate_ok == false ) return false;
@@ -232,22 +234,18 @@ void Controller::updateRule( const std::string &rule_ )
     if( rule_.compare( "RA_SKETCHING" ) == 0 )
     {
         rules_processor.removeAbove();
-        std::cout << "Remove above\n\n" <<std::flush;
     }
     else if( rule_.compare( "RAI_SKETCHING" ) == 0 )
     {
         rules_processor.removeAboveIntersection();
-        std::cout << "Remove above intersection\n\n" <<std::flush;
     }
     else if( rule_.compare( "RB_SKETCHING" ) == 0 )
     {
         rules_processor.removeBelow();
-        std::cout << "Remove below\n\n" <<std::flush;
     }
     else if( rule_.compare( "RBI_SKETCHING" ) == 0 )
     {
         rules_processor.removeBelowIntersection();
-        std::cout << "Remove below intersection\n\n" <<std::flush;
     }
 
 }

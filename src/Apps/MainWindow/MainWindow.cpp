@@ -19,6 +19,9 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QFrame>
+
 #include "MainWindow.h"
 
 MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )//, ui( new Ui::MainWindow )
@@ -100,6 +103,14 @@ void MainWindow::createWindow()
     create3dSection();
     createObjectTreeSection();
     createSketchSection();
+
+
+    QFrame* frame_ = new QFrame();
+    frame_->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
+    QLabel* label_ = new QLabel( "text" );
+
+
+    statusBar()->addWidget( frame_ );
 
 
     getCurrentDirectory();
