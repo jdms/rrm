@@ -107,9 +107,12 @@ void MainWindow::createWindow()
 
     QFrame* frame_ = new QFrame();
     frame_->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
+
+
     QLabel* label_ = new QLabel( "text" );
-
-
+    QHBoxLayout* hb_dimensions = new QHBoxLayout( frame_ );
+    hb_dimensions->addWidget( label_ );
+    frame_->setLayout( hb_dimensions );
     statusBar()->addWidget( frame_ );
 
 
