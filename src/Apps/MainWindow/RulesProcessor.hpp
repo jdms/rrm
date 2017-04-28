@@ -212,7 +212,7 @@
     }
 
     template<typename CurveType>
-    bool RulesProcessor::createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path )
+    bool RulesProcessor::createChannel( size_t surface_index, const CurveType &cross_section_curve, const CurveType &path_curve )
     {
         return false;
     }
@@ -225,11 +225,26 @@
         size_t num_steps
         )
     {
-        StratigraphyUtilities util(modeller_);
-        std::vector<double> surface;
+        /* StratigraphyUtilities util(modeller_); */
+        /* std::vector<double> surface; */
+
+        /* std::vector<double> cross_section; */
+        /* for ( size_t i = 0; i < cross_section_curve.size(); ++i ) */
+        /* { */
+        /*     cross_section.push_back( cross_section[i].x() ); */
+        /*     cross_section.push_back( cross_section[i].y() ); */
+        /* } */
+
+        /* std::vector<double> path; */
+        /* for ( size_t i = 0; i < path_curve.size(); ++i ) */
+        /* { */
+        /*     path.push_back( path_curve[i].x() ); */
+        /*     path.push_back( path_curve[i].y() ); */
+        /* } */
 
         /* util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_steps); */
-        return modeller_.createSurface(surface_index, surface);
+        /* return modeller_.createSurface(surface_index, surface); */
+        return false;
     }
 
     template<typename VertexList, typename FaceList>
