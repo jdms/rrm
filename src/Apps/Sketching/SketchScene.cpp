@@ -133,6 +133,8 @@ void SketchScene::addObject( Object* obj_ )
         obj_wrapper_ = new ObjectItemWrap();        
         addItem( obj_wrapper_ );
 
+        std::cout << " - added in " << csection.getZCoordinate() << ", " << std::flush;
+
         object_list[ obj_->getId() ] = obj_wrapper_;
     }
     else

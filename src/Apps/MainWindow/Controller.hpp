@@ -365,16 +365,17 @@ class Controller: public QObject
 
 
 
-        inline void setupDepthResolution( std::size_t& disc_depth_ )
+        inline void setupDepthResolution( std::size_t& disc_depth_, std::size_t& step_ )
         {
             disc_depth_ = rules_processor.getDepthResolution();
             disc_depth = disc_depth_;
-            step_depth = (double) (input_volume.getDepth()/disc_depth_);
+            step_ = input_volume.getDepth()/disc_depth_;
+            step_depth = (double) step_ ;
         }
 
         inline std::size_t rowIndexfromDepth( double depth_ )
         {
-            return std::size_t ( depth_ ) / disc_depth;
+            return std::size_t ( depth_ ) / step_depth;
         }
 
         inline double depthFromRowIndex( std::size_t index_ )
@@ -434,21 +435,36 @@ class Controller: public QObject
             depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
             sketch_scene->setCrossSection( depth_of_cross_sections[ current_depth_csection ] );
 
-            for( auto it_: objects )
+            std::size_t index_ = rowIndexfromDepth( current_depth_csection );
+
+            std::cout << "Cross-section: " << index_ << ", objects: " << std::flush;
+
+            for( auto& it_: objects )
             {
+
+
                 std::vector< float > curve_vertices;
                 std::vector< std::size_t > curve_edges;
-                bool has_curve = rules_processor.getCrossSection( it_.first, rowIndexfromDepth( current_depth_csection ),
+                bool has_curve = rules_processor.getCrossSection( it_.first, index_ ,
                                                  curve_vertices, curve_edges );
 
-                if( has_curve == false )continue;
-
+                if( has_curve == false )
+                {
+                     std::cout << "-1, " << std::flush;
+                    continue;
+                }
                 std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
                 it_.second->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
                 it_.second->addInputEdges( current_depth_csection, curve_edges );
 
+                std::cout << it_.first << " " << std::flush;
+
                 sketch_scene->addObject( it_.second );
+
+
             }
+
+            std::cout << std::endl << std::endl << std::flush;
 
             scene3d->updateCrossSection( current_depth_csection );
 
@@ -513,6 +529,7 @@ class Controller: public QObject
 
             rules_processor.setOrigin( ox_, oy_, oz_ );
             rules_processor.setLenght(  w_, h_, d_ );
+            rules_processor.setMediumResolution();
             rules_processor.removeAbove();
         }
 

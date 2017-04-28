@@ -105,11 +105,11 @@ void MainWindow::createWindow()
     getCurrentDirectory();
 
 
-    connect( sl_depth_csection, &QSlider::sliderMoved, [=](){
-                   dw_sketch_canvas->setVisible( true );
-                   double depth_ = controller->depthFromRowIndex( (std::size_t )sl_depth_csection->value() );
+    connect( sl_depth_csection, &QSlider::sliderMoved, [=]( int v ){
+                   double depth_ = controller->depthFromRowIndex( (std::size_t ) v );
+                   std::cout << depth_ << ", " << std::flush;
                    controller->setCurrentCrossSection( depth_ );
-                   emit updateScenes();} );
+                   emit updateScenes(); } );
 
 
 
@@ -436,7 +436,8 @@ void MainWindow::run_app()
     controller->init();
 
     std::size_t depth_ = 1;
-    controller->setupDepthResolution( depth_ );
+    std::size_t step_ = 1;
+    controller->setupDepthResolution( depth_, step_ );
 
     sl_depth_csection->setMinimum( 0 );
     sl_depth_csection->setMaximum( (int)depth_ );
