@@ -212,8 +212,8 @@ bool Controller::interpolate()
     {
         Curve2D path_ = obj_->getPathCurve();
         Curve2D curve_ = std::get<0>( curves_[ 0 ] );
-//        interpolate_ok = rules_processor.extrudeAlongPath( obj_->getId(), curve_,
-//                                                           current_depth_csection, path_ );
+        interpolate_ok = rules_processor.extrudeAlongPath( obj_->getId(), curve_,
+                                                           current_depth_csection, path_ );
                 //createChannel( obj_->getId(), curve_, path_ );
     }
 
