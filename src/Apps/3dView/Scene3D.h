@@ -15,6 +15,7 @@
 #include "Core/Geology/Models/CrossSection.h"
 #include "OpenGLWrappers/VolumeOpenGLWrap.h"
 #include "OpenGLWrappers/ObjectOpenGLWrapper.h"
+#include "OpenGLWrappers/CrossSectionOpenGLWrapper.h"
 
 #include <QObject>
 #include <QOpenGLContext>
@@ -48,6 +49,7 @@ class Scene3D: public QObject
         void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                    const int& h_ );
 
+        inline void updateCrossSection( double depth_ ){ cross_section->reloadBuffers( depth_ ); }
 
     signals:
 
@@ -70,6 +72,7 @@ class Scene3D: public QObject
         QSurface* surfacegl;
 
         VolumeOpenGLWrap* input_volume;
+        CrossSectionOpenGLWrapper* cross_section;
         std::map< std::size_t, ObjectOpenGLWrapper* > object_list;
 
         QColor current_color;

@@ -3,6 +3,7 @@
 Scene3D::Scene3D()
 {
     input_volume = nullptr;
+    cross_section = nullptr;
 
     context = nullptr;
     surfacegl = nullptr;
@@ -19,6 +20,22 @@ bool Scene3D::addVolume(  Volume* const& volume_ )
     input_volume->setShaderDirectory( current_directory );
     input_volume->init();
     input_volume->setVolumeRaw( volume_ );
+
+
+    double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
+    double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
+
+    input_volume->getOrigin( ox_, oy_, oz_ );
+    input_volume->getDimensions( w_, h_, d_ );
+
+    cross_section = new CrossSectionOpenGLWrapper();
+    cross_section->setShaderDirectory( current_directory );
+    cross_section->init();
+    cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
+                                  ( float ) oz_, ( float ) (oz_ + d_) );
+
+
+//    cross_section->setVolumeRaw( volume_ );
 
     return true;
 }
@@ -62,12 +79,16 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
     if( input_volume != nullptr )
         input_volume->draw( V_, P_, w_, h_ );
 
+    if( cross_section != nullptr )
+        cross_section->draw( V_, P_, w_, h_ );
+
 }
 
 
 void Scene3D::updateScene()
 {
     input_volume->update();
+
 
     for( auto &it_: object_list )
     {
@@ -84,6 +105,9 @@ void Scene3D::clearScene()
 
     input_volume->clear();
     delete input_volume;
+
+    cross_section->clear();
+    delete cross_section;
 
     for( auto &it: object_list )
     {

@@ -80,7 +80,8 @@ set( SKETCHING_SOURCES        Sketching/Inputsketch.cpp
                               Sketching/SketchScene.cpp
                               Sketching/ItemWrappers/ObjectItemWrap.cpp
                               Sketching/ItemWrappers/VolumeItemWrapper.cpp
-                              Sketching/ItemWrappers/RegionItem.cpp
+                              Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
+                              Sketching/ItemWrappers/RegionItem.cpp                              
                               Sketching/PolyQtUtils.cpp )
 
 
@@ -93,7 +94,8 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
                        3dView/Model3DUtils.hpp
                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
                        3dView/OpenGLWrappers/VolumeOpenGLWrap.h
-                       Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
+                       3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.h
+
                        3dView/GradientBackgroundShader.hpp )
 
 
@@ -107,7 +109,9 @@ set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
                         3dView/Model3DUtils.cpp
                         3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
                         3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
+                        3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.cpp
                         3dView/GradientBackgroundShader.cpp )
+
 
 
 ###############################################

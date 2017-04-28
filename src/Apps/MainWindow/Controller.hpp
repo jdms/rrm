@@ -450,6 +450,7 @@ class Controller: public QObject
                 sketch_scene->addObject( it_.second );
             }
 
+            scene3d->updateCrossSection( current_depth_csection );
 
 
         }
