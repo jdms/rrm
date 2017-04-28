@@ -153,12 +153,16 @@ class Controller: public QObject
 
             current_object = obj->getId();
             objects[ current_object ] = obj;
+
+            path_scene->setObject( obj );
         }
 
 
         inline void setTypeCurrentObject( Object::TYPE type_ )
         {
             current_object_type = type_;
+            objects[ current_object ]->setType( current_object_type );
+
         }
 
         inline Object::TYPE getTypeCurrentObject() const
@@ -330,8 +334,6 @@ class Controller: public QObject
 
         inline bool undo()
         {
-            std::cout << "Trying undo" << std::flush;
-
             bool undo_done = rules_processor.undo();
             if( undo_done == false ) return false;
 
@@ -341,8 +343,6 @@ class Controller: public QObject
 
         inline bool redo()
         {
-            std::cout << "Trying redo" << std::flush;
-
             bool redo_done = rules_processor.redo();
             if( redo_done == false ) return false;
 
@@ -353,13 +353,11 @@ class Controller: public QObject
 
         inline bool canUndo()
         {
-            std::cout << "Enabling undo \n"  << std::flush;
             return rules_processor.canUndo();
         }
 
         inline bool canRedo()
         {
-            std::cout << "Enabling redo \n"  << std::flush;
             return rules_processor.canRedo();
         }
 
@@ -437,11 +435,8 @@ class Controller: public QObject
 
             std::size_t index_ = rowIndexfromDepth( current_depth_csection );
 
-            std::cout << "Cross-section: " << index_ << ", objects: " << std::flush;
-
             for( auto& it_: objects )
             {
-
 
                 std::vector< float > curve_vertices;
                 std::vector< std::size_t > curve_edges;

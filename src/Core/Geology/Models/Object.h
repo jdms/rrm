@@ -88,11 +88,19 @@ class Object
 
         inline void addInputCurve( double _depth, Curve2D const& _curve )
         {
+
+            if( ( type == Object::TYPE::Channel ) && ( input_curves.size() > 1 ) )
+                input_curves.clear();
+
             input_curves[ _depth ] = _curve;
+
         }
 
         inline void addInputEdges( double _depth, const std::vector< std::size_t >& edges_ )
         {
+            if( ( type == Object::TYPE::Channel ) && ( input_edges.size() > 1 ) )
+                input_edges.clear();
+
             input_edges[ _depth ] = edges_;
         }
 
@@ -159,6 +167,8 @@ class Object
         {
             return path_curve;
         }
+
+        inline bool hasPathCurve(){ return ( !path_curve.isEmpty() );  }
 
         inline void updateSurface( const std::vector< double >& vertices_,
                                    const std::vector< std::size_t > faces_ )

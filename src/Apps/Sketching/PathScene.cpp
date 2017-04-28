@@ -36,6 +36,7 @@ void PathScene::finishSketch()
         emit curveAccepted( curve_ );
 
     clearSketch();
+    updateScene();
 }
 
 
@@ -84,13 +85,21 @@ void PathScene::updateScene()
     volume.update();
     setSceneRect( volume.boundingRect() );
 
-//    for( auto &it_: csections )
-//    {
-//        ObjectItemWrap* obj_= it_.second;
-//        obj_->updateCrossSection( csection.getZCoordinate() );
-//    }
+    if( object->hasPathCurve() == false ) return;
+
+    QPainterPath path;
+    path.addPolygon( PolyQtUtils::curve2DToQPolyginF( object->getPathCurve() ) );
+
+
+    QPen pen_color = QColor( 0, 0, 255 );
+    pen_color.setCapStyle( Qt::RoundCap );
+    pen_color.setJoinStyle( Qt::RoundJoin );
+    pen_color.setWidth( 3 );
+
+    addPath( path,  pen_color );
 
     update();
+
 }
 
 
@@ -146,6 +155,56 @@ void PathScene::savetoVectorImage( const QString& filename )
     render( &painter );
 }
 
+
+
+void PathScene::clearScene()
+{
+    draw_cross_sections = true;
+    current_interaction = UserInteraction::SKETCHING;
+
+    if( sketch != nullptr )
+        sketch->clear();
+
+    if( object != nullptr )
+        object->clear();
+
+    volume.clear();
+
+    removeItem( sketch );
+    removeItem( &volume );
+    removeItem( csection_image );
+
+    for( auto &it: csections )
+    {
+        if( (it.second) != nullptr )
+        {
+            removeItem( it.second );
+//            (it.second)->clear();
+            delete it.second;
+        }
+    }
+
+    csections.clear();
+
+
+    clear();
+
+
+    delete sketch;
+    sketch = nullptr;
+
+    delete csection_image;
+    csection_image = nullptr;
+
+    boundary_anchor = QPointF( 0.0f, 0.0f );
+
+    sketch = new InputSketch( QColor( 0, 255, 0 ) );
+    csection_image = new QGraphicsPixmapItem();
+
+    addItem( sketch );
+    addItem( csection_image );
+
+}
 
 
 void PathScene::mousePressEvent( QGraphicsSceneMouseEvent *event )

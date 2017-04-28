@@ -107,7 +107,6 @@ void MainWindow::createWindow()
 
     connect( sl_depth_csection, &QSlider::sliderMoved, [=]( int v ){
                    double depth_ = controller->depthFromRowIndex( (std::size_t ) v );
-                   std::cout << depth_ << ", " << std::flush;
                    controller->setCurrentCrossSection( depth_ );
                    emit updateScenes(); } );
 
@@ -148,6 +147,7 @@ void MainWindow::createWindow()
     connect( ac_clear, &QAction::triggered, [=](){
                                                 sketch_scene.clearScene();
                                                 scene3d.clearScene();
+                                                scene_path.clearScene();
                                                 controller->clear();
                                                 run_app(); } );
 
@@ -193,17 +193,20 @@ void MainWindow::createWindow()
 
 
     ac_stratigraphy = new QAction( "Stratigraphy", this );
+    ac_stratigraphy->setCheckable( true );
     connect( ac_stratigraphy, &QAction::triggered,
              [=](){ controller->setTypeCurrentObject( Object::TYPE::Stratigraphy );} );
 
     ac_channel = new QAction( "Channel", this );
+    ac_channel->setCheckable( true );
     connect( ac_channel, &QAction::triggered,
-             [=](){ controller->setTypeCurrentObject( Object::TYPE::Channel );} );
+             [=](){ controller->setTypeCurrentObject( Object::TYPE::Channel );
+                    dw_sketch_path_canvas->setVisible( true ); } );
 
 
     ag_surface_type = new QActionGroup( this );
-    ag_surface_type->addAction(  ac_stratigraphy );
-    ag_surface_type->addAction(  ac_channel );
+    ag_surface_type->addAction( ac_stratigraphy );
+    ag_surface_type->addAction( ac_channel );
     ac_stratigraphy->setChecked( true );
 
 
