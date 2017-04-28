@@ -30,6 +30,7 @@
 
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 #include "stratmod/stratigraphy_modeller.hpp"
+#include "stratmod/stratigraphy_utilities.hpp"
 
 
 
