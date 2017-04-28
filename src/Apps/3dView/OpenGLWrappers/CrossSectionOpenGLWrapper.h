@@ -63,10 +63,10 @@ class CrossSectionOpenGLWrapper
         {
             std::vector< double > plane_ =
             {
-                maxx, maxy, depth_, 1.0,
-                minx, maxy, depth_, 1.0,
-                maxx, miny, depth_, 1.0,
-                minx, miny, depth_, 1.0
+                maxx, maxy, depth_,
+                minx, maxy, depth_,
+                maxx, miny, depth_,
+                minx, miny, depth_
             };
 
             nvertices = plane_.size()/NCOORD;
@@ -81,8 +81,10 @@ class CrossSectionOpenGLWrapper
                 unit_vertices_.push_back( v.x() );
                 unit_vertices_.push_back( v.y() );
                 unit_vertices_.push_back( v.z() );
+                unit_vertices_.push_back( 1.0f );
             }
 
+            nvertices = unit_vertices_.size();
 
             glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices );
             glBufferData ( GL_ARRAY_BUFFER, unit_vertices_.size() * sizeof ( float ), unit_vertices_.data() ,
