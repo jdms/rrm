@@ -33,6 +33,12 @@ class PathScene: public QGraphicsScene
             addItem( sketch );
         }
 
+        inline void setObject( Object* const& obj_ )
+        {
+            object = obj_;
+            updateScene();
+        }
+
         void setImagetoCrossSection( const QString& url_ );
 
         void addCrossSection( double depth_ );
@@ -73,6 +79,8 @@ class PathScene: public QGraphicsScene
         void clearSketch();
         void updateScene();
 
+        void clearScene();
+
 
         inline void setModeSketching(){ current_interaction = UserInteraction::SKETCHING; }
         inline void setModeBoundaryEditing(){ current_interaction = UserInteraction::EDITING_BOUNDARY; }
@@ -94,6 +102,7 @@ class PathScene: public QGraphicsScene
 
         UserInteraction current_interaction = UserInteraction::SKETCHING;
         InputSketch *sketch;
+        Object* object;
         QPointF boundary_anchor;
 
         std::map< double, CrossSectionItemWrapper* > csections;
