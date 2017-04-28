@@ -140,7 +140,7 @@
             bool createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path );
 
             template<typename CurveType>
-            bool extrudeAlongPath( 
+            bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth, 
                     const CurveType &path, 
                     size_t num_steps = 10 
@@ -218,13 +218,17 @@
 
 
     template<typename CurveType>
-    bool RulesProcessor::extrudeAlongPath( 
+    bool RulesProcessor::extrudeAlongPath(  size_t surface_index, 
         const CurveType &cross_section, double cross_section_depth, 
         const CurveType &path, 
         size_t num_steps
         )
     {
-        return false;
+        StratigraphyUtilities util(modeller_);
+        std::vector<double> surface;
+
+        util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_steps);
+        return modeller_.createSurface(surface_index, surface);
     }
 
     template<typename VertexList, typename FaceList>
