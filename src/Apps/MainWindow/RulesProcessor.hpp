@@ -228,7 +228,7 @@
         StratigraphyUtilities util(modeller_);
         std::vector<double> surface;
 
-        util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_steps);
+        /* util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_steps); */
         return modeller_.createSurface(surface_index, surface);
     }
 
