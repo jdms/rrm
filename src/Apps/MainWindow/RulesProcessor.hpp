@@ -139,6 +139,12 @@
             template<typename CurveType>
             bool createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path );
 
+            template<typename CurveType>
+            bool extrudeAlongPath( 
+                    const CurveType &cross_section, double cross_section_depth, 
+                    const CurveType &path, 
+                    size_t num_steps = 10 
+                    );
 
             bool canUndo();
             bool undo();
@@ -211,11 +217,21 @@
     }
 
 
+    template<typename CurveType>
+    bool RulesProcessor::extrudeAlongPath( 
+        const CurveType &cross_section, double cross_section_depth, 
+        const CurveType &path, 
+        size_t num_steps
+        )
+    {
+        return false;
+    }
+
     template<typename VertexList, typename FaceList>
     bool RulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist)
     {
 
-        return modeller_.getMesh(surface_index, vlist, flist);
+    return modeller_.getMesh(surface_index, vlist, flist);
     }
 
     template<typename VertexList, typename EdgeList>
