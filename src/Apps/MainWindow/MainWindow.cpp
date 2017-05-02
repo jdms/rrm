@@ -380,14 +380,20 @@ void MainWindow::createObjectTreeSection()
 {
     object_tree = new ObjectTree( this );
     object_tree->setMaximumWidth( 0.2*app_width );
-    object_tree->setHeaderLabel( "Objects" );
-    object_tree->setColumnCount( 1 );
 
     dw_object_tree = new QDockWidget( "Sketching Canvas" );
     dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_object_tree->setWidget( object_tree );
-    dw_object_tree->setVisible( false );
+    dw_object_tree->setVisible( true );
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
+
+    connect( object_tree, &ObjectTree::setInputVolumeVisible,
+                        [=]( bool status_ ) { controller->setInputVolumeVisibility( status_ ); } );
+
+    connect( object_tree, &ObjectTree::setObjectVisible,
+                        [=]( std::size_t id_, bool status_ ) {
+                                        controller->setVisibilityofObjectofId( id_, status_ ); } );
+
 
 }
 
