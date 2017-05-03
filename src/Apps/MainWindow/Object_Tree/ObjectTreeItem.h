@@ -15,7 +15,7 @@ class ObjectTreeItem: public QTreeWidgetItem
             type = type_;
             id = id_;
 
-            setFlags( flags() | Qt::ItemIsEditable );
+//            setFlags( flags() | Qt::ItemIsEditable );
         }
 
         inline TreeItemType getType() const{ return type; }
