@@ -133,18 +133,13 @@
 
 
             template<typename CurveType>
-
             bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves );
-
-
-            template<typename CurveType>
-            bool createChannel( size_t surface_index, const CurveType &cross_section, const CurveType &path );
 
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth, 
                     const CurveType &path, 
-                    size_t num_steps = 10 
+                    size_t num_extrusion_steps = 32 
                     );
 
             bool canUndo();
@@ -212,39 +207,36 @@
     }
 
     template<typename CurveType>
-    bool RulesProcessor::createChannel( size_t surface_index, const CurveType &cross_section_curve, const CurveType &path_curve )
-    {
-        return false;
-    }
-
-
-    template<typename CurveType>
     bool RulesProcessor::extrudeAlongPath(  size_t surface_index, 
-        const CurveType &cross_section, double cross_section_depth, 
-        const CurveType &path, 
-        size_t num_steps
+        const CurveType &cross_section_curve, double cross_section_depth, 
+        const CurveType &path_curve, 
+        size_t num_extrusion_steps
         )
     {
-        /* StratigraphyUtilities util(modeller_); */
-        /* std::vector<double> surface; */
+        std::cout << "Got into extrudeAlongPath()\n\n" << std::flush;
+        StratigraphyUtilities util(modeller_);
+        std::vector<double> surface;
 
-        /* std::vector<double> cross_section; */
-        /* for ( size_t i = 0; i < cross_section_curve.size(); ++i ) */
-        /* { */
-        /*     cross_section.push_back( cross_section[i].x() ); */
-        /*     cross_section.push_back( cross_section[i].y() ); */
-        /* } */
+        std::vector<double> cross_section;
+        std::cout << "RulesProcessor: cross section size = " << cross_section_curve.size() << "\n\n";
+        for ( size_t i = 0; i < cross_section_curve.size(); ++i )
+        {
+            cross_section.push_back( cross_section_curve[i].x() );
+            cross_section.push_back( cross_section_curve[i].y() );
+        }
 
-        /* std::vector<double> path; */
-        /* for ( size_t i = 0; i < path_curve.size(); ++i ) */
-        /* { */
-        /*     path.push_back( path_curve[i].x() ); */
-        /*     path.push_back( path_curve[i].y() ); */
-        /* } */
+        std::vector<double> path;
+        std::cout <<  "RulesProcessor: path size = " << path_curve.size() << "\n\n";
+        for ( size_t i = 0; i < path_curve.size(); ++i )
+        {
+            path.push_back( path_curve[i].x() );
+            path.push_back( path_curve[i].y() );
+        }
 
-        /* util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_steps); */
-        /* return modeller_.createSurface(surface_index, surface); */
-        return false;
+        util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_extrusion_steps, 32);
+        std::cout << "Creating surface "<< surface_index << " with " << surface.size()/3.0 << " points.\n\n";
+        std::cout << std::flush;
+        return modeller_.createSurface(surface_index, surface);
     }
 
     template<typename VertexList, typename FaceList>
