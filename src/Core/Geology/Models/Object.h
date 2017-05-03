@@ -233,10 +233,26 @@ class Object
 
         }
 
+
+        inline void clearAllCurves()
+        {
+            for( auto &it: input_curves )
+            {
+                clearCurve( it.first );
+            }
+
+            if( path_curve.isEmpty() == false )
+                path_curve.clear();
+
+        }
+
         inline void clearCurve( double depth_ )
         {
             input_curves[ depth_ ].clear();
             input_edges[ depth_ ].clear();
+
+            input_curves.clear();
+            input_edges.clear();
         }
 
         inline void clearSurface()

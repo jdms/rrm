@@ -19,6 +19,11 @@ class ObjectTree :public QTreeWidget
         void addObject( ObjectTreeItem* const& obj_ );
         void addRegion( ObjectTreeItem* const& reg_ );
 
+
+    signals:
+             void setInputVolumeVisible( bool status_ );
+             void setObjectVisible( std::size_t id_, bool status_ );
+
     private:
 
         std::map< std::size_t, ObjectTreeItem* > objects;
