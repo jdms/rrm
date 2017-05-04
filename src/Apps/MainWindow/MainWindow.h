@@ -104,6 +104,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
         void createWindow();
         void setupWindowProperties();
+        void startController();
 
         void create3dSection();
         void createObjectTreeSection();
@@ -113,6 +114,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void createActions();
         void createMenuBar();
         void createMainWindowActions();
+
+        void createGeneralActions();
+        void createAppRelatedActions();
 
 
         void keyPressEvent( QKeyEvent *event );

@@ -61,14 +61,9 @@ void MainWindow::init()
 
     setupWindowProperties();
     createWindow();
+    startController();
 
-
-    controller = new Controller();
-    controller->setScene3D( &scene3d );
-    controller->setSketchScene( &sketch_scene );
-    controller->setPathScene( &scene_path );
-    controller->setObjectTree( object_tree );
-
+    createActions();
 
 }
 
@@ -82,11 +77,6 @@ void MainWindow::setupWindowProperties()
                     QMainWindow::AllowTabbedDocks );
 
     setDockNestingEnabled( true );
-}
-
-
-void MainWindow::createWindow()
-{
 
     QRect rect = QGuiApplication::primaryScreen()->geometry();
     app_height = rect.height()* 0.8;
@@ -98,22 +88,16 @@ void MainWindow::createWindow()
 
     setGeometry( app_orig_x, app_orig_y, app_width, app_height );
     setWindowTitle( "Rapid Reservoir Modelling" );
+}
 
+
+void MainWindow::createWindow()
+{
 
     create3dSection();
     createObjectTreeSection();
     createSketchSection();
 
-
-    QFrame* frame_ = new QFrame();
-    frame_->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-
-
-    QLabel* label_ = new QLabel( "text" );
-    QHBoxLayout* hb_dimensions = new QHBoxLayout( frame_ );
-    hb_dimensions->addWidget( label_ );
-    frame_->setLayout( hb_dimensions );
-    statusBar()->addWidget( frame_ );
 
 
     getCurrentDirectory();
@@ -124,6 +108,92 @@ void MainWindow::createWindow()
                    controller->setCurrentCrossSection( depth_ );
                    emit updateScenes(); } );
 
+
+
+
+    connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
+
+
+
+//    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) {
+//                                       ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* > item_;
+//                                       controller->selectObject( obj_->getId() ); } );
+
+
+
+
+
+
+}
+
+
+void MainWindow::create3dSection()
+{
+
+    canvas3d = new Canvas3D();
+    canvas3d->setScene( &scene3d );
+
+    sl_depth_csection = new QSlider( Qt::Vertical );
+
+
+    QHBoxLayout* hl_window3d = new QHBoxLayout( this );
+    hl_window3d->addWidget( canvas3d );
+    hl_window3d->addWidget( sl_depth_csection );
+
+    QWidget *wd_window3d = new QWidget( this );
+    wd_window3d->setLayout( hl_window3d );
+
+    setCentralWidget( wd_window3d );
+
+}
+
+
+void MainWindow::createObjectTreeSection()
+{
+    object_tree = new ObjectTree( this );
+    object_tree->setMaximumWidth( 0.2*app_width );
+
+    dw_object_tree = new QDockWidget( "Sketching Canvas" );
+    dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_tree->setWidget( object_tree );
+    dw_object_tree->setVisible( true );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
+
+    connect( object_tree, &ObjectTree::setInputVolumeVisible,
+                        [=]( bool status_ ) { controller->setInputVolumeVisibility( status_ ); } );
+
+    connect( object_tree, &ObjectTree::setObjectVisible,
+                        [=]( std::size_t id_, bool status_ ) {
+                                        controller->setVisibilityofObjectofId( id_, status_ ); } );
+
+
+}
+
+
+
+void MainWindow::createSketchSection()
+{
+
+
+    canvas2d = new SketchCanvas();
+    canvas2d->setScene( &sketch_scene );
+    canvas2d->setMinimumHeight( 0.4f* ( app_height - 10 ) );
+
+    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
+    dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketch_canvas->setWidget( canvas2d );
+    dw_sketch_canvas->setVisible( true );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
+
+    canvas_path = new CanvasPath();
+    canvas_path->setScenePath( &scene_path );
+//    canvas_path->setMaximumSize( 350, 200 );
+
+    dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
+    dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketch_path_canvas->setWidget( canvas_path );
+    dw_sketch_path_canvas->setVisible( false );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_path_canvas );
 
 
     connect( &sketch_scene, &SketchScene::updateVolumeWidthHeight, [=]( double w_, double h_ ) {
@@ -147,16 +217,78 @@ void MainWindow::createWindow()
 
 
     connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
-    connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
+
+}
+
+
+void MainWindow::getCurrentDirectory()
+{
+
+    QDir app_dir = QDir( qApp->applicationDirPath() );
+
+#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
+    QString current_dir ( app_dir.path ()+"\\" );
+
+#elif defined(__linux__)               // Linux Directory Style
+    QString current_dir ( app_dir.path ( ) + "/" );
+
+#else
+    /* Error, both can't be defined or undefined same time */
+    std::cout << "Operate System not supported !"
+    halt();
+
+#endif
+
+    scene3d.setCurrentDirectory( current_dir.toStdString() );
+
+}
+
+
+void MainWindow::run_app()
+{
+
+    randomColor( true );
+
+    controller->init();
+
+    std::size_t depth_ = 1;
+    std::size_t step_ = 1;
+    controller->setupDepthResolution( depth_, step_ );
+
+    sl_depth_csection->setMinimum( 0 );
+    sl_depth_csection->setMaximum( (int)depth_ );
+    sl_depth_csection->setValue( depth_ );
+
+    canvas2d->update();
+    canvas3d->update();
+
+}
+
+
+void MainWindow::startController()
+{
+    controller = new Controller();
+    controller->setScene3D( &scene3d );
+    controller->setSketchScene( &sketch_scene );
+    controller->setPathScene( &scene_path );
+    controller->setObjectTree( object_tree );
+}
+
+void MainWindow::createActions()
+{
+    createGeneralActions();
+    createAppRelatedActions();
 
 
 
-//    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) {
-//                                       ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* > item_;
-//                                       controller->selectObject( obj_->getId() ); } );
 
 
 
+}
+
+
+void MainWindow::createGeneralActions()
+{
     ac_clear = new QAction( "Clear", this );
     connect( ac_clear, &QAction::triggered, [=](){
                                                 sketch_scene.clearScene();
@@ -204,8 +336,11 @@ void MainWindow::createWindow()
     tb_general->addAction( ac_screenshot );
     addToolBar( tb_general );
 
+}
 
 
+void MainWindow::createAppRelatedActions()
+{
     ac_stratigraphy = new QAction( "Stratigraphy", this );
     ac_stratigraphy->setCheckable( true );
     connect( ac_stratigraphy, &QAction::triggered,
@@ -350,131 +485,6 @@ void MainWindow::createWindow()
     tb_sketch->addSeparator();
     tb_sketch->addWidget( tbt_colorsketch );
     addToolBar( tb_sketch );
-
-
-}
-
-
-void MainWindow::create3dSection()
-{
-
-    canvas3d = new Canvas3D();
-    canvas3d->setScene( &scene3d );
-
-    sl_depth_csection = new QSlider( Qt::Vertical );
-
-
-    QHBoxLayout* hl_window3d = new QHBoxLayout( this );
-    hl_window3d->addWidget( canvas3d );
-    hl_window3d->addWidget( sl_depth_csection );
-
-    QWidget *wd_window3d = new QWidget( this );
-    wd_window3d->setLayout( hl_window3d );
-
-    setCentralWidget( wd_window3d );
-
-}
-
-
-void MainWindow::createObjectTreeSection()
-{
-    object_tree = new ObjectTree( this );
-    object_tree->setMaximumWidth( 0.2*app_width );
-
-    dw_object_tree = new QDockWidget( "Sketching Canvas" );
-    dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
-    dw_object_tree->setWidget( object_tree );
-    dw_object_tree->setVisible( true );
-    addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
-
-    connect( object_tree, &ObjectTree::setInputVolumeVisible,
-                        [=]( bool status_ ) { controller->setInputVolumeVisibility( status_ ); } );
-
-    connect( object_tree, &ObjectTree::setObjectVisible,
-                        [=]( std::size_t id_, bool status_ ) {
-                                        controller->setVisibilityofObjectofId( id_, status_ ); } );
-
-
-}
-
-
-
-void MainWindow::createSketchSection()
-{
-
-
-    canvas2d = new SketchCanvas();
-    canvas2d->setScene( &sketch_scene );
-    canvas2d->setMinimumHeight( 0.4f* ( app_height - 10 ) );
-
-    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
-    dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketch_canvas->setWidget( canvas2d );
-    dw_sketch_canvas->setVisible( true );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
-
-    canvas_path = new CanvasPath();
-    canvas_path->setScenePath( &scene_path );
-//    canvas_path->setMaximumSize( 350, 200 );
-
-    dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
-    dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketch_path_canvas->setWidget( canvas_path );
-    dw_sketch_path_canvas->setVisible( false );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_path_canvas );
-
-
-
-}
-
-
-void MainWindow::getCurrentDirectory()
-{
-
-    QDir app_dir = QDir( qApp->applicationDirPath() );
-
-#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-    QString current_dir ( app_dir.path ()+"\\" );
-
-#elif defined(__linux__)               // Linux Directory Style
-    QString current_dir ( app_dir.path ( ) + "/" );
-
-#else
-    /* Error, both can't be defined or undefined same time */
-    std::cout << "Operate System not supported !"
-    halt();
-
-#endif
-
-    scene3d.setCurrentDirectory( current_dir.toStdString() );
-
-}
-
-
-void MainWindow::run_app()
-{
-
-    randomColor( true );
-
-    controller->init();
-
-    std::size_t depth_ = 1;
-    std::size_t step_ = 1;
-    controller->setupDepthResolution( depth_, step_ );
-
-    sl_depth_csection->setMinimum( 0 );
-    sl_depth_csection->setMaximum( (int)depth_ );
-    sl_depth_csection->setValue( depth_ );
-
-    canvas2d->update();
-    canvas3d->update();
-
-}
-
-void MainWindow::createActions()
-{
-
-
 }
 
 
