@@ -252,7 +252,7 @@ void MainWindow::getCurrentDirectory()
 void MainWindow::run_app()
 {
 
-    randomColor( true );
+    defineColor( true );
     controller->init();
     setupCrossSectionsDiscretization();
 
@@ -420,11 +420,11 @@ void MainWindow::createAppRelatedActions()
     tbt_colorsketch ->setCheckable( true );
 
 
-    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ randomColor( !status_ ); } );
+    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ defineColor( !status_ ); } );
 
     connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
         tbt_colorsketch->setChecked( true );
-        randomColor( false, c_ ); } );
+        defineColor( false, c_ ); } );
 
 
     tb_sketch = new QToolBar( this );
@@ -485,7 +485,7 @@ void MainWindow::interpolate()
     bool created = controller->interpolate();
     if( created == true )
     {
-        randomColor( true );
+        defineColor( true );
         controller->createObject();
     }
 
@@ -493,6 +493,21 @@ void MainWindow::interpolate()
     ac_redo->setEnabled( controller->canRedo() );
 
     emit updateScenes();
+}
+
+
+void MainWindow::defineColor( bool aleatory_, QColor c_ )
+{
+    QColor color = c_;
+
+    if( aleatory_ == true ){
+        int r_ = 0, g_ = 0, b_ = 0;
+        Model3DUtils::randomColor( r_, g_, b_ );
+        color = QColor( r_, g_, b_ );
+    }
+
+    controller->setCurrentColor( color.red(), color.green(), color.blue() );
+
 }
 
 
