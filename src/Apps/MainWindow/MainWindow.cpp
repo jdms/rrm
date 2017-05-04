@@ -143,6 +143,10 @@ void MainWindow::create3dSection()
     QWidget *wd_window3d = new QWidget( this );
     wd_window3d->setLayout( hl_window3d );
 
+
+    connect( this, SIGNAL( updateCanvas() ), canvas3d, SLOT( update() ) );
+
+
     setCentralWidget( wd_window3d );
 
 }
@@ -187,7 +191,6 @@ void MainWindow::createSketchSection()
 
     canvas_path = new CanvasPath();
     canvas_path->setScenePath( &scene_path );
-//    canvas_path->setMaximumSize( 350, 200 );
 
     dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
     dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
@@ -217,6 +220,8 @@ void MainWindow::createSketchSection()
 
 
     connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
+
+    connect( this, SIGNAL( updateCanvas() ), canvas2d, SLOT( update() ) );
 
 }
 
@@ -248,9 +253,16 @@ void MainWindow::run_app()
 {
 
     randomColor( true );
-
     controller->init();
+    setupCrossSectionsDiscretization();
 
+    emit updateCanvas();
+
+}
+
+
+void MainWindow::setupCrossSectionsDiscretization()
+{
     std::size_t depth_ = 1;
     std::size_t step_ = 1;
     controller->setupDepthResolution( depth_, step_ );
@@ -258,10 +270,6 @@ void MainWindow::run_app()
     sl_depth_csection->setMinimum( 0 );
     sl_depth_csection->setMaximum( (int)depth_ );
     sl_depth_csection->setValue( depth_ );
-
-    canvas2d->update();
-    canvas3d->update();
-
 }
 
 
@@ -445,7 +453,9 @@ void MainWindow::clear()
 
 void MainWindow::undo()
 {
-    controller->undo();
+    bool undo_ok = controller->undo();
+    if( undo_ok == false ) return;
+
     ac_undo->setEnabled( controller->canUndo() );
     ac_redo->setEnabled( controller->canRedo() );
     emit updateScenes();
@@ -454,7 +464,9 @@ void MainWindow::undo()
 
 void MainWindow::redo()
 {
-    controller->redo();
+    bool redo_ok = controller->redo();
+    if( redo_ok == false ) return;
+
     ac_undo->setEnabled( controller->canUndo() );
     ac_redo->setEnabled( controller->canRedo() );
     emit updateScenes();
