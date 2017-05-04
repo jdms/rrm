@@ -143,6 +143,8 @@ class SketchScene: public QGraphicsScene
         inline void setModeBoundaryEditing(){ current_interaction = UserInteraction::EDITING_BOUNDARY; }
         inline void setModeSelecting(){ current_interaction = UserInteraction::SELECTING; }
         inline void setCurrentColor( const QColor& c_ ){ current_color = c_;  }
+        inline void setCurrentColor( int red_, int green_, int blue_ ){
+                                     current_color = QColor( red_, green_, blue_ ); }
 
 
     signals:
