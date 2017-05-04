@@ -278,46 +278,21 @@ void MainWindow::createActions()
 {
     createGeneralActions();
     createAppRelatedActions();
-
-
-
-
-
-
 }
 
 
 void MainWindow::createGeneralActions()
 {
-    ac_clear = new QAction( "Clear", this );
-    connect( ac_clear, &QAction::triggered, [=](){
-                                                sketch_scene.clearScene();
-                                                scene3d.clearScene();
-                                                scene_path.clearScene();
-                                                controller->clear();
-                                                run_app(); } );
 
+    ac_clear = new QAction( "Clear", this );
+    connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
 
     ac_undo = new QAction( "Undo", this );
-//    ac_undo->setShortcut( QKeySequence(/*undo_*/ );
-
-    QShortcut* undo_ = new QShortcut( QKeySequence::Undo, this );
-    connect( undo_, &QShortcut::activated, ac_undo, &QAction::trigger );
-    connect( ac_undo, &QAction::triggered, [=](){
-                                                 controller->undo();
-                                                 ac_undo->setEnabled( controller->canUndo() );
-                                                 ac_redo->setEnabled( controller->canRedo() );
-                                                 emit updateScenes(); } );
+    connect( ac_undo, &QAction::triggered, this, &MainWindow::undo );
 
 
     ac_redo = new QAction( "Redo", this );
-    QShortcut* redo_ = new QShortcut( QKeySequence::Undo, this );
-    connect( redo_, &QShortcut::activated, ac_redo, &QAction::trigger );
-    connect( ac_redo, &QAction::triggered, [=](){
-                                                controller->redo();
-                                                ac_undo->setEnabled( controller->canUndo() );
-                                                ac_redo->setEnabled( controller->canRedo() );
-                                                emit updateScenes(); } );
+    connect( ac_redo, &QAction::triggered, this, &MainWindow::redo );
 
 
     ac_discard_sketch = new QAction( "Discard sketch", this );
@@ -325,8 +300,7 @@ void MainWindow::createGeneralActions()
 
 
     ac_screenshot = new QAction( "Screenshot", this );
-    connect( ac_screenshot, &QAction::triggered, &sketch_scene, &SketchScene::screenshot );
-
+    connect( ac_screenshot, &QAction::triggered, this, &MainWindow::screenshot );
 
 
     tb_general = new QToolBar( this );
@@ -504,8 +478,36 @@ void MainWindow::createMenuBar()
 
 void MainWindow::clear()
 {
+    sketch_scene.clearScene();
+    scene3d.clearScene();
+    scene_path.clearScene();
+    controller->clear();
+    run_app();
 }
 
+void MainWindow::undo()
+{
+    controller->undo();
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+    emit updateScenes();
+}
+
+
+void MainWindow::redo()
+{
+    controller->redo();
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+    emit updateScenes();
+}
+
+
+void MainWindow::screenshot()
+{
+    sketch_scene.screenshot();
+//    scene3d.screenshot();
+}
 
 void MainWindow::exportTo()
 {

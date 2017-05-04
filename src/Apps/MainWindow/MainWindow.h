@@ -137,6 +137,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     protected slots:
 
         void clear();
+        void undo();
+        void redo();
+        void screenshot();
 
 
 
