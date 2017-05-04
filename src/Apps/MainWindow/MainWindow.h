@@ -138,6 +138,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void undo();
         void redo();
         void screenshot();
+        void interpolate();
 
 
 
@@ -154,7 +155,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 private:
 
-//        Ui::MainWindow *ui;
 
         int app_height;
         int app_width;
