@@ -274,6 +274,7 @@ void MainWindow::startController()
     controller->setObjectTree( object_tree );
 }
 
+
 void MainWindow::createActions()
 {
     createGeneralActions();
@@ -318,7 +319,8 @@ void MainWindow::createAppRelatedActions()
     ac_stratigraphy = new QAction( "Stratigraphy", this );
     ac_stratigraphy->setCheckable( true );
     connect( ac_stratigraphy, &QAction::triggered,
-             [=](){ controller->setTypeCurrentObject( Object::TYPE::Stratigraphy );} );
+             [=](){ controller->setTypeCurrentObject( Object::TYPE::Stratigraphy );
+                    dw_sketch_path_canvas->setVisible( false ); } );
 
     ac_channel = new QAction( "Channel", this );
     ac_channel->setCheckable( true );
@@ -459,20 +461,6 @@ void MainWindow::createAppRelatedActions()
     tb_sketch->addSeparator();
     tb_sketch->addWidget( tbt_colorsketch );
     addToolBar( tb_sketch );
-}
-
-
-
-void MainWindow::createMainWindowActions ()
-{
-
-}
-
-
-void MainWindow::createMenuBar()
-{
-
-
 }
 
 

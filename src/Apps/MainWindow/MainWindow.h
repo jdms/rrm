@@ -112,8 +112,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 
         void createActions();
-        void createMenuBar();
-        void createMainWindowActions();
 
         void createGeneralActions();
         void createAppRelatedActions();
