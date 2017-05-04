@@ -218,14 +218,9 @@ bool RulesProcessor::redo()
     return modeller_.redo(); 
 }
 
-//{} // namespace RRM
-
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    std::vector<double> vlistd;
-    vlistd.assign(vlist.begin(), vlist.end());
-
-    return getMesh(surface_id, vlistd, flist);
+    return modeller_.getMesh(surface_id, vlist, flist);
 }
 
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist )
@@ -236,15 +231,15 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    std::vector<double> vlistd;
-    vlistd.assign(vlist.begin(), vlist.end());
-
-    return getCrossSection(surface_id, depth, vlistd, elist);
+    return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
 }
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
+    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n\n" << std::flush;
+
     return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
 }
 
 
+//{} // namespace RRM

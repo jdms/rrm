@@ -272,6 +272,7 @@ bool InterpolatedGraph::getRawHeightMap( CoordinatesList &vertices )
 
             /* p.z = f(p.x, p.y); */ 
             /* std::cout << "p.x = " << p.x << ", p.y = " << p.y << ", p.z = " << p.z << std::endl; */ //debug
+            getRawHeight( {{{ p.x, p.y }}}, p.z );
             mesh.setVertex(i, p); 
         }
     }

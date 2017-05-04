@@ -138,8 +138,8 @@
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth, 
-                    const CurveType &path, 
-                    size_t num_extrusion_steps = 32 
+                    const CurveType &path 
+                    /* size_t num_extrusion_steps = 32 */ 
                     );
 
             bool canUndo();
@@ -213,16 +213,14 @@
     template<typename CurveType>
     bool RulesProcessor::extrudeAlongPath(  size_t surface_index, 
         const CurveType &cross_section_curve, double cross_section_depth, 
-        const CurveType &path_curve, 
-        size_t num_extrusion_steps
+        const CurveType &path_curve 
+        /* size_t num_extrusion_steps */
         )
     {
-        /* std::cout << "Got into extrudeAlongPath()\n\n" << std::flush; */
         StratigraphyUtilities util(modeller_);
         std::vector<double> surface;
 
         std::vector<double> cross_section;
-        /* std::cout << "RulesProcessor: cross section size = " << cross_section_curve.size() << "\n\n"; */
         for ( size_t i = 0; i < cross_section_curve.size(); ++i )
         {
             cross_section.push_back( cross_section_curve[i].x() );
@@ -230,21 +228,14 @@
         }
 
         std::vector<double> path;
-        /* std::cout <<  "RulesProcessor: path size = " << path_curve.size() << "\n\n"; */
         for ( size_t i = 0; i < path_curve.size(); ++i )
         {
             path.push_back( path_curve[i].x() );
             path.push_back( path_curve[i].y() );
         }
 
-        /* util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_extrusion_steps, 32); */
-        /* std::cout << "Creating surface "<< surface_index << " with " << surface.size()/3.0 << " points.\n\n"; */
-        /* std::cout << std::flush; */
-        bool status = modeller_.createSurface(surface_index, surface);
+        return modeller_.createExtrusionAlongPath(surface_index, cross_section, cross_section_depth, path);
 
-        /* std::cout << "Result of creating extrudeAlongPath(): " << status << "\n\n" << std::flush; */
-
-        return status;
     }
 
     /* template<typename VertexList, typename FaceList> */
