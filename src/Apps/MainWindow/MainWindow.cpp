@@ -24,9 +24,9 @@
 
 #include "MainWindow.h"
 
-MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )//, ui( new Ui::MainWindow )
+MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
-    /*ui->*/setupUi( this );
+    setupUi( this );
 
     sl_depth_csection = nullptr;
     object_tree = nullptr;
@@ -380,32 +380,18 @@ void MainWindow::createAppRelatedActions()
 
 
     ac_discard_sketch = new QAction( "Discard", this );
-    connect( ac_discard_sketch, &QAction::triggered,
-             [=](){ sketch_scene.clearSketch(); } );
+    connect( ac_discard_sketch, &QAction::triggered, [=](){ sketch_scene.clearSketch(); } );
 
     ac_commit_sketch = new QAction( "Commit", this );
     connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
 
     connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->addInputCurvetoCurrentObject( c_ );
-                                                 } );
+                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
 
     ac_interpolate = new QAction( "Generate", this );
     connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
 
-    connect( &sketch_scene, &SketchScene::interpolateObject, [=](){
-                                                bool created = controller->interpolate();
-                                                if( created == true )
-                                                {
-                                                    randomColor( true );
-                                                    controller->createObject();
-                                                }
-
-                                                ac_undo->setEnabled( controller->canUndo() );
-                                                ac_redo->setEnabled( controller->canRedo() );
-
-                                                emit updateScenes();
-                                            } );
+    connect( &sketch_scene, &SketchScene::interpolateObject, this, &MainWindow::interpolate );
 
 
     cd_pickercolor = new QColorDialog();
@@ -452,12 +438,10 @@ void MainWindow::createAppRelatedActions()
 
 void MainWindow::clear()
 {
-    sketch_scene.clearScene();
-    scene3d.clearScene();
-    scene_path.clearScene();
     controller->clear();
     run_app();
 }
+
 
 void MainWindow::undo()
 {
@@ -482,6 +466,23 @@ void MainWindow::screenshot()
     sketch_scene.screenshot();
 //    scene3d.screenshot();
 }
+
+void MainWindow::interpolate()
+{
+
+    bool created = controller->interpolate();
+    if( created == true )
+    {
+        randomColor( true );
+        controller->createObject();
+    }
+
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+
+    emit updateScenes();
+}
+
 
 void MainWindow::exportTo()
 {

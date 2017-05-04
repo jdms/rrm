@@ -418,15 +418,15 @@ void Controller::updateObjects()
 void Controller::clear()
 {
 
-    //    if( scene3d != nullptr )
-    //        scene3d->clearScene();
+    if( scene3d != nullptr )
+        scene3d->clearScene();
 
-    //    if( sketch_scene != nullptr )
-    //        sketch_scene->clearScene();
+    if( sketch_scene != nullptr )
+        sketch_scene->clearScene();
 
 
-    //    if( path_scene != nullptr )
-    //        path_scene->clearScene();
+    if( path_scene != nullptr )
+        path_scene->clearScene();
 
 
     object_tree->clear();
