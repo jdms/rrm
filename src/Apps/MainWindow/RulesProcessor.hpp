@@ -151,12 +151,16 @@
 
             /* Get mesh, pcl and curves for visualization */
 
+            bool getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
 
-            template<typename VertexList, typename FaceList>
-            bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist );
+            /* template<typename VertexList, typename FaceList> */
+            /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */
 
-            template<typename VertexList, typename EdgeList>
-            bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist );
+            bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist );
+            bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist );
+            /* template<typename VertexList, typename EdgeList> */
+            /* bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ); */
 
 
 
@@ -213,12 +217,12 @@
         size_t num_extrusion_steps
         )
     {
-        std::cout << "Got into extrudeAlongPath()\n\n" << std::flush;
+        /* std::cout << "Got into extrudeAlongPath()\n\n" << std::flush; */
         StratigraphyUtilities util(modeller_);
         std::vector<double> surface;
 
         std::vector<double> cross_section;
-        std::cout << "RulesProcessor: cross section size = " << cross_section_curve.size() << "\n\n";
+        /* std::cout << "RulesProcessor: cross section size = " << cross_section_curve.size() << "\n\n"; */
         for ( size_t i = 0; i < cross_section_curve.size(); ++i )
         {
             cross_section.push_back( cross_section_curve[i].x() );
@@ -226,35 +230,35 @@
         }
 
         std::vector<double> path;
-        std::cout <<  "RulesProcessor: path size = " << path_curve.size() << "\n\n";
+        /* std::cout <<  "RulesProcessor: path size = " << path_curve.size() << "\n\n"; */
         for ( size_t i = 0; i < path_curve.size(); ++i )
         {
             path.push_back( path_curve[i].x() );
             path.push_back( path_curve[i].y() );
         }
 
-        util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_extrusion_steps, 32);
-        std::cout << "Creating surface "<< surface_index << " with " << surface.size()/3.0 << " points.\n\n";
-        std::cout << std::flush;
+        /* util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_extrusion_steps, 32); */
+        /* std::cout << "Creating surface "<< surface_index << " with " << surface.size()/3.0 << " points.\n\n"; */
+        /* std::cout << std::flush; */
         bool status = modeller_.createSurface(surface_index, surface);
 
-        std::cout << "Result of creating extrudeAlongPath(): " << status << "\n\n" << std::flush;
+        /* std::cout << "Result of creating extrudeAlongPath(): " << status << "\n\n" << std::flush; */
 
         return status;
     }
 
-    template<typename VertexList, typename FaceList>
-    bool RulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist)
-    {
+    /* template<typename VertexList, typename FaceList> */
+    /* bool RulesProcessor::getMesh(size_t surface_index, VertexList &vlist, FaceList &flist) */
+    /* { */
 
-    return modeller_.getMesh(surface_index, vlist, flist);
-    }
+    /* return modeller_.getMesh(surface_index, vlist, flist); */
+    /* } */
 
-    template<typename VertexList, typename EdgeList>
-    bool RulesProcessor::getCrossSection(size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist)
-    {
-        return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
-    }
+    /* template<typename VertexList, typename EdgeList> */
+    /* bool RulesProcessor::getCrossSection(size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist) */
+    /* { */
+    /*     return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth); */
+    /* } */
 
 //{} // End of Namespace RRM
 

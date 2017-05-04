@@ -220,5 +220,31 @@ bool RulesProcessor::redo()
 
 //{} // namespace RRM
 
+bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    std::vector<double> vlistd;
+    vlistd.assign(vlist.begin(), vlist.end());
+
+    return getMesh(surface_id, vlistd, flist);
+}
+
+bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    return modeller_.getMesh(surface_id, vlist, flist);
+}
+
+
+bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    std::vector<double> vlistd;
+    vlistd.assign(vlist.begin(), vlist.end());
+
+    return getCrossSection(surface_id, depth, vlistd, elist);
+}
+
+bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
+}
 
 
