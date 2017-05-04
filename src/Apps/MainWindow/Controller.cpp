@@ -257,16 +257,18 @@ bool Controller::enableCreateAbove( bool status_ )
 
     if( status_ == true )
     {
-        bool ok_ = rules_processor.requestCreateAbove( allowed_upper );
-        if( ok_ == false ) return false;
-
-        setObjectsAsAllowed( allowed_upper );
-        current_region = RequestRegion::ABOVE;
-        return true;
+        rules_processor.stopDefineAbove();
+        unSelectObject( boundering_above );
+        return false;
     }
 
-    rules_processor.stopDefineAbove();
-    return false;
+
+    bool ok_ = rules_processor.requestCreateAbove( allowed_upper );
+    if( ok_ == false ) return false;
+
+    setObjectsAsAllowed( allowed_upper );
+    current_region = RequestRegion::ABOVE;
+    return true;
 }
 
 
@@ -294,21 +296,23 @@ void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
 
 bool Controller::enableCreateBelow( bool status_ )
 {
+
     unsetObjectsAsAllowed( allowed_below );
 
-    if( status_ == true )
+    if( status_ == false )
     {
-        bool ok_ = rules_processor.requestCreateBelow( allowed_below );
-        if( ok_ == false ) return false;
-
-
-        setObjectsAsAllowed( allowed_below );
-        current_region = RequestRegion::BELOW;
-        return true;
+        rules_processor.stopDefineBelow();
+        unSelectObject( boundering_below );
+        return false;
     }
 
-    rules_processor.stopDefineBelow();
-    return false;
+    bool ok_ = rules_processor.requestCreateBelow( allowed_below );
+    if( ok_ == false ) return false;
+
+    setObjectsAsAllowed( allowed_below );
+    current_region = RequestRegion::BELOW;
+    return true;
+
 }
 
 void Controller::defineSketchBelow( std::size_t surface_id_ )
@@ -331,6 +335,12 @@ void Controller::sendSelectedSurface( const std::size_t& id_ )
         boundering_below = id_;
         rules_processor.defineBelow( id_ );
     }
+}
+
+void Controller::unSelectObject( const std::size_t& id_ )
+{
+    sketch_scene->unselectObject( id_ );
+//    scene3d->unselectObject( id_ );
 }
 
 void Controller::updateObjects()

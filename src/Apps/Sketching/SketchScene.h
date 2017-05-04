@@ -105,6 +105,9 @@ class SketchScene: public QGraphicsScene
 
         inline void unselectObject( const std::size_t id_ )
         {
+            auto search = object_list.find( id_ );
+            if( search == object_list.end() ) return;
+
             object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
             update();
         }

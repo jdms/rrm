@@ -338,27 +338,13 @@ void MainWindow::createAppRelatedActions()
 
     ac_sketch_above = new QAction( "Sketch Above", this );
     ac_sketch_above->setCheckable( true );
-    connect( ac_sketch_above, &QAction::triggered,
-             [=]( bool status_ ){
-                                bool define_above = controller->enableCreateAbove( status_ );
-                                if( define_above == false )
-                                {
-                                    std::size_t id_ = controller->getUpperSurface();
-                                    sketch_scene.unselectObject( id_ );
-                                }
-
-    } );
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){
+                                                   controller->enableCreateAbove( status_ ); } );
 
     ac_sketch_below = new QAction( "Sketch Below", this );
     ac_sketch_below->setCheckable( true );
-    connect( ac_sketch_below, &QAction::triggered,
-             [=]( bool status_ ){ bool define_below = controller->enableCreateBelow( status_ );
-                                  if( define_below == false )
-                                  {
-                                      std::size_t id_ = controller->getLowerSurface();
-                                      sketch_scene.unselectObject( id_ );
-                                  }
-    } );
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){
+                                                   controller->enableCreateBelow( status_ ); } );
 
 
 
