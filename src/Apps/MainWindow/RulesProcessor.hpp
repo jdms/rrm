@@ -178,11 +178,32 @@
     bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
     {
         std::vector<double> surface;
-        size_t num_cross_sections = 0;
+        size_t num_cross_sections = curves.size();
 
-        for ( auto &curve_tuple : curves )
+        bool status = false;
+
+        if ( num_cross_sections > 1 )
         {
-            num_cross_sections++;
+            for ( auto &curve_tuple : curves )
+            {
+                auto &in_curve = std::get<0>(curve_tuple);
+                auto &in_curve_depth = std::get<1>(curve_tuple);
+
+                for ( size_t i = 0; i < in_curve.size(); ++i )
+                {
+                    surface.push_back(in_curve[i].x());
+                    surface.push_back(in_curve[i].y());
+                    surface.push_back(in_curve_depth);
+                }
+            }
+
+            std::cout << "Trying to create surface...\n\n"; 
+            status = modeller_.createSurface( surface_index, surface );
+        }
+
+        else if ( num_cross_sections == 1 )
+        {
+            auto &curve_tuple = curves[0];
 
             auto &in_curve = std::get<0>(curve_tuple);
             auto &in_curve_depth = std::get<1>(curve_tuple);
@@ -191,19 +212,9 @@
             {
                 surface.push_back(in_curve[i].x());
                 surface.push_back(in_curve[i].y());
-                surface.push_back(in_curve_depth);
             }
-        }
 
-        bool status = false;
-
-        if ( num_cross_sections > 1 )
-        {
-            status = modeller_.createSurface( surface_index, surface );
-        }
-
-        else if ( num_cross_sections == 1 )
-        {
+            std::cout << "Trying to create extruded surface...\n\n"; 
             status = modeller_.createExtrudedSurface( surface_index, surface );
         }
 
@@ -234,7 +245,7 @@
             path.push_back( path_curve[i].y() );
         }
 
-        return modeller_.createExtrusionAlongPath(surface_index, cross_section, cross_section_depth, path);
+        return modeller_.createExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
 
     }
 
