@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -24,17 +24,17 @@
 #ifndef __INTERPOLATED_GRAPH__
 #define __INTERPOLATED_GRAPH__
 
-#include <omp.h>
-
 #include <algorithm>
 #include <vector> 
 #include <list> 
 #include <set>
 #include <memory>
+
+#include "use_openmp.hpp"
+
 #include "interpolant_2d.hpp" 
 #include "core.hpp" 
 #include "triangle_soup_wrapper.hpp" 
-
 
 /* Class InterpolatedGraph is not reentrant. */ 
 
@@ -60,6 +60,8 @@ class InterpolatedGraph
         bool getHeight( Point2 &&p, double &height ); 
         bool getHeight( Point3 &p ); 
 
+        bool getRawHeight( const Point2 &p, double &height );
+
         template<typename CoordinatesList2D>
         double getRawHeight( CoordinatesList2D &&vertex ); 
 
@@ -77,11 +79,14 @@ class InterpolatedGraph
         bool addPoint( Point3 &&p ); 
         bool addPoints( const std::vector<Point3> &points ); 
 
-        template<typename __Point3__>
-        bool addPoint( __Point3__ &&p ); 
+        template<typename Point3Type>
+        bool addPoint( Point3Type &&p ); 
 
-        template<typename __Point3__>
-        bool addPoints( const std::vector<__Point3__> &points); 
+        template<typename Point3Type>
+        bool addPoints( const std::vector<Point3Type> &points); 
+
+        bool addExtrusionPathPoint( double abscissa, double ordinate );
+        void setPathOrigin( double abscissa, double ordinate = 0. );
 
         bool generateSurface(); 
 
@@ -125,7 +130,13 @@ class InterpolatedGraph
         const unsigned long int id_; 
 
         bool surface_is_set_ = false; 
+        bool path_is_set_ = false;
+
         Interpolant2D f; 
+
+        Interpolant2D path;
+        Point2 path_origin;
+
         std::list< std::weak_ptr<InterpolatedGraph> > upper_bound_; 
         std::list< std::weak_ptr<InterpolatedGraph> > lower_bound_; 
         std::set<unsigned long int> dependency_list_; 
@@ -135,8 +146,8 @@ class InterpolatedGraph
         bool compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const;
 };
 
-template<typename __Point3__>
-bool InterpolatedGraph::addPoint( __Point3__ &&p ) 
+template<typename Point3Type>
+bool InterpolatedGraph::addPoint( Point3Type &&p ) 
 {
     Point2 p2; 
     if ( isExtrudedSurface() == true ) { 
@@ -149,8 +160,8 @@ bool InterpolatedGraph::addPoint( __Point3__ &&p )
     return f.addPointEvaluation(p2, p[2]); 
 } 
 
-template<typename __Point3__>
-bool InterpolatedGraph::addPoints( const std::vector<__Point3__> &points) 
+template<typename Point3Type>
+bool InterpolatedGraph::addPoints( const std::vector<Point3Type> &points) 
 {
     bool status = true; 
     for ( auto &p : points ) 
@@ -176,8 +187,18 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
     bool status; 
 
     status = getHeight(p, height); 
-    DxF = f.Dx(p.x, p.y); 
-    DyF = f.Dy(p.x, p.y); 
+
+    if ( isExtrudedSurface() )
+    {
+        DxF = f.Dx(p.x, 0); 
+        DyF = 0; 
+    }
+
+    else
+    {
+        DxF = f.Dx(p.x, p.y); 
+        DyF = f.Dy(p.x, p.y); 
+    }
     normDF = DxF*DxF + DyF*DyF + 1; 
 
     normal[0] = -DxF/normDF; 
@@ -196,12 +217,23 @@ bool InterpolatedGraph::getNormal( Point2 &&p, T& normal )
 template<typename CoordinatesList2D>
 double InterpolatedGraph::getRawHeight( CoordinatesList2D &&vertex ) 
 {
-    double height = 0.0; 
-    if ( isExtrudedSurface() == true ) { 
-        height = f(vertex[0], 0.0); 
-    }
-    else { 
-        height = f(vertex[0], vertex[1]);  
+    /* double height = 0.0; */ 
+    /* if ( isExtrudedSurface() == true ) { */ 
+    /*     height = f(vertex[0], 0.0); */ 
+    /* } */
+    /* else { */ 
+    /*     height = f(vertex[0], vertex[1]); */  
+    /* } */
+
+    /* return height; */  
+
+    Point2 p2; 
+    p2.x = vertex[0]; 
+    p2.y = vertex[1]; 
+    double height; 
+
+    if ( getRawHeight(p2, height ) == false ) { 
+        return false; 
     }
 
     return height; 
@@ -231,12 +263,12 @@ bool InterpolatedGraph::getRawHeightMap( CoordinatesList &vertices )
     {
         if ( mesh.getVertex(i, p) == true ) { 
 
-            if ( isExtrudedSurface() == true ) { 
-                p.z = f(p.x, 0.0); 
-            }
-            else { 
-                p.z = f(p.x, p.y);  
-            }
+            /* if ( isExtrudedSurface() == true ) { */ 
+            /*     p.z = f(p.x, 0.0); */ 
+            /* } */
+            /* else { */ 
+            /*     p.z = f(p.x, p.y); */  
+            /* } */
 
             /* p.z = f(p.x, p.y); */ 
             /* std::cout << "p.x = " << p.x << ", p.y = " << p.y << ", p.z = " << p.z << std::endl; */ //debug

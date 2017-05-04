@@ -787,6 +787,16 @@ bool PlanarSurface::addPoints( const std::vector<Point3> &points ) {
     return f->addPoints(points); 
 }
 
+bool PlanarSurface::addExtrusionPathPoint( double abscissa, double ordinate )
+{
+    return f->addExtrusionPathPoint(abscissa, ordinate);
+}
+
+void PlanarSurface::setPathOrigin( double abscissa, double ordinate )
+{
+    f->setPathOrigin(abscissa, ordinate);
+}
+
 bool PlanarSurface::generateSurface() { 
     if ( f->generateSurface() == false ) { 
         interpolant_is_set_ = false; 
@@ -808,16 +818,21 @@ bool PlanarSurface::updateHeights()
     }
 
     heights.resize(num_vertices_); 
-    Point2 v;  
+    Point2 v {};  
 
     auto &heights_omp = heights; 
     auto &f_omp = f; 
 
-    if ( isExtrudedSurface() == false ) 
+
+    /* TODO: revisit this logic to see whether it is possible to exploit the loop for the linear extrusion */
+    /*       The lower loop was ignored because we now can extrude along a path */
+
+    /* if ( isExtrudedSurface() == false ) */ 
+    if ( true )
     { 
         auto num_vertices_omp = num_vertices_; 
         /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-        #pragma omp parallel for shared(heights_omp, f_omp) firstprivate(num_vertices_omp) private(v) default(none) 
+        #pragma omp parallel for shared(heights_omp, f_omp) firstprivate(num_vertices_omp, v) default(none) 
         for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
         {
             getVertex2D(i, v); 
@@ -834,7 +849,7 @@ bool PlanarSurface::updateHeights()
         // The following loops do not use the cache optimally. 
 
         /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-        #pragma omp parallel for shared(heights_omp, f_omp) firstprivate(nX, nY) private(v, height, index) default(none) 
+        #pragma omp parallel for shared(heights_omp, f_omp) firstprivate(nX, nY, v, height, index) default(none) 
         for ( long int i = 0; i < static_cast<long int>(nX); ++i )  
         {
             index = getVertexIndex(i, 0); 
@@ -1014,6 +1029,7 @@ void PlanarSurface::clearBoundingLists()
 
 /* Methods */ 
 bool PlanarSurface::rangeCheck( Natural i, Natural j ) { 
+    /*TODO: Range should be <, not <=; verify if this is a bug. */
     return ( (i <= nX_) && (j <= nY_) ); 
 }
 

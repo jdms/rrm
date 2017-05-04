@@ -236,7 +236,11 @@
         util.extrudeAlongPath(surface, cross_section, cross_section_depth, path, num_extrusion_steps, 32);
         std::cout << "Creating surface "<< surface_index << " with " << surface.size()/3.0 << " points.\n\n";
         std::cout << std::flush;
-        return modeller_.createSurface(surface_index, surface);
+        bool status = modeller_.createSurface(surface_index, surface);
+
+        std::cout << "Result of creating extrudeAlongPath(): " << status << "\n\n" << std::flush;
+
+        return status;
     }
 
     template<typename VertexList, typename FaceList>

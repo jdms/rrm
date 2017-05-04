@@ -32,8 +32,6 @@
 
 #include "use_openmp.hpp"
 
-#include "use_openmp.hpp"
-
 #include "interpolated_graph.hpp"
 #include "triangle_soup_wrapper.hpp" 
 
@@ -65,6 +63,9 @@ class PlanarSurface {
         /* Methods */ 
 
         /* Setters. */ 
+        bool addExtrusionPathPoint( double abscissa, double ordinate );
+        void setPathOrigin( double abscissa, double ordinate = 0. );
+
         bool addPoint( const Point3 &p ); 
         bool addPoint( Point3 &&p ); 
         bool addPoints( const std::vector<Point3> &points ); 
