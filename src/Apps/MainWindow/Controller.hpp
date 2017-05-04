@@ -85,6 +85,7 @@ class Controller: public QObject
 
         void addInputVolume();
 
+
         inline void setInputVolumeDimensions( double width_, double height_, double depth_ )
         {
             input_volume.setDimensions( width_, height_, depth_ );
@@ -128,8 +129,6 @@ class Controller: public QObject
 
 
         //NOTE: cross-sections should be members of volumes? it makes sense to me.
-
-        void addCurrentCrossSectionToList();
 
         void setCurrentCrossSection( double depth_ );
 
@@ -367,7 +366,7 @@ class Controller: public QObject
         {
             disc_depth_ = rules_processor.getDepthResolution();
             disc_depth = disc_depth_;
-            step_ = input_volume.getDepth()/disc_depth_;
+            step_ = input_volume.getDepth()/( disc_depth_);
             step_depth = (double) step_ ;
         }
 
@@ -403,9 +402,8 @@ class Controller: public QObject
 
     private:
 
-        inline void addCrossSectionofDepth( double depth_ )
-        {
-        }
+        void addInputVolumeToScenes();
+
 
         inline void setCurrentCrossSectionAsUsed()
         {
@@ -431,8 +429,19 @@ class Controller: public QObject
 
         inline void updateScenesWithCurrentCrossSection()
         {
-            sketch_scene->resetData();
 
+            clearCrossSectionScenes();
+            getCurvesOfCurrentCrossSection();
+            updateScenes();
+        }
+
+
+
+
+        inline void clearCrossSectionScenes(){ sketch_scene->resetData(); }
+
+        inline void getCurvesOfCurrentCrossSection()
+        {
             depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
             sketch_scene->setCrossSection( depth_of_cross_sections[ current_depth_csection ] );
 
@@ -448,7 +457,6 @@ class Controller: public QObject
 
                 if( has_curve == false )
                 {
-                     std::cout << "-1, " << std::flush;
                     continue;
                 }
                 std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
@@ -459,15 +467,17 @@ class Controller: public QObject
 
                 sketch_scene->addObject( it_.second );
 
-
             }
 
             std::cout << std::endl << std::endl << std::flush;
-
-            scene3d->updateCrossSection( current_depth_csection );
-
-
         }
+
+
+        inline void updateScenes()
+        {
+            scene3d->updateCrossSection( current_depth_csection );
+        }
+
 
         inline bool isCrossSectionAdded( double depth_ )
         {

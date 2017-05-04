@@ -58,20 +58,20 @@ void Controller::init()
 void Controller::addInputVolume()
 {
     input_volume.initialize();
-    scene3d->addVolume( &input_volume );
+    object_tree->addInputVolume();
+
+    addInputVolumeToScenes();
+}
+
+void Controller::addInputVolumeToScenes()
+{
     sketch_scene->setVolume( &input_volume );
     path_scene->setVolume( &input_volume );
 
-    ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
-    object_tree->addInputVolume( item );
+    scene3d->addVolume( &input_volume );
+    scene3d->createCrossSection();
 }
 
-
-
-void Controller::addCurrentCrossSectionToList()
-{
-
-}
 
 void Controller::setCurrentCrossSection( double depth_ )
 {

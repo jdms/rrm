@@ -31,7 +31,6 @@ QRectF VolumeItemWrapper::boundingRect() const
 
 void VolumeItemWrapper::setVolumeRaw( Volume* const &vol_ )
 {
-    boundary.clear();
     volume = vol_;
 
     double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
@@ -40,14 +39,12 @@ void VolumeItemWrapper::setVolumeRaw( Volume* const &vol_ )
     vol_->getOrigin( ox_, oy_, oz_ );
     vol_->getDimensions( w_, h_, d_ );
 
-    double width_ = w_;
-    double height_ = h_;
+    if( section == Section::XY )
+        editGeometry( ox_, oy_, w_, h_ );
 
-    if( section == Section::XZ )
-        height_ = d_;
+    else if( section == Section::XZ )
+        editGeometry( ox_, oy_, w_, d_ );
 
-    QRectF rect_( ox_, oy_, width_, height_ );
-    boundary = QPolygonF( rect_ );
 }
 
 void VolumeItemWrapper::editGeometry( int ox_, int oy_, int w_, int h_ )

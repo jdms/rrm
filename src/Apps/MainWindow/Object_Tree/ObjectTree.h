@@ -15,7 +15,7 @@ class ObjectTree :public QTreeWidget
         ObjectTree( QWidget* parent = 0 );
 
 
-        void addInputVolume( ObjectTreeItem* const& vol_ );
+        void addInputVolume(/* ObjectTreeItem* const& vol_ */);
         void addObject( ObjectTreeItem* const& obj_ );
         void addRegion( ObjectTreeItem* const& reg_ );
 
