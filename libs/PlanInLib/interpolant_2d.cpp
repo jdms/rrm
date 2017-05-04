@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -23,14 +23,21 @@
 
 #include "interpolant_2d.hpp"
 
+/* Disable MSVC warnings due to the following (GCC) unknown pragmas */
+/* https://msdn.microsoft.com/en-us/library/2c8f766e.aspx 
+ */
+#pragma warning (disable : 4068)
 
 // Eigen & GCC 5 : class std::binder2nd is deprecated
 // http://stackoverflow.com/questions/30535933/eigen-gcc-5-class-stdbinder2nd-is-deprecated
-// TODO: for some weird reason, the "system" keyword is not working when 
-// including Eigen's headers in the "CMakeLists.txt" file.  
+// FIXED: for some weird reason, the "system" keyword is not working when
+// including Eigen's headers in the "CMakeLists.txt" file.  Solution: used
+// incorrect call to Eigen3_INCLUDE_DIRS, which needed to be changed to
+// EIGEN3_INCLUDE_DIR
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#include <Eigen/Dense>
+/* TODO: include special inclusion for Eigen in Windows */
+#include "Eigen/Dense" 
 #pragma GCC diagnostic pop 
 
 /* #include "prettyprint.hpp" */ //debug 
@@ -173,8 +180,14 @@ bool Interpolant2D::addPointEvaluations( std::vector<Point2> &points, std::vecto
 
 bool Interpolant2D::interpolate() 
 {
+    /* TODO: this methos assumes that input points_ is always valid, beware */
     if ( points_.size() != fevals_.size() ) { 
         return false; 
+    }
+    
+    if ( points_.size() == 0 )
+    {
+        return false;
     }
 
     size_t size = points_.size(); 

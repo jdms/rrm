@@ -27,11 +27,15 @@
 unsigned long int InterpolatedGraph::num_instances_ = 0; 
 
 InterpolatedGraph::InterpolatedGraph( bool extruded_surface ) : 
-    id_(num_instances_), f( Kernel(), (extruded_surface == true ? 2 : 3) )
+    id_(num_instances_), 
+    f( Kernel(), (extruded_surface == true ? 2 : 3) ),
+    path( Kernel(), (extruded_surface == true ? 2 : 3) )
 { 
     ++num_instances_;
     dependency_list_.insert(id_); 
     extruded_surface_ = extruded_surface; 
+
+    path_origin = {{{ 0., 0. }}};
 }
 
 InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_instances_) 
@@ -41,6 +45,7 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
     surface_is_set_ = rhs.surface_is_set_; 
 
     f = rhs.f; 
+    path = rhs.path;
 
     upper_bound_ = rhs.upper_bound_; 
     lower_bound_ = rhs.lower_bound_; 
@@ -51,6 +56,8 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
     dependency_list_.insert(id_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
+
+    path_origin = rhs.path_origin;
 }
 
 InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_) 
@@ -58,6 +65,7 @@ InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_)
     surface_is_set_ = rhs.surface_is_set_; 
 
     f = std::move(rhs.f); 
+    path = std::move(rhs.path);
 
     upper_bound_ = std::move(rhs.upper_bound_); 
     lower_bound_ = std::move(rhs.lower_bound_); 
@@ -65,6 +73,8 @@ InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_)
     dependency_list_ = std::move(rhs.dependency_list_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
+
+    path_origin = rhs.path_origin;
 }
 
 bool InterpolatedGraph::surfaceIsSet() 
@@ -91,17 +101,51 @@ int InterpolatedGraph::isSmooth()
     return f.isSmooth(); 
 }
 
-bool InterpolatedGraph::getHeight( const Point2 &p, double &height ) 
+bool InterpolatedGraph::getRawHeight( const Point2 &p, double &height )
 {
-    if ( surfaceIsSet() == false ) { 
+    if ( surfaceIsSet() == false ) 
+    { 
         return false; 
     }
 
-    if ( isExtrudedSurface() == true ) { 
-        height = f(p.x, 0.0); 
+    if ( isExtrudedSurface() == true ) 
+    { 
+        if ( path_is_set_ )
+        {
+            double origin = path(path_origin.x, 0) - path_origin.y;
+            height = f(p.x - (path(p.y, 0) - origin), 0);
+        }
+
+        else
+        {
+            height = f(p.x, 0.0); 
+        }
     }
-    else { 
+
+    else 
+    { 
         height = f(p.x, p.y);  
+    }
+
+    return true;
+}
+
+bool InterpolatedGraph::getHeight( const Point2 &p, double &height ) 
+{
+    /* if ( surfaceIsSet() == false ) { */ 
+    /*     return false; */ 
+    /* } */
+
+    /* if ( isExtrudedSurface() == true ) { */ 
+    /*     height = f(p.x, 0.0); */ 
+    /* } */
+    /* else { */ 
+    /*     height = f(p.x, p.y); */  
+    /* } */
+
+    if ( getRawHeight(p, height) == false )
+    {
+        return false;
     }
 
     double upper_bound, lower_bound;  
@@ -144,6 +188,30 @@ bool InterpolatedGraph::getHeight( Point3 &p )
     p2.y = p.y;
 
     return getHeight(p2, p.z); 
+}
+
+void InterpolatedGraph::setPathOrigin( double abscissa, double ordinate )
+{
+    path_origin.x = abscissa;
+    path_origin.y = ordinate;
+}
+
+bool InterpolatedGraph::addExtrusionPathPoint( double abscissa, double ordinate )
+{
+    if ( surfaceIsSet() == true )
+    {
+        return false;
+    }
+
+    if ( isExtrudedSurface() == false )
+    {
+        return false;
+    }
+
+
+    path.addPointEvaluation( {{{ abscissa, 0 }}}, ordinate );
+
+    return true;
 }
 
 bool InterpolatedGraph::addPoint( const Point3 &p ) 
@@ -191,6 +259,12 @@ bool InterpolatedGraph::generateSurface()
     }
 
     surface_is_set_ = f.interpolate(); 
+
+    if ( surface_is_set_ && isExtrudedSurface() )
+    {
+        path_is_set_ = path.interpolate();
+    }
+
     return surface_is_set_; 
 } 
 
@@ -259,18 +333,35 @@ bool InterpolatedGraph::liesBelow( Point3 &&p )
 
 /* 1 */ 
 
-bool InterpolatedGraph::liesAboveRawSurface( const Point3 &p ) { 
+bool InterpolatedGraph::liesAboveRawSurface( const Point3 &p ) 
+{ 
 
-    if ( surfaceIsSet() == false ) { 
+/*     if ( surfaceIsSet() == false ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     double height = 0.0; */ 
+/*     if ( isExtrudedSurface() == true ) { */ 
+/*         height = f(p.x, 0.0); */ 
+/*     } */
+/*     else { */ 
+/*         height = f(p.x, p.y); */  
+/*     } */
+
+/*     if ( p.z < height ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     return true; */ 
+ 
+    Point2 p2; 
+    p2.x = p.x; 
+    p2.y = p.y; 
+    double height; 
+
+    // Check whether p lies in a region for which the surface is well defined 
+    if ( getRawHeight(p2, height ) == false ) { 
         return false; 
-    }
-
-    double height = 0.0; 
-    if ( isExtrudedSurface() == true ) { 
-        height = f(p.x, 0.0); 
-    }
-    else { 
-        height = f(p.x, p.y);  
     }
 
     if ( p.z < height ) { 
@@ -278,7 +369,6 @@ bool InterpolatedGraph::liesAboveRawSurface( const Point3 &p ) {
     }
 
     return true; 
-
 }
 
 bool InterpolatedGraph::liesAboveRawSurface( Point3 &&p ) 
@@ -288,19 +378,35 @@ bool InterpolatedGraph::liesAboveRawSurface( Point3 &&p )
 
 bool InterpolatedGraph::liesBelowRawSurface( const Point3 &p ) 
 { 
-    if ( surfaceIsSet() == false ) { 
-        return false; 
-    }
+/*     if ( surfaceIsSet() == false ) { */ 
+/*         return false; */ 
+/*     } */
 
-    double height = 0.0; 
-    if ( isExtrudedSurface() == true ) { 
-        height = f(p.x, 0.0); 
-    }
-    else { 
-        height = f(p.x, p.y);  
-    }
+/*     double height = 0.0; */ 
+/*     if ( isExtrudedSurface() == true ) { */ 
+/*         height = f(p.x, 0.0); */ 
+/*     } */
+/*     else { */ 
+/*         height = f(p.x, p.y); */  
+/*     } */
 
-    if ( p.z < height ) { 
+/*     if ( p.z < height ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     if ( p.z > height ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     return true; */ 
+ 
+    Point2 p2; 
+    p2.x = p.x; 
+    p2.y = p.y; 
+    double height; 
+
+    // Check whether p lies in a region for which the surface is well defined 
+    if ( getRawHeight(p2, height ) == false ) { 
         return false; 
     }
 
