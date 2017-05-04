@@ -12,7 +12,7 @@ Scene3D::Scene3D()
 }
 
 
-bool Scene3D::addVolume(  Volume* const& volume_ )
+void Scene3D::addVolume(  Volume* const& volume_ )
 {
     context->makeCurrent( surfacegl );
 
@@ -21,7 +21,11 @@ bool Scene3D::addVolume(  Volume* const& volume_ )
     input_volume->init();
     input_volume->setVolumeRaw( volume_ );
 
+}
 
+
+void Scene3D::createCrossSection()
+{
     double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
     double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
 
@@ -34,11 +38,8 @@ bool Scene3D::addVolume(  Volume* const& volume_ )
     cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
                                   ( float ) oz_, ( float ) (oz_ + d_) );
 
-
-//    cross_section->setVolumeRaw( volume_ );
-
-    return true;
 }
+
 
 bool Scene3D::addObject( Object* const& object_ )
 {

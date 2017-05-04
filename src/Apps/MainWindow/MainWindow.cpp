@@ -61,8 +61,8 @@ void MainWindow::init()
 
     setupWindowProperties();
     createWindow();
-    startController();
 
+    startController();
     createActions();
 
 }
@@ -268,7 +268,7 @@ void MainWindow::setupCrossSectionsDiscretization()
     controller->setupDepthResolution( depth_, step_ );
 
     sl_depth_csection->setMinimum( 0 );
-    sl_depth_csection->setMaximum( (int)depth_ );
+    sl_depth_csection->setMaximum( (int)depth_);
     sl_depth_csection->setValue( depth_ );
 }
 
@@ -478,6 +478,7 @@ void MainWindow::screenshot()
     sketch_scene.screenshot();
 //    scene3d.screenshot();
 }
+
 
 void MainWindow::interpolate()
 {

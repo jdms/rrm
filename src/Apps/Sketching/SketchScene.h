@@ -28,13 +28,13 @@ class SketchScene: public QGraphicsScene
         inline void setVolume( Volume* const &vol_ )
         {
             volume.setVolumeRaw( vol_ );
-            setSceneRect( volume.boundingRect() );          
+            setSceneRect( volume.boundingRect() );
 
             addItem( csection_image );
             addItem( &volume );
-
-
         }
+
+
         void setImagetoCrossSection( const QString& url_ );
         void addObject( Object *obj_ );
 

@@ -33,7 +33,9 @@ class Scene3D: public QObject
 
         inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_; }
 
-        bool addVolume(  Volume* const& volume_ );
+        void addVolume(  Volume* const& volume_ );
+
+        void createCrossSection();
 
         bool addObject( Object* const& object_ );
 
