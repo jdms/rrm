@@ -28,6 +28,8 @@ class SketchScene: public QGraphicsScene
         inline void setVolume( Volume* const &vol_ )
         {
             volume.setVolumeRaw( vol_ );
+
+            csection_depth = vol_->getDepth();
             setSceneRect( volume.boundingRect() );
 
             addItem( csection_image );
@@ -43,25 +45,12 @@ class SketchScene: public QGraphicsScene
         inline void init(){}
 
 
-        inline void setCrossSection( const CrossSection& csection_ )
+        inline void setCrossSection( double csection_ )
         {
-            csection = csection_;
-//            drawCrossSectionObjects();
-//            drawCrossSectionRegions();
+            csection_depth = csection_;
             update();
         }
 
-        inline void drawCrossSectionObjects()
-        {
-            std::set< Object* > objects_ = csection.getObjectsReferenced();
-            for( Object* o: objects_ )
-            {
-                addObject( o );
-            }
-        }
-        inline void drawCrossSectionRegions()
-        {
-        }
 
         inline void setAllowedObjects( const std::vector< std::size_t >& allowed_ )
         {
@@ -169,7 +158,7 @@ class SketchScene: public QGraphicsScene
         InputSketch *sketch;
         QPointF boundary_anchor;
 
-        CrossSection csection;
+        double csection_depth;
         VolumeItemWrapper volume;
         QGraphicsPixmapItem* csection_image;
 
