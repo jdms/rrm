@@ -532,6 +532,8 @@ class Controller: public QObject
         void setObjectsAsAllowed( std::vector< std::size_t >& objects_ );
         void unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ );
 
+        void unSelectObject( const std::size_t& id_ );
+
 
 /*
                 inline bool registerSolver()
