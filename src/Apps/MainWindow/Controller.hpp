@@ -443,7 +443,7 @@ class Controller: public QObject
         inline void getCurvesOfCurrentCrossSection()
         {
             depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
-            sketch_scene->setCrossSection( depth_of_cross_sections[ current_depth_csection ] );
+            sketch_scene->setCrossSection( current_depth_csection );//depth_of_cross_sections[ current_depth_csection ] );
 
             std::size_t index_ = rowIndexfromDepth( current_depth_csection );
 
@@ -463,13 +463,10 @@ class Controller: public QObject
                 it_.second->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
                 it_.second->addInputEdges( current_depth_csection, curve_edges );
 
-                std::cout << it_.first << " " << std::flush;
-
                 sketch_scene->addObject( it_.second );
 
             }
 
-            std::cout << std::endl << std::endl << std::flush;
         }
 
 
