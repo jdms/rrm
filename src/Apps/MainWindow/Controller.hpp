@@ -529,6 +529,8 @@ class Controller: public QObject
         }
 
 
+        void setObjectsAsAllowed( std::vector< std::size_t >& objects_ );
+        void unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ );
 
 
 /*
@@ -591,6 +593,9 @@ class Controller: public QObject
 
         std::size_t boundering_above;
         std::size_t boundering_below;
+
+        std::vector< std::size_t > allowed_upper;
+        std::vector< std::size_t > allowed_below;
 
         //        SolverRegistration register_solver;
 

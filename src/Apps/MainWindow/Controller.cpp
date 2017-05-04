@@ -253,12 +253,14 @@ void Controller::updateRule( const std::string &rule_ )
 
 bool Controller::enableCreateAbove( bool status_ )
 {
+    unsetObjectsAsAllowed( allowed_upper );
+
     if( status_ == true )
     {
-        std::vector< std::size_t > objects_;
+        bool ok_ = rules_processor.requestCreateAbove( allowed_upper );
+        if( ok_ == false ) return false;
 
-        bool ok_ = rules_processor.requestCreateAbove( objects_ );
-        sketch_scene->setAllowedObjects( objects_ );
+        setObjectsAsAllowed( allowed_upper );
         current_region = RequestRegion::ABOVE;
         return true;
     }
@@ -276,15 +278,31 @@ void Controller::defineSketchAbove( std::size_t surface_id_ )
 }
 
 
+void Controller::setObjectsAsAllowed( std::vector< std::size_t >& objects_ )
+{
+    sketch_scene->setAllowedObjects( objects_ );
+//    scene3d->setAllowedObjects( objects_ );
+}
+
+void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
+{
+    sketch_scene->unsetAllowedObjects( objects_ );
+//    scene3d->unsetAllowedObjects( objects_ );
+    objects_.clear();
+}
+
 
 bool Controller::enableCreateBelow( bool status_ )
 {
+    unsetObjectsAsAllowed( allowed_below );
+
     if( status_ == true )
     {
-        std::vector< std::size_t > objects_;
-        bool ok = rules_processor.requestCreateBelow( objects_ );
+        bool ok_ = rules_processor.requestCreateBelow( allowed_below );
+        if( ok_ == false ) return false;
 
-        sketch_scene->setAllowedObjects( objects_ );
+
+        setObjectsAsAllowed( allowed_below );
         current_region = RequestRegion::BELOW;
         return true;
     }

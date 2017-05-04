@@ -34,11 +34,6 @@ class SketchScene: public QGraphicsScene
             addItem( &volume );
 
 
-//            QGraphicsView* view_ = views()[ 0 ];
-////            int margin_ = ( view_->width() - volume.getWidth() )*0.5;
-////            view_->ensureVisible( volume.boundingRect(), margin_, 50 );
-//            view_->fitInView( volume.boundingRect(), Qt::KeepAspectRatio );
-
         }
         void setImagetoCrossSection( const QString& url_ );
         void addObject( Object *obj_ );
@@ -76,6 +71,19 @@ class SketchScene: public QGraphicsScene
             {
                 object_list[ id_ ]->setState( ObjectItemWrap::State::ALLOWED );
             }
+
+            setModeSelecting();
+            update();
+        }
+
+        inline void unsetAllowedObjects( const std::vector< std::size_t >& allowed_ )
+        {
+
+            for( std::size_t id_: allowed_ )
+            {
+                object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+            }
+            allowed_objects.clear();
 
             setModeSelecting();
             update();
