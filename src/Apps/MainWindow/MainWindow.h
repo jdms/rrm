@@ -99,7 +99,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 
         void init();
-
         void getCurrentDirectory();
 
         void createWindow();
@@ -110,11 +109,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void createObjectTreeSection();
         void createSketchSection();
 
-
         void createActions();
-
         void createGeneralActions();
         void createAppRelatedActions();
+
+        void setupCrossSectionsDiscretization();
 
 
         void keyPressEvent( QKeyEvent *event );
@@ -129,6 +128,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         bool enableRedo( bool );
 
         void updateScenes();
+        void updateCanvas();
 
 
 
