@@ -463,6 +463,8 @@ class Controller: public QObject
 
             }
 
+            updateScenes();
+
 
         }
 
