@@ -378,18 +378,29 @@ void Controller::updateObjects()
 void Controller::clear()
 {
 
+    cleaningScenes();
+    cleaningRawData();
+    cleaningRules();
+
+    object_tree->clear();
+
+}
+
+void Controller::cleaningScenes()
+{
     if( scene3d != nullptr )
         scene3d->clearScene();
 
     if( sketch_scene != nullptr )
         sketch_scene->clearScene();
 
-
     if( path_scene != nullptr )
         path_scene->clearScene();
+}
 
 
-    object_tree->clear();
+void Controller::cleaningRawData()
+{
 
     input_volume.clear();
     disc_width = 10;
@@ -422,8 +433,11 @@ void Controller::clear()
         delete it.second;
     }
     regions.clear();
+}
 
+
+void Controller::cleaningRules()
+{
     current_rule = RuleStatus::RA_SKETCHING;
     rules_processor.clear();
 }
-
