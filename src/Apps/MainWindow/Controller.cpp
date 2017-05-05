@@ -107,6 +107,8 @@ bool Controller::getNameofObjectofId( std::size_t id_, std::string& name_ )
 
 bool Controller::setVisibilityofObjectofId( std::size_t id_, bool option )
 {
+
+    std::cout << "Set object " << id_ << " visible: " << option << std::endl << std::flush;
     if( isValidObject( id_ ) == false ) return false;
 
     Object* obj = objects[ id_ ];
@@ -322,43 +324,16 @@ void Controller::updateObjects()
 
     for( auto &it_: objects )
     {
-
         Object* obj_ = it_.second;
 
+        if ( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
+             obj_->clearCurve( current_depth_csection );
 
-        std::vector< float > curve_vertices;
-        std::vector< std::size_t > curve_edges;
-
-        bool getcurve_ok = rules_processor.getCrossSection( obj_->getId(),
-                                                            rowIndexfromDepth( current_depth_csection ),
-                                                            curve_vertices, curve_edges );
-
-        if( getcurve_ok  == false )
-        {
-            obj_->clearCurve( current_depth_csection );
-        }
-
-
-        //TODO: change addInputCurve to updateInputCurve
-        std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
-        obj_->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
-        obj_->addInputEdges( current_depth_csection, curve_edges );
-
-        std::vector< float > surface_vertices;
-        std::vector< std::size_t > surface_faces;
-
-
-        bool getmesh_ok = rules_processor.getMesh( obj_->getId(), surface_vertices, surface_faces );
-        if( getmesh_ok  == false )
-        {
-            std::cout << "Mesh not valid \n\n" << std::flush;
+        if( getObjectSurface( obj_ ) == false )
             obj_->clearSurface();
-        }
-
-        std::vector< double > surface_vertices1( surface_vertices.begin(), surface_vertices.end() );
-        obj_->updateSurface( surface_vertices1, surface_faces );
-
     }
+
+    //TODO: update scenes should be called here
 
 }
 

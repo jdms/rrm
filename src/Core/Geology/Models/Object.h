@@ -257,9 +257,6 @@ class Object
         {
             input_curves[ depth_ ].clear();
             input_edges[ depth_ ].clear();
-
-            input_curves.clear();
-            input_edges.clear();
         }
 
         inline void clearSurface()
