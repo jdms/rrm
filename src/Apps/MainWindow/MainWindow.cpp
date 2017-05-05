@@ -166,11 +166,17 @@ void MainWindow::createObjectTreeSection()
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
     connect( object_tree, &ObjectTree::setInputVolumeVisible,
-                        [=]( bool status_ ) { controller->setInputVolumeVisibility( status_ ); } );
+                        [=]( bool status_ ) { controller->setInputVolumeVisibility( status_ );
+                                              emit updateScenes();
+                                              emit updateCanvas();
+                                            } );
 
     connect( object_tree, &ObjectTree::setObjectVisible,
                         [=]( std::size_t id_, bool status_ ) {
-                                        controller->setVisibilityofObjectofId( id_, status_ ); } );
+                                        controller->setVisibilityofObjectofId( id_, status_ );
+                                        emit updateScenes();
+                                        emit updateCanvas();
+                            } );
 
 
 }

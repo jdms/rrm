@@ -194,6 +194,9 @@ void ObjectOpenGLWrapper::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f
                                                                                    const int& h_ )
 {
 
+    if( object == nullptr ) return;
+    if( object->getVisibility() == false ) return;
+
     if( nfaces == 0 ) return;
 
     Eigen::Affine3f M_;

@@ -58,7 +58,8 @@ class SketchScene: public QGraphicsScene
 
             for( std::size_t id_: allowed_ )
             {
-                object_list[ id_ ]->setState( ObjectItemWrap::State::ALLOWED );
+                ObjectItemWrap* obj_ = object_list[ id_ ];
+                obj_->setState( ObjectItemWrap::State::ALLOWED );
             }
 
             setModeSelecting();
@@ -70,11 +71,12 @@ class SketchScene: public QGraphicsScene
 
             for( std::size_t id_: allowed_ )
             {
-                object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+                ObjectItemWrap* obj_ = object_list[ id_ ];
+                obj_->setState( ObjectItemWrap::State::NONE );
             }
             allowed_objects.clear();
 
-            setModeSelecting();
+            setModeSketching();
             update();
         }
 
@@ -84,7 +86,8 @@ class SketchScene: public QGraphicsScene
             for( std::size_t id_: allowed_objects )
             {
                 if( id_ == surface_selected ) continue;
-                object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+                ObjectItemWrap* obj_ = object_list[ id_ ];
+                obj_->setState( ObjectItemWrap::State::NONE );
             }
 
             allowed_objects.clear();
@@ -97,7 +100,8 @@ class SketchScene: public QGraphicsScene
             auto search = object_list.find( id_ );
             if( search == object_list.end() ) return;
 
-            object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+            ObjectItemWrap* obj_ = object_list[ id_ ];
+            obj_->setState( ObjectItemWrap::State::NONE );
             update();
         }
 

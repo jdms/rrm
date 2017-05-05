@@ -26,6 +26,9 @@ void ObjectItemWrap::setupPens()
 void ObjectItemWrap::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w )
 {
 
+    if( object == nullptr ) return;
+    if( object->getVisibility() == false ) return;
+
     visible_subpaths_pen.setColor( temp_color );
     hidden_subpaths_pen.setColor( temp_color );
 
