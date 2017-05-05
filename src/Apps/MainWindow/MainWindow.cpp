@@ -24,9 +24,9 @@
 
 #include "MainWindow.h"
 
-MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )//, ui( new Ui::MainWindow )
+MainWindow::MainWindow ( QWidget *parent ) : QMainWindow ( parent )
 {
-    /*ui->*/setupUi( this );
+    setupUi( this );
 
     sl_depth_csection = nullptr;
     object_tree = nullptr;
@@ -62,13 +62,8 @@ void MainWindow::init()
     setupWindowProperties();
     createWindow();
 
-
-    controller = new Controller();
-    controller->setScene3D( &scene3d );
-    controller->setSketchScene( &sketch_scene );
-    controller->setPathScene( &scene_path );
-    controller->setObjectTree( object_tree );
-
+    startController();
+    createActions();
 
 }
 
@@ -82,11 +77,6 @@ void MainWindow::setupWindowProperties()
                     QMainWindow::AllowTabbedDocks );
 
     setDockNestingEnabled( true );
-}
-
-
-void MainWindow::createWindow()
-{
 
     QRect rect = QGuiApplication::primaryScreen()->geometry();
     app_height = rect.height()* 0.8;
@@ -98,22 +88,16 @@ void MainWindow::createWindow()
 
     setGeometry( app_orig_x, app_orig_y, app_width, app_height );
     setWindowTitle( "Rapid Reservoir Modelling" );
+}
 
+
+void MainWindow::createWindow()
+{
 
     create3dSection();
     createObjectTreeSection();
     createSketchSection();
 
-
-    QFrame* frame_ = new QFrame();
-    frame_->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-
-
-    QLabel* label_ = new QLabel( "text" );
-    QHBoxLayout* hb_dimensions = new QHBoxLayout( frame_ );
-    hb_dimensions->addWidget( label_ );
-    frame_->setLayout( hb_dimensions );
-    statusBar()->addWidget( frame_ );
 
 
     getCurrentDirectory();
@@ -126,27 +110,7 @@ void MainWindow::createWindow()
 
 
 
-    connect( &sketch_scene, &SketchScene::updateVolumeWidthHeight, [=]( double w_, double h_ ) {
-                                                controller->setInputVolumeWidthHeight( w_, h_ );
-                                                emit updateScenes();
-                                                } );
 
-    connect( &sketch_scene, &SketchScene::selectedSurface, [=]( const std::size_t&id_  ) {
-                                                        controller->sendSelectedSurface( id_ ); } );
-
-
-    connect( &scene_path, &PathScene::updateVolumeWidthDepth, [=]( double w_, double d_ ) {
-                                                controller->setInputVolumeWidthDepth( w_, d_ );
-                                                emit updateScenes();
-                                                } );
-
-
-    connect( &scene_path, &PathScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->setPathCurvetoCurrentObject( c_ );
-                                                 } );
-
-
-    connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
     connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
 
 
@@ -157,199 +121,7 @@ void MainWindow::createWindow()
 
 
 
-    ac_clear = new QAction( "Clear", this );
-    connect( ac_clear, &QAction::triggered, [=](){
-                                                sketch_scene.clearScene();
-                                                scene3d.clearScene();
-                                                scene_path.clearScene();
-                                                controller->clear();
-                                                run_app(); } );
 
-
-    ac_undo = new QAction( "Undo", this );
-//    ac_undo->setShortcut( QKeySequence(/*undo_*/ );
-
-    QShortcut* undo_ = new QShortcut( QKeySequence::Undo, this );
-    connect( undo_, &QShortcut::activated, ac_undo, &QAction::trigger );
-    connect( ac_undo, &QAction::triggered, [=](){
-                                                 controller->undo();
-                                                 ac_undo->setEnabled( controller->canUndo() );
-                                                 ac_redo->setEnabled( controller->canRedo() );
-                                                 emit updateScenes(); } );
-
-
-    ac_redo = new QAction( "Redo", this );
-    QShortcut* redo_ = new QShortcut( QKeySequence::Undo, this );
-    connect( redo_, &QShortcut::activated, ac_redo, &QAction::trigger );
-    connect( ac_redo, &QAction::triggered, [=](){
-                                                controller->redo();
-                                                ac_undo->setEnabled( controller->canUndo() );
-                                                ac_redo->setEnabled( controller->canRedo() );
-                                                emit updateScenes(); } );
-
-
-    ac_discard_sketch = new QAction( "Discard sketch", this );
-    connect( ac_discard_sketch, &QAction::triggered, &sketch_scene, &SketchScene::clearSketch );
-
-
-    ac_screenshot = new QAction( "Screenshot", this );
-    connect( ac_screenshot, &QAction::triggered, &sketch_scene, &SketchScene::screenshot );
-
-
-
-    tb_general = new QToolBar( this );
-    tb_general->addAction( ac_clear );
-    tb_general->addAction( ac_undo );
-    tb_general->addAction( ac_redo );
-    tb_general->addAction( ac_screenshot );
-    addToolBar( tb_general );
-
-
-
-    ac_stratigraphy = new QAction( "Stratigraphy", this );
-    ac_stratigraphy->setCheckable( true );
-    connect( ac_stratigraphy, &QAction::triggered,
-             [=](){ controller->setTypeCurrentObject( Object::TYPE::Stratigraphy );} );
-
-    ac_channel = new QAction( "Channel", this );
-    ac_channel->setCheckable( true );
-    connect( ac_channel, &QAction::triggered,
-             [=](){ controller->setTypeCurrentObject( Object::TYPE::Channel );
-                    dw_sketch_path_canvas->setVisible( true ); } );
-
-
-    ag_surface_type = new QActionGroup( this );
-    ag_surface_type->addAction( ac_stratigraphy );
-    ag_surface_type->addAction( ac_channel );
-    ac_stratigraphy->setChecked( true );
-
-
-
-    ac_sketch_above = new QAction( "Sketch Above", this );
-    ac_sketch_above->setCheckable( true );
-    connect( ac_sketch_above, &QAction::triggered,
-             [=]( bool status_ ){
-                                bool define_above = controller->enableCreateAbove( status_ );
-                                if( define_above == false )
-                                {
-                                    std::size_t id_ = controller->getUpperSurface();
-                                    sketch_scene.unselectObject( id_ );
-                                }
-
-    } );
-
-    ac_sketch_below = new QAction( "Sketch Below", this );
-    ac_sketch_below->setCheckable( true );
-    connect( ac_sketch_below, &QAction::triggered,
-             [=]( bool status_ ){ bool define_below = controller->enableCreateBelow( status_ );
-                                  if( define_below == false )
-                                  {
-                                      std::size_t id_ = controller->getLowerSurface();
-                                      sketch_scene.unselectObject( id_ );
-                                  }
-    } );
-
-
-
-    ac_remove_above  = new QAction( "Remove Above", this );
-    ac_remove_above->setCheckable( true );
-    connect( ac_remove_above, &QAction::triggered,
-             [=](){ controller->updateRule( "RA_SKETCHING" ); } );
-
-    ac_remove_above_int  = new QAction( "Remove Above Intersection", this );
-    ac_remove_above_int->setCheckable( true );
-    connect( ac_remove_above_int, &QAction::triggered,
-             [=](){ controller->updateRule( "RAI_SKETCHING" ); } );
-
-    ac_remove_below  = new QAction( "Remove Below", this );
-    ac_remove_below->setCheckable( true );
-    connect( ac_remove_below, &QAction::triggered,
-             [=](){ controller->updateRule( "RB_SKETCHING" ); } );
-
-    ac_remove_below_int  = new QAction( "Remove Below Intersection", this );
-    ac_remove_below_int->setCheckable( true );
-    connect( ac_remove_below_int, &QAction::triggered,
-             [=](){ controller->updateRule( "RBI_SKETCHING" ); } );
-
-
-    ag_stratigraphy_rules = new QActionGroup( this );
-    ag_stratigraphy_rules->addAction( ac_remove_above );
-    ag_stratigraphy_rules->addAction( ac_remove_above_int );
-    ag_stratigraphy_rules->addAction( ac_remove_below );
-    ag_stratigraphy_rules->addAction( ac_remove_below_int );
-    ac_remove_above_int->setChecked( true );
-
-
-
-
-    ac_discard_sketch = new QAction( "Discard", this );
-    connect( ac_discard_sketch, &QAction::triggered,
-             [=](){ sketch_scene.clearSketch(); } );
-
-    ac_commit_sketch = new QAction( "Commit", this );
-    connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
-
-    connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->addInputCurvetoCurrentObject( c_ );
-                                                 } );
-
-    ac_interpolate = new QAction( "Generate", this );
-    connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
-
-    connect( &sketch_scene, &SketchScene::interpolateObject, [=](){
-                                                bool created = controller->interpolate();
-                                                if( created == true )
-                                                {
-                                                    randomColor( true );
-                                                    controller->createObject();
-                                                }
-
-                                                ac_undo->setEnabled( controller->canUndo() );
-                                                ac_redo->setEnabled( controller->canRedo() );
-
-                                                emit updateScenes();
-                                            } );
-
-
-    cd_pickercolor = new QColorDialog();
-    cd_pickercolor->setWindowFlags( Qt::Widget );
-    cd_pickercolor->setCurrentColor( QColor( 255, 0, 0 ) );
-
-    ac_sketchcolor = new QWidgetAction( this );
-    ac_sketchcolor->setDefaultWidget( cd_pickercolor );
-
-
-    mn_pickercolor = new QMenu();
-    mn_pickercolor->addAction( ac_sketchcolor );
-
-    tbt_colorsketch = new QToolButton;
-    tbt_colorsketch->setPopupMode( QToolButton::MenuButtonPopup );
-    tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
-    tbt_colorsketch->setMenu( mn_pickercolor );
-    tbt_colorsketch ->setCheckable( true );
-
-
-    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ randomColor( !status_ ); } );
-
-    connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
-        tbt_colorsketch->setChecked( true );
-        randomColor( false, c_ ); } );
-
-
-    tb_sketch = new QToolBar( this );
-    tb_sketch->addActions( ag_surface_type->actions() );
-    tb_sketch->addSeparator();
-    tb_sketch->addAction( ac_sketch_above );
-    tb_sketch->addAction( ac_sketch_below );
-    tb_sketch->addSeparator();
-    tb_sketch->addActions( ag_stratigraphy_rules->actions() );
-    tb_sketch->addSeparator();
-    tb_sketch->addAction( ac_discard_sketch );
-    tb_sketch->addAction( ac_commit_sketch );
-    tb_sketch->addAction( ac_interpolate );
-    tb_sketch->addSeparator();
-    tb_sketch->addWidget( tbt_colorsketch );
-    addToolBar( tb_sketch );
 
 
 }
@@ -370,6 +142,10 @@ void MainWindow::create3dSection()
 
     QWidget *wd_window3d = new QWidget( this );
     wd_window3d->setLayout( hl_window3d );
+
+
+    connect( this, SIGNAL( updateCanvas() ), canvas3d, SLOT( update() ) );
+
 
     setCentralWidget( wd_window3d );
 
@@ -415,7 +191,6 @@ void MainWindow::createSketchSection()
 
     canvas_path = new CanvasPath();
     canvas_path->setScenePath( &scene_path );
-//    canvas_path->setMaximumSize( 350, 200 );
 
     dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
     dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
@@ -424,6 +199,29 @@ void MainWindow::createSketchSection()
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_path_canvas );
 
 
+    connect( &sketch_scene, &SketchScene::updateVolumeWidthHeight, [=]( double w_, double h_ ) {
+                                                controller->setInputVolumeWidthHeight( w_, h_ );
+                                                emit updateScenes();
+                                                } );
+
+    connect( &sketch_scene, &SketchScene::selectedSurface, [=]( const std::size_t&id_  ) {
+                                                        controller->sendSelectedSurface( id_ ); } );
+
+
+    connect( &scene_path, &PathScene::updateVolumeWidthDepth, [=]( double w_, double d_ ) {
+                                                controller->setInputVolumeWidthDepth( w_, d_ );
+                                                emit updateScenes();
+                                                } );
+
+
+    connect( &scene_path, &PathScene::curveAccepted, [=]( const Curve2D& c_ ){
+                                                 controller->setPathCurvetoCurrentObject( c_ );
+                                                 } );
+
+
+    connect( this, &MainWindow::updateScenes, &sketch_scene, &SketchScene::updateScene );
+
+    connect( this, SIGNAL( updateCanvas() ), canvas2d, SLOT( update() ) );
 
 }
 
@@ -454,46 +252,263 @@ void MainWindow::getCurrentDirectory()
 void MainWindow::run_app()
 {
 
-    randomColor( true );
-
+    defineColor( true );
     controller->init();
+    setupCrossSectionsDiscretization();
 
+    emit updateCanvas();
+
+}
+
+
+void MainWindow::setupCrossSectionsDiscretization()
+{
     std::size_t depth_ = 1;
     std::size_t step_ = 1;
     controller->setupDepthResolution( depth_, step_ );
 
     sl_depth_csection->setMinimum( 0 );
-    sl_depth_csection->setMaximum( (int)depth_ );
+    sl_depth_csection->setMaximum( (int)depth_);
     sl_depth_csection->setValue( depth_ );
-
-    canvas2d->update();
-    canvas3d->update();
-
 }
+
+
+void MainWindow::startController()
+{
+    controller = new Controller();
+    controller->setScene3D( &scene3d );
+    controller->setSketchScene( &sketch_scene );
+    controller->setPathScene( &scene_path );
+    controller->setObjectTree( object_tree );
+}
+
 
 void MainWindow::createActions()
 {
+    createGeneralActions();
+    createAppRelatedActions();
+}
 
+
+void MainWindow::createGeneralActions()
+{
+
+    ac_clear = new QAction( "Clear", this );
+    connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
+
+    ac_undo = new QAction( "Undo", this );
+    connect( ac_undo, &QAction::triggered, this, &MainWindow::undo );
+
+
+    ac_redo = new QAction( "Redo", this );
+    connect( ac_redo, &QAction::triggered, this, &MainWindow::redo );
+
+
+    ac_discard_sketch = new QAction( "Discard sketch", this );
+    connect( ac_discard_sketch, &QAction::triggered, &sketch_scene, &SketchScene::clearSketch );
+
+
+    ac_screenshot = new QAction( "Screenshot", this );
+    connect( ac_screenshot, &QAction::triggered, this, &MainWindow::screenshot );
+
+
+    tb_general = new QToolBar( this );
+    tb_general->addAction( ac_clear );
+    tb_general->addAction( ac_undo );
+    tb_general->addAction( ac_redo );
+    tb_general->addAction( ac_screenshot );
+    addToolBar( tb_general );
 
 }
 
 
-
-void MainWindow::createMainWindowActions ()
+void MainWindow::createAppRelatedActions()
 {
+    ac_stratigraphy = new QAction( "Stratigraphy", this );
+    ac_stratigraphy->setCheckable( true );
+    connect( ac_stratigraphy, &QAction::triggered,
+             [=](){ controller->setTypeCurrentObject( Object::TYPE::Stratigraphy );
+                    dw_sketch_path_canvas->setVisible( false ); } );
 
-}
+    ac_channel = new QAction( "Channel", this );
+    ac_channel->setCheckable( true );
+    connect( ac_channel, &QAction::triggered,
+             [=](){ controller->setTypeCurrentObject( Object::TYPE::Channel );
+                    dw_sketch_path_canvas->setVisible( true ); } );
 
 
-void MainWindow::createMenuBar()
-{
+    ag_surface_type = new QActionGroup( this );
+    ag_surface_type->addAction( ac_stratigraphy );
+    ag_surface_type->addAction( ac_channel );
+    ac_stratigraphy->setChecked( true );
 
 
+
+    ac_sketch_above = new QAction( "Sketch Above", this );
+    ac_sketch_above->setCheckable( true );
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){
+                                                   controller->enableCreateAbove( status_ ); } );
+
+    ac_sketch_below = new QAction( "Sketch Below", this );
+    ac_sketch_below->setCheckable( true );
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){
+                                                   controller->enableCreateBelow( status_ ); } );
+
+
+
+    ac_remove_above  = new QAction( "Remove Above", this );
+    ac_remove_above->setCheckable( true );
+    connect( ac_remove_above, &QAction::triggered,
+             [=](){ controller->updateRule( "RA_SKETCHING" ); } );
+
+    ac_remove_above_int  = new QAction( "Remove Above Intersection", this );
+    ac_remove_above_int->setCheckable( true );
+    connect( ac_remove_above_int, &QAction::triggered,
+             [=](){ controller->updateRule( "RAI_SKETCHING" ); } );
+
+    ac_remove_below  = new QAction( "Remove Below", this );
+    ac_remove_below->setCheckable( true );
+    connect( ac_remove_below, &QAction::triggered,
+             [=](){ controller->updateRule( "RB_SKETCHING" ); } );
+
+    ac_remove_below_int  = new QAction( "Remove Below Intersection", this );
+    ac_remove_below_int->setCheckable( true );
+    connect( ac_remove_below_int, &QAction::triggered,
+             [=](){ controller->updateRule( "RBI_SKETCHING" ); } );
+
+
+    ag_stratigraphy_rules = new QActionGroup( this );
+    ag_stratigraphy_rules->addAction( ac_remove_above );
+    ag_stratigraphy_rules->addAction( ac_remove_above_int );
+    ag_stratigraphy_rules->addAction( ac_remove_below );
+    ag_stratigraphy_rules->addAction( ac_remove_below_int );
+    ac_remove_above_int->setChecked( true );
+
+
+
+
+    ac_discard_sketch = new QAction( "Discard", this );
+    connect( ac_discard_sketch, &QAction::triggered, [=](){ sketch_scene.clearSketch(); } );
+
+    ac_commit_sketch = new QAction( "Commit", this );
+    connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
+
+    connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
+                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
+
+    ac_interpolate = new QAction( "Generate", this );
+    connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
+
+    connect( &sketch_scene, &SketchScene::interpolateObject, this, &MainWindow::interpolate );
+
+
+    cd_pickercolor = new QColorDialog();
+    cd_pickercolor->setWindowFlags( Qt::Widget );
+    cd_pickercolor->setCurrentColor( QColor( 255, 0, 0 ) );
+
+    ac_sketchcolor = new QWidgetAction( this );
+    ac_sketchcolor->setDefaultWidget( cd_pickercolor );
+
+
+    mn_pickercolor = new QMenu();
+    mn_pickercolor->addAction( ac_sketchcolor );
+
+    tbt_colorsketch = new QToolButton;
+    tbt_colorsketch->setPopupMode( QToolButton::MenuButtonPopup );
+    tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
+    tbt_colorsketch->setMenu( mn_pickercolor );
+    tbt_colorsketch ->setCheckable( true );
+
+
+    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ defineColor( !status_ ); } );
+
+    connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
+        tbt_colorsketch->setChecked( true );
+        defineColor( false, c_ ); } );
+
+
+    tb_sketch = new QToolBar( this );
+    tb_sketch->addActions( ag_surface_type->actions() );
+    tb_sketch->addSeparator();
+    tb_sketch->addAction( ac_sketch_above );
+    tb_sketch->addAction( ac_sketch_below );
+    tb_sketch->addSeparator();
+    tb_sketch->addActions( ag_stratigraphy_rules->actions() );
+    tb_sketch->addSeparator();
+    tb_sketch->addAction( ac_discard_sketch );
+    tb_sketch->addAction( ac_commit_sketch );
+    tb_sketch->addAction( ac_interpolate );
+    tb_sketch->addSeparator();
+    tb_sketch->addWidget( tbt_colorsketch );
+    addToolBar( tb_sketch );
 }
 
 
 void MainWindow::clear()
 {
+    controller->clear();
+    run_app();
+}
+
+
+void MainWindow::undo()
+{
+    bool undo_ok = controller->undo();
+    if( undo_ok == false ) return;
+
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+    emit updateScenes();
+}
+
+
+void MainWindow::redo()
+{
+    bool redo_ok = controller->redo();
+    if( redo_ok == false ) return;
+
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+    emit updateScenes();
+}
+
+
+void MainWindow::screenshot()
+{
+    sketch_scene.screenshot();
+//    scene3d.screenshot();
+}
+
+
+void MainWindow::interpolate()
+{
+
+    bool created = controller->interpolate();
+    if( created == true )
+    {
+        defineColor( true );
+        controller->createObject();
+    }
+
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+
+    emit updateScenes();
+}
+
+
+void MainWindow::defineColor( bool aleatory_, QColor c_ )
+{
+    QColor color = c_;
+
+    if( aleatory_ == true ){
+        int r_ = 0, g_ = 0, b_ = 0;
+        Model3DUtils::randomColor( r_, g_, b_ );
+        color = QColor( r_, g_, b_ );
+    }
+
+    controller->setCurrentColor( color.red(), color.green(), color.blue() );
+
 }
 
 

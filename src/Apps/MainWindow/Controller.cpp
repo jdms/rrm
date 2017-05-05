@@ -58,20 +58,20 @@ void Controller::init()
 void Controller::addInputVolume()
 {
     input_volume.initialize();
-    scene3d->addVolume( &input_volume );
+    object_tree->addInputVolume();
+
+    addInputVolumeToScenes();
+}
+
+void Controller::addInputVolumeToScenes()
+{
     sketch_scene->setVolume( &input_volume );
     path_scene->setVolume( &input_volume );
 
-    ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
-    object_tree->addInputVolume( item );
+    scene3d->addVolume( &input_volume );
+    scene3d->createCrossSection();
 }
 
-
-
-void Controller::addCurrentCrossSectionToList()
-{
-
-}
 
 void Controller::setCurrentCrossSection( double depth_ )
 {
@@ -84,17 +84,6 @@ void Controller::setCurrentCrossSection( double depth_ )
     current_depth_csection = depth_;
     updateScenesWithCurrentCrossSection();
 
-
-}
-
-bool Controller::getCurrentCrossSectionDimensions( double& width_, double& height_ )
-{
-    if( isCrossSectionAdded( current_depth_csection ) == false )
-        return false;
-
-    CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
-    csection_.getDimensions( width_, height_ );
-    return true;
 }
 
 
@@ -141,7 +130,7 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
     Object* const& obj_ = objects[ current_object ];
     obj_->addInputCurve( current_depth_csection, curve_ );
 
-    addCurrentObjectToCurrentCrossSection();
+//    addCurrentObjectToCurrentCrossSection();
     setCurrentCrossSectionAsUsed();
     addCurrentObjectToScenes();
 
@@ -253,18 +242,22 @@ void Controller::updateRule( const std::string &rule_ )
 
 bool Controller::enableCreateAbove( bool status_ )
 {
+    unsetObjectsAsAllowed( allowed_upper );
+
     if( status_ == true )
     {
-        std::vector< std::size_t > objects_;
-
-        bool ok_ = rules_processor.requestCreateAbove( objects_ );
-        sketch_scene->setAllowedObjects( objects_ );
-        current_region = RequestRegion::ABOVE;
-        return true;
+        rules_processor.stopDefineAbove();
+        unSelectObject( boundering_above );
+        return false;
     }
 
-    rules_processor.stopDefineAbove();
-    return false;
+
+    bool ok_ = rules_processor.requestCreateAbove( allowed_upper );
+    if( ok_ == false ) return false;
+
+    setObjectsAsAllowed( allowed_upper );
+    current_region = RequestRegion::ABOVE;
+    return true;
 }
 
 
@@ -276,21 +269,39 @@ void Controller::defineSketchAbove( std::size_t surface_id_ )
 }
 
 
+void Controller::setObjectsAsAllowed( std::vector< std::size_t >& objects_ )
+{
+    sketch_scene->setAllowedObjects( objects_ );
+//    scene3d->setAllowedObjects( objects_ );
+}
+
+void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
+{
+    sketch_scene->unsetAllowedObjects( objects_ );
+//    scene3d->unsetAllowedObjects( objects_ );
+    objects_.clear();
+}
+
 
 bool Controller::enableCreateBelow( bool status_ )
 {
-    if( status_ == true )
-    {
-        std::vector< std::size_t > objects_;
-        bool ok = rules_processor.requestCreateBelow( objects_ );
 
-        sketch_scene->setAllowedObjects( objects_ );
-        current_region = RequestRegion::BELOW;
-        return true;
+    unsetObjectsAsAllowed( allowed_below );
+
+    if( status_ == false )
+    {
+        rules_processor.stopDefineBelow();
+        unSelectObject( boundering_below );
+        return false;
     }
 
-    rules_processor.stopDefineBelow();
-    return false;
+    bool ok_ = rules_processor.requestCreateBelow( allowed_below );
+    if( ok_ == false ) return false;
+
+    setObjectsAsAllowed( allowed_below );
+    current_region = RequestRegion::BELOW;
+    return true;
+
 }
 
 void Controller::defineSketchBelow( std::size_t surface_id_ )
@@ -313,6 +324,12 @@ void Controller::sendSelectedSurface( const std::size_t& id_ )
         boundering_below = id_;
         rules_processor.defineBelow( id_ );
     }
+}
+
+void Controller::unSelectObject( const std::size_t& id_ )
+{
+    sketch_scene->unselectObject( id_ );
+//    scene3d->unselectObject( id_ );
 }
 
 void Controller::updateObjects()
@@ -390,15 +407,15 @@ void Controller::updateObjects()
 void Controller::clear()
 {
 
-    //    if( scene3d != nullptr )
-    //        scene3d->clearScene();
+    if( scene3d != nullptr )
+        scene3d->clearScene();
 
-    //    if( sketch_scene != nullptr )
-    //        sketch_scene->clearScene();
+    if( sketch_scene != nullptr )
+        sketch_scene->clearScene();
 
 
-    //    if( path_scene != nullptr )
-    //        path_scene->clearScene();
+    if( path_scene != nullptr )
+        path_scene->clearScene();
 
 
     object_tree->clear();

@@ -85,6 +85,7 @@ class Controller: public QObject
 
         void addInputVolume();
 
+
         inline void setInputVolumeDimensions( double width_, double height_, double depth_ )
         {
             input_volume.setDimensions( width_, height_, depth_ );
@@ -129,8 +130,6 @@ class Controller: public QObject
 
         //NOTE: cross-sections should be members of volumes? it makes sense to me.
 
-        void addCurrentCrossSectionToList();
-
         void setCurrentCrossSection( double depth_ );
 
         inline double getCurrentCrossSection() const
@@ -138,11 +137,9 @@ class Controller: public QObject
             return current_depth_csection;
         }
 
-        bool getCurrentCrossSectionDimensions( double& width_, double& height_ );
-
         inline size_t getNumberofCrossSectionsUsed() const
         {
-            return depth_of_cross_sections.size();
+            return used_cross_sections.size();
         }
 
 
@@ -367,7 +364,7 @@ class Controller: public QObject
         {
             disc_depth_ = rules_processor.getDepthResolution();
             disc_depth = disc_depth_;
-            step_ = input_volume.getDepth()/disc_depth_;
+            step_ = input_volume.getDepth()/( disc_depth_);
             step_depth = (double) step_ ;
         }
 
@@ -395,14 +392,16 @@ class Controller: public QObject
             current_color.red =   r_;
             current_color.green = g_;
             current_color.blue =  b_;
+
+            sketch_scene->setCurrentColor( r_, g_, b_ );
+            scene3d->setCurrentColor( r_, g_, b_ );
         }
 
 
     private:
 
-        inline void addCrossSectionofDepth( double depth_ )
-        {
-        }
+        void addInputVolumeToScenes();
+
 
         inline void setCurrentCrossSectionAsUsed()
         {
@@ -426,12 +425,21 @@ class Controller: public QObject
                 return false;
         }
 
+
         inline void updateScenesWithCurrentCrossSection()
         {
-            sketch_scene->resetData();
+            clearCrossSectionScenes();
+            updateScenesCurvesOfCurrentCrossSection();
+        }
 
-            depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
-            sketch_scene->setCrossSection( depth_of_cross_sections[ current_depth_csection ] );
+
+        inline void clearCrossSectionScenes()
+        {
+            sketch_scene->resetData();
+        }
+
+        inline void updateScenesCurvesOfCurrentCrossSection()
+        {
 
             std::size_t index_ = rowIndexfromDepth( current_depth_csection );
 
@@ -445,26 +453,26 @@ class Controller: public QObject
 
                 if( has_curve == false )
                 {
-                     std::cout << "-1, " << std::flush;
                     continue;
                 }
                 std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
                 it_.second->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
                 it_.second->addInputEdges( current_depth_csection, curve_edges );
 
-                std::cout << it_.first << " " << std::flush;
-
                 sketch_scene->addObject( it_.second );
-
 
             }
 
-            std::cout << std::endl << std::endl << std::flush;
-
-            scene3d->updateCrossSection( current_depth_csection );
-
 
         }
+
+
+        inline void updateScenes()
+        {
+            sketch_scene->setCrossSection( current_depth_csection );
+            scene3d->updateCrossSection( current_depth_csection );
+        }
+
 
         inline bool isCrossSectionAdded( double depth_ )
         {
@@ -506,13 +514,6 @@ class Controller: public QObject
             object_tree->addObject( item );
         }
 
-        inline void addCurrentObjectToCurrentCrossSection()
-        {
-            CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
-            Object* const& obj_ = objects[ current_object ];
-            csection_.addObjectReferenced( obj_ );
-        }
-
 
         inline void initRulesProcessor()
         {
@@ -529,6 +530,10 @@ class Controller: public QObject
         }
 
 
+        void setObjectsAsAllowed( std::vector< std::size_t >& objects_ );
+        void unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ );
+
+        void unSelectObject( const std::size_t& id_ );
 
 
 /*
@@ -591,6 +596,9 @@ class Controller: public QObject
 
         std::size_t boundering_above;
         std::size_t boundering_below;
+
+        std::vector< std::size_t > allowed_upper;
+        std::vector< std::size_t > allowed_below;
 
         //        SolverRegistration register_solver;
 
