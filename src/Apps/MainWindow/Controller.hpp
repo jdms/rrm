@@ -435,31 +435,58 @@ class Controller: public QObject
         inline void updateScenesCurvesOfCurrentCrossSection()
         {
 
-            std::size_t index_ = rowIndexfromDepth( current_depth_csection );
-
             for( auto& it_: objects )
             {
-
-                std::vector< float > curve_vertices;
-                std::vector< std::size_t > curve_edges;
-                bool has_curve = rules_processor.getCrossSection( it_.first, index_ ,
-                                                 curve_vertices, curve_edges );
-
-                if( has_curve == false )
-                {
+                Object* obj_ = it_.second;
+                if( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
                     continue;
-                }
-                std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
-                it_.second->addInputCurve( current_depth_csection,
-                                           Model3DUtils::convertToCurve2D( curve_vertices1 ) );
-                it_.second->addInputEdges( current_depth_csection, curve_edges );
-
                 sketch_scene->addObject( it_.second );
-
             }
 
             sketch_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );
+
+        }
+
+
+        inline bool getObjectCurvesFromCurrentCrossSection( Object* obj_ )
+        {
+
+            std::size_t index_ = rowIndexfromDepth( current_depth_csection );
+
+            std::cout << "cross-section: " << index_ << std::endl << std::flush;
+
+            std::vector< float > curve_vertices;
+            std::vector< std::size_t > curve_edges;
+            bool has_curve = rules_processor.getCrossSection( obj_->getId(), index_ ,
+                                             curve_vertices, curve_edges );
+
+            std::cout << "Object " << obj_->getId() << " has curve " << has_curve << std::endl << std::flush;
+
+            if( has_curve == false )
+            {
+                return false;
+            }
+
+            std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
+            obj_->addInputCurve( current_depth_csection,
+                                       Model3DUtils::convertToCurve2D( curve_vertices1 ) );
+            obj_->addInputEdges( current_depth_csection, curve_edges );
+
+            return true;
+        }
+
+
+        inline bool getObjectSurface( Object* obj_ )
+        {
+            std::vector< float > surface_vertices;
+            std::vector< std::size_t > surface_faces;
+
+            bool getmesh_ok = rules_processor.getMesh( obj_->getId(), surface_vertices, surface_faces );
+            if( getmesh_ok  == false ) return false;
+
+            std::vector< double > surface_vertices1( surface_vertices.begin(), surface_vertices.end() );
+            obj_->updateSurface( surface_vertices1, surface_faces );
 
         }
 
