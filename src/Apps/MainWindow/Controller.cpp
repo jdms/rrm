@@ -242,7 +242,7 @@ bool Controller::enableCreateAbove( bool status_ )
 {
     unsetObjectsAsAllowed( allowed_upper );
 
-    if( status_ == true )
+    if( status_ == false )
     {
         rules_processor.stopDefineAbove();
         unSelectObject( boundering_above );

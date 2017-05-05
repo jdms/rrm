@@ -106,11 +106,21 @@ void Scene3D::updateScene()
 void Scene3D::clearScene()
 {
 
-    input_volume->clear();
-    delete input_volume;
+    std::cout << "Cleaning scene3d \n" <<std::flush;
 
-    cross_section->clear();
-    delete cross_section;
+    if( input_volume != nullptr )
+    {
+        input_volume->clear();
+        delete input_volume;
+        input_volume = nullptr;
+    }
+
+    if( cross_section != nullptr )
+    {
+        cross_section->clear();
+        delete cross_section;
+        cross_section = nullptr;
+    }
 
     for( auto &it: object_list )
     {
@@ -120,4 +130,6 @@ void Scene3D::clearScene()
     object_list.clear();
 
     current_color = QColor( 255, 0, 0 );
+
+    std::cout << "End of cleaning scene3d \n" <<std::flush;
 }
