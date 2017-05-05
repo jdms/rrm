@@ -77,8 +77,6 @@ void SketchScene::clearSketch()
     delete sketch;
 
     sketch = nullptr;
-
-//    update();
 }
 
 
@@ -88,34 +86,36 @@ void SketchScene::clearScene()
 
 
     if( sketch != nullptr )
+    {
         sketch->clear();
+        delete sketch;
+        sketch = nullptr;
+    }
 
-    volume.clear();
 
+    if( csection_image != nullptr )
+    {
+        delete csection_image;
+        csection_image = nullptr;
+    }
 
-    removeItem( sketch );
-    removeItem( &volume );
-    removeItem( csection_image );
 
     for( auto &it: object_list )
     {
         if( (it.second) != nullptr )
         {
-            removeItem( it.second );
             (it.second)->clear();
             delete it.second;
         }
     }
-
     object_list.clear();
+
+
     allowed_objects.clear();
+    volume.clear();
 
 
-    delete sketch;
-    sketch = nullptr;
-    delete csection_image;
-    csection_image = nullptr;
-
+    csection_depth = 0.0f;
     surface_selected = 10000;
     boundary_anchor = QPointF( 0.0f, 0.0f );
 
