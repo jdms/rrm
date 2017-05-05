@@ -15,9 +15,9 @@ class ObjectTree :public QTreeWidget
         ObjectTree( QWidget* parent = 0 );
 
 
-        void addInputVolume(/* ObjectTreeItem* const& vol_ */);
-        void addObject( ObjectTreeItem* const& obj_ );
-        void addRegion( ObjectTreeItem* const& reg_ );
+        void addInputVolume();
+        void addObject( const std::size_t& id_ );
+        void addRegion( const std::size_t& id_ );
 
 
     signals:

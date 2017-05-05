@@ -150,13 +150,12 @@ class Controller: public QObject
 
             current_object = obj->getId();
             objects[ current_object ] = obj;
-
-            path_scene->setObject( obj );
         }
 
 
         inline void setTypeCurrentObject( Object::TYPE type_ )
         {
+            //TODO: if object is a channel set object in path scene
             current_object_type = type_;
             objects[ current_object ]->setType( current_object_type );
 
@@ -166,6 +165,7 @@ class Controller: public QObject
         {
             return current_object_type;
         }
+
 
         inline bool setNameofCurrentObject( const std::string& name_ )
         {
@@ -435,6 +435,7 @@ class Controller: public QObject
 
         inline void clearCrossSectionScenes()
         {
+            //NOTE: don't need to clear scene3d?
             sketch_scene->resetData();
         }
 
@@ -456,24 +457,19 @@ class Controller: public QObject
                     continue;
                 }
                 std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
-                it_.second->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
+                it_.second->addInputCurve( current_depth_csection,
+                                           Model3DUtils::convertToCurve2D( curve_vertices1 ) );
                 it_.second->addInputEdges( current_depth_csection, curve_edges );
 
                 sketch_scene->addObject( it_.second );
 
             }
 
-            updateScenes();
-
-
-        }
-
-
-        inline void updateScenes()
-        {
             sketch_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );
+
         }
+
 
 
         inline bool isCrossSectionAdded( double depth_ )
@@ -497,12 +493,6 @@ class Controller: public QObject
 
         }
 
-        inline void addCurrentObjectifNotValid()
-        {
-            //NOTE: maybe this method is not necessary too
-            if( isValidObject( current_object ) == true ) return;
-            createObject();
-        }
 
         inline void addCurrentObjectToScenes()
         {
@@ -510,10 +500,7 @@ class Controller: public QObject
 
             scene3d->addObject( obj );
             sketch_scene->addObject( obj );
-
-            ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::OBJECT,
-                                                       obj->getId() );
-            object_tree->addObject( item );
+            object_tree->addObject( obj->getId() );
         }
 
 

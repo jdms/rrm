@@ -179,7 +179,6 @@ void PathScene::clearScene()
         if( (it.second) != nullptr )
         {
             removeItem( it.second );
-//            (it.second)->clear();
             delete it.second;
         }
     }
