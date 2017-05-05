@@ -363,12 +363,12 @@ class Controller: public QObject
 
         inline std::size_t rowIndexfromDepth( double depth_ )
         {
-            return std::size_t ( depth_ ) / step_depth;
+            return std::size_t ( disc_depth*depth_/input_volume.getDepth() );
         }
 
         inline double depthFromRowIndex( std::size_t index_ )
         {
-            return (double)index_*step_depth;
+            return (double)( index_*input_volume.getDepth()/( disc_depth ) );
         }
 
         void sendSelectedSurface( const std::size_t& id_ );

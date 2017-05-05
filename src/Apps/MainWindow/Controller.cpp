@@ -74,6 +74,7 @@ void Controller::addInputVolumeToScenes()
 
 void Controller::setCurrentCrossSection( double depth_ )
 {
+
     if( isValidCrossSection( depth_ ) == false )
     {
         std::cout << "Cross-section out of range" <<std::endl;
