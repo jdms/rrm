@@ -84,17 +84,6 @@ void Controller::setCurrentCrossSection( double depth_ )
     current_depth_csection = depth_;
     updateScenesWithCurrentCrossSection();
 
-
-}
-
-bool Controller::getCurrentCrossSectionDimensions( double& width_, double& height_ )
-{
-    if( isCrossSectionAdded( current_depth_csection ) == false )
-        return false;
-
-    CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
-    csection_.getDimensions( width_, height_ );
-    return true;
 }
 
 
@@ -141,7 +130,7 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
     Object* const& obj_ = objects[ current_object ];
     obj_->addInputCurve( current_depth_csection, curve_ );
 
-    addCurrentObjectToCurrentCrossSection();
+//    addCurrentObjectToCurrentCrossSection();
     setCurrentCrossSectionAsUsed();
     addCurrentObjectToScenes();
 
