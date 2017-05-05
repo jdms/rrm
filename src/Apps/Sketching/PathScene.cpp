@@ -14,6 +14,7 @@ PathScene::PathScene( QObject* parent )
     csection_image = new QGraphicsPixmapItem();
     current_interaction = UserInteraction::SKETCHING;
     draw_cross_sections = true;
+    object = nullptr;
 }
 
 void PathScene::setImagetoCrossSection( const QString &url_ )
@@ -159,43 +160,46 @@ void PathScene::savetoVectorImage( const QString& filename )
 
 void PathScene::clearScene()
 {
-    draw_cross_sections = true;
-    current_interaction = UserInteraction::SKETCHING;
+
+    for( auto &it: items() )
+        removeItem( it );
+
 
     if( sketch != nullptr )
+    {
         sketch->clear();
+        delete sketch;
+        sketch = nullptr;
+    }
+
 
     if( object != nullptr )
+    {
         object->clear();
+        object = nullptr;
+    }
 
-    volume.clear();
+    if( csection_image != nullptr )
+    {
+        delete csection_image;
+        csection_image = nullptr;
+    }
 
-    removeItem( sketch );
-    removeItem( &volume );
-    removeItem( csection_image );
 
     for( auto &it: csections )
     {
         if( (it.second) != nullptr )
         {
-            removeItem( it.second );
+//            it.second->clear();
             delete it.second;
         }
     }
-
     csections.clear();
-
-
-    clear();
-
-
-    delete sketch;
-    sketch = nullptr;
-
-    delete csection_image;
-    csection_image = nullptr;
+    volume.clear();
 
     boundary_anchor = QPointF( 0.0f, 0.0f );
+    draw_cross_sections = true;
+    current_interaction = UserInteraction::SKETCHING;
 
     sketch = new InputSketch( QColor( 0, 255, 0 ) );
     csection_image = new QGraphicsPixmapItem();

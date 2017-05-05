@@ -114,7 +114,6 @@ void SketchScene::clearScene()
     allowed_objects.clear();
     volume.clear();
 
-
     csection_depth = 0.0f;
     surface_selected = 10000;
     boundary_anchor = QPointF( 0.0f, 0.0f );
