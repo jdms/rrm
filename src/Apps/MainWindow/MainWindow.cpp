@@ -447,7 +447,20 @@ void MainWindow::createAppRelatedActions()
 void MainWindow::clear()
 {
     controller->clear();
+    resetInterface();
     run_app();
+}
+
+
+void MainWindow::resetInterface()
+{
+    dw_sketch_canvas->setVisible( true );
+    dw_sketch_path_canvas->setVisible( false );
+    ac_stratigraphy->setChecked( true );
+    tbt_colorsketch->setChecked( true );
+    ac_remove_above_int->setChecked( true );
+    ac_undo->setEnabled( true );
+    ac_redo->setEnabled( true );
 }
 
 

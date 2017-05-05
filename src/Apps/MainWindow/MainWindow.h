@@ -126,6 +126,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void redo();
         void screenshot();
         void interpolate();
+        void resetInterface();
 
 
 
