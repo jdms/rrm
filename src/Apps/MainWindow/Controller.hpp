@@ -159,6 +159,8 @@ class Controller: public QObject
             current_object_type = type_;
             objects[ current_object ]->setType( current_object_type );
 
+            path_scene->setObject( objects[ current_object ] );
+
         }
 
         inline Object::TYPE getTypeCurrentObject() const
@@ -442,6 +444,19 @@ class Controller: public QObject
                     continue;
                 sketch_scene->addObject( it_.second );
             }
+
+//            if( allowed_below.empty() == false )
+//            {
+//                setObjectsAsAllowed( allowed_below );
+//            }
+
+//            if( allowed_upper.empty() == false )
+//            {
+//                setObjectsAsAllowed( allowed_upper );
+//            }
+
+
+
 
             sketch_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );

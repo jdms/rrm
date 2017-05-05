@@ -21,17 +21,19 @@ SketchScene::SketchScene( QObject* parent )
 
 void SketchScene::resetData()
 {
-    sketch = nullptr;
-    object_list.clear();
+    for( auto &it: items() )
+        removeItem( it );
 
-    removeItem( &volume );
-    removeItem( csection_image );
+    if( sketch != nullptr )
+    {
+        sketch->clear();
+        delete sketch;
+        sketch = nullptr;
+    }
 
-    clear();
 
     addItem( csection_image );
     addItem( &volume );
-
     setSceneRect( volume.boundingRect());
 
 }
@@ -126,17 +128,20 @@ void SketchScene::addObject( Object* obj_ )
     auto search = object_list.find( obj_->getId() );
     if( search == object_list.end() )
     {
+        std::cout << "I am creating a new object\n" << std::flush;
         obj_wrapper_ = new ObjectItemWrap();        
-        addItem( obj_wrapper_ );
+        obj_wrapper_->setObjectRaw( obj_, csection_depth );
+        obj_wrapper_->setState( ObjectItemWrap::State::NONE );
+
         object_list[ obj_->getId() ] = obj_wrapper_;
     }
-    else
+    else{
         obj_wrapper_ = object_list[ obj_->getId() ];
+        obj_wrapper_->setObjectRaw( obj_, csection_depth );
+    }
 
 
-    obj_wrapper_->setObjectRaw( obj_, csection_depth );
-    obj_wrapper_->setState( ObjectItemWrap::State::NONE );
-
+    addItem( obj_wrapper_ );
     update();
 }
 

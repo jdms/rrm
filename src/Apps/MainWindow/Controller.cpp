@@ -295,6 +295,7 @@ void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
     sketch_scene->unsetAllowedObjects( objects_ );
 //    scene3d->unsetAllowedObjects( objects_ );
     objects_.clear();
+
 }
 
 
