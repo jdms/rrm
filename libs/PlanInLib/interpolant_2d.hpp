@@ -30,7 +30,7 @@
 #include "kernels.hpp"
 #include "polynomial.hpp" 
 
-using Kernel = Cubic; 
+using Kernel = ThinPlateSpline22; 
 
 class Interpolant2D 
 { 
