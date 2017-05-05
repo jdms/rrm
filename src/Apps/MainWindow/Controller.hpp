@@ -317,16 +317,9 @@ class Controller: public QObject
 
 
 
-
         bool enableCreateAbove( bool status_ );
 
         bool enableCreateBelow( bool status_ );
-
-
-        void defineSketchAbove( std::size_t surface_id_ );
-
-        void defineSketchBelow( std::size_t surface_id_ );
-
 
 
         inline bool undo()
