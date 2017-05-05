@@ -104,6 +104,8 @@ void MainWindow::createWindow()
 
 
     connect( sl_depth_csection, &QSlider::sliderMoved, [=]( int v ){
+
+
                    double depth_ = controller->depthFromRowIndex( (std::size_t ) v );
                    controller->setCurrentCrossSection( depth_ );
                    emit updateScenes(); } );
@@ -266,6 +268,8 @@ void MainWindow::setupCrossSectionsDiscretization()
     std::size_t depth_ = 1;
     std::size_t step_ = 1;
     controller->setupDepthResolution( depth_, step_ );
+
+    std::cout << "Slider goes from 0 to " << depth_ << std::endl << std::flush;
 
     sl_depth_csection->setMinimum( 0 );
     sl_depth_csection->setMaximum( (int)depth_);
