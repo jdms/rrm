@@ -49,7 +49,6 @@ void Controller::init()
     initRulesProcessor();
 
     setCurrentCrossSection( input_volume.getDepth() );
-
     createObject();
 
 }
@@ -130,7 +129,6 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
     Object* const& obj_ = objects[ current_object ];
     obj_->addInputCurve( current_depth_csection, curve_ );
 
-//    addCurrentObjectToCurrentCrossSection();
     setCurrentCrossSectionAsUsed();
     addCurrentObjectToScenes();
 
@@ -350,9 +348,7 @@ void Controller::updateObjects()
 
         if( getcurve_ok  == false )
         {
-            std::cout << "Curve not valid \n\n" << std::flush;
             obj_->clearCurve( current_depth_csection );
-//            continue;
         }
 
 
@@ -360,31 +356,6 @@ void Controller::updateObjects()
         std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
         obj_->addInputCurve( current_depth_csection, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
         obj_->addInputEdges( current_depth_csection, curve_edges );
-
-
-//        std::vector< double > csections_ = obj_->getAllCrossSectionsRelatedtoObject();
-
-//        for( auto d_: csections_ )
-//        {
-//            std::vector< float > curve_vertices;
-//            std::vector< std::size_t > curve_edges;
-
-//            bool getcurve_ok = rules_processor.getCrossSection( obj_->getId(),
-//                                              rowIndexfromDepth( d_ ), curve_vertices, curve_edges );
-
-//            if( getcurve_ok  == false )
-//            {
-//                std::cout << "Curve not valid \n\n" << std::flush;
-//                obj_->clearCurve( d_ );
-//                continue;
-//            }
-
-
-//            //TODO: change addInputCurve to updateInputCurve
-//            std::vector< double > curve_vertices1( curve_vertices.begin(), curve_vertices.end() );
-//            obj_->addInputCurve( d_, Model3DUtils::convertToCurve2D( curve_vertices1 ) );
-//            obj_->addInputEdges( d_, curve_edges );
-//        }
 
         std::vector< float > surface_vertices;
         std::vector< std::size_t > surface_faces;
