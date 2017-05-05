@@ -137,11 +137,9 @@ class Controller: public QObject
             return current_depth_csection;
         }
 
-        bool getCurrentCrossSectionDimensions( double& width_, double& height_ );
-
         inline size_t getNumberofCrossSectionsUsed() const
         {
-            return depth_of_cross_sections.size();
+            return used_cross_sections.size();
         }
 
 
@@ -427,23 +425,21 @@ class Controller: public QObject
                 return false;
         }
 
+
         inline void updateScenesWithCurrentCrossSection()
         {
-
             clearCrossSectionScenes();
-            getCurvesOfCurrentCrossSection();
-            updateScenes();
+            updateScenesCurvesOfCurrentCrossSection();
         }
 
 
-
-
-        inline void clearCrossSectionScenes(){ sketch_scene->resetData(); }
-
-        inline void getCurvesOfCurrentCrossSection()
+        inline void clearCrossSectionScenes()
         {
-            depth_of_cross_sections[ current_depth_csection ].setZCoordinate( current_depth_csection );
-            sketch_scene->setCrossSection( current_depth_csection );//depth_of_cross_sections[ current_depth_csection ] );
+            sketch_scene->resetData();
+        }
+
+        inline void updateScenesCurvesOfCurrentCrossSection()
+        {
 
             std::size_t index_ = rowIndexfromDepth( current_depth_csection );
 
@@ -467,11 +463,13 @@ class Controller: public QObject
 
             }
 
+
         }
 
 
         inline void updateScenes()
         {
+            sketch_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );
         }
 
@@ -514,13 +512,6 @@ class Controller: public QObject
             ObjectTreeItem* item = new ObjectTreeItem( ObjectTreeItem::TreeItemType::OBJECT,
                                                        obj->getId() );
             object_tree->addObject( item );
-        }
-
-        inline void addCurrentObjectToCurrentCrossSection()
-        {
-            CrossSection& csection_ = depth_of_cross_sections[ current_depth_csection ];
-            Object* const& obj_ = objects[ current_object ];
-            csection_.addObjectReferenced( obj_ );
         }
 
 
