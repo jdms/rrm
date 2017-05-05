@@ -85,6 +85,10 @@ void SketchScene::clearScene()
     current_interaction = UserInteraction::SKETCHING;
 
 
+    for( auto &it: items() )
+        removeItem( it );
+
+
     if( sketch != nullptr )
     {
         sketch->clear();
