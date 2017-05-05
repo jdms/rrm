@@ -34,12 +34,6 @@ void SketchScene::resetData()
 
     setSceneRect( volume.boundingRect());
 
-//    QGraphicsView* view_ = views()[ 0 ];
-//    view_->fitInView( volume.boundingRect(), Qt::KeepAspectRatio );
-
-
-//    update();
-
 }
 
 void SketchScene::finishSketch()
