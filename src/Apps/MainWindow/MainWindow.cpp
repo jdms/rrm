@@ -344,34 +344,34 @@ void MainWindow::createAppRelatedActions()
 
 
 
-    ac_sketch_above = new QAction( "Sketch Above", this );
+    ac_sketch_above = new QAction( "SA", this );
     ac_sketch_above->setCheckable( true );
     connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){
                                                    controller->enableCreateAbove( status_ ); } );
 
-    ac_sketch_below = new QAction( "Sketch Below", this );
+    ac_sketch_below = new QAction( "SB", this );
     ac_sketch_below->setCheckable( true );
     connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){
                                                    controller->enableCreateBelow( status_ ); } );
 
 
 
-    ac_remove_above  = new QAction( "Remove Above", this );
+    ac_remove_above  = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
     connect( ac_remove_above, &QAction::triggered,
              [=](){ controller->updateRule( "RA_SKETCHING" ); } );
 
-    ac_remove_above_int  = new QAction( "Remove Above Intersection", this );
+    ac_remove_above_int  = new QAction( "RAI", this );
     ac_remove_above_int->setCheckable( true );
     connect( ac_remove_above_int, &QAction::triggered,
              [=](){ controller->updateRule( "RAI_SKETCHING" ); } );
 
-    ac_remove_below  = new QAction( "Remove Below", this );
+    ac_remove_below  = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
     connect( ac_remove_below, &QAction::triggered,
              [=](){ controller->updateRule( "RB_SKETCHING" ); } );
 
-    ac_remove_below_int  = new QAction( "Remove Below Intersection", this );
+    ac_remove_below_int  = new QAction( "RBI", this );
     ac_remove_below_int->setCheckable( true );
     connect( ac_remove_below_int, &QAction::triggered,
              [=](){ controller->updateRule( "RBI_SKETCHING" ); } );
