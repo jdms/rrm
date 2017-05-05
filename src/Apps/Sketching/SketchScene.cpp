@@ -90,7 +90,6 @@ void SketchScene::clearScene()
     if( sketch != nullptr )
         sketch->clear();
 
-    csection.clear();
     volume.clear();
 
 
@@ -138,7 +137,7 @@ void SketchScene::addObject( Object* obj_ )
         obj_wrapper_ = object_list[ obj_->getId() ];
 
 
-    obj_wrapper_->setObjectRaw( obj_, csection.getZCoordinate() );
+    obj_wrapper_->setObjectRaw( obj_, csection_depth );
     obj_wrapper_->setState( ObjectItemWrap::State::NONE );
 
     update();
@@ -164,16 +163,10 @@ void SketchScene::updateScene()
     volume.update();
     setSceneRect( volume.boundingRect() );
 
-//    QGraphicsView* view_ = views()[ 0 ];
-////    int margin_ = ( view_->width() - volume.getWidth() )*0.5;
-////    view_->ensureVisible( volume.boundingRect(), margin_, 50 );
-//    view_->fitInView( volume.boundingRect(), Qt::KeepAspectRatio );
-
-
     for( auto &it_: object_list )
     {
         ObjectItemWrap* obj_= it_.second;
-        obj_->updateCrossSection( csection.getZCoordinate() );
+        obj_->updateCrossSection( csection_depth );
     }
 
     update();

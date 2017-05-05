@@ -13,9 +13,10 @@ ObjectTree::ObjectTree( QWidget *parent )
 }
 
 
-void ObjectTree::addInputVolume( ObjectTreeItem* const& vol_ )
+void ObjectTree::addInputVolume(/* ObjectTreeItem* const& vol_ */)
 {
-    input_volume = vol_;
+
+    input_volume = new ObjectTreeItem( ObjectTreeItem::TreeItemType::VOLUME, 0 );
     input_volume->setText( 1, "INPUT_VOLUME" );
 
     QCheckBox* chk_input_volume = new QCheckBox( this );

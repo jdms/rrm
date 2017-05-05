@@ -79,40 +79,28 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
         void run_app();
 
-        inline void randomColor( bool status, QColor c_ = QColor( 255, 0, 0 ) )
-        {
-            QColor color = c_;
-
-            if( status == true ){
-                int r_ = 0, g_ = 0, b_ = 0;
-                Model3DUtils::randomColor( r_, g_, b_ );
-                color = QColor( r_, g_, b_ );
-            }
-
-            controller->setCurrentColor( color.red(), color.green(), color.blue() );
-            sketch_scene.setCurrentColor( color );
-            scene3d.setCurrentColor( color );
-        }
 
 
     protected:
 
 
         void init();
-
         void getCurrentDirectory();
 
         void createWindow();
         void setupWindowProperties();
+        void startController();
 
         void create3dSection();
         void createObjectTreeSection();
         void createSketchSection();
 
-
         void createActions();
-        void createMenuBar();
-        void createMainWindowActions();
+        void createGeneralActions();
+        void createAppRelatedActions();
+
+        void setupCrossSectionsDiscretization();
+        void defineColor( bool aleatory_, QColor c_ = QColor( 255, 0, 0 ) );
 
 
         void keyPressEvent( QKeyEvent *event );
@@ -127,12 +115,17 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         bool enableRedo( bool );
 
         void updateScenes();
+        void updateCanvas();
 
 
 
     protected slots:
 
         void clear();
+        void undo();
+        void redo();
+        void screenshot();
+        void interpolate();
 
 
 
@@ -149,7 +142,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 private:
 
-//        Ui::MainWindow *ui;
 
         int app_height;
         int app_width;

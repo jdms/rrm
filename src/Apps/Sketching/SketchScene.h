@@ -28,18 +28,15 @@ class SketchScene: public QGraphicsScene
         inline void setVolume( Volume* const &vol_ )
         {
             volume.setVolumeRaw( vol_ );
-            setSceneRect( volume.boundingRect() );          
+
+            csection_depth = vol_->getDepth();
+            setSceneRect( volume.boundingRect() );
 
             addItem( csection_image );
             addItem( &volume );
-
-
-//            QGraphicsView* view_ = views()[ 0 ];
-////            int margin_ = ( view_->width() - volume.getWidth() )*0.5;
-////            view_->ensureVisible( volume.boundingRect(), margin_, 50 );
-//            view_->fitInView( volume.boundingRect(), Qt::KeepAspectRatio );
-
         }
+
+
         void setImagetoCrossSection( const QString& url_ );
         void addObject( Object *obj_ );
 
@@ -48,25 +45,12 @@ class SketchScene: public QGraphicsScene
         inline void init(){}
 
 
-        inline void setCrossSection( const CrossSection& csection_ )
+        inline void setCrossSection( double csection_ )
         {
-            csection = csection_;
-//            drawCrossSectionObjects();
-//            drawCrossSectionRegions();
+            csection_depth = csection_;
             update();
         }
 
-        inline void drawCrossSectionObjects()
-        {
-            std::set< Object* > objects_ = csection.getObjectsReferenced();
-            for( Object* o: objects_ )
-            {
-                addObject( o );
-            }
-        }
-        inline void drawCrossSectionRegions()
-        {
-        }
 
         inline void setAllowedObjects( const std::vector< std::size_t >& allowed_ )
         {
@@ -76,6 +60,19 @@ class SketchScene: public QGraphicsScene
             {
                 object_list[ id_ ]->setState( ObjectItemWrap::State::ALLOWED );
             }
+
+            setModeSelecting();
+            update();
+        }
+
+        inline void unsetAllowedObjects( const std::vector< std::size_t >& allowed_ )
+        {
+
+            for( std::size_t id_: allowed_ )
+            {
+                object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
+            }
+            allowed_objects.clear();
 
             setModeSelecting();
             update();
@@ -97,6 +94,9 @@ class SketchScene: public QGraphicsScene
 
         inline void unselectObject( const std::size_t id_ )
         {
+            auto search = object_list.find( id_ );
+            if( search == object_list.end() ) return;
+
             object_list[ id_ ]->setState( ObjectItemWrap::State::NONE );
             update();
         }
@@ -132,6 +132,8 @@ class SketchScene: public QGraphicsScene
         inline void setModeBoundaryEditing(){ current_interaction = UserInteraction::EDITING_BOUNDARY; }
         inline void setModeSelecting(){ current_interaction = UserInteraction::SELECTING; }
         inline void setCurrentColor( const QColor& c_ ){ current_color = c_;  }
+        inline void setCurrentColor( int red_, int green_, int blue_ ){
+                                     current_color = QColor( red_, green_, blue_ ); }
 
 
     signals:
@@ -156,7 +158,7 @@ class SketchScene: public QGraphicsScene
         InputSketch *sketch;
         QPointF boundary_anchor;
 
-        CrossSection csection;
+        double csection_depth;
         VolumeItemWrapper volume;
         QGraphicsPixmapItem* csection_image;
 

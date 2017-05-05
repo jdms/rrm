@@ -33,7 +33,9 @@ class Scene3D: public QObject
 
         inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_; }
 
-        bool addVolume(  Volume* const& volume_ );
+        void addVolume(  Volume* const& volume_ );
+
+        void createCrossSection();
 
         bool addObject( Object* const& object_ );
 
@@ -62,6 +64,8 @@ class Scene3D: public QObject
         void clearScene();
 
         inline void setCurrentColor( const QColor& c_ ){ current_color = c_; }
+        inline void setCurrentColor( int red_, int green_, int blue_ ){
+                                     current_color = QColor( red_, green_, blue_ ); }
 
 
     protected:
