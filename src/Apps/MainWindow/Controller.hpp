@@ -524,6 +524,9 @@ class Controller: public QObject
 
         void unSelectObject( const std::size_t& id_ );
 
+        void cleaningScenes();
+        void cleaningRawData();
+        void cleaningRules();
 
 /*
                 inline bool registerSolver()
