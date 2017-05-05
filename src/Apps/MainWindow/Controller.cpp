@@ -413,13 +413,6 @@ void Controller::cleaningRawData()
     current_object_type = Object::TYPE::Stratigraphy;
     current_object = 0;
 
-    for( auto &it: depth_of_cross_sections )
-    {
-        (it.second).clear();
-    }
-    depth_of_cross_sections.clear();
-
-
     for( auto &it: objects )
     {
         (it.second)->clear();

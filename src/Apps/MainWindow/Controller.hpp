@@ -472,17 +472,6 @@ class Controller: public QObject
 
 
 
-        inline bool isCrossSectionAdded( double depth_ )
-        {
-            auto search_csection_ = depth_of_cross_sections.find( depth_ );
-            if( search_csection_ != depth_of_cross_sections.end() )
-                return true;
-            else return false;
-
-        }
-
-
-
         inline bool isValidObject( std::size_t id_ )
         {
             auto search = objects.find( id_ );
@@ -573,7 +562,6 @@ class Controller: public QObject
         double step_depth = 10;
 
         double current_depth_csection;
-        std::map< double, CrossSection > depth_of_cross_sections;
         std::set< double > used_cross_sections;
 
         Object::TYPE current_object_type = Object::TYPE::Stratigraphy;
