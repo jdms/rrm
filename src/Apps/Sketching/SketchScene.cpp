@@ -319,7 +319,7 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
             disallowObjects();
 
             emit selectedSurface( surface_selected );
-            current_interaction = UserInteraction::SKETCHING;
+            setModeSketching();
 
         }
 

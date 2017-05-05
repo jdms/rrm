@@ -477,6 +477,7 @@ void MainWindow::undo()
 
 void MainWindow::redo()
 {
+    //TODO: update scenes should be called from controller
     bool redo_ok = controller->redo();
     if( redo_ok == false ) return;
 

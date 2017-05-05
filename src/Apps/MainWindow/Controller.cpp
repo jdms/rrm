@@ -259,28 +259,6 @@ bool Controller::enableCreateAbove( bool status_ )
 }
 
 
-
-void Controller::defineSketchAbove( std::size_t surface_id_ )
-{
-    rules_processor.defineAbove( surface_id_ );
-    current_region = RequestRegion::NONE;
-}
-
-
-void Controller::setObjectsAsAllowed( std::vector< std::size_t >& objects_ )
-{
-    sketch_scene->setAllowedObjects( objects_ );
-//    scene3d->setAllowedObjects( objects_ );
-}
-
-void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
-{
-    sketch_scene->unsetAllowedObjects( objects_ );
-//    scene3d->unsetAllowedObjects( objects_ );
-    objects_.clear();
-}
-
-
 bool Controller::enableCreateBelow( bool status_ )
 {
 
@@ -302,10 +280,18 @@ bool Controller::enableCreateBelow( bool status_ )
 
 }
 
-void Controller::defineSketchBelow( std::size_t surface_id_ )
+void Controller::setObjectsAsAllowed( std::vector< std::size_t >& objects_ )
 {
-    rules_processor.defineBelow( surface_id_ );
-    current_region = RequestRegion::NONE;
+    sketch_scene->setAllowedObjects( objects_ );
+//    scene3d->setAllowedObjects( objects_ );
+}
+
+
+void Controller::unsetObjectsAsAllowed( std::vector< std::size_t >& objects_ )
+{
+    sketch_scene->unsetAllowedObjects( objects_ );
+//    scene3d->unsetAllowedObjects( objects_ );
+    objects_.clear();
 }
 
 
@@ -326,6 +312,7 @@ void Controller::sendSelectedSurface( const std::size_t& id_ )
 
 void Controller::unSelectObject( const std::size_t& id_ )
 {
+    //TODO: search for a number to represent a size_t invalid
     sketch_scene->unselectObject( id_ );
 //    scene3d->unselectObject( id_ );
 }
