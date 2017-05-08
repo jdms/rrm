@@ -20,6 +20,7 @@ void ObjectTree::addInputVolume()
     input_volume->setText( 1, "INPUT_VOLUME" );
 
     QCheckBox* chk_input_volume = new QCheckBox( this );
+    chk_input_volume->setChecked( true );
     connect( chk_input_volume, &QCheckBox::toggled, [=]( bool status_ )
                                                     { emit setInputVolumeVisible( status_ ); } );
 
@@ -40,6 +41,7 @@ void ObjectTree::addObject( const std::size_t& id_ )
     objects[ id_ ] = item_;
 
     QCheckBox* chk_object = new QCheckBox( this );
+    chk_object->setChecked( true );
     connect( chk_object, &QCheckBox::toggled, [=]( bool status_ )
                                                     { emit setObjectVisible( id_, status_ ); } );
 

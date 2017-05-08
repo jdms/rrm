@@ -109,7 +109,6 @@ bool Controller::getNameofObjectofId( std::size_t id_, std::string& name_ )
 bool Controller::setVisibilityofObjectofId( std::size_t id_, bool option )
 {
 
-    std::cout << "Set object " << id_ << " visible: " << option << std::endl << std::flush;
     if( isValidObject( id_ ) == false ) return false;
 
     Object* obj = objects[ id_ ];

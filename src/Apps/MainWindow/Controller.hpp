@@ -445,19 +445,6 @@ class Controller: public QObject
                 sketch_scene->addObject( it_.second );
             }
 
-//            if( allowed_below.empty() == false )
-//            {
-//                setObjectsAsAllowed( allowed_below );
-//            }
-
-//            if( allowed_upper.empty() == false )
-//            {
-//                setObjectsAsAllowed( allowed_upper );
-//            }
-
-
-
-
             sketch_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );
 
