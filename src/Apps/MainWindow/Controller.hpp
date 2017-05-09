@@ -448,6 +448,7 @@ class Controller: public QObject
             }
 
             sketch_scene->setCrossSection( current_depth_csection );
+            path_scene->setCrossSection( current_depth_csection );
             scene3d->updateCrossSection( current_depth_csection );
 
         }

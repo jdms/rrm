@@ -8,6 +8,8 @@
 
 #include "PathScene.h"
 
+
+
 PathScene::PathScene( QObject* parent )
 {
     sketch = nullptr;
@@ -59,22 +61,29 @@ void PathScene::finishSketch()
 
 bool PathScene::acceptSketch( Curve2D &curve_ )
 {
-
-
     if ( sketch == nullptr ) return false;
 
-    QPolygonF c_ = sketch->getSketchFunctionGraph();
-    curve_ = PolyQtUtils::qPolyginFToCurve2D( /*c_*/sketch->getSketch() );
-
+    curve_ = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketch() );
     return true;
 }
 
 
 void PathScene::addCrossSection( double depth_ )
 {
+
+    auto search = csections.find( depth_ );
+    if( search != csections.end() ) return;
+
     csections[ depth_ ] = new CrossSectionItemWrapper( volume.getWidth(), depth_ );
     csections[ depth_ ]->setVisible( draw_cross_sections );
     addItem( csections[ depth_ ] );
+    update();
+}
+
+
+void PathScene::setCrossSection( double depth_ )
+{
+    current_csection->setDepth( depth_ );
     update();
 }
 
@@ -83,7 +92,8 @@ void PathScene::resetData()
 {
 
 
-    for( auto &it: items() ){
+    for( auto &it: items() )
+    {
         removeItem( it );
     }
 
@@ -104,6 +114,18 @@ void PathScene::resetData()
         sketch = nullptr;
     }
 
+    if( current_csection != nullptr )
+    {
+//        sketch->clear();
+        delete current_csection;
+
+        current_csection = nullptr;
+        current_csection = new CrossSectionItemWrapper( volume.getWidth(), volume.getHeight() );
+        current_csection->setPen( pen_color );
+        addItem( current_csection );
+
+    }
+
     if( path != nullptr )
     {
         delete path;
@@ -122,8 +144,6 @@ void PathScene::resetData()
 
 void PathScene::clearSketch()
 {
-//    sketch->clear();
-//    update();
     removeItem( sketch );
     delete sketch;
 
@@ -234,6 +254,12 @@ void PathScene::clearScene()
         object = nullptr;
     }
 
+    if( current_csection != nullptr )
+    {
+        delete current_csection;
+        current_csection = nullptr;
+    }
+
     if( csection_image != nullptr )
     {
         delete csection_image;
@@ -255,6 +281,7 @@ void PathScene::clearScene()
     boundary_anchor = QPointF( 0.0f, 0.0f );
     draw_cross_sections = true;
     current_interaction = UserInteraction::SKETCHING;
+
 
     csection_image = new QGraphicsPixmapItem();
     addItem( csection_image );
