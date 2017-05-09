@@ -28,8 +28,12 @@ class PathScene: public QGraphicsScene
             volume.setVolumeRaw( vol_ );
             setSceneRect( volume.boundingRect() );
 
+            current_csection = new CrossSectionItemWrapper( volume.getWidth(), volume.getHeight() );
+            current_csection->setPen( pen_color );
+
             addItem( csection_image );
             addItem( &volume );
+            addItem( current_csection );
         }
 
         inline void setObject( Object* const& obj_ )
@@ -41,6 +45,8 @@ class PathScene: public QGraphicsScene
         void setImagetoCrossSection( const QString& url_ );
 
         void addCrossSection( double depth_ );
+
+        void setCrossSection( double depth_ );
 
         inline void drawCrossSections( bool status_ )
         {
@@ -106,6 +112,7 @@ class PathScene: public QGraphicsScene
         Object* object;
         QPointF boundary_anchor;
 
+        CrossSectionItemWrapper* current_csection;
         std::map< double, CrossSectionItemWrapper* > csections;
         VolumeItemWrapper volume;
         QGraphicsPixmapItem* csection_image;

@@ -16,6 +16,7 @@ class CrossSectionItemWrapper: public QGraphicsLineItem
         inline void setDimensions( double width_, double depth_ ){ width = width_; depth = depth_; }
         inline void getDimensions( double& width_, double& depth_ ){ width_ = width; depth_ = depth; }
         inline double getDepth(){ return depth; }
+        inline void setDepth( double depth_ ){ depth = depth_; update(); }
 
     protected:
 
