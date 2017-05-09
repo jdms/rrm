@@ -394,6 +394,7 @@ void MainWindow::createAppRelatedActions()
 
     connect( &sketch_scene, &SketchScene::interpolateObject, this, &MainWindow::interpolate );
 
+    connect( &scene_path, &PathScene::interpolateObject, this, &MainWindow::interpolate );
 
     cd_pickercolor = new QColorDialog();
     cd_pickercolor->setWindowFlags( Qt::Widget );

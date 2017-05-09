@@ -356,6 +356,18 @@ void PathScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 }
 
 
+void PathScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+    if( current_interaction == UserInteraction::SKETCHING )
+    {
+         emit interpolateObject();
+    }
+
+    QGraphicsScene::mouseDoubleClickEvent( event );
+    update();
+}
+
+
 
 void PathScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
 {

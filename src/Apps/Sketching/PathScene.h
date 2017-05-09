@@ -30,7 +30,6 @@ class PathScene: public QGraphicsScene
 
             addItem( csection_image );
             addItem( &volume );
-//            addItem( sketch );
         }
 
         inline void setObject( Object* const& obj_ )
@@ -64,6 +63,7 @@ class PathScene: public QGraphicsScene
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+        void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
 
 
         void dragEnterEvent( QGraphicsSceneDragDropEvent* event );

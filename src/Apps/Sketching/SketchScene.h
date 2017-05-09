@@ -120,8 +120,6 @@ class SketchScene: public QGraphicsScene
         void dragLeaveEvent( QGraphicsSceneDragDropEvent* event );
         void dropEvent( QGraphicsSceneDragDropEvent* event );
 
-        void sketchingInteractions( QGraphicsSceneMouseEvent* event );
-
 
     public slots:
 
