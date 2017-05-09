@@ -128,7 +128,6 @@ void SketchScene::addObject( Object* obj_ )
     auto search = object_list.find( obj_->getId() );
     if( search == object_list.end() )
     {
-        std::cout << "I am creating a new object\n" << std::flush;
         obj_wrapper_ = new ObjectItemWrap();        
         obj_wrapper_->setObjectRaw( obj_, csection_depth );
         obj_wrapper_->setState( ObjectItemWrap::State::NONE );
@@ -342,11 +341,6 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 
     QGraphicsScene::mouseDoubleClickEvent( event );
     update();
-}
-
-
-void SketchScene::sketchingInteractions( QGraphicsSceneMouseEvent* event )
-{
 }
 
 
