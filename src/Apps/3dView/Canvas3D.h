@@ -27,6 +27,13 @@ class Canvas3D: public QOpenGLWidget
             scene->setContext( context() );
         }
 
+        inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_;
+                                                                     axes.initShader( current_directory );
+                                                                     axes.load(); }
+
+        inline void showAxis( bool status_ ){ show_axis = status_; update(); }
+
+
 
     protected:
 
@@ -47,6 +54,10 @@ class Canvas3D: public QOpenGLWidget
         Tucano::Trackball camera;
         Scene3D *scene;
 
+        bool show_axis = true;
+        CoordinateAxes axes;
+
+        std::string current_directory;
 
 };
 

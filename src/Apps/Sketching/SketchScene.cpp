@@ -256,10 +256,6 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
             finishSketch();
         }
     }
-    else if( event->buttons() & Qt::MiddleButton )
-    {
-        current_interaction = UserInteraction::SELECTING;
-    }
 
     QGraphicsScene::mousePressEvent( event );
     update();

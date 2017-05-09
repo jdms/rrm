@@ -92,11 +92,12 @@ set( SKETCHING_SOURCES        Sketching/Inputsketch.cpp
 set( 3DVIEW_HEADERS    3dView/Canvas3D.h
                        3dView/Scene3D.h
                        3dView/Model3DUtils.hpp
+                       3dView/OpenGLWrappers/CoordinateAxes.h
                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
                        3dView/OpenGLWrappers/VolumeOpenGLWrap.h
                        3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.h
-
-                       3dView/GradientBackgroundShader.hpp )
+                       3dView/GradientBackgroundShader.hpp
+                       3dView/tinyobjloader/tiny_obj_loader.h)
 
 
 set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
@@ -107,10 +108,12 @@ set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
 set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
                         3dView/Scene3D.cpp
                         3dView/Model3DUtils.cpp
+                        3dView/OpenGLWrappers/CoordinateAxes.cpp
                         3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
                         3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
                         3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.cpp
-                        3dView/GradientBackgroundShader.cpp )
+                        3dView/GradientBackgroundShader.cpp
+                        3dView/tinyobjloader/tiny_obj_loader.cc)
 
 
 

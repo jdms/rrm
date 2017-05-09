@@ -17,6 +17,8 @@
 #include "OpenGLWrappers/ObjectOpenGLWrapper.h"
 #include "OpenGLWrappers/CrossSectionOpenGLWrapper.h"
 
+#include "OpenGLWrappers/CoordinateAxes.h"
+
 #include <QObject>
 #include <QOpenGLContext>
 #include <QColor>
@@ -31,7 +33,8 @@ class Scene3D: public QObject
 
         Scene3D();
 
-        inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_; }
+        inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_;
+                                                                      }
 
         void addVolume(  Volume* const& volume_ );
 
@@ -52,6 +55,8 @@ class Scene3D: public QObject
                    const int& h_ );
 
         inline void updateCrossSection( double depth_ ){ cross_section->reloadBuffers( depth_ ); }
+
+
 
     signals:
 
@@ -80,6 +85,8 @@ class Scene3D: public QObject
         std::map< std::size_t, ObjectOpenGLWrapper* > object_list;
 
         QColor current_color;
+
+
 
 
 
