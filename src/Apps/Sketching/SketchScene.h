@@ -173,9 +173,6 @@ class SketchScene: public QGraphicsScene
         QColor current_color;
 
 
-
-
-
 };
 
 #endif // SKETCHSCENE_H

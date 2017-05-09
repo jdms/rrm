@@ -150,6 +150,8 @@ class Controller: public QObject
 
             current_object = obj->getId();
             objects[ current_object ] = obj;
+
+            path_scene->setObject( objects[ current_object ] );
         }
 
 

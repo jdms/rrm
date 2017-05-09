@@ -9,6 +9,8 @@ Scene3D::Scene3D()
     surfacegl = nullptr;
 
     current_color = QColor( 255, 0, 0 );
+
+
 }
 
 
@@ -73,6 +75,8 @@ bool Scene3D::addObject( Object* const& object_ )
 void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                                                                           const int& h_ )
 {
+
+
 
     for( auto& it : object_list )
         (it.second)->draw( V_, P_, w_, h_ );

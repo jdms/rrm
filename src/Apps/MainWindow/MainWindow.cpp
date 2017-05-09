@@ -85,7 +85,6 @@ void MainWindow::setupWindowProperties()
     app_orig_x = ( rect.width() - app_width )*0.5 ;
     app_orig_y = ( rect.height() - app_height )*0.5 ;
 
-
     setGeometry( app_orig_x, app_orig_y, app_width, app_height );
     setWindowTitle( "Rapid Reservoir Modelling" );
 }
@@ -98,10 +97,7 @@ void MainWindow::createWindow()
     createObjectTreeSection();
     createSketchSection();
 
-
-
     getCurrentDirectory();
-
 
     connect( sl_depth_csection, &QSlider::sliderMoved, [=]( int v ){
 
@@ -110,20 +106,9 @@ void MainWindow::createWindow()
                    controller->setCurrentCrossSection( depth_ );
                    emit updateScenes(); } );
 
-
-
-
-    connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
-
-
-
 //    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) {
 //                                       ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* > item_;
 //                                       controller->selectObject( obj_->getId() ); } );
-
-
-
-
 
 
 }
@@ -147,7 +132,7 @@ void MainWindow::create3dSection()
 
 
     connect( this, SIGNAL( updateCanvas() ), canvas3d, SLOT( update() ) );
-
+    connect( this, &MainWindow::updateScenes, &scene3d, &Scene3D::updateScene );
 
     setCentralWidget( wd_window3d );
 
@@ -275,8 +260,6 @@ void MainWindow::setupCrossSectionsDiscretization()
     std::size_t step_ = 1;
     controller->setupDepthResolution( depth_, step_ );
 
-    std::cout << "Slider goes from 0 to " << depth_ << std::endl << std::flush;
-
     sl_depth_csection->setMinimum( 0 );
     sl_depth_csection->setMaximum( (int)depth_);
     sl_depth_csection->setValue( depth_ );
@@ -392,7 +375,7 @@ void MainWindow::createAppRelatedActions()
     ag_stratigraphy_rules->addAction( ac_remove_above_int );
     ag_stratigraphy_rules->addAction( ac_remove_below );
     ag_stratigraphy_rules->addAction( ac_remove_below_int );
-    ac_remove_above_int->setChecked( true );
+    ac_remove_above->setChecked( true );
 
 
 
@@ -567,79 +550,9 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
     switch ( event->key() )
     {
 
-        case Qt::Key_A:
+         case Qt::Key_E:
         {
-
-            if( event->modifiers() & Qt::AltModifier )
-            {
-                controller->enableCreateAbove( false );
-            }
-
-            else if( event->modifiers() & Qt::ControlModifier )
-            {
-                controller->updateRule( "RA_SKETCHING" );
-            }
-
-            else if( event->modifiers() & Qt::ShiftModifier )
-            {
-                controller->updateRule( "RAI_SKETCHING" );
-            }
-
-            else
-            {
-                controller->enableCreateAbove( true );
-            }
-        }
-        break;
-
-        case Qt::Key_B:
-        {
-            if( event->modifiers() & Qt::AltModifier )
-            {
-                controller->enableCreateBelow( false );
-            }
-
-            else if( event->modifiers() & Qt::ControlModifier )
-            {
-                controller->updateRule( "RB_SKETCHING" );
-            }
-
-            else if( event->modifiers() & Qt::ShiftModifier )
-            {
-                controller->updateRule( "RBI_SKETCHING" );
-            }
-
-            else
-            {
-                controller->enableCreateBelow( true );
-            }
-        }
-        break;
-
-
-        case Qt::Key_E:
-        {
-            ac_screenshot->trigger();
 //            exportTo();
-        }
-        break;
-
-        case Qt::Key_I:
-        {
-            controller->interpolate();
-
-            emit enableUndo( controller->canUndo() );
-            emit enableRedo( controller->canRedo() );
-
-            emit updateScenes();
-        }
-        break;
-
-
-
-        case Qt::Key_S:
-        {
-            controller->updateRule( "SKETCHING" );
         }
         break;
 

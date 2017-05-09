@@ -30,7 +30,7 @@ class PathScene: public QGraphicsScene
 
             addItem( csection_image );
             addItem( &volume );
-            addItem( sketch );
+//            addItem( sketch );
         }
 
         inline void setObject( Object* const& obj_ )
@@ -85,13 +85,14 @@ class PathScene: public QGraphicsScene
         inline void setModeSketching(){ current_interaction = UserInteraction::SKETCHING; }
         inline void setModeBoundaryEditing(){ current_interaction = UserInteraction::EDITING_BOUNDARY; }
         inline void setCurrentColor( const QColor& c_ ){ current_color = c_; sketch->setColor( c_ ); }
-
+        inline void setCurrentColor( int red_, int green_, int blue_ ){
+                                     current_color = QColor( red_, green_, blue_ ); }
 
     signals:
 
         void curveAccepted( Curve2D c_ );
         void updateVolumeWidthDepth( double w_, double d_ );
-
+        void interpolateObject();
 
     protected:
 
@@ -109,8 +110,10 @@ class PathScene: public QGraphicsScene
         VolumeItemWrapper volume;
         QGraphicsPixmapItem* csection_image;
 
-        QColor current_color;
+        QGraphicsPathItem* path;
+        QPen pen_color;
 
+        QColor current_color;
         bool draw_cross_sections = true;
 
 };

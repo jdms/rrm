@@ -4,6 +4,8 @@ CanvasPath::CanvasPath( QWidget* parent )
 {
     draw_cross_sections = true;
     scene = nullptr;
+    setRenderHint( QPainter::Antialiasing, true );
+//    scale( 1, -1 );
 }
 
 void CanvasPath::wheelEvent( QWheelEvent *event )

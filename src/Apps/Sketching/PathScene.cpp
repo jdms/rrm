@@ -10,11 +10,22 @@
 
 PathScene::PathScene( QObject* parent )
 {
-    sketch = new InputSketch( QColor( 0, 255, 0 ) );
+    sketch = nullptr;
     csection_image = new QGraphicsPixmapItem();
     current_interaction = UserInteraction::SKETCHING;
     draw_cross_sections = true;
     object = nullptr;
+
+    pen_color = QColor( 0, 0, 255 );
+    pen_color.setCapStyle( Qt::RoundCap );
+    pen_color.setJoinStyle( Qt::RoundJoin );
+    pen_color.setWidth( 3 );
+
+    path = new QGraphicsPathItem();
+    path->setPen( pen_color );
+    addItem( path );
+
+
 }
 
 void PathScene::setImagetoCrossSection( const QString &url_ )
@@ -30,11 +41,16 @@ void PathScene::setImagetoCrossSection( const QString &url_ )
 
 void PathScene::finishSketch()
 {
+    if ( sketch == nullptr ) return;
     if ( sketch->isEmpty() == true ) return;
 
     Curve2D curve_;
     if( acceptSketch( curve_ ) == true  )
-        emit curveAccepted( curve_ );
+    {
+        Curve2D cpy_curve_;
+        curve_.douglasPeuckerSimplify( cpy_curve_, 1.0 );
+        emit curveAccepted( cpy_curve_ );
+    }
 
     clearSketch();
     updateScene();
@@ -43,9 +59,16 @@ void PathScene::finishSketch()
 
 bool PathScene::acceptSketch( Curve2D &curve_ )
 {
-    curve_ = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketch() );
+
+
+    if ( sketch == nullptr ) return false;
+
+    QPolygonF c_ = sketch->getSketchFunctionGraph();
+    curve_ = PolyQtUtils::qPolyginFToCurve2D( /*c_*/sketch->getSketch() );
+
     return true;
 }
+
 
 void PathScene::addCrossSection( double depth_ )
 {
@@ -58,26 +81,53 @@ void PathScene::addCrossSection( double depth_ )
 
 void PathScene::resetData()
 {
+
+
+    for( auto &it: items() ){
+        removeItem( it );
+    }
+
+    for( auto &it: csections )
+    {
+        if( (it.second) != nullptr )
+        {
+//            it.second->clear();
+            delete it.second;
+        }
+    }
     csections.clear();
 
-    removeItem( &volume );
-    removeItem( sketch );
-    removeItem( csection_image );
+    if( sketch != nullptr )
+    {
+        sketch->clear();
+        delete sketch;
+        sketch = nullptr;
+    }
 
-    clear();
+    if( path != nullptr )
+    {
+        delete path;
+        path = nullptr;
+        path = new QGraphicsPathItem();
+        path->setPen( pen_color );
+        addItem( path );
+    }
+
 
     addItem( csection_image );
     addItem( &volume );
-    addItem( sketch );
+    setSceneRect( volume.boundingRect());
 
-    setSceneRect( volume.boundingRect() );
-    update();
 }
 
 void PathScene::clearSketch()
 {
-    sketch->clear();
-    update();
+//    sketch->clear();
+//    update();
+    removeItem( sketch );
+    delete sketch;
+
+    sketch = nullptr;
 }
 
 
@@ -88,16 +138,12 @@ void PathScene::updateScene()
 
     if( object->hasPathCurve() == false ) return;
 
-    QPainterPath path;
-    path.addPolygon( PolyQtUtils::curve2DToQPolyginF( object->getPathCurve() ) );
 
-
-    QPen pen_color = QColor( 0, 0, 255 );
-    pen_color.setCapStyle( Qt::RoundCap );
-    pen_color.setJoinStyle( Qt::RoundJoin );
-    pen_color.setWidth( 3 );
-
-    addPath( path,  pen_color );
+    removeItem( path );
+    QPainterPath curve_ = QPainterPath();
+    curve_.addPolygon( PolyQtUtils::curve2DToQPolyginF( object->getPathCurve() ) );
+    path->setPath( curve_ );
+    addItem( path );
 
     update();
 
@@ -172,6 +218,15 @@ void PathScene::clearScene()
         sketch = nullptr;
     }
 
+    if( path != nullptr )
+    {
+        delete path;
+        path = nullptr;
+        path = new QGraphicsPathItem();
+        path->setPen( pen_color );
+        addItem( path );
+    }
+
 
     if( object != nullptr )
     {
@@ -201,10 +256,7 @@ void PathScene::clearScene()
     draw_cross_sections = true;
     current_interaction = UserInteraction::SKETCHING;
 
-    sketch = new InputSketch( QColor( 0, 255, 0 ) );
     csection_image = new QGraphicsPixmapItem();
-
-    addItem( sketch );
     addItem( csection_image );
 
 }
@@ -217,7 +269,9 @@ void PathScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         if( event->buttons() & Qt::LeftButton )
         {
+            sketch = new InputSketch( QColor( 0, 255, 0 ) );
             sketch->create( event->scenePos() );
+            addItem( sketch );
         }
         else if( event->buttons() & Qt::RightButton )
         {
@@ -238,30 +292,54 @@ void PathScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void PathScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
-    if( current_interaction == UserInteraction::SKETCHING )
-    {
-        sketch->add( event->scenePos() );
-    }
-    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
-    {
-        int w_ = event->scenePos().x() - boundary_anchor.x() ;
-        int d_ = event->scenePos().y() - boundary_anchor.y() ;
+//    if( current_interaction == UserInteraction::SKETCHING )
+//    {
+//        sketch->add( event->scenePos() );
+//    }
+//    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+//    {
+//        int w_ = event->scenePos().x() - boundary_anchor.x() ;
+//        int d_ = event->scenePos().y() - boundary_anchor.y() ;
 
-        volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
-                             std::abs( d_) ) ;
+//        volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
+//                             std::abs( d_) ) ;
+//    }
+
+    if ( event->buttons() & Qt::LeftButton )
+    {
+
+        if( current_interaction == UserInteraction::SKETCHING )
+        {
+            if ( sketch == nullptr ) return;
+            sketch->add( event->scenePos() );
+        }
+        else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+        {
+            int w_ = event->scenePos().x() - boundary_anchor.x() ;
+            int h_ = event->scenePos().y() - boundary_anchor.y() ;
+
+            volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
+                                 std::abs( h_) ) ;
+        }
+
     }
 
     QGraphicsScene::mouseMoveEvent( event );
     update();
+
+
+    QGraphicsScene::mouseMoveEvent( event );
+    update();
 }
+
 
 void PathScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
     if( current_interaction == UserInteraction::SKETCHING )
     {
+        if ( sketch == nullptr ) return;
         sketch->process( event->scenePos() );
-        setModeSketching();
     }
     else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
     {
@@ -269,7 +347,9 @@ void PathScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         double d_ = ( double )std::abs( event->scenePos().y() - boundary_anchor.y() );
 
         emit updateVolumeWidthDepth( w_, d_ );
+        setModeSketching();
     }
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
