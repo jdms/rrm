@@ -82,6 +82,68 @@ void VolumeOpenGLWrap::createVolumeBox()
     Eigen::Vector3f min( originx_, originy_, originz_ );
     Eigen::Vector3f max( originx_ + width_, originy_ + height_, originz_ + depth_ );
 
+
+//    Eigen::Vector3f A( min.x(), min.y(), max.z());
+//    Eigen::Vector3f B( max.x(), min.y(), max.z());
+//    Eigen::Vector3f C( max.x(), max.y(), max.z());
+//    Eigen::Vector3f D( min.x(), max.y(), max.z());
+//    Eigen::Vector3f E( max.x(), min.y(), min.z());
+//    Eigen::Vector3f F( min.x(), min.y(), min.z());
+//    Eigen::Vector3f G( min.x(), max.y(), min.z());
+//    Eigen::Vector3f H( max.x(), max.y(), min.z());
+
+//    std::vector< float > wireframe_ =
+//    {
+//        //  Front Face
+//        A.x(), A.y(), A.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+
+//        C.x(), C.y(), C.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+
+//        B.x(), B.y(), B.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+
+//        H.x(), H.y(), H.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f,
+
+//        E.x(), E.y(), E.z(), 1.0f,
+//        F.x(), F.y(), F.z(), 1.0f,
+//        H.x(), H.y(), H.z(), 1.0f,
+
+//        G.x(), G.y(), G.z(), 1.0f,
+//        H.x(), H.y(), H.z(), 1.0f,
+//        F.x(), F.y(), F.z(), 1.0f,
+
+//        F.x(), F.y(), F.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+
+//        D.x(), D.y(), D.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+
+//        D.x(), D.y(), D.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+
+//        H.x(), H.y(), H.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+
+//        F.x(), F.y(), F.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+
+//        B.x(), B.y(), B.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f
+//    };
+
     std::vector< float > wireframe_ =
             {
                 //  Top Face
@@ -115,6 +177,10 @@ void VolumeOpenGLWrap::createVolumeBox()
                 min.x(), min.y(), max.z(), 1.0f,
                 min.x(), min.y(), min.z(), 1.0f
             };
+
+
+
+
 
     std::vector< float > unit_wireframe_ = Model3DUtils::normalizePointCloud( wireframe_ );
     reloadBuffers( unit_wireframe_ ) ;

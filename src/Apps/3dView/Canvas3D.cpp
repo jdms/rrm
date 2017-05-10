@@ -23,11 +23,9 @@ void Canvas3D::initializeGL()
 
     glClearColor ( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_DEPTH_TEST );
-    glDisable( GL_CULL_FACE );
     glEnable( GL_BLEND );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-    glEnable( GL_MULTISAMPLE );
-    glMinSampleShading( 1.0f );
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//    glEnable( GL_MULTISAMPLE );
+    //    glMinSampleShading( 1.0f );
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
     axes.initShader( current_directory );

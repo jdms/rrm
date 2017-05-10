@@ -16,8 +16,27 @@ class ObjectTree :public QTreeWidget
 
 
         void addInputVolume();
+
+        inline void setInputVolumeHidden( bool status_ )
+        {
+            setItemHidden( input_volume, status_ );
+        }
+
+
         void addObject( const std::size_t& id_ );
+
+        inline void setObjectHidden( const std::size_t& id_, bool status_ )
+        {
+            setItemHidden( objects[ id_ ], status_ );
+        }
+
+
         void addRegion( const std::size_t& id_ );
+
+        inline void setRegionHidden( const std::size_t id_, bool status_ )
+        {
+            setItemHidden( regions[ id_ ], status_ );
+        }
 
 
     signals:

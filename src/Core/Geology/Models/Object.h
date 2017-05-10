@@ -8,8 +8,6 @@
 #include <exception>
 #include <tuple>
 
-//FIXME: remove this typedef later
-//typedef int Curve2d;
 #include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 //TODO: clear whatever variable before performing the set
