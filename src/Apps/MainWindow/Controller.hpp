@@ -157,7 +157,6 @@ class Controller: public QObject
 
         inline void setTypeCurrentObject( Object::TYPE type_ )
         {
-            //TODO: if object is a channel set object in path scene
             current_object_type = type_;
             objects[ current_object ]->setType( current_object_type );
 
@@ -439,12 +438,20 @@ class Controller: public QObject
         inline void updateScenesCurvesOfCurrentCrossSection()
         {
 
-            for( auto& it_: objects )
+            if( objects.empty() == true ) return;
+
+            std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
+
+            sketch_scene->addObject( objects[ current_object] );
+
+
+            for( auto id_: actives_ )
             {
-                Object* obj_ = it_.second;
+                Object* obj_ = objects[ id_ ];
                 if( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
                     continue;
-                sketch_scene->addObject( it_.second );
+                sketch_scene->addObject( obj_ );
             }
 
             sketch_scene->setCrossSection( current_depth_csection );
@@ -459,14 +466,10 @@ class Controller: public QObject
 
             std::size_t index_ = rowIndexfromDepth( current_depth_csection );
 
-            std::cout << "cross-section: " << index_ << std::endl << std::flush;
-
             std::vector< float > curve_vertices;
             std::vector< std::size_t > curve_edges;
             bool has_curve = rules_processor.getCrossSection( obj_->getId(), index_ ,
                                              curve_vertices, curve_edges );
-
-            std::cout << "Object " << obj_->getId() << " has curve " << has_curve << std::endl << std::flush;
 
             if( has_curve == false )
             {
@@ -493,6 +496,7 @@ class Controller: public QObject
             std::vector< double > surface_vertices1( surface_vertices.begin(), surface_vertices.end() );
             obj_->updateSurface( surface_vertices1, surface_faces );
 
+            return true;
         }
 
 

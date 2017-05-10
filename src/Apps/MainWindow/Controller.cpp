@@ -190,6 +190,7 @@ bool Controller::interpolate()
     Object* const& obj_ = objects[ current_object ];
     std::vector< std::tuple< Curve2D, double > > curves_ = obj_->getAllCurves();
 
+    if( curves_.empty() == true ) return false;
 
     bool interpolate_ok = false;
 
@@ -323,16 +324,34 @@ void Controller::unSelectObject( const std::size_t& id_ )
 void Controller::updateObjects()
 {
 
+    if( objects.empty() == true ) return;
+
     for( auto &it_: objects )
     {
         Object* obj_ = it_.second;
 
+        if( obj_->getId() == current_object ) continue;
+
+        obj_->setVisibility( false );
+        object_tree->setObjectHidden( obj_->getId(), true );
+    }
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
+    for( auto id_: actives_ )
+    {
+        Object* obj_ = objects[ id_ ];
+
+        obj_->setVisibility( true );
+        object_tree->setObjectHidden( id_, false );
+
         if ( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
-             obj_->clearCurve( current_depth_csection );
+            obj_->clearCurve( current_depth_csection );
 
         if( getObjectSurface( obj_ ) == false )
             obj_->clearSurface();
     }
+
 
     //TODO: update scenes should be called here
 
