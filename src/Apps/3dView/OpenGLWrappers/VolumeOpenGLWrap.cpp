@@ -191,6 +191,8 @@ void VolumeOpenGLWrap::createVolumeBox()
 void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                                                                                    const int& h_ )
 {
+    if( volume->getVisibility() == false ) return;
+
     Eigen::Affine3f M_;
     M_.setIdentity();
 

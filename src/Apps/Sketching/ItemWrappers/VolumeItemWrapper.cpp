@@ -17,6 +17,8 @@ void VolumeItemWrapper::paint( QPainter *painter , const QStyleOptionGraphicsIte
     brush.setColor( QColor( 55, 100, 55, 75 ) );
     brush.setStyle( Qt::SolidPattern );
 
+    if(volume == nullptr ) return;
+    if( volume->getVisibility() == false ) return;
 
     painter->setBrush( brush );
     painter->setPen ( pen_color );
