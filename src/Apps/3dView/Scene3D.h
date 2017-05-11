@@ -52,6 +52,7 @@ class Scene3D: public QObject
 
             axes.initShader( current_directory );
             axes.load();
+            axes.setNonCentered();
 
         }
 
@@ -78,6 +79,19 @@ class Scene3D: public QObject
         inline void setCurrentColor( int red_, int green_, int blue_ ){
                                      current_color = QColor( red_, green_, blue_ ); }
 
+        inline void centerAxes( bool status_ )
+        {
+            if( status_ == false )
+            {
+                axes.setNonCentered();
+                updateCanvas();
+                return;
+             }
+
+            Eigen::Vector3f min = input_volume->getMinimum();
+            axes.setCenter( min.x(), min.y(), min.z() );
+            updateCanvas();
+        }
 
     protected:
 

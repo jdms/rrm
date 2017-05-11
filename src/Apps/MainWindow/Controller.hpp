@@ -49,8 +49,8 @@ class Controller: public QObject
 
     Q_OBJECT
 
-	public: 
-	
+    public:
+
     enum class State : int {
         UNDEFINED = -1,
         NO_GEOLOGIC_RULE,
@@ -440,18 +440,31 @@ class Controller: public QObject
 
             if( objects.empty() == true ) return;
 
-            std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+//            std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
 
 
-            sketch_scene->addObject( objects[ current_object] );
+//            sketch_scene->addObject( objects[ current_object] );
 
 
-            for( auto id_: actives_ )
+//            for( auto id_: actives_ )
+//            {
+//                Object* obj_ = objects[ id_ ];
+//                if( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
+//                    continue;
+//                sketch_scene->addObject( obj_ );
+//            }
+
+//            sketch_scene->setCrossSection( current_depth_csection );
+//            path_scene->setCrossSection( current_depth_csection );
+//            scene3d->updateCrossSection( current_depth_csection );
+
+
+            for( auto& it_: objects )
             {
-                Object* obj_ = objects[ id_ ];
+                Object* obj_ = it_.second;
                 if( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
                     continue;
-                sketch_scene->addObject( obj_ );
+                sketch_scene->addObject( it_.second );
             }
 
             sketch_scene->setCrossSection( current_depth_csection );

@@ -23,10 +23,7 @@ void Scene3D::addVolume(  Volume* const& volume_ )
     input_volume->init();
     input_volume->setVolumeRaw( volume_ );
 
-    Eigen::Vector3f min = input_volume->getMinimum();
-    axes.setCenter( min.x(), min.y() );
 
-    std::cout << "min: " << min.x() << ", " << min.y() << std::endl << std::flush;
 
 
 }
