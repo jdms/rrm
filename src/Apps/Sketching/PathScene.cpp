@@ -75,6 +75,7 @@ void PathScene::addCrossSection( double depth_ )
     if( search != csections.end() ) return;
 
     csections[ depth_ ] = new CrossSectionItemWrapper( volume.getWidth(), depth_ );
+    csections[ depth_ ]->setCurrent( false );
     csections[ depth_ ]->setVisible( draw_cross_sections );
     addItem( csections[ depth_ ] );
     update();
@@ -84,6 +85,7 @@ void PathScene::addCrossSection( double depth_ )
 void PathScene::setCrossSection( double depth_ )
 {
     current_csection->setDepth( depth_ );
+    current_csection->setCurrent( true );
     update();
 }
 

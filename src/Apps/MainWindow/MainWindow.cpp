@@ -97,19 +97,23 @@ void MainWindow::createWindow()
     createObjectTreeSection();
     createSketchSection();
 
+    setFocusProxy( sl_depth_csection );
     getCurrentDirectory();
 
-    connect( sl_depth_csection, &QSlider::sliderMoved, [=]( int v ){
-
-
+    connect( sl_depth_csection, &QSlider::valueChanged, [=]( int v ){
                    double depth_ = controller->depthFromRowIndex( (std::size_t ) v );
                    controller->setCurrentCrossSection( depth_ );
                    emit updateScenes(); } );
 
-//    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) {
-//                                       ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* > item_;
-//                                       controller->selectObject( obj_->getId() ); } );
+    connect( canvas3d, &Canvas3D::increaseSlider, [=](){
+                                                        int value = sl_depth_csection->value() + 1;
+                                                        sl_depth_csection->setValue( value );
+                                                  } );
 
+    connect( canvas3d, &Canvas3D::decreaseSlider, [=](){
+                                                        int value = sl_depth_csection->value() - 1;
+                                                        sl_depth_csection->setValue( value );
+                                                  } );
 
 }
 
@@ -121,8 +125,10 @@ void MainWindow::create3dSection()
     canvas3d->setScene( &scene3d );
 
     sl_depth_csection = new QSlider( Qt::Vertical );
+    sl_depth_csection->setTickPosition( QSlider::TicksRight );
     sl_depth_csection->setInvertedAppearance( true );
-
+    sl_depth_csection->setFocusPolicy( Qt::WheelFocus );
+    sl_depth_csection->setFocus();
 
     QHBoxLayout* hl_window3d = new QHBoxLayout( this );
     hl_window3d->addWidget( canvas3d );
@@ -497,8 +503,24 @@ void MainWindow::redo()
 
 void MainWindow::screenshot()
 {
-    sketch_scene.screenshot();
-//    scene3d.screenshot();
+
+    QString selectedFilter;
+    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
+
+
+    if( selectedFilter == "PNG (*.png)" )
+    {
+        sketch_scene.savetoRasterImage( name_of_file );
+        canvas3d->savetoRasterImage( name_of_file );
+    }
+    else if ( selectedFilter == "SVG (*.svg)" )
+    {
+        sketch_scene.savetoVectorImage( name_of_file );
+        canvas3d->savetoVectorImage( name_of_file );
+    }
+
 }
 
 
@@ -587,4 +609,24 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
 
 }
+
+
+void MainWindow::wheelEvent ( QWheelEvent *event )
+{
+
+    const int WHEEL_STEP = 120;
+    float pos = event->delta()/float( WHEEL_STEP );
+
+
+    if( event->modifiers() & Qt::ControlModifier )
+    {
+        canvas3d->wheelEvent( event );
+    }
+    else
+        sl_depth_csection->setFocus();
+
+
+    update();
+}
+
 

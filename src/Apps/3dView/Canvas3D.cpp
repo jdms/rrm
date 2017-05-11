@@ -24,8 +24,7 @@ void Canvas3D::initializeGL()
     glClearColor ( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_BLEND );
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//    glEnable( GL_MULTISAMPLE );
-    //    glMinSampleShading( 1.0f );
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
 
@@ -174,10 +173,10 @@ void Canvas3D::wheelEvent ( QWheelEvent *event )
 
     if ( event->modifiers() & Qt::ShiftModifier )
     {
-        camera.incrementFov ( pos );
+//        camera.incrementFov ( pos );
     }
 
-    else
+    else if( event->modifiers() & Qt::ControlModifier )
     {
         if ( pos > 0 )
         {
@@ -189,6 +188,21 @@ void Canvas3D::wheelEvent ( QWheelEvent *event )
             camera.increaseZoom ( 1.0f/1.05f );
         }
     }
+    else
+    {
+        if ( pos > 0 )
+        {
+            emit decreaseSlider();
+        }
+
+        else if ( pos < 0 )
+        {
+            emit increaseSlider();
+        }
+    }
+
+
+    QOpenGLWidget::wheelEvent( event );
 
     update();
 }

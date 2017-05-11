@@ -83,16 +83,14 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
         axes.draw( V_, P_, w_, h_ );
     }
 
+    if( input_volume != nullptr )
+        input_volume->draw( V_, P_, w_, h_ );
+
     for( auto& it : object_list )
         (it.second)->draw( V_, P_, w_, h_ );
 
     if( cross_section != nullptr )
         cross_section->draw( V_, P_, w_, h_ );
-
-
-    if( input_volume != nullptr )
-        input_volume->draw( V_, P_, w_, h_ );
-
 
 }
 
