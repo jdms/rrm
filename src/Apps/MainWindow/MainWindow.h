@@ -34,6 +34,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QStatusBar>
+#include <QWheelEvent>
 #include <QScreen>
 
 #include <QKeyEvent>
@@ -76,6 +77,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
+
+        void wheelEvent ( QWheelEvent *event );
 
         void run_app();
 

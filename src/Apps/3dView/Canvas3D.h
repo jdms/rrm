@@ -31,8 +31,24 @@ class Canvas3D: public QOpenGLWidget
                                                                      /*axes.initShader( current_directory );
                                                                      axes.load();*/ }
 
-//        inline void showAxis( bool status_ ){ show_axis = status_; update(); }
 
+        inline void savetoRasterImage( const QString& filename )
+        {
+            QImage image = grabFramebuffer();
+            image.save( filename );
+        }
+
+        inline void savetoVectorImage( const QString& filename )
+        {
+            std::cout << "Not implemented yet to 3dView\n" << std::flush;
+        }
+
+        void wheelEvent( QWheelEvent *e );
+
+
+    signals:
+        void increaseSlider();
+        void decreaseSlider();
 
 
     protected:
@@ -44,7 +60,7 @@ class Canvas3D: public QOpenGLWidget
         void mousePressEvent( QMouseEvent *event );
         void mouseMoveEvent( QMouseEvent *event );
         void mouseReleaseEvent( QMouseEvent *event );
-        void wheelEvent( QWheelEvent *e );
+
 
         void keyPressEvent( QKeyEvent * event );
 

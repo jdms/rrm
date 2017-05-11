@@ -18,11 +18,28 @@ class CrossSectionItemWrapper: public QGraphicsLineItem
         inline double getDepth(){ return depth; }
         inline void setDepth( double depth_ ){ depth = depth_; update(); }
 
+        inline void setCurrent( bool status_ )
+        {
+            if( status_ == true )
+            {
+                pen_color.setStyle( Qt::SolidLine );
+                pen_color.setColor( Qt::yellow );
+                pen_color.setWidth ( 3 );
+            }
+            else
+            {
+                pen_color.setStyle( Qt::DotLine );
+                pen_color.setColor( Qt::black );
+                pen_color.setWidth ( 2 );
+            }
+        }
+
     protected:
 
         double width;
         double depth;
 
+        QPen pen_color;
 
 };
 

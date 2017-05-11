@@ -198,6 +198,8 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
     Eigen::Affine3f M_;
     M_.setIdentity();
 
+    glDisable( GL_DEPTH_TEST );
+
     shader->bind();
 
         shader->setUniform( "ModelMatrix", M_ );
@@ -211,4 +213,7 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
         glBindVertexArray( 0 );
 
     shader->unbind();
+
+    glEnable( GL_DEPTH_TEST );
+
 }

@@ -108,6 +108,9 @@ class SketchScene: public QGraphicsScene
         void finishSketch();
         bool acceptSketch( Curve2D& curve_ );
 
+        void savetoRasterImage( const QString& filename );
+        void savetoVectorImage( const QString& filename );
+
 
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
@@ -149,8 +152,7 @@ class SketchScene: public QGraphicsScene
     protected:
 
 
-        void savetoRasterImage( const QString& filename );
-        void savetoVectorImage( const QString& filename );
+
 
 
 
