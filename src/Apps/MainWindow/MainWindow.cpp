@@ -286,6 +286,11 @@ void MainWindow::createActions()
 void MainWindow::createGeneralActions()
 {
 
+    ac_object_tree = new QAction( "Object Tree", this );
+    ac_object_tree->setCheckable( true );
+    connect( ac_object_tree, &QAction::toggled, dw_object_tree, &QDockWidget::setVisible );
+
+
     ac_clear = new QAction( "Clear", this );
     connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
 
@@ -306,6 +311,8 @@ void MainWindow::createGeneralActions()
 
 
     tb_general = new QToolBar( this );
+    tb_general->addAction( ac_object_tree );
+    tb_general->addSeparator();
     tb_general->addAction( ac_clear );
     tb_general->addAction( ac_undo );
     tb_general->addAction( ac_redo );

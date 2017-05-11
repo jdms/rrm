@@ -83,6 +83,8 @@ class VolumeOpenGLWrap
 
         inline void update(){ createVolumeBox(); }
 
+        inline Eigen::Vector3f getMinimum(){ return minimum; }
+
     private:
 
         void initShaders();
@@ -104,6 +106,8 @@ class VolumeOpenGLWrap
 
         std::string shader_directory;
         Tucano::Shader* shader;
+
+        Eigen::Vector3f minimum;
 
 };
 

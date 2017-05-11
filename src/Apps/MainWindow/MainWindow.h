@@ -134,6 +134,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 
         void exportTo();
+        inline void showObjectTree( bool status_ ){ object_tree->setVisible( status_ ); }
 
 
     protected:
@@ -171,6 +172,7 @@ private:
 
         QAction* ac_screenshot;
         QAction* ac_clear;
+        QAction* ac_object_tree;
 
 
         QAction* ac_stratigraphy;

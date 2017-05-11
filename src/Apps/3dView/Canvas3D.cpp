@@ -28,9 +28,6 @@ void Canvas3D::initializeGL()
     //    glMinSampleShading( 1.0f );
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
-    axes.initShader( current_directory );
-    axes.load();
-
 
     shareContext();
 
@@ -54,11 +51,6 @@ void Canvas3D::paintGL()
     if( scene != nullptr )
         scene->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 
-//    if( show_axis == true )
-//    {
-//        axes.draw( camera.getRotation(), camera.getViewport() );
-//    }
-
 
 }
 
@@ -79,7 +71,7 @@ void Canvas3D::keyPressEvent( QKeyEvent * event )
         case Qt::Key_R:
         {
             camera.reset();
-            axes.resetBuffers();
+//            axes.resetBuffers();
         }
         break;
 

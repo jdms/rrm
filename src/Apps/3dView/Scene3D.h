@@ -34,6 +34,7 @@ class Scene3D: public QObject
         Scene3D();
 
         inline void setCurrentDirectory( const std::string& path_ ){ current_directory = path_;
+
                                                                       }
 
         void addVolume(  Volume* const& volume_ );
@@ -48,6 +49,10 @@ class Scene3D: public QObject
         {
             context = cnt_;
             surfacegl = cnt_->surface();
+
+            axes.initShader( current_directory );
+            axes.load();
+
         }
 
 
@@ -56,6 +61,7 @@ class Scene3D: public QObject
 
         inline void updateCrossSection( double depth_ ){ cross_section->reloadBuffers( depth_ ); }
 
+        inline void showAxis( bool status_ ){ show_axis = status_; /*update();*/ }
 
 
     signals:
@@ -85,6 +91,10 @@ class Scene3D: public QObject
         std::map< std::size_t, ObjectOpenGLWrapper* > object_list;
 
         QColor current_color;
+
+        CoordinateAxes axes;
+        bool show_axis = true;
+
 
 
 

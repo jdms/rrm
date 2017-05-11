@@ -1,5 +1,7 @@
 #include "CoordinateAxes.h"
 
+#include <math.h>
+
 CoordinateAxes::CoordinateAxes()
 {
 
@@ -18,6 +20,8 @@ void CoordinateAxes::init()
 	vertex_buffer_vertices = 0;
 	vertex_buffer_normals = 0;
 	vertex_buffer_colors = 0;
+
+    origin = Eigen::Vector2f( 0.0f, 0.0f );
 }
 
 void CoordinateAxes::initShader( std::string directory )
@@ -27,27 +31,6 @@ void CoordinateAxes::initShader( std::string directory )
 
     current_directory = directory;
 
-	float left		 = -1.0f;
-	float right		 =  1.0f;
-	float bottom	 = -1.0f;
-	float top		 =  1.0f; 
-	float near_plane = 0.1f;
-	float far_plane  = 100.0f;
-
-	this->projetionMatrix = Eigen::Matrix4f::Zero();
-
-	projetionMatrix(0, 0) = 2.0f / (right - left);
-	projetionMatrix(1, 1) = 2.0f / (top - bottom);
-	projetionMatrix(2, 2) = -2.0f / (far_plane - near_plane);
-	projetionMatrix(3, 3) = 1.0f;
-	projetionMatrix(0, 3) = -(right + left) / (right - left);
-	projetionMatrix(1, 3) = -(top + bottom) / (top - bottom);
-	projetionMatrix(2, 3) = -(far_plane + near_plane) / (far_plane - near_plane);
-
-	/// The correct manner to defaine an identity matrix
-	this->viewMatrix_ = Eigen::Affine3f::Identity();
-	this->viewMatrix_.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
-	this->viewMatrix_.rotate(Eigen::Quaternion<float>::Identity());
 }
 
 void CoordinateAxes::reloadShader()
@@ -153,41 +136,54 @@ void CoordinateAxes::load()
 	glBindVertexArray(0);
 }
 
-void CoordinateAxes::draw( const Eigen::Quaternion<float>& _orientation, const Eigen::Vector4f& _viewport)
+void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ )
 {
 
-	/// Coordinate Axes enviroment setup
+    Eigen::Matrix4f P = Eigen::Matrix4f::Zero();
 
-	float integral = 0.0f;
+    float left		 = -1.0f;
+    float right		 =  1.0f;
+    float bottom	 = -1.0f;
+    float top		 =  1.0f;
+    float near_plane = 0.1f;
+    float far_plane  = 100.0f;
 
-	integral = std::trunc(static_cast<float>(_viewport[2]*0.1f));
-	GLsizei w = static_cast<GLsizei>(integral);
-	integral = std::trunc(static_cast<float>(_viewport[3]*0.1f));
-	GLsizei h = static_cast<GLsizei>(integral);
+    P(0, 0) = 2.0f / (right - left);
+    P(1, 1) = 2.0f / (top - bottom);
+    P(2, 2) = -2.0f / (far_plane - near_plane);
+    P(3, 3) = 1.0f;
+    P(0, 3) = -(right + left) / (right - left);
+    P(1, 3) = -(top + bottom) / (top - bottom);
+    P(2, 3) = -(far_plane + near_plane) / (far_plane - near_plane);
+
+    Eigen::Matrix4f PM = P;
+    int min = (int) (0.2f * std::min( w_, h_ ));
+
+    Eigen::Affine3f M;
+    M.setIdentity();
+
+    Eigen::Affine3f V;
+    V.setIdentity();
+    V.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
+    V.rotate( V_.rotation().matrix() );
 
 
+    if( centered == true )
+    {
+        M.translate( Eigen::Vector3f( origin.x(), origin.y(), origin.y() ) );
+        M.scale( 0.32f );
+        PM = P_;
+        V = V_;
+    }
+    else
+        glViewport( 0, 0, min, min );
 
-    float max = std::max( w, h );
-    float min = std::min( w, h );
-
-    float aspect_ratio_ = static_cast<float>(max) / static_cast<float>(min);
-
-//	h = static_cast<GLsizei>(h*aspect_ratio_);
-
-//    glViewport(0, 0, w, h);
-
-	this->viewMatrix_ = Eigen::Affine3f::Identity();
-    this->viewMatrix_.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
-    this->viewMatrix_.scale( 0.05f*aspect_ratio_ );
-	this->viewMatrix_.rotate(Eigen::Quaternion<float>::Identity());
-	this->viewMatrix_.rotate(_orientation);
-	
 
 	shader_axes->bind();
 
-	shader_axes->setUniform("ModelMatrix", this->viewMatrix_.Identity());
-	shader_axes->setUniform("ViewMatrix", this->viewMatrix_);
-	shader_axes->setUniform("ProjectionMatrix", this->projetionMatrix);
+    shader_axes->setUniform("ModelMatrix", M );
+    shader_axes->setUniform("ViewMatrix", V );
+    shader_axes->setUniform("ProjectionMatrix", PM );
 
 		glBindVertexArray(vertex_array_coneaxes);
 
@@ -198,10 +194,7 @@ void CoordinateAxes::draw( const Eigen::Quaternion<float>& _orientation, const E
 
 	shader_axes->unbind();
 
-    w = static_cast<GLsizei>(_viewport[2]);
-    h = static_cast<GLsizei>(_viewport[3]);
-	
-//    glViewport(0, 0, w, h);
+    glViewport(0, 0, w_, h_ );
 
 }
 
