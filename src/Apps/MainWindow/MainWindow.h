@@ -173,6 +173,7 @@ private:
         QAction* ac_screenshot;
         QAction* ac_clear;
         QAction* ac_object_tree;
+        QAction* ac_center_axes;
 
 
         QAction* ac_stratigraphy;

@@ -121,6 +121,7 @@ void MainWindow::create3dSection()
     canvas3d->setScene( &scene3d );
 
     sl_depth_csection = new QSlider( Qt::Vertical );
+    sl_depth_csection->setInvertedAppearance( true );
 
 
     QHBoxLayout* hl_window3d = new QHBoxLayout( this );
@@ -288,6 +289,7 @@ void MainWindow::createGeneralActions()
 
     ac_object_tree = new QAction( "Object Tree", this );
     ac_object_tree->setCheckable( true );
+    ac_object_tree->setChecked( true );
     connect( ac_object_tree, &QAction::toggled, dw_object_tree, &QDockWidget::setVisible );
 
 
@@ -310,8 +312,13 @@ void MainWindow::createGeneralActions()
     connect( ac_screenshot, &QAction::triggered, this, &MainWindow::screenshot );
 
 
+    ac_center_axes = new QAction( "Center Axes", this );
+    ac_center_axes->setCheckable( true );
+    connect( ac_center_axes, &QAction::toggled, &scene3d, &Scene3D::centerAxes );
+
     tb_general = new QToolBar( this );
     tb_general->addAction( ac_object_tree );
+    tb_general->addAction( ac_center_axes );
     tb_general->addSeparator();
     tb_general->addAction( ac_clear );
     tb_general->addAction( ac_undo );

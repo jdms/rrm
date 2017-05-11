@@ -21,7 +21,7 @@ void CoordinateAxes::init()
 	vertex_buffer_normals = 0;
 	vertex_buffer_colors = 0;
 
-    origin = Eigen::Vector2f( 0.0f, 0.0f );
+    origin = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
 }
 
 void CoordinateAxes::initShader( std::string directory )
@@ -170,7 +170,7 @@ void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_,
 
     if( centered == true )
     {
-        M.translate( Eigen::Vector3f( origin.x(), origin.y(), origin.y() ) );
+        M.translate( Eigen::Vector3f( origin.x(), origin.y(), origin.z() ) );
         M.scale( 0.32f );
         PM = P_;
         V = V_;

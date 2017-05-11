@@ -25,14 +25,18 @@ class CoordinateAxes
         void initShader( std::string directory );
 
         void resetBuffers();
-        inline void setCenter( float ox_, float oy_ )
+        inline void setCenter( float ox_, float oy_, float oz_ )
         {
-            origin = Eigen::Vector2f( ox_, oy_ );
+            origin = Eigen::Vector3f( ox_, oy_, oz_ );
             centered = true;
         }
 
 
-        inline void setNonCentered(){ centered = false; }
+        inline void setNonCentered()
+        {
+            origin = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+            centered = false;
+        }
 
     private:
 
@@ -54,7 +58,7 @@ class CoordinateAxes
         std::string current_directory;
 
         bool centered = true;
-        Eigen::Vector2f origin;
+        Eigen::Vector3f origin;
 
 };
 
