@@ -23,6 +23,12 @@ void Scene3D::addVolume(  Volume* const& volume_ )
     input_volume->init();
     input_volume->setVolumeRaw( volume_ );
 
+    Eigen::Vector3f min = input_volume->getMinimum();
+    axes.setCenter( min.x(), min.y() );
+
+    std::cout << "min: " << min.x() << ", " << min.y() << std::endl << std::flush;
+
+
 }
 
 
@@ -75,7 +81,10 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
                                                                           const int& h_ )
 {
 
-
+    if( show_axis == true )
+    {
+        axes.draw( V_, P_, w_, h_ );
+    }
 
     for( auto& it : object_list )
         (it.second)->draw( V_, P_, w_, h_ );

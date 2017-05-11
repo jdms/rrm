@@ -185,6 +185,8 @@ void VolumeOpenGLWrap::createVolumeBox()
     std::vector< float > unit_wireframe_ = Model3DUtils::normalizePointCloud( wireframe_ );
     reloadBuffers( unit_wireframe_ ) ;
 
+    minimum = Model3DUtils::normalizePointCloud( min, max, min );
+
 }
 
 
