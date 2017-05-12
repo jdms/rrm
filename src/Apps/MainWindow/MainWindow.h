@@ -34,6 +34,9 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QToolBox>
+#include <QtWidgets/QGroupBox>
+
 #include <QWheelEvent>
 #include <QScreen>
 
@@ -144,6 +147,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
         Controller* controller;
 
+
+    private slots:
+
+            void on_sl_width_volume_sliderMoved(int position);
+            void on_sl_height_volume_sliderMoved(int position);
+            void on_sl_depth_volume_sliderMoved(int position);
 
 private:
 

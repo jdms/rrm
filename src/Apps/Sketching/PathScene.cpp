@@ -161,6 +161,13 @@ void PathScene::updateScene()
     if( object->hasPathCurve() == false ) return;
 
 
+    for( auto &it: csections )
+    {
+        CrossSectionItemWrapper* csection = it.second;
+        csection->setDimensions( volume.getWidth(), it.first );
+    }
+
+
     removeItem( path );
     QPainterPath curve_ = QPainterPath();
     curve_.addPolygon( PolyQtUtils::curve2DToQPolyginF( object->getPathCurve() ) );

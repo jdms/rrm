@@ -106,6 +106,24 @@ class Controller: public QObject
             input_volume.getDimensions( width_, height_, depth_ );
         }
 
+
+        inline void setInputVolumeWidth( double width_ )
+        {
+            input_volume.setWidth( width_ );
+        }
+
+        inline void setInputVolumeHeight( double height_ )
+        {
+            input_volume.setHeight( height_ );
+        }
+
+        inline void setInputVolumeDepth( double depth_ )
+        {
+            input_volume.setDepth( depth_ );
+        }
+
+
+
         inline void setInputVolumeOrigin( double ox_, double oy_, double oz_ )
         {
             input_volume.setOrigin( ox_, oy_, oz_ );
@@ -440,25 +458,6 @@ class Controller: public QObject
 
             if( objects.empty() == true ) return;
 
-//            std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-
-
-//            sketch_scene->addObject( objects[ current_object] );
-
-
-//            for( auto id_: actives_ )
-//            {
-//                Object* obj_ = objects[ id_ ];
-//                if( getObjectCurvesFromCurrentCrossSection( obj_ ) == false )
-//                    continue;
-//                sketch_scene->addObject( obj_ );
-//            }
-
-//            sketch_scene->setCrossSection( current_depth_csection );
-//            path_scene->setCrossSection( current_depth_csection );
-//            scene3d->updateCrossSection( current_depth_csection );
-
-
             for( auto& it_: objects )
             {
                 Object* obj_ = it_.second;
@@ -469,7 +468,7 @@ class Controller: public QObject
 
             sketch_scene->setCrossSection( current_depth_csection );
             path_scene->setCrossSection( current_depth_csection );
-            scene3d->updateCrossSection( current_depth_csection );
+            scene3d->moveCrossSection( current_depth_csection );
 
         }
 
