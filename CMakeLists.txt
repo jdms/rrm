@@ -7,7 +7,7 @@ project( RRM )
 # Options
 #####################################################################
 
-set(RRM_BUILD_TYPE "Release" CACHE STRING
+set(RRM_BUILD_TYPE "Debug" CACHE STRING
     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 

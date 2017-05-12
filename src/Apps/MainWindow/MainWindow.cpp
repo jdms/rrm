@@ -76,6 +76,10 @@ void MainWindow::setupWindowProperties()
     setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs |
                     QMainWindow::AllowTabbedDocks );
 
+    setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+
+
     setDockNestingEnabled( true );
 
     QRect rect = QGuiApplication::primaryScreen()->geometry();
@@ -96,6 +100,30 @@ void MainWindow::createWindow()
     create3dSection();
     createObjectTreeSection();
     createSketchSection();
+
+
+
+    sl_width_volume->setRange( 0, 10000 );
+    sl_height_volume->setRange( 0, 10000 );
+    sl_depth_volume->setRange( 0, 10000 );
+
+    sp_width_volume->setRange( 0, 10000 );
+    sp_height_volume->setRange( 0, 10000 );
+    sp_depth_volume->setRange( 0, 10000 );
+
+
+    tb_properties->removeItem( 0 );
+    tb_properties->addItem( gb_volume_properties, "Object Properties" );
+
+    QDockWidget* dw_properties = new QDockWidget( "", this );
+    dw_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_properties->setWidget( tb_properties );
+    dw_properties->setVisible( true );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_properties );
+
+
+    ///////////////////////////////////////////
+
 
     setFocusProxy( sl_depth_csection );
     getCurrentDirectory();
@@ -151,6 +179,7 @@ void MainWindow::createObjectTreeSection()
     object_tree = new ObjectTree( this );
     object_tree->setMaximumWidth( 0.2*app_width );
 
+
     dw_object_tree = new QDockWidget( "Sketching Canvas" );
     dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_object_tree->setWidget( object_tree );
@@ -172,7 +201,6 @@ void MainWindow::createObjectTreeSection()
 
 
 }
-
 
 
 void MainWindow::createSketchSection()
@@ -630,3 +658,25 @@ void MainWindow::wheelEvent ( QWheelEvent *event )
 }
 
 
+
+void MainWindow::on_sl_width_volume_sliderMoved( int position )
+{
+    controller->setInputVolumeWidth( (double) position );
+    sp_width_volume->setValue( position );
+    emit updateScenes();
+
+}
+
+void MainWindow::on_sl_height_volume_sliderMoved( int position )
+{
+    controller->setInputVolumeHeight( (double)position );
+    sp_height_volume->setValue( position );
+    emit updateScenes();
+}
+
+void MainWindow::on_sl_depth_volume_sliderMoved( int position )
+{
+    controller->setInputVolumeDepth( (double)position );
+    sp_depth_volume->setValue( position );
+    emit updateScenes();
+}
