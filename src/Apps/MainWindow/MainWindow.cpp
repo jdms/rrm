@@ -200,6 +200,9 @@ void MainWindow::createObjectTreeSection()
                             } );
 
 
+    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem *item, int column ){
+        std::cout << item->text( column ).toStdString() << std::endl << std::flush; } );
+
 }
 
 
