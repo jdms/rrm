@@ -678,5 +678,8 @@ void MainWindow::on_sl_depth_volume_sliderMoved( int position )
 {
     controller->setInputVolumeDepth( (double)position );
     sp_depth_volume->setValue( position );
+
+    setupCrossSectionsDiscretization();
+
     emit updateScenes();
 }

@@ -60,25 +60,26 @@ class Scene3D: public QObject
         void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                    const int& h_ );
 
-        inline void moveCrossSection( double depth_ ){ cross_section->reloadBuffers( depth_ ); }
+        inline void moveCrossSection( double depth_ ){ input_volume->updateCrossSection( depth_ ); emit updateCanvas();
+                                                       /*cross_section->reloadBuffers( depth_ );*/ }
         inline void updateCrossSection()
         {
-            if( input_volume == nullptr ) return;
-            if( cross_section == nullptr ) return;
+//            if( input_volume == nullptr ) return;
+//            if( cross_section == nullptr ) return;
 
-            double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
-            double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
+//            double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
+//            double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
 
-            input_volume->getOrigin( ox_, oy_, oz_ );
-            input_volume->getDimensions( w_, h_, d_ );
+//            input_volume->getOrigin( ox_, oy_, oz_ );
+//            input_volume->getDimensions( w_, h_, d_ );
 
-            cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
-                                          ( float ) oz_, ( float ) (oz_ + d_) );
-//            cross_section->reloadBuffers( double depth_ );
+//            cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
+//                                          ( float ) oz_, ( float ) (oz_ + d_) );
         }
 
-        inline void showAxis( bool status_ ){ show_axis = status_; /*update();*/ }
+        inline void showAxis( bool status_ ){ show_axis = status_; }
 
+        inline void updateVolumeDimensions(){ input_volume->updateDimensions(); }
 
     signals:
 
@@ -123,10 +124,6 @@ class Scene3D: public QObject
 
         CoordinateAxes axes;
         bool show_axis = true;
-
-
-
-
 
 
 

@@ -221,17 +221,22 @@ Eigen::Affine3f Model3DUtils::normalizePointCloud( float minx, float maxx, float
 	
     float L = std::max( std::max( dimx, dimy ), dimz );
 
+    maxx /= L;
+    maxy /= L;
+    maxz /= L;
 
-    Eigen::Vector3f center = Eigen::Vector3f( (maxx + minx)*0.5f/L, (maxy + miny)*0.5f/L, (maxz + minz)*0.5f/L );
+    minx /= L;
+    miny /= L;
+    minz /= L;
+
+    Eigen::Vector4f center = Eigen::Vector4f( (maxx + minx)*0.5f, (maxy + miny)*0.5f, (maxz + minz)*0.5f, 0.0f );
 
     Eigen::Affine3f matrix = Eigen::Affine3f::Identity();
-    matrix.translation() = -center;
+    matrix.translation() = -center.head< 3 >();
     matrix.scale( Eigen::Vector3f( 1.0f/L, 1.0f/L, 1.0f/L ) );
 	
 	return matrix;
-	
-
-}
+	}
 
 
 Curve2D Model3DUtils::convertToCurve2D( const std::vector< double >& v )
@@ -262,7 +267,8 @@ Eigen::Vector3f Model3DUtils::normalizePointCloud( const Eigen::Vector3f& p, con
     float scale = std::max( std::max( dimx, dimy ), dimz );
 
 
-    Eigen::Vector3f center = Eigen::Vector3f( ( M.x() + m.x() )*0.5f,( M.y() + m.y() )*0.5f,( M.z() + m.z() )*0.5f  );
+
+    Eigen::Vector3f center = Eigen::Vector3f( ( M.x() + m.x() )*0.5f,( M.y() + m.y() )*0.5f,( M.z() + m.z() )*0.5f );
     Eigen::Vector3f cpy( p.x(), p.y(), p.z() );
 
     cpy -= center;
