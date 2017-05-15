@@ -20,10 +20,6 @@ class CrossSectionOpenGLWrapper
             shader_directory = directory_;
         }
 
-        inline void setCrossSectionRaw( /*CrossSection* const &csection_ */)
-        {
-        }
-
         inline void init()
         {
             initShaders();

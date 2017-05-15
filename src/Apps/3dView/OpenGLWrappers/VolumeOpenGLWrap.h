@@ -8,6 +8,7 @@
 #include "Tucano/Shader.hpp"
 #include "3dView/Model3DUtils.hpp"
 
+#include "CrossSectionOpenGLWrapper.h"
 
 
 class VolumeOpenGLWrap
@@ -56,6 +57,7 @@ class VolumeOpenGLWrap
         inline void reloadShaders()
         {
             shader->reloadShaders();
+            shader_csection->reloadShaders();
         }
 
         inline void reloadBuffers( const std::vector< float >& wireframe_ )
@@ -66,6 +68,9 @@ class VolumeOpenGLWrap
             glBufferData ( GL_ARRAY_BUFFER , wireframe_.size() * sizeof ( GLfloat ) ,
                                              wireframe_.data() , GL_STATIC_DRAW );
             glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+
+
+
 
         }
 
@@ -81,9 +86,13 @@ class VolumeOpenGLWrap
         }
 
 
-        inline void update(){ createVolumeBox(); }
+        inline void update(){ /*createVolumeBox();*/ }
 
         inline Eigen::Vector3f getMinimum(){ return minimum; }
+
+        void updateCrossSection( double depth_ );
+
+        inline void updateDimensions(){ createVolumeBox(); }
 
     private:
 
@@ -106,8 +115,16 @@ class VolumeOpenGLWrap
 
         std::string shader_directory;
         Tucano::Shader* shader;
-
         Eigen::Vector3f minimum;
+
+
+        CrossSectionOpenGLWrapper* csection;
+        Tucano::Shader* shader_csection;
+        GLuint va_csection;
+        GLuint vb_vertices_csection;
+        GLuint nvertices_csection;
+
+
 
 };
 

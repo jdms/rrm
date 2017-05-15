@@ -89,16 +89,22 @@ class Controller: public QObject
         inline void setInputVolumeDimensions( double width_, double height_, double depth_ )
         {
             input_volume.setDimensions( width_, height_, depth_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void setInputVolumeWidthHeight( double width_, double height_ )
         {
             input_volume.setDimensions( width_, height_, input_volume.getDepth() );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void setInputVolumeWidthDepth( double width_, double depth_ )
         {
             input_volume.setDimensions( width_, input_volume.getHeight(), depth_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void getInputVolumeDimensions( double& width_, double& height_, double& depth_ ) const
@@ -110,16 +116,22 @@ class Controller: public QObject
         inline void setInputVolumeWidth( double width_ )
         {
             input_volume.setWidth( width_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void setInputVolumeHeight( double height_ )
         {
             input_volume.setHeight( height_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void setInputVolumeDepth( double depth_ )
         {
             input_volume.setDepth( depth_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
 
@@ -127,16 +139,20 @@ class Controller: public QObject
         inline void setInputVolumeOrigin( double ox_, double oy_, double oz_ )
         {
             input_volume.setOrigin( ox_, oy_, oz_ );
+            scene3d->updateVolumeDimensions();
+            initRulesProcessor();
         }
 
         inline void getInputVolumeOrigin( double& ox_, double& oy_, double& oz_ )
         {
             input_volume.getOrigin( ox_, oy_, oz_ );
+            scene3d->updateVolumeDimensions();
         }
 
         inline void setInputVolumeVisibility( bool option )
         {
             input_volume.setVisibility( option );
+            scene3d->updateVolumeDimensions();
         }
 
         inline bool getInputVolumeVisibility() const
