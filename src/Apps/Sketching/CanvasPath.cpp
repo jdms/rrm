@@ -5,23 +5,45 @@ CanvasPath::CanvasPath( QWidget* parent )
     draw_cross_sections = true;
     scene = nullptr;
     setRenderHint( QPainter::Antialiasing, true );
-//    scale( 1, -1 );
 }
 
 void CanvasPath::wheelEvent( QWheelEvent *event )
 {
 
-    double scaleFactor = 1.5;
 
-    if( event->delta() > 0 )
+    if( event->modifiers() & Qt::ControlModifier )
     {
-        scale( scaleFactor, scaleFactor );
-    }
 
+        const int WHEEL_STEP = 120;
+        float pos = event->delta()/float( WHEEL_STEP );
+
+        if ( pos > 0 )
+        {
+            emit decreaseSlider();
+        }
+
+        else if ( pos < 0 )
+        {
+            emit increaseSlider();
+        }
+    }
     else
     {
-        scale( 1.0/scaleFactor, 1.0/scaleFactor );
+        double scaleFactor = 1.5;
+
+        if( event->delta() > 0 )
+        {
+            scale( scaleFactor, scaleFactor );
+        }
+
+        else
+        {
+            scale( 1.0/scaleFactor, 1.0/scaleFactor );
+        }
+
     }
+
+
 
 }
 

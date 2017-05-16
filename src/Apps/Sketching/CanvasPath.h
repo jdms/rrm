@@ -16,6 +16,12 @@ class CanvasPath: public QGraphicsView
         CanvasPath( QWidget* parent = 0 );
         inline void setScenePath( PathScene* const& sc_ ){ scene = sc_; setScene( scene );}
 
+
+    signals:
+
+        void decreaseSlider();
+        void increaseSlider();
+
     protected:
 
         void wheelEvent( QWheelEvent *event );

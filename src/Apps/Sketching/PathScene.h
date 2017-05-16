@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsSceneWheelEvent>
 #include <QKeyEvent>
 
 #include "Core/Geology/Models/Volume.h"
@@ -80,6 +81,8 @@ class PathScene: public QGraphicsScene
 
 
 
+
+
     public slots:
 
         void clearSketch();
@@ -99,6 +102,7 @@ class PathScene: public QGraphicsScene
         void curveAccepted( Curve2D c_ );
         void updateVolumeWidthDepth( double w_, double d_ );
         void interpolateObject();
+
 
     protected:
 

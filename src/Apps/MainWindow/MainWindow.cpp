@@ -172,6 +172,18 @@ void MainWindow::createWindow()
                                                         sl_depth_csection->setValue( value );
                                                   } );
 
+
+    connect( canvas_path, &CanvasPath::increaseSlider, [=](){
+                                                        int value = sl_depth_csection->value() + 1;
+                                                        sl_depth_csection->setValue( value );
+                                                  } );
+
+    connect( canvas_path, &CanvasPath::decreaseSlider, [=](){
+                                                        int value = sl_depth_csection->value() - 1;
+                                                        sl_depth_csection->setValue( value );
+                                                  } );
+
+
 }
 
 
@@ -677,16 +689,14 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 void MainWindow::wheelEvent ( QWheelEvent *event )
 {
 
-    const int WHEEL_STEP = 120;
-    float pos = event->delta()/float( WHEEL_STEP );
-
-
     if( event->modifiers() & Qt::ControlModifier )
     {
-        canvas3d->wheelEvent( event );
+        sl_depth_csection->setFocus();
+
     }
     else
-        sl_depth_csection->setFocus();
+        canvas3d->wheelEvent( event );
+
 
 
     update();
