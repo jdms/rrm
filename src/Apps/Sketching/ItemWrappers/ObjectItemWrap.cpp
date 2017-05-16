@@ -86,6 +86,9 @@ void ObjectItemWrap::updateCrossSection( double depth_ )
     Curve2D c_ = object->getInputCurveofCrossSection( depth_ );
     std::vector< std::size_t > edges_ = object->getInputEdgesofCrossSection( depth_ );
 
+    int r_, g_, b_;
+    object->getColor( r_, g_, b_ );
+    setColor( QColor( r_, g_, b_ ) );
 
     QPolygonF points_ = PolyQtUtils::curve2DToQPolyginF( c_ );
 

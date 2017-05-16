@@ -68,7 +68,7 @@ void Controller::addInputVolumeToScenes()
     path_scene->setVolume( &input_volume );
 
     scene3d->addVolume( &input_volume );
-//    scene3d->createCrossSection();
+    scene3d->createCrossSection();
 }
 
 
@@ -94,6 +94,8 @@ bool Controller::setNameofObjectofId( std::size_t id_, const std::string& name_ 
 
     Object* obj = objects[ id_ ];
     obj->setName( name_ );
+
+    object_tree->setObjectName( id_, name_ );
     return true;
 }
 
@@ -356,6 +358,10 @@ void Controller::updateObjects()
     //TODO: update scenes should be called here
 
 }
+
+
+
+
 
 void Controller::clear()
 {

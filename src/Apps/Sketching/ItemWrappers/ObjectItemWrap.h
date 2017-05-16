@@ -33,10 +33,11 @@ class ObjectItemWrap: public QGraphicsPathItem
         void updateCrossSection( double depth_ );
 
 
-        void setColor( const QColor& c_ ){ current_color = c_; setupPens(); }
+        void setColor( const QColor& c_ ){ current_color = c_;  setState( state ); setupPens(); }
 
         inline void setState( ObjectItemWrap::State st_ )
         {
+            state = st_;
             switch ( st_ ) {
             case State::NONE:
                 {
@@ -74,6 +75,8 @@ class ObjectItemWrap: public QGraphicsPathItem
         QPainterPath curve;
         std::set<QPointF> intersection_points;
         std::vector<bool> hidden_subpaths;
+
+        ObjectItemWrap::State state;
 
         QColor current_color;
         QColor temp_color;

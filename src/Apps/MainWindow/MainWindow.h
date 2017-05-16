@@ -109,6 +109,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void defineColor( bool aleatory_, QColor c_ = QColor( 255, 0, 0 ) );
 
 
+        void enableVolumeEditionProperty();
+        void enableObjectEditionProperty( const std::size_t& id_ );
+
+
         void keyPressEvent( QKeyEvent *event );
 
 
@@ -153,6 +157,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
             void on_sl_width_volume_sliderMoved(int position);
             void on_sl_height_volume_sliderMoved(int position);
             void on_sl_depth_volume_sliderMoved(int position);
+
+            void editObjectTreeItem( QTreeWidgetItem* item_, int column_ );
+
+            void on_btn_save_object_clicked();
 
 private:
 
@@ -206,10 +214,17 @@ private:
         QAction* ac_interpolate;
 
 
+        QDockWidget* dw_properties;
         QWidgetAction *ac_sketchcolor;
         QMenu *mn_pickercolor;
         QColorDialog *cd_pickercolor;
         QToolButton *tbt_colorsketch;
+
+
+        QColorDialog *cd_color_object;
+        QWidgetAction *ac_color_object;
+        QMenu *mn_color_object;
+        QToolButton *tbt_color_object;
 
         QToolBar* tb_general;
         QToolBar* tb_sketch;

@@ -40,13 +40,6 @@ class Object
         inline void setType( const Object::TYPE _type )
         {
             type = _type;
-
-            if( type == Object::TYPE::Stratigraphy )
-                name = std::string( "Stratigraphy" );
-            else if( type == Object::TYPE::Channel )
-                name = std::string( "Channel" );
-            else
-                name = std::string( "Surface" );
         }
 
         inline Object::TYPE getType() const
@@ -267,8 +260,9 @@ class Object
         {
 
             setDefaultValues();
-
             id = index;
+
+            name = std::string( "Surface " ) + std::to_string( (int) id );
             ++index;
 
         }
