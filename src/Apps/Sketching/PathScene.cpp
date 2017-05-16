@@ -167,12 +167,14 @@ void PathScene::updateScene()
         csection->setDimensions( volume.getWidth(), it.first );
     }
 
+    int r_, g_, b_;
+    object->getColor( r_, g_, b_ );
+    pen_color.setColor( QColor( r_, g_, b_ ) );
 
-    removeItem( path );
     QPainterPath curve_ = QPainterPath();
     curve_.addPolygon( PolyQtUtils::curve2DToQPolyginF( object->getPathCurve() ) );
     path->setPath( curve_ );
-    addItem( path );
+    path->setPen( pen_color );
 
     update();
 
@@ -305,6 +307,8 @@ void PathScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         if( event->buttons() & Qt::LeftButton )
         {
+            if( sketch != nullptr ) return;
+
             sketch = new InputSketch( QColor( 0, 255, 0 ) );
             sketch->create( event->scenePos() );
             addItem( sketch );

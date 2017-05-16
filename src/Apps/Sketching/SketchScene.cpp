@@ -147,13 +147,16 @@ void SketchScene::addObject( Object* obj_ )
 
 void SketchScene::setImagetoCrossSection( const QString& url_ )
 {
-//    QTransform matrix_;
-//    matrix_.scale( 1, -1 );
 
-    QPixmap image_ = QPixmap( url_ );
+    QPixmap image_ = QPixmap( url_ );    
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image_ = image_.transformed( myTransform );
+
     csection_image->setPixmap( image_ );
 
-    emit updateVolumeWidthHeight( image_.rect().width(), image_.rect().height() );
+//    emit updateVolumeWidthHeight( image_.rect().width(), image_.rect().height() );
 
     update();
 }
@@ -197,6 +200,17 @@ void SketchScene::screenshot()
 void SketchScene::savetoRasterImage( const QString& filename )
 {
 
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_csection." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
     QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
     image.fill( Qt::transparent );
 
@@ -204,16 +218,29 @@ void SketchScene::savetoRasterImage( const QString& filename )
     render( &painter );
 
     image = image.mirrored( false, true );
-    image.save( filename );
+    image.save( filename_csection );
 
 }
 
 void SketchScene::savetoVectorImage( const QString& filename )
 {
 
+
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_csection." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
+
     QSvgGenerator svgGen;
 
-    svgGen.setFileName( filename );
+    svgGen.setFileName( filename_csection );
     svgGen.setSize( QSize( width(), height() ) );
 
     svgGen.setViewBox( sceneRect() );
