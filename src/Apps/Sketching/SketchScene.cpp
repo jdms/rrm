@@ -238,9 +238,12 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         if( current_interaction == UserInteraction::SKETCHING )
         {
-            sketch = new InputSketch( current_color );
-            sketch->create( event->scenePos() );
-            addItem( sketch );
+            if( sketch == nullptr )
+            {
+                sketch = new InputSketch( current_color );
+                sketch->create( event->scenePos() );
+                addItem( sketch );
+            }
         }
 
         else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
@@ -337,6 +340,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
     if( current_interaction == UserInteraction::SKETCHING )
     {
          emit interpolateObject();
+        clearSketch();
     }
 
     QGraphicsScene::mouseDoubleClickEvent( event );

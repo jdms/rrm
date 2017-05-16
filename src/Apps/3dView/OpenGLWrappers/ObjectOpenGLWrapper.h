@@ -72,6 +72,10 @@ class ObjectOpenGLWrapper
         {
             std::vector< double > vertices_ = object->getSurfaceVertices();
 
+            int r_, g_, b_;
+            object->getColor( r_, g_, b_ );
+            setConstantColor( r_, g_, b_ );
+
             reloadVertices( vertices_ );
             reloadFaces( object->getSurfaceFaces() );
             reloadColors();

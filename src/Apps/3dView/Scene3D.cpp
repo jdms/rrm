@@ -31,21 +31,21 @@ void Scene3D::addVolume(  Volume* const& volume_ )
 
 void Scene3D::createCrossSection()
 {
-//    double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
-//    double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
+    double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
+    double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
 
-//    input_volume->getOrigin( ox_, oy_, oz_ );
-//    input_volume->getDimensions( w_, h_, d_ );
+    input_volume->getOrigin( ox_, oy_, oz_ );
+    input_volume->getDimensions( w_, h_, d_ );
 
-//    cross_section = new CrossSectionOpenGLWrapper();
-//    cross_section->setShaderDirectory( current_directory );
-//    cross_section->init();
+    cross_section = new CrossSectionOpenGLWrapper();
+    cross_section->setShaderDirectory( current_directory );
+    cross_section->init();
 
-//    updateCrossSection();
-//    cross_section->setShaderDirectory( current_directory );
-//    cross_section->init();
-//    cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
-//                                  ( float ) oz_, ( float ) (oz_ + d_) );
+    updateCrossSection();
+    cross_section->setShaderDirectory( current_directory );
+    cross_section->init();
+    cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
+                                  ( float ) oz_, ( float ) (oz_ + d_) );
 
 }
 
@@ -93,8 +93,8 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
     for( auto& it : object_list )
         (it.second)->draw( V_, P_, w_, h_ );
 
-//    if( cross_section != nullptr )
-//        cross_section->draw( V_, P_, w_, h_ );
+    if( cross_section != nullptr )
+        cross_section->draw( V_, P_, w_, h_ );
 
 }
 
@@ -102,7 +102,7 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
 void Scene3D::updateScene()
 {
     input_volume->update();
-//    updateCrossSection();
+    updateCrossSection();
 
     for( auto &it_: object_list )
     {

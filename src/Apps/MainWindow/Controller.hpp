@@ -236,6 +236,18 @@ class Controller: public QObject
 
         bool getPathCurveofCurrentObject( Curve2D& path_ );
 
+        inline void getCurrentObjectColor( const std::size_t& id_, int& r_, int& g_, int& b_ )
+        {
+            if( isValidObject( id_ ) == false ) return;
+            objects[ id_ ]->getColor( r_, g_, b_ );
+        }
+
+        inline void setObjectColor( const std::size_t& id_, int r_, int g_, int b_ )
+        {
+            if( isValidObject( id_ ) == false ) return;
+            objects[ id_ ]->setColor( r_, g_, b_ );
+        }
+
         inline bool setCurrentObject( Object*& obj_ )
         {
             auto id_ = obj_->getId();

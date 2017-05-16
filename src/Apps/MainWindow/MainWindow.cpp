@@ -115,11 +115,40 @@ void MainWindow::createWindow()
     tb_properties->removeItem( 0 );
     tb_properties->addItem( gb_volume_properties, "Object Properties" );
 
-    QDockWidget* dw_properties = new QDockWidget( "", this );
+    dw_properties = new QDockWidget( "", this );
     dw_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_properties->setWidget( tb_properties );
     dw_properties->setVisible( true );
     addDockWidget( Qt::LeftDockWidgetArea, dw_properties );
+
+
+    cd_color_object = new QColorDialog();
+    cd_color_object->setWindowFlags( Qt::Widget );
+    cd_color_object->setCurrentColor( QColor( 255, 0, 0 ) );
+
+    ac_color_object = new QWidgetAction( this );
+    ac_color_object->setDefaultWidget( cd_color_object );
+    mn_color_object = new QMenu();
+    mn_color_object->addAction( ac_color_object );
+
+    tbt_color_object = new QToolButton;
+    tbt_color_object->setPopupMode( QToolButton::MenuButtonPopup );
+    tbt_color_object->setMenu( mn_color_object );
+    tbt_color_object ->setCheckable( true );
+
+    QPixmap px(20, 20);
+    px.fill( QColor( 255, 0, 0 ) );
+    tbt_color_object->setIcon( px );
+
+    gl_object_properties->addWidget( tbt_color_object, 0, 2 );
+
+
+    connect( mn_color_object, &QMenu::aboutToShow, cd_color_object, &QColorDialog::show );
+    connect( cd_color_object, &QColorDialog::rejected, mn_color_object, &QMenu::hide );
+    connect( cd_color_object, &QColorDialog::accepted, mn_color_object, &QMenu::hide );
+
+
+
 
 
     ///////////////////////////////////////////
@@ -200,8 +229,7 @@ void MainWindow::createObjectTreeSection()
                             } );
 
 
-    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem *item, int column ){
-        std::cout << item->text( column ).toStdString() << std::endl << std::flush; } );
+    connect( object_tree, &ObjectTree::itemClicked, this, &MainWindow::editObjectTreeItem );
 
 }
 
@@ -328,6 +356,7 @@ void MainWindow::createGeneralActions()
     ac_object_tree->setCheckable( true );
     ac_object_tree->setChecked( true );
     connect( ac_object_tree, &QAction::toggled, dw_object_tree, &QDockWidget::setVisible );
+    connect( ac_object_tree, &QAction::toggled, dw_properties, &QDockWidget::setVisible );
 
 
     ac_clear = new QAction( "Clear", this );
@@ -453,8 +482,6 @@ void MainWindow::createAppRelatedActions()
 
     ac_sketchcolor = new QWidgetAction( this );
     ac_sketchcolor->setDefaultWidget( cd_pickercolor );
-
-
     mn_pickercolor = new QMenu();
     mn_pickercolor->addAction( ac_sketchcolor );
 
@@ -470,6 +497,11 @@ void MainWindow::createAppRelatedActions()
     connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
         tbt_colorsketch->setChecked( true );
         defineColor( false, c_ ); } );
+
+    connect( mn_pickercolor, &QMenu::aboutToShow, cd_pickercolor, &QColorDialog::show );
+    connect( cd_pickercolor, &QColorDialog::rejected, mn_pickercolor, &QMenu::hide );
+    connect( cd_pickercolor, &QColorDialog::accepted, mn_pickercolor, &QMenu::hide );
+
 
 
     tb_sketch = new QToolBar( this );
@@ -670,12 +702,14 @@ void MainWindow::on_sl_width_volume_sliderMoved( int position )
 
 }
 
+
 void MainWindow::on_sl_height_volume_sliderMoved( int position )
 {
     controller->setInputVolumeHeight( (double)position );
     sp_height_volume->setValue( position );
     emit updateScenes();
 }
+
 
 void MainWindow::on_sl_depth_volume_sliderMoved( int position )
 {
@@ -685,4 +719,67 @@ void MainWindow::on_sl_depth_volume_sliderMoved( int position )
     setupCrossSectionsDiscretization();
 
     emit updateScenes();
+}
+
+
+
+
+void MainWindow::editObjectTreeItem( QTreeWidgetItem* item_, int column_ )
+{
+    ObjectTreeItem* obj_ = (ObjectTreeItem*) item_;
+
+
+    ObjectTreeItem::TreeItemType type = obj_->getType();
+    if( type == ObjectTreeItem::TreeItemType::VOLUME )
+        enableVolumeEditionProperty();
+    else if( type == ObjectTreeItem::TreeItemType::OBJECT )
+        enableObjectEditionProperty( obj_->getId() );
+
+}
+
+
+void MainWindow::enableVolumeEditionProperty()
+{
+//    sw_properties_objects->setCurrentIndex( 0 );
+}
+
+
+void MainWindow::enableObjectEditionProperty( const std::size_t& id_ )
+{
+    sw_properties_objects->setCurrentIndex( 1 );
+
+    std::string name_;
+    controller->getNameofObjectofId( id_, name_ );
+    edt_object_name->setText( name_.c_str() );
+
+    int r_ = 255, g_ = 0, b_ = 0;
+    controller->getCurrentObjectColor( id_, r_, g_, b_ );
+    cd_color_object->setCurrentColor( QColor( r_, g_, b_ ) );
+
+    QPixmap px(20, 20);
+    px.fill( QColor( r_, g_, b_ ) );
+    tbt_color_object->setIcon( px );
+
+}
+
+
+
+
+void MainWindow::on_btn_save_object_clicked()
+{
+    QList<QTreeWidgetItem* > list_ = object_tree->selectedItems();
+    if( list_.empty() == true ) return;
+
+    ObjectTreeItem* obj_ = (ObjectTreeItem*) list_[0];
+    controller->setNameofObjectofId( obj_->getId(), edt_object_name->text().toStdString() );
+
+    QColor c_ = cd_color_object->selectedColor();
+    controller->setObjectColor( obj_->getId(), c_.red(), c_.green(), c_.blue() );
+
+    QPixmap px(20, 20);
+    px.fill( c_);
+    tbt_color_object->setIcon( px );
+
+    emit updateScenes();
+
 }
