@@ -332,19 +332,6 @@ void PathScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void PathScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
-//    if( current_interaction == UserInteraction::SKETCHING )
-//    {
-//        sketch->add( event->scenePos() );
-//    }
-//    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
-//    {
-//        int w_ = event->scenePos().x() - boundary_anchor.x() ;
-//        int d_ = event->scenePos().y() - boundary_anchor.y() ;
-
-//        volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
-//                             std::abs( d_) ) ;
-//    }
-
     if ( event->buttons() & Qt::LeftButton )
     {
 
@@ -439,5 +426,6 @@ void PathScene::dropEvent( QGraphicsSceneDragDropEvent* event )
 
     setImagetoCrossSection( url_file );
 }
+
 
 

@@ -170,25 +170,7 @@ void Canvas3D::wheelEvent ( QWheelEvent *event )
     const int WHEEL_STEP = 120;
     float pos = event->delta()/float( WHEEL_STEP );
 
-
-    if ( event->modifiers() & Qt::ShiftModifier )
-    {
-//        camera.incrementFov ( pos );
-    }
-
-    else if( event->modifiers() & Qt::ControlModifier )
-    {
-        if ( pos > 0 )
-        {
-            camera.increaseZoom ( 1.05f );
-        }
-
-        else if ( pos < 0 )
-        {
-            camera.increaseZoom ( 1.0f/1.05f );
-        }
-    }
-    else
+    if( event->modifiers() & Qt::ControlModifier )
     {
         if ( pos > 0 )
         {
@@ -198,6 +180,18 @@ void Canvas3D::wheelEvent ( QWheelEvent *event )
         else if ( pos < 0 )
         {
             emit increaseSlider();
+        }
+    }
+    else
+    {
+        if ( pos > 0 )
+        {
+            camera.increaseZoom ( 1.05f );
+        }
+
+        else if ( pos < 0 )
+        {
+            camera.increaseZoom ( 1.0f/1.05f );
         }
     }
 
