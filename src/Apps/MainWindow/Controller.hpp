@@ -436,6 +436,7 @@ class Controller: public QObject
             current_color.blue =  b_;
 
             sketch_scene->setCurrentColor( r_, g_, b_ );
+            path_scene->setCurrentColor( r_, g_, b_ );
             scene3d->setCurrentColor( r_, g_, b_ );
         }
 

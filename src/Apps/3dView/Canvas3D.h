@@ -34,8 +34,20 @@ class Canvas3D: public QOpenGLWidget
 
         inline void savetoRasterImage( const QString& filename )
         {
+            QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+            QString filename_csection;
+
+            if( name_and_extension.size() > 1 ){
+                filename_csection = name_and_extension[ 0 ].append( "_model." );
+                filename_csection.append( name_and_extension[1] );
+            }
+            else
+                filename_csection = filename;
+
+
             QImage image = grabFramebuffer();
-            image.save( filename );
+            image.save( filename_csection );
         }
 
         inline void savetoVectorImage( const QString& filename )

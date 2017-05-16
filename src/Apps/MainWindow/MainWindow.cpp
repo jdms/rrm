@@ -118,7 +118,7 @@ void MainWindow::createWindow()
     dw_properties = new QDockWidget( "", this );
     dw_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_properties->setWidget( tb_properties );
-    dw_properties->setVisible( true );
+    dw_properties->setVisible( false );
     addDockWidget( Qt::LeftDockWidgetArea, dw_properties );
 
 
@@ -212,7 +212,7 @@ void MainWindow::createObjectTreeSection()
     dw_object_tree = new QDockWidget( "Sketching Canvas" );
     dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_object_tree->setWidget( object_tree );
-    dw_object_tree->setVisible( true );
+    dw_object_tree->setVisible( false );
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
     connect( object_tree, &ObjectTree::setInputVolumeVisible,
@@ -354,7 +354,7 @@ void MainWindow::createGeneralActions()
 
     ac_object_tree = new QAction( "Object Tree", this );
     ac_object_tree->setCheckable( true );
-    ac_object_tree->setChecked( true );
+    ac_object_tree->setChecked( false );
     connect( ac_object_tree, &QAction::toggled, dw_object_tree, &QDockWidget::setVisible );
     connect( ac_object_tree, &QAction::toggled, dw_properties, &QDockWidget::setVisible );
 
