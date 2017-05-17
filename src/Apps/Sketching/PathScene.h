@@ -62,7 +62,6 @@ class PathScene: public QGraphicsScene
         void finishSketch();
         inline bool acceptSketch( Curve2D& curve_ );
 
-        void screenshot();
 
         void resetData();
         inline void init(){}
@@ -80,9 +79,6 @@ class PathScene: public QGraphicsScene
 
 
 
-
-
-
     public slots:
 
         void clearSketch();
@@ -96,6 +92,10 @@ class PathScene: public QGraphicsScene
         inline void setCurrentColor( const QColor& c_ ){ current_color = c_; sketch->setColor( c_ ); }
         inline void setCurrentColor( int red_, int green_, int blue_ ){
                                      current_color = QColor( red_, green_, blue_ ); }
+
+
+        void screenshot();
+
 
     signals:
 

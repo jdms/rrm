@@ -209,7 +209,6 @@ void PathScene::savetoRasterImage( const QString& filename )
     QPainter painter( &image );
     render( &painter );
 
-    image = image.mirrored( false, true );
     image.save( filename );
 
 }
@@ -227,9 +226,6 @@ void PathScene::savetoVectorImage( const QString& filename )
     svgGen.setDescription( tr( "SVG output of Rapid Reservoir Modelling Software" ) );
 
     QPainter painter( &svgGen );
-    painter.scale( 1.0, -1.0 );
-    painter.translate( QPointF( 0.0, -height() ) );
-
     render( &painter );
 }
 
