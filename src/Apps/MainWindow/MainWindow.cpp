@@ -296,6 +296,11 @@ void MainWindow::createSketchSection()
     QAction* ac_screenshot_path = new QAction( "Screenshot", mw_canvas_window );
 
 
+    connect( ac_discard_path, &QAction::triggered, &scene_path,  &PathScene::clearSketch );
+    connect( ac_commit_path, &QAction::triggered, [=](){ scene_path.finishSketch(); } );
+    connect( ac_generate_in_path, &QAction::triggered, [=](){ emit scene_path.interpolateObject(); } );
+
+
     QToolBar* tb_path = new QToolBar( this );
     tb_path->addAction( ac_discard_path );
     tb_path->addAction( ac_commit_path );
