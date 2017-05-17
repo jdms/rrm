@@ -36,6 +36,8 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBox>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QAbstractButton>
+#include <QtWidgets/QButtonGroup>
 
 #include <QWheelEvent>
 #include <QScreen>
@@ -228,6 +230,7 @@ private:
 
         QToolBar* tb_general;
         QToolBar* tb_sketch;
+
 
 
 };
