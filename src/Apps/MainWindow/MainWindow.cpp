@@ -248,24 +248,67 @@ void MainWindow::createObjectTreeSection()
 
 void MainWindow::createSketchSection()
 {
-
-
     canvas2d = new SketchCanvas();
     canvas2d->setScene( &sketch_scene );
     canvas2d->setMinimumHeight( 0.4f* ( app_height - 10 ) );
 
+
+    QMainWindow* mw_sketch_window = new QMainWindow();
+    mw_sketch_window->setCentralWidget( canvas2d );
+
+
+    QAction* ac_discard_path1 = new QAction( "Discard", mw_sketch_window );
+    QAction* ac_commit_path1 = new QAction( "Commit", mw_sketch_window );
+    QAction* ac_generate_in_path1 = new QAction( "Generate", mw_sketch_window );
+    QAction* ac_axes_in_path1 = new QAction( "Axes", mw_sketch_window );
+    QAction* ac_screenshot_path1 = new QAction( "Screenshot", mw_sketch_window );
+
+
+    QToolBar* tb_path1 = new QToolBar( this );
+
+    tb_path1->addAction( ac_discard_path1 );
+    tb_path1->addAction( ac_commit_path1 );
+    tb_path1->addAction( ac_generate_in_path1 );
+    tb_path1->addAction( ac_axes_in_path1 );
+    tb_path1->addAction( ac_screenshot_path1 );
+
+    mw_sketch_window->addToolBar( Qt::BottomToolBarArea, tb_path1 );
+
+
     dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
     dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketch_canvas->setWidget( canvas2d );
+    dw_sketch_canvas->setWidget( mw_sketch_window );
     dw_sketch_canvas->setVisible( true );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_canvas );
+
+
 
     canvas_path = new CanvasPath();
     canvas_path->setScenePath( &scene_path );
 
+    QMainWindow* mw_canvas_window = new QMainWindow();
+    mw_canvas_window->setCentralWidget( canvas_path );
+
+    QAction* ac_discard_path = new QAction( "Discard", mw_canvas_window );
+    QAction* ac_commit_path = new QAction( "Commit", mw_canvas_window );
+    QAction* ac_generate_in_path = new QAction( "Generate", mw_canvas_window );
+    QAction* ac_axes_in_path = new QAction( "Axes", mw_canvas_window );
+    QAction* ac_screenshot_path = new QAction( "Screenshot", mw_canvas_window );
+
+
+    QToolBar* tb_path = new QToolBar( this );
+    tb_path->addAction( ac_discard_path );
+    tb_path->addAction( ac_commit_path );
+    tb_path->addAction( ac_generate_in_path );
+    tb_path->addAction( ac_axes_in_path );
+    tb_path->addAction( ac_screenshot_path );
+
+    mw_canvas_window->addToolBar( Qt::BottomToolBarArea, tb_path );
+
+
     dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
     dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketch_path_canvas->setWidget( canvas_path );
+    dw_sketch_path_canvas->setWidget( mw_canvas_window );
     dw_sketch_path_canvas->setVisible( false );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketch_path_canvas );
 
@@ -523,10 +566,10 @@ void MainWindow::createAppRelatedActions()
     tb_sketch->addAction( ac_sketch_below );
     tb_sketch->addSeparator();
     tb_sketch->addActions( ag_stratigraphy_rules->actions() );
-    tb_sketch->addSeparator();
-    tb_sketch->addAction( ac_discard_sketch );
-    tb_sketch->addAction( ac_commit_sketch );
-    tb_sketch->addAction( ac_interpolate );
+//    tb_sketch->addSeparator();
+//    tb_sketch->addAction( ac_discard_sketch );
+//    tb_sketch->addAction( ac_commit_sketch );
+//    tb_sketch->addAction( ac_interpolate );
     tb_sketch->addSeparator();
     tb_sketch->addWidget( tbt_colorsketch );
     addToolBar( tb_sketch );
