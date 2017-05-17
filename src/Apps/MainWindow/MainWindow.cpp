@@ -221,7 +221,7 @@ void MainWindow::createObjectTreeSection()
     object_tree->setMaximumWidth( 0.2*app_width );
 
 
-    dw_object_tree = new QDockWidget( "Sketching Canvas" );
+    dw_object_tree = new QDockWidget( "" );
     dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_object_tree->setWidget( object_tree );
     dw_object_tree->setVisible( false );
@@ -256,26 +256,69 @@ void MainWindow::createSketchSection()
     QMainWindow* mw_sketch_window = new QMainWindow();
     mw_sketch_window->setCentralWidget( canvas2d );
 
+    ac_discard_sketch = new QAction( "Discard", this );
+    connect( ac_discard_sketch, &QAction::triggered, [=](){ sketch_scene.clearSketch(); } );
 
-    QAction* ac_discard_path1 = new QAction( "Discard", mw_sketch_window );
-    QAction* ac_commit_path1 = new QAction( "Commit", mw_sketch_window );
-    QAction* ac_generate_in_path1 = new QAction( "Generate", mw_sketch_window );
-    QAction* ac_axes_in_path1 = new QAction( "Axes", mw_sketch_window );
-    QAction* ac_screenshot_path1 = new QAction( "Screenshot", mw_sketch_window );
+    ac_commit_sketch = new QAction( "Commit", this );
+    connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
+
+    connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
+                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
+
+    ac_interpolate = new QAction( "Generate", this );
+    connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
+
+    connect( &sketch_scene, &SketchScene::interpolateObject, this, &MainWindow::interpolate );
+
+    ac_screenshot_sketch = new QAction( "Screenshot", this );
+    connect( ac_screenshot_sketch, &QAction::triggered, &sketch_scene, &SketchScene::screenshot );
+
+
+    cd_pickercolor = new QColorDialog();
+    cd_pickercolor->setWindowFlags( Qt::Widget );
+    cd_pickercolor->setCurrentColor( QColor( 255, 0, 0 ) );
+
+    ac_sketchcolor = new QWidgetAction( this );
+    ac_sketchcolor->setDefaultWidget( cd_pickercolor );
+    mn_pickercolor = new QMenu();
+    mn_pickercolor->addAction( ac_sketchcolor );
+
+    tbt_colorsketch = new QToolButton;
+    tbt_colorsketch->setPopupMode( QToolButton::MenuButtonPopup );
+    tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
+    tbt_colorsketch->setMenu( mn_pickercolor );
+    tbt_colorsketch ->setCheckable( true );
+
+
+    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ defineColor( !status_ ); } );
+
+    connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
+        tbt_colorsketch->setChecked( true );
+        defineColor( false, c_ ); } );
+
+    connect( mn_pickercolor, &QMenu::aboutToShow, cd_pickercolor, &QColorDialog::show );
+    connect( cd_pickercolor, &QColorDialog::rejected, mn_pickercolor, &QMenu::hide );
+    connect( cd_pickercolor, &QColorDialog::accepted, mn_pickercolor, &QMenu::hide );
+
+
+
 
 
     QToolBar* tb_path1 = new QToolBar( this );
 
-    tb_path1->addAction( ac_discard_path1 );
-    tb_path1->addAction( ac_commit_path1 );
-    tb_path1->addAction( ac_generate_in_path1 );
-    tb_path1->addAction( ac_axes_in_path1 );
-    tb_path1->addAction( ac_screenshot_path1 );
+    tb_path1->addAction( ac_discard_sketch );
+    tb_path1->addAction( ac_commit_sketch );
+    tb_path1->addAction( ac_interpolate );
+    tb_path1->addSeparator();
+    tb_path1->addWidget( tbt_colorsketch );
+    tb_path1->addAction( ac_screenshot_sketch );
+
+
 
     mw_sketch_window->addToolBar( Qt::BottomToolBarArea, tb_path1 );
 
 
-    dw_sketch_canvas = new QDockWidget( "Sketching Canvas" );
+    dw_sketch_canvas = new QDockWidget( "Cross-Section" );
     dw_sketch_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketch_canvas->setWidget( mw_sketch_window );
     dw_sketch_canvas->setVisible( true );
@@ -292,26 +335,27 @@ void MainWindow::createSketchSection()
     QAction* ac_discard_path = new QAction( "Discard", mw_canvas_window );
     QAction* ac_commit_path = new QAction( "Commit", mw_canvas_window );
     QAction* ac_generate_in_path = new QAction( "Generate", mw_canvas_window );
-    QAction* ac_axes_in_path = new QAction( "Axes", mw_canvas_window );
     QAction* ac_screenshot_path = new QAction( "Screenshot", mw_canvas_window );
 
 
     connect( ac_discard_path, &QAction::triggered, &scene_path,  &PathScene::clearSketch );
     connect( ac_commit_path, &QAction::triggered, [=](){ scene_path.finishSketch(); } );
     connect( ac_generate_in_path, &QAction::triggered, [=](){ emit scene_path.interpolateObject(); } );
+    connect( ac_screenshot_path, &QAction::triggered, &scene_path,  &PathScene::screenshot );
+    connect( &scene_path, &PathScene::interpolateObject, this, &MainWindow::interpolate );
 
 
     QToolBar* tb_path = new QToolBar( this );
     tb_path->addAction( ac_discard_path );
     tb_path->addAction( ac_commit_path );
     tb_path->addAction( ac_generate_in_path );
-    tb_path->addAction( ac_axes_in_path );
+    tb_path->addSeparator();
     tb_path->addAction( ac_screenshot_path );
 
     mw_canvas_window->addToolBar( Qt::BottomToolBarArea, tb_path );
 
 
-    dw_sketch_path_canvas = new QDockWidget( "Sketching Path Canvas" );
+    dw_sketch_path_canvas = new QDockWidget( "Trajectory" );
     dw_sketch_path_canvas->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketch_path_canvas->setWidget( mw_canvas_window );
     dw_sketch_path_canvas->setVisible( false );
@@ -520,48 +564,6 @@ void MainWindow::createAppRelatedActions()
 
 
 
-    ac_discard_sketch = new QAction( "Discard", this );
-    connect( ac_discard_sketch, &QAction::triggered, [=](){ sketch_scene.clearSketch(); } );
-
-    ac_commit_sketch = new QAction( "Commit", this );
-    connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
-
-    connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
-
-    ac_interpolate = new QAction( "Generate", this );
-    connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
-
-    connect( &sketch_scene, &SketchScene::interpolateObject, this, &MainWindow::interpolate );
-
-    connect( &scene_path, &PathScene::interpolateObject, this, &MainWindow::interpolate );
-
-    cd_pickercolor = new QColorDialog();
-    cd_pickercolor->setWindowFlags( Qt::Widget );
-    cd_pickercolor->setCurrentColor( QColor( 255, 0, 0 ) );
-
-    ac_sketchcolor = new QWidgetAction( this );
-    ac_sketchcolor->setDefaultWidget( cd_pickercolor );
-    mn_pickercolor = new QMenu();
-    mn_pickercolor->addAction( ac_sketchcolor );
-
-    tbt_colorsketch = new QToolButton;
-    tbt_colorsketch->setPopupMode( QToolButton::MenuButtonPopup );
-    tbt_colorsketch->setIcon( QIcon( ":/images/icons/border_color.png" ) );
-    tbt_colorsketch->setMenu( mn_pickercolor );
-    tbt_colorsketch ->setCheckable( true );
-
-
-    connect( tbt_colorsketch, &QToolButton::toggled, [=]( bool status_ ){ defineColor( !status_ ); } );
-
-    connect( cd_pickercolor, &QColorDialog::colorSelected, [=]( const QColor& c_ ){
-        tbt_colorsketch->setChecked( true );
-        defineColor( false, c_ ); } );
-
-    connect( mn_pickercolor, &QMenu::aboutToShow, cd_pickercolor, &QColorDialog::show );
-    connect( cd_pickercolor, &QColorDialog::rejected, mn_pickercolor, &QMenu::hide );
-    connect( cd_pickercolor, &QColorDialog::accepted, mn_pickercolor, &QMenu::hide );
-
 
 
     tb_sketch = new QToolBar( this );
@@ -575,8 +577,8 @@ void MainWindow::createAppRelatedActions()
 //    tb_sketch->addAction( ac_discard_sketch );
 //    tb_sketch->addAction( ac_commit_sketch );
 //    tb_sketch->addAction( ac_interpolate );
-    tb_sketch->addSeparator();
-    tb_sketch->addWidget( tbt_colorsketch );
+//    tb_sketch->addSeparator();
+
     addToolBar( tb_sketch );
 }
 
@@ -733,22 +735,6 @@ void MainWindow::keyPressEvent( QKeyEvent *event )
 
 }
 
-
-void MainWindow::wheelEvent ( QWheelEvent *event )
-{
-
-    if( event->modifiers() & Qt::ControlModifier )
-    {
-        sl_depth_csection->setFocus();
-
-    }
-    else
-        canvas3d->wheelEvent( event );
-
-
-
-    update();
-}
 
 
 

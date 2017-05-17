@@ -83,8 +83,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         explicit MainWindow( QWidget *parent = 0 );
         ~MainWindow();
 
-        void wheelEvent ( QWheelEvent *event );
-
         void run_app();
 
 
@@ -227,6 +225,7 @@ private:
         QWidgetAction *ac_color_object;
         QMenu *mn_color_object;
         QToolButton *tbt_color_object;
+        QAction* ac_screenshot_sketch;
 
         QToolBar* tb_general;
         QToolBar* tb_sketch;
