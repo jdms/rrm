@@ -117,8 +117,6 @@ void Scene3D::updateScene()
 void Scene3D::clearScene()
 {
 
-    std::cout << "Cleaning scene3d \n" <<std::flush;
-
     if( input_volume != nullptr )
     {
         input_volume->clear();
@@ -142,5 +140,4 @@ void Scene3D::clearScene()
 
     current_color = QColor( 255, 0, 0 );
 
-    std::cout << "End of cleaning scene3d \n" <<std::flush;
 }
