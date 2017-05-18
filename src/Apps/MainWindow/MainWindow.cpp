@@ -562,10 +562,6 @@ void MainWindow::createAppRelatedActions()
     ac_remove_above->setChecked( true );
 
 
-
-
-
-
     tb_sketch = new QToolBar( this );
     tb_sketch->addActions( ag_surface_type->actions() );
     tb_sketch->addSeparator();
@@ -573,13 +569,9 @@ void MainWindow::createAppRelatedActions()
     tb_sketch->addAction( ac_sketch_below );
     tb_sketch->addSeparator();
     tb_sketch->addActions( ag_stratigraphy_rules->actions() );
-//    tb_sketch->addSeparator();
-//    tb_sketch->addAction( ac_discard_sketch );
-//    tb_sketch->addAction( ac_commit_sketch );
-//    tb_sketch->addAction( ac_interpolate );
-//    tb_sketch->addSeparator();
 
     addToolBar( tb_sketch );
+
 }
 
 
@@ -597,7 +589,9 @@ void MainWindow::resetInterface()
     dw_sketch_path_canvas->setVisible( false );
     ac_stratigraphy->setChecked( true );
     tbt_colorsketch->setChecked( true );
-    ac_remove_above_int->setChecked( true );
+    ac_remove_above->setChecked( true );
+    ac_sketch_above->setChecked( false );
+    ac_sketch_below->setChecked( false );
     ac_undo->setEnabled( true );
     ac_redo->setEnabled( true );
 }
@@ -817,7 +811,7 @@ void MainWindow::on_btn_save_object_clicked()
     ObjectTreeItem* obj_ = (ObjectTreeItem*) list_[0];
     controller->setNameofObjectofId( obj_->getId(), edt_object_name->text().toStdString() );
 
-    QColor c_ = cd_color_object->selectedColor();
+    QColor c_ = cd_color_object->currentColor();
     controller->setObjectColor( obj_->getId(), c_.red(), c_.green(), c_.blue() );
 
     QPixmap px(20, 20);

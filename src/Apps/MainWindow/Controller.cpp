@@ -398,8 +398,16 @@ void Controller::cleaningRawData()
     current_depth_csection = 0;
     used_cross_sections.clear();
 
+    current_region = RequestRegion::NONE;
     current_object_type = Object::TYPE::Stratigraphy;
     current_object = 0;
+
+
+    boundering_above = 100000;
+    boundering_below = 100000;
+
+    allowed_upper.clear();
+    allowed_below.clear();
 
     for( auto &it: objects )
     {
