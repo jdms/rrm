@@ -303,6 +303,7 @@ void MainWindow::createSketchSection()
 
 
 
+    cp_teste = new ColorPicker();;
 
     QToolBar* tb_path1 = new QToolBar( this );
 
@@ -311,6 +312,7 @@ void MainWindow::createSketchSection()
     tb_path1->addAction( ac_interpolate );
     tb_path1->addSeparator();
     tb_path1->addWidget( tbt_colorsketch );
+    tb_path1->addWidget( cp_teste );
     tb_path1->addAction( ac_screenshot_sketch );
 
 
@@ -485,6 +487,11 @@ void MainWindow::createGeneralActions()
     ac_center_axes = new QAction( "Center Axes", this );
     ac_center_axes->setCheckable( true );
     connect( ac_center_axes, &QAction::toggled, &scene3d, &Scene3D::centerAxes );
+
+
+
+
+
 
     tb_general = new QToolBar( this );
     tb_general->addAction( ac_object_tree );

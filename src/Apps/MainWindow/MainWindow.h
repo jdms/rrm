@@ -46,7 +46,7 @@
 #include <QKeySequence>
 #include <QShortcut>
 
-
+#include "ColorPicker.h"
 #include "Help/HelpDialog.h"
 #include "Object_Tree/ObjectTree.h"
 
@@ -230,7 +230,7 @@ private:
         QToolBar* tb_general;
         QToolBar* tb_sketch;
 
-
+        ColorPicker *cp_teste;
 
 };
 
