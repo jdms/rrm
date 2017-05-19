@@ -16,6 +16,7 @@ include_directories (
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/Controller.hpp
                         MainWindow/RulesProcessor.hpp
+                        MainWindow/ColorPicker.h
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Object_Tree/ObjectTreeItem.h
@@ -25,6 +26,7 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
+                            MainWindow/ColorPicker.h
                             MainWindow/Controller.hpp
                             MainWindow/Object_Tree/ObjectTree.h
                             MainWindow/Help/HelpDialog.h
@@ -38,8 +40,9 @@ set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/MainWindow.cpp
+                        MainWindow/ColorPicker.cpp
                         MainWindow/Controller.cpp
-                       MainWindow/RulesProcessor.cpp
+                        MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
                         MainWindow/Object_Tree/ObjectTreeItem.cpp
