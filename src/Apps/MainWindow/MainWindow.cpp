@@ -778,7 +778,18 @@ void MainWindow::editObjectTreeItem( QTreeWidgetItem* item_, int column_ )
 
 void MainWindow::enableVolumeEditionProperty()
 {
-//    sw_properties_objects->setCurrentIndex( 0 );
+    sw_properties_objects->setCurrentIndex( 0 );
+
+    double w_, h_, d_;
+    controller->getInputVolumeDimensions( w_, h_, d_ );
+
+    sl_width_volume->setValue( (int) w_ );
+    sl_height_volume->setValue( (int) h_ );
+    sl_depth_volume->setValue( (int) d_ );
+
+    sp_width_volume->setValue( (int) w_ );
+    sp_height_volume->setValue( (int) h_ );
+    sp_depth_volume->setValue( (int) d_ );
 }
 
 

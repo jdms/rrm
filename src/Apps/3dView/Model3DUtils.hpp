@@ -64,6 +64,7 @@ class Model3DUtils
 
     }
 
+    static std::vector< float > normalizeMeshIntoABox( const std::vector< float >& points, const Eigen::Vector3f& M, const Eigen::Vector3f& m );
 
 
     private:
