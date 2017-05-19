@@ -278,4 +278,63 @@ Eigen::Vector3f Model3DUtils::normalizePointCloud( const Eigen::Vector3f& p, con
     return cpy;
 }
 
+std::vector< float > Model3DUtils::normalizeMeshIntoABox( const std::vector< float >& points, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
+{
+
+    if( points.empty() == true ) return points;
+
+
+    Eigen::Vector3f max_mesh;
+    Eigen::Vector3f min_mesh;
+
+    max_mesh.x() = points[ 0 ];
+    min_mesh.x() = points[ 0 ];
+    max_mesh.y() = points[ 1 ];
+    min_mesh.y() = points[ 1 ];
+    max_mesh.z() = points[ 2 ];
+    min_mesh.z() = points[ 2 ];
+
+
+    std::size_t number_of_points = points.size()/4;
+    for( std::size_t i = 0; i < number_of_points; ++i )
+    {
+        if( points[ 4*i ] >= max_mesh.x() ) max_mesh.x() = points[ 4*i ];
+        if( points[ 4*i ] <= min_mesh.x() ) min_mesh.x() = points[ 4*i ];
+
+        if( points[ 4*i + 1 ] >= max_mesh.y() ) max_mesh.y() = points[ 4*i + 1 ];
+        if( points[ 4*i + 1 ] <= min_mesh.y() ) min_mesh.y() = points[ 4*i + 1 ];
+
+        if( points[ 4*i + 2 ] >= max_mesh.z() ) max_mesh.z() = points[ 4*i + 2 ];
+        if( points[ 4*i + 2 ] <= min_mesh.z() ) min_mesh.z() = points[ 4*i + 2 ];
+    }
+
+
+    Eigen::Vector3f range_mesh = max_mesh - min_mesh;
+    Eigen::Vector3f range_box = M - m;
+
+    float scale = std::min( std::min( range_box.x()/range_mesh.x(), range_box.y()/range_mesh.y() ),
+                            range_box.z()/range_mesh.z() );
+
+
+    Eigen::Vector3f center_mesh = ( max_mesh + min_mesh )*0.5f;
+    Eigen::Vector3f center_box = ( M + m )*0.5f;
+
+
+
+    std::vector< float > points_in_box;
+    points_in_box.resize( points.size() );
+    for( int i = 0; i < number_of_points; ++i )
+    {
+        Eigen::Vector3f p = Eigen::Vector3f( points[ 4*i ], points[ 4*i + 1 ], points[ 4*i + 2 ] );
+        Eigen::Vector3f p_ = ( p - center_mesh )*scale + center_box;
+
+        points_in_box[ 4*i ] = p_.x();
+        points_in_box[ 4*i + 1 ] = p_.y();
+        points_in_box[ 4*i + 2 ] = p_.z();
+        points_in_box[ 4*i + 3 ] = 1.0f;
+    }
+
+    return points_in_box;
+}
+
 

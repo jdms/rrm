@@ -102,7 +102,7 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
 void Scene3D::updateScene()
 {
     input_volume->update();
-    updateCrossSection();
+//    updateCrossSection();
 
     for( auto &it_: object_list )
     {
@@ -124,12 +124,12 @@ void Scene3D::clearScene()
         input_volume = nullptr;
     }
 
-    if( cross_section != nullptr )
-    {
-//        cross_section->clear();
-        delete cross_section;
-        cross_section = nullptr;
-    }
+//    if( cross_section != nullptr )
+//    {
+////        cross_section->clear();
+//        delete cross_section;
+//        cross_section = nullptr;
+//    }
 
     for( auto &it: object_list )
     {

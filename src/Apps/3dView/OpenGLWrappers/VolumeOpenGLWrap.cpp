@@ -10,11 +10,11 @@ VolumeOpenGLWrap::VolumeOpenGLWrap()
     volume = nullptr;
 
 
-//    csection = nullptr;
-//    shader_csection = nullptr;
-//    va_csection = 0;
-//    vb_vertices_csection = 0;
-//    nvertices_csection = 0;
+    csection = nullptr;
+    shader_csection = nullptr;
+    va_csection = 0;
+    vb_vertices_csection = 0;
+    nvertices_csection = 0;
 
 }
 
@@ -26,12 +26,12 @@ void VolumeOpenGLWrap::initShaders()
     shader->initialize();
 
 
-//    shader_csection = new Tucano::Shader( "Surface", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ),
-//                                            ( shader_directory + "shaders/CubeSinglePassWireframe.frag" ),
-//                                            ( shader_directory + "shaders/CubeSinglePassWireframe.geom" ), "", "" );
+    shader_csection = new Tucano::Shader( "Surface", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ),
+                                            ( shader_directory + "shaders/CubeSinglePassWireframe.frag" ),
+                                            ( shader_directory + "shaders/CubeSinglePassWireframe.geom" ), "", "" );
 
 
-//    shader_csection->initialize();
+    shader_csection->initialize();
 }
 
 void VolumeOpenGLWrap::initBuffers()
@@ -48,16 +48,16 @@ void VolumeOpenGLWrap::initBuffers()
     glBindVertexArray( 0 );
 
 
-//    glGenVertexArrays ( 1 , &va_csection );
-//    glBindVertexArray ( va_csection );
+    glGenVertexArrays ( 1 , &va_csection );
+    glBindVertexArray ( va_csection );
 
-//        glGenBuffers ( 1 , &vb_vertices_csection );
-//        glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices_csection );
-//        glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
-//        glEnableVertexAttribArray ( 0 );
-//        glVertexAttribPointer ( 0 , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
+        glGenBuffers ( 1 , &vb_vertices_csection );
+        glBindBuffer ( GL_ARRAY_BUFFER , vb_vertices_csection );
+        glBufferData ( GL_ARRAY_BUFFER , 0, 0 , GL_STATIC_DRAW );
+        glEnableVertexAttribArray ( 0 );
+        glVertexAttribPointer ( 0 , 4 , GL_FLOAT , GL_FALSE , 0 , 0 );
 
-//    glBindVertexArray ( 0 );
+    glBindVertexArray ( 0 );
 }
 
 
@@ -71,11 +71,11 @@ void VolumeOpenGLWrap::resetShaders()
         shader = nullptr;
     }
 
-//    if ( shader_csection != nullptr )
-//    {
-//        delete( shader_csection );
-//        shader_csection = nullptr;
-//    }
+    if ( shader_csection != nullptr )
+    {
+        delete( shader_csection );
+        shader_csection = nullptr;
+    }
 }
 
 void VolumeOpenGLWrap::resetBuffers()
@@ -93,20 +93,20 @@ void VolumeOpenGLWrap::resetBuffers()
     va_volume = 0;
     vb_vertices = 0;
 
-//    if( va_csection != 0 )
-//    {
-//        glDeleteVertexArrays( 1, &va_csection );
+    if( va_csection != 0 )
+    {
+        glDeleteVertexArrays( 1, &va_csection );
 
-//        if ( vb_vertices_csection != 0 )
-//        {
-//            glDeleteBuffers( 1, &vb_vertices_csection );
-//        }
+        if ( vb_vertices_csection != 0 )
+        {
+            glDeleteBuffers( 1, &vb_vertices_csection );
+        }
 
-//    }
+    }
 
-//    va_csection = 0;
-//    vb_vertices_csection = 0;
-//    nvertices_csection = 0;
+    va_csection = 0;
+    vb_vertices_csection = 0;
+    nvertices_csection = 0;
 }
 
 
@@ -176,73 +176,62 @@ void VolumeOpenGLWrap::createVolumeBox()
     };
 
 
-    std::vector< float > unit_wireframe_ = Model3DUtils::normalizePointCloud( wireframe_ );
+    Eigen::Vector3f max_( 0.5f, 0.5f, 0.5f );
+    Eigen::Vector3f min_( -0.5f, -0.5f, -0.5f );
+
+    std::vector< float > unit_wireframe_ = Model3DUtils::normalizeMeshIntoABox( wireframe_, max_, min_ );
     reloadBuffers( unit_wireframe_ ) ;
 
     minimum = Model3DUtils::normalizePointCloud( min, max, min );
+    std::cout << "minimum: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z()
+              << std::endl << std::flush;
 
-//    std::vector< float > plane_;
-//    std::copy_n(unit_wireframe_.begin(), 16, std::back_inserter(plane_));
 
-//    nvertices_csection = plane_.size();
+    maximum = Model3DUtils::normalizePointCloud( max, max, min );
+    std::cout << "maximum: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z()
+              << std::endl << std::flush;
 
-//    glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices_csection );
-//    glBufferData ( GL_ARRAY_BUFFER, plane_.size() * sizeof ( float ), plane_.data() ,
-//                   GL_STATIC_DRAW );
-//    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
 
+    updateCrossSection( depth_ );
 }
 
 
 void VolumeOpenGLWrap::updateCrossSection( double depth_ )
 {
 
-//    double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
-//    double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
+    double ox_ = 0.0f, oy_ = 0.0f, oz_ = 0.0f;
+    double w_ = 0.0f, h_ = 0.0f, d_ = 0.0f;
 
-//    volume->getOrigin( ox_, oy_, oz_ );
-//    volume->getDimensions( w_, h_, d_ );
+    volume->getOrigin( ox_, oy_, oz_ );
+    volume->getDimensions( w_, h_, d_ );
 
-//    float originx_ = (float)ox_, originy_ =  (float)oy_, originz_ = (float)oz_;
-//    float width_ = (float)w_, height_ = (float)h_, depth1_ = (float)d_;
+    float M = (float)( oz_ + d_ );
+    float m = (float)( oz_ );
 
-//    Eigen::Vector3f min( originx_, originy_, originz_ );
-//    Eigen::Vector3f max( originx_ + width_, originy_ + height_, originz_ + depth1_ );
+    float z_ = ( depth_ - m )*( maximum.z() - minimum.z() )/( M - m ) + minimum.z();
 
-
-//    Eigen::Vector3f A( min.x(), min.y(), originz_ + depth_ );
-//    Eigen::Vector3f B( max.x(), min.y(), originz_ + depth_ );
-//    Eigen::Vector3f C( max.x(), max.y(), originz_ + depth_ );
-//    Eigen::Vector3f D( min.x(), max.y(), originz_ + depth_ );
-
-
-//    Eigen::Vector3f A1 = Model3DUtils::normalizePointCloud( A , max, min );
-//    Eigen::Vector3f B1 = Model3DUtils::normalizePointCloud( B , max, min );
-//    Eigen::Vector3f C1 = Model3DUtils::normalizePointCloud( C , max, min );
-//    Eigen::Vector3f D1 = Model3DUtils::normalizePointCloud( D , max, min );
+    Eigen::Vector3f A( minimum.x(), minimum.y(), z_ );
+    Eigen::Vector3f B( maximum.x(), minimum.y(), z_ );
+    Eigen::Vector3f C( maximum.x(), maximum.y(), z_ );
+    Eigen::Vector3f D( minimum.x(), maximum.y(), z_ );
 
 
 
-//    std::vector< float > plane_ =
-//    {
-//        A1.x(), A1.y(), A1.z(), 1.0f,
-//        B1.x(), B1.y(), B1.z(), 1.0f,
-//        D1.x(), D1.y(), D1.z(), 1.0f,
-//        C1.x(), C1.y(), C1.z(), 1.0f
-//    };
-
-////    std::vector< float > plane_;
-////    std::copy_n(unit_wireframe_.begin(), 16, std::back_inserter(plane_));
-
-//    nvertices_csection = plane_.size();
-
-//    glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices_csection );
-//    glBufferData ( GL_ARRAY_BUFFER, plane_.size() * sizeof ( float ), plane_.data() ,
-//                   GL_STATIC_DRAW );
-//    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
+    std::vector< float > plane_ =
+    {
+        A.x(), A.y(), A.z(), 1.0f,
+        B.x(), B.y(), B.z(), 1.0f,
+        D.x(), D.y(), D.z(), 1.0f,
+        C.x(), C.y(), C.z(), 1.0f
+    };
 
 
+    nvertices_csection = plane_.size();
 
+    glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices_csection );
+    glBufferData ( GL_ARRAY_BUFFER, plane_.size() * sizeof ( float ), plane_.data() ,
+                   GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
 
 
 }
@@ -274,19 +263,19 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
     shader->unbind();
 
 
-//    shader_csection->bind();
+    shader_csection->bind();
 
-//    shader_csection->setUniform( "ModelMatrix" , M_ );
-//    shader_csection->setUniform( "ViewMatrix" , V_ );
-//    shader_csection->setUniform( "ProjectionMatrix" , P_ );
-//    shader_csection->setUniform( "WIN_SCALE" , (float) w_ , (float) h_ );
-//    shader_csection->setUniform( "color_plane", 0.5f, 0.5f, 0.5f, 0.2f );
+    shader_csection->setUniform( "ModelMatrix" , M_ );
+    shader_csection->setUniform( "ViewMatrix" , V_ );
+    shader_csection->setUniform( "ProjectionMatrix" , P_ );
+    shader_csection->setUniform( "WIN_SCALE" , (float) w_ , (float) h_ );
+    shader_csection->setUniform( "color_plane", 0.5f, 0.5f, 0.5f, 0.2f );
 
-//        glBindVertexArray( va_csection );
-//        glDrawArrays ( GL_LINES_ADJACENCY , 0 , nvertices_csection );
-//        glBindVertexArray ( 0 );
+        glBindVertexArray( va_csection );
+        glDrawArrays ( GL_LINES_ADJACENCY , 0 , nvertices_csection );
+        glBindVertexArray ( 0 );
 
-//    shader_csection->unbind();
+    shader_csection->unbind();
 
 
 

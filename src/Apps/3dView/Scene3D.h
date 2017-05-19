@@ -60,8 +60,8 @@ class Scene3D: public QObject
         void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                    const int& h_ );
 
-        inline void moveCrossSection( double depth_ ){ /*input_volume->updateCrossSection( depth_ ); emit updateCanvas();*/
-                                                       cross_section->reloadBuffers( depth_ ); }
+        inline void moveCrossSection( double depth_ ){ input_volume->updateCrossSection( depth_ ); emit updateCanvas();
+                                                       /*cross_section->reloadBuffers( depth_ );*/ }
         inline void updateCrossSection()
         {
             if( input_volume == nullptr ) return;
