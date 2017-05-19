@@ -91,7 +91,7 @@ class ObjectOpenGLWrapper
 
         void reloadVertices( const std::vector< double >& vertices_ );
         void reloadFaces( const std::vector< std::size_t >& faces_sizet_ );
-        void reloadColors( std::vector< float >& colors_ = std::vector< float >() );
+        void reloadColors( std::vector< float > colors_ = std::vector< float >() );
 
 
         inline void setBoundingBox( float xmin_, float xmax_, float ymin_, float ymax_,

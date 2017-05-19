@@ -57,7 +57,7 @@
 #include "Sketching/PathScene.h"
 
 #include "3dView/Canvas3D.h"
-#include "3dView/Scene3d.h"
+#include "3dView/Scene3D.h"
 
 /**
  * @brief Main GUI and Controller of the Project

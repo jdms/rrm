@@ -54,7 +54,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 # Main source -- Sketching SubDirectory
 ###############################################
 
-set( SKETCHING_HEADERS        Sketching/Inputsketch.h
+set( SKETCHING_HEADERS        Sketching/InputSketch.h
                               Sketching/CanvasPath.h
                               Sketching/PathScene.h
                               Sketching/SketchCanvas.h
@@ -73,7 +73,7 @@ set( SKETCHING_MOC_HEADERS    Sketching/CanvasPath.h
 
 
 
-set( SKETCHING_SOURCES        Sketching/Inputsketch.cpp
+set( SKETCHING_SOURCES        Sketching/InputSketch.cpp
                               Sketching/CanvasPath.cpp
                               Sketching/PathScene.cpp
                               Sketching/SketchCanvas.cpp
