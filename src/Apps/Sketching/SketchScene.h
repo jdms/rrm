@@ -11,7 +11,7 @@
 #include "ItemWrappers/VolumeItemWrapper.h"
 #include "ItemWrappers/ObjectItemWrap.h"
 #include "Core/Geology/Models/CrossSection.h"
-#include "Sketching/Inputsketch.h"
+#include "Sketching/InputSketch.h"
 
 class SketchScene: public QGraphicsScene
 {

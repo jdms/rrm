@@ -119,7 +119,7 @@ void ObjectOpenGLWrapper::reloadFaces( const std::vector< std::size_t >& faces_s
 }
 
 
-void ObjectOpenGLWrapper::reloadColors( std::vector<float> &colors_ )
+void ObjectOpenGLWrapper::reloadColors( std::vector<float> colors_ )
 {
     if( colors_.empty() == true ){
 
