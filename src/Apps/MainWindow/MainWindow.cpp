@@ -263,7 +263,13 @@ void MainWindow::createSketchSection()
     connect( ac_commit_sketch, &QAction::triggered, [=](){ sketch_scene.finishSketch(); } );
 
     connect( &sketch_scene, &SketchScene::curveAccepted, [=]( const Curve2D& c_ ){
-                                                 controller->addInputCurvetoCurrentObject( c_ ); } );
+                                                 controller->addInputCurvetoCurrentObject( c_ );
+                                                 sl_depth_volume->setDisabled( true );
+                                                 sl_height_volume->setDisabled( true );
+                                                 sl_width_volume->setDisabled( true );
+                                                 ac_edit_boundary->setDisabled( true );
+
+                                                 } );
 
     ac_interpolate = new QAction( "Generate", this );
     connect( ac_interpolate, &QAction::triggered, [=](){ emit sketch_scene.interpolateObject(); } );
@@ -272,6 +278,10 @@ void MainWindow::createSketchSection()
 
     ac_screenshot_sketch = new QAction( "Screenshot", this );
     connect( ac_screenshot_sketch, &QAction::triggered, &sketch_scene, &SketchScene::screenshot );
+
+
+    ac_edit_boundary = new QAction( "Edit Boundary", this );
+    connect( ac_edit_boundary,  &QAction::triggered, &sketch_scene, &SketchScene::setModeBoundaryEditing );
 
 
     cd_pickercolor = new QColorDialog();
@@ -303,7 +313,7 @@ void MainWindow::createSketchSection()
 
 
 
-    cp_teste = new ColorPicker();;
+
 
     QToolBar* tb_path1 = new QToolBar( this );
 
@@ -311,10 +321,13 @@ void MainWindow::createSketchSection()
     tb_path1->addAction( ac_commit_sketch );
     tb_path1->addAction( ac_interpolate );
     tb_path1->addSeparator();
+    tb_path1->addAction( ac_edit_boundary );
+    tb_path1->addSeparator();
     tb_path1->addWidget( tbt_colorsketch );
-    tb_path1->addWidget( cp_teste );
     tb_path1->addAction( ac_screenshot_sketch );
 
+    cp_teste = new ColorPicker();;
+//    tb_path1->addWidget( cp_teste );
 
 
     mw_sketch_window->addToolBar( Qt::BottomToolBarArea, tb_path1 );
@@ -340,10 +353,12 @@ void MainWindow::createSketchSection()
     QAction* ac_screenshot_path = new QAction( "Screenshot", mw_canvas_window );
 
 
+
     connect( ac_discard_path, &QAction::triggered, &scene_path,  &PathScene::clearSketch );
     connect( ac_commit_path, &QAction::triggered, [=](){ scene_path.finishSketch(); } );
     connect( ac_generate_in_path, &QAction::triggered, [=](){ emit scene_path.interpolateObject(); } );
     connect( ac_screenshot_path, &QAction::triggered, &scene_path,  &PathScene::screenshot );
+
     connect( &scene_path, &PathScene::interpolateObject, this, &MainWindow::interpolate );
 
 
@@ -491,11 +506,9 @@ void MainWindow::createGeneralActions()
 
 
 
-
-
     tb_general = new QToolBar( this );
     tb_general->addAction( ac_object_tree );
-    tb_general->addAction( ac_center_axes );
+//    tb_general->addAction( ac_center_axes );
     tb_general->addSeparator();
     tb_general->addAction( ac_clear );
     tb_general->addAction( ac_undo );

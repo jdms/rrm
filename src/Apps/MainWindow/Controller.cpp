@@ -68,7 +68,7 @@ void Controller::addInputVolumeToScenes()
     path_scene->setVolume( &input_volume );
 
     scene3d->addVolume( &input_volume );
-//    scene3d->createCrossSection();
+    scene3d->createCrossSection();
 }
 
 
@@ -135,6 +135,8 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
 
     setCurrentCrossSectionAsUsed();
     addCurrentObjectToScenes();
+
+    disableVolumeResize();
 
 }
 

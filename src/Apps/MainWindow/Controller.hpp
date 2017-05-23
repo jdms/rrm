@@ -88,6 +88,8 @@ class Controller: public QObject
 
         inline void setInputVolumeDimensions( double width_, double height_, double depth_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setDimensions( width_, height_, depth_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -95,6 +97,9 @@ class Controller: public QObject
 
         inline void setInputVolumeWidthHeight( double width_, double height_ )
         {
+
+            if( resize_volume == false  ) return;
+
             input_volume.setDimensions( width_, height_, input_volume.getDepth() );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -102,6 +107,8 @@ class Controller: public QObject
 
         inline void setInputVolumeWidthDepth( double width_, double depth_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setDimensions( width_, input_volume.getHeight(), depth_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -115,6 +122,8 @@ class Controller: public QObject
 
         inline void setInputVolumeWidth( double width_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setWidth( width_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -122,6 +131,8 @@ class Controller: public QObject
 
         inline void setInputVolumeHeight( double height_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setHeight( height_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -129,6 +140,8 @@ class Controller: public QObject
 
         inline void setInputVolumeDepth( double depth_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setDepth( depth_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -138,6 +151,8 @@ class Controller: public QObject
 
         inline void setInputVolumeOrigin( double ox_, double oy_, double oz_ )
         {
+            if( resize_volume == false  ) return;
+
             input_volume.setOrigin( ox_, oy_, oz_ );
             scene3d->updateVolumeDimensions();
             initRulesProcessor();
@@ -160,6 +175,7 @@ class Controller: public QObject
             return input_volume.getVisibility();
         }
 
+        inline void disableVolumeResize(){ resize_volume = false; }
 
 
         //NOTE: cross-sections should be members of volumes? it makes sense to me.
@@ -630,6 +646,7 @@ class Controller: public QObject
         std::size_t disc_width = 10;
         std::size_t disc_depth = 10;
         double step_depth = 10;
+        bool resize_volume = true;
 
         double current_depth_csection;
         std::set< double > used_cross_sections;

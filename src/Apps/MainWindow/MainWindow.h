@@ -212,7 +212,7 @@ private:
         QAction* ac_discard_sketch;
         QAction* ac_commit_sketch;
         QAction* ac_interpolate;
-
+        QAction* ac_edit_boundary;
 
         QDockWidget* dw_properties;
         QWidgetAction *ac_sketchcolor;

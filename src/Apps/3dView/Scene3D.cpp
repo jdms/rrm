@@ -42,10 +42,7 @@ void Scene3D::createCrossSection()
     cross_section->init();
 
     updateCrossSection();
-    cross_section->setShaderDirectory( current_directory );
-    cross_section->init();
-    cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
-                                  ( float ) oz_, ( float ) (oz_ + d_) );
+    moveCrossSection( d_ );
 
 }
 
@@ -102,7 +99,7 @@ void Scene3D::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const 
 void Scene3D::updateScene()
 {
     input_volume->update();
-//    updateCrossSection();
+    updateCrossSection();
 
     for( auto &it_: object_list )
     {
@@ -124,12 +121,12 @@ void Scene3D::clearScene()
         input_volume = nullptr;
     }
 
-//    if( cross_section != nullptr )
-//    {
-////        cross_section->clear();
-//        delete cross_section;
-//        cross_section = nullptr;
-//    }
+    if( cross_section != nullptr )
+    {
+//        cross_section->clear();
+        delete cross_section;
+        cross_section = nullptr;
+    }
 
     for( auto &it: object_list )
     {
