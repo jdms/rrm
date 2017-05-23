@@ -60,8 +60,8 @@ class Scene3D: public QObject
         void draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_,
                    const int& h_ );
 
-        inline void moveCrossSection( double depth_ ){ input_volume->updateCrossSection( depth_ ); emit updateCanvas();
-                                                       /*cross_section->reloadBuffers( depth_ );*/ }
+        inline void moveCrossSection( double depth_ ){ current_crosssection = depth_; /*input_volume->updateCrossSection( depth_ ); emit updateCanvas();*/
+                                                       cross_section->reloadBuffers( depth_ ); }
         inline void updateCrossSection()
         {
             if( input_volume == nullptr ) return;
@@ -75,6 +75,11 @@ class Scene3D: public QObject
 
             cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
                                           ( float ) oz_, ( float ) (oz_ + d_) );
+
+            cross_section->reloadBuffers( current_crosssection );
+
+            emit updateCanvas();
+
         }
 
         inline void showAxis( bool status_ ){ show_axis = status_; }
@@ -112,6 +117,8 @@ class Scene3D: public QObject
     protected:
 
         std::string current_directory;
+
+        double current_crosssection;
 
         QOpenGLContext* context;
         QSurface* surfacegl;

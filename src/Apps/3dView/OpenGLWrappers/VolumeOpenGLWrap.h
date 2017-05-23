@@ -57,7 +57,7 @@ class VolumeOpenGLWrap
         inline void reloadShaders()
         {
             shader->reloadShaders();
-            shader_csection->reloadShaders();
+//            shader_csection->reloadShaders();
         }
 
         inline void reloadBuffers( const std::vector< float >& wireframe_ )
@@ -68,9 +68,6 @@ class VolumeOpenGLWrap
             glBufferData ( GL_ARRAY_BUFFER , wireframe_.size() * sizeof ( GLfloat ) ,
                                              wireframe_.data() , GL_STATIC_DRAW );
             glBindBuffer ( GL_ARRAY_BUFFER , 0 );
-
-
-
 
         }
 
@@ -119,11 +116,11 @@ class VolumeOpenGLWrap
         Eigen::Vector3f maximum;
 
 
-        CrossSectionOpenGLWrapper* csection;
-        Tucano::Shader* shader_csection;
-        GLuint va_csection;
-        GLuint vb_vertices_csection;
-        GLuint nvertices_csection;
+//        CrossSectionOpenGLWrapper* csection;
+//        Tucano::Shader* shader_csection;
+//        GLuint va_csection;
+//        GLuint vb_vertices_csection;
+//        GLuint nvertices_csection;
 
 
 

@@ -197,7 +197,6 @@
                 }
             }
 
-            std::cout << "Trying to create surface...\n\n"; 
             status = modeller_.createSurface( surface_index, surface );
         }
 
@@ -214,7 +213,6 @@
                 surface.push_back(in_curve[i].y());
             }
 
-            std::cout << "Trying to create extruded surface...\n\n"; 
             status = modeller_.createExtrudedSurface( surface_index, surface );
         }
 
