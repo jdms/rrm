@@ -79,15 +79,14 @@ void MainWindow::setupWindowProperties()
     setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
-
     setDockNestingEnabled( true );
 
     QRect rect = QGuiApplication::primaryScreen()->geometry();
-    app_height = rect.height()* 0.8;
-    app_width = rect.width()* 0.8;
+    app_height = rect.height() * 0.8;
+    app_width = rect.width() * 0.8;
 
     app_orig_x = ( rect.width() - app_width )*0.5 ;
-    app_orig_y = ( rect.height() - app_height )*0.5 ;
+    app_orig_y = ( rect.height() - app_height )*0.5;
 
     setGeometry( app_orig_x, app_orig_y, app_width, app_height );
     setWindowTitle( "Rapid Reservoir Modelling" );

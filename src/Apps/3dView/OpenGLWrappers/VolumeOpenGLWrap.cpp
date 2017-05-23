@@ -277,6 +277,7 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
 //    shader_csection->unbind();
 
     glEnable( GL_DEPTH_TEST );
+//    glDepthFunc( GL_LESS );
 
 
 
