@@ -14,9 +14,11 @@ include_directories (
 ###############################################
   
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
+                        MainWindow/mainwindow_refactored.h
                         MainWindow/Controller.hpp
                         MainWindow/RulesProcessor.hpp
-                        MainWindow/ColorPicker.h
+                        MainWindow/Widgets/ColorPicker.h
+                        MainWindow/Widgets/pagesstack.h
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Object_Tree/ObjectTreeItem.h
@@ -26,7 +28,9 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
-                            MainWindow/ColorPicker.h
+                            MainWindow/mainwindow_refactored.h
+                            MainWindow/Widgets/ColorPicker.h
+                            MainWindow/Widgets/pagesstack.h
                             MainWindow/Controller.hpp
                             MainWindow/Object_Tree/ObjectTree.h
                             MainWindow/Help/HelpDialog.h
@@ -35,12 +39,15 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
 
 set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
                             MainWindow/Help/HelpDialog.ui
+                            MainWindow/Widgets/pageswidget.ui
                             MainWindow/MainWindow.ui )
 
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/MainWindow.cpp
-                        MainWindow/ColorPicker.cpp
+                        MainWindow/mainwindow_refactored.cpp
+                        MainWindow/Widgets/ColorPicker.cpp
+                        MainWindow/Widgets/pagesstack.cpp
                         MainWindow/Controller.cpp
                         MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
@@ -57,7 +64,8 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 # Main source -- Sketching SubDirectory
 ###############################################
 
-set( SKETCHING_HEADERS        Sketching/InputSketch.h
+set( SKETCHING_HEADERS        Sketching/sketchwindow.h
+                              Sketching/InputSketch.h
                               Sketching/CanvasPath.h
                               Sketching/PathScene.h
                               Sketching/SketchCanvas.h
@@ -69,14 +77,15 @@ set( SKETCHING_HEADERS        Sketching/InputSketch.h
                               Sketching/PolyQtUtils.hpp )
 
 
-set( SKETCHING_MOC_HEADERS    Sketching/CanvasPath.h
+set( SKETCHING_MOC_HEADERS    Sketching/sketchwindow.h
+                              Sketching/CanvasPath.h
                               Sketching/PathScene.h
                               Sketching/SketchCanvas.h
                               Sketching/SketchScene.h )
 
 
-
-set( SKETCHING_SOURCES        Sketching/InputSketch.cpp
+set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
+                              Sketching/InputSketch.cpp
                               Sketching/CanvasPath.cpp
                               Sketching/PathScene.cpp
                               Sketching/SketchCanvas.cpp
@@ -93,6 +102,7 @@ set( SKETCHING_SOURCES        Sketching/InputSketch.cpp
 ###############################################
 
 set( 3DVIEW_HEADERS    3dView/Canvas3D.h
+                       3dView/canvas3d_refactored.h
                        3dView/Scene3D.h
                        3dView/Model3DUtils.hpp
                        3dView/OpenGLWrappers/CoordinateAxes.h
@@ -104,11 +114,13 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
 
 
 set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
+                         3dView/canvas3d_refactored.h
                          3dView/Scene3D.h )
 
 
 
 set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
+                        3dView/canvas3d_refactored.cpp
                         3dView/Scene3D.cpp
                         3dView/Model3DUtils.cpp
                         3dView/OpenGLWrappers/CoordinateAxes.cpp
