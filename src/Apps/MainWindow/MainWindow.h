@@ -46,7 +46,7 @@
 #include <QKeySequence>
 #include <QShortcut>
 
-#include "ColorPicker.h"
+#include "Widgets/ColorPicker.h"
 #include "Help/HelpDialog.h"
 #include "Object_Tree/ObjectTree.h"
 

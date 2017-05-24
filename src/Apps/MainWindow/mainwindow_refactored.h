@@ -3,6 +3,16 @@
 
 #include <QMainWindow>
 
+class QActionGroup;
+class QAction;
+class QToolbar;
+class QSlider;
+
+class Canvas3d_Refactored;
+class SketchWindow;
+class ObjectTree;
+
+
 class MainWindow_Refactored : public QMainWindow
 {
     Q_OBJECT
@@ -20,18 +30,41 @@ class MainWindow_Refactored : public QMainWindow
 
         inline void clear(){}
         inline void resetInterface(){}
-        inline void setDefaultValues(){}
+        void setDefaultValues();
 
 
     private:
 
-        inline void createMainInterface(){}
-        inline void createCrossSectionInterface(){}
-        inline void createTopViewInterface(){}
-        inline void createSidebar(){}
+        void createWindow();
+        void setupWindowProperties();
+        void createMainInterface();
+        void createCrossSectionInterface();
+        void createTopViewInterface();
+        void createSidebar();
+        void createToolbarActions();
 
         inline void setupController(){}
         inline void initController(){}
+
+
+    private:
+
+        int app_height;
+        int app_width;
+
+        int app_orig_x;
+        int app_orig_y;
+
+        QSlider* sl_depth_csection;
+
+        Canvas3d_Refactored *canvas3d;
+        SketchWindow* sketch_window;
+        ObjectTree* object_tree;
+
+        QDockWidget* dw_object_tree;
+
+
+        const bool OBJECTTREE_VISIBLE = true;
 
 
 };

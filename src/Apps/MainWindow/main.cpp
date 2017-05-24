@@ -27,6 +27,8 @@
 
 
 #include "MainWindow.h"
+#include "mainwindow_refactored.h"
+
 
 
 std::size_t Object::index = 0;
@@ -63,9 +65,10 @@ int main( int argc, char *argv[] )
 
     MainWindow w;
     w.show();
-
     w.run_app();
 
+    MainWindow_Refactored w1;
+    w1.show();
 
     return app.exec();
 }

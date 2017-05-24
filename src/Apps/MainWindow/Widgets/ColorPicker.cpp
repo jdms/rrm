@@ -1,5 +1,7 @@
 #include "ColorPicker.h"
 
+#include <QHBoxLayout>
+
 ColorPicker::ColorPicker( QWidget* parent )
 {
     createWidget();
@@ -8,14 +10,14 @@ ColorPicker::ColorPicker( QWidget* parent )
 
 void ColorPicker::createWidget()
 {
-    cd_picker_color = new QColorDialog();
+    cd_picker_color = new QColorDialog( this );
     cd_picker_color->setWindowFlags( Qt::Widget );
     cd_picker_color->setCurrentColor( QColor( 255, 0, 0 ) );
 
     wa_picker_color = new QWidgetAction( this );
     wa_picker_color->setDefaultWidget( cd_picker_color );
 
-    mn_picker_color = new QMenu();
+    mn_picker_color = new QMenu( this );
     mn_picker_color->addAction( wa_picker_color );
 
     setPopupMode( QToolButton::MenuButtonPopup );
@@ -38,7 +40,8 @@ void ColorPicker::createActions()
 
 void ColorPicker::colorChanged( const QColor& color_ )
 {
-    QPixmap px( 20, 20 );
+
+    QPixmap px( 15, 15 );
     px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
     setIcon( px );
 }
