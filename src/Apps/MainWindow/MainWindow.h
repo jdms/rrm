@@ -105,6 +105,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void createGeneralActions();
         void createAppRelatedActions();
 
+        void createVolumePropertiesSection();
+        void createObjectPropertiesSection();
+
+
         void setupCrossSectionsDiscretization();
         void defineColor( bool aleatory_, QColor c_ = QColor( 255, 0, 0 ) );
 

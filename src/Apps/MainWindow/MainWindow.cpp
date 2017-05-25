@@ -101,54 +101,8 @@ void MainWindow::createWindow()
     createObjectTreeSection();
     createSketchSection();
 
-
-
-    sl_width_volume->setRange( 0, 10000 );
-    sl_height_volume->setRange( 0, 10000 );
-    sl_depth_volume->setRange( 0, 10000 );
-
-    sp_width_volume->setRange( 0, 10000 );
-    sp_height_volume->setRange( 0, 10000 );
-    sp_depth_volume->setRange( 0, 10000 );
-
-
-    tb_properties->removeItem( 0 );
-    tb_properties->addItem( gb_volume_properties, "Object Properties" );
-
-    dw_properties = new QDockWidget( "", this );
-    dw_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
-    dw_properties->setWidget( tb_properties );
-    dw_properties->setVisible( false );
-    addDockWidget( Qt::LeftDockWidgetArea, dw_properties );
-
-
-    cd_color_object = new QColorDialog();
-    cd_color_object->setWindowFlags( Qt::Widget );
-    cd_color_object->setCurrentColor( QColor( 255, 0, 0 ) );
-
-    ac_color_object = new QWidgetAction( this );
-    ac_color_object->setDefaultWidget( cd_color_object );
-    mn_color_object = new QMenu();
-    mn_color_object->addAction( ac_color_object );
-
-    tbt_color_object = new QToolButton;
-    tbt_color_object->setPopupMode( QToolButton::MenuButtonPopup );
-    tbt_color_object->setMenu( mn_color_object );
-    tbt_color_object ->setCheckable( true );
-
-    QPixmap px(20, 20);
-    px.fill( QColor( 255, 0, 0 ) );
-    tbt_color_object->setIcon( px );
-
-    gl_object_properties->addWidget( tbt_color_object, 0, 2 );
-
-
-    connect( mn_color_object, &QMenu::aboutToShow, cd_color_object, &QColorDialog::show );
-    connect( cd_color_object, &QColorDialog::rejected, mn_color_object, &QMenu::hide );
-    connect( cd_color_object, &QColorDialog::accepted, mn_color_object, &QMenu::hide );
-
-
-
+    createVolumePropertiesSection();
+    createObjectPropertiesSection();
 
 
     ///////////////////////////////////////////
@@ -389,6 +343,61 @@ void MainWindow::createSketchSection()
 }
 
 
+
+void MainWindow::createVolumePropertiesSection()
+{
+
+    sl_width_volume->setRange( 0, 10000 );
+    sl_height_volume->setRange( 0, 10000 );
+    sl_depth_volume->setRange( 0, 10000 );
+
+    sp_width_volume->setRange( 0, 10000 );
+    sp_height_volume->setRange( 0, 10000 );
+    sp_depth_volume->setRange( 0, 10000 );
+
+    tb_properties->removeItem( 0 );
+    tb_properties->addItem( gb_volume_properties, "Object Properties" );
+
+
+}
+
+
+void MainWindow::createObjectPropertiesSection()
+{
+    dw_properties = new QDockWidget( "", this );
+    dw_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_properties->setWidget( tb_properties );
+    dw_properties->setVisible( false );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_properties );
+
+
+    cd_color_object = new QColorDialog();
+    cd_color_object->setWindowFlags( Qt::Widget );
+    cd_color_object->setCurrentColor( QColor( 255, 0, 0 ) );
+
+    ac_color_object = new QWidgetAction( this );
+    ac_color_object->setDefaultWidget( cd_color_object );
+    mn_color_object = new QMenu();
+    mn_color_object->addAction( ac_color_object );
+
+    tbt_color_object = new QToolButton;
+    tbt_color_object->setPopupMode( QToolButton::MenuButtonPopup );
+    tbt_color_object->setMenu( mn_color_object );
+    tbt_color_object ->setCheckable( true );
+
+    QPixmap px(20, 20);
+    px.fill( QColor( 255, 0, 0 ) );
+    tbt_color_object->setIcon( px );
+
+    gl_object_properties->addWidget( tbt_color_object, 0, 2 );
+
+    connect( mn_color_object, &QMenu::aboutToShow, cd_color_object, &QColorDialog::show );
+    connect( cd_color_object, &QColorDialog::rejected, mn_color_object, &QMenu::hide );
+    connect( cd_color_object, &QColorDialog::accepted, mn_color_object, &QMenu::hide );
+
+}
+
+
 void MainWindow::getCurrentDirectory()
 {
 
@@ -488,7 +497,7 @@ void MainWindow::createGeneralActions()
 
     tb_general = new QToolBar( this );
     tb_general->addAction( ac_object_tree );
-    tb_general->addAction( ac_center_axes );
+//    tb_general->addAction( ac_center_axes );
     tb_general->addSeparator();
     tb_general->addAction( ac_clear );
     tb_general->addAction( ac_undo );
@@ -632,11 +641,13 @@ void MainWindow::screenshot()
     if( selectedFilter == "PNG (*.png)" )
     {
         sketch_scene.savetoRasterImage( name_of_file );
+        scene_path.savetoRasterImage( name_of_file );
         canvas3d->savetoRasterImage( name_of_file );
     }
     else if ( selectedFilter == "SVG (*.svg)" )
     {
         sketch_scene.savetoVectorImage( name_of_file );
+        scene_path.savetoVectorImage( name_of_file );
         canvas3d->savetoVectorImage( name_of_file );
     }
 

@@ -95,7 +95,8 @@ class PathScene: public QGraphicsScene
 
 
         void screenshot();
-
+        void savetoRasterImage( const QString& filename );
+        void savetoVectorImage( const QString& filename );
 
     signals:
 
@@ -106,9 +107,6 @@ class PathScene: public QGraphicsScene
 
     protected:
 
-
-        void savetoRasterImage( const QString& filename );
-        void savetoVectorImage( const QString& filename );
 
 
         UserInteraction current_interaction = UserInteraction::SKETCHING;
