@@ -221,6 +221,9 @@ void MainWindow::createSketchSection()
                                                  sl_depth_volume->setDisabled( true );
                                                  sl_height_volume->setDisabled( true );
                                                  sl_width_volume->setDisabled( true );
+                                                 sp_depth_volume->setEnabled( false );
+                                                 sp_width_volume->setEnabled( false );
+                                                 sp_height_volume->setEnabled( false );
                                                  ac_edit_boundary->setDisabled( true );
 
                                                  } );
@@ -623,6 +626,16 @@ void MainWindow::resetInterface()
     ac_sketch_below->setChecked( false );
     ac_undo->setEnabled( true );
     ac_redo->setEnabled( true );
+
+    sl_depth_volume->setEnabled( true );
+    sl_width_volume->setEnabled( true );
+    sl_height_volume->setEnabled( true );
+
+    sp_depth_volume->setEnabled( true );
+    sp_width_volume->setEnabled( true );
+    sp_height_volume->setEnabled( true );
+
+    ac_edit_boundary->setEnabled( true );
 }
 
 
