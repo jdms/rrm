@@ -19,7 +19,7 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Inputsketch.h"
+#include "InputSketch.h"
 
 InputSketch::InputSketch( QColor color ) :QGraphicsPathItem()
 {

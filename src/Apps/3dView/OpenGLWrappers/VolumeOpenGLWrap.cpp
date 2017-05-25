@@ -176,21 +176,23 @@ void VolumeOpenGLWrap::createVolumeBox()
     };
 
 
-    std::vector< float > unit_wireframe_ = Model3DUtils::normalizePointCloud( wireframe_ );
+    Eigen::Vector3f max_( 0.5f, 0.5f, 0.5f );
+    Eigen::Vector3f min_( -0.5f, -0.5f, -0.5f );
+
+    std::vector< float > unit_wireframe_ = Model3DUtils::normalizeMeshIntoABox( wireframe_, max_, min_ );
     reloadBuffers( unit_wireframe_ ) ;
 
     minimum = Model3DUtils::normalizePointCloud( min, max, min );
+    std::cout << "minimum: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z()
+              << std::endl << std::flush;
 
-//    std::vector< float > plane_;
-//    std::copy_n(unit_wireframe_.begin(), 16, std::back_inserter(plane_));
 
-//    nvertices_csection = plane_.size();
+    maximum = Model3DUtils::normalizePointCloud( max, max, min );
+    std::cout << "maximum: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z()
+              << std::endl << std::flush;
 
-//    glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices_csection );
-//    glBufferData ( GL_ARRAY_BUFFER, plane_.size() * sizeof ( float ), plane_.data() ,
-//                   GL_STATIC_DRAW );
-//    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
 
+//    updateCrossSection( depth_ );
 }
 
 
@@ -203,36 +205,26 @@ void VolumeOpenGLWrap::updateCrossSection( double depth_ )
 //    volume->getOrigin( ox_, oy_, oz_ );
 //    volume->getDimensions( w_, h_, d_ );
 
-//    float originx_ = (float)ox_, originy_ =  (float)oy_, originz_ = (float)oz_;
-//    float width_ = (float)w_, height_ = (float)h_, depth1_ = (float)d_;
+//    float M = (float)( oz_ + d_ );
+//    float m = (float)( oz_ );
 
-//    Eigen::Vector3f min( originx_, originy_, originz_ );
-//    Eigen::Vector3f max( originx_ + width_, originy_ + height_, originz_ + depth1_ );
+//    float z_ = ( depth_ - m )*( maximum.z() - minimum.z() )/( M - m ) + minimum.z();
 
-
-//    Eigen::Vector3f A( min.x(), min.y(), originz_ + depth_ );
-//    Eigen::Vector3f B( max.x(), min.y(), originz_ + depth_ );
-//    Eigen::Vector3f C( max.x(), max.y(), originz_ + depth_ );
-//    Eigen::Vector3f D( min.x(), max.y(), originz_ + depth_ );
-
-
-//    Eigen::Vector3f A1 = Model3DUtils::normalizePointCloud( A , max, min );
-//    Eigen::Vector3f B1 = Model3DUtils::normalizePointCloud( B , max, min );
-//    Eigen::Vector3f C1 = Model3DUtils::normalizePointCloud( C , max, min );
-//    Eigen::Vector3f D1 = Model3DUtils::normalizePointCloud( D , max, min );
+//    Eigen::Vector3f A( minimum.x(), minimum.y(), z_ );
+//    Eigen::Vector3f B( maximum.x(), minimum.y(), z_ );
+//    Eigen::Vector3f C( maximum.x(), maximum.y(), z_ );
+//    Eigen::Vector3f D( minimum.x(), maximum.y(), z_ );
 
 
 
 //    std::vector< float > plane_ =
 //    {
-//        A1.x(), A1.y(), A1.z(), 1.0f,
-//        B1.x(), B1.y(), B1.z(), 1.0f,
-//        D1.x(), D1.y(), D1.z(), 1.0f,
-//        C1.x(), C1.y(), C1.z(), 1.0f
+//        A.x(), A.y(), A.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f
 //    };
 
-////    std::vector< float > plane_;
-////    std::copy_n(unit_wireframe_.begin(), 16, std::back_inserter(plane_));
 
 //    nvertices_csection = plane_.size();
 
@@ -240,9 +232,6 @@ void VolumeOpenGLWrap::updateCrossSection( double depth_ )
 //    glBufferData ( GL_ARRAY_BUFFER, plane_.size() * sizeof ( float ), plane_.data() ,
 //                   GL_STATIC_DRAW );
 //    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
-
-
-
 
 
 }
@@ -273,7 +262,6 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
 
     shader->unbind();
 
-
 //    shader_csection->bind();
 
 //    shader_csection->setUniform( "ModelMatrix" , M_ );
@@ -288,9 +276,8 @@ void VolumeOpenGLWrap::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P
 
 //    shader_csection->unbind();
 
-
-
     glEnable( GL_DEPTH_TEST );
+
 
 
 }

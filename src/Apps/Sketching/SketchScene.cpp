@@ -307,8 +307,7 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
             int w_ = event->scenePos().x() - boundary_anchor.x() ;
             int h_ = event->scenePos().y() - boundary_anchor.y() ;
 
-            volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), std::abs( w_),
-                                 std::abs( h_) ) ;
+            volume.editGeometry( boundary_anchor.x(), boundary_anchor.y(), w_, h_) ;
         }
 
     }
