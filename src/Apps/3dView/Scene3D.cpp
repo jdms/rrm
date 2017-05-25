@@ -42,10 +42,7 @@ void Scene3D::createCrossSection()
     cross_section->init();
 
     updateCrossSection();
-    cross_section->setShaderDirectory( current_directory );
-    cross_section->init();
-    cross_section->setBoundingBox( ( float ) ox_, ( float ) (ox_ + w_), ( float ) oy_, ( float ) (oy_ + h_),
-                                  ( float ) oz_, ( float ) (oz_ + d_) );
+    moveCrossSection( d_ );
 
 }
 

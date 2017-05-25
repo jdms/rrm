@@ -46,7 +46,7 @@
 #include <QKeySequence>
 #include <QShortcut>
 
-
+#include "ColorPicker.h"
 #include "Help/HelpDialog.h"
 #include "Object_Tree/ObjectTree.h"
 
@@ -57,7 +57,7 @@
 #include "Sketching/PathScene.h"
 
 #include "3dView/Canvas3D.h"
-#include "3dView/Scene3d.h"
+#include "3dView/Scene3D.h"
 
 /**
  * @brief Main GUI and Controller of the Project
@@ -216,7 +216,7 @@ private:
         QAction* ac_discard_sketch;
         QAction* ac_commit_sketch;
         QAction* ac_interpolate;
-
+        QAction* ac_edit_boundary;
 
         QDockWidget* dw_properties;
         QWidgetAction *ac_sketchcolor;
@@ -234,7 +234,7 @@ private:
         QToolBar* tb_general;
         QToolBar* tb_sketch;
 
-
+        ColorPicker *cp_teste;
 
 };
 

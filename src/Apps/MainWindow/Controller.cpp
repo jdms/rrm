@@ -136,6 +136,8 @@ void Controller::addInputCurvetoCurrentObject( const Curve2D& curve_ )
     setCurrentCrossSectionAsUsed();
     addCurrentObjectToScenes();
 
+    disableVolumeResize();
+
 }
 
 bool Controller::getAllInputCurvesofCurrentObject( std::vector< Curve2D >& input_curves_ )

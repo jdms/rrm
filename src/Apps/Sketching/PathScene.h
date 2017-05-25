@@ -10,7 +10,7 @@
 #include "ItemWrappers/VolumeItemWrapper.h"
 #include "Core/Geology/Models/CrossSection.h"
 #include "ItemWrappers/CrossSectionItemWrapper.h"
-#include "./Inputsketch.h"
+#include "./InputSketch.h"
 
 
 
