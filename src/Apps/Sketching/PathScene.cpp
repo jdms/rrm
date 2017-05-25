@@ -203,22 +203,44 @@ void PathScene::screenshot()
 void PathScene::savetoRasterImage( const QString& filename )
 {
 
+
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_trajectory." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
     QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
     image.fill( Qt::transparent );
 
     QPainter painter( &image );
     render( &painter );
 
-    image.save( filename );
+    image.save( filename_csection );
 
 }
 
 void PathScene::savetoVectorImage( const QString& filename )
 {
 
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_trajectory." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
     QSvgGenerator svgGen;
 
-    svgGen.setFileName( filename );
+    svgGen.setFileName( filename_csection );
     svgGen.setSize( QSize( width(), height() ) );
 
     svgGen.setViewBox( sceneRect() );
