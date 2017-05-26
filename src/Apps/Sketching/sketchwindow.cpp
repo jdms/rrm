@@ -1,5 +1,7 @@
 #include "sketchwindow.h"
 #include "./MainWindow/Widgets/ColorPicker.h"
+#include "csectionscene.h"
+#include "topviewscene.h"
 
 #include <QtWidgets>
 
@@ -8,15 +10,27 @@ SketchWindow::SketchWindow( QWidget* parent, bool customizable ): QMainWindow( p
                                                                   is_customizable( customizable )
 {
     createWindow();
+    createScene();
     createToolbarActions();
 }
 
 
 void SketchWindow::createWindow()
 {
-    QGraphicsView* gv_view = new QGraphicsView();
+    gv_view = new QGraphicsView();
     gv_view->setRenderHint( QPainter::Antialiasing, true );
     setCentralWidget( gv_view );
+}
+
+
+void SketchWindow::createScene()
+{
+    if(is_customizable == true )
+        scene = new CSectionScene();
+    else
+        scene = new TopViewScene();
+
+    gv_view->setScene( scene );
 }
 
 
@@ -45,4 +59,10 @@ void SketchWindow::createToolbarActions()
     tb_commands->addAction( ac_edit_boundary );
     tb_commands->addWidget( cp_define_color );
     addToolBar( tb_commands );
+}
+
+
+SketchScene_Refactored* SketchWindow::getScene() const
+{
+    return scene;
 }

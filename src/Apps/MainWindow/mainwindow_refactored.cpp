@@ -1,6 +1,8 @@
 #include "mainwindow_refactored.h"
 #include "3dView/canvas3d_refactored.h"
+#include "controller_refactored.h"
 #include "Sketching/sketchwindow.h"
+#include "Widgets/pagesstack.h"
 #include "Object_Tree/ObjectTree.h"
 
 #include <QtWidgets>
@@ -71,7 +73,13 @@ void MainWindow_Refactored::createMainInterface()
 void MainWindow_Refactored::createToolbarActions()
 {
 
-    QAction* ac_show_sidebar = new QAction( "Show Sidebar", this );
+    ac_show_sidebar = new QAction( "Show Sidebar", this );
+    ac_show_sidebar->setCheckable( true );
+
+    connect( ac_show_sidebar, &QAction::toggled, dw_object_tree, &QDockWidget::setVisible );
+    connect( ac_show_sidebar, &QAction::toggled, dw_info_objects, &QDockWidget::setVisible );
+
+
 
     QAction* ac_new = new QAction( "Clear", this );
 
@@ -90,7 +98,9 @@ void MainWindow_Refactored::createToolbarActions()
 
 
 
-    QAction* ac_show_topview = new QAction( "Show Top-View", this );
+    ac_show_topview = new QAction( "Show Top-View", this );
+    ac_show_topview->setCheckable( true );
+    connect( ac_show_topview, &QAction::toggled, dw_topview, &QDockWidget::setVisible );
 
 
     QAction* ac_sketch_above = new QAction( "SA", this );
@@ -139,7 +149,7 @@ void MainWindow_Refactored::createCrossSectionInterface()
 {
     sketch_window = new SketchWindow( this );
 
-    QDockWidget* dw_csection = new QDockWidget( "Cross-Section" );
+    dw_csection = new QDockWidget( "Cross-Section" );
     dw_csection->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_csection->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_csection );
@@ -148,9 +158,9 @@ void MainWindow_Refactored::createCrossSectionInterface()
 
 void MainWindow_Refactored::createTopViewInterface()
 {
-    SketchWindow* topview_window = new SketchWindow( this, false );
+    topview_window = new SketchWindow( this, false );
 
-    QDockWidget* dw_topview = new QDockWidget( "Top View" );
+    dw_topview = new QDockWidget( "Top View" );
     dw_topview->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview->setWidget( topview_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview );
@@ -165,15 +175,46 @@ void MainWindow_Refactored::createSidebar()
     dw_object_tree = new QDockWidget( "" );
     dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
     dw_object_tree->setWidget( object_tree );
-    dw_object_tree->setVisible( OBJECTTREE_VISIBLE );
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
 
+    pages_sidebar = new PagesStack();
+    dw_info_objects = new QDockWidget( "Properties" );
+    dw_info_objects->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_info_objects->setWidget( pages_sidebar );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_info_objects );
 
+}
+
+
+void MainWindow_Refactored::createController()
+{
+    if( controller != nullptr )
+        delete controller;
+
+    controller = new Controller_Refactored();
+}
+
+
+void MainWindow_Refactored::setupController()
+{
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+    TopViewScene* topview_scene = ( TopViewScene* ) ( topview_window->getScene() );
+    Scene3d_refactored* scene3d = canvas3d->getScene();
+
+    controller->setCSectionScene( csection_scene );
+    controller->setTopViewScene( topview_scene );
+    controller->setScene3d( scene3d );
+
+    controller->init();
 }
 
 
 void MainWindow_Refactored::setDefaultValues()
 {
-    dw_object_tree->setVisible( OBJECTTREE_VISIBLE );
+    ac_show_sidebar->setChecked( SIDEBAR_VISIBLE );
+    ac_show_topview->setChecked( TOPVIEW_VISIBLE );
+
+    dw_topview->setVisible( TOPVIEW_VISIBLE );
+    dw_csection->setVisible( CSECTION_VISIBLE );
 }

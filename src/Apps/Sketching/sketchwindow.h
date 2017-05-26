@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 
+class QGraphicsView;
+
+class SketchScene_Refactored;
+class CSectionScene;
+class TopViewScene;
+
 class SketchWindow: public QMainWindow
 {
     Q_OBJECT
@@ -10,6 +16,8 @@ class SketchWindow: public QMainWindow
     public:
 
         SketchWindow( QWidget* parent = 0, bool customizable = true );
+
+        SketchScene_Refactored* getScene() const;
 
     protected slots:
 
@@ -20,12 +28,15 @@ class SketchWindow: public QMainWindow
     protected:
 
         void createWindow();
+        void createScene();
         void createToolbarActions();
 
     private:
 
         bool is_customizable;
 
+        QGraphicsView* gv_view;
+        SketchScene_Refactored* scene;
 
 };
 

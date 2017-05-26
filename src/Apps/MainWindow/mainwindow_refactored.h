@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+
 class QActionGroup;
 class QAction;
 class QToolbar;
@@ -11,7 +12,8 @@ class QSlider;
 class Canvas3d_Refactored;
 class SketchWindow;
 class ObjectTree;
-
+class PagesStack;
+class Controller_Refactored;
 
 class MainWindow_Refactored : public QMainWindow
 {
@@ -43,7 +45,8 @@ class MainWindow_Refactored : public QMainWindow
         void createSidebar();
         void createToolbarActions();
 
-        inline void setupController(){}
+        void createController();
+        void setupController();
         inline void initController(){}
 
 
@@ -55,16 +58,28 @@ class MainWindow_Refactored : public QMainWindow
         int app_orig_x;
         int app_orig_y;
 
+
+        QAction* ac_show_sidebar;
+        QAction* ac_show_topview;
+
+
+        Controller_Refactored* controller;
+        Canvas3d_Refactored* canvas3d;
+        SketchWindow* sketch_window;
+        SketchWindow* topview_window;
+        ObjectTree* object_tree;
+        PagesStack* pages_sidebar;
         QSlider* sl_depth_csection;
 
-        Canvas3d_Refactored *canvas3d;
-        SketchWindow* sketch_window;
-        ObjectTree* object_tree;
-
+        QDockWidget* dw_csection;
+        QDockWidget* dw_topview;
         QDockWidget* dw_object_tree;
+        QDockWidget* dw_info_objects;
 
 
-        const bool OBJECTTREE_VISIBLE = true;
+        const bool SIDEBAR_VISIBLE = true;
+        const bool TOPVIEW_VISIBLE = false;
+        const bool CSECTION_VISIBLE = true;
 
 
 };

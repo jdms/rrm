@@ -3,7 +3,10 @@
 
 
 #include "Scene3D.h"
+#include "scene3d_refactored.h"
+
 #include <QOpenGLWidget>
+
 
 
 class Canvas3d_Refactored: public QOpenGLWidget
@@ -14,11 +17,24 @@ class Canvas3d_Refactored: public QOpenGLWidget
 
         Canvas3d_Refactored();
 
+        Scene3d_refactored* getScene() const;
+
+
     protected:
 
         void initializeGL();
         void resizeGL( int width, int height );
         void paintGL();
+
+
+        void createScene();
+        void shareOpenGLContext();
+
+
+    private:
+
+
+        Scene3d_refactored* scene3d;
 
 };
 
