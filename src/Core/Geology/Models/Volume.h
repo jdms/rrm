@@ -4,8 +4,6 @@
 #include <vector>
 #include <cmath>
 
-//TODO: clear whatever variable before performing the set
-//NOTE: think about if cells are vector of indexes of faces or indexes of vertices
 
 class Volume
 {

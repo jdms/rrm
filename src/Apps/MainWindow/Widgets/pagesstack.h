@@ -3,6 +3,9 @@
 
 #include <QStackedWidget>
 
+
+#include "ui_VolumeResizeWidget.h"
+
 class PagesStack: public QStackedWidget
 {
     Q_OBJECT
@@ -11,12 +14,19 @@ class PagesStack: public QStackedWidget
 
         PagesStack();
 
+    public slots:
+
+        void changeVolumeSize( int width, int height, int depth );
+        void setEnabledVolumeResize( bool status );
 
     protected:
 
         void createVolumePropertiesPage();
         void createRulesHistoryPage();
 
+    private:
+
+        Ui::Form wd_volume_resize;
 };
 
 #endif // PAGESSTACK_H

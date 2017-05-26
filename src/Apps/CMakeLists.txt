@@ -16,6 +16,7 @@ include_directories (
 set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/mainwindow_refactored.h
                         MainWindow/Controller.hpp
+                        MainWindow/controller_refactored.h
                         MainWindow/RulesProcessor.hpp
                         MainWindow/Widgets/ColorPicker.h
                         MainWindow/Widgets/pagesstack.h
@@ -39,7 +40,7 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
 
 set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
                             MainWindow/Help/HelpDialog.ui
-                            MainWindow/Widgets/pageswidget.ui
+                            MainWindow/Widgets/VolumeResizeWidget.ui
                             MainWindow/MainWindow.ui )
 
 
@@ -48,6 +49,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/mainwindow_refactored.cpp
                         MainWindow/Widgets/ColorPicker.cpp
                         MainWindow/Widgets/pagesstack.cpp
+                        MainWindow/controller_refactored.cpp
                         MainWindow/Controller.cpp
                         MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
@@ -70,6 +72,9 @@ set( SKETCHING_HEADERS        Sketching/sketchwindow.h
                               Sketching/PathScene.h
                               Sketching/SketchCanvas.h
                               Sketching/SketchScene.h
+                              Sketching/sketchscene_refactored.h
+                              Sketching/csectionscene.h
+                              Sketching/topviewscene.h
                               Sketching/ItemWrappers/ObjectItemWrap.h
                               Sketching/ItemWrappers/VolumeItemWrapper.h
                               Sketching/ItemWrappers/CrossSectionItemWrapper.h
@@ -80,7 +85,10 @@ set( SKETCHING_HEADERS        Sketching/sketchwindow.h
 set( SKETCHING_MOC_HEADERS    Sketching/sketchwindow.h
                               Sketching/CanvasPath.h
                               Sketching/PathScene.h
+                              Sketching/topviewscene.h
                               Sketching/SketchCanvas.h
+                              Sketching/sketchscene_refactored.h
+                              Sketching/csectionscene.h
                               Sketching/SketchScene.h )
 
 
@@ -88,8 +96,11 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
                               Sketching/InputSketch.cpp
                               Sketching/CanvasPath.cpp
                               Sketching/PathScene.cpp
+                              Sketching/topviewscene.cpp
                               Sketching/SketchCanvas.cpp
                               Sketching/SketchScene.cpp
+                              Sketching/sketchscene_refactored.cpp
+                              Sketching/csectionscene.cpp
                               Sketching/ItemWrappers/ObjectItemWrap.cpp
                               Sketching/ItemWrappers/VolumeItemWrapper.cpp
                               Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
@@ -105,6 +116,7 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
                        3dView/canvas3d_refactored.h
                        3dView/Scene3D.h
                        3dView/Model3DUtils.hpp
+                       3dView/scene3d_refactored.h
                        3dView/OpenGLWrappers/CoordinateAxes.h
                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
                        3dView/OpenGLWrappers/VolumeOpenGLWrap.h
@@ -115,6 +127,7 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
 
 set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
                          3dView/canvas3d_refactored.h
+                         3dView/scene3d_refactored.h
                          3dView/Scene3D.h )
 
 
@@ -122,6 +135,7 @@ set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
 set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
                         3dView/canvas3d_refactored.cpp
                         3dView/Scene3D.cpp
+                        3dView/scene3d_refactored.cpp
                         3dView/Model3DUtils.cpp
                         3dView/OpenGLWrappers/CoordinateAxes.cpp
                         3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
