@@ -8,6 +8,10 @@ class QString;
 class QOpenGLContext;
 class QSurface;
 
+class Volume;
+class VolumeOpenGLWrapper_Refactored;
+class CrossSectionOpenGLWrapper_Refactored;
+
 
 class Scene3d_refactored: public QObject
 {
@@ -17,7 +21,9 @@ class Scene3d_refactored: public QObject
 
         Scene3d_refactored();
 
-        inline void addVolume(){}
+        void addVolume( Volume* const& vol );
+
+        void addCrossSection();
 
         inline void addObject(){}
         inline bool isDuplicatedObject(){ return true; }
@@ -42,7 +48,12 @@ class Scene3d_refactored: public QObject
 
         inline void setDefaultValues(){}
         void setCurrentDirectory( const QString& dir );
-        void setOpenGLContext( QOpenGLContext* const& ctxt );
+        void setOpenGLContext( QOpenGLContext* ctxt );
+
+
+    signals:
+
+        void updateCanvas();
 
 
     private:
@@ -54,7 +65,8 @@ class Scene3d_refactored: public QObject
         QOpenGLContext* context;
         QSurface* surface;
 
-
+        VolumeOpenGLWrapper_Refactored* volume;
+        CrossSectionOpenGLWrapper_Refactored* csection;
 
 };
 

@@ -14,15 +14,34 @@ void PagesStack::createVolumePropertiesPage()
 }
 
 
-void PagesStack::changeVolumeSize( int width, int height, int depth )
+void PagesStack::changeRangeSize( double width, double height, double depth )
 {
-    wd_volume_resize.hs_width_volume->setRange( 0, width );
-    wd_volume_resize.hs_height_volume->setRange( 0, height );
-    wd_volume_resize.hs_depth_volume->setRange( 0, depth );
 
-    wd_volume_resize.sb_width_volume->setRange( 0, width );
-    wd_volume_resize.sb_height_volume->setRange( 0, height );
-    wd_volume_resize.sb_depth_volume->setRange( 0, depth );
+    int w = static_cast< int > (width);
+    int h = static_cast< int > (height);
+    int d = static_cast< int > (depth);
+
+    wd_volume_resize.hs_width_volume->setRange( 0, w );
+    wd_volume_resize.hs_height_volume->setRange( 0, h );
+    wd_volume_resize.hs_depth_volume->setRange( 0, d );
+
+    wd_volume_resize.sb_width_volume->setRange( 0, w );
+    wd_volume_resize.sb_height_volume->setRange( 0, h );
+    wd_volume_resize.sb_depth_volume->setRange( 0, d );
+}
+
+
+
+void PagesStack::changeVolumeSize( double width, double height, double depth )
+{
+    int w = static_cast< int > (width);
+    int h = static_cast< int > (height);
+    int d = static_cast< int > (depth);
+
+    wd_volume_resize.sb_width_volume->setValue( w );
+    wd_volume_resize.sb_height_volume->setValue( h );
+    wd_volume_resize.sb_depth_volume->setValue( d );
+
 }
 
 

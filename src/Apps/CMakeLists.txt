@@ -77,6 +77,7 @@ set( SKETCHING_HEADERS        Sketching/sketchwindow.h
                               Sketching/topviewscene.h
                               Sketching/ItemWrappers/ObjectItemWrap.h
                               Sketching/ItemWrappers/VolumeItemWrapper.h
+                              Sketching/ItemWrappers/volumeitemwrapper_refactored.h
                               Sketching/ItemWrappers/CrossSectionItemWrapper.h
                               Sketching/ItemWrappers/RegionItem.hpp
                               Sketching/PolyQtUtils.hpp )
@@ -103,6 +104,7 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
                               Sketching/csectionscene.cpp
                               Sketching/ItemWrappers/ObjectItemWrap.cpp
                               Sketching/ItemWrappers/VolumeItemWrapper.cpp
+                              Sketching/ItemWrappers/volumeitemwrapper_refactored.cpp
                               Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
                               Sketching/ItemWrappers/RegionItem.cpp                              
                               Sketching/PolyQtUtils.cpp )
@@ -120,6 +122,8 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
                        3dView/OpenGLWrappers/CoordinateAxes.h
                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
                        3dView/OpenGLWrappers/VolumeOpenGLWrap.h
+                       3dView/OpenGLWrappers/volumeopenglwrapper_refactored.h
+                       3dView/OpenGLWrappers/crosssectionopenglwrapper_refactored.h
                        3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.h
                        3dView/GradientBackgroundShader.hpp
                        3dView/tinyobjloader/tiny_obj_loader.h)
@@ -140,7 +144,9 @@ set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
                         3dView/OpenGLWrappers/CoordinateAxes.cpp
                         3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
                         3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
+                        3dView/OpenGLWrappers/volumeopenglwrapper_refactored.cpp
                         3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.cpp
+                        3dView/OpenGLWrappers/crosssectionopenglwrapper_refactored.cpp
                         3dView/GradientBackgroundShader.cpp
                         3dView/tinyobjloader/tiny_obj_loader.cc)
 

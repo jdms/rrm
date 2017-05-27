@@ -4,10 +4,12 @@
 #include <QMainWindow>
 
 class QGraphicsView;
+class QWheelEvent;
 
 class SketchScene_Refactored;
 class CSectionScene;
 class TopViewScene;
+
 
 class SketchWindow: public QMainWindow
 {
@@ -31,12 +33,16 @@ class SketchWindow: public QMainWindow
         void createScene();
         void createToolbarActions();
 
+        void wheelEvent( QWheelEvent *event );
+
     private:
 
         bool is_customizable;
 
         QGraphicsView* gv_view;
         SketchScene_Refactored* scene;
+
+        const double ZOOM_SCALE = 1.1;
 
 };
 

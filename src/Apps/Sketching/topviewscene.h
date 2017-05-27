@@ -3,6 +3,7 @@
 
 #include "sketchscene_refactored.h"
 
+
 class TopViewScene: public SketchScene_Refactored
 {
     Q_OBJECT

@@ -24,6 +24,12 @@ class MainWindow_Refactored : public QMainWindow
         explicit MainWindow_Refactored( QWidget *parent = 0 );
 
 
+    signals:
+
+
+        void resizedVolume( double w, double h, double d );
+
+
     protected slots:
 
         inline void showSidebar( bool status_ ){}
@@ -33,6 +39,7 @@ class MainWindow_Refactored : public QMainWindow
         inline void clear(){}
         inline void resetInterface(){}
         void setDefaultValues();
+        void setupInterface();
 
 
     private:
