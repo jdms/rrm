@@ -37,6 +37,8 @@ class SketchScene_Refactored: public QGraphicsScene
         void startSketch( const QPointF& p );
         void clearSketch();
 
+        bool isValidSketch();
+
 
     private:
 
