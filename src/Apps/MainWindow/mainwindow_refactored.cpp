@@ -12,8 +12,18 @@
 
 MainWindow_Refactored::MainWindow_Refactored( QWidget *parent ) : QMainWindow( parent )
 {
+    controller = nullptr;
+
     setupWindowProperties();
     createWindow();
+    setDefaultValues();
+
+    show();
+
+    createController();
+    setupController();
+    setupInterface();
+
 }
 
 
@@ -58,6 +68,11 @@ void MainWindow_Refactored::createMainInterface()
     sl_depth_csection = new QSlider( Qt::Vertical, this );
     sl_depth_csection->setTickPosition( QSlider::TicksRight );
     sl_depth_csection->setInvertedAppearance( true );
+
+
+    connect( this, &MainWindow_Refactored::resizedVolume, [=]( double w, double h, double d )
+                                    { sl_depth_csection->setRange( 0, static_cast< int > (d) );
+                                      sl_depth_csection->setValue( static_cast< int > (d) );    } );
 
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
@@ -184,7 +199,12 @@ void MainWindow_Refactored::createSidebar()
     dw_info_objects->setWidget( pages_sidebar );
     addDockWidget( Qt::LeftDockWidgetArea, dw_info_objects );
 
+    connect( this, &MainWindow_Refactored::resizedVolume, pages_sidebar,
+             &PagesStack::changeVolumeSize );
+
 }
+
+
 
 
 void MainWindow_Refactored::createController()
@@ -205,9 +225,29 @@ void MainWindow_Refactored::setupController()
     controller->setCSectionScene( csection_scene );
     controller->setTopViewScene( topview_scene );
     controller->setScene3d( scene3d );
+    controller->setObjectTree( object_tree );
 
     controller->init();
+
+
+
+
 }
+
+void MainWindow_Refactored::setupInterface()
+{
+    double width = controller->getVolumeWidth();
+    double height = controller->getVolumeHeight();
+    double depth = controller->getVolumeDepth();
+
+    pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
+    emit resizedVolume( width, height, depth );
+}
+
+
+
+
+
 
 
 void MainWindow_Refactored::setDefaultValues()
@@ -217,4 +257,9 @@ void MainWindow_Refactored::setDefaultValues()
 
     dw_topview->setVisible( TOPVIEW_VISIBLE );
     dw_csection->setVisible( CSECTION_VISIBLE );
+
+//    pages_sidebar->setDefaultValues();
+//    sketch_window->setDefaultValues();
+//    topview_window->setDefaultValues();
+
 }

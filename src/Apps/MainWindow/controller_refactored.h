@@ -4,6 +4,7 @@
 class CSectionScene;
 class TopViewScene;
 class Scene3d_refactored;
+class ObjectTree;
 
 class Volume;
 
@@ -20,21 +21,21 @@ class Controller_Refactored
         void setScene3d( Scene3d_refactored* const& sc );
         void setCSectionScene( CSectionScene* const& sc );
         void setTopViewScene( TopViewScene* const& sc );
-        inline void setObjectTree(){}
+        void setObjectTree( ObjectTree* const& ot );
 
         void addVolume();
         void addVolumeToInterface();
 
-        inline void setVolumeWidth(){}
-        inline void setVolumeHeight(){}
-        inline void setVolumeDepth(){}
+        void setVolumeWidth( double width );
+        void setVolumeHeight( double height );
+        void setVolumeDepth( double depth );
 
-        inline void getVolumeWidth(){}
-        inline void getVolumeHeight(){}
-        inline void getVolumeDepth(){}
+        double getVolumeWidth() const ;
+        double getVolumeHeight() const ;
+        double getVolumeDepth() const ;
 
-        inline void setVolumeVisibility(){}
-        inline void getVolumeVisibility(){}
+        void setVolumeVisibility( bool status );
+        bool getVolumeVisibility() const ;
 
 
         inline void addObject(){}
@@ -69,11 +70,16 @@ class Controller_Refactored
         inline void updateActiveSurfaces(){}
 
 
+        inline void initRulesProcessor(){}
+        inline void updateBoundingBoxRulesProcessor( double width, double height, double depth ){}
+
+
     private:
 
         CSectionScene* csection_scene;
         TopViewScene* topview_scene;
         Scene3d_refactored* scene3d;
+        ObjectTree* object_tree;
 
         Volume* volume;
 };

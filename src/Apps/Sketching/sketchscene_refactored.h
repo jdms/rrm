@@ -4,6 +4,11 @@
 #include <QGraphicsScene>
 #include <QColor>
 
+#include "ItemWrappers/volumeitemwrapper_refactored.h"
+
+class Volume;
+class InputSketch;
+
 class SketchScene_Refactored: public QGraphicsScene
 {
     Q_OBJECT
@@ -12,7 +17,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         SketchScene_Refactored();
 
-        inline void addVolume(){}
+        void addVolume( Volume* const& vol );
         inline void addObject(){}
 
         inline void setObjectSelected( std::size_t id ){}
@@ -28,9 +33,17 @@ class SketchScene_Refactored: public QGraphicsScene
 
         inline void setDefaultValues(){}
 
+
+        void startSketch( const QPointF& p );
+        void clearSketch();
+
+
     private:
 
         QColor current_color;
+
+        VolumeItemWrapper_Refactored volume;
+        InputSketch* sketch;
 
 };
 

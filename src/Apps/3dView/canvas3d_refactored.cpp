@@ -19,6 +19,7 @@ void Canvas3d_Refactored::initializeGL()
         exit( EXIT_FAILURE );
     }
 
+    makeCurrent();
     glClearColor( 1.0f , 1.0 , 1.0 , 1.0f );
 
     shareOpenGLContext();
@@ -40,6 +41,7 @@ void Canvas3d_Refactored::paintGL()
 void Canvas3d_Refactored::createScene()
 {
     scene3d = new Scene3d_refactored();
+    connect( scene3d, SIGNAL( updateCanvas() ), this, SLOT( update() ) );
 }
 
 

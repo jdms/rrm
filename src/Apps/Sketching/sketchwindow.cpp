@@ -4,6 +4,7 @@
 #include "topviewscene.h"
 
 #include <QtWidgets>
+#include <QWheelEvent>
 
 
 SketchWindow::SketchWindow( QWidget* parent, bool customizable ): QMainWindow( parent ),
@@ -46,6 +47,7 @@ void SketchWindow::createToolbarActions()
     connect( ac_create_surface, &QAction::triggered, this, &SketchWindow::createSurface );
 
     QAction* ac_edit_boundary = new QAction( "Edit Boundary", this );
+    ac_edit_boundary->setCheckable( true );
     ac_edit_boundary->setVisible( is_customizable );
 
     ColorPicker* cp_define_color = new ColorPicker( this );
@@ -65,4 +67,19 @@ void SketchWindow::createToolbarActions()
 SketchScene_Refactored* SketchWindow::getScene() const
 {
     return scene;
+}
+
+
+void SketchWindow::wheelEvent( QWheelEvent *event )
+{
+    if( event->delta() > 0 )
+        gv_view->scale( ZOOM_SCALE, ZOOM_SCALE );
+    else
+        gv_view->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
+
+
+    gv_view->ensureVisible( scene->sceneRect() );
+    gv_view->update();
+
+    QMainWindow::wheelEvent( event );
 }
