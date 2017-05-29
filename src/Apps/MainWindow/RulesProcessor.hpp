@@ -137,8 +137,7 @@
 
 
             template<typename CurveType>
-            bool testSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
-            { return false; }
+            bool testSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves );
 
 
             template<typename CurveType>
@@ -159,7 +158,7 @@
 
             bool getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
-            bool getNormals( size_t surface_id, std::vector<double> &vlist ){ return false; }
+            bool getNormals( size_t surface_id, std::vector<double> &nlist );
 
 
             /* template<typename VertexList, typename FaceList> */
@@ -176,15 +175,31 @@
 
 
         private:
-
             StratigraphyModeller modeller_;
             struct { double x, y, z; } origin_, lenght_;
+
+            bool testing_surface_insertion_ = false;
 
     };
 
     template<typename CurveType>
+    bool RulesProcessor::testSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
+    {
+        modeller_.disableGeologicRules();
+        bool status = createSurface(surface_index, curves);
+        testing_surface_insertion_ = true; 
+
+        return status;
+    }
+
+    template<typename CurveType>
     bool RulesProcessor::createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
     {
+        if ( testing_surface_insertion_ == true )
+        {
+            modeller_.undo();
+        }
+
         std::vector<double> surface;
         size_t num_cross_sections = curves.size();
 
@@ -223,6 +238,8 @@
 
             status = modeller_.createExtrudedSurface( surface_index, surface );
         }
+
+        testing_surface_insertion_ = false;
 
         return status;
     }
