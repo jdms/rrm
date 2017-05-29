@@ -282,6 +282,8 @@ class Object
         std::string name;
 
         std::map< double,  Curve2D > input_curves;
+
+        //define edges_list std::vector< std::size_t >
         std::map< double,  std::vector< std::size_t > > input_edges;
         Curve2D path_curve;
 

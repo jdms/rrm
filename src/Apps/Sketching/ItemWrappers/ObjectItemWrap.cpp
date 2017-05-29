@@ -1,3 +1,5 @@
+#include <QPainterPathStroker>
+
 #include "ObjectItemWrap.h"
 
 ObjectItemWrap::ObjectItemWrap()
@@ -31,6 +33,10 @@ void ObjectItemWrap::paint( QPainter* painter, const QStyleOptionGraphicsItem* o
 
     visible_subpaths_pen.setColor( temp_color );
     hidden_subpaths_pen.setColor( temp_color );
+
+    QPainterPathStroker stroker;
+    stroker.setCurveThreshold( 0.2 );
+    stroker.createStroke( curve );
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( visible_subpaths_pen );

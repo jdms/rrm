@@ -1,12 +1,17 @@
 #ifndef CONTROLLER_REFACTORED_H
 #define CONTROLLER_REFACTORED_H
 
+#include <vector>
+#include <string>
+#include <map>
+
 class CSectionScene;
 class TopViewScene;
 class Scene3d_refactored;
 class ObjectTree;
 
 class Volume;
+class Object_Refactored;
 
 
 class Controller_Refactored
@@ -38,14 +43,14 @@ class Controller_Refactored
         bool getVolumeVisibility() const ;
 
 
-        inline void addObject(){}
+        void addObject();
         inline void addObjectToInterface(){}
 
-        inline void setObjectType(){}
-        inline void getObjectType(){}
+        void setObjectType( const Object_Refactored::Type& type );
+        Object_Refactored::Type getObjectType() const;
 
-        inline void setObjectName(){}
-        inline void getObjectName(){}
+        void setObjectName( const std::string& name );
+        std::string getObjectName() const;
 
         inline void setObjectColor(){}
         inline void getObjectColor(){}
@@ -82,6 +87,9 @@ class Controller_Refactored
         ObjectTree* object_tree;
 
         Volume* volume;
+        std::map< std::size_t, Object_Refactored* > objects;
+        std::size_t current_object;
+
 };
 
 #endif // CONTROLLER_REFACTORED_H

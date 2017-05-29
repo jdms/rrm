@@ -19,12 +19,14 @@ include_directories("./")
 include_directories("./Models")
 
 set( GEOLOGY_HEADERS Models/Object.h
+                     Models/object_refactored.h
                      Models/CrossSection.h
                      Models/Region1.h
                      Models/Volume.h )
-set( GEOLOGY_SOURCES  )
+
+set( GEOLOGY_SOURCES  Models/object_refactored.cpp )
 
 						
 
-add_library( ${PROJECT_NAME} STATIC ${GEOLOGY_HEADERS} )
+add_library( ${PROJECT_NAME} STATIC ${GEOLOGY_HEADERS} ${GEOLOGY_SOURCES} )
 set_target_properties( ${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX )

@@ -18,14 +18,14 @@ class SketchWindow: public QMainWindow
     public:
 
         SketchWindow( QWidget* parent = 0, bool customizable = true );
-
         SketchScene_Refactored* getScene() const;
 
-    protected slots:
 
-        bool discardSketch(){ return false; }
-        bool commitSketch(){ return false; }
-        bool createSurface(){ return false; }
+    signals:
+
+        void createSurface();
+
+
 
     protected:
 

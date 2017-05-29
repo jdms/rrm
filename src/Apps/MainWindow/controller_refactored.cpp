@@ -7,6 +7,7 @@
 #include "Object_Tree/ObjectTree.h"
 
 #include "./Core/Geology/Models/Volume.h"
+#include "./Core/Geology/Models/object_refactored.h"
 
 
 Controller_Refactored::Controller_Refactored()
@@ -117,3 +118,39 @@ bool Controller_Refactored::getVolumeVisibility() const
 {
     return volume->getVisibility();
 }
+
+
+
+void Controller_Refactored::addObject()
+{
+    Object_Refactored* obj = new Object();
+    objects[ obj->getId() ] = obj;
+    current_object = obj->getId();
+}
+
+
+void Controller_Refactored::setObjectType( const Object_Refactored::Type& type )
+{
+    Object_Refactored* object = objects[ current_object ];
+    object->setType( type );
+}
+
+
+Object_Refactored::Type Controller_Refactored::getObjectType() const
+{
+    return objects[ current_object ]->getType();
+}
+
+
+void Controller_Refactored::setObjectName( const std::string& name )
+{
+    Object_Refactored* object = objects[ current_object ];
+    object->setName( name );
+}
+
+
+std::string Controller_Refactored::getObjectName()
+{
+    return objects[ current_object ]->getName();
+}
+
