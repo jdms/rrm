@@ -19,6 +19,8 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QPainterPathStroker>
+
 #include "InputSketch.h"
 
 InputSketch::InputSketch( QColor color ) :QGraphicsPathItem()
@@ -39,6 +41,12 @@ InputSketch::InputSketch( QColor color ) :QGraphicsPathItem()
 void InputSketch::paint( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
     pen_color.setWidth( 3 );
+
+    QPainterPathStroker stroker;
+    stroker.setCurveThreshold( 0.4 );
+    stroker.setCapStyle( Qt::RoundCap );
+    stroker.setJoinStyle( Qt::RoundJoin );
+    stroker.createStroke( curve );
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( pen_color );

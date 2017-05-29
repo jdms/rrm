@@ -135,6 +135,13 @@
             template<typename CurveType>
             bool createSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves );
 
+
+            template<typename CurveType>
+            bool testSurface( size_t surface_index, const std::vector< std::tuple< CurveType, double  > > &curves )
+            { return false; }
+
+
+
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth, 
@@ -153,6 +160,7 @@
 
             bool getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getNormals( size_t surface_id, std::vector<double> &vlist ){ return false; }
 
             /* template<typename VertexList, typename FaceList> */
             /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */

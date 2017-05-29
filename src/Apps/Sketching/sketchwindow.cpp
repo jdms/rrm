@@ -20,6 +20,7 @@ void SketchWindow::createWindow()
 {
     gv_view = new QGraphicsView();
     gv_view->setRenderHint( QPainter::Antialiasing, true );
+    gv_view->setAcceptDrops( true );
     setCentralWidget( gv_view );
 }
 
@@ -38,13 +39,13 @@ void SketchWindow::createScene()
 void SketchWindow::createToolbarActions()
 {
     QAction* ac_discard_sketch = new QAction( "Discard", this );
-    connect( ac_discard_sketch, &QAction::triggered, this, &SketchWindow::discardSketch );
+    connect( ac_discard_sketch, &QAction::triggered, scene, &SketchScene_Refactored::clearSketch );
 
     QAction* ac_commit_sketch = new QAction( "Commit", this );
-    connect( ac_commit_sketch, &QAction::triggered, this, &SketchWindow::commitSketch );
+    connect( ac_commit_sketch, &QAction::triggered, scene, &SketchScene_Refactored::finishSketch );
 
     QAction* ac_create_surface = new QAction( "Create", this );
-    connect( ac_create_surface, &QAction::triggered, this, &SketchWindow::createSurface );
+    connect( ac_create_surface, &QAction::triggered, [=](){ emit createSurface(); } );
 
     QAction* ac_edit_boundary = new QAction( "Edit Boundary", this );
     ac_edit_boundary->setCheckable( true );
@@ -61,6 +62,7 @@ void SketchWindow::createToolbarActions()
     tb_commands->addAction( ac_edit_boundary );
     tb_commands->addWidget( cp_define_color );
     addToolBar( tb_commands );
+
 }
 
 
