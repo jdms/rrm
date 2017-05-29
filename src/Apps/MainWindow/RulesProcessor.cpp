@@ -228,6 +228,12 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std
     return modeller_.getMesh(surface_id, vlist, flist);
 }
 
+bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
+{ 
+    StratigraphyUtilities util(modeller_);
+
+    return util.getNormalList(surface_id, nlist); 
+}
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
