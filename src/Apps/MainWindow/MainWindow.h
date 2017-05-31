@@ -158,13 +158,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
     private slots:
 
-            void on_sl_width_volume_sliderMoved(int position);
-            void on_sl_height_volume_sliderMoved(int position);
-            void on_sl_depth_volume_sliderMoved(int position);
+        void saveFile();
+        void loadFile();
 
-            void editObjectTreeItem( QTreeWidgetItem* item_, int column_ );
+        void on_sl_width_volume_sliderMoved(int position);
+        void on_sl_height_volume_sliderMoved(int position);
+        void on_sl_depth_volume_sliderMoved(int position);
 
-            void on_btn_save_object_clicked();
+        void editObjectTreeItem( QTreeWidgetItem* item_, int column_ );
+
+        void on_btn_save_object_clicked();
 
 private:
 
@@ -193,6 +196,10 @@ private:
 
         QAction* ac_undo;
         QAction* ac_redo;
+
+        QAction* ac_save_file;
+        QAction* ac_load_file;
+
 
         QAction* ac_screenshot;
         QAction* ac_clear;
