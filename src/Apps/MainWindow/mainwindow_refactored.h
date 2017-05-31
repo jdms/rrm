@@ -54,7 +54,8 @@ class MainWindow_Refactored : public QMainWindow
 
         void createController();
         void setupController();
-        inline void initController(){}
+
+        void disableVolumeResizing();
 
 
     private:

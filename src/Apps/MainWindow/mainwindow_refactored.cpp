@@ -4,6 +4,8 @@
 #include "Sketching/sketchwindow.h"
 #include "Widgets/pagesstack.h"
 #include "Object_Tree/ObjectTree.h"
+#include "Sketching/csectionscene.h"
+#include "Sketching/topviewscene.h"
 
 #include <QtWidgets>
 #include <QActionGroup>
@@ -168,6 +170,8 @@ void MainWindow_Refactored::createCrossSectionInterface()
     dw_csection->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_csection->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_csection );
+
+
 }
 
 
@@ -218,14 +222,37 @@ void MainWindow_Refactored::createController()
 
 void MainWindow_Refactored::setupController()
 {
+
+    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& c ) {
+                                     controller->setCurrentColor( c.red(), c.green(), c.blue() );
+                                 } );
+
+
+
     CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
     TopViewScene* topview_scene = ( TopViewScene* ) ( topview_window->getScene() );
     Scene3d_refactored* scene3d = canvas3d->getScene();
+
+    connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
+                                                disableVolumeResizing();
+                                                controller->addCurveToObject( curve ); } );
+
+
+    connect( csection_scene, &CSectionScene::removeCurveFromObject, [=]( double depth ){
+                                                controller->removeCurveFromObject( depth ); } );
+
+
+    connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
+                                                disableVolumeResizing();
+                                                controller->addTrajectoryToObject( curve ); } );
+
 
     controller->setCSectionScene( csection_scene );
     controller->setTopViewScene( topview_scene );
     controller->setScene3d( scene3d );
     controller->setObjectTree( object_tree );
+
+    controller->setCurrentColor( 255, 0, 0 );
 
     controller->init();
 
@@ -233,6 +260,15 @@ void MainWindow_Refactored::setupController()
 
 
 }
+
+
+
+void MainWindow_Refactored::disableVolumeResizing()
+{
+    pages_sidebar->setEnabledVolumeResize( false );
+    sketch_window->setEnabledVolumeResize( false );
+}
+
 
 void MainWindow_Refactored::setupInterface()
 {
