@@ -532,8 +532,8 @@ void MainWindow::createGeneralActions()
     tb_general->addSeparator();
     tb_general->addAction( ac_clear );
     tb_general->addSeparator();
-    tb_general->addAction( ac_save );
-    tb_general->addAction( ac_load );
+    tb_general->addAction( ac_save_file );
+    tb_general->addAction( ac_load_file );
     tb_general->addSeparator();
     tb_general->addAction( ac_undo );
     tb_general->addAction( ac_redo );
@@ -892,18 +892,23 @@ void MainWindow::on_btn_save_object_clicked()
 
 void MainWindow::saveFile()
 {
+    QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
                                                              "rrm files (*.rrm)", &selected_format );
 
+
+    if( filename.isEmpty() == true ) return;
     controller->saveFile( filename.toStdString() );
 
 }
 
 void MainWindow::loadFile()
 {
+    QString selected_format = "";
     QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
                                                              "rrm files (*.rrm)", &selected_format );
 
+    if( filename.isEmpty() == true ) return;
     controller->loadFile( filename.toStdString() );
 
 }
