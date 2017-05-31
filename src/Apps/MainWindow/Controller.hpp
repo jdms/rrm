@@ -603,6 +603,19 @@ class Controller: public QObject
         void cleaningRawData();
         void cleaningRules();
 
+
+        inline void saveFile( const std::string& filename )
+        {
+            rules_processor.saveFile( filename );
+        }
+
+        inline void loadFile( const std::string& filename )
+        {
+            rules_processor.loadFile( filename );
+            updateObjects();
+        }
+
+
 /*
                 inline bool registerSolver()
                 {

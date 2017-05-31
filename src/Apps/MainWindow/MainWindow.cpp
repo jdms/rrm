@@ -495,6 +495,14 @@ void MainWindow::createGeneralActions()
     ac_clear = new QAction( "Clear", this );
     connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
 
+
+    ac_save_file = new QAction( "Save", this );
+    connect( ac_save_file, &QAction::triggered, this, &MainWindow::saveFile );
+
+    ac_load_file = new QAction( "Load", this );
+    connect( ac_load_file, &QAction::triggered, this, &MainWindow::loadFile );
+
+
     ac_undo = new QAction( "Undo", this );
     connect( ac_undo, &QAction::triggered, this, &MainWindow::undo );
 
@@ -523,6 +531,10 @@ void MainWindow::createGeneralActions()
 //    tb_general->addAction( ac_center_axes );
     tb_general->addSeparator();
     tb_general->addAction( ac_clear );
+    tb_general->addSeparator();
+    tb_general->addAction( ac_save );
+    tb_general->addAction( ac_load );
+    tb_general->addSeparator();
     tb_general->addAction( ac_undo );
     tb_general->addAction( ac_redo );
     tb_general->addAction( ac_screenshot );
@@ -874,5 +886,24 @@ void MainWindow::on_btn_save_object_clicked()
     tbt_color_object->setIcon( px );
 
     emit updateScenes();
+
+}
+
+
+void MainWindow::saveFile()
+{
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+    controller->saveFile( filename.toStdString() );
+
+}
+
+void MainWindow::loadFile()
+{
+    QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+    controller->loadFile( filename.toStdString() );
 
 }
