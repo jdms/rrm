@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QColor>
+#include <QString>
 
 #include "Sketching/InputSketch.h"
 #include "ItemWrappers/volumeitemwrapper_refactored.h"
@@ -57,6 +58,8 @@ class SketchScene_Refactored: public QGraphicsScene
         void processCurve( Curve2D& curve );
         void removeCurve();
 
+        bool hasImageInCrossSection();
+        void setCurrentCrossSection( double depth );
         void removeImageFromCrossSection();
 
         void setModeSketching();
@@ -100,6 +103,9 @@ class SketchScene_Refactored: public QGraphicsScene
         enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY,
                                      EDITING_SCENE };
 
+
+        double current_csection;
+
         QColor current_color;
         UserInteraction current_interaction;
 
@@ -108,6 +114,7 @@ class SketchScene_Refactored: public QGraphicsScene
         InputSketch* sketch;
 
         std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
+        std::map< double, QString > backgrounds;
 
 
 };

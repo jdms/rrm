@@ -74,8 +74,6 @@ class Controller_Refactored
         std::string getObjectName( std::size_t id );
 
 
-
-
         inline void setObjectColor( int r, int g, int b ){
                                     setObjectColor( current_object, r, g, b ); }
         inline void getObjectColor( int& r, int& g, int& b ){
@@ -83,8 +81,6 @@ class Controller_Refactored
 
         void setObjectColor( std::size_t id, int r, int g, int b );
         void getObjectColor( std::size_t id, int& r, int& g, int& b );
-
-
 
 
         inline void setObjectVisibility( bool status ){
@@ -96,35 +92,22 @@ class Controller_Refactored
         bool getObjectVisibility( std::size_t id );
 
 
-
-
         void addCurveToObject( const Curve2D& curve );
         void addTrajectoryToObject( const Curve2D& curve );
 
-        inline std::vector< Curve2D > getObjectCurves(){
-                                    getObjectCurves( current_object ); }
-        inline bool getObjectTrajectory( Curve2D& curve ) {
-                                    return getObjectTrajectory( current_object, curve ); }
-
-        std::vector< Curve2D > getObjectCurves( std::size_t id );
-        bool getObjectTrajectory( std::size_t id, Curve2D& curve );
-
 
         void removeCurveFromObject( double depth );
-
-
-        inline void createObjectSurface(){}
-
-
-
-        void setCurrentCrossSection( double depth );
-        inline void getCurrentCrossSection(){}
-        bool isValidCrossSection( double depth ) const;
-
+        bool createObjectSurface();
 
         void updateActiveObjects();
         bool updateActiveCurve( std::size_t id );
-        inline bool updateActiveSurface( std::size_t id ){ return false; }
+        bool updateActiveSurface( std::size_t id );
+        void desactiveObjects();
+
+
+        void setCurrentCrossSection( double depth );
+        double getCurrentCrossSection() const;
+        bool isValidCrossSection( double depth ) const;
 
 
         void initRulesProcessor();
@@ -147,6 +130,9 @@ class Controller_Refactored
         Volume* volume;
         std::map< std::size_t, Object_Refactored* > objects;
         std::size_t current_object;
+
+
+        double current_csection;
 
 
         std::tuple< int, int, int > current_color;

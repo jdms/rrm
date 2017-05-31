@@ -53,8 +53,10 @@ class Object_Refactored
         void setCrossSectionCurve( double depth, const Curve2D& curve,
                                    std::vector< std::size_t > edges = std::vector< std::size_t >() );
         Curve2D getCrossSectionCurve( double depth ) ;
-        std::vector< Curve2D > getCrossSectionCurves();
         std::vector< std::size_t > getCrossSectionCurveEdges( double depth ) ;
+
+        std::vector< std::tuple< Curve2D, double > > getCrossSectionCurves();
+
         void removeCrossSectionCurve( double depth );
         void removeCrossSections();
 
