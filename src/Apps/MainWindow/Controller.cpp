@@ -391,6 +391,7 @@ void Controller::cleaningScenes()
 
 void Controller::cleaningRawData()
 {
+    resize_volume = true;
 
     input_volume.clear();
     disc_width = 10;
