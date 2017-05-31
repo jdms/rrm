@@ -146,6 +146,7 @@ void Controller_Refactored::addObjectToInterface()
 
     Object_Refactored* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
+    scene3d->addObject( obj );
 
 }
 
@@ -227,6 +228,8 @@ void Controller_Refactored::addCurveToObject( const Curve2D& curve )
 
 //    setCrossSectionAsUsed();
     addObjectToInterface();
+
+    createObjectSurface();
 
 }
 
@@ -318,6 +321,7 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
     obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
                                curve_edges );
 
+
     return true;
 
 
@@ -334,8 +338,15 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
     bool has_surface = rules_processor.getMesh( id, surface_vertices, surface_faces );
     if( has_surface  == false ) return false;
 
+
+    std::vector< double > surface_normals;
+    rules_processor.getNormals( id, surface_normals );
+
     obj->setSurface( surface_vertices, surface_faces );
+    obj->setSurfaceNormals( surface_normals );
     obj->setVisibility( true );
+
+    scene3d->updateObject( id );
 
     return true;
 

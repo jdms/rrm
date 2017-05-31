@@ -241,6 +241,9 @@ void MainWindow_Refactored::setupController()
     connect( csection_scene, &CSectionScene::removeCurveFromObject, [=]( double depth ){
                                                 controller->removeCurveFromObject( depth ); } );
 
+    connect( csection_scene, &CSectionScene::createSurface, [=](){
+                                                controller->createObjectSurface(); } );
+
 
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 disableVolumeResizing();

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QColor>
 
+#include "Eigen/Dense"
+
 class QString;
 class QOpenGLContext;
 class QSurface;
@@ -11,6 +13,8 @@ class QSurface;
 class Volume;
 class VolumeOpenGLWrapper_Refactored;
 class CrossSectionOpenGLWrapper_Refactored;
+class Object_Refactored;
+class ObjectOpenGLWrapper_Refactored;
 
 
 class Scene3d_refactored: public QObject
@@ -25,8 +29,8 @@ class Scene3d_refactored: public QObject
 
         void addCrossSection();
 
-        inline void addObject(){}
-        inline bool isDuplicatedObject(){ return true; }
+        bool addObject( Object_Refactored* const& obj );
+        bool isAddedObject( std::size_t id );
 
         inline void setActiveObjects(){}
 
@@ -39,11 +43,11 @@ class Scene3d_refactored: public QObject
         void setCurrentColor( const QColor& color );
 
         inline void upadteVolume(){}
-        inline void updateObject(){}
+        void updateObject( std::size_t );
         inline void updateObjects(){}
         inline void updateScene(){}
 
-        inline void draw(){}
+        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
         inline void clear(){}
 
         inline void setDefaultValues(){}
@@ -67,6 +71,8 @@ class Scene3d_refactored: public QObject
 
         VolumeOpenGLWrapper_Refactored* volume;
         CrossSectionOpenGLWrapper_Refactored* csection;
+
+        std::map< std::size_t, ObjectOpenGLWrapper_Refactored* > objects;
 
 };
 

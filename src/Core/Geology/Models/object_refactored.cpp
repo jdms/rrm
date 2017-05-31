@@ -218,6 +218,24 @@ void Object_Refactored::setSurfaceNormals( const std::vector< double >& normals 
 }
 
 
+std::vector< double > Object_Refactored::getSurfaceVertices() const
+{
+    return surface_vertices;
+}
+
+
+std::vector< std::size_t > Object_Refactored::getSurfaceFaces() const
+{
+    return surface_faces;
+}
+
+
+std::vector< double > Object_Refactored::getSurfaceNormals() const
+{
+    return surface_normals;
+}
+
+
 void Object_Refactored::removeSurface()
 {
     surface_vertices.clear();

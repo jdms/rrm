@@ -70,10 +70,15 @@ class Object_Refactored
 
         void setSurface( const std::vector< double >& vertices,
                          const std::vector< std::size_t >& faces );
+
+
         void setSurfaceNormals( const std::vector< double >& normals );
         void removeSurface();
 
 
+        std::vector< double > getSurfaceVertices() const ;
+        std::vector< std::size_t > getSurfaceFaces() const ;
+        std::vector< double > getSurfaceNormals() const ;
 
         void clear();
         void setDefaultValues();

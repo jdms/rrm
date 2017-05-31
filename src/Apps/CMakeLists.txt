@@ -122,6 +122,7 @@ set( 3DVIEW_HEADERS    3dView/Canvas3D.h
                        3dView/Model3DUtils.hpp
                        3dView/scene3d_refactored.h
                        3dView/OpenGLWrappers/CoordinateAxes.h
+                       3dView/OpenGLWrappers/objectopenglwrapper_refactored.h
                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
                        3dView/OpenGLWrappers/VolumeOpenGLWrap.h
                        3dView/OpenGLWrappers/volumeopenglwrapper_refactored.h
@@ -144,6 +145,7 @@ set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
                         3dView/scene3d_refactored.cpp
                         3dView/Model3DUtils.cpp
                         3dView/OpenGLWrappers/CoordinateAxes.cpp
+                        3dView/OpenGLWrappers/objectopenglwrapper_refactored.cpp
                         3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
                         3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
                         3dView/OpenGLWrappers/volumeopenglwrapper_refactored.cpp

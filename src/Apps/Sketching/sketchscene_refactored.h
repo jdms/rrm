@@ -72,6 +72,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         void addCurveToObject( const Curve2D& curve );
         void removeCurveFromObject( double depth );
+        void createSurface();
 
 
 

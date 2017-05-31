@@ -23,6 +23,7 @@ void VolumeOpenGLWrapper_Refactored::setShaderDirectory( const std::string& dir 
 void VolumeOpenGLWrapper_Refactored::setRawVolume( Volume* const& vol )
 {
     raw = vol;
+    createVolumeBox();
 }
 
 
@@ -32,6 +33,10 @@ Volume* VolumeOpenGLWrapper_Refactored::getRawVolume() const
 }
 
 
+void VolumeOpenGLWrapper_Refactored::getOrigin( double& w, double& h, double& d ) const
+{
+    raw->getOrigin( w, h, d );
+}
 
 
 double VolumeOpenGLWrapper_Refactored::getWidth() const
@@ -334,6 +339,8 @@ void VolumeOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
     Eigen::Affine3f M;
     M.setIdentity();
 
+    glEnable( GL_BLEND );
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable( GL_DEPTH_TEST );
 
     shader->bind();

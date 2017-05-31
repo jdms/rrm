@@ -25,6 +25,7 @@ class VolumeOpenGLWrapper_Refactored
 
         bool isVisible() const;
 
+        void getOrigin( double& w, double& h, double& d ) const ;
 
         double getWidth() const ;
         double getHeight() const ;
