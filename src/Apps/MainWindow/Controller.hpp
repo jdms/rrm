@@ -457,6 +457,19 @@ class Controller: public QObject
         }
 
 
+        inline void saveFile( const std::string& filename )
+        {
+            rules_processor.saveFile( filename );
+        }
+
+        inline void loadFile( const std::string& filename )
+        {
+            rules_processor.loadFile( filename );
+            updateObjects();
+        }
+
+
+
     private:
 
         void addInputVolumeToScenes();
@@ -602,6 +615,8 @@ class Controller: public QObject
         void cleaningScenes();
         void cleaningRawData();
         void cleaningRules();
+
+
 
 /*
                 inline bool registerSolver()
