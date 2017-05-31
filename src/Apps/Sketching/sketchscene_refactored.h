@@ -6,13 +6,16 @@
 
 #include "Sketching/InputSketch.h"
 #include "ItemWrappers/volumeitemwrapper_refactored.h"
+#include "ItemWrappers/objectitemwrapper_refactored.h"
 
 
 
 class Volume;
+class Object_Refactored;
 class QGraphicsSceneMouseEvent;
 class QGraphicsPixmapItem;
 class QGraphicsSceneDragDropEvent;
+class QKeyEvent;
 
 
 class SketchScene_Refactored: public QGraphicsScene
@@ -25,37 +28,47 @@ class SketchScene_Refactored: public QGraphicsScene
         SketchScene_Refactored();
 
         void addVolume( Volume* const& vol );
-        inline void addObject(){}
+        void addObject( Object_Refactored* const& obj );
 
-        inline void setObjectSelected( std::size_t id ){}
-        inline void setObjectSelectable( std::size_t id ){}
+        void setModeEditable( bool status );
 
         void setCurrentColor( const QColor& color );
+        void setCurrentColor( int r, int g, int b );
 
         inline void upadteVolume(){}
-        inline void updateObject( std::size_t id ){}
+        void updateObject( std::size_t id );
+
+        void reActiveObject( std::size_t id );
+        void removeObjectsFromScene();
+
 
         inline void updateScene(){}
         inline void clear(){}
 
         inline void setDefaultValues(){}
 
-
         void startSketch( const QPointF& p );
         void clearSketch();
 
         void finishSketch();
         bool acceptSketch( Curve2D& curve );
-
-
         bool isValidSketch();
 
-         void processCurve( Curve2D& curve );
+        void processCurve( Curve2D& curve );
+        void removeCurve();
+
+        void removeImageFromCrossSection();
+
+        void setModeSketching();
+        void setModeSelecting();
+        void setModeEditingBoundary();
+        void setModeMovingImage();
 
 
     signals:
 
         void addCurveToObject( const Curve2D& curve );
+        void removeCurveFromObject( double depth );
 
 
 
@@ -63,7 +76,10 @@ class SketchScene_Refactored: public QGraphicsScene
 
         void createCrossSectionImageItem();
         void setImageToCrossSection( const QString& file );
-        void resetImageToCrossSection();
+
+
+        bool isAddedObject( std::size_t id ) const ;
+
 
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
@@ -73,13 +89,16 @@ class SketchScene_Refactored: public QGraphicsScene
         void dragMoveEvent( QGraphicsSceneDragDropEvent* event );
         void dropEvent( QGraphicsSceneDragDropEvent* event );
 
+        void keyPressEvent( QKeyEvent *event );
+
 
 
 
 
     private:
 
-        enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY };
+        enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY,
+                                     EDITING_SCENE };
 
         QColor current_color;
         UserInteraction current_interaction;
@@ -87,6 +106,9 @@ class SketchScene_Refactored: public QGraphicsScene
         QGraphicsPixmapItem* csection_image;
         VolumeItemWrapper_Refactored volume;
         InputSketch* sketch;
+
+        std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
+
 
 };
 

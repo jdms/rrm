@@ -6,29 +6,34 @@
 #include <map>
 #include <tuple>
 
-class Curve2D;
+#include "./Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+
 
 class Object_Refactored
 {
     public:
 
-        enum class Type { STRATIGRAPHY };
+        enum class Type { STRATIGRAPHY, NONE };
 
         Object_Refactored();
+        Object_Refactored( const Object_Refactored::Type& t );
 
 
-        std::size_t getId() const{}
+        std::size_t getId() const;
 
         void setType( const Object_Refactored::Type& t );
         Object_Refactored::Type getType() const ;
 
         void setName( const std::string& n );
-        std::string getName() const ;
+        std::string getName() const;
 
 
         void setColor( int r, int g, int b );
         void getColor( int& r, int& g, int& b ) const ;
 
+
+        void setEditable( bool status );
+        bool getEditable() const ;
 
         void setSelectable( bool status );
         bool getSelectable() const ;
@@ -42,21 +47,22 @@ class Object_Refactored
         bool getVisibility() const ;
 
 
-        bool isEmpty() const { return true; }
+        bool isEmpty() const ;
 
 
-        void setCrossSectionCurve( double depth, Curve2D* const& curve,
+        void setCrossSectionCurve( double depth, const Curve2D& curve,
                                    std::vector< std::size_t > edges = std::vector< std::size_t >() );
-        void getCrossSectionCurve( double depth ) const ;
-        void getCrossSectionCurveEdges( double depth ) const ;
+        Curve2D getCrossSectionCurve( double depth ) ;
+        std::vector< Curve2D > getCrossSectionCurves();
+        std::vector< std::size_t > getCrossSectionCurveEdges( double depth ) ;
         void removeCrossSectionCurve( double depth );
         void removeCrossSections();
 
 
 
         bool hasTrajectoryCurve();
-        void setTrajectoryCurve( Curve2D* const& path );
-        Curve2D* getTrajectoryCurve() const ;
+        void setTrajectoryCurve( const Curve2D& path );
+        Curve2D getTrajectoryCurve() const ;
         void removeTrajectoryCurve();
 
 
@@ -67,13 +73,15 @@ class Object_Refactored
 
 
 
-        void clear(){}
-        void setDefaultValues(){}
+        void clear();
+        void setDefaultValues();
 
 
 
 
+    public:
 
+        static std::size_t count_objects;
 
 
     private:
@@ -86,12 +94,13 @@ class Object_Refactored
         bool is_selectable;
         bool is_selected;
         bool is_visible;
+        bool is_editable;
 
 
         bool has_trajectory;
-        std::map< double, Curve2D* > csections_curves;
+        std::map< double, Curve2D > csections_curves;
         std::map< double, std::vector< std::size_t > > csections_edges;
-        Curve2D* trajectory_curve;
+        Curve2D trajectory_curve;
 
 
         std::vector< double > surface_vertices;
@@ -99,7 +108,7 @@ class Object_Refactored
         std::vector< double > surface_normals;
 
 
-        static std::size_t count_objects;
+
 
 
 };

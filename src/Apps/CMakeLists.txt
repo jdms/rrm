@@ -75,6 +75,7 @@ set( SKETCHING_HEADERS        Sketching/sketchwindow.h
                               Sketching/sketchscene_refactored.h
                               Sketching/csectionscene.h
                               Sketching/topviewscene.h
+                              Sketching/ItemWrappers/objectitemwrapper_refactored.h
                               Sketching/ItemWrappers/ObjectItemWrap.h
                               Sketching/ItemWrappers/VolumeItemWrapper.h
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.h
@@ -102,6 +103,7 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
                               Sketching/SketchScene.cpp
                               Sketching/sketchscene_refactored.cpp
                               Sketching/csectionscene.cpp
+                              Sketching/ItemWrappers/objectitemwrapper_refactored.cpp
                               Sketching/ItemWrappers/ObjectItemWrap.cpp
                               Sketching/ItemWrappers/VolumeItemWrapper.cpp
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.cpp
@@ -310,12 +312,12 @@ add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${SKETCHING_SOURCES} ${SKETCHING_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
 #                               ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}
-                               ${GEOLOGY_HEADERS}
+                               ${GEOLOGY_SOURCES} ${GEOLOGY_HEADERS}
                                ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} Resources/rrm.rc)
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}
-                                        planin stratmod RRMGeometry Arrangement_2D SketchLib )
+                                        planin stratmod RRMGeometry RRMGeology Arrangement_2D SketchLib )
 
 
 ######################################################

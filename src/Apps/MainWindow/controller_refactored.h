@@ -5,13 +5,16 @@
 #include <string>
 #include <map>
 
+#include "RulesProcessor.hpp"
+#include "./Core/Geology/Models/object_refactored.h"
+
+
 class CSectionScene;
 class TopViewScene;
 class Scene3d_refactored;
 class ObjectTree;
 
 class Volume;
-class Object_Refactored;
 
 
 class Controller_Refactored
@@ -44,39 +47,92 @@ class Controller_Refactored
 
 
         void addObject();
-        inline void addObjectToInterface(){}
+        void addObjectToInterface();
+        void showObjectInCrossSection( std::size_t id );
 
-        void setObjectType( const Object_Refactored::Type& type );
-        Object_Refactored::Type getObjectType() const;
+        bool isValidObject( std::size_t id ) const ;
 
-        void setObjectName( const std::string& name );
-        std::string getObjectName() const;
 
-        inline void setObjectColor(){}
-        inline void getObjectColor(){}
+        inline void setObjectType( const Object_Refactored::Type& type ) {
+                                    setObjectType( current_object, type ); }
 
-        inline void setObjectVisibility(){}
-        inline void getObjectVisibility(){}
+        inline Object_Refactored::Type getObjectType(){
+                                    return getObjectType( current_object ); }
 
-        inline void addCurveToObject();
-        inline void addTrajectoryToObject(){}
+        void setObjectType( std::size_t id, const Object_Refactored::Type& type );
+        Object_Refactored::Type getObjectType( std::size_t id );
 
-        inline void getObjectCurves(){}
-        inline void getObjectTrajectory(){}
+
+
+
+        inline void setObjectName( const std::string& name ){
+                                    setObjectName( current_object, name ) ;}
+        inline std::string getObjectName(){
+                                    return getObjectName( current_object ); }
+
+        void setObjectName( std::size_t id, const std::string& name );
+        std::string getObjectName( std::size_t id );
+
+
+
+
+        inline void setObjectColor( int r, int g, int b ){
+                                    setObjectColor( current_object, r, g, b ); }
+        inline void getObjectColor( int& r, int& g, int& b ){
+                                    getObjectColor( current_object, r, g, b ); }
+
+        void setObjectColor( std::size_t id, int r, int g, int b );
+        void getObjectColor( std::size_t id, int& r, int& g, int& b );
+
+
+
+
+        inline void setObjectVisibility( bool status ){
+                                    setObjectVisibility( current_object, status ); }
+        inline bool getObjectVisibility(){
+                                    return getObjectVisibility( current_object ); }
+
+        void setObjectVisibility( std::size_t id,  bool status );
+        bool getObjectVisibility( std::size_t id );
+
+
+
+
+        void addCurveToObject( const Curve2D& curve );
+        void addTrajectoryToObject( const Curve2D& curve );
+
+        inline std::vector< Curve2D > getObjectCurves(){
+                                    getObjectCurves( current_object ); }
+        inline bool getObjectTrajectory( Curve2D& curve ) {
+                                    return getObjectTrajectory( current_object, curve ); }
+
+        std::vector< Curve2D > getObjectCurves( std::size_t id );
+        bool getObjectTrajectory( std::size_t id, Curve2D& curve );
+
+
+        void removeCurveFromObject( double depth );
+
 
         inline void createObjectSurface(){}
 
 
-        inline void setCurrentCrossSection(){}
+
+        void setCurrentCrossSection( double depth );
         inline void getCurrentCrossSection(){}
+        bool isValidCrossSection( double depth ) const;
 
 
-        inline void updateActiveCurves(){}
-        inline void updateActiveSurfaces(){}
+        void updateActiveObjects();
+        bool updateActiveCurve( std::size_t id );
+        inline bool updateActiveSurface( std::size_t id ){ return false; }
 
 
-        inline void initRulesProcessor(){}
-        inline void updateBoundingBoxRulesProcessor( double width, double height, double depth ){}
+        void initRulesProcessor();
+        void updateBoundingBoxRulesProcessor();
+
+
+        void setCurrentColor( int r, int g, int b );
+        void getCurrentColor( int& r, int& g, int& b ) const ;
 
 
     private:
@@ -86,10 +142,14 @@ class Controller_Refactored
         Scene3d_refactored* scene3d;
         ObjectTree* object_tree;
 
+        RulesProcessor rules_processor;
+
         Volume* volume;
         std::map< std::size_t, Object_Refactored* > objects;
         std::size_t current_object;
 
+
+        std::tuple< int, int, int > current_color;
 };
 
 #endif // CONTROLLER_REFACTORED_H

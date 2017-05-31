@@ -21,9 +21,13 @@ class SketchWindow: public QMainWindow
         SketchScene_Refactored* getScene() const;
 
 
+        void setEnabledVolumeResize( bool status );
+
+
     signals:
 
         void createSurface();
+        void defineColorCurrent( const QColor& c );
 
 
 
@@ -39,6 +43,7 @@ class SketchWindow: public QMainWindow
 
         bool is_customizable;
 
+        QAction* ac_edit_boundary;
         QGraphicsView* gv_view;
         SketchScene_Refactored* scene;
 

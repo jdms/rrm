@@ -47,22 +47,45 @@ void SketchWindow::createToolbarActions()
     QAction* ac_create_surface = new QAction( "Create", this );
     connect( ac_create_surface, &QAction::triggered, [=](){ emit createSurface(); } );
 
-    QAction* ac_edit_boundary = new QAction( "Edit Boundary", this );
+    ac_edit_boundary = new QAction( "Edit Boundary", this );
     ac_edit_boundary->setCheckable( true );
     ac_edit_boundary->setVisible( is_customizable );
 
+    QAction* ac_edit_scene = new QAction( "Edit Objects", this );
+    ac_edit_scene->setCheckable( true );
+    connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditable );
+
+    QAction* ac_remove_curve = new QAction( "Delete Curve", this );
+    connect( ac_remove_curve, &QAction::triggered, scene, &SketchScene_Refactored::removeCurve );
+
+    QAction* ac_remove_image = new QAction( "Remove Image", this );
+    connect( ac_remove_image, &QAction::triggered, scene, &SketchScene_Refactored::removeImageFromCrossSection );
+
+
     ColorPicker* cp_define_color = new ColorPicker( this );
     cp_define_color->setVisible( is_customizable );
+    connect( cp_define_color, &ColorPicker::colorSelected, [=]( const QColor& c ){ emit defineColorCurrent( c ); } );
 
     QToolBar* tb_commands = new QToolBar( this );
     tb_commands->addAction( ac_discard_sketch );
     tb_commands->addAction( ac_commit_sketch );
     tb_commands->addAction( ac_create_surface );
     tb_commands->addSeparator();
+    tb_commands->addAction( ac_edit_scene );
+    tb_commands->addAction( ac_remove_curve );
+    tb_commands->addAction( ac_remove_image );
+    tb_commands->addSeparator();
     tb_commands->addAction( ac_edit_boundary );
     tb_commands->addWidget( cp_define_color );
     addToolBar( tb_commands );
 
+}
+
+
+
+void SketchWindow::setEnabledVolumeResize( bool status )
+{
+    ac_edit_boundary->setEnabled( status );
 }
 
 

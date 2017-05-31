@@ -1,5 +1,5 @@
 #include "object_refactored.h"
-#include "Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+
 
 Object_Refactored::Object_Refactored()
 {
@@ -47,7 +47,7 @@ std::string Object_Refactored::getName() const
 
 void Object_Refactored::setColor( int r, int g, int b )
 {
-    std::make_tuple( r, g, b );
+    color = std::make_tuple( r, g, b );
 }
 
 
@@ -59,13 +59,26 @@ void Object_Refactored::getColor( int& r, int& g, int& b ) const
 }
 
 
+void Object_Refactored::setEditable( bool status )
+{
+    is_editable = status;
+}
+
+
+bool Object_Refactored::getEditable() const
+{
+    return is_editable;
+}
+
+
+
 void Object_Refactored::setSelectable( bool status )
 {
     is_selectable = status;
 }
 
 
-bool Object_Refactored::getSelectable()
+bool Object_Refactored::getSelectable() const
 {
     return is_selectable;
 }
@@ -78,7 +91,7 @@ void Object_Refactored::setSelected( bool status )
 }
 
 
-bool Object_Refactored::getSelected()
+bool Object_Refactored::getSelected() const
 {
     return is_selected;
 }
@@ -104,21 +117,33 @@ bool Object_Refactored::isEmpty() const
 }
 
 
-void Object_Refactored::setCrossSectionCurve( double depth, Curve2D* const& curve,
-                           std::vector< std::size_t > edges = std::vector< std::size_t >() )
+void Object_Refactored::setCrossSectionCurve( double depth, const Curve2D& curve,
+                           std::vector< std::size_t > edges )
 {
     csections_curves[ depth ] = curve;
     csections_edges[ depth ] = edges;
 }
 
 
-Curve2D* Object_Refactored::getCrossSectionCurve( double depth ) const
+Curve2D Object_Refactored::getCrossSectionCurve( double depth )
 {
     return csections_curves[ depth ];
 }
 
 
-std::vector< std::size_t > Object_Refactored::getCrossSectionCurveEdges( double depth ) const
+std::vector< Curve2D > Object_Refactored::getCrossSectionCurves()
+{
+    std::vector< Curve2D > curves;
+    for( auto it: csections_curves )
+    {
+        curves.push_back( it.second );
+    }
+
+    return curves;
+}
+
+
+std::vector< std::size_t > Object_Refactored::getCrossSectionCurveEdges( double depth )
 {
     return csections_edges[ depth ];
 }
@@ -126,21 +151,27 @@ std::vector< std::size_t > Object_Refactored::getCrossSectionCurveEdges( double 
 
 void Object_Refactored::removeCrossSectionCurve( double depth )
 {
-    delete csections_curves[ depth ];
+    csections_curves[ depth ].clear();
     csections_curves.erase( depth );
 
-    delete csections_edges[ depth ];
+    csections_edges[ depth ].clear();
     csections_edges.erase( depth );
 }
 
 
 void Object_Refactored::removeCrossSections()
 {
-    for( auto &it: csections_curves )
+    if( csections_curves.empty() == true ) return;
+
+    std::map< double, Curve2D >::iterator it = csections_curves.begin();
+    while ( it != csections_curves.end()  )
     {
-        removeCrossSectionCurve( it.first );
+        removeCrossSectionCurve( it->first );
+        it = csections_curves.begin();
     }
+
     csections_curves.clear();
+    csections_edges.clear();
 }
 
 
@@ -150,13 +181,13 @@ bool Object_Refactored::hasTrajectoryCurve()
 }
 
 
-void Object_Refactored::setTrajectoryCurve( Curve2D* const& path )
+void Object_Refactored::setTrajectoryCurve( const Curve2D& path )
 {
     trajectory_curve = path;
 }
 
 
-Curve2D* Object_Refactored::setTrajectoryCurve() const
+Curve2D Object_Refactored::getTrajectoryCurve() const
 {
     return trajectory_curve;
 }
@@ -165,7 +196,7 @@ Curve2D* Object_Refactored::setTrajectoryCurve() const
 void Object_Refactored::removeTrajectoryCurve()
 {
     trajectory_curve.clear();
-    delete trajectory_curve;
+    has_trajectory = false;
 }
 
 
@@ -178,7 +209,7 @@ void Object_Refactored::setSurface( const std::vector< double >& vertices,
 }
 
 
-void Object_Refactored::setNormals( const std::vector< double >& normals )
+void Object_Refactored::setSurfaceNormals( const std::vector< double >& normals )
 {
     surface_normals.clear();
     surface_normals.assign( normals.begin(), normals.end() );
@@ -213,7 +244,8 @@ void Object_Refactored::setDefaultValues()
 
     is_selectable = false;
     is_selected = false;
-    is_visible = false;
+    is_visible = true;
+    is_editable = true;
 }
 
 

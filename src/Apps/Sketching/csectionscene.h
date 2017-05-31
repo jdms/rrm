@@ -17,6 +17,11 @@ class CSectionScene: public SketchScene_Refactored
         inline void setObjectsSelectable( const std::vector< std::size_t >& objs ){}
         inline void updateObjects( const std::vector< std::size_t >& objs ){}
 
+
+    private:
+
+         std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
+
 };
 
 #endif // CSECTIONSCENE_H

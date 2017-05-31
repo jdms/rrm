@@ -28,9 +28,9 @@
 
 #include "MainWindow.h"
 #include "mainwindow_refactored.h"
+#include "./Core/Geology/Models/object_refactored.h"
 
-
-
+std::size_t Object_Refactored::count_objects = 0;
 std::size_t Object::index = 0;
 
 int main( int argc, char *argv[] )
