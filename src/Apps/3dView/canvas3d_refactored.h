@@ -7,6 +7,8 @@
 
 #include <QOpenGLWidget>
 
+class QMouseEvent;
+class QWheelEvent;
 
 
 class Canvas3d_Refactored: public QOpenGLWidget
@@ -26,15 +28,22 @@ class Canvas3d_Refactored: public QOpenGLWidget
         void resizeGL( int width, int height );
         void paintGL();
 
-
         void createScene();
         void shareOpenGLContext();
+
+        void mousePressEvent( QMouseEvent *event );
+        void mouseMoveEvent( QMouseEvent *event );
+        void mouseReleaseEvent( QMouseEvent *event );
+        void wheelEvent( QWheelEvent *event );
 
 
     private:
 
 
         Scene3d_refactored* scene3d;
+
+        Tucano::Trackball camera;
+        const int WHEEL_STEP = 120;
 
 };
 

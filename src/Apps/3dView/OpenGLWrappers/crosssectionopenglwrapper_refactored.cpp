@@ -215,6 +215,8 @@ void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const
     Eigen::Affine3f M;
     M.setIdentity();
 
+    glEnable( GL_BLEND );
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable( GL_DEPTH_TEST );
 
     shader->bind();
