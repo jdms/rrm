@@ -170,6 +170,8 @@
             /* bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ); */
 
 
+            bool saveFile( std::string filename );
+            bool loadFile( std::string filename );
 
             /* End methods to interface with GUI */
 

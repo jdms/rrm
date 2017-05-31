@@ -247,5 +247,16 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vect
     return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
 }
 
+bool RulesProcessor::saveFile( std::string filename )
+{
+    (void)(filename);
+    return false;
+}
+
+bool RulesProcessor::loadFile( std::string filename )
+{
+    (void)(filename);
+    return false;
+}
 
 //{} // namespace RRM
