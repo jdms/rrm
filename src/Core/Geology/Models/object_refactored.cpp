@@ -131,12 +131,12 @@ Curve2D Object_Refactored::getCrossSectionCurve( double depth )
 }
 
 
-std::vector< Curve2D > Object_Refactored::getCrossSectionCurves()
+std::vector< std::tuple< Curve2D, double > > Object_Refactored::getCrossSectionCurves()
 {
-    std::vector< Curve2D > curves;
+    std::vector< std::tuple< Curve2D, double > > curves;
     for( auto it: csections_curves )
     {
-        curves.push_back( it.second );
+        curves.push_back( std::make_tuple( it.second, (std::size_t)it.first ) );
     }
 
     return curves;
@@ -206,6 +206,8 @@ void Object_Refactored::setSurface( const std::vector< double >& vertices,
     removeSurface();
     surface_vertices.assign( vertices.begin(), vertices.end() );
     surface_faces.assign( faces.begin(), faces.end() );
+
+    is_editable = false;
 }
 
 
@@ -221,6 +223,8 @@ void Object_Refactored::removeSurface()
     surface_vertices.clear();
     surface_faces.clear();
     surface_normals.clear();
+
+    is_editable = true;
 }
 
 

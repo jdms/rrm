@@ -12,7 +12,13 @@
 
 Controller_Refactored::Controller_Refactored()
 {
+    current_csection = 0;
     volume = nullptr;
+    csection_scene = nullptr;
+    topview_scene = nullptr;
+    scene3d = nullptr;
+    object_tree = nullptr;
+
 }
 
 
@@ -40,15 +46,14 @@ void Controller_Refactored::setObjectTree( ObjectTree* const& ot )
 }
 
 
-
 void Controller_Refactored::init()
 {
     addVolume();
     addVolumeToInterface();
 
+    setCurrentCrossSection( volume->getDepth() );
     addObject();
 }
-
 
 
 void Controller_Refactored::addVolume()
@@ -70,7 +75,6 @@ void Controller_Refactored::addVolumeToInterface()
 
     object_tree->addInputVolume();
 }
-
 
 
 void Controller_Refactored::setVolumeWidth( double width )
@@ -143,7 +147,6 @@ void Controller_Refactored::addObjectToInterface()
     Object_Refactored* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
 
-    addObject();
 }
 
 
@@ -194,6 +197,7 @@ void Controller_Refactored::setObjectColor( std::size_t id, int r, int g, int b 
     object->setColor( r, g, b );
 }
 
+
 void Controller_Refactored::getObjectColor( std::size_t id, int& r, int& g, int& b )
 {
     if( isValidObject( id ) == false ) return;
@@ -219,7 +223,7 @@ bool Controller_Refactored::getObjectVisibility( std::size_t id )
 void Controller_Refactored::addCurveToObject( const Curve2D& curve )
 {
     Object_Refactored* const& object = objects[ current_object ];
-    object->setCrossSectionCurve( 0, curve );
+    object->setCrossSectionCurve( current_csection, curve );
 
 //    setCrossSectionAsUsed();
     addObjectToInterface();
@@ -242,58 +246,50 @@ void Controller_Refactored::addTrajectoryToObject( const Curve2D& curve )
 }
 
 
-std::vector< Curve2D > Controller_Refactored::getObjectCurves( std::size_t id )
+bool Controller_Refactored::createObjectSurface()
 {
-    if( isValidObject( id ) == false ) return std::vector< Curve2D >();
-    return objects[ id ]->getCrossSectionCurves();
-}
+    if( isValidObject( current_object ) == false ) return false;
 
+    Object_Refactored* const& obj = objects[ current_object ];
+    std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
 
-bool Controller_Refactored::getObjectTrajectory( std::size_t id, Curve2D& curve )
-{
+    if( curves.empty() == true ) return false;
 
-    if( isValidObject( id ) == false ) return false;
-    Object_Refactored* const& object = objects[ id ];
+    rules_processor.createSurface( current_object, curves );
+    updateActiveObjects();
 
-    if( object->hasTrajectoryCurve() == false )
-        return false;
-
-    curve = object->getTrajectoryCurve();
     return true;
 }
 
 
-void Controller_Refactored::setCurrentCrossSection( double depth )
+void Controller_Refactored::desactiveObjects()
 {
-    if( ( isValidCrossSection( depth ) == false ) || ( objects.empty() == true ) ) return;
+    for( auto it: objects )
+    {
+        Object_Refactored* obj = objects[ it.first ];
+        obj->setVisibility( false );
 
-    csection_scene->removeObjectsFromScene();
-
-    updateActiveObjects();
-
-}
-
-
-bool Controller_Refactored::isValidCrossSection( double depth ) const
-{
-    double ox = 0.0f, oy = 0.0f, oz = 0.0f;
-    volume->getOrigin( ox, oy, oz );
-
-    if( std::fabs(  depth - oz ) <= volume->getDepth() )
-        return true;
-    else
-        return false;
+        // TODO: set visibility as false in object tree too
+    }
 }
 
 
 void Controller_Refactored::updateActiveObjects()
 {
+    desactiveObjects();
+
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     actives.push_back( current_object );
 
     for( auto it: actives )
     {
-        updateActiveSurface( it );
+
+        bool has_surface = updateActiveSurface( it );
+//        if( has_surface == true )
+//            showObjectInCrossSection( it );
+//        else
+//            std::cout << "there is not curve in this cross-section\n" << std::flush;
+
 
         bool has_curve = updateActiveCurve( it );
         if( has_curve == true )
@@ -319,7 +315,7 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
     if( has_curve == false ) return false;
 
 
-    obj->setCrossSectionCurve( 0/*csection_depth*/, Model3DUtils::convertToCurve2D( curve_vertices ),
+    obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
                                curve_edges );
 
     return true;
@@ -328,11 +324,63 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 }
 
 
+bool Controller_Refactored::updateActiveSurface( std::size_t id )
+{
+    Object_Refactored* obj = objects[ id ];
+
+    std::vector< double > surface_vertices;
+    std::vector< std::size_t > surface_faces;
+
+    bool has_surface = rules_processor.getMesh( id, surface_vertices, surface_faces );
+    if( has_surface  == false ) return false;
+
+    obj->setSurface( surface_vertices, surface_faces );
+    obj->setVisibility( true );
+
+    return true;
+
+}
+
 
 void Controller_Refactored::showObjectInCrossSection( std::size_t id )
 {
     csection_scene->reActiveObject( id );
 }
+
+
+
+
+void Controller_Refactored::setCurrentCrossSection( double depth )
+{
+    if( ( isValidCrossSection( depth ) == false ) || ( objects.empty() == true ) ) return;
+
+    current_csection = depth;
+    csection_scene->setCurrentCrossSection( current_csection );
+
+
+    updateActiveObjects();
+
+}
+
+
+double Controller_Refactored::getCurrentCrossSection() const
+{
+    return current_csection;
+}
+
+
+bool Controller_Refactored::isValidCrossSection( double depth ) const
+{
+    double ox = 0.0f, oy = 0.0f, oz = 0.0f;
+    volume->getOrigin( ox, oy, oz );
+
+    if( std::fabs(  depth - oz ) <= volume->getDepth() )
+        return true;
+    else
+        return false;
+}
+
+
 
 
 void Controller_Refactored::setCurrentColor( int r, int g, int b )

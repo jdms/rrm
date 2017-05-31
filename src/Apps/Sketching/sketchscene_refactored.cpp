@@ -15,6 +15,7 @@ SketchScene_Refactored::SketchScene_Refactored()
     sketch = nullptr;
     current_interaction = UserInteraction::SKETCHING;
     current_color = Qt::red;
+    current_csection = 0;
 
     createCrossSectionImageItem();
 }
@@ -45,7 +46,7 @@ void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
     if( isAddedObject( obj->getId() ) == true ) return;
 
     ObjectItemWrapper_Refactored* wrapper = new ObjectItemWrapper_Refactored();
-    wrapper->setRawObject( obj, 0 );
+    wrapper->setRawObject( obj, current_csection );
 
     objects[ obj->getId() ] = wrapper;
 
@@ -69,7 +70,7 @@ void SketchScene_Refactored::reActiveObject( std::size_t id )
     if( isAddedObject( id ) == false ) return;
 
     ObjectItemWrapper_Refactored* const& wrapper = objects[ id ];
-    wrapper->updateDepth( 0/*csection_depth*/ );
+    wrapper->updateDepth( current_csection );
 
     addItem( wrapper );
     update();
@@ -90,6 +91,7 @@ void SketchScene_Refactored::removeObjectsFromScene()
     setSceneRect( volume.boundingRect() );
 
 }
+
 
 void SketchScene_Refactored::setModeEditable( bool status )
 {
@@ -231,7 +233,7 @@ void SketchScene_Refactored::removeCurve()
     delete objects[ id ];
     objects.erase( id );
 
-    emit removeCurveFromObject( 0 );
+    emit removeCurveFromObject( current_csection );
     update();
 }
 
@@ -246,6 +248,17 @@ void SketchScene_Refactored::processCurve( Curve2D& curve )
 }
 
 
+void SketchScene_Refactored::setCurrentCrossSection( double depth )
+{
+    current_csection = depth;
+    removeObjectsFromScene();
+
+    if( hasImageInCrossSection() == false ) return;
+    setImageToCrossSection( backgrounds[ current_csection ] );
+
+}
+
+
 
 void SketchScene_Refactored::createCrossSectionImageItem()
 {
@@ -253,7 +266,6 @@ void SketchScene_Refactored::createCrossSectionImageItem()
     csection_image->setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     addItem( csection_image );
 
-    csection_image->
 
     update();
 }
@@ -264,7 +276,10 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
     QPixmap image = QPixmap( file );
     csection_image->setPixmap( image );
 
-    //TODO: add to map of images and cross_sections, saving the position too
+    //TODO: save the position
+    backgrounds[ current_csection ] = file;
+
+
 
     update();
 }
@@ -279,6 +294,16 @@ void SketchScene_Refactored::removeImageFromCrossSection()
     createCrossSectionImageItem();
 
     update();
+}
+
+
+bool SketchScene_Refactored::hasImageInCrossSection()
+{
+    auto search = backgrounds.find( current_csection );
+    if( search == backgrounds.end() )
+        return false;
+    else
+        return true;
 }
 
 
