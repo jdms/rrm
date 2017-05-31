@@ -61,6 +61,7 @@ class InterpolatedGraph
         bool getHeight( Point3 &p ); 
 
         bool getRawHeight( const Point2 &p, double &height );
+        double getPathOrdinate( double abscissa );
 
         template<typename CoordinatesList2D>
         double getRawHeight( CoordinatesList2D &&vertex ); 
@@ -124,6 +125,7 @@ class InterpolatedGraph
         void clearBoundingLists(); 
 
         bool isExtrudedSurface(); 
+        bool isPathExtrudedSurface();
 
     private: 
         static unsigned long int num_instances_; 
@@ -190,8 +192,20 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
 
     if ( isExtrudedSurface() )
     {
-        DxF = f.Dx(p.x, 0); 
-        DyF = 0; 
+        if ( path_is_set_ )
+        {
+            double origin = path(path_origin.x, 0) - path_origin.y;
+            /* height = f(p.x - (path(p.y, 0) - origin), 0); */
+
+            DxF = f.Dx(p.x - (path(p.y,0) - origin), 0);
+            DyF = f.Dx(p.x - (path(p.y,0) - origin), 0) * path.Dx(p.y,0);
+        }
+
+        else
+        {
+            DxF = f.Dx(p.x, 0); 
+            DyF = 0; 
+        }
     }
 
     else

@@ -62,7 +62,7 @@ void PlanarSurface::updateDiscretization()
     /* if ( this_discretization_state_ < global_discretization_state_ ) */ 
     if ( surfaceIsSet() == true ) 
     { 
-        updateHeights(); 
+        updateCache(); 
     }
     
     this_discretization_state_ = global_discretization_state_; 
@@ -150,6 +150,7 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
     /* lenght = rhs.lenght; */ 
 
     heights = rhs.heights; 
+    normals = rhs.normals;
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -184,6 +185,7 @@ PlanarSurface::PlanarSurface( PlanarSurface &&rhs ) : id_( rhs.id_ )
     /* lenght = std::move(rhs.lenght); */ 
 
     heights = std::move(rhs.heights); 
+    normals = std::move(rhs.normals);
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -806,22 +808,32 @@ bool PlanarSurface::generateSurface() {
     interpolant_is_set_ = true; 
     /* std::cout << "Got interpolant!\n\n"; */ 
 
-    updateHeights(); 
+    updateCache(); 
 
     return true; 
 }
 
-bool PlanarSurface::updateHeights() 
+bool PlanarSurface::updateCache() 
 {
     if ( surfaceIsSet() == false ) { 
         return false; 
     }
 
+    bool is_smooth = ( f->isSmooth() >= 1 );
+    if ( is_smooth )
+    {
+        normals.resize(3 * num_vertices_);
+    }
+
     heights.resize(num_vertices_); 
     Point2 v {};  
+    Point3 n {};
+
 
     auto &heights_omp = heights; 
     auto &f_omp = f; 
+    auto &nlist_omp = normals;
+    /* auto &cmap_omp = coordinates_map_; */ 
 
 
     /* TODO: revisit this logic to see whether it is possible to exploit the loop for the linear extrusion */
@@ -832,11 +844,20 @@ bool PlanarSurface::updateHeights()
     { 
         auto num_vertices_omp = num_vertices_; 
         /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-        #pragma omp parallel for shared(heights_omp, f_omp) firstprivate(num_vertices_omp, v) default(none) 
+        #pragma omp parallel for shared(heights_omp, nlist_omp, f_omp) firstprivate(num_vertices_omp, v, n, is_smooth) default(none) 
         for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
         {
             getVertex2D(i, v); 
             heights_omp[i] = f_omp->getRawHeight(v);  
+
+            if ( is_smooth )
+            {
+                getNormal(v, n); 
+                nlist_omp[3*i + 0] = n[0]; 
+                nlist_omp[3*i + 1] = n[1]; 
+                nlist_omp[3*i + 2] = n[2];
+            }
+
         }
     }
     else 
@@ -1052,6 +1073,11 @@ bool PlanarSurface::isExtrudedSurface()
 { 
     return extruded_surface_; 
 } 
+
+bool PlanarSurface::isPathExtrudedSurface()
+{
+    return f->isPathExtrudedSurface();
+}
 
 bool PlanarSurface::compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const
 {
