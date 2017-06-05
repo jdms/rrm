@@ -73,6 +73,24 @@ void PagesStack::setEnabledVolumeResize( bool status )
 }
 
 
+
+void PagesStack::setVolumeWidth( double w )
+{
+    wd_volume_resize.sb_width_volume->setValue( static_cast< int > (w) );
+}
+
+void PagesStack::setVolumeHeight( double h )
+{
+    wd_volume_resize.sb_height_volume->setValue( static_cast< int > (h) );
+}
+
+void PagesStack::setVolumeDepth( double d )
+{
+    wd_volume_resize.sb_depth_volume->setValue( static_cast< int > (d) );
+}
+
+
+
 void PagesStack::createRulesHistoryPage()
 {
 //    addWidget( gl_volume_resizing );

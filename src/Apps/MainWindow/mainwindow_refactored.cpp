@@ -256,6 +256,11 @@ void MainWindow_Refactored::setupController()
                                      controller->setCurrentColor( c.red(), c.green(), c.blue() );
                                  } );
 
+    connect( csection_scene, &CSectionScene::updateVolumeDimensions, [=]( double w, double h ){
+                                    resizingVolumeWidth( w );
+                                    resizingVolumeHeight( h );
+                                } );
+
 
     connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 disableVolumeResizing();
@@ -272,6 +277,12 @@ void MainWindow_Refactored::setupController()
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 disableVolumeResizing();
                                                 controller->addTrajectoryToObject( curve ); } );
+
+
+    connect( topview_scene, &TopViewScene::updateVolumeDimensions, [=]( double w, double d ){
+                                            resizingVolumeWidth( w );
+                                            resizingVolumeDepth( d );
+                                        } );
 
 
     connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
@@ -292,6 +303,27 @@ void MainWindow_Refactored::disableVolumeResizing()
 {
     pages_sidebar->setEnabledVolumeResize( false );
     sketch_window->setEnabledVolumeResize( false );
+}
+
+
+void MainWindow_Refactored::resizingVolumeWidth( double w )
+{
+    controller->setVolumeWidth( w );
+    pages_sidebar->setVolumeWidth( w );
+}
+
+
+void MainWindow_Refactored::resizingVolumeHeight( double h )
+{
+    controller->setVolumeHeight( h );
+    pages_sidebar->setVolumeHeight( h );
+}
+
+
+void MainWindow_Refactored::resizingVolumeDepth( double d )
+{
+    controller->setVolumeDepth( d );
+    pages_sidebar->setVolumeDepth( d );
 }
 
 

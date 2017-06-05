@@ -33,6 +33,8 @@ void SketchWindow::createScene()
         scene = new TopViewScene();
 
     gv_view->setScene( scene );
+
+
 }
 
 
@@ -51,7 +53,9 @@ void SketchWindow::createToolbarActions()
     ac_edit_boundary->setCheckable( true );
     ac_edit_boundary->setVisible( is_customizable );
 
-    connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditingBoundary );
+    connect( ac_edit_boundary, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditingBoundary );
+    connect( scene, &SketchScene_Refactored::updateVolumeDimensions, [=](){
+                                             ac_edit_boundary->setChecked( false ); } );
 
     QAction* ac_edit_scene = new QAction( "Edit Objects", this );
     ac_edit_scene->setCheckable( true );
@@ -81,6 +85,7 @@ void SketchWindow::createToolbarActions()
     tb_commands->addWidget( cp_define_color );
     addToolBar( tb_commands );
 
+    tb_commands->setFixedHeight( 27 );
 }
 
 

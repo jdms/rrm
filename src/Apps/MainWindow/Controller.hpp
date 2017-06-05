@@ -588,7 +588,7 @@ class Controller: public QObject
 
             scene3d->addObject( obj );
             sketch_scene->addObject( obj );
-            object_tree->addObject( obj->getId() );
+//            object_tree->addObject( obj->getId() );
         }
 
 

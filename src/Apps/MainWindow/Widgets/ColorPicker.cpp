@@ -24,6 +24,9 @@ void ColorPicker::createWidget()
     setMenu( mn_picker_color );
     setCheckable( true );
 
+    colorChanged( currentColor() );
+
+
 }
 
 void ColorPicker::createActions()

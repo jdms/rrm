@@ -29,6 +29,8 @@ class SketchScene_Refactored: public QGraphicsScene
         SketchScene_Refactored();
 
         void addVolume( Volume* const& vol );
+        void resizingVolume( const QPointF& point, bool done = false );
+
         void addObject( Object_Refactored* const& obj );
 
         void setModeEditable( bool status );
@@ -68,11 +70,14 @@ class SketchScene_Refactored: public QGraphicsScene
         void setModeMovingImage();
 
 
+
+
     signals:
 
         void addCurveToObject( const Curve2D& curve );
         void removeCurveFromObject( double depth );
         void createSurface();
+        void updateVolumeDimensions( double w, double h );
 
 
 
@@ -83,6 +88,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         bool isAddedObject( std::size_t id ) const ;
+        void disableMovingImage();
 
 
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
@@ -97,18 +103,19 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
 
-
-
-    private:
+    protected:
 
         enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY,
                                      EDITING_SCENE };
 
 
         double current_csection;
-
         QColor current_color;
         UserInteraction current_interaction;
+
+
+        QPointF boundary_anchor;
+
 
         QGraphicsPixmapItem* csection_image;
         VolumeItemWrapper_Refactored volume;
