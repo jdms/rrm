@@ -49,7 +49,7 @@ void ObjectItemWrapper_Refactored::setRawObject( Object_Refactored* const& obj, 
 void ObjectItemWrapper_Refactored::updateDepth( double depth )
 {
     csection_depth = depth;
-    updateCurve();
+    updateObject();
 }
 
 

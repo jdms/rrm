@@ -6,6 +6,8 @@
 #include <map>
 #include <tuple>
 
+#include <Eigen/Dense>
+
 #include "./Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
 
 
@@ -73,12 +75,13 @@ class Object_Refactored
 
 
         void setSurfaceNormals( const std::vector< double >& normals );
+        std::vector< double > computeNormals();
         void removeSurface();
 
 
         std::vector< double > getSurfaceVertices() const ;
         std::vector< std::size_t > getSurfaceFaces() const ;
-        std::vector< double > getSurfaceNormals() const ;
+        std::vector< double > getSurfaceNormals();
 
         void clear();
         void setDefaultValues();

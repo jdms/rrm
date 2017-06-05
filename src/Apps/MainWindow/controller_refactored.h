@@ -45,6 +45,8 @@ class Controller_Refactored
         void setVolumeVisibility( bool status );
         bool getVolumeVisibility() const ;
 
+        void updateVolume();
+
 
         void addObject();
         void addObjectToInterface();
@@ -99,6 +101,7 @@ class Controller_Refactored
         void removeCurveFromObject( double depth );
         bool createObjectSurface();
 
+        void updateObject( std::size_t id );
         void updateActiveObjects();
         bool updateActiveCurve( std::size_t id );
         bool updateActiveSurface( std::size_t id );

@@ -38,6 +38,14 @@ void Scene3d_refactored::addVolume( Volume* const& vol )
 }
 
 
+void Scene3d_refactored::updateVolume()
+{
+    if( volume == nullptr ) return;
+    volume->updateGeometry();
+
+     emit updateCanvas();
+}
+
 void Scene3d_refactored::addCrossSection()
 {
     if( csection != nullptr )
@@ -119,8 +127,8 @@ void Scene3d_refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& 
 {
 
 
-//    if( volume != nullptr )
-//        volume->draw( V, P, w, h );
+    if( volume != nullptr )
+        volume->draw( V, P, w, h );
 
     for( auto& it : objects )
         (it.second)->draw( V, P, w, h );

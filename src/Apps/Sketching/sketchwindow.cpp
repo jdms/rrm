@@ -51,6 +51,8 @@ void SketchWindow::createToolbarActions()
     ac_edit_boundary->setCheckable( true );
     ac_edit_boundary->setVisible( is_customizable );
 
+    connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditingBoundary );
+
     QAction* ac_edit_scene = new QAction( "Edit Objects", this );
     ac_edit_scene->setCheckable( true );
     connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditable );

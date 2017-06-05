@@ -80,18 +80,21 @@ void Controller_Refactored::addVolumeToInterface()
 void Controller_Refactored::setVolumeWidth( double width )
 {
     volume->setWidth( width );
+    updateVolume();
 }
 
 
 void Controller_Refactored::setVolumeHeight( double height )
 {
     volume->setHeight( height );
+    updateVolume();
 }
 
 
 void Controller_Refactored::setVolumeDepth( double depth )
 {
     volume->setDepth( depth );
+    updateVolume();
 }
 
 
@@ -125,6 +128,18 @@ bool Controller_Refactored::getVolumeVisibility() const
 }
 
 
+void Controller_Refactored::updateVolume()
+{
+
+    csection_scene->updateVolume();
+    scene3d->updateVolume();
+
+
+    updateBoundingBoxRulesProcessor();
+
+
+}
+
 void Controller_Refactored::addObject()
 {
     Object_Refactored* const& obj = new Object_Refactored();
@@ -147,6 +162,10 @@ void Controller_Refactored::addObjectToInterface()
     Object_Refactored* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
     scene3d->addObject( obj );
+
+    int r, g, b;
+    obj->getColor( r, g, b );
+    object_tree->addObject( obj->getId(), r, g, b );
 
 }
 
@@ -196,6 +215,8 @@ void Controller_Refactored::setObjectColor( std::size_t id, int r, int g, int b 
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
     object->setColor( r, g, b );
+
+    updateObject( id );
 }
 
 
@@ -211,6 +232,8 @@ void Controller_Refactored::setObjectVisibility( std::size_t id,bool status )
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
     object->setVisibility( status );
+
+     updateObject( id );
 }
 
 
@@ -261,6 +284,8 @@ bool Controller_Refactored::createObjectSurface()
     rules_processor.createSurface( current_object, curves );
     updateActiveObjects();
 
+    addObject();
+
     return true;
 }
 
@@ -274,6 +299,13 @@ void Controller_Refactored::desactiveObjects()
 
         // TODO: set visibility as false in object tree too
     }
+}
+
+
+void Controller_Refactored::updateObject( std::size_t id )
+{
+    csection_scene->updateObject( id );
+    scene3d->updateObject( id );
 }
 
 
@@ -419,7 +451,6 @@ void Controller_Refactored::getCurrentColor( int& r, int& g, int& b ) const
 void Controller_Refactored::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
-    rules_processor.setMediumResolution();
     rules_processor.removeAbove();
 }
 
@@ -431,4 +462,5 @@ void Controller_Refactored::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getDepth() );
+    rules_processor.setMediumResolution();
 }

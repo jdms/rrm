@@ -230,10 +230,69 @@ std::vector< std::size_t > Object_Refactored::getSurfaceFaces() const
 }
 
 
-std::vector< double > Object_Refactored::getSurfaceNormals() const
+std::vector< double > Object_Refactored::getSurfaceNormals()
 {
-    return surface_normals;
+    std::vector< double > normals_list;
+
+    if( surface_normals.empty() == true )
+        normals_list = computeNormals();
+    else
+        normals_list = surface_normals;
+
+    return normals_list;
 }
+
+
+std::vector< double > Object_Refactored::computeNormals()
+{
+    std::size_t number_of_faces = surface_faces.size()/3;
+    std::size_t size_vector  = surface_vertices.size();
+
+    std::vector< double > normals;
+    normals.resize( size_vector );
+
+    if( ( number_of_faces == 0 ) || ( size_vector == 0 ) ) return std::vector< double >();
+
+    for( std::size_t i = 0; i < number_of_faces; ++i )
+    {
+        std::size_t i1 = surface_faces[ 3*i ];
+        std::size_t i2 = surface_faces[ 3*i + 1 ];
+        std::size_t i3 = surface_faces[ 3*i + 2 ];
+
+        Eigen::Vector3f v1( surface_vertices[ 3*i1 ], surface_vertices[ 3*i1 + 1 ],
+                            surface_vertices[ 3*i1 + 2 ] );
+
+        Eigen::Vector3f v2( surface_vertices[ 3*i2 ], surface_vertices[ 3*i2 + 1 ],
+                            surface_vertices[ 3*i2 + 2 ] );
+
+        Eigen::Vector3f v3( surface_vertices[ 3*i3 ], surface_vertices[ 3*i3 + 1 ],
+                            surface_vertices[ 3*i3 + 2 ] );
+
+        Eigen::Vector3f a = v2 - v1;
+        Eigen::Vector3f b = v3 - v1;
+
+        Eigen::Vector3f face_normal = b.cross( a );
+
+        normals[ 3*i1 ] += face_normal.x();
+        normals[ 3*i1 + 1 ] += face_normal.y();
+        normals[ 3*i1 + 2 ] += face_normal.z();
+
+
+        normals[ 3*i2 ] += face_normal.x();
+        normals[ 3*i2 + 1 ] += face_normal.y();
+        normals[ 3*i2 + 2 ] += face_normal.z();
+
+
+        normals[ 3*i3 ] += face_normal.x();
+        normals[ 3*i3 + 1 ] += face_normal.y();
+        normals[ 3*i3 + 2 ] += face_normal.z();
+
+    }
+
+    return normals;
+
+}
+
 
 
 void Object_Refactored::removeSurface()

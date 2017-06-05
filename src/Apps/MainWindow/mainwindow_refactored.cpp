@@ -223,15 +223,39 @@ void MainWindow_Refactored::createController()
 void MainWindow_Refactored::setupController()
 {
 
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+    TopViewScene* topview_scene = ( TopViewScene* ) ( topview_window->getScene() );
+    Scene3d_refactored* scene3d = canvas3d->getScene();
+
+
+    controller->setCSectionScene( csection_scene );
+    controller->setTopViewScene( topview_scene );
+    controller->setScene3d( scene3d );
+    controller->setObjectTree( object_tree );
+
+    controller->setCurrentColor( 255, 0, 0 );
+    controller->init();
+
+
+    connect( object_tree, &ObjectTree::setInputVolumeVisible, [=]( bool status )
+                                              { controller->setVolumeVisibility( status ); } );
+
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t id, bool status )
+                                              { controller->setObjectVisibility( id, status ); } );
+
+    connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t id, const QString& n )
+                                              { controller->setObjectName( id, n.toStdString() ); } );
+
+
+    connect( object_tree, &ObjectTree::setObjectColor, [=](  std::size_t id_, const QColor& c ){
+                                    controller->setObjectColor( id_, c.red(), c.green(), c.blue() );
+                                 } );
+
+
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& c ) {
                                      controller->setCurrentColor( c.red(), c.green(), c.blue() );
                                  } );
 
-
-
-    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
-    TopViewScene* topview_scene = ( TopViewScene* ) ( topview_window->getScene() );
-    Scene3d_refactored* scene3d = canvas3d->getScene();
 
     connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 disableVolumeResizing();
@@ -250,16 +274,14 @@ void MainWindow_Refactored::setupController()
                                                 controller->addTrajectoryToObject( curve ); } );
 
 
-    controller->setCSectionScene( csection_scene );
-    controller->setTopViewScene( topview_scene );
-    controller->setScene3d( scene3d );
-    controller->setObjectTree( object_tree );
+    connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
+                                                controller->setVolumeWidth( width ); } );
 
-    controller->setCurrentColor( 255, 0, 0 );
+    connect( pages_sidebar, &PagesStack::heightVolumeChanged, [=]( int height ){
+                                                controller->setVolumeHeight( height ); } );
 
-    controller->init();
-
-
+    connect( pages_sidebar, &PagesStack::depthVolumeChanged, [=]( int depth ){
+                                                controller->setVolumeDepth( depth ); } );
 
 
 }

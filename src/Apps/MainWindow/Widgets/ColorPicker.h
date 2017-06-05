@@ -16,6 +16,9 @@ class ColorPicker: public QToolButton
 
         ColorPicker( QWidget* parent = 0 );
 
+        void setColor( const QColor& c );
+        QColor currentColor() const;
+
     protected:
 
         void createWidget();

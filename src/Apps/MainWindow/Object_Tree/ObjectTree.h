@@ -5,6 +5,7 @@
 
 #include "ObjectTreeItem.h"
 
+class ColorPicker;
 
 class ObjectTree :public QTreeWidget
 {
@@ -23,17 +24,17 @@ class ObjectTree :public QTreeWidget
         }
 
 
-        void addObject( const std::size_t& id_ );
+        void addObject( const std::size_t& id, int r, int g, int b );
 
-        inline void setObjectName( const std::size_t& id_, const std::string& name_ )
-        {
-            auto search = objects.find( id_ );
-            if( search == objects.end() ) return;
+//        inline void setObjectName( const std::size_t& id_, const std::string& name_ )
+//        {
+//            auto search = objects.find( id_ );
+//            if( search == objects.end() ) return;
 
-            ObjectTreeItem* item_ = objects[ id_ ];
-            item_->setText( 1, name_.c_str() );
+//            ObjectTreeItem* item_ = objects[ id_ ];
+//            item_->setText( 1, name_.c_str() );
 
-        }
+//        }
 
         inline void setObjectHidden( const std::size_t& id_, bool status_ )
         {
@@ -41,7 +42,10 @@ class ObjectTree :public QTreeWidget
         }
 
 
-        void addRegion( const std::size_t& id_ );
+        ObjectTreeItem* addVolumeChilds( const ObjectTreeItem::TreeItemType& type, std::size_t id );
+
+
+        void addRegion( const std::size_t& id );
 
         inline void setRegionHidden( const std::size_t id_, bool status_ )
         {
@@ -59,8 +63,16 @@ class ObjectTree :public QTreeWidget
         }
 
     signals:
-             void setInputVolumeVisible( bool status_ );
-             void setObjectVisible( std::size_t id_, bool status_ );
+
+        void setInputVolumeVisible( bool status_ );
+        void setObjectVisible( std::size_t id_, bool status_ );
+        void setObjectName( std::size_t id_, const QString& n );
+        void setObjectColor( std::size_t id_, const QColor& c );
+
+
+    protected slots:
+
+        void ObjectTree::filterAction( QTreeWidgetItem* item, std::size_t column );
 
     private:
 

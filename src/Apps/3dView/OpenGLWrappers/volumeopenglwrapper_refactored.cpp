@@ -357,6 +357,8 @@ void VolumeOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
 
     shader->unbind();
 
+
+    glDisable( GL_BLEND );
     glEnable( GL_DEPTH_TEST );
 
 }

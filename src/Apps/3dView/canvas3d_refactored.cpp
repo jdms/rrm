@@ -26,6 +26,7 @@ void Canvas3d_Refactored::initializeGL()
 
     makeCurrent();
     glClearColor( 1.0f , 1.0 , 1.0 , 1.0f );
+    glEnable( GL_MULTISAMPLE );
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
 

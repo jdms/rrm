@@ -14,11 +14,22 @@ class PagesStack: public QStackedWidget
 
         PagesStack();
 
+        void createVolumeActions();
+
+
     public slots:
 
         void changeVolumeSize( double width, double height, double depth );
         void changeRangeSize( double width, double height, double depth );
         void setEnabledVolumeResize( bool status );
+
+
+    signals:
+
+        void widthVolumeChanged( int value );
+        void heightVolumeChanged( int value );
+        void depthVolumeChanged( int value );
+
 
     protected:
 

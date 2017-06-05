@@ -58,6 +58,9 @@ class ObjectOpenGLWrapper_Refactored
                    const int& h );
         void clear();
 
+        void singlePassWireFrame();
+        void rendering();
+
 
     private:
 
@@ -77,6 +80,9 @@ class ObjectOpenGLWrapper_Refactored
 
         Eigen::Vector3f minimum;
         Eigen::Vector3f maximum;
+
+        bool singlepass;
+        bool testing;
 
 };
 
