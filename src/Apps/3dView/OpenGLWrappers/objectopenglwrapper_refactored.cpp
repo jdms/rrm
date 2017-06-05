@@ -9,6 +9,9 @@ ObjectOpenGLWrapper_Refactored::ObjectOpenGLWrapper_Refactored()
 {
     number_of_faces = 0;
     number_of_vertices = 0;
+
+    singlepass = false;
+    testing = false;
 }
 
 
@@ -52,9 +55,16 @@ bool ObjectOpenGLWrapper_Refactored::isVisible() const
 
 void ObjectOpenGLWrapper_Refactored::initShaders()
 {
-    shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/Seismic.vert" ),
-                                            ( shader_directory + "shaders/Seismic.frag" ),
-                                            ( shader_directory + "shaders/Seismic.geom" ), "", "" );
+
+    if( singlepass == true )
+        shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/SurfaceSinglePassWireframe.vert" ),
+                                                ( shader_directory + "shaders/SurfaceSinglePassWireframe.frag" ),
+                                                ( shader_directory + "shaders/SurfaceSinglePassWireframe.geom" ), "", "" );
+
+    else
+        shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/gouraud_surface.vert" ),
+                                                ( shader_directory + "shaders/gouraud_surface.frag" ),
+                                                "", "", "" );
 
     shader->initialize();
 }
@@ -201,6 +211,7 @@ void ObjectOpenGLWrapper_Refactored::reloadGeometry( const std::vector< GLfloat 
                                                      const std::vector< GLfloat >& normals,
                                                      const std::vector< GLuint >& faces )
 {
+
     glBindBuffer ( GL_ARRAY_BUFFER, vb_vertices );
     glBufferData ( GL_ARRAY_BUFFER, vertices.size() * sizeof ( GLfloat ), vertices.data() ,
                    GL_STATIC_DRAW );
@@ -212,6 +223,7 @@ void ObjectOpenGLWrapper_Refactored::reloadGeometry( const std::vector< GLfloat 
                    GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 
+    number_of_faces = faces.size();
     glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
     glBufferData ( GL_ELEMENT_ARRAY_BUFFER, faces.size() * sizeof ( GLuint ), faces.data(),
                    GL_STATIC_DRAW );
@@ -237,7 +249,13 @@ void ObjectOpenGLWrapper_Refactored::setConstantColor( float r, float g, float b
 }
 
 
-void ObjectOpenGLWrapper_Refactored::reloadColors( const std::vector< GLfloat >& colors ){}
+void ObjectOpenGLWrapper_Refactored::reloadColors( const std::vector< GLfloat >& colors )
+{
+    glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
+    glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(),
+                  GL_STATIC_DRAW );
+    glBindBuffer ( GL_ARRAY_BUFFER , 0 );
+}
 
 
 void ObjectOpenGLWrapper_Refactored::init()
@@ -266,12 +284,67 @@ void ObjectOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
     Eigen::Affine3f M;
     M.setIdentity();
 
+    glDisable( GL_BLEND );
+
     shader->bind();
 
     shader->setUniform( "ModelMatrix" , M );
     shader->setUniform( "ViewMatrix" , V );
     shader->setUniform( "ProjectionMatrix" , P );
     shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
+
+    if( singlepass == true )
+        singlePassWireFrame();
+    else
+        rendering();
+
+    shader->unbind();
+
+}
+
+
+void ObjectOpenGLWrapper_Refactored::singlePassWireFrame()
+{
+
+
+//    shader->setUniform( "phong" , false );
+//    shader->setUniform( "wireframe", true );
+
+
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LEQUAL );
+    glBindVertexArray( va_object );
+
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+    glBindVertexArray ( 0 );
+
+}
+
+
+
+void ObjectOpenGLWrapper_Refactored::rendering()
+{
+
+    if( testing == true )
+    {
+        glEnable( GL_BLEND );
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+        glDisable( GL_BLEND );
+
+
+        glEnable( GL_DEPTH_TEST );
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset( 2.0f, 1.0f );
+
+
+        shader->setUniform( "solid" , true );
+        shader->setUniform( "testing" , testing );
+
 
         glBindVertexArray( va_object );
 
@@ -280,9 +353,28 @@ void ObjectOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
 
         glBindVertexArray ( 0 );
 
-    shader->unbind();
-}
 
+    glDisable(GL_POLYGON_OFFSET_FILL);
+
+
+    glDepthFunc( GL_LEQUAL );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+    shader->setUniform( "solid" , false );
+
+    glBindVertexArray( va_object );
+
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+        glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+    glBindVertexArray ( 0 );
+
+    glDisable( GL_BLEND );
+    glDisable( GL_DEPTH_TEST );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+
+}
 
 void ObjectOpenGLWrapper_Refactored::clear()
 {

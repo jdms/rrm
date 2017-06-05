@@ -122,7 +122,7 @@ void VolumeItemWrapper_Refactored::resize( double ox, double oy, double width, d
 void VolumeItemWrapper_Refactored::updateItem()
 {
     QPointF origin = section_boundary.boundingRect().bottomLeft();
-    resize( origin.x(), origin.y(), getWidth(), getHeight() ) ;
+    resize( 0.0, 0.0, getWidth(), getHeight() ) ;
 }
 
 

@@ -42,7 +42,7 @@ class Scene3d_refactored: public QObject
 
         void setCurrentColor( const QColor& color );
 
-        inline void upadteVolume(){}
+        void updateVolume();
         void updateObject( std::size_t );
         inline void updateObjects(){}
         inline void updateScene(){}

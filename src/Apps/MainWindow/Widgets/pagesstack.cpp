@@ -3,6 +3,7 @@
 PagesStack::PagesStack()
 {
     createVolumePropertiesPage();
+    createVolumeActions();
 }
 
 
@@ -12,6 +13,21 @@ void PagesStack::createVolumePropertiesPage()
     wd_volume_resize.setupUi( wd_volume_page );
     addWidget( wd_volume_page );
 }
+
+
+void PagesStack::createVolumeActions()
+{
+    connect( wd_volume_resize.hs_width_volume, &QSlider::sliderMoved, [=]( int value ){
+                                                         emit widthVolumeChanged( value ); } );
+
+    connect( wd_volume_resize.hs_height_volume, &QSlider::sliderMoved, [=]( int value ){
+                                                         emit heightVolumeChanged( value ); } );
+
+    connect( wd_volume_resize.hs_depth_volume, &QSlider::sliderMoved, [=]( int value ){
+                                                         emit depthVolumeChanged( value ); } );
+
+}
+
 
 
 void PagesStack::changeRangeSize( double width, double height, double depth )

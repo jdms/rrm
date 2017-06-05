@@ -36,7 +36,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void setCurrentColor( const QColor& color );
         void setCurrentColor( int r, int g, int b );
 
-        inline void upadteVolume(){}
+        void updateVolume();
         void updateObject( std::size_t id );
 
         void reActiveObject( std::size_t id );

@@ -343,6 +343,13 @@ void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
     }
 
 
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    {
+        boundary_anchor = event->buttonDownScenePos( Qt::LeftButton );
+    }
+    
+    
+    
     QGraphicsScene::mousePressEvent( event );
 }
 
@@ -356,7 +363,14 @@ void SketchScene_Refactored::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
             sketch->add( event->scenePos() );
     }
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+             ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
+    {
+        int w = event->scenePos().x() - boundary_anchor.x() ;
+        int h = event->scenePos().y() - boundary_anchor.y() ;
 
+        volume.resize( w, h, boundary_anchor.x(), boundary_anchor.y() ) ;
+    }
 
     QGraphicsScene::mouseMoveEvent( event );
 }

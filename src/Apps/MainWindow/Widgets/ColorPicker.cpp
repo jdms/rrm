@@ -38,6 +38,19 @@ void ColorPicker::createActions()
 
 }
 
+
+void ColorPicker::setColor( const QColor& c )
+{
+    cd_picker_color->setCurrentColor( c );
+    colorChanged( c );
+}
+
+QColor ColorPicker::currentColor() const
+{
+    return cd_picker_color->selectedColor();
+}
+
+
 void ColorPicker::colorChanged( const QColor& color_ )
 {
 
