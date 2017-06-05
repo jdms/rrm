@@ -133,7 +133,7 @@ void Controller_Refactored::updateVolume()
 
     csection_scene->updateVolume();
     scene3d->updateVolume();
-
+    topview_scene->updateVolume();
 
     updateBoundingBoxRulesProcessor();
 
@@ -152,6 +152,7 @@ void Controller_Refactored::addObject()
 
     objects[ obj->getId() ] = obj;
     current_object = obj->getId();
+
 }
 
 
@@ -268,7 +269,7 @@ void Controller_Refactored::addTrajectoryToObject( const Curve2D& curve )
 {
     Object_Refactored* const& object = objects[ current_object ];
     object->setTrajectoryCurve( curve );
-
+    topview_scene->addObject( object );
 }
 
 
@@ -296,8 +297,7 @@ void Controller_Refactored::desactiveObjects()
     {
         Object_Refactored* obj = objects[ it.first ];
         obj->setVisibility( false );
-
-        // TODO: set visibility as false in object tree too
+        object_tree->setObjectHidden( it.first, true );
     }
 }
 

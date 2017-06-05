@@ -95,7 +95,7 @@ bool Controller::setNameofObjectofId( std::size_t id_, const std::string& name_ 
     Object* obj = objects[ id_ ];
     obj->setName( name_ );
 
-    object_tree->setObjectName( id_, name_ );
+//    object_tree->setObjectName( id_, name_ );
     return true;
 }
 

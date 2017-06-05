@@ -29,6 +29,24 @@ void SketchScene_Refactored::addVolume( Volume* const& vol )
 }
 
 
+void SketchScene_Refactored::resizingVolume( const QPointF& point, bool done )
+{
+    int w = static_cast< int > ( point.x() - boundary_anchor.x() );
+    int h = static_cast< int > ( point.y() - boundary_anchor.y() );
+
+    if( done == false )
+        volume.resize(boundary_anchor.x(), boundary_anchor.y(), w, h ) ;
+    else
+    {
+        emit updateVolumeDimensions( static_cast< double > ( abs( w ) ),
+                                static_cast< double > ( abs( h ) ) );
+        setModeSketching();
+    }
+
+}
+
+
+
 void SketchScene_Refactored::updateVolume()
 {
     volume.updateItem();
@@ -139,6 +157,15 @@ void SketchScene_Refactored::setModeEditingBoundary()
 void SketchScene_Refactored::setModeMovingImage()
 {
     current_interaction = UserInteraction::MOVING_IMAGE;
+    csection_image->setFlag( QGraphicsItem::ItemIsMovable, true );
+}
+
+
+void SketchScene_Refactored::disableMovingImage()
+{
+    csection_image->setFlag( QGraphicsItem::ItemIsMovable, false );
+    csection_image->setFlag( QGraphicsItem::ItemIsSelectable, false );
+    setModeSketching();
 }
 
 
@@ -294,7 +321,6 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 
 void SketchScene_Refactored::removeImageFromCrossSection()
 {
-    //TODO: create an action to this method
     removeItem( csection_image );
     delete csection_image;
 
@@ -321,13 +347,7 @@ void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
     if(  event->modifiers() & Qt::ControlModifier )
     {
         if( csection_image->isUnderMouse() == true )
-            current_interaction = UserInteraction::MOVING_IMAGE;
-    }
-
-    if(  ( event->modifiers() & Qt::ControlModifier ) &&
-         ( current_interaction == UserInteraction::MOVING_IMAGE ) )
-    {
-        csection_image->setFlag( QGraphicsItem::ItemIsMovable, true );
+            setModeMovingImage();
     }
 
     else if ( ( event->buttons() & Qt::LeftButton ) &&
@@ -343,7 +363,14 @@ void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
     }
 
 
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+             ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
+    {
+        boundary_anchor = event->scenePos();
+    }
+    
     QGraphicsScene::mousePressEvent( event );
+    update();
 }
 
 
@@ -356,9 +383,14 @@ void SketchScene_Refactored::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
             sketch->add( event->scenePos() );
     }
-
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+             ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
+    {
+        resizingVolume( event->scenePos() );
+    }
 
     QGraphicsScene::mouseMoveEvent( event );
+    update();
 }
 
 
@@ -371,15 +403,20 @@ void SketchScene_Refactored::mouseReleaseEvent( QGraphicsSceneMouseEvent* event 
         sketch->process( event->scenePos() );
     }
 
-    else if( ( event->modifiers() & Qt::ControlModifier ) &&
-             ( current_interaction == UserInteraction::MOVING_IMAGE ) )
+    else if( current_interaction == UserInteraction::MOVING_IMAGE )
     {
-        csection_image->setFlag( QGraphicsItem::ItemIsMovable, false );
-        csection_image->setFlag( QGraphicsItem::ItemIsSelectable, false );
-        current_interaction = UserInteraction::SKETCHING;
+        disableMovingImage();
     }
 
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    {
+        bool done = true;
+        resizingVolume( event->scenePos(), done );
+    }
+
+
     QGraphicsScene::mouseReleaseEvent( event );
+    update();
 }
 
 

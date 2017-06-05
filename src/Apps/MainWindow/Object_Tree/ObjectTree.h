@@ -26,15 +26,6 @@ class ObjectTree :public QTreeWidget
 
         void addObject( const std::size_t& id, int r, int g, int b );
 
-//        inline void setObjectName( const std::size_t& id_, const std::string& name_ )
-//        {
-//            auto search = objects.find( id_ );
-//            if( search == objects.end() ) return;
-
-//            ObjectTreeItem* item_ = objects[ id_ ];
-//            item_->setText( 1, name_.c_str() );
-
-//        }
 
         inline void setObjectHidden( const std::size_t& id_, bool status_ )
         {

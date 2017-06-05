@@ -24,6 +24,11 @@ class PagesStack: public QStackedWidget
         void setEnabledVolumeResize( bool status );
 
 
+        void setVolumeWidth( double w );
+        void setVolumeHeight( double h );
+        void setVolumeDepth( double d );
+
+
     signals:
 
         void widthVolumeChanged( int value );

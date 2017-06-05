@@ -42,6 +42,12 @@ class MainWindow_Refactored : public QMainWindow
         void setupInterface();
 
 
+        void resizingVolumeWidth( double w );
+        void resizingVolumeHeight( double h );
+        void resizingVolumeDepth( double d );
+
+
+
     private:
 
         void createWindow();

@@ -184,6 +184,7 @@ bool Object_Refactored::hasTrajectoryCurve()
 void Object_Refactored::setTrajectoryCurve( const Curve2D& path )
 {
     trajectory_curve = path;
+    has_trajectory = true;
 }
 
 

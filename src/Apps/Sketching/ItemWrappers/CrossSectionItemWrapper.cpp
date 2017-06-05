@@ -11,8 +11,6 @@ CrossSectionItemWrapper::CrossSectionItemWrapper( double width_, double depth_ )
 
 void CrossSectionItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w )
 {
-
-
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( pen_color );
     painter->drawLine( 0, depth, width, depth );
