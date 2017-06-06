@@ -27,8 +27,10 @@ void SketchWindow::createWindow()
 
 void SketchWindow::createScene()
 {
-    if(is_customizable == true )
+    if(is_customizable == true ){
         scene = new CSectionScene();
+        gv_view->scale( 1, -1 );
+    }
     else
         scene = new TopViewScene();
 
@@ -62,7 +64,10 @@ void SketchWindow::createToolbarActions()
     connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditable );
 
     QAction* ac_remove_curve = new QAction( "Delete Curve", this );
+    ac_remove_curve->setVisible( is_customizable );
     connect( ac_remove_curve, &QAction::triggered, scene, &SketchScene_Refactored::removeCurve );
+    connect( scene, &SketchScene_Refactored::enableDeleting, ac_remove_curve, &QAction::setEnabled );
+
 
     QAction* ac_remove_image = new QAction( "Remove Image", this );
     connect( ac_remove_image, &QAction::triggered, scene, &SketchScene_Refactored::removeImageFromCrossSection );

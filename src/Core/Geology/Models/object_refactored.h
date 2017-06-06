@@ -63,6 +63,9 @@ class Object_Refactored
         void removeCrossSections();
 
 
+        bool isCurveAdmissible();
+        bool isTrajectoryAdmissible();
+
 
         bool hasTrajectoryCurve();
         void setTrajectoryCurve( const Curve2D& path );

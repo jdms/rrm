@@ -602,7 +602,7 @@ void MainWindow::createAppRelatedActions()
     ag_stratigraphy_rules->addAction( ac_remove_above_int );
     ag_stratigraphy_rules->addAction( ac_remove_below );
     ag_stratigraphy_rules->addAction( ac_remove_below_int );
-    ac_remove_above->setChecked( true );
+    ac_remove_above_int->setChecked( true );
 
 
     tb_sketch = new QToolBar( this );

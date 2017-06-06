@@ -3,6 +3,7 @@
 #include "controller_refactored.h"
 #include "Sketching/sketchwindow.h"
 #include "Widgets/pagesstack.h"
+#include "Widgets/realslider.h"
 #include "Object_Tree/ObjectTree.h"
 #include "Sketching/csectionscene.h"
 #include "Sketching/topviewscene.h"
@@ -67,14 +68,19 @@ void MainWindow_Refactored::createMainInterface()
 
     canvas3d = new Canvas3d_Refactored();
 
-    sl_depth_csection = new QSlider( Qt::Vertical, this );
+    sl_depth_csection = new RealSlider( Qt::Vertical );
     sl_depth_csection->setTickPosition( QSlider::TicksRight );
     sl_depth_csection->setInvertedAppearance( true );
 
 
+    connect( sl_depth_csection, &RealSlider::sliderMoved, [=]( const double& v )
+                                      { controller->setCurrentCrossSection( v ); } );
+
+
     connect( this, &MainWindow_Refactored::resizedVolume, [=]( double w, double h, double d )
-                                    { sl_depth_csection->setRange( 0, static_cast< int > (d) );
-                                      sl_depth_csection->setValue( static_cast< int > (d) );    } );
+                                            { sl_depth_csection->setRange( 0, d );
+                                              sl_depth_csection->setValue( d ); } );
+
 
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
@@ -97,11 +103,8 @@ void MainWindow_Refactored::createToolbarActions()
     connect( ac_show_sidebar, &QAction::toggled, dw_info_objects, &QDockWidget::setVisible );
 
 
-
     QAction* ac_new = new QAction( "Clear", this );
-
     QAction* ac_undo = new QAction( "Undo", this );
-
     QAction* ac_redo = new QAction( "Redo", this );
 
 
@@ -120,8 +123,16 @@ void MainWindow_Refactored::createToolbarActions()
     connect( ac_show_topview, &QAction::toggled, dw_topview, &QDockWidget::setVisible );
 
 
-    QAction* ac_sketch_above = new QAction( "SA", this );
-    QAction* ac_sketch_below = new QAction( "SB", this );
+    ac_sketch_above = new QAction( "SA", this );
+    ac_sketch_above->setCheckable( true );
+    connect( ac_sketch_above, &QAction::toggled, [=]( bool status ){
+          controller->enableCreateAbove( status ); } );
+
+    ac_sketch_below = new QAction( "SB", this );
+    ac_sketch_below->setCheckable( true );
+    connect( ac_sketch_below, &QAction::toggled, [=]( bool status ){
+          controller->enableCreateBelow( status ); } );
+
 
     QActionGroup* ag_region_sketching = new QActionGroup( this );
     ag_region_sketching->addAction( ac_sketch_above );
@@ -129,18 +140,32 @@ void MainWindow_Refactored::createToolbarActions()
     ag_region_sketching->setExclusive( false );
 
 
-    QAction* ac_remove_above = new QAction( "RA", this );
-    QAction* ac_ra_intersection = new QAction( "RAI", this );
+    ac_remove_above = new QAction( "RA", this );
+    ac_remove_above->setCheckable( true );
+    connect( ac_remove_above, &QAction::toggled, [=](){
+          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE );} );
 
-    QAction* ac_remove_below = new QAction( "RB", this );
-    QAction* ac_rb_intersection = new QAction( "RBI", this );
+    ac_ra_intersection = new QAction( "RAI", this );
+    ac_ra_intersection->setCheckable( true );
+    connect( ac_ra_intersection, &QAction::toggled, [=](){
+          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION );} );
+
+    ac_remove_below = new QAction( "RB", this );
+    ac_remove_below->setCheckable( true );
+    connect( ac_remove_below, &QAction::toggled, [=](){
+          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW );} );
+
+    ac_rb_intersection = new QAction( "RBI", this );
+    ac_rb_intersection->setCheckable( true );
+    connect( ac_rb_intersection, &QAction::toggled, [=](){
+          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
 
 
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_ra_intersection );
     ag_rules->addAction( ac_remove_below );
-    ag_rules->addAction( ac_rb_intersection );
+    ag_rules->addAction( ac_rb_intersection );    
     ag_rules->setExclusive( true );
 
 
@@ -236,6 +261,15 @@ void MainWindow_Refactored::setupController()
     controller->setCurrentColor( 255, 0, 0 );
     controller->init();
 
+    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
+    sl_depth_csection->setDiscretization( disc );
+
+    double max_slider = controller->getVolumeDepth();
+    sl_depth_csection->setRange( 0, max_slider );
+
+
+    setDefaultRule();
+
 
     connect( object_tree, &ObjectTree::setInputVolumeVisible, [=]( bool status )
                                               { controller->setVolumeVisibility( status ); } );
@@ -274,6 +308,11 @@ void MainWindow_Refactored::setupController()
                                                 controller->createObjectSurface(); } );
 
 
+    connect( csection_scene, &CSectionScene::selectedObject, [=]( std::size_t id ){
+                                                controller->defineObjectSelected( id ); } );
+
+
+
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 disableVolumeResizing();
                                                 controller->addTrajectoryToObject( curve ); } );
@@ -283,6 +322,10 @@ void MainWindow_Refactored::setupController()
                                             resizingVolumeWidth( w );
                                             resizingVolumeDepth( d );
                                         } );
+
+    connect( topview_scene, &TopViewScene::removeTrajectory, [=](){
+                                                controller->removeTrajectoryFromObject(); } );
+
 
 
     connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
@@ -310,6 +353,11 @@ void MainWindow_Refactored::resizingVolumeWidth( double w )
 {
     controller->setVolumeWidth( w );
     pages_sidebar->setVolumeWidth( w );
+
+    double height = controller->getVolumeHeight();
+    double depth = controller->getVolumeDepth();
+
+    emit resizedVolume( w, height, depth );
 }
 
 
@@ -317,6 +365,12 @@ void MainWindow_Refactored::resizingVolumeHeight( double h )
 {
     controller->setVolumeHeight( h );
     pages_sidebar->setVolumeHeight( h );
+
+    double width = controller->getVolumeWidth();
+    double depth = controller->getVolumeDepth();
+
+    emit resizedVolume( width, h, depth );
+
 }
 
 
@@ -324,6 +378,11 @@ void MainWindow_Refactored::resizingVolumeDepth( double d )
 {
     controller->setVolumeDepth( d );
     pages_sidebar->setVolumeDepth( d );
+
+    double width = controller->getVolumeWidth();
+    double height = controller->getVolumeHeight();
+
+    emit resizedVolume( width, height, d );
 }
 
 
@@ -340,9 +399,6 @@ void MainWindow_Refactored::setupInterface()
 
 
 
-
-
-
 void MainWindow_Refactored::setDefaultValues()
 {
     ac_show_sidebar->setChecked( SIDEBAR_VISIBLE );
@@ -355,4 +411,28 @@ void MainWindow_Refactored::setDefaultValues()
 //    sketch_window->setDefaultValues();
 //    topview_window->setDefaultValues();
 
+}
+
+
+void MainWindow_Refactored::setDefaultRule()
+{
+
+    Controller_Refactored::StratigraphicRules rule = controller->getCurrentRule();
+
+    if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE )
+    {
+        ac_remove_above->setChecked( true );
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    {
+        ac_ra_intersection->setChecked( true );
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW )
+    {
+        ac_remove_below->setChecked( true );
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    {
+        ac_rb_intersection->setChecked( true );
+    }
 }

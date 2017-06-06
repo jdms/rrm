@@ -11,7 +11,6 @@
 TopViewScene::TopViewScene()
 {
     setupPen();
-//    showPopUp( true );
 }
 
 
@@ -95,7 +94,10 @@ void TopViewScene::addObject( Object_Refactored * const &obj )
     curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( obj->getTrajectoryCurve() ) );
 
     objects[ obj->getId() ] = curve;
-    addPath( curve, trajectory_pen );
+    QGraphicsItem* const& item = addPath( curve, trajectory_pen );
+    item->setFlag( QGraphicsItem::ItemIsSelectable, true );
+
+    update();
 
 }
 
@@ -114,6 +116,26 @@ bool TopViewScene::acceptSketch( Curve2D& curve )
 }
 
 
+void TopViewScene::removeCurve()
+{
+
+    if( ( current_interaction != UserInteraction::EDITING_SCENE ) ||
+        ( is_delete_enabled == false ) ) return;
+
+    QList < QGraphicsItem* > items = selectedItems();
+    if( items.empty() == true ) return;
+
+    QGraphicsItem* item = items[ 0 ];
+
+    removeItem( item );
+    delete item;
+
+    emit removeTrajectory();
+    update();
+}
+
+
+
 void TopViewScene::setupPen()
 {
     trajectory_pen.setStyle( Qt::SolidLine );
@@ -128,7 +150,7 @@ void TopViewScene::showPopUp()
 {
     QFrame* w = new QFrame;
     w->setMaximumHeight( 20 );
-    w->setStyleSheet( "background-color: red"`);
+    w->setStyleSheet( "background-color: red");
 
 
     QLabel *lb_popup = new QLabel( "It's not possible to add two cross-sections and "
@@ -140,4 +162,17 @@ void TopViewScene::showPopUp()
     w->setLayout( gl_popup );
     w->show();
 
+}
+
+
+void TopViewScene::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+        case Qt::Key_Delete:
+            removeCurve();
+            break;
+        default:
+            break;
+    };
 }

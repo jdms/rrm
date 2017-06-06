@@ -16,6 +16,8 @@ SketchScene_Refactored::SketchScene_Refactored()
     current_interaction = UserInteraction::SKETCHING;
     current_color = Qt::red;
     current_csection = 0;
+    is_sketch_enabled = true;
+    is_delete_enabled = true;
 
     createCrossSectionImageItem();
 }
@@ -74,8 +76,9 @@ void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
     wrapper->setRawObject( obj, current_csection );
 
     objects[ obj->getId() ] = wrapper;
-
     addItem( wrapper );
+
+    enableDeletingCurves( true );
     update();
 }
 
@@ -116,6 +119,7 @@ void SketchScene_Refactored::removeObjectsFromScene()
     setSceneRect( volume.boundingRect() );
 
 }
+
 
 
 void SketchScene_Refactored::setModeEditable( bool status )
@@ -169,6 +173,14 @@ void SketchScene_Refactored::disableMovingImage()
 }
 
 
+
+void SketchScene_Refactored::enableDeletingCurves( bool status )
+{
+    is_delete_enabled = status;
+    emit enableDeleting( status );
+}
+
+
 void SketchScene_Refactored::setCurrentColor( const QColor& color )
 {
     current_color = color;
@@ -187,9 +199,12 @@ void SketchScene_Refactored::setCurrentColor( int r, int g, int b )
 }
 
 
+
+
 void SketchScene_Refactored::startSketch( const QPointF& p )
 {
-    if( isValidSketch() == true ) return;
+
+    if( ( isValidSketch() == true ) || ( is_sketch_enabled == false ) ) return;
 
     sketch = new InputSketch( current_color );
     sketch->create( p );
@@ -242,6 +257,15 @@ bool SketchScene_Refactored::acceptSketch( Curve2D& curve )
 }
 
 
+void SketchScene_Refactored::enableSketch( bool status )
+{
+    if( status == false )
+        clearSketch();
+
+    is_sketch_enabled = status;
+}
+
+
 bool SketchScene_Refactored::isValidSketch()
 {
     if ( sketch == nullptr ) return false;
@@ -250,10 +274,12 @@ bool SketchScene_Refactored::isValidSketch()
 
 
 
+
 void SketchScene_Refactored::removeCurve()
 {
 
-    if( current_interaction != UserInteraction::EDITING_SCENE ) return;
+    if( ( current_interaction != UserInteraction::EDITING_SCENE ) ||
+        ( is_delete_enabled == false ) ) return;
 
     QList < QGraphicsItem* > items = selectedItems();
     if( items.empty() == true ) return;
@@ -270,6 +296,21 @@ void SketchScene_Refactored::removeCurve()
     emit removeCurveFromObject( current_csection );
     update();
 }
+
+
+void SketchScene_Refactored::selectBounderingRegion()
+{
+    QList< QGraphicsItem* > items = selectedItems();
+    if( items.empty() == true ) return;
+
+
+    ObjectItemWrapper_Refactored* const& obj = ( ObjectItemWrapper_Refactored* )items[ 0 ];
+    std::size_t id = obj->getId();
+
+    emit selectedObject( id );
+
+}
+
 
 
 void SketchScene_Refactored::processCurve( Curve2D& curve )
@@ -291,6 +332,7 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
     setImageToCrossSection( backgrounds[ current_csection ] );
 
 }
+
 
 
 
@@ -338,6 +380,7 @@ bool SketchScene_Refactored::hasImageInCrossSection()
     else
         return true;
 }
+
 
 
 void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
@@ -412,6 +455,11 @@ void SketchScene_Refactored::mouseReleaseEvent( QGraphicsSceneMouseEvent* event 
     {
         bool done = true;
         resizingVolume( event->scenePos(), done );
+    }
+
+    else if( current_interaction == UserInteraction::SELECTING )
+    {
+        selectBounderingRegion();
     }
 
 

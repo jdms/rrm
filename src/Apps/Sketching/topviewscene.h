@@ -1,9 +1,10 @@
 #ifndef TOPVIEWSCENE_H
 #define TOPVIEWSCENE_H
 
-
-
 #include "sketchscene_refactored.h"
+
+#include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 
 class CrossSectionItemWrapper_Refactored;
 
@@ -30,11 +31,22 @@ class TopViewScene: public SketchScene_Refactored
         bool isAddedObject( std::size_t id );
 
 
-        bool acceptSketch( Curve2D& curve );
+        virtual bool acceptSketch( Curve2D& curve );
+        virtual void removeCurve();
 
         void setupPen();
         void showPopUp();
 
+
+
+    signals:
+
+        void removeTrajectory();
+
+
+    protected:
+
+        void keyPressEvent( QKeyEvent *event );
 
     protected:
 
@@ -45,6 +57,7 @@ class TopViewScene: public SketchScene_Refactored
         QPen trajectory_pen;
 
         std::map< std::size_t, QPainterPath > objects;
+
 
 };
 
