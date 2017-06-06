@@ -175,6 +175,27 @@ void Object_Refactored::removeCrossSections()
 }
 
 
+
+bool Object_Refactored::isTrajectoryAdmissible()
+{
+
+    if( csections_curves.size() > 0  )
+        return false;
+
+    return true;
+}
+
+
+
+bool Object_Refactored::isCurveAdmissible()
+{
+    if( ( has_trajectory == true ) && ( csections_curves.size() > 0  ) )
+        return false;
+
+    return true;
+}
+
+
 bool Object_Refactored::hasTrajectoryCurve()
 {
     return has_trajectory;

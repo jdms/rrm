@@ -20,6 +20,7 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/RulesProcessor.hpp
                         MainWindow/Widgets/ColorPicker.h
                         MainWindow/Widgets/pagesstack.h
+                        MainWindow/Widgets/realslider.h
                         MainWindow/Exporter/CPS3Exporter.hpp
                         MainWindow/Exporter/IrapGridExporter.hpp
                         MainWindow/Object_Tree/ObjectTreeItem.h
@@ -32,6 +33,7 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
                             MainWindow/mainwindow_refactored.h
                             MainWindow/Widgets/ColorPicker.h
                             MainWindow/Widgets/pagesstack.h
+                            MainWindow/Widgets/realslider.h
                             MainWindow/Controller.hpp
                             MainWindow/Object_Tree/ObjectTree.h
                             MainWindow/Help/HelpDialog.h
@@ -49,6 +51,7 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/mainwindow_refactored.cpp
                         MainWindow/Widgets/ColorPicker.cpp
                         MainWindow/Widgets/pagesstack.cpp
+                        MainWindow/Widgets/realslider.cpp
                         MainWindow/controller_refactored.cpp
                         MainWindow/Controller.cpp
                         MainWindow/RulesProcessor.cpp

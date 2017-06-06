@@ -18,8 +18,10 @@ Controller_Refactored::Controller_Refactored()
     topview_scene = nullptr;
     scene3d = nullptr;
     object_tree = nullptr;
-
+    current_rule = RULE_DEFAULT;
 }
+
+
 
 
 void Controller_Refactored::setScene3d( Scene3d_refactored* const& sc )
@@ -46,6 +48,8 @@ void Controller_Refactored::setObjectTree( ObjectTree* const& ot )
 }
 
 
+
+
 void Controller_Refactored::init()
 {
     addVolume();
@@ -54,6 +58,8 @@ void Controller_Refactored::init()
     setCurrentCrossSection( volume->getDepth() );
     addObject();
 }
+
+
 
 
 void Controller_Refactored::addVolume()
@@ -140,6 +146,9 @@ void Controller_Refactored::updateVolume()
 
 }
 
+
+
+
 void Controller_Refactored::addObject()
 {
     Object_Refactored* const& obj = new Object_Refactored();
@@ -152,6 +161,8 @@ void Controller_Refactored::addObject()
 
     objects[ obj->getId() ] = obj;
     current_object = obj->getId();
+
+    enableDeletingCurves( true );
 
 }
 
@@ -181,6 +192,12 @@ bool Controller_Refactored::isValidObject( std::size_t id ) const
 }
 
 
+void Controller_Refactored::setObjectType( const Object_Refactored::Type& type )
+{
+    setObjectType( current_object, type );
+}
+
+
 void Controller_Refactored::setObjectType( std::size_t id, const Object_Refactored::Type& type )
 {
     if( isValidObject( id ) == false ) return;
@@ -189,10 +206,22 @@ void Controller_Refactored::setObjectType( std::size_t id, const Object_Refactor
 }
 
 
+Object_Refactored::Type Controller_Refactored::getObjectType()
+{
+    return getObjectType( current_object );
+}
+
+
 Object_Refactored::Type Controller_Refactored::getObjectType( std::size_t id )
 {
     if( isValidObject( id ) == false ) return Object_Refactored::Type::NONE;
     return objects[ id ]->getType();
+}
+
+
+void Controller_Refactored::setObjectName( const std::string& name )
+{
+    setObjectName( current_object, name ) ;
 }
 
 
@@ -204,10 +233,28 @@ void Controller_Refactored::setObjectName( std::size_t id, const std::string& na
 }
 
 
+std::string Controller_Refactored::getObjectName()
+{
+    return getObjectName( current_object );
+}
+
+
 std::string Controller_Refactored::getObjectName( std::size_t id )
 {
     if( isValidObject( id ) == false ) return std::string();
     return objects[ id ]->getName();
+}
+
+
+void Controller_Refactored::setObjectColor( int r, int g, int b )
+{
+    setObjectColor( current_object, r, g, b );
+}
+
+
+void Controller_Refactored::getObjectColor( int& r, int& g, int& b )
+{
+    getObjectColor( current_object, r, g, b );
 }
 
 
@@ -225,6 +272,18 @@ void Controller_Refactored::getObjectColor( std::size_t id, int& r, int& g, int&
 {
     if( isValidObject( id ) == false ) return;
     objects[ id ]->getColor( r, g, b );
+}
+
+
+void Controller_Refactored::setObjectVisibility( bool status )
+{
+    setObjectVisibility( current_object, status );
+}
+
+
+bool Controller_Refactored::getObjectVisibility()
+{
+    return getObjectVisibility( current_object );
 }
 
 
@@ -250,9 +309,15 @@ void Controller_Refactored::addCurveToObject( const Curve2D& curve )
     Object_Refactored* const& object = objects[ current_object ];
     object->setCrossSectionCurve( current_csection, curve );
 
-//    setCrossSectionAsUsed();
-    addObjectToInterface();
 
+    bool status = object->isCurveAdmissible();
+    enableCurve( status );
+
+    status = object->isTrajectoryAdmissible();
+    enableTrajectory( status );
+
+
+    addObjectToInterface();
     createObjectSurface();
 
 }
@@ -262,6 +327,50 @@ void Controller_Refactored::removeCurveFromObject( double depth )
 {
     Object_Refactored* const& object = objects[ current_object ];
     object->removeCrossSectionCurve( depth );
+
+
+    bool status = object->isCurveAdmissible();
+    enableCurve( status );
+
+    status = object->isTrajectoryAdmissible();
+    enableTrajectory( status );
+
+
+}
+
+
+void Controller_Refactored::removeTrajectoryFromObject()
+{
+    Object_Refactored* const& object = objects[ current_object ];
+    object->removeTrajectoryCurve();
+
+
+    bool status = object->isCurveAdmissible();
+    enableCurve( status );
+
+    status = object->isTrajectoryAdmissible();
+    enableTrajectory( status );
+
+}
+
+
+
+void Controller_Refactored::enableTrajectory( bool status )
+{
+    topview_scene->enableSketch( status );
+}
+
+
+void Controller_Refactored::enableCurve( bool status )
+{
+    csection_scene->enableSketch( status );
+}
+
+
+void Controller_Refactored::enableDeletingCurves( bool status  )
+{
+    csection_scene->enableDeletingCurves( status );
+    topview_scene->enableDeletingCurves( status );
 }
 
 
@@ -282,9 +391,11 @@ bool Controller_Refactored::createObjectSurface()
 
     if( curves.empty() == true ) return false;
 
+
     rules_processor.createSurface( current_object, curves );
     updateActiveObjects();
 
+    enableDeletingCurves( false );
     addObject();
 
     return true;
@@ -343,8 +454,8 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 
     std::vector< double > curve_vertices;
     std::vector< std::size_t > curve_edges;
-    bool has_curve = rules_processor.getCrossSection( id, 0/*index_*/ , curve_vertices,
-                                                      curve_edges );
+    bool has_curve = rules_processor.getCrossSection( id, indexCrossSection( current_csection ) ,
+                                                      curve_vertices, curve_edges );
 
 
     if( has_curve == false ) return false;
@@ -400,7 +511,6 @@ void Controller_Refactored::setCurrentCrossSection( double depth )
     current_csection = depth;
     csection_scene->setCurrentCrossSection( current_csection );
 
-
     updateActiveObjects();
 
 }
@@ -421,6 +531,26 @@ bool Controller_Refactored::isValidCrossSection( double depth ) const
         return true;
     else
         return false;
+}
+
+
+std::size_t Controller_Refactored::setupCrossSectionDiscretization()
+{
+    std::size_t discretization = rules_processor.getDepthResolution();
+    csection_step = static_cast< double >( volume->getDepth()/discretization );
+    return discretization;
+}
+
+
+std::size_t Controller_Refactored::indexCrossSection( double value ) const
+{
+    return static_cast< std::size_t > ( value/csection_step );
+}
+
+
+double Controller_Refactored::depthCrossSection( std::size_t index ) const
+{
+    return static_cast< double > ( index*csection_step );
 }
 
 
@@ -448,10 +578,12 @@ void Controller_Refactored::getCurrentColor( int& r, int& g, int& b ) const
 }
 
 
+
+
 void Controller_Refactored::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
-    rules_processor.removeAbove();
+    rules_processor.removeAboveIntersection();
 }
 
 
@@ -463,4 +595,147 @@ void Controller_Refactored::updateBoundingBoxRulesProcessor()
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getDepth() );
     rules_processor.setMediumResolution();
+}
+
+
+
+
+Controller_Refactored::StratigraphicRules Controller_Refactored::getCurrentRule() const
+{
+    return current_rule;
+}
+
+
+void Controller_Refactored::setCurrentRule( const Controller_Refactored::StratigraphicRules& rule )
+{
+
+    current_rule = rule;
+
+    if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE )
+    {
+        rules_processor.removeAbove();
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    {
+        rules_processor.removeAboveIntersection();
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW )
+    {
+        rules_processor.removeBelow();
+    }
+    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    {
+        rules_processor.removeBelowIntersection();
+    }
+
+}
+
+
+
+void Controller_Refactored::enableCreateAbove( bool status )
+{
+    setObjectsAsSelectable( selectable_upper, false );
+
+    if( status == false )
+        stopCreateAbove();
+    else
+        requestCreateAbove();
+
+}
+
+
+void Controller_Refactored::stopCreateAbove()
+{
+    rules_processor.stopDefineAbove();
+    setObjectSelected( boundering_above, false );
+}
+
+
+void Controller_Refactored::requestCreateAbove()
+{
+    bool request_accept = rules_processor.requestCreateAbove( selectable_upper );
+    if( request_accept == false ) return;
+
+    current_region = RequestRegion::ABOVE;
+    setObjectsAsSelectable( selectable_upper, true );
+}
+
+
+
+void Controller_Refactored::enableCreateBelow( bool status )
+{
+    setObjectsAsSelectable( selectable_below, false );
+
+    if( status == false )
+        stopCreateBelow();
+    else
+        requestCreateBelow();
+
+}
+
+
+void Controller_Refactored::stopCreateBelow()
+{
+    rules_processor.stopDefineBelow();
+    setObjectSelected( boundering_below, false );
+
+}
+
+
+void Controller_Refactored::requestCreateBelow()
+{
+    bool request_accept = rules_processor.requestCreateBelow( selectable_below );
+    if( request_accept == false ) return;
+
+    current_region = RequestRegion::BELOW;
+    setObjectsAsSelectable( selectable_below, true );
+    csection_scene->setModeSelecting();
+}
+
+
+
+void Controller_Refactored::setObjectsAsSelectable( std::vector< std::size_t >& indexes,
+                                                    bool status )
+{
+
+    for( std::size_t id: indexes )
+    {
+        Object_Refactored* const& obj = objects[ id ];
+        obj->setSelectable( status );
+
+        updateObject( id );
+    }
+
+    if( status == false )
+        indexes.clear();
+}
+
+
+void Controller_Refactored::setObjectSelected( std::size_t id, bool status )
+{
+    Object_Refactored* const& obj = objects[ id ];
+    obj->setSelected( status );
+    updateObject( id );
+
+    csection_scene->setModeSketching();
+}
+
+
+void Controller_Refactored::defineObjectSelected( std::size_t id )
+{
+    if( current_region == RequestRegion::ABOVE )
+    {
+        boundering_above = id;
+        rules_processor.defineAbove( id );
+        setObjectsAsSelectable( selectable_upper, false );
+    }
+
+    else if( current_region == RequestRegion::BELOW )
+    {
+        boundering_below = id;
+        rules_processor.defineBelow( id );
+        setObjectsAsSelectable( selectable_below, false );
+    }
+
+    setObjectSelected( id, true );
 }

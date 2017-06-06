@@ -56,6 +56,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void finishSketch();
         bool acceptSketch( Curve2D& curve );
         bool isValidSketch();
+        void enableSketch( bool status );
 
         void processCurve( Curve2D& curve );
         void removeCurve();
@@ -70,6 +71,8 @@ class SketchScene_Refactored: public QGraphicsScene
         void setModeMovingImage();
 
 
+        void enableDeletingCurves( bool status );
+
 
 
     signals:
@@ -78,6 +81,8 @@ class SketchScene_Refactored: public QGraphicsScene
         void removeCurveFromObject( double depth );
         void createSurface();
         void updateVolumeDimensions( double w, double h );
+        void enableDeleting( bool status );
+        void selectedObject( std::size_t id );
 
 
 
@@ -124,7 +129,8 @@ class SketchScene_Refactored: public QGraphicsScene
         std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
         std::map< double, QString > backgrounds;
 
-
+        bool is_sketch_enabled;
+        bool is_delete_enabled;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H

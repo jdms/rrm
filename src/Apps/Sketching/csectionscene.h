@@ -12,9 +12,9 @@ class CSectionScene: public SketchScene_Refactored
         CSectionScene();
 
         inline bool isDuplicatedObject(){ return true; }
-        inline void setActiveObjects( const std::vector< std::size_t >& objs ){}
-        inline void setObjectsSelected( const std::vector< std::size_t >& objs ){}
-        inline void setObjectsSelectable( const std::vector< std::size_t >& objs ){}
+        inline void setActiveObjects( const std::vector< std::size_t >& objs, bool status ){}
+        inline void setObjectsSelected( const std::vector< std::size_t >& objs, bool status ){}
+        inline void setObjectsSelectable( const std::vector< std::size_t >& objs, bool status ){}
         inline void updateObjects( const std::vector< std::size_t >& objs ){}
 
 

@@ -14,6 +14,7 @@ class SketchWindow;
 class ObjectTree;
 class PagesStack;
 class Controller_Refactored;
+class RealSlider;
 
 class MainWindow_Refactored : public QMainWindow
 {
@@ -62,6 +63,7 @@ class MainWindow_Refactored : public QMainWindow
         void setupController();
 
         void disableVolumeResizing();
+        void setDefaultRule();
 
 
     private:
@@ -71,6 +73,15 @@ class MainWindow_Refactored : public QMainWindow
 
         int app_orig_x;
         int app_orig_y;
+
+
+        QAction* ac_sketch_above;
+        QAction* ac_sketch_below;
+
+        QAction* ac_remove_above;
+        QAction* ac_ra_intersection;
+        QAction* ac_remove_below;
+        QAction* ac_rb_intersection;
 
 
         QAction* ac_show_sidebar;
@@ -83,7 +94,7 @@ class MainWindow_Refactored : public QMainWindow
         SketchWindow* topview_window;
         ObjectTree* object_tree;
         PagesStack* pages_sidebar;
-        QSlider* sl_depth_csection;
+        RealSlider* sl_depth_csection;
 
         QDockWidget* dw_csection;
         QDockWidget* dw_topview;

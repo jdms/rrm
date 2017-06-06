@@ -22,6 +22,21 @@ class Controller_Refactored
 
     public:
 
+
+        enum class StratigraphicRules : int {
+            UNDEFINED = -1,
+            NO_GEOLOGIC_RULE,
+            REMOVE_ABOVE, // Remove above
+            REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+            REMOVE_BELOW, // Remove below
+            REMOVE_BELOW_INTERSECTION, // Remove below intersection
+            DEFINE_ABOVE, // Define above
+            DEFINE_BELOW, // Define below
+            DEFINE_REGION // Define region
+        };
+
+        enum class RequestRegion { ABOVE, BELOW, NONE };
+
         Controller_Refactored();
 
         void init();
@@ -55,40 +70,29 @@ class Controller_Refactored
         bool isValidObject( std::size_t id ) const ;
 
 
-        inline void setObjectType( const Object_Refactored::Type& type ) {
-                                    setObjectType( current_object, type ); }
-
-        inline Object_Refactored::Type getObjectType(){
-                                    return getObjectType( current_object ); }
-
+        void setObjectType( const Object_Refactored::Type& type );
         void setObjectType( std::size_t id, const Object_Refactored::Type& type );
+
+        Object_Refactored::Type getObjectType();
         Object_Refactored::Type getObjectType( std::size_t id );
 
 
-
-
-        inline void setObjectName( const std::string& name ){
-                                    setObjectName( current_object, name ) ;}
-        inline std::string getObjectName(){
-                                    return getObjectName( current_object ); }
+        void setObjectName( const std::string& name );
+        std::string getObjectName();
 
         void setObjectName( std::size_t id, const std::string& name );
         std::string getObjectName( std::size_t id );
 
 
-        inline void setObjectColor( int r, int g, int b ){
-                                    setObjectColor( current_object, r, g, b ); }
-        inline void getObjectColor( int& r, int& g, int& b ){
-                                    getObjectColor( current_object, r, g, b ); }
+        void setObjectColor( int r, int g, int b );
+        void getObjectColor( int& r, int& g, int& b );
 
         void setObjectColor( std::size_t id, int r, int g, int b );
         void getObjectColor( std::size_t id, int& r, int& g, int& b );
 
 
-        inline void setObjectVisibility( bool status ){
-                                    setObjectVisibility( current_object, status ); }
-        inline bool getObjectVisibility(){
-                                    return getObjectVisibility( current_object ); }
+        void setObjectVisibility( bool status );
+        bool getObjectVisibility();
 
         void setObjectVisibility( std::size_t id,  bool status );
         bool getObjectVisibility( std::size_t id );
@@ -97,8 +101,14 @@ class Controller_Refactored
         void addCurveToObject( const Curve2D& curve );
         void addTrajectoryToObject( const Curve2D& curve );
 
-
         void removeCurveFromObject( double depth );
+        void removeTrajectoryFromObject();
+
+        void enableTrajectory( bool status );
+        void enableCurve( bool status );
+
+        void enableDeletingCurves( bool status  );
+
         bool createObjectSurface();
 
         void updateObject( std::size_t id );
@@ -117,8 +127,33 @@ class Controller_Refactored
         void updateBoundingBoxRulesProcessor();
 
 
+        std::size_t setupCrossSectionDiscretization();
+        std::size_t indexCrossSection( double value ) const;
+        double depthCrossSection( std::size_t index ) const;
+
+
         void setCurrentColor( int r, int g, int b );
         void getCurrentColor( int& r, int& g, int& b ) const ;
+
+
+        Controller_Refactored::StratigraphicRules getCurrentRule() const;
+        void setCurrentRule( const Controller_Refactored::StratigraphicRules& rule );
+
+
+        void enableCreateAbove( bool status );
+        void stopCreateAbove();
+        void requestCreateAbove();
+
+        void enableCreateBelow( bool status );
+        void stopCreateBelow();
+        void requestCreateBelow();
+
+
+        void setObjectsAsSelectable( std::vector< std::size_t >& indexes,
+                                                            bool status );
+        void setObjectSelected( std::size_t id, bool status );
+
+        void defineObjectSelected( std::size_t id );
 
 
     private:
@@ -136,9 +171,22 @@ class Controller_Refactored
 
 
         double current_csection;
-
+        double csection_step;
 
         std::tuple< int, int, int > current_color;
+
+        StratigraphicRules current_rule;
+        const StratigraphicRules RULE_DEFAULT = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
+
+
+        std::vector< std::size_t > selectable_upper;
+        std::vector< std::size_t > selectable_below;
+
+        std::size_t boundering_above;
+        std::size_t boundering_below;
+
+        RequestRegion current_region;
+
 };
 
 #endif // CONTROLLER_REFACTORED_H
