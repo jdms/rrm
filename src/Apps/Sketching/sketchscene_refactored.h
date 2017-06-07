@@ -82,6 +82,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void updateVolumeDimensions( double w, double h );
         void enableDeleting( bool status );
         void selectedObject( std::size_t id );
+        void updateColor( const QColor& c );
 
 
 
