@@ -48,9 +48,10 @@ class Scene3d_refactored: public QObject
         inline void updateScene(){}
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
-        inline void clear(){}
 
-        inline void setDefaultValues(){}
+        void clear();
+        void clearData();
+
         void setCurrentDirectory( const QString& dir );
         void setOpenGLContext( QOpenGLContext* ctxt );
 

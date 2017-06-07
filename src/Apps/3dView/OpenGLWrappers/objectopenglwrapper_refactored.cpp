@@ -7,11 +7,8 @@
 
 ObjectOpenGLWrapper_Refactored::ObjectOpenGLWrapper_Refactored()
 {
-    number_of_faces = 0;
-    number_of_vertices = 0;
-
-    singlepass = false;
-    testing = false;
+    raw = nullptr;
+    setDefaultValues();
 }
 
 
@@ -378,6 +375,14 @@ void ObjectOpenGLWrapper_Refactored::rendering()
 
 void ObjectOpenGLWrapper_Refactored::clear()
 {
+    clearData();
+    setDefaultValues();
+}
+
+
+void ObjectOpenGLWrapper_Refactored::clearData()
+{
+
     resetShaders();
     resetBuffers();
 
@@ -385,6 +390,24 @@ void ObjectOpenGLWrapper_Refactored::clear()
         raw->clear();
     raw = nullptr;
 
+}
+
+
+void ObjectOpenGLWrapper_Refactored::setDefaultValues()
+{
+    va_object = 0;
+    vb_vertices = 0;
+    vb_normals = 0;
+    vb_colors = 0;
+    vb_faces = 0;
+
+    number_of_faces = 0;
+    number_of_vertices = 0;
+
     minimum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
     maximum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+
+    singlepass = false;
+    testing = false;
+
 }

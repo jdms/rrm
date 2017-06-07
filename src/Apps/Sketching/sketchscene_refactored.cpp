@@ -12,14 +12,12 @@
 
 SketchScene_Refactored::SketchScene_Refactored()
 {
-    sketch = nullptr;
-    current_interaction = UserInteraction::SKETCHING;
-    current_color = Qt::red;
-    current_csection = 0;
-    is_sketch_enabled = true;
-    is_delete_enabled = true;
 
-    createCrossSectionImageItem();
+    csection_image = nullptr;
+    sketch = nullptr;
+
+    setDefaultValues();
+
 }
 
 
@@ -37,11 +35,11 @@ void SketchScene_Refactored::resizingVolume( const QPointF& point, bool done )
     int h = static_cast< int > ( point.y() - boundary_anchor.y() );
 
     if( done == false )
-        volume.resize(boundary_anchor.x(), boundary_anchor.y(), w, h ) ;
+        volume.resize( boundary_anchor.x(), boundary_anchor.y(), w, h ) ;
     else
     {
         emit updateVolumeDimensions( static_cast< double > ( abs( w ) ),
-                                static_cast< double > ( abs( h ) ) );
+                                     static_cast< double > ( abs( h ) ) );
         setModeSketching();
     }
 
@@ -143,6 +141,7 @@ void SketchScene_Refactored::setModeEditable( bool status )
 void SketchScene_Refactored::setModeSketching()
 {
     current_interaction = UserInteraction::SKETCHING;
+    clearSketch();
 }
 
 
@@ -342,7 +341,6 @@ void SketchScene_Refactored::createCrossSectionImageItem()
     csection_image->setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     addItem( csection_image );
 
-
     update();
 }
 
@@ -379,6 +377,53 @@ bool SketchScene_Refactored::hasImageInCrossSection()
         return false;
     else
         return true;
+}
+
+
+
+
+
+void SketchScene_Refactored::clear()
+{
+    clearData();
+    setDefaultValues();
+    update();
+}
+
+
+void SketchScene_Refactored::clearData()
+{
+
+    if( csection_image != nullptr )
+        delete csection_image;
+    csection_image = nullptr;
+
+    volume.clear();
+    clearSketch();
+
+    for( auto& it : objects )
+    {
+        ( it.second )->clear();
+        delete ( it.second );
+    }
+    objects.clear();
+
+    backgrounds.clear();
+}
+
+
+void SketchScene_Refactored::setDefaultValues()
+{
+    current_csection = 0.0;
+    current_color = Qt::red;
+    current_interaction = DEFAULT_INTERACTION;
+
+    boundary_anchor = QPointF( 0.0, 0.0 );
+
+    is_sketch_enabled = true;
+    is_delete_enabled = false;
+
+    createCrossSectionImageItem();
 }
 
 

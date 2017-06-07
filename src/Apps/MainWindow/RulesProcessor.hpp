@@ -121,8 +121,8 @@
             //
             void stopDefineBelow();
 
-            bool defineAboveIsActive();
-            bool defineBelowIsActive();
+            bool defineAboveIsActive( std::size_t& index );
+            bool defineBelowIsActive( std::size_t& index );
 
 
             void removeAbove();

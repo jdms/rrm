@@ -19,7 +19,7 @@ class CrossSectionItemWrapper_Refactored: public QGraphicsLineItem
         void getDimensions( double& w, double& d ) const;
 
         void setWidth( double w );
-        void setDepth( double f );
+        void setDepth( double d );
 
         double getWidth() const;
         double getDepth() const;
@@ -27,6 +27,8 @@ class CrossSectionItemWrapper_Refactored: public QGraphicsLineItem
         void setupPens();
 
         void setCurrent( bool status );
+
+        void clear();
 
     protected:
 

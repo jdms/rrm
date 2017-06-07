@@ -45,11 +45,6 @@ class SketchScene_Refactored: public QGraphicsScene
         void removeObjectsFromScene();
 
 
-        inline void updateScene(){}
-        inline void clear(){}
-
-        inline void setDefaultValues(){}
-
         void startSketch( const QPointF& p );
         void clearSketch();
 
@@ -72,6 +67,10 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         void enableDeletingCurves( bool status );
+        void selectBounderingRegion();
+
+        void clear();
+        void setDefaultValues();
 
 
 
@@ -95,6 +94,7 @@ class SketchScene_Refactored: public QGraphicsScene
         bool isAddedObject( std::size_t id ) const ;
         void disableMovingImage();
 
+        void clearData();
 
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
@@ -117,7 +117,7 @@ class SketchScene_Refactored: public QGraphicsScene
         double current_csection;
         QColor current_color;
         UserInteraction current_interaction;
-
+        const UserInteraction DEFAULT_INTERACTION = UserInteraction::SKETCHING;
 
         QPointF boundary_anchor;
 

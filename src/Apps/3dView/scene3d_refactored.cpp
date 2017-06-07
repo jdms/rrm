@@ -125,8 +125,6 @@ bool Scene3d_refactored::isAddedObject( std::size_t id )
 void Scene3d_refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {
-
-
     if( volume != nullptr )
         volume->draw( V, P, w, h );
 
@@ -152,3 +150,41 @@ void Scene3d_refactored::setOpenGLContext( QOpenGLContext* ctxt )
     context = ctxt;
     surface = ctxt->surface();
 }
+
+
+
+void Scene3d_refactored::clear()
+{
+    clearData();
+    current_color = Qt::red;
+    emit updateCanvas();
+}
+
+
+void Scene3d_refactored::clearData()
+{
+    current_color = Qt::red;
+
+    if( volume != nullptr )
+    {
+        volume->clear();
+        delete volume;
+    }
+    volume = nullptr;
+
+
+    if( csection != nullptr )
+    {
+        csection->clear();
+        delete csection;
+    }
+    csection = nullptr;
+
+    for( auto& it: objects )
+    {
+        ( it.second )->clear();
+        delete ( it.second );
+    }
+    objects.clear();
+}
+

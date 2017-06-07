@@ -8,8 +8,7 @@
 
 CrossSectionOpenGLWrapper_Refactored::CrossSectionOpenGLWrapper_Refactored()
 {
-    is_visible = true;
-    depth = 0.0;
+    setDefaultValues();
 }
 
 
@@ -240,9 +239,20 @@ void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const
 
 void CrossSectionOpenGLWrapper_Refactored::clear()
 {
+    clearData();
+    setDefaultValues();
+}
+
+
+void CrossSectionOpenGLWrapper_Refactored::clearData()
+{
     resetShaders();
     resetBuffers();
 
+}
+
+void CrossSectionOpenGLWrapper_Refactored::setDefaultValues()
+{
     depth = 0.0f;
     number_of_vertices = 0;
     is_visible = true;

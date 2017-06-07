@@ -12,13 +12,14 @@
 
 Controller_Refactored::Controller_Refactored()
 {
-    current_csection = 0;
     volume = nullptr;
     csection_scene = nullptr;
     topview_scene = nullptr;
     scene3d = nullptr;
     object_tree = nullptr;
-    current_rule = RULE_DEFAULT;
+
+    setDefaultValues();
+
 }
 
 
@@ -657,6 +658,7 @@ void Controller_Refactored::requestCreateAbove()
     if( request_accept == false ) return;
 
     current_region = RequestRegion::ABOVE;
+    csection_scene->setModeSelecting();
     setObjectsAsSelectable( selectable_upper, true );
 }
 
@@ -739,3 +741,146 @@ void Controller_Refactored::defineObjectSelected( std::size_t id )
 
     setObjectSelected( id, true );
 }
+
+
+
+void Controller_Refactored::saveFile( const std::string& filename )
+{
+    rules_processor.saveFile( filename );
+}
+
+void Controller_Refactored::loadFile( const std::string& filename )
+{
+    rules_processor.loadFile( filename );
+    loadObjects();
+    loadStatus();
+}
+
+
+void Controller_Refactored::loadObjects()
+{
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    std::size_t number_of_objects = actives.size();
+
+    std::vector< int > colors;// = createVectorOfColors( number_of_objects );
+
+    for( std::size_t i = 0; i < number_of_objects; ++i )
+    {
+        setCurrentColor( colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
+        addObject();
+        addObjectToInterface();
+    }
+    updateActiveObjects();
+}
+
+
+void Controller_Refactored::loadStatus()
+{
+    std::size_t id;
+    if( rules_processor.defineAboveIsActive( id ) == true )
+    {
+        current_region = RequestRegion::ABOVE;
+        defineObjectSelected( id );
+    }
+    if( rules_processor.defineBelowIsActive( id ) == true )
+    {
+        current_region = RequestRegion::BELOW;
+        defineObjectSelected( id );
+    }
+}
+
+
+bool Controller_Refactored::undo()
+{
+    bool undo_done = rules_processor.undo();
+    if( undo_done == false ) return false;
+
+    updateActiveObjects();
+    return true;
+}
+
+bool Controller_Refactored::redo()
+{
+    bool redo_done = rules_processor.redo();
+    if( redo_done == false ) return false;
+
+    updateActiveObjects();
+    return true;
+}
+
+
+bool Controller_Refactored::canUndo()
+{
+    return rules_processor.canUndo();
+}
+
+bool Controller_Refactored::canRedo()
+{
+    return rules_processor.canRedo();
+}
+
+
+void Controller_Refactored::clear()
+{
+    clearScenes();
+    clearData();
+
+    setDefaultValues();
+}
+
+
+void Controller_Refactored::clearScenes()
+{
+    if( scene3d != nullptr )
+        scene3d->clear();
+
+    if( csection_scene != nullptr )
+        csection_scene->clear();
+
+    if( topview_scene != nullptr )
+        topview_scene->clear();
+}
+
+
+void Controller_Refactored::clearData()
+{
+    if( volume != nullptr )
+    {
+        volume->clear();
+        delete volume;
+    }
+    volume = nullptr;
+
+
+
+    for( auto &it: objects )
+    {
+        ( it.second )->clear();
+        delete ( it.second );
+    }
+    objects.clear();
+
+
+    if( object_tree != nullptr )
+        object_tree->clear();
+
+
+    selectable_upper.clear();
+    selectable_below.clear();
+}
+
+
+void Controller_Refactored::setDefaultValues()
+{
+    csection_step = 0.0;
+    boundering_above = 0;
+    boundering_below = 0;
+
+    current_color = std::make_tuple( 255, 0, 0 );
+    current_object = 0;
+    current_csection = 0.0;
+    current_rule = RULE_DEFAULT;
+    current_region = RequestRegion::NONE;
+}
+
+

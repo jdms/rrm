@@ -104,14 +104,28 @@ void MainWindow_Refactored::createToolbarActions()
 
 
     QAction* ac_new = new QAction( "Clear", this );
+    connect( ac_new, &QAction::triggered, this, &MainWindow_Refactored::clear );
+
+    QAction* ac_save_file = new QAction( "Save", this );
+    connect( ac_save_file, &QAction::triggered, this, &MainWindow_Refactored::saveFile );
+    QAction* ac_load_file = new QAction( "Load", this );
+    connect( ac_load_file, &QAction::triggered, this, &MainWindow_Refactored::loadFile );
+
+
     QAction* ac_undo = new QAction( "Undo", this );
+    connect( ac_undo, &QAction::triggered, this, &MainWindow_Refactored::undo );
+
     QAction* ac_redo = new QAction( "Redo", this );
+    connect( ac_redo, &QAction::triggered, this, &MainWindow_Refactored::redo );
 
 
     QToolBar* tb_general = new QToolBar( this );
     tb_general->addAction( ac_show_sidebar );
     tb_general->addSeparator();
     tb_general->addAction( ac_new );
+    tb_general->addAction( ac_save_file );
+    tb_general->addAction( ac_load_file );
+    tb_general->addSeparator();
     tb_general->addAction( ac_undo );
     tb_general->addAction( ac_redo );
     addToolBar( tb_general );
@@ -305,7 +319,8 @@ void MainWindow_Refactored::setupController()
                                                 controller->removeCurveFromObject( depth ); } );
 
     connect( csection_scene, &CSectionScene::createSurface, [=](){
-                                                controller->createObjectSurface(); } );
+                                                controller->createObjectSurface();
+                                                checkUndoRedo(); } );
 
 
     connect( csection_scene, &CSectionScene::selectedObject, [=]( std::size_t id ){
@@ -386,6 +401,70 @@ void MainWindow_Refactored::resizingVolumeDepth( double d )
 }
 
 
+
+
+void MainWindow_Refactored::clear()
+{
+    controller->clear();
+//    resetInterface();
+//    setupController();
+}
+
+
+
+void MainWindow_Refactored::saveFile()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+
+    if( filename.isEmpty() == true ) return;
+    controller->saveFile( filename.toStdString() );
+
+}
+
+
+void MainWindow_Refactored::loadFile()
+{
+    QString selected_format = "";
+    QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+    if( filename.isEmpty() == true ) return;
+
+    controller->loadFile( filename.toStdString() );
+    checkUndoRedo();
+}
+
+
+
+void MainWindow_Refactored::undo()
+{
+    bool undo_ok = controller->undo();
+    if( undo_ok == false ) return;
+
+    checkUndoRedo();
+}
+
+
+void MainWindow_Refactored::redo()
+{
+    bool redo_ok = controller->redo();
+    if( redo_ok == false ) return;
+
+    checkUndoRedo();
+}
+
+
+
+void MainWindow_Refactored::checkUndoRedo()
+{
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+}
+
+
 void MainWindow_Refactored::setupInterface()
 {
     double width = controller->getVolumeWidth();
@@ -395,8 +474,6 @@ void MainWindow_Refactored::setupInterface()
     pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
 }
-
-
 
 
 void MainWindow_Refactored::setDefaultValues()

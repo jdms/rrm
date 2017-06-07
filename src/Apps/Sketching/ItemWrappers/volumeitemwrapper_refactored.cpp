@@ -23,10 +23,7 @@ void VolumeItemWrapper_Refactored::setupPen()
 void VolumeItemWrapper_Refactored::clear()
 {
     if( raw != nullptr )
-    {
         raw->clear();
-        delete raw;
-    }
     raw = nullptr;
 
     section_boundary.clear();

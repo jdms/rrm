@@ -73,3 +73,10 @@ void CrossSectionItemWrapper_Refactored::setCurrent( bool status )
     else
         current_pen = fixed_csection_pen;
 }
+
+
+void CrossSectionItemWrapper_Refactored::clear()
+{
+    width = 0.0;
+    depth = 0.0;
+}

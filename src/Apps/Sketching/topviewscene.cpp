@@ -10,6 +10,7 @@
 
 TopViewScene::TopViewScene()
 {
+    csection = nullptr;
     setupPen();
 }
 
@@ -163,6 +164,45 @@ void TopViewScene::showPopUp()
     w->show();
 
 }
+
+
+
+void TopViewScene::clear()
+{
+    clearData();
+    draw_csections = true;
+    update();
+}
+
+
+void TopViewScene::clearData()
+{
+    if( csection != nullptr )
+    {
+        csection->clear();
+        delete csection;
+    }
+    csection = nullptr;
+
+    for( auto &it: csections )
+    {
+        ( it.second )->clear();
+        delete ( it.second );
+    }
+    csections.clear();
+
+    for( auto &it: csections )
+    {
+        ( it.second )->clear();
+        delete ( it.second );
+    }
+    csections.clear();
+
+    objects.clear();
+
+}
+
+
 
 
 void TopViewScene::keyPressEvent( QKeyEvent *event )

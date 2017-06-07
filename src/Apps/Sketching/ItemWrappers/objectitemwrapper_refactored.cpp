@@ -24,11 +24,11 @@ void ObjectItemWrapper_Refactored::paint( QPainter* painter, const QStyleOptionG
 {
     if( isVisible() == false ) return;
 
-    if( isSelected() == true )
-    {
-        QColor c = visible_subpaths_pen.color().darker();
-        visible_subpaths_pen.setColor( visible_subpaths_pen.color().darker() );
-    }
+//    if( isSelected() == true )
+//    {
+//        QColor c = visible_subpaths_pen.color().darker();
+//        visible_subpaths_pen.setColor( visible_subpaths_pen.color().darker() );
+//    }
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( visible_subpaths_pen );
@@ -70,13 +70,17 @@ void ObjectItemWrapper_Refactored::updateState()
     }
     else if( object->getSelected() == true )
     {
-        visible_subpaths_pen.setColor( selected_color );
+        int r, g, b;
+        object->getColor( r, g, b );
+        visible_subpaths_pen.setColor( QColor( r, g, b ).lighter() );
+        visible_subpaths_pen.setStyle( Qt::DotLine );
     }
     else
     {
         int r, g, b;
         object->getColor( r, g, b );
         visible_subpaths_pen.setColor( QColor( r, g, b ) );
+        visible_subpaths_pen.setStyle( Qt::SolidLine );
     }
 
     setFlag( QGraphicsItem::ItemIsSelectable, selectable );
@@ -165,11 +169,16 @@ void ObjectItemWrapper_Refactored::setupPen()
 
 void ObjectItemWrapper_Refactored::clear()
 {
+    clearData();
+    csection_depth = 0.0;
+}
+
+
+void ObjectItemWrapper_Refactored::clearData()
+{
     if( object != nullptr )
         object->clear();
     object = nullptr;
-
-    csection_depth = 0.0;
 
     clearCurve();
 }
