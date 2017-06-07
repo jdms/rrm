@@ -31,6 +31,7 @@
 #include <memory>
 
 #include "use_openmp.hpp"
+#include "serialization_primitives.hpp"
 
 #include "interpolant_2d.hpp" 
 #include "core.hpp" 
@@ -129,7 +130,7 @@ class InterpolatedGraph
 
     private: 
         static unsigned long int num_instances_; 
-        const unsigned long int id_; 
+        unsigned long int id_; 
 
         bool surface_is_set_ = false; 
         bool path_is_set_ = false;
@@ -146,6 +147,15 @@ class InterpolatedGraph
         bool extruded_surface_ = false; 
 
         bool compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const;
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
+
+        /* template<typename Archive> */
+        /* static void load_and_construct( Archive &ar, cereal::construct<InterpolatedGraph> &construct, const::uint32_t version); */
 };
 
 template<typename Point3Type>

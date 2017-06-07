@@ -33,6 +33,8 @@ class ColorPicker: public QToolButton
     signals:
 
         void colorSelected( const QColor& );
+        void setFixedColor( bool status, const QColor& );
+
 
     private:
 
