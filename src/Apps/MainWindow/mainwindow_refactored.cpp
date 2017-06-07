@@ -301,7 +301,6 @@ void MainWindow_Refactored::setupController()
 
 
     connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
-//                                                disableVolumeResizing();
                                                 controller->addCurveToObject( curve );
                                                 bool status = controller->isVolumeResizable();
                                                 setVolumeResizingEnabled( status );

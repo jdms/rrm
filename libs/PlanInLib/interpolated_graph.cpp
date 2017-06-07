@@ -21,6 +21,7 @@
 /******************************************************************************/
 
 
+#include "serialization.hpp"
 #include "interpolated_graph.hpp" 
 #include "triangle_soup_wrapper.hpp" 
 

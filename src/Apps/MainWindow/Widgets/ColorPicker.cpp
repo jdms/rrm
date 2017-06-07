@@ -39,6 +39,9 @@ void ColorPicker::createActions()
     connect( cd_picker_color, &QColorDialog::colorSelected, [=]( const QColor& color_ )
                                                 { emit colorSelected( color_ ); } );
 
+
+    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineColor );
+
 }
 
 
@@ -56,9 +59,23 @@ QColor ColorPicker::currentColor() const
 
 void ColorPicker::colorChanged( const QColor& color_ )
 {
-
     QPixmap px( 15, 15 );
     px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
     setIcon( px );
 }
+
+
+void ColorPicker::defineColor( bool status )
+{
+    QColor c;
+
+    if( status == false )
+        c = randomColor();
+    else
+        c = currentColor();
+
+    emit setFixedColor( status, c );
+}
+
+
 

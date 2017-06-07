@@ -909,6 +909,7 @@ void Controller_Refactored::setDefaultValues()
     current_csection = 0.0;
     current_rule = RULE_DEFAULT;
     current_region = RequestRegion::NONE;
+
 }
 
 

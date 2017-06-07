@@ -214,6 +214,8 @@ class Controller_Refactored
 
         RequestRegion current_region;
 
+
+        bool randomic_color;
 };
 
 #endif // CONTROLLER_REFACTORED_H
