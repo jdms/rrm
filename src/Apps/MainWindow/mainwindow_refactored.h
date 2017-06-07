@@ -48,8 +48,8 @@ class MainWindow_Refactored : public QMainWindow
 
         inline void resetInterface(){}
         void setDefaultValues();
-        void setupInterface();
-
+        void loadVolumeDimensions();
+        void loadDefaultValues();
 
         void resizingVolumeWidth( double w );
         void resizingVolumeHeight( double h );
@@ -70,10 +70,17 @@ class MainWindow_Refactored : public QMainWindow
         void createController();
         void setupController();
 
-        void disableVolumeResizing();
-        void setDefaultRule();
+        void setVolumeResizingEnabled( bool status );
+        void loadDefaultRule();
 
         void checkUndoRedo();
+
+        void clearInterface();
+        void clearMenu();
+        void clearWindows();
+
+        void run_app();
+
 
 
     private:
@@ -118,7 +125,10 @@ class MainWindow_Refactored : public QMainWindow
         const bool TOPVIEW_VISIBLE = false;
         const bool CSECTION_VISIBLE = true;
 
+        const bool CREATE_REGIONS_ALLOWED = true;
+        const bool CREATE_REGIONS_DEFINED = false;
 
+        const bool NO_RULE_CHECKED = false;
 };
 
 #endif // MAINWINDOW_REFACTORED_H

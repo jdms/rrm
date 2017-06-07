@@ -21,6 +21,7 @@ class Object_Refactored
         Object_Refactored( const Object_Refactored::Type& t );
 
 
+        void setId( std::size_t id );
         std::size_t getId() const;
 
         void setType( const Object_Refactored::Type& t );

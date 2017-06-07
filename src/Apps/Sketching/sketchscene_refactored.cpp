@@ -325,7 +325,6 @@ void SketchScene_Refactored::processCurve( Curve2D& curve )
 void SketchScene_Refactored::setCurrentCrossSection( double depth )
 {
     current_csection = depth;
-    removeObjectsFromScene();
 
     if( hasImageInCrossSection() == false ) return;
     setImageToCrossSection( backgrounds[ current_csection ] );
@@ -385,6 +384,8 @@ bool SketchScene_Refactored::hasImageInCrossSection()
 
 void SketchScene_Refactored::clear()
 {
+
+
     clearData();
     setDefaultValues();
     update();
@@ -393,6 +394,9 @@ void SketchScene_Refactored::clear()
 
 void SketchScene_Refactored::clearData()
 {
+
+    for( auto &it: items() )
+        removeItem( it );
 
     if( csection_image != nullptr )
         delete csection_image;

@@ -60,10 +60,13 @@ class Controller_Refactored
         void setVolumeVisibility( bool status );
         bool getVolumeVisibility() const ;
 
+        bool isVolumeResizable() const;
+
         void updateVolume();
 
 
         void addObject();
+        void addObject( std::size_t id );
         void addObjectToInterface();
         void showObjectInCrossSection( std::size_t id );
 

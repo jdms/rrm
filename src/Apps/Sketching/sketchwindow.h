@@ -22,6 +22,7 @@ class SketchWindow: public QMainWindow
 
 
         void setEnabledVolumeResize( bool status );
+        void clear();
 
 
     signals:

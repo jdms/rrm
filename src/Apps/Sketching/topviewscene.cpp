@@ -177,6 +177,10 @@ void TopViewScene::clear()
 
 void TopViewScene::clearData()
 {
+
+    for( auto &it: items() )
+        removeItem( it );
+
     if( csection != nullptr )
     {
         csection->clear();

@@ -148,6 +148,18 @@ void Controller_Refactored::updateVolume()
 }
 
 
+bool Controller_Refactored::isVolumeResizable() const
+{
+
+    for( auto &it: objects )
+    {
+        Object_Refactored* const& obj = ( it.second );
+        if( obj->isEmpty() == false )
+            return false;
+    }
+
+    return true;
+}
 
 
 void Controller_Refactored::addObject()
@@ -162,6 +174,25 @@ void Controller_Refactored::addObject()
 
     objects[ obj->getId() ] = obj;
     current_object = obj->getId();
+
+    enableDeletingCurves( true );
+
+}
+
+
+void Controller_Refactored::addObject( std::size_t id )
+{
+    Object_Refactored* const& obj = new Object_Refactored();
+
+    int r = std::get<0>( current_color );
+    int g = std::get<1>( current_color );
+    int b = std::get<2>( current_color );
+
+    obj->setColor( r, g, b );
+
+    obj->setId( id );
+    objects[ id ] = obj;
+    current_object = id;
 
     enableDeletingCurves( true );
 
@@ -411,6 +442,8 @@ void Controller_Refactored::desactiveObjects()
         obj->setVisibility( false );
         object_tree->setObjectHidden( it.first, true );
     }
+
+    csection_scene->removeObjectsFromScene();
 }
 
 
@@ -426,17 +459,10 @@ void Controller_Refactored::updateActiveObjects()
     desactiveObjects();
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
-    actives.push_back( current_object );
 
     for( auto it: actives )
     {
-
         bool has_surface = updateActiveSurface( it );
-//        if( has_surface == true )
-//            showObjectInCrossSection( it );
-//        else
-//            std::cout << "there is not curve in this cross-section\n" << std::flush;
-
 
         bool has_curve = updateActiveCurve( it );
         if( has_curve == true )
@@ -764,10 +790,10 @@ void Controller_Refactored::loadObjects()
 
     std::vector< int > colors;// = createVectorOfColors( number_of_objects );
 
-    for( std::size_t i = 0; i < number_of_objects; ++i )
+    for( auto id: actives )
     {
-        setCurrentColor( colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
-        addObject();
+        setCurrentColor( 255, 0, 0 );//colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
+        addObject( id );
         addObjectToInterface();
     }
     updateActiveObjects();
@@ -867,6 +893,8 @@ void Controller_Refactored::clearData()
 
     selectable_upper.clear();
     selectable_below.clear();
+
+    rules_processor.clear();
 }
 
 

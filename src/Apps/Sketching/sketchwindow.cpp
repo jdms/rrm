@@ -120,3 +120,8 @@ void SketchWindow::wheelEvent( QWheelEvent *event )
 
     QMainWindow::wheelEvent( event );
 }
+
+void SketchWindow::clear()
+{
+    ac_edit_boundary->setEnabled( true );
+}
