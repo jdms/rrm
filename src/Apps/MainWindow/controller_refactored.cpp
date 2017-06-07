@@ -904,7 +904,7 @@ void Controller_Refactored::setDefaultValues()
     boundering_above = 0;
     boundering_below = 0;
 
-    current_color = std::make_tuple( 255, 0, 0 );
+    setCurrentColor( 255, 0, 0 );
     current_object = 0;
     current_csection = 0.0;
     current_rule = RULE_DEFAULT;

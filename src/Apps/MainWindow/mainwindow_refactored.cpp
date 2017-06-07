@@ -358,16 +358,7 @@ void MainWindow_Refactored::setupController()
 
 void MainWindow_Refactored::run_app()
 {
-    controller->setCurrentColor( 255, 0, 0 );
     controller->init();
-
-    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
-    sl_depth_csection->setDiscretization( disc );
-
-    double max_slider = controller->getVolumeDepth();
-    sl_depth_csection->setRange( 0, max_slider );
-
-
     loadDefaultValues();
 }
 
@@ -505,6 +496,13 @@ void MainWindow_Refactored::loadVolumeDimensions()
     emit resizedVolume( width, height, depth );
 
 
+    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
+    sl_depth_csection->setDiscretization( disc );
+
+    double max_slider = controller->getVolumeDepth();
+    sl_depth_csection->setRange( 0, max_slider );
+
+
     bool status = controller->isVolumeResizable();
     setVolumeResizingEnabled( status );
 }
@@ -532,8 +530,6 @@ void MainWindow_Refactored::loadDefaultRule()
         ac_rb_intersection->setChecked( true );
     }
 }
-
-
 
 
 

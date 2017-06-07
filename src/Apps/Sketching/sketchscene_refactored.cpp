@@ -187,6 +187,7 @@ void SketchScene_Refactored::setCurrentColor( const QColor& color )
     if( isValidSketch() == true )
         sketch->setColor( color );
 
+    emit updateColor( color );
     update();
 
 }
@@ -194,7 +195,7 @@ void SketchScene_Refactored::setCurrentColor( const QColor& color )
 
 void SketchScene_Refactored::setCurrentColor( int r, int g, int b )
 {
-    setCurrentColor( QColor( r, g, b ) );
+    setCurrentColor( QColor( r, g, b ) );    
 }
 
 
