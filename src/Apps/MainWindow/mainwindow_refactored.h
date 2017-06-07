@@ -37,7 +37,15 @@ class MainWindow_Refactored : public QMainWindow
         inline void showObjectTree( bool status_ ){}
         inline void showObjectProperties( bool status_ ){}
 
-        inline void clear(){}
+        void clear();
+
+        void saveFile();
+        void loadFile();
+
+        void undo();
+        void redo();
+
+
         inline void resetInterface(){}
         void setDefaultValues();
         void setupInterface();
@@ -65,6 +73,8 @@ class MainWindow_Refactored : public QMainWindow
         void disableVolumeResizing();
         void setDefaultRule();
 
+        void checkUndoRedo();
+
 
     private:
 
@@ -83,9 +93,11 @@ class MainWindow_Refactored : public QMainWindow
         QAction* ac_remove_below;
         QAction* ac_rb_intersection;
 
-
         QAction* ac_show_sidebar;
         QAction* ac_show_topview;
+
+        QAction* ac_undo;
+        QAction* ac_redo;
 
 
         Controller_Refactored* controller;

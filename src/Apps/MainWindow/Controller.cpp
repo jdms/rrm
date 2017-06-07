@@ -27,6 +27,7 @@ Controller::Controller()
 
     scene3d = nullptr;
     sketch_scene = nullptr;
+
     path_scene = nullptr;
     object_tree = nullptr;
 

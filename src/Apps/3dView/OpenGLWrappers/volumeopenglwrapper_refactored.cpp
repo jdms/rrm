@@ -9,6 +9,7 @@
 VolumeOpenGLWrapper_Refactored::VolumeOpenGLWrapper_Refactored()
 {
     raw = nullptr;
+    setDefaultValues();
 }
 
 
@@ -55,7 +56,6 @@ double VolumeOpenGLWrapper_Refactored::getDepth() const
 {
     return raw->getDepth();
 }
-
 
 
 
@@ -366,6 +366,13 @@ void VolumeOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
 
 void VolumeOpenGLWrapper_Refactored::clear()
 {
+    clearData();
+    setDefaultValues();
+}
+
+
+void VolumeOpenGLWrapper_Refactored::clearData()
+{
     resetShaders();
     resetBuffers();
 
@@ -373,8 +380,16 @@ void VolumeOpenGLWrapper_Refactored::clear()
         raw->clear();
     raw = nullptr;
 
-    number_of_vertices = 0;
-
 }
 
 
+void VolumeOpenGLWrapper_Refactored::setDefaultValues()
+{
+    va_volume = 0;
+    vb_volume_vertices = 0;
+    vb_volume_normals = 0;
+    number_of_vertices = 0;
+
+    minimum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+    maximum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+}

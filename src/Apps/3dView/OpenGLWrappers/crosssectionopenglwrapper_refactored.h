@@ -46,7 +46,10 @@ class CrossSectionOpenGLWrapper_Refactored
         void reset();
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                    const int& h );
+
         void clear();
+        void clearData();
+        void setDefaultValues();
 
 
     private:

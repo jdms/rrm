@@ -32,6 +32,7 @@ class ObjectItemWrapper_Refactored: public QGraphicsPathItem
         void enableEditing();
 
         void clear();
+        void clearData();
 
 
     protected:

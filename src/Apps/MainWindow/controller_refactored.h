@@ -152,8 +152,32 @@ class Controller_Refactored
         void setObjectsAsSelectable( std::vector< std::size_t >& indexes,
                                                             bool status );
         void setObjectSelected( std::size_t id, bool status );
-
         void defineObjectSelected( std::size_t id );
+
+
+        void saveFile( const std::string& filename );
+        void loadFile( const std::string& filename );
+
+        void loadObjects();
+        void loadStatus();
+
+
+        bool undo();
+        bool canUndo();
+
+        bool redo();
+        bool canRedo();
+
+
+        void clear();
+        void clearScenes();
+        void clearData();
+
+
+        void setDefaultValues();
+
+
+        std::vector< int > createVectorOfColors( std::size_t number_of_colors );
 
 
     private:

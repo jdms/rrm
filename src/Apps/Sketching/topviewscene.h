@@ -37,6 +37,7 @@ class TopViewScene: public SketchScene_Refactored
         void setupPen();
         void showPopUp();
 
+        virtual void clear();
 
 
     signals:
@@ -46,7 +47,10 @@ class TopViewScene: public SketchScene_Refactored
 
     protected:
 
+        virtual void clearData();
+
         void keyPressEvent( QKeyEvent *event );
+
 
     protected:
 

@@ -165,12 +165,12 @@ void RulesProcessor::stopDefineBelow()
     modeller_.stopCreateBelow();
 }
 
-bool RulesProcessor::defineAboveIsActive()
+bool RulesProcessor::defineAboveIsActive( std::size_t& index )
 { 
     return modeller_.createAboveIsActive(); 
 }
 
-bool RulesProcessor::defineBelowIsActive()
+bool RulesProcessor::defineBelowIsActive( std::size_t& index )
 { 
     return modeller_.createBelowIsActive();
 }

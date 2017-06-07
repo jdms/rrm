@@ -87,7 +87,8 @@ void InputSketch::clear( )
     curve = QPainterPath();
 
     created = false;
-
+    is_visible = true;
+    is_inside = false;
 }
 
 
@@ -207,7 +208,7 @@ void InputSketch::process( const QPointF& p )
     Curve2D c = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 1 ] );
     Curve2D whole_curve = PolyQtUtils::qPolyginFToCurve2D( subpaths[ 0 ] );
 
-    bool oversketch_ok = sketchlib.overSketching( whole_curve, c );
+    sketchlib.overSketching( whole_curve, c );
 
     curve = QPainterPath();
     curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( whole_curve ) );
