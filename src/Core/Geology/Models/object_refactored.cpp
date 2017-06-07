@@ -17,6 +17,14 @@ Object_Refactored::Object_Refactored( const Object_Refactored::Type& t )
 }
 
 
+void Object_Refactored::setId( std::size_t id )
+{
+    index = id;
+    count_objects = id + 1;
+}
+
+
+
 std::size_t Object_Refactored::getId() const
 {
     return index;

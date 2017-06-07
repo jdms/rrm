@@ -15,6 +15,7 @@ class PagesStack: public QStackedWidget
         PagesStack();
 
         void createVolumeActions();
+        void clear();
 
 
     public slots:
@@ -44,6 +45,12 @@ class PagesStack: public QStackedWidget
     private:
 
         Ui::Form wd_volume_resize;
+
+        const int MAX_WIDTH = 1000;
+        const int MAX_HEIGHT = 1000;
+        const int MAX_DEPTH = 1000;
+
+        const bool VOLUME_RESIZING = true;
 };
 
 #endif // PAGESSTACK_H

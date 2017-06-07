@@ -25,7 +25,7 @@ MainWindow_Refactored::MainWindow_Refactored( QWidget *parent ) : QMainWindow( p
 
     createController();
     setupController();
-    setupInterface();
+    run_app();
 
 }
 
@@ -112,10 +112,10 @@ void MainWindow_Refactored::createToolbarActions()
     connect( ac_load_file, &QAction::triggered, this, &MainWindow_Refactored::loadFile );
 
 
-    QAction* ac_undo = new QAction( "Undo", this );
+    ac_undo = new QAction( "Undo", this );
     connect( ac_undo, &QAction::triggered, this, &MainWindow_Refactored::undo );
 
-    QAction* ac_redo = new QAction( "Redo", this );
+    ac_redo = new QAction( "Redo", this );
     connect( ac_redo, &QAction::triggered, this, &MainWindow_Refactored::redo );
 
 
@@ -272,17 +272,7 @@ void MainWindow_Refactored::setupController()
     controller->setScene3d( scene3d );
     controller->setObjectTree( object_tree );
 
-    controller->setCurrentColor( 255, 0, 0 );
-    controller->init();
 
-    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
-    sl_depth_csection->setDiscretization( disc );
-
-    double max_slider = controller->getVolumeDepth();
-    sl_depth_csection->setRange( 0, max_slider );
-
-
-    setDefaultRule();
 
 
     connect( object_tree, &ObjectTree::setInputVolumeVisible, [=]( bool status )
@@ -311,12 +301,18 @@ void MainWindow_Refactored::setupController()
 
 
     connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
-                                                disableVolumeResizing();
-                                                controller->addCurveToObject( curve ); } );
+//                                                disableVolumeResizing();
+                                                controller->addCurveToObject( curve );
+                                                bool status = controller->isVolumeResizable();
+                                                setVolumeResizingEnabled( status );
+                              } );
 
 
     connect( csection_scene, &CSectionScene::removeCurveFromObject, [=]( double depth ){
-                                                controller->removeCurveFromObject( depth ); } );
+                                                controller->removeCurveFromObject( depth );
+                                                bool status = controller->isVolumeResizable();
+                                                setVolumeResizingEnabled( status );
+    } );
 
     connect( csection_scene, &CSectionScene::createSurface, [=](){
                                                 controller->createObjectSurface();
@@ -329,8 +325,9 @@ void MainWindow_Refactored::setupController()
 
 
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
-                                                disableVolumeResizing();
-                                                controller->addTrajectoryToObject( curve ); } );
+                                                controller->addTrajectoryToObject( curve );
+                                                bool status = controller->isVolumeResizable();
+                                                setVolumeResizingEnabled( status ); } );
 
 
     connect( topview_scene, &TopViewScene::updateVolumeDimensions, [=]( double w, double d ){
@@ -339,7 +336,9 @@ void MainWindow_Refactored::setupController()
                                         } );
 
     connect( topview_scene, &TopViewScene::removeTrajectory, [=](){
-                                                controller->removeTrajectoryFromObject(); } );
+                                                controller->removeTrajectoryFromObject();
+                                                bool status = controller->isVolumeResizable();
+                                                setVolumeResizingEnabled( status ); } );
 
 
 
@@ -357,10 +356,27 @@ void MainWindow_Refactored::setupController()
 
 
 
-void MainWindow_Refactored::disableVolumeResizing()
+void MainWindow_Refactored::run_app()
 {
-    pages_sidebar->setEnabledVolumeResize( false );
-    sketch_window->setEnabledVolumeResize( false );
+    controller->setCurrentColor( 255, 0, 0 );
+    controller->init();
+
+    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
+    sl_depth_csection->setDiscretization( disc );
+
+    double max_slider = controller->getVolumeDepth();
+    sl_depth_csection->setRange( 0, max_slider );
+
+
+    loadDefaultValues();
+}
+
+
+
+void MainWindow_Refactored::setVolumeResizingEnabled( bool status )
+{
+    pages_sidebar->setEnabledVolumeResize( status );
+    sketch_window->setEnabledVolumeResize( status );
 }
 
 
@@ -406,8 +422,10 @@ void MainWindow_Refactored::resizingVolumeDepth( double d )
 void MainWindow_Refactored::clear()
 {
     controller->clear();
-//    resetInterface();
-//    setupController();
+    clearInterface();
+
+    run_app();
+    loadDefaultValues();
 }
 
 
@@ -460,12 +478,24 @@ void MainWindow_Refactored::redo()
 
 void MainWindow_Refactored::checkUndoRedo()
 {
+    if( controller == nullptr ) return;
+
     ac_undo->setEnabled( controller->canUndo() );
     ac_redo->setEnabled( controller->canRedo() );
 }
 
 
-void MainWindow_Refactored::setupInterface()
+
+
+void MainWindow_Refactored::loadDefaultValues()
+{
+    loadVolumeDimensions();
+    loadDefaultRule();
+    checkUndoRedo();
+}
+
+
+void MainWindow_Refactored::loadVolumeDimensions()
 {
     double width = controller->getVolumeWidth();
     double height = controller->getVolumeHeight();
@@ -473,25 +503,14 @@ void MainWindow_Refactored::setupInterface()
 
     pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
+
+
+    bool status = controller->isVolumeResizable();
+    setVolumeResizingEnabled( status );
 }
 
 
-void MainWindow_Refactored::setDefaultValues()
-{
-    ac_show_sidebar->setChecked( SIDEBAR_VISIBLE );
-    ac_show_topview->setChecked( TOPVIEW_VISIBLE );
-
-    dw_topview->setVisible( TOPVIEW_VISIBLE );
-    dw_csection->setVisible( CSECTION_VISIBLE );
-
-//    pages_sidebar->setDefaultValues();
-//    sketch_window->setDefaultValues();
-//    topview_window->setDefaultValues();
-
-}
-
-
-void MainWindow_Refactored::setDefaultRule()
+void MainWindow_Refactored::loadDefaultRule()
 {
 
     Controller_Refactored::StratigraphicRules rule = controller->getCurrentRule();
@@ -512,4 +531,51 @@ void MainWindow_Refactored::setDefaultRule()
     {
         ac_rb_intersection->setChecked( true );
     }
+}
+
+
+
+
+
+
+void MainWindow_Refactored::clearInterface()
+{
+    clearMenu();
+    clearWindows();
+}
+
+
+void MainWindow_Refactored::clearMenu()
+{
+    ac_sketch_above->setEnabled( CREATE_REGIONS_ALLOWED );
+    ac_sketch_below->setEnabled( CREATE_REGIONS_ALLOWED );
+
+    ac_sketch_above->setChecked( CREATE_REGIONS_DEFINED );
+    ac_sketch_below->setChecked( CREATE_REGIONS_DEFINED );
+
+    ac_remove_above->setChecked( NO_RULE_CHECKED );
+    ac_ra_intersection->setChecked( NO_RULE_CHECKED );
+    ac_remove_below->setChecked( NO_RULE_CHECKED );
+    ac_rb_intersection->setChecked( NO_RULE_CHECKED );
+}
+
+
+void MainWindow_Refactored::clearWindows()
+{
+    sketch_window->clear();
+    topview_window->clear();
+    pages_sidebar->clear();
+}
+
+
+
+
+void MainWindow_Refactored::setDefaultValues()
+{
+    ac_show_sidebar->setChecked( SIDEBAR_VISIBLE );
+    ac_show_topview->setChecked( TOPVIEW_VISIBLE );
+
+    dw_topview->setVisible( TOPVIEW_VISIBLE );
+    dw_csection->setVisible( CSECTION_VISIBLE );
+
 }

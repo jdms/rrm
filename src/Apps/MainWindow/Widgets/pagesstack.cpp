@@ -95,3 +95,11 @@ void PagesStack::createRulesHistoryPage()
 {
 //    addWidget( gl_volume_resizing );
 }
+
+
+void PagesStack::clear()
+{
+    changeRangeSize( MAX_WIDTH, MAX_HEIGHT, MAX_DEPTH );
+    changeVolumeSize( MAX_WIDTH*0.5, MAX_HEIGHT*0.5, MAX_DEPTH*0.5 );
+    setEnabledVolumeResize( VOLUME_RESIZING );
+}
