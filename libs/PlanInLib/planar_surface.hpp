@@ -29,8 +29,10 @@
 #include <list> 
 #include <memory> 
 #include <type_traits>
+#include <cstdint>
 
 #include "use_openmp.hpp"
+#include "serialization_primitives.hpp"
 
 #include "interpolated_graph.hpp"
 #include "triangle_soup_wrapper.hpp" 
@@ -84,7 +86,7 @@ class PlanarSurface {
 
         /* Create surface. */ 
         bool generateSurface(); 
-        bool updateHeights(); 
+        bool updateCache(); 
 
         void updateDiscretization(); 
         static bool requestChangeDiscretization( Natural numX, Natural numY ); 
@@ -102,6 +104,9 @@ class PlanarSurface {
 
         template<typename NList>
         bool getNormalList( NList &normal_list ); 
+
+        template<typename VList>
+        bool getPathVertexList( VList &path_vertex_list );
 
         /* Basic methods. */ 
         bool surfaceIsSet();
@@ -198,6 +203,7 @@ class PlanarSurface {
 
         /* Misc */ 
         bool isExtrudedSurface(); 
+        bool isPathExtrudedSurface();
 
     private:
         /* Members 'discretization_X' and 'discretization_Y' are supposed to 
@@ -216,7 +222,7 @@ class PlanarSurface {
         Natural num_vertices_; // = nX_ * nY_; 
 
         static unsigned long int num_instances_; 
-        const unsigned long int id_; 
+        unsigned long int id_; 
 
         InterpolatedGraph::Ptr f;  
 
@@ -226,6 +232,7 @@ class PlanarSurface {
         static Point3 lenght; 
 
         std::vector<double> heights; 
+        std::vector<double> normals;
         /* std::vector<bool> valid_heights; */ 
 
         bool interpolant_is_set_ = false; 
@@ -244,6 +251,12 @@ class PlanarSurface {
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
 };
 
 template<typename Point3Type>
@@ -256,6 +269,31 @@ template<typename Point3Type>
 bool PlanarSurface::addPoints( const std::vector<Point3Type> &points)
 {
     return f->addPoints(points);
+}
+
+template<typename VList>
+bool PlanarSurface::getPathVertexList( VList &pvlist )
+{
+    if ( surfaceIsSet() == false ) {
+        return false; 
+    }
+
+    if ( f->isPathExtrudedSurface() == false )
+    {
+        return false;
+    }
+
+    pvlist.resize(2*nY_);
+    Point2 v {};
+
+    for ( long int j = 0; j < static_cast<long int>( pvlist.size() ); ++j )
+    {
+        getVertex2D( getVertexIndex(0, j), v );
+        pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
+        pvlist[ 2*j + 1 ] = v.y;
+    }
+
+    return true;
 }
 
 template<typename VList>
@@ -454,38 +492,73 @@ unsigned int PlanarSurface::getMesh( VList &vertex_list, FList &face_list ) {
 template<typename NList>
 bool PlanarSurface::getNormalList( NList &nlist ) 
 {
-    if ( f->isSmooth() < 1 ) { 
+    if ( surfaceIsSet() == false ) {
         return false; 
     }
 
-    /* std::cout << "Got here? \n\n"; */ 
-    if ( interpolant_is_set_ == false ) {
-        /* std::cout << "No normals for you today...\n\n"; */ 
-        return false; 
+    if ( f->isSmooth() < 1 )
+    {
+        return false;
     }
 
     updateDiscretization(); 
 
     /* std::cout << "Num vertices: " << num_vertices_ << "\n\n"; */ 
     nlist.resize(3*num_vertices_); 
-    Point2 v; 
-    Point3 n; 
     auto &nlist_omp = nlist; 
+    auto num_vertices_omp = num_vertices_; 
     auto &cmap_omp = coordinates_map_; 
 
-    auto num_vertices_omp = num_vertices_; 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(nlist_omp, cmap_omp) firstprivate(num_vertices_omp) private(v, n) default(none)
-    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    if ( num_vertices_ > 0 )
     {
-        getNormal(v, n); 
-        nlist_omp[3*i + 0] = n[cmap_omp[0]]; 
-        nlist_omp[3*i + 1] = n[cmap_omp[1]]; 
-        nlist_omp[3*i + 2] = n[cmap_omp[2]]; 
+        using OutRealType = typename std::remove_reference< decltype( nlist[0] ) >::type;
+
+        /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+        /* #pragma omp parallel for shared(nlist_omp, cmap_omp) firstprivate(num_vertices_omp) private(v) default(none) */
+        for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+        {
+            nlist_omp[3*i + 0] = static_cast<OutRealType>( normals[ 3*i + cmap_omp[0] ] ); 
+            nlist_omp[3*i + 1] = static_cast<OutRealType>( normals[ 3*i + cmap_omp[1] ] ); 
+            nlist_omp[3*i + 2] = static_cast<OutRealType>( normals[ 3*i + cmap_omp[2] ] ); 
+        }
+
     }
 
     return true; 
-} 
+}
+/* { */
+/*     if ( f->isSmooth() < 1 ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     /1* std::cout << "Got here? \n\n"; *1/ */ 
+/*     if ( interpolant_is_set_ == false ) { */
+/*         /1* std::cout << "No normals for you today...\n\n"; *1/ */ 
+/*         return false; */ 
+/*     } */
+
+/*     updateDiscretization(); */ 
+
+/*     /1* std::cout << "Num vertices: " << num_vertices_ << "\n\n"; *1/ */ 
+/*     nlist.resize(3*num_vertices_); */ 
+/*     Point2 v; */ 
+/*     Point3 n; */ 
+/*     auto &nlist_omp = nlist; */ 
+/*     auto &cmap_omp = coordinates_map_; */ 
+
+/*     auto num_vertices_omp = num_vertices_; */ 
+/*     /1* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type *1/ */ 
+/*     #pragma omp parallel for shared(nlist_omp, cmap_omp) firstprivate(num_vertices_omp) private(v, n) default(none) */
+/*     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) */ 
+/*     { */
+/*         getNormal(v, n); */ 
+/*         nlist_omp[3*i + 0] = n[cmap_omp[0]]; */ 
+/*         nlist_omp[3*i + 1] = n[cmap_omp[1]]; */ 
+/*         nlist_omp[3*i + 2] = n[cmap_omp[2]]; */ 
+/*     } */
+
+/*     return true; */ 
+/* } */ 
 
 
 

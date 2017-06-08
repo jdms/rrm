@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -21,13 +21,54 @@
 /******************************************************************************/
 
 
+#include <fstream>
+
 #include "srules.hpp" 
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/xml.hpp"
+#include "cereal/archives/json.hpp"
+
+
+#define BUILD_WITH_CEREAL
+#include "serialization.hpp"
+
+
+bool SRules::saveModel( std::string filename )
+{
+    /* std::ofstream ofs(filename, std::ios::binary); */
+    std::ofstream ofs(filename);
+
+    /* cereal::BinaryOutputArchive oarchive(ofs); */
+    cereal::XMLOutputArchive oarchive(ofs);
+    /* cereal::JSONOutputArchive oarchive(ofs); */
+
+    oarchive( cereal::make_nvp("SRules container", *this) );
+
+    return true;
+}
+
+bool SRules::loadModel( std::string filename )
+{
+    /* std::ifstream ifs(filename, std::ios::binary); */
+    /* cereal::BinaryInputArchive iarchive(ifs); */
+
+    /* iarchive(*this); */
+
+    std::ifstream ifs(filename);
+    /* cereal::XMLInputArchive iarchive(ifs); */
+    cereal::JSONInputArchive iarchive(ifs);
+
+    iarchive( CEREAL_NVP(*this) );
+
+    return true;
+}
 
 /* #include <iostream> */ 
 /* using namespace std; */ 
 
-bool SRules::empty()
-{
+
+bool SRules::empty() 
+{ 
     return container.empty(); 
 }
 
@@ -344,8 +385,8 @@ bool SRules::removeAbove( PlanarSurface::Ptr sptr )
     bool status = false; 
     for ( auto s : container ) 
     {
-        if ( !s->weakLiesBelowCheck(sptr) )
         if ( s->surfaceIsSet() == true  ) 
+        if ( !s->weakLiesBelowCheck(sptr) )
         {
             status |= boundaryAwareRemoveAbove(sptr, s); 
         }
@@ -441,8 +482,8 @@ bool SRules::removeBelow( PlanarSurface::Ptr sptr )
     bool status = false; 
     for ( auto s : container ) 
     {
-        if ( !s->weakLiesAboveCheck(sptr) )
         if ( s->surfaceIsSet() == true ) 
+        if ( !s->weakLiesAboveCheck(sptr) )
         { 
             status |= boundaryAwareRemoveBelow(sptr, s); 
         }

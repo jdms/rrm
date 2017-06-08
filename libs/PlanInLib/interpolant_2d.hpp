@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -25,6 +25,9 @@
 #define __INTERPOLANT_2D__
 
 #include <vector> 
+#include <cstdint>
+
+#include "serialization_primitives.hpp"
 
 #include "core.hpp" // Dummy definitions to be replaced by the project's definitions. 
 #include "kernels.hpp"
@@ -40,10 +43,8 @@ class Interpolant2D
         Interpolant2D( const Interpolant2D & ) = default; 
         Interpolant2D& operator=( const Interpolant2D & ) = default;
 
-
-  //      Interpolant2D( Interpolant2D && ) = default; 
-    //    Interpolant2D& operator=( Interpolant2D && ) = default; 
-
+        /* Interpolant2D( Interpolant2D && ) = default; */ 
+        /* Interpolant2D& operator=( Interpolant2D && ) = default; */ 
 
         double operator()( double x, double y ); 
         double operator()( Point2 &p ); 
@@ -75,6 +76,12 @@ class Interpolant2D
         std::vector<double> weights_; 
 
         bool interpolant_is_set_ = false;  
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
 };
 
 
