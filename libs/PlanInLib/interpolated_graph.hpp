@@ -29,8 +29,10 @@
 #include <list> 
 #include <set>
 #include <memory>
+#include <cstdint>
 
 #include "use_openmp.hpp"
+#include "serialization_primitives.hpp"
 
 #include "interpolant_2d.hpp" 
 #include "core.hpp" 
@@ -61,6 +63,7 @@ class InterpolatedGraph
         bool getHeight( Point3 &p ); 
 
         bool getRawHeight( const Point2 &p, double &height );
+        double getPathOrdinate( double abscissa );
 
         template<typename CoordinatesList2D>
         double getRawHeight( CoordinatesList2D &&vertex ); 
@@ -124,10 +127,11 @@ class InterpolatedGraph
         void clearBoundingLists(); 
 
         bool isExtrudedSurface(); 
+        bool isPathExtrudedSurface();
 
     private: 
         static unsigned long int num_instances_; 
-        const unsigned long int id_; 
+        unsigned long int id_; 
 
         bool surface_is_set_ = false; 
         bool path_is_set_ = false;
@@ -144,6 +148,15 @@ class InterpolatedGraph
         bool extruded_surface_ = false; 
 
         bool compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const;
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
+
+        /* template<typename Archive> */
+        /* static void load_and_construct( Archive &ar, cereal::construct<InterpolatedGraph> &construct, const::uint32_t version); */
 };
 
 template<typename Point3Type>
@@ -190,8 +203,20 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
 
     if ( isExtrudedSurface() )
     {
-        DxF = f.Dx(p.x, 0); 
-        DyF = 0; 
+        if ( path_is_set_ )
+        {
+            double origin = path(path_origin.x, 0) - path_origin.y;
+            /* height = f(p.x - (path(p.y, 0) - origin), 0); */
+
+            DxF = f.Dx(p.x - (path(p.y,0) - origin), 0);
+            DyF = f.Dx(p.x - (path(p.y,0) - origin), 0) * path.Dx(p.y,0);
+        }
+
+        else
+        {
+            DxF = f.Dx(p.x, 0); 
+            DyF = 0; 
+        }
     }
 
     else

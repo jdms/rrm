@@ -21,6 +21,7 @@
 /******************************************************************************/
 
 
+#include "serialization.hpp"
 #include "interpolant_2d.hpp"
 
 /* Disable MSVC warnings due to the following (GCC) unknown pragmas */

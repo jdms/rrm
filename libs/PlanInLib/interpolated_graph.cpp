@@ -21,6 +21,7 @@
 /******************************************************************************/
 
 
+#include "serialization.hpp"
 #include "interpolated_graph.hpp" 
 #include "triangle_soup_wrapper.hpp" 
 
@@ -128,6 +129,11 @@ bool InterpolatedGraph::getRawHeight( const Point2 &p, double &height )
     }
 
     return true;
+}
+
+double InterpolatedGraph::getPathOrdinate( double abscissa )
+{
+    return path(abscissa, 0);
 }
 
 bool InterpolatedGraph::getHeight( const Point2 &p, double &height ) 
@@ -518,6 +524,11 @@ bool InterpolatedGraph::isExtrudedSurface()
 { 
     return extruded_surface_;
 } 
+
+bool InterpolatedGraph::isPathExtrudedSurface()
+{
+    return path_is_set_;
+}
 
 bool InterpolatedGraph::compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const
 {
