@@ -78,6 +78,9 @@
 
             bool setLenght( double opengl_x, double opengl_y, double opengl_z );
 
+            void getOrigin( double &opengl_x, double &opengl_y, double &opengl_z );
+
+            void getLenght( double &opengl_x, double &opengl_y, double &opengl_z );
 
             /* Begin methods to interface with GUI */
 
@@ -121,9 +124,15 @@
             //
             void stopDefineBelow();
 
-            bool defineAboveIsActive( std::size_t& index );
-            bool defineBelowIsActive( std::size_t& index );
+//            bool defineAboveIsActive( std::size_t& index );
+//            bool defineBelowIsActive( std::size_t& index );
 
+
+            bool defineAboveIsActive();
+            bool defineBelowIsActive();
+
+            bool defineAboveIsActive( size_t &boundary_index );
+            bool defineBelowIsActive( size_t &boundary_index );
 
             void removeAbove();
             void removeAboveIntersection();
