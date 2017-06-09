@@ -453,6 +453,7 @@ void MainWindow_Refactored::loadFile()
 
     clear();
     controller->loadFile( filename.toStdString() );
+    loadDefaultValues();
     checkUndoRedo();
 }
 
