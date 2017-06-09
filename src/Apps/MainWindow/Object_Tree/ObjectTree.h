@@ -87,7 +87,7 @@ class ObjectTree :public QTreeWidget
 
     protected slots:
 
-        void ObjectTree::filterAction( QTreeWidgetItem* item, std::size_t column );
+        void filterAction( QTreeWidgetItem* item, std::size_t column );
 
     private:
 

@@ -9,8 +9,8 @@ class RealSlider: public QSlider
 
     public:
 
-        RealSlider( Qt::Orientation o );
-        RealSlider::RealSlider( Qt::Orientation o, int disc );
+    RealSlider( Qt::Orientation o );
+    RealSlider( Qt::Orientation o, int disc );
 
 
 
