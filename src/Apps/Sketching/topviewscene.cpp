@@ -115,7 +115,7 @@ bool TopViewScene::acceptSketch( Curve2D& curve )
 
     Curve2D cpy_curve = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketch() );
     curve.douglasPeuckerSimplify( cpy_curve, 1.0 );
-    processCurve( curve );
+//    processCurve( curve );
 
     return true;
 

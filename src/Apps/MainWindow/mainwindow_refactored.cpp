@@ -346,6 +346,11 @@ void MainWindow_Refactored::setupController()
                                                 bool status = controller->isVolumeResizable();
                                                 setVolumeResizingEnabled( status ); } );
 
+    connect( topview_scene, &CSectionScene::createSurface, [=](){
+                                                controller->createObjectSurface();
+                                                checkUndoRedo();
+                                                emit ( csection_scene->setUpColor() );  } );
+
 
 
     connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
@@ -461,14 +466,14 @@ void MainWindow_Refactored::loadFile()
 
 void MainWindow_Refactored::undo()
 {
-    bool undo_ok = controller->undo();
+    controller->undo();
     checkUndoRedo();
 }
 
 
 void MainWindow_Refactored::redo()
 {
-    bool redo_ok = controller->redo();
+    controller->redo();
     checkUndoRedo();
 }
 
