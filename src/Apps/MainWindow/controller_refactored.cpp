@@ -855,7 +855,7 @@ void Controller_Refactored::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
     loadObjects();
-    loadStatus();
+//    loadStatus();
 }
 
 
@@ -863,11 +863,13 @@ void Controller_Refactored::loadObjects()
 {
 
 
-    double width;// = rules_processor.getWidth();
-    double height;// = rules_processor.getHeight();
-    double depth;// = rules_processor.getDepth();
+    double ox, oy, oz;
+    double width, height, depth;
 
-//    volume->setDimensions( width, height, depth );
+    rules_processor.getOrigin( ox, oy, oz );
+    rules_processor.getLenght( width, height, depth );
+
+
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     std::size_t number_of_objects = actives.size();
