@@ -884,6 +884,8 @@ void Controller_Refactored::loadObjects()
         addObjectToInterface();
     }
     updateActiveObjects();
+
+    addObject();
 }
 
 
