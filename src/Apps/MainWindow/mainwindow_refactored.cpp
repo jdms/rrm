@@ -310,8 +310,7 @@ void MainWindow_Refactored::setupController()
     connect( csection_scene, &CSectionScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 controller->addCurveToObject( curve );
                                                 bool status = controller->isVolumeResizable();
-                                                setVolumeResizingEnabled( status );
-                                                /*emit ( csection_scene->setUpColor() );*/ } );
+                                                setVolumeResizingEnabled( status ); } );
 
 
     connect( csection_scene, &CSectionScene::removeCurveFromObject, [=]( double depth ){
@@ -334,8 +333,7 @@ void MainWindow_Refactored::setupController()
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 controller->addTrajectoryToObject( curve );
                                                 bool status = controller->isVolumeResizable();
-                                                setVolumeResizingEnabled( status );
-                                                /*emit ( csection_scene->setUpColor() );*/ } );
+                                                setVolumeResizingEnabled( status ); } );
 
 
     connect( topview_scene, &TopViewScene::updateVolumeDimensions, [=]( double w, double d ){
