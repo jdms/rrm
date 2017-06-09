@@ -510,6 +510,7 @@ void Controller_Refactored::updateActiveObjects()
         if( isValidObject( it ) == false ) continue;
 
         bool has_surface = updateActiveSurface( it );
+        if( has_surface == false ) continue;
 
         bool has_curve = updateActiveCurve( it );
         if( has_curve == true )
@@ -855,7 +856,7 @@ void Controller_Refactored::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
     loadObjects();
-//    loadStatus();
+    loadStatus();
 }
 
 
