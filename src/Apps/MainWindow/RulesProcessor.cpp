@@ -113,6 +113,17 @@ bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_
 }
 
 
+void RulesProcessor::getOrigin( double &opengl_x, double &opengl_y, double &opengl_z )
+{
+    modeller_.getOrigin(opengl_x, opengl_y, opengl_z);
+}
+
+void RulesProcessor::getLenght( double &opengl_x, double &opengl_y, double &opengl_z )
+{ 
+    modeller_.getLenght(opengl_x, opengl_y, opengl_z);
+}
+
+
 /* Begin methods to interface with GUI */
 
 
@@ -167,12 +178,24 @@ void RulesProcessor::stopDefineBelow()
 
 bool RulesProcessor::defineAboveIsActive()
 { 
-    return modeller_.createAboveIsActive(); 
+    size_t dummy_index;
+    return modeller_.createAboveIsActive(dummy_index); 
 }
 
 bool RulesProcessor::defineBelowIsActive()
 { 
-    return modeller_.createBelowIsActive();
+    size_t dummy_index;
+    return modeller_.createBelowIsActive(dummy_index);
+}
+
+bool RulesProcessor::defineAboveIsActive( size_t &boundary_index )
+{ 
+    return modeller_.createAboveIsActive(boundary_index); 
+}
+
+bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
+{ 
+    return modeller_.createBelowIsActive(boundary_index);
 }
 
 
