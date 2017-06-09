@@ -40,7 +40,7 @@ void ColorPicker::createActions()
                                                 { emit colorSelected( color_ ); } );
 
 
-    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineColor );
+//    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineColor );
 
 }
 
@@ -65,17 +65,17 @@ void ColorPicker::colorChanged( const QColor& color_ )
 }
 
 
-void ColorPicker::defineColor( bool status )
-{
-    QColor c;
+//void ColorPicker::defineColor( bool status )
+//{
+//    QColor c;
 
-    if( status == false )
-        c = randomColor();
-    else
-        c = currentColor();
+//    if( status == false )
+//        c = randomColor();
+//    else
+//        c = currentColor();
 
-    emit setFixedColor( status, c );
-}
+//    emit setFixedColor( status, c );
+//}
 
 
 
