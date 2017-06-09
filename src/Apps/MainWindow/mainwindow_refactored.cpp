@@ -292,6 +292,7 @@ void MainWindow_Refactored::setupController()
 
     connect( sketch_window, &SketchWindow::createSurface, [=]() {
                                      controller->createObjectSurface();
+                                     checkUndoRedo();
                                      emit ( csection_scene->setUpColor() );
                                  } );
 
@@ -368,6 +369,7 @@ void MainWindow_Refactored::run_app()
     controller->setCurrentColor( 255, 0, 0 );
     controller->init();
 
+    checkUndoRedo();
     loadDefaultValues();
 }
 
@@ -462,8 +464,6 @@ void MainWindow_Refactored::loadFile()
 void MainWindow_Refactored::undo()
 {
     bool undo_ok = controller->undo();
-    if( undo_ok == false ) return;
-
     checkUndoRedo();
 }
 
@@ -471,8 +471,6 @@ void MainWindow_Refactored::undo()
 void MainWindow_Refactored::redo()
 {
     bool redo_ok = controller->redo();
-    if( redo_ok == false ) return;
-
     checkUndoRedo();
 }
 
