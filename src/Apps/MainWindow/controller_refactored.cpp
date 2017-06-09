@@ -483,10 +483,15 @@ void Controller_Refactored::desactiveObjects()
 {
     for( auto it: objects )
     {
-//        Object_Refactored* obj = objects[ it.first ];
-//        obj->setVisibility( false );
+        Object_Refactored* obj = objects[ it.first ];
+        obj->setVisibility( false );
+
         object_tree->setObjectHidden( it.first, true );
     }
+
+
+    if( isValidObject( current_object ) == true )
+        objects[ current_object ]->setVisibility( true );
 
     csection_scene->removeObjectsFromScene();
 }
