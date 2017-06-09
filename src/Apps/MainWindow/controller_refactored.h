@@ -107,6 +107,8 @@ class Controller_Refactored
         void removeCurveFromObject( double depth );
         void removeTrajectoryFromObject();
 
+        void removeCurrentObject();
+
         void enableTrajectory( bool status );
         void enableCurve( bool status );
 
@@ -214,8 +216,6 @@ class Controller_Refactored
 
         RequestRegion current_region;
 
-
-        bool randomic_color;
 };
 
 #endif // CONTROLLER_REFACTORED_H

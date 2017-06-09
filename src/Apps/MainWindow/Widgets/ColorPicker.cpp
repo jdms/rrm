@@ -1,6 +1,8 @@
+#include <random>
+#include <QHBoxLayout>
+
 #include "ColorPicker.h"
 
-#include <QHBoxLayout>
 
 ColorPicker::ColorPicker( QWidget* parent )
 {
@@ -39,8 +41,7 @@ void ColorPicker::createActions()
     connect( cd_picker_color, &QColorDialog::colorSelected, [=]( const QColor& color_ )
                                                 { emit colorSelected( color_ ); } );
 
-
-//    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineColor );
+//    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineRandomColor );
 
 }
 
@@ -53,29 +54,44 @@ void ColorPicker::setColor( const QColor& c )
 
 QColor ColorPicker::currentColor() const
 {
-    return cd_picker_color->selectedColor();
+    return cd_picker_color->currentColor();
 }
 
 
 void ColorPicker::colorChanged( const QColor& color_ )
 {
+
     QPixmap px( 15, 15 );
     px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
     setIcon( px );
 }
 
 
-//void ColorPicker::defineColor( bool status )
-//{
-//    QColor c;
+void ColorPicker::defineRandomColor()
+{
+    QColor c;
 
-//    if( status == false )
-//        c = randomColor();
-//    else
-//        c = currentColor();
+    bool status = this->isChecked();
 
-//    emit setFixedColor( status, c );
-//}
+    if( status == false )
+        c = randomColor();
+    else
+        c = cd_picker_color->currentColor();
+
+    emit colorSelected( c );
+
+}
 
 
+QColor ColorPicker::randomColor()
+{
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
+    int r = distr( eng );
+    int b = distr( eng );
+    int g = distr( eng );
+
+    return QColor( r, g, b );
+}

@@ -46,6 +46,7 @@ void Scene3d_refactored::updateVolume()
      emit updateCanvas();
 }
 
+
 void Scene3d_refactored::addCrossSection()
 {
     if( csection != nullptr )
@@ -57,18 +58,44 @@ void Scene3d_refactored::addCrossSection()
     csection->setShaderDirectory( shader_directory.toStdString() );
     csection->init();
 
-    float mx, my, mz;
-    float Mx, My, Mz;
+    double mx, my, mz;
+    volume->getOrigin( mx, my, mz );
+    csection->setMinimum( static_cast<float>(mx), static_cast<float>(my), static_cast<float>(mz) );
 
-    volume->getMinimum( mx, my, mz );
-    volume->getMaximum( Mx, My, Mz );
-
-    csection->setMinimum( mx, my, mz );
-    csection->setMaximum( Mx, My, Mz );
-    csection->setDepth( volume->getDepth() );
+    double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
+    csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
 
     emit updateCanvas();
 }
+
+
+void Scene3d_refactored::updateCrossSection()
+{
+    if( csection != nullptr )
+        delete csection;
+
+    context->makeCurrent( surface );
+
+    double mx, my, mz;
+    volume->getOrigin( mx, my, mz );
+    csection->setMinimum( static_cast<float>(mx), static_cast<float>(my), static_cast<float>(mz) );
+
+    double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
+    csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
+
+    emit updateCanvas();
+}
+
+
+void Scene3d_refactored::moveCrossSection( double depth )
+{
+    if( csection == nullptr ) return;
+
+    context->makeCurrent( surface );
+    csection->setDepth( depth );
+    emit updateCanvas();
+}
+
 
 
 bool Scene3d_refactored::addObject( Object_Refactored* const& obj )
@@ -125,11 +152,17 @@ bool Scene3d_refactored::isAddedObject( std::size_t id )
 void Scene3d_refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {
+
     if( volume != nullptr )
         volume->draw( V, P, w, h );
 
+
     for( auto& it : objects )
         (it.second)->draw( V, P, w, h );
+
+
+    if( csection != nullptr )
+        csection->draw( V, P, w, h );
 }
 
 

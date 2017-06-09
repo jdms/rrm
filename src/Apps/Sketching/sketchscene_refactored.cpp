@@ -68,7 +68,11 @@ bool SketchScene_Refactored::isAddedObject( std::size_t id ) const
 
 void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
 {
-    if( isAddedObject( obj->getId() ) == true ) return;
+    if( isAddedObject( obj->getId() ) == true )
+    {
+        reActiveObject( obj->getId() );
+        return;
+    }
 
     ObjectItemWrapper_Refactored* wrapper = new ObjectItemWrapper_Refactored();
     wrapper->setRawObject( obj, current_csection );
@@ -195,7 +199,7 @@ void SketchScene_Refactored::setCurrentColor( const QColor& color )
 
 void SketchScene_Refactored::setCurrentColor( int r, int g, int b )
 {
-    setCurrentColor( QColor( r, g, b ) );    
+    setCurrentColor( QColor( r, g, b ) );
 }
 
 

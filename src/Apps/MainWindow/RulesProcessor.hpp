@@ -142,9 +142,9 @@
 
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
-                    const CurveType &cross_section, double cross_section_depth, 
-                    const CurveType &path 
-                    /* size_t num_extrusion_steps = 32 */ 
+                    const CurveType &cross_section, double cross_section_depth,
+                    const CurveType &path
+                    /* size_t num_extrusion_steps = 32 */
                     );
 
             bool canUndo();
@@ -189,7 +189,7 @@
     {
         modeller_.disableGeologicRules();
         bool status = createSurface(surface_index, curves);
-        testing_surface_insertion_ = true; 
+        testing_surface_insertion_ = true;
 
         return status;
     }
@@ -247,9 +247,9 @@
     }
 
     template<typename CurveType>
-    bool RulesProcessor::extrudeAlongPath(  size_t surface_index, 
-        const CurveType &cross_section_curve, double cross_section_depth, 
-        const CurveType &path_curve 
+    bool RulesProcessor::extrudeAlongPath(  size_t surface_index,
+        const CurveType &cross_section_curve, double cross_section_depth,
+        const CurveType &path_curve
         /* size_t num_extrusion_steps */
         )
     {

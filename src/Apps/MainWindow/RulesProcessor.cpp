@@ -29,7 +29,7 @@ RulesProcessor::RulesProcessor()
 }
 
 std::vector<std::size_t> RulesProcessor::getSurfaces()
-{ 
+{
     return modeller_.getSurfacesIndices();
 }
 
@@ -57,12 +57,12 @@ std::size_t RulesProcessor::getDepthResolution()
 /* bool requestDefineRegion( std::vector<size_t> &eligible_surfaces ); */
 
 bool RulesProcessor::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
-{ 
+{
     return modeller_.requestCreateAbove(eligible_surfaces);
 }
 
 bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
-{ 
+{
     return modeller_.requestCreateBelow(eligible_surfaces);
 }
 
@@ -74,17 +74,17 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 
 bool RulesProcessor::setLowResolution()
-{ 
+{
     return modeller_.tryChangeDiscretization(16, 16);
 }
 
 bool RulesProcessor::setMediumResolution()
-{ 
+{
     return modeller_.tryChangeDiscretization(64, 64);
 }
 
 bool RulesProcessor::setHighResolution()
-{   
+{
     return modeller_.tryChangeDiscretization(128, 128);
 }
 
@@ -99,7 +99,7 @@ void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_
 }
 
 bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_z )
-{ 
+{
     if ( modeller_.setLenght(opengl_x, opengl_y, opengl_z) == false )
     {
         return false;
@@ -131,8 +131,8 @@ void RulesProcessor::clear()
 // Define new input region above surface which index is `surface_index`.
 //
 bool RulesProcessor::defineAbove( size_t surface_index )
-{ 
-    return modeller_.createAbove(surface_index); 
+{
+    return modeller_.createAbove(surface_index);
 }
 
 
@@ -151,8 +151,8 @@ void RulesProcessor::stopDefineAbove()
 // Define new input region below surface which index is `surface_index`.
 //
 bool RulesProcessor::defineBelow( size_t surface_index )
-{ 
-    return modeller_.createBelow(surface_index); 
+{
+    return modeller_.createBelow(surface_index);
 }
 
 //
@@ -166,12 +166,12 @@ void RulesProcessor::stopDefineBelow()
 }
 
 bool RulesProcessor::defineAboveIsActive( std::size_t& index )
-{ 
-    return modeller_.createAboveIsActive(); 
+{
+    return modeller_.createAboveIsActive();
 }
 
 bool RulesProcessor::defineBelowIsActive( std::size_t& index )
-{ 
+{
     return modeller_.createBelowIsActive();
 }
 
@@ -199,23 +199,23 @@ void RulesProcessor::removeBelowIntersection()
 
 
 bool RulesProcessor::canUndo()
-{ 
+{
     return modeller_.canUndo();
 }
 
 bool RulesProcessor::undo()
-{ 
-    return modeller_.undo(); 
+{
+    return modeller_.undo();
 }
 
 bool RulesProcessor::canRedo()
-{ 
-    return modeller_.canRedo(); 
+{
+    return modeller_.canRedo();
 }
 
 bool RulesProcessor::redo()
-{ 
-    return modeller_.redo(); 
+{
+    return modeller_.redo();
 }
 
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
@@ -229,10 +229,10 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std
 }
 
 bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
-{ 
+{
     StratigraphyUtilities util(modeller_);
 
-    return util.getNormalList(surface_id, nlist); 
+    return util.getNormalList(surface_id, nlist);
 }
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist )

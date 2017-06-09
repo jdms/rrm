@@ -6,6 +6,7 @@
 CrossSectionItemWrapper_Refactored::CrossSectionItemWrapper_Refactored( double w, double d ):
                                     width( w ), depth( d )
 {
+    setupPens();
 }
 
 
@@ -21,6 +22,7 @@ void CrossSectionItemWrapper_Refactored::setDimensions( double w, double d )
 {
     width = w;
     depth = d;
+    update();
 }
 
 
@@ -34,12 +36,14 @@ void CrossSectionItemWrapper_Refactored::getDimensions( double& w, double& d ) c
 void CrossSectionItemWrapper_Refactored::setWidth( double w )
 {
     width = w;
+    update();
 }
 
 
 void CrossSectionItemWrapper_Refactored::setDepth( double d )
 {
     depth = d;
+    update();
 }
 
 
@@ -79,4 +83,5 @@ void CrossSectionItemWrapper_Refactored::clear()
 {
     width = 0.0;
     depth = 0.0;
+    update();
 }

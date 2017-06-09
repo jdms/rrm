@@ -25,7 +25,9 @@ void RealSlider::setRange( double min, double max )
     minimum = min;
 
     updateStep();
-    QSlider::setRange( 0, discretization );
+
+    QSlider::setRange( getIndex( min ), getIndex( max ) );
+    setValue( max );
 }
 
 

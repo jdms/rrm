@@ -281,8 +281,6 @@ void ObjectOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
     Eigen::Affine3f M;
     M.setIdentity();
 
-    glDisable( GL_BLEND );
-
     shader->bind();
 
     shader->setUniform( "ModelMatrix" , M );
@@ -334,8 +332,11 @@ void ObjectOpenGLWrapper_Refactored::rendering()
 
 
         glEnable( GL_DEPTH_TEST );
+
+
+
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-        glEnable(GL_POLYGON_OFFSET_FILL);
+        glEnable( GL_POLYGON_OFFSET_FILL );
         glPolygonOffset( 2.0f, 1.0f );
 
 
@@ -354,6 +355,8 @@ void ObjectOpenGLWrapper_Refactored::rendering()
     glDisable(GL_POLYGON_OFFSET_FILL);
 
 
+
+    glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -367,7 +370,6 @@ void ObjectOpenGLWrapper_Refactored::rendering()
     glBindVertexArray ( 0 );
 
     glDisable( GL_BLEND );
-    glDisable( GL_DEPTH_TEST );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 

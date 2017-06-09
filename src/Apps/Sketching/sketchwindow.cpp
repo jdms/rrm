@@ -36,7 +36,6 @@ void SketchWindow::createScene()
 
     gv_view->setScene( scene );
 
-
 }
 
 
@@ -59,8 +58,6 @@ void SketchWindow::createToolbarActions()
     connect( scene, &SketchScene_Refactored::updateVolumeDimensions, [=](){
                                              ac_edit_boundary->setChecked( false ); } );
 
-
-
     QAction* ac_edit_scene = new QAction( "Edit Objects", this );
     ac_edit_scene->setCheckable( true );
     connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditable );
@@ -79,8 +76,13 @@ void SketchWindow::createToolbarActions()
     cp_define_color->setVisible( is_customizable );
     connect( cp_define_color, &ColorPicker::colorSelected, [=]( const QColor& c ){ emit defineColorCurrent( c ); } );
 
+
     connect( scene, &SketchScene_Refactored::updateColor, [=]( const QColor& c ){
-                                                        cp_define_color->setColor( c ); } );
+                                                            cp_define_color->setColor( c ); } );
+
+    connect( scene, &SketchScene_Refactored::setUpColor, [=](){
+                                                            cp_define_color->defineRandomColor(); } );
+
 
     QToolBar* tb_commands = new QToolBar( this );
     tb_commands->addAction( ac_discard_sketch );
