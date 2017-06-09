@@ -29,8 +29,10 @@
 #include <list> 
 #include <memory> 
 #include <type_traits>
+#include <cstdint>
 
 #include "use_openmp.hpp"
+#include "serialization_primitives.hpp"
 
 #include "interpolated_graph.hpp"
 #include "triangle_soup_wrapper.hpp" 
@@ -220,7 +222,7 @@ class PlanarSurface {
         Natural num_vertices_; // = nX_ * nY_; 
 
         static unsigned long int num_instances_; 
-        const unsigned long int id_; 
+        unsigned long int id_; 
 
         InterpolatedGraph::Ptr f;  
 
@@ -249,6 +251,12 @@ class PlanarSurface {
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
 };
 
 template<typename Point3Type>

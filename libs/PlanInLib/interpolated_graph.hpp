@@ -29,6 +29,7 @@
 #include <list> 
 #include <set>
 #include <memory>
+#include <cstdint>
 
 #include "use_openmp.hpp"
 #include "serialization_primitives.hpp"

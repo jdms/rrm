@@ -26,7 +26,6 @@
 
 #include <vector>
 #include <cstdint>
-
 #include "serialization_primitives.hpp"
 
 #include "core.hpp" // Dummy definitions to be replaced by the project's definitions.
@@ -48,6 +47,7 @@ class Interpolant2D
 
         double operator()( double x, double y );
         double operator()( Point2 &p );
+
 
         double Dx( double x, double y );
         double Dx( Point2 &p );
