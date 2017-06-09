@@ -15,7 +15,7 @@ Canvas3d_Refactored::Canvas3d_Refactored()
 
 void Canvas3d_Refactored::initializeGL()
 {
-    glewExperimental = TRUE;
+    glewExperimental = GL_TRUE;
     GLenum err = glewInit();
 
     if( err != GLEW_OK )
