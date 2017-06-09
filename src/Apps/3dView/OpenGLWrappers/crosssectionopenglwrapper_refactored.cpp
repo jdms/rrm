@@ -118,6 +118,11 @@ void CrossSectionOpenGLWrapper_Refactored::defineNormals()
 }
 
 
+void CrossSectionOpenGLWrapper_Refactored::updateGeometry()
+{
+    createPlane();
+}
+
 void CrossSectionOpenGLWrapper_Refactored::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ),

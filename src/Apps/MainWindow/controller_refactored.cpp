@@ -175,6 +175,9 @@ void Controller_Refactored::addObject()
     objects[ obj->getId() ] = obj;
     current_object = obj->getId();
 
+
+    enableCurve( true );
+    enableTrajectory( true );
     enableDeletingCurves( false );
 
 }
@@ -339,7 +342,6 @@ bool Controller_Refactored::getObjectVisibility( std::size_t id )
 
 void Controller_Refactored::addCurveToObject( const Curve2D& curve )
 {
-//    if( isValidObject( current_object ) == false ) return;
 
     Object_Refactored* const& object = objects[ current_object ];
     object->setCrossSectionCurve( current_csection, curve );
@@ -395,7 +397,6 @@ void Controller_Refactored::removeTrajectoryFromObject()
 
 void Controller_Refactored::removeCurrentObject()
 {
-    //object_tree->setObjectHidden( current_object, true );
     object_tree->removeObject( current_object );
     delete objects[ current_object ];
     objects.erase( current_object );
@@ -439,12 +440,14 @@ bool Controller_Refactored::createObjectSurface()
 {
     if( isValidObject( current_object ) == false ) return false;
 
+
     Object_Refactored* const& obj = objects[ current_object ];
     std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
-
     if( curves.empty() == true ) return false;
 
+
     bool surface_created;
+
 
     if( obj->hasTrajectoryCurve() == true )
     {
@@ -464,13 +467,6 @@ bool Controller_Refactored::createObjectSurface()
     {
         updateActiveObjects();
         addObject();
-
-        bool status = obj->isCurveAdmissible();
-        enableCurve( status );
-
-        status = obj->isTrajectoryAdmissible();
-        enableTrajectory( status );
-
     }
 
 
@@ -487,6 +483,7 @@ void Controller_Refactored::desactiveObjects()
         obj->setVisibility( false );
 
         object_tree->setObjectHidden( it.first, true );
+        updateObject( it.first );
     }
 
 
@@ -534,7 +531,6 @@ void Controller_Refactored::updateActiveObjects()
 
 bool Controller_Refactored::updateActiveCurve( std::size_t id )
 {
-//    if( isValidObject( id ) == false ) return;
 
     Object_Refactored* obj = objects[ id ];
 
@@ -873,8 +869,10 @@ void Controller_Refactored::loadObjects()
     rules_processor.getOrigin( ox, oy, oz );
     rules_processor.getLenght( width, height, depth );
 
+
     volume->setOrigin( ox, oy, oz );
     volume->setDimensions( width, height, depth );
+    updateVolume();
 
 
     if( isValidObject( current_object ) == true )
@@ -892,9 +890,9 @@ void Controller_Refactored::loadObjects()
         addObjectToInterface();
     }
 
+    addObject();
     updateActiveObjects();
 
-    addObject();
 }
 
 

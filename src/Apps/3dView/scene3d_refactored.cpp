@@ -43,7 +43,9 @@ void Scene3d_refactored::updateVolume()
     if( volume == nullptr ) return;
     volume->updateGeometry();
 
-     emit updateCanvas();
+    updateCrossSection();
+
+    emit updateCanvas();
 }
 
 
@@ -65,14 +67,14 @@ void Scene3d_refactored::addCrossSection()
     double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
     csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
 
+    csection->updateGeometry();
     emit updateCanvas();
 }
 
 
 void Scene3d_refactored::updateCrossSection()
 {
-    if( csection != nullptr )
-        delete csection;
+    if( csection == nullptr ) return;
 
     context->makeCurrent( surface );
 
@@ -83,6 +85,7 @@ void Scene3d_refactored::updateCrossSection()
     double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
     csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
 
+    csection->updateGeometry();
     emit updateCanvas();
 }
 

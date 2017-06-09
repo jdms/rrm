@@ -234,6 +234,7 @@ void SketchScene_Refactored::finishSketch()
 {
 
     if( isValidSketch() == false ) return;
+    if( sketch->isEmpty() == true ) return;
 
 
     Curve2D curve;
