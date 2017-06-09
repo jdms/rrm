@@ -159,9 +159,17 @@ void ObjectOpenGLWrapper_Refactored::reloadBuffers()
     if( vertices.empty() == true ) return;
 
 
-    std::vector< GLuint > faces( raw->getSurfaceFaces() );
-    std::vector< double > normals_double( raw->getSurfaceNormals() );
-    std::vector< GLfloat > normals( normals_double.begin(), normals_double.end() );
+    std::vector< GLuint > faces_std = raw->getSurfaceFaces();
+    std::vector< GLuint > faces;
+    std::vector< double > normals_double = raw->getSurfaceNormals();
+    std::vector< GLfloat > normals;
+
+
+    for( std::size_t f: faces_std )
+        faces.push_back( static_cast< GLuint > (f));
+
+    for( double d: normals_double )
+        normals.push_back( static_cast< GLfloat > (d));
 
     reloadGeometry( vertices, normals, faces );
 

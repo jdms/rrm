@@ -861,23 +861,23 @@ void Controller_Refactored::loadFile( const std::string& filename )
 
 void Controller_Refactored::loadObjects()
 {
-
-
     double ox, oy, oz;
     double width, height, depth;
 
     rules_processor.getOrigin( ox, oy, oz );
     rules_processor.getLenght( width, height, depth );
 
+    volume->setOrigin( ox, oy, oz );
+    volume->setDimensions( width, height, depth );
+
+
+    if( isValidObject( current_object ) == true )
+        removeCurrentObject();
 
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     std::size_t number_of_objects = actives.size();
-
     std::vector< int > colors;// = createVectorOfColors( number_of_objects );
-
-    if( isValidObject( current_object ) == true )
-        removeCurrentObject();
 
     for( auto id: actives )
     {
