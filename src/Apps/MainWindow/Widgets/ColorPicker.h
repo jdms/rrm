@@ -19,10 +19,18 @@ class ColorPicker: public QToolButton
         void setColor( const QColor& c );
         QColor currentColor() const;
 
+
+    public slots:
+
+        void defineRandomColor();
+
+
     protected:
 
         void createWidget();
         void createActions();
+
+        QColor randomColor();
 
 
     protected slots:
@@ -30,11 +38,11 @@ class ColorPicker: public QToolButton
         void colorChanged( const QColor& color_ );
 
 
+
     signals:
 
         void colorSelected( const QColor& );
         void setFixedColor( bool status, const QColor& );
-
 
     private:
 

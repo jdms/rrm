@@ -20,6 +20,7 @@ class ObjectTree :public QTreeWidget
 
         inline void setInputVolumeHidden( bool status_ )
         {
+            if( input_volume == nullptr ) return;
             setItemHidden( input_volume, status_ );
         }
 
@@ -29,7 +30,23 @@ class ObjectTree :public QTreeWidget
 
         inline void setObjectHidden( const std::size_t& id_, bool status_ )
         {
+            auto search = objects.find( id_ );
+            if( search == objects.end() ) return;
+
             setItemHidden( objects[ id_ ], status_ );
+        }
+
+
+        inline void removeObject( const std::size_t& id_ )
+        {
+            auto search = objects.find( id_ );
+            if( search == objects.end() ) return;
+
+            ObjectTreeItem* const& item = objects[ id_ ];
+            input_volume->removeChild( item );
+
+//            delete objects[ id_ ];
+//            objects.erase( id_ );
         }
 
 
@@ -40,6 +57,8 @@ class ObjectTree :public QTreeWidget
 
         inline void setRegionHidden( const std::size_t id_, bool status_ )
         {
+            auto search = regions.find( id_ );
+            if( search == regions.end() ) return;
             setItemHidden( regions[ id_ ], status_ );
         }
 
@@ -52,6 +71,11 @@ class ObjectTree :public QTreeWidget
             item_->setText( 1, name_ );
 
         }
+
+
+
+        virtual void clear();
+
 
     signals:
 

@@ -4,6 +4,7 @@
 
 #include "topviewscene.h"
 
+#include "Core/Geology/Models/Volume.h"
 #include "Core/Geology/Models/object_refactored.h"
 #include "./ItemWrappers/crosssectionitemwrapper_refactored.h"
 
@@ -22,13 +23,18 @@ void TopViewScene::addVolume( Volume* const& vol )
     volume.setRawVolume( vol );
     setSceneRect( volume.boundingRect() );
     addItem( &volume );
+
+    createCurrentCrossSection( volume.getHeight() );
 }
 
 
 void TopViewScene::createCurrentCrossSection( double depth )
 {
     csection = new CrossSectionItemWrapper_Refactored( volume.getWidth(), depth );
-    csections[ depth ]->setCurrent( true );
+    csection->setCurrent( true );
+    csection->setVisible( true );
+    addItem( csection );
+    update();
 }
 
 
@@ -82,9 +88,8 @@ bool TopViewScene::isAddedObject( std::size_t id )
 void TopViewScene::addObject( Object_Refactored * const &obj )
 {
 
-    if( ( isAddedObject( obj->getId() ) == true ) || ( obj->hasTrajectoryCurve() == false ) )
-        return;
-
+    if( isAddedObject( obj->getId() ) == true )
+        reActiveObject( obj->getId() );
 
     int r, g, b;
     obj->getColor( r, g, b );

@@ -343,6 +343,7 @@ void VolumeOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable( GL_DEPTH_TEST );
 
+
     shader->bind();
 
         shader->setUniform( "ModelMatrix", M );
@@ -359,7 +360,6 @@ void VolumeOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
 
 
     glDisable( GL_BLEND );
-    glEnable( GL_DEPTH_TEST );
 
 }
 

@@ -53,18 +53,20 @@ void CrossSectionOpenGLWrapper_Refactored::setMaximum( float mx, float my, float
 void CrossSectionOpenGLWrapper_Refactored::createPlane()
 {
 
-    float M = (float)( minimum.z() + depth );
-    float m = (float)( minimum.z() );
-
-
-    float z = ( depth - m )*( maximum.z() - minimum.z() )/( M - m ) + minimum.z();
-
+    float z = static_cast<float> (depth);
 
     Eigen::Vector3f A( minimum.x(), minimum.y(), z );
     Eigen::Vector3f B( maximum.x(), minimum.y(), z );
     Eigen::Vector3f C( maximum.x(), maximum.y(), z );
     Eigen::Vector3f D( minimum.x(), maximum.y(), z );
 
+    Eigen::Affine3f matrix = Model3DUtils::normalizePointCloud( minimum.x(), maximum.x(), minimum.y(),
+                                                                maximum.y(), minimum.z(), maximum.z() );
+
+    A = matrix * A;
+    B = matrix * B;
+    C = matrix * C;
+    D = matrix * D;
 
     std::vector< float > plane =
     {
@@ -75,7 +77,7 @@ void CrossSectionOpenGLWrapper_Refactored::createPlane()
     };
 
 
-    number_of_vertices = static_cast< GLuint >(plane.size()/3);
+    number_of_vertices = static_cast< GLuint > (plane.size() );
     reloadBuffers( plane );
 
     defineNormals();
@@ -147,6 +149,7 @@ void CrossSectionOpenGLWrapper_Refactored::initBuffers()
     glBindVertexArray( 0 );
 }
 
+
 void CrossSectionOpenGLWrapper_Refactored::resetShaders()
 {
     if ( shader != nullptr )
@@ -216,7 +219,7 @@ void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const
 
     glEnable( GL_BLEND );
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable( GL_DEPTH_TEST );
+
 
     shader->bind();
 
@@ -233,7 +236,6 @@ void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const
     shader->unbind();
 
     glDisable( GL_BLEND );
-    glEnable( GL_DEPTH_TEST );
 }
 
 

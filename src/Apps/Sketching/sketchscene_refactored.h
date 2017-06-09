@@ -83,7 +83,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void enableDeleting( bool status );
         void selectedObject( std::size_t id );
         void updateColor( const QColor& c );
-
+        void setUpColor();
 
 
     protected:

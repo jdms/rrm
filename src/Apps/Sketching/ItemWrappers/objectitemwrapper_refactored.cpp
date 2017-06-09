@@ -24,11 +24,11 @@ void ObjectItemWrapper_Refactored::paint( QPainter* painter, const QStyleOptionG
 {
     if( isVisible() == false ) return;
 
-//    if( isSelected() == true )
-//    {
-//        QColor c = visible_subpaths_pen.color().darker();
-//        visible_subpaths_pen.setColor( visible_subpaths_pen.color().darker() );
-//    }
+    if( ( isSelected() == true ) && ( object->getSelected() == false ) )
+    {
+        QColor c = visible_subpaths_pen.color().darker();
+        visible_subpaths_pen.setColor( visible_subpaths_pen.color().darker() );
+    }
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( visible_subpaths_pen );

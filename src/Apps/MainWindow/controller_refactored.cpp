@@ -175,7 +175,7 @@ void Controller_Refactored::addObject()
     objects[ obj->getId() ] = obj;
     current_object = obj->getId();
 
-    enableDeletingCurves( true );
+    enableDeletingCurves( false );
 
 }
 
@@ -194,7 +194,7 @@ void Controller_Refactored::addObject( std::size_t id )
     objects[ id ] = obj;
     current_object = id;
 
-    enableDeletingCurves( true );
+    enableDeletingCurves( false );
 
 }
 
@@ -210,6 +210,7 @@ void Controller_Refactored::addObjectToInterface()
     int r, g, b;
     obj->getColor( r, g, b );
     object_tree->addObject( obj->getId(), r, g, b );
+
 
 }
 
@@ -325,7 +326,7 @@ void Controller_Refactored::setObjectVisibility( std::size_t id,bool status )
     Object_Refactored* const& object = objects[ id ];
     object->setVisibility( status );
 
-     updateObject( id );
+    updateObject( id );
 }
 
 
@@ -338,6 +339,8 @@ bool Controller_Refactored::getObjectVisibility( std::size_t id )
 
 void Controller_Refactored::addCurveToObject( const Curve2D& curve )
 {
+//    if( isValidObject( current_object ) == false ) return;
+
     Object_Refactored* const& object = objects[ current_object ];
     object->setCrossSectionCurve( current_csection, curve );
 
@@ -349,8 +352,11 @@ void Controller_Refactored::addCurveToObject( const Curve2D& curve )
     enableTrajectory( status );
 
 
+    enableDeletingCurves( true );
+
+
     addObjectToInterface();
-    createObjectSurface();
+    topview_scene->addCrossSection( current_csection );
 
 }
 
@@ -387,6 +393,15 @@ void Controller_Refactored::removeTrajectoryFromObject()
 
 
 
+void Controller_Refactored::removeCurrentObject()
+{
+    //object_tree->setObjectHidden( current_object, true );
+    object_tree->removeObject( current_object );
+    delete objects[ current_object ];
+    objects.erase( current_object );
+}
+
+
 void Controller_Refactored::enableTrajectory( bool status )
 {
     topview_scene->enableSketch( status );
@@ -411,6 +426,12 @@ void Controller_Refactored::addTrajectoryToObject( const Curve2D& curve )
     Object_Refactored* const& object = objects[ current_object ];
     object->setTrajectoryCurve( curve );
     topview_scene->addObject( object );
+
+    bool status = object->isCurveAdmissible();
+    enableCurve( status );
+
+    status = object->isTrajectoryAdmissible();
+    enableTrajectory( status );
 }
 
 
@@ -423,14 +444,38 @@ bool Controller_Refactored::createObjectSurface()
 
     if( curves.empty() == true ) return false;
 
+    bool surface_created;
 
-    rules_processor.createSurface( current_object, curves );
-    updateActiveObjects();
+    if( obj->hasTrajectoryCurve() == true )
+    {
+        Curve2D path = obj->getTrajectoryCurve();
+        Curve2D curve = std::get<0>( curves[ 0 ] );
+        double depth = std::get<1>( curves[ 0 ] );
 
-    enableDeletingCurves( false );
-    addObject();
+        surface_created = rules_processor.extrudeAlongPath( obj->getId(), curve, depth,
+                                                           path );
+    }
 
-    return true;
+    else
+        surface_created = rules_processor.createSurface( current_object, curves );
+
+
+    if( surface_created == true )
+    {
+        updateActiveObjects();
+        addObject();
+
+        bool status = obj->isCurveAdmissible();
+        enableCurve( status );
+
+        status = obj->isTrajectoryAdmissible();
+        enableTrajectory( status );
+
+    }
+
+
+
+    return surface_created;
 }
 
 
@@ -438,8 +483,8 @@ void Controller_Refactored::desactiveObjects()
 {
     for( auto it: objects )
     {
-        Object_Refactored* obj = objects[ it.first ];
-        obj->setVisibility( false );
+//        Object_Refactored* obj = objects[ it.first ];
+//        obj->setVisibility( false );
         object_tree->setObjectHidden( it.first, true );
     }
 
@@ -462,6 +507,8 @@ void Controller_Refactored::updateActiveObjects()
 
     for( auto it: actives )
     {
+        if( isValidObject( it ) == false ) continue;
+
         bool has_surface = updateActiveSurface( it );
 
         bool has_curve = updateActiveCurve( it );
@@ -469,14 +516,20 @@ void Controller_Refactored::updateActiveObjects()
             showObjectInCrossSection( it );
         else
             std::cout << "there is not curve in this cross-section\n" << std::flush;
+
+        object_tree->setObjectHidden( it, false );
+
     }
 
+    showObjectInCrossSection( current_object );
 
 }
 
 
 bool Controller_Refactored::updateActiveCurve( std::size_t id )
 {
+//    if( isValidObject( id ) == false ) return;
+
     Object_Refactored* obj = objects[ id ];
 
     std::vector< double > curve_vertices;
@@ -500,6 +553,8 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 
 bool Controller_Refactored::updateActiveSurface( std::size_t id )
 {
+
+
     Object_Refactored* obj = objects[ id ];
 
     std::vector< double > surface_vertices;
@@ -533,12 +588,15 @@ void Controller_Refactored::showObjectInCrossSection( std::size_t id )
 
 void Controller_Refactored::setCurrentCrossSection( double depth )
 {
-    if( ( isValidCrossSection( depth ) == false ) || ( objects.empty() == true ) ) return;
+    if ( isValidCrossSection( depth ) == false ) return;
 
     current_csection = depth;
     csection_scene->setCurrentCrossSection( current_csection );
+    topview_scene->moveCurrentCrossSection( current_csection );
+    scene3d->moveCrossSection( current_csection );
 
-    updateActiveObjects();
+    if ( objects.empty() == false )
+        updateActiveObjects();
 
 }
 
@@ -663,6 +721,7 @@ void Controller_Refactored::enableCreateAbove( bool status )
 {
     setObjectsAsSelectable( selectable_upper, false );
 
+
     if( status == false )
         stopCreateAbove();
     else
@@ -675,6 +734,7 @@ void Controller_Refactored::stopCreateAbove()
 {
     rules_processor.stopDefineAbove();
     setObjectSelected( boundering_above, false );
+
 }
 
 
@@ -684,14 +744,18 @@ void Controller_Refactored::requestCreateAbove()
     if( request_accept == false ) return;
 
     current_region = RequestRegion::ABOVE;
-    csection_scene->setModeSelecting();
+
+    setObjectsAsSelectable( selectable_below, false );
     setObjectsAsSelectable( selectable_upper, true );
+
+    csection_scene->setModeSelecting();
 }
 
 
 
 void Controller_Refactored::enableCreateBelow( bool status )
 {
+
     setObjectsAsSelectable( selectable_below, false );
 
     if( status == false )
@@ -712,11 +776,15 @@ void Controller_Refactored::stopCreateBelow()
 
 void Controller_Refactored::requestCreateBelow()
 {
+
     bool request_accept = rules_processor.requestCreateBelow( selectable_below );
     if( request_accept == false ) return;
 
     current_region = RequestRegion::BELOW;
+
+    setObjectsAsSelectable( selectable_upper, false );
     setObjectsAsSelectable( selectable_below, true );
+
     csection_scene->setModeSelecting();
 }
 
@@ -728,6 +796,8 @@ void Controller_Refactored::setObjectsAsSelectable( std::vector< std::size_t >& 
 
     for( std::size_t id: indexes )
     {
+        if( isValidObject( id ) == false ) continue;
+
         Object_Refactored* const& obj = objects[ id ];
         obj->setSelectable( status );
 
@@ -741,6 +811,9 @@ void Controller_Refactored::setObjectsAsSelectable( std::vector< std::size_t >& 
 
 void Controller_Refactored::setObjectSelected( std::size_t id, bool status )
 {
+
+    if( isValidObject( id ) == false ) return;
+
     Object_Refactored* const& obj = objects[ id ];
     obj->setSelected( status );
     updateObject( id );
@@ -751,6 +824,8 @@ void Controller_Refactored::setObjectSelected( std::size_t id, bool status )
 
 void Controller_Refactored::defineObjectSelected( std::size_t id )
 {
+    if( isValidObject( id ) == false ) return;
+
     if( current_region == RequestRegion::ABOVE )
     {
         boundering_above = id;
@@ -765,7 +840,8 @@ void Controller_Refactored::defineObjectSelected( std::size_t id )
         setObjectsAsSelectable( selectable_below, false );
     }
 
-    setObjectSelected( id, true );
+    setObjectSelected( id, true);
+
 }
 
 
@@ -785,10 +861,21 @@ void Controller_Refactored::loadFile( const std::string& filename )
 
 void Controller_Refactored::loadObjects()
 {
+
+
+    double width;// = rules_processor.getWidth();
+    double height;// = rules_processor.getHeight();
+    double depth;// = rules_processor.getDepth();
+
+//    volume->setDimensions( width, height, depth );
+
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     std::size_t number_of_objects = actives.size();
 
     std::vector< int > colors;// = createVectorOfColors( number_of_objects );
+
+    if( isValidObject( current_object ) == true )
+        removeCurrentObject();
 
     for( auto id: actives )
     {
@@ -909,7 +996,6 @@ void Controller_Refactored::setDefaultValues()
     current_csection = 0.0;
     current_rule = RULE_DEFAULT;
     current_region = RequestRegion::NONE;
-
 }
 
 

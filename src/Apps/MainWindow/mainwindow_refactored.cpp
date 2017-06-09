@@ -290,6 +290,12 @@ void MainWindow_Refactored::setupController()
                                  } );
 
 
+    connect( sketch_window, &SketchWindow::createSurface, [=]() {
+                                     controller->createObjectSurface();
+                                     emit ( csection_scene->setUpColor() );
+                                 } );
+
+
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& c ) {
                                      controller->setCurrentColor( c.red(), c.green(), c.blue() );
                                  } );
@@ -304,7 +310,7 @@ void MainWindow_Refactored::setupController()
                                                 controller->addCurveToObject( curve );
                                                 bool status = controller->isVolumeResizable();
                                                 setVolumeResizingEnabled( status );
-                              } );
+                                                /*emit ( csection_scene->setUpColor() );*/ } );
 
 
     connect( csection_scene, &CSectionScene::removeCurveFromObject, [=]( double depth ){
@@ -314,8 +320,9 @@ void MainWindow_Refactored::setupController()
     } );
 
     connect( csection_scene, &CSectionScene::createSurface, [=](){
-                                                controller->createObjectSurface();
-                                                checkUndoRedo(); } );
+                                                controller->createObjectSurface();                                                
+                                                checkUndoRedo();
+                                                emit ( csection_scene->setUpColor() );  } );
 
 
     connect( csection_scene, &CSectionScene::selectedObject, [=]( std::size_t id ){
@@ -326,7 +333,8 @@ void MainWindow_Refactored::setupController()
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
                                                 controller->addTrajectoryToObject( curve );
                                                 bool status = controller->isVolumeResizable();
-                                                setVolumeResizingEnabled( status ); } );
+                                                setVolumeResizingEnabled( status );
+                                                /*emit ( csection_scene->setUpColor() );*/ } );
 
 
     connect( topview_scene, &TopViewScene::updateVolumeDimensions, [=]( double w, double d ){
@@ -357,7 +365,9 @@ void MainWindow_Refactored::setupController()
 
 void MainWindow_Refactored::run_app()
 {
+    controller->setCurrentColor( 255, 0, 0 );
     controller->init();
+
     loadDefaultValues();
 }
 
@@ -441,6 +451,7 @@ void MainWindow_Refactored::loadFile()
 
     if( filename.isEmpty() == true ) return;
 
+    clear();
     controller->loadFile( filename.toStdString() );
     checkUndoRedo();
 }
@@ -494,12 +505,9 @@ void MainWindow_Refactored::loadVolumeDimensions()
     pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
 
-
     int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
     sl_depth_csection->setDiscretization( disc );
-
-    double max_slider = controller->getVolumeDepth();
-    sl_depth_csection->setRange( 0, max_slider );
+    sl_depth_csection->setRange( 0, depth );
 
 
     bool status = controller->isVolumeResizable();
@@ -529,6 +537,8 @@ void MainWindow_Refactored::loadDefaultRule()
         ac_rb_intersection->setChecked( true );
     }
 }
+
+
 
 
 

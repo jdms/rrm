@@ -28,6 +28,7 @@ class Scene3d_refactored: public QObject
         void addVolume( Volume* const& vol );
 
         void addCrossSection();
+        void moveCrossSection( double depth );
 
         bool addObject( Object_Refactored* const& obj );
         bool isAddedObject( std::size_t id );
@@ -43,6 +44,7 @@ class Scene3d_refactored: public QObject
         void setCurrentColor( const QColor& color );
 
         void updateVolume();
+        void updateCrossSection();
         void updateObject( std::size_t );
         inline void updateObjects(){}
         inline void updateScene(){}

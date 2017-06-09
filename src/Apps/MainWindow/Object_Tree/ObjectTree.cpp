@@ -108,3 +108,18 @@ void ObjectTree::addRegion( const std::size_t& id )
     regions[ id ] = item;
 
   }
+
+
+void ObjectTree::clear()
+{
+
+
+
+    for( auto& it: objects )
+    {
+        delete objects[ it.first ];
+    }
+    objects.clear();
+
+    QTreeWidget::clear();
+}
