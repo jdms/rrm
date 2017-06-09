@@ -21,6 +21,7 @@
 /******************************************************************************/
 
 
+#include "serialization.hpp"
 #include "planar_surface.hpp" 
 #include <cmath>
 #include <stdexcept> 

@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -26,13 +26,16 @@
 
 #include <vector>
 #include <unordered_map>
+#include <cstdint>
+
+#include "serialization_primitives.hpp"
 
 #include "planar_surface.hpp" 
 
 /** 
  * \class SRules \anchor SRules
  * 
- * \brief Simple stratigraphic rules. 
+ * \brief Simple stratigraphic rules aware surfaces container. 
  *
  * This class implements a container and a basic set of stratigraphic rules, 
  * which are applied to the container's surfaces. 
@@ -64,7 +67,11 @@ class SRules
          * \return Size of the container. 
          */
         std::size_t size(); 
-
+        
+        /** \brief Query whether the container is empty. 
+         *
+         * \return True if the container is empty. 
+         */
         bool empty(); 
         
         /** \brief Translates a PlanarSurface's SurfaceId to the surface's index in the container. 
@@ -187,6 +194,10 @@ class SRules
          */
         bool removeBelowIntersection(); 
 
+        bool saveModel( std::string filename );
+
+        bool loadModel( std::string filename );
+
 
     public:
         bool removeAbove( PlanarSurface::Ptr sptr ); 
@@ -230,6 +241,12 @@ class SRules
 
         bool boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface ); 
         bool boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface ); 
+
+        // Cereal provides an easy way to serialize objects
+        friend class cereal::access;
+
+        template<typename Archive>
+        void serialize( Archive &ar, const std::uint32_t version );
 }; 
 
 #endif 
