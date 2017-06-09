@@ -113,6 +113,17 @@ bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_
 }
 
 
+void RulesProcessor::getOrigin( double &opengl_x, double &opengl_y, double &opengl_z )
+{
+    modeller_.getOrigin(opengl_x, opengl_y, opengl_z);
+}
+
+void RulesProcessor::getLenght( double &opengl_x, double &opengl_y, double &opengl_z )
+{ 
+    modeller_.getLenght(opengl_x, opengl_y, opengl_z);
+}
+
+
 /* Begin methods to interface with GUI */
 
 
@@ -165,14 +176,37 @@ void RulesProcessor::stopDefineBelow()
     modeller_.stopCreateBelow();
 }
 
-bool RulesProcessor::defineAboveIsActive( std::size_t& index )
-{
-    return modeller_.createAboveIsActive();
+//<<<<<<< HEAD
+//bool RulesProcessor::defineAboveIsActive( std::size_t& index )
+//{
+//    return modeller_.createAboveIsActive();
+//}
+
+//bool RulesProcessor::defineBelowIsActive( std::size_t& index )
+//{
+//    return modeller_.createBelowIsActive();
+//=======
+bool RulesProcessor::defineAboveIsActive()
+{ 
+    size_t dummy_index;
+    return modeller_.createAboveIsActive(dummy_index); 
 }
 
-bool RulesProcessor::defineBelowIsActive( std::size_t& index )
-{
-    return modeller_.createBelowIsActive();
+bool RulesProcessor::defineBelowIsActive()
+{ 
+    size_t dummy_index;
+    return modeller_.createBelowIsActive(dummy_index);
+}
+
+bool RulesProcessor::defineAboveIsActive( size_t &boundary_index )
+{ 
+    return modeller_.createAboveIsActive(boundary_index); 
+}
+
+bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
+{ 
+    return modeller_.createBelowIsActive(boundary_index);
+//>>>>>>> a8073a9921ca7e86e80e6ce7d8d7085f52de6471
 }
 
 
