@@ -357,9 +357,47 @@ void Controller_Refactored::addCurveToObject( const Curve2D& curve )
     enableDeletingCurves( true );
 
 
-    addObjectToInterface();
     topview_scene->addCrossSection( current_csection );
+    addObjectToInterface();
 
+    testObjectSurface();
+
+}
+
+
+bool Controller_Refactored::testObjectSurface()
+{
+    if( isValidObject( current_object ) == false ) return false;
+
+
+    Object_Refactored* const& obj = objects[ current_object ];
+    std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
+    if( curves.empty() == true ) return false;
+
+
+    bool surface_created = rules_processor.testSurface( current_object, curves );
+
+
+    if( surface_created == true )
+    {
+
+        std::vector< double > surface_vertices;
+        std::vector< std::size_t > surface_faces;
+        bool has_surface = rules_processor.getMesh( current_object, surface_vertices, surface_faces );
+        if( has_surface  == false ) return false;
+
+
+        std::vector< double > surface_normals;
+        rules_processor.getNormals( current_object, surface_normals );
+
+        obj->setSurface( surface_vertices, surface_faces, true );
+        obj->setSurfaceNormals( surface_normals );
+        obj->setVisibility( true );
+
+        scene3d->updateObject( current_object );
+    }
+
+    return surface_created;
 }
 
 
@@ -442,13 +480,13 @@ bool Controller_Refactored::createObjectSurface()
 
 
     Object_Refactored* const& obj = objects[ current_object ];
+    obj->setTesting( false );
+
     std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
     if( curves.empty() == true ) return false;
 
 
     bool surface_created;
-
-
     if( obj->hasTrajectoryCurve() == true )
     {
         Curve2D path = obj->getTrajectoryCurve();
@@ -468,8 +506,6 @@ bool Controller_Refactored::createObjectSurface()
         updateActiveObjects();
         addObject();
     }
-
-
 
     return surface_created;
 }
@@ -533,6 +569,9 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 {
 
     Object_Refactored* obj = objects[ id ];
+    bool testing = obj->isTesting();
+
+    if( testing == true ) return false;
 
     std::vector< double > curve_vertices;
     std::vector< std::size_t > curve_edges;
@@ -558,6 +597,7 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
 
 
     Object_Refactored* obj = objects[ id ];
+    bool testing = obj->isTesting();
 
     std::vector< double > surface_vertices;
     std::vector< std::size_t > surface_faces;
@@ -569,7 +609,7 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
     std::vector< double > surface_normals;
     rules_processor.getNormals( id, surface_normals );
 
-    obj->setSurface( surface_vertices, surface_faces );
+    obj->setSurface( surface_vertices, surface_faces, testing );
     obj->setSurfaceNormals( surface_normals );
     obj->setVisibility( true );
 

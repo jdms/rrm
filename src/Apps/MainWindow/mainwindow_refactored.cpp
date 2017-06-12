@@ -193,6 +193,7 @@ void MainWindow_Refactored::createToolbarActions()
 
 
     QAction* ac_screenshot = new QAction( "Screenshot", this );
+    connect( ac_screenshot, &QAction::triggered, canvas3d, &Canvas3d_Refactored::screenshot );
 
     QToolBar* tb_misc = new QToolBar( this );
     tb_misc->addAction( ac_screenshot );

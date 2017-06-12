@@ -176,8 +176,8 @@ void ObjectItemWrapper_Refactored::clear()
 
 void ObjectItemWrapper_Refactored::clearData()
 {
-    if( object != nullptr )
-        object->clear();
+//    if( object != nullptr )
+//        object->clear();
     object = nullptr;
 
     clearCurve();

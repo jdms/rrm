@@ -115,6 +115,7 @@ class Controller_Refactored
         void enableDeletingCurves( bool status  );
 
         bool createObjectSurface();
+        bool testObjectSurface();
 
         void updateObject( std::size_t id );
         void updateActiveObjects();

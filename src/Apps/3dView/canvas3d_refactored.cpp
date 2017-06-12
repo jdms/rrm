@@ -5,6 +5,7 @@
 
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QFileDialog>
 
 
 
@@ -63,6 +64,53 @@ Scene3d_refactored* Canvas3d_Refactored::getScene() const
 {
     return scene3d;
 }
+
+
+
+
+
+void Canvas3d_Refactored::screenshot()
+{
+    QString selectedFilter;
+    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
+
+    if( selectedFilter == "PNG (*.png)" )
+    {
+        savetoRasterImage( name_of_file );
+    }
+    else if ( selectedFilter == "SVG (*.svg)" )
+    {
+        savetoVectorImage( name_of_file );
+    }
+}
+
+
+
+void Canvas3d_Refactored::savetoRasterImage( const QString& filename )
+{
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_model." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
+    QImage image = grabFramebuffer();
+    image.save( filename_csection );
+}
+
+void Canvas3d_Refactored::savetoVectorImage( const QString& filename )
+{
+    std::cout << "Not implemented yet to 3dView\n" << std::flush;
+}
+
 
 
 void Canvas3d_Refactored::shareOpenGLContext()

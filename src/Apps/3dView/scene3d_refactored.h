@@ -5,6 +5,7 @@
 #include <QColor>
 
 #include "Eigen/Dense"
+#include "OpenGLWrappers/CoordinateAxes.h"
 
 class QString;
 class QOpenGLContext;
@@ -68,6 +69,8 @@ class Scene3d_refactored: public QObject
 
         QString shader_directory;
         QColor current_color;
+
+        CoordinateAxes axes;
 
         QOpenGLContext* context;
         QSurface* surface;

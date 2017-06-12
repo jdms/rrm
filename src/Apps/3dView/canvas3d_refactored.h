@@ -22,6 +22,11 @@ class Canvas3d_Refactored: public QOpenGLWidget
         Scene3d_refactored* getScene() const;
 
 
+    public slots:
+
+        void screenshot();
+
+
     protected:
 
         void initializeGL();
@@ -30,6 +35,10 @@ class Canvas3d_Refactored: public QOpenGLWidget
 
         void createScene();
         void shareOpenGLContext();
+
+        void savetoRasterImage( const QString& filename );
+        void savetoVectorImage( const QString& filename );
+
 
         void mousePressEvent( QMouseEvent *event );
         void mouseMoveEvent( QMouseEvent *event );

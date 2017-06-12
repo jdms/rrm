@@ -63,9 +63,9 @@ int main( int argc, char *argv[] )
     QSurfaceFormat::setDefaultFormat( format );
 
 
-    MainWindow w;
-    w.show();
-    w.run_app();
+//    MainWindow w;
+//    w.show();
+//    w.run_app();
 
     MainWindow_Refactored w1;
     w1.show();

@@ -156,11 +156,10 @@ void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_,
     P(1, 3) = -(top + bottom) / (top - bottom);
     P(2, 3) = -(far_plane + near_plane) / (far_plane - near_plane);
 
-    Eigen::Matrix4f PM = P;
-    int min = (int) (0.2f * std::min( w_, h_ ));
 
     Eigen::Affine3f M;
     M.setIdentity();
+    M.scale( 0.7f );
 
     Eigen::Affine3f V;
     V.setIdentity();
@@ -168,22 +167,12 @@ void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_,
     V.rotate( V_.rotation().matrix() );
 
 
-    if( centered == true )
-    {
-        M.translate( Eigen::Vector3f( origin.x(), origin.y(), origin.z() ) );
-        M.scale( 0.32f );
-        PM = P_;
-        V = V_;
-    }
-    else
-        glViewport( 0, 0, min, min );
-
-
+    glViewport( 0, 0, w_*0.15, h_*0.15 );
 	shader_axes->bind();
 
     shader_axes->setUniform("ModelMatrix", M );
     shader_axes->setUniform("ViewMatrix", V );
-    shader_axes->setUniform("ProjectionMatrix", PM );
+    shader_axes->setUniform("ProjectionMatrix", P );
 
 		glBindVertexArray(vertex_array_coneaxes);
 

@@ -52,6 +52,9 @@ class Object_Refactored
 
         bool isEmpty() const ;
 
+        void setTesting( bool status );
+        bool isTesting() const;
+
 
         void setCrossSectionCurve( double depth, const Curve2D& curve,
                                    std::vector< std::size_t > edges = std::vector< std::size_t >() );
@@ -75,7 +78,7 @@ class Object_Refactored
 
 
         void setSurface( const std::vector< double >& vertices,
-                         const std::vector< std::size_t >& faces );
+                         const std::vector< std::size_t >& faces, bool test = false );
 
 
         void setSurfaceNormals( const std::vector< double >& normals );
@@ -109,6 +112,7 @@ class Object_Refactored
         bool is_selected;
         bool is_visible;
         bool is_editable;
+        bool is_test;
 
 
         bool has_trajectory;

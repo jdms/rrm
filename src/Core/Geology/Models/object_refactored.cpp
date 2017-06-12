@@ -124,6 +124,15 @@ bool Object_Refactored::isEmpty() const
     return empty;
 }
 
+bool Object_Refactored::isTesting() const
+{
+    return is_test;
+}
+
+void Object_Refactored::setTesting( bool status )
+{
+    is_test = status;
+}
 
 void Object_Refactored::setCrossSectionCurve( double depth, const Curve2D& curve,
                            std::vector< std::size_t > edges )
@@ -187,7 +196,7 @@ void Object_Refactored::removeCrossSections()
 bool Object_Refactored::isTrajectoryAdmissible()
 {
 
-    if( csections_curves.size() > 1  )
+    if( ( csections_curves.size() > 1  ) || ( has_trajectory == true ) )
         return false;
 
     return true;
@@ -231,13 +240,14 @@ void Object_Refactored::removeTrajectoryCurve()
 
 
 void Object_Refactored::setSurface( const std::vector< double >& vertices,
-                                    const std::vector< std::size_t >& faces )
+                                    const std::vector< std::size_t >& faces, bool test )
 {
     removeSurface();
     surface_vertices.assign( vertices.begin(), vertices.end() );
     surface_faces.assign( faces.begin(), faces.end() );
 
-    is_editable = false;
+    is_editable = test;
+    is_test = test;
 }
 
 
@@ -332,6 +342,7 @@ void Object_Refactored::removeSurface()
     surface_normals.clear();
 
     is_editable = true;
+    is_test = false;
 }
 
 
@@ -357,6 +368,7 @@ void Object_Refactored::setDefaultValues()
     is_selected = false;
     is_visible = true;
     is_editable = true;
+    is_test = false;
 }
 
 
