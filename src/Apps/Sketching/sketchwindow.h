@@ -25,6 +25,12 @@ class SketchWindow: public QMainWindow
         void clear();
 
 
+
+    public slots:
+
+        void screenshot();
+
+
     signals:
 
         void createSurface();

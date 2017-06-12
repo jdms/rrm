@@ -32,6 +32,7 @@ class ObjectOpenGLWrapper_Refactored
 
 
         bool isVisible() const;
+        bool isTesting();
 
         void initShaders();
         void initBuffers();

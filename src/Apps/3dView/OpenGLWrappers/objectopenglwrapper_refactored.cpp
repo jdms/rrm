@@ -50,6 +50,13 @@ bool ObjectOpenGLWrapper_Refactored::isVisible() const
 }
 
 
+bool ObjectOpenGLWrapper_Refactored::isTesting()
+{
+    if( isVisible() == false ) return false;
+    testing = raw->isTesting();
+    return testing;
+}
+
 void ObjectOpenGLWrapper_Refactored::initShaders()
 {
 
@@ -330,17 +337,17 @@ void ObjectOpenGLWrapper_Refactored::singlePassWireFrame()
 void ObjectOpenGLWrapper_Refactored::rendering()
 {
 
-    if( testing == true )
+
+    glEnable( GL_DEPTH_TEST );
+
+
+    if( isTesting() == true )
     {
         glEnable( GL_BLEND );
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     else
         glDisable( GL_BLEND );
-
-
-        glEnable( GL_DEPTH_TEST );
-
 
 
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -396,8 +403,8 @@ void ObjectOpenGLWrapper_Refactored::clearData()
     resetShaders();
     resetBuffers();
 
-    if( raw != nullptr )
-        raw->clear();
+//    if( raw != nullptr )
+//        raw->clear();
     raw = nullptr;
 
 }

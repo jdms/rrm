@@ -5,6 +5,7 @@
 
 #include <QtWidgets>
 #include <QWheelEvent>
+#include <QFileDialog>
 
 
 SketchWindow::SketchWindow( QWidget* parent, bool customizable ): QMainWindow( parent ),
@@ -84,6 +85,10 @@ void SketchWindow::createToolbarActions()
                                                             cp_define_color->defineRandomColor(); } );
 
 
+    QAction* ac_screenshot = new QAction( "Screenshot", this );
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
+
+
     QToolBar* tb_commands = new QToolBar( this );
     tb_commands->addAction( ac_discard_sketch );
     tb_commands->addAction( ac_commit_sketch );
@@ -95,6 +100,7 @@ void SketchWindow::createToolbarActions()
     tb_commands->addSeparator();
     tb_commands->addAction( ac_edit_boundary );
     tb_commands->addWidget( cp_define_color );
+    tb_commands->addAction( ac_screenshot );
     addToolBar( tb_commands );
 
     tb_commands->setFixedHeight( 27 );
@@ -114,6 +120,32 @@ SketchScene_Refactored* SketchWindow::getScene() const
 }
 
 
+void SketchWindow::clear()
+{
+    ac_edit_boundary->setEnabled( true );
+}
+
+
+
+void SketchWindow::screenshot()
+{
+    QString selectedFilter;
+    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
+
+    if( selectedFilter == "PNG (*.png)" )
+    {
+        scene->savetoRasterImage( name_of_file );
+    }
+    else if ( selectedFilter == "SVG (*.svg)" )
+    {
+        scene->savetoVectorImage( name_of_file );
+    }
+}
+
+
+
 void SketchWindow::wheelEvent( QWheelEvent *event )
 {
     if( event->delta() > 0 )
@@ -128,7 +160,3 @@ void SketchWindow::wheelEvent( QWheelEvent *event )
     QMainWindow::wheelEvent( event );
 }
 
-void SketchWindow::clear()
-{
-    ac_edit_boundary->setEnabled( true );
-}

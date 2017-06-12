@@ -376,8 +376,8 @@ void VolumeOpenGLWrapper_Refactored::clearData()
     resetShaders();
     resetBuffers();
 
-    if( raw != nullptr )
-        raw->clear();
+//    if( raw != nullptr )
+//        raw->clear();
     raw = nullptr;
 
 }

@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "Sketching/InputSketch.h"
+#include "ItemWrappers/coordinateaxes2d.h"
 #include "ItemWrappers/volumeitemwrapper_refactored.h"
 #include "ItemWrappers/objectitemwrapper_refactored.h"
 
@@ -48,13 +49,13 @@ class SketchScene_Refactored: public QGraphicsScene
         void startSketch( const QPointF& p );
         void clearSketch();
 
-        void finishSketch();
-        bool acceptSketch( Curve2D& curve );
+        virtual void finishSketch();
+        virtual bool acceptSketch( Curve2D& curve );
         bool isValidSketch();
         void enableSketch( bool status );
 
         void processCurve( Curve2D& curve );
-        void removeCurve();
+        virtual void removeCurve();
 
         bool hasImageInCrossSection();
         void setCurrentCrossSection( double depth );
@@ -68,6 +69,9 @@ class SketchScene_Refactored: public QGraphicsScene
 
         void enableDeletingCurves( bool status );
         void selectBounderingRegion();
+
+        virtual void savetoRasterImage( const QString& filename );
+        virtual void savetoVectorImage( const QString& filename );
 
         void clear();
         void setDefaultValues();
@@ -132,6 +136,9 @@ class SketchScene_Refactored: public QGraphicsScene
 
         bool is_sketch_enabled;
         bool is_delete_enabled;
+
+
+        CoordinateAxes2d axes;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H

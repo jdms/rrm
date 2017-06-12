@@ -156,6 +156,11 @@ void Scene3d_refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& 
                                const int& h )
 {
 
+//    if( show_axis == true )
+//    {
+        axes.draw( V, P, w, h );
+//    }
+
     if( volume != nullptr )
         volume->draw( V, P, w, h );
 
@@ -185,6 +190,10 @@ void Scene3d_refactored::setOpenGLContext( QOpenGLContext* ctxt )
 {
     context = ctxt;
     surface = ctxt->surface();
+
+    axes.initShader( shader_directory.toStdString() );
+    axes.load();
+    axes.setNonCentered();
 }
 
 
