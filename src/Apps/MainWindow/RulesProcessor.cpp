@@ -276,7 +276,7 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vect
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
-    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n\n" << std::flush;
+    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n" << std::flush;
 
     return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
 }

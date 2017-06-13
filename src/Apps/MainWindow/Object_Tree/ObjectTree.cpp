@@ -93,6 +93,19 @@ void ObjectTree::addObject( const std::size_t& id , int r, int g, int b )
 }
 
 
+
+void ObjectTree::updateObjectColor( const std::size_t& id, int r, int g, int b )
+{
+    auto search = objects.find( id );
+    if( search == objects.end() ) return;
+
+    ObjectTreeItem* const& item = objects[ id ];
+    ColorPicker* const& cp = static_cast< ColorPicker* >( itemWidget( item, 2 ) );
+    cp->setColor( QColor( r, g, b ) );
+
+    update();
+}
+
 void ObjectTree::addRegion( const std::size_t& id )
 {
 
@@ -112,9 +125,6 @@ void ObjectTree::addRegion( const std::size_t& id )
 
 void ObjectTree::clear()
 {
-
-
-
     for( auto& it: objects )
     {
         delete objects[ it.first ];

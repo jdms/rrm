@@ -33,6 +33,11 @@ class SketchScene_Refactored: public QGraphicsScene
         void resizingVolume( const QPointF& point, bool done = false );
 
         void addObject( Object_Refactored* const& obj );
+        void addObjectTest( const std::vector< double >& vertices,
+                            const std::vector< std::size_t >&edges );
+
+        void removeObjectTest();
+
 
         void setModeEditable( bool status );
 
@@ -120,7 +125,10 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         double current_csection;
+
         QColor current_color;
+        QPen pen_testing;
+
         UserInteraction current_interaction;
         const UserInteraction DEFAULT_INTERACTION = UserInteraction::SKETCHING;
 
@@ -139,6 +147,8 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         CoordinateAxes2d axes;
+
+        QGraphicsPathItem* object_test;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H

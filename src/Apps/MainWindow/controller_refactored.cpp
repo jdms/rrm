@@ -206,6 +206,8 @@ void Controller_Refactored::addObjectToInterface()
 {
     if ( isValidObject( current_object ) == false ) return;
 
+    csection_scene->removeObjectTest();
+
     Object_Refactored* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
     scene3d->addObject( obj );
@@ -300,6 +302,7 @@ void Controller_Refactored::setObjectColor( std::size_t id, int r, int g, int b 
     Object_Refactored* const& object = objects[ id ];
     object->setColor( r, g, b );
 
+    object_tree->updateObjectColor( id, r, g, b );
     updateObject( id );
 }
 
@@ -560,8 +563,6 @@ void Controller_Refactored::updateActiveObjects()
 
     }
 
-    showObjectInCrossSection( current_object );
-
 }
 
 
@@ -569,9 +570,7 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 {
 
     Object_Refactored* obj = objects[ id ];
-    bool testing = obj->isTesting();
 
-    if( testing == true ) return false;
 
     std::vector< double > curve_vertices;
     std::vector< std::size_t > curve_edges;
@@ -582,12 +581,18 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
     if( has_curve == false ) return false;
 
 
-    obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
-                               curve_edges );
+    bool testing = obj->isTesting();
+    bool has_crosssection = obj->hasCurve( current_csection );
+
+
+    if( ( testing == false ) || ( has_crosssection == true ) )
+        obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
+                                   curve_edges );
+    else if( testing == true )
+        csection_scene->addObjectTest( curve_vertices, curve_edges );
 
 
     return true;
-
 
 }
 
