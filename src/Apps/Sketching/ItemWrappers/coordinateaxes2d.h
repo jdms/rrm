@@ -18,6 +18,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
     protected:
 
          void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+         void drawAxisX( QPainter* p );
+         void drawAxisY( QPainter* p );
 
     protected:
 

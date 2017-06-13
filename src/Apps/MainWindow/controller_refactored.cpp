@@ -416,6 +416,8 @@ void Controller_Refactored::removeCurveFromObject( double depth )
     status = object->isTrajectoryAdmissible();
     enableTrajectory( status );
 
+    testObjectSurface();
+
 
 }
 
