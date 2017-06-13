@@ -144,6 +144,7 @@ void Object_Refactored::setCrossSectionCurve( double depth, const Curve2D& curve
 
 Curve2D Object_Refactored::getCrossSectionCurve( double depth )
 {
+    if( hasCurve( depth ) == false ) return Curve2D();
     return csections_curves[ depth ];
 }
 
@@ -162,12 +163,15 @@ std::vector< std::tuple< Curve2D, double > > Object_Refactored::getCrossSectionC
 
 std::vector< std::size_t > Object_Refactored::getCrossSectionCurveEdges( double depth )
 {
+    if( hasCurve( depth ) == false ) return std::vector< std::size_t >();
     return csections_edges[ depth ];
 }
 
 
 void Object_Refactored::removeCrossSectionCurve( double depth )
 {
+    if( hasCurve( depth ) == false ) return;
+
     csections_curves[ depth ].clear();
     csections_curves.erase( depth );
 
@@ -212,6 +216,15 @@ bool Object_Refactored::isCurveAdmissible()
     return true;
 }
 
+
+bool Object_Refactored::hasCurve( double depth )
+{
+    auto search = csections_curves.find( depth );
+    if( search != csections_curves.end() )
+        return true;
+    else
+        return false;
+}
 
 bool Object_Refactored::hasTrajectoryCurve()
 {

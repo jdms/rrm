@@ -26,6 +26,7 @@ class ObjectTree :public QTreeWidget
 
 
         void addObject( const std::size_t& id, int r, int g, int b );
+        void updateObjectColor( const std::size_t& id, int r, int g, int b );
 
 
         inline void setObjectHidden( const std::size_t& id_, bool status_ )

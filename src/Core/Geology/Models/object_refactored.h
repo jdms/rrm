@@ -71,6 +71,8 @@ class Object_Refactored
         bool isTrajectoryAdmissible();
 
 
+        bool hasCurve( double depth );
+
         bool hasTrajectoryCurve();
         void setTrajectoryCurve( const Curve2D& path );
         Curve2D getTrajectoryCurve() const ;

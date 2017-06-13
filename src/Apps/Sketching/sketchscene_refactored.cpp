@@ -16,6 +16,7 @@ SketchScene_Refactored::SketchScene_Refactored()
 
     csection_image = nullptr;
     sketch = nullptr;
+    object_test = nullptr;
 
     setDefaultValues();
 
@@ -108,6 +109,67 @@ void SketchScene_Refactored::reActiveObject( std::size_t id )
 }
 
 
+void SketchScene_Refactored::addObjectTest( const std::vector< double >& vertices,
+                                            const std::vector< std::size_t >&edges )
+{
+
+    QPainterPath curve;
+
+    if( edges.empty() == true )
+    {
+        std::size_t number_of_vertices = static_cast< std::size_t > ( vertices.size()/2 );
+
+        curve.moveTo( QPointF( vertices[ 0 ], vertices[ 1 ] ) );
+        for( std::size_t it = 1; it < number_of_vertices; ++it )
+        {
+            curve.lineTo( QPointF( vertices[ 2*it ], vertices[ 2*it + 1 ] ) );
+        }
+    }
+    else
+    {
+
+        std::size_t nedges = static_cast< std::size_t >( edges.size()/2 );
+        std::size_t last_id = 10000;
+
+        for( size_t i = 0; i < nedges; ++i )
+        {
+
+            std::size_t id0 = edges[ 2*i ];
+            std::size_t id1 = edges[ 2*i + 1 ];
+
+            if( last_id != id0 )
+                curve.moveTo( QPointF( vertices[ 2*id0 ],
+                                       vertices[ 2*id0 + 1 ] ) );
+            else
+                curve.lineTo( QPointF( vertices[ 2*id1 ],
+                                       vertices[ 2*id1 + 1 ] ) );
+
+
+            last_id = id1;
+        }
+    }
+
+    pen_testing.setColor( QColor( current_color.red(), current_color.green(), current_color.blue(),
+                                  100 ) );
+    pen_testing.setStyle( Qt::DashDotLine );
+    pen_testing.setWidth( 2 );
+    object_test = addPath( curve, pen_testing );
+    update();
+}
+
+
+void SketchScene_Refactored::removeObjectTest()
+{
+
+    if( object_test == nullptr ) return;
+
+    removeItem( object_test );
+    delete object_test;
+    object_test = nullptr;
+    update();
+}
+
+
 
 void SketchScene_Refactored::removeObjectsFromScene()
 {
@@ -188,9 +250,13 @@ void SketchScene_Refactored::enableDeletingCurves( bool status )
 void SketchScene_Refactored::setCurrentColor( const QColor& color )
 {
     current_color = color;
+    pen_testing.setColor( color );
 
     if( isValidSketch() == true )
         sketch->setColor( color );
+
+    if( object_test != nullptr )
+        object_test->setPen( pen_testing );
 
     emit updateColor( color );
     update();
