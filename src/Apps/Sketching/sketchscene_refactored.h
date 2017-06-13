@@ -26,6 +26,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
     public:
 
+        CoordinateAxes2d axes;
 
         SketchScene_Refactored();
 
@@ -146,7 +147,7 @@ class SketchScene_Refactored: public QGraphicsScene
         bool is_delete_enabled;
 
 
-        CoordinateAxes2d axes;
+
 
         QGraphicsPathItem* object_test;
 };
