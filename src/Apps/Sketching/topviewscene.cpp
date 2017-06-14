@@ -25,6 +25,8 @@ void TopViewScene::addVolume( Volume* const& vol )
     setSceneRect( volume.boundingRect() );
     addItem( &volume );
 
+    axes.setPlane( CoordinateAxes2d::Plane::XZ );
+
     createCurrentCrossSection( volume.getHeight() );
 }
 

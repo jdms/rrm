@@ -3,17 +3,22 @@
 
 #include <QGraphicsLineItem>
 #include <QPainter>
-
+#include <QColor>
 
 class CoordinateAxes2d: public QGraphicsLineItem
 {
     public:
 
-        CoordinateAxes2d();
+        enum class Plane{ XY, XZ };
 
 
+        CoordinateAxes2d( const Plane& pl = Plane::XY );
+
+        void setPlane( const Plane& pl );
         void setAxisXLenght( double l );
         void setAxisYLenght( double l );
+
+        QRectF boundingRect() const;
 
     protected:
 
@@ -28,6 +33,14 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
         QString text_axisx;
         QString text_axisy;
+
+        const QColor width_color = QColor( 255, 0, 0 );
+        const QColor height_color = QColor( 0, 255, 0 );
+        const QColor depth_color = QColor( 0, 0, 255 );
+
+        QColor current_y;
+        Plane plane;
+        int scale;
 
 };
 

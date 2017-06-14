@@ -154,7 +154,7 @@ void SketchWindow::wheelEvent( QWheelEvent *event )
         gv_view->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
 
 
-    gv_view->ensureVisible( scene->itemsBoundingRect() );
+    gv_view->ensureVisible( &(scene->axes), 100, 100 );
     gv_view->update();
 
     QMainWindow::wheelEvent( event );
