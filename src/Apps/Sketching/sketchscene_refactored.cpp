@@ -53,6 +53,10 @@ void SketchScene_Refactored::updateVolume()
 {
     volume.updateItem();
     setSceneRect( volume.boundingRect() );
+
+    axes.setAxisXLenght( volume.getWidth() );
+    axes.setAxisYLenght( volume.getHeight() );
+
     update();
 }
 
