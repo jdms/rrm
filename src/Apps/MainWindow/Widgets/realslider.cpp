@@ -42,6 +42,7 @@ void RealSlider::setValue( double value )
 {
     int value_int = getIndex( value );
     QSlider::setValue( value_int );
+    emit sliderMoved( value );
 }
 
 
@@ -74,4 +75,16 @@ void RealSlider::moveInDouble( int index )
 {
     double value = getDoubleValue( index );
     emit sliderMoved( value );
+}
+
+void RealSlider::increaseValue()
+{
+    double d = getDoubleValue( QSlider::value() + 1 );
+    setValue( d );
+}
+
+void RealSlider::decreaseValue()
+{
+    double d = getDoubleValue( QSlider::value() - 1 );
+    setValue( d );
 }

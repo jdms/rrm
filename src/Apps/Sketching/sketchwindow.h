@@ -35,6 +35,8 @@ class SketchWindow: public QMainWindow
 
         void createSurface();
         void defineColorCurrent( const QColor& c );
+        void increaseSlider();
+        void decreaseSlider();
 
 
 

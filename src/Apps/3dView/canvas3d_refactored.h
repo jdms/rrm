@@ -22,9 +22,17 @@ class Canvas3d_Refactored: public QOpenGLWidget
         Scene3d_refactored* getScene() const;
 
 
+
+
     public slots:
 
         void screenshot();
+
+
+    signals:
+
+        void increaseSlider();
+        void decreaseSlider();
 
 
     protected:
