@@ -262,6 +262,11 @@
         /* size_t num_extrusion_steps */
         )
     {
+        if ( testing_surface_insertion_ == true )
+        {
+            modeller_.undo();
+        }
+
         StratigraphyUtilities util(modeller_);
         std::vector<double> surface;
 
@@ -278,6 +283,8 @@
             path.push_back( path_curve[i].x() );
             path.push_back( path_curve[i].y() );
         }
+
+        testing_surface_insertion_ = false;
 
         return modeller_.createExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
 
