@@ -355,13 +355,16 @@ void MainWindow_Refactored::setupController()
 
 
     connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
-                                                controller->setVolumeWidth( width ); } );
+                                                resizingVolumeWidth( width );
+                                                /*controller->setVolumeWidth( width );*/ } );
 
     connect( pages_sidebar, &PagesStack::heightVolumeChanged, [=]( int height ){
-                                                controller->setVolumeHeight( height ); } );
+                                                resizingVolumeHeight( height );
+                                                /*controller->setVolumeHeight( height );*/ } );
 
     connect( pages_sidebar, &PagesStack::depthVolumeChanged, [=]( int depth ){
-                                                controller->setVolumeDepth( depth ); } );
+                                                resizingVolumeDepth( depth );
+                                                /*controller->setVolumeDepth( depth );*/ } );
 
 
 }
