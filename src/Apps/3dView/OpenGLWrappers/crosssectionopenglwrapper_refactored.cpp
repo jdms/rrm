@@ -53,6 +53,11 @@ void CrossSectionOpenGLWrapper_Refactored::setMaximum( float mx, float my, float
 void CrossSectionOpenGLWrapper_Refactored::createPlane()
 {
 
+    if( depth >= maximum.z() )
+        depth = maximum.z();
+    else if( depth <= minimum.z() )
+        depth = minimum.z();
+
     float z = static_cast<float> (depth);
 
     Eigen::Vector3f A( minimum.x(), minimum.y(), z );
