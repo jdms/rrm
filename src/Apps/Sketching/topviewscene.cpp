@@ -31,6 +31,20 @@ void TopViewScene::addVolume( Volume* const& vol )
 }
 
 
+void TopViewScene::updateVolume()
+{
+    volume.updateItem();
+    setSceneRect( volume.boundingRect() );
+
+    csection->setDimensions( volume.getWidth(), volume.getHeight() );
+
+    axes.setAxisXLenght( volume.getWidth() );
+    axes.setAxisYLenght( volume.getHeight() );
+
+    update();
+}
+
+
 void TopViewScene::createCurrentCrossSection( double depth )
 {
     csection = new CrossSectionItemWrapper_Refactored( volume.getWidth(), depth );

@@ -177,15 +177,21 @@ void SketchScene_Refactored::removeObjectTest()
 
 void SketchScene_Refactored::removeObjectsFromScene()
 {
+
     for( auto &it: items() )
         removeItem( it );
 
     if( isValidSketch() == true )
         clearSketch();
 
-    addItem( csection_image );
+
     addItem( &volume );
     setSceneRect( volume.boundingRect() );
+
+//    removeImageFromCrossSection();
+    addItem( csection_image );
+    addItem( &axes );
+
 
 }
 
@@ -237,8 +243,15 @@ void SketchScene_Refactored::setModeMovingImage()
 
 void SketchScene_Refactored::disableMovingImage()
 {
+
+    if( hasImageInCrossSection() == false ) return;
+
     csection_image->setFlag( QGraphicsItem::ItemIsMovable, false );
     csection_image->setFlag( QGraphicsItem::ItemIsSelectable, false );
+
+    ImageData& image_data = backgrounds[ current_csection ];
+    image_data.origin = csection_image->pos();
+
     setModeSketching();
 }
 
@@ -404,8 +417,7 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
     current_csection = depth;
 
     if( hasImageInCrossSection() == false ) return;
-    setImageToCrossSection( backgrounds[ current_csection ] );
-
+    setImageToCrossSection();
 }
 
 
@@ -423,24 +435,39 @@ void SketchScene_Refactored::createCrossSectionImageItem()
 
 void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 {
+
     QPixmap image = QPixmap( file );
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
+
     csection_image->setPixmap( image );
 
-    //TODO: save the position
-    backgrounds[ current_csection ] = file;
-
-
+    ImageData image_data;
+    image_data.file = file;
+    image_data.origin = csection_image->pos();
+    backgrounds[ current_csection ] = image_data;
+    addItem( csection_image );
 
     update();
 }
 
 
+void SketchScene_Refactored::setImageToCrossSection()
+{
+
+    const ImageData& image_data = backgrounds[ current_csection ];
+    csection_image->setPos( image_data.origin );
+    setImageToCrossSection( image_data.file );
+
+}
+
 void SketchScene_Refactored::removeImageFromCrossSection()
 {
-    removeItem( csection_image );
-    delete csection_image;
-
-    createCrossSectionImageItem();
+//    removeItem( csection_image );
+    csection_image->setPixmap( QPixmap() );
+//    delete csection_image;
 
     update();
 }
@@ -448,6 +475,7 @@ void SketchScene_Refactored::removeImageFromCrossSection()
 
 bool SketchScene_Refactored::hasImageInCrossSection()
 {
+    std::cout << "current csection: " << current_csection << std::endl << std::flush;
     auto search = backgrounds.find( current_csection );
     if( search == backgrounds.end() )
         return false;
