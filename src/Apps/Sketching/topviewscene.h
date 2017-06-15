@@ -19,6 +19,7 @@ class TopViewScene: public SketchScene_Refactored
         TopViewScene();
 
         virtual void addVolume( Volume* const& vol );
+        virtual void updateVolume();
 
         void addCrossSection( double depth );
         bool isAddedCrossSection( double depth );

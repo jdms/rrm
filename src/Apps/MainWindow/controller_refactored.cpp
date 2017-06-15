@@ -491,6 +491,9 @@ bool Controller_Refactored::createObjectSurface()
     if( curves.empty() == true ) return false;
 
 
+    setCurrentRule( current_rule );
+
+
     bool surface_created;
     if( obj->hasTrajectoryCurve() == true )
     {

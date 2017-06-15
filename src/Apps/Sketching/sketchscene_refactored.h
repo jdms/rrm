@@ -45,7 +45,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void setCurrentColor( const QColor& color );
         void setCurrentColor( int r, int g, int b );
 
-        void updateVolume();
+        virtual void updateVolume();
         void updateObject( std::size_t id );
 
         void reActiveObject( std::size_t id );
@@ -100,6 +100,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         void createCrossSectionImageItem();
         void setImageToCrossSection( const QString& file );
+        void setImageToCrossSection();
 
 
         bool isAddedObject( std::size_t id ) const ;
@@ -121,6 +122,12 @@ class SketchScene_Refactored: public QGraphicsScene
 
     protected:
 
+        struct ImageData
+        {
+            QString file;
+            QPointF origin;
+        };
+
         enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY,
                                      EDITING_SCENE };
 
@@ -141,7 +148,7 @@ class SketchScene_Refactored: public QGraphicsScene
         InputSketch* sketch;
 
         std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
-        std::map< double, QString > backgrounds;
+        std::map< double, ImageData > backgrounds;
 
         bool is_sketch_enabled;
         bool is_delete_enabled;
