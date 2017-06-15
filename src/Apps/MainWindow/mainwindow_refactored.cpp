@@ -82,6 +82,10 @@ void MainWindow_Refactored::createMainInterface()
                                               sl_depth_csection->setValue( d ); } );
 
 
+    connect( canvas3d, &Canvas3d_Refactored::increaseSlider, sl_depth_csection,
+             &RealSlider::increaseValue );
+    connect( canvas3d, &Canvas3d_Refactored::decreaseSlider, sl_depth_csection,
+             &RealSlider::decreaseValue );
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
     hb_central_widget->addWidget( canvas3d );
@@ -212,6 +216,10 @@ void MainWindow_Refactored::createCrossSectionInterface()
     addDockWidget( Qt::BottomDockWidgetArea, dw_csection );
 
 
+    connect( sketch_window, &SketchWindow::increaseSlider, sl_depth_csection,
+             &RealSlider::increaseValue );
+    connect( sketch_window, &SketchWindow::decreaseSlider, sl_depth_csection,
+             &RealSlider::decreaseValue );
 }
 
 
@@ -223,6 +231,11 @@ void MainWindow_Refactored::createTopViewInterface()
     dw_topview->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview->setWidget( topview_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview );
+
+    connect( topview_window, &SketchWindow::increaseSlider, sl_depth_csection,
+             &RealSlider::increaseValue );
+    connect( topview_window, &SketchWindow::decreaseSlider, sl_depth_csection,
+             &RealSlider::decreaseValue );
 }
 
 
@@ -329,6 +342,14 @@ void MainWindow_Refactored::setupController()
     connect( csection_scene, &CSectionScene::selectedObject, [=]( std::size_t id ){
                                                 controller->defineObjectSelected( id ); } );
 
+
+
+
+    connect( topview_window, &SketchWindow::createSurface, [=]() {
+                                     controller->createObjectSurface();
+                                     checkUndoRedo();
+                                     emit ( csection_scene->setUpColor() );
+                                 } );
 
 
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){

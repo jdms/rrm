@@ -200,14 +200,30 @@ void Canvas3d_Refactored::wheelEvent( QWheelEvent *event )
 
     float pos = event->delta()/float( WHEEL_STEP );
 
-    if ( pos > 0 )
-    {
-        camera.increaseZoom ( 1.05f );
-    }
 
-    else if( pos < 0 )
+    if( event->modifiers() & Qt::ControlModifier )
     {
-        camera.increaseZoom ( 1.0f/1.05f );
+        if ( pos > 0 )
+        {
+            emit decreaseSlider();
+        }
+
+        else if ( pos < 0 )
+        {
+            emit increaseSlider();
+        }
+    }
+    else
+    {
+        if ( pos > 0 )
+        {
+            camera.increaseZoom ( 1.05f );
+        }
+
+        else if( pos < 0 )
+        {
+            camera.increaseZoom ( 1.0f/1.05f );
+        }
     }
 
     QOpenGLWidget::wheelEvent( event );

@@ -111,6 +111,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void mousePressEvent( QGraphicsSceneMouseEvent *event );
         void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
         void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+        void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
 
         void dragEnterEvent( QGraphicsSceneDragDropEvent* event );
         void dragMoveEvent( QGraphicsSceneDragDropEvent* event );

@@ -188,9 +188,12 @@ void SketchScene_Refactored::removeObjectsFromScene()
     addItem( &volume );
     setSceneRect( volume.boundingRect() );
 
-//    removeImageFromCrossSection();
-    addItem( csection_image );
     addItem( &axes );
+
+//    removeImageFromCrossSection();
+//    createCrossSectionImageItem();
+//    addItem( csection_image );
+
 
 
 }
@@ -414,6 +417,7 @@ void SketchScene_Refactored::processCurve( Curve2D& curve )
 
 void SketchScene_Refactored::setCurrentCrossSection( double depth )
 {
+
     current_csection = depth;
 
     if( hasImageInCrossSection() == false ) return;
@@ -426,6 +430,7 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
 void SketchScene_Refactored::createCrossSectionImageItem()
 {
     csection_image = new QGraphicsPixmapItem();
+    csection_image->setPixmap( QPixmap() );
     csection_image->setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     addItem( csection_image );
 
@@ -436,19 +441,20 @@ void SketchScene_Refactored::createCrossSectionImageItem()
 void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 {
 
-    QPixmap image = QPixmap( file );
+    QPixmap image;
+    image.load( file );
 
     QTransform myTransform;
     myTransform.scale( 1, -1 );
     image = image.transformed( myTransform );
 
     csection_image->setPixmap( image );
+//    std::cout << "image is visible: " << image.isNull() << std::endl << std::flush;
 
     ImageData image_data;
     image_data.file = file;
     image_data.origin = csection_image->pos();
     backgrounds[ current_csection ] = image_data;
-    addItem( csection_image );
 
     update();
 }
@@ -458,8 +464,10 @@ void SketchScene_Refactored::setImageToCrossSection()
 {
 
     const ImageData& image_data = backgrounds[ current_csection ];
-    csection_image->setPos( image_data.origin );
+
     setImageToCrossSection( image_data.file );
+
+    update();
 
 }
 
@@ -467,7 +475,7 @@ void SketchScene_Refactored::removeImageFromCrossSection()
 {
 //    removeItem( csection_image );
     csection_image->setPixmap( QPixmap() );
-//    delete csection_image;
+    delete csection_image;
 
     update();
 }
@@ -475,7 +483,6 @@ void SketchScene_Refactored::removeImageFromCrossSection()
 
 bool SketchScene_Refactored::hasImageInCrossSection()
 {
-    std::cout << "current csection: " << current_csection << std::endl << std::flush;
     auto search = backgrounds.find( current_csection );
     if( search == backgrounds.end() )
         return false;
@@ -677,6 +684,20 @@ void SketchScene_Refactored::mouseReleaseEvent( QGraphicsSceneMouseEvent* event 
 
 
     QGraphicsScene::mouseReleaseEvent( event );
+    update();
+}
+
+
+
+void SketchScene_Refactored::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+    if( current_interaction == UserInteraction::SKETCHING )
+    {
+         emit createSurface();
+//        clearSketch();
+    }
+
+    QGraphicsScene::mouseDoubleClickEvent( event );
     update();
 }
 

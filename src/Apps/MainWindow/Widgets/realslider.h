@@ -29,6 +29,10 @@ class RealSlider: public QSlider
         void setValue( double value );
         void setDiscretization( int disc );
 
+        void increaseValue();
+        void decreaseValue();
+
+
 
     protected slots:
 

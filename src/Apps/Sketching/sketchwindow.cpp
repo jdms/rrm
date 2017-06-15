@@ -50,6 +50,7 @@ void SketchWindow::createToolbarActions()
 
     QAction* ac_create_surface = new QAction( "Create", this );
     connect( ac_create_surface, &QAction::triggered, [=](){ emit createSurface(); } );
+    connect( scene, &SketchScene_Refactored::createSurface, ac_create_surface, &QAction::trigger );
 
     ac_edit_boundary = new QAction( "Edit Boundary", this );
     ac_edit_boundary->setCheckable( true );
@@ -148,14 +149,31 @@ void SketchWindow::screenshot()
 
 void SketchWindow::wheelEvent( QWheelEvent *event )
 {
-    if( event->delta() > 0 )
-        gv_view->scale( ZOOM_SCALE, ZOOM_SCALE );
+
+    if( event->modifiers() & Qt::ControlModifier )
+    {
+        if ( event->delta() > 0 )
+        {
+            emit decreaseSlider();
+        }
+
+        else if ( event->delta() < 0 )
+        {
+            emit increaseSlider();
+        }
+    }
     else
-        gv_view->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
+    {
+
+        if( event->delta() > 0 )
+            gv_view->scale( ZOOM_SCALE, ZOOM_SCALE );
+        else
+            gv_view->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
 
 
-    gv_view->ensureVisible( &(scene->axes), 100, 100 );
-    gv_view->update();
+        gv_view->ensureVisible( &(scene->axes), 100, 100 );
+        gv_view->update();
+    }
 
     QMainWindow::wheelEvent( event );
 }
