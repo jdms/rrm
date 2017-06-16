@@ -4,6 +4,7 @@ PagesStack::PagesStack()
 {
     createVolumePropertiesPage();
     createVolumeActions();
+    changeRangeSize( MAX_WIDTH, MAX_HEIGHT, MAX_DEPTH );
 }
 
 
@@ -17,14 +18,39 @@ void PagesStack::createVolumePropertiesPage()
 
 void PagesStack::createVolumeActions()
 {
-    connect( wd_volume_resize.hs_width_volume, &QSlider::sliderMoved, [=]( int value ){
-                                                         emit widthVolumeChanged( value ); } );
 
-    connect( wd_volume_resize.hs_height_volume, &QSlider::sliderMoved, [=]( int value ){
+
+    connect( wd_volume_resize.hs_width_volume, SIGNAL( sliderMoved(int) ),
+             wd_volume_resize.sb_width_volume, SLOT( setValue(int) ) );
+
+    connect( wd_volume_resize.sb_width_volume, SIGNAL( valueChanged(int) ),
+             wd_volume_resize.hs_width_volume, SLOT( setValue(int) ) );
+
+    connect( wd_volume_resize.hs_height_volume, SIGNAL( sliderMoved(int) ),
+             wd_volume_resize.sb_height_volume, SLOT( setValue(int) ) );
+
+    connect( wd_volume_resize.sb_height_volume, SIGNAL( valueChanged(int) ),
+             wd_volume_resize.hs_height_volume, SLOT( setValue(int) ) );
+
+
+    connect( wd_volume_resize.hs_depth_volume, SIGNAL( sliderMoved(int) ),
+             wd_volume_resize.sb_depth_volume, SLOT( setValue(int) ) );
+
+    connect( wd_volume_resize.sb_depth_volume, SIGNAL( valueChanged(int) ),
+             wd_volume_resize.hs_depth_volume, SLOT( setValue(int) ) );
+
+
+    connect( wd_volume_resize.hs_width_volume, &QSlider::valueChanged, [=]( int value ){
+                                                        emit widthVolumeChanged( value ); } );
+
+    connect( wd_volume_resize.hs_height_volume, &QSlider::valueChanged, [=]( int value ){
                                                          emit heightVolumeChanged( value ); } );
 
-    connect( wd_volume_resize.hs_depth_volume, &QSlider::sliderMoved, [=]( int value ){
+    connect( wd_volume_resize.hs_depth_volume, &QSlider::valueChanged, [=]( int value ){
                                                          emit depthVolumeChanged( value ); } );
+
+
+
 
 }
 
@@ -44,6 +70,15 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     wd_volume_resize.sb_width_volume->setRange( 0, w );
     wd_volume_resize.sb_height_volume->setRange( 0, h );
     wd_volume_resize.sb_depth_volume->setRange( 0, d );
+
+
+    wd_volume_resize.hs_width_volume->setSingleStep( SINGLE_STEP );
+    wd_volume_resize.hs_height_volume->setSingleStep( SINGLE_STEP );
+    wd_volume_resize.hs_depth_volume->setSingleStep( SINGLE_STEP );
+
+    wd_volume_resize.sb_width_volume->setSingleStep( SINGLE_STEP );
+    wd_volume_resize.sb_height_volume->setSingleStep( SINGLE_STEP );
+    wd_volume_resize.sb_depth_volume->setSingleStep( SINGLE_STEP );
 }
 
 

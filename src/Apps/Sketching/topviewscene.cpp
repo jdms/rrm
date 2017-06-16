@@ -26,6 +26,7 @@ void TopViewScene::addVolume( Volume* const& vol )
     addItem( &volume );
 
     axes.setPlane( CoordinateAxes2d::Plane::XZ );
+    addItem( &axes );
 
     createCurrentCrossSection( volume.getHeight() );
 }
@@ -144,6 +145,7 @@ void TopViewScene::savetoRasterImage( const QString& filename )
 
     QPainter painter( &image );
     render( &painter );
+    painter.end();
 
     image = image.mirrored( false, true );
     image.save( filename_csection );
@@ -180,6 +182,7 @@ void TopViewScene::savetoVectorImage( const QString& filename )
     painter.translate( QPointF( 0.0, -height() ) );
 
     render( &painter );
+    painter.end();
 }
 
 
@@ -249,6 +252,8 @@ void TopViewScene::clear()
 {
     clearData();
     draw_csections = true;
+
+    addItem( &axes );
     update();
 }
 

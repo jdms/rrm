@@ -46,9 +46,11 @@ class PagesStack: public QStackedWidget
 
         Ui::Form wd_volume_resize;
 
-        const int MAX_WIDTH = 1000;
-        const int MAX_HEIGHT = 1000;
-        const int MAX_DEPTH = 1000;
+        const int MAX_WIDTH = 10000;
+        const int MAX_HEIGHT = 10000;
+        const int MAX_DEPTH = 10000;
+
+        const int SINGLE_STEP = 10;
 
         const bool VOLUME_RESIZING = true;
 };
