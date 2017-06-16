@@ -126,6 +126,7 @@ double Controller_Refactored::getVolumeDepth() const
 void Controller_Refactored::setVolumeVisibility( bool status )
 {
     volume->setVisibility( status );
+    updateVolume();
 }
 
 
