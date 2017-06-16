@@ -305,10 +305,10 @@ void MainWindow_Refactored::setupController()
 
 
     connect( sketch_window, &SketchWindow::createSurface, [=]() {
-                                     controller->createObjectSurface();
-                                     checkUndoRedo();
-                                     emit ( csection_scene->setUpColor() );
-                                 } );
+                                     bool status = controller->createObjectSurface();
+                                     if( status == true )
+                                        emit ( csection_scene->setUpColor() );
+                                     checkUndoRedo(); } );
 
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& c ) {
@@ -334,9 +334,10 @@ void MainWindow_Refactored::setupController()
     } );
 
     connect( csection_scene, &CSectionScene::createSurface, [=](){
-                                                controller->createObjectSurface();                                                
-                                                checkUndoRedo();
-                                                emit ( csection_scene->setUpColor() );  } );
+                                    bool status = controller->createObjectSurface();
+                                    if( status == true )
+                                       emit ( csection_scene->setUpColor() );
+                                    checkUndoRedo();  } );
 
 
     connect( csection_scene, &CSectionScene::selectedObject, [=]( std::size_t id ){
@@ -346,10 +347,10 @@ void MainWindow_Refactored::setupController()
 
 
     connect( topview_window, &SketchWindow::createSurface, [=]() {
-                                     controller->createObjectSurface();
-                                     checkUndoRedo();
-                                     emit ( csection_scene->setUpColor() );
-                                 } );
+                                     bool status = controller->createObjectSurface();
+                                     if( status == true )
+                                        emit ( csection_scene->setUpColor() );
+                                     checkUndoRedo();  } );
 
 
     connect( topview_scene, &TopViewScene::addCurveToObject, [=](  const Curve2D& curve ){
