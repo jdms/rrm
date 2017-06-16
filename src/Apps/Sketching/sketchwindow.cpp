@@ -89,6 +89,14 @@ void SketchWindow::createToolbarActions()
     QAction* ac_screenshot = new QAction( "Screenshot", this );
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
+    QAction* ac_axes = new QAction( "Axes", this );
+    ac_axes->setCheckable( true );
+    ac_axes->setChecked( true );
+    connect( ac_axes, &QAction::triggered, [=]( bool status ){
+                                        scene->axes.setVisible( status );
+                                        scene->update(); });
+
+
 
     QToolBar* tb_commands = new QToolBar( this );
     tb_commands->addAction( ac_discard_sketch );
@@ -102,6 +110,7 @@ void SketchWindow::createToolbarActions()
     tb_commands->addAction( ac_edit_boundary );
     tb_commands->addWidget( cp_define_color );
     tb_commands->addAction( ac_screenshot );
+    tb_commands->addAction( ac_axes );
     addToolBar( tb_commands );
 
     tb_commands->setFixedHeight( 27 );

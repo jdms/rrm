@@ -82,6 +82,8 @@ class SketchScene_Refactored: public QGraphicsScene
         void clear();
         void setDefaultValues();
 
+        void enableAxes( bool status );
+
 
 
     signals:
@@ -154,7 +156,7 @@ class SketchScene_Refactored: public QGraphicsScene
         bool is_sketch_enabled;
         bool is_delete_enabled;
 
-
+        bool is_axes_enable;
 
 
         QGraphicsPathItem* object_test;

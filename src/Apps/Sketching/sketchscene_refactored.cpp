@@ -551,6 +551,13 @@ void SketchScene_Refactored::savetoVectorImage( const QString& filename )
 
 
 
+void SketchScene_Refactored::enableAxes( bool status )
+{
+    is_axes_enable = status;
+    update();
+}
+
+
 void SketchScene_Refactored::clear()
 {
 
@@ -595,8 +602,10 @@ void SketchScene_Refactored::setDefaultValues()
 
     is_sketch_enabled = true;
     is_delete_enabled = false;
+    is_axes_enable = true;
 
     addItem( &axes );
+
     createCrossSectionImageItem();
 
 }

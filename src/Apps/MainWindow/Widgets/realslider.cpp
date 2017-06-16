@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "realslider.h"
 
 RealSlider::RealSlider( Qt::Orientation o ):QSlider( o )
@@ -79,12 +81,19 @@ void RealSlider::moveInDouble( int index )
 
 void RealSlider::increaseValue()
 {
-    double d = getDoubleValue( QSlider::value() + 1 );
-    setValue( d );
+    int int_d = QSlider::value() + 1;
+    double d = getDoubleValue( int_d );
+
+    QSlider::setValue( int_d );
+    emit sliderMoved( d );
 }
 
 void RealSlider::decreaseValue()
 {
-    double d = getDoubleValue( QSlider::value() - 1 );
-    setValue( d );
+
+    int int_d = QSlider::value() - 1;
+    double d = getDoubleValue( int_d );
+
+    QSlider::setValue( int_d );
+    emit sliderMoved( d );
 }

@@ -32,8 +32,8 @@ class TopViewScene: public SketchScene_Refactored
         bool isAddedObject( std::size_t id );
 
 
-        virtual void savetoRasterImage( const QString& filename ) override;
-        virtual void savetoVectorImage( const QString& filename ) override;
+        virtual void savetoRasterImage( const QString& filename );
+        virtual void savetoVectorImage( const QString& filename );
 
         virtual bool acceptSketch( Curve2D& curve ) override;
         virtual void removeCurve() override;

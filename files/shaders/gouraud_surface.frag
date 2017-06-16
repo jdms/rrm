@@ -48,7 +48,7 @@ void main(void)
         FragColor = edge_color;
 
     if( testing == true )
-        FragColor.a = 0.5f;
+        FragColor.a = 0.2f;
     else
         FragColor.a = 1.0f;
 
