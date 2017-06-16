@@ -108,7 +108,8 @@ void SketchScene_Refactored::reActiveObject( std::size_t id )
     ObjectItemWrapper_Refactored* const& wrapper = objects[ id ];
     wrapper->updateDepth( current_csection );
 
-    addItem( wrapper );
+    wrapper->setVisible( true );
+//    addItem( wrapper );
     update();
 }
 
@@ -178,21 +179,25 @@ void SketchScene_Refactored::removeObjectTest()
 void SketchScene_Refactored::removeObjectsFromScene()
 {
 
+
+    bool axes_visible = axes.isVisible();
+
     for( auto &it: items() )
-        removeItem( it );
+        it->setVisible( false );
+//        removeItem( it );
 
     if( isValidSketch() == true )
         clearSketch();
 
 
-    addItem( &volume );
-    setSceneRect( volume.boundingRect() );
+    volume.setVisible( true );
+    axes.setVisible( axes_visible );
 
-    addItem( &axes );
+//    addItem( &volume );
+//    setSceneRect( volume.boundingRect() );
 
-//    removeImageFromCrossSection();
-//    createCrossSectionImageItem();
-//    addItem( csection_image );
+//    addItem( &axes );
+
 
 
 
@@ -449,6 +454,7 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
     image = image.transformed( myTransform );
 
     csection_image->setPixmap( image );
+    csection_image->setVisible( true );
 //    std::cout << "image is visible: " << image.isNull() << std::endl << std::flush;
 
     ImageData image_data;
@@ -464,9 +470,7 @@ void SketchScene_Refactored::setImageToCrossSection()
 {
 
     const ImageData& image_data = backgrounds[ current_csection ];
-
-    setImageToCrossSection( image_data.file );
-
+    setImageToCrossSection( image_data.file );    
     update();
 
 }
@@ -474,8 +478,9 @@ void SketchScene_Refactored::setImageToCrossSection()
 void SketchScene_Refactored::removeImageFromCrossSection()
 {
 //    removeItem( csection_image );
-    csection_image->setPixmap( QPixmap() );
-    delete csection_image;
+//    csection_image->setPixmap( QPixmap() );
+//    delete csection_image;
+    csection_image->setVisible( false );
 
     update();
 }
@@ -511,6 +516,7 @@ void SketchScene_Refactored::savetoRasterImage( const QString& filename )
 
     QPainter painter( &image );
     render( &painter );
+    painter.end();
 
     image = image.mirrored( false, true );
     image.save( filename_csection );
@@ -547,6 +553,7 @@ void SketchScene_Refactored::savetoVectorImage( const QString& filename )
     painter.translate( QPointF( 0.0, -height() ) );
 
     render( &painter );
+    painter.end();
 }
 
 

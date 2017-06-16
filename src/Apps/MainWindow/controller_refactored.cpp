@@ -86,6 +86,7 @@ void Controller_Refactored::addVolumeToInterface()
 
 void Controller_Refactored::setVolumeWidth( double width )
 {
+    if( volume == nullptr ) return;
     volume->setWidth( width );
     updateVolume();
 }
@@ -93,6 +94,7 @@ void Controller_Refactored::setVolumeWidth( double width )
 
 void Controller_Refactored::setVolumeHeight( double height )
 {
+    if( volume == nullptr ) return;
     volume->setHeight( height );
     updateVolume();
 }
@@ -100,6 +102,7 @@ void Controller_Refactored::setVolumeHeight( double height )
 
 void Controller_Refactored::setVolumeDepth( double depth )
 {
+    if( volume == nullptr ) return;
     volume->setDepth( depth );
     updateVolume();
 }
@@ -107,24 +110,28 @@ void Controller_Refactored::setVolumeDepth( double depth )
 
 double Controller_Refactored::getVolumeWidth() const
 {
+    if( volume == nullptr ) return 0.0;
     return volume->getWidth();
 }
 
 
 double Controller_Refactored::getVolumeHeight() const
 {
+    if( volume == nullptr ) return 0.0;
     return volume->getHeight();
 }
 
 
 double Controller_Refactored::getVolumeDepth() const
 {
+    if( volume == nullptr ) return 0.0;
     return volume->getDepth();
 }
 
 
 void Controller_Refactored::setVolumeVisibility( bool status )
 {
+    if( volume == nullptr ) return;
     volume->setVisibility( status );
     updateVolume();
 }
@@ -132,6 +139,7 @@ void Controller_Refactored::setVolumeVisibility( bool status )
 
 bool Controller_Refactored::getVolumeVisibility() const
 {
+    if( volume == nullptr ) return false;
     return volume->getVisibility();
 }
 
@@ -662,6 +670,8 @@ double Controller_Refactored::getCurrentCrossSection() const
 
 bool Controller_Refactored::isValidCrossSection( double depth ) const
 {
+    if( volume == nullptr ) return false;
+
     double ox = 0.0f, oy = 0.0f, oz = 0.0f;
     volume->getOrigin( ox, oy, oz );
 
@@ -674,6 +684,8 @@ bool Controller_Refactored::isValidCrossSection( double depth ) const
 
 std::size_t Controller_Refactored::setupCrossSectionDiscretization()
 {
+    if( volume == nullptr ) return 0;
+
     std::size_t discretization = rules_processor.getDepthResolution();
     csection_step = static_cast< double >( volume->getDepth()/discretization );
     return discretization;
@@ -727,6 +739,8 @@ void Controller_Refactored::initRulesProcessor()
 
 void Controller_Refactored::updateBoundingBoxRulesProcessor()
 {
+    if( volume == nullptr ) return;
+
     double ox = 0.0f, oy = 0.0f, oz = 0.0f;
     volume->getOrigin( ox, oy, oz );
 
@@ -914,6 +928,8 @@ void Controller_Refactored::loadFile( const std::string& filename )
 
 void Controller_Refactored::loadObjects()
 {
+    if( volume == nullptr ) return;
+
     double ox, oy, oz;
     double width, height, depth;
 
@@ -1010,7 +1026,11 @@ bool Controller_Refactored::isDefineAboveActive()
     std::size_t id;
 
     bool status = rules_processor.defineAboveIsActive( id );
-    if( status == false ) return false;
+    if( status == false )
+    {
+        setObjectSelected( boundering_above, false );
+        return false;
+    }
 
     current_region = RequestRegion::ABOVE;
     defineObjectSelected( id );
@@ -1025,7 +1045,11 @@ bool Controller_Refactored::isDefineBelowActive()
     std::size_t id;
 
     bool status = rules_processor.defineBelowIsActive( id );
-    if( status == false ) return false;
+    if( status == false )
+    {
+        setObjectSelected( boundering_below, false );
+        return false;
+    }
 
     current_region = RequestRegion::BELOW;
     defineObjectSelected( id );
