@@ -74,6 +74,7 @@ class MainWindow_Refactored : public QMainWindow
         void loadDefaultRule();
 
         void checkUndoRedo();
+        void checkSketchStatus();
 
         void clearInterface();
         void clearMenu();

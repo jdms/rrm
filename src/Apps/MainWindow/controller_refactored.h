@@ -175,6 +175,9 @@ class Controller_Refactored
         bool canRedo();
 
 
+        bool isDefineAboveActive();
+        bool isDefineBelowActive();
+
         void clear();
         void clearScenes();
         void clearData();

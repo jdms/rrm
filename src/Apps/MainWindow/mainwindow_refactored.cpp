@@ -376,16 +376,13 @@ void MainWindow_Refactored::setupController()
 
 
     connect( pages_sidebar, &PagesStack::widthVolumeChanged, [=]( int width ){
-                                                resizingVolumeWidth( width );
-                                                /*controller->setVolumeWidth( width );*/ } );
+                                                resizingVolumeWidth( width ); } );
 
     connect( pages_sidebar, &PagesStack::heightVolumeChanged, [=]( int height ){
-                                                resizingVolumeHeight( height );
-                                                /*controller->setVolumeHeight( height );*/ } );
+                                                resizingVolumeHeight( height ); } );
 
     connect( pages_sidebar, &PagesStack::depthVolumeChanged, [=]( int depth ){
-                                                resizingVolumeDepth( depth );
-                                                /*controller->setVolumeDepth( depth );*/ } );
+                                                resizingVolumeDepth( depth ); } );
 
 
 }
@@ -510,9 +507,18 @@ void MainWindow_Refactored::checkUndoRedo()
 
     ac_undo->setEnabled( controller->canUndo() );
     ac_redo->setEnabled( controller->canRedo() );
+
+    checkSketchStatus();
 }
 
 
+void MainWindow_Refactored::checkSketchStatus()
+{
+    if( controller == nullptr ) return;
+
+    ac_sketch_above->setChecked( controller->isDefineAboveActive() );
+    ac_sketch_below->setChecked( controller->isDefineBelowActive() );
+}
 
 
 void MainWindow_Refactored::loadDefaultValues()
@@ -525,6 +531,9 @@ void MainWindow_Refactored::loadDefaultValues()
 
 void MainWindow_Refactored::loadVolumeDimensions()
 {
+
+    if( controller == nullptr ) return;
+
     double width = controller->getVolumeWidth();
     double height = controller->getVolumeHeight();
     double depth = controller->getVolumeDepth();

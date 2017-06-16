@@ -907,7 +907,7 @@ void Controller_Refactored::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
     loadObjects();
-    loadStatus();
+//    loadStatus();
 }
 
 
@@ -931,13 +931,15 @@ void Controller_Refactored::loadObjects()
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     std::size_t number_of_objects = actives.size();
-    std::vector< int > colors;// = createVectorOfColors( number_of_objects );
+    std::vector< int > colors = createVectorOfColors( number_of_objects );
 
+    std::size_t i = 0;
     for( auto id: actives )
     {
-        setCurrentColor( 255, 0, 0 );//colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
         addObject( id );
+        setObjectColor( id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
         addObjectToInterface();
+        ++i;
     }
 
     addObject();
@@ -946,19 +948,29 @@ void Controller_Refactored::loadObjects()
 }
 
 
+std::vector< int > Controller_Refactored::createVectorOfColors( std::size_t number_of_colors )
+{
+
+    std::vector< int > colors;
+    colors.resize( 3*number_of_colors );
+
+    for( std::size_t i = 0; i < number_of_colors; ++i )
+    {
+        std::random_device rd;
+        std::mt19937 eng( rd() );
+        std::uniform_int_distribution< size_t > distr( 0, 255 );
+        colors[ 3*i ] = distr( eng );
+        colors[ 3*i + 1 ] = distr( eng );
+        colors[ 3*i + 2 ] = distr( eng );
+    }
+
+    return colors;
+}
+
 void Controller_Refactored::loadStatus()
 {
-    std::size_t id;
-    if( rules_processor.defineAboveIsActive( id ) == true )
-    {
-        current_region = RequestRegion::ABOVE;
-        defineObjectSelected( id );
-    }
-    if( rules_processor.defineBelowIsActive( id ) == true )
-    {
-        current_region = RequestRegion::BELOW;
-        defineObjectSelected( id );
-    }
+    isDefineAboveActive();
+    isDefineBelowActive();
 }
 
 
@@ -989,6 +1001,34 @@ bool Controller_Refactored::canUndo()
 bool Controller_Refactored::canRedo()
 {
     return rules_processor.canRedo();
+}
+
+
+bool Controller_Refactored::isDefineAboveActive()
+{
+    std::size_t id;
+
+    bool status = rules_processor.defineAboveIsActive( id );
+    if( status == false ) return false;
+
+    current_region = RequestRegion::ABOVE;
+    defineObjectSelected( id );
+    return true;
+
+}
+
+
+
+bool Controller_Refactored::isDefineBelowActive()
+{
+    std::size_t id;
+
+    bool status = rules_processor.defineBelowIsActive( id );
+    if( status == false ) return false;
+
+    current_region = RequestRegion::BELOW;
+    defineObjectSelected( id );
+    return true;
 }
 
 

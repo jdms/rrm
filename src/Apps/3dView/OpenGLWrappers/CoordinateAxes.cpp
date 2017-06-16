@@ -139,6 +139,28 @@ void CoordinateAxes::load()
 void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ )
 {
 
+
+    Eigen::Matrix3f R = V_.rotation().matrix();
+    Eigen::Vector3f T = V_.translation();
+
+    Eigen::Affine3f V;
+    V.setIdentity();
+
+    for( int i = 0; i < 3; ++i )
+        for( int j = 0; j < 3; ++j )
+            V( i, j ) = R( i, j );
+
+    V( 0, 3 ) = T( 0 );
+    V( 1, 3 ) = T( 1 );
+    V( 2, 3 ) = T( 2 );
+
+
+    Eigen::Affine3f M;
+    M.setIdentity();
+    M.scale( 2.0f );
+
+
+/*
     Eigen::Matrix4f P = Eigen::Matrix4f::Zero();
 
     float left		 = -1.0f;
@@ -165,14 +187,14 @@ void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_,
     V.setIdentity();
     V.translate(Eigen::Vector3f(0.0f, 0.0f, -4.0f));
     V.rotate( V_.rotation().matrix() );
+*/
 
-
-    glViewport( 0, 0, w_*0.15, h_*0.15 );
+    glViewport( 0, 0, w_*0.17, h_*0.17 );
 	shader_axes->bind();
 
-    shader_axes->setUniform("ModelMatrix", M );
-    shader_axes->setUniform("ViewMatrix", V );
-    shader_axes->setUniform("ProjectionMatrix", P );
+    shader_axes->setUniform( "ModelMatrix", M );
+    shader_axes->setUniform( "ViewMatrix", V );
+    shader_axes->setUniform( "ProjectionMatrix", P_ );
 
 		glBindVertexArray(vertex_array_coneaxes);
 
