@@ -139,16 +139,17 @@ void MainWindow_Refactored::createToolbarActions()
     ac_show_topview = new QAction( "Show Top-View", this );
     ac_show_topview->setCheckable( true );
     connect( ac_show_topview, &QAction::toggled, dw_topview, &QDockWidget::setVisible );
+    connect( dw_topview, &QDockWidget::visibilityChanged, ac_show_topview, &QAction::setChecked );
 
 
     ac_sketch_above = new QAction( "SA", this );
     ac_sketch_above->setCheckable( true );
-    connect( ac_sketch_above, &QAction::toggled, [=]( bool status ){
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status ){
           controller->enableCreateAbove( status ); } );
 
     ac_sketch_below = new QAction( "SB", this );
     ac_sketch_below->setCheckable( true );
-    connect( ac_sketch_below, &QAction::toggled, [=]( bool status ){
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status ){
           controller->enableCreateBelow( status ); } );
 
 
@@ -236,7 +237,11 @@ void MainWindow_Refactored::createTopViewInterface()
              &RealSlider::increaseValue );
     connect( topview_window, &SketchWindow::decreaseSlider, sl_depth_csection,
              &RealSlider::decreaseValue );
+
+
+
 }
+
 
 
 void MainWindow_Refactored::createSidebar()
@@ -539,7 +544,7 @@ void MainWindow_Refactored::loadVolumeDimensions()
     double height = controller->getVolumeHeight();
     double depth = controller->getVolumeDepth();
 
-    pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
+    //pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
 
     int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );

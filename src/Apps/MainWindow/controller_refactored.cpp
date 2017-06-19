@@ -568,10 +568,10 @@ void Controller_Refactored::updateActiveObjects()
         if( has_surface == false ) continue;
 
         bool has_curve = updateActiveCurve( it );
-        if( has_curve == true )
+//        if( has_curve == true )
             showObjectInCrossSection( it );
-        else
-            std::cout << "there is not curve in this cross-section\n" << std::flush;
+//        else
+//            std::cout << "there is not curve in this cross-section\n" << std::flush;
 
         object_tree->setObjectHidden( it, false );
 
@@ -592,7 +592,13 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
                                                       curve_vertices, curve_edges );
 
 
-    if( has_curve == false ) return false;
+    if( has_curve == false )
+    {
+        obj->removeCrossSectionCurve( current_csection );
+        std::cout << "there is not curve in this cross-section\n" << std::flush;
+        return false;
+    }
+
 
 
     bool testing = obj->isTesting();

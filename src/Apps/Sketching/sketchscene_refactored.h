@@ -127,7 +127,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         struct ImageData
         {
-            QString file;
+            std::string file;
             QPointF origin;
         };
 
@@ -160,6 +160,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         QGraphicsPathItem* object_test;
+        QPainterPath test_curve;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H
