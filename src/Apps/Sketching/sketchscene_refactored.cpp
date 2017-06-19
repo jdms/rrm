@@ -118,6 +118,7 @@ void SketchScene_Refactored::addObjectTest( const std::vector< double >& vertice
                                             const std::vector< std::size_t >&edges )
 {
 
+    /*
     QPainterPath curve;
 
     if( edges.empty() == true )
@@ -160,6 +161,60 @@ void SketchScene_Refactored::addObjectTest( const std::vector< double >& vertice
     pen_testing.setWidth( 2 );
     object_test = addPath( curve, pen_testing );
     update();
+*/
+
+
+
+    test_curve = QPainterPath();
+
+    if( edges.empty() == true )
+    {
+        std::size_t number_of_vertices = static_cast< std::size_t > ( vertices.size()/2 );
+
+        test_curve.moveTo( QPointF( vertices[ 0 ], vertices[ 1 ] ) );
+        for( std::size_t it = 1; it < number_of_vertices; ++it )
+        {
+            test_curve.lineTo( QPointF( vertices[ 2*it ], vertices[ 2*it + 1 ] ) );
+        }
+    }
+    else
+    {
+
+        std::size_t nedges = static_cast< std::size_t >( edges.size()/2 );
+        std::size_t last_id = 10000;
+
+        for( size_t i = 0; i < nedges; ++i )
+        {
+
+            std::size_t id0 = edges[ 2*i ];
+            std::size_t id1 = edges[ 2*i + 1 ];
+
+            if( last_id != id0 )
+                test_curve.moveTo( QPointF( vertices[ 2*id0 ],
+                              vertices[ 2*id0 + 1 ] ) );
+            else
+                test_curve.lineTo( QPointF( vertices[ 2*id1 ],
+                              vertices[ 2*id1 + 1 ] ) );
+
+
+            last_id = id1;
+        }
+    }
+
+
+    pen_testing.setColor( QColor( current_color.red(), current_color.green(), current_color.blue(),
+                                  100 ) );
+    pen_testing.setStyle( Qt::DashDotLine );
+    pen_testing.setWidth( 2 );
+
+    object_test->setPen( pen_testing );
+    object_test->setPath( test_curve );
+    object_test->setVisible( true );
+
+    update();
+
+
+
 }
 
 
@@ -167,11 +222,8 @@ void SketchScene_Refactored::removeObjectTest()
 {
 
     if( object_test == nullptr ) return;
+    object_test->setVisible( false );
 
-    removeItem( object_test );
-    delete object_test;
-    object_test = nullptr;
-    update();
 }
 
 
@@ -182,21 +234,17 @@ void SketchScene_Refactored::removeObjectsFromScene()
 
     bool axes_visible = axes.isVisible();
 
-    for( auto &it: items() )
-        it->setVisible( false );
+//    for( auto &it: items() )
+//        it->setVisible( false );
 //        removeItem( it );
 
-    if( isValidSketch() == true )
-        clearSketch();
+//    if( isValidSketch() == true )
+//        clearSketch();
 
 
     volume.setVisible( true );
     axes.setVisible( axes_visible );
 
-//    addItem( &volume );
-//    setSceneRect( volume.boundingRect() );
-
-//    addItem( &axes );
 
 
 
@@ -425,8 +473,12 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
 
     current_csection = depth;
 
-    if( hasImageInCrossSection() == false ) return;
-    setImageToCrossSection();
+    if( hasImageInCrossSection() == false )
+    {
+        removeImageFromCrossSection();
+    }
+    else
+        setImageToCrossSection();
 }
 
 
@@ -435,11 +487,7 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
 void SketchScene_Refactored::createCrossSectionImageItem()
 {
     csection_image = new QGraphicsPixmapItem();
-    csection_image->setPixmap( QPixmap() );
-    csection_image->setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     addItem( csection_image );
-
-    update();
 }
 
 
@@ -447,7 +495,8 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 {
 
     QPixmap image;
-    image.load( file );
+    image.load( QString( file ) );
+
 
     QTransform myTransform;
     myTransform.scale( 1, -1 );
@@ -455,34 +504,37 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 
     csection_image->setPixmap( image );
     csection_image->setVisible( true );
-//    std::cout << "image is visible: " << image.isNull() << std::endl << std::flush;
 
     ImageData image_data;
-    image_data.file = file;
+    image_data.file = file.toStdString();
     image_data.origin = csection_image->pos();
     backgrounds[ current_csection ] = image_data;
 
-    update();
+
+
 }
 
 
 void SketchScene_Refactored::setImageToCrossSection()
 {
-
     const ImageData& image_data = backgrounds[ current_csection ];
-    setImageToCrossSection( image_data.file );    
-    update();
 
+    QPixmap image;
+    image.load( QString( image_data.file.c_str() ) );
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
+
+    csection_image->setPixmap( image );
+    csection_image->setVisible( true );
+    csection_image->setPos( image_data.origin );
 }
+
 
 void SketchScene_Refactored::removeImageFromCrossSection()
 {
-//    removeItem( csection_image );
-//    csection_image->setPixmap( QPixmap() );
-//    delete csection_image;
     csection_image->setVisible( false );
-
-    update();
 }
 
 
@@ -585,6 +637,8 @@ void SketchScene_Refactored::clearData()
         delete csection_image;
     csection_image = nullptr;
 
+    delete object_test;
+
     volume.clear();
     clearSketch();
 
@@ -614,6 +668,9 @@ void SketchScene_Refactored::setDefaultValues()
     addItem( &axes );
 
     createCrossSectionImageItem();
+
+    object_test = new QGraphicsPathItem();
+    addItem( object_test );
 
 }
 
@@ -734,7 +791,7 @@ void SketchScene_Refactored::dropEvent( QGraphicsSceneDragDropEvent* event )
 {
     const QMimeData *mime_data = event->mimeData();
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
-    url_file = QDir::toNativeSeparators( url_file );
+//    url_file = QDir::toNativeSeparators( url_file );
 
     setImageToCrossSection( url_file );
 

@@ -13,6 +13,7 @@
 TopViewScene::TopViewScene()
 {
     csection = nullptr;
+    axes.setPlane( CoordinateAxes2d::Plane::XZ );
     setupPen();
 }
 
@@ -24,9 +25,6 @@ void TopViewScene::addVolume( Volume* const& vol )
     volume.setRawVolume( vol );
     setSceneRect( volume.boundingRect() );
     addItem( &volume );
-
-    axes.setPlane( CoordinateAxes2d::Plane::XZ );
-    addItem( &axes );
 
     createCurrentCrossSection( volume.getHeight() );
 }
