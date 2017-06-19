@@ -224,6 +224,9 @@ void VolumeOpenGLWrapper_Refactored::initShaders()
 {
     shader = new Tucano::Shader( "VolumeOpenGLWrap", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ), ( shader_directory + "shaders/CubeSinglePassWireframe.frag"),
                                              ( shader_directory + "shaders/CubeSinglePassWireframe.geom" ), "", "" );
+
+//    shader = new Tucano::Shader( "VolumeOpenGLWrap", ( shader_directory + "shaders/SurfaceSinglePassWireframe.vert" ), ( shader_directory + "shaders/SurfaceSinglePassWireframe.frag"),
+//                                         ( shader_directory + "shaders/SurfaceSinglePassWireframe.geom" ), "", "" );
     shader->initialize();
 }
 

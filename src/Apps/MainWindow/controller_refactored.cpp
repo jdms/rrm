@@ -568,8 +568,9 @@ void Controller_Refactored::updateActiveObjects()
         if( has_surface == false ) continue;
 
         bool has_curve = updateActiveCurve( it );
+        showObjectInCrossSection( it );
 //        if( has_curve == true )
-            showObjectInCrossSection( it );
+//            showObjectInCrossSection( it );
 //        else
 //            std::cout << "there is not curve in this cross-section\n" << std::flush;
 
@@ -585,17 +586,71 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 
     Object_Refactored* obj = objects[ id ];
 
-
     std::vector< double > curve_vertices;
     std::vector< std::size_t > curve_edges;
+
+
+    bool testing = obj->isTesting();
+    if( testing == true )
+    {
+
+        bool has_crosssection = obj->hasCurve( current_csection );
+        if( has_crosssection == true )
+        {
+            // desenha a feita pelo usuário
+        }
+        else
+        {
+            // verifica se tem na stratmod
+            bool has_curve = rules_processor.getCrossSection( id, indexCrossSection( current_csection ) ,
+                                                              curve_vertices, curve_edges );
+            if( has_curve == true )
+            {
+                csection_scene->addObjectTest( curve_vertices, curve_edges );
+            }
+            else
+            {
+                std::cout << "there is not test-curve in this cross-section\n" << std::flush;
+                //nao desenha
+            }
+
+            // tem que atualizar o objeto?
+
+        }
+
+    }
+    else
+    {
+
+        bool has_curve = rules_processor.getCrossSection( id, indexCrossSection( current_csection ) ,
+                                                          curve_vertices, curve_edges );
+
+        if( has_curve == true )
+        {
+            obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
+                                       curve_edges );
+        }
+        else
+        {
+            obj->removeCrossSectionCurve( current_csection );
+            std::cout << "there is not curve in this cross-section\n" << std::flush;
+            //apaga curva daquela cross-section
+        }
+
+    }
+
+
+
+
+    /*
+
+
     bool has_curve = rules_processor.getCrossSection( id, indexCrossSection( current_csection ) ,
                                                       curve_vertices, curve_edges );
 
 
     if( has_curve == false )
     {
-        obj->removeCrossSectionCurve( current_csection );
-        std::cout << "there is not curve in this cross-section\n" << std::flush;
         return false;
     }
 
@@ -614,6 +669,11 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 
     return true;
 
+
+    */
+
+
+    return true;
 }
 
 
