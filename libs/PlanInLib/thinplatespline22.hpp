@@ -6,7 +6,7 @@
 /* PlanInLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                 */
 /* License as published by the Free Software Foundation; either               */
-/* version 2.1 of the License, or (at your option) any later version.         */
+/* version 3 of the License, or (at your option) any later version.           */
 /*                                                                            */
 /* PlanInLib is distributed in the hope that it will be useful,               */
 /* but WITHOUT ANY WARRANTY; without even the implied warranty of             */
@@ -41,7 +41,12 @@ class ThinPlateSpline22 : public BasisFunction2D
                 return -r2/2; 
             }
 
-            return ( r2*log( r2 )/2 ); 
+            return ( r2*log( sqrt(r2) ) ); 
+        }
+
+        int isSmooth() const
+        {
+            return smoothness; 
         }
 
         unsigned int get_order() const  
@@ -49,34 +54,11 @@ class ThinPlateSpline22 : public BasisFunction2D
             return order; 
         }
 
-        double Dx( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            if ( r < epsilon )
-            {
-                return -x1;
-            }
-
-            return x1*(2*log(r) + 1);
-        }
-
-        double Dy( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            if ( r < epsilon )
-            {
-                return -x2;
-            }
-
-            return x2*(2*log(r) + 1);
-        }
-
-
     private: 
         static const unsigned int order = 2; 
         double epsilon = 1E-9; 
+
+        static const int smoothness = 1; 
 };
 
 #endif 
