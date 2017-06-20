@@ -160,6 +160,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         QGraphicsPathItem* object_test;
+        QGraphicsPathItem object_test1;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H

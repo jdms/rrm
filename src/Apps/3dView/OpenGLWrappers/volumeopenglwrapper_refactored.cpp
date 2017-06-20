@@ -91,38 +91,76 @@ void VolumeOpenGLWrapper_Refactored::createVolumeBox()
     Eigen::Vector3f H( maximum.x(), maximum.y(), minimum.z() );
 
 
+    /*
+
+*/
+
+
     std::vector< float > wireframe =
     {
-        A.x(), A.y(), A.z(), 1.0f,
-        B.x(), B.y(), B.z(), 1.0f,
-        D.x(), D.y(), D.z(), 1.0f,
-        C.x(), C.y(), C.z(), 1.0f,
-
-        B.x(), B.y(), B.z(), 1.0f,
-        E.x(), E.y(), E.z(), 1.0f,
-        C.x(), C.y(), C.z(), 1.0f,
-        H.x(), H.y(), H.z(), 1.0f,
-
-        E.x(), E.y(), E.z(), 1.0f,
-        F.x(), F.y(), F.z(), 1.0f,
-        H.x(), H.y(), H.z(), 1.0f,
-        G.x(), G.y(), G.z(), 1.0f,
-
-        F.x(), F.y(), F.z(), 1.0f,
-        A.x(), A.y(), A.z(), 1.0f,
-        G.x(), G.y(), G.z(), 1.0f,
-        D.x(), D.y(), D.z(), 1.0f,
-
-        D.x(), D.y(), D.z(), 1.0f,
-        C.x(), C.y(), C.z(), 1.0f,
-        G.x(), G.y(), G.z(), 1.0f,
-        H.x(), H.y(), H.z(), 1.0f,
-
-        F.x(), F.y(), F.z(), 1.0f,
-        E.x(), E.y(), E.z(), 1.0f,
-        A.x(), A.y(), A.z(), 1.0f,
-        B.x(), B.y(), B.z(), 1.0f,
+        maximum.x(), maximum.y(), maximum.z(),1.0,
+        minimum.x(), maximum.y(), maximum.z(),1.0,
+        maximum.x(), maximum.y(), minimum.z(),1.0,
+        minimum.x(), maximum.y(), minimum.z(),1.0,
+        // Bottom Face
+        maximum.x(), minimum.y(), maximum.z(),1.0,
+        minimum.x(), minimum.y(), maximum.z(),1.0,
+        maximum.x(), minimum.y(), minimum.z(),1.0,
+        minimum.x(), minimum.y(), minimum.z(),1.0,
+        // Front Face
+        maximum.x(), maximum.y(), maximum.z(),1.0,
+        minimum.x(), maximum.y(), maximum.z(),1.0,
+        maximum.x(), minimum.y(), maximum.z(),1.0,
+        minimum.x(), minimum.y(), maximum.z(),1.0,
+        // Back Face
+        maximum.x(), maximum.y(), minimum.z(),1.0,
+        minimum.x(), maximum.y(), minimum.z(),1.0,
+        maximum.x(), minimum.y(), minimum.z(),1.0,
+        minimum.x(), minimum.y(), minimum.z(),1.0,
+        // Left Face
+        maximum.x(), maximum.y(), minimum.z(),1.0,
+        maximum.x(), maximum.y(), maximum.z(),1.0,
+        maximum.x(), minimum.y(), minimum.z(),1.0,
+        maximum.x(), minimum.y(), maximum.z(),1.0,
+        // Right Face
+        minimum.x(), maximum.y(), maximum.z(),1.0,
+        minimum.x(), maximum.y(), minimum.z(),1.0,
+        minimum.x(), minimum.y(), maximum.z(),1.0,
+        minimum.x(), minimum.y(), minimum.z(),1.0
     };
+
+//    std::vector< float > wireframe =
+//    {
+//        A.x(), A.y(), A.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+
+//        B.x(), B.y(), B.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+//        H.x(), H.y(), H.z(), 1.0f,
+
+//        E.x(), E.y(), E.z(), 1.0f,
+//        F.x(), F.y(), F.z(), 1.0f,
+//        H.x(), H.y(), H.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+
+//        F.x(), F.y(), F.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+
+//        D.x(), D.y(), D.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f,
+//        G.x(), G.y(), G.z(), 1.0f,
+//        H.x(), H.y(), H.z(), 1.0f,
+
+//        F.x(), F.y(), F.z(), 1.0f,
+//        E.x(), E.y(), E.z(), 1.0f,
+//        A.x(), A.y(), A.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+//    };
 
 
     defineNormals();

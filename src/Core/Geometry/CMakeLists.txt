@@ -6,7 +6,7 @@ project( RRMGeometry )
 # Options 
 #####################################################################
 
-set( CMAKE_BUILD_TYPE Debug )
+set( CMAKE_BUILD_TYPE Release )
 
 
 ###############################################

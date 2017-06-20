@@ -254,6 +254,7 @@ void TopViewScene::clear()
     draw_csections = true;
 
     addItem( &axes );
+    createCrossSectionImageItem();
     update();
 }
 
