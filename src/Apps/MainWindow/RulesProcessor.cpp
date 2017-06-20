@@ -281,6 +281,16 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vect
     return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
 }
 
+bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double> &path)
+{
+    StratigraphyUtilities util(modeller_);
+
+    bool status = util.getExtrusionPath(surface_index, path);
+
+    return status;
+}
+
+
 bool RulesProcessor::saveFile( std::string filename )
 {
     return modeller_.save(filename);
