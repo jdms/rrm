@@ -235,23 +235,12 @@ void SketchScene_Refactored::removeObjectsFromScene()
         wrapper->setVisible( false );
     }
 
-//    for( auto &it: items() )
-//        it->setVisible( false );
-//        removeItem( it );
-
     if( isValidSketch() == true )
         clearSketch();
 
-
+    removeObjectTest();
     volume.setVisible( true );
     axes.setVisible( axes_visible );
-
-//    addItem( &volume );
-//    setSceneRect( volume.boundingRect() );
-
-//    addItem( &axes );
-
-
 
 
 }
@@ -503,8 +492,6 @@ void SketchScene_Refactored::createCrossSectionImageItem()
 void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 {
 
-    const QString& file1( "C:\Users\Clarissa Marques\Desktop\RRM -- Local Repository\rrm\build\bin\teste_topview.png" );
-
     QPixmap image;
     image.load( file );
 
@@ -543,10 +530,10 @@ void SketchScene_Refactored::setImageToCrossSection()
 
 void SketchScene_Refactored::removeImageFromCrossSection()
 {
-//    removeItem( csection_image );
-//    csection_image->setPixmap( QPixmap() );
-//    delete csection_image;
     csection_image->setVisible( false );
+
+    if( hasImageInCrossSection() == true )
+        backgrounds.erase( current_csection );
 
     update();
 }

@@ -518,6 +518,8 @@ bool Controller_Refactored::createObjectSurface()
         surface_created = rules_processor.createSurface( current_object, curves );
 
 
+
+
     if( surface_created == true )
     {
         updateActiveObjects();
@@ -583,6 +585,31 @@ void Controller_Refactored::updateActiveObjects()
 bool Controller_Refactored::updateActiveCurve( std::size_t id )
 {
 
+//    Object_Refactored* obj = objects[ id ];
+
+
+//    std::vector< double > curve_vertices;
+//    std::vector< std::size_t > curve_edges;
+//    bool has_curve = rules_processor.getCrossSection( id, indexCrossSection( current_csection ) ,
+//                                                      curve_vertices, curve_edges );
+
+
+//    if( has_curve == false ) return false;
+
+
+//    bool testing = obj->isTesting();
+//    bool has_crosssection = obj->hasCurve( current_csection );
+
+
+//    if( ( testing == false ) || ( has_crosssection == true ) )
+//        obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
+//                                   curve_edges );
+//    else if( testing == true )
+//        csection_scene->addObjectTest( curve_vertices, curve_edges );
+
+
+//    return true;
+
     Object_Refactored* obj = objects[ id ];
 
 
@@ -599,11 +626,21 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
     bool has_crosssection = obj->hasCurve( current_csection );
 
 
-    if( ( testing == false ) || ( has_crosssection == true ) )
+    if( testing == true )
+    {
+        if( has_crosssection == true )
+        {
+            obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
+                                       curve_edges );
+        }
+        else
+            csection_scene->addObjectTest( curve_vertices, curve_edges );
+    }
+    else
+    {
         obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
                                    curve_edges );
-    else if( testing == true )
-        csection_scene->addObjectTest( curve_vertices, curve_edges );
+    }
 
 
     return true;
