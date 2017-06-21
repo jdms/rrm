@@ -186,6 +186,13 @@ class Controller_Refactored
         void setDefaultValues();
 
 
+
+
+        void updateModel();
+        void activeObject( std::size_t id );
+        void desactiveObject( std::size_t id );
+        void updateCrossSection();
+
         std::vector< int > createVectorOfColors( std::size_t number_of_colors );
 
 
