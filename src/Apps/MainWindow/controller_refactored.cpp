@@ -630,8 +630,8 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
     {
         if( has_crosssection == true )
         {
-            obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
-                                       curve_edges );
+//            obj->setCrossSectionCurve( current_csection, obj->getCrossSectionCurve( current_csection ), /*Model3DUtils::convertToCurve2D( curve_vertices )*/,
+//                                       obj->getCrossSectionCurveEdges( current_csection ) );
         }
         else
             csection_scene->addObjectTest( curve_vertices, curve_edges );
@@ -671,9 +671,90 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
 
     scene3d->updateObject( id );
 
+//    updateObject( it.first );
+
     return true;
 
 }
+
+
+
+
+//void Controller_Refactored::updateActiveIndexes()
+//{
+
+//    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+
+//    typedef std::map< std::size_t, Object_Refactored* >::iterator iterator_id = objects.begin();
+//    for( std::size_t i = 0; i < actives.size(); )
+//    {
+//        std::size_t id = actives[ i ];
+
+//        if( id == (*iterator_id).first )
+//        {
+//            int ok = 1;
+//            ++i;
+//            //active
+//        }
+//        else
+//        {
+//            int ok = 0;
+//            //desactive
+//            desactiveObject( id );
+//        }
+
+//        ++iterator_id;
+
+//    }
+
+
+//    while ( iterator_id != objects.end() )
+//    {
+//        int ok = 0;
+//        desactiveObject( (*iterator_id).first );
+//        //desactive
+//    }
+
+
+//}
+
+
+
+//void Controller_Refactored::activeObject( std::size_t id )
+//{
+//    Object_Refactored* obj = objects[ it.first ];
+//    obj->setVisibility( true );
+//    object_tree->setObjectHidden( it.first, false );
+
+//    updateActiveSurface( id );
+
+//}
+
+
+
+//void Controller_Refactored::desactiveObject( std::size_t id )
+//{
+//    Object_Refactored* obj = objects[ it.first ];
+//    obj->setVisibility( false );
+//    object_tree->setObjectHidden( it.first, true );
+//    updateObject( it.first );
+//}
+
+
+
+
+//void Controller_Refactored::updateCrossSection()
+//{
+
+//    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+
+//}
+
+
+
+
 
 
 void Controller_Refactored::showObjectInCrossSection( std::size_t id )
