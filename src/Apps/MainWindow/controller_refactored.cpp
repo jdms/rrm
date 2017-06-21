@@ -523,7 +523,6 @@ bool Controller_Refactored::createObjectSurface()
     if( surface_created == true )
     {
         obj->removeCrossSections();
-//        updateActiveObjects();
         updateModel();
         addObject();
     }
@@ -547,7 +546,7 @@ void Controller_Refactored::desactiveObjects()
     if( isValidObject( current_object ) == true )
         objects[ current_object ]->setVisibility( true );
 
-    csection_scene->removeObjectsFromScene();
+//    csection_scene->removeObjectsFromScene();
 }
 
 
@@ -560,6 +559,8 @@ void Controller_Refactored::updateObject( std::size_t id )
 
 void Controller_Refactored::updateActiveObjects()
 {
+    //deprecated
+
     desactiveObjects();
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
@@ -589,17 +590,6 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 
     Object_Refactored* obj = objects[ id ];
 
-    bool testing = obj->isTesting();
-    bool has_crosssection = obj->hasCurve( current_csection );
-    bool done = testing && has_crosssection;
-
-
-
-    // testing object and user has already done a curve there. So just drawn it.
-    if( done == true ) return true;
-
-
-
 
     std::vector< double > curve_vertices;
     std::vector< std::size_t > curve_edges;
@@ -607,25 +597,29 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
                                                       curve_vertices, curve_edges );
 
 
-//    obj->removeCrossSections();
+    if( has_curve == false ) return false;
 
 
-    // disrergarding if object is for testing, if there is no curve, just there is not to do
-    if( has_curve == false )  return false;
+    bool testing = obj->isTesting();
+    bool has_crosssection = obj->hasCurve( current_csection );
 
 
-    // draw what rulesprocessor has.
     if( testing == true )
-        csection_scene->addObjectTest( curve_vertices, curve_edges );
+    {
+        if( has_crosssection == true ) return true;
 
-    //
-    else if( testing == false )
+        csection_scene->addObjectTest( curve_vertices, curve_edges );
+    }
+    else
     {
         obj->setCrossSectionCurve( current_csection, Model3DUtils::convertToCurve2D( curve_vertices ),
                                    curve_edges );
     }
 
+
     return true;
+
+
 
 }
 
@@ -643,6 +637,11 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
     bool has_surface = rules_processor.getMesh( id, surface_vertices, surface_faces );
     if( has_surface  == false ) return false;
 
+    std::vector< double > surface_path;
+    bool has_path = rules_processor.getExtrusionPath( id, surface_path );
+    if( has_path == true )
+        obj->setTrajectoryCurve( Model3DUtils::convertToCurve2D( surface_path ) );
+
 
     std::vector< double > surface_normals;
     rules_processor.getNormals( id, surface_normals );
@@ -652,8 +651,6 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
     obj->setVisibility( true );
 
     scene3d->updateObject( id );
-
-//    updateObject( it.first );
 
     return true;
 
@@ -754,6 +751,7 @@ void Controller_Refactored::updateCrossSection()
 
 void Controller_Refactored::showObjectInCrossSection( std::size_t id )
 {
+    // deprecated
     csection_scene->reActiveObject( id );
 }
 
@@ -769,9 +767,9 @@ void Controller_Refactored::setCurrentCrossSection( double depth )
     topview_scene->moveCurrentCrossSection( current_csection );
     scene3d->moveCrossSection( current_csection );
 
-    if ( objects.empty() == false )
-        updateCrossSection();
-//        updateActiveObjects();
+    if ( objects.empty() == true ) return;
+    updateCrossSection();
+
 
 }
 
