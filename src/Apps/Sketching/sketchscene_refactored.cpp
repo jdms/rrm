@@ -467,6 +467,8 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
 
     current_csection = depth;
 
+    removeObjectsFromScene();
+
     if( hasImageInCrossSection() == false )
     {
         removeImageFromCrossSection();
