@@ -286,7 +286,7 @@ bool PlanarSurface::getPathVertexList( VList &pvlist )
     pvlist.resize(2*nY_);
     Point2 v {};
 
-    for ( long int j = 0; j < static_cast<long int>( pvlist.size() ); ++j )
+    for ( long int j = 0; j < static_cast<long int>( nY_ ); ++j )
     {
         getVertex2D( getVertexIndex(0, j), v );
         pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
