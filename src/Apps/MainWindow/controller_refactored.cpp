@@ -220,6 +220,7 @@ void Controller_Refactored::addObjectToInterface()
     Object_Refactored* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
     scene3d->addObject( obj );
+    topview_scene->addObject( obj );
 
     int r, g, b;
     obj->getColor( r, g, b );
@@ -426,6 +427,7 @@ void Controller_Refactored::removeCurveFromObject( double depth )
     enableTrajectory( status );
 
     testObjectSurface();
+    updateCrossSection();
 
 
 }
@@ -553,6 +555,7 @@ void Controller_Refactored::desactiveObjects()
 void Controller_Refactored::updateObject( std::size_t id )
 {
     csection_scene->updateObject( id );
+    topview_scene->updateObject( id );
     scene3d->updateObject( id );
 }
 
@@ -651,7 +654,7 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
     obj->setVisibility( true );
 
     scene3d->updateObject( id );
-
+    topview_scene->updateObject( id );
     return true;
 
 }
@@ -672,14 +675,12 @@ void Controller_Refactored::updateModel()
 
         if( id == (*iterator_id).first )
         {
-            int ok = 1;
-            activeObject( id );
+           activeObject( id );
             ++i;
             //active
         }
         else
         {
-            int ok = 0;
             //desactive
             desactiveObject( id );
         }
@@ -705,10 +706,13 @@ void Controller_Refactored::updateModel()
 void Controller_Refactored::activeObject( std::size_t id )
 {
     Object_Refactored* obj = objects[ id ];
+
     obj->setVisibility( true );
     object_tree->setObjectHidden( id, false );
 
-    updateActiveSurface( id );
+    bool status = updateActiveSurface( id );
+    if( status == false )
+        desactiveObject( id );
 }
 
 
@@ -1072,7 +1076,6 @@ void Controller_Refactored::loadObjects()
     }
 
     addObject();
-//    updateActiveObjects();
     updateModel();
 
 }

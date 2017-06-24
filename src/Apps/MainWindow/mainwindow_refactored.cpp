@@ -107,6 +107,20 @@ void MainWindow_Refactored::createToolbarActions()
     connect( ac_show_sidebar, &QAction::toggled, dw_info_objects, &QDockWidget::setVisible );
 
 
+    connect( dw_object_tree, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_info_objects->isVisible() == false ) )
+            ac_show_sidebar->setChecked( false );
+    } );
+
+    connect( dw_info_objects, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_object_tree->isVisible() == false ) )
+            ac_show_sidebar->setChecked( false );
+    } );
+
+
+
     QAction* ac_new = new QAction( "Clear", this );
     connect( ac_new, &QAction::triggered, this, &MainWindow_Refactored::clear );
 
@@ -161,22 +175,22 @@ void MainWindow_Refactored::createToolbarActions()
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
-    connect( ac_remove_above, &QAction::toggled, [=](){
+    connect( ac_remove_above, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE );} );
 
     ac_ra_intersection = new QAction( "RAI", this );
     ac_ra_intersection->setCheckable( true );
-    connect( ac_ra_intersection, &QAction::toggled, [=](){
+    connect( ac_ra_intersection, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION );} );
 
     ac_remove_below = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
-    connect( ac_remove_below, &QAction::toggled, [=](){
+    connect( ac_remove_below, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW );} );
 
     ac_rb_intersection = new QAction( "RBI", this );
     ac_rb_intersection->setCheckable( true );
-    connect( ac_rb_intersection, &QAction::toggled, [=](){
+    connect( ac_rb_intersection, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
 
 

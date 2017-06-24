@@ -31,7 +31,7 @@ class Controller_Refactored
             REMOVE_BELOW, // Remove below
             REMOVE_BELOW_INTERSECTION, // Remove below intersection
             DEFINE_ABOVE, // Define above
-            DEFINE_BELOW, // Define below
+            DEFINE_BELOW , // Define below
             DEFINE_REGION // Define region
         };
 

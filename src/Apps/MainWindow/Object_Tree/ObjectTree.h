@@ -37,6 +37,7 @@ class ObjectTree :public QTreeWidget
             setItemHidden( objects[ id_ ], status_ );
         }
 
+        bool getObjectVisibility( std::size_t id );
 
         inline void removeObject( const std::size_t& id_ )
         {
@@ -46,8 +47,6 @@ class ObjectTree :public QTreeWidget
             ObjectTreeItem* const& item = objects[ id_ ];
             input_volume->removeChild( item );
 
-//            delete objects[ id_ ];
-//            objects.erase( id_ );
         }
 
 
