@@ -554,7 +554,6 @@ void MainWindow_Refactored::loadVolumeDimensions()
     double height = controller->getVolumeHeight();
     double depth = controller->getVolumeDepth();
 
-//    pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
 
     int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
