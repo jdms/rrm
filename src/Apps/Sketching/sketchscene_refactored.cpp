@@ -109,7 +109,6 @@ void SketchScene_Refactored::reActiveObject( std::size_t id )
     wrapper->updateDepth( current_csection );
 
     wrapper->setVisible( true );
-//    addItem( wrapper );
     update();
 }
 
@@ -423,15 +422,6 @@ void SketchScene_Refactored::removeCurve()
     QList < QGraphicsItem* > items = selectedItems();
     if( items.empty() == true ) return;
 
-    ObjectItemWrapper_Refactored* obj = ( ObjectItemWrapper_Refactored* )items[ 0 ];
-    std::size_t id = obj->getId();
-    obj->clear();
-
-    removeItem( obj );
-
-    delete objects[ id ];
-    objects.erase( id );
-
     emit removeCurveFromObject( current_csection );
     update();
 }
@@ -499,15 +489,13 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 
     if( image.isNull() == true ) return;
 
-    std::cout << "image valid\n" <<std::flush;
-
     QTransform myTransform;
     myTransform.scale( 1, -1 );
     image = image.transformed( myTransform );
 
     csection_image->setPixmap( image );
+    csection_image->setPos( QPointF(0, 0) );
     csection_image->setVisible( true );
-//    std::cout << "image is visible: " << image.isNull() << std::endl << std::flush;
     csection_image->update();
 
 
@@ -524,8 +512,20 @@ void SketchScene_Refactored::setImageToCrossSection()
 {
 
     const ImageData& image_data = backgrounds[ current_csection ];
-    setImageToCrossSection( image_data.file );
+
+    QPixmap image;
+    image.load( image_data.file );
+
+    if( image.isNull() == true ) return;
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
+
+    csection_image->setPixmap( image );
     csection_image->setPos( image_data.origin );
+    csection_image->setVisible( true );
+    csection_image->update();
     update();
 
 }

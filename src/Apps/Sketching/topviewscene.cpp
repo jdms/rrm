@@ -13,6 +13,7 @@
 TopViewScene::TopViewScene()
 {
     csection = nullptr;
+    draw_csections = true;
     setupPen();
 }
 
@@ -107,22 +108,34 @@ void TopViewScene::addObject( Object_Refactored * const &obj )
 {
 
     if( isAddedObject( obj->getId() ) == true )
-        reActiveObject( obj->getId() );
+        updateObject( obj->getId() );
 
     int r, g, b;
     obj->getColor( r, g, b );
     trajectory_pen.setColor( QColor( r, g, b ) );
 
 
-    QPainterPath curve = QPainterPath();
-    curve.addPolygon( PolyQtUtils::curve2DToQPolyginF( obj->getTrajectoryCurve() ) );
 
-    objects[ obj->getId() ] = curve;
-    QGraphicsItem* const& item = addPath( curve, trajectory_pen );
-    item->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    TrajectoryItemWrapper* wrapper = new TrajectoryItemWrapper();
+    wrapper->setRawObject( obj );
+
+    objects[ obj->getId() ] = wrapper;
+    addItem( wrapper );
 
     update();
 
+
+}
+
+
+
+void TopViewScene::updateObject( std::size_t id )
+{
+    if( isAddedObject( id ) == false ) return;
+
+    TrajectoryItemWrapper* const& wrapper = objects[ id ];
+    wrapper->updateObject();
+    update();
 }
 
 
@@ -141,7 +154,7 @@ void TopViewScene::savetoRasterImage( const QString& filename )
 
 
     QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
-    image.fill( Qt::transparent );
+//    image.fill( Qt::transparent );
 
     QPainter painter( &image );
     render( &painter );
@@ -286,6 +299,12 @@ void TopViewScene::clearData()
     }
     csections.clear();
 
+
+    for( auto &it: objects )
+    {
+//        ( it.second )->clear();
+        delete ( it.second );
+    }
     objects.clear();
 
 }
