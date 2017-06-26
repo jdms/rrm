@@ -194,6 +194,7 @@ void MainWindow_Refactored::createToolbarActions()
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
 
 
+
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_ra_intersection );
@@ -217,6 +218,28 @@ void MainWindow_Refactored::createToolbarActions()
     QToolBar* tb_misc = new QToolBar( this );
     tb_misc->addAction( ac_screenshot );
     addToolBar( tb_misc );
+
+
+
+    ac_show_sidebar->setIcon( QIcon( ":/images/icons/sidebar.png" ) );
+    ac_new->setIcon( QIcon( ":/images/icons/new.png" ) );
+    ac_save_file->setIcon( QIcon( ":/images/icons/save.png" ) );
+    ac_load_file->setIcon( QIcon( ":/images/icons/load.png" ) );
+
+
+    ac_undo->setIcon( QIcon( ":/images/icons/undo.png" ) );
+    ac_redo->setIcon( QIcon( ":/images/icons/redo.png" ) );
+
+
+    ac_sketch_above->setIcon( QIcon( ":/images/icons/sketchabove.png" ) );
+    ac_sketch_below->setIcon( QIcon( ":/images/icons/sketchbelow.png" ) );
+
+    ac_remove_above->setIcon( QIcon( ":/images/icons/removeabove.png" ) );
+    ac_ra_intersection->setIcon( QIcon( ":/images/icons/removeaboveintersecion.png" ) );
+    ac_remove_below->setIcon( QIcon( ":/images/icons/removebelow.png" ) );
+    ac_rb_intersection->setIcon( QIcon( ":/images/icons/removebelowintersecion.png" ) );
+    ac_show_topview->setIcon( QIcon( ":/images/icons/topview.png" ) );
+    ac_screenshot->setIcon( QIcon( ":/images/icons/Camera.png" ) );
 
 }
 
