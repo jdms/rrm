@@ -99,21 +99,42 @@ void SketchWindow::createToolbarActions()
 
 
     QToolBar* tb_commands = new QToolBar( this );
+    tb_commands->addWidget( cp_define_color );
+    tb_commands->addSeparator();
+    tb_commands->addAction( ac_edit_boundary );
+    tb_commands->addSeparator();
     tb_commands->addAction( ac_discard_sketch );
     tb_commands->addAction( ac_commit_sketch );
-    tb_commands->addAction( ac_create_surface );
     tb_commands->addSeparator();
     tb_commands->addAction( ac_edit_scene );
     tb_commands->addAction( ac_remove_curve );
-    tb_commands->addAction( ac_remove_image );
     tb_commands->addSeparator();
-    tb_commands->addAction( ac_edit_boundary );
-    tb_commands->addWidget( cp_define_color );
+    tb_commands->addAction( ac_create_surface );
+    tb_commands->addSeparator();
+    tb_commands->addAction( ac_remove_image );
     tb_commands->addAction( ac_screenshot );
     tb_commands->addAction( ac_axes );
     addToolBar( tb_commands );
 
-    tb_commands->setFixedHeight( 27 );
+    tb_commands->setFixedHeight( 34 );
+
+
+
+
+    ac_discard_sketch->setIcon( QIcon( ":/images/icons/denyCurve.png" ) );
+    ac_commit_sketch->setIcon( QIcon( ":/images/icons/add_curve2.png" ) );
+    ac_create_surface->setIcon( QIcon( ":/images/icons/accept.png" ) );
+
+
+    ac_edit_scene->setIcon( QIcon( ":/images/icons/select_curve.png" ) );
+    ac_remove_curve->setIcon( QIcon( ":/images/icons/delete_curve.png" ) );
+
+
+    ac_remove_image->setIcon( QIcon( ":/images/icons/remove_picture.png" ) );
+    ac_edit_boundary->setIcon( QIcon( ":/images/icons/newBoundary.png" ) );
+
+    ac_screenshot->setIcon( QIcon( ":/images/icons/Camera.png" ) );
+    ac_axes->setIcon( QIcon( ":/images/icons/axes.png" ) );
 }
 
 
