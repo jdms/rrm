@@ -107,6 +107,20 @@ void MainWindow_Refactored::createToolbarActions()
     connect( ac_show_sidebar, &QAction::toggled, dw_info_objects, &QDockWidget::setVisible );
 
 
+    connect( dw_object_tree, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_info_objects->isVisible() == false ) )
+            ac_show_sidebar->setChecked( false );
+    } );
+
+    connect( dw_info_objects, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_object_tree->isVisible() == false ) )
+            ac_show_sidebar->setChecked( false );
+    } );
+
+
+
     QAction* ac_new = new QAction( "Clear", this );
     connect( ac_new, &QAction::triggered, this, &MainWindow_Refactored::clear );
 
@@ -161,23 +175,24 @@ void MainWindow_Refactored::createToolbarActions()
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
-    connect( ac_remove_above, &QAction::toggled, [=](){
+    connect( ac_remove_above, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE );} );
 
     ac_ra_intersection = new QAction( "RAI", this );
     ac_ra_intersection->setCheckable( true );
-    connect( ac_ra_intersection, &QAction::toggled, [=](){
+    connect( ac_ra_intersection, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION );} );
 
     ac_remove_below = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
-    connect( ac_remove_below, &QAction::toggled, [=](){
+    connect( ac_remove_below, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW );} );
 
     ac_rb_intersection = new QAction( "RBI", this );
     ac_rb_intersection->setCheckable( true );
-    connect( ac_rb_intersection, &QAction::toggled, [=](){
+    connect( ac_rb_intersection, &QAction::triggered, [=](){
           controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
+
 
 
     QActionGroup* ag_rules = new QActionGroup( this );
@@ -203,6 +218,28 @@ void MainWindow_Refactored::createToolbarActions()
     QToolBar* tb_misc = new QToolBar( this );
     tb_misc->addAction( ac_screenshot );
     addToolBar( tb_misc );
+
+
+
+    ac_show_sidebar->setIcon( QIcon( ":/images/icons/sidebar.png" ) );
+    ac_new->setIcon( QIcon( ":/images/icons/new.png" ) );
+    ac_save_file->setIcon( QIcon( ":/images/icons/save.png" ) );
+    ac_load_file->setIcon( QIcon( ":/images/icons/load.png" ) );
+
+
+    ac_undo->setIcon( QIcon( ":/images/icons/undo.png" ) );
+    ac_redo->setIcon( QIcon( ":/images/icons/redo.png" ) );
+
+
+    ac_sketch_above->setIcon( QIcon( ":/images/icons/sketchabove.png" ) );
+    ac_sketch_below->setIcon( QIcon( ":/images/icons/sketchbelow.png" ) );
+
+    ac_remove_above->setIcon( QIcon( ":/images/icons/removeabove.png" ) );
+    ac_ra_intersection->setIcon( QIcon( ":/images/icons/removeaboveintersecion.png" ) );
+    ac_remove_below->setIcon( QIcon( ":/images/icons/removebelow.png" ) );
+    ac_rb_intersection->setIcon( QIcon( ":/images/icons/removebelowintersecion.png" ) );
+    ac_show_topview->setIcon( QIcon( ":/images/icons/topview.png" ) );
+    ac_screenshot->setIcon( QIcon( ":/images/icons/Camera.png" ) );
 
 }
 
@@ -237,11 +274,7 @@ void MainWindow_Refactored::createTopViewInterface()
              &RealSlider::increaseValue );
     connect( topview_window, &SketchWindow::decreaseSlider, sl_depth_csection,
              &RealSlider::decreaseValue );
-
-
-
 }
-
 
 
 void MainWindow_Refactored::createSidebar()
@@ -544,7 +577,6 @@ void MainWindow_Refactored::loadVolumeDimensions()
     double height = controller->getVolumeHeight();
     double depth = controller->getVolumeDepth();
 
-    //pages_sidebar->changeRangeSize( 2*width, 2*height, 2*depth );
     emit resizedVolume( width, height, depth );
 
     int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );

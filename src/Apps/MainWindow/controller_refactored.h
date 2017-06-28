@@ -31,7 +31,7 @@ class Controller_Refactored
             REMOVE_BELOW, // Remove below
             REMOVE_BELOW_INTERSECTION, // Remove below intersection
             DEFINE_ABOVE, // Define above
-            DEFINE_BELOW, // Define below
+            DEFINE_BELOW , // Define below
             DEFINE_REGION // Define region
         };
 
@@ -185,6 +185,13 @@ class Controller_Refactored
 
         void setDefaultValues();
 
+
+
+
+        void updateModel();
+        void activeObject( std::size_t id );
+        void desactiveObject( std::size_t id );
+        void updateCrossSection();
 
         std::vector< int > createVectorOfColors( std::size_t number_of_colors );
 

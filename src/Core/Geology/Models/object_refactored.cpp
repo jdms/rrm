@@ -152,10 +152,14 @@ Curve2D Object_Refactored::getCrossSectionCurve( double depth )
 std::vector< std::tuple< Curve2D, double > > Object_Refactored::getCrossSectionCurves()
 {
     std::vector< std::tuple< Curve2D, double > > curves;
+
     for( auto it: csections_curves )
     {
-        curves.push_back( std::make_tuple( it.second, (std::size_t)it.first ) );
+        std::cout <<  it.first << " " << std::flush;
+        curves.push_back( std::make_tuple( it.second, it.first ) );
     }
+
+    std::cout <<  std::endl << std::flush;
 
     return curves;
 }

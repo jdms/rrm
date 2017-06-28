@@ -2,6 +2,7 @@
 #define TOPVIEWSCENE_H
 
 #include "sketchscene_refactored.h"
+#include "ItemWrappers/trajectoryitemwrapper.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
@@ -30,6 +31,7 @@ class TopViewScene: public SketchScene_Refactored
 
         void addObject( Object_Refactored * const &obj );
         bool isAddedObject( std::size_t id );
+        virtual void updateObject( std::size_t id );
 
 
         virtual void savetoRasterImage( const QString& filename );
@@ -65,7 +67,7 @@ class TopViewScene: public SketchScene_Refactored
 
         QPen trajectory_pen;
 
-        std::map< std::size_t, QPainterPath > objects;
+        std::map< std::size_t, TrajectoryItemWrapper*/*QPainterPath*/ > objects;
 
 
 };

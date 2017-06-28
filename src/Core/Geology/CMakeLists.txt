@@ -7,7 +7,7 @@ project( RRMGeology )
 # Options
 #####################################################################
 
-set( CMAKE_BUILD_TYPE Debug )
+set( CMAKE_BUILD_TYPE Release )
 
 
 ###############################################

@@ -106,6 +106,18 @@ void ObjectTree::updateObjectColor( const std::size_t& id, int r, int g, int b )
     update();
 }
 
+
+bool ObjectTree::getObjectVisibility( std::size_t id )
+{
+    auto search = objects.find( id );
+    if( search == objects.end() ) return false;
+
+    ObjectTreeItem* const& item = objects[ id ];
+    QCheckBox* const& chk = static_cast< QCheckBox* >( itemWidget( item, 0 ) );
+    return chk->isChecked();
+
+}
+
 void ObjectTree::addRegion( const std::size_t& id )
 {
 

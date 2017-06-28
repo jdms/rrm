@@ -53,9 +53,9 @@ void CrossSectionOpenGLWrapper_Refactored::setMaximum( float mx, float my, float
 void CrossSectionOpenGLWrapper_Refactored::createPlane()
 {
 
-    if( depth >= maximum.z() )
+    if( depth > maximum.z() )
         depth = maximum.z();
-    else if( depth <= minimum.z() )
+    else if( depth < minimum.z() )
         depth = minimum.z();
 
     float z = static_cast<float> (depth);
@@ -75,12 +75,30 @@ void CrossSectionOpenGLWrapper_Refactored::createPlane()
 
     std::vector< float > plane =
     {
-        A.x(), A.y(), A.z(), 1.0f,
-        B.x(), B.y(), B.z(), 1.0f,
+        C.x(), C.y(), C.z(), 1.0f,
         D.x(), D.y(), D.z(), 1.0f,
-        C.x(), C.y(), C.z(), 1.0f
+        B.x(), B.y(), B.z(), 1.0f,
+        A.x(), A.y(), A.z(), 1.0f
     };
 
+
+//    std::vector< float > plane =
+//    {
+//        A.x(), A.y(), A.z(), 1.0f,
+//        B.x(), B.y(), B.z(), 1.0f,
+//        D.x(), D.y(), D.z(), 1.0f,
+//        C.x(), C.y(), C.z(), 1.0f
+//    };
+
+    /*
+    std::vector< float > wireframe =
+    {
+        maximum.x(), maximum.y(), maximum.z(),1.0,
+        minimum.x(), maximum.y(), maximum.z(),1.0,
+        maximum.x(), minimum.y(), maximum.z(),1.0,
+        minimum.x(), minimum.y(), maximum.z(),1.0,
+
+*/
 
     number_of_vertices = static_cast< GLuint > (plane.size() );
     reloadBuffers( plane );
