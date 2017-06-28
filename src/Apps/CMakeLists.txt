@@ -80,6 +80,7 @@ set( SKETCHING_HEADERS        Sketching/sketchwindow.h
                               Sketching/topviewscene.h
                               Sketching/ItemWrappers/coordinateaxes2d.h
                               Sketching/ItemWrappers/objectitemwrapper_refactored.h
+                              Sketching/ItemWrappers/trajectoryitemwrapper.h
                               Sketching/ItemWrappers/ObjectItemWrap.h
                               Sketching/ItemWrappers/VolumeItemWrapper.h
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.h
@@ -110,6 +111,7 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
                               Sketching/csectionscene.cpp
                               Sketching/ItemWrappers/coordinateaxes2d.cpp
                               Sketching/ItemWrappers/objectitemwrapper_refactored.cpp
+                              Sketching/ItemWrappers/trajectoryitemwrapper.cpp
                               Sketching/ItemWrappers/ObjectItemWrap.cpp
                               Sketching/ItemWrappers/VolumeItemWrapper.cpp
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.cpp

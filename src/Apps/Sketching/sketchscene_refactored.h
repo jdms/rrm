@@ -46,7 +46,7 @@ class SketchScene_Refactored: public QGraphicsScene
         void setCurrentColor( int r, int g, int b );
 
         virtual void updateVolume();
-        void updateObject( std::size_t id );
+        virtual void updateObject( std::size_t id );
 
         void reActiveObject( std::size_t id );
         void removeObjectsFromScene();
@@ -127,7 +127,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         struct ImageData
         {
-            std::string file;
+            QString file;
             QPointF origin;
         };
 
@@ -160,7 +160,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         QGraphicsPathItem* object_test;
-        QPainterPath test_curve;
+        QGraphicsPathItem object_test1;
 };
 
 #endif // SKETCHSCENE_REFACTORED_H

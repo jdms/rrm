@@ -169,6 +169,8 @@
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
             bool getNormals( size_t surface_id, std::vector<double> &nlist );
 
+            bool getExtrusionPath( size_t surface_index, std::vector<double> &path);
+
 
             /* template<typename VertexList, typename FaceList> */
             /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */

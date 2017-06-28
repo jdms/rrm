@@ -100,7 +100,6 @@ void ObjectItemWrapper_Refactored::updateCurve()
     clearCurve();
 
     Curve2D c = object->getCrossSectionCurve( csection_depth );
-//    std::cout << "size of curve: " << c.size() << std::endl << std::flush;
     std::vector< std::size_t > edges = object->getCrossSectionCurveEdges( csection_depth );
 
 

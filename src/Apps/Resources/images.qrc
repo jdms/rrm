@@ -13,9 +13,6 @@
         <file>icons/undo.png</file>
         <file>icons/redo.png</file>
         <file>icons/newBoundary.png</file>
-        <file>icons/surfacesfromfile.png</file>
-        <file>icons/surfacesfromsketch.png</file>
-        <file>icons/userinput.png</file>
         <file>icons/computeproperties.png</file>
         <file>icons/clear.png</file>
         <file>icons/colormap.png</file>
@@ -31,6 +28,16 @@
         <file>icons/removeaboveintersecion.png</file>
         <file>icons/removebelowintersecion.png</file>
         <file>icons/sketchmode.png</file>
+        <file>icons/add_curve2.png</file>
+        <file>icons/load.png</file>
+        <file>icons/save.png</file>
+        <file>icons/sidebar.png</file>
+        <file>icons/remove_picture.png</file>
+        <file>icons/accept.png</file>
+        <file>icons/topview.png</file>
+        <file>icons/delete_curve.png</file>
+        <file>icons/select_curve.png</file>
+        <file>icons/axes.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>
