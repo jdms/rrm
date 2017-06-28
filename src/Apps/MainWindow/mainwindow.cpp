@@ -1,6 +1,6 @@
-#include "mainwindow_refactored.h"
-#include "3dView/canvas3d_refactored.h"
-#include "controller_refactored.h"
+#include "mainwindow.h"
+#include "3dView/canvas3d.h"
+#include "controller.h"
 #include "Sketching/sketchwindow.h"
 #include "Widgets/pagesstack.h"
 #include "Widgets/realslider.h"
@@ -13,7 +13,7 @@
 #include <QSlider>
 
 
-MainWindow_Refactored::MainWindow_Refactored( QWidget *parent ) : QMainWindow( parent )
+MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 {
     controller = nullptr;
 
@@ -30,7 +30,7 @@ MainWindow_Refactored::MainWindow_Refactored( QWidget *parent ) : QMainWindow( p
 }
 
 
-void MainWindow_Refactored::setupWindowProperties()
+void MainWindow::setupWindowProperties()
 {
     setAcceptDrops( true );
     setDockOptions( QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs |
@@ -53,7 +53,7 @@ void MainWindow_Refactored::setupWindowProperties()
 }
 
 
-void MainWindow_Refactored::createWindow()
+void MainWindow::createWindow()
 {
     createMainInterface();
     createSidebar();
@@ -63,10 +63,10 @@ void MainWindow_Refactored::createWindow()
 }
 
 
-void MainWindow_Refactored::createMainInterface()
+void MainWindow::createMainInterface()
 {
 
-    canvas3d = new Canvas3d_Refactored();
+    canvas3d = new Canvas3d();
 
     sl_depth_csection = new RealSlider( Qt::Vertical );
     sl_depth_csection->setTickPosition( QSlider::TicksRight );
@@ -77,14 +77,14 @@ void MainWindow_Refactored::createMainInterface()
                                       { controller->setCurrentCrossSection( v ); } );
 
 
-    connect( this, &MainWindow_Refactored::resizedVolume, [=]( double w, double h, double d )
+    connect( this, &MainWindow::resizedVolume, [=]( double w, double h, double d )
                                             { sl_depth_csection->setRange( 0, d );
                                               sl_depth_csection->setValue( d ); } );
 
 
-    connect( canvas3d, &Canvas3d_Refactored::increaseSlider, sl_depth_csection,
+    connect( canvas3d, &Canvas3d::increaseSlider, sl_depth_csection,
              &RealSlider::increaseValue );
-    connect( canvas3d, &Canvas3d_Refactored::decreaseSlider, sl_depth_csection,
+    connect( canvas3d, &Canvas3d::decreaseSlider, sl_depth_csection,
              &RealSlider::decreaseValue );
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
@@ -97,7 +97,7 @@ void MainWindow_Refactored::createMainInterface()
 }
 
 
-void MainWindow_Refactored::createToolbarActions()
+void MainWindow::createToolbarActions()
 {
 
     ac_show_sidebar = new QAction( "Show Sidebar", this );
@@ -122,19 +122,19 @@ void MainWindow_Refactored::createToolbarActions()
 
 
     QAction* ac_new = new QAction( "Clear", this );
-    connect( ac_new, &QAction::triggered, this, &MainWindow_Refactored::clear );
+    connect( ac_new, &QAction::triggered, this, &MainWindow::clear );
 
     QAction* ac_save_file = new QAction( "Save", this );
-    connect( ac_save_file, &QAction::triggered, this, &MainWindow_Refactored::saveFile );
+    connect( ac_save_file, &QAction::triggered, this, &MainWindow::saveFile );
     QAction* ac_load_file = new QAction( "Load", this );
-    connect( ac_load_file, &QAction::triggered, this, &MainWindow_Refactored::loadFile );
+    connect( ac_load_file, &QAction::triggered, this, &MainWindow::loadFile );
 
 
     ac_undo = new QAction( "Undo", this );
-    connect( ac_undo, &QAction::triggered, this, &MainWindow_Refactored::undo );
+    connect( ac_undo, &QAction::triggered, this, &MainWindow::undo );
 
     ac_redo = new QAction( "Redo", this );
-    connect( ac_redo, &QAction::triggered, this, &MainWindow_Refactored::redo );
+    connect( ac_redo, &QAction::triggered, this, &MainWindow::redo );
 
 
     QToolBar* tb_general = new QToolBar( this );
@@ -176,22 +176,22 @@ void MainWindow_Refactored::createToolbarActions()
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
     connect( ac_remove_above, &QAction::triggered, [=](){
-          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE );} );
+          controller->setCurrentRule( Controller::StratigraphicRules::REMOVE_ABOVE );} );
 
     ac_ra_intersection = new QAction( "RAI", this );
     ac_ra_intersection->setCheckable( true );
     connect( ac_ra_intersection, &QAction::triggered, [=](){
-          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION );} );
+          controller->setCurrentRule( Controller::StratigraphicRules::REMOVE_ABOVE_INTERSECTION );} );
 
     ac_remove_below = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
     connect( ac_remove_below, &QAction::triggered, [=](){
-          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW );} );
+          controller->setCurrentRule( Controller::StratigraphicRules::REMOVE_BELOW );} );
 
     ac_rb_intersection = new QAction( "RBI", this );
     ac_rb_intersection->setCheckable( true );
     connect( ac_rb_intersection, &QAction::triggered, [=](){
-          controller->setCurrentRule( Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
+          controller->setCurrentRule( Controller::StratigraphicRules::REMOVE_BELOW_INTERSECTION );} );
 
 
 
@@ -213,7 +213,7 @@ void MainWindow_Refactored::createToolbarActions()
 
 
     QAction* ac_screenshot = new QAction( "Screenshot", this );
-    connect( ac_screenshot, &QAction::triggered, canvas3d, &Canvas3d_Refactored::screenshot );
+    connect( ac_screenshot, &QAction::triggered, canvas3d, &Canvas3d::screenshot );
 
     QToolBar* tb_misc = new QToolBar( this );
     tb_misc->addAction( ac_screenshot );
@@ -244,7 +244,7 @@ void MainWindow_Refactored::createToolbarActions()
 }
 
 
-void MainWindow_Refactored::createCrossSectionInterface()
+void MainWindow::createCrossSectionInterface()
 {
     sketch_window = new SketchWindow( this );
 
@@ -261,7 +261,7 @@ void MainWindow_Refactored::createCrossSectionInterface()
 }
 
 
-void MainWindow_Refactored::createTopViewInterface()
+void MainWindow::createTopViewInterface()
 {
     topview_window = new SketchWindow( this, false );
 
@@ -277,7 +277,7 @@ void MainWindow_Refactored::createTopViewInterface()
 }
 
 
-void MainWindow_Refactored::createSidebar()
+void MainWindow::createSidebar()
 {
     object_tree = new ObjectTree( this );
     object_tree->setMaximumWidth( 0.2*app_width );
@@ -294,7 +294,7 @@ void MainWindow_Refactored::createSidebar()
     dw_info_objects->setWidget( pages_sidebar );
     addDockWidget( Qt::LeftDockWidgetArea, dw_info_objects );
 
-    connect( this, &MainWindow_Refactored::resizedVolume, pages_sidebar,
+    connect( this, &MainWindow::resizedVolume, pages_sidebar,
              &PagesStack::changeVolumeSize );
 
 }
@@ -302,21 +302,21 @@ void MainWindow_Refactored::createSidebar()
 
 
 
-void MainWindow_Refactored::createController()
+void MainWindow::createController()
 {
     if( controller != nullptr )
         delete controller;
 
-    controller = new Controller_Refactored();
+    controller = new Controller();
 }
 
 
-void MainWindow_Refactored::setupController()
+void MainWindow::setupController()
 {
 
     CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
     TopViewScene* topview_scene = ( TopViewScene* ) ( topview_window->getScene() );
-    Scene3d_refactored* scene3d = canvas3d->getScene();
+    Scene3d* scene3d = canvas3d->getScene();
 
 
     controller->setCSectionScene( csection_scene );
@@ -428,7 +428,7 @@ void MainWindow_Refactored::setupController()
 
 
 
-void MainWindow_Refactored::run_app()
+void MainWindow::run_app()
 {
     controller->setCurrentColor( 255, 0, 0 );
     controller->init();
@@ -439,14 +439,14 @@ void MainWindow_Refactored::run_app()
 
 
 
-void MainWindow_Refactored::setVolumeResizingEnabled( bool status )
+void MainWindow::setVolumeResizingEnabled( bool status )
 {
     pages_sidebar->setEnabledVolumeResize( status );
     sketch_window->setEnabledVolumeResize( status );
 }
 
 
-void MainWindow_Refactored::resizingVolumeWidth( double w )
+void MainWindow::resizingVolumeWidth( double w )
 {
     controller->setVolumeWidth( w );
     pages_sidebar->setVolumeWidth( w );
@@ -458,7 +458,7 @@ void MainWindow_Refactored::resizingVolumeWidth( double w )
 }
 
 
-void MainWindow_Refactored::resizingVolumeHeight( double h )
+void MainWindow::resizingVolumeHeight( double h )
 {
     controller->setVolumeHeight( h );
     pages_sidebar->setVolumeHeight( h );
@@ -471,7 +471,7 @@ void MainWindow_Refactored::resizingVolumeHeight( double h )
 }
 
 
-void MainWindow_Refactored::resizingVolumeDepth( double d )
+void MainWindow::resizingVolumeDepth( double d )
 {
     controller->setVolumeDepth( d );
     pages_sidebar->setVolumeDepth( d );
@@ -485,7 +485,7 @@ void MainWindow_Refactored::resizingVolumeDepth( double d )
 
 
 
-void MainWindow_Refactored::clear()
+void MainWindow::clear()
 {
     controller->clear();
     clearInterface();
@@ -496,7 +496,7 @@ void MainWindow_Refactored::clear()
 
 
 
-void MainWindow_Refactored::saveFile()
+void MainWindow::saveFile()
 {
     QString selected_format = "";
     QString filename = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
@@ -509,7 +509,7 @@ void MainWindow_Refactored::saveFile()
 }
 
 
-void MainWindow_Refactored::loadFile()
+void MainWindow::loadFile()
 {
     QString selected_format = "";
     QString filename = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
@@ -525,14 +525,14 @@ void MainWindow_Refactored::loadFile()
 
 
 
-void MainWindow_Refactored::undo()
+void MainWindow::undo()
 {
     controller->undo();
     checkUndoRedo();
 }
 
 
-void MainWindow_Refactored::redo()
+void MainWindow::redo()
 {
     controller->redo();
     checkUndoRedo();
@@ -540,7 +540,7 @@ void MainWindow_Refactored::redo()
 
 
 
-void MainWindow_Refactored::checkUndoRedo()
+void MainWindow::checkUndoRedo()
 {
     if( controller == nullptr ) return;
 
@@ -551,7 +551,7 @@ void MainWindow_Refactored::checkUndoRedo()
 }
 
 
-void MainWindow_Refactored::checkSketchStatus()
+void MainWindow::checkSketchStatus()
 {
     if( controller == nullptr ) return;
 
@@ -560,7 +560,7 @@ void MainWindow_Refactored::checkSketchStatus()
 }
 
 
-void MainWindow_Refactored::loadDefaultValues()
+void MainWindow::loadDefaultValues()
 {
     loadVolumeDimensions();
     loadDefaultRule();
@@ -568,7 +568,7 @@ void MainWindow_Refactored::loadDefaultValues()
 }
 
 
-void MainWindow_Refactored::loadVolumeDimensions()
+void MainWindow::loadVolumeDimensions()
 {
 
     if( controller == nullptr ) return;
@@ -589,24 +589,24 @@ void MainWindow_Refactored::loadVolumeDimensions()
 }
 
 
-void MainWindow_Refactored::loadDefaultRule()
+void MainWindow::loadDefaultRule()
 {
 
-    Controller_Refactored::StratigraphicRules rule = controller->getCurrentRule();
+    Controller::StratigraphicRules rule = controller->getCurrentRule();
 
-    if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE )
+    if( rule == Controller::StratigraphicRules::REMOVE_ABOVE )
     {
         ac_remove_above->setChecked( true );
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    else if( rule == Controller::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
     {
         ac_ra_intersection->setChecked( true );
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW )
+    else if( rule == Controller::StratigraphicRules::REMOVE_BELOW )
     {
         ac_remove_below->setChecked( true );
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    else if( rule == Controller::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
     {
         ac_rb_intersection->setChecked( true );
     }
@@ -617,14 +617,14 @@ void MainWindow_Refactored::loadDefaultRule()
 
 
 
-void MainWindow_Refactored::clearInterface()
+void MainWindow::clearInterface()
 {
     clearMenu();
     clearWindows();
 }
 
 
-void MainWindow_Refactored::clearMenu()
+void MainWindow::clearMenu()
 {
     ac_sketch_above->setEnabled( CREATE_REGIONS_ALLOWED );
     ac_sketch_below->setEnabled( CREATE_REGIONS_ALLOWED );
@@ -639,7 +639,7 @@ void MainWindow_Refactored::clearMenu()
 }
 
 
-void MainWindow_Refactored::clearWindows()
+void MainWindow::clearWindows()
 {
     sketch_window->clear();
     topview_window->clear();
@@ -649,7 +649,7 @@ void MainWindow_Refactored::clearWindows()
 
 
 
-void MainWindow_Refactored::setDefaultValues()
+void MainWindow::setDefaultValues()
 {
     ac_show_sidebar->setChecked( SIDEBAR_VISIBLE );
     ac_show_topview->setChecked( TOPVIEW_VISIBLE );

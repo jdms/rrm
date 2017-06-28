@@ -1,8 +1,8 @@
-#include "volumeitemwrapper_refactored.h"
+#include "volumeitemwrapper.h"
 #include "Core/Geology/Models/Volume.h"
 
 
-VolumeItemWrapper_Refactored::VolumeItemWrapper_Refactored( const Section& sec ): section( sec )
+VolumeItemWrapper::VolumeItemWrapper( const Section& sec ): section( sec )
 {
     raw = nullptr;
     setupPen();
@@ -10,7 +10,7 @@ VolumeItemWrapper_Refactored::VolumeItemWrapper_Refactored( const Section& sec )
 
 
 
-void VolumeItemWrapper_Refactored::setupPen()
+void VolumeItemWrapper::setupPen()
 {
     countor_volume.setColor( QColor ( 0 , 200 , 0 ) );
     countor_volume.setWidth( 1 );
@@ -20,7 +20,7 @@ void VolumeItemWrapper_Refactored::setupPen()
 }
 
 
-void VolumeItemWrapper_Refactored::clear()
+void VolumeItemWrapper::clear()
 {
 //    if( raw != nullptr )
 //        raw->clear();
@@ -33,7 +33,7 @@ void VolumeItemWrapper_Refactored::clear()
 
 
 
-void VolumeItemWrapper_Refactored::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
+void VolumeItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
                                           QWidget *w )
 {
     if( isVisible() == false ) return;
@@ -46,7 +46,7 @@ void VolumeItemWrapper_Refactored::paint( QPainter *painter, const QStyleOptionG
 }
 
 
-QRectF VolumeItemWrapper_Refactored::boundingRect() const
+QRectF VolumeItemWrapper::boundingRect() const
 {
     return section_boundary.boundingRect();
 }
@@ -54,14 +54,14 @@ QRectF VolumeItemWrapper_Refactored::boundingRect() const
 
 
 
-void VolumeItemWrapper_Refactored::setRawVolume( Volume* const& vol )
+void VolumeItemWrapper::setRawVolume( Volume* const& vol )
 {
     raw = vol;
     updateItem();
 }
 
 
-Volume* VolumeItemWrapper_Refactored::getRawVolume() const
+Volume* VolumeItemWrapper::getRawVolume() const
 {
     return raw;
 }
@@ -69,13 +69,13 @@ Volume* VolumeItemWrapper_Refactored::getRawVolume() const
 
 
 
-void VolumeItemWrapper_Refactored::defineSectionPlane( const Section& sec )
+void VolumeItemWrapper::defineSectionPlane( const Section& sec )
 {
     section = sec;
 }
 
 
-VolumeItemWrapper_Refactored::Section VolumeItemWrapper_Refactored::getSectionPlane() const
+VolumeItemWrapper::Section VolumeItemWrapper::getSectionPlane() const
 {
     return section;
 }
@@ -83,13 +83,13 @@ VolumeItemWrapper_Refactored::Section VolumeItemWrapper_Refactored::getSectionPl
 
 
 
-double VolumeItemWrapper_Refactored::getWidth() const
+double VolumeItemWrapper::getWidth() const
 {
     return raw->getWidth();
 }
 
 
-double VolumeItemWrapper_Refactored::getHeight() const
+double VolumeItemWrapper::getHeight() const
 {
     if( section == Section::XZ )
         return raw->getDepth();
@@ -99,7 +99,7 @@ double VolumeItemWrapper_Refactored::getHeight() const
 
 
 
-bool VolumeItemWrapper_Refactored::isVisible() const
+bool VolumeItemWrapper::isVisible() const
 {
     if( raw == nullptr ) return false;
     return raw->getVisibility();
@@ -108,7 +108,7 @@ bool VolumeItemWrapper_Refactored::isVisible() const
 
 
 
-void VolumeItemWrapper_Refactored::resize( double ox, double oy, double width, double height )
+void VolumeItemWrapper::resize( double ox, double oy, double width, double height )
 {
     section_boundary.clear();
     section_boundary = QPolygonF( QRectF( QPointF( ox, oy ), QSizeF( width, height ) ) );
@@ -116,7 +116,7 @@ void VolumeItemWrapper_Refactored::resize( double ox, double oy, double width, d
 }
 
 
-void VolumeItemWrapper_Refactored::updateItem()
+void VolumeItemWrapper::updateItem()
 {
     QPointF origin = section_boundary.boundingRect().bottomLeft();
     resize( 0.0, 0.0, getWidth(), getHeight() ) ;

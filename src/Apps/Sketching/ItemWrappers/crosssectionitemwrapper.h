@@ -1,5 +1,5 @@
-#ifndef CROSSSECTIONITEMWRAPPER_REFACTORED_H
-#define CROSSSECTIONITEMWRAPPER_REFACTORED_H
+#ifndef CROSSSECTIONITEMWRAPPER_H
+#define CROSSSECTIONITEMWRAPPER_H
 
 #include <QGraphicsLineItem>
 #include <QPen>
@@ -7,11 +7,11 @@
 class QPainter;
 
 
-class CrossSectionItemWrapper_Refactored: public QGraphicsLineItem
+class CrossSectionItemWrapper: public QGraphicsLineItem
 {
     public:
 
-        CrossSectionItemWrapper_Refactored( double w, double d );
+        CrossSectionItemWrapper( double w, double d );
 
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w );
 
@@ -40,4 +40,4 @@ class CrossSectionItemWrapper_Refactored: public QGraphicsLineItem
         QPen current_pen;
 };
 
-#endif // CROSSSECTIONITEMWRAPPER_REFACTORED_H
+#endif // CROSSSECTIONITEMWRAPPER_H

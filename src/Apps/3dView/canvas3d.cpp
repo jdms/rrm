@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include "canvas3d_refactored.h"
+#include "canvas3d.h"
 
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -9,12 +9,12 @@
 
 
 
-Canvas3d_Refactored::Canvas3d_Refactored()
+Canvas3d::Canvas3d()
 {
     createScene();
 }
 
-void Canvas3d_Refactored::initializeGL()
+void Canvas3d::initializeGL()
 {
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -35,7 +35,7 @@ void Canvas3d_Refactored::initializeGL()
 }
 
 
-void Canvas3d_Refactored::resizeGL( int width, int height )
+void Canvas3d::resizeGL( int width, int height )
 {
     glViewport( 0 , 0 , width , height );
     camera.setViewport( Eigen::Vector2f( (float) width, (float) height ) );
@@ -43,7 +43,7 @@ void Canvas3d_Refactored::resizeGL( int width, int height )
 }
 
 
-void Canvas3d_Refactored::paintGL()
+void Canvas3d::paintGL()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -53,14 +53,14 @@ void Canvas3d_Refactored::paintGL()
 }
 
 
-void Canvas3d_Refactored::createScene()
+void Canvas3d::createScene()
 {
-    scene3d = new Scene3d_refactored();
+    scene3d = new Scene3d();
     connect( scene3d, SIGNAL( updateCanvas() ), this, SLOT( update() ) );
 }
 
 
-Scene3d_refactored* Canvas3d_Refactored::getScene() const
+Scene3d* Canvas3d::getScene() const
 {
     return scene3d;
 }
@@ -69,7 +69,7 @@ Scene3d_refactored* Canvas3d_Refactored::getScene() const
 
 
 
-void Canvas3d_Refactored::screenshot()
+void Canvas3d::screenshot()
 {
     QString selectedFilter;
     QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
@@ -88,7 +88,7 @@ void Canvas3d_Refactored::screenshot()
 
 
 
-void Canvas3d_Refactored::savetoRasterImage( const QString& filename )
+void Canvas3d::savetoRasterImage( const QString& filename )
 {
     QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
 
@@ -106,14 +106,14 @@ void Canvas3d_Refactored::savetoRasterImage( const QString& filename )
     image.save( filename_csection );
 }
 
-void Canvas3d_Refactored::savetoVectorImage( const QString& filename )
+void Canvas3d::savetoVectorImage( const QString& filename )
 {
     std::cout << "Not implemented yet to 3dView\n" << std::flush;
 }
 
 
 
-void Canvas3d_Refactored::shareOpenGLContext()
+void Canvas3d::shareOpenGLContext()
 {
     scene3d->setOpenGLContext( context() );
 }
@@ -121,7 +121,7 @@ void Canvas3d_Refactored::shareOpenGLContext()
 
 
 
-void Canvas3d_Refactored::mousePressEvent( QMouseEvent *event )
+void Canvas3d::mousePressEvent( QMouseEvent *event )
 {
     makeCurrent();
 
@@ -148,7 +148,7 @@ void Canvas3d_Refactored::mousePressEvent( QMouseEvent *event )
 }
 
 
-void Canvas3d_Refactored::mouseMoveEvent( QMouseEvent *event )
+void Canvas3d::mouseMoveEvent( QMouseEvent *event )
 {
 
     makeCurrent();
@@ -178,7 +178,7 @@ void Canvas3d_Refactored::mouseMoveEvent( QMouseEvent *event )
 }
 
 
-void Canvas3d_Refactored::mouseReleaseEvent( QMouseEvent *event )
+void Canvas3d::mouseReleaseEvent( QMouseEvent *event )
 {
 
     makeCurrent();
@@ -195,7 +195,7 @@ void Canvas3d_Refactored::mouseReleaseEvent( QMouseEvent *event )
 }
 
 
-void Canvas3d_Refactored::wheelEvent( QWheelEvent *event )
+void Canvas3d::wheelEvent( QWheelEvent *event )
 {
 
     float pos = event->delta()/float( WHEEL_STEP );

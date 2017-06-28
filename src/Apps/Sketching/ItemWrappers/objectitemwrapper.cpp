@@ -1,9 +1,9 @@
-#include "objectitemwrapper_refactored.h"
+#include "objectitemwrapper.h"
 
 #include "Sketching/PolyQtUtils.hpp"
 #include "Core/Geology/Models/object_refactored.h"
 
-ObjectItemWrapper_Refactored::ObjectItemWrapper_Refactored()
+ObjectItemWrapper::ObjectItemWrapper()
 {
     object = nullptr;
     setFlag( QGraphicsItem::ItemIsSelectable, false );
@@ -13,13 +13,13 @@ ObjectItemWrapper_Refactored::ObjectItemWrapper_Refactored()
 
 
 
-QRectF ObjectItemWrapper_Refactored::boundingRect() const
+QRectF ObjectItemWrapper::boundingRect() const
 {
     return curve.boundingRect();
 }
 
 
-void ObjectItemWrapper_Refactored::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
+void ObjectItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                                           QWidget* w )
 {
     if( isVisible() == false ) return;
@@ -36,7 +36,7 @@ void ObjectItemWrapper_Refactored::paint( QPainter* painter, const QStyleOptionG
 }
 
 
-void ObjectItemWrapper_Refactored::setRawObject( Object_Refactored* const& obj, double depth )
+void ObjectItemWrapper::setRawObject( Object_Refactored* const& obj, double depth )
 {
     object = obj;
     csection_depth = depth;
@@ -46,20 +46,20 @@ void ObjectItemWrapper_Refactored::setRawObject( Object_Refactored* const& obj, 
 }
 
 
-void ObjectItemWrapper_Refactored::updateDepth( double depth )
+void ObjectItemWrapper::updateDepth( double depth )
 {
     csection_depth = depth;
     updateObject();
 }
 
 
-std::size_t ObjectItemWrapper_Refactored::getId() const
+std::size_t ObjectItemWrapper::getId() const
 {
     return object->getId();
 }
 
 
-void ObjectItemWrapper_Refactored::updateState()
+void ObjectItemWrapper::updateState()
 {
     bool selectable = false;
 
@@ -88,13 +88,13 @@ void ObjectItemWrapper_Refactored::updateState()
 }
 
 
-void ObjectItemWrapper_Refactored::enableEditing()
+void ObjectItemWrapper::enableEditing()
 {
     setFlag( QGraphicsItem::ItemIsSelectable, object->getEditable() );
 }
 
 
-void ObjectItemWrapper_Refactored::updateCurve()
+void ObjectItemWrapper::updateCurve()
 {
 
     clearCurve();
@@ -139,20 +139,20 @@ void ObjectItemWrapper_Refactored::updateCurve()
 }
 
 
-void ObjectItemWrapper_Refactored::updateObject()
+void ObjectItemWrapper::updateObject()
 {
     updateCurve();
     updateState();
 }
 
 
-bool ObjectItemWrapper_Refactored::isVisible() const
+bool ObjectItemWrapper::isVisible() const
 {
     return object->getVisibility();
 }
 
 
-void ObjectItemWrapper_Refactored::setupPen()
+void ObjectItemWrapper::setupPen()
 {
     visible_subpaths_pen.setStyle( Qt::SolidLine );
     visible_subpaths_pen.setCapStyle( Qt::RoundCap );
@@ -167,14 +167,14 @@ void ObjectItemWrapper_Refactored::setupPen()
 }
 
 
-void ObjectItemWrapper_Refactored::clear()
+void ObjectItemWrapper::clear()
 {
     clearData();
     csection_depth = 0.0;
 }
 
 
-void ObjectItemWrapper_Refactored::clearData()
+void ObjectItemWrapper::clearData()
 {
 //    if( object != nullptr )
 //        object->clear();
@@ -184,7 +184,7 @@ void ObjectItemWrapper_Refactored::clearData()
 }
 
 
-void ObjectItemWrapper_Refactored::clearCurve()
+void ObjectItemWrapper::clearCurve()
 {
     prepareGeometryChange();
     curve = QPainterPath();

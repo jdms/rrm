@@ -1,16 +1,16 @@
-#include "controller_refactored.h"
+#include "controller.h"
 
 
 #include "Object_Tree/ObjectTree.h"
 #include "Sketching/csectionscene.h"
 #include "Sketching/topviewscene.h"
-#include "3dView/scene3d_refactored.h"
+#include "3dView/scene3d.h"
 #include "3dView/Model3DUtils.hpp"
 
 #include "./Core/Geology/Models/Volume.h"
 
 
-Controller_Refactored::Controller_Refactored()
+Controller::Controller()
 {
     volume = nullptr;
     csection_scene = nullptr;
@@ -25,25 +25,25 @@ Controller_Refactored::Controller_Refactored()
 
 
 
-void Controller_Refactored::setScene3d( Scene3d_refactored* const& sc )
+void Controller::setScene3d( Scene3d* const& sc )
 {
     scene3d = sc;
 }
 
 
-void Controller_Refactored::setCSectionScene( CSectionScene* const& sc )
+void Controller::setCSectionScene( CSectionScene* const& sc )
 {
     csection_scene = sc;
 }
 
 
-void Controller_Refactored::setTopViewScene( TopViewScene* const& sc )
+void Controller::setTopViewScene( TopViewScene* const& sc )
 {
     topview_scene = sc;
 }
 
 
-void Controller_Refactored::setObjectTree( ObjectTree* const& ot )
+void Controller::setObjectTree( ObjectTree* const& ot )
 {
     object_tree = ot;
 }
@@ -51,7 +51,7 @@ void Controller_Refactored::setObjectTree( ObjectTree* const& ot )
 
 
 
-void Controller_Refactored::init()
+void Controller::init()
 {
     addVolume();
     addVolumeToInterface();
@@ -63,7 +63,7 @@ void Controller_Refactored::init()
 
 
 
-void Controller_Refactored::addVolume()
+void Controller::addVolume()
 {
     if( volume != nullptr )
         delete volume;
@@ -74,7 +74,7 @@ void Controller_Refactored::addVolume()
 }
 
 
-void Controller_Refactored::addVolumeToInterface()
+void Controller::addVolumeToInterface()
 {
     scene3d->addVolume( volume );
     csection_scene->addVolume( volume );
@@ -84,7 +84,7 @@ void Controller_Refactored::addVolumeToInterface()
 }
 
 
-void Controller_Refactored::setVolumeWidth( double width )
+void Controller::setVolumeWidth( double width )
 {
     if( volume == nullptr ) return;
     volume->setWidth( width );
@@ -92,7 +92,7 @@ void Controller_Refactored::setVolumeWidth( double width )
 }
 
 
-void Controller_Refactored::setVolumeHeight( double height )
+void Controller::setVolumeHeight( double height )
 {
     if( volume == nullptr ) return;
     volume->setHeight( height );
@@ -100,7 +100,7 @@ void Controller_Refactored::setVolumeHeight( double height )
 }
 
 
-void Controller_Refactored::setVolumeDepth( double depth )
+void Controller::setVolumeDepth( double depth )
 {
     if( volume == nullptr ) return;
     volume->setDepth( depth );
@@ -108,28 +108,28 @@ void Controller_Refactored::setVolumeDepth( double depth )
 }
 
 
-double Controller_Refactored::getVolumeWidth() const
+double Controller::getVolumeWidth() const
 {
     if( volume == nullptr ) return 0.0;
     return volume->getWidth();
 }
 
 
-double Controller_Refactored::getVolumeHeight() const
+double Controller::getVolumeHeight() const
 {
     if( volume == nullptr ) return 0.0;
     return volume->getHeight();
 }
 
 
-double Controller_Refactored::getVolumeDepth() const
+double Controller::getVolumeDepth() const
 {
     if( volume == nullptr ) return 0.0;
     return volume->getDepth();
 }
 
 
-void Controller_Refactored::setVolumeVisibility( bool status )
+void Controller::setVolumeVisibility( bool status )
 {
     if( volume == nullptr ) return;
     volume->setVisibility( status );
@@ -137,14 +137,14 @@ void Controller_Refactored::setVolumeVisibility( bool status )
 }
 
 
-bool Controller_Refactored::getVolumeVisibility() const
+bool Controller::getVolumeVisibility() const
 {
     if( volume == nullptr ) return false;
     return volume->getVisibility();
 }
 
 
-void Controller_Refactored::updateVolume()
+void Controller::updateVolume()
 {
 
     csection_scene->updateVolume();
@@ -157,7 +157,7 @@ void Controller_Refactored::updateVolume()
 }
 
 
-bool Controller_Refactored::isVolumeResizable() const
+bool Controller::isVolumeResizable() const
 {
 
     for( auto &it: objects )
@@ -171,7 +171,7 @@ bool Controller_Refactored::isVolumeResizable() const
 }
 
 
-void Controller_Refactored::addObject()
+void Controller::addObject()
 {
     Object_Refactored* const& obj = new Object_Refactored();
 
@@ -192,7 +192,7 @@ void Controller_Refactored::addObject()
 }
 
 
-void Controller_Refactored::addObject( std::size_t id )
+void Controller::addObject( std::size_t id )
 {
     Object_Refactored* const& obj = new Object_Refactored();
 
@@ -211,7 +211,7 @@ void Controller_Refactored::addObject( std::size_t id )
 }
 
 
-void Controller_Refactored::addObjectToInterface()
+void Controller::addObjectToInterface()
 {
     if ( isValidObject( current_object ) == false ) return;
 
@@ -230,7 +230,7 @@ void Controller_Refactored::addObjectToInterface()
 }
 
 
-bool Controller_Refactored::isValidObject( std::size_t id ) const
+bool Controller::isValidObject( std::size_t id ) const
 {
     auto search = objects.find( id );
     if( search != objects.end() )
@@ -240,13 +240,13 @@ bool Controller_Refactored::isValidObject( std::size_t id ) const
 }
 
 
-void Controller_Refactored::setObjectType( const Object_Refactored::Type& type )
+void Controller::setObjectType( const Object_Refactored::Type& type )
 {
     setObjectType( current_object, type );
 }
 
 
-void Controller_Refactored::setObjectType( std::size_t id, const Object_Refactored::Type& type )
+void Controller::setObjectType( std::size_t id, const Object_Refactored::Type& type )
 {
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
@@ -254,26 +254,26 @@ void Controller_Refactored::setObjectType( std::size_t id, const Object_Refactor
 }
 
 
-Object_Refactored::Type Controller_Refactored::getObjectType()
+Object_Refactored::Type Controller::getObjectType()
 {
     return getObjectType( current_object );
 }
 
 
-Object_Refactored::Type Controller_Refactored::getObjectType( std::size_t id )
+Object_Refactored::Type Controller::getObjectType( std::size_t id )
 {
     if( isValidObject( id ) == false ) return Object_Refactored::Type::NONE;
     return objects[ id ]->getType();
 }
 
 
-void Controller_Refactored::setObjectName( const std::string& name )
+void Controller::setObjectName( const std::string& name )
 {
     setObjectName( current_object, name ) ;
 }
 
 
-void Controller_Refactored::setObjectName( std::size_t id, const std::string& name )
+void Controller::setObjectName( std::size_t id, const std::string& name )
 {
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
@@ -281,32 +281,32 @@ void Controller_Refactored::setObjectName( std::size_t id, const std::string& na
 }
 
 
-std::string Controller_Refactored::getObjectName()
+std::string Controller::getObjectName()
 {
     return getObjectName( current_object );
 }
 
 
-std::string Controller_Refactored::getObjectName( std::size_t id )
+std::string Controller::getObjectName( std::size_t id )
 {
     if( isValidObject( id ) == false ) return std::string();
     return objects[ id ]->getName();
 }
 
 
-void Controller_Refactored::setObjectColor( int r, int g, int b )
+void Controller::setObjectColor( int r, int g, int b )
 {
     setObjectColor( current_object, r, g, b );
 }
 
 
-void Controller_Refactored::getObjectColor( int& r, int& g, int& b )
+void Controller::getObjectColor( int& r, int& g, int& b )
 {
     getObjectColor( current_object, r, g, b );
 }
 
 
-void Controller_Refactored::setObjectColor( std::size_t id, int r, int g, int b )
+void Controller::setObjectColor( std::size_t id, int r, int g, int b )
 {
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
@@ -317,26 +317,26 @@ void Controller_Refactored::setObjectColor( std::size_t id, int r, int g, int b 
 }
 
 
-void Controller_Refactored::getObjectColor( std::size_t id, int& r, int& g, int& b )
+void Controller::getObjectColor( std::size_t id, int& r, int& g, int& b )
 {
     if( isValidObject( id ) == false ) return;
     objects[ id ]->getColor( r, g, b );
 }
 
 
-void Controller_Refactored::setObjectVisibility( bool status )
+void Controller::setObjectVisibility( bool status )
 {
     setObjectVisibility( current_object, status );
 }
 
 
-bool Controller_Refactored::getObjectVisibility()
+bool Controller::getObjectVisibility()
 {
     return getObjectVisibility( current_object );
 }
 
 
-void Controller_Refactored::setObjectVisibility( std::size_t id,bool status )
+void Controller::setObjectVisibility( std::size_t id,bool status )
 {
     if( isValidObject( id ) == false ) return;
     Object_Refactored* const& object = objects[ id ];
@@ -346,14 +346,14 @@ void Controller_Refactored::setObjectVisibility( std::size_t id,bool status )
 }
 
 
-bool Controller_Refactored::getObjectVisibility( std::size_t id )
+bool Controller::getObjectVisibility( std::size_t id )
 {
     if( isValidObject( id ) == false ) return false;
     return objects[ id ]->getVisibility();
 }
 
 
-void Controller_Refactored::addCurveToObject( const Curve2D& curve )
+void Controller::addCurveToObject( const Curve2D& curve )
 {
 
     Object_Refactored* const& object = objects[ current_object ];
@@ -378,7 +378,7 @@ void Controller_Refactored::addCurveToObject( const Curve2D& curve )
 }
 
 
-bool Controller_Refactored::testObjectSurface()
+bool Controller::testObjectSurface()
 {
     if( isValidObject( current_object ) == false ) return false;
 
@@ -414,7 +414,7 @@ bool Controller_Refactored::testObjectSurface()
 }
 
 
-void Controller_Refactored::removeCurveFromObject( double depth )
+void Controller::removeCurveFromObject( double depth )
 {
     Object_Refactored* const& object = objects[ current_object ];
     object->removeCrossSectionCurve( depth );
@@ -433,7 +433,7 @@ void Controller_Refactored::removeCurveFromObject( double depth )
 }
 
 
-void Controller_Refactored::removeTrajectoryFromObject()
+void Controller::removeTrajectoryFromObject()
 {
     Object_Refactored* const& object = objects[ current_object ];
     object->removeTrajectoryCurve();
@@ -449,7 +449,7 @@ void Controller_Refactored::removeTrajectoryFromObject()
 
 
 
-void Controller_Refactored::removeCurrentObject()
+void Controller::removeCurrentObject()
 {
     object_tree->removeObject( current_object );
     delete objects[ current_object ];
@@ -457,26 +457,26 @@ void Controller_Refactored::removeCurrentObject()
 }
 
 
-void Controller_Refactored::enableTrajectory( bool status )
+void Controller::enableTrajectory( bool status )
 {
     topview_scene->enableSketch( status );
 }
 
 
-void Controller_Refactored::enableCurve( bool status )
+void Controller::enableCurve( bool status )
 {
     csection_scene->enableSketch( status );
 }
 
 
-void Controller_Refactored::enableDeletingCurves( bool status  )
+void Controller::enableDeletingCurves( bool status  )
 {
     csection_scene->enableDeletingCurves( status );
     topview_scene->enableDeletingCurves( status );
 }
 
 
-void Controller_Refactored::addTrajectoryToObject( const Curve2D& curve )
+void Controller::addTrajectoryToObject( const Curve2D& curve )
 {
     Object_Refactored* const& object = objects[ current_object ];
     object->setTrajectoryCurve( curve );
@@ -490,7 +490,7 @@ void Controller_Refactored::addTrajectoryToObject( const Curve2D& curve )
 }
 
 
-bool Controller_Refactored::createObjectSurface()
+bool Controller::createObjectSurface()
 {
     if( isValidObject( current_object ) == false ) return false;
 
@@ -533,7 +533,7 @@ bool Controller_Refactored::createObjectSurface()
 }
 
 
-void Controller_Refactored::desactiveObjects()
+void Controller::desactiveObjects()
 {
     for( auto it: objects )
     {
@@ -552,7 +552,7 @@ void Controller_Refactored::desactiveObjects()
 }
 
 
-void Controller_Refactored::updateObject( std::size_t id )
+void Controller::updateObject( std::size_t id )
 {
     csection_scene->updateObject( id );
     topview_scene->updateObject( id );
@@ -560,7 +560,7 @@ void Controller_Refactored::updateObject( std::size_t id )
 }
 
 
-void Controller_Refactored::updateActiveObjects()
+void Controller::updateActiveObjects()
 {
     //deprecated
 
@@ -588,7 +588,7 @@ void Controller_Refactored::updateActiveObjects()
 }
 
 
-bool Controller_Refactored::updateActiveCurve( std::size_t id )
+bool Controller::updateActiveCurve( std::size_t id )
 {
 
     Object_Refactored* obj = objects[ id ];
@@ -627,7 +627,7 @@ bool Controller_Refactored::updateActiveCurve( std::size_t id )
 }
 
 
-bool Controller_Refactored::updateActiveSurface( std::size_t id )
+bool Controller::updateActiveSurface( std::size_t id )
 {
 
 
@@ -662,7 +662,7 @@ bool Controller_Refactored::updateActiveSurface( std::size_t id )
 
 
 
-void Controller_Refactored::updateModel()
+void Controller::updateModel()
 {
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
@@ -703,7 +703,7 @@ void Controller_Refactored::updateModel()
 
 
 
-void Controller_Refactored::activeObject( std::size_t id )
+void Controller::activeObject( std::size_t id )
 {
     Object_Refactored* obj = objects[ id ];
 
@@ -717,7 +717,7 @@ void Controller_Refactored::activeObject( std::size_t id )
 
 
 
-void Controller_Refactored::desactiveObject( std::size_t id )
+void Controller::desactiveObject( std::size_t id )
 {
     Object_Refactored* obj = objects[ id ];
     obj->setVisibility( false );
@@ -728,7 +728,7 @@ void Controller_Refactored::desactiveObject( std::size_t id )
 
 
 
-void Controller_Refactored::updateCrossSection()
+void Controller::updateCrossSection()
 {
 
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
@@ -753,7 +753,7 @@ void Controller_Refactored::updateCrossSection()
 
 
 
-void Controller_Refactored::showObjectInCrossSection( std::size_t id )
+void Controller::showObjectInCrossSection( std::size_t id )
 {
     // deprecated
     csection_scene->reActiveObject( id );
@@ -762,7 +762,7 @@ void Controller_Refactored::showObjectInCrossSection( std::size_t id )
 
 
 
-void Controller_Refactored::setCurrentCrossSection( double depth )
+void Controller::setCurrentCrossSection( double depth )
 {
     if ( isValidCrossSection( depth ) == false ) return;
 
@@ -778,13 +778,13 @@ void Controller_Refactored::setCurrentCrossSection( double depth )
 }
 
 
-double Controller_Refactored::getCurrentCrossSection() const
+double Controller::getCurrentCrossSection() const
 {
     return current_csection;
 }
 
 
-bool Controller_Refactored::isValidCrossSection( double depth ) const
+bool Controller::isValidCrossSection( double depth ) const
 {
     if( volume == nullptr ) return false;
 
@@ -798,7 +798,7 @@ bool Controller_Refactored::isValidCrossSection( double depth ) const
 }
 
 
-std::size_t Controller_Refactored::setupCrossSectionDiscretization()
+std::size_t Controller::setupCrossSectionDiscretization()
 {
     if( volume == nullptr ) return 0;
 
@@ -808,13 +808,13 @@ std::size_t Controller_Refactored::setupCrossSectionDiscretization()
 }
 
 
-std::size_t Controller_Refactored::indexCrossSection( double value ) const
+std::size_t Controller::indexCrossSection( double value ) const
 {
     return static_cast< std::size_t > ( value/csection_step );
 }
 
 
-double Controller_Refactored::depthCrossSection( std::size_t index ) const
+double Controller::depthCrossSection( std::size_t index ) const
 {
     return static_cast< double > ( index*csection_step );
 }
@@ -822,7 +822,7 @@ double Controller_Refactored::depthCrossSection( std::size_t index ) const
 
 
 
-void Controller_Refactored::setCurrentColor( int r, int g, int b )
+void Controller::setCurrentColor( int r, int g, int b )
 {
     current_color = std::make_tuple( r, g, b );
 
@@ -836,7 +836,7 @@ void Controller_Refactored::setCurrentColor( int r, int g, int b )
 }
 
 
-void Controller_Refactored::getCurrentColor( int& r, int& g, int& b ) const
+void Controller::getCurrentColor( int& r, int& g, int& b ) const
 {
     r = std::get<0>( current_color );
     g = std::get<1>( current_color );
@@ -846,14 +846,14 @@ void Controller_Refactored::getCurrentColor( int& r, int& g, int& b ) const
 
 
 
-void Controller_Refactored::initRulesProcessor()
+void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
     rules_processor.removeAboveIntersection();
 }
 
 
-void Controller_Refactored::updateBoundingBoxRulesProcessor()
+void Controller::updateBoundingBoxRulesProcessor()
 {
     if( volume == nullptr ) return;
 
@@ -868,30 +868,30 @@ void Controller_Refactored::updateBoundingBoxRulesProcessor()
 
 
 
-Controller_Refactored::StratigraphicRules Controller_Refactored::getCurrentRule() const
+Controller::StratigraphicRules Controller::getCurrentRule() const
 {
     return current_rule;
 }
 
 
-void Controller_Refactored::setCurrentRule( const Controller_Refactored::StratigraphicRules& rule )
+void Controller::setCurrentRule( const Controller::StratigraphicRules& rule )
 {
 
     current_rule = rule;
 
-    if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE )
+    if( rule == Controller::StratigraphicRules::REMOVE_ABOVE )
     {
         rules_processor.removeAbove();
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    else if( rule == Controller::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
     {
         rules_processor.removeAboveIntersection();
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW )
+    else if( rule == Controller::StratigraphicRules::REMOVE_BELOW )
     {
         rules_processor.removeBelow();
     }
-    else if( rule == Controller_Refactored::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    else if( rule == Controller::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
     {
         rules_processor.removeBelowIntersection();
     }
@@ -900,7 +900,7 @@ void Controller_Refactored::setCurrentRule( const Controller_Refactored::Stratig
 
 
 
-void Controller_Refactored::enableCreateAbove( bool status )
+void Controller::enableCreateAbove( bool status )
 {
     setObjectsAsSelectable( selectable_upper, false );
 
@@ -913,7 +913,7 @@ void Controller_Refactored::enableCreateAbove( bool status )
 }
 
 
-void Controller_Refactored::stopCreateAbove()
+void Controller::stopCreateAbove()
 {
     rules_processor.stopDefineAbove();
     setObjectSelected( boundering_above, false );
@@ -921,7 +921,7 @@ void Controller_Refactored::stopCreateAbove()
 }
 
 
-void Controller_Refactored::requestCreateAbove()
+void Controller::requestCreateAbove()
 {
     bool request_accept = rules_processor.requestCreateAbove( selectable_upper );
     if( request_accept == false ) return;
@@ -936,7 +936,7 @@ void Controller_Refactored::requestCreateAbove()
 
 
 
-void Controller_Refactored::enableCreateBelow( bool status )
+void Controller::enableCreateBelow( bool status )
 {
 
     setObjectsAsSelectable( selectable_below, false );
@@ -949,7 +949,7 @@ void Controller_Refactored::enableCreateBelow( bool status )
 }
 
 
-void Controller_Refactored::stopCreateBelow()
+void Controller::stopCreateBelow()
 {
     rules_processor.stopDefineBelow();
     setObjectSelected( boundering_below, false );
@@ -957,7 +957,7 @@ void Controller_Refactored::stopCreateBelow()
 }
 
 
-void Controller_Refactored::requestCreateBelow()
+void Controller::requestCreateBelow()
 {
 
     bool request_accept = rules_processor.requestCreateBelow( selectable_below );
@@ -973,7 +973,7 @@ void Controller_Refactored::requestCreateBelow()
 
 
 
-void Controller_Refactored::setObjectsAsSelectable( std::vector< std::size_t >& indexes,
+void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes,
                                                     bool status )
 {
 
@@ -992,7 +992,7 @@ void Controller_Refactored::setObjectsAsSelectable( std::vector< std::size_t >& 
 }
 
 
-void Controller_Refactored::setObjectSelected( std::size_t id, bool status )
+void Controller::setObjectSelected( std::size_t id, bool status )
 {
 
     if( isValidObject( id ) == false ) return;
@@ -1005,7 +1005,7 @@ void Controller_Refactored::setObjectSelected( std::size_t id, bool status )
 }
 
 
-void Controller_Refactored::defineObjectSelected( std::size_t id )
+void Controller::defineObjectSelected( std::size_t id )
 {
     if( isValidObject( id ) == false ) return;
 
@@ -1029,12 +1029,12 @@ void Controller_Refactored::defineObjectSelected( std::size_t id )
 
 
 
-void Controller_Refactored::saveFile( const std::string& filename )
+void Controller::saveFile( const std::string& filename )
 {
     rules_processor.saveFile( filename );
 }
 
-void Controller_Refactored::loadFile( const std::string& filename )
+void Controller::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
     loadObjects();
@@ -1042,7 +1042,7 @@ void Controller_Refactored::loadFile( const std::string& filename )
 }
 
 
-void Controller_Refactored::loadObjects()
+void Controller::loadObjects()
 {
     if( volume == nullptr ) return;
 
@@ -1081,7 +1081,7 @@ void Controller_Refactored::loadObjects()
 }
 
 
-std::vector< int > Controller_Refactored::createVectorOfColors( std::size_t number_of_colors )
+std::vector< int > Controller::createVectorOfColors( std::size_t number_of_colors )
 {
 
     std::vector< int > colors;
@@ -1100,14 +1100,14 @@ std::vector< int > Controller_Refactored::createVectorOfColors( std::size_t numb
     return colors;
 }
 
-void Controller_Refactored::loadStatus()
+void Controller::loadStatus()
 {
     isDefineAboveActive();
     isDefineBelowActive();
 }
 
 
-bool Controller_Refactored::undo()
+bool Controller::undo()
 {
     bool undo_done = rules_processor.undo();
     if( undo_done == false ) return false;
@@ -1117,7 +1117,7 @@ bool Controller_Refactored::undo()
     return true;
 }
 
-bool Controller_Refactored::redo()
+bool Controller::redo()
 {
     bool redo_done = rules_processor.redo();
     if( redo_done == false ) return false;
@@ -1128,18 +1128,18 @@ bool Controller_Refactored::redo()
 }
 
 
-bool Controller_Refactored::canUndo()
+bool Controller::canUndo()
 {
     return rules_processor.canUndo();
 }
 
-bool Controller_Refactored::canRedo()
+bool Controller::canRedo()
 {
     return rules_processor.canRedo();
 }
 
 
-bool Controller_Refactored::isDefineAboveActive()
+bool Controller::isDefineAboveActive()
 {
     std::size_t id;
 
@@ -1158,7 +1158,7 @@ bool Controller_Refactored::isDefineAboveActive()
 
 
 
-bool Controller_Refactored::isDefineBelowActive()
+bool Controller::isDefineBelowActive()
 {
     std::size_t id;
 
@@ -1175,7 +1175,7 @@ bool Controller_Refactored::isDefineBelowActive()
 }
 
 
-void Controller_Refactored::clear()
+void Controller::clear()
 {
     clearScenes();
     clearData();
@@ -1184,7 +1184,7 @@ void Controller_Refactored::clear()
 }
 
 
-void Controller_Refactored::clearScenes()
+void Controller::clearScenes()
 {
     if( scene3d != nullptr )
         scene3d->clear();
@@ -1197,7 +1197,7 @@ void Controller_Refactored::clearScenes()
 }
 
 
-void Controller_Refactored::clearData()
+void Controller::clearData()
 {
     if( volume != nullptr )
     {
@@ -1227,7 +1227,7 @@ void Controller_Refactored::clearData()
 }
 
 
-void Controller_Refactored::setDefaultValues()
+void Controller::setDefaultValues()
 {
     csection_step = 0.0;
     boundering_above = 0;

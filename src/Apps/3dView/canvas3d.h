@@ -1,9 +1,8 @@
-#ifndef CANVAS3D_REFACTORED_H
-#define CANVAS3D_REFACTORED_H
+#ifndef CANVAS3D_H
+#define CANVAS3D_H
 
 
-#include "Scene3D.h"
-#include "scene3d_refactored.h"
+#include "scene3d.h"
 
 #include <QOpenGLWidget>
 
@@ -11,15 +10,15 @@ class QMouseEvent;
 class QWheelEvent;
 
 
-class Canvas3d_Refactored: public QOpenGLWidget
+class Canvas3d: public QOpenGLWidget
 {
     Q_OBJECT
 
     public:
 
-        Canvas3d_Refactored();
+        Canvas3d();
 
-        Scene3d_refactored* getScene() const;
+        Scene3d* getScene() const;
 
 
 
@@ -57,11 +56,11 @@ class Canvas3d_Refactored: public QOpenGLWidget
     private:
 
 
-        Scene3d_refactored* scene3d;
+        Scene3d* scene3d;
 
         Tucano::Trackball camera;
         const int WHEEL_STEP = 120;
 
 };
 
-#endif // CANVAS3D_REFACTORED_H
+#endif // CANVAS3D_H

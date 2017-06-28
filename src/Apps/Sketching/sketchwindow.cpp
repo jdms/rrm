@@ -43,35 +43,35 @@ void SketchWindow::createScene()
 void SketchWindow::createToolbarActions()
 {
     QAction* ac_discard_sketch = new QAction( "Discard", this );
-    connect( ac_discard_sketch, &QAction::triggered, scene, &SketchScene_Refactored::clearSketch );
+    connect( ac_discard_sketch, &QAction::triggered, scene, &SketchScene::clearSketch );
 
     QAction* ac_commit_sketch = new QAction( "Commit", this );
-    connect( ac_commit_sketch, &QAction::triggered, scene, &SketchScene_Refactored::finishSketch );
+    connect( ac_commit_sketch, &QAction::triggered, scene, &SketchScene::finishSketch );
 
     QAction* ac_create_surface = new QAction( "Create", this );
     connect( ac_create_surface, &QAction::triggered, [=](){ emit createSurface(); } );
-    connect( scene, &SketchScene_Refactored::createSurface, ac_create_surface, &QAction::trigger );
+    connect( scene, &SketchScene::createSurface, ac_create_surface, &QAction::trigger );
 
     ac_edit_boundary = new QAction( "Edit Boundary", this );
     ac_edit_boundary->setCheckable( true );
     ac_edit_boundary->setVisible( is_customizable );
 
-    connect( ac_edit_boundary, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditingBoundary );
-    connect( scene, &SketchScene_Refactored::updateVolumeDimensions, [=](){
+    connect( ac_edit_boundary, &QAction::toggled, scene, &SketchScene::setModeEditingBoundary );
+    connect( scene, &SketchScene::updateVolumeDimensions, [=](){
                                              ac_edit_boundary->setChecked( false ); } );
 
     QAction* ac_edit_scene = new QAction( "Edit Objects", this );
     ac_edit_scene->setCheckable( true );
-    connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene_Refactored::setModeEditable );
+    connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene::setModeEditable );
 
     QAction* ac_remove_curve = new QAction( "Delete Curve", this );
     ac_remove_curve->setVisible( is_customizable );
-    connect( ac_remove_curve, &QAction::triggered, scene, &SketchScene_Refactored::removeCurve );
-    connect( scene, &SketchScene_Refactored::enableDeleting, ac_remove_curve, &QAction::setEnabled );
+    connect( ac_remove_curve, &QAction::triggered, scene, &SketchScene::removeCurve );
+    connect( scene, &SketchScene::enableDeleting, ac_remove_curve, &QAction::setEnabled );
 
 
     QAction* ac_remove_image = new QAction( "Remove Image", this );
-    connect( ac_remove_image, &QAction::triggered, scene, &SketchScene_Refactored::removeImageFromCrossSection );
+    connect( ac_remove_image, &QAction::triggered, scene, &SketchScene::removeImageFromCrossSection );
 
 
     ColorPicker* cp_define_color = new ColorPicker( this );
@@ -79,10 +79,10 @@ void SketchWindow::createToolbarActions()
     connect( cp_define_color, &ColorPicker::colorSelected, [=]( const QColor& c ){ emit defineColorCurrent( c ); } );
 
 
-    connect( scene, &SketchScene_Refactored::updateColor, [=]( const QColor& c ){
+    connect( scene, &SketchScene::updateColor, [=]( const QColor& c ){
                                                             cp_define_color->setColor( c ); } );
 
-    connect( scene, &SketchScene_Refactored::setUpColor, [=](){
+    connect( scene, &SketchScene::setUpColor, [=](){
                                                             cp_define_color->defineRandomColor(); } );
 
 
@@ -145,7 +145,7 @@ void SketchWindow::setEnabledVolumeResize( bool status )
 }
 
 
-SketchScene_Refactored* SketchWindow::getScene() const
+SketchScene* SketchWindow::getScene() const
 {
     return scene;
 }
