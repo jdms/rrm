@@ -1,17 +1,17 @@
 #ifndef TOPVIEWSCENE_H
 #define TOPVIEWSCENE_H
 
-#include "sketchscene_refactored.h"
+#include "sketchscene.h"
 #include "ItemWrappers/trajectoryitemwrapper.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 
-class CrossSectionItemWrapper_Refactored;
+class CrossSectionItemWrapper;
 
 
 
-class TopViewScene: public SketchScene_Refactored
+class TopViewScene: public SketchScene
 {
     Q_OBJECT
 
@@ -62,8 +62,8 @@ class TopViewScene: public SketchScene_Refactored
     protected:
 
         bool draw_csections;
-        CrossSectionItemWrapper_Refactored* csection;
-        std::map< double, CrossSectionItemWrapper_Refactored* > csections;
+        CrossSectionItemWrapper* csection;
+        std::map< double, CrossSectionItemWrapper* > csections;
 
         QPen trajectory_pen;
 

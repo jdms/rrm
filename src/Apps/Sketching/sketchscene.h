@@ -1,5 +1,5 @@
-#ifndef SKETCHSCENE_REFACTORED_H
-#define SKETCHSCENE_REFACTORED_H
+#ifndef SKETCHSCENE_H
+#define SKETCHSCENE_H
 
 #include <QGraphicsScene>
 #include <QColor>
@@ -7,8 +7,8 @@
 
 #include "Sketching/InputSketch.h"
 #include "ItemWrappers/coordinateaxes2d.h"
-#include "ItemWrappers/volumeitemwrapper_refactored.h"
-#include "ItemWrappers/objectitemwrapper_refactored.h"
+#include "ItemWrappers/volumeitemwrapper.h"
+#include "ItemWrappers/objectitemwrapper.h"
 
 
 
@@ -20,7 +20,7 @@ class QGraphicsSceneDragDropEvent;
 class QKeyEvent;
 
 
-class SketchScene_Refactored: public QGraphicsScene
+class SketchScene: public QGraphicsScene
 {
     Q_OBJECT
 
@@ -28,7 +28,7 @@ class SketchScene_Refactored: public QGraphicsScene
 
         CoordinateAxes2d axes;
 
-        SketchScene_Refactored();
+        SketchScene();
 
         void addVolume( Volume* const& vol );
         void resizingVolume( const QPointF& point, bool done = false );
@@ -147,10 +147,10 @@ class SketchScene_Refactored: public QGraphicsScene
 
 
         QGraphicsPixmapItem* csection_image;
-        VolumeItemWrapper_Refactored volume;
+        VolumeItemWrapper volume;
         InputSketch* sketch;
 
-        std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
+        std::map< std::size_t, ObjectItemWrapper* > objects;
         std::map< double, ImageData > backgrounds;
 
         bool is_sketch_enabled;
@@ -163,4 +163,4 @@ class SketchScene_Refactored: public QGraphicsScene
         QGraphicsPathItem object_test1;
 };
 
-#endif // SKETCHSCENE_REFACTORED_H
+#endif // SKETCHSCENE_H

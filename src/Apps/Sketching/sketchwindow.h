@@ -6,7 +6,7 @@
 class QGraphicsView;
 class QWheelEvent;
 
-class SketchScene_Refactored;
+class SketchScene;
 class CSectionScene;
 class TopViewScene;
 
@@ -18,7 +18,7 @@ class SketchWindow: public QMainWindow
     public:
 
         SketchWindow( QWidget* parent = 0, bool customizable = true );
-        SketchScene_Refactored* getScene() const;
+        SketchScene* getScene() const;
 
 
         void setEnabledVolumeResize( bool status );
@@ -54,7 +54,7 @@ class SketchWindow: public QMainWindow
 
         QAction* ac_edit_boundary;
         QGraphicsView* gv_view;
-        SketchScene_Refactored* scene;
+        SketchScene* scene;
 
         const double ZOOM_SCALE = 1.1;
 

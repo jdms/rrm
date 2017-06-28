@@ -1,5 +1,5 @@
-#ifndef SCENE3D_REFACTORED_H
-#define SCENE3D_REFACTORED_H
+#ifndef SCENE3D_H
+#define SCENE3D_H
 
 #include <QObject>
 #include <QColor>
@@ -13,18 +13,18 @@ class QSurface;
 
 class Volume;
 class VolumeOpenGLWrapper_Refactored;
-class CrossSectionOpenGLWrapper_Refactored;
+class CrossSectionOpenGLWrapper;
 class Object_Refactored;
 class ObjectOpenGLWrapper_Refactored;
 
 
-class Scene3d_refactored: public QObject
+class Scene3d: public QObject
 {
     Q_OBJECT
 
     public:
 
-        Scene3d_refactored();
+        Scene3d();
 
         void addVolume( Volume* const& vol );
 
@@ -76,10 +76,10 @@ class Scene3d_refactored: public QObject
         QSurface* surface;
 
         VolumeOpenGLWrapper_Refactored* volume;
-        CrossSectionOpenGLWrapper_Refactored* csection;
+        CrossSectionOpenGLWrapper* csection;
 
         std::map< std::size_t, ObjectOpenGLWrapper_Refactored* > objects;
 
 };
 
-#endif // SCENE3D_REFACTORED_H
+#endif // SCENE3D_H

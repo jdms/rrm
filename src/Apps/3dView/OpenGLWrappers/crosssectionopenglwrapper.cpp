@@ -2,55 +2,55 @@
 #include <cmath>
 
 
-#include "crosssectionopenglwrapper_refactored.h"
+#include "crosssectionopenglwrapper.h"
 
 
 
-CrossSectionOpenGLWrapper_Refactored::CrossSectionOpenGLWrapper_Refactored()
+CrossSectionOpenGLWrapper::CrossSectionOpenGLWrapper()
 {
     setDefaultValues();
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::setShaderDirectory( const std::string& dir )
+void CrossSectionOpenGLWrapper::setShaderDirectory( const std::string& dir )
 {
     shader_directory = dir;
 }
 
-void CrossSectionOpenGLWrapper_Refactored::setDepth( double d )
+void CrossSectionOpenGLWrapper::setDepth( double d )
 {
     depth = d;
     createPlane();
 }
 
-double CrossSectionOpenGLWrapper_Refactored::getDepth() const
+double CrossSectionOpenGLWrapper::getDepth() const
 {
     return depth;
 }
 
-bool CrossSectionOpenGLWrapper_Refactored::isVisible() const
+bool CrossSectionOpenGLWrapper::isVisible() const
 {
     return is_visible;
 }
 
-void CrossSectionOpenGLWrapper_Refactored::setVisible( bool status )
+void CrossSectionOpenGLWrapper::setVisible( bool status )
 {
     is_visible = status;
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::setMinimum( float mx, float my, float mz )
+void CrossSectionOpenGLWrapper::setMinimum( float mx, float my, float mz )
 {
     minimum = Eigen::Vector3f( mx, my, mz );
 }
 
-void CrossSectionOpenGLWrapper_Refactored::setMaximum( float mx, float my, float mz )
+void CrossSectionOpenGLWrapper::setMaximum( float mx, float my, float mz )
 {
     maximum = Eigen::Vector3f( mx, my, mz );
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::createPlane()
+void CrossSectionOpenGLWrapper::createPlane()
 {
 
     if( depth > maximum.z() )
@@ -108,7 +108,7 @@ void CrossSectionOpenGLWrapper_Refactored::createPlane()
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::defineNormals()
+void CrossSectionOpenGLWrapper::defineNormals()
 {
     Eigen::Vector3f normal_A( -1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_B(  1.0f, -1.0f,  1.0f );
@@ -141,12 +141,12 @@ void CrossSectionOpenGLWrapper_Refactored::defineNormals()
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::updateGeometry()
+void CrossSectionOpenGLWrapper::updateGeometry()
 {
     createPlane();
 }
 
-void CrossSectionOpenGLWrapper_Refactored::initShaders()
+void CrossSectionOpenGLWrapper::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/CubeSinglePassWireframe.vert" ),
                                             ( shader_directory + "shaders/CubeSinglePassWireframe.frag" ),
@@ -156,7 +156,7 @@ void CrossSectionOpenGLWrapper_Refactored::initShaders()
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::initBuffers()
+void CrossSectionOpenGLWrapper::initBuffers()
 {
     glGenVertexArrays( 1 , &va_csection );
     glBindVertexArray( va_csection );
@@ -178,7 +178,7 @@ void CrossSectionOpenGLWrapper_Refactored::initBuffers()
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::resetShaders()
+void CrossSectionOpenGLWrapper::resetShaders()
 {
     if ( shader != nullptr )
     {
@@ -187,7 +187,7 @@ void CrossSectionOpenGLWrapper_Refactored::resetShaders()
     }
 }
 
-void CrossSectionOpenGLWrapper_Refactored::resetBuffers()
+void CrossSectionOpenGLWrapper::resetBuffers()
 {
     if( va_csection != 0 )
     {
@@ -204,12 +204,12 @@ void CrossSectionOpenGLWrapper_Refactored::resetBuffers()
     }
 }
 
-void CrossSectionOpenGLWrapper_Refactored::reloadShaders()
+void CrossSectionOpenGLWrapper::reloadShaders()
 {
     shader->reloadShaders();
 }
 
-void CrossSectionOpenGLWrapper_Refactored::reloadBuffers( const std::vector< float >& wireframe )
+void CrossSectionOpenGLWrapper::reloadBuffers( const std::vector< float >& wireframe )
 {
 
 
@@ -220,14 +220,14 @@ void CrossSectionOpenGLWrapper_Refactored::reloadBuffers( const std::vector< flo
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::init()
+void CrossSectionOpenGLWrapper::init()
 {
     initShaders();
     initBuffers();
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::reset()
+void CrossSectionOpenGLWrapper::reset()
 {
     resetShaders();
     resetBuffers();
@@ -237,7 +237,7 @@ void CrossSectionOpenGLWrapper_Refactored::reset()
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
+void CrossSectionOpenGLWrapper::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
            const int& h )
 {
     if( isVisible() == false ) return;
@@ -267,21 +267,21 @@ void CrossSectionOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::clear()
+void CrossSectionOpenGLWrapper::clear()
 {
     clearData();
     setDefaultValues();
 }
 
 
-void CrossSectionOpenGLWrapper_Refactored::clearData()
+void CrossSectionOpenGLWrapper::clearData()
 {
     resetShaders();
     resetBuffers();
 
 }
 
-void CrossSectionOpenGLWrapper_Refactored::setDefaultValues()
+void CrossSectionOpenGLWrapper::setDefaultValues()
 {
     depth = 0.0f;
     number_of_vertices = 0;

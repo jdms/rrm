@@ -1,63 +1,63 @@
 
-#include "objectopenglwrapper_refactored.h"
+#include "objectopenglwrapper.h"
 
 #include "./Core/Geology/Models/object_refactored.h"
 
 
 
-ObjectOpenGLWrapper_Refactored::ObjectOpenGLWrapper_Refactored()
+ObjectOpenGLWrapper::ObjectOpenGLWrapper()
 {
     raw = nullptr;
     setDefaultValues();
 }
 
 
-void ObjectOpenGLWrapper_Refactored::setShaderDirectory( const std::string& dir )
+void ObjectOpenGLWrapper::setShaderDirectory( const std::string& dir )
 {
     shader_directory = dir;
 }
 
 
-void ObjectOpenGLWrapper_Refactored::setRawObject( Object_Refactored* const& obj )
+void ObjectOpenGLWrapper::setRawObject( Object_Refactored* const& obj )
 {
     raw = obj;
     reloadBuffers();
 }
 
 
-Object_Refactored* ObjectOpenGLWrapper_Refactored::getRawObject() const
+Object_Refactored* ObjectOpenGLWrapper::getRawObject() const
 {
     return raw;
 }
 
 
-void ObjectOpenGLWrapper_Refactored::setMinimum( float mx, float my, float mz )
+void ObjectOpenGLWrapper::setMinimum( float mx, float my, float mz )
 {
     minimum = Eigen::Vector3f( mx, my, mz );
 }
 
 
-void ObjectOpenGLWrapper_Refactored::setMaximum( float mx, float my, float mz )
+void ObjectOpenGLWrapper::setMaximum( float mx, float my, float mz )
 {
     maximum = Eigen::Vector3f( mx, my, mz );
 }
 
 
-bool ObjectOpenGLWrapper_Refactored::isVisible() const
+bool ObjectOpenGLWrapper::isVisible() const
 {
     if( raw == nullptr || ( number_of_faces == 0 ) || (number_of_vertices == 0 ) ) return false;
     return raw->getVisibility();
 }
 
 
-bool ObjectOpenGLWrapper_Refactored::isTesting()
+bool ObjectOpenGLWrapper::isTesting()
 {
     if( isVisible() == false ) return false;
     testing = raw->isTesting();
     return testing;
 }
 
-void ObjectOpenGLWrapper_Refactored::initShaders()
+void ObjectOpenGLWrapper::initShaders()
 {
 
     if( singlepass == true )
@@ -74,7 +74,7 @@ void ObjectOpenGLWrapper_Refactored::initShaders()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::initBuffers()
+void ObjectOpenGLWrapper::initBuffers()
 {
     glGenVertexArrays ( 1 , &va_object );
     glBindVertexArray ( va_object );
@@ -111,7 +111,7 @@ void ObjectOpenGLWrapper_Refactored::initBuffers()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::resetShaders()
+void ObjectOpenGLWrapper::resetShaders()
 {
     if ( shader != nullptr )
     {
@@ -121,7 +121,7 @@ void ObjectOpenGLWrapper_Refactored::resetShaders()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::resetBuffers()
+void ObjectOpenGLWrapper::resetBuffers()
 {
     if( va_object != 0 )
     {
@@ -153,14 +153,14 @@ void ObjectOpenGLWrapper_Refactored::resetBuffers()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::reloadShaders()
+void ObjectOpenGLWrapper::reloadShaders()
 {
     shader->reloadShaders();
 }
 
 
 
-void ObjectOpenGLWrapper_Refactored::reloadBuffers()
+void ObjectOpenGLWrapper::reloadBuffers()
 {
     std::vector< GLfloat > vertices = normalizedVertices();
     if( vertices.empty() == true ) return;
@@ -193,7 +193,7 @@ void ObjectOpenGLWrapper_Refactored::reloadBuffers()
 }
 
 
-std::vector< GLfloat > ObjectOpenGLWrapper_Refactored::normalizedVertices()
+std::vector< GLfloat > ObjectOpenGLWrapper::normalizedVertices()
 {
     std::vector< double > vertices = raw->getSurfaceVertices();
 
@@ -219,7 +219,7 @@ std::vector< GLfloat > ObjectOpenGLWrapper_Refactored::normalizedVertices()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::reloadGeometry( const std::vector< GLfloat >& vertices,
+void ObjectOpenGLWrapper::reloadGeometry( const std::vector< GLfloat >& vertices,
                                                      const std::vector< GLfloat >& normals,
                                                      const std::vector< GLuint >& faces )
 {
@@ -244,7 +244,7 @@ void ObjectOpenGLWrapper_Refactored::reloadGeometry( const std::vector< GLfloat 
 
 
 
-void ObjectOpenGLWrapper_Refactored::setConstantColor( float r, float g, float b )
+void ObjectOpenGLWrapper::setConstantColor( float r, float g, float b )
 {
 
     std::vector< GLfloat > colors;
@@ -261,7 +261,7 @@ void ObjectOpenGLWrapper_Refactored::setConstantColor( float r, float g, float b
 }
 
 
-void ObjectOpenGLWrapper_Refactored::reloadColors( const std::vector< GLfloat >& colors )
+void ObjectOpenGLWrapper::reloadColors( const std::vector< GLfloat >& colors )
 {
     glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
     glBufferData( GL_ARRAY_BUFFER, colors.size() * sizeof ( GLfloat ), colors.data(),
@@ -270,14 +270,14 @@ void ObjectOpenGLWrapper_Refactored::reloadColors( const std::vector< GLfloat >&
 }
 
 
-void ObjectOpenGLWrapper_Refactored::init()
+void ObjectOpenGLWrapper::init()
 {
     initShaders();
     initBuffers();
 }
 
 
-void ObjectOpenGLWrapper_Refactored::reset()
+void ObjectOpenGLWrapper::reset()
 {
     resetShaders();
     resetBuffers();
@@ -288,7 +288,7 @@ void ObjectOpenGLWrapper_Refactored::reset()
 
 
 
-void ObjectOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
+void ObjectOpenGLWrapper::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                            const int& h )
 {
     if( isVisible() == false ) return;
@@ -313,7 +313,7 @@ void ObjectOpenGLWrapper_Refactored::draw( const Eigen::Affine3f& V, const Eigen
 }
 
 
-void ObjectOpenGLWrapper_Refactored::singlePassWireFrame()
+void ObjectOpenGLWrapper::singlePassWireFrame()
 {
 
 
@@ -334,7 +334,7 @@ void ObjectOpenGLWrapper_Refactored::singlePassWireFrame()
 
 
 
-void ObjectOpenGLWrapper_Refactored::rendering()
+void ObjectOpenGLWrapper::rendering()
 {
 
 
@@ -390,14 +390,14 @@ void ObjectOpenGLWrapper_Refactored::rendering()
 
 }
 
-void ObjectOpenGLWrapper_Refactored::clear()
+void ObjectOpenGLWrapper::clear()
 {
     clearData();
     setDefaultValues();
 }
 
 
-void ObjectOpenGLWrapper_Refactored::clearData()
+void ObjectOpenGLWrapper::clearData()
 {
 
     resetShaders();
@@ -410,7 +410,7 @@ void ObjectOpenGLWrapper_Refactored::clearData()
 }
 
 
-void ObjectOpenGLWrapper_Refactored::setDefaultValues()
+void ObjectOpenGLWrapper::setDefaultValues()
 {
     va_object = 0;
     vb_vertices = 0;

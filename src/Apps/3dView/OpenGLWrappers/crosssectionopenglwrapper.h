@@ -1,5 +1,5 @@
-#ifndef CROSSSECTIONOPENGLWRAPPER_REFACTORED_H
-#define CROSSSECTIONOPENGLWRAPPER_REFACTORED_H
+#ifndef CROSSSECTIONOPENGLWRAPPER_H
+#define CROSSSECTIONOPENGLWRAPPER_H
 
 #include <string>
 
@@ -7,11 +7,11 @@
 #include "3dView/Model3DUtils.hpp"
 
 
-class CrossSectionOpenGLWrapper_Refactored
+class CrossSectionOpenGLWrapper
 {
     public:
 
-        CrossSectionOpenGLWrapper_Refactored();
+        CrossSectionOpenGLWrapper();
 
         void setShaderDirectory( const std::string& dir );
 
@@ -72,4 +72,4 @@ class CrossSectionOpenGLWrapper_Refactored
 
 };
 
-#endif // CROSSSECTIONOPENGLWRAPPER_REFACTORED_H
+#endif // CROSSSECTIONOPENGLWRAPPER_H

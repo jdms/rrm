@@ -8,10 +8,10 @@
 #include <QSvgGenerator>
 
 #include "Core/Geology/Models/object_refactored.h"
-#include "sketchscene_refactored.h"
+#include "sketchscene.h"
 
 
-SketchScene_Refactored::SketchScene_Refactored()
+SketchScene::SketchScene()
 {
 
     csection_image = nullptr;
@@ -23,7 +23,7 @@ SketchScene_Refactored::SketchScene_Refactored()
 }
 
 
-void SketchScene_Refactored::addVolume( Volume* const& vol )
+void SketchScene::addVolume( Volume* const& vol )
 {
     volume.setRawVolume( vol );
     setSceneRect( volume.boundingRect() );
@@ -31,7 +31,7 @@ void SketchScene_Refactored::addVolume( Volume* const& vol )
 }
 
 
-void SketchScene_Refactored::resizingVolume( const QPointF& point, bool done )
+void SketchScene::resizingVolume( const QPointF& point, bool done )
 {
     int w = static_cast< int > ( point.x() - boundary_anchor.x() );
     int h = static_cast< int > ( point.y() - boundary_anchor.y() );
@@ -49,7 +49,7 @@ void SketchScene_Refactored::resizingVolume( const QPointF& point, bool done )
 
 
 
-void SketchScene_Refactored::updateVolume()
+void SketchScene::updateVolume()
 {
     volume.updateItem();
     setSceneRect( volume.boundingRect() );
@@ -61,7 +61,7 @@ void SketchScene_Refactored::updateVolume()
 }
 
 
-bool SketchScene_Refactored::isAddedObject( std::size_t id ) const
+bool SketchScene::isAddedObject( std::size_t id ) const
 {
     auto search = objects.find( id );
     if( search == objects.end() )
@@ -72,7 +72,7 @@ bool SketchScene_Refactored::isAddedObject( std::size_t id ) const
 
 
 
-void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
+void SketchScene::addObject( Object_Refactored* const& obj )
 {
     if( isAddedObject( obj->getId() ) == true )
     {
@@ -80,7 +80,7 @@ void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
         return;
     }
 
-    ObjectItemWrapper_Refactored* wrapper = new ObjectItemWrapper_Refactored();
+    ObjectItemWrapper* wrapper = new ObjectItemWrapper();
     wrapper->setRawObject( obj, current_csection );
 
     objects[ obj->getId() ] = wrapper;
@@ -91,21 +91,21 @@ void SketchScene_Refactored::addObject( Object_Refactored* const& obj )
 }
 
 
-void SketchScene_Refactored::updateObject( std::size_t id )
+void SketchScene::updateObject( std::size_t id )
 {
     if( isAddedObject( id ) == false ) return;
 
-    ObjectItemWrapper_Refactored* const& wrapper = objects[ id ];
+    ObjectItemWrapper* const& wrapper = objects[ id ];
     wrapper->updateObject();
     update();
 }
 
 
-void SketchScene_Refactored::reActiveObject( std::size_t id )
+void SketchScene::reActiveObject( std::size_t id )
 {
     if( isAddedObject( id ) == false ) return;
 
-    ObjectItemWrapper_Refactored* const& wrapper = objects[ id ];
+    ObjectItemWrapper* const& wrapper = objects[ id ];
     wrapper->updateDepth( current_csection );
 
     wrapper->setVisible( true );
@@ -113,7 +113,7 @@ void SketchScene_Refactored::reActiveObject( std::size_t id )
 }
 
 
-void SketchScene_Refactored::addObjectTest( const std::vector< double >& vertices,
+void SketchScene::addObjectTest( const std::vector< double >& vertices,
                                             const std::vector< std::size_t >&edges )
 {
 
@@ -208,7 +208,7 @@ void SketchScene_Refactored::addObjectTest( const std::vector< double >& vertice
 }
 
 
-void SketchScene_Refactored::removeObjectTest()
+void SketchScene::removeObjectTest()
 {
 
 //    if( object_test == nullptr ) return;
@@ -222,7 +222,7 @@ void SketchScene_Refactored::removeObjectTest()
 
 
 
-void SketchScene_Refactored::removeObjectsFromScene()
+void SketchScene::removeObjectsFromScene()
 {
 
 
@@ -230,7 +230,7 @@ void SketchScene_Refactored::removeObjectsFromScene()
 
     for( auto it: objects )
     {
-        ObjectItemWrapper_Refactored* const& wrapper = objects[ it.first ];
+        ObjectItemWrapper* const& wrapper = objects[ it.first ];
         wrapper->setVisible( false );
     }
 
@@ -246,7 +246,7 @@ void SketchScene_Refactored::removeObjectsFromScene()
 
 
 
-void SketchScene_Refactored::setModeEditable( bool status )
+void SketchScene::setModeEditable( bool status )
 {
     if( status == false )
     {
@@ -256,7 +256,7 @@ void SketchScene_Refactored::setModeEditable( bool status )
 
     for( auto it: objects )
     {
-        ObjectItemWrapper_Refactored* const& wrapper = objects[ it.first ];
+        ObjectItemWrapper* const& wrapper = objects[ it.first ];
         wrapper->enableEditing();
     }
 
@@ -264,33 +264,33 @@ void SketchScene_Refactored::setModeEditable( bool status )
 }
 
 
-void SketchScene_Refactored::setModeSketching()
+void SketchScene::setModeSketching()
 {
     current_interaction = UserInteraction::SKETCHING;
     clearSketch();
 }
 
 
-void SketchScene_Refactored::setModeSelecting()
+void SketchScene::setModeSelecting()
 {
     current_interaction = UserInteraction::SELECTING;
 }
 
 
-void SketchScene_Refactored::setModeEditingBoundary()
+void SketchScene::setModeEditingBoundary()
 {
     current_interaction = UserInteraction::EDITING_BOUNDARY;
 }
 
 
-void SketchScene_Refactored::setModeMovingImage()
+void SketchScene::setModeMovingImage()
 {
     current_interaction = UserInteraction::MOVING_IMAGE;
     csection_image->setFlag( QGraphicsItem::ItemIsMovable, true );
 }
 
 
-void SketchScene_Refactored::disableMovingImage()
+void SketchScene::disableMovingImage()
 {
 
     if( hasImageInCrossSection() == false ) return;
@@ -306,14 +306,14 @@ void SketchScene_Refactored::disableMovingImage()
 
 
 
-void SketchScene_Refactored::enableDeletingCurves( bool status )
+void SketchScene::enableDeletingCurves( bool status )
 {
     is_delete_enabled = status;
     emit enableDeleting( status );
 }
 
 
-void SketchScene_Refactored::setCurrentColor( const QColor& color )
+void SketchScene::setCurrentColor( const QColor& color )
 {
     current_color = color;
     pen_testing.setColor( color );
@@ -330,7 +330,7 @@ void SketchScene_Refactored::setCurrentColor( const QColor& color )
 }
 
 
-void SketchScene_Refactored::setCurrentColor( int r, int g, int b )
+void SketchScene::setCurrentColor( int r, int g, int b )
 {
     setCurrentColor( QColor( r, g, b ) );
 }
@@ -338,7 +338,7 @@ void SketchScene_Refactored::setCurrentColor( int r, int g, int b )
 
 
 
-void SketchScene_Refactored::startSketch( const QPointF& p )
+void SketchScene::startSketch( const QPointF& p )
 {
 
     if( ( isValidSketch() == true ) || ( is_sketch_enabled == false ) ) return;
@@ -351,7 +351,7 @@ void SketchScene_Refactored::startSketch( const QPointF& p )
 }
 
 
-void SketchScene_Refactored::clearSketch()
+void SketchScene::clearSketch()
 {
     if( isValidSketch() == false ) return;
 
@@ -363,7 +363,7 @@ void SketchScene_Refactored::clearSketch()
 }
 
 
-void SketchScene_Refactored::finishSketch()
+void SketchScene::finishSketch()
 {
 
     if( isValidSketch() == false ) return;
@@ -382,7 +382,7 @@ void SketchScene_Refactored::finishSketch()
 }
 
 
-bool SketchScene_Refactored::acceptSketch( Curve2D& curve )
+bool SketchScene::acceptSketch( Curve2D& curve )
 {
     if( sketch->isEmpty() == true ) return false;
 
@@ -395,7 +395,7 @@ bool SketchScene_Refactored::acceptSketch( Curve2D& curve )
 }
 
 
-void SketchScene_Refactored::enableSketch( bool status )
+void SketchScene::enableSketch( bool status )
 {
     if( status == false )
         clearSketch();
@@ -404,7 +404,7 @@ void SketchScene_Refactored::enableSketch( bool status )
 }
 
 
-bool SketchScene_Refactored::isValidSketch()
+bool SketchScene::isValidSketch()
 {
     if ( sketch == nullptr ) return false;
     return true;
@@ -413,7 +413,7 @@ bool SketchScene_Refactored::isValidSketch()
 
 
 
-void SketchScene_Refactored::removeCurve()
+void SketchScene::removeCurve()
 {
 
     if( ( current_interaction != UserInteraction::EDITING_SCENE ) ||
@@ -427,13 +427,13 @@ void SketchScene_Refactored::removeCurve()
 }
 
 
-void SketchScene_Refactored::selectBounderingRegion()
+void SketchScene::selectBounderingRegion()
 {
     QList< QGraphicsItem* > items = selectedItems();
     if( items.empty() == true ) return;
 
 
-    ObjectItemWrapper_Refactored* const& obj = ( ObjectItemWrapper_Refactored* )items[ 0 ];
+    ObjectItemWrapper* const& obj = ( ObjectItemWrapper* )items[ 0 ];
     std::size_t id = obj->getId();
 
     emit selectedObject( id );
@@ -442,7 +442,7 @@ void SketchScene_Refactored::selectBounderingRegion()
 
 
 
-void SketchScene_Refactored::processCurve( Curve2D& curve )
+void SketchScene::processCurve( Curve2D& curve )
 {
     Curve2D cpy = curve;
     cpy.lineFilter();
@@ -452,7 +452,7 @@ void SketchScene_Refactored::processCurve( Curve2D& curve )
 }
 
 
-void SketchScene_Refactored::setCurrentCrossSection( double depth )
+void SketchScene::setCurrentCrossSection( double depth )
 {
 
     current_csection = depth;
@@ -470,7 +470,7 @@ void SketchScene_Refactored::setCurrentCrossSection( double depth )
 
 
 
-void SketchScene_Refactored::createCrossSectionImageItem()
+void SketchScene::createCrossSectionImageItem()
 {
     csection_image = new QGraphicsPixmapItem();
 //    csection_image->setPixmap( QPixmap() );
@@ -481,7 +481,7 @@ void SketchScene_Refactored::createCrossSectionImageItem()
 }
 
 
-void SketchScene_Refactored::setImageToCrossSection( const QString& file )
+void SketchScene::setImageToCrossSection( const QString& file )
 {
 
     QPixmap image;
@@ -508,7 +508,7 @@ void SketchScene_Refactored::setImageToCrossSection( const QString& file )
 }
 
 
-void SketchScene_Refactored::setImageToCrossSection()
+void SketchScene::setImageToCrossSection()
 {
 
     const ImageData& image_data = backgrounds[ current_csection ];
@@ -530,7 +530,7 @@ void SketchScene_Refactored::setImageToCrossSection()
 
 }
 
-void SketchScene_Refactored::removeImageFromCrossSection()
+void SketchScene::removeImageFromCrossSection()
 {
     csection_image->setVisible( false );
 
@@ -541,7 +541,7 @@ void SketchScene_Refactored::removeImageFromCrossSection()
 }
 
 
-bool SketchScene_Refactored::hasImageInCrossSection()
+bool SketchScene::hasImageInCrossSection()
 {
     auto search = backgrounds.find( current_csection );
     if( search == backgrounds.end() )
@@ -552,7 +552,7 @@ bool SketchScene_Refactored::hasImageInCrossSection()
 
 
 
-void SketchScene_Refactored::savetoRasterImage( const QString& filename )
+void SketchScene::savetoRasterImage( const QString& filename )
 {
 
     QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
@@ -578,7 +578,7 @@ void SketchScene_Refactored::savetoRasterImage( const QString& filename )
 
 }
 
-void SketchScene_Refactored::savetoVectorImage( const QString& filename )
+void SketchScene::savetoVectorImage( const QString& filename )
 {
 
 
@@ -613,14 +613,14 @@ void SketchScene_Refactored::savetoVectorImage( const QString& filename )
 
 
 
-void SketchScene_Refactored::enableAxes( bool status )
+void SketchScene::enableAxes( bool status )
 {
     is_axes_enable = status;
     update();
 }
 
 
-void SketchScene_Refactored::clear()
+void SketchScene::clear()
 {
 
 
@@ -630,7 +630,7 @@ void SketchScene_Refactored::clear()
 }
 
 
-void SketchScene_Refactored::clearData()
+void SketchScene::clearData()
 {
 
     for( auto &it: items() )
@@ -654,7 +654,7 @@ void SketchScene_Refactored::clearData()
 }
 
 
-void SketchScene_Refactored::setDefaultValues()
+void SketchScene::setDefaultValues()
 {
     current_csection = 0.0;
     current_color = Qt::red;
@@ -677,7 +677,7 @@ void SketchScene_Refactored::setDefaultValues()
 
 
 
-void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
+void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
 
 
@@ -711,7 +711,7 @@ void SketchScene_Refactored::mousePressEvent( QGraphicsSceneMouseEvent *event )
 }
 
 
-void SketchScene_Refactored::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
     if ( ( event->buttons() & Qt::LeftButton ) &&
@@ -731,7 +731,7 @@ void SketchScene_Refactored::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 }
 
 
-void SketchScene_Refactored::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
+void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
     if( ( current_interaction == UserInteraction::SKETCHING ) &&
@@ -763,7 +763,7 @@ void SketchScene_Refactored::mouseReleaseEvent( QGraphicsSceneMouseEvent* event 
 
 
 
-void SketchScene_Refactored::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
     if( current_interaction == UserInteraction::SKETCHING )
     {
@@ -778,7 +778,7 @@ void SketchScene_Refactored::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *ev
 
 
 
-void SketchScene_Refactored::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
+void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
 {
     if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
     {
@@ -788,7 +788,7 @@ void SketchScene_Refactored::dragEnterEvent( QGraphicsSceneDragDropEvent* event 
 }
 
 
-void SketchScene_Refactored::dropEvent( QGraphicsSceneDragDropEvent* event )
+void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event )
 {
     const QMimeData *mime_data = event->mimeData();
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
@@ -799,14 +799,14 @@ void SketchScene_Refactored::dropEvent( QGraphicsSceneDragDropEvent* event )
 }
 
 
-void SketchScene_Refactored::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
+void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
 {
     event->accept();
 }
 
 
 
-void SketchScene_Refactored::keyPressEvent( QKeyEvent *event )
+void SketchScene::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {

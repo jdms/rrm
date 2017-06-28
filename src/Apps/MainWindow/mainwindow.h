@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_REFACTORED_H
-#define MAINWINDOW_REFACTORED_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 
@@ -9,20 +9,20 @@ class QAction;
 class QToolbar;
 class QSlider;
 
-class Canvas3d_Refactored;
+class Canvas3d;
 class SketchWindow;
 class ObjectTree;
 class PagesStack;
-class Controller_Refactored;
+class Controller;
 class RealSlider;
 
-class MainWindow_Refactored : public QMainWindow
+class MainWindow: public QMainWindow
 {
     Q_OBJECT
 
    public:
 
-        explicit MainWindow_Refactored( QWidget *parent = 0 );
+        explicit MainWindow( QWidget *parent = 0 );
 
 
     signals:
@@ -108,8 +108,8 @@ class MainWindow_Refactored : public QMainWindow
         QAction* ac_redo;
 
 
-        Controller_Refactored* controller;
-        Canvas3d_Refactored* canvas3d;
+        Controller* controller;
+        Canvas3d* canvas3d;
         SketchWindow* sketch_window;
         SketchWindow* topview_window;
         ObjectTree* object_tree;
@@ -132,4 +132,4 @@ class MainWindow_Refactored : public QMainWindow
         const bool NO_RULE_CHECKED = false;
 };
 
-#endif // MAINWINDOW_REFACTORED_H
+#endif // MAINWINDOW_H

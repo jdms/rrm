@@ -1,5 +1,5 @@
-#ifndef OBJECTITEMWRAPPER_REFACTORED_H
-#define OBJECTITEMWRAPPER_REFACTORED_H
+#ifndef OBJECTITEMWRAPPER_H
+#define OBJECTITEMWRAPPER_H
 
 #include <set>
 #include <vector>
@@ -9,11 +9,11 @@
 
 class Object_Refactored;
 
-class ObjectItemWrapper_Refactored: public QGraphicsPathItem
+class ObjectItemWrapper: public QGraphicsPathItem
 {
     public:
 
-        ObjectItemWrapper_Refactored();
+        ObjectItemWrapper();
 
 
         QRectF boundingRect() const;
@@ -58,4 +58,4 @@ class ObjectItemWrapper_Refactored: public QGraphicsPathItem
 
 };
 
-#endif // OBJECTITEMWRAPPER_REFACTORED_H
+#endif // OBJECTITEMWRAPPER_H

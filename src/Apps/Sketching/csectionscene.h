@@ -1,9 +1,9 @@
 #ifndef CSECTIONSCENE_H
 #define CSECTIONSCENE_H
 
-#include "sketchscene_refactored.h"
+#include "sketchscene.h"
 
-class CSectionScene: public SketchScene_Refactored
+class CSectionScene: public SketchScene
 {
     Q_OBJECT
 
@@ -19,7 +19,7 @@ class CSectionScene: public SketchScene_Refactored
 
 
 
-//         std::map< std::size_t, ObjectItemWrapper_Refactored* > objects;
+//         std::map< std::size_t, ObjectItemWrapper* > objects;
 
 };
 

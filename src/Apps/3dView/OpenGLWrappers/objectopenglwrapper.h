@@ -1,5 +1,5 @@
-#ifndef OBJECTOPENGLWRAPPER_REFACTORED_H
-#define OBJECTOPENGLWRAPPER_REFACTORED_H
+#ifndef OBJECTOPENGLWRAPPER_H
+#define OBJECTOPENGLWRAPPER_H
 
 #include <string>
 #include <vector>
@@ -11,12 +11,12 @@
 class Object_Refactored;
 
 
-class ObjectOpenGLWrapper_Refactored
+class ObjectOpenGLWrapper
 {
 
     public:
 
-        ObjectOpenGLWrapper_Refactored();
+        ObjectOpenGLWrapper();
 
         void setShaderDirectory( const std::string& dir );
 
@@ -90,4 +90,4 @@ class ObjectOpenGLWrapper_Refactored
 
 };
 
-#endif // OBJECTOPENGLWRAPPER_REFACTORED_H
+#endif // OBJECTOPENGLWRAPPER_H

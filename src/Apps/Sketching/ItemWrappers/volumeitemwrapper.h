@@ -1,5 +1,5 @@
-#ifndef VOLUMEITEMWRAPPER_REFACTORED_H
-#define VOLUMEITEMWRAPPER_REFACTORED_H
+#ifndef VOLUMEITEMWRAPPER_H
+#define VOLUMEITEMWRAPPER_H
 
 #include <QGraphicsPathItem>
 #include <QColor>
@@ -8,14 +8,14 @@
 class Volume;
 
 
-class VolumeItemWrapper_Refactored: public QGraphicsPathItem
+class VolumeItemWrapper: public QGraphicsPathItem
 {
 
     public:
 
         enum class Section{ XY, XZ };
 
-        VolumeItemWrapper_Refactored( const Section& sec = Section::XY );
+        VolumeItemWrapper( const Section& sec = Section::XY );
 
 
         void setRawVolume( Volume* const& vol );
@@ -23,7 +23,7 @@ class VolumeItemWrapper_Refactored: public QGraphicsPathItem
 
 
         void defineSectionPlane( const Section& sec );
-        VolumeItemWrapper_Refactored::Section getSectionPlane() const;
+        VolumeItemWrapper::Section getSectionPlane() const;
 
 
         double getHeight() const;
@@ -58,4 +58,4 @@ class VolumeItemWrapper_Refactored: public QGraphicsPathItem
 
 };
 
-#endif // VOLUMEITEMWRAPPER_REFACTORED_H
+#endif // VOLUMEITEMWRAPPER_H

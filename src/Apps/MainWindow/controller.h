@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_REFACTORED_H
-#define CONTROLLER_REFACTORED_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include <vector>
 #include <string>
@@ -11,13 +11,13 @@
 
 class CSectionScene;
 class TopViewScene;
-class Scene3d_refactored;
+class Scene3d;
 class ObjectTree;
 
 class Volume;
 
 
-class Controller_Refactored
+class Controller
 {
 
     public:
@@ -37,11 +37,11 @@ class Controller_Refactored
 
         enum class RequestRegion { ABOVE, BELOW, NONE };
 
-        Controller_Refactored();
+        Controller();
 
         void init();
 
-        void setScene3d( Scene3d_refactored* const& sc );
+        void setScene3d( Scene3d* const& sc );
         void setCSectionScene( CSectionScene* const& sc );
         void setTopViewScene( TopViewScene* const& sc );
         void setObjectTree( ObjectTree* const& ot );
@@ -142,8 +142,8 @@ class Controller_Refactored
         void getCurrentColor( int& r, int& g, int& b ) const ;
 
 
-        Controller_Refactored::StratigraphicRules getCurrentRule() const;
-        void setCurrentRule( const Controller_Refactored::StratigraphicRules& rule );
+        Controller::StratigraphicRules getCurrentRule() const;
+        void setCurrentRule( const Controller::StratigraphicRules& rule );
 
 
         void enableCreateAbove( bool status );
@@ -200,7 +200,7 @@ class Controller_Refactored
 
         CSectionScene* csection_scene;
         TopViewScene* topview_scene;
-        Scene3d_refactored* scene3d;
+        Scene3d* scene3d;
         ObjectTree* object_tree;
 
         RulesProcessor rules_processor;
@@ -229,4 +229,4 @@ class Controller_Refactored
 
 };
 
-#endif // CONTROLLER_REFACTORED_H
+#endif // CONTROLLER_H

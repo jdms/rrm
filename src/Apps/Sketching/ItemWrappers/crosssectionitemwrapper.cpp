@@ -1,16 +1,16 @@
-#include "crosssectionitemwrapper_refactored.h"
+#include "crosssectionitemwrapper.h"
 
 #include <QPainter>
 #include <QPen>
 
-CrossSectionItemWrapper_Refactored::CrossSectionItemWrapper_Refactored( double w, double d ):
+CrossSectionItemWrapper::CrossSectionItemWrapper( double w, double d ):
                                     width( w ), depth( d )
 {
     setupPens();
 }
 
 
-void CrossSectionItemWrapper_Refactored::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
+void CrossSectionItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                                                 QWidget* w )
 {
     painter->setRenderHint( QPainter::Antialiasing );
@@ -18,7 +18,7 @@ void CrossSectionItemWrapper_Refactored::paint( QPainter* painter, const QStyleO
     painter->drawLine( 0, depth, width, depth );
 }
 
-void CrossSectionItemWrapper_Refactored::setDimensions( double w, double d )
+void CrossSectionItemWrapper::setDimensions( double w, double d )
 {
     width = w;
     depth = d;
@@ -26,40 +26,40 @@ void CrossSectionItemWrapper_Refactored::setDimensions( double w, double d )
 }
 
 
-void CrossSectionItemWrapper_Refactored::getDimensions( double& w, double& d ) const
+void CrossSectionItemWrapper::getDimensions( double& w, double& d ) const
 {
     w = width;
     d = depth;
 }
 
 
-void CrossSectionItemWrapper_Refactored::setWidth( double w )
+void CrossSectionItemWrapper::setWidth( double w )
 {
     width = w;
     update();
 }
 
 
-void CrossSectionItemWrapper_Refactored::setDepth( double d )
+void CrossSectionItemWrapper::setDepth( double d )
 {
     depth = d;
     update();
 }
 
 
-double CrossSectionItemWrapper_Refactored::getWidth() const
+double CrossSectionItemWrapper::getWidth() const
 {
     return width;
 }
 
 
-double CrossSectionItemWrapper_Refactored::getDepth() const
+double CrossSectionItemWrapper::getDepth() const
 {
     return depth;
 }
 
 
-void CrossSectionItemWrapper_Refactored::setupPens()
+void CrossSectionItemWrapper::setupPens()
 {
     dynamic_csection_pen.setStyle( Qt::SolidLine );
     dynamic_csection_pen.setColor( Qt::yellow );
@@ -70,7 +70,7 @@ void CrossSectionItemWrapper_Refactored::setupPens()
     fixed_csection_pen.setWidth ( 2 );
 }
 
-void CrossSectionItemWrapper_Refactored::setCurrent( bool status )
+void CrossSectionItemWrapper::setCurrent( bool status )
 {
     if( status == true )
         current_pen = dynamic_csection_pen;
@@ -79,7 +79,7 @@ void CrossSectionItemWrapper_Refactored::setCurrent( bool status )
 }
 
 
-void CrossSectionItemWrapper_Refactored::clear()
+void CrossSectionItemWrapper::clear()
 {
     width = 0.0;
     depth = 0.0;

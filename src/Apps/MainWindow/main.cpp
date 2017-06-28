@@ -26,7 +26,7 @@
 #include <QtGui/QIcon>
 
 
-#include "mainwindow_refactored.h"
+#include "mainwindow.h"
 #include "./Core/Geology/Models/object_refactored.h"
 
 std::size_t Object_Refactored::count_objects = 0;
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
     QSurfaceFormat::setDefaultFormat( format );
 
 
-    MainWindow_Refactored w;
+    MainWindow w;
     w.show();
 
     return app.exec();

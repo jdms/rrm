@@ -7,7 +7,7 @@
 
 #include "Core/Geology/Models/Volume.h"
 #include "Core/Geology/Models/object_refactored.h"
-#include "./ItemWrappers/crosssectionitemwrapper_refactored.h"
+#include "./ItemWrappers/crosssectionitemwrapper.h"
 
 
 TopViewScene::TopViewScene()
@@ -21,7 +21,7 @@ TopViewScene::TopViewScene()
 
 void TopViewScene::addVolume( Volume* const& vol )
 {
-    volume.defineSectionPlane( VolumeItemWrapper_Refactored::Section::XZ );
+    volume.defineSectionPlane( VolumeItemWrapper::Section::XZ );
     volume.setRawVolume( vol );
     setSceneRect( volume.boundingRect() );
     addItem( &volume );
@@ -49,7 +49,7 @@ void TopViewScene::updateVolume()
 
 void TopViewScene::createCurrentCrossSection( double depth )
 {
-    csection = new CrossSectionItemWrapper_Refactored( volume.getWidth(), depth );
+    csection = new CrossSectionItemWrapper( volume.getWidth(), depth );
     csection->setCurrent( true );
     csection->setVisible( true );
     addItem( csection );
@@ -68,7 +68,7 @@ void TopViewScene::addCrossSection( double depth )
 {
     if( isAddedCrossSection( depth ) == true ) return;
 
-    csections[ depth ] = new CrossSectionItemWrapper_Refactored( volume.getWidth(), depth );
+    csections[ depth ] = new CrossSectionItemWrapper( volume.getWidth(), depth );
     csections[ depth ]->setCurrent( false );
     csections[ depth ]->setVisible( draw_csections );
 
