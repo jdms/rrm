@@ -26,12 +26,10 @@
 #include <QtGui/QIcon>
 
 
-#include "MainWindow.h"
 #include "mainwindow_refactored.h"
 #include "./Core/Geology/Models/object_refactored.h"
 
 std::size_t Object_Refactored::count_objects = 0;
-std::size_t Object::index = 0;
 
 int main( int argc, char *argv[] )
 {
@@ -63,12 +61,8 @@ int main( int argc, char *argv[] )
     QSurfaceFormat::setDefaultFormat( format );
 
 
-//    MainWindow w;
-//    w.show();
-//    w.run_app();
-
-    MainWindow_Refactored w1;
-    w1.show();
+    MainWindow_Refactored w;
+    w.show();
 
     return app.exec();
 }

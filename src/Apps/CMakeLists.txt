@@ -13,9 +13,7 @@ include_directories (
 # Main source -- MainWindow SubDirectory
 ###############################################
   
-set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
-                        MainWindow/mainwindow_refactored.h
-                        MainWindow/Controller.hpp
+set( MAINWINDOW_HEADERS MainWindow/mainwindow_refactored.h
                         MainWindow/controller_refactored.h
                         MainWindow/RulesProcessor.hpp
                         MainWindow/Widgets/ColorPicker.h
@@ -29,12 +27,10 @@ set( MAINWINDOW_HEADERS MainWindow/MainWindow.h
                         MainWindow/About/AboutWidget.hpp )
 
 
-set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
-                            MainWindow/mainwindow_refactored.h
+set( MAINWINDOW_MOC_HEADERS MainWindow/mainwindow_refactored.h
                             MainWindow/Widgets/ColorPicker.h
                             MainWindow/Widgets/pagesstack.h
                             MainWindow/Widgets/realslider.h
-                            MainWindow/Controller.hpp
                             MainWindow/Object_Tree/ObjectTree.h
                             MainWindow/Help/HelpDialog.h
                             MainWindow/About/AboutWidget.hpp )
@@ -42,18 +38,15 @@ set( MAINWINDOW_MOC_HEADERS MainWindow/MainWindow.h
 
 set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
                             MainWindow/Help/HelpDialog.ui
-                            MainWindow/Widgets/VolumeResizeWidget.ui
-                            MainWindow/MainWindow.ui )
+                            MainWindow/Widgets/VolumeResizeWidget.ui )
 
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
-                        MainWindow/MainWindow.cpp
                         MainWindow/mainwindow_refactored.cpp
                         MainWindow/Widgets/ColorPicker.cpp
                         MainWindow/Widgets/pagesstack.cpp
                         MainWindow/Widgets/realslider.cpp
                         MainWindow/controller_refactored.cpp
-                        MainWindow/Controller.cpp
                         MainWindow/RulesProcessor.cpp
                         MainWindow/Exporter/CPS3Exporter.cpp
                         MainWindow/Exporter/IrapGridExporter.cpp
@@ -71,53 +64,33 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 
 set( SKETCHING_HEADERS        Sketching/sketchwindow.h
                               Sketching/InputSketch.h
-                              Sketching/CanvasPath.h
-                              Sketching/PathScene.h
-                              Sketching/SketchCanvas.h
-                              Sketching/SketchScene.h
                               Sketching/sketchscene_refactored.h
                               Sketching/csectionscene.h
                               Sketching/topviewscene.h
                               Sketching/ItemWrappers/coordinateaxes2d.h
                               Sketching/ItemWrappers/objectitemwrapper_refactored.h
                               Sketching/ItemWrappers/trajectoryitemwrapper.h
-                              Sketching/ItemWrappers/ObjectItemWrap.h
-                              Sketching/ItemWrappers/VolumeItemWrapper.h
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.h
                               Sketching/ItemWrappers/crosssectionitemwrapper_refactored.h
-                              Sketching/ItemWrappers/CrossSectionItemWrapper.h
-                              Sketching/ItemWrappers/RegionItem.hpp
                               Sketching/PolyQtUtils.hpp )
 
 
 set( SKETCHING_MOC_HEADERS    Sketching/sketchwindow.h
-                              Sketching/CanvasPath.h
-                              Sketching/PathScene.h
                               Sketching/topviewscene.h
-                              Sketching/SketchCanvas.h
                               Sketching/sketchscene_refactored.h
-                              Sketching/csectionscene.h
-                              Sketching/SketchScene.h )
+                              Sketching/csectionscene.h )
 
 
 set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
                               Sketching/InputSketch.cpp
-                              Sketching/CanvasPath.cpp
-                              Sketching/PathScene.cpp
                               Sketching/topviewscene.cpp
-                              Sketching/SketchCanvas.cpp
-                              Sketching/SketchScene.cpp
                               Sketching/sketchscene_refactored.cpp
                               Sketching/csectionscene.cpp
                               Sketching/ItemWrappers/coordinateaxes2d.cpp
                               Sketching/ItemWrappers/objectitemwrapper_refactored.cpp
                               Sketching/ItemWrappers/trajectoryitemwrapper.cpp
-                              Sketching/ItemWrappers/ObjectItemWrap.cpp
-                              Sketching/ItemWrappers/VolumeItemWrapper.cpp
                               Sketching/ItemWrappers/volumeitemwrapper_refactored.cpp
                               Sketching/ItemWrappers/crosssectionitemwrapper_refactored.cpp
-                              Sketching/ItemWrappers/CrossSectionItemWrapper.cpp
-                              Sketching/ItemWrappers/RegionItem.cpp                              
                               Sketching/PolyQtUtils.cpp )
 
 
@@ -125,40 +98,28 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
 # Main source -- 3dView SubDirectory
 ###############################################
 
-set( 3DVIEW_HEADERS    3dView/Canvas3D.h
-                       3dView/canvas3d_refactored.h
-                       3dView/Scene3D.h
+set( 3DVIEW_HEADERS    3dView/canvas3d_refactored.h
                        3dView/Model3DUtils.hpp
                        3dView/scene3d_refactored.h
                        3dView/OpenGLWrappers/CoordinateAxes.h
                        3dView/OpenGLWrappers/objectopenglwrapper_refactored.h
-                       3dView/OpenGLWrappers/ObjectOpenGLWrapper.h
-                       3dView/OpenGLWrappers/VolumeOpenGLWrap.h
                        3dView/OpenGLWrappers/volumeopenglwrapper_refactored.h
                        3dView/OpenGLWrappers/crosssectionopenglwrapper_refactored.h
-                       3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.h
                        3dView/GradientBackgroundShader.hpp
                        3dView/tinyobjloader/tiny_obj_loader.h)
 
 
-set( 3DVIEW_MOC_HEADERS  3dView/Canvas3D.h
-                         3dView/canvas3d_refactored.h
-                         3dView/scene3d_refactored.h
-                         3dView/Scene3D.h )
+set( 3DVIEW_MOC_HEADERS  3dView/canvas3d_refactored.h
+                         3dView/scene3d_refactored.h )
 
 
 
-set( 3DVIEW_SOURCES     3dView/Canvas3D.cpp
-                        3dView/canvas3d_refactored.cpp
-                        3dView/Scene3D.cpp
+set( 3DVIEW_SOURCES     3dView/canvas3d_refactored.cpp
                         3dView/scene3d_refactored.cpp
                         3dView/Model3DUtils.cpp
                         3dView/OpenGLWrappers/CoordinateAxes.cpp
                         3dView/OpenGLWrappers/objectopenglwrapper_refactored.cpp
-                        3dView/OpenGLWrappers/ObjectOpenGLWrapper.cpp
-                        3dView/OpenGLWrappers/VolumeOpenGLWrap.cpp
                         3dView/OpenGLWrappers/volumeopenglwrapper_refactored.cpp
-                        3dView/OpenGLWrappers/CrossSectionOpenGLWrapper.cpp
                         3dView/OpenGLWrappers/crosssectionopenglwrapper_refactored.cpp
                         3dView/GradientBackgroundShader.cpp
                         3dView/tinyobjloader/tiny_obj_loader.cc)
