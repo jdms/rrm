@@ -100,7 +100,7 @@ void CrossSectionOpenGLWrapper::createPlane()
 
 */
 
-    number_of_vertices = static_cast< GLuint > (plane.size() );
+    number_of_vertices = static_cast< GLuint > (plane.size()/4 );
     reloadBuffers( plane );
 
     defineNormals();
