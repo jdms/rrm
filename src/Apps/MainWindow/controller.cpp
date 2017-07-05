@@ -1,13 +1,13 @@
 #include "controller.h"
 
 
-#include "Object_Tree/ObjectTree.h"
-#include "Sketching/csectionscene.h"
-#include "Sketching/topviewscene.h"
+#include "Object_Tree/object_tree.h"
+#include "Sketching/csection_scene.h"
+#include "Sketching/topview_scene.h"
 #include "3dView/scene3d.h"
-#include "3dView/Model3DUtils.hpp"
+#include "3dView/model3d_utils.hpp"
 
-#include "./Core/Geology/Models/Volume.h"
+#include "./Core/Geology/Models/volume.h"
 
 
 Controller::Controller()
@@ -162,7 +162,7 @@ bool Controller::isVolumeResizable() const
 
     for( auto &it: objects )
     {
-        Object_Refactored* const& obj = ( it.second );
+        Object* const& obj = ( it.second );
         if( obj->isEmpty() == false )
             return false;
     }
@@ -173,7 +173,7 @@ bool Controller::isVolumeResizable() const
 
 void Controller::addObject()
 {
-    Object_Refactored* const& obj = new Object_Refactored();
+    Object* const& obj = new Object();
 
     int r = std::get<0>( current_color );
     int g = std::get<1>( current_color );
@@ -194,7 +194,7 @@ void Controller::addObject()
 
 void Controller::addObject( std::size_t id )
 {
-    Object_Refactored* const& obj = new Object_Refactored();
+    Object* const& obj = new Object();
 
     int r = std::get<0>( current_color );
     int g = std::get<1>( current_color );
@@ -217,7 +217,7 @@ void Controller::addObjectToInterface()
 
     csection_scene->removeObjectTest();
 
-    Object_Refactored* const& obj = objects[ current_object ];
+    Object* const& obj = objects[ current_object ];
     csection_scene->addObject( obj );
     scene3d->addObject( obj );
     topview_scene->addObject( obj );
@@ -240,29 +240,29 @@ bool Controller::isValidObject( std::size_t id ) const
 }
 
 
-void Controller::setObjectType( const Object_Refactored::Type& type )
+void Controller::setObjectType( const Object::Type& type )
 {
     setObjectType( current_object, type );
 }
 
 
-void Controller::setObjectType( std::size_t id, const Object_Refactored::Type& type )
+void Controller::setObjectType( std::size_t id, const Object::Type& type )
 {
     if( isValidObject( id ) == false ) return;
-    Object_Refactored* const& object = objects[ id ];
+    Object* const& object = objects[ id ];
     object->setType( type );
 }
 
 
-Object_Refactored::Type Controller::getObjectType()
+Object::Type Controller::getObjectType()
 {
     return getObjectType( current_object );
 }
 
 
-Object_Refactored::Type Controller::getObjectType( std::size_t id )
+Object::Type Controller::getObjectType( std::size_t id )
 {
-    if( isValidObject( id ) == false ) return Object_Refactored::Type::NONE;
+    if( isValidObject( id ) == false ) return Object::Type::NONE;
     return objects[ id ]->getType();
 }
 
@@ -276,7 +276,7 @@ void Controller::setObjectName( const std::string& name )
 void Controller::setObjectName( std::size_t id, const std::string& name )
 {
     if( isValidObject( id ) == false ) return;
-    Object_Refactored* const& object = objects[ id ];
+    Object* const& object = objects[ id ];
     object->setName( name );
 }
 
@@ -309,7 +309,7 @@ void Controller::getObjectColor( int& r, int& g, int& b )
 void Controller::setObjectColor( std::size_t id, int r, int g, int b )
 {
     if( isValidObject( id ) == false ) return;
-    Object_Refactored* const& object = objects[ id ];
+    Object* const& object = objects[ id ];
     object->setColor( r, g, b );
 
     object_tree->updateObjectColor( id, r, g, b );
@@ -339,7 +339,7 @@ bool Controller::getObjectVisibility()
 void Controller::setObjectVisibility( std::size_t id,bool status )
 {
     if( isValidObject( id ) == false ) return;
-    Object_Refactored* const& object = objects[ id ];
+    Object* const& object = objects[ id ];
     object->setVisibility( status );
 
     updateObject( id );
@@ -356,7 +356,7 @@ bool Controller::getObjectVisibility( std::size_t id )
 void Controller::addCurveToObject( const Curve2D& curve )
 {
 
-    Object_Refactored* const& object = objects[ current_object ];
+    Object* const& object = objects[ current_object ];
     object->setCrossSectionCurve( current_csection, curve );
 
 
@@ -383,7 +383,7 @@ bool Controller::testObjectSurface()
     if( isValidObject( current_object ) == false ) return false;
 
 
-    Object_Refactored* const& obj = objects[ current_object ];
+    Object* const& obj = objects[ current_object ];
     std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
     if( curves.empty() == true ) return false;
 
@@ -416,7 +416,7 @@ bool Controller::testObjectSurface()
 
 void Controller::removeCurveFromObject( double depth )
 {
-    Object_Refactored* const& object = objects[ current_object ];
+    Object* const& object = objects[ current_object ];
     object->removeCrossSectionCurve( depth );
 
 
@@ -435,7 +435,7 @@ void Controller::removeCurveFromObject( double depth )
 
 void Controller::removeTrajectoryFromObject()
 {
-    Object_Refactored* const& object = objects[ current_object ];
+    Object* const& object = objects[ current_object ];
     object->removeTrajectoryCurve();
 
 
@@ -478,7 +478,7 @@ void Controller::enableDeletingCurves( bool status  )
 
 void Controller::addTrajectoryToObject( const Curve2D& curve )
 {
-    Object_Refactored* const& object = objects[ current_object ];
+    Object* const& object = objects[ current_object ];
     object->setTrajectoryCurve( curve );
     topview_scene->addObject( object );
 
@@ -495,7 +495,7 @@ bool Controller::createObjectSurface()
     if( isValidObject( current_object ) == false ) return false;
 
 
-    Object_Refactored* const& obj = objects[ current_object ];
+    Object* const& obj = objects[ current_object ];
     obj->setTesting( false );
 
     std::vector< std::tuple< Curve2D, double > > curves = obj->getCrossSectionCurves();
@@ -537,7 +537,7 @@ void Controller::desactiveObjects()
 {
     for( auto it: objects )
     {
-        Object_Refactored* obj = objects[ it.first ];
+        Object* obj = objects[ it.first ];
         obj->setVisibility( false );
 
         object_tree->setObjectHidden( it.first, true );
@@ -591,7 +591,7 @@ void Controller::updateActiveObjects()
 bool Controller::updateActiveCurve( std::size_t id )
 {
 
-    Object_Refactored* obj = objects[ id ];
+    Object* obj = objects[ id ];
 
 
     std::vector< double > curve_vertices;
@@ -631,7 +631,7 @@ bool Controller::updateActiveSurface( std::size_t id )
 {
 
 
-    Object_Refactored* obj = objects[ id ];
+    Object* obj = objects[ id ];
     bool testing = obj->isTesting();
 
     std::vector< double > surface_vertices;
@@ -668,7 +668,7 @@ void Controller::updateModel()
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
 
 
-    std::map< std::size_t, Object_Refactored* >::iterator iterator_id = objects.begin();
+    std::map< std::size_t, Object* >::iterator iterator_id = objects.begin();
     for( std::size_t i = 0; i < actives.size(); )
     {
         std::size_t id = actives[ i ];
@@ -705,7 +705,7 @@ void Controller::updateModel()
 
 void Controller::activeObject( std::size_t id )
 {
-    Object_Refactored* obj = objects[ id ];
+    Object* obj = objects[ id ];
 
     obj->setVisibility( true );
     object_tree->setObjectHidden( id, false );
@@ -719,7 +719,7 @@ void Controller::activeObject( std::size_t id )
 
 void Controller::desactiveObject( std::size_t id )
 {
-    Object_Refactored* obj = objects[ id ];
+    Object* obj = objects[ id ];
     obj->setVisibility( false );
     object_tree->setObjectHidden( id, true );
     updateObject( id );
@@ -981,7 +981,7 @@ void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes,
     {
         if( isValidObject( id ) == false ) continue;
 
-        Object_Refactored* const& obj = objects[ id ];
+        Object* const& obj = objects[ id ];
         obj->setSelectable( status );
 
         updateObject( id );
@@ -997,7 +997,7 @@ void Controller::setObjectSelected( std::size_t id, bool status )
 
     if( isValidObject( id ) == false ) return;
 
-    Object_Refactored* const& obj = objects[ id ];
+    Object* const& obj = objects[ id ];
     obj->setSelected( status );
     updateObject( id );
 

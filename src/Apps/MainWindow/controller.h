@@ -5,8 +5,8 @@
 #include <string>
 #include <map>
 
-#include "RulesProcessor.hpp"
-#include "./Core/Geology/Models/object_refactored.h"
+#include "rules_processor.hpp"
+#include "./Core/Geology/Models/object.h"
 
 
 class CSectionScene;
@@ -73,11 +73,11 @@ class Controller
         bool isValidObject( std::size_t id ) const ;
 
 
-        void setObjectType( const Object_Refactored::Type& type );
-        void setObjectType( std::size_t id, const Object_Refactored::Type& type );
+        void setObjectType( const Object::Type& type );
+        void setObjectType( std::size_t id, const Object::Type& type );
 
-        Object_Refactored::Type getObjectType();
-        Object_Refactored::Type getObjectType( std::size_t id );
+        Object::Type getObjectType();
+        Object::Type getObjectType( std::size_t id );
 
 
         void setObjectName( const std::string& name );
@@ -206,7 +206,7 @@ class Controller
         RulesProcessor rules_processor;
 
         Volume* volume;
-        std::map< std::size_t, Object_Refactored* > objects;
+        std::map< std::size_t, Object* > objects;
         std::size_t current_object;
 
 

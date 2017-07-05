@@ -1,10 +1,10 @@
 #include "scene3d.h"
 
 
-#include "./Core/Geology/Models/object_refactored.h"
-#include "OpenGLWrappers/volumeopenglwrapper_refactored.h"
-#include "OpenGLWrappers/crosssectionopenglwrapper.h"
-#include "OpenGLWrappers/objectopenglwrapper_refactored.h"
+#include "./Core/Geology/Models/object.h"
+#include "OpenGLWrappers/volume_opengl_wrapper.h"
+#include "OpenGLWrappers/crosssection_opengl_wrapper.h"
+#include "OpenGLWrappers/object_opengl_wrapper.h"
 
 
 #include <QString>
@@ -27,7 +27,7 @@ void Scene3d::addVolume( Volume* const& vol )
 
     context->makeCurrent( surface );
 
-    volume = new VolumeOpenGLWrapper_Refactored();
+    volume = new VolumeOpenGLWrapper();
     volume->setShaderDirectory( shader_directory.toStdString() );
     volume->init();
     volume->setRawVolume( vol );
@@ -101,14 +101,14 @@ void Scene3d::moveCrossSection( double depth )
 
 
 
-bool Scene3d::addObject( Object_Refactored* const& obj )
+bool Scene3d::addObject( Object* const& obj )
 {
 
     if( isAddedObject( obj->getId() ) == true ) return false;
 
     context->makeCurrent( surface );
 
-    ObjectOpenGLWrapper_Refactored* object = new ObjectOpenGLWrapper_Refactored();
+    ObjectOpenGLWrapper* object = new ObjectOpenGLWrapper();
     object->setShaderDirectory( shader_directory.toStdString() );
     object->init();
 
@@ -134,7 +134,7 @@ void Scene3d::updateObject( std::size_t id )
 {
     if( isAddedObject( id ) == false ) return;
 
-    ObjectOpenGLWrapper_Refactored* const& object = objects[ id ];
+    ObjectOpenGLWrapper* const& object = objects[ id ];
     object->reloadBuffers();
     emit updateCanvas();
 

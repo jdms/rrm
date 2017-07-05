@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "3dView/canvas3d.h"
 #include "controller.h"
-#include "Sketching/sketchwindow.h"
-#include "Widgets/pagesstack.h"
-#include "Widgets/realslider.h"
-#include "Object_Tree/ObjectTree.h"
-#include "Sketching/csectionscene.h"
-#include "Sketching/topviewscene.h"
+#include "Sketching/sketch_window.h"
+#include "Widgets/pages_stack.h"
+#include "Widgets/real_slider.h"
+#include "Object_Tree/object_tree.h"
+#include "Sketching/csection_scene.h"
+#include "Sketching/topview_scene.h"
 
 #include <QtWidgets>
 #include <QActionGroup>

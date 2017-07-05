@@ -36,8 +36,8 @@
 #include <algorithm>
 #include <tuple>
 
-#include "./src/Core/Base/Constants/Constants.hpp"
-#include "./src/Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+#include "./src/Core/Base/Constants/constants.hpp"
+#include "./src/Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 
 /*!
  * @brief  Wrapper to class PolygonalCurve, which represents curves built from the concatenation of straight lines.
