@@ -15,45 +15,45 @@ include_directories (
   
 set( MAINWINDOW_HEADERS MainWindow/mainwindow.h
                         MainWindow/controller.h
-                        MainWindow/RulesProcessor.hpp
-                        MainWindow/Widgets/ColorPicker.h
-                        MainWindow/Widgets/pagesstack.h
-                        MainWindow/Widgets/realslider.h
-                        MainWindow/Exporter/CPS3Exporter.hpp
-                        MainWindow/Exporter/IrapGridExporter.hpp
-                        MainWindow/Object_Tree/ObjectTreeItem.h
-                        MainWindow/Object_Tree/ObjectTree.h
-                        MainWindow/Help/HelpDialog.h
-                        MainWindow/About/AboutWidget.hpp )
+                        MainWindow/rules_processor.hpp
+                        MainWindow/Widgets/color_picker.h
+                        MainWindow/Widgets/pages_stack.h
+                        MainWindow/Widgets/real_slider.h
+                        MainWindow/Exporter/csp3_exporter.hpp
+                        MainWindow/Exporter/irap_grid_exporter.hpp
+                        MainWindow/Object_Tree/object_tree_item.h
+                        MainWindow/Object_Tree/object_tree.h
+                        MainWindow/Help/help_dialog.h
+                        MainWindow/About/about_widget.hpp )
 
 
 set( MAINWINDOW_MOC_HEADERS MainWindow/mainwindow.h
-                            MainWindow/Widgets/ColorPicker.h
-                            MainWindow/Widgets/pagesstack.h
-                            MainWindow/Widgets/realslider.h
-                            MainWindow/Object_Tree/ObjectTree.h
-                            MainWindow/Help/HelpDialog.h
-                            MainWindow/About/AboutWidget.hpp )
+                            MainWindow/Widgets/color_picker.h
+                            MainWindow/Widgets/pages_stack.h
+                            MainWindow/Widgets/real_slider.h
+                            MainWindow/Object_Tree/object_tree.h
+                            MainWindow/Help/help_dialog.h
+                            MainWindow/About/about_widget.hpp )
 
 
-set( MAINWINDOW_UI_SOURCES  MainWindow/About/AboutWidget.ui
-                            MainWindow/Help/HelpDialog.ui
-                            MainWindow/Widgets/VolumeResizeWidget.ui )
+set( MAINWINDOW_UI_SOURCES  MainWindow/About/about_widget.ui
+                            MainWindow/Help/help_dialog.ui
+                            MainWindow/Widgets/volume_resize_widget.ui )
 
 
 set( MAINWINDOW_SOURCES MainWindow/main.cpp
                         MainWindow/mainwindow.cpp
-                        MainWindow/Widgets/ColorPicker.cpp
-                        MainWindow/Widgets/pagesstack.cpp
-                        MainWindow/Widgets/realslider.cpp
+                        MainWindow/Widgets/color_picker.cpp
+                        MainWindow/Widgets/pages_stack.cpp
+                        MainWindow/Widgets/real_slider.cpp
                         MainWindow/controller.cpp
-                        MainWindow/RulesProcessor.cpp
-                        MainWindow/Exporter/CPS3Exporter.cpp
-                        MainWindow/Exporter/IrapGridExporter.cpp
-                        MainWindow/Object_Tree/ObjectTreeItem.cpp
-                        MainWindow/Object_Tree/ObjectTree.cpp
-                        MainWindow/Help/HelpDialog.cpp
-                        MainWindow/About/AboutWidget.cpp )
+                        MainWindow/rules_processor.cpp
+                        MainWindow/Exporter/csp3_exporter.cpp
+                        MainWindow/Exporter/irap_grid_exporter.cpp
+                        MainWindow/Object_Tree/object_tree_item.cpp
+                        MainWindow/Object_Tree/object_tree.cpp
+                        MainWindow/Help/help_dialog.cpp
+                        MainWindow/About/about_widget.cpp )
 
 
 
@@ -62,36 +62,36 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 # Main source -- Sketching SubDirectory
 ###############################################
 
-set( SKETCHING_HEADERS        Sketching/sketchwindow.h
-                              Sketching/InputSketch.h
-                              Sketching/sketchscene.h
-                              Sketching/csectionscene.h
-                              Sketching/topviewscene.h
-                              Sketching/ItemWrappers/coordinateaxes2d.h
-                              Sketching/ItemWrappers/objectitemwrapper.h
-                              Sketching/ItemWrappers/trajectoryitemwrapper.h
-                              Sketching/ItemWrappers/volumeitemwrapper.h
-                              Sketching/ItemWrappers/crosssectionitemwrapper.h
-                              Sketching/PolyQtUtils.hpp )
+set( SKETCHING_HEADERS        Sketching/sketch_window.h
+                              Sketching/input_sketch.h
+                              Sketching/sketch_scene.h
+                              Sketching/csection_scene.h
+                              Sketching/topview_scene.h
+                              Sketching/ItemWrappers/coordinate_axes_2d.h
+                              Sketching/ItemWrappers/object_item_wrapper.h
+                              Sketching/ItemWrappers/trajectory_item_wrapper.h
+                              Sketching/ItemWrappers/volume_item_wrapper.h
+                              Sketching/ItemWrappers/crosssection_item_wrapper.h
+                              Sketching/polyqt_utils.hpp )
 
 
-set( SKETCHING_MOC_HEADERS    Sketching/sketchwindow.h
-                              Sketching/topviewscene.h
-                              Sketching/sketchscene.h
-                              Sketching/csectionscene.h )
+set( SKETCHING_MOC_HEADERS    Sketching/sketch_window.h
+                              Sketching/topview_scene.h
+                              Sketching/sketch_scene.h
+                              Sketching/csection_scene.h )
 
 
-set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
-                              Sketching/InputSketch.cpp
-                              Sketching/topviewscene.cpp
-                              Sketching/sketchscene.cpp
-                              Sketching/csectionscene.cpp
-                              Sketching/ItemWrappers/coordinateaxes2d.cpp
-                              Sketching/ItemWrappers/objectitemwrapper.cpp
-                              Sketching/ItemWrappers/trajectoryitemwrapper.cpp
-                              Sketching/ItemWrappers/volumeitemwrapper.cpp
-                              Sketching/ItemWrappers/crosssectionitemwrapper.cpp
-                              Sketching/PolyQtUtils.cpp )
+set( SKETCHING_SOURCES        Sketching/sketch_window.cpp
+                              Sketching/input_sketch.cpp
+                              Sketching/topview_scene.cpp
+                              Sketching/sketch_scene.cpp
+                              Sketching/csection_scene.cpp
+                              Sketching/ItemWrappers/coordinate_axes_2d.cpp
+                              Sketching/ItemWrappers/object_item_wrapper.cpp
+                              Sketching/ItemWrappers/trajectory_item_wrapper.cpp
+                              Sketching/ItemWrappers/volume_item_wrapper.cpp
+                              Sketching/ItemWrappers/crosssection_item_wrapper.cpp
+                              Sketching/polyqt_utils.cpp )
 
 
 ###############################################
@@ -99,13 +99,13 @@ set( SKETCHING_SOURCES        Sketching/sketchwindow.cpp
 ###############################################
 
 set( 3DVIEW_HEADERS    3dView/canvas3d.h
-                       3dView/Model3DUtils.hpp
+                       3dView/model3d_utils.hpp
                        3dView/scene3d.h
-                       3dView/OpenGLWrappers/CoordinateAxes.h
-                       3dView/OpenGLWrappers/objectopenglwrapper.h
-                       3dView/OpenGLWrappers/volumeopenglwrapper_refactored.h
-                       3dView/OpenGLWrappers/crosssectionopenglwrapper.h
-                       3dView/GradientBackgroundShader.hpp
+                       3dView/OpenGLWrappers/coordinate_axes_3d.h
+                       3dView/OpenGLWrappers/object_opengl_wrapper.h
+                       3dView/OpenGLWrappers/volume_opengl_wrapper.h
+                       3dView/OpenGLWrappers/crosssection_opengl_wrapper.h
+                       3dView/gradient_background_shader.hpp
                        3dView/tinyobjloader/tiny_obj_loader.h)
 
 
@@ -116,12 +116,12 @@ set( 3DVIEW_MOC_HEADERS  3dView/canvas3d.h
 
 set( 3DVIEW_SOURCES     3dView/canvas3d.cpp
                         3dView/scene3d.cpp
-                        3dView/Model3DUtils.cpp
-                        3dView/OpenGLWrappers/CoordinateAxes.cpp
-                        3dView/OpenGLWrappers/objectopenglwrapper.cpp
-                        3dView/OpenGLWrappers/volumeopenglwrapper_refactored.cpp
-                        3dView/OpenGLWrappers/crosssectionopenglwrapper.cpp
-                        3dView/GradientBackgroundShader.cpp
+                        3dView/model3d_utils.cpp
+                        3dView/OpenGLWrappers/coordinate_axes_3d.cpp
+                        3dView/OpenGLWrappers/object_opengl_wrapper.cpp
+                        3dView/OpenGLWrappers/volume_opengl_wrapper.cpp
+                        3dView/OpenGLWrappers/crosssection_opengl_wrapper.cpp
+                        3dView/gradient_background_shader.cpp
                         3dView/tinyobjloader/tiny_obj_loader.cc)
 
 

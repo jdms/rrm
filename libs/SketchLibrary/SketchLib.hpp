@@ -30,7 +30,7 @@
 #ifndef _SKETCHLIB_HPP_
 #define _SKETCHLIB_HPP_
 
-#include "./src/Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+#include "./src/Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 #include <vector>
 
 

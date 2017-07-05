@@ -27,7 +27,7 @@
  *      Author: felipe
  */
 
-#include "Constants.hpp"
+#include "constants.hpp"
 
 namespace Math {
 

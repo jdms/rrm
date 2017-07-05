@@ -38,7 +38,7 @@
 #include <iterator>
 
 #include "PolygonalCurve2.hpp"
-#include "./src/Core/Geometry/PolygonalCurve/PolygonalCurve2D.hpp"
+#include "./src/Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 
 
 typedef size_t Natural;

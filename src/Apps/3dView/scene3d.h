@@ -5,17 +5,17 @@
 #include <QColor>
 
 #include "Eigen/Dense"
-#include "OpenGLWrappers/CoordinateAxes.h"
+#include "OpenGLWrappers/coordinate_axes_3d.h"
 
 class QString;
 class QOpenGLContext;
 class QSurface;
 
 class Volume;
-class VolumeOpenGLWrapper_Refactored;
+class VolumeOpenGLWrapper;
 class CrossSectionOpenGLWrapper;
-class Object_Refactored;
-class ObjectOpenGLWrapper_Refactored;
+class Object;
+class ObjectOpenGLWrapper;
 
 
 class Scene3d: public QObject
@@ -31,7 +31,7 @@ class Scene3d: public QObject
         void addCrossSection();
         void moveCrossSection( double depth );
 
-        bool addObject( Object_Refactored* const& obj );
+        bool addObject( Object* const& obj );
         bool isAddedObject( std::size_t id );
 
         inline void setActiveObjects(){}
@@ -75,10 +75,10 @@ class Scene3d: public QObject
         QOpenGLContext* context;
         QSurface* surface;
 
-        VolumeOpenGLWrapper_Refactored* volume;
+        VolumeOpenGLWrapper* volume;
         CrossSectionOpenGLWrapper* csection;
 
-        std::map< std::size_t, ObjectOpenGLWrapper_Refactored* > objects;
+        std::map< std::size_t, ObjectOpenGLWrapper* > objects;
 
 };
 

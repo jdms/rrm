@@ -13,8 +13,8 @@ set( CMAKE_BUILD_TYPE Release )
 # Main library
 ###############################################
      
-set( GEOMETRY_HEADERS PolygonalCurve/PolygonalCurve2D.hpp )
-set( GEOMETRY_SOURCES PolygonalCurve/PolygonalCurve2D.cpp )					
+set( GEOMETRY_HEADERS PolygonalCurve/polygonal_curve_2d.hpp )
+set( GEOMETRY_SOURCES PolygonalCurve/polygonal_curve_2d.cpp )
 						
 						
 add_library( ${PROJECT_NAME} STATIC ${GEOMETRY_HEADERS} ${GEOMETRY_SOURCES} )  
