@@ -548,7 +548,7 @@ void Controller::desactiveObjects()
     if( isValidObject( current_object ) == true )
         objects[ current_object ]->setVisibility( true );
 
-//    csection_scene->removeObjectsFromScene();
+
 }
 
 
@@ -1038,7 +1038,6 @@ void Controller::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
     loadObjects();
-//    loadStatus();
 }
 
 
@@ -1112,7 +1111,6 @@ bool Controller::undo()
     bool undo_done = rules_processor.undo();
     if( undo_done == false ) return false;
 
-//    updateActiveObjects();
     updateModel();
     return true;
 }

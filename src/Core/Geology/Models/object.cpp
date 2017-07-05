@@ -238,6 +238,7 @@ bool Object::hasTrajectoryCurve()
 
 void Object::setTrajectoryCurve( const Curve2D& path )
 {
+    trajectory_curve.clear();
     trajectory_curve = path;
     has_trajectory = true;
 }
