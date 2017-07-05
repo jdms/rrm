@@ -480,6 +480,14 @@ void MainWindow::resizingVolumeDepth( double d )
     double height = controller->getVolumeHeight();
 
     emit resizedVolume( width, height, d );
+
+    int disc = static_cast< int >( controller->setupCrossSectionDiscretization() );
+    sl_depth_csection->setDiscretization( disc );
+    sl_depth_csection->setRange( 0, d );
+
+
+    bool status = controller->isVolumeResizable();
+    setVolumeResizingEnabled( status );
 }
 
 
