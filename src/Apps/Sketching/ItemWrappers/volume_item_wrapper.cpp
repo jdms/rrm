@@ -36,6 +36,7 @@ void VolumeItemWrapper::clear()
 void VolumeItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
                                           QWidget *w )
 {
+
     if( isVisible() == false ) return;
 
     painter->setRenderHint ( QPainter::Antialiasing );
@@ -110,6 +111,9 @@ bool VolumeItemWrapper::isVisible() const
 
 void VolumeItemWrapper::resize( double ox, double oy, double width, double height )
 {
+
+    prepareGeometryChange();
+
     section_boundary.clear();
     section_boundary = QPolygonF( QRectF( QPointF( ox, oy ), QSizeF( width, height ) ) );
     update();
@@ -118,6 +122,8 @@ void VolumeItemWrapper::resize( double ox, double oy, double width, double heigh
 
 void VolumeItemWrapper::updateItem()
 {
+    prepareGeometryChange();
+
     QPointF origin = section_boundary.boundingRect().bottomLeft();
     resize( 0.0, 0.0, getWidth(), getHeight() ) ;
 }

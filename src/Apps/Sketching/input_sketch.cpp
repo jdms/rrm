@@ -40,6 +40,9 @@ InputSketch::InputSketch( QColor color ) :QGraphicsPathItem()
 
 void InputSketch::paint( QPainter *painter , const QStyleOptionGraphicsItem *option , QWidget *w )
 {
+
+    prepareGeometryChange();
+
     pen_color.setWidth( 3 );
 
     QPainterPathStroker stroker;

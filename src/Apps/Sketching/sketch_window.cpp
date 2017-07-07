@@ -70,6 +70,15 @@ void SketchWindow::createToolbarActions()
     connect( scene, &SketchScene::enableDeleting, ac_remove_curve, &QAction::setEnabled );
 
 
+
+    QAction* ac_resize_image = new QAction( "Resize Image", this );
+    ac_resize_image->setCheckable( true );
+    connect( ac_resize_image, &QAction::toggled, scene, &SketchScene::setModeResizingImage );
+    connect( scene, &SketchScene::enableResizingImage, ac_resize_image, &QAction::setEnabled );
+    connect( scene, &SketchScene::enableResizingImage, [=]( bool status ) { if( status == true ) return;
+                                                                             ac_resize_image->setChecked( false ); });
+
+
     QAction* ac_remove_image = new QAction( "Remove Image", this );
     connect( ac_remove_image, &QAction::triggered, scene, &SketchScene::removeImageFromCrossSection );
 
@@ -111,6 +120,7 @@ void SketchWindow::createToolbarActions()
     tb_commands->addSeparator();
     tb_commands->addAction( ac_create_surface );
     tb_commands->addSeparator();
+    tb_commands->addAction( ac_resize_image );
     tb_commands->addAction( ac_remove_image );
     tb_commands->addAction( ac_screenshot );
     tb_commands->addAction( ac_axes );

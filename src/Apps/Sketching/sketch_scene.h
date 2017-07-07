@@ -71,7 +71,7 @@ class SketchScene: public QGraphicsScene
         void setModeSelecting();
         void setModeEditingBoundary();
         void setModeMovingImage();
-
+        void setModeResizingImage( bool status );
 
         void enableDeletingCurves( bool status );
         void selectBounderingRegion();
@@ -96,6 +96,7 @@ class SketchScene: public QGraphicsScene
         void selectedObject( std::size_t id );
         void updateColor( const QColor& c );
         void setUpColor();
+        void enableResizingImage( bool status );
 
 
     protected:
@@ -103,6 +104,7 @@ class SketchScene: public QGraphicsScene
         void createCrossSectionImageItem();
         void setImageToCrossSection( const QString& file );
         void setImageToCrossSection();
+        void resizingCrossSectionImage( const QPointF& p );
 
 
         bool isAddedObject( std::size_t id ) const ;
@@ -129,10 +131,11 @@ class SketchScene: public QGraphicsScene
         {
             QString file;
             QPointF origin;
+            qreal scale;
         };
 
-        enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, EDITING_BOUNDARY,
-                                     EDITING_SCENE };
+        enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, RESIZING_IMAGE,
+                                     EDITING_BOUNDARY, EDITING_SCENE };
 
 
         double current_csection;
@@ -161,6 +164,10 @@ class SketchScene: public QGraphicsScene
 
         QGraphicsPathItem* object_test;
         QGraphicsPathItem object_test1;
+
+
+        QGraphicsItem* marker;
+        QPixmap* image_resizing;
 };
 
 #endif // SKETCHSCENE_H
