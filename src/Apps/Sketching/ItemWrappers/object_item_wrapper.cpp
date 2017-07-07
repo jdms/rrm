@@ -22,6 +22,7 @@ QRectF ObjectItemWrapper::boundingRect() const
 void ObjectItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                                           QWidget* w )
 {
+
     if( isVisible() == false ) return;
 
     if( ( isSelected() == true ) && ( object->getSelected() == false ) )
@@ -48,6 +49,7 @@ void ObjectItemWrapper::setRawObject( Object* const& obj, double depth )
 
 void ObjectItemWrapper::updateDepth( double depth )
 {
+
     csection_depth = depth;
     updateObject();
 }
@@ -141,6 +143,8 @@ void ObjectItemWrapper::updateCurve()
 
 void ObjectItemWrapper::updateObject()
 {
+    prepareGeometryChange();
+
     updateCurve();
     updateState();
 }

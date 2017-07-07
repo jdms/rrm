@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QKeyEvent>
 #include <QSvgGenerator>
+#include <QCursor>
 
 #include "Core/Geology/Models/object.h"
 #include "sketch_scene.h"
@@ -17,6 +18,8 @@ SketchScene::SketchScene()
     csection_image = nullptr;
     sketch = nullptr;
     object_test = nullptr;
+    marker = nullptr;
+    image_resizing = nullptr;
 
     setDefaultValues();
 
@@ -25,6 +28,7 @@ SketchScene::SketchScene()
 
 void SketchScene::addVolume( Volume* const& vol )
 {
+
     volume.setRawVolume( vol );
     setSceneRect( volume.boundingRect() );
     addItem( &volume );
@@ -33,6 +37,8 @@ void SketchScene::addVolume( Volume* const& vol )
 
 void SketchScene::resizingVolume( const QPointF& point, bool done )
 {
+
+
     int w = static_cast< int > ( point.x() - boundary_anchor.x() );
     int h = static_cast< int > ( point.y() - boundary_anchor.y() );
 
@@ -51,6 +57,7 @@ void SketchScene::resizingVolume( const QPointF& point, bool done )
 
 void SketchScene::updateVolume()
 {
+
     volume.updateItem();
     setSceneRect( volume.boundingRect() );
 
@@ -117,49 +124,6 @@ void SketchScene::addObjectTest( const std::vector< double >& vertices,
                                             const std::vector< std::size_t >&edges )
 {
 
-//    QPainterPath curve;
-
-//    if( edges.empty() == true )
-//    {
-//        std::size_t number_of_vertices = static_cast< std::size_t > ( vertices.size()/2 );
-
-//        curve.moveTo( QPointF( vertices[ 0 ], vertices[ 1 ] ) );
-//        for( std::size_t it = 1; it < number_of_vertices; ++it )
-//        {
-//            curve.lineTo( QPointF( vertices[ 2*it ], vertices[ 2*it + 1 ] ) );
-//        }
-//    }
-//    else
-//    {
-
-//        std::size_t nedges = static_cast< std::size_t >( edges.size()/2 );
-//        std::size_t last_id = 10000;
-
-//        for( size_t i = 0; i < nedges; ++i )
-//        {
-
-//            std::size_t id0 = edges[ 2*i ];
-//            std::size_t id1 = edges[ 2*i + 1 ];
-
-//            if( last_id != id0 )
-//                curve.moveTo( QPointF( vertices[ 2*id0 ],
-//                                       vertices[ 2*id0 + 1 ] ) );
-//            else
-//                curve.lineTo( QPointF( vertices[ 2*id1 ],
-//                                       vertices[ 2*id1 + 1 ] ) );
-
-
-//            last_id = id1;
-//        }
-//    }
-
-//    pen_testing.setColor( QColor( current_color.red(), current_color.green(), current_color.blue(),
-//                                  100 ) );
-//    pen_testing.setStyle( Qt::DashDotLine );
-//    pen_testing.setWidth( 2 );
-//    object_test = addPath( curve, pen_testing );
-//    update();
-
     QPainterPath curve;
 
     if( edges.empty() == true )
@@ -211,11 +175,6 @@ void SketchScene::addObjectTest( const std::vector< double >& vertices,
 void SketchScene::removeObjectTest()
 {
 
-//    if( object_test == nullptr ) return;
-
-//    removeItem( object_test );
-//    delete object_test;
-//    object_test = nullptr;
     object_test1.setVisible( false );
     update();
 }
@@ -224,9 +183,6 @@ void SketchScene::removeObjectTest()
 
 void SketchScene::removeObjectsFromScene()
 {
-
-
-    bool axes_visible = axes.isVisible();
 
     for( auto it: objects )
     {
@@ -239,7 +195,7 @@ void SketchScene::removeObjectsFromScene()
 
     removeObjectTest();
     volume.setVisible( true );
-    axes.setVisible( axes_visible );
+//    axes.setVisible( axes_visible );
 
 
 }
@@ -299,11 +255,38 @@ void SketchScene::disableMovingImage()
     csection_image->setFlag( QGraphicsItem::ItemIsSelectable, false );
 
     ImageData& image_data = backgrounds[ current_csection ];
-    image_data.origin = csection_image->pos();
+    image_data.origin = csection_image->scenePos();
 
     setModeSketching();
 }
 
+
+void SketchScene::setModeResizingImage( bool status )
+{
+
+    if( status == true )
+    {
+        if( hasImageInCrossSection() == false || csection_image == nullptr ) return;
+
+        marker = addEllipse( 0, 0, 25, 25, QPen( Qt::blue ) );
+        marker->setPos( csection_image->sceneBoundingRect().topRight().x()-25*0.5,
+                        csection_image->sceneBoundingRect().topRight().y()-25*0.5 );
+        current_interaction = UserInteraction::RESIZING_IMAGE;
+    }
+    else
+    {
+
+
+        if( marker != nullptr )
+        {
+            removeItem( marker );
+            delete marker;
+            marker = nullptr;
+            current_interaction = UserInteraction::SKETCHING;
+        }
+
+    }
+}
 
 
 void SketchScene::enableDeletingCurves( bool status )
@@ -368,7 +351,6 @@ void SketchScene::finishSketch()
 
     if( isValidSketch() == false ) return;
     if( sketch->isEmpty() == true ) return;
-
 
     Curve2D curve;
     if( acceptSketch( curve ) == true  )
@@ -461,10 +443,12 @@ void SketchScene::setCurrentCrossSection( double depth )
 
     if( hasImageInCrossSection() == false )
     {
-        removeImageFromCrossSection();
+        removeImageFromCrossSection();        
     }
     else
         setImageToCrossSection();
+
+
 }
 
 
@@ -473,8 +457,6 @@ void SketchScene::setCurrentCrossSection( double depth )
 void SketchScene::createCrossSectionImageItem()
 {
     csection_image = new QGraphicsPixmapItem();
-//    csection_image->setPixmap( QPixmap() );
-//    csection_image->setFlag( QGraphicsItem::ItemStacksBehindParent, true );
     addItem( csection_image );
 
     update();
@@ -494,16 +476,20 @@ void SketchScene::setImageToCrossSection( const QString& file )
     image = image.transformed( myTransform );
 
     csection_image->setPixmap( image );
-    csection_image->setPos( QPointF(0, 0) );
+    csection_image->setPos( QPointF( 0, 0 ) );
     csection_image->setVisible( true );
     csection_image->update();
 
 
     ImageData image_data;
     image_data.file = file;
-    image_data.origin = csection_image->pos();
+    image_data.origin = csection_image->scenePos();
+    image_data.scale = csection_image->scale();
     backgrounds[ current_csection ] = image_data;
 
+
+
+    enableResizingImage( true );
     update();
 }
 
@@ -522,20 +508,54 @@ void SketchScene::setImageToCrossSection()
     myTransform.scale( 1, -1 );
     image = image.transformed( myTransform );
 
+
     csection_image->setPixmap( image );
     csection_image->setPos( image_data.origin );
+    csection_image->setScale( image_data.scale );
     csection_image->setVisible( true );
     csection_image->update();
+
+
+    enableResizingImage( true );
+
     update();
 
 }
 
+
+void SketchScene::resizingCrossSectionImage( const QPointF& p )
+{
+
+    if( marker == nullptr || csection_image == nullptr ) return;
+    if( std::abs( p.y() - marker->y() ) > marker->boundingRect().width() ) return;
+
+
+    float aratio = ( p.x() - csection_image->pos().x() )/csection_image->boundingRect().width();
+    marker->setX( p.x() - marker->boundingRect().width()*0.5f );
+
+    csection_image->setScale( aratio );
+
+    ImageData& image_data = backgrounds[ current_csection ];
+    image_data.scale = aratio;
+
+}
+
+
 void SketchScene::removeImageFromCrossSection()
 {
+
     csection_image->setVisible( false );
 
     if( hasImageInCrossSection() == true )
         backgrounds.erase( current_csection );
+
+    if( marker != nullptr )
+    {
+        removeItem( marker );
+        delete marker;
+        marker = nullptr;
+    }
+    enableResizingImage( false );
 
     update();
 }
@@ -577,6 +597,7 @@ void SketchScene::savetoRasterImage( const QString& filename )
     image.save( filename_csection );
 
 }
+
 
 void SketchScene::savetoVectorImage( const QString& filename )
 {
@@ -623,7 +644,6 @@ void SketchScene::enableAxes( bool status )
 void SketchScene::clear()
 {
 
-
     clearData();
     setDefaultValues();
     update();
@@ -632,6 +652,7 @@ void SketchScene::clear()
 
 void SketchScene::clearData()
 {
+
 
     for( auto &it: items() )
         removeItem( it );
@@ -720,10 +741,18 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
             sketch->add( event->scenePos() );
     }
+
     else if( ( event->buttons() & Qt::LeftButton ) &&
              ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
     {
         resizingVolume( event->scenePos() );
+    }
+
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+             ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
+    {
+        resizingCrossSectionImage( event->scenePos() );
+
     }
 
     QGraphicsScene::mouseMoveEvent( event );

@@ -23,6 +23,7 @@ QRectF TrajectoryItemWrapper::boundingRect() const
 void TrajectoryItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                                           QWidget* w )
 {
+
     if( isVisible() == false ) return;
 
     if( ( isSelected() == true ) && ( object->getSelected() == false ) )
@@ -91,6 +92,8 @@ void TrajectoryItemWrapper::updateCurve()
 {
 
     clearCurve();
+
+    prepareGeometryChange();
 
     Curve2D c = object->getTrajectoryCurve();
     QPolygonF points = PolyQtUtils::curve2DToQPolyginF( c );
