@@ -120,26 +120,26 @@ void InterpolatedGraph::serialize( Archive &archive, const std::uint32_t version
 #include "cereal/types/list.hpp"
 #include "cereal/types/memory.hpp"
 
-template<typename Archive>
-void PlanarSurface::serialize( Archive &archive, const std::uint32_t version)
-{
-    (void)(version);
-    archive(discretization_X, discretization_Y, tolerance, 
-            global_discretization_state_, 
-            this_discretization_state_, 
-            nX_, nY_, num_vertices_, 
-            num_instances_, id_, 
-            f, 
-            coordinates_map_, 
-            origin, lenght, 
-            heights, 
-            interpolant_is_set_, 
-            mesh_is_set_, 
-            upper_bound_, lower_bound_, 
-            dependency_list_, 
-            extruded_surface_
-           );
-}
+/* template<typename Archive> */
+/* void PlanarSurface::serialize( Archive &archive, const std::uint32_t version) */
+/* { */
+/*     (void)(version); */
+/*     archive(discretization_X, discretization_Y, tolerance, */ 
+/*             global_discretization_state_, */ 
+/*             this_discretization_state_, */ 
+/*             nX_, nY_, num_vertices_, */ 
+/*             num_instances_, id_, */ 
+/*             f, */ 
+/*             coordinates_map_, */ 
+/*             origin, lenght, */ 
+/*             heights, */ 
+/*             interpolant_is_set_, */ 
+/*             mesh_is_set_, */ 
+/*             upper_bound_, lower_bound_, */ 
+/*             dependency_list_, */ 
+/*             extruded_surface_ */
+/*            ); */
+/* } */
 
 
 /* Serialize srules.hpp */
