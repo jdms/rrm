@@ -427,6 +427,7 @@ void VolumeOpenGLWrapper::setDefaultValues()
     vb_volume_vertices = 0;
     vb_volume_normals = 0;
     number_of_vertices = 0;
+    shader = nullptr;
 
     minimum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
     maximum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );

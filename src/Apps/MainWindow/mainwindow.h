@@ -9,6 +9,8 @@ class QAction;
 class QToolbar;
 class QSlider;
 
+class AboutWidget;
+
 class Canvas3d;
 class SketchWindow;
 class ObjectTree;
@@ -55,6 +57,8 @@ class MainWindow: public QMainWindow
         void resizingVolumeHeight( double h );
         void resizingVolumeDepth( double d );
 
+        void showHelp();
+
 
 
     private:
@@ -66,6 +70,7 @@ class MainWindow: public QMainWindow
         void createTopViewInterface();
         void createSidebar();
         void createToolbarActions();
+        void createMenuBar();
 
         void createController();
         void setupController();
@@ -92,6 +97,9 @@ class MainWindow: public QMainWindow
         int app_orig_x;
         int app_orig_y;
 
+        QMenu *mn_file;
+        QMenu *mn_help;
+        QMenu *mn_windows;
 
         QAction* ac_sketch_above;
         QAction* ac_sketch_below;
@@ -107,6 +115,8 @@ class MainWindow: public QMainWindow
         QAction* ac_undo;
         QAction* ac_redo;
 
+//        HelpDialog help;
+        AboutWidget* aboutRRM;
 
         Controller* controller;
         Canvas3d* canvas3d;

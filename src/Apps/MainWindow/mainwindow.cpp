@@ -7,10 +7,14 @@
 #include "Object_Tree/object_tree.h"
 #include "Sketching/csection_scene.h"
 #include "Sketching/topview_scene.h"
+#include "About/about_widget.hpp"
 
 #include <QtWidgets>
 #include <QActionGroup>
 #include <QSlider>
+#include <QDir>
+#include <QFileInfo>
+#include <QDesktopServices>
 
 
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
@@ -60,6 +64,9 @@ void MainWindow::createWindow()
     createCrossSectionInterface();
     createTopViewInterface();
     createToolbarActions();
+    createMenuBar();
+
+
 }
 
 
@@ -94,6 +101,8 @@ void MainWindow::createMainInterface()
     QWidget* central_widget = new QWidget( this );
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
+
+    aboutRRM = new AboutWidget( this );
 }
 
 
@@ -242,6 +251,62 @@ void MainWindow::createToolbarActions()
     ac_screenshot->setIcon( QIcon( ":/images/icons/Camera.png" ) );
 
 }
+
+
+void MainWindow::createMenuBar()
+{
+
+
+
+    QAction* ac_exit = new QAction( tr ( "E&xit" ) , this );
+    ac_exit->setIcon( QIcon( ":/images/icons/door_out.png" ) );
+    QAction* ac_manual = new QAction( tr ( "RRM Manual" ), this );
+    QAction* ac_about = new QAction( tr ( "&About" ) , this );
+
+    connect( ac_about, &QAction::triggered, aboutRRM, &AboutWidget::show );
+    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
+    connect( ac_exit, &QAction::triggered , this, &MainWindow::close );
+
+
+
+    QAction* ac_csection = new QAction ( tr ( "Cross-Section Window" ) , this );
+    ac_csection->setCheckable ( true );
+
+    connect( ac_csection, &QAction::toggled, dw_csection , &QDockWidget::setVisible );
+    connect( dw_csection, &QDockWidget::visibilityChanged, ac_csection, &QAction::setChecked );
+
+
+
+    QAction* ac_topview = new QAction ( tr ( "Top-View Window" ) , this );
+    ac_topview->setCheckable ( true );
+
+    connect( ac_topview , &QAction::toggled, dw_topview , &QDockWidget::setVisible );
+    connect( dw_topview, &QDockWidget::visibilityChanged, ac_topview, &QAction::setChecked );
+
+
+
+    QAction* ac_sidebar = new QAction ( tr ( "Sidebar" ) , this );
+    ac_sidebar->setCheckable ( true );
+    connect ( ac_sidebar , &QAction::toggled , ac_show_sidebar , &QAction::setChecked );
+    connect ( ac_show_sidebar, &QAction::toggled , ac_sidebar , &QAction::setChecked );
+
+
+
+    mn_file = menuBar()->addMenu ( tr ( "&File" ) );
+    mn_file->addAction ( ac_exit );
+
+    mn_windows = menuBar()->addMenu ( tr ( "&View" ) );
+    mn_windows->addAction ( ac_csection );
+    mn_windows->addAction ( ac_topview );
+    mn_windows->addAction ( ac_sidebar );
+
+    mn_help = menuBar()->addMenu ( tr ( "&Help" ) );
+    mn_help->addAction( ac_manual );
+    mn_help->addAction( ac_about );
+
+}
+
+
 
 
 void MainWindow::createCrossSectionInterface()
@@ -624,7 +689,6 @@ void MainWindow::loadDefaultRule()
 
 
 
-
 void MainWindow::clearInterface()
 {
     clearMenu();
@@ -665,4 +729,13 @@ void MainWindow::setDefaultValues()
     dw_topview->setVisible( TOPVIEW_VISIBLE );
     dw_csection->setVisible( CSECTION_VISIBLE );
 
+
+}
+
+
+void MainWindow::showHelp()
+{
+    QDir dir;
+    QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
+    QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
 }

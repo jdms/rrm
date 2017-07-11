@@ -38,6 +38,7 @@
         <file>icons/delete_curve.png</file>
         <file>icons/select_curve.png</file>
         <file>icons/axes.png</file>
+        <file>icons/resize_image.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>

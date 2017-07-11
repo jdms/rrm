@@ -143,8 +143,6 @@ void ObjectItemWrapper::updateCurve()
 
 void ObjectItemWrapper::updateObject()
 {
-    prepareGeometryChange();
-
     updateCurve();
     updateState();
 }
@@ -190,7 +188,6 @@ void ObjectItemWrapper::clearData()
 
 void ObjectItemWrapper::clearCurve()
 {
-    prepareGeometryChange();
     curve = QPainterPath();
 
     intersection_points.clear();

@@ -67,7 +67,7 @@ class TopViewScene: public SketchScene
 
         QPen trajectory_pen;
 
-        std::map< std::size_t, TrajectoryItemWrapper*/*QPainterPath*/ > objects;
+        std::map< std::size_t, TrajectoryItemWrapper* > objects;
 
 
 };
