@@ -268,7 +268,7 @@ void SketchScene::setModeResizingImage( bool status )
     {
         if( hasImageInCrossSection() == false || csection_image == nullptr ) return;
 
-        marker = addEllipse( 0, 0, 25, 25, QPen( Qt::blue ) );
+        marker = addEllipse( 0, 0, 25, 25, QPen( Qt::blue ), QBrush( QColor( 204, 229, 255, 170 ) ) );
         marker->setPos( csection_image->sceneBoundingRect().topRight().x()-25*0.5,
                         csection_image->sceneBoundingRect().topRight().y()-25*0.5 );
         current_interaction = UserInteraction::RESIZING_IMAGE;
