@@ -130,12 +130,12 @@ void MainWindow::createToolbarActions()
 
 
 
-    QAction* ac_new = new QAction( "Clear", this );
+    ac_new = new QAction( "New", this );
     connect( ac_new, &QAction::triggered, this, &MainWindow::clear );
 
-    QAction* ac_save_file = new QAction( "Save", this );
+    ac_save_file = new QAction( "Save", this );
     connect( ac_save_file, &QAction::triggered, this, &MainWindow::saveFile );
-    QAction* ac_load_file = new QAction( "Load", this );
+    ac_load_file = new QAction( "Load", this );
     connect( ac_load_file, &QAction::triggered, this, &MainWindow::loadFile );
 
 
@@ -293,6 +293,9 @@ void MainWindow::createMenuBar()
 
 
     mn_file = menuBar()->addMenu ( tr ( "&File" ) );
+    mn_file->addAction ( ac_new );
+    mn_file->addAction ( ac_save_file );
+    mn_file->addAction ( ac_load_file );
     mn_file->addAction ( ac_exit );
 
     mn_windows = menuBar()->addMenu ( tr ( "&View" ) );

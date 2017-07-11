@@ -101,6 +101,10 @@ class MainWindow: public QMainWindow
         QMenu *mn_help;
         QMenu *mn_windows;
 
+        QAction* ac_new;
+        QAction* ac_save_file;
+        QAction* ac_load_file;
+
         QAction* ac_sketch_above;
         QAction* ac_sketch_below;
 
