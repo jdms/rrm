@@ -427,4 +427,6 @@ void ObjectOpenGLWrapper::setDefaultValues()
     singlepass = false;
     testing = false;
 
+    shader = nullptr;
+
 }

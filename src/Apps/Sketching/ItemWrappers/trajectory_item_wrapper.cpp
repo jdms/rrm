@@ -93,8 +93,6 @@ void TrajectoryItemWrapper::updateCurve()
 
     clearCurve();
 
-    prepareGeometryChange();
-
     Curve2D c = object->getTrajectoryCurve();
     QPolygonF points = PolyQtUtils::curve2DToQPolyginF( c );
 
@@ -149,7 +147,6 @@ void TrajectoryItemWrapper::clearData()
 
 void TrajectoryItemWrapper::clearCurve()
 {
-    prepareGeometryChange();
     curve = QPainterPath();
 
     intersection_points.clear();

@@ -289,4 +289,11 @@ void CrossSectionOpenGLWrapper::setDefaultValues()
 
     minimum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
     maximum = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+
+    va_csection = 0;
+    vb_csection_lines = 0;
+    vb_csection_normals = 0;
+
+    shader = nullptr;
+
 }

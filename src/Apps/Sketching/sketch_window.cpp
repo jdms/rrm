@@ -140,6 +140,7 @@ void SketchWindow::createToolbarActions()
     ac_remove_curve->setIcon( QIcon( ":/images/icons/delete_curve.png" ) );
 
 
+    ac_resize_image->setIcon( QIcon( ":/images/icons/resize_image.png" ) );
     ac_remove_image->setIcon( QIcon( ":/images/icons/remove_picture.png" ) );
     ac_edit_boundary->setIcon( QIcon( ":/images/icons/newBoundary.png" ) );
 

@@ -20,8 +20,6 @@ void CrossSectionItemWrapper::paint( QPainter* painter, const QStyleOptionGraphi
 
 void CrossSectionItemWrapper::setDimensions( double w, double d )
 {
-    prepareGeometryChange();
-
     width = w;
     depth = d;
     update();
@@ -37,7 +35,6 @@ void CrossSectionItemWrapper::getDimensions( double& w, double& d ) const
 
 void CrossSectionItemWrapper::setWidth( double w )
 {
-    prepareGeometryChange();
     width = w;
     update();
 }
@@ -45,7 +42,6 @@ void CrossSectionItemWrapper::setWidth( double w )
 
 void CrossSectionItemWrapper::setDepth( double d )
 {
-    prepareGeometryChange();
     depth = d;
     update();
 }
