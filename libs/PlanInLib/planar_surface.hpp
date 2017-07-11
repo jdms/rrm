@@ -256,7 +256,10 @@ class PlanarSurface {
         friend class cereal::access;
 
         template<typename Archive>
-        void serialize( Archive &ar, const std::uint32_t version );
+        void save( Archive &ar, const std::uint32_t version ) const;
+
+        template<typename Archive>
+        void load( Archive &ar, const std::uint32_t version );
 };
 
 template<typename Point3Type>
@@ -612,6 +615,83 @@ void PlanarSurface::getLowerBoundList( T &list ) const
             } 
         ); 
 }
+
+#if defined( BUILD_WITH_SERIALIZATION )
+    #include "cereal/types/array.hpp"
+    #include "cereal/types/vector.hpp"
+    #include "cereal/types/list.hpp"
+    #include "cereal/types/memory.hpp"
+
+    template<typename Archive>
+    void PlanarSurface::save( Archive &ar, const std::uint32_t version ) const
+    {
+        (void)(version);
+        ar(
+           discretization_X, 
+           discretization_Y, 
+           tolerance, 
+           global_discretization_state_, 
+           this_discretization_state_, 
+           nX_, 
+           nY_, 
+           num_vertices_, 
+           num_instances_, 
+           id_, 
+           f, 
+           coordinates_map_, 
+           origin, 
+           lenght, 
+           /* heights, */ 
+           interpolant_is_set_, 
+           mesh_is_set_, 
+           upper_bound_, 
+           lower_bound_, 
+           dependency_list_, 
+           extruded_surface_
+          );
+    }
+
+    template<typename Archive>
+    void PlanarSurface::load( Archive &ar, const std::uint32_t version )
+    {
+        (void)(version);
+        ar(
+           discretization_X, 
+           discretization_Y, 
+           tolerance, 
+           global_discretization_state_, 
+           this_discretization_state_, 
+           nX_, 
+           nY_, 
+           num_vertices_, 
+           num_instances_, 
+           id_, 
+           f, 
+           coordinates_map_, 
+           origin, 
+           lenght, 
+           /* heights, */ 
+           interpolant_is_set_, 
+           mesh_is_set_, 
+           upper_bound_, 
+           lower_bound_, 
+           dependency_list_, 
+           extruded_surface_
+          );
+
+        updateCache();
+    }
+
+    CEREAL_CLASS_VERSION(PlanarSurface, 1);
+
+#else
+    template<typename Archive>
+    void PlanarSurface::save( Archive &, const std::uint32_t ) const {}
+
+    template<typename Archive>
+    void PlanarSurface::load( Archive &, const std::uint32_t ) {}
+
+#endif /* BUILD_WITH_SERIALIZATION */
 
 #endif 
 

@@ -293,12 +293,12 @@ bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double>
 
 bool RulesProcessor::saveFile( std::string filename )
 {
-    return modeller_.save(filename);
+    return modeller_.saveBinary(filename);
 }
 
 bool RulesProcessor::loadFile( std::string filename )
 {
-    return modeller_.load(filename);
+    return modeller_.loadBinary(filename);
 }
 
 //{} // namespace RRM
