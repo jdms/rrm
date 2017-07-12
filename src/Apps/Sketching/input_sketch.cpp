@@ -181,6 +181,57 @@ QPolygonF InputSketch::getSketchFunctionGraph() const
 }
 
 
+QPolygonF InputSketch::getSketchFunctionGraphTopView() const
+{
+   QPolygonF curve_ =  getSketch();
+   QPolygonF curve1_;
+
+
+
+   if( curve_.size() < 2 ) return curve_;
+
+
+
+   curve1_.append( curve_[ 0 ] );
+
+
+   int start = 0;
+   for( auto i = 0; i < curve_.size() - 1; ++i )
+   {
+        if( curve_[ i ].y() != curve_[ i + 1 ].y() ) break;
+
+        curve1_.append( curve_[ i + 1 ] );
+        start = i+1;
+   }
+
+
+   if( start > (curve_.size() - 1) ) return curve1_;
+
+
+
+   if( curve_[ start ].y() <= curve_[ start+1 ].y() )
+   {
+       for( auto i = start; i < curve_.size() - 1; ++i )
+       {
+            if( curve_[ i ].y() >= curve_[ i + 1 ].y() ) continue;
+            curve1_.append( curve_[ i + 1 ] );
+       }
+
+    }
+   else if( curve_[ start ].y() >= curve_[ start + 1 ].y() )
+   {
+       for( auto i = start; i < curve_.size() - 1; ++i )
+       {
+            if( curve_[ i ].y() <= curve_[ i + 1 ].y() ) continue;
+            curve1_.append( curve_[ i + 1 ] );
+       }
+
+   }
+
+   return curve1_;
+}
+
+
 void InputSketch::clip( QPolygonF& pol_, int xmin_, int xmax_, int ymin_, int ymax_ )
 {
 

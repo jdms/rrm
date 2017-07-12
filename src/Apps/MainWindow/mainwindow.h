@@ -137,7 +137,7 @@ class MainWindow: public QMainWindow
 
 
         const bool SIDEBAR_VISIBLE = true;
-        const bool TOPVIEW_VISIBLE = false;
+        const bool TOPVIEW_VISIBLE = true;
         const bool CSECTION_VISIBLE = true;
 
         const bool CREATE_REGIONS_ALLOWED = true;

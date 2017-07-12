@@ -180,6 +180,8 @@ void ObjectItemWrapper::clearData()
 {
 //    if( object != nullptr )
 //        object->clear();
+
+    prepareGeometryChange();
     object = nullptr;
 
     clearCurve();
@@ -188,6 +190,8 @@ void ObjectItemWrapper::clearData()
 
 void ObjectItemWrapper::clearCurve()
 {
+    prepareGeometryChange();
+
     curve = QPainterPath();
 
     intersection_points.clear();

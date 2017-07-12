@@ -64,6 +64,8 @@ class InputSketch : public QGraphicsPathItem
         QPolygonF getSketch() const;
 
         QPolygonF getSketchFunctionGraph() const;
+        QPolygonF getSketchFunctionGraphTopView() const;
+
         static void clip( QPolygonF& pol_, int xmin_, int xmax_, int ymin_, int ymax_ );
 
 
