@@ -1,5 +1,6 @@
 #include <iostream>
 #include <QtWidgets/QCheckBox>
+#include <QHeaderView>
 
 #include "../Widgets/color_picker.h"
 #include "object_tree.h"
@@ -9,9 +10,9 @@ ObjectTree::ObjectTree( QWidget *parent )
 {
     setHeaderHidden( true );
     setColumnCount( 3 );
-    setColumnWidth( 0, 60 );
-    setColumnWidth( 1, 150 );
-    setColumnWidth( 2, 40 );
+//    setColumnWidth( 0, 60 );
+//    setColumnWidth( 1, 150 );
+//    setColumnWidth( 2, 40 );
 }
 
 void ObjectTree::filterAction( QTreeWidgetItem* item, std::size_t column )
@@ -55,6 +56,7 @@ ObjectTreeItem* ObjectTree::addVolumeChilds( const ObjectTreeItem::TreeItemType&
     connect( colorpicker, &ColorPicker::colorSelected, [=](){ filterAction( item, 2 ); } );
     connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
 
+
     return item;
 }
 
@@ -89,6 +91,9 @@ void ObjectTree::addObject( const std::size_t& id , int r, int g, int b )
     cp->setColor( QColor( r, g, b ) );
 
     objects[ id ] = item;
+
+
+//    header()->resizeSections();
 
 }
 

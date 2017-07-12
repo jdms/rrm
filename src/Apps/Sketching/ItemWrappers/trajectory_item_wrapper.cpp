@@ -147,6 +147,7 @@ void TrajectoryItemWrapper::clearData()
 
 void TrajectoryItemWrapper::clearCurve()
 {
+    prepareGeometryChange();
     curve = QPainterPath();
 
     intersection_points.clear();
