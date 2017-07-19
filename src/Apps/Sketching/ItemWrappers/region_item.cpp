@@ -26,7 +26,7 @@
 *  @date    13/12/2016
 */
 
-#include "RegionItem.hpp"
+#include "region_item.hpp"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>

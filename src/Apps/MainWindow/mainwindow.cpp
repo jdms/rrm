@@ -94,11 +94,11 @@ void MainWindow::createMainInterface()
     connect( canvas3d, &Canvas3d::decreaseSlider, sl_depth_csection,
              &RealSlider::decreaseValue );
 
-    QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
+    hb_central_widget = new QHBoxLayout( this );
     hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
-    QWidget* central_widget = new QWidget( this );
+    central_widget = new QWidget( this );
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
 
@@ -204,6 +204,12 @@ void MainWindow::createToolbarActions()
 
 
 
+    QAction* ac_show_simulator = new QAction( "Simulator", this );
+    ac_show_simulator->setCheckable( true );
+    connect( ac_show_simulator, &QAction::toggled, this, &MainWindow::setSimulationMode );
+
+
+
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_ra_intersection );
@@ -213,11 +219,16 @@ void MainWindow::createToolbarActions()
 
 
     QToolBar* tb_app_rrm = new QToolBar( this );
-    tb_app_rrm->addAction( ac_show_topview );
-    tb_app_rrm->addSeparator();
     tb_app_rrm->addActions( ag_region_sketching->actions() );
     tb_app_rrm->addSeparator();
     tb_app_rrm->addActions( ag_rules->actions() );
+    tb_app_rrm->addSeparator();
+    tb_app_rrm->addAction( ac_show_topview );
+    tb_app_rrm->addAction( ac_show_simulator );
+    tb_app_rrm->addSeparator();
+
+
+
     addToolBar( tb_app_rrm );
 
 
@@ -496,6 +507,31 @@ void MainWindow::setupController()
 
 
 
+void MainWindow::setSimulationMode( bool status )
+{
+    if( status == true )
+    {
+
+        canvas3d->setVisible( false );
+        ac_show_sidebar->setChecked( false );
+        ac_show_topview->setChecked( false );
+        hb_central_widget->insertWidget( 0, sketch_window );
+        dw_csection->setVisible( false );
+
+        return;
+    }
+
+    canvas3d->setVisible( true );
+    ac_show_sidebar->setChecked( true );
+    ac_show_topview->setChecked( true );
+    hb_central_widget->removeWidget( sketch_window );
+
+    dw_csection->setVisible( true );
+    dw_csection->setWidget( sketch_window );
+
+}
+
+
 void MainWindow::run_app()
 {
     controller->setCurrentColor( 255, 0, 0 );
@@ -503,6 +539,7 @@ void MainWindow::run_app()
 
     checkUndoRedo();
     loadDefaultValues();
+
 }
 
 

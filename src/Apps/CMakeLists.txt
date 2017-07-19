@@ -72,6 +72,7 @@ set( SKETCHING_HEADERS        Sketching/sketch_window.h
                               Sketching/ItemWrappers/trajectory_item_wrapper.h
                               Sketching/ItemWrappers/volume_item_wrapper.h
                               Sketching/ItemWrappers/crosssection_item_wrapper.h
+                              Sketching/ItemWrappers/region_item.hpp
                               Sketching/polyqt_utils.hpp )
 
 
@@ -91,6 +92,7 @@ set( SKETCHING_SOURCES        Sketching/sketch_window.cpp
                               Sketching/ItemWrappers/trajectory_item_wrapper.cpp
                               Sketching/ItemWrappers/volume_item_wrapper.cpp
                               Sketching/ItemWrappers/crosssection_item_wrapper.cpp
+                              Sketching/ItemWrappers/region_item.cpp
                               Sketching/polyqt_utils.cpp )
 
 
