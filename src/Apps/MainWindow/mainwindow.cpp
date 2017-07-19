@@ -7,6 +7,7 @@
 #include "Object_Tree/object_tree.h"
 #include "Sketching/csection_scene.h"
 #include "Sketching/topview_scene.h"
+#include "Simulator/FlowWindow.h"
 #include "About/about_widget.hpp"
 
 #include <QtWidgets>
@@ -15,6 +16,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopServices>
+
+#include "Tucano/BoundingBox3.hpp"
 
 
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
@@ -63,6 +66,7 @@ void MainWindow::createWindow()
     createSidebar();
     createCrossSectionInterface();
     createTopViewInterface();
+    createFlowDiagnosticsInterface();
     createToolbarActions();
     createMenuBar();
 
@@ -379,6 +383,24 @@ void MainWindow::createSidebar()
 }
 
 
+void MainWindow::createFlowDiagnosticsInterface()
+{
+
+    flow_window = new FlowWindow();
+    dw_flowdiag = new QDockWidget( "Flow Diagnostics" );
+    dw_flowdiag->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_flowdiag->setWidget( flow_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_flowdiag );
+
+    dw_flowdiag->setVisible( false );
+
+
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+    connect( flow_window, &FlowWindow::sendNumberOfRegions, csection_scene, &CSectionScene::addRegionsToScene );
+//    connect( flow_window, &FlowWindow::requestRegionsPosition, csection_scene, &CSectionScene::sendRegionsToFlow );
+
+}
+
 
 
 void MainWindow::createController()
@@ -509,9 +531,15 @@ void MainWindow::setupController()
 
 void MainWindow::setSimulationMode( bool status )
 {
+
+
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+
+    csection_scene->setModeSelectingRegions( status );
+    dw_flowdiag->setVisible( status );
+
     if( status == true )
     {
-
         canvas3d->setVisible( false );
         ac_show_sidebar->setChecked( false );
         ac_show_topview->setChecked( false );
@@ -756,6 +784,8 @@ void MainWindow::clearWindows()
     sketch_window->clear();
     topview_window->clear();
     pages_sidebar->clear();
+
+    setSimulationMode( false );
 }
 
 

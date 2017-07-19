@@ -41,6 +41,9 @@ ColorBar::ColorBar() : QWidget()
 	this->setMaximumWidth(width + 100);
 	this->setMaximumHeight(length + 60);
 
+    this->setMinimumWidth(width + 100);
+    this->setMinimumHeight(length + 60);
+
     is_gradient = true;
 
 }
@@ -220,7 +223,10 @@ void ColorBar::updateColorMap(const std::vector < QVector3D >& c, float _min, fl
 
 void ColorBar::clear()
 {
+
+	colors.clear();
     colors.push_back( QVector3D( 0.5, 0.5, 0.5 ) );
+	values.clear();
     values.push_back( 0.0 );
     min = 0.0;
     max = 0.0;

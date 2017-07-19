@@ -5,4 +5,3 @@
  *      Author: fmc
  */
 
-#include <Celer/Core/Physics/BoundingBox3.hpp>

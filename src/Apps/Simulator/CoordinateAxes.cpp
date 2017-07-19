@@ -21,6 +21,7 @@
 
 #include "CoordinateAxes.h"
 
+
 CoordinateAxes::CoordinateAxes()
 {
 
@@ -95,7 +96,6 @@ void CoordinateAxes::load()
 
 	std::vector<GLfloat> attributes;
 	std::vector<int> indices;
-
 
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str(), material_path.c_str())) 
 	{

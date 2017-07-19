@@ -70,7 +70,7 @@ class Scene3d: public QObject
         QString shader_directory;
         QColor current_color;
 
-        CoordinateAxes axes;
+        CoordinateAxes3d axes;
 
         QOpenGLContext* context;
         QSurface* surface;

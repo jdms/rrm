@@ -12,6 +12,7 @@ include_directories(
   
 add_subdirectory( Geology )
 add_subdirectory( Geometry )
+add_subdirectory( Geometry/Mesh )
 add_subdirectory( Base )
 
 

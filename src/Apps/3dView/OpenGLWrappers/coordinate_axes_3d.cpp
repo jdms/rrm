@@ -1,19 +1,20 @@
 #include "coordinate_axes_3d.h"
-
 #include <math.h>
 
-CoordinateAxes::CoordinateAxes()
+#include "3dView/tinyobjloader/tiny_obj_loader.h"
+
+CoordinateAxes3d::CoordinateAxes3d()
 {
 
 }
 
 
-CoordinateAxes::~CoordinateAxes()
+CoordinateAxes3d::~CoordinateAxes3d()
 {
 	resetBuffers();
 }
 
-void CoordinateAxes::init()
+void CoordinateAxes3d::init()
 {
 	vertex_array_coneaxes = 0;
 	vertex_buffer_faces_indices = 0;
@@ -24,7 +25,7 @@ void CoordinateAxes::init()
     origin = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
 }
 
-void CoordinateAxes::initShader( std::string directory )
+void CoordinateAxes3d::initShader( std::string directory )
 {
 	shader_axes = new Tucano::Shader("shader_axes", (directory + "shaders/orientationAxes.vert"), (directory + "shaders/orientationAxes.frag"), (directory + "shaders/orientationAxes.geom"), "", "");
     shader_axes->initialize();
@@ -33,7 +34,7 @@ void CoordinateAxes::initShader( std::string directory )
 
 }
 
-void CoordinateAxes::reloadShader()
+void CoordinateAxes3d::reloadShader()
 {
 	if (shader_axes)
 	{
@@ -41,7 +42,7 @@ void CoordinateAxes::reloadShader()
 	}
 }
 
-void CoordinateAxes::load()
+void CoordinateAxes3d::load()
 {
 
 	std::string filename = current_directory + "models/orientationaxes.obj";
@@ -136,7 +137,7 @@ void CoordinateAxes::load()
 	glBindVertexArray(0);
 }
 
-void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ )
+void CoordinateAxes3d::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ )
 {
 
 
@@ -209,7 +210,7 @@ void CoordinateAxes::draw( const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_,
 
 }
 
-void CoordinateAxes::resetBuffers()
+void CoordinateAxes3d::resetBuffers()
 {
 	/// Delete Shaders
 	if (shader_axes)
@@ -221,7 +222,7 @@ void CoordinateAxes::resetBuffers()
 	this->releaseOpenGLResources();
 }
 
-void CoordinateAxes::requestOpenGLResources()
+void CoordinateAxes3d::requestOpenGLResources()
 {
 	this->releaseOpenGLResources();
 
@@ -234,7 +235,7 @@ void CoordinateAxes::requestOpenGLResources()
 
 }
 
-void CoordinateAxes::releaseOpenGLResources()
+void CoordinateAxes3d::releaseOpenGLResources()
 {
 	if (vertex_array_coneaxes)
 	{
