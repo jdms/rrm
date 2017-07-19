@@ -9,6 +9,7 @@
 #include "ItemWrappers/coordinate_axes_2d.h"
 #include "ItemWrappers/volume_item_wrapper.h"
 #include "ItemWrappers/object_item_wrapper.h"
+#include "ItemWrappers/region_item.hpp"
 
 
 
@@ -85,6 +86,12 @@ class SketchScene: public QGraphicsScene
         void enableAxes( bool status );
 
 
+        void addRegionsToScene( int nregions );
+        void setRegionsVisibility( bool status );
+        void removeAllRegions();
+
+
+
 
     signals:
 
@@ -155,6 +162,7 @@ class SketchScene: public QGraphicsScene
 
         std::map< std::size_t, ObjectItemWrapper* > objects;
         std::map< double, ImageData > backgrounds;
+        std::map< std::size_t, RRM::RegionItem* > regions;
 
         bool is_sketch_enabled;
         bool is_delete_enabled;

@@ -634,6 +634,51 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 
 
+void SketchScene::addRegionsToScene( int nregions )
+{
+    std::size_t number_of_regions = static_cast< std::size_t > ( nregions );
+
+    setRegionsVisibility( false );
+
+    for( auto i = 0; i < number_of_regions; ++i )
+    {
+        std::size_t id = i + 1;
+
+        if( regions.count( id ) != 0 ) continue;
+        regions[ id ] = new RRM::RegionItem( id );
+//        regions[ id ]->setPos();
+        addItem( regions[ id ] );
+    }
+
+    setRegionsVisibility( true );
+}
+
+
+
+void SketchScene::setRegionsVisibility( bool status )
+{
+    for( auto &it: regions )
+    {
+        RRM::RegionItem* const& region = ( it.second );
+        region->setVisible( status );
+    }
+
+}
+
+
+void SketchScene::removeAllRegions()
+{
+    for( auto &it: regions )
+    {
+        delete it.second;
+    }
+    regions.clear();
+}
+
+
+
+
+
 void SketchScene::enableAxes( bool status )
 {
     is_axes_enable = status;

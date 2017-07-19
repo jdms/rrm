@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QHBoxLayout>
+#include <QWidget>
 
 
 class QActionGroup;
@@ -59,6 +61,8 @@ class MainWindow: public QMainWindow
 
         void showHelp();
 
+        void setSimulationMode( bool status );
+
 
 
     private:
@@ -97,6 +101,9 @@ class MainWindow: public QMainWindow
         int app_orig_x;
         int app_orig_y;
 
+        QHBoxLayout* hb_central_widget;
+        QWidget* central_widget;
+
         QMenu *mn_file;
         QMenu *mn_help;
         QMenu *mn_windows;
@@ -119,7 +126,6 @@ class MainWindow: public QMainWindow
         QAction* ac_undo;
         QAction* ac_redo;
 
-//        HelpDialog help;
         AboutWidget* aboutRRM;
 
         Controller* controller;
