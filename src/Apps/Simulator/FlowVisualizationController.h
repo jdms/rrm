@@ -25,6 +25,12 @@
 
 //#include "Model/CrossSection.hpp"
 
+// OpenVolume Mesh
+#include "Core/Geometry/Mesh/OpenVolumeMeshDefines.hpp"
+
+// Flow Model
+#include "FlowModel/FlowModel.hpp"
+
 #include <vector>
 #include <random>
 #include <set>
@@ -38,8 +44,6 @@
 #include "ProgressCounter.h"
 #include "FlowDiagnosticsInterface.hpp"
 #include "ColorMap.h"
-
-
 #include <Eigen/Dense>
 
 class FlowVisualizationController: public QWidget
@@ -48,14 +52,9 @@ class FlowVisualizationController: public QWidget
 
     public:
 
-        typedef qreal		 	 	Real;
-
         enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
 
-
         FlowVisualizationController( QWidget* parent = 0 );
-
-
 
         void readSkeletonFiles( const std::string& filename );
         void setSkeletonData( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
@@ -66,41 +65,44 @@ class FlowVisualizationController: public QWidget
 
         void generateCornerPoint();
         void generateUnstructured();
-
-        void updateSurfaces( std::vector< float >& vertices, std::vector< unsigned int >& faces );
-        void updateCornerPoint( std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces );
-        void updateVolumetricMesh( std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces );
+		        
+		void updateCornerPoint(std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
+		void updateVolumetricMesh(std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
         void getSurfacesFromCrossSection();
 
         void computeFlowProperties();
 
-        std::vector< double > getVerticesPropertyValues( std::string name_of_property, std::string method, double& min, double& max );
-        std::vector< double > getFacesPropertyValues( std::string name_of_property, std::string method, double& min, double& max );
-        std::vector< double > vectorToScalarProperties(const std::vector<double> &values, std::string type, double& min , double& max  );
-
         void setPropertyArea( const int np, const std::vector< double >& values , const std::vector< double >& perm, const std::vector< double >& poros, const std::vector< double >& visc );
         void getPropertyArea( int& np, std::vector< double >& values , std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc );
 
-        void setWellsValues( const int nw,  const std::vector< unsigned int >& type, const std::vector< double >& value, const std::vector< int >& sign );
-        void getWellsValues( int& nw,  std::vector< unsigned int >& type, std::vector< double >& value, std::vector< int >& sign );
+		void setWellsValues(const int nw, const std::vector< unsigned int >& type, const std::vector< double >& value, const std::vector< int >& sign, const std::vector<Eigen::Vector4d>& positions, std::vector< Eigen::Vector2d>& range);
+		void getWellsValues(int& nw, std::vector< unsigned int >& type, std::vector< double >& value, std::vector< int >& sign);
+      
 
+		bool isVolumetricBuilt() const;
+		bool isUserInputOk() const;
+		bool isSurfaceLoaded() const;
+		bool arePropertiesComputed() const;
+       
+		void setVolumeDimensions(double width_, double height_, double depth_);
 
-        void clear();
+		void setCurrentColormap(ColorMap::COLORMAP cm);
+		ColorMap::COLORMAP getCurrentColormap() const;
 
+		void clear();
 
-		bool isVolumetricBuilt(){ return this->is_volumetric_built; }
-		bool isUserInputOk() { return this->user_input_ok; }
-		bool isSurfaceLoaded()      { return this->is_surface_loaded; }
-		bool arePropertiesComputed() { return are_properties_computed; }
+		/// OpenVolumeMesh Interface	 ----- ---------------------------------------->>
+		void loadPropertiesTetrahedron();
+		void loadPropertiesHexahedron();
 
-        std::map< double, QVector3D> getRegionsColor(std::vector< QColor >& color_by_cells, std::vector< double >& values, ColorMap::COLORMAP current_colormap, std::vector<int>& _ids);
+		void updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max);
+		void updateHexahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max);
+		
+		std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> getPtrHexahedralMesh();	
+		std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> getPtrTetrahedralMesh();	
 
-
-        void setVolumeDimensions( double width_, double height_, double depth_ )
-        {
-            code_interface.setVolumeDimensions( width_, height_, depth_ );
-        }
-
+		/// @TODO Later, move this fucntions to FlowvizualizationController 
+		Eigen::Affine3d FlowVisualizationController::getModelMatrix() const;
 
     public slots:
 
@@ -108,6 +110,11 @@ class FlowVisualizationController: public QWidget
         inline void setCurrentMethod( const FlowVisualizationController::MESHING_METHOD& t ){ current_method = t; }
         inline  FlowVisualizationController::MESHING_METHOD setCurrentMethod(){ return current_method; }
 
+		/// @TODO June 2017
+		void exportDerivedQuantities();
+		void clearComputedQuantities();
+		void getUpscalledPermeability(std::string& _result);
+		void getPoreVolume();
 
         void exportSurfacetoVTK();
         void exportVolumetoVTK();
@@ -119,12 +126,7 @@ class FlowVisualizationController: public QWidget
     signals:
 
         void showToolbar( bool );
-
-        void propertybyVertexComputed( std::string, std::string );
-        void propertybyFaceComputed( std::string, std::string );
-
-        void setColorMap();
-
+		        
         void clearPropertiesMenu();
         void clearAll();
 		
@@ -139,8 +141,7 @@ class FlowVisualizationController: public QWidget
 
 
     private:
-
-
+		
         ProgressCounter counter;
 
         bool is_surface_loaded;
@@ -150,9 +151,12 @@ class FlowVisualizationController: public QWidget
 
         MESHING_METHOD current_method;
         FlowDiagnosticsInterface code_interface;
-
+		
 		ColorMap colormap;
+		ColorMap::COLORMAP current_colormap_;
 
+		RRM::FlowModel flow_model_;
+			
 };
 
 #endif // FLOWVISUALIZATIONCONTROLLER_H

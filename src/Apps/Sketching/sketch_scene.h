@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QString>
 
+#include "Eigen/Dense"
+
 #include "Sketching/input_sketch.h"
 #include "ItemWrappers/coordinate_axes_2d.h"
 #include "ItemWrappers/volume_item_wrapper.h"
@@ -73,6 +75,7 @@ class SketchScene: public QGraphicsScene
         void setModeEditingBoundary();
         void setModeMovingImage();
         void setModeResizingImage( bool status );
+        void setModeSelectingRegions( bool status );
 
         void enableDeletingCurves( bool status );
         void selectBounderingRegion();
@@ -90,6 +93,11 @@ class SketchScene: public QGraphicsScene
         void setRegionsVisibility( bool status );
         void removeAllRegions();
 
+
+
+    public slots:
+
+        void sendRegionsToFlow( std::map<int, Eigen::Vector3f> & region_point );
 
 
 
@@ -142,7 +150,7 @@ class SketchScene: public QGraphicsScene
         };
 
         enum class UserInteraction { SKETCHING, SELECTING, MOVING_IMAGE, RESIZING_IMAGE,
-                                     EDITING_BOUNDARY, EDITING_SCENE };
+                                     EDITING_BOUNDARY, EDITING_SCENE, SELECTING_REGION };
 
 
         double current_csection;

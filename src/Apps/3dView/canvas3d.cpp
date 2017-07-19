@@ -8,7 +8,6 @@
 #include <QFileDialog>
 
 
-
 Canvas3d::Canvas3d()
 {
     createScene();

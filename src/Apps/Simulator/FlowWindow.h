@@ -34,13 +34,25 @@
 #include <QResizeEvent>
 
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QMenuBar>
 
 #include "NormalMovableCrossSectionFlow.H"
 #include "FlowVisualizationCanvas.h"
 #include "ColorBar.h"
-#include "PoreVolumeResultsForm.h"
 
-#include "FlowParametersBar.h"
+
+#include "WellModule/WellScene.hpp"
+#include "WellModule/WellCanvas.hpp"
+#include "WellModule/WellWidget.hpp"
+
+#include "RegionModule/RegionWidget.hpp"
+
+#include "FluidModule/FluidWidget.hpp"
+
+#include "FlowModel/PropertyProfile.hpp"
 
 class FlowWindow : public  QMainWindow
 {
@@ -57,15 +69,11 @@ class FlowWindow : public  QMainWindow
         void updateParameterFields();
         QString getCurrentDirectory();
 
-
         void keyPressEvent( QKeyEvent *event );
         void resizeEvent(QResizeEvent *event);
 
-
     protected:
-
         void reset();
-
 
     public slots:
 
@@ -77,10 +85,6 @@ class FlowWindow : public  QMainWindow
 
         void startProgressBar( const unsigned int& min, const unsigned int& max );
         void updateProgressBar( const unsigned int& value );
-
-
-        void addVertexProperty( std::string name, std::string dimension );
-        void addFaceProperty( std::string name, std::string dimension );
 
         void clearPropertiesMenu();
 
@@ -99,6 +103,10 @@ class FlowWindow : public  QMainWindow
             controller->setVolumeDimensions( width_, height_, depth_ );
         }
 		
+		/// @FIXME
+		void boundingBoxChnaged(bool _is_new_model);
+
+
     signals:
 
         void getSurfaceCrossSection();
@@ -125,20 +133,14 @@ class FlowWindow : public  QMainWindow
         QAction* qexportresults;
 
 
-        QAction* ac_cornerpoint;
-        QAction* ac_unstructured;
+        QAction* action_cornerpoint;
+        QAction* action_unstructured;
 
         QMenu *mn_export;
         QToolButton* tbn_export;
-
-
-        QDockWidget *qdockparametersBar;
-        FlowParametersBar parametersBar;
-
-
+		
         FlowVisualizationCanvas *canvas;
         FlowVisualizationController *controller;
-
 
         QDockWidget * qdockcrosssectionnormalBar;
         NormalMovableCrossSectionFlow crosssectionnormalBar;
@@ -154,43 +156,85 @@ class FlowWindow : public  QMainWindow
 
         QToolButton* tbn_coloringbyvertex;
         QToolButton* tbn_coloringbyface;
-        QMenu* mn_coloring_byvertex;
-        QMenu* mn_coloring_byfaces;
-
-        std::vector< QMenu *> mn_vectorsproperties_byvertex;
-        std::vector< QRadioButton *> rd_vectormethods_byvertex;
-        QWidgetAction* wa_vectormethods_byvertex;
-        std::vector<QAction* > ac_vertex_property;
-
-
-        std::vector< QMenu *> mn_vectorsproperties_byface;
-        std::vector< QRadioButton *> rd_vectormethods_byface;
-        QWidgetAction* wa_vectormethods_byface;
-        std::vector<QAction* > ac_face_property;
 
 
         QHBoxLayout *hb_mainwindow;
         ColorBar colorbar;
+		ColorMap colormap;
         QToolButton* tbn_colormaps;
         QMenu* mn_colormaps;
 
-        QAction* ac_constant;
-		QAction* ac_cool_to_warm;
-        QAction* ac_hot;
-        QAction* ac_cool;
-        QAction* ac_parula;
-        QAction* ac_spring;
-        QAction* ac_summer;
-        QAction* ac_copper;
-        QAction* ac_polar;
-        QAction* ac_winter;
-		QAction* ac_jet;
+        QAction* action_constant;
+		QAction* action_cool_to_warm;
+        QAction* action_hot;
+        QAction* action_cool;
+        QAction* action_parula;
+        QAction* action_spring;
+        QAction* action_summer;
+        QAction* action_copper;
+        QAction* action_polar;
+        QAction* action_winter;
+		QAction* action_jet;
 
-        QAction* ac_showregions;
-
-        PoreVolumeResultsForm porevolumeform;
+        QAction* action_showregions;
+       
         bool are_regionsdefined;
         bool is_cornerpoint;
+		bool bounding_box_changed_;
+
+		/// New Interface for June
+
+		QAction* action_exportDerivedQuantities_;
+		QAction* action_clearComputedQuantities_;
+		QAction* action_upscalledPermeability_;
+
+		/// OpenVolume Mesh Integration ---------------------------------------------->
+		void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> _ptr_mesh);
+		void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> _ptr_mesh);
+
+		std::vector<std::tuple<QAction*, QMetaObject::Connection, RRM::PropertyProfile> >  action_vertex_properties;
+		std::vector<std::tuple<QAction*, QMetaObject::Connection, RRM::PropertyProfile> >  action_cell_properties;
+		RRM::PropertyProfile current_property_;
+
+		void updateModelColors(const RRM::PropertyProfile& _profile);
+
+		void clearVertexPropertiesActions();
+		void clearCellPropertiesActions();
+
+		QMenu * menu_vertex_properties;
+		QMenu * menu_cell_properties;
+
+		QTabWidget * flow_tab_widget_;
+
+		///@FIXME 2017
+		QMenu * flowModule_view_;
+		QMenu * flowModule_diagnostic_;
+
+		void createWellModule();
+		RRM::WellCanvas*         well_canvas_;
+		RRM::WellScene*          well_scene_;
+		RRM::WellWidget*		 well_parameters_;
+		QDockWidget*			 dockWellContainer_;
+		QDockWidget*			 dockWellSceneContainer_;
+		QAction * view_well_module_;
+		QAction * view_well_visualization_;
+		QPushButton * fitView_;
+
+		void createRegionModule();
+		RRM::RegionWidget*   region_parameters_;
+		QDockWidget*         dockRegionContainer_;
+		QAction * view_region_module_;
+
+        void createFluidModule();
+        RRM::FluidWidget*   fluid_parameters_;
+        QDockWidget*         dockFluidContainer_;
+        QAction * view_fluid_module_;
+
+
+		QTextEdit up_scaled_;
+
+
+
 
 
 };

@@ -29,143 +29,22 @@ Mesh::Mesh()
     show_vertices = true;
     show_edges = true;
     show_faces = true;
-    show_bbox = true;
+    show_bbox = false;
 	this->centre_ = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
 	float depth_ = 0.0f;
 
     apply_crosssection_clipping = false;
 }
 
-
 void Mesh::setMeshType( Mesh::TYPE t )
 {
     mesh_type = t;
 }
 
-void Mesh::setVertices( const std::vector< float >& v )
-{
-    vertices.clear();
-    std::copy( v.begin(), v.end(), std::back_inserter( vertices ) );
-}
-
-
-void Mesh::setVertice( int id, float x, float y, float z ){
-
-    if ( isValidVertice( id ) == false ) return;
-
-    vertices[ 3*id ] = x ;
-    vertices[ 3*id + 1 ] = y ;
-    vertices[ 3*id + 2 ] = z ;
-
-}
-
-
-void Mesh::getVertice( int id, float& x, float& y, float& z )
-{
-
-    if ( isValidVertice( id ) == false ) return;
-
-    x = vertices[ 3*id ];
-    y = vertices[ 3*id + 1 ];
-    z = vertices[ 3*id + 2 ];
-}
-
-
-void Mesh::setEdge( int id, const std::vector< unsigned int >& e )
-{
-
-    if( isValidEdge( id ) == false ) return;
-
-    for( int i = 0; i < 2; ++i )
-    {
-        wireframe[ 2*i + i ] = e[ i ];
-    }
-
-}
-
-
-void Mesh::setWireframe( const std::vector< unsigned int >& w )
-{
-    wireframe.clear();
-    std::copy( w.begin(), w.end(), std::back_inserter( wireframe ) );
-}
-
-
-void Mesh::setFace( int id, const std::vector< unsigned int >& f )
-{
-
-    if( isValidFace( id ) == false ) return;
-
-    int vertices_number = getNumberofVerticesbyFace();
-    for( int i = 0; i < vertices_number; ++i )
-    {
-        faces[ vertices_number*id + i ] = f[ i ];
-    }
-
-}
-
-
-void Mesh::setFaces( const std::vector< unsigned int >& f ){
-
-    faces.clear();
-    std::copy( f.begin(), f.end(), std::back_inserter( faces ) );
-
-}
-
-
-std::vector< unsigned int > Mesh::getFace( int id )
-{
-
-
-    std::vector< unsigned int > f;
-
-    if( isValidFace( id ) == false ) return f;
-
-    int vertices_number = getNumberofVerticesbyFace();
-    f.resize( vertices_number );
-
-    for( int i = 0; i < vertices_number; ++i )
-    {
-        f[ i ] = faces[ vertices_number*id + i ];
-    }
-
-    return f;
-
-}
-
-
 void Mesh::setConstantColor( const float r, const float g, const float b )
 {
-    int number_of_vertices = getNumberofVertices();
-
-//    std::vector <float> color;
-    colors.clear();
-    colors.resize( 3*number_of_vertices );
-
-    for( int i = 0; i < number_of_vertices; ++i )
-    {
-        colors[ 3*i ] = r;
-        colors[ 3*i + 1 ] = g;
-        colors[ 3*i + 2 ] = b;
-    }
-
-
-    loadColorsbyVertices();
-//    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-//    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
-
+    
 }
-
-
-void Mesh::setColor( const std::vector< float >& vcolors  )
-{
-
-    colors = vcolors;
-//    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-//    glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
-
-}
-
 
 void Mesh::setCrossSectionClippingEquation(const float& a, const float& b, const float& c, const float& d, Eigen::Vector3f _centre)
 {
@@ -178,402 +57,57 @@ void Mesh::setCrossSectionClippingEquation(const float& a, const float& b, const
     coefDCrossSectionEquation = d;
 }
 
-
 void Mesh::disableCrossSection()
 {
     apply_crosssection_clipping = false;
 
 }
 
-
-bool Mesh::isValidVertice( const int id )
-{
-    int vertices_number = getNumberofVertices();
-
-    if( id < 0 || id >= vertices_number ) return false;
-
-    return true;
-
-}
-
-
-bool Mesh::isValidEdge( const int id )
-{
-    int edges_number = getNumberofEdges();
-
-    if( id < 0 || id >= edges_number ) return false;
-
-    return true;
-
-}
-
-
-bool Mesh::isValidFace( const int id )
-{
-    int faces_number = getNumberofFaces();
-
-    if( id < 0 || id >= faces_number ) return false;
-
-    return true;
-
-}
-
-
-int Mesh::getNumberofVerticesbyFace()
-{
-
-    int vertices_number = 3;
-
-    if ( mesh_type == TYPE::QUADRILATERAL )
-    {
-        vertices_number = 4;
-    }
-    else if ( mesh_type == TYPE::TETRAHEDRAL )
-    {
-        vertices_number = 4;
-    }
-    else if ( mesh_type == TYPE::HEXAHEDRAL )
-    {
-        vertices_number = 8;
-    }
-
-    return vertices_number;
-
-}
-
-
-
-void Mesh::buildTrianglesFacesList( vector< unsigned int >& triangles )
-{
-
-    if( mesh_type == TYPE::QUADRILATERAL )
-        getTrianglesfromRectangles( triangles  );
-    else if( mesh_type == TYPE::TETRAHEDRAL )
-        getTrianglesfromTetrahedros( triangles  );
-
-}
-
+/// Dimension in Qt Space
 float Mesh::getDepth() const
 {
 	return this->depth_;
 }
 
-void Mesh::buildBoundingBox()
+std::tuple<Eigen::Vector3f, Eigen::Vector3f> Mesh::getBoudingBoxDimension() const
 {
-
-    if( vertices.empty() == true ) return;
-
-    number_of_vertices = getNumberofVertices();
-
-    vector< Eigen::Vector3f > normalized_vertices;
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
-
-	/// Here is where the bounding box "y" (depth) can be grab.
-	/// For some reason the bounding box location in 3D varies
-    Celer::BoundingBox3< float > bbox_mesh;
-    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
-
-
-//	std::cout << "Min - Max " << std::endl;
-//	std::cout << bbox_mesh.Min() << std::endl;
-//	std::cout << bbox_mesh.Max() << std::endl;
-
-
-	std::cout << ( bbox_mesh.Min().y() ) + ( bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f  << std::endl;
-
-	this->depth_ = (bbox_mesh.Min().y()) + ((bbox_mesh.Max().y() - bbox_mesh.Min().y())*0.5f);
-
-
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-		normalized_vertices[it] = (normalized_vertices[it] - bbox_mesh.center()) / (bbox_mesh.diagonal()*0.25f);
-
-
-    max[ 0 ] = normalized_vertices[ 0 ]( 0 );
-    min[ 0 ] = normalized_vertices[ 0 ]( 0 );
-
-    max[ 1 ] = normalized_vertices[ 0 ]( 1 );
-    min[ 1 ] = normalized_vertices[ 0 ]( 1 );
-
-    max[ 2 ] = normalized_vertices[ 0 ]( 2 );
-    min[ 2 ] = normalized_vertices[ 0 ]( 2 );
-
-    for( unsigned int i = 1; i < number_of_vertices; i++ )
-    {
-        if( normalized_vertices[ i ]( 0 ) > max[ 0 ] ) max[ 0 ] = normalized_vertices[ i ]( 0 );
-        if( normalized_vertices[ i ]( 0 ) < min[ 0 ] ) min[ 0 ] = normalized_vertices[ i ]( 0 );
-
-        if( normalized_vertices[ i ]( 1 ) > max[ 1 ] ) max[ 1 ] = normalized_vertices[ i ]( 1 );
-        if( normalized_vertices[ i ]( 1 ) < min[ 1 ] ) min[ 1 ] = normalized_vertices[ i ]( 1 );
-
-        if( normalized_vertices[ i ]( 2 ) > max[ 2 ] ) max[ 2 ] = normalized_vertices[ i ]( 2 );
-        if( normalized_vertices[ i ]( 2 ) < min[ 2 ] ) min[ 2 ] = normalized_vertices[ i ]( 2 );
-
-    }
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-//fim de 3)
-
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-//fim de 5)
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-//fim de 7)
-
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-
-
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( max[ 2 ] );
-
-
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( max[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-
-
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( min[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
-    bounding_box.push_back( min[ 0 ] );
-    bounding_box.push_back( max[ 1 ] );
-    bounding_box.push_back( min[ 2 ] );
+	return std::make_tuple(dim_min, dim_max);
 }
-
-
-void Mesh::getBoundingBox( float &xm, float &xM, float &ym, float &yM, float &zm, float &zM )
-{
-    xm = min[ 0 ];
-    xM = max[ 0 ];
-    ym = min[ 1 ];
-    yM = max[ 1 ];
-    zm = min[ 2 ];
-    zM = max[ 2 ];
-}
-
-
-void Mesh::getTrianglesfromRectangles( vector< unsigned int >& triangles  )
-{
-
-    std::size_t nquads = faces.size()/4;
-
-    triangles.clear();
-
-    for( int i = 0; i < (int) nquads; ++i )
-    {
-        triangles.push_back( ( unsigned int )faces[ 4*i ] );
-        triangles.push_back( ( unsigned int )faces[ 4*i + 1 ] );
-        triangles.push_back( ( unsigned int )faces[ 4*i + 2 ] );
-
-        triangles.push_back( ( unsigned int )faces[ 4*i + 2 ] );
-        triangles.push_back( ( unsigned int )faces[ 4*i + 3 ] );
-        triangles.push_back( ( unsigned int )faces[ 4*i ] );
-    }
-
-}
-
-
-void Mesh::getTrianglesfromTetrahedros( vector< unsigned int >& triangles  )
-{
-
-    std::size_t nquads = faces.size()/4;
-
-    triangles.clear();
-
-    for( int i = 0; i < (int)nquads; ++i )
-    {
-
-        triangles.push_back( ( unsigned int ) faces[ 4*i ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 1 ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 3 ] );
-
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 1 ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 2 ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 3 ] );
-
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 2 ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 3 ] );
-
-        triangles.push_back( ( unsigned int ) faces[ 4*i ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 1 ] );
-        triangles.push_back( ( unsigned int ) faces[ 4*i + 2 ] );
-
-    }
-
-}
-
-
-void Mesh::buildWireframeList()
-{
-
-    if( mesh_type == TYPE::TRIANGLES )
-        getWireframeofTriangles();
-    else if( mesh_type == TYPE::QUADRILATERAL )
-        getWireframeofQuadrilaterals();
-
-}
-
-
-void Mesh::getWireframeofTriangles()
-{
-    if( faces.size() < 3 ) return;
-
-    int nfaces = faces.size()/3;
-
-    for( int i = 0; i < nfaces; i++ )
-    {
-
-        wireframe.push_back( faces[ 3*i ] );
-        wireframe.push_back( faces[ 3*i + 1 ] );
-
-        wireframe.push_back( faces[ 3*i + 1 ] );
-        wireframe.push_back( faces[ 3*i + 2 ] );
-
-        wireframe.push_back( faces[ 3*i + 2 ] );
-        wireframe.push_back( faces[ 3*i ] );
-
-    }
-
-}
-
-
-void Mesh::getWireframeofQuadrilaterals()
-{
-    if( faces.size() < 4 ) return;
-
-    int nfaces = faces.size()/4;
-
-    for( int i = 0; i < nfaces; ++i )
-    {
-
-        wireframe.push_back( faces[ 4*i ] );
-        wireframe.push_back( faces[ 4*i + 1 ] );
-
-        wireframe.push_back( faces[ 4*i + 1 ] );
-        wireframe.push_back( faces[ 4*i + 2 ] );
-
-        wireframe.push_back( faces[ 4*i + 2 ] );
-        wireframe.push_back( faces[ 4*i + 3 ] );
-
-        wireframe.push_back( faces[ 4*i + 3 ] );
-        wireframe.push_back( faces[ 4*i ] );
-
-    }
-}
-
-
 
 void Mesh::showVertices( bool status )
 {
     show_vertices = status;
 }
 
-
 void Mesh::showEdges( bool status )
 {
     show_edges = status;
 }
-
 
 void Mesh::showFaces( bool status )
 {
     show_faces = status;
 }
 
-
-
 bool Mesh::showVertices() const
 {
     return show_vertices;
 }
-
 
 bool Mesh::showEdges() const
 {
     return show_edges;
 }
 
-
 bool Mesh::showFaces() const
 {
     return show_faces;
 }
 
-
 void Mesh::showBoundingBox( bool status )
 {
     show_bbox = status;
 }
-
 
 bool Mesh::showBoundingBox() const
 {
@@ -584,6 +118,9 @@ void Mesh::reloadShader()
 {
     shader_mesh->reloadShaders();
     shader_mesh_cornerpoint->reloadShaders();
+	well_shader->reloadShaders();
+	quad_phong_->reloadShaders();
+	shader_bbox->reloadShaders();
 }
 
 void Mesh::initializeShader( std::string directory )
@@ -594,7 +131,7 @@ void Mesh::initializeShader( std::string directory )
                                                      (directory + "shaders/FlowDefault.frag"),
                                                      (directory + "shaders/FlowDefault.geom"),
                                                       "", "") ;
-    shader_mesh->initialize();
+	shader_mesh->initialize();
 
 
 
@@ -602,512 +139,148 @@ void Mesh::initializeShader( std::string directory )
                                                      (directory + "shaders/FlowQuadrilaterals.frag"),
                                                      (directory + "shaders/FlowQuadrilaterals.geom"),
                                                       "", "") ;
-
-
-
     shader_mesh_cornerpoint->initialize();
-
-    glGenVertexArrays( 1, &va_mesh );
-    glBindVertexArray( va_mesh );
-
-
-    glGenBuffers( 1, &bf_vertices_mesh );
-    glBindBuffer( GL_ARRAY_BUFFER, bf_vertices_mesh );
-    glBufferData( GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-    glEnableVertexAttribArray( 0 );
-
-
-    glGenBuffers( 1, &bf_faces_mesh );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-
-    glGenBuffers( 1, &bf_wireframe_mesh );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-
-    glGenBuffers( 1, &bf_colors_mesh );
-    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-    glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-    glEnableVertexAttribArray( 2 );
-
-
-
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-
-    glBindVertexArray( 0 );
-
-
-    shader_bbox = new Tucano::Shader(  "shader_bbox", ( directory + "shaders/vertex_bbox_shader.vert" ),
-                                                      ( directory + "shaders/fragment_bbox_shader.frag" ), "", "", "" );
+	
+    shader_bbox = new Tucano::Shader(  "shader_bbox", ( directory + "shaders/BoundingBox.vert" ),
+                                                      ( directory + "shaders/BoundingBox.frag" ), 
+													  (directory + "shaders/BoundingBox.geom"), "", "");
     shader_bbox->initialize();
 
-    glGenVertexArrays( 1, &va_bbox );
-    glBindVertexArray( va_bbox );
-
-        glGenBuffers( 1, &bf_bbox_mesh );
-        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
-        glBufferData( GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW );
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-        glEnableVertexAttribArray( 0 );
+	well_shader = new Tucano::Shader("well shader", (directory + "shaders/well_shader.vert"),
+									                (directory + "shaders/well_shader.frag"), "", "", "");
+	well_shader->initialize();
 
 
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glBindVertexArray( 0 );
-
-}
-
-
-
-
-void Mesh::getTrianglesfromQuadrilaterals( unsigned int id, std::vector< unsigned int >& triangles )
-{
-    triangles.push_back( ( unsigned int )faces[ 4*id ] );
-    triangles.push_back( ( unsigned int )faces[ 4*id + 1 ] );
-    triangles.push_back( ( unsigned int )faces[ 4*id + 3 ] );
-    triangles.push_back( ( unsigned int )faces[ 4*id + 2 ] );
-
-}
+	quad_phong_ = new Tucano::Shader("Quad Phong", (directory + "shaders/QuadPhong.vert"),
+												   (directory + "shaders/QuadPhong.frag"),
+											       (directory + "shaders/QuadPhong.geom"),	
+													"", "");
+	quad_phong_->initialize();
 
 
-void Mesh::getTrianglesfromTetrahedros( unsigned int id, std::vector< unsigned int >& triangles )
-{
-
-    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
-
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
-
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 3 ] );
-
-    triangles.push_back( ( unsigned int ) faces[ 4*id ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 1 ] );
-    triangles.push_back( ( unsigned int ) faces[ 4*id + 2 ] );
-
-}
+	// Well Points
+	entities_["WellPoints"] = OpenGLGeometry();
+	entities_["WellLines"] = OpenGLGeometry();
+	entities_["Sketchies"] = OpenGLGeometry();
+	entities_["Hexahedron"] = OpenGLGeometry();
+	entities_["Tetrahedron"] = OpenGLGeometry();
+	entities_["BoundingBox"] = OpenGLGeometry();
 
 
-void Mesh::getTrianglesfromHexahedros( unsigned int id, std::vector< unsigned int >& triangles )
-{
+	for (auto& gl : entities_)
+	{
+		glGenVertexArrays(1, &gl.second.vertexArray_);
+		glBindVertexArray(gl.second.vertexArray_);
 
+		glGenBuffers(1, &gl.second.vertexBuffer_vertices_);
+		glBindBuffer(GL_ARRAY_BUFFER, gl.second.vertexBuffer_vertices_);
+		glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glEnableVertexAttribArray(0);
 
-}
+		glGenBuffers(1, &gl.second.vertexBuffer_normals_);
+		glBindBuffer(GL_ARRAY_BUFFER, gl.second.vertexBuffer_normals_);
+		glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glEnableVertexAttribArray(1);
 
+		glGenBuffers(1, &gl.second.vertexBuffer_colors_);
+		glBindBuffer(GL_ARRAY_BUFFER, gl.second.vertexBuffer_colors_);
+		glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		glEnableVertexAttribArray(2);
 
-void Mesh::getCoordfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  )
-{
+		glGenBuffers(1, &gl.second.vertexBuffer_elemets_);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl.second.vertexBuffer_elemets_);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
 
-    std::size_t vertices_number = triangles.size();
-
-    auto i = 0;
-    unsigned int id = 0;
-    for( i = 0; i < vertices_number; ++i )
-    {
-
-
-        id = triangles[ i ];
-        vertices_coord.push_back( vertices[ 3*id ] );
-        vertices_coord.push_back( vertices[ 3*id + 1 ] );
-        vertices_coord.push_back( vertices[ 3*id + 2 ] );
-
-    }
-
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		
+	}
 
 }
-
-
-void Mesh::getColorsfromIndex( std::vector< unsigned int > triangles, std::vector< float >& vertices_coord  )
-{
-    std::size_t vertices_number = triangles.size();
-    for( auto i = 0; i < vertices_number; ++i )
-    {
-
-        unsigned int id = triangles[ i ];
-        vertices_coord.push_back( colors[ 3*id ] );
-        vertices_coord.push_back( colors[ 3*id + 1 ] );
-        vertices_coord.push_back( colors[ 3*id + 2 ] );
-
-    }
-
-
-
-}
-
-
-void Mesh::setColorinFace( std::vector< unsigned int > triangles, float r, float g, float b, std::vector< float >& colors_coord  )
-{
-    std::size_t colors_number = triangles.size();
-    for( auto i = 0; i < colors_number; ++i )
-    {
-
-        colors_coord.push_back( r );
-        colors_coord.push_back( g );
-        colors_coord.push_back( b );
-
-    }
-
-}
-
-
-void Mesh::loadColorsbyVertices()
-{
-
-
-    std::vector< float > output_colors;
-
-    if( mesh_type == TYPE::TRIANGLES )
-    {
-            getColorsfromIndex( faces, output_colors );
-
-    }
-
-    else if( mesh_type == TYPE::QUADRILATERAL )
-    {
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromQuadrilaterals( i, colors_id );
-            getColorsfromIndex( colors_id, output_colors );
-
-        }
-
-    }
-
-    else if( mesh_type == TYPE::TETRAHEDRAL )
-    {
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromTetrahedros( i, colors_id );
-            getColorsfromIndex( colors_id, output_colors );
-
-        }
-
-    }
-
-    else if( mesh_type == TYPE::HEXAHEDRAL )
-    {
-
-        std::size_t faces_number = faces.size()/8;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromHexahedros( i, colors_id );
-            getColorsfromIndex( colors_id, output_colors );
-
-        }
-
-    }
-
-    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, output_colors.size()*sizeof( GLfloat ), output_colors.data(), GL_STATIC_DRAW );
-
-
-}
-
-
-void Mesh::loadColorsbyFaces()
-{
-
-    std::vector< float > output_colors;
-
-
-    if( mesh_type == TYPE::TRIANGLES )
-    {
-        std::size_t faces_number = faces.size()/3;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-            output_colors.push_back( colors[ 3*i ] );
-            output_colors.push_back( colors[ 3*i + 1 ] );
-            output_colors.push_back( colors[ 3*i + 2 ] );
-        }
-    }
-
-    else if( mesh_type == TYPE::QUADRILATERAL )
-    {
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromQuadrilaterals( i, colors_id );
-            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
-
-        }
-
-    }
-
-    else if( mesh_type == TYPE::TETRAHEDRAL )
-    {
-
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromTetrahedros( i, colors_id );
-            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
-
-        }
-
-    }
-
-    else if( mesh_type == TYPE::HEXAHEDRAL )
-    {
-
-        std::size_t faces_number = faces.size()/8;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > colors_id;
-            getTrianglesfromHexahedros( i, colors_id );
-            setColorinFace( colors_id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ], output_colors );
-
-        }
-
-    }
-
-    glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-    glBufferData( GL_ARRAY_BUFFER, output_colors.size()*sizeof( GLfloat ), output_colors.data(), GL_STATIC_DRAW );
-
-
-}
-
-
-void Mesh::loadVertices()
-{
-
-    if( vertices.empty() == true ) return;
-
-
-    std::vector< float > triangles;
-
-
-    if( mesh_type == TYPE::TRIANGLES )
-    {
-        std::size_t faces_number = faces.size()/3;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            getCoordfromIndex( faces, triangles );
-
-        }
-    }
-    else if( mesh_type == TYPE::QUADRILATERAL )
-    {
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > triangles_id;
-            getTrianglesfromQuadrilaterals( i, triangles_id );
-            getCoordfromIndex( triangles_id, triangles );
-
-        }
-
-    }
-    else if( mesh_type == TYPE::TETRAHEDRAL )
-    {
-
-        std::size_t faces_number = faces.size()/4;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-            std::vector< unsigned int > triangles_id;
-            getTrianglesfromTetrahedros( i, triangles_id );
-            getCoordfromIndex( triangles_id, triangles );
-
-        }
-
-    }
-
-    else if( mesh_type == TYPE::HEXAHEDRAL )
-    {
-
-        std::size_t faces_number = faces.size()/8;
-        for( auto i = 0; i < faces_number; ++i )
-        {
-
-            std::vector< unsigned int > triangles_id;
-            getTrianglesfromHexahedros( i, triangles_id );
-            getCoordfromIndex( triangles_id, triangles );
-
-        }
-
-    }
-
-
-
-    number_of_vertices = triangles.size()/3;
-
-
-    vector< Eigen::Vector3f > normalized_vertices;
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices.push_back( Eigen::Vector3f( triangles[ 3*it ], triangles[ 3*it + 1 ], triangles[ 3*it + 2 ] ) );
-
-    Celer::BoundingBox3< float > bbox_mesh;
-    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
-
-
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/(bbox_mesh.diagonal()*0.25f);
-
-    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
-
-    vector_triangles_size = (int) normalized_vertices.size();
-
-    glBindBuffer( GL_ARRAY_BUFFER, bf_vertices_mesh );
-    glBufferData( GL_ARRAY_BUFFER, vector_triangles_size*sizeof( normalized_vertices[0] ), normalized_vertices.data(), GL_STATIC_DRAW );
-
-
-    if( bounding_box.empty() == false )
-    {
-        number_lines_bbox = bounding_box.size();
-
-        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
-        glBufferData( GL_ARRAY_BUFFER, bounding_box.size()*sizeof( GLfloat ), bounding_box.data(), GL_STATIC_DRAW );
-    }
-
-}
-
 
 void Mesh::load()
 {
 
-
-    if( vertices.empty() == true ) return;
-
-    number_of_vertices = getNumberofVertices();
-    int vector_vertices_size = number_of_vertices * 3;
-
-
-    vector< Eigen::Vector3f > normalized_vertices;
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices.push_back( Eigen::Vector3f( vertices[ 3*it ], vertices[ 3*it + 1 ], vertices[ 3*it + 2 ] ) );
-
-    Celer::BoundingBox3< float > bbox_mesh;
-    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
-
-
-    for( unsigned int it = 0; it < number_of_vertices; ++it )
-        normalized_vertices[ it ] = ( normalized_vertices[ it ] - bbox_mesh.center() )/(bbox_mesh.diagonal()*0.25f);
-
-    bbox_mesh.fromPointCloud( normalized_vertices.begin(), normalized_vertices.end() );
-
-
-    glBindBuffer( GL_ARRAY_BUFFER, bf_vertices_mesh );
-    glBufferData( GL_ARRAY_BUFFER, vector_vertices_size*sizeof( GLfloat ), normalized_vertices.data(), GL_STATIC_DRAW );
-
-
-
-    vector< unsigned int > triangles;
-
-    if( mesh_type != TYPE::TRIANGLES )
-        buildTrianglesFacesList( triangles );
-    else
-        triangles = faces;
-
-
-    if( triangles.empty() == false )
-    {
-        vector_triangles_size = (int) triangles.size();
-
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_faces_mesh );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vector_triangles_size*sizeof( GLuint ), triangles.data(), GL_STATIC_DRAW );
-    }
-
-
-    if( wireframe.empty() == true )
-        buildWireframeList();
-
-
-    if( wireframe.empty() == false )
-    {
-        vector_wireframe_size = (int) wireframe.size();
-
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, bf_wireframe_mesh );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, vector_wireframe_size*sizeof( GLuint ), wireframe.data(), GL_STATIC_DRAW );
-    }
-
-    if( bounding_box.empty() == false )
-    {
-        number_lines_bbox = bounding_box.size();
-
-        glBindBuffer( GL_ARRAY_BUFFER, bf_bbox_mesh );
-        glBufferData( GL_ARRAY_BUFFER, bounding_box.size()*sizeof( GLfloat ), bounding_box.data(), GL_STATIC_DRAW );
-    }
-
-
-    if( colors.empty() == false )
-    {
-        glBindBuffer( GL_ARRAY_BUFFER, bf_colors_mesh );
-        glBufferData( GL_ARRAY_BUFFER, colors.size()*sizeof( GLfloat ), colors.data(), GL_STATIC_DRAW );
-    }
+	 
 
 }
-
 
 void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale , const float width, const float height )
 {
 
-    if( vertices.empty() == true ) return;
-
-    glPointSize( 5.0f );
-
     Eigen::Affine3f M;
     M.setIdentity();
 
-
     if( mesh_type == TYPE::QUADRILATERAL )
     {
-        shader_mesh_cornerpoint->bind();
+		quad_phong_->bind();
 
-        shader_mesh_cornerpoint->setUniform("WIN_SCALE", width, height);
-        shader_mesh_cornerpoint->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
-        shader_mesh_cornerpoint->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
-        shader_mesh_cornerpoint->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
-        shader_mesh_cornerpoint->setUniform("isClip", GL_FALSE);
-        glBindVertexArray( va_mesh );
-
+		quad_phong_->setUniform("WIN_SCALE", width, height);
+		quad_phong_->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+		quad_phong_->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+		quad_phong_->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+		quad_phong_->setUniform("isClip", GL_FALSE);
+		glBindVertexArray(entities_.at("Sketchies").vertexArray_);
+		
 
         if( apply_crosssection_clipping == true )
         {
             glEnable(GL_CLIP_DISTANCE0);
-            shader_mesh_cornerpoint->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
-            shader_mesh_cornerpoint->setUniform( "ClipPlaneCentre", this->centre_);
-            shader_mesh_cornerpoint->setUniform("isClip", GL_TRUE);
+			quad_phong_->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
+			quad_phong_->setUniform("ClipPlaneCentre", this->centre_);
+			quad_phong_->setUniform("isClip", GL_TRUE);
 
         }
 
         if( show_faces == true )
         {
 
-                glDrawArrays ( GL_LINES_ADJACENCY , 0 , vector_triangles_size );
-
+			glDrawArrays(GL_LINES_ADJACENCY, 0, entities_.at("Sketchies").number_of_elements_);
         }
 
         glBindVertexArray( 0 );
 
-        shader_mesh_cornerpoint->unbind();
+		quad_phong_->unbind();
 
     }
-    else
+	else if (mesh_type == TYPE::HEXAHEDRAL)
+	{
+		shader_mesh_cornerpoint->bind();
+
+		shader_mesh_cornerpoint->setUniform("WIN_SCALE", width, height);
+		shader_mesh_cornerpoint->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+		shader_mesh_cornerpoint->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+		shader_mesh_cornerpoint->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+		shader_mesh_cornerpoint->setUniform("isClip", GL_FALSE);
+		//glBindVertexArray( va_mesh );
+		glBindVertexArray(entities_.at("Hexahedron").vertexArray_);
+
+		if (apply_crosssection_clipping == true)
+		{
+			glEnable(GL_CLIP_DISTANCE0);
+			shader_mesh_cornerpoint->setUniform("ClipPlane", coefACrossSectionEquation, coefBCrossSectionEquation, coefCCrossSectionEquation, coefDCrossSectionEquation);
+			shader_mesh_cornerpoint->setUniform("ClipPlaneCentre", this->centre_);
+			shader_mesh_cornerpoint->setUniform("isClip", GL_TRUE);
+
+		}
+
+		if (show_faces == true)
+		{
+
+			//glDrawArrays ( GL_LINES_ADJACENCY , 0 , vector_triangles_size );
+			glDrawArrays(GL_LINES_ADJACENCY, 0, entities_.at("Hexahedron").number_of_elements_);
+
+		}
+
+		glBindVertexArray(0);
+
+		shader_mesh_cornerpoint->unbind();
+
+	}
+	else if (mesh_type == TYPE::TETRAHEDRAL)
     {
 
         shader_mesh->bind();
@@ -1118,8 +291,8 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
         shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
         shader_mesh->setUniform("isClip", GL_FALSE);
-        glBindVertexArray( va_mesh );
-
+        //glBindVertexArray( va_mesh );
+		glBindVertexArray(entities_.at("Tetrahedron").vertexArray_);
 
         if( apply_crosssection_clipping == true )
         {
@@ -1132,8 +305,9 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
         if( show_faces == true )
         {
-
-                glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
+			
+             //glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
+			glDrawArrays(GL_TRIANGLES, 0, entities_.at("Tetrahedron").number_of_elements_);
 
         }
 
@@ -1141,45 +315,84 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         shader_mesh->unbind();
 
     }
+	else
+	{
+		//std::cout << "Nohting to be renderer" << std::endl;
+	}
 
-
-
-
-
-    if( show_bbox == true )
+    if( true )
     {
+		if (entities_.at("BoundingBox").number_of_elements_ > 0)
+		{
 
-        glLineWidth( 4.0f );
+			shader_bbox->bind();
+
+			shader_bbox->setUniform("WIN_SCALE", width, height);
+			shader_bbox->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+			shader_bbox->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+			shader_bbox->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+			
+			glBindVertexArray(entities_.at("BoundingBox").vertexArray_);
+
+			glDrawArrays(GL_LINES_ADJACENCY, 0, entities_.at("BoundingBox").number_of_elements_);
+
+			glBindVertexArray(0);
+
+			shader_bbox->unbind();
+
+		}
+		if ( entities_.at("WellPoints").number_of_elements_ > 0)
+		{
+			glPointSize(7);
+
+			well_shader->bind();
+
+			well_shader->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+			well_shader->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+			well_shader->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+
+			glBindVertexArray(entities_.at("WellPoints").vertexArray_);
+
+			glDrawArrays(GL_POINTS, 0, entities_.at("WellPoints").number_of_elements_);
+
+			glBindVertexArray(0);
+
+			//std::cout << " Vertex Array " << entities_.at("WellPoints").vertexArray_ << "  " << entities_.at("WellPoints").number_of_elements_ << std::endl;
+
+			well_shader->unbind();
+		}
 
 
-        shader_bbox->bind();
-        shader_bbox->setUniform( "mmatrix", M );
-        shader_bbox->setUniform( "vmatrix", V );
-        shader_bbox->setUniform( "pmatrix", P );
-        shader_bbox->setUniform( "scale", 1.0 );
 
-        glBindVertexArray( va_bbox );
+		if (entities_.at("WellLines").number_of_elements_ > 0)
+		{
+			glLineWidth(6);
 
-            glDrawArrays( GL_LINES, 0, number_lines_bbox );
+			well_shader->bind();
 
-        glBindVertexArray( 0 );
+			well_shader->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+			well_shader->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+			well_shader->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+
+			glBindVertexArray(entities_.at("WellLines").vertexArray_);
+
+			glDrawArrays(GL_LINES, 0, entities_.at("WellLines").number_of_elements_);
+
+			glBindVertexArray(0);
+
+			//std::cout << " Vertex Array " << entities_.at("WellLines").vertexArray_ << "  " << entities_.at("WellLines").number_of_elements_ << std::endl;
+
+			well_shader->unbind();
+		}
 
     }
 
-    shader_bbox->unbind();
+    
 }
-
 
 void Mesh::clear()
 {
     mesh_type = TYPE::TRIANGLES;
-
-    vertices.clear();
-    faces.clear();
-    wireframe.clear();
-    normals_by_vertices.clear();
-    bounding_box.clear();
-
 
     max[ 0 ] = 0.0f;
     max[ 1 ] = 0.0f;
@@ -1193,7 +406,7 @@ void Mesh::clear()
     show_vertices = true;
     show_edges = false;
     show_faces = true;
-    show_bbox = true;
+    show_bbox = false;
 
     apply_crosssection_clipping = false;
 
@@ -1207,41 +420,44 @@ void Mesh::resetBuffers()
 {
     deleteShaders();
 
-    if( va_mesh )
-    {
-        glDeleteVertexArrays( 1, &va_mesh );
-        if( bf_vertices_mesh )
-            glDeleteBuffers(1, &bf_vertices_mesh);
-        if( bf_faces_mesh )
-            glDeleteBuffers(1, &bf_faces_mesh);
-        if( bf_wireframe_mesh )
-            glDeleteBuffers(1, &bf_wireframe_mesh);
-        if( bf_colors_mesh )
-            glDeleteBuffers(1, &bf_colors_mesh);
+	/// OpenVolume Mesh Integration ---------------------------------------------->
+	// Surface Mesh
 
-    }
+	for (auto& gl : entities_)
+	{
+		if (gl.second.vertexArray_ != 0)
+		{
 
-    if( va_bbox )
-    {
-        glDeleteVertexArrays( 1, &va_bbox );
-        if( bf_bbox_mesh )
-            glDeleteBuffers(1, &bf_bbox_mesh);
-    }
+			if (gl.second.vertexBuffer_vertices_ != 0)
+			{
+				glDeleteBuffers(1, &gl.second.vertexBuffer_vertices_);
+			}
 
+			if (gl.second.vertexBuffer_normals_ != 0)
+			{
+				glDeleteBuffers(1, &gl.second.vertexBuffer_normals_);
+			}
 
-    va_mesh = 0;
-    bf_vertices_mesh = 0;
-    bf_faces_mesh = 0;
-    bf_wireframe_mesh = 0;
-    bf_colors_mesh = 0;
+			if (gl.second.vertexBuffer_colors_ != 0)
+			{
+				glDeleteBuffers(1, &gl.second.vertexBuffer_colors_);
+			}
 
-    number_of_vertices = 0;
-    vector_triangles_size = 0;
-    vector_wireframe_size = 0;
+			if (gl.second.vertexBuffer_elemets_ != 0)
+			{
+				glDeleteBuffers(1, &gl.second.vertexBuffer_elemets_);
+			}
 
-    va_bbox = 0;
-    bf_bbox_mesh = 0;
-    number_lines_bbox = 0;
+			glDeleteVertexArrays(1, &gl.second.vertexArray_);
+		}
+
+		gl.second.vertexArray_ = 0;
+		gl.second.vertexBuffer_vertices_ = 0;
+		gl.second.vertexBuffer_normals_ = 0;
+		gl.second.vertexBuffer_colors_ = 0;
+		gl.second.vertexBuffer_elemets_ = 0;
+		gl.second.number_of_elements_ = 0;
+	}
 
 }
 
@@ -1265,5 +481,353 @@ void Mesh::deleteShaders()
         shader_bbox = nullptr;
     }
 
+	if (well_shader)
+	{
+		delete(well_shader);
+		well_shader = nullptr;
+	}
+
+}
+/// OpenVolume Mesh Integration ---------------------------------------------->
+
+void Mesh::setDefaultColor()
+{
+	std::vector<float> _colors(entities_.at("Tetrahedron").number_of_elements_, 0.5F);
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(_colors[0]), _colors.data(), GL_STATIC_DRAW);
 }
 
+void Mesh::setMeshColor(const std::vector<float>& _colors)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(_colors[0]), _colors.data(), GL_STATIC_DRAW);
+}
+
+void Mesh::setTetrahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array)
+{
+	std::vector<float> colors_array_ = std::vector<float>(_vertices_array.size(), 0.5f);
+
+	entities_.at("Tetrahedron").number_of_elements_ = _vertices_array.size();
+
+	/// Load by Arrays
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_normals_);
+	glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, colors_array_.size() * sizeof(colors_array_[0]), colors_array_.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_elemets_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _faces_array.size() * sizeof(_faces_array[0]), _faces_array.data(), GL_STATIC_DRAW);
+
+}
+
+void Mesh::setHexahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array)
+{
+
+	std::vector<float> colors_array_ = std::vector<float>(_vertices_array.size(), 0.5f);
+
+	entities_.at("Hexahedron").number_of_elements_ = _vertices_array.size();
+
+	/// Load by Arrays
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Hexahedron").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Hexahedron").vertexBuffer_normals_);
+	glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Hexahedron").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, colors_array_.size() * sizeof(colors_array_[0]), colors_array_.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entities_.at("Hexahedron").vertexBuffer_elemets_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _faces_array.size() * sizeof(_faces_array[0]), _faces_array.data(), GL_STATIC_DRAW);
+}
+
+void Mesh::buildBoundingBox(const std::vector<float>& _vertices)
+{
+
+	std::vector< Eigen::Vector3f > normalized_vertices;
+
+	for (unsigned int it = 0; it < _vertices.size(); it+=3)
+	{
+		normalized_vertices.push_back(Eigen::Vector3f(_vertices[it + 0], _vertices[it + 1], _vertices[it + 2]));
+	}
+
+	boundingbox_.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+	std::cout << (boundingbox_.Min().z()) + (boundingbox_.Max().z() - boundingbox_.Min().z())*0.5f << std::endl;
+
+	this->depth_ = (boundingbox_.Min().y()) + ((boundingbox_.Max().y() - boundingbox_.Min().y())*0.5f);
+
+
+	for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
+	{
+		normalized_vertices[it] = (normalized_vertices[it] - boundingbox_.center()) / (boundingbox_.diagonal()*0.25f);
+	}
+
+	boundingbox_.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+	// Cube /////////////////////////////////////////////////////////////////////////////////////
+	//    v2----- v1
+	//   /|      /|
+	//  v3------v0|
+	//  | |     | |
+	//  | |v6---|-|v7
+	//  |/      |/
+	//  v5------v4
+
+	// Vertex coordinate array for glDrawArrays() =========================
+	// Using Quad Shader Layout	
+	// Draw GL_LINES_ADJACENCY -> Triangle strip		
+	//   2*-->-*3     	  
+	//   | *    |   
+	//   |   *  |
+	//   0*-->-*1
+
+	std::vector<Eigen::Vector3f> v =
+	{
+		/// Top Face
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v0
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v1
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v3
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v2
+		
+
+		/// Bottom Face
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v4
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v5
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v7
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v6
+		
+
+		/// Front Face
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v4
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v0
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v5
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v3
+
+		/// Back Face
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v7
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v1		
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v6
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v2
+
+		/// Right Face
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v4
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v7
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v0
+		Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v1	
+
+		/// Left Face
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Max().z()), // v5
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v3	
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Min().y(), boundingbox_.Min().z()), // v6
+		Eigen::Vector3f(boundingbox_.Min().x(), boundingbox_.Max().y(), boundingbox_.Min().z()), // v2
+						
+	};
+	
+
+	entities_.at("BoundingBox").number_of_elements_ = v.size();
+	/// Load by Arrays
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f),v.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_normals_);
+	glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f), v.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f), v.data(), GL_STATIC_DRAW);
+
+}
+
+void Mesh::getBoundingBox(float& xm, float& xM, float& ym, float& yM, float& zm, float& zM)
+{
+	xm = boundingbox_.Min().x();
+	ym = boundingbox_.Min().y();
+	zm = boundingbox_.Min().z();
+
+	xM = boundingbox_.Max().x();
+	yM = boundingbox_.Max().y();
+	zM = boundingbox_.Max().z();
+}
+
+void Mesh::setSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array)
+{
+	std::vector< Eigen::Vector3f > normalized_vertices;
+	
+	for (unsigned int it = 0; it < _vertices_array.size(); it += 3)
+	{
+		normalized_vertices.push_back(Eigen::Vector3f(_vertices_array[it + 0], _vertices_array[it + 1], _vertices_array[it + 2]));
+	}
+
+	Tucano::BoundingBox3<float > bb;
+	
+	bb.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+
+	double scale = 1.0 / (bb.diagonal()*0.25);
+
+	Eigen::Affine3f t;
+	Eigen::Affine3f s;
+
+	t.setIdentity();
+	s.setIdentity();
+
+	t.translation() = -bb.center();
+	s.scale(Eigen::Vector3f(scale, scale, scale));
+
+	this->model_matrix_.setIdentity();
+	this->model_matrix_ = s * t;
+	
+	std::cout << "(bbox_mesh) on MESH" << std::endl;
+	std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
+	std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
+	std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
+
+	dim_max.x() = (bb.Max().x());
+	dim_max.y() = (bb.Max().y());
+	dim_max.z() = (bb.Max().z());
+
+
+	dim_min.x() = (bb.Min().x());
+	dim_min.y() = (bb.Min().y());
+	dim_min.z() = (bb.Min().z());
+
+	std::cout << "(bbox_mesh) on Max/Min" << std::endl;
+	std::cout << bb.Max() << std::endl;
+	std::cout << bb.Min() << std::endl;
+	std::cout << bb.center() << std::endl;
+	
+	
+
+	for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
+	{
+		normalized_vertices[it] = this->model_matrix_ * normalized_vertices[it];
+	}
+
+
+	std::vector< Eigen::Vector3f > vertices_coord;
+	
+	std::vector< unsigned int > triangles_id;;
+	std::size_t faces_number = _faces_array.size() / 4;
+
+	for (std::size_t i = 0; i < faces_number; ++i)
+	{
+
+		triangles_id.clear();
+		triangles_id.push_back(_faces_array[4 * i]);
+		triangles_id.push_back(_faces_array[4 * i + 1]);
+		triangles_id.push_back(_faces_array[4 * i + 3]);
+		triangles_id.push_back(_faces_array[4 * i + 2]);
+
+		for (std::size_t index = 0; index < triangles_id.size(); index++)
+		{
+			vertices_coord.push_back(normalized_vertices[triangles_id[index]]);
+
+		}
+	}
+	
+	std::vector< Eigen::Vector3f > color(vertices_coord.size(), Eigen::Vector3f(0.5, 0.5, 0.5));
+
+	
+	entities_.at("Sketchies").number_of_elements_ = vertices_coord.size();
+
+	/// Load by Arrays
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, vertices_coord.size() * sizeof(Eigen::Vector3f), vertices_coord.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_normals_);
+	glBufferData(GL_ARRAY_BUFFER, vertices_coord.size() * sizeof(Eigen::Vector3f), vertices_coord.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, color.size() * sizeof(Eigen::Vector3f), color.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_elemets_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _faces_array.size() * sizeof(_faces_array[0]), _faces_array.data(), GL_STATIC_DRAW);
+
+}
+
+/// @TODO Later, move this fucntions to FlowvizualizationController 
+void Mesh::loadWellPosition(int _number_of_wells,const std::map<int, Eigen::Vector4d>& _vertices_array, const std::map<int, int>& _types)
+{
+
+	/// Load by Arrays
+
+	std::vector<Eigen::Vector3f> vertices;
+	std::vector<Eigen::Vector3f> colors;
+	std::vector<Eigen::Vector3f> colors_lines;
+	std::vector<Eigen::Vector3f> lines;
+	Eigen::Vector3f v;
+	Eigen::Vector3f well_direction(0.0f,0.0f,-1.0f);
+	float well_size = ((model_matrix_ * Eigen::Vector4f(0.0f, 0.0, dim_max.z(), 1.0f)).head<3>()).z() - ((model_matrix_ * Eigen::Vector4f(0.0f, 0.0f, dim_min.z(), 1.0f)).head<3>()).z();
+
+	Eigen::Vector3f injector(0.0f,0.0f,1.0f);
+	Eigen::Vector3f producer(1.0f, 0.0, 0.0f);
+
+	for (auto p : _vertices_array )
+	{
+
+		if (p.first >= _number_of_wells)
+		{
+			break;
+		}
+
+		//float x = dim_min.x() + (dim_max.x() - dim_min.x()) * (p.second.x() / (dim_max.x() - dim_min.x()));
+		//float y = dim_min.y() + (dim_max.y() - dim_min.y()) * (p.second.y() / (dim_max.y() - dim_min.y()) );
+		//float z = dim_max.z() + (dim_max.z() - dim_min.z()) * (p.second.z() / 100.0f);
+
+		v = (model_matrix_ * Eigen::Vector4f(p.second.x(), p.second.y(), p.second.z(), 1.0f)).head<3>();
+
+		vertices.push_back(v);
+
+		if (_types.at(p.first) == -1 ) // Injector
+		{
+			colors.push_back(producer);
+			colors_lines.push_back(producer);
+			colors_lines.push_back(producer);
+		}
+		else if (_types.at(p.first) == 1) // producer
+		{
+			colors.push_back(injector);
+			colors_lines.push_back(injector);
+			colors_lines.push_back(injector);
+		}else /// error
+		{ 
+			colors.push_back(Eigen::Vector3f(0.5f, 0.5f, 0.5f));
+			colors_lines.push_back(Eigen::Vector3f(0.5f, 0.5f, 0.5f));
+			colors_lines.push_back(Eigen::Vector3f(0.5f, 0.5f, 0.5f));
+			std::cout << "reach" << std::endl;
+
+		}
+
+		//std::cout << well_direction * well_size * (p.second.w() / 100.0f) << std::endl;
+
+		lines.push_back(v);		
+		lines.push_back(v + well_direction * well_size * (p.second.w()/100.0f));
+	}
+
+	entities_.at("WellPoints").number_of_elements_ = vertices.size();
+	entities_.at("WellLines").number_of_elements_ = lines.size();
+
+	//v[0] = (model_matrix_ * Eigen::Vector4f(dim_max.x(), dim_max.y(), dim_max.z(), 1.0f)).head<3>();
+	//v[1] = (model_matrix_ * Eigen::Vector4f(dim_min.x(), dim_min.y(), dim_min.z(), 1.0f)).head<3>();
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("WellPoints").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Eigen::Vector3f), vertices.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("WellPoints").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(Eigen::Vector3f), colors.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("WellLines").vertexBuffer_vertices_);
+	glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(Eigen::Vector3f), lines.data(), GL_STATIC_DRAW);	
+	glBindBuffer(GL_ARRAY_BUFFER, entities_.at("WellLines").vertexBuffer_colors_);
+	glBufferData(GL_ARRAY_BUFFER, colors_lines.size() * sizeof(Eigen::Vector3f), colors_lines.data(), GL_STATIC_DRAW);
+
+}
+
+
+Eigen::Affine3f Mesh::getModelMatrix() const
+{
+	return this->model_matrix_;
+}

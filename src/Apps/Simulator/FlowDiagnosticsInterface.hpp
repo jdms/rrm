@@ -26,7 +26,11 @@
 #include <vector>
 #include <string>
 
+/* #include "region.h" // Undo change 1 */ 
+
+//// It includes the Window.h  ... OpenVolumMesh defines min/max in its own 
 #include "FlowComputation/region.h"
+
 
 class FlowDiagnosticsInterface
 {
@@ -49,7 +53,7 @@ class FlowDiagnosticsInterface
 
         void setRegion( unsigned int id, double x, double y, double z, double perm,
                         double poros, double visc );
-
+		void setviscosity(double visc);//user can set a global viscosity after setting regions to overwrite regions' viscosity
 
         /// \brief Get regions properties -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity, viscosity and
         ///		   x, y, z for each region (this can be same as before)
@@ -64,13 +68,7 @@ class FlowDiagnosticsInterface
         void clearRegions();
 
 
-
-
-
-
-
-
-        /// \brief Set wells properties as user inputs -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled
+	    /// \brief Set wells properties as user inputs -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled
         ///		   or 2 flowrate-controled), value (unit is bar or m3/sec), sign (1 for injector, -1 for producer): please also check
         ///		   region::userinput(char*)
 
@@ -150,29 +148,26 @@ class FlowDiagnosticsInterface
 
         /// \brief Get velocity values by vertex -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output velocity )
-        void getVelocitybyVertices( std::vector< double >& values ) ;
-
+        void getVelocitybyVertices( std::vector< double >& values ) ; //velocity defined on elements
 
         /// \brief Get velocity values by cell -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output velocity )
         void getVelocitybyCells( std::vector< double >& values );
-
-
+		void getVelocityMagnitudebyCells_log10(std::vector< double >& values);
         /// \brief Get backward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Backward_TOF )
         void getBackwardTOF( std::vector< double >& values ) ;
-
+		void getBackwardTOF_log10(std::vector< double >& values);
 
         /// \brief Get forward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Forward_TOF )
         void getForwardTOF( std::vector< double >& values ) ;
-
-
+		void getFowardTOF_log10(std::vector< double >& values);
 
         /// \brief Get total tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Total_TOF )
         void getTotalTOF( std::vector< double >& values ) ;
-
+		void getTotalTOF_log10(std::vector< double >& values);
 
         /// \brief Get max backward tracer by vertex (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Max_Backward_Tracer )
@@ -191,7 +186,7 @@ class FlowDiagnosticsInterface
 
         /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
         ///        and required by Zhao's document ( output Permeability ).
-        void getPermeabilitybyVertices( std::vector< double >& values ) ;
+        void getPermeabilitybyVertices( std::vector< double >& values ) ; //permeability defined on cells
 
 
         void getPorosity( std::vector< double >& values ) ;
@@ -264,7 +259,7 @@ class FlowDiagnosticsInterface
 
         void getVolumeEdges( std::vector< unsigned int >& edges )  ;
 
-        void getVolumeCells( std::vector< unsigned int >& cells )  ;
+		void getVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh);
 
 
 
@@ -273,7 +268,7 @@ class FlowDiagnosticsInterface
 
         void getCPGVolumeEdges( std::vector< unsigned int >& edges )  ;
 
-        void getCPGVolumeCells( std::vector< unsigned int >& cells )  ;
+		void getCPGVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> ptr_mesh);
 
 
 
@@ -292,9 +287,104 @@ class FlowDiagnosticsInterface
         void clear();
 
 
+        /* ****************************************************************
+         *
+         * The following methods were added to satisfy the requirements 
+         * for the June 2017 release of the RRM prototype.
+         *
+         * ************************************************************** */
+
+        /* The following method allows configuring a well type */ 
+
+        enum WellType { INJECTOR, PRODUCER };
+
+        bool setWell( unsigned int id, WellType t, double pressure_value, 
+			double qt_x, double qt_y, double qt_z,  double well_depth);//qt_z not needed
+
+		bool setverticalWell(unsigned int id, WellType t, double pressure_value,
+			double qt_x, double qt_y, double topd_, double botd_);
+
+        /* Allow changing the linear solver for Zhao's flow diagnostics */
+
+        enum SolverType { HYPRE, SAMG };
+
+        /* Not for now */
+        bool setSolver( SolverType solver );
+
+
+        /* Get a string with the values of the upscalled permeability to 
+         * display in the GUI 
+         * */
+
+        bool getUpscalledPermeability( std::string &result );
+
+
+        /* Export derived quantities (such as flow capacity) to a file, or 
+         * get this information to display it in the GUI 
+         * */
+
+		bool exportDerivedQuantities(const std::string &filename);
+
+        /* Not for now */
+        bool getDerivedQuantities( std::string &derived_quantities );
+
+
+        /* Set Dirchlet boundary conditions (pressure). Remember that 
+         * boundary conditions must be admissible, thus, initially it 
+         * may be wise to allow the user to impose the pressure in 
+         * just one of the boundaries. */ 
+
+        enum Boundary { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK };
+
+        /* Not for now */
+        bool setBoundaryConditions( Boundary b, double pressure_value ); 
+
+
+        /* This method clears all computed quantities (related to the flow 
+         * diagnostics) without clearing the meshes (either tetrhedral or 
+         * hexahedral).  This allows the user to change rock properties 
+         * (porosity, permeability) and rerun the simulation without having 
+         * to build a volume mesh. 
+         * */
+
+        void clearComputedQuantities();
+
+
+        /* The following definitions are the first step towards creating 
+         * tetrhedral meshes for the new generic models.
+         * 
+         * The main idea is to allow the creation of a picewise linear 
+         * complex for the boundary of the model, to be used as input for 
+         * Tetgen.
+         * */
+
+        struct TriangleMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> face_list;
+        };
+
+        struct CurveMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> edge_list;
+        };
+
+        /* Not for now */
+        bool setSkeleton(
+                const std::vector<TriangleMesh> &triangle_meshes,
+                const std::vector<CurveMesh> &left_boundary_curves,
+                const std::vector<CurveMesh> &right_boundary_curves,
+                const std::vector<CurveMesh> &front_boundary_curves,
+                const std::vector<CurveMesh> &back_boundary_curves
+                );
+
+
+
+
     private:
 
-        REGION region1;
+        REGION region;
 		
 };
 

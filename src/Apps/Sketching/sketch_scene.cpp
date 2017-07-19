@@ -246,6 +246,15 @@ void SketchScene::setModeMovingImage()
 }
 
 
+void SketchScene::setModeSelectingRegions( bool status )
+{
+    if( status == true )
+        current_interaction = UserInteraction::SELECTING_REGION;
+    else
+        setModeSketching();
+
+}
+
 void SketchScene::disableMovingImage()
 {
 
@@ -644,13 +653,17 @@ void SketchScene::addRegionsToScene( int nregions )
     {
         std::size_t id = i + 1;
 
-        if( regions.count( id ) != 0 ) continue;
+        if( regions.count( id ) != 0 )
+         {
+            regions[ id ]->setVisible( true );
+            continue;
+        }
+
         regions[ id ] = new RRM::RegionItem( id );
 //        regions[ id ]->setPos();
         addItem( regions[ id ] );
     }
 
-    setRegionsVisibility( true );
 }
 
 
@@ -659,7 +672,7 @@ void SketchScene::setRegionsVisibility( bool status )
 {
     for( auto &it: regions )
     {
-        RRM::RegionItem* const& region = ( it.second );
+        RRM::RegionItem* region = ( it.second );
         region->setVisible( status );
     }
 
@@ -676,7 +689,16 @@ void SketchScene::removeAllRegions()
 }
 
 
+void SketchScene::sendRegionsToFlow( std::map<int, Eigen::Vector3f> &region_point )
+{
+    for ( auto &it : regions )
+    {
+        int id = static_cast< int >( it.first );
+        float z = static_cast< float > (current_csection);
+        region_point[ id ] = Eigen::Vector3f( it.second->pos().x(), it.second->pos().y(), z );
+    }
 
+}
 
 
 void SketchScene::enableAxes( bool status )
@@ -708,6 +730,8 @@ void SketchScene::clearData()
 
     volume.clear();
     clearSketch();
+
+    removeAllRegions();
 
     for( auto& it : objects )
     {
@@ -745,7 +769,6 @@ void SketchScene::setDefaultValues()
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
-
 
     if(  event->modifiers() & Qt::ControlModifier )
     {

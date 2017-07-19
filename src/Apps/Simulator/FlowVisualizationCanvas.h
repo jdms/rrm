@@ -25,7 +25,7 @@
 
 
 #include <GL/glew.h>
-
+#include <iostream>
 #include <QOpenGLWidget>
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -38,10 +38,8 @@
 
 #include "FlowVisualizationController.h"
 #include "ColorMap.h"
-#include "FlowRenderingOptionsMenu.h"
 #include "CoordinateAxes.h"
 #include "FlowCrossSection.h"
-#include "Colorbar.h"
 //#include "PointMarkers.h"
 
 
@@ -53,58 +51,34 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
 		FlowVisualizationCanvas(QWidget *parent, QString _current_dir);
         ~FlowVisualizationCanvas();
-
-        void setOpenGLFormat();
-        void setController( FlowVisualizationController *c );
-        void createRenderingMenu();
-
-
-
+       
+        void setController( FlowVisualizationController *c );      
         void clear();
 
-
-
     public slots:
-
 
         void updateMesh();
         void updateVolumetricMesh();
         void updateCornerPoint();
-
-        void showVertices( bool status );
-        void showEdges( bool status );
-        void showFaces( bool status );
+		
         void showBoundingBox( bool status );
-
-
-        void setVerticesColorbyProperty( std::string name, std::string method = "" );
-        void setFacesColorbyProperty( std::string name, std::string method = "" );
-
-        void setConstantColor();
-        void setColorMap();
-
-
+        
         void disableCrossSection( bool status );
         void setCrossSectionNormalCoordinates( float X, float Y, float Z );
-
 
         inline void setCurrentDirectory( std::string current_dir ){ current_directory.clear(); current_directory = current_dir; }
 
         void setColors( const std::vector< float >& colors );
-        void setCurrentColormap( const ColorMap::COLORMAP& cm );
-
-        inline void setColorBar( ColorBar* cb ){ colorbar = cb; }
+		void setDefaultColor();
 
         void showRegions();
-
-
-        void setAleatoryColorMap();
-
 
 		/// Debug Purpose
 		void reloadShader();
 
 		float getDepth() const;
+
+		void updateWellsPosition(int _number_of_wells,const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types);
 
     signals:
         void applyCrossSection();
@@ -113,7 +87,6 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
     protected:
 
-        void createActions();
         void initializeShader();
         void loadBackGround();
 
@@ -140,16 +113,11 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         const float speed_zoom = 0.1f;
 
         Mesh mesh;
-        ColorMap colormap;
 
-        FlowRenderingOptionsMenu* rendering_menu;
-
-        std::string coloring_property_name;
-        std::string coloring_property_method;
-        std::string coloring_property_type;
-
+		std::map<int, Eigen::Vector4d> wells_positions_;
+       
         bool show_axis;
-        CoordinateAxes axes;
+//        CoordinateAxes axes;
 
         float scale;
 
@@ -163,10 +131,8 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
         ColorMap::COLORMAP current_colormap;
         bool show_colorbar;
-        ColorBar* colorbar;
-
-
 
 };
 
 #endif // FLOWVISUALIZATIONCANVAS_H
+

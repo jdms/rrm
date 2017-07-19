@@ -15,6 +15,7 @@ class AboutWidget;
 
 class Canvas3d;
 class SketchWindow;
+class FlowWindow;
 class ObjectTree;
 class PagesStack;
 class Controller;
@@ -72,6 +73,7 @@ class MainWindow: public QMainWindow
         void createMainInterface();
         void createCrossSectionInterface();
         void createTopViewInterface();
+        void createFlowDiagnosticsInterface();
         void createSidebar();
         void createToolbarActions();
         void createMenuBar();
@@ -132,12 +134,14 @@ class MainWindow: public QMainWindow
         Canvas3d* canvas3d;
         SketchWindow* sketch_window;
         SketchWindow* topview_window;
+        FlowWindow* flow_window;
         ObjectTree* object_tree;
         PagesStack* pages_sidebar;
         RealSlider* sl_depth_csection;
 
         QDockWidget* dw_csection;
         QDockWidget* dw_topview;
+        QDockWidget* dw_flowdiag;
         QDockWidget* dw_object_tree;
         QDockWidget* dw_info_objects;
 

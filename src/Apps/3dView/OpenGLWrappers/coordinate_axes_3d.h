@@ -6,14 +6,14 @@
 #include "Tucano/Shader.hpp"
 #include "Tucano/BoundingBox3.hpp"
 
-#include "../tinyobjloader/tiny_obj_loader.h"
 
-class CoordinateAxes
+
+class CoordinateAxes3d
 {
     public:
 
-        CoordinateAxes();
-        ~CoordinateAxes();
+        CoordinateAxes3d();
+        ~CoordinateAxes3d();
 
         void init();
         void load();

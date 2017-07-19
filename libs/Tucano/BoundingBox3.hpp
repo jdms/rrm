@@ -1,13 +1,13 @@
-#ifndef CELER_BOUNDINGBOX3_HPP_
-#define CELER_BOUNDINGBOX3_HPP_
+#ifndef TUCANO_BOUNDINGBOX3_HPP_
+#define TUCANO_BOUNDINGBOX3_HPP_
 
 // from Standard Library
 #include <vector>
 #include <limits>
-// Celer Library
+
 #include <Eigen/Dense>
 
-namespace Celer
+namespace Tucano
 {
 
 	/*!
@@ -265,7 +265,7 @@ namespace Celer
 		                         ( p.z() ( ) >= this->min_.z() ) and ( p.z() ( ) < this->max_.z() ) );
 			}
 
-			bool intersect ( const Celer::BoundingBox3<Real>& box ) const
+			bool intersect ( const Tucano::BoundingBox3<Real>& box ) const
 			{
 				return ( ( box.Max( ).x() > this->min_.x() ) and ( box.Min( ).x() < this->max_.x() ) and
 		                         ( box.Max( ).y() > this->min_.y() ) and ( box.Min( ).y() < this->max_.y() ) and
@@ -279,33 +279,7 @@ namespace Celer
 			}
 	};
 
-}/* Celer :: NAMESPACE */
+}/* Tucano :: NAMESPACE */
 
 #endif /*BOUNDINGBOX3_HPP_*/
 
-
-//Celer::BoundingBox3<float> box;
-//
-//Celer::Vector3< float > v[9];
-//
-//v[0] = Celer::Vector3<float> ( 1.f , 0.f , -1.f );
-//v[1] = Celer::Vector3<float> ( 1.f , 0.f , 1.f );
-//v[2] = Celer::Vector3<float> ( -1.f , 0.f , 1.f );
-//v[3] = Celer::Vector3<float> ( -1.f , 0.f , -1.f );
-//
-//v[4] = Celer::Vector3<float> ( 1.f , 1.f , -1.f );
-//v[5] = Celer::Vector3<float> ( 1.f , 1.f , 1.f );
-//v[6] = Celer::Vector3<float> ( -1.f , 1.f , 1.f );
-//v[7] = Celer::Vector3<float> ( -1.f , 1.f , -1.f );
-//
-//v[8] = Celer::Vector3<float> ( 0.f , 2.f , 0.f );
-//
-//for (int var = 0; var < 9 ; ++var)
-//{
-//	box = box + v[var];
-//}
-//
-//std::cout << "box center : " << box.center( ) << std::endl;
-//
-//std::cout << "box min : " << box.Min( ) << std::endl;
-//std::cout << "box max : " << box.Max( ) << std::endl;

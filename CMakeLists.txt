@@ -82,6 +82,19 @@ if( OWN_LIBRARIES AND WIN32 )
 
         find_library( SAMG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SAMG )
 
+    ## OpenVolume Mesh
+    set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
+    set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
+
+    set(OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
+        debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
+
+    include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+
+
+    set(HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
+    include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
+    find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
 
 elseif( OWN_LIBRARIES AND UNIX )
@@ -109,7 +122,7 @@ elseif( OWN_LIBRARIES AND UNIX )
     endif( Qt5COMPONENTS_FOUND )
 
 
-
+    find_package( HYPRE REQUIRED )
 
 else( OWN_LIBRARIES )
 
@@ -133,6 +146,16 @@ else( OWN_LIBRARIES )
         include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
         include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
     endif( Qt5COMPONENTS_FOUND )
+
+
+    ## OpenVolume Mesh
+    set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
+    set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
+
+    set(OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
+                                 debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
+
+    include_directories( SYSTEM ${OPENVOLUMEMESH_LIBRARY} )
 
 
 endif( OWN_LIBRARIES AND WIN32 )
