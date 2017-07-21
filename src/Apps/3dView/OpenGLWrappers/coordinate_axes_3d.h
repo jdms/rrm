@@ -1,5 +1,5 @@
-#ifndef COORDINATEAXES_H
-#define COORDINATEAXES_H
+#ifndef COORDINATEAXES3D_H
+#define COORDINATEAXES3D_H
 
 #include "Eigen/Dense"
 #include "Tucano/Trackball.hpp"
@@ -7,6 +7,7 @@
 #include "Tucano/BoundingBox3.hpp"
 
 
+#include "./libs/tinyobjloader/tiny_obj_loader.h"
 
 class CoordinateAxes3d
 {
@@ -62,4 +63,4 @@ class CoordinateAxes3d
 
 };
 
-#endif // COORDINATEAXES_H
+#endif // COORDINATEAXES3D_H

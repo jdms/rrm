@@ -110,7 +110,6 @@ set( 3DVIEW_HEADERS    3dView/canvas3d.h
                        3dView/OpenGLWrappers/volume_opengl_wrapper.h
                        3dView/OpenGLWrappers/crosssection_opengl_wrapper.h
                        3dView/gradient_background_shader.hpp
-                       3dView/tinyobjloader/tiny_obj_loader.h
                        )
 
 
@@ -127,7 +126,6 @@ set( 3DVIEW_SOURCES     3dView/canvas3d.cpp
                         3dView/OpenGLWrappers/volume_opengl_wrapper.cpp
                         3dView/OpenGLWrappers/crosssection_opengl_wrapper.cpp
                         3dView/gradient_background_shader.cpp
-                        3dView/tinyobjloader/tiny_obj_loader.cc
                         )
 
 
@@ -321,7 +319,7 @@ add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${HYPRE} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}
-                                        planin stratmod RRMGeometry RRMGeology Arrangement_2D SketchLib RRMMesh ${OPENVOLUMEMESH_LIBRARY} )
+                                        planin stratmod RRMGeometry RRMGeology Arrangement_2D SketchLib TinyObjLoader RRMMesh ${OPENVOLUMEMESH_LIBRARY} )
 
 
 ######################################################

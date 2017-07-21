@@ -175,6 +175,7 @@ endif( OpenGL_FOUND )
 
 add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
 add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
+add_subdirectory( libs/tinyobjloader EXCLUDE_FROM_ALL )
 add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
 
 

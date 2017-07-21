@@ -117,7 +117,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 		std::map<int, Eigen::Vector4d> wells_positions_;
        
         bool show_axis;
-//        CoordinateAxes axes;
+        CoordinateAxes axes;
 
         float scale;
 
