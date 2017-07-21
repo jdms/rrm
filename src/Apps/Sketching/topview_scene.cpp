@@ -204,7 +204,7 @@ bool TopViewScene::acceptSketch( Curve2D& curve )
 {
     if( sketch->isEmpty() == true ) return false;
 
-    curve = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketch() );
+    curve = PolyQtUtils::qPolyginFToCurve2D( sketch->getSketchFunctionGraphTopView() );
     processCurve( curve );
 
     return true;
