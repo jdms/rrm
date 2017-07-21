@@ -245,7 +245,7 @@ void TopViewScene::showPopUp()
 {
     QFrame* w = new QFrame;
     w->setMaximumHeight( 20 );
-    w->setStyleSheet( "background-color: red");
+    w->setStyleSheet( "background-color: red" );
 
 
     QLabel *lb_popup = new QLabel( "It's not possible to add two cross-sections and "
