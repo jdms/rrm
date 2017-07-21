@@ -151,6 +151,56 @@ QPolygonF InputSketch::getSketch() const
 
 QPolygonF InputSketch::getSketchFunctionGraph() const
 {
+    QPolygonF curve_ =  getSketch();
+    QPolygonF curve1_;
+
+    if( curve_.size() < 2 ) return curve_;
+
+    curve1_.append( curve_[ 0 ] );
+
+
+    int start = 0;
+    for( auto i = 0; i < curve_.size() - 1; ++i )
+    {
+         if( curve_[ i ].y() != curve_[ i + 1 ].y() ) break;
+
+         curve1_.append( curve_[ i + 1 ] );
+         start = i+1;
+    }
+
+
+
+    if( curve_[ start ].x() <= curve_[ start + 1 ].x() )
+    {
+        std::size_t temp = start;
+        for( auto i = start; i < curve_.size() - 1; ++i )
+        {
+             if( curve_[ temp ].x() >= curve_[ i + 1 ].x() ) continue;
+
+             curve1_.append( curve_[ i + 1 ] );
+             temp = i + 1;
+        }
+
+     }
+    else if( curve_[ start ].x() >= curve_[ start + 1 ].x() )
+    {
+        std::size_t temp = start;
+        for( auto i = start; i < curve_.size() - 1; ++i )
+        {
+             if( curve_[ temp ].x() <= curve_[ i + 1 ].x() ) continue;
+             curve1_.append( curve_[ i + 1 ] );
+             temp = i + 1;
+        }
+
+    }
+
+    return curve1_;
+}
+
+
+QPolygonF InputSketch::getSketchFunctionGraphTopView() const
+{
+
    QPolygonF curve_ =  getSketch();
    QPolygonF curve1_;
 
@@ -158,35 +208,44 @@ QPolygonF InputSketch::getSketchFunctionGraph() const
 
    curve1_.append( curve_[ 0 ] );
 
-   if( curve_[ 0 ].x() <= curve_[ 1 ].x() )
+
+   int start = 0;
+   for( auto i = 0; i < curve_.size() - 1; ++i )
    {
-       for( auto i = 0; i < curve_.size() - 1; ++i )
+        if( curve_[ i ].y() != curve_[ i + 1 ].y() ) break;
+
+        curve1_.append( curve_[ i + 1 ] );
+        start = i+1;
+   }
+
+
+   if( curve_[ start ].y() <= curve_[ start + 1 ].y() )
+   {
+       std::size_t temp = start;
+       for( auto i = start; i < curve_.size() - 1; ++i )
        {
-            if( curve_[ i ].x() >= curve_[ i + 1 ].x() ) continue;
+            if( curve_[ temp ].y() >= curve_[ i + 1 ].y() ) continue;
+
             curve1_.append( curve_[ i + 1 ] );
+            temp = i + 1;
        }
 
     }
-   else if( curve_[ 0 ].x() >= curve_[ 1 ].x() )
+   else if( curve_[ start ].y() >= curve_[ start + 1 ].y() )
    {
-       for( auto i = 0; i < curve_.size() - 1; ++i )
+       std::size_t temp = start;
+       for( auto i = start; i < curve_.size() - 1; ++i )
        {
-            if( curve_[ i ].x() <= curve_[ i + 1 ].x() ) continue;
+            if( curve_[ temp ].y() <= curve_[ i + 1 ].y() ) continue;
             curve1_.append( curve_[ i + 1 ] );
+            temp = i + 1;
        }
 
    }
 
    return curve1_;
-}
 
-
-QPolygonF InputSketch::getSketchFunctionGraphTopView() const
-{
-   QPolygonF curve_ =  getSketch();
-   QPolygonF curve1_;
-
-
+/*
 
    if( curve_.size() < 2 ) return curve_;
 
@@ -229,6 +288,8 @@ QPolygonF InputSketch::getSketchFunctionGraphTopView() const
    }
 
    return curve1_;
+
+   */
 }
 
 
