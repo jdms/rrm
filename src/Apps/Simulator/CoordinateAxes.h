@@ -28,7 +28,7 @@
 #include "Tucano/Shader.hpp"
 #include "Tucano/BoundingBox3.hpp"
 
-#include "./3dView/tinyobjloader/tiny_obj_loader.h"
+#include "./libs/tinyobjloader/tiny_obj_loader.h"
 
 
 class CoordinateAxes

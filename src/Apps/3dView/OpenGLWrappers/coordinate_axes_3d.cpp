@@ -1,7 +1,6 @@
 #include "coordinate_axes_3d.h"
 #include <math.h>
 
-#include "3dView/tinyobjloader/tiny_obj_loader.h"
 
 CoordinateAxes3d::CoordinateAxes3d()
 {

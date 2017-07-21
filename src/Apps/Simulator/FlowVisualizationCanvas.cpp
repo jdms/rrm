@@ -65,8 +65,8 @@ void FlowVisualizationCanvas::initializeGL()
 	mesh.initializeShader(current_directory);
 	crosssection.initShader(current_directory);
 
-//	axes.initShader(current_directory);
-//	axes.load();
+    axes.initShader(current_directory);
+    axes.load();
 
 	initializeShader();
 
@@ -104,10 +104,10 @@ void FlowVisualizationCanvas::paintGL()
 
 	mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
 
-//	if (true)
-//	{
-//		axes.draw(camera.getRotation(), camera.getViewport());
-//	}
+    if (true)
+    {
+        axes.draw(camera.getRotation(), camera.getViewport());
+    }
 
 }
 
@@ -421,7 +421,7 @@ void FlowVisualizationCanvas::setController( FlowVisualizationController *c )
 void FlowVisualizationCanvas::reloadShader()
 {
 	mesh.reloadShader();
-	//axes.reloadShader();
+    axes.reloadShader();
 
 	glFinish();
 	update();
