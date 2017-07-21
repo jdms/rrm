@@ -62,6 +62,7 @@ void SketchWindow::createToolbarActions()
 
     QAction* ac_edit_scene = new QAction( "Edit Objects", this );
     ac_edit_scene->setCheckable( true );
+    ac_edit_scene->setVisible( is_customizable );
     connect( ac_edit_scene, &QAction::toggled, scene, &SketchScene::setModeEditable );
 
     QAction* ac_remove_curve = new QAction( "Delete Curve", this );
