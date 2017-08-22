@@ -29,8 +29,8 @@
 
 
 #include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
-#include "stratmod/stratigraphy_modeller.hpp"
-#include "stratmod/stratigraphy_utilities.hpp"
+#include "smodeller.hpp"
+#include "sutilities.hpp"
 
 
 
@@ -188,7 +188,7 @@
 
 
         private:
-            StratigraphyModeller modeller_;
+            SModeller modeller_;
             struct { double x, y, z; } origin_, lenght_;
 
             bool testing_surface_insertion_ = false;
@@ -269,7 +269,7 @@
             modeller_.undo();
         }
 
-        StratigraphyUtilities util(modeller_);
+        SUtilities util(modeller_);
         std::vector<double> surface;
 
         std::vector<double> cross_section;

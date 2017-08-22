@@ -264,7 +264,7 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std
 
 bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
 {
-    StratigraphyUtilities util(modeller_);
+    SUtilities util(modeller_);
 
     return util.getNormalList(surface_id, nlist);
 }
@@ -283,7 +283,7 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vect
 
 bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double> &path)
 {
-    StratigraphyUtilities util(modeller_);
+    SUtilities util(modeller_);
 
     bool status = util.getExtrusionPath(surface_index, path);
 
