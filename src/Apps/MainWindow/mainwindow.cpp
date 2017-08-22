@@ -166,8 +166,11 @@ void MainWindow::createToolbarActions()
     ac_show_topview = new QAction( "Show Top-View", this );
     ac_show_topview->setCheckable( true );
     connect( ac_show_topview, &QAction::toggled, dw_topview, &QDockWidget::setVisible );
-    connect( dw_topview, &QDockWidget::visibilityChanged, ac_show_topview, &QAction::setChecked );
-
+    connect( dw_topview, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_topview->isVisible() == false ) )
+            ac_show_topview->setChecked( false );
+    } );
 
     ac_sketch_above = new QAction( "SA", this );
     ac_sketch_above->setCheckable( true );
@@ -288,15 +291,22 @@ void MainWindow::createMenuBar()
     ac_csection->setCheckable ( true );
 
     connect( ac_csection, &QAction::toggled, dw_csection , &QDockWidget::setVisible );
-    connect( dw_csection, &QDockWidget::visibilityChanged, ac_csection, &QAction::setChecked );
-
+    connect( dw_csection, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_csection->isVisible() == false ) )
+            ac_csection->setChecked( false );
+    } );
 
 
     QAction* ac_topview = new QAction ( tr ( "Top-View Window" ) , this );
     ac_topview->setCheckable ( true );
 
     connect( ac_topview , &QAction::toggled, dw_topview , &QDockWidget::setVisible );
-    connect( dw_topview, &QDockWidget::visibilityChanged, ac_topview, &QAction::setChecked );
+    connect( dw_topview, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_topview->isVisible() == false ) )
+            ac_topview->setChecked( false );
+    } );
 
 
 
