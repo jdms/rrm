@@ -20,7 +20,7 @@
  */
 
 
-#include "ColorMap.h"
+#include "colormap.h"
 
 
 ColorMap::ColorMap()

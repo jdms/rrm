@@ -28,7 +28,8 @@
 #include <map>
 
 
-#include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+//#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "PolygonalCurve/CurveN.hpp"
 #include "stratmod/stratigraphy_modeller.hpp"
 #include "stratmod/stratigraphy_utilities.hpp"
 

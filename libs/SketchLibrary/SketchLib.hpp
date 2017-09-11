@@ -30,8 +30,12 @@
 #ifndef _SKETCHLIB_HPP_
 #define _SKETCHLIB_HPP_
 
-#include "./src/Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+//#include "./src/core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "PolygonalCurve/CurveN.hpp"
+#include <map>
 #include <vector>
+#include <algorithm>
+#include <tuple>
 
 
 namespace RRM

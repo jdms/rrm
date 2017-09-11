@@ -30,7 +30,8 @@
 #include <vector>
 
 #include "Eigen/Dense"
-#include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "PolygonalCurve/CurveN.hpp"
+//#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 
 class Model3DUtils
 {

@@ -107,7 +107,7 @@ void Canvas3d::savetoRasterImage( const QString& filename )
 
 void Canvas3d::savetoVectorImage( const QString& filename )
 {
-    std::cout << "Not implemented yet to 3dView\n" << std::flush;
+    std::cout << "Not implemented yet to 3dview\n" << std::flush;
 }
 
 

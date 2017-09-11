@@ -1,10 +1,10 @@
 #include "scene3d.h"
 
 
-#include "./Core/Geology/Models/object.h"
-#include "OpenGLWrappers/volume_opengl_wrapper.h"
-#include "OpenGLWrappers/crosssection_opengl_wrapper.h"
-#include "OpenGLWrappers/object_opengl_wrapper.h"
+#include "./core/geology/models/object.h"
+#include "opengl_wrappers/volume_opengl_wrapper.h"
+#include "opengl_wrappers/crosssection_opengl_wrapper.h"
+#include "opengl_wrappers/object_opengl_wrapper.h"
 
 
 #include <QString>

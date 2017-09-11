@@ -33,7 +33,7 @@
 #include "libs/Tucano/BoundingBox3.hpp"
 
 
-#include "ColorMap.h"
+#include "colormap.h"
 
 // @DEPRECATED 
 // This class itself needs a huge refactory

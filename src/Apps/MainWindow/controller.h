@@ -6,7 +6,7 @@
 #include <map>
 
 #include "rules_processor.hpp"
-#include "./Core/Geology/Models/object.h"
+#include "./core/geology/models/object.h"
 
 
 class CSectionScene;

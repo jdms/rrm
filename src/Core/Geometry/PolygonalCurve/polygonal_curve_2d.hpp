@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <tuple>
 
-#include "./src/Core/Base/Constants/constants.hpp"
+#include "./src/core/base/constants/constants.hpp"
 #include "PolygonalCurve/CurveN.hpp"
 
 

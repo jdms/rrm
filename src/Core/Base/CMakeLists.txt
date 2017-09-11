@@ -11,8 +11,8 @@ project( RRMBase )
 # Main library
 ###############################################
      
-set( BASE_HEADERS Constants/constants.hpp )
-set( BASE_SOURCES Constants/constants.cpp )
+set( BASE_HEADERS constants/constants.hpp )
+set( BASE_SOURCES constants/constants.cpp )
 						
 						
 add_library( ${PROJECT_NAME} STATIC ${BASE_HEADERS} ${BASE_SOURCES} )  

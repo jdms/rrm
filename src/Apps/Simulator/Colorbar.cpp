@@ -20,7 +20,7 @@
  */
 
 
-#include "ColorBar.h"
+#include "colorbar.h"
 
 ColorBar::ColorBar() : QWidget()
 {

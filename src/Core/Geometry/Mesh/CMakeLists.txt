@@ -18,8 +18,8 @@ include_directories(
 # Main library
 ###############################################
      
-set( MESH_HEADERS MeshGenerator.hpp OpenVolumeMeshDefines.hpp)
-set( MESH_SOURCES MeshGenerator.cpp OpenVolumeMeshDefines.cpp)					
+set( MESH_HEADERS mesh_generator.hpp openvolumemesh_defines.hpp)
+set( MESH_SOURCES mesh_generator.cpp openvolumemesh_defines.cpp)
 					
 add_library( ${PROJECT_NAME} STATIC ${MESH_HEADERS} ${MESH_SOURCES} )  
 target_link_libraries( ${PROJECT_NAME} ${OPENVOLUMEMESH_LIBRARY} )

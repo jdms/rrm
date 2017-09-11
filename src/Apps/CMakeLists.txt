@@ -15,47 +15,47 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 # Main source -- MainWindow SubDirectory
 ###############################################
   
-set( MAINWINDOW_HEADERS MainWindow/mainwindow.h
-                        MainWindow/controller.h
-                        MainWindow/rules_processor.hpp
-                        MainWindow/Widgets/color_picker.h
-                        MainWindow/Widgets/pages_stack.h
-                        MainWindow/Widgets/real_slider.h
-                        MainWindow/Exporter/csp3_exporter.hpp
-                        MainWindow/Exporter/irap_grid_exporter.hpp
-                        MainWindow/Object_Tree/object_tree_item.h
-                        MainWindow/Object_Tree/object_tree.h
-                        MainWindow/Help/help_dialog.h
-                        MainWindow/About/about_widget.hpp )
+set( MAINWINDOW_HEADERS mainwindow/mainwindow.h
+                        mainwindow/controller.h
+                        mainwindow/rules_processor.hpp
+                        mainwindow/widgets/color_picker.h
+                        mainwindow/widgets/pages_stack.h
+                        mainwindow/widgets/real_slider.h
+                        mainwindow/exporter/csp3_exporter.hpp
+                        mainwindow/exporter/irap_grid_exporter.hpp
+                        mainwindow/object_tree/object_tree_item.h
+                        mainwindow/object_tree/object_tree.h
+                        mainwindow/help/help_dialog.h
+                        mainwindow/about/about_widget.hpp )
 
 
-set( MAINWINDOW_MOC_HEADERS MainWindow/mainwindow.h
-                            MainWindow/Widgets/color_picker.h
-                            MainWindow/Widgets/pages_stack.h
-                            MainWindow/Widgets/real_slider.h
-                            MainWindow/Object_Tree/object_tree.h
-                            MainWindow/Help/help_dialog.h
-                            MainWindow/About/about_widget.hpp )
+set( MAINWINDOW_MOC_HEADERS mainwindow/mainwindow.h
+                            mainwindow/widgets/color_picker.h
+                            mainwindow/widgets/pages_stack.h
+                            mainwindow/widgets/real_slider.h
+                            mainwindow/object_tree/object_tree.h
+                            mainwindow/help/help_dialog.h
+                            mainwindow/about/about_widget.hpp )
 
 
-set( MAINWINDOW_UI_SOURCES  MainWindow/About/about_widget.ui
-                            MainWindow/Help/help_dialog.ui
-                            MainWindow/Widgets/volume_resize_widget.ui )
+set( MAINWINDOW_UI_SOURCES  mainwindow/about/about_widget.ui
+                            mainwindow/help/help_dialog.ui
+                            mainwindow/widgets/volume_resize_widget.ui )
 
 
-set( MAINWINDOW_SOURCES MainWindow/main.cpp
-                        MainWindow/mainwindow.cpp
-                        MainWindow/Widgets/color_picker.cpp
-                        MainWindow/Widgets/pages_stack.cpp
-                        MainWindow/Widgets/real_slider.cpp
-                        MainWindow/controller.cpp
-                        MainWindow/rules_processor.cpp
-                        MainWindow/Exporter/csp3_exporter.cpp
-                        MainWindow/Exporter/irap_grid_exporter.cpp
-                        MainWindow/Object_Tree/object_tree_item.cpp
-                        MainWindow/Object_Tree/object_tree.cpp
-                        MainWindow/Help/help_dialog.cpp
-                        MainWindow/About/about_widget.cpp )
+set( MAINWINDOW_SOURCES mainwindow/main.cpp
+                        mainwindow/mainwindow.cpp
+                        mainwindow/widgets/color_picker.cpp
+                        mainwindow/widgets/pages_stack.cpp
+                        mainwindow/widgets/real_slider.cpp
+                        mainwindow/controller.cpp
+                        mainwindow/rules_processor.cpp
+                        mainwindow/exporter/csp3_exporter.cpp
+                        mainwindow/exporter/irap_grid_exporter.cpp
+                        mainwindow/object_tree/object_tree_item.cpp
+                        mainwindow/object_tree/object_tree.cpp
+                        mainwindow/help/help_dialog.cpp
+                        mainwindow/about/about_widget.cpp )
 
 
 
@@ -64,68 +64,68 @@ set( MAINWINDOW_SOURCES MainWindow/main.cpp
 # Main source -- Sketching SubDirectory
 ###############################################
 
-set( SKETCHING_HEADERS        Sketching/sketch_window.h
-                              Sketching/input_sketch.h
-                              Sketching/sketch_scene.h
-                              Sketching/csection_scene.h
-                              Sketching/topview_scene.h
-                              Sketching/ItemWrappers/coordinate_axes_2d.h
-                              Sketching/ItemWrappers/object_item_wrapper.h
-                              Sketching/ItemWrappers/trajectory_item_wrapper.h
-                              Sketching/ItemWrappers/volume_item_wrapper.h
-                              Sketching/ItemWrappers/crosssection_item_wrapper.h
-                              Sketching/ItemWrappers/region_item.hpp
-                              Sketching/polyqt_utils.hpp )
+set( SKETCHING_HEADERS        sketching/sketch_window.h
+                              sketching/input_sketch.h
+                              sketching/sketch_scene.h
+                              sketching/csection_scene.h
+                              sketching/topview_scene.h
+                              sketching/item_wrappers/coordinate_axes_2d.h
+                              sketching/item_wrappers/object_item_wrapper.h
+                              sketching/item_wrappers/trajectory_item_wrapper.h
+                              sketching/item_wrappers/volume_item_wrapper.h
+                              sketching/item_wrappers/crosssection_item_wrapper.h
+                              sketching/item_wrappers/region_item.hpp
+                              sketching/polyqt_utils.hpp )
 
 
-set( SKETCHING_MOC_HEADERS    Sketching/sketch_window.h
-                              Sketching/topview_scene.h
-                              Sketching/sketch_scene.h
-                              Sketching/csection_scene.h )
+set( SKETCHING_MOC_HEADERS    sketching/sketch_window.h
+                              sketching/topview_scene.h
+                              sketching/sketch_scene.h
+                              sketching/csection_scene.h )
 
 
-set( SKETCHING_SOURCES        Sketching/sketch_window.cpp
-                              Sketching/input_sketch.cpp
-                              Sketching/topview_scene.cpp
-                              Sketching/sketch_scene.cpp
-                              Sketching/csection_scene.cpp
-                              Sketching/ItemWrappers/coordinate_axes_2d.cpp
-                              Sketching/ItemWrappers/object_item_wrapper.cpp
-                              Sketching/ItemWrappers/trajectory_item_wrapper.cpp
-                              Sketching/ItemWrappers/volume_item_wrapper.cpp
-                              Sketching/ItemWrappers/crosssection_item_wrapper.cpp
-                              Sketching/ItemWrappers/region_item.cpp
-                              Sketching/polyqt_utils.cpp )
+set( SKETCHING_SOURCES        sketching/sketch_window.cpp
+                              sketching/input_sketch.cpp
+                              sketching/topview_scene.cpp
+                              sketching/sketch_scene.cpp
+                              sketching/csection_scene.cpp
+                              sketching/item_wrappers/coordinate_axes_2d.cpp
+                              sketching/item_wrappers/object_item_wrapper.cpp
+                              sketching/item_wrappers/trajectory_item_wrapper.cpp
+                              sketching/item_wrappers/volume_item_wrapper.cpp
+                              sketching/item_wrappers/crosssection_item_wrapper.cpp
+                              sketching/item_wrappers/region_item.cpp
+                              sketching/polyqt_utils.cpp )
 
 
 ###############################################
-# Main source -- 3dView SubDirectory
+# Main source -- 3dview SubDirectory
 ###############################################
 
-set( 3DVIEW_HEADERS    3dView/canvas3d.h
-                       3dView/model3d_utils.hpp
-                       3dView/scene3d.h
-                       3dView/OpenGLWrappers/coordinate_axes_3d.h
-                       3dView/OpenGLWrappers/object_opengl_wrapper.h
-                       3dView/OpenGLWrappers/volume_opengl_wrapper.h
-                       3dView/OpenGLWrappers/crosssection_opengl_wrapper.h
-                       3dView/gradient_background_shader.hpp
+set( 3DVIEW_HEADERS    3dview/canvas3d.h
+                       3dview/model3d_utils.hpp
+                       3dview/scene3d.h
+                       3dview/opengl_wrappers/coordinate_axes_3d.h
+                       3dview/opengl_wrappers/object_opengl_wrapper.h
+                       3dview/opengl_wrappers/volume_opengl_wrapper.h
+                       3dview/opengl_wrappers/crosssection_opengl_wrapper.h
+                       3dview/gradient_background_shader.hpp
                        )
 
 
-set( 3DVIEW_MOC_HEADERS  3dView/canvas3d.h
-                         3dView/scene3d.h )
+set( 3DVIEW_MOC_HEADERS  3dview/canvas3d.h
+                         3dview/scene3d.h )
 
 
 
-set( 3DVIEW_SOURCES     3dView/canvas3d.cpp
-                        3dView/scene3d.cpp
-                        3dView/model3d_utils.cpp
-                        3dView/OpenGLWrappers/coordinate_axes_3d.cpp
-                        3dView/OpenGLWrappers/object_opengl_wrapper.cpp
-                        3dView/OpenGLWrappers/volume_opengl_wrapper.cpp
-                        3dView/OpenGLWrappers/crosssection_opengl_wrapper.cpp
-                        3dView/gradient_background_shader.cpp
+set( 3DVIEW_SOURCES     3dview/canvas3d.cpp
+                        3dview/scene3d.cpp
+                        3dview/model3d_utils.cpp
+                        3dview/opengl_wrappers/coordinate_axes_3d.cpp
+                        3dview/opengl_wrappers/object_opengl_wrapper.cpp
+                        3dview/opengl_wrappers/volume_opengl_wrapper.cpp
+                        3dview/opengl_wrappers/crosssection_opengl_wrapper.cpp
+                        3dview/gradient_background_shader.cpp
                         )
 
 
@@ -136,151 +136,149 @@ set( 3DVIEW_SOURCES     3dView/canvas3d.cpp
 					
 
 set( SIMULATOR_HEADERS
-#                 Simulator/tinyobjloader/tiny_obj_loader.h
-                 Simulator/ColorMap.h
-                 Simulator/CoordinateAxes.h
-                 Simulator/FlowCrossSection.h
-                 Simulator/FlowVisualizationCanvas.h
-                 Simulator/FlowVisualizationController.h
-                 Simulator/FlowWindow.h
-                 Simulator/Mesh.h
-                 Simulator/NormalMovableCrossSectionFlow.h
-                 Simulator/ProgressCounter.h
-                 Simulator/ColorBar.h
-                 Simulator/FlowDiagnosticsInterface.hpp
-                 Simulator/FlowComputation/bsurface.h
-                 Simulator/FlowComputation/cpgelement.h
-                 Simulator/FlowComputation/curve.h
-                 Simulator/FlowComputation/edge.h
-                 Simulator/FlowComputation/facet.h
-                 Simulator/FlowComputation/geosurface.h
-                 Simulator/FlowComputation/graph.h
-                 Simulator/FlowComputation/graphedge.h
-                 Simulator/FlowComputation/graphnode.h
-                 Simulator/FlowComputation/linearfunc.h
-                 Simulator/FlowComputation/mathzz.h
-                 Simulator/FlowComputation/matrix.h
-                 Simulator/FlowComputation/meshinfo.h
-                 Simulator/FlowComputation/modelsurface.h
-                 Simulator/FlowComputation/node.h
-                 Simulator/FlowComputation/parasurface.h
-                 Simulator/FlowComputation/propertyarea.h
-                 Simulator/FlowComputation/region.h
-                 Simulator/FlowComputation/samg.h
-                 Simulator/FlowComputation/segment.h
-                 Simulator/FlowComputation/skeleton.h
-                 Simulator/FlowComputation/tetgen.h
-                 Simulator/FlowComputation/tetrahedron.h
-                 Simulator/FlowComputation/tofb.h
-                 Simulator/FlowComputation/tracerb.h
-                 Simulator/FlowComputation/triangle.h
-                 Simulator/FlowComputation/trifacet.h
-                 Simulator/FlowComputation/usermanual.h
-                 Simulator/FlowComputation/uvline.h
-                 Simulator/FlowComputation/uvnode.h
-                 Simulator/FlowComputation/well.h
-                 Simulator/FlowComputation/cpgface.h
-                 Simulator/FlowComputation/flowb.h
-                 Simulator/FlowComputation/row.h
-                                 Simulator/FlowComputation/pillar.h
+#                 simulator/tinyobjloader/tiny_obj_loader.h
+                 simulator/colormap.h
+                 simulator/coordinate_axes.h
+                 simulator/flow_crosssection.h
+                 simulator/flow_visualization_canvas.h
+                 simulator/flow_visualization_controller.h
+                 simulator/flow_window.h
+                 simulator/mesh.h
+                 simulator/normal_movable_crosssection_flow.h
+                 simulator/colorbar.h
+                 simulator/flow_diagnostics_interface.hpp
+                 simulator/flow_computation/bsurface.h
+                 simulator/flow_computation/cpgelement.h
+                 simulator/flow_computation/curve.h
+                 simulator/flow_computation/edge.h
+                 simulator/flow_computation/facet.h
+                 simulator/flow_computation/geosurface.h
+                 simulator/flow_computation/graph.h
+                 simulator/flow_computation/graphedge.h
+                 simulator/flow_computation/graphnode.h
+                 simulator/flow_computation/linearfunc.h
+                 simulator/flow_computation/mathzz.h
+                 simulator/flow_computation/matrix.h
+                 simulator/flow_computation/meshinfo.h
+                 simulator/flow_computation/modelsurface.h
+                 simulator/flow_computation/node.h
+                 simulator/flow_computation/parasurface.h
+                 simulator/flow_computation/propertyarea.h
+                 simulator/flow_computation/region.h
+                 simulator/flow_computation/samg.h
+                 simulator/flow_computation/segment.h
+                 simulator/flow_computation/skeleton.h
+                 simulator/flow_computation/tetgen.h
+                 simulator/flow_computation/tetrahedron.h
+                 simulator/flow_computation/tofb.h
+                 simulator/flow_computation/tracerb.h
+                 simulator/flow_computation/triangle.h
+                 simulator/flow_computation/trifacet.h
+                 simulator/flow_computation/usermanual.h
+                 simulator/flow_computation/uvline.h
+                 simulator/flow_computation/uvnode.h
+                 simulator/flow_computation/well.h
+                 simulator/flow_computation/cpgface.h
+                 simulator/flow_computation/flowb.h
+                 simulator/flow_computation/row.h
+                 simulator/flow_computation/pillar.h
                  # Flow Model
-                 Simulator/FlowModel/FlowModel.hpp
-                 Simulator/FlowModel/PropertyProfile.hpp
+                 simulator/flow_model/flow_model.hpp
+                 simulator/flow_model/property_profile.hpp
                  # Well Module
-                 Simulator/WellModule/WellCanvas.hpp
-                 Simulator/WellModule/WellScene.hpp
-                 Simulator/WellModule/WellItem.hpp
-                 Simulator/WellModule/WellWidget.hpp
+                 simulator/well_module/well_canvas.hpp
+                 simulator/well_module/well_scene.hpp
+                 simulator/well_module/well_item.hpp
+                 simulator/well_module/well_widget.hpp
                  # Region Module
-                 Simulator/RegionModule/RegionWidget.hpp
+                 simulator/region_module/region_widget.hpp
                  # Fluid Module
-                 Simulator/FluidModule/FluidWidget.hpp)
+                 simulator/fluid_module/fluid_widget.hpp)
 
 set ( SIMULATOR_MOC_HEADERS
-                Simulator/FlowVisualizationCanvas.h
-                Simulator/FlowVisualizationController.h
-                Simulator/FlowWindow.h
-                Simulator/NormalMovableCrossSectionFlow.h
-                Simulator/ProgressCounter.h
-                Simulator/ColorBar.h
+                simulator/flow_visualization_canvas.h
+                simulator/flow_visualization_controller.h
+                simulator/flow_window.h
+                simulator/normal_movable_crosssection_flow.h
+                simulator/colorbar.h
                 # Well Module
-                Simulator/WellModule/WellCanvas.hpp
-                Simulator/WellModule/WellScene.hpp
-                Simulator/WellModule/WellItem.hpp
-                Simulator/WellModule/WellWidget.hpp
+                simulator/well_module/well_canvas.hpp
+                simulator/well_module/well_scene.hpp
+                simulator/well_module/well_item.hpp
+                simulator/well_module/well_widget.hpp
                 # Region Module
-                Simulator/RegionModule/RegionWidget.hpp
+                simulator/region_module/region_widget.hpp
                 # Fluid Module
-                Simulator/FluidModule/FluidWidget.hpp)
+                simulator/fluid_module/fluid_widget.hpp)
 
 set ( SIMULATOR_UI_SOURCES
-                Simulator/NormalMovableCrossSectionFlow.ui
+                simulator/normal_movable_crosssection_flow.ui
                 # Well Module
-                 Simulator/WellModule/WellWidgetForm.ui
+                 simulator/well_module/well_widget_form.ui
                  # Region Module
-                 Simulator/RegionModule/RegionWidgetForm.ui
+                 simulator/region_module/region_widget_form.ui
                  # Fluid Module
-                 Simulator/FluidModule/FluidWidgetForm.ui
+                 simulator/fluid_module/fluid_widget_form.ui
                  )
 
 set( SIMULATOR_SOURCES
-#                Simulator/tinyobjloader/tiny_obj_loader.cc
-                Simulator/ColorMap.cpp
-                Simulator/CoordinateAxes.cpp
-                Simulator/FlowCrossSection.cpp
-                Simulator/FlowVisualizationCanvas.cpp
-                Simulator/FlowVisualizationController.cpp
-                Simulator/FlowWindow.cpp
-                Simulator/Mesh.cpp
-                Simulator/NormalMovableCrossSectionFlow.cpp
-                Simulator/ColorBar.cpp
-                Simulator/FlowDiagnosticsInterface.cpp
-                Simulator/FlowComputation/bsurface.cpp
-                Simulator/FlowComputation/cpgelement.cpp
-                Simulator/FlowComputation/curve.cpp
-                Simulator/FlowComputation/edge.cpp
-                Simulator/FlowComputation/facet.cpp
-                Simulator/FlowComputation/geosurface.cpp
-                Simulator/FlowComputation/graph.cpp
-                Simulator/FlowComputation/graphedge.cpp
-                Simulator/FlowComputation/graphnode.cpp
-                Simulator/FlowComputation/linearfunc.cpp
-                Simulator/FlowComputation/mathzz.cpp
-                Simulator/FlowComputation/matrix.cpp
-                Simulator/FlowComputation/meshinfo.cpp
-                Simulator/FlowComputation/modelsurface.cpp
-                Simulator/FlowComputation/node.cpp
-                Simulator/FlowComputation/predicates.cxx
-                Simulator/FlowComputation/parasurface.cpp
-                Simulator/FlowComputation/propertyarea.cpp
-                Simulator/FlowComputation/region.cpp
-                Simulator/FlowComputation/segment.cpp
-                Simulator/FlowComputation/skeleton.cpp
-                Simulator/FlowComputation/tetgen.cxx
-                Simulator/FlowComputation/tetrahedron.cpp
-                Simulator/FlowComputation/tofb.cpp
-                Simulator/FlowComputation/tracerb.cpp
-                Simulator/FlowComputation/triangle.c
-                Simulator/FlowComputation/trifacet.cpp
-                Simulator/FlowComputation/uvline.cpp
-                Simulator/FlowComputation/uvnode.cpp
-                Simulator/FlowComputation/well.cpp
-                Simulator/FlowComputation/cpgface.cpp
-                Simulator/FlowComputation/flowb.cpp
-                Simulator/FlowComputation/row.cpp
-                            Simulator/FlowComputation/pillar.cpp
+#                simulator/tinyobjloader/tiny_obj_loader.cc
+                simulator/colormap.cpp
+                simulator/coordinate_axes.cpp
+                simulator/flow_crosssection.cpp
+                simulator/flow_visualization_canvas.cpp
+                simulator/flow_visualization_controller.cpp
+                simulator/flow_window.cpp
+                simulator/mesh.cpp
+                simulator/normal_movable_crosssection_flow.cpp
+                simulator/colorbar.cpp
+                simulator/flow_diagnostics_interface.cpp
+                simulator/flow_computation/bsurface.cpp
+                simulator/flow_computation/cpgelement.cpp
+                simulator/flow_computation/curve.cpp
+                simulator/flow_computation/edge.cpp
+                simulator/flow_computation/facet.cpp
+                simulator/flow_computation/geosurface.cpp
+                simulator/flow_computation/graph.cpp
+                simulator/flow_computation/graphedge.cpp
+                simulator/flow_computation/graphnode.cpp
+                simulator/flow_computation/linearfunc.cpp
+                simulator/flow_computation/mathzz.cpp
+                simulator/flow_computation/matrix.cpp
+                simulator/flow_computation/meshinfo.cpp
+                simulator/flow_computation/modelsurface.cpp
+                simulator/flow_computation/node.cpp
+                simulator/flow_computation/predicates.cxx
+                simulator/flow_computation/parasurface.cpp
+                simulator/flow_computation/propertyarea.cpp
+                simulator/flow_computation/region.cpp
+                simulator/flow_computation/segment.cpp
+                simulator/flow_computation/skeleton.cpp
+                simulator/flow_computation/tetgen.cxx
+                simulator/flow_computation/tetrahedron.cpp
+                simulator/flow_computation/tofb.cpp
+                simulator/flow_computation/tracerb.cpp
+                simulator/flow_computation/triangle.c
+                simulator/flow_computation/trifacet.cpp
+                simulator/flow_computation/uvline.cpp
+                simulator/flow_computation/uvnode.cpp
+                simulator/flow_computation/well.cpp
+                simulator/flow_computation/cpgface.cpp
+                simulator/flow_computation/flowb.cpp
+                simulator/flow_computation/row.cpp
+                simulator/flow_computation/pillar.cpp
                 # Flow Model
-                Simulator/FlowModel/FlowModel.cpp
-                Simulator/FlowModel/PropertyProfile.cpp
+                simulator/flow_model/flow_model.cpp
+                simulator/flow_model/property_profile.cpp
                 # Well Module
-                Simulator/WellModule/WellCanvas.cpp
-                Simulator/WellModule/WellScene.cpp
-                Simulator/WellModule/WellItem.cpp
-                Simulator/WellModule/WellWidget.cpp
+                simulator/well_module/well_canvas.cpp
+                simulator/well_module/well_scene.cpp
+                simulator/well_module/well_item.cpp
+                simulator/well_module/well_widget.cpp
                 # Region Module
-                Simulator/RegionModule/RegionWidget.cpp
+                simulator/region_module/region_widget.cpp
                 # Fluid Module
-                Simulator/FluidModule/FluidWidget.cpp)
+                simulator/fluid_module/fluid_widget.cpp)
 
 
 ###############################################
@@ -297,7 +295,7 @@ set( UI_SOURCES ${MAINWINDOW_UI_SOURCES} ${SIMULATOR_UI_SOURCES} )
 
 
 ## Resources
-set( RCC_SOURCES Resources/images.qrc )
+set( RCC_SOURCES resources/images.qrc )
 
 
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
@@ -315,7 +313,7 @@ add_executable(${PROJECT_NAME} WIN32 ${MAINWINDOW_SOURCES} ${MAINWINDOW_HEADERS}
                                ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} 
                                ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS}
                                ${GEOLOGY_SOURCES} ${GEOLOGY_HEADERS}
-                               ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} Resources/rrm.rc)
+                               ${MOC_SOURCES} ${UI_HEADERS} ${RCC_HEADERS} resources/rrm.rc)
 
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${HYPRE} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${SAMG_LIBRARY}

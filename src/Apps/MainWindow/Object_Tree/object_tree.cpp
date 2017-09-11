@@ -2,7 +2,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QHeaderView>
 
-#include "../Widgets/color_picker.h"
+#include "../widgets/color_picker.h"
 #include "object_tree.h"
 
 
