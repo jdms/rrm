@@ -1402,5 +1402,8 @@ protected:
 };
 
 
+typedef PolygonalCurve< double, 2, PointN< double, 2 >, VectorN< double, 2 > > Curve2D;
+typedef PointN< double, 2 >                                                Point2D;
+
 #endif // __CURVEN_HPP__
 
