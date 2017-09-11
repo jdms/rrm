@@ -1,13 +1,13 @@
 #include "controller.h"
 
 
-#include "Object_Tree/object_tree.h"
-#include "Sketching/csection_scene.h"
-#include "Sketching/topview_scene.h"
-#include "3dView/scene3d.h"
-#include "3dView/model3d_utils.hpp"
+#include "object_tree/object_tree.h"
+#include "sketching/csection_scene.h"
+#include "sketching/topview_scene.h"
+#include "3dview/scene3d.h"
+#include "3dview/model3d_utils.hpp"
 
-#include "./Core/Geology/Models/volume.h"
+#include "./core/geology/models/volume.h"
 
 
 Controller::Controller()

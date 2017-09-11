@@ -30,7 +30,7 @@
 #include <iostream>
 
 
-#include "Sketching/polyqt_utils.hpp"
+#include "sketching/polyqt_utils.hpp"
 
 #include "./libs/SketchLibrary/SketchLib.hpp"
 

@@ -27,7 +27,8 @@
 
 #include <QPolygonF>
 
-#include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+//#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "PolygonalCurve/CurveN.hpp"
 
 /// \brief collection of methods to use QT polyline library facilities
 class PolyQtUtils

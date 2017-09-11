@@ -1,5 +1,5 @@
 #include "sketch_window.h"
-#include "./MainWindow/Widgets/color_picker.h"
+#include "./mainwindow/widgets/color_picker.h"
 #include "csection_scene.h"
 #include "topview_scene.h"
 

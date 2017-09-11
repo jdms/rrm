@@ -11,10 +11,10 @@ include_directories(
 
 
 if( BUILD_FULL_SUITE )
-    add_subdirectory( Apps )
+    add_subdirectory( apps )
 endif( BUILD_FULL_SUITE )
 
-add_subdirectory( Core )
+add_subdirectory( core )
 
 
 	

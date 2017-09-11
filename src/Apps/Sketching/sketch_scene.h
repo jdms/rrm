@@ -7,11 +7,11 @@
 
 #include "Eigen/Dense"
 
-#include "Sketching/input_sketch.h"
-#include "ItemWrappers/coordinate_axes_2d.h"
-#include "ItemWrappers/volume_item_wrapper.h"
-#include "ItemWrappers/object_item_wrapper.h"
-#include "ItemWrappers/region_item.hpp"
+#include "sketching/input_sketch.h"
+#include "item_wrappers/coordinate_axes_2d.h"
+#include "item_wrappers/volume_item_wrapper.h"
+#include "item_wrappers/object_item_wrapper.h"
+#include "item_wrappers/region_item.hpp"
 
 
 

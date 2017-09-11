@@ -8,7 +8,8 @@
 
 #include <Eigen/Dense>
 
-#include "./Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "PolygonalCurve/CurveN.hpp"
+//#include "./core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 
 
 class Object

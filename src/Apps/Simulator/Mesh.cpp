@@ -19,7 +19,7 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Mesh.h"
+#include "mesh.h"
 
 
 #include "Tucano/BoundingBox3.hpp"

@@ -5,9 +5,9 @@
 
 #include "topview_scene.h"
 
-#include "Core/Geology/Models/volume.h"
-#include "Core/Geology/Models/object.h"
-#include "./ItemWrappers/crosssection_item_wrapper.h"
+#include "core/geology/models/volume.h"
+#include "core/geology/models/object.h"
+#include "./item_wrappers/crosssection_item_wrapper.h"
 
 
 TopViewScene::TopViewScene()

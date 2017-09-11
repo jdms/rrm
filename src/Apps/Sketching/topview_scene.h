@@ -2,7 +2,7 @@
 #define TOPVIEWSCENE_H
 
 #include "sketch_scene.h"
-#include "ItemWrappers/trajectory_item_wrapper.h"
+#include "item_wrappers/trajectory_item_wrapper.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>

@@ -5,7 +5,7 @@
 #include <QColor>
 
 #include "Eigen/Dense"
-#include "OpenGLWrappers/coordinate_axes_3d.h"
+#include "opengl_wrappers/coordinate_axes_3d.h"
 
 class QString;
 class QOpenGLContext;
