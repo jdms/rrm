@@ -26,83 +26,83 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
 {
 
     show_axis = true;
-   
+
     this->current_directory = _current_dir.toStdString();
 }
 
 void FlowVisualizationCanvas::initializeGL()
 {
 
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-	}
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
 
 
-	GLint bufs;
-	GLint samples;
+    GLint bufs;
+    GLint samples;
 
-	GLint minor;
-	GLint major;
+    GLint minor;
+    GLint major;
 
-	glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
-	glGetIntegerv(GL_SAMPLES, &samples);
+    glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
+    glGetIntegerv(GL_SAMPLES, &samples);
 
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
 
-	qDebug("Have %d buffers and %d samples", bufs, samples);
-	qDebug("Have %d Minor and %d Major", minor, major);
+    qDebug("Have %d buffers and %d samples", bufs, samples);
+    qDebug("Have %d Minor and %d Major", minor, major);
 
-	mesh.initializeShader(current_directory);
-	crosssection.initShader(current_directory);
+    mesh.initializeShader(current_directory);
+    crosssection.initShader(current_directory);
 
     axes.initShader(current_directory);
     axes.load();
 
-	initializeShader();
+    initializeShader();
 
 }
 
 void FlowVisualizationCanvas::paintGL()
 {
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	loadBackGround();
+    loadBackGround();
 
-	Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
-	Eigen::Affine3f M;
-	M.setIdentity();
-	M.rotate(q);
+    Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
+    Eigen::Affine3f M;
+    M.setIdentity();
+    M.rotate(q);
 
-	Eigen::Affine3f V = camera.getViewMatrix();
-	Eigen::Matrix4f P = camera.getProjectionMatrix();
+    Eigen::Affine3f V = camera.getViewMatrix();
+    Eigen::Matrix4f P = camera.getProjectionMatrix();
 
-	V = V * M;
+    V = V * M;
 
-	if (apply_crosssection == true)
-	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (apply_crosssection == true)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		scale = 1.0f;
-		crosssection.draw(V, P, scale);
+        scale = 1.0f;
+        crosssection.draw(V, P, scale);
 
-		glDisable(GL_BLEND);
+        glDisable(GL_BLEND);
 
-	}
+    }
 
 
-	mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
+    mesh.draw(V, P, scale, static_cast<float>(width()), static_cast<float>(height()));
 
     if (true)
     {
@@ -114,301 +114,301 @@ void FlowVisualizationCanvas::paintGL()
 void FlowVisualizationCanvas::resizeGL(int width, int height)
 {
 
-	glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 
-	camera.setViewport(Eigen::Vector2f(static_cast<float>(width), static_cast<float>(height)));
-	camera.setPerspectiveMatrix(camera.getFovy(), (float)width / (float)height, 0.1f, 100.0f);
+    camera.setViewport(Eigen::Vector2f(static_cast<float>(width), static_cast<float>(height)));
+    camera.setPerspectiveMatrix(camera.getFovy(), (float)width / (float)height, 0.1f, 100.0f);
 
-	scale = 1.5*(float)width / (float)height;
+    scale = 1.5*(float)width / (float)height;
 }
 
 void FlowVisualizationCanvas::mouseMoveEvent(QMouseEvent *event)
 {
 
-	Eigen::Vector2f mouse_pos(event->x(), event->y());
+    Eigen::Vector2f mouse_pos(event->x(), event->y());
 
 
-	if ((event->modifiers() & Qt::ShiftModifier) && (event->buttons() & Qt::LeftButton))
-	{
-		camera.translateCamera(mouse_pos);
-	}
+    if ((event->modifiers() & Qt::ShiftModifier) && (event->buttons() & Qt::LeftButton))
+    {
+        camera.translateCamera(mouse_pos);
+    }
 
-	else if (event->buttons() & Qt::LeftButton)
-	{
-		camera.rotateCamera(mouse_pos);
-	}
+    else if (event->buttons() & Qt::LeftButton)
+    {
+        camera.rotateCamera(mouse_pos);
+    }
 
 
-	else if (event->buttons() & Qt::RightButton)
-	{
+    else if (event->buttons() & Qt::RightButton)
+    {
 
-		float x = 2 * event->screenPos().x() / width() - 1.0f;
-		float y = -2 * event->screenPos().y() / height() + 1.0f;
-		float z = 1 - x*x - y*y;
+        float x = 2 * event->screenPos().x() / width() - 1.0f;
+        float y = -2 * event->screenPos().y() / height() + 1.0f;
+        float z = 1 - x*x - y*y;
 
-		if (z >= 0) z = sqrt(z);
-		else z = 0;
+        if (z >= 0) z = sqrt(z);
+        else z = 0;
 
-		double length = sqrt(x*x + y*y + z*z);
-		if (length == 0.0f) return;
+        double length = sqrt(x*x + y*y + z*z);
+        if (length == 0.0f) return;
 
-		x /= length;
-		y /= length;
-		z /= length;
+        x /= length;
+        y /= length;
+        z /= length;
 
-		Eigen::Affine3f V = camera.getViewMatrix();
-		Eigen::Matrix4f P = camera.getProjectionMatrix();
+        Eigen::Affine3f V = camera.getViewMatrix();
+        Eigen::Matrix4f P = camera.getProjectionMatrix();
 
-		crosssection.updatePosition(QVector3D(x, y, z));
+        crosssection.updatePosition(QVector3D(x, y, z));
 
-		float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-		crosssection.getPlaneEquation(a, b, c, d);
-		mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+        crosssection.getPlaneEquation(a, b, c, d);
+        mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
-	}
+    }
 
-	update();
+    update();
 
 }
 
 void FlowVisualizationCanvas::mousePressEvent(QMouseEvent *event)
 {
-	Eigen::Vector2f mouse_pos(event->x(), event->y());
+    Eigen::Vector2f mouse_pos(event->x(), event->y());
 
 
-	setFocus();
+    setFocus();
 
-	if ((event->modifiers() & Qt::ShiftModifier) && (event->button() == Qt::LeftButton))
-	{
-		camera.translateCamera(mouse_pos);
-	}
+    if ((event->modifiers() & Qt::ShiftModifier) && (event->button() == Qt::LeftButton))
+    {
+        camera.translateCamera(mouse_pos);
+    }
 
-	if ((event->buttons() & Qt::RightButton))
-	{
+    if ((event->buttons() & Qt::RightButton))
+    {
 
-	}
+    }
 
 }
 
 void FlowVisualizationCanvas::mouseReleaseEvent(QMouseEvent *event)
 {
 
-	if (event->button() == Qt::LeftButton)
-	{
-		camera.endTranslation();
-		camera.endRotation();
-	}
+    if (event->button() == Qt::LeftButton)
+    {
+        camera.endTranslation();
+        camera.endRotation();
+    }
 
-	update();
+    update();
 }
 
 void FlowVisualizationCanvas::wheelEvent(QWheelEvent *event)
 {
-	float pos = event->delta() / float(speed_zoom);
+    float pos = event->delta() / float(speed_zoom);
 
-	if (event->modifiers() & Qt::ShiftModifier)
-		camera.incrementFov(pos);
+    if (event->modifiers() & Qt::ShiftModifier)
+        camera.incrementFov(pos);
 
-	else
-	{
-		if (pos > 0){
-			camera.increaseZoom(1.05f);
-		}
-		else if (pos < 0){
-			camera.increaseZoom(1.0f / 1.05f);
-		}
+    else
+    {
+        if (pos > 0){
+            camera.increaseZoom(1.05f);
+        }
+        else if (pos < 0){
+            camera.increaseZoom(1.0f / 1.05f);
+        }
 
 
-	}
+    }
 
-	update();
+    update();
 }
 
 void FlowVisualizationCanvas::keyPressEvent(QKeyEvent *event)
 {
 
-	Eigen::Affine3f V = camera.getViewMatrix();
-	Eigen::Matrix4f P = camera.getProjectionMatrix();
+    Eigen::Affine3f V = camera.getViewMatrix();
+    Eigen::Matrix4f P = camera.getProjectionMatrix();
 
-	switch (event->key())
-	{
-
-
-	case Qt::Key_A:
-	{
-		show_axis = !show_axis;
-
-	} break;
-
-	case Qt::Key_C:
-	{
-	} break;
+    switch (event->key())
+    {
 
 
-	case Qt::Key_U:
-	{
-		this->reloadShader();
-	} break;
+    case Qt::Key_A:
+    {
+        show_axis = !show_axis;
 
-	case Qt::Key_R:
-	{
-		camera.reset();
-		camera.increaseZoom(2.0f*1.05f);
-	} break;
+    } break;
 
-	case Qt::Key_X:
-	{
-		if (apply_crosssection == true)
-		{
-			crosssection.setNormal(QVector3D(1.0f, 0.0f, 0.0f));
-			crosssection.init();
-			crosssection.load();
-
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-
-		}
-
-	} break;
+    case Qt::Key_C:
+    {
+    } break;
 
 
-	case Qt::Key_Y:
-	{
-		if (apply_crosssection == true)
-		{
-			crosssection.setNormal(QVector3D(0.0f, 1.0f, 0.0f));
-			crosssection.init();
-			crosssection.load();
+    case Qt::Key_U:
+    {
+        this->reloadShader();
+    } break;
+
+    case Qt::Key_R:
+    {
+        camera.reset();
+        camera.increaseZoom(2.0f*1.05f);
+    } break;
+
+    case Qt::Key_X:
+    {
+        if (apply_crosssection == true)
+        {
+            crosssection.setNormal(QVector3D(1.0f, 0.0f, 0.0f));
+            crosssection.init();
+            crosssection.load();
+
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+
+        }
+
+    } break;
 
 
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-		}
+    case Qt::Key_Y:
+    {
+        if (apply_crosssection == true)
+        {
+            crosssection.setNormal(QVector3D(0.0f, 1.0f, 0.0f));
+            crosssection.init();
+            crosssection.load();
 
 
-
-	} break;
-
-	case Qt::Key_Z:
-	{
-		if (apply_crosssection == true)
-		{
-
-			crosssection.setNormal(QVector3D(0.0f, 0.0f, 1.0f));
-			crosssection.init();
-			crosssection.load();
-
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-
-		}
-
-
-	} break;
-
-	case Qt::Key_Up:
-	{
-
-		if (apply_crosssection == true)
-		{
-			float step = 1.0f;
-			crosssection.updatePosition(V, P, step);
-
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-		}
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        }
 
 
 
-	}break;
-	case Qt::Key_Down:
-	{
+    } break;
 
-		if (apply_crosssection == true)
-		{
-			float step = -1.0f;
-			crosssection.updatePosition(V, P, step);
+    case Qt::Key_Z:
+    {
+        if (apply_crosssection == true)
+        {
 
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+            crosssection.setNormal(QVector3D(0.0f, 0.0f, 1.0f));
+            crosssection.init();
+            crosssection.load();
 
-		}
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
 
-
-	}break;
-	case Qt::Key_Right:
-	{
-
-		if (apply_crosssection == true)
-		{
-			float step = 1.0f;
-			crosssection.updatePosition(V, P, step);
-
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-
-		}
+        }
 
 
-	}break;
-	case Qt::Key_Left:
-	{
+    } break;
 
-		if (apply_crosssection == true)
-		{
-			float step = -1.0f;
-			crosssection.updatePosition(V, P, step);
+    case Qt::Key_Up:
+    {
 
-			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
-			crosssection.getPlaneEquation(a, b, c, d);
-			mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
-		}
+        if (apply_crosssection == true)
+        {
+            float step = 1.0f;
+            crosssection.updatePosition(V, P, step);
 
-
-	}break;
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        }
 
 
-	case Qt::Key_Delete:
-	{
-		emit controller->clearAll();
-	} break;
+
+    }break;
+    case Qt::Key_Down:
+    {
+
+        if (apply_crosssection == true)
+        {
+            float step = -1.0f;
+            crosssection.updatePosition(V, P, step);
+
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+
+        }
 
 
-	default:
-		break;
+    }break;
+    case Qt::Key_Right:
+    {
+
+        if (apply_crosssection == true)
+        {
+            float step = 1.0f;
+            crosssection.updatePosition(V, P, step);
+
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+
+        }
 
 
-	}
+    }break;
+    case Qt::Key_Left:
+    {
 
-	update();
+        if (apply_crosssection == true)
+        {
+            float step = -1.0f;
+            crosssection.updatePosition(V, P, step);
+
+            float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+            crosssection.getPlaneEquation(a, b, c, d);
+            mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        }
+
+
+    }break;
+
+
+    case Qt::Key_Delete:
+    {
+        emit controller->clearAll();
+    } break;
+
+
+    default:
+        break;
+
+
+    }
+
+    update();
 }
 
 void FlowVisualizationCanvas::initializeShader()
 {
-	background = new Tucano::Shader("BackGround", (current_directory + "Shaders/DummyQuad.vert"),
-		(current_directory + "Shaders/DummyQuad.frag"),
-		(current_directory + "Shaders/DummyQuad.geom"), "", "");
-	background->initialize();
+    background = new Tucano::Shader("BackGround", (current_directory + "Shaders/DummyQuad.vert"),
+        (current_directory + "Shaders/DummyQuad.frag"),
+        (current_directory + "Shaders/DummyQuad.geom"), "", "");
+    background->initialize();
 
 
-	glGenVertexArrays(1, &va_background);
-	glBindVertexArray(va_background);
+    glGenVertexArrays(1, &va_background);
+    glBindVertexArray(va_background);
 
-	/// Requesting Vertex Buffers to the GPU
-	glGenBuffers(1, &vb_background);
-	glBindBuffer(GL_ARRAY_BUFFER, vb_background);
-	glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+    /// Requesting Vertex Buffers to the GPU
+    glGenBuffers(1, &vb_background);
+    glBindBuffer(GL_ARRAY_BUFFER, vb_background);
+    glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindVertexArray(0);
+    glBindVertexArray(0);
 
 
 }
@@ -420,11 +420,11 @@ void FlowVisualizationCanvas::setController( FlowVisualizationController *c )
 /// Debug Purpose
 void FlowVisualizationCanvas::reloadShader()
 {
-	mesh.reloadShader();
-    axes.reloadShader();
+    mesh.reloadShader();
+    //axes.reloadShader();
 
-	glFinish();
-	update();
+    glFinish();
+    update();
 }
 
 void FlowVisualizationCanvas::loadBackGround()
@@ -487,7 +487,7 @@ void FlowVisualizationCanvas::showRegions()
     //    values.push_back( it->first);
     //     colors_.push_back( it->second);
     //}
-	    
+
 
     update();
 
@@ -518,18 +518,18 @@ void FlowVisualizationCanvas::updateMesh()
 
     mesh.setMeshType( Mesh::TYPE::QUADRILATERAL );
 
-	std::vector<float> vertices_float;
+    std::vector<float> vertices_float;
 
-	for (auto v : vertices)
-	{
-		vertices_float.push_back(static_cast<float>(v));
-	}
+    for (auto v : vertices)
+    {
+        vertices_float.push_back(static_cast<float>(v));
+    }
 
 
-	mesh.buildBoundingBox(vertices_float);
+    mesh.buildBoundingBox(vertices_float);
 
-	mesh.setSkeletonGeometry(faces, vertices_float);
-	
+    mesh.setSkeletonGeometry(faces, vertices_float);
+
 
     camera.reset();
     camera.increaseZoom(2.0f*1.05f);
@@ -553,7 +553,7 @@ void FlowVisualizationCanvas::updateCornerPoint( )
     vertices.assign( vertices_double.begin(), vertices_double.end() );
 
     mesh.setMeshType( Mesh::TYPE::HEXAHEDRAL );
-	mesh.setHexahedronGeometry(faces, vertices);
+    mesh.setHexahedronGeometry(faces, vertices);
 
 
     update();
@@ -572,11 +572,11 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
-	/// OpenVolumeMesh
-	mesh.setTetrahedronGeometry(faces, vertices);
-	
+    /// OpenVolumeMesh
+    mesh.setTetrahedronGeometry(faces, vertices);
+
     update();
-	
+
 }
 
 void FlowVisualizationCanvas::clear()
@@ -588,7 +588,7 @@ void FlowVisualizationCanvas::clear()
     apply_crosssection = false;
 
     camera.reset();
-	
+
     update();
 }
 
@@ -596,32 +596,32 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 {
     mesh.resetBuffers();
     crosssection.resetBuffers();
-//    axes.resetBuffers();
+    axes.resetBuffers();
 
 }
 /// Get the current boundingobx depth in the extrusion framework
 float FlowVisualizationCanvas::getDepth() const
 {
-	return mesh.getDepth();
+    return mesh.getDepth();
 }
 
 
 void FlowVisualizationCanvas::setDefaultColor()
 {
-	mesh.setDefaultColor();
-	update();
+    mesh.setDefaultColor();
+    update();
 
 }
 
 void FlowVisualizationCanvas::setColors(const std::vector< float >& colors)
 {
-	mesh.setMeshColor(colors);
-	update();
+    mesh.setMeshColor(colors);
+    update();
 
 }
 
-void FlowVisualizationCanvas::updateWellsPosition(int _number_of_wells_,const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types)
+void FlowVisualizationCanvas::updateWellsPosition(int _number_of_wells_, const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types, const std::map<int, Eigen::Vector2d>& _range)
 {
-	mesh.loadWellPosition(_number_of_wells_,_positions, _types);
-	update();
+    mesh.loadWellPosition(_number_of_wells_, _positions, _types, _range);
+    update();
 }

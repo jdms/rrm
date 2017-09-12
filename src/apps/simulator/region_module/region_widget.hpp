@@ -14,6 +14,8 @@
 
 #include "ui_region_widget_form.h"
 
+#include "../widgets/spanslider/qxtspanslider.h"
+
 namespace RRM
 {
 
@@ -26,25 +28,34 @@ namespace RRM
                          RegionWidget ( QWidget * parent );
                         virtual ~RegionWidget ( ) = default;
 
-						void getRegionData(int& _number_of_regions, 
-										   std::vector<double>& _positions,
-										   std::vector<double>& _permeability_values,
-										   std::vector<double>& _porosity_values,
-										   std::vector<double>& _viscosity_values
-										   );
+                        void getRegionData(int& _number_of_regions,
+                                           std::vector<double>& _positions,
+                                           std::vector<double>& _permeability_values,
+                                           std::vector<double>& _porosity_values,
+                                           std::vector<double >& _staturation_values,
+                                           std::map<int, std::pair<double,double> >& _porosity_gratdients,
+                                           std::map<int, std::pair<double, double> >& _permeability_gratdients
+                                           );
 
-						void setRegionData(int& _number_of_regions,
-							std::vector<double>& _positions,
-							std::vector<double>& _permeability_values,
-							std::vector<double>& _porosity_values,
-							std::vector<double>& _viscosity_values
-							);
+                        void setRegionData(const int _number_of_regions,
+                            const std::vector<double>& _positions,
+                            const std::vector<double>& _permeability_values,
+                            const std::vector<double>& _porosity_values,
+                            const std::vector<double >& _staturation_values
+                            );
 
-						int getNumberOfRegion() const;
+                        int getNumberOfRegion() const;
 
-						void setRegionDepth(float _depth);
+                        void setRegionDepth(float _depth);
 
-						void clear();
+                        void setByRegionSaturation( bool option )
+                        {
+                            ui_->label_Region_Saturation_->setEnabled( option );
+                            ui_->doubleSpinBox_Region_Saturation_->setEnabled( option );
+                            ui_->horizontalSlider_Saturation_->setEnabled( option );
+                        }
+
+                        void clear();
 
                 public slots:
                         void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
@@ -61,15 +72,42 @@ namespace RRM
                         void createRegions( int _number_of_regions);
 
                         int number_of_regions_;
-						float depth_;
+
+                        /// @Deprecated soon ...
+                        float depth_;
+
                         std::map< int, Eigen::Vector3f > positions_values;
+
+                        /// Region Attributes
                         std::map< int, double > permeability_values;
                         std::map< int, double > porosity_values;
-                        std::map< int, double > viscosity_values;
+                        std::map< int, double > saturation_values;
+                        std::map< int, int >    permeability_curve_values;
 
+                        /// Region GUI Attributes. To keep track of the slider position
                         std::map< int, int > permeability_slider_values;
                         std::map< int, int > porosity_slider_values;
-                        std::map< int, int > viscosity_slider_values;
+                        std::map< int, int > sturation_slider_values;
+
+                        ///@FIXME September 2017
+                        QxtSpanSlider* qxt_span_slider_permeability_;
+                        QSlider*     slider_permeability_;
+                        QLabel* gradient_permeability_Label_;
+                        QDoubleSpinBox* doubleSpinbBox_low_permeability_;
+                        QDoubleSpinBox* doubleSpinbBox_high_permeability_;
+
+                        std::map< int, std::pair<double,double> > permeability_gradient_values_;
+                        std::tuple<int, int, int, int> permeability_position_;
+
+                        QxtSpanSlider* qxt_span_slider_porosity_;
+                        QSlider*     slider_porosity_;
+                        QLabel* gradient_porosity_Label_;
+                        QDoubleSpinBox* doubleSpinbBox_low_porosity_;
+                        QDoubleSpinBox* doubleSpinbBox_high_porosity_;
+
+                        std::map< int, std::pair<double, double> > porosity_gradient_values_;
+                        std::tuple<int, int, int, int> porosity_position_;
+
         };
 
 } /* namespace RRM */

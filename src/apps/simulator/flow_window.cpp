@@ -23,620 +23,661 @@
 
 FlowWindow::FlowWindow(QWidget *parent) : QMainWindow(parent)
 {
-	setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::StrongFocus);
 
-	createWindow();
-	createToolBar();
-	createActions();
-	getCurrentDirectory();
+    createWindow();
+    createToolBar();
+    createActions();
+    getCurrentDirectory();
 
-	reset();
-	are_regionsdefined = false;
-	is_cornerpoint = false;
+    reset();
+    are_regionsdefined = false;
+    is_cornerpoint = false;
 
 
-	/// FIXME June 2017. It tells when a new model is build. Used to keep well position
-	bounding_box_changed_ = true;
+    /// FIXME June 2017. It tells when a new model is build. Used to keep well position
+    bounding_box_changed_ = true;
 }
 
 void FlowWindow::createWindow()
 {
+    flowModule_view_ = this->menuBar()->addMenu(tr("&View"));
+    flowModule_diagnostic_  = this->menuBar()->addMenu(tr("&Flow Diagnostic"));
 
-	flowModule_view_ = this->menuBar()->addMenu(tr("&View"));
-	flowModule_diagnostic_  = this->menuBar()->addMenu(tr("&Flow Diagnostic"));
-
-	qdockcrosssectionnormalBar = new QDockWidget(this);
-	qdockcrosssectionnormalBar->setAllowedAreas(Qt::LeftDockWidgetArea);
-	qdockcrosssectionnormalBar->setWidget(&crosssectionnormalBar);
-	qdockcrosssectionnormalBar->setVisible(false);
-	addDockWidget(Qt::LeftDockWidgetArea, qdockcrosssectionnormalBar);
-
-
-	sb_statusbar = new QStatusBar();
-	this->setStatusBar(sb_statusbar);
-
-	pb_processprogress = new QProgressBar(this);
-	pb_processprogress->setVisible(false);
-	sb_statusbar->addPermanentWidget(pb_processprogress, 1);
+    qdockcrosssectionnormalBar = new QDockWidget(this);
+    qdockcrosssectionnormalBar->setAllowedAreas(Qt::LeftDockWidgetArea);
+    qdockcrosssectionnormalBar->setWidget(&crosssectionnormalBar);
+    qdockcrosssectionnormalBar->setVisible(false);
+    addDockWidget(Qt::LeftDockWidgetArea, qdockcrosssectionnormalBar);
 
 
-	controller = new FlowVisualizationController(this);
-	controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+    sb_statusbar = new QStatusBar();
+    this->setStatusBar(sb_statusbar);
+
+    pb_processprogress = new QProgressBar(this);
+    pb_processprogress->setVisible(false);
+    sb_statusbar->addPermanentWidget(pb_processprogress, 1);
 
 
-	canvas = new FlowVisualizationCanvas(this, this->getCurrentDirectory());
-	canvas->setController(controller);
+    controller = new FlowVisualizationController(this);
+    controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
 
-	createWellModule();
-	createRegionModule();
-	createFluidModule();
 
-	flow_tab_widget_ = new QTabWidget(this);
-	flow_tab_widget_->addTab(canvas, "3D Visualization");
-	//flow_tab_widget_->addTab(this->well_canvas_, "Well Module");
+    canvas = new FlowVisualizationCanvas(this, this->getCurrentDirectory());
+    canvas->setController(controller);
 
-	/// Remove this from contructor prevent the warning menssage
-	hb_mainwindow = new QHBoxLayout();
-	//hb_mainwindow->addWidget( canvas );
-	hb_mainwindow->addWidget(flow_tab_widget_);
-	hb_mainwindow->addWidget(&colorbar);
+    createWellModule();
+    createRegionModule();
+    createFluidModule();
 
-	QWidget *wd_main = new QWidget(this);
-	wd_main->setLayout(hb_mainwindow);
+    flow_tab_widget_ = new QTabWidget(this);
+    flow_tab_widget_->addTab(canvas, "3D Visualization");
+    //flow_tab_widget_->addTab(this->well_canvas_, "Well Module");
 
-	this->setCentralWidget(wd_main);
+    /// Remove this from contructor prevent the warning menssage
+    hb_mainwindow = new QHBoxLayout();
+    //hb_mainwindow->addWidget( canvas );
+    hb_mainwindow->addWidget(flow_tab_widget_);
+    hb_mainwindow->addWidget(&colorbar);
 
-	colorbar.setSize(canvas->height(), 25);
+    QWidget *wd_main = new QWidget(this);
+    wd_main->setLayout(hb_mainwindow);
+
+    this->setCentralWidget(wd_main);
+
+    colorbar.setSize(canvas->height(), 25);
 }
 
 void FlowWindow::createToolBar()
 {
 
-	qtoolbarFlow = new QToolBar();
+    qtoolbarFlow = new QToolBar();
 
 
-	qreloadSurface = new QAction(tr("Surface from Sketch"), qtoolbarFlow);
-	qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+    qreloadSurface = new QAction(tr("Surface from Sketch"), qtoolbarFlow);
+    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
 
-	qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
-	qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
-
-
-	qflowparametersDialog = new QAction(tr("User Input"), qtoolbarFlow);
-	qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
+    qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
+    qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
 
 
-
-	qbuildCornerPoint = new QAction(tr("Corner Point"), qtoolbarFlow);
-	qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
-	qbuildCornerPoint->setEnabled(false);
-	//qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
-	//							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
-
-	qbuildUnstructured = new QAction(tr("Unstructured"), qtoolbarFlow);
-	qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));
-	qbuildUnstructured->setEnabled(false);
-
-
-	qcomputeFlowProperties = new QAction(tr("Compute Properties"), qtoolbarFlow);
-	qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));
-	qcomputeFlowProperties->setEnabled(false);
+    qflowparametersDialog = new QAction(tr("User Input"), qtoolbarFlow);
+    qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
 
 
 
-	qshowMovingCrossSection = new QAction(tr("CrossSection"), qtoolbarFlow);
-	qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
-	qshowMovingCrossSection->setCheckable(true);
+    qbuildCornerPoint = new QAction(tr("Corner Point"), qtoolbarFlow);
+    qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
+    qbuildCornerPoint->setEnabled(false);
+    //qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
+    //							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
 
-	/// Exporters
-	// @FIXME June 2017
-	action_exportDerivedQuantities_ = new QAction(tr("Export Derived Quantities"), qtoolbarFlow);
-
-	qexportsurface = new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
-	qexportvolume = new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
-	qexportcornerpointVTK = new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
-	qexportcornerpointGRDECL = new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
-	qexportresults = new QAction(tr("Results to VTK"), qtoolbarFlow);
-
-	mn_export = new QMenu(tr("Export"), this);
-	mn_export->addAction(qexportsurface);
-	mn_export->addAction(qexportvolume);
-	mn_export->addAction(qexportcornerpointVTK);
-	mn_export->addAction(qexportcornerpointGRDECL);
-	mn_export->addAction(qexportresults);
-	mn_export->addAction(action_exportDerivedQuantities_);
-
-	tbn_export = new QToolButton();
-	tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
-	tbn_export->setMenu(mn_export);
-	tbn_export->setPopupMode(QToolButton::InstantPopup);
-	tbn_export->setEnabled(false);
-
-	/// Properties
-
-	tbn_coloringbyvertex = new QToolButton();
-	tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/vertex.png"));
-
-	/// OpenVolume Mesh Integration ---------------------------------------------->
-	menu_vertex_properties = new QMenu(tr("OVM Vertex Properties"));
-	tbn_coloringbyvertex->setMenu(menu_vertex_properties);
-	tbn_coloringbyvertex->setPopupMode(QToolButton::InstantPopup);
-	tbn_coloringbyvertex->setEnabled(false);
+    qbuildUnstructured = new QAction(tr("Unstructured"), qtoolbarFlow);
+    qbuildUnstructured->setIcon(QIcon(":/images/icons/unstructural.png"));
+    qbuildUnstructured->setEnabled(false);
 
 
-	tbn_coloringbyface = new QToolButton();
-	tbn_coloringbyface->setIcon(QIcon(":/images/icons/properties.png"));
+    qcomputeFlowProperties = new QAction(tr("Compute Properties"), qtoolbarFlow);
+    qcomputeFlowProperties->setIcon(QIcon(":/images/icons/computeproperties.png"));
+    qcomputeFlowProperties->setEnabled(false);
 
-	/// OpenVolume Mesh Integration ---------------------------------------------->
-	menu_cell_properties = new QMenu(tr("OVM Cell Properties"));
-	tbn_coloringbyface->setMenu(menu_cell_properties);
-	tbn_coloringbyface->setPopupMode(QToolButton::InstantPopup);
-	tbn_coloringbyface->setEnabled(false);
 
-	mn_colormaps = new QMenu(tr("Colormaps"));
-	tbn_colormaps = new QToolButton();
-	tbn_colormaps->setIcon(QIcon(":/images/icons/colormap.png"));
-	tbn_colormaps->setMenu(mn_colormaps);
-	tbn_colormaps->setPopupMode(QToolButton::InstantPopup);
 
-	QActionGroup* ag_colormaps = new QActionGroup(mn_colormaps);
-	ag_colormaps->setExclusive(true);
+    qshowMovingCrossSection = new QAction(tr("CrossSection"), qtoolbarFlow);
+    qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
+    qshowMovingCrossSection->setCheckable(true);
 
-	action_constant = new QAction(tr("Constant"), ag_colormaps);
-	action_constant->setCheckable(true);
-	action_constant->setChecked(true);
-	action_cool_to_warm = new QAction(tr("Cool to Warm"), ag_colormaps);
-	action_cool_to_warm->setCheckable(true);
-	action_hot = new QAction(tr("Hot"), ag_colormaps);
-	action_hot->setCheckable(true);
-	action_cool = new QAction(tr("Cool"), ag_colormaps);
-	action_cool->setCheckable(true);
-	//action_parula = new QAction(tr("Parula"), ag_colormaps);
-	//action_parula->setCheckable(true);
-	action_spring = new QAction(tr("Spring"), ag_colormaps);
-	action_spring->setCheckable(true);
-	action_summer = new QAction(tr("Summer"), ag_colormaps);
-	action_summer->setCheckable(true);
-	action_copper = new QAction(tr("Copper"), ag_colormaps);
-	action_copper->setCheckable(true);
-	action_polar = new QAction(tr("Polar"), ag_colormaps);
-	action_polar->setCheckable(true);
-	action_winter = new QAction(tr("Winter"), ag_colormaps);
-	action_winter->setCheckable(true);
-	action_jet = new QAction(tr("Jet"), ag_colormaps);
-	action_jet->setCheckable(true);
+    /// Exporters
+    // @FIXME June 2017
+    action_exportDerivedQuantities_ = new QAction(tr("Export Derived Quantities"), qtoolbarFlow);
 
-	mn_colormaps->addActions(ag_colormaps->actions());
+    qexportsurface = new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
+    qexportvolume = new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
+    qexportcornerpointVTK = new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
+    qexportcornerpointGRDECL = new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
+    qexportresults = new QAction(tr("Results to VTK"), qtoolbarFlow);
 
-	action_showregions = new QAction(tr("Show Pore Volumes"), qtoolbarFlow);
-	action_showregions->setIcon(QIcon(":/images/icons/porus.png"));
-	action_showregions->setCheckable(true);
-	//connect( action_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
+    mn_export = new QMenu(tr("Export"), this);
+    mn_export->addAction(qexportsurface);
+    mn_export->addAction(qexportvolume);
+    mn_export->addAction(qexportcornerpointVTK);
+    mn_export->addAction(qexportcornerpointGRDECL);
+    mn_export->addAction(qexportresults);
+    mn_export->addAction(action_exportDerivedQuantities_);
 
-	action_showregions->setEnabled(false);
+    tbn_export = new QToolButton();
+    tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
+    tbn_export->setMenu(mn_export);
+    tbn_export->setPopupMode(QToolButton::InstantPopup);
+    tbn_export->setEnabled(false);
 
-	qclear = new QAction(tr("Clear"), qtoolbarFlow);
-	qclear->setIcon(QIcon(":/images/icons/clear.png"));
+    /// Properties
 
-	/// ToolBar setUp
+    tbn_coloringbyvertex = new QToolButton();
+    tbn_coloringbyvertex->setIcon(QIcon(":/images/icons/vertex.png"));
 
-	qtoolbarFlow->addAction(qreloadSurface);
-	qtoolbarFlow->addAction(qoopenfilesDialog);
-	qtoolbarFlow->addAction(qflowparametersDialog);
+    /// OpenVolume Mesh Integration ---------------------------------------------->
+    menu_vertex_properties = new QMenu(tr("OVM Vertex Properties"));
+    tbn_coloringbyvertex->setMenu(menu_vertex_properties);
+    tbn_coloringbyvertex->setPopupMode(QToolButton::InstantPopup);
+    tbn_coloringbyvertex->setEnabled(false);
 
-	qtoolbarFlow->addSeparator();
-	qtoolbarFlow->addAction(qbuildCornerPoint);
-	qtoolbarFlow->addAction(qbuildUnstructured);
 
-	qtoolbarFlow->addSeparator();
-	qtoolbarFlow->addAction(qcomputeFlowProperties);
-	qtoolbarFlow->addWidget(tbn_coloringbyvertex);
-	qtoolbarFlow->addWidget(tbn_coloringbyface);
-	qtoolbarFlow->addAction(action_showregions);
+    tbn_coloringbyface = new QToolButton();
+    tbn_coloringbyface->setIcon(QIcon(":/images/icons/properties.png"));
 
-	qtoolbarFlow->addSeparator();
-	qtoolbarFlow->addAction(qshowMovingCrossSection);
+    /// OpenVolume Mesh Integration ---------------------------------------------->
+    menu_cell_properties = new QMenu(tr("OVM Cell Properties"));
+    tbn_coloringbyface->setMenu(menu_cell_properties);
+    tbn_coloringbyface->setPopupMode(QToolButton::InstantPopup);
+    tbn_coloringbyface->setEnabled(false);
 
-	qtoolbarFlow->addSeparator();
-	qtoolbarFlow->addWidget(tbn_colormaps);
-	qtoolbarFlow->addWidget(tbn_export);
-	/// FIXME June
-	//qtoolbarFlow->addAction(qclear);
+    mn_colormaps = new QMenu(tr("Colormaps"));
+    tbn_colormaps = new QToolButton();
+    tbn_colormaps->setIcon(QIcon(":/images/icons/colormap.png"));
+    tbn_colormaps->setMenu(mn_colormaps);
+    tbn_colormaps->setPopupMode(QToolButton::InstantPopup);
 
-	qtoolbarFlow->addSeparator();
-	
-	action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
-	action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
-	action_clearComputedQuantities_->setEnabled(false);
-	action_upscalledPermeability_ = new QAction(tr("Get Upscaled Permeability"), qtoolbarFlow);
-	action_upscalledPermeability_->setEnabled(false);
+    QActionGroup* ag_colormaps = new QActionGroup(mn_colormaps);
+    ag_colormaps->setExclusive(true);
 
-	flowModule_diagnostic_->addAction(action_upscalledPermeability_);
+    action_constant = new QAction(tr("Constant"), ag_colormaps);
+    action_constant->setCheckable(true);
+    action_constant->setChecked(true);
+    action_cool_to_warm = new QAction(tr("Cool to Warm"), ag_colormaps);
+    action_cool_to_warm->setCheckable(true);
+    action_hot = new QAction(tr("Hot"), ag_colormaps);
+    action_hot->setCheckable(true);
+    action_cool = new QAction(tr("Cool"), ag_colormaps);
+    action_cool->setCheckable(true);
+    //action_parula = new QAction(tr("Parula"), ag_colormaps);
+    //action_parula->setCheckable(true);
+    action_spring = new QAction(tr("Spring"), ag_colormaps);
+    action_spring->setCheckable(true);
+    action_summer = new QAction(tr("Summer"), ag_colormaps);
+    action_summer->setCheckable(true);
+    action_copper = new QAction(tr("Copper"), ag_colormaps);
+    action_copper->setCheckable(true);
+    action_polar = new QAction(tr("Polar"), ag_colormaps);
+    action_polar->setCheckable(true);
+    action_winter = new QAction(tr("Winter"), ag_colormaps);
+    action_winter->setCheckable(true);
+    action_jet = new QAction(tr("Jet"), ag_colormaps);
+    action_jet->setCheckable(true);
 
-	//qtoolbarFlow->addAction(action_exportDerivedQuantities_);
-	qtoolbarFlow->addAction(action_clearComputedQuantities_);
-	//qtoolbarFlow->addAction(action_upscalledPermeability_);
+    mn_colormaps->addActions(ag_colormaps->actions());
 
-	addToolBar(qtoolbarFlow);
-	qtoolbarFlow->setVisible(true);
+    action_showregions = new QAction(tr("Show Pore Volumes"), qtoolbarFlow);
+    action_showregions->setIcon(QIcon(":/images/icons/porus.png"));
+    action_showregions->setCheckable(true);
+    //connect( action_showregions, &QAction::toggled, &porevolumeform, &PoreVolumeResultsForm::setVisible );
+
+    action_showregions->setEnabled(false);
+
+    qclear = new QAction(tr("Clear"), qtoolbarFlow);
+    qclear->setIcon(QIcon(":/images/icons/clear.png"));
+
+    /// ToolBar setUp
+
+    qtoolbarFlow->addAction(qreloadSurface);
+    qtoolbarFlow->addAction(qoopenfilesDialog);
+    qtoolbarFlow->addAction(qflowparametersDialog);
+
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction(qbuildCornerPoint);
+    qtoolbarFlow->addAction(qbuildUnstructured);
+
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction(qcomputeFlowProperties);
+    qtoolbarFlow->addWidget(tbn_coloringbyvertex);
+    qtoolbarFlow->addWidget(tbn_coloringbyface);
+    qtoolbarFlow->addAction(action_showregions);
+
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction(qshowMovingCrossSection);
+
+    qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addWidget(tbn_colormaps);
+    qtoolbarFlow->addWidget(tbn_export);
+    /// FIXME June
+    //qtoolbarFlow->addAction(qclear);
+
+    qtoolbarFlow->addSeparator();
+
+    action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
+    action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
+    action_clearComputedQuantities_->setEnabled(false);
+    action_upscalledPermeability_ = new QAction(tr("Get Upscaled Permeability"), qtoolbarFlow);
+    action_upscalledPermeability_->setEnabled(false);
+    action_oilinPlace_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
+    action_oilinPlace_->setEnabled(false);
+
+
+//	action_oil_in_place_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
+//	action_oil_in_place_->setEnabled(false);
+
+    flowModule_diagnostic_->addAction(action_upscalledPermeability_);
+
+    flowModule_diagnostic_->addAction(action_oilinPlace_);
+
+    //qtoolbarFlow->addAction(action_exportDerivedQuantities_);
+    qtoolbarFlow->addAction(action_clearComputedQuantities_);
+    //qtoolbarFlow->addAction(action_upscalledPermeability_);
+
+    addToolBar(qtoolbarFlow);
+    qtoolbarFlow->setVisible(true);
 }
 
 void FlowWindow::resizeEvent(QResizeEvent *event)
 {
-	QSize size = event->size();
-	colorbar.setSize(canvas->height(), 25);
+    QSize size = event->size();
+    colorbar.setSize(canvas->height(), 25);
 }
 
 void FlowWindow::createActions()
 {
 
-	/// FlowWindo ToolBar		
-	//connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
-	/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
-	connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
-	{
-		/// Clear Scene
-		qclear->trigger();
-		this->loadSurfacesfromFile();
-		if (are_regionsdefined == true)
-		{
-			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);
-		}
-	});
-	/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
-	connect(qreloadSurface, &QAction::triggered, this, [=]()
-	{
-		/// Clear Scene
-		qclear->trigger();
-		this->loadSurfacesfromSketch();
-		/// Now we can build the volumetric mesh
+    /// FlowWindo ToolBar
+    //connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
+    /// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
+    connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
+    {
+        /// Clear Scene
+        qclear->trigger();
+        this->loadSurfacesfromFile();
+        if (are_regionsdefined == true)
+        {
+            qbuildCornerPoint->setEnabled(true);
+            qbuildUnstructured->setEnabled(true);
+        }
+    });
+    /// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
+    connect(qreloadSurface, &QAction::triggered, this, [=]()
+    {
+        /// Clear Scene
+        qclear->trigger();
+        this->loadSurfacesfromSketch();
+        /// Now we can build the volumetric mesh
 
-		if (are_regionsdefined == true)
-		{
-			qbuildCornerPoint->setEnabled(true);
-			qbuildUnstructured->setEnabled(true);
-		}
-	});
+        if (are_regionsdefined == true)
+        {
+            qbuildCornerPoint->setEnabled(true);
+            qbuildUnstructured->setEnabled(true);
+        }
+    });
 
-	connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
-	{
+    connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
+    {
 
-		//QMessageBox::StandardButton reply;
-		//reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
+        //QMessageBox::StandardButton reply;
+        //reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
 
-		///@FIXME June 2017
-		if (true) //if (reply == QMessageBox::Yes)
-	    {
-			//				qDebug() << "Yes was clicked";
-			/// Now we can Compute
-			/// @FIXME catch execption from HWU mesh generator
-			this->buildCornerPoint();
-			qcomputeFlowProperties->setEnabled(false);
-			qbuildCornerPoint->setEnabled(false);
-			qbuildUnstructured->setEnabled(false);
+        ///@FIXME June 2017
+        if (true) //if (reply == QMessageBox::Yes)
+        {
+            //				qDebug() << "Yes was clicked";
+            /// Now we can Compute
+            /// @FIXME catch execption from HWU mesh generator
+            this->buildCornerPoint();
+            qcomputeFlowProperties->setEnabled(false);
+            qbuildCornerPoint->setEnabled(false);
+            qbuildUnstructured->setEnabled(false);
 
-		}
-		else {
-			qDebug() << "Yes was *not* clicked";
-		}
+        }
+        else {
+            qDebug() << "Yes was *not* clicked";
+        }
 
-		is_cornerpoint = true;
-	});
+        is_cornerpoint = true;
+    });
 
-	connect(qbuildUnstructured, &QAction::triggered, this, [=]()
-	{
-		/// Now we can Compute and see region Identifications
-		/// @FIXME catch execption from HWU mesh generator
-		this->buildUnstructured();
-		qcomputeFlowProperties->setEnabled(true);
-		action_showregions->setEnabled(false);
-		qbuildCornerPoint->setEnabled(false);
-		qbuildUnstructured->setEnabled(false);
-		action_upscalledPermeability_->setEnabled(true);
-		is_cornerpoint = false;
+    connect(qbuildUnstructured, &QAction::triggered, this, [=]()
+    {
+        /// Now we can Compute and see region Identifications
+        /// @FIXME catch execption from HWU mesh generator
+        this->buildUnstructured();
+        qcomputeFlowProperties->setEnabled(true);
+        action_showregions->setEnabled(false);
+        qbuildCornerPoint->setEnabled(false);
+        qbuildUnstructured->setEnabled(false);
+        action_upscalledPermeability_->setEnabled(true);
+        is_cornerpoint = false;
 
-	});
+    });
 
-	connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
-	{
-		/// Now we can visualize the properties and export
-		/// @FIXME catch execption from HWU mesh generator
-		controller->computeFlowProperties();
-		qcomputeFlowProperties->setEnabled(false);
-		tbn_export->setEnabled(true);
-		tbn_coloringbyvertex->setEnabled(true);
-		tbn_coloringbyface->setEnabled(true);
-		/// Set Default ColorMap
-		action_cool_to_warm->setChecked(true);
-		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
-		action_upscalledPermeability_->setEnabled(false);
+    connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
+    {
+        /// Now we can visualize the properties and export
+        /// @FIXME catch execption from HWU mesh generator
+        controller->computeFlowProperties();
+        qcomputeFlowProperties->setEnabled(false);
+        tbn_export->setEnabled(true);
+        tbn_coloringbyvertex->setEnabled(true);
+        tbn_coloringbyface->setEnabled(true);
+        /// Set Default ColorMap
+        action_cool_to_warm->setChecked(true);
+        controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+        action_upscalledPermeability_->setEnabled(false);
+        action_oilinPlace_->setEnabled( true );
 
-		if (is_cornerpoint == false)
-		{
-			controller->loadPropertiesTetrahedron();			
-			this->updatePropertyAction(controller->getPtrTetrahedralMesh());			
-			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
-			updateModelColors(current_property_);
-			action_showregions->setEnabled(true);
-			controller->getPoreVolume();
-			action_clearComputedQuantities_->setEnabled(true);
-			
-		}
-		else
-		{
-			controller->loadPropertiesHexahedron();
-			this->updatePropertyAction(controller->getPtrHexahedralMesh());
-			current_property_ = RRM::PropertyProfile("Hexahedron","Pressure","CProp","","double");
-			updateModelColors(current_property_);
-			action_showregions->setEnabled(false);
-		}
+        if (is_cornerpoint == false)
+        {
+            controller->loadPropertiesTetrahedron();
+            this->updatePropertyAction(controller->getPtrTetrahedralMesh());
+            current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
+            updateModelColors(current_property_);
+            action_showregions->setEnabled(true);
+            controller->getPoreVolume();
+            action_clearComputedQuantities_->setEnabled(true);
 
-
-	});
-	/// FIXME JUNE 2017
-	/// Clear Reload
-	connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
-	{
-		qclear->trigger();
-		this->loadSurfacesfromSketch();
-		this->buildUnstructured();
-		//controller->computeFlowProperties();
+        }
+        else
+        {
+            controller->loadPropertiesHexahedron();
+            this->updatePropertyAction(controller->getPtrHexahedralMesh());
+            current_property_ = RRM::PropertyProfile("Hexahedron","Pressure","CProp","","double");
+            updateModelColors(current_property_);
+            action_showregions->setEnabled(false);
+        }
 
 
-			//controller->loadPropertiesTetrahedron();
-			this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-			//current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
-			//updateModelColors(current_property_);
-			action_showregions->setEnabled(false);
-			//controller->getPoreVolume();
-			action_clearComputedQuantities_->setEnabled(true);
-			action_upscalledPermeability_->setEnabled(false);
-
-		/// Set Default ColorMap
-		action_cool_to_warm->setChecked(true);
-		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
-
-		qcomputeFlowProperties->setEnabled(true);
-		tbn_export->setEnabled(false);
-		tbn_coloringbyvertex->setEnabled(false);
-		tbn_coloringbyface->setEnabled(false);
-		action_clearComputedQuantities_->setEnabled(true);
+    });
+    /// FIXME JUNE 2017
+    /// Clear Reload
+    connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
+    {
+        qclear->trigger();
+        this->loadSurfacesfromSketch();
+        this->buildUnstructured();
+        //controller->computeFlowProperties();
 
 
-	});
-	/// Region ID
-	connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
-	{
-		if (is_toggled)
-		{			
-			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
-			updateModelColors(current_property_);
-			canvas->showRegions();
-		}
+            //controller->loadPropertiesTetrahedron();
+            this->updatePropertyAction(controller->getPtrTetrahedralMesh());
+            //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
+            //updateModelColors(current_property_);
+            action_showregions->setEnabled(false);
+            //controller->getPoreVolume();
+            action_clearComputedQuantities_->setEnabled(true);
+            action_upscalledPermeability_->setEnabled(false);
 
-	});
-	/// Exporters
-	/// @TODO June 2017
-	connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
-	connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
-	{
-		controller->clearComputedQuantities();
-		canvas->setDefaultColor();
-	});
-	connect(action_upscalledPermeability_, &QAction::triggered, [=]()
-	{
-		std::string result;
-		action_upscalledPermeability_->setEnabled(false);
-		qcomputeFlowProperties->setEnabled(false);
-		controller->getUpscalledPermeability(result);
-		up_scaled_.setText(QString::fromStdString(result));
-		up_scaled_.show();
-	}
-	);
+        /// Set Default ColorMap
+        action_cool_to_warm->setChecked(true);
+        controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
 
-	connect(qexportsurface, SIGNAL(triggered(bool)), controller, SLOT(exportSurfacetoVTK()));
-	connect(qexportvolume, SIGNAL(triggered(bool)), controller, SLOT(exportVolumetoVTK()));
-	connect(qexportcornerpointVTK, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoVTK()));
-	connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
-	connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
-	connect(qexportresults, SIGNAL(triggered(bool)), controller, SLOT(exportResultstoVTK()));
-	// CrossSection
-	connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
-	connect(qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection);
-	/// ColorMap
-	connect(action_constant, &QAction::triggered, this, [=](){ 
-		controller->setCurrentColormap(ColorMap::COLORMAP::CONSTANT); 
-	});
-	connect(action_cool_to_warm, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM); 
-		updateModelColors(current_property_);
-	});
-	connect(action_hot, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::HOT);  
-		updateModelColors(current_property_);
-	});
-	connect(action_cool, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COOL); 
-		updateModelColors(current_property_);
-	});
-	//connect(action_parula, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::PARULA); 
-	//	updateModelColors(current_property_);
-	//});
-	connect(action_spring, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::SPRING); 
-		updateModelColors(current_property_);
-	});
-	connect(action_summer, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::SUMMER); 
-		updateModelColors(current_property_);
-	});
-	connect(action_copper, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COPPER); 
-		updateModelColors(current_property_);
-	});
-	connect(action_polar, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::POLAR); 
-		updateModelColors(current_property_);
-	});
-	connect(action_winter, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::WINTER); 
-		updateModelColors(current_property_);
-	});
-	connect(action_jet, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::JET); 
-		updateModelColors(current_property_);
-	});
+        qcomputeFlowProperties->setEnabled(true);
+        tbn_export->setEnabled(false);
+        tbn_coloringbyvertex->setEnabled(false);
+        tbn_coloringbyface->setEnabled(false);
+        action_clearComputedQuantities_->setEnabled(true);
 
 
-	connect(controller, &FlowVisualizationController::showToolbar, qtoolbarFlow, &QToolBar::setVisible);
-	connect(controller, &FlowVisualizationController::clearAll, this, &FlowWindow::clear);
+    });
+    /// Region ID
+    connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
+    {
+        if (is_toggled)
+        {
+            current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
+            updateModelColors(current_property_);
+            canvas->showRegions();
+        }
+
+    });
+    /// Exporters
+    /// @TODO June 2017
+    connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
+    connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
+    {
+        controller->clearComputedQuantities();
+        canvas->setDefaultColor();
+    });
+    connect(action_upscalledPermeability_, &QAction::triggered, [=]()
+    {
+        std::string result;
+        action_upscalledPermeability_->setEnabled(false);
+        qcomputeFlowProperties->setEnabled(false);
+        controller->getUpscalledPermeability(result);
+        up_scaled_.setText(QString::fromStdString(result));
+        up_scaled_.show();
+    }
+    );
 
 
-	connect(controller, SIGNAL(clearPropertiesMenu()), this, SLOT(clearPropertiesMenu()));
 
-	connect(canvas, &FlowVisualizationCanvas::applyCrossSection, qdockcrosssectionnormalBar, &QDockWidget::show);
-	connect(canvas, &FlowVisualizationCanvas::clearAll, this, &FlowWindow::clear);
+    connect(action_oilinPlace_, &QAction::triggered, [=]()
+    {
+        std::string result;
+        controller->getOilInPlace(result);
+        up_scaled_.setText(QString::fromStdString(result));
+        up_scaled_.show();
+    }
+    );
+
+    connect(qexportsurface, SIGNAL(triggered(bool)), controller, SLOT(exportSurfacetoVTK()));
+    connect(qexportvolume, SIGNAL(triggered(bool)), controller, SLOT(exportVolumetoVTK()));
+    connect(qexportcornerpointVTK, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoVTK()));
+    connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+    connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+    connect(qexportresults, SIGNAL(triggered(bool)), controller, SLOT(exportResultstoVTK()));
+    // CrossSection
+    connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
+    connect(qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection);
+    /// ColorMap
+    connect(action_constant, &QAction::triggered, this, [=](){
+        controller->setCurrentColormap(ColorMap::COLORMAP::CONSTANT);
+    });
+    connect(action_cool_to_warm, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+        updateModelColors(current_property_);
+    });
+    connect(action_hot, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::HOT);
+        updateModelColors(current_property_);
+    });
+    connect(action_cool, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COOL);
+        updateModelColors(current_property_);
+    });
+    //connect(action_parula, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::PARULA);
+    //	updateModelColors(current_property_);
+    //});
+    connect(action_spring, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::SPRING);
+        updateModelColors(current_property_);
+    });
+    connect(action_summer, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::SUMMER);
+        updateModelColors(current_property_);
+    });
+    connect(action_copper, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COPPER);
+        updateModelColors(current_property_);
+    });
+    connect(action_polar, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::POLAR);
+        updateModelColors(current_property_);
+    });
+    connect(action_winter, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::WINTER);
+        updateModelColors(current_property_);
+    });
+    connect(action_jet, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::JET);
+        updateModelColors(current_property_);
+    });
 
 
-	connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, canvas, &FlowVisualizationCanvas::setCrossSectionNormalCoordinates);
-	connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, qdockcrosssectionnormalBar, &QDockWidget::close);
-	connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, qdockcrosssectionnormalBar, &QDockWidget::close);
-	connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qshowMovingCrossSection->setChecked(false); });
+    connect(controller, &FlowVisualizationController::showToolbar, qtoolbarFlow, &QToolBar::setVisible);
+    connect(controller, &FlowVisualizationController::clearAll, this, &FlowWindow::clear);
 
-	//Region Signal
-	connect(region_parameters_, &RRM::RegionWidget::numberOfRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
+
+    connect(controller, SIGNAL(clearPropertiesMenu()), this, SLOT(clearPropertiesMenu()));
+
+    connect(canvas, &FlowVisualizationCanvas::applyCrossSection, qdockcrosssectionnormalBar, &QDockWidget::show);
+    connect(canvas, &FlowVisualizationCanvas::clearAll, this, &FlowWindow::clear);
+
+
+    connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, canvas, &FlowVisualizationCanvas::setCrossSectionNormalCoordinates);
+    connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::sendCrossSectionNormalCoordinates, qdockcrosssectionnormalBar, &QDockWidget::close);
+    connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, qdockcrosssectionnormalBar, &QDockWidget::close);
+    connect(&crosssectionnormalBar, &NormalMovableCrossSectionFlow::canceled, this, [=](){ qshowMovingCrossSection->setChecked(false); });
+
+    //Region Signal
+    connect(region_parameters_, &RRM::RegionWidget::numberOfRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
+
+
+
+    connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]()
+    {
+        region_parameters_->setByRegionSaturation( false );
+
+    } );
+
+    connect( fluid_parameters_, &RRM::FluidWidget::setSaturationPerRegion, this, [=]()
+    {
+        controller->setSaturationMethod( FlowVisualizationController::SaturationMethod::PERREGION );
+        region_parameters_->setByRegionSaturation( true );
+    } );
+
+    connect( fluid_parameters_, &RRM::FluidWidget::setAPIGravity, this, [=]()
+    {
+        controller->setSaturationMethod( FlowVisualizationController::SaturationMethod::APIGRAVITY );
+        region_parameters_->setByRegionSaturation( false );
+    } );
+
 
 }
 
 QString FlowWindow::getCurrentDirectory()
 {
 
-	QDir app_dir = QDir(qApp->applicationDirPath());
+    QDir app_dir = QDir(qApp->applicationDirPath());
 
 #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-	QString current_dir(app_dir.path() + "\\");
+    QString current_dir(app_dir.path() + "\\");
 
 #elif defined(__linux__)               // Linux Directory Style
-	QString current_dir(app_dir.path() + "/");
+    QString current_dir(app_dir.path() + "/");
 
 #else
-	/* Error, both can't be defined or undefined same time */
-	std::cout << "Operate System not supported !"
-		halt();
+    /* Error, both can't be defined or undefined same time */
+    std::cout << "Operate System not supported !"
+        halt();
 
 #endif
 
-	//canvas->setCurrentDirectory( current_dir.toStdString() );
+    //canvas->setCurrentDirectory( current_dir.toStdString() );
 
-	return current_dir;
+    return current_dir;
 }
 
 void FlowWindow::loadSurfacesfromSketch()
 {
 
-	controller->clear();
-	canvas->clear();
+    controller->clear();
+    canvas->clear();
 
-	std::vector< size_t > nu;
-	std::vector< size_t > nv;
-	std::vector< double > points;
-	size_t num_extrusion_steps = 1;
+    std::vector< size_t > nu;
+    std::vector< size_t > nv;
+    std::vector< double > points;
+    size_t num_extrusion_steps = 1;
 
-	Eigen::Affine3f m2D_to_3D;
-	Eigen::Affine3f m3D_to_2D;
+    Eigen::Affine3f m2D_to_3D;
+    Eigen::Affine3f m3D_to_2D;
 
-	emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+    emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
-	controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
+    controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
 
-	canvas->updateMesh();
+    canvas->updateMesh();
 
-	/// @TODO
-	/// Used to get the right Region depth in 3D
-	this->region_parameters_->setRegionDepth(canvas->getDepth());
+    /// @TODO
+    /// Used to get the right Region depth in 3D
+    this->region_parameters_->setRegionDepth(canvas->getDepth());
 
-	std::vector< double > vertices;
-	std::vector< unsigned int > faces;
+    std::vector< double > vertices;
+    std::vector< unsigned int > faces;
 
-	controller->buildSurfaceSkeleton(vertices, faces);
-	
-	Tucano::BoundingBox3<double> bbox;
-	std::vector<Eigen::Vector3d> v;
+    controller->buildSurfaceSkeleton(vertices, faces);
 
-	for (std::size_t it = 0; it < vertices.size(); it += 3)
-	{
-		v.push_back(Eigen::Vector3d(vertices[it + 0], vertices[it + 1], vertices[it + 2]));
-	}
+    Tucano::BoundingBox3<double> bbox;
+    std::vector<Eigen::Vector3d> v;
 
-	bbox.fromPointCloud(v.begin(), v.end());
+    for (std::size_t it = 0; it < vertices.size(); it += 3)
+    {
+        v.push_back(Eigen::Vector3d(vertices[it + 0], vertices[it + 1], vertices[it + 2]));
+    }
 
-	well_parameters_->setBoundingBoxDimension(Eigen::Vector3d(bbox.Min().x(), bbox.Min().y(), bbox.Min().z()), Eigen::Vector3d(bbox.Max().x(), bbox.Max().y(), bbox.Max().z()));
-	
-	well_scene_->setDimension(Eigen::Vector2f((bbox.Max().x()) - (bbox.Min().x()), (bbox.Max().y()) - (bbox.Min().y())), this->bounding_box_changed_);
+    bbox.fromPointCloud(v.begin(), v.end());
 
-	this->bounding_box_changed_ = false;
+    well_parameters_->setBoundingBoxDimension(Eigen::Vector3d(bbox.Min().x(), bbox.Min().y(), bbox.Min().z()), Eigen::Vector3d(bbox.Max().x(), bbox.Max().y(), bbox.Max().z()));
 
-	this->well_canvas_->fitInView();
-	
-	/// Well Module
-	canvas->updateWellsPosition(well_parameters_->getNumberOfWells(),well_parameters_->getWellsPosition(), well_parameters_->getWellsSign());
-	
+    well_scene_->setDimension(Eigen::Vector2f((bbox.Max().x()) - (bbox.Min().x()), (bbox.Max().y()) - (bbox.Min().y())), this->bounding_box_changed_);
+
+    this->bounding_box_changed_ = false;
+
+    this->well_canvas_->fitInView();
+
+    /// Well Module
+    canvas->updateWellsPosition(well_parameters_->getNumberOfWells(),well_parameters_->getWellsPosition(), well_parameters_->getWellsSign(), well_parameters_->getWellsRange());
+
 }
 
 void FlowWindow::loadSurfacesfromFile()
 {
 
-	controller->clear();
-	canvas->clear();
+    controller->clear();
+    canvas->clear();
 
-	QString selected_format = "";
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), "./inputs/",
-		".skt files (*.skt)", &selected_format);
-	if (filename.isEmpty() == true) return;
+    QString selected_format = "";
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), "./inputs/",
+        ".skt files (*.skt)", &selected_format);
+    if (filename.isEmpty() == true) return;
 
 
 
-	QStringList path = filename.split("\.");
-	QString name_of_file = path[0];
-	QString extension_of_file = path[1];
+    QStringList path = filename.split("\.");
+    QString name_of_file = path[0];
+    QString extension_of_file = path[1];
 
-	type_of_file = extension_of_file.toStdString();
+    type_of_file = extension_of_file.toStdString();
 
-	if (extension_of_file.compare("skt") == 0){
+    if (extension_of_file.compare("skt") == 0){
 
-		file_of_mesh = filename.toStdString();
-		controller->readSkeletonFiles(file_of_mesh);
-		canvas->updateMesh();
+        file_of_mesh = filename.toStdString();
+        controller->readSkeletonFiles(file_of_mesh);
+        canvas->updateMesh();
 
-	}
+    }
 
 }
 
 void FlowWindow::readUserInputFile(const std::string& input_file)
 {
 
-	controller->readInputParameters(input_file);
-	updateParameterFields();
+    controller->readInputParameters(input_file);
+    updateParameterFields();
 
-	file_of_parameters = input_file;
+    file_of_parameters = input_file;
 
 }
 
 void FlowWindow::updateParameterFields()
 {
 
-	int np = 0;
-	std::vector< double > positions;
-	std::vector< double > perm;
-	std::vector< double > poros;
-	std::vector< double > visc;
+    int np = 0;
+    std::vector< double > positions;
+    std::vector< double > perm;
+    std::vector< double > poros;
+    std::vector< double > visc;
+    std::vector< double > saturation;
 
 
-	controller->getPropertyArea(np, positions, perm, poros, visc);
+    controller->getPropertyArea(np, positions, perm, poros, visc);
 
-	/// Region Module
-	this->region_parameters_->setRegionData(np, positions, perm, poros, visc);
+    /// Region Module
+    this->region_parameters_->setRegionData(np, positions, perm, poros, saturation);
 
 
-	int nw = 0;
-	std::vector< unsigned int > type;
-	std::vector< double > values;
-	std::vector< int > sign;
+    int nw = 0;
+    std::vector< unsigned int > type;
+    std::vector< double > values;
+    std::vector< int > sign;
 
-	/// Well Module
-	controller->getWellsValues(nw, type, values, sign);
+    /// Well Module
+    controller->getWellsValues(nw, type, values, sign);
 
 
 
@@ -644,114 +685,135 @@ void FlowWindow::updateParameterFields()
 
 void FlowWindow::acceptUserParameters()
 {
+    /// Region parameters
+    int np = 0;
+    std::vector< double > positions;
+    std::vector< double > permeability;
+    std::vector< double > porosity;
+    std::vector< double > saturation;
+    std::vector< int > permeability_curves;
 
-	int np = 0;
-	std::vector< double > positions;
-	std::vector< double > perm;
-	std::vector< double > poros;
-	std::vector< double > visc;
-	std::vector< double > viscosity;
+    std::map<int, std::pair<double, double> > permeability_gradients;
+    std::map<int, std::pair<double, double> > porosity_gradients;
 
+    /// Region Module
+    ///@FIXME September
+    region_parameters_->getRegionData(np, positions, permeability, porosity, saturation, porosity_gradients, permeability_gradients);
 
-	/// Region Module
-	region_parameters_->getRegionData(np, positions, perm, poros, visc);
-	fluid_parameters_->getFluidData(visc);
-
-	viscosity.resize(np, visc[0]);
-
-	//std::cout << " Viscosity " << viscosity[0] << std::endl;
-
-	controller->setPropertyArea(np, positions, perm, poros, viscosity);
-
-
-	for (int i = 0; i < np; i++)
-	{
-		std::cout << " perm " << perm[i] << std::endl;
-		std::cout << " poros " << poros[i] << std::endl;
-		std::cout << " visc " << viscosity[i] << std::endl;
-	}
+    /// Feeding HWU Flow Diagnostic
+    controller->setPropertyArea(np, positions, permeability, porosity, std::vector<double>(np,1.0), saturation, permeability_curves, porosity_gradients, permeability_gradients);
 
 
-	int nw = 0;
-	std::vector< unsigned int > type;
-	std::vector< double > values;
-	std::vector< int > sign;
+    /// Fluid parameters
+    std::vector< double > bo;
+    std::vector< double > viscosity;
+    std::vector< double > oildensity;
+    std::vector <std::pair< int, int>> phase_method;
 
-	/// Well Module
-	std::vector< Eigen::Vector4d> wells_position;
-	std::vector< Eigen::Vector2d> wells_range;
+    /// Fluid Module
+    fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
 
-	well_parameters_->getWellData(nw, type, values, sign, wells_position, wells_range);
+    //std::cout << " Viscosity " << viscosity[0] << std::endl;
 
-	controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
-	
+    controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method[0]);
+
+    //controller->setPropertyFluid(viscosity[0], bo[0], oildensity[0]);
+
+
+    for (int i = 0; i < np; i++)
+    {
+        std::cout << " permeability " << permeability[i] << std::endl;
+        std::cout << " porosity     " << porosity[i]     << std::endl;
+        std::cout << " viscosity    " << viscosity[i]    << std::endl;
+        std::cout << " saturation   " << saturation[i]   << std::endl;
+    }
+
+
+    int nw = 0;
+    std::vector< unsigned int > type;
+    std::vector< double > values;
+    std::vector< int > sign;
+
+    /// Well Module
+    std::vector< Eigen::Vector4d> wells_position;
+    std::vector< Eigen::Vector2d> wells_range;
+
+    well_parameters_->getWellData(nw, type, values, sign, wells_position, wells_range);
+
+    controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
+
+
+    /// FIXME Septembe 2017
+    /// Set Fluid Property
+    /// controller->setFluidProperty(visc, bo);
+
 
 }
 
 void FlowWindow::buildCornerPoint()
 {
-	controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::CORNERPOINT);
+    controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::CORNERPOINT);
 
-	if (controller->isUserInputOk() == false)
-	{
-		acceptUserParameters();
-	}
+    if (controller->isUserInputOk() == false)
+    {
+        acceptUserParameters();
+    }
 
-	controller->generateCornerPoint();
-	canvas->updateCornerPoint();
+    controller->generateCornerPoint();
+    canvas->updateCornerPoint();
 
 }
 
 void FlowWindow::buildUnstructured()
 {
 
-	controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::UNSTRUCTURED);
+    controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::UNSTRUCTURED);
 
-	if (controller->isUserInputOk() == false)
-	{
-		acceptUserParameters();
-	}
+    if (controller->isUserInputOk() == false)
+    {
+        acceptUserParameters();
+    }
 
-	controller->generateUnstructured();
-	canvas->updateVolumetricMesh();
+    controller->generateUnstructured();
+    canvas->updateVolumetricMesh();
 }
 
 void FlowWindow::startProgressBar(const unsigned int& min, const unsigned int& max)
 {
 
-	pb_processprogress->setVisible(true);
+    pb_processprogress->setVisible(true);
 
-	pb_processprogress->setMaximum((int)max);
-	pb_processprogress->setMinimum((int)min);
+    pb_processprogress->setMaximum((int)max);
+    pb_processprogress->setMinimum((int)min);
 
-	pb_processprogress->setValue(min);
+    pb_processprogress->setValue(min);
 }
 
 void FlowWindow::updateProgressBar(const unsigned int& value)
 {
 
-	pb_processprogress->setValue(value);
+    pb_processprogress->setValue(value);
 
-	if ((int)value == pb_processprogress->maximum())
-		pb_processprogress->setVisible(false);
+    if ((int)value == pb_processprogress->maximum())
+        pb_processprogress->setVisible(false);
 }
 
 void FlowWindow::clear()
 {
-	controller->clear();
-	canvas->clear();
+    controller->clear();
+    canvas->clear();
 
-	this->region_parameters_->clear();
-	this->well_parameters_->clear();
-	crosssectionnormalBar.clear();
-	reset();
+    this->region_parameters_->clear();
+    this->well_parameters_->clear();
+    crosssectionnormalBar.clear();
+    reset();
 }
 
 void FlowWindow::boundingBoxChnaged(bool _is_new_model)
 {
-	this->bounding_box_changed_ = _is_new_model;
-	/// The Boundary Has Changed
-	std::cout << " The Boundary Has Changed " << std::endl;
+    this->bounding_box_changed_ = _is_new_model;
+    /// The Boundary Has Changed
+    std::cout << " The Boundary Has Changed " << std::endl;
 }
 
 void FlowWindow::clearPropertiesMenu()
@@ -761,123 +823,123 @@ void FlowWindow::clearPropertiesMenu()
 
 void FlowWindow::keyPressEvent(QKeyEvent *event)
 {
-	switch (event->key())
-	{
+    switch (event->key())
+    {
 
-	case Qt::Key_H:
-	{
-		qtoolbarFlow->setVisible(false);
-	}
-	break;
-	case Qt::Key_T:
-	{
-		qtoolbarFlow->setVisible(true);
-	}
-	break;
-	case Qt::Key_F5:
-	{
-		canvas->reloadShader();
-	}
-	break;
+    case Qt::Key_H:
+    {
+        qtoolbarFlow->setVisible(false);
+    }
+    break;
+    case Qt::Key_T:
+    {
+        qtoolbarFlow->setVisible(true);
+    }
+    break;
+    case Qt::Key_F5:
+    {
+        canvas->reloadShader();
+    }
+    break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	update();
+    update();
 }
 
 void FlowWindow::reset()
 {
-	file_of_parameters.clear();
-	file_of_mesh.clear();
-	type_of_file.clear();
+    file_of_parameters.clear();
+    file_of_mesh.clear();
+    type_of_file.clear();
 }
 /// Flow Parameters Widget
 void FlowWindow::regionPoints(const std::map<int, Eigen::Vector3f>& region_points)
 {
-	// Z is fixed
-	//this->parametersBar.setRegionPoints(region_points);
+    // Z is fixed
+    //this->parametersBar.setRegionPoints(region_points);
 
-	this->region_parameters_->updateRegionPosition(region_points);
+    this->region_parameters_->updateRegionPosition(region_points);
 
-	are_regionsdefined = true;
+    are_regionsdefined = true;
 
-	qbuildCornerPoint->setEnabled(true);
-	qbuildUnstructured->setEnabled(true);
+    qbuildCornerPoint->setEnabled(true);
+    qbuildUnstructured->setEnabled(true);
 }
 
 int FlowWindow::getNumberOfRegions()
 {
-	//return parametersBar.getNumberOfRegions();
-	return this->region_parameters_->getNumberOfRegion();
+    //return parametersBar.getNumberOfRegions();
+    return this->region_parameters_->getNumberOfRegion();
 }
 /// OpenVolume Mesh Integration ---------------------------------------------->
 void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> _ptr_mesh)
 {
 
 
-	std::vector<RRM::PropertyProfile> vertex_properties;
-	std::vector<RRM::PropertyProfile> cell_properties;
+    std::vector<RRM::PropertyProfile> vertex_properties;
+    std::vector<RRM::PropertyProfile> cell_properties;
 
-	if (_ptr_mesh)
-	{
-		/// Entity Vertex
+    if (_ptr_mesh)
+    {
+        /// Entity Vertex
 
-		for (OpenVolumeMesh::ResourceManager::Properties::const_iterator vp_it = _ptr_mesh->vertex_props_begin(); vp_it != _ptr_mesh->vertex_props_end(); vp_it++)
-		{
-			std::cout << (*vp_it)->name() << " Type = " << (*vp_it)->entityType() << " Data name = " << (*vp_it)->typeNameWrapper() << std::endl;
+        for (OpenVolumeMesh::ResourceManager::Properties::const_iterator vp_it = _ptr_mesh->vertex_props_begin(); vp_it != _ptr_mesh->vertex_props_end(); vp_it++)
+        {
+            std::cout << (*vp_it)->name() << " Type = " << (*vp_it)->entityType() << " Data name = " << (*vp_it)->typeNameWrapper() << std::endl;
 
-			vertex_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
-		}
+            vertex_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
+        }
 
-		/// Entity Cells
+        /// Entity Cells
 
-		for (OpenVolumeMesh::ResourceManager::Properties::const_iterator cp_it = _ptr_mesh->cell_props_begin(); cp_it != _ptr_mesh->cell_props_end(); cp_it++)
-		{
-			std::cout << (*cp_it)->name() << " Type = " << (*cp_it)->entityType() << " Data name = " << (*cp_it)->typeNameWrapper() << std::endl;
+        for (OpenVolumeMesh::ResourceManager::Properties::const_iterator cp_it = _ptr_mesh->cell_props_begin(); cp_it != _ptr_mesh->cell_props_end(); cp_it++)
+        {
+            std::cout << (*cp_it)->name() << " Type = " << (*cp_it)->entityType() << " Data name = " << (*cp_it)->typeNameWrapper() << std::endl;
 
-			cell_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*cp_it)->name(), (*cp_it)->entityType(), "", (*cp_it)->typeNameWrapper()));
-		}
+            cell_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*cp_it)->name(), (*cp_it)->entityType(), "", (*cp_it)->typeNameWrapper()));
+        }
 
-	}
+    }
 
-	clearVertexPropertiesActions();
+    clearVertexPropertiesActions();
 
-	for (const auto vp : vertex_properties)
-	{
-		/// Get the action pointer
-		QAction * action = menu_vertex_properties->addAction(QString::fromStdString(vp.name()));
+    for (const auto vp : vertex_properties)
+    {
+        /// Get the action pointer
+        QAction * action = menu_vertex_properties->addAction(QString::fromStdString(vp.name()));
 
-		/// The connection object in order to proper delete the action later.
-		QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-		{
-			current_property_ = vp;
-			updateModelColors(current_property_);
-		});
+        /// The connection object in order to proper delete the action later.
+        QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+        {
+            current_property_ = vp;
+            updateModelColors(current_property_);
+        });
 
-		/// Action Container
-		action_vertex_properties.push_back(std::make_tuple(action, connection, vp));
-	}
+        /// Action Container
+        action_vertex_properties.push_back(std::make_tuple(action, connection, vp));
+    }
 
 
-	clearCellPropertiesActions();
+    clearCellPropertiesActions();
 
-	for (const auto cp : cell_properties)
-	{
-		/// Get the action pointer
-		QAction * action = menu_cell_properties->addAction(QString::fromStdString(cp.name()));
+    for (const auto cp : cell_properties)
+    {
+        /// Get the action pointer
+        QAction * action = menu_cell_properties->addAction(QString::fromStdString(cp.name()));
 
-		/// The connection object in order to proper delete the action later.
-		QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-		{			
-			current_property_ = cp;
-			updateModelColors(current_property_);
-		});
+        /// The connection object in order to proper delete the action later.
+        QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+        {
+            current_property_ = cp;
+            updateModelColors(current_property_);
+        });
 
-		/// Action Container
-		action_cell_properties.push_back(std::make_tuple(action, connection, cp));
-	}
+        /// Action Container
+        action_cell_properties.push_back(std::make_tuple(action, connection, cp));
+    }
 
 
 
@@ -885,187 +947,188 @@ void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::Tetrahedra
 
 void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> _ptr_mesh)
 {
-	std::vector<RRM::PropertyProfile> vertex_properties;
-	std::vector<RRM::PropertyProfile> cell_properties;
+    std::vector<RRM::PropertyProfile> vertex_properties;
+    std::vector<RRM::PropertyProfile> cell_properties;
 
-	if (_ptr_mesh)
-	{
-		/// Entity Vertex
+    if (_ptr_mesh)
+    {
+        /// Entity Vertex
 
-		for (OpenVolumeMesh::ResourceManager::Properties::const_iterator vp_it = _ptr_mesh->vertex_props_begin(); vp_it != _ptr_mesh->vertex_props_end(); vp_it++)
-		{
-			std::cout << (*vp_it)->name() << " Type = " << (*vp_it)->entityType() << " Data name = " << (*vp_it)->typeNameWrapper() << std::endl;
+        for (OpenVolumeMesh::ResourceManager::Properties::const_iterator vp_it = _ptr_mesh->vertex_props_begin(); vp_it != _ptr_mesh->vertex_props_end(); vp_it++)
+        {
+            std::cout << (*vp_it)->name() << " Type = " << (*vp_it)->entityType() << " Data name = " << (*vp_it)->typeNameWrapper() << std::endl;
 
-			vertex_properties.push_back(RRM::PropertyProfile("Hexahedron",(*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
-		}
+            vertex_properties.push_back(RRM::PropertyProfile("Hexahedron",(*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
+        }
 
-		/// Entity Cells
+        /// Entity Cells
 
-		for (OpenVolumeMesh::ResourceManager::Properties::const_iterator cp_it = _ptr_mesh->cell_props_begin(); cp_it != _ptr_mesh->cell_props_end(); cp_it++)
-		{
-			std::cout << (*cp_it)->name() << " Type = " << (*cp_it)->entityType() << " Data name = " << (*cp_it)->typeNameWrapper() << std::endl;
+        for (OpenVolumeMesh::ResourceManager::Properties::const_iterator cp_it = _ptr_mesh->cell_props_begin(); cp_it != _ptr_mesh->cell_props_end(); cp_it++)
+        {
+            std::cout << (*cp_it)->name() << " Type = " << (*cp_it)->entityType() << " Data name = " << (*cp_it)->typeNameWrapper() << std::endl;
 
-			cell_properties.push_back(RRM::PropertyProfile("Hexahedron",(*cp_it)->name(), (*cp_it)->entityType(), "", (*cp_it)->typeNameWrapper()));
-		}
+            cell_properties.push_back(RRM::PropertyProfile("Hexahedron",(*cp_it)->name(), (*cp_it)->entityType(), "", (*cp_it)->typeNameWrapper()));
+        }
 
-	}
+    }
 
-	clearVertexPropertiesActions();
+    clearVertexPropertiesActions();
 
-	for (const auto vp : vertex_properties)
-	{
-		/// Get the action pointer
-		QAction * action = menu_vertex_properties->addAction(QString::fromStdString(vp.name()));
+    for (const auto vp : vertex_properties)
+    {
+        /// Get the action pointer
+        QAction * action = menu_vertex_properties->addAction(QString::fromStdString(vp.name()));
 
-		/// The connection object in order to proper delete the action later.
-		QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-		{		
-			current_property_ = vp;
-			updateModelColors(current_property_);
-		});
+        /// The connection object in order to proper delete the action later.
+        QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+        {
+            current_property_ = vp;
+            updateModelColors(current_property_);
+        });
 
-		/// Action Container
-		action_vertex_properties.push_back(std::make_tuple(action, connection, vp));
-	}
+        /// Action Container
+        action_vertex_properties.push_back(std::make_tuple(action, connection, vp));
+    }
 
 
-	clearCellPropertiesActions();
+    clearCellPropertiesActions();
 
-	for (const auto cp : cell_properties)
-	{
-		/// Get the action pointer
-		QAction * action = menu_cell_properties->addAction(QString::fromStdString(cp.name()));
+    for (const auto cp : cell_properties)
+    {
+        /// Get the action pointer
+        QAction * action = menu_cell_properties->addAction(QString::fromStdString(cp.name()));
 
-		/// The connection object in order to proper delete the action later.
-		QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-		{
-			current_property_ = cp;
-			updateModelColors(current_property_);
-		});
+        /// The connection object in order to proper delete the action later.
+        QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+        {
+            current_property_ = cp;
+            updateModelColors(current_property_);
+        });
 
-		/// Action Container
-		action_cell_properties.push_back(std::make_tuple(action, connection, cp));
-	}
+        /// Action Container
+        action_cell_properties.push_back(std::make_tuple(action, connection, cp));
+    }
 }
 
 void FlowWindow::clearVertexPropertiesActions()
 {
-	/// @see https://wiki.qt.io/New_Signal_Slot_Syntax
-	for (auto action : action_vertex_properties)
-	{
-		if (std::get<0>(action))
-		{
-			menu_vertex_properties->removeAction(std::get<0>(action));
-			disconnect(std::get<1>(action));
-			delete std::get<0>(action);
-		}
-	}
+    /// @see https://wiki.qt.io/New_Signal_Slot_Syntax
+    for (auto action : action_vertex_properties)
+    {
+        if (std::get<0>(action))
+        {
+            menu_vertex_properties->removeAction(std::get<0>(action));
+            disconnect(std::get<1>(action));
+            delete std::get<0>(action);
+        }
+    }
 
-	action_vertex_properties.clear();
-	menu_vertex_properties->clear();
+    action_vertex_properties.clear();
+    menu_vertex_properties->clear();
 }
 
 void FlowWindow::clearCellPropertiesActions()
 {
-	/// @see https://wiki.qt.io/New_Signal_Slot_Syntax
-	for (auto action : action_cell_properties)
-	{
-		if (std::get<0>(action))
-		{
-			menu_cell_properties->removeAction(std::get<0>(action));
-			disconnect(std::get<1>(action));
-			delete std::get<0>(action);
-		}
-	}
+    /// @see https://wiki.qt.io/New_Signal_Slot_Syntax
+    for (auto action : action_cell_properties)
+    {
+        if (std::get<0>(action))
+        {
+            menu_cell_properties->removeAction(std::get<0>(action));
+            disconnect(std::get<1>(action));
+            delete std::get<0>(action);
+        }
+    }
 
-	action_cell_properties.clear();
-	menu_cell_properties->clear();
+    action_cell_properties.clear();
+    menu_cell_properties->clear();
 }
 
 void FlowWindow::createWellModule()
 {
-	// Centrall Widget - The Canvas Area
-	this->well_canvas_ = new RRM::WellCanvas(this);
-	/// Well Scene
-	this->well_scene_ = new RRM::WellScene(this->well_canvas_);
-	this->well_scene_->setItemIndexMethod(QGraphicsScene::NoIndex);
-	this->well_scene_->setTranformationMatrix(this->well_canvas_->getTransformationMatrix());
+    // Centrall Widget - The Canvas Area
+    this->well_canvas_ = new RRM::WellCanvas(this);
+    /// Well Scene
+    this->well_scene_ = new RRM::WellScene(this->well_canvas_);
+    this->well_scene_->setItemIndexMethod(QGraphicsScene::NoIndex);
+    this->well_scene_->setTranformationMatrix(this->well_canvas_->getTransformationMatrix());
 
-	this->well_canvas_->setScene(this->well_scene_);
+    this->well_canvas_->setScene(this->well_scene_);
 
-	this->dockWellContainer_ = new QDockWidget(QString("Well Module"), this);
-	this->dockWellSceneContainer_ = new QDockWidget(QString("Well Visualization"), this);
-	this->well_parameters_ = new RRM::WellWidget(this);
+    this->dockWellContainer_ = new QDockWidget(QString("Well Module"), this);
+    this->dockWellSceneContainer_ = new QDockWidget(QString("Well Visualization"), this);
+    this->well_parameters_ = new RRM::WellWidget(this);
 
-	this->fitView_ = new QPushButton("Fit to View");
+    this->fitView_ = new QPushButton("Fit to View");
 
-	connect(this->fitView_, &QPushButton::pressed, [=]()
-	{
-		this->well_canvas_->fitInView();
-	}
-	);
+    connect(this->fitView_, &QPushButton::pressed, [=]()
+    {
+        this->well_canvas_->fitInView();
+    }
+    );
 
-	QVBoxLayout * h = new QVBoxLayout();
-	h->addWidget(this->well_canvas_);
-	h->addWidget(this->fitView_);
+    QVBoxLayout * h = new QVBoxLayout();
+    h->addWidget(this->well_canvas_);
+    h->addWidget(this->fitView_);
 
-	QWidget * w = new QWidget(this->dockWellContainer_);
-	w->setLayout(h);
+    QWidget * w = new QWidget(this->dockWellContainer_);
+    w->setLayout(h);
 
-	this->dockWellContainer_->setWidget(this->well_parameters_);
-	this->addDockWidget(Qt::LeftDockWidgetArea, this->dockWellContainer_);
+    this->dockWellContainer_->setWidget(this->well_parameters_);
+    this->addDockWidget(Qt::LeftDockWidgetArea, this->dockWellContainer_);
 
-	this->dockWellSceneContainer_->setWidget(w);
-	this->dockWellSceneContainer_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::BottomDockWidgetArea);
-	this->addDockWidget(Qt::LeftDockWidgetArea, this->dockWellSceneContainer_);
+    this->dockWellSceneContainer_->setWidget(w);
+    this->dockWellSceneContainer_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::BottomDockWidgetArea);
+    this->addDockWidget(Qt::LeftDockWidgetArea, this->dockWellSceneContainer_);
 
-	this->tabifyDockWidget(this->dockWellSceneContainer_, this->dockWellContainer_);
+    this->tabifyDockWidget(this->dockWellSceneContainer_, this->dockWellContainer_);
 
-	connect(this->well_parameters_, &RRM::WellWidget::numberOfWells, [=]()
-	{
-		this->well_scene_->createWells(this->well_parameters_->getNumberOfWells(),this->well_parameters_->getWellsSign());
-	}
-	);
-		
-	connect(this->well_scene_, &RRM::WellScene::updatedWellsPosition, this->well_parameters_, &RRM::WellWidget::updateWellPosition);
-	connect(this->well_parameters_, &RRM::WellWidget::wellPositionsHasChanged, [=]()
-	{
-		canvas->updateWellsPosition(well_parameters_->getNumberOfWells(),well_parameters_->getWellsPosition(), well_parameters_->getWellsSign());
-	}
-	);
-	
-	view_well_module_ = new QAction(tr("View Well Module"),0);
-	view_well_module_->setCheckable(true);
+    connect(this->well_parameters_, &RRM::WellWidget::numberOfWells, [=]()
+    {
+        this->well_scene_->createWells(this->well_parameters_->getNumberOfWells(),this->well_parameters_->getWellsSign());
+    }
+    );
 
-	view_well_visualization_ = new QAction(tr("View Well Visualization"), 0);
-	view_well_visualization_->setCheckable(true);
+    connect(this->well_scene_, &RRM::WellScene::updatedWellsPosition, this->well_parameters_, &RRM::WellWidget::updateWellPosition);
 
-	connect(this->dockWellContainer_, &QDockWidget::visibilityChanged, this->view_well_module_, &QAction::setChecked);
-	connect(this->dockWellSceneContainer_, &QDockWidget::visibilityChanged, this->view_well_visualization_, &QAction::setChecked);
+    connect(this->well_parameters_, &RRM::WellWidget::wellPositionsHasChanged, [=]()
+    {
+        canvas->updateWellsPosition(well_parameters_->getNumberOfWells(), well_parameters_->getWellsPosition(), well_parameters_->getWellsSign(), well_parameters_->getWellsRange());
+    }
+    );
 
-	connect(this->view_well_module_, &QAction::triggered, this->dockWellContainer_, &QDockWidget::setVisible);
-	connect(this->view_well_visualization_, &QAction::triggered, this->dockWellSceneContainer_, &QDockWidget::setVisible);
+    view_well_module_ = new QAction(tr("View Well Module"),0);
+    view_well_module_->setCheckable(true);
 
-	flowModule_view_->addAction(view_well_module_);
-	flowModule_view_->addAction(view_well_visualization_);
+    view_well_visualization_ = new QAction(tr("View Well Visualization"), 0);
+    view_well_visualization_->setCheckable(true);
+
+    connect(this->dockWellContainer_, &QDockWidget::visibilityChanged, this->view_well_module_, &QAction::setChecked);
+    connect(this->dockWellSceneContainer_, &QDockWidget::visibilityChanged, this->view_well_visualization_, &QAction::setChecked);
+
+    connect(this->view_well_module_, &QAction::triggered, this->dockWellContainer_, &QDockWidget::setVisible);
+    connect(this->view_well_visualization_, &QAction::triggered, this->dockWellSceneContainer_, &QDockWidget::setVisible);
+
+    flowModule_view_->addAction(view_well_module_);
+    flowModule_view_->addAction(view_well_visualization_);
 }
 
 void FlowWindow::createRegionModule()
 {
-	this->dockRegionContainer_ = new QDockWidget(QString("Region Module"), this);
-	this->region_parameters_ = new RRM::RegionWidget(this);
+    this->dockRegionContainer_ = new QDockWidget(QString("Region Module"), this);
+    this->region_parameters_ = new RRM::RegionWidget(this);
 
-	this->dockRegionContainer_->setWidget(this->region_parameters_);
-	this->addDockWidget(Qt::LeftDockWidgetArea, this->dockRegionContainer_);
+    this->dockRegionContainer_->setWidget(this->region_parameters_);
+    this->addDockWidget(Qt::LeftDockWidgetArea, this->dockRegionContainer_);
 
 
-	view_region_module_ = new QAction(tr("View Region Module"), 0);
-	view_region_module_->setCheckable(true);
+    view_region_module_ = new QAction(tr("View Region Module"), 0);
+    view_region_module_->setCheckable(true);
 
-	connect(this->dockRegionContainer_, &QDockWidget::visibilityChanged, this->view_region_module_, &QAction::setChecked);
-	connect(this->view_region_module_, &QAction::triggered, this->dockRegionContainer_, &QDockWidget::setVisible);
-	
-	flowModule_view_->addAction(view_region_module_);
+    connect(this->dockRegionContainer_, &QDockWidget::visibilityChanged, this->view_region_module_, &QAction::setChecked);
+    connect(this->view_region_module_, &QAction::triggered, this->dockRegionContainer_, &QDockWidget::setVisible);
+
+    flowModule_view_->addAction(view_region_module_);
 
 }
 
@@ -1091,26 +1154,26 @@ void FlowWindow::createFluidModule()
 
 void FlowWindow::updateModelColors( const RRM::PropertyProfile& _profile)
 {
-	std::vector<float> colors;
-	double min;
-	double max;
-	unsigned int nc = 0;
+    std::vector<float> colors;
+    double min;
+    double max;
+    unsigned int nc = 0;
 
-	if (_profile.elementType() == "Tetrahedron")
-	{	
-		controller->updateTetrahedronColors(_profile.name(), _profile.entity(), _profile.dimension(), colors, min, max);
-		colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
-		canvas->setColors(colors);	
-	}
-	else if (_profile.elementType() == "Hexahedron")
-	{		
-		controller->updateHexahedronColors(_profile.name(), _profile.entity(), _profile.dimension(), colors, min, max);
-		colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
-		canvas->setColors(colors);
-	}else
-	{
-		std::cout << "You shall never reach this point" << std::endl;
-	}
+    if (_profile.elementType() == "Tetrahedron")
+    {
+        controller->updateTetrahedronColors(_profile.name(), _profile.entity(), _profile.dimension(), colors, min, max);
+        colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
+        canvas->setColors(colors);
+    }
+    else if (_profile.elementType() == "Hexahedron")
+    {
+        controller->updateHexahedronColors(_profile.name(), _profile.entity(), _profile.dimension(), colors, min, max);
+        colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
+        canvas->setColors(colors);
+    }else
+    {
+        std::cout << "You shall never reach this point" << std::endl;
+    }
 
 
 }

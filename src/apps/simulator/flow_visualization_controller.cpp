@@ -28,8 +28,8 @@ FlowVisualizationController::FlowVisualizationController( QWidget *parent )
     are_properties_computed = false;
     user_input_ok = false;
 
-	current_method = MESHING_METHOD::UNSTRUCTURED;
-	current_colormap_ = ColorMap::COLORMAP::COOL_TO_WARM;
+    current_method = MESHING_METHOD::UNSTRUCTURED;
+    current_colormap_ = ColorMap::COLORMAP::COOL_TO_WARM;
 
     //code_interface.loadDefaultValues(1);
 }
@@ -91,20 +91,20 @@ void FlowVisualizationController::readInputParameters( const std::string& input_
 
 void FlowVisualizationController::generateCornerPoint()
 {
-	if (is_surface_loaded == false || user_input_ok == false)
-	{
-		return;
-	}
+    if (is_surface_loaded == false || user_input_ok == false)
+    {
+        return;
+    }
     code_interface.buildCPGVolumetricMesh();
     is_volumetric_built = true;
 }
 
 void FlowVisualizationController::generateUnstructured()
 {
-	if (is_surface_loaded == false || user_input_ok == false)
-	{
-		return;
-	}
+    if (is_surface_loaded == false || user_input_ok == false)
+    {
+        return;
+    }
 
     code_interface.buildVolumetricMesh();
     is_volumetric_built = true;
@@ -115,10 +115,10 @@ void FlowVisualizationController::updateCornerPoint(std::vector< float >& vertic
      code_interface.getCPGVolumeVertices( vertices );
      code_interface.getCPGVolumeEdges( edges );
      code_interface.getCPGVolumeCells( faces);
-	 flow_model_.createHexahedonMesh(vertices, faces);
+     flow_model_.createHexahedonMesh(vertices, faces);
 
-	 flow_model_.uploadHexahedron(faces, vertices);
-	 //ptr_mesh = std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d>(flow_model_.getPtrHexahedralMesh());
+     flow_model_.uploadHexahedron(faces, vertices);
+     //ptr_mesh = std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d>(flow_model_.getPtrHexahedralMesh());
 
      is_volumetric_built = true;
 }
@@ -131,13 +131,13 @@ void FlowVisualizationController::updateVolumetricMesh(std::vector< float >& ver
     code_interface.getVolumeEdges( edges );
     code_interface.getVolumeCells( faces);
 
-	std::cout << " FlowVisualizationController vertices " << vertices.size() << std::endl;
+    std::cout << " FlowVisualizationController vertices " << vertices.size() << std::endl;
 
-	flow_model_.createTetrahedonMesh(vertices, faces);
+    flow_model_.createTetrahedonMesh(vertices, faces);
 
-	flow_model_.uploadTetrahedron(faces, vertices);
+    flow_model_.uploadTetrahedron(faces, vertices);
 
-	//ptr_mesh = std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d>(flow_model_.getPtrTetrahedralMesh());
+    //ptr_mesh = std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d>(flow_model_.getPtrTetrahedralMesh());
 
     is_volumetric_built = true;
 
@@ -157,36 +157,36 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
 
 bool FlowVisualizationController::isVolumetricBuilt() const
 {
-	return this->is_volumetric_built;
+    return this->is_volumetric_built;
 }
 
 bool FlowVisualizationController::isUserInputOk() const
 {
-	return this->user_input_ok;
+    return this->user_input_ok;
 }
 
 bool FlowVisualizationController::isSurfaceLoaded() const
 {
-	return this->is_surface_loaded;
+    return this->is_surface_loaded;
 }
 
 bool FlowVisualizationController::arePropertiesComputed() const
 {
-	return are_properties_computed;
+    return are_properties_computed;
 }
 
 void FlowVisualizationController::setVolumeDimensions(double width_, double height_, double depth_)
 {
-	code_interface.setVolumeDimensions(width_, height_, depth_);
+    code_interface.setVolumeDimensions(width_, height_, depth_);
 }
 
 void FlowVisualizationController::computeFlowProperties()
 {
 
-	if (is_volumetric_built == false || is_surface_loaded == false)
-	{
-		return;
-	}
+    if (is_volumetric_built == false || is_surface_loaded == false)
+    {
+        return;
+    }
 
     code_interface.init();
     code_interface.computeProperties();
@@ -197,17 +197,38 @@ void FlowVisualizationController::computeFlowProperties()
 
 }
 
-void FlowVisualizationController::setPropertyArea( const int np, const std::vector< double >& values , const std::vector< double >& perm, const std::vector< double >& poros, const std::vector< double >& visc )
+void FlowVisualizationController::setPropertyArea(const int np,
+                                                  const std::vector< double >& values,
+                                                  const std::vector< double >& perm,
+                                                  const std::vector< double >& poros,
+                                                  const std::vector< double >& visc,
+                                                  const std::vector<double>& _saturations,
+                                                  const std::vector<int>& _perm_curves_,
+                                                  const std::map<int,std::pair<double, double> >& _permeability_gradients,
+                                                  const std::map<int,std::pair<double, double> >& _porosity_gradients)
 {
     code_interface.setNumberofRegions(np);
     for( int i = 0; i < np; ++i )
     {
-        code_interface.setRegion( i, values[ 3*i ], values[ 3*i + 1 ], values[ 3*i +2 ], perm[ i ], poros[ i ], visc[ i ] );
+        /// @FIXME September
+        ///code_interface.setRegion( i, values[ 3*i ], values[ 3*i + 1 ], values[ 3*i +2 ], perm[ i ], poros[ i ], visc[ i ] );
+        code_interface.setRegion(i,
+                                values[3 * i],
+                                values[3 * i + 1],
+                                values[3 * i + 2],
+                                _permeability_gradients.at(i).first,
+                                _permeability_gradients.at(i).second,
+                                _porosity_gradients.at(i).first,
+                                _porosity_gradients.at(i).second
+                                );
+        //code_interface.setWaterSaturation(i,_saturations[i]);
+        //code_interface.setPermeabilityCurve(i,_perm_curves_[i]);
     }
 
     user_input_ok = true;
 
 }
+
 
 void FlowVisualizationController::getPropertyArea( int& np, std::vector< double >& values , std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc )
 {
@@ -227,11 +248,22 @@ void FlowVisualizationController::getPropertyArea( int& np, std::vector< double 
 
 }
 
+
+
+/// @FIXME September
+void FlowVisualizationController::setFluidProperty(double _viscosity, double _bo, const double& _oildensity, const std::pair<int, int>& _phase_method)
+{
+    this->code_interface.setViscosity(_viscosity);
+    this->code_interface.setBo(_bo);
+    this->code_interface.setOilGravity(_oildensity);
+    this->setSaturationMethod(SaturationMethod::APIGRAVITY);
+}
+
 /* /1* Suggestion *1/ */
 
 using WellType = FlowDiagnosticsInterface::WellType;
 
-/* struct WellDescriptor { */ 
+/* struct WellDescriptor { */
 /*     double qt_x; */
 /*     double qt_y; */
 /*     double well_depth; */
@@ -244,29 +276,29 @@ void FlowVisualizationController::setWellsValues(const int nw, const std::vector
     code_interface.setNumberofWells(nw);
     for( int i = 0; i < nw; ++i )
     {
-		std::cout << "setWellsValues " << positions[i];
-		std::cout << " ------ " << positions[i];
-		std::cout << "Top " << range[i].y();
-		std::cout << "Bottom " << range[i].x();
-		
+        std::cout << "setWellsValues " << positions[i];
+        std::cout << " ------ " << positions[i];
+        std::cout << "Top " << range[i].y();
+        std::cout << "Bottom " << range[i].x();
+
 
         /* Old */
         /* code_interface.setWell( i, type[ i ], value[ i ], sign[ i ] ); */
 
         /* New (suggestion) */
-        /* code_interface.setWell( i, type[ i ], value[ i ], 
+        /* code_interface.setWell( i, type[ i ], value[ i ],
         *       descriptors[i].qt_x, descriptors[ i ].qt_y, descriptors[ i ].well_depth ); */
 
         /* Before the complete integration */
         if ( sign[ i ] == 1 ) // means this well is an injector
         {
-			code_interface.setWell(i, WellType::INJECTOR, value[i], positions[i].x(), positions[i].y(), positions[i].z(), positions[i].w());
-			//code_interface.setverticalWell(i, WellType::INJECTOR, value[i], positions[i].x(), positions[i].y(), range[i].y(), range[i].x());
+            //code_interface.setWell(i, WellType::INJECTOR, value[i], positions[i].x(), positions[i].y(), positions[i].z(), positions[i].w());
+            code_interface.setVerticalWell(i, WellType::INJECTOR, value[i], positions[i].x(), positions[i].y(), range[i].y(), range[i].x());
         }
         else if ( sign[ i ]== -1 )
         {
-			code_interface.setWell(i, WellType::PRODUCER, value[i], positions[i].x(), positions[i].y(), positions[i].z(), positions[i].w());
-			//code_interface.setverticalWell(i, WellType::PRODUCER, value[i], positions[i].x(), positions[i].y(), range[i].y(), range[i].x());
+            //code_interface.setWell(i, WellType::PRODUCER, value[i], positions[i].x(), positions[i].y(), positions[i].z(), positions[i].w());
+            code_interface.setVerticalWell(i, WellType::PRODUCER, value[i], positions[i].x(), positions[i].y(), range[i].y(), range[i].x());
         }
         else
         {
@@ -297,24 +329,34 @@ void FlowVisualizationController::getWellsValues( int& nw,  std::vector< unsigne
 
 void FlowVisualizationController::clearComputedQuantities()
 {
-	code_interface.clearComputedQuantities();
+    code_interface.clearComputedQuantities();
 };
 
 void FlowVisualizationController::getUpscalledPermeability( std::string& _result)
 {
-	//std::string up;
-	code_interface.getUpscalledPermeability(_result);
-		
+    //std::string up;
+    code_interface.getUpscalledPermeability(_result);
+
+};
+
+void FlowVisualizationController::getOilInPlace( std::string& _result)
+{
+    //std::string up;
+    double value;
+    code_interface.getOilInPlace( value );
+    _result.clear();
+    _result = std::to_string( value );
+
 };
 
 void FlowVisualizationController::exportDerivedQuantities()
 {
-	QString selected_format = "";
-	QString filename = QFileDialog::getSaveFileName(this, tr("Export File"), "./exported/Derived Quantities/",
-		".txt files (*.txt)", &selected_format);
-	if (filename.isEmpty() == true) return;
+    QString selected_format = "";
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export File"), "./exported/Derived Quantities/",
+        ".txt files (*.txt)", &selected_format);
+    if (filename.isEmpty() == true) return;
 
-	code_interface.exportDerivedQuantities(filename.toStdString());
+    code_interface.exportDerivedQuantities(filename.toStdString());
 }
 
 void FlowVisualizationController::exportSurfacetoVTK()
@@ -386,12 +428,12 @@ void FlowVisualizationController::clear()
 
 void FlowVisualizationController::setCurrentColormap(ColorMap::COLORMAP cm)
 {
-	current_colormap_ = cm;
+    current_colormap_ = cm;
 }
 
 ColorMap::COLORMAP FlowVisualizationController::getCurrentColormap() const
 {
-	return current_colormap_;
+    return current_colormap_;
 }
 
 /// OpenVolumeMesh Interface	 ----- ---------------------------------------->>
@@ -399,250 +441,313 @@ ColorMap::COLORMAP FlowVisualizationController::getCurrentColormap() const
 void FlowVisualizationController::loadPropertiesTetrahedron()
 {
 
-	std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
+    std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
 
-	if (ptr_mesh)
-	{
-		// Vertex Properties ------------------------------------------------->
-		std::vector<double> values;
-		// Pressure
-		values.clear();
-		int i = 0;
-		code_interface.getPressure(values);
+    if (ptr_mesh)
+    {
 
-		OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure");
-		ptr_mesh->set_persistent(ph);		
+        // Vertex Properties ------------------------------------------------->
+        std::vector<double> values;
+        bool status = false;
+        // Pressure
+        values.clear();
+        int i = 0;
+        code_interface.getPressure(values);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure");
+        ptr_mesh->set_persistent(ph);
 
-		// Foward TOF
-		values.clear();
-		i = 0;
-		code_interface.getForwardTOF(values);
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-		ph = ptr_mesh->request_vertex_property<double>("Forward TOF");
-		ptr_mesh->set_persistent(ph);
+        // Foward TOF
+        values.clear();
+        i = 0;
+        code_interface.getForwardTOF(values);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        ph = ptr_mesh->request_vertex_property<double>("Forward TOF");
+        ptr_mesh->set_persistent(ph);
 
-		// Foward TOF Log 10
-		values.clear();
-		i = 0;
-		code_interface.getFowardTOF_log10(values);
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-		ph = ptr_mesh->request_vertex_property<double>("Forward TOF Log10");
-		ptr_mesh->set_persistent(ph);
+        // Foward TOF Log 10
+        values.clear();
+        i = 0;
+        code_interface.getFowardTOF_log10(values);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        ph = ptr_mesh->request_vertex_property<double>("Forward TOF Log10");
+        ptr_mesh->set_persistent(ph);
 
-		// BackWard TOF
-		values.clear();
-		i = 0;
-		code_interface.getBackwardTOF(values);
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-		ph = ptr_mesh->request_vertex_property<double>("Backward TOF");
-		ptr_mesh->set_persistent(ph);
+        // BackWard TOF
+        values.clear();
+        i = 0;
+        code_interface.getBackwardTOF(values);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        ph = ptr_mesh->request_vertex_property<double>("Backward TOF");
+        ptr_mesh->set_persistent(ph);
 
-		// BackWard TOF Log 10
-		values.clear();
-		i = 0;
-		code_interface.getBackwardTOF_log10(values);
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-		ph = ptr_mesh->request_vertex_property<double>("Backward TOF Log10");
-		ptr_mesh->set_persistent(ph);
+        // BackWard TOF Log 10
+        values.clear();
+        i = 0;
+        code_interface.getBackwardTOF_log10(values);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        ph = ptr_mesh->request_vertex_property<double>("Backward TOF Log10");
+        ptr_mesh->set_persistent(ph);
 
-
-		// Total TOF
-		values.clear();
-		i = 0;
-		code_interface.getTotalTOF(values);
-
-		ph = ptr_mesh->request_vertex_property<double>("Total TOF");
-		ptr_mesh->set_persistent(ph);
-
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
-
-		// Total TOF Log 10
-		values.clear();
-		i = 0;
-		code_interface.getTotalTOF_log10(values);
-
-		ph = ptr_mesh->request_vertex_property<double>("Total TOF Log10");
-		ptr_mesh->set_persistent(ph);
-
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];			
-		}
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
 
-		//Maximum Tracer
-		values.clear();
-		i = 0;
-		code_interface.getMaxForwardTracer(values);
+        // Total TOF
+        values.clear();
+        i = 0;
+        code_interface.getTotalTOF(values);
 
-		ph = ptr_mesh->request_vertex_property<double>("MaxForwardTracer");
-		ptr_mesh->set_persistent(ph);
+        ph = ptr_mesh->request_vertex_property<double>("Total TOF");
+        ptr_mesh->set_persistent(ph);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-		//Max BackTracer
-		values.clear();
-		i = 0;
-		code_interface.getMaxBackwardTracer(values);
+        // Total TOF Log 10
+        values.clear();
+        i = 0;
+        code_interface.getTotalTOF_log10(values);
 
-		ph = ptr_mesh->request_vertex_property<double>("MaxBackwardTracer");
-		ptr_mesh->set_persistent(ph);
+        ph = ptr_mesh->request_vertex_property<double>("Total TOF Log10");
+        ptr_mesh->set_persistent(ph);
 
-		for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		{
-			// Set property value
-			ph[*v_it] = values[i++];
-		}
-
-
-		////Fake Tracer, testing another dimension types
-		//values.clear();
-		//i = 0;
-		//code_interface.getMaxForwardTracer(values);
-
-		//OpenVolumeMesh::VertexPropertyT<OpenVolumeMesh::Matrix3D> pe = ptr_mesh->request_vertex_property<OpenVolumeMesh::Matrix3D>("Fake Tracer");
-		//ptr_mesh->set_persistent(pe);
-
-		//for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		//{
-	
-		//	// Set property value			
-		//	pe[*v_it] = OpenVolumeMesh::Matrix3D();
-		//}
-
-		// Cell Properties --------------------------------------------------->
-
-		//Permeability
-		values.clear();
-		i = 0;
-		code_interface.getPermeabilitybyCells(values);
-
-		OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability");
-		ptr_mesh->set_persistent(ch);
-
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-		//	// Set property value
-			ch[*c_it] = values[i++];
-		}
-
-		//Porosity
-		values.clear();
-		i = 0;
-		code_interface.getPorosity(values);
-
-		ch = ptr_mesh->request_cell_property<double>("Porosity");
-		ptr_mesh->set_persistent(ch);
-
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
-
-		//Velocity
-		values.clear();
-		i = 0;
-		code_interface.getVelocitybyCells(values);
-
-		OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity");
-		ptr_mesh->set_persistent(chv);
-
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			OpenVolumeMesh::Vector3D v (values[3 * i + 0], values[3 * i + 1], values[3 * i + 2]);
-			
-			// Set property value
-			chv[*c_it] = v.norm();
-						
-			i++;
-		}
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
 
-		//Velocity Log 10
-		values.clear();
-		i = 0;
-		code_interface.getVelocityMagnitudebyCells_log10(values);
+        //Maximum Tracer
+        values.clear();
+        i = 0;
+        code_interface.getMaxForwardTracer(values);
 
-		chv = ptr_mesh->request_cell_property<double>("Velocity Log10");
-		ptr_mesh->set_persistent(chv);
+        ph = ptr_mesh->request_vertex_property<double>("MaxForwardTracer");
+        ptr_mesh->set_persistent(ph);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
 
-			// Set property value
-			chv[*c_it] = values[i++];
-			i++;
-		}
+        //Max BackTracer
+        values.clear();
+        i = 0;
+        code_interface.getMaxBackwardTracer(values);
 
-	}
+        ph = ptr_mesh->request_vertex_property<double>("MaxBackwardTracer");
+        ptr_mesh->set_persistent(ph);
+
+        for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        {
+            // Set property value
+            ph[*v_it] = values[i++];
+        }
+
+
+        //Capillary Pressure
+        values.clear();
+        i = 0;
+        status = code_interface.getCapillaryPressure(values);
+
+        if ( status)
+        {
+            ph = ptr_mesh->request_vertex_property<double>("Capillary Pressure");
+            ptr_mesh->set_persistent(ph);
+
+            for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+            {
+                // Set property value
+                ph[*v_it] = values[i++];
+            }
+        }
+
+        // Cell Properties --------------------------------------------------->
+
+        //Permeability
+        values.clear();
+        i = 0;
+        code_interface.getPermeabilitybyCells(values);
+
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability");
+        ptr_mesh->set_persistent(ch);
+
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+        //	// Set property value
+            ch[*c_it] = values[i++];
+        }
+
+        //Porosity
+        values.clear();
+        i = 0;
+        code_interface.getPorosity(values);
+
+        ch = ptr_mesh->request_cell_property<double>("Porosity");
+        ptr_mesh->set_persistent(ch);
+
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
+
+        //Velocity
+        values.clear();
+        i = 0;
+        code_interface.getVelocitybyCells(values);
+
+        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity");
+        ptr_mesh->set_persistent(chv);
+
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            OpenVolumeMesh::Vector3D v (values[3 * i + 0], values[3 * i + 1], values[3 * i + 2]);
+
+            // Set property value
+            chv[*c_it] = v.norm();
+
+            i++;
+        }
+
+
+        //Velocity Log 10
+        values.clear();
+        i = 0;
+        code_interface.getVelocityMagnitudebyCells_log10(values);
+
+        chv = ptr_mesh->request_cell_property<double>("Velocity Log10");
+        ptr_mesh->set_persistent(chv);
+
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+
+            // Set property value
+            chv[*c_it] = values[i++];
+            i++;
+        }
+
+
+        ////@TODO September
+        //Water Saturation
+        values.clear();
+        i = 0;
+        status = code_interface.getWaterSaturationByCells(values);
+
+        if (status)
+        {
+            chv = ptr_mesh->request_cell_property<double>("Water Saturation");
+            ptr_mesh->set_persistent(chv);
+
+            for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+            {
+
+                // Set property value
+                chv[*c_it] = values[i++];
+                i++;
+            }
+        }
+
+        //Oil Relative permeability
+        values.clear();
+        i = 0;
+        status = code_interface.getKroByCells(values);
+
+        if (status)
+        {
+            chv = ptr_mesh->request_cell_property<double>("Oil Relative Permeability");
+            ptr_mesh->set_persistent(chv);
+
+            for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+            {
+
+                // Set property value
+                chv[*c_it] = values[i++];
+                i++;
+            }
+        }
+
+        //Water Relative Permeability
+        values.clear();
+        i = 0;
+        status = code_interface.getKrwByCells(values);
+
+        if (status)
+        {
+            chv = ptr_mesh->request_cell_property<double>("Water Relative Permeability");
+            ptr_mesh->set_persistent(chv);
+
+            for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+            {
+
+                // Set property value
+                chv[*c_it] = values[i++];
+                i++;
+            }
+        }
+
+    }
 
 }
 
 /// FIXEME June 2017
 void FlowVisualizationController::getPoreVolume()
 {
-	
-	std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
 
-	if (ptr_mesh)
-	{
-		//Pore Volume
-		std::vector<double> values;
-		values.clear();
-		
-		code_interface.getPoreVolumebyRegion(values);
-		std::vector< int > idregion_by_cell;
-		code_interface.getRegionId(idregion_by_cell);
+    std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
 
-		OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Pore Volume");
-		ptr_mesh->set_persistent(ch);
+    if (ptr_mesh)
+    {
+        //Pore Volume
+        std::vector<double> values;
+        values.clear();
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			//	// Set property value
-			ch[*c_it] = values[idregion_by_cell[*c_it]];
-		}
-	}
+        code_interface.getPoreVolumebyRegion(values);
+        std::vector< int > idregion_by_cell;
+        code_interface.getRegionId(idregion_by_cell);
+
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Pore Volume");
+        ptr_mesh->set_persistent(ch);
+
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            //	// Set property value
+            ch[*c_it] = values[idregion_by_cell[*c_it]];
+        }
+    }
 
 }
 
@@ -651,160 +756,160 @@ void FlowVisualizationController::getPoreVolume()
 void FlowVisualizationController::loadPropertiesHexahedron()
 {
 
-	std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> ptr_mesh = flow_model_.getPtrHexahedralMesh();
+    std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> ptr_mesh = flow_model_.getPtrHexahedralMesh();
 
-	if (ptr_mesh)
-	{
-		// Vertex Properties ------------------------------------------------->
-		std::vector<double> values;
-		int i = 0;
+    if (ptr_mesh)
+    {
+        // Vertex Properties ------------------------------------------------->
+        std::vector<double> values;
+        int i = 0;
 
-		//// Pressure
-		//values.clear();
-		//int i = 0;
-		//code_interface.getCPGPressure(values);
+        //// Pressure
+        //values.clear();
+        //int i = 0;
+        //code_interface.getCPGPressure(values);
 
-		//OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure");
-		//ptr_mesh->set_persistent(ph);
+        //OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure");
+        //ptr_mesh->set_persistent(ph);
 
-		//for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		//{
-		//	// Set property value
-		//	ph[*v_it] = values[i++];
-		//}
+        //for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        //{
+        //	// Set property value
+        //	ph[*v_it] = values[i++];
+        //}
 
 
-		////Fake Tracer, testing another dimension types
-		//values.clear();
-		//i = 0;
-		//code_interface.getMaxForwardTracer(values);
+        ////Fake Tracer, testing another dimension types
+        //values.clear();
+        //i = 0;
+        //code_interface.getMaxForwardTracer(values);
 
-		//OpenVolumeMesh::VertexPropertyT<OpenVolumeMesh::Matrix3D> pe = ptr_mesh->request_vertex_property<OpenVolumeMesh::Matrix3D>("Fake Tracer");
-		//ptr_mesh->set_persistent(pe);
+        //OpenVolumeMesh::VertexPropertyT<OpenVolumeMesh::Matrix3D> pe = ptr_mesh->request_vertex_property<OpenVolumeMesh::Matrix3D>("Fake Tracer");
+        //ptr_mesh->set_persistent(pe);
 
-		//for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
-		//{
+        //for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
+        //{
 
-		//	// Set property value			
-		//	pe[*v_it] = OpenVolumeMesh::Matrix3D();
-		//}
+        //	// Set property value
+        //	pe[*v_it] = OpenVolumeMesh::Matrix3D();
+        //}
 
-		// Cell Properties --------------------------------------------------->
+        // Cell Properties --------------------------------------------------->
 
-		//Pressure
-		values.clear();
-		i = 0;
-		code_interface.getCPGPressure(values);
+        //Pressure
+        values.clear();
+        i = 0;
+        code_interface.getCPGPressure(values);
 
-		OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Pressure");
-		ptr_mesh->set_persistent(ch);
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Pressure");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			//	// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            //	// Set property value
+            ch[*c_it] = values[i++];
+        }
 
-		//Forward TOF
-		values.clear();
-		i = 0;
-		code_interface.getCPGTOF(values);
+        //Forward TOF
+        values.clear();
+        i = 0;
+        code_interface.getCPGTOF(values);
 
-		ch = ptr_mesh->request_cell_property<double>("Forward TOF");
-		ptr_mesh->set_persistent(ch);
+        ch = ptr_mesh->request_cell_property<double>("Forward TOF");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
 
-		//Backward TOF
-		values.clear();
-		i = 0;
-		code_interface.getCPGBackwardTOF(values);
+        //Backward TOF
+        values.clear();
+        i = 0;
+        code_interface.getCPGBackwardTOF(values);
 
-		ch = ptr_mesh->request_cell_property<double>("Backward Tracer");
-		ptr_mesh->set_persistent(ch);
+        ch = ptr_mesh->request_cell_property<double>("Backward Tracer");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
 
-		//Total TOF
-		values.clear();
-		i = 0;
-		code_interface.getCPGTotalTOF(values);
+        //Total TOF
+        values.clear();
+        i = 0;
+        code_interface.getCPGTotalTOF(values);
 
-		ch = ptr_mesh->request_cell_property<double>("Total TOF");
-		ptr_mesh->set_persistent(ch);
+        ch = ptr_mesh->request_cell_property<double>("Total TOF");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
 
-		//Total Permeability
-		values.clear();
-		i = 0;
-		code_interface.getCPGPermeability(values);
+        //Total Permeability
+        values.clear();
+        i = 0;
+        code_interface.getCPGPermeability(values);
 
-		ch = ptr_mesh->request_cell_property<double>("Permeability");
-		ptr_mesh->set_persistent(ch);
+        ch = ptr_mesh->request_cell_property<double>("Permeability");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
 
-		//Total Porosity
-		values.clear();
-		i = 0;
-		code_interface.getCPGPorosity(values);
+        //Total Porosity
+        values.clear();
+        i = 0;
+        code_interface.getCPGPorosity(values);
 
-		ch = ptr_mesh->request_cell_property<double>("Porosity");
-		ptr_mesh->set_persistent(ch);
+        ch = ptr_mesh->request_cell_property<double>("Porosity");
+        ptr_mesh->set_persistent(ch);
 
-		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
-		{
-			// Set property value
-			ch[*c_it] = values[i++];
-		}
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = values[i++];
+        }
 
-	}
+    }
 
 }
 
 void FlowVisualizationController::updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max)
 {
 
-	std::vector<double> values;
+    std::vector<double> values;
 
-	flow_model_.updateTetrahedronColors(_property_name, _entity_name, _dimension, values);
+    flow_model_.updateTetrahedronColors(_property_name, _entity_name, _dimension, values);
 
-	// Get the property by the interator
-	auto min_max = std::minmax_element(values.begin(), values.end());
+    // Get the property by the interator
+    auto min_max = std::minmax_element(values.begin(), values.end());
 
-	std::cout << "min element at: " << (min_max.first - values.begin()) << " " << *min_max.first << std::endl;
-	std::cout << "max element at: " << (min_max.second - values.begin()) << " " << *min_max.second << std::endl;
+    std::cout << "min element at: " << (min_max.first - values.begin()) << " " << *min_max.first << std::endl;
+    std::cout << "max element at: " << (min_max.second - values.begin()) << " " << *min_max.second << std::endl;
 
-	_colors.clear();
-	_colors.resize(values.size() * 3);
+    _colors.clear();
+    _colors.resize(values.size() * 3);
 
-	_min = *min_max.first;
-	_max = *min_max.second;
+    _min = *min_max.first;
+    _max = *min_max.second;
 
-	for (unsigned int i = 0; i < values.size(); ++i)
-	{
-		QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
-		_colors[i * 3 + 0] = static_cast<float>(c[0]);
-		_colors[i * 3 + 1] = static_cast<float>(c[1]);
-		_colors[i * 3 + 2] = static_cast<float>(c[2]);
-	}
+    for (unsigned int i = 0; i < values.size(); ++i)
+    {
+        QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
+        _colors[i * 3 + 0] = static_cast<float>(c[0]);
+        _colors[i * 3 + 1] = static_cast<float>(c[1]);
+        _colors[i * 3 + 2] = static_cast<float>(c[2]);
+    }
 
 
 }
@@ -812,45 +917,62 @@ void FlowVisualizationController::updateTetrahedronColors(const std::string& _pr
 void FlowVisualizationController::updateHexahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max)
 {
 
-	std::vector<double> values;
+    std::vector<double> values;
 
-	flow_model_.updateHexahedronColors(_property_name, _entity_name, _dimension, values);
+    flow_model_.updateHexahedronColors(_property_name, _entity_name, _dimension, values);
 
-	// Get the property by the interator
-	auto min_max = std::minmax_element(values.begin(), values.end());
+    // Get the property by the interator
+    auto min_max = std::minmax_element(values.begin(), values.end());
 
-	std::cout << "min element at: " << (min_max.first - values.begin()) << " " << *min_max.first << std::endl;
-	std::cout << "max element at: " << (min_max.second - values.begin()) << " " << *min_max.second << std::endl;
+    std::cout << "min element at: " << (min_max.first - values.begin()) << " " << *min_max.first << std::endl;
+    std::cout << "max element at: " << (min_max.second - values.begin()) << " " << *min_max.second << std::endl;
 
-	_colors.clear();
-	_colors.resize(values.size() * 3);
+    _colors.clear();
+    _colors.resize(values.size() * 3);
 
-	_min = *min_max.first;
-	_max = *min_max.second;
+    _min = *min_max.first;
+    _max = *min_max.second;
 
-	for (unsigned int i = 0; i < values.size(); ++i)
-	{
-		QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
-		_colors[i * 3 + 0] = static_cast<float>(c[0]);
-		_colors[i * 3 + 1] = static_cast<float>(c[1]);
-		_colors[i * 3 + 2] = static_cast<float>(c[2]);
-	}
+    for (unsigned int i = 0; i < values.size(); ++i)
+    {
+        QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
+        _colors[i * 3 + 0] = static_cast<float>(c[0]);
+        _colors[i * 3 + 1] = static_cast<float>(c[1]);
+        _colors[i * 3 + 2] = static_cast<float>(c[2]);
+    }
 
 
 }
 
-std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> FlowVisualizationController::getPtrHexahedralMesh() 
+std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> FlowVisualizationController::getPtrHexahedralMesh()
 {
-	return flow_model_.getPtrHexahedralMesh();
+    return flow_model_.getPtrHexahedralMesh();
 }
-std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> FlowVisualizationController::getPtrTetrahedralMesh() 
+std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> FlowVisualizationController::getPtrTetrahedralMesh()
 {
-	return flow_model_.getPtrTetrahedralMesh();
+    return flow_model_.getPtrTetrahedralMesh();
 }
 
 
-/// @TODO Later, move this fucntions to FlowvizualizationController 
+/// @TODO Later, move this fucntions to FlowvizualizationController
 Eigen::Affine3d FlowVisualizationController::getModelMatrix() const
 {
-	return this->flow_model_.getModelMatrix();
+    return this->flow_model_.getModelMatrix();
+}
+
+
+void FlowVisualizationController::setSaturationMethod( const SaturationMethod& option )
+{
+    if( option == SaturationMethod::PERREGION )
+    {
+        code_interface.setSaturationMethod( 1 );
+    }
+    else if( option == SaturationMethod::APIGRAVITY )
+    {
+        code_interface.setSaturationMethod( 2 );
+    }
+    else
+    {
+        std::cout << "Not implemented yet" << std::flush << std::endl;
+    }
 }

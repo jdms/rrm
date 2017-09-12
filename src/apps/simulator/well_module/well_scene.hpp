@@ -33,9 +33,9 @@ namespace RRM
                         WellScene ( QObject * parent = 0 );
                         void setTranformationMatrix ( const QTransform& _tranform );
                         QRectF fitView() const;
-						void setDimension(const Eigen::Vector2f& _dim, bool _is_the_same = false);
+                        void setDimension(const Eigen::Vector2f& _dim, bool _is_the_same = false);
                 public slots:
-						void createWells(int _number_of_wells, const std::map<int, int>& _types);
+                        void createWells(int _number_of_wells, const std::map<int, int>& _types);
                 signals:
                         void updatedWellsPosition(const std::map< int, Eigen::Vector4d >&);
 
@@ -43,7 +43,7 @@ namespace RRM
                         void mousePressEvent ( QGraphicsSceneMouseEvent* event ) override;
                         void mouseMoveEvent ( QGraphicsSceneMouseEvent* event ) override;
                         void mouseReleaseEvent ( QGraphicsSceneMouseEvent* event ) override;
-                       
+
                 private:
 
                         /// It is needed to transform any widget from the QGraphicsView Coordinate System to ours
@@ -58,13 +58,13 @@ namespace RRM
                         std::map<int, RRM::WellItem *> wells_item_;
                         std::size_t number_of_well_items_;
 
-						void createBoard(double  _widht, double _height);
+                        void createBoard(double  _widht, double _height);
 
-						// Where the item resides
+                        // Where the item resides
                         QGraphicsRectItem * board_;
-						// Helps in the centralization of the scene
-						QGraphicsRectItem * boundary_;
-                        //QGraphicsRectItem *proxyControl;	
+                        // Helps in the centralization of the scene
+                        QGraphicsRectItem * boundary_;
+                        //QGraphicsRectItem *proxyControl;
 
                         void wellItemVisibility(bool _is_visible);
 

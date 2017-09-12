@@ -25,9 +25,12 @@ namespace RRM
             FluidWidget(QWidget * parent);
             virtual ~FluidWidget() = default;
 
-            void getFluidData(std::vector<double>& _viscosity_values);
-
-            void setFluidData(const std::vector<double>& _viscosity_values);
+            void getFluidData ( std::vector<double>& _viscosity_values,
+                                std::vector< double >& _bo_values,
+                                std::vector< double >& _oildensity_values,
+                                std::vector<std::pair<int, int>>& _phase_method);
+            /// Userless for now
+            void setFluidData(const std::vector<double>& _viscosity_values, const std::vector<double>& _bo_values);
 
             void clear();
 
@@ -35,15 +38,31 @@ namespace RRM
 
             signals:
 
+                void setSaturationPerRegion();
+                void setAPIGravity();
+                void setSinglePhase();
+
             private:
             // Designer form
             Ui::FluidWidgetForm * ui_;
 
             // Create  the default widget stage
+
+            std::vector<QString> phase_methods_names_;
+
             void setupWidget();
             void createConnections();
 
             std::vector<double> viscosity_values_;
+            std::vector<double> bo_values_;
+            std::vector<double> oildensity_values_;
+
+            /// @FIXME September
+            //// 1 for single phase
+            //// 2 for multiphase
+            ///        1 for water saturation per region
+            ///        2 API gravity
+            std::vector<std::pair<int, int>> phase_method_;
     };
 
 } /* namespace RRM */

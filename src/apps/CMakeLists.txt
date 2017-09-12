@@ -193,7 +193,10 @@ set( SIMULATOR_HEADERS
                  # Region Module
                  simulator/region_module/region_widget.hpp
                  # Fluid Module
-                 simulator/fluid_module/fluid_widget.hpp)
+                 simulator/fluid_module/fluid_widget.hpp
+                 # Widgets
+                 simulator/widgets/spanslider/qxtspanslider.h
+                 simulator/widgets/spanslider/qxtspanslider_p.h)
 
 set ( SIMULATOR_MOC_HEADERS
                 simulator/flow_visualization_canvas.h
@@ -209,7 +212,10 @@ set ( SIMULATOR_MOC_HEADERS
                 # Region Module
                 simulator/region_module/region_widget.hpp
                 # Fluid Module
-                simulator/fluid_module/fluid_widget.hpp)
+                simulator/fluid_module/fluid_widget.hpp
+                # Widgets
+                simulator/widgets/spanslider/qxtspanslider.h
+                simulator/widgets/spanslider/qxtspanslider_p.h)
 
 set ( SIMULATOR_UI_SOURCES
                 simulator/normal_movable_crosssection_flow.ui
@@ -278,7 +284,9 @@ set( SIMULATOR_SOURCES
                 # Region Module
                 simulator/region_module/region_widget.cpp
                 # Fluid Module
-                simulator/fluid_module/fluid_widget.cpp)
+                simulator/fluid_module/fluid_widget.cpp
+                # Widgets
+                simulator/widgets/spanslider/qxtspanslider.cpp)
 
 
 ###############################################

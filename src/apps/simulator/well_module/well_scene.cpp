@@ -38,75 +38,75 @@ namespace RRM
 //        this->wells_.resize ( 10 );
 //
 //        this->addItem ( new RRM::WellItem ( ) );
-				this->board_ = nullptr;
-				this->boundary_ = nullptr;
+                this->board_ = nullptr;
+                this->boundary_ = nullptr;
 
-				this->createBoard(100, 100);
+                this->createBoard(100, 100);
 
                 number_of_well_items_ = 2;
 
-				int index = 0;
-				wells_item_[index] = new RRM::WellItem(board_, index + 1);
-				/// @See http://lists.qt-project.org/pipermail/qt-interest-old/2010-June/024612.html
-				/// Regarding the warning  QGraphicsScene::addItem item has already been	added to this scene Error
-				//The usual way this happens is that when you create your QGraphicsItem you
-				//specify a parent for the item that is already in the scene.In this case there
-				//is no need to explicitly add it to the scene afterwards as the QGraphicsItem
-				//constructor does it for you if the parent is already in a scene.
-				//this->addItem(wells_item_[index]);
-				wells_item_[index]->setPos(0,0);
-				wells_item_[index]->setColor(Qt::blue);
+                int index = 0;
+                wells_item_[index] = new RRM::WellItem(board_, index + 1);
+                /// @See http://lists.qt-project.org/pipermail/qt-interest-old/2010-June/024612.html
+                /// Regarding the warning  QGraphicsScene::addItem item has already been	added to this scene Error
+                //The usual way this happens is that when you create your QGraphicsItem you
+                //specify a parent for the item that is already in the scene.In this case there
+                //is no need to explicitly add it to the scene afterwards as the QGraphicsItem
+                //constructor does it for you if the parent is already in a scene.
+                //this->addItem(wells_item_[index]);
+                wells_item_[index]->setPos(0,0);
+                wells_item_[index]->setColor(Qt::blue);
 
-				index = 1;
-				wells_item_[index] = new RRM::WellItem(board_, index + 1);
-				/// @See http://lists.qt-project.org/pipermail/qt-interest-old/2010-June/024612.html
-				//this->addItem(wells_item_[index]);
-				wells_item_[index]->setPos(board_->boundingRect().width(), board_->boundingRect().height());
-				wells_item_[index]->setColor(Qt::red);
+                index = 1;
+                wells_item_[index] = new RRM::WellItem(board_, index + 1);
+                /// @See http://lists.qt-project.org/pipermail/qt-interest-old/2010-June/024612.html
+                //this->addItem(wells_item_[index]);
+                wells_item_[index]->setPos(board_->boundingRect().width(), board_->boundingRect().height());
+                wells_item_[index]->setColor(Qt::red);
 
         }
 
-		void WellScene::createBoard(double  _widht, double _height)
-		{
+        void WellScene::createBoard(double  _widht, double _height)
+        {
 
-			double offset = std::max(_height, _widht);
-			double aspect_ratio = _height/_widht;
-			double w_ratio = 1.0;
-			double h_ratio = 1.0;
+            double offset = std::max(_height, _widht);
+            double aspect_ratio = _height/_widht;
+            double w_ratio = 1.0;
+            double h_ratio = 1.0;
 
-			if (aspect_ratio > 1.0)
-			{
-				h_ratio = _widht / _height;
-			}
-			else
-			{
-				w_ratio = aspect_ratio;
-			}
+            if (aspect_ratio > 1.0)
+            {
+                h_ratio = _widht / _height;
+            }
+            else
+            {
+                w_ratio = aspect_ratio;
+            }
 
-			if (this->board_ == nullptr)
-			{	
-				this->board_ = new QGraphicsRectItem(0, 0, _widht, _height);
-				this->boundary_ = new QGraphicsRectItem(board_->boundingRect().x() - _widht*0.1*w_ratio,
-														board_->boundingRect().y() - _height*0.1*h_ratio,
-														board_->boundingRect().width() + _widht*0.2*w_ratio,
-														board_->boundingRect().height() + _height*0.2*h_ratio);
+            if (this->board_ == nullptr)
+            {
+                this->board_ = new QGraphicsRectItem(0, 0, _widht, _height);
+                this->boundary_ = new QGraphicsRectItem(board_->boundingRect().x() - _widht*0.1*w_ratio,
+                                                        board_->boundingRect().y() - _height*0.1*h_ratio,
+                                                        board_->boundingRect().width() + _widht*0.2*w_ratio,
+                                                        board_->boundingRect().height() + _height*0.2*h_ratio);
 
-				this->addItem(this->board_);
-				this->addItem(this->boundary_);
-			}
-			else
-			{
-				this->board_->setRect(0, 0, _widht, _height);
-				this->boundary_->setRect(board_->boundingRect().x() - _widht*0.1*w_ratio,
-										 board_->boundingRect().y() - _height*0.1*h_ratio,
-										 board_->boundingRect().width() + _widht*0.2*w_ratio,
-										 board_->boundingRect().height() + _height*0.2*h_ratio);
-			}
+                this->addItem(this->board_);
+                this->addItem(this->boundary_);
+            }
+            else
+            {
+                this->board_->setRect(0, 0, _widht, _height);
+                this->boundary_->setRect(board_->boundingRect().x() - _widht*0.1*w_ratio,
+                                         board_->boundingRect().y() - _height*0.1*h_ratio,
+                                         board_->boundingRect().width() + _widht*0.2*w_ratio,
+                                         board_->boundingRect().height() + _height*0.2*h_ratio);
+            }
 
 
-			/// this is needed to centralize the board in the middle of the widget
-			this->setSceneRect(this->boundary_->rect());
-		}
+            /// this is needed to centralize the board in the middle of the widget
+            this->setSceneRect(this->boundary_->rect());
+        }
 
         void WellScene::setTranformationMatrix ( const QTransform& _transform )
         {
@@ -178,9 +178,9 @@ namespace RRM
 
                 for (auto index : wells_item_)
                 {
-					/// @TODO , still confused
+                    /// @TODO , still confused
 
-					region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
+                    region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
 
                 }
 
@@ -190,108 +190,108 @@ namespace RRM
         }
 
         void WellScene::setDimension ( const Eigen::Vector2f& _dim, bool _bounding_box_changed  )
-        {               
-				std::map<int, Eigen::Vector4d> region_points;
+        {
+                std::map<int, Eigen::Vector4d> region_points;
 
-				this->createBoard(_dim.x(), _dim.y());
+                this->createBoard(_dim.x(), _dim.y());
 
-				if (_bounding_box_changed)
-				{					
+                if (_bounding_box_changed)
+                {
 
-					//int index = 0;							
-					wells_item_[0]->setPos(0, 0);
-					//index = 1;
-					wells_item_[1]->setPos(board_->boundingRect().width(), board_->boundingRect().height());
+                    //int index = 0;
+                    wells_item_[0]->setPos(0, 0);
+                    //index = 1;
+                    wells_item_[1]->setPos(board_->boundingRect().width(), board_->boundingRect().height());
 
-					for (auto index : wells_item_)
-					{
+                    for (auto index : wells_item_)
+                    {
 
-						if (index.first > 1)
-						{
-							wells_item_[index.first]->setPos((wells_item_[index.first]->boundingRect().width() * index.first), board_->boundingRect().height());
-						}
+                        if (index.first > 1)
+                        {
+                            wells_item_[index.first]->setPos((wells_item_[index.first]->boundingRect().width() * index.first), board_->boundingRect().height());
+                        }
 
-						/// @TODO , still confused					
-						region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
+                        /// @TODO , still confused
+                        region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
 
-					}
+                    }
 
-					emit updatedWellsPosition(region_points);
-				}
-				else
-				{
-					for (auto index : wells_item_)
-					{
+                    emit updatedWellsPosition(region_points);
+                }
+                else
+                {
+                    for (auto index : wells_item_)
+                    {
 
-						/// @TODO , still confused					
-						region_points[index.first] = Eigen::Vector4d(wells_item_[index.first]->pos().x(), wells_item_[index.first]->pos().y(), 0.0, 0.0);
+                        /// @TODO , still confused
+                        region_points[index.first] = Eigen::Vector4d(wells_item_[index.first]->pos().x(), wells_item_[index.first]->pos().y(), 0.0, 0.0);
 
-					}
-				}
+                    }
+                }
 
-				update();
+                update();
         }
 
-		void WellScene::createWells(int _number_of_wells, const std::map<int, int>& _types)
+        void WellScene::createWells(int _number_of_wells, const std::map<int, int>& _types)
         {
-				std::cout << " _number_of_Wells " << _types.size() << std::endl;
+                std::cout << " _number_of_Wells " << _types.size() << std::endl;
 
-				number_of_well_items_ = _number_of_wells;
+                number_of_well_items_ = _number_of_wells;
 
-				wellItemVisibility(false);
+                wellItemVisibility(false);
 
                 for ( auto index : _types )
                 {
                         if ( !wells_item_.count ( index.first ) )
                         {
-							wells_item_[index.first] = new RRM::WellItem(board_, index.first + 1);
-							//this->addItem(wells_item_[index.first]);
-							wells_item_[index.first]->setPos((wells_item_[index.first]->boundingRect().width() * index.first), board_->boundingRect().height());
+                            wells_item_[index.first] = new RRM::WellItem(board_, index.first + 1);
+                            //this->addItem(wells_item_[index.first]);
+                            wells_item_[index.first]->setPos((wells_item_[index.first]->boundingRect().width() * index.first), board_->boundingRect().height());
 
-							/// FIXME June 2017
-							if (index.second == -1) /// injector
-							{
-								wells_item_[index.first]->setColor(Qt::red);
-							}
-							else if (index.second == 1) /// producer
-							{
-								wells_item_[index.first]->setColor(Qt::blue);
-							}
-							else
-							{
+                            /// FIXME June 2017
+                            if (index.second == -1) /// injector
+                            {
+                                wells_item_[index.first]->setColor(Qt::red);
+                            }
+                            else if (index.second == 1) /// producer
+                            {
+                                wells_item_[index.first]->setColor(Qt::blue);
+                            }
+                            else
+                            {
 
-							}
+                            }
 
                         }
                         else
                         {
-							/// FIXME June 2017
-							if (index.second == -1) /// injector
-							{
-								wells_item_[index.first]->setColor(Qt::red);
-							}
-							else if (index.second == 1) /// producer
-							{
-								wells_item_[index.first]->setColor(Qt::blue);
-							}
-							else
-							{
+                            /// FIXME June 2017
+                            if (index.second == -1) /// injector
+                            {
+                                wells_item_[index.first]->setColor(Qt::red);
+                            }
+                            else if (index.second == 1) /// producer
+                            {
+                                wells_item_[index.first]->setColor(Qt::blue);
+                            }
+                            else
+                            {
 
-							}
+                            }
 
-							wells_item_[index.first]->setVisible(true);
+                            wells_item_[index.first]->setVisible(true);
                         }
                 }
 
-				std::map<int, Eigen::Vector4d> region_points;
+                std::map<int, Eigen::Vector4d> region_points;
 
-				for (auto index : wells_item_)
-				{
-					/// @TODO , still confused
-					region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
-				}
+                for (auto index : wells_item_)
+                {
+                    /// @TODO , still confused
+                    region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
+                }
 
-				emit updatedWellsPosition(region_points);
+                emit updatedWellsPosition(region_points);
 
                 wellItemVisibility(true);
 
@@ -302,24 +302,24 @@ namespace RRM
         void WellScene::wellItemVisibility(bool _is_visible)
         {
 
-			for (auto &item : wells_item_)
-			{
-				if (item.first >= number_of_well_items_)
-				{
-					item.second->setVisible(false);
-				}
-				else
-				{
-					item.second->setVisible(true);
-				}
-			}
+            for (auto &item : wells_item_)
+            {
+                if (item.first >= number_of_well_items_)
+                {
+                    item.second->setVisible(false);
+                }
+                else
+                {
+                    item.second->setVisible(true);
+                }
+            }
 
             for (auto index = 0; index < number_of_well_items_; index++)
             {
                 if (wells_item_.count(index))
                 {
                         wells_item_[index]->setVisible(_is_visible);
-                }		
+                }
             }
         }
 }

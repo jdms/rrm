@@ -37,17 +37,17 @@
 namespace RRM
 {
 
-		WellItem::WellItem(QGraphicsItem *parent) : QGraphicsItem(parent)
-		{
-			this->setup();
-		}
+        WellItem::WellItem(QGraphicsItem *parent) : QGraphicsItem(parent)
+        {
+            this->setup();
+        }
 
-		WellItem::WellItem(QGraphicsItem *parent, int _id) : QGraphicsItem(parent)
-		{
-			this->setup();
-			this->id_ = _id;
-			color_ = Qt::gray;
-		}
+        WellItem::WellItem(QGraphicsItem *parent, int _id) : QGraphicsItem(parent)
+        {
+            this->setup();
+            this->id_ = _id;
+            color_ = Qt::gray;
+        }
 
 
         void WellItem::setup ( )
@@ -98,15 +98,15 @@ namespace RRM
                 QRadialGradient gradient ( -3 , -3 , 10 );
                 if ( option->state & QStyle::State_Sunken )
                 {
-					gradient.setColorAt(0, this->color_);
-					gradient.setColorAt(1, QColor(Qt::white).light(80));
+                    gradient.setColorAt(0, this->color_);
+                    gradient.setColorAt(1, QColor(Qt::white).light(80));
                 }
                 else
                 {
-						gradient.setCenter(3, 3);
-						gradient.setFocalPoint(3, 3);
-						gradient.setColorAt(1, QColor(this->color_).light(80));
-						gradient.setColorAt(0, QColor(this->color_).light(120));
+                        gradient.setCenter(3, 3);
+                        gradient.setFocalPoint(3, 3);
+                        gradient.setColorAt(1, QColor(this->color_).light(80));
+                        gradient.setColorAt(0, QColor(this->color_).light(120));
                 }
 
                 painter->setBrush ( gradient );
@@ -119,12 +119,12 @@ namespace RRM
                 poly << QPoint ( -10 , 0 );
 
                 //painter->drawPolygon ( poly );
-				painter->drawEllipse(-6,-6,12,12);
+                painter->drawEllipse(-6,-6,12,12);
 
                 /// FIMEX maybe be useful in the future
                 //painter->drawEllipse(QPoint(0, -18), 3, 3);
 
-				painter->setPen(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                painter->setPen(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                 painter->setFont ( QFont ( "Arial" , 8 , QFont::Bold ) );
                 // I have used the .adjusted() to make the text centralized on the diamond.
                 painter->drawText ( poly.boundingRect ( ).adjusted ( poly.boundingRect ( ).width ( ) * ( -0.05 ) , poly.boundingRect ( ).height ( ) * ( -0.1 ) , 0 , 0 ) , Qt::AlignCenter , QString::number ( this->id_ ) );
@@ -135,39 +135,39 @@ namespace RRM
         {
                 switch ( change )
                 {
-						case QGraphicsItem::ItemPositionChange:
+                        case QGraphicsItem::ItemPositionChange:
                         {
-							qreal adjust = 0.5;
+                            qreal adjust = 0.5;
 
-							const QRectF parentRect(parentItem()->sceneBoundingRect());
+                            const QRectF parentRect(parentItem()->sceneBoundingRect());
 
-							//std::cout << "parent " << parentRect.right() - 0.5 << " " << parentRect.left() + 0.5 << " " << parentRect.top() + 0.5 << " " << parentRect.bottom() - 0.5 << std::endl;
+                            //std::cout << "parent " << parentRect.right() - 0.5 << " " << parentRect.left() + 0.5 << " " << parentRect.top() + 0.5 << " " << parentRect.bottom() - 0.5 << std::endl;
 
-							qreal right  = parentRect.right() - adjust;
-							qreal left   = parentRect.left() + adjust;
-							qreal top    = parentRect.top() + adjust;
-							qreal bottom = parentRect.bottom() - adjust;
+                            qreal right  = parentRect.right() - adjust;
+                            qreal left   = parentRect.left() + adjust;
+                            qreal top    = parentRect.top() + adjust;
+                            qreal bottom = parentRect.bottom() - adjust;
 
-							QPointF newPos(value.toPointF());
+                            QPointF newPos(value.toPointF());
 
-							if (newPos.x() > right)
-							{
-								newPos.setX(right);
-							}
-							if (newPos.x() < left)
-							{
-								newPos.setX(left);
-							}
-							if (newPos.y() < top)
-							{
-								newPos.setY(top);
-							}
-							if (newPos.y() > bottom)
-							{
-								newPos.setY(bottom);
-							}
+                            if (newPos.x() > right)
+                            {
+                                newPos.setX(right);
+                            }
+                            if (newPos.x() < left)
+                            {
+                                newPos.setX(left);
+                            }
+                            if (newPos.y() < top)
+                            {
+                                newPos.setY(top);
+                            }
+                            if (newPos.y() > bottom)
+                            {
+                                newPos.setY(bottom);
+                            }
 
-							return newPos;
+                            return newPos;
                             break;
                         }
                         default:
@@ -215,14 +215,14 @@ namespace RRM
                 return this->id_;
         }
 
-		void WellItem::setColor(const QColor _color)
-		{
-			this->color_ = _color;
-		}
+        void WellItem::setColor(const QColor _color)
+        {
+            this->color_ = _color;
+        }
 
-		QColor WellItem::getColor() const
-		{
-			return this->color_;
-		}
+        QColor WellItem::getColor() const
+        {
+            return this->color_;
+        }
 }
 

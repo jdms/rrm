@@ -32,7 +32,7 @@ namespace RRM
                 public slots:
                         void zoomIn ( );
                         void zoomOut ( );
-						void fitInView();
+                        void fitInView();
 
                 protected:
                         void keyPressEvent ( QKeyEvent *event ) override;
@@ -46,7 +46,7 @@ namespace RRM
                         void scaleView ( qreal scaleFactor );
 
                 private:
-                        int timerId;                       
+                        int timerId;
                         QTransform transformation_matrix_;
 
         };

@@ -31,15 +31,15 @@ ColorBar::ColorBar() : QWidget()
     max = 0.0;
 
 
-	x = 10;
-	y = 30;
-	length = 300;
-	width = 20;
-	
-	this->label_step = 10;
+    x = 10;
+    y = 30;
+    length = 300;
+    width = 20;
 
-	this->setMaximumWidth(width + 100);
-	this->setMaximumHeight(length + 60);
+    this->label_step = 10;
+
+    this->setMaximumWidth(width + 100);
+    this->setMaximumHeight(length + 60);
 
     this->setMinimumWidth(width + 100);
     this->setMinimumHeight(length + 60);
@@ -52,8 +52,8 @@ void ColorBar::setSize( const int& l, const int& w )
 {
  //   x = 10;
  //   y = 5;
-	//length = 300;
-	//width = 20;
+    //length = 300;
+    //width = 20;
 
  //   this->setMaximumWidth( width + 60 );
  //   this->setMaximumHeight( l - 5 );
@@ -65,10 +65,10 @@ void ColorBar::paintEvent( QPaintEvent *event )
 {
 
 
-	if (colors.empty() == true)
-	{
-		return;
-	}
+    if (colors.empty() == true)
+    {
+        return;
+    }
 
 
     QPainter painter(this);
@@ -76,7 +76,7 @@ void ColorBar::paintEvent( QPaintEvent *event )
     QLinearGradient gradient( QPointF( x, y ), QPointF( x, length ) );
 
     int number_of_colors = colors.size() - 1;
-	
+
     if( number_of_colors == 0 )
         number_of_colors = 1;
 
@@ -212,9 +212,9 @@ void ColorBar::updateColorMap(const std::vector < QVector3D >& c, float _min, fl
     is_gradient = true;
 
     colors = c;
-	// The color is paint top down.
-	std::reverse(colors.begin(), colors.end());
-	this->label_step = label_step;
+    // The color is paint top down.
+    std::reverse(colors.begin(), colors.end());
+    this->label_step = label_step;
     min = _min;
     max = _max;
 
@@ -224,9 +224,9 @@ void ColorBar::updateColorMap(const std::vector < QVector3D >& c, float _min, fl
 void ColorBar::clear()
 {
 
-	colors.clear();
+    colors.clear();
     colors.push_back( QVector3D( 0.5, 0.5, 0.5 ) );
-	values.clear();
+    values.clear();
     values.push_back( 0.0 );
     min = 0.0;
     max = 0.0;

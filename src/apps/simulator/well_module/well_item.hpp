@@ -49,12 +49,12 @@ namespace RRM
 {
 
     class WellItem : public QGraphicsItem
-    {		
+    {
         public:
-			WellItem(QGraphicsItem *parent = nullptr);
-			WellItem(QGraphicsItem *parent, int _id = -1);
+            WellItem(QGraphicsItem *parent = nullptr);
+            WellItem(QGraphicsItem *parent, int _id = -1);
 
-			void setup();
+            void setup();
 
             enum { Type = UserType + 1 };
             int type() const override { return Type; }
@@ -63,11 +63,11 @@ namespace RRM
             QPainterPath shape() const override;
             void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-			void setID(const int _id);
-			int getID() const;
+            void setID(const int _id);
+            int getID() const;
 
-			void setColor(const QColor _color);
-			QColor getColor() const;
+            void setColor(const QColor _color);
+            QColor getColor() const;
 
         protected:
             QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -75,10 +75,10 @@ namespace RRM
             void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
             void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
             void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-		private:
-			int id_;
-			QPainterPath ellipse_;
-			QColor color_;
+        private:
+            int id_;
+            QPainterPath ellipse_;
+            QColor color_;
 
     };
 

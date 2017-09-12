@@ -36,357 +36,401 @@ class FlowDiagnosticsInterface
 {
 
 
-	public:
-	
+public:
 
 
 
-        FlowDiagnosticsInterface();
 
-        /// \brief Load default values -- refers to: ( Zhao's document ) Please include a Function to load default values for user inputs
-        void loadDefaultValues(int);
+    FlowDiagnosticsInterface();
 
-        /// \brief Set regions properties as user inputs -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity,
-        ///		   viscosity and x, y, z for each region (this can be same as before)
+    /// \brief Load default values -- refers to: ( Zhao's document ) Please include a Function to load default values for user inputs
+    void loadDefaultValues(int);
 
-        void setNumberofRegions( unsigned int regions_number );
+    /// \brief Set regions properties as user inputs -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity,
+    ///		   viscosity and x, y, z for each region (this can be same as before)
 
-        void setRegion( unsigned int id, double x, double y, double z, double perm,
-                        double poros, double visc );
-		void setviscosity(double visc);//user can set a global viscosity after setting regions to overwrite regions' viscosity
+    void setNumberofRegions(unsigned int regions_number);
 
-        /// \brief Get regions properties -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity, viscosity and
-        ///		   x, y, z for each region (this can be same as before)
+    void setRegion(unsigned int id, double x, double y, double z, double perm, double poros);
+    void setViscosity(double visc);//user can set a global viscosity after setting regions to overwrite regions' viscosity
 
-        unsigned int getNumberofRegions() const ;
+    /// \brief Get regions properties -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity, viscosity and
+    ///		   x, y, z for each region (this can be same as before)
 
-        void getRegion( unsigned int id, double& x, double& y, double& z, double& perm,
-                        double &poros, double& visc, double &porevolume ) ;
+    unsigned int getNumberofRegions() const;
 
+    void getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
+        double &poros, double& visc, double &porevolume);
 
-        /// \brief Clean all the regions
-        void clearRegions();
 
+    /// \brief Clean all the regions
+    void clearRegions();
 
-	    /// \brief Set wells properties as user inputs -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled
-        ///		   or 2 flowrate-controled), value (unit is bar or m3/sec), sign (1 for injector, -1 for producer): please also check
-        ///		   region::userinput(char*)
 
-        void setNumberofWells( unsigned int wells_number );
+    /// \brief Set wells properties as user inputs -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled
+    ///		   or 2 flowrate-controled), value (unit is bar or m3/sec), sign (1 for injector, -1 for producer): please also check
+    ///		   region::userinput(char*)
 
-        void setWell( unsigned int id, unsigned int type, double value, int sign );
+    void setNumberofWells(unsigned int wells_number);
 
+    void setWell(unsigned int id, unsigned int type, double value, int sign);
 
 
-        /// \brief Get wells properties -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled or 2 flowrate-controled),
-        ///		   value (unit is bar or m3/sec), sign (1 for injector, -1 for producer): please also check region::userinput(char*)
 
-        unsigned int getNumberofWells() const ;
+    /// \brief Get wells properties -- refers to: ( Zhao's document ) 2. Number of wells, well type (1 pressure-controled or 2 flowrate-controled),
+    ///		   value (unit is bar or m3/sec), sign (1 for injector, -1 for producer): please also check region::userinput(char*)
 
-        void getWell( unsigned int id, unsigned int& type, double& value, int& sign ) ;
+    unsigned int getNumberofWells() const;
 
+    void getWell(unsigned int id, unsigned int& type, double& value, int& sign);
 
-        /// \brief Clean all the wells
-        void clearWells();
 
+    /// \brief Clean all the wells
+    void clearWells();
 
-        void loadWellsGeometry( char* ); //should be called after setting all wells
 
+    void loadWellsGeometry(char*); //should be called after setting all wells
 
 
 
 
-        /// \brief Read user input file --refers to: last code
-        void readUserInput( const std::string& input_file );
 
+    /// \brief Read user input file --refers to: last code
+    void readUserInput(const std::string& input_file);
 
-        /// \brief Read skeleton file --refers to: last code, optional
-        void readSkeletonFile( const std::string& skeleton_file );
 
+    /// \brief Read skeleton file --refers to: last code, optional
+    void readSkeletonFile(const std::string& skeleton_file);
 
-        /// \brief Set informations from RRM surfaces -- refers to: last code, required
-        void setSkeletonData( unsigned int surfaces_number, const std::vector< unsigned int >& nu,
-                              const std::vector< unsigned int >& nv, const std::vector< double >& positions );
 
+    /// \brief Set informations from RRM surfaces -- refers to: last code, required
+    void setSkeletonData(unsigned int surfaces_number, const std::vector< unsigned int >& nu,
+        const std::vector< unsigned int >& nv, const std::vector< double >& positions);
 
-        void getSurfaceSkeleton( unsigned int& surfaces_number, std::vector< unsigned int >& nu,
-                                 std::vector< unsigned int >& nv, std::vector< double >& positions ) const;
 
+    void getSurfaceSkeleton(unsigned int& surfaces_number, std::vector< unsigned int >& nu,
+        std::vector< unsigned int >& nv, std::vector< double >& positions) const;
 
 
 
-        void setVolumeDimensions( double width, double height, double depth );
 
+    void setVolumeDimensions(double width, double height, double depth);
 
 
-        /// \brief A kind of pre-processing or preparation to compute properties -- refers to: last code, optional
-        void init();
 
-        /// \brief Method to compute properties -- refers to: last code, required
-        void computeProperties();
+    /// \brief A kind of pre-processing or preparation to compute properties -- refers to: last code, optional
+    void init();
 
+    /// \brief Method to compute properties -- refers to: last code, required
+    void computeProperties();
 
 
 
-        /// \brief Method to build the volumetric mesh -- refers to: last code, required
-        void buildVolumetricMesh();
 
+    /// \brief Method to build the volumetric mesh -- refers to: last code, required
+    void buildVolumetricMesh();
 
-        /// \brief Method to build the cpg volumetric mesh -- refers to: last code, required
-        void buildCPGVolumetricMesh();
 
+    /// \brief Method to build the cpg volumetric mesh -- refers to: last code, required
+    void buildCPGVolumetricMesh();
 
 
-        void getPoreVolumebyRegion( std::vector< double >& values );
 
+    void getPoreVolumebyRegion(std::vector< double >& values);
 
 
-        /// \brief Get pressure values by vertex (only) -- refers to: last and new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output corrected_pressure )
-        void getPressure( std::vector< double >& values ) ;
 
+    /// \brief Get pressure values by vertex (only) -- refers to: last and new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output corrected_pressure )
+    void getPressure(std::vector< double >& values);
 
-        /// \brief Get velocity values by vertex -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output velocity )
-        void getVelocitybyVertices( std::vector< double >& values ) ; //velocity defined on elements
 
-        /// \brief Get velocity values by cell -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output velocity )
-        void getVelocitybyCells( std::vector< double >& values );
-		void getVelocityMagnitudebyCells_log10(std::vector< double >& values);
-        /// \brief Get backward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Backward_TOF )
-        void getBackwardTOF( std::vector< double >& values ) ;
-		void getBackwardTOF_log10(std::vector< double >& values);
+    /// \brief Get velocity values by vertex -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output velocity )
+    void getVelocitybyVertices(std::vector< double >& values); //velocity defined on elements
 
-        /// \brief Get forward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Forward_TOF )
-        void getForwardTOF( std::vector< double >& values ) ;
-		void getFowardTOF_log10(std::vector< double >& values);
+    /// \brief Get velocity values by cell -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output velocity )
+    void getVelocitybyCells(std::vector< double >& values);
+    void getVelocityMagnitudebyCells_log10(std::vector< double >& values);
+    /// \brief Get backward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Backward_TOF )
+    void getBackwardTOF(std::vector< double >& values);
+    void getBackwardTOF_log10(std::vector< double >& values);
 
-        /// \brief Get total tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Total_TOF )
-        void getTotalTOF( std::vector< double >& values ) ;
-		void getTotalTOF_log10(std::vector< double >& values);
+    /// \brief Get forward tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Forward_TOF )
+    void getForwardTOF(std::vector< double >& values);
+    void getFowardTOF_log10(std::vector< double >& values);
 
-        /// \brief Get max backward tracer by vertex (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Max_Backward_Tracer )
-        void getMaxBackwardTracer( std::vector< double >& values );
+    /// \brief Get total tof by vertex (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Total_TOF )
+    void getTotalTOF(std::vector< double >& values);
+    void getTotalTOF_log10(std::vector< double >& values);
 
+    /// \brief Get max backward tracer by vertex (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Max_Backward_Tracer )
+    void getMaxBackwardTracer(std::vector< double >& values);
 
-        /// \brief Get max forward tracer by vertex (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Max_Forward_Tracer )
-        void getMaxForwardTracer( std::vector< double >& values );
 
+    /// \brief Get max forward tracer by vertex (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Max_Forward_Tracer )
+    void getMaxForwardTracer(std::vector< double >& values);
 
-        /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Permeability ).
-        void getPermeabilitybyCells( std::vector< double >& values ) ;
 
+    /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Permeability ).
+    void getPermeabilitybyCells(std::vector< double >& values);
 
-        /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
-        ///        and required by Zhao's document ( output Permeability ).
-        void getPermeabilitybyVertices( std::vector< double >& values ) ; //permeability defined on cells
 
+    /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
+    ///        and required by Zhao's document ( output Permeability ).
+    void getPermeabilitybyVertices(std::vector< double >& values); //permeability defined on cells
 
-        void getPorosity( std::vector< double >& values ) ;
 
+    void getPorosity(std::vector< double >& values);
 
-        void getCPGPermeability( std::vector< double >& values );
 
+    void getCPGPermeability(std::vector< double >& values);
 
-        /// \brief Get region id by cell (only) -- refers to: new code (from writeresult_unstructured), optional
-        ///        It's not clear if it is required and if so, how should be shown to user. What does it mean?
-        void getRegionId( std::vector< int >& regions_id ) ;
 
+    /// \brief Get region id by cell (only) -- refers to: new code (from writeresult_unstructured), optional
+    ///        It's not clear if it is required and if so, how should be shown to user. What does it mean?
+    void getRegionId(std::vector< int >& regions_id);
 
-        /// \brief It's not clear how should be shown to user. What does it mean? It is required required by
-        ///        Zhao's document ( Flow diagnostic information: please check
-        ///        region::writeflowdiagnostics(char*, char*, char*). These information can be similarly
-        ///        displayed like pore volume
-        void getFlowDiagnosticInformation();
 
+    /// Observation: below there are many functions to get properties values of cornerpoint grids, however, it was not
+    /// clear in the document if they are required or not. I have supposed they are. Please, delete if I am wrong.
 
 
-        /// Observation: below there are many functions to get properties values of cornerpoint grids, however, it was not
-        /// clear in the document if they are required or not. I have supposed they are. Please, delete if I am wrong.
 
+    /// \brief Get pressure values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    void getCPGPressure(std::vector< double >& values);
 
 
-        /// \brief Get pressure values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        void getCPGPressure( std::vector< double >& values ) ;
+    void getCPGPorosity(std::vector< double >& values);
 
 
-        void getCPGPorosity( std::vector< double >& values ) ;
+    /// \brief Get tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    void getCPGTOF(std::vector< double >& values);
 
 
-        /// \brief Get tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        void getCPGTOF( std::vector< double >& values );
+    /// \brief Get tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    void getCPGBackwardTOF(std::vector< double >& values);
 
 
-        /// \brief Get tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        void getCPGBackwardTOF( std::vector< double >& values ) ;
+    /// \brief Get total tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    void getCPGTotalTOF(std::vector< double >& values);
 
 
-        /// \brief Get total tof values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        void getCPGTotalTOF( std::vector< double >& values ) ;
+    /// \brief Get tracer values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    //void getTracer(std::vector< double >& values);
+    void getCPGMaxForwardTracer(std::vector< double >& values);
 
 
-        /// \brief Get tracer values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        //void getTracer(std::vector< double >& values);
-        void getCPGMaxForwardTracer( std::vector< double >& values );
+    /// \brief Get backward tracer values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
+    //void geBackwardTracer( std::vector< double >& values );
+    void getCPGMaxBackwardTracer(std::vector< double >& values);
 
 
-        /// \brief Get backward tracer values by cell (only), in CPG volumetric mesh -- refers to: new code (from writeresult_cpgfv)
-        //void geBackwardTracer( std::vector< double >& values );
-        void getCPGMaxBackwardTracer(std::vector< double >& values);
+    void getCPGVelocity(std::vector< double >& values);
 
 
-        void getCPGVelocity(std::vector< double >& values);
+    /// \brief Get vertices and faces of the reparametrized surface -- it is required by the gui.
+    //we can talk more about this if necessary
+    void getSurfaceVertices(std::vector< float >& vertices) const;
 
+    void getSurfaceFaces(std::vector< unsigned int >& faces) const;
 
-        /// \brief Get vertices and faces of the reparametrized surface -- it is required by the gui.
-        //we can talk more about this if necessary
-        void getSurfaceVertices( std::vector< float >& vertices ) const;
 
-        void getSurfaceFaces( std::vector< unsigned int >& faces ) const ;
 
 
+    /// \brief Get vertices, edges and cells of the unstructured grid -- it is required by the gui.
+    void getVolumeVertices(std::vector< float >& vertices);
 
+    void getVolumeEdges(std::vector< unsigned int >& edges);
 
-        /// \brief Get vertices, edges and cells of the unstructured grid -- it is required by the gui.
-        void getVolumeVertices( std::vector< float >& vertices )  ;
+    void getVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh);
 
-        void getVolumeEdges( std::vector< unsigned int >& edges )  ;
 
-		void getVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh);
 
+    /// \brief Get vertices, edges and cells of the cornerpoint grid -- it is required by the gui.
+    void getCPGVolumeVertices(std::vector< float >& vertices);
 
+    void getCPGVolumeEdges(std::vector< unsigned int >& edges);
 
-        /// \brief Get vertices, edges and cells of the cornerpoint grid -- it is required by the gui.
-        void getCPGVolumeVertices( std::vector< float >& vertices )  ;
+    void getCPGVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> ptr_mesh);
 
-        void getCPGVolumeEdges( std::vector< unsigned int >& edges )  ;
 
-		void getCPGVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> ptr_mesh);
 
+    /// \brief Export results -- optional
+    void exportSurfacetoVTK(const std::string& filename);
 
+    void exportCornerPointtoVTK(const std::string& filename);
 
-        /// \brief Export results -- optional
-        void exportSurfacetoVTK( const std::string& filename );
+    void exportCornerPointtoGRDECL(const std::string& filename);
 
-        void exportCornerPointtoVTK( const std::string& filename );
+    void exportResultstoVTK(const std::string& filename);
 
-        void exportCornerPointtoGRDECL( const std::string& filename );
 
-        void exportResultstoVTK( const std::string& filename );
 
+    /// \brief Please, clean all the data -- required by the gui
+    void clear();
 
 
-        /// \brief Please, clean all the data -- required by the gui
-        void clear();
+    /* ****************************************************************
+    *
+    * The following methods were added to satisfy the requirements
+    * for the June 2017 release of the RRM prototype.
+    *
+    * ************************************************************** */
 
+    /* The following method allows configuring a well type */
 
-        /* ****************************************************************
-         *
-         * The following methods were added to satisfy the requirements 
-         * for the June 2017 release of the RRM prototype.
-         *
-         * ************************************************************** */
+    enum WellType { INJECTOR, PRODUCER };
 
-        /* The following method allows configuring a well type */ 
+    bool setWell(unsigned int id, WellType t, double pressure_value,
+        double qt_x, double qt_y, double qt_z, double well_depth);//qt_z not needed
 
-        enum WellType { INJECTOR, PRODUCER };
+    bool setVerticalWell(unsigned int id, WellType t, double pressure_value,
+        double qt_x, double qt_y, double topd_, double botd_);
 
-        bool setWell( unsigned int id, WellType t, double pressure_value, 
-			double qt_x, double qt_y, double qt_z,  double well_depth);//qt_z not needed
+    /* Allow changing the linear solver for Zhao's flow diagnostics */
 
-		bool setverticalWell(unsigned int id, WellType t, double pressure_value,
-			double qt_x, double qt_y, double topd_, double botd_);
+    enum SolverType { HYPRE, SAMG };
 
-        /* Allow changing the linear solver for Zhao's flow diagnostics */
+    /* Not for now */
+    bool setSolver(SolverType solver);
 
-        enum SolverType { HYPRE, SAMG };
 
-        /* Not for now */
-        bool setSolver( SolverType solver );
+    /* Get a string with the values of the upscalled permeability to
+    * display in the GUI
+    * */
 
+    bool getUpscalledPermeability(std::string &result);
 
-        /* Get a string with the values of the upscalled permeability to 
-         * display in the GUI 
-         * */
 
-        bool getUpscalledPermeability( std::string &result );
+    /* Export derived quantities (such as flow capacity) to a file, or
+    * get this information to display it in the GUI
+    * */
 
+    bool exportDerivedQuantities(const std::string &filename);
 
-        /* Export derived quantities (such as flow capacity) to a file, or 
-         * get this information to display it in the GUI 
-         * */
+    /* Not for now */
+    bool getDerivedQuantities(std::string &derived_quantities);
 
-		bool exportDerivedQuantities(const std::string &filename);
 
-        /* Not for now */
-        bool getDerivedQuantities( std::string &derived_quantities );
+    /* Set Dirchlet boundary conditions (pressure). Remember that
+    * boundary conditions must be admissible, thus, initially it
+    * may be wise to allow the user to impose the pressure in
+    * just one of the boundaries. */
 
+    enum Boundary { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK };
 
-        /* Set Dirchlet boundary conditions (pressure). Remember that 
-         * boundary conditions must be admissible, thus, initially it 
-         * may be wise to allow the user to impose the pressure in 
-         * just one of the boundaries. */ 
+    /* Not for now */
+    bool setBoundaryConditions(Boundary b, double pressure_value);
 
-        enum Boundary { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK };
 
-        /* Not for now */
-        bool setBoundaryConditions( Boundary b, double pressure_value ); 
+    /* This method clears all computed quantities (related to the flow
+    * diagnostics) without clearing the meshes (either tetrhedral or
+    * hexahedral).  This allows the user to change rock properties
+    * (porosity, permeability) and rerun the simulation without having
+    * to build a volume mesh.
+    * */
 
+    void clearComputedQuantities();
 
-        /* This method clears all computed quantities (related to the flow 
-         * diagnostics) without clearing the meshes (either tetrhedral or 
-         * hexahedral).  This allows the user to change rock properties 
-         * (porosity, permeability) and rerun the simulation without having 
-         * to build a volume mesh. 
-         * */
 
-        void clearComputedQuantities();
+    /* The following definitions are the first step towards creating
+    * tetrhedral meshes for the new generic models.
+    *
+    * The main idea is to allow the creation of a picewise linear
+    * complex for the boundary of the model, to be used as input for
+    * Tetgen.
+    * */
 
+    struct TriangleMesh
+    {
+        std::vector<double> vertex_list;
+        std::vector<std::size_t> face_list;
+    };
 
-        /* The following definitions are the first step towards creating 
-         * tetrhedral meshes for the new generic models.
-         * 
-         * The main idea is to allow the creation of a picewise linear 
-         * complex for the boundary of the model, to be used as input for 
-         * Tetgen.
-         * */
+    struct CurveMesh
+    {
+        std::vector<double> vertex_list;
+        std::vector<std::size_t> edge_list;
+    };
 
-        struct TriangleMesh
-        {
-            std::vector<double> vertex_list;
-            std::vector<std::size_t> face_list;
-        };
+    /* Not for now */
+    bool setSkeleton(
+        const std::vector<TriangleMesh> &triangle_meshes,
+        const std::vector<CurveMesh> &left_boundary_curves,
+        const std::vector<CurveMesh> &right_boundary_curves,
+        const std::vector<CurveMesh> &front_boundary_curves,
+        const std::vector<CurveMesh> &back_boundary_curves
+        );
 
-        struct CurveMesh
-        {
-            std::vector<double> vertex_list;
-            std::vector<std::size_t> edge_list;
-        };
+    //refer to writeflowdiagnostics
 
-        /* Not for now */
-        bool setSkeleton(
-                const std::vector<TriangleMesh> &triangle_meshes,
-                const std::vector<CurveMesh> &left_boundary_curves,
-                const std::vector<CurveMesh> &right_boundary_curves,
-                const std::vector<CurveMesh> &front_boundary_curves,
-                const std::vector<CurveMesh> &back_boundary_curves
-                );
+    //For September 2017 start*********************************************************
 
+    void getOilInPlace(double &oil_in_place);
+    void setBo(double Bo_); // sets the oil formation volume factor
+    void setWaterSaturation(unsigned int region_id, double Sw);
 
+    void setNumberOfPhases(int);//1 or 2; init() updated; setviscosity is oil viscosity.
 
 
-    private:
+    void setSaturationMethod(int); //1 means set saturation for each region; 2 means by gravity
+    void setOilGravity(double); //either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
+    //visualise nodal capillary pressure, elemental saturation, elemental krw, kro;
+    bool getCapillaryPressure(std::vector< double >& values); //nodal
+    bool getWaterSaturationByCells(std::vector< double >& values);
+    bool getKrwByCells(std::vector< double >& values);
+    bool getKroByCells(std::vector< double >& values);
+    //For September 2017 end************************************************************
 
-        REGION region;
-		
+    // as suggested by Matt the GUI would provide an integer (id) to be tied to a file
+    // with the properties of the correspondent permeability curve
+    void setPermeabilityCurve(unsigned int region_id, int pcurve_id);
+    void getAvailablePermeabilityCurves(std::vector<int> &pcurves_ids);
+
+    // How to allow assigning gradients in properties? This function should be enough.
+    void setRegion(unsigned int id, double x, double y, double z,
+        double min_perm, double max_perm,
+        double min_poros, double max_poros);
+
+
+    void setRegion(unsigned int id, double x, double y, double z, double perm,
+        double poros, double visc)
+    {
+        setRegion(id, x, y, z, perm, poros);
+        visc_ = visc;
+    }
+
+    // How to allow assigning gradients in properties? This function should be enough.
+    void setRegion(unsigned int id, double x, double y, double z,
+        double min_perm, double max_perm,
+        double min_poros, double max_poros,
+        double visc)
+    {
+        setRegion(id, x, y, z, min_perm, max_perm, min_poros, max_poros);
+        visc_ = visc;
+    }
+
+    void setfreewaterlevel(double);
+
+private:
+
+    REGION region;
+
+    // This code is a stub to allow changing the Flow Diagnostics GUI
+
+    bool multi_phase_flow = false;
+    double visc_ = 1;
+
 };
+
 
 
 
