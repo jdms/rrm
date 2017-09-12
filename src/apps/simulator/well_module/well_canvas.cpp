@@ -27,7 +27,7 @@ namespace RRM
 
                 setMinimumSize ( 300 , 200 );
                 setWindowTitle ( tr ( "RRM Well Plug-in" ) );
-               
+
         }
 
         void WellCanvas::itemMoved ( )
@@ -36,10 +36,10 @@ namespace RRM
                         timerId = startTimer ( 1000 / 25 );
         }
 
-		void WellCanvas::fitInView()
-		{
-			QGraphicsView::fitInView(this->sceneRect(), Qt::KeepAspectRatio);
-		}
+        void WellCanvas::fitInView()
+        {
+            QGraphicsView::fitInView(this->sceneRect(), Qt::KeepAspectRatio);
+        }
 
         void WellCanvas::keyPressEvent ( QKeyEvent *event )
         {
@@ -88,37 +88,37 @@ namespace RRM
                 Q_UNUSED( rect );
 
     //            // Shadow
-				//QRectF sceneRect = this->sceneRect ( );
+                //QRectF sceneRect = this->sceneRect ( );
 
-				//QRectF rightShadow ( sceneRect.right ( ) , sceneRect.top ( ) + 5 , 5 , sceneRect.height ( ) );
-				//QRectF bottomShadow ( sceneRect.left ( ) + 5 , sceneRect.bottom ( ) , sceneRect.width ( ) , 5 );
-				//if ( rightShadow.intersects ( rect ) || rightShadow.contains ( rect ) )
-				//		painter->fillRect ( rightShadow , Qt::darkGray );
-				//if ( bottomShadow.intersects ( rect ) || bottomShadow.contains ( rect ) )
-				//		painter->fillRect ( bottomShadow , Qt::darkGray );
+                //QRectF rightShadow ( sceneRect.right ( ) , sceneRect.top ( ) + 5 , 5 , sceneRect.height ( ) );
+                //QRectF bottomShadow ( sceneRect.left ( ) + 5 , sceneRect.bottom ( ) , sceneRect.width ( ) , 5 );
+                //if ( rightShadow.intersects ( rect ) || rightShadow.contains ( rect ) )
+                //		painter->fillRect ( rightShadow , Qt::darkGray );
+                //if ( bottomShadow.intersects ( rect ) || bottomShadow.contains ( rect ) )
+                //		painter->fillRect ( bottomShadow , Qt::darkGray );
 
-				//// Fill
-				//QLinearGradient gradient ( sceneRect.topLeft ( ) , sceneRect.bottomRight ( ) );
-				//gradient.setColorAt ( 0 , Qt::white );
-				//gradient.setColorAt ( 1 , Qt::lightGray );
-				//painter->fillRect ( rect.intersected ( sceneRect ) , gradient );
-				//painter->setBrush ( Qt::NoBrush );
-				//painter->drawRect ( sceneRect );
+                //// Fill
+                //QLinearGradient gradient ( sceneRect.topLeft ( ) , sceneRect.bottomRight ( ) );
+                //gradient.setColorAt ( 0 , Qt::white );
+                //gradient.setColorAt ( 1 , Qt::lightGray );
+                //painter->fillRect ( rect.intersected ( sceneRect ) , gradient );
+                //painter->setBrush ( Qt::NoBrush );
+                //painter->drawRect ( sceneRect );
 
-				//// Text
-				//QRectF textRect ( sceneRect.left ( ) + 4 , sceneRect.top ( ) + 4 , sceneRect.width ( ) - 4 , sceneRect.height ( ) - 4 );
-				//QString message ( tr ( "Click and drag the nodes around, and zoom with the mouse " "wheel or the '+' and '-' keys" ) );
+                //// Text
+                //QRectF textRect ( sceneRect.left ( ) + 4 , sceneRect.top ( ) + 4 , sceneRect.width ( ) - 4 , sceneRect.height ( ) - 4 );
+                //QString message ( tr ( "Click and drag the nodes around, and zoom with the mouse " "wheel or the '+' and '-' keys" ) );
 
-				//// Combine the transformation, thus it can be applied when zoom in/out
-				////painter->setTransform ( transformation_matrix_ , true );
-				//QFont font = painter->font ( );
-				//font.setBold ( true );
-				//font.setPointSize ( 14 );
-				//painter->setFont ( font );
-				//painter->setPen ( Qt::lightGray );
-				//painter->drawText ( textRect.translated ( 2 , 2 ) , message );
-				//painter->setPen ( Qt::black );
-				//painter->drawText ( textRect , message );
+                //// Combine the transformation, thus it can be applied when zoom in/out
+                ////painter->setTransform ( transformation_matrix_ , true );
+                //QFont font = painter->font ( );
+                //font.setBold ( true );
+                //font.setPointSize ( 14 );
+                //painter->setFont ( font );
+                //painter->setPen ( Qt::lightGray );
+                //painter->drawText ( textRect.translated ( 2 , 2 ) , message );
+                //painter->setPen ( Qt::black );
+                //painter->drawText ( textRect , message );
         }
 
         void WellCanvas::scaleView ( qreal scaleFactor )

@@ -396,18 +396,18 @@ void MainWindow::createSidebar()
 void MainWindow::createFlowDiagnosticsInterface()
 {
 
-//    flow_window = new FlowWindow();
-//    dw_flowdiag = new QDockWidget( "Flow Diagnostics" );
-//    dw_flowdiag->setAllowedAreas( Qt::AllDockWidgetAreas );
-//    dw_flowdiag->setWidget( flow_window );
-//    addDockWidget( Qt::BottomDockWidgetArea, dw_flowdiag );
+    flow_window = new FlowWindow();
+    dw_flowdiag = new QDockWidget( "Flow Diagnostics" );
+    dw_flowdiag->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_flowdiag->setWidget( flow_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_flowdiag );
 
-//    dw_flowdiag->setVisible( false );
+    dw_flowdiag->setVisible( false );
 
 
-//    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
-//    connect( flow_window, &FlowWindow::sendNumberOfRegions, csection_scene, &CSectionScene::addRegionsToScene );
-////    connect( flow_window, &FlowWindow::requestRegionsPosition, csection_scene, &CSectionScene::sendRegionsToFlow );
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+    connect( flow_window, &FlowWindow::sendNumberOfRegions, csection_scene, &CSectionScene::addRegionsToScene );
+//    connect( flow_window, &FlowWindow::requestRegionsPosition, csection_scene, &CSectionScene::sendRegionsToFlow );
 
 }
 
@@ -543,29 +543,29 @@ void MainWindow::setSimulationMode( bool status )
 {
 
 
-//    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
+    CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
 
-//    csection_scene->setModeSelectingRegions( status );
-//    dw_flowdiag->setVisible( status );
+    csection_scene->setModeSelectingRegions( status );
+    dw_flowdiag->setVisible( status );
 
-//    if( status == true )
-//    {
-//        canvas3d->setVisible( false );
-//        ac_show_sidebar->setChecked( false );
-//        ac_show_topview->setChecked( false );
-//        hb_central_widget->insertWidget( 0, sketch_window );
-//        dw_csection->setVisible( false );
+    if( status == true )
+    {
+        canvas3d->setVisible( false );
+        ac_show_sidebar->setChecked( false );
+        ac_show_topview->setChecked( false );
+        hb_central_widget->insertWidget( 0, sketch_window );
+        dw_csection->setVisible( false );
 
-//        return;
-//    }
+        return;
+    }
 
-//    canvas3d->setVisible( true );
-//    ac_show_sidebar->setChecked( true );
-//    ac_show_topview->setChecked( true );
-//    hb_central_widget->removeWidget( sketch_window );
+    canvas3d->setVisible( true );
+    ac_show_sidebar->setChecked( true );
+    ac_show_topview->setChecked( true );
+    hb_central_widget->removeWidget( sketch_window );
 
-//    dw_csection->setVisible( true );
-//    dw_csection->setWidget( sketch_window );
+    dw_csection->setVisible( true );
+    dw_csection->setWidget( sketch_window );
 
 }
 

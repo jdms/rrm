@@ -11,12 +11,12 @@ namespace RRM
 {
 
         //// Property Profile
-	PropertyProfile::PropertyProfile( const std::string& _element_type_,
-									  const std::string& _other_name,
+    PropertyProfile::PropertyProfile( const std::string& _element_type_,
+                                      const std::string& _other_name,
                                       const std::string& _other_entity,
                                       const std::string& _other_unit,
-									  const std::string& _other_dimension) : element_type_(_element_type_),
-																			 name_(_other_name),
+                                      const std::string& _other_dimension) : element_type_(_element_type_),
+                                                                             name_(_other_name),
                                                                              entity_(_other_entity),
                                                                              unit_(_other_unit),
                                                                              dimension_(_other_dimension)
@@ -24,10 +24,10 @@ namespace RRM
 
         }
 
-		std::string PropertyProfile::elementType() const
-		{
-			return this->element_type_;
-		}
+        std::string PropertyProfile::elementType() const
+        {
+            return this->element_type_;
+        }
 
         std::string PropertyProfile::name() const
         {
@@ -49,10 +49,10 @@ namespace RRM
             return this->dimension_;
         }
 
-		void PropertyProfile::elementType(const std::string& _other_element_type)
-		{
-			this->element_type_ = _other_element_type;
-		}
+        void PropertyProfile::elementType(const std::string& _other_element_type)
+        {
+            this->element_type_ = _other_element_type;
+        }
 
         void PropertyProfile::setName(const std::string& _other_name)
         {
@@ -77,7 +77,7 @@ namespace RRM
         void PropertyProfile::print() const
         {
             std::cout << "------------------: " << std::endl;
-			std::cout << "Element Type      : " << this->element_type_ << std::endl;
+            std::cout << "Element Type      : " << this->element_type_ << std::endl;
             std::cout << "Name				: " << this->name_ << std::endl;
             std::cout << "Entity			: " << this->entity_ << std::endl;
             std::cout << "Unit				: " << this->unit_ << std::endl;

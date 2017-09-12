@@ -48,10 +48,10 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
     public:
 
-		FlowVisualizationCanvas(QWidget *parent, QString _current_dir);
+        FlowVisualizationCanvas(QWidget *parent, QString _current_dir);
         ~FlowVisualizationCanvas();
-       
-        void setController( FlowVisualizationController *c );      
+
+        void setController( FlowVisualizationController *c );
         void clear();
 
     public slots:
@@ -59,25 +59,25 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void updateMesh();
         void updateVolumetricMesh();
         void updateCornerPoint();
-		
+
         void showBoundingBox( bool status );
-        
+
         void disableCrossSection( bool status );
         void setCrossSectionNormalCoordinates( float X, float Y, float Z );
 
         inline void setCurrentDirectory( std::string current_dir ){ current_directory.clear(); current_directory = current_dir; }
 
         void setColors( const std::vector< float >& colors );
-		void setDefaultColor();
+        void setDefaultColor();
 
         void showRegions();
 
-		/// Debug Purpose
-		void reloadShader();
+        /// Debug Purpose
+        void reloadShader();
 
-		float getDepth() const;
+        float getDepth() const;
 
-		void updateWellsPosition(int _number_of_wells,const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types);
+        void updateWellsPosition(int _number_of_wells, const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types, const std::map<int, Eigen::Vector2d>& _range);
 
     signals:
         void applyCrossSection();
@@ -91,14 +91,14 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
         void initializeGL() Q_DECL_OVERRIDE;
         void paintGL() Q_DECL_OVERRIDE;
-		void resizeGL(int width, int height) Q_DECL_OVERRIDE;
+        void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
-		void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-		void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-		void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-		void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
+        void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+        void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+        void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+        void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 
-		void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+        void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 
     private:
@@ -113,8 +113,8 @@ class FlowVisualizationCanvas: public QOpenGLWidget
 
         Mesh mesh;
 
-		std::map<int, Eigen::Vector4d> wells_positions_;
-       
+        std::map<int, Eigen::Vector4d> wells_positions_;
+
         bool show_axis;
         CoordinateAxes axes;
 
