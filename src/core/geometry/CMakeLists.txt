@@ -6,16 +6,20 @@ project( RRMGeometry )
 # Options 
 #####################################################################
 
-set( CMAKE_BUILD_TYPE Release )
+ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 
 ###############################################
 # Main library
 ###############################################
      
-set( GEOMETRY_HEADERS PolygonalCurve/polygonal_curve_2d.hpp )
-set( GEOMETRY_SOURCES PolygonalCurve/polygonal_curve_2d.cpp )
-						
-						
-add_library( ${PROJECT_NAME} STATIC ${GEOMETRY_HEADERS} ${GEOMETRY_SOURCES} )  
-target_link_libraries( ${PROJECT_NAME} RRMBase )
+set( MESH_HEADERS mesh_generator.hpp openvolumemesh_defines.hpp)
+set( MESH_SOURCES mesh_generator.cpp openvolumemesh_defines.cpp)
+					
+add_library( ${PROJECT_NAME} STATIC ${MESH_HEADERS} ${MESH_SOURCES} )  
+target_link_libraries( ${PROJECT_NAME} ${OPENVOLUMEMESH_LIBRARY} )

@@ -97,6 +97,9 @@ void FlowWindow::createToolBar()
     qreloadSurface = new QAction(tr("Surface from Sketch"), qtoolbarFlow);
     qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
 
+    qreloadSurface1 = new QAction(tr("Surface from Sketch -- New"), qtoolbarFlow);
+    qreloadSurface1->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+
     qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
     qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
 
@@ -220,6 +223,7 @@ void FlowWindow::createToolBar()
     /// ToolBar setUp
 
     qtoolbarFlow->addAction(qreloadSurface);
+    qtoolbarFlow->addAction(qreloadSurface1);
     qtoolbarFlow->addAction(qoopenfilesDialog);
     qtoolbarFlow->addAction(qflowparametersDialog);
 
@@ -304,6 +308,14 @@ void FlowWindow::createActions()
             qbuildCornerPoint->setEnabled(true);
             qbuildUnstructured->setEnabled(true);
         }
+    });
+
+
+    connect( qreloadSurface1, &QAction::triggered, this, [=](){
+
+        qclear->trigger();
+        this->loadSurfacesfromSketch1();
+
     });
 
     connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
@@ -615,6 +627,27 @@ void FlowWindow::loadSurfacesfromSketch()
 
 }
 
+
+
+void FlowWindow::loadSurfacesfromSketch1()
+{
+    controller->clear();
+    canvas->clear();
+
+    std::vector< TriangleMesh > triangles_meshes;
+    std::vector< CurveMesh > left_curves;
+    std::vector< CurveMesh > right_curves;
+    std::vector< CurveMesh > front_curves;
+    std::vector< CurveMesh > back_curves;
+
+    emit getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
+    controller->setSkeleton( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
+    canvas->updateMesh();
+
+}
+
+
+
 void FlowWindow::loadSurfacesfromFile()
 {
 
@@ -759,6 +792,13 @@ void FlowWindow::buildCornerPoint()
         acceptUserParameters();
     }
 
+    std::map<int, Eigen::Vector3f> region_points;
+    emit requestRegionsPosition( region_points );
+
+    regionPoints( region_points );
+
+
+
     controller->generateCornerPoint();
     canvas->updateCornerPoint();
 
@@ -773,6 +813,12 @@ void FlowWindow::buildUnstructured()
     {
         acceptUserParameters();
     }
+
+    std::map<int, Eigen::Vector3f> region_points;
+    emit requestRegionsPosition( region_points );
+
+    regionPoints( region_points );
+
 
     controller->generateUnstructured();
     canvas->updateVolumetricMesh();

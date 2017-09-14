@@ -2,7 +2,7 @@
 #include <cmath>
 
 #include "volume_opengl_wrapper.h"
-#include "./core/geology/models/volume.h"
+#include "./core/base/models/volume.h"
 
 
 

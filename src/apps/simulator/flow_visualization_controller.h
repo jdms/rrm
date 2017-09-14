@@ -26,7 +26,7 @@
 //#include "Model/CrossSection.hpp"
 
 // OpenVolume Mesh
-#include "core/geometry/mesh/openvolumemesh_defines.hpp"
+#include "core/geometry/openvolumemesh_defines.hpp"
 
 // Flow Model
 #include "flow_model/flow_model.hpp"
@@ -54,10 +54,17 @@ class FlowVisualizationController: public QWidget
         enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
         enum class SaturationMethod{ PERREGION, APIGRAVITY };
 
+        using TriangleMesh = FlowDiagnosticsInterface::TriangleMesh;
+        using CurveMesh = FlowDiagnosticsInterface::CurveMesh;
+
+
         FlowVisualizationController( QWidget* parent = 0 );
 
         void readSkeletonFiles( const std::string& filename );
         void setSkeletonData( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+        void setSkeleton( const std::vector< TriangleMesh>& triangles_meshes, const std::vector< CurveMesh>& left_curves, const std::vector< CurveMesh >& right_curves,
+                          const std::vector< CurveMesh> & front_curves, const std::vector< CurveMesh >& back_curves );
+
 
         void buildSurfaceSkeleton( std::vector< double >& positions, std::vector< unsigned int >& faces );
 
@@ -159,6 +166,9 @@ class FlowVisualizationController: public QWidget
         void cornerPointMeshBuilt();
 
         void propertiesComputed();
+
+
+
 
 
     private:

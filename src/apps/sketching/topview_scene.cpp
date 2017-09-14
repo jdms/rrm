@@ -5,8 +5,8 @@
 
 #include "topview_scene.h"
 
-#include "core/geology/models/volume.h"
-#include "core/geology/models/object.h"
+#include "core/base/models/volume.h"
+#include "core/base/models/object.h"
 #include "./item_wrappers/crosssection_item_wrapper.h"
 
 

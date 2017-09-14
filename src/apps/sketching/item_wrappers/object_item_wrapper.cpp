@@ -1,7 +1,7 @@
 #include "object_item_wrapper.h"
 
 #include "sketching/polyqt_utils.hpp"
-#include "core/geology/models/object.h"
+#include "core/base/models/object.h"
 
 ObjectItemWrapper::ObjectItemWrapper()
 {

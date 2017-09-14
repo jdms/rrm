@@ -16,14 +16,11 @@ set( CMAKE_BUILD_TYPE Release )
      
 
 include_directories("./")
-include_directories("./models")
+#include_directories("./models")
 
-set( GEOLOGY_HEADERS models/object.h
-                     models/cross_section.h
-                     models/region1.h
-                     models/volume.h )
+set( GEOLOGY_HEADERS  )
 
-set( GEOLOGY_SOURCES  models/object.cpp )
+set( GEOLOGY_SOURCES   )
 
 						
 

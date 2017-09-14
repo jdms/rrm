@@ -6,7 +6,7 @@
 #include <map>
 
 #include "rules_processor.hpp"
-#include "./core/geology/models/object.h"
+#include "./core/base/models/object.h"
 
 
 class CSectionScene;
@@ -34,6 +34,20 @@ class Controller
             DEFINE_BELOW , // Define below
             DEFINE_REGION // Define region
         };
+
+
+        struct TriangleMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> face_list;
+        };
+
+        struct CurveMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> edge_list;
+        };
+
 
         enum class RequestRegion { ABOVE, BELOW, NONE };
 
@@ -116,6 +130,10 @@ class Controller
 
         bool createObjectSurface();
         bool testObjectSurface();
+
+
+        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes, std::vector< CurveMesh >& left_curves, std::vector< CurveMesh >& right_curves,
+                                std::vector< CurveMesh > & front_curves, std::vector< CurveMesh >& back_curves );
 
         void updateObject( std::size_t id );
         void updateActiveObjects();

@@ -23,6 +23,8 @@
 #ifndef FLOWWINDOW_H
 #define FLOWWINDOW_H
 
+#include <map>
+
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QToolBar>
@@ -58,6 +60,12 @@ class FlowWindow : public  QMainWindow
 
     public:
 
+
+        using TriangleMesh = FlowVisualizationController::TriangleMesh;
+        using CurveMesh = FlowVisualizationController::CurveMesh;
+
+
+
         explicit FlowWindow( QWidget *parent = 0 );
 
         void createWindow();
@@ -78,6 +86,7 @@ class FlowWindow : public  QMainWindow
 
         void loadSurfacesfromFile();
         void loadSurfacesfromSketch();
+        void loadSurfacesfromSketch1();
 
         void readUserInputFile( const std::string& input_file );
 
@@ -108,8 +117,12 @@ class FlowWindow : public  QMainWindow
     signals:
 
         void getSurfaceCrossSection();
+        void getSurfacesMeshes( std::vector< TriangleMesh>& triangles_meshes, std::vector< CurveMesh>& left_curves, std::vector< CurveMesh >& right_curves,
+                                std::vector< CurveMesh> & front_curves, std::vector< CurveMesh >& back_curves );
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
         void sendNumberOfRegions(int _number_of_regions);
+
+        void requestRegionsPosition( std::map<int, Eigen::Vector3f>& region_point );
 
     private:
 
@@ -119,6 +132,7 @@ class FlowWindow : public  QMainWindow
         QAction *qcomputeFlowProperties;
         QAction *qshowMovingCrossSection;
         QAction* qreloadSurface;
+        QAction* qreloadSurface1;
         QAction *qclear;
 
         QAction* qbuildCornerPoint;

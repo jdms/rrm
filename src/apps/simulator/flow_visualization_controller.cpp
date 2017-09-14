@@ -95,6 +95,7 @@ void FlowVisualizationController::generateCornerPoint()
     {
         return;
     }
+
     code_interface.buildCPGVolumetricMesh();
     is_volumetric_built = true;
 }
@@ -154,6 +155,17 @@ void FlowVisualizationController::setSkeletonData( std::vector<double> &points, 
 
     code_interface.setSkeletonData( surfaces_number, nu_uint, nv_uint, points );
 }
+
+
+
+
+void FlowVisualizationController::setSkeleton( const std::vector< TriangleMesh>& triangles_meshes, const std::vector< CurveMesh>& left_curves, const std::vector< CurveMesh >& right_curves,
+                                               const std::vector< CurveMesh> & front_curves, const std::vector< CurveMesh >& back_curves )
+{
+
+    code_interface.setSkeleton( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
+}
+
 
 bool FlowVisualizationController::isVolumetricBuilt() const
 {

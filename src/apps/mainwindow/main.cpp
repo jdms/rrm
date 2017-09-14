@@ -27,7 +27,7 @@
 
 
 #include "mainwindow.h"
-#include "./core/geology/models/object.h"
+#include "./core/base/models/object.h"
 
 std::size_t Object::count_objects = 0;
 

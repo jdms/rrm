@@ -18,8 +18,9 @@ class SketchWindow;
 class FlowWindow;
 class ObjectTree;
 class PagesStack;
-class Controller;
 class RealSlider;
+
+#include "controller.h"
 
 class MainWindow: public QMainWindow
 {

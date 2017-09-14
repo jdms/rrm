@@ -16,8 +16,8 @@
 
 
 // OpenVolume Mesh
-#include "core/geometry/mesh/openvolumemesh_defines.hpp"
-#include "core/geometry/mesh/mesh_generator.hpp"
+#include "core/geometry/openvolumemesh_defines.hpp"
+#include "core/geometry/mesh_generator.hpp"
 
 #include "././libs/Tucano/BoundingBox3.hpp"
 

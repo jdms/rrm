@@ -1,5 +1,5 @@
 #include "volume_item_wrapper.h"
-#include "core/geology/models/volume.h"
+#include "core/base/models/volume.h"
 
 
 VolumeItemWrapper::VolumeItemWrapper( const Section& sec ): section( sec )
