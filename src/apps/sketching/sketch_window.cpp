@@ -19,6 +19,17 @@ SketchWindow::SketchWindow( QWidget* parent, bool customizable ): QMainWindow( p
 
 void SketchWindow::createWindow()
 {
+    int width = 500;
+    int height = 300;
+
+    if( parentWidget() != nullptr )
+    {
+        width = 0.5* parentWidget()->geometry().width();
+        height = 0.3* parentWidget()->geometry().height();
+    }
+
+    setMinimumSize( width, height );
+
     gv_view = new QGraphicsView();
     gv_view->setRenderHint( QPainter::Antialiasing, true );
     gv_view->setAcceptDrops( true );
