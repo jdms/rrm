@@ -19,13 +19,15 @@ SketchWindow::SketchWindow( QWidget* parent, bool customizable ): QMainWindow( p
 
 void SketchWindow::createWindow()
 {
-    int width = 500;
+    int width = 400;
     int height = 300;
 
     if( parentWidget() != nullptr )
     {
-        width = 0.5* parentWidget()->geometry().width();
+        width = 0.4* parentWidget()->geometry().width();
         height = 0.3* parentWidget()->geometry().height();
+
+        std::cout << "width: " << width << ", height: " << height << std::endl << std::flush;
     }
 
     setMinimumSize( width, height );

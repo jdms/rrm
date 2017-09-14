@@ -10,9 +10,16 @@ project( RRMBase )
 ###############################################
 # Main library
 ###############################################
-     
-set( BASE_HEADERS constants/constants.hpp )
-set( BASE_SOURCES constants/constants.cpp )
+
+include_directories("./models")
+
+set( BASE_HEADERS constants/constants.hpp 
+                  models/object.h
+                  models/cross_section.h
+                  models/region1.h
+                  models/volume.h)
+set( BASE_SOURCES constants/constants.cpp
+                  models/object.cpp)
 						
 						
 add_library( ${PROJECT_NAME} STATIC ${BASE_HEADERS} ${BASE_SOURCES} )  

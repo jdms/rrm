@@ -1,7 +1,7 @@
 #include "scene3d.h"
 
 
-#include "./core/geology/models/object.h"
+#include "./core/base/models/object.h"
 #include "opengl_wrappers/volume_opengl_wrapper.h"
 #include "opengl_wrappers/crosssection_opengl_wrapper.h"
 #include "opengl_wrappers/object_opengl_wrapper.h"

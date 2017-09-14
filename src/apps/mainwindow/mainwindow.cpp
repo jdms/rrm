@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "3dview/canvas3d.h"
-#include "controller.h"
 #include "widgets/pages_stack.h"
 #include "widgets/real_slider.h"
 #include "object_tree/object_tree.h"
@@ -396,7 +395,7 @@ void MainWindow::createSidebar()
 void MainWindow::createFlowDiagnosticsInterface()
 {
 
-    flow_window = new FlowWindow();
+    flow_window = new FlowWindow( this );
     dw_flowdiag = new QDockWidget( "Flow Diagnostics" );
     dw_flowdiag->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_flowdiag->setWidget( flow_window );
@@ -407,7 +406,50 @@ void MainWindow::createFlowDiagnosticsInterface()
 
     CSectionScene* csection_scene = ( CSectionScene* ) ( sketch_window->getScene() );
     connect( flow_window, &FlowWindow::sendNumberOfRegions, csection_scene, &CSectionScene::addRegionsToScene );
-//    connect( flow_window, &FlowWindow::requestRegionsPosition, csection_scene, &CSectionScene::sendRegionsToFlow );
+    connect( flow_window, &FlowWindow::requestRegionsPosition, csection_scene, &CSectionScene::sendRegionsToFlow );
+    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, std::vector< FlowWindow::CurveMesh>& left_curves, std::vector< FlowWindow::CurveMesh >& right_curves,
+             std::vector< FlowWindow::CurveMesh > & front_curves, std::vector< FlowWindow::CurveMesh >& back_curves )
+    {
+
+        std::vector< Controller::TriangleMesh > meshes;
+        std::vector< Controller::CurveMesh > lcurves;
+        std::vector< Controller::CurveMesh > rcurves;
+        std::vector< Controller::CurveMesh > fcurves;
+        std::vector< Controller::CurveMesh > bcurves;
+
+        controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves );
+
+        for( std::size_t i = 0; i < meshes.size(); ++i )
+        {
+            FlowWindow::TriangleMesh t;
+            t.vertex_list = meshes[i].vertex_list;
+            t.face_list = meshes[i].face_list;
+
+//            FlowWindow::CurveMesh lc;
+//            lc.edge_list = lcurves[i].edge_list;
+//            lc.vertex_list = lcurves[i].vertex_list;
+
+//            FlowWindow::CurveMesh rc;
+//            rc.edge_list = rcurves[i].edge_list;
+//            rc.vertex_list = rcurves[i].vertex_list;
+
+//            FlowWindow::CurveMesh fc;
+//            fc.edge_list = fcurves[i].edge_list;
+//            fc.vertex_list = fcurves[i].vertex_list;
+
+//            FlowWindow::CurveMesh bc;
+//            bc.edge_list = bcurves[i].edge_list;
+//            bc.vertex_list = bcurves[i].vertex_list;
+
+            triangles_meshes.push_back( t );
+//            left_curves.push_back( lc );
+//            right_curves.push_back( rc );
+//            front_curves.push_back( fc );
+//            back_curves.push_back( bc );
+
+        }
+
+    } );
 
 }
 
@@ -550,6 +592,10 @@ void MainWindow::setSimulationMode( bool status )
 
     if( status == true )
     {
+
+
+        sketch_window->setGeometry( canvas3d->geometry() );
+
         canvas3d->setVisible( false );
         ac_show_sidebar->setChecked( false );
         ac_show_topview->setChecked( false );

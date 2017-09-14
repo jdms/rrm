@@ -7,7 +7,7 @@
 #include "3dview/scene3d.h"
 #include "3dview/model3d_utils.hpp"
 
-#include "./core/geology/models/volume.h"
+#include "./core/base/models/volume.h"
 
 
 Controller::Controller()
@@ -750,7 +750,37 @@ void Controller::updateCrossSection()
 
 
 
+void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+                                    std::vector< CurveMesh >& left_curves,
+                                    std::vector< CurveMesh >& right_curves,
+                                    std::vector< CurveMesh > & front_curves,
+                                    std::vector< CurveMesh >& back_curves )
+{
 
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+    for( auto it: actives )
+    {
+
+        if( isValidObject( it ) == false ) continue;
+
+        std::vector< double > surface_vertices;
+        std::vector< std::size_t > surface_faces;
+
+
+        bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces );
+        if( has_surface  == false ) continue;
+
+
+        TriangleMesh t;
+        t.face_list = surface_faces;
+        t.vertex_list = surface_vertices;
+
+        triangles_meshes.push_back( t );
+
+    }
+
+}
 
 
 void Controller::showObjectInCrossSection( std::size_t id )

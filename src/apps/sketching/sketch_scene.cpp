@@ -8,7 +8,7 @@
 #include <QSvgGenerator>
 #include <QCursor>
 
-#include "core/geology/models/object.h"
+#include "core/base/models/object.h"
 #include "sketch_scene.h"
 
 

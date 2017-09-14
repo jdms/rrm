@@ -39,6 +39,9 @@
         <file>icons/select_curve.png</file>
         <file>icons/axes.png</file>
         <file>icons/resize_image.png</file>
+        <file>icons/surfacesfromfile.png</file>
+        <file>icons/surfacesfromsketch.png</file>
+        <file>icons/userinput.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>
