@@ -301,4 +301,35 @@ bool RulesProcessor::loadFile( std::string filename )
     return modeller_.loadBinary(filename);
 }
 
+size_t RulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+{
+
+    StratigraphyUtilities u(modeller_);
+
+    return u.getLegacyMeshes(points, nu, nv, num_extrusion_steps);
+}
+
+bool RulesProcessor::getLeftBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges )
+{
+    return modeller_.getCrossSectionWidth(surface_id, vertices, edges, 0);
+}
+
+bool RulesProcessor::getRightBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges )
+{
+    size_t right_boundary = modeller_.getDiscretizationWidth();
+    return modeller_.getCrossSectionWidth(surface_id, vertices, edges, right_boundary);
+}
+
+bool RulesProcessor::getFrontBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges )
+{
+    return modeller_.getCrossSectionDepth(surface_id, vertices, edges, 0);
+}
+
+bool RulesProcessor::getBackBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges )
+{
+    size_t right_boundary = modeller_.getDiscretizationDepth();
+    return modeller_.getCrossSectionDepth(surface_id, vertices, edges, right_boundary);
+}
+
+
 //{} // namespace RRM
