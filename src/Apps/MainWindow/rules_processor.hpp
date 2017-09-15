@@ -249,7 +249,7 @@
                 surface.push_back(in_curve[i].y());
             }
 
-            status = modeller_.createExtrudedSurface( surface_index, surface );
+            status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface );
         }
 
         testing_surface_insertion_ = false;
@@ -288,7 +288,7 @@
 
         testing_surface_insertion_ = false;
 
-        return modeller_.createExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
+        return modeller_.createLengthwiseExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
 
     }
 

@@ -36,13 +36,13 @@ std::vector<std::size_t> RulesProcessor::getSurfaces()
 
 std::size_t RulesProcessor::getWidthResolution()
 {
-    return modeller_.getDiscretizationWidth();
+    return modeller_.getWidthDiscretization();
 }
 
 
 std::size_t RulesProcessor::getDepthResolution()
 {
-    return modeller_.getDiscretizationDepth();
+    return modeller_.getLengthDiscretization();
 }
 
 
@@ -100,7 +100,7 @@ void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_
 
 bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_z )
 {
-    if ( modeller_.setLenght(opengl_x, opengl_y, opengl_z) == false )
+    if ( modeller_.setSize(opengl_x, opengl_y, opengl_z) == false )
     {
         return false;
     }
@@ -120,7 +120,7 @@ void RulesProcessor::getOrigin( double &opengl_x, double &opengl_y, double &open
 
 void RulesProcessor::getLenght( double &opengl_x, double &opengl_y, double &opengl_z )
 { 
-    modeller_.getLenght(opengl_x, opengl_y, opengl_z);
+    modeller_.getSize(opengl_x, opengl_y, opengl_z);
 }
 
 
@@ -269,16 +269,16 @@ bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
     return util.getNormalList(surface_id, nlist);
 }
 
-bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist )
+bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
+    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
 
-bool RulesProcessor::getCrossSection( size_t surface_id, size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist )
+bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
 //    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n" << std::flush;
 
-    return modeller_.getCrossSectionDepth(surface_id, vlist, elist, depth);
+    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
 
 bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double> &path)
