@@ -173,6 +173,8 @@ namespace RRM
                 connect(ui_->spinBox_Number_of_Regions_, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &RegionWidget::createRegions);
                 connect(ui_->comboBox_Region_, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](){ updateRegionsWidget(ui_->comboBox_Region_->currentIndex()); });
 
+                connect( ui_->pushButton, &QPushButton::clicked, this, [=](){ emit getRegions(); } );
+
                 //@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
                 /// 0 to 10101
                 connect(ui_->horizontalSlider_Permeability_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
@@ -528,7 +530,11 @@ namespace RRM
                     // Z
                     positions_values[index.first][2] = index.second.y();
                     // Y
-                    positions_values[index.first][1] = this->depth_;
+                    positions_values[index.first][1] = index.second.z()/*this->depth_*/;
+
+                    std::cout << "region " << index.first << ": " << index.second.x() << ", "
+                              << index.second.y() << ", " << index.second.z() << std::endl << std::flush;
+
 
                 }
 

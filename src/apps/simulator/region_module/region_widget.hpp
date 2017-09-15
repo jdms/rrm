@@ -61,6 +61,7 @@ namespace RRM
                         void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
                 signals:
                         void numberOfRegions(int _number_of_regions);
+                        void getRegions();
                 private:
                         // Designer form
                         Ui::RegionWidgetForm * ui_;

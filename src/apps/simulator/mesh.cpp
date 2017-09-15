@@ -121,6 +121,7 @@ void Mesh::reloadShader()
     well_shader->reloadShaders();
     quad_phong_->reloadShaders();
     shader_bbox->reloadShaders();
+    shader->reloadShaders();
 }
 
 void Mesh::initializeShader( std::string directory )
@@ -156,6 +157,12 @@ void Mesh::initializeShader( std::string directory )
                                                    (directory + "shaders/QuadPhong.geom"),
                                                     "", "");
     quad_phong_->initialize();
+
+    shader = new Tucano::Shader( "Surface", ( directory + "shaders/gouraud_surface.vert" ),
+                                            ( directory + "shaders/gouraud_surface.frag" ),
+                                            "", "", "" );
+
+    shader->initialize();
 
 
     // Well Points
@@ -245,6 +252,61 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
         glBindVertexArray( 0 );
 
         quad_phong_->unbind();
+
+    }
+    if( mesh_type == TYPE::TRIANGLES )
+    {
+
+        shader->bind();
+
+        shader->setUniform( "ModelMatrix" , M );
+        shader->setUniform( "ViewMatrix" , V );
+        shader->setUniform( "ProjectionMatrix" , P );
+        shader->setUniform( "WIN_SCALE" , (float) width , (float) height );
+
+
+        glEnable( GL_DEPTH_TEST );
+
+
+
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+            glEnable( GL_POLYGON_OFFSET_FILL );
+            glPolygonOffset( 2.0f, 1.0f );
+
+
+            shader->setUniform( "solid" , true );
+            shader->setUniform( "testing" , false );
+
+
+            glBindVertexArray( entities_.at("Sketchies").vertexArray_ );
+
+                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,  entities_.at("Sketchies").vertexBuffer_elemets_ );
+                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+            glBindVertexArray ( 0 );
+
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
+
+
+        glEnable( GL_DEPTH_TEST );
+        glDepthFunc( GL_LEQUAL );
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+        shader->setUniform( "solid" , false );
+
+        glBindVertexArray( entities_.at("Sketchies").vertexArray_ );
+
+            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_elemets_ );
+            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+        glBindVertexArray ( 0 );
+
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+        shader->unbind();
+
 
     }
     else if (mesh_type == TYPE::HEXAHEDRAL)
@@ -770,6 +832,105 @@ void Mesh::setSkeletonGeometry(const std::vector < unsigned int >& _faces_array,
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _faces_array.size() * sizeof(_faces_array[0]), _faces_array.data(), GL_STATIC_DRAW);
 
 }
+
+
+
+void Mesh::setTriangleSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array)
+{
+    std::vector< Eigen::Vector3f > normalized_vertices;
+
+    for (unsigned int it = 0; it < _vertices_array.size(); it += 3)
+    {
+        normalized_vertices.push_back(Eigen::Vector3f(_vertices_array[it + 0], _vertices_array[it + 1], _vertices_array[it + 2]));
+    }
+
+    Tucano::BoundingBox3<float > bb;
+
+    bb.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+
+    double scale = 1.0 / (bb.diagonal()*0.25);
+
+    Eigen::Affine3f t;
+    Eigen::Affine3f s;
+
+    t.setIdentity();
+    s.setIdentity();
+
+    t.translation() = -bb.center();
+    s.scale(Eigen::Vector3f(scale, scale, scale));
+
+    this->model_matrix_.setIdentity();
+    this->model_matrix_ = s * t;
+
+    std::cout << "(bbox_mesh) on MESH" << std::endl;
+    std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
+    std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
+    std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
+
+    dim_max.x() = (bb.Max().x());
+    dim_max.y() = (bb.Max().y());
+    dim_max.z() = (bb.Max().z());
+
+
+    dim_min.x() = (bb.Min().x());
+    dim_min.y() = (bb.Min().y());
+    dim_min.z() = (bb.Min().z());
+
+    std::cout << "(bbox_mesh) on Max/Min" << std::endl;
+    std::cout << bb.Max() << std::endl;
+    std::cout << bb.Min() << std::endl;
+    std::cout << bb.center() << std::endl;
+
+
+
+    for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
+    {
+        normalized_vertices[it] = this->model_matrix_ * normalized_vertices[it];
+    }
+
+
+    std::vector< Eigen::Vector3f > vertices_coord;
+
+    std::vector< unsigned int > triangles_id;;
+    std::size_t faces_number = _faces_array.size() / 3;
+
+    for (std::size_t i = 0; i < faces_number; ++i)
+    {
+
+        triangles_id.clear();
+        triangles_id.push_back(_faces_array[3 * i]);
+        triangles_id.push_back(_faces_array[3 * i + 1]);
+        triangles_id.push_back(_faces_array[3 * i + 2]);
+
+        for (std::size_t index = 0; index < triangles_id.size(); index++)
+        {
+            vertices_coord.push_back(normalized_vertices[triangles_id[index]]);
+        }
+    }
+
+    std::vector< Eigen::Vector3f > color(vertices_coord.size(), Eigen::Vector3f(0.5, 0.5, 0.5));
+
+
+    entities_.at("Sketchies").number_of_elements_ = vertices_coord.size();
+    number_of_faces = _faces_array.size();
+
+    /// Load by Arrays
+    glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_vertices_);
+    glBufferData(GL_ARRAY_BUFFER, normalized_vertices.size() * sizeof(Eigen::Vector3f), normalized_vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_normals_);
+    glBufferData(GL_ARRAY_BUFFER, normalized_vertices.size() * sizeof(Eigen::Vector3f), normalized_vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_colors_);
+    glBufferData(GL_ARRAY_BUFFER, color.size() * sizeof(Eigen::Vector3f), color.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_elemets_);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _faces_array.size() * sizeof(_faces_array[0]), _faces_array.data(), GL_STATIC_DRAW);
+
+}
+
+
 
 /// @TODO Later, move this fucntions to FlowvizualizationController
 void Mesh::loadWellPosition(int _number_of_wells, const std::map<int, Eigen::Vector4d>& _vertices_array, const std::map<int, int>& _types, const std::map< int, Eigen::Vector2d >& _range)

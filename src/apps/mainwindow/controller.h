@@ -147,6 +147,11 @@ class Controller
         bool isValidCrossSection( double depth ) const;
 
 
+        inline void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+        {
+            rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+        }
+
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 

@@ -653,15 +653,15 @@ void SketchScene::addRegionsToScene( int nregions )
     {
         std::size_t id = i + 1;
 
-        if( regions.count( id ) != 0 )
+        if( regions.count( i/*id*/ ) != 0 )
          {
-            regions[ id ]->setVisible( true );
+            regions[ i/*id*/ ]->setVisible( true );
             continue;
         }
 
-        regions[ id ] = new RRM::RegionItem( id );
+        regions[ i/*id*/ ] = new RRM::RegionItem( id );
 //        regions[ id ]->setPos();
-        addItem( regions[ id ] );
+        addItem( regions[ i/*id*/ ] );
     }
 
 }
