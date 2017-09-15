@@ -164,6 +164,7 @@ void FlowVisualizationController::setSkeleton( const std::vector< TriangleMesh>&
 {
 
     code_interface.setSkeleton( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
+    is_surface_loaded = true;
 }
 
 

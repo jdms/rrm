@@ -54,6 +54,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Ok</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -61,7 +74,7 @@
         <item>
          <widget class="QRadioButton" name="radioButton_Linear_">
           <property name="text">
-           <string>Linear</string>
+           <string>Constant</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -71,7 +84,7 @@
         <item>
          <widget class="QRadioButton" name="radioButton_Gradient_">
           <property name="text">
-           <string>Gradient</string>
+           <string>Linear Gradient</string>
           </property>
          </widget>
         </item>

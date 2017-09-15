@@ -54,6 +54,8 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         void setController( FlowVisualizationController *c );
         void clear();
 
+        void updateTriangleMesh( const std::vector< double >& vertices, const std::vector< std::size_t >& faces );
+
     public slots:
 
         void updateMesh();

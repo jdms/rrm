@@ -94,11 +94,11 @@ void FlowWindow::createToolBar()
     qtoolbarFlow = new QToolBar();
 
 
-    qreloadSurface = new QAction(tr("Surface from Sketch"), qtoolbarFlow);
-    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+    qreloadSurface = new QAction(tr("Get Extruded Surface"), qtoolbarFlow);
+//    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
 
-    qreloadSurface1 = new QAction(tr("Surface from Sketch -- New"), qtoolbarFlow);
-    qreloadSurface1->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+    qreloadSurface1 = new QAction(tr("Get General Surface"), qtoolbarFlow);
+//    qreloadSurface1->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
 
     qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
     qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
@@ -315,6 +315,11 @@ void FlowWindow::createActions()
 
         qclear->trigger();
         this->loadSurfacesfromSketch1();
+        if (are_regionsdefined == true)
+        {
+            qbuildCornerPoint->setEnabled(true);
+            qbuildUnstructured->setEnabled(true);
+        }
 
     });
 
@@ -642,7 +647,31 @@ void FlowWindow::loadSurfacesfromSketch1()
 
     emit getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
     controller->setSkeleton( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
-    canvas->updateMesh();
+
+    std::vector< double > vertices;
+    std::vector< std::size_t > faces;
+    int number_of_surfaces = static_cast< int >( triangles_meshes.size() );
+
+    std::size_t offset = 0;
+    for( int i = 0; i < number_of_surfaces; ++i )
+    {
+        const TriangleMesh& t = triangles_meshes[ i ];
+        for( std::size_t j = 0; j < t.vertex_list.size(); ++j )
+        {
+            vertices.push_back( t.vertex_list[ j ] );
+        }
+        for( std::size_t k = 0; k < t.face_list.size(); ++k )
+        {
+            faces.push_back( t.face_list[ k ] + offset );
+        }
+
+        offset += (t.vertex_list.size()/3);
+
+    }
+
+
+    canvas->updateTriangleMesh( vertices, faces );
+
 
 }
 
@@ -792,13 +821,6 @@ void FlowWindow::buildCornerPoint()
         acceptUserParameters();
     }
 
-    std::map<int, Eigen::Vector3f> region_points;
-    emit requestRegionsPosition( region_points );
-
-    regionPoints( region_points );
-
-
-
     controller->generateCornerPoint();
     canvas->updateCornerPoint();
 
@@ -813,12 +835,6 @@ void FlowWindow::buildUnstructured()
     {
         acceptUserParameters();
     }
-
-    std::map<int, Eigen::Vector3f> region_points;
-    emit requestRegionsPosition( region_points );
-
-    regionPoints( region_points );
-
 
     controller->generateUnstructured();
     canvas->updateVolumetricMesh();
@@ -1173,6 +1189,11 @@ void FlowWindow::createRegionModule()
 
     connect(this->dockRegionContainer_, &QDockWidget::visibilityChanged, this->view_region_module_, &QAction::setChecked);
     connect(this->view_region_module_, &QAction::triggered, this->dockRegionContainer_, &QDockWidget::setVisible);
+    connect( this->region_parameters_, &RRM::RegionWidget::getRegions, [=](){
+        std::map<int, Eigen::Vector3f> region_points;
+        emit requestRegionsPosition( region_points );
+        regionPoints( region_points );
+    } );
 
     flowModule_view_->addAction(view_region_module_);
 

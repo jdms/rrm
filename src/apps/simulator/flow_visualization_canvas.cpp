@@ -538,6 +538,43 @@ void FlowVisualizationCanvas::updateMesh()
 
 }
 
+
+void FlowVisualizationCanvas::updateTriangleMesh( const std::vector< double >& vertices,
+                                          const std::vector< std::size_t >& faces )
+{
+
+
+
+    std::vector<float> vertices_float;
+    for (auto v : vertices)
+    {
+        vertices_float.push_back(static_cast<float>(v));
+    }
+
+    std::vector<unsigned int> faces_;
+    for (auto f : faces)
+    {
+        faces_.push_back(static_cast<unsigned int>(f));
+    }
+
+    mesh.buildBoundingBox(vertices_float);
+
+    mesh.setMeshType( Mesh::TYPE::TRIANGLES );
+    mesh.setTriangleSkeletonGeometry( faces_, vertices_float );
+//    mesh.setSkeletonGeometry(faces, vertices_float);
+//    mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
+//    mesh.setTetrahedronGeometry(faces_, vertices_float);
+
+
+
+    camera.reset();
+    camera.increaseZoom(2.0f*1.05f);
+
+    update();
+
+}
+
+
 void FlowVisualizationCanvas::updateCornerPoint( )
 {
 

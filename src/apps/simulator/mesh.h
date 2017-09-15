@@ -112,6 +112,7 @@ class Mesh
         void setTetrahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setHexahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
+        void setTriangleSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
 
         void setDefaultColor();
         void setMeshColor(const std::vector<float>& _colors);
@@ -166,7 +167,7 @@ class Mesh
 
         std::map<std::string, OpenGLGeometry> entities_;
 
-
+        std::size_t number_of_faces;
 };
 
 #endif // MESH_H
