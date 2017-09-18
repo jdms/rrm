@@ -49,10 +49,14 @@
 // Eigen
 #include <Eigen/Dense>
 
+// BUG: why are those types being aliased in the OpenVolumeMesh namespace?
+// Either use the native types provided by OpenVolumeMesh or do the aliases in a
+// different namespace.
+
 namespace OpenVolumeMesh
 {
-	using Vec3d = OpenVolumeMesh::Geometry::Vec3d;
-	using BaseMesh3d = OpenVolumeMesh::GeometryKernel<Vec3d, OpenVolumeMesh::TopologyKernel>;
+    using Vec3d = OpenVolumeMesh::Geometry::Vec3d;
+    using BaseMesh3d = OpenVolumeMesh::GeometryKernel<OpenVolumeMesh::Vec3d, OpenVolumeMesh::TopologyKernel>;
 	using PolyhedralMeshV3d = OpenVolumeMesh::GeometricPolyhedralMeshV3d;
 	using TetrahedralMeshV3d = OpenVolumeMesh::GeometricTetrahedralMeshV3d;
 	using HexahedralMesh3d = OpenVolumeMesh::GeometricHexahedralMeshV3d;
