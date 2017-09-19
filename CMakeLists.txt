@@ -25,18 +25,19 @@ OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
 #      creating havoc in windows.  Moreover, such flags are redundant since
 #      we are setting the build type directly in cmake.
 
-#IF( WIN32 )
+IF( WIN32 )
 
-#    if( MSVC )
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-#    endif()
+    if( MSVC )
+        #        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /EHsc")
+    endif()
 
-#ELSEIF( UNIX )
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+ELSEIF( UNIX )
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
 
-#ELSE()
-#  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-#ENDIF()
+ELSE()
+  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
+ENDIF()
 
 
 
