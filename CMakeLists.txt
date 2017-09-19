@@ -21,18 +21,22 @@ OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
 # Gcc (4.8+) and VS2013 (revision 5+)).
 ###############################################
 
-IF( WIN32 )
+# BUG: the following was commented out because the compiler flags were 
+#      creating havoc in windows.  Moreover, such flags are redundant since
+#      we are setting the build type directly in cmake.
 
-    if( MSVC )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-    endif()
+#IF( WIN32 )
 
-ELSEIF( UNIX )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+#    if( MSVC )
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
+#    endif()
 
-ELSE()
-  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-ENDIF()
+#ELSEIF( UNIX )
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+
+#ELSE()
+#  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
+#ENDIF()
 
 
 
@@ -202,26 +206,27 @@ ExternalProject_Add(
 #endif()
 
 #set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
-find_library(STRATMODLIB stratmod ${STRATMOD_SOURCE}/stratmod/lib)
 
 #ExternalProject_Get_Property(StratModLibBuild binary_dir)
 #set(STRATMODLIB "${binary_dir}/Release/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-message(WARNING ${STRATMODLIB})
+#message(WARNING ${STRATMODLIB})
 #message(FATAL_ERROR ${binary_dir})
 
-if( BUILD_SHARED_STRATMODLIB )
-    add_library(stratmod SHARED IMPORTED)
+find_library(STRATMODLIB stratmod ${STRATMOD_SOURCE}/stratmod/lib)
+#set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
 
-else()
-    add_library(stratmod STATIC IMPORTED)
+#if( BUILD_SHARED_STRATMODLIB )
+#    add_library(stratmod SHARED IMPORTED)
 
-endif()
+#else()
+#    add_library(stratmod STATIC IMPORTED)
 
-set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
-add_dependencies(stratmod StratModLibBuild)
+#endif()
+
+#add_dependencies(stratmod StratModLibBuild)
 include_directories(${STRATMOD_SOURCE}/stratmod/include)
 
-message(WARNING stratmod)
+#message(WARNING stratmod)
 
 
 ###############################################
