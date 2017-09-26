@@ -179,7 +179,7 @@ set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 
 set(STRATMOD_CMAKE_ARGS 
     -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-    -DBUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
+    -DBUILD_SHARED_LIBRARY=ON
     -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
     )
 
@@ -200,11 +200,12 @@ ExternalProject_Add(
     CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
     )
 
-#if(MSVC)
-#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/stratmod.lib)
-#else()
-#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
-#endif()
+if(MSVC)
+    set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
+else()
+    set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
+endif()
 
 #set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
@@ -213,7 +214,6 @@ ExternalProject_Add(
 #message(WARNING ${STRATMODLIB})
 #message(FATAL_ERROR ${binary_dir})
 
-find_library(STRATMODLIB stratmod ${STRATMOD_SOURCE}/stratmod/lib)
 #set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
 
 #if( BUILD_SHARED_STRATMODLIB )
