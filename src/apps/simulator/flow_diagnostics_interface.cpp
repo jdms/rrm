@@ -36,51 +36,15 @@ void FlowDiagnosticsInterface::loadDefaultValues(int i)// 1 for unstructured 2 f
 }
 
 
-
-
 void FlowDiagnosticsInterface::setNumberofRegions(unsigned int regions_number){
     region.setnumberofpropertyareas(regions_number);
 }
-
-void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z, double perm,
-    double poros){
-
-    PROPERTYAREA p;
-    p.x(x);
-    p.y(y);
-    p.z(z);
-    p.permlow(perm*0.987e-15);
-    p.permhigh(perm*0.987e-15);
-    // ZHAO This is a BUG // set porolow and porohigh to be the same when there is only one poro value for the region
-    // p.porosity(poros);
-    p.porolow(poros);
-    p.porohigh(poros);
-    region.modifypropertyarea(id, p);
-}
-
 
 
 unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
     return region.numberofpropertyareas();
 }
 
-
-
-void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
-    double &poros, double& visc, double &porevolume) {
-    x = region.propertyarea(id).x();
-    y = region.propertyarea(id).y();
-    z = region.propertyarea(id).z();
-    perm = region.propertyarea(id).permlow() / 0.987e-15;
-
-    // ZHAO This is a BUG:
-    // The method: propertyarea(int).potosity() is not available anymore
-    //poros = region.propertyarea(id).porosity();
-    poros = region.propertyarea(id).porolow();//if porolow and porohigh are both needed then get both
-
-    visc = region.propertyarea(id).mu_o();
-    porevolume = region.propertyarea(id).porevolume();
-}
 
 void FlowDiagnosticsInterface::setViscosity(double visc){
     region.setoilviscosity(visc);
@@ -91,107 +55,18 @@ void FlowDiagnosticsInterface::clearRegions(){
 }
 
 
-
-
 void FlowDiagnosticsInterface::setNumberofWells(unsigned int wells_number){
     region.setnumberofwells(wells_number);
 }
 
-void FlowDiagnosticsInterface::setWell(unsigned int id, unsigned int type, double value, int sign){
-    WELL w;
-    if (type == 1 || type == 3){//type should be 1 in this version
-        value = value*1.0e+5;
-    }
-    w.type(type);
-    w.sign(sign);
-    w.value(value);
-    region.modifywell(id, w);
-}
-
-
-void FlowDiagnosticsInterface::loadWellsGeometry(char* file){
-    region.readwellgeometry(file);
-}
 
 unsigned int FlowDiagnosticsInterface::getNumberofWells() const { return region.numberofwells(); }
-
-//here
-void FlowDiagnosticsInterface::getWell(unsigned int id, unsigned int& type, double& value, int& sign){
-    type = region.well(id).type();
-    value = region.well(id).value();
-    sign = region.well(id).sign();
-}
 
 
 void FlowDiagnosticsInterface::clearWells(){
     region.clearwells();
 }
 
-
-void FlowDiagnosticsInterface::readUserInput(const std::string& input_file){
-    region.userinput_unstructured_skt_SF(input_file.c_str());
-}
-
-
-void FlowDiagnosticsInterface::readSkeletonFile(const std::string& skeleton_file){
-    region.readskeleton(skeleton_file.c_str());
-}
-
-
-
-void FlowDiagnosticsInterface::setSkeletonData(unsigned int surfaces_number, const std::vector< unsigned int >& nu,
-    const std::vector< unsigned int >& nv, const std::vector< double >& positions){
-    region.setskeletondata(surfaces_number, nu, nv, positions);
-}
-
-
-void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number, std::vector< unsigned int >& nu,
-    std::vector< unsigned int >& nv, std::vector< double >& positions) const
-{
-    std::vector<PARASURFACE> parasurfacelist;
-    parasurfacelist = region.getparasurfacelist();
-    surfaces_number = parasurfacelist.size();
-
-    PARASURFACE parasurface_;
-    UVNODE uvnode_;
-
-    for (int k = 0; k < surfaces_number; k++){
-
-
-        parasurface_ = parasurfacelist[k];
-
-        int nu_ = parasurface_.nu();
-        int nv_ = parasurface_.nv();
-
-
-        nu.push_back(nu_);
-        nv.push_back(nv_);
-
-        int l = 0;
-        for (int j = 0; j < nv_; j++){
-            for (int i = 0; i < nu_; i++){
-
-                uvnode_ = parasurface_.uvnode(l);
-
-                float x = uvnode_.x();
-                float y = uvnode_.y();
-                float z = uvnode_.z();
-
-                positions.push_back(x);
-                positions.push_back(y);
-                positions.push_back(z);
-
-
-                ++l;
-            }
-        }
-
-    }
-}
-
-void FlowDiagnosticsInterface::setfreewaterlevel(double d){
-    region.setfreewaterlevel(d);
-}
 
 void FlowDiagnosticsInterface::init(){
     if (region.meshinfo_type() == 1 && region.numberofphases() == 1){ //unstructured
@@ -234,26 +109,12 @@ void FlowDiagnosticsInterface::setVolumeDimensions(double width, double height, 
 }
 
 
-void FlowDiagnosticsInterface::computeProperties(){
-
-    // A proper way to set viscosities should be implemented in the GUI
-    setViscosity(visc_); // THIS LINE IS A STUB
-
-    if (region.meshinfo_type() == 1){
-        region.steadystateflowsolver();
-        region.flowdiagnostics_tracing();
-        region.writeresult_cvfe_sf_log2t("result.vtk");
-        region.derivedquantities_both();
-        region.writeflowdiagnostics("flowdiagnostics.txt");
-    }
-}
-
 
 void FlowDiagnosticsInterface::buildVolumetricMesh(){
     region.RRMdefaultvalues_unstructured();
     region.paramodel();
-    region.inputstraightwells();
-    //region.inputverticalwells();
+    //region.inputstraightwells();
+    region.inputverticalwells();
     region.unstructuredsurfacemesh();
     region.calltetgen_in2mid(); //must: already read in poly or created in
     region.wellgeonodes2addin(); //wellgeonodes -> wellnodes->addin
@@ -262,13 +123,12 @@ void FlowDiagnosticsInterface::buildVolumetricMesh(){
     region.meshdimension_max();
 }
 
-
 void FlowDiagnosticsInterface::buildCPGVolumetricMesh(){
-    region.RRMdefaultvalues_cpg();
-    region.paramodel();
-    region.buildcpg_ordering();
-    region.writecornerpointgridVTK("cpg.vtk");
-    region.writecornerpointgridGRDECL("cpg.grdecl");
+	region.RRMdefaultvalues_cpg();
+	region.paramodel();
+	region.buildcpg_ordering();
+	region.writecornerpointgridVTK("cpg.vtk");
+	region.writecornerpointgridGRDECL("cpg.grdecl");
 }
 
 void FlowDiagnosticsInterface::getPressure(std::vector< double >& values) {
@@ -278,13 +138,15 @@ void FlowDiagnosticsInterface::getPressure(std::vector< double >& values) {
 void FlowDiagnosticsInterface::getVelocitybyCells(std::vector< double >& values) {
     values = region.getvelocity_elements();
 }
+
+void FlowDiagnosticsInterface::getBackwardTOF(std::vector< double >& values) {
+	values = region.getbackwardtof();
+}
 void FlowDiagnosticsInterface::getVelocityMagnitudebyCells_log10(std::vector< double >& values) {
     values = region.getvelocitymagnitude_elements_log10();
 }
 
-void FlowDiagnosticsInterface::getBackwardTOF(std::vector< double >& values) {
-    values = region.getbackwardtof();
-}
+
 
 void FlowDiagnosticsInterface::getBackwardTOF_log10(std::vector< double >& values) {
     values = region.getbackwardtof_log10();
@@ -397,12 +259,6 @@ void FlowDiagnosticsInterface::getCPGVelocity(std::vector< double >& values)
 }
 
 
-void FlowDiagnosticsInterface::getSurfaceVertices(std::vector< float >& vertices) const {}
-
-
-void FlowDiagnosticsInterface::getSurfaceFaces(std::vector< unsigned int >& faces) const {}
-
-
 void FlowDiagnosticsInterface::getVolumeVertices(std::vector< float >& vertices)
 {
     std::vector<NODE> nodelist;
@@ -470,8 +326,6 @@ void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells
     }
 
 }
-
-
 
 
 void FlowDiagnosticsInterface::getCPGVolumeVertices(std::vector< float >& vertices)
@@ -634,64 +488,7 @@ void FlowDiagnosticsInterface::clear(){
 }
 
 
-/* The following methods were included for the June 2017 RRM integration. */
-
-bool FlowDiagnosticsInterface::setWell(unsigned int id, WellType t, double pressure_value,
-    double qt_x, double qt_y, double qt_z, double well_depth) //please use setverticalwell with two sides slider
-{
-    switch (t)
-    {
-    case INJECTOR:
-        /* Set an INJECTOR well here */
-        setWell(id, 1, pressure_value, 1);
-        break;
-
-    case PRODUCER:
-        /* Set an INJECTOR well here */
-        setWell(id, 1, pressure_value, -1);
-        break;
-
-    default:
-        break;
-    }
-
-    region.setverticalwellgeometry(id, qt_x, qt_y, 0, 0+well_depth);
-    return true;
-}
-
-bool FlowDiagnosticsInterface::setVerticalWell(unsigned int id, WellType t, double pressure_value,
-    double qt_x, double qt_y, double topd_, double botd_) //use this one
-{
-    switch (t)
-    {
-    case INJECTOR:
-        /* Set an INJECTOR well here */
-        setWell(id, 1, pressure_value, 1);
-        break;
-
-    case PRODUCER:
-        /* Set an INJECTOR well here */
-        setWell(id, 1, pressure_value, -1);
-        break;
-
-    default:
-        break;
-    }
-    region.setverticalwellgeometry(id, qt_x, qt_y, topd_, botd_);
-    return true;
-}
-
-/* Allow changing the linear solver for Zhao's flow diagnostics */
-
-bool FlowDiagnosticsInterface::setSolver(SolverType solver)
-{
-    return false;
-}
-
-
-/* Get a string with the values of the upscalled permeability to
-* display in the GUI
-* */
+//discuss:
 
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
@@ -702,7 +499,7 @@ bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
     region.upscalebsurface(1);
     region.boundarycondition();
     region.steadystateflowsolver();
-    region.upscaling(1, result); //problem with add double to string
+    region.upscaling(1, result); 
     region.clearnodesbc();
     region.upscalebsurface(2);
     region.boundarycondition();
@@ -725,7 +522,7 @@ bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 bool FlowDiagnosticsInterface::exportDerivedQuantities(const std::string &filename)
 {
     region.writeflowdiagnostics(filename);
-    return false;
+    return true;
 }
 
 bool FlowDiagnosticsInterface::getDerivedQuantities(std::string &derived_quantities)
@@ -740,8 +537,8 @@ bool FlowDiagnosticsInterface::getDerivedQuantities(std::string &derived_quantit
 * may be wise to allow the user to impose the pressure in
 * just one of the boundaries. */
 
-bool FlowDiagnosticsInterface::setBoundaryConditions(Boundary b, double pressure_value)
-{
+bool FlowDiagnosticsInterface::setBoundaryConditions(Boundary b, int type_, double value, int sign_)
+{// type: 1 for pressure 2 for velocity; sign_: 1 is outflow -1 is inflow
     return false;
 }
 
@@ -777,10 +574,14 @@ bool FlowDiagnosticsInterface::setSkeleton(
     const std::vector<CurveMesh> &right_boundary_curves,
     const std::vector<CurveMesh> &front_boundary_curves,
     const std::vector<CurveMesh> &back_boundary_curves
+	
     )
 {
+	//region.readintoregion //zzzzzz
     return false;
 }
+
+
 
 
 void FlowDiagnosticsInterface::getOilInPlace(double &oil_in_place)
@@ -788,7 +589,7 @@ void FlowDiagnosticsInterface::getOilInPlace(double &oil_in_place)
     oil_in_place = region.oilinplace();
 }
 
-void setWaterSaturation(unsigned int region_id, double Sw)
+void setWaterSaturation(unsigned int region_id, double Sw)// need to link to region
 {
     return;
 }
@@ -810,7 +611,7 @@ void FlowDiagnosticsInterface::getAvailablePermeabilityCurves(std::vector<int> &
 
 void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z,
     double min_perm, double max_perm,
-    double min_poros, double max_poros)
+    double min_poros, double max_poros) //the one used
 {
 
     //
@@ -820,16 +621,16 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     min_perm = min_perm > 0 ? min_perm : 0;
     min_poros = min_poros > 0 ? min_poros : 0;
 
-    double tol = 1E-7; // error tolerance
-    bool constant_perm = std::fabs(max_perm - min_perm) < tol;
-    bool constant_poros = std::fabs(max_poros - min_poros) < tol;
+    //double tol = 1E-7; // error tolerance
+    //bool constant_perm = std::fabs(max_perm - min_perm) < tol;
+    //bool constant_poros = std::fabs(max_poros - min_poros) < tol;
 
-    if (constant_perm && constant_poros)
-    {
-        setRegion(id, x, y, z, min_perm, min_poros);
+    //if (constant_perm && constant_poros)
+    //{
+    //    setRegion(id, x, y, z, min_perm, min_poros);
 
-        return;
-    }
+    //    return;
+    //}
 
 
     PROPERTYAREA p;
@@ -912,3 +713,196 @@ bool FlowDiagnosticsInterface::getKrwByCells(std::vector< double >& values) {
     return true;
 }
 
+
+
+void FlowDiagnosticsInterface::setWell(unsigned int id, unsigned int type, double value, int sign){
+	WELL w;
+	if (type == 1 || type == 3){//type should be 1 in this version
+		value = value*1.0e+5;
+	}
+	w.type(type);
+	w.sign(sign);
+	w.value(value);
+	region.modifywell(id, w);
+}
+
+void FlowDiagnosticsInterface::loadWellsGeometry(char* file){
+	region.readwellgeometry(file);
+}
+
+void FlowDiagnosticsInterface::getWell(unsigned int id, unsigned int& type, double& value, int& sign){
+	type = region.well(id).type();
+	value = region.well(id).value();
+	sign = region.well(id).sign();
+}
+
+void FlowDiagnosticsInterface::setfreewaterlevel(double d){//not in gui yet
+	region.setfreewaterlevel(d);
+}
+
+
+void FlowDiagnosticsInterface::setSkeletonData(unsigned int surfaces_number, const std::vector< unsigned int >& nu,
+	const std::vector< unsigned int >& nv, const std::vector< double >& positions){
+	region.setskeletondata(surfaces_number, nu, nv, positions);
+}
+
+
+void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number, std::vector< unsigned int >& nu,
+	std::vector< unsigned int >& nv, std::vector< double >& positions) const
+{
+	std::vector<PARASURFACE> parasurfacelist;
+	parasurfacelist = region.getparasurfacelist();
+	surfaces_number = parasurfacelist.size();
+
+	PARASURFACE parasurface_;
+	UVNODE uvnode_;
+
+	for (int k = 0; k < surfaces_number; k++){
+
+
+		parasurface_ = parasurfacelist[k];
+
+		int nu_ = parasurface_.nu();
+		int nv_ = parasurface_.nv();
+
+
+		nu.push_back(nu_);
+		nv.push_back(nv_);
+
+		int l = 0;
+		for (int j = 0; j < nv_; j++){
+			for (int i = 0; i < nu_; i++){
+
+				uvnode_ = parasurface_.uvnode(l);
+
+				float x = uvnode_.x();
+				float y = uvnode_.y();
+				float z = uvnode_.z();
+
+				positions.push_back(x);
+				positions.push_back(y);
+				positions.push_back(z);
+
+
+				++l;
+			}
+		}
+
+	}
+}
+
+void FlowDiagnosticsInterface::computeProperties(){
+
+	// A proper way to set viscosities should be implemented in the GUI
+	setViscosity(visc_); // THIS LINE IS A STUB
+
+	if (region.meshinfo_type() == 1){
+		region.steadystateflowsolver();
+		region.flowdiagnostics_tracing();
+		region.writeresult_cvfe_sf_log2t("result.vtk");
+		region.derivedquantities_both();
+		region.writeflowdiagnostics("flowdiagnostics.txt");
+	}
+}
+
+
+/* The following methods were included for the June 2017 RRM integration. */
+
+
+bool FlowDiagnosticsInterface::setVerticalWell(unsigned int id, WellType t, double pressure_value,
+	double qt_x, double qt_y, double topd_, double botd_) //use this one
+{
+	switch (t)
+	{
+	case INJECTOR:
+		/* Set an INJECTOR well here */
+		setWell(id, 1, pressure_value, 1);
+		break;
+
+	case PRODUCER:
+		/* Set an PRODUCER well here */
+		setWell(id, -1, pressure_value, -1);
+		break;
+
+	default:
+		break;
+	}
+	region.setverticalwellgeometry(id, qt_x, qt_y, topd_, botd_);
+	return true;
+}
+
+//functions that are not being used
+
+bool FlowDiagnosticsInterface::setWell(unsigned int id, WellType t, double pressure_value,
+	double qt_x, double qt_y, double qt_z, double well_depth) //not being used; please use setverticalwell with two sides slider
+{
+	switch (t)
+	{
+	case INJECTOR:
+		/* Set an INJECTOR well here */
+		setWell(id, 1, pressure_value, 1);
+		break;
+
+	case PRODUCER:
+		/* Set an INJECTOR well here */
+		setWell(id, 1, pressure_value, -1);
+		break;
+
+	default:
+		break;
+	}
+
+	region.setverticalwellgeometry(id, qt_x, qt_y, 0, 0 + well_depth);
+	return true;
+}
+
+void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z, double perm,
+	double poros){
+	//not being used
+	PROPERTYAREA p;
+	p.x(x);
+	p.y(y);
+	p.z(z);
+	p.permlow(perm*0.987e-15);
+	p.permhigh(perm*0.987e-15);
+
+	p.porolow(poros);
+	p.porohigh(poros);
+	region.modifypropertyarea(id, p);
+}
+
+void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
+	double &poros, double& visc, double &porevolume) { //not being used
+	x = region.propertyarea(id).x();
+	y = region.propertyarea(id).y();
+	z = region.propertyarea(id).z();
+	perm = region.propertyarea(id).permlow() / 0.987e-15;
+
+	// The method: propertyarea(int).potosity() is not available anymore
+	//poros = region.propertyarea(id).porosity();
+	poros = region.propertyarea(id).porolow();//if porolow and porohigh are both needed then get both
+
+	visc = region.propertyarea(id).mu_o();
+	porevolume = region.propertyarea(id).porevolume();
+}
+
+void FlowDiagnosticsInterface::readUserInput(const std::string& input_file){//not being used
+	region.userinput_unstructured_skt_SF(input_file.c_str());
+}
+
+
+void FlowDiagnosticsInterface::readSkeletonFile(const std::string& skeleton_file){//not being used
+	region.readskeleton(skeleton_file.c_str());
+}
+
+void FlowDiagnosticsInterface::getSurfaceVertices(std::vector< float >& vertices) const {}//not being used
+
+
+void FlowDiagnosticsInterface::getSurfaceFaces(std::vector< unsigned int >& faces) const {}//not being used
+
+/* Allow changing the linear solver for Zhao's flow diagnostics */
+
+bool FlowDiagnosticsInterface::setSolver(SolverType solver)
+{
+	return false;
+}
