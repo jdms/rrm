@@ -328,7 +328,7 @@ public:
     enum Boundary { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK };
 
     /* Not for now */
-    bool setBoundaryConditions(Boundary b, double pressure_value);
+    bool setBoundaryConditions(Boundary b, int type_, double value_, int sign_);
 
 
     /* This method clears all computed quantities (related to the flow
@@ -339,6 +339,8 @@ public:
     * */
 
     void clearComputedQuantities();
+
+	
 
 
     /* The following definitions are the first step towards creating
