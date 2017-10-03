@@ -821,7 +821,7 @@ bool FlowDiagnosticsInterface::setVerticalWell(unsigned int id, WellType t, doub
 
 	case PRODUCER:
 		/* Set an PRODUCER well here */
-		setWell(id, -1, pressure_value, -1);
+		setWell(id, 1, pressure_value, -1);
 		break;
 
 	default:
