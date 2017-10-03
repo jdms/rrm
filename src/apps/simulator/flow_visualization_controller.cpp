@@ -669,7 +669,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         {
 
             // Set property value
-            chv[*c_it] = values[i++]; //here debug error
+            chv[*c_it] = values[i]; //here debug error
             i++;
         }
 
@@ -689,7 +689,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
             {
 
                 // Set property value
-                chv[*c_it] = values[i++];
+                chv[*c_it] = values[i];
                 i++;
             }
         }
@@ -708,7 +708,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
             {
 
                 // Set property value
-                chv[*c_it] = values[i++];
+                chv[*c_it] = values[i];
                 i++;
             }
         }
@@ -727,7 +727,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
             {
 
                 // Set property value
-                chv[*c_it] = values[i++];
+                chv[*c_it] = values[i];
                 i++;
             }
         }
