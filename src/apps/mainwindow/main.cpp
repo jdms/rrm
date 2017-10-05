@@ -29,31 +29,25 @@
 #include "mainwindow.h"
 #include "./core/base/models/object.h"
 
-std::size_t Object::count_objects = 0;
+std::size_t Object::number_of_surfaces = 0;
+std::size_t CrossSection::number_of_csections;
+
 
 int main( int argc, char *argv[] )
 {
 
 
 	QApplication app(argc, argv);
-
-	QIcon appIcon;
-	appIcon.addFile(":/logos/about/rrm.png");
-	app.setWindowIcon(appIcon);
-	
-
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
     app.setAttribute( Qt::AA_ShareOpenGLContexts );
     app.setAttribute( Qt::AA_EnableHighDpiScaling );
-//    app.setAttribute( Qt::AA_DisableHighDpiScaling );
-
 
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )
     {
         std::cout << "Neither, your system do not have the hardware requirement " << std::endl
-    			  << "nor the driver are not load properly" << std::endl;
-    	return 0;
+                  << "nor the driver are not load properly" << std::endl;
+        return 0;
     }
 
     QSurfaceFormat format;

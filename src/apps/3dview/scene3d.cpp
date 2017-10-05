@@ -2,9 +2,8 @@
 
 
 #include "./core/base/models/object.h"
-#include "opengl_wrappers/volume_opengl_wrapper.h"
-#include "opengl_wrappers/crosssection_opengl_wrapper.h"
-#include "opengl_wrappers/object_opengl_wrapper.h"
+#include "./core/base/models/volumeshader.h"
+#include "./core/base/models/planeshader.h"
 
 
 #include <QString>
@@ -15,138 +14,44 @@
 Scene3d::Scene3d()
 {
     volume = nullptr;
-    csection = nullptr;
 }
 
 
 
-void Scene3d::addVolume( Volume* const& vol )
+void Scene3d::addVolume( Volume* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    clearVolume();
+    volume = new VolumeShader( raw_ );
+
+    emit updateCanvas();
+
+}
+
+void Scene3d::clearVolume()
 {
     if( volume != nullptr )
         delete volume;
+    volume = nullptr;
+}
 
-    context->makeCurrent( surface );
 
-    volume = new VolumeOpenGLWrapper();
-    volume->setShaderDirectory( shader_directory.toStdString() );
-    volume->init();
-    volume->setRawVolume( vol );
-
-    addCrossSection();
+void Scene3d::addCrossSection( CrossSection* const& raw_ )
+{
+    std::size_t index_ = raw_->getIndex();
+    csections.addElement( index_, new PlaneShader( raw_ ) );
 
     emit updateCanvas();
 }
 
 
-void Scene3d::updateVolume()
+void Scene3d::removeCrossSection( CrossSection* const& raw_ )
 {
-    if( volume == nullptr ) return;
-    volume->updateGeometry();
-
-    updateCrossSection();
+    std::size_t index_ = raw_->getIndex();
+    csections.removeElement( index_ );
 
     emit updateCanvas();
-}
-
-
-void Scene3d::addCrossSection()
-{
-    if( csection != nullptr )
-        delete csection;
-
-    context->makeCurrent( surface );
-
-    csection = new CrossSectionOpenGLWrapper();
-    csection->setShaderDirectory( shader_directory.toStdString() );
-    csection->init();
-
-    double mx, my, mz;
-    volume->getOrigin( mx, my, mz );
-    csection->setMinimum( static_cast<float>(mx), static_cast<float>(my), static_cast<float>(mz) );
-
-    double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
-    csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
-
-    csection->updateGeometry();
-    emit updateCanvas();
-}
-
-
-void Scene3d::updateCrossSection()
-{
-    if( csection == nullptr ) return;
-
-    context->makeCurrent( surface );
-
-    double mx, my, mz;
-    volume->getOrigin( mx, my, mz );
-    csection->setMinimum( static_cast<float>(mx), static_cast<float>(my), static_cast<float>(mz) );
-
-    double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
-    csection->setMaximum( static_cast<float>(Mx), static_cast<float>(My), static_cast<float>(Mz) );
-
-    csection->updateGeometry();
-    emit updateCanvas();
-}
-
-
-void Scene3d::moveCrossSection( double depth )
-{
-    if( csection == nullptr ) return;
-
-    context->makeCurrent( surface );
-    csection->setDepth( depth );
-    emit updateCanvas();
-}
-
-
-
-bool Scene3d::addObject( Object* const& obj )
-{
-
-    if( isAddedObject( obj->getId() ) == true ) return false;
-
-    context->makeCurrent( surface );
-
-    ObjectOpenGLWrapper* object = new ObjectOpenGLWrapper();
-    object->setShaderDirectory( shader_directory.toStdString() );
-    object->init();
-
-
-    double mx, my, mz;
-    volume->getOrigin( mx, my, mz );
-    object->setMinimum( static_cast< float >(mx), static_cast< float >(my),
-                        static_cast< float >(mz) );
-
-    double Mx = volume->getWidth(), My = volume->getHeight(), Mz = volume->getDepth();
-    object->setMaximum( static_cast< float >(Mx), static_cast< float >(My),
-                        static_cast< float >(Mz) );
-
-
-    object->setRawObject( obj );
-    objects[ obj->getId() ] = object;
-
-    return true;
-}
-
-
-void Scene3d::updateObject( std::size_t id )
-{
-    if( isAddedObject( id ) == false ) return;
-
-    ObjectOpenGLWrapper* const& object = objects[ id ];
-    object->reloadBuffers();
-    emit updateCanvas();
-
-}
-
-
-
-bool Scene3d::isAddedObject( std::size_t id )
-{
-    auto search = objects.find( id );
-    if( search == objects.end() ) return false;
-    return true;
 }
 
 
@@ -155,29 +60,15 @@ bool Scene3d::isAddedObject( std::size_t id )
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {
-
-//    if( show_axis == true )
-//    {
-        axes.draw( V, P, w, h );
-//    }
-
     if( volume != nullptr )
         volume->draw( V, P, w, h );
 
+    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+        (it->second)->draw( V, P, w, h );
 
-    for( auto& it : objects )
-        (it.second)->draw( V, P, w, h );
-
-
-    if( csection != nullptr )
-        csection->draw( V, P, w, h );
 }
 
 
-void Scene3d::setCurrentColor( const QColor& color )
-{
-    current_color = color;
-}
 
 
 void Scene3d::setCurrentDirectory( const QString& dir )
@@ -190,10 +81,6 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 {
     context = ctxt;
     surface = ctxt->surface();
-
-    axes.initShader( shader_directory.toStdString() );
-    axes.load();
-    axes.setNonCentered();
 }
 
 
@@ -210,26 +97,5 @@ void Scene3d::clearData()
 {
     current_color = Qt::red;
 
-    if( volume != nullptr )
-    {
-        volume->clear();
-        delete volume;
-    }
-    volume = nullptr;
-
-
-    if( csection != nullptr )
-    {
-        csection->clear();
-        delete csection;
-    }
-    csection = nullptr;
-
-    for( auto& it: objects )
-    {
-        ( it.second )->clear();
-        delete ( it.second );
-    }
-    objects.clear();
 }
 
