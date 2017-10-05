@@ -1,136 +1,103 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <vector>
+#include <iostream>
 #include <string>
 #include <map>
-#include <tuple>
-
-#include <Eigen/Dense>
-
-#include "PolygonalCurve/CurveN.hpp"
-//#include "./core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
 
 
 class Object
 {
+
     public:
 
-        enum class Type { STRATIGRAPHY, NONE };
+        using Surface = double;
+        using Curve2D = double;
+
+        enum class Type{ STRATIGRAPHY, FAULT };
+
 
         Object();
-        Object( const Object::Type& t );
 
 
-        void setId( std::size_t id );
-        std::size_t getId() const;
-
-        void setType( const Object::Type& t );
-        Object::Type getType() const ;
-
-        void setName( const std::string& n );
-        std::string getName() const;
+        void setIndex( const std::size_t id_ );
+        std::size_t getIndex() const;
 
 
-        void setColor( int r, int g, int b );
-        void getColor( int& r, int& g, int& b ) const ;
+        void setName( const std::string& name_ );
+        void getName( std::string& name ) const;
 
 
-        void setEditable( bool status );
-        bool getEditable() const ;
-
-        void setSelectable( bool status );
-        bool getSelectable() const ;
+        void setType( const Object::Type& type_ );
+        void getType( Object::Type& type_ ) const;
 
 
-        void setSelected( bool status );
-        bool getSelected() const ;
+        void setEditable( const bool status_ );
+        bool isEditable() const;
 
 
-        void setVisibility( bool status );
-        bool getVisibility() const ;
+        void setSelectable( const bool status_ );
+        bool isSelectable() const;
 
 
-        bool isEmpty() const ;
-
-        void setTesting( bool status );
-        bool isTesting() const;
+        void setSelected( const bool status_ );
+        bool isSelected() const;
 
 
-        void setCrossSectionCurve( double depth, const Curve2D& curve,
-                                   std::vector< std::size_t > edges = std::vector< std::size_t >() );
-        Curve2D getCrossSectionCurve( double depth ) ;
-        std::vector< std::size_t > getCrossSectionCurveEdges( double depth ) ;
-
-        std::vector< std::tuple< Curve2D, double > > getCrossSectionCurves();
-
-        void removeCrossSectionCurve( double depth );
-        void removeCrossSections();
+        void setVisible( const bool status_ );
+        bool isVisible() const;
 
 
-        bool isCurveAdmissible();
-        bool isTrajectoryAdmissible();
+        bool isEmpty() const;
 
 
-        bool hasCurve( double depth );
-
-        bool hasTrajectoryCurve();
-        void setTrajectoryCurve( const Curve2D& path );
-        Curve2D getTrajectoryCurve() const ;
-        void removeTrajectoryCurve();
+        void addCurve( std::size_t csection_id_, const Curve2D& curve_ );
+        Curve2D& getCurve( std::size_t csection_id_ ) const;
+        void removeCurve( std::size_t csection_id_ );
 
 
-        void setSurface( const std::vector< double >& vertices,
-                         const std::vector< std::size_t >& faces, bool test = false );
+        std::map< std::size_t, Curve2D >& getCrossSectionCurves() const;
+        void removeCrossSectionCurves();
 
 
-        void setSurfaceNormals( const std::vector< double >& normals );
-        std::vector< double > computeNormals();
+        void addTrajectory( const Curve2D& traj_ );
+        void removeTrajectory();
+        bool hasTrajectory() const;
+
+
+        void setSurface( const Surface& surface_ );
         void removeSurface();
 
 
-        std::vector< double > getSurfaceVertices() const ;
-        std::vector< std::size_t > getSurfaceFaces() const ;
-        std::vector< double > getSurfaceNormals();
-
         void clear();
-        void setDefaultValues();
+        void initialize();
 
 
 
 
-    public:
+    protected:
 
-        static std::size_t count_objects;
+        void defineIndex();
+
 
 
     private:
 
+        static std::size_t number_of_surfaces;
+
         std::size_t index;
         std::string name;
-        std::tuple< int, int, int > color;
-        Object::Type type;
 
+        Type type;
+
+        bool is_editable;
         bool is_selectable;
         bool is_selected;
         bool is_visible;
-        bool is_editable;
-        bool is_test;
 
-
-        bool has_trajectory;
-        std::map< double, Curve2D > csections_curves;
-        std::map< double, std::vector< std::size_t > > csections_edges;
-        Curve2D trajectory_curve;
-
-
-        std::vector< double > surface_vertices;
-        std::vector< std::size_t > surface_faces;
-        std::vector< double > surface_normals;
-
-
-
-
+        mutable std::map< std::size_t, Curve2D > csection_curves;
+        Surface surface;
+        Curve2D trajectory;
 
 };
 

@@ -1,119 +1,71 @@
 #ifndef VOLUME_H
 #define VOLUME_H
 
+#include <iostream>
+#include <string>
 #include <vector>
-#include <cmath>
+#include <set>
 
 
 class Volume
 {
     public:
 
-        Volume()
-        {
-            initialize();
-        }
-
-        inline void setDimensions( double width_, double height_, double depth_ )
-        {
-            width = std::fabs( width_ );
-            height = std::fabs( height_ );
-            depth = std::fabs(depth_ );
-        }
-
-        inline void getDimensions( double& width_, double& height_, double& depth_ ) const
-        {
-            width_ = width;
-            height_ = height;
-            depth_ = depth;
-        }
+        Volume();
 
 
-        inline void setWidth( double width_ )
-        {
-            width = std::fabs( width_ );
-        }
-
-        inline void setHeight( double height_ )
-        {
-            height = std::fabs( height_ );
-        }
-
-        inline void setDepth( double depth_ )
-        {
-            depth = std::fabs( depth_ );
-        }
+        void setOrigin( double ox_, double oy_, double oz_ );
+        void getOrigin( double& ox_, double& oy_, double& oz_ ) const;
 
 
-        inline double getWidth() const
-        {
-            return width;
-        }
-
-        inline double getHeight() const
-        {
-            return height;
-        }
-
-        inline double getDepth() const
-        {
-            return depth;
-        }
+        void setGeometry( double w_, double h_, double l_ );
+        void getGeometry( double& w_, double& h_, double& l_ ) const;
 
 
-        inline void setOrigin( double ox_, double oy_, double oz_ )
-        {
-            origin_x = ox_;
-            origin_y = oy_;
-            origin_z = oz_;
-        }
-
-        inline void getOrigin( double& ox_, double& oy_, double& oz_ ) const
-        {
-            ox_ = origin_x;
-            oy_ = origin_y;
-            oz_ = origin_z;
-        }
+        void setWidth( double w_ );
+        double getWidth() const;
 
 
-        inline void setVisibility( bool option )
-        {
-            is_visible = option;
-        }
-
-        inline bool getVisibility() const
-        {
-            return is_visible;
-        }
+        void setHeight( double h_  );
+        double getHeight() const;
 
 
-        inline void initialize()
-        {
-            setDefaultValues();
-        }
-
-        inline void clear()
-        {
-            setDefaultValues();
-        }
+        void setLenght( double l_ );
+        double getLenght() const;
 
 
-        inline void setDefaultValues()
-        {
-            origin_x = 0.0f;
-            origin_y = 0.0f;
-            origin_z = 0.0f;
-
-            width = 500.0f;
-            height = 500.0f;
-            depth = 500.0f;
-
-            is_visible = true;
-        }
+        void getFrontFace( std::vector< double >& vertices_ ) const;
+        void getRightFace( std::vector< double >& vertices_ ) const;
+        void getBackFace( std::vector< double >& vertices_ ) const;
+        void getLeftFace( std::vector< double >& vertices_ ) const;
+        void getTopFace( std::vector< double >& vertices_ ) const;
+        void getBottomFace( std::vector< double >& vertices_ ) const;
 
 
 
-    protected:
+        void addObject( std::size_t id_ );
+        void removeObject( std::size_t id_ );
+        std::set<size_t> getObjects() const;
+
+
+        void addCrossSection( std::size_t id_ );
+        void removeCrossSection( std::size_t id_ );
+        std::set<size_t> getCrossSections() const;
+
+
+        void setVisible( bool status_ );
+        bool isVisible() const;
+
+
+        void setResizable( bool status_ );
+        bool isResizable() const;
+
+
+        void clear();
+        void initialize();
+
+
+    private:
 
         double origin_x;
         double origin_y;
@@ -121,11 +73,13 @@ class Volume
 
         double width;
         double height;
-        double depth;
+        double lenght;
 
         bool is_visible;
+        bool is_resizable;
 
-        const std::size_t POINT_DIMENSION = 3;
+        std::set< std::size_t > stratigraphies;
+        std::set< std::size_t > csections;
 
 };
 

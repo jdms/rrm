@@ -1,392 +1,197 @@
 #include "object.h"
 
-
 Object::Object()
 {
-    setDefaultValues();
-    ++count_objects;
+    defineIndex();
+    initialize();
 }
 
 
-Object::Object( const Object::Type& t )
+void Object::defineIndex()
 {
-    setDefaultValues();
-    type = t;
-
-    ++count_objects;
+    index = number_of_surfaces;
+    number_of_surfaces++;
 }
 
-
-void Object::setId( std::size_t id )
+void Object::setIndex( const size_t id_ )
 {
-    index = id;
-    count_objects = id + 1;
+    index = id_;
+    number_of_surfaces = id_ + 1;
 }
 
-
-
-std::size_t Object::getId() const
+std::size_t Object::getIndex() const
 {
     return index;
 }
 
-void Object::setType( const Object::Type& t )
+
+
+void Object::setName( const std::string& name_ )
 {
-    type = t;
+    name = name_;
+}
+
+void Object::getName( std::string& name_ ) const
+{
+    name_ = name;
 }
 
 
-Object::Type Object::getType() const
+
+void Object::setType( const Object::Type &type_ )
 {
-    return type;
+    type = type_;
+}
+
+void Object::getType( Object::Type &type_ ) const
+{
+    type_ = type;
 }
 
 
-void Object::setName( const std::string& n )
+
+void Object::setEditable( const bool status_ )
 {
-    name = n;
+    is_editable = status_;
 }
 
-std::string Object::getName() const
-{
-    return name;
-}
-
-
-void Object::setColor( int r, int g, int b )
-{
-    color = std::make_tuple( r, g, b );
-}
-
-
-void Object::getColor( int& r, int& g, int& b ) const
-{
-    r = std::get<0>( color );
-    g = std::get<1>( color );
-    b = std::get<2>( color );
-}
-
-
-void Object::setEditable( bool status )
-{
-    is_editable = status;
-}
-
-
-bool Object::getEditable() const
+bool Object::isEditable() const
 {
     return is_editable;
 }
 
 
 
-void Object::setSelectable( bool status )
+void Object::setSelectable( const bool status_ )
 {
-    is_selectable = status;
+    is_selectable = status_;
 }
 
-
-bool Object::getSelectable() const
+bool Object::isSelectable() const
 {
     return is_selectable;
 }
 
 
 
-void Object::setSelected( bool status )
+void Object::setSelected( const bool status_ )
 {
-    is_selected = status;
+    if( isSelectable() == false ) return;
+    is_selected = status_;
 }
 
 
-bool Object::getSelected() const
+bool Object::isSelected() const
 {
     return is_selected;
 }
 
 
-void Object::setVisibility( bool status )
+
+void Object::setVisible( const bool status_ )
 {
-    is_visible = status;
+    is_visible = status_;
 }
 
-
-bool Object::getVisibility() const
+bool Object::isVisible() const
 {
     return is_visible;
 }
 
 
+
 bool Object::isEmpty() const
 {
-    bool empty = csections_curves.empty() && csections_edges.empty() &&
-                 ( !has_trajectory );
-    return empty;
+    return csection_curves.empty();
 }
 
-bool Object::isTesting() const
+
+
+void Object::addCurve( std::size_t csection_id_, const Curve2D& curve_ )
 {
-    return is_test;
+    csection_curves[ csection_id_ ] = curve_;
 }
 
-void Object::setTesting( bool status )
+Object::Curve2D& Object::getCurve( std::size_t csection_id_ ) const
 {
-    is_test = status;
+    //TODO: verificar se existe id_;
+    return csection_curves[ csection_id_ ];
 }
 
-void Object::setCrossSectionCurve( double depth, const Curve2D& curve,
-                           std::vector< std::size_t > edges )
+void Object::removeCurve( std::size_t csection_id_ )
 {
-    csections_curves[ depth ] = curve;
-    csections_edges[ depth ] = edges;
+    //TODO: verificar se existe id_;
+    //TODO: clear curve;
+//    return csection_curves.erase( csection_id_ );
 }
 
 
-Curve2D Object::getCrossSectionCurve( double depth )
+
+std::map< std::size_t, Object::Curve2D >& Object::getCrossSectionCurves() const
 {
-    if( hasCurve( depth ) == false ) return Curve2D();
-    return csections_curves[ depth ];
+    return csection_curves;
 }
 
-
-std::vector< std::tuple< Curve2D, double > > Object::getCrossSectionCurves()
+void Object::removeCrossSectionCurves()
 {
-    std::vector< std::tuple< Curve2D, double > > curves;
+//    for( auto it: csection_curves )
+//    {
+//        removeCurve( it->first );
+//    }
 
-    for( auto it: csections_curves )
-    {
-        std::cout <<  it.first << " " << std::flush;
-        curves.push_back( std::make_tuple( it.second, it.first ) );
-    }
-
-    std::cout <<  std::endl << std::flush;
-
-    return curves;
+//    csection_curves.clear();
 }
 
 
-std::vector< std::size_t > Object::getCrossSectionCurveEdges( double depth )
+
+void Object::addTrajectory( const Curve2D& traj_ )
 {
-    if( hasCurve( depth ) == false ) return std::vector< std::size_t >();
-    return csections_edges[ depth ];
+    trajectory = traj_;
 }
 
-
-void Object::removeCrossSectionCurve( double depth )
+void Object::removeTrajectory()
 {
-    if( hasCurve( depth ) == false ) return;
-
-    csections_curves[ depth ].clear();
-    csections_curves.erase( depth );
-
-    csections_edges[ depth ].clear();
-    csections_edges.erase( depth );
+    //TODO: clear trajectory;
 }
 
-
-void Object::removeCrossSections()
+bool Object::hasTrajectory() const
 {
-    if( csections_curves.empty() == true ) return;
-
-    std::map< double, Curve2D >::iterator it = csections_curves.begin();
-    while ( it != csections_curves.end()  )
-    {
-        removeCrossSectionCurve( it->first );
-        it = csections_curves.begin();
-    }
-
-    csections_curves.clear();
-    csections_edges.clear();
+    //TODO: check if traj is empty
+    return false;
 }
 
 
 
-bool Object::isTrajectoryAdmissible()
+void Object::setSurface( const Surface& surface_ )
 {
-
-    if( ( csections_curves.size() > 1  ) || ( has_trajectory == true ) )
-        return false;
-
-    return true;
+//    surface = surface_;
 }
-
-
-
-bool Object::isCurveAdmissible()
-{
-    if( ( has_trajectory == true ) && ( csections_curves.size() > 0  ) )
-        return false;
-
-    return true;
-}
-
-
-bool Object::hasCurve( double depth )
-{
-    auto search = csections_curves.find( depth );
-    if( search != csections_curves.end() )
-        return true;
-    else
-        return false;
-}
-
-bool Object::hasTrajectoryCurve()
-{
-    return has_trajectory;
-}
-
-
-void Object::setTrajectoryCurve( const Curve2D& path )
-{
-    trajectory_curve.clear();
-    trajectory_curve = path;
-    has_trajectory = true;
-}
-
-
-Curve2D Object::getTrajectoryCurve() const
-{
-    return trajectory_curve;
-}
-
-
-void Object::removeTrajectoryCurve()
-{
-    trajectory_curve.clear();
-    has_trajectory = false;
-}
-
-
-void Object::setSurface( const std::vector< double >& vertices,
-                                    const std::vector< std::size_t >& faces, bool test )
-{
-    removeSurface();
-    surface_vertices.assign( vertices.begin(), vertices.end() );
-    surface_faces.assign( faces.begin(), faces.end() );
-
-    is_editable = test;
-    is_test = test;
-}
-
-
-void Object::setSurfaceNormals( const std::vector< double >& normals )
-{
-    surface_normals.clear();
-    surface_normals.assign( normals.begin(), normals.end() );
-}
-
-
-std::vector< double > Object::getSurfaceVertices() const
-{
-    return surface_vertices;
-}
-
-
-std::vector< std::size_t > Object::getSurfaceFaces() const
-{
-    return surface_faces;
-}
-
-
-std::vector< double > Object::getSurfaceNormals()
-{
-    std::vector< double > normals_list;
-
-    if( surface_normals.empty() == true )
-        normals_list = computeNormals();
-    else
-        normals_list = surface_normals;
-
-    return normals_list;
-}
-
-
-std::vector< double > Object::computeNormals()
-{
-    std::size_t number_of_faces = surface_faces.size()/3;
-    std::size_t size_vector  = surface_vertices.size();
-
-    std::vector< double > normals;
-    normals.resize( size_vector );
-
-    if( ( number_of_faces == 0 ) || ( size_vector == 0 ) ) return std::vector< double >();
-
-    for( std::size_t i = 0; i < number_of_faces; ++i )
-    {
-        std::size_t i1 = surface_faces[ 3*i ];
-        std::size_t i2 = surface_faces[ 3*i + 1 ];
-        std::size_t i3 = surface_faces[ 3*i + 2 ];
-
-        Eigen::Vector3f v1( surface_vertices[ 3*i1 ], surface_vertices[ 3*i1 + 1 ],
-                            surface_vertices[ 3*i1 + 2 ] );
-
-        Eigen::Vector3f v2( surface_vertices[ 3*i2 ], surface_vertices[ 3*i2 + 1 ],
-                            surface_vertices[ 3*i2 + 2 ] );
-
-        Eigen::Vector3f v3( surface_vertices[ 3*i3 ], surface_vertices[ 3*i3 + 1 ],
-                            surface_vertices[ 3*i3 + 2 ] );
-
-        Eigen::Vector3f a = v2 - v1;
-        Eigen::Vector3f b = v3 - v1;
-
-        Eigen::Vector3f face_normal = b.cross( a );
-
-        normals[ 3*i1 ] += face_normal.x();
-        normals[ 3*i1 + 1 ] += face_normal.y();
-        normals[ 3*i1 + 2 ] += face_normal.z();
-
-
-        normals[ 3*i2 ] += face_normal.x();
-        normals[ 3*i2 + 1 ] += face_normal.y();
-        normals[ 3*i2 + 2 ] += face_normal.z();
-
-
-        normals[ 3*i3 ] += face_normal.x();
-        normals[ 3*i3 + 1 ] += face_normal.y();
-        normals[ 3*i3 + 2 ] += face_normal.z();
-
-    }
-
-    return normals;
-
-}
-
-
 
 void Object::removeSurface()
 {
-    surface_vertices.clear();
-    surface_faces.clear();
-    surface_normals.clear();
-
-    is_editable = true;
-    is_test = false;
+    //TODO: clear surface
 }
+
 
 
 void Object::clear()
 {
+    removeCrossSectionCurves();
+    removeTrajectory();
     removeSurface();
-    removeCrossSections();
-    removeTrajectoryCurve();
 
-    setDefaultValues();
+    initialize();
 }
 
-
-void Object::setDefaultValues()
+void Object::initialize()
 {
-    index = count_objects;
-
     type = Type::STRATIGRAPHY;
-    name = std::string( "Surface " ) + std::to_string( (int) index );
-    has_trajectory = false;
+    name = "Surface " + std::to_string( index );
 
+    is_editable = true;
     is_selectable = false;
     is_selected = false;
     is_visible = true;
-    is_editable = true;
-    is_test = false;
-}
 
+}
 
