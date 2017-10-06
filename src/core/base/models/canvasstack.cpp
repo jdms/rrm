@@ -15,7 +15,8 @@ void CanvasStack::initialize()
 
 void CanvasStack::addElement( std::size_t id_, QGraphicsView* canvas_ )
 {
-    Container::addElement( id_, canvas_ );
+    bool status = Container::addElement( id_, canvas_ );
+    if( status == false ) return;
 
     hb_mainlayout->addWidget( canvas_ );
     hb_mainlayout->addSpacing( 1 );
@@ -26,7 +27,8 @@ void CanvasStack::addElement( std::size_t id_, QGraphicsView* canvas_ )
 void CanvasStack::removeElement( std::size_t id_ )
 {
     hb_mainlayout->removeWidget( Container::data[ id_ ] );
-    Container::removeElement( id_ );
+    bool status = Container::removeElement( id_ );
+    if( status == false ) return;
 
     update();
 

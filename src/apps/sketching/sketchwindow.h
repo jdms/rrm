@@ -20,9 +20,18 @@ class SketchWindow: public QMainWindow
         SketchWindow( QWidget* parent = 0 );
 
 
+
+    public slots:
+
+        void addCanvas( std::size_t id_ );
+
+
+
     protected:
 
         void createWindow();
+
+
 
 
 
