@@ -17,8 +17,8 @@ class Container
         using Iterator = typename std::map< Index, Item >::iterator;
 
 
-        void addElement( Index id_, const Item& d );
-        void removeElement( Index id_ );
+        bool addElement( Index id_, const Item& d );
+        bool removeElement( Index id_ );
 
 
         void setElement( const Index& id, const Item& d );
@@ -54,20 +54,24 @@ class Container
 
 
 template < class Index, class Item >
-void Container< Index, Item >::addElement( Index id_, const Item& d )
+bool Container< Index, Item >::addElement( Index id_, const Item& d )
 {
     if( findElement( id_ ) == true )
-        return;
+        return false;
+
     data[ id_ ] = d;
+    return true;
 }
 
 
 template <class Index, class Item >
-void Container< Index, Item >::removeElement( Index id_ )
+bool Container< Index, Item >::removeElement( Index id_ )
 {
     if( findElement( id_ ) == false )
-        return;
+        return false;
+
     data.erase( id_ );
+    return true;
 }
 
 
