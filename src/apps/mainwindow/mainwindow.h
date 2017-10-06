@@ -12,8 +12,10 @@ class QToolbar;
 class QSlider;
 
 
+
 class Canvas3d;
 class RealSlider;
+class RealFeaturedSlider;
 class SketchWindow;
 
 
@@ -68,7 +70,7 @@ class MainWindow: public QMainWindow
         Controller* controller;
         Canvas3d* canvas3d;
 
-        RealSlider* sl_depth_csection;
+        RealFeaturedSlider* sl_depth_csection;
 
         SketchWindow* sketch_window;
 

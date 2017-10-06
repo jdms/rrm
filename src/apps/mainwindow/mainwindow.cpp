@@ -2,6 +2,7 @@
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
 #include "widgets/real_slider.h"
+#include "widgets/realfeaturedslider.h"
 
 
 #include <QtWidgets>
@@ -63,10 +64,9 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
-
-    sl_depth_csection = new RealSlider( Qt::Vertical );
-    sl_depth_csection->setTickPosition( QSlider::TicksRight );
-    sl_depth_csection->setInvertedAppearance( true );
+    sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
+    sl_depth_csection->setDiscretization( 500 );
+    sl_depth_csection->setRange( 0, 500 );
 
 
     hb_central_widget = new QHBoxLayout( this );
@@ -78,6 +78,9 @@ void MainWindow::createMainInterface()
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
 
+
+
+
 }
 
 
@@ -86,6 +89,15 @@ void MainWindow::createSketchingWindow()
 {
     sketch_window = new SketchWindow();
     sketch_window->show();
+
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( double v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
+                                                                                 sketch_window->addCanvas( controller->getCurrentCrossSection() ); } );
+
+    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ /*controller->CrossSection( CrossSection::Direction::Z, static_cast< int >( v ) );
+                                                                                   sketch_window->addCanvas( controller->getCurrentCrossSection() );*/ } );
+
+//    connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, &sketch_window, &SketchWindow::highlightWidget );
+
 }
 
 
@@ -109,17 +121,17 @@ void MainWindow::setupController()
 void MainWindow::run_app()
 {
     controller->init();
-    controller->addCrossSection( CrossSection::Direction::Z, 20 );
-    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+//    controller->addCrossSection( CrossSection::Direction::Z, 20 );
+//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
 
-    controller->addCrossSection( CrossSection::Direction::Z, 232 );
-    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+//    controller->addCrossSection( CrossSection::Direction::Z, 232 );
+//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
 
-    controller->addCrossSection( CrossSection::Direction::Z, 173 );
-    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+//    controller->addCrossSection( CrossSection::Direction::Z, 173 );
+//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
 
-    controller->addCrossSection( CrossSection::Direction::Z, 435 );
-    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+//    controller->addCrossSection( CrossSection::Direction::Z, 435 );
+//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
 
 //    sketch_window->addCanvas( 0 );
 //    sketch_window->addCanvas( 1 );

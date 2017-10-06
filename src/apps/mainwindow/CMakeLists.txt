@@ -11,16 +11,16 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 
 
 set( MAINWINDOW_HEADERS     mainwindow.h
-                            widgets/real_slider.h )
+                            widgets/realfeaturedslider.h )
 
 
 set( MAINWINDOW_MOC_HEADERS mainwindow.h
-                            widgets/real_slider.h )
+                            widgets/realfeaturedslider.h )
 
 
 set( MAINWINDOW_SOURCES     main.cpp
                             mainwindow.cpp
-                            widgets/real_slider.cpp )
+                            widgets/realfeaturedslider.cpp )
 
 
 
