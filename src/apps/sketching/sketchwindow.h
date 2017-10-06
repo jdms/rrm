@@ -25,7 +25,10 @@ class SketchWindow: public QMainWindow
         void createWindow();
 
 
-        CanvasStack cs;
+
+    private:
+
+        CanvasStack* cs;
 
 
 

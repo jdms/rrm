@@ -12,6 +12,8 @@ using CanvasContainer = Container< std::size_t, QGraphicsView* >;
 
 class CanvasStack: public QGraphicsView, public CanvasContainer
 {
+
+
     public:
 
         CanvasStack();
