@@ -10,7 +10,18 @@ class SketchCanvas: public QGraphicsView
 
     public:
 
+
         SketchCanvas();
+
+        void getScene();
+
+
+
+    protected:
+
+        void createScene();
+
+
 
 
 
