@@ -8,6 +8,9 @@
 
 class SketchScene: public QGraphicsScene, public Scene
 {
+    Q_OBJECT
+
+    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY };
 
     public:
 
@@ -26,7 +29,24 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
 
+    signals:
+
+
+        void acceptVolumeDimensions( double w_, double h_ );
+
+
     protected:
+
+
+        void mousePressEvent( QGraphicsSceneMouseEvent *event );
+        void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
+        void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+
+
+    protected:
+
+
+        UserInteraction current_interaction = UserInteraction::EDITING_BOUNDARY;
 
         VolumeItemWrapper* volume;
 
