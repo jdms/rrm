@@ -110,14 +110,21 @@ void MainWindow::run_app()
 {
     controller->init();
     controller->addCrossSection( CrossSection::Direction::Z, 20 );
-    controller->addCrossSection( CrossSection::Direction::Z, 232 );
-    controller->addCrossSection( CrossSection::Direction::Z, 173 );
-    controller->addCrossSection( CrossSection::Direction::Z, 435 );
+    sketch_window->addCanvas( controller->getCurrentCrossSection() );
 
-    sketch_window->addCanvas( 0 );
-    sketch_window->addCanvas( 1 );
-    sketch_window->addCanvas( 2 );
-    sketch_window->addCanvas( 0 );
+    controller->addCrossSection( CrossSection::Direction::Z, 232 );
+    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+
+    controller->addCrossSection( CrossSection::Direction::Z, 173 );
+    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+
+    controller->addCrossSection( CrossSection::Direction::Z, 435 );
+    sketch_window->addCanvas( controller->getCurrentCrossSection() );
+
+//    sketch_window->addCanvas( 0 );
+//    sketch_window->addCanvas( 1 );
+//    sketch_window->addCanvas( 2 );
+//    sketch_window->addCanvas( 0 );
 
 
 //    controller->addCrossSection( CrossSection::Direction::X, 20 );

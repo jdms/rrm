@@ -13,7 +13,8 @@ void SketchWindow::createWindow()
 
 }
 
-void SketchWindow::addCanvas( std::size_t id_ )
+void SketchWindow::addCanvas( CrossSection* const& cs_ )
 {
-    cs->addElement( id_, new QGraphicsView() );
+    SketchScene* scene_ = new SketchScene( cs_ );
+    cs->addElement( cs_->getIndex(), new QGraphicsView( scene_ ) );
 }

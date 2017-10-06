@@ -43,6 +43,12 @@ void CrossSection::setVolume( Volume* const& raw_ )
     volume = raw_;
 }
 
+Volume* CrossSection::getVolume() const
+{
+    return volume;
+}
+
+
 void CrossSection::getCoordinates( std::vector< double >& vertices_ ) const
 {
     if( direction == Direction::Z )

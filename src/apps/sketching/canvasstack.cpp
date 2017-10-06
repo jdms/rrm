@@ -24,6 +24,7 @@ void CanvasStack::addElement( std::size_t id_, QGraphicsView* canvas_ )
     update();
 }
 
+
 void CanvasStack::removeElement( std::size_t id_ )
 {
     hb_mainlayout->removeWidget( Container::data[ id_ ] );
@@ -53,6 +54,7 @@ void CanvasStack::setCurrent( std::size_t id_ )
 
     update();
 }
+
 
 QGraphicsView* CanvasStack::getCurrent()
 {

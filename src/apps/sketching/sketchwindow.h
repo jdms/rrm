@@ -4,7 +4,8 @@
 
 #include <QMainWindow>
 
-#include "./core/base/models/canvasstack.h"
+#include "canvasstack.h"
+#include "sketchscene.h"
 
 class QGraphicsView;
 class QWheelEvent;
@@ -23,7 +24,7 @@ class SketchWindow: public QMainWindow
 
     public slots:
 
-        void addCanvas( std::size_t id_ );
+        void addCanvas( CrossSection* const& cs_ );
 
 
 
@@ -38,6 +39,7 @@ class SketchWindow: public QMainWindow
     private:
 
         CanvasStack* cs;
+        SketchScene sk_;
 
 
 
