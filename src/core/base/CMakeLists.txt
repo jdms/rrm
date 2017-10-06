@@ -14,9 +14,9 @@ project( RRMBase )
 include_directories("./models")
 
 set( BASE_HEADERS constants/constants.hpp
+                  models/canvasstack.h
                   models/container.h
                   models/controller.h
-                  models/controller2d.h
                   models/object.h
                   models/cross_section.h
                   models/region.h
@@ -29,9 +29,8 @@ set( BASE_HEADERS constants/constants.hpp
                   models/volumeshader.h
                   models/well.h)
 set( BASE_SOURCES constants/constants.cpp
-#                  models/container.cpp
+                  models/canvasstack.cpp
                   models/controller.cpp
-                  models/controller2d.cpp
                   models/object.cpp
                   models/region.cpp
                   models/volume.cpp

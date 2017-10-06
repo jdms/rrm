@@ -4,11 +4,6 @@
 #include <map>
 
 
-
-
-
-
-
 template< class Index, class Item >
 class Container
 {

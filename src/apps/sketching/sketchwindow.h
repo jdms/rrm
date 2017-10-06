@@ -4,8 +4,7 @@
 
 #include <QMainWindow>
 
-#include "./core/base/models/container.h"
-
+#include "./core/base/models/canvasstack.h"
 
 class QGraphicsView;
 class QWheelEvent;
@@ -26,6 +25,7 @@ class SketchWindow: public QMainWindow
         void createWindow();
 
 
+        CanvasStack cs;
 
 
 
