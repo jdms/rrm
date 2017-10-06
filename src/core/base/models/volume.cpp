@@ -243,6 +243,9 @@ void Volume::setResizable( bool status_ )
 
 bool Volume::isResizable() const
 {
+    if( stratigraphies.empty() == true )
+        return true;
+
     return is_resizable;
 }
 

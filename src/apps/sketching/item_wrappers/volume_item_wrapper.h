@@ -15,7 +15,8 @@ class VolumeItemWrapper: public QGraphicsPathItem
 
         enum class Section{ XY, XZ };
 
-        VolumeItemWrapper( const Section& sec = Section::XY );
+        VolumeItemWrapper() = default;
+        VolumeItemWrapper( Volume* const& vol_, const Section& sec_ = Section::XY );
 
 
         void setRawVolume( Volume* const& vol );

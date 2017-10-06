@@ -2,9 +2,10 @@
 #include "core/base/models/volume.h"
 
 
-VolumeItemWrapper::VolumeItemWrapper( const Section& sec ): section( sec )
+VolumeItemWrapper::VolumeItemWrapper( Volume* const& vol_, const Section& sec_ )
 {
-    raw = nullptr;
+    setRawVolume( vol_ );
+    defineSectionPlane( sec_ );
     setupPen();
 }
 
@@ -22,10 +23,8 @@ void VolumeItemWrapper::setupPen()
 
 void VolumeItemWrapper::clear()
 {
-//    if( raw != nullptr )
-//        raw->clear();
     raw = nullptr;
-
+    section = Section::XZ;
     section_boundary.clear();
     setupPen();
 }
@@ -36,14 +35,12 @@ void VolumeItemWrapper::clear()
 void VolumeItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option,
                                           QWidget *w )
 {
-
     if( isVisible() == false ) return;
 
     painter->setRenderHint ( QPainter::Antialiasing );
     painter->setBrush( fill_volume );
     painter->setPen ( countor_volume );
     painter->drawPolygon( section_boundary );
-
 }
 
 
@@ -55,9 +52,9 @@ QRectF VolumeItemWrapper::boundingRect() const
 
 
 
-void VolumeItemWrapper::setRawVolume( Volume* const& vol )
+void VolumeItemWrapper::setRawVolume( Volume* const& vol_ )
 {
-    raw = vol;
+    raw = vol_;
     updateItem();
 }
 
@@ -70,9 +67,9 @@ Volume* VolumeItemWrapper::getRawVolume() const
 
 
 
-void VolumeItemWrapper::defineSectionPlane( const Section& sec )
+void VolumeItemWrapper::defineSectionPlane( const Section& sec_ )
 {
-    section = sec;
+    section = sec_;
 }
 
 
@@ -93,7 +90,7 @@ double VolumeItemWrapper::getWidth() const
 double VolumeItemWrapper::getHeight() const
 {
     if( section == Section::XZ )
-        return raw->getDepth();
+        return raw->getLenght();
     return raw->getHeight();
 }
 
@@ -103,7 +100,7 @@ double VolumeItemWrapper::getHeight() const
 bool VolumeItemWrapper::isVisible() const
 {
     if( raw == nullptr ) return false;
-    return raw->getVisibility();
+    return raw->isVisible();
 }
 
 

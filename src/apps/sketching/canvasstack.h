@@ -4,7 +4,7 @@
 #include <QGraphicsView>
 #include <QHBoxLayout>
 
-#include "container.h"
+#include "./core/base/models/container.h"
 
 
 using CanvasContainer = Container< std::size_t, QGraphicsView* >;
@@ -12,7 +12,7 @@ using CanvasContainer = Container< std::size_t, QGraphicsView* >;
 
 class CanvasStack: public QGraphicsView, public CanvasContainer
 {
-
+    Q_OBJECT
 
     public:
 

@@ -15,6 +15,7 @@ class Scene
 
 
         virtual void addVolume( Volume* const& raw_ ) = 0;
+        virtual void clearVolume() = 0;
 //        virtual void updateVolume();
 
 

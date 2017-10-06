@@ -31,6 +31,8 @@ class CrossSection
 
 
         void setVolume( Volume* const& raw_ );
+        Volume* getVolume() const;
+
         void getCoordinates( std::vector< double >& vertices_ ) const;
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
                         double& minx_, double& miny_, double& minz_ ) const;
