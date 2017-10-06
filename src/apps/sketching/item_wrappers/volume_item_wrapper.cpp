@@ -105,6 +105,23 @@ bool VolumeItemWrapper::isVisible() const
 
 
 
+void VolumeItemWrapper::startPoint( const QPointF& origin_ )
+{
+    start = origin_;
+}
+
+
+
+void VolumeItemWrapper::resize( const QPointF& end_ )
+{
+    int w = static_cast< int > ( end_.x() - start.x() );
+    int h = static_cast< int > ( end_.y() - start.y() );
+
+    resize( start.x(), start.y(), w, h ) ;
+
+}
+
+
 
 void VolumeItemWrapper::resize( double ox, double oy, double width, double height )
 {

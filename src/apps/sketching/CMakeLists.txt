@@ -15,7 +15,8 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             item_wrappers/volume_item_wrapper.h)
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
-                            canvasstack.h)
+                            canvasstack.h
+                            sketchscene.h )
 
 set( SKETCHING_SOURCES      sketchwindow.cpp
                             canvasstack.cpp
