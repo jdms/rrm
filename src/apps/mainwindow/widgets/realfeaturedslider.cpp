@@ -123,6 +123,20 @@ void RealFeaturedSlider::moveInDouble( int index_ )
 
 
 
+double RealFeaturedSlider::maximumValue() const
+{
+    return maximum;
+}
+
+
+
+double RealFeaturedSlider::minimumValue() const
+{
+    return minimum;
+}
+
+
+
 void RealFeaturedSlider::updateStep()
 {
     step = ( maximum - minimum )/discretization;

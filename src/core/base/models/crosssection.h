@@ -33,13 +33,13 @@ class CrossSection
         void setVolume( Volume* const& raw_ );
         Volume* getVolume() const;
 
-        void getCoordinates( std::vector< double >& vertices_ ) const;
+        void getCoordinates( std::vector< double >& vertices_ );
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
                         double& minx_, double& miny_, double& minz_ ) const;
 
 
         void setDirection( const CrossSection::Direction& dir_ );
-        void getDirection( CrossSection::Direction& dir_ ) const;
+        CrossSection::Direction getDirection() const;
 
 
         void setDepth( double depth_ );

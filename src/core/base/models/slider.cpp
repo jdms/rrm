@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include <QtWidgets/QStyle>
 #include <QtWidgets/QStyleOptionSlider>
@@ -88,7 +89,6 @@ void Slider::saveMarkerPosition( int value, int slider_length, int slider_min, i
 
     markers[ value ] = pos;
 
-//    std::cout << "saved: " << value << std::endl << std::flush;
 }
 
 
@@ -110,14 +110,14 @@ void Slider::getSubControlDimensions( int& slider_length, int& slider_min, int& 
 void Slider::hightlightMarker( int pos_ )
 {
 
-    int slider_length, slider_min, slider_max;
-    getSubControlDimensions( slider_length, slider_min, slider_max );
-    int value = QStyle::sliderValueFromPosition( minimum(), maximum(), pos_, height(),
-                                                    true ) ;
-    if( isValidMarker( value ) == false ) return;
+    if( markers.empty() == true ) return;
 
-    hightlightValue( value );
-//    std::cout << "Valid Marker, value: " << value << std::endl << std::flush;
+    for( auto it: markers )
+    {
+        if( it.second != pos_ ) continue;
+        hightlightValue( it.first );
+    }
+
 }
 
 
@@ -146,8 +146,6 @@ void Slider::resizeEvent( QResizeEvent *event )
 void Slider::mousePressEvent( QMouseEvent *event )
 {
 
-    hightlightMarker( event->pos().y() );
-
     QStyleOptionSlider opt;
     initStyleOption( &opt );
 
@@ -159,6 +157,9 @@ void Slider::mousePressEvent( QMouseEvent *event )
 
     else if ( status_ && event->button() == Qt::MiddleButton )
         removeMarker( value() );
+
+    else if ( event->button() == Qt::LeftButton )
+        hightlightMarker( event->pos().y() );
 
 
     QSlider::mousePressEvent( event );

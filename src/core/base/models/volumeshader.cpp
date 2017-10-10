@@ -211,10 +211,10 @@ void VolumeShader::resetBuffers()
         {
             glDeleteBuffers( 1, &vb_vertices );
         }
-//        if ( vb_normals != 0 )
-//        {
-//            glDeleteBuffers( 1, &vb_normals );
-//        }
+        if ( vb_normals != 0 )
+        {
+            glDeleteBuffers( 1, &vb_normals );
+        }
     }
 }
 
@@ -286,4 +286,9 @@ void VolumeShader::setDefaultValues()
 
     number_of_vertices = 0;
     raw = nullptr;
+}
+
+void VolumeShader::update()
+{
+    createVolumeMesh();
 }

@@ -27,7 +27,9 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
     setupController();
     run_app();
 
+
 }
+
 
 
 void MainWindow::setupWindowProperties()
@@ -60,6 +62,7 @@ void MainWindow::createWindow()
 }
 
 
+
 void MainWindow::createMainInterface()
 {
 
@@ -79,10 +82,11 @@ void MainWindow::createMainInterface()
     setCentralWidget( central_widget );
 
 
-
+    connect( this, &MainWindow::updateVolume, [=](){ double width_ = 0, height_ = 0, length_ = 0;
+                                                     controller->getVolumeDimensions( width_, height_, length_ );
+                                                     sl_depth_csection->setRange( 0, length_ ); } );
 
 }
-
 
 
 void MainWindow::createSketchingWindow()
@@ -90,14 +94,20 @@ void MainWindow::createSketchingWindow()
     sketch_window = new SketchWindow();
     sketch_window->show();
 
-    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( double v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
-                                                                                 sketch_window->addCanvas( controller->getCurrentCrossSection() ); } );
 
-    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ /*controller->CrossSection( CrossSection::Direction::Z, static_cast< int >( v ) );
-                                                                                   sketch_window->addCanvas( controller->getCurrentCrossSection() );*/ } );
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
+                                                                                        sketch_window->addCanvas( controller->getCurrentCrossSection() ); } );
 
-//    connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, &sketch_window, &SketchWindow::highlightWidget );
+    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){   controller->removeCrossSection( CrossSection::Direction::Z, v );
+                                                                                     sketch_window->removeCanvas( controller->getCrossection( v ) ); } );
 
+    connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, [=]( double v ){  controller->setCurrentCrossSection( v );
+                                                                                        sketch_window->highlightCanvas( controller->getCurrentCrossSection() ); }  );
+
+    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateCanvas );
+
+    connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
+                                                                                                                  emit updateVolume(); } );
 }
 
 
@@ -118,38 +128,14 @@ void MainWindow::setupController()
 }
 
 
+
 void MainWindow::run_app()
 {
     controller->init();
-//    controller->addCrossSection( CrossSection::Direction::Z, 20 );
-//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
-
-//    controller->addCrossSection( CrossSection::Direction::Z, 232 );
-//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
-
-//    controller->addCrossSection( CrossSection::Direction::Z, 173 );
-//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
-
-//    controller->addCrossSection( CrossSection::Direction::Z, 435 );
-//    sketch_window->addCanvas( controller->getCurrentCrossSection() );
-
-//    sketch_window->addCanvas( 0 );
-//    sketch_window->addCanvas( 1 );
-//    sketch_window->addCanvas( 2 );
-//    sketch_window->addCanvas( 0 );
 
 
-//    controller->addCrossSection( CrossSection::Direction::X, 20 );
-//    controller->addCrossSection( CrossSection::Direction::X, 232 );
-//    controller->addCrossSection( CrossSection::Direction::X, 173 );
-//    controller->addCrossSection( CrossSection::Direction::X, 435 );
 
 
-//    controller->addCrossSection( CrossSection::Direction::Y, 20 );
-//    controller->addCrossSection( CrossSection::Direction::Y, 232 );
-//    controller->addCrossSection( CrossSection::Direction::Y, 173 );
-//    controller->addCrossSection( CrossSection::Direction::Y, 435 );
+
 }
-
-
 

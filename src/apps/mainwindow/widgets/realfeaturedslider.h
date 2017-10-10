@@ -8,9 +8,7 @@
 
 class RealFeaturedSlider: public Slider
 {
-
     Q_OBJECT
-
 
     public:
 
@@ -18,6 +16,8 @@ class RealFeaturedSlider: public Slider
         RealFeaturedSlider( Qt::Orientation o_, int disc_ );
 
         void getDoubleMarkers( std::map< double, int >& markers_ );
+        double maximumValue() const;
+        double minimumValue() const;
 
 
     signals:
@@ -25,7 +25,7 @@ class RealFeaturedSlider: public Slider
 
 
             void sliderMoved( const double& value_ );
-            void markValue( double value );
+            void markValue( const double& value );
             void unmarkValue( double value );
             void hightlightValue( double value );
 

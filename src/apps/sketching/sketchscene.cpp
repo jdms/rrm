@@ -38,6 +38,14 @@ void SketchScene::addVolume( Volume* const &raw_ )
 }
 
 
+void SketchScene::updateVolume()
+{
+    volume->updateItem();
+    setSceneRect( volume->boundingRect() );
+    update();
+}
+
+
 void SketchScene::clearVolume()
 {
     if( volume != nullptr )

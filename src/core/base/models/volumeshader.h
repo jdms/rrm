@@ -23,13 +23,10 @@ class VolumeShader: public Shader
         void setVolume( Volume* const& raw_ );
 
 
-
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                  const int& h );
 
-        void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
-                                    const std::vector< GLfloat >& normals_ );
-
+        void update();
         void clear();
 
 
@@ -40,6 +37,8 @@ class VolumeShader: public Shader
         void createVolumeMesh();
         std::vector< float > defineVolumeNormals() const;
 
+        void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
+                                    const std::vector< GLfloat >& normals_ );
 
         virtual void initShaders();
         virtual void initBuffers();
