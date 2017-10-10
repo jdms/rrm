@@ -17,11 +17,11 @@ void Controller::init()
 }
 
 
+
 void Controller::addVolume()
 {
     volume = new Volume();
     scene3d->addVolume( volume );
-
 }
 
 
@@ -85,7 +85,7 @@ void Controller::setCurrentCrossSection( const double& depth_ )
 
 CrossSection* Controller::getCurrentCrossSection()
 {
-    return getCrossection( current_csection ); //actives_csections.getElement( current_csection );
+    return getCrossection( current_csection );
 }
 
 
@@ -93,7 +93,6 @@ CrossSection* Controller::getCrossection( const double& depth_ )
 {
     return actives_csections.getElement( depth_ );
 }
-
 
 
 
