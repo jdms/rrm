@@ -19,7 +19,12 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
-    addVolume( raw_->getVolume() );
+
+    Volume* const& vol_ = raw_->getVolume();
+    addVolume( vol_ );
+
+//    vol_->getObjects();
+//    addObjects();
 
 
 
