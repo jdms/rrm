@@ -11,6 +11,7 @@ class QGraphicsView;
 class QWheelEvent;
 
 
+
 class SketchWindow: public QMainWindow
 {
     Q_OBJECT
@@ -25,6 +26,16 @@ class SketchWindow: public QMainWindow
     public slots:
 
         void addCanvas( CrossSection* const& cs_ );
+        void removeCanvas( CrossSection* const& cs_ );
+        void highlightCanvas( CrossSection* const& cs_ );
+        void updateCanvas();
+
+
+
+    signals:
+
+
+        void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
 
 
 

@@ -21,6 +21,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         virtual void addVolume( Volume* const& raw_ );
+        void updateVolume();
         virtual void clearVolume();
 
 

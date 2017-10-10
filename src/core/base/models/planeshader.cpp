@@ -199,6 +199,12 @@ void PlaneShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, cons
 
 
 
+void PlaneShader::update()
+{
+    createPlane();
+}
+
+
 void PlaneShader::clear()
 {
     reset();

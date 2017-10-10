@@ -27,12 +27,25 @@ class Controller
 
         void setScene3d( Scene3d* const& sc_ );
 
-
         void init();
+
+
         void addVolume();
 
+        void acceptVolumeDimensions( CrossSection::Direction dir_, double w_, double h_ );
+        void setVolumeDimensions( const double& width_, const double& height_, const double& length_ );
+        void getVolumeDimensions( double& width_, double& height_, double& length_ ) const;
+
+
+
+
         void addCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        void removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
+
+        void setCurrentCrossSection( const double& depth_ );
         CrossSection* getCurrentCrossSection();
+
+        CrossSection* getCrossection( const double& depth_ );
 
 
 
@@ -47,7 +60,6 @@ class Controller
 
         Volume* volume;
         std::map< std::size_t, Object* > objects;
-//        mutable std::map< double, CrossSection* > actives_csections;
         Container< double, CrossSection* > actives_csections;
 };
 

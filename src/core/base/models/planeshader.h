@@ -19,17 +19,19 @@ class PlaneShader: public Shader
 
         void setCrossSection( CrossSection* const& raw_ );
 
-
-        void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
-                                    const std::vector< GLfloat >& normals_ );
-
-
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                 const int& h );
+
+        void update();
         void clear();
 
 
     protected:
+
+
+        void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
+                                    const std::vector< GLfloat >& normals_ );
+
 
 
         void setDefaultValues();

@@ -34,6 +34,9 @@ class MainWindow: public QMainWindow
 
     signals:
 
+        void updateVolume();
+
+
 
 
     protected slots:

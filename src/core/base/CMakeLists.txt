@@ -18,7 +18,6 @@ set( BASE_HEADERS constants/constants.hpp
                   models/slider.h
                   models/controller.h
                   models/object.h
-                  models/cross_section.h
                   models/region.h
                   models/volume.h
                   models/crosssection.h

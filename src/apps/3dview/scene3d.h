@@ -36,6 +36,7 @@ class Scene3d: public QObject, public Scene
 
 
         virtual void addVolume( Volume* const& raw_ );
+        virtual void updateVolume();
         virtual void clearVolume();
 
 

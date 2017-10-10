@@ -27,10 +27,14 @@ void CanvasStack::addElement( std::size_t id_, QGraphicsView* canvas_ )
 
 void CanvasStack::removeElement( std::size_t id_ )
 {
-    hb_mainlayout->removeWidget( Container::data[ id_ ] );
+    QGraphicsView* canvas_ = Container::data[ id_ ];
+    hb_mainlayout->removeWidget( canvas_ );
+
+
     bool status = Container::removeElement( id_ );
     if( status == false ) return;
 
+    delete[] canvas_;
     update();
 
 }

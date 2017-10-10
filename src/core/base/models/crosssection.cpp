@@ -49,10 +49,22 @@ Volume* CrossSection::getVolume() const
 }
 
 
-void CrossSection::getCoordinates( std::vector< double >& vertices_ ) const
+void CrossSection::getCoordinates( std::vector< double >& vertices_ )
 {
+
+
+    double maxx , maxy, maxz;
+    double minx , miny, minz;
+
+    getMaxMin( maxx, maxy, maxz, minx, miny, minz );
+
     if( direction == Direction::Z )
     {
+        if( depth > maxz )
+            depth = maxz;
+        else if( depth < minz )
+            depth = minz;
+
         volume->getFrontFace( vertices_ );
         vertices_[ 2 ]  = depth;
         vertices_[ 5 ]  = depth;
@@ -61,6 +73,13 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ ) const
     }
     else if( direction == Direction::Y )
     {
+
+        if( depth > maxy )
+            depth = maxy;
+        else if( depth < miny )
+            depth = miny;
+
+
         volume->getBottomFace( vertices_ );
         vertices_[ 1 ] = depth;
         vertices_[ 4 ] = depth;
@@ -69,6 +88,13 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ ) const
     }
     else if( direction == Direction::X )
     {
+
+        if( depth > maxx )
+            depth = maxx;
+        else if( depth < minx )
+            depth = minx;
+
+
         volume->getRightFace( vertices_ );
         vertices_[ 0 ] = depth;
         vertices_[ 3 ] = depth;
@@ -98,9 +124,9 @@ void CrossSection::setDirection( const CrossSection::Direction& dir_ )
     direction = dir_;
 }
 
-void CrossSection::getDirection( CrossSection::Direction& dir_ ) const
+CrossSection::Direction CrossSection::getDirection() const
 {
-    dir_ = direction;
+    return direction;
 }
 
 void CrossSection::setDepth( double depth_ )
