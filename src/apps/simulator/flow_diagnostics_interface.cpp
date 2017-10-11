@@ -574,10 +574,24 @@ bool FlowDiagnosticsInterface::setSkeleton(
     const std::vector<CurveMesh> &right_boundary_curves,
     const std::vector<CurveMesh> &front_boundary_curves,
     const std::vector<CurveMesh> &back_boundary_curves
-	
     )
 {
-	//region.readintoregion //zzzzzz
+
+	std::vector<int> triangles, edges;
+	std::vector<double> coord;
+	for (int isur = 0; isur < triangle_meshes.size(); isur++){
+		for (int iv = 0; iv < triangle_meshes[isur].vertex_list.size(); iv++){
+			coord.push_back(triangle_meshes[isur].vertex_list[iv]);
+		}
+		for (int iv = 0; iv < triangle_meshes[isur].face_list.size(); iv++){
+			triangles.push_back(triangle_meshes[isur].face_list[iv]);
+		}
+
+	}
+
+
+
+
     return false;
 }
 
