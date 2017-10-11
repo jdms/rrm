@@ -92,9 +92,6 @@ public:
     void loadWellsGeometry(char*); //should be called after setting all wells
 
 
-
-
-
     /// \brief Read user input file --refers to: last code
     void readUserInput(const std::string& input_file);
 
@@ -341,8 +338,6 @@ public:
     void clearComputedQuantities();
 
 	
-
-
     /* The following definitions are the first step towards creating
     * tetrhedral meshes for the new generic models.
     *
@@ -363,7 +358,7 @@ public:
         std::vector<std::size_t> edge_list;
     };
 
-    /* Not for now */
+    /* for integration Jan 2018 */
     bool setSkeleton(
         const std::vector<TriangleMesh> &triangle_meshes,
         const std::vector<CurveMesh> &left_boundary_curves,
