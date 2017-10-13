@@ -32,7 +32,7 @@ class SketchScene: public QGraphicsScene, public Scene
         void removeCrossSection( CrossSection* const& raw_ ){}
 
 
-        void addObject( Object* const& raw_ ){}
+        void addObject( Object* const& raw_ );
 
 
     signals:
@@ -55,6 +55,7 @@ class SketchScene: public QGraphicsScene, public Scene
         UserInteraction current_interaction = UserInteraction::EDITING_BOUNDARY;
 
         VolumeItemWrapper* volume;
+        std::map< std::size_t, ObjectItemWrapper* > objects;
 
 };
 

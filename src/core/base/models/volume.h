@@ -5,7 +5,10 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 
+
+class Object;
 
 class Volume
 {
@@ -43,9 +46,9 @@ class Volume
 
 
 
-        void addObject( std::size_t id_ );
+        void addObject( std::size_t id_, Object* const& obj_ );
         void removeObject( std::size_t id_ );
-        std::set<size_t> getObjects() const;
+        std::map< std::size_t, Object* > getObjects() const;
 
 
         void addCrossSection( std::size_t id_ );
@@ -78,7 +81,7 @@ class Volume
         bool is_visible;
         bool is_resizable;
 
-        std::set< std::size_t > stratigraphies;
+        std::map< std::size_t, Object* > stratigraphies;
         std::set< std::size_t > csections;
 
 };
