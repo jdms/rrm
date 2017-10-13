@@ -1,4 +1,6 @@
 #include "volume.h"
+#include "object.h"
+
 
 Volume::Volume()
 {
@@ -189,9 +191,10 @@ void Volume::getBottomFace( std::vector< double >& vertices_ ) const
 }
 
 
-void Volume::addObject( std::size_t id_ )
+void Volume::addObject( std::size_t id_, Object* const& obj_ )
 {
-    stratigraphies.insert( id_ );
+//    stratigraphies.insert( id_ );
+    stratigraphies[ id_ ] = obj_;
 }
 
 
@@ -201,7 +204,7 @@ void Volume::removeObject( std::size_t id_ )
     stratigraphies.erase( id_ );
 }
 
-std::set< std::size_t > Volume::getObjects() const
+std::map< std::size_t, Object* > Volume::getObjects() const
 {
     return stratigraphies;
 }

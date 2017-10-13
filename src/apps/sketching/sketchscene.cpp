@@ -60,6 +60,14 @@ void SketchScene::clearVolume()
 
 
 
+void SketchScene::addObject( Object* const& raw_ )
+{
+    //TODO: check if valid raw->getIndex
+
+    std::size_t index_ = raw_->getIndex();
+    objects[ index_ ] = new ObjectItemWrapper( raw_ );
+
+}
 
 
 
