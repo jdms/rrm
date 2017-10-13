@@ -12,16 +12,19 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 set( SKETCHING_HEADERS      sketchwindow.h
                             canvasstack.h
                             sketchscene.h
-                            item_wrappers/volume_item_wrapper.h)
+                            item_wrappers/volume_item_wrapper.h
+                            item_wrappers/object_item_wrapper.h )
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
                             canvasstack.h
                             sketchscene.h )
 
+
 set( SKETCHING_SOURCES      sketchwindow.cpp
                             canvasstack.cpp
                             sketchscene.cpp
-                            item_wrappers/volume_item_wrapper.cpp )
+                            item_wrappers/volume_item_wrapper.cpp
+                            item_wrappers/object_item_wrapper.cpp )
 
 
 ## Q_OBJECT files

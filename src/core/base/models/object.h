@@ -5,14 +5,15 @@
 #include <string>
 #include <map>
 
+#include "./surface.h"
+#include "./polycurve.h"
+
 
 class Object
 {
 
     public:
 
-        using Surface = double;
-        using Curve2D = double;
 
         enum class Type{ STRATIGRAPHY, FAULT };
 
@@ -30,6 +31,10 @@ class Object
 
         void setType( const Object::Type& type_ );
         void getType( Object::Type& type_ ) const;
+
+
+        void setColor( int r, int g, int b );
+        void getColor( int& r, int& g, int& b ) const ;
 
 
         void setEditable( const bool status_ );
@@ -51,16 +56,16 @@ class Object
         bool isEmpty() const;
 
 
-        void addCurve( std::size_t csection_id_, const Curve2D& curve_ );
-        Curve2D& getCurve( std::size_t csection_id_ ) const;
+        void addCurve( std::size_t csection_id_, const PolyCurve& curve_ );
+        PolyCurve getCurve( std::size_t csection_id_ ) const;
         void removeCurve( std::size_t csection_id_ );
 
 
-        std::map< std::size_t, Curve2D >& getCrossSectionCurves() const;
+        std::map< std::size_t, PolyCurve > getCrossSectionCurves() const;
         void removeCrossSectionCurves();
 
 
-        void addTrajectory( const Curve2D& traj_ );
+        void addTrajectory( const PolyCurve& traj_ );
         void removeTrajectory();
         bool hasTrajectory() const;
 
@@ -95,9 +100,17 @@ class Object
         bool is_selected;
         bool is_visible;
 
-        mutable std::map< std::size_t, Curve2D > csection_curves;
+        std::map< std::size_t, PolyCurve > csection_curves;
         Surface surface;
-        Curve2D trajectory;
+        PolyCurve trajectory;
+
+
+        struct Color
+        {
+            int r;
+            int g;
+            int b;
+        } color;
 
 };
 

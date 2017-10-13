@@ -4,6 +4,7 @@
 
 #include "volume.h"
 #include "crosssection.h"
+#include "object.h"
 
 
 class Scene
@@ -16,10 +17,10 @@ class Scene
 
         virtual void addVolume( Volume* const& raw_ ) = 0;
         virtual void clearVolume() = 0;
-//        virtual void updateVolume();
+        virtual void updateVolume() = 0;
 
 
-//        virtual void addObject() = 0;
+        virtual void addObject(  Object* const& raw_ ) = 0;
 //        virtual void updateObject();
 //        virtual void selectObject();
 

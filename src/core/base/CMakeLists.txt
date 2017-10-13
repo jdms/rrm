@@ -20,6 +20,8 @@ set( BASE_HEADERS constants/constants.hpp
                   models/object.h
                   models/region.h
                   models/volume.h
+                  models/polycurve.h
+                  models/surface.h
                   models/crosssection.h
                   models/planeshader.h
                   models/scene.h
@@ -29,7 +31,6 @@ set( BASE_HEADERS constants/constants.hpp
                   models/well.h)
 
 set( BASE_MOC_HEADERS models/slider.h )
-
 
 
 set( BASE_SOURCES constants/constants.cpp

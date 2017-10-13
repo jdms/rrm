@@ -44,6 +44,8 @@ class Scene3d: public QObject, public Scene
         virtual void removeCrossSection( CrossSection* const& raw_ );
 
 
+        virtual void addObject(  Object* const& raw_ ){}
+
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
 
