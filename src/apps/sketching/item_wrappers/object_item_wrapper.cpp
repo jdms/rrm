@@ -1,12 +1,106 @@
+#include <limits>
+#include <iostream>
+
 #include "object_item_wrapper.h"
 
-#include "sketching/polyqt_utils.hpp"
-#include "core/base/models/object.h"
 
-ObjectItemWrapper::ObjectItemWrapper()
+ObjectItemWrapper::ObjectItemWrapper( Object* const& obj_ )
 {
-    object = nullptr;
-    setFlag( QGraphicsItem::ItemIsSelectable, false );
+    setRawObject( obj_ );
+}
+
+
+
+void ObjectItemWrapper::setRawObject( Object* const& obj_ )
+{
+    raw = obj_;
+    setupPen();
+    updateObject();
+}
+
+
+Object* ObjectItemWrapper::getRawObject() const
+{
+    return raw;
+}
+
+
+
+
+void ObjectItemWrapper::updateObject()
+{
+    updateState();
+    updateCurve();
+}
+
+
+void ObjectItemWrapper::updateState()
+{
+    bool selectable_ = false;
+
+    int r, g, b;
+    raw->getColor( r, g, b );
+
+    QColor color_ = QColor( r, g, b );
+    Qt::PenStyle style_ = Qt::SolidLine;
+
+
+    if( raw->isSelectable() == true )
+    {
+        selectable_ = true;
+        color_ = Qt::yellow;
+    }
+
+    else if( raw->isSelected() == true )
+    {
+        color_ = color_.lighter();
+        style_ = Qt::DotLine;
+    }
+
+
+    current_pen.setColor( color_ );
+    current_pen.setStyle( style_ );
+
+    setFlag( QGraphicsItem::ItemIsSelectable, selectable_ );
+    update();
+}
+
+
+void ObjectItemWrapper::updateCurve()
+{
+
+    prepareGeometryChange();
+
+    clearCurve();
+    curve = ObjectItemWrapper::polycurveToQPainterPath( raw->getCurve( current_csection ) );
+    setPath( curve );
+    update();
+}
+
+
+void ObjectItemWrapper::updateDepth( double depth_ )
+{
+    current_csection = depth_;
+    updateCurve();
+}
+
+
+void ObjectItemWrapper::setupPen()
+{
+    current_pen.setStyle( Qt::SolidLine );
+    current_pen.setCapStyle( Qt::RoundCap );
+    current_pen.setJoinStyle( Qt::RoundJoin );
+    current_pen.setWidth( 3 );
+
+}
+
+
+
+
+bool ObjectItemWrapper::isVisible() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isVisible();
 
 }
 
@@ -19,184 +113,105 @@ QRectF ObjectItemWrapper::boundingRect() const
 }
 
 
-void ObjectItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
-                                          QWidget* w )
+void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
 {
-
-    if( isVisible() == false ) return;
-
-    if( ( isSelected() == true ) && ( object->getSelected() == false ) )
-    {
-        QColor c = visible_subpaths_pen.color().darker();
-        visible_subpaths_pen.setColor( visible_subpaths_pen.color().darker() );
-    }
+    if( isVisible() == false  ) return;
 
     painter->setRenderHint( QPainter::Antialiasing );
-    painter->setPen( visible_subpaths_pen );
+    painter->setPen( current_pen );
     painter->drawPath( curve );
 }
 
 
-void ObjectItemWrapper::setRawObject( Object* const& obj, double depth )
-{
-    object = obj;
-    csection_depth = depth;
-
-    setupPen();
-    updateObject();
-}
-
-
-void ObjectItemWrapper::updateDepth( double depth )
-{
-
-    csection_depth = depth;
-    updateObject();
-}
-
-
-std::size_t ObjectItemWrapper::getId() const
-{
-    return object->getId();
-}
-
-
-void ObjectItemWrapper::updateState()
-{
-    bool selectable = false;
-
-    if( object->getSelectable() == true )
-    {
-        visible_subpaths_pen.setColor( selectable_color );
-        selectable = true;
-    }
-    else if( object->getSelected() == true )
-    {
-        int r, g, b;
-        object->getColor( r, g, b );
-        visible_subpaths_pen.setColor( QColor( r, g, b ).lighter() );
-        visible_subpaths_pen.setStyle( Qt::DotLine );
-    }
-    else
-    {
-        int r, g, b;
-        object->getColor( r, g, b );
-        visible_subpaths_pen.setColor( QColor( r, g, b ) );
-        visible_subpaths_pen.setStyle( Qt::SolidLine );
-    }
-
-    setFlag( QGraphicsItem::ItemIsSelectable, selectable );
-    update();
-}
-
-
-void ObjectItemWrapper::enableEditing()
-{
-    setFlag( QGraphicsItem::ItemIsSelectable, object->getEditable() );
-}
-
-
-void ObjectItemWrapper::updateCurve()
-{
-
-    clearCurve();
-
-    Curve2D c = object->getCrossSectionCurve( csection_depth );
-    std::vector< std::size_t > edges = object->getCrossSectionCurveEdges( csection_depth );
-
-
-    QPolygonF points = PolyQtUtils::curve2DToQPolyginF( c );
-
-    if( edges.empty() == true )
-    {
-        curve.addPolygon( points );
-        setPath( curve );
-        update();
-        return;
-    }
-
-    std::size_t nedges = edges.size()/2;
-    std::size_t last_id = 10000;
-
-    for( size_t i = 0; i < nedges; ++i )
-    {
-
-        std::size_t id0 = edges[ 2*i ];
-        std::size_t id1 = edges[ 2*i + 1 ];
-
-        if( last_id != id0 )
-            curve.moveTo( QPointF( points[ id0 ].x(),
-                                   points[ id0 ].y() ) );
-        else
-            curve.lineTo( QPointF( points[ id1 ].x(),
-                                   points[ id1 ].y() ) );
-
-
-        last_id = id1;
-    }
-
-    setPath( curve );
-    update();
-
-}
-
-
-void ObjectItemWrapper::updateObject()
-{
-    updateCurve();
-    updateState();
-}
-
-
-bool ObjectItemWrapper::isVisible() const
-{
-    return object->getVisibility();
-}
-
-
-void ObjectItemWrapper::setupPen()
-{
-    visible_subpaths_pen.setStyle( Qt::SolidLine );
-    visible_subpaths_pen.setCapStyle( Qt::RoundCap );
-    visible_subpaths_pen.setJoinStyle( Qt::RoundJoin );
-    visible_subpaths_pen.setWidth( 3 );
-
-
-    hidden_subpaths_pen.setStyle( Qt::DotLine );
-    hidden_subpaths_pen.setCapStyle( Qt::RoundCap );
-    hidden_subpaths_pen.setJoinStyle( Qt::RoundJoin );
-    hidden_subpaths_pen.setWidth( 3 );
-}
 
 
 void ObjectItemWrapper::clear()
 {
-    clearData();
-    csection_depth = 0.0;
-}
-
-
-void ObjectItemWrapper::clearData()
-{
-//    if( object != nullptr )
-//        object->clear();
-
-    prepareGeometryChange();
-    object = nullptr;
-
     clearCurve();
+    clearData();
 }
 
 
 void ObjectItemWrapper::clearCurve()
 {
     prepareGeometryChange();
-
     curve = QPainterPath();
-
-    intersection_points.clear();
-    hidden_subpaths.clear();
 }
 
 
+void ObjectItemWrapper::clearData()
+{
+    raw = nullptr;
+    current_csection = 0;
+}
+
+
+
+
+QPainterPath ObjectItemWrapper::polycurveToQPainterPath( const PolyCurve& pol_ )
+{
+
+    QPainterPath path_;
+
+    std::vector< double > vertices_;
+    pol_.getVertices( vertices_ );
+
+    std::vector< std::size_t > edges_;
+    pol_.getEdges( edges_ );
+
+    if( edges_.empty() == true )
+        path_.addPolygon( ObjectItemWrapper::vectorToQPolygonF( vertices_ ) );
+
+    else
+        path_ = ObjectItemWrapper::vectorToPainterPath( vertices_, edges_ );
+
+
+    return path_;
+}
+
+
+
+QPolygonF ObjectItemWrapper::vectorToQPolygonF( const std::vector< double >& vertices_ )
+{
+
+    std::size_t size_ = vertices_.size()/2;
+
+    QPolygonF pol_ ;
+    for( std::size_t i = 0 ; i < size_ ; ++i )
+        pol_ << QPointF( vertices_[ 2*i ], vertices_[ 2*i + 1 ] );
+
+    return pol_;
+
+}
+
+
+
+QPainterPath ObjectItemWrapper::vectorToPainterPath( const std::vector< double >& vertices_,
+                                                const std::vector< std::size_t >& edges_ )
+{
+
+    std::size_t number_of_edges_ = edges_.size()/2;
+    std::size_t last_id_ = UINT_MAX;
+
+    QPainterPath path_;
+    for( std::size_t i = 0; i < number_of_edges_; ++i )
+    {
+
+        std::size_t id0_ = edges_[ 2*i ];
+        std::size_t id1_ = edges_[ 2*i + 1 ];
+
+        if( last_id_ != id0_ )
+            path_.moveTo( QPointF( vertices_[ 2*id0_ ],
+                                   vertices_[ 2*id0_ + 1 ] ) );
+        else
+            path_.lineTo( QPointF( vertices_[ 2*id1_ ],
+                                   vertices_[ 2*id1_ + 1 ] ) );
+
+        last_id_ = id1_;
+
+    }
+
+    return path_;
+
+}
 

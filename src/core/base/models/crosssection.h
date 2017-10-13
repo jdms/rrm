@@ -77,7 +77,7 @@ class CrossSection
         bool is_visible;
         std::string image_path;
 
-        mutable std::map< Object, Curve2D* > objects;
+        std::map< Object, Curve2D* > objects;
         Volume* volume;
 
 };

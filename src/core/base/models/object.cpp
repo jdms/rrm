@@ -50,6 +50,24 @@ void Object::getType( Object::Type &type_ ) const
 
 
 
+void Object::setColor( int r, int g, int b )
+{
+    color.r = r;
+    color.g = g;
+    color.b = b;
+
+}
+
+
+void Object::getColor( int& r, int& g, int& b ) const
+{
+    r = color.r;
+    g = color.g;
+    b = color.b;
+}
+
+
+
 void Object::setEditable( const bool status_ )
 {
     is_editable = status_;
@@ -107,69 +125,70 @@ bool Object::isEmpty() const
 
 
 
-void Object::addCurve( std::size_t csection_id_, const Curve2D& curve_ )
+void Object::addCurve( std::size_t csection_id_, const PolyCurve& curve_ )
 {
     csection_curves[ csection_id_ ] = curve_;
 }
 
-Object::Curve2D& Object::getCurve( std::size_t csection_id_ ) const
+PolyCurve Object::getCurve( std::size_t csection_id_ ) const
 {
     //TODO: verificar se existe id_;
-    return csection_curves[ csection_id_ ];
+    return csection_curves.at( csection_id_ );
 }
 
 void Object::removeCurve( std::size_t csection_id_ )
 {
     //TODO: verificar se existe id_;
-    //TODO: clear curve;
-//    return csection_curves.erase( csection_id_ );
+
+    csection_curves.at( csection_id_ ).clear();
+    csection_curves.erase( csection_id_ );
+
 }
 
 
 
-std::map< std::size_t, Object::Curve2D >& Object::getCrossSectionCurves() const
+std::map< std::size_t, PolyCurve > Object::getCrossSectionCurves() const
 {
     return csection_curves;
 }
 
 void Object::removeCrossSectionCurves()
 {
-//    for( auto it: csection_curves )
-//    {
-//        removeCurve( it->first );
-//    }
+    for( auto it: csection_curves )
+    {
+        removeCurve( it.first );
+    }
 
-//    csection_curves.clear();
+    csection_curves.clear();
 }
 
 
 
-void Object::addTrajectory( const Curve2D& traj_ )
+void Object::addTrajectory( const PolyCurve& traj_ )
 {
     trajectory = traj_;
 }
 
 void Object::removeTrajectory()
 {
-    //TODO: clear trajectory;
+    trajectory.clear();
 }
 
 bool Object::hasTrajectory() const
 {
-    //TODO: check if traj is empty
-    return false;
+    return trajectory.isEmpty();
 }
 
 
 
 void Object::setSurface( const Surface& surface_ )
 {
-//    surface = surface_;
+    surface = surface_;
 }
 
 void Object::removeSurface()
 {
-    //TODO: clear surface
+    surface.clear();
 }
 
 

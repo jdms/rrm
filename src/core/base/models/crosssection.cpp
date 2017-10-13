@@ -168,7 +168,7 @@ void CrossSection::addObject( const Object& id_, Curve2D* const& curve_ )
 CrossSection::Curve2D* const& CrossSection::getObjectCurve( const Object& id_ ) const
 {
     //TODO: check if id is valid
-    return objects[ id_ ];
+    return objects.at( id_ );
 
 }
 

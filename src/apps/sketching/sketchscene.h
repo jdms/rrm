@@ -3,8 +3,11 @@
 
 #include <QGraphicsScene>
 
+
 #include "./item_wrappers/volume_item_wrapper.h"
+#include "./item_wrappers/object_item_wrapper.h"
 #include "./core/base/models/scene.h"
+
 
 class SketchScene: public QGraphicsScene, public Scene
 {
@@ -21,13 +24,15 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         virtual void addVolume( Volume* const& raw_ );
-        void updateVolume();
+        virtual void updateVolume();
         virtual void clearVolume();
 
 
         void addCrossSection( CrossSection* const& raw_ ){}
         void removeCrossSection( CrossSection* const& raw_ ){}
 
+
+        void addObject( Object* const& raw_ ){}
 
 
     signals:
