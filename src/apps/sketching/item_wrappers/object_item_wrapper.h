@@ -16,7 +16,7 @@ class ObjectItemWrapper: public QGraphicsPathItem
     public:
 
         ObjectItemWrapper() = default;
-        ObjectItemWrapper( Object* const& obj_ );
+        ObjectItemWrapper( Object* const& obj_, double depth_ );
 
 
         void setRawObject( Object* const& obj_ );

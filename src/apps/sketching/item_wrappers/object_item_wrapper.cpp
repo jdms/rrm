@@ -4,9 +4,10 @@
 #include "object_item_wrapper.h"
 
 
-ObjectItemWrapper::ObjectItemWrapper( Object* const& obj_ )
+ObjectItemWrapper::ObjectItemWrapper( Object* const& obj_, double depth_ )
 {
     setRawObject( obj_ );
+    updateDepth( depth_ );
 }
 
 
@@ -69,11 +70,13 @@ void ObjectItemWrapper::updateState()
 void ObjectItemWrapper::updateCurve()
 {
 
+    if( raw->isEmpty() == true ) return;
+
     prepareGeometryChange();
 
     clearCurve();
     curve = ObjectItemWrapper::polycurveToQPainterPath( raw->getCurve( current_csection ) );
-    setPath( curve );
+//    setPath( curve );
     update();
 }
 
@@ -83,6 +86,8 @@ void ObjectItemWrapper::updateDepth( double depth_ )
     current_csection = depth_;
     updateCurve();
 }
+
+
 
 
 void ObjectItemWrapper::setupPen()

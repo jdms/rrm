@@ -38,15 +38,16 @@ class Controller
 
 
 
-
         void addCrossSection( const CrossSection::Direction& dir_, double depth_ );
         void removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        CrossSection* getCrossection( const double& depth_ );
 
         void setCurrentCrossSection( const double& depth_ );
         CrossSection* getCurrentCrossSection();
 
-        CrossSection* getCrossection( const double& depth_ );
 
+
+        void addObject();
 
 
 

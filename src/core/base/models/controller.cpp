@@ -14,6 +14,7 @@ void Controller::setScene3d( Scene3d* const& sc_ )
 void Controller::init()
 {
     addVolume();
+    addObject();
 }
 
 
@@ -97,16 +98,18 @@ CrossSection* Controller::getCrossection( const double& depth_ )
 
 
 
-/*
+
 void Controller::addObject()
 {
-    Object* obj = new Object();
-    std::size_t index_ = obj->getIndex();
+    Object* obj_ = new Object();
+    std::size_t index_ = obj_->getIndex();
 
-    objects[ index_ ] = obj;
-    volume->addObject( index_ );
+    objects[ index_ ] = obj_;
+    volume->addObject( index_, obj_ );
 }
 
+
+/*
 
 void Controller::addObjectCurve( Curve2D* const& curve_ )
 {
