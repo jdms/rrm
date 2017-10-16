@@ -19,16 +19,6 @@ namespace RRM
                 this->setupWidget();
                 this->createConnections();
 
-                /// @FIXME September 2017
-                this->ui_->label_Region_Permeability->setVisible(false);
-                this->ui_->doubleSpinBox_Region_Permeability_->setVisible(false);
-                this->ui_->horizontalSlider_Permeability_->setVisible(false);
-                this->ui_->label_Region_Porosity_->setVisible(false);
-                this->ui_->doubleSpinBox_Region_Porosity_->setVisible(false);
-                this->ui_->horizontalSlider_Porosity_->setVisible(false);
-
-                this->ui_->label_Region_Permeability_Curves_->setVisible(false);
-                this->ui_->comboBox_Region_Permeability_Curves_->setVisible(false);
 
                 /// @FIXME September 2017
                 this->doubleSpinbBox_low_permeability_->setSuffix(" (mD)");
@@ -36,7 +26,7 @@ namespace RRM
                 this->doubleSpinbBox_low_porosity_->setSuffix(" (--)");
                 this->doubleSpinbBox_high_porosity_->setSuffix(" (--)");
 
-                this->ui_->doubleSpinBox_Region_Saturation_->setSuffix(" (--)");
+				doubleSpinBox_Region_Water_Saturation_->setSuffix(" (--)");
 
                 ///@September
                 emit this->ui_->radioButton_Linear_->toggled(true);
@@ -46,8 +36,6 @@ namespace RRM
         void RegionWidget::setupWidget()
         {
             this->number_of_regions_ = 0;
-            this->ui_->label_Region_Permeability_Curves_->setVisible(true);
-            this->ui_->comboBox_Region_Permeability_Curves_->setVisible(true);
 
 
             /// @FIXME September
@@ -60,11 +48,11 @@ namespace RRM
             doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
             doubleSpinbBox_high_porosity_ = new QDoubleSpinBox();
 
-            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, 4, 0);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 4, 1);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, 4, 2, 1, 5);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 4, 8);
-            this->porosity_position_ = std::make_tuple<int, int, int, int>(4, 2, 1, 5);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, 0, 0);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 0, 1);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, 0, 2, 1, 5);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 8);
+            this->porosity_position_ = std::make_tuple<int, int, int, int>(0, 2, 1, 5);
 
             /// @FIXME September
             slider_permeability_ = new QSlider(Qt::Orientation::Horizontal);
@@ -76,11 +64,11 @@ namespace RRM
             doubleSpinbBox_low_permeability_ = new QDoubleSpinBox();
             doubleSpinbBox_high_permeability_ = new QDoubleSpinBox();
 
-            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, 5, 0);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 5, 1);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 5, 2, 1, 5);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 5, 8);
-            this->permeability_position_ = std::make_tuple<int, int, int, int>(5, 2, 1, 5);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, 1, 0);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 1, 1);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 1, 2, 1, 5);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 1, 8);
+            this->permeability_position_ = std::make_tuple<int, int, int, int>(1, 2, 1, 5);
 
             doubleSpinbBox_low_permeability_->setMinimum(0.001);
             doubleSpinbBox_low_permeability_->setMaximum(10000.0);
@@ -95,7 +83,6 @@ namespace RRM
             slider_permeability_->setMaximum(102);
 
 
-
             doubleSpinbBox_low_porosity_->setMinimum(0.01);
             doubleSpinbBox_low_porosity_->setMaximum(0.35);
             doubleSpinbBox_low_porosity_->setDecimals(2);
@@ -107,6 +94,26 @@ namespace RRM
             qxt_span_slider_porosity_->setMaximum(101);
             slider_porosity_->setMinimum(-1);
             slider_porosity_->setMaximum(101);
+
+			// Water Saturation
+			slider_Water_Saturation_ = new QSlider(Qt::Orientation::Horizontal);
+			label_Water_Saturation_ = new QLabel(tr("Water Saturation"));
+			doubleSpinBox_Region_Water_Saturation_ = new QDoubleSpinBox();
+			
+			this->ui_->gridLayout_Region_Attributes_->addWidget(label_Water_Saturation_, 2, 0);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinBox_Region_Water_Saturation_, 2, 1);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(slider_Water_Saturation_, 2, 2, 1, 5);
+			
+			water_saturation_position_ = std::make_tuple<int, int, int, int>(2, 2, 1, 5);
+
+			slider_Water_Saturation_->setMinimum(0);
+			slider_Water_Saturation_->setMaximum(100);
+			doubleSpinBox_Region_Water_Saturation_->setMinimum(0);
+			doubleSpinBox_Region_Water_Saturation_->setMaximum(100);
+
+			slider_Water_Saturation_->setEnabled(false);
+			label_Water_Saturation_->setEnabled(false);
+			doubleSpinBox_Region_Water_Saturation_->setEnabled(false);
         }
 
 
@@ -177,85 +184,27 @@ namespace RRM
 
                 //@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
                 /// 0 to 10101
-                connect(ui_->horizontalSlider_Permeability_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
-                {
-                    double ex = -3.0 + (0.07)*static_cast<double>(ui_->horizontalSlider_Permeability_->value());
-                    double p = std::pow(10, ex);
-                    //std::cout << "Step " << horizontalSlider_Permeability->value() << " 10^" << ex << "= " << p << std::endl;
-                    ui_->doubleSpinBox_Region_Permeability_->setValue(p);
-
-                    permeability_values[ui_->comboBox_Region_->currentIndex()] = ui_->doubleSpinBox_Region_Permeability_->value();
-                    permeability_slider_values[ui_->comboBox_Region_->currentIndex()] = ui_->horizontalSlider_Permeability_->value();
-
-                });
-
-
-                ///// FIXME July 14
-                connect(ui_->doubleSpinBox_Region_Permeability_, &QDoubleSpinBox::editingFinished, this, [=]()
-                {
-                    double p = ui_->doubleSpinBox_Region_Permeability_->value();
-
-                    double ex = std::log10(p);
-
-                    int i = static_cast<int>( (ex + 3.0) / 0.07);
-
-                    ui_->horizontalSlider_Permeability_->setValue(i);
-
-                    permeability_values[ui_->comboBox_Region_->currentIndex()] = ui_->doubleSpinBox_Region_Permeability_->value();
-                    permeability_slider_values[ui_->comboBox_Region_->currentIndex()] = ui_->horizontalSlider_Permeability_->value();
-
-                });
-
-                /// Porosity
-                connect(ui_->horizontalSlider_Porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
-                {
-                    double ex = 0.01 + (0.0034)*static_cast<double>(ui_->horizontalSlider_Porosity_->value());
-                    ui_->doubleSpinBox_Region_Porosity_->setValue(ex);
-
-                    porosity_values[ui_->comboBox_Region_->currentIndex()] = ui_->doubleSpinBox_Region_Porosity_->value();
-                    porosity_slider_values[ui_->comboBox_Region_->currentIndex()] = ui_->horizontalSlider_Porosity_->value();
-
-                });
-
-                ///// FIXME July 14
-                connect(ui_->doubleSpinBox_Region_Porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
-                {
-                    permeability_values[ui_->comboBox_Region_->currentIndex()] = ui_->doubleSpinBox_Region_Porosity_->value();
-
-                    double ex = ui_->doubleSpinBox_Region_Porosity_->value();
-
-                    int i = static_cast<int>((ex - 0.01) / 0.0034);
-
-                    ui_->horizontalSlider_Porosity_->setValue(i);
-
-                    porosity_values[ui_->comboBox_Region_->currentIndex()] = ui_->doubleSpinBox_Region_Porosity_->value();
-                    porosity_slider_values[ui_->comboBox_Region_->currentIndex()] = ui_->horizontalSlider_Porosity_->value();
-                });
-
-
                 /// Saturation
-                connect(ui_->horizontalSlider_Saturation_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
+				connect(slider_Water_Saturation_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
 
-                        double ex = (0.01)*static_cast<double>(ui_->horizontalSlider_Saturation_->value());
-                        ui_->doubleSpinBox_Region_Saturation_->setValue(ex);
-                    //	/// FIXME Viscosity have to be the same for all model for now, util a better
-                        /// interface if design.
-                        saturation_values[ui_->comboBox_Region_->currentIndex()] = ex;
+					double ex = static_cast<double>(slider_Water_Saturation_->value());
+
+					doubleSpinBox_Region_Water_Saturation_->setValue(ex);
+
+                    saturation_values[ui_->comboBox_Region_->currentIndex()] = ex;
 
                 });
 
-                ///// FIXME July 14
-                connect(ui_->doubleSpinBox_Region_Saturation_, &QDoubleSpinBox::editingFinished, this, [=]()
+                /// FIXME September
+				connect(doubleSpinBox_Region_Water_Saturation_, &QDoubleSpinBox::editingFinished, this, [=]()
                 {
 
-                    double ex = ui_->doubleSpinBox_Region_Saturation_->value();
+					double ex = doubleSpinBox_Region_Water_Saturation_->value();
 
-                    int i = static_cast<int>((ex) / 0.01);
-                    /// FIXME Viscosity have to be the same for all model for now, util a better
-                    /// interface if design.
+					int i = static_cast<int>(ex);
 
-                    ui_->horizontalSlider_Saturation_->setValue(i);
+					slider_Water_Saturation_->setValue(i);
 
                     saturation_values[ui_->comboBox_Region_->currentIndex()] = ex;
 
@@ -304,7 +253,7 @@ namespace RRM
                 {
                     double ex = -3.0 + (0.07)*static_cast<double>(qxt_span_slider_permeability_->lowerValue());
                     ex = std::pow(10, ex);
-                    std::cout << "Step " << qxt_span_slider_permeability_->lowerValue() << std::endl;
+                    std::cout << "Step LINEAR" << qxt_span_slider_permeability_->lowerValue() << std::endl;
 
                     doubleSpinbBox_low_permeability_->setValue(ex);
                     permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
@@ -396,7 +345,10 @@ namespace RRM
                     double ex = -3.0 + (0.07)*static_cast<double>(slider_permeability_->value());
                     ex = std::pow(10, ex);
 
+					//std::cout << "Step CONSTANT " << slider_permeability_->value() << ex << std::endl;
+
                     doubleSpinbBox_low_permeability_->setValue(ex);
+
                     permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
                     permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
                 });
@@ -406,6 +358,8 @@ namespace RRM
                 {
                     double ex = 0.01 + (0.0034)*static_cast<double>(slider_porosity_->value());
                     doubleSpinbBox_low_porosity_->setValue(ex);
+
+					//std::cout << "Step CONSTANT " << slider_porosity_->value() << ex << std::endl;
 
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
@@ -418,11 +372,6 @@ namespace RRM
         /// Update text box with the current information
         void RegionWidget::updateRegionsWidget(int _index)
         {
-            ui_->doubleSpinBox_Region_Permeability_->setValue(permeability_values[_index]);
-            ui_->horizontalSlider_Permeability_->setValue(permeability_slider_values[_index]);
-
-            ui_->doubleSpinBox_Region_Porosity_->setValue(porosity_values[_index]);
-            ui_->horizontalSlider_Porosity_->setValue(porosity_slider_values[_index]);
 
             /// @FIXME Me September
             doubleSpinbBox_low_porosity_->setValue(porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first);
@@ -435,9 +384,9 @@ namespace RRM
             doubleSpinbBox_high_permeability_->setValue(permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].second);
             emit doubleSpinbBox_high_permeability_->editingFinished();
 
-
-            ui_->doubleSpinBox_Region_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
-            emit ui_->doubleSpinBox_Region_Saturation_->editingFinished();
+			/// @FIXME Me September
+			doubleSpinBox_Region_Water_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
+			emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
 
         }
 
@@ -453,16 +402,6 @@ namespace RRM
 
                     if (permeability_values.count(i) == 0)
                     {
-                        ui_->horizontalSlider_Permeability_->setValue(75);
-                        emit ui_->horizontalSlider_Permeability_->sliderMoved(75);
-                        ui_->horizontalSlider_Porosity_->setValue(88);
-                        emit ui_->horizontalSlider_Porosity_->sliderMoved(88);
-
-                        permeability_values[i] = ui_->doubleSpinBox_Region_Permeability_->value();
-                        permeability_slider_values[i] = 75;
-                        porosity_values[i] = ui_->doubleSpinBox_Region_Porosity_->value();
-                        porosity_slider_values[i] = 88;
-
 
                         positions_values[i].x() = 0.0;
                         positions_values[i].y() = 0.0;
@@ -486,8 +425,8 @@ namespace RRM
                         permeability_gradient_values_[i].second = 250.0;
 
                         saturation_values[i] = 0.0;
-                        ui_->doubleSpinBox_Region_Saturation_->setValue(0.0);
-                        emit ui_->doubleSpinBox_Region_Saturation_->editingFinished();
+                        doubleSpinBox_Region_Water_Saturation_->setValue(0.0);
+						emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
 
                     }
 
@@ -535,10 +474,17 @@ namespace RRM
                     std::cout << "region " << index.first << ": " << index.second.x() << ", "
                               << index.second.y() << ", " << index.second.z() << std::endl << std::flush;
 
-
                 }
 
                 this->updateRegionsWidget(ui_->comboBox_Region_->currentIndex());
         }
+
+
+		void RegionWidget::setByRegionSaturation(bool _option)
+		{
+			slider_Water_Saturation_->setEnabled(_option);
+			label_Water_Saturation_->setEnabled(_option);
+			doubleSpinBox_Region_Water_Saturation_->setEnabled(_option);
+		}
 
 } /* namespace RRM */
