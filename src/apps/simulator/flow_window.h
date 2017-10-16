@@ -122,6 +122,8 @@ class FlowWindow : public  QMainWindow
         size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
         void sendNumberOfRegions(int _number_of_regions);
 
+        void getVolumeDimension(double& width, double& heigth, double&  depth);
+
         void requestRegionsPosition( std::map<int, Eigen::Vector3f>& region_point );
 
     private:

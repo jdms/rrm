@@ -9,6 +9,7 @@
 #define _REGIONWIDGET_HPP_
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QLabel>
 #include <Eigen/Dense>
 
 
@@ -48,12 +49,8 @@ namespace RRM
 
                         void setRegionDepth(float _depth);
 
-                        void setByRegionSaturation( bool option )
-                        {
-                            ui_->label_Region_Saturation_->setEnabled( option );
-                            ui_->doubleSpinBox_Region_Saturation_->setEnabled( option );
-                            ui_->horizontalSlider_Saturation_->setEnabled( option );
-                        }
+						void setByRegionSaturation(bool option);
+    
 
                         void clear();
 
@@ -83,13 +80,8 @@ namespace RRM
                         std::map< int, double > permeability_values;
                         std::map< int, double > porosity_values;
                         std::map< int, double > saturation_values;
-                        std::map< int, int >    permeability_curve_values;
 
-                        /// Region GUI Attributes. To keep track of the slider position
-                        std::map< int, int > permeability_slider_values;
-                        std::map< int, int > porosity_slider_values;
-                        std::map< int, int > sturation_slider_values;
-
+                        
                         ///@FIXME September 2017
                         QxtSpanSlider* qxt_span_slider_permeability_;
                         QSlider*     slider_permeability_;
@@ -108,7 +100,13 @@ namespace RRM
 
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
+		
+						// Water Saturation
+						QSlider*        slider_Water_Saturation_;
+						QLabel*			label_Water_Saturation_;
+						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
 
+						std::tuple<int, int, int, int> water_saturation_position_;
         };
 
 } /* namespace RRM */

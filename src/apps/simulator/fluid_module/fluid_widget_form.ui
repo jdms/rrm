@@ -171,10 +171,10 @@
          <number>2</number>
         </property>
         <property name="minimum">
-         <double>1.000000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
-         <double>100.000000000000000</double>
+         <double>2000.000000000000000</double>
         </property>
         <property name="value">
          <double>10.000000000000000</double>
@@ -187,10 +187,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>2000</number>
         </property>
         <property name="value">
          <number>23</number>

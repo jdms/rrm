@@ -596,6 +596,9 @@ void FlowWindow::loadSurfacesfromSketch()
 
     emit getLegacyMeshes( points, nu, nv, num_extrusion_steps );
 
+    //emit getVolumeDimension(double& width, double& height, double&  depth);
+    //this->setVolumeDimensions();
+
     controller->setSkeletonData( points, nu, nv, num_extrusion_steps );
 
     canvas->updateMesh();
@@ -646,6 +649,10 @@ void FlowWindow::loadSurfacesfromSketch1()
     std::vector< CurveMesh > back_curves;
 
     emit getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
+
+    //emit getVolumeDimension(double& width, double& height, double&  depth);
+    //this->setVolumeDimensions();
+
     controller->setSkeleton( triangles_meshes, left_curves, right_curves, front_curves, back_curves );
 
     std::vector< double > vertices;
