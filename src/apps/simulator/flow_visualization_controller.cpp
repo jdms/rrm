@@ -638,6 +638,23 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
             ch[*c_it] = values[i++];
         }
 
+        //Water Saturation
+        values.clear();
+        i = 0;
+        status = code_interface.getWaterSaturationByCells(values);
+
+        if (status)
+        {
+            ch = ptr_mesh->request_cell_property<double>("Water Saturation");
+            ptr_mesh->set_persistent(ch);
+
+            for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+            {
+                // Set property value
+                ch[*c_it] = values[i++];
+            }
+        }
+
         //Velocity
         values.clear();
         i = 0;
@@ -988,4 +1005,17 @@ void FlowVisualizationController::setSaturationMethod( const SaturationMethod& o
     {
         std::cout << "Not implemented yet" << std::flush << std::endl;
     }
+}
+
+
+void FlowVisualizationController::setSinglePhase( bool status_ )
+{
+    int nphases = 1;
+
+    if( status_ == false )
+    {
+        nphases = 2;
+    }
+
+    code_interface.setNumberOfPhases( nphases );
 }

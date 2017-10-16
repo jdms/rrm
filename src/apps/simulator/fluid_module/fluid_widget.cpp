@@ -118,25 +118,26 @@ namespace RRM
 
 
         /// @FIXME September
-        connect( ui_->radioButton_Singlephase_, &QRadioButton::toggled, [=]()
+        connect( ui_->radioButton_Singlephase_, &QRadioButton::toggled, [=]( bool status_ )
         {
             ui_->comboBox_PhaseMethods_->setEnabled(false);
             ui_->label_Fluid_OilDensity_->setEnabled( false );
             ui_->doubleSpinBox_Fluid_OilDensity_->setEnabled( false );
             ui_->horizontalSlider_Fluid_OilDensity_->setEnabled( false );
 
-            emit setSinglePhase();
+            emit setSinglePhase( status_ );
 
             phase_method_[0].first = 1;
 
         } );
 
-        connect(ui_->radioButton_Multiphase_, &QRadioButton::toggled, this, [=]()
+        connect(ui_->radioButton_Multiphase_, &QRadioButton::clicked, this, [=]( bool status_ )
         {
             ui_->comboBox_PhaseMethods_->setEnabled(true);
             emit ui_->comboBox_PhaseMethods_->currentIndexChanged(phase_methods_names_[ui_->comboBox_PhaseMethods_->currentIndex()]);
 
-            phase_method_[0].first = 2;
+
+            //phase_method_[0].first = 2;
 
         });
 
@@ -166,6 +167,11 @@ namespace RRM
                 phase_method_[0].second = 2;
             }
         } );
+
+
+
+//        connect( ui_->radioButton_Singlephase_, &QRadioButton::toggled, [=](){ emit singlePhase(); } );
+//        connect( ui_->radioButton_Multiphase_, &QRadioButton::toggled, [=](){ emit multiPhase(); } );
 
 
     }
