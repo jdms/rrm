@@ -657,6 +657,8 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     p.porohigh(max_poros);
     region.modifypropertyarea(id, p);
 
+//    std::cout << "At region: " << id << " min perm = " << min_perm << ", max perm = " << max_perm
+//              << " min poros = " << min_poros << ", max poros = " << max_poros << "\n" << std::flush;
     return;
 }
 

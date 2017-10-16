@@ -536,8 +536,10 @@ void FlowWindow::createActions()
 
 
 
-    connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]()
+    connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]( bool status_ )
     {
+
+        controller->setSinglePhase( status_ );
         region_parameters_->setByRegionSaturation( false );
 
     } );
@@ -770,7 +772,7 @@ void FlowWindow::acceptUserParameters()
     region_parameters_->getRegionData(np, positions, permeability, porosity, saturation, porosity_gradients, permeability_gradients);
 
     /// Feeding HWU Flow Diagnostic
-    controller->setPropertyArea(np, positions, permeability, porosity, std::vector<double>(np,1.0), saturation, permeability_curves, porosity_gradients, permeability_gradients);
+    controller->setPropertyArea(np, positions, permeability, porosity, std::vector<double>(np,1.0), saturation, permeability_curves, permeability_gradients, porosity_gradients);
 
 
     /// Fluid parameters

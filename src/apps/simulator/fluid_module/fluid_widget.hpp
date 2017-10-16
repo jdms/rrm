@@ -40,7 +40,7 @@ namespace RRM
 
                 void setSaturationPerRegion();
                 void setAPIGravity();
-                void setSinglePhase();
+                void setSinglePhase( bool status_ );
 
             private:
             // Designer form

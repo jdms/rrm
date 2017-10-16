@@ -109,7 +109,7 @@ namespace RRM
 			slider_Water_Saturation_->setMinimum(0);
 			slider_Water_Saturation_->setMaximum(100);
 			doubleSpinBox_Region_Water_Saturation_->setMinimum(0);
-			doubleSpinBox_Region_Water_Saturation_->setMaximum(100);
+            doubleSpinBox_Region_Water_Saturation_->setMaximum(1);
 
 			slider_Water_Saturation_->setEnabled(false);
 			label_Water_Saturation_->setEnabled(false);
@@ -188,7 +188,7 @@ namespace RRM
 				connect(slider_Water_Saturation_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
 
-					double ex = static_cast<double>(slider_Water_Saturation_->value());
+                    double ex = static_cast<double>(0.01*slider_Water_Saturation_->value());
 
 					doubleSpinBox_Region_Water_Saturation_->setValue(ex);
 
@@ -200,9 +200,9 @@ namespace RRM
 				connect(doubleSpinBox_Region_Water_Saturation_, &QDoubleSpinBox::editingFinished, this, [=]()
                 {
 
-					double ex = doubleSpinBox_Region_Water_Saturation_->value();
+                    double ex = doubleSpinBox_Region_Water_Saturation_->value();
 
-					int i = static_cast<int>(ex);
+                    int i = static_cast<int>( 100.0*ex);
 
 					slider_Water_Saturation_->setValue(i);
 
