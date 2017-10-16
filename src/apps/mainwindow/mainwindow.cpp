@@ -430,27 +430,27 @@ void MainWindow::createFlowDiagnosticsInterface()
             t.vertex_list = meshes[i].vertex_list;
             t.face_list = meshes[i].face_list;
 
-//            FlowWindow::CurveMesh lc;
-//            lc.edge_list = lcurves[i].edge_list;
-//            lc.vertex_list = lcurves[i].vertex_list;
+            FlowWindow::CurveMesh lc;
+            lc.edge_list = lcurves[i].edge_list;
+            lc.vertex_list = lcurves[i].vertex_list;
 
-//            FlowWindow::CurveMesh rc;
-//            rc.edge_list = rcurves[i].edge_list;
-//            rc.vertex_list = rcurves[i].vertex_list;
+            FlowWindow::CurveMesh rc;
+            rc.edge_list = rcurves[i].edge_list;
+            rc.vertex_list = rcurves[i].vertex_list;
 
-//            FlowWindow::CurveMesh fc;
-//            fc.edge_list = fcurves[i].edge_list;
-//            fc.vertex_list = fcurves[i].vertex_list;
+            FlowWindow::CurveMesh fc;
+            fc.edge_list = fcurves[i].edge_list;
+            fc.vertex_list = fcurves[i].vertex_list;
 
-//            FlowWindow::CurveMesh bc;
-//            bc.edge_list = bcurves[i].edge_list;
-//            bc.vertex_list = bcurves[i].vertex_list;
+            FlowWindow::CurveMesh bc;
+            bc.edge_list = bcurves[i].edge_list;
+            bc.vertex_list = bcurves[i].vertex_list;
 
             triangles_meshes.push_back( t );
-//            left_curves.push_back( lc );
-//            right_curves.push_back( rc );
-//            front_curves.push_back( fc );
-//            back_curves.push_back( bc );
+            left_curves.push_back( lc );
+            right_curves.push_back( rc );
+            front_curves.push_back( fc );
+            back_curves.push_back( bc );
 
         }
 
