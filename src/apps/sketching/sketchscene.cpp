@@ -6,6 +6,9 @@
 
 SketchScene::SketchScene()
 {
+    user_input = new InputSketch();
+    addItem( user_input );
+
     volume = nullptr;
 }
 
@@ -14,6 +17,9 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 {
     volume = nullptr;
     readCrossSection( raw_ );
+
+    user_input = new InputSketch();
+    addItem( user_input );
 }
 
 
@@ -23,8 +29,9 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
     Volume* const& vol_ = raw_->getVolume();
     addVolume( vol_ );
 
-//    vol_->getObjects();
-//    addObjects();
+    std::map< std::size_t, Object* > objs_ = vol_->getObjects();
+    for( auto o: objs_ )
+        addObject( o.second );
 
 
 
@@ -64,16 +71,29 @@ void SketchScene::addObject( Object* const& raw_ )
 {
     //TODO: check if valid raw->getIndex
 
+
     std::size_t index_ = raw_->getIndex();
-    objects[ index_ ] = new ObjectItemWrapper( raw_ );
+    objects[ index_ ] = new ObjectItemWrapper( raw_, 0 );
+
+    std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
 }
 
 
 
+
+
+
+
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
+
     if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::SKETCHING ) )
+    {
+        user_input->create(  event->scenePos() );
+    }
+    else if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
     {
         volume->startPoint( event->scenePos() );
@@ -84,9 +104,15 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 }
 
 
-void SketchScene::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
+void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
+
     if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::SKETCHING ) )
+    {
+        user_input->add(  event->scenePos() );
+    }
+    else if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
     {
         volume->resize( event->scenePos() );
@@ -101,9 +127,16 @@ void SketchScene::mouseMoveEvent ( QGraphicsSceneMouseEvent* event )
 void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
-    if( current_interaction == UserInteraction::EDITING_BOUNDARY )
+    if( current_interaction == UserInteraction::SKETCHING )
+    {
+        user_input->process();
+    }
+    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
     {
         emit acceptVolumeDimensions( static_cast< double >( volume->boundingRect().width() ),
                                      static_cast< double >( volume->boundingRect().height() ) );
     }
+
+    QGraphicsScene::mouseReleaseEvent( event );
+    update();
 }

@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 
 
+#include "inputsketch.h"
 #include "./item_wrappers/volume_item_wrapper.h"
 #include "./item_wrappers/object_item_wrapper.h"
 #include "./core/base/models/scene.h"
@@ -20,6 +21,7 @@ class SketchScene: public QGraphicsScene, public Scene
         SketchScene();
         SketchScene( CrossSection* const& raw_ );
 
+
         void readCrossSection( CrossSection* const& raw_ );
 
 
@@ -35,6 +37,9 @@ class SketchScene: public QGraphicsScene, public Scene
         void addObject( Object* const& raw_ );
 
 
+
+
+
     signals:
 
 
@@ -44,15 +49,17 @@ class SketchScene: public QGraphicsScene, public Scene
     protected:
 
 
-        void mousePressEvent( QGraphicsSceneMouseEvent *event );
-        void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
-        void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+        virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
+        virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
+        virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
 
 
     protected:
 
 
-        UserInteraction current_interaction = UserInteraction::EDITING_BOUNDARY;
+        UserInteraction current_interaction = UserInteraction::SKETCHING;
+        InputSketch* user_input;
+
 
         VolumeItemWrapper* volume;
         std::map< std::size_t, ObjectItemWrapper* > objects;
