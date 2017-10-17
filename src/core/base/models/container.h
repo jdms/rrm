@@ -118,7 +118,7 @@ template < class Index, class Item >
 void Container< Index, Item >::clear()
 {
     for( auto d: data )
-        d.clear();
+        (d.second)->clear();
 
     data.clear();
 }

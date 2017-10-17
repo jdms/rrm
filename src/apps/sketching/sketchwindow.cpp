@@ -19,6 +19,7 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
     cs->addElement( cs_->getIndex(), new QGraphicsView( scene_ ) );
 
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( double w, double h ){ emit updateVolume( cs_->getDirection(), w, h ); } );
+    connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_ ){ emit acceptCurve( curve_ ); } );
 }
 
 

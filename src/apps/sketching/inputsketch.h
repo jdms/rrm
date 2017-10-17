@@ -4,6 +4,7 @@
 #include <QGraphicsPathItem>
 
 #include "./libs/PolygonalCurve/CurveN.hpp"
+#include "./core/base/models/polycurve.h"
 
 class SketchLibrary
 {
@@ -131,6 +132,34 @@ class SketchLibrary
             return cpy_;
         }
 
+        static void fromCurve2DToVector( const Curve2D& curve_, std::vector< double >& vertices_,
+                                         std::vector< std::size_t >& edges_ )
+        {
+            if( curve_.isEmpty() == true ) return;
+
+            std::size_t index_ = 0;
+
+            for( std::size_t i = 0; i < curve_.size(); ++i )
+            {
+                const Point2D& p_ = curve_.at( i );
+
+                vertices_.push_back( p_.x() );
+                vertices_.push_back( p_.y() );
+
+                edges_.push_back( index_ );
+                edges_.push_back( ++index_ );
+            }
+        }
+
+        static PolyCurve fromCurve2DToPolyCurve( const Curve2D& curve_ )
+        {
+            std::vector< double > vertices_;
+            std::vector< std::size_t > edges_;
+
+            fromCurve2DToVector( curve_, vertices_, edges_ );
+            return PolyCurve( vertices_, edges_ );
+
+        }
 
     public:
 
@@ -152,6 +181,7 @@ class InputSketch: public QGraphicsPathItem
         void create( const QPointF& p_ );
         void add( const QPointF& p_ );
         void process();
+        PolyCurve done();
         void clear();
         bool isEmpty() const;
 
@@ -167,6 +197,10 @@ class InputSketch: public QGraphicsPathItem
         bool getSubpaths( QPolygonF& path0_, QPolygonF& path1_ ) const;
         Curve2D overSketch( const QPolygonF& path0_, const QPolygonF& path1_ );
 
+
+        static void fromPainterPathToVector( const QPainterPath& curve_,
+                                             std::vector< double >& vertices_,
+                                             std::vector< std::size_t >& edges_ );
 
         static Curve2D fromQtToCurve2D( const QPolygonF& pol_ );
         static QPolygonF fromCurve2DToQt( const Curve2D& curve_ );

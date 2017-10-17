@@ -27,8 +27,6 @@ class Scene3d: public QObject, public Scene
     using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
 
 
-
-
     public:
 
 

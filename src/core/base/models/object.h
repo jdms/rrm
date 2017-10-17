@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 
+#include "container.h"
 #include "./surface.h"
 #include "./polycurve.h"
 
@@ -16,6 +17,7 @@ class Object
 
 
         enum class Type{ STRATIGRAPHY, FAULT };
+        using CrossSectionsContainer = Container< std::size_t, PolyCurve >;
 
 
         Object();
@@ -57,11 +59,11 @@ class Object
 
 
         void addCurve( std::size_t csection_id_, const PolyCurve& curve_ );
-        PolyCurve getCurve( std::size_t csection_id_ ) const;
+        PolyCurve getCurve( std::size_t csection_id_ );
         void removeCurve( std::size_t csection_id_ );
 
 
-        std::map< std::size_t, PolyCurve > getCrossSectionCurves() const;
+        Object::CrossSectionsContainer getCrossSectionCurves() const;
         void removeCrossSectionCurves();
 
 
@@ -100,7 +102,7 @@ class Object
         bool is_selected;
         bool is_visible;
 
-        std::map< std::size_t, PolyCurve > csection_curves;
+        CrossSectionsContainer csection_curves;
         Surface surface;
         PolyCurve trajectory;
 

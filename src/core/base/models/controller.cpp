@@ -52,6 +52,7 @@ void Controller::acceptVolumeDimensions( CrossSection::Direction dir_, double w_
 
 
 
+
 void Controller::addCrossSection( const CrossSection::Direction& dir_, double depth_ )
 {
     actives_csections.addElement( depth_, new CrossSection( volume, dir_, depth_ ) );
@@ -83,7 +84,6 @@ void Controller::setCurrentCrossSection( const double& depth_ )
 }
 
 
-
 CrossSection* Controller::getCurrentCrossSection()
 {
     return getCrossection( current_csection );
@@ -102,30 +102,38 @@ CrossSection* Controller::getCrossection( const double& depth_ )
 void Controller::addObject()
 {
     Object* obj_ = new Object();
-    std::size_t index_ = obj_->getIndex();
+    current_object = obj_->getIndex();
 
-    objects[ index_ ] = obj_;
-    volume->addObject( index_, obj_ );
+    objects.addElement( current_object, obj_ );
+    volume->addObject( current_object, obj_ );
 }
 
 
-/*
-
-void Controller::addObjectCurve( Curve2D* const& curve_ )
+void Controller::addObjectCurve( PolyCurve curve_ )
 {
-    Object* const& obj = objects[ current_object ];
-    obj->addCurve( current_csection, curve_ );
-    active_csection[ current_csection ]->addObject( obj, curve_ );
+    Object* const& obj_ = objects.getElement( current_object );
+    obj_->addCurve( current_csection, curve_ );
+
+    CrossSection* cs_ = getCurrentCrossSection();
+    cs_->addObject( obj_->getIndex(),  &curve_ );
 }
 
 
 void Controller::removeObjectCurve( std::size_t csection_ )
 {
-    Object* const& obj = objects[ current_object ];
-    obj->removeCurve( current_csection );
-    active_csection[ current_csection ]->removeObject( obj );
+    Object* const& obj_ = objects.getElement( current_object );
+    obj_->removeCurve( csection_ );
+
+    CrossSection* cs_ = getCurrentCrossSection();
+    cs_->removeObjectCurve( obj_->getIndex() );
 }
 
+
+
+
+
+
+/*
 
 void Controller::buildObjectSurface()
 {

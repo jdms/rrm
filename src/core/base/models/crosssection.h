@@ -7,8 +7,11 @@
 #include <map>
 #include <vector>
 
+#include "container.h"
+
 
 class Volume;
+class PolyCurve;
 
 class CrossSection
 {
@@ -17,7 +20,7 @@ class CrossSection
         enum class Direction{ X, Y, Z };
 
         using Object = std::size_t;
-        using Curve2D = double;
+        using ObjectsContainer = Container< Object, PolyCurve* >;
 
 
         CrossSection();
@@ -54,8 +57,8 @@ class CrossSection
         bool isVisible() const;
 
 
-        void addObject( const Object& id_, Curve2D* const& curve_ );
-        Curve2D* const& getObjectCurve( const Object& id_ ) const;
+        void addObject(const Object& id_, PolyCurve* const& curve_  );
+        const PolyCurve *getObjectCurve( const Object& id_ );
         void removeObjectCurve( const Object& id_ ) ;
 
 
@@ -77,7 +80,8 @@ class CrossSection
         bool is_visible;
         std::string image_path;
 
-        std::map< Object, Curve2D* > objects;
+        ObjectsContainer objects;
+//        std::map< Object, PolyCurve* > objects;
         Volume* volume;
 
 };

@@ -16,7 +16,12 @@ class SketchScene: public QGraphicsScene, public Scene
 
     enum class UserInteraction { SKETCHING, EDITING_BOUNDARY };
 
+
     public:
+
+
+        using ObjectsContainer = Container< std::size_t, ObjectItemWrapper* >;
+
 
         SketchScene();
         SketchScene( CrossSection* const& raw_ );
@@ -44,6 +49,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         void acceptVolumeDimensions( double w_, double h_ );
+        void acceptCurve( const PolyCurve& curve_ );
 
 
     protected:
@@ -62,7 +68,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         VolumeItemWrapper* volume;
-        std::map< std::size_t, ObjectItemWrapper* > objects;
+        ObjectsContainer objects;
 
 };
 
