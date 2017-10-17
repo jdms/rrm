@@ -1,3 +1,4 @@
+#include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 
 #include "sketchscene.h"
@@ -85,15 +86,30 @@ void SketchScene::addObject( Object* const& raw_ )
 
 
 
+void SketchScene::setCurrent( bool status_ )
+{
+    is_current = status_;
+}
+
+
+bool SketchScene::isCurrent() const
+{
+    return is_current;
+}
+
 
 
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
 
+    if( is_current == false ) return;
+
+
     if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
+
         user_input->create(  event->scenePos() );
     }
 
@@ -117,6 +133,8 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
 
+    if( is_current == false ) return;
+
     if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
@@ -137,6 +155,8 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 {
 
+    if( is_current == false ) return;
+
     if( current_interaction == UserInteraction::SKETCHING )
     {
         user_input->process();
@@ -148,5 +168,23 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     }
 
     QGraphicsScene::mouseReleaseEvent( event );
+    update();
+}
+
+
+void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
+{
+
+    if( views().isEmpty() == true ) return;
+
+    QGraphicsView* gv_ = views()[ 0 ];
+
+    if( event->delta() > 0 )
+        gv_->scale( ZOOM_SCALE, ZOOM_SCALE );
+    else
+        gv_->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
+
+
+    QGraphicsScene::wheelEvent( event );
     update();
 }

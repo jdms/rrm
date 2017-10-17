@@ -127,6 +127,7 @@ bool Object::isEmpty() const
 
 void Object::addCurve( std::size_t csection_id_, const PolyCurve& curve_ )
 {
+    if( isCurveAdmissible() == false ) return;
     csection_curves.addElement( csection_id_, curve_ );
 }
 
@@ -163,6 +164,7 @@ void Object::removeCrossSectionCurves()
 
 void Object::addTrajectory( const PolyCurve& traj_ )
 {
+    if( isTrajectoryAdmissible() == false ) return;
     trajectory = traj_;
 }
 
@@ -186,6 +188,28 @@ void Object::setSurface( const Surface& surface_ )
 void Object::removeSurface()
 {
     surface.clear();
+}
+
+
+
+bool Object::isCurveAdmissible()
+{
+    if( hasTrajectory() == false )
+        return true;
+
+    bool has_enoughcurves = ( csection_curves.size() < CHANNEL_MAX_CSECTIONS )? true:false;
+    return has_enoughcurves;
+}
+
+
+
+bool Object::isTrajectoryAdmissible()
+{
+    if( hasTrajectory() == true )
+        return false;
+
+    bool has_enoughcurves = ( csection_curves.size() < CHANNEL_MAX_CSECTIONS )? true:false;
+    return has_enoughcurves;
 }
 
 

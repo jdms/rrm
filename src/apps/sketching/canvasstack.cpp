@@ -51,6 +51,7 @@ void CanvasStack::setCurrent( std::size_t id_ )
         QWidget* w0 = hb_mainlayout->itemAt( index )->widget();
         if( w0 == nullptr ) continue;
         w0->setStyleSheet( "" );
+
     }
 
     QGraphicsView* gv_ = Container::data[ id_ ];

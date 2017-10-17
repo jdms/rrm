@@ -72,6 +72,11 @@ class Object
         bool hasTrajectory() const;
 
 
+
+        bool isCurveAdmissible();
+        bool isTrajectoryAdmissible();
+
+
         void setSurface( const Surface& surface_ );
         void removeSurface();
 
@@ -114,6 +119,8 @@ class Object
             int b;
         } color;
 
+
+        const std::size_t CHANNEL_MAX_CSECTIONS = 1;
 };
 
 #endif // OBJECT_H

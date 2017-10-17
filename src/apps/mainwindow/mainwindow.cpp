@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
-#include "widgets/real_slider.h"
 #include "widgets/realfeaturedslider.h"
 
 
@@ -91,8 +90,14 @@ void MainWindow::createMainInterface()
 
 void MainWindow::createSketchingWindow()
 {
+
     sketch_window = new SketchWindow();
-    sketch_window->show();
+
+    dw_sketchwindow = new QDockWidget( "Cross-Section" );
+    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketchwindow->setWidget( sketch_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+
 
 
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
@@ -106,6 +111,7 @@ void MainWindow::createSketchingWindow()
 
 
     connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateCanvas );
+
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
                                                                                                                   emit updateVolume(); } );
@@ -136,9 +142,7 @@ void MainWindow::run_app()
 {
     controller->init();
 
-
-
-
+    emit sl_depth_csection->markValue( sl_depth_csection->maximumValue() );
 
 }
 

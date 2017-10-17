@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QWidget>
+#include <QDockWidget>
 
 
 class QActionGroup;
@@ -75,6 +76,7 @@ class MainWindow: public QMainWindow
 
         RealFeaturedSlider* sl_depth_csection;
 
+        QDockWidget* dw_sketchwindow;
         SketchWindow* sketch_window;
 
 };
