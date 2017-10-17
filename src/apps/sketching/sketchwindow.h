@@ -43,6 +43,7 @@ class SketchWindow: public QMainWindow
     protected:
 
         void createWindow();
+        void setCurrentScene( CrossSection* const& cs_ );
 
 
 
@@ -51,9 +52,6 @@ class SketchWindow: public QMainWindow
     private:
 
         CanvasStack* cs;
-        SketchScene sk_;
-
-
 
 };
 

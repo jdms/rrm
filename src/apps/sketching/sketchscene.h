@@ -45,6 +45,11 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
 
+        void setCurrent( bool status_ );
+        bool isCurrent() const;
+
+
+
     signals:
 
 
@@ -58,6 +63,7 @@ class SketchScene: public QGraphicsScene, public Scene
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
         virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+        virtual void wheelEvent( QGraphicsSceneWheelEvent *event );
 
 
     protected:
@@ -69,6 +75,9 @@ class SketchScene: public QGraphicsScene, public Scene
 
         VolumeItemWrapper* volume;
         ObjectsContainer objects;
+
+        const double ZOOM_SCALE = 1.1;
+        bool is_current = false;
 
 };
 

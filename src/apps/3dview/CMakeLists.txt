@@ -20,6 +20,7 @@ set( 3DVIEW_SOURCES      canvas3d.cpp
                          scene3d.cpp )
 
 
+
 ## Q_OBJECT files
 set( MOC_HEADERS ${3DVIEW_MOC_HEADERS} )
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
