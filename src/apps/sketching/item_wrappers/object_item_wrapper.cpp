@@ -76,7 +76,7 @@ void ObjectItemWrapper::updateCurve()
 
     clearCurve();
     curve = ObjectItemWrapper::polycurveToQPainterPath( raw->getCurve( current_csection ) );
-//    setPath( curve );
+    setPath( curve );
     update();
 }
 

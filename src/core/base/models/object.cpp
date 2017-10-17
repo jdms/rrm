@@ -127,39 +127,36 @@ bool Object::isEmpty() const
 
 void Object::addCurve( std::size_t csection_id_, const PolyCurve& curve_ )
 {
-    csection_curves[ csection_id_ ] = curve_;
+    csection_curves.addElement( csection_id_, curve_ );
 }
 
-PolyCurve Object::getCurve( std::size_t csection_id_ ) const
+PolyCurve Object::getCurve( std::size_t csection_id_ )
 {
     //TODO: verificar se existe id_;
-    return csection_curves.at( csection_id_ );
+    return csection_curves.getElement( csection_id_ );
 }
 
 void Object::removeCurve( std::size_t csection_id_ )
 {
     //TODO: verificar se existe id_;
-
-    csection_curves.at( csection_id_ ).clear();
-    csection_curves.erase( csection_id_ );
-
+    csection_curves.removeElement( csection_id_ );
 }
 
 
 
-std::map< std::size_t, PolyCurve > Object::getCrossSectionCurves() const
+Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 {
     return csection_curves;
 }
 
 void Object::removeCrossSectionCurves()
 {
-    for( auto it: csection_curves )
-    {
-        removeCurve( it.first );
-    }
+//    for( auto it: csection_curves )
+//    {
+//        removeCurve( it.first );
+//    }
 
-    csection_curves.clear();
+//    csection_curves.clear();
 }
 
 

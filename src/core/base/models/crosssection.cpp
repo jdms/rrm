@@ -1,5 +1,8 @@
 #include "crosssection.h"
+
 #include "volume.h"
+#include "polycurve.h"
+
 
 CrossSection::CrossSection()
 {
@@ -160,35 +163,33 @@ bool CrossSection::isVisible() const
 }
 
 
-void CrossSection::addObject( const Object& id_, Curve2D* const& curve_ )
+void CrossSection::addObject(const Object& id_, PolyCurve* const& curve_ )
 {
-    objects[ id_ ] = curve_;
+    objects.addElement( id_, curve_ );
 }
 
-CrossSection::Curve2D* const& CrossSection::getObjectCurve( const Object& id_ ) const
+const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
 {
     //TODO: check if id is valid
-    return objects.at( id_ );
-
+    return objects.getElement( id_ );
 }
 
 
 void CrossSection::removeObjectCurve( const Object& id_ )
 {
     //TODO: check if id is valid
-    //TODO: check clear curve2d
-    objects.erase( id_ );
+    objects.removeElement( id_ );
 
 }
 
 
 void CrossSection::removeObjects()
 {
-    for( auto it: objects )
-    {
-//        removeObjectCurve( it->first );
-    }
-    objects.clear();
+//    for( auto it: objects )
+//    {
+//        removeObjectCurve( it.first );
+//    }
+//    objects.clear();
 }
 
 

@@ -48,7 +48,8 @@ class Controller
 
 
         void addObject();
-
+        void addObjectCurve( PolyCurve curve_ );
+        void removeObjectCurve( std::size_t csection_ );
 
 
 
@@ -60,7 +61,7 @@ class Controller
         double current_csection;
 
         Volume* volume;
-        std::map< std::size_t, Object* > objects;
+        Container< std::size_t, Object* > objects;
         Container< double, CrossSection* > actives_csections;
 };
 

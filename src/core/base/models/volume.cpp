@@ -1,5 +1,4 @@
 #include "volume.h"
-#include "object.h"
 
 
 Volume::Volume()
@@ -193,20 +192,18 @@ void Volume::getBottomFace( std::vector< double >& vertices_ ) const
 
 void Volume::addObject( std::size_t id_, Object* const& obj_ )
 {
-//    stratigraphies.insert( id_ );
-    stratigraphies[ id_ ] = obj_;
+    objects.addElement( id_, obj_ );
 }
 
 
 void Volume::removeObject( std::size_t id_ )
 {
-    //TODO: check if id_ is valid
-    stratigraphies.erase( id_ );
+    objects.removeElement( id_ );
 }
 
-std::map< std::size_t, Object* > Volume::getObjects() const
+Volume::ObjectsContainer Volume::getObjects() const
 {
-    return stratigraphies;
+    return objects;
 }
 
 
@@ -246,7 +243,7 @@ void Volume::setResizable( bool status_ )
 
 bool Volume::isResizable() const
 {
-    if( stratigraphies.empty() == true )
+    if( objects.empty() == true )
         return true;
 
     return is_resizable;
@@ -255,7 +252,7 @@ bool Volume::isResizable() const
 
 void Volume::clear()
 {
-    stratigraphies.clear();
+    objects.clear();
     csections.clear();
 
     initialize();

@@ -104,10 +104,13 @@ void MainWindow::createSketchingWindow()
     connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, [=]( double v ){  controller->setCurrentCrossSection( v );
                                                                                         sketch_window->highlightCanvas( controller->getCurrentCrossSection() ); }  );
 
+
     connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateCanvas );
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
                                                                                                                   emit updateVolume(); } );
+
+    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ controller->addObjectCurve( curve_ );  } );
 }
 
 

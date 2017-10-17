@@ -23,13 +23,15 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 }
 
 
+
+
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
 
     Volume* const& vol_ = raw_->getVolume();
     addVolume( vol_ );
 
-    std::map< std::size_t, Object* > objs_ = vol_->getObjects();
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addObject( o.second );
 
@@ -67,13 +69,14 @@ void SketchScene::clearVolume()
 
 
 
+
 void SketchScene::addObject( Object* const& raw_ )
 {
     //TODO: check if valid raw->getIndex
 
 
     std::size_t index_ = raw_->getIndex();
-    objects[ index_ ] = new ObjectItemWrapper( raw_, 0 );
+    objects.addElement( index_, 0 );
 
     std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
@@ -93,6 +96,13 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     {
         user_input->create(  event->scenePos() );
     }
+
+    else if( ( event->buttons() & Qt::RightButton ) &&
+        ( current_interaction == UserInteraction::SKETCHING ) )
+    {
+        emit acceptCurve( user_input->done() );
+    }
+
     else if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
     {

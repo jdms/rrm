@@ -60,6 +60,20 @@ void InputSketch::process()
 }
 
 
+PolyCurve InputSketch::done()
+{
+    if( curve.isEmpty() == true ) return PolyCurve();
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > edges_;
+    fromPainterPathToVector( curve, vertices_, edges_ );
+
+    clear();
+
+    return PolyCurve( vertices_, edges_ );
+}
+
+
 void InputSketch::clear()
 {
     prepareGeometryChange();
@@ -175,6 +189,32 @@ void InputSketch::paint( QPainter * painter, const QStyleOptionGraphicsItem * op
     painter->drawPath( curve );
 }
 
+
+
+void InputSketch::fromPainterPathToVector( const QPainterPath& curve_,
+                                     std::vector< double >& vertices_,
+                                     std::vector< std::size_t >& edges_ )
+{
+    int number_of_elements_ = curve_.elementCount();
+
+    for( int i = 0; i < number_of_elements_; ++i )
+    {
+        QPainterPath::Element p_ = curve_.elementAt( i );
+
+        vertices_.push_back( p_.x );
+        vertices_.push_back( p_.y );
+
+        if( p_.isMoveTo() == true ) continue;
+
+        int id0 = ( i - 1 < 0 )? 0: ( i - 1 );
+        int id1 = i;
+        edges_.push_back( static_cast< std::size_t >( id0 ) );
+        edges_.push_back( static_cast< std::size_t >( id1 ) );
+
+    }
+
+
+}
 
 
 

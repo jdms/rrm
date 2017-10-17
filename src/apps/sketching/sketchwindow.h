@@ -36,6 +36,7 @@ class SketchWindow: public QMainWindow
 
 
         void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
+        void acceptCurve( const PolyCurve& curve_ );
 
 
 

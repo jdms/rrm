@@ -7,12 +7,22 @@
 #include <set>
 #include <map>
 
+#include "./core/base/models/container.h"
+#include "object.h"
 
-class Object;
 
 class Volume
 {
+
+//    using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
+
+
     public:
+
+
+        using ObjectsContainer = Container< std::size_t, Object* >;
+
+
 
         Volume();
 
@@ -48,7 +58,7 @@ class Volume
 
         void addObject( std::size_t id_, Object* const& obj_ );
         void removeObject( std::size_t id_ );
-        std::map< std::size_t, Object* > getObjects() const;
+        Volume::ObjectsContainer getObjects() const;
 
 
         void addCrossSection( std::size_t id_ );
@@ -81,7 +91,8 @@ class Volume
         bool is_visible;
         bool is_resizable;
 
-        std::map< std::size_t, Object* > stratigraphies;
+
+        ObjectsContainer objects;
         std::set< std::size_t > csections;
 
 };
