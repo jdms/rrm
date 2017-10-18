@@ -19,9 +19,9 @@ namespace RRM
         bo_values_.resize(1);
         oildensity_values_.resize(1);
 
-        phase_method_.resize(1);
-        phase_method_[0].first = 1;
-        phase_method_[0].second = 1;
+        /// Single Phase Method
+        phase_method_.first = 1;
+        phase_method_.second = 1;
 
         this->ui_ = new Ui::FluidWidgetForm;
         this->ui_->setupUi(this);
@@ -72,8 +72,6 @@ namespace RRM
             viscosity_values_[0] = ex;
         });
 
-
-
         connect(ui_->doubleSpinBox_Region_Viscosity_, &QDoubleSpinBox::editingFinished, this, [=]()
         {
             double ex = ui_->doubleSpinBox_Region_Viscosity_->value();
@@ -100,8 +98,6 @@ namespace RRM
             ui_->horizontalSlider_Bo_->setValue(static_cast<int>( bo_values_[0] ) );
         });
 
-
-
         connect(ui_->horizontalSlider_Fluid_OilDensity_,static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]( int value )
         {
             oildensity_values_[0] = static_cast<double>( value );
@@ -115,8 +111,6 @@ namespace RRM
             ui_->horizontalSlider_Fluid_OilDensity_->setValue(static_cast<int>( oildensity_values_[0] ) );
         });
 
-
-
         /// @FIXME September
         connect( ui_->radioButton_Singlephase_, &QRadioButton::toggled, [=]( bool status_ )
         {
@@ -125,19 +119,21 @@ namespace RRM
             ui_->doubleSpinBox_Fluid_OilDensity_->setEnabled( false );
             ui_->horizontalSlider_Fluid_OilDensity_->setEnabled( false );
 
-            emit setSinglePhase( status_ );
+            emit setSinglePhase();
 
-            phase_method_[0].first = 1;
+            phase_method_.first = 1;
 
         } );
 
         connect(ui_->radioButton_Multiphase_, &QRadioButton::clicked, this, [=]( bool status_ )
         {
             ui_->comboBox_PhaseMethods_->setEnabled(true);
+
             emit ui_->comboBox_PhaseMethods_->currentIndexChanged(phase_methods_names_[ui_->comboBox_PhaseMethods_->currentIndex()]);
+			
+			emit setMultiPhase();
 
-
-            //phase_method_[0].first = 2;
+            phase_method_.first = 2;
 
         });
 
@@ -154,7 +150,7 @@ namespace RRM
 
                 std::cout << "By Water Saturation per Region" << std::endl;
                 emit setSaturationPerRegion();
-                phase_method_[0].second = 1;
+                phase_method_.second = 1;
             }
             /// By API Grabity
             else
@@ -163,8 +159,9 @@ namespace RRM
                 ui_->doubleSpinBox_Fluid_OilDensity_->setEnabled( true );
                 ui_->horizontalSlider_Fluid_OilDensity_->setEnabled( true );
 
+				std::cout << "By API Gravity" << std::endl;
                 emit setAPIGravity();
-                phase_method_[0].second = 2;
+                phase_method_.second = 2;
             }
         } );
 
@@ -177,7 +174,7 @@ namespace RRM
     }
 
     void FluidWidget::getFluidData(std::vector<double>& _viscosity_values, std::vector< double >& _bo_values,
-                                   std::vector< double >& _oildensity_values, std::vector<std::pair<int, int>>& _phase_method )
+                                   std::vector< double >& _oildensity_values, std::pair<int, int>& _phase_method )
     {
         _viscosity_values.clear();
         _viscosity_values = this->viscosity_values_;
@@ -187,8 +184,7 @@ namespace RRM
 
         _oildensity_values.clear();
         _oildensity_values = this->oildensity_values_;
-
-        _phase_method.clear();
+		        
         _phase_method = this->phase_method_;
     }
 

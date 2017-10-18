@@ -51,7 +51,6 @@ namespace RRM
 
 						void setByRegionSaturation(bool option);
     
-
                         void clear();
 
                 public slots:

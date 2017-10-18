@@ -131,7 +131,8 @@ class FlowVisualizationController: public QWidget
         /// @TODO Later, move this fucntions to FlowvizualizationController
         Eigen::Affine3d FlowVisualizationController::getModelMatrix() const;
 
-        void setSinglePhase( bool status_ = true );
+        void setSinglePhase(  );
+		void setMultiPhase( SaturationMethod _method);
 
     public slots:
 
