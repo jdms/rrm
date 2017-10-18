@@ -188,10 +188,10 @@
             size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
             /* End methods to interface with GUI */
 
-            bool getLeftBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges );
-            bool getRightBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges );
-            bool getFrontBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges );
-            bool getBackBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double> vertices, std::vector<std::size_t> edges );
+            bool getLeftBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double>& vertices, std::vector<std::size_t>& edges );
+            bool getRightBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double>& vertices, std::vector<std::size_t>& edges );
+            bool getFrontBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double>& vertices, std::vector<std::size_t>& edges );
+            bool getBackBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double>& vertices, std::vector<std::size_t>& edges );
 
         private:
             StratigraphyModeller modeller_;
