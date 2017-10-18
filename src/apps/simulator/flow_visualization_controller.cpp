@@ -269,7 +269,7 @@ void FlowVisualizationController::setFluidProperty(double _viscosity, double _bo
     this->code_interface.setViscosity(_viscosity);
     this->code_interface.setBo(_bo);
     this->code_interface.setOilGravity(_oildensity);
-    this->setSaturationMethod(SaturationMethod::APIGRAVITY);
+    //this->setSaturationMethod(SaturationMethod::APIGRAVITY);
 }
 
 /* /1* Suggestion *1/ */
@@ -993,6 +993,9 @@ Eigen::Affine3d FlowVisualizationController::getModelMatrix() const
 
 void FlowVisualizationController::setSaturationMethod( const SaturationMethod& option )
 {
+
+	code_interface.setNumberOfPhases(2);
+
     if( option == SaturationMethod::PERREGION )
     {
         code_interface.setSaturationMethod( 1 );
@@ -1008,14 +1011,22 @@ void FlowVisualizationController::setSaturationMethod( const SaturationMethod& o
 }
 
 
-void FlowVisualizationController::setSinglePhase( bool status_ )
+void FlowVisualizationController::setMultiPhase(SaturationMethod _method)
 {
-    int nphases = 1;
+	code_interface.setNumberOfPhases(2);
 
-    if( status_ == false )
-    {
-        nphases = 2;
-    }
+	if (_method == SaturationMethod::PERREGION)
+	{
+		code_interface.setSaturationMethod(1);
+	}
+	else if (_method == SaturationMethod::APIGRAVITY)
+	{
+		code_interface.setSaturationMethod(2);
+	}
 
-    code_interface.setNumberOfPhases( nphases );
+}
+
+void FlowVisualizationController::setSinglePhase( )
+{
+        code_interface.setNumberOfPhases( 1 );
 }

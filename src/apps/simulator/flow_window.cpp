@@ -536,13 +536,18 @@ void FlowWindow::createActions()
 
 
 
-    connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]( bool status_ )
+    connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]( )
     {
-
-        controller->setSinglePhase( status_ );
+		controller->setSinglePhase( );
         region_parameters_->setByRegionSaturation( false );
-
     } );
+
+
+	connect(fluid_parameters_, &RRM::FluidWidget::setMultiPhase, this, [=]()
+	{
+		//controller->setMultiPhase(FlowVisualizationController::SaturationMethod::PERREGION);
+		//region_parameters_->setByRegionSaturation(true);
+	});
 
     connect( fluid_parameters_, &RRM::FluidWidget::setSaturationPerRegion, this, [=]()
     {
@@ -779,14 +784,14 @@ void FlowWindow::acceptUserParameters()
     std::vector< double > bo;
     std::vector< double > viscosity;
     std::vector< double > oildensity;
-    std::vector <std::pair< int, int>> phase_method;
+    std::pair< int, int>  phase_method;
 
     /// Fluid Module
     fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
 
     //std::cout << " Viscosity " << viscosity[0] << std::endl;
 
-    controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method[0]);
+    controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
 
     //controller->setPropertyFluid(viscosity[0], bo[0], oildensity[0]);
 

@@ -38,7 +38,7 @@ namespace RRM
             this->number_of_regions_ = 0;
 
 
-            /// @FIXME September
+            /// @FIXME September   POROSITY
             slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
             slider_porosity_->setVisible(false);
             qxt_span_slider_porosity_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
@@ -54,7 +54,19 @@ namespace RRM
             this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 8);
             this->porosity_position_ = std::make_tuple<int, int, int, int>(0, 2, 1, 5);
 
-            /// @FIXME September
+			doubleSpinbBox_low_porosity_->setMinimum(0.01);
+			doubleSpinbBox_low_porosity_->setMaximum(0.35);
+			doubleSpinbBox_low_porosity_->setDecimals(2);
+			doubleSpinbBox_high_porosity_->setMinimum(0.01);
+			doubleSpinbBox_high_porosity_->setMaximum(0.35);
+			doubleSpinbBox_high_porosity_->setDecimals(2);
+
+			qxt_span_slider_porosity_->setMinimum(1);
+			qxt_span_slider_porosity_->setMaximum(100);
+			slider_porosity_->setMinimum(1);
+			slider_porosity_->setMaximum(100);
+
+            /// @FIXME September  PERMEABILITY
             slider_permeability_ = new QSlider(Qt::Orientation::Horizontal);
             slider_permeability_->setVisible(false);
             qxt_span_slider_permeability_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
@@ -77,25 +89,13 @@ namespace RRM
             doubleSpinbBox_high_permeability_->setMaximum(10000.0);
             doubleSpinbBox_high_permeability_->setDecimals(3);
 
-            qxt_span_slider_permeability_->setMinimum(-1);
-            qxt_span_slider_permeability_->setMaximum(102);
-            slider_permeability_->setMinimum(-1);
-            slider_permeability_->setMaximum(102);
+            qxt_span_slider_permeability_->setMinimum(1);
+            qxt_span_slider_permeability_->setMaximum(100);
+            slider_permeability_->setMinimum(1);
+            slider_permeability_->setMaximum(100);
 
 
-            doubleSpinbBox_low_porosity_->setMinimum(0.01);
-            doubleSpinbBox_low_porosity_->setMaximum(0.35);
-            doubleSpinbBox_low_porosity_->setDecimals(2);
-            doubleSpinbBox_high_porosity_->setMinimum(0.01);
-            doubleSpinbBox_high_porosity_->setMaximum(0.35);
-            doubleSpinbBox_high_porosity_->setDecimals(2);
-
-            qxt_span_slider_porosity_->setMinimum(-1);
-            qxt_span_slider_porosity_->setMaximum(101);
-            slider_porosity_->setMinimum(-1);
-            slider_porosity_->setMaximum(101);
-
-			// Water Saturation
+			/// @FIXME September	 Water Saturation
 			slider_Water_Saturation_ = new QSlider(Qt::Orientation::Horizontal);
 			label_Water_Saturation_ = new QLabel(tr("Water Saturation"));
 			doubleSpinBox_Region_Water_Saturation_ = new QDoubleSpinBox();
@@ -124,6 +124,7 @@ namespace RRM
 
         void RegionWidget::clear()
         {
+
         }
 
         void RegionWidget::getRegionData(int& _number_of_regions,
@@ -154,8 +155,20 @@ namespace RRM
                 _porosity_values[it]		= porosity_values[it];
                 _staturation_values[it]     = saturation_values[it];
 
-                _porosity_gratdients[it]	 = this->porosity_gradient_values_.at(it);
-                _permeability_gratdients[it] = this->permeability_gradient_values_.at(it);
+				if (ui_->radioButton_Linear_->isChecked())
+				{
+					_porosity_gratdients[it].first = this->porosity_gradient_values_.at(it).first;
+					_porosity_gratdients[it].second = this->porosity_gradient_values_.at(it).first;
+
+					_permeability_gratdients[it].first = this->permeability_gradient_values_.at(it).first;
+					_permeability_gratdients[it].second = this->permeability_gradient_values_.at(it).first;
+				}
+				else
+				{
+					_porosity_gratdients[it] = this->porosity_gradient_values_.at(it);
+					_permeability_gratdients[it] = this->permeability_gradient_values_.at(it);
+				}
+
             }
         }
 
@@ -213,7 +226,7 @@ namespace RRM
 
                 //// @FIXME September Porosity
 
-                connect(qxt_span_slider_porosity_, &QxtSpanSlider::lowerPositionChanged, this, [=]()
+                connect(qxt_span_slider_porosity_, &QxtSpanSlider::lowerValueChanged, this, [=]()
                 {
                     double ex = 0.01 + (0.0034)*static_cast<double>(qxt_span_slider_porosity_->lowerValue());
                     doubleSpinbBox_low_porosity_->setValue(ex);
@@ -233,7 +246,7 @@ namespace RRM
                         porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = doubleSpinbBox_low_porosity_->value();
                     });
 
-                    connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperPositionChanged, this, [=]()
+                    connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperValueChanged, this, [=]()
                 {
                     double ex = 0.01 + (0.0034)*static_cast<double>(qxt_span_slider_porosity_->upperValue());
                     doubleSpinbBox_high_porosity_->setValue(ex);
@@ -249,7 +262,7 @@ namespace RRM
                     });
 
                 //// @FIXME September Permeability
-                    connect(qxt_span_slider_permeability_, &QxtSpanSlider::lowerPositionChanged, this, [=]()
+					connect(qxt_span_slider_permeability_, &QxtSpanSlider::lowerValueChanged, this, [=]()
                 {
                     double ex = -3.0 + (0.07)*static_cast<double>(qxt_span_slider_permeability_->lowerValue());
                     ex = std::pow(10, ex);
@@ -272,7 +285,7 @@ namespace RRM
                         permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = doubleSpinbBox_low_permeability_->value();
                     });
 
-                connect(qxt_span_slider_permeability_, &QxtSpanSlider::upperPositionChanged, this, [=]()
+					connect(qxt_span_slider_permeability_, &QxtSpanSlider::upperValueChanged, this, [=]()
                 {
                     double ex = -3.0 + (0.07)*static_cast<double>(qxt_span_slider_permeability_->upperValue());
                     ex= std::pow(10, ex);
@@ -340,7 +353,7 @@ namespace RRM
 
 
                 //// @FIXME September Permeability
-                connect(slider_permeability_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
+				connect(slider_permeability_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
                     double ex = -3.0 + (0.07)*static_cast<double>(slider_permeability_->value());
                     ex = std::pow(10, ex);
@@ -354,7 +367,7 @@ namespace RRM
                 });
 
                 //// @FIXME September Permeability
-                connect(slider_porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::sliderMoved), this, [=]()
+				connect(slider_porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
                     double ex = 0.01 + (0.0034)*static_cast<double>(slider_porosity_->value());
                     doubleSpinbBox_low_porosity_->setValue(ex);

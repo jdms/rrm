@@ -28,7 +28,7 @@ namespace RRM
             void getFluidData ( std::vector<double>& _viscosity_values,
                                 std::vector< double >& _bo_values,
                                 std::vector< double >& _oildensity_values,
-                                std::vector<std::pair<int, int>>& _phase_method);
+                                std::pair<int, int>& _phase_method);
             /// Userless for now
             void setFluidData(const std::vector<double>& _viscosity_values, const std::vector<double>& _bo_values);
 
@@ -37,10 +37,10 @@ namespace RRM
             public slots:
 
             signals:
-
                 void setSaturationPerRegion();
                 void setAPIGravity();
-                void setSinglePhase( bool status_ );
+				void setSinglePhase();
+				void setMultiPhase();
 
             private:
             // Designer form
@@ -62,7 +62,7 @@ namespace RRM
             //// 2 for multiphase
             ///        1 for water saturation per region
             ///        2 API gravity
-            std::vector<std::pair<int, int>> phase_method_;
+            std::pair<int, int> phase_method_;
     };
 
 } /* namespace RRM */
