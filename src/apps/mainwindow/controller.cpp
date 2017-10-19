@@ -778,6 +778,48 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
 
         triangles_meshes.push_back( t );
 
+
+//        std::vector< double > curve_vertices_lb;
+//        std::vector< std::size_t > curve_faces_lb;
+
+//        std::vector< double > curve_vertices_rb;
+//        std::vector< std::size_t > curve_faces_rb;
+
+
+//        std::vector< double > curve_vertices_fb;
+//        std::vector< std::size_t > curve_faces_fb;
+
+
+//        std::vector< double > curve_vertices_bb;
+//        std::vector< std::size_t > curve_faces_bb;
+
+
+////        struct CurveMesh
+////        {
+////            std::vector<double> vertex_list;
+////            std::vector<std::size_t> edge_list;
+////        };
+
+
+//        rules_processor.getLeftBoundaryCrossSectionCurve( it,  curve_vertices_lb, curve_faces_lb );
+//        rules_processor.getRightBoundaryCrossSectionCurve( it, curve_vertices_rb, curve_faces_rb  );
+//        rules_processor.getFrontBoundaryCrossSectionCurve( it, curve_vertices_fb, curve_faces_fb  );
+//        rules_processor.getBackBoundaryCrossSectionCurve( it,  curve_vertices_bb, curve_faces_bb  );
+
+
+        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+        rules_processor.getLeftBoundaryCrossSectionCurve( it,  cm_lb.vertex_list, cm_lb.edge_list );
+        rules_processor.getRightBoundaryCrossSectionCurve( it, cm_rb.vertex_list, cm_rb.edge_list  );
+        rules_processor.getFrontBoundaryCrossSectionCurve( it, cm_fb.vertex_list, cm_fb.edge_list  );
+        rules_processor.getBackBoundaryCrossSectionCurve( it,  cm_bb.vertex_list, cm_bb.edge_list  );
+
+        left_curves.push_back( cm_lb );
+        right_curves.push_back( cm_rb );
+        front_curves.push_back( cm_fb );
+        back_curves.push_back( cm_bb );
+
+
     }
 
 }
