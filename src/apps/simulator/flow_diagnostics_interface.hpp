@@ -376,6 +376,7 @@ public:
     void setWaterSaturation(unsigned int region_id, double Sw);
 
     void setNumberOfPhases(int);//1 or 2; init() updated; setviscosity is oil viscosity.
+	int  getNumberOfPhases();//1 or 2; init() updated; setviscosity is oil viscosity.
 
 
     void setSaturationMethod(int); //1 means set saturation for each region; 2 means by gravity

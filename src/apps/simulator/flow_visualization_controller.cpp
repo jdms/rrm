@@ -212,11 +212,7 @@ void FlowVisualizationController::computeFlowProperties()
 
 void FlowVisualizationController::setPropertyArea(const int np,
                                                   const std::vector< double >& values,
-                                                  const std::vector< double >& perm,
-                                                  const std::vector< double >& poros,
-                                                  const std::vector< double >& visc,
                                                   const std::vector<double>& _saturations,
-                                                  const std::vector<int>& _perm_curves_,
                                                   const std::map<int,std::pair<double, double> >& _permeability_gradients,
                                                   const std::map<int,std::pair<double, double> >& _porosity_gradients)
 {
@@ -224,7 +220,7 @@ void FlowVisualizationController::setPropertyArea(const int np,
     for( int i = 0; i < np; ++i )
     {
         /// @FIXME September
-        ///code_interface.setRegion( i, values[ 3*i ], values[ 3*i + 1 ], values[ 3*i +2 ], perm[ i ], poros[ i ], visc[ i ] );
+        
         code_interface.setRegion(i,
                                 values[3 * i],
                                 values[3 * i + 1],
@@ -234,8 +230,9 @@ void FlowVisualizationController::setPropertyArea(const int np,
                                 _porosity_gradients.at(i).first,
                                 _porosity_gradients.at(i).second
                                 );
-        //code_interface.setWaterSaturation(i,_saturations[i]);
-        //code_interface.setPermeabilityCurve(i,_perm_curves_[i]);
+
+        code_interface.setWaterSaturation(i,_saturations[i]);
+        
     }
 
     user_input_ok = true;
@@ -269,7 +266,15 @@ void FlowVisualizationController::setFluidProperty(double _viscosity, double _bo
     this->code_interface.setViscosity(_viscosity);
     this->code_interface.setBo(_bo);
     this->code_interface.setOilGravity(_oildensity);
-    //this->setSaturationMethod(SaturationMethod::APIGRAVITY);
+
+
+	std::cout << "------" << std::endl;
+
+	std::cout << " viscosity " << _viscosity << std::endl;
+	std::cout << " bo     " << _bo << std::endl;
+	std::cout << " oildensity   " << _oildensity << std::endl;
+	std::cout << " phase  " << code_interface.getNumberOfPhases() << std::endl;
+    
 }
 
 /* /1* Suggestion *1/ */
@@ -978,6 +983,7 @@ std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> FlowVisualizationController::g
 {
     return flow_model_.getPtrHexahedralMesh();
 }
+
 std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> FlowVisualizationController::getPtrTetrahedralMesh()
 {
     return flow_model_.getPtrTetrahedralMesh();

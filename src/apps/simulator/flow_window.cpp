@@ -774,11 +774,30 @@ void FlowWindow::acceptUserParameters()
 
     /// Region Module
     ///@FIXME September
-    region_parameters_->getRegionData(np, positions, permeability, porosity, saturation, porosity_gradients, permeability_gradients);
+	region_parameters_->getRegionData(np, 
+									  positions, 
+									  permeability, 
+									  porosity, 
+									  saturation, 
+									  porosity_gradients, 
+									  permeability_gradients);
 
     /// Feeding HWU Flow Diagnostic
-    controller->setPropertyArea(np, positions, permeability, porosity, std::vector<double>(np,1.0), saturation, permeability_curves, permeability_gradients, porosity_gradients);
+    controller->setPropertyArea(np, 
+								positions, 						
+								saturation, 								
+								permeability_gradients, 
+								porosity_gradients);
 
+
+	for (int i = 0; i < np; i++)
+	{
+		std::cout << " permeability " << permeability_gradients.at(i).first << std::endl;
+		std::cout << " permeability " << permeability_gradients.at(i).second << std::endl;
+		std::cout << " porosity     " << porosity_gradients.at(i).first << std::endl;
+		std::cout << " porosity     " << porosity_gradients.at(i).second << std::endl;
+		std::cout << " saturation   " << saturation[i] << std::endl;
+	}
 
     /// Fluid parameters
     std::vector< double > bo;
@@ -788,23 +807,11 @@ void FlowWindow::acceptUserParameters()
 
     /// Fluid Module
     fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
-
-    //std::cout << " Viscosity " << viscosity[0] << std::endl;
+	   
 
     controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
 
-    //controller->setPropertyFluid(viscosity[0], bo[0], oildensity[0]);
-
-
-    for (int i = 0; i < np; i++)
-    {
-        std::cout << " permeability " << permeability[i] << std::endl;
-        std::cout << " porosity     " << porosity[i]     << std::endl;
-        std::cout << " viscosity    " << viscosity[i]    << std::endl;
-        std::cout << " saturation   " << saturation[i]   << std::endl;
-    }
-
-
+    
     int nw = 0;
     std::vector< unsigned int > type;
     std::vector< double > values;
@@ -818,11 +825,9 @@ void FlowWindow::acceptUserParameters()
 
     controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
 
-
+	
     /// FIXME Septembe 2017
     /// Set Fluid Property
-    /// controller->setFluidProperty(visc, bo);
-
 
 }
 
