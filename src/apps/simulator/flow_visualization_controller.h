@@ -80,12 +80,8 @@ class FlowVisualizationController: public QWidget
         void computeFlowProperties();
 
         void setPropertyArea(const int np,
-                             const std::vector< double >& values,
-                             const std::vector< double >& perm,
-                             const std::vector< double >& poros,
-                             const std::vector< double >& visc,
-                             const std::vector<double>& _saturations,
-                             const std::vector<int>& _perm_curves_,
+                             const std::vector< double >& values,                         
+                             const std::vector<double>& _saturations,                           
                              const std::map<int, std::pair<double, double> >& _permeability_gradients,
                              const std::map<int, std::pair<double, double> >& _porosity_gradiets);
 

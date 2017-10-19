@@ -603,9 +603,9 @@ void FlowDiagnosticsInterface::getOilInPlace(double &oil_in_place)
     oil_in_place = region.oilinplace();
 }
 
-void setWaterSaturation(unsigned int region_id, double Sw)// need to link to region
+void FlowDiagnosticsInterface::setWaterSaturation(unsigned int region_id, double Sw)// need to link to region
 {
-    return;
+	region.setWaterSaturation(region_id, Sw);
 }
 void FlowDiagnosticsInterface::setSaturationMethod(int i){
     region.saturationflag(i);
@@ -680,6 +680,11 @@ void FlowDiagnosticsInterface::setNumberOfPhases(int i){
     }
 
     region.numberofphases(i);
+}
+
+int FlowDiagnosticsInterface::getNumberOfPhases()
+{
+	return region.numberofphases();
 }
 
 
