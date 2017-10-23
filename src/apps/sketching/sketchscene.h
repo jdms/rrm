@@ -39,7 +39,8 @@ class SketchScene: public QGraphicsScene, public Scene
         void removeCrossSection( CrossSection* const& raw_ ){}
 
 
-        void addObject( Object* const& raw_ );
+        virtual void addObject( Object* const& raw_ );
+        virtual void updateObject(  const std::size_t& index_ );
 
 
 
@@ -72,6 +73,7 @@ class SketchScene: public QGraphicsScene, public Scene
         UserInteraction current_interaction = UserInteraction::SKETCHING;
         InputSketch* user_input;
 
+         CrossSection* csection;
 
         VolumeItemWrapper* volume;
         ObjectsContainer objects;

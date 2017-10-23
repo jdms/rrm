@@ -116,7 +116,11 @@ void MainWindow::createSketchingWindow()
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
                                                                                                                   emit updateVolume(); } );
 
-    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ controller->addObjectCurve( curve_ );  } );
+    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ controller->addObjectCurve( curve_ );
+                                                                                        emit updateObject( controller->getIndexCurrentObject() ); } );
+
+    connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
+
 }
 
 

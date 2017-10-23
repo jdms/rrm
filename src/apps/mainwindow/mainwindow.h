@@ -36,6 +36,7 @@ class MainWindow: public QMainWindow
     signals:
 
         void updateVolume();
+        void updateObject( const std::size_t );
 
 
 

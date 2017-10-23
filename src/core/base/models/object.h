@@ -114,9 +114,9 @@ class Object
 
         struct Color
         {
-            int r;
-            int g;
-            int b;
+            int r = 255;
+            int g = 0;
+            int b = 0;
         } color;
 
 

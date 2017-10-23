@@ -21,7 +21,7 @@ class Scene
 
 
         virtual void addObject(  Object* const& raw_ ) = 0;
-//        virtual void updateObject();
+        virtual void updateObject(  const std::size_t& index_ ) = 0;
 //        virtual void selectObject();
 
 

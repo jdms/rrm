@@ -6,12 +6,15 @@ SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 }
 
 
+
 void SketchWindow::createWindow()
 {
     cs = new CanvasStack();
     setCentralWidget( cs );
 
 }
+
+
 
 void SketchWindow::addCanvas( CrossSection* const& cs_ )
 {
@@ -54,6 +57,8 @@ void SketchWindow::updateCanvas()
 }
 
 
+
+
 void SketchWindow::setCurrentScene( CrossSection* const& cs_ )
 {
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
@@ -66,5 +71,18 @@ void SketchWindow::setCurrentScene( CrossSection* const& cs_ )
     QGraphicsView* gview_ = cs->getElement( cs_->getIndex() );
     SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
     sc_->setCurrent( true );
+
+}
+
+
+void SketchWindow::updateObject( const std::size_t& index_ )
+{
+    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+    {
+        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+        sc_->updateObject( index_ );
+    }
+
 
 }

@@ -175,7 +175,7 @@ void Object::removeTrajectory()
 
 bool Object::hasTrajectory() const
 {
-    return trajectory.isEmpty();
+    return !trajectory.isEmpty();
 }
 
 
