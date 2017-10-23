@@ -456,6 +456,12 @@ void MainWindow::createFlowDiagnosticsInterface()
 
     } );
 
+    connect( flow_window, &FlowWindow::getVolumeDimension, this, [=]( double& width, double& height, double&  depth )
+    {
+       controller->getVolumeDimension( width, height, depth );
+    });
+
+
 }
 
 

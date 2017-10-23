@@ -152,6 +152,12 @@ class Controller
             rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
         }
 
+        inline void getVolumeDimension(double& width, double& height, double&  depth)
+        {
+            rules_processor.getLenght( width, height, depth );
+        }
+
+
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 
