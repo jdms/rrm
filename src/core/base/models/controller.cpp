@@ -116,7 +116,7 @@ void Controller::addObjectCurve( PolyCurve curve_ )
     obj_->addCurve( current_csection, curve_ );
 
     CrossSection* cs_ = getCurrentCrossSection();
-    cs_->addObject( obj_->getIndex(),  &curve_ );
+    cs_->addObject( obj_->getIndex(),  &curve_ );    
 }
 
 
@@ -129,6 +129,11 @@ void Controller::removeObjectCurve( std::size_t csection_ )
     cs_->removeObjectCurve( obj_->getIndex() );
 }
 
+
+Object* Controller::getCurrentObject()
+{
+    return objects.getElement( current_object );
+}
 
 
 std::size_t Controller::getIndexCurrentObject() const

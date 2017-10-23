@@ -95,7 +95,7 @@ class Object
 
     private:
 
-        static std::size_t number_of_surfaces;
+        static std::size_t number_of_objects;
 
         std::size_t index;
         std::string name;

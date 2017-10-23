@@ -13,15 +13,16 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/ )
 
 
 
-#####################################################################
+###############################################
 # Options
-#####################################################################
+###############################################
 
 set(RRM_BUILD_TYPE "Debug" CACHE STRING
     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
+
 
 
 ###############################################
@@ -84,6 +85,55 @@ include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
 INCLUDE_DIRECTORIES( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
+
+
+
+
+###############################################
+# Preliminary support for stratmod library
+###############################################
+
+include(ExternalProject)  ## needed
+
+set(BUILD_USING_OPENMP ON)
+
+set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
+
+set(STRATMOD_CMAKE_ARGS
+    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+    -DBUILD_SHARED_LIBRARY=OFF
+    -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+    )
+
+if(BUILD_USING_OPENMP AND APPLE)
+    set(STRATMOD_CMAKE_ARGS
+        -DBUILD_USING_OPENMP=ON
+        -DBUILD_SHARED_LIBRARY=OFF
+        -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
+        )
+endif()
+
+ExternalProject_Add(
+    StratModLibBuild
+    DOWNLOAD_COMMAND git submodule update --init
+    UPDATE_COMMAND git submodule update -f
+    SOURCE_DIR ${STRATMOD_SOURCE}
+    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
+    )
+
+
+set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+message(WARNING ${STRATMODLIB})
+
+add_library(stratmod STATIC IMPORTED)
+set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
+add_dependencies(stratmod StratModLibBuild)
+include_directories(${STRATMOD_SOURCE})
+
+message(WARNING stratmod)
+
 
 
 ###############################################

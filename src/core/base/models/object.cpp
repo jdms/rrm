@@ -9,14 +9,14 @@ Object::Object()
 
 void Object::defineIndex()
 {
-    index = number_of_surfaces;
-    number_of_surfaces++;
+    index = number_of_objects;
+    number_of_objects++;
 }
 
 void Object::setIndex( const size_t id_ )
 {
     index = id_;
-    number_of_surfaces = id_ + 1;
+    number_of_objects = id_ + 1;
 }
 
 std::size_t Object::getIndex() const

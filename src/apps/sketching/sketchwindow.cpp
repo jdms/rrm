@@ -75,6 +75,19 @@ void SketchWindow::setCurrentScene( CrossSection* const& cs_ )
 }
 
 
+
+void SketchWindow::addObject( Object* const& obj_ )
+{
+    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+    {
+        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+        sc_->addObject( obj_ );
+    }
+
+}
+
+
 void SketchWindow::updateObject( const std::size_t& index_ )
 {
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
