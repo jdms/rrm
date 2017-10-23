@@ -2,6 +2,7 @@
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
 #include "widgets/realfeaturedslider.h"
+#include "widgets/objecttree.h"
 
 
 #include <QtWidgets>
@@ -57,8 +58,10 @@ void MainWindow::setupWindowProperties()
 void MainWindow::createWindow()
 {
     createMainInterface();
+    createSidebar();
     createSketchingWindow();
 }
+
 
 
 
@@ -66,6 +69,7 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
+
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
@@ -84,6 +88,18 @@ void MainWindow::createMainInterface()
     connect( this, &MainWindow::updateVolume, [=](){ double width_ = 0, height_ = 0, length_ = 0;
                                                      controller->getVolumeDimensions( width_, height_, length_ );
                                                      sl_depth_csection->setRange( 0, length_ ); } );
+
+}
+
+
+void MainWindow::createSidebar()
+{
+
+    object_tree = new ObjectTree( this );
+    dw_object_tree = new QDockWidget( "" );
+    dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_tree->setWidget( object_tree );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
 }
 
@@ -117,11 +133,16 @@ void MainWindow::createSketchingWindow()
                                                                                                                   emit updateVolume(); } );
 
     connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ controller->addObjectCurve( curve_ );
-                                                                                        emit updateObject( controller->getIndexCurrentObject() ); } );
+                                                                                        emit updateObject( controller->getIndexCurrentObject() );
+                                                                                        controller->addObject();
+                                                                                        emit addObject( controller->getCurrentObject() ); } );
 
     connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
 
+    connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
+
 }
+
 
 
 

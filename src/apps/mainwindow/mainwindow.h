@@ -15,8 +15,8 @@ class QSlider;
 
 
 class Canvas3d;
-class RealSlider;
 class RealFeaturedSlider;
+class ObjectTree;
 class SketchWindow;
 
 
@@ -36,6 +36,7 @@ class MainWindow: public QMainWindow
     signals:
 
         void updateVolume();
+        void addObject( Object* const& obj_ );
         void updateObject( const std::size_t );
 
 
@@ -52,6 +53,7 @@ class MainWindow: public QMainWindow
         void setupWindowProperties();
         void createSketchingWindow();
         void createMainInterface();
+        void createSidebar();
 
 
         void createController();
@@ -76,6 +78,9 @@ class MainWindow: public QMainWindow
         Canvas3d* canvas3d;
 
         RealFeaturedSlider* sl_depth_csection;
+
+        QDockWidget* dw_object_tree;
+        ObjectTree* object_tree;
 
         QDockWidget* dw_sketchwindow;
         SketchWindow* sketch_window;

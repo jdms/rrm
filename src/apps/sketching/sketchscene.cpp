@@ -97,6 +97,7 @@ void SketchScene::updateObject(  const std::size_t& index_ )
 
 
 
+
 void SketchScene::setCurrent( bool status_ )
 {
     is_current = status_;

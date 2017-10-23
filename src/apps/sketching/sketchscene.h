@@ -73,7 +73,7 @@ class SketchScene: public QGraphicsScene, public Scene
         UserInteraction current_interaction = UserInteraction::SKETCHING;
         InputSketch* user_input;
 
-         CrossSection* csection;
+        CrossSection* csection;
 
         VolumeItemWrapper* volume;
         ObjectsContainer objects;

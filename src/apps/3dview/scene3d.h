@@ -43,6 +43,7 @@ class Scene3d: public QObject, public Scene
 
 
         virtual void addObject(  Object* const& raw_ ){}
+        virtual void updateObject(  const std::size_t& index_ ){}
 
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );

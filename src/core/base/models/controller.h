@@ -50,6 +50,7 @@ class Controller
         void addObject();
         void addObjectCurve( PolyCurve curve_ );
         void removeObjectCurve( std::size_t csection_ );
+        Object* getCurrentObject();
 
         std::size_t getIndexCurrentObject() const;
 
