@@ -131,6 +131,10 @@ void Controller::removeObjectCurve( std::size_t csection_ )
 
 
 
+std::size_t Controller::getIndexCurrentObject() const
+{
+    return current_object;
+}
 
 
 

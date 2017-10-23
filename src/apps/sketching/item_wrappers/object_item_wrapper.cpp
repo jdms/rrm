@@ -90,41 +90,11 @@ void ObjectItemWrapper::updateDepth( double depth_ )
 
 
 
-void ObjectItemWrapper::setupPen()
-{
-    current_pen.setStyle( Qt::SolidLine );
-    current_pen.setCapStyle( Qt::RoundCap );
-    current_pen.setJoinStyle( Qt::RoundJoin );
-    current_pen.setWidth( 3 );
-
-}
-
-
-
-
 bool ObjectItemWrapper::isVisible() const
 {
     if( raw == nullptr ) return false;
     return raw->isVisible();
 
-}
-
-
-
-
-QRectF ObjectItemWrapper::boundingRect() const
-{
-    return curve.boundingRect();
-}
-
-
-void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
-{
-    if( isVisible() == false  ) return;
-
-    painter->setRenderHint( QPainter::Antialiasing );
-    painter->setPen( current_pen );
-    painter->drawPath( curve );
 }
 
 
@@ -149,6 +119,35 @@ void ObjectItemWrapper::clearData()
     raw = nullptr;
     current_csection = 0;
 }
+
+
+
+
+void ObjectItemWrapper::setupPen()
+{
+    current_pen.setStyle( Qt::SolidLine );
+    current_pen.setCapStyle( Qt::RoundCap );
+    current_pen.setJoinStyle( Qt::RoundJoin );
+    current_pen.setWidth( 3 );
+
+}
+
+
+QRectF ObjectItemWrapper::boundingRect() const
+{
+    return curve.boundingRect();
+}
+
+
+void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
+{
+    if( isVisible() == false  ) return;
+
+    painter->setRenderHint( QPainter::Antialiasing );
+    painter->setPen( current_pen );
+    painter->drawPath( curve );
+}
+
 
 
 

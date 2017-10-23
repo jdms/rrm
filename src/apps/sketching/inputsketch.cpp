@@ -52,8 +52,8 @@ void InputSketch::process()
     else
         sketch_ = fromQtToCurve2D( path0_ );
 
-    sketch_ = SketchLibrary::xmonotonicSketch( sketch_ );
-    sketch_ = SketchLibrary::smooth( sketch_ );
+//    sketch_ = SketchLibrary::xmonotonicSketch( sketch_ );
+//    sketch_ = SketchLibrary::smooth( sketch_ );
 
     setSketch( fromCurve2DToQt( sketch_ ) );
 
@@ -63,6 +63,18 @@ void InputSketch::process()
 PolyCurve InputSketch::done()
 {
     if( curve.isEmpty() == true ) return PolyCurve();
+
+
+    //TODO: create a method to smooth the curve
+
+    Curve2D sketch_ = fromQtToCurve2D( curve.toSubpathPolygons()[ 0 ] );
+    sketch_ = SketchLibrary::xmonotonicSketch( sketch_ );
+    sketch_ = SketchLibrary::smooth( sketch_ );
+    setSketch( fromCurve2DToQt( sketch_ ) );
+
+    //Finish: create a method to smooth the curve
+
+
 
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;

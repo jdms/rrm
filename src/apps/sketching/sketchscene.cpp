@@ -29,14 +29,14 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
 
+    csection = raw_;
+
     Volume* const& vol_ = raw_->getVolume();
     addVolume( vol_ );
 
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addObject( o.second );
-
-
 
 }
 
@@ -77,12 +77,23 @@ void SketchScene::addObject( Object* const& raw_ )
 
 
     std::size_t index_ = raw_->getIndex();
-    objects.addElement( index_, 0 );
 
+    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, csection->getDepth() );
+    objects.addElement( index_, obj_ );
+
+    addItem( obj_ );
     std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
 }
 
+
+void SketchScene::updateObject(  const std::size_t& index_ )
+{
+    ObjectItemWrapper* obj_ = objects.getElement( index_ );
+    obj_->updateObject();
+
+    update();
+}
 
 
 

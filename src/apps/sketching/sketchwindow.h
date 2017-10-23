@@ -31,6 +31,9 @@ class SketchWindow: public QMainWindow
         void updateCanvas();
 
 
+        void updateObject( const std::size_t& index_ );
+
+
 
     signals:
 
