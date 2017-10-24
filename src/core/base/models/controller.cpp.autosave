@@ -247,10 +247,6 @@ bool Controller::createObjectSurface()
 
 
 
-
-
-
-
 void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();

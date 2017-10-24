@@ -30,9 +30,9 @@ class PolyCurve
              data.vertices.assign( vs_.begin(), vs_.end() );
         }
 
-        void getVertices( std::vector< double >& vs_ ) const
+        std::vector< double > getVertices() const
         {
-             vs_ = data.vertices;
+            return data.vertices;
         }
 
 
@@ -42,9 +42,9 @@ class PolyCurve
              data.edges.assign( es_.begin(), es_.end() );
         }
 
-        void getEdges( std::vector< std::size_t >& es_ ) const
+        std::vector< std::size_t > getEdges() const
         {
-             es_ = data.edges;
+             return data.edges;
         }
 
 

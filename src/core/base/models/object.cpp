@@ -152,12 +152,7 @@ Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 
 void Object::removeCrossSectionCurves()
 {
-//    for( auto it: csection_curves )
-//    {
-//        removeCurve( it.first );
-//    }
 
-//    csection_curves.clear();
 }
 
 
@@ -166,6 +161,12 @@ void Object::addTrajectory( const PolyCurve& traj_ )
 {
     if( isTrajectoryAdmissible() == false ) return;
     trajectory = traj_;
+}
+
+
+PolyCurve Object::getTrajectory()
+{
+    return trajectory;
 }
 
 void Object::removeTrajectory()
@@ -184,6 +185,12 @@ void Object::setSurface( const Surface& surface_ )
 {
     surface = surface_;
 }
+
+Surface Object::getSurface() const
+{
+    return surface;
+}
+
 
 void Object::removeSurface()
 {

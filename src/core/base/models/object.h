@@ -67,7 +67,11 @@ class Object
         void removeCrossSectionCurves();
 
 
+        std::vector< std::tuple< PolyCurve, double > > getCrossSectionAndCurves(){}
+
+
         void addTrajectory( const PolyCurve& traj_ );
+        PolyCurve getTrajectory();
         void removeTrajectory();
         bool hasTrajectory() const;
 
@@ -78,6 +82,7 @@ class Object
 
 
         void setSurface( const Surface& surface_ );
+        Surface getSurface() const;
         void removeSurface();
 
 

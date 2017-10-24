@@ -157,11 +157,8 @@ QPainterPath ObjectItemWrapper::polycurveToQPainterPath( const PolyCurve& pol_ )
 
     QPainterPath path_;
 
-    std::vector< double > vertices_;
-    pol_.getVertices( vertices_ );
-
-    std::vector< std::size_t > edges_;
-    pol_.getEdges( edges_ );
+    std::vector< double > vertices_ = pol_.getVertices();
+    std::vector< std::size_t > edges_ = pol_.getEdges();
 
     if( edges_.empty() == true )
         path_.addPolygon( ObjectItemWrapper::vectorToQPolygonF( vertices_ ) );

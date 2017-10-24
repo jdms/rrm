@@ -32,9 +32,9 @@ class Surface
              data.vertices.assign( vs_.begin(), vs_.end() );
         }
 
-        void getVertices( std::vector< double >& vs_ ) const
+        std::vector< double > getVertices() const
         {
-             vs_ = data.vertices;
+             return data.vertices;
         }
 
 
@@ -45,9 +45,9 @@ class Surface
              data.normals.assign( ns_.begin(), ns_.end() );
         }
 
-        void getNormals( std::vector< double >& ns_ ) const
+        std::vector< double > getNormals() const
         {
-             ns_ = data.normals;
+             return data.normals;
         }
 
 
@@ -58,9 +58,9 @@ class Surface
              data.faces.assign( fs_.begin(), fs_.end() );
         }
 
-        void getFaces( std::vector< std::size_t >& fs_ ) const
+        std::vector< std::size_t > getFaces() const
         {
-             fs_ = data.faces;
+             return data.faces;
         }
 
 
