@@ -67,7 +67,6 @@ class Shader
         }
 
 
-
         static Eigen::Vector3f normalize( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
         {
 
@@ -95,6 +94,15 @@ class Shader
             for( auto v: points_ )
                 points.push_back( static_cast< float >( v ) );
             return points;
+        }
+
+
+        static std::vector< unsigned int > convertToUnsignedInt( const std::vector< std::size_t >& edges_ )
+        {
+            std::vector< unsigned int > edges;
+            for( auto e: edges_ )
+                edges.push_back( static_cast< unsigned int >( e ) );
+            return edges;
         }
 
 

@@ -6,6 +6,43 @@ SurfaceShader::SurfaceShader()
 }
 
 
+SurfaceShader::SurfaceShader( Object* const& raw_ )
+{
+    setDefaultValues();
+    setObject( raw_ );
+}
+
+
+
+void SurfaceShader::setObject( Object* const& raw_ )
+{
+    raw = raw_;
+    loadBuffers();
+}
+
+void SurfaceShader::loadBuffers()
+{
+
+    Surface surface_ = raw->getSurface();
+
+    std::vector< GLfloat > vertices_ = Shader::convertToFloat( surface_.getVertices() );
+    if( vertices_.empty() == true ) return;
+
+
+    std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( surface_.getFaces() );
+    std::vector< GLfloat > normals_ = Shader::convertToFloat( surface_.getNormals() );
+
+    int r, g, b;
+    raw->getColor( r, g, b );
+
+    std::size_t nvertices = vertices_.size()/3;
+
+    updateGeometryBuffers( vertices_, normals_, faces_ );
+    updateColorBuffers( nvertices, r, g, b );
+}
+
+
+
 void SurfaceShader::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/gouraud_surface.vert" ),
@@ -114,7 +151,6 @@ void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertice
     glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
 
-
 void SurfaceShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
 {
     glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
@@ -124,10 +160,28 @@ void SurfaceShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
 }
 
 
+void SurfaceShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ )
+{
+    std::vector< GLfloat > color_;
+    color_.resize( 3*nvertices_ );
+
+    for( std::size_t i = 0; i < nvertices_; ++i )
+    {
+        color_[ 3* i ] = static_cast<GLfloat>( r_/255.0f );
+        color_[ 3* i + 1 ] = static_cast<GLfloat>( g_/255.0f );
+        color_[ 3* i + 2 ] = static_cast<GLfloat>( b_/255.0f );
+    }
+
+    updateColorBuffers( color_ );
+}
+
+
 
 void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                           const int& h )
 {
+
+    if( raw->isVisible() == false ) return;
 
     Eigen::Affine3f M;
     M.setIdentity();
@@ -180,11 +234,19 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 }
 
 
+
+void SurfaceShader::update()
+{
+    loadBuffers();
+}
+
+
 void SurfaceShader::clear()
 {
     reset();
     setDefaultValues();
 }
+
 
 void SurfaceShader::setDefaultValues()
 {

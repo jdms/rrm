@@ -4,6 +4,7 @@
 #include "./core/base/models/object.h"
 #include "./core/base/models/volumeshader.h"
 #include "./core/base/models/planeshader.h"
+#include "./core/base/models/surfaceshader.h"
 
 
 #include <QString>
@@ -72,6 +73,14 @@ void Scene3d::removeCrossSection( CrossSection* const& raw_ )
 }
 
 
+void Scene3d::addObject(  Object* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    objects.addElement( raw_->getIndex(), new SurfaceShader( raw_ ) );
+    emit updateCanvas();
+
+}
 
 
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,

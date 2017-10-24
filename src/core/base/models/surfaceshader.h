@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "shader.h"
-
+#include "object.h"
 
 class SurfaceShader: public Shader
 {
@@ -14,6 +14,24 @@ class SurfaceShader: public Shader
     public:
 
         SurfaceShader();
+        SurfaceShader( Object* const& raw_ );
+
+
+        void setObject( Object* const& raw_ );
+
+
+        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
+              const int& h );
+
+        void update();
+        void clear();
+
+
+    protected:
+
+
+        void setDefaultValues();
+        void loadBuffers();
 
 
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
@@ -23,16 +41,8 @@ class SurfaceShader: public Shader
         void updateColorBuffers( const std::vector< GLfloat >& colors_ );
 
 
-        void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
-              const int& h );
+        void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );
 
-        void clear();
-
-
-    protected:
-
-
-        void setDefaultValues();
 
         virtual void initShaders();
         virtual void initBuffers();
@@ -53,6 +63,8 @@ class SurfaceShader: public Shader
 
         GLuint number_of_vertices;
         GLuint number_of_faces;
+
+        Object* raw;
 
 };
 

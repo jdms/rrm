@@ -62,6 +62,8 @@ class Controller
         void setObjectVisibility( std::size_t index_, bool status_ );
         bool getObjectVisibility( std::size_t index_ );
 
+        bool createObjectSurface();
+
 
         std::size_t getIndexCurrentObject() const;
 

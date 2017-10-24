@@ -12,6 +12,7 @@ class QSurface;
 
 class VolumeShader;
 class PlaneShader;
+class SurfaceShader;
 
 
 #include "./core/base/models/scene.h"
@@ -25,6 +26,7 @@ class Scene3d: public QObject, public Scene
 
 
     using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
+    using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
 
 
     public:
@@ -42,7 +44,7 @@ class Scene3d: public QObject, public Scene
         virtual void removeCrossSection( CrossSection* const& raw_ );
 
 
-        virtual void addObject(  Object* const& raw_ ){}
+        virtual void addObject(  Object* const& raw_ );
         virtual void updateObject(  const std::size_t& index_ ){}
 
 
@@ -71,6 +73,7 @@ class Scene3d: public QObject, public Scene
 
         VolumeShader* volume;
         CrossSectionsContainer csections;
+        ObjectsContainer objects;
 
 
 };
