@@ -11,6 +11,14 @@ void Controller::setScene3d( Scene3d* const& sc_ )
 }
 
 
+void Controller::setObjectTree( ObjectTree* const& ot_ )
+{
+    object_tree = ot_;
+}
+
+
+
+
 void Controller::init()
 {
     addVolume();
@@ -23,7 +31,12 @@ void Controller::init()
 void Controller::addVolume()
 {
     volume = new Volume();
+
     scene3d->addVolume( volume );
+    object_tree->addInputVolume();
+
+    initRulesProcessor();
+
 }
 
 
@@ -31,6 +44,9 @@ void Controller::setVolumeDimensions( const double& width_, const double& height
 {
     volume->setGeometry( width_, height_, length_ );
     scene3d->updateVolume();
+
+    updateBoundingBoxRulesProcessor();
+
 }
 
 
@@ -49,6 +65,20 @@ void Controller::acceptVolumeDimensions( CrossSection::Direction dir_, double w_
     else if( dir_ == CrossSection::Direction::Y )
         setVolumeDimensions( w_, volume->getHeight(), h_ );
 
+}
+
+
+
+void Controller::setVolumeVisibility( bool status_ )
+{
+    volume->setVisible( status_ );
+    scene3d->updateVolume();
+}
+
+
+bool Controller::getVolumeVisibility() const
+{
+    return volume->isVisible();
 }
 
 
@@ -99,7 +129,6 @@ CrossSection* Controller::getCrossection( const double& depth_ )
 
 
 
-
 void Controller::addObject()
 {
     Object* obj_ = new Object();
@@ -107,6 +136,10 @@ void Controller::addObject()
 
     objects.addElement( current_object, obj_ );
     volume->addObject( current_object, obj_ );
+
+    object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
+                            obj_->getName(), 255, 0, 0 );
+    scene3d->addObject( obj_ );
 }
 
 
@@ -116,7 +149,8 @@ void Controller::addObjectCurve( PolyCurve curve_ )
     obj_->addCurve( current_csection, curve_ );
 
     CrossSection* cs_ = getCurrentCrossSection();
-    cs_->addObject( obj_->getIndex(),  &curve_ );    
+    cs_->addObject( obj_->getIndex(),  &curve_ );
+    scene3d->updateObject( obj_->getIndex() );
 }
 
 
@@ -130,6 +164,23 @@ void Controller::removeObjectCurve( std::size_t csection_ )
 }
 
 
+void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
+{
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->setVisible( status_ );
+    scene3d->updateObject( index_ );
+
+}
+
+
+bool  Controller::getObjectVisibility( std::size_t index_ )
+{
+    Object* const& obj_ = objects.getElement( index_ );
+    return obj_->isVisible();
+}
+
+
+
 Object* Controller::getCurrentObject()
 {
     return objects.getElement( current_object );
@@ -141,6 +192,27 @@ std::size_t Controller::getIndexCurrentObject() const
     return current_object;
 }
 
+
+
+
+void Controller::initRulesProcessor()
+{
+    updateBoundingBoxRulesProcessor();
+    rules_processor.removeAboveIntersection();
+}
+
+
+void Controller::updateBoundingBoxRulesProcessor()
+{
+    if( volume == nullptr ) return;
+
+    double ox = 0.0, oy = 0.0, oz = 0.0;
+    volume->getOrigin( ox, oy, oz );
+
+    rules_processor.setOrigin( ox, oy, oz );
+    rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
+    rules_processor.setMediumResolution();
+}
 
 
 /*
