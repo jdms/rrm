@@ -101,6 +101,14 @@ void MainWindow::createSidebar()
     dw_object_tree->setWidget( object_tree );
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
+    connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ )
+                                                         { controller->setVolumeVisibility( status_ ); } );
+
+
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ )
+                                                         { controller->setObjectVisibility( index_, status_ ); } );
+
+
 }
 
 
@@ -141,6 +149,13 @@ void MainWindow::createSketchingWindow()
 
     connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
 
+    connect( object_tree, &ObjectTree::setVolumeVisible, [=](){ sketch_window->updateCanvas(); } );
+
+
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ )
+                                                         { sketch_window->updateObject( index_ ); } );
+
+
 }
 
 
@@ -159,6 +174,7 @@ void MainWindow::setupController()
 {
     Scene3d* scene3d = canvas3d->getScene();
     controller->setScene3d( scene3d );
+    controller->setObjectTree( object_tree );
 }
 
 

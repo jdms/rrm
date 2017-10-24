@@ -86,7 +86,7 @@ include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
 INCLUDE_DIRECTORIES( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 
-
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
 ###############################################

@@ -28,11 +28,11 @@ class Object
 
 
         void setName( const std::string& name_ );
-        void getName( std::string& name ) const;
+        std::string getName() const;
 
 
         void setType( const Object::Type& type_ );
-        void getType( Object::Type& type_ ) const;
+        Object::Type getType() const;
 
 
         void setColor( int r, int g, int b );

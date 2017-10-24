@@ -31,9 +31,9 @@ void Object::setName( const std::string& name_ )
     name = name_;
 }
 
-void Object::getName( std::string& name_ ) const
+std::string Object::getName() const
 {
-    name_ = name;
+    return name;
 }
 
 
@@ -43,9 +43,9 @@ void Object::setType( const Object::Type &type_ )
     type = type_;
 }
 
-void Object::getType( Object::Type &type_ ) const
+Object::Type Object::getType() const
 {
-    type_ = type;
+    return type;
 }
 
 

@@ -243,6 +243,8 @@ void VolumeShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices
 void VolumeShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                          const int& h )
 {
+    if( raw->isVisible() == false ) return;
+
 
     Eigen::Affine3f M;
     M.setIdentity();
