@@ -72,6 +72,10 @@ class Controller
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 
+        void updateCurves();
+        void updateObjectCurveFromCrossSection( std::size_t object_id_, std::size_t csection_id_ );
+
+
 
 
     protected:
