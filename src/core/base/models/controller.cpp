@@ -245,8 +245,36 @@ bool Controller::createObjectSurface()
 
 
 
+void Controller::updateCurves()
+{
+//    for ( Container< std::size_t, Object* >::Iterator it =  objs_.begin(); it != objs_.end(); ++it )
+//    {
 
 
+
+
+
+
+
+//    }
+}
+
+
+void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, std::size_t csection_id_ )
+{
+    Object* obj_ = objects.getElement( object_id_ );
+    CrossSection* csection_ = actives_csections.getElement( csection_id_ );
+
+    std::vector< double > curve_vertices;
+    std::vector< std::size_t > curve_edges;
+    bool has_curve;// = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_->getDepth() ) ,
+                     //                                 curve_vertices, curve_edges );
+
+    if( has_curve == false ) return;
+
+    obj_->addCurve( csection_id_, PolyCurve( curve_vertices, curve_edges ) );
+
+}
 
 
 
