@@ -777,21 +777,52 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
         t.vertex_list = surface_vertices;
 
         triangles_meshes.push_back( t );
+    }
 
+    std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists;
+    std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists;
+
+    rules_processor.getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists);
+    rules_processor.getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists);
+    rules_processor.getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
+    rules_processor.getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
+
+    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
+    {
         CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
-        rules_processor.getLeftBoundaryCrossSectionCurve( it,  cm_lb.vertex_list, cm_lb.edge_list );
-        rules_processor.getRightBoundaryCrossSectionCurve( it, cm_rb.vertex_list, cm_rb.edge_list  );
-        rules_processor.getFrontBoundaryCrossSectionCurve( it, cm_fb.vertex_list, cm_fb.edge_list  );
-        rules_processor.getBackBoundaryCrossSectionCurve( it,  cm_bb.vertex_list, cm_bb.edge_list  );
+        std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) );
+        std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) );
+
+        std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) );
+        std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) );
+
+        std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) );
+        std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) );
+
+        std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) );
+        std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) );
 
         left_curves.push_back( cm_lb );
         right_curves.push_back( cm_rb );
         front_curves.push_back( cm_fb );
         back_curves.push_back( cm_bb );
-
-
     }
+//    {
+//        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+//        rules_processor.getLeftBoundaryCrossSectionCurve( it,  cm_lb.vertex_list, cm_lb.edge_list );
+//        rules_processor.getRightBoundaryCrossSectionCurve( it, cm_rb.vertex_list, cm_rb.edge_list  );
+//        rules_processor.getFrontBoundaryCrossSectionCurve( it, cm_fb.vertex_list, cm_fb.edge_list  );
+//        rules_processor.getBackBoundaryCrossSectionCurve( it,  cm_bb.vertex_list, cm_bb.edge_list  );
+
+//        left_curves.push_back( cm_lb );
+//        right_curves.push_back( cm_rb );
+//        front_curves.push_back( cm_fb );
+//        back_curves.push_back( cm_bb );
+
+
+//    }
 
 }
 
