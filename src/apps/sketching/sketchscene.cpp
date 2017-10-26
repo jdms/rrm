@@ -42,6 +42,26 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
 
+void SketchScene::updateCrossSection()
+{
+    Volume* const& vol_ = csection->getVolume();
+
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
+    for( auto o: objs_ )
+        (o.second)->setVisible( false );
+
+
+    CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
+    for( auto o: objs_cs_ )
+    {
+        updateObject( o.first );
+        objects.getElement( o.first )->setVisible( true );
+    }
+
+}
+
+
+
 void SketchScene::addVolume( Volume* const &raw_ )
 {
     clearVolume();
@@ -82,7 +102,7 @@ void SketchScene::addObject( Object* const& raw_ )
     objects.addElement( index_, obj_ );
 
     addItem( obj_ );
-    std::cout << "object " << index_ << " added!" << std::endl << std::flush;
+//    std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
 }
 

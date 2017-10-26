@@ -42,7 +42,9 @@ class MainWindow: public QMainWindow
 
 
 
-    protected slots:
+    public slots:
+
+        void setupSlider();
 
 
 

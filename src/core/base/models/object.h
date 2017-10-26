@@ -17,7 +17,7 @@ class Object
 
 
         enum class Type{ STRATIGRAPHY, FAULT };
-        using CrossSectionsContainer = Container< std::size_t, PolyCurve >;
+        using CrossSectionsContainer = Container< double, PolyCurve >;
 
 
         Object();
@@ -58,9 +58,10 @@ class Object
         bool isEmpty() const;
 
 
-        void addCurve( std::size_t csection_id_, const PolyCurve& curve_ );
-        PolyCurve getCurve( std::size_t csection_id_ );
-        void removeCurve( std::size_t csection_id_ );
+        bool addCurve( double csection_id_, const PolyCurve& curve_ );
+        PolyCurve getCurve( double csection_id_ );
+        bool removeCurve( double csection_id_ );
+        void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
 
         Object::CrossSectionsContainer getCrossSectionCurves() const;
@@ -70,7 +71,7 @@ class Object
         std::vector< std::tuple< PolyCurve, double > > getCrossSectionAndCurves(){}
 
 
-        void addTrajectory( const PolyCurve& traj_ );
+        bool addTrajectory( const PolyCurve& traj_ );
         PolyCurve getTrajectory();
         void removeTrajectory();
         bool hasTrajectory() const;

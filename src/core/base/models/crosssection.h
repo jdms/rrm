@@ -57,11 +57,12 @@ class CrossSection
         bool isVisible() const;
 
 
-        void addObject(const Object& id_, PolyCurve* const& curve_  );
+        bool addObject(const Object& id_, PolyCurve* const& curve_  );
         const PolyCurve *getObjectCurve( const Object& id_ );
-        void removeObjectCurve( const Object& id_ ) ;
+        bool removeObjectCurve( const Object& id_ ) ;
 
 
+        ObjectsContainer getObjects() const;
         void removeObjects();
 
 

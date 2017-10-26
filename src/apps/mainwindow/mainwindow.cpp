@@ -134,7 +134,7 @@ void MainWindow::createSketchingWindow()
                                                                                         sketch_window->highlightCanvas( controller->getCurrentCrossSection() ); }  );
 
 
-    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateCanvas );
+    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateVolumes );
 
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
@@ -145,11 +145,14 @@ void MainWindow::createSketchingWindow()
                                                                                         controller->addObject();
                                                                                         emit addObject( controller->getCurrentObject() ); } );
 
+
     connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
 
     connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
 
-    connect( object_tree, &ObjectTree::setVolumeVisible, [=](){ sketch_window->updateCanvas(); } );
+
+
+    connect( object_tree, &ObjectTree::setVolumeVisible, [=](){ sketch_window->updateVolumes(); } );
 
 
     connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ )
@@ -178,12 +181,22 @@ void MainWindow::setupController()
 }
 
 
+void MainWindow::setupSlider()
+{
+    double w_, h_, d_;
+    controller->getVolumeDimensions( w_, h_, d_ );
+    int disc_ = static_cast< int >( controller->setupCrossSectionDiscretization() );
+
+    sl_depth_csection->setDiscretization( disc_ );
+    sl_depth_csection->setRange( 0, d_ );
+    emit sl_depth_csection->markValue( d_ );
+}
+
+
 
 void MainWindow::run_app()
 {
     controller->init();
-
-    emit sl_depth_csection->markValue( sl_depth_csection->maximumValue() );
-
+    setupSlider();
 }
 

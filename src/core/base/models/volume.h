@@ -14,8 +14,6 @@
 class Volume
 {
 
-//    using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
-
 
     public:
 
@@ -56,13 +54,13 @@ class Volume
 
 
 
-        void addObject( std::size_t id_, Object* const& obj_ );
-        void removeObject( std::size_t id_ );
+        bool addObject( std::size_t id_, Object* const& obj_ );
+        bool removeObject( std::size_t id_ );
         Volume::ObjectsContainer getObjects() const;
 
 
-        void addCrossSection( std::size_t id_ );
-        void removeCrossSection( std::size_t id_ );
+        bool addCrossSection( std::size_t id_ );
+        bool removeCrossSection( std::size_t id_ );
         std::set<size_t> getCrossSections() const;
 
 

@@ -31,8 +31,15 @@ class SketchWindow: public QMainWindow
         void updateCanvas();
 
 
+        void updateVolumes();
+
+
         void addObject( Object* const& obj_ );
         void updateObject( const std::size_t& index_ );
+
+
+
+
 
 
 

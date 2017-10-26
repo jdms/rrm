@@ -47,6 +47,22 @@ void SketchWindow::highlightCanvas( CrossSection* const& cs_ )
 
 void SketchWindow::updateCanvas()
 {
+
+    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+    {
+        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+        sc_->updateCrossSection();
+    }
+
+}
+
+
+
+
+void SketchWindow::updateVolumes()
+{
+
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = it->second;

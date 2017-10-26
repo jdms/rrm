@@ -190,15 +190,19 @@ void Volume::getBottomFace( std::vector< double >& vertices_ ) const
 }
 
 
-void Volume::addObject( std::size_t id_, Object* const& obj_ )
+bool Volume::addObject( std::size_t id_, Object* const& obj_ )
 {
-    objects.addElement( id_, obj_ );
+    return objects.addElement( id_, obj_ );
 }
 
 
-void Volume::removeObject( std::size_t id_ )
+bool Volume::removeObject( std::size_t id_ )
 {
+    if( objects.findElement( id_ ) == false )
+        return false;
+
     objects.removeElement( id_ );
+    return true;
 }
 
 Volume::ObjectsContainer Volume::getObjects() const
@@ -207,16 +211,20 @@ Volume::ObjectsContainer Volume::getObjects() const
 }
 
 
-void Volume::addCrossSection( std::size_t id_ )
+bool Volume::addCrossSection( std::size_t id_ )
 {
     csections.insert( id_ );
+    return true;
 }
 
 
-void Volume::removeCrossSection( std::size_t id_ )
+bool Volume::removeCrossSection( std::size_t id_ )
 {
-    //TODO: check if id_ is valid
+    if( csections.find( id_ ) == csections.end() )
+        return false;
+
     csections.erase( id_ );
+    return true;
 }
 
 
