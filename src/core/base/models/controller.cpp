@@ -131,11 +131,26 @@ CrossSection* Controller::getCrossection( const double& depth_ )
 
 void Controller::addObject()
 {
+
+
+    double w = 0, h = 0,  l = 0;
+    double minx_ = 0, miny_ = 0, minz_ = 0;
+
+    volume->getOrigin( minx_, miny_, minz_ );
+    volume->getGeometry( w, h, l );
+
+    double maxx_ = minx_ + w;
+    double maxy_ = miny_ + h;
+    double maxz_ = minz_ + l;
+
+
     Object* obj_ = new Object();
     current_object = obj_->getIndex();
+    obj_->setMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
     objects.addElement( current_object, obj_ );
     volume->addObject( current_object, obj_ );
+
 
     object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
                             obj_->getName(), 255, 0, 0 );
