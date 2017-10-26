@@ -221,6 +221,38 @@ bool Object::isTrajectoryAdmissible()
 
 
 
+
+void Object::setMaxMin( double maxx_, double maxy_, double maxz_,
+                        double minx_, double miny_, double minz_ )
+{
+    max.x = maxx_;
+    max.y = maxy_;
+    max.z = maxz_;
+
+    min.x = minx_;
+    min.y = miny_;
+    min.z = minz_;
+
+
+}
+
+
+void Object::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+                        double& minx_, double& miny_, double& minz_ ) const
+{
+
+    maxx_ = max.x;
+    maxy_ = max.y;
+    maxz_ = max.z;
+
+    minx_ = min.x;
+    miny_ = min.y;
+    minz_ = min.z;
+
+}
+
+
+
 void Object::clear()
 {
     removeCrossSectionCurves();
@@ -238,7 +270,7 @@ void Object::initialize()
     is_editable = true;
     is_selectable = false;
     is_selected = false;
-    is_visible = true;
+    is_visible = false;
 
 }
 

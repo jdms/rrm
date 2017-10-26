@@ -82,6 +82,15 @@ void Scene3d::addObject(  Object* const& raw_ )
 
 }
 
+void Scene3d::updateObject( const std::size_t &index_ )
+{
+
+    SurfaceShader* obj_ = objects.getElement( index_ );
+    obj_->update();
+
+    emit updateCanvas();
+}
+
 
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
@@ -91,6 +100,11 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
         volume->draw( V, P, w, h );
 
     for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    {
+        (it->second)->draw( V, P, w, h );
+    }
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
     {
         (it->second)->draw( V, P, w, h );
     }

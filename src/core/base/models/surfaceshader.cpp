@@ -9,6 +9,7 @@ SurfaceShader::SurfaceShader()
 SurfaceShader::SurfaceShader( Object* const& raw_ )
 {
     setDefaultValues();
+    init();
     setObject( raw_ );
 }
 
@@ -25,9 +26,16 @@ void SurfaceShader::loadBuffers()
 
     Surface surface_ = raw->getSurface();
 
-    std::vector< GLfloat > vertices_ = Shader::convertToFloat( surface_.getVertices() );
+    std::vector< float > vertices_ = Shader::convertToFloat( surface_.getVertices() );
     if( vertices_.empty() == true ) return;
 
+
+    double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
+    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+
+    Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
+    Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
+    vertices_ = Shader::normalize( vertices_, max, min, 3 );
 
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( surface_.getFaces() );
     std::vector< GLfloat > normals_ = Shader::convertToFloat( surface_.getNormals() );

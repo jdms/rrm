@@ -81,7 +81,6 @@ class CrossSection
         std::string image_path;
 
         ObjectsContainer objects;
-//        std::map< Object, PolyCurve* > objects;
         Volume* volume;
 
 };

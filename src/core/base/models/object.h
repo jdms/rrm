@@ -86,6 +86,12 @@ class Object
         void removeSurface();
 
 
+        void setMaxMin( double maxx_, double maxy_, double maxz_,
+                        double minx_, double miny_, double minz_ );
+        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+                        double& minx_, double& miny_, double& minz_ ) const;
+
+
         void clear();
         void initialize();
 
@@ -123,6 +129,13 @@ class Object
             int g = 0;
             int b = 0;
         } color;
+
+        struct Point
+        {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+        } max, min;
 
 
         const std::size_t CHANNEL_MAX_CSECTIONS = 1;
