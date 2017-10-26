@@ -30,6 +30,7 @@ class SketchScene: public QGraphicsScene, public Scene
         void readCrossSection( CrossSection* const& raw_ );
 
 
+
         virtual void addVolume( Volume* const& raw_ );
         virtual void updateVolume();
         virtual void clearVolume();
@@ -37,6 +38,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
         void addCrossSection( CrossSection* const& raw_ ){}
         void removeCrossSection( CrossSection* const& raw_ ){}
+        void updateCrossSection();
 
 
         virtual void addObject( Object* const& raw_ );

@@ -163,33 +163,41 @@ bool CrossSection::isVisible() const
 }
 
 
-void CrossSection::addObject(const Object& id_, PolyCurve* const& curve_ )
+bool CrossSection::addObject(const Object& id_, PolyCurve* const& curve_ )
 {
-    objects.addElement( id_, curve_ );
+    return objects.addElement( id_, curve_ );
 }
 
 const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
 {
-    //TODO: check if id is valid
+    if( objects.findElement( id_ ) == false )
+        return nullptr;
+
     return objects.getElement( id_ );
 }
 
 
-void CrossSection::removeObjectCurve( const Object& id_ )
+bool CrossSection::removeObjectCurve( const Object& id_ )
 {
-    //TODO: check if id is valid
+    if( objects.findElement( id_ ) == false )
+        return false;
+
     objects.removeElement( id_ );
+    return true;
 
 }
 
 
+CrossSection::ObjectsContainer CrossSection::getObjects() const
+{
+    return objects;
+}
+
+
+
 void CrossSection::removeObjects()
 {
-//    for( auto it: objects )
-//    {
-//        removeObjectCurve( it.first );
-//    }
-//    objects.clear();
+
 }
 
 

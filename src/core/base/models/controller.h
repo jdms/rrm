@@ -45,8 +45,8 @@ class Controller
 
 
 
-        void addCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        void removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
         CrossSection* getCrossection( const double& depth_ );
 
         void setCurrentCrossSection( const double& depth_ );
@@ -54,9 +54,9 @@ class Controller
 
 
 
-        void addObject();
-        void addObjectCurve( PolyCurve curve_ );
-        void removeObjectCurve( std::size_t csection_ );
+        bool addObject();
+        bool addObjectCurve( PolyCurve curve_ );
+        bool removeObjectCurve( double csection_ );
         Object* getCurrentObject();
 
         void setObjectVisibility( std::size_t index_, bool status_ );
@@ -79,7 +79,7 @@ class Controller
 
 
         void updateModel();
-        void updateObjectCurveFromCrossSection( std::size_t object_id_, std::size_t csection_id_ );
+        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ );
         void updateObjectSurfaces( std::size_t object_id_ );
 
 

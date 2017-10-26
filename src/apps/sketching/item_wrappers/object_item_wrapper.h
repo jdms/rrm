@@ -29,6 +29,10 @@ class ObjectItemWrapper: public QGraphicsPathItem
         void updateDepth( double depth_ );
 
 
+        void setActive( bool status_ ){}
+        bool isActive() const{}
+
+
         bool isVisible() const;
 
 
@@ -61,6 +65,7 @@ class ObjectItemWrapper: public QGraphicsPathItem
         QPainterPath curve;
         QPen current_pen;
 
+        bool is_active;
 
         double current_csection;
 

@@ -125,25 +125,37 @@ bool Object::isEmpty() const
 
 
 
-void Object::addCurve( std::size_t csection_id_, const PolyCurve& curve_ )
+bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 {
-    if( isCurveAdmissible() == false ) return;
+    if( isCurveAdmissible() == false ) return false;
     csection_curves.addElement( csection_id_, curve_ );
+    return true;
 }
 
-PolyCurve Object::getCurve( std::size_t csection_id_ )
+PolyCurve Object::getCurve( double csection_id_ )
 {
-    //TODO: verificar se existe id_;
+    if( csection_curves.findElement( csection_id_ ) == false )
+        return PolyCurve();
+
     return csection_curves.getElement( csection_id_ );
 }
 
-void Object::removeCurve( std::size_t csection_id_ )
+bool Object::removeCurve( double csection_id_ )
 {
-    //TODO: verificar se existe id_;
+    if( csection_curves.findElement( csection_id_ ) == false )
+        return false;
+
     csection_curves.removeElement( csection_id_ );
+    return true;
 }
 
+void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
+{
+    csection_curves.setElement( csection_id_, curve_ );
+    std::cout << "Adding curve in " << csection_id_ << "\n" << std::flush;
+}
 
+\
 
 Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 {
@@ -157,10 +169,12 @@ void Object::removeCrossSectionCurves()
 
 
 
-void Object::addTrajectory( const PolyCurve& traj_ )
+bool Object::addTrajectory( const PolyCurve& traj_ )
 {
-    if( isTrajectoryAdmissible() == false ) return;
+    if( isTrajectoryAdmissible() == false ) return false;
+
     trajectory = traj_;
+    return true;
 }
 
 
