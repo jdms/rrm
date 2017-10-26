@@ -28,10 +28,16 @@
 #include <map>
 
 
-//#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
-#include "PolygonalCurve/CurveN.hpp"
-#include "stratmod/stratigraphy_modeller.hpp"
-#include "stratmod/stratigraphy_utilities.hpp"
+//<<<<<<< HEAD:src/apps/mainwindow/rules_processor.hpp
+////#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+//#include "PolygonalCurve/CurveN.hpp"
+//#include "stratmod/stratigraphy_modeller.hpp"
+//#include "stratmod/stratigraphy_utilities.hpp"
+//=======
+#include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "smodeller.hpp"
+#include "sutilities.hpp"
+//>>>>>>> origin/feature-stratmod_ref:src/Apps/MainWindow/rules_processor.hpp
 
 
 
@@ -194,7 +200,7 @@
             bool getBackBoundaryCrossSectionCurve( std::size_t surface_id, std::vector<double>& vertices, std::vector<std::size_t>& edges );
 
         private:
-            StratigraphyModeller modeller_;
+            SModeller modeller_;
             struct { double x, y, z; } origin_, lenght_;
 
             bool testing_surface_insertion_ = false;
@@ -255,7 +261,7 @@
                 surface.push_back(in_curve[i].y());
             }
 
-            status = modeller_.createExtrudedSurface( surface_index, surface );
+            status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface );
         }
 
         testing_surface_insertion_ = false;
@@ -275,7 +281,7 @@
             modeller_.undo();
         }
 
-        StratigraphyUtilities util(modeller_);
+        SUtilities util(modeller_);
         std::vector<double> surface;
 
         std::vector<double> cross_section;
@@ -294,7 +300,7 @@
 
         testing_surface_insertion_ = false;
 
-        return modeller_.createExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
+        return modeller_.createLengthwiseExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
 
     }
 
