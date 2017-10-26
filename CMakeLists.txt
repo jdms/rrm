@@ -13,16 +13,23 @@ set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
+OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
+
 
 ###############################################
 # Compiler flags (we support Clang (3.7+),
 # Gcc (4.8+) and VS2013 (revision 5+)).
 ###############################################
 
+# BUG: the following was commented out because the compiler flags were 
+#      creating havoc in windows.  Moreover, such flags are redundant since
+#      we are setting the build type directly in cmake.
+
 IF( WIN32 )
 
     if( MSVC )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
+        #        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /EHsc")
     endif()
 
 ELSEIF( UNIX )
@@ -196,14 +203,14 @@ set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 
 set(STRATMOD_CMAKE_ARGS 
     -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-    -DBUILD_SHARED_LIBRARY=OFF
+    -DBUILD_SHARED_LIBRARY=ON
     -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
     )
 
 if(BUILD_USING_OPENMP AND APPLE)
     set(STRATMOD_CMAKE_ARGS 
         -DBUILD_USING_OPENMP=ON 
-        -DBUILD_SHARED_LIBRARY=OFF
+        -DBUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
         -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
         )
@@ -217,25 +224,34 @@ ExternalProject_Add(
     CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
     )
 
-#if(MSVC)
-#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/stratmod.lib)
-#else()
-#    set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
-#endif()
+if(MSVC)
+    set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
+else()
+    set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
+endif()
 
-set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
+#set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 #ExternalProject_Get_Property(StratModLibBuild binary_dir)
 #set(STRATMODLIB "${binary_dir}/Release/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-message(WARNING ${STRATMODLIB})
+#message(WARNING ${STRATMODLIB})
 #message(FATAL_ERROR ${binary_dir})
 
-add_library(stratmod STATIC IMPORTED)
-set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
-add_dependencies(stratmod StratModLibBuild)
-include_directories(${STRATMOD_SOURCE})
+#set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
 
-message(WARNING stratmod)
+#if( BUILD_SHARED_STRATMODLIB )
+#    add_library(stratmod SHARED IMPORTED)
+
+#else()
+#    add_library(stratmod STATIC IMPORTED)
+
+#endif()
+
+#add_dependencies(stratmod StratModLibBuild)
+include_directories(${STRATMOD_SOURCE}/stratmod/include)
+
+#message(WARNING stratmod)
 
 
 ###############################################
