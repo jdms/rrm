@@ -72,8 +72,15 @@ class Controller
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 
-        void updateCurves();
+        std::size_t setupCrossSectionDiscretization();
+        std::size_t indexCrossSection( double value_ ) const;
+        double depthCrossSection( std::size_t index_ ) const;
+
+
+
+        void updateModel();
         void updateObjectCurveFromCrossSection( std::size_t object_id_, std::size_t csection_id_ );
+        void updateObjectSurfaces( std::size_t object_id_ );
 
 
 
@@ -86,11 +93,14 @@ class Controller
         std::size_t current_object;
         double current_csection;
 
+
         Volume* volume;
         Container< std::size_t, Object* > objects;
         Container< double, CrossSection* > actives_csections;
 
         RulesProcessor rules_processor;
+        double csection_step;
+
 };
 
 #endif // CONTROLLER_H
