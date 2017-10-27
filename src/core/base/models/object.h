@@ -68,7 +68,7 @@ class Object
         void removeCrossSectionCurves();
 
 
-        std::vector< std::tuple< PolyCurve, double > > getCrossSectionAndCurves(){}
+//        std::vector< std::tuple< PolyCurve, double > > getCrossSectionAndCurves(){}
 
 
         bool addTrajectory( const PolyCurve& traj_ );

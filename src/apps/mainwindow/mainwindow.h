@@ -39,6 +39,7 @@ class MainWindow: public QMainWindow
         void addObject( Object* const& obj_ );
         void updateObject( const std::size_t );
 
+        void defineMainCrossSection( const double& depth_ );
 
 
 

@@ -23,30 +23,29 @@ set( BASE_HEADERS constants/constants.hpp
                   models/polycurve.h
                   models/surface.h
                   models/crosssection.h
-                  models/planeshader.h
+#                  models/planeshader.h
                   models/scene.h
-                  models/shader.h
-                  models/surfaceshader.h
-                  models/volumeshader.h
-                  models/well.h
-                  models/rules_processor.hpp )
+#                  models/shader.h
+#                  models/surfaceshader.h
+#                  models/volumeshader.h
+                  models/well.h )
+#                  models/rules_processor.hpp )
 
 set( BASE_MOC_HEADERS models/slider.h )
 
 
 set( BASE_SOURCES constants/constants.cpp
-                  models/container.cpp
                   models/slider.cpp
                   models/controller.cpp
                   models/object.cpp
                   models/region.cpp
                   models/volume.cpp
                   models/crosssection.cpp
-                  models/planeshader.cpp
-                  models/surfaceshader.cpp
-                  models/volumeshader.cpp
-                  models/well.cpp
-                  models/rules_processor.cpp )
+#                  models/planeshader.cpp
+#                  models/surfaceshader.cpp
+#                  models/volumeshader.cpp
+                  models/well.cpp )
+#                  models/rules_processor.cpp )
 
 set( MOC_HEADERS ${BASE_MOC_HEADERS} )
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )

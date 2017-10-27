@@ -65,6 +65,8 @@ class CrossSection
         ObjectsContainer getObjects() const;
         void removeObjects();
 
+        bool hasObjects() const;
+
 
         void clear();
         void initialize();

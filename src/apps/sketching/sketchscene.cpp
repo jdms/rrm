@@ -44,6 +44,8 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 void SketchScene::updateCrossSection()
 {
+
+    std::cout << "Updating main csection " << csection->getDepth() << std::endl << std::flush;
     Volume* const& vol_ = csection->getVolume();
 
     Volume::ObjectsContainer objs_ = vol_->getObjects();
@@ -93,16 +95,21 @@ void SketchScene::clearVolume()
 
 void SketchScene::addObject( Object* const& raw_ )
 {
+    addObject( raw_, csection->getDepth() );
+}
+
+
+void SketchScene::addObject( Object* const& raw_, double depth_ )
+{
     //TODO: check if valid raw->getIndex
 
 
     std::size_t index_ = raw_->getIndex();
 
-    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, csection->getDepth() );
+    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, depth_ );
     objects.addElement( index_, obj_ );
 
     addItem( obj_ );
-//    std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
 }
 

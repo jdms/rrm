@@ -19,7 +19,7 @@ void SketchWindow::createWindow()
 void SketchWindow::addCanvas( CrossSection* const& cs_ )
 {
     SketchScene* scene_ = new SketchScene( cs_ );
-    cs->addElement( cs_->getIndex(), new QGraphicsView( scene_ ) );
+    cs->addElement( cs_->getDepth(), new QGraphicsView( scene_ ) );
 
     highlightCanvas( cs_ );
 
@@ -31,18 +31,27 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
 void SketchWindow::removeCanvas( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
-    cs->removeElement( cs_->getIndex() );
+    cs->removeElement( cs_->getDepth() );
 }
 
 
 void SketchWindow::highlightCanvas( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
-    cs->setCurrent( cs_->getIndex() );
+    cs->setCurrent( cs_->getDepth() );
 
     setCurrentScene( cs_ );
 
 }
+
+
+void SketchWindow::setMainCanvas( CrossSection* const& cs_ )
+{
+    addCanvas( cs_ );
+    main = cs->getElement( cs_->getDepth() );
+
+}
+
 
 
 void SketchWindow::updateCanvas()
@@ -84,7 +93,7 @@ void SketchWindow::setCurrentScene( CrossSection* const& cs_ )
         sc_->setCurrent( false );
     }
 
-    QGraphicsView* gview_ = cs->getElement( cs_->getIndex() );
+    QGraphicsView* gview_ = cs->getElement( cs_->getDepth() );
     SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
     sc_->setCurrent( true );
 
@@ -114,4 +123,11 @@ void SketchWindow::updateObject( const std::size_t& index_ )
     }
 
 
+}
+
+
+void SketchWindow::setCurrentCrossSection( const double& value_ )
+{
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->updateCrossSection();
 }
