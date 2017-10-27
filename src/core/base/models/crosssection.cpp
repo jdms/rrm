@@ -201,6 +201,12 @@ void CrossSection::removeObjects()
 }
 
 
+bool CrossSection::hasObjects() const
+{
+    return !objects.empty();
+}
+
+
 void CrossSection::clear()
 {
     image_path.clear();

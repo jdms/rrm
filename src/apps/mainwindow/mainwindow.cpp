@@ -89,6 +89,9 @@ void MainWindow::createMainInterface()
                                                      controller->getVolumeDimensions( width_, height_, length_ );
                                                      sl_depth_csection->setRange( 0, length_ ); } );
 
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( const double& value_ )
+                                                                  { controller->setCurrentCrossSection( value_ ); } );
+
 }
 
 
@@ -117,6 +120,7 @@ void MainWindow::createSketchingWindow()
 
     sketch_window = new SketchWindow();
 
+
     dw_sketchwindow = new QDockWidget( "Cross-Section" );
     dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketchwindow->setWidget( sketch_window );
@@ -124,14 +128,20 @@ void MainWindow::createSketchingWindow()
 
 
 
+
+    connect( this, &MainWindow::defineMainCrossSection, [=]( const double& v ){ controller->setMainCrossSection( CrossSection::Direction::Z, v );
+                                                                                sketch_window->setMainCanvas( controller->getActiveCrossSection( v ) ); } );
+
+
+
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
-                                                                                        sketch_window->addCanvas( controller->getCurrentCrossSection() ); } );
+                                                                                        sketch_window->addCanvas( controller->getActiveCrossSection( v ) ); } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){   controller->removeCrossSection( CrossSection::Direction::Z, v );
-                                                                                     sketch_window->removeCanvas( controller->getCrossection( v ) ); } );
+                                                                                     sketch_window->removeCanvas( controller->getActiveCrossSection( v ) ); } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, [=]( double v ){  controller->setCurrentCrossSection( v );
-                                                                                        sketch_window->highlightCanvas( controller->getCurrentCrossSection() ); }  );
+                                                                                        sketch_window->highlightCanvas( controller->getActiveCrossSection( v ) ); }  );
 
 
     connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateVolumes );
@@ -157,6 +167,12 @@ void MainWindow::createSketchingWindow()
 
     connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ )
                                                          { sketch_window->updateObject( index_ ); } );
+
+
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
+//             [=]( const double& value_ )
+//                                                                  { controller->setCurrentCrossSection( value ); } );
+
 
 
 }
@@ -185,11 +201,12 @@ void MainWindow::setupSlider()
 {
     double w_, h_, d_;
     controller->getVolumeDimensions( w_, h_, d_ );
-    int disc_ = static_cast< int >( controller->setupCrossSectionDiscretization() );
+//    int disc_ = static_cast< int >( controller->setupCrossSectionDiscretization() );
 
-    sl_depth_csection->setDiscretization( disc_ );
-    sl_depth_csection->setRange( 0, d_ );
-    emit sl_depth_csection->markValue( d_ );
+//    sl_depth_csection->setDiscretization( disc_ );
+//    sl_depth_csection->setRange( 0, d_ );
+//    emit sl_depth_csection->markValue( d_ );
+    emit defineMainCrossSection( d_ );
 }
 
 
@@ -198,5 +215,7 @@ void MainWindow::run_app()
 {
     controller->init();
     setupSlider();
+
+
 }
 

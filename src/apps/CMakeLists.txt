@@ -34,7 +34,8 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 
 add_executable(${PROJECT_NAME} WIN32 ${RCC_HEADERS} resources/rrm.rc )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp 3dViewApp stratmod planin)
+    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp 3dViewApp )
+#stratmod planin)
 
 
 

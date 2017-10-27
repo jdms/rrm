@@ -10,9 +10,9 @@ class QString;
 class QOpenGLContext;
 class QSurface;
 
-class VolumeShader;
-class PlaneShader;
-class SurfaceShader;
+//class VolumeShader;
+//class PlaneShader;
+//class SurfaceShader;
 
 
 #include "./core/base/models/scene.h"
@@ -25,8 +25,8 @@ class Scene3d: public QObject, public Scene
     Q_OBJECT
 
 
-    using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
-    using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
+//    using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
+//    using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
 
 
     public:
@@ -71,9 +71,9 @@ class Scene3d: public QObject, public Scene
         QOpenGLContext* context;
         QSurface* surface;
 
-        VolumeShader* volume;
-        CrossSectionsContainer csections;
-        ObjectsContainer objects;
+//        VolumeShader* volume;
+//        CrossSectionsContainer csections;
+//        ObjectsContainer objects;
 
 
 };

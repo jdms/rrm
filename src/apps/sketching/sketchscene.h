@@ -42,6 +42,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         virtual void addObject( Object* const& raw_ );
+        virtual void addObject( Object* const& raw_, double depth_ );
         virtual void updateObject(  const std::size_t& index_ );
 
 

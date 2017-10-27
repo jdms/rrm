@@ -3,8 +3,8 @@
 
 
 
-#include <Tucano/Camera.hpp>
-#include <Tucano/Trackball.hpp>
+//#include <Tucano/Camera.hpp>
+//#include <Tucano/Trackball.hpp>
 #include "scene3d.h"
 
 #include <QOpenGLWidget>
@@ -61,7 +61,7 @@ class Canvas3d: public QOpenGLWidget
 
         Scene3d* scene3d;
 
-        Tucano::Trackball camera;
+//        Tucano::Trackball camera;
         const int WHEEL_STEP = 120;
 
 };

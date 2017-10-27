@@ -28,6 +28,7 @@ class SketchWindow: public QMainWindow
         void addCanvas( CrossSection* const& cs_ );
         void removeCanvas( CrossSection* const& cs_ );
         void highlightCanvas( CrossSection* const& cs_ );
+        void setMainCanvas( CrossSection* const& cs_ );
         void updateCanvas();
 
 
@@ -36,6 +37,10 @@ class SketchWindow: public QMainWindow
 
         void addObject( Object* const& obj_ );
         void updateObject( const std::size_t& index_ );
+
+
+
+        void setCurrentCrossSection( const double& value_ );
 
 
 
@@ -63,6 +68,7 @@ class SketchWindow: public QMainWindow
     private:
 
         CanvasStack* cs;
+        QGraphicsView* main = nullptr;
 
 };
 
