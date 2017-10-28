@@ -1,10 +1,34 @@
+#include <QToolBar>
+
 #include "sketchwindow.h"
+
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
     createWindow();
+    createToolBar();
 }
 
+
+
+void SketchWindow::createToolBar()
+{
+    QToolBar *tb_actions = new QToolBar();
+
+    ac_discard = new QAction( "Discard", this );
+    ac_commit = new QAction( "Commit", this );
+    ac_create = new QAction( "Create", this );
+
+    ac_edit_scene = new QAction( "Edit Scene", this );
+
+    tb_actions->addAction( ac_discard );
+    tb_actions->addAction( ac_commit );
+    tb_actions->addAction( ac_create );
+    tb_actions->addAction( ac_edit_scene );
+
+    addToolBar( tb_actions );
+
+}
 
 
 void SketchWindow::createWindow()
@@ -25,6 +49,13 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
 
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( double w, double h ){ emit updateVolume( cs_->getDirection(), w, h ); } );
     connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_ ){ emit acceptCurve( curve_ ); } );
+
+    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
+    connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
+    connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
+    connect( ac_edit_scene, &QAction::triggered, scene_, &SketchScene::edit );
+
+
 }
 
 
@@ -130,4 +161,30 @@ void SketchWindow::setCurrentCrossSection( const double& value_ )
 {
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     sc_->updateCrossSection();
+}
+
+
+void SketchWindow::discardSketch()
+{
+    QGraphicsView* gview_ = cs->getCurrent();
+    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+    emit sc_->discard();
+
+}
+
+
+void SketchWindow::commitSketch()
+{
+    QGraphicsView* gview_ = cs->getCurrent();
+    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+    emit sc_->commit();
+
+}
+
+void SketchWindow::createSurface()
+{
+    QGraphicsView* gview_ = cs->getCurrent();
+    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+    emit sc_->create();
+
 }

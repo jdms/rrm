@@ -60,6 +60,15 @@ class SketchScene: public QGraphicsScene, public Scene
         void acceptVolumeDimensions( double w_, double h_ );
         void acceptCurve( const PolyCurve& curve_ );
 
+        void discard();
+        void commit();
+        void create();
+
+
+    public slots:
+
+        void edit();
+
 
     protected:
 

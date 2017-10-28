@@ -21,9 +21,38 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 
     user_input = new InputSketch();
     addItem( user_input );
+
+    connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
+    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done() ); } );
+    connect( this, &SketchScene::create, [=](){ emit acceptCurve( user_input->done() ); } );
 }
 
 
+
+void SketchScene::edit()
+{
+    QList<QGraphicsItem *> objs_ = selectedItems();
+    QGraphicsItem* obj_;// = objs_.at( 0 );
+
+    QGraphicsPixmapItem *pixmap_ = new QGraphicsPixmapItem();
+    QGraphicsPathItem *path_ = new QGraphicsPathItem();
+
+    obj_ = user_input;
+
+
+
+    if( obj_ == nullptr ) return;
+
+    if( obj_->type() == QGraphicsPixmapItem::Type )
+        std::cout << "pixmap type: " << pixmap_->type() << std::endl << std::flush;
+    else if( obj_->type() == QGraphicsPathItem::Type )
+        std::cout << "path type: " << path_->type() << std::endl << std::flush;
+
+
+
+
+
+}
 
 
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
