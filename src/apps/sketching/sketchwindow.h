@@ -46,6 +46,12 @@ class SketchWindow: public QMainWindow
 
 
 
+    protected slots:
+
+        void discardSketch();
+        void commitSketch();
+        void createSurface();
+
 
 
     signals:
@@ -59,6 +65,7 @@ class SketchWindow: public QMainWindow
     protected:
 
         void createWindow();
+        void createToolBar();
         void setCurrentScene( CrossSection* const& cs_ );
 
 
@@ -69,6 +76,11 @@ class SketchWindow: public QMainWindow
 
         CanvasStack* cs;
         QGraphicsView* main = nullptr;
+
+        QAction* ac_discard;
+        QAction* ac_commit;
+        QAction* ac_create;
+        QAction* ac_edit_scene;
 
 };
 
