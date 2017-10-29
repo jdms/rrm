@@ -82,15 +82,25 @@ bool Controller::getVolumeVisibility() const
 }
 
 
+bool Controller::setMainCrossSection( const CrossSection::Direction& dir_, double depth_ )
+{
+    bool status_ = addCrossSection( dir_, depth_ );
+    if( status_ == false )
+         return false;
 
+    main_csection = getActiveCrossSection( depth_ );
+    return true;
+
+}
 
 bool Controller::addCrossSection( const CrossSection::Direction& dir_, double depth_ )
 {
-    bool status_ = actives_csections.addElement( depth_, new CrossSection( volume, dir_, depth_ ) );
+    CrossSection* cs_ = new CrossSection( volume, dir_, depth_ ) ;
+    bool status_ = actives_csections.addElement( depth_, cs_ );
     if( status_ == false ) return false;
 
     setCurrentCrossSection( depth_ );
-    scene3d->addCrossSection( getCurrentCrossSection() );
+    scene3d->addCrossSection( cs_ );
     return true;
 }
 
@@ -111,29 +121,41 @@ bool Controller::removeCrossSection( const CrossSection::Direction& dir_, double
 }
 
 
-void Controller::setCurrentCrossSection( const double& depth_ )
-{
-
-    std::cout << "CrossSection depth: " << depth_ << ", id: " << indexCrossSection( depth_ )
-              << std::endl << std::flush;
-
-    bool status_ = actives_csections.findElement( depth_ );
-    if( status_ == false ) return;
-
-    current_csection = depth_;
-}
-
-
-CrossSection* Controller::getCurrentCrossSection()
-{
-    return getCrossection( current_csection );
-}
-
-
-CrossSection* Controller::getCrossection( const double& depth_ )
+CrossSection* Controller::getActiveCrossSection( const double& depth_ )
 {
     return actives_csections.getElement( depth_ );
 }
+
+CrossSection* Controller::getCrossSection( const double& depth_ )
+{
+    return all_csections.getElement( depth_ );
+}
+
+
+void Controller::setCurrentCrossSection( const double& depth_ )
+{
+
+//    std::cout << "CrossSection depth: " << depth_ << ", id: " << indexCrossSection( depth_ )
+//              << std::endl << std::flush;
+
+
+    // its not needeed. One cross-section can be current and doesnt exist into vectors of cross-sections;
+//    bool status_ = actives_csections.findElement( depth_ );
+//    if( status_ == false ) return;
+
+    current_csection = depth_;
+    if( main_csection != nullptr )
+        main_csection->setDepth( depth_ );
+}
+
+
+double Controller::getCurrentCrossSection()
+{
+    return current_csection;
+}
+
+
+
 
 
 
@@ -180,8 +202,22 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
     if( status_ == false )
         return false;
 
-    CrossSection* cs_ = getCurrentCrossSection();
+    CrossSection* cs_;
+
+    if( actives_csections.findElement( current_csection ) == true )
+        cs_ = actives_csections.getElement( current_csection );
+    else if( all_csections.findElement( current_csection ) == true )
+        cs_ = all_csections.getElement( current_csection );
+    else
+        cs_ = new CrossSection( volume, CrossSection::Direction::Z, current_csection );
+
+
     cs_->addObject( obj_->getIndex(),  &curve_ );
+
+
+    if( all_csections.findElement( current_csection ) == false )
+        all_csections.addElement( current_csection, cs_ );
+
     createObjectSurface();
     return true;
 
@@ -198,8 +234,18 @@ bool Controller::removeObjectCurve( double csection_ )
     if( status_ == false )
         return false ;
 
-    CrossSection* cs_ = getCurrentCrossSection();
+
+    if( all_csections.findElement( current_csection ) == false )
+        return true;
+
+
+    CrossSection* cs_ = getCrossSection( csection_ );
     cs_->removeObjectCurve( obj_->getIndex() );
+
+    if( cs_->hasObjects() == false )
+        all_csections.removeElement( csection_ );
+
+
     return true;
 }
 

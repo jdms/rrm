@@ -45,12 +45,14 @@ class Controller
 
 
 
+        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        CrossSection* getCrossection( const double& depth_ );
+        CrossSection* getActiveCrossSection( const double& depth_ );
+        CrossSection* getCrossSection( const double& depth_ );
 
         void setCurrentCrossSection( const double& depth_ );
-        CrossSection* getCurrentCrossSection();
+        double getCurrentCrossSection();
 
 
 
@@ -90,13 +92,20 @@ class Controller
         Scene3d* scene3d;
         ObjectTree* object_tree;
 
-        std::size_t current_object;
-        double current_csection;
-
 
         Volume* volume;
+
+
+        std::size_t current_object = 0;
         Container< std::size_t, Object* > objects;
+
+
+        double current_csection = 500.0;
+        CrossSection* main_csection = nullptr;
         Container< double, CrossSection* > actives_csections;
+        Container< double, CrossSection* > all_csections;
+
+
 
         RulesProcessor rules_processor;
         double csection_step;

@@ -76,6 +76,7 @@ void ObjectItemWrapper::updateCurve()
 
     clearCurve();
     curve = ObjectItemWrapper::polycurveToQPainterPath( raw->getCurve( current_csection ) );
+    std::cout << "curve1 size " << curve.elementCount() << std::endl << std::flush;
     setPath( curve );
     update();
 }

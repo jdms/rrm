@@ -28,6 +28,7 @@ class SketchWindow: public QMainWindow
         void addCanvas( CrossSection* const& cs_ );
         void removeCanvas( CrossSection* const& cs_ );
         void highlightCanvas( CrossSection* const& cs_ );
+        void setMainCanvas( CrossSection* const& cs_ );
         void updateCanvas();
 
 
@@ -39,7 +40,17 @@ class SketchWindow: public QMainWindow
 
 
 
+        void setCurrentCrossSection( const double& value_ );
 
+
+
+
+
+    protected slots:
+
+        void discardSketch();
+        void commitSketch();
+        void createSurface();
 
 
 
@@ -54,6 +65,7 @@ class SketchWindow: public QMainWindow
     protected:
 
         void createWindow();
+        void createToolBar();
         void setCurrentScene( CrossSection* const& cs_ );
 
 
@@ -63,6 +75,12 @@ class SketchWindow: public QMainWindow
     private:
 
         CanvasStack* cs;
+        QGraphicsView* main = nullptr;
+
+        QAction* ac_discard;
+        QAction* ac_commit;
+        QAction* ac_create;
+        QAction* ac_edit_scene;
 
 };
 

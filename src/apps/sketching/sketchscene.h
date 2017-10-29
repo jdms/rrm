@@ -42,6 +42,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         virtual void addObject( Object* const& raw_ );
+        virtual void addObject( Object* const& raw_, double depth_ );
         virtual void updateObject(  const std::size_t& index_ );
 
 
@@ -58,6 +59,15 @@ class SketchScene: public QGraphicsScene, public Scene
 
         void acceptVolumeDimensions( double w_, double h_ );
         void acceptCurve( const PolyCurve& curve_ );
+
+        void discard();
+        void commit();
+        void create();
+
+
+    public slots:
+
+        void edit();
 
 
     protected:

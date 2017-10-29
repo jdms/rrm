@@ -173,6 +173,7 @@ class QPainter;
 
 class InputSketch: public QGraphicsPathItem
 {
+
     public:
 
         InputSketch( QGraphicsItem * parent = 0 );

@@ -37,7 +37,8 @@ IF( WIN32 )
     endif()
 
 ELSEIF( UNIX )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2"  )
+#            -fopenmp")
 
 ELSE()
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
