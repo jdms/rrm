@@ -7,7 +7,7 @@
 #include "./core/base/models/container.h"
 
 
-using CanvasContainer = Container< std::size_t, QGraphicsView* >;
+using CanvasContainer = Container< double, QGraphicsView* >;
 
 
 class CanvasStack: public QGraphicsView, public CanvasContainer
@@ -20,17 +20,17 @@ class CanvasStack: public QGraphicsView, public CanvasContainer
 
         void initialize();
 
-        void addElement( std::size_t id_, QGraphicsView* canvas_ );
-        void removeElement( std::size_t id_ );
+        void addElement( double, QGraphicsView* canvas_ );
+        void removeElement( double id_ );
 
-        void setCurrent( std::size_t id_ );
+        void setCurrent( double id_ );
         QGraphicsView* getCurrent();
 
 
 
     protected:
 
-        std::size_t current;
+        double current;
         QHBoxLayout* hb_mainlayout;
 
 };

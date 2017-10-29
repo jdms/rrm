@@ -21,9 +21,38 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 
     user_input = new InputSketch();
     addItem( user_input );
+
+    connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
+    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done() ); } );
+    connect( this, &SketchScene::create, [=](){ emit acceptCurve( user_input->done() ); } );
 }
 
 
+
+void SketchScene::edit()
+{
+    QList<QGraphicsItem *> objs_ = selectedItems();
+    QGraphicsItem* obj_;// = objs_.at( 0 );
+
+    QGraphicsPixmapItem *pixmap_ = new QGraphicsPixmapItem();
+    QGraphicsPathItem *path_ = new QGraphicsPathItem();
+
+    obj_ = user_input;
+
+
+
+    if( obj_ == nullptr ) return;
+
+    if( obj_->type() == QGraphicsPixmapItem::Type )
+        std::cout << "pixmap type: " << pixmap_->type() << std::endl << std::flush;
+    else if( obj_->type() == QGraphicsPathItem::Type )
+        std::cout << "path type: " << path_->type() << std::endl << std::flush;
+
+
+
+
+
+}
 
 
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
@@ -44,6 +73,8 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 void SketchScene::updateCrossSection()
 {
+
+    std::cout << "Updating main csection " << csection->getDepth() << std::endl << std::flush;
     Volume* const& vol_ = csection->getVolume();
 
     Volume::ObjectsContainer objs_ = vol_->getObjects();
@@ -93,16 +124,21 @@ void SketchScene::clearVolume()
 
 void SketchScene::addObject( Object* const& raw_ )
 {
+    addObject( raw_, csection->getDepth() );
+}
+
+
+void SketchScene::addObject( Object* const& raw_, double depth_ )
+{
     //TODO: check if valid raw->getIndex
 
 
     std::size_t index_ = raw_->getIndex();
 
-    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, csection->getDepth() );
+    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, depth_ );
     objects.addElement( index_, obj_ );
 
     addItem( obj_ );
-//    std::cout << "object " << index_ << " added!" << std::endl << std::flush;
 
 }
 
