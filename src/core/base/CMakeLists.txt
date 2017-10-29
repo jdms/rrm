@@ -35,7 +35,6 @@ set( BASE_MOC_HEADERS models/slider.h )
 
 
 set( BASE_SOURCES constants/constants.cpp
-                  models/container.cpp
                   models/slider.cpp
                   models/controller.cpp
                   models/object.cpp
