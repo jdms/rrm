@@ -16,20 +16,20 @@ Canvas3d::Canvas3d()
 
 void Canvas3d::initializeGL()
 {
-//    glewExperimental = GL_TRUE;
-//    GLenum err = glewInit();
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
 
-//    if( err != GLEW_OK )
-//    {
-//        std::cout << "glewInit failed: " << glewGetErrorString( err ) << std::endl;
-//        exit( EXIT_FAILURE );
-//    }
+    if( err != GLEW_OK )
+    {
+        std::cout << "glewInit failed: " << glewGetErrorString( err ) << std::endl;
+        exit( EXIT_FAILURE );
+    }
 
     makeCurrent();
     glClearColor( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_MULTISAMPLE );
 
-//    camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
+    camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
 
     shareOpenGLContext();
 }
@@ -38,8 +38,8 @@ void Canvas3d::initializeGL()
 void Canvas3d::resizeGL( int width, int height )
 {
     glViewport( 0 , 0 , width , height );
-//    camera.setViewport( Eigen::Vector2f( (float) width, (float) height ) );
-//    camera.setPerspectiveMatrix( camera.getFovy(), (float) width/(float)height, 0.1f , 100.0f );
+    camera.setViewport( Eigen::Vector2f( (float) width, (float) height ) );
+    camera.setPerspectiveMatrix( camera.getFovy(), (float) width/(float)height, 0.1f , 100.0f );
 }
 
 
@@ -47,8 +47,8 @@ void Canvas3d::paintGL()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-//    if( scene3d != nullptr )
-//        scene3d->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
+    if( scene3d != nullptr )
+        scene3d->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 
 }
 
@@ -131,14 +131,14 @@ void Canvas3d::mousePressEvent( QMouseEvent *event )
     {
         if ( event->button() == Qt::LeftButton )
         {
-//            camera.translateCamera( screen_pos );
+            camera.translateCamera( screen_pos );
         }
     }
     else
     {
         if ( event->button() == Qt::LeftButton )
         {
-//            camera.rotateCamera( screen_pos );
+            camera.rotateCamera( screen_pos );
         }
     }
 
@@ -160,7 +160,7 @@ void Canvas3d::mouseMoveEvent( QMouseEvent *event )
     {
         if ( event->buttons() & Qt::LeftButton )
         {
-//            camera.translateCamera( screen_pos );
+            camera.translateCamera( screen_pos );
         }
 
     }
@@ -168,7 +168,7 @@ void Canvas3d::mouseMoveEvent( QMouseEvent *event )
     {
         if ( event->buttons() & Qt::LeftButton )
         {
-//            camera.rotateCamera( screen_pos );
+            camera.rotateCamera( screen_pos );
         }
 
     }
@@ -185,8 +185,8 @@ void Canvas3d::mouseReleaseEvent( QMouseEvent *event )
 
     if ( event->button ( ) == Qt::LeftButton )
     {
-//        camera.endTranslation();
-//        camera.endRotation();
+        camera.endTranslation();
+        camera.endRotation();
     }
 
     QOpenGLWidget::mouseReleaseEvent( event );
@@ -217,12 +217,12 @@ void Canvas3d::wheelEvent( QWheelEvent *event )
     {
         if ( pos > 0 )
         {
-//            camera.increaseZoom ( 1.05f );
+            camera.increaseZoom ( 1.05f );
         }
 
         else if( pos < 0 )
         {
-//            camera.increaseZoom ( 1.0f/1.05f );
+            camera.increaseZoom ( 1.0f/1.05f );
         }
     }
 

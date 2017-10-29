@@ -11,7 +11,7 @@
 #include "./apps/mainwindow/widgets/objecttree.h"
 #include "./apps/3dview/scene3d.h"
 #include "crosssection.h"
-//#include "rules_processor.hpp"
+#include "rules_processor.hpp"
 
 
 class Volume;
@@ -107,7 +107,7 @@ class Controller
 
 
 
-//        RulesProcessor rules_processor;
+        RulesProcessor rules_processor;
         double csection_step;
 
 };

@@ -84,56 +84,56 @@ include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
 include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
 include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 
-#set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
-#INCLUDE_DIRECTORIES( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
+set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
+INCLUDE_DIRECTORIES( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 
-#add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
-
-
-################################################
-## Preliminary support for stratmod library
-################################################
-
-#include(ExternalProject)  ## needed
-
-#set(BUILD_USING_OPENMP ON)
-
-#set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
-
-#set(STRATMOD_CMAKE_ARGS
-#    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-#    -DBUILD_SHARED_LIBRARY=OFF
-#    -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-#    )
-
-#if(BUILD_USING_OPENMP AND APPLE)
-#    set(STRATMOD_CMAKE_ARGS
-#        -DBUILD_USING_OPENMP=ON
-#        -DBUILD_SHARED_LIBRARY=OFF
-#        -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-#        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
-#        )
-#endif()
-
-#ExternalProject_Add(
-#    StratModLibBuild
-#    DOWNLOAD_COMMAND git submodule update --init
-#    UPDATE_COMMAND git submodule update -f
-#    SOURCE_DIR ${STRATMOD_SOURCE}
-#    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
-#    )
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
-#set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
+###############################################
+# Preliminary support for stratmod library
+###############################################
 
-#message(WARNING ${STRATMODLIB})
+include(ExternalProject)  ## needed
 
-#add_library(stratmod STATIC IMPORTED)
-#set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
-#add_dependencies(stratmod StratModLibBuild)
-#include_directories(${STRATMOD_SOURCE})
+set(BUILD_USING_OPENMP ON)
 
-#message(WARNING stratmod)
+set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
+
+set(STRATMOD_CMAKE_ARGS
+    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+    -DBUILD_SHARED_LIBRARY=OFF
+    -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+    )
+
+if(BUILD_USING_OPENMP AND APPLE)
+    set(STRATMOD_CMAKE_ARGS
+        -DBUILD_USING_OPENMP=ON
+        -DBUILD_SHARED_LIBRARY=OFF
+        -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
+        )
+endif()
+
+ExternalProject_Add(
+    StratModLibBuild
+    DOWNLOAD_COMMAND git submodule update --init
+    UPDATE_COMMAND git submodule update -f
+    SOURCE_DIR ${STRATMOD_SOURCE}
+    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS}
+    )
+
+
+set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+message(WARNING ${STRATMODLIB})
+
+add_library(stratmod STATIC IMPORTED)
+set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
+add_dependencies(stratmod StratModLibBuild)
+include_directories(${STRATMOD_SOURCE})
+
+message(WARNING stratmod)
 
 
 
