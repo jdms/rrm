@@ -2,9 +2,9 @@
 
 
 #include "./core/base/models/object.h"
-//#include "./core/base/models/volumeshader.h"
-//#include "./core/base/models/planeshader.h"
-//#include "./core/base/models/surfaceshader.h"
+#include "./core/base/models/volumeshader.h"
+#include "./core/base/models/planeshader.h"
+#include "./core/base/models/surfaceshader.h"
 
 
 #include <QString>
@@ -14,7 +14,7 @@
 
 Scene3d::Scene3d()
 {
-//    volume = nullptr;
+    volume = nullptr;
 }
 
 
@@ -23,8 +23,8 @@ void Scene3d::addVolume( Volume* const& raw_ )
 {
     context->makeCurrent( surface );
 
-//    clearVolume();
-//    volume = new VolumeShader( raw_ );
+    clearVolume();
+    volume = new VolumeShader( raw_ );
 
     emit updateCanvas();
 
@@ -33,13 +33,13 @@ void Scene3d::addVolume( Volume* const& raw_ )
 
 void Scene3d::updateVolume()
 {
-//    if( volume == nullptr ) return;
+    if( volume == nullptr ) return;
 
-//    volume->update();
-//    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
-//    {
-//        (it->second)->update();
-//    }
+    volume->update();
+    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    {
+        (it->second)->update();
+    }
 
     emit updateCanvas();
 
@@ -47,9 +47,9 @@ void Scene3d::updateVolume()
 
 void Scene3d::clearVolume()
 {
-//    if( volume != nullptr )
-//        delete volume;
-//    volume = nullptr;
+    if( volume != nullptr )
+        delete volume;
+    volume = nullptr;
 }
 
 
@@ -57,8 +57,8 @@ void Scene3d::addCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );
 
-//    std::size_t index_ = raw_->getIndex();
-//    csections.addElement( index_, new PlaneShader( raw_ ) );
+    std::size_t index_ = raw_->getIndex();
+    csections.addElement( index_, new PlaneShader( raw_ ) );
 
     emit updateCanvas();
 }
@@ -68,7 +68,7 @@ void Scene3d::removeCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );
 
-//    csections.removeElement( raw_->getIndex() );
+    csections.removeElement( raw_->getIndex() );
     emit updateCanvas();
 }
 
@@ -77,7 +77,7 @@ void Scene3d::addObject(  Object* const& raw_ )
 {
     context->makeCurrent( surface );
 
-//    objects.addElement( raw_->getIndex(), new SurfaceShader( raw_ ) );
+    objects.addElement( raw_->getIndex(), new SurfaceShader( raw_ ) );
     emit updateCanvas();
 
 }
@@ -85,8 +85,8 @@ void Scene3d::addObject(  Object* const& raw_ )
 void Scene3d::updateObject( const std::size_t &index_ )
 {
 
-//    SurfaceShader* obj_ = objects.getElement( index_ );
-//    obj_->update();
+    SurfaceShader* obj_ = objects.getElement( index_ );
+    obj_->update();
 
     emit updateCanvas();
 }
@@ -96,18 +96,18 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
                                const int& h )
 {
 
-//    if( volume != nullptr )
-//        volume->draw( V, P, w, h );
+    if( volume != nullptr )
+        volume->draw( V, P, w, h );
 
-//    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
-//    {
-//        (it->second)->draw( V, P, w, h );
-//    }
+    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    {
+        (it->second)->draw( V, P, w, h );
+    }
 
-//    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-//    {
-//        (it->second)->draw( V, P, w, h );
-//    }
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        (it->second)->draw( V, P, w, h );
+    }
 
 }
 
