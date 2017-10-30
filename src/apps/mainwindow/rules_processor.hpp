@@ -201,6 +201,8 @@
             bool getFrontBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
             bool getBackBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
 
+            bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
+
         private:
             SModellerWrapper modeller_;
             struct { double x, y, z; } origin_, lenght_;
