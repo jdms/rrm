@@ -7,6 +7,10 @@
 #include "canvasstack.h"
 #include "sketchscene.h"
 
+//TODO: remove dependence from mainwindow
+#include "mainwindow/widgets/color_picker.h"
+
+
 class QGraphicsView;
 class QWheelEvent;
 
@@ -24,6 +28,9 @@ class SketchWindow: public QMainWindow
 
 
     public slots:
+
+
+        void setUpColor();
 
         void addCanvas( CrossSection* const& cs_ );
         void removeCanvas( CrossSection* const& cs_ );
@@ -59,6 +66,7 @@ class SketchWindow: public QMainWindow
 
         void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
         void acceptCurve( const PolyCurve& curve_ );
+        void defineColorCurrent( const QColor& color_ );
 
 
 
@@ -76,6 +84,9 @@ class SketchWindow: public QMainWindow
 
         CanvasStack* cs;
         QGraphicsView* main = nullptr;
+
+
+        ColorPicker *cp_color;
 
         QAction* ac_discard;
         QAction* ac_commit;

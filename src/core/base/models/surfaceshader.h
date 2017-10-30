@@ -19,7 +19,6 @@ class SurfaceShader: public Shader
 
         void setObject( Object* const& raw_ );
 
-
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
 

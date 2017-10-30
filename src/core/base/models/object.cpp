@@ -152,7 +152,6 @@ bool Object::removeCurve( double csection_id_ )
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
     csection_curves.setElement( csection_id_, curve_ );
-    std::cout << "Adding curve in " << csection_id_ << "\n" << std::flush;
 }
 
 \
@@ -164,6 +163,12 @@ Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 
 void Object::removeCrossSectionCurves()
 {
+
+    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+    {
+        (it->second).clear();
+    }
+    csection_curves.clear();
 
 }
 

@@ -34,6 +34,7 @@ class ObjectItemWrapper: public QGraphicsPathItem
 
 
         bool isVisible() const;
+        bool isEditable() const;
 
 
         QRectF boundingRect() const;

@@ -258,11 +258,21 @@ bool Volume::isResizable() const
 }
 
 
+void Volume::removeAllObjects()
+{
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    objects.clear();
+}
+
+
+
 void Volume::clear()
 {
-    objects.clear();
     csections.clear();
-
+    removeAllObjects();
     initialize();
 }
 

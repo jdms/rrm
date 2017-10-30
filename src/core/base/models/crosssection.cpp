@@ -197,7 +197,11 @@ CrossSection::ObjectsContainer CrossSection::getObjects() const
 
 void CrossSection::removeObjects()
 {
-
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    objects.clear();
 }
 
 

@@ -78,19 +78,19 @@ void Well::getEndPoint( double& x_, double& y_, double& z_ ) const
 
 
 
-void Well::setCurve( const Well::Curve2D& curve_ )
+void Well::setCurve( const PolyCurve& curve_ )
 {
     curve = curve_;
 }
 
-Well::Curve2D Well::getCurve() const
+PolyCurve Well::getCurve() const
 {
     return curve;
 }
 
 void Well::removeCurve()
 {
-    //TODO: clear curve2d
+    curve.clear();
 }
 
 

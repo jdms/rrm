@@ -29,6 +29,8 @@ class Controller
 
         void setScene3d( Scene3d* const& sc_ );
         void setObjectTree( ObjectTree* const& ot_ );
+        void setCurrentColor( int r, int g, int b );
+        void getCurrentColor( int& r, int& g, int& b ) const ;
 
 
         void init();
@@ -95,6 +97,13 @@ class Controller
 
         Volume* volume;
 
+
+        struct Color
+        {
+            int r = 255;
+            int g = 0;
+            int b = 0;
+        } current_color;
 
         std::size_t current_object = 0;
         Container< std::size_t, Object* > objects;

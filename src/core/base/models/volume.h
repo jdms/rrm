@@ -57,6 +57,7 @@ class Volume
         bool addObject( std::size_t id_, Object* const& obj_ );
         bool removeObject( std::size_t id_ );
         Volume::ObjectsContainer getObjects() const;
+        void removeAllObjects();
 
 
         bool addCrossSection( std::size_t id_ );

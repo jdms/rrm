@@ -29,27 +29,30 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
 
 
 
-void SketchScene::edit()
+void SketchScene::edit( bool status_ )
 {
-    QList<QGraphicsItem *> objs_ = selectedItems();
-    QGraphicsItem* obj_;// = objs_.at( 0 );
 
-    QGraphicsPixmapItem *pixmap_ = new QGraphicsPixmapItem();
-    QGraphicsPathItem *path_ = new QGraphicsPathItem();
+    if( status_ == false )
+        setModeSketching();
+    else
+        setModeEditingScene();
 
-    obj_ = user_input;
-
-
-
-    if( obj_ == nullptr ) return;
-
-    if( obj_->type() == QGraphicsPixmapItem::Type )
-        std::cout << "pixmap type: " << pixmap_->type() << std::endl << std::flush;
-    else if( obj_->type() == QGraphicsPathItem::Type )
-        std::cout << "path type: " << path_->type() << std::endl << std::flush;
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->updateState();
+    }
 
 
+    update();
 
+
+//    if( obj_ == nullptr ) return;
+
+//    if( obj_->type() == QGraphicsPixmapItem::Type )
+//        std::cout << "pixmap type: " << pixmap_->type() << std::endl << std::flush;
+//    else if( obj_->type() == QGraphicsPathItem::Type )
+//        std::cout << "path type: " << path_->type() << std::endl << std::flush;
 
 
 }
@@ -77,9 +80,11 @@ void SketchScene::updateCrossSection()
     std::cout << "Updating main csection " << csection->getDepth() << std::endl << std::flush;
     Volume* const& vol_ = csection->getVolume();
 
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
-    for( auto o: objs_ )
-        (o.second)->setVisible( false );
+
+//TODO: Uncomentting
+//    Volume::ObjectsContainer objs_ = vol_->getObjects();
+//    for( auto o: objs_ )
+//        (o.second)->setVisible( false );
 
 
     CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
@@ -165,6 +170,26 @@ bool SketchScene::isCurrent() const
     return is_current;
 }
 
+
+
+
+void SketchScene::setModeSketching()
+{
+    user_input->clear();
+    current_interaction = UserInteraction::SKETCHING;
+}
+
+
+void SketchScene::setModeEditingBoundary()
+{
+    current_interaction = UserInteraction::EDITING_BOUNDARY;
+}
+
+
+void SketchScene::setModeEditingScene()
+{
+    current_interaction = UserInteraction::EDITING_SCENE;
+}
 
 
 
