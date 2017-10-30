@@ -37,7 +37,9 @@ void ObjectItemWrapper::updateObject()
 
 void ObjectItemWrapper::updateState()
 {
-    bool selectable_ = false;
+    bool selectable_ = raw->isSelectable();
+    bool selected_ = raw->isSelected();
+    bool editable_ = raw->isEditable();
 
     int r, g, b;
     raw->getColor( r, g, b );
@@ -46,23 +48,32 @@ void ObjectItemWrapper::updateState()
     Qt::PenStyle style_ = Qt::SolidLine;
 
 
-    if( raw->isSelectable() == true )
+    if( selectable_  == true )
     {
         selectable_ = true;
         color_ = Qt::yellow;
     }
 
-    else if( raw->isSelected() == true )
+
+    if( selected_ == true )
     {
         color_ = color_.lighter();
         style_ = Qt::DotLine;
     }
 
 
+
     current_pen.setColor( color_ );
     current_pen.setStyle( style_ );
 
-    setFlag( QGraphicsItem::ItemIsSelectable, selectable_ );
+    std::string selectable_s_ = ( selectable_ )? "true":" false";
+    std::string editable_s_ = ( editable_ )? "true":" false";
+
+    std::cout << "Object " << raw->getIndex() << ", is selectable = " << selectable_s_
+              << "\n and editable = " << editable_s_  << std::endl << std::flush;
+
+    setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
+
     update();
 }
 
@@ -76,7 +87,6 @@ void ObjectItemWrapper::updateCurve()
 
     clearCurve();
     curve = ObjectItemWrapper::polycurveToQPainterPath( raw->getCurve( current_csection ) );
-    std::cout << "curve1 size " << curve.elementCount() << std::endl << std::flush;
     setPath( curve );
     update();
 }
@@ -89,6 +99,11 @@ void ObjectItemWrapper::updateDepth( double depth_ )
 }
 
 
+
+bool ObjectItemWrapper::isEditable() const
+{
+    return raw->isEditable();
+}
 
 
 bool ObjectItemWrapper::isVisible() const
@@ -143,6 +158,13 @@ QRectF ObjectItemWrapper::boundingRect() const
 void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w )
 {
     if( isVisible() == false  ) return;
+    if( isSelected() == true )
+    {
+        current_pen.setColor( Qt::blue );
+    }
+
+
+
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( current_pen );

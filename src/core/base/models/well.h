@@ -6,13 +6,12 @@
 #include <map>
 
 
-
+#include "./polycurve.h"
 
 class Well
 {
 
     enum class Type{ INJECTOR, PRODUCTOR };
-    using Curve2D = double;
 
     public:
 
@@ -39,8 +38,8 @@ class Well
         void getEndPoint( double& x_, double& y_, double& z_ ) const;
 
 
-        void setCurve( const Curve2D& curve_ );
-        Well::Curve2D getCurve() const;
+        void setCurve( const PolyCurve& curve_ );
+        PolyCurve getCurve() const;
         void removeCurve();
 
 
@@ -65,7 +64,7 @@ class Well
         Point start;
         Point end;
 
-        Curve2D curve;
+        PolyCurve curve;
 
         bool is_visible;
 

@@ -13,19 +13,22 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 set( MAINWINDOW_HEADERS     mainwindow.h
                             widgets/realfeaturedslider.h
                             widgets/objecttree.h
-                            widgets/objecttreeitem.h )
+                            widgets/objecttreeitem.h
+                            widgets/color_picker.h )
 
 
 set( MAINWINDOW_MOC_HEADERS mainwindow.h
                             widgets/realfeaturedslider.h
-                            widgets/objecttree.h )
+                            widgets/objecttree.h
+                            widgets/color_picker.h )
 
 
 set( MAINWINDOW_SOURCES     main.cpp
                             mainwindow.cpp
                             widgets/realfeaturedslider.cpp
                             widgets/objecttree.cpp
-                            widgets/objecttreeitem.cpp )
+                            widgets/objecttreeitem.cpp
+                            widgets/color_picker.cpp )
 
 
 add_subdirectory( ../3dview ${CMAKE_BINARY_DIR}/3dview )

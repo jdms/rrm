@@ -35,9 +35,12 @@ class MainWindow: public QMainWindow
 
     signals:
 
+        void setUpColor();
+
         void updateVolume();
         void addObject( Object* const& obj_ );
         void updateObject( const std::size_t );
+        void updateObjects();
 
         void defineMainCrossSection( const double& depth_ );
 

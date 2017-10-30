@@ -14,7 +14,7 @@ class SketchScene: public QGraphicsScene, public Scene
 {
     Q_OBJECT
 
-    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY };
+    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE };
 
 
     public:
@@ -47,10 +47,11 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
 
-
-
         void setCurrent( bool status_ );
         bool isCurrent() const;
+
+
+
 
 
 
@@ -67,7 +68,11 @@ class SketchScene: public QGraphicsScene, public Scene
 
     public slots:
 
-        void edit();
+        void edit( bool status_ );
+
+        void setModeSketching();
+        void setModeEditingBoundary();
+        void setModeEditingScene();
 
 
     protected:

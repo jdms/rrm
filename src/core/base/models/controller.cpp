@@ -17,6 +17,19 @@ void Controller::setObjectTree( ObjectTree* const& ot_ )
 }
 
 
+void Controller::setCurrentColor( int r, int g, int b )
+{
+    current_color.r = r;
+    current_color.g = g;
+    current_color.b = b;
+
+}
+void Controller::getCurrentColor( int& r, int& g, int& b ) const
+{
+    r = current_color.r;
+    g = current_color.g;
+    b = current_color.b;
+}
 
 
 void Controller::init()
@@ -166,17 +179,14 @@ bool Controller::addObject()
     double w = 0, h = 0,  l = 0;
     double minx_ = 0, miny_ = 0, minz_ = 0;
 
+
     volume->getOrigin( minx_, miny_, minz_ );
     volume->getGeometry( w, h, l );
 
-    double maxx_ = minx_ + w;
-    double maxy_ = miny_ + h;
-    double maxz_ = minz_ + l;
-
-
     Object* obj_ = new Object();
     current_object = obj_->getIndex();
-    obj_->setMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+    obj_->setMaxMin( minx_ + w, miny_ + h, minz_ + l, minx_, miny_, minz_ );
+    obj_->setColor( current_color.r, current_color.g, current_color.b );
 
     bool status_ = objects.addElement( current_object, obj_ );
     if( status_ == false ) return false;
@@ -202,6 +212,8 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
     if( status_ == false )
         return false;
 
+    obj_->setEditable( true );
+
     CrossSection* cs_;
 
     if( actives_csections.findElement( current_csection ) == true )
@@ -219,6 +231,8 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
         all_csections.addElement( current_csection, cs_ );
 
     createObjectSurface();
+
+
     return true;
 
 }
@@ -326,6 +340,7 @@ bool Controller::createObjectSurface()
 
     obj_->removeCrossSectionCurves();
     obj_->removeTrajectory();
+    obj_->setEditable( false );
 
     updateModel();
 

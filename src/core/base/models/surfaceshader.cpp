@@ -21,6 +21,7 @@ void SurfaceShader::setObject( Object* const& raw_ )
     loadBuffers();
 }
 
+
 void SurfaceShader::loadBuffers()
 {
 
@@ -266,5 +267,7 @@ void SurfaceShader::setDefaultValues()
 
     number_of_faces = 0;
     number_of_vertices = 0;
+
+    raw = nullptr;
 
 }

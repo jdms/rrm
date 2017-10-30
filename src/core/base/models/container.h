@@ -56,9 +56,6 @@ class Container
 template < class Index, class Item >
 bool Container< Index, Item >::addElement( Index id_, const Item& d )
 {
-//    if( findElement( id_ ) == true )
-//        return false;
-
     data[ id_ ] = d;
     return true;
 }
@@ -67,9 +64,6 @@ bool Container< Index, Item >::addElement( Index id_, const Item& d )
 template <class Index, class Item >
 bool Container< Index, Item >::removeElement( Index id_ )
 {
-//    if( findElement( id_ ) == false )
-//        return false;
-
     data.erase( id_ );
     return true;
 }
@@ -85,11 +79,7 @@ void  Container< Index, Item >::setElement( const Index& id_, const Item& d )
 template < class Index, class Item >
 Item Container< Index, Item >::getElement( const Index& id_ )
 {
-//    if( findElement( id_ ) == false )
-//        return Item();
-
     return data[ id_ ];
-
 }
 
 
@@ -117,9 +107,6 @@ bool Container< Index, Item >::empty() const
 template < class Index, class Item >
 void Container< Index, Item >::clear()
 {
-    for( auto d: data )
-        (d.second)->clear();
-
     data.clear();
 }
 
