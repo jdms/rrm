@@ -34,11 +34,13 @@
 //#include "stratmod/stratigraphy_modeller.hpp"
 //#include "stratmod/stratigraphy_utilities.hpp"
 //=======
-#include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
-#include "smodeller.hpp"
-#include "sutilities.hpp"
+/* #include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp" */
+/* #include "stratmod_wraper.hpp" */
+/* #include "smodeller.hpp" */
+/* #include "sutilities.hpp" */
 //>>>>>>> origin/feature-stratmod_ref:src/Apps/MainWindow/rules_processor.hpp
 
+#include "stratmod_wrapper.hpp"
 
 
 //namespace RRM
@@ -200,7 +202,7 @@
             bool getBackBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
 
         private:
-            SModeller modeller_;
+            SModellerWrapper modeller_;
             struct { double x, y, z; } origin_, lenght_;
 
             bool testing_surface_insertion_ = false;
@@ -281,7 +283,7 @@
             modeller_.undo();
         }
 
-        SUtilities util(modeller_);
+        SUtilitiesWrapper util(modeller_);
         std::vector<double> surface;
 
         std::vector<double> cross_section;

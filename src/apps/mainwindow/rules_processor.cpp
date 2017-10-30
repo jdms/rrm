@@ -264,7 +264,7 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std
 
 bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
 {
-    SUtilities util(modeller_);
+    SUtilitiesWrapper util(modeller_);
 
     return util.getNormalList(surface_id, nlist);
 }
@@ -283,7 +283,7 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vec
 
 bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double> &path)
 {
-    SUtilities util(modeller_);
+    SUtilitiesWrapper util(modeller_);
 
     bool status = util.getExtrusionPath(surface_index, path);
 
@@ -304,21 +304,21 @@ bool RulesProcessor::loadFile( std::string filename )
 size_t RulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
 
-    SUtilities u(modeller_);
+    SUtilitiesWrapper u(modeller_);
 
     return u.getLegacyMeshes(points, nu, nv, num_extrusion_steps);
 }
 
 bool RulesProcessor::getLeftBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
-    SUtilities u(modeller_);
+    SUtilitiesWrapper u(modeller_);
     return u.getLeftBoundary3DCurves(vertices, edges);
     //return false; //modeller_.getCrossSectionWidth(surface_id, vertices, edges, 0);
 }
 
 bool RulesProcessor::getRightBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
-    SUtilities u(modeller_);
+    SUtilitiesWrapper u(modeller_);
     return u.getRightBoundary3DCurves(vertices, edges);
     //size_t right_boundary = modeller_.getDiscretizationWidth();
     //return false; //modeller_.getCrossSectionWidth(surface_id, vertices, edges, right_boundary);
@@ -326,14 +326,14 @@ bool RulesProcessor::getRightBoundaryCrossSectionCurve(  std::vector< std::vecto
 
 bool RulesProcessor::getFrontBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
-    SUtilities u(modeller_);
+    SUtilitiesWrapper u(modeller_);
     return u.getFrontBoundary3DCurves(vertices, edges);
     //return false; //modeller_.getCrossSectionDepth(surface_id, vertices, edges, 0);
 }
 
 bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
-    SUtilities u(modeller_);
+    SUtilitiesWrapper u(modeller_);
     return u.getBackBoundary3DCurves(vertices, edges);
     //size_t right_boundary = modeller_.getDiscretizationDepth();
     //return false; //modeller_.getCrossSectionDepth(surface_id, vertices, edges, right_boundary);

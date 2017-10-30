@@ -18,6 +18,7 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 set( MAINWINDOW_HEADERS mainwindow/mainwindow.h
                         mainwindow/controller.h
                         mainwindow/rules_processor.hpp
+                        mainwindow/stratmod_wrapper.hpp
                         mainwindow/widgets/color_picker.h
                         mainwindow/widgets/pages_stack.h
                         mainwindow/widgets/real_slider.h
