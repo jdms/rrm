@@ -8,8 +8,9 @@
 
 struct TetrahedralMeshBuilder::TriangleHeights
 {
-    std::array<double, 3> vertex_height = {};
-    std::array<bool, 3> vertex_status = {};
+    // BUG: VS2013 does not support empty initializer lists
+    std::array<double, 3> vertex_height; //= {};
+    std::array<bool, 3> vertex_status; //= {};
     double tolerance = 1E-13;
 
     bool status() const
