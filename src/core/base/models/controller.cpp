@@ -194,7 +194,7 @@ bool Controller::addObject()
     volume->addObject( current_object, obj_ );
 
     object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
-                            obj_->getName(), 255, 0, 0 );
+                            obj_->getName(), current_color.r, current_color.g, current_color.b );
     scene3d->addObject( obj_ );
 
     return true;
@@ -261,6 +261,28 @@ bool Controller::removeObjectCurve( double csection_ )
 
 
     return true;
+}
+
+
+
+void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
+{
+    if( objects.findElement( index_) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->setColor( r_, g_, b_ );
+    scene3d->updateObject( index_ );
+}
+
+
+void Controller::getObjectColor( std::size_t index_,int& r_, int& g_, int& b_)
+{
+    if( objects.findElement( index_) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->getColor( r_, g_, b_ );
 }
 
 

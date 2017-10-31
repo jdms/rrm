@@ -64,6 +64,11 @@ class Controller
         bool removeObjectCurve( double csection_ );
         Object* getCurrentObject();
 
+
+        void setObjectColor( std::size_t index_, int r_, int g_, int b_);
+        void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
+
+
         void setObjectVisibility( std::size_t index_, bool status_ );
         bool getObjectVisibility( std::size_t index_ );
 

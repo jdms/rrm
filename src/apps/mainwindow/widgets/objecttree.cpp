@@ -1,4 +1,9 @@
+#include <iostream>
+#include <QCheckBox>
+
 #include "objecttree.h"
+#include "./mainwindow/widgets/color_picker.h"
+
 
 ObjectTree::ObjectTree( QWidget *parent )
 {
@@ -45,6 +50,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         {
             emit setObjectName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
+
     }
 
     else if( obj_->getType() == ObjectTreeItem::Type::CROSS_SECTION )
@@ -107,6 +113,16 @@ void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type
 
 
     ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-    if( vol_ != nullptr )
-        vol_->addChild( obj_ );
+    if( vol_ == nullptr ) return;
+
+    vol_->addChild( obj_ );
+
+    ColorPicker* colorpicker_ = new ColorPicker( this );
+    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
+    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
+
+    setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
+
+
+
 }

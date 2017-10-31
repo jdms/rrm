@@ -52,6 +52,10 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
     SketchScene* scene_ = new SketchScene( cs_ );
     cs->addElement( cs_->getDepth(), new QGraphicsView( scene_ ) );
 
+    QColor color_ = cp_color->currentColor();
+    scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
+
+
     highlightCanvas( cs_ );
 
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( double w, double h ){ emit updateVolume( cs_->getDirection(), w, h ); } );
@@ -63,6 +67,7 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
     connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+
 
 
 }
