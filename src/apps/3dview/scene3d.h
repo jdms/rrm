@@ -57,6 +57,10 @@ class Scene3d: public QObject, public Scene
         void setCurrentDirectory( const QString& dir );
         void setOpenGLContext( QOpenGLContext* ctxt );
 
+        virtual void setCurrentColor( int r, int g, int b ){}
+        virtual void getCurrentColor( int& r, int& g, int& b ){}
+
+
 
     signals:
 

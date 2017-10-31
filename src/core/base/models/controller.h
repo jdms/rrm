@@ -29,6 +29,7 @@ class Controller
 
         void setScene3d( Scene3d* const& sc_ );
         void setObjectTree( ObjectTree* const& ot_ );
+
         void setCurrentColor( int r, int g, int b );
         void getCurrentColor( int& r, int& g, int& b ) const ;
 

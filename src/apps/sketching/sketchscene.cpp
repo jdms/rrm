@@ -171,6 +171,24 @@ bool SketchScene::isCurrent() const
 }
 
 
+void SketchScene::setCurrentColor( int r, int g, int b )
+{
+    if( user_input == nullptr ) return;
+    user_input->setCurrentColor( QColor( r, g, b ) );
+
+}
+
+void SketchScene::getCurrentColor( int& r, int& g, int& b )
+{
+    if( user_input == nullptr ) return;
+    QColor color_ = user_input->getCurrentColor();
+
+
+    r = color_.red();
+    g = color_.green();
+    b = color_.blue();
+}
+
 
 
 void SketchScene::setModeSketching()
