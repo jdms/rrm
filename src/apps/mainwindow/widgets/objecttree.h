@@ -7,6 +7,7 @@
 #include "./core/base/models/container.h"
 
 
+
 class ObjectTree: public QTreeWidget
 {
     Q_OBJECT
@@ -17,7 +18,6 @@ class ObjectTree: public QTreeWidget
         ObjectTree( QWidget* parent = 0 );
 
         void addInputVolume();
-//        void setInputVolumeVisibility( bool status_ );
 
 
         void addObject( std::size_t index_, const ObjectTreeItem::Type& type_,
@@ -25,7 +25,6 @@ class ObjectTree: public QTreeWidget
                         const int& green_,  const int& blue_ );
 
 
-//        void setObjectName( const std::string& name_ );
 //        std::string& getObjectName() const;
 
 //        void setObjectColor( const int& red_, const int& green_,
@@ -56,6 +55,7 @@ class ObjectTree: public QTreeWidget
 
         void setObjectVisible( std::size_t index_, bool status_ );
         void setObjectName( std::size_t index_, const std::string& name_ );
+        void setObjectColor( std::size_t index_, const QColor& color_ );
 
         void setCrossSectionVisible( std::size_t index_, bool status_ );
         void setCrossSectionName( std::size_t index_, const std::string& name_ );

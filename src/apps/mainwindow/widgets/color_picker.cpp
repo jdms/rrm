@@ -39,9 +39,12 @@ void ColorPicker::createActions()
 
     connect( cd_picker_color, &QColorDialog::currentColorChanged, this, &ColorPicker::colorChanged );
     connect( cd_picker_color, &QColorDialog::colorSelected, [=]( const QColor& color_ )
-                                                { emit colorSelected( color_ ); } );
+                                                            { emit colorSelected( color_ ); } );
 
-//    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineRandomColor );
+    connect( this, &ColorPicker::toggled, [=]( bool status_ ){
+                                          if( status_ == true ) setColor( cd_picker_color->currentColor() );
+                                          else defineRandomColor(); } );
+
 
 }
 
@@ -77,6 +80,8 @@ void ColorPicker::defineRandomColor()
         c = randomColor();
     else
         c = cd_picker_color->currentColor();
+
+    setColor( c );
 
     emit colorSelected( c );
 

@@ -91,6 +91,13 @@ class SketchScene: public QGraphicsScene, public Scene
 
     protected:
 
+        struct Color
+        {
+            int red = 255;
+            int green = 0;
+            int blue = 0;
+        } current_color;
+
 
         UserInteraction current_interaction = UserInteraction::SKETCHING;
         InputSketch* user_input;

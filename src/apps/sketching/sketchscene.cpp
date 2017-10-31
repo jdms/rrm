@@ -20,6 +20,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ )
     readCrossSection( raw_ );
 
     user_input = new InputSketch();
+    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
     addItem( user_input );
 
     connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
@@ -174,19 +175,20 @@ bool SketchScene::isCurrent() const
 void SketchScene::setCurrentColor( int r, int g, int b )
 {
     if( user_input == nullptr ) return;
+
     user_input->setCurrentColor( QColor( r, g, b ) );
+    current_color.red   = r;
+    current_color.green = g;
+    current_color.blue  = b;
 
 }
 
 void SketchScene::getCurrentColor( int& r, int& g, int& b )
 {
     if( user_input == nullptr ) return;
-    QColor color_ = user_input->getCurrentColor();
-
-
-    r = color_.red();
-    g = color_.green();
-    b = color_.blue();
+    r = current_color.red;
+    g = current_color.green;
+    b = current_color.blue;
 }
 
 

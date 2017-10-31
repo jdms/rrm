@@ -112,6 +112,8 @@ void MainWindow::createSidebar()
                                                          { controller->setObjectVisibility( index_, status_ ); } );
 
 
+
+
 }
 
 
@@ -128,9 +130,15 @@ void MainWindow::createSketchingWindow()
 
 
 
-
     connect( this, &MainWindow::defineMainCrossSection, [=]( const double& v ){ controller->setMainCrossSection( CrossSection::Direction::Z, v );
                                                                                 sketch_window->setMainCanvas( controller->getActiveCrossSection( v ) ); } );
+
+
+    connect( this, &MainWindow::setUpColor, sketch_window, &SketchWindow::setUpColor );
+    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateVolumes );
+    connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
+    connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
+    connect( this, &MainWindow::updateObjects, sketch_window, &SketchWindow::updateCanvas );
 
 
 
@@ -143,8 +151,9 @@ void MainWindow::createSketchingWindow()
     connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, [=]( double v ){  controller->setCurrentCrossSection( v );
                                                                                         sketch_window->highlightCanvas( controller->getActiveCrossSection( v ) ); }  );
 
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
 
-    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateVolumes );
+
 
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
@@ -157,27 +166,20 @@ void MainWindow::createSketchingWindow()
                                                                                         controller->addObject();
                                                                                         emit addObject( controller->getCurrentObject() ); } );
 
-
-
-    connect( this, &MainWindow::setUpColor, sketch_window, &SketchWindow::setUpColor );
-    connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
-    connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
-    connect( this, &MainWindow::updateObjects, sketch_window, &SketchWindow::updateCanvas );
-
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ ) {
                                                                controller->setCurrentColor( color_.red(), color_.green(), color_.blue() ); });
+
 
 
 
     connect( object_tree, &ObjectTree::setVolumeVisible, [=](){ sketch_window->updateVolumes(); } );
 
 
-    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_ )
-                                                         { sketch_window->updateObject( index_ ); } );
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_ ) { sketch_window->updateObject( index_ ); } );
 
-
-    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
-
+    connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
+                                                       { controller->setObjectColor( index_, color_.red(), color_.green(), color_.blue() );
+                                                         sketch_window->updateObject( index_ ); } );
 
 
 
