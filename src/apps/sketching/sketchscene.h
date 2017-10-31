@@ -51,6 +51,8 @@ class SketchScene: public QGraphicsScene, public Scene
         bool isCurrent() const;
 
 
+        virtual void setCurrentColor( int r, int g, int b );
+        virtual void getCurrentColor( int& r, int& g, int& b );
 
 
 
@@ -66,6 +68,7 @@ class SketchScene: public QGraphicsScene, public Scene
         void create();
 
 
+
     public slots:
 
         void edit( bool status_ );
@@ -73,6 +76,8 @@ class SketchScene: public QGraphicsScene, public Scene
         void setModeSketching();
         void setModeEditingBoundary();
         void setModeEditingScene();
+
+
 
 
     protected:

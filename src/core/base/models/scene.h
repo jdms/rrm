@@ -34,8 +34,8 @@ class Scene
 //        virtual void updateRegion() = 0;
 
 
-//        virtual void setCurrentColor( int r, int g, int b ) = 0;
-//        virtual void getCurrentColor( int& r, int& g, int& b ) = 0;
+        virtual void setCurrentColor( int r, int g, int b ) = 0;
+        virtual void getCurrentColor( int& r, int& g, int& b ) = 0;
 
 
 

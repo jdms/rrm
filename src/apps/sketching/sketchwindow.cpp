@@ -62,6 +62,8 @@ void SketchWindow::addCanvas( CrossSection* const& cs_ )
     connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
     connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+
 
 }
 

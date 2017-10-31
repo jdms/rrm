@@ -165,9 +165,7 @@ void MainWindow::createSketchingWindow()
     connect( this, &MainWindow::updateObjects, sketch_window, &SketchWindow::updateCanvas );
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ ) {
-                                                               controller->setCurrentColor( color_.red(), color_.green(), color_.blue() );
-
-    });
+                                                               controller->setCurrentColor( color_.red(), color_.green(), color_.blue() ); });
 
 
 
