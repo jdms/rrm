@@ -23,6 +23,8 @@ void Controller::setCurrentColor( int r, int g, int b )
     current_color.g = g;
     current_color.b = b;
 
+    setObjectColor( current_object, r, g, b );
+
 }
 void Controller::getCurrentColor( int& r, int& g, int& b ) const
 {
@@ -273,6 +275,7 @@ void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
     Object* const& obj_ = objects.getElement( index_ );
     obj_->setColor( r_, g_, b_ );
     scene3d->updateObject( index_ );
+    object_tree->updateObjectColor( index_, r_, g_, b_ );
 }
 
 
@@ -283,6 +286,16 @@ void Controller::getObjectColor( std::size_t index_,int& r_, int& g_, int& b_)
 
     Object* const& obj_ = objects.getElement( index_ );
     obj_->getColor( r_, g_, b_ );
+}
+
+
+void Controller::setObjectName( std::size_t index_, const std::string& name_ )
+{
+    if( objects.findElement( index_) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->setName( name_ );
 }
 
 
@@ -340,7 +353,7 @@ bool Controller::createObjectSurface()
         curves_.push_back( std::make_tuple( curve_, csection_->getDepth() ) );
     }
 
-    rules_processor.removeBelowIntersection();
+    rules_processor.removeAbove();
 
     bool surface_created = false;
     if( obj_->hasTrajectory() == true )
@@ -378,20 +391,27 @@ bool Controller::createObjectSurface()
 void Controller::updateModel()
 {
 
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
 
     for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
     {
+        Object* obj_ = (it->second);
+        obj_->setActive( false );
+        object_tree->setObjectVisibility( it->first, false );
+        scene3d->updateObject( it->first );
+    }
 
-        updateObjectSurfaces( it->first );
+    for ( std::size_t id_: actives_ )
+    {
+
+        updateObjectSurfaces( id_ );
 
         for ( Container< double, CrossSection* >::Iterator cs_it =  actives_csections.begin(); cs_it != actives_csections.end(); ++cs_it )
         {
-
-            updateObjectCurveFromCrossSection( it->first, cs_it->first );
-
+            updateObjectCurveFromCrossSection( id_, cs_it->first );
         }
-
     }
+
 }
 
 
@@ -407,6 +427,9 @@ void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, doub
 
     if( has_curve == false )
     {
+//        std::cout << "Remove curve of object " << object_id_ << ", from csection " << csection_id_ <<
+//                     std::endl << std::flush;
+
         obj_->removeCurve( csection_id_ );
         csection_->removeObjectCurve( object_id_ );
         return;
@@ -414,6 +437,7 @@ void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, doub
 
 
     PolyCurve curve_ = PolyCurve( vertices_, edges_ );
+
 
     obj_->updateCurve( csection_id_, curve_ );
     csection_->addObject( object_id_, &curve_ );
@@ -451,8 +475,10 @@ void Controller::updateObjectSurfaces( std::size_t object_id_ )
         obj_->addTrajectory( PolyCurve( path_ ) );
     }
 
+    obj_->setActive( true );
     obj_->setSurface( surface );
     obj_->setVisible( true );
+    object_tree->setObjectVisibility( object_id_, true );
 
     scene3d->updateObject( object_id_ );
 }

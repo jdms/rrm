@@ -69,8 +69,8 @@ void ObjectItemWrapper::updateState()
     std::string selectable_s_ = ( selectable_ )? "true":" false";
     std::string editable_s_ = ( editable_ )? "true":" false";
 
-    std::cout << "Object " << raw->getIndex() << ", is selectable = " << selectable_s_
-              << "\n and editable = " << editable_s_  << std::endl << std::flush;
+//    std::cout << "Object " << raw->getIndex() << ", is selectable = " << selectable_s_
+//              << "\n and editable = " << editable_s_  << std::endl << std::flush;
 
     setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
 
@@ -81,7 +81,7 @@ void ObjectItemWrapper::updateState()
 void ObjectItemWrapper::updateCurve()
 {
 
-    if( raw->isEmpty() == true ) return;
+    if( raw->isEmpty() == true || raw->isActive() == false ) return;
 
     prepareGeometryChange();
 
@@ -109,8 +109,8 @@ bool ObjectItemWrapper::isEditable() const
 bool ObjectItemWrapper::isVisible() const
 {
     if( raw == nullptr ) return false;
+    if( raw->isActive() == false ) return false;
     return raw->isVisible();
-
 }
 
 
@@ -162,9 +162,6 @@ void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem
     {
         current_pen.setColor( Qt::blue );
     }
-
-
-
 
     painter->setRenderHint( QPainter::Antialiasing );
     painter->setPen( current_pen );

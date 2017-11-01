@@ -118,6 +118,18 @@ bool Object::isVisible() const
 
 
 
+void Object::setActive( const bool status_ )
+{
+    is_active = status_;
+}
+
+bool Object::isActive() const
+{
+    return is_active;
+}
+
+
+
 bool Object::isEmpty() const
 {
     return csection_curves.empty();
@@ -290,6 +302,7 @@ void Object::initialize()
     is_selectable = false;
     is_selected = false;
     is_visible = false;
+    is_active = true;
 
 }
 

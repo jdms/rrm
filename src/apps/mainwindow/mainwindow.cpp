@@ -112,7 +112,8 @@ void MainWindow::createSidebar()
                                                          { controller->setObjectVisibility( index_, status_ ); } );
 
 
-
+    connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t index_, const std::string& name_ )
+                                                       { controller->setObjectName( index_, name_ ); } );
 
 }
 
@@ -161,10 +162,10 @@ void MainWindow::createSketchingWindow()
 
     connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ bool status_ = controller->addObjectCurve( curve_ );
                                                                                         if( status_ == false ) return;
-                                                                                        emit updateObjects();
-                                                                                        emit setUpColor();
+                                                                                        emit updateObjects();                                                                                        
                                                                                         controller->addObject();
-                                                                                        emit addObject( controller->getCurrentObject() ); } );
+                                                                                        emit addObject( controller->getCurrentObject() );
+                                                                                        emit setUpColor(); } );
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ ) {
                                                                controller->setCurrentColor( color_.red(), color_.green(), color_.blue() ); });
