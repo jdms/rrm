@@ -78,11 +78,10 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 void SketchScene::updateCrossSection()
 {
 
-    std::cout << "Updating main csection " << csection->getDepth() << std::endl << std::flush;
     Volume* const& vol_ = csection->getVolume();
 
 
-//TODO: Uncomentting
+////TODO: Uncomentting
 //    Volume::ObjectsContainer objs_ = vol_->getObjects();
 //    for( auto o: objs_ )
 //        (o.second)->setVisible( false );
@@ -91,8 +90,9 @@ void SketchScene::updateCrossSection()
     CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
     for( auto o: objs_cs_ )
     {
+//        objects.getElement( o.first )->setVisible( true );
         updateObject( o.first );
-        objects.getElement( o.first )->setVisible( true );
+
     }
 
 }

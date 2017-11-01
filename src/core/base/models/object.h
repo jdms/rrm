@@ -55,6 +55,10 @@ class Object
         bool isVisible() const;
 
 
+        void setActive( const bool status_ );
+        bool isActive() const;
+
+
         bool isEmpty() const;
 
 
@@ -118,6 +122,7 @@ class Object
         bool is_selectable;
         bool is_selected;
         bool is_visible;
+        bool is_active;
 
         CrossSectionsContainer csection_curves;
         Surface surface;

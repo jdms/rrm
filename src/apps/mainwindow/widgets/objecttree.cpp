@@ -118,11 +118,29 @@ void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type
     vol_->addChild( obj_ );
 
     ColorPicker* colorpicker_ = new ColorPicker( this );
+    colorpicker_->setMaximumWidth( 30 );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
     connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
 
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
+    items.addElement( index_, obj_ );
+
+}
 
 
+void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, int blue_)
+{
+    if( items.findElement( index_ ) == false ) return;
 
+    ObjectTreeItem* obj_ = items.getElement( index_ );
+    ColorPicker* cp_color_ = static_cast< ColorPicker* > ( itemWidget( obj_, COLUMN_COLOR ) );
+    cp_color_->setColor( QColor( red_, green_, blue_ ) );
+}
+
+void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
+{
+    if( items.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* obj_ = items.getElement( index_ );
+    obj_->setHidden( !status_ );
 }

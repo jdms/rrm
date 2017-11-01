@@ -61,12 +61,15 @@ class Controller
 
         bool addObject();
         bool addObjectCurve( PolyCurve curve_ );
+
         bool removeObjectCurve( double csection_ );
         Object* getCurrentObject();
 
-
         void setObjectColor( std::size_t index_, int r_, int g_, int b_);
         void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
+
+
+        void setObjectName( std::size_t index_, const std::string& name_ );
 
 
         void setObjectVisibility( std::size_t index_, bool status_ );

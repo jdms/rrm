@@ -190,6 +190,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
                           const int& h )
 {
 
+    if( raw->isActive() == false ) return;
     if( raw->isVisible() == false ) return;
 
     Eigen::Affine3f M;
