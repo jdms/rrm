@@ -3,7 +3,7 @@
 #include "smodeller.hpp"
 #include "sutilities.hpp"
 
-bool exportCurves( std::vector<std::vector<double>> &vlists, std::string filename );
+int exportCurves( std::vector<std::vector<double>> &vlists, std::string filename );
 
 int main()
 {
@@ -30,7 +30,7 @@ int main()
     return 0;
 }
 
-bool exportCurves( std::vector<std::vector<double>> &vlists, std::string filename )
+int exportCurves( std::vector<std::vector<double>> &vlists, std::string filename )
 {
     std::ofstream ofile(filename + "_interior.mat");
     if ( !ofile.good() )

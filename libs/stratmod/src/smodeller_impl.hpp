@@ -119,7 +119,7 @@ struct SModellerImplementation
         // Model properties
         Point3 origin_, lenght_; 
 
-        size_t discI_ = 64, discJ_ = 64; 
+        size_t discWidth_ = 64, discLenght_ = 64; 
         size_t numI_, numJ_; 
         size_t max_discretization_level_; 
         size_t level_I_, level_J_;
@@ -150,7 +150,7 @@ struct SModellerImplementation
             dictionary_,
             inserted_surfaces_indices_,
             origin_, lenght_,
-            discI_, discJ_,
+            discWidth_, discLenght_,
             numI_, numJ_,
             max_discretization_level_,
             level_I_, level_J_,

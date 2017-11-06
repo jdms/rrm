@@ -30,8 +30,8 @@ bool SModellerImplementation::init()
     /* } */
 
     PlanarSurface::requestChangeDiscretization(
-            static_cast<PlanarSurface::Natural>( discI_ ), 
-            static_cast<PlanarSurface::Natural>( discJ_ ) );
+            static_cast<PlanarSurface::Natural>( discWidth_ ), 
+            static_cast<PlanarSurface::Natural>( discLenght_ ) );
 
     PlanarSurface::setOutputCoordinatesOrdering( 
             PlanarSurface::Coordinate::WIDTH,
