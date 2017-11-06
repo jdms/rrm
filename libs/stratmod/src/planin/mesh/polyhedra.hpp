@@ -43,7 +43,10 @@ class Triangle
 
         std::vector<size_t> getConnectivity() const
         {
-            std::vector<size_t> vindices = {{vindices_[0], vindices_[1], vindices_[2]}};
+            std::vector<size_t> vindices; //= {{vindices_[0], vindices_[1], vindices_[2]}};
+            vindices.push_back(vindices_[0]);
+            vindices.push_back(vindices_[1]);
+            vindices.push_back(vindices_[2]);
 
             return vindices;
         }
@@ -109,9 +112,9 @@ class Triangle
         // BUG: VS2013 does not support empty initializer lists
         std::array<Point3, 3>  vertices_; //= {}; 
         std::array<size_t, 3>  vindices_; //= {};
-        std::array<bool, 3> vstatus_ = {{false, false, false}};
+        std::array<bool, 3> vstatus_; //= {{false, false, false}};
 
-        std::array<bool, 3> vertex_is_set_ = {{false, false, false}};
+        std::array<bool, 3> vertex_is_set_; //= {{false, false, false}};
 
         bool verticesAreSet() const
         {
@@ -163,7 +166,12 @@ class Tetrahedron
 
         std::vector<size_t> getConnectivity() const
         {
-            std::vector<size_t> vindices = {{vindices_[0], vindices_[1], vindices_[2], vindices_[3]}};
+            std::vector<size_t> vindices; //= {{vindices_[0], vindices_[1], vindices_[2], vindices_[3]}};
+            vindices.push_back(vindices_[0]);
+            vindices.push_back(vindices_[1]);
+            vindices.push_back(vindices_[2]);
+            vindices.push_back(vindices_[3]);
+
 
             return vindices;
         }
@@ -247,9 +255,9 @@ class Tetrahedron
         // BUG: VS2013 does not support empty initializer lists
         std::array<Point3, 4>  vertices_; //= {}; 
         std::array<size_t, 4>  vindices_; //= {};
-        std::array<bool, 4> vstatus_ = {{false, false, false, false}};
+        std::array<bool, 4> vstatus_; //= {{false, false, false, false}};
 
-        std::array<bool, 4> vertex_is_set_ = {{false, false, false, false}};
+        std::array<bool, 4> vertex_is_set_; //= {{false, false, false, false}};
 
         // BUG: VS2013 does not support empty initializer lists
         std::vector<bool> region_attribute_; //= {};
@@ -276,7 +284,7 @@ class Prism
 
         std::vector<Tetrahedron> tetrahedralize() const
         {
-            std::vector<Tetrahedron> tetrahedra = {};
+            std::vector<Tetrahedron> tetrahedra; //= {};
 
             if ( isValid() )
             {
@@ -375,9 +383,9 @@ class Prism
         // BUG: VS2013 does not support empty initializer lists
         std::array<Point3, 6>  vertices_; //= {}; 
         std::array<size_t, 6>  vindices_; //= {};
-        std::array<bool, 6> vstatus_ = {{false, false, false, false, false, false}};
+        std::array<bool, 6> vstatus_; //= {{false, false, false, false, false, false}};
 
-        std::array<bool, 6> vertex_is_set_ = {{false, false, false, false, false, false}};
+        std::array<bool, 6> vertex_is_set_; //= {{false, false, false, false, false, false}};
         // BUG: VS2013 does not support empty initializer lists
         std::vector<bool> region_attribute_; //= {};
         

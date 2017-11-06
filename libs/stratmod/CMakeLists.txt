@@ -96,7 +96,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /W3")
 
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
 
 endif()
 
@@ -211,8 +211,8 @@ endif()
 
 ExternalProject_Add(
     PlanIn
-    DOWNLOAD_COMMAND git submodule update --init
-    UPDATE_COMMAND git submodule update
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
     SOURCE_DIR ${PLANIN_SOURCE}
     CMAKE_ARGS ${PLANIN_CMAKE_ARGS} 
     )

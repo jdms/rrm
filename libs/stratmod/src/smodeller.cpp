@@ -213,41 +213,40 @@ bool SModeller::useOpenGLCoordinateSystem()
 }
 
 
-bool SModeller::tryChangeDiscretization( size_t width, size_t depth )
+bool SModeller::tryChangeDiscretization( size_t width, size_t lenght )
 {
     if ( pimpl_->container_.size() > 0 )
     {
         return false;
     }
 
-    return changeDiscretization(width, depth);
+    return changeDiscretization(width, lenght);
 }
 
-bool SModeller::changeDiscretization( size_t width, size_t depth )
+bool SModeller::changeDiscretization( size_t width, size_t lenght )
 {
-    if ( (width == 0) || (depth == 0) )
+    if ( (width == 0) || (lenght == 0) )
     {
         return false;
     }
 
-    pimpl_->discI_ = width; 
-    pimpl_->discJ_ = depth; 
+    pimpl_->discWidth_ = width; 
+    pimpl_->discLenght_ = lenght; 
 
     /* TODO: review use and conversion of types */
-    PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discI_), PlanarSurface::Natural(pimpl_->discJ_));
-
-    return true;
+    /* PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discWidth_), PlanarSurface::Natural(pimpl_->discLenght_)); */
+    return pimpl_->container_.changeDiscretization(width, lenght);
 }
 
 
 size_t SModeller::getWidthDiscretization() const
 {
-    return pimpl_->discI_;
+    return pimpl_->discWidth_;
 }
 
 size_t SModeller::getLengthDiscretization() const
 {
-    return pimpl_->discJ_;
+    return pimpl_->discLenght_;
 }
 
 void SModeller::setOrigin( double x, double y, double z )

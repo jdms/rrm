@@ -72,12 +72,12 @@ bool SUtilities::getNormalList( size_t surface_id, std::vector<double> &normals 
 
 }
 
-bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t surface_id,  std::size_t width, std::vector< std::vector<double> > vertices_coordinates )
+bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t,  std::size_t, std::vector< std::vector<double> > )
 {
     return false;
 }
 
-bool SUtilities::getLengthCrossSectionCurveVertices( std::size_t surface_id, std::size_t lenght, std::vector< std::vector<double> > vertices_coordinates )
+bool SUtilities::getLengthCrossSectionCurveVertices( std::size_t, std::size_t, std::vector< std::vector<double> > )
 {
     return false;
 }
