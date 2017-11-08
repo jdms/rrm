@@ -226,6 +226,7 @@ bool CrossSection::hasObjects() const
 
 void CrossSection::clear()
 {
+
     image_path.clear();
     removeObjects();
     initialize();

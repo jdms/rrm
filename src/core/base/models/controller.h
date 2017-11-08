@@ -91,10 +91,6 @@ class Controller
 
 
 
-
-
-
-
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 
@@ -110,22 +106,37 @@ class Controller
         double depthCrossSection( std::size_t index_ ) const;
 
 
-
         void updateModel();
         void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ );
         void updateObjectSurfaces( std::size_t object_id_ );
 
 
-
         bool enableCreateAbove( bool status_ );
-        bool stopCreateAbove();
+        void stopCreateAbove();
         bool requestCreateAbove();
 
+        bool enableCreateBelow( bool status_ );
+        void stopCreateBelow();
+        bool requestCreateBelow();
 
 
         void getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_);
         void setObjectAsBoundering( std::size_t index_ );
 
+
+        bool undo();
+        bool canUndo();
+
+        bool redo();
+        bool canRedo();
+
+
+        bool isDefineAboveActive();
+        bool isDefineBelowActive();
+
+
+        void clear();
+        void initializeData();
 
     protected:
 
@@ -168,16 +179,22 @@ class Controller
         Container< double, CrossSection* > all_csections;
 
 
-
         RulesProcessor rules_processor;
         double csection_step;
 
         StratigraphicRules current_rule = StratigraphicRules::REMOVE_ABOVE;
         std::vector< std::size_t > selectable_upper;
+        std::vector< std::size_t > selectable_bottom;
 
         BounderingRegion boundering_region;
         std::size_t index_upper_boundary;
         std::size_t index_bottom_boundary;
+
+
+
+
+
+
 };
 
 #endif // CONTROLLER_H

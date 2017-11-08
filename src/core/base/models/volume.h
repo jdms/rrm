@@ -65,6 +65,7 @@ class Volume
         bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
         bool removeCrossSection( std::size_t id_ );
         Volume::CrossSectionsContainer getCrossSections() const;
+        void removeAllCrossSections();
 
 
         void setVisible( bool status_ );

@@ -613,111 +613,100 @@ void Controller::applyStratigraphicRule()
 }
 
 
+
+
 bool Controller::enableCreateAbove( bool status_ )
 {
     setObjectsAsSelectable( selectable_upper, false );
 
-    bool final_status_ = true;
-
     if( status_ == false )
-        final_status_ = !stopCreateAbove();
-    else
-        final_status_ = requestCreateAbove();
+    {
+        stopCreateAbove();
+        return false;
+    }
 
-    return final_status_;
+    return requestCreateAbove();
 
 }
 
 
-bool Controller::stopCreateAbove()
+void Controller::stopCreateAbove()
 {
-    bool stop_ = true;
-
-    if( stop_ == true )
-    {
-        std::cout << "Stop create above accepted" << std::endl << std::flush;
-        setObjectsAsSelectable( selectable_upper, false );
-
-//        rules_processor.stopDefineAbove();
-//        setObjectSelected( boundering_above, false );
-    }
-    else
-        std::cout << "Stop create above denied" << std::endl << std::flush;
-
-    return stop_ ;
-
-
-
+    std::cout << "Stop create above accepted" << std::endl << std::flush;
+    rules_processor.stopDefineAbove();
+    setObjectAsSelected( index_upper_boundary, false );
 }
 
 
 bool Controller::requestCreateAbove()
 {
 
-    bool request_ = true;
-//    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
+    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
 
     if( request_ == true )
     {
         std::cout << "Request create accepted" << std::endl << std::flush;
-        selectable_upper.push_back( 0 );
+
+        setObjectsAsSelectable( selectable_bottom, false );
         setObjectsAsSelectable( selectable_upper, true );
+
+        boundering_region = BounderingRegion::ABOVE;
+
     }
     else
         std::cout << "Request create denied" << std::endl << std::flush;
 
     return request_ ;
 
-
-
-
-//    bool request_accept = rules_processor.requestCreateAbove( selectable_upper );
-//    if( request_accept == false ) return;
-
-//    current_region = RequestRegion::ABOVE;
-
-//    setObjectsAsSelectable( selectable_below, false );
-//    setObjectsAsSelectable( selectable_upper, true );
-
-//    csection_scene->setModeSelecting();
 }
 
 
 
-//void Controller::enableCreateBelow( bool status )
-//{
+bool Controller::enableCreateBelow( bool status_ )
+{
 
-//    setObjectsAsSelectable( selectable_below, false );
+    setObjectsAsSelectable( selectable_upper, false );
 
-//    if( status == false )
-//        stopCreateBelow();
-//    else
-//        requestCreateBelow();
+    if( status_ == false )
+    {
+        stopCreateBelow();
+        return false;
+    }
 
-//}
+    return requestCreateBelow();
 
-
-//void Controller::stopCreateBelow()
-//{
-//    rules_processor.stopDefineBelow();
-//    setObjectSelected( boundering_below, false );
-
-//}
+}
 
 
-//void Controller::requestCreateBelow()
-//{
+void Controller::stopCreateBelow()
+{
+    std::cout << "Stop create below accepted" << std::endl << std::flush;
+    rules_processor.stopDefineBelow();
+    setObjectAsSelected( index_bottom_boundary, false );
 
-//    bool request_accept = rules_processor.requestCreateBelow( selectable_below );
-//    if( request_accept == false ) return;
+}
 
-//    current_region = RequestRegion::BELOW;
 
-//    setObjectsAsSelectable( selectable_upper, false );
-//    setObjectsAsSelectable( selectable_below, true );
+bool Controller::requestCreateBelow()
+{
 
-//    csection_scene->setModeSelecting();
-//}
+    bool request_ = rules_processor.requestCreateBelow( selectable_bottom );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+
+        setObjectsAsSelectable( selectable_upper, false );
+        setObjectsAsSelectable( selectable_bottom, true );
+        boundering_region = BounderingRegion::BELOW;
+
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+}
 
 
 
@@ -745,9 +734,6 @@ void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
 
     Object* obj_ = objects.getElement( index_ );
     obj_->setSelected( status_ );
-//    updateObject( id );
-
-//    csection_scene->setModeSketching();
 }
 
 
@@ -763,21 +749,157 @@ void Controller::setObjectAsBoundering( std::size_t index_ )
     if( objects.findElement( index_ ) == false ) return;
 
 
+    setObjectAsSelected( index_, true );
+
     if( boundering_region == BounderingRegion::ABOVE )
     {
         index_upper_boundary = index_;
         rules_processor.defineAbove( index_ );
         setObjectsAsSelectable( selectable_upper, false );
     }
-
     else if( boundering_region == BounderingRegion::BELOW )
     {
         index_bottom_boundary = index_;
         rules_processor.defineBelow( index_ );
-//        setObjectsAsSelectable( selectable_below, false );
+        setObjectsAsSelectable( selectable_bottom, false );
     }
 
-//    setObjectAsSelected( id, true);
+}
 
+
+bool Controller::undo()
+{
+    bool undo_done = rules_processor.undo();
+    if( undo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+bool Controller::redo()
+{
+    bool redo_done = rules_processor.redo();
+    if( redo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+
+bool Controller::canUndo()
+{
+    return rules_processor.canUndo();
+}
+
+bool Controller::canRedo()
+{
+    return rules_processor.canRedo();
+}
+
+
+bool Controller::isDefineAboveActive()
+{
+    std::size_t index_;
+
+    bool status_ = rules_processor.defineAboveIsActive( index_ );
+    if( status_ == false )
+    {
+        setObjectAsSelected( index_upper_boundary, false );
+        return false;
+    }
+
+    boundering_region = BounderingRegion::ABOVE;
+    setObjectAsBoundering( index_ );
+    return true;
+
+}
+
+
+
+bool Controller::isDefineBelowActive()
+{
+    std::size_t index_;
+
+    bool status_ = rules_processor.defineBelowIsActive( index_ );
+    if( status_ == false )
+    {
+        setObjectAsSelected( index_bottom_boundary, false );
+        return false;
+    }
+
+    boundering_region = BounderingRegion::BELOW;
+    setObjectAsBoundering( index_ );
+    return true;
+}
+
+
+
+
+void Controller::clear()
+{
+
+
+    for (  Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        delete (it->second);
+        (it->second) = nullptr;
+    }
+    objects.clear();
+
+
+
+    for (  Container< double, CrossSection* >::Iterator it =  actives_csections.begin(); it != actives_csections.end(); ++it )
+    {
+        delete (it->second);
+        (it->second) = nullptr;
+    }
+    actives_csections.clear();
+
+    for (  Container< double, CrossSection* >::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
+    {
+        delete (it->second);
+        (it->second) = nullptr;
+    }
+    all_csections.clear();
+
+
+    main_csection->clear();
+    topview_csection->clear();
+
+
+    scene3d->clear();
+    object_tree->clear();
+    volume->clear();
+
+    selectable_upper.clear();
+    selectable_bottom.clear();
+
+    rules_processor.clear();
+
+    initializeData();
+
+}
+
+
+void Controller::initializeData()
+{
+    main_csection = nullptr;
+    topview_csection = nullptr;
+    scene3d = nullptr;
+    object_tree = nullptr;
+    volume = nullptr;
+    current_color.r = 255;
+    current_color.g = 0;
+    current_color.b = 0;
+
+    current_object = 0;
+    current_csection = 500.0;
+
+    csection_step = 0.0;
+    current_rule = StratigraphicRules::REMOVE_ABOVE;
+    boundering_region = BounderingRegion::ABOVE;
+
+    index_upper_boundary = 0;
+    index_bottom_boundary = 0;
 
 }

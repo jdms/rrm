@@ -141,14 +141,32 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 
 void Scene3d::clear()
 {
+    shader_directory.clear();
+
+
+    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    csections.clear();
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    objects.clear();
+
+    volume->clear();
+    delete volume;
+
     clearData();
-    current_color = Qt::red;
     emit updateCanvas();
 }
 
 
 void Scene3d::clearData()
 {
+    volume = nullptr;
     current_color = Qt::red;
 
 }
