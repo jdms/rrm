@@ -26,6 +26,7 @@
 RulesProcessor::RulesProcessor()
 {
     modeller_.useOpenGLCoordinateSystem();
+    modeller_.changeDiscretization(8,8);
 }
 
 std::vector<std::size_t> RulesProcessor::getSurfaces()
@@ -75,17 +76,23 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 bool RulesProcessor::setLowResolution()
 {
-    return modeller_.tryChangeDiscretization(16, 16);
+    std::cout << "setLowResolution() was called\n";
+    /* return modeller_.tryChangeDiscretization(16, 16); */
+    return modeller_.tryChangeDiscretization(8, 8);
 }
 
 bool RulesProcessor::setMediumResolution()
 {
-    return modeller_.tryChangeDiscretization(64, 64);
+    std::cout << "setMediumResolution() was called\n";
+    /* return modeller_.tryChangeDiscretization(64, 64); */
+    return modeller_.tryChangeDiscretization(8, 8);
 }
 
 bool RulesProcessor::setHighResolution()
 {
-    return modeller_.tryChangeDiscretization(128, 128);
+    std::cout << "setHighResolution() was called\n";
+    /* return modeller_.tryChangeDiscretization(128, 128); */
+    return modeller_.tryChangeDiscretization(8, 8);
 }
 
 
@@ -303,7 +310,6 @@ bool RulesProcessor::loadFile( std::string filename )
 
 size_t RulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
-
     SUtilitiesWrapper u(modeller_);
 
     return u.getLegacyMeshes(points, nu, nv, num_extrusion_steps);
@@ -312,31 +318,29 @@ size_t RulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector
 bool RulesProcessor::getLeftBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
     SUtilitiesWrapper u(modeller_);
+
     return u.getLeftBoundary3DCurves(vertices, edges);
-    //return false; //modeller_.getCrossSectionWidth(surface_id, vertices, edges, 0);
 }
 
 bool RulesProcessor::getRightBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
     SUtilitiesWrapper u(modeller_);
+
     return u.getRightBoundary3DCurves(vertices, edges);
-    //size_t right_boundary = modeller_.getDiscretizationWidth();
-    //return false; //modeller_.getCrossSectionWidth(surface_id, vertices, edges, right_boundary);
 }
 
 bool RulesProcessor::getFrontBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
     SUtilitiesWrapper u(modeller_);
+
     return u.getFrontBoundary3DCurves(vertices, edges);
-    //return false; //modeller_.getCrossSectionDepth(surface_id, vertices, edges, 0);
 }
 
 bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges  )
 {
     SUtilitiesWrapper u(modeller_);
+
     return u.getBackBoundary3DCurves(vertices, edges);
-    //size_t right_boundary = modeller_.getDiscretizationDepth();
-    //return false; //modeller_.getCrossSectionDepth(surface_id, vertices, edges, right_boundary);
 }
 
 bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )

@@ -764,17 +764,34 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
 
         if( isValidObject( it ) == false ) continue;
 
-        std::vector< double > surface_vertices;
-        std::vector< std::size_t > surface_faces;
+        TriangleMesh t;
+        /* std::vector< double > surface_vertices; */
+        /* std::vector< std::size_t > surface_faces; */
 
 
-        bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces );
+        /* bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces ); */
+        bool has_surface = rules_processor.getMesh( it, t.vertex_list, t.face_list );
+
         if( has_surface  == false ) continue;
 
 
-        TriangleMesh t;
-        t.face_list = surface_faces;
-        t.vertex_list = surface_vertices;
+        /* t.face_list = surface_faces; */
+        /* t.vertex_list = surface_vertices; */
+        
+        //
+        // This loop changes the y-z coordinates of the vertices as RRM
+        // understands the y coordinate as height and the z coordinate as
+        // length, but Zhao's convention is the opposite.
+        //
+        double y, z; 
+        for ( size_t i = 0; i < t.vertex_list.size()/3; ++i ) 
+        { 
+            y = t.vertex_list[3*i + 1]; 
+            z = t.vertex_list[3*i + 2];
+
+            t.vertex_list[3*i + 1] = z;
+            t.vertex_list[3*i + 2] = y;
+        }
 
         triangles_meshes.push_back( t );
     }
@@ -1034,7 +1051,7 @@ void Controller::requestCreateBelow()
 
 
 void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes,
-                                                    bool status )
+        bool status )
 {
 
     for( std::size_t id: indexes )
