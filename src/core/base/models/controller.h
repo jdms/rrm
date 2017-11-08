@@ -24,6 +24,7 @@ class Controller
     public:
 
 
+
         Controller() = default;
 
 
@@ -43,6 +44,8 @@ class Controller
         void setVolumeDimensions( const double& width_, const double& height_, const double& length_ );
         void getVolumeDimensions( double& width_, double& height_, double& length_ ) const;
 
+        bool isVolumeResizable() const;
+
         void setVolumeVisibility( bool status_ );
         bool getVolumeVisibility() const;
 
@@ -51,11 +54,14 @@ class Controller
         bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        CrossSection* getActiveCrossSection( const double& depth_ );
         CrossSection* getCrossSection( const double& depth_ );
 
         void setCurrentCrossSection( const double& depth_ );
+        void updateCurrentCrossSection();
         double getCurrentCrossSection();
+
+        void addTopViewCrossSection();
+        CrossSection* getTopViewCrossSection();
 
 
 
@@ -68,22 +74,36 @@ class Controller
         void setObjectColor( std::size_t index_, int r_, int g_, int b_);
         void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
 
-
         void setObjectName( std::size_t index_, const std::string& name_ );
-
+        std::string getObjectName( std::size_t index_ );
 
         void setObjectVisibility( std::size_t index_, bool status_ );
         bool getObjectVisibility( std::size_t index_ );
 
-        bool createObjectSurface();
+
+        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
+        void setObjectAsSelected( std::size_t index_, bool status_ );
 
 
         std::size_t getIndexCurrentObject() const;
+
+        bool createObjectSurface();
+
+
+
+
 
 
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
+
+        void setRemoveAbove();
+        void setRemoveAboveIntersection();
+        void setRemoveBelow();
+        void setRemoveBelowIntersection();
+        void applyStratigraphicRule();
+
 
         std::size_t setupCrossSectionDiscretization();
         std::size_t indexCrossSection( double value_ ) const;
@@ -97,8 +117,31 @@ class Controller
 
 
 
+        bool enableCreateAbove( bool status_ );
+        bool stopCreateAbove();
+        bool requestCreateAbove();
+
+
+
+        void getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_);
+        void setObjectAsBoundering( std::size_t index_ );
+
 
     protected:
+
+
+        enum class StratigraphicRules : int {
+            UNDEFINED = -1,
+            NO_GEOLOGIC_RULE,
+            REMOVE_ABOVE, // Remove above
+            REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+            REMOVE_BELOW, // Remove below
+            REMOVE_BELOW_INTERSECTION, // Remove below intersection
+        };
+
+
+        enum class BounderingRegion { ABOVE, BELOW };
+
 
         Scene3d* scene3d;
         ObjectTree* object_tree;
@@ -120,6 +163,7 @@ class Controller
 
         double current_csection = 500.0;
         CrossSection* main_csection = nullptr;
+        CrossSection* topview_csection = nullptr;
         Container< double, CrossSection* > actives_csections;
         Container< double, CrossSection* > all_csections;
 
@@ -128,6 +172,12 @@ class Controller
         RulesProcessor rules_processor;
         double csection_step;
 
+        StratigraphicRules current_rule = StratigraphicRules::REMOVE_ABOVE;
+        std::vector< std::size_t > selectable_upper;
+
+        BounderingRegion boundering_region;
+        std::size_t index_upper_boundary;
+        std::size_t index_bottom_boundary;
 };
 
 #endif // CONTROLLER_H

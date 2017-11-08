@@ -22,6 +22,7 @@ class ObjectItemWrapper: public QGraphicsPathItem
         void setRawObject( Object* const& obj_ );
         Object* getRawObject() const ;
 
+        std::size_t getIndex() const;
 
         void updateState();
         void updateCurve();

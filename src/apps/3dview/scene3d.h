@@ -41,6 +41,7 @@ class Scene3d: public QObject, public Scene
 
 
         virtual void addCrossSection( CrossSection* const& raw_ );
+        void updateCrossSection( CrossSection* const& raw_ );
         virtual void removeCrossSection( CrossSection* const& raw_ );
 
 

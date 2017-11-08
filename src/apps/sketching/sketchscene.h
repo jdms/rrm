@@ -7,6 +7,7 @@
 #include "inputsketch.h"
 #include "./item_wrappers/volume_item_wrapper.h"
 #include "./item_wrappers/object_item_wrapper.h"
+#include "./item_wrappers/crosssection_item_wrapper.h"
 #include "./core/base/models/scene.h"
 
 
@@ -14,13 +15,14 @@ class SketchScene: public QGraphicsScene, public Scene
 {
     Q_OBJECT
 
-    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE };
+    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE, SELECTING };
 
 
     public:
 
 
         using ObjectsContainer = Container< std::size_t, ObjectItemWrapper* >;
+        using CrossSectionsContainer = Container< std::size_t, CrossSectionItemWrapper* >;
 
 
         SketchScene();
@@ -36,7 +38,7 @@ class SketchScene: public QGraphicsScene, public Scene
         virtual void clearVolume();
 
 
-        void addCrossSection( CrossSection* const& raw_ ){}
+        void addCrossSection( CrossSection* const& raw_ );
         void removeCrossSection( CrossSection* const& raw_ ){}
         void updateCrossSection();
 
@@ -67,6 +69,9 @@ class SketchScene: public QGraphicsScene, public Scene
         void commit();
         void create();
 
+        void setAsCurrent( double depth_, QGraphicsView* gview_ );
+        void objectSelected( std::size_t index_ );
+
 
 
     public slots:
@@ -76,6 +81,8 @@ class SketchScene: public QGraphicsScene, public Scene
         void setModeSketching();
         void setModeEditingBoundary();
         void setModeEditingScene();
+        void setModeSelecting();
+        void selectObjectAsBounderingRegion();
 
 
 
@@ -84,6 +91,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
+        virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
         virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event );
@@ -106,6 +114,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
         VolumeItemWrapper* volume;
         ObjectsContainer objects;
+        CrossSectionsContainer cross_sections;
 
         const double ZOOM_SCALE = 1.1;
         bool is_current = false;

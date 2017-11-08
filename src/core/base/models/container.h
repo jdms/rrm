@@ -22,7 +22,7 @@ class Container
 
 
         void setElement( const Index& id, const Item& d );
-        Item  getElement( const Index& id );
+        Item  getElement( const Index& id ) const;
 
 
         bool findElement( const Index& id ) const;
@@ -77,9 +77,9 @@ void  Container< Index, Item >::setElement( const Index& id_, const Item& d )
 
 
 template < class Index, class Item >
-Item Container< Index, Item >::getElement( const Index& id_ )
+Item Container< Index, Item >::getElement( const Index& id_ ) const
 {
-    return data[ id_ ];
+    return data.at( id_ );
 }
 
 

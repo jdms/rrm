@@ -25,6 +25,15 @@ void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 }
 
 
+QGraphicsView* CanvasStack::getElement( double id_ )
+{
+    bool status = Container::findElement( id_ );
+    if( status == false ) return nullptr;
+
+    return Container::getElement( id_ );
+}
+
+
 void CanvasStack::removeElement( double id_ )
 {
     QGraphicsView* canvas_ = Container::data[ id_ ];

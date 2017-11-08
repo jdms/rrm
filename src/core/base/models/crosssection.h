@@ -26,6 +26,7 @@ class CrossSection
         CrossSection();
         CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, const double depth_ );
 
+        CrossSection& operator=( const CrossSection& other_ );
 
         void defineIndex();
 

@@ -23,22 +23,12 @@ class ObjectTreeItem: public QTreeWidgetItem
 
 
 
-//    protected:
-
-//        struct Color
-//        {
-//          int r = 255;
-//          int g = 0;
-//          int b = 0;
-//        };
+    protected:
 
 
-//        QString name;
         std::size_t index;
         Type type;
-//        bool is_visible;
-//        bool is_active;
-//        Color color;
+
 
 };
 

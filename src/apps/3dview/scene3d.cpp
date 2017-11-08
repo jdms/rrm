@@ -64,6 +64,17 @@ void Scene3d::addCrossSection( CrossSection* const& raw_ )
 }
 
 
+void Scene3d::updateCrossSection( CrossSection* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    PlaneShader* csection_ = csections.getElement( raw_->getIndex() );
+    csection_->update();
+
+    emit updateCanvas();
+}
+
+
 void Scene3d::removeCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );

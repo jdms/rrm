@@ -211,24 +211,24 @@ Volume::ObjectsContainer Volume::getObjects() const
 }
 
 
-bool Volume::addCrossSection( std::size_t id_ )
+bool Volume::addCrossSection( std::size_t id_, CrossSection* const& csection_ )
 {
-    csections.insert( id_ );
+    csections.addElement( id_, csection_ );
     return true;
 }
 
 
 bool Volume::removeCrossSection( std::size_t id_ )
 {
-    if( csections.find( id_ ) == csections.end() )
+    if( csections.findElement( id_ ) == false )
         return false;
 
-    csections.erase( id_ );
+    csections.removeElement( id_ );
     return true;
 }
 
 
-std::set< std::size_t > Volume::getCrossSections() const
+Volume::CrossSectionsContainer Volume::getCrossSections() const
 {
     return csections;
 }
