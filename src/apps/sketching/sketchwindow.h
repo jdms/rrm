@@ -55,6 +55,8 @@ class SketchWindow: public QMainWindow
         void setModeSelecting();
         void setModeSketching();
 
+        void clear();
+
 
     protected slots:
 

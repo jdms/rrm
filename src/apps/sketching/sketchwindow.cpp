@@ -301,3 +301,13 @@ void SketchWindow::setUpColor()
         return;
     cp_color->defineRandomColor();
 }
+
+
+void SketchWindow::clear()
+{
+    delete main;
+    main = nullptr;
+
+    cs->clear();
+
+}

@@ -84,11 +84,14 @@ class SketchScene: public QGraphicsScene, public Scene
         void setModeSelecting();
         void selectObjectAsBounderingRegion();
 
+        void clear();
 
 
 
     protected:
 
+
+        void initialize();
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );

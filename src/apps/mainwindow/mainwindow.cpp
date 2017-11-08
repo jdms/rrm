@@ -24,9 +24,9 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 
     show();
 
-//    createController();
-//    setupController();
-//    run_app();
+    createController();
+    setupController();
+    run_app();
 }
 
 
@@ -57,10 +57,10 @@ void MainWindow::setupWindowProperties()
 void MainWindow::createWindow()
 {
     createMainInterface();
-//    createSidebar();
-//    createBottombar();
-////    createToolbar();
-//    createSketchingWindow();
+    createSidebar();
+    createBottombar();
+    createToolbar();
+    createSketchingWindow();
 }
 
 
@@ -105,17 +105,19 @@ void MainWindow::createToolbar()
     QAction* ac_save = new QAction( "Save", this );
     QAction* ac_load = new QAction( "Load", this );
 
-    QAction* ac_undo = new QAction( "Undo", this );
-    QAction* ac_redo = new QAction( "Redo", this );
+    ac_undo = new QAction( "Undo", this );
+    connect( ac_undo, &QAction::triggered, [=](){ controller->undo(); checkUndoRedo(); } );
+
+    ac_redo = new QAction( "Redo", this );
+    connect( ac_redo, &QAction::triggered, [=](){ controller->redo(); checkUndoRedo(); } );
 
 
     ac_sketch_above = new QAction( "SA", this );
     ac_sketch_above->setCheckable( true );
 
 
-
-    QAction* ac_sketch_below = new QAction( "SB", this );
-
+    ac_sketch_below = new QAction( "SB", this );
+    ac_sketch_below->setCheckable( true );
 
 
 
@@ -279,7 +281,9 @@ void MainWindow::createSketchingWindow()
                                                                                         object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
 
                                                                                         emit addObject( controller->getCurrentObject() );
-                                                                                        emit setUpColor(); } );
+                                                                                        emit setUpColor();
+
+                                                                                        checkUndoRedo(); } );
 
     connect( sketch_window, &SketchWindow::setAsCurrent, [=]( double depth_ ){  controller->setCurrentCrossSection( depth_ ); } );
 
@@ -288,8 +292,9 @@ void MainWindow::createSketchingWindow()
 
 
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ controller->setObjectAsBoundering( index_ );
-                                                                                      sketch_window->setModeSketching(); } );
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ controller->setObjectAsBoundering( index_ );                                                                                      
+                                                                                      sketch_window->setModeSketching();
+                                                                                      emit updateObjects(); } );
 
 
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
@@ -317,35 +322,68 @@ void MainWindow::createSketchingWindow()
 
 
 
-//    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ) {
-//                                                 bool enabled_ = controller->enableCreateAbove( status_ );
-//                                                 if( ( status_ == false ) && ( enabled_ == true ) )
-//                                                 {
-//                                                     std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
-//                                                     ac_sketch_above->setChecked( true );
-//                                                 }
-//                                                 if( ( status_ == true ) && ( enabled_ == false ) )
-//                                                 {
-//                                                     std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
-//                                                     ac_sketch_above->setChecked( false );
-//                                                 }
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ) {
+                                                 bool enabled_ = controller->enableCreateAbove( status_ );
 
-//                                                 if( ( status_ == true ) && ( enabled_ == true ) )
-//                                                 {
-//                                                     std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
-//                                                     std::cout << "and mark them as selectable" << std::endl << std::flush;
-//                                                     sketch_window->setModeSelecting();
-//                                                     sketch_window->updateCanvas();
+                                                 if( ( status_ == false ) && ( enabled_ == true ) )
+                                                 {
+                                                     std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
+                                                     ac_sketch_above->setChecked( true );
+                                                 }
+                                                 if( ( status_ == true ) && ( enabled_ == false ) )
+                                                 {
+                                                     std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
+                                                     ac_sketch_above->setChecked( false );
+                                                 }
 
-//                                                 }
-//                                                 if( ( status_ == false ) && ( enabled_ == false ) )
-//                                                 {
-//                                                     std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
-//                                                     std::cout << "and mark them as non-selectable" << std::endl << std::flush;
-//                                                     sketch_window->setModeSketching();
-//                                                     sketch_window->updateCanvas();
-//                                                 }
-//    } );
+                                                 if( ( status_ == true ) && ( enabled_ == true ) )
+                                                 {
+                                                     std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
+                                                     std::cout << "and mark them as selectable" << std::endl << std::flush;
+                                                     sketch_window->setModeSelecting();
+                                                     emit updateObjects();
+
+                                                 }
+                                                 if( ( status_ == false ) && ( enabled_ == false ) )
+                                                 {
+                                                     std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
+                                                     std::cout << "and mark them as non-selectable" << std::endl << std::flush;
+                                                     sketch_window->setModeSketching();
+                                                     emit updateObjects();
+                                                 }
+    } );
+
+
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ) {
+                                                 bool enabled_ = controller->enableCreateBelow( status_ );
+                                                 if( ( status_ == false ) && ( enabled_ == true ) )
+                                                 {
+                                                     std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
+                                                     ac_sketch_below->setChecked( true );
+                                                 }
+                                                 if( ( status_ == true ) && ( enabled_ == false ) )
+                                                 {
+                                                     std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
+                                                     ac_sketch_below->setChecked( false );
+                                                 }
+
+                                                 if( ( status_ == true ) && ( enabled_ == true ) )
+                                                 {
+                                                     std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
+                                                     std::cout << "and mark them as selectable" << std::endl << std::flush;
+                                                     sketch_window->setModeSelecting();
+                                                     sketch_window->updateCanvas();
+
+                                                 }
+                                                 if( ( status_ == false ) && ( enabled_ == false ) )
+                                                 {
+                                                     std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
+                                                     std::cout << "and mark them as non-selectable" << std::endl << std::flush;
+                                                     sketch_window->setModeSketching();
+                                                     sketch_window->updateCanvas();
+                                                 }
+    } );
+
 
 
     sketch_topview_window = new SketchWindow();
@@ -404,4 +442,26 @@ void MainWindow::run_app()
 
 
 }
+
+
+void MainWindow::checkUndoRedo()
+{
+    if( controller == nullptr ) return;
+
+    ac_undo->setEnabled( controller->canUndo() );
+    ac_redo->setEnabled( controller->canRedo() );
+
+    checkSketchStatus();
+}
+
+
+void MainWindow::checkSketchStatus()
+{
+    if( controller == nullptr ) return;
+
+    ac_sketch_above->setChecked( controller->isDefineAboveActive() );
+    ac_sketch_below->setChecked( controller->isDefineBelowActive() );
+    emit updateObjects();
+}
+
 

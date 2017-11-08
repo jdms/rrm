@@ -70,6 +70,8 @@ class MainWindow: public QMainWindow
         void setupController();
         void run_app();
 
+        void checkUndoRedo();
+        void checkSketchStatus();
 
 
     private:
@@ -102,6 +104,10 @@ class MainWindow: public QMainWindow
 
 
         QAction* ac_sketch_above;
+        QAction* ac_sketch_below;
+
+        QAction* ac_undo;
+        QAction* ac_redo;
 };
 
 #endif // MAINWINDOW_H

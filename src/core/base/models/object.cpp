@@ -94,7 +94,7 @@ bool Object::isSelectable() const
 
 void Object::setSelected( const bool status_ )
 {
-    if( isSelectable() == false ) return;
+//    if( isSelectable() == false ) return;
     is_selected = status_;
 }
 
@@ -286,6 +286,9 @@ void Object::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 
 void Object::clear()
 {
+
+    name.clear();
+
     removeCrossSectionCurves();
     removeTrajectory();
     removeSurface();
@@ -304,5 +307,16 @@ void Object::initialize()
     is_visible = false;
     is_active = true;
 
+    color.r = 255;
+    color.g = 0;
+    color.b = 0;
+
+    max.x = 0;
+    max.y = 0;
+    max.z = 0;
+
+    min.x = 0;
+    min.y = 0;
+    min.z = 0;
 }
 

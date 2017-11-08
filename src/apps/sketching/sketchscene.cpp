@@ -362,3 +362,40 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
     QGraphicsScene::wheelEvent( event );
     update();
 }
+
+void SketchScene::clear()
+{
+
+    delete user_input;
+
+
+    delete volume;
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    objects.clear();
+
+
+    for ( CrossSectionsContainer::Iterator it =  cross_sections.begin(); it != cross_sections.end(); ++it )
+    {
+        (it->second) = nullptr;
+    }
+    cross_sections.clear();
+
+    initialize();
+}
+
+
+void SketchScene::initialize()
+{
+    current_color.red = 255;
+    current_color.green = 0;
+    current_color.blue = 0;
+    current_interaction = UserInteraction::SKETCHING;
+    user_input = nullptr;
+    csection = nullptr;
+    volume = nullptr;
+    is_current = false;
+}
