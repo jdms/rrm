@@ -416,6 +416,8 @@ void MainWindow::createFlowDiagnosticsInterface()
              std::vector< FlowWindow::CurveMesh > & front_curves, std::vector< FlowWindow::CurveMesh >& back_curves )
     {
 
+
+
         std::vector< Controller::TriangleMesh > meshes;
         std::vector< Controller::CurveMesh > lcurves;
         std::vector< Controller::CurveMesh > rcurves;
@@ -429,29 +431,32 @@ void MainWindow::createFlowDiagnosticsInterface()
             FlowWindow::TriangleMesh t;
             t.vertex_list = meshes[i].vertex_list;
             t.face_list = meshes[i].face_list;
-
-            FlowWindow::CurveMesh lc;
-            lc.edge_list = lcurves[i].edge_list;
-            lc.vertex_list = lcurves[i].vertex_list;
-
-            FlowWindow::CurveMesh rc;
-            rc.edge_list = rcurves[i].edge_list;
-            rc.vertex_list = rcurves[i].vertex_list;
-
-            FlowWindow::CurveMesh fc;
-            fc.edge_list = fcurves[i].edge_list;
-            fc.vertex_list = fcurves[i].vertex_list;
-
-            FlowWindow::CurveMesh bc;
-            bc.edge_list = bcurves[i].edge_list;
-            bc.vertex_list = bcurves[i].vertex_list;
-
             triangles_meshes.push_back( t );
-            left_curves.push_back( lc );
-            right_curves.push_back( rc );
-            front_curves.push_back( fc );
-            back_curves.push_back( bc );
+        }
 
+        for ( int i = 0; i < lcurves.size(); ++i )
+        {
+            FlowWindow::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+            std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) );
+            std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) );
+
+            std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) );
+            std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) );
+
+
+            std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) );
+            std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) );
+
+
+            std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) );
+            std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) );
+
+
+            left_curves.push_back( cm_lb );
+            right_curves.push_back( cm_rb );
+            front_curves.push_back( cm_fb );
+            back_curves.push_back( cm_bb );
         }
 
     } );

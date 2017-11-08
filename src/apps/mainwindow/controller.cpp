@@ -808,21 +808,7 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
         front_curves.push_back( cm_fb );
         back_curves.push_back( cm_bb );
     }
-//    {
-//        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
-//        rules_processor.getLeftBoundaryCrossSectionCurve( it,  cm_lb.vertex_list, cm_lb.edge_list );
-//        rules_processor.getRightBoundaryCrossSectionCurve( it, cm_rb.vertex_list, cm_rb.edge_list  );
-//        rules_processor.getFrontBoundaryCrossSectionCurve( it, cm_fb.vertex_list, cm_fb.edge_list  );
-//        rules_processor.getBackBoundaryCrossSectionCurve( it,  cm_bb.vertex_list, cm_bb.edge_list  );
-
-//        left_curves.push_back( cm_lb );
-//        right_curves.push_back( cm_rb );
-//        front_curves.push_back( cm_fb );
-//        back_curves.push_back( cm_bb );
-
-
-//    }
 
 }
 
