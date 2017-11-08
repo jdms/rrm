@@ -27,6 +27,11 @@ Object* ObjectItemWrapper::getRawObject() const
 
 
 
+std::size_t ObjectItemWrapper::getIndex() const
+{
+    return raw->getIndex();
+}
+
 
 void ObjectItemWrapper::updateObject()
 {

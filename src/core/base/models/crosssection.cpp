@@ -22,6 +22,19 @@ CrossSection::CrossSection( Volume* const& raw_, const CrossSection::Direction& 
 }
 
 
+CrossSection& CrossSection::operator=( const CrossSection& other_ )
+{
+    volume = other_.volume;
+    objects = other_.objects;
+    direction = other_.direction;
+    depth = other_.depth;
+    image_path = other_.image_path;
+    is_visible = other_.is_visible;
+    index = other_.index;
+
+    return *this;
+}
+
 
 void CrossSection::defineIndex()
 {

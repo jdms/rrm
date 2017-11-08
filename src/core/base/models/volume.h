@@ -9,6 +9,7 @@
 
 #include "./core/base/models/container.h"
 #include "object.h"
+#include "crosssection.h"
 
 
 class Volume
@@ -19,6 +20,7 @@ class Volume
 
 
         using ObjectsContainer = Container< std::size_t, Object* >;
+        using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
 
 
 
@@ -60,9 +62,9 @@ class Volume
         void removeAllObjects();
 
 
-        bool addCrossSection( std::size_t id_ );
+        bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
         bool removeCrossSection( std::size_t id_ );
-        std::set<size_t> getCrossSections() const;
+        Volume::CrossSectionsContainer getCrossSections() const;
 
 
         void setVisible( bool status_ );
@@ -92,7 +94,7 @@ class Volume
 
 
         ObjectsContainer objects;
-        std::set< std::size_t > csections;
+        CrossSectionsContainer csections;
 
 };
 

@@ -1,6 +1,7 @@
 #ifndef CANVASSTACK_H
 #define CANVASSTACK_H
 
+#include <QWidget>
 #include <QGraphicsView>
 #include <QHBoxLayout>
 
@@ -10,7 +11,7 @@
 using CanvasContainer = Container< double, QGraphicsView* >;
 
 
-class CanvasStack: public QGraphicsView, public CanvasContainer
+class CanvasStack: public QWidget, public CanvasContainer
 {
     Q_OBJECT
 
@@ -21,6 +22,8 @@ class CanvasStack: public QGraphicsView, public CanvasContainer
         void initialize();
 
         void addElement( double, QGraphicsView* canvas_ );
+        QGraphicsView* getElement( double id_ );
+
         void removeElement( double id_ );
 
         void setCurrent( double id_ );

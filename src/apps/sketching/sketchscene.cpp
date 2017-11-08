@@ -14,9 +14,8 @@ SketchScene::SketchScene()
 }
 
 
-SketchScene::SketchScene( CrossSection* const& raw_ )
+SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( nullptr )
 {
-    volume = nullptr;
     readCrossSection( raw_ );
 
     user_input = new InputSketch();
@@ -61,6 +60,7 @@ void SketchScene::edit( bool status_ )
 
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
+    if( raw_ == nullptr ) return;
 
     csection = raw_;
 
@@ -70,6 +70,15 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addObject( o.second );
+
+    if( raw_->getDirection() != CrossSection::Direction::Y ) return;
+
+    Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
+    for( auto c: csections_ )
+    {
+        addCrossSection( c.second );
+    }
+
 
 }
 
@@ -82,18 +91,21 @@ void SketchScene::updateCrossSection()
 
 
 ////TODO: Uncomentting
-//    Volume::ObjectsContainer objs_ = vol_->getObjects();
-//    for( auto o: objs_ )
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
+    for( auto o: objs_ )
+    {
+        updateObject( o.first );
+    }
 //        (o.second)->setVisible( false );
 
 
-    CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
-    for( auto o: objs_cs_ )
-    {
-//        objects.getElement( o.first )->setVisible( true );
-        updateObject( o.first );
+//    CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
+//    for( auto o: objs_cs_ )
+//    {
+////        objects.getElement( o.first )->setVisible( true );
+//        updateObject( o.first );
+//    }
 
-    }
 
 }
 
@@ -152,12 +164,40 @@ void SketchScene::addObject( Object* const& raw_, double depth_ )
 void SketchScene::updateObject(  const std::size_t& index_ )
 {
     ObjectItemWrapper* obj_ = objects.getElement( index_ );
+    obj_->updateDepth( csection->getDepth() );
     obj_->updateObject();
 
     update();
 }
 
 
+void SketchScene::selectObjectAsBounderingRegion()
+{
+    QList< QGraphicsItem* > items = selectedItems();
+    if( items.empty() == true ) return;
+
+
+    ObjectItemWrapper* const& obj = ( ObjectItemWrapper* )items[ 0 ];
+    std::size_t id = obj->getIndex();
+
+    std::cout << "Object selected: " << id << std::endl << std::flush;
+    emit objectSelected( id );
+
+}
+
+
+
+
+void SketchScene::addCrossSection( CrossSection * const &raw_ )
+{
+
+    Volume* const& vol_ = raw_->getVolume();
+
+    CrossSectionItemWrapper* csection_ = new CrossSectionItemWrapper( vol_->getWidth(), raw_->getDepth() );
+    cross_sections.addElement( raw_->getIndex(), csection_ );
+
+    addItem( csection_ );
+}
 
 
 void SketchScene::setCurrent( bool status_ )
@@ -212,6 +252,12 @@ void SketchScene::setModeEditingScene()
 }
 
 
+void SketchScene::setModeSelecting()
+{
+    current_interaction = UserInteraction::SELECTING;
+}
+
+
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 {
@@ -222,7 +268,6 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-
         user_input->create(  event->scenePos() );
     }
 
@@ -242,6 +287,16 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     update();
 }
 
+
+void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+{
+    if( ( event->buttons() & Qt::LeftButton ) )
+    {
+        if( csection == nullptr ) return;
+        if( views().empty() == true ) return;
+        emit setAsCurrent( csection->getDepth(), views()[ 0 ] );
+    }
+}
 
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
@@ -279,6 +334,12 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         emit acceptVolumeDimensions( static_cast< double >( volume->boundingRect().width() ),
                                      static_cast< double >( volume->boundingRect().height() ) );
     }
+
+    else if( current_interaction == UserInteraction::SELECTING )
+    {
+        selectObjectAsBounderingRegion();
+    }
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();

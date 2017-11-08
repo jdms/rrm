@@ -27,6 +27,7 @@ class Scene
 
         virtual void addCrossSection( CrossSection* const& raw_ ) = 0;
         virtual void removeCrossSection( CrossSection* const& raw_ ) = 0 ;
+//        virtual void updateCrossSection( CrossSection* const& raw_ ) = 0;
 //        virtual void updateCrossSection();
 
 

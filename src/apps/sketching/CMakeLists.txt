@@ -14,7 +14,8 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
                             inputsketch.h
                             item_wrappers/volume_item_wrapper.h
-                            item_wrappers/object_item_wrapper.h )
+                            item_wrappers/object_item_wrapper.h
+                            item_wrappers/crosssection_item_wrapper.h )
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
                             canvasstack.h
@@ -26,7 +27,8 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             sketchscene.cpp
                             inputsketch.cpp
                             item_wrappers/volume_item_wrapper.cpp
-                            item_wrappers/object_item_wrapper.cpp )
+                            item_wrappers/object_item_wrapper.cpp
+                            item_wrappers/crosssection_item_wrapper.cpp )
 
 
 ## Q_OBJECT files

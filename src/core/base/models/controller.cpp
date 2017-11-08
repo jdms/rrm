@@ -55,6 +55,13 @@ void Controller::addVolume()
 }
 
 
+bool Controller::isVolumeResizable() const
+{
+    if( volume != nullptr ) return false;
+    return volume->isResizable();
+
+}
+
 void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
 {
     volume->setGeometry( width_, height_, length_ );
@@ -103,16 +110,18 @@ bool Controller::setMainCrossSection( const CrossSection::Direction& dir_, doubl
     if( status_ == false )
          return false;
 
-    main_csection = getActiveCrossSection( depth_ );
+    main_csection = getCrossSection( depth_ );
     return true;
 
 }
 
 bool Controller::addCrossSection( const CrossSection::Direction& dir_, double depth_ )
 {
+
     CrossSection* cs_ = new CrossSection( volume, dir_, depth_ ) ;
     bool status_ = actives_csections.addElement( depth_, cs_ );
     if( status_ == false ) return false;
+
 
     setCurrentCrossSection( depth_ );
     scene3d->addCrossSection( cs_ );
@@ -123,44 +132,42 @@ bool Controller::addCrossSection( const CrossSection::Direction& dir_, double de
 bool Controller::removeCrossSection( const CrossSection::Direction& dir_, double depth_ )
 {
 
-    bool status_ = actives_csections.findElement( depth_ );
-    if( status_ == false ) return false;
+//    bool status_ = actives_csections.findElement( depth_ );
+//    if( status_ == false ) return false;
 
-    actives_csections.removeElement( depth_ );
+//    actives_csections.removeElement( depth_ );
 
-    CrossSection* const& cs_ = actives_csections.getElement( depth_ );
-    scene3d->removeCrossSection( cs_ );
+//    CrossSection* const& cs_ = actives_csections.getElement( depth_ );
+//    scene3d->removeCrossSection( cs_ );
 
     return true;
 
 }
 
 
-CrossSection* Controller::getActiveCrossSection( const double& depth_ )
-{
-    return actives_csections.getElement( depth_ );
-}
-
 CrossSection* Controller::getCrossSection( const double& depth_ )
 {
-    return all_csections.getElement( depth_ );
+    if( actives_csections.findElement( depth_ ) == true )
+        return  actives_csections.getElement( depth_ );
+    else if( all_csections.findElement( depth_ ) == true )
+        return  all_csections.getElement( depth_ );
+    else
+        return nullptr;
 }
 
 
 void Controller::setCurrentCrossSection( const double& depth_ )
 {
 
-//    std::cout << "CrossSection depth: " << depth_ << ", id: " << indexCrossSection( depth_ )
-//              << std::endl << std::flush;
-
-
-    // its not needeed. One cross-section can be current and doesnt exist into vectors of cross-sections;
-//    bool status_ = actives_csections.findElement( depth_ );
-//    if( status_ == false ) return;
+    std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
 
     current_csection = depth_;
-    if( main_csection != nullptr )
-        main_csection->setDepth( depth_ );
+    if( main_csection == nullptr ) return;
+    main_csection->setDepth( depth_ );
+
+    updateCurrentCrossSection();
+    scene3d->updateCrossSection( main_csection );
+
 }
 
 
@@ -171,22 +178,46 @@ double Controller::getCurrentCrossSection()
 
 
 
+void Controller::updateCurrentCrossSection()
+{
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
 
+    for ( std::size_t id_: actives_ )
+    {
+        updateObjectCurveFromCrossSection( id_, current_csection );
+    }
+}
+
+
+void Controller::addTopViewCrossSection()
+{
+    topview_csection = new CrossSection( volume, CrossSection::Direction::Y,  volume->getHeight() );
+
+}
+
+
+CrossSection* Controller::getTopViewCrossSection()
+{
+    return topview_csection;
+
+}
 
 
 
 bool Controller::addObject()
 {
 
+    Object* obj_ = new Object();
+    current_object = obj_->getIndex();
+
+
     double w = 0, h = 0,  l = 0;
     double minx_ = 0, miny_ = 0, minz_ = 0;
-
 
     volume->getOrigin( minx_, miny_, minz_ );
     volume->getGeometry( w, h, l );
 
-    Object* obj_ = new Object();
-    current_object = obj_->getIndex();
+
     obj_->setMaxMin( minx_ + w, miny_ + h, minz_ + l, minx_, miny_, minz_ );
     obj_->setColor( current_color.r, current_color.g, current_color.b );
 
@@ -216,23 +247,22 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
 
     obj_->setEditable( true );
 
-    CrossSection* cs_;
 
-    if( actives_csections.findElement( current_csection ) == true )
-        cs_ = actives_csections.getElement( current_csection );
-    else if( all_csections.findElement( current_csection ) == true )
-        cs_ = all_csections.getElement( current_csection );
-    else
+    CrossSection* cs_ = getCrossSection( current_csection );
+    if( cs_ == nullptr )
         cs_ = new CrossSection( volume, CrossSection::Direction::Z, current_csection );
 
-
     cs_->addObject( obj_->getIndex(),  &curve_ );
+    volume->addCrossSection( cs_->getIndex(), cs_ );
 
 
     if( all_csections.findElement( current_csection ) == false )
         all_csections.addElement( current_csection, cs_ );
 
     createObjectSurface();
+
+
+    std::cout << "Adding curve in cross-section: " << current_csection << std::endl << std::flush;
 
 
     return true;
@@ -251,15 +281,15 @@ bool Controller::removeObjectCurve( double csection_ )
         return false ;
 
 
-    if( all_csections.findElement( current_csection ) == false )
-        return true;
+//    if( all_csections.findElement( current_csection ) == false )
+//        return true;
 
 
-    CrossSection* cs_ = getCrossSection( csection_ );
-    cs_->removeObjectCurve( obj_->getIndex() );
+//    CrossSection* cs_ = getCrossSection( csection_ );
+//    cs_->removeObjectCurve( obj_->getIndex() );
 
-    if( cs_->hasObjects() == false )
-        all_csections.removeElement( csection_ );
+//    if( cs_->hasObjects() == false )
+//        all_csections.removeElement( csection_ );
 
 
     return true;
@@ -289,6 +319,7 @@ void Controller::getObjectColor( std::size_t index_,int& r_, int& g_, int& b_)
 }
 
 
+
 void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 {
     if( objects.findElement( index_) == false )
@@ -297,6 +328,17 @@ void Controller::setObjectName( std::size_t index_, const std::string& name_ )
     Object* const& obj_ = objects.getElement( index_ );
     obj_->setName( name_ );
 }
+
+
+std::string Controller::getObjectName( std::size_t index_ )
+{
+    if( objects.findElement( index_) == false )
+        return std::string();
+
+    Object* const& obj_ = objects.getElement( index_ );
+    return obj_->getName();
+}
+
 
 
 void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
@@ -347,13 +389,13 @@ bool Controller::createObjectSurface()
         double csection_id_ = it->first;
         PolyCurve sketch_ = it->second;
 
-        CrossSection* csection_ = actives_csections.getElement( csection_id_ );
+        CrossSection* csection_ = all_csections.getElement( csection_id_ );
         Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
 
-        curves_.push_back( std::make_tuple( curve_, csection_->getDepth() ) );
+        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
     }
 
-    rules_processor.removeAbove();
+    applyStratigraphicRule();
 
     bool surface_created = false;
     if( obj_->hasTrajectory() == true )
@@ -403,13 +445,15 @@ void Controller::updateModel()
 
     for ( std::size_t id_: actives_ )
     {
-
         updateObjectSurfaces( id_ );
 
         for ( Container< double, CrossSection* >::Iterator cs_it =  actives_csections.begin(); cs_it != actives_csections.end(); ++cs_it )
         {
             updateObjectCurveFromCrossSection( id_, cs_it->first );
         }
+
+        updateObjectCurveFromCrossSection( id_, current_csection );
+
     }
 
 }
@@ -418,7 +462,6 @@ void Controller::updateModel()
 void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ )
 {
     Object* obj_ = objects.getElement( object_id_ );
-    CrossSection* csection_ = actives_csections.getElement( csection_id_ );
 
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
@@ -427,20 +470,26 @@ void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, doub
 
     if( has_curve == false )
     {
-//        std::cout << "Remove curve of object " << object_id_ << ", from csection " << csection_id_ <<
-//                     std::endl << std::flush;
-
         obj_->removeCurve( csection_id_ );
-        csection_->removeObjectCurve( object_id_ );
         return;
     }
 
 
+
     PolyCurve curve_ = PolyCurve( vertices_, edges_ );
-
-
     obj_->updateCurve( csection_id_, curve_ );
-    csection_->addObject( object_id_, &curve_ );
+
+
+    if( all_csections.findElement( csection_id_ ) == false )
+        return;
+
+    CrossSection* csection_ = all_csections.getElement( csection_id_ );
+    if( has_curve == true )
+        csection_->addObject( object_id_, &curve_ );
+    else
+        csection_->removeObjectCurve( object_id_ );
+
+
 
 }
 
@@ -530,3 +579,205 @@ double Controller::depthCrossSection( std::size_t index_ ) const
 
 
 
+void Controller::setRemoveAbove()
+{
+    current_rule = StratigraphicRules::REMOVE_ABOVE;
+}
+
+void Controller::setRemoveAboveIntersection()
+{
+    current_rule = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
+}
+
+void Controller::setRemoveBelow()
+{
+    current_rule = StratigraphicRules::REMOVE_BELOW;
+}
+
+void Controller::setRemoveBelowIntersection()
+{
+    current_rule = StratigraphicRules::REMOVE_BELOW_INTERSECTION;
+}
+
+
+void Controller::applyStratigraphicRule()
+{
+    if( current_rule == StratigraphicRules::REMOVE_ABOVE )
+        rules_processor.removeAbove();
+    else if( current_rule == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        rules_processor.removeAboveIntersection();
+    else if( current_rule == StratigraphicRules::REMOVE_BELOW )
+        rules_processor.removeBelow();
+    else if( current_rule == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        rules_processor.removeBelowIntersection();
+}
+
+
+bool Controller::enableCreateAbove( bool status_ )
+{
+    setObjectsAsSelectable( selectable_upper, false );
+
+    bool final_status_ = true;
+
+    if( status_ == false )
+        final_status_ = !stopCreateAbove();
+    else
+        final_status_ = requestCreateAbove();
+
+    return final_status_;
+
+}
+
+
+bool Controller::stopCreateAbove()
+{
+    bool stop_ = true;
+
+    if( stop_ == true )
+    {
+        std::cout << "Stop create above accepted" << std::endl << std::flush;
+        setObjectsAsSelectable( selectable_upper, false );
+
+//        rules_processor.stopDefineAbove();
+//        setObjectSelected( boundering_above, false );
+    }
+    else
+        std::cout << "Stop create above denied" << std::endl << std::flush;
+
+    return stop_ ;
+
+
+
+}
+
+
+bool Controller::requestCreateAbove()
+{
+
+    bool request_ = true;
+//    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+        selectable_upper.push_back( 0 );
+        setObjectsAsSelectable( selectable_upper, true );
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+
+
+
+//    bool request_accept = rules_processor.requestCreateAbove( selectable_upper );
+//    if( request_accept == false ) return;
+
+//    current_region = RequestRegion::ABOVE;
+
+//    setObjectsAsSelectable( selectable_below, false );
+//    setObjectsAsSelectable( selectable_upper, true );
+
+//    csection_scene->setModeSelecting();
+}
+
+
+
+//void Controller::enableCreateBelow( bool status )
+//{
+
+//    setObjectsAsSelectable( selectable_below, false );
+
+//    if( status == false )
+//        stopCreateBelow();
+//    else
+//        requestCreateBelow();
+
+//}
+
+
+//void Controller::stopCreateBelow()
+//{
+//    rules_processor.stopDefineBelow();
+//    setObjectSelected( boundering_below, false );
+
+//}
+
+
+//void Controller::requestCreateBelow()
+//{
+
+//    bool request_accept = rules_processor.requestCreateBelow( selectable_below );
+//    if( request_accept == false ) return;
+
+//    current_region = RequestRegion::BELOW;
+
+//    setObjectsAsSelectable( selectable_upper, false );
+//    setObjectsAsSelectable( selectable_below, true );
+
+//    csection_scene->setModeSelecting();
+//}
+
+
+
+void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes_,
+                                                    bool status_ )
+{
+
+    for( std::size_t id_: indexes_ )
+    {
+        if( objects.findElement( id_ ) == false ) continue;
+
+        Object* obj_ = objects.getElement( id_ );
+        obj_->setSelectable( status_ );
+    }
+
+    if( status_ == false )
+        indexes_.clear();
+}
+
+
+void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
+{
+
+    if( objects.findElement( index_ ) == false ) return;
+
+    Object* obj_ = objects.getElement( index_ );
+    obj_->setSelected( status_ );
+//    updateObject( id );
+
+//    csection_scene->setModeSketching();
+}
+
+
+void Controller::getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_)
+{
+    indexes_ = selectable_upper;
+}
+
+
+void Controller::setObjectAsBoundering( std::size_t index_ )
+{
+
+    if( objects.findElement( index_ ) == false ) return;
+
+
+    if( boundering_region == BounderingRegion::ABOVE )
+    {
+        index_upper_boundary = index_;
+        rules_processor.defineAbove( index_ );
+        setObjectsAsSelectable( selectable_upper, false );
+    }
+
+    else if( boundering_region == BounderingRegion::BELOW )
+    {
+        index_bottom_boundary = index_;
+        rules_processor.defineBelow( index_ );
+//        setObjectsAsSelectable( selectable_below, false );
+    }
+
+//    setObjectAsSelected( id, true);
+
+
+}

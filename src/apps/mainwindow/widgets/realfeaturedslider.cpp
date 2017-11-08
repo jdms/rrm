@@ -7,6 +7,7 @@ RealFeaturedSlider::RealFeaturedSlider( Qt::Orientation o_ )
     RealFeaturedSlider::setDiscretization( 10 );
     RealFeaturedSlider::setRange( 0, 1 );
     RealFeaturedSlider::setInvertedAppearance( true );
+    RealFeaturedSlider::setInvertedControls( true );
 
     setTickPosition( QSlider::TicksLeft );
 
@@ -22,6 +23,8 @@ RealFeaturedSlider::RealFeaturedSlider( Qt::Orientation o_, int disc_ )
 
     RealFeaturedSlider::setDiscretization( disc_ );
     RealFeaturedSlider::setRange( 0, 1 );
+    RealFeaturedSlider::setInvertedAppearance( true );
+    RealFeaturedSlider::setInvertedControls( true );
 
     setTickPosition( QSlider::TicksLeft );
 

@@ -18,6 +18,7 @@ class Canvas3d;
 class RealFeaturedSlider;
 class ObjectTree;
 class SketchWindow;
+class PagesStack;
 
 
 #include "./core/base/models/controller.h"
@@ -38,12 +39,13 @@ class MainWindow: public QMainWindow
         void setUpColor();
 
         void updateVolume();
+        void defineVolumeDimensions(  double width, double height, double depth );
         void addObject( Object* const& obj_ );
         void updateObject( const std::size_t );
         void updateObjects();
 
-        void defineMainCrossSection( const double& depth_ );
-
+        void defineMainCrossSection( double depth_ );
+        void addCrossSection( CrossSection* const& cs_ );
 
 
     public slots:
@@ -60,6 +62,8 @@ class MainWindow: public QMainWindow
         void createSketchingWindow();
         void createMainInterface();
         void createSidebar();
+        void createBottombar();
+        void createToolbar();
 
 
         void createController();
@@ -87,10 +91,17 @@ class MainWindow: public QMainWindow
 
         QDockWidget* dw_object_tree;
         ObjectTree* object_tree;
+        QDockWidget* dw_object_properties;
+        PagesStack* object_properties;
 
         QDockWidget* dw_sketchwindow;
         SketchWindow* sketch_window;
 
+        QDockWidget* dw_topview_window;
+        SketchWindow* sketch_topview_window;
+
+
+        QAction* ac_sketch_above;
 };
 
 #endif // MAINWINDOW_H
