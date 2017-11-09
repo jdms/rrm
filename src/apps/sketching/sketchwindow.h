@@ -34,6 +34,7 @@ class SketchWindow: public QMainWindow
 
         void addCanvas( CrossSection* const& cs_, bool main_ = false );
         void removeCanvas( CrossSection* const& cs_ );
+        void removeCanvas( double depth_ );
         void highlightCanvas( CrossSection* const& cs_ );
         void highlightCanvas( double depth_ );
         void setMainCanvas( CrossSection* const& cs_ );

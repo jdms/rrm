@@ -54,7 +54,7 @@ class Controller
         bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
         bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        CrossSection* getCrossSection( const double& depth_ );
+        CrossSection* &getCrossSection( const double& depth_ );
 
         void setCurrentCrossSection( const double& depth_ );
         void updateCurrentCrossSection();

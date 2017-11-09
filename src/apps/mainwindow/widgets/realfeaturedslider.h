@@ -48,6 +48,8 @@ class RealFeaturedSlider: public Slider
         void increaseValue();
         void decreaseValue();
 
+        void clear();
+
 
     protected slots:
 
@@ -58,14 +60,12 @@ class RealFeaturedSlider: public Slider
     protected:
 
         void updateStep();
-
-
         void hightlightMarker( int pos_ );
         bool isValidMarker( int value );
         void updateMarkerPositions();
         void saveMarkerPosition( int value, int slider_length, int slider_min, int slider_max );
         void getSubControlDimensions( int& slider_length, int& slider_min, int& slider_max ) const ;
-
+        void setDefaultValues();
 
 
 

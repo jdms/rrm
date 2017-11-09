@@ -23,10 +23,12 @@ class Container
 
         void setElement( const Index& id, const Item& d );
         Item  getElement( const Index& id ) const;
+        Item&  getElement( const Index& id );
 
 
         bool findElement( const Index& id ) const;
 
+        void deleteElement( const Index& id_ );
 
         Iterator begin()
         {
@@ -80,6 +82,23 @@ template < class Index, class Item >
 Item Container< Index, Item >::getElement( const Index& id_ ) const
 {
     return data.at( id_ );
+}
+
+
+template < class Index, class Item >
+Item& Container< Index, Item >::getElement( const Index& id_ )
+{
+    return data[ id_ ];
+}
+
+template < class Index, class Item >
+void Container< Index, Item >::deleteElement( const Index& id_ )
+{
+    if( findElement( id_ ) == false ) return;
+    if( data[ id_ ] == nullptr ) return;
+
+    delete data[ id_ ];
+    data[ id_ ] = nullptr;
 }
 
 

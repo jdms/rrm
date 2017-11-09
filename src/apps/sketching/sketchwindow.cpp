@@ -92,7 +92,35 @@ void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
 void SketchWindow::removeCanvas( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
+    if( cs->findElement( cs_->getDepth()  ) == false ) return;
+
+
+    QGraphicsView* gview_ = cs->getElement( cs_->getDepth()  );
+
+    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+    sc_->clear();
+    delete sc_;
+    sc_ = nullptr;
+
     cs->removeElement( cs_->getDepth() );
+}
+
+
+void SketchWindow::removeCanvas( double depth_ )
+{
+    if( cs->findElement( depth_  ) == false ) return;
+
+
+    QGraphicsView* gview_ = cs->getElement( depth_ );
+    cs->removeElement( depth_ );
+
+//    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+//    if( sc_ == nullptr ) return;
+//    sc_->clear();
+//    delete sc_;
+//    sc_ = nullptr;
+
+
 }
 
 
@@ -305,9 +333,26 @@ void SketchWindow::setUpColor()
 
 void SketchWindow::clear()
 {
-    delete main;
-    main = nullptr;
 
-    cs->clear();
+    if( main != nullptr )
+    {
+        SketchScene* sc_ = ( SketchScene* )( main->scene() );
+        sc_->clear();
+        delete sc_;
+        sc_ = nullptr;
+        main = nullptr;
+    }
+
+
+
+    while( cs->empty() == false )
+    {
+        CanvasContainer::Iterator it =  cs->begin();
+        removeCanvas( it->first );
+    }
+
+//    cs->clear();
+
+
 
 }

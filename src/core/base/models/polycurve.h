@@ -8,7 +8,7 @@ class PolyCurve
 
     public:
 
-        PolyCurve() = default;
+        PolyCurve(){}
 
         PolyCurve( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ =
                 std::vector< std::size_t >() )
@@ -50,10 +50,15 @@ class PolyCurve
 
         void clear()
         {
+            if( data.vertices.empty() == true ) return;
             data.vertices.clear();
             data.edges.clear();
         }
 
+        ~PolyCurve()
+        {
+
+        }
 
     private:
 

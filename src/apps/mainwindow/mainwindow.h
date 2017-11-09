@@ -47,12 +47,14 @@ class MainWindow: public QMainWindow
         void defineMainCrossSection( double depth_ );
         void addCrossSection( CrossSection* const& cs_ );
 
+        void resetMenus();
+        void resetWindows();
+
 
     public slots:
 
         void setupSlider();
-
-
+        void clear();
 
 
     private:
@@ -102,6 +104,8 @@ class MainWindow: public QMainWindow
         QDockWidget* dw_topview_window;
         SketchWindow* sketch_topview_window;
 
+
+        QAction* ac_clear;
 
         QAction* ac_sketch_above;
         QAction* ac_sketch_below;
