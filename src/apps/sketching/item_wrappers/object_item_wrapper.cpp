@@ -71,12 +71,6 @@ void ObjectItemWrapper::updateState()
     current_pen.setColor( color_ );
     current_pen.setStyle( style_ );
 
-    std::string selectable_s_ = ( selectable_ )? "true":" false";
-    std::string editable_s_ = ( editable_ )? "true":" false";
-
-//    std::cout << "Object " << raw->getIndex() << ", is selectable = " << selectable_s_
-//              << "\n and editable = " << editable_s_  << std::endl << std::flush;
-
     setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
 
     update();

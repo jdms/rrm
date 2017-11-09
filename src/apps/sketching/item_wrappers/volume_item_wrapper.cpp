@@ -26,6 +26,13 @@ void VolumeItemWrapper::clear()
     raw = nullptr;
     section = Section::XZ;
     section_boundary.clear();
+
+    start.setX( 0 );
+    start.setY( 0 );
+
+    end.setX( 0 );
+    end.setY( 0 );
+
     setupPen();
 }
 

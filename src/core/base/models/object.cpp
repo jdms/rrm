@@ -178,7 +178,8 @@ void Object::removeCrossSectionCurves()
 
     for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
     {
-        (it->second).clear();
+        if( ( it->second ).isEmpty() == true ) continue;
+        ( it->second ).clear();
     }
     csection_curves.clear();
 

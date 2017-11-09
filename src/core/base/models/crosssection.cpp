@@ -210,10 +210,12 @@ CrossSection::ObjectsContainer CrossSection::getObjects() const
 
 void CrossSection::removeObjects()
 {
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        (it->second) = nullptr;
-    }
+//    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+//    {
+//        PolyCurve* curve_ = objects.getElement( it->first );
+//        if( curve_ == nullptr ) continue;
+//        curve_ = nullptr;
+//    }
     objects.clear();
 }
 
@@ -227,7 +229,9 @@ bool CrossSection::hasObjects() const
 void CrossSection::clear()
 {
 
-    image_path.clear();
+    if( image_path.empty() == false )
+        image_path.clear();
+
     removeObjects();
     initialize();
 }
@@ -237,5 +241,14 @@ void CrossSection::initialize()
     depth = 0.0;
     direction = Direction::Z;
     is_visible = true;
+    volume = nullptr;
+}
+
+
+CrossSection::~CrossSection()
+{
+    if( objects.empty() == false )
+        clear();
+    if( volume != nullptr )
     volume = nullptr;
 }

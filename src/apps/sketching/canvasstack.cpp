@@ -10,6 +10,8 @@ void CanvasStack::initialize()
 {
     hb_mainlayout = new QHBoxLayout( this );
     setLayout( hb_mainlayout );
+
+    current = 0.0;
 }
 
 
@@ -36,14 +38,20 @@ QGraphicsView* CanvasStack::getElement( double id_ )
 
 void CanvasStack::removeElement( double id_ )
 {
-    QGraphicsView* canvas_ = Container::data[ id_ ];
-    hb_mainlayout->removeWidget( canvas_ );
 
+    if( findElement( id_ ) == false ) return;
+
+
+    QGraphicsView* canvas_ = Container::data[ id_ ];
+    if( canvas_ == nullptr ) return;
+
+    hb_mainlayout->removeWidget( canvas_ );
 
     bool status = Container::removeElement( id_ );
     if( status == false ) return;
 
-    delete[] canvas_;
+    delete canvas_;
+    canvas_ = nullptr;
     update();
 
 }
@@ -74,4 +82,15 @@ QGraphicsView* CanvasStack::getCurrent()
 {
     if( findElement( current ) == false ) return ( new QGraphicsView() );
     return Container::data[ current ];
+}
+
+void CanvasStack::clear()
+{
+
+    while ( Container::data.begin()  != Container::data.end() )
+    {
+        Container::Iterator it =  Container::data.begin();
+        removeElement( it->first );
+    }
+
 }

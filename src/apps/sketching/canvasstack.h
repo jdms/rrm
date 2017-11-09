@@ -29,6 +29,8 @@ class CanvasStack: public QWidget, public CanvasContainer
         void setCurrent( double id_ );
         QGraphicsView* getCurrent();
 
+        void clear();
+
 
 
     protected:

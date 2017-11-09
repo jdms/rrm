@@ -145,14 +145,14 @@ bool Controller::removeCrossSection( const CrossSection::Direction& dir_, double
 }
 
 
-CrossSection* Controller::getCrossSection( const double& depth_ )
+CrossSection* &Controller::getCrossSection( const double& depth_ )
 {
     if( actives_csections.findElement( depth_ ) == true )
         return  actives_csections.getElement( depth_ );
     else if( all_csections.findElement( depth_ ) == true )
         return  all_csections.getElement( depth_ );
-    else
-        return nullptr;
+//    else
+//        return nullptr;
 }
 
 
@@ -248,7 +248,7 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
     obj_->setEditable( true );
 
 
-    CrossSection* cs_ = getCrossSection( current_csection );
+    CrossSection* &cs_ = getCrossSection( current_csection );
     if( cs_ == nullptr )
         cs_ = new CrossSection( volume, CrossSection::Direction::Z, current_csection );
 
@@ -839,44 +839,62 @@ void Controller::clear()
 {
 
 
-    for (  Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        delete (it->second);
-        (it->second) = nullptr;
-    }
-    objects.clear();
-
-
-
-    for (  Container< double, CrossSection* >::Iterator it =  actives_csections.begin(); it != actives_csections.end(); ++it )
-    {
-        delete (it->second);
-        (it->second) = nullptr;
-    }
-    actives_csections.clear();
-
-    for (  Container< double, CrossSection* >::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
-    {
-        delete (it->second);
-        (it->second) = nullptr;
-    }
-    all_csections.clear();
-
-
-    main_csection->clear();
-    topview_csection->clear();
-
-
     scene3d->clear();
-    object_tree->clear();
-    volume->clear();
 
-    selectable_upper.clear();
-    selectable_bottom.clear();
 
-    rules_processor.clear();
+//    if( main_csection != nullptr )
+//    {
+//        main_csection->clear();
+//        delete main_csection;
+//        main_csection = nullptr;
+//    }
 
-    initializeData();
+//    if( topview_csection != nullptr )
+//    {
+//        topview_csection->clear();
+//        delete topview_csection;
+//        topview_csection = nullptr;
+//    }
+
+
+
+//    for (  Container< double, CrossSection* >::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
+//    {
+//        CrossSection* &csection_ = all_csections.getElement( it->first );
+//        if( csection_ == nullptr ) continue;
+
+//        all_csections.deleteElement( it->first );
+
+//    }
+//    all_csections.clear();
+
+
+//    //TODO: delete all contents from actives_csections
+//    actives_csections.clear();
+
+
+
+//    for (  Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+//    {
+//        Object* &obj_ = objects.getElement( it->first );
+//        if( obj_ == nullptr ) continue;
+//        objects.deleteElement( it->first );
+//    }
+//    objects.clear();
+
+
+
+
+
+//    object_tree->clear();
+//    volume->clear();
+
+//    selectable_upper.clear();
+//    selectable_bottom.clear();
+
+//    rules_processor.clear();
+
+//    initializeData();
 
 }
 
@@ -885,8 +903,6 @@ void Controller::initializeData()
 {
     main_csection = nullptr;
     topview_csection = nullptr;
-    scene3d = nullptr;
-    object_tree = nullptr;
     volume = nullptr;
     current_color.r = 255;
     current_color.g = 0;

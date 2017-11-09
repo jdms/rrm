@@ -4,34 +4,15 @@
 
 RealFeaturedSlider::RealFeaturedSlider( Qt::Orientation o_ )
 {
-    RealFeaturedSlider::setDiscretization( 10 );
-    RealFeaturedSlider::setRange( 0, 1 );
-    RealFeaturedSlider::setInvertedAppearance( true );
-    RealFeaturedSlider::setInvertedControls( true );
-
-    setTickPosition( QSlider::TicksLeft );
-
-    connect( this, &Slider::sliderMoved, this, &RealFeaturedSlider::moveInDouble );
-    connect( this, &Slider::markValue, [=]( int v ){ emit markValue( getDoubleValue( v ) ); } );
-    connect( this, &Slider::unmarkValue, [=]( int v ){ emit unmarkValue( getDoubleValue( v ) ); } );
-    connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
+   setDefaultValues();
 }
 
 
 RealFeaturedSlider::RealFeaturedSlider( Qt::Orientation o_, int disc_ )
 {
 
+    setDefaultValues();
     RealFeaturedSlider::setDiscretization( disc_ );
-    RealFeaturedSlider::setRange( 0, 1 );
-    RealFeaturedSlider::setInvertedAppearance( true );
-    RealFeaturedSlider::setInvertedControls( true );
-
-    setTickPosition( QSlider::TicksLeft );
-
-    connect( this, &Slider::sliderMoved, this, &RealFeaturedSlider::moveInDouble );
-    connect( this, &Slider::markValue, [=]( int v ){ emit markValue( getDoubleValue( v ) ); } );
-    connect( this, &Slider::unmarkValue, [=]( int v ){ emit unmarkValue( getDoubleValue( v ) ); } );
-    connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
 
 }
 
@@ -158,3 +139,27 @@ void RealFeaturedSlider::getDoubleMarkers( std::map< double, int >& markers_ )
 
 }
 
+
+void RealFeaturedSlider::setDefaultValues()
+{
+    RealFeaturedSlider::setDiscretization( 10 );
+    RealFeaturedSlider::setRange( 0, 1 );
+    RealFeaturedSlider::setInvertedAppearance( true );
+    RealFeaturedSlider::setInvertedControls( true );
+
+    setTickPosition( QSlider::TicksLeft );
+
+    connect( this, &Slider::sliderMoved, this, &RealFeaturedSlider::moveInDouble );
+    connect( this, &Slider::markValue, [=]( int v ){ emit markValue( getDoubleValue( v ) ); } );
+    connect( this, &Slider::unmarkValue, [=]( int v ){ emit unmarkValue( getDoubleValue( v ) ); } );
+    connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
+
+//    setValue( maximum );
+}
+
+void RealFeaturedSlider::clear()
+{
+    markers.clear();
+
+//    setDefaultValues();
+}

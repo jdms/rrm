@@ -67,8 +67,6 @@ class ObjectItemWrapper: public QGraphicsPathItem
         QPainterPath curve;
         QPen current_pen;
 
-        bool is_active;
-
         double current_csection;
 
 

@@ -366,21 +366,43 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
 void SketchScene::clear()
 {
 
-    delete user_input;
+    for( auto &it: items() )
+        removeItem( it );
 
 
-    delete volume;
+    if( user_input != nullptr )
+    {
+        user_input->clear();
+        delete user_input;
+        user_input = nullptr;
+    }
+
+    if( volume != nullptr )
+    {
+        volume->clear();
+        delete volume;
+        volume = nullptr;
+    }
+
 
     for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
     {
-        (it->second) = nullptr;
+        ObjectItemWrapper* item_ = objects.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        delete item_;
+        item_ = nullptr;
     }
     objects.clear();
 
 
     for ( CrossSectionsContainer::Iterator it =  cross_sections.begin(); it != cross_sections.end(); ++it )
     {
-        (it->second) = nullptr;
+        CrossSectionItemWrapper* item_ = cross_sections.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        delete item_;
+        item_ = nullptr;
     }
     cross_sections.clear();
 

@@ -101,7 +101,11 @@ void MainWindow::createMainInterface()
 void MainWindow::createToolbar()
 {
 
-    QAction* ac_clear = new QAction( "New", this );
+    ac_clear = new QAction( "New", this );
+    connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
+//    connect( ac_clear, &QAction::triggered, object_tree, &ObjectTree::clear );
+//    connect( ac_clear, &QAction::triggered, sl_depth_csection, &RealFeaturedSlider::clear );
+
     QAction* ac_save = new QAction( "Save", this );
     QAction* ac_load = new QAction( "Load", this );
 
@@ -153,6 +157,10 @@ void MainWindow::createToolbar()
     } );
 
 
+    connect( this, &MainWindow::resetMenus, [=](){ ac_undo->setEnabled( false ); ac_redo->setEnabled( false );
+                                                   ac_remove_above->setChecked( true );  ac_sketch_above->setCheckable( false );
+                                                   ac_sketch_below->setCheckable( false ); } );
+
     QToolBar* tb_mainwindow = new QToolBar();
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
@@ -188,6 +196,8 @@ void MainWindow::createSidebar()
 
     connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t index_, const std::string& name_ )
                                                        { controller->setObjectName( index_, name_ ); } );
+
+
 
 
 }
@@ -233,6 +243,8 @@ void MainWindow::createBottombar()
 
 
 
+
+
 }
 
 
@@ -247,6 +259,7 @@ void MainWindow::createSketchingWindow()
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
 
 
+//    connect( ac_clear, &QAction::triggered, sketch_window, &SketchWindow::clear );
 
 
 
@@ -262,6 +275,7 @@ void MainWindow::createSketchingWindow()
     connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
     connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
     connect( this, &MainWindow::updateObjects, sketch_window, &SketchWindow::updateCanvas );
+
 
 
 
@@ -390,6 +404,7 @@ void MainWindow::createSketchingWindow()
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
+    dw_topview_window->setVisible( false );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
@@ -399,6 +414,8 @@ void MainWindow::createSketchingWindow()
     connect( this, &MainWindow::updateObjects, sketch_topview_window, &SketchWindow::updateCanvas );
     connect( this, &MainWindow::addCrossSection, sketch_topview_window, &SketchWindow::addCrossSection );
 
+//    connect( ac_clear, &QAction::triggered, sketch_topview_window, &SketchWindow::clear );
+//    connect( this, &MainWindow::resetWindows, [=](){ dw_sketchwindow->setVisible( true ); dw_topview_window->setVisible( false ); } );
 
 }
 
@@ -462,6 +479,20 @@ void MainWindow::checkSketchStatus()
     ac_sketch_above->setChecked( controller->isDefineAboveActive() );
     ac_sketch_below->setChecked( controller->isDefineBelowActive() );
     emit updateObjects();
+}
+
+
+void MainWindow::clear()
+{
+
+    controller->clear();
+
+//    emit resetMenus();
+//    emit resetWindows();
+
+
+    run_app();
+
 }
 
 
