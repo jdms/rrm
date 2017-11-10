@@ -147,14 +147,14 @@ bool Controller::removeCrossSection( const CrossSection::Direction& dir_, double
 }
 
 
-CrossSection* &Controller::getCrossSection( const double& depth_ )
+CrossSection* Controller::getCrossSection( const double& depth_ )
 {
     if( actives_csections.findElement( depth_ ) == true )
         return  actives_csections.getElement( depth_ );
     else if( all_csections.findElement( depth_ ) == true )
         return  all_csections.getElement( depth_ );
-//    else
-//        return nullptr;
+    else
+        return nullptr;
 }
 
 
@@ -250,7 +250,7 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
     obj_->setEditable( true );
 
 
-    CrossSection* &cs_ = getCrossSection( current_csection );
+    CrossSection* cs_ = getCrossSection( current_csection );
     if( cs_ == nullptr )
         cs_ = new CrossSection( volume, CrossSection::Direction::Z, current_csection );
 
@@ -261,7 +261,7 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
     if( all_csections.findElement( current_csection ) == false )
         all_csections.addElement( current_csection, cs_ );
 
-    createObjectSurface();
+//    createObjectSurface();
 
 
     std::cout << "Adding curve in cross-section: " << current_csection << std::endl << std::flush;

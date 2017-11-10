@@ -290,12 +290,18 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
-    if( ( event->buttons() & Qt::LeftButton ) )
+    if( event->modifiers() & Qt::ControlModifier /*( event->buttons() & Qt::LeftButton )*/ )
     {
         if( csection == nullptr ) return;
         if( views().empty() == true ) return;
         emit setAsCurrent( csection->getDepth(), views()[ 0 ] );
     }
+
+    else if( current_interaction == UserInteraction::SKETCHING )
+    {
+         emit commitObject();
+    }
+
 }
 
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
