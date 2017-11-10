@@ -262,8 +262,9 @@ void Volume::removeAllObjects()
 {
     for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
     {
-        if( ( it->second ) == nullptr ) continue;
-        (it->second) = nullptr;
+        Object* obj_ = objects.getElement( it->first );
+        if( obj_ == nullptr ) continue;
+        obj_ = nullptr;
     }
     objects.clear();
 }
@@ -273,8 +274,9 @@ void Volume::removeAllCrossSections()
 {
     for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
     {
-        if( ( it->second ) == nullptr ) continue;
-        (it->second) = nullptr;
+        CrossSection* csection_ = csections.getElement( it->first );
+        if( csection_ == nullptr ) continue;
+        csection_ = nullptr;
     }
     csections.clear();
 }
@@ -283,9 +285,8 @@ void Volume::removeAllCrossSections()
 
 void Volume::clear()
 {
-    csections.clear();
-    removeAllObjects();
     removeAllCrossSections();
+    removeAllObjects();
     initialize();
 }
 
