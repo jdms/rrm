@@ -72,6 +72,8 @@ class SketchScene: public QGraphicsScene, public Scene
         void setAsCurrent( double depth_, QGraphicsView* gview_ );
         void objectSelected( std::size_t index_ );
 
+        void commitObject();
+
 
 
     public slots:

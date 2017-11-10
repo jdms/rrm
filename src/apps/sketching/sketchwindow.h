@@ -76,6 +76,7 @@ class SketchWindow: public QMainWindow
         void setAsCurrent( double depth_ );
 
         void objectSelected( std::size_t index_ );
+        void commitObject();
 
 
 

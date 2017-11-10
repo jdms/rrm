@@ -64,6 +64,7 @@ void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
                                                                                                if( gview_ == main ) highlightCanvas( -1 );
                                                                                                else highlightCanvas( depth_ ); } );
     connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
+    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
 
 
     connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );

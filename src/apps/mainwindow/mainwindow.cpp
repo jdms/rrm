@@ -291,13 +291,27 @@ void MainWindow::createSketchingWindow()
                                                                                         CrossSection* cs_ = controller->getCrossSection( depth_ );
                                                                                         emit addCrossSection( cs_ );
 
-                                                                                        controller->addObject();
+                                                                                        /*controller->addObject();
                                                                                         object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
 
                                                                                         emit addObject( controller->getCurrentObject() );
                                                                                         emit setUpColor();
 
-                                                                                        checkUndoRedo(); } );
+                                                                                        checkUndoRedo();*/ } );
+
+
+    connect( sketch_window, &SketchWindow::commitObject, [=](){ bool status_ = controller->createObjectSurface();
+                                                                if( status_ == false ) return;
+
+                                                                controller->addObject();
+                                                                object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
+
+                                                                emit addObject( controller->getCurrentObject() );
+                                                                emit setUpColor();
+
+                                                                checkUndoRedo();
+
+                                                            } );
 
     connect( sketch_window, &SketchWindow::setAsCurrent, [=]( double depth_ ){  controller->setCurrentCrossSection( depth_ ); } );
 
