@@ -144,3 +144,48 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
     ObjectTreeItem* obj_ = items.getElement( index_ );
     obj_->setHidden( !status_ );
 }
+
+
+void ObjectTree::clear()
+{
+
+    std::vector < std::size_t > diff;
+
+    for ( int i = 0; i < topLevelItemCount(); ++i )
+    {
+
+        int nchildren = topLevelItem(i)->childCount();
+        for( int j = 0; j < nchildren; ++j )
+        {
+            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem(i)->child( j ) );
+
+//            obj_->clear();
+
+            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+            removeItemWidget( obj_, COLUMN_COLOR );
+            delete colorpicker_;
+
+            if( items.findElement( obj_->getIndex() ) == true )
+            {
+                diff.push_back( obj_->getIndex() );
+                continue;
+            }
+
+            delete obj_;
+            obj_ = nullptr;
+        }
+    }
+
+    for( auto d: diff )
+    {
+        ObjectTreeItem* obj_ = items.getElement( d );
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+    QTreeWidget::clear();
+    items.clear();
+
+
+
+}

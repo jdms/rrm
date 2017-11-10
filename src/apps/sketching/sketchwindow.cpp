@@ -71,7 +71,7 @@ void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
     connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
     connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ if( scene_ == nullptr ) return;  scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
 
 
     QGraphicsView* gv_ = new QGraphicsView();
@@ -112,14 +112,16 @@ void SketchWindow::removeCanvas( double depth_ )
 
 
     QGraphicsView* gview_ = cs->getElement( depth_ );
+    if( gview_ == nullptr ) return;
+
+    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+    if( sc_== nullptr ) return;
+
+    sc_->clear();
+    delete sc_;
+    sc_ = nullptr;
+
     cs->removeElement( depth_ );
-
-//    SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-//    if( sc_ == nullptr ) return;
-//    sc_->clear();
-//    delete sc_;
-//    sc_ = nullptr;
-
 
 }
 
@@ -334,25 +336,12 @@ void SketchWindow::setUpColor()
 void SketchWindow::clear()
 {
 
-    if( main != nullptr )
-    {
-        SketchScene* sc_ = ( SketchScene* )( main->scene() );
-        sc_->clear();
-        delete sc_;
-        sc_ = nullptr;
-        main = nullptr;
-    }
-
-
-
     while( cs->empty() == false )
     {
         CanvasContainer::Iterator it =  cs->begin();
         removeCanvas( it->first );
     }
 
-//    cs->clear();
-
-
+    main = nullptr;
 
 }

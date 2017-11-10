@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "controller.h"
 
 #include "volume.h"
@@ -840,61 +842,74 @@ void Controller::clear()
 
 
     scene3d->clear();
-
-
-//    if( main_csection != nullptr )
-//    {
-//        main_csection->clear();
-//        delete main_csection;
-//        main_csection = nullptr;
-//    }
-
-//    if( topview_csection != nullptr )
-//    {
-//        topview_csection->clear();
-//        delete topview_csection;
-//        topview_csection = nullptr;
-//    }
-
-
-
-//    for (  Container< double, CrossSection* >::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
-//    {
-//        CrossSection* &csection_ = all_csections.getElement( it->first );
-//        if( csection_ == nullptr ) continue;
-
-//        all_csections.deleteElement( it->first );
-
-//    }
-//    all_csections.clear();
-
-
-//    //TODO: delete all contents from actives_csections
-//    actives_csections.clear();
-
-
-
-//    for (  Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
-//    {
-//        Object* &obj_ = objects.getElement( it->first );
-//        if( obj_ == nullptr ) continue;
-//        objects.deleteElement( it->first );
-//    }
-//    objects.clear();
+    volume->clear();
 
 
 
 
+    std::vector< double > diff;
+    for (  Container< double, CrossSection* >::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
+    {
+        CrossSection* &csection_ = all_csections.getElement( it->first );
+        if( csection_ == nullptr ) continue;
 
-//    object_tree->clear();
-//    volume->clear();
+        if( actives_csections.findElement( it->first ) == true )
+        {
+            diff.push_back( it->first );
+            continue;
+        }
 
-//    selectable_upper.clear();
-//    selectable_bottom.clear();
+        csection_->clear();
+        all_csections.deleteElement( it->first );
 
-//    rules_processor.clear();
+    }
+    all_csections.clear();
 
-//    initializeData();
+
+    for (  auto d: diff )
+    {
+        CrossSection* &csection_ = actives_csections.getElement( d );
+        if( csection_ == nullptr ) continue;
+
+        csection_->clear();
+        actives_csections.deleteElement( d );
+
+    }
+    actives_csections.clear();
+
+
+
+    if( main_csection != nullptr )
+    {
+        main_csection = nullptr;
+    }
+
+    if( topview_csection != nullptr )
+    {
+        topview_csection->clear();
+        delete topview_csection;
+        topview_csection = nullptr;
+    }
+
+    object_tree->clear();
+
+
+    for (  Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        Object* &obj_ = objects.getElement( it->first );
+        if( obj_ == nullptr ) continue;
+        objects.deleteElement( it->first );
+    }
+    objects.clear();
+
+
+
+    selectable_upper.clear();
+    selectable_bottom.clear();
+
+    rules_processor.clear();
+
+    initializeData();
 
 }
 

@@ -26,22 +26,7 @@ class ObjectTree: public QTreeWidget
         void updateObjectColor( std::size_t index_, int red_, int green_, int blue_);
         void setObjectVisibility( std::size_t index_, bool status_ );
 
-//        std::string& getObjectName() const;
-
-//        void setObjectColor( const int& red_, const int& green_,
-//                             const int& blue_ );
-//        void getObjectColor( int& red_, int& green_, int& blue_ ) const;
-
-//        void setObjectVisibility( bool status_ );
-//        bool isObjectVisible() const;
-
-//        void setObjectActive( bool status_ );
-//        bool isObjectActive() const;
-
-
-
-
-
+        void clear();
 
     protected slots:
 

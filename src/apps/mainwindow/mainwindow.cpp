@@ -485,10 +485,13 @@ void MainWindow::checkSketchStatus()
 void MainWindow::clear()
 {
 
+    sketch_window->clear();
+    sketch_topview_window->clear();
     controller->clear();
+    sl_depth_csection->clear();
 
-//    emit resetMenus();
-//    emit resetWindows();
+    emit resetMenus();
+    emit resetWindows();
 
 
     run_app();
