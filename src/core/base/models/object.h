@@ -1,137 +1,147 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <vector>
+#include <iostream>
 #include <string>
 #include <map>
-#include <tuple>
 
-#include <Eigen/Dense>
-
-#include "PolygonalCurve/CurveN.hpp"
-//#include "./core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp"
+#include "container.h"
+#include "./surface.h"
+#include "./polycurve.h"
 
 
 class Object
 {
+
     public:
 
-        enum class Type { STRATIGRAPHY, NONE };
+
+        enum class Type{ STRATIGRAPHY, FAULT };
+        using CrossSectionsContainer = Container< double, PolyCurve >;
+
 
         Object();
-        Object( const Object::Type& t );
 
 
-        void setId( std::size_t id );
-        std::size_t getId() const;
+        void setIndex( const std::size_t id_ );
+        std::size_t getIndex() const;
 
-        void setType( const Object::Type& t );
-        Object::Type getType() const ;
 
-        void setName( const std::string& n );
+        void setName( const std::string& name_ );
         std::string getName() const;
+
+
+        void setType( const Object::Type& type_ );
+        Object::Type getType() const;
 
 
         void setColor( int r, int g, int b );
         void getColor( int& r, int& g, int& b ) const ;
 
 
-        void setEditable( bool status );
-        bool getEditable() const ;
-
-        void setSelectable( bool status );
-        bool getSelectable() const ;
+        void setEditable( const bool status_ );
+        bool isEditable() const;
 
 
-        void setSelected( bool status );
-        bool getSelected() const ;
+        void setSelectable( const bool status_ );
+        bool isSelectable() const;
 
 
-        void setVisibility( bool status );
-        bool getVisibility() const ;
+        void setSelected( const bool status_ );
+        bool isSelected() const;
 
 
-        bool isEmpty() const ;
-
-        void setTesting( bool status );
-        bool isTesting() const;
+        void setVisible( const bool status_ );
+        bool isVisible() const;
 
 
-        void setCrossSectionCurve( double depth, const Curve2D& curve,
-                                   std::vector< std::size_t > edges = std::vector< std::size_t >() );
-        Curve2D getCrossSectionCurve( double depth ) ;
-        std::vector< std::size_t > getCrossSectionCurveEdges( double depth ) ;
+        void setActive( const bool status_ );
+        bool isActive() const;
 
-        std::vector< std::tuple< Curve2D, double > > getCrossSectionCurves();
 
-        void removeCrossSectionCurve( double depth );
-        void removeCrossSections();
+        bool isEmpty() const;
+
+
+        bool addCurve( double csection_id_, const PolyCurve& curve_ );
+        PolyCurve getCurve( double csection_id_ );
+        bool removeCurve( double csection_id_ );
+        void updateCurve( double csection_id_, const PolyCurve& curve_ );
+
+
+        Object::CrossSectionsContainer getCrossSectionCurves() const;
+        void removeCrossSectionCurves();
+
+
+        bool addTrajectory( const PolyCurve& traj_ );
+        PolyCurve getTrajectory();
+        void removeTrajectory();
+        bool hasTrajectory() const;
+
 
 
         bool isCurveAdmissible();
         bool isTrajectoryAdmissible();
 
 
-        bool hasCurve( double depth );
-
-        bool hasTrajectoryCurve();
-        void setTrajectoryCurve( const Curve2D& path );
-        Curve2D getTrajectoryCurve() const ;
-        void removeTrajectoryCurve();
-
-
-        void setSurface( const std::vector< double >& vertices,
-                         const std::vector< std::size_t >& faces, bool test = false );
-
-
-        void setSurfaceNormals( const std::vector< double >& normals );
-        std::vector< double > computeNormals();
+        void setSurface( const Surface& surface_ );
+        Surface getSurface() const;
         void removeSurface();
 
 
-        std::vector< double > getSurfaceVertices() const ;
-        std::vector< std::size_t > getSurfaceFaces() const ;
-        std::vector< double > getSurfaceNormals();
+        void setMaxMin( double maxx_, double maxy_, double maxz_,
+                        double minx_, double miny_, double minz_ );
+        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+                        double& minx_, double& miny_, double& minz_ ) const;
+
 
         void clear();
-        void setDefaultValues();
+        void initialize();
 
 
 
 
-    public:
+    protected:
 
-        static std::size_t count_objects;
+        void defineIndex();
+
 
 
     private:
 
+        static std::size_t number_of_objects;
+
         std::size_t index;
         std::string name;
-        std::tuple< int, int, int > color;
-        Object::Type type;
 
+        Type type;
+
+        bool is_editable;
         bool is_selectable;
         bool is_selected;
         bool is_visible;
-        bool is_editable;
-        bool is_test;
+        bool is_active;
+
+        CrossSectionsContainer csection_curves;
+        Surface surface;
+        PolyCurve trajectory;
 
 
-        bool has_trajectory;
-        std::map< double, Curve2D > csections_curves;
-        std::map< double, std::vector< std::size_t > > csections_edges;
-        Curve2D trajectory_curve;
+        struct Color
+        {
+            int r = 255;
+            int g = 0;
+            int b = 0;
+        } color;
+
+        struct Point
+        {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+        } max, min;
 
 
-        std::vector< double > surface_vertices;
-        std::vector< std::size_t > surface_faces;
-        std::vector< double > surface_normals;
-
-
-
-
-
+        const std::size_t CHANNEL_MAX_CSECTIONS = 1;
 };
 
 #endif // OBJECT_H

@@ -5,6 +5,7 @@
 
 
 #include "ui_volume_resize_widget.h"
+#include "ui_object_properties.h"
 
 class PagesStack: public QStackedWidget
 {
@@ -16,6 +17,10 @@ class PagesStack: public QStackedWidget
 
         void createVolumeActions();
         void clear();
+
+        double getWidth();
+        double getHeight();
+        double getLenght();
 
 
     public slots:
@@ -40,11 +45,12 @@ class PagesStack: public QStackedWidget
     protected:
 
         void createVolumePropertiesPage();
-        void createRulesHistoryPage();
+        void createObjectPropertiesPage();
 
     private:
 
-        Ui::Form wd_volume_resize;
+        Ui::fm_volume wd_volume_resize;
+        Ui::Form wd_object_properties;
 
         const int MAX_WIDTH = 10000;
         const int MAX_HEIGHT = 10000;

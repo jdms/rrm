@@ -23,6 +23,7 @@ class ColorPicker: public QToolButton
     public slots:
 
         void defineRandomColor();
+        virtual void setVisible( bool visible ) override;
 
 
     protected:

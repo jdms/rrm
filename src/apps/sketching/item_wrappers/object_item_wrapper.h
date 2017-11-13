@@ -1,60 +1,75 @@
 #ifndef OBJECTITEMWRAPPER_H
 #define OBJECTITEMWRAPPER_H
 
-#include <set>
-#include <vector>
 
 #include <QGraphicsPathItem>
+#include <QColor>
 #include <QPainter>
 
-class Object;
+
+#include "./core/base/models/object.h"
+
 
 class ObjectItemWrapper: public QGraphicsPathItem
 {
+
     public:
 
-        ObjectItemWrapper();
+        ObjectItemWrapper() = default;
+        ObjectItemWrapper( Object* const& obj_, double depth_ );
 
 
-        QRectF boundingRect() const;
-        void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* w );
+        void setRawObject( Object* const& obj_ );
+        Object* getRawObject() const ;
 
-        void setRawObject( Object* const& obj, double depth );
-        std::size_t getId() const;
-
-        void updateDepth( double depth );
+        std::size_t getIndex() const;
 
         void updateState();
         void updateCurve();
         void updateObject();
+        void updateDepth( double depth_ );
+
+
+        void setActive( bool status_ ){}
+        bool isActive() const{}
+
 
         bool isVisible() const;
-        void enableEditing();
+        bool isEditable() const;
+
+
+        QRectF boundingRect() const;
+
 
         void clear();
         void clearData();
+        void clearCurve();
+
+
+        static QPainterPath polycurveToQPainterPath( const PolyCurve& pol_ );
+        static QPolygonF vectorToQPolygonF( const std::vector< double >& vertices_ );
+        static QPainterPath vectorToPainterPath( const std::vector< double >& vertices_,
+                                                 const std::vector< std::size_t >& edges_ );
+
 
 
     protected:
 
+
         void setupPen();
-        void clearCurve();
+        void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w );
 
 
 
     private:
 
-        Object* object;
-
-        double csection_depth;
+        Object* raw;
         QPainterPath curve;
-        const QColor selectable_color =  Qt::yellow;
-        QColor selected_color = Qt::red;
+        QPen current_pen;
 
-        std::set<QPointF> intersection_points;
-        std::vector<bool> hidden_subpaths;
-        QPen hidden_subpaths_pen;
-        QPen visible_subpaths_pen;
+        double current_csection;
+
+
 
 };
 
