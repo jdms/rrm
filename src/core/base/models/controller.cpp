@@ -186,6 +186,7 @@ void Controller::updateCurrentCrossSection()
 
     for ( std::size_t id_: actives_ )
     {
+        std::cout << "updating active " << id_ << std::endl << std::flush;
         updateObjectCurveFromCrossSection( id_, current_csection );
     }
 }
@@ -248,7 +249,10 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
         return false;
 
     obj_->setEditable( true );
+    obj_->setVisible( true );
 
+
+    createPreviewSurface();
 
     CrossSection* cs_ = getCrossSection( current_csection );
     if( cs_ == nullptr )
@@ -260,11 +264,6 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
 
     if( all_csections.findElement( current_csection ) == false )
         all_csections.addElement( current_csection, cs_ );
-
-//    createObjectSurface();
-
-
-    std::cout << "Adding curve in cross-section: " << current_csection << std::endl << std::flush;
 
 
     return true;
@@ -297,6 +296,30 @@ bool Controller::removeObjectCurve( double csection_ )
     return true;
 }
 
+
+bool Controller::addObjectTrajectory( PolyCurve curve_ )
+{
+
+    if( objects.findElement( current_object ) == false )
+        return false;
+
+    Object* const& obj_ = objects.getElement( current_object );
+    bool status_ = obj_->addTrajectory( curve_ );
+    return status_;
+
+}
+
+
+void Controller::removeObjectTrajectory()
+{
+
+    if( objects.findElement( current_object ) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( current_object );
+    obj_->removeTrajectory();
+
+}
 
 
 void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
@@ -429,7 +452,49 @@ bool Controller::createObjectSurface()
 
 
 
+bool Controller::createPreviewSurface()
+{
+    Object* const& obj_ = objects.getElement( current_object );
+    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
 
+    std::vector< std::tuple< Curve2D, double > > curves_;
+    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+    {
+        double csection_id_ = it->first;
+        PolyCurve sketch_ = it->second;
+
+        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+    }
+
+
+    bool surface_created = rules_processor.testSurface( current_object, curves_ );
+    if( surface_created == false ) return false;
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > faces_;
+
+    bool has_surface = rules_processor.getMesh( current_object, vertices_, faces_ );
+    if( has_surface  == false ) return false;
+
+
+    std::vector< double > normals_;
+    rules_processor.getNormals( current_object, normals_ );
+
+
+    Surface surface;
+    surface.setVertices( vertices_ );
+    surface.setFaces( faces_ );
+    surface.setNormals( normals_ );
+
+    obj_->setActive( true );
+    obj_->setSurface( surface );
+    obj_->setVisible( true );
+
+    scene3d->updateObject( current_object );
+    return true;
+
+}
 
 
 void Controller::updateModel()
@@ -833,8 +898,6 @@ bool Controller::isDefineBelowActive()
     setObjectAsBoundering( index_ );
     return true;
 }
-
-
 
 
 void Controller::clear()

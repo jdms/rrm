@@ -67,8 +67,12 @@ class Controller
 
         bool addObject();
         bool addObjectCurve( PolyCurve curve_ );
-
         bool removeObjectCurve( double csection_ );
+
+        bool addObjectTrajectory( PolyCurve curve_ );
+        void removeObjectTrajectory();
+
+
         Object* getCurrentObject();
 
         void setObjectColor( std::size_t index_, int r_, int g_, int b_);
@@ -88,6 +92,7 @@ class Controller
         std::size_t getIndexCurrentObject() const;
 
         bool createObjectSurface();
+        bool createPreviewSurface();
 
 
 

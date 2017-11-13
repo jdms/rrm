@@ -64,20 +64,44 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
     csection = raw_;
 
+
+
     Volume* const& vol_ = raw_->getVolume();
     addVolume( vol_ );
 
+
+
+    if( raw_->getDirection() != CrossSection::Direction::Z )
+        createCrossSectionScene( vol_ );
+
+    else if( raw_->getDirection() != CrossSection::Direction::Y )
+        createTopViewScene( vol_ );
+
+
+
+}
+
+
+void SketchScene::createCrossSectionScene( Volume* const& vol_ )
+{
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addObject( o.second );
+}
 
-    if( raw_->getDirection() != CrossSection::Direction::Y ) return;
 
+void SketchScene::createTopViewScene( Volume* const& vol_ )
+{
     Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
     for( auto c: csections_ )
     {
         addCrossSection( c.second );
     }
+
+
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
+    for( auto o: objs_ )
+        addTrajectory( o.second );
 
 
 }
@@ -90,24 +114,34 @@ void SketchScene::updateCrossSection()
     Volume* const& vol_ = csection->getVolume();
 
 
-////TODO: Uncomentting
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
-    for( auto o: objs_ )
-    {
-        updateObject( o.first );
-    }
-//        (o.second)->setVisible( false );
+    if( csection->getDirection() != CrossSection::Direction::Z )
+        updateCrossSectionScene( vol_ );
 
-
-//    CrossSection::ObjectsContainer objs_cs_ = csection->getObjects();
-//    for( auto o: objs_cs_ )
-//    {
-////        objects.getElement( o.first )->setVisible( true );
-//        updateObject( o.first );
-//    }
-
+    else if( csection->getDirection() != CrossSection::Direction::Y )
+        updateTopViewScene( vol_ );
 
 }
+
+
+
+void SketchScene::updateCrossSectionScene( Volume* const& vol_ )
+{
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
+
+    for( auto o: objs_ )
+        updateObject( o.first );
+}
+
+
+void SketchScene::updateTopViewScene( Volume* const& vol_ )
+{
+
+    Volume::ObjectsContainer objs_ = vol_->getObjects();
+    for( auto o: objs_ )
+        updateTrajectory( o.first );
+
+}
+
 
 
 
@@ -150,6 +184,7 @@ void SketchScene::addObject( Object* const& raw_, double depth_ )
 {
     //TODO: check if valid raw->getIndex
 
+    if( csection->getDirection() != CrossSection::Direction::Z ) return;
 
     std::size_t index_ = raw_->getIndex();
 
@@ -163,6 +198,8 @@ void SketchScene::addObject( Object* const& raw_, double depth_ )
 
 void SketchScene::updateObject(  const std::size_t& index_ )
 {
+    if( csection->getDirection() != CrossSection::Direction::Z ) return;
+
     ObjectItemWrapper* obj_ = objects.getElement( index_ );
     obj_->updateDepth( csection->getDepth() );
     obj_->updateObject();
@@ -180,12 +217,46 @@ void SketchScene::selectObjectAsBounderingRegion()
     ObjectItemWrapper* const& obj = ( ObjectItemWrapper* )items[ 0 ];
     std::size_t id = obj->getIndex();
 
-    std::cout << "Object selected: " << id << std::endl << std::flush;
     emit objectSelected( id );
 
 }
 
 
+
+void SketchScene::addTrajectory( Object* const& raw_ )
+{
+    //TODO: check if valid raw->getIndex
+
+
+    std::size_t index_ = raw_->getIndex();
+
+    TrajectoryItemWrapper* traj_ = new TrajectoryItemWrapper( raw_ );
+    trajectories.addElement( index_, traj_ );
+
+    addItem( traj_ );
+
+}
+
+
+void SketchScene::updateTrajectory(  const std::size_t& index_ )
+{
+    TrajectoryItemWrapper* traj_ = trajectories.getElement( index_ );
+    traj_->updateTrajectory();
+
+    update();
+}
+
+
+void SketchScene::updateTrajectories()
+{
+    for ( TrajectoriesContainer::Iterator it =  trajectories.begin(); it != trajectories.end(); ++it )
+    {
+        TrajectoryItemWrapper* item_ = trajectories.getElement( it->first );
+        if( item_ == nullptr ) continue;
+        item_->updateTrajectory();
+    }
+    update();
+}
 
 
 void SketchScene::addCrossSection( CrossSection * const &raw_ )

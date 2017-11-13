@@ -47,6 +47,16 @@ void SketchWindow::createWindow()
 
 
 
+void SketchWindow::setupCrossSectionWindow()
+{
+    ac_edit_scene->setVisible( true );
+    cp_color->setVisible( true );
+
+}
+
+
+
+
 void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
 {
 
@@ -65,7 +75,6 @@ void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
                                                                                                else highlightCanvas( depth_ ); } );
     connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
     connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
-
 
     connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
     connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
@@ -86,7 +95,10 @@ void SketchWindow::addCanvas( CrossSection* const& cs_, bool main_ )
     highlightCanvas( cs_ );
 
 
-
+    if( cs_->getDirection() == CrossSection::Direction::Y )
+        setupTopViewWindow();
+    else if( cs_->getDirection() == CrossSection::Direction::Z )
+        setupCrossSectionWindow();
 }
 
 
@@ -270,6 +282,27 @@ void SketchWindow::updateObject( const std::size_t& index_ )
 
 
 
+void SketchWindow::addTrajectory( Object* const& obj_ )
+{
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->addTrajectory( obj_ );
+}
+
+
+void SketchWindow::updateTrajectory( const std::size_t& index_ )
+{
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->updateTrajectory( index_ );
+}
+
+void SketchWindow::updateTrajectories()
+{
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->updateTrajectories();
+}
+
+
+
 void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
@@ -287,6 +320,7 @@ void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 void SketchWindow::setCurrentCrossSection( const double& value_ )
 {
     if( main == nullptr ) return;
+
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     if( sc_ == nullptr ) return;
     sc_->updateCrossSection();
@@ -344,5 +378,15 @@ void SketchWindow::clear()
     }
 
     main = nullptr;
+
+}
+
+
+void SketchWindow::setupTopViewWindow()
+{
+    ac_edit_scene->setVisible( false );
+    cp_color->setVisible( false );
+    cp_color->setEnabled( false );
+    update();
 
 }

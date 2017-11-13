@@ -100,3 +100,12 @@ QColor ColorPicker::randomColor()
 
     return QColor( r, g, b );
 }
+
+
+void ColorPicker::setVisible( bool visible )
+{
+    QToolButton::setVisible( visible );
+    cd_picker_color->setVisible( visible );
+    wa_picker_color->setVisible( visible );
+    mn_picker_color->setVisible( visible );
+}
