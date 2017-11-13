@@ -207,6 +207,9 @@ class Controller
         bool isDefineAboveActive();
         bool isDefineBelowActive();
 
+
+        void getOutputVolume();
+
         void clear();
         void clearScenes();
         void clearData();

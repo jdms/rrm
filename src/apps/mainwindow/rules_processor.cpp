@@ -339,7 +339,7 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
     //return false; //modeller_.getCrossSectionDepth(surface_id, vertices, edges, right_boundary);
 }
 
-bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
+bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
     return false;
 }
