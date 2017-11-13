@@ -48,6 +48,10 @@ class SketchWindow: public QMainWindow
         void updateObject( const std::size_t& index_ );
 
 
+        void addTrajectory( Object* const& obj_ );
+        void updateTrajectory( const std::size_t& index_ );
+        void updateTrajectories();
+
 
         void addCrossSection( CrossSection* const& cs_ );
         void setCurrentCrossSection( const double& value_ );
@@ -57,6 +61,10 @@ class SketchWindow: public QMainWindow
         void setModeSketching();
 
         void clear();
+
+        void setupCrossSectionWindow();
+        void setupTopViewWindow();
+
 
 
     protected slots:

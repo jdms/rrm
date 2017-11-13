@@ -8,8 +8,8 @@
 #include "./item_wrappers/volume_item_wrapper.h"
 #include "./item_wrappers/object_item_wrapper.h"
 #include "./item_wrappers/crosssection_item_wrapper.h"
+#include "./item_wrappers/trajectoryitemwrapper.h"
 #include "./core/base/models/scene.h"
-
 
 class SketchScene: public QGraphicsScene, public Scene
 {
@@ -22,6 +22,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         using ObjectsContainer = Container< std::size_t, ObjectItemWrapper* >;
+        using TrajectoriesContainer = Container< std::size_t, TrajectoryItemWrapper* >;
         using CrossSectionsContainer = Container< std::size_t, CrossSectionItemWrapper* >;
 
 
@@ -49,6 +50,12 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
 
+        virtual void addTrajectory( Object* const& raw_ );
+        virtual void updateTrajectory(  const std::size_t& index_ );
+        void updateTrajectories();
+
+
+
         void setCurrent( bool status_ );
         bool isCurrent() const;
 
@@ -60,6 +67,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
     signals:
+
 
 
         void acceptVolumeDimensions( double w_, double h_ );
@@ -75,6 +83,12 @@ class SketchScene: public QGraphicsScene, public Scene
         void commitObject();
 
 
+        void isTopViewScene();
+        void isCrossSectionScene();
+
+
+        void AAA();
+        void BBB();
 
     public slots:
 
@@ -94,6 +108,13 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         void initialize();
+
+        void createCrossSectionScene( Volume* const& vol_ );
+        void createTopViewScene( Volume* const& vol_ );
+
+        void updateCrossSectionScene( Volume* const& vol_ );
+        void updateTopViewScene( Volume* const& vol_ );
+
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
@@ -120,6 +141,7 @@ class SketchScene: public QGraphicsScene, public Scene
         VolumeItemWrapper* volume;
         ObjectsContainer objects;
         CrossSectionsContainer cross_sections;
+        TrajectoriesContainer trajectories;
 
         const double ZOOM_SCALE = 1.1;
         bool is_current = false;

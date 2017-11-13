@@ -103,8 +103,6 @@ void MainWindow::createToolbar()
 
     ac_clear = new QAction( "New", this );
     connect( ac_clear, &QAction::triggered, this, &MainWindow::clear );
-//    connect( ac_clear, &QAction::triggered, object_tree, &ObjectTree::clear );
-//    connect( ac_clear, &QAction::triggered, sl_depth_csection, &RealFeaturedSlider::clear );
 
     QAction* ac_save = new QAction( "Save", this );
     QAction* ac_load = new QAction( "Load", this );
@@ -258,16 +256,11 @@ void MainWindow::createSketchingWindow()
     dw_sketchwindow->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
 
-
-//    connect( ac_clear, &QAction::triggered, sketch_window, &SketchWindow::clear );
-
-
-
     connect( this, &MainWindow::defineMainCrossSection, [=]( double v ){ controller->setMainCrossSection( CrossSection::Direction::Z, v );
                                                                          sketch_window->setMainCanvas( controller->getCrossSection( v ) );
                                                                          sketch_window->setCurrentCrossSection( v );
                                                                          controller->addTopViewCrossSection();
-                                                                         sketch_topview_window->addCanvas( controller->getTopViewCrossSection() ); } );
+                                                                         sketch_topview_window->setMainCanvas( controller->getTopViewCrossSection() ); } );
 
 
     connect( this, &MainWindow::setUpColor, sketch_window, &SketchWindow::setUpColor );
@@ -418,18 +411,32 @@ void MainWindow::createSketchingWindow()
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
-    dw_topview_window->setVisible( false );
+    dw_topview_window->setVisible( true );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
     connect( this, &MainWindow::updateVolume, sketch_topview_window, &SketchWindow::updateVolumes );
-    connect( this, &MainWindow::addObject, sketch_topview_window, &SketchWindow::addObject );
-    connect( this, &MainWindow::updateObject, sketch_topview_window, &SketchWindow::updateObject );
-    connect( this, &MainWindow::updateObjects, sketch_topview_window, &SketchWindow::updateCanvas );
+    connect( this, &MainWindow::addObject, sketch_topview_window, &SketchWindow::addTrajectory );
+    connect( this, &MainWindow::updateObject, sketch_topview_window, &SketchWindow::updateTrajectory );
+    connect( this, &MainWindow::updateObjects, sketch_topview_window, &SketchWindow::updateTrajectories );
     connect( this, &MainWindow::addCrossSection, sketch_topview_window, &SketchWindow::addCrossSection );
 
-//    connect( ac_clear, &QAction::triggered, sketch_topview_window, &SketchWindow::clear );
-//    connect( this, &MainWindow::resetWindows, [=](){ dw_sketchwindow->setVisible( true ); dw_topview_window->setVisible( false ); } );
+
+    connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ bool status_ = controller->addObjectTrajectory( curve_ );
+                                                                                        if( status_ == false ) return;
+                                                                                        emit updateObjects(); } );
+
+
+    connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ bool status_ = controller->createObjectSurface();
+                                                                        if( status_ == false ) return;
+
+                                                                        controller->addObject();
+                                                                        object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
+
+                                                                        emit addObject( controller->getCurrentObject() );
+                                                                        emit setUpColor();
+
+                                                                        checkUndoRedo(); } );
 
 }
 
