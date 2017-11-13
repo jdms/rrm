@@ -3,17 +3,28 @@ cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
 project( RRM )
 
 
-#####################################################################
-# Options
-#####################################################################
+###############################################
+# CMake Options
+###############################################
 
-set(RRM_BUILD_TYPE "Release" CACHE STRING
+set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+set( CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/ )
+
+
+
+###############################################
+# Options
+###############################################
+
+set(RRM_BUILD_TYPE "Debug" CACHE STRING
     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
+
 
 
 ###############################################
@@ -33,25 +44,12 @@ IF( WIN32 )
     endif()
 
 ELSEIF( UNIX )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2"  )
+#            -fopenmp")
 
 ELSE()
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
 ENDIF()
-
-
-
-###############################################
-# Output CMake
-###############################################
-
-set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-
-
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-
 
 
 ################################################
@@ -62,113 +60,16 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
+OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
-OPTION( OWN_LIBRARIES "Use predefined libraries directories" ON )
+if( RRM_DIRECTORY_LIBRARIES )
 
-if( OWN_LIBRARIES AND WIN32 )
-
-    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
-    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-    include_directories( SYSTEM ${Qt5_DIR} )
-    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-
-
+    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
     set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
     set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
-    find_package( GLEW REQUIRED )
-    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
-
-    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-    find_package( EIGEN3 REQUIRED )
-    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-    add_definitions( -DEIGEN_DONT_ALIGN )
-
-        find_library( SAMG_LIBRARY samg_XP_6_2005 ${CMAKE_SOURCE_DIR}/libs/SAMG )
-
-    ## OpenVolume Mesh
-    set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
-    set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
-
-    set(OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
-        debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
-
-    include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
-
-
-    set(HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
-    include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
-
-
-elseif( OWN_LIBRARIES AND UNIX )
-
-
-    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-    find_package( Eigen3 REQUIRED )
-    if( EIGEN3_FOUND )
-        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-        add_definitions( -DEIGEN_DONT_ALIGN )
-    endif( EIGEN3_FOUND )
-
-    find_package( GLEW REQUIRED )
-    if( GLEW_FOUND )
-        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-    endif( GLEW_FOUND )
-
-
-    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-    if( Qt5COMPONENTS_FOUND )
-        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-    endif( Qt5COMPONENTS_FOUND )
-
-
-    find_package( HYPRE REQUIRED )
-
-else( OWN_LIBRARIES )
-
-
-    find_package( Eigen3 REQUIRED )
-    if( Eigen3_FOUND )
-        include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
-        #add_definitions( -DEIGEN_DONT_ALIGN )
-    endif( Eigen3_FOUND )
-
-    find_package( GLEW REQUIRED )
-    if( GLEW_FOUND )
-        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-    endif( GLEW_FOUND )
-
-
-    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-    if( Qt5COMPONENTS_FOUND )
-        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-    endif( Qt5COMPONENTS_FOUND )
-
-
-    ## OpenVolume Mesh
-    set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
-    set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
-
-    set(OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
-                                 debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
-
-    include_directories( SYSTEM ${OPENVOLUMEMESH_LIBRARY} )
-
-
-endif( OWN_LIBRARIES AND WIN32 )
-
-
-
+endif()
 
 
 find_package( OpenGL REQUIRED )
@@ -176,16 +77,24 @@ if( OpenGL_FOUND )
     include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 endif( OpenGL_FOUND )
 
+find_package( GLEW REQUIRED )
+include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
 
+find_package( EIGEN3 REQUIRED )
+include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+add_definitions( -DEIGEN_DONT_ALIGN )
 
+find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL REQUIRED )
+include_directories( SYSTEM ${Qt5_DIR} )
+include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
+include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
+include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
+include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 
+set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
+INCLUDE_DIRECTORIES( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 
-add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
-add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
-add_subdirectory( libs/tinyobjloader EXCLUDE_FROM_ALL )
-add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
-
-
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
 ###############################################
@@ -259,170 +168,4 @@ include_directories(${STRATMOD_SOURCE}/stratmod/include)
 ###############################################
 
 add_subdirectory( src )
-
-
-
-#cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
-
-#project( RRM )
-
-
-######################################################################
-## Options
-######################################################################
-
-#set( CMAKE_BUILD_TYPE DEBUG )
-#OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
-
-
-######################################################################
-## Compiler flags ( we support Clang (3.7+), Gcc (4.8+) and
-## VS2013 (revision 5+) ).
-######################################################################
-
-#IF( WIN32 )
-
-#    if( MSVC )
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-#    endif()
-
-#ELSEIF( UNIX )
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2 -fopenmp")
-
-#ELSE()
-#  message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-#ENDIF()
-
-
-
-################################################
-## Output CMake
-################################################
-
-#set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-
-
-#set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
-#set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-#set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-
-
-
-#################################################
-### External libraries
-#################################################
-
-
-#include_directories( ${CMAKE_SOURCE_DIR}/libs )
-#include_directories( "./" )
-
-
-#OPTION( OWN_LIBRARIES "Use predefined libraries directories" ON )
-
-#if( OWN_LIBRARIES AND WIN32 )
-
-#    set( Qt5_DIR "C:/Qt/5.6/msvc2013/lib/cmake/Qt5" )
-#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#    include_directories( SYSTEM ${Qt5_DIR} )
-#    include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#    include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-
-
-#    set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
-#    find_package( GLEW REQUIRED )
-#    include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-
-
-#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-#    find_package( EIGEN3 REQUIRED )
-#    include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-#    add_definitions( -DEIGEN_DONT_ALIGN )
-
-
-
-#elseif( OWN_LIBRARIES AND UNIX )
-
-
-#    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-#    find_package( Eigen3 REQUIRED )
-#    if( EIGEN3_FOUND )
-#        include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-#        add_definitions( -DEIGEN_DONT_ALIGN )
-#    endif( EIGEN3_FOUND )
-
-#    find_package( GLEW REQUIRED )
-#    if( GLEW_FOUND )
-#        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-#    endif( GLEW_FOUND )
-
-
-#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#    if( Qt5COMPONENTS_FOUND )
-#        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-#    endif( Qt5COMPONENTS_FOUND )
-
-
-
-
-#else( OWN_LIBRARIES )
-
-
-#    find_package( Eigen3 REQUIRED )
-#    if( Eigen3_FOUND )
-#        include_directories( SYSTEM ${Eigen3_INCLUDE_DIR} )
-#        add_definitions( -DEIGEN_DONT_ALIGN )
-#    endif( Eigen3_FOUND )
-
-#    find_package( GLEW REQUIRED )
-#    if( GLEW_FOUND )
-#        include_directories( SYSTEM ${GLEW_INCLUDE_DIR} )
-#    endif( GLEW_FOUND )
-
-
-#    find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL )
-#    if( Qt5COMPONENTS_FOUND )
-#        include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-#        include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
-#    endif( Qt5COMPONENTS_FOUND )
-
-
-#endif( OWN_LIBRARIES AND WIN32 )
-
-
-
-
-
-#find_package( OpenGL REQUIRED )
-#if( OpenGL_FOUND )
-#    include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
-#endif( OpenGL_FOUND )
-
-
-
-
-
-#add_subdirectory( libs/PlanInLib EXCLUDE_FROM_ALL )
-#add_subdirectory( libs/SketchLibrary EXCLUDE_FROM_ALL )
-#add_subdirectory( libs/Arrangement2D EXCLUDE_FROM_ALL )
-
-
-
-################################################
-## Main source
-################################################
-
-#add_subdirectory( src )
-
-
-
-
-
 

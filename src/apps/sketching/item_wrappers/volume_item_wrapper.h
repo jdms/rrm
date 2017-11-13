@@ -15,7 +15,8 @@ class VolumeItemWrapper: public QGraphicsPathItem
 
         enum class Section{ XY, XZ };
 
-        VolumeItemWrapper( const Section& sec = Section::XY );
+        VolumeItemWrapper() = default;
+        VolumeItemWrapper( Volume* const& vol_, const Section& sec_ = Section::XY );
 
 
         void setRawVolume( Volume* const& vol );
@@ -30,6 +31,10 @@ class VolumeItemWrapper: public QGraphicsPathItem
         double getWidth() const ;
 
 
+        void startPoint( const QPointF& origin_ );
+
+
+        void resize( const QPointF& end_ );
         void resize( double width, double height, double ox = 0.0, double oy = 0.0 );
         void updateItem();
 
@@ -52,6 +57,9 @@ class VolumeItemWrapper: public QGraphicsPathItem
         QPolygonF section_boundary;
         QPen countor_volume;
         QBrush fill_volume;
+
+        QPointF start;
+        QPointF end;
 
         Volume* raw;
         Section section;

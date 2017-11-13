@@ -39,9 +39,12 @@ void ColorPicker::createActions()
 
     connect( cd_picker_color, &QColorDialog::currentColorChanged, this, &ColorPicker::colorChanged );
     connect( cd_picker_color, &QColorDialog::colorSelected, [=]( const QColor& color_ )
-                                                { emit colorSelected( color_ ); } );
+                                                            { emit colorSelected( color_ ); } );
 
-//    connect( this, &ColorPicker::triggered, this, &ColorPicker::defineRandomColor );
+    connect( this, &ColorPicker::toggled, [=]( bool status_ ){
+                                          if( status_ == true ) setColor( cd_picker_color->currentColor() );
+                                          else defineRandomColor(); } );
+
 
 }
 
@@ -78,6 +81,8 @@ void ColorPicker::defineRandomColor()
     else
         c = cd_picker_color->currentColor();
 
+    setColor( c );
+
     emit colorSelected( c );
 
 }
@@ -94,4 +99,13 @@ QColor ColorPicker::randomColor()
     int g = distr( eng );
 
     return QColor( r, g, b );
+}
+
+
+void ColorPicker::setVisible( bool visible )
+{
+    QToolButton::setVisible( visible );
+    cd_picker_color->setVisible( visible );
+    wa_picker_color->setVisible( visible );
+    mn_picker_color->setVisible( visible );
 }

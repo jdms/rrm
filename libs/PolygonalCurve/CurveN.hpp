@@ -1405,5 +1405,19 @@ protected:
 typedef PolygonalCurve< double, 2, PointN< double, 2 >, VectorN< double, 2 > > Curve2D;
 typedef PointN< double, 2 >                                                Point2D;
 
+
+static Curve2D vectorToCurve2D( std::vector< double > source_ )
+{
+    Curve2D curve_;
+
+    std::size_t number_of_points = static_cast< std::size_t >( source_.size()/2 );
+    for( std::size_t i = 0; i < number_of_points; ++i )
+    {
+        curve_.push_back( Point2D( source_[ 2*i ], source_[ 2*i + 1 ] ) );
+    }
+
+    return curve_;
+}
+
 #endif // __CURVEN_HPP__
 

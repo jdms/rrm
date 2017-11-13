@@ -4,6 +4,7 @@ PagesStack::PagesStack()
 {
     createVolumePropertiesPage();
     createVolumeActions();
+    createObjectPropertiesPage();
     changeRangeSize( MAX_WIDTH, MAX_HEIGHT, MAX_DEPTH );
 }
 
@@ -18,7 +19,6 @@ void PagesStack::createVolumePropertiesPage()
 
 void PagesStack::createVolumeActions()
 {
-
 
     connect( wd_volume_resize.hs_width_volume, SIGNAL( sliderMoved(int) ),
              wd_volume_resize.sb_width_volume, SLOT( setValue(int) ) );
@@ -50,8 +50,6 @@ void PagesStack::createVolumeActions()
                                                          emit depthVolumeChanged( value ); } );
 
 
-
-
 }
 
 
@@ -63,13 +61,13 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     int h = static_cast< int > (height);
     int d = static_cast< int > (depth);
 
-    wd_volume_resize.hs_width_volume->setRange( 0, w );
-    wd_volume_resize.hs_height_volume->setRange( 0, h );
-    wd_volume_resize.hs_depth_volume->setRange( 0, d );
+    wd_volume_resize.hs_width_volume->setRange( 1, w );
+    wd_volume_resize.hs_height_volume->setRange( 1, h );
+    wd_volume_resize.hs_depth_volume->setRange( 1, d );
 
-    wd_volume_resize.sb_width_volume->setRange( 0, w );
-    wd_volume_resize.sb_height_volume->setRange( 0, h );
-    wd_volume_resize.sb_depth_volume->setRange( 0, d );
+    wd_volume_resize.sb_width_volume->setRange( 1, w );
+    wd_volume_resize.sb_height_volume->setRange( 1, h );
+    wd_volume_resize.sb_depth_volume->setRange( 1, d );
 
 
     wd_volume_resize.hs_width_volume->setSingleStep( SINGLE_STEP );
@@ -107,6 +105,19 @@ void PagesStack::setEnabledVolumeResize( bool status )
     wd_volume_resize.sb_depth_volume->setEnabled( status );
 }
 
+double PagesStack::getWidth()
+{
+    return static_cast<double>( wd_volume_resize.sb_width_volume->value() );
+}
+
+double PagesStack::getHeight()
+{
+    return static_cast<double>( wd_volume_resize.sb_height_volume->value() );
+}
+double PagesStack::getLenght()
+{
+    return static_cast<double>( wd_volume_resize.sb_depth_volume->value() );
+}
 
 
 void PagesStack::setVolumeWidth( double w )
@@ -126,9 +137,11 @@ void PagesStack::setVolumeDepth( double d )
 
 
 
-void PagesStack::createRulesHistoryPage()
+void PagesStack::createObjectPropertiesPage()
 {
-//    addWidget( gl_volume_resizing );
+    QWidget* wd_object_comments = new QWidget( this );
+    wd_object_properties.setupUi( wd_object_comments );
+    addWidget( wd_object_comments );
 }
 
 

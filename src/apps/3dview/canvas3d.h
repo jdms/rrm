@@ -2,6 +2,9 @@
 #define CANVAS3D_H
 
 
+
+#include <Tucano/Camera.hpp>
+#include <Tucano/Trackball.hpp>
 #include "scene3d.h"
 
 #include <QOpenGLWidget>
