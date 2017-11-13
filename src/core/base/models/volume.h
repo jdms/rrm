@@ -23,7 +23,6 @@ class Volume
         using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
 
 
-
         Volume();
 
 
@@ -62,6 +61,17 @@ class Volume
         void removeAllObjects();
 
 
+
+        void addTetrahedralFaces( const std::vector< std::size_t >& faces_ );
+        void setVertices( const std::vector< double >& vertices_  );
+
+
+        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_ );
+        void removeRegion( std::size_t index_ );
+        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_ ) const;
+        void removeAllRegions();
+
+
         bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
         bool removeCrossSection( std::size_t id_ );
         Volume::CrossSectionsContainer getCrossSections() const;
@@ -96,6 +106,11 @@ class Volume
 
         ObjectsContainer objects;
         CrossSectionsContainer csections;
+
+        std::vector< double > vertices;
+        std::vector< std::size_t > faces;
+        std::map< std::size_t, std::vector< std::size_t > > regions;
+
 
 };
 

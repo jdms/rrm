@@ -34,7 +34,7 @@ QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 
 add_executable(${PROJECT_NAME} WIN32 ${RCC_HEADERS} resources/rrm.rc )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp 3dViewApp stratmod planin )
+    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp 3dViewApp  ${STRATMODLIB}  )
 #stratmod planin)
 
 
@@ -58,7 +58,11 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/models )
 
+#add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+#    libs/stratmod/stratmod/lib/stratmod.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
+add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy
+    ${CMAKE_SOURCE_DIR}/libs/stratmod/stratmod/lib/stratmod.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
 if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 

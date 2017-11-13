@@ -95,6 +95,8 @@ class Controller
         bool createPreviewSurface();
 
 
+        void getOutputVolume();
+
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();

@@ -900,6 +900,24 @@ bool Controller::isDefineBelowActive()
 }
 
 
+
+void Controller::getOutputVolume()
+{
+    std::vector< double > vertices_;
+    std::vector< std::vector< std::size_t > > regions_;
+    rules_processor.getTetrahedralMesh( vertices_, regions_ );
+
+    Volume* vol1_ = new Volume();
+    vol1_->setVertices( vertices_ );
+
+    std::size_t number_of_regions = regions_.size();
+    for( std::size_t i = 0; i < number_of_regions; ++i )
+    {
+        vol1_->addRegion( i, regions_[ i ] );
+    }
+}
+
+
 void Controller::clear()
 {
 

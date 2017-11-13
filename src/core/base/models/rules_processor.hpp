@@ -39,6 +39,7 @@
 /* #include "sutilities.hpp" */
 //>>>>>>> origin/feature-stratmod_ref:src/Apps/MainWindow/rules_processor.hpp
 
+#include "./libs/PolygonalCurve/CurveN.hpp"
 #include "stratmod_wrapper.hpp"
 
 
