@@ -234,6 +234,49 @@ Volume::CrossSectionsContainer Volume::getCrossSections() const
 }
 
 
+
+void Volume::addTetrahedralFaces( const std::vector< std::size_t >& faces_ )
+{
+    faces.push_back( faces_[ 0 ] );
+    faces.push_back( faces_[ 1 ] );
+    faces.push_back( faces_[ 2 ] );
+
+    faces.push_back( faces_[ 0 ] );
+    faces.push_back( faces_[ 2 ] );
+    faces.push_back( faces_[ 3 ] );
+
+    faces.push_back( faces_[ 0 ] );
+    faces.push_back( faces_[ 3 ] );
+    faces.push_back( faces_[ 1 ] );
+
+    faces.push_back( faces_[ 1 ] );
+    faces.push_back( faces_[ 3 ] );
+    faces.push_back( faces_[ 2 ] );
+}
+
+
+
+void Volume::setVertices( const std::vector< double >& vertices_  )
+{
+    vertices.clear();
+    vertices.assign( vertices_.begin(), vertices_.end() );
+}
+
+
+void Volume::addRegion( std::size_t index_, const std::vector< std::size_t >& faces_ )
+{
+    regions[ index_ ] = faces_;
+    addTetrahedralFaces( faces_ );
+
+}
+
+void Volume::getRegion( std::size_t index_, std::vector< std::size_t >& faces_ ) const
+{
+    if( regions.find(index_ ) == regions.end() ) return;
+    faces_ = regions.at( index_ );
+}
+
+
 void Volume::setVisible( bool status_ )
 {
     is_visible = status_;

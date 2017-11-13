@@ -29,7 +29,8 @@ set( BASE_HEADERS constants/constants.hpp
                   models/surfaceshader.h
                   models/volumeshader.h
                   models/well.h
-                  models/rules_processor.hpp )
+                  models/rules_processor.hpp
+                  models/stratmod_wrapper.hpp )
 
 set( BASE_MOC_HEADERS models/slider.h )
 
