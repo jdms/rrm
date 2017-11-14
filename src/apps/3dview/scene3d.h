@@ -39,6 +39,9 @@ class Scene3d: public QObject, public Scene
         virtual void updateVolume();
         virtual void clearVolume();
 
+        void addOutputVolume( Volume* const& raw_ );
+        void updateOutputVolume();
+        void clearOutputVolume();
 
         virtual void addCrossSection( CrossSection* const& raw_ );
         void updateCrossSection( CrossSection* const& raw_ );
@@ -77,6 +80,7 @@ class Scene3d: public QObject, public Scene
         QSurface* surface;
 
         VolumeShader* volume;
+        VolumeShader* output_volume;
         CrossSectionsContainer csections;
         ObjectsContainer objects;
 

@@ -255,6 +255,11 @@ void Volume::addTetrahedralFaces( const std::vector< std::size_t >& faces_ )
 }
 
 
+void Volume::getFaces( std::vector< std::size_t >& faces_ ) const
+{
+    faces_.clear();
+    faces_.assign( faces.begin(), faces.end() );
+}
 
 void Volume::setVertices( const std::vector< double >& vertices_  )
 {
@@ -263,17 +268,26 @@ void Volume::setVertices( const std::vector< double >& vertices_  )
 }
 
 
-void Volume::addRegion( std::size_t index_, const std::vector< std::size_t >& faces_ )
+void Volume::getVertices( std::vector< double >& vertices_  ) const
+{
+    vertices_.clear();
+    vertices_.assign( vertices.begin(), vertices.end() );
+}
+
+
+void Volume::addRegion( std::size_t index_, const std::vector< std::size_t >& faces_, const Volume::Color& c_ )
 {
     regions[ index_ ] = faces_;
+    regions_colors[ index_ ] = c_;
     addTetrahedralFaces( faces_ );
 
 }
 
-void Volume::getRegion( std::size_t index_, std::vector< std::size_t >& faces_ ) const
+void Volume::getRegion( std::size_t index_, std::vector< std::size_t >& faces_, Volume::Color& c_ ) const
 {
     if( regions.find(index_ ) == regions.end() ) return;
     faces_ = regions.at( index_ );
+    c_ = regions_colors.at( index_ );
 }
 
 
@@ -300,6 +314,11 @@ bool Volume::isResizable() const
     return is_resizable;
 }
 
+
+bool Volume::isEmpty() const
+{
+    return vertices.empty();
+}
 
 void Volume::removeAllObjects()
 {
@@ -328,6 +347,17 @@ void Volume::removeAllCrossSections()
 
 void Volume::clear()
 {
+
+
+    vertices.clear();
+    faces.clear();
+    for( auto id = 0; id < regions.size(); ++id )
+    {
+        regions[id].clear();
+    }
+    regions.clear();
+
+
     removeAllCrossSections();
     removeAllObjects();
     initialize();

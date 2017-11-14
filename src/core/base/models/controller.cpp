@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <random>
 
 #include "controller.h"
 
@@ -237,6 +238,36 @@ bool Controller::addObject()
 }
 
 
+bool Controller::addObject( std::size_t index_ )
+{
+
+    Object* obj_ = new Object();
+    obj_->setIndex( index_ );
+    current_object = index_;
+
+    double w = 0, h = 0,  l = 0;
+    double minx_ = 0, miny_ = 0, minz_ = 0;
+
+    volume->getOrigin( minx_, miny_, minz_ );
+    volume->getGeometry( w, h, l );
+
+
+    obj_->setMaxMin( minx_ + w, miny_ + h, minz_ + l, minx_, miny_, minz_ );
+    obj_->setColor( current_color.r, current_color.g, current_color.b );
+
+    bool status_ = objects.addElement( current_object, obj_ );
+    if( status_ == false ) return false;
+
+    volume->addObject( current_object, obj_ );
+
+    object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
+                            obj_->getName(), current_color.r, current_color.g, current_color.b );
+    scene3d->addObject( obj_ );
+
+    return true;
+}
+
+
 bool Controller::addObjectCurve( PolyCurve curve_ )
 {
 
@@ -387,6 +418,34 @@ bool  Controller::getObjectVisibility( std::size_t index_ )
     return obj_->isVisible();
 }
 
+
+void Controller::saveObjectInformation( std::size_t index_, const std::string & text_ )
+{
+    if( objects.findElement( index_ ) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->saveInformation( text_ );
+}
+
+const std::string& Controller::getObjectInformation( std::size_t index_ )
+{
+    if( objects.findElement( index_ ) == false )
+        return std::string();
+
+    Object* const& obj_ = objects.getElement( index_ );
+    return obj_->getInformation();
+}
+
+
+void Controller::clearObjectInformation( std::size_t index_ )
+{
+    if( objects.findElement( index_ ) == false )
+        return;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->clearInformation();
+}
 
 
 Object* Controller::getCurrentObject()
@@ -910,22 +969,103 @@ void Controller::getOutputVolume()
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );
 
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+
+
+
     std::size_t number_of_regions = regions_.size();
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
-        vol1_->addRegion( i, regions_[ i ] );
+        Volume::Color color_;
+        color_.r = distr( eng );
+        color_.b = distr( eng );
+        color_.g = distr( eng );
+
+        vol1_->addRegion( i, regions_[ i ], color_ );
     }
+    scene3d->addOutputVolume( vol1_ );
+}
+
+
+void Controller::saveFile( const std::string& filename )
+{
+    rules_processor.saveFile( filename );
+}
+
+void Controller::loadFile( const std::string& filename )
+{
+    rules_processor.loadFile( filename );
+    loadObjects();
+}
+
+
+void Controller::loadObjects()
+{
+    if( volume == nullptr ) return;
+
+    double ox, oy, oz;
+    double width, height, depth;
+
+    rules_processor.getOrigin( ox, oy, oz );
+    rules_processor.getLenght( width, height, depth );
+
+
+    volume->setOrigin( ox, oy, oz );
+    setVolumeDimensions( width, height, depth );
+
+    if( objects.findElement( current_object ) == true )
+    {
+        objects.removeElement( current_object );
+//        scene3d->removeObject( current_object );
+    }
+
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    std::size_t number_of_objects = actives.size();
+    std::vector< int > colors = createVectorOfColors( number_of_objects );
+
+    std::size_t i = 0;
+    for( auto id: actives )
+    {
+        addObject( id );
+        setObjectColor( id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
+//        addObjectToInterface();
+        ++i;
+    }
+
+    addObject();
+    updateModel();
+
+}
+
+
+std::vector< int > Controller::createVectorOfColors( std::size_t number_of_colors )
+{
+
+    std::vector< int > colors;
+    colors.resize( 3*number_of_colors );
+
+    for( std::size_t i = 0; i < number_of_colors; ++i )
+    {
+        std::random_device rd;
+        std::mt19937 eng( rd() );
+        std::uniform_int_distribution< size_t > distr( 0, 255 );
+        colors[ 3*i ] = distr( eng );
+        colors[ 3*i + 1 ] = distr( eng );
+        colors[ 3*i + 2 ] = distr( eng );
+    }
+
+    return colors;
 }
 
 
 void Controller::clear()
 {
 
-
     scene3d->clear();
     volume->clear();
-
-
 
 
     std::vector< double > diff;

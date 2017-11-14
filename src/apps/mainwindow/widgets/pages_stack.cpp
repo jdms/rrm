@@ -1,3 +1,8 @@
+#include <QTextDocument>
+#include <QString>
+
+#include <iostream>
+
 #include "pages_stack.h"
 
 PagesStack::PagesStack()
@@ -142,8 +147,22 @@ void PagesStack::createObjectPropertiesPage()
     QWidget* wd_object_comments = new QWidget( this );
     wd_object_properties.setupUi( wd_object_comments );
     addWidget( wd_object_comments );
+
+    connect( wd_object_properties.te_object_properties, &QTextEdit::textChanged, [=]() {
+            QString text_ = wd_object_properties.te_object_properties->toPlainText();
+            std::cout << "Edited: " << text_.toStdString().c_str() << std::flush << std::endl;
+            emit saveText( text_ );
+    } );
 }
 
+
+void PagesStack::loadObjectInformation( const std::string& text_ )
+{
+    QString obj_text_( text_.c_str() );
+    wd_object_properties.te_object_properties->clear();
+    wd_object_properties.te_object_properties->setPlainText( obj_text_ );
+
+}
 
 void PagesStack::clear()
 {

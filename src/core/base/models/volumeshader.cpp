@@ -18,7 +18,8 @@ VolumeShader::VolumeShader( Volume* const& raw_ )
 void VolumeShader::setVolume( Volume* const& raw_ )
 {
     raw = raw_;
-    createVolumeMesh();
+    if( raw->isEmpty() == true)
+        createVolumeMesh();
 }
 
 
@@ -90,6 +91,9 @@ void VolumeShader::createVolumeMesh()
 
     updateGeometryBuffers( wireframe, defineVolumeNormals() );
 }
+
+
+
 
 
 std::vector< float > VolumeShader::defineVolumeNormals() const
