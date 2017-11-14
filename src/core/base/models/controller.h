@@ -66,6 +66,7 @@ class Controller
 
 
         bool addObject();
+        bool addObject( std::size_t index_ );
         bool addObjectCurve( PolyCurve curve_ );
         bool removeObjectCurve( double csection_ );
 
@@ -74,6 +75,10 @@ class Controller
 
 
         Object* getCurrentObject();
+
+        void saveObjectInformation( std::size_t index_, const std::string & text_ );
+        const std::string& getObjectInformation( std::size_t index_ );
+        void clearObjectInformation( std::size_t index_ );
 
         void setObjectColor( std::size_t index_, int r_, int g_, int b_);
         void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
@@ -136,6 +141,12 @@ class Controller
 
         bool redo();
         bool canRedo();
+
+
+        void saveFile( const std::string& filename );
+        void loadFile( const std::string& filename );
+        void loadObjects();
+        std::vector< int > createVectorOfColors( std::size_t number_of_colors );
 
 
         bool isDefineAboveActive();

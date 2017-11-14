@@ -159,6 +159,11 @@ void MainWindow::createToolbar()
                                                    ac_remove_above->setChecked( true );  ac_sketch_above->setCheckable( false );
                                                    ac_sketch_below->setCheckable( false ); } );
 
+
+
+    QAction* ac_output_volume = new QAction( "Get Regions", this );
+    connect( ac_output_volume, &QAction::triggered, [=](){ controller->getOutputVolume(); } );
+
     QToolBar* tb_mainwindow = new QToolBar();
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
@@ -168,6 +173,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addAction( ac_sketch_above );
     tb_mainwindow->addAction( ac_sketch_below );
     tb_mainwindow->addActions( ag_rules->actions() );
+    tb_mainwindow->addAction( ac_output_volume );
 
     addToolBar( tb_mainwindow );
 
@@ -237,9 +243,21 @@ void MainWindow::createBottombar()
             object_properties->setCurrentIndex( 0 );
         else
             object_properties->setCurrentIndex( 1 );
+
+        std::string text_ = controller->getObjectInformation( obj_item_->getIndex() );
+        object_properties->loadObjectInformation( text_ );
     } );
 
 
+    connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ )
+    {
+        QList< QTreeWidgetItem* > list = object_tree->selectedItems();
+        if (list.empty() == true ) return;
+        ObjectTreeItem* item_ = static_cast< ObjectTreeItem* >( list[ 0 ] );
+        std::cout << item_->getIndex() << std::endl << std::flush;
+        std::size_t index_ = item_->getIndex();
+        controller->saveObjectInformation( index_, text_.toStdString() );
+    } );
 
 
 
@@ -259,120 +277,9 @@ void MainWindow::createSketchingWindow()
     connect( this, &MainWindow::defineMainCrossSection, [=]( double v ){ controller->setMainCrossSection( CrossSection::Direction::Z, v );
                                                                          sketch_window->setMainCanvas( controller->getCrossSection( v ) );
                                                                          sketch_window->setCurrentCrossSection( v );
-                                                                         controller->addTopViewCrossSection();
-                                                                         sketch_topview_window->setMainCanvas( controller->getTopViewCrossSection() ); } );
+                                                                         /*controller->addTopViewCrossSection();
+                                                                         sketch_topview_window->setMainCanvas( controller->getTopViewCrossSection() );*/ } );
 
-
-    connect( this, &MainWindow::setUpColor, sketch_window, &SketchWindow::setUpColor );
-    connect( this, &MainWindow::updateVolume, sketch_window, &SketchWindow::updateVolumes );
-    connect( this, &MainWindow::addObject, sketch_window, &SketchWindow::addObject );
-    connect( this, &MainWindow::updateObject, sketch_window, &SketchWindow::updateObject );
-    connect( this, &MainWindow::updateObjects, sketch_window, &SketchWindow::updateCanvas );
-
-
-
-
-
-    connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w, double l ){ controller->acceptVolumeDimensions( dir_, w, l );
-                                                                                                                  emit updateVolume(); } );
-
-    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ bool status_ = controller->addObjectCurve( curve_ );
-                                                                                        if( status_ == false ) return;
-                                                                                        emit updateObjects();
-
-                                                                                        double depth_ = controller->getCurrentCrossSection();
-                                                                                        CrossSection* cs_ = controller->getCrossSection( depth_ );
-                                                                                        emit addCrossSection( cs_ );
-
-                                                                                        /*controller->addObject();
-                                                                                        object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
-
-                                                                                        emit addObject( controller->getCurrentObject() );
-                                                                                        emit setUpColor();
-
-                                                                                        checkUndoRedo();*/ } );
-
-
-    connect( sketch_window, &SketchWindow::commitObject, [=](){ bool status_ = controller->createObjectSurface();
-                                                                if( status_ == false ) return;
-
-                                                                controller->addObject();
-                                                                object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
-
-                                                                emit addObject( controller->getCurrentObject() );
-                                                                emit setUpColor();
-
-                                                                checkUndoRedo();
-
-                                                            } );
-
-    connect( sketch_window, &SketchWindow::setAsCurrent, [=]( double depth_ ){  controller->setCurrentCrossSection( depth_ ); } );
-
-    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ ) {
-                                                               controller->setCurrentColor( color_.red(), color_.green(), color_.blue() ); });
-
-
-
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ controller->setObjectAsBoundering( index_ );                                                                                      
-                                                                                      sketch_window->setModeSketching();
-                                                                                      emit updateObjects(); } );
-
-
-    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v ){ controller->addCrossSection( CrossSection::Direction::Z, v );
-                                                                                        sketch_window->addCanvas( controller->getCrossSection( v ) ); } );
-
-    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){   controller->removeCrossSection( CrossSection::Direction::Z, v );
-                                                                                     sketch_window->removeCanvas( controller->getCrossSection( v ) ); } );
-
-    connect( sl_depth_csection, &RealFeaturedSlider::hightlightValue, [=]( double v ){  controller->setCurrentCrossSection( v );
-                                                                                        sketch_window->highlightCanvas( controller->getCrossSection( v ) ); }  );
-
-    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
-
-
-
-
-    connect( object_tree, &ObjectTree::setVolumeVisible, [=](){ sketch_window->updateVolumes(); } );
-
-
-    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_ ) { sketch_window->updateObject( index_ ); } );
-
-    connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
-                                                       { controller->setObjectColor( index_, color_.red(), color_.green(), color_.blue() );
-                                                         sketch_window->updateObject( index_ ); } );
-
-
-
-    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ) {
-                                                 bool enabled_ = controller->enableCreateAbove( status_ );
-
-                                                 if( ( status_ == false ) && ( enabled_ == true ) )
-                                                 {
-                                                     std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
-                                                     ac_sketch_above->setChecked( true );
-                                                 }
-                                                 if( ( status_ == true ) && ( enabled_ == false ) )
-                                                 {
-                                                     std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
-                                                     ac_sketch_above->setChecked( false );
-                                                 }
-
-                                                 if( ( status_ == true ) && ( enabled_ == true ) )
-                                                 {
-                                                     std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
-                                                     std::cout << "and mark them as selectable" << std::endl << std::flush;
-                                                     sketch_window->setModeSelecting();
-                                                     emit updateObjects();
-
-                                                 }
-                                                 if( ( status_ == false ) && ( enabled_ == false ) )
-                                                 {
-                                                     std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
-                                                     std::cout << "and mark them as non-selectable" << std::endl << std::flush;
-                                                     sketch_window->setModeSketching();
-                                                     emit updateObjects();
-                                                 }
-    } );
 
 
     connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ) {
@@ -407,36 +314,36 @@ void MainWindow::createSketchingWindow()
 
 
 
-    sketch_topview_window = new SketchWindow();
-    dw_topview_window = new QDockWidget( "Top-View" );
-    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_topview_window->setWidget( sketch_topview_window );
-    dw_topview_window->setVisible( true );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+//    sketch_topview_window = new SketchWindow();
+//    dw_topview_window = new QDockWidget( "Top-View" );
+//    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+//    dw_topview_window->setWidget( sketch_topview_window );
+//    dw_topview_window->setVisible( true );
+//    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
-    connect( this, &MainWindow::updateVolume, sketch_topview_window, &SketchWindow::updateVolumes );
-    connect( this, &MainWindow::addObject, sketch_topview_window, &SketchWindow::addTrajectory );
-    connect( this, &MainWindow::updateObject, sketch_topview_window, &SketchWindow::updateTrajectory );
-    connect( this, &MainWindow::updateObjects, sketch_topview_window, &SketchWindow::updateTrajectories );
-    connect( this, &MainWindow::addCrossSection, sketch_topview_window, &SketchWindow::addCrossSection );
+//    connect( this, &MainWindow::updateVolume, sketch_topview_window, &SketchWindow::updateVolumes );
+//    connect( this, &MainWindow::addObject, sketch_topview_window, &SketchWindow::addTrajectory );
+//    connect( this, &MainWindow::updateObject, sketch_topview_window, &SketchWindow::updateTrajectory );
+//    connect( this, &MainWindow::updateObjects, sketch_topview_window, &SketchWindow::updateTrajectories );
+//    connect( this, &MainWindow::addCrossSection, sketch_topview_window, &SketchWindow::addCrossSection );
 
 
-    connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ bool status_ = controller->addObjectTrajectory( curve_ );
-                                                                                        if( status_ == false ) return;
-                                                                                        emit updateObjects(); } );
+//    connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ ){ bool status_ = controller->addObjectTrajectory( curve_ );
+//                                                                                        if( status_ == false ) return;
+//                                                                                        emit updateObjects(); } );
 
 
-    connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ bool status_ = controller->createObjectSurface();
-                                                                        if( status_ == false ) return;
+//    connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ bool status_ = controller->createObjectSurface();
+//                                                                        if( status_ == false ) return;
 
-                                                                        controller->addObject();
-                                                                        object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
+//                                                                        controller->addObject();
+//                                                                        object_properties->setEnabledVolumeResize( controller->isVolumeResizable() );
 
-                                                                        emit addObject( controller->getCurrentObject() );
-                                                                        emit setUpColor();
+//                                                                        emit addObject( controller->getCurrentObject() );
+//                                                                        emit setUpColor();
 
-                                                                        checkUndoRedo(); } );
+//                                                                        checkUndoRedo(); } );
 
 }
 

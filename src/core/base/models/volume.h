@@ -18,6 +18,12 @@ class Volume
 
     public:
 
+        struct Color
+        {
+          int r = 255;
+          int g = 0;
+          int b = 0;
+        };
 
         using ObjectsContainer = Container< std::size_t, Object* >;
         using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
@@ -63,12 +69,14 @@ class Volume
 
 
         void addTetrahedralFaces( const std::vector< std::size_t >& faces_ );
+        void getFaces( std::vector< std::size_t >& faces_ ) const ;
         void setVertices( const std::vector< double >& vertices_  );
+        void getVertices( std::vector< double >& vertices_  ) const;
 
 
-        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_ );
+        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_, const Volume::Color& c_ );
         void removeRegion( std::size_t index_ );
-        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_ ) const;
+        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_, Volume::Color& c_ ) const;
         void removeAllRegions();
 
 
@@ -86,11 +94,14 @@ class Volume
         bool isResizable() const;
 
 
+        bool isEmpty() const;
+
         void clear();
         void initialize();
 
 
     private:
+
 
         double origin_x;
         double origin_y;
@@ -110,6 +121,7 @@ class Volume
         std::vector< double > vertices;
         std::vector< std::size_t > faces;
         std::map< std::size_t, std::vector< std::size_t > > regions;
+        std::map< std::size_t, Color > regions_colors;
 
 
 };

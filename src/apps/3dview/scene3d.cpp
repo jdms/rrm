@@ -53,6 +53,36 @@ void Scene3d::clearVolume()
 }
 
 
+void Scene3d::addOutputVolume( Volume* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    clearOutputVolume();
+    output_volume = new VolumeShader( raw_ );
+
+    emit updateCanvas();
+
+}
+
+
+void Scene3d::updateOutputVolume()
+{
+    if( output_volume == nullptr ) return;
+
+    output_volume->update();
+    emit updateCanvas();
+
+}
+
+void Scene3d::clearOutputVolume()
+{
+    if( output_volume != nullptr )
+        delete output_volume;
+    output_volume = nullptr;
+}
+
+
+
 void Scene3d::addCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );

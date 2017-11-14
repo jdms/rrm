@@ -58,6 +58,10 @@ class Object
         void setActive( const bool status_ );
         bool isActive() const;
 
+        void saveInformation( const std::string& text_ );
+        const std::string& getInformation();
+        void clearInformation();
+
 
         bool isEmpty() const;
 
@@ -115,6 +119,8 @@ class Object
 
         Type type;
 
+        std::string text_information;
+
         bool is_editable;
         bool is_selectable;
         bool is_selected;
@@ -142,6 +148,7 @@ class Object
 
 
         const std::size_t CHANNEL_MAX_CSECTIONS = 1;
+
 };
 
 #endif // OBJECT_H

@@ -130,6 +130,26 @@ bool Object::isActive() const
 
 
 
+void Object::saveInformation( const std::string& text_ )
+{
+    clearInformation();
+    text_information = text_;
+
+}
+
+
+const std::string& Object::getInformation()
+{
+    return text_information;
+}
+
+
+void Object::clearInformation()
+{
+    text_information.clear();
+}
+
+
 bool Object::isEmpty() const
 {
     return csection_curves.empty();
@@ -289,6 +309,7 @@ void Object::clear()
 {
 
     name.clear();
+    clearInformation();
 
     removeCrossSectionCurves();
     removeTrajectory();

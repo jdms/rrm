@@ -34,12 +34,15 @@ class PagesStack: public QStackedWidget
         void setVolumeHeight( double h );
         void setVolumeDepth( double d );
 
+        void loadObjectInformation( const std::string& text_ );
+
 
     signals:
 
         void widthVolumeChanged( int value );
         void heightVolumeChanged( int value );
         void depthVolumeChanged( int value );
+        void saveText( const QString& text_ );
 
 
     protected:
