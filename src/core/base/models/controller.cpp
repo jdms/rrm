@@ -969,6 +969,9 @@ void Controller::getOutputVolume()
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );
 
+    scene3d->addOutputVolume( vol1_ );
+    object_tree->addOutputVolume();
+
     std::random_device rd;
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
@@ -985,8 +988,10 @@ void Controller::getOutputVolume()
         color_.g = distr( eng );
 
         vol1_->addRegion( i, regions_[ i ], color_ );
+        std::string name_ = "Region" + std::to_string( i );
+        object_tree->addRegion( i, name_ , color_.r, color_.g, color_.b );
     }
-    scene3d->addOutputVolume( vol1_ );
+
 }
 
 

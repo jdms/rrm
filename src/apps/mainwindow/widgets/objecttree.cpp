@@ -100,6 +100,17 @@ void ObjectTree::addInputVolume()
 
 }
 
+void ObjectTree::addOutputVolume()
+{
+    ObjectTreeItem* vol_ = new ObjectTreeItem();
+    vol_->setText( COLUMN_NAME, "OUTPUT VOLUME" );
+    vol_->setType( ObjectTreeItem::Type::VOLUME );
+    vol_->setIndex( 1 );
+    vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
+    addTopLevelItem( vol_ );
+
+}
+
 
 void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type_,
                             const std::string& name_,  const int& red_,
@@ -143,6 +154,51 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 
     ObjectTreeItem* obj_ = items.getElement( index_ );
     obj_->setHidden( !status_ );
+}
+
+
+
+void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_,
+                const int& green_,  const int& blue_ )
+{
+    ObjectTreeItem* region_ = new ObjectTreeItem();
+    region_->setIndex( index_ );
+    region_->setType( ObjectTreeItem::Type::REGION );
+    region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
+    region_->setCheckState( COLUMN_STATUS, Qt::Checked );
+
+
+    ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
+    if( vol1_ == nullptr ) return;
+
+    vol1_->addChild( region_ );
+
+    ColorPicker* colorpicker_ = new ColorPicker( this );
+    colorpicker_->setMaximumWidth( 30 );
+    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
+    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
+
+    setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
+    regions.addElement( index_, region_ );
+}
+
+void ObjectTree::updateRegionColor( std::size_t index_, int red_, int green_, int blue_)
+{
+
+    if( regions.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* region_ = regions.getElement( index_ );
+    ColorPicker* cp_color_ = static_cast< ColorPicker* > ( itemWidget( region_, COLUMN_COLOR ) );
+    cp_color_->setColor( QColor( red_, green_, blue_ ) );
+}
+
+
+void ObjectTree::setRegionVisibility( std::size_t index_, bool status_ )
+{
+    if( regions.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* region_ = regions.getElement( index_ );
+    region_->setHidden( !status_ );
 }
 
 
