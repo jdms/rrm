@@ -18,6 +18,7 @@ class ObjectTree: public QTreeWidget
         ObjectTree( QWidget* parent = 0 );
 
         void addInputVolume();
+        void addOutputVolume();
 
 
         void addObject( std::size_t index_, const ObjectTreeItem::Type& type_,
@@ -26,7 +27,16 @@ class ObjectTree: public QTreeWidget
         void updateObjectColor( std::size_t index_, int red_, int green_, int blue_);
         void setObjectVisibility( std::size_t index_, bool status_ );
 
+
+        void addRegion( std::size_t index_, const std::string& name_,  const int& red_,
+                        const int& green_,  const int& blue_ );
+        void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
+        void setRegionVisibility( std::size_t index_, bool status_ );
+
+
         void clear();
+
+
 
     protected slots:
 
@@ -48,6 +58,7 @@ class ObjectTree: public QTreeWidget
 
         void setRegionVisible(  std::size_t index_, bool status_ );
         void setRegionName( std::size_t index_, const std::string& name_ );
+        void setRegionColor( std::size_t index_, const QColor& color_ );
 
 
 
@@ -59,6 +70,7 @@ class ObjectTree: public QTreeWidget
         const int COLUMN_COLOR = 2;
 
         Container< std::size_t, ObjectTreeItem* > items;
+        Container< std::size_t, ObjectTreeItem* > regions;
 
 
 };
