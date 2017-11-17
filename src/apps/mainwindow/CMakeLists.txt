@@ -11,6 +11,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 
 
 set( MAINWINDOW_HEADERS     mainwindow.h
+                            rrmapplication.h
                             widgets/realfeaturedslider.h
                             widgets/objecttree.h
                             widgets/objecttreeitem.h
@@ -30,6 +31,7 @@ set( MAINWINDOW_UI_SOURCES  widgets/volume_resize_widget.ui
 
 set( MAINWINDOW_SOURCES     main.cpp
                             mainwindow.cpp
+                            rrmapplication.cpp
                             widgets/realfeaturedslider.cpp
                             widgets/objecttree.cpp
                             widgets/objecttreeitem.cpp
