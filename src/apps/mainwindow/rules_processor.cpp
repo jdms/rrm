@@ -343,7 +343,7 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
     return u.getBackBoundary3DCurves(vertices, edges);
 }
 
-bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
+bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
     return false;
 }
