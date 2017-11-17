@@ -351,7 +351,7 @@ void Volume::clear()
 
     vertices.clear();
     faces.clear();
-    for( auto id = 0; id < regions.size(); ++id )
+    for( std::size_t id = 0; id < regions.size(); ++id )
     {
         regions[id].clear();
     }

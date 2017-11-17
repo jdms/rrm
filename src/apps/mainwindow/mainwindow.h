@@ -13,20 +13,26 @@ class QToolbar;
 class QSlider;
 
 
-
-class Canvas3d;
-class RealFeaturedSlider;
-class ObjectTree;
-class SketchWindow;
-class PagesStack;
+#include "3dview/canvas3d.h"
+#include "sketching/sketchwindow.h"
+#include "widgets/realfeaturedslider.h"
+#include "widgets/objecttree.h"
+#include "widgets/pages_stack.h"
 
 
 #include "./core/base/models/controller.h"
+#include "rrmapplication.h"
+
 
 
 class MainWindow: public QMainWindow
 {
     Q_OBJECT
+
+
+    friend class RRMApplication;
+
+
 
    public:
 
@@ -64,7 +70,6 @@ class MainWindow: public QMainWindow
         void createSketchingWindow();
         void createMainInterface();
         void createSidebar();
-        void createBottombar();
         void createToolbar();
 
 
@@ -85,24 +90,30 @@ class MainWindow: public QMainWindow
         int app_orig_y;
 
 
-        QHBoxLayout* hb_central_widget;
-        QWidget* central_widget;
 
         Controller* controller;
         Canvas3d* canvas3d;
-
         RealFeaturedSlider* sl_depth_csection;
 
-        QDockWidget* dw_object_tree;
+        QWidget* central_widget;
+        QHBoxLayout* hb_central_widget;
+
+
         ObjectTree* object_tree;
-        QDockWidget* dw_object_properties;
+        QDockWidget* dw_object_tree;
+
+
         PagesStack* object_properties;
+        QDockWidget* dw_object_properties;
 
-        QDockWidget* dw_sketchwindow;
+
         SketchWindow* sketch_window;
+        QDockWidget* dw_sketchwindow;
 
-        QDockWidget* dw_topview_window;
+
         SketchWindow* sketch_topview_window;
+        QDockWidget* dw_topview_window;
+
 
 
         QAction* ac_clear;
@@ -112,6 +123,10 @@ class MainWindow: public QMainWindow
 
         QAction* ac_undo;
         QAction* ac_redo;
+
+        RRMApplication* app;
+
+
 };
 
 #endif // MAINWINDOW_H
