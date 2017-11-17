@@ -31,7 +31,6 @@
 //// It includes the Window.h  ... OpenVolumMesh defines min/max in its own 
 #include "flow_computation/region.h"
 
-
 class FlowDiagnosticsInterface
 {
 
