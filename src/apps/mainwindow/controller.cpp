@@ -1105,6 +1105,15 @@ void Controller::defineObjectSelected( std::size_t id )
 }
 
 
+void Controller::getOutputVolume()
+{
+    std::vector< double > vertices_;
+    std::vector< std::vector< std::size_t > > regions_;
+    rules_processor.getTetrahedralMesh( vertices_, regions_ );
+
+
+}
+
 
 void Controller::saveFile( const std::string& filename )
 {
