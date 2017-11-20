@@ -263,8 +263,21 @@ void FlowVisualizationController::getPropertyArea( int& np, std::vector< double 
 /// @FIXME September
 void FlowVisualizationController::setFluidProperty(double _viscosity, double _bo, const double& _oildensity, const std::pair<int, int>& _phase_method)
 {
+    // Tells the FlowDiagnosticsInterface whether we want
+    // single-phase  := (_phase_method.first == 1), or
+    // multi-phase   := (_phase_method.first == 2)
+    // flow diagnostics
+    this->code_interface.setNumberOfPhases( _phase_method.first );
+
     this->code_interface.setViscosity(_viscosity);
     this->code_interface.setBo(_bo);
+
+    // Set water saturation by region  := (_phase_method.second == 1)
+    // Set water saturation by gravity := (_phase_method.second == 2)
+    // This should only be set if "multi-phase" diagnostics was selected
+    this->code_interface.setSaturationMethod( _phase_method.second );
+
+    // This should only be set if "multi-phase" diagnostics was selected
     this->code_interface.setOilGravity(_oildensity);
 
 

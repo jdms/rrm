@@ -691,6 +691,30 @@ void FlowWindow::loadSurfacesfromSketch1()
 
     canvas->updateTriangleMesh( vertices, faces );
 
+    /////// Changed here -- Clarissa
+
+
+    Tucano::BoundingBox3<double> bbox;
+    std::vector<Eigen::Vector3d> v;
+
+    for (std::size_t it = 0; it < vertices.size(); it += 3)
+    {
+        v.push_back(Eigen::Vector3d(vertices[it + 0], vertices[it + 1], vertices[it + 2]));
+    }
+
+    bbox.fromPointCloud(v.begin(), v.end());
+
+    well_parameters_->setBoundingBoxDimension(Eigen::Vector3d(bbox.Min().x(), bbox.Min().y(), bbox.Min().z()), Eigen::Vector3d(bbox.Max().x(), bbox.Max().y(), bbox.Max().z()));
+
+    well_scene_->setDimension(Eigen::Vector2f((bbox.Max().x()) - (bbox.Min().x()), (bbox.Max().y()) - (bbox.Min().y())), this->bounding_box_changed_);
+
+    this->bounding_box_changed_ = false;
+
+    this->well_canvas_->fitInView();
+
+    /// Well Module
+    canvas->updateWellsPosition(well_parameters_->getNumberOfWells(),well_parameters_->getWellsPosition(), well_parameters_->getWellsSign(), well_parameters_->getWellsRange());
+
 
 }
 
