@@ -71,6 +71,7 @@ class RRMApplication
 
     public:
 
+        enum class AxesDirection{ X, Y, Z };
 
 
         RRMApplication() = default;
@@ -79,12 +80,38 @@ class RRMApplication
 
 
         void init();
+        void setRRMDefaultValuesOnInterface();
 
+        void changeDimensionVolume( const AxesDirection& dir_, double value_ );
         void setVolumeDimensionsToController(  double width_, double height_, double length_ );
-        void getVolumeDimensionsFromController();
+        void getVolumeDimensionsFromController() const;
+
+        void setVolumeName( std::size_t index_, const std::string& name_ );
+        void setVolumeVisible( std::size_t index_, bool status_ );
+
+
+        void setCurrentCrossSection( double depth_ );
 
 
 
+        void setObjectName( std::size_t index_, const std::string& name_ );
+        void setObjectVisible( std::size_t index_, bool status_ );
+        void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
+
+        void saveObjectInformation( const std::string & text_ );
+        void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
+
+
+/*
+ * ObjectTreeItem* obj_item_ = static_cast< ObjectTreeItem* >( item_ );
+        if( obj_item_->getType() == ObjectTreeItem::Type::VOLUME )
+            object_properties->setCurrentIndex( 0 );
+        else
+            object_properties->setCurrentIndex( 1 );
+
+        std::string text_ = controller->getObjectInformation( obj_item_->getIndex() );
+        object_properties->loadObjectInformation( text_ );
+*/
 
 
 
@@ -93,16 +120,32 @@ class RRMApplication
 
 
 
-    std::unordered_map< AppsCommands, simple_method > runs;
-    std::unordered_map< CommonObjects, singleparams_sizet > adds, remove;
-    std::unordered_map< CommonObjects, singleparams_double > adds_double, remove_double;
+        std::unordered_map< AppsCommands, simple_method > runs;
+        std::unordered_map< CommonObjects, singleparams_sizet > adds, remove;
+        std::unordered_map< CommonObjects, singleparams_double > adds_double, remove_double;
 
-    std::unordered_map< CommonProperties, output_string > getters_string;
-    std::unordered_map< CommonProperties, output_bool > getters_bool;
-    std::unordered_map< CommonProperties, output_color > getters_color;
+        std::unordered_map< CommonProperties, output_string > getters_string;
+        std::unordered_map< CommonProperties, output_bool > getters_bool;
+        std::unordered_map< CommonProperties, output_color > getters_color;
 
 
-    MainWindow* mainwindow = nullptr;
+        MainWindow* mainwindow = nullptr;
+
+
+        const double VOLUME_WIDTH = 500;
+        const double VOLUME_HEIGHT = 500;
+        const double VOLUME_LENGTH = 500;
+
+        const CrossSection::Direction DEFAULT_CROSSSECTION_DIRECTION = CrossSection::Direction::Z;
+        const double DEFAULT_CROSSSECTION_DEPTHX = 0;
+        const double DEFAULT_CROSSSECTION_DEPTHY = 0;
+        const double DEFAULT_CROSSSECTION_DEPTHZ = 0;
+
+
+        std::size_t discretization = 1;
+        double step_csection = 1.0;
+
+
 
 };
 

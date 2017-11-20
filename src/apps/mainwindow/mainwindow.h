@@ -73,6 +73,11 @@ class MainWindow: public QMainWindow
         void createToolbar();
 
 
+        void createActions();
+        void createMainWindowActions();
+        void createSidebarActions();
+
+
         void createController();
         void setupController();
         void run_app();

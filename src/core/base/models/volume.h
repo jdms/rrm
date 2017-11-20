@@ -52,6 +52,10 @@ class Volume
         double getLenght() const;
 
 
+        void setName( const std::string name_ );
+        const std::string& getName() const;
+
+
         void getFrontFace( std::vector< double >& vertices_ ) const;
         void getRightFace( std::vector< double >& vertices_ ) const;
         void getBackFace( std::vector< double >& vertices_ ) const;
@@ -102,6 +106,8 @@ class Volume
 
     private:
 
+
+        std::string name = "VOLUME";
 
         double origin_x;
         double origin_y;
