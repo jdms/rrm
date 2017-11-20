@@ -74,14 +74,14 @@ class RRMApplication
 
 
         RRMApplication() = default;
-        RRMApplication( MainWindow* mw_ );
-        ~RRMApplication(){}
+//        RRMApplication( MainWindow* mw_ );
+//        ~RRMApplication(){}
 
 
-        void init();
+//        void init();
 
-        void setVolumeDimensionsToController(  double width_, double height_, double length_ );
-        void getVolumeDimensionsFromController();
+//        void setVolumeDimensionsToController(  double width_, double height_, double length_ );
+//        void getVolumeDimensionsFromController();
 
 
 

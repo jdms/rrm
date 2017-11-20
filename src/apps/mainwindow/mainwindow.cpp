@@ -16,11 +16,11 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
     setupWindowProperties();
     createWindow();
 
-    show();
+//    show();
 
 //    createController();
 //    setupController();
-    run_app();
+//    run_app();
 }
 
 
@@ -88,8 +88,8 @@ void MainWindow::createMainInterface()
 void MainWindow::createToolbar()
 {
 
-    QAction* ac_save = new QAction( "Save", this );
-    QAction* ac_load = new QAction( "Load", this );
+    ac_save = new QAction( "Save", this );
+    ac_load = new QAction( "Load", this );
 
     ac_clear = new QAction( "New", this );
 
@@ -126,7 +126,7 @@ void MainWindow::createToolbar()
 
     QAction* ac_output_volume = new QAction( "Get Regions", this );
 
-    QToolBar* tb_mainwindow = new QToolBar();
+    tb_mainwindow =  addToolBar( "Test ");
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
     tb_mainwindow->addAction( ac_load );
@@ -137,7 +137,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addAction( ac_output_volume );
 
-    addToolBar( tb_mainwindow );
+//    addToolBar( tb_mainwindow );
 
 
 }
@@ -218,8 +218,8 @@ void MainWindow::setupSlider()
 void MainWindow::run_app()
 {
 
-    app = new RRMApplication( this );
-    app->init();
+//    app = new RRMApplication( this );
+////    app->init();
 
 //    controller->init();
 //    setupSlider();
