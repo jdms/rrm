@@ -56,6 +56,7 @@ void MainWindow::createWindow()
 
     createToolbar();
 
+    createActions();
 }
 
 
@@ -183,6 +184,56 @@ void MainWindow::createSketchingWindow()
 }
 
 
+void MainWindow::createActions()
+{
+
+    createMainWindowActions();
+    createSidebarActions();
+
+}
+
+
+
+void MainWindow::createMainWindowActions()
+{
+
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double d_ ){ app->setCurrentCrossSection( d_ ); } );
+
+}
+
+
+
+void MainWindow::createSidebarActions()
+{
+
+    connect( object_tree, &ObjectTree::setVolumeName, [=]( std::size_t index_, const std::string& name_ ){ app->setVolumeName( index_, name_ ); } );
+
+    connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ ){ app->setVolumeVisible( index_, status_ ); } );
+
+
+    connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t index_, const std::string& name_ ){ app->setObjectName( index_, name_ ); } );
+
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ ){ app->setObjectVisible( index_, status_ ); } );
+
+    connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
+                                                       { app->setObjectColor( index_, color_.red(), color_.green(), color_.blue() ); } );
+
+    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) { app->getObjectInformation( item_ ); } );
+
+
+
+    connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
+                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::X, w_ ); } );
+    connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
+                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::Y, h_ ); } );
+    connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
+                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::Z, l_ ); } );
+
+
+    connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ ){ app->saveObjectInformation( text_.toStdString() ); } );
+
+
+}
 
 
 void MainWindow::createController()
@@ -230,38 +281,38 @@ void MainWindow::run_app()
 
 void MainWindow::checkUndoRedo()
 {
-    if( controller == nullptr ) return;
+//    if( controller == nullptr ) return;
 
-    ac_undo->setEnabled( controller->canUndo() );
-    ac_redo->setEnabled( controller->canRedo() );
+//    ac_undo->setEnabled( controller->canUndo() );
+//    ac_redo->setEnabled( controller->canRedo() );
 
-    checkSketchStatus();
+//    checkSketchStatus();
 }
 
 
 void MainWindow::checkSketchStatus()
 {
-    if( controller == nullptr ) return;
+//    if( controller == nullptr ) return;
 
-    ac_sketch_above->setChecked( controller->isDefineAboveActive() );
-    ac_sketch_below->setChecked( controller->isDefineBelowActive() );
-    emit updateObjects();
+//    ac_sketch_above->setChecked( controller->isDefineAboveActive() );
+//    ac_sketch_below->setChecked( controller->isDefineBelowActive() );
+//    emit updateObjects();
 }
 
 
 void MainWindow::clear()
 {
 
-    sketch_window->clear();
-    sketch_topview_window->clear();
-    controller->clear();
-    sl_depth_csection->clear();
+//    sketch_window->clear();
+//    sketch_topview_window->clear();
+//    controller->clear();
+//    sl_depth_csection->clear();
 
-    emit resetMenus();
-    emit resetWindows();
+//    emit resetMenus();
+//    emit resetWindows();
 
 
-    run_app();
+//    run_app();
 
 }
 

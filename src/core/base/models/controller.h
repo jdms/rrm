@@ -40,121 +40,145 @@ class Controller
 
         void addVolume();
 
-        void acceptVolumeDimensions( CrossSection::Direction dir_, double w_, double h_ );
+        void setVolumeOrigin( double ox_, double oy_, double oz_ );
+        void getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const;
+
         void setVolumeDimensions( const double& width_, const double& height_, const double& length_ );
         void getVolumeDimensions( double& width_, double& height_, double& length_ ) const;
+
+        void setVolumeName( const std::string& name_ );
+        const std::string& getVolumeName() const ;
 
         bool isVolumeResizable() const;
 
         void setVolumeVisibility( bool status_ );
         bool getVolumeVisibility() const;
+        void setupCrossSectionDiscretization( std::size_t& disc_, double& step_ );
 
 
-
-        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        CrossSection* getCrossSection( const double& depth_ );
-
-        void setCurrentCrossSection( const double& depth_ );
-        void updateCurrentCrossSection();
-        double getCurrentCrossSection();
-
-        void addTopViewCrossSection();
-        CrossSection* getTopViewCrossSection();
+        void addMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        void setCurrentCrossSection( double depth_ );
 
 
 
         bool addObject();
-        bool addObject( std::size_t index_ );
-        bool addObjectCurve( PolyCurve curve_ );
-        bool removeObjectCurve( double csection_ );
-
-        bool addObjectTrajectory( PolyCurve curve_ );
-        void removeObjectTrajectory();
-
-
-        Object* getCurrentObject();
+        void setObjectName( std::size_t index_, const std::string& name_ );
+        void setObjectVisibility( std::size_t index_, bool status_ );
+        void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
 
         void saveObjectInformation( std::size_t index_, const std::string & text_ );
-        const std::string& getObjectInformation( std::size_t index_ );
-        void clearObjectInformation( std::size_t index_ );
+        const std::string& getObjectInformation( std::size_t index_ ) const;
 
-        void setObjectColor( std::size_t index_, int r_, int g_, int b_);
-        void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
-
-        void setObjectName( std::size_t index_, const std::string& name_ );
-        std::string getObjectName( std::size_t index_ );
-
-        void setObjectVisibility( std::size_t index_, bool status_ );
-        bool getObjectVisibility( std::size_t index_ );
-
-
-        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
-        void setObjectAsSelected( std::size_t index_, bool status_ );
-
-
-        std::size_t getIndexCurrentObject() const;
-
-        bool createObjectSurface();
-        bool createPreviewSurface();
-
-
-        void getOutputVolume();
 
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
 
-        void setRemoveAbove();
-        void setRemoveAboveIntersection();
-        void setRemoveBelow();
-        void setRemoveBelowIntersection();
-        void applyStratigraphicRule();
+
+//        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
+//        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
+//        bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
+//        CrossSection* getCrossSection( const double& depth_ );
+
+//        void setCurrentCrossSection( const double& depth_ );
+//        void updateCurrentCrossSection();
+//        double getCurrentCrossSection();
+
+//        void addTopViewCrossSection();
+//        CrossSection* getTopViewCrossSection();
 
 
-        std::size_t setupCrossSectionDiscretization();
-        std::size_t indexCrossSection( double value_ ) const;
-        double depthCrossSection( std::size_t index_ ) const;
+
+//
+//        bool addObject( std::size_t index_ );
+//        bool addObjectCurve( PolyCurve curve_ );
+//        bool removeObjectCurve( double csection_ );
+
+//        bool addObjectTrajectory( PolyCurve curve_ );
+//        void removeObjectTrajectory();
 
 
-        void updateModel();
-        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ );
-        void updateObjectSurfaces( std::size_t object_id_ );
+//        Object* getCurrentObject();
+
+//        void saveObjectInformation( std::size_t index_, const std::string & text_ );
+//        const std::string& getObjectInformation( std::size_t index_ );
+//        void clearObjectInformation( std::size_t index_ );
+
+//        void setObjectColor( std::size_t index_, int r_, int g_, int b_);
+//        void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
+
+//        void setObjectName( std::size_t index_, const std::string& name_ );
+//        std::string getObjectName( std::size_t index_ );
+
+//        void setObjectVisibility( std::size_t index_, bool status_ );
+//        bool getObjectVisibility( std::size_t index_ );
 
 
-        bool enableCreateAbove( bool status_ );
-        void stopCreateAbove();
-        bool requestCreateAbove();
-
-        bool enableCreateBelow( bool status_ );
-        void stopCreateBelow();
-        bool requestCreateBelow();
+//        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
+//        void setObjectAsSelected( std::size_t index_, bool status_ );
 
 
-        void getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_);
-        void setObjectAsBoundering( std::size_t index_ );
+//        std::size_t getIndexCurrentObject() const;
+
+//        bool createObjectSurface();
+//        bool createPreviewSurface();
 
 
-        bool undo();
-        bool canUndo();
-
-        bool redo();
-        bool canRedo();
+//        void getOutputVolume();
 
 
-        void saveFile( const std::string& filename );
-        void loadFile( const std::string& filename );
-        void loadObjects();
-        std::vector< int > createVectorOfColors( std::size_t number_of_colors );
+//        void initRulesProcessor();
+//        void updateBoundingBoxRulesProcessor();
+
+//        void setRemoveAbove();
+//        void setRemoveAboveIntersection();
+//        void setRemoveBelow();
+//        void setRemoveBelowIntersection();
+//        void applyStratigraphicRule();
 
 
-        bool isDefineAboveActive();
-        bool isDefineBelowActive();
+
+//        std::size_t indexCrossSection( double value_ ) const;
+//        double depthCrossSection( std::size_t index_ ) const;
 
 
-        void clear();
-        void initializeData();
+//        void updateModel();
+//        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ );
+//        void updateObjectSurfaces( std::size_t object_id_ );
+
+
+//        bool enableCreateAbove( bool status_ );
+//        void stopCreateAbove();
+//        bool requestCreateAbove();
+
+//        bool enableCreateBelow( bool status_ );
+//        void stopCreateBelow();
+//        bool requestCreateBelow();
+
+
+//        void getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_);
+//        void setObjectAsBoundering( std::size_t index_ );
+
+
+//        bool undo();
+//        bool canUndo();
+
+//        bool redo();
+//        bool canRedo();
+
+
+//        void saveFile( const std::string& filename );
+//        void loadFile( const std::string& filename );
+//        void loadObjects();
+//        std::vector< int > createVectorOfColors( std::size_t number_of_colors );
+
+
+//        bool isDefineAboveActive();
+//        bool isDefineBelowActive();
+
+
+//        void clear();
+//        void initializeData();
 
     protected:
 
@@ -172,11 +196,11 @@ class Controller
         enum class BounderingRegion { ABOVE, BELOW };
 
 
-        Scene3d* scene3d;
-        ObjectTree* object_tree;
+        Scene3d* scene3d = nullptr;
+        ObjectTree* object_tree = nullptr;
 
 
-        Volume* volume;
+        Volume* volume = nullptr;
 
 
         struct Color

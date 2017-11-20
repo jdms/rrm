@@ -69,6 +69,20 @@ double Volume::getLenght() const
 }
 
 
+
+void Volume::setName( const std::string name_ )
+{
+    name.clear();
+    name = name_;
+}
+
+
+const std::string& Volume::getName() const
+{
+    return name;
+}
+
+
 void Volume::getFrontFace( std::vector< double >& vertices_ ) const
 {
     vertices_.push_back( origin_x );

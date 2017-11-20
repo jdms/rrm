@@ -10,7 +10,7 @@ ObjectTree::ObjectTree( QWidget *parent )
     setHeaderHidden( true );
     setColumnCount( COLUMNS_NUMBER );
 
-    connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
+//    connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
 
 }
 
@@ -115,14 +115,43 @@ void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type
     ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
     if( vol_ == nullptr ) return;
 
-    vol_->addChild( obj_ );
+
 
     ColorPicker* colorpicker_ = new ColorPicker( this );
-    colorpicker_->setMaximumWidth( 30 );
-    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
-    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
+    colorpicker_->setMaximumSize( 35, 30 );
 
-    setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
+
+    vol_->addChild( obj_ );
+
+
+    //=====
+
+
+//    ObjectTreeItem* item = new ObjectTreeItem( type, id );
+
+//    QCheckBox* checkbox = new QCheckBox( this );
+//    checkbox->setChecked( true );
+
+//    ColorPicker* colorpicker = new ColorPicker( this );
+//    colorpicker->setMaximumSize( 35, 30 );
+
+//    input_volume->addChild( item );
+//    setItemWidget( item, 0, checkbox );
+//    setItemWidget( item, 2, colorpicker );
+
+//    connect( checkbox, &QCheckBox::toggled,  [=](){ filterAction( item, 0 ); } );
+//    connect( colorpicker, &ColorPicker::colorSelected, [=](){ filterAction( item, 2 ); } );
+//    connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
+
+
+    //=====
+
+//    ColorPicker* colorpicker_ = new ColorPicker();
+//    colorpicker_->setMaximumWidth( 30 );
+//    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
+//    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
+
+    setItemWidget( obj_, 2, colorpicker_ );
     items.addElement( index_, obj_ );
 
 }
@@ -133,8 +162,8 @@ void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, in
     if( items.findElement( index_ ) == false ) return;
 
     ObjectTreeItem* obj_ = items.getElement( index_ );
-    ColorPicker* cp_color_ = static_cast< ColorPicker* > ( itemWidget( obj_, COLUMN_COLOR ) );
-    cp_color_->setColor( QColor( red_, green_, blue_ ) );
+//    ColorPicker* cp_color_ = static_cast< ColorPicker* > ( itemWidget( obj_, COLUMN_COLOR ) );
+//    cp_color_->setColor( QColor( red_, green_, blue_ ) );
 }
 
 void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
@@ -161,9 +190,9 @@ void ObjectTree::clear()
 
 //            obj_->clear();
 
-            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
-            removeItemWidget( obj_, COLUMN_COLOR );
-            delete colorpicker_;
+//            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+//            removeItemWidget( obj_, COLUMN_COLOR );
+//            delete colorpicker_;
 
             if( items.findElement( obj_->getIndex() ) == true )
             {
