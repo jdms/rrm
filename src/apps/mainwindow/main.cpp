@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 
 
     MainWindow w;
-    w.show();
+//    w.show();
 
 
 //    std::unordered_map< AppsCommands, method_void > runs;

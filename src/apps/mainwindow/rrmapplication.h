@@ -86,6 +86,7 @@ class RRMApplication
         void setVolumeDimensionsToController(  double width_, double height_, double length_ );
         void getVolumeDimensionsFromController() const;
 
+
         void setVolumeName( std::size_t index_, const std::string& name_ );
         void setVolumeVisible( std::size_t index_, bool status_ );
 

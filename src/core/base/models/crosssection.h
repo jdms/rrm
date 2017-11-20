@@ -24,7 +24,7 @@ class CrossSection
 
 
         CrossSection();
-        CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, const double depth_ );
+        CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, double depth_ );
 
         CrossSection& operator=( const CrossSection& other_ );
 
@@ -51,7 +51,7 @@ class CrossSection
 
 
         void setImagePath( const std::string& path_ );
-        std::string getImagePath() const;
+        const std::string& getImagePath();
 
 
         void setVisible( const bool status_ );
