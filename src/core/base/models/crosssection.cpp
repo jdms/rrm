@@ -11,7 +11,7 @@ CrossSection::CrossSection()
 }
 
 
-CrossSection::CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, const double depth_ )
+CrossSection::CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, double depth_ )
 {
     defineIndex();
     initialize();
@@ -160,7 +160,7 @@ void CrossSection::setImagePath( const std::string& path_ )
     image_path = path_;
 }
 
-std::string CrossSection::getImagePath() const
+const std::string& CrossSection::getImagePath()
 {
     return image_path;
 }

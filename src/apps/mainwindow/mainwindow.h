@@ -120,7 +120,10 @@ class MainWindow: public QMainWindow
         QDockWidget* dw_topview_window;
 
 
+        QToolBar* tb_mainwindow;
 
+        QAction* ac_save;
+        QAction* ac_load;
         QAction* ac_clear;
 
         QAction* ac_sketch_above;

@@ -26,7 +26,7 @@ void Controller::setCurrentColor( int r, int g, int b )
     current_color.g = g;
     current_color.b = b;
 
-//    setObjectColor( current_object, r, g, b );
+    setObjectColor( current_object, r, g, b );
 
 }
 
@@ -1065,23 +1065,6 @@ void Controller::updateBoundingBoxRulesProcessor()
 
 
 
-//bool Controller::isDefineBelowActive()
-//{
-//    std::size_t index_;
-
-//    bool status_ = rules_processor.defineBelowIsActive( index_ );
-//    if( status_ == false )
-//    {
-//        setObjectAsSelected( index_bottom_boundary, false );
-//        return false;
-//    }
-
-//    boundering_region = BounderingRegion::BELOW;
-//    setObjectAsBoundering( index_ );
-//    return true;
-//}
-
-
 
 //void Controller::getOutputVolume()
 //{
@@ -1123,6 +1106,7 @@ void Controller::updateBoundingBoxRulesProcessor()
 //    rules_processor.loadFile( filename );
 //    loadObjects();
 //}
+
 
 
 //void Controller::loadObjects()
