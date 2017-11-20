@@ -1036,7 +1036,6 @@ void Controller::loadObjects()
     {
         addObject( id );
         setObjectColor( id, colors[ 3*i ], colors[ 3*i + 1 ], colors[ 3*i + 2 ] );
-//        addObjectToInterface();
         ++i;
     }
 
