@@ -130,6 +130,17 @@ bool Object::isActive() const
 
 
 
+void Object::setDone( const bool status_ )
+{
+    is_done = status_;
+}
+
+
+bool Object::isDone() const
+{
+    return is_done;
+}
+
 void Object::saveInformation( const std::string& text_ )
 {
     clearInformation();
@@ -162,6 +173,15 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
     if( isCurveAdmissible() == false ) return false;
     csection_curves.addElement( csection_id_, curve_ );
     return true;
+}
+
+bool Object::hasCurve( double csection_id_ ) const
+{
+    if( csection_curves.findElement( csection_id_ ) == false )
+        return false;
+
+    return ( csection_curves.getElement( csection_id_ ).isEmpty() == false );
+
 }
 
 PolyCurve Object::getCurve( double csection_id_ )
@@ -328,6 +348,7 @@ void Object::initialize()
     is_selected = false;
     is_visible = false;
     is_active = true;
+    is_done = false;
 
     color.r = 255;
     color.g = 0;

@@ -82,7 +82,9 @@ class RRMApplication
         void init();
         void setRRMDefaultValuesOnInterface();
 
-        void changeDimensionVolume( const AxesDirection& dir_, double value_ );
+        void changeVolumeDimension( const AxesDirection& dir_, double value_ );
+        void changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ );
+
         void setVolumeDimensionsToController(  double width_, double height_, double length_ );
         void getVolumeDimensionsFromController() const;
 
@@ -103,7 +105,13 @@ class RRMApplication
         void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
 
 
+
+
+
         void initSketchingApp();
+        void updateSketchingCanvas();
+
+        void acceptSketchingCurve( const PolyCurve& curve_ );
 
 
     protected:

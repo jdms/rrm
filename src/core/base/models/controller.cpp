@@ -96,7 +96,6 @@ void Controller::getVolumeDimensions( double& width_, double& height_, double& l
 }
 
 
-
 void Controller::setVolumeName( const std::string& name_ )
 {
     volume->setName( name_ );
@@ -123,14 +122,16 @@ bool Controller::getVolumeVisibility() const
 
 
 
+
+
 void Controller::setupCrossSectionDiscretization( std::size_t& disc_, double& step_ )
 {
     if( volume == nullptr ) return;
 
     disc_ = rules_processor.getDepthResolution();
     step_ = static_cast< double >( volume->getLenght()/disc_ );
+    csection_step = step_;
 }
-
 
 
 void Controller::addMainCrossSection( const CrossSection::Direction& dir_, double depth_ )
@@ -147,6 +148,21 @@ CrossSection* Controller::getMainCrossSection( const CrossSection::Direction& di
     return main_csection;
 }
 
+
+void Controller::addTopViewCrossSection( double depth_ )
+{
+    topview_csection = new CrossSection( volume, CrossSection::Direction::Y, depth_ );
+//    scene3d->addCrossSection( main_csection );
+
+}
+
+
+CrossSection* Controller::getTopViewCrossSection() const
+{
+    return topview_csection;
+}
+
+
 void Controller::setCurrentCrossSection( double depth_ )
 {
 
@@ -154,7 +170,7 @@ void Controller::setCurrentCrossSection( double depth_ )
     if( main_csection == nullptr ) return;
     main_csection->setDepth( depth_ );
 
-//    updateCurrentCrossSection();
+    updateCurrentCrossSection();
     scene3d->updateCrossSection( main_csection );
 
     std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
@@ -162,8 +178,28 @@ void Controller::setCurrentCrossSection( double depth_ )
 }
 
 
+void Controller::updateCurrentCrossSection()
+{
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
+    for ( std::size_t id_: actives_ )
+    {
+        std::cout << "updating active " << id_ << std::endl << std::flush;
+        updateObjectCurveFromCrossSection( id_, current_csection );
+    }
+}
 
 
+CrossSection* Controller::getCrossSection( const double& depth_ ) const
+{
+    if( all_csections.findElement( depth_ ) == false ) return nullptr;
+    return all_csections.getElement( depth_ );
+}
+
+CrossSection* Controller::getCurrentCrossSection() const
+{
+    return getCrossSection( current_csection );
+}
 
 
 
@@ -197,7 +233,6 @@ bool Controller::addObject()
 }
 
 
-
 void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 {
     if( objects.findElement( index_) == false )
@@ -218,6 +253,7 @@ void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
     scene3d->updateObject( index_ );
 
 }
+
 
 void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
 {
@@ -241,6 +277,7 @@ void Controller::saveObjectInformation( std::size_t index_, const std::string & 
     obj_->saveInformation( text_ );
 }
 
+
 const std::string& Controller::getObjectInformation( std::size_t index_ ) const
 {
     if( objects.findElement( index_ ) == false )
@@ -249,6 +286,159 @@ const std::string& Controller::getObjectInformation( std::size_t index_ ) const
     Object* const& obj_ = objects.getElement( index_ );
     return obj_->getInformation();
 }
+
+
+bool Controller::addObjectCurve( PolyCurve curve_ )
+{
+
+    if( objects.findElement( current_object ) == false )
+        return false;
+
+    Object* const& obj_ = objects.getElement( current_object );
+    if( obj_->hasCurve( current_csection ) == false )
+    {
+        bool status_ = obj_->addCurve( current_csection, curve_ );
+        if( status_ == false )
+            return false;
+    }
+    else
+        obj_->updateCurve( current_csection, curve_ );
+
+
+    obj_->setEditable( true );
+    obj_->setVisible( true );
+
+
+
+    main_csection->addObject( obj_->getIndex(), &curve_ );
+
+
+    CrossSection* cs_ = new CrossSection( volume, CrossSection::Direction::Z, current_csection );
+    cs_->addObject( obj_->getIndex(), &curve_ );
+
+    volume->addCrossSection( cs_->getIndex(), cs_ );
+
+    if( all_csections.findElement( current_csection ) == false )
+        all_csections.addElement( current_csection, cs_ );
+
+
+    createPreviewSurface();
+
+
+    return true;
+
+}
+
+
+
+void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ )
+{
+    Object* obj_ = objects.getElement( object_id_ );
+    if( obj_->isDone() == true )
+    {
+
+        obj_->removeCurve( csection_depth_ );
+        if( all_csections.findElement( csection_depth_ ) == true )
+        {
+            CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+            csection_->removeObjectCurve( object_id_ );
+        }
+
+        getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+    }
+    else
+        updatePreviewCurves( obj_, csection_depth_ );
+}
+
+
+void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
+{
+
+    std::size_t object_id_ = obj_->getIndex();
+
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > edges_;
+    bool has_curve = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_depth_ ), vertices_, edges_ );
+    if( has_curve == false ) return;
+
+
+    PolyCurve curve_ = PolyCurve( vertices_, edges_ );
+    obj_->updateCurve( csection_depth_, curve_ );
+
+
+    if( all_csections.findElement( csection_depth_ ) == true )
+    {
+        CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+        csection_->addObject( object_id_, &curve_ );
+    }
+
+}
+
+
+void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
+{
+
+    bool has_user_curve = obj_->hasCurve( csection_depth_ );
+    has_user_curve &= all_csections.findElement( csection_depth_ );
+
+    if( has_user_curve == true ) return;
+
+    getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+}
+
+
+
+
+bool Controller::createPreviewSurface()
+{
+    Object* const& obj_ = objects.getElement( current_object );
+    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+
+    std::vector< std::tuple< Curve2D, double > > curves_;
+    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+    {
+        double csection_id_ = it->first;
+        PolyCurve sketch_ = it->second;
+
+        if( all_csections.findElement( csection_id_ ) == false )
+            continue;
+
+        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+    }
+
+
+    bool surface_created = rules_processor.testSurface( current_object, curves_ );
+    if( surface_created == false ) return false;
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > faces_;
+
+    bool has_surface = rules_processor.getMesh( current_object, vertices_, faces_ );
+    if( has_surface  == false ) return false;
+
+
+    std::vector< double > normals_;
+    rules_processor.getNormals( current_object, normals_ );
+
+
+    Surface surface;
+    surface.setVertices( vertices_ );
+    surface.setFaces( faces_ );
+    surface.setNormals( normals_ );
+
+    obj_->setActive( true );
+    obj_->setSurface( surface );
+    obj_->setVisible( true );
+
+    scene3d->updateObject( current_object );
+    return true;
+
+}
+
 
 
 
@@ -272,6 +462,11 @@ void Controller::updateBoundingBoxRulesProcessor()
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
     rules_processor.setMediumResolution();
 }
+
+
+
+
+
 
 
 
@@ -819,16 +1014,16 @@ void Controller::updateBoundingBoxRulesProcessor()
 //}
 
 
-//std::size_t Controller::indexCrossSection( double value_ ) const
-//{
-//    return static_cast< std::size_t > ( value_/csection_step );
-//}
+std::size_t Controller::indexCrossSection( double value_ ) const
+{
+    return static_cast< std::size_t > ( value_/csection_step );
+}
 
 
-//double Controller::depthCrossSection( std::size_t index_ ) const
-//{
-//    return static_cast< double > ( index_*csection_step );
-//}
+double Controller::depthCrossSection( std::size_t index_ ) const
+{
+    return static_cast< double > ( index_*csection_step );
+}
 
 
 

@@ -193,6 +193,9 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     if( raw->isActive() == false ) return;
     if( raw->isVisible() == false ) return;
 
+
+    bool is_preview_ = !raw->isDone();
+
     Eigen::Affine3f M;
     M.setIdentity();
 
@@ -203,6 +206,19 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
         shader->setUniform( "ProjectionMatrix" , P );
         shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
 
+
+        glEnable( GL_DEPTH_TEST );
+
+
+        if( is_preview_ == true )
+        {
+            glEnable( GL_BLEND );
+            glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else
+            glDisable( GL_BLEND );
+
+
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
         glEnable( GL_POLYGON_OFFSET_FILL );
@@ -212,7 +228,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
             glBindVertexArray( va_surface );
 
                 shader->setUniform( "solid" , true );
-                shader->setUniform( "testing" , true );
+                shader->setUniform( "testing" , is_preview_ );
 
                 glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
                 glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );

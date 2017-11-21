@@ -5,7 +5,7 @@
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-//    createWindow();
+    createWindow();
     createToolBar();
 }
 
@@ -40,8 +40,14 @@ void SketchWindow::createToolBar()
 
 void SketchWindow::createWindow()
 {
-//    cs = new CanvasStack();
-//    setCentralWidget( cs );
+    cs = new CanvasStack();
+
+    hb_central_widget = new QHBoxLayout( this );
+    hb_central_widget->addWidget( cs );
+
+    QWidget* central_widget = new QWidget( this );
+    central_widget->setLayout( hb_central_widget );
+    setCentralWidget( central_widget );
 
 }
 
@@ -52,27 +58,28 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
     QColor color_ = cp_color->currentColor();
     scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
 
+
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( CrossSection::Direction dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
 
     connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_ ){ emit acceptCurve( curve_ ); } );
 
-    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
-                                                                                               /*if( gview_ == main ) highlightCanvas( -1 );
-                                                                                               else highlightCanvas( depth_ );*/ } );
+//    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
+//                                                                                               /*if( gview_ == main ) highlightCanvas( -1 );
+//                                                                                               else highlightCanvas( depth_ );*/ } );
 
-    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
+//    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
-    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
+//    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
 
-    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
+//    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
 
-    connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
+//    connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
 
-    connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
+//    connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
 
-    connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
+//    connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ if( scene_ == nullptr ) return;  scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+//    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ if( scene_ == nullptr ) return;  scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
 
 
 }
@@ -89,20 +96,55 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     main = new QGraphicsView();
     main->setScene( scene_ );
 
-
-    cs = new CanvasStack();
-
-    QHBoxLayout* hb_central_widget = new QHBoxLayout( this );
-    hb_central_widget->addWidget( main );
-    hb_central_widget->addWidget( cs );
-
-    QWidget* central_widget = new QWidget( this );
-    central_widget->setLayout( hb_central_widget );
-    setCentralWidget( central_widget );
-
+    hb_central_widget->insertWidget( 0, main );
 
 }
 
+
+void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
+{
+    if( cs_ == nullptr ) return;
+
+    SketchScene* scene_ = new SketchScene( cs_ );
+    setupScene( scene_ );
+
+    tv_main = new QGraphicsView();
+    tv_main->setScene( scene_ );
+
+    hb_central_widget->insertWidget( 0, tv_main );
+
+}
+
+
+
+void SketchWindow::updateCanvas()
+{
+
+    if( main == nullptr ) return;
+
+    SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
+    sc_main_->updateCrossSection();
+
+//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+//    {
+//        QGraphicsView* gview_ = it->second;
+//        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+//        sc_->updateCrossSection();
+//    }
+
+}
+
+
+
+
+void SketchWindow::addCrossSection( CrossSection* const& cs_ )
+{
+    if( cs_ == nullptr ) return;
+
+    SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
+    sc_->addCrossSection( cs_ );
+
+}
 
 
 

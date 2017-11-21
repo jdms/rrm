@@ -59,8 +59,16 @@ class Controller
         void addMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
         CrossSection* getMainCrossSection( const CrossSection::Direction& dir_ ) const;
 
+        void addTopViewCrossSection( double depth_ );
+        CrossSection* getTopViewCrossSection() const;
+
 
         void setCurrentCrossSection( double depth_ );
+        void updateCurrentCrossSection();
+
+
+        CrossSection* getCrossSection( const double& depth_ ) const;
+        CrossSection* getCurrentCrossSection() const;
 
 
 
@@ -71,6 +79,13 @@ class Controller
 
         void saveObjectInformation( std::size_t index_, const std::string & text_ );
         const std::string& getObjectInformation( std::size_t index_ ) const;
+
+        bool addObjectCurve( PolyCurve curve_ );
+        bool createPreviewSurface();
+
+        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
+        void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
+        void updatePreviewCurves( Object* obj_, double csection_depth_ );
 
 
 
@@ -141,8 +156,8 @@ class Controller
 
 
 
-//        std::size_t indexCrossSection( double value_ ) const;
-//        double depthCrossSection( std::size_t index_ ) const;
+        std::size_t indexCrossSection( double value_ ) const;
+        double depthCrossSection( std::size_t index_ ) const;
 
 
 //        void updateModel();
@@ -225,7 +240,7 @@ class Controller
 
 
         RulesProcessor rules_processor;
-        double csection_step;
+        double csection_step = 1.0;
 
         StratigraphicRules current_rule = StratigraphicRules::REMOVE_ABOVE;
         std::vector< std::size_t > selectable_upper;

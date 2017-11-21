@@ -19,6 +19,7 @@ void RRMApplication::init()
     setRRMDefaultValuesOnInterface();
 
     mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
+    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
 
 
 }
@@ -64,7 +65,7 @@ void RRMApplication::getVolumeDimensionsFromController() const
 }
 
 
-void RRMApplication::changeDimensionVolume( const AxesDirection& dir_, double value_ )
+void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double value_ )
 {
     double ox_ = 0, oy_ = 0, oz_ = 0;
     mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
@@ -91,6 +92,32 @@ void RRMApplication::changeDimensionVolume( const AxesDirection& dir_, double va
         mainwindow->sl_depth_csection->setRange( oz_,  oz_ + value_ );
     }
 
+}
+
+
+void RRMApplication::changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ )
+{
+    double ox_ = 0, oy_ = 0, oz_ = 0;
+    mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
+
+    double width_ = 0, height_ = 0, length_ = 0;
+    mainwindow->controller->getVolumeDimensions( width_, height_, length_ );
+
+
+    if( dir_ == CrossSection::Direction::X )
+    {
+        mainwindow->controller->setVolumeDimensions( width_, dim2_, dim1_ );
+    }
+    else if( dir_ == CrossSection::Direction::Y )
+    {
+        mainwindow->controller->setVolumeDimensions( dim1_, height_, dim2_ );
+    }
+    else if( dir_ == CrossSection::Direction::Z )
+    {
+        mainwindow->controller->setVolumeDimensions( dim1_, dim2_, length_ );
+    }
+
+    getVolumeDimensionsFromController();
 }
 
 
@@ -163,4 +190,29 @@ void RRMApplication::initSketchingApp()
 {
     CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
     mainwindow->sketch_window->addMainCanvas( csection_ );
+
+    CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
+    mainwindow->sketch_topview_window->addTopViewCanvas( topview_ );
+}
+
+
+void RRMApplication::updateSketchingCanvas()
+{
+    mainwindow->sketch_window->updateCanvas();
+    mainwindow->sketch_topview_window->updateCanvas();
+}
+
+
+void RRMApplication::acceptSketchingCurve( const PolyCurve& curve_ )
+{
+
+    bool status_ = mainwindow->controller->addObjectCurve( curve_ );
+    if( status_ == false ) return;
+
+    CrossSection* csection_ = mainwindow->controller->getCurrentCrossSection();
+    mainwindow->sketch_topview_window->addCrossSection( csection_ );
+    
+    updateSketchingCanvas();
+    
+
 }
