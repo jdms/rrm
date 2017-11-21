@@ -81,11 +81,12 @@ class Controller
         const std::string& getObjectInformation( std::size_t index_ ) const;
 
         bool addObjectCurve( PolyCurve curve_ );
-        bool createPreviewSurface();
-
         void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
         void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
         void updatePreviewCurves( Object* obj_, double csection_depth_ );
+
+        bool createPreviewSurface();
+        bool createObjectSurface();
 
 
 

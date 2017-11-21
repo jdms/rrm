@@ -112,6 +112,7 @@ class RRMApplication
         void updateSketchingCanvas();
 
         void acceptSketchingCurve( const PolyCurve& curve_ );
+        void createObjectSurface();
 
 
     protected:

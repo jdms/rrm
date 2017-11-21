@@ -440,7 +440,53 @@ bool Controller::createPreviewSurface()
 }
 
 
+bool Controller::createObjectSurface()
+{
 
+//    Object* const& obj_ = objects.getElement( current_object );
+//    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+
+//    std::vector< std::tuple< Curve2D, double > > curves_;
+//    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+//    {
+//        double csection_id_ = it->first;
+//        PolyCurve sketch_ = it->second;
+
+//        CrossSection* csection_ = all_csections.getElement( csection_id_ );
+//        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+
+//        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+//    }
+
+//    applyStratigraphicRule();
+
+//    bool surface_created = false;
+//    if( obj_->hasTrajectory() == true )
+//    {
+//        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
+//        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
+//        double depth_ = std::get<1>( curves_[ 0 ] );
+
+//        surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
+//    }
+
+//    else
+//    {
+//        surface_created = rules_processor.createSurface( current_object, curves_ );
+//    }
+
+
+//    if( surface_created == false ) return false;
+
+//    obj_->removeCrossSectionCurves();
+//    obj_->removeTrajectory();
+//    obj_->setEditable( false );
+
+//    updateModel();
+
+    return true;
+
+}
 
 
 

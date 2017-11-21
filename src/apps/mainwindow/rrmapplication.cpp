@@ -214,5 +214,9 @@ void RRMApplication::acceptSketchingCurve( const PolyCurve& curve_ )
     
     updateSketchingCanvas();
     
+}
+
+void RRMApplication::createObjectSurface()
+{
 
 }
