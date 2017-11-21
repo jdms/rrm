@@ -58,6 +58,11 @@ class Object
         void setActive( const bool status_ );
         bool isActive() const;
 
+
+        void setDone( const bool status_ );
+        bool isDone() const;
+
+
         void saveInformation( const std::string& text_ );
         const std::string& getInformation();
         void clearInformation();
@@ -67,6 +72,7 @@ class Object
 
 
         bool addCurve( double csection_id_, const PolyCurve& curve_ );
+        bool hasCurve( double csection_id_ ) const;
         PolyCurve getCurve( double csection_id_ );
         bool removeCurve( double csection_id_ );
         void updateCurve( double csection_id_, const PolyCurve& curve_ );
@@ -126,6 +132,7 @@ class Object
         bool is_selected;
         bool is_visible;
         bool is_active;
+        bool is_done;
 
         CrossSectionsContainer csection_curves;
         Surface surface;

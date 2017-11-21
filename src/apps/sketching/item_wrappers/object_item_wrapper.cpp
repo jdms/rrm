@@ -49,6 +49,7 @@ void ObjectItemWrapper::updateState()
     int r, g, b;
     raw->getColor( r, g, b );
 
+
     QColor color_ = QColor( r, g, b );
     Qt::PenStyle style_ = Qt::SolidLine;
 
@@ -65,7 +66,6 @@ void ObjectItemWrapper::updateState()
         color_ = color_.lighter();
         style_ = Qt::DotLine;
     }
-
 
 
     current_pen.setColor( color_ );
@@ -160,6 +160,10 @@ void ObjectItemWrapper::paint( QPainter *painter, const QStyleOptionGraphicsItem
     if( isSelected() == true )
     {
         current_pen.setColor( Qt::blue );
+    }
+    if( raw->isDone() == false )
+    {
+        current_pen.setStyle( Qt::DotLine );
     }
 
     painter->setRenderHint( QPainter::Antialiasing );

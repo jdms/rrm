@@ -206,11 +206,11 @@ void MainWindow::createSidebarActions()
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
-                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::X, w_ ); } );
+                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::X, w_ ); } );
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
-                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::Y, h_ ); } );
+                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Y, h_ ); } );
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
-                                                                 { app->changeDimensionVolume( RRMApplication::AxesDirection::Z, l_ ); } );
+                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Z, l_ ); } );
 
 
     connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ ){ app->saveObjectInformation( text_.toStdString() ); } );
@@ -244,21 +244,13 @@ void MainWindow::createSketchingWindow()
 void MainWindow::createSketchingActions()
 {
 
-//    connect( )
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=](){ app->updateSketchingCanvas(); } );
 
-//    sketch_window = new SketchWindow();
-//    dw_sketchwindow = new QDockWidget( "Cross-Section" );
-//    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
-//    dw_sketchwindow->setWidget( sketch_window );
-//    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+    connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
+                                                         { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
-//    sketch_topview_window = new SketchWindow();
-//    dw_topview_window = new QDockWidget( "Top-View" );
-//    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-//    dw_topview_window->setWidget( sketch_topview_window );
-//    dw_topview_window->setVisible( true );
-//    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
-
+    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
+                                                        { app->acceptSketchingCurve( curve_ ); } );
 
 
 }
