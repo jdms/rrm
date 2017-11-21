@@ -142,6 +142,11 @@ void Controller::addMainCrossSection( const CrossSection::Direction& dir_, doubl
 }
 
 
+CrossSection* Controller::getMainCrossSection( const CrossSection::Direction& dir_ ) const
+{
+    return main_csection;
+}
+
 void Controller::setCurrentCrossSection( double depth_ )
 {
 

@@ -103,17 +103,7 @@ class RRMApplication
         void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
 
 
-/*
- * ObjectTreeItem* obj_item_ = static_cast< ObjectTreeItem* >( item_ );
-        if( obj_item_->getType() == ObjectTreeItem::Type::VOLUME )
-            object_properties->setCurrentIndex( 0 );
-        else
-            object_properties->setCurrentIndex( 1 );
-
-        std::string text_ = controller->getObjectInformation( obj_item_->getIndex() );
-        object_properties->loadObjectInformation( text_ );
-*/
-
+        void initSketchingApp();
 
 
     protected:

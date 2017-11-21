@@ -30,48 +30,50 @@ class SketchWindow: public QMainWindow
     public slots:
 
 
-        void setUpColor();
+        void addMainCanvas( CrossSection* const& cs_ );
 
-        void addCanvas( CrossSection* const& cs_, bool main_ = false );
-        void removeCanvas( CrossSection* const& cs_ );
-        void removeCanvas( double depth_ );
-        void highlightCanvas( CrossSection* const& cs_ );
-        void highlightCanvas( double depth_ );
-        void setMainCanvas( CrossSection* const& cs_ );
-        void updateCanvas();
+//        void setUpColor();
 
-
-        void updateVolumes();
-
-
-        void addObject( Object* const& obj_ );
-        void updateObject( const std::size_t& index_ );
+//        void addCanvas( CrossSection* const& cs_, bool main_ = false );
+//        void removeCanvas( CrossSection* const& cs_ );
+//        void removeCanvas( double depth_ );
+//        void highlightCanvas( CrossSection* const& cs_ );
+//        void highlightCanvas( double depth_ );
+//        void setMainCanvas( CrossSection* const& cs_ );
+//        void updateCanvas();
 
 
-        void addTrajectory( Object* const& obj_ );
-        void updateTrajectory( const std::size_t& index_ );
-        void updateTrajectories();
+//        void updateVolumes();
 
 
-        void addCrossSection( CrossSection* const& cs_ );
-        void setCurrentCrossSection( const double& value_ );
+//        void addObject( Object* const& obj_ );
+//        void updateObject( const std::size_t& index_ );
 
 
-        void setModeSelecting();
-        void setModeSketching();
+//        void addTrajectory( Object* const& obj_ );
+//        void updateTrajectory( const std::size_t& index_ );
+//        void updateTrajectories();
 
-        void clear();
 
-        void setupCrossSectionWindow();
-        void setupTopViewWindow();
+//        void addCrossSection( CrossSection* const& cs_ );
+//        void setCurrentCrossSection( const double& value_ );
+
+
+//        void setModeSelecting();
+//        void setModeSketching();
+
+//        void clear();
+
+//        void setupCrossSectionWindow();
+//        void setupTopViewWindow();
 
 
 
     protected slots:
 
-        void discardSketch();
-        void commitSketch();
-        void createSurface();
+//        void discardSketch();
+//        void commitSketch();
+//        void createSurface();
 
 
 
@@ -92,8 +94,11 @@ class SketchWindow: public QMainWindow
 
         void createWindow();
         void createToolBar();
-        void setCurrentScene( CrossSection* const& cs_ );
-        void setCurrentScene( double depth_ );
+
+
+        void setupScene( SketchScene* const& scene_ );
+//        void setCurrentScene( CrossSection* const& cs_ );
+//        void setCurrentScene( double depth_ );
 
 
 

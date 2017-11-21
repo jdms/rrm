@@ -52,11 +52,13 @@ void MainWindow::createWindow()
 {
     createMainInterface();
     createSidebar();
-    createSketchingWindow();
-
     createToolbar();
 
     createActions();
+
+    createSketchingWindow();
+    createSketchingActions();
+
 }
 
 
@@ -127,7 +129,7 @@ void MainWindow::createToolbar()
 
     QAction* ac_output_volume = new QAction( "Get Regions", this );
 
-    tb_mainwindow =  addToolBar( "Test ");
+    tb_mainwindow = addToolBar( "Test ");
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
     tb_mainwindow->addAction( ac_load );
@@ -163,25 +165,6 @@ void MainWindow::createSidebar()
 }
 
 
-
-void MainWindow::createSketchingWindow()
-{
-
-    sketch_window = new SketchWindow();
-    dw_sketchwindow = new QDockWidget( "Cross-Section" );
-    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketchwindow->setWidget( sketch_window );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
-
-    sketch_topview_window = new SketchWindow();
-    dw_topview_window = new QDockWidget( "Top-View" );
-    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_topview_window->setWidget( sketch_topview_window );
-    dw_topview_window->setVisible( true );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
-
-
-}
 
 
 void MainWindow::createActions()
@@ -236,6 +219,52 @@ void MainWindow::createSidebarActions()
 }
 
 
+
+
+void MainWindow::createSketchingWindow()
+{
+
+    sketch_window = new SketchWindow();
+    dw_sketchwindow = new QDockWidget( "Cross-Section" );
+    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketchwindow->setWidget( sketch_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+
+    sketch_topview_window = new SketchWindow();
+    dw_topview_window = new QDockWidget( "Top-View" );
+    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_topview_window->setWidget( sketch_topview_window );
+    dw_topview_window->setVisible( true );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+
+
+}
+
+
+void MainWindow::createSketchingActions()
+{
+
+//    connect( )
+
+//    sketch_window = new SketchWindow();
+//    dw_sketchwindow = new QDockWidget( "Cross-Section" );
+//    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
+//    dw_sketchwindow->setWidget( sketch_window );
+//    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+
+//    sketch_topview_window = new SketchWindow();
+//    dw_topview_window = new QDockWidget( "Top-View" );
+//    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+//    dw_topview_window->setWidget( sketch_topview_window );
+//    dw_topview_window->setVisible( true );
+//    addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+
+
+
+}
+
+
+
 void MainWindow::createController()
 {
     if( controller != nullptr )
@@ -272,9 +301,7 @@ void MainWindow::run_app()
     app = new RRMApplication( this );
     app->init();
 
-//    controller->init();
-//    setupSlider();
-
+    app->initSketchingApp();
 
 }
 
