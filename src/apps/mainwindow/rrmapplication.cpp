@@ -156,3 +156,11 @@ void RRMApplication::getObjectInformation( QTreeWidgetItem* const& item_ ) const
     std::string text_ = mainwindow->controller->getObjectInformation( obj_item_->getIndex() );
     mainwindow->object_properties->loadObjectInformation( text_ );
 }
+
+
+
+void RRMApplication::initSketchingApp()
+{
+    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
+    mainwindow->sketch_window->addMainCanvas( csection_ );
+}

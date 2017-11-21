@@ -71,10 +71,10 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
 
-    if( raw_->getDirection() != CrossSection::Direction::Z )
+    if( raw_->getDirection() == CrossSection::Direction::Z )
         createCrossSectionScene( vol_ );
 
-    else if( raw_->getDirection() != CrossSection::Direction::Y )
+    else if( raw_->getDirection() == CrossSection::Direction::Y )
         createTopViewScene( vol_ );
 
 
@@ -408,7 +408,7 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     }
     else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
     {
-        emit acceptVolumeDimensions( static_cast< double >( volume->boundingRect().width() ),
+        emit acceptVolumeDimensions( csection->getDirection(), static_cast< double >( volume->boundingRect().width() ),
                                      static_cast< double >( volume->boundingRect().height() ) );
     }
 

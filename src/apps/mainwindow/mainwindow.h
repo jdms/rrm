@@ -67,7 +67,6 @@ class MainWindow: public QMainWindow
 
         void createWindow();
         void setupWindowProperties();
-        void createSketchingWindow();
         void createMainInterface();
         void createSidebar();
         void createToolbar();
@@ -77,6 +76,9 @@ class MainWindow: public QMainWindow
         void createMainWindowActions();
         void createSidebarActions();
 
+
+        void createSketchingWindow();
+        void createSketchingActions();
 
         void createController();
         void setupController();

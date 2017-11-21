@@ -57,6 +57,9 @@ class Controller
 
 
         void addMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
+        CrossSection* getMainCrossSection( const CrossSection::Direction& dir_ ) const;
+
+
         void setCurrentCrossSection( double depth_ );
 
 
