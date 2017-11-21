@@ -111,13 +111,18 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
 void SketchScene::updateCrossSection()
 {
 
+    std::cout << "Cross-section being updated: " << csection->getDepth() << std::endl << std::flush;
+
     Volume* const& vol_ = csection->getVolume();
 
+    std::cout << "Volume dimensions: ( " << vol_->getWidth() << ", " << vol_->getHeight() << ", "
+              << vol_->getWidth() << ") " << std::endl << std::flush;
 
-    if( csection->getDirection() != CrossSection::Direction::Z )
+
+    if( csection->getDirection() == CrossSection::Direction::Z )
         updateCrossSectionScene( vol_ );
 
-    else if( csection->getDirection() != CrossSection::Direction::Y )
+    else if( csection->getDirection() == CrossSection::Direction::Y )
         updateTopViewScene( vol_ );
 
 }

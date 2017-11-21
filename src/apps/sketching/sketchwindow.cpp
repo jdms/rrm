@@ -63,13 +63,16 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
     connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_ ){ emit acceptCurve( curve_ ); } );
 
+    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
+
+
 //    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
 //                                                                                               /*if( gview_ == main ) highlightCanvas( -1 );
 //                                                                                               else highlightCanvas( depth_ );*/ } );
 
 //    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
-//    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
+
 
 //    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
 
