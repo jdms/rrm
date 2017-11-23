@@ -216,7 +216,29 @@ void RRMApplication::acceptSketchingCurve( const PolyCurve& curve_ )
     
 }
 
-void RRMApplication::createObjectSurface()
+
+void RRMApplication::acceptSketchingTrajectory( const PolyCurve& curve_ )
 {
 
+    bool status_ = mainwindow->controller->addObjectTrajectory( curve_ );
+    if( status_ == false ) return;
+
+    updateSketchingCanvas();
+
+}
+
+
+void RRMApplication::createObjectSurface()
+{
+    bool status_ = mainwindow->controller->createObjectSurface();
+    if( status_ == false ) return;
+
+    mainwindow->controller->addObject();
+    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
+
+    mainwindow->sketch_window->addObject( mainwindow->controller->getCurrentObject() );
+    mainwindow->sketch_topview_window->addTrajectory( mainwindow->controller->getCurrentObject() );
+
+    //    emit setUpColor();
+    //    checkUndoRedo();
 }

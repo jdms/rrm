@@ -32,12 +32,21 @@ class SketchWindow: public QMainWindow
 
         void addMainCanvas( CrossSection* const& cs_ );
         void addTopViewCanvas( CrossSection* const& cs_ );
-
         void updateCanvas();
 
 
-
         void addCrossSection( CrossSection* const& cs_ );
+
+
+
+        void addObject( Object* const& obj_ );
+        void updateObject( const std::size_t& index_ );
+
+
+        void addTrajectory( Object* const& obj_ );
+        void updateTrajectory( const std::size_t& index_ );
+
+
 
 //        void setUpColor();
 

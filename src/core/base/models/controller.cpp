@@ -196,10 +196,12 @@ CrossSection* Controller::getCrossSection( const double& depth_ ) const
     return all_csections.getElement( depth_ );
 }
 
+
 CrossSection* Controller::getCurrentCrossSection() const
 {
     return getCrossSection( current_csection );
 }
+
 
 
 
@@ -330,64 +332,46 @@ bool Controller::addObjectCurve( PolyCurve curve_ )
 }
 
 
-
-void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ )
-{
-    Object* obj_ = objects.getElement( object_id_ );
-    if( obj_->isDone() == true )
-    {
-
-        obj_->removeCurve( csection_depth_ );
-        if( all_csections.findElement( csection_depth_ ) == true )
-        {
-            CrossSection* csection_ = all_csections.getElement( csection_depth_ );
-            csection_->removeObjectCurve( object_id_ );
-        }
-
-        getCurveFromRulesProcessor( obj_, csection_depth_ );
-
-    }
-    else
-        updatePreviewCurves( obj_, csection_depth_ );
-}
-
-
-void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
+bool Controller::addObjectTrajectory( PolyCurve curve_ )
 {
 
-    std::size_t object_id_ = obj_->getIndex();
+    if( objects.findElement( current_object ) == false )
+        return false;
 
-
-    std::vector< double > vertices_;
-    std::vector< std::size_t > edges_;
-    bool has_curve = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_depth_ ), vertices_, edges_ );
-    if( has_curve == false ) return;
-
-
-    PolyCurve curve_ = PolyCurve( vertices_, edges_ );
-    obj_->updateCurve( csection_depth_, curve_ );
-
-
-    if( all_csections.findElement( csection_depth_ ) == true )
-    {
-        CrossSection* csection_ = all_csections.getElement( csection_depth_ );
-        csection_->addObject( object_id_, &curve_ );
-    }
+    Object* const& obj_ = objects.getElement( current_object );
+    bool status_ = obj_->addTrajectory( curve_ );
+    return status_;
 
 }
 
 
-void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
+void Controller::removeObjectTrajectory()
 {
 
-    bool has_user_curve = obj_->hasCurve( csection_depth_ );
-    has_user_curve &= all_csections.findElement( csection_depth_ );
+    if( objects.findElement( current_object ) == false )
+        return;
 
-    if( has_user_curve == true ) return;
-
-    getCurveFromRulesProcessor( obj_, csection_depth_ );
+    Object* const& obj_ = objects.getElement( current_object );
+    obj_->removeTrajectory();
 
 }
+
+
+
+
+Object* Controller::getCurrentObject() const
+{
+    return getObject( current_object );
+}
+
+
+Object* Controller::getObject( std::size_t index_ ) const
+{
+    if( objects.findElement( index_) == false )
+        return nullptr;
+    return objects.getElement( index_ );
+}
+
 
 
 
@@ -443,50 +427,58 @@ bool Controller::createPreviewSurface()
 bool Controller::createObjectSurface()
 {
 
-//    Object* const& obj_ = objects.getElement( current_object );
-//    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+    Object* const& obj_ = objects.getElement( current_object );
 
-//    std::vector< std::tuple< Curve2D, double > > curves_;
-//    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
-//    {
-//        double csection_id_ = it->first;
-//        PolyCurve sketch_ = it->second;
+    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
 
-//        CrossSection* csection_ = all_csections.getElement( csection_id_ );
-//        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+    std::vector< std::tuple< Curve2D, double > > curves_;
+    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+    {
+        double csection_id_ = it->first;
+        PolyCurve sketch_ = it->second;
 
-//        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
-//    }
+        if( all_csections.findElement( csection_id_ )  == false ) continue;
 
-//    applyStratigraphicRule();
+        CrossSection* csection_ = all_csections.getElement( csection_id_ );
+        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
 
-//    bool surface_created = false;
-//    if( obj_->hasTrajectory() == true )
-//    {
-//        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
-//        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
-//        double depth_ = std::get<1>( curves_[ 0 ] );
+        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+    }
 
-//        surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
-//    }
-
-//    else
-//    {
-//        surface_created = rules_processor.createSurface( current_object, curves_ );
-//    }
+    //    applyStratigraphicRule();
+    rules_processor.removeAbove();
 
 
-//    if( surface_created == false ) return false;
+    bool surface_created = false;
+    if( obj_->hasTrajectory() == true )
+    {
+        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
+        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
+        double depth_ = std::get<1>( curves_[ 0 ] );
 
-//    obj_->removeCrossSectionCurves();
-//    obj_->removeTrajectory();
-//    obj_->setEditable( false );
+        surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
+    }
 
-//    updateModel();
+    else
+    {
+        surface_created = rules_processor.createSurface( current_object, curves_ );
+    }
+
+
+    if( surface_created == false ) return false;
+
+    obj_->removeCrossSectionCurves();
+    obj_->removeTrajectory();
+    obj_->setEditable( false );
+
+    updateModel();
 
     return true;
 
 }
+
+
+
 
 
 
@@ -510,12 +502,141 @@ void Controller::updateBoundingBoxRulesProcessor()
 }
 
 
+void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
+{
+
+    std::size_t object_id_ = obj_->getIndex();
+
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > edges_;
+    bool has_curve = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_depth_ ), vertices_, edges_ );
+    if( has_curve == false ) return;
+
+
+    PolyCurve curve_ = PolyCurve( vertices_, edges_ );
+    obj_->updateCurve( csection_depth_, curve_ );
+
+
+    if( all_csections.findElement( csection_depth_ ) == true )
+    {
+        CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+        csection_->addObject( object_id_, &curve_ );
+    }
+
+}
 
 
 
 
 
+void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ )
+{
+    Object* obj_ = objects.getElement( object_id_ );
+    if( obj_->isDone() == true )
+    {
 
+        obj_->removeCurve( csection_depth_ );
+        if( all_csections.findElement( csection_depth_ ) == true )
+        {
+            CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+            csection_->removeObjectCurve( object_id_ );
+        }
+
+        getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+    }
+    else
+        updatePreviewCurves( obj_, csection_depth_ );
+}
+
+
+void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
+{
+
+    bool has_user_curve = obj_->hasCurve( csection_depth_ );
+    has_user_curve &= all_csections.findElement( csection_depth_ );
+
+    if( has_user_curve == true ) return;
+
+    getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+}
+
+
+void Controller::updateObjectSurfaces( std::size_t object_id_ )
+{
+
+    Object* obj_ = objects.getElement( object_id_ );
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > faces_;
+
+    bool has_surface = rules_processor.getMesh( object_id_, vertices_, faces_ );
+    if( has_surface  == false ) return;
+
+    std::vector< double > normals_;
+    rules_processor.getNormals( object_id_, normals_ );
+
+
+    Surface surface;
+    surface.setVertices( vertices_ );
+    surface.setFaces( faces_ );
+    surface.setNormals( normals_ );
+
+
+    std::vector< double > path_;
+    bool has_path = rules_processor.getExtrusionPath( object_id_, path_ );
+    if( has_path == true )
+    {
+        obj_->removeTrajectory();
+        obj_->addTrajectory( PolyCurve( path_ ) );
+    }
+
+    obj_->setActive( true );
+    obj_->setSurface( surface );
+    obj_->setVisible( true );
+    obj_->setDone( true );
+    object_tree->setObjectVisibility( object_id_, true );
+
+    scene3d->updateObject( object_id_ );
+}
+
+
+void Controller::updateModel()
+{
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
+    setActiveAllObjects( false );
+
+    for ( std::size_t id_: actives_ )
+    {
+        updateObjectSurfaces( id_ );
+        updateObjectCurveFromCrossSection( id_, current_csection );
+
+//        for ( Container< double, CrossSection* >::Iterator cs_it =  actives_csections.begin(); cs_it != actives_csections.end(); ++cs_it )
+//        {
+//            updateObjectCurveFromCrossSection( id_, cs_it->first );
+//        }
+
+
+
+    }
+
+}
+
+
+void Controller::setActiveAllObjects( bool status_ )
+{
+    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        Object* obj_ = (it->second);
+        obj_->setActive( status_ );
+        object_tree->setObjectVisibility( it->first, status_ );
+        scene3d->updateObject( it->first );
+    }
+}
 
 //bool Controller::setMainCrossSection( const CrossSection::Direction& dir_, double depth_ )
 //{

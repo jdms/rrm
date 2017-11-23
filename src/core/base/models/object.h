@@ -154,7 +154,7 @@ class Object
         } max, min;
 
 
-        const std::size_t CHANNEL_MAX_CSECTIONS = 1;
+        const std::size_t CHANNEL_MAX_CSECTIONS = 2;
 
 };
 

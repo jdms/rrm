@@ -176,13 +176,15 @@ class InputSketch: public QGraphicsPathItem
 
     public:
 
+        enum class Direction{ X, Y, Z };
+
         InputSketch( QGraphicsItem * parent = 0 );
         virtual QRectF boundingRect() const;
 
         void create( const QPointF& p_ );
         void add( const QPointF& p_ );
         void process();
-        PolyCurve done();
+        PolyCurve done( const InputSketch::Direction& dir_ );
         void clear();
         bool isEmpty() const;
 

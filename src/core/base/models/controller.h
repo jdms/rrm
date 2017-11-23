@@ -73,6 +73,9 @@ class Controller
 
 
         bool addObject();
+        Object* getObject( std::size_t index_ ) const;
+        Object* getCurrentObject() const;
+
         void setObjectName( std::size_t index_, const std::string& name_ );
         void setObjectVisibility( std::size_t index_, bool status_ );
         void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
@@ -81,17 +84,29 @@ class Controller
         const std::string& getObjectInformation( std::size_t index_ ) const;
 
         bool addObjectCurve( PolyCurve curve_ );
-        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
-        void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
-        void updatePreviewCurves( Object* obj_, double csection_depth_ );
+
+        bool addObjectTrajectory( PolyCurve curve_ );
+        void removeObjectTrajectory();
+
 
         bool createPreviewSurface();
         bool createObjectSurface();
 
 
+        void setActiveAllObjects( bool status_ );
+
+
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
+        void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
+
+
+        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
+        void updatePreviewCurves( Object* obj_, double csection_depth_ );
+        void updateObjectSurfaces( std::size_t object_id_ );
+        void updateModel();
+
 
 
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
