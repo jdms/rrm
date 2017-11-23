@@ -242,3 +242,16 @@ void RRMApplication::createObjectSurface()
     //    emit setUpColor();
     //    checkUndoRedo();
 }
+
+
+void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
+{
+    if( rules_ == StratigraphicRules::REMOVE_ABOVE )
+        mainwindow->controller->setRemoveAbove();
+    else if( rules_ == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        mainwindow->controller->setRemoveAboveIntersection();
+    else if( rules_ == StratigraphicRules::REMOVE_BELOW )
+        mainwindow->controller->setRemoveBelow();
+    else if( rules_ == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        mainwindow->controller->setRemoveBelowIntersection();
+}

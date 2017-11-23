@@ -124,6 +124,8 @@ class MainWindow: public QMainWindow
 
         QToolBar* tb_mainwindow;
 
+
+
         QAction* ac_save;
         QAction* ac_load;
         QAction* ac_clear;
@@ -133,6 +135,12 @@ class MainWindow: public QMainWindow
 
         QAction* ac_undo;
         QAction* ac_redo;
+
+        QAction* ac_remove_above;
+        QAction* ac_remove_above_int;
+        QAction* ac_remove_below;
+        QAction* ac_remove_below_int;
+
 
         RRMApplication* app;
 

@@ -106,18 +106,18 @@ void MainWindow::createToolbar()
     ac_sketch_below->setCheckable( true );
 
 
-
-    QAction* ac_remove_above = new QAction( "RA", this );
+    ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
 
-    QAction* ac_remove_above_int = new QAction( "RAI", this );
+    ac_remove_above_int = new QAction( "RAI", this );
     ac_remove_above_int->setCheckable( true );
 
-    QAction* ac_remove_below = new QAction( "RB", this );
+    ac_remove_below = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
 
-    QAction* ac_remove_below_int = new QAction( "RBI", this );
+    ac_remove_below_int = new QAction( "RBI", this );
     ac_remove_below_int->setCheckable( true );
+
 
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->setExclusive( true );
@@ -181,6 +181,14 @@ void MainWindow::createMainWindowActions()
 {
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double d_ ){ app->setCurrentCrossSection( d_ ); } );
+
+    connect( ac_remove_above, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE ); } );
+
+    connect( ac_remove_above_int, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+
+    connect( ac_remove_below, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW ); } );
+
+    connect( ac_remove_below_int, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
 
 }
 
@@ -257,6 +265,12 @@ void MainWindow::createSketchingActions()
 
 
 
+    connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
+                                                                 { app->updateSketchingCanvas(); } );
+    connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
+                                                                 {  app->updateSketchingCanvas(); } );
+    connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
+                                                                 {  app->updateSketchingCanvas(); } );
 
 
 

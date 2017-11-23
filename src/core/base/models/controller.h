@@ -23,6 +23,17 @@ class Controller
 {
     public:
 
+    enum class StratigraphicRules : int {
+        UNDEFINED = -1,
+        NO_GEOLOGIC_RULE,
+        REMOVE_ABOVE, // Remove above
+        REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+        REMOVE_BELOW, // Remove below
+        REMOVE_BELOW_INTERSECTION, // Remove below intersection
+    };
+
+
+    enum class BounderingRegion { ABOVE, BELOW };
 
 
         Controller() = default;
@@ -107,6 +118,12 @@ class Controller
         void updateObjectSurfaces( std::size_t object_id_ );
         void updateModel();
 
+
+        void setRemoveAbove();
+        void setRemoveAboveIntersection();
+        void setRemoveBelow();
+        void setRemoveBelowIntersection();
+        void applyStratigraphicRule();
 
 
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
@@ -215,19 +232,6 @@ class Controller
 //        void initializeData();
 
     protected:
-
-
-        enum class StratigraphicRules : int {
-            UNDEFINED = -1,
-            NO_GEOLOGIC_RULE,
-            REMOVE_ABOVE, // Remove above
-            REMOVE_ABOVE_INTERSECTION, // Remove above intersection
-            REMOVE_BELOW, // Remove below
-            REMOVE_BELOW_INTERSECTION, // Remove below intersection
-        };
-
-
-        enum class BounderingRegion { ABOVE, BELOW };
 
 
         Scene3d* scene3d = nullptr;

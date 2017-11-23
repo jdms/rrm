@@ -73,6 +73,18 @@ class RRMApplication
 
         enum class AxesDirection{ X, Y, Z };
 
+        enum class StratigraphicRules : int {
+            UNDEFINED = -1,
+            NO_GEOLOGIC_RULE,
+            REMOVE_ABOVE, // Remove above
+            REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+            REMOVE_BELOW, // Remove below
+            REMOVE_BELOW_INTERSECTION, // Remove below intersection
+        };
+
+
+        enum class BounderingRegion { ABOVE, BELOW };
+
 
         RRMApplication() = default;
         RRMApplication( MainWindow* mw_ );
@@ -105,7 +117,7 @@ class RRMApplication
         void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
 
 
-
+        void setStratigraphicRule( const StratigraphicRules& rules_ );
 
 
         void initSketchingApp();

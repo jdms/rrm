@@ -31,9 +31,10 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     else if( csection->getDirection() == CrossSection::Direction::Z )
         dir_ = InputSketch::Direction::X;
 
+
     connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
     connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done( dir_ ) ); } );
-    connect( this, &SketchScene::create, [=](){ emit acceptCurve( user_input->done( dir_ ) ); } );
+    connect( this, &SketchScene::create, [=](){ emit commitObject(); } );
 }
 
 

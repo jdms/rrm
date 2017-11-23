@@ -445,8 +445,7 @@ bool Controller::createObjectSurface()
         curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
     }
 
-    //    applyStratigraphicRule();
-    rules_processor.removeAbove();
+    applyStratigraphicRule();
 
 
     bool surface_created = false;
@@ -637,6 +636,46 @@ void Controller::setActiveAllObjects( bool status_ )
         scene3d->updateObject( it->first );
     }
 }
+
+
+
+
+
+void Controller::setRemoveAbove()
+{
+    current_rule = StratigraphicRules::REMOVE_ABOVE;
+}
+
+void Controller::setRemoveAboveIntersection()
+{
+    current_rule = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
+}
+
+void Controller::setRemoveBelow()
+{
+    current_rule = StratigraphicRules::REMOVE_BELOW;
+}
+
+void Controller::setRemoveBelowIntersection()
+{
+    current_rule = StratigraphicRules::REMOVE_BELOW_INTERSECTION;
+}
+
+
+void Controller::applyStratigraphicRule()
+{
+    if( current_rule == StratigraphicRules::REMOVE_ABOVE )
+        rules_processor.removeAbove();
+    else if( current_rule == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        rules_processor.removeAboveIntersection();
+    else if( current_rule == StratigraphicRules::REMOVE_BELOW )
+        rules_processor.removeBelow();
+    else if( current_rule == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        rules_processor.removeBelowIntersection();
+}
+
+
+
 
 //bool Controller::setMainCrossSection( const CrossSection::Direction& dir_, double depth_ )
 //{

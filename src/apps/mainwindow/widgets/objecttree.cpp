@@ -10,7 +10,7 @@ ObjectTree::ObjectTree( QWidget *parent )
     setHeaderHidden( true );
     setColumnCount( COLUMNS_NUMBER );
 
-//    connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
+    connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
 
 }
 
