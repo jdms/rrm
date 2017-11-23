@@ -47,7 +47,7 @@ unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
 
 
 void FlowDiagnosticsInterface::setViscosity(double visc){
-    region.setoilviscosity(visc);
+    region.setoilviscosity(visc*0.001); //cp to si
 }
 
 void FlowDiagnosticsInterface::clearRegions(){
@@ -92,6 +92,7 @@ void FlowDiagnosticsInterface::init(){
         region.computerelativepermeabilities();
         region.computemobility_cvfe_mf();
         region.boundarycondition();
+		region.markwellnodes_verticaltopbot();
         region.wellcondition(); //well boundary condition overwrite surface boundary condition
         region.oilinplace();
     }
@@ -1161,10 +1162,6 @@ void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number,
 }
 
 void FlowDiagnosticsInterface::computeProperties(){
-
-	// A proper way to set viscosities should be implemented in the GUI
-	setViscosity(visc_); // THIS LINE IS A STUB
-
 	if (region.meshinfo_type() == 1){
 		region.steadystateflowsolver();
 		region.flowdiagnostics_tracing();
