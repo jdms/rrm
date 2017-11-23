@@ -47,6 +47,9 @@ class SketchWindow: public QMainWindow
         void updateTrajectory( const std::size_t& index_ );
 
 
+        void setModeSelecting();
+        void setModeSketching();
+
 
 //        void setUpColor();
 

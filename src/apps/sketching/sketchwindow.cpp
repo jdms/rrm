@@ -72,12 +72,13 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
     connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
 
+    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
 //    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
 //                                                                                               /*if( gview_ == main ) highlightCanvas( -1 );
 //                                                                                               else highlightCanvas( depth_ );*/ } );
 
-//    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
+
 
 
 
@@ -200,6 +201,38 @@ void SketchWindow::updateTrajectory( const std::size_t& index_ )
     SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
     sc_->updateTrajectory( index_ );
 }
+
+
+
+
+
+void SketchWindow::setModeSelecting()
+{
+
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->setModeSelecting();
+
+//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+//    {
+//        QGraphicsView* gview_ = it->second;
+//        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+//        sc_->setModeSelecting();
+//    }
+}
+
+void SketchWindow::setModeSketching()
+{
+    SketchScene* sc_ = ( SketchScene* )( main->scene() );
+    sc_->setModeSketching();
+
+//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+//    {
+//        QGraphicsView* gview_ = it->second;
+//        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+//        sc_->setModeSketching();
+//    }
+}
+
 
 
 

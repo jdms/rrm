@@ -100,6 +100,9 @@ void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_
 
 bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_z )
 {
+    std::cout << "Inside RulesProcessor::setLenght, Volume Dimensions: ( " << opengl_x
+              << ", " << opengl_y << "," << opengl_z << ") " << std::flush;
+
     if ( modeller_.setSize(opengl_x, opengl_y, opengl_z) == false )
     {
         return false;
@@ -108,6 +111,8 @@ bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_
     lenght_.x = opengl_x;
     lenght_.y = opengl_y;
     lenght_.z = opengl_z;
+
+    std::cout << "updated " << std::endl << std::flush;
 
     return true;
 }
@@ -341,7 +346,7 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    return false;
+    return modeller_.getTetrahedralMesh(vertex_coordinates, element_list );
 }
 
 //{} // namespace RRM

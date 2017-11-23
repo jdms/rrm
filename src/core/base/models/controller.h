@@ -11,6 +11,7 @@
 #include "./apps/mainwindow/widgets/objecttree.h"
 #include "./apps/3dview/scene3d.h"
 #include "crosssection.h"
+#include "region.h"
 #include "rules_processor.hpp"
 
 
@@ -94,6 +95,7 @@ class Controller
         void saveObjectInformation( std::size_t index_, const std::string & text_ );
         const std::string& getObjectInformation( std::size_t index_ ) const;
 
+
         bool addObjectCurve( PolyCurve curve_ );
 
         bool addObjectTrajectory( PolyCurve curve_ );
@@ -124,6 +126,38 @@ class Controller
         void setRemoveBelow();
         void setRemoveBelowIntersection();
         void applyStratigraphicRule();
+
+
+
+        bool enableCreateAbove( bool status_ );
+        void stopCreateAbove();
+        bool requestCreateAbove();
+        bool isDefineAboveActive();
+
+        bool enableCreateBelow( bool status_ );
+        void stopCreateBelow();
+        bool requestCreateBelow();
+        bool isDefineBelowActive();
+
+
+
+        void setObjectAsBoundering( std::size_t index_ );
+        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
+        void setObjectAsSelected( std::size_t index_, bool status_ );
+
+
+        void saveFile( const std::string& filename );
+        void loadFile( const std::string& filename );
+
+
+        bool undo();
+        bool canUndo();
+
+        bool redo();
+        bool canRedo();
+
+
+        void getOutputVolume();
 
 
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
@@ -250,6 +284,7 @@ class Controller
 
         std::size_t current_object = 0;
         Container< std::size_t, Object* > objects;
+        Container< std::size_t, Region* > regions;
 
 
         double current_csection = 500.0;

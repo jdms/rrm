@@ -5,6 +5,7 @@
 #include "./core/base/models/volumeshader.h"
 #include "./core/base/models/planeshader.h"
 #include "./core/base/models/surfaceshader.h"
+#include "./core/base/models/volumemeshshader.h"
 
 
 #include <QString>
@@ -15,6 +16,7 @@
 Scene3d::Scene3d()
 {
     volume = nullptr;
+    output_volume = nullptr;
 }
 
 
@@ -45,12 +47,16 @@ void Scene3d::updateVolume()
 
 }
 
+
 void Scene3d::clearVolume()
 {
     if( volume != nullptr )
         delete volume;
     volume = nullptr;
 }
+
+
+
 
 
 void Scene3d::addOutputVolume( Volume* const& raw_ )
@@ -70,15 +76,41 @@ void Scene3d::updateOutputVolume()
     if( output_volume == nullptr ) return;
 
     output_volume->update();
+
     emit updateCanvas();
 
 }
+
 
 void Scene3d::clearOutputVolume()
 {
     if( output_volume != nullptr )
         delete output_volume;
     output_volume = nullptr;
+}
+
+
+void Scene3d::addRegion( Region* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    std::size_t index_ = raw_->getIndex();
+    regions.addElement( index_, new VolumeMeshShader( raw_ ) );
+
+    emit updateCanvas();
+
+}
+
+
+void Scene3d::updateRegion( Region* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    VolumeMeshShader* region_ = regions.getElement( raw_->getIndex() );
+    region_->update();
+
+    emit updateCanvas();
+
 }
 
 
@@ -150,6 +182,11 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
         (it->second)->draw( V, P, w, h );
     }
 
+    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+        (it->second)->draw( V, P, w, h );
+    }
+
 }
 
 
@@ -211,7 +248,7 @@ void Scene3d::clear()
 void Scene3d::clearData()
 {
 
-//    volume = nullptr;
+    output_volume = nullptr;
     current_color = Qt::red;
     shader_directory.clear();
 

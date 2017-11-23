@@ -82,6 +82,9 @@ void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
 
 void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
 {
+    std::cout << "Inside controller, changing volume dimensions: ( " << width_ << ", " << height_
+              << ", " << length_ << ") " <<  std::endl << std::flush;
+
     volume->setGeometry( width_, height_, length_ );
     scene3d->updateVolume();
 
@@ -672,6 +675,292 @@ void Controller::applyStratigraphicRule()
         rules_processor.removeBelow();
     else if( current_rule == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         rules_processor.removeBelowIntersection();
+}
+
+
+
+
+bool Controller::enableCreateAbove( bool status_ )
+{
+    setObjectsAsSelectable( selectable_upper, false );
+
+    if( status_ == false )
+    {
+        stopCreateAbove();
+        return false;
+    }
+
+    return requestCreateAbove();
+
+}
+
+
+void Controller::stopCreateAbove()
+{
+    std::cout << "Stop create above accepted" << std::endl << std::flush;
+    rules_processor.stopDefineAbove();
+    setObjectAsSelected( index_upper_boundary, false );
+}
+
+
+bool Controller::requestCreateAbove()
+{
+
+    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+
+        setObjectsAsSelectable( selectable_bottom, false );
+        setObjectsAsSelectable( selectable_upper, true );
+
+        boundering_region = BounderingRegion::ABOVE;
+
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+}
+
+
+
+
+
+bool Controller::enableCreateBelow( bool status_ )
+{
+
+    setObjectsAsSelectable( selectable_upper, false );
+
+    if( status_ == false )
+    {
+        stopCreateBelow();
+        return false;
+    }
+
+    return requestCreateBelow();
+
+}
+
+
+void Controller::stopCreateBelow()
+{
+    std::cout << "Stop create below accepted" << std::endl << std::flush;
+    rules_processor.stopDefineBelow();
+    setObjectAsSelected( index_bottom_boundary, false );
+
+}
+
+
+bool Controller::requestCreateBelow()
+{
+
+    bool request_ = rules_processor.requestCreateBelow( selectable_bottom );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+
+        setObjectsAsSelectable( selectable_upper, false );
+        setObjectsAsSelectable( selectable_bottom, true );
+        boundering_region = BounderingRegion::BELOW;
+
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+}
+
+
+
+
+
+void Controller::setObjectAsBoundering( std::size_t index_ )
+{
+
+    if( objects.findElement( index_ ) == false ) return;
+
+
+    setObjectAsSelected( index_, true );
+
+    if( boundering_region == BounderingRegion::ABOVE )
+    {
+        index_upper_boundary = index_;
+        rules_processor.defineAbove( index_ );
+        setObjectsAsSelectable( selectable_upper, false );
+    }
+    else if( boundering_region == BounderingRegion::BELOW )
+    {
+        index_bottom_boundary = index_;
+        rules_processor.defineBelow( index_ );
+        setObjectsAsSelectable( selectable_bottom, false );
+    }
+
+}
+
+
+void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes_,
+                                                    bool status_ )
+{
+
+    for( std::size_t id_: indexes_ )
+    {
+        if( objects.findElement( id_ ) == false ) continue;
+
+        Object* obj_ = objects.getElement( id_ );
+        obj_->setSelectable( status_ );
+    }
+
+    if( status_ == false )
+        indexes_.clear();
+}
+
+
+void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
+{
+
+    if( objects.findElement( index_ ) == false ) return;
+
+    Object* obj_ = objects.getElement( index_ );
+    obj_->setSelected( status_ );
+}
+
+
+
+
+void Controller::saveFile( const std::string& filename )
+{
+    rules_processor.saveFile( filename );
+}
+
+void Controller::loadFile( const std::string& filename )
+{
+    rules_processor.loadFile( filename );
+//    loadObjects();
+}
+
+
+
+
+bool Controller::undo()
+{
+    bool undo_done = rules_processor.undo();
+    if( undo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+
+bool Controller::redo()
+{
+    bool redo_done = rules_processor.redo();
+    if( redo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+
+bool Controller::canUndo()
+{
+    return rules_processor.canUndo();
+}
+
+
+bool Controller::canRedo()
+{
+    return rules_processor.canRedo();
+}
+
+
+
+
+bool Controller::isDefineAboveActive()
+{
+    std::size_t index_;
+
+    bool status_ = rules_processor.defineAboveIsActive( index_ );
+    if( status_ == false )
+    {
+        setObjectAsSelected( index_upper_boundary, false );
+        return false;
+    }
+
+    boundering_region = BounderingRegion::ABOVE;
+    setObjectAsBoundering( index_ );
+    return true;
+
+}
+
+
+bool Controller::isDefineBelowActive()
+{
+    std::size_t index_;
+
+    bool status_ = rules_processor.defineBelowIsActive( index_ );
+    if( status_ == false )
+    {
+        setObjectAsSelected( index_bottom_boundary, false );
+        return false;
+    }
+
+    boundering_region = BounderingRegion::BELOW;
+    setObjectAsBoundering( index_ );
+    return true;
+}
+
+
+
+
+void Controller::getOutputVolume()
+{
+    std::vector< double > vertices_;
+    std::vector< std::vector< std::size_t > > regions_;
+    rules_processor.getTetrahedralMesh( vertices_, regions_ );
+
+    Volume* vol1_ = new Volume();
+    vol1_->setVertices( vertices_ );
+
+    scene3d->addOutputVolume( vol1_ );
+    object_tree->addOutputVolume();
+
+
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+
+    std::size_t number_of_regions = regions_.size();
+    for( std::size_t i = 0; i < number_of_regions; ++i )
+    {
+        Volume::Color color_;
+        color_.r = distr( eng );
+        color_.g = distr( eng );
+        color_.b = distr( eng );
+
+
+        Region* region_ = new Region();
+
+        region_->setIndex( i );
+        region_->setVertices( vertices_ );
+        region_->setTetrahedralCells( regions_[ i ] );
+        region_->setColor( color_.r, color_.g, color_.b );
+
+        regions.addElement( i, region_ );
+        scene3d->addRegion( region_ );
+        object_tree->addRegion( i, "region", color_.r, color_.g, color_.b );
+
+        vol1_->addRegion( i, regions_[ i ], color_ );
+    }
+
+//
+
+
 }
 
 
@@ -1486,8 +1775,6 @@ double Controller::depthCrossSection( std::size_t index_ ) const
 //    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
 
-
-
 //    std::size_t number_of_regions = regions_.size();
 //    for( std::size_t i = 0; i < number_of_regions; ++i )
 //    {
@@ -1499,6 +1786,7 @@ double Controller::depthCrossSection( std::size_t index_ ) const
 //        vol1_->addRegion( i, regions_[ i ], color_ );
 //    }
 //    scene3d->addOutputVolume( vol1_ );
+
 //}
 
 

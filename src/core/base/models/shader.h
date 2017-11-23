@@ -106,6 +106,21 @@ class Shader
         }
 
 
+        static std::vector< float > getDefaultNormals( std::size_t number_of_vertices_ )
+        {
+            std::size_t number_of_points = number_of_vertices_/3;
+
+            std::vector< float > normals_;
+            for( std::size_t i = 0; i < number_of_points; ++i )
+            {
+                normals_.push_back( 0.0 );
+                normals_.push_back( 1.0 );
+                normals_.push_back( 0.0 );
+            }
+
+            return normals_;
+        }
+
     protected:
 
         virtual void initShaders() = 0;

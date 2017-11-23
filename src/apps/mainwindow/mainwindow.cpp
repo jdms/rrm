@@ -127,7 +127,7 @@ void MainWindow::createToolbar()
     ag_rules->addAction( ac_remove_below_int );
 
 
-    QAction* ac_output_volume = new QAction( "Get Regions", this );
+    ac_output_volume = new QAction( "Get Regions", this );
 
     tb_mainwindow = addToolBar( "Test ");
     tb_mainwindow->addAction( ac_clear );
@@ -140,7 +140,6 @@ void MainWindow::createToolbar()
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addAction( ac_output_volume );
 
-//    addToolBar( tb_mainwindow );
 
 
 }
@@ -182,13 +181,40 @@ void MainWindow::createMainWindowActions()
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double d_ ){ app->setCurrentCrossSection( d_ ); } );
 
-    connect( ac_remove_above, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE ); } );
 
-    connect( ac_remove_above_int, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+    connect( ac_sketch_above, &QAction::toggled, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
 
-    connect( ac_remove_below, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW ); } );
 
-    connect( ac_remove_below_int, &QAction::triggered, [=](){ app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+    connect( ac_sketch_below, &QAction::toggled, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
+
+
+    connect( ac_remove_above, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE ); } );
+
+    connect( ac_remove_above_int, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+
+    connect( ac_remove_below, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW ); } );
+
+    connect( ac_remove_below_int, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+
+
+
+    connect( ac_save, &QAction::triggered, [=](){ /*app->save();*/ } );
+
+
+    connect( ac_load, &QAction::triggered, [=](){ /*app->load();*/ } );
+
+
+    connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
+
+
+    connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
+
+
+    connect( ac_output_volume, &QAction::triggered, [=](){ controller->getOutputVolume(); } );
 
 }
 
@@ -209,7 +235,7 @@ void MainWindow::createSidebarActions()
     connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
                                                        { app->setObjectColor( index_, color_.red(), color_.green(), color_.blue() ); } );
 
-    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ ) { app->getObjectInformation( item_ ); } );
+    connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_ ) { app->getObjectInformation( item_ ); } );
 
 
 
@@ -242,7 +268,7 @@ void MainWindow::createSketchingWindow()
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
-    dw_topview_window->setVisible( true );
+//    dw_topview_window->setVisible( false );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
@@ -261,6 +287,9 @@ void MainWindow::createSketchingActions()
                                                         { app->acceptSketchingCurve( curve_ ); } );
 
     connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
+
+
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ app->setObjectAsBoundering( index_ ); } );
 
 
 
@@ -325,25 +354,6 @@ void MainWindow::run_app()
 }
 
 
-void MainWindow::checkUndoRedo()
-{
-//    if( controller == nullptr ) return;
-
-//    ac_undo->setEnabled( controller->canUndo() );
-//    ac_redo->setEnabled( controller->canRedo() );
-
-//    checkSketchStatus();
-}
-
-
-void MainWindow::checkSketchStatus()
-{
-//    if( controller == nullptr ) return;
-
-//    ac_sketch_above->setChecked( controller->isDefineAboveActive() );
-//    ac_sketch_below->setChecked( controller->isDefineBelowActive() );
-//    emit updateObjects();
-}
 
 
 void MainWindow::clear()

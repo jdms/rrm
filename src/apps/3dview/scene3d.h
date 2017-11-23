@@ -13,6 +13,7 @@ class QSurface;
 class VolumeShader;
 class PlaneShader;
 class SurfaceShader;
+class VolumeMeshShader;
 
 
 #include "./core/base/models/scene.h"
@@ -27,6 +28,8 @@ class Scene3d: public QObject, public Scene
 
     using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
     using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
+    using RegionsContainer = Container< std::size_t, VolumeMeshShader* >;
+
 
 
     public:
@@ -39,9 +42,16 @@ class Scene3d: public QObject, public Scene
         virtual void updateVolume();
         virtual void clearVolume();
 
+
+
         void addOutputVolume( Volume* const& raw_ );
         void updateOutputVolume();
         void clearOutputVolume();
+
+
+        void addRegion( Region* const& raw_ );
+        void updateRegion( Region* const& raw_ );
+//        void clearRegion();
 
         virtual void addCrossSection( CrossSection* const& raw_ );
         void updateCrossSection( CrossSection* const& raw_ );
@@ -83,6 +93,7 @@ class Scene3d: public QObject, public Scene
         VolumeShader* output_volume;
         CrossSectionsContainer csections;
         ObjectsContainer objects;
+        RegionsContainer regions;
 
 
 };
