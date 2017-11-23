@@ -22,9 +22,18 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
     addItem( user_input );
 
+
+    InputSketch::Direction dir_;
+    if( csection->getDirection() == CrossSection::Direction::X )
+        dir_ = InputSketch::Direction::Z;
+    else if( csection->getDirection() == CrossSection::Direction::Y )
+        dir_ = InputSketch::Direction::Y;
+    else if( csection->getDirection() == CrossSection::Direction::Z )
+        dir_ = InputSketch::Direction::X;
+
     connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
-    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done() ); } );
-    connect( this, &SketchScene::create, [=](){ emit acceptCurve( user_input->done() ); } );
+    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done( dir_ ) ); } );
+    connect( this, &SketchScene::create, [=](){ emit acceptCurve( user_input->done( dir_ ) ); } );
 }
 
 
@@ -230,8 +239,6 @@ void SketchScene::selectObjectAsBounderingRegion()
 
 void SketchScene::addTrajectory( Object* const& raw_ )
 {
-    //TODO: check if valid raw->getIndex
-
 
     std::size_t index_ = raw_->getIndex();
 
@@ -350,7 +357,12 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     else if( ( event->buttons() & Qt::RightButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-        emit acceptCurve( user_input->done() );
+        if( csection->getDirection() == CrossSection::Direction::X )
+            emit acceptCurve( user_input->done( InputSketch::Direction::Z ) );
+        else if( csection->getDirection() == CrossSection::Direction::Y )
+            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ) );
+        else if( csection->getDirection() == CrossSection::Direction::Z )
+            emit acceptCurve( user_input->done( InputSketch::Direction::X  ) );
     }
 
     else if( ( event->buttons() & Qt::LeftButton ) &&

@@ -109,6 +109,7 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
     if( cs_ == nullptr ) return;
 
     SketchScene* scene_ = new SketchScene( cs_ );
+    scene_->setCurrent( true );
     setupScene( scene_ );
 
     tv_main = new QGraphicsView();
@@ -123,10 +124,16 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
 void SketchWindow::updateCanvas()
 {
 
-    if( main == nullptr ) return;
+    if( main != nullptr )
+    {
+        SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
+        sc_main_->updateCrossSection();
+    }
 
-    SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
-    sc_main_->updateCrossSection();
+    if( tv_main == nullptr ) return;
+
+    SketchScene* tv_main_ = ( SketchScene* )( tv_main->scene() );
+    tv_main_->updateCrossSection();
 
 //    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
 //    {
@@ -148,6 +155,48 @@ void SketchWindow::addCrossSection( CrossSection* const& cs_ )
     sc_->addCrossSection( cs_ );
 
 }
+
+
+
+void SketchWindow::addObject( Object* const& obj_ )
+{
+
+//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+//    {
+//        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( main->scene() );
+        sc_->addObject( obj_ );
+//    }
+
+}
+
+
+void SketchWindow::updateObject( const std::size_t& index_ )
+{
+//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+//    {
+//        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( main->scene() );
+        sc_->updateObject( index_ );
+//    }
+
+
+}
+
+
+void SketchWindow::addTrajectory( Object* const& obj_ )
+{
+    SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
+    sc_->addTrajectory( obj_ );
+}
+
+
+void SketchWindow::updateTrajectory( const std::size_t& index_ )
+{
+    SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
+    sc_->updateTrajectory( index_ );
+}
+
 
 
 

@@ -254,6 +254,18 @@ void MainWindow::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
+
+
+
+
+
+
+
+    connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
+                                                        { app->acceptSketchingTrajectory( curve_ ); } );
+
+    connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
+
 }
 
 
