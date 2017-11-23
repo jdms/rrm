@@ -59,6 +59,13 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
     scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
 
 
+    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
+
+    connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
+
+    connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
+
+
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( CrossSection::Direction dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
 
     connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_ ){ emit acceptCurve( curve_ ); } );
@@ -74,11 +81,6 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
 
 
-//    connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
-
-//    connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
-
-//    connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
 
 //    connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
@@ -127,12 +129,14 @@ void SketchWindow::updateCanvas()
     if( main != nullptr )
     {
         SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
+        sc_main_->updateVolume();
         sc_main_->updateCrossSection();
     }
 
     if( tv_main == nullptr ) return;
 
     SketchScene* tv_main_ = ( SketchScene* )( tv_main->scene() );
+    tv_main_->updateVolume();
     tv_main_->updateCrossSection();
 
 //    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
