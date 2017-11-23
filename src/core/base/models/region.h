@@ -29,6 +29,11 @@ class Region
         void getVertices( std::vector< double >& vertices_  ) const;
         void clearVertices();
 
+        void setMaxMin( double maxx_, double maxy_, double maxz_,
+                                double minx_, double miny_, double minz_ );
+        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+                                double& minx_, double& miny_, double& minz_ ) const;
+
 
         void setColor( int r_, int g_, int b_ );
         void getColor( int& r_, int& g_, int& b_ ) const;
@@ -41,7 +46,7 @@ class Region
 
     private:
 
-        struct  Point { double x, y, z; };
+        struct  Point { double x, y, z; } max, min;
 
         struct Color
         {
