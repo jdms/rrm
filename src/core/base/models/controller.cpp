@@ -930,6 +930,16 @@ void Controller::getOutputVolume()
     object_tree->addOutputVolume();
 
 
+    double w = 0, h = 0,  l = 0;
+    double ox_ = 0, oy_ = 0, oz_ = 0;
+
+    vol1_->getOrigin( ox_, oy_, oz_ );
+    vol1_->getGeometry( w, h, l );
+
+
+
+
+
     std::random_device rd;
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
@@ -950,6 +960,8 @@ void Controller::getOutputVolume()
         region_->setVertices( vertices_ );
         region_->setTetrahedralCells( regions_[ i ] );
         region_->setColor( color_.r, color_.g, color_.b );
+        region_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+        region_->setColor( current_color.r, current_color.g, current_color.b );
 
         regions.addElement( i, region_ );
         scene3d->addRegion( region_ );
