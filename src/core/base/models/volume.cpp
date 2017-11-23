@@ -361,8 +361,6 @@ void Volume::removeAllCrossSections()
 
 void Volume::clear()
 {
-
-
     vertices.clear();
     faces.clear();
     for( std::size_t id = 0; id < regions.size(); ++id )

@@ -6,16 +6,16 @@ VolumeMeshShader::VolumeMeshShader()
 }
 
 
-VolumeMeshShader::VolumeMeshShader( Volume* const& raw_ )
+VolumeMeshShader::VolumeMeshShader( Region* const& raw_ )
 {
     setDefaultValues();
     init();
-    setVolume( raw_ );
+    setRegion( raw_ );
 }
 
 
 
-void VolumeMeshShader::setVolume( Volume* const& raw_ )
+void VolumeMeshShader::setRegion( Region* const& raw_ )
 {
     raw = raw_;
     loadBuffers();
@@ -32,21 +32,14 @@ void VolumeMeshShader::loadBuffers()
     if( vertices_.empty() == true ) return;
 
 
-//    double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
-//    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
-
-//    Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
-//    Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
-//    vertices_ = Shader::normalize( vertices_, max, min, 3 );
-
     std::vector< std::size_t > faces_size_t_;
-    raw->getFaces( faces_size_t_ );
+    raw->getTetrahedralCells( faces_size_t_ );
 
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
     std::vector< GLfloat > normals_;
 
     int r, g, b;
-//    raw->getColor( r, g, b );
+    raw->getColor( r, g, b );
 
     std::size_t nvertices = vertices_.size()/3;
 
@@ -152,8 +145,13 @@ void VolumeMeshShader::updateGeometryBuffers( const std::vector< GLfloat >& vert
     glBindBuffer ( GL_ARRAY_BUFFER, 0 );
 
 
+    std::vector< GLfloat > normals_default_;
+    normals_default_ = normals_;
+    if( normals_default_.empty() == true )
+        normals_default_ = getDefaultNormals( vertices_.size() );
+
     glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
-    glBufferData ( GL_ARRAY_BUFFER , normals_.size() * sizeof ( GLfloat ), normals_.data() ,
+    glBufferData ( GL_ARRAY_BUFFER , normals_default_.size() * sizeof ( GLfloat ), normals_default_.data() ,
                    GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER , 0 );
 

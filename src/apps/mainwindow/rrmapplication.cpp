@@ -67,6 +67,9 @@ void RRMApplication::getVolumeDimensionsFromController() const
 
 void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double value_ )
 {
+
+
+
     double ox_ = 0, oy_ = 0, oz_ = 0;
     mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
 
@@ -76,6 +79,8 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
 
     if( dir_ == AxesDirection::X )
     {
+        std::cout << "Inside RRMApplication::changeVolumeDimension, changing X: " << value_ << std::endl << std::flush;
+
         mainwindow->controller->setVolumeDimensions( value_, height_, length_ );
     }
     else if( dir_ == AxesDirection::Y )
@@ -84,6 +89,7 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
     }
     else if( dir_ == AxesDirection::Z )
     {
+        std::cout << "Inside RRMApplication::changeVolumeDimension, changing Z: " << value_ << std::endl << std::flush;
         std::size_t disc_ = 1;
         double step_ = 1.0;
         mainwindow->controller->setVolumeDimensions( width_, height_, value_ );
@@ -129,7 +135,9 @@ void RRMApplication::setVolumeName( std::size_t index_, const std::string& name_
 
 void RRMApplication::setVolumeVisible( std::size_t index_, bool status_ )
 {
-    mainwindow->controller->setVolumeVisibility( status_ );
+    if( index_ == 0 )
+        mainwindow->controller->setVolumeVisibility( status_ );
+
 }
 
 
@@ -186,6 +194,7 @@ void RRMApplication::getObjectInformation( QTreeWidgetItem* const& item_ ) const
 
 
 
+
 void RRMApplication::initSketchingApp()
 {
     CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
@@ -194,6 +203,7 @@ void RRMApplication::initSketchingApp()
     CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
     mainwindow->sketch_topview_window->addTopViewCanvas( topview_ );
 }
+
 
 
 void RRMApplication::updateSketchingCanvas()
@@ -244,6 +254,8 @@ void RRMApplication::createObjectSurface()
 }
 
 
+
+
 void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
 {
     if( rules_ == StratigraphicRules::REMOVE_ABOVE )
@@ -254,4 +266,149 @@ void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
         mainwindow->controller->setRemoveBelow();
     else if( rules_ == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         mainwindow->controller->setRemoveBelowIntersection();
+}
+
+
+
+
+void RRMApplication::setSketchAbove( bool status_ )
+{
+
+    bool enabled_ = mainwindow->controller->enableCreateAbove( status_ );
+
+    if( ( status_ == false ) && ( enabled_ == true ) )
+    {
+        std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
+        mainwindow->ac_sketch_above->setChecked( true );
+    }
+    if( ( status_ == true ) && ( enabled_ == false ) )
+    {
+        std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
+        mainwindow->ac_sketch_above->setChecked( false );
+    }
+
+    if( ( status_ == true ) && ( enabled_ == true ) )
+    {
+        std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
+        std::cout << "and mark them as selectable" << std::endl << std::flush;
+
+        setModeSelecting();
+//        emit updateObjects();
+
+    }
+    if( ( status_ == false ) && ( enabled_ == false ) )
+    {
+        std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
+        std::cout << "and mark them as non-selectable" << std::endl << std::flush;
+        setModeSketching();
+//        emit updateObjects();
+    }
+}
+
+
+void RRMApplication::setSketchBelow( bool status_ )
+{
+
+    bool enabled_ = mainwindow->controller->enableCreateBelow( status_ );
+
+
+    if( ( status_ == false ) && ( enabled_ == true ) )
+    {
+        std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
+        mainwindow->ac_sketch_below->setChecked( true );
+    }
+    if( ( status_ == true ) && ( enabled_ == false ) )
+    {
+        std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
+        mainwindow->ac_sketch_below->setChecked( false );
+    }
+
+    if( ( status_ == true ) && ( enabled_ == true ) )
+    {
+        std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
+        std::cout << "and mark them as selectable" << std::endl << std::flush;
+        setModeSelecting();
+
+    }
+    if( ( status_ == false ) && ( enabled_ == false ) )
+    {
+        std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
+        std::cout << "and mark them as non-selectable" << std::endl << std::flush;
+        setModeSketching();
+    }
+}
+
+
+
+
+void RRMApplication::setObjectAsBoundering( std::size_t index_ )
+{
+    mainwindow->controller->setObjectAsBoundering( index_ );
+    setModeSketching();
+}
+
+
+
+
+void RRMApplication::setModeSelecting()
+{
+    mainwindow->sketch_window->setModeSelecting();
+    updateSketchingCanvas();
+}
+
+
+void RRMApplication::setModeSketching()
+{
+    mainwindow->sketch_window->setModeSketching();
+    updateSketchingCanvas();
+}
+
+
+
+void RRMApplication::save( const std::string& filename_ )
+{
+    mainwindow->controller->saveFile( filename_ );
+}
+
+
+void RRMApplication::load( const std::string& filename_ )
+{
+    mainwindow->controller->loadFile( filename_ );
+}
+
+
+
+void RRMApplication::undo()
+{
+    mainwindow->controller->undo();
+    checkUndoRedo();
+}
+
+
+void RRMApplication::redo()
+{
+    mainwindow->controller->redo();
+    checkUndoRedo();
+}
+
+
+void RRMApplication::checkUndoRedo()
+{
+    if( mainwindow->controller == nullptr ) return;
+
+    mainwindow->ac_undo->setEnabled(  mainwindow->controller->canUndo() );
+    mainwindow->ac_redo->setEnabled(  mainwindow->controller->canRedo() );
+
+    updateSketchingCanvas();
+}
+
+
+void RRMApplication::checkSketchStatus()
+{
+    if( mainwindow->controller == nullptr ) return;
+
+    mainwindow->ac_sketch_above->setChecked(  mainwindow->controller->isDefineAboveActive() );
+    mainwindow->ac_sketch_below->setChecked(  mainwindow->controller->isDefineBelowActive() );
+
+    updateSketchingCanvas();
 }

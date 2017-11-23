@@ -76,7 +76,7 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
 
-    Volume* const& vol_ = raw_->getVolume();
+    Volume* vol_ = const_cast< Volume* >( raw_->getVolume() );
     addVolume( vol_ );
 
 
@@ -123,10 +123,10 @@ void SketchScene::updateCrossSection()
 
     std::cout << "Cross-section being updated: " << csection->getDepth() << std::endl << std::flush;
 
-    Volume* const& vol_ = csection->getVolume();
+    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
 
     std::cout << "Volume dimensions: ( " << vol_->getWidth() << ", " << vol_->getHeight() << ", "
-              << vol_->getWidth() << ") " << std::endl << std::flush;
+              << vol_->getLenght() << ") " << std::endl << std::flush;
 
 
     if( csection->getDirection() == CrossSection::Direction::Z )
@@ -275,7 +275,7 @@ void SketchScene::updateTrajectories()
 void SketchScene::addCrossSection( CrossSection * const &raw_ )
 {
 
-    Volume* const& vol_ = raw_->getVolume();
+    Volume* const& vol_ = const_cast< Volume* >( raw_->getVolume() );
 
     CrossSectionItemWrapper* csection_ = new CrossSectionItemWrapper( vol_->getWidth(), raw_->getDepth() );
     cross_sections.addElement( raw_->getIndex(), csection_ );

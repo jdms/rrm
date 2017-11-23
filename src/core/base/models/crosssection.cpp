@@ -11,12 +11,12 @@ CrossSection::CrossSection()
 }
 
 
-CrossSection::CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, double depth_ )
+CrossSection::CrossSection( const Volume* raw_, const CrossSection::Direction& dir_, double depth_ ): volume( raw_ )
 {
     defineIndex();
     initialize();
 
-    setVolume( raw_ );
+//    setVolume( raw_ );
     setDirection( dir_ );
     setDepth( depth_ );
 }
@@ -54,12 +54,12 @@ std::size_t CrossSection::getIndex() const
 }
 
 
-void CrossSection::setVolume( Volume* const& raw_ )
+void CrossSection::setVolume( const Volume* raw_ )
 {
-    volume = raw_;
+//    volume = raw_;
 }
 
-Volume* CrossSection::getVolume() const
+const Volume* CrossSection::getVolume() const
 {
     return volume;
 }
@@ -67,7 +67,6 @@ Volume* CrossSection::getVolume() const
 
 void CrossSection::getCoordinates( std::vector< double >& vertices_ )
 {
-
 
     double maxx , maxy, maxz;
     double minx , miny, minz;
@@ -241,7 +240,7 @@ void CrossSection::initialize()
     depth = 0.0;
     direction = Direction::Z;
     is_visible = true;
-    volume = nullptr;
+//    volume = nullptr;
 }
 
 

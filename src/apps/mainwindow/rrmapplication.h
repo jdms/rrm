@@ -118,6 +118,9 @@ class RRMApplication
 
 
         void setStratigraphicRule( const StratigraphicRules& rules_ );
+        void setSketchAbove( bool status_ );
+        void setSketchBelow( bool status_ );
+        void setObjectAsBoundering( std::size_t index_ );
 
 
         void initSketchingApp();
@@ -126,6 +129,20 @@ class RRMApplication
         void acceptSketchingCurve( const PolyCurve& curve_ );
         void acceptSketchingTrajectory( const PolyCurve& curve_ );
         void createObjectSurface();
+
+
+        void setModeSelecting();
+        void setModeSketching();
+
+
+        void save( const std::string& filename_ );
+        void load( const std::string& filename_ );
+
+
+        void undo();
+        void redo();
+        void checkUndoRedo();
+        void checkSketchStatus();
 
 
 

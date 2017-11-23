@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "shader.h"
-#include "volume.h"
+#include "region.h"
 
 class VolumeMeshShader: public Shader
 {
@@ -15,10 +15,10 @@ class VolumeMeshShader: public Shader
     public:
 
         VolumeMeshShader();
-        VolumeMeshShader( Volume* const& raw_ );
+        VolumeMeshShader( Region* const& raw_ );
 
 
-        void setVolume( Volume* const& raw_ );
+        void setRegion( Region* const& raw_ );
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -64,7 +64,7 @@ class VolumeMeshShader: public Shader
         GLuint number_of_vertices;
         GLuint number_of_faces;
 
-        Volume* raw;
+        Region* raw;
 
 };
 

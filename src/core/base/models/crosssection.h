@@ -24,7 +24,7 @@ class CrossSection
 
 
         CrossSection();
-        CrossSection( Volume* const& raw_, const CrossSection::Direction& dir_, double depth_ );
+        CrossSection( const Volume* raw_, const CrossSection::Direction& dir_, double depth_ );
 
         CrossSection& operator=( const CrossSection& other_ );
 
@@ -34,8 +34,8 @@ class CrossSection
         std::size_t getIndex() const;
 
 
-        void setVolume( Volume* const& raw_ );
-        Volume* getVolume() const;
+        void setVolume( const Volume* raw_ );
+        const Volume* getVolume() const;
 
         void getCoordinates( std::vector< double >& vertices_ );
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
@@ -86,7 +86,7 @@ class CrossSection
         std::string image_path;
 
         ObjectsContainer objects;
-        Volume* volume;
+        const Volume* volume;
 
 };
 
