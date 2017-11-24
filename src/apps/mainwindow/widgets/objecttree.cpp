@@ -214,11 +214,10 @@ void ObjectTree::clear()
     for ( int i = 0; i < topLevelItemCount(); ++i )
     {
 
-        int nchildren = topLevelItem(i)->childCount();
+        int nchildren = topLevelItem( i )->childCount();
         for( int j = 0; j < nchildren; ++j )
         {
-            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem(i)->child( j ) );
-//            obj_->clear();
+            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( i )->child( j ) );
 
             ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
             removeItemWidget( obj_, COLUMN_COLOR );

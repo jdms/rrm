@@ -368,6 +368,7 @@ void Volume::clear()
         regions[id].clear();
     }
     regions.clear();
+    regions_colors.clear();
 
 
     removeAllCrossSections();

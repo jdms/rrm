@@ -415,6 +415,13 @@ void RRMApplication::checkSketchStatus()
 
 
 
+void RRMApplication::setCurrentColor( int r_, int g_, int b_ )
+{
+    mainwindow->controller->setCurrentColor( r_, g_, b_ );
+    mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
+}
+
+
 
 void RRMApplication::defineRandomColor()
 {
@@ -427,7 +434,23 @@ void RRMApplication::defineRandomColor()
     int b_ = distr( eng );
 
     mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
+    mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
     mainwindow->controller->setCurrentColor( r_, g_, b_ );
 
+}
 
+
+void RRMApplication::clear()
+{
+    mainwindow->sketch_window->clear();
+    mainwindow->sketch_topview_window->clear();
+    mainwindow->controller->clear();
+
+
+    mainwindow->controller->init();
+    setRRMDefaultValuesOnInterface();
+    mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
+    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
+
+    initSketchingApp();
 }
