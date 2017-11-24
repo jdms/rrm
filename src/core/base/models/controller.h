@@ -34,7 +34,7 @@ class Controller
     };
 
 
-    enum class BounderingRegion { ABOVE, BELOW };
+    enum class BounderingRegion { NONE, ABOVE, BELOW };
 
 
         Controller() = default;
@@ -84,7 +84,7 @@ class Controller
 
 
 
-        bool addObject();
+        bool addObject( std::size_t index_ = 9999 );
         Object* getObject( std::size_t index_ ) const;
         Object* getCurrentObject() const;
 
@@ -148,6 +148,7 @@ class Controller
 
         void saveFile( const std::string& filename );
         void loadFile( const std::string& filename );
+        void loadObjects();
 
 
         bool undo();
@@ -158,6 +159,9 @@ class Controller
 
 
         void getOutputVolume();
+
+
+        void clear();
 
 
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );

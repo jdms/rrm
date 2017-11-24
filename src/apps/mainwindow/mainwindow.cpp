@@ -201,11 +201,13 @@ void MainWindow::createMainWindowActions()
                                                    { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
 
 
+    connect( ac_clear, &QAction::triggered, [=](){ app->clear(); } );
 
-    connect( ac_save, &QAction::triggered, [=](){ /*app->save();*/ } );
+
+    connect( ac_save, &QAction::triggered, [=](){ save(); } );
 
 
-    connect( ac_load, &QAction::triggered, [=](){ /*app->load();*/ } );
+    connect( ac_load, &QAction::triggered, [=](){ load(); } );
 
 
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
@@ -293,15 +295,19 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ app->setObjectAsBoundering( index_ ); } );
 
 
+    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ )
+                                                                { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
 
 
-    connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
+
+
+    connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
                                                                  { app->updateSketchingCanvas(); } );
 
-    connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
+    connect( object_properties, &PagesStack::heightVolumeChanged, [=]()
                                                                  {  app->updateSketchingCanvas(); } );
 
-    connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
+    connect( object_properties, &PagesStack::depthVolumeChanged, [=]()
                                                                  {  app->updateSketchingCanvas(); } );
 
 
@@ -357,6 +363,30 @@ void MainWindow::run_app()
 }
 
 
+
+void MainWindow::save()
+{
+    QString selected_format = "";
+    QString filename_ = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+
+    if( filename_.isEmpty() == true ) return;
+    app->save( filename_.toStdString() );
+}
+
+
+void MainWindow::load()
+{
+
+    QString selected_format = "";
+    QString filename_ = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+    if( filename_.isEmpty() == true ) return;
+    app->load( filename_.toStdString() );
+
+}
 
 
 void MainWindow::clear()

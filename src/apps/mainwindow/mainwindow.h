@@ -59,6 +59,9 @@ class MainWindow: public QMainWindow
 
     public slots:
 
+        void save();
+        void load();
+
         void setupSlider();
         void clear();
 

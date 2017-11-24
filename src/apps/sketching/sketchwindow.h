@@ -54,6 +54,8 @@ class SketchWindow: public QMainWindow
         void setCurrentColor( int r_, int g_, int b_ );
 
 
+        void clear();
+
 //        void setUpColor();
 
 //        void addCanvas( CrossSection* const& cs_, bool main_ = false );
@@ -131,6 +133,7 @@ class SketchWindow: public QMainWindow
         QHBoxLayout* hb_central_widget;
 
         CanvasStack* cs = nullptr;
+
         QGraphicsView* main = nullptr;
         QGraphicsView* tv_main = nullptr;
 

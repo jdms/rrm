@@ -55,8 +55,10 @@ void SketchWindow::createWindow()
 
 void SketchWindow::setupScene( SketchScene* const& scene_ )
 {
+
     QColor color_ = cp_color->currentColor();
     scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
+
 
 
     connect( ac_discard, &QAction::triggered, [=](){ emit scene_->discard(); } );
@@ -64,6 +66,10 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
     connect( ac_commit, &QAction::triggered, [=](){ emit scene_->commit(); } );
 
     connect( ac_create, &QAction::triggered, [=](){ emit scene_->create(); } );
+
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
+                                                    { scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+
 
 
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( CrossSection::Direction dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
@@ -74,7 +80,13 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
     connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
-//    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
+
+
+
+
+
+
+    //    connect( scene_, &SketchScene::setAsCurrent, [=]( double depth_, QGraphicsView* gview_ ){  emit setAsCurrent( depth_ );
 //                                                                                               /*if( gview_ == main ) highlightCanvas( -1 );
 //                                                                                               else highlightCanvas( depth_ );*/ } );
 
@@ -85,7 +97,7 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
 //    connect( ac_edit_scene, &QAction::toggled, scene_, &SketchScene::edit );
 
-//    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ ){ if( scene_ == nullptr ) return;  scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+//
 
 
 }
@@ -164,6 +176,7 @@ void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 
 
 
+
 void SketchWindow::addObject( Object* const& obj_ )
 {
 
@@ -188,6 +201,8 @@ void SketchWindow::updateObject( const std::size_t& index_ )
 
 
 }
+
+
 
 
 void SketchWindow::addTrajectory( Object* const& obj_ )
@@ -221,6 +236,7 @@ void SketchWindow::setModeSelecting()
 //    }
 }
 
+
 void SketchWindow::setModeSketching()
 {
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
@@ -252,6 +268,38 @@ void SketchWindow::setCurrentColor( int r_, int g_, int b_ )
     }
     updateCanvas();
 }
+
+
+
+
+
+void SketchWindow::clear()
+{
+    if( main != nullptr )
+    {
+        SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
+        sc_main_->clear();
+
+        delete sc_main_;
+        sc_main_ = nullptr;
+
+        delete main;
+        main = nullptr;
+    }
+
+
+    if( tv_main != nullptr )
+    {
+        SketchScene* sc_tv_main_ = ( SketchScene* )( tv_main->scene() );
+        sc_tv_main_->clear();
+
+        delete tv_main;
+        tv_main = nullptr;
+    }
+
+}
+
+
 
 
 

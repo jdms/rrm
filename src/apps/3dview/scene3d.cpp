@@ -232,6 +232,20 @@ void Scene3d::clear()
     }
     objects.clear();
 
+
+    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+
+        VolumeMeshShader* region_ = regions.getElement( it->first );
+        if( region_ == nullptr ) continue;
+
+        region_->clear();
+        delete region_;
+        region_ = nullptr;
+    }
+    regions.clear();
+
+
     if( volume != nullptr )
     {
         volume->clear();
@@ -239,15 +253,22 @@ void Scene3d::clear()
         volume = nullptr;
     }
 
+    if( output_volume != nullptr )
+    {
+        output_volume->clear();
+        delete output_volume;
+        output_volume = nullptr;
+    }
 
-//    clearData();
+
+    clearData();
     emit updateCanvas();
 }
 
 
 void Scene3d::clearData()
 {
-
+    volume = nullptr;
     output_volume = nullptr;
     current_color = Qt::red;
     shader_directory.clear();

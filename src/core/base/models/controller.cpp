@@ -208,11 +208,18 @@ CrossSection* Controller::getCurrentCrossSection() const
 
 
 
-bool Controller::addObject()
+bool Controller::addObject( std::size_t index_ )
 {
 
     Object* obj_ = new Object();
-    current_object = obj_->getIndex();
+
+    if( index_ != 9999 )
+    {
+        obj_->setIndex( index_ );
+        current_object = index_;
+    }
+    else
+        current_object = obj_->getIndex();
 
 
     double w = 0, h = 0,  l = 0;
@@ -649,15 +656,18 @@ void Controller::setRemoveAbove()
     current_rule = StratigraphicRules::REMOVE_ABOVE;
 }
 
+
 void Controller::setRemoveAboveIntersection()
 {
     current_rule = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
 }
 
+
 void Controller::setRemoveBelow()
 {
     current_rule = StratigraphicRules::REMOVE_BELOW;
 }
+
 
 void Controller::setRemoveBelowIntersection()
 {
@@ -840,9 +850,54 @@ void Controller::saveFile( const std::string& filename )
 void Controller::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
-//    loadObjects();
+    loadObjects();
 }
 
+
+void Controller::loadObjects()
+{
+    if( volume == nullptr ) return;
+
+    double ox, oy, oz;
+    rules_processor.getOrigin( ox, oy, oz );
+    volume->setOrigin( ox, oy, oz );
+
+    double width, height, depth;
+    rules_processor.getLenght( width, height, depth );
+    setVolumeDimensions( width, height, depth );
+
+
+    if( objects.findElement( current_object ) == true )
+    {
+        objects.removeElement( current_object );
+
+//        volume->addObject( current_object, obj_ );
+
+//        object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
+//                                obj_->getName(), current_color.r, current_color.g, current_color.b );
+//        scene3d->addObject( obj_ );
+    }
+
+
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    for( auto id: actives )
+    {
+        int r_ = distr( eng );
+        int g_ = distr( eng );
+        int b_ = distr( eng );
+
+        addObject( id );
+        setObjectColor( id, r_, g_, b_ );
+    }
+
+    addObject();
+    updateModel();
+
+}
 
 
 
@@ -969,6 +1024,96 @@ void Controller::getOutputVolume()
 
 }
 
+
+
+
+void Controller::clear()
+{
+
+    if( scene3d != nullptr )
+    {
+        scene3d->clear();
+    }
+
+
+    if( object_tree != nullptr )
+        object_tree->clear();
+
+
+    if( volume != nullptr )
+    {
+        volume->clear();
+        delete volume;
+        volume = nullptr;
+    }
+
+
+    if( main_csection != nullptr )
+    {
+        main_csection->clear();
+        delete main_csection;
+        main_csection = nullptr;
+    }
+
+    if( topview_csection != nullptr )
+    {
+        topview_csection->clear();
+        delete topview_csection;
+        topview_csection = nullptr;
+    }
+
+
+    for ( Container< double, CrossSection* > ::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
+    {
+        CrossSection* item_ = all_csections.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    all_csections.clear();
+
+
+    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        Object* item_ = objects.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    objects.clear();
+
+
+    for ( Container< std::size_t, Region* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+        Region* item_ = regions.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    regions.clear();
+
+    selectable_upper.clear();
+    selectable_bottom.clear();
+
+    rules_processor.clear();
+
+    current_color.r = 255;
+    current_color.g = 0;
+    current_color.b = 0;
+
+    current_object = 0;
+    current_csection = 500.0;
+    csection_step = 1.0;
+
+    boundering_region = BounderingRegion::NONE;
+
+}
 
 
 

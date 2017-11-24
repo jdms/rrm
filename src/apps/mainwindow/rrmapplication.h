@@ -147,8 +147,10 @@ class RRMApplication
         void checkSketchStatus();
 
 
+        void setCurrentColor( int r_, int g_, int b_ );
         void defineRandomColor();
 
+        void clear();
 
     protected:
 

@@ -209,12 +209,12 @@ CrossSection::ObjectsContainer CrossSection::getObjects() const
 
 void CrossSection::removeObjects()
 {
-//    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-//    {
-//        PolyCurve* curve_ = objects.getElement( it->first );
-//        if( curve_ == nullptr ) continue;
-//        curve_ = nullptr;
-//    }
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        PolyCurve* curve_ = objects.getElement( it->first );
+        if( curve_ == nullptr ) continue;
+        curve_ = nullptr;
+    }
     objects.clear();
 }
 

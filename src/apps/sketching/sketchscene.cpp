@@ -473,6 +473,13 @@ void SketchScene::clear()
         user_input = nullptr;
     }
 
+
+    if( csection != nullptr )
+    {
+        csection = nullptr;
+    }
+
+
     if( volume != nullptr )
     {
         volume->clear();
@@ -486,6 +493,8 @@ void SketchScene::clear()
         ObjectItemWrapper* item_ = objects.getElement( it->first );
         if( item_ == nullptr ) continue;
 
+
+        item_->clear();
         delete item_;
         item_ = nullptr;
     }
@@ -497,10 +506,23 @@ void SketchScene::clear()
         CrossSectionItemWrapper* item_ = cross_sections.getElement( it->first );
         if( item_ == nullptr ) continue;
 
+        item_->clear();
         delete item_;
         item_ = nullptr;
     }
     cross_sections.clear();
+
+
+    for ( TrajectoriesContainer::Iterator it =  trajectories.begin(); it != trajectories.end(); ++it )
+    {
+        TrajectoryItemWrapper* item_ = trajectories.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    trajectories.clear();
 
     initialize();
 }
