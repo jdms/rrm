@@ -51,6 +51,9 @@ class SketchWindow: public QMainWindow
         void setModeSketching();
 
 
+        void setCurrentColor( int r_, int g_, int b_ );
+
+
 //        void setUpColor();
 
 //        void addCanvas( CrossSection* const& cs_, bool main_ = false );

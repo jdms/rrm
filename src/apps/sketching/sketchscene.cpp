@@ -94,6 +94,7 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 void SketchScene::createCrossSectionScene( Volume* const& vol_ )
 {
+
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addObject( o.second );

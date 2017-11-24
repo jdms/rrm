@@ -217,22 +217,22 @@ void VolumeMeshShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P,
 
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-        glEnable( GL_POLYGON_OFFSET_FILL );
-        glPolygonOffset( 2.0f, 1.0f );
+//        glEnable( GL_POLYGON_OFFSET_FILL );
+//        glPolygonOffset( 2.0f, 1.0f );
 
 
-            glBindVertexArray( va_volume );
+//            glBindVertexArray( va_volume );
 
-                shader->setUniform( "solid" , true );
-                shader->setUniform( "testing" , true );
+//                shader->setUniform( "solid" , true );
+//                shader->setUniform( "testing" , true );
 
-                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+//                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+//                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-            glBindVertexArray ( 0 );
+//            glBindVertexArray ( 0 );
 
 
-        glDisable(GL_POLYGON_OFFSET_FILL);
+//        glDisable(GL_POLYGON_OFFSET_FILL);
 
 
         glEnable( GL_DEPTH_TEST );
@@ -249,7 +249,7 @@ void VolumeMeshShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P,
             glBindVertexArray ( 0 );
 
         glDisable( GL_BLEND );
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+//        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     shader->unbind();
 

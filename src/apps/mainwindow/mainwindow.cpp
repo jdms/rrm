@@ -280,6 +280,7 @@ void MainWindow::createSketchingActions()
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=](){ app->updateSketchingCanvas(); } );
 
+
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
                                                          { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
@@ -296,8 +297,10 @@ void MainWindow::createSketchingActions()
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
                                                                  { app->updateSketchingCanvas(); } );
+
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
                                                                  {  app->updateSketchingCanvas(); } );
+
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
                                                                  {  app->updateSketchingCanvas(); } );
 

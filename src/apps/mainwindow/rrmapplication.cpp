@@ -68,8 +68,6 @@ void RRMApplication::getVolumeDimensionsFromController() const
 void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double value_ )
 {
 
-
-
     double ox_ = 0, oy_ = 0, oz_ = 0;
     mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
 
@@ -166,6 +164,7 @@ void RRMApplication::setObjectVisible( std::size_t index_, bool status_ )
 void RRMApplication::setObjectColor( std::size_t index_, int r_, int g_, int b_ )
 {
     mainwindow->controller->setObjectColor( index_, r_, g_, b_ );
+    updateSketchingCanvas();
 }
 
 
@@ -249,8 +248,9 @@ void RRMApplication::createObjectSurface()
     mainwindow->sketch_window->addObject( mainwindow->controller->getCurrentObject() );
     mainwindow->sketch_topview_window->addTrajectory( mainwindow->controller->getCurrentObject() );
 
-    //    emit setUpColor();
-    //    checkUndoRedo();
+    updateSketchingCanvas();
+    defineRandomColor();
+    checkUndoRedo();
 }
 
 
@@ -411,4 +411,23 @@ void RRMApplication::checkSketchStatus()
     mainwindow->ac_sketch_below->setChecked(  mainwindow->controller->isDefineBelowActive() );
 
     updateSketchingCanvas();
+}
+
+
+
+
+void RRMApplication::defineRandomColor()
+{
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    int r_ = distr( eng );
+    int g_ = distr( eng );
+    int b_ = distr( eng );
+
+    mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
+    mainwindow->controller->setCurrentColor( r_, g_, b_ );
+
+
 }
