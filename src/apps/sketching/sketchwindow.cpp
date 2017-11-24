@@ -100,6 +100,7 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     setupScene( scene_ );
 
     main = new QGraphicsView();
+    main->scale( 1, -1 );
     main->setScene( scene_ );
 
     hb_central_widget->insertWidget( 0, main );
@@ -235,6 +236,22 @@ void SketchWindow::setModeSketching()
 
 
 
+void SketchWindow::setCurrentColor( int r_, int g_, int b_ )
+{
+    cp_color->setColor( QColor( r_, g_, b_ ) );
+
+    if( main != nullptr )
+    {
+        SketchScene* sc_ = ( SketchScene* )( main->scene() );
+        sc_->setCurrentColor( r_, g_, b_ );
+    }
+    if( tv_main != nullptr )
+    {
+        SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
+        sc_->setCurrentColor( r_, g_, b_ );
+    }
+    updateCanvas();
+}
 
 
 

@@ -937,9 +937,6 @@ void Controller::getOutputVolume()
     vol1_->getGeometry( w, h, l );
 
 
-
-
-
     std::random_device rd;
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
@@ -961,7 +958,6 @@ void Controller::getOutputVolume()
         region_->setTetrahedralCells( regions_[ i ] );
         region_->setColor( color_.r, color_.g, color_.b );
         region_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
-        region_->setColor( current_color.r, current_color.g, current_color.b );
 
         regions.addElement( i, region_ );
         scene3d->addRegion( region_ );
@@ -969,8 +965,6 @@ void Controller::getOutputVolume()
 
         vol1_->addRegion( i, regions_[ i ], color_ );
     }
-
-//
 
 
 }
@@ -1533,40 +1527,6 @@ double Controller::depthCrossSection( std::size_t index_ ) const
 }
 
 
-
-
-//void Controller::setRemoveAbove()
-//{
-//    current_rule = StratigraphicRules::REMOVE_ABOVE;
-//}
-
-//void Controller::setRemoveAboveIntersection()
-//{
-//    current_rule = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
-//}
-
-//void Controller::setRemoveBelow()
-//{
-//    current_rule = StratigraphicRules::REMOVE_BELOW;
-//}
-
-//void Controller::setRemoveBelowIntersection()
-//{
-//    current_rule = StratigraphicRules::REMOVE_BELOW_INTERSECTION;
-//}
-
-
-//void Controller::applyStratigraphicRule()
-//{
-//    if( current_rule == StratigraphicRules::REMOVE_ABOVE )
-//        rules_processor.removeAbove();
-//    else if( current_rule == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
-//        rules_processor.removeAboveIntersection();
-//    else if( current_rule == StratigraphicRules::REMOVE_BELOW )
-//        rules_processor.removeBelow();
-//    else if( current_rule == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
-//        rules_processor.removeBelowIntersection();
-//}
 
 
 

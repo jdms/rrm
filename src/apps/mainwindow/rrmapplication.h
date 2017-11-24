@@ -7,6 +7,8 @@
 #include <vector>
 #include <functional>
 #include <unordered_map>
+#include <random>
+
 
 #include <QObject>
 
@@ -145,7 +147,7 @@ class RRMApplication
         void checkSketchStatus();
 
 
-
+        void defineRandomColor();
 
 
     protected:
