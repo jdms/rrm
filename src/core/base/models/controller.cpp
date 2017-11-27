@@ -858,6 +858,7 @@ void Controller::saveFile( const std::string& filename )
     rules_processor.saveFile( filename );
 }
 
+
 void Controller::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
@@ -1027,12 +1028,44 @@ void Controller::getOutputVolume()
 
         regions.addElement( i, region_ );
         scene3d->addRegion( region_ );
-        object_tree->addRegion( i, "region", color_.r, color_.g, color_.b );
+        object_tree->addRegion( i, region_->getName(), color_.r, color_.g, color_.b );
 
         vol1_->addRegion( i, regions_[ i ], color_ );
     }
 
 
+}
+
+
+void Controller::setRegionName( std::size_t index_, const std::string& name_ )
+{
+    if( regions.findElement( index_) == false )
+        return;
+
+    Region* const& region_ = regions.getElement( index_ );
+//    region_->setName( name_ );
+}
+
+
+void Controller::setRegionVisibility( std::size_t index_, bool status_ )
+{
+    if( regions.findElement( index_ ) == false )
+        return;
+
+    Region* const& region_ = regions.getElement( index_ );
+    region_->setVisible( status_ );
+    scene3d->updateRegion( index_ );
+}
+
+void Controller::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
+{
+
+    if( regions.findElement( index_ ) == false )
+        return;
+
+    Region* const& region_ = regions.getElement( index_ );
+    region_->setColor( r_, g_, b_ );
+    scene3d->updateRegion( index_ );
 }
 
 

@@ -103,11 +103,12 @@ void Scene3d::addRegion( Region* const& raw_ )
 }
 
 
-void Scene3d::updateRegion( Region* const& raw_ )
+void Scene3d::updateRegion( std::size_t index_ )
 {
     context->makeCurrent( surface );
 
-    VolumeMeshShader* region_ = regions.getElement( raw_->getIndex() );
+    if( regions.findElement( index_ ) == false ) return;
+    VolumeMeshShader* region_ = regions.getElement( index_ );
     region_->update();
 
     emit updateCanvas();

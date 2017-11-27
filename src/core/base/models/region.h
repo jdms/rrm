@@ -18,6 +18,9 @@ class Region
         void setPoint( double x_, double y_, double z_ );
         void getPoint( double& x_, double& y_, double& z_ ) const;
 
+        void setName( const std::string& name_ );
+        std::string getName() const;
+
         void setVisible( const bool status_ );
         bool isVisible() const;
 
@@ -60,6 +63,7 @@ class Region
         Point center;
 
         bool is_visible;
+        std::string name;
         std::vector< std::size_t > index_cells;
         std::vector< double > vertices;
         Color color;

@@ -202,7 +202,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     ColorPicker* colorpicker_ = new ColorPicker( this );
     colorpicker_->setMaximumWidth( 30 );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
-    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setObjectColor( index_, color_ ); } );
+    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setRegionColor( index_, color_ ); } );
 
     setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
     regions.addElement( index_, region_ );

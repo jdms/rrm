@@ -238,7 +238,22 @@ void MainWindow::createSidebarActions()
     connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
                                                        { app->setObjectColor( index_, color_.red(), color_.green(), color_.blue() ); } );
 
+
     connect( object_tree, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_ ) { app->getObjectInformation( item_ ); } );
+
+
+
+
+
+    connect( object_tree, &ObjectTree::setRegionName, [=]( std::size_t index_, const std::string& name_ ){ app->setRegionName( index_, name_ ); } );
+
+
+    connect( object_tree, &ObjectTree::setRegionVisible, [=]( std::size_t index_, bool status_ ){ app->setRegionVisible( index_, status_ ); } );
+
+
+    connect( object_tree, &ObjectTree::setRegionColor, [=]( std::size_t index_, const QColor& color_ )
+                                                       { app->setRegionColor( index_, color_.red(), color_.green(), color_.blue() ); } );
+
 
 
 
@@ -292,6 +307,10 @@ void MainWindow::createSketchingActions()
                                                          { app->addCrossSectionCanvas( v );  } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ app->removeCrossSectionCanvas( v ); } );
+
+
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
+
 
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
