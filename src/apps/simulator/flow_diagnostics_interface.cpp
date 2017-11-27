@@ -96,10 +96,12 @@ void FlowDiagnosticsInterface::init(){
         region.wellcondition(); //well boundary condition overwrite surface boundary condition
         region.oilinplace();
     }
-    else if (region.meshinfo_type() == 2){ //CPG
-        region.properties_cpgfv();
+	else if (region.meshinfo_type() == 2 && region.sketchflag() == 0 && region.numberofphases() == 1){
+		//cpg+linear extrusion+1phase
+        region.properties_cpgfv_sf();
         region.wellcondition_cpgfv();
         region.transmatrix_cpgfv();
+		region.oilinplace();
     }
 }
 
@@ -124,7 +126,7 @@ void FlowDiagnosticsInterface::buildVolumetricMesh(){
 		region.tetgen2region();
 		region.meshdimension_max();
 	}
-	else if (region.sketchflag() == 1){
+	else if (region.sketchflag() == 1){//general surface
 		region.RRMdefaultvalues_unstructured();
 		region.inputverticalwells();
 		region.buildsurfacemesh();
@@ -139,11 +141,14 @@ void FlowDiagnosticsInterface::buildVolumetricMesh(){
 
 
 void FlowDiagnosticsInterface::buildCPGVolumetricMesh(){
-	region.RRMdefaultvalues_cpg();
-	region.paramodel();
-	region.buildcpg_ordering();
-	region.writecornerpointgridVTK("cpg.vtk");
-	region.writecornerpointgridGRDECL("cpg.grdecl");
+	if (region.sketchflag() == 0){//linear extrusion only
+		region.RRMdefaultvalues_cpg();
+		region.paramodel();
+		region.buildcpg_ordering();
+		region.writecornerpointgridVTK("cpg.vtk");
+		region.writecornerpointgridGRDECL("cpg.grdecl");
+	}
+	
 }
 
 void FlowDiagnosticsInterface::getPressure(std::vector< double >& values) {
@@ -503,14 +508,11 @@ void FlowDiagnosticsInterface::clear(){
 }
 
 
-//discuss:
-
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
     std::cout << " getUpscalledPermeability " << std::endl;
     region.clear_computedproperties();
     region.modelpreparation_upscale();
-
     region.upscalebsurface(1);
     region.boundarycondition();
     region.steadystateflowsolver();
@@ -1162,12 +1164,16 @@ void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number,
 }
 
 void FlowDiagnosticsInterface::computeProperties(){
+	
 	if (region.meshinfo_type() == 1){
 		region.steadystateflowsolver();
 		region.flowdiagnostics_tracing();
 		region.writeresult_cvfe_sf_log2t("result.vtk");
 		region.derivedquantities_both();
 		region.writeflowdiagnostics("flowdiagnostics.txt");
+	}
+	else if (region.sketchflag() == 0 && region.meshinfo_type() == 2){//linear extrusion+cpg
+		region.steadystateflowsolver();
 	}
 }
 
