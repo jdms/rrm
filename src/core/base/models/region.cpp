@@ -8,6 +8,7 @@ Region::Region()
 void Region::setIndex( const std::size_t id_ )
 {
     index = id_;
+    name = "Region " + std::to_string( index );
 }
 
 std::size_t Region::getIndex() const
@@ -29,6 +30,20 @@ void Region::getPoint( double& x_, double& y_, double& z_ ) const
     y_ = center.y;
     z_ = center.z;
 }
+
+
+void Region::setName( const std::string& name_ )
+{
+    name.clear();
+    name = name_;
+}
+
+
+std::string Region::getName() const
+{
+    return name;
+}
+
 
 void Region::setVisible( const bool status_ )
 {
@@ -76,32 +91,8 @@ void Region::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
 
     }
 
-
-
-
-//    index_cells.push_back( faces_[ 0 ] );
-//    index_cells.push_back( faces_[ 1 ] );
-//    index_cells.push_back( faces_[ 2 ] );
-
-//    index_cells.push_back( faces_[ 0 ] );
-//    index_cells.push_back( faces_[ 2 ] );
-//    index_cells.push_back( faces_[ 3 ] );
-
-//    index_cells.push_back( faces_[ 0 ] );
-//    index_cells.push_back( faces_[ 3 ] );
-//    index_cells.push_back( faces_[ 1 ] );
-
-//    index_cells.push_back( faces_[ 1 ] );
-//    index_cells.push_back( faces_[ 3 ] );
-//    index_cells.push_back( faces_[ 2 ] );
 }
 
-
-//void Region::updateCells( const std::vector< std::size_t >& cells_ )
-//{
-//    clearCells();
-//    index_cells.assign( cells_.begin(), cells_.end() );
-//}
 
 void Region::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
 {

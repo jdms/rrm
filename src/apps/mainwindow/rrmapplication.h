@@ -107,6 +107,7 @@ class RRMApplication
         void setVolumeVisible( std::size_t index_, bool status_ );
 
 
+
         void setCurrentCrossSection( double depth_ );
 
 
@@ -117,6 +118,12 @@ class RRMApplication
 
         void saveObjectInformation( const std::string & text_ );
         void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
+
+
+        void setRegionName( std::size_t index_, const std::string& name_ );
+        void setRegionVisible( std::size_t index_, bool status_ );
+        void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
+
 
 
         void setStratigraphicRule( const StratigraphicRules& rules_ );

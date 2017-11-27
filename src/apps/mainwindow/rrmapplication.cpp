@@ -201,6 +201,26 @@ void RRMApplication::getObjectInformation( QTreeWidgetItem* const& item_ ) const
 
 
 
+void RRMApplication::setRegionName( std::size_t index_, const std::string& name_ )
+{
+    mainwindow->controller->setRegionName( index_, name_ );
+}
+
+
+void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
+{
+    mainwindow->controller->setRegionVisibility( index_, status_ );
+}
+
+
+void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
+{
+    mainwindow->controller->setRegionColor( index_, r_, g_, b_ );
+//    updateSketchingCanvas();
+}
+
+
+
 void RRMApplication::initSketchingApp()
 {
     CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
