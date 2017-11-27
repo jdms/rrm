@@ -143,6 +143,28 @@ void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type
 }
 
 
+void ObjectTree::removeObject( std::size_t index_ )
+{
+    if( items.findElement( index_ ) == false ) return;
+    ObjectTreeItem* obj_ = items.getElement( index_ );
+    if( obj_ == nullptr ) return;
+
+
+    ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+    removeItemWidget( obj_, COLUMN_COLOR );
+    delete colorpicker_;
+
+
+    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+    if( vol_ == nullptr ) return;
+    vol_->removeChild( obj_ );
+
+    delete obj_;
+    obj_ = nullptr;
+
+}
+
+
 void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, int blue_)
 {
     if( items.findElement( index_ ) == false ) return;

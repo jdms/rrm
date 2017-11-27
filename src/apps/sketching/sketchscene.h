@@ -71,7 +71,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
         void acceptVolumeDimensions( CrossSection::Direction dir_, double w_, double h_ );
-        void acceptCurve( const PolyCurve& curve_ );
+        void acceptCurve( const PolyCurve& curve_, double depth_ );
 
         void discard();
         void commit();

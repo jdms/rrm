@@ -34,9 +34,6 @@
 #include "mainwindow.h"
 #include "./core/base/models/object.h"
 
-std::size_t Object::number_of_objects = 0;
-std::size_t CrossSection::number_of_csections;
-
 
 int main( int argc, char *argv[] )
 {

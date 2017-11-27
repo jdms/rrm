@@ -215,6 +215,9 @@ bool Volume::removeObject( std::size_t id_ )
     if( objects.findElement( id_ ) == false )
         return false;
 
+    Object* obj_ = objects.getElement( id_ );
+    if( obj_ != nullptr ) obj_ = nullptr;
+
     objects.removeElement( id_ );
     return true;
 }

@@ -240,6 +240,7 @@ void CrossSection::initialize()
     depth = 0.0;
     direction = Direction::Z;
     is_visible = true;
+    number_of_csections = 0;
 //    volume = nullptr;
 }
 
@@ -250,4 +251,10 @@ CrossSection::~CrossSection()
         clear();
     if( volume != nullptr )
     volume = nullptr;
+}
+
+
+void CrossSection::resetAllCrossSections()
+{
+    number_of_csections = 0;
 }

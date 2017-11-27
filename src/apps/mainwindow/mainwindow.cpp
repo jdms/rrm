@@ -18,8 +18,6 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 
     show();
 
-//    createController();
-//    setupController();
     run_app();
 }
 
@@ -201,7 +199,7 @@ void MainWindow::createMainWindowActions()
                                                    { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
 
 
-    connect( ac_clear, &QAction::triggered, [=](){ app->clear(); } );
+    connect( ac_clear, &QAction::triggered, [=](){ app->restart(); } );
 
 
     connect( ac_save, &QAction::triggered, [=](){ save(); } );
@@ -227,12 +225,15 @@ void MainWindow::createSidebarActions()
 
     connect( object_tree, &ObjectTree::setVolumeName, [=]( std::size_t index_, const std::string& name_ ){ app->setVolumeName( index_, name_ ); } );
 
+
     connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ ){ app->setVolumeVisible( index_, status_ ); } );
 
 
     connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t index_, const std::string& name_ ){ app->setObjectName( index_, name_ ); } );
 
+
     connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ ){ app->setObjectVisible( index_, status_ ); } );
+
 
     connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
                                                        { app->setObjectColor( index_, color_.red(), color_.green(), color_.blue() ); } );
@@ -243,8 +244,11 @@ void MainWindow::createSidebarActions()
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
                                                                  { app->changeVolumeDimension( RRMApplication::AxesDirection::X, w_ ); } );
+
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
                                                                  { app->changeVolumeDimension( RRMApplication::AxesDirection::Y, h_ ); } );
+
+
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
                                                                  { app->changeVolumeDimension( RRMApplication::AxesDirection::Z, l_ ); } );
 
@@ -277,17 +281,24 @@ void MainWindow::createSketchingWindow()
 }
 
 
+
 void MainWindow::createSketchingActions()
 {
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=](){ app->updateSketchingCanvas(); } );
 
 
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v )
+                                                         { app->addCrossSectionCanvas( v );  } );
+
+    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ app->removeCrossSectionCanvas( v ); } );
+
+
     connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
                                                          { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
-    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
-                                                        { app->acceptSketchingCurve( curve_ ); } );
+    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_, double depth_ )
+                                                        { app->acceptSketchingCurve( curve_, depth_ ); } );
 
     connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
@@ -322,42 +333,12 @@ void MainWindow::createSketchingActions()
 
 
 
-void MainWindow::createController()
-{
-    if( controller != nullptr )
-        delete controller;
-
-    controller = new Controller();
-}
-
-
-void MainWindow::setupController()
-{
-    Scene3d* scene3d = canvas3d->getScene();
-    controller->setScene3d( scene3d );
-    controller->setObjectTree( object_tree );
-}
-
-
-void MainWindow::setupSlider()
-{
-    double w_, h_, d_;
-    controller->getVolumeDimensions( w_, h_, d_ );
-
-    emit defineMainCrossSection( d_ );
-    emit defineVolumeDimensions( w_, h_, d_ );;
-
-    sl_depth_csection->setValue( d_ );
-}
-
-
 
 void MainWindow::run_app()
 {
 
     app = new RRMApplication( this );
     app->init();
-
     app->initSketchingApp();
 
 }
@@ -388,21 +369,5 @@ void MainWindow::load()
 
 }
 
-
-void MainWindow::clear()
-{
-
-//    sketch_window->clear();
-//    sketch_topview_window->clear();
-//    controller->clear();
-//    sl_depth_csection->clear();
-
-//    emit resetMenus();
-//    emit resetWindows();
-
-
-//    run_app();
-
-}
 
 

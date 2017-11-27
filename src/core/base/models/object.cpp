@@ -363,3 +363,9 @@ void Object::initialize()
     min.z = 0;
 }
 
+
+void Object::resetAllObjects()
+{
+    number_of_objects = 0;
+}
+

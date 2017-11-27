@@ -21,12 +21,16 @@ class ObjectTreeItem: public QTreeWidgetItem
         void setIndex( const std::size_t index_ );
         std::size_t getIndex() const;
 
+        void setTreeIndex( const std::size_t index_ );
+        std::size_t getTreeIndex() const;
+
 
 
     protected:
 
 
         std::size_t index;
+        std::size_t tree_index;
         Type type;
 
 

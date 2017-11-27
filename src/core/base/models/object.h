@@ -107,6 +107,7 @@ class Object
         void clear();
         void initialize();
 
+        static void resetAllObjects();
 
 
 

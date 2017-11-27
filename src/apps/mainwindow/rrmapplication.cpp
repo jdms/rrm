@@ -1,6 +1,13 @@
 #include "rrmapplication.h"
 #include "mainwindow.h"
 
+
+
+std::size_t Object::number_of_objects = 0;
+std::size_t CrossSection::number_of_csections = 0;
+
+
+
 RRMApplication::RRMApplication(MainWindow *mw_ ): mainwindow( mw_ )
 {
     mainwindow->controller = new Controller();
@@ -212,13 +219,13 @@ void RRMApplication::updateSketchingCanvas()
 }
 
 
-void RRMApplication::acceptSketchingCurve( const PolyCurve& curve_ )
+void RRMApplication::acceptSketchingCurve( const PolyCurve& curve_, double depth_ )
 {
 
-    bool status_ = mainwindow->controller->addObjectCurve( curve_ );
+    bool status_ = mainwindow->controller->addObjectCurve( curve_, depth_ );
     if( status_ == false ) return;
 
-    CrossSection* csection_ = mainwindow->controller->getCurrentCrossSection();
+    CrossSection* csection_ = mainwindow->controller->getCrossSection( depth_ );
     mainwindow->sketch_topview_window->addCrossSection( csection_ );
     
     updateSketchingCanvas();
@@ -365,6 +372,8 @@ void RRMApplication::setModeSketching()
 
 
 
+
+
 void RRMApplication::save( const std::string& filename_ )
 {
     mainwindow->controller->saveFile( filename_ );
@@ -373,8 +382,12 @@ void RRMApplication::save( const std::string& filename_ )
 
 void RRMApplication::load( const std::string& filename_ )
 {
+    clear();
     mainwindow->controller->loadFile( filename_ );
+    initSketchingApp();
 }
+
+
 
 
 
@@ -390,6 +403,9 @@ void RRMApplication::redo()
     mainwindow->controller->redo();
     checkUndoRedo();
 }
+
+
+
 
 
 void RRMApplication::checkUndoRedo()
@@ -415,12 +431,13 @@ void RRMApplication::checkSketchStatus()
 
 
 
+
+
 void RRMApplication::setCurrentColor( int r_, int g_, int b_ )
 {
     mainwindow->controller->setCurrentColor( r_, g_, b_ );
     mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
 }
-
 
 
 void RRMApplication::defineRandomColor()
@@ -440,6 +457,10 @@ void RRMApplication::defineRandomColor()
 }
 
 
+
+
+
+
 void RRMApplication::clear()
 {
     mainwindow->sketch_window->clear();
@@ -452,5 +473,31 @@ void RRMApplication::clear()
     mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
     mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
 
+}
+
+
+void RRMApplication::restart()
+{
+    clear();
     initSketchingApp();
+}
+
+
+
+void RRMApplication::addCrossSectionCanvas( double depth_ )
+{
+    bool status_ = mainwindow->controller->addFixedCrossSection( depth_ );
+    if( status_ == false ) return;
+    mainwindow->sketch_window->addFixedCrossSectionCanvas( mainwindow->controller->getCrossSection( depth_ ) );
+    updateSketchingCanvas();
+}
+
+
+void RRMApplication::removeCrossSectionCanvas( double depth_ )
+{
+    bool status_ = mainwindow->sketch_window->removeFixedCrossSectionCanvas( depth_ );
+    if( status_ == false ) return;
+
+    status_ = mainwindow->controller->removeFixedCrossSection( depth_ );
+
 }
