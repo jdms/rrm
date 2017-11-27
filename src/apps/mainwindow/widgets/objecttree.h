@@ -24,6 +24,8 @@ class ObjectTree: public QTreeWidget
         void addObject( std::size_t index_, const ObjectTreeItem::Type& type_,
                         const std::string& name_,  const int& red_,
                         const int& green_,  const int& blue_ );
+        void removeObject( std::size_t index_ );
+
         void updateObjectColor( std::size_t index_, int red_, int green_, int blue_);
         void setObjectVisibility( std::size_t index_, bool status_ );
 

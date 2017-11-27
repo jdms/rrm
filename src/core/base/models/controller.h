@@ -96,7 +96,7 @@ class Controller
         const std::string& getObjectInformation( std::size_t index_ ) const;
 
 
-        bool addObjectCurve( PolyCurve curve_ );
+        bool addObjectCurve( PolyCurve curve_, double depth_ );
 
         bool addObjectTrajectory( PolyCurve curve_ );
         void removeObjectTrajectory();
@@ -118,6 +118,7 @@ class Controller
         void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
         void updatePreviewCurves( Object* obj_, double csection_depth_ );
         void updateObjectSurfaces( std::size_t object_id_ );
+        void updateObjectInFixedCrossSections( std::size_t id_ );
         void updateModel();
 
 
@@ -163,6 +164,9 @@ class Controller
 
         void clear();
 
+
+        bool addFixedCrossSection( double depth_ );
+        bool removeFixedCrossSection( double depth_ );
 
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
 //        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
@@ -294,7 +298,7 @@ class Controller
         double current_csection = 500.0;
         CrossSection* main_csection = nullptr;
         CrossSection* topview_csection = nullptr;
-        Container< double, CrossSection* > actives_csections;
+        Container< double, CrossSection* > fixed_csections;
         Container< double, CrossSection* > all_csections;
 
 

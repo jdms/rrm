@@ -26,7 +26,7 @@ class Scene3d: public QObject, public Scene
     Q_OBJECT
 
 
-    using CrossSectionsContainer = Container< std::size_t, PlaneShader* >;
+    using CrossSectionsContainer = Container< double, PlaneShader* >;
     using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
     using RegionsContainer = Container< std::size_t, VolumeMeshShader* >;
 
@@ -53,6 +53,9 @@ class Scene3d: public QObject, public Scene
         void updateRegion( Region* const& raw_ );
 //        void clearRegion();
 
+        void addMainCrossSection( CrossSection* const& raw_ );
+        void updateMainCrossSection();
+
         virtual void addCrossSection( CrossSection* const& raw_ );
         void updateCrossSection( CrossSection* const& raw_ );
         virtual void removeCrossSection( CrossSection* const& raw_ );
@@ -60,6 +63,7 @@ class Scene3d: public QObject, public Scene
 
         virtual void addObject(  Object* const& raw_ );
         virtual void updateObject(  const std::size_t& index_ );
+        void removeObject(  const std::size_t& index_ );
 
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
@@ -91,6 +95,9 @@ class Scene3d: public QObject, public Scene
 
         VolumeShader* volume;
         VolumeShader* output_volume;
+
+        PlaneShader* main_csection;
+
         CrossSectionsContainer csections;
         ObjectsContainer objects;
         RegionsContainer regions;

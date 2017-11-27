@@ -128,7 +128,7 @@ class RRMApplication
         void initSketchingApp();
         void updateSketchingCanvas();
 
-        void acceptSketchingCurve( const PolyCurve& curve_ );
+        void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
         void acceptSketchingTrajectory( const PolyCurve& curve_ );
         void createObjectSurface();
 
@@ -151,6 +151,11 @@ class RRMApplication
         void defineRandomColor();
 
         void clear();
+        void restart();
+
+
+        void addCrossSectionCanvas( double depth_ );
+        void removeCrossSectionCanvas( double depth_ );
 
     protected:
 

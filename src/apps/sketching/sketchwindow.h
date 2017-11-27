@@ -56,6 +56,10 @@ class SketchWindow: public QMainWindow
 
         void clear();
 
+
+        void addFixedCrossSectionCanvas( CrossSection* const& cs_ );
+        bool removeFixedCrossSectionCanvas( double depth_ );
+
 //        void setUpColor();
 
 //        void addCanvas( CrossSection* const& cs_, bool main_ = false );
@@ -105,7 +109,7 @@ class SketchWindow: public QMainWindow
 
 
         void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
-        void acceptCurve( const PolyCurve& curve_ );
+        void acceptCurve( const PolyCurve& curve_, double depth_ );
         void defineColorCurrent( const QColor& color_ );
         void setAsCurrent( double depth_ );
 

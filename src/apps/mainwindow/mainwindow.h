@@ -62,8 +62,7 @@ class MainWindow: public QMainWindow
         void save();
         void load();
 
-        void setupSlider();
-        void clear();
+
 
 
     private:
@@ -83,12 +82,8 @@ class MainWindow: public QMainWindow
         void createSketchingWindow();
         void createSketchingActions();
 
-        void createController();
-        void setupController();
         void run_app();
 
-        void checkUndoRedo();
-        void checkSketchStatus();
 
 
     private:

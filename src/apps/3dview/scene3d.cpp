@@ -17,6 +17,7 @@ Scene3d::Scene3d()
 {
     volume = nullptr;
     output_volume = nullptr;
+    main_csection = nullptr;
 }
 
 
@@ -115,12 +116,21 @@ void Scene3d::updateRegion( Region* const& raw_ )
 
 
 
+void Scene3d::addMainCrossSection( CrossSection* const& raw_ )
+{
+    context->makeCurrent( surface );
+
+    main_csection = new PlaneShader( raw_ );
+    emit updateCanvas();
+}
+
+
+
 void Scene3d::addCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );
 
-    std::size_t index_ = raw_->getIndex();
-    csections.addElement( index_, new PlaneShader( raw_ ) );
+    csections.addElement( raw_->getDepth(), new PlaneShader( raw_ ) );
 
     emit updateCanvas();
 }
@@ -130,8 +140,20 @@ void Scene3d::updateCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );
 
-    PlaneShader* csection_ = csections.getElement( raw_->getIndex() );
+    if( csections.findElement( raw_->getDepth() ) == false  ) return;
+    PlaneShader* csection_ = csections.getElement( raw_->getDepth() );
     csection_->update();
+
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateMainCrossSection()
+{
+    context->makeCurrent( surface );
+
+    if( main_csection == nullptr ) return;
+    main_csection->update();
 
     emit updateCanvas();
 }
@@ -141,7 +163,8 @@ void Scene3d::removeCrossSection( CrossSection* const& raw_ )
 {
     context->makeCurrent( surface );
 
-    csections.removeElement( raw_->getIndex() );
+    if( csections.findElement( raw_->getDepth() ) == false  ) return;
+    csections.removeElement( raw_->getDepth() );
     emit updateCanvas();
 }
 
@@ -165,12 +188,32 @@ void Scene3d::updateObject( const std::size_t &index_ )
 }
 
 
+void Scene3d::removeObject( const std::size_t &index_ )
+{
+
+    if( objects.findElement( index_ ) == false ) return;
+
+    SurfaceShader* obj_ = objects.getElement( index_ );
+    obj_->clear();
+    delete obj_;
+    obj_ = nullptr;
+
+    objects.removeElement( index_ );
+
+    emit updateCanvas();
+}
+
+
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {
 
     if( volume != nullptr )
         volume->draw( V, P, w, h );
+
+    if( main_csection != nullptr )
+        main_csection->draw( V, P, w, h );
+
 
     for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
     {
@@ -260,6 +303,12 @@ void Scene3d::clear()
         output_volume = nullptr;
     }
 
+    if( main_csection != nullptr )
+    {
+        main_csection->clear();
+        delete main_csection;
+        main_csection = nullptr;
+    }
 
     clearData();
     emit updateCanvas();
@@ -270,6 +319,7 @@ void Scene3d::clearData()
 {
     volume = nullptr;
     output_volume = nullptr;
+    main_csection = nullptr;
     current_color = Qt::red;
     shader_directory.clear();
 

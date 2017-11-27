@@ -72,6 +72,8 @@ class CrossSection
         void clear();
         void initialize();
 
+        static void resetAllCrossSections();
+
         ~CrossSection();
 
     private:

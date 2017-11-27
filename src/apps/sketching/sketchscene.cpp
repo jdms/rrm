@@ -33,7 +33,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
 
 
     connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
-    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done( dir_ ) ); } );
+    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done( dir_ ), csection->getDepth() ); } );
     connect( this, &SketchScene::create, [=](){ emit commitObject(); } );
 }
 
@@ -198,7 +198,6 @@ void SketchScene::addObject( Object* const& raw_ )
 
 void SketchScene::addObject( Object* const& raw_, double depth_ )
 {
-    //TODO: check if valid raw->getIndex
 
     if( csection->getDirection() != CrossSection::Direction::Z ) return;
 
@@ -217,8 +216,10 @@ void SketchScene::updateObject(  const std::size_t& index_ )
     if( csection->getDirection() != CrossSection::Direction::Z ) return;
 
     ObjectItemWrapper* obj_ = objects.getElement( index_ );
+
     obj_->updateDepth( csection->getDepth() );
     obj_->updateObject();
+
 
     update();
 }
@@ -360,11 +361,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
         if( csection->getDirection() == CrossSection::Direction::X )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Z ) );
+            emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
         else if( csection->getDirection() == CrossSection::Direction::Y )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ) );
+            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
         else if( csection->getDirection() == CrossSection::Direction::Z )
-            emit acceptCurve( user_input->done( InputSketch::Direction::X  ) );
+            emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
     }
 
     else if( ( event->buttons() & Qt::LeftButton ) &&
