@@ -104,6 +104,9 @@ void MainWindow::createToolbar()
     ac_sketch_below->setCheckable( true );
 
 
+//    ac_truncate = new QAction( "Truncate", this );
+//    ac_truncate->setCheckable( true );
+
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
 
