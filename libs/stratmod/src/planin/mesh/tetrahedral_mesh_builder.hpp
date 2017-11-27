@@ -73,6 +73,9 @@ class TetrahedralMeshBuilder
         template<typename VertexList>
         size_t getVertexCoordinates( VertexList & );
 
+        template<typename VertexList>
+        size_t getMappedVertexCoordinates( VertexList & );
+
         template<typename ElementList, typename AttributeList>
         size_t getElementList( const std::vector<Tetrahedron> &, ElementList &, AttributeList & );
 
@@ -104,6 +107,35 @@ size_t TetrahedralMeshBuilder::getVertexCoordinates( VertexList &vlist )
         for ( size_t v = 0; v < numVertices; ++v )
         {
             container_[surf_id]->getVertex3D(v, vcoords);
+            vindex = getVertexIndexInVList(v, surf_id);
+
+            vlist[3*vindex + 0] = vcoords.x;
+            vlist[3*vindex + 1] = vcoords.y;
+            vlist[3*vindex + 2] = vcoords.z;
+        }
+    }
+
+    return num_vertices; 
+}
+
+template<typename VertexList>
+size_t TetrahedralMeshBuilder::getMappedVertexCoordinates( VertexList &vlist ) 
+{ 
+    size_t num_vertices = 0;
+    getDiscretization();
+
+    num_vertices = numVertices*numSurfaces;
+    const size_t numCoordinatesPerTriangle = 3;
+    vlist.resize(num_vertices*numCoordinatesPerTriangle);
+
+    size_t vindex;
+    Point3 vcoords;
+
+    for ( size_t surf_id = 0; surf_id < numSurfaces; ++surf_id )
+    {
+        for ( size_t v = 0; v < numVertices; ++v )
+        {
+            container_[surf_id]->getMappedVertex3D(v, vcoords);
             vindex = getVertexIndexInVList(v, surf_id);
 
             vlist[3*vindex + 0] = vcoords.x;
@@ -356,7 +388,7 @@ size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, std::vector<
         return 0;
     }
 
-    getVertexCoordinates(vcoords);
+    getMappedVertexCoordinates(vcoords);
     size_t num_tetrahedra = getElementList(prism_list, elist);
 
     return num_tetrahedra; 
