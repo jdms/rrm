@@ -5,6 +5,9 @@
 #include <QString>
 #include <QMouseEvent>
 
+#include "./core/base/constants/constants.hpp"
+
+
 class Slider: public QSlider
 {
     Q_OBJECT

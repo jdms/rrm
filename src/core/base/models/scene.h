@@ -2,6 +2,8 @@
 #define SCENE_H
 
 
+#include "./core/base/constants/constants.hpp"
+
 #include "volume.h"
 #include "crosssection.h"
 #include "object.h"

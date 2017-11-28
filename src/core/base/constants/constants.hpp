@@ -32,8 +32,11 @@
 #ifndef _CORE_CONSTANTS_HPP_
 #define _CORE_CONSTANTS_HPP_
 
+
 #include <limits>
 #include <cmath>
+#include <string>
+#include <vector>
 
 
 
@@ -44,7 +47,7 @@ namespace Math {
  * @brief Our own definition of Math constants
  */
 
-class Constants {
+    class Constants {
 
 	/// TODO Infinity and Zero are for double.
 
@@ -107,7 +110,13 @@ class Constants {
 	    static const double	Infinty;
 	    /*! */
 	    static const double 	Epsilon;
+        /*! */
+        static const std::size_t MaxSize_t;
+        /*! */
+        static const std::size_t MinSize_t;
+
 	    //@}
+
 
 		/*! @name functions ... */
 		//@{
@@ -131,5 +140,163 @@ class Constants {
 	};
 
 } /* namespace Math */
+
+
+
+namespace Settings {
+
+
+
+    class Volume
+    {
+
+        public:
+
+            static const double VOLUME_WIDTH;
+            static const double VOLUME_HEIGHT;
+            static const double VOLUME_LENGTH;
+
+            static const double VOLUME_ORIGINX;
+            static const double VOLUME_ORIGINY;
+            static const double VOLUME_ORIGINZ;
+
+            static const std::string DEFAULT_VOLUME_NAME;
+
+    };
+
+
+
+    class CrossSection
+    {
+        public:
+
+             enum class CrossSectionDirections { X, Y, Z };
+
+             static const CrossSectionDirections DEFAULT_CSECTION_DIRECTION;
+             static const CrossSectionDirections DEFAULT_TOPVIEW_DIRECTION;
+
+             static const double INITIAL_CSECTIONX_POSITION;
+             static const double INITIAL_CSECTIONY_POSITION;
+             static const double INITIAL_CSECTIONZ_POSITION;
+
+             static const std::size_t CSECTION_DISCRETIZATION;
+             static const std::string DEFAULT_CSECTION_NAME;
+    };
+
+
+
+    class Stratigraphy
+    {
+        public:
+
+            enum class StratigraphicRules : int {
+                UNDEFINED = -1,
+                NO_GEOLOGIC_RULE,
+                REMOVE_ABOVE, // Remove above
+                REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+                REMOVE_BELOW, // Remove below
+                REMOVE_BELOW_INTERSECTION, // Remove below intersection
+            };
+
+
+            static const StratigraphicRules DEFAULT_STRAT_RULES;
+            static const std::string DEFAULT_STRAT_NAME;
+    };
+
+
+
+
+    class Region
+    {
+        public:
+
+            static const std::string DEFAULT_REGION_NAME;
+    };
+
+
+
+    class Well
+    {
+        public:
+
+            enum class WellType{ NONE, INJECTOR, PRODUCTOR };
+            static const WellType DEFAULT_WELL_TYPE;
+    };
+
+
+
+
+
+    class Objects
+    {
+        public:
+            enum class BounderingRegion { NONE, ABOVE, BELOW };
+
+            enum class ObjectType { VOLUME, CROSS_SECTION, STRATIGRAPHY, REGION, WELL };
+
+            enum class ObjectProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE };
+
+            static const ObjectType DEFAULT_OBJECT_TYPE;
+            static const BounderingRegion DEFAULT_BOUNDERING_REGION;
+            static const std::size_t MAX_CSECTION_NUMBER_FOR_CHANNEL;
+
+    };
+
+
+
+    class Application
+    {
+
+        public:
+
+            enum class AppsCommands{ NEW, SAVE, LOAD, UNDO, REDO };
+            enum class CommonCommands{ ADD, REMOVE, SET, GET };
+
+
+            static const double APP_WIDTH;
+            static const double APP_HEIGHT;
+
+            static const double APP_ORIGIN_X;
+            static const double APP_ORIGIN_Y;
+
+            static const double APP_WIDTH_SCALE;
+            static const double APP_HEIGHT_SCALE;
+
+            static const bool DEFAULT_TOPVIEW_VISIBILITY;
+            static const bool DEFAULT_CSECTION_VISIBILITY;
+            static const bool DEFAULT_SIMULATOR_VISIBILITY;
+            static const bool DEFAULT_SIDEBAR_VISIBILITY;
+
+            static const std::string SHADERS_DIRECTORY;
+            static const std::string IO_DIRECTORY;
+            static const std::string SCREENSHOT_DIRECTORY;
+            static const std::string OUTPUT_COMPUTATIONS;
+
+    };
+
+
+
+    class OpenGL
+    {
+        public:
+
+            static const int DEPTH_BUFFER;
+            static const int SAMPLES;
+    };
+
+
+}
+
+
+
+namespace Variables {
+
+    static const bool ON = true;
+    static const bool OFF = false;
+
+}
+
+
+
 
 #endif /* _CORE_CONSTANTS_HPP_ */

@@ -11,7 +11,7 @@ CrossSection::CrossSection()
 }
 
 
-CrossSection::CrossSection( const Volume* raw_, const CrossSection::Direction& dir_, double depth_ ): volume( raw_ )
+CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
 {
     defineIndex();
     initialize();
@@ -73,7 +73,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
 
     getMaxMin( maxx, maxy, maxz, minx, miny, minz );
 
-    if( direction == Direction::Z )
+    if( direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         if( depth > maxz )
             depth = maxz;
@@ -86,7 +86,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
         vertices_[ 8 ]  = depth;
         vertices_[ 11 ] = depth;
     }
-    else if( direction == Direction::Y )
+    else if( direction == Settings::CrossSection::CrossSectionDirections::Y )
     {
 
         if( depth > maxy )
@@ -101,7 +101,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
         vertices_[ 7 ] = depth;
         vertices_[ 10 ] = depth;
     }
-    else if( direction == Direction::X )
+    else if( direction == Settings::CrossSection::CrossSectionDirections::X )
     {
 
         if( depth > maxx )
@@ -134,12 +134,12 @@ void CrossSection::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-void CrossSection::setDirection( const CrossSection::Direction& dir_ )
+void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     direction = dir_;
 }
 
-CrossSection::Direction CrossSection::getDirection() const
+Settings::CrossSection::CrossSectionDirections CrossSection::getDirection() const
 {
     return direction;
 }
@@ -238,7 +238,7 @@ void CrossSection::clear()
 void CrossSection::initialize()
 {
     depth = 0.0;
-    direction = Direction::Z;
+    direction = Settings::CrossSection::CrossSectionDirections::Z;
     is_visible = true;
     number_of_csections = 0;
 //    volume = nullptr;

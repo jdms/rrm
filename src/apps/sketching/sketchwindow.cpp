@@ -72,7 +72,7 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
 
 
 
-    connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( CrossSection::Direction dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
+    connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
 
     connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_, double depth_ ){ emit acceptCurve( curve_, depth_ ); } );
 
@@ -330,7 +330,6 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_ )
     gv_->setScene( scene_ );
     cs->addElement( cs_->getDepth(), gv_ );
 
-//    highlightCanvas( cs_ );
 
 }
 

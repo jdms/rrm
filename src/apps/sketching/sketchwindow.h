@@ -8,6 +8,7 @@
 #include "sketchscene.h"
 
 //TODO: remove dependence from mainwindow
+#include "./core/base/constants/constants.hpp"
 #include "mainwindow/widgets/color_picker.h"
 
 
@@ -68,7 +69,7 @@ class SketchWindow: public QMainWindow
     signals:
 
 
-        void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
+        void updateVolume( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ );
         void acceptCurve( const PolyCurve& curve_, double depth_ );
         void defineColorCurrent( const QColor& color_ );
         void setAsCurrent( double depth_ );

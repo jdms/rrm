@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 
+#include "./core/base/constants/constants.hpp"
 #include "container.h"
 
 
@@ -24,7 +25,7 @@ class CrossSection
 
 
         CrossSection();
-        CrossSection( const Volume* raw_, const CrossSection::Direction& dir_, double depth_ );
+        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
         CrossSection& operator=( const CrossSection& other_ );
 
@@ -42,8 +43,8 @@ class CrossSection
                         double& minx_, double& miny_, double& minz_ ) const;
 
 
-        void setDirection( const CrossSection::Direction& dir_ );
-        CrossSection::Direction getDirection() const;
+        void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+        Settings::CrossSection::CrossSectionDirections getDirection() const;
 
 
         void setDepth( double depth_ );
@@ -82,7 +83,7 @@ class CrossSection
         static std::size_t number_of_csections;
 
         double depth;
-        Direction direction;
+        Settings::CrossSection::CrossSectionDirections direction;
 
         bool is_visible;
         std::string image_path;

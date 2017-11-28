@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 
+#include "./core/base/constants/constants.hpp"
 #include "container.h"
 #include "./surface.h"
 #include "./polycurve.h"

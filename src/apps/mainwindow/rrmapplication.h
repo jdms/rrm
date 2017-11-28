@@ -13,6 +13,7 @@
 #include <QObject>
 
 
+#include "./core/base/constants/constants.hpp"
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
 #include "widgets/realfeaturedslider.h"
@@ -73,7 +74,7 @@ class RRMApplication
 
     public:
 
-        enum class AxesDirection{ X, Y, Z };
+//        enum class AxesDirection{ X, Y, Z };
 
         enum class StratigraphicRules : int {
             UNDEFINED = -1,
@@ -96,9 +97,10 @@ class RRMApplication
         void init();
         void setRRMDefaultValuesOnInterface();
 
-        void changeVolumeDimension( const AxesDirection& dir_, double value_ );
-        void changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ );
+        void changeVolumeDimension( const Settings::CrossSection::CrossSectionDirections& dir_, double value_ );
+        void changeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double dim1_, double dim2_ );
 
+        void setVolumeOriginToController( double ox_, double oy_, double oz_ );
         void setVolumeDimensionsToController(  double width_, double height_, double length_ );
         void getVolumeDimensionsFromController() const;
 

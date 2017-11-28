@@ -261,14 +261,14 @@ void MainWindow::createSidebarActions()
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::X, w_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::X, w_ ); } );
 
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Y, h_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::Y, h_ ); } );
 
 
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Z, l_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::Z, l_ ); } );
 
 
     connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ ){ app->saveObjectInformation( text_.toStdString() ); } );
@@ -316,7 +316,7 @@ void MainWindow::createSketchingActions()
 
 
 
-    connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
+    connect( sketch_window, &SketchWindow::updateVolume, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ )
                                                          { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
     connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_, double depth_ )
