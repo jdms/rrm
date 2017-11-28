@@ -664,37 +664,37 @@ void Controller::setActiveAllObjects( bool status_ )
 
 void Controller::setRemoveAbove()
 {
-    current_rule = StratigraphicRules::REMOVE_ABOVE;
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
 }
 
 
 void Controller::setRemoveAboveIntersection()
 {
-    current_rule = StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
 }
 
 
 void Controller::setRemoveBelow()
 {
-    current_rule = StratigraphicRules::REMOVE_BELOW;
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW;
 }
 
 
 void Controller::setRemoveBelowIntersection()
 {
-    current_rule = StratigraphicRules::REMOVE_BELOW_INTERSECTION;
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION;
 }
 
 
 void Controller::applyStratigraphicRule()
 {
-    if( current_rule == StratigraphicRules::REMOVE_ABOVE )
+    if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
         rules_processor.removeAbove();
-    else if( current_rule == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
         rules_processor.removeAboveIntersection();
-    else if( current_rule == StratigraphicRules::REMOVE_BELOW )
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
         rules_processor.removeBelow();
-    else if( current_rule == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         rules_processor.removeBelowIntersection();
 }
 
@@ -736,7 +736,7 @@ bool Controller::requestCreateAbove()
         setObjectsAsSelectable( selectable_bottom, false );
         setObjectsAsSelectable( selectable_upper, true );
 
-        boundering_region = BounderingRegion::ABOVE;
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
 
     }
     else
@@ -786,7 +786,7 @@ bool Controller::requestCreateBelow()
 
         setObjectsAsSelectable( selectable_upper, false );
         setObjectsAsSelectable( selectable_bottom, true );
-        boundering_region = BounderingRegion::BELOW;
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
 
     }
     else
@@ -808,13 +808,13 @@ void Controller::setObjectAsBoundering( std::size_t index_ )
 
     setObjectAsSelected( index_, true );
 
-    if( boundering_region == BounderingRegion::ABOVE )
+    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
     {
         index_upper_boundary = index_;
         rules_processor.defineAbove( index_ );
         setObjectsAsSelectable( selectable_upper, false );
     }
-    else if( boundering_region == BounderingRegion::BELOW )
+    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
     {
         index_bottom_boundary = index_;
         rules_processor.defineBelow( index_ );
@@ -958,7 +958,7 @@ bool Controller::isDefineAboveActive()
         return false;
     }
 
-    boundering_region = BounderingRegion::ABOVE;
+    boundering_region = Settings::Objects::BounderingRegion::ABOVE;
     setObjectAsBoundering( index_ );
     return true;
 
@@ -976,7 +976,7 @@ bool Controller::isDefineBelowActive()
         return false;
     }
 
-    boundering_region = BounderingRegion::BELOW;
+    boundering_region = Settings::Objects::BounderingRegion::BELOW;
     setObjectAsBoundering( index_ );
     return true;
 }
@@ -1162,7 +1162,7 @@ void Controller::clear()
     index_upper_boundary = 0;
     index_bottom_boundary = 0;
 
-    boundering_region = BounderingRegion::NONE;
+    boundering_region = Settings::Objects::BounderingRegion::NONE;
 
 }
 

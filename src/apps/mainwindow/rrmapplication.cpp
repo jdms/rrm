@@ -290,15 +290,15 @@ void RRMApplication::createObjectSurface()
 
 
 
-void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
+void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ )
 {
-    if( rules_ == StratigraphicRules::REMOVE_ABOVE )
+    if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
         mainwindow->controller->setRemoveAbove();
-    else if( rules_ == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
         mainwindow->controller->setRemoveAboveIntersection();
-    else if( rules_ == StratigraphicRules::REMOVE_BELOW )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
         mainwindow->controller->setRemoveBelow();
-    else if( rules_ == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         mainwindow->controller->setRemoveBelowIntersection();
 }
 

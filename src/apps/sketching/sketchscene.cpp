@@ -164,7 +164,7 @@ void SketchScene::updateTopViewScene( Volume* const& vol_ )
 void SketchScene::addVolume( Volume* const &raw_ )
 {
     clearVolume();
-    volume = new VolumeItemWrapper( raw_, VolumeItemWrapper::Section::XY );
+    volume = new VolumeItemWrapper( raw_, Settings::CrossSection::CrossSectionDirections::Z );
 
     addItem( volume );
     setSceneRect( volume->boundingRect() );

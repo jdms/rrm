@@ -18,7 +18,7 @@ class CrossSection
 {
     public:
 
-        enum class Direction{ X, Y, Z };
+//        enum class Direction{ X, Y, Z };
 
         using Object = std::size_t;
         using ObjectsContainer = Container< Object, PolyCurve* >;

@@ -2,7 +2,7 @@
 #include "core/base/models/volume.h"
 
 
-VolumeItemWrapper::VolumeItemWrapper( Volume* const& vol_, const Section& sec_ )
+VolumeItemWrapper::VolumeItemWrapper( Volume* const& vol_, const Settings::CrossSection::CrossSectionDirections& sec_ )
 {
     setRawVolume( vol_ );
     defineSectionPlane( sec_ );
@@ -24,7 +24,7 @@ void VolumeItemWrapper::setupPen()
 void VolumeItemWrapper::clear()
 {
     raw = nullptr;
-    section = Section::XZ;
+    section = Settings::CrossSection::CrossSectionDirections::Y;
     section_boundary.clear();
 
     start.setX( 0 );
@@ -74,13 +74,13 @@ Volume* VolumeItemWrapper::getRawVolume() const
 
 
 
-void VolumeItemWrapper::defineSectionPlane( const Section& sec_ )
+void VolumeItemWrapper::defineSectionPlane( const Settings::CrossSection::CrossSectionDirections& sec_ )
 {
     section = sec_;
 }
 
 
-VolumeItemWrapper::Section VolumeItemWrapper::getSectionPlane() const
+Settings::CrossSection::CrossSectionDirections VolumeItemWrapper::getSectionPlane() const
 {
     return section;
 }
@@ -96,7 +96,7 @@ double VolumeItemWrapper::getWidth() const
 
 double VolumeItemWrapper::getHeight() const
 {
-    if( section == Section::XZ )
+    if( section == Settings::CrossSection::CrossSectionDirections::Y )
         return raw->getLenght();
     return raw->getHeight();
 }
