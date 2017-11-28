@@ -241,7 +241,7 @@ bool Controller::addObject( std::size_t index_ )
 
     volume->addObject( current_object, obj_ );
 
-    object_tree->addObject( current_object, ObjectTreeItem::Type::STRATIGRAPHY,
+    object_tree->addObject( current_object, Settings::Objects::ObjectType::STRATIGRAPHY,
                             obj_->getName(), current_color.r, current_color.g, current_color.b );
     scene3d->addObject( obj_ );
 

@@ -16,8 +16,6 @@ class VolumeItemWrapper: public QGraphicsPathItem
 
     public:
 
-//        enum class Section{ XY, XZ };
-
         VolumeItemWrapper() = default;
         VolumeItemWrapper( Volume* const& vol_, const Settings::CrossSection::CrossSectionDirections& sec_ = Settings::CrossSection::CrossSectionDirections::Z );
 

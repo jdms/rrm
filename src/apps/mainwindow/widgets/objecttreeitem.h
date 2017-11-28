@@ -4,18 +4,20 @@
 
 #include <QTreeWidgetItem>
 
+#include "./core/base/constants/constants.hpp"
+
 
 class ObjectTreeItem: public QTreeWidgetItem
 {
     public:
 
-        enum class Type { VOLUME, CROSS_SECTION, STRATIGRAPHY, REGION, WELL };
+//        enum class Type { VOLUME, CROSS_SECTION, STRATIGRAPHY, REGION, WELL };
 
 
         ObjectTreeItem();
 
-        void setType( const ObjectTreeItem::Type& type_ );
-        ObjectTreeItem::Type getType() const;
+        void setType( const Settings::Objects::ObjectType& type_ );
+        Settings::Objects::ObjectType getType() const;
 
 
         void setIndex( const std::size_t index_ );
@@ -31,7 +33,7 @@ class ObjectTreeItem: public QTreeWidgetItem
 
         std::size_t index;
         std::size_t tree_index;
-        Type type;
+        Settings::Objects::ObjectType type;
 
 
 };
