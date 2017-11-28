@@ -30,8 +30,8 @@ class Well
         void getName( std::string& name_ ) const;
 
 
-        void setType( const Well::Type& type_ );
-        void getType( Well::Type& type_ ) const;
+        void setType( const Settings::Well::WellType& type_ );
+        void getType( Settings::Well::WellType& type_ ) const;
 
 
         void setStartPoint( double x_, double y_, double z_ );
@@ -62,7 +62,7 @@ class Well
         std::size_t number_of_wells;
 
         std::string name;
-        Type type;
+        Settings::Well::WellType type;
 
         Point start;
         Point end;

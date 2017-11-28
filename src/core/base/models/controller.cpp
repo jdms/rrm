@@ -62,7 +62,7 @@ void Controller::addVolume()
 
 bool Controller::isVolumeResizable() const
 {
-    if( volume != nullptr ) return false;
+    if( volume == nullptr ) return false;
     return volume->isResizable();
 
 }
@@ -256,6 +256,15 @@ void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 
     Object* const& obj_ = objects.getElement( index_ );
     obj_->setName( name_ );
+}
+
+
+std::string Controller::getObjectName( std::size_t index_) const
+{
+    if( objects.findElement( index_) == false )
+        return std::string("");
+    Object* const& obj_ = objects.getElement( index_ );
+    return obj_->getName();
 }
 
 

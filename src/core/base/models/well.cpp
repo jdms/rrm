@@ -36,12 +36,12 @@ void Well::getName( std::string& name_ ) const
 }
 
 
-void Well::setType( const Well::Type& type_ )
+void Well::setType( const Settings::Well::WellType& type_ )
 {
     type = type_;
 }
 
-void Well::getType( Well::Type& type_ ) const
+void Well::getType( Settings::Well::WellType& type_ ) const
 {
     type_ = type;
 }
@@ -113,7 +113,7 @@ void Well::clear()
 
 void Well::initialize()
 {
-    type = Type::INJECTOR;
+    type = Settings::Well::WellType::INJECTOR;
     name = "Well " + std::to_string( index );
     is_visible = true;
 }

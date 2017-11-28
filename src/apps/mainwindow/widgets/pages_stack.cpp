@@ -85,7 +85,6 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
 }
 
 
-
 void PagesStack::changeVolumeSize( double width, double height, double depth )
 {
     int w = static_cast< int > (width);
@@ -110,15 +109,20 @@ void PagesStack::setEnabledVolumeResize( bool status )
     wd_volume_resize.sb_depth_volume->setEnabled( status );
 }
 
+
+
 double PagesStack::getWidth()
 {
     return static_cast<double>( wd_volume_resize.sb_width_volume->value() );
 }
 
+
 double PagesStack::getHeight()
 {
     return static_cast<double>( wd_volume_resize.sb_height_volume->value() );
 }
+
+
 double PagesStack::getLenght()
 {
     return static_cast<double>( wd_volume_resize.sb_depth_volume->value() );
@@ -130,10 +134,12 @@ void PagesStack::setVolumeWidth( double w )
     wd_volume_resize.sb_width_volume->setValue( static_cast< int > (w) );
 }
 
+
 void PagesStack::setVolumeHeight( double h )
 {
     wd_volume_resize.sb_height_volume->setValue( static_cast< int > (h) );
 }
+
 
 void PagesStack::setVolumeDepth( double d )
 {
@@ -148,17 +154,19 @@ void PagesStack::createObjectPropertiesPage()
     wd_object_properties.setupUi( wd_object_comments );
     addWidget( wd_object_comments );
 
+    wd_object_properties.groupBox->setTitle( "Object Log" );
+
     connect( wd_object_properties.te_object_properties, &QTextEdit::textChanged, [=]() {
             QString text_ = wd_object_properties.te_object_properties->toPlainText();
-            std::cout << "Edited: " << text_.toStdString().c_str() << std::flush << std::endl;
             emit saveText( text_ );
     } );
 }
 
 
-void PagesStack::loadObjectInformation( const std::string& text_ )
+void PagesStack::loadObjectInformation( const std::string& name_, const std::string& text_ )
 {
     QString obj_text_( text_.c_str() );
+    wd_object_properties.groupBox->setTitle( QString( "Object Log: " ).append( name_.c_str() ) );
     wd_object_properties.te_object_properties->clear();
     wd_object_properties.te_object_properties->setPlainText( obj_text_ );
 
@@ -169,4 +177,6 @@ void PagesStack::clear()
     changeRangeSize( MAX_WIDTH, MAX_HEIGHT, MAX_DEPTH );
     changeVolumeSize( MAX_WIDTH*0.5, MAX_HEIGHT*0.5, MAX_DEPTH*0.5 );
     setEnabledVolumeResize( VOLUME_RESIZING );
+
+    wd_object_properties.groupBox->setTitle( "Object Log" );
 }

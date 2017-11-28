@@ -28,6 +28,7 @@ void ColorPicker::createWidget()
 
     colorChanged( currentColor() );
 
+    setMaximumSize( 35, 30 );
 
 }
 

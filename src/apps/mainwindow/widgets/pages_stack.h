@@ -34,7 +34,7 @@ class PagesStack: public QStackedWidget
         void setVolumeHeight( double h );
         void setVolumeDepth( double d );
 
-        void loadObjectInformation( const std::string& text_ );
+        void loadObjectInformation( const std::string& name_, const std::string& text_ );
 
 
     signals:

@@ -32,11 +32,57 @@ void RRMApplication::init()
 }
 
 
+void RRMApplication::setSiderBarVisibility( bool status_ )
+{
+    mainwindow->dw_object_properties->setVisible( status_ );
+    mainwindow->dw_object_tree->setVisible( status_ );
+}
+
+
+void RRMApplication::setDefaultRule( Settings::Stratigraphy::StratigraphicRules rule_ )
+{
+    if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
+        mainwindow->ac_remove_above->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        mainwindow->ac_remove_above_int->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
+        mainwindow->ac_remove_below->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        mainwindow->ac_remove_below_int->setChecked( Variables::ON );
+}
+
+
+void RRMApplication::setDefaultSketchingRegion( Settings::Objects::BounderingRegion sketching_region_ )
+{
+    if( sketching_region_ == Settings::Objects::BounderingRegion::ABOVE )
+        mainwindow->ac_sketch_above->setChecked( Variables::ON );
+    else if( sketching_region_ == Settings::Objects::BounderingRegion::BELOW )
+        mainwindow->ac_sketch_below->setChecked( Variables::ON );
+    else
+    {
+        mainwindow->ac_sketch_above->setChecked( Variables::OFF );
+        mainwindow->ac_sketch_below->setChecked( Variables::OFF );
+    }
+
+}
+
+
+void RRMApplication::setDefaultSiderBarValues()
+{
+    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
+}
+
+
 void RRMApplication::setRRMDefaultValuesOnInterface()
 {
+
+    setSiderBarVisibility( Settings::Application::DEFAULT_SIDEBAR_VISIBILITY );
+    setDefaultRule( Settings::Stratigraphy::DEFAULT_STRAT_RULES );
+    setDefaultSketchingRegion( Settings::Objects::BounderingRegion::NONE );
+    setDefaultSiderBarValues();
+
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
-
 
 }
 
@@ -196,13 +242,16 @@ void RRMApplication::getObjectInformation( QTreeWidgetItem* const& item_ ) const
 {
     ObjectTreeItem* obj_item_ = static_cast< ObjectTreeItem* >( item_ );
 
-    if( obj_item_->getType() == ObjectTreeItem::Type::VOLUME )
+    if( obj_item_->getType() == Settings::Objects::ObjectType::VOLUME )
         mainwindow->object_properties->setCurrentIndex( 0 );
-    else
+    else if( obj_item_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY )
+    {
         mainwindow->object_properties->setCurrentIndex( 1 );
+        std::string text_ = mainwindow->controller->getObjectInformation( obj_item_->getIndex() );
+        std::string name_ = mainwindow->controller->getObjectName( obj_item_->getIndex() );
+        mainwindow->object_properties->loadObjectInformation( name_, text_ );
+    }
 
-    std::string text_ = mainwindow->controller->getObjectInformation( obj_item_->getIndex() );
-    mainwindow->object_properties->loadObjectInformation( text_ );
 }
 
 
@@ -232,9 +281,11 @@ void RRMApplication::initSketchingApp()
 {
     CrossSection* csection_ = mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION );
     mainwindow->sketch_window->addMainCanvas( csection_ );
+    mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
     CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
     mainwindow->sketch_topview_window->addTopViewCanvas( topview_ );
+    mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }
 
 
