@@ -24,11 +24,11 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
 
 
     InputSketch::Direction dir_;
-    if( csection->getDirection() == CrossSection::Direction::X )
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
         dir_ = InputSketch::Direction::Z;
-    else if( csection->getDirection() == CrossSection::Direction::Y )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         dir_ = InputSketch::Direction::Y;
-    else if( csection->getDirection() == CrossSection::Direction::Z )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         dir_ = InputSketch::Direction::X;
 
 
@@ -81,10 +81,10 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
 
-    if( raw_->getDirection() == CrossSection::Direction::Z )
+    if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         createCrossSectionScene( vol_ );
 
-    else if( raw_->getDirection() == CrossSection::Direction::Y )
+    else if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         createTopViewScene( vol_ );
 
 
@@ -130,10 +130,10 @@ void SketchScene::updateCrossSection()
               << vol_->getLenght() << ") " << std::endl << std::flush;
 
 
-    if( csection->getDirection() == CrossSection::Direction::Z )
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         updateCrossSectionScene( vol_ );
 
-    else if( csection->getDirection() == CrossSection::Direction::Y )
+    else if( csection->getDirection() ==Settings::CrossSection::CrossSectionDirections::Y )
         updateTopViewScene( vol_ );
 
 }
@@ -199,7 +199,7 @@ void SketchScene::addObject( Object* const& raw_ )
 void SketchScene::addObject( Object* const& raw_, double depth_ )
 {
 
-    if( csection->getDirection() != CrossSection::Direction::Z ) return;
+    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
 
     std::size_t index_ = raw_->getIndex();
 
@@ -213,7 +213,7 @@ void SketchScene::addObject( Object* const& raw_, double depth_ )
 
 void SketchScene::updateObject(  const std::size_t& index_ )
 {
-    if( csection->getDirection() != CrossSection::Direction::Z ) return;
+    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
 
     ObjectItemWrapper* obj_ = objects.getElement( index_ );
 
@@ -360,11 +360,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     else if( ( event->buttons() & Qt::RightButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-        if( csection->getDirection() == CrossSection::Direction::X )
+        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
             emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-        else if( csection->getDirection() == CrossSection::Direction::Y )
+        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
             emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-        else if( csection->getDirection() == CrossSection::Direction::Z )
+        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
             emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
     }
 

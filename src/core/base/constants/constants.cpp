@@ -49,4 +49,84 @@ const double Math::Constants::Radian2Degree = 180.0 / Math::Constants::Pi;
 const double Math::Constants::Infinty = std::numeric_limits<double>::max();
 const double Math::Constants::Epsilon = std::numeric_limits<double>::epsilon();
 
+const std::size_t Math::Constants::MaxSize_t = std::numeric_limits<std::size_t>::max();
+const std::size_t Math::Constants::MinSize_t = std::numeric_limits<std::size_t>::min();
+
 }
+
+
+namespace Settings {
+
+    const double Volume::VOLUME_WIDTH = 500;
+    const double Volume::VOLUME_HEIGHT = 500;
+    const double Volume::VOLUME_LENGTH = 500;
+
+    const double Volume::VOLUME_ORIGINX = 0;
+    const double Volume::VOLUME_ORIGINY = 0;
+    const double Volume::VOLUME_ORIGINZ = 0;
+
+    const std::string Volume::DEFAULT_VOLUME_NAME = "Volume ";
+
+
+
+    const CrossSection::CrossSectionDirections CrossSection::DEFAULT_CSECTION_DIRECTION = CrossSection::CrossSectionDirections::Z;
+    const CrossSection::CrossSectionDirections CrossSection::DEFAULT_TOPVIEW_DIRECTION = CrossSection::CrossSectionDirections::Y;
+
+    const double CrossSection::INITIAL_CSECTIONX_POSITION = Volume::VOLUME_ORIGINX;
+    const double CrossSection::INITIAL_CSECTIONY_POSITION = Volume::VOLUME_ORIGINY;
+    const double CrossSection::INITIAL_CSECTIONZ_POSITION = Volume::VOLUME_ORIGINZ;
+
+    const std::size_t CrossSection::CSECTION_DISCRETIZATION = 10;
+    const std::string CrossSection::DEFAULT_CSECTION_NAME = "CrossSection ";
+
+
+
+    const Stratigraphy::StratigraphicRules Stratigraphy::DEFAULT_STRAT_RULES = Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
+    const std::string Stratigraphy::DEFAULT_STRAT_NAME = "Surface ";
+
+
+
+
+    const std::string Region::DEFAULT_REGION_NAME = "Region ";
+
+
+
+
+    const Well::WellType Well::DEFAULT_WELL_TYPE = Well::WellType::NONE;
+
+
+
+
+    const Objects::ObjectType Objects::DEFAULT_OBJECT_TYPE = Objects::ObjectType::STRATIGRAPHY;
+    const Objects::BounderingRegion Objects::DEFAULT_BOUNDERING_REGION = Objects::BounderingRegion::NONE;
+    const std::size_t Objects::MAX_CSECTION_NUMBER_FOR_CHANNEL = 1;
+
+
+
+    const double Application::APP_WIDTH = 1024;
+    const double Application::APP_HEIGHT = 800;
+
+    const double Application::APP_ORIGIN_X = 10;
+    const double Application::APP_ORIGIN_Y = 10;
+
+    const double Application::APP_WIDTH_SCALE = 0.8;
+    const double Application::APP_HEIGHT_SCALE = 0.8;
+
+    const bool Application::DEFAULT_TOPVIEW_VISIBILITY = false;
+    const bool Application::DEFAULT_CSECTION_VISIBILITY = true;
+    const bool Application::DEFAULT_SIMULATOR_VISIBILITY = false;
+    const bool Application::DEFAULT_SIDEBAR_VISIBILITY = true;
+
+    const std::string Application::SHADERS_DIRECTORY = "./shaders";
+    const std::string Application::IO_DIRECTORY = "./files";
+    const std::string Application::SCREENSHOT_DIRECTORY = "./screenshots";
+    const std::string Application::OUTPUT_COMPUTATIONS = "./output_files";
+
+
+
+
+    const int OpenGL::DEPTH_BUFFER = 16;
+    const int OpenGL::SAMPLES = 16;
+
+}
+

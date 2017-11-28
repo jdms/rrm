@@ -3,6 +3,7 @@
 
 #include <QGraphicsPathItem>
 
+#include "./core/base/constants/constants.hpp"
 #include "./libs/PolygonalCurve/CurveN.hpp"
 #include "./core/base/models/polycurve.h"
 

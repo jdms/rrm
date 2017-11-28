@@ -25,8 +25,8 @@ void RRMApplication::init()
 
     setRRMDefaultValuesOnInterface();
 
-    mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
-    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
+    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
+    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
 
 }
@@ -34,12 +34,19 @@ void RRMApplication::init()
 
 void RRMApplication::setRRMDefaultValuesOnInterface()
 {
-    setVolumeDimensionsToController( VOLUME_WIDTH, VOLUME_HEIGHT, VOLUME_LENGTH );
+    setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
+    setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
 
 
 }
 
 
+
+void RRMApplication::setVolumeOriginToController( double ox_, double oy_, double oz_ )
+{
+    mainwindow->controller->setVolumeOrigin( ox_, oy_, oz_ );
+    getVolumeDimensionsFromController();
+}
 
 
 void RRMApplication::setVolumeDimensionsToController( double width_, double height_, double length_ )
@@ -72,7 +79,7 @@ void RRMApplication::getVolumeDimensionsFromController() const
 }
 
 
-void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double value_ )
+void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossSectionDirections& dir_, double value_ )
 {
 
     double ox_ = 0, oy_ = 0, oz_ = 0;
@@ -82,17 +89,17 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
     mainwindow->controller->getVolumeDimensions( width_, height_, length_ );
 
 
-    if( dir_ == AxesDirection::X )
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         std::cout << "Inside RRMApplication::changeVolumeDimension, changing X: " << value_ << std::endl << std::flush;
 
         mainwindow->controller->setVolumeDimensions( value_, height_, length_ );
     }
-    else if( dir_ == AxesDirection::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         mainwindow->controller->setVolumeDimensions( width_, value_, length_ );
     }
-    else if( dir_ == AxesDirection::Z )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         std::cout << "Inside RRMApplication::changeVolumeDimension, changing Z: " << value_ << std::endl << std::flush;
         std::size_t disc_ = 1;
@@ -106,7 +113,7 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
 }
 
 
-void RRMApplication::changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ )
+void RRMApplication::changeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double dim1_, double dim2_ )
 {
     double ox_ = 0, oy_ = 0, oz_ = 0;
     mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
@@ -115,15 +122,15 @@ void RRMApplication::changeVolumeDimensions( const CrossSection::Direction& dir_
     mainwindow->controller->getVolumeDimensions( width_, height_, length_ );
 
 
-    if( dir_ == CrossSection::Direction::X )
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         mainwindow->controller->setVolumeDimensions( width_, dim2_, dim1_ );
     }
-    else if( dir_ == CrossSection::Direction::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         mainwindow->controller->setVolumeDimensions( dim1_, height_, dim2_ );
     }
-    else if( dir_ == CrossSection::Direction::Z )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         mainwindow->controller->setVolumeDimensions( dim1_, dim2_, length_ );
     }
@@ -223,7 +230,7 @@ void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ 
 
 void RRMApplication::initSketchingApp()
 {
-    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
+    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION );
     mainwindow->sketch_window->addMainCanvas( csection_ );
 
     CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
@@ -490,8 +497,8 @@ void RRMApplication::clear()
 
     mainwindow->controller->init();
     setRRMDefaultValuesOnInterface();
-    mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
-    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
+    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
+    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION );
 
 }
 

@@ -39,10 +39,6 @@ void VolumeMeshShader::loadBuffers()
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
 
 
-//    std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( surface_.getFaces() );
-
-
-
     std::vector< std::size_t > faces_size_t_;
     raw->getTetrahedralCells( faces_size_t_ );
 
@@ -235,8 +231,8 @@ void VolumeMeshShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P,
         glDisable(GL_POLYGON_OFFSET_FILL);
 
 
-//        glEnable( GL_DEPTH_TEST );
-//        glDepthFunc( GL_LEQUAL );
+        glEnable( GL_DEPTH_TEST );
+        glDepthFunc( GL_LEQUAL );
 //        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 

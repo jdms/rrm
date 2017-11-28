@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-
+#include "./core/base/constants/constants.hpp"
 #include "./core/base/models/container.h"
 #include "./apps/mainwindow/widgets/objecttree.h"
 #include "./apps/3dview/scene3d.h"
@@ -68,8 +68,8 @@ class Controller
         void setupCrossSectionDiscretization( std::size_t& disc_, double& step_ );
 
 
-        void addMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
-        CrossSection* getMainCrossSection( const CrossSection::Direction& dir_ ) const;
+        void addMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        CrossSection* getMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_ ) const;
 
         void addTopViewCrossSection( double depth_ );
         CrossSection* getTopViewCrossSection() const;

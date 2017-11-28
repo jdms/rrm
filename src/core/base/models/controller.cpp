@@ -137,7 +137,7 @@ void Controller::setupCrossSectionDiscretization( std::size_t& disc_, double& st
 }
 
 
-void Controller::addMainCrossSection( const CrossSection::Direction& dir_, double depth_ )
+void Controller::addMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     main_csection = new CrossSection( volume, dir_, depth_ );
     scene3d->addMainCrossSection( main_csection );
@@ -146,7 +146,7 @@ void Controller::addMainCrossSection( const CrossSection::Direction& dir_, doubl
 }
 
 
-CrossSection* Controller::getMainCrossSection( const CrossSection::Direction& dir_ ) const
+CrossSection* Controller::getMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_ ) const
 {
     return main_csection;
 }
@@ -154,7 +154,7 @@ CrossSection* Controller::getMainCrossSection( const CrossSection::Direction& di
 
 void Controller::addTopViewCrossSection( double depth_ )
 {
-    topview_csection = new CrossSection( volume, CrossSection::Direction::Y, depth_ );
+    topview_csection = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Y, depth_ );
 //    scene3d->addCrossSection( main_csection );
 
 }
@@ -329,7 +329,7 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
     main_csection->addObject( obj_->getIndex(), &curve_ );
 
 
-    CrossSection* cs_ = new CrossSection( volume, CrossSection::Direction::Z, depth_ );
+    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
     cs_->addObject( obj_->getIndex(), &curve_ );
 
     volume->addCrossSection( cs_->getIndex(), cs_ );
@@ -1169,7 +1169,7 @@ void Controller::clear()
 
 bool Controller::addFixedCrossSection( double depth_ )
 {
-    CrossSection* cs_ = new CrossSection( volume, CrossSection::Direction::Z, depth_ );
+    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
     bool status_ = fixed_csections.addElement( depth_, cs_ );
     if( status_ == false ) return false;
 
