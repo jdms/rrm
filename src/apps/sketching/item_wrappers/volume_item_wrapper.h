@@ -5,6 +5,9 @@
 #include <QColor>
 #include <QPainter>
 
+
+#include "./core/base/constants/constants.hpp"
+
 class Volume;
 
 
@@ -13,18 +16,18 @@ class VolumeItemWrapper: public QGraphicsPathItem
 
     public:
 
-        enum class Section{ XY, XZ };
+//        enum class Section{ XY, XZ };
 
         VolumeItemWrapper() = default;
-        VolumeItemWrapper( Volume* const& vol_, const Section& sec_ = Section::XY );
+        VolumeItemWrapper( Volume* const& vol_, const Settings::CrossSection::CrossSectionDirections& sec_ = Settings::CrossSection::CrossSectionDirections::Z );
 
 
         void setRawVolume( Volume* const& vol );
         Volume* getRawVolume() const ;
 
 
-        void defineSectionPlane( const Section& sec );
-        VolumeItemWrapper::Section getSectionPlane() const;
+        void defineSectionPlane( const Settings::CrossSection::CrossSectionDirections& sec );
+        Settings::CrossSection::CrossSectionDirections getSectionPlane() const;
 
 
         double getHeight() const;
@@ -62,7 +65,7 @@ class VolumeItemWrapper: public QGraphicsPathItem
         QPointF end;
 
         Volume* raw;
-        Section section;
+        Settings::CrossSection::CrossSectionDirections section;
 
 };
 

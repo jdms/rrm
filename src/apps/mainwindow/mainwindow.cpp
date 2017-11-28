@@ -190,16 +190,16 @@ void MainWindow::createMainWindowActions()
 
 
     connect( ac_remove_above, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
 
     connect( ac_remove_above_int, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
 
     connect( ac_remove_below, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW ); } );
 
     connect( ac_remove_below_int, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
 
 
     connect( ac_clear, &QAction::triggered, [=](){ app->restart(); } );

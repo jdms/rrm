@@ -24,17 +24,17 @@ class Controller
 {
     public:
 
-    enum class StratigraphicRules : int {
-        UNDEFINED = -1,
-        NO_GEOLOGIC_RULE,
-        REMOVE_ABOVE, // Remove above
-        REMOVE_ABOVE_INTERSECTION, // Remove above intersection
-        REMOVE_BELOW, // Remove below
-        REMOVE_BELOW_INTERSECTION, // Remove below intersection
-    };
+//    enum class StratigraphicRules : int {
+//        UNDEFINED = -1,
+//        NO_GEOLOGIC_RULE,
+//        REMOVE_ABOVE, // Remove above
+//        REMOVE_ABOVE_INTERSECTION, // Remove above intersection
+//        REMOVE_BELOW, // Remove below
+//        REMOVE_BELOW_INTERSECTION, // Remove below intersection
+//    };
 
 
-    enum class BounderingRegion { NONE, ABOVE, BELOW };
+//    enum class BounderingRegion { NONE, ABOVE, BELOW };
 
 
         Controller() = default;
@@ -310,11 +310,11 @@ class Controller
         RulesProcessor rules_processor;
         double csection_step = 1.0;
 
-        StratigraphicRules current_rule = StratigraphicRules::REMOVE_ABOVE;
+        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
         std::vector< std::size_t > selectable_upper;
         std::vector< std::size_t > selectable_bottom;
 
-        BounderingRegion boundering_region;
+        Settings::Objects::BounderingRegion boundering_region;
         std::size_t index_upper_boundary;
         std::size_t index_bottom_boundary;
 
