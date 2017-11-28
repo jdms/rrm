@@ -17,7 +17,7 @@ class Object
     public:
 
 
-        enum class Type{ STRATIGRAPHY, FAULT };
+//        enum class Type{ STRATIGRAPHY, FAULT };
         using CrossSectionsContainer = Container< double, PolyCurve >;
 
 
@@ -32,8 +32,8 @@ class Object
         std::string getName() const;
 
 
-        void setType( const Object::Type& type_ );
-        Object::Type getType() const;
+        void setType( const Settings::Objects::ObjectType& type_ );
+        Settings::Objects::ObjectType getType() const;
 
 
         void setColor( int r, int g, int b );
@@ -125,7 +125,7 @@ class Object
         std::size_t index;
         std::string name;
 
-        Type type;
+        Settings::Objects::ObjectType type;
 
         std::string text_information;
 

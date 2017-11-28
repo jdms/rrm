@@ -5,12 +5,12 @@ ObjectTreeItem::ObjectTreeItem()
     setFlags( flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable );
 }
 
-void ObjectTreeItem::setType( const ObjectTreeItem::Type& type_ )
+void ObjectTreeItem::setType( const Settings::Objects::ObjectType& type_ )
 {
     type = type_;
 }
 
-ObjectTreeItem::Type ObjectTreeItem::getType() const
+Settings::Objects::ObjectType ObjectTreeItem::getType() const
 {
     return type;
 }

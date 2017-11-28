@@ -20,7 +20,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 {
     ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
 
-    if( obj_->getType() == ObjectTreeItem::Type::VOLUME )
+    if( obj_->getType() == Settings::Objects::ObjectType::VOLUME )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -36,7 +36,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         }
     }
 
-    else if( obj_->getType() == ObjectTreeItem::Type::STRATIGRAPHY )
+    else if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -53,7 +53,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 
     }
 
-    else if( obj_->getType() == ObjectTreeItem::Type::CROSS_SECTION )
+    else if( obj_->getType() == Settings::Objects::ObjectType::CROSS_SECTION )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -69,7 +69,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         }
     }
 
-    else if( obj_->getType() == ObjectTreeItem::Type::REGION )
+    else if( obj_->getType() == Settings::Objects::ObjectType::REGION )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -93,7 +93,7 @@ void ObjectTree::addInputVolume()
 {
     ObjectTreeItem* vol_ = new ObjectTreeItem();
     vol_->setText( COLUMN_NAME, "VOLUME" );
-    vol_->setType( ObjectTreeItem::Type::VOLUME );
+    vol_->setType( Settings::Objects::ObjectType::VOLUME );
     vol_->setIndex( 0 );
     vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
     addTopLevelItem( vol_ );
@@ -104,7 +104,7 @@ void ObjectTree::addOutputVolume()
 {
     ObjectTreeItem* vol_ = new ObjectTreeItem();
     vol_->setText( COLUMN_NAME, "OUTPUT VOLUME" );
-    vol_->setType( ObjectTreeItem::Type::VOLUME );
+    vol_->setType( Settings::Objects::ObjectType::VOLUME );
     vol_->setIndex( 1 );
     vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
     addTopLevelItem( vol_ );
@@ -112,7 +112,7 @@ void ObjectTree::addOutputVolume()
 }
 
 
-void ObjectTree::addObject( std::size_t index_, const ObjectTreeItem::Type& type_,
+void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,
                             const std::string& name_,  const int& red_,
                             const int& green_,  const int& blue_ )
 {
@@ -189,7 +189,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
 {
     ObjectTreeItem* region_ = new ObjectTreeItem();
     region_->setIndex( index_ );
-    region_->setType( ObjectTreeItem::Type::REGION );
+    region_->setType( Settings::Objects::ObjectType::REGION );
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
 

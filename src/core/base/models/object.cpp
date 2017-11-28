@@ -38,12 +38,12 @@ std::string Object::getName() const
 
 
 
-void Object::setType( const Object::Type &type_ )
+void Object::setType( const Settings::Objects::ObjectType &type_ )
 {
     type = type_;
 }
 
-Object::Type Object::getType() const
+Settings::Objects::ObjectType Object::getType() const
 {
     return type;
 }
@@ -340,7 +340,7 @@ void Object::clear()
 
 void Object::initialize()
 {
-    type = Type::STRATIGRAPHY;
+    type = Settings::Objects::ObjectType::STRATIGRAPHY;
     name = "Surface " + std::to_string( index );
 
     is_editable = true;
