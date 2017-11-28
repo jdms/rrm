@@ -77,6 +77,8 @@ class Controller
         Object* getCurrentObject() const;
 
         void setObjectName( std::size_t index_, const std::string& name_ );
+        std::string getObjectName( std::size_t index_) const;
+
         void setObjectVisibility( std::size_t index_, bool status_ );
         void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
 

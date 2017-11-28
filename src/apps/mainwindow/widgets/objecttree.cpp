@@ -9,7 +9,6 @@ ObjectTree::ObjectTree( QWidget *parent )
 {
     setHeaderHidden( true );
     setColumnCount( COLUMNS_NUMBER );
-
     connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
 
 }
@@ -100,6 +99,7 @@ void ObjectTree::addInputVolume()
 
 }
 
+
 void ObjectTree::addOutputVolume()
 {
     ObjectTreeItem* vol_ = new ObjectTreeItem();
@@ -108,7 +108,6 @@ void ObjectTree::addOutputVolume()
     vol_->setIndex( 1 );
     vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
     addTopLevelItem( vol_ );
-
 }
 
 
@@ -129,7 +128,6 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
 
 
     ColorPicker* colorpicker_ = new ColorPicker( this );
-    colorpicker_->setMaximumSize( 35, 30 );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
     connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ )
                                                         { emit setObjectColor( index_, color_ ); } );
@@ -174,6 +172,7 @@ void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, in
     cp_color_->setColor( QColor( red_, green_, blue_ ) );
 }
 
+
 void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 {
     if( items.findElement( index_ ) == false ) return;
@@ -200,13 +199,14 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     vol1_->addChild( region_ );
 
     ColorPicker* colorpicker_ = new ColorPicker( this );
-    colorpicker_->setMaximumWidth( 30 );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
     connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setRegionColor( index_, color_ ); } );
 
     setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
+    setColumnWidth( COLUMN_NAME, COLUMN_NAME_WIDTH );
     regions.addElement( index_, region_ );
 }
+
 
 void ObjectTree::updateRegionColor( std::size_t index_, int red_, int green_, int blue_)
 {

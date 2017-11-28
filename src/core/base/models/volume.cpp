@@ -328,6 +328,10 @@ bool Volume::isResizable() const
     if( objects.empty() == true )
         return true;
 
+    Object* obj_ = objects.getElement( 0 );
+    if( obj_->isEmpty() == true )
+        return true;
+
     return is_resizable;
 }
 
@@ -384,5 +388,5 @@ void Volume::initialize()
     setOrigin( 0.0, 0.0, 0.0 );
     setGeometry( 500, 500, 500 );
     setVisible( true );
-    setResizable( true );
+    setResizable( false );
 }

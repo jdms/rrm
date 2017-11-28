@@ -130,15 +130,19 @@ void MainWindow::createToolbar()
 
     ac_output_volume = new QAction( "Get Regions", this );
 
-    tb_mainwindow = addToolBar( "Test ");
+    tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
     tb_mainwindow->addAction( ac_load );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_undo );
     tb_mainwindow->addAction( ac_redo );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_sketch_above );
     tb_mainwindow->addAction( ac_sketch_below );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_output_volume );
 
 
@@ -292,7 +296,6 @@ void MainWindow::createSketchingWindow()
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
-//    dw_topview_window->setVisible( false );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 

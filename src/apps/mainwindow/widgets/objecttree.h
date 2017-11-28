@@ -71,6 +71,9 @@ class ObjectTree: public QTreeWidget
         const int COLUMN_NAME = 1;
         const int COLUMN_COLOR = 2;
 
+        int COLUMN_NAME_WIDTH = 30;
+
+
         Container< std::size_t, ObjectTreeItem* > items;
         Container< std::size_t, ObjectTreeItem* > regions;
 

@@ -152,6 +152,7 @@ void SketchWindow::updateCanvas()
 void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
+    if( tv_main == nullptr ) return;
 
     SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
     sc_->addCrossSection( cs_ );
@@ -163,6 +164,8 @@ void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 
 void SketchWindow::addObject( Object* const& obj_ )
 {
+
+    if( main == nullptr ) return;
 
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     sc_->addObject( obj_ );
@@ -179,6 +182,8 @@ void SketchWindow::addObject( Object* const& obj_ )
 
 void SketchWindow::updateObject( const std::size_t& index_ )
 {
+
+    if( main == nullptr ) return;
 
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     sc_->updateObject( index_ );
@@ -197,6 +202,8 @@ void SketchWindow::updateObject( const std::size_t& index_ )
 
 void SketchWindow::addTrajectory( Object* const& obj_ )
 {
+    if( tv_main == nullptr ) return;
+
     SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
     sc_->addTrajectory( obj_ );
 }
@@ -204,6 +211,8 @@ void SketchWindow::addTrajectory( Object* const& obj_ )
 
 void SketchWindow::updateTrajectory( const std::size_t& index_ )
 {
+    if( tv_main == nullptr ) return;
+
     SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
     sc_->updateTrajectory( index_ );
 }
@@ -214,6 +223,7 @@ void SketchWindow::updateTrajectory( const std::size_t& index_ )
 
 void SketchWindow::setModeSelecting()
 {
+    if( main == nullptr ) return;
 
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     sc_->setModeSelecting();
@@ -229,6 +239,8 @@ void SketchWindow::setModeSelecting()
 
 void SketchWindow::setModeSketching()
 {
+    if( main == nullptr ) return;
+
     SketchScene* sc_ = ( SketchScene* )( main->scene() );
     sc_->setModeSketching();
 

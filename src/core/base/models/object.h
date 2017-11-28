@@ -17,7 +17,6 @@ class Object
     public:
 
 
-//        enum class Type{ STRATIGRAPHY, FAULT };
         using CrossSectionsContainer = Container< double, PolyCurve >;
 
 
