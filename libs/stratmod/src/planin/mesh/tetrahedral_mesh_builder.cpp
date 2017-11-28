@@ -39,10 +39,20 @@ struct TetrahedralMeshBuilder::TriangleHeights
         bool equal_v1 = std::fabs( vertex_height[1] - rhs.vertex_height[1] ) < tolerance;
         bool equal_v2 = std::fabs( vertex_height[2] - rhs.vertex_height[2] ) < tolerance;
 
+        // Given equal heights a valid triangle can't be < than an invalid triangle
+        // Also, enforce that x < x is false
+        //
         if ( equal_v0 && equal_v1 && equal_v2 )
-        if ( status() && (rhs.status() == false) )
         {
-            return false;
+            if ( rhs.status() == false )
+            {
+                return false;
+            }
+
+            if ( status() && rhs.status() )
+            {
+                return false;
+            }
         }
 
         return true;
