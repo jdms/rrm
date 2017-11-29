@@ -645,6 +645,30 @@ bool PlanarSurface::getVertex3D( Natural index, Point3 &v ) {
     return valid_vertex; 
 }
 
+bool PlanarSurface::getMappedVertex3D( Natural index, Point3 &v ) {
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    Point2 p2; 
+    if ( getVertex2D(index, p2) == false ) { 
+        return false; 
+    }
+
+    Point3 w;
+
+    w.x = p2.x; 
+    w.y = p2.y; 
+    bool valid_vertex = getHeight(index, w.z); 
+    /* std::cout << "Problem!\n\n"; */ 
+
+    v.x = w[coordinates_map_[0]];
+    v.y = w[coordinates_map_[1]];
+    v.z = w[coordinates_map_[2]];
+
+    return valid_vertex; 
+}
+
 double PlanarSurface::getTolerance() 
 {
     updateDiscretization();
