@@ -11,8 +11,6 @@ class ObjectTreeItem: public QTreeWidgetItem
 {
     public:
 
-//        enum class Type { VOLUME, CROSS_SECTION, STRATIGRAPHY, REGION, WELL };
-
 
         ObjectTreeItem();
 

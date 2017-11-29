@@ -20,7 +20,13 @@ class PolyCurve
 
         bool isEmpty() const
         {
-            return data.vertices.empty();
+            if( data.vertices.empty() == true )
+                return true;
+            else if( data.vertices.size() < 15 )
+                return true;
+
+            return false;
+//            return data.vertices.empty();
         }
 
 
