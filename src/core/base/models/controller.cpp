@@ -319,6 +319,8 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
     if( objects.findElement( current_object ) == false )
         return false;
 
+    if( curve_.isEmpty() == true ) return false;
+
     Object* const& obj_ = objects.getElement( current_object );
     if( obj_->hasCurve( depth_ ) == false )
     {
