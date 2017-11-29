@@ -621,6 +621,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	region.readinfacets(facetlist);
 	region.numberofsurfaces(triangle_meshes.size());
 	
+	//region.writesurfacemeshVTK("surfaces.vtk");
 
 	std::vector<NODE> curvenodelist, curvenodelist2;
 	std::vector<SEGMENT> segmentlist, segmentlist2;
@@ -662,23 +663,28 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		markreplace[i] = -1;
 		markreplacenumber[i] = 0;
 	}
-	for (int ic = 0; ic < markcorner.size(); ic++){
-		int inode = markcorner[ic];
-		double x = curvenodelist[inode].x();
-		double y = curvenodelist[inode].y();
-		double z = curvenodelist[inode].z();
-		for (int i = 0; i < curvenodelist.size(); i++){
-			double xx = curvenodelist[i].x();
-			double yy = curvenodelist[i].y();
-			double zz = curvenodelist[i].z();
-			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-				if (inode != i && markreplace[inode] == -1){
-					markreplace[inode] = i;//remove inode
-					markreplace[i] = -2;//keep i no change
-					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-						markreplacenumber[j]++;
+	/*for (int ic = 0; ic < markcorner.size(); ic++){
+		int inode = markcorner[ic];*/
+	for (int inode = 0; inode < curvenodelist.size(); inode++){
+		if (markreplace[inode] == -1){
+			double x = curvenodelist[inode].x();
+			double y = curvenodelist[inode].y();
+			double z = curvenodelist[inode].z();
+			for (int i = 0; i < curvenodelist.size(); i++){
+				if (markreplace[i] < 0){
+					double xx = curvenodelist[i].x();
+					double yy = curvenodelist[i].y();
+					double zz = curvenodelist[i].z();
+					if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
+						if (inode != i){
+							markreplace[inode] = i;//remove inode
+							markreplace[i] = -2;//keep i no change
+							for (int j = inode + 1; j < markreplacenumber.size(); j++){
+								markreplacenumber[j]++;
+							}
+							break;
+						}
 					}
-					break;
 				}
 			}
 		}
@@ -705,7 +711,52 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segmentlist2.push_back(segment_);
 	}
 
+	//for (int i = 0; i < markreplace.size(); i++){
+	//	markreplace[i] = i;
+	//	markreplacenumber[i] = 0;
+	//}
+	////all curves from left to right. need to check all nodes when geological rules applied
+	//for (int inode = 0; inode < curvenodelist.size(); inode++){ //max 3 nodes overlap; 
+	//	if (markreplace[inode] == inode){
+	//		double x = curvenodelist[inode].x();
+	//		double y = curvenodelist[inode].y();
+	//		double z = curvenodelist[inode].z();
+	//		for (int i = 0; i < curvenodelist.size(); i++){
+	//			double xx = curvenodelist[i].x();
+	//			double yy = curvenodelist[i].y();
+	//			double zz = curvenodelist[i].z();
+	//			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
+	//				if (inode != i && inode != markreplace[i]){
+	//					markreplace[inode] = markreplace[i];//remove inode
+	//					for (int j = inode + 1; j < markreplacenumber.size(); j++){
+	//						markreplacenumber[j]++;
+	//					}
+	//					break;
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	//for (int i = 0; i < curvenodelist.size(); i++){
+	//	if (markreplace[i] == i){
+	//		NODE node_ = curvenodelist[i];
+	//		curvenodelist2.push_back(node_);
+	//	}
+	//}
+	//for (int i = 0; i < segmentlist.size(); i++){
+	//	int i1 = segmentlist[i].node(0);
+	//	int i2 = segmentlist[i].node(1);
+	//	i1 = markreplace[i1];
+	//	i2 = markreplace[i2];
+	//	i1 = i1 - markreplacenumber[i1];
+	//	i2 = i2 - markreplacenumber[i2];
+	//	segment_.node(0, i1);
+	//	segment_.node(1, i2);
+	//	segmentlist2.push_back(segment_);
+	//}
+
 	region.readincurves_front(curvenodelist2, segmentlist2); //f-b-l-r
+	region.writecurvesvtk_f("curvesf.vtk");
 
 	//for back boundary 
 	segmentlist.clear();
@@ -736,27 +787,33 @@ bool FlowDiagnosticsInterface::setSkeleton(
 
 	markreplace.resize(curvenodelist.size());
 	markreplacenumber.resize(curvenodelist.size());
+
 	for (int i = 0; i < markreplace.size(); i++){
 		markreplace[i] = -1;
 		markreplacenumber[i] = 0;
 	}
-	for (int ic = 0; ic < markcorner.size(); ic++){
-		int inode = markcorner[ic];
-		double x = curvenodelist[inode].x();
-		double y = curvenodelist[inode].y();
-		double z = curvenodelist[inode].z();
-		for (int i = 0; i < curvenodelist.size(); i++){
-			double xx = curvenodelist[i].x();
-			double yy = curvenodelist[i].y();
-			double zz = curvenodelist[i].z();
-			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-				if (inode != i && markreplace[inode] == -1){
-					markreplace[inode] = i;//remove inode
-					markreplace[i] = -2;//keep i no change
-					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-						markreplacenumber[j]++;
+	/*for (int ic = 0; ic < markcorner.size(); ic++){
+	int inode = markcorner[ic];*/
+	for (int inode = 0; inode < curvenodelist.size(); inode++){
+		if (markreplace[inode] == -1){
+			double x = curvenodelist[inode].x();
+			double y = curvenodelist[inode].y();
+			double z = curvenodelist[inode].z();
+			for (int i = 0; i < curvenodelist.size(); i++){
+				if (markreplace[i] < 0){
+					double xx = curvenodelist[i].x();
+					double yy = curvenodelist[i].y();
+					double zz = curvenodelist[i].z();
+					if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
+						if (inode != i){
+							markreplace[inode] = i;//remove inode
+							markreplace[i] = -2;//keep i no change
+							for (int j = inode + 1; j < markreplacenumber.size(); j++){
+								markreplacenumber[j]++;
+							}
+							break;
+						}
 					}
-					break;
 				}
 			}
 		}
@@ -782,7 +839,6 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segment_.node(1, i2);
 		segmentlist2.push_back(segment_);
 	}
-
 	region.readincurves_back(curvenodelist2, segmentlist2); //f-b-l-r
 
 
@@ -819,23 +875,28 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		markreplace[i] = -1;
 		markreplacenumber[i] = 0;
 	}
-	for (int ic = 0; ic < markcorner.size(); ic++){
-		int inode = markcorner[ic];
-		double x = curvenodelist[inode].x();
-		double y = curvenodelist[inode].y();
-		double z = curvenodelist[inode].z();
-		for (int i = 0; i < curvenodelist.size(); i++){
-			double xx = curvenodelist[i].x();
-			double yy = curvenodelist[i].y();
-			double zz = curvenodelist[i].z();
-			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-				if (inode != i && markreplace[inode]==-1){
-					markreplace[inode] = i;//remove inode
-					markreplace[i] = -2;//keep i no change
-					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-						markreplacenumber[j]++;
+	/*for (int ic = 0; ic < markcorner.size(); ic++){
+	int inode = markcorner[ic];*/
+	for (int inode = 0; inode < curvenodelist.size(); inode++){
+		if (markreplace[inode] == -1){
+			double x = curvenodelist[inode].x();
+			double y = curvenodelist[inode].y();
+			double z = curvenodelist[inode].z();
+			for (int i = 0; i < curvenodelist.size(); i++){
+				if (markreplace[i] < 0){
+					double xx = curvenodelist[i].x();
+					double yy = curvenodelist[i].y();
+					double zz = curvenodelist[i].z();
+					if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
+						if (inode != i){
+							markreplace[inode] = i;//remove inode
+							markreplace[i] = -2;//keep i no change
+							for (int j = inode + 1; j < markreplacenumber.size(); j++){
+								markreplacenumber[j]++;
+							}
+							break;
+						}
 					}
-					break;
 				}
 			}
 		}
@@ -898,23 +959,28 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		markreplace[i] = -1;
 		markreplacenumber[i] = 0;
 	}
-	for (int ic = 0; ic < markcorner.size(); ic++){
-		int inode = markcorner[ic];
-		double x = curvenodelist[inode].x();
-		double y = curvenodelist[inode].y();
-		double z = curvenodelist[inode].z();
-		for (int i = 0; i < curvenodelist.size(); i++){
-			double xx = curvenodelist[i].x();
-			double yy = curvenodelist[i].y();
-			double zz = curvenodelist[i].z();
-			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-				if (inode != i && markreplace[inode] == -1){
-					markreplace[inode] = i;//remove inode
-					markreplace[i] = -2;//keep i no change
-					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-						markreplacenumber[j]++;
+	/*for (int ic = 0; ic < markcorner.size(); ic++){
+	int inode = markcorner[ic];*/
+	for (int inode = 0; inode < curvenodelist.size(); inode++){
+		if (markreplace[inode] == -1){
+			double x = curvenodelist[inode].x();
+			double y = curvenodelist[inode].y();
+			double z = curvenodelist[inode].z();
+			for (int i = 0; i < curvenodelist.size(); i++){
+				if (markreplace[i] < 0){
+					double xx = curvenodelist[i].x();
+					double yy = curvenodelist[i].y();
+					double zz = curvenodelist[i].z();
+					if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
+						if (inode != i){
+							markreplace[inode] = i;//remove inode
+							markreplace[i] = -2;//keep i no change
+							for (int j = inode + 1; j < markreplacenumber.size(); j++){
+								markreplacenumber[j]++;
+							}
+							break;
+						}
 					}
-					break;
 				}
 			}
 		}
@@ -1174,6 +1240,8 @@ void FlowDiagnosticsInterface::computeProperties(){
 	}
 	else if (region.sketchflag() == 0 && region.meshinfo_type() == 2){//linear extrusion+cpg
 		region.steadystateflowsolver();
+		region.flowdiagnostics_cpg();
+		region.derivedquantities_cpgfv();
 	}
 }
 
