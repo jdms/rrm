@@ -345,7 +345,7 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    return false;
+    return modeller_.getTetrahedralMesh(vertex_coordinates, element_list);
 }
 
 //{} // namespace RRM

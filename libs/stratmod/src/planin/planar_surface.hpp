@@ -142,6 +142,7 @@ class PlanarSurface {
 
         bool getVertex2D( Natural index, Point2 &v );
         bool getVertex3D( Natural index, Point3 &v );
+        bool getMappedVertex3D( Natural index, Point3 &v );
 
         bool getHeight( Natural vertex_index, double &height );
         bool getHeight( Natural i, Natural j, double &height ); 

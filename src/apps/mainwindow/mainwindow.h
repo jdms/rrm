@@ -28,6 +28,7 @@ class MainWindow: public QMainWindow
 
    public:
 
+
         explicit MainWindow( QWidget *parent = 0 );
 
 
@@ -118,6 +119,7 @@ class MainWindow: public QMainWindow
         QAction* ac_sketch_above;
         QAction* ac_sketch_below;
 
+        QAction* ac_truncate;
         QAction* ac_remove_above;
         QAction* ac_ra_intersection;
         QAction* ac_remove_below;

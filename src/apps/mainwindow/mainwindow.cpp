@@ -188,6 +188,9 @@ void MainWindow::createToolbarActions()
     ag_region_sketching->setExclusive( false );
 
 
+    ac_truncate = new QAction( "Truncate", this );
+    ac_truncate->setCheckable( true );
+
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
     connect( ac_remove_above, &QAction::triggered, [=](){
@@ -217,6 +220,7 @@ void MainWindow::createToolbarActions()
 
 
     QActionGroup* ag_rules = new QActionGroup( this );
+    ag_rules->addAction( ac_truncate );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_ra_intersection );
     ag_rules->addAction( ac_remove_below );
