@@ -579,3 +579,9 @@ void RRMApplication::removeCrossSectionCanvas( double depth_ )
     status_ = mainwindow->controller->removeFixedCrossSection( depth_ );
 
 }
+
+
+void RRMApplication::setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double scale_ )
+{
+    mainwindow->controller->setImageCrossSection( depth_, file_, ox_, oy_, scale_ );
+}

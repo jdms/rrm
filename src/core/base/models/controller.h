@@ -67,6 +67,12 @@ class Controller
         void updateCurrentCrossSection();
 
 
+        void setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double scale_ );
+        bool hasImageCrossSection( double depth_ );
+        bool clearImageCrossSection( double depth_ );
+        bool getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& scale_ );
+
+
         CrossSection* getCrossSection( const double& depth_ ) const;
         CrossSection* getCurrentCrossSection() const;
 
@@ -308,11 +314,16 @@ class Controller
         std::size_t index_upper_boundary;
         std::size_t index_bottom_boundary;
 
+        struct ImageData
+        {
+            std::string file;
+            double ox;
+            double oy;
+            double scale;
+        };
 
 
-
-
-
+        std::map< double, ImageData > csections_background;
 };
 
 #endif // CONTROLLER_H

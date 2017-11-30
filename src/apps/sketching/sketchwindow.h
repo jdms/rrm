@@ -77,6 +77,8 @@ class SketchWindow: public QMainWindow
         void objectSelected( std::size_t index_ );
         void commitObject();
 
+        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double scale_ );
+
 
 
     protected:
@@ -108,6 +110,7 @@ class SketchWindow: public QMainWindow
         QAction* ac_commit;
         QAction* ac_create;
         QAction* ac_edit_scene;
+        QAction* ac_axes;
 
 };
 

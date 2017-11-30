@@ -13,6 +13,7 @@ SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 
 void SketchWindow::createToolBar()
 {
+
     QToolBar *tb_actions = new QToolBar();
 
 
@@ -25,6 +26,10 @@ void SketchWindow::createToolBar()
 
     ac_edit_scene = new QAction( "Edit Scene", this );
     ac_edit_scene->setCheckable( true );
+
+    ac_axes = new QAction( "Axes", this );
+    ac_axes->setCheckable( true );
+    ac_axes->setChecked( true );
 
 
     tb_actions->addWidget( cp_color );
@@ -70,6 +75,8 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
                                                     { if( scene_ == nullptr) return; scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
 
+    connect( ac_axes, &QAction::triggered, scene_, &SketchScene::setAxesVisible );
+
 
 
     connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
@@ -79,6 +86,9 @@ void SketchWindow::setupScene( SketchScene* const& scene_ )
     connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
 
     connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
+
+    connect( scene_, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double scale_ )
+                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, scale_ ); } );
 
 
 

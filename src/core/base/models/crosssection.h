@@ -50,9 +50,10 @@ class CrossSection
         double getDepth() const;
 
 
-        void setImagePath( const std::string& path_ );
-        const std::string& getImagePath();
-
+        void setImage( const std::string& path_, double ox_, double oy_, double scale_ );
+        void getImage( std::string& path_, double& ox_, double& oy_, double& scale_ );
+        void clearImage();
+        bool hasImage();
 
         void setVisible( const bool status_ );
         bool isVisible() const;
@@ -78,6 +79,12 @@ class CrossSection
 
     private:
 
+        struct Point
+        {
+            double x;
+            double y;
+        };
+
         std::size_t index;
         static std::size_t number_of_csections;
 
@@ -85,10 +92,16 @@ class CrossSection
         Settings::CrossSection::CrossSectionDirections direction;
 
         bool is_visible;
-        std::string image_path;
+
 
         ObjectsContainer objects;
         const Volume* volume;
+
+        std::string image_path;
+        Point image_origin;
+        double image_scale;
+
+
 
 };
 

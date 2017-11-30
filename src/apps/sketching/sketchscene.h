@@ -3,12 +3,12 @@
 
 #include <QGraphicsScene>
 
-
 #include "inputsketch.h"
 #include "./item_wrappers/volume_item_wrapper.h"
 #include "./item_wrappers/object_item_wrapper.h"
 #include "./item_wrappers/crosssection_item_wrapper.h"
 #include "./item_wrappers/trajectoryitemwrapper.h"
+#include "./item_wrappers/coordinate_axes_2d.h"
 #include "./core/base/models/scene.h"
 
 class SketchScene: public QGraphicsScene, public Scene
@@ -34,7 +34,8 @@ class SketchScene: public QGraphicsScene, public Scene
 
 
 
-        virtual void addVolume( Volume* const& raw_ );
+        void addVolume( Volume* const& raw_, Settings::CrossSection::CrossSectionDirections dir_ );
+        virtual void addVolume( Volume* const& raw_ ){}
         virtual void updateVolume();
         virtual void clearVolume();
 
@@ -86,19 +87,22 @@ class SketchScene: public QGraphicsScene, public Scene
         void isTopViewScene();
         void isCrossSectionScene();
 
+        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double scale_ );
 
-        void AAA();
-        void BBB();
 
     public slots:
 
         void edit( bool status_ );
+
+        void setImageToCrossSection( const QString& file, double ox_ = 0.0, double oy_ = 0.0, double scale_ = 1.0 );
 
         void setModeSketching();
         void setModeEditingBoundary();
         void setModeEditingScene();
         void setModeSelecting();
         void selectObjectAsBounderingRegion();
+
+        void setAxesVisible( bool status_ );
 
         void clear();
 
@@ -109,17 +113,22 @@ class SketchScene: public QGraphicsScene, public Scene
 
         void initialize();
 
+
         void createCrossSectionScene( Volume* const& vol_ );
         void createTopViewScene( Volume* const& vol_ );
 
-        void updateCrossSectionScene( Volume* const& vol_ );
-        void updateTopViewScene( Volume* const& vol_ );
+        void updateCrossSectionScene();
+        void updateTopViewScene();
 
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event );
         virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent* event );
         virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
+        virtual void dragEnterEvent( QGraphicsSceneDragDropEvent* event );
+        virtual void dropEvent( QGraphicsSceneDragDropEvent* event );
+        virtual void dragMoveEvent( QGraphicsSceneDragDropEvent* event );
+
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event );
 
 
@@ -137,6 +146,7 @@ class SketchScene: public QGraphicsScene, public Scene
         InputSketch* user_input;
 
         CrossSection* csection;
+        QGraphicsPixmapItem* csection_image;
 
         VolumeItemWrapper* volume;
         ObjectsContainer objects;
@@ -145,6 +155,9 @@ class SketchScene: public QGraphicsScene, public Scene
 
         const double ZOOM_SCALE = 1.1;
         bool is_current = false;
+
+        CoordinateAxes2d axes;
+
 
 };
 

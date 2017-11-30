@@ -1,5 +1,10 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneDragDropEvent>
+#include <QPixmap>
+#include <QDir>
+#include <QUrl>
+#include <QMimeData>
 
 #include "sketchscene.h"
 
@@ -9,6 +14,12 @@ SketchScene::SketchScene()
 {
     user_input = new InputSketch();
     addItem( user_input );
+
+    csection_image = new QGraphicsPixmapItem();
+    addItem( csection_image );
+
+    axes.setVisible( true );
+    addItem( &axes );
 
     volume = nullptr;
 }
@@ -21,6 +32,12 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     user_input = new InputSketch();
     user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
     addItem( user_input );
+
+    csection_image = new QGraphicsPixmapItem();
+    addItem( csection_image );
+
+    axes.setVisible( true );
+    addItem( &axes );
 
 
     InputSketch::Direction dir_;
@@ -68,6 +85,13 @@ void SketchScene::edit( bool status_ )
 }
 
 
+void SketchScene::setAxesVisible( bool status_ )
+{
+    axes.setVisible( status_ );
+    update();
+}
+
+
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
     if( raw_ == nullptr ) return;
@@ -77,8 +101,6 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
     Volume* vol_ = const_cast< Volume* >( raw_->getVolume() );
-    addVolume( vol_ );
-
 
 
     if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
@@ -94,6 +116,11 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 void SketchScene::createCrossSectionScene( Volume* const& vol_ )
 {
+    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Z );
+
+    axes.setPlane( CoordinateAxes2d::Plane::XY );
+    axes.setAxisXLenght( vol_->getWidth() );
+    axes.setAxisYLenght( vol_->getHeight() );
 
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
@@ -103,6 +130,12 @@ void SketchScene::createCrossSectionScene( Volume* const& vol_ )
 
 void SketchScene::createTopViewScene( Volume* const& vol_ )
 {
+    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Y );
+
+    axes.setPlane( CoordinateAxes2d::Plane::XZ );
+    axes.setAxisXLenght( vol_->getWidth() );
+    axes.setAxisYLenght( vol_->getHeight() );
+
     Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
     for( auto c: csections_ )
     {
@@ -118,6 +151,39 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
 }
 
 
+void SketchScene::setImageToCrossSection( const QString& file_, double ox_, double oy_, double scale_ )
+{
+
+    QPixmap image;
+    image.load( file_ );
+
+    if( image.isNull() == true ) return;
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image = image.transformed( myTransform );
+
+    csection_image->setPixmap( image );
+    csection_image->setPos( QPointF( ox_, oy_ ) );
+    csection_image->setVisible( true );
+    csection_image->setScale( scale_ );
+    csection_image->update();
+
+
+    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, scale_ );
+
+//    ImageData image_data;
+//    image_data.file = file;
+//    image_data.origin = csection_image->scenePos();
+//    image_data.scale = csection_image->scale();
+//    backgrounds[ current_csection ] = image_data;
+
+
+
+//    enableResizingImage( true );
+    update();
+}
+
 
 void SketchScene::updateCrossSection()
 {
@@ -131,28 +197,50 @@ void SketchScene::updateCrossSection()
 
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        updateCrossSectionScene( vol_ );
+        updateCrossSectionScene();
 
     else if( csection->getDirection() ==Settings::CrossSection::CrossSectionDirections::Y )
-        updateTopViewScene( vol_ );
+        updateTopViewScene();
 
 }
 
 
 
-void SketchScene::updateCrossSectionScene( Volume* const& vol_ )
+void SketchScene::updateCrossSectionScene()
 {
+
+    if( csection->hasImage() == true )
+    {
+        std::string path_;
+        double ox_;
+        double oy_;
+        double scale_;
+        csection->getImage( path_, ox_, oy_, scale_ );
+        setImageToCrossSection( QString( path_.c_str() ), ox_, oy_, scale_ );
+    }
+    else
+    {
+        csection_image->setVisible( false );
+        csection_image->update();
+    }
+
+    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
     Volume::ObjectsContainer objs_ = vol_->getObjects();
 
     for( auto o: objs_ )
         updateObject( o.first );
+
+
+    update();
 }
 
 
-void SketchScene::updateTopViewScene( Volume* const& vol_ )
+void SketchScene::updateTopViewScene()
 {
 
+    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
     Volume::ObjectsContainer objs_ = vol_->getObjects();
+
     for( auto o: objs_ )
         updateTrajectory( o.first );
 
@@ -161,10 +249,10 @@ void SketchScene::updateTopViewScene( Volume* const& vol_ )
 
 
 
-void SketchScene::addVolume( Volume* const &raw_ )
+void SketchScene::addVolume( Volume* const &raw_, Settings::CrossSection::CrossSectionDirections dir_ )
 {
     clearVolume();
-    volume = new VolumeItemWrapper( raw_, Settings::CrossSection::CrossSectionDirections::Z );
+    volume = new VolumeItemWrapper( raw_, dir_ );
 
     addItem( volume );
     setSceneRect( volume->boundingRect() );
@@ -174,7 +262,13 @@ void SketchScene::addVolume( Volume* const &raw_ )
 
 void SketchScene::updateVolume()
 {
+
     volume->updateItem();
+
+    axes.setAxisXLenght( volume->getWidth() );
+    axes.setAxisYLenght( volume->getHeight() );
+
+
     setSceneRect( volume->boundingRect() );
     update();
 }
@@ -286,6 +380,7 @@ void SketchScene::addCrossSection( CrossSection * const &raw_ )
 }
 
 
+
 void SketchScene::setCurrent( bool status_ )
 {
     is_current = status_;
@@ -298,6 +393,7 @@ bool SketchScene::isCurrent() const
 }
 
 
+
 void SketchScene::setCurrentColor( int r, int g, int b )
 {
     if( user_input == nullptr ) return;
@@ -308,6 +404,7 @@ void SketchScene::setCurrentColor( int r, int g, int b )
     current_color.blue  = b;
 
 }
+
 
 void SketchScene::getCurrentColor( int& r, int& g, int& b )
 {
@@ -381,7 +478,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
-    if( event->modifiers() & Qt::ControlModifier /*( event->buttons() & Qt::LeftButton )*/ )
+    if( event->modifiers() & Qt::ControlModifier )
     {
         if( csection == nullptr ) return;
         if( views().empty() == true ) return;
@@ -394,6 +491,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
     }
 
 }
+
 
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
@@ -443,6 +541,35 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 }
 
 
+
+void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
+{
+    if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
+    {
+            event->acceptProposedAction();
+    }
+
+}
+
+
+void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event )
+{
+    const QMimeData *mime_data = event->mimeData();
+    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
+    url_file = QDir::toNativeSeparators( url_file );
+
+    setImageToCrossSection( url_file );
+
+}
+
+
+void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
+{
+    event->accept();
+}
+
+
+
 void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
 {
 
@@ -459,6 +586,8 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
     QGraphicsScene::wheelEvent( event );
     update();
 }
+
+
 
 void SketchScene::clear()
 {
@@ -539,4 +668,6 @@ void SketchScene::initialize()
     csection = nullptr;
     volume = nullptr;
     is_current = false;
+
+
 }
