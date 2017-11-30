@@ -29,6 +29,7 @@ void Canvas3d::initializeGL()
     glClearColor( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_MULTISAMPLE );
 
+//    camera.setOrthographicMatrix(  0, width(), 0, height(), 0., 100.  );
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
 
     shareOpenGLContext();
@@ -39,6 +40,7 @@ void Canvas3d::resizeGL( int width, int height )
 {
     glViewport( 0 , 0 , width , height );
     camera.setViewport( Eigen::Vector2f( (float) width, (float) height ) );
+//    camera.setOrthographicMatrix( 0, (float)width, 0, (float)height, 0., 100. );
     camera.setPerspectiveMatrix( camera.getFovy(), (float) width/(float)height, 0.1f , 100.0f );
 }
 

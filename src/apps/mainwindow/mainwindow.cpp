@@ -323,7 +323,7 @@ void MainWindow::createSketchingActions()
                                                          { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
     connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_, double depth_ )
-                                                        { app->acceptSketchingCurve( curve_, depth_ ); } );
+                                                         { app->acceptSketchingCurve( curve_, depth_ ); } );
 
     connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
@@ -332,19 +332,23 @@ void MainWindow::createSketchingActions()
 
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ )
-                                                                { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+                                                          { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+
+
+    connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double scale_ )
+                                                           { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, scale_ ); } );
 
 
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
-                                                                 { app->updateSketchingCanvas(); } );
+                                                           { app->updateSketchingCanvas(); } );
 
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]()
-                                                                 {  app->updateSketchingCanvas(); } );
+                                                           {  app->updateSketchingCanvas(); } );
 
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]()
-                                                                 {  app->updateSketchingCanvas(); } );
+                                                            {  app->updateSketchingCanvas(); } );
 
 
 

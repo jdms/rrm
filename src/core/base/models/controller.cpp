@@ -166,6 +166,73 @@ CrossSection* Controller::getTopViewCrossSection() const
 }
 
 
+
+void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double scale_ )
+{
+
+
+    ImageData image_data;
+    image_data.file = path_;
+    image_data.ox = ox_;
+    image_data.oy = oy_;
+    image_data.scale = scale_;
+
+    csections_background[ depth_ ] = image_data;
+
+    CrossSection* csection_ = getCrossSection( depth_ );
+    if( csection_ != nullptr )
+    {
+        csection_->setImage( path_, ox_, oy_, scale_ );
+    }
+
+}
+
+
+
+bool Controller::hasImageCrossSection( double depth_ )
+{
+    if( csections_background.find( depth_ ) == csections_background.end() )
+        return false;
+    return true;
+}
+
+
+bool Controller::clearImageCrossSection( double depth_ )
+{
+
+    if( csections_background.find( depth_ ) == csections_background.end() )
+        return false;
+
+
+    CrossSection* csection_ = getCrossSection( depth_ );
+    if( csection_ != nullptr )
+    {
+        csection_->clearImage();
+    }
+
+    csections_background.erase( depth_ );
+    return true;
+
+
+}
+
+
+bool Controller::getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& scale_ )
+{
+
+    if( hasImageCrossSection( depth_ ) == false ) return false;
+
+    ImageData image_data = csections_background[ depth_ ];
+    path_  = image_data.file ;
+    ox_    = image_data.ox;
+    oy_    = image_data.oy;
+    scale_ = image_data.scale;
+
+    return true;
+}
+
+
+
 void Controller::setCurrentCrossSection( double depth_ )
 {
 
@@ -183,8 +250,18 @@ void Controller::setCurrentCrossSection( double depth_ )
 
 void Controller::updateCurrentCrossSection()
 {
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    std::string path_;
+    double ox_ = 0.0;
+    double oy_ = 0.0;
+    double scale_ = 1.0;
 
+    if( getImageCrossSection( current_csection, path_, ox_, oy_, scale_ ) == true )
+        main_csection->setImage( path_, ox_, oy_, scale_ );
+    else
+        main_csection->clearImage();
+
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
     for ( std::size_t id_: actives_ )
     {
         std::cout << "updating active " << id_ << std::endl << std::flush;
@@ -634,7 +711,7 @@ void Controller::updateObjectInFixedCrossSections( std::size_t id_ )
 {
     for ( Container< double, CrossSection* >::Iterator cs_it =  fixed_csections.begin(); cs_it != fixed_csections.end(); ++cs_it )
     {
-//            if( cs_it->first == current_csection ) continue;
+        if( cs_it->first == current_csection ) continue;
         updateObjectCurveFromCrossSection( id_, cs_it->first );
     }
 
@@ -1116,6 +1193,9 @@ void Controller::clear()
         delete topview_csection;
         topview_csection = nullptr;
     }
+
+
+    csections_background.clear();
 
 
     for ( Container< double, CrossSection* > ::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )

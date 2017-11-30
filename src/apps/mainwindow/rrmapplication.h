@@ -159,6 +159,12 @@ class RRMApplication
         void addCrossSectionCanvas( double depth_ );
         void removeCrossSectionCanvas( double depth_ );
 
+
+        void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double scale_ );
+
+
+
+
     protected:
 
 

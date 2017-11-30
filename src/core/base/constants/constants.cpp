@@ -112,7 +112,7 @@ namespace Settings {
     const double Application::APP_WIDTH_SCALE = 0.8;
     const double Application::APP_HEIGHT_SCALE = 0.8;
 
-    const bool Application::DEFAULT_TOPVIEW_VISIBILITY = false;
+    const bool Application::DEFAULT_TOPVIEW_VISIBILITY = true;
     const bool Application::DEFAULT_CSECTION_VISIBILITY = true;
     const bool Application::DEFAULT_SIMULATOR_VISIBILITY = false;
     const bool Application::DEFAULT_SIDEBAR_VISIBILITY = true;

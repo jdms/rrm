@@ -16,7 +16,8 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             item_wrappers/volume_item_wrapper.h
                             item_wrappers/object_item_wrapper.h
                             item_wrappers/crosssection_item_wrapper.h
-                            item_wrappers/trajectoryitemwrapper.h )
+                            item_wrappers/trajectoryitemwrapper.h
+                            item_wrappers/coordinate_axes_2d.h )
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
                             canvasstack.h
@@ -30,7 +31,8 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             item_wrappers/volume_item_wrapper.cpp
                             item_wrappers/object_item_wrapper.cpp
                             item_wrappers/crosssection_item_wrapper.cpp
-                            item_wrappers/trajectoryitemwrapper.cpp )
+                            item_wrappers/trajectoryitemwrapper.cpp
+                            item_wrappers/coordinate_axes_2d.cpp )
 
 
 
