@@ -29,8 +29,10 @@ void Canvas3d::initializeGL()
     glClearColor( 1.0f , 1.0 , 1.0 , 1.0f );
     glEnable( GL_MULTISAMPLE );
 
-//    camera.setOrthographicMatrix(  0, width(), 0, height(), 0., 100.  );
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
+
+
+
 
     shareOpenGLContext();
 }
@@ -38,10 +40,11 @@ void Canvas3d::initializeGL()
 
 void Canvas3d::resizeGL( int width, int height )
 {
-    glViewport( 0 , 0 , width , height );
-    camera.setViewport( Eigen::Vector2f( (float) width, (float) height ) );
-//    camera.setOrthographicMatrix( 0, (float)width, 0, (float)height, 0., 100. );
+
+    glViewport( 0 , 0 , (float) width , (float)height );
+    camera.setViewport( Eigen::Vector2f( width, (float)height ) );
     camera.setPerspectiveMatrix( camera.getFovy(), (float) width/(float)height, 0.1f , 100.0f );
+
 }
 
 
@@ -68,6 +71,45 @@ Scene3d* Canvas3d::getScene() const
 }
 
 
+std::string Canvas3d::sendImage( double width_, double height_  )
+{
+
+    Eigen::Matrix3f mat;
+    mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX() )
+            * Eigen::AngleAxisf(0.0/*Math::Constants::HalfPi*/, Eigen::Vector3f::UnitY() )
+            * Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitZ() );
+
+
+    Eigen::Quaternionf q(mat);
+
+
+    double delta_w = ( width() - width_ )*0.5;
+    double delta_h = ( height() - height_ )*0.5;
+
+
+    glViewport( static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) )  ;
+
+    camera.reset();
+
+    camera.setViewport( Eigen::Vector4f( delta_w, delta_h, width_, height_ ) ) ; //(float) 500/*width*/, (float)/*height */500) );
+    camera.setOrthographicMatrix( -0.5, 0.5, -0.5, 0.5, 0.1, 100. ); //(  -0.5, (float)0.5, -0.5, (float)0.5, 0.1, 100.);
+    camera.rotate( q );
+
+    update();
+
+
+    QImage image = grabFramebuffer();    
+    std::string path_ = "./tmp/mapview.png";
+    image.save( QString( path_.c_str() ) );
+
+
+    camera.reset();
+    glViewport( 0 , 0 , (float) width() , (float)height() );
+    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+
+    return path_;
+}
 
 
 

@@ -64,6 +64,8 @@ class SketchWindow: public QMainWindow
 
         void setCurrentCrossSection( double depth_ );
 
+        void setTopViewImage( const std::string& image_ );
+
 
 
     signals:
@@ -78,6 +80,7 @@ class SketchWindow: public QMainWindow
         void commitObject();
 
         void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double scale_ );
+        void getHeightMap();
 
 
 
@@ -111,6 +114,7 @@ class SketchWindow: public QMainWindow
         QAction* ac_create;
         QAction* ac_edit_scene;
         QAction* ac_axes;
+        QAction* ac_height_map;
 
 };
 

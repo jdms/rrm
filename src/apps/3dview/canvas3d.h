@@ -22,6 +22,7 @@ class Canvas3d: public QOpenGLWidget
         Canvas3d();
 
         Scene3d* getScene() const;
+        std::string sendImage( double width_, double height_ );
 
 
 

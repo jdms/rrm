@@ -161,7 +161,7 @@ class RRMApplication
 
 
         void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double scale_ );
-
+        void getHeightMapTopView();
 
 
 

@@ -358,6 +358,7 @@ void MainWindow::createSketchingActions()
 
     connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
+    connect( sketch_topview_window, &SketchWindow::getHeightMap, [=](){ app->getHeightMapTopView(); } );
 }
 
 

@@ -585,3 +585,15 @@ void RRMApplication::setImageToCrossSection( double depth_, std::string file_, d
 {
     mainwindow->controller->setImageCrossSection( depth_, file_, ox_, oy_, scale_ );
 }
+
+
+void RRMApplication::getHeightMapTopView()
+{
+
+
+    double w_, h_, l_;
+    mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
+
+    std::string image_ = mainwindow->canvas3d->sendImage( w_, l_ );
+    mainwindow->sketch_topview_window->setTopViewImage( image_ );
+}

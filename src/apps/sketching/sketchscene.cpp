@@ -170,7 +170,7 @@ void SketchScene::setImageToCrossSection( const QString& file_, double ox_, doub
     csection_image->update();
 
 
-    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, scale_ );
+//    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, scale_ );
 
 //    ImageData image_data;
 //    image_data.file = file;
@@ -188,12 +188,12 @@ void SketchScene::setImageToCrossSection( const QString& file_, double ox_, doub
 void SketchScene::updateCrossSection()
 {
 
-    std::cout << "Cross-section being updated: " << csection->getDepth() << std::endl << std::flush;
+//    std::cout << "Cross-section being updated: " << csection->getDepth() << std::endl << std::flush;
 
-    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
+//    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
 
-    std::cout << "Volume dimensions: ( " << vol_->getWidth() << ", " << vol_->getHeight() << ", "
-              << vol_->getLenght() << ") " << std::endl << std::flush;
+//    std::cout << "Volume dimensions: ( " << vol_->getWidth() << ", " << vol_->getHeight() << ", "
+//              << vol_->getLenght() << ") " << std::endl << std::flush;
 
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )

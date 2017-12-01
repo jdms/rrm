@@ -231,15 +231,17 @@ void ObjectTree::setRegionVisibility( std::size_t index_, bool status_ )
 void ObjectTree::clear()
 {
 
-    std::vector < std::size_t > diff;
+    std::vector< std::size_t > diff_objs;
+    std::vector< std::size_t > diff_regs;
 
-    for ( int i = 0; i < topLevelItemCount(); ++i )
+
+    if( topLevelItemCount() != 0 )
     {
 
-        int nchildren = topLevelItem( i )->childCount();
+        int nchildren = topLevelItem( 0 )->childCount();
         for( int j = 0; j < nchildren; ++j )
         {
-            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( i )->child( j ) );
+            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 0 )->child( j ) );
 
             ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
             removeItemWidget( obj_, COLUMN_COLOR );
@@ -247,24 +249,75 @@ void ObjectTree::clear()
 
             if( items.findElement( obj_->getIndex() ) == true )
             {
-                diff.push_back( obj_->getIndex() );
+                diff_objs.push_back( obj_->getIndex() );
                 continue;
             }
 
             delete obj_;
             obj_ = nullptr;
         }
+
+        for( auto d: diff_objs )
+        {
+            ObjectTreeItem* obj_ = items.getElement( d );
+
+            delete obj_;
+            obj_ = nullptr;
+        }
+
+
+
+        if( topLevelItemCount() < 2 ) return;
+
+
+        nchildren = topLevelItem( 1 )->childCount();
+        for( int j = 0; j < nchildren; ++j )
+        {
+            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 1 )->child( j ) );
+
+            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+            removeItemWidget( obj_, COLUMN_COLOR );
+            delete colorpicker_;
+
+            if( regions.findElement( obj_->getIndex() ) == true )
+            {
+                diff_regs.push_back( obj_->getIndex() );
+                continue;
+            }
+
+            delete obj_;
+            obj_ = nullptr;
+        }
+
+        for( auto d: diff_regs )
+        {
+            ObjectTreeItem* obj_ = regions.getElement( d );
+
+            delete obj_;
+            obj_ = nullptr;
+        }
+
+
+        ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+        if( vol0_ != nullptr )
+        {
+            delete vol0_;
+            vol0_ = nullptr;
+       }
+
+         ObjectTreeItem* vol1_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
+         if( vol1_ != nullptr )
+         {
+             delete vol1_;
+             vol1_ = nullptr;
+        }
+
     }
 
-    for( auto d: diff )
-    {
-        ObjectTreeItem* obj_ = items.getElement( d );
-        delete obj_;
-        obj_ = nullptr;
-    }
 
     QTreeWidget::clear();
     items.clear();
+    regions.clear();
 
 
 
