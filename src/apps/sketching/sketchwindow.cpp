@@ -31,12 +31,20 @@ void SketchWindow::createToolBar()
     ac_axes->setCheckable( true );
     ac_axes->setChecked( true );
 
+    ac_height_map = new QAction( "Map", this );
+    connect( ac_height_map, &QAction::triggered, [=](){ emit getHeightMap(); } );
+
 
     tb_actions->addWidget( cp_color );
+    tb_actions->addSeparator();
     tb_actions->addAction( ac_discard );
     tb_actions->addAction( ac_commit );
     tb_actions->addAction( ac_create );
+    tb_actions->addSeparator();
     tb_actions->addAction( ac_edit_scene );
+    tb_actions->addSeparator();
+    tb_actions->addAction( ac_axes );
+    tb_actions->addAction( ac_height_map );
 
     addToolBar( tb_actions );
 
@@ -318,15 +326,18 @@ void SketchWindow::clear()
     }
 
 
-//    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
-//    {
-//        QGraphicsView* gview_ = it->second;
-//        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-//        sc_->clear();
+    CanvasContainer::Iterator it =  cs->begin();
+    while( it != cs->end() )
+    {
+        QGraphicsView* gview_ = it->second;
+        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
+        sc_->clear();
 
-//        delete gview_;
-//        gview_ = nullptr;
-//    }
+        cs->removeElement( it->first );
+        it =  cs->begin();
+
+    }
+    cs->clear();
 
 
 }
@@ -379,4 +390,11 @@ void SketchWindow::setCurrentCrossSection( double depth_ )
 
 
 
+void SketchWindow::setTopViewImage( const std::string& image_ )
+{
+    if( tv_main == nullptr ) return;
 
+    SketchScene* sc_ = ( SketchScene* )( tv_main->scene() );
+    sc_->setImageToCrossSection( QString( image_.c_str() ) );
+
+}
