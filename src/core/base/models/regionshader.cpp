@@ -1,12 +1,12 @@
-#include "volumemeshshader.h"
+#include "regionshader.h"
 
-VolumeMeshShader::VolumeMeshShader()
+RegionShader::RegionShader()
 {
     setDefaultValues();
 }
 
 
-VolumeMeshShader::VolumeMeshShader( Region* const& raw_ )
+RegionShader::RegionShader( Region* const& raw_ )
 {
     setDefaultValues();
     init();
@@ -15,14 +15,14 @@ VolumeMeshShader::VolumeMeshShader( Region* const& raw_ )
 
 
 
-void VolumeMeshShader::setRegion( Region* const& raw_ )
+void RegionShader::setRegion( Region* const& raw_ )
 {
     raw = raw_;
     loadBuffers();
 }
 
 
-void VolumeMeshShader::loadBuffers()
+void RegionShader::loadBuffers()
 {
 
     std::vector< double > vertices_double_;
@@ -56,7 +56,7 @@ void VolumeMeshShader::loadBuffers()
 
 
 
-void VolumeMeshShader::initShaders()
+void RegionShader::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/gouraud_surface.vert" ),
                                             ( shader_directory + "shaders/gouraud_surface.frag" ),
@@ -65,7 +65,7 @@ void VolumeMeshShader::initShaders()
     shader->initialize();
 }
 
-void VolumeMeshShader::initBuffers()
+void RegionShader::initBuffers()
 {
     glGenVertexArrays ( 1 , &va_volume );
     glBindVertexArray ( va_volume );
@@ -102,7 +102,7 @@ void VolumeMeshShader::initBuffers()
 
 
 
-void VolumeMeshShader::resetShaders()
+void RegionShader::resetShaders()
 {
     if ( shader == nullptr ) return;
 
@@ -110,7 +110,7 @@ void VolumeMeshShader::resetShaders()
     shader = nullptr;
 }
 
-void VolumeMeshShader::resetBuffers()
+void RegionShader::resetBuffers()
 {
 
     if( va_volume != 0 )
@@ -142,7 +142,7 @@ void VolumeMeshShader::resetBuffers()
 
 
 
-void VolumeMeshShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
+void RegionShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                            const std::vector< GLfloat >& normals_,
                                            const std::vector< GLuint >& faces_ )
 {
@@ -169,7 +169,7 @@ void VolumeMeshShader::updateGeometryBuffers( const std::vector< GLfloat >& vert
     glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
 
-void VolumeMeshShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
+void RegionShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
 {
     glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
     glBufferData( GL_ARRAY_BUFFER, colors_.size() * sizeof ( GLfloat ), colors_.data(),
@@ -178,7 +178,7 @@ void VolumeMeshShader::updateColorBuffers( const std::vector< GLfloat >& colors_
 }
 
 
-void VolumeMeshShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ )
+void RegionShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ )
 {
     std::vector< GLfloat > color_;
     color_.resize( 3*nvertices_ );
@@ -195,7 +195,7 @@ void VolumeMeshShader::updateColorBuffers( std::size_t nvertices_, int r_, int g
 
 
 
-void VolumeMeshShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
+void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                           const int& h )
 {
 
@@ -253,20 +253,20 @@ void VolumeMeshShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P,
 
 
 
-void VolumeMeshShader::update()
+void RegionShader::update()
 {
     loadBuffers();
 }
 
 
-void VolumeMeshShader::clear()
+void RegionShader::clear()
 {
     reset();
     setDefaultValues();
 }
 
 
-void VolumeMeshShader::setDefaultValues()
+void RegionShader::setDefaultValues()
 {
     va_volume = 0;
     vb_vertices = 0;

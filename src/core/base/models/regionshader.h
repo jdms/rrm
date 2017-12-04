@@ -9,13 +9,13 @@
 #include "shader.h"
 #include "region.h"
 
-class VolumeMeshShader: public Shader
+class RegionShader: public Shader
 {
 
     public:
 
-        VolumeMeshShader();
-        VolumeMeshShader( Region* const& raw_ );
+        RegionShader();
+        RegionShader( Region* const& raw_ );
 
 
         void setRegion( Region* const& raw_ );

@@ -5,7 +5,7 @@
 #include "./core/base/models/volumeshader.h"
 #include "./core/base/models/planeshader.h"
 #include "./core/base/models/surfaceshader.h"
-#include "./core/base/models/volumemeshshader.h"
+#include "./core/base/models/regionshader.h"
 
 
 #include <QString>
@@ -96,7 +96,7 @@ void Scene3d::addRegion( Region* const& raw_ )
     context->makeCurrent( surface );
 
     std::size_t index_ = raw_->getIndex();
-    regions.addElement( index_, new VolumeMeshShader( raw_ ) );
+    regions.addElement( index_, new RegionShader( raw_ ) );
 
     emit updateCanvas();
 
@@ -108,7 +108,7 @@ void Scene3d::updateRegion( std::size_t index_ )
     context->makeCurrent( surface );
 
     if( regions.findElement( index_ ) == false ) return;
-    VolumeMeshShader* region_ = regions.getElement( index_ );
+    RegionShader* region_ = regions.getElement( index_ );
     region_->update();
 
     emit updateCanvas();
@@ -280,7 +280,7 @@ void Scene3d::clear()
     for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
     {
 
-        VolumeMeshShader* region_ = regions.getElement( it->first );
+        RegionShader* region_ = regions.getElement( it->first );
         if( region_ == nullptr ) continue;
 
         region_->clear();

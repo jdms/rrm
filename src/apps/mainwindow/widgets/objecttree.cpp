@@ -267,8 +267,16 @@ void ObjectTree::clear()
 
 
 
-        if( topLevelItemCount() < 2 ) return;
-
+        if( topLevelItemCount() < 2 )
+        {
+            ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+            if( vol0_ != nullptr )
+            {
+                delete vol0_;
+                vol0_ = nullptr;
+            }
+            return;
+        }
 
         nchildren = topLevelItem( 1 )->childCount();
         for( int j = 0; j < nchildren; ++j )
@@ -303,7 +311,7 @@ void ObjectTree::clear()
         {
             delete vol0_;
             vol0_ = nullptr;
-       }
+        }
 
          ObjectTreeItem* vol1_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
          if( vol1_ != nullptr )

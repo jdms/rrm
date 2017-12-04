@@ -31,7 +31,7 @@ set( BASE_HEADERS constants/constants.hpp
                   models/well.h
                   models/rules_processor.hpp
                   models/stratmod_wrapper.hpp
-                  models/volumemeshshader.h )
+                  models/regionshader.h )
 
 set( BASE_MOC_HEADERS models/slider.h )
 
@@ -48,7 +48,7 @@ set( BASE_SOURCES constants/constants.cpp
                   models/volumeshader.cpp
                   models/well.cpp
                   models/rules_processor.cpp
-                  models/volumemeshshader.cpp )
+                  models/regionshader.cpp )
 
 set( MOC_HEADERS ${BASE_MOC_HEADERS} )
 QT5_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )

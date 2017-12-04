@@ -8,7 +8,7 @@ CanvasStack::CanvasStack()
 
 void CanvasStack::initialize()
 {
-    hb_mainlayout = new QHBoxLayout( this );
+    hb_mainlayout = new QVBoxLayout( this );
     setLayout( hb_mainlayout );
 
     current = 0.0;
