@@ -142,6 +142,9 @@ class Controller
         bool isDefineBelowActive();
 
 
+        bool isDefineAboveObjectSelected();
+        bool isDefineBelowObjectSelected();
+
 
         void setObjectAsBoundering( std::size_t index_ );
         void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );

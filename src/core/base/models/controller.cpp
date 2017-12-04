@@ -791,7 +791,7 @@ void Controller::applyStratigraphicRule()
 
 bool Controller::enableCreateAbove( bool status_ )
 {
-    setObjectsAsSelectable( selectable_upper, false );
+//    setObjectsAsSelectable( selectable_upper, false );
 
     if( status_ == false )
     {
@@ -808,6 +808,7 @@ void Controller::stopCreateAbove()
 {
     std::cout << "Stop create above accepted" << std::endl << std::flush;
     rules_processor.stopDefineAbove();
+    setObjectsAsSelectable( selectable_upper, false );
     setObjectAsSelected( index_upper_boundary, false );
 }
 
@@ -841,7 +842,8 @@ bool Controller::requestCreateAbove()
 bool Controller::enableCreateBelow( bool status_ )
 {
 
-    setObjectsAsSelectable( selectable_upper, false );
+
+//    setObjectsAsSelectable( selectable_bottom, false );
 
     if( status_ == false )
     {
@@ -858,6 +860,7 @@ void Controller::stopCreateBelow()
 {
     std::cout << "Stop create below accepted" << std::endl << std::flush;
     rules_processor.stopDefineBelow();
+    setObjectsAsSelectable( selectable_bottom, false );
     setObjectAsSelected( index_bottom_boundary, false );
 
 }
@@ -885,6 +888,19 @@ bool Controller::requestCreateBelow()
 }
 
 
+
+
+bool Controller::isDefineAboveObjectSelected()
+{
+
+    return selectable_upper.empty();
+}
+
+
+bool Controller::isDefineBelowObjectSelected()
+{
+    return selectable_bottom.empty();
+}
 
 
 
@@ -1144,6 +1160,7 @@ void Controller::setRegionVisibility( std::size_t index_, bool status_ )
     region_->setVisible( status_ );
     scene3d->updateRegion( index_ );
 }
+
 
 void Controller::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
 {

@@ -187,10 +187,10 @@ void MainWindow::createMainWindowActions()
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double d_ ){ app->setCurrentCrossSection( d_ ); } );
 
 
-    connect( ac_sketch_above, &QAction::toggled, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
 
 
-    connect( ac_sketch_below, &QAction::toggled, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
 
 
     connect( ac_remove_above, &QAction::triggered, [=]()

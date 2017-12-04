@@ -3,6 +3,7 @@
 
 
 #include <QMainWindow>
+#include <QDockWidget>
 
 #include "canvasstack.h"
 #include "sketchscene.h"
@@ -101,6 +102,7 @@ class SketchWindow: public QMainWindow
 
         QHBoxLayout* hb_central_widget;
 
+        QDockWidget* dw_canvas_stack = nullptr;
         CanvasStack* cs = nullptr;
 
         QGraphicsView* main = nullptr;

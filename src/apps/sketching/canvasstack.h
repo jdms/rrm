@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QGraphicsView>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "./core/base/models/container.h"
 
@@ -36,7 +36,7 @@ class CanvasStack: public QWidget, public CanvasContainer
     protected:
 
         double current;
-        QHBoxLayout* hb_mainlayout;
+        QVBoxLayout* hb_mainlayout;
 
 };
 

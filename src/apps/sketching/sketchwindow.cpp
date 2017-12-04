@@ -54,9 +54,24 @@ void SketchWindow::createToolBar()
 void SketchWindow::createWindow()
 {
     cs = new CanvasStack();
+    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
+    dw_canvas_stack->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_canvas_stack->setWidget( cs );
+    addDockWidget( Qt::RightDockWidgetArea, dw_canvas_stack );
+//    dw_canvas_stack->setVisible( false );
+
+
+//    sketch_window = new SketchWindow();
+//    dw_sketchwindow = new QDockWidget( "Cross-Section" );
+//    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
+//    dw_sketchwindow->setWidget( sketch_window );
+//    addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+
+
+
 
     hb_central_widget = new QHBoxLayout( this );
-    hb_central_widget->addWidget( cs );
+//    hb_central_widget->addWidget( cs );
 
     QWidget* central_widget = new QWidget( this );
     central_widget->setLayout( hb_central_widget );
@@ -117,6 +132,20 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
 
     hb_central_widget->insertWidget( 0, main );
 
+    /*
+    SketchScene* scene_ = new SketchScene( cs_ );
+
+    QColor color_ = cp_color->currentColor();
+    scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
+    scene_->setCurrent( true );
+
+    setupScene( scene_ );
+
+    QGraphicsView* gv_ = new QGraphicsView();
+    gv_->scale( 1, -1 );
+    gv_->setScene( scene_ );
+    cs->addElement( cs_->getDepth(), gv_ );
+    */
 }
 
 
@@ -308,8 +337,8 @@ void SketchWindow::clear()
         SketchScene* sc_main_ = ( SketchScene* )( main->scene() );
         sc_main_->clear();
 
-        delete sc_main_;
-        sc_main_ = nullptr;
+//        delete sc_main_;
+//        sc_main_ = nullptr;
 
         delete main;
         main = nullptr;

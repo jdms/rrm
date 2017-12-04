@@ -13,7 +13,7 @@ class QSurface;
 class VolumeShader;
 class PlaneShader;
 class SurfaceShader;
-class VolumeMeshShader;
+class RegionShader;
 
 
 #include "./core/base/models/scene.h"
@@ -28,7 +28,7 @@ class Scene3d: public QObject, public Scene
 
     using CrossSectionsContainer = Container< double, PlaneShader* >;
     using ObjectsContainer = Container< std::size_t, SurfaceShader* >;
-    using RegionsContainer = Container< std::size_t, VolumeMeshShader* >;
+    using RegionsContainer = Container< std::size_t, RegionShader* >;
 
 
 
