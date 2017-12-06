@@ -167,7 +167,7 @@ CrossSection* Controller::getTopViewCrossSection() const
 
 
 
-void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double scale_ )
+void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double x_, double y_ )
 {
 
 
@@ -175,14 +175,19 @@ void Controller::setImageCrossSection( double depth_, const std::string& path_, 
     image_data.file = path_;
     image_data.ox = ox_;
     image_data.oy = oy_;
-    image_data.scale = scale_;
+    image_data.x = x_;
+    image_data.y = y_;
 
     csections_background[ depth_ ] = image_data;
 
     CrossSection* csection_ = getCrossSection( depth_ );
     if( csection_ != nullptr )
     {
-        csection_->setImage( path_, ox_, oy_, scale_ );
+        csection_->setImage( path_, ox_, oy_, x_, y_ );
+    }
+    if( main_csection->getDepth() == depth_ )
+    {
+        main_csection->setImage( path_, ox_, oy_, x_, y_ );
     }
 
 }
@@ -217,7 +222,7 @@ bool Controller::clearImageCrossSection( double depth_ )
 }
 
 
-bool Controller::getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& scale_ )
+bool Controller::getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& x_, double& y_ )
 {
 
     if( hasImageCrossSection( depth_ ) == false ) return false;
@@ -226,7 +231,8 @@ bool Controller::getImageCrossSection( double depth_, std::string& path_, double
     path_  = image_data.file ;
     ox_    = image_data.ox;
     oy_    = image_data.oy;
-    scale_ = image_data.scale;
+    x_ = image_data.x;
+    y_ = image_data.y;
 
     return true;
 }
@@ -253,10 +259,11 @@ void Controller::updateCurrentCrossSection()
     std::string path_;
     double ox_ = 0.0;
     double oy_ = 0.0;
-    double scale_ = 1.0;
+    double x_ = 100.0;
+    double y_ = 100.0;
 
-    if( getImageCrossSection( current_csection, path_, ox_, oy_, scale_ ) == true )
-        main_csection->setImage( path_, ox_, oy_, scale_ );
+    if( getImageCrossSection( current_csection, path_, ox_, oy_, x_, y_ ) == true )
+        main_csection->setImage( path_, ox_, oy_, x_, y_ );
     else
         main_csection->clearImage();
 
@@ -418,6 +425,7 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
 
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
+
     cs_->addObject( obj_->getIndex(), &curve_ );
 
     volume->addCrossSection( cs_->getIndex(), cs_ );

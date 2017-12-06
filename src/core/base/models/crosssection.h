@@ -50,8 +50,8 @@ class CrossSection
         double getDepth() const;
 
 
-        void setImage( const std::string& path_, double ox_, double oy_, double scale_ );
-        void getImage( std::string& path_, double& ox_, double& oy_, double& scale_ );
+        void setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ );
+        void getImage( std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
         void clearImage();
         bool hasImage();
 
@@ -99,7 +99,7 @@ class CrossSection
 
         std::string image_path;
         Point image_origin;
-        double image_scale;
+        Point image_top_right;
 
 
 
