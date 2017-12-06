@@ -9,13 +9,14 @@
 #include "./item_wrappers/crosssection_item_wrapper.h"
 #include "./item_wrappers/trajectoryitemwrapper.h"
 #include "./item_wrappers/coordinate_axes_2d.h"
+#include "./item_wrappers/image_item_wrapper.h"
 #include "./core/base/models/scene.h"
 
 class SketchScene: public QGraphicsScene, public Scene
 {
     Q_OBJECT
 
-    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE, SELECTING };
+    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE, SELECTING, MOVING_IMAGE, RESIZING_IMAGE };
 
 
     public:
@@ -64,6 +65,8 @@ class SketchScene: public QGraphicsScene, public Scene
         virtual void setCurrentColor( int r, int g, int b );
         virtual void getCurrentColor( int& r, int& g, int& b );
 
+        void editItem();
+
 
 
 
@@ -87,14 +90,16 @@ class SketchScene: public QGraphicsScene, public Scene
         void isTopViewScene();
         void isCrossSectionScene();
 
-        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double scale_ );
+        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
 
 
     public slots:
 
         void edit( bool status_ );
 
-        void setImageToCrossSection( const QString& file, double ox_ = 0.0, double oy_ = 0.0, double scale_ = 1.0 );
+        void setImageToCrossSection( const QString& file );
+        void setImageToCrossSection( const QString& file, double ox_, double oy_, double x_, double y_);
+        void updateImageCrossSection();
 
         void setModeSketching();
         void setModeEditingBoundary();
@@ -157,6 +162,10 @@ class SketchScene: public QGraphicsScene, public Scene
         bool is_current = false;
 
         CoordinateAxes2d axes;
+
+        QGraphicsEllipseItem* resize_marker;
+        QGraphicsEllipseItem* move_marker;
+        ImageItemWrapper* image;
 
 
 };

@@ -160,7 +160,7 @@ class RRMApplication
         void removeCrossSectionCanvas( double depth_ );
 
 
-        void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double scale_ );
+        void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double x_, double y_ );
         void getHeightMapTopView();
 
 

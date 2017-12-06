@@ -80,7 +80,7 @@ class SketchWindow: public QMainWindow
         void objectSelected( std::size_t index_ );
         void commitObject();
 
-        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double scale_ );
+        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
         void getHeightMap();
 
 

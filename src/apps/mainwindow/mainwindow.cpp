@@ -335,8 +335,8 @@ void MainWindow::createSketchingActions()
                                                           { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
 
 
-    connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double scale_ )
-                                                           { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, scale_ ); } );
+    connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double x_, double y_ )
+                                                           { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, x_, y_ ); } );
 
 
 

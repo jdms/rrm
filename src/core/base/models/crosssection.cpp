@@ -153,20 +153,22 @@ double CrossSection::getDepth() const
     return depth;
 }
 
-void CrossSection::setImage( const std::string& path_, double ox_, double oy_, double scale_ )
+void CrossSection::setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ )
 {
     image_path = path_;
     image_origin.x = ox_;
     image_origin.y = oy_;
-    image_scale = scale_;
+    image_top_right.x = x_;
+    image_top_right.y = y_;
 }
 
-void CrossSection::getImage( std::string& path_, double& ox_, double& oy_, double& scale_ )
+void CrossSection::getImage( std::string& path_, double& ox_, double& oy_, double& x_, double& y_ )
 {
     path_ = image_path;
     ox_ = image_origin.x;
     oy_ = image_origin.y;
-    scale_ = image_scale;
+    x_ = image_top_right.x;
+    y_ = image_top_right.y;
 }
 
 
@@ -181,7 +183,8 @@ void CrossSection::clearImage()
     image_path.clear();
     image_origin.x = 0.0;
     image_origin.y = 0.0;
-    image_scale = 1.0;
+    image_top_right.x = 100.0;
+    image_top_right.y = 100;
 }
 
 
@@ -264,7 +267,8 @@ void CrossSection::initialize()
     number_of_csections = 0;
     image_origin.x = 0;
     image_origin.y = 0;
-    image_scale = 0.0;
+    image_top_right.x = 100.0;
+    image_top_right.y = 100.0;
 //    volume = nullptr;
 }
 
