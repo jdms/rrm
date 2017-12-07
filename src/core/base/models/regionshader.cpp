@@ -58,8 +58,8 @@ void RegionShader::loadBuffers()
 
 void RegionShader::initShaders()
 {
-    shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/gouraud_surface.vert" ),
-                                            ( shader_directory + "shaders/gouraud_surface.frag" ),
+    shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/mesh.vert" ),
+                                            ( shader_directory + "shaders/mesh.frag" ),
                                             "", "", "" );
 
     shader->initialize();
@@ -219,8 +219,9 @@ void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 
             glBindVertexArray( va_volume );
 
-                shader->setUniform( "solid" , true );
-                shader->setUniform( "testing" , true );
+                shader->setUniform( "is_face" , true );
+                shader->setUniform( "is_preview" , false );
+                shader->setUniform( "has_shading" , false );
 
                 glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
                 glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );

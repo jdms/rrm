@@ -57,8 +57,8 @@ void SurfaceShader::loadBuffers()
 
 void SurfaceShader::initShaders()
 {
-    shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/gouraud_surface.vert" ),
-                                            ( shader_directory + "shaders/gouraud_surface.frag" ),
+    shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/mesh.vert" ),
+                                            ( shader_directory + "shaders/mesh.frag" ),
                                             "", "", "" );
 
     shader->initialize();
@@ -208,7 +208,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
         shader->setUniform( "ViewMatrix" , V );
         shader->setUniform( "ProjectionMatrix" , P );
         shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
-
+        shader->setUniform( "has_shading" , true );
 
         glEnable( GL_DEPTH_TEST );
 
@@ -230,8 +230,8 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
             glBindVertexArray( va_surface );
 
-                shader->setUniform( "solid" , true );
-                shader->setUniform( "testing" , is_preview_ );
+                shader->setUniform( "is_face" , true );
+                shader->setUniform( "is_preview" , is_preview_ );
 
                 glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
                 glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
@@ -249,7 +249,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
             glBindVertexArray( va_surface );
 
-                shader->setUniform( "solid" , false );
+                shader->setUniform( "is_face" , false );
                 glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
                 glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
