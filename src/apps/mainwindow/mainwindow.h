@@ -141,6 +141,7 @@ class MainWindow: public QMainWindow
         QAction* ac_remove_below_int;
 
         QAction* ac_output_volume;
+        QAction* ac_topview;
 
         RRMApplication* app;
 

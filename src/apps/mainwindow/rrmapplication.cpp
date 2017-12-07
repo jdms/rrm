@@ -279,12 +279,12 @@ void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ 
 
 void RRMApplication::initSketchingApp()
 {
-    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION );
-    mainwindow->sketch_window->addMainCanvas( csection_ );
+//    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION );
+    mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
     mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
-    CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
-    mainwindow->sketch_topview_window->addTopViewCanvas( topview_ );
+//    CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
+    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection()/*topview_*/ );
     mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }
 
@@ -359,8 +359,6 @@ void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::Stratig
 void RRMApplication::setSketchAbove( bool status_ )
 {
 
-
-
     bool below_done = mainwindow->controller->isDefineBelowObjectSelected();
     if( below_done == false )
     {
@@ -396,8 +394,6 @@ void RRMApplication::setSketchAbove( bool status_ )
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
-
-
 
     bool above_done = mainwindow->controller->isDefineAboveObjectSelected();
     if( above_done == false )
@@ -550,11 +546,17 @@ void RRMApplication::defineRandomColor()
 
 
 
-
+void RRMApplication::clearInterface()
+{
+    mainwindow->sl_depth_csection->clear();
+    mainwindow->object_properties->clear();
+}
 
 
 void RRMApplication::clear()
 {
+    clearInterface();
+
     mainwindow->sketch_window->clear();
     mainwindow->sketch_topview_window->clear();
     mainwindow->controller->clear();
@@ -603,11 +605,24 @@ void RRMApplication::setImageToCrossSection( double depth_, std::string file_, d
 
 void RRMApplication::getHeightMapTopView()
 {
-
-
     double w_, h_, l_;
     mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
 
     std::string image_ = mainwindow->canvas3d->sendImage( w_, l_ );
     mainwindow->sketch_topview_window->setTopViewImage( image_ );
 }
+
+
+void RRMApplication::removeCurveFromObject(  double depth_, std::size_t index_ )
+{
+     mainwindow->controller->removeObjectCurve( index_, depth_ );
+     updateSketchingCanvas();
+}
+
+
+void RRMApplication::removeImageFromCrossSection( double depth_ )
+{
+    mainwindow->controller->clearImageCrossSection( depth_ );
+    updateSketchingCanvas();
+}
+

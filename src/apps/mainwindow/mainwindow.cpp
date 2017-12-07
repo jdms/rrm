@@ -120,6 +120,7 @@ void MainWindow::createToolbar()
     ac_remove_below_int->setCheckable( true );
 
 
+
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->setExclusive( true );
     ag_rules->addAction( ac_remove_above );
@@ -129,6 +130,7 @@ void MainWindow::createToolbar()
 
 
     ac_output_volume = new QAction( "Get Regions", this );
+
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
@@ -299,14 +301,18 @@ void MainWindow::createSketchingWindow()
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
+    ac_topview = new QAction( "Top-View" );
+    ac_topview->setCheckable( true );
+
+    tb_mainwindow->addAction( ac_topview );
+
+
 }
 
 
 
 void MainWindow::createSketchingActions()
 {
-
-    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=](){ app->updateSketchingCanvas(); } );
 
 
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v )
@@ -317,6 +323,9 @@ void MainWindow::createSketchingActions()
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
 
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ )
@@ -338,6 +347,12 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double x_, double y_ )
                                                            { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, x_, y_ ); } );
 
+    connect( sketch_window, &SketchWindow::removeCurveFromObject, [=](  double depth_, std::size_t index_ )
+                                                           { app->removeCurveFromObject( depth_, index_ ); } );
+
+    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=](  double depth_ )
+                                                           { app->removeImageFromCrossSection( depth_ ); } );
+
 
 
 
@@ -351,6 +366,9 @@ void MainWindow::createSketchingActions()
                                                             {  app->updateSketchingCanvas(); } );
 
 
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
     connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )

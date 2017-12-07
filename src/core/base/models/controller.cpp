@@ -214,6 +214,11 @@ bool Controller::clearImageCrossSection( double depth_ )
     {
         csection_->clearImage();
     }
+    if( main_csection->getDepth() == depth_ )
+    {
+        main_csection->clearImage();
+    }
+
 
     csections_background.erase( depth_ );
     return true;
@@ -442,6 +447,31 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 }
 
 
+bool Controller::removeObjectCurve( std::size_t index_, double depth_ )
+{
+    if( objects.findElement( index_ ) == false )
+        return false;
+
+    Object* const& obj_ = objects.getElement( index_ );
+    obj_->removeCurve( depth_ );
+
+    CrossSection* csection_ = getCurrentCrossSection();
+    if( csection_ == nullptr ) return true;
+
+    csection_->removeObjectCurve( index_ );
+    createPreviewSurface();
+
+    return true;
+
+}
+
+
+bool Controller::removeObjectCurve( double depth_ )
+{
+    return removeObjectCurve( current_object, depth_ );
+}
+
+
 bool Controller::addObjectTrajectory( PolyCurve curve_ )
 {
 
@@ -506,7 +536,14 @@ bool Controller::createPreviewSurface()
 
 
     bool surface_created = rules_processor.testSurface( current_object, curves_ );
-    if( surface_created == false ) return false;
+    if( surface_created == false )
+    {
+        obj_->removeSurface();
+        obj_->setVisible( false );
+        scene3d->updateObject( current_object );
+        updateObjectInFixedCrossSections( current_object );
+        return false;
+    }
 
     std::vector< double > vertices_;
     std::vector< std::size_t > faces_;
@@ -529,7 +566,6 @@ bool Controller::createPreviewSurface()
     obj_->setVisible( true );
 
     scene3d->updateObject( current_object );
-
     updateObjectInFixedCrossSections( current_object );
 
 

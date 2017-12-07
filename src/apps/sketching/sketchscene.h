@@ -66,6 +66,7 @@ class SketchScene: public QGraphicsScene, public Scene
         virtual void getCurrentColor( int& r, int& g, int& b );
 
         void editItem();
+        void removeItem();
 
 
 
@@ -85,12 +86,14 @@ class SketchScene: public QGraphicsScene, public Scene
         void objectSelected( std::size_t index_ );
 
         void commitObject();
+        void removeCurveFromObject( double depth_, std::size_t index_ );
 
 
         void isTopViewScene();
         void isCrossSectionScene();
 
         void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromCrossSection( double depth_ );
 
 
     public slots:
@@ -136,6 +139,7 @@ class SketchScene: public QGraphicsScene, public Scene
 
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event );
 
+        virtual void keyPressEvent( QKeyEvent *event );
 
     protected:
 
