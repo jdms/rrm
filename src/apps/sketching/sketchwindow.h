@@ -123,6 +123,7 @@ class SketchWindow: public QMainWindow
         QAction* ac_discard;
         QAction* ac_commit;
         QAction* ac_create;
+        QAction* ac_edit_boundary;
         QAction* ac_edit_scene;
         QAction* ac_axes;
         QAction* ac_height_map;
