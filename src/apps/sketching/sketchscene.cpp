@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QUrl>
 #include <QMimeData>
+#include <QKeyEvent>
 
 #include "sketchscene.h"
 
@@ -100,11 +101,6 @@ void SketchScene::edit( bool status_ )
     else
         setModeEditingScene();
 
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        ObjectItemWrapper* obj_ = ( it->second );
-        obj_->updateState();
-    }
 
 
     update();
@@ -114,37 +110,51 @@ void SketchScene::edit( bool status_ )
 
 void SketchScene::editItem()
 {
-//    QList< QGraphicsItem* > items = selectedItems();
-//    if( items.empty() == true ) return;
-
-//    if( items.size() > 1 )
-//        items.removeFirst();
-
-//    QGraphicsItem* item_ = items[ 0 ];
 
 
-//    if( item_->type() == QGraphicsEllipseItem::Type )
-//    {
+    bool move_selected = move_marker->isUnderMouse();
+    bool resize_selected = resize_marker->isUnderMouse();
 
-        bool move_selected = move_marker->isUnderMouse();
-        bool resize_selected = resize_marker->isUnderMouse();
-
-        if( move_selected == true )
-        {
-            current_interaction = UserInteraction::MOVING_IMAGE;
-        }
-        else if( resize_selected == true )
-        {
-            current_interaction = UserInteraction::RESIZING_IMAGE;
-        }
-
-//    }
-
-    else
-        std::cout << "path type " << std::endl << std::flush;
+    if( move_selected == true )
+    {
+        current_interaction = UserInteraction::MOVING_IMAGE;
+    }
+    else if( resize_selected == true )
+    {
+        current_interaction = UserInteraction::RESIZING_IMAGE;
+    }
 
     update();
 }
+
+
+
+void SketchScene::removeItem()
+{
+    if(  current_interaction != UserInteraction::EDITING_SCENE ) return;
+
+
+    QList< QGraphicsItem* > items = selectedItems();
+    if( items.empty() == true ) return;
+
+    if( items.size() > 1 )
+        items.removeFirst();
+
+    QGraphicsItem* item_ = items[ 0 ];
+    if( item_->type() == QGraphicsPixmapItem::Type )
+    {
+        emit removeImageFromCrossSection( csection->getDepth() );
+    }
+    else if( item_->type() == QGraphicsPathItem::Type )
+    {
+        ObjectItemWrapper* obj_ = static_cast< ObjectItemWrapper* >( item_ );
+        emit removeCurveFromObject( csection->getDepth(), obj_->getIndex() );
+    }
+
+    update();
+
+}
+
 
 
 void SketchScene::setAxesVisible( bool status_ )
@@ -303,6 +313,10 @@ void SketchScene::updateCrossSectionScene()
     else
     {
         image->setVisible( false );
+        move_marker->setVisible( false );
+        resize_marker->setVisible( false );
+        move_marker->update();
+        resize_marker->update();
         image->update();
     }
 
@@ -512,6 +526,13 @@ void SketchScene::setModeSketching()
     image->setFlag( QGraphicsItem::ItemIsSelectable, false );
     resize_marker->setVisible( false );
     move_marker->setVisible( false );
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, false );
+    }
+
 }
 
 
@@ -524,20 +545,26 @@ void SketchScene::setModeEditingBoundary()
 void SketchScene::setModeEditingScene()
 {
     current_interaction = UserInteraction::EDITING_SCENE;
-//    image->setFlag( QGraphicsItem::ItemIsMovable, true );
-//    image->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    image->setFlag( QGraphicsItem::ItemIsSelectable, true );
 
-    move_marker->setPos( image->getOrigin() );
-    move_marker->setVisible( true );
+    if( image->isVisible() == true )
+    {
+        move_marker->setPos( image->getOrigin() );
+        resize_marker->setPos( image->getTopRight() );
+        move_marker->setVisible( true );
+        resize_marker->setVisible( true );
+    }
     move_marker->update();
-
-    resize_marker->setPos( image->getTopRight() );
-    resize_marker->setVisible( true );
     resize_marker->update();
-
-    move_marker->setVisible( true );
-    resize_marker->setVisible( true );
     image->update();
+
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, obj_->isEditable() );
+    }
+
 
 }
 
@@ -545,6 +572,12 @@ void SketchScene::setModeEditingScene()
 void SketchScene::setModeSelecting()
 {
     current_interaction = UserInteraction::SELECTING;
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    }
 }
 
 
@@ -695,12 +728,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     }
 
-//    else if(
-//             ( current_interaction == UserInteraction::EDITING_SCENE ) )
-//    {
-//        editItem();
-//    }
-
 
 
 
@@ -756,12 +783,26 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
 }
 
 
+void SketchScene::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+        case Qt::Key_Delete:
+            std::cout << "Remove item" << std::endl << std::flush;
+            removeItem();
+            break;
+        default:
+            break;
+    };
+}
+
+
 
 void SketchScene::clear()
 {
 
     for( auto &it: items() )
-        removeItem( it );
+        QGraphicsScene::removeItem( it );
 
 
     if( user_input != nullptr )
@@ -840,3 +881,4 @@ void SketchScene::initialize()
 
 
 }
+

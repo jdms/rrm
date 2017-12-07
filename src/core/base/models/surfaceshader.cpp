@@ -28,7 +28,10 @@ void SurfaceShader::loadBuffers()
     Surface surface_ = raw->getSurface();
 
     std::vector< float > vertices_ = Shader::convertToFloat( surface_.getVertices() );
-    if( vertices_.empty() == true ) return;
+    if( vertices_.empty() == true )
+    {
+        return;
+    }
 
 
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;

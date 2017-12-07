@@ -71,7 +71,7 @@ void ObjectItemWrapper::updateState()
     current_pen.setColor( color_ );
     current_pen.setStyle( style_ );
 
-    setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
+//    setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
 
     update();
 }

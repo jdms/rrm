@@ -93,6 +93,8 @@ class Controller
 
 
         bool addObjectCurve( PolyCurve curve_, double depth_ );
+        bool removeObjectCurve( std::size_t index_, double depth_ );
+        bool removeObjectCurve( double depth_ );
 
         bool addObjectTrajectory( PolyCurve curve_ );
         void removeObjectTrajectory();

@@ -152,6 +152,8 @@ class RRMApplication
         void setCurrentColor( int r_, int g_, int b_ );
         void defineRandomColor();
 
+
+        void clearInterface();
         void clear();
         void restart();
 
@@ -164,10 +166,12 @@ class RRMApplication
         void getHeightMapTopView();
 
 
+        void removeCurveFromObject(  double depth_, std::size_t index_ );
+        void removeImageFromCrossSection( double depth_ );
+
+
 
     protected:
-
-
 
 
         std::unordered_map< AppsCommands, simple_method > runs;
