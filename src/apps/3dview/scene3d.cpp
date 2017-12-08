@@ -1,11 +1,11 @@
 #include "scene3d.h"
 
 
-#include "./core/base/models/object.h"
-#include "./core/base/models/volumeshader.h"
-#include "./core/base/models/planeshader.h"
-#include "./core/base/models/surfaceshader.h"
-#include "./core/base/models/regionshader.h"
+#include "./core/models/object.h"
+#include "./models/volumeshader.h"
+#include "./models/planeshader.h"
+#include "./models/surfaceshader.h"
+#include "./models/regionshader.h"
 
 
 #include <QString>

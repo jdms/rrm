@@ -32,7 +32,7 @@
 
 
 #include "mainwindow.h"
-#include "./core/base/models/object.h"
+#include "./core/models/object.h"
 
 
 int main( int argc, char *argv[] )

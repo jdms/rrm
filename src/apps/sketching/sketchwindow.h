@@ -5,12 +5,12 @@
 #include <QMainWindow>
 #include <QDockWidget>
 
-#include "canvasstack.h"
+#include "./src/core/widgets/canvasstack.h"
 #include "sketchscene.h"
 
 //TODO: remove dependence from mainwindow
-#include "./core/base/constants/constants.hpp"
-#include "mainwindow/widgets/color_picker.h"
+#include "./core/definitions/constants.hpp"
+#include "./src/core/widgets/color_picker.h"
 
 
 class QGraphicsView;

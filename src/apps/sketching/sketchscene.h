@@ -3,14 +3,14 @@
 
 #include <QGraphicsScene>
 
-#include "inputsketch.h"
-#include "./item_wrappers/volume_item_wrapper.h"
-#include "./item_wrappers/object_item_wrapper.h"
-#include "./item_wrappers/crosssection_item_wrapper.h"
-#include "./item_wrappers/trajectoryitemwrapper.h"
-#include "./item_wrappers/coordinate_axes_2d.h"
-#include "./item_wrappers/image_item_wrapper.h"
-#include "./core/base/models/scene.h"
+#include "./models/inputsketch.h"
+#include "./models/volume_item_wrapper.h"
+#include "./models/object_item_wrapper.h"
+#include "./models/crosssection_item_wrapper.h"
+#include "./models/trajectoryitemwrapper.h"
+#include "./models/coordinate_axes_2d.h"
+#include "./models/image_item_wrapper.h"
+#include "./core/models/scene.h"
 
 class SketchScene: public QGraphicsScene, public Scene
 {

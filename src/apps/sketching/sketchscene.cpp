@@ -239,6 +239,8 @@ void SketchScene::setImageToCrossSection( const QString& file_ )
     float y_ = image1.height();
 
     setImageToCrossSection( file_, 0.0, 0.0, x_, y_ );
+
+    emit setImageCrossSection( csection->getDepth(), file_, 0.0, 0.0, x_, y_ );
 }
 
 
@@ -260,7 +262,7 @@ void SketchScene::setImageToCrossSection( const QString& file_, double ox_, doub
     image->update();
 
 
-    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, x_, y_ );
+//    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, x_, y_ );
 
     update();
 }

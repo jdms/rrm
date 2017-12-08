@@ -303,6 +303,7 @@ void MainWindow::createSketchingWindow()
 
     ac_topview = new QAction( "Top-View" );
     ac_topview->setCheckable( true );
+    ac_topview->setChecked( true );
 
     tb_mainwindow->addAction( ac_topview );
 
