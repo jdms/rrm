@@ -39,10 +39,20 @@ struct TetrahedralMeshBuilder::TriangleHeights
         bool equal_v1 = std::fabs( vertex_height[1] - rhs.vertex_height[1] ) < tolerance;
         bool equal_v2 = std::fabs( vertex_height[2] - rhs.vertex_height[2] ) < tolerance;
 
+        // Given equal heights a valid triangle can't be < than an invalid triangle
+        // Also, enforce that x < x is false
+        //
         if ( equal_v0 && equal_v1 && equal_v2 )
-        if ( status() && (rhs.status() == false) )
         {
-            return false;
+            if ( rhs.status() == false )
+            {
+                return false;
+            }
+
+            if ( status() && rhs.status() )
+            {
+                return false;
+            }
         }
 
         return true;
@@ -52,17 +62,15 @@ struct TetrahedralMeshBuilder::TriangleHeights
 
 bool TetrahedralMeshBuilder::exportToTetgen( std::string filename )
 {
-    container_.changeDiscretization(32, 32);
+    /* std::vector<Prism> prism_list; */
+    /* std::vector<size_t> attribute_list; */
 
-    std::vector<Prism> prism_list;
-    std::vector<size_t> attribute_list;
+    /* bool status = buildPrismMesh(prism_list); */
 
-    bool status = buildPrismMesh(prism_list);
-
-    if ( status == false )
-    {
-        return false;
-    }
+    /* if ( status == false ) */
+    /* { */
+        /* return false; */
+    /* } */
 
     /* % Create node file */
     std::ofstream nodeofs(filename + ".node");
@@ -98,7 +106,8 @@ bool TetrahedralMeshBuilder::exportToTetgen( std::string filename )
 
     std::vector<size_t> elelist;
     std::vector<size_t> attlist;
-    size_t num_tetrahedra = getElementList(prism_list, elelist, attlist);
+    /* size_t num_tetrahedra = getElementList(prism_list, elelist, attlist); */
+    size_t num_tetrahedra = getTetrahedronList(elelist, attlist);
 
     /* Header: <# of tetrahedra> <nodes per tet. (4 or 10)> <region attribute (0 or 1)> */
     eleofs << num_tetrahedra << " 4 1\n\n";
@@ -129,21 +138,22 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
 
 
     // Create mesh
-    std::vector<Prism> prism_list;
+    /* std::vector<Prism> prism_list; */
 
     std::vector<double> vcoords;
     std::vector<size_t> elist;
     std::vector<size_t> attribute_list;
 
-    bool status = buildPrismMesh(prism_list);
+    /* bool status = buildPrismMesh(prism_list); */
 
-    if ( status == false )
-    {
-        return false;
-    }
+    /* if ( status == false ) */
+    /* { */
+        /* return false; */
+    /* } */
 
     size_t num_vertices = getVertexCoordinates(vcoords);
-    size_t num_tetrahedra = getElementList(prism_list, elist, attribute_list);
+    /* size_t num_tetrahedra = getElementList(prism_list, elelist, attlist); */
+    size_t num_tetrahedra = getTetrahedronList(elist, attribute_list);
 
 
     // Write file
@@ -444,7 +454,7 @@ TetrahedralMeshBuilder::TriangleHeights TetrahedralMeshBuilder::getTriangleHeigh
     return theights;
 }
 
-Prism TetrahedralMeshBuilder::getPrism( size_t prism_pos, size_t bindex, size_t lower_surface, size_t upper_surface ) const
+TetrahedralMeshBuilder::Prism TetrahedralMeshBuilder::getPrism( size_t prism_pos, size_t bindex, size_t lower_surface, size_t upper_surface ) const
 {
     Prism prism;
 
@@ -704,5 +714,86 @@ size_t TetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  
     size_t jv = 2*indices[1] + j;
 
     return getVertexIndex(iv, jv);
+}
+
+std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuilder::computeAttributeMap( const std::vector<Prism> &prism_list )
+{
+    std::map< AttributeType, size_t > attributes_map;
+
+    //
+    // Process attributes
+    //
+
+    std::vector< AttributeType > pre_processed_attributes;
+    pre_processed_attributes.resize( prism_list.size() );
+
+    for ( size_t p = 0; p < prism_list.size(); ++p )
+    {
+        pre_processed_attributes[p] = prism_list[p].getAttribute();
+        attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
+    }
+
+    size_t i = 0;
+
+    for ( auto &att : attributes_map )
+    {
+        att.second = i;
+        ++i;
+    }
+
+    return attributes_map;
+}
+
+bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
+{
+    if ( points.empty() )
+    {
+        return false;
+    }
+
+    std::vector<Prism> prism_list;
+    bool status = buildPrismMesh(prism_list);
+
+    auto attributes_map = computeAttributeMap(prism_list);
+
+    auto getAttribute = []( std::vector<size_t> &&a )-> std::vector<bool> {
+        std::vector<bool> attrib;
+
+        if ( a.empty() )
+        {
+            return attrib;
+        }
+
+        attrib.resize( a.size(), false );
+
+        for ( size_t i = 0; i < a.size(); ++i )
+        {
+            attrib[i] = true;
+        }
+
+        return attrib;
+    };
+
+    std::vector<bool> attrib;
+    int num_attrib;
+
+    for ( size_t i = 0; i < points.size(); ++i )
+    {
+        attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) );
+
+        auto iter = attributes_map.find(attrib);
+        if ( iter != attributes_map.end() )
+        {
+            num_attrib = iter->second;
+        }
+        else
+        {
+            num_attrib = -1;
+        }
+
+        attrib_list[i] = num_attrib;
+    }
+
+    return true;
 }
 

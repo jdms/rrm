@@ -182,6 +182,14 @@ struct SModellerImplementation
 
     void getLenght( double &x, double &y, double &z );
 
+    std::vector<size_t> getSurfacesIndicesBelowPoint( double x, double y, double z );
+
+    std::vector<size_t> getSurfacesIndicesAbovePoint( double x, double y, double z );
+
+    bool lastInsertedSurfaceIntersects( std::vector<ControllerSurfaceIndex> &intersected_surfaces_ids );
+
+    bool getControllerIndex( const ContainerSurfaceIndex surface_id, ControllerSurfaceIndex &controller_id );
+
     bool getSurfaceIndex( const size_t controller_index, size_t &index ) const;
 
     bool getPlanarSurfaceId( const size_t controller_index, PlanarSurface::SurfaceId &surface_id );
