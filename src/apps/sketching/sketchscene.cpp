@@ -208,6 +208,11 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
     axes.setAxisXLenght( vol_->getWidth() );
     axes.setAxisYLenght( vol_->getHeight() );
 
+    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getHeight() );
+    main_csection->setCurrent( true );
+    addItem( main_csection );
+
+
     Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
     for( auto c: csections_ )
     {
@@ -286,7 +291,7 @@ void SketchScene::updateImageCrossSection()
 
 void SketchScene::updateCrossSection()
 {
-
+//    std::cout << "Entrei na updateCrossSection" << std::endl << std::flush;
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         updateCrossSectionScene();
 
@@ -309,6 +314,8 @@ void SketchScene::updateCrossSectionScene()
         double y_;
         csection->getImage( path_, ox_, oy_, x_, y_ );
         setImageToCrossSection( QString( path_.c_str() ), ox_, oy_, x_, y_ );
+
+//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has image" << std::endl << std::flush;
     }
     else
     {
@@ -318,6 +325,8 @@ void SketchScene::updateCrossSectionScene()
         move_marker->update();
         resize_marker->update();
         image->update();
+
+//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has no image" << std::endl << std::flush;
     }
 
     Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
@@ -337,11 +346,28 @@ void SketchScene::updateTopViewScene()
     Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
     Volume::ObjectsContainer objs_ = vol_->getObjects();
 
+
+    if( main_csection != nullptr )
+    {
+        main_csection->setVisible( volume->isVisible() );
+        main_csection->update();
+    }
+
+
     for( auto o: objs_ )
         updateTrajectory( o.first );
 
 }
 
+
+
+void SketchScene::moveCurrentCrossSection( double depth_ )
+{
+
+    main_csection->setDepth( depth_ );
+    update();
+
+}
 
 
 
@@ -363,7 +389,6 @@ void SketchScene::updateVolume()
 
     axes.setAxisXLenght( volume->getWidth() );
     axes.setAxisYLenght( volume->getHeight() );
-
 
     setSceneRect( volume->boundingRect() );
     update();

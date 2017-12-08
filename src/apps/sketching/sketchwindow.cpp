@@ -175,7 +175,7 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     connect( main_scene, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
     connect( main_scene, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); } );
+                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); }  );
 
 
     connect( main_scene, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
@@ -233,15 +233,14 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
     connect( tv_scene, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
     connect( tv_scene, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-    { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); } );
+    { emit setImageToTopView( file_, ox_, oy_, x_, y_ ); } );
 
 
     connect( tv_scene, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
     { emit removeCurveFromObject( depth_, index_ ); } );
 
 
-    connect( tv_scene, &SketchScene::removeImageFromCrossSection, [=]( double depth_ )
-    { emit removeImageFromCrossSection( depth_ ); } );
+    connect( tv_scene, &SketchScene::removeImageFromCrossSection, [=](){ emit removeImageFromTopView(); } );
 
     ////// teste
 
@@ -527,7 +526,7 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_ )
     connect( scenes[ cs_->getDepth() ], &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
     connect( scenes[ cs_->getDepth() ], &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); } );
+                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); main_scene->updateCrossSection(); } );
 
 
     connect( scenes[ cs_->getDepth() ], &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
@@ -567,6 +566,12 @@ void SketchWindow::setFixedCrossSectionsVisible( bool status_ )
 
 void SketchWindow::setCurrentCrossSection( double depth_ )
 {
+    std::cout << "updating cross-section inside sketch-window: " << depth_ << std::endl << std::flush;
+    if( tv_scene != nullptr )
+    {
+        tv_scene->moveCurrentCrossSection( depth_ );
+    }
+
     if( cs->findElement( depth_ ) == false ) return;
     cs->setCurrent( depth_ );
 }
@@ -583,5 +588,16 @@ void SketchWindow::setTopViewImage( const std::string& image_ )
     }
 
     update();
+}
 
+
+
+void SketchWindow::setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
+{
+
+    emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ );
+
+
+    if( main_scene == nullptr ) return;
+    main_scene->updateCrossSection();
 }

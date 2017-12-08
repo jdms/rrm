@@ -131,6 +131,7 @@ class RRMApplication
         void updateSketchingCanvas();
 
         void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
+        void removeCurveFromObject(  double depth_, std::size_t index_ );
         void acceptSketchingTrajectory( const PolyCurve& curve_ );
         void createObjectSurface();
 
@@ -163,11 +164,16 @@ class RRMApplication
 
 
         void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromCrossSection( double depth_ );
+
+
+        void setImageToTopView( std::string file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromTopView();
         void getHeightMapTopView();
 
 
-        void removeCurveFromObject(  double depth_, std::size_t index_ );
-        void removeImageFromCrossSection( double depth_ );
+
+
 
 
 

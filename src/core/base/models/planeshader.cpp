@@ -24,6 +24,7 @@ void PlaneShader::setCrossSection( CrossSection* const& raw_ )
 
 void PlaneShader::createPlane()
 {
+
     std::vector< double > verticesd_;
     csection->getCoordinates( verticesd_ );
     std::vector< float >  vertices_ = Shader::convertToFloat( verticesd_ );
@@ -172,6 +173,8 @@ void PlaneShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices_
 void PlaneShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                         const int& h )
 {
+
+    if( csection->isVisible() == false ) return;
 
     Eigen::Affine3f M;
     M.setIdentity();

@@ -44,6 +44,12 @@ void Scene3d::updateVolume()
         (it->second)->update();
     }
 
+    if( main_csection != nullptr )
+    {
+        main_csection->update();
+    }
+
+
     emit updateCanvas();
 
 }

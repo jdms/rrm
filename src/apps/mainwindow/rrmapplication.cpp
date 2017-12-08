@@ -195,7 +195,7 @@ void RRMApplication::setVolumeVisible( std::size_t index_, bool status_ )
 {
     if( index_ == 0 )
         mainwindow->controller->setVolumeVisibility( status_ );
-
+     updateSketchingCanvas();
 }
 
 
@@ -204,6 +204,7 @@ void RRMApplication::setVolumeVisible( std::size_t index_, bool status_ )
 void RRMApplication::setCurrentCrossSection( double depth_ )
 {
     mainwindow->controller->setCurrentCrossSection( depth_ );
+    updateSketchingCanvas();
 }
 
 
@@ -626,3 +627,13 @@ void RRMApplication::removeImageFromCrossSection( double depth_ )
     updateSketchingCanvas();
 }
 
+
+void RRMApplication::setImageToTopView( std::string file_, double ox_, double oy_, double x_, double y_ )
+{
+    mainwindow->controller->setTopViewImage( file_, ox_, oy_, x_, y_ );
+}
+
+void RRMApplication::removeImageFromTopView()
+{
+    mainwindow->controller->removeTopViewImage();
+}

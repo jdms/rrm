@@ -56,6 +56,7 @@ class SketchScene: public QGraphicsScene, public Scene
         virtual void updateTrajectory(  const std::size_t& index_ );
         void updateTrajectories();
 
+        void moveCurrentCrossSection( double depth_ );
 
 
         void setCurrent( bool status_ );
@@ -155,6 +156,7 @@ class SketchScene: public QGraphicsScene, public Scene
         InputSketch* user_input;
 
         CrossSection* csection;
+        CrossSectionItemWrapper* main_csection;
         QGraphicsPixmapItem* csection_image;
 
         VolumeItemWrapper* volume;

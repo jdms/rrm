@@ -371,12 +371,24 @@ void MainWindow::createSketchingActions()
     connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_topview_window, &SketchWindow::setCurrentCrossSection );
+
+
     connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
                                                         { app->acceptSketchingTrajectory( curve_ ); } );
 
     connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
+
     connect( sketch_topview_window, &SketchWindow::getHeightMap, [=](){ app->getHeightMapTopView(); } );
+
+
+    connect( sketch_topview_window, &SketchWindow::setImageToTopView, [=]( const QString& file_, double ox_, double oy_, double x_, double y_ )
+                                                            { app->setImageToTopView( file_.toStdString(), ox_, oy_, x_, y_ ); } );
+
+    connect( sketch_topview_window, &SketchWindow::removeImageFromTopView, [=](){ app->removeImageFromTopView(); } );
+
+
 }
 
 
