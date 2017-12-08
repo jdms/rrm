@@ -175,7 +175,7 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     connect( main_scene, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
 
     connect( main_scene, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); }  );
+                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); updateCanvas(); }  );
 
 
     connect( main_scene, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )

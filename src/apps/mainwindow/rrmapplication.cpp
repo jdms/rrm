@@ -280,11 +280,9 @@ void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ 
 
 void RRMApplication::initSketchingApp()
 {
-//    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION );
     mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
     mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
-//    CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
     mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection()/*topview_*/ );
     mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }

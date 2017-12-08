@@ -15,12 +15,12 @@ class QSlider;
 
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
-#include "widgets/realfeaturedslider.h"
-#include "widgets/objecttree.h"
-#include "widgets/pages_stack.h"
+#include "./core/widgets/realfeaturedslider.h"
+#include "./core/widgets/objecttree.h"
+#include "./core/widgets/pages_stack.h"
 
 
-#include "./core/base/models/controller.h"
+#include "./core/models/controller.h"
 #include "rrmapplication.h"
 
 

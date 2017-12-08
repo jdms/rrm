@@ -16,8 +16,8 @@ class SurfaceShader;
 class RegionShader;
 
 
-#include "./core/base/models/scene.h"
-#include "./core/base/models/container.h"
+#include "./core/models/scene.h"
+#include "./core/models/container.h"
 
 
 

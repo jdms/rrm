@@ -10,6 +10,12 @@ include_directories(
   )
 
   
-add_subdirectory( base )
+include_directories("./definitions")
+include_directories("./widgets")
+include_directories("./models")
+
+add_subdirectory( definitions )
+add_subdirectory( widgets )
+add_subdirectory( models )
 
 
