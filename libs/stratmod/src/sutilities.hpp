@@ -55,6 +55,12 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool getBackBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getRightBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
+        
+        bool exportToTetgen( std::string filename );
+        bool exportToVTK( std::string filename );
+
+        std::vector<size_t> getSurfacesIndicesBelowPoint(double x, double y, double z);
+        std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);
 
     private:
         SModeller &model_;

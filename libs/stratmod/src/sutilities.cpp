@@ -567,3 +567,28 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
     return true;
 }
 
+bool SUtilities::exportToTetgen( std::string filename )
+{
+    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+    
+    return mb.exportToTetgen(filename);
+}
+
+
+bool SUtilities::exportToVTK( std::string filename )
+{
+    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+    
+    return mb.exportToVTK(filename);
+}
+
+std::vector<size_t> SUtilities::getSurfacesIndicesBelowPoint(double x, double y, double z)
+{
+    return model_.pimpl_->getSurfacesIndicesBelowPoint(x, y, z);
+}
+
+std::vector<size_t> SUtilities::getSurfacesIndicesAbovePoint(double x, double y, double z)
+{
+    return model_.pimpl_->getSurfacesIndicesAbovePoint(x, y, z);
+}
+
