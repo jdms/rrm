@@ -73,6 +73,10 @@ class Controller
         bool getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
 
 
+        void setTopViewImage( std::string file_, double ox_, double oy_, double x_, double y_ );
+        void removeTopViewImage();
+
+
         CrossSection* getCrossSection( const double& depth_ ) const;
         CrossSection* getCurrentCrossSection() const;
 

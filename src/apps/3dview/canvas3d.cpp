@@ -92,7 +92,7 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     camera.reset();
 
     camera.setViewport( Eigen::Vector4f( delta_w, delta_h, width_, height_ ) ) ; //(float) 500/*width*/, (float)/*height */500) );
-    camera.setOrthographicMatrix( -0.5, 0.5, -0.5, 0.5, 0.1, 100. ); //(  -0.5, (float)0.5, -0.5, (float)0.5, 0.1, 100.);
+    camera.setOrthographicMatrix( -0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 100.f ); //(  -0.5, (float)0.5, -0.5, (float)0.5, 0.1, 100.);
     camera.rotate( q );
 
     update();

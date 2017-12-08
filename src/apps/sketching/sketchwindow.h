@@ -67,6 +67,7 @@ class SketchWindow: public QMainWindow
         void setCurrentCrossSection( double depth_ );
 
         void setTopViewImage( const std::string& image_ );
+        void setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
 
 
 
@@ -85,6 +86,11 @@ class SketchWindow: public QMainWindow
 
         void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
         void removeImageFromCrossSection( double depth_ );
+
+        void setImageToTopView( const QString& file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromTopView();
+
+
         void getHeightMap();
 
 

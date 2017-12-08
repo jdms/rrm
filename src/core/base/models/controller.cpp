@@ -114,6 +114,7 @@ const std::string& Controller::getVolumeName() const
 void Controller::setVolumeVisibility( bool status_ )
 {
     volume->setVisible( status_ );
+    main_csection->setVisible( status_ );
     scene3d->updateVolume();
 }
 
@@ -166,10 +167,22 @@ CrossSection* Controller::getTopViewCrossSection() const
 }
 
 
+void Controller::setTopViewImage( std::string file_, double ox_, double oy_, double x_, double y_ )
+{
+    topview_csection->setImage( file_, ox_, oy_, x_, y_ );
+}
+
+
+
+void Controller::removeTopViewImage()
+{
+    topview_csection->clearImage();
+}
+
+
 
 void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double x_, double y_ )
 {
-
 
     ImageData image_data;
     image_data.file = path_;
@@ -268,9 +281,15 @@ void Controller::updateCurrentCrossSection()
     double y_ = 100.0;
 
     if( getImageCrossSection( current_csection, path_, ox_, oy_, x_, y_ ) == true )
+    {
+//        std::cout << "this cross-section has image: " << current_csection << std::endl << std::flush;
         main_csection->setImage( path_, ox_, oy_, x_, y_ );
+    }
     else
+    {
+//        std::cout << "this cross-section has no image: " << current_csection << std::endl << std::flush;
         main_csection->clearImage();
+    }
 
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
