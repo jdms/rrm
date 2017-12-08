@@ -85,7 +85,7 @@ bool RulesProcessor::setMediumResolution()
 {
     std::cout << "setMediumResolution() was called\n";
     /* return modeller_.tryChangeDiscretization(64, 64); */
-    return modeller_.tryChangeDiscretization(8, 8);
+    return modeller_.tryChangeDiscretization(64, 64);
 }
 
 bool RulesProcessor::setHighResolution()
@@ -219,24 +219,34 @@ bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
 
 void RulesProcessor::removeAbove()
 {
-    return modeller_.removeAbove();
+    truncate_surface_ = false;
+    modeller_.removeAbove();
 }
 
 void RulesProcessor::removeAboveIntersection()
 {
-    return modeller_.removeAboveIntersection();
+    truncate_surface_ = false;
+    modeller_.removeAboveIntersection();
 }
 
 void RulesProcessor::removeBelow()
 {
-    return modeller_.removeBelow();
+    truncate_surface_ = false;
+    modeller_.removeBelow();
 }
 
 void RulesProcessor::removeBelowIntersection()
 {
-    return modeller_.removeBelowIntersection();
+    truncate_surface_ = false;
+    modeller_.removeBelowIntersection();
 }
 
+
+void RulesProcessor::truncate()
+{
+    truncate_surface_ = true;
+    std::cout << "Truncating!\n";
+}
 
 
 bool RulesProcessor::canUndo()

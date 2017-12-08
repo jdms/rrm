@@ -32,7 +32,8 @@ class Controller
             REMOVE_BELOW_INTERSECTION, // Remove below intersection
             DEFINE_ABOVE, // Define above
             DEFINE_BELOW , // Define below
-            DEFINE_REGION // Define region
+            DEFINE_REGION, // Define region
+            TRUNCATE       // Truncate new surface
         };
 
 
