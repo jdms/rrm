@@ -190,6 +190,8 @@ void MainWindow::createToolbarActions()
 
     ac_truncate = new QAction( "Truncate", this );
     ac_truncate->setCheckable( true );
+    connect( ac_truncate, &QAction::triggered, [=](){
+          controller->setCurrentRule( Controller::StratigraphicRules::TRUNCATE );} );
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );

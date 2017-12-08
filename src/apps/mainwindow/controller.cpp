@@ -972,6 +972,10 @@ void Controller::setCurrentRule( const Controller::StratigraphicRules& rule )
     {
         rules_processor.removeBelowIntersection();
     }
+    else if( rule == Controller::StratigraphicRules::TRUNCATE )
+    {
+        rules_processor.truncate();
+    }
 
 }
 
