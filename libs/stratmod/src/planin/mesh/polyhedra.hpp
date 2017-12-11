@@ -124,9 +124,12 @@ class Triangle
         }
 };
 
+template<typename __AttributeType__ = int>
 class Tetrahedron
 {
     public:
+        using AttributeType = __AttributeType__;
+
         Tetrahedron() = default;
         ~Tetrahedron() = default;
 
@@ -231,12 +234,12 @@ class Tetrahedron
             return vol;
         }
 
-        void setAttribute( std::vector<bool> attribute )
+        void setAttribute( AttributeType attribute )
         {
             region_attribute_ = std::move(attribute);
         }
 
-        std::vector<bool> getAttribute() const
+        AttributeType getAttribute() const
         {
             return region_attribute_;
         }
@@ -260,7 +263,7 @@ class Tetrahedron
         std::array<bool, 4> vertex_is_set_; //= {{false, false, false, false}};
 
         // BUG: VS2013 does not support empty initializer lists
-        std::vector<bool> region_attribute_; //= {};
+        AttributeType region_attribute_; //= {};
         
         bool verticesAreSet() const
         {
@@ -270,9 +273,14 @@ class Tetrahedron
         }
 };
 
+template<typename __AttributeType__ = int>
 class Prism 
 {
+    using Tetrahedron = ::Tetrahedron<__AttributeType__>;
+
     public:
+        using AttributeType = __AttributeType__;
+
         template<typename _Point3_>
         void setVertex( size_t position, _Point3_ &&vertex_coordinates, size_t vindex, bool vstatus )
         {
@@ -358,12 +366,12 @@ class Prism
             return c;
         }
 
-        void setAttribute( std::vector<bool> attribute )
+        void setAttribute( AttributeType attribute )
         {
             region_attribute_ = std::move(attribute);
         }
 
-        std::vector<bool> getAttribute() const
+        AttributeType getAttribute() const
         {
             return region_attribute_;
         }
@@ -387,7 +395,7 @@ class Prism
 
         std::array<bool, 6> vertex_is_set_; //= {{false, false, false, false, false, false}};
         // BUG: VS2013 does not support empty initializer lists
-        std::vector<bool> region_attribute_; //= {};
+        AttributeType region_attribute_; //= {};
         
         bool verticesAreSet() const
         {

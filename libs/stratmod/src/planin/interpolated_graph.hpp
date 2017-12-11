@@ -62,6 +62,10 @@ class InterpolatedGraph
         bool getHeight( Point2 &&p, double &height ); 
         bool getHeight( Point3 &p ); 
 
+        bool getBoundedHeight( const Point2 &p, double &height, double ubound, double lbound );
+        bool getBoundedHeight( Point2 &&p, double &height, double ubound, double lbound ); 
+        bool getBoundedHeight( Point3 &p, double ubound, double lbound ); 
+
         bool getRawHeight( const Point2 &p, double &height );
         double getPathOrdinate( double abscissa );
 

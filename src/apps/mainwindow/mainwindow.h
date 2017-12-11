@@ -139,6 +139,7 @@ class MainWindow: public QMainWindow
         QAction* ac_remove_above_int;
         QAction* ac_remove_below;
         QAction* ac_remove_below_int;
+        QAction* ac_truncate;
 
         QAction* ac_output_volume;
         QAction* ac_topview;

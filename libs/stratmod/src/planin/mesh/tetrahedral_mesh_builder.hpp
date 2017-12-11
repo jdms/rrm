@@ -10,6 +10,10 @@
 class TetrahedralMeshBuilder
 {
     public:
+        using AttributeType = std::vector<bool>;
+        using Tetrahedron = ::Tetrahedron<AttributeType>;
+        using Prism = ::Prism<AttributeType>;
+
         TetrahedralMeshBuilder() = delete;
         TetrahedralMeshBuilder( SRules &container ) : container_(container) {}
 
@@ -20,14 +24,37 @@ class TetrahedralMeshBuilder
 
         size_t tetrahedralize( std::vector<Tetrahedron>& );
 
-        template<typename VertexList, typename ElementList>
-        size_t tetrahedralize( VertexList &, std::vector<ElementList> & );
+        /* template<typename VertexList, typename ElementList> */
+        /* size_t tetrahedralize( VertexList &, std::vector<ElementList> & ); */
 
-        template<typename VertexList, typename ElementList, typename AttributeList>
-        size_t tetrahedralize( VertexList &, ElementList &, AttributeList & );
+        /* template<typename VertexList, typename ElementList, typename AttributeList> */
+        /* size_t tetrahedralize( VertexList &, ElementList &, AttributeList & ); */
+
+        /* template<typename VertexList, typename ElementList, typename VolumeList> */
+        /* size_t tetrahedralize( VertexList &, std::vector<ElementList> &, VolumeList & ); */
+
+        template<typename VertexList>
+        size_t getRawVertexCoordinates( VertexList & );
+
+        template<typename VertexList>
+        size_t getVertexCoordinates( VertexList & );
+
+        template<typename ElementList, typename AttributeList>
+        size_t getTetrahedronList( ElementList &, AttributeList & );
+
+        template<typename ElementList>
+        size_t getTetrahedronList( std::vector<ElementList> & );
 
         template<typename VertexList, typename ElementList, typename VolumeList>
-        size_t tetrahedralize( VertexList &, std::vector<ElementList> &, VolumeList & );
+        static bool computeVolumes( const VertexList &, const ElementList &, VolumeList & );
+
+        template<typename VertexList, typename ElementList, typename EdgeList>
+        static bool computeBoundingCurves( const VertexList &, const ElementList &, EdgeList & );
+
+        template<typename VertexList, typename ElementList, typename TriangleList>
+        static bool computeBoundaryMesh( const VertexList &, const ElementList &, TriangleList & );
+
+        bool mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list );
 
 
     private:
@@ -70,11 +97,7 @@ class TetrahedralMeshBuilder
 
         size_t getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const;
 
-        template<typename VertexList>
-        size_t getVertexCoordinates( VertexList & );
-
-        template<typename VertexList>
-        size_t getMappedVertexCoordinates( VertexList & );
+        std::map<AttributeType, std::size_t> computeAttributeMap( const std::vector<Prism> &prism_list );
 
         template<typename ElementList, typename AttributeList>
         size_t getElementList( const std::vector<Tetrahedron> &, ElementList &, AttributeList & );
@@ -90,7 +113,7 @@ class TetrahedralMeshBuilder
 };
 
 template<typename VertexList>
-size_t TetrahedralMeshBuilder::getVertexCoordinates( VertexList &vlist ) 
+size_t TetrahedralMeshBuilder::getRawVertexCoordinates( VertexList &vlist ) 
 { 
     size_t num_vertices = 0;
     getDiscretization();
@@ -119,7 +142,7 @@ size_t TetrahedralMeshBuilder::getVertexCoordinates( VertexList &vlist )
 }
 
 template<typename VertexList>
-size_t TetrahedralMeshBuilder::getMappedVertexCoordinates( VertexList &vlist ) 
+size_t TetrahedralMeshBuilder::getVertexCoordinates( VertexList &vlist ) 
 { 
     size_t num_vertices = 0;
     getDiscretization();
@@ -194,32 +217,65 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Tetrahedron> &t
 }
 
 template<typename ElementList, typename AttributeList>
+size_t TetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, AttributeList &alist )
+{
+    std::vector<Prism> prism_list;
+    bool status = buildPrismMesh(prism_list);
+
+    if ( status == false )
+    {
+        return 0;
+    }
+
+    size_t num_tetrahedra = getElementList(prism_list, elist, alist);
+
+    return num_tetrahedra; 
+}
+
+template<typename ElementList>
+size_t TetrahedralMeshBuilder::getTetrahedronList( std::vector<ElementList> &elist )
+{
+    std::vector<Prism> prism_list;
+    bool status = buildPrismMesh(prism_list);
+
+    if ( status == false )
+    {
+        return 0;
+    }
+
+    size_t num_tetrahedra = getElementList(prism_list, elist);
+
+    return num_tetrahedra; 
+}
+
+template<typename ElementList, typename AttributeList>
 size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_list, ElementList &elist, AttributeList &alist ) 
 { 
-    using AttributeType = decltype( prism_list[0].getAttribute() );
-    std::map< AttributeType, size_t > attributes_map;
+    /* using AttributeType = decltype( prism_list[0].getAttribute() ); */
+    /* std::map< AttributeType, size_t > attributes_map; */
 
-    //
-    // Process attributes
-    //
+    /* // */
+    /* // Process attributes */
+    /* // */
 
-    std::vector< AttributeType > pre_processed_attributes;
-    pre_processed_attributes.resize( prism_list.size() );
+    /* std::vector< AttributeType > pre_processed_attributes; */
+    /* pre_processed_attributes.resize( prism_list.size() ); */
 
-    for ( size_t p = 0; p < prism_list.size(); ++p )
-    {
-        pre_processed_attributes[p] = prism_list[p].getAttribute();
-        attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
-    }
+    /* for ( size_t p = 0; p < prism_list.size(); ++p ) */
+    /* { */
+    /*     pre_processed_attributes[p] = prism_list[p].getAttribute(); */
+    /*     attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) ); */
+    /* } */
 
-    size_t i = 1;
+    /* size_t i = 1; */
 
-    for ( auto &att : attributes_map )
-    {
-        att.second = i;
-        ++i;
-    }
+    /* for ( auto &att : attributes_map ) */
+    /* { */
+    /*     att.second = i; */
+    /*     ++i; */
+    /* } */
 
+    auto attributes_map = computeAttributeMap(prism_list);
 
     //
     // Get tetrahedra
@@ -257,30 +313,31 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
 template<typename ElementList>
 size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_list, std::vector<ElementList> &elist )
 { 
-    using AttributeType = decltype( prism_list[0].getAttribute() );
-    std::map< AttributeType, size_t > attributes_map;
+    /* using AttributeType = decltype( prism_list[0].getAttribute() ); */
+    /* std::map< AttributeType, size_t > attributes_map; */
 
-    //
-    // Process attributes
-    //
+    /* // */
+    /* // Process attributes */
+    /* // */
 
-    std::vector< AttributeType > pre_processed_attributes;
-    pre_processed_attributes.resize( prism_list.size() );
+    /* std::vector< AttributeType > pre_processed_attributes; */
+    /* pre_processed_attributes.resize( prism_list.size() ); */
 
-    for ( size_t p = 0; p < prism_list.size(); ++p )
-    {
-        pre_processed_attributes[p] = prism_list[p].getAttribute();
-        attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
-    }
+    /* for ( size_t p = 0; p < prism_list.size(); ++p ) */
+    /* { */
+    /*     pre_processed_attributes[p] = prism_list[p].getAttribute(); */
+    /*     attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) ); */
+    /* } */
 
-    size_t i = 0;
+    /* size_t i = 0; */
 
-    for ( auto &att : attributes_map )
-    {
-        att.second = i;
-        ++i;
-    }
+    /* for ( auto &att : attributes_map ) */
+    /* { */
+    /*     att.second = i; */
+    /*     ++i; */
+    /* } */
 
+    auto attributes_map = computeAttributeMap(prism_list);
 
     //
     // Get tetrahedra
@@ -377,56 +434,56 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
     return num_tetrahedra; 
 }
 
-template<typename VertexList, typename ElementList>
-size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, std::vector<ElementList> &elist ) 
-{ 
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+/* template<typename VertexList, typename ElementList> */
+/* size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, std::vector<ElementList> &elist ) */ 
+/* { */ 
+/*     std::vector<Prism> prism_list; */
+/*     bool status = buildPrismMesh(prism_list); */
 
-    if ( status == false )
-    {
-        return 0;
-    }
+/*     if ( status == false ) */
+/*     { */
+/*         return 0; */
+/*     } */
 
-    getMappedVertexCoordinates(vcoords);
-    size_t num_tetrahedra = getElementList(prism_list, elist);
+/*     getVertexCoordinates(vcoords); */
+/*     size_t num_tetrahedra = getElementList(prism_list, elist); */
 
-    return num_tetrahedra; 
-}
+/*     return num_tetrahedra; */ 
+/* } */
 
-template<typename VertexList, typename ElementList, typename AttributeList>
-size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, ElementList &elist, AttributeList &alist ) 
-{ 
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+/* template<typename VertexList, typename ElementList, typename AttributeList> */
+/* size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, ElementList &elist, AttributeList &alist ) */ 
+/* { */ 
+/*     std::vector<Prism> prism_list; */
+/*     bool status = buildPrismMesh(prism_list); */
 
-    if ( status == false )
-    {
-        return 0;
-    }
+/*     if ( status == false ) */
+/*     { */
+/*         return 0; */
+/*     } */
 
-    getVertexCoordinates(vcoords);
-    size_t num_tetrahedra = getElementList(prism_list, elist, alist);
+/*     getVertexCoordinates(vcoords); */
+/*     size_t num_tetrahedra = getElementList(prism_list, elist, alist); */
 
-    return num_tetrahedra; 
-}
+/*     return num_tetrahedra; */ 
+/* } */
 
-template<typename VertexList, typename ElementList, typename VolumeList>
-size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, std::vector<ElementList> &elist, VolumeList &vlist ) 
-{  
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+/* template<typename VertexList, typename ElementList, typename VolumeList> */
+/* size_t TetrahedralMeshBuilder::tetrahedralize( VertexList &vcoords, std::vector<ElementList> &elist, VolumeList &vlist ) */ 
+/* { */  
+/*     std::vector<Prism> prism_list; */
+/*     bool status = buildPrismMesh(prism_list); */
 
-    if ( status == false )
-    {
-        return 0;
-    }
+/*     if ( status == false ) */
+/*     { */
+/*         return 0; */
+/*     } */
 
-    getVertexCoordinates(vcoords);
-    size_t num_tetrahedra = getElementList(prism_list, elist, vlist);
+/*     getVertexCoordinates(vcoords); */
+/*     size_t num_tetrahedra = getElementList(prism_list, elist, vlist); */
 
-    return num_tetrahedra; 
-}
+/*     return num_tetrahedra; */ 
+/* } */
 
 
 #endif
