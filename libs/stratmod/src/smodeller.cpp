@@ -471,7 +471,7 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
         return false;
     }
 
-    pimpl_->container_.lastInsertedSurfaceIntersects(intersected_surfaces);
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
 
     if ( ! intersected_surfaces.empty() )
     {
@@ -496,6 +496,7 @@ bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &inters
     /* State current = pimpl_->current_.state_; */
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
+    std::cout << "Trying to create a surface...\n"; 
     bool status = createSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
@@ -505,14 +506,17 @@ bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &inters
         return false;
     }
 
-    pimpl_->container_.lastInsertedSurfaceIntersects(intersected_surfaces);
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
 
     if ( ! intersected_surfaces.empty() )
     {
+        std::cout << "But it intersected another surface...\n";
         pimpl_->popLastSurface();
 
         return false;
     }
+
+    std::cout << "Success!\n";
 
     return true;
 }
@@ -538,7 +542,7 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
         return false;
     }
 
-    pimpl_->container_.lastInsertedSurfaceIntersects(intersected_surfaces);
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
 
     if ( ! intersected_surfaces.empty() )
     {
@@ -682,7 +686,18 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
 {
     TetrahedralMeshBuilder mb(pimpl_->container_);
 
-    return mb.tetrahedralize(vertex_coordinates, element_list);
+    bool status = true; 
+    size_t num_elements;
+
+    status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+    if ( status == false )
+    {
+        return 0;
+    }
+
+    num_elements = mb.getTetrahedronList(element_list);
+
+    return num_elements;
 }
 
 #if defined(BUILD_WITH_SERIALIZATION)

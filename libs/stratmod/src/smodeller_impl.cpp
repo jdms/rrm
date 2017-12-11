@@ -91,6 +91,77 @@ void SModellerImplementation::getLenght( double &x, double &y, double &z )
     }
 }
 
+std::vector<size_t> SModellerImplementation::getSurfacesIndicesBelowPoint( double x, double y, double z )
+{
+    std::vector<size_t> surfaces_ids = {};
+    Point3 p = point3(x, y, z);
+
+    surfaces_ids = container_.getSurfacesBelowPoint(p);
+    size_t cid;
+    for ( auto &i : surfaces_ids )
+    {
+        getControllerIndex(i, cid);
+        i = cid;
+    }
+
+    return surfaces_ids;
+}
+
+std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( double x, double y, double z )
+{
+    std::vector<size_t> surfaces_ids = {};
+    Point3 p = point3(x, y, z);
+
+    surfaces_ids = container_.getSurfacesAbovePoint(p);
+    size_t cid;
+    for ( size_t i = 0; i < surfaces_ids.size(); ++i )
+    {
+        getControllerIndex(surfaces_ids[i], cid);
+        surfaces_ids[i] = cid;
+    }
+
+    return surfaces_ids;
+}
+
+#include <iostream>
+
+bool SModellerImplementation::lastInsertedSurfaceIntersects( std::vector<ControllerSurfaceIndex> &intersected_surfaces )
+{
+    std::vector<ContainerSurfaceIndex> ids = {};
+    bool status = container_.lastInsertedSurfaceIntersects(ids);
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    intersected_surfaces.resize( ids.size() );
+    ControllerSurfaceIndex cindex;
+
+    for ( size_t i = 0; i < ids.size(); ++i )
+    {
+        status &= getControllerIndex(ids[i], cindex);
+        intersected_surfaces[i] = cindex;
+    }
+
+    return status;
+}
+
+bool SModellerImplementation::getControllerIndex( const ContainerSurfaceIndex surface_id, ControllerSurfaceIndex &controller_id )
+{
+    for ( auto iter = dictionary_.begin(); iter != dictionary_.end(); ++iter )
+    {
+        if ( iter->second == surface_id )
+        {
+            controller_id = iter->first;
+            /* std::cout << "Surf id: " << surface_id << " corresponds to cont id: " << controller_id << std::endl; */
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool SModellerImplementation::getSurfaceIndex( const size_t controller_index, size_t &index ) const
 {
     auto iter = dictionary_.find(controller_index);  
@@ -307,6 +378,21 @@ bool SModellerImplementation::commitSurface(
 
     if ( current_.state_ == State::SKETCHING )
     {
+        std::cout << "Inserting surface " << given_index << "\n";
+        std::cout << "Ubounds: ";
+        for ( auto s : ubounds )
+        {
+            std::cout << s << ", ";
+        }
+        std::cout << "\n";
+
+        std::cout << "Lbounds: ";
+        for ( auto s : lbounds )
+        {
+            std::cout << s << ", ";
+        }
+        std::cout << "\n";
+
         status = container_.addSurface(sptr, index, ubounds, lbounds);
     }
     else
@@ -347,6 +433,7 @@ bool SModellerImplementation::commitSurface(
     if ( status == true ) { 
         dictionary_[given_index] = index; 
         inserted_surfaces_indices_.push_back(given_index); 
+        std::cout << "Surface " << given_index << " was commited.\n";
 
         past_states_.push_back(current_);
     }

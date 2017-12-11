@@ -946,10 +946,10 @@ std::vector<size_t> SRules::getSurfacesBelowPoint( const Point3 &p )
         }
     }
 
-    if ( lies_above_all_surfaces )
-    {
-        descriptor.clear();
-    }
+    /* if ( lies_above_all_surfaces ) */
+    /* { */
+    /*     descriptor.clear(); */
+    /* } */
 
     return descriptor;
 
@@ -1010,6 +1010,7 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
 
     if ( out_of_boundaries )
     {
+        std::cout << "Point is out of boundaries.\n";
         return descriptor;
     }
 
@@ -1027,16 +1028,16 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
         }
     }
 
-    if ( lies_below_all_surfaces )
-    {
-        descriptor.clear();
-    }
+    /* if ( lies_below_all_surfaces ) */
+    /* { */
+    /*     descriptor.clear(); */
+    /* } */
 
     return descriptor;
 }
 
 std::vector<size_t> SRules::getSurfacesAbovePoint( Point3 &&p )
 {
-    return getSurfacesBelowPoint(p);
+    return getSurfacesAbovePoint(p);
 }
 
