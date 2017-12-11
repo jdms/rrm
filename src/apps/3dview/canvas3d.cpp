@@ -76,24 +76,28 @@ std::string Canvas3d::sendImage( double width_, double height_  )
 
     Eigen::Matrix3f mat;
     mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX() )
-            * Eigen::AngleAxisf(0.0/*Math::Constants::HalfPi*/, Eigen::Vector3f::UnitY() )
+            * Eigen::AngleAxisf( 0.0, Eigen::Vector3f::UnitY() )
             * Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitZ() );
-
-
     Eigen::Quaternionf q(mat);
 
 
-    double delta_w = ( width() - width_ )*0.5;
-    double delta_h = ( height() - height_ )*0.5;
 
 
-    glViewport( static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) )  ;
+    int delta_w = width() - static_cast<int>( width_ );
+    int delta_h = height() - static_cast<int>( height_ );
+
+    float asp_ratio = width()/height();
+
+    int x_ = static_cast<int>( delta_w*0.5f );
+    int y_ = static_cast<int>( delta_h*0.5f );
+
+    glViewport( x_, y_, width(), height() )  ;
 
     camera.reset();
+    camera.setViewport( Eigen::Vector4f( 0, 0, 10, 10 ) );
 
-    camera.setViewport( Eigen::Vector4f( delta_w, delta_h, width_, height_ ) ); //(float) 500/*width*/, (float)/*height */500) );
-    camera.setOrthographicMatrix( -0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 100.f ); //(  -0.5, (float)0.5, -0.5, (float)0.5, 0.1, 100.);
-    camera.rotate( q );
+//    camera.setOrthographicMatrix( -asp_ratio*1.f, asp_ratio*1.f, -asp_ratio*1.f, asp_ratio*1.f, -0.1f, 100.f );
+//    camera.rotate( q );
 
     update();
 
@@ -101,17 +105,17 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     QImage image = grabFramebuffer();    
     std::string path_ = "./tmp/mapview.png";
 
-    QImage image1 = image.copy(  0, 0, static_cast< GLint>(width_), static_cast< GLint>(height_) );//static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) );
+//    QImage image1 = image.copy(  0, 0, static_cast< GLint>(width()), static_cast< GLint>(height()) );//static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) );
 
-    image1.save( QString( path_.c_str() ) );
-
-
+    image.save( QString( path_.c_str() ) );
 
 
-    camera.reset();
-    glViewport( 0 , 0 , (float) width() , (float)height() );
-    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
-    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+
+
+//    camera.reset();
+//    glViewport( 0 , 0 , (float) width() , (float)height() );
+//    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+//    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
 
     return path_;
 }
