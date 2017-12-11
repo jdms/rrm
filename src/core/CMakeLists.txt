@@ -4,10 +4,8 @@ project(RRM)
 # Main source -- Core Directory
 ###############################################
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
+                     ${CMAKE_CURRENT_BINARY_DIR} )
 
   
 include_directories("./definitions")
