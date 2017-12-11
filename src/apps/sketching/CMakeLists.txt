@@ -34,12 +34,12 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             models/image_item_wrapper.cpp )
 
 
-set(CMAKE_AUTOMOC ON)
+QT5_WRAP_CPP( SKETCHING_MOC_SOURCES ${SKETCHING_MOC_HEADERS} )
 
 
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
 
-add_library( ${PROJECT_NAME} STATIC ${SKETCHING_HEADERS} ${SKETCHING_SOURCES} )
+add_library( ${PROJECT_NAME} STATIC ${SKETCHING_HEADERS} ${SKETCHING_MOC_SOURCES} ${SKETCHING_SOURCES} )
 
