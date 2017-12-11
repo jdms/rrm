@@ -133,6 +133,7 @@ class Controller
         void setRemoveAboveIntersection();
         void setRemoveBelow();
         void setRemoveBelowIntersection();
+        void setTruncate();
         void applyStratigraphicRule();
 
 

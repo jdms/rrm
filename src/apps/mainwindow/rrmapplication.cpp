@@ -350,6 +350,8 @@ void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::Stratig
         mainwindow->controller->setRemoveBelow();
     else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         mainwindow->controller->setRemoveBelowIntersection();
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+        mainwindow->controller->setTruncate();
 }
 
 

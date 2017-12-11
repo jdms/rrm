@@ -106,8 +106,6 @@ void MainWindow::createToolbar()
     ac_truncate = new QAction( "Truncate", this );
     ac_truncate->setCheckable( true );
 
-    connect( ac_truncate, &QAction::triggered, [=](){
-          controller->setCurrentRule( Controller::StratigraphicRules::TRUNCATE );} );
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
@@ -129,6 +127,7 @@ void MainWindow::createToolbar()
     ag_rules->addAction( ac_remove_above_int );
     ag_rules->addAction( ac_remove_below );
     ag_rules->addAction( ac_remove_below_int );
+    ag_rules->addAction( ac_truncate );
 
 
     ac_output_volume = new QAction( "Get Regions", this );
@@ -208,6 +207,10 @@ void MainWindow::createMainWindowActions()
 
     connect( ac_remove_below_int, &QAction::triggered, [=]()
                                                    { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+
+
+    connect( ac_truncate, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::TRUNCATE ); } );
 
 
     connect( ac_clear, &QAction::triggered, [=](){ app->restart(); } );

@@ -196,6 +196,7 @@ namespace Settings {
                 REMOVE_ABOVE_INTERSECTION, // Remove above intersection
                 REMOVE_BELOW, // Remove below
                 REMOVE_BELOW_INTERSECTION, // Remove below intersection
+                TRUNCATE
             };
 
 

@@ -836,6 +836,11 @@ void Controller::setRemoveBelowIntersection()
     current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION;
 }
 
+void Controller::setTruncate()
+{
+    current_rule = Settings::Stratigraphy::StratigraphicRules::TRUNCATE;
+}
+
 
 void Controller::applyStratigraphicRule()
 {
@@ -847,6 +852,8 @@ void Controller::applyStratigraphicRule()
         rules_processor.removeBelow();
     else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         rules_processor.removeBelowIntersection();
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+        rules_processor.truncate();
 }
 
 
