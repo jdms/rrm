@@ -91,7 +91,7 @@ std::string Canvas3d::sendImage( double width_, double height_  )
 
     camera.reset();
 
-    camera.setViewport( Eigen::Vector4f( delta_w, delta_h, width_, height_ ) ) ; //(float) 500/*width*/, (float)/*height */500) );
+    camera.setViewport( Eigen::Vector4f( delta_w, delta_h, width_, height_ ) ); //(float) 500/*width*/, (float)/*height */500) );
     camera.setOrthographicMatrix( -0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 100.f ); //(  -0.5, (float)0.5, -0.5, (float)0.5, 0.1, 100.);
     camera.rotate( q );
 
@@ -100,7 +100,12 @@ std::string Canvas3d::sendImage( double width_, double height_  )
 
     QImage image = grabFramebuffer();    
     std::string path_ = "./tmp/mapview.png";
-    image.save( QString( path_.c_str() ) );
+
+    QImage image1 = image.copy(  0, 0, static_cast< GLint>(width_), static_cast< GLint>(height_) );//static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) );
+
+    image1.save( QString( path_.c_str() ) );
+
+
 
 
     camera.reset();
