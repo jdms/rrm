@@ -65,6 +65,9 @@ class Canvas3d: public QOpenGLWidget
         Tucano::Trackball camera;
         const int WHEEL_STEP = 120;
 
+        int canvas_width;
+        int canvas_height;
+
 };
 
 #endif // CANVAS3D_H
