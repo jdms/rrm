@@ -11,6 +11,8 @@
 Canvas3d::Canvas3d()
 {
     createScene();
+    canvas_width = width();
+    canvas_height = height();
 }
 
 
@@ -30,7 +32,6 @@ void Canvas3d::initializeGL()
     glEnable( GL_MULTISAMPLE );
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
-
 
 
 
@@ -74,48 +75,83 @@ Scene3d* Canvas3d::getScene() const
 std::string Canvas3d::sendImage( double width_, double height_  )
 {
 
-    Eigen::Matrix3f mat;
-    mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX() )
-            * Eigen::AngleAxisf( 0.0, Eigen::Vector3f::UnitY() )
-            * Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitZ() );
-    Eigen::Quaternionf q(mat);
-
-
-
+    int V = static_cast< int >( width()/height() );
 
     int delta_w = width() - static_cast<int>( width_ );
     int delta_h = height() - static_cast<int>( height_ );
 
-    float asp_ratio = width()/height();
-
     int x_ = static_cast<int>( delta_w*0.5f );
     int y_ = static_cast<int>( delta_h*0.5f );
 
-    glViewport( x_, y_, width(), height() )  ;
+    if( V >= 1 )
+        camera.setOrthographicMatrix( -V * 0.5, V * 0.5, -0.5, 0.5, 0.1f, 100.f );
+    else
+        camera.setOrthographicMatrix( -0.5, -0.5, -V*0.5, V*0.5, -0.1f, 100.f );
 
-    camera.reset();
-    camera.setViewport( Eigen::Vector4f( 0, 0, 10, 10 ) );
-
-//    camera.setOrthographicMatrix( -asp_ratio*1.f, asp_ratio*1.f, -asp_ratio*1.f, asp_ratio*1.f, -0.1f, 100.f );
-//    camera.rotate( q );
+    canvas_width = width_;
+    canvas_height = height_;
 
     update();
 
 
-    QImage image = grabFramebuffer();    
+    QImage image = grabFramebuffer();
     std::string path_ = "./tmp/mapview.png";
 
-//    QImage image1 = image.copy(  0, 0, static_cast< GLint>(width()), static_cast< GLint>(height()) );//static_cast< GLint>(delta_w), static_cast< GLint>(delta_h), static_cast< GLint>(width_), static_cast< GLint>(height_) );
+    QImage image1 = image.copy(  x_, y_, width_, height_ );
+    image1.save( QString( path_.c_str() ) );
 
-    image.save( QString( path_.c_str() ) );
+//    canvas_width = width();
+//    canvas_height = height();
+
+//    update();
+
+
+    //    Eigen::Matrix3f mat;
+//    mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX() )
+//            * Eigen::AngleAxisf( 0.0, Eigen::Vector3f::UnitY() )
+//            * Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitZ() );
+//    Eigen::Quaternionf q(mat);
 
 
 
 
-//    camera.reset();
-//    glViewport( 0 , 0 , (float) width() , (float)height() );
-//    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
-//    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+//    int delta_w = width() - static_cast<int>( width_ );
+//    int delta_h = height() - static_cast<int>( height_ );
+
+//    float asp_ratio = width()/height();
+
+//    int x_ = static_cast<int>( delta_w*0.5f );
+//    int y_ = static_cast<int>( delta_h*0.5f );
+
+//    glViewport( 0, 0, width_, height_ )  ;
+
+////    camera.reset();
+//    camera.setViewport( Eigen::Vector4f( 0, 0, width_, height_ ) );
+////    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+//    camera.setOrthographicMatrix( -0.5f, 0.5f, -0.5f, 0.5f, -0.1f, 100.f );
+////    camera.rotate( q );
+
+
+//    canvas_width = width_;
+//    canvas_height = height_;
+
+//    update();
+
+
+//    QImage image = grabFramebuffer();
+//    std::string path_ = "./tmp/mapview.png";
+
+//    QImage image1 = image.copy(  x_, y_, width_, height_ );
+//    image1.save( QString( path_.c_str() ) );
+
+
+//    canvas_width = width();
+//    canvas_height = height();
+
+////    camera.reset();
+////    glViewport( 0 , 0 , (float) width() , (float)height() );
+////    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+////    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
 
     return path_;
 }
