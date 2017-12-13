@@ -57,6 +57,8 @@ void MainWindow::createWindow()
     createSketchingWindow();
     createSketchingActions();
 
+    createFlowWindow();
+
 }
 
 
@@ -228,7 +230,7 @@ void MainWindow::createMainWindowActions()
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
 
-    connect( ac_output_volume, &QAction::triggered, [=](){ controller->getOutputVolume(); } );
+    connect( ac_output_volume, &QAction::triggered, [=](){ controller->getOutputVolume(); app->startFlowDiagnostics(); } );
 
 }
 
@@ -397,6 +399,28 @@ void MainWindow::createSketchingActions()
 
 }
 
+
+
+void MainWindow::createFlowWindow()
+{
+    flow_window = new FlowWindow();
+    dw_flow_window = new QDockWidget( "Flow Diagnostics" );
+    dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_flow_window->setWidget( flow_window );
+    dw_flow_window->setVisible( false );
+    addDockWidget( Qt::BottomDockWidgetArea, flow_window );
+
+    connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
+                                                                   std::vector<size_t> &nv, size_t num_extrusion_steps ){
+                                                                    app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
+
+    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
+                                                std::vector< FlowWindow::CurveMesh>& left_curves,
+                                                std::vector< FlowWindow::CurveMesh >& right_curves,
+                                                std::vector< FlowWindow::CurveMesh > & front_curves,
+                                                std::vector< FlowWindow::CurveMesh >& back_curves ) {
+                                                app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
+}
 
 
 

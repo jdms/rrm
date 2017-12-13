@@ -27,7 +27,9 @@ set( MODELS_HEADERS     container.h
                         shader.h
                         well.h
                         rules_processor.hpp
-                        stratmod_wrapper.hpp )
+                        stratmod_wrapper.hpp
+                        mesh_generator.hpp
+                        openvolumemesh_defines.hpp )
 
 set( MODELS_SOURCES     controller.cpp
                         object.cpp
@@ -35,7 +37,9 @@ set( MODELS_SOURCES     controller.cpp
                         volume.cpp
                         crosssection.cpp
                         well.cpp
-                        rules_processor.cpp )
+                        rules_processor.cpp
+                        mesh_generator.cpp
+                        openvolumemesh_defines.cpp)
 
 
 

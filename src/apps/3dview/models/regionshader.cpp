@@ -6,7 +6,7 @@ RegionShader::RegionShader()
 }
 
 
-RegionShader::RegionShader( Region* const& raw_ )
+RegionShader::RegionShader( Regions* const& raw_ )
 {
     setDefaultValues();
     init();
@@ -15,7 +15,7 @@ RegionShader::RegionShader( Region* const& raw_ )
 
 
 
-void RegionShader::setRegion( Region* const& raw_ )
+void RegionShader::setRegion( Regions* const& raw_ )
 {
     raw = raw_;
     loadBuffers();

@@ -49,7 +49,7 @@ class Scene3d: public QObject, public Scene
         void clearOutputVolume();
 
 
-        void addRegion( Region* const& raw_ );
+        void addRegion( Regions* const& raw_ );
         void updateRegion( std::size_t index_ );
 //        void clearRegion();
 

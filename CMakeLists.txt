@@ -58,6 +58,7 @@ ENDIF()
 
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator )
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
@@ -97,6 +98,21 @@ include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
+
+
+set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
+set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
+set( OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
+    debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
+
+include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+
+
+set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
+include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
+find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
 
 ###############################################
 # Preliminary support for stratmod library

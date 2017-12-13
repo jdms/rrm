@@ -24,6 +24,18 @@ class Controller
 {
     public:
 
+        struct TriangleMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> face_list;
+        };
+
+        struct CurveMesh
+        {
+            std::vector<double> vertex_list;
+            std::vector<std::size_t> edge_list;
+        };
+
 
         Controller() = default;
 
@@ -179,6 +191,20 @@ class Controller
         bool addFixedCrossSection( double depth_ );
         bool removeFixedCrossSection( double depth_ );
 
+
+        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes, std::vector< CurveMesh >& left_curves, std::vector< CurveMesh >& right_curves,
+                                std::vector< CurveMesh > & front_curves, std::vector< CurveMesh >& back_curves );
+
+        inline void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+        {
+            rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+        }
+
+        inline void getVolumeDimension(double& width, double& height, double&  depth)
+        {
+            rules_processor.getLenght( width, height, depth );
+        }
+
 //        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
 //        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
 //        bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
@@ -303,7 +329,7 @@ class Controller
 
         std::size_t current_object = 0;
         Container< std::size_t, Object* > objects;
-        Container< std::size_t, Region* > regions;
+        Container< std::size_t, Regions* > regions;
 
 
         double current_csection = 500.0;

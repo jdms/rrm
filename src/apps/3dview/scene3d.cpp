@@ -97,7 +97,7 @@ void Scene3d::clearOutputVolume()
 }
 
 
-void Scene3d::addRegion( Region* const& raw_ )
+void Scene3d::addRegion( Regions* const& raw_ )
 {
     context->makeCurrent( surface );
 
