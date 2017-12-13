@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "./core/models/shader.h"
-#include "./core/models/region.h"
+#include "./core/models/regions.h"
 
 class RegionShader: public Shader
 {
@@ -15,10 +15,10 @@ class RegionShader: public Shader
     public:
 
         RegionShader();
-        RegionShader( Region* const& raw_ );
+        RegionShader( Regions* const& raw_ );
 
 
-        void setRegion( Region* const& raw_ );
+        void setRegion( Regions* const& raw_ );
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -64,7 +64,7 @@ class RegionShader: public Shader
         GLuint number_of_vertices;
         GLuint number_of_faces;
 
-        Region* raw;
+        Regions* raw;
 
 };
 

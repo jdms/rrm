@@ -1,30 +1,30 @@
 #include "region.h"
 
-Region::Region()
+Regions::Regions()
 {
     initialize();
 }
 
-void Region::setIndex( const std::size_t id_ )
+void Regions::setIndex( const std::size_t id_ )
 {
     index = id_;
     name = "Region " + std::to_string( index );
 }
 
-std::size_t Region::getIndex() const
+std::size_t Regions::getIndex() const
 {
     return index;
 }
 
 
-void Region::setPoint( double x_, double y_, double z_ )
+void Regions::setPoint( double x_, double y_, double z_ )
 {
     center.x = x_;
     center.y = y_;
     center.z = z_;
 }
 
-void Region::getPoint( double& x_, double& y_, double& z_ ) const
+void Regions::getPoint( double& x_, double& y_, double& z_ ) const
 {
     x_ = center.x;
     y_ = center.y;
@@ -32,31 +32,31 @@ void Region::getPoint( double& x_, double& y_, double& z_ ) const
 }
 
 
-void Region::setName( const std::string& name_ )
+void Regions::setName( const std::string& name_ )
 {
     name.clear();
     name = name_;
 }
 
 
-std::string Region::getName() const
+std::string Regions::getName() const
 {
     return name;
 }
 
 
-void Region::setVisible( const bool status_ )
+void Regions::setVisible( const bool status_ )
 {
     is_visible = status_;
 }
 
-bool Region::isVisible() const
+bool Regions::isVisible() const
 {
     return is_visible;
 }
 
 
-void Region::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
+void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
 {
 
     clearCells();
@@ -94,40 +94,40 @@ void Region::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
 }
 
 
-void Region::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
+void Regions::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
 {
     cells_.clear();
     cells_.assign( index_cells.begin(), index_cells.end() );
 }
 
 
-void Region::clearCells()
+void Regions::clearCells()
 {
     index_cells.clear();
 }
 
 
-void Region::setVertices( const std::vector< double >& vertices_  )
+void Regions::setVertices( const std::vector< double >& vertices_  )
 {
     vertices.clear();
     vertices.assign( vertices_.begin(), vertices_.end() );
 }
 
 
-void Region::getVertices( std::vector< double >& vertices_  ) const
+void Regions::getVertices( std::vector< double >& vertices_  ) const
 {
     vertices_.clear();
     vertices_.assign( vertices.begin(), vertices.end() );
 }
 
 
-void Region::clearVertices()
+void Regions::clearVertices()
 {
     vertices.clear();
 }
 
 
-void Region::setMaxMin( double maxx_, double maxy_, double maxz_,
+void Regions::setMaxMin( double maxx_, double maxy_, double maxz_,
                         double minx_, double miny_, double minz_ )
 {
     max.x = maxx_;
@@ -142,7 +142,7 @@ void Region::setMaxMin( double maxx_, double maxy_, double maxz_,
 }
 
 
-void Region::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+void Regions::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
                         double& minx_, double& miny_, double& minz_ ) const
 {
 
@@ -157,7 +157,7 @@ void Region::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-void Region::setColor( int r_, int g_, int b_ )
+void Regions::setColor( int r_, int g_, int b_ )
 {
     color.r = r_;
     color.g = g_;
@@ -165,7 +165,7 @@ void Region::setColor( int r_, int g_, int b_ )
 }
 
 
-void Region::getColor( int& r_, int& g_, int& b_ ) const
+void Regions::getColor( int& r_, int& g_, int& b_ ) const
 {
     r_ = color.r;
     g_ = color.g;
@@ -173,14 +173,14 @@ void Region::getColor( int& r_, int& g_, int& b_ ) const
 }
 
 
-void Region::clear()
+void Regions::clear()
 {
     clearCells();
     clearVertices();
     initialize();
 }
 
-void Region::initialize()
+void Regions::initialize()
 {
     index = 0;
 

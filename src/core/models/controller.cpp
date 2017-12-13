@@ -1192,7 +1192,7 @@ void Controller::getOutputVolume()
         color_.b = distr( eng );
 
 
-        Region* region_ = new Region();
+        Regions* region_ = new Regions();
 
         region_->setIndex( i );
         region_->setVertices( vertices_ );
@@ -1216,7 +1216,7 @@ void Controller::setRegionName( std::size_t index_, const std::string& name_ )
     if( regions.findElement( index_) == false )
         return;
 
-    Region* const& region_ = regions.getElement( index_ );
+    Regions* const& region_ = regions.getElement( index_ );
 //    region_->setName( name_ );
 }
 
@@ -1226,7 +1226,7 @@ void Controller::setRegionVisibility( std::size_t index_, bool status_ )
     if( regions.findElement( index_ ) == false )
         return;
 
-    Region* const& region_ = regions.getElement( index_ );
+    Regions* const& region_ = regions.getElement( index_ );
     region_->setVisible( status_ );
     scene3d->updateRegion( index_ );
 }
@@ -1238,7 +1238,7 @@ void Controller::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
     if( regions.findElement( index_ ) == false )
         return;
 
-    Region* const& region_ = regions.getElement( index_ );
+    Regions* const& region_ = regions.getElement( index_ );
     region_->setColor( r_, g_, b_ );
     scene3d->updateRegion( index_ );
 }
@@ -1309,9 +1309,9 @@ void Controller::clear()
     objects.clear();
 
 
-    for ( Container< std::size_t, Region* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
     {
-        Region* item_ = regions.getElement( it->first );
+        Regions* item_ = regions.getElement( it->first );
         if( item_ == nullptr ) continue;
 
         item_->clear();
@@ -1375,6 +1375,87 @@ bool Controller::removeFixedCrossSection( double depth_ )
 
 //    setCurrentCrossSection( main_csection->getDepth() );
 //    scene3d->removeCrossSection( cs_ );
+
+}
+
+
+
+void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+                                    std::vector< CurveMesh >& left_curves,
+                                    std::vector< CurveMesh >& right_curves,
+                                    std::vector< CurveMesh > & front_curves,
+                                    std::vector< CurveMesh >& back_curves )
+{
+
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+    for( auto it: actives )
+    {
+
+        if( objects.findElement( it ) == false ) continue;
+
+        TriangleMesh t;
+        /* std::vector< double > surface_vertices; */
+        /* std::vector< std::size_t > surface_faces; */
+
+
+        /* bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces ); */
+        bool has_surface = rules_processor.getMesh( it, t.vertex_list, t.face_list );
+
+        if( has_surface  == false ) continue;
+
+
+        /* t.face_list = surface_faces; */
+        /* t.vertex_list = surface_vertices; */
+
+        //
+        // This loop changes the y-z coordinates of the vertices as RRM
+        // understands the y coordinate as height and the z coordinate as
+        // length, but Zhao's convention is the opposite.
+        //
+        double y, z;
+        for ( size_t i = 0; i < t.vertex_list.size()/3; ++i )
+        {
+            y = t.vertex_list[3*i + 1];
+            z = t.vertex_list[3*i + 2];
+
+            t.vertex_list[3*i + 1] = z;
+            t.vertex_list[3*i + 2] = y;
+        }
+
+        triangles_meshes.push_back( t );
+    }
+
+    std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists;
+    std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists;
+
+    rules_processor.getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists);
+    rules_processor.getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists);
+    rules_processor.getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
+    rules_processor.getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
+
+    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
+    {
+        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+        std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) );
+        std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) );
+
+        std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) );
+        std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) );
+
+        std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) );
+        std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) );
+
+        std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) );
+        std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) );
+
+        left_curves.push_back( cm_lb );
+        right_curves.push_back( cm_rb );
+        front_curves.push_back( cm_fb );
+        back_curves.push_back( cm_bb );
+    }
+
 
 }
 

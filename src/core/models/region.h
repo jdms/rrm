@@ -8,11 +8,11 @@
 #include "./core/definitions/constants.hpp"
 
 
-class Region
+class Regions
 {
     public:
 
-        Region();
+        Regions();
 
         void setIndex( const std::size_t id_ );
         std::size_t getIndex() const;

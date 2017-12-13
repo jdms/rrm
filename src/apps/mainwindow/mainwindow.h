@@ -13,11 +13,12 @@ class QToolbar;
 class QSlider;
 
 
-#include "3dview/canvas3d.h"
-#include "sketching/sketchwindow.h"
-#include "./core/widgets/realfeaturedslider.h"
-#include "./core/widgets/objecttree.h"
-#include "./core/widgets/pages_stack.h"
+//#include "3dview/canvas3d.h"
+//#include "sketching/sketchwindow.h"
+//#include "simulator/flow_window.h"
+//#include "./core/widgets/realfeaturedslider.h"
+//#include "./core/widgets/objecttree.h"
+//#include "./core/widgets/pages_stack.h"
 
 
 #include "./core/models/controller.h"
@@ -83,6 +84,9 @@ class MainWindow: public QMainWindow
         void createSketchingWindow();
         void createSketchingActions();
 
+
+        void createFlowWindow();
+
         void run_app();
 
 
@@ -119,6 +123,9 @@ class MainWindow: public QMainWindow
 
         SketchWindow* sketch_topview_window;
         QDockWidget* dw_topview_window;
+
+        FlowWindow* flow_window;
+        QDockWidget* dw_flow_window;
 
 
         QToolBar* tb_mainwindow;
