@@ -18,7 +18,7 @@ set(CMAKE_AUTOMOC ON)
 set( MODELS_HEADERS     container.h
                         controller.h
                         object.h
-                        region.h
+                        regions.h
                         volume.h
                         polycurve.h
                         surface.h
@@ -33,7 +33,7 @@ set( MODELS_HEADERS     container.h
 
 set( MODELS_SOURCES     controller.cpp
                         object.cpp
-                        region.cpp
+                        regions.cpp
                         volume.cpp
                         crosssection.cpp
                         well.cpp
