@@ -7,7 +7,7 @@
 #include "volume.h"
 #include "crosssection.h"
 #include "object.h"
-#include "region.h"
+#include "regions.h"
 
 
 class Scene
