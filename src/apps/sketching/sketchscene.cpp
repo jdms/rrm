@@ -1,5 +1,11 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneDragDropEvent>
+#include <QPixmap>
+#include <QDir>
+#include <QUrl>
+#include <QMimeData>
+#include <QKeyEvent>
 
 #include "sketchscene.h"
 
@@ -7,8 +13,32 @@
 
 SketchScene::SketchScene()
 {
+    image = new ImageItemWrapper();
+    addItem( image );
+
     user_input = new InputSketch();
     addItem( user_input );
+
+    csection_image = new QGraphicsPixmapItem();
+    addItem( csection_image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    addItem( move_marker );
+
+    move_marker->setVisible( false );
+    resize_marker->setVisible( false );
+
+    axes.setVisible( true );
+    addItem( &axes );
+
+
 
     volume = nullptr;
 }
@@ -16,19 +46,43 @@ SketchScene::SketchScene()
 
 SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( nullptr )
 {
-    readCrossSection( raw_ );
+
+
+    image = new ImageItemWrapper();
+    addItem( image );
 
     user_input = new InputSketch();
     user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
     addItem( user_input );
 
+    csection_image = new QGraphicsPixmapItem();
+    addItem( csection_image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    addItem( move_marker );
+
+
+    axes.setVisible( true );
+    addItem( &axes );
+
+    readCrossSection( raw_ );
+
+    move_marker->setVisible( false );
+    resize_marker->setVisible( false );
 
     InputSketch::Direction dir_;
-    if( csection->getDirection() == CrossSection::Direction::X )
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
         dir_ = InputSketch::Direction::Z;
-    else if( csection->getDirection() == CrossSection::Direction::Y )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         dir_ = InputSketch::Direction::Y;
-    else if( csection->getDirection() == CrossSection::Direction::Z )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         dir_ = InputSketch::Direction::X;
 
 
@@ -47,24 +101,66 @@ void SketchScene::edit( bool status_ )
     else
         setModeEditingScene();
 
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        ObjectItemWrapper* obj_ = ( it->second );
-        obj_->updateState();
-    }
 
 
     update();
 
-
-//    if( obj_ == nullptr ) return;
-
-//    if( obj_->type() == QGraphicsPixmapItem::Type )
-//        std::cout << "pixmap type: " << pixmap_->type() << std::endl << std::flush;
-//    else if( obj_->type() == QGraphicsPathItem::Type )
-//        std::cout << "path type: " << path_->type() << std::endl << std::flush;
+}
 
 
+void SketchScene::editItem()
+{
+
+
+    bool move_selected = move_marker->isUnderMouse();
+    bool resize_selected = resize_marker->isUnderMouse();
+
+    if( move_selected == true )
+    {
+        current_interaction = UserInteraction::MOVING_IMAGE;
+    }
+    else if( resize_selected == true )
+    {
+        current_interaction = UserInteraction::RESIZING_IMAGE;
+    }
+
+    update();
+}
+
+
+
+void SketchScene::removeItem()
+{
+    if(  current_interaction != UserInteraction::EDITING_SCENE ) return;
+
+
+    QList< QGraphicsItem* > items = selectedItems();
+    if( items.empty() == true ) return;
+
+    if( items.size() > 1 )
+        items.removeFirst();
+
+    QGraphicsItem* item_ = items[ 0 ];
+    if( item_->type() == QGraphicsPixmapItem::Type )
+    {
+        emit removeImageFromCrossSection( csection->getDepth() );
+    }
+    else if( item_->type() == QGraphicsPathItem::Type )
+    {
+        ObjectItemWrapper* obj_ = static_cast< ObjectItemWrapper* >( item_ );
+        emit removeCurveFromObject( csection->getDepth(), obj_->getIndex() );
+    }
+
+    update();
+
+}
+
+
+
+void SketchScene::setAxesVisible( bool status_ )
+{
+    axes.setVisible( status_ );
+    update();
 }
 
 
@@ -77,14 +173,12 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 
     Volume* vol_ = const_cast< Volume* >( raw_->getVolume() );
-    addVolume( vol_ );
 
 
-
-    if( raw_->getDirection() == CrossSection::Direction::Z )
+    if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         createCrossSectionScene( vol_ );
 
-    else if( raw_->getDirection() == CrossSection::Direction::Y )
+    else if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         createTopViewScene( vol_ );
 
 
@@ -94,6 +188,11 @@ void SketchScene::readCrossSection( CrossSection* const& raw_ )
 
 void SketchScene::createCrossSectionScene( Volume* const& vol_ )
 {
+    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Z );
+
+    axes.setPlane( CoordinateAxes2d::Plane::XY );
+    axes.setAxisXLenght( vol_->getWidth() );
+    axes.setAxisYLenght( vol_->getHeight() );
 
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
@@ -103,6 +202,17 @@ void SketchScene::createCrossSectionScene( Volume* const& vol_ )
 
 void SketchScene::createTopViewScene( Volume* const& vol_ )
 {
+    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Y );
+
+    axes.setPlane( CoordinateAxes2d::Plane::XZ );
+    axes.setAxisXLenght( vol_->getWidth() );
+    axes.setAxisYLenght( vol_->getHeight() );
+
+    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getHeight() );
+    main_csection->setCurrent( true );
+    addItem( main_csection );
+
+
     Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
     for( auto c: csections_ )
     {
@@ -119,40 +229,133 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
 
 
 
-void SketchScene::updateCrossSection()
+void SketchScene::setImageToCrossSection( const QString& file_ )
 {
 
-    std::cout << "Cross-section being updated: " << csection->getDepth() << std::endl << std::flush;
+    QPixmap image1;
+    image1.load( file_ );
 
-    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
+    float x_ = image1.width();
+    float y_ = image1.height();
 
-    std::cout << "Volume dimensions: ( " << vol_->getWidth() << ", " << vol_->getHeight() << ", "
-              << vol_->getLenght() << ") " << std::endl << std::flush;
+    setImageToCrossSection( file_, 0.0, 0.0, x_, y_ );
+
+    emit setImageCrossSection( csection->getDepth(), file_, 0.0, 0.0, x_, y_ );
+}
 
 
-    if( csection->getDirection() == CrossSection::Direction::Z )
-        updateCrossSectionScene( vol_ );
+void SketchScene::setImageToCrossSection( const QString& file_, double ox_, double oy_, double x_, double y_ )
+{
 
-    else if( csection->getDirection() == CrossSection::Direction::Y )
-        updateTopViewScene( vol_ );
+    QPixmap image1;
+    image1.load( file_ );
+
+    if( image1.isNull() == true ) return;
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image1 = image1.transformed( myTransform );
+
+    image->setImagePath( file_ );
+    image->setImage( image1, QPointF( ox_, oy_ ), QPointF( x_, y_ ) );
+    image->setVisible( true );
+    image->update();
+
+
+//    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, x_, y_ );
+
+    update();
+}
+
+
+
+void SketchScene::updateImageCrossSection()
+{
+    QString file_ = image->getImagePath();
+    QPointF origin_ = image->getOrigin();
+    QPointF topright_ = image->getTopRight();
+
+
+    move_marker->setPos( origin_.x(), origin_.y() );
+    move_marker->setVisible( true );
+    move_marker->update();
+
+    resize_marker->setPos( topright_.x(), topright_.y() );
+    resize_marker->setVisible( true );
+    resize_marker->update();
+
+
+    emit setImageCrossSection( csection->getDepth(), file_, origin_.x(), origin_.y(),
+                               topright_.x(), topright_.y() );
+
+}
+
+
+void SketchScene::updateCrossSection()
+{
+//    std::cout << "Entrei na updateCrossSection" << std::endl << std::flush;
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+        updateCrossSectionScene();
+
+    else if( csection->getDirection() ==Settings::CrossSection::CrossSectionDirections::Y )
+        updateTopViewScene();
 
 }
 
 
 
-void SketchScene::updateCrossSectionScene( Volume* const& vol_ )
+void SketchScene::updateCrossSectionScene()
 {
+
+    if( csection->hasImage() == true )
+    {
+        std::string path_;
+        double ox_;
+        double oy_;
+        double x_;
+        double y_;
+        csection->getImage( path_, ox_, oy_, x_, y_ );
+        setImageToCrossSection( QString( path_.c_str() ), ox_, oy_, x_, y_ );
+
+//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has image" << std::endl << std::flush;
+    }
+    else
+    {
+        image->setVisible( false );
+        move_marker->setVisible( false );
+        resize_marker->setVisible( false );
+        move_marker->update();
+        resize_marker->update();
+        image->update();
+
+//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has no image" << std::endl << std::flush;
+    }
+
+    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
     Volume::ObjectsContainer objs_ = vol_->getObjects();
 
     for( auto o: objs_ )
         updateObject( o.first );
+
+
+    update();
 }
 
 
-void SketchScene::updateTopViewScene( Volume* const& vol_ )
+void SketchScene::updateTopViewScene()
 {
 
+    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
     Volume::ObjectsContainer objs_ = vol_->getObjects();
+
+
+    if( main_csection != nullptr )
+    {
+        main_csection->setVisible( volume->isVisible() );
+        main_csection->update();
+    }
+
+
     for( auto o: objs_ )
         updateTrajectory( o.first );
 
@@ -160,11 +363,20 @@ void SketchScene::updateTopViewScene( Volume* const& vol_ )
 
 
 
+void SketchScene::moveCurrentCrossSection( double depth_ )
+{
 
-void SketchScene::addVolume( Volume* const &raw_ )
+    main_csection->setDepth( depth_ );
+    update();
+
+}
+
+
+
+void SketchScene::addVolume( Volume* const &raw_, Settings::CrossSection::CrossSectionDirections dir_ )
 {
     clearVolume();
-    volume = new VolumeItemWrapper( raw_, VolumeItemWrapper::Section::XY );
+    volume = new VolumeItemWrapper( raw_, dir_ );
 
     addItem( volume );
     setSceneRect( volume->boundingRect() );
@@ -174,7 +386,12 @@ void SketchScene::addVolume( Volume* const &raw_ )
 
 void SketchScene::updateVolume()
 {
+
     volume->updateItem();
+
+    axes.setAxisXLenght( volume->getWidth() );
+    axes.setAxisYLenght( volume->getHeight() );
+
     setSceneRect( volume->boundingRect() );
     update();
 }
@@ -199,7 +416,7 @@ void SketchScene::addObject( Object* const& raw_ )
 void SketchScene::addObject( Object* const& raw_, double depth_ )
 {
 
-    if( csection->getDirection() != CrossSection::Direction::Z ) return;
+    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
 
     std::size_t index_ = raw_->getIndex();
 
@@ -208,18 +425,24 @@ void SketchScene::addObject( Object* const& raw_, double depth_ )
 
     addItem( obj_ );
 
+    if( image != nullptr )
+        image->update();
+
 }
 
 
 void SketchScene::updateObject(  const std::size_t& index_ )
 {
-    if( csection->getDirection() != CrossSection::Direction::Z ) return;
+    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
 
     ObjectItemWrapper* obj_ = objects.getElement( index_ );
 
     obj_->updateDepth( csection->getDepth() );
     obj_->updateObject();
 
+    if( image != nullptr )
+        if( image->isVisible() == true )
+            image->show();
 
     update();
 }
@@ -286,6 +509,7 @@ void SketchScene::addCrossSection( CrossSection * const &raw_ )
 }
 
 
+
 void SketchScene::setCurrent( bool status_ )
 {
     is_current = status_;
@@ -296,6 +520,7 @@ bool SketchScene::isCurrent() const
 {
     return is_current;
 }
+
 
 
 void SketchScene::setCurrentColor( int r, int g, int b )
@@ -309,6 +534,7 @@ void SketchScene::setCurrentColor( int r, int g, int b )
 
 }
 
+
 void SketchScene::getCurrentColor( int& r, int& g, int& b )
 {
     if( user_input == nullptr ) return;
@@ -319,10 +545,21 @@ void SketchScene::getCurrentColor( int& r, int& g, int& b )
 
 
 
+
 void SketchScene::setModeSketching()
 {
     user_input->clear();
     current_interaction = UserInteraction::SKETCHING;
+    image->setFlag( QGraphicsItem::ItemIsSelectable, false );
+    resize_marker->setVisible( false );
+    move_marker->setVisible( false );
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, false );
+    }
+
 }
 
 
@@ -335,12 +572,39 @@ void SketchScene::setModeEditingBoundary()
 void SketchScene::setModeEditingScene()
 {
     current_interaction = UserInteraction::EDITING_SCENE;
+    image->setFlag( QGraphicsItem::ItemIsSelectable, true );
+
+    if( image->isVisible() == true )
+    {
+        move_marker->setPos( image->getOrigin() );
+        resize_marker->setPos( image->getTopRight() );
+        move_marker->setVisible( true );
+        resize_marker->setVisible( true );
+    }
+    move_marker->update();
+    resize_marker->update();
+    image->update();
+
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, obj_->isEditable() );
+    }
+
+
 }
 
 
 void SketchScene::setModeSelecting()
 {
     current_interaction = UserInteraction::SELECTING;
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        ObjectItemWrapper* obj_ = ( it->second );
+        obj_->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    }
 }
 
 
@@ -360,11 +624,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     else if( ( event->buttons() & Qt::RightButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-        if( csection->getDirection() == CrossSection::Direction::X )
+        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
             emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-        else if( csection->getDirection() == CrossSection::Direction::Y )
+        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
             emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-        else if( csection->getDirection() == CrossSection::Direction::Z )
+        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
             emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
     }
 
@@ -374,6 +638,15 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
         volume->startPoint( event->scenePos() );
     }
 
+    else if(( event->buttons() & Qt::LeftButton ) &&
+             ( current_interaction == UserInteraction::EDITING_SCENE ||
+               current_interaction == UserInteraction::MOVING_IMAGE  ||
+               current_interaction == UserInteraction::RESIZING_IMAGE ) )
+    {
+        editItem();
+    }
+
+
     QGraphicsScene::mousePressEvent( event );
     update();
 }
@@ -381,7 +654,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
-    if( event->modifiers() & Qt::ControlModifier /*( event->buttons() & Qt::LeftButton )*/ )
+    if( event->modifiers() & Qt::ControlModifier )
     {
         if( csection == nullptr ) return;
         if( views().empty() == true ) return;
@@ -394,6 +667,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
     }
 
 }
+
 
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
@@ -411,6 +685,22 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
         volume->resize( event->scenePos() );
     }
 
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
+    {
+        image->resizeRectangle( event->scenePos() );
+        updateImageCrossSection();
+    }
+
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
+   {
+        image->moveRectangle( event->scenePos() );
+        updateImageCrossSection();
+    }
+
+
+
     QGraphicsScene::mouseMoveEvent( event );
     update();
 
@@ -426,6 +716,7 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
     {
         user_input->process();
     }
+
     else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
     {
         emit acceptVolumeDimensions( csection->getDirection(), static_cast< double >( volume->boundingRect().width() ),
@@ -437,10 +728,68 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
         selectObjectAsBounderingRegion();
     }
 
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
+    {
+        image->resizeRectangle( event->scenePos() );
+        updateImageCrossSection();
+    }
+
+    else if( ( event->buttons() & Qt::LeftButton ) &&
+        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
+    {
+
+        image->moveRectangle( event->scenePos() );
+        updateImageCrossSection();
+    }
+
+    else if( ( current_interaction == UserInteraction::EDITING_SCENE ||
+               current_interaction == UserInteraction::MOVING_IMAGE  ||
+               current_interaction == UserInteraction::RESIZING_IMAGE ) )
+    {
+        current_interaction = UserInteraction::EDITING_SCENE;
+
+        resize_marker->setSelected( false );
+        move_marker->setSelected( false );
+        editItem();
+
+    }
+
+
+
 
     QGraphicsScene::mouseReleaseEvent( event );
     update();
 }
+
+
+
+void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
+{
+    if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
+    {
+            event->acceptProposedAction();
+    }
+
+}
+
+
+void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event )
+{
+    const QMimeData *mime_data = event->mimeData();
+    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
+    url_file = QDir::toNativeSeparators( url_file );
+
+    setImageToCrossSection( url_file );
+
+}
+
+
+void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
+{
+    event->accept();
+}
+
 
 
 void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
@@ -460,11 +809,27 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
     update();
 }
 
+
+void SketchScene::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+        case Qt::Key_Delete:
+            std::cout << "Remove item" << std::endl << std::flush;
+            removeItem();
+            break;
+        default:
+            break;
+    };
+}
+
+
+
 void SketchScene::clear()
 {
 
     for( auto &it: items() )
-        removeItem( it );
+        QGraphicsScene::removeItem( it );
 
 
     if( user_input != nullptr )
@@ -539,4 +904,8 @@ void SketchScene::initialize()
     csection = nullptr;
     volume = nullptr;
     is_current = false;
+    image = nullptr;
+
+
 }
+

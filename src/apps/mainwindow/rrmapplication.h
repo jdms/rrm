@@ -15,9 +15,10 @@
 
 #include "3dview/canvas3d.h"
 #include "sketching/sketchwindow.h"
-#include "widgets/realfeaturedslider.h"
-#include "widgets/objecttree.h"
-#include "widgets/pages_stack.h"
+#include "./core/definitions/constants.hpp"
+#include "./core/widgets/realfeaturedslider.h"
+#include "./core/widgets/objecttree.h"
+#include "./core/widgets/pages_stack.h"
 
 
 enum class AppsCommands{ NEW, SAVE, LOAD, UNDO, REDO };
@@ -73,20 +74,6 @@ class RRMApplication
 
     public:
 
-        enum class AxesDirection{ X, Y, Z };
-
-        enum class StratigraphicRules : int {
-            UNDEFINED = -1,
-            NO_GEOLOGIC_RULE,
-            REMOVE_ABOVE, // Remove above
-            REMOVE_ABOVE_INTERSECTION, // Remove above intersection
-            REMOVE_BELOW, // Remove below
-            REMOVE_BELOW_INTERSECTION, // Remove below intersection
-        };
-
-
-        enum class BounderingRegion { ABOVE, BELOW };
-
 
         RRMApplication() = default;
         RRMApplication( MainWindow* mw_ );
@@ -94,11 +81,19 @@ class RRMApplication
 
 
         void init();
+
+
+        void setSiderBarVisibility( bool status_ );
+        void setDefaultRule( Settings::Stratigraphy::StratigraphicRules rule_ );
+        void setDefaultSketchingRegion( Settings::Objects::BounderingRegion sketching_region_ );
+        void setDefaultSiderBarValues();
         void setRRMDefaultValuesOnInterface();
 
-        void changeVolumeDimension( const AxesDirection& dir_, double value_ );
-        void changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ );
 
+        void changeVolumeDimension( const Settings::CrossSection::CrossSectionDirections& dir_, double value_ );
+        void changeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double dim1_, double dim2_ );
+
+        void setVolumeOriginToController( double ox_, double oy_, double oz_ );
         void setVolumeDimensionsToController(  double width_, double height_, double length_ );
         void getVolumeDimensionsFromController() const;
 
@@ -126,7 +121,7 @@ class RRMApplication
 
 
 
-        void setStratigraphicRule( const StratigraphicRules& rules_ );
+        void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
         void setSketchAbove( bool status_ );
         void setSketchBelow( bool status_ );
         void setObjectAsBoundering( std::size_t index_ );
@@ -136,6 +131,7 @@ class RRMApplication
         void updateSketchingCanvas();
 
         void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
+        void removeCurveFromObject(  double depth_, std::size_t index_ );
         void acceptSketchingTrajectory( const PolyCurve& curve_ );
         void createObjectSurface();
 
@@ -157,6 +153,8 @@ class RRMApplication
         void setCurrentColor( int r_, int g_, int b_ );
         void defineRandomColor();
 
+
+        void clearInterface();
         void clear();
         void restart();
 
@@ -164,9 +162,22 @@ class RRMApplication
         void addCrossSectionCanvas( double depth_ );
         void removeCrossSectionCanvas( double depth_ );
 
+
+        void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromCrossSection( double depth_ );
+
+
+        void setImageToTopView( std::string file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromTopView();
+        void getHeightMapTopView();
+
+
+
+
+
+
+
     protected:
-
-
 
 
         std::unordered_map< AppsCommands, simple_method > runs;
@@ -184,11 +195,6 @@ class RRMApplication
         const double VOLUME_WIDTH = 500;
         const double VOLUME_HEIGHT = 500;
         const double VOLUME_LENGTH = 500;
-
-        const CrossSection::Direction DEFAULT_CROSSSECTION_DIRECTION = CrossSection::Direction::Z;
-        const double DEFAULT_CROSSSECTION_DEPTHX = 0;
-        const double DEFAULT_CROSSSECTION_DEPTHY = 0;
-        const double DEFAULT_CROSSSECTION_DEPTHZ = 0;
 
 
         std::size_t discretization = 1;

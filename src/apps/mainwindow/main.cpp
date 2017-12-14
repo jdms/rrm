@@ -32,7 +32,7 @@
 
 
 #include "mainwindow.h"
-#include "./core/base/models/object.h"
+#include "./core/models/object.h"
 
 
 int main( int argc, char *argv[] )
@@ -62,77 +62,6 @@ int main( int argc, char *argv[] )
     MainWindow w;
 //    w.show();
 
-
-//    std::unordered_map< AppsCommands, method_void > runs;
-//    runs[ AppsCommands::NEW ] = [](void)->void{};
-//    runs[ AppsCommands::SAVE ] = [](void)->void{};
-//    runs[ AppsCommands::LOAD ] = [](void)->void{};
-//    runs[ AppsCommands::UNDO ] = [](void)->void{};
-//    runs[ AppsCommands::REDO ] = [](void)->void{};
-
-
-
-//    using method1_sizet = FunctionType< std::size_t >::method_void;
-//    using method1_double = FunctionType< double >::method_void;
-//    std::unordered_map< CommonObjects, method1_sizet > adds, remove;
-//    std::unordered_map< CommonObjects, method1_double > adds_double, remove_double;
-
-
-
-//    adds[ CommonObjects::VOLUME ] = []( std::size_t )->void{};
-//    adds[ CommonObjects::STRATIGRAPHY ] = []( std::size_t )->void{};
-//    adds[ CommonObjects::REGION ] = []( std::size_t )->void{};
-//    adds_double[ CommonObjects::CROSS_SECTION ] = []( double )->void{};
-
-
-//    remove[ CommonObjects::VOLUME ] = []( std::size_t )->void{};
-//    remove[ CommonObjects::STRATIGRAPHY ] = []( std::size_t )->void{};
-//    remove[ CommonObjects::REGION ] = []( std::size_t )->void{};
-//    remove_double[ CommonObjects::CROSS_SECTION ] = []( double )->void{};
-
-
-//    using method_string = FunctionType1< std::size_t, std::string >::method_void;
-//    using method_bool = FunctionType1< std::size_t, bool >::method_void;
-//    using method_color = FunctionType1< std::size_t, Color >::method;
-
-//    std::unordered_map< CommonProperties, method_string > setters_string;
-//    std::unordered_map< CommonProperties, method_bool > setters_bool;
-//    std::unordered_map< CommonProperties, method_color > setters_color;
-
-
-
-//    setters_string[ CommonProperties::NAME ] = []( CommonObjects obj_, std::size_t, std::string )->void{};
-//    setters_color[ CommonProperties::COLOR ] = []( CommonObjects obj_, std::size_t, Color )->void{};
-//    setters_bool[ CommonProperties::VISIBLE ] = []( CommonObjects obj_, std::size_t, bool )->void{};
-//    setters_bool[ CommonProperties::SELECTABLE ] = []( CommonObjects obj_, std::size_t, bool )->void{};
-//    setters_bool[ CommonProperties::SELECTED] = []( CommonObjects obj_, std::size_t, bool )->void{};
-//    setters_bool[ CommonProperties::ACTIVE ] = []( CommonObjects obj_, std::size_t, bool )->void{};
-//    setters_bool[ CommonProperties::CURRENT ] = []( CommonObjects obj_, std::size_t, bool )->void{};
-//    setters_bool[ CommonProperties::INDEX ] = []( CommonObjects obj_, std::size_t, bool )->void{};
-
-
-
-//    using method_string1 = FunctionType< std::size_t, std::string >::method2;
-//    using method_bool1 = FunctionType< std::size_t, bool >::method2;
-//    using method_color1 = FunctionType< std::size_t, Color >::method2;
-
-//    std::unordered_map< CommonProperties, method_string1 > getters_string;
-//    std::unordered_map< CommonProperties, method_bool1 > getters_bool;
-//    std::unordered_map< CommonProperties, method_color1 > getters_color;
-
-//    getters_string[ CommonProperties::NAME ] = []( CommonObjects obj_, std::size_t )->std::string{ return std::string(); };
-//    getters_color[ CommonProperties::COLOR ] = []( CommonObjects obj_, std::size_t )->Color{ return Color(); };
-//    getters_bool[ CommonProperties::VISIBLE ] = []( CommonObjects obj_, std::size_t )->bool{ return true;};
-//    getters_bool[ CommonProperties::SELECTABLE ] = []( CommonObjects obj_, std::size_t )->bool{ return true;};
-//    getters_bool[ CommonProperties::SELECTED]  = []( CommonObjects obj_, std::size_t )->bool{ return true;};
-//    getters_bool[ CommonProperties::ACTIVE ] = []( CommonObjects obj_, std::size_t )->bool{ return true;};
-//    getters_bool[ CommonProperties::CURRENT ] = []( CommonObjects obj_, std::size_t )->bool{ return true; };
-//    getters_bool[ CommonProperties::INDEX ] = []( CommonObjects obj_, std::size_t )->bool{return true; };
-
-
-
-//    FunctionType<int>::settters Funcp = run_setters<int>;
-//    Funcp( "index", "stratigraphy", 2 );
 
 
     return app.exec();

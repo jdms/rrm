@@ -135,6 +135,62 @@ double InterpolatedGraph::getPathOrdinate( double abscissa )
     return path(abscissa, 0);
 }
 
+bool InterpolatedGraph::getBoundedHeight( const Point2 &p, double &height, double ubound, double lbound )
+{
+    if ( getRawHeight(p, height) == false )
+    {
+        return false;
+    }
+    
+    if ( height > ubound ) { 
+        height = ubound; 
+    }
+    else if ( height < lbound ) { 
+        height = lbound; 
+    }
+
+    double upper_bound, lower_bound;  
+
+    bool status = true; 
+    for ( auto &p_upper_bound_ : upper_bound_ )
+        if ( auto upper_surface = p_upper_bound_.lock() ) { 
+            if ( upper_surface->surfaceIsSet() ) {
+                 upper_surface->getBoundedHeight(p, upper_bound, ubound, lbound); 
+                if ( height >= upper_bound ) { 
+                    height = upper_bound; 
+                    status &= false; 
+                }
+            }
+        }
+
+    for ( auto &p_lower_bound_ : lower_bound_ )
+        if ( auto lower_surface = p_lower_bound_.lock() ) { 
+            if ( lower_surface->surfaceIsSet() ) { 
+                lower_surface->getBoundedHeight(p, lower_bound, ubound, lbound); 
+                if ( height <= lower_bound ) { 
+                    height = lower_bound; 
+                    status &= false; 
+                }
+            }
+        }
+
+    return status; 
+}
+
+bool InterpolatedGraph::getBoundedHeight( Point2 &&p, double &height, double ubound, double lbound ) 
+{
+    return getBoundedHeight(p, height, ubound, lbound); 
+}
+
+bool InterpolatedGraph::getBoundedHeight( Point3 &p, double ubound, double lbound ) 
+{
+    Point2 p2;
+    p2.x = p.x; 
+    p2.y = p.y;
+
+    return getBoundedHeight(p2, p.z, ubound, lbound); 
+}
+
 bool InterpolatedGraph::getHeight( const Point2 &p, double &height ) 
 {
     /* if ( surfaceIsSet() == false ) { */ 
@@ -160,7 +216,7 @@ bool InterpolatedGraph::getHeight( const Point2 &p, double &height )
         if ( auto upper_surface = p_upper_bound_.lock() ) { 
             if ( upper_surface->surfaceIsSet() ) {
                  upper_surface->getHeight(p, upper_bound); 
-                if ( height > upper_bound ) { 
+                if ( height >= upper_bound ) { 
                     height = upper_bound; 
                     status &= false; 
                 }
@@ -171,7 +227,7 @@ bool InterpolatedGraph::getHeight( const Point2 &p, double &height )
         if ( auto lower_surface = p_lower_bound_.lock() ) { 
             if ( lower_surface->surfaceIsSet() ) { 
                 lower_surface->getHeight(p, lower_bound); 
-                if ( height < lower_bound ) { 
+                if ( height <= lower_bound ) { 
                     height = lower_bound; 
                     status &= false; 
                 }
