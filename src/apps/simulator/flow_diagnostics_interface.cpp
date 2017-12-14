@@ -342,6 +342,9 @@ void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells
 
 }
 
+void FlowDiagnosticsInterface::setTetrahedralMeshRegions( const std::vector<int> &regions )
+{
+}
 
 void FlowDiagnosticsInterface::getCPGVolumeVertices(std::vector< float >& vertices)
 {
