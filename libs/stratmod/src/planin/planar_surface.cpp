@@ -701,22 +701,22 @@ bool PlanarSurface::checkIfDependsOn( unsigned long int surface_id ) {
 
 bool PlanarSurface::getHeight( const Point2 &p, double &height ) { 
     
-    bool status = f->getHeight(p, height); 
+    double lb = origin.z;  
+    double ub = origin.z + lenght.z;  
+    
+    bool status = f->getBoundedHeight(p, height, ub, lb); 
     if ( status == false ) { 
         return false; 
     }
 
-    double lb = origin.z;  
-    double ub = origin.z + lenght.z;  
-    
-    if ( height > ub ) { 
-        height = ub; 
-        status &= false; 
-    }
-    else if ( height < lb ) { 
-        height = lb; 
-        status &= false; 
-    }
+    /* if ( height > ub ) { */ 
+    /*     height = ub; */ 
+    /*     /1* status &= false; *1/ */ 
+    /* } */
+    /* else if ( height < lb ) { */ 
+    /*     height = lb; */ 
+    /*     /1* status &= false; *1/ */ 
+    /* } */
 
     return status; 
 }
@@ -734,11 +734,11 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
     
     if ( height > ub ) { 
         height = ub; 
-        status &= false; 
+        /* status &= false; */ 
     }
     else if ( height < lb ) { 
         height = lb; 
-        status &= false; 
+        /* status &= false; */ 
     }
 
     /* #pragma omp critical */
@@ -751,7 +751,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
             /* if ( upper_surface->getHeight(vertex_index, ub) ) */
             if ( upper_surface->surfaceIsSet() ) { 
                 upper_surface->getHeight(vertex_index, ub); 
-                if ( height > ub ) { 
+                if ( height >= ub ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed above! \n"; */ 
                     height = ub; 
@@ -766,7 +766,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
             /* if ( lower_surface->getHeight(vertex_index, lb) ) */  
             if ( lower_surface->surfaceIsSet() ) { 
                 lower_surface->getHeight(vertex_index, lb); 
-                if ( height < lb ) { 
+                if ( height <= lb ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed below! \n"; */ 
                     height = lb; 

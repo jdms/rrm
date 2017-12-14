@@ -22,6 +22,7 @@ class Canvas3d: public QOpenGLWidget
         Canvas3d();
 
         Scene3d* getScene() const;
+        std::string sendImage( double width_, double height_ );
 
 
 
@@ -63,6 +64,9 @@ class Canvas3d: public QOpenGLWidget
 
         Tucano::Trackball camera;
         const int WHEEL_STEP = 120;
+
+        int canvas_width;
+        int canvas_height;
 
 };
 

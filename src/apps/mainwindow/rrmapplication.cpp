@@ -25,21 +25,74 @@ void RRMApplication::init()
 
     setRRMDefaultValuesOnInterface();
 
-    mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
-    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
+    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
+    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
 
+}
+
+
+void RRMApplication::setSiderBarVisibility( bool status_ )
+{
+    mainwindow->dw_object_properties->setVisible( status_ );
+    mainwindow->dw_object_tree->setVisible( status_ );
+}
+
+
+void RRMApplication::setDefaultRule( Settings::Stratigraphy::StratigraphicRules rule_ )
+{
+    if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
+        mainwindow->ac_remove_above->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        mainwindow->ac_remove_above_int->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
+        mainwindow->ac_remove_below->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        mainwindow->ac_remove_below_int->setChecked( Variables::ON );
+}
+
+
+void RRMApplication::setDefaultSketchingRegion( Settings::Objects::BounderingRegion sketching_region_ )
+{
+    if( sketching_region_ == Settings::Objects::BounderingRegion::ABOVE )
+        mainwindow->ac_sketch_above->setChecked( Variables::ON );
+    else if( sketching_region_ == Settings::Objects::BounderingRegion::BELOW )
+        mainwindow->ac_sketch_below->setChecked( Variables::ON );
+    else
+    {
+        mainwindow->ac_sketch_above->setChecked( Variables::OFF );
+        mainwindow->ac_sketch_below->setChecked( Variables::OFF );
+    }
+
+}
+
+
+void RRMApplication::setDefaultSiderBarValues()
+{
+    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
 }
 
 
 void RRMApplication::setRRMDefaultValuesOnInterface()
 {
-    setVolumeDimensionsToController( VOLUME_WIDTH, VOLUME_HEIGHT, VOLUME_LENGTH );
 
+    setSiderBarVisibility( Settings::Application::DEFAULT_SIDEBAR_VISIBILITY );
+    setDefaultRule( Settings::Stratigraphy::DEFAULT_STRAT_RULES );
+    setDefaultSketchingRegion( Settings::Objects::BounderingRegion::NONE );
+    setDefaultSiderBarValues();
+
+    setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
+    setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
 
 }
 
 
+
+void RRMApplication::setVolumeOriginToController( double ox_, double oy_, double oz_ )
+{
+    mainwindow->controller->setVolumeOrigin( ox_, oy_, oz_ );
+    getVolumeDimensionsFromController();
+}
 
 
 void RRMApplication::setVolumeDimensionsToController( double width_, double height_, double length_ )
@@ -72,7 +125,7 @@ void RRMApplication::getVolumeDimensionsFromController() const
 }
 
 
-void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double value_ )
+void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossSectionDirections& dir_, double value_ )
 {
 
     double ox_ = 0, oy_ = 0, oz_ = 0;
@@ -82,17 +135,17 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
     mainwindow->controller->getVolumeDimensions( width_, height_, length_ );
 
 
-    if( dir_ == AxesDirection::X )
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         std::cout << "Inside RRMApplication::changeVolumeDimension, changing X: " << value_ << std::endl << std::flush;
 
         mainwindow->controller->setVolumeDimensions( value_, height_, length_ );
     }
-    else if( dir_ == AxesDirection::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         mainwindow->controller->setVolumeDimensions( width_, value_, length_ );
     }
-    else if( dir_ == AxesDirection::Z )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         std::cout << "Inside RRMApplication::changeVolumeDimension, changing Z: " << value_ << std::endl << std::flush;
         std::size_t disc_ = 1;
@@ -106,7 +159,7 @@ void RRMApplication::changeVolumeDimension( const AxesDirection& dir_, double va
 }
 
 
-void RRMApplication::changeVolumeDimensions( const CrossSection::Direction& dir_, double dim1_, double dim2_ )
+void RRMApplication::changeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double dim1_, double dim2_ )
 {
     double ox_ = 0, oy_ = 0, oz_ = 0;
     mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
@@ -115,15 +168,15 @@ void RRMApplication::changeVolumeDimensions( const CrossSection::Direction& dir_
     mainwindow->controller->getVolumeDimensions( width_, height_, length_ );
 
 
-    if( dir_ == CrossSection::Direction::X )
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         mainwindow->controller->setVolumeDimensions( width_, dim2_, dim1_ );
     }
-    else if( dir_ == CrossSection::Direction::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         mainwindow->controller->setVolumeDimensions( dim1_, height_, dim2_ );
     }
-    else if( dir_ == CrossSection::Direction::Z )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         mainwindow->controller->setVolumeDimensions( dim1_, dim2_, length_ );
     }
@@ -142,7 +195,7 @@ void RRMApplication::setVolumeVisible( std::size_t index_, bool status_ )
 {
     if( index_ == 0 )
         mainwindow->controller->setVolumeVisibility( status_ );
-
+     updateSketchingCanvas();
 }
 
 
@@ -151,6 +204,7 @@ void RRMApplication::setVolumeVisible( std::size_t index_, bool status_ )
 void RRMApplication::setCurrentCrossSection( double depth_ )
 {
     mainwindow->controller->setCurrentCrossSection( depth_ );
+    updateSketchingCanvas();
 }
 
 
@@ -189,13 +243,16 @@ void RRMApplication::getObjectInformation( QTreeWidgetItem* const& item_ ) const
 {
     ObjectTreeItem* obj_item_ = static_cast< ObjectTreeItem* >( item_ );
 
-    if( obj_item_->getType() == ObjectTreeItem::Type::VOLUME )
+    if( obj_item_->getType() == Settings::Objects::ObjectType::VOLUME )
         mainwindow->object_properties->setCurrentIndex( 0 );
-    else
+    else if( obj_item_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY )
+    {
         mainwindow->object_properties->setCurrentIndex( 1 );
+        std::string text_ = mainwindow->controller->getObjectInformation( obj_item_->getIndex() );
+        std::string name_ = mainwindow->controller->getObjectName( obj_item_->getIndex() );
+        mainwindow->object_properties->loadObjectInformation( name_, text_ );
+    }
 
-    std::string text_ = mainwindow->controller->getObjectInformation( obj_item_->getIndex() );
-    mainwindow->object_properties->loadObjectInformation( text_ );
 }
 
 
@@ -223,11 +280,11 @@ void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ 
 
 void RRMApplication::initSketchingApp()
 {
-    CrossSection* csection_ = mainwindow->controller->getMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION );
-    mainwindow->sketch_window->addMainCanvas( csection_ );
+    mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
+    mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
-    CrossSection* topview_ = mainwindow->controller->getTopViewCrossSection();
-    mainwindow->sketch_topview_window->addTopViewCanvas( topview_ );
+    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection()/*topview_*/ );
+    mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }
 
 
@@ -283,16 +340,18 @@ void RRMApplication::createObjectSurface()
 
 
 
-void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
+void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ )
 {
-    if( rules_ == StratigraphicRules::REMOVE_ABOVE )
+    if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
         mainwindow->controller->setRemoveAbove();
-    else if( rules_ == StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
         mainwindow->controller->setRemoveAboveIntersection();
-    else if( rules_ == StratigraphicRules::REMOVE_BELOW )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
         mainwindow->controller->setRemoveBelow();
-    else if( rules_ == StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         mainwindow->controller->setRemoveBelowIntersection();
+    else if( rules_ == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+        mainwindow->controller->setTruncate();
 }
 
 
@@ -301,68 +360,73 @@ void RRMApplication::setStratigraphicRule( const StratigraphicRules& rules_ )
 void RRMApplication::setSketchAbove( bool status_ )
 {
 
+    bool below_done = mainwindow->controller->isDefineBelowObjectSelected();
+    if( below_done == false )
+    {
+        mainwindow->ac_sketch_above->setChecked( !status_ );
+        return;
+    }
+
     bool enabled_ = mainwindow->controller->enableCreateAbove( status_ );
 
-    if( ( status_ == false ) && ( enabled_ == true ) )
-    {
-        std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
-        mainwindow->ac_sketch_above->setChecked( true );
-    }
-    if( ( status_ == true ) && ( enabled_ == false ) )
-    {
-        std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
-        mainwindow->ac_sketch_above->setChecked( false );
-    }
 
-    if( ( status_ == true ) && ( enabled_ == true ) )
+    if( status_ == false )
     {
-        std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
-        std::cout << "and mark them as selectable" << std::endl << std::flush;
+        if( enabled_ == false )
+        {
+            mainwindow->ac_sketch_above->setChecked( false );
+            setModeSketching();
+        }
 
-        setModeSelecting();
-//        emit updateObjects();
+        updateSketchingCanvas();
 
     }
-    if( ( status_ == false ) && ( enabled_ == false ) )
+
+    else if(  status_ == true )
     {
-        std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
-        std::cout << "and mark them as non-selectable" << std::endl << std::flush;
-        setModeSketching();
-//        emit updateObjects();
+        if( enabled_ == true )
+            setModeSelecting();
+        else
+            setModeSketching();
     }
+
 }
 
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
 
+    bool above_done = mainwindow->controller->isDefineAboveObjectSelected();
+    if( above_done == false )
+    {
+        mainwindow->ac_sketch_below->setChecked( !status_ );
+        return;
+    }
+
     bool enabled_ = mainwindow->controller->enableCreateBelow( status_ );
 
+    if( status_ == false )
+    {
 
-    if( ( status_ == false ) && ( enabled_ == true ) )
-    {
-        std::cout << "Stop failed, so keep turned it on" << std::endl << std::flush;
-        mainwindow->ac_sketch_below->setChecked( true );
-    }
-    if( ( status_ == true ) && ( enabled_ == false ) )
-    {
-        std::cout << "Request failed, so keep turned it off" << std::endl << std::flush;
-        mainwindow->ac_sketch_below->setChecked( false );
-    }
+        if( enabled_ == false )
+        {
+            mainwindow->ac_sketch_below->setChecked( false );
+            setModeSketching();
+        }
 
-    if( ( status_ == true ) && ( enabled_ == true ) )
-    {
-        std::cout << "Request accepted, get the selectable objects" << std::endl << std::flush;
-        std::cout << "and mark them as selectable" << std::endl << std::flush;
-        setModeSelecting();
+         updateSketchingCanvas();
 
     }
-    if( ( status_ == false ) && ( enabled_ == false ) )
+
+    else if(  status_ == true )
     {
-        std::cout << "Stop accepted, get the selectable objects" << std::endl << std::flush;
-        std::cout << "and mark them as non-selectable" << std::endl << std::flush;
-        setModeSketching();
+        if( enabled_ == true )
+            setModeSelecting();
+        else
+            setModeSketching();
     }
+
+
 }
 
 
@@ -404,6 +468,8 @@ void RRMApplication::load( const std::string& filename_ )
 {
     clear();
     mainwindow->controller->loadFile( filename_ );
+    checkUndoRedo();
+    checkSketchStatus();
     initSketchingApp();
 }
 
@@ -415,6 +481,7 @@ void RRMApplication::undo()
 {
     mainwindow->controller->undo();
     checkUndoRedo();
+    checkSketchStatus();
 }
 
 
@@ -422,6 +489,7 @@ void RRMApplication::redo()
 {
     mainwindow->controller->redo();
     checkUndoRedo();
+    checkSketchStatus();
 }
 
 
@@ -434,6 +502,7 @@ void RRMApplication::checkUndoRedo()
 
     mainwindow->ac_undo->setEnabled(  mainwindow->controller->canUndo() );
     mainwindow->ac_redo->setEnabled(  mainwindow->controller->canRedo() );
+
 
     updateSketchingCanvas();
 }
@@ -478,11 +547,17 @@ void RRMApplication::defineRandomColor()
 
 
 
-
+void RRMApplication::clearInterface()
+{
+    mainwindow->sl_depth_csection->clear();
+    mainwindow->object_properties->clear();
+}
 
 
 void RRMApplication::clear()
 {
+    clearInterface();
+
     mainwindow->sketch_window->clear();
     mainwindow->sketch_topview_window->clear();
     mainwindow->controller->clear();
@@ -490,8 +565,8 @@ void RRMApplication::clear()
 
     mainwindow->controller->init();
     setRRMDefaultValuesOnInterface();
-    mainwindow->controller->addMainCrossSection( DEFAULT_CROSSSECTION_DIRECTION, DEFAULT_CROSSSECTION_DEPTHZ );
-    mainwindow->controller->addTopViewCrossSection( DEFAULT_CROSSSECTION_DEPTHY );
+    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
+    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION );
 
 }
 
@@ -520,4 +595,45 @@ void RRMApplication::removeCrossSectionCanvas( double depth_ )
 
     status_ = mainwindow->controller->removeFixedCrossSection( depth_ );
 
+}
+
+
+void RRMApplication::setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double x_, double y_ )
+{
+    mainwindow->controller->setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ );
+}
+
+
+void RRMApplication::getHeightMapTopView()
+{
+    double w_, h_, l_;
+    mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
+
+    std::string image_ = mainwindow->canvas3d->sendImage( w_, l_ );
+    mainwindow->sketch_topview_window->setTopViewImage( image_ );
+}
+
+
+void RRMApplication::removeCurveFromObject(  double depth_, std::size_t index_ )
+{
+     mainwindow->controller->removeObjectCurve( index_, depth_ );
+     updateSketchingCanvas();
+}
+
+
+void RRMApplication::removeImageFromCrossSection( double depth_ )
+{
+    mainwindow->controller->clearImageCrossSection( depth_ );
+    updateSketchingCanvas();
+}
+
+
+void RRMApplication::setImageToTopView( std::string file_, double ox_, double oy_, double x_, double y_ )
+{
+    mainwindow->controller->setTopViewImage( file_, ox_, oy_, x_, y_ );
+}
+
+void RRMApplication::removeImageFromTopView()
+{
+    mainwindow->controller->removeTopViewImage();
 }

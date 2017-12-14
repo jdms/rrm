@@ -3,12 +3,14 @@
 
 
 #include <QMainWindow>
+#include <QDockWidget>
 
-#include "canvasstack.h"
+#include "./src/core/widgets/canvasstack.h"
 #include "sketchscene.h"
 
 //TODO: remove dependence from mainwindow
-#include "mainwindow/widgets/color_picker.h"
+#include "./core/definitions/constants.hpp"
+#include "./src/core/widgets/color_picker.h"
 
 
 class QGraphicsView;
@@ -59,22 +61,42 @@ class SketchWindow: public QMainWindow
 
         void addFixedCrossSectionCanvas( CrossSection* const& cs_ );
         bool removeFixedCrossSectionCanvas( double depth_ );
+        void setFixedCrossSectionsVisible( bool status_ );
 
 
         void setCurrentCrossSection( double depth_ );
+
+        void setTopViewImage( const std::string& image_ );
+        void setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
+
 
 
 
     signals:
 
 
-        void updateVolume( CrossSection::Direction dir_, double w_, double h_ );
+        void updateVolume( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ );
         void acceptCurve( const PolyCurve& curve_, double depth_ );
         void defineColorCurrent( const QColor& color_ );
         void setAsCurrent( double depth_ );
 
         void objectSelected( std::size_t index_ );
         void commitObject();
+        void removeCurveFromObject( double depth_, std::size_t index_ );
+
+        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromCrossSection( double depth_ );
+
+        void setImageToTopView( const QString& file_, double ox_, double oy_, double x_, double y_ );
+        void removeImageFromTopView();
+
+
+        void getHeightMap();
+
+
+
+
+
 
 
 
@@ -84,7 +106,7 @@ class SketchWindow: public QMainWindow
         void createToolBar();
 
 
-        void setupScene( SketchScene* const& scene_ );
+        void setupScene(SketchScene *scene_ );
 
 
 
@@ -95,6 +117,7 @@ class SketchWindow: public QMainWindow
 
         QHBoxLayout* hb_central_widget;
 
+        QDockWidget* dw_canvas_stack = nullptr;
         CanvasStack* cs = nullptr;
 
         QGraphicsView* main = nullptr;
@@ -106,7 +129,16 @@ class SketchWindow: public QMainWindow
         QAction* ac_discard;
         QAction* ac_commit;
         QAction* ac_create;
+        QAction* ac_edit_boundary;
         QAction* ac_edit_scene;
+        QAction* ac_axes;
+        QAction* ac_height_map;
+        QAction* ac_fixed_csections;
+
+        SketchScene* main_scene = nullptr;
+        SketchScene* tv_scene = nullptr;
+
+        std::map< double, SketchScene* > scenes;
 
 };
 

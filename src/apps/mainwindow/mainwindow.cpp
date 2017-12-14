@@ -103,9 +103,9 @@ void MainWindow::createToolbar()
     ac_sketch_below = new QAction( "SB", this );
     ac_sketch_below->setCheckable( true );
 
+    ac_truncate = new QAction( "Truncate", this );
+    ac_truncate->setCheckable( true );
 
-//    ac_truncate = new QAction( "Truncate", this );
-//    ac_truncate->setCheckable( true );
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
@@ -120,25 +120,32 @@ void MainWindow::createToolbar()
     ac_remove_below_int->setCheckable( true );
 
 
+
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->setExclusive( true );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_remove_above_int );
     ag_rules->addAction( ac_remove_below );
     ag_rules->addAction( ac_remove_below_int );
+    ag_rules->addAction( ac_truncate );
 
 
     ac_output_volume = new QAction( "Get Regions", this );
 
-    tb_mainwindow = addToolBar( "Test ");
+
+    tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
     tb_mainwindow->addAction( ac_load );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_undo );
     tb_mainwindow->addAction( ac_redo );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_sketch_above );
     tb_mainwindow->addAction( ac_sketch_below );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_output_volume );
 
 
@@ -183,23 +190,27 @@ void MainWindow::createMainWindowActions()
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double d_ ){ app->setCurrentCrossSection( d_ ); } );
 
 
-    connect( ac_sketch_above, &QAction::toggled, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
 
 
-    connect( ac_sketch_below, &QAction::toggled, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
 
 
     connect( ac_remove_above, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
 
     connect( ac_remove_above_int, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
 
     connect( ac_remove_below, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW ); } );
 
     connect( ac_remove_below_int, &QAction::triggered, [=]()
-                                                   { app->setStratigraphicRule( RRMApplication::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+
+
+    connect( ac_truncate, &QAction::triggered, [=]()
+                                                   { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::TRUNCATE ); } );
 
 
     connect( ac_clear, &QAction::triggered, [=](){ app->restart(); } );
@@ -261,14 +272,14 @@ void MainWindow::createSidebarActions()
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]( double w_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::X, w_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::X, w_ ); } );
 
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]( double h_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Y, h_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::Y, h_ ); } );
 
 
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]( double l_ )
-                                                                 { app->changeVolumeDimension( RRMApplication::AxesDirection::Z, l_ ); } );
+                                                                 { app->changeVolumeDimension( Settings::CrossSection::CrossSectionDirections::Z, l_ ); } );
 
 
     connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ ){ app->saveObjectInformation( text_.toStdString() ); } );
@@ -292,8 +303,14 @@ void MainWindow::createSketchingWindow()
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
-//    dw_topview_window->setVisible( false );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+
+
+    ac_topview = new QAction( "Top-View" );
+    ac_topview->setCheckable( true );
+    ac_topview->setChecked( true );
+
+    tb_mainwindow->addAction( ac_topview );
 
 
 }
@@ -302,8 +319,6 @@ void MainWindow::createSketchingWindow()
 
 void MainWindow::createSketchingActions()
 {
-
-    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=](){ app->updateSketchingCanvas(); } );
 
 
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v )
@@ -316,11 +331,14 @@ void MainWindow::createSketchingActions()
 
 
 
-    connect( sketch_window, &SketchWindow::updateVolume, [=]( CrossSection::Direction dir_, double w_, double h_ )
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
+
+    connect( sketch_window, &SketchWindow::updateVolume, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ )
                                                          { app->changeVolumeDimensions( dir_, w_, h_ ); } );
 
     connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_, double depth_ )
-                                                        { app->acceptSketchingCurve( curve_, depth_ ); } );
+                                                         { app->acceptSketchingCurve( curve_, depth_ ); } );
 
     connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
 
@@ -329,27 +347,53 @@ void MainWindow::createSketchingActions()
 
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ )
-                                                                { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+                                                          { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
+
+
+    connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double x_, double y_ )
+                                                           { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, x_, y_ ); } );
+
+    connect( sketch_window, &SketchWindow::removeCurveFromObject, [=](  double depth_, std::size_t index_ )
+                                                           { app->removeCurveFromObject( depth_, index_ ); } );
+
+    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=](  double depth_ )
+                                                           { app->removeImageFromCrossSection( depth_ ); } );
 
 
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
-                                                                 { app->updateSketchingCanvas(); } );
+                                                           { app->updateSketchingCanvas(); } );
 
     connect( object_properties, &PagesStack::heightVolumeChanged, [=]()
-                                                                 {  app->updateSketchingCanvas(); } );
+                                                           {  app->updateSketchingCanvas(); } );
 
     connect( object_properties, &PagesStack::depthVolumeChanged, [=]()
-                                                                 {  app->updateSketchingCanvas(); } );
+                                                            {  app->updateSketchingCanvas(); } );
 
 
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
+
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_topview_window, &SketchWindow::setCurrentCrossSection );
 
 
     connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
                                                         { app->acceptSketchingTrajectory( curve_ ); } );
 
     connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
+
+
+    connect( sketch_topview_window, &SketchWindow::getHeightMap, [=](){ app->getHeightMapTopView(); } );
+
+
+    connect( sketch_topview_window, &SketchWindow::setImageToTopView, [=]( const QString& file_, double ox_, double oy_, double x_, double y_ )
+                                                            { app->setImageToTopView( file_.toStdString(), ox_, oy_, x_, y_ ); } );
+
+    connect( sketch_topview_window, &SketchWindow::removeImageFromTopView, [=](){ app->removeImageFromTopView(); } );
+
 
 }
 
