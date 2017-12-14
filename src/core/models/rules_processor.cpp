@@ -363,5 +363,10 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
     return modeller_.getTetrahedralMesh(vertex_coordinates, element_list);
 }
 
+bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<double> &vertex_coordinates, const std::vector<std::size_t> &element_list, std::vector<int> &regions )
+{
+    return false;
+}
+
 //{} // namespace RRM
 
