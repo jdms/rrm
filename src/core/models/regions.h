@@ -71,4 +71,4 @@ class Regions
         Color color;
 };
 
-#endif // REGION_H
+#endif // REGIONS_H

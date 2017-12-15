@@ -38,12 +38,7 @@ namespace RRM
                                            std::map<int, std::pair<double, double> >& _permeability_gratdients
                                            );
 
-                        void setRegionData(const int _number_of_regions,
-                            const std::vector<double>& _positions,
-                            const std::vector<double>& _permeability_values,
-                            const std::vector<double>& _porosity_values,
-                            const std::vector<double >& _staturation_values
-                            );
+                        void setRegionData(const int _number_of_regions );
 
                         int getNumberOfRegion() const;
 

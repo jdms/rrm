@@ -57,8 +57,11 @@ ENDIF()
 ################################################
 
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator )
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
+##include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/apps/simulator)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
 
@@ -118,9 +121,6 @@ add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
 # Preliminary support for stratmod library
 ###############################################
 
-# include_directories(/usr/include/openmpi)
-# set(HypreLibs HYPRE HYPRE_sstruct_ls HYPRE_parcsr_ls HYPRE_IJ_mv mpi mpi++)
-
 include(ExternalProject)  ## needed
 
 set(BUILD_USING_OPENMP ON)
@@ -157,24 +157,7 @@ else()
     #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
 endif()
 
-#set(STRATMODLIB "${STRATMOD_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}stratmod${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
-#ExternalProject_Get_Property(StratModLibBuild binary_dir)
-#set(STRATMODLIB "${binary_dir}/Release/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-#message(WARNING ${STRATMODLIB})
-#message(FATAL_ERROR ${binary_dir})
-
-#set_target_properties(stratmod PROPERTIES IMPORTED_LOCATION ${STRATMODLIB})
-
-#if( BUILD_SHARED_STRATMODLIB )
-#    add_library(stratmod SHARED IMPORTED)
-
-#else()
-#    add_library(stratmod STATIC IMPORTED)
-
-#endif()
-
-#add_dependencies(stratmod StratModLibBuild)
 include_directories(${STRATMOD_SOURCE}/stratmod/include)
 
 #message(WARNING stratmod)
