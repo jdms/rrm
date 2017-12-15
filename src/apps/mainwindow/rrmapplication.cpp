@@ -644,6 +644,8 @@ void RRMApplication::startFlowDiagnostics()
     mainwindow->dw_sketchwindow->setVisible( false );
     mainwindow->dw_topview_window->setVisible( false );
     mainwindow->dw_flow_window->setVisible( true );
+
+    mainwindow->flow_window->loadSurfacesfromSketch1();
 }
 
 

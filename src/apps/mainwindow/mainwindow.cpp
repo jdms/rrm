@@ -408,7 +408,7 @@ void MainWindow::createFlowWindow()
     dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_flow_window->setWidget( flow_window );
     dw_flow_window->setVisible( false );
-    addDockWidget( Qt::BottomDockWidgetArea, flow_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
                                                                    std::vector<size_t> &nv, size_t num_extrusion_steps ){

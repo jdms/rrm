@@ -1,5 +1,5 @@
-#ifndef REGION_H
-#define REGION_H
+#ifndef REGIONS_H
+#define REGIONS_H
 
 #include <iostream>
 #include <string>
@@ -71,4 +71,4 @@ class Regions
         Color color;
 };
 
-#endif // REGION_H
+#endif // REGIONS_H
