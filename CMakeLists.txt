@@ -8,9 +8,7 @@ project( RRM )
 ###############################################
 
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-set( CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/ )
-
+#set( CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build )
 
 
 ###############################################
@@ -25,7 +23,11 @@ OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
 OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
 
+OPTION( BUILD_IN_PREFIXED_BINARY_DIR "To simplify cleaning in Windows" OFF)
 
+if(BUILD_IN_PREFIXED_BINARY_DIR)
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/ )
+endif()
 
 ###############################################
 # Compiler flags (we support Clang (3.7+),
@@ -57,13 +59,19 @@ ENDIF()
 ################################################
 
 
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-##include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/apps/simulator)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
+include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
+include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include)
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
 
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
+
+# The following code prints all directories currently included in the project
+# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# foreach(dir ${dirs})
+#  message(STATUS "dir='${dir}'")
+# endforeach()
 
 OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 

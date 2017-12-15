@@ -9,8 +9,16 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 
 
 include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
+# The following code lists all directories already included in the project
+# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# foreach(dir ${dirs})
+#   message(STATUS "dir='${dir}'")
+# endforeach()
 
 
 set( SIMULATOR_HEADERS
