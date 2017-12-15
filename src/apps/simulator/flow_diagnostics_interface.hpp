@@ -249,6 +249,8 @@ public:
     void getVolumeCells(std::vector< unsigned int >& cells);//, std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh);
 
 
+    /// \brief Set regions for tetrahedral mesh
+    void setTetrahedralMeshRegions( const std::vector<int> &regions );
 
     /// \brief Get vertices, edges and cells of the cornerpoint grid -- it is required by the gui.
     void getCPGVolumeVertices(std::vector< float >& vertices);
