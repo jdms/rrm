@@ -182,7 +182,7 @@ class Controller
         bool canRedo();
 
 
-        void getOutputVolume();
+        void getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_ );
 
 
         void clear();
@@ -205,110 +205,12 @@ class Controller
             rules_processor.getLenght( width, height, depth );
         }
 
-//        bool setMainCrossSection( const CrossSection::Direction& dir_, double depth_ );
-//        bool addCrossSection( const CrossSection::Direction& dir_, double depth_ );
-//        bool removeCrossSection( const CrossSection::Direction& dir_, double depth_ );
-//        CrossSection* getCrossSection( const double& depth_ );
-
-//        void setCurrentCrossSection( const double& depth_ );
-//        void updateCurrentCrossSection();
-//        double getCurrentCrossSection();
-
-//        void addTopViewCrossSection();
-//        CrossSection* getTopViewCrossSection();
-
-
-
-//
-//        bool addObject( std::size_t index_ );
-//        bool addObjectCurve( PolyCurve curve_ );
-//        bool removeObjectCurve( double csection_ );
-
-//        bool addObjectTrajectory( PolyCurve curve_ );
-//        void removeObjectTrajectory();
-
-
-//        Object* getCurrentObject();
-
-//        void saveObjectInformation( std::size_t index_, const std::string & text_ );
-//        const std::string& getObjectInformation( std::size_t index_ );
-//        void clearObjectInformation( std::size_t index_ );
-
-//        void setObjectColor( std::size_t index_, int r_, int g_, int b_);
-//        void getObjectColor( std::size_t index_, int& r_, int& g_, int& b_);
-
-//        void setObjectName( std::size_t index_, const std::string& name_ );
-//        std::string getObjectName( std::size_t index_ );
-
-//        void setObjectVisibility( std::size_t index_, bool status_ );
-//        bool getObjectVisibility( std::size_t index_ );
-
-
-//        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
-//        void setObjectAsSelected( std::size_t index_, bool status_ );
-
-
-//        std::size_t getIndexCurrentObject() const;
-
-//        bool createObjectSurface();
-//        bool createPreviewSurface();
-
-
-//        void getOutputVolume();
-
-
-//        void initRulesProcessor();
-//        void updateBoundingBoxRulesProcessor();
-
-//        void setRemoveAbove();
-//        void setRemoveAboveIntersection();
-//        void setRemoveBelow();
-//        void setRemoveBelowIntersection();
-//        void applyStratigraphicRule();
-
-
 
         std::size_t indexCrossSection( double value_ ) const;
         double depthCrossSection( std::size_t index_ ) const;
 
+        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
-//        void updateModel();
-//        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_id_ );
-//        void updateObjectSurfaces( std::size_t object_id_ );
-
-
-//        bool enableCreateAbove( bool status_ );
-//        void stopCreateAbove();
-//        bool requestCreateAbove();
-
-//        bool enableCreateBelow( bool status_ );
-//        void stopCreateBelow();
-//        bool requestCreateBelow();
-
-
-//        void getObjectsAsUpperBoundering( std::vector< std::size_t >& indexes_);
-//        void setObjectAsBoundering( std::size_t index_ );
-
-
-//        bool undo();
-//        bool canUndo();
-
-//        bool redo();
-//        bool canRedo();
-
-
-//        void saveFile( const std::string& filename );
-//        void loadFile( const std::string& filename );
-//        void loadObjects();
-//        std::vector< int > createVectorOfColors( std::size_t number_of_colors );
-
-
-//        bool isDefineAboveActive();
-//        bool isDefineBelowActive();
-
-
-//        void clear();
-//        void initializeData();
 
     protected:
 

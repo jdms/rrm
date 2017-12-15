@@ -645,7 +645,23 @@ void RRMApplication::startFlowDiagnostics()
     mainwindow->dw_topview_window->setVisible( false );
     mainwindow->dw_flow_window->setVisible( true );
 
+    std::map< std::size_t, Volume::Color > regions_map_ ;
+    mainwindow->controller->getOutputVolume( regions_map_ );
+
+    std::map< std::size_t, FlowVisualizationController::Color > regions_ ;
+    for( auto it: regions_map_ )
+    {
+        FlowVisualizationController::Color color_;
+        color_.r = it.second.r;
+        color_.g = it.second.g;
+        color_.b = it.second.b;
+
+        regions_[ it.first ] = color_;
+    }
+
+
     mainwindow->flow_window->loadSurfacesfromSketch1();
+    mainwindow->flow_window->setRegions( regions_ );
 }
 
 
@@ -701,4 +717,11 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
         front_curves.push_back( cm_fb );
         back_curves.push_back( cm_bb );
     }
+}
+
+
+void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+{
+    std::vector< int > regions_ = mainwindow->controller->getTetrahedronsRegions(vertices, edges, faces );
+    mainwindow->flow_window->setTetrahedronRegions( regions_ );
 }
