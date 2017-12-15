@@ -51,6 +51,15 @@ class FlowVisualizationController: public QWidget
 
     public:
 
+
+        struct Color
+        {
+            int r = 255;
+            int g = 0;
+            int b = 0;
+        };
+
+
         enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
         enum class SaturationMethod{ PERREGION, APIGRAVITY };
 
@@ -129,6 +138,8 @@ class FlowVisualizationController: public QWidget
 
         void setSinglePhase(  );
 		void setMultiPhase( SaturationMethod _method);
+
+        void updateTetrahedonRegions( const std::vector< int >& regions_ );
 
     public slots:
 

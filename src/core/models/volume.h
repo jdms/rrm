@@ -22,9 +22,9 @@ class Volume
 
         struct Color
         {
-          int r = 255;
-          int g = 0;
-          int b = 0;
+            int r = 255;
+            int g = 0;
+            int b = 0;
         };
 
         using ObjectsContainer = Container< std::size_t, Object* >;

@@ -179,6 +179,7 @@ class RRMApplication
                                 std::vector< FlowWindow::CurveMesh >& back_curves );
 
 
+        void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
 
 
