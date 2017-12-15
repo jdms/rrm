@@ -1,5 +1,5 @@
-#ifndef REGION_H
-#define REGION_H
+#ifndef REGIONS_H
+#define REGIONS_H
 
 #include <iostream>
 #include <string>

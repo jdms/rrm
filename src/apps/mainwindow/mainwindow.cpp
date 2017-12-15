@@ -230,7 +230,7 @@ void MainWindow::createMainWindowActions()
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
 
-    connect( ac_output_volume, &QAction::triggered, [=](){ controller->getOutputVolume(); app->startFlowDiagnostics(); } );
+    connect( ac_output_volume, &QAction::triggered, [=](){ app->startFlowDiagnostics(); } );
 
 }
 
@@ -408,7 +408,7 @@ void MainWindow::createFlowWindow()
     dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_flow_window->setWidget( flow_window );
     dw_flow_window->setVisible( false );
-    addDockWidget( Qt::BottomDockWidgetArea, flow_window );
+    addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
 
     connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
                                                                    std::vector<size_t> &nv, size_t num_extrusion_steps ){
@@ -420,6 +420,11 @@ void MainWindow::createFlowWindow()
                                                 std::vector< FlowWindow::CurveMesh > & front_curves,
                                                 std::vector< FlowWindow::CurveMesh >& back_curves ) {
                                                 app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
+
+    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces ){
+                                                app->getTetrahedronsRegions( vertices, edges, faces ); } );
+
+
 }
 
 

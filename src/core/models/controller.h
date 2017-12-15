@@ -11,7 +11,7 @@
 #include "./core/widgets/objecttree.h"
 #include "./apps/3dview/scene3d.h"
 #include "crosssection.h"
-#include "region.h"
+#include "regions.h"
 #include "rules_processor.hpp"
 
 
