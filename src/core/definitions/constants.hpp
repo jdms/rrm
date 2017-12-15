@@ -207,7 +207,7 @@ namespace Settings {
 
 
 
-    class Region
+    class Regions
     {
         public:
 
