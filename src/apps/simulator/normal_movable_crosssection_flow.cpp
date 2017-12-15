@@ -20,7 +20,6 @@
  */
 
 #include "normal_movable_crosssection_flow.h"
-#include "ui_normal_movable_crosssection_flow.h"
 
 NormalMovableCrossSectionFlow::NormalMovableCrossSectionFlow(QWidget *parent) :
     QWidget(parent)

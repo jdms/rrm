@@ -1049,3 +1049,9 @@ void FlowVisualizationController::setSinglePhase( )
 {
         code_interface.setNumberOfPhases( 1 );
 }
+
+
+void FlowVisualizationController::updateTetrahedonRegions( const std::vector< int >& regions_ )
+{
+    code_interface.setTetrahedralMeshRegions( regions_ );
+}
