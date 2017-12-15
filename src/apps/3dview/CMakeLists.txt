@@ -28,13 +28,23 @@ set( 3DVIEW_SOURCES      canvas3d.cpp
                          models/regionshader.cpp )
 
 
-QT5_WRAP_CPP( 3DVIEW_MOC_SOURCES ${3DVIEW_MOC_HEADERS} )
+#QT5_WRAP_CPP( 3DVIEW_MOC_SOURCES ${3DVIEW_MOC_HEADERS} )
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
 
-add_library( ${PROJECT_NAME} STATIC ${3DVIEW_HEADERS} ${3DVIEW_MOC_SOURCES} ${3DVIEW_SOURCES} )
+
+include_directories (${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_BINARY_DIR})
+
+
+add_library( ${PROJECT_NAME} STATIC ${3DVIEW_HEADERS} ${3DVIEW_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+
+#add_library( ${PROJECT_NAME} STATIC ${3DVIEW_HEADERS} ${3DVIEW_MOC_SOURCES} ${3DVIEW_SOURCES} )
+#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
 

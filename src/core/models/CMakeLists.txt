@@ -7,8 +7,10 @@ project( RRMModel )
 # Options
 #####################################################################
 
-set(CMAKE_AUTOMOC ON)
 
+include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+
+ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 
 
 ###############################################
@@ -41,7 +43,5 @@ set( MODELS_SOURCES     controller.cpp
                         mesh_generator.cpp
                         openvolumemesh_defines.cpp)
 
-
-
 add_library( ${PROJECT_NAME} STATIC ${MODELS_HEADERS} ${MODELS_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${OPENVOLUMEMESH_LIBRARY} )

@@ -40,9 +40,17 @@ set( WIDGETS_SOURCES realfeaturedslider.cpp
                      canvasstack.cpp
                      slider.cpp )
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-QT5_WRAP_CPP( WIDGETS_MOC_SOURCES ${WIDGETS_MOC_HEADERS} )
-QT5_WRAP_UI( WIDGETS_MOC_UI ${WIDGETS_UI_SOURCES} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
-add_library( ${PROJECT_NAME} STATIC ${WIDGETS_HEADERS} ${WIDGETS_MOC_SOURCES} ${WIDGETS_MOC_UI} ${WIDGETS_SOURCES} )
+#QT5_WRAP_CPP( WIDGETS_MOC_SOURCES ${WIDGETS_MOC_HEADERS} )
+#QT5_WRAP_UI( WIDGETS_MOC_UI ${WIDGETS_UI_SOURCES} )
+
+add_library( ${PROJECT_NAME} STATIC ${WIDGETS_HEADERS} ${WIDGETS_UI_SOURCES} ${WIDGETS_SOURCES} )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+
+#add_library( ${PROJECT_NAME} STATIC ${WIDGETS_HEADERS} ${WIDGETS_MOC_SOURCES} ${WIDGETS_MOC_UI} ${WIDGETS_SOURCES} )
 #target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )

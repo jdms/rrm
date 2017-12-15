@@ -87,7 +87,7 @@ namespace Settings {
 
 
 
-    const std::string Region::DEFAULT_REGION_NAME = "Region ";
+    const std::string Regions::DEFAULT_REGION_NAME = "Region ";
 
 
 

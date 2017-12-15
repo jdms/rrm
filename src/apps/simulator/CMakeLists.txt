@@ -8,6 +8,10 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR} )
 
 
+include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+
+
 
 set( SIMULATOR_HEADERS
                  colormap.h
@@ -140,17 +144,26 @@ set( SIMULATOR_SOURCES
                well_module/well_widget.cpp
                region_module/region_widget.cpp
                fluid_module/fluid_widget.cpp
-               widgets/spanslider/qxtspanslider.cpp )
+                widgets/spanslider/qxtspanslider.cpp )
 
 
-QT5_WRAP_CPP( SIMULATOR_MOC_SOURCES ${SIMULATOR_MOC_HEADERS} )
-QT5_WRAP_UI( SIMULATOR_MOC_UI ${SIMULATOR_UI_SOURCES} )
+#QT5_WRAP_CPP( SIMULATOR_MOC_SOURCES ${SIMULATOR_MOC_HEADERS} )
+#QT5_WRAP_UI( SIMULATOR_MOC_UI ${SIMULATOR_UI_SOURCES} )
 
-
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
 
-add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_SOURCES} ${SIMULATOR_MOC_UI} ${SIMULATOR_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+include_directories (${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_BINARY_DIR})
+
+
+add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets RRMModel ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader  )
+
+#add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_SOURCES} ${SIMULATOR_MOC_UI} ${SIMULATOR_SOURCES} )
+#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets RRMModel ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader  )
