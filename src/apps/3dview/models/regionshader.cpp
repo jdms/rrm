@@ -211,6 +211,8 @@ void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
         shader->setUniform( "ProjectionMatrix" , P );
         shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
 
+        glEnable( GL_DEPTH_TEST );
+
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
         glEnable( GL_POLYGON_OFFSET_FILL );
@@ -232,8 +234,9 @@ void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
         glDisable(GL_POLYGON_OFFSET_FILL);
 
 
-        glEnable( GL_DEPTH_TEST );
-        glDepthFunc( GL_LEQUAL );
+        glDisable( GL_DEPTH_TEST );
+
+//        glDepthFunc( GL_LEQUAL );
 //        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
@@ -245,8 +248,8 @@ void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 
 //            glBindVertexArray ( 0 );
 
-        glDisable( GL_BLEND );
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+//        glDisable( GL_BLEND );
+//        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     shader->unbind();
 

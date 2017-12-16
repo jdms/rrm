@@ -45,6 +45,7 @@ void ObjectItemWrapper::updateState()
     bool selectable_ = raw->isSelectable();
     bool selected_ = raw->isSelected();
     bool editable_ = raw->isEditable();
+    int width_ = 3;
 
     int r, g, b;
     raw->getColor( r, g, b );
@@ -64,12 +65,14 @@ void ObjectItemWrapper::updateState()
     if( selected_ == true )
     {
         color_ = color_.lighter();
-        style_ = Qt::DotLine;
+        style_ = Qt::DashLine;
+        width_ = 5;
     }
 
 
     current_pen.setColor( color_ );
     current_pen.setStyle( style_ );
+    current_pen.setWidth( width_ );
 
 //    setFlag( QGraphicsItem::ItemIsSelectable, ( selectable_ || editable_ ) );
 
@@ -143,7 +146,7 @@ void ObjectItemWrapper::setupPen()
     current_pen.setStyle( Qt::SolidLine );
     current_pen.setCapStyle( Qt::RoundCap );
     current_pen.setJoinStyle( Qt::RoundJoin );
-    current_pen.setWidth( 3 );
+//    current_pen.setWidth( 3 );
 
 }
 

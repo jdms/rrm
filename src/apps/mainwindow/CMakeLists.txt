@@ -36,16 +36,15 @@ add_subdirectory( ../simulator ${CMAKE_BINARY_DIR}/simulator )
 include_directories( ${SIMULATOR_HEADERS} )
 
 
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
 
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
-#QT5_WRAP_CPP( MAINWINDOW_MOC_SOURCES ${MAINWINDOW_MOC_HEADERS} )
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#SET(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 ###############################################
 # ADD TO LIBRARY AND LINK
@@ -59,10 +58,3 @@ add_library( ${PROJECT_NAME} STATIC ${MAINWINDOW_HEADERS} ${MAINWINDOW_MOC_SOURC
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
                                        ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} RRMBase RRMModel RRMWidgets 3dViewApp
                                        Sketching FlowDiagnosticsApp ${STRATMODLIB}  ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader )
-
-
-#add_library( ${PROJECT_NAME} STATIC ${MAINWINDOW_HEADERS} ${MAINWINDOW_MOC_SOURCES} ${MAINWINDOW_SOURCES} )
-#target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-#                                       ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} RRMBase RRMModel RRMWidgets 3dViewApp
-#                                       Sketching 3dViewApp ${STRATMODLIB}  ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader )
-

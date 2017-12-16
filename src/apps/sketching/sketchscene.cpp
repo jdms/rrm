@@ -261,9 +261,6 @@ void SketchScene::setImageToCrossSection( const QString& file_, double ox_, doub
     image->setVisible( true );
     image->update();
 
-
-//    emit setImageCrossSection( csection->getDepth(), file_, ox_, oy_, x_, y_ );
-
     update();
 }
 
@@ -275,12 +272,21 @@ void SketchScene::updateImageCrossSection()
     QPointF origin_ = image->getOrigin();
     QPointF topright_ = image->getTopRight();
 
+    QPointF p_move;
+    p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
+    p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
 
-    move_marker->setPos( origin_.x(), origin_.y() );
+//    move_marker->setPos( origin_.x(), origin_.y() );
+    move_marker->setPos( p_move );
     move_marker->setVisible( true );
     move_marker->update();
 
-    resize_marker->setPos( topright_.x(), topright_.y() );
+    QPointF p_resize;
+    p_resize.setX( topright_.x() - resize_marker->boundingRect().width()*0.5f );
+    p_resize.setY( topright_.y() - resize_marker->boundingRect().height()*0.5f );
+
+    resize_marker->setPos( p_resize );
+//    resize_marker->setPos( topright_.x(), topright_.y() );
     resize_marker->setVisible( true );
     resize_marker->update();
 
@@ -293,7 +299,6 @@ void SketchScene::updateImageCrossSection()
 
 void SketchScene::updateCrossSection()
 {
-//    std::cout << "Entrei na updateCrossSection" << std::endl << std::flush;
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
         updateCrossSectionScene();
 
@@ -576,8 +581,21 @@ void SketchScene::setModeEditingScene()
 
     if( image->isVisible() == true )
     {
-        move_marker->setPos( image->getOrigin() );
-        resize_marker->setPos( image->getTopRight() );
+
+        QPointF origin_ = image->getOrigin();
+        QPointF topright_ = image->getTopRight();
+
+        QPointF p_move;
+        p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
+        p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
+
+        QPointF p_resize;
+        p_resize.setX( topright_.x() - resize_marker->boundingRect().width()*0.5f );
+        p_resize.setY( topright_.y() - resize_marker->boundingRect().height()*0.5f );
+
+
+        move_marker->setPos( p_move );
+        resize_marker->setPos( p_resize );
         move_marker->setVisible( true );
         resize_marker->setVisible( true );
     }
