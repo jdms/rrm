@@ -28,20 +28,13 @@ add_subdirectory( mainwindow )
 ###############################################
 # Wrapping Qt Elements
 ###############################################
-#find_package(Qt5Widgets REQUIRED)
-#QT5_WRAP_CPP( SIMULATOR_MOC_SOURCES ${SIMULATOR_MOC_HEADERS} )
-#QT5_WRAP_UI( SIMULATOR_MOC_UI ${SIMULATOR_UI_SOURCES} )
 
-
-### Resources
 set( RCC_SOURCES resources/images.qrc )
-#QT5_ADD_RESOURCES( RCC_HEADERS ${RCC_SOURCES} )
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#SET(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 
 ###############################################
@@ -56,9 +49,6 @@ add_executable(${PROJECT_NAME} WIN32 ${RCC_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
     ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} )
 
-#add_executable(${PROJECT_NAME} WIN32 ${RCC_HEADERS} resources/rrm.rc ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_SOURCES} ${SIMULATOR_MOC_UI} ${SIMULATOR_SOURCES} )
-#target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-#    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp RRMModel ${STRATMODLIB}  ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader )
 
 ######################################################
 # POST BUILD COMMANDS: COPYING FILES TO EXEC DIRECTORY
