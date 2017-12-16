@@ -690,10 +690,12 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
     size_t num_elements;
 
     status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+
     if ( status == false )
     {
         return 0;
     }
+
 
     num_elements = mb.getTetrahedronList(element_list);
 

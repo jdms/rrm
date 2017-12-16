@@ -191,7 +191,11 @@ class Tetrahedron
             Point3 c{};
             const double numv = static_cast<double>(num_vertices_);
 
-            if ( isValid() )
+            /* std::cout << "Vertex0: x = " << vertices_[0].x << ", " << " y = " << vertices_[0].y << ", z = " << vertices_[0].z << "\n"; */
+            /* std::cout << "Vertex1: x = " << vertices_[1].x << ", " << " y = " << vertices_[1].y << ", z = " << vertices_[1].z << "\n"; */
+            /* std::cout << "Vertex2: x = " << vertices_[2].x << ", " << " y = " << vertices_[2].y << ", z = " << vertices_[2].z << "\n"; */
+            /* std::cout << "Vertex3: x = " << vertices_[3].x << ", " << " y = " << vertices_[3].y << ", z = " << vertices_[3].z << "\n"; */
+            if ( verticesAreSet() )
             {
                 for ( size_t i = 0; i < num_vertices_; ++i )
                 {
@@ -201,6 +205,8 @@ class Tetrahedron
                 }
 
             }
+
+            /* std::cout << "Centroid: x = " << c.x << ", " << " y = " << c.y << ", z = " << c.z << "\n"; */
 
             return c;
         }

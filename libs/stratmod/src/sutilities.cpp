@@ -582,6 +582,64 @@ bool SUtilities::exportToVTK( std::string filename )
     return mb.exportToVTK(filename);
 }
 
+bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions)
+{
+
+    if ( vcoords.size() % 3 != 0 )
+    {
+        std::cout << "Wrong vcoords size\n";
+        return false;
+    }
+
+    if ( elements.size() % 4 != 0 )
+    {
+        std::cout << "Wrong elements size\n";
+        return false;
+    }
+
+    size_t num_elements = elements.size()/4;
+
+    Point3 v0, v1, v2, v3;
+    size_t index0, index1, index2, index3;
+
+    std::vector<Point3> centroids(num_elements);
+
+    for ( size_t i = 0; i < num_elements; ++i )
+    {
+        try
+        {
+            index0 = elements.at(4*i + 0);
+            index1 = elements.at(4*i + 1);
+            index2 = elements.at(4*i + 2);
+            index3 = elements.at(4*i + 3);
+
+            v0 = model_.pimpl_->point3( vcoords.at(3*index0 + 0), vcoords.at(3*index0 + 1), vcoords.at(3*index0 + 2) );
+            v1 = model_.pimpl_->point3( vcoords.at(3*index1 + 0), vcoords.at(3*index1 + 1), vcoords.at(3*index1 + 2) );
+            v2 = model_.pimpl_->point3( vcoords.at(3*index2 + 0), vcoords.at(3*index2 + 1), vcoords.at(3*index2 + 2) );
+            v3 = model_.pimpl_->point3( vcoords.at(3*index3 + 0), vcoords.at(3*index3 + 1), vcoords.at(3*index3 + 2) );
+        }
+        catch( const std::exception &e )
+        {
+            std::cerr << "Failed to getTetrahedralMeshRegions() at index " << i << "; caught exception:\n";
+            std::cerr << e.what();
+        }
+        catch(...)
+        {
+            std::cerr << "Failed to getTetrahedralMeshRegions() at index " << i << "; unknown exception was caught.\n";
+            throw;
+        }
+
+        Tetrahedron<> t(v0, index0, v1, index1, v2, index2, v3, index3);
+        centroids[i] = t.getCentroid();
+        /* std::cout << "Centroid " << i << ": x = " << centroids[i].x << ", y = " << centroids[i].y << ", z = " << centroids[i].z << "\n"; */
+    }
+    /* std::cout << "Number of centroids: " << centroids.size() << "\n"; */
+
+    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+
+    return mb.mapPointsToAttributes(centroids, regions);
+}
+
 std::vector<size_t> SUtilities::getSurfacesIndicesBelowPoint(double x, double y, double z)
 {
     return model_.pimpl_->getSurfacesIndicesBelowPoint(x, y, z);
