@@ -754,25 +754,45 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
     std::vector<Prism> prism_list;
     bool status = buildPrismMesh(prism_list);
 
+    if ( status == false )
+    {
+        return false;
+    }
+
     auto attributes_map = computeAttributeMap(prism_list);
 
-    auto getAttribute = []( std::vector<size_t> &&a )-> std::vector<bool> {
+    size_t size_att = TetrahedralMeshBuilder::numSurfaces;
+
+    auto getAttribute = [size_att]( std::vector<size_t> &&a )-> std::vector<bool> {
         std::vector<bool> attrib;
+
+        attrib.resize( size_att, false );
+
+        /* std::cout << "Current attrb: "; */
+        /* for ( auto i : a ) */
+        /*     std::cout << i << ", "; */
+        /* std::cout << "\n"; */
 
         if ( a.empty() )
         {
             return attrib;
         }
 
-        attrib.resize( a.size(), false );
-
         for ( size_t i = 0; i < a.size(); ++i )
         {
-            attrib[i] = true;
+            attrib[ a[i] ] = true;
         }
+
+        /* std::cout << "Current bool attrb: "; */
+        /* for ( auto i : attrib ) */
+        /*     std::cout << i << ", "; */
+        /* std::cout << "\n"; */
 
         return attrib;
     };
+
+
+    attrib_list.resize( points.size() );
 
     std::vector<bool> attrib;
     int num_attrib;
@@ -792,6 +812,7 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
         }
 
         attrib_list[i] = num_attrib;
+        /* std::cout << "Num_attrib: " << num_attrib << "\n"; */
     }
 
     return true;

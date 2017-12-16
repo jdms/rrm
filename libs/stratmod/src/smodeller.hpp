@@ -221,9 +221,9 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         bool loadBinary( std::string filename );
 
+        bool changeDiscretization( size_t width_discretization = 64, size_t depth_discretization = 64 );
 
     protected:
-        bool changeDiscretization( size_t width_discretization = 64, size_t depth_discretization = 64 );
 
     private:
         std::unique_ptr<SModellerImplementation> pimpl_;

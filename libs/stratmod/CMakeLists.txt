@@ -327,5 +327,8 @@ set(SOURCES src/test_mesh.cpp)
 add_executable(test_mesh ${SOURCES} ${HEADERS})
 target_link_libraries(test_mesh stratmod)
 
+set(SOURCES src/test_regions.cpp)
+add_executable(test_regions ${SOURCES} ${HEADERS})
+target_link_libraries(test_regions stratmod)
 
 

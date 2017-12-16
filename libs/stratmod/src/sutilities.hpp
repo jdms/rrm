@@ -59,6 +59,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool exportToTetgen( std::string filename );
         bool exportToVTK( std::string filename );
 
+        bool getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions);
+
         std::vector<size_t> getSurfacesIndicesBelowPoint(double x, double y, double z);
         std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);
 
