@@ -56,11 +56,11 @@ ENDIF()
 ## External libraries
 ################################################
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
 
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-##include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/apps/simulator)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )

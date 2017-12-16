@@ -6,7 +6,10 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QFileDialog>
-
+#include <QOffscreenSurface>
+#include <QScreen>
+#include <QPixmap>
+#include <QOpenGLContext>
 
 Canvas3d::Canvas3d()
 {
@@ -74,62 +77,41 @@ Scene3d* Canvas3d::getScene() const
 
 std::string Canvas3d::sendImage( double width_, double height_  )
 {
+    makeCurrent();
 
-    int V = static_cast< int >( width()/height() );
-
-    int delta_w = width() - static_cast<int>( width_ );
-    int delta_h = height() - static_cast<int>( height_ );
-
-    int x_ = static_cast<int>( delta_w*0.5f );
-    int y_ = static_cast<int>( delta_h*0.5f );
-
-    if( V >= 1 )
-        camera.setOrthographicMatrix( -V * 0.5, V * 0.5, -0.5, 0.5, 0.1f, 100.f );
-    else
-        camera.setOrthographicMatrix( -0.5, -0.5, -V*0.5, V*0.5, -0.1f, 100.f );
-
-    canvas_width = width_;
-    canvas_height = height_;
-
-    update();
+    QOffscreenSurface* surface_ = new QOffscreenSurface();
+    surface_->setFormat( context()->surface()->format() );
+    QPixmap image_ = surface_->screen()->grabWindow( winId(), 0, 0, width_, height_);
 
 
-    QImage image = grabFramebuffer();
-    std::string path_ = "./tmp/mapview.png";
 
-    QImage image1 = image.copy(  x_, y_, width_, height_ );
-    image1.save( QString( path_.c_str() ) );
+//    int V = static_cast< int >( width()/height() );
 
-//    canvas_width = width();
-//    canvas_height = height();
+//    int delta_w = width() - static_cast<int>( width_ );
+//    int delta_h = height() - static_cast<int>( height_ );
 
-//    update();
+//    int x_ = static_cast<int>( delta_w*0.5f );
+//    int y_ = static_cast<int>( delta_h*0.5f );
 
 
-    //    Eigen::Matrix3f mat;
+//    Eigen::Matrix3f mat;
 //    mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX() )
 //            * Eigen::AngleAxisf( 0.0, Eigen::Vector3f::UnitY() )
 //            * Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitZ() );
 //    Eigen::Quaternionf q(mat);
 
 
+//    camera.reset();
+//    camera.rotate( q );
 
+//    glViewport( height_, 0, 2*height_, height_ )  ;
+//    camera.setViewport( Eigen::Vector4f( height_, 0, 2*height_, height_ ) );
 
-//    int delta_w = width() - static_cast<int>( width_ );
-//    int delta_h = height() - static_cast<int>( height_ );
+//    if( V >= 1 )
+//        camera.setOrthographicMatrix( -V * 0.5, V * 0.5, -0.5, 0.5, 0.1f, 100.f );
+//    else
+//        camera.setOrthographicMatrix( -0.5, -0.5, -V*0.5, V*0.5, -0.1f, 100.f );
 
-//    float asp_ratio = width()/height();
-
-//    int x_ = static_cast<int>( delta_w*0.5f );
-//    int y_ = static_cast<int>( delta_h*0.5f );
-
-//    glViewport( 0, 0, width_, height_ )  ;
-
-////    camera.reset();
-//    camera.setViewport( Eigen::Vector4f( 0, 0, width_, height_ ) );
-////    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
-//    camera.setOrthographicMatrix( -0.5f, 0.5f, -0.5f, 0.5f, -0.1f, 100.f );
-////    camera.rotate( q );
 
 
 //    canvas_width = width_;
@@ -139,20 +121,21 @@ std::string Canvas3d::sendImage( double width_, double height_  )
 
 
 //    QImage image = grabFramebuffer();
-//    std::string path_ = "./tmp/mapview.png";
+    std::string path_ = "./tmp/mapview.png";
 
 //    QImage image1 = image.copy(  x_, y_, width_, height_ );
 //    image1.save( QString( path_.c_str() ) );
 
 
-//    canvas_width = width();
-//    canvas_height = height();
+////    canvas_width = width();
+////    canvas_height = height();
 
-////    camera.reset();
-////    glViewport( 0 , 0 , (float) width() , (float)height() );
-////    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
-////    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+//////    camera.reset();
+//////    glViewport( 0 , 0 , (float) width() , (float)height() );
+//////    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+//////    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
 
+    image_.save( QString( path_.c_str() ) );
     return path_;
 }
 

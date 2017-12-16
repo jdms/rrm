@@ -37,6 +37,10 @@ void SurfaceShader::loadBuffers()
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
     raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
+    std::cout << "Box related to surfaces: " << std::endl << std::flush;
+    std::cout << "width: " << maxx_ << ", height: " << maxy_ << ", depth: " << maxz_ << std::endl << std::flush;
+    std::cout << "x: " << minx_ << ", y: " << miny_ << ", z: " << minz_ << std::endl << std::flush;
+
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
@@ -218,9 +222,6 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
             glEnable( GL_BLEND );
             glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
-        else
-            glDisable( GL_BLEND );
-
 
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
@@ -242,7 +243,6 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
         glDisable(GL_POLYGON_OFFSET_FILL);
 
 
-        glEnable( GL_DEPTH_TEST );
         glDepthFunc( GL_LEQUAL );
         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -255,8 +255,12 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
             glBindVertexArray ( 0 );
 
-        glDisable( GL_BLEND );
+        if( is_preview_ == true )
+            glDisable( GL_BLEND );
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+
+    glDisable( GL_DEPTH_TEST );
 
     shader->unbind();
 
