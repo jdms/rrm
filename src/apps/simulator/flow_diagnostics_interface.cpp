@@ -344,6 +344,7 @@ void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells
 
 void FlowDiagnosticsInterface::setTetrahedralMeshRegions( const std::vector<int> &regions )
 {
+	region.setregionids_tet(regions);
 }
 
 void FlowDiagnosticsInterface::getCPGVolumeVertices(std::vector< float >& vertices)
@@ -980,9 +981,6 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     double min_poros, double max_poros) //the one used
 {
 
-    //
-    // If permeability and porosity are constant revert to old setRegion call
-    //
 
     min_perm = min_perm > 0 ? min_perm : 0;
     min_poros = min_poros > 0 ? min_poros : 0;
@@ -1012,6 +1010,24 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
 //    std::cout << "At region: " << id << " min perm = " << min_perm << ", max perm = " << max_perm
 //              << " min poros = " << min_poros << ", max poros = " << max_poros << "\n" << std::flush;
     return;
+}
+
+void FlowDiagnosticsInterface::setRegion(unsigned int id,
+	double min_perm, double max_perm,
+	double min_poros, double max_poros) //the one used for automatic regions
+{
+
+	min_perm = min_perm > 0 ? min_perm : 0;
+	min_poros = min_poros > 0 ? min_poros : 0;
+
+	PROPERTYAREA p;
+	p.permlow(min_perm*0.987e-15);
+	p.permhigh(max_perm*0.987e-15);
+	p.porolow(min_poros);
+	p.porohigh(max_poros);
+	region.modifypropertyarea(id, p);
+
+	return;
 }
 
 void FlowDiagnosticsInterface::setBo(double Bo_){

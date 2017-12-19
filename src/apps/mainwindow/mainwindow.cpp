@@ -308,7 +308,7 @@ void MainWindow::createSketchingWindow()
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
-    ac_topview = new QAction( "Top-View" );
+    ac_topview = new QAction( "Top-View", this);
     ac_topview->setCheckable( true );
     ac_topview->setChecked( true );
 
