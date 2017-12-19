@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
 	QApplication app(argc, argv);
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
     app.setAttribute( Qt::AA_ShareOpenGLContexts );
-    app.setAttribute( Qt::AA_EnableHighDpiScaling );
+    //app.setAttribute( Qt::AA_EnableHighDpiScaling );
 
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )

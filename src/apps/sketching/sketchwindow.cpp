@@ -37,7 +37,7 @@ void SketchWindow::createToolBar()
     ac_height_map = new QAction( "Map", this );
     connect( ac_height_map, &QAction::triggered, [=](){ emit getHeightMap(); } );
 
-    ac_fixed_csections = new QAction( "Fixed Cross-Sections" );
+    ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setCheckable( true );
     connect( ac_fixed_csections, &QAction::triggered, dw_canvas_stack, &QDockWidget::setVisible );
 

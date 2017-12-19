@@ -399,6 +399,10 @@ public:
         double min_perm, double max_perm,
         double min_poros, double max_poros);
 
+	void setRegion(unsigned int id, 
+		double min_perm, double max_perm,
+		double min_poros, double max_poros); //for automatic regions
+
 
     void setRegion(unsigned int id, double x, double y, double z, double perm,
         double poros, double visc)
