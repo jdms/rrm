@@ -665,6 +665,15 @@ void RRMApplication::startFlowDiagnostics()
 }
 
 
+void RRMApplication::closeFlowDiagnostics()
+{
+    mainwindow->updateSketchingWindowGeometry();
+    mainwindow->dw_sketchwindow->setVisible( true );
+    mainwindow->dw_topview_window->setVisible( true );
+    mainwindow->dw_flow_window->setVisible( false );
+}
+
+
 void RRMApplication::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
 {
      mainwindow->controller->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ;

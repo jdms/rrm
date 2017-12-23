@@ -19,6 +19,7 @@ class ObjectTree: public QTreeWidget
 
         void addInputVolume();
         void addOutputVolume();
+        void removeOutputVolume();
 
 
         void addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,

@@ -133,6 +133,7 @@ void MainWindow::createToolbar()
 
 
     ac_output_volume = new QAction( "Get Regions", this );
+    ac_output_volume->setCheckable( true );
 
 
     tb_mainwindow = addToolBar( "");
@@ -230,7 +231,8 @@ void MainWindow::createMainWindowActions()
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
 
-    connect( ac_output_volume, &QAction::triggered, [=](){ app->startFlowDiagnostics(); } );
+    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
+                                                    {  if( status_ == true ) app->startFlowDiagnostics(); else app->closeFlowDiagnostics(); } );
 
 }
 
@@ -301,6 +303,7 @@ void MainWindow::createSketchingWindow()
     dw_sketchwindow->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
 
+
     sketch_topview_window = new SketchWindow();
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
@@ -317,6 +320,12 @@ void MainWindow::createSketchingWindow()
 
 }
 
+
+void MainWindow::updateSketchingWindowGeometry()
+{
+    dw_sketchwindow->setMaximumSize( app_width*0.6, app_height*0.5 );
+    dw_topview_window->setMaximumSize( app_width*0.6, app_height*0.5 );
+}
 
 
 void MainWindow::createSketchingActions()

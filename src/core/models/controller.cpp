@@ -1172,6 +1172,22 @@ bool Controller::isDefineBelowActive()
 
 void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_  )
 {
+
+    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+        Regions* item_ = regions.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    regions.clear();
+
+    scene3d->clearOutputVolume();
+    object_tree->removeOutputVolume();
+
+
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     rules_processor.getTetrahedralMesh( vertices_, regions_ );
