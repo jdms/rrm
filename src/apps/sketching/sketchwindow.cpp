@@ -69,6 +69,7 @@ void SketchWindow::createWindow()
     dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
     dw_canvas_stack->setWidget( cs );
     dw_canvas_stack->setVisible( false );
+    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
 
     hb_central_widget = new QHBoxLayout( this );
 
@@ -77,6 +78,7 @@ void SketchWindow::createWindow()
     setCentralWidget( central_widget );
 
 }
+
 
 
 

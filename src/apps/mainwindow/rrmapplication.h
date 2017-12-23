@@ -173,6 +173,8 @@ class RRMApplication
         void getHeightMapTopView();
 
         void startFlowDiagnostics();
+        void closeFlowDiagnostics();
+
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
         void getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, std::vector< FlowWindow::CurveMesh>& left_curves,
                                 std::vector< FlowWindow::CurveMesh >& right_curves, std::vector< FlowWindow::CurveMesh > & front_curves,

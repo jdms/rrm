@@ -884,18 +884,18 @@ void FlowWindow::buildUnstructured()
         acceptUserParameters();
     }
 
-//    controller->generateUnstructured();
-//    canvas->updateVolumetricMesh();
-
-    std::vector< float > vertices;
-    std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces;
-
     controller->generateUnstructured();
-    controller->updateVolumetricMesh( vertices, edges, faces );
+    canvas->updateVolumetricMesh();
+
+//    std::vector< float > vertices;
+//    std::vector< unsigned int > edges;
+//    std::vector< unsigned int > faces;
+
+//    controller->generateUnstructured();
+//    controller->updateVolumetricMesh( vertices, edges, faces );
 
 
-    emit sendSimplifiedMesh( vertices, edges, faces );
+//    emit sendSimplifiedMesh( vertices, edges, faces );
 
 }
 

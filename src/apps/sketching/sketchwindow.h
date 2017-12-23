@@ -140,6 +140,9 @@ class SketchWindow: public QMainWindow
 
         std::map< double, SketchScene* > scenes;
 
+        const int WIDTH_APP = 450;
+        const int HEIGHT_APP = 320;
+
 };
 
 #endif // SKETCHWINDOW_H

@@ -111,6 +111,41 @@ void ObjectTree::addOutputVolume()
 }
 
 
+void ObjectTree::removeOutputVolume()
+{
+    if( topLevelItemCount() < 2 )
+        return;
+
+    int nchildren = topLevelItem( 1 )->childCount();
+    for( int j = 0; j < nchildren; ++j )
+    {
+        ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 1 )->child( j ) );
+
+        ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+        removeItemWidget( obj_, COLUMN_COLOR );
+        delete colorpicker_;
+
+//        if( regions.findElement( obj_->getIndex() ) == true )
+//        {
+//            diff_regs.push_back( obj_->getIndex() );
+//            continue;
+//        }
+
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+    ObjectTreeItem* vol1_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
+    if( vol1_ != nullptr )
+    {
+        delete vol1_;
+        vol1_ = nullptr;
+   }
+
+    regions.clear();
+}
+
+
 void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,
                             const std::string& name_,  const int& red_,
                             const int& green_,  const int& blue_ )
