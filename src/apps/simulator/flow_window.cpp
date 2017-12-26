@@ -884,18 +884,18 @@ void FlowWindow::buildUnstructured()
         acceptUserParameters();
     }
 
-    controller->generateUnstructured();
-    canvas->updateVolumetricMesh();
-
-//    std::vector< float > vertices;
-//    std::vector< unsigned int > edges;
-//    std::vector< unsigned int > faces;
-
 //    controller->generateUnstructured();
-//    controller->updateVolumetricMesh( vertices, edges, faces );
+//    canvas->updateVolumetricMesh();
 
+    std::vector< float > vertices;
+    std::vector< unsigned int > edges;
+    std::vector< unsigned int > faces;
 
-//    emit sendSimplifiedMesh( vertices, edges, faces );
+    controller->generateUnstructured();
+    controller->updateVolumetricMesh( vertices, edges, faces );
+
+    emit sendSimplifiedMesh( vertices, edges, faces );
+//    canvas->updateVolumetricMesh();
 
 }
 
@@ -1315,4 +1315,5 @@ void FlowWindow::setRegions( std::map<std::size_t, FlowVisualizationController::
 void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_ )
 {
     controller->updateTetrahedonRegions( regions_ );
+    canvas->updateVolumetricMesh();
 }
