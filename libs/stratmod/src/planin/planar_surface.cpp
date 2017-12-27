@@ -982,8 +982,29 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     /*     mesh_is_set_ = false; */ 
     /* } */
 
-    upper_bound_.push_back( std::weak_ptr<PlanarSurface>(s) ); 
-    s->getLowerBoundList(lower_bound_); 
+    upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+
+    pruneBoundingLists();
+
+    std::list< std::weak_ptr<PlanarSurface> > lbound{};
+    s->getLowerBoundList(lbound);
+
+    bool new_bound = true;
+
+    for ( auto &lb : lbound )
+    {
+        new_bound = true;
+        for ( auto &ub : upper_bound_ )
+        {
+            new_bound &= (compareSurfaceWptr(lb, ub) == false);
+        }
+
+        if ( new_bound )
+        {
+            lower_bound_.push_back(lb);
+        }
+
+    }
 
     return true; 
 }
@@ -1023,8 +1044,32 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     /*     mesh_is_set_ = false; */ 
     /* } */
 
-    lower_bound_.push_back( std::weak_ptr<PlanarSurface>(s) ); 
-    s->getUpperBoundList(upper_bound_); 
+    // lower_bound_.push_back( std::weak_ptr<PlanarSurface>(s) ); 
+    // s->getUpperBoundList(upper_bound_); 
+
+    lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+
+    pruneBoundingLists();
+
+    std::list< std::weak_ptr<PlanarSurface> > ubound{};
+    s->getUpperBoundList(ubound);
+
+    bool new_bound = true;
+
+    for (auto &ub : ubound)
+    {
+        new_bound = true;
+        for (auto &lb : lower_bound_)
+        {
+            new_bound &= (compareSurfaceWptr(ub, lb) == false);
+        }
+
+        if (new_bound)
+        {
+            upper_bound_.push_back(ub);
+        }
+
+    }
 
     return true; 
 }
