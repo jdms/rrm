@@ -101,7 +101,7 @@ class FlowWindow : public  QMainWindow
         void acceptUserParameters();
         void clear();
 
-        void setRegions( std::map<std::size_t, FlowVisualizationController::Color > regions_ );
+        void setRegions( std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ );
         void regionPoints(const std::map<int, Eigen::Vector3f>& region_points);
         /// Will emit a signal sendNumberOfRegions
         int getNumberOfRegions();
@@ -114,7 +114,7 @@ class FlowWindow : public  QMainWindow
         /// @FIXME
         void boundingBoxChnaged(bool _is_new_model);
 
-        void setTetrahedronRegions( const std::vector< int >& regions_ );
+        void setTetrahedronRegions( const std::vector< int >& regions_, const std::vector< float >& colors_ );
 
 
     signals:

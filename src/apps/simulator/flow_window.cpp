@@ -884,9 +884,6 @@ void FlowWindow::buildUnstructured()
         acceptUserParameters();
     }
 
-//    controller->generateUnstructured();
-//    canvas->updateVolumetricMesh();
-
     std::vector< float > vertices;
     std::vector< unsigned int > edges;
     std::vector< unsigned int > faces;
@@ -1304,16 +1301,19 @@ void FlowWindow::updateModelColors( const RRM::PropertyProfile& _profile)
 
 }
 
-void FlowWindow::setRegions( std::map<std::size_t, FlowVisualizationController::Color > regions_ )
+void FlowWindow::setRegions( std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ )
 {
-    region_parameters_->setRegionData( regions_.size() );
+    region_parameters_->setRegionData( number_of_regions_ );
+
     qbuildCornerPoint->setEnabled(true);
     qbuildUnstructured->setEnabled(true);
 }
 
 
-void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_ )
+void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, const std::vector< float >& colors_ )
 {
     controller->updateTetrahedonRegions( regions_ );
+
     canvas->updateVolumetricMesh();
+//    canvas->setColors( colors_ );
 }

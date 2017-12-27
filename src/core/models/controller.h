@@ -126,7 +126,7 @@ class Controller
         void setRegionName( std::size_t index_, const std::string& name_ );
         void setRegionVisibility( std::size_t index_, bool status_ );
         void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
-
+        void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ );
 
 
         void initRulesProcessor();

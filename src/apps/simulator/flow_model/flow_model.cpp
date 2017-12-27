@@ -84,15 +84,15 @@ namespace RRM
                 mesh_generator.addCell(cell);
             }
 
-            /// Euler Charactristic for Volume Mesh
-            int euler = (ptr_tetrahedron_mesh_->n_vertices() - ptr_tetrahedron_mesh_->n_edges() + ptr_tetrahedron_mesh_->n_faces() - ptr_tetrahedron_mesh_->n_cells());
-            std::cout << " === Mesh Information Shared Pointer ====  File FlowModel.cpp" << std::endl;
-            std::cout << "Size : " << " Faces :" << ptr_tetrahedron_mesh_->n_faces() << " | " << std::endl;
-            std::cout << "Size : " << " Edges :" << ptr_tetrahedron_mesh_->n_edges() << " | " << std::endl;
-            std::cout << "Size : " << " Vertices :" << ptr_tetrahedron_mesh_->n_vertices() << " | " << std::endl;
-            std::cout << "Size : " << " cells :" << ptr_tetrahedron_mesh_->n_cells() << std::endl;
-            std::cout << "Euler Characteristics : V-E+F-C= " << euler << std::endl;
-            std::cout << " ========================= " << std::endl;
+//            /// Euler Charactristic for Volume Mesh
+//            int euler = (ptr_tetrahedron_mesh_->n_vertices() - ptr_tetrahedron_mesh_->n_edges() + ptr_tetrahedron_mesh_->n_faces() - ptr_tetrahedron_mesh_->n_cells());
+//            std::cout << " === Mesh Information Shared Pointer ====  File FlowModel.cpp" << std::endl;
+//            std::cout << "Size : " << " Faces :" << ptr_tetrahedron_mesh_->n_faces() << " | " << std::endl;
+//            std::cout << "Size : " << " Edges :" << ptr_tetrahedron_mesh_->n_edges() << " | " << std::endl;
+//            std::cout << "Size : " << " Vertices :" << ptr_tetrahedron_mesh_->n_vertices() << " | " << std::endl;
+//            std::cout << "Size : " << " cells :" << ptr_tetrahedron_mesh_->n_cells() << std::endl;
+//            std::cout << "Euler Characteristics : V-E+F-C= " << euler << std::endl;
+//            std::cout << " ========================= " << std::endl;
         }
 
         return true;
@@ -137,13 +137,13 @@ namespace RRM
             /// Euler Charactristic for Volume Mesh
             int euler = (this->ptr_hexahedron_mesh_->n_vertices() - this->ptr_hexahedron_mesh_->n_edges() + this->ptr_hexahedron_mesh_->n_faces() - this->ptr_hexahedron_mesh_->n_cells());
 
-            std::cout << " === Mesh Hexahedron Information Shared Pointer ==== FlowModel.cpp" << std::endl;
-            std::cout << "Size : " << " Faces :" << this->ptr_hexahedron_mesh_->n_faces() << " | " << std::endl;
-            std::cout << "Size : " << " Edges :" << this->ptr_hexahedron_mesh_->n_edges() << " | " << std::endl;
-            std::cout << "Size : " << " Vertices :" << this->ptr_hexahedron_mesh_->n_vertices() << " | " << std::endl;
-            std::cout << "Size : " << " cells :" << this->ptr_hexahedron_mesh_->n_cells() << std::endl;
-            std::cout << "Euler Characteristics : V-E+F-C= " << euler << std::endl;
-            std::cout << " ========================= " << std::endl;
+//            std::cout << " === Mesh Hexahedron Information Shared Pointer ==== FlowModel.cpp" << std::endl;
+//            std::cout << "Size : " << " Faces :" << this->ptr_hexahedron_mesh_->n_faces() << " | " << std::endl;
+//            std::cout << "Size : " << " Edges :" << this->ptr_hexahedron_mesh_->n_edges() << " | " << std::endl;
+//            std::cout << "Size : " << " Vertices :" << this->ptr_hexahedron_mesh_->n_vertices() << " | " << std::endl;
+//            std::cout << "Size : " << " cells :" << this->ptr_hexahedron_mesh_->n_cells() << std::endl;
+//            std::cout << "Euler Characteristics : V-E+F-C= " << euler << std::endl;
+//            std::cout << " ========================= " << std::endl;
 
         }
 

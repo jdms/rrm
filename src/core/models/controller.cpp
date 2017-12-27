@@ -1278,6 +1278,18 @@ void Controller::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
 
 
 
+void Controller::getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ )
+{
+
+    if( regions.findElement( index_ ) == false )
+        return;
+
+    Regions* const& region_ = regions.getElement( index_ );
+    region_->getColor( r_, g_, b_ );
+}
+
+
+
 
 void Controller::clear()
 {
