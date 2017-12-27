@@ -648,20 +648,23 @@ void RRMApplication::startFlowDiagnostics()
     std::map< std::size_t, Volume::Color > regions_map_ ;
     mainwindow->controller->getOutputVolume( regions_map_ );
 
-    std::map< std::size_t, FlowVisualizationController::Color > regions_ ;
+    std::vector< std::size_t > regions_ ;
+    std::vector< float > colors_;
+    std::set< std::size_t > regions_indexes_;
     for( auto it: regions_map_ )
     {
         FlowVisualizationController::Color color_;
-        color_.r = it.second.r;
-        color_.g = it.second.g;
-        color_.b = it.second.b;
+        colors_.push_back( color_.r );
+        colors_.push_back( color_.g );
+        colors_.push_back( color_.b );
 
-        regions_[ it.first ] = color_;
+        regions_.push_back( it.first );
+        regions_indexes_.insert( it.first );
     }
 
 
     mainwindow->flow_window->loadSurfacesfromSketch1();
-    mainwindow->flow_window->setRegions( regions_ );
+    mainwindow->flow_window->setRegions( regions_indexes_.size(), regions_, colors_ );
 }
 
 
@@ -731,6 +734,20 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 
 void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
 {
-    std::vector< int > regions_ = mainwindow->controller->getTetrahedronsRegions(vertices, edges, faces );
-    mainwindow->flow_window->setTetrahedronRegions( regions_ );
+    std::vector< int > regions_ = mainwindow->controller->getTetrahedronsRegions( vertices, edges, faces );
+
+    std::vector< float > colors_;
+    for( auto it: regions_ )
+    {/*
+        int r = 255, g = 0, b = 0;
+        mainwindow->controller->getRegionColor( it, r, g, b );*/
+
+        std::cout << "Region " << it << std::endl << std::flush ;//", color = " << r << ", " << g << ", " << b << std::endl << std::flush;
+
+//        colors_.push_back( static_cast< float >( r/255.f ) );
+//        colors_.push_back( static_cast< float >( g/255.f ) );
+//        colors_.push_back( static_cast< float >( b/255.f ) );
+    }
+
+    mainwindow->flow_window->setTetrahedronRegions( regions_, colors_ );
 }
