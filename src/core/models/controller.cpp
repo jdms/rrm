@@ -1431,77 +1431,76 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
                                     std::vector< CurveMesh > & front_curves,
                                     std::vector< CurveMesh >& back_curves )
 {
+    rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
 
-    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+/*     std::vector< std::size_t > actives = rules_processor.getSurfaces(); */
 
-    for( auto it: actives )
-    {
+/*     for( auto it: actives ) */
+/*     { */
 
-        if( objects.findElement( it ) == false ) continue;
+/*         if( objects.findElement( it ) == false ) continue; */
 
-        TriangleMesh t;
-        /* std::vector< double > surface_vertices; */
-        /* std::vector< std::size_t > surface_faces; */
-
-
-        /* bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces ); */
-        bool has_surface = rules_processor.getMesh( it, t.vertex_list, t.face_list );
-
-        if( has_surface  == false ) continue;
+/*         TriangleMesh t; */
+/*         /1* std::vector< double > surface_vertices; *1/ */
+/*         /1* std::vector< std::size_t > surface_faces; *1/ */
 
 
-        /* t.face_list = surface_faces; */
-        /* t.vertex_list = surface_vertices; */
+/*         /1* bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces ); *1/ */
+/*         bool has_surface = rules_processor.getMesh( it, t.vertex_list, t.face_list ); */
 
-        //
-        // This loop changes the y-z coordinates of the vertices as RRM
-        // understands the y coordinate as height and the z coordinate as
-        // length, but Zhao's convention is the opposite.
-        //
-        double y, z;
-        for ( size_t i = 0; i < t.vertex_list.size()/3; ++i )
-        {
-            y = t.vertex_list[3*i + 1];
-            z = t.vertex_list[3*i + 2];
-
-            t.vertex_list[3*i + 1] = z;
-            t.vertex_list[3*i + 2] = y;
-        }
-
-        triangles_meshes.push_back( t );
-    }
-
-    std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists;
-    std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists;
-
-    rules_processor.getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists);
-    rules_processor.getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists);
-    rules_processor.getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
-    rules_processor.getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
-
-    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
-    {
-        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
-
-        std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) );
-        std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) );
-
-        std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) );
-        std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) );
-
-        std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) );
-        std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) );
-
-        std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) );
-        std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) );
-
-        left_curves.push_back( cm_lb );
-        right_curves.push_back( cm_rb );
-        front_curves.push_back( cm_fb );
-        back_curves.push_back( cm_bb );
-    }
+/*         if( has_surface  == false ) continue; */
 
 
+/*         /1* t.face_list = surface_faces; *1/ */
+/*         /1* t.vertex_list = surface_vertices; *1/ */
+
+/*         // */
+/*         // This loop changes the y-z coordinates of the vertices as RRM */
+/*         // understands the y coordinate as height and the z coordinate as */
+/*         // length, but Zhao's convention is the opposite. */
+/*         // */
+/*         double y, z; */
+/*         for ( size_t i = 0; i < t.vertex_list.size()/3; ++i ) */
+/*         { */
+/*             y = t.vertex_list[3*i + 1]; */
+/*             z = t.vertex_list[3*i + 2]; */
+
+/*             t.vertex_list[3*i + 1] = z; */
+/*             t.vertex_list[3*i + 2] = y; */
+/*         } */
+
+/*         triangles_meshes.push_back( t ); */
+/*     } */
+
+/*     std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists; */
+/*     std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists; */
+
+/*     rules_processor.getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists); */
+/*     rules_processor.getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists); */
+/*     rules_processor.getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists); */
+/*     rules_processor.getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists); */
+
+/*     for ( int i = 0; i < lb_vertex_lists.size(); ++i ) */
+/*     { */
+/*         CurveMesh cm_lb, cm_rb, cm_fb, cm_bb; */
+
+/*         std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) ); */
+/*         std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) ); */
+
+/*         std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) ); */
+/*         std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) ); */
+
+/*         std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) ); */
+/*         std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) ); */
+
+/*         std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) ); */
+/*         std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) ); */
+
+/*         left_curves.push_back( cm_lb ); */
+/*         right_curves.push_back( cm_rb ); */
+/*         front_curves.push_back( cm_fb ); */
+/*         back_curves.push_back( cm_bb ); */
+/*     } */
 }
 
 
@@ -1524,12 +1523,12 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     for( auto v: vertices )
         points.push_back( static_cast< double >( v ) );
 
-    std::vector< std::size_t > edges_;
-    for( auto e: edges )
-        edges_.push_back( static_cast< std::size_t >( e ) );
+    std::vector< std::size_t > elements_;
+    for( auto e: faces )
+        elements_.push_back( static_cast< std::size_t >( e ) );
 
     std::vector<int> regions_;
-    rules_processor.getRegionsForSimulationTetrahedralMesh( points, edges_, regions_ );
+    rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
     return regions_;
 }
 

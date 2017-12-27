@@ -50,6 +50,18 @@
 
         public:
 
+            struct TriangleMesh
+            {
+                std::vector<double> vertex_list;
+                std::vector<std::size_t> face_list;
+            };
+
+            struct CurveMesh
+            {
+                std::vector<double> vertex_list;
+                std::vector<std::size_t> edge_list;
+            };
+
 
             RulesProcessor();
             ~RulesProcessor() = default;
@@ -203,11 +215,24 @@
             bool getBackBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
 
             bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
+
+            bool setPLCForSimulation( std::vector< TriangleMesh >& triangle_meshes,
+                                    std::vector< CurveMesh >& left_curves,
+                                    std::vector< CurveMesh >& right_curves,
+                                    std::vector< CurveMesh > & front_curves,
+                                    std::vector< CurveMesh >& back_curves, 
+                                    std::size_t length_discretization = 16, 
+                                    std::size_t width_discretization = 16 
+                                    );
+
             bool getRegionsForSimulationTetrahedralMesh( const std::vector<double> &vertex_coordinates, const std::vector<std::size_t> &element_list, std::vector<int> &regions );
 
         private:
             SModellerWrapper modeller_;
             struct { double x, y, z; } origin_, lenght_;
+
+            enum ModelResolution { LOW, MEDIUM, HIGH };
+            ModelResolution current_resolution_;
 
             bool testing_surface_insertion_ = false;
             bool truncate_surface_ = false;
