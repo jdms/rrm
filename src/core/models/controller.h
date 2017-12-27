@@ -24,17 +24,20 @@ class Controller
 {
     public:
 
-        struct TriangleMesh
-        {
-            std::vector<double> vertex_list;
-            std::vector<std::size_t> face_list;
-        };
+        /* struct TriangleMesh */
+        /* { */
+        /*     std::vector<double> vertex_list; */
+        /*     std::vector<std::size_t> face_list; */
+        /* }; */
 
-        struct CurveMesh
-        {
-            std::vector<double> vertex_list;
-            std::vector<std::size_t> edge_list;
-        };
+        /* struct CurveMesh */
+        /* { */
+        /*     std::vector<double> vertex_list; */
+        /*     std::vector<std::size_t> edge_list; */
+        /* }; */
+
+        using TriangleMesh = RulesProcessor::TriangleMesh;
+        using CurveMesh = RulesProcessor::CurveMesh;
 
 
         Controller() = default;

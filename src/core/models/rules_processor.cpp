@@ -26,7 +26,7 @@
 RulesProcessor::RulesProcessor()
 {
     modeller_.useOpenGLCoordinateSystem();
-    modeller_.changeDiscretization(8,8);
+    setMediumResolution();
 }
 
 std::vector<std::size_t> RulesProcessor::getSurfaces()
@@ -76,23 +76,41 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 bool RulesProcessor::setLowResolution()
 {
-    std::cout << "setLowResolution() was called\n";
-    /* return modeller_.tryChangeDiscretization(16, 16); */
-    return modeller_.tryChangeDiscretization(8, 8);
+    bool status = modeller_.tryChangeDiscretization(32, 32);
+    if ( status == false )
+    {
+        return false;
+    }
+
+    current_resolution_ = ModelResolution::LOW;
+
+    return status;
 }
 
 bool RulesProcessor::setMediumResolution()
 {
-    std::cout << "setMediumResolution() was called\n";
-    /* return modeller_.tryChangeDiscretization(64, 64); */
-    return modeller_.tryChangeDiscretization(64, 64);
+    bool status = modeller_.tryChangeDiscretization(8, 8);
+    if ( status == false )
+    {
+        return false;
+    }
+
+    current_resolution_ = ModelResolution::MEDIUM;
+
+    return status;
 }
 
 bool RulesProcessor::setHighResolution()
 {
-    std::cout << "setHighResolution() was called\n";
-    /* return modeller_.tryChangeDiscretization(128, 128); */
-    return modeller_.tryChangeDiscretization(8, 8);
+    bool status = modeller_.tryChangeDiscretization(128, 128);
+    if ( status == false )
+    {
+        return false;
+    }
+
+    current_resolution_ = ModelResolution::HIGH;
+
+    return status;
 }
 
 
@@ -360,13 +378,129 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    return modeller_.getTetrahedralMesh(vertex_coordinates, element_list);
+    return (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+}
+
+#include <iterator>
+
+bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_meshes,
+        std::vector< CurveMesh >& left_curves,
+        std::vector< CurveMesh >& right_curves,
+        std::vector< CurveMesh > & front_curves,
+        std::vector< CurveMesh >& back_curves, 
+        size_t length_discretization, 
+        size_t width_discretization 
+        )
+{
+    //
+    // Reduce resolution for simulation
+    //
+
+    /* modeller_.changeDiscretization(length_discretization, width_discretization); */
+    modeller_.changeDiscretization(4, 4);
+    
+    // 
+    // Get the PLC
+    //
+
+    std::vector< std::size_t > surfacesIDs = getSurfaces();
+
+    for( auto it: surfacesIDs )
+    {
+
+        /* if( objects.findElement( it ) == false ) continue; */
+
+        TriangleMesh t;
+        /* std::vector< double > surface_vertices; */
+        /* std::vector< std::size_t > surface_faces; */
+
+
+        /* bool has_surface = getMesh( it, surface_vertices, surface_faces ); */
+        bool has_surface = getMesh( it, t.vertex_list, t.face_list );
+
+        if( has_surface  == false ) continue;
+
+
+        /* t.face_list = surface_faces; */
+        /* t.vertex_list = surface_vertices; */
+
+        //
+        // This loop changes the y-z coordinates of the vertices as RRM
+        // understands the y coordinate as height and the z coordinate as
+        // length, but Zhao's convention is the opposite.
+        //
+        double y, z;
+        for ( size_t i = 0; i < t.vertex_list.size()/3; ++i )
+        {
+            y = t.vertex_list[3*i + 1];
+            z = t.vertex_list[3*i + 2];
+
+            t.vertex_list[3*i + 1] = z;
+            t.vertex_list[3*i + 2] = y;
+        }
+
+        triangle_meshes.push_back( t );
+    }
+
+    std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists;
+    std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists;
+
+    getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists);
+    getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists);
+    getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
+    getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
+
+    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
+    {
+        CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+        std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) );
+        std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) );
+
+        std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) );
+        std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) );
+
+        std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) );
+        std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) );
+
+        std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) );
+        std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) );
+
+        left_curves.push_back( cm_lb );
+        right_curves.push_back( cm_rb );
+        front_curves.push_back( cm_fb );
+        back_curves.push_back( cm_bb );
+    }
+
+
+    // 
+    // Return resolution to original state
+    //
+
+    switch( current_resolution_ )
+    {
+        case LOW:
+            modeller_.changeDiscretization(32, 32);
+            break;
+
+        case MEDIUM:
+            modeller_.changeDiscretization(64, 64);
+            break;
+
+        case HIGH:
+            modeller_.changeDiscretization(128, 128);
+            break;
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<double> &vertex_coordinates, const std::vector<std::size_t> &element_list, std::vector<int> &regions )
 {
     SUtilitiesWrapper u(modeller_);
-    return u.getTetrahedralMeshRegions( vertex_coordinates, element_list, regions);
+    bool status = u.getTetrahedralMeshRegions( vertex_coordinates, element_list, regions);
+
+    return status;
 }
 
 //{} // namespace RRM
