@@ -378,20 +378,20 @@ bool SModellerImplementation::commitSurface(
 
     if ( current_.state_ == State::SKETCHING )
     {
-        std::cout << "Inserting surface " << given_index << "\n";
-        std::cout << "Ubounds: ";
+        /* std::cout << "Inserting surface " << given_index << "\n"; */
+        /* std::cout << "Ubounds: "; */
         for ( auto s : ubounds )
         {
-            std::cout << s << ", ";
+            /* std::cout << s << ", "; */
         }
-        std::cout << "\n";
+        /* std::cout << "\n"; */
 
-        std::cout << "Lbounds: ";
+        /* std::cout << "Lbounds: "; */
         for ( auto s : lbounds )
         {
-            std::cout << s << ", ";
+            /* std::cout << s << ", "; */
         }
-        std::cout << "\n";
+        /* std::cout << "\n"; */
 
         status = container_.addSurface(sptr, index, ubounds, lbounds);
     }
@@ -433,7 +433,7 @@ bool SModellerImplementation::commitSurface(
     if ( status == true ) { 
         dictionary_[given_index] = index; 
         inserted_surfaces_indices_.push_back(given_index); 
-        std::cout << "Surface " << given_index << " was commited.\n";
+        /* std::cout << "Surface " << given_index << " was commited.\n"; */
 
         past_states_.push_back(current_);
     }
