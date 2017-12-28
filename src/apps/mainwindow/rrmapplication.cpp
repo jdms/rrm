@@ -654,9 +654,10 @@ void RRMApplication::startFlowDiagnostics()
     for( auto it: regions_map_ )
     {
         FlowVisualizationController::Color color_;
-        colors_.push_back( color_.r );
-        colors_.push_back( color_.g );
-        colors_.push_back( color_.b );
+
+        colors_.push_back( it.second.r );
+        colors_.push_back( it.second.g );
+        colors_.push_back( it.second.b );
 
         regions_.push_back( it.first );
         regions_indexes_.insert( it.first );
