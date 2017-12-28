@@ -323,16 +323,16 @@ bool SUtilities::getLengthCrossSectionCurve( size_t surface_id, size_t lenght, s
 
 bool SUtilities::getFrontBoundary3DCurves( std::vector<std::vector<double>> &vlists, std::vector<std::vector<size_t>> &elists)
 {
-    std::cout << "\nFront boundary, getting surface ids: ";
+    /* std::cout << "\nFront boundary, getting surface ids: "; */
     auto surfaces_ids = model_.getSurfacesIndices();
     bool status = surfaces_ids.size() > 0;
 
     if ( status == false )
     {
-        std::cout << "false -- got 0 surfaces\n";
+        /* std::cout << "false -- got 0 surfaces\n"; */
         return false;
     }
-    std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n";
+    /* std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n"; */
 
     vlists.clear();
     elists.clear();
@@ -342,7 +342,7 @@ bool SUtilities::getFrontBoundary3DCurves( std::vector<std::vector<double>> &vli
 
     for ( auto id : surfaces_ids )
     {
-        std::cout << "Getting vlist & elist to surface: " << id << std::endl;
+        /* std::cout << "Getting vlist & elist to surface: " << id << std::endl; */
         status &= getLengthCrossSectionCurve(id, 0, vlist, elist);
         vlists.push_back(vlist);
         elists.push_back(elist);
@@ -355,16 +355,16 @@ bool SUtilities::getFrontBoundary3DCurves( std::vector<std::vector<double>> &vli
 
 bool SUtilities::getBackBoundary3DCurves( std::vector<std::vector<double>> &vlists, std::vector<std::vector<size_t>> &elists)
 {
-    std::cout << "\nBack Boundary, getting surface ids: ";
+    /* std::cout << "\nBack Boundary, getting surface ids: "; */
     auto surfaces_ids = model_.getSurfacesIndices();
     bool status = surfaces_ids.size() > 0;
 
     if ( status == false )
     {
-        std::cout << "false -- got 0 surfaces\n";
+        /* std::cout << "false -- got 0 surfaces\n"; */
         return false;
     }
-    std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n";
+    /* std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n"; */
 
     vlists.clear();
     elists.clear();
@@ -376,7 +376,7 @@ bool SUtilities::getBackBoundary3DCurves( std::vector<std::vector<double>> &vlis
 
     for ( auto id : surfaces_ids )
     {
-        std::cout << "Getting vlist & elist to surface: " << id << std::endl;
+        /* std::cout << "Getting vlist & elist to surface: " << id << std::endl; */
         status &= getLengthCrossSectionCurve(id, max_lenght, vlist, elist);
         vlists.push_back(vlist);
         elists.push_back(elist);
@@ -389,16 +389,16 @@ bool SUtilities::getBackBoundary3DCurves( std::vector<std::vector<double>> &vlis
 
 bool SUtilities::getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlists, std::vector<std::vector<size_t>> &elists)
 {
-    std::cout << "\nLeft Boundary, getting surface ids: ";
+    /* std::cout << "\nLeft Boundary, getting surface ids: "; */
     auto surfaces_ids = model_.getSurfacesIndices();
     bool status = surfaces_ids.size() > 0;
 
     if ( status == false )
     {
-        std::cout << "false -- got 0 surfaces\n";
+        /* std::cout << "false -- got 0 surfaces\n"; */
         return false;
     }
-    std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n";
+    /* std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n"; */
 
     vlists.clear();
     elists.clear();
@@ -408,7 +408,7 @@ bool SUtilities::getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlis
 
     for ( auto id : surfaces_ids )
     {
-        std::cout << "Getting vlist & elist to surface: " << id << std::endl;
+        /* std::cout << "Getting vlist & elist to surface: " << id << std::endl; */
         status &= getWidthCrossSectionCurve(id, 0, vlist, elist);
         vlists.push_back(vlist);
         elists.push_back(elist);
@@ -421,16 +421,16 @@ bool SUtilities::getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlis
 
 bool SUtilities::getRightBoundary3DCurves( std::vector<std::vector<double>> &vlists, std::vector<std::vector<size_t>> &elists)
 {
-    std::cout << "\nLeft Boundary, getting surface ids: ";
+    /* std::cout << "\nLeft Boundary, getting surface ids: "; */
     auto surfaces_ids = model_.getSurfacesIndices();
     bool status = surfaces_ids.size() > 0;
 
     if ( status == false )
     {
-        std::cout << "false -- got 0 surfaces\n";
+        /* std::cout << "false -- got 0 surfaces\n"; */
         return false;
     }
-    std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n";
+    /* std::cout << "true -- got " << surfaces_ids.size() << " surfaces\n"; */
 
     vlists.clear();
     elists.clear();
@@ -442,7 +442,7 @@ bool SUtilities::getRightBoundary3DCurves( std::vector<std::vector<double>> &vli
 
     for ( auto id : surfaces_ids )
     {
-        std::cout << "Getting vlist & elist to surface: " << id << std::endl;
+        /* std::cout << "Getting vlist & elist to surface: " << id << std::endl; */
         status &= getWidthCrossSectionCurve(id, max_width, vlist, elist);
         vlists.push_back(vlist);
         elists.push_back(elist);
@@ -466,7 +466,7 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
 
     // For the left
     std::iota(ordered_surfaces.begin(), ordered_surfaces.end(), 0);
-    std::cout << "Ordering curves by height on the left, result is: ";
+    /* std::cout << "Ordering curves by height on the left, result is: "; */
     for ( size_t i = 0; i < size; i++ )
     {
         for ( size_t j = i+1; j < size; j++ )
@@ -481,17 +481,17 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
                 ordered_surfaces[j] = temp;
             }
         }
-        std::cout << ordered_surfaces[i] << " ";
+        /* std::cout << ordered_surfaces[i] << " "; */
     }
-    std::cout << "\n";
+    /* std::cout << "\n"; */
 
-    std::cout << "Creating vertical curve on the left.\n";
+    /* std::cout << "Creating vertical curve on the left.\n"; */
     vlist[0] = vlists[ordered_surfaces[0]].operator[](0);
     vlist[1] = vlists[ordered_surfaces[0]].operator[](1);
     vlist[2] = vlists[ordered_surfaces[0]].operator[](2);
 
-    std::cout << "Vertical curve on the left is: ";
-    std:: cout <<  "( " << vlist[0] << ", " << vlist[1] << ", " << vlist[2] << "), ";
+    /* std::cout << "Vertical curve on the left is: "; */
+    /* std:: cout <<  "( " << vlist[0] << ", " << vlist[1] << ", " << vlist[2] << "), "; */
     /* std::cout << "Connectivity is : "; */
 
 
@@ -500,13 +500,13 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
         vlist[3*i + 0] = vlists[ordered_surfaces[i]].operator[](0);
         vlist[3*i + 1] = vlists[ordered_surfaces[i]].operator[](1);
         vlist[3*i + 2] = vlists[ordered_surfaces[i]].operator[](2);
-        std:: cout <<  "( " << vlist[3*i + 0] << ", " << vlist[3*i + 1] << ", " << vlist[3*i + 2] << "), ";
+        /* std:: cout <<  "( " << vlist[3*i + 0] << ", " << vlist[3*i + 1] << ", " << vlist[3*i + 2] << "), "; */
 
         elist[2*(i-1) + 0] = i-1;
         elist[2*(i-1) + 1] = i;
         /* std::cout << elist[2*(i-1) + 0] << ", " << elist[2*(i-1) + 1] << "; "; */
     }
-    std::cout << "\n";
+    /* std::cout << "\n"; */
 
     vlists.push_back(vlist);
     elists.push_back(elist);
@@ -515,7 +515,7 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
     // For the right
     std::iota(ordered_surfaces.begin(), ordered_surfaces.end(), 0);
     /* std::cout << "Ordering curves by height on the right, result is:\n"; */
-    std::cout << "Ordering curves by height on the right, result is: ";
+    /* std::cout << "Ordering curves by height on the right, result is: "; */
     // waiting for a bug
     size_t last_entry_index = vlists[0].size() -3;
 
@@ -536,29 +536,29 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
             }
         }
         /* std::cout << "Smallest surface is: " << ordered_surfaces[i] << "\n"; */
-        std::cout << ordered_surfaces[i] << " ";
+        /* std::cout << ordered_surfaces[i] << " "; */
     }
-    std::cout << "\n";
+    /* std::cout << "\n"; */
 
-    std::cout << "Creating vertical curve on the right.\n";
+    /* std::cout << "Creating vertical curve on the right.\n"; */
     vlist[0] = vlists[ordered_surfaces[0]].operator[](last_entry_index + 0);
     vlist[1] = vlists[ordered_surfaces[0]].operator[](last_entry_index + 1);
     vlist[2] = vlists[ordered_surfaces[0]].operator[](last_entry_index + 2);
 
-    std::cout << "Vertical curve on the right is: ";
-    std:: cout <<  "( " << vlist[0] << ", " << vlist[1] << ", " << vlist[2] << "), ";
+    /* std::cout << "Vertical curve on the right is: "; */
+    /* std:: cout <<  "( " << vlist[0] << ", " << vlist[1] << ", " << vlist[2] << "), "; */
 
     for ( size_t i = 1; i < ordered_surfaces.size(); ++i )
     {
         vlist[3*i + 0] = vlists[ordered_surfaces[i]].operator[](last_entry_index + 0);
         vlist[3*i + 1] = vlists[ordered_surfaces[i]].operator[](last_entry_index + 1);
         vlist[3*i + 2] = vlists[ordered_surfaces[i]].operator[](last_entry_index + 2);
-        std:: cout <<  "( " << vlist[3*i + 0] << ", " << vlist[3*i + 1] << ", " << vlist[3*i + 2] << "), ";
+        /* std:: cout <<  "( " << vlist[3*i + 0] << ", " << vlist[3*i + 1] << ", " << vlist[3*i + 2] << "), "; */
 
         elist[2*(i-1) + 0] = i-1;
         elist[2*(i-1) + 1] = i;
     }
-    std::cout << "\n\n";
+    /* std::cout << "\n\n"; */
 
     vlists.push_back(vlist);
     elists.push_back(elist);
@@ -587,13 +587,13 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
 
     if ( vcoords.size() % 3 != 0 )
     {
-        std::cout << "Wrong vcoords size\n";
+        /* std::cout << "Wrong vcoords size\n"; */
         return false;
     }
 
     if ( elements.size() % 4 != 0 )
     {
-        std::cout << "Wrong elements size\n";
+        /* std::cout << "Wrong elements size\n"; */
         return false;
     }
 

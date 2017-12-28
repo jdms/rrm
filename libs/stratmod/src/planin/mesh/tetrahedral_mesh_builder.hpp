@@ -240,7 +240,7 @@ size_t TetrahedralMeshBuilder::getTetrahedronList( std::vector<ElementList> &eli
 
     if ( status == false )
     {
-        std::cout << "Failed to build prism mesh\n";
+        /* std::cout << "Failed to build prism mesh\n"; */
         return 0;
     }
 
@@ -353,7 +353,7 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
     size_t num_tetrahedra = 0;
     size_t attribute;
 
-    int step = 0;
+    /* int step = 0; */
     for ( size_t p = 0; p < prism_list.size(); ++p )
     {
         tetrahedra = prism_list[p].tetrahedralize();
@@ -368,7 +368,7 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
 
             ++num_tetrahedra;
         }
-        std::cout << ++step << "\n";
+        /* std::cout << ++step << "\n"; */
     }
 
     return num_tetrahedra; 

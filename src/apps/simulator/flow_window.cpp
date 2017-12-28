@@ -1315,5 +1315,5 @@ void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, cons
     controller->updateTetrahedonRegions( regions_ );
 
     canvas->updateVolumetricMesh();
-//    canvas->setColors( colors_ );
+    canvas->setColors( colors_ );
 }
