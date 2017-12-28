@@ -16,6 +16,8 @@ namespace RRM
                 this->ui_ = new Ui::RegionWidgetForm;
                 this->ui_->setupUi(this);
 
+                color_picker_ = new ColorPicker();
+
                 this->setupWidget();
                 this->createConnections();
 
@@ -30,6 +32,12 @@ namespace RRM
 
                 ///@September
                 emit this->ui_->radioButton_Linear_->toggled(true);
+
+
+
+                ui_->spinBox_Number_of_Regions_->setVisible( false );
+                ui_->pushButton->setVisible( false );
+
 
         }
 
@@ -170,6 +178,10 @@ namespace RRM
 				}
 
             }
+
+
+
+            ui_->horizontalLayout_Region_Number->addWidget( color_picker_ );
         }
 
         void RegionWidget::setRegionData(const int _number_of_region )

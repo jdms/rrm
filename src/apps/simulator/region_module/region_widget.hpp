@@ -16,6 +16,7 @@
 #include "ui_region_widget_form.h"
 
 #include "../widgets/spanslider/qxtspanslider.h"
+#include "../core/widgets/color_picker.h"
 
 namespace RRM
 {
@@ -101,6 +102,8 @@ namespace RRM
 						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
 
 						std::tuple<int, int, int, int> water_saturation_position_;
+
+                        ColorPicker* color_picker_;
         };
 
 } /* namespace RRM */
