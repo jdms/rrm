@@ -83,7 +83,7 @@ class FlowVisualizationController: public QWidget
         void generateUnstructured();
 
         void updateCornerPoint(std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
-        void updateVolumetricMesh(std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
+        void updateVolumetricMesh(std::vector< float >& raw_vertices, std::vector<float>& normalized_vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
         void getSurfacesFromCrossSection();
 
         void computeFlowProperties();
