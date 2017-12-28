@@ -738,15 +738,15 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 
     std::vector< float > colors_;
     for( auto it: regions_ )
-    {/*
+    {
         int r = 255, g = 0, b = 0;
-        mainwindow->controller->getRegionColor( it, r, g, b );*/
+        mainwindow->controller->getRegionColor( it, r, g, b );
 
-        std::cout << "Region " << it << std::endl << std::flush ;//", color = " << r << ", " << g << ", " << b << std::endl << std::flush;
+        std::cout << "Region " << it << ", color = " << r << ", " << g << ", " << b << std::endl << std::flush;
 
-//        colors_.push_back( static_cast< float >( r/255.f ) );
-//        colors_.push_back( static_cast< float >( g/255.f ) );
-//        colors_.push_back( static_cast< float >( b/255.f ) );
+        colors_.push_back( static_cast< float >( r/255.f ) );
+        colors_.push_back( static_cast< float >( g/255.f ) );
+        colors_.push_back( static_cast< float >( b/255.f ) );
     }
 
     mainwindow->flow_window->setTetrahedronRegions( regions_, colors_ );

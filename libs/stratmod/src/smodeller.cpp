@@ -496,7 +496,7 @@ bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &inters
     /* State current = pimpl_->current_.state_; */
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
-    std::cout << "Trying to create a surface...\n"; 
+    /* std::cout << "Trying to create a surface...\n"; */ 
     bool status = createSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
@@ -510,13 +510,13 @@ bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &inters
 
     if ( ! intersected_surfaces.empty() )
     {
-        std::cout << "But it intersected another surface...\n";
+        /* std::cout << "But it intersected another surface...\n"; */
         pimpl_->popLastSurface();
 
         return false;
     }
 
-    std::cout << "Success!\n";
+    /* std::cout << "Success!\n"; */
 
     return true;
 }
