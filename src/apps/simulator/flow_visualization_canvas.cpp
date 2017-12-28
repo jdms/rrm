@@ -600,17 +600,17 @@ void FlowVisualizationCanvas::updateCornerPoint( )
 void FlowVisualizationCanvas::updateVolumetricMesh()
 {
 
-    std::vector< float > vertices;
+    std::vector< float > raw_vertices, normalized_vertices;
     std::vector< unsigned int > edges;
     std::vector< unsigned int > faces ;
 
 
-    controller->updateVolumetricMesh( vertices, edges, faces);
+    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, faces);
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
     /// OpenVolumeMesh
-    mesh.setTetrahedronGeometry(faces, vertices);
+    mesh.setTetrahedronGeometry(faces, normalized_vertices);
 
     update();
 
