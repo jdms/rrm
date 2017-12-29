@@ -10,6 +10,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QLabel>
+#include <QPixmap>
 #include <Eigen/Dense>
 
 
@@ -39,7 +40,8 @@ namespace RRM
                                            std::map<int, std::pair<double, double> >& _permeability_gratdients
                                            );
 
-                        void setRegionData(const int _number_of_regions );
+                        void setRegionData( const std::map< int,  std::vector< int > >& region_colors );
+                        void updateRegionColor( int _index, int red, int green, int blue );
 
                         int getNumberOfRegion() const;
 
@@ -62,7 +64,7 @@ namespace RRM
                         void setupWidget();
                         void createConnections();
                         void updateRegionsWidget(int _index);
-                        void createRegions( int _number_of_regions);
+                        void createRegions( const std::map< int,  std::vector< int > >& region_colors  );
 
                         int number_of_regions_;
 
@@ -102,6 +104,9 @@ namespace RRM
 						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
 
 						std::tuple<int, int, int, int> water_saturation_position_;
+
+                        QLabel* lb_region_color;
+                        std::map< int, QColor > regions_colors;
 
         };
 

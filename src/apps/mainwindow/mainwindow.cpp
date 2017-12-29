@@ -99,13 +99,13 @@ void MainWindow::createToolbar()
     ac_undo = new QAction( "Undo", this );
     ac_redo = new QAction( "Redo", this );
 
-    ac_sketch_above = new QAction( "SA", this );
+    ac_sketch_above = new QAction( "CA", this ); // create above!
     ac_sketch_above->setCheckable( true );
 
-    ac_sketch_below = new QAction( "SB", this );
+    ac_sketch_below = new QAction( "CB", this ); // create below!
     ac_sketch_below->setCheckable( true );
 
-    ac_truncate = new QAction( "Truncate", this );
+    ac_truncate = new QAction( "T", this );
     ac_truncate->setCheckable( true );
 
 
@@ -132,8 +132,6 @@ void MainWindow::createToolbar()
     ag_rules->addAction( ac_truncate );
 
 
-    ac_output_volume = new QAction( "Get Regions", this );
-    ac_output_volume->setCheckable( true );
 
 
     tb_mainwindow = addToolBar( "");
@@ -149,8 +147,6 @@ void MainWindow::createToolbar()
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addSeparator();
-    tb_mainwindow->addAction( ac_output_volume );
-
 
 
 }
@@ -231,8 +227,6 @@ void MainWindow::createMainWindowActions()
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
 
-    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
-                                                    {  if( status_ == true ) app->startFlowDiagnostics(); else app->closeFlowDiagnostics(); } );
 
 }
 
@@ -316,6 +310,7 @@ void MainWindow::createSketchingWindow()
     ac_topview->setChecked( true );
 
     tb_mainwindow->addAction( ac_topview );
+    tb_mainwindow->addSeparator();
 
 
 }
@@ -432,6 +427,17 @@ void MainWindow::createFlowWindow()
 
     connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces ){
                                                 app->getTetrahedronsRegions( vertices, edges, faces ); } );
+
+
+    ac_output_volume = new QAction( "Diagostics", this );
+    ac_output_volume->setCheckable( true );
+
+    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
+                                                    {  if( status_ == true ) app->startFlowDiagnostics(); else app->closeFlowDiagnostics(); } );
+
+    tb_mainwindow->addAction( ac_output_volume );
+
+
 
 
 }

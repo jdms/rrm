@@ -101,7 +101,7 @@ class FlowWindow : public  QMainWindow
         void acceptUserParameters();
         void clear();
 
-        void setRegions( std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ );
+        void setRegions( const std::map< int,  std::vector< int > >& region_colors /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_*/ );
         void regionPoints(const std::map<int, Eigen::Vector3f>& region_points);
         /// Will emit a signal sendNumberOfRegions
         int getNumberOfRegions();
@@ -115,7 +115,7 @@ class FlowWindow : public  QMainWindow
         void boundingBoxChnaged(bool _is_new_model);
 
         void setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ );//const std::vector< float >& colors_ );
-
+        void updateRegionColor( int index_, int r_, int g_, int b_ );
 
     signals:
 

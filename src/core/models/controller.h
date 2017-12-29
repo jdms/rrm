@@ -247,7 +247,7 @@ class Controller
         RulesProcessor rules_processor;
         double csection_step = 1.0;
 
-        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
+        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
         std::vector< std::size_t > selectable_upper;
         std::vector< std::size_t > selectable_bottom;
 

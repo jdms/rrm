@@ -1301,9 +1301,9 @@ void FlowWindow::updateModelColors( const RRM::PropertyProfile& _profile)
 
 }
 
-void FlowWindow::setRegions( std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ )
+void FlowWindow::setRegions( const std::map< int,  std::vector< int > >& region_colors  /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ */)
 {
-    region_parameters_->setRegionData( number_of_regions_ );
+    region_parameters_->setRegionData( region_colors );
 
     qbuildCornerPoint->setEnabled(true);
     qbuildUnstructured->setEnabled(true);
@@ -1322,9 +1322,9 @@ void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, std:
     for( auto v: values_for_visualization_ )
     {
         int id = static_cast< int >(v);
-        colors_ov_mesh_[ 3*i ] = colors_[ id/*static_cast< int >(v)*/].at(0);
-        colors_ov_mesh_[ 3*i + 1 ] = colors_[ id/*static_cast< int >(v)*/].at(1);
-        colors_ov_mesh_[ 3*i + 2 ] = colors_[ id/*static_cast< int >(v)*/].at(2);
+        colors_ov_mesh_[ 3*i ] = colors_[ id ].at(0);
+        colors_ov_mesh_[ 3*i + 1 ] = colors_[ id ].at(1);
+        colors_ov_mesh_[ 3*i + 2 ] = colors_[ id ].at(2);
         ++i;
     }
 
@@ -1332,4 +1332,10 @@ void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, std:
 
     canvas->updateVolumetricMesh();
     canvas->setColors( colors_ov_mesh_ );
+}
+
+
+void FlowWindow::updateRegionColor( int index_, int r_, int g_, int b_ )
+{
+    region_parameters_->updateRegionColor( index_, r_, g_, b_ );
 }

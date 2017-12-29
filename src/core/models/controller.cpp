@@ -664,7 +664,7 @@ bool Controller::createObjectSurface()
 void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
-    rules_processor.removeAbove();
+    rules_processor.truncate();
 }
 
 
