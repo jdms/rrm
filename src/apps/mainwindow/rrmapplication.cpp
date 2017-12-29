@@ -49,6 +49,8 @@ void RRMApplication::setDefaultRule( Settings::Stratigraphy::StratigraphicRules 
         mainwindow->ac_remove_below->setChecked( Variables::ON );
     else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         mainwindow->ac_remove_below_int->setChecked( Variables::ON );
+    else if( rule_ == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+        mainwindow->ac_truncate->setChecked( Variables::ON );
 }
 
 
@@ -273,6 +275,7 @@ void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
 {
     mainwindow->controller->setRegionColor( index_, r_, g_, b_ );
+    mainwindow->flow_window->updateRegionColor( index_, r_, g_, b_ );
 //    updateSketchingCanvas();
 }
 
@@ -633,6 +636,7 @@ void RRMApplication::setImageToTopView( std::string file_, double ox_, double oy
     mainwindow->controller->setTopViewImage( file_, ox_, oy_, x_, y_ );
 }
 
+
 void RRMApplication::removeImageFromTopView()
 {
     mainwindow->controller->removeTopViewImage();
@@ -648,24 +652,25 @@ void RRMApplication::startFlowDiagnostics()
     std::map< std::size_t, Volume::Color > regions_map_ ;
     mainwindow->controller->getOutputVolume( regions_map_ );
 
-    std::vector< std::size_t > regions_ ;
-    std::vector< float > colors_;
-    std::set< std::size_t > regions_indexes_;
+    std::map< int, std::vector< int > > color_regions_ ;
     for( auto it: regions_map_ )
     {
-        FlowVisualizationController::Color color_;
 
-        colors_.push_back( it.second.r );
-        colors_.push_back( it.second.g );
-        colors_.push_back( it.second.b );
+        int index_ = static_cast< int >( it.first );
+        std::vector< int > color_;
+        color_.resize( 3 );
 
-        regions_.push_back( it.first );
-        regions_indexes_.insert( it.first );
+        color_[ 0 ] = it.second.r;
+        color_[ 1 ] = it.second.g;
+        color_[ 2 ] = it.second.b;
+
+        color_regions_[ index_ ] = color_;
+
     }
 
 
     mainwindow->flow_window->loadSurfacesfromSketch1();
-    mainwindow->flow_window->setRegions( regions_indexes_.size(), regions_, colors_ );
+    mainwindow->flow_window->setRegions( color_regions_ );
 }
 
 

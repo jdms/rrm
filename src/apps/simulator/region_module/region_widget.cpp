@@ -119,7 +119,20 @@ namespace RRM
 
 			slider_Water_Saturation_->setEnabled(false);
 			label_Water_Saturation_->setEnabled(false);
-			doubleSpinBox_Region_Water_Saturation_->setEnabled(false);
+            doubleSpinBox_Region_Water_Saturation_->setEnabled(false);
+
+            lb_region_color = new QLabel();
+            lb_region_color->setMaximumSize( 16, 16 );
+            lb_region_color->setFrameShape( QFrame::Box );
+            lb_region_color->setLineWidth( 1 );
+
+
+            ui_->horizontalLayout_Region_Number->addWidget( lb_region_color );
+            ui_->spinBox_Number_of_Regions_->setVisible( false );
+            ui_->pushButton->setVisible( false );
+
+
+
         }
 
 
@@ -181,9 +194,21 @@ namespace RRM
 
         }
 
-        void RegionWidget::setRegionData(const int _number_of_region )
+        void RegionWidget::setRegionData( const std::map< int,  std::vector< int > >& region_colors )
         {
-            ui_->spinBox_Number_of_Regions_->setValue( _number_of_region );
+            ui_->spinBox_Number_of_Regions_->setValue( region_colors.size() );
+            createRegions( region_colors/*_number_of_region, colors_*/ );
+        }
+
+
+
+        void RegionWidget::updateRegionColor( int _index, int red, int green, int blue )
+        {
+            regions_colors[ _index ] =  QColor( red, green, blue );
+            QPixmap pixmap_ = QPixmap( 15, 15 );
+            pixmap_.fill( regions_colors[ _index ] );
+            lb_region_color->setPixmap( pixmap_ );
+            lb_region_color->update();
         }
 
 
@@ -194,7 +219,7 @@ namespace RRM
 
                 /// New GUI ---->
                 //// REGION
-                connect(ui_->spinBox_Number_of_Regions_, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &RegionWidget::createRegions);
+//                connect(ui_->spinBox_Number_of_Regions_, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &RegionWidget::createRegions);
                 connect(ui_->comboBox_Region_, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](){ updateRegionsWidget(ui_->comboBox_Region_->currentIndex()); });
 
                 connect( ui_->pushButton, &QPushButton::clicked, this, [=](){ emit getRegions(); } );
@@ -405,24 +430,45 @@ namespace RRM
 			doubleSpinBox_Region_Water_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
 			emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
 
+
+            QPixmap pixmap_ = QPixmap( 15, 15 );
+            pixmap_.fill( regions_colors[ _index ] );
+            lb_region_color->setPixmap( pixmap_ );
+            lb_region_color->update();
+
+
         }
 
-        void RegionWidget::createRegions( int _number_of_well)
+        void RegionWidget::createRegions( const std::map< int,  std::vector< int > >& region_colors /*int _number_of_well, const std::vector< float >& colors_*/ )
         {
                 QStringList stringList;
 
-                this->number_of_regions_ = _number_of_well;
+                this->number_of_regions_ = static_cast< int >( region_colors.size() );
 
-                for (auto i = 0; i < this->number_of_regions_ ; i++)
+                for( auto it: region_colors )
                 {
-                    stringList.push_back("Region " + QString::number(i + 1));
+                    int index_ = it.first;
+                    stringList.push_back("Region " + QString::number( index_ ) );
 
-                    if (permeability_values.count(i) == 0)
+                    int r = it.second[ 0 ];
+                    int g = it.second[ 1 ];
+                    int b = it.second[ 2 ];
+
+
+//                    QPixmap pixmap_ = QPixmap( 15, 15 );
+//                    pixmap_.fill( QColor( r, g, b ) );
+//                    lb_region_color->setPixmap( pixmap_ );
+//                    lb_region_color->update();
+
+                    regions_colors[ index_ ] =  QColor( r, g, b );
+
+
+                    if (permeability_values.count(index_) == 0)
                     {
 
-                        positions_values[i].x() = 0.0;
-                        positions_values[i].y() = 0.0;
-                        positions_values[i].z() = 0.0;
+                        positions_values[index_].x() = 0.0;
+                        positions_values[index_].y() = 0.0;
+                        positions_values[index_].z() = 0.0;
 
                         /// @FIXME Me September
                         doubleSpinbBox_low_porosity_->setValue(0.28);
@@ -430,18 +476,18 @@ namespace RRM
                         doubleSpinbBox_high_porosity_->setValue(0.32);
                         emit doubleSpinbBox_high_porosity_->editingFinished();
 
-                        porosity_gradient_values_[i].first = 0.28;
-                        porosity_gradient_values_[i].second = 0.32;
+                        porosity_gradient_values_[index_].first = 0.28;
+                        porosity_gradient_values_[index_].second = 0.32;
 
                         doubleSpinbBox_low_permeability_->setValue(150.0);
                         emit doubleSpinbBox_low_permeability_->editingFinished();
                         doubleSpinbBox_high_permeability_->setValue(250.0);
                         emit doubleSpinbBox_high_permeability_->editingFinished();
 
-                        permeability_gradient_values_[i].first = 150.0;
-                        permeability_gradient_values_[i].second = 250.0;
+                        permeability_gradient_values_[index_].first = 150.0;
+                        permeability_gradient_values_[index_].second = 250.0;
 
-                        saturation_values[i] = 0.0;
+                        saturation_values[index_] = 0.0;
                         doubleSpinBox_Region_Water_Saturation_->setValue(0.0);
 						emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
 

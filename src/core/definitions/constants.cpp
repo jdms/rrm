@@ -81,7 +81,7 @@ namespace Settings {
 
 
 
-    const Stratigraphy::StratigraphicRules Stratigraphy::DEFAULT_STRAT_RULES = Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
+    const Stratigraphy::StratigraphicRules Stratigraphy::DEFAULT_STRAT_RULES = Stratigraphy::StratigraphicRules::TRUNCATE;
     const std::string Stratigraphy::DEFAULT_STRAT_NAME = "Surface ";
 
 
