@@ -114,7 +114,7 @@ class FlowWindow : public  QMainWindow
         /// @FIXME
         void boundingBoxChnaged(bool _is_new_model);
 
-        void setTetrahedronRegions( const std::vector< int >& regions_, const std::vector< float >& colors_ );
+        void setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ );//const std::vector< float >& colors_ );
 
 
     signals:

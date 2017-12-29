@@ -16,8 +16,6 @@ namespace RRM
                 this->ui_ = new Ui::RegionWidgetForm;
                 this->ui_->setupUi(this);
 
-                color_picker_ = new ColorPicker();
-
                 this->setupWidget();
                 this->createConnections();
 
@@ -181,7 +179,6 @@ namespace RRM
 
 
 
-            ui_->horizontalLayout_Region_Number->addWidget( color_picker_ );
         }
 
         void RegionWidget::setRegionData(const int _number_of_region )

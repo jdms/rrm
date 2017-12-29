@@ -1310,10 +1310,26 @@ void FlowWindow::setRegions( std::size_t number_of_regions_, std::vector<std::si
 }
 
 
-void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, const std::vector< float >& colors_ )
+void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ )//const std::vector< float >& colors_ )
 {
-    controller->updateTetrahedonRegions( regions_ );
+
+    std::vector<double> values_for_visualization_;
+    controller->updateTetrahedonRegions( regions_, values_for_visualization_ );
+
+    std::vector< float > colors_ov_mesh_;
+    colors_ov_mesh_.resize( values_for_visualization_.size()*3 );
+    int i = 0;
+    for( auto v: values_for_visualization_ )
+    {
+        int id = static_cast< int >(v);
+        colors_ov_mesh_[ 3*i ] = colors_[ id/*static_cast< int >(v)*/].at(0);
+        colors_ov_mesh_[ 3*i + 1 ] = colors_[ id/*static_cast< int >(v)*/].at(1);
+        colors_ov_mesh_[ 3*i + 2 ] = colors_[ id/*static_cast< int >(v)*/].at(2);
+        ++i;
+    }
+
+
 
     canvas->updateVolumetricMesh();
-    canvas->setColors( colors_ );
+    canvas->setColors( colors_ov_mesh_ );
 }

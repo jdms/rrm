@@ -139,7 +139,7 @@ class FlowVisualizationController: public QWidget
         void setSinglePhase(  );
 		void setMultiPhase( SaturationMethod _method);
 
-        void updateTetrahedonRegions( const std::vector< int >& regions_ );
+        void updateTetrahedonRegions( const std::vector< int >& regions_ , std::vector<double> &values_for_visualization_ );
 
     public slots:
 

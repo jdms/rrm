@@ -103,7 +103,6 @@ namespace RRM
 
 						std::tuple<int, int, int, int> water_saturation_position_;
 
-                        ColorPicker* color_picker_;
         };
 
 } /* namespace RRM */
