@@ -613,10 +613,10 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
             index2 = elements.at(4*i + 2);
             index3 = elements.at(4*i + 3);
 
-            v0 = model_.pimpl_->point3( vcoords.at(3*index0 + 0), vcoords.at(3*index0 + 1), vcoords.at(3*index0 + 2) );
-            v1 = model_.pimpl_->point3( vcoords.at(3*index1 + 0), vcoords.at(3*index1 + 1), vcoords.at(3*index1 + 2) );
-            v2 = model_.pimpl_->point3( vcoords.at(3*index2 + 0), vcoords.at(3*index2 + 1), vcoords.at(3*index2 + 2) );
-            v3 = model_.pimpl_->point3( vcoords.at(3*index3 + 0), vcoords.at(3*index3 + 1), vcoords.at(3*index3 + 2) );
+            v0 = model_.pimpl_->point3( vcoords.at(3*index0 + 0), vcoords.at(3*index0 + 2), vcoords.at(3*index0 + 1) );
+            v1 = model_.pimpl_->point3( vcoords.at(3*index1 + 0), vcoords.at(3*index1 + 2), vcoords.at(3*index1 + 1) );
+            v2 = model_.pimpl_->point3( vcoords.at(3*index2 + 0), vcoords.at(3*index2 + 2), vcoords.at(3*index2 + 1) );
+            v3 = model_.pimpl_->point3( vcoords.at(3*index3 + 0), vcoords.at(3*index3 + 2), vcoords.at(3*index3 + 1) );
         }
         catch( const std::exception &e )
         {
@@ -637,7 +637,11 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
 
     TetrahedralMeshBuilder mb(model_.pimpl_->container_);
 
-    return mb.mapPointsToAttributes(centroids, regions);
+    bool status = mb.mapPointsToAttributes(centroids, regions);
+
+    mb.exportToVTK("rtest", vcoords, elements, regions);
+
+    return status;
 }
 
 std::vector<size_t> SUtilities::getSurfacesIndicesBelowPoint(double x, double y, double z)

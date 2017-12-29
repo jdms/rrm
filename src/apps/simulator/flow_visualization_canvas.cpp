@@ -602,15 +602,21 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
 
     std::vector< float > raw_vertices, normalized_vertices;
     std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces ;
+    std::vector< unsigned int > raw_faces, modified_faces;
 
 
-    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, faces);
+    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces);
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
     /// OpenVolumeMesh
-    mesh.setTetrahedronGeometry(faces, normalized_vertices);
+	//
+	// Why does this method cannot use the elments' connectivity as provided by the simulator? 
+	// Here the vector 'modified_faces' contains vertices' indices in an order created by FlowModel::uploadTetrahedron(), 
+	// which differs from the vertices' indices provided by the simulator in vector 'raw_faces'.
+	//
+
+    mesh.setTetrahedronGeometry(modified_faces, normalized_vertices);
 
     update();
 

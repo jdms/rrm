@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 class TetrahedralMeshBuilder
 {
@@ -20,6 +21,9 @@ class TetrahedralMeshBuilder
         ~TetrahedralMeshBuilder() = default;
 
         bool exportToTetgen( std::string );
+
+        template<typename VertexList, typename ElementList, typename AttributeList>
+        bool exportToVTK( std::string, const VertexList&, const ElementList&, const AttributeList& );
         bool exportToVTK( std::string );
 
         size_t tetrahedralize( std::vector<Tetrahedron>& );
@@ -488,5 +492,82 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
 /*     return num_tetrahedra; */ 
 /* } */
 
+template<typename VertexList, typename ElementList, typename AttributeList>
+bool TetrahedralMeshBuilder::exportToVTK( std::string filename, const VertexList &vcoords, const ElementList &elist, const AttributeList &attribute_list )
+{
+    /* Create vtk file */
+    std::ofstream vtkfs(filename + ".vtk");
+
+    if ( !vtkfs.good() )
+    {
+        return false; 
+    }
+
+
+    // Create mesh
+    /* std::vector<Prism> prism_list; */
+
+    /* std::vector<double> vcoords; */
+    /* std::vector<size_t> elist; */
+    /* std::vector<size_t> attribute_list; */
+
+    /* bool status = buildPrismMesh(prism_list); */
+
+    /* if ( status == false ) */
+    /* { */
+        /* return false; */
+    /* } */
+
+    // size_t num_vertices = getVertexCoordinates(vcoords);
+    /* size_t num_tetrahedra = getElementList(prism_list, elelist, attlist); */
+    // size_t num_tetrahedra = getTetrahedronList(elist, attribute_list);
+	size_t num_vertices = vcoords.size() / 3;
+	size_t num_tetrahedra = elist.size() / 4;
+
+    // Write file
+    vtkfs << "# vtk DataFile Version 2.0\n";
+    vtkfs << "Unstructured Grid\n";
+    vtkfs << "ASCII\n";
+    vtkfs << "DATASET UNSTRUCTURED_GRID\n\n";
+
+    vtkfs << "POINTS " << num_vertices << " double\n";
+    for ( size_t i = 0; i < num_vertices; ++i )
+    {
+        vtkfs << vcoords[3*i + 0] << " "
+            << vcoords[3*i + 1] << " "
+            << vcoords[3*i + 2] << "\n";
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELLS " << num_tetrahedra << " " << num_tetrahedra*5 << "\n";
+    for ( size_t i = 0; i < num_tetrahedra; ++i )
+    {
+        vtkfs << "4" << " "
+            << elist[4*i + 0] << " " 
+            << elist[4*i + 1] << " " 
+            << elist[4*i + 2] << " " 
+            << elist[4*i + 3] << "\n"; 
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELL_TYPES " << num_tetrahedra << "\n";
+    for ( size_t i = 0; i < num_tetrahedra; ++i )
+    {
+        // the number "10" corresponds to "VTK_TETRA"
+        vtkfs << "10" << "\n";
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELL_DATA " << num_tetrahedra << "\n";
+    vtkfs << "SCALARS cell_scalars int 1\n";
+    vtkfs << "LOOKUP_TABLE default\n";
+    for ( size_t i = 0; i < num_tetrahedra; ++i )
+    {
+        vtkfs << attribute_list[i] << "\n";
+    }
+    vtkfs << "\n";
+
+    return true;
+}
 
 #endif
