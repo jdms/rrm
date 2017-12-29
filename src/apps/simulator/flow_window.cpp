@@ -886,12 +886,12 @@ void FlowWindow::buildUnstructured()
 
     std::vector< float > raw_vertices, normalized_vertices;
     std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces;
+    std::vector< unsigned int > raw_faces, modified_faces;
 
     controller->generateUnstructured();
-    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, faces );
+    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces );
 
-    emit sendSimplifiedMesh( raw_vertices, edges, faces );
+    emit sendSimplifiedMesh( raw_vertices, edges, raw_faces );
 //    canvas->updateVolumetricMesh();
 
 }
