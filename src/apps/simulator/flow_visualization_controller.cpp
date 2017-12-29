@@ -1053,7 +1053,27 @@ void FlowVisualizationController::setSinglePhase( )
 }
 
 
-void FlowVisualizationController::updateTetrahedonRegions( const std::vector< int >& regions_ )
+void FlowVisualizationController::updateTetrahedonRegions( const std::vector< int >& regions_, std::vector<double> &values_for_visualization_ )
 {
     code_interface.setTetrahedralMeshRegions( regions_ );
+
+
+    std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
+    if (ptr_mesh)
+    {
+        // Vertex Properties ------------------------------------------------->
+
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Regions");
+        ptr_mesh->set_persistent(ch);
+
+        int i = 0;
+        for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+        {
+            // Set property value
+            ch[*c_it] = regions_[ i ];//values[i++];
+            ++i;
+        }
+
+        flow_model_.updateTetrahedronCellScalarProperty("Regions", values_for_visualization_);
+    }
 }
