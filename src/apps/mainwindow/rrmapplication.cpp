@@ -221,6 +221,7 @@ void RRMApplication::setObjectName( std::size_t index_, const std::string& name_
 void RRMApplication::setObjectVisible( std::size_t index_, bool status_ )
 {
     mainwindow->controller->setObjectVisibility( index_, status_ );
+    updateSketchingCanvas();
 }
 
 
@@ -269,6 +270,7 @@ void RRMApplication::setRegionName( std::size_t index_, const std::string& name_
 void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 {
     mainwindow->controller->setRegionVisibility( index_, status_ );
+    updateSketchingCanvas();
 }
 
 
@@ -276,7 +278,7 @@ void RRMApplication::setRegionColor( std::size_t index_, int r_, int g_, int b_ 
 {
     mainwindow->controller->setRegionColor( index_, r_, g_, b_ );
     mainwindow->flow_window->updateRegionColor( index_, r_, g_, b_ );
-//    updateSketchingCanvas();
+    updateSketchingCanvas();
 }
 
 
@@ -483,6 +485,7 @@ void RRMApplication::load( const std::string& filename_ )
 void RRMApplication::undo()
 {
     mainwindow->controller->undo();
+    updateSketchingCanvas();
     checkUndoRedo();
     checkSketchStatus();
 }
@@ -491,6 +494,7 @@ void RRMApplication::undo()
 void RRMApplication::redo()
 {
     mainwindow->controller->redo();
+    updateSketchingCanvas();
     checkUndoRedo();
     checkSketchStatus();
 }
