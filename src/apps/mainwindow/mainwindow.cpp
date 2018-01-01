@@ -429,7 +429,7 @@ void MainWindow::createFlowWindow()
                                                 app->getTetrahedronsRegions( vertices, edges, faces ); } );
 
 
-    ac_output_volume = new QAction( "Diagostics", this );
+    ac_output_volume = new QAction( "Diagnostics", this );
     ac_output_volume->setCheckable( true );
 
     connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
