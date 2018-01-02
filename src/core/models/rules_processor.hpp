@@ -493,9 +493,19 @@
                     std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect));
                     std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect));
 
-					// tHelper.truncateCurve();
-					// in_curve = tHelper.getTruncatedCurve();
-					// surface = tHelper.getTruncatedPoints2D();
+					tHelper.truncateCurve();
+					std::cout << "Original curve\n";
+					for (size_t i = 0; i < in_curve.size(); ++i)
+					{
+						std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n";
+					}
+					in_curve = tHelper.getTruncatedCurve();
+					std::cout << "Modified curve\n";
+					for (size_t i = 0; i < in_curve.size(); ++i)
+					{
+						std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n";
+					}
+					surface = tHelper.getTruncatedPoints2D();
                     status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface, lb_intersect, ub_intersect );
                     std::cout << "Final status is: " << status << "\n";
                 }
