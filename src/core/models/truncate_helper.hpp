@@ -15,12 +15,20 @@ class TruncateHelper
         using SurfacesIndices = std::vector<std::size_t>;
         using CurveTuple = std::tuple<CurveType, double>;
 
-        TruncateHelper(const CurveTuple &curve_tuple, SModellerWrapper &m, SurfacesIndices &isurf) : in_curve_(std::get<0>(curve_tuple)), modeller_( m )
+        TruncateHelper( const CurveTuple &curve_tuple, SModellerWrapper &m, SurfacesIndices &isurf ) : in_curve_(std::get<0>(curve_tuple)), modeller_( m )
 		{
 			curve_ = in_curve_;
-			sanitizeCurve(curve_);
+			//sanitizeCurve(curve_);
+
 			cross_section_ = std::get<1>(curve_tuple);
+			
 			intersected_surfaces_ = isurf;
+			
+			modeller_.getOrigin(origin_.x, origin_.y, origin_.z);
+			modeller_.getSize(model_size_.x, model_size_.y, model_size_.z);
+
+			first_cross_ = false;
+			second_cross_ = false;
 		}
 
         bool getFirstRegionCurveIntersects( SurfacesIndices &lb, SurfacesIndices &ub );
@@ -112,11 +120,30 @@ class TruncateHelper
         size_t first_cross_index_, second_cross_index_;
         bool first_cross_, second_cross_;
 
+		struct { double x, y, z;  } origin_, model_size_;
+
         double tol = 1E-1;
 
         enum class CrossedBoundary { UPPER, LOWER, BOUNDING_BOX, INVALID };
 
-        void sanitizeCurve( CurveType &c )
+		enum class CrossingType { UP_DOWN, DOWN_UP };
+
+		bool liesInsideBoundingBox( double x, double y, double z )
+		{
+			bool liesInside = true;
+			
+			liesInside &= (x >= origin_.x);
+			liesInside &= (y >= origin_.y);
+			liesInside &= (z >= origin_.z);
+
+			liesInside &= (x <= origin_.x + model_size_.x);
+			liesInside &= (y <= origin_.y + model_size_.y);
+			liesInside &= (z <= origin_.z + model_size_.z);
+
+			return liesInside;
+		}
+
+        bool reverseCurve( CurveType &c )
         {
             if ( c.size() > 1 )
             {
@@ -126,8 +153,11 @@ class TruncateHelper
                 if ( p.x() > q.x() )
                 {
                     c.reverse();
+					return true;
                 }
             }
+
+			return false;
         }
 
         void trimIntersectionList()
@@ -186,6 +216,17 @@ class TruncateHelper
 
         CrossedBoundary getCrossedBoundary(size_t index)
         {
+
+			if (!liesInsideBoundingBox(curve_[index - 1].x(), curve_[index - 1].y(), cross_section_))
+			{
+				return CrossedBoundary::BOUNDING_BOX;
+			}
+
+			if (!liesInsideBoundingBox(curve_[index].x(), curve_[index].y(), cross_section_))
+			{
+				return CrossedBoundary::BOUNDING_BOX;
+			}
+
             std::vector<size_t> sym_diff = {};
 
             SUtilitiesWrapper u(modeller_);
@@ -194,7 +235,7 @@ class TruncateHelper
             auto ub		 = u.getSurfacesIndicesAbovePoint(curve_[index    ].x(), curve_[index    ].y(), cross_section_);
             std::set_symmetric_difference(prev_ub.begin(), prev_ub.end(), ub.begin(), ub.end(), std::back_inserter(sym_diff));
 
-            bool at_upper_boundary = std::includes(upper_boundary_.begin(), upper_boundary_.end(), sym_diff.begin(), sym_diff.end());
+            bool at_upper_boundary = !sym_diff.empty() && std::includes(upper_boundary_.begin(), upper_boundary_.end(), sym_diff.begin(), sym_diff.end());
 
             if (at_upper_boundary)
             {
@@ -208,7 +249,7 @@ class TruncateHelper
             auto lb = u.getSurfacesIndicesBelowPoint(curve_[index].x(), curve_[index].y(), cross_section_);
             std::set_symmetric_difference(prev_lb.begin(), prev_lb.end(), lb.begin(), lb.end(), std::back_inserter(sym_diff));
 
-            bool at_lower_boundary = std::includes(lower_boundary_.begin(), lower_boundary_.end(), sym_diff.begin(), sym_diff.end());
+            bool at_lower_boundary = !sym_diff.empty() && std::includes(lower_boundary_.begin(), lower_boundary_.end(), sym_diff.begin(), sym_diff.end());
 
             if (at_lower_boundary)
             {
@@ -232,7 +273,14 @@ class TruncateHelper
     template<typename CurveType>
 bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &lb, SurfacesIndices &ub )
 {
-    lower_boundary_ = {};
+	if ( canTruncate() )
+	{
+		lb = lower_boundary_;
+		ub = upper_boundary_;
+		return true;
+	}
+
+	lower_boundary_ = {};
     upper_boundary_ = {};
 
     if ( curve_.size() < 2 )
@@ -240,8 +288,9 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
         return false;
     }
 
+
     std::vector<size_t> cur_region, region, cur_lbounds, cur_ubounds;
-    bool first_cross_ = false, second_cross_ = false;
+    //bool first_cross_ = false, second_cross_ = false;
 
     SUtilitiesWrapper u(modeller_);
 
@@ -275,9 +324,21 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
 
     if ( first_cross_ && second_cross_ )
     {
+		bool curve_was_reversed = reverseCurve(curve_);
+		if (curve_was_reversed)
+		{
+			size_t size = curve_.size(), fcross, scross;
+			fcross = size - second_cross_index_;
+			scross = size - first_cross_index_;
+
+			first_cross_index_ = fcross; 
+			second_cross_index_ = scross;
+		}
+
         lb = lower_boundary_;
         ub = upper_boundary_;
-        return true;
+        
+		return true;
     }
 
     return false;
@@ -286,24 +347,10 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
     template<typename CurveType>
 bool TruncateHelper<CurveType>::truncateCurve()
 {
-    // Initialization
-    //
-    //size_t num_curves = intersect_surf.size();
-    //auto &in_curve = std::get<0>(curve_tuple);
-    //auto &in_curve_depth = std::get<1>(curve_tuple);
-
-    std::cout << "Inside truncateSurface()\n";
-    if ( !canTruncate() )
-    {
-        return false;
-    }
-
-    std::cout << "canTruncate() == true\n";
     bool success = false;
-    success |= getLowerBoundaryForTruncate();
-    std::cout << "Got lower boundary\n";
+
+	success |= getLowerBoundaryForTruncate();
     success |= getUpperBoundaryForTruncate();
-    std::cout << "Got upper boundary\n";
 
     if (!success)
     {
@@ -370,7 +417,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
 
     Point2D p, q;
 
-    std::cout << "Getting first crossed boundary: ";
     CrossedBoundary t1 = getCrossedBoundary(first_cross_index_);
     q = curve_[first_cross_index_ - 1];
     size_t i = 0;
@@ -378,7 +424,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
     switch (t1)
     {
         case CrossedBoundary::UPPER:
-            std::cout << " upper\n";
             p = upper_curve_.atBegin();
             while ( (p.x() < q.x()) && (i < upper_curve_.size()) )
             {
@@ -390,7 +435,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
             break;
 
         case CrossedBoundary::LOWER:
-            std::cout << " lower\n";
             p = lower_curve_.atBegin();
             while ((p.x() < q.x()) && (i < lower_curve_.size()))
             {
@@ -402,11 +446,9 @@ bool TruncateHelper<CurveType>::truncateCurve()
             break;
 
         case CrossedBoundary::INVALID:
-            std::cout << " invalid\n";
             break;
     }
 
-    std::cout << "Getting second crossed boundary: ";
     CrossedBoundary t2 = getCrossedBoundary(second_cross_index_);
     q = curve_[second_cross_index_];
     size_t j = 1;
@@ -414,7 +456,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
     switch (t2)
     {
         case CrossedBoundary::UPPER:
-            std::cout << " upper\n";
             p = upper_curve_.atEnd();
             while ((p.x() > q.x()) && (j < upper_curve_.size()))
             {
@@ -426,7 +467,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
             break;
 
         case CrossedBoundary::LOWER:
-            std::cout << " lower\n";
             p = lower_curve_.atEnd();
             while ((p.x() > q.x()) && (j < lower_curve_.size()))
             {
@@ -438,7 +478,6 @@ bool TruncateHelper<CurveType>::truncateCurve()
             break;
 
         case CrossedBoundary::INVALID:
-            std::cout << " invalid\n";
             break;
     }
 
@@ -459,7 +498,6 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
 
     if (num_curves == 0)
     {
-        std::cout << "Lower boundary is empty\n";
         return false;
     }
 
@@ -498,7 +536,6 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
         lb_curve[j] -= 0;
     }
 
-    std::cout << "Converting lower boundary to a curve\n";
     convertToCurveType(lb_curve, lower_curve_);
 
     return true;
@@ -516,7 +553,6 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
 
     if ( num_curves == 0 )
     {
-        std::cout << "Upper boundary is empty\n";
         return false;
     }
 
@@ -554,8 +590,8 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
     {
         ub_curve[j] += 0;
     }
-    std::cout << "Converting upper boundary to a curve\n";
-    convertToCurveType(ub_curve, upper_curve_);
+    
+	convertToCurveType(ub_curve, upper_curve_);
 
     return true;
 }
