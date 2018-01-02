@@ -89,7 +89,7 @@ bool RulesProcessor::setLowResolution()
 
 bool RulesProcessor::setMediumResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(32, 32);
+    bool status = modeller_.tryChangeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
