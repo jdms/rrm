@@ -494,7 +494,12 @@
                     std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect));
                     std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect));
 
-					tHelper.truncateCurve();
+					status = tHelper.truncateCurve();
+					if (status == false)
+					{
+						return false;
+					}
+
 					std::cout << "Original curve\n";
 					for (size_t i = 0; i < in_curve.size(); ++i)
 					{
