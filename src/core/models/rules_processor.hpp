@@ -375,7 +375,8 @@
     {
         modeller_.disableGeologicRules();
         bool success = createSurface(surface_index, curves);
-        if ( success )
+        
+		if ( success )
         {
             testing_surface_insertion_ = true;
         }
@@ -522,7 +523,11 @@
 
         testing_surface_insertion_ = false;
 
-        return status;
+		//std::vector<double> dummy_vertices;
+		//std::vector<size_t> dummy_edges;
+		//status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+        
+		return status;
     }
 
     template<typename CurveType>
