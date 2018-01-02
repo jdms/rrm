@@ -26,7 +26,7 @@ OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
 OPTION( BUILD_IN_PREFIXED_BINARY_DIR "To simplify cleaning in Windows" ON)
 
 if(BUILD_IN_PREFIXED_BINARY_DIR)
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/ )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ )
 endif()
 
 ###############################################

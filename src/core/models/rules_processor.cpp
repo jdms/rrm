@@ -89,7 +89,7 @@ bool RulesProcessor::setLowResolution()
 
 bool RulesProcessor::setMediumResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(8, 8);
+    bool status = modeller_.tryChangeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
@@ -397,7 +397,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //
 
     /* modeller_.changeDiscretization(length_discretization, width_discretization); */
-    modeller_.changeDiscretization(4, 4);
+    modeller_.changeDiscretization(8, 8);
     
     // 
     // Get the PLC
