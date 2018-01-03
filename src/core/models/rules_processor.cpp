@@ -82,7 +82,7 @@ bool RulesProcessor::setLowResolution()
         return false;
     }
 
-    current_resolution_ = ModelResolution::LOW;
+    current_resolution_ = LOW;
 
     return status;
 }
@@ -95,7 +95,7 @@ bool RulesProcessor::setMediumResolution()
         return false;
     }
 
-    current_resolution_ = ModelResolution::MEDIUM;
+    current_resolution_ = MEDIUM;
 
     return status;
 }
@@ -108,7 +108,7 @@ bool RulesProcessor::setHighResolution()
         return false;
     }
 
-    current_resolution_ = ModelResolution::HIGH;
+    current_resolution_ = HIGH;
 
     return status;
 }
@@ -479,18 +479,19 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
 
     switch( current_resolution_ )
     {
-        case LOW:
+	case LOW:
             modeller_.changeDiscretization(32, 32);
             break;
 
-        case MEDIUM:
+	case MEDIUM:
             modeller_.changeDiscretization(64, 64);
             break;
 
-        case HIGH:
+	case HIGH:
             modeller_.changeDiscretization(128, 128);
             break;
     }
+	modeller_.changeDiscretization(64, 64);
 
     return true;
 }
