@@ -138,13 +138,13 @@ class TruncateHelper
                 if ( t == CrossingType::UP_DOWN )
                 {
                     p.y() += displacement_;
-                    // p.y() = std::max(p.y(), bound.y());
+                    p.y() = std::max(p.y(), bound.y());
                     success = true;
                 }
                 else if ( t == CrossingType::DOWN_UP )
                 {
                     p.y() += displacement_;
-                    // p.y() = std::max(p.y(), bound.y());
+                    p.y() = std::max(p.y(), bound.y());
                     success = true;
 
                 }
@@ -155,13 +155,13 @@ class TruncateHelper
                 if ( t == CrossingType::UP_DOWN )
                 {
                     p.y() -= displacement_;
-                    // p.y() = std::min(p.y(), bound.y());
+                    p.y() = std::min(p.y(), bound.y());
                     success = true;
                 }
                 else if ( t == CrossingType::DOWN_UP )
                 {
                     p.y() -= displacement_;
-                    // p.y() = std::min(p.y(), bound.y());
+                    p.y() = std::min(p.y(), bound.y());
                     success = true;
                 }
             }

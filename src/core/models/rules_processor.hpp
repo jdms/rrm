@@ -578,7 +578,8 @@
             if ( intersected_surfaces.size() > 0 )
             {
                 std::tuple<CurveType, double> curve_tuple = std::make_pair(cross_section_curve, cross_section_depth);
-                status = getFirstRegionCurveIntersects( curve_tuple, lbounds, ubounds, first_index, second_index );
+                TruncateHelper<CurveType> tHelper(curve_tuple, modeller_, intersected_surfaces);
+                status = tHelper.getFirstRegionCurveIntersects( lbounds, ubounds );
                 if ( status == false )
                 {
                     return false;
@@ -588,6 +589,13 @@
                 std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect));
                 std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect));
 
+                status = tHelper.truncateCurve();
+                if (status == false)
+                {
+                    return false;
+                }
+
+                cross_section = tHelper.getTruncatedPoints2D();
                 status = modeller_.createLengthwiseExtrudedSurface( surface_index, cross_section, cross_section_depth, path, lb_intersect, ub_intersect );
             }
         }
