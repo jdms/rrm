@@ -1188,22 +1188,26 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     object_tree->removeOutputVolume();
 
 
+    double w = 0, h = 0,  l = 0;
+    double ox_ = 0, oy_ = 0, oz_ = 0;
+
+    volume->getOrigin( ox_, oy_, oz_ );
+    volume->getGeometry( w, h, l );
+
+
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     rules_processor.getTetrahedralMesh( vertices_, regions_ );
 
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );
+    vol1_->setOrigin( ox_, oy_, oz_ );
+    vol1_->setGeometry( w, h, l );
 
     scene3d->addOutputVolume( vol1_ );
     object_tree->addOutputVolume();
 
 
-    double w = 0, h = 0,  l = 0;
-    double ox_ = 0, oy_ = 0, oz_ = 0;
-
-    vol1_->getOrigin( ox_, oy_, oz_ );
-    vol1_->getGeometry( w, h, l );
 
 
     std::random_device rd;
@@ -1289,6 +1293,20 @@ void Controller::getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ )
 }
 
 
+void Controller::hideRegions()
+{
+    if( regions.empty() == true ) return;
+
+    for( auto id: regions )
+        setRegionVisibility( id.first, false );
+
+    object_tree->hideOutputVolume();
+    scene3d->updateRegions();
+
+
+
+
+}
 
 
 void Controller::clear()

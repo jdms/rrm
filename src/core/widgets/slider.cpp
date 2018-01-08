@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 #include <QtWidgets/QStyle>
 #include <QtWidgets/QStyleOptionSlider>
@@ -27,7 +28,7 @@ void Slider::addMarker( int value )
     getSubControlDimensions( sliderLength, sliderMin, sliderMax );
     saveMarkerPosition( value, sliderLength, sliderMin, sliderMax );
 
-    emit markValue( value );
+    emit markValue( value, color_markers[ value ] );
 
 }
 
@@ -37,6 +38,8 @@ void Slider::removeMarker( int value )
     if( isValidMarker( value ) == false ) return;
 
     markers.erase( value );
+    color_markers.erase( value );
+
     emit unmarkValue( value );
 
     update();
@@ -89,6 +92,17 @@ void Slider::saveMarkerPosition( int value, int slider_length, int slider_min, i
 
     markers[ value ] = pos;
 
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    int r = distr( eng );
+    int b = distr( eng );
+    int g = distr( eng );
+
+    color_markers[ value ] = QColor( r, g, b );
+
+
 }
 
 
@@ -129,9 +143,14 @@ void Slider::paintEvent( QPaintEvent *ev )
     pen_.setWidth( 2.0 );
 
     QPainter painter( this );
-    painter.setPen( pen_ );
     for( auto s: markers )
-        painter.drawLine( 0, s.second, 10, s.second );
+    {
+//        painter.drawLine( 0, s.second, 10, s.second );
+        QColor c_ = color_markers[ s.first ];
+        painter.setPen( c_.darker() );
+        painter.setBrush( QBrush( c_ ) );
+        painter.drawEllipse( QPoint( 5, s.second ), 4, 4 );
+    }
     QSlider::paintEvent(ev);
 }
 

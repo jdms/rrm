@@ -105,6 +105,8 @@ class Volume
         void clear();
         void initialize();
 
+        void updateDimensions();
+
 
     private:
 

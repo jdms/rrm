@@ -327,8 +327,8 @@ void MainWindow::createSketchingActions()
 {
 
 
-    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v )
-                                                         { app->addCrossSectionCanvas( v );  } );
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )
+                                                         { app->addCrossSectionCanvas( v, c_ );  } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ app->removeCrossSectionCanvas( v ); } );
 

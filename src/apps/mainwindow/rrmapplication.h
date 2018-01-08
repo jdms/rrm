@@ -160,7 +160,7 @@ class RRMApplication
         void restart();
 
 
-        void addCrossSectionCanvas( double depth_ );
+        void addCrossSectionCanvas( double depth_, QColor color_ );
         void removeCrossSectionCanvas( double depth_ );
 
 

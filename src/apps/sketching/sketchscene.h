@@ -31,8 +31,10 @@ class SketchScene: public QGraphicsScene, public Scene
         SketchScene( CrossSection* const& raw_ );
 
 
-        void readCrossSection( CrossSection* const& raw_ );
+        void addLabel( double depth_, QColor color_);
 
+
+        void readCrossSection( CrossSection* const& raw_ );
 
 
         void addVolume( Volume* const& raw_, Settings::CrossSection::CrossSectionDirections dir_ );
@@ -172,6 +174,9 @@ class SketchScene: public QGraphicsScene, public Scene
         QGraphicsEllipseItem* resize_marker;
         QGraphicsEllipseItem* move_marker;
         ImageItemWrapper* image;
+
+        QGraphicsTextItem* csection_label;
+        QGraphicsEllipseItem* csection_color;
 
 
 };

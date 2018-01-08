@@ -282,6 +282,8 @@ void Volume::setVertices( const std::vector< double >& vertices_  )
 {
     vertices.clear();
     vertices.assign( vertices_.begin(), vertices_.end() );
+
+//    updateDimensions();
 }
 
 
@@ -305,6 +307,53 @@ void Volume::getRegion( std::size_t index_, std::vector< std::size_t >& faces_, 
     if( regions.find(index_ ) == regions.end() ) return;
     faces_ = regions.at( index_ );
     c_ = regions_colors.at( index_ );
+}
+
+
+void Volume::updateDimensions()
+{
+    if( vertices.empty() == true ) return;
+
+    std::size_t number_of_vertices_ = vertices.size()/3;
+
+
+    double maxx_ = 0.0, maxy_ = 0.0, maxz_ = 0.0;
+    double minx_ = 0.0, miny_ = 0.0, minz_ = 0.0;
+
+    maxx_ = vertices[ 0 ];
+    maxy_ = vertices[ 1 ];
+    maxz_ = vertices[ 2 ];
+
+    minx_ = vertices[ 0 ];
+    miny_ = vertices[ 1 ];
+    minz_ = vertices[ 2 ];
+
+    for( std::size_t i = 0; i < number_of_vertices_; ++i )
+    {
+        double x_ = vertices[ 3*i ];
+        double y_ = vertices[ 3*i + 1 ];
+        double z_ = vertices[ 3*i + 2 ];
+
+        if( x_ >= maxx_  ) maxx_ = x_;
+        if( y_ >= maxy_  ) maxy_ = y_;
+        if( z_ >= maxz_  ) maxz_ = z_;
+
+        if( x_ <= minx_  ) minx_ = x_;
+        if( y_ <= miny_  ) miny_ = y_;
+        if( z_ <= minz_  ) minz_ = z_;
+    }
+
+
+    std::cout << "New origin: " << minx_ << ", " << miny_ << ", " << minz_ << std::endl << std::flush;
+    std::cout << "New maxs: " << maxx_ << ", " << maxy_ << ", " << maxz_ << std::endl << std::flush;
+
+//    setOrigin( minx_, miny_, minz_ );
+    setGeometry( std::fabs( maxx_ - minx_ ), std::fabs( maxy_ - miny_ ), std::fabs( maxz_ - minz_ ) );
+
+//    setWidth( std::fabs( maxx_ - minx_ ) );
+//    setHeight( std::fabs( maxy_ - miny_ ) );
+//    setLenght( std::fabs( maxz_ - minz_ ) );
+
 }
 
 
