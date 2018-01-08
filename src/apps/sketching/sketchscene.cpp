@@ -22,6 +22,22 @@ SketchScene::SketchScene()
     csection_image = new QGraphicsPixmapItem();
     addItem( csection_image );
 
+
+    QFont font_;
+    font_.setPixelSize(20);
+    font_.setBold(false);
+    font_.setFamily("Calibri");
+
+    csection_label = new QGraphicsTextItem();
+    csection_label->setTransform( QTransform::fromScale(1, -1), true );
+    csection_label->setFont( font_ );
+    addItem( csection_label );
+
+    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
+    addItem( csection_color );
+
+
+
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
@@ -67,6 +83,21 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
     addItem( move_marker );
+
+    QFont font_;
+    font_.setPixelSize(20);
+    font_.setBold(false);
+    font_.setFamily("Calibri");
+
+    csection_label = new QGraphicsTextItem();
+    csection_label->setTransform( QTransform::fromScale(1, -1), true );
+//    csection_label->setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
+    csection_label->setFont( font_ );
+    addItem( csection_label );
+
+    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
+    addItem( csection_color );
+
 
 
     axes.setVisible( true );
@@ -161,6 +192,20 @@ void SketchScene::setAxesVisible( bool status_ )
 {
     axes.setVisible( status_ );
     update();
+}
+
+
+void SketchScene::addLabel( double depth_, QColor color_ )
+{
+
+    csection_color->setPos( volume->boundingRect().bottomLeft().x(), volume->boundingRect().bottomLeft().y() + 40 );
+    csection_label->setPos( volume->boundingRect().bottomLeft().x() + 20, volume->boundingRect().bottomLeft().y() + 65 );
+
+    QString label_( " Cross-Section %1" );
+    csection_label->setPlainText( label_.arg( depth_ ) );
+    csection_color->setPen( QPen( color_ ) );
+    csection_color->setBrush( QBrush( color_ ) );
+    csection_color->update();
 }
 
 
@@ -276,7 +321,6 @@ void SketchScene::updateImageCrossSection()
     p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
     p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
 
-//    move_marker->setPos( origin_.x(), origin_.y() );
     move_marker->setPos( p_move );
     move_marker->setVisible( true );
     move_marker->update();
@@ -381,9 +425,12 @@ void SketchScene::moveCurrentCrossSection( double depth_ )
 void SketchScene::addVolume( Volume* const &raw_, Settings::CrossSection::CrossSectionDirections dir_ )
 {
     clearVolume();
-    volume = new VolumeItemWrapper( raw_, dir_ );
 
+    volume = new VolumeItemWrapper( raw_, dir_ );
     addItem( volume );
+
+//    csection_color->setPos( volume->boundingRect().bottomLeft().x(), volume->boundingRect().bottomLeft().y() + 40 );
+
     setSceneRect( volume->boundingRect() );
     update();
 }

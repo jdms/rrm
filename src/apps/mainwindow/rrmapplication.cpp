@@ -586,11 +586,11 @@ void RRMApplication::restart()
 
 
 
-void RRMApplication::addCrossSectionCanvas( double depth_ )
+void RRMApplication::addCrossSectionCanvas( double depth_, QColor color_ )
 {
     bool status_ = mainwindow->controller->addFixedCrossSection( depth_ );
     if( status_ == false ) return;
-    mainwindow->sketch_window->addFixedCrossSectionCanvas( mainwindow->controller->getCrossSection( depth_ ) );
+    mainwindow->sketch_window->addFixedCrossSectionCanvas( mainwindow->controller->getCrossSection( depth_ ), color_ );
     updateSketchingCanvas();
 }
 
@@ -684,6 +684,8 @@ void RRMApplication::closeFlowDiagnostics()
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
+
+    mainwindow->controller->hideRegions();
 }
 
 
@@ -745,46 +747,6 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
 {
     std::vector< int > regions_ = mainwindow->controller->getTetrahedronsRegions( vertices, edges, faces );
-
-//    std::vector< float > colors_;
-//    colors_.resize( vertices.size() );
-//    for( auto it: regions_ )
-//    {
-//        int r = 255, g = 0, b = 0;
-//        mainwindow->controller->getRegionColor( it, r, g, b );
-
-//        std::cout << "Region " << it << ", color = " << r << ", " << g << ", " << b << std::endl << std::flush;
-
-
-//        unsigned int id0_ = faces[ 4*it ];
-//        unsigned int id1_ = faces[ 4*it + 1 ];
-//        unsigned int id2_ = faces[ 4*it + 2 ];
-//        unsigned int id3_ = faces[ 4*it + 3 ];
-
-//        colors_[ 3*id0_ ] = r ;
-//        colors_[ 3*id0_ + 1 ] = g;
-//        colors_[ 3*id0_ + 2 ] = b;
-
-//        colors_[ 3*id1_ ] = r;
-//        colors_[ 3*id1_ + 1 ] = g;
-//        colors_[ 3*id1_ + 2 ] = b;
-
-//        colors_[ 3*id2_ ] = r;
-//        colors_[ 3*id2_ + 1 ] = g;
-//        colors_[ 3*id2_ + 2 ] = b;
-
-//        colors_[ 3*id3_ ] = r;
-//        colors_[ 3*id3_ + 1 ] = g;
-//        colors_[ 3*id3_ + 2 ] = b;
-
-
-
-////        colors_.push_back( static_cast< float >( r/255.f ) );
-////        colors_.push_back( static_cast< float >( g/255.f ) );
-////        colors_.push_back( static_cast< float >( b/255.f ) );
-//    }
-
-//    mainwindow->flow_window->setTetrahedronRegions( regions_, colors_ );
 
     std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )

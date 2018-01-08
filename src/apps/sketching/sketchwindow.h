@@ -4,6 +4,7 @@
 
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QGraphicsView>D
 
 #include "./src/core/widgets/canvasstack.h"
 #include "sketchscene.h"
@@ -13,7 +14,7 @@
 #include "./src/core/widgets/color_picker.h"
 
 
-class QGraphicsView;
+//class QGraphicsView;
 class QWheelEvent;
 
 
@@ -59,7 +60,7 @@ class SketchWindow: public QMainWindow
         void clear();
 
 
-        void addFixedCrossSectionCanvas( CrossSection* const& cs_ );
+        void addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ );
         bool removeFixedCrossSectionCanvas( double depth_ );
         void setFixedCrossSectionsVisible( bool status_ );
 

@@ -144,6 +144,9 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     main->scale( 1, -1 );
     main->setScene( main_scene );
 
+    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+
     ////// teste
 
     QColor color_ = cp_color->currentColor();
@@ -204,6 +207,7 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
 
     tv_main = new QGraphicsView();
     tv_main->setScene( tv_scene );
+    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
 
     ////// teste
@@ -264,6 +268,7 @@ void SketchWindow::updateCanvas()
         {
             main_scene->updateVolume();
             main_scene->updateCrossSection();
+            main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
         }
 
     }
@@ -275,6 +280,7 @@ void SketchWindow::updateCanvas()
         {
             tv_scene->updateVolume();
             tv_scene->updateCrossSection();
+            tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
         }
 
     }
@@ -285,6 +291,7 @@ void SketchWindow::updateCanvas()
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateVolume();
         sc_->updateCrossSection();
+        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 
 }
@@ -312,12 +319,14 @@ void SketchWindow::addObject( Object* const& obj_ )
     if( main_scene == nullptr) return;
 
     main_scene->addObject( obj_ );
+    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->addObject( obj_ );
+        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 
 }
@@ -330,6 +339,7 @@ void SketchWindow::updateObject( const std::size_t& index_ )
     if( main_scene == nullptr) return;
 
     main_scene->updateObject( index_ );
+    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
@@ -337,6 +347,7 @@ void SketchWindow::updateObject( const std::size_t& index_ )
         QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateObject( index_ );
+        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 }
 
@@ -348,6 +359,7 @@ void SketchWindow::addTrajectory( Object* const& obj_ )
 
     if( tv_scene == nullptr ) return;
     tv_scene->addTrajectory( obj_ );
+    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -355,6 +367,7 @@ void SketchWindow::updateTrajectory( const std::size_t& index_ )
 {
     if( tv_scene == nullptr ) return;
     tv_scene->updateTrajectory( index_ );
+    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -483,7 +496,7 @@ void SketchWindow::clear()
 
 
 
-void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_ )
+void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ )
 {
     if( cs_ == nullptr ) return;
 
@@ -494,13 +507,17 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_ )
 
 
     QColor color_ = cp_color->currentColor();
+    scene_->addLabel( cs_->getDepth(), c_ );
     scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
     scene_->setCurrent( true );
 
     QGraphicsView* gv_ = new QGraphicsView();
+    gv_->setWindowFlags( Qt::Window );
     gv_->scale( 1, -1 );
     gv_->setScene( scene_ );
     cs->addElement( cs_->getDepth(), gv_ );
+
+    gv_->fitInView( scene_->itemsBoundingRect(), Qt::KeepAspectRatio);
 
 
 
@@ -602,4 +619,5 @@ void SketchWindow::setCrossSectionImage( double depth_, const QString& file_, do
 
     if( main_scene == nullptr ) return;
     main_scene->updateCrossSection();
+    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }

@@ -892,7 +892,6 @@ void FlowWindow::buildUnstructured()
     controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces );
 
     emit sendSimplifiedMesh( raw_vertices, edges, raw_faces );
-//    canvas->updateVolumetricMesh();
 
 }
 
