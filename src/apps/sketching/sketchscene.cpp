@@ -41,11 +41,13 @@ SketchScene::SketchScene()
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setVisible( false );
     addItem( move_marker );
 
     move_marker->setVisible( false );
@@ -77,11 +79,13 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setVisible( false );
     addItem( move_marker );
 
     QFont font_;
@@ -91,7 +95,6 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
 
     csection_label = new QGraphicsTextItem();
     csection_label->setTransform( QTransform::fromScale(1, -1), true );
-//    csection_label->setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
     csection_label->setFont( font_ );
     addItem( csection_label );
 
@@ -251,7 +254,7 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
     axes.setAxisXLenght( vol_->getWidth() );
     axes.setAxisYLenght( vol_->getHeight() );
 
-    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getHeight() );
+    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), 0 );
     main_csection->setCurrent( true );
     addItem( main_csection );
 
@@ -900,7 +903,7 @@ void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
 {
     if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
     {
-            event->acceptProposedAction();
+        event->acceptProposedAction();
     }
 
 }

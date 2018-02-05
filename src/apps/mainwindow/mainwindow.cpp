@@ -132,7 +132,7 @@ void MainWindow::createToolbar()
     ag_rules->addAction( ac_truncate );
 
 
-
+    ac_screenshot = new QAction( "Screenshot", this );
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
@@ -147,6 +147,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addSeparator();
+    tb_mainwindow->addAction( ac_screenshot );
 
 
 }
@@ -226,7 +227,7 @@ void MainWindow::createMainWindowActions()
 
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
-
+    connect( ac_screenshot, &QAction::triggered, [=](){ app->screenshot(); } );
 
 }
 

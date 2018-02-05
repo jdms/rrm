@@ -28,7 +28,6 @@ void RRMApplication::init()
     mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
     mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
-
 }
 
 
@@ -285,7 +284,7 @@ void RRMApplication::initSketchingApp()
     mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
     mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
-    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection()/*topview_*/ );
+    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection() );
     mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }
 
@@ -547,6 +546,12 @@ void RRMApplication::defineRandomColor()
     mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
     mainwindow->controller->setCurrentColor( r_, g_, b_ );
 
+}
+
+
+void RRMApplication::screenshot()
+{
+    mainwindow->canvas3d->screenshot();
 }
 
 

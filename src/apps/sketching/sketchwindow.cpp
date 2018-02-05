@@ -314,7 +314,7 @@ void SketchWindow::updateCanvas()
 void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
-    if( tv_main == nullptr ) return;
+//    if( tv_main == nullptr ) return;
 
     if( tv_scene == nullptr) return;
     tv_scene->addCrossSection( cs_ );
