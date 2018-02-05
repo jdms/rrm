@@ -139,8 +139,6 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-        std::cout << "Inside RRMApplication::changeVolumeDimension, changing X: " << value_ << std::endl << std::flush;
-
         mainwindow->controller->setVolumeDimensions( value_, height_, length_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
@@ -149,7 +147,6 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        std::cout << "Inside RRMApplication::changeVolumeDimension, changing Z: " << value_ << std::endl << std::flush;
         std::size_t disc_ = 1;
         double step_ = 1.0;
         mainwindow->controller->setVolumeDimensions( width_, height_, value_ );
@@ -613,11 +610,14 @@ void RRMApplication::setImageToCrossSection( double depth_, std::string file_, d
 
 void RRMApplication::getHeightMapTopView()
 {
+    double ox_, oy_, oz_;
+    mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
     double w_, h_, l_;
     mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
 
-    std::string image_ = mainwindow->canvas3d->sendImage( w_, l_ );
+    std::string image_ = mainwindow->canvas3d->sendImage( oy_, oy_ + h_, w_, l_ );
     mainwindow->sketch_topview_window->setTopViewImage( image_ );
+
 }
 
 

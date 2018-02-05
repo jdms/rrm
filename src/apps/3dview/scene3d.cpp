@@ -251,6 +251,23 @@ void Scene3d::removeObject( const std::size_t &index_ )
 }
 
 
+
+void Scene3d::setHeightMap( double zmin_, double zmax_ )
+{
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        SurfaceShader* obj_ = objects.getElement( it->first );
+        if( obj_ == nullptr ) continue;
+
+        obj_->setHeightMap( zmin_, zmax_);
+
+    }
+
+}
+
+
+
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {

@@ -78,7 +78,7 @@ Scene3d* Canvas3d::getScene() const
 }
 
 
-std::string Canvas3d::sendImage( double width_, double height_  )
+std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, double height_  )
 {
 
     makeCurrent();
@@ -89,8 +89,13 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     int delta_w = width() - static_cast<int>( width_ );
     int delta_h = height() - static_cast<int>( height_ );
 
-    int x_ = static_cast<int>( delta_w*0.5f );
-    int y_ = static_cast<int>( delta_h*0.5f );
+    int x_ = static_cast<int>( std::ceil( delta_w*0.5f ) );
+    int y_ = static_cast<int>( std::ceil( delta_h*0.5 ) );
+
+
+    std::cout << "window width: " << width() << ", height: " << height() << std::endl;
+    std::cout << "box width: " << width_ << ", height: " << height_ << std::endl;
+
 
 
     Eigen::Matrix3f mat;
@@ -103,32 +108,46 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     camera.reset();
     camera.rotate( q );
 
-
     if( V >= 1 )
+    {
         camera.setOrthographicMatrix( -V * 0.5, V * 0.5, -0.5, 0.5, 0.1f, 100.f );
+    }
     else
+    {
         camera.setOrthographicMatrix( -0.5, -0.5, -V*0.5, V*0.5, -0.1f, 100.f );
 
+    }
 
+    scene3d->setHeightMap( zmin_, zmax_ );
     update();
 
 
     QImage image = grabFramebuffer();
     std::string path_ = "./tmp/mapview.png";
 
+    std::cout << "image.devicePixelRatio() = " << image.devicePixelRatio() << std::endl << std::flush;
 
-    QImage image1 = image.copy(  x_, y_, static_cast< int >( width_ ), static_cast< int >( height_ ) );
+    QImage image1 = image.copy(  x_, y_, static_cast<int>(width_), static_cast<int>(height_) );
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image1 = image1.transformed( myTransform );
     image1.save( QString( path_.c_str() ) );
 
-    canvas_width = width();
-    canvas_height = height();
 
-    camera.reset();
-    glViewport( 0 , 0 , (float) width() , (float)height() );
-    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
-    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+//    canvas_width = width();
+//    canvas_height = height();
 
-    image1.save( QString( path_.c_str() ) );
+//    camera.reset();
+//    glViewport( 0 , 0 , (float) width() , (float)height() );
+//    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+//    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+
+//    scene3d->updateObjects();
+//    update();
+
+
+    std::cout << "Image origin: " << x_ << ", " << y_ << std::endl << std::flush;
+
     return path_;
 }
 

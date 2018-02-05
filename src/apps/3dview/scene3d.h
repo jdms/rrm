@@ -82,6 +82,8 @@ class Scene3d: public QObject, public Scene
         virtual void getCurrentColor( int& r, int& g, int& b ){}
 
 
+        void setHeightMap( double zmin_, double zmax_ );
+
 
     signals:
 

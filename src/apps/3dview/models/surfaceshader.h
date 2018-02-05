@@ -25,6 +25,8 @@ class SurfaceShader: public Shader
         void update();
         void clear();
 
+        void setHeightMap( double zmin_, double zmax_ );
+
 
     protected:
 
@@ -48,6 +50,9 @@ class SurfaceShader: public Shader
 
         virtual void resetShaders();
         virtual void resetBuffers();
+
+
+
 
 
 

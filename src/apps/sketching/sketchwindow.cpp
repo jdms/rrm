@@ -1,4 +1,5 @@
 #include <QToolBar>
+#include <QFileDialog>
 
 #include "sketchwindow.h"
 
@@ -30,12 +31,17 @@ void SketchWindow::createToolBar()
     ac_edit_scene = new QAction( "Edit Scene", this );
     ac_edit_scene->setCheckable( true );
 
+    ac_screenshot = new QAction( "Screenshot", this );
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
+
+
     ac_axes = new QAction( "Axes", this );
     ac_axes->setCheckable( true );
     ac_axes->setChecked( true );
 
     ac_height_map = new QAction( "Map", this );
-    connect( ac_height_map, &QAction::triggered, [=](){ emit getHeightMap(); } );
+    connect( ac_height_map, &QAction::triggered, [=](){ if( tv_main != nullptr ) std::cout << "tv_main->devicePixelRatio() = " << tv_main->devicePixelRatio() << std::endl << std::flush;
+                                                                                              emit getHeightMap(); } );
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setCheckable( true );
@@ -52,6 +58,7 @@ void SketchWindow::createToolBar()
     tb_actions->addAction( ac_edit_boundary );
     tb_actions->addAction( ac_edit_scene );
     tb_actions->addSeparator();
+    tb_actions->addAction( ac_screenshot );
     tb_actions->addAction( ac_fixed_csections );
     tb_actions->addAction( ac_axes );
     tb_actions->addAction( ac_height_map );
@@ -70,6 +77,8 @@ void SketchWindow::createWindow()
     dw_canvas_stack->setWidget( cs );
     dw_canvas_stack->setVisible( false );
     dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+
+    connect( cs, &CanvasStack::closeSubWindow, this, &SketchWindow::removeFixedCrossSectionCanvas );
 
     hb_central_widget = new QHBoxLayout( this );
 
@@ -287,7 +296,10 @@ void SketchWindow::updateCanvas()
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
+//        QMainWindow* mw_window = it->second;
+//        QGraphicsView* gview_ = (QGraphicsView*) mw_window->centralWidget();
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateVolume();
         sc_->updateCrossSection();
@@ -323,7 +335,8 @@ void SketchWindow::addObject( Object* const& obj_ )
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->addObject( obj_ );
         gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
@@ -344,7 +357,8 @@ void SketchWindow::updateObject( const std::size_t& index_ )
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateObject( index_ );
         gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
@@ -383,7 +397,8 @@ void SketchWindow::setModeSelecting()
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setModeSelecting();
     }
@@ -399,7 +414,8 @@ void SketchWindow::setModeSketching()
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setModeSketching();
     }
@@ -427,7 +443,8 @@ void SketchWindow::setCurrentColor( int r_, int g_, int b_ )
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
-        QGraphicsView* gview_ = it->second;
+        QGraphicsView* gview_ = cs->getElement( it->first );
+//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setCurrentColor( r_, g_, b_ );
     }
@@ -498,6 +515,8 @@ void SketchWindow::clear()
 
 void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ )
 {
+    std::cout << "Adding canvas inside addFixedCrossSectionCanvas" << std::endl << std::flush;
+
     if( cs_ == nullptr ) return;
 
     dw_canvas_stack->setVisible( true );
@@ -512,10 +531,13 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
     scene_->setCurrent( true );
 
     QGraphicsView* gv_ = new QGraphicsView();
-    gv_->setWindowFlags( Qt::Window );
     gv_->scale( 1, -1 );
     gv_->setScene( scene_ );
+    gv_->setWindowIconText( "A" );
+    gv_->setWindowTitle( "B" );
     cs->addElement( cs_->getDepth(), gv_ );
+
+
 
     gv_->fitInView( scene_->itemsBoundingRect(), Qt::KeepAspectRatio);
 
@@ -572,6 +594,7 @@ bool SketchWindow::removeFixedCrossSectionCanvas( double depth_ )
     if( cs->findElement( depth_  ) == false ) return false;
     cs->removeElement( depth_ );
 
+    emit removeFixedCrossSection( depth_ );
     return true;
 
 }
@@ -585,7 +608,6 @@ void SketchWindow::setFixedCrossSectionsVisible( bool status_ )
 
 void SketchWindow::setCurrentCrossSection( double depth_ )
 {
-    std::cout << "updating cross-section inside sketch-window: " << depth_ << std::endl << std::flush;
     if( tv_scene != nullptr )
     {
         tv_scene->moveCurrentCrossSection( depth_ );
@@ -620,4 +642,38 @@ void SketchWindow::setCrossSectionImage( double depth_, const QString& file_, do
     if( main_scene == nullptr ) return;
     main_scene->updateCrossSection();
     main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+}
+
+
+void SketchWindow::screenshot()
+{
+    QString selectedFilter;
+    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
+
+
+    if( main_scene != nullptr)
+    {
+        if( selectedFilter == "PNG (*.png)" )
+        {
+            main_scene->savetoRasterImage( name_of_file );
+        }
+        else if ( selectedFilter == "SVG (*.svg)" )
+        {
+            main_scene->savetoVectorImage( name_of_file );
+        }
+    }
+    else if( tv_scene != nullptr)
+    {
+        if( selectedFilter == "PNG (*.png)" )
+        {
+            tv_scene->savetoRasterImage( name_of_file );
+        }
+        else if ( selectedFilter == "SVG (*.svg)" )
+        {
+            tv_scene->savetoVectorImage( name_of_file );
+        }
+    }
+
 }

@@ -2,13 +2,17 @@
 #define CANVASSTACK_H
 
 #include <QWidget>
+#include <QMainWindow>
 #include <QGraphicsView>
+#include <QSplitter>
 #include <QVBoxLayout>
+
+#include <iostream>
 
 #include "./core/models/container.h"
 
 
-using CanvasContainer = Container< double, QGraphicsView* >;
+using CanvasContainer = Container< double, QDockWidget*/*QGraphicsView*/ >;
 
 
 class CanvasStack: public QWidget, public CanvasContainer
@@ -33,10 +37,15 @@ class CanvasStack: public QWidget, public CanvasContainer
 
 
 
+    signals:
+
+        void closeSubWindow( double id_ );
+
     protected:
 
         double current;
-        QVBoxLayout* hb_mainlayout;
+//        QVBoxLayout* hb_mainlayout;
+        QSplitter* hb_mainlayout;
 
 };
 

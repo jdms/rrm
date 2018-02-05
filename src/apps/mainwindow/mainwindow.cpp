@@ -75,12 +75,12 @@ void MainWindow::createMainInterface()
 
 
 
-    hb_central_widget = new QHBoxLayout( this );
+    hb_central_widget = new QHBoxLayout();
     hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
 
-    central_widget = new QWidget( this );
+    central_widget = new QWidget();
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
 
@@ -365,7 +365,9 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=](  double depth_ )
                                                            { app->removeImageFromCrossSection( depth_ ); } );
 
+    connect( sketch_window, &SketchWindow::addFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::addMarker );
 
+    connect( sketch_window, &SketchWindow::removeFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::removeMarker );
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
