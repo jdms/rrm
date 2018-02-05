@@ -455,11 +455,10 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
 
 
-    main_csection->addObject( obj_->getIndex(), &curve_ );
+//    bool status_ = main_csection->addObject( obj_->getIndex(), &curve_ );
 
 
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
-
     cs_->addObject( obj_->getIndex(), &curve_ );
 
     volume->addCrossSection( cs_->getIndex(), cs_ );
@@ -595,6 +594,7 @@ bool Controller::createPreviewSurface()
     obj_->setVisible( true );
 
     scene3d->updateObject( current_object );
+    updatePreviewCurves( obj_, current_csection );
     updateObjectInFixedCrossSections( current_object );
 
 

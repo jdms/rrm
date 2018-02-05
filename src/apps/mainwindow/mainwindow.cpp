@@ -68,7 +68,7 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
-
+    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
