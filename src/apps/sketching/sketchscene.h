@@ -72,6 +72,9 @@ class SketchScene: public QGraphicsScene, public Scene
         void removeItem();
 
 
+        void savetoVectorImage( const QString& filename );
+        void savetoRasterImage( const QString& filename );
+
 
 
     signals:

@@ -82,8 +82,6 @@ void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
 
 void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
 {
-    std::cout << "Inside controller, changing volume dimensions: ( " << width_ << ", " << height_
-              << ", " << length_ << ") " <<  std::endl << std::flush;
 
     volume->setGeometry( width_, height_, length_ );
     scene3d->updateVolume();
@@ -1203,7 +1201,6 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     vol1_->setVertices( vertices_ );
     vol1_->setOrigin( ox_, oy_, oz_ );
     vol1_->setGeometry( w, h, l );
-
     scene3d->addOutputVolume( vol1_ );
     object_tree->addOutputVolume();
 
