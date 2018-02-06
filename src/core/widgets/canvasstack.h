@@ -12,7 +12,7 @@
 #include "./core/models/container.h"
 
 
-using CanvasContainer = Container< double, QDockWidget*/*QGraphicsView*/ >;
+using CanvasContainer = Container< double, QDockWidget* >;
 
 
 class CanvasStack: public QWidget, public CanvasContainer
