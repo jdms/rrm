@@ -27,6 +27,8 @@ class SurfaceShader: public Shader
 
         void setHeightMap( double zmin_, double zmax_ );
 
+        void enableDrawingEdges();
+
 
     protected:
 
@@ -67,6 +69,8 @@ class SurfaceShader: public Shader
 
         GLuint number_of_vertices;
         GLuint number_of_faces;
+
+        bool draw_edge = true;
 
         Object* raw;
 

@@ -243,10 +243,13 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
         glDisable(GL_POLYGON_OFFSET_FILL);
 
 
+
+
         glDepthFunc( GL_LEQUAL );
         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
+        if( draw_edge == true )
+        {
             glBindVertexArray( va_surface );
 
                 shader->setUniform( "is_face" , false );
@@ -254,7 +257,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
                 glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
             glBindVertexArray ( 0 );
-
+        }
         if( is_preview_ == true )
             glDisable( GL_BLEND );
 
@@ -294,12 +297,15 @@ void SurfaceShader::setDefaultValues()
     number_of_vertices = 0;
 
     raw = nullptr;
+    draw_edge = true;
 
 }
 
 
 void SurfaceShader::setHeightMap(double zmin_, double zmax_)
 {
+    draw_edge = false;
+
     Surface surface_ = raw->getSurface();
 
     std::vector< double > coords_ = surface_.getVertices();
@@ -310,5 +316,12 @@ void SurfaceShader::setHeightMap(double zmin_, double zmax_)
     }
 
     std::vector< float > colors_ = Shader::getHeightMapColor( zmin_, zmax_, zcoords_ );
+
     updateColorBuffers( colors_ );
+}
+
+
+void SurfaceShader::enableDrawingEdges()
+{
+    draw_edge = true;
 }

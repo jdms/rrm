@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMenu>
 #include <QHBoxLayout>
 #include <QWidget>
 #include <QDockWidget>
@@ -74,6 +75,7 @@ class MainWindow: public QMainWindow
         void setupWindowProperties();
         void createMainInterface();
         void createSidebar();
+        void createMenuBar();
         void createToolbar();
 
 
@@ -152,6 +154,10 @@ class MainWindow: public QMainWindow
         QAction* ac_screenshot;
         QAction* ac_output_volume;
         QAction* ac_topview;
+
+        QMenu *mn_file;
+        QMenu *mn_help;
+        QMenu *mn_windows;
 
         RRMApplication* app;
 
