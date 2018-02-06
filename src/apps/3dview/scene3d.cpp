@@ -229,7 +229,7 @@ void Scene3d::updateObjects()
     {
         SurfaceShader* obj_ = objects.getElement( it->first );
         if( obj_ == nullptr ) continue;
-
+        obj_->enableDrawingEdges();
         obj_->update();
     }
 

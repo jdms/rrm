@@ -52,13 +52,18 @@ void MainWindow::createWindow()
     createSidebar();
     createToolbar();
 
+
     createActions();
+
 
     createSketchingWindow();
     createSketchingActions();
-
     createFlowWindow();
 
+    tb_mainwindow->addSeparator();
+    tb_mainwindow->addAction( ac_screenshot );
+
+    createMenuBar();
 }
 
 
@@ -83,6 +88,69 @@ void MainWindow::createMainInterface()
     central_widget = new QWidget();
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
+
+}
+
+
+void MainWindow::createMenuBar()
+{
+
+    QAction* ac_exit = new QAction( tr ( "E&xit" ) , this );
+    QAction* ac_manual = new QAction( tr ( "RRM Manual" ), this );
+    QAction* ac_about = new QAction( tr ( "&About" ) , this );
+
+//    connect( ac_about, &QAction::triggered, aboutRRM, &AboutWidget::show );
+//    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
+    connect( ac_exit, &QAction::triggered , this, &MainWindow::close );
+
+
+
+    QAction* ac_csection = new QAction ( tr ( "Cross-Section Window" ) , this );
+    ac_csection->setCheckable ( true );
+    ac_csection->setChecked ( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
+
+    connect( ac_csection, &QAction::toggled, dw_sketchwindow , &QDockWidget::setVisible );
+    connect( dw_sketchwindow, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_sketchwindow->isVisible() == false ) )
+            ac_csection->setChecked( false );
+    } );
+
+
+    QAction* ac_topview = new QAction ( tr ( "Top-View Window" ) , this );
+    ac_topview->setCheckable ( true );
+    ac_topview->setChecked ( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
+
+    connect( ac_topview , &QAction::toggled, dw_topview_window , &QDockWidget::setVisible );
+    connect( dw_topview_window, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_topview_window->isVisible() == false ) )
+            ac_topview->setChecked( false );
+    } );
+
+
+
+//    QAction* ac_sidebar = new QAction ( tr ( "Sidebar" ) , this );
+//    ac_sidebar->setCheckable ( true );
+//    connect ( ac_sidebar , &QAction::toggled , ac_show_sidebar , &QAction::setChecked );
+//    connect ( ac_show_sidebar, &QAction::toggled , ac_sidebar , &QAction::setChecked );
+
+
+
+    mn_file = menuBar()->addMenu ( tr ( "&File" ) );
+    mn_file->addAction ( ac_clear );
+    mn_file->addAction ( ac_save );
+    mn_file->addAction ( ac_load );
+    mn_file->addAction ( ac_exit );
+
+    mn_windows = menuBar()->addMenu ( tr ( "&Windows" ) );
+    mn_windows->addAction ( ac_csection );
+    mn_windows->addAction ( ac_topview );
+//    mn_windows->addAction ( ac_sidebar );
+
+    mn_help = menuBar()->addMenu ( tr ( "&Help" ) );
+    mn_help->addAction( ac_manual );
+    mn_help->addAction( ac_about );
 
 }
 
@@ -310,8 +378,8 @@ void MainWindow::createSketchingWindow()
     ac_topview->setCheckable( true );
     ac_topview->setChecked( true );
 
-    tb_mainwindow->addAction( ac_topview );
-    tb_mainwindow->addSeparator();
+//    tb_mainwindow->addAction( ac_topview );
+//    tb_mainwindow->addSeparator();
 
 
 }
