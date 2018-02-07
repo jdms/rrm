@@ -67,6 +67,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
 
 
     image = new ImageItemWrapper();
+    image->setVisible( false );
     addItem( image );
 
     user_input = new InputSketch();
@@ -74,6 +75,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     addItem( user_input );
 
     csection_image = new QGraphicsPixmapItem();
+    csection_image->setVisible( false );
     addItem( csection_image );
 
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
@@ -99,6 +101,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     addItem( csection_label );
 
     csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
+    csection_color->setVisible( false );
     addItem( csection_color );
 
 
@@ -198,9 +201,10 @@ void SketchScene::setAxesVisible( bool status_ )
 }
 
 
-void SketchScene::addLabel( double depth_, QColor color_ )
+QPixmap SketchScene::addLabel( double depth_, QColor color_ )
 {
 
+    csection_color->setVisible( true );
     csection_color->setPos( volume->boundingRect().bottomLeft().x(), volume->boundingRect().bottomLeft().y() + 40 );
     csection_label->setPos( volume->boundingRect().bottomLeft().x() + 20, volume->boundingRect().bottomLeft().y() + 65 );
 
@@ -209,6 +213,16 @@ void SketchScene::addLabel( double depth_, QColor color_ )
     csection_color->setPen( QPen( color_ ) );
     csection_color->setBrush( QBrush( color_ ) );
     csection_color->update();
+
+    QPixmap px( 30, 30 );
+    px.fill( color_ );/*
+    QPainter p(&px);
+    p.setPen(Qt::blue);
+    p.drawEllipse(0, 0, 20, 20);
+    p.end();*/
+
+    addPixmap( px );
+    return px;
 }
 
 

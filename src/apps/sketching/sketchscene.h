@@ -31,7 +31,7 @@ class SketchScene: public QGraphicsScene, public Scene
         SketchScene( CrossSection* const& raw_ );
 
 
-        void addLabel( double depth_, QColor color_);
+        QPixmap addLabel( double depth_, QColor color_);
 
 
         void readCrossSection( CrossSection* const& raw_ );
