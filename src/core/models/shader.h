@@ -1,12 +1,14 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include <QVector>
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "./core/definitions/constants.hpp"
+#include "./apps/simulator/colormap.h"
 #include <Tucano/Shader.hpp>
 
 
@@ -121,6 +123,23 @@ class Shader
             return normals_;
         }
 
+
+        static std::vector< float > getHeightMapColor(  double zmin_, double zmax_, std::vector< float > values )
+        {
+            ColorMap colormap;
+            std::vector< float > colors_;
+            for( double v: values )
+            {
+                QVector3D color_ = colormap.getColor( ColorMap::COLORMAP::COOL_TO_WARM, v, zmin_, zmax_ );
+                colors_.push_back( color_.x() );
+                colors_.push_back( color_.y() );
+                colors_.push_back( color_.z() );
+            }
+
+            return colors_;
+        }
+
+
     protected:
 
         virtual void initShaders() = 0;
@@ -131,6 +150,8 @@ class Shader
 
         std::string shader_directory;
         Tucano::Shader* shader;
+
+
 
 };
 

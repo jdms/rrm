@@ -154,13 +154,14 @@ class RRMApplication
         void setCurrentColor( int r_, int g_, int b_ );
         void defineRandomColor();
 
+        void screenshot();
 
         void clearInterface();
         void clear();
         void restart();
 
 
-        void addCrossSectionCanvas( double depth_ );
+        void addCrossSectionCanvas( double depth_, QColor color_ );
         void removeCrossSectionCanvas( double depth_ );
 
 

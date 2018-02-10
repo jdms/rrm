@@ -215,6 +215,8 @@ class Controller
         std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
 
+        void hideRegions();
+
     protected:
 
 

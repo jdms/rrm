@@ -125,8 +125,6 @@ void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_
 
 bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_z )
 {
-    std::cout << "Inside RulesProcessor::setLenght, Volume Dimensions: ( " << opengl_x
-              << ", " << opengl_y << "," << opengl_z << ") " << std::flush;
 
     if ( modeller_.setSize(opengl_x, opengl_y, opengl_z) == false )
     {

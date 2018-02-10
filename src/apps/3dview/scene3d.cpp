@@ -121,6 +121,18 @@ void Scene3d::updateRegion( std::size_t index_ )
 
 }
 
+void Scene3d::updateRegions()
+{
+    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+
+        RegionShader* region_ = regions.getElement( it->first );
+        if( region_ == nullptr ) continue;
+
+        region_->update();
+    }
+    emit updateCanvas();
+}
 
 
 void Scene3d::addMainCrossSection( CrossSection* const& raw_ )
@@ -152,6 +164,23 @@ void Scene3d::updateCrossSection( CrossSection* const& raw_ )
     csection_->update();
 
     emit updateCanvas();
+}
+
+
+void Scene3d::updateCrossSections()
+{
+    context->makeCurrent( surface );
+
+    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    {
+        PlaneShader* csection_ = csections.getElement( it->first );
+        if( csection_ == nullptr ) continue;
+
+        csection_->update();
+    }
+
+    emit updateCanvas();
+
 }
 
 
@@ -194,6 +223,17 @@ void Scene3d::updateObject( const std::size_t &index_ )
     emit updateCanvas();
 }
 
+void Scene3d::updateObjects()
+{
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        SurfaceShader* obj_ = objects.getElement( it->first );
+        if( obj_ == nullptr ) continue;
+        obj_->enableDrawingEdges();
+        obj_->update();
+    }
+
+}
 
 void Scene3d::removeObject( const std::size_t &index_ )
 {
@@ -209,6 +249,23 @@ void Scene3d::removeObject( const std::size_t &index_ )
 
     emit updateCanvas();
 }
+
+
+
+void Scene3d::setHeightMap( double zmin_, double zmax_ )
+{
+
+    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    {
+        SurfaceShader* obj_ = objects.getElement( it->first );
+        if( obj_ == nullptr ) continue;
+
+        obj_->setHeightMap( zmin_, zmax_);
+
+    }
+
+}
+
 
 
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,

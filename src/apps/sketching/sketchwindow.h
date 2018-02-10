@@ -4,6 +4,7 @@
 
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QGraphicsView>D
 
 #include "./src/core/widgets/canvasstack.h"
 #include "sketchscene.h"
@@ -13,7 +14,7 @@
 #include "./src/core/widgets/color_picker.h"
 
 
-class QGraphicsView;
+//class QGraphicsView;
 class QWheelEvent;
 
 
@@ -59,7 +60,7 @@ class SketchWindow: public QMainWindow
         void clear();
 
 
-        void addFixedCrossSectionCanvas( CrossSection* const& cs_ );
+        void addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ );
         bool removeFixedCrossSectionCanvas( double depth_ );
         void setFixedCrossSectionsVisible( bool status_ );
 
@@ -69,6 +70,7 @@ class SketchWindow: public QMainWindow
         void setTopViewImage( const std::string& image_ );
         void setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
 
+        void screenshot();
 
 
 
@@ -90,6 +92,9 @@ class SketchWindow: public QMainWindow
         void setImageToTopView( const QString& file_, double ox_, double oy_, double x_, double y_ );
         void removeImageFromTopView();
 
+
+        void addFixedCrossSection( double depth_ );
+        void removeFixedCrossSection( double depth_ );
 
         void getHeightMap();
 
@@ -131,6 +136,7 @@ class SketchWindow: public QMainWindow
         QAction* ac_create;
         QAction* ac_edit_boundary;
         QAction* ac_edit_scene;
+        QAction* ac_screenshot;
         QAction* ac_axes;
         QAction* ac_height_map;
         QAction* ac_fixed_csections;
