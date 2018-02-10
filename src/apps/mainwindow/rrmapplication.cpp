@@ -28,7 +28,6 @@ void RRMApplication::init()
     mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
     mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
-
 }
 
 
@@ -139,8 +138,6 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-        std::cout << "Inside RRMApplication::changeVolumeDimension, changing X: " << value_ << std::endl << std::flush;
-
         mainwindow->controller->setVolumeDimensions( value_, height_, length_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
@@ -149,7 +146,6 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        std::cout << "Inside RRMApplication::changeVolumeDimension, changing Z: " << value_ << std::endl << std::flush;
         std::size_t disc_ = 1;
         double step_ = 1.0;
         mainwindow->controller->setVolumeDimensions( width_, height_, value_ );
@@ -288,7 +284,7 @@ void RRMApplication::initSketchingApp()
     mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
     mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
 
-    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection()/*topview_*/ );
+    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection() );
     mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
 }
 
@@ -553,6 +549,12 @@ void RRMApplication::defineRandomColor()
 }
 
 
+void RRMApplication::screenshot()
+{
+    mainwindow->canvas3d->screenshot();
+}
+
+
 
 void RRMApplication::clearInterface()
 {
@@ -586,11 +588,11 @@ void RRMApplication::restart()
 
 
 
-void RRMApplication::addCrossSectionCanvas( double depth_ )
+void RRMApplication::addCrossSectionCanvas( double depth_, QColor color_ )
 {
     bool status_ = mainwindow->controller->addFixedCrossSection( depth_ );
     if( status_ == false ) return;
-    mainwindow->sketch_window->addFixedCrossSectionCanvas( mainwindow->controller->getCrossSection( depth_ ) );
+    mainwindow->sketch_window->addFixedCrossSectionCanvas( mainwindow->controller->getCrossSection( depth_ ), color_ );
     updateSketchingCanvas();
 }
 
@@ -613,11 +615,14 @@ void RRMApplication::setImageToCrossSection( double depth_, std::string file_, d
 
 void RRMApplication::getHeightMapTopView()
 {
+    double ox_, oy_, oz_;
+    mainwindow->controller->getVolumeOrigin( ox_, oy_, oz_ );
     double w_, h_, l_;
     mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
 
-    std::string image_ = mainwindow->canvas3d->sendImage( w_, l_ );
+    std::string image_ = mainwindow->canvas3d->sendImage( oy_, oy_ + h_, w_, l_ );
     mainwindow->sketch_topview_window->setTopViewImage( image_ );
+
 }
 
 
@@ -684,6 +689,8 @@ void RRMApplication::closeFlowDiagnostics()
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
+
+    mainwindow->controller->hideRegions();
 }
 
 
@@ -745,46 +752,6 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
 {
     std::vector< int > regions_ = mainwindow->controller->getTetrahedronsRegions( vertices, edges, faces );
-
-//    std::vector< float > colors_;
-//    colors_.resize( vertices.size() );
-//    for( auto it: regions_ )
-//    {
-//        int r = 255, g = 0, b = 0;
-//        mainwindow->controller->getRegionColor( it, r, g, b );
-
-//        std::cout << "Region " << it << ", color = " << r << ", " << g << ", " << b << std::endl << std::flush;
-
-
-//        unsigned int id0_ = faces[ 4*it ];
-//        unsigned int id1_ = faces[ 4*it + 1 ];
-//        unsigned int id2_ = faces[ 4*it + 2 ];
-//        unsigned int id3_ = faces[ 4*it + 3 ];
-
-//        colors_[ 3*id0_ ] = r ;
-//        colors_[ 3*id0_ + 1 ] = g;
-//        colors_[ 3*id0_ + 2 ] = b;
-
-//        colors_[ 3*id1_ ] = r;
-//        colors_[ 3*id1_ + 1 ] = g;
-//        colors_[ 3*id1_ + 2 ] = b;
-
-//        colors_[ 3*id2_ ] = r;
-//        colors_[ 3*id2_ + 1 ] = g;
-//        colors_[ 3*id2_ + 2 ] = b;
-
-//        colors_[ 3*id3_ ] = r;
-//        colors_[ 3*id3_ + 1 ] = g;
-//        colors_[ 3*id3_ + 2 ] = b;
-
-
-
-////        colors_.push_back( static_cast< float >( r/255.f ) );
-////        colors_.push_back( static_cast< float >( g/255.f ) );
-////        colors_.push_back( static_cast< float >( b/255.f ) );
-//    }
-
-//    mainwindow->flow_window->setTetrahedronRegions( regions_, colors_ );
 
     std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )

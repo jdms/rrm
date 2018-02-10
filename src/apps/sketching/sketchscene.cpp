@@ -6,7 +6,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QKeyEvent>
-
+#include <QtSvg/QSvgGenerator>
 #include "sketchscene.h"
 
 
@@ -22,14 +22,32 @@ SketchScene::SketchScene()
     csection_image = new QGraphicsPixmapItem();
     addItem( csection_image );
 
+
+    QFont font_;
+    font_.setPixelSize(20);
+    font_.setBold(false);
+    font_.setFamily("Calibri");
+
+    csection_label = new QGraphicsTextItem();
+    csection_label->setTransform( QTransform::fromScale(1, -1), true );
+    csection_label->setFont( font_ );
+    addItem( csection_label );
+
+    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
+    addItem( csection_color );
+
+
+
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setVisible( false );
     addItem( move_marker );
 
     move_marker->setVisible( false );
@@ -49,6 +67,7 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
 
 
     image = new ImageItemWrapper();
+    image->setVisible( false );
     addItem( image );
 
     user_input = new InputSketch();
@@ -56,17 +75,35 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     addItem( user_input );
 
     csection_image = new QGraphicsPixmapItem();
+    csection_image->setVisible( false );
     addItem( csection_image );
 
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setVisible( false );
     addItem( move_marker );
+
+    QFont font_;
+    font_.setPixelSize(20);
+    font_.setBold(false);
+    font_.setFamily("Calibri");
+
+    csection_label = new QGraphicsTextItem();
+    csection_label->setTransform( QTransform::fromScale(1, -1), true );
+    csection_label->setFont( font_ );
+    addItem( csection_label );
+
+    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
+    csection_color->setVisible( false );
+    addItem( csection_color );
+
 
 
     axes.setVisible( true );
@@ -164,13 +201,36 @@ void SketchScene::setAxesVisible( bool status_ )
 }
 
 
+QPixmap SketchScene::addLabel( double depth_, QColor color_ )
+{
+
+    csection_color->setVisible( true );
+    csection_color->setPos( volume->boundingRect().bottomLeft().x(), volume->boundingRect().bottomLeft().y() + 40 );
+    csection_label->setPos( volume->boundingRect().bottomLeft().x() + 20, volume->boundingRect().bottomLeft().y() + 65 );
+
+    QString label_( " Cross-Section %1" );
+    csection_label->setPlainText( label_.arg( depth_ ) );
+    csection_color->setPen( QPen( color_ ) );
+    csection_color->setBrush( QBrush( color_ ) );
+    csection_color->update();
+
+    QPixmap px( 30, 30 );
+    px.fill( color_ );/*
+    QPainter p(&px);
+    p.setPen(Qt::blue);
+    p.drawEllipse(0, 0, 20, 20);
+    p.end();*/
+
+    addPixmap( px );
+    return px;
+}
+
+
 void SketchScene::readCrossSection( CrossSection* const& raw_ )
 {
     if( raw_ == nullptr ) return;
 
     csection = raw_;
-
-
 
     Volume* vol_ = const_cast< Volume* >( raw_->getVolume() );
 
@@ -208,7 +268,7 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
     axes.setAxisXLenght( vol_->getWidth() );
     axes.setAxisYLenght( vol_->getHeight() );
 
-    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getHeight() );
+    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), 0 );
     main_csection->setCurrent( true );
     addItem( main_csection );
 
@@ -223,6 +283,7 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
     Volume::ObjectsContainer objs_ = vol_->getObjects();
     for( auto o: objs_ )
         addTrajectory( o.second );
+
 
 
 }
@@ -276,7 +337,6 @@ void SketchScene::updateImageCrossSection()
     p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
     p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
 
-//    move_marker->setPos( origin_.x(), origin_.y() );
     move_marker->setPos( p_move );
     move_marker->setVisible( true );
     move_marker->update();
@@ -321,8 +381,6 @@ void SketchScene::updateCrossSectionScene()
         double y_;
         csection->getImage( path_, ox_, oy_, x_, y_ );
         setImageToCrossSection( QString( path_.c_str() ), ox_, oy_, x_, y_ );
-
-//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has image" << std::endl << std::flush;
     }
     else
     {
@@ -332,8 +390,6 @@ void SketchScene::updateCrossSectionScene()
         move_marker->update();
         resize_marker->update();
         image->update();
-
-//        std::cout << "Inside sketch-scene, csection, " << csection->getDepth() << " has no image" << std::endl << std::flush;
     }
 
     Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
@@ -381,9 +437,11 @@ void SketchScene::moveCurrentCrossSection( double depth_ )
 void SketchScene::addVolume( Volume* const &raw_, Settings::CrossSection::CrossSectionDirections dir_ )
 {
     clearVolume();
-    volume = new VolumeItemWrapper( raw_, dir_ );
 
+    volume = new VolumeItemWrapper( raw_, dir_ );
     addItem( volume );
+
+
     setSceneRect( volume->boundingRect() );
     update();
 }
@@ -396,6 +454,22 @@ void SketchScene::updateVolume()
 
     axes.setAxisXLenght( volume->getWidth() );
     axes.setAxisYLenght( volume->getHeight() );
+
+    if( views().empty() == true ) return;
+    if( volume == nullptr ) return;
+
+    QPoint bl_ = views()[0]->mapFromScene( volume->boundingRect().bottomLeft() );
+    QPoint br_ = views()[0]->mapFromScene( volume->boundingRect().bottomRight() );
+
+    QPoint tl_ = views()[0]->mapFromScene( volume->boundingRect().topLeft() );
+    QPoint tr_ = views()[0]->mapFromScene( volume->boundingRect().topRight() );
+
+
+//    std::cout << "Bottom Left: ( " << bl_.x() << ", " << bl_.y() << "), Right: ( " << br_.x() << ", " << br_.y() << ") " << std::endl << std::flush;
+//    std::cout << "Top Left: ( " << tl_.x() << ", " << tl_.y() << "), Right: ( " << tr_.x() << ", " << tr_.y() << ") " << std::endl << std::flush;
+
+
+    std::cout << "Width sketching: " << ( br_ - bl_ ).x() << ", height: " << ( tr_ - br_ ).y() << std::endl << std::flush;
 
     setSceneRect( volume->boundingRect() );
     update();
@@ -549,6 +623,63 @@ void SketchScene::getCurrentColor( int& r, int& g, int& b )
 }
 
 
+
+void SketchScene::savetoRasterImage( const QString& filename )
+{
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_csection." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
+    QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
+    image.fill( Qt::transparent );
+
+    QPainter painter( &image );
+    render( &painter );
+    painter.end();
+
+    image = image.mirrored( false, true );
+    image.save( filename_csection );
+
+}
+
+
+void SketchScene::savetoVectorImage( const QString& filename )
+{
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+
+    QString filename_csection;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_csection." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
+
+
+
+    QSvgGenerator svgGen;
+
+    svgGen.setFileName( filename_csection );
+    svgGen.setSize( QSize( width(), height() ) );
+
+    svgGen.setViewBox( sceneRect() );
+    svgGen.setTitle( tr( "Rapid Reservoir Modelling - SVG generated by Qt5" ) );
+    svgGen.setDescription( tr( "SVG output of Rapid Reservoir Modelling Software" ) );
+
+    QPainter painter( &svgGen );
+    painter.scale( 1.0, -1.0 );
+    painter.translate( QPointF( 0.0, -height() ) );
+
+    render( &painter );
+    painter.end();
+}
 
 
 void SketchScene::setModeSketching()
@@ -786,7 +917,7 @@ void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
 {
     if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
     {
-            event->acceptProposedAction();
+        event->acceptProposedAction();
     }
 
 }

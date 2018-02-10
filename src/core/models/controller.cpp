@@ -82,8 +82,6 @@ void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
 
 void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
 {
-    std::cout << "Inside controller, changing volume dimensions: ( " << width_ << ", " << height_
-              << ", " << length_ << ") " <<  std::endl << std::flush;
 
     volume->setGeometry( width_, height_, length_ );
     scene3d->updateVolume();
@@ -457,11 +455,10 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
 
 
-    main_csection->addObject( obj_->getIndex(), &curve_ );
+//    bool status_ = main_csection->addObject( obj_->getIndex(), &curve_ );
 
 
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
-
     cs_->addObject( obj_->getIndex(), &curve_ );
 
     volume->addCrossSection( cs_->getIndex(), cs_ );
@@ -597,6 +594,7 @@ bool Controller::createPreviewSurface()
     obj_->setVisible( true );
 
     scene3d->updateObject( current_object );
+    updatePreviewCurves( obj_, current_csection );
     updateObjectInFixedCrossSections( current_object );
 
 
@@ -1188,22 +1186,25 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     object_tree->removeOutputVolume();
 
 
+    double w = 0, h = 0,  l = 0;
+    double ox_ = 0, oy_ = 0, oz_ = 0;
+
+    volume->getOrigin( ox_, oy_, oz_ );
+    volume->getGeometry( w, h, l );
+
+
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     rules_processor.getTetrahedralMesh( vertices_, regions_ );
 
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );
-
+    vol1_->setOrigin( ox_, oy_, oz_ );
+    vol1_->setGeometry( w, h, l );
     scene3d->addOutputVolume( vol1_ );
     object_tree->addOutputVolume();
 
 
-    double w = 0, h = 0,  l = 0;
-    double ox_ = 0, oy_ = 0, oz_ = 0;
-
-    vol1_->getOrigin( ox_, oy_, oz_ );
-    vol1_->getGeometry( w, h, l );
 
 
     std::random_device rd;
@@ -1289,6 +1290,20 @@ void Controller::getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ )
 }
 
 
+void Controller::hideRegions()
+{
+    if( regions.empty() == true ) return;
+
+    for( auto id: regions )
+        setRegionVisibility( id.first, false );
+
+    object_tree->hideOutputVolume();
+    scene3d->updateRegions();
+
+
+
+
+}
 
 
 void Controller::clear()
