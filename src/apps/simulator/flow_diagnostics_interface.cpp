@@ -70,6 +70,7 @@ void FlowDiagnosticsInterface::clearWells(){
 
 void FlowDiagnosticsInterface::init(){
     if (region.meshinfo_type() == 1 && region.numberofphases() == 1){ //unstructured
+		region.writevolumemesh("volumetetmesh.vtk");
         region.tetrahedralmesh_postprocessCVFE();
         region.properties_cvfe_sf(); //kvratio_=0.1
         region.computemobility_cvfe_sf();
@@ -115,6 +116,7 @@ void FlowDiagnosticsInterface::buildVolumetricMesh(){
 	if (region.sketchflag() == 0){//linear extrusion
 		region.RRMdefaultvalues_unstructured();
 		region.paramodel();
+		region.surfacemeshmax();
 		//region.inputstraightwells();
 		region.inputverticalwells();
 		region.unstructuredsurfacemesh();
@@ -126,6 +128,7 @@ void FlowDiagnosticsInterface::buildVolumetricMesh(){
 	}
 	else if (region.sketchflag() == 1){
 		region.RRMdefaultvalues_unstructured();
+		region.surfacemeshmax();
 		region.inputverticalwells();
 		region.buildsurfacemesh();
 		region.calltetgen_in2mid(); //must: already read in poly or created in
