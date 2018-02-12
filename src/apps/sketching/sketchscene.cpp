@@ -16,8 +16,10 @@ SketchScene::SketchScene()
     image = new ImageItemWrapper();
     addItem( image );
 
-    user_input = new InputSketch();
-    addItem( user_input );
+    user_input = nullptr;
+
+//    user_input = new InputSketch();
+//    addItem( user_input );
 
     csection_image = new QGraphicsPixmapItem();
     addItem( csection_image );
@@ -70,9 +72,10 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
     image->setVisible( false );
     addItem( image );
 
-    user_input = new InputSketch();
-    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
-    addItem( user_input );
+    user_input = nullptr;
+//    user_input = new InputSketch();
+//    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
+//    addItem( user_input );
 
     csection_image = new QGraphicsPixmapItem();
     csection_image->setVisible( false );
@@ -123,8 +126,8 @@ SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( 
         dir_ = InputSketch::Direction::X;
 
 
-    connect( this, &SketchScene::discard, [=](){ user_input->clear(); update(); } );
-    connect( this, &SketchScene::commit, [=](){ emit acceptCurve( user_input->done( dir_ ), csection->getDepth() ); } );
+    connect( this, &SketchScene::discard, [=](){if( user_input == nullptr )  return; user_input->clear(); update(); } );
+    connect( this, &SketchScene::commit, [=](){ if( user_input == nullptr )  return; emit acceptCurve( user_input->done( dir_ ), csection->getDepth() ); } );
     connect( this, &SketchScene::create, [=](){ emit commitObject(); } );
 }
 
@@ -223,6 +226,52 @@ QPixmap SketchScene::addLabel( double depth_, QColor color_ )
 
     addPixmap( px );
     return px;
+}
+
+
+void SketchScene::startSketch( const QPointF& p )
+{
+
+    if( user_input != nullptr ) return;
+
+    user_input = new InputSketch();
+    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
+    user_input->create( p );
+    addItem( user_input );
+
+    update();
+}
+
+
+void SketchScene::clearSketch()
+{
+    if( user_input == nullptr ) return;
+
+    QGraphicsScene::removeItem( user_input );
+    delete user_input;
+    user_input = nullptr;
+
+    update();
+}
+
+
+void SketchScene::finishSketch()
+{
+
+    if( user_input == nullptr ) return;
+    if( user_input->isEmpty() == true ) return;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+        emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+        emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
+
+
+    clearSketch();
+
+    update();
 }
 
 
@@ -684,7 +733,8 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::setModeSketching()
 {
-    user_input->clear();
+//    if( user_input == nullptr )  return;
+//    user_input->clear();
     current_interaction = UserInteraction::SKETCHING;
     image->setFlag( QGraphicsItem::ItemIsSelectable, false );
     resize_marker->setVisible( false );
@@ -767,18 +817,13 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-        user_input->create(  event->scenePos() );
+        startSketch( event->scenePos() );
     }
 
     else if( ( event->buttons() & Qt::RightButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-            emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
+        finishSketch();
     }
 
     else if( ( event->buttons() & Qt::LeftButton ) &&
@@ -803,6 +848,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
 
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
 {
+
     if( event->modifiers() & Qt::ControlModifier )
     {
         if( csection == nullptr ) return;
@@ -813,6 +859,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
     else if( current_interaction == UserInteraction::SKETCHING )
     {
          emit commitObject();
+        clearSketch();
     }
 
 }
@@ -824,7 +871,7 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     if( is_current == false ) return;
 
     if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::SKETCHING ) )
+        ( current_interaction == UserInteraction::SKETCHING ) && ( user_input != nullptr ) )
     {
         user_input->add(  event->scenePos() );
     }
@@ -861,7 +908,7 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
 
     if( is_current == false ) return;
 
-    if( current_interaction == UserInteraction::SKETCHING )
+    if( ( current_interaction == UserInteraction::SKETCHING ) && ( user_input != nullptr ) )
     {
         user_input->process();
     }
