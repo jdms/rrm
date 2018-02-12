@@ -25,7 +25,7 @@ void CanvasStack::initialize()
 void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 {
 
-    QDockWidget* dc = new QDockWidget( this );
+    QDockWidget* dc = new QDockWidget();
     dc->setWindowFlags( Qt::Window );
     dc->setWindowTitle( canvas_->windowTitle() );
 
@@ -80,13 +80,12 @@ void CanvasStack::setCurrent( double id_ )
 {
     if( findElement( id_ ) == false ) return;
 
-    int count = hb_mainlayout->count();
-
-    for( auto index = 0; index < count; ++index )
+    Container::Iterator it =  Container::data.begin();
+    while( it != Container::data.end() )
     {
-        QWidget* w0 = hb_mainlayout->widget( index );
-        if( w0 == nullptr ) continue;
-        w0->setStyleSheet( "" );
+        QGraphicsView* gv_ = (QGraphicsView*)(Container::data[ it->first ]->widget());
+        gv_->setStyleSheet( "" );
+        it++;
     }
 
     QGraphicsView* gv_ = (QGraphicsView*)(Container::data[ id_ ]->widget());

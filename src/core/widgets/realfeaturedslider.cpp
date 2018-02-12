@@ -154,6 +154,7 @@ void RealFeaturedSlider::setDefaultValues()
     connect( this, &Slider::unmarkValue, [=]( int v ){ emit unmarkValue( getDoubleValue( v ) ); } );
     connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
 
+    connect( this, &QSlider::valueChanged, this, &Slider::sliderMoved );
 //    setValue( maximum );
 }
 

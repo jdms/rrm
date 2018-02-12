@@ -297,9 +297,6 @@ void SketchWindow::updateCanvas()
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
-//        QMainWindow* mw_window = it->second;
-//        QGraphicsView* gview_ = (QGraphicsView*) mw_window->centralWidget();
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateVolume();
         sc_->updateCrossSection();
@@ -314,7 +311,6 @@ void SketchWindow::updateCanvas()
 void SketchWindow::addCrossSection( CrossSection* const& cs_ )
 {
     if( cs_ == nullptr ) return;
-//    if( tv_main == nullptr ) return;
 
     if( tv_scene == nullptr) return;
     tv_scene->addCrossSection( cs_ );
@@ -336,7 +332,6 @@ void SketchWindow::addObject( Object* const& obj_ )
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->addObject( obj_ );
         gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
@@ -358,7 +353,6 @@ void SketchWindow::updateObject( const std::size_t& index_ )
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateObject( index_ );
         gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
@@ -398,7 +392,6 @@ void SketchWindow::setModeSelecting()
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setModeSelecting();
     }
@@ -415,7 +408,6 @@ void SketchWindow::setModeSketching()
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setModeSketching();
     }
@@ -444,7 +436,6 @@ void SketchWindow::setCurrentColor( int r_, int g_, int b_ )
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
-//        QGraphicsView* gview_ = it->second;
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->setCurrentColor( r_, g_, b_ );
     }
@@ -515,8 +506,6 @@ void SketchWindow::clear()
 
 void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ )
 {
-    std::cout << "Adding canvas inside addFixedCrossSectionCanvas" << std::endl << std::flush;
-
     if( cs_ == nullptr ) return;
 
     dw_canvas_stack->setVisible( true );
@@ -533,8 +522,7 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
     QGraphicsView* gv_ = new QGraphicsView();
     gv_->scale( 1, -1 );
     gv_->setScene( scene_ );
-    gv_->setWindowIconText( "A" );
-    gv_->setWindowTitle( "B" );
+    gv_->setWindowTitle( QString( "CrossSection %1" ).arg( cs_->getDepth() ) );
     cs->addElement( cs_->getDepth(), gv_ );
 
 
