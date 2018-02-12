@@ -218,13 +218,13 @@ QPixmap SketchScene::addLabel( double depth_, QColor color_ )
     csection_color->update();
 
     QPixmap px( 30, 30 );
-    px.fill( color_ );/*
-    QPainter p(&px);
-    p.setPen(Qt::blue);
-    p.drawEllipse(0, 0, 20, 20);
-    p.end();*/
+//    px.fill( color_ );/*
+//    QPainter p(&px);
+//    p.setPen(Qt::blue);
+//    p.drawEllipse(0, 0, 20, 20);
+//    p.end();*/
 
-    addPixmap( px );
+//    addPixmap( px );
     return px;
 }
 
@@ -461,6 +461,7 @@ void SketchScene::updateTopViewScene()
 
     if( main_csection != nullptr )
     {
+        main_csection->setWidth( vol_->getWidth() );
         main_csection->setVisible( volume->isVisible() );
         main_csection->update();
     }
@@ -506,19 +507,6 @@ void SketchScene::updateVolume()
 
     if( views().empty() == true ) return;
     if( volume == nullptr ) return;
-
-    QPoint bl_ = views()[0]->mapFromScene( volume->boundingRect().bottomLeft() );
-    QPoint br_ = views()[0]->mapFromScene( volume->boundingRect().bottomRight() );
-
-    QPoint tl_ = views()[0]->mapFromScene( volume->boundingRect().topLeft() );
-    QPoint tr_ = views()[0]->mapFromScene( volume->boundingRect().topRight() );
-
-
-//    std::cout << "Bottom Left: ( " << bl_.x() << ", " << bl_.y() << "), Right: ( " << br_.x() << ", " << br_.y() << ") " << std::endl << std::flush;
-//    std::cout << "Top Left: ( " << tl_.x() << ", " << tl_.y() << "), Right: ( " << tr_.x() << ", " << tr_.y() << ") " << std::endl << std::flush;
-
-
-    std::cout << "Width sketching: " << ( br_ - bl_ ).x() << ", height: " << ( tr_ - br_ ).y() << std::endl << std::flush;
 
     setSceneRect( volume->boundingRect() );
     update();

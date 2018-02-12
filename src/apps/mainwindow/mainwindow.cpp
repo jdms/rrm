@@ -167,10 +167,10 @@ void MainWindow::createToolbar()
     ac_undo = new QAction( "Undo", this );
     ac_redo = new QAction( "Redo", this );
 
-    ac_sketch_above = new QAction( "CA", this ); // create above!
+    ac_sketch_above = new QAction( "PA", this ); // create above!
     ac_sketch_above->setCheckable( true );
 
-    ac_sketch_below = new QAction( "CB", this ); // create below!
+    ac_sketch_below = new QAction( "PB", this ); // create below!
     ac_sketch_below->setCheckable( true );
 
     ac_truncate = new QAction( "T", this );
@@ -378,8 +378,6 @@ void MainWindow::createSketchingWindow()
     ac_topview->setCheckable( true );
     ac_topview->setChecked( true );
 
-//    tb_mainwindow->addAction( ac_topview );
-//    tb_mainwindow->addSeparator();
 
 
 }
