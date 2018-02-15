@@ -361,6 +361,7 @@ bool Controller::addObject( std::size_t index_ )
 
     object_tree->addObject( current_object, Settings::Objects::ObjectType::STRATIGRAPHY,
                             obj_->getName(), current_color.r, current_color.g, current_color.b );
+    object_tree->setObjectVisibility( current_object, false );
     scene3d->addObject( obj_ );
 
     return true;
@@ -452,6 +453,8 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
     obj_->setEditable( true );
     obj_->setVisible( true );
+
+    object_tree->setObjectVisibility( current_object, true );
 
 
 
