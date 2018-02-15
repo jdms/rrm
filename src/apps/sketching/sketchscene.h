@@ -127,6 +127,10 @@ class SketchScene: public QGraphicsScene, public Scene
 
         void initialize();
 
+        void startSketch( const QPointF& p );
+        void clearSketch();
+        void finishSketch();
+
 
         void createCrossSectionScene( Volume* const& vol_ );
         void createTopViewScene( Volume* const& vol_ );
@@ -180,6 +184,8 @@ class SketchScene: public QGraphicsScene, public Scene
 
         QGraphicsTextItem* csection_label;
         QGraphicsEllipseItem* csection_color;
+
+        bool allow_sketching = true;
 
 
 };

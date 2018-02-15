@@ -44,7 +44,6 @@ class CanvasStack: public QWidget, public CanvasContainer
     protected:
 
         double current;
-//        QVBoxLayout* hb_mainlayout;
         QSplitter* hb_mainlayout;
 
 };

@@ -145,7 +145,6 @@ void Slider::paintEvent( QPaintEvent *ev )
     QPainter painter( this );
     for( auto s: markers )
     {
-//        painter.drawLine( 0, s.second, 10, s.second );
         QColor c_ = color_markers[ s.first ];
         painter.setPen( c_.darker() );
         painter.setBrush( QBrush( c_ ) );
