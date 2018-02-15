@@ -31,8 +31,10 @@ class SketchScene: public QGraphicsScene, public Scene
         SketchScene( CrossSection* const& raw_ );
 
 
-        void readCrossSection( CrossSection* const& raw_ );
+        QPixmap addLabel( double depth_, QColor color_);
 
+
+        void readCrossSection( CrossSection* const& raw_ );
 
 
         void addVolume( Volume* const& raw_, Settings::CrossSection::CrossSectionDirections dir_ );
@@ -69,6 +71,9 @@ class SketchScene: public QGraphicsScene, public Scene
         void editItem();
         void removeItem();
 
+
+        void savetoVectorImage( const QString& filename );
+        void savetoRasterImage( const QString& filename );
 
 
 
@@ -122,6 +127,10 @@ class SketchScene: public QGraphicsScene, public Scene
 
         void initialize();
 
+        void startSketch( const QPointF& p );
+        void clearSketch();
+        void finishSketch();
+
 
         void createCrossSectionScene( Volume* const& vol_ );
         void createTopViewScene( Volume* const& vol_ );
@@ -172,6 +181,11 @@ class SketchScene: public QGraphicsScene, public Scene
         QGraphicsEllipseItem* resize_marker;
         QGraphicsEllipseItem* move_marker;
         ImageItemWrapper* image;
+
+        QGraphicsTextItem* csection_label;
+        QGraphicsEllipseItem* csection_color;
+
+        bool allow_sketching = true;
 
 
 };

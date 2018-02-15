@@ -150,10 +150,11 @@ void RealFeaturedSlider::setDefaultValues()
     setTickPosition( QSlider::TicksLeft );
 
     connect( this, &Slider::sliderMoved, this, &RealFeaturedSlider::moveInDouble );
-    connect( this, &Slider::markValue, [=]( int v ){ emit markValue( getDoubleValue( v ) ); } );
+    connect( this, &Slider::markValue, [=]( int v, QColor c_ ){ emit markValue( getDoubleValue( v ), c_ ); } );
     connect( this, &Slider::unmarkValue, [=]( int v ){ emit unmarkValue( getDoubleValue( v ) ); } );
     connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
 
+    connect( this, &QSlider::valueChanged, this, &Slider::sliderMoved );
 //    setValue( maximum );
 }
 

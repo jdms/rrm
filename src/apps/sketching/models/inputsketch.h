@@ -164,7 +164,7 @@ class SketchLibrary
 
     public:
 
-        static const std::size_t SKETCH_MIN_LENGHT = 7;
+        static const std::size_t SKETCH_MIN_LENGHT = 3;
 
 };
 
@@ -229,6 +229,7 @@ class InputSketch: public QGraphicsPathItem
         QColor current_color;
 
         QPainterPath curve;
+        bool created = false;
 
 
 };

@@ -108,6 +108,11 @@ bool ObjectItemWrapper::isEditable() const
 }
 
 
+bool ObjectItemWrapper::isSelectable() const
+{
+    return raw->isSelectable();
+}
+
 bool ObjectItemWrapper::isVisible() const
 {
     if( raw == nullptr ) return false;
