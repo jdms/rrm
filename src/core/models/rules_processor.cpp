@@ -397,7 +397,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //
 
     /* modeller_.changeDiscretization(length_discretization, width_discretization); */
-    modeller_.changeDiscretization(8, 8);
+    modeller_.changeDiscretization(16, 16);
     
     // 
     // Get the PLC
@@ -480,15 +480,15 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     switch( current_resolution_ )
     {
 	case LOW:
-            modeller_.changeDiscretization(32, 32);
+            /* modeller_.changeDiscretization(32, 32); */
             break;
 
 	case MEDIUM:
-            modeller_.changeDiscretization(64, 64);
+            /* modeller_.changeDiscretization(64, 64); */
             break;
 
 	case HIGH:
-            modeller_.changeDiscretization(128, 128);
+            /* modeller_.changeDiscretization(128, 128); */
             break;
     }
 	modeller_.changeDiscretization(64, 64);
