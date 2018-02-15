@@ -78,7 +78,7 @@ Scene3d* Canvas3d::getScene() const
 }
 
 
-std::string Canvas3d::sendImage( double width_, double height_  )
+std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, double height_  )
 {
 
     makeCurrent();
@@ -89,8 +89,13 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     int delta_w = width() - static_cast<int>( width_ );
     int delta_h = height() - static_cast<int>( height_ );
 
-    int x_ = static_cast<int>( delta_w*0.5f );
-    int y_ = static_cast<int>( delta_h*0.5f );
+    int x_ = static_cast<int>( std::ceil( delta_w*0.5f ) );
+    int y_ = static_cast<int>( std::ceil( delta_h*0.5 ) );
+
+
+    std::cout << "window width: " << width() << ", height: " << height() << std::endl;
+    std::cout << "box width: " << width_ << ", height: " << height_ << std::endl;
+
 
 
     Eigen::Matrix3f mat;
@@ -103,22 +108,42 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     camera.reset();
     camera.rotate( q );
 
+//    glViewport( 0 , 0 , static_cast<int>( width_ ) , static_cast<int>( height_ ) );
 
     if( V >= 1 )
-        camera.setOrthographicMatrix( -V * 0.5, V * 0.5, -0.5, 0.5, 0.1f, 100.f );
+    {
+        std::cout << "ortographic values: " << V  << ", 0.5" << std::endl << std::flush;
+        camera.setOrthographicMatrix( -V *0.5, V *0.5, - 0.5, 0.5, -0.1f, 100.f );
+    }
     else
-        camera.setOrthographicMatrix( -0.5, -0.5, -V*0.5, V*0.5, -0.1f, 100.f );
+    {
+        camera.setOrthographicMatrix( -0.5, 0.5, -V*0.5,V*0.5, 0.1f, 100.f );
 
+    }
 
+    scene3d->setHeightMap( zmin_, zmax_ );
     update();
 
 
     QImage image = grabFramebuffer();
     std::string path_ = "./tmp/mapview.png";
 
+    std::cout << "Resolution image from framebuffer: ( " << image.width() << ", "
+              << image.height() << ") " << std::endl << std::flush;
 
-    QImage image1 = image.copy(  x_, y_, static_cast< int >( width_ ), static_cast< int >( height_ ) );
+//    QImage image1 = image.copy(  x_, y_, static_cast<int>(width_), static_cast<int>(height_) );
+
+    double x = 297;
+    double y = 0;
+
+    QImage image1 = image.copy(  static_cast<int>(x), static_cast<int>(y), image.width() - 2*static_cast< int >( x ), image.height() - 2*static_cast< int >( y ) );
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image1 = image1.transformed( myTransform );
     image1.save( QString( path_.c_str() ) );
+
+    std::cout << "Resolution image from framebuffer: ( " << image1.width() << ", "
+              << image1.height() << ") " << std::endl << std::flush;
 
     canvas_width = width();
     canvas_height = height();
@@ -128,7 +153,12 @@ std::string Canvas3d::sendImage( double width_, double height_  )
     camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
     camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
 
-    image1.save( QString( path_.c_str() ) );
+    scene3d->updateObjects();
+    update();
+
+
+    std::cout << "Image origin: " << x_ << ", " << y_ << std::endl << std::flush;
+
     return path_;
 }
 

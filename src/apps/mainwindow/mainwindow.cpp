@@ -52,13 +52,18 @@ void MainWindow::createWindow()
     createSidebar();
     createToolbar();
 
+
     createActions();
+
 
     createSketchingWindow();
     createSketchingActions();
-
     createFlowWindow();
 
+    tb_mainwindow->addSeparator();
+    tb_mainwindow->addAction( ac_screenshot );
+
+    createMenuBar();
 }
 
 
@@ -68,21 +73,84 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
-
+//    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
 
 
 
-    hb_central_widget = new QHBoxLayout( this );
+    hb_central_widget = new QHBoxLayout();
     hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
 
-    central_widget = new QWidget( this );
+    central_widget = new QWidget();
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
+
+}
+
+
+void MainWindow::createMenuBar()
+{
+
+    QAction* ac_exit = new QAction( tr ( "E&xit" ) , this );
+    QAction* ac_manual = new QAction( tr ( "RRM Manual" ), this );
+    QAction* ac_about = new QAction( tr ( "&About" ) , this );
+
+//    connect( ac_about, &QAction::triggered, aboutRRM, &AboutWidget::show );
+//    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
+    connect( ac_exit, &QAction::triggered , this, &MainWindow::close );
+
+
+
+    QAction* ac_csection = new QAction ( tr ( "Cross-Section Window" ) , this );
+    ac_csection->setCheckable ( true );
+    ac_csection->setChecked ( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
+
+    connect( ac_csection, &QAction::toggled, dw_sketchwindow , &QDockWidget::setVisible );
+    connect( dw_sketchwindow, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_sketchwindow->isVisible() == false ) )
+            ac_csection->setChecked( false );
+    } );
+
+
+    QAction* ac_topview = new QAction ( tr ( "Top-View Window" ) , this );
+    ac_topview->setCheckable ( true );
+    ac_topview->setChecked ( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
+
+    connect( ac_topview , &QAction::toggled, dw_topview_window , &QDockWidget::setVisible );
+    connect( dw_topview_window, &QDockWidget::visibilityChanged, [=]( bool status )
+    {
+        if( ( status == false ) && ( dw_topview_window->isVisible() == false ) )
+            ac_topview->setChecked( false );
+    } );
+
+
+
+//    QAction* ac_sidebar = new QAction ( tr ( "Sidebar" ) , this );
+//    ac_sidebar->setCheckable ( true );
+//    connect ( ac_sidebar , &QAction::toggled , ac_show_sidebar , &QAction::setChecked );
+//    connect ( ac_show_sidebar, &QAction::toggled , ac_sidebar , &QAction::setChecked );
+
+
+
+    mn_file = menuBar()->addMenu ( tr ( "&File" ) );
+    mn_file->addAction ( ac_clear );
+    mn_file->addAction ( ac_save );
+    mn_file->addAction ( ac_load );
+    mn_file->addAction ( ac_exit );
+
+    mn_windows = menuBar()->addMenu ( tr ( "&Windows" ) );
+    mn_windows->addAction ( ac_csection );
+    mn_windows->addAction ( ac_topview );
+//    mn_windows->addAction ( ac_sidebar );
+
+    mn_help = menuBar()->addMenu ( tr ( "&Help" ) );
+    mn_help->addAction( ac_manual );
+    mn_help->addAction( ac_about );
 
 }
 
@@ -99,10 +167,10 @@ void MainWindow::createToolbar()
     ac_undo = new QAction( "Undo", this );
     ac_redo = new QAction( "Redo", this );
 
-    ac_sketch_above = new QAction( "CA", this ); // create above!
+    ac_sketch_above = new QAction( "PA", this ); // create above!
     ac_sketch_above->setCheckable( true );
 
-    ac_sketch_below = new QAction( "CB", this ); // create below!
+    ac_sketch_below = new QAction( "PB", this ); // create below!
     ac_sketch_below->setCheckable( true );
 
     ac_truncate = new QAction( "T", this );
@@ -132,7 +200,7 @@ void MainWindow::createToolbar()
     ag_rules->addAction( ac_truncate );
 
 
-
+    ac_screenshot = new QAction( "Screenshot", this );
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
@@ -147,6 +215,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addSeparator();
+    tb_mainwindow->addAction( ac_screenshot );
 
 
 }
@@ -226,7 +295,7 @@ void MainWindow::createMainWindowActions()
 
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
-
+    connect( ac_screenshot, &QAction::triggered, [=](){ app->screenshot(); } );
 
 }
 
@@ -309,8 +378,6 @@ void MainWindow::createSketchingWindow()
     ac_topview->setCheckable( true );
     ac_topview->setChecked( true );
 
-    tb_mainwindow->addAction( ac_topview );
-    tb_mainwindow->addSeparator();
 
 
 }
@@ -327,8 +394,8 @@ void MainWindow::createSketchingActions()
 {
 
 
-    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v )
-                                                         { app->addCrossSectionCanvas( v );  } );
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )
+                                                         { app->addCrossSectionCanvas( v, c_ );  } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ app->removeCrossSectionCanvas( v ); } );
 
@@ -365,7 +432,9 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=](  double depth_ )
                                                            { app->removeImageFromCrossSection( depth_ ); } );
 
+    connect( sketch_window, &SketchWindow::addFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::addMarker );
 
+    connect( sketch_window, &SketchWindow::removeFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::removeMarker );
 
 
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]()

@@ -12,6 +12,7 @@
 InputSketch::InputSketch( QGraphicsItem * parent ): QGraphicsPathItem( parent ),
                                                     current_color( Qt::red ), current_width( 3 )
 {
+    created = false;
     setPath( curve );
 }
 
@@ -20,15 +21,19 @@ InputSketch::InputSketch( QGraphicsItem * parent ): QGraphicsPathItem( parent ),
 
 void InputSketch::create( const QPointF& p_ )
 {
+    if( created == true ) return;
     prepareGeometryChange();
     curve.moveTo( p_);
 
+    created = true;
     update();
 }
 
 
 void InputSketch::add( const QPointF& p_ )
 {
+    if( created == false ) return;
+
     prepareGeometryChange();
     curve.lineTo( p_ );
     update();
@@ -38,13 +43,14 @@ void InputSketch::add( const QPointF& p_ )
 void InputSketch::process()
 {
 
-    if( curve.isEmpty() == true ) return;
-
+    if( isEmpty()  == true ) return;
+    if( created == false ) return;
 
     prepareGeometryChange();
 
     QPolygonF path0_ = curve.toSubpathPolygons()[ 0 ], path1_;
     Curve2D sketch_;
+
 
     bool status_ = getSubpaths( path0_, path1_ );
     if( status_ == true )
@@ -62,7 +68,7 @@ void InputSketch::process()
 
 PolyCurve InputSketch::done( const InputSketch::Direction& dir_ )
 {
-    if( curve.isEmpty() == true ) return PolyCurve();
+    if( isEmpty() == true ) return PolyCurve();
 
 
     //TODO: create a method to smooth the curve
@@ -95,13 +101,24 @@ void InputSketch::clear()
     prepareGeometryChange();
     curve = QPainterPath();
     setPath( curve );
+
+    created = false;
     update();
 }
 
 
 bool InputSketch::isEmpty() const
 {
-    return curve.toSubpathPolygons().empty();
+    if( curve.toSubpathPolygons().empty()  == true )
+        return true;
+
+    QPolygonF path0_ = curve.toSubpathPolygons()[ 0 ];
+    if( path0_.isEmpty() == true )
+        return true;
+    else if( path0_.size() < SketchLibrary::SKETCH_MIN_LENGHT )
+        return true;
+
+    return false;
 }
 
 
@@ -160,11 +177,14 @@ bool InputSketch::getSubpaths( QPolygonF& path0_, QPolygonF& path1_ ) const
 
 
     if( subpaths[ 0 ].size() < SketchLibrary::SKETCH_MIN_LENGHT ) return false;
+    if( subpaths[ 1 ].size() < SketchLibrary::SKETCH_MIN_LENGHT ) return false;
 
 
     path0_ = subpaths[ 0 ];
     path1_ = subpaths[ 1 ];
 
+    std::cout << "size subpath0: " << path0_.size() << std::endl << std::flush;
+    std::cout << "size subpath1: " << path1_.size() << std::endl << std::flush;
     return true;
 }
 

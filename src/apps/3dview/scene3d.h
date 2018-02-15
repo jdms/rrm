@@ -51,6 +51,7 @@ class Scene3d: public QObject, public Scene
 
         void addRegion( Regions* const& raw_ );
         void updateRegion( std::size_t index_ );
+        void updateRegions();
 //        void clearRegion();
 
         void addMainCrossSection( CrossSection* const& raw_ );
@@ -58,11 +59,13 @@ class Scene3d: public QObject, public Scene
 
         virtual void addCrossSection( CrossSection* const& raw_ );
         void updateCrossSection( CrossSection* const& raw_ );
+        void updateCrossSections();
         virtual void removeCrossSection( CrossSection* const& raw_ );
 
 
         virtual void addObject(  Object* const& raw_ );
         virtual void updateObject(  const std::size_t& index_ );
+        void updateObjects();
         void removeObject(  const std::size_t& index_ );
 
 
@@ -78,6 +81,8 @@ class Scene3d: public QObject, public Scene
         virtual void setCurrentColor( int r, int g, int b ){}
         virtual void getCurrentColor( int& r, int& g, int& b ){}
 
+
+        void setHeightMap( double zmin_, double zmax_ );
 
 
     signals:

@@ -28,7 +28,7 @@ class Slider: public QSlider
 
     signals:
 
-        void markValue( int value );
+        void markValue( int value, QColor color_ );
         void unmarkValue( int value );
         void hightlightValue( int value );
 
@@ -54,6 +54,8 @@ class Slider: public QSlider
 
 
         std::map< int, int > markers;
+        std::map< int, QColor > color_markers;
+
 };
 
 #endif // SLIDER_H

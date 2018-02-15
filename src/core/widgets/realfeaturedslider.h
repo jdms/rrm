@@ -3,6 +3,8 @@
 
 
 #include <QSlider>
+#include <QColor>
+
 #include "./slider.h"
 
 
@@ -23,7 +25,7 @@ class RealFeaturedSlider: public Slider
     signals:
 
         void sliderMoved( const double& value_ );
-        void markValue( const double& value );
+        void markValue( const double& value, QColor color_ );
         void unmarkValue( double value );
         void hightlightValue( double value );
 
