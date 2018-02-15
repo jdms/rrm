@@ -1,6 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <QJsonObject>
+
 #include <iostream>
 #include <string>
 #include <map>
@@ -108,6 +110,63 @@ class Object
         void initialize();
 
         static void resetAllObjects();
+
+
+        inline void write( QJsonObject &json ) const
+        {
+            json[ "name" ] = QString( name.c_str() );
+            json[ "text_information" ] = QString( text_information.c_str() );
+            json[ "is_editable" ] = is_editable;
+            json[ "is_selectable" ] = is_selectable;
+            json[ "is_selected" ] = is_selected;
+            json[ "is_visible" ] = is_visible;
+            json[ "is_active" ] = is_active;
+            json[ "is_done" ] = is_active;
+            json[ "red" ] = color.r;
+            json[ "green" ] = color.g;
+            json[ "blue" ] = color.b;
+
+        }
+
+
+        inline void read( const QJsonObject &json )
+        {
+
+
+            if (json.contains("name") && json["name"].isString())
+                name = json["name"].toString().toStdString();
+
+            if (json.contains("text_information") && json["text_information"].isString())
+                text_information = json["text_information"].toString().toStdString();
+
+            if (json.contains("is_editable") && json["is_editable"].isBool())
+                is_editable =json["is_editable"].toBool();
+
+            if (json.contains("is_selectable") && json["is_selectable"].isBool())
+                is_selectable = json["is_selectable"].toBool();
+
+            if (json.contains("is_selected") && json["is_selected"].isBool())
+                is_selected = json["is_selected"].toBool();
+
+            if (json.contains("is_visible") && json["is_visible"].isBool())
+                is_visible = json["is_visible"].toBool();
+
+            if (json.contains("is_active") && json["is_active"].isBool())
+                is_active = json["is_active"].toBool();
+
+            if (json.contains("is_done") && json["is_done"].isBool())
+                is_done = json["is_done"].toBool();
+
+            if (json.contains("red") && json["red"].isDouble())
+                color.r = json["red"].toInt();
+
+            if (json.contains("green") && json["green"].isDouble())
+                color.g = json["green"].toInt();
+
+            if (json.contains("blue") && json["blue"].isDouble())
+                color.b = json["blue"].toInt();
+
+        }
 
 
 
