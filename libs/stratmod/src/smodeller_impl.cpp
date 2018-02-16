@@ -96,7 +96,7 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesBelowPoint( doubl
     std::vector<size_t> surfaces_ids = {};
     Point3 p = point3(x, y, z);
 
-    surfaces_ids = container_.getSurfacesBelowPoint(p);
+    surfaces_ids = container_.getActiveSurfacesBelowPoint(p);
     size_t cid;
     for ( auto &i : surfaces_ids )
     {
@@ -112,7 +112,7 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
     std::vector<size_t> surfaces_ids = {};
     Point3 p = point3(x, y, z);
 
-    surfaces_ids = container_.getSurfacesAbovePoint(p);
+    surfaces_ids = container_.getActiveSurfacesAbovePoint(p);
     size_t cid;
     for ( size_t i = 0; i < surfaces_ids.size(); ++i )
     {
