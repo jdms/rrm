@@ -352,6 +352,11 @@ void MainWindow::createSidebarActions()
     connect( object_properties, &PagesStack::saveText, [=]( const QString& text_ ){ app->saveObjectInformation( text_.toStdString() ); } );
 
 
+
+    connect( object_properties, &PagesStack::setLowResolution, [=](){ app->setLowResolution(); } );
+    connect( object_properties, &PagesStack::setMediumResolution, [=](){ app->setMediumResolution(); } );
+    connect( object_properties, &PagesStack::setHighResolution, [=](){ app->setHighResolution(); } );
+
 }
 
 
