@@ -226,8 +226,8 @@ class Controller
         void hideRegions();
 
         bool saveObjectsMetaData( const std::string& filename );
-        bool loadObjectMetaDatas( const std::string& filename );
-
+        void loadObjectMetaDatas( QFile& load_file/*const std::string& filename*/ );
+        void loadObjectNoMetaDatas();
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 

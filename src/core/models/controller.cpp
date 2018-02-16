@@ -1111,38 +1111,51 @@ void Controller::loadObjects( const std::string& filename )
     }
 
 
+    std::string complete_filename = filename + ".json";
 
-
-//    std::vector< std::size_t > actives = rules_processor.getSurfaces();
-//    for( auto id: actives )
-//    {
-//        int r_ = distr( eng );
-//        int g_ = distr( eng );
-//        int b_ = distr( eng );
-
-//        addObject( id );
-//        setObjectColor( id, r_, g_, b_ );
-//    }
-
-    loadObjectMetaDatas( filename );
+    QFile load_file( QString( complete_filename.c_str() ) );
+    if ( !load_file.open( QIODevice::ReadOnly ) ) {
+        loadObjectNoMetaDatas();
+    }
+    else
+        loadObjectMetaDatas( load_file );
 
     addObject();
     updateModel();
 
 }
 
+void Controller::loadObjectNoMetaDatas()
+{
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-bool Controller::loadObjectMetaDatas( const std::string& filename )
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    for( auto id: actives )
+    {
+        int r_ = distr( eng );
+        int g_ = distr( eng );
+        int b_ = distr( eng );
+
+        addObject( id );
+        setObjectColor( id, r_, g_, b_ );
+    }
+
+}
+
+
+void Controller::loadObjectMetaDatas( QFile& load_file )
 {
 
-    std::string complete_filename = filename + ".json";
+//    std::string complete_filename = filename + ".json";
 
-    QFile load_file( QString( complete_filename.c_str() ) );
+//    QFile load_file( QString( complete_filename.c_str() ) );
 
-    if ( !load_file.open( QIODevice::ReadOnly ) ) {
-        qWarning("Couldn't open save file.");
-        return false;
-    }
+//    if ( !load_file.open( QIODevice::ReadOnly ) ) {
+//        qWarning("Couldn't open save file.");
+//        return false;
+//    }
 
 
     std::random_device rd;
