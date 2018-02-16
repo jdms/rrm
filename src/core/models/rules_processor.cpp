@@ -395,7 +395,9 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //
 
     /* modeller_.changeDiscretization(length_discretization, width_discretization); */
-    modeller_.changeDiscretization(8, 8);
+
+    // Change the following line to force a change in the models' discretization, also, see line above
+    /* modeller_.changeDiscretization(16, 16); */
     
     // 
     // Get the PLC
@@ -475,21 +477,23 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     // Return resolution to original state
     //
 
-    switch( current_resolution_ )
-    {
-	case LOW:
-            modeller_.changeDiscretization(32, 32);
-            break;
+    /* switch( current_resolution_ ) */
+    /* { */
+	/* case LOW: */
+    /*         modeller_.changeDiscretization(32, 32); */
+    /*         break; */
 
-	case MEDIUM:
-            modeller_.changeDiscretization(64, 64);
-            break;
+	/* case MEDIUM: */
+    /*         modeller_.changeDiscretization(64, 64); */
+    /*         break; */
 
-	case HIGH:
-            modeller_.changeDiscretization(128, 128);
-            break;
-    }
-	modeller_.changeDiscretization(64, 64);
+	/* case HIGH: */
+    /*         modeller_.changeDiscretization(128, 128); */
+    /*         break; */
+    /* } */
+
+    // Use the following to force a different discretization on the modeller
+	/* modeller_.changeDiscretization(64, 64); */
 
     return true;
 }

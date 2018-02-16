@@ -20,6 +20,7 @@ class TruncateHelper
             curve_ = in_curve_;
 
             cross_section_ = std::get<1>(curve_tuple);
+            cross_section_index_ = lengthwiseCrossSectionIndex(cross_section_);
 
             intersected_surfaces_ = isurf;
 
@@ -102,6 +103,7 @@ class TruncateHelper
         const CurveType &in_curve_;
         CurveType curve_;
         double cross_section_;
+        size_t cross_section_index_;
 
         CurveType upper_curve_;
         CurveType lower_curve_;
@@ -126,6 +128,23 @@ class TruncateHelper
         //
         // Methods
         //
+
+        size_t lengthwiseCrossSectionIndex( double cross )
+        {
+			struct { double x, y, z; } origin, model_size;
+
+			modeller_.getOrigin(origin.x, origin.y, origin.z);
+			modeller_.getSize(model_size.x, model_size.y, model_size.z);
+
+            double ldisc = modeller_.getLengthDiscretization();
+            double step = model_size.z/ldisc;
+
+            if ( step <= 0 )
+                return ldisc + 1;
+
+            size_t index = static_cast<size_t>(cross/step);
+            return index;
+        }
 
         template<typename Point>
         bool truncatePoint( Point &p, const Point &bound, CrossedBoundary b, CrossingType t )
@@ -595,7 +614,7 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
     size_t i;
     for (i = 0; i < num_curves; ++i)
     {
-        valid_curve = modeller_.getLengthCrossSectionCurve(lb[i], cross_section_, lb_curve, dummy_elist);
+        valid_curve = modeller_.getLengthCrossSectionCurve(lb[i], cross_section_index_, lb_curve, dummy_elist);
         if (valid_curve)
         {
             break;
@@ -604,7 +623,7 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
 
     for (; i < num_curves; ++i)
     {
-        valid_curve = modeller_.getLengthCrossSectionCurve(lb[i], cross_section_, curve, dummy_elist);
+        valid_curve = modeller_.getLengthCrossSectionCurve(lb[i], cross_section_index_, curve, dummy_elist);
         if (valid_curve)
         {
             for (size_t j = 1; j < curve.size(); j += 2)
@@ -624,7 +643,7 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
 
     convertToCurveType(lb_curve, lower_curve_);
 
-    return true;
+    return valid_curve;
 }
 
 template<typename CurveType>
@@ -654,7 +673,7 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
     size_t i;
     for (i = 0; i < num_curves; ++i)
     {
-        valid_curve = modeller_.getLengthCrossSectionCurve(ub[i], cross_section_, ub_curve, dummy_elist);
+        valid_curve = modeller_.getLengthCrossSectionCurve(ub[i], cross_section_index_, ub_curve, dummy_elist);
         if (valid_curve)
         {
             break;
@@ -663,7 +682,7 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
 
     for (; i < num_curves; ++i)
     {
-        valid_curve = modeller_.getLengthCrossSectionCurve(ub[i], cross_section_, curve, dummy_elist);
+        valid_curve = modeller_.getLengthCrossSectionCurve(ub[i], cross_section_index_, curve, dummy_elist);
         if (valid_curve)
         {
             for (size_t j = 1; j < curve.size(); j += 2)
@@ -683,7 +702,7 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
 
     convertToCurveType(ub_curve, upper_curve_);
 
-    return true;
+    return valid_curve;
 }
 
 #endif

@@ -795,6 +795,67 @@ bool SRules::defineBelow( std::size_t surface_index )
     return defineBelow( container[surface_index] );
 }
 
+bool SRules::liesInsideBoundingBox( const Point3 &p )
+{
+    Point3 origin = container[0]->getOrigin();
+    Point3 lenght = container[0]->getLenght();
+
+    bool lies_inside_boundaries = false;
+
+    lies_inside_boundaries = lies_inside_boundaries || (p.x >= origin.x) || (p.x <= origin.x + lenght.x);
+    lies_inside_boundaries = lies_inside_boundaries || (p.y >= origin.y) || (p.y <= origin.y + lenght.y);
+    lies_inside_boundaries = lies_inside_boundaries || (p.z >= origin.z) || (p.z <= origin.z + lenght.z);
+
+    return lies_inside_boundaries;
+}
+
+bool SRules::liesInsideBoundingBox( Point3 &&p )
+{
+    return liesInsideBoundingBox(p);
+}
+
+bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
+{
+    Point3 origin = container[0]->getOrigin();
+    Point3 lenght = container[0]->getLenght();
+
+    double height, lb_height, ub_height;
+    Point2 p2 = {{{ p.x, p.y }}};
+
+    if ( defineAboveIsActive() )
+    {
+        auto sptr = upper_bound_.lock();
+        sptr->getHeight(p2, ub_height);
+    }
+    else
+    {
+        ub_height = origin.z + lenght.z;
+    }
+
+    if ( defineBelowIsActive() )
+    {
+        auto sptr = lower_bound_.lock();
+        sptr->getHeight(p2, lb_height);
+    }
+    else
+    {
+        lb_height = origin.z;
+    }
+
+    bool lies_inside_boundaries = false;
+
+    lies_inside_boundaries = lies_inside_boundaries || (p.x >= origin.x ) || (p.x <= origin.x + lenght.x);
+    lies_inside_boundaries = lies_inside_boundaries || (p.y >= origin.y ) || (p.y <= origin.y + lenght.y);
+    lies_inside_boundaries = lies_inside_boundaries || (p.z >= lb_height) || (p.z <= ub_height          );
+
+    return lies_inside_boundaries;
+}
+
+bool SRules::liesBetweenBoundarySurfaces( Point3 &&p )
+{
+    return liesBetweenBoundarySurfaces(p);
+}
+
 bool SRules::weakEntireSurfaceCheck( std::size_t surface_index )
 {
     if ( surface_index >= size() )
@@ -918,14 +979,7 @@ std::vector<size_t> SRules::getSurfacesBelowPoint( const Point3 &p )
 
     descriptor.reserve( size() );
 
-    Point3 origin = container[0]->getOrigin();
-    Point3 lenght = container[0]->getLenght();
-
-    bool out_of_boundaries = false;
-
-    out_of_boundaries = out_of_boundaries || (p.x < origin.x) || (p.x > origin.x + lenght.x);
-    out_of_boundaries = out_of_boundaries || (p.y < origin.y) || (p.y > origin.y + lenght.y);
-    out_of_boundaries = out_of_boundaries || (p.z < origin.z) || (p.z > origin.z + lenght.z);
+    bool out_of_boundaries = !liesInsideBoundingBox(p);
 
     if ( out_of_boundaries )
     {
@@ -999,14 +1053,8 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
     }
 
     descriptor.reserve( size() );
-    Point3 origin = container[0]->getOrigin();
-    Point3 lenght = container[0]->getLenght();
 
-    bool out_of_boundaries = false;
-
-    out_of_boundaries = out_of_boundaries || (p.x < origin.x) || (p.x > origin.x + lenght.x);
-    out_of_boundaries = out_of_boundaries || (p.y < origin.y) || (p.y > origin.y + lenght.y);
-    out_of_boundaries = out_of_boundaries || (p.z < origin.z) || (p.z > origin.z + lenght.z);
+    bool out_of_boundaries = !liesInsideBoundingBox(p);
 
     if ( out_of_boundaries )
     {
@@ -1039,5 +1087,176 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
 std::vector<size_t> SRules::getSurfacesAbovePoint( Point3 &&p )
 {
     return getSurfacesAbovePoint(p);
+}
+
+std::vector<size_t> SRules::getActiveSurfacesBelowPoint( const Point3 &p )
+{
+    std::vector<size_t> descriptor = {};
+
+    if ( empty() )
+    {
+        return descriptor;
+    }
+
+    descriptor.reserve( size() );
+
+    Point3 origin = container[0]->getOrigin();
+    Point3 lenght = container[0]->getLenght();
+
+    bool out_of_boundaries = !liesBetweenBoundarySurfaces(p);
+
+    if ( out_of_boundaries )
+    {
+        return descriptor;
+    }
+
+    double height, lb_height, ub_height;
+    Point2 p2 = {{{ p.x, p.y }}};
+
+    if ( defineAboveIsActive() )
+    {
+        auto sptr = upper_bound_.lock();
+        sptr->getHeight(p2, ub_height);
+    }
+    else
+    {
+        ub_height = origin.z + lenght.z;
+    }
+
+    if ( defineBelowIsActive() )
+    {
+        auto sptr = lower_bound_.lock();
+        sptr->getHeight(p2, lb_height);
+    }
+    else
+    {
+        lb_height = origin.z;
+    }
+
+    for ( size_t i = 0; i < size(); ++i )
+    {
+        operator[](i)->getHeight(p2, height);
+
+        if ( ( height >= lb_height ) || ( height <= ub_height ) )
+        {
+            if ( operator[](i)->liesAbove(p) )
+            {
+                descriptor.push_back(i);
+            }
+        }
+    }
+
+    /* if ( lies_above_all_surfaces ) */
+    /* { */
+    /*     descriptor.clear(); */
+    /* } */
+
+    return descriptor;
+
+    /* PlanarSurface::Natural min_surface_id = container[0]->getID(); */
+    /* int region_id = 0; */
+    /* bool above_all_surfaces = true; */
+
+    /* for ( auto &sptr : container ) */
+    /* { */
+    /*     if ( min_surface_id > sptr->getID() ) */
+    /*     { */
+    /*         min_surface_id = sptr->getID(); */
+    /*     } */
+
+    /*     if ( sptr->liesAbove(p) ) */
+    /*     { */
+    /*         region_id += static_cast<int>(std::pow( 2.0, static_cast<double>(sptr->getID()) )); */
+    /*     } */
+    /*     else */
+    /*     { */
+    /*         above_all_surfaces &= false; */
+    /*     } */
+    /* } */
+
+    /* if ( above_all_surfaces ) */
+    /* { */
+    /*     return 0; */
+    /* } */
+
+    /* region_id /= static_cast<int>(std::pow( 2.0, static_cast<double>(min_surface_id) )); */
+
+    /* return region_id; */
+}
+
+std::vector<size_t> SRules::getActiveSurfacesBelowPoint( Point3 &&p )
+{
+    return getActiveSurfacesBelowPoint(p);
+}
+
+std::vector<size_t> SRules::getActiveSurfacesAbovePoint( const Point3 &p )
+{
+    std::vector<size_t> descriptor = {};
+
+    if ( empty() )
+    {
+        return descriptor;
+    }
+
+    descriptor.reserve( size() );
+    Point3 origin = container[0]->getOrigin();
+    Point3 lenght = container[0]->getLenght();
+
+    bool out_of_boundaries = !liesBetweenBoundarySurfaces(p);
+
+    if ( out_of_boundaries )
+    {
+        std::cout << "Point is out of boundaries.\n";
+        return descriptor;
+    }
+
+    double height, lb_height, ub_height;
+    Point2 p2 = {{{ p.x, p.y }}};
+
+    if ( defineAboveIsActive() )
+    {
+        auto sptr = upper_bound_.lock();
+        sptr->getHeight(p2, ub_height);
+    }
+    else
+    {
+        ub_height = origin.z + lenght.z;
+    }
+
+    if ( defineBelowIsActive() )
+    {
+        auto sptr = lower_bound_.lock();
+        sptr->getHeight(p2, lb_height);
+    }
+    else
+    {
+        lb_height = origin.z;
+    }
+
+
+    for ( size_t i = 0; i < size(); ++i )
+    {
+        operator[](i)->getHeight(p2, height);
+
+        if ( ( height >= lb_height ) || ( height <= ub_height ) )
+        {
+            if ( operator[](i)->liesBelow(p) )
+            {
+                descriptor.push_back(i);
+            }
+        }
+    }
+
+    /* if ( lies_below_all_surfaces ) */
+    /* { */
+    /*     descriptor.clear(); */
+    /* } */
+
+    return descriptor;
+}
+
+std::vector<size_t> SRules::getActiveSurfacesAbovePoint( Point3 &&p )
+{
+    return getActiveSurfacesAbovePoint(p);
 }
 
