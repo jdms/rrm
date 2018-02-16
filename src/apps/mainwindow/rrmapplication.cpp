@@ -773,3 +773,19 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
     mainwindow->flow_window->setTetrahedronRegions( regions_, colors_ );
 
 }
+
+
+void RRMApplication::setLowResolution()
+{
+    mainwindow->controller->setMeshResolution( Controller::MeshResolution::LOW );
+}
+
+void RRMApplication::setMediumResolution()
+{
+    mainwindow->controller->setMeshResolution( Controller::MeshResolution::MEDIUM );
+}
+
+void RRMApplication::setHighResolution()
+{
+    mainwindow->controller->setMeshResolution( Controller::MeshResolution::HIGH );
+}

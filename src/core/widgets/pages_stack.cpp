@@ -9,8 +9,10 @@ PagesStack::PagesStack()
 {
     createVolumePropertiesPage();
     createVolumeActions();
+    createResolutionActions();
     createObjectPropertiesPage();
     changeRangeSize( MAX_WIDTH, MAX_HEIGHT, MAX_DEPTH );
+
 }
 
 
@@ -57,6 +59,34 @@ void PagesStack::createVolumeActions()
 
 }
 
+
+void PagesStack::createResolutionActions()
+{
+    connect( wd_volume_resize.rb_lowresolution, &QRadioButton::pressed,
+             [=](){ emit setLowResolution(); } );
+
+    connect( wd_volume_resize.rb_mdresolution, &QRadioButton::pressed,
+             [=](){ emit setMediumResolution(); } );
+
+    connect( wd_volume_resize.rb_hgresolution, &QRadioButton::pressed,
+             [=](){ emit setHighResolution(); } );
+
+}
+
+void PagesStack::checkLowResolution()
+{
+    wd_volume_resize.rb_lowresolution->setChecked( true );
+}
+
+void PagesStack::checkMediumResolution()
+{
+    wd_volume_resize.rb_mdresolution->setChecked( true );
+}
+
+void PagesStack::checkHighResolution()
+{
+    wd_volume_resize.rb_hgresolution->setChecked( true );
+}
 
 
 void PagesStack::changeRangeSize( double width, double height, double depth )
@@ -107,6 +137,12 @@ void PagesStack::setEnabledVolumeResize( bool status )
     wd_volume_resize.sb_width_volume->setEnabled( status );
     wd_volume_resize.sb_height_volume->setEnabled( status );
     wd_volume_resize.sb_depth_volume->setEnabled( status );
+
+
+    wd_volume_resize.rb_lowresolution->setEnabled( status );
+    wd_volume_resize.rb_mdresolution->setEnabled( status );
+    wd_volume_resize.rb_hgresolution->setEnabled( status );
+
 }
 
 

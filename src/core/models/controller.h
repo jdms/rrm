@@ -6,6 +6,11 @@
 #include <vector>
 #include <map>
 
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+
 #include "./core/definitions/constants.hpp"
 #include "./core/models/container.h"
 #include "./core/widgets/objecttree.h"
@@ -38,6 +43,9 @@ class Controller
 
         using TriangleMesh = RulesProcessor::TriangleMesh;
         using CurveMesh = RulesProcessor::CurveMesh;
+
+
+        enum class MeshResolution{ LOW, MEDIUM, HIGH };
 
 
         Controller() = default;
@@ -175,7 +183,7 @@ class Controller
 
         void saveFile( const std::string& filename );
         void loadFile( const std::string& filename );
-        void loadObjects();
+        void loadObjects( const std::string& filename );
 
 
         bool undo();
@@ -216,6 +224,13 @@ class Controller
 
 
         void hideRegions();
+
+        bool saveObjectsMetaData( const std::string& filename );
+        bool loadObjectMetaDatas( const std::string& filename );
+
+
+        void setMeshResolution( const Controller::MeshResolution& resolution_ );
+
 
     protected:
 

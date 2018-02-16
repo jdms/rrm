@@ -678,7 +678,8 @@ void Controller::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
-    rules_processor.setMediumResolution();
+//    rules_processor.setMediumResolution();
+    setMeshResolution( Controller::MeshResolution::MEDIUM );
 }
 
 
@@ -1043,17 +1044,49 @@ void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
 void Controller::saveFile( const std::string& filename )
 {
     rules_processor.saveFile( filename );
+    saveObjectsMetaData( filename );
+}
+
+
+bool Controller::saveObjectsMetaData( const std::string& filename )
+{
+
+    std::string complete_filename = filename + ".json";
+    QFile save_file( QString( complete_filename.c_str() ) );
+
+    if ( !save_file.open( QIODevice::WriteOnly ) ) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QJsonObject metadatas;
+
+    QJsonArray objects_array_;
+    for( auto it: objects )
+    {
+        const Object* obj_ = it.second;
+        QJsonObject object_;
+        obj_->write( object_ );
+        objects_array_.append( object_ );
+    }
+    metadatas["objects"] = objects_array_;
+
+
+    QJsonDocument save_doc( metadatas );
+    save_file.write( save_doc.toJson() );
+
+    return true;
 }
 
 
 void Controller::loadFile( const std::string& filename )
 {
     rules_processor.loadFile( filename );
-    loadObjects();
+    loadObjects( filename );
 }
 
 
-void Controller::loadObjects()
+void Controller::loadObjects( const std::string& filename )
 {
     if( volume == nullptr ) return;
 
@@ -1078,26 +1111,84 @@ void Controller::loadObjects()
     }
 
 
-    std::random_device rd;
-    std::mt19937 eng( rd() );
-    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    std::vector< std::size_t > actives = rules_processor.getSurfaces();
-    for( auto id: actives )
-    {
-        int r_ = distr( eng );
-        int g_ = distr( eng );
-        int b_ = distr( eng );
 
-        addObject( id );
-        setObjectColor( id, r_, g_, b_ );
-    }
+//    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+//    for( auto id: actives )
+//    {
+//        int r_ = distr( eng );
+//        int g_ = distr( eng );
+//        int b_ = distr( eng );
+
+//        addObject( id );
+//        setObjectColor( id, r_, g_, b_ );
+//    }
+
+    loadObjectMetaDatas( filename );
 
     addObject();
     updateModel();
 
 }
 
+
+bool Controller::loadObjectMetaDatas( const std::string& filename )
+{
+
+    std::string complete_filename = filename + ".json";
+
+    QFile load_file( QString( complete_filename.c_str() ) );
+
+    if ( !load_file.open( QIODevice::ReadOnly ) ) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    QByteArray save_data = load_file.readAll();
+    QJsonDocument load_doc( QJsonDocument::fromJson(save_data) );
+    const QJsonObject &json = load_doc.object();
+
+    if ( json.contains("objects") && json["objects"].isArray() )
+    {
+        QJsonArray objects_array_ = json["objects"].toArray();
+
+        std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+        int obj_id_ = 0;
+        for( auto id: actives )
+        {
+            int r_= distr( eng );
+            int g_= distr( eng );
+            int b_= distr( eng );
+
+            addObject( id );
+
+            if( obj_id_ < objects_array_.size() )
+            {
+                QJsonObject object_ = objects_array_[obj_id_].toObject();
+
+                Object* obj_ = objects.getElement( id );
+                obj_->read( object_ );
+                obj_->getColor( r_, g_, b_ );
+
+                obj_id_++;
+            }
+            else
+            {
+                setObjectColor( id, r_, g_, b_ );
+            }
+
+            scene3d->updateObject( id );
+            object_tree->updateObjectColor( id, r_, g_, b_ );
+
+        }
+    }
+}
 
 
 bool Controller::undo()
@@ -1550,3 +1641,21 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     return regions_;
 }
 
+void Controller::setMeshResolution( const Controller::MeshResolution& resolution_ )
+{
+    if( resolution_ == Controller::MeshResolution::LOW )
+    {
+        rules_processor.setLowResolution();
+        std::cout << "Changing to Regular resolution" << std::endl << std::flush;
+    }
+    else if( resolution_ == Controller::MeshResolution::MEDIUM )
+    {
+        rules_processor.setMediumResolution();
+        std::cout << "Changing to Good resolution" << std::endl << std::flush;
+    }
+    else if( resolution_ == Controller::MeshResolution::HIGH )
+    {
+        rules_processor.setHighResolution();
+        std::cout << "Changing to Better resolution" << std::endl << std::flush;
+    }
+}
