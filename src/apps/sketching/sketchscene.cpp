@@ -805,14 +805,12 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
     if( ( event->buttons() & Qt::LeftButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-//        startSketch( event->scenePos() );
         user_input->create( event->scenePos() );
     }
 
     else if( ( event->buttons() & Qt::RightButton ) &&
         ( current_interaction == UserInteraction::SKETCHING ) )
     {
-//        finishSketch();
         if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
             emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
         else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
@@ -858,7 +856,6 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
     {
          emit commitObject();
         user_input->clear();
-//        clearSketch();
     }
 
 }

@@ -184,6 +184,9 @@ class RRMApplication
 
         void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
+        void setLowResolution();
+        void setMediumResolution();
+        void setHighResolution();
 
 
 
