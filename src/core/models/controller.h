@@ -45,6 +45,9 @@ class Controller
         using CurveMesh = RulesProcessor::CurveMesh;
 
 
+        enum class MeshResolution{ LOW, MEDIUM, HIGH };
+
+
         Controller() = default;
 
 
@@ -224,6 +227,9 @@ class Controller
 
         bool saveObjectsMetaData( const std::string& filename );
         bool loadObjectMetaDatas( const std::string& filename );
+
+
+        void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
 
     protected:

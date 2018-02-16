@@ -36,6 +36,9 @@ class PagesStack: public QStackedWidget
 
         void loadObjectInformation( const std::string& name_, const std::string& text_ );
 
+        void checkLowResolution();
+        void checkMediumResolution();
+        void checkHighResolution();
 
     signals:
 
@@ -44,11 +47,17 @@ class PagesStack: public QStackedWidget
         void depthVolumeChanged( int value );
         void saveText( const QString& text_ );
 
+        void setLowResolution();
+        void setMediumResolution();
+        void setHighResolution();
+
+
 
     protected:
 
         void createVolumePropertiesPage();
         void createObjectPropertiesPage();
+        void createResolutionActions();
 
     private:
 

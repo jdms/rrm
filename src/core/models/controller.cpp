@@ -678,7 +678,8 @@ void Controller::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
-    rules_processor.setMediumResolution();
+//    rules_processor.setMediumResolution();
+    setMeshResolution( Controller::MeshResolution::MEDIUM );
 }
 
 
@@ -1640,3 +1641,21 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     return regions_;
 }
 
+void Controller::setMeshResolution( const Controller::MeshResolution& resolution_ )
+{
+    if( resolution_ == Controller::MeshResolution::LOW )
+    {
+        rules_processor.setLowResolution();
+        std::cout << "Changing to Regular resolution" << std::endl << std::flush;
+    }
+    else if( resolution_ == Controller::MeshResolution::MEDIUM )
+    {
+        rules_processor.setMediumResolution();
+        std::cout << "Changing to Good resolution" << std::endl << std::flush;
+    }
+    else if( resolution_ == Controller::MeshResolution::HIGH )
+    {
+        rules_processor.setHighResolution();
+        std::cout << "Changing to Better resolution" << std::endl << std::flush;
+    }
+}
