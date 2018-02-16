@@ -208,6 +208,14 @@ class SRules
 
         std::vector<size_t> getSurfacesAbovePoint( Point3 &&p );
 
+        std::vector<size_t> getActiveSurfacesBelowPoint( const Point3 &p );
+
+        std::vector<size_t> getActiveSurfacesBelowPoint( Point3 &&p );
+
+        std::vector<size_t> getActiveSurfacesAbovePoint( const Point3 &p );
+
+        std::vector<size_t> getActiveSurfacesAbovePoint( Point3 &&p );
+
         bool saveBinary( const std::string &filename );
 
         bool loadBinary( const std::string &filename );
@@ -237,6 +245,14 @@ class SRules
         bool defineBelow( std::size_t surface_index ); 
 
         bool weakEntireSurfaceCheck( std::size_t surface_index ); 
+
+        bool liesInsideBoundingBox( const Point3 &p );
+
+        bool liesInsideBoundingBox( Point3 &&p );
+
+        bool liesBetweenBoundarySurfaces( const Point3 &p );
+
+        bool liesBetweenBoundarySurfaces( Point3 &&p );
 
 
     private: 
