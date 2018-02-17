@@ -76,7 +76,7 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 bool RulesProcessor::setLowResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(32, 32);
+    bool status = modeller_.tryChangeDiscretization(16, 16);
     if ( status == false )
     {
         return false;
@@ -89,7 +89,7 @@ bool RulesProcessor::setLowResolution()
 
 bool RulesProcessor::setMediumResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(64, 64);
+    bool status = modeller_.tryChangeDiscretization(32, 32);
     if ( status == false )
     {
         return false;
@@ -102,7 +102,7 @@ bool RulesProcessor::setMediumResolution()
 
 bool RulesProcessor::setHighResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(128, 128);
+    bool status = modeller_.tryChangeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
