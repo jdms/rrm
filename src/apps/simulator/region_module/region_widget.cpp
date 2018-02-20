@@ -307,9 +307,16 @@ namespace RRM
                         double ex = std::log10(p);
                         int i = static_cast<int>((ex + 3.0) / 0.07);
 
+                        /// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+
+                        qxt_span_slider_permeability_->blockSignals(true);
                         qxt_span_slider_permeability_->setLowerPosition(i);
+                        qxt_span_slider_permeability_->blockSignals(false);
                         ///@September
+                        /// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+                        slider_permeability_->blockSignals(true);
                         slider_permeability_->setValue(i);
+                        slider_permeability_->blockSignals(false);
 
                         permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = doubleSpinbBox_low_permeability_->value();
                     });
@@ -330,7 +337,11 @@ namespace RRM
                         double ex = std::log10(p);
                         int i = static_cast<int>((ex + 3.0) / 0.07);
 
+                        /// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+                        qxt_span_slider_permeability_->blockSignals(true);
                         qxt_span_slider_permeability_->setUpperPosition(i);
+                        qxt_span_slider_permeability_->blockSignals(false);
+
                         permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = doubleSpinbBox_high_permeability_->value();
 
                     });
