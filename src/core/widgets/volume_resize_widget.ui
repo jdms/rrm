@@ -89,7 +89,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Resolution</string>
+      <string>Mesh Resolution</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>

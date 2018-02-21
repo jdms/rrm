@@ -71,6 +71,7 @@ void RRMApplication::setDefaultSketchingRegion( Settings::Objects::BounderingReg
 void RRMApplication::setDefaultSiderBarValues()
 {
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
+    mainwindow->object_properties->setMediumResolution();
 }
 
 
@@ -81,6 +82,8 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
     setDefaultRule( Settings::Stratigraphy::DEFAULT_STRAT_RULES );
     setDefaultSketchingRegion( Settings::Objects::BounderingRegion::NONE );
     setDefaultSiderBarValues();
+
+    setCurrentColor( 255, 0, 0 );
 
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
@@ -528,6 +531,7 @@ void RRMApplication::checkSketchStatus()
 void RRMApplication::setCurrentColor( int r_, int g_, int b_ )
 {
     mainwindow->controller->setCurrentColor( r_, g_, b_ );
+    mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
     mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
 }
 
@@ -542,9 +546,10 @@ void RRMApplication::defineRandomColor()
     int g_ = distr( eng );
     int b_ = distr( eng );
 
-    mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
-    mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
-    mainwindow->controller->setCurrentColor( r_, g_, b_ );
+    setCurrentColor( r_, g_, b_ );
+//    mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
+//    mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
+//    mainwindow->controller->setCurrentColor( r_, g_, b_ );
 
 }
 

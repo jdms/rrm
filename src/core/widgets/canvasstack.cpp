@@ -1,8 +1,9 @@
 #include "canvasstack.h"
 #include <QDockWidget>
 #include <QBitmap>
+#include <QStyleOptionDockWidget>
 
-CanvasStack::CanvasStack()
+CanvasStack::CanvasStack( QWidget* parent ): QWidget( parent )
 {
     initialize();
 }
@@ -10,6 +11,9 @@ CanvasStack::CanvasStack()
 
 void CanvasStack::initialize()
 {
+
+    setWindowFlags(Qt::Widget);
+
     hb_mainlayout = new QSplitter( this );
     hb_mainlayout->setOrientation( Qt::Vertical );
 
@@ -25,22 +29,22 @@ void CanvasStack::initialize()
 void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 {
 
-    QDockWidget* dc = new QDockWidget();
-    dc->setWindowFlags( Qt::Window );
+    DockWidget* dc = new DockWidget( this );
+    dc->setAllowedAreas(Qt::AllDockWidgetAreas);
+    dc->setGeometry( 100, 100, canvas_->rect().width(), canvas_->rect().height() );
     dc->setWindowTitle( canvas_->windowTitle() );
-
-    connect( dc, &QDockWidget::visibilityChanged, [=]( bool status_ ) { if( dc->isHidden() == true ) emit closeSubWindow( id_ ); } );
+    dc->setWidget( canvas_ );
+    dc->updateGeometry();
 
     bool status = Container::addElement( id_, dc );
     if( status == false ) return;
 
-    std::cout << "adicionou canvas: " <<std::endl << std::flush;
-
-    dc->setWidget( canvas_ );
     hb_mainlayout->addWidget( dc );
-    update();
-}
 
+    connect( dc, &DockWidget::closeDockWidget, [=]() { emit closeSubWindow( id_ ); } );
+
+
+}
 
 QGraphicsView* CanvasStack::getElement( double id_ )
 {
@@ -54,7 +58,6 @@ QGraphicsView* CanvasStack::getElement( double id_ )
 void CanvasStack::removeElement( double id_ )
 {
 
-
     if( findElement( id_ ) == false ) return;
 
     QGraphicsView* canvas_ = (QGraphicsView*)(Container::data[ id_ ]->widget() );
@@ -67,9 +70,6 @@ void CanvasStack::removeElement( double id_ )
     if( status == false ) return;
 
     deleteElement( id_ );
-
-    std::cout << "removeu canvas!" << std::endl;
-
 
     update();
 
@@ -110,4 +110,22 @@ void CanvasStack::clear()
         removeElement( it->first );
     }
 
+}
+
+void CanvasStack::mousePressEvent(QMouseEvent *event)
+{
+
+    QWidget::mousePressEvent( event );
+}
+
+void CanvasStack::mouseReleaseEvent(QMouseEvent *event)
+{
+
+    QWidget::mouseReleaseEvent( event );
+}
+
+void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
+{
+
+    QWidget::mouseDoubleClickEvent( event );
 }
