@@ -2,6 +2,7 @@
 #include <QDockWidget>
 #include <QBitmap>
 #include <QStyleOptionDockWidget>
+#include <QAction>
 
 CanvasStack::CanvasStack( QWidget* parent ): QWidget( parent )
 {
@@ -42,6 +43,7 @@ void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
     hb_mainlayout->addWidget( dc );
 
     connect( dc, &DockWidget::closeDockWidget, [=]() { emit closeSubWindow( id_ ); } );
+
 
 
 }

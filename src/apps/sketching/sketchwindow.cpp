@@ -579,20 +579,16 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
 
 bool SketchWindow::removeFixedCrossSectionCanvas( double depth_ )
 {
-    std::cout << "is going to remove scene..." << std::endl << std::flush;
 
     if( scenes.find( depth_ ) != scenes.end() )
     {
         scenes[ depth_ ]->clear();
         delete scenes[ depth_ ];
         scenes.erase( depth_ );
-        std::cout << "deleted scene..." << std::endl << std::flush;
     }
 
-    std::cout << "seacrhing the dockwidget..." << std::endl << std::flush;
     if( cs->findElement( depth_  ) == false ) return false;
 
-    std::cout << "found the dockwidget..." << std::endl << std::flush;
     cs->removeElement( depth_ );
 
     emit removeFixedCrossSection( depth_ );
