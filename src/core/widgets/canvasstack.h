@@ -6,14 +6,41 @@
 #include <QGraphicsView>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QMouseEvent>
+#include <QDockWidget>
+#include <QCloseEvent>
 
 #include <iostream>
 
 #include "./core/models/container.h"
 
 
-using CanvasContainer = Container< double, QDockWidget* >;
+//using CanvasContainer = Container< double, QDockWidget* >;
 
+
+class DockWidget: public QDockWidget
+{
+    Q_OBJECT
+
+    public:
+
+        DockWidget( QWidget* parent = nullptr ): QDockWidget( parent )
+        {
+
+        }
+
+        inline void closeEvent( QCloseEvent *event )
+        {
+            std::cout << "Closing dockwidget?" << std::endl << std::flush;
+            emit closeDockWidget();
+        }
+
+    signals:
+
+        void closeDockWidget();
+};
+
+using CanvasContainer = Container< double, DockWidget* >;
 
 class CanvasStack: public QWidget, public CanvasContainer
 {
@@ -21,7 +48,7 @@ class CanvasStack: public QWidget, public CanvasContainer
 
     public:
 
-        CanvasStack();
+        CanvasStack( QWidget* parent = nullptr );
 
         void initialize();
 
@@ -40,6 +67,13 @@ class CanvasStack: public QWidget, public CanvasContainer
     signals:
 
         void closeSubWindow( double id_ );
+
+
+    protected:
+
+        void mousePressEvent(QMouseEvent *event);
+        void mouseReleaseEvent(QMouseEvent *event);
+        void mouseDoubleClickEvent(QMouseEvent *event);
 
     protected:
 
