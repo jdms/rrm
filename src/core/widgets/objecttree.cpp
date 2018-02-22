@@ -204,11 +204,17 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
                                                         { emit setObjectColor( index_, color_ ); } );
 
 
+
     vol_->addChild( obj_ );
 
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
     items.addElement( index_, obj_ );
 
+
+    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+    {   if( indexv_ != 0 ) return;
+        obj_->setCheckState( COLUMN_STATUS, vol_->checkState( COLUMN_STATUS) );
+    } );
 }
 
 
@@ -276,6 +282,12 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
     setColumnWidth( COLUMN_NAME, COLUMN_NAME_WIDTH );
     regions.addElement( index_, region_ );
+
+
+    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+    {   if( indexv_ != 1 ) return;
+        region_->setCheckState( COLUMN_STATUS, vol1_->checkState( COLUMN_STATUS) );
+    } );
 }
 
 

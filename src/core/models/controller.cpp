@@ -687,7 +687,7 @@ void Controller::updateBoundingBoxRulesProcessor()
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
 //    rules_processor.setMediumResolution();
-    setMeshResolution( Controller::MeshResolution::MEDIUM );
+    setMeshResolution( Controller::MeshResolution::LOW );
 }
 
 
@@ -746,7 +746,7 @@ void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
     bool has_user_curve = obj_->hasCurve( csection_depth_ );
     has_user_curve &= all_csections.findElement( csection_depth_ );
 
-    if( has_user_curve == true ) return;
+    if( ( has_user_curve == true  ) || ( preview_enabled == false ) ) return;
 
     getCurveFromRulesProcessor( obj_, csection_depth_ );
 
@@ -1155,16 +1155,6 @@ void Controller::loadObjectNoMetaDatas()
 
 void Controller::loadObjectMetaDatas( QFile& load_file )
 {
-
-//    std::string complete_filename = filename + ".json";
-
-//    QFile load_file( QString( complete_filename.c_str() ) );
-
-//    if ( !load_file.open( QIODevice::ReadOnly ) ) {
-//        qWarning("Couldn't open save file.");
-//        return false;
-//    }
-
 
     std::random_device rd;
     std::mt19937 eng( rd() );
@@ -1679,4 +1669,20 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
         rules_processor.setHighResolution();
         std::cout << "Changing to Better resolution" << std::endl << std::flush;
     }
+}
+
+
+void Controller::setPreviewEnabled( bool status_ )
+{
+    preview_enabled = status_;
+    if( preview_enabled == true ) return;
+
+    Object* obj_ = getCurrentObject();
+    obj_->clearPreviewCurves();
+
+}
+
+bool Controller::isPreviewEnabled() const
+{
+    return preview_enabled;
 }

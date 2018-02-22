@@ -97,6 +97,7 @@ class SketchWindow: public QMainWindow
         void removeFixedCrossSection( double depth_ );
 
         void getHeightMap();
+        void enablePreview( bool status_ );
 
 
 
@@ -140,6 +141,7 @@ class SketchWindow: public QMainWindow
         QAction* ac_axes;
         QAction* ac_height_map;
         QAction* ac_fixed_csections;
+        QAction* ac_enable_preview;
 
         SketchScene* main_scene = nullptr;
         SketchScene* tv_scene = nullptr;
