@@ -794,3 +794,10 @@ void RRMApplication::setHighResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::HIGH );
 }
+
+
+void RRMApplication::enablePreview( bool status_ )
+{
+    mainwindow->controller->setPreviewEnabled( status_ );
+    updateSketchingCanvas();
+}

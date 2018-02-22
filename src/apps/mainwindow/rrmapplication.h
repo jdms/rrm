@@ -188,6 +188,8 @@ class RRMApplication
         void setMediumResolution();
         void setHighResolution();
 
+        void enablePreview( bool status_ );
+
 
 
     protected:

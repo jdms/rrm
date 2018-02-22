@@ -231,6 +231,8 @@ class Controller
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
+        void setPreviewEnabled( bool status_ );
+        bool isPreviewEnabled() const;
 
     protected:
 
@@ -283,6 +285,7 @@ class Controller
 
 
         std::map< double, ImageData > csections_background;
+        bool preview_enabled = true;
 };
 
 #endif // CONTROLLER_H

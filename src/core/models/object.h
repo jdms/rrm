@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set>
 
 #include "./core/definitions/constants.hpp"
 #include "container.h"
@@ -89,6 +90,8 @@ class Object
         void removeTrajectory();
         bool hasTrajectory() const;
 
+
+        void clearPreviewCurves();
 
 
         bool isCurveAdmissible();
@@ -215,6 +218,7 @@ class Object
 
 
         const std::size_t CHANNEL_MAX_CSECTIONS = 2;
+        std::set< double > user_entered;
 
 };
 
