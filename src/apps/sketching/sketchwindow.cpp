@@ -45,7 +45,9 @@ void SketchWindow::createToolBar()
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setCheckable( true );
-    connect( ac_fixed_csections, &QAction::triggered, dw_canvas_stack, &QDockWidget::setVisible );
+//    connect( ac_fixed_csections, &QAction::triggered, dw_canvas_stack, &QDockWidget::setVisible );
+    connect( ac_fixed_csections, &QAction::triggered, cs, &QDockWidget::setVisible );
+
 
 
 
@@ -72,11 +74,16 @@ void SketchWindow::createToolBar()
 void SketchWindow::createWindow()
 {
     cs = new CanvasStack();
-    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
-    dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
-    dw_canvas_stack->setWidget( cs );
-    dw_canvas_stack->setVisible( false );
-    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+    cs->setWindowTitle( "Fixed Cross-Sections" );
+//    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
+//    dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
+//    dw_canvas_stack->setWidget( cs );
+//    dw_canvas_stack->setVisible( false );
+//    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+
+
+    cs->setVisible( false );
+    cs->setMinimumSize( WIDTH_APP, HEIGHT_APP );
 
     connect( cs, &CanvasStack::closeSubWindow, this, &SketchWindow::removeFixedCrossSectionCanvas );
 
@@ -508,7 +515,8 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
 {
     if( cs_ == nullptr ) return;
 
-    dw_canvas_stack->setVisible( true );
+    cs->setVisible( true );
+//    dw_canvas_stack->setVisible( true );
 
     scenes[ cs_->getDepth() ] = new SketchScene( cs_ );
     SketchScene* const& scene_ = scenes[ cs_->getDepth() ];
@@ -580,6 +588,7 @@ bool SketchWindow::removeFixedCrossSectionCanvas( double depth_ )
     }
 
     if( cs->findElement( depth_  ) == false ) return false;
+
     cs->removeElement( depth_ );
 
     emit removeFixedCrossSection( depth_ );
