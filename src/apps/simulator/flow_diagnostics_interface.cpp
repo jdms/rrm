@@ -515,26 +515,25 @@ void FlowDiagnosticsInterface::clear(){
 
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
-    std::cout << " getUpscalledPermeability " << std::endl;
-    region.clear_computedproperties();
-    region.modelpreparation_upscale();
+	std::cout << " getUpscalledPermeability " << std::endl;
+	region.clear_computedproperties();
+	region.modelpreparation_upscale();
+	region.upscalebsurface(1);
+	region.boundarycondition();
+	region.steadystateflowsolver();
+	region.upscaling(1, result);
+	region.clearnodesbc();
+	region.upscalebsurface(2);
+	region.boundarycondition();
+	region.steadystateflowsolver();
+	region.upscaling(2, result);
+	region.clearnodesbc();
+	region.upscalebsurface(3);
+	region.boundarycondition();
+	region.steadystateflowsolver();
+	region.upscaling(3, result);
 
-    region.upscalebsurface(1);
-    region.boundarycondition();
-    region.steadystateflowsolver();
-    region.upscaling(1, result); 
-    region.clearnodesbc();
-    region.upscalebsurface(2);
-    region.boundarycondition();
-    region.steadystateflowsolver();
-    region.upscaling(2, result);
-    region.clearnodesbc();
-    region.upscalebsurface(3);
-    region.boundarycondition();
-    region.steadystateflowsolver();
-    region.upscaling(3, result);
-
-    return true;
+	return true;
 }
 
 
@@ -591,366 +590,7 @@ void FlowDiagnosticsInterface::clearComputedQuantities()
 * Tetgen.
 * */
 
-//bool FlowDiagnosticsInterface::setSkeleton(
-//    const std::vector<TriangleMesh> &triangle_meshes,
-//    const std::vector<CurveMesh> &left_boundary_curves,
-//    const std::vector<CurveMesh> &right_boundary_curves,
-//    const std::vector<CurveMesh> &front_boundary_curves,
-//    const std::vector<CurveMesh> &back_boundary_curves
-//    )
-//{
-//	region.sketchflag(1);//mark sketch 3D
-//	std::vector<NODE> surfacenodelist;
-//	std::vector<FACET> facetlist;
-//	NODE node_;
-//	FACET facet_;
-//	int cc = 0;
-//	for (int isur = 0; isur < triangle_meshes.size(); isur++){
-//		for (int iv = 0; iv < triangle_meshes[isur].vertex_list.size() / 3; iv++){
-//			node_.x(triangle_meshes[isur].vertex_list[iv*3]);
-//			node_.y(triangle_meshes[isur].vertex_list[iv*3+1]);
-//			node_.z(triangle_meshes[isur].vertex_list[iv*3+2]);
-//			surfacenodelist.push_back(node_);
-//		}
-//
-//		for (int iv = 0; iv < triangle_meshes[isur].face_list.size()/3; iv++){
-//			facet_.node(0, triangle_meshes[isur].face_list[iv*3]+cc);
-//			facet_.node(1, triangle_meshes[isur].face_list[iv * 3+1]+cc);
-//			facet_.node(2, triangle_meshes[isur].face_list[iv * 3+2]+cc);
-//			facet_.numberofvertex(3);
-//			facet_.markbsurface(isur);//start from 0
-//			facetlist.push_back(facet_);
-//		}
-//		cc = cc + triangle_meshes[isur].vertex_list.size() / 3;
-//	}
-//	region.readinsurfacenodes(surfacenodelist);
-//	region.readinfacets(facetlist);
-//	region.numberofsurfaces(triangle_meshes.size());
-//	
-//
-//	std::vector<NODE> curvenodelist, curvenodelist2;
-//	std::vector<SEGMENT> segmentlist, segmentlist2;
-//	SEGMENT segment_;
-//	std::vector<int> markreplace, markreplacenumber;
-//	std::vector<int> markcorner;
-//
-//
-//	//for front boundary 
-//	segmentlist.clear();
-//	segmentlist2.clear();
-//	curvenodelist.clear();
-//	curvenodelist2.clear();
-//	markreplace.clear();
-//	markreplacenumber.clear();
-//	markcorner.clear();
-//	cc = 0;
-//	for (int ic = 0; ic < front_boundary_curves.size(); ic++){
-//		for (int iv = 0; iv < front_boundary_curves[ic].vertex_list.size() / 3; iv++){
-//			node_.x(front_boundary_curves[ic].vertex_list[iv * 3]);
-//			node_.y(front_boundary_curves[ic].vertex_list[iv * 3 + 1]);
-//			node_.z(front_boundary_curves[ic].vertex_list[iv * 3 + 2]);
-//			if (iv == 0 || iv == front_boundary_curves[ic].vertex_list.size() / 3 - 1){
-//				markcorner.push_back(curvenodelist.size());
-//			}
-//			curvenodelist.push_back(node_);
-//		}
-//		for (int iv = 0; iv < front_boundary_curves[ic].edge_list.size() / 2; iv++){
-//			segment_.node(0, front_boundary_curves[ic].edge_list[iv * 2] + cc);
-//			segment_.node(1, front_boundary_curves[ic].edge_list[iv * 2 + 1] + cc);
-//			segmentlist.push_back(segment_);
-//		}
-//		cc = cc + front_boundary_curves[ic].vertex_list.size() / 3;
-//	}
-//
-//	markreplace.resize(curvenodelist.size());
-//	markreplacenumber.resize(curvenodelist.size());
-//	for (int i = 0; i < markreplace.size(); i++){
-//		markreplace[i] = -1;
-//		markreplacenumber[i] = 0;
-//	}
-//	for (int ic = 0; ic < markcorner.size(); ic++){
-//		int inode = markcorner[ic];
-//		double x = curvenodelist[inode].x();
-//		double y = curvenodelist[inode].y();
-//		double z = curvenodelist[inode].z();
-//		for (int i = 0; i < curvenodelist.size(); i++){
-//			double xx = curvenodelist[i].x();
-//			double yy = curvenodelist[i].y();
-//			double zz = curvenodelist[i].z();
-//			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-//				if (inode != i && markreplace[inode] == -1){
-//					markreplace[inode] = i;//remove inode
-//					markreplace[i] = -2;//keep i no change
-//					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-//						markreplacenumber[j]++;
-//					}
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < curvenodelist.size(); i++){
-//		if (markreplace[i] < 0){
-//			NODE node_ = curvenodelist[i];
-//			curvenodelist2.push_back(node_);
-//		}
-//	}
-//	for (int i = 0; i < segmentlist.size(); i++){
-//		int i1 = segmentlist[i].node(0);
-//		int i2 = segmentlist[i].node(1);
-//		if (markreplace[i1] >= 0){
-//			i1 = markreplace[i1];
-//		}
-//		if (markreplace[i2] >= 0){
-//			i2 = markreplace[i2];
-//		}
-//		i1 = i1 - markreplacenumber[i1];
-//		i2 = i2 - markreplacenumber[i2];
-//		segment_.node(0, i1);
-//		segment_.node(1, i2);
-//		segmentlist2.push_back(segment_);
-//	}
-//
-//	region.readincurves_front(curvenodelist2, segmentlist2); //f-b-l-r
-//
-//	//for back boundary 
-//	segmentlist.clear();
-//	segmentlist2.clear();
-//	curvenodelist.clear();
-//	curvenodelist2.clear();
-//	markreplace.clear();
-//	markreplacenumber.clear();
-//	markcorner.clear();
-//	cc = 0;
-//	for (int ic = 0; ic < back_boundary_curves.size(); ic++){
-//		for (int iv = 0; iv < back_boundary_curves[ic].vertex_list.size() / 3; iv++){
-//			node_.x(back_boundary_curves[ic].vertex_list[iv * 3]);
-//			node_.y(back_boundary_curves[ic].vertex_list[iv * 3 + 1]);
-//			node_.z(back_boundary_curves[ic].vertex_list[iv * 3 + 2]);
-//			if (iv == 0 || iv == back_boundary_curves[ic].vertex_list.size() / 3 - 1){
-//				markcorner.push_back(curvenodelist.size());
-//			}
-//			curvenodelist.push_back(node_);
-//		}
-//		for (int iv = 0; iv < back_boundary_curves[ic].edge_list.size() / 2; iv++){
-//			segment_.node(0, back_boundary_curves[ic].edge_list[iv * 2] + cc);
-//			segment_.node(1, back_boundary_curves[ic].edge_list[iv * 2 + 1] + cc);
-//			segmentlist.push_back(segment_);
-//		}
-//		cc = cc + back_boundary_curves[ic].vertex_list.size() / 3;
-//	}
-//
-//	markreplace.resize(curvenodelist.size());
-//	markreplacenumber.resize(curvenodelist.size());
-//	for (int i = 0; i < markreplace.size(); i++){
-//		markreplace[i] = -1;
-//		markreplacenumber[i] = 0;
-//	}
-//	for (int ic = 0; ic < markcorner.size(); ic++){
-//		int inode = markcorner[ic];
-//		double x = curvenodelist[inode].x();
-//		double y = curvenodelist[inode].y();
-//		double z = curvenodelist[inode].z();
-//		for (int i = 0; i < curvenodelist.size(); i++){
-//			double xx = curvenodelist[i].x();
-//			double yy = curvenodelist[i].y();
-//			double zz = curvenodelist[i].z();
-//			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-//				if (inode != i && markreplace[inode] == -1){
-//					markreplace[inode] = i;//remove inode
-//					markreplace[i] = -2;//keep i no change
-//					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-//						markreplacenumber[j]++;
-//					}
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < curvenodelist.size(); i++){
-//		if (markreplace[i] < 0){
-//			NODE node_ = curvenodelist[i];
-//			curvenodelist2.push_back(node_);
-//		}
-//	}
-//	for (int i = 0; i < segmentlist.size(); i++){
-//		int i1 = segmentlist[i].node(0);
-//		int i2 = segmentlist[i].node(1);
-//		if (markreplace[i1] >= 0){
-//			i1 = markreplace[i1];
-//		}
-//		if (markreplace[i2] >= 0){
-//			i2 = markreplace[i2];
-//		}
-//		i1 = i1 - markreplacenumber[i1];
-//		i2 = i2 - markreplacenumber[i2];
-//		segment_.node(0, i1);
-//		segment_.node(1, i2);
-//		segmentlist2.push_back(segment_);
-//	}
-//
-//	region.readincurves_back(curvenodelist2, segmentlist2); //f-b-l-r
-//
-//
-//	//for left boundary
-//	segmentlist.clear();
-//	segmentlist2.clear();
-//	curvenodelist.clear();
-//	curvenodelist2.clear();
-//	markreplace.clear();
-//	markreplacenumber.clear();
-//	markcorner.clear();
-//	cc = 0;
-//	for (int ic = 0; ic < left_boundary_curves.size(); ic++){
-//		for (int iv = 0; iv < left_boundary_curves[ic].vertex_list.size() / 3; iv++){
-//			node_.x(left_boundary_curves[ic].vertex_list[iv * 3]);
-//			node_.y(left_boundary_curves[ic].vertex_list[iv * 3 + 1]);
-//			node_.z(left_boundary_curves[ic].vertex_list[iv * 3 + 2]);
-//			if (iv == 0 || iv == left_boundary_curves[ic].vertex_list.size() / 3 - 1){
-//				markcorner.push_back(curvenodelist.size());
-//			}
-//			curvenodelist.push_back(node_);
-//		}
-//		for (int iv = 0; iv < left_boundary_curves[ic].edge_list.size() / 2; iv++){
-//			segment_.node(0, left_boundary_curves[ic].edge_list[iv * 2]+cc);
-//			segment_.node(1, left_boundary_curves[ic].edge_list[iv * 2+1]+cc);
-//			segmentlist.push_back(segment_);
-//		}
-//		cc = cc + left_boundary_curves[ic].vertex_list.size() / 3;
-//	}
-//	
-//	markreplace.resize(curvenodelist.size());
-//	markreplacenumber.resize(curvenodelist.size());
-//	for (int i = 0; i < markreplace.size(); i++){
-//		markreplace[i] = -1;
-//		markreplacenumber[i] = 0;
-//	}
-//	for (int ic = 0; ic < markcorner.size(); ic++){
-//		int inode = markcorner[ic];
-//		double x = curvenodelist[inode].x();
-//		double y = curvenodelist[inode].y();
-//		double z = curvenodelist[inode].z();
-//		for (int i = 0; i < curvenodelist.size(); i++){
-//			double xx = curvenodelist[i].x();
-//			double yy = curvenodelist[i].y();
-//			double zz = curvenodelist[i].z();
-//			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-//				if (inode != i && markreplace[inode]==-1){
-//					markreplace[inode] = i;//remove inode
-//					markreplace[i] = -2;//keep i no change
-//					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-//						markreplacenumber[j]++;
-//					}
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < curvenodelist.size(); i++){
-//		if (markreplace[i] < 0){
-//			NODE node_ = curvenodelist[i];
-//			curvenodelist2.push_back(node_);
-//		}
-//	}
-//	for (int i = 0; i < segmentlist.size(); i++){
-//		int i1 = segmentlist[i].node(0);
-//		int i2 = segmentlist[i].node(1);
-//		if (markreplace[i1] >= 0){
-//			i1 = markreplace[i1];
-//		}
-//		if (markreplace[i2] >= 0){
-//			i2 = markreplace[i2];
-//		}
-//		i1 = i1 - markreplacenumber[i1];
-//		i2 = i2 - markreplacenumber[i2];
-//		segment_.node(0, i1);
-//		segment_.node(1, i2);
-//		segmentlist2.push_back(segment_);
-//	}
-//	
-//	region.readincurves_left(curvenodelist2, segmentlist2); //f-b-l-r
-//
-//
-//	//for right boundary 
-//	segmentlist.clear();
-//	segmentlist2.clear();
-//	curvenodelist.clear();
-//	curvenodelist2.clear();
-//	markreplace.clear();
-//	markreplacenumber.clear();
-//	markcorner.clear();
-//	cc = 0;
-//	for (int ic = 0; ic < right_boundary_curves.size(); ic++){
-//		for (int iv = 0; iv < right_boundary_curves[ic].vertex_list.size() / 3; iv++){
-//			node_.x(right_boundary_curves[ic].vertex_list[iv * 3]);
-//			node_.y(right_boundary_curves[ic].vertex_list[iv * 3 + 1]);
-//			node_.z(right_boundary_curves[ic].vertex_list[iv * 3 + 2]);
-//			if (iv == 0 || iv == right_boundary_curves[ic].vertex_list.size() / 3 - 1){
-//				markcorner.push_back(curvenodelist.size());
-//			}
-//			curvenodelist.push_back(node_);
-//		}
-//		for (int iv = 0; iv < right_boundary_curves[ic].edge_list.size() / 2; iv++){
-//			segment_.node(0, right_boundary_curves[ic].edge_list[iv * 2] + cc);
-//			segment_.node(1, right_boundary_curves[ic].edge_list[iv * 2 + 1] + cc);
-//			segmentlist.push_back(segment_);
-//		}
-//		cc = cc + right_boundary_curves[ic].vertex_list.size() / 3;
-//	}
-//
-//	markreplace.resize(curvenodelist.size());
-//	markreplacenumber.resize(curvenodelist.size());
-//	for (int i = 0; i < markreplace.size(); i++){
-//		markreplace[i] = -1;
-//		markreplacenumber[i] = 0;
-//	}
-//	for (int ic = 0; ic < markcorner.size(); ic++){
-//		int inode = markcorner[ic];
-//		double x = curvenodelist[inode].x();
-//		double y = curvenodelist[inode].y();
-//		double z = curvenodelist[inode].z();
-//		for (int i = 0; i < curvenodelist.size(); i++){
-//			double xx = curvenodelist[i].x();
-//			double yy = curvenodelist[i].y();
-//			double zz = curvenodelist[i].z();
-//			if (std::abs(x - xx) < 0.0001 && std::abs(y - yy) < 0.0001 && std::abs(z - zz) < 0.0001){
-//				if (inode != i && markreplace[inode] == -1){
-//					markreplace[inode] = i;//remove inode
-//					markreplace[i] = -2;//keep i no change
-//					for (int j = inode + 1; j < markreplacenumber.size(); j++){
-//						markreplacenumber[j]++;
-//					}
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < curvenodelist.size(); i++){
-//		if (markreplace[i] < 0){
-//			NODE node_ = curvenodelist[i];
-//			curvenodelist2.push_back(node_);
-//		}
-//	}
-//	for (int i = 0; i < segmentlist.size(); i++){
-//		int i1 = segmentlist[i].node(0);
-//		int i2 = segmentlist[i].node(1);
-//		if (markreplace[i1] >= 0){
-//			i1 = markreplace[i1];
-//		}
-//		if (markreplace[i2] >= 0){
-//			i2 = markreplace[i2];
-//		}
-//		i1 = i1 - markreplacenumber[i1];
-//		i2 = i2 - markreplacenumber[i2];
-//		segment_.node(0, i1);
-//		segment_.node(1, i2);
-//		segmentlist2.push_back(segment_);
-//	}
-//
-//	region.readincurves_right(curvenodelist2, segmentlist2); //f-b-l-r
-//		
-//    return true;
-//}
+
 
 bool FlowDiagnosticsInterface::setSkeleton(
 	const std::vector<TriangleMesh> &triangle_meshes,
@@ -966,7 +606,19 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	NODE node_;
 	FACET facet_;
 	int cc = 0;
+	int minsid, maxsid;
+	double minz = 100000000;
+	double maxz = -100000000;
 	for (int isur = 0; isur < triangle_meshes.size(); isur++){
+		double zz = triangle_meshes[isur].vertex_list[2];
+		if (zz > maxz){
+			maxz = zz;
+			maxsid = isur;
+		}
+		if (zz < minz){
+			minz = zz;
+			minsid = isur;
+		}
 		for (int iv = 0; iv < triangle_meshes[isur].vertex_list.size() / 3; iv++){
 			node_.x(triangle_meshes[isur].vertex_list[iv * 3]);
 			node_.y(triangle_meshes[isur].vertex_list[iv * 3 + 1]);
@@ -987,7 +639,15 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	region.readinsurfacenodes(surfacenodelist);
 	region.readinfacets(facetlist);
 	region.numberofsurfaces(triangle_meshes.size());
-
+	//for all surfaces (sketched and vertical), remember boundary and internal for surface bc
+	region.setbsurfaceid(minsid, maxsid, triangle_meshes.size(), triangle_meshes.size() + 1, triangle_meshes.size() + 2, triangle_meshes.size() + 3);//order same in region.buildsurfacemesh()
+	region.createbsurfacelist(triangle_meshes.size() + 4);
+	region.setnoflowbsurface(minsid);
+	region.setnoflowbsurface(maxsid);
+	region.setnoflowbsurface(triangle_meshes.size());
+	region.setnoflowbsurface(triangle_meshes.size() + 1);
+	region.setnoflowbsurface(triangle_meshes.size() + 2);
+	region.setnoflowbsurface(triangle_meshes.size() + 3);
 
 	std::vector<NODE> curvenodelist, curvenodelist2;
 	std::vector<SEGMENT> segmentlist, segmentlist2;
