@@ -511,7 +511,15 @@ bool Controller::addObjectTrajectory( PolyCurve curve_ )
 
     Object* const& obj_ = objects.getElement( current_object );
     bool status_ = obj_->addTrajectory( curve_ );
-    return status_;
+
+
+    if( status_ == false ) return false;
+
+    obj_->setEditable( true );
+    obj_->setVisible( true );
+    object_tree->setObjectVisibility( current_object, true );
+
+    return true;
 
 }
 

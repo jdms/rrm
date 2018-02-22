@@ -163,7 +163,8 @@ void Object::clearInformation()
 
 bool Object::isEmpty() const
 {
-    return csection_curves.empty();
+
+    return ( csection_curves.empty() && trajectory.isEmpty() );
 }
 
 
