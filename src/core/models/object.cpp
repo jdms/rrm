@@ -225,6 +225,7 @@ void Object::removeCrossSectionCurves()
     }
     csection_curves.clear();
 
+    user_entered.clear();
 }
 
 
