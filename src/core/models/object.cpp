@@ -289,7 +289,7 @@ bool Object::isTrajectoryAdmissible()
     if( hasTrajectory() == true )
         return false;
 
-    bool has_less_than_max = ( csection_curves.size() < CHANNEL_MAX_CSECTIONS )? true:false;
+    bool has_less_than_max = ( user_entered.size() < CHANNEL_MAX_CSECTIONS )? true:false;
     return has_less_than_max;
 }
 
