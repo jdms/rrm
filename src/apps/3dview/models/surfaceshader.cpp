@@ -37,10 +37,6 @@ void SurfaceShader::loadBuffers()
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
     raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
-    std::cout << "Box related to surfaces: " << std::endl << std::flush;
-    std::cout << "width: " << maxx_ << ", height: " << maxy_ << ", depth: " << maxz_ << std::endl << std::flush;
-    std::cout << "x: " << minx_ << ", y: " << miny_ << ", z: " << minz_ << std::endl << std::flush;
-
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
