@@ -213,7 +213,14 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
 
     connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
     {   if( indexv_ != 0 ) return;
-        obj_->setCheckState( COLUMN_STATUS, vol_->checkState( COLUMN_STATUS) );
+
+        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+        if( vol1_ == nullptr ) return;
+
+        ObjectTreeItem* obj1_ = items.getElement( index_ );
+        if( obj1_ == nullptr ) return;
+
+        obj1_->setCheckState( COLUMN_STATUS, vol1_->checkState( COLUMN_STATUS) );
     } );
 }
 
@@ -283,11 +290,23 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     setColumnWidth( COLUMN_NAME, COLUMN_NAME_WIDTH );
     regions.addElement( index_, region_ );
 
-
     connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
     {   if( indexv_ != 1 ) return;
-        region_->setCheckState( COLUMN_STATUS, vol1_->checkState( COLUMN_STATUS) );
+
+        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
+        if( vol1_ == nullptr ) return;
+
+        ObjectTreeItem* region1_ = regions.getElement( index_ );
+        if( region1_ == nullptr ) return;
+
+        region1_->setCheckState( COLUMN_STATUS, vol1_->checkState( COLUMN_STATUS) );
     } );
+
+
+//    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+//    {   if( indexv_ != 1 ) return;
+//        region_->setCheckState( COLUMN_STATUS, vol1_->checkState( COLUMN_STATUS) );
+//    } );
 }
 
 

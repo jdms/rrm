@@ -190,22 +190,26 @@ class TruncateHelper
         
         bool liesInsideBoundingBox( double x, double y, double z )
         {
-            struct { double x, y, z; } origin, model_size;
+            SUtilitiesWrapper u(modeller_);
 
-            modeller_.getOrigin(origin.x, origin.y, origin.z);
-            modeller_.getSize(model_size.x, model_size.y, model_size.z);
+            return u.liesInsideBoundarySurfaces(x, y, z);
 
-            bool liesInside = true;
+            /* struct { double x, y, z; } origin, model_size; */
 
-            liesInside &= (x >= origin.x);
-            liesInside &= (y >= origin.y);
-            liesInside &= (z >= origin.z);
+            /* modeller_.getOrigin(origin.x, origin.y, origin.z); */
+            /* modeller_.getSize(model_size.x, model_size.y, model_size.z); */
 
-            liesInside &= (x <= origin.x + model_size.x);
-            liesInside &= (y <= origin.y + model_size.y);
-            liesInside &= (z <= origin.z + model_size.z);
+            /* bool liesInside = true; */
 
-            return liesInside;
+            /* liesInside &= (x >= origin.x); */
+            /* liesInside &= (y >= origin.y); */
+            /* liesInside &= (z >= origin.z); */
+
+            /* liesInside &= (x <= origin.x + model_size.x); */
+            /* liesInside &= (y <= origin.y + model_size.y); */
+            /* liesInside &= (z <= origin.z + model_size.z); */
+
+            /* return liesInside; */
         }
 
         bool reverseCurve( CurveType &c )
@@ -391,6 +395,7 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
 
     for ( size_t i = 1; i < curve_.size(); ++i )
     {
+        std::cout << "Trying point: " << i << " of " << curve_.size() << std::endl << std::flush;
         cur_lbounds = u.getSurfacesIndicesBelowPoint(curve_[i].x(), curve_[i].y(), cross_section_);
         cur_ubounds = u.getSurfacesIndicesAbovePoint(curve_[i].x(), curve_[i].y(), cross_section_);
 
@@ -402,11 +407,13 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
                 upper_boundary_ = cur_ubounds;
                 first_cross_index_ = i;
                 first_cross_ = true;
+                std::cout << "Got first cross\n";
             }
             else 
             {
                 second_cross_index_= i;
                 second_cross_ = true;
+                std::cout << "Got second cross\n";
                 break; // for loop
             }
         }
@@ -427,9 +434,11 @@ bool TruncateHelper<CurveType>::getFirstRegionCurveIntersects( SurfacesIndices &
 
 		getIntersectedBoundaries(lb, ub);
 
+        std::cout << "Got an intersected region.\n" << std::flush;
         return true;
     }
 
+    std::cout << "Failed to get an intersected region.\n" << std::flush;
     return false;
 }
 
@@ -506,6 +515,7 @@ bool TruncateHelper<CurveType>::truncateCurve()
 
     Point2D p, q;
 
+    std::cout << "Processing first boundary crossing.\n" << std::flush;
     CrossedBoundary b1 = getCrossedBoundary(first_cross_index_);
     CrossingType t1 = getCrossingType(first_cross_index_);
     q = curve_[first_cross_index_ - 1];
@@ -544,6 +554,7 @@ bool TruncateHelper<CurveType>::truncateCurve()
             break;
     }
 
+    std::cout << "Processing second boundary crossing.\n" << std::flush;
     CrossedBoundary b2 = getCrossedBoundary(second_cross_index_);
     CrossingType t2 = getCrossingType(second_cross_index_);
     q = curve_[second_cross_index_];
@@ -597,6 +608,13 @@ bool TruncateHelper<CurveType>::getLowerBoundaryForTruncate()
 
     SurfacesIndices lb;
     std::set_intersection(intersected_surfaces_.begin(), intersected_surfaces_.end(), lower_boundary_.begin(), lower_boundary_.end(), std::back_inserter(lb));
+
+    size_t lboundary;
+    if ( modeller_.createAboveIsActive(lboundary) )
+    {
+        lb.push_back(lboundary);
+    }
+
     auto num_curves = lb.size();
 
     if (num_curves == 0)
@@ -656,6 +674,13 @@ bool TruncateHelper<CurveType>::getUpperBoundaryForTruncate()
 
     SurfacesIndices ub;
     std::set_intersection(intersected_surfaces_.begin(), intersected_surfaces_.end(), upper_boundary_.begin(), upper_boundary_.end(), std::back_inserter(ub));
+
+    size_t uboundary;
+    if ( modeller_.createBelowIsActive(uboundary) )
+    {
+        ub.push_back(uboundary);
+    }
+
     auto num_curves = ub.size();
 
     if ( num_curves == 0 )
