@@ -204,11 +204,28 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
                                                         { emit setObjectColor( index_, color_ ); } );
 
 
+
     vol_->addChild( obj_ );
 
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
     items.addElement( index_, obj_ );
 
+
+    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+    {   if( indexv_ != 0 ) return;
+
+        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+        if( vol1_ == nullptr ) return;
+
+        int nchildren = vol1_->childCount();
+        for( int j = 0; j < nchildren; ++j )
+        {
+
+            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
+            if( obj_ == nullptr ) continue;
+            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
+        }
+    } );
 }
 
 
@@ -276,6 +293,22 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
     setColumnWidth( COLUMN_NAME, COLUMN_NAME_WIDTH );
     regions.addElement( index_, region_ );
+
+    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+    {   if( indexv_ != 1 ) return;
+
+        ObjectTreeItem* vol2_ = ( ObjectTreeItem* ) topLevelItem( 1 );
+        if( vol2_ == nullptr ) return;
+
+        int nchildren = vol2_->childCount();
+        for( int j = 0; j < nchildren; ++j )
+        {
+            ObjectTreeItem* region1_ = (ObjectTreeItem* )( vol2_->child( j ) );
+            if( region1_ == nullptr ) continue;
+            region1_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
+        }
+    } );
+
 }
 
 

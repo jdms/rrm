@@ -83,6 +83,7 @@ namespace Settings {
 
     const Stratigraphy::StratigraphicRules Stratigraphy::DEFAULT_STRAT_RULES = Stratigraphy::StratigraphicRules::TRUNCATE;
     const std::string Stratigraphy::DEFAULT_STRAT_NAME = "Surface ";
+    const MeshResolution Stratigraphy::DEFAULT_MESH_RESOLUTION = MeshResolution::REGULAR;
 
 
 
