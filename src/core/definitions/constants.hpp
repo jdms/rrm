@@ -146,6 +146,7 @@ namespace Math {
 namespace Settings {
 
 
+    enum class MeshResolution { LOW, REGULAR, GOOD, BETTER };
 
     class Volume
     {
@@ -202,6 +203,7 @@ namespace Settings {
 
             static const StratigraphicRules DEFAULT_STRAT_RULES;
             static const std::string DEFAULT_STRAT_NAME;
+            static const MeshResolution DEFAULT_MESH_RESOLUTION;
     };
 
 

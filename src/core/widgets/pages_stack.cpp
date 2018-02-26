@@ -215,4 +215,6 @@ void PagesStack::clear()
     setEnabledVolumeResize( VOLUME_RESIZING );
 
     wd_object_properties.groupBox->setTitle( "Object Log" );
+    wd_object_properties.te_object_properties->clear();
+
 }
