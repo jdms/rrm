@@ -85,6 +85,7 @@ void RRMApplication::setDefaultSketchingRegion( Settings::Objects::BounderingReg
 
 void RRMApplication::setDefaultSiderBarValues()
 {
+    mainwindow->object_properties->clear();
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
     mainwindow->object_properties->checkLowResolution();
 }
