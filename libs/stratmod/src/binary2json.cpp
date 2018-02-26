@@ -17,8 +17,8 @@ enum fileErrorCodes
 { 
     FAILED_TO_SAVE_BINARY_FILE = 11, 
     FAILED_TO_LOAD_BINARY_FILE = 12,
-    FAILED_TO_SAVE_XML_FILE = 13, 
-    FAILED_TO_LOAD_XML_FILE = 14 
+    FAILED_TO_SAVE_JSON_FILE = 13, 
+    FAILED_TO_LOAD_JSON_FILE = 14 
 }; 
 
 int main( int argc , char* argv[] )
@@ -37,7 +37,7 @@ int main( int argc , char* argv[] )
     } 
     else if( argc == CALLED_WITHOUT_OUTPUT_FILE ) { 
         input = argv[1];
-        output = input + ".xml";
+        output = input + ".json";
     }
     else if( argc == CALLED_WITH_INPUT_AND_OUTPUT_FILES ) {
         input = argv[1];
@@ -55,12 +55,12 @@ int main( int argc , char* argv[] )
     }
 
 
-    success = model.saveXML(output);
+    success = model.saveJSON(output);
     if ( success ) {
-        std::cout << std::endl << "The XML file was successfully written." << std::endl << std::endl;
+        std::cout << std::endl << "The JSON file was successfully written." << std::endl << std::endl;
     }
     else { 
-        return FAILED_TO_SAVE_XML_FILE; 
+        return FAILED_TO_SAVE_JSON_FILE; 
     }
 
 
