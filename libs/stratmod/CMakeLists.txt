@@ -331,4 +331,15 @@ set(SOURCES src/test_regions.cpp)
 add_executable(test_regions ${SOURCES} ${HEADERS})
 target_link_libraries(test_regions stratmod)
 
+set(SOURCES src/binary2xml.cpp)
+add_executable(binary2xml ${SOURCES} ${HEADERS})
+target_link_libraries(binary2xml stratmod)
+
+set(SOURCES src/xml2binary.cpp)
+add_executable(xml2binary ${SOURCES} ${HEADERS})
+target_link_libraries(xml2binary stratmod)
+
+set(SOURCES src/change_resolution.cpp)
+add_executable(resample ${SOURCES} ${HEADERS})
+target_link_libraries(resample stratmod)
 
