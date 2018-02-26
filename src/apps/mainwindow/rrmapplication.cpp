@@ -41,15 +41,30 @@ void RRMApplication::setSiderBarVisibility( bool status_ )
 void RRMApplication::setDefaultRule( Settings::Stratigraphy::StratigraphicRules rule_ )
 {
     if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
+    {
         mainwindow->ac_remove_above->setChecked( Variables::ON );
+        mainwindow->controller->setRemoveAbove();
+    }
     else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+    {
         mainwindow->ac_remove_above_int->setChecked( Variables::ON );
+        mainwindow->controller->setRemoveAboveIntersection();
+    }
     else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
+    {
         mainwindow->ac_remove_below->setChecked( Variables::ON );
+        mainwindow->controller->setRemoveBelow();
+    }
     else if( rule_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+    {
         mainwindow->ac_remove_below_int->setChecked( Variables::ON );
+        mainwindow->controller->setRemoveBelowIntersection();
+    }
     else if( rule_ == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+    {
         mainwindow->ac_truncate->setChecked( Variables::ON );
+        mainwindow->controller->setTruncate();
+    }
 }
 
 
@@ -84,6 +99,7 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
     setDefaultSiderBarValues();
 
     setCurrentColor( 255, 0, 0 );
+    checkUndoRedo();
 
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
@@ -547,9 +563,7 @@ void RRMApplication::defineRandomColor()
     int b_ = distr( eng );
 
     setCurrentColor( r_, g_, b_ );
-//    mainwindow->sketch_window->setCurrentColor( r_, g_, b_ );
-//    mainwindow->sketch_topview_window->setCurrentColor( r_, g_, b_ );
-//    mainwindow->controller->setCurrentColor( r_, g_, b_ );
+
 
 }
 
@@ -572,10 +586,12 @@ void RRMApplication::clear()
 {
     clearInterface();
 
+
     mainwindow->sketch_window->clear();
     mainwindow->sketch_topview_window->clear();
     mainwindow->controller->clear();
 
+    closeFlowDiagnostics();
 
     mainwindow->controller->init();
     setRRMDefaultValuesOnInterface();
@@ -690,10 +706,13 @@ void RRMApplication::startFlowDiagnostics()
 
 void RRMApplication::closeFlowDiagnostics()
 {
+    if( mainwindow->ac_output_volume->isChecked() == false ) return;
+
     mainwindow->updateSketchingWindowGeometry();
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
+    mainwindow->ac_output_volume->setChecked( false );
 
     mainwindow->controller->hideRegions();
 }
