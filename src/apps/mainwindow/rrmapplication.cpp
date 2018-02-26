@@ -86,7 +86,7 @@ void RRMApplication::setDefaultSketchingRegion( Settings::Objects::BounderingReg
 void RRMApplication::setDefaultSiderBarValues()
 {
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
-    mainwindow->object_properties->setMediumResolution();
+    mainwindow->object_properties->checkLowResolution();
 }
 
 
@@ -488,6 +488,7 @@ void RRMApplication::load( const std::string& filename_ )
 {
     clear();
     mainwindow->controller->loadFile( filename_ );
+    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
     checkUndoRedo();
     checkSketchStatus();
     initSketchingApp();
