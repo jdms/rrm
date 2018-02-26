@@ -45,7 +45,7 @@ void SketchWindow::createToolBar()
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setCheckable( true );
-    connect( ac_fixed_csections, &QAction::triggered, cs, &QDockWidget::setVisible );
+    connect( ac_fixed_csections, &QAction::toggled, cs, &QDockWidget::setVisible );
 
 
     ac_enable_preview = new QAction( "Enable Preview", this );
@@ -489,8 +489,6 @@ void SketchWindow::clear()
         }
         delete tv_main;
         tv_main = nullptr;
-
-
     }
 
 
@@ -505,6 +503,9 @@ void SketchWindow::clear()
         it_ =  scenes.begin();
     }
     scenes.clear();
+
+    if( cs == nullptr ) return;
+    cs->setVisible( false );
 
 
     CanvasContainer::Iterator it =  cs->begin();
@@ -526,7 +527,7 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
     if( cs_ == nullptr ) return;
 
     cs->setVisible( true );
-//    dw_canvas_stack->setVisible( true );
+    cs->raise();
 
     scenes[ cs_->getDepth() ] = new SketchScene( cs_ );
     SketchScene* const& scene_ = scenes[ cs_->getDepth() ];
