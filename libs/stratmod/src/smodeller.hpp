@@ -221,6 +221,10 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         bool loadBinary( std::string filename );
 
+        bool saveXML( std::string filename );
+
+        bool loadXML( std::string filename );
+
         bool changeDiscretization( size_t width_discretization = 64, size_t depth_discretization = 64 );
 
     protected:

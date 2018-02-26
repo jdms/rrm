@@ -741,6 +741,44 @@ bool SModeller::saveBinary( std::string filename )
         return true;
 }
 
+bool SModeller::saveXML( std::string filename )
+{
+        /* std::ofstream ofs(filename, std::ios::binary); */
+        std::ofstream ofs(filename);
+
+        if ( !ofs.good() )
+        {
+            return false; 
+        }
+
+        /* cereal::PortableBinaryOutputArchive oarchive(ofs); */
+        /* cereal::XMLOutputArchive oarchive(ofs); */
+        cereal::JSONOutputArchive oarchive(ofs);
+
+        unsigned int version = 1;
+
+        try 
+        {
+            oarchive( cereal::make_nvp("SModeller version", version), 
+                      cereal::make_nvp("SModeller data", *pimpl_) 
+                    );
+        }
+        catch( const std::exception &e )
+        {
+            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+
+            return false;
+        }
+        catch(...)
+        {
+            std::cerr << "Unknown exception caught in method SModeller::saveXML(...)\n\n" << std::flush;
+
+            return false;
+        }
+
+        return true;
+}
+
 bool SModeller::loadBinary( std::string filename )
 {
         std::ifstream ifs(filename, std::ios::binary);
@@ -779,8 +817,54 @@ bool SModeller::loadBinary( std::string filename )
         return true;
 }
 
+bool SModeller::loadXML( std::string filename )
+{
+        std::ifstream ifs(filename);
+
+        if ( !ifs.good() )
+        {
+            return false;
+        }
+
+        /* cereal::XMLInputArchive iarchive(ifs); */
+        cereal::JSONInputArchive iarchive(ifs);
+
+        unsigned int version;
+
+        try
+        {
+            iarchive( version, *pimpl_ );
+        }
+        catch( const std::exception &e )
+        {
+            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            clear();
+
+            return false;
+        }
+        catch(...)
+        {
+            std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
+
+            return false;
+        }
+
+
+        return true;
+}
+
 #else //defined(BUILD_WITH_SERIALIZATION)
 bool SModeller::saveBinary( std::string )
+{
+    return false;
+}
+
+bool SModeller::loadBinary( std::string )
+{
+    return false;
+}
+
+bool SModeller::saveXML( std::string )
 {
     return false;
 }
