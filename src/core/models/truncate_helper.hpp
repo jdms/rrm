@@ -192,7 +192,7 @@ class TruncateHelper
         {
             SUtilitiesWrapper u(modeller_);
 
-            return u.liesInsideBoundarySurfaces(x, y, z);
+            return u.liesBetweenBoundarySurfaces(x, y, z);
 
             /* struct { double x, y, z; } origin, model_size; */
 
