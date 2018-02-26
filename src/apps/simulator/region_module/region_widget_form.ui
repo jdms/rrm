@@ -88,6 +88,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_Inverted_">
+          <property name="text">
+           <string>Inverted</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>

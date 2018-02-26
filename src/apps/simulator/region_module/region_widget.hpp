@@ -49,10 +49,14 @@ namespace RRM
 
 						void setByRegionSaturation(bool option);
     
+						int reversePermeability(bool _is_reversed,int _value);
+						int resersePorosity(bool _is_reversed, int _value) ;
+
                         void clear();
 
                 public slots:
                         void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
+
                 signals:
                         void numberOfRegions(int _number_of_regions);
                         void getRegions();
@@ -107,6 +111,12 @@ namespace RRM
 
                         QLabel* lb_region_color;
                         std::map< int, QColor > regions_colors;
+
+						/// FIXME January 2018
+						bool is_reversed_permeability_;
+						QCheckBox*      inverted_permeability_;
+						bool is_reversed_porosity_;
+						QCheckBox*      inverted_porosity_;
 
         };
 
