@@ -1065,7 +1065,7 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
 
     if ( out_of_boundaries )
     {
-        std::cout << "Point is out of boundaries.\n";
+        /* std::cout << "Point is out of boundaries.\n"; */
         return descriptor;
     }
 
@@ -1108,15 +1108,15 @@ std::vector<size_t> SRules::getActiveSurfacesBelowPoint( const Point3 &p )
     Point3 origin = container[0]->getOrigin();
     Point3 lenght = container[0]->getLenght();
 
-    std::cout << "Is point out of model?";
+    /* std::cout << "Is point out of model?"; */
     bool out_of_boundaries = !liesBetweenBoundarySurfaces(p);
 
     if ( out_of_boundaries )
     {
-        std::cout << " Yes.\n" << std::flush;
+        /* std::cout << " Yes.\n" << std::flush; */
         return descriptor;
     }
-    std::cout << " No.\n" << std::flush;
+    /* std::cout << " No.\n" << std::flush; */
 
     descriptor.reserve( size() );
 
@@ -1145,21 +1145,25 @@ std::vector<size_t> SRules::getActiveSurfacesBelowPoint( const Point3 &p )
 
     for ( size_t i = 0; i < size(); ++i )
     {
-        std::cout << "Processing surface: " << i << std::flush;
+        /* std::cout << "Processing surface: " << i << std::flush; */
         operator[](i)->getHeight(p2, height);
 
         if ( ( height >= lb_height ) && ( height <= ub_height ) )
         {
             if ( operator[](i)->liesAbove(p) )
             {
-                std::cout << "-> point lies above surface" << std::endl << std::flush;
+                /* std::cout << "-> point lies above surface" << std::endl << std::flush; */
                 descriptor.push_back(i);
             }
-            else
-                std::cout << "-> point DOESN'T lie above surface" << std::endl << std::flush;
+            /* else */ 
+            /* { */
+                /* std::cout << "-> point DOESN'T lie above surface" << std::endl << std::flush; */
+            /* } */
         }
-        else
-            std::cout << "-> surface lies outside of active area" << std::endl << std::flush;
+        /* else */
+        /* { */
+            /* std::cout << "-> surface lies outside of active area" << std::endl << std::flush; */
+        /* } */
 
     }
 
@@ -1223,7 +1227,7 @@ std::vector<size_t> SRules::getActiveSurfacesAbovePoint( const Point3 &p )
 
     if ( out_of_boundaries )
     {
-        std::cout << "Point is out of boundaries.\n";
+        /* std::cout << "Point is out of boundaries.\n"; */
         return descriptor;
     }
 

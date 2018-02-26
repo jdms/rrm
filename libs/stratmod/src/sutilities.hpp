@@ -61,7 +61,7 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
         bool getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions);
 
-        bool liesInsideBoundarySurfaces(double x, double y, double z);
+        bool liesBetweenBoundarySurfaces(double x, double y, double z);
 
         std::vector<size_t> getSurfacesIndicesBelowPoint(double x, double y, double z);
         std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);

@@ -644,7 +644,7 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
     return status;
 }
 
-bool SUtilities::liesInsideBoundarySurfaces(double x, double y, double z)
+bool SUtilities::liesBetweenBoundarySurfaces(double x, double y, double z)
 {
     Point3 p = model_.pimpl_->point3(x, y, z);
 

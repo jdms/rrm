@@ -741,7 +741,7 @@ bool SModeller::saveBinary( std::string filename )
         return true;
 }
 
-bool SModeller::saveXML( std::string filename )
+bool SModeller::saveJSON( std::string filename )
 {
         /* std::ofstream ofs(filename, std::ios::binary); */
         std::ofstream ofs(filename);
@@ -771,7 +771,7 @@ bool SModeller::saveXML( std::string filename )
         }
         catch(...)
         {
-            std::cerr << "Unknown exception caught in method SModeller::saveXML(...)\n\n" << std::flush;
+            std::cerr << "Unknown exception caught in method SModeller::saveJSON(...)\n\n" << std::flush;
 
             return false;
         }
@@ -817,7 +817,7 @@ bool SModeller::loadBinary( std::string filename )
         return true;
 }
 
-bool SModeller::loadXML( std::string filename )
+bool SModeller::loadJSON( std::string filename )
 {
         std::ifstream ifs(filename);
 
@@ -844,7 +844,7 @@ bool SModeller::loadXML( std::string filename )
         }
         catch(...)
         {
-            std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
+            std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush;
 
             return false;
         }
@@ -864,7 +864,7 @@ bool SModeller::loadBinary( std::string )
     return false;
 }
 
-bool SModeller::saveXML( std::string )
+bool SModeller::saveJSON( std::string )
 {
     return false;
 }

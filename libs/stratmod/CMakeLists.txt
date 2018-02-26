@@ -54,6 +54,7 @@ option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"     
 option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
 option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
 option(STRATMOD_BUILD_EXAMPLE        "Build exmaples"                                   OFF) 
+option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     OFF) 
 
 # regarding testing, see also: https://cmake.org/Wiki/CMake/Testing_With_CTest
 
@@ -319,27 +320,29 @@ if(${STRATMOD_BUILD_EXAMPLE})
 
 endif()
 
-set(SOURCES src/test_boundary.cpp)
-add_executable(test_boundary ${SOURCES} ${HEADERS})
-target_link_libraries(test_boundary stratmod)
+if(${STRATMOD_BUILD_UTILITIES})
+    set(SOURCES src/test_boundary.cpp)
+    add_executable(test_boundary ${SOURCES} ${HEADERS})
+    target_link_libraries(test_boundary stratmod)
 
-set(SOURCES src/test_mesh.cpp)
-add_executable(test_mesh ${SOURCES} ${HEADERS})
-target_link_libraries(test_mesh stratmod)
+    set(SOURCES src/test_mesh.cpp)
+    add_executable(test_mesh ${SOURCES} ${HEADERS})
+    target_link_libraries(test_mesh stratmod)
 
-set(SOURCES src/test_regions.cpp)
-add_executable(test_regions ${SOURCES} ${HEADERS})
-target_link_libraries(test_regions stratmod)
+    set(SOURCES src/test_regions.cpp)
+    add_executable(test_regions ${SOURCES} ${HEADERS})
+    target_link_libraries(test_regions stratmod)
 
-set(SOURCES src/binary2xml.cpp)
-add_executable(binary2xml ${SOURCES} ${HEADERS})
-target_link_libraries(binary2xml stratmod)
+    set(SOURCES src/binary2json.cpp)
+    add_executable(binary2json ${SOURCES} ${HEADERS})
+    target_link_libraries(binary2json stratmod)
 
-set(SOURCES src/xml2binary.cpp)
-add_executable(xml2binary ${SOURCES} ${HEADERS})
-target_link_libraries(xml2binary stratmod)
+    set(SOURCES src/json2binary.cpp)
+    add_executable(json2binary ${SOURCES} ${HEADERS})
+    target_link_libraries(json2binary stratmod)
 
-set(SOURCES src/change_resolution.cpp)
-add_executable(resample ${SOURCES} ${HEADERS})
-target_link_libraries(resample stratmod)
+    set(SOURCES src/change_resolution.cpp)
+    add_executable(resample ${SOURCES} ${HEADERS})
+    target_link_libraries(resample stratmod)
+endif()
 
