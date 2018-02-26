@@ -47,13 +47,32 @@ unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
 
 
 void FlowDiagnosticsInterface::setViscosity(double visc){
-    region.setoilviscosity(visc*0.001); //cp to si
+    region.oilviscosity(visc*0.001); //cp to si
+}
+
+void FlowDiagnosticsInterface::setViscosity_water(double visc){
+	region.waterviscosity(visc*0.001); //cp to si
+}
+
+void FlowDiagnosticsInterface::setdensity_water(double den_w){
+	region.waterdensity(den_w); //cp to si
+}
+
+void FlowDiagnosticsInterface::setdensity_oil(double den_o){
+	region.oildensity(den_o*0.001); //cp to si
+}
+
+void FlowDiagnosticsInterface::setBo(double Bo_){
+	region.setBo(Bo_);
+}
+
+void FlowDiagnosticsInterface::setBw(double Bw_){
+	region.setBw(Bw_);
 }
 
 void FlowDiagnosticsInterface::clearRegions(){
     region.clearpropertyareas();
 }
-
 
 void FlowDiagnosticsInterface::setNumberofWells(unsigned int wells_number){
     region.setnumberofwells(wells_number);
@@ -70,7 +89,7 @@ void FlowDiagnosticsInterface::clearWells(){
 
 void FlowDiagnosticsInterface::init(){
     if (region.meshinfo_type() == 1 && region.numberofphases() == 1){ //unstructured
-		region.writevolumemesh("volumetetmesh.vtk");
+		//region.writevolumemesh("volumetetmesh.vtk");
         region.tetrahedralmesh_postprocessCVFE();
         region.properties_cvfe_sf(); //kvratio_=0.1
         region.computemobility_cvfe_sf();
@@ -984,6 +1003,9 @@ void FlowDiagnosticsInterface::getAvailablePermeabilityCurves(std::vector<int> &
 
 #include <cmath>
 
+
+
+
 void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z,
     double min_perm, double max_perm,
     double min_poros, double max_poros) //the one used
@@ -993,19 +1015,7 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     min_perm = min_perm > 0 ? min_perm : 0;
     min_poros = min_poros > 0 ? min_poros : 0;
 
-    //double tol = 1E-7; // error tolerance
-    //bool constant_perm = std::fabs(max_perm - min_perm) < tol;
-    //bool constant_poros = std::fabs(max_poros - min_poros) < tol;
-
-    //if (constant_perm && constant_poros)
-    //{
-    //    setRegion(id, x, y, z, min_perm, min_poros);
-
-    //    return;
-    //}
-
-
-    PROPERTYAREA p;
+     PROPERTYAREA p;
     p.x(x);
     p.y(y);
     p.z(z);
@@ -1015,34 +1025,68 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     p.porohigh(max_poros);
     region.modifypropertyarea(id, p);
 
-//    std::cout << "At region: " << id << " min perm = " << min_perm << ", max perm = " << max_perm
-//              << " min poros = " << min_poros << ", max poros = " << max_poros << "\n" << std::flush;
     return;
 }
 
-void FlowDiagnosticsInterface::setRegion(unsigned int id,
-	double min_perm, double max_perm,
-	double min_poros, double max_poros) //the one used for automatic regions
+void FlowDiagnosticsInterface::setRegion_sf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_) //the one used
 {
-
-	min_perm = min_perm > 0 ? min_perm : 0;
-	min_poros = min_poros > 0 ? min_poros : 0;
-
 	PROPERTYAREA p;
-	p.permlow(min_perm*0.987e-15);
-	p.permhigh(max_perm*0.987e-15);
-	p.porolow(min_poros);
-	p.porohigh(max_poros);
+	p.Kxlow(Kxlow_*0.987e-15);
+	p.Kxhigh(Kxhigh_*0.987e-15);
+	p.Kylow(Kylow_*0.987e-15);
+	p.Kyhigh(Kyhigh_*0.987e-15);
+	p.Kzlow(Kzlow_*0.987e-15);
+	p.Kzhigh(Kzhigh_*0.987e-15);
+	p.porolow(porolow_);
+	p.porohigh(porohigh_);
 	region.modifypropertyarea(id, p);
 
 	return;
 }
 
-void FlowDiagnosticsInterface::setBo(double Bo_){
-    region.setBo(Bo_);
+void FlowDiagnosticsInterface::setRegion_mf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
+	double Pct_, double Si_, double lambda_) //the one used
+{
+	PROPERTYAREA p;
+	p.Kxlow(Kxlow_*0.987e-15);
+	p.Kxhigh(Kxhigh_*0.987e-15);
+	p.Kylow(Kylow_*0.987e-15);
+	p.Kyhigh(Kyhigh_*0.987e-15);
+	p.Kzlow(Kzlow_*0.987e-15);
+	p.Kzhigh(Kzhigh_*0.987e-15);
+	p.porolow(porolow_);
+	p.porohigh(porohigh_);
+	p.Pct(Pct_);
+	p.Siw(Si_);
+	p.lamda(lambda_);
+	region.modifypropertyarea(id, p);
+
+	return;
 }
+
+//void FlowDiagnosticsInterface::setRegion(unsigned int id,
+//	double min_perm, double max_perm,
+//	double min_poros, double max_poros) 
+//{
+//
+//	min_perm = min_perm > 0 ? min_perm : 0;
+//	min_poros = min_poros > 0 ? min_poros : 0;
+//
+//	PROPERTYAREA p;
+//	p.permlow(min_perm*0.987e-15);
+//	p.permhigh(max_perm*0.987e-15);
+//	p.porolow(min_poros);
+//	p.porohigh(max_poros);
+//	region.modifypropertyarea(id, p);
+//
+//	return;
+//}
+
+
 void FlowDiagnosticsInterface::setOilGravity(double g){
-    region.setoilgravity(g);
+    region.oildensity(g);
 }
 
 void FlowDiagnosticsInterface::setNumberOfPhases(int i){
@@ -1192,9 +1236,9 @@ void FlowDiagnosticsInterface::computeProperties(){
 	if (region.meshinfo_type() == 1){
 		region.steadystateflowsolver();
 		region.flowdiagnostics_tracing();
-		region.writeresult_cvfe_sf_log2t("result.vtk");
+		//region.writeresult_cvfe_sf_log2t("result.vtk");
 		region.derivedquantities_both();
-		region.writeflowdiagnostics("flowdiagnostics.txt");
+		//region.writeflowdiagnostics("flowdiagnostics.txt");
 	}
 }
 
@@ -1249,20 +1293,22 @@ bool FlowDiagnosticsInterface::setWell(unsigned int id, WellType t, double press
 	return true;
 }
 
-void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z, double perm,
-	double poros){
-	//not being used
-	PROPERTYAREA p;
-	p.x(x);
-	p.y(y);
-	p.z(z);
-	p.permlow(perm*0.987e-15);
-	p.permhigh(perm*0.987e-15);
 
-	p.porolow(poros);
-	p.porohigh(poros);
-	region.modifypropertyarea(id, p);
-}
+
+//void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z, double perm,
+//	double poros){
+//	//not being used
+//	PROPERTYAREA p;
+//	p.x(x);
+//	p.y(y);
+//	p.z(z);
+//	p.permlow(perm*0.987e-15);
+//	p.permhigh(perm*0.987e-15);
+//
+//	p.porolow(poros);
+//	p.porohigh(poros);
+//	region.modifypropertyarea(id, p);
+//}
 
 void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
 	double &poros, double& visc, double &porevolume) { //not being used
@@ -1275,12 +1321,8 @@ void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, 
 	//poros = region.propertyarea(id).porosity();
 	poros = region.propertyarea(id).porolow();//if porolow and porohigh are both needed then get both
 
-	visc = region.propertyarea(id).mu_o();
+	visc = region.oilviscosity();
 	porevolume = region.propertyarea(id).porevolume();
-}
-
-void FlowDiagnosticsInterface::readUserInput(const std::string& input_file){//not being used
-	region.userinput_unstructured_skt_SF(input_file.c_str());
 }
 
 

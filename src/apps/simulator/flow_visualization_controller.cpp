@@ -85,7 +85,7 @@ void FlowVisualizationController::buildSurfaceSkeleton( std::vector< double >& p
 
 void FlowVisualizationController::readInputParameters( const std::string& input_file )
 {
-    code_interface.readUserInput( input_file );
+    //code_interface.readUserInput( input_file );//no user input funtion needed
     user_input_ok = true;
 }
 
