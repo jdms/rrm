@@ -50,8 +50,7 @@ public:
 
     void setNumberofRegions(unsigned int regions_number);
 
-    void setRegion(unsigned int id, double x, double y, double z, double perm, double poros);
-    void setViscosity(double visc);//user can set a global viscosity after setting regions to overwrite regions' viscosity
+  
 
     /// \brief Get regions properties -- refers to: ( Zhao's document ) 1. Number of regions, permeability, porosity, viscosity and
     ///		   x, y, z for each region (this can be same as before)
@@ -89,10 +88,6 @@ public:
 
 
     void loadWellsGeometry(char*); //should be called after setting all wells
-
-
-    /// \brief Read user input file --refers to: last code
-    void readUserInput(const std::string& input_file);
 
 
     /// \brief Read skeleton file --refers to: last code, optional
@@ -373,7 +368,6 @@ public:
     //For September 2017 start*********************************************************
 
     void getOilInPlace(double &oil_in_place);
-    void setBo(double Bo_); // sets the oil formation volume factor
     void setWaterSaturation(unsigned int region_id, double Sw);
 
     void setNumberOfPhases(int);//1 or 2; init() updated; setviscosity is oil viscosity.
@@ -381,7 +375,7 @@ public:
 
 
     void setSaturationMethod(int); //1 means set saturation for each region; 2 means by gravity
-    void setOilGravity(double); //either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
+    
     //visualise nodal capillary pressure, elemental saturation, elemental krw, kro;
     bool getCapillaryPressure(std::vector< double >& values); //nodal
     bool getWaterSaturationByCells(std::vector< double >& values);
@@ -394,34 +388,50 @@ public:
     void setPermeabilityCurve(unsigned int region_id, int pcurve_id);
     void getAvailablePermeabilityCurves(std::vector<int> &pcurves_ids);
 
-    // How to allow assigning gradients in properties? This function should be enough.
     void setRegion(unsigned int id, double x, double y, double z,
         double min_perm, double max_perm,
         double min_poros, double max_poros);
 
-	void setRegion(unsigned int id, 
+	/*void setRegion(unsigned int id, 
 		double min_perm, double max_perm,
-		double min_poros, double max_poros); //for automatic regions
+		double min_poros, double max_poros); */
 
+	//void setRegion(unsigned int id, double x, double y, double z, double perm, double poros);
 
-    void setRegion(unsigned int id, double x, double y, double z, double perm,
+   /* void setRegion(unsigned int id, double x, double y, double z, double perm,
         double poros, double visc)
     {
         setRegion(id, x, y, z, perm, poros);
         visc_ = visc;
-    }
+    }*/
 
-    // How to allow assigning gradients in properties? This function should be enough.
-    void setRegion(unsigned int id, double x, double y, double z,
+    
+    /*void setRegion(unsigned int id, double x, double y, double z,
         double min_perm, double max_perm,
         double min_poros, double max_poros,
         double visc)
     {
         setRegion(id, x, y, z, min_perm, max_perm, min_poros, max_poros);
         visc_ = visc;
-    }
+    }*/
+	
 
+	void setRegion_sf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_);
+
+	void setRegion_mf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
+		double Pct_, double Si_, double lambda_);
+
+	//either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
+	void setViscosity(double visc);//oil viscosity
+	void setViscosity_water(double visc);
+	void setdensity_water(double den_w);
+	void setdensity_oil(double den_w);
+	void setOilGravity(double); //same as setdensity_oil
     void setfreewaterlevel(double);
+	void setBo(double Bo_);
+	void setBw(double Bw_);
 
 private:
 
