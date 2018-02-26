@@ -25,7 +25,7 @@ int main()
     std::vector<std::vector<size_t>> elements;
     std::vector<int> regions;
 
-    status = model.getTetrahedralMesh(vcoords, elements);
+    status = model.getTetrahedralMesh(vcoords, elements) > 0;
     if ( status == false )
     {
         std::cerr << "Failed to get tet mesh\n";

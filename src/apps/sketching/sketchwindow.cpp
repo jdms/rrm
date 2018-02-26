@@ -45,8 +45,14 @@ void SketchWindow::createToolBar()
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setCheckable( true );
-    connect( ac_fixed_csections, &QAction::triggered, dw_canvas_stack, &QDockWidget::setVisible );
+    connect( ac_fixed_csections, &QAction::toggled, cs, &QDockWidget::setVisible );
 
+
+    ac_enable_preview = new QAction( "Enable Preview", this );
+    ac_enable_preview->setCheckable( true );
+    ac_enable_preview->setChecked( true );
+
+    connect( ac_enable_preview, &QAction::toggled, [=]( bool status_ ){ emit enablePreview( status_ ); } );
 
 
     tb_actions->addWidget( cp_color );
@@ -62,6 +68,7 @@ void SketchWindow::createToolBar()
     tb_actions->addAction( ac_fixed_csections );
     tb_actions->addAction( ac_axes );
     tb_actions->addAction( ac_height_map );
+    tb_actions->addAction( ac_enable_preview );
 
 
     addToolBar( tb_actions );
@@ -72,11 +79,16 @@ void SketchWindow::createToolBar()
 void SketchWindow::createWindow()
 {
     cs = new CanvasStack();
-    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
-    dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
-    dw_canvas_stack->setWidget( cs );
-    dw_canvas_stack->setVisible( false );
-    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+    cs->setWindowTitle( "Fixed Cross-Sections" );
+//    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
+//    dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
+//    dw_canvas_stack->setWidget( cs );
+//    dw_canvas_stack->setVisible( false );
+//    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+
+
+    cs->setVisible( false );
+    cs->setMinimumSize( WIDTH_APP, HEIGHT_APP );
 
     connect( cs, &CanvasStack::closeSubWindow, this, &SketchWindow::removeFixedCrossSectionCanvas );
 
@@ -150,6 +162,7 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     main_scene->setCurrent( true );
 
     main = new QGraphicsView();
+
     main->scale( 1, -1 );
     main->setScene( main_scene );
 
@@ -198,6 +211,9 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
 
     connect( main_scene, &SketchScene::removeImageFromCrossSection, [=]( double depth_ )
                                                             { emit removeImageFromCrossSection( depth_ ); } );
+
+
+
 
     ////// teste
 
@@ -261,6 +277,7 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
 
     ac_fixed_csections->setVisible( false );
     ac_edit_boundary->setVisible( false );
+    ac_enable_preview->setVisible( false );
     hb_central_widget->insertWidget( 0, tv_main );
 
 }
@@ -472,8 +489,6 @@ void SketchWindow::clear()
         }
         delete tv_main;
         tv_main = nullptr;
-
-
     }
 
 
@@ -488,6 +503,9 @@ void SketchWindow::clear()
         it_ =  scenes.begin();
     }
     scenes.clear();
+
+    if( cs == nullptr ) return;
+    cs->setVisible( false );
 
 
     CanvasContainer::Iterator it =  cs->begin();
@@ -508,7 +526,8 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
 {
     if( cs_ == nullptr ) return;
 
-    dw_canvas_stack->setVisible( true );
+    cs->setVisible( true );
+    cs->raise();
 
     scenes[ cs_->getDepth() ] = new SketchScene( cs_ );
     SketchScene* const& scene_ = scenes[ cs_->getDepth() ];
@@ -580,6 +599,7 @@ bool SketchWindow::removeFixedCrossSectionCanvas( double depth_ )
     }
 
     if( cs->findElement( depth_  ) == false ) return false;
+
     cs->removeElement( depth_ );
 
     emit removeFixedCrossSection( depth_ );

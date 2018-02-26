@@ -442,6 +442,9 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::removeFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::removeMarker );
 
 
+    connect( sketch_window, &SketchWindow::enablePreview, [=]( bool status_ ){ app->enablePreview( status_ ); } );
+
+
     connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
                                                            { app->updateSketchingCanvas(); } );
 
