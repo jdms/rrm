@@ -68,10 +68,10 @@ void CanvasStack::removeElement( double id_ )
     delete canvas_;
     canvas_ = nullptr;
 
+    deleteElement( id_ );
+
     bool status = Container::removeElement( id_ );
     if( status == false ) return;
-
-    deleteElement( id_ );
 
     update();
 
