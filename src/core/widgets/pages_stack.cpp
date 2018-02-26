@@ -217,4 +217,6 @@ void PagesStack::clear()
     wd_object_properties.groupBox->setTitle( "Object Log" );
     wd_object_properties.te_object_properties->clear();
 
+    setCurrentIndex( 0 );
+
 }
