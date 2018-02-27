@@ -125,8 +125,6 @@ public:
     /// \brief Method to build the cpg volumetric mesh -- refers to: last code, required
     void buildCPGVolumetricMesh();
 
-
-
     void getPoreVolumebyRegion(std::vector< double >& values);
 
 
