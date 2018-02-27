@@ -372,12 +372,13 @@ void Volume::setResizable( bool status_ )
     is_resizable = status_;
 }
 
-bool Volume::isResizable() const
+bool Volume::isResizable()
 {
     if( objects.empty() == true )
         return true;
 
-    Object* obj_ = objects.getElement( 0 );
+    ObjectsContainer::Iterator it =  objects.begin();
+    Object* obj_ = objects.getElement( it->first );
     if( obj_->isEmpty() == true )
         return true;
 
