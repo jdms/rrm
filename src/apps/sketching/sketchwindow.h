@@ -112,11 +112,6 @@ class SketchWindow: public QMainWindow
         void createToolBar();
 
 
-        void setupScene(SketchScene *scene_ );
-
-
-
-
 
 
     private:

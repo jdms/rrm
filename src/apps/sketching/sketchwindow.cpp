@@ -24,6 +24,7 @@ void SketchWindow::createToolBar()
     ac_discard = new QAction( "Discard", this );
     ac_commit = new QAction( "Commit", this );
     ac_create = new QAction( "Create", this );
+    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     ac_edit_boundary = new QAction( "Edit Boundary", this );
     ac_edit_boundary->setCheckable( true );
@@ -80,11 +81,6 @@ void SketchWindow::createWindow()
 {
     cs = new CanvasStack();
     cs->setWindowTitle( "Fixed Cross-Sections" );
-//    dw_canvas_stack = new QDockWidget( "Fixed Cross-Sections" );
-//    dw_canvas_stack->setAllowedAreas( Qt::BottomDockWidgetArea );
-//    dw_canvas_stack->setWidget( cs );
-//    dw_canvas_stack->setVisible( false );
-//    dw_canvas_stack->setMinimumSize( WIDTH_APP, HEIGHT_APP );
 
 
     cs->setVisible( false );
@@ -97,58 +93,6 @@ void SketchWindow::createWindow()
     QWidget* central_widget = new QWidget( this );
     central_widget->setLayout( hb_central_widget );
     setCentralWidget( central_widget );
-
-}
-
-
-
-
-void SketchWindow::setupScene( SketchScene* scene_ )
-{
-
-    if( scene_ == nullptr ) return;
-
-    QColor color_ = cp_color->currentColor();
-    scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
-
-
-
-    connect( ac_discard, &QAction::triggered, [=](){ if( scene_ == nullptr) return; emit scene_->discard(); } );
-
-    connect( ac_commit, &QAction::triggered, [=](){ if( scene_ == nullptr) return; emit scene_->commit(); } );
-
-    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
-
-    connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( scene_ == nullptr) return; scene_->edit( status_ ); } );
-
-    connect( ac_edit_boundary, &QAction::triggered, [=](){ if( scene_ == nullptr) return; scene_->setModeEditingBoundary(); } );
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
-                                                    { if( scene_ == nullptr) return; scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
-
-    connect( ac_axes, &QAction::triggered, scene_, &SketchScene::setAxesVisible );
-
-
-
-    connect( scene_, &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
-
-    connect( scene_, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_, double depth_ ){ emit acceptCurve( curve_, depth_ ); } );
-
-    connect( scene_, &SketchScene::commitObject, [=](){ emit commitObject(); } );
-
-    connect( scene_, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
-
-    connect( scene_, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); } );
-
-
-    connect( scene_, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
-                                                            { emit removeCurveFromObject( depth_, index_ ); } );
-
-
-    connect( scene_, &SketchScene::removeImageFromCrossSection, [=]( double depth_ )
-                                                            { emit removeImageFromCrossSection( depth_ ); } );
-
 
 }
 
@@ -178,7 +122,7 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
 
     connect( ac_commit, &QAction::triggered, [=](){ if( main_scene == nullptr) return; emit main_scene->commit(); } );
 
-    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
+//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( main_scene == nullptr) return; main_scene->edit( status_ ); } );
 
@@ -244,7 +188,7 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
 
     connect( ac_commit, &QAction::triggered, [=](){ if( tv_scene == nullptr) return; emit tv_scene->commit(); } );
 
-    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
+//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( tv_scene == nullptr) return; tv_scene->edit( status_ ); } );
 
@@ -554,7 +498,7 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
 
     connect( ac_commit, &QAction::triggered, [=](){ if( scenes[ cs_->getDepth() ] == nullptr) return; emit scenes[ cs_->getDepth() ]->commit(); } );
 
-    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
+//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( scenes[ cs_->getDepth() ] == nullptr) return; scenes[ cs_->getDepth() ]->edit( status_ ); } );
 
