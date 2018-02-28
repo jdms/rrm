@@ -708,13 +708,13 @@ void RRMApplication::startFlowDiagnostics()
 
 void RRMApplication::closeFlowDiagnostics()
 {
-    if( mainwindow->ac_output_volume->isChecked() == false ) return;
+//    if( mainwindow->ac_output_volume->isChecked() == false ) return;
 
     mainwindow->updateSketchingWindowGeometry();
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
-    mainwindow->ac_output_volume->setChecked( false );
+//    mainwindow->ac_output_volume->setChecked( false );
 
     mainwindow->controller->hideRegions();
 }
