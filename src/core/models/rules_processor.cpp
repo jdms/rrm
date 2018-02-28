@@ -272,21 +272,40 @@ void RulesProcessor::truncate()
 
 bool RulesProcessor::canUndo()
 {
+	if ( testing_surface_insertion_ )
+	{
+		return false;
+	}
+
     return modeller_.canUndo();
 }
 
 bool RulesProcessor::undo()
 {
+	if ( !canUndo() )
+	{
+		return false;
+	}
+
     return modeller_.undo();
 }
 
 bool RulesProcessor::canRedo()
 {
+	if ( testing_surface_insertion_ )
+	{
+		return false;
+	}
+
     return modeller_.canRedo();
 }
 
 bool RulesProcessor::redo()
 {
+	if ( !canRedo() )
+	{
+		return false;
+	}
     return modeller_.redo();
 }
 
