@@ -390,8 +390,9 @@
         if ( testing_surface_insertion_ == true )
         {
             modeller_.undo();
+			// testing_surface_insertion_ = false;
         }
-
+		
         std::vector<size_t> lbounds, ubounds;
         std::vector<size_t> intersected_surfaces;
 
