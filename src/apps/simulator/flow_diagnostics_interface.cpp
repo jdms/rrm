@@ -530,27 +530,55 @@ void FlowDiagnosticsInterface::clear(){
 }
 
 
-//discuss:
+
+//bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
+//{
+//	std::cout << " getUpscalledPermeability " << std::endl;
+//	region.clear_computedproperties();
+//	region.modelpreparation_upscale();
+//	region.upscalebsurface(1);
+//	region.boundarycondition();
+//	region.steadystateflowsolver();
+//	region.upscaling(1, result);
+//	region.clearnodesbc();
+//	region.upscalebsurface(2);
+//	region.boundarycondition();
+//	region.steadystateflowsolver();
+//	region.upscaling(2, result);
+//	region.clearnodesbc();
+//	region.upscalebsurface(3);
+//	region.boundarycondition();
+//	region.steadystateflowsolver();
+//	region.upscaling(3, result);
+//
+//	return true;
+//}
 
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
-	std::cout << " getUpscalledPermeability " << std::endl;
-	region.clear_computedproperties();
-	region.modelpreparation_upscale();
-	region.upscalebsurface(1);
-	region.boundarycondition();
-	region.steadystateflowsolver();
-	region.upscaling(1, result);
-	region.clearnodesbc();
-	region.upscalebsurface(2);
-	region.boundarycondition();
-	region.steadystateflowsolver();
-	region.upscaling(2, result);
-	region.clearnodesbc();
-	region.upscalebsurface(3);
-	region.boundarycondition();
-	region.steadystateflowsolver();
-	region.upscaling(3, result);
+	if (region.numberofphases() == 1){
+		std::vector<double> kk;
+		kk = region.flowbasedupscaling_sf();
+		result.append("Kx= ");
+		result.append(std::to_string(kk[0]));
+		result.append(" mD ");
+		result.append("\n");
+
+		result.append("Ky= ");
+		result.append(std::to_string(kk[1]));
+		result.append(" mD ");
+		result.append("\n");
+
+		result.append("Kz= ");
+		result.append(std::to_string(kk[2]));
+		result.append(" mD ");
+		result.append("\n");
+	}
+	else if (region.numberofphases() == 2){
+		region.flowbasedupscaling_mf();
+		result.append("upscaled absolute and relative permeability curves exported to upscaledrelativeperm.txt in bin folder");
+	}
+
 
 	return true;
 }
