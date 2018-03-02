@@ -61,12 +61,13 @@ option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"             
 
 
 ###############################################
-# Build in release mode
+# Auxiliary config files. 
 ###############################################
 
-# if(BUILD_FOR_RELEASE)
-#     set(CMAKE_BUILD_TYPE RELEASE)
-# endif()
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include_directories("./")
+
 
 
 ###############################################
@@ -107,19 +108,24 @@ endif()
 ###############################################
 
 if(STRATMOD_BUILD_USING_OPENMP)
-    if (MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
-
-    else()
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
-
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
-
-        endif()
-    endif()
+    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+    find_package(OpenMP REQUIRED)
 endif()
+
+#if(STRATMOD_BUILD_USING_OPENMP)
+#    if (MSVC)
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
+#
+#    else()
+#        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
+#
+#        else()
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
+#
+#        endif()
+#    endif()
+#endif()
 
 
 # Waiting for macOS to support OpenMP natively to adopt the following solution:
@@ -134,26 +140,6 @@ endif()
 #  endif()
 #
 #endif()
-
-
-###############################################
-# Use the Cereal library for serialization
-###############################################
-
-if(STRATMOD_BUILD_USING_CEREAL)
-    add_definitions(-DBUILD_WITH_SERIALIZATION)
-
-endif()
-
-
-###############################################
-# Auxiliary config files. 
-###############################################
-
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include_directories("./")
-
 
 
 ###############################################
@@ -207,7 +193,8 @@ if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
         -DPLANIN_BUILD_USING_OPENMP=ON 
         -DPLANIN_BUILD_USING_CEREAL=${STRATMOD_BUILD_USING_CEREAL}
         -DPLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE=${PLANIN_FORCE_POSITION_INDEPENDENT_CODE}
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
+    )
+        #-DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
 endif()
 
 ExternalProject_Add(
@@ -221,10 +208,21 @@ ExternalProject_Add(
 
 add_library(planin STATIC IMPORTED)
 add_dependencies(planin PlanIn)
-include_directories(${PLANIN_SOURCE})
+include_directories(SYSTEM ${PLANIN_SOURCE})
 
 set(PLANINLIB "${PLANIN_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}planin${CMAKE_STATIC_LIBRARY_SUFFIX}")
 set_property(TARGET planin PROPERTY IMPORTED_LOCATION ${PLANINLIB})
+
+
+
+###############################################
+# Use the Cereal library for serialization
+###############################################
+
+if(STRATMOD_BUILD_USING_CEREAL)
+    add_definitions(-DBUILD_WITH_SERIALIZATION)
+
+endif()
 
 
 
@@ -277,7 +275,7 @@ set(STRATMOD_LIB_SOURCES
 
 
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
-target_link_libraries(stratmod planin)
+target_link_libraries(stratmod planin OpenMP::OpenMP_CXX)
 add_dependencies(stratmod planin)
 
 
@@ -302,7 +300,7 @@ install(FILES ${HEADERS}
 if(${STRATMOD_BUILD_TESTS}) 
     set(TESTING_SOURCES src/main_tests.cpp src/first_test.cpp src/smodeller_impl.cpp)
     add_executable (run_tests ${TESTING_SOURCES} ${HEADERS})
-    target_link_libraries(run_tests planin)
+    target_link_libraries(run_tests planin OpenMP::OpenMP_CXX)
     add_dependencies(run_tests planin)
     add_dependencies(run_tests Catch-build)
 

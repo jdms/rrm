@@ -3,15 +3,18 @@
 
 
 #if defined( BUILD_WITH_SERIALIZATION )
-    #include "planin/cereal/cereal.hpp"
+    //
+    // The Cereal library is located inside the planin dir
+    //
+    #include <cereal/cereal.hpp>
 
-    #include "planin/cereal/types/vector.hpp"
-    #include "planin/cereal/types/map.hpp"
+    #include <cereal/types/vector.hpp>
+    #include <cereal/types/map.hpp>
 
-    #include "planin/cereal/archives/portable_binary.hpp"
-    #include "planin/cereal/archives/binary.hpp"
-    #include "planin/cereal/archives/xml.hpp"
-    #include "planin/cereal/archives/json.hpp"
+    #include <cereal/archives/portable_binary.hpp>
+    #include <cereal/archives/binary.hpp>
+    #include <cereal/archives/xml.hpp>
+    #include <cereal/archives/json.hpp>
 
     /* using access = cereal::access; */
 

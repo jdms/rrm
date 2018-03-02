@@ -97,7 +97,7 @@ class Volume
 
 
         void setResizable( bool status_ );
-        bool isResizable() const;
+        bool isResizable();
 
 
         bool isEmpty() const;

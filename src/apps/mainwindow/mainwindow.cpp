@@ -510,7 +510,18 @@ void MainWindow::createFlowWindow()
     ac_output_volume->setCheckable( true );
 
     connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
-                                                    {  if( status_ == true ) app->startFlowDiagnostics(); else app->closeFlowDiagnostics(); } );
+    {  if( status_ == true )
+        {
+            app->startFlowDiagnostics();
+            std::cout << "Start flow diagnostics" << std::endl << std::flush;
+        }
+        else
+        {
+            app->closeFlowDiagnostics();
+            std::cout << "Stop flow diagnostics" << std::endl << std::flush;
+        }
+//             else
+    } );
 
     tb_mainwindow->addAction( ac_output_volume );
 
