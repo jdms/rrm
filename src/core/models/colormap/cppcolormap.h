@@ -40,7 +40,7 @@ inline size_t findNearestNeighbourIndex(float value, const std::vector<float> &x
   for ( size_t i = 0 ; i<x.size() ; ++i )
   {
     float newDist = value-x[i];
-    if ( newDist > 0 and newDist < dist )
+    if ( (newDist > 0) && (newDist < dist) )
     {
       dist = newDist;
       idx  = i;

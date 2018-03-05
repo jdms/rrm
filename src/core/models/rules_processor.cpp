@@ -20,6 +20,8 @@
  */
 
 #include "rules_processor.hpp"
+
+#include "colormap/color_map_wrapper.hpp"
 //namespace RRM
 //{}
 
@@ -525,5 +527,9 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
     return status;
 }
 
+std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
+{
+    return ColorMapWrapper::getRegionsColor(numColors);
+}
 //{} // namespace RRM
 

@@ -9,6 +9,7 @@ project( RRMModel )
 
 
 include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
+include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/colormap)
 
 ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 
@@ -31,7 +32,8 @@ set( MODELS_HEADERS     container.h
                         rules_processor.hpp
                         stratmod_wrapper.hpp
                         mesh_generator.hpp
-                        openvolumemesh_defines.hpp )
+                        openvolumemesh_defines.hpp 
+                        colormap/color_map_wrapper.hpp)
 
 set( MODELS_SOURCES     controller.cpp
                         object.cpp

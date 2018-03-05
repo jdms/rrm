@@ -228,6 +228,8 @@
 
             bool getRegionsForSimulationTetrahedralMesh( const std::vector<double> &vertex_coordinates, const std::vector<std::size_t> &element_list, std::vector<int> &regions );
 
+            std::vector<int> getRegionsColor( std::size_t numColors );
+
         private:
             SModellerWrapper modeller_;
             struct { double x, y, z; } origin_, lenght_;
