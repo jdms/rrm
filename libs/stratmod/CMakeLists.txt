@@ -107,25 +107,25 @@ endif()
 # Configure OpenMP for parallelization
 ###############################################
 
-if(STRATMOD_BUILD_USING_OPENMP)
-    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
-    find_package(OpenMP REQUIRED)
-endif()
-
 #if(STRATMOD_BUILD_USING_OPENMP)
-#    if (MSVC)
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
-#
-#    else()
-#        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
-#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
-#
-#        else()
-#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
-#
-#        endif()
-#    endif()
+#    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+#    find_package(OpenMP REQUIRED)
 #endif()
+
+if(STRATMOD_BUILD_USING_OPENMP)
+    if (MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
+
+    else()
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
+
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
+
+        endif()
+    endif()
+endif()
 
 
 # Waiting for macOS to support OpenMP natively to adopt the following solution:
@@ -275,7 +275,8 @@ set(STRATMOD_LIB_SOURCES
 
 
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
-target_link_libraries(stratmod planin OpenMP::OpenMP_CXX)
+# target_link_libraries(stratmod planin OpenMP::OpenMP_CXX) # only valid in cmake >= 3.10
+target_link_libraries(stratmod planin)
 add_dependencies(stratmod planin)
 
 
@@ -300,7 +301,8 @@ install(FILES ${HEADERS}
 if(${STRATMOD_BUILD_TESTS}) 
     set(TESTING_SOURCES src/main_tests.cpp src/first_test.cpp src/smodeller_impl.cpp)
     add_executable (run_tests ${TESTING_SOURCES} ${HEADERS})
-    target_link_libraries(run_tests planin OpenMP::OpenMP_CXX)
+    target_link_libraries(run_tests planin)
+    # target_link_libraries(run_tests planin OpenMP::OpenMP_CXX) # only valid in cmake >= 3.10
     add_dependencies(run_tests planin)
     add_dependencies(run_tests Catch-build)
 
