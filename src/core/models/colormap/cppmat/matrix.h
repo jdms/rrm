@@ -4,13 +4,12 @@
 
 ================================================================================================= */
 
-#ifndef CPPMAT_PERIODIC_MATRIX_H
-#define CPPMAT_PERIODIC_MATRIX_H
+#ifndef CPPMAT_MATRIX_H
+#define CPPMAT_MATRIX_H
 
 #include "macros.h"
 
 namespace cppmat {
-namespace periodic {
 
 #define MAX_DIM 6
 
@@ -27,7 +26,6 @@ private:
   size_t         m_ndim=0;           // actual number of dimensions
   size_t         m_size=0;           // total number of entries == data.size() == prod(shape)
   size_t         m_shape[MAX_DIM];   // number of entries in each dimensions
-  int            m_shape_i[MAX_DIM]; // == m_shape, but with int's
   size_t         m_strides[MAX_DIM]; // stride length for each index
 
 public:
@@ -55,18 +53,18 @@ public:
   const X& operator[](size_t i) const;
 
   // index operators: access using matrix indices
-  X&       operator()(int a);
-  const X& operator()(int a) const;
-  X&       operator()(int a, int b);
-  const X& operator()(int a, int b) const;
-  X&       operator()(int a, int b, int c);
-  const X& operator()(int a, int b, int c) const;
-  X&       operator()(int a, int b, int c, int d);
-  const X& operator()(int a, int b, int c, int d) const;
-  X&       operator()(int a, int b, int c, int d, int e);
-  const X& operator()(int a, int b, int c, int d, int e) const;
-  X&       operator()(int a, int b, int c, int d, int e, int f);
-  const X& operator()(int a, int b, int c, int d, int e, int f) const;
+  X&       operator()(size_t a);
+  const X& operator()(size_t a) const;
+  X&       operator()(size_t a, size_t b);
+  const X& operator()(size_t a, size_t b) const;
+  X&       operator()(size_t a, size_t b, size_t c);
+  const X& operator()(size_t a, size_t b, size_t c) const;
+  X&       operator()(size_t a, size_t b, size_t c, size_t d);
+  const X& operator()(size_t a, size_t b, size_t c, size_t d) const;
+  X&       operator()(size_t a, size_t b, size_t c, size_t d, size_t e);
+  const X& operator()(size_t a, size_t b, size_t c, size_t d, size_t e) const;
+  X&       operator()(size_t a, size_t b, size_t c, size_t d, size_t e, size_t f);
+  const X& operator()(size_t a, size_t b, size_t c, size_t d, size_t e, size_t f) const;
 
   // arithmetic operators
   matrix<X>& operator*= (const matrix<X> &B);
@@ -81,10 +79,13 @@ public:
   // pointer / iterators
   X*       data();
   const X* data() const;
-  auto     begin();
-  auto     begin() const;
-  auto     end();
-  auto     end() const;
+
+
+  // Commented out, auto return types are part of the C++14 standard
+  /* auto     begin(); */
+  /* auto     begin() const; */
+  /* auto     end(); */
+  /* auto     end() const; */
 
   // basic algebra
   X      min() const;
@@ -252,9 +253,6 @@ inline void matrix<X>::resize(const std::vector<size_t> &shape)
     for ( size_t j = i+1 ; j < m_ndim ; ++j )
       m_strides[i] *= m_shape[j];
 
-  for ( size_t i = 0 ; i < MAX_DIM ; ++i )
-    m_shape_i[i] = static_cast<int>(m_shape[i]);
-
   m_data.resize(m_size);
 }
 
@@ -307,150 +305,96 @@ inline const X& matrix<X>::operator[](size_t i) const
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a)
+inline X& matrix<X>::operator()(size_t a)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-
   return m_data[a*m_strides[0]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a) const
+inline const X& matrix<X>::operator()(size_t a) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-
   return m_data[a*m_strides[0]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a, int b)
+inline X& matrix<X>::operator()(size_t a, size_t b)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a, int b) const
+inline const X& matrix<X>::operator()(size_t a, size_t b) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a, int b, int c)
+inline X& matrix<X>::operator()(size_t a, size_t b, size_t c)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a, int b, int c) const
+inline const X& matrix<X>::operator()(size_t a, size_t b, size_t c) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a, int b, int c, int d)
+inline X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a, int b, int c, int d) const
+inline const X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a, int b, int c, int d, int e)
+inline X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d, size_t e)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-  e = ( e < 0 ) ? e + m_shape_i[4] : ( e >= m_shape_i[4] ) ? e - m_shape_i[4] : e ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]+e*m_strides[4]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a, int b, int c, int d, int e) const
+inline const X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d, size_t e) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-  e = ( e < 0 ) ? e + m_shape_i[4] : ( e >= m_shape_i[4] ) ? e - m_shape_i[4] : e ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]+e*m_strides[4]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline X& matrix<X>::operator()(int a, int b, int c, int d, int e, int f)
+inline X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d, size_t e, size_t f)
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-  e = ( e < 0 ) ? e + m_shape_i[4] : ( e >= m_shape_i[4] ) ? e - m_shape_i[4] : e ;
-  f = ( f < 0 ) ? f + m_shape_i[5] : ( f >= m_shape_i[5] ) ? f - m_shape_i[5] : f ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]+e*m_strides[4]+f*m_strides[5]];
 }
 
 // -------------------------------------------------------------------------------------------------
 
 template<class X>
-inline const X& matrix<X>::operator()(int a, int b, int c, int d, int e, int f) const
+inline const X& matrix<X>::operator()(size_t a, size_t b, size_t c, size_t d, size_t e, size_t f) const
 {
-  a = ( a < 0 ) ? a + m_shape_i[0] : ( a >= m_shape_i[0] ) ? a - m_shape_i[0] : a ;
-  b = ( b < 0 ) ? b + m_shape_i[1] : ( b >= m_shape_i[1] ) ? b - m_shape_i[1] : b ;
-  c = ( c < 0 ) ? c + m_shape_i[2] : ( c >= m_shape_i[2] ) ? c - m_shape_i[2] : c ;
-  d = ( d < 0 ) ? d + m_shape_i[3] : ( d >= m_shape_i[3] ) ? d - m_shape_i[3] : d ;
-  e = ( e < 0 ) ? e + m_shape_i[4] : ( e >= m_shape_i[4] ) ? e - m_shape_i[4] : e ;
-  f = ( f < 0 ) ? f + m_shape_i[5] : ( f >= m_shape_i[5] ) ? f - m_shape_i[5] : f ;
-
   return m_data[a*m_strides[0]+b*m_strides[1]+c*m_strides[2]+d*m_strides[3]+e*m_strides[4]+f*m_strides[5]];
 }
 
@@ -736,43 +680,43 @@ inline X* matrix<X>::data()
 
 // -------------------------------------------------------------------------------------------------
 
-template<class X>
-inline auto matrix<X>::begin()
-{
-  return m_data.begin();
-}
+/* template<class X> */
+/* inline auto matrix<X>::begin() */
+/* { */
+/*   return m_data.begin(); */
+/* } */
 
 // -------------------------------------------------------------------------------------------------
 
-template<class X>
-inline auto matrix<X>::end()
-{
-  return m_data.end();
-}
+/* template<class X> */
+/* inline auto matrix<X>::end() */
+/* { */
+/*   return m_data.end(); */
+/* } */
 
 // -------------------------------------------------------------------------------------------------
 
-template<class X>
-inline const X* matrix<X>::data() const
-{
-  return m_data.data();
-}
+/* template<class X> */
+/* inline const X* matrix<X>::data() const */
+/* { */
+/*   return m_data.data(); */
+/* } */
 
 // -------------------------------------------------------------------------------------------------
 
-template<class X>
-inline auto matrix<X>::begin() const
-{
-  return m_data.begin();
-}
+/* template<class X> */
+/* inline auto matrix<X>::begin() const */
+/* { */
+/*   return m_data.begin(); */
+/* } */
 
 // -------------------------------------------------------------------------------------------------
 
-template<class X>
-inline auto matrix<X>::end() const
-{
-  return m_data.end();
-}
+/* template<class X> */
+/* inline auto matrix<X>::end() const */
+/* { */
+/*   return m_data.end(); */
+/* } */
 
 // =================================================================================================
 // basic algebra
@@ -1041,7 +985,7 @@ inline std::ostream& operator<<(std::ostream& out, matrix<X>& src)
 
 // =================================================================================================
 
-}} // namespace ...
+} // namespace ...
 
 #endif
 
