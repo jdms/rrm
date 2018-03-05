@@ -524,6 +524,10 @@ void FlowDiagnosticsInterface::exportResultstoVTK(const std::string& filename){
     region.writeresult(const_cast<char *>(filename.c_str()));
 }
 
+void FlowDiagnosticsInterface::exportMeshtoMSH(const std::string& filename){
+	region.writevolumemeshMSH(const_cast<char *>(filename.c_str()));
+}
+
 
 void FlowDiagnosticsInterface::clear(){
     region.clearregion();
@@ -687,7 +691,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	region.readinfacets(facetlist);
 	region.numberofsurfaces(triangle_meshes.size());
 	//for all surfaces (sketched and vertical), remember boundary and internal for surface bc
-	region.setbsurfaceid(minsid, maxsid, triangle_meshes.size(), triangle_meshes.size() + 1, triangle_meshes.size() + 2, triangle_meshes.size() + 3);//order same in region.buildsurfacemesh()
+	region.setoutbsurfaceid(minsid, maxsid, triangle_meshes.size(), triangle_meshes.size() + 1, triangle_meshes.size() + 2, triangle_meshes.size() + 3);//order same in region.buildsurfacemesh()
 	region.createbsurfacelist(triangle_meshes.size() + 4);
 	region.setnoflowbsurface(minsid);
 	region.setnoflowbsurface(maxsid);
