@@ -661,3 +661,50 @@ std::vector<size_t> SUtilities::getSurfacesIndicesAbovePoint(double x, double y,
     return model_.pimpl_->getSurfacesIndicesAbovePoint(x, y, z);
 }
 
+bool SUtilities::getQuadMesh( std::size_t surface_id, std::vector<std::size_t> &points, std::vector<std::size_t> &valid_points, std::size_t &num_width, std::size_t &num_length )
+{
+    if ( model_.pimpl_->container_.empty() )
+    {
+        return false;
+    }
+
+    size_t id = 0;
+    if ( model_.pimpl_->getSurfaceIndex(surface_id, id) == false )
+    {
+        return false;
+    }
+
+    num_width = model_.pimpl_->container_[0]->getNumX();
+    num_length = model_.pimpl_->container_[0]->getNumY();
+
+    size_t num_points = num_width*num_length;
+    size_t num_coordinates = 3*num_points;
+
+    points.resize(num_coordinates);
+    valid_points.resize(num_points);
+
+    Point3 p;
+    size_t index = 0;
+    PlanarSurface::Natural vindex = 0;
+
+    for ( size_t j = 0; j < num_length; ++j )
+    {
+        for ( size_t i = 0; i < num_width ; ++i )
+        {
+            index = j*num_width + i; 
+            vindex = model_.pimpl_->container_[0]->getVertexIndex( 
+                    static_cast<PlanarSurface::Natural>(i), 
+                    static_cast<PlanarSurface::Natural>(j)
+                    );
+            valid_points[index] = model_.pimpl_->container_[id]->getVertex3D(vindex, p);
+
+            points[3*index + 0] = p.x; 
+            points[3*index + 1] = p.y; 
+            points[3*index + 2] = p.z;
+        }
+    }
+
+    return true;
+}
+
+
