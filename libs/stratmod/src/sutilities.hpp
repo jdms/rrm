@@ -66,6 +66,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         std::vector<size_t> getSurfacesIndicesBelowPoint(double x, double y, double z);
         std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);
 
+        bool getQuadMesh( std::size_t surface_id, std::vector<std::size_t> &points, std::vector<std::size_t> &valid_points, std::size_t &num_width, std::size_t &num_length );
+
     private:
         SModeller &model_;
 

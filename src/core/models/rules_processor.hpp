@@ -230,6 +230,8 @@
 
             std::vector<int> getRegionsColor( std::size_t numColors );
 
+            bool getQuadMesh( std::size_t surface_id, std::vector<std::size_t> &points, std::vector<std::size_t> &valid_points, std::size_t &num_width, std::size_t &num_length );
+
         private:
             SModellerWrapper modeller_;
             struct { double x, y, z; } origin_, lenght_;
