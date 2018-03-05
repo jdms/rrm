@@ -1310,6 +1310,7 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     object_tree->addOutputVolume();
 
 
+//    std::vector< int > colors_ = getRegionColors( number_of_regions );
 
 
     std::random_device rd;
