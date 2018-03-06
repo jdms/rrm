@@ -33,6 +33,7 @@ set( MODELS_HEADERS     container.h
                         stratmod_wrapper.hpp
                         mesh_generator.hpp
                         openvolumemesh_defines.hpp 
+                        irap_grid_exporter.hpp
                         colormap/color_map_wrapper.hpp)
 
 set( MODELS_SOURCES     controller.cpp
@@ -43,6 +44,7 @@ set( MODELS_SOURCES     controller.cpp
                         well.cpp
                         rules_processor.cpp
                         mesh_generator.cpp
+                        irap_grid_exporter.cpp
                         openvolumemesh_defines.cpp)
 
 add_library( ${PROJECT_NAME} STATIC ${MODELS_HEADERS} ${MODELS_SOURCES} )

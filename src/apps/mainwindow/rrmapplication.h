@@ -190,6 +190,8 @@ class RRMApplication
 
         void enablePreview( bool status_ );
 
+        void exportToIRAP();
+
 
 
     protected:

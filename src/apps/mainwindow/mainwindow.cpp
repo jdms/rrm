@@ -136,11 +136,15 @@ void MainWindow::createMenuBar()
 //    connect ( ac_show_sidebar, &QAction::toggled , ac_sidebar , &QAction::setChecked );
 
 
+    QAction *ac_export = new QAction( "Export", this );
+    connect( ac_export, &QAction::triggered, [=](){ app->exportToIRAP(); } );
 
     mn_file = menuBar()->addMenu ( tr ( "&File" ) );
     mn_file->addAction ( ac_clear );
     mn_file->addAction ( ac_save );
     mn_file->addAction ( ac_load );
+    mn_file->addSeparator();
+    mn_file->addAction( ac_export );
     mn_file->addAction ( ac_exit );
 
     mn_windows = menuBar()->addMenu ( tr ( "&Windows" ) );
