@@ -1310,7 +1310,7 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     object_tree->addOutputVolume();
 
 
-//    std::vector< int > colors_ = getRegionColors( number_of_regions );
+
 
 
     std::random_device rd;
@@ -1319,9 +1319,15 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
 
 
     std::size_t number_of_regions = regions_.size();
+//    std::vector< int > colors_ = rules_processor.getRegionColors( number_of_regions );
+
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
         Volume::Color color_;
+//        color_.r = colors_[ 3*i ];
+//        color_.g = colors_[ 3*i + 1 ];
+//        color_.b = colors_[ 3*i + 2 ];
+
         color_.r = distr( eng );
         color_.g = distr( eng );
         color_.b = distr( eng );
@@ -1658,17 +1664,14 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
     if( resolution_ == Controller::MeshResolution::LOW )
     {
         rules_processor.setLowResolution();
-        std::cout << "Changing to Regular resolution" << std::endl << std::flush;
     }
     else if( resolution_ == Controller::MeshResolution::MEDIUM )
     {
         rules_processor.setMediumResolution();
-        std::cout << "Changing to Good resolution" << std::endl << std::flush;
     }
     else if( resolution_ == Controller::MeshResolution::HIGH )
     {
         rules_processor.setHighResolution();
-        std::cout << "Changing to Better resolution" << std::endl << std::flush;
     }
 }
 
