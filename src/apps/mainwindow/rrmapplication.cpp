@@ -643,6 +643,7 @@ void RRMApplication::getHeightMapTopView()
     double w_, h_, l_;
     mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
 
+    double max_ = ( l_ > h_ ? l_:h_ );
     std::string image_ = mainwindow->canvas3d->sendImage( oy_, oy_ + h_, w_, l_ );
     mainwindow->sketch_topview_window->setTopViewImage( image_ );
 
