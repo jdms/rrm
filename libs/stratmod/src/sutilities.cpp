@@ -661,7 +661,7 @@ std::vector<size_t> SUtilities::getSurfacesIndicesAbovePoint(double x, double y,
     return model_.pimpl_->getSurfacesIndicesAbovePoint(x, y, z);
 }
 
-bool SUtilities::getQuadMesh( std::size_t surface_id, std::vector<std::size_t> &points, std::vector<std::size_t> &valid_points, std::size_t &num_width, std::size_t &num_length )
+bool SUtilities::getQuadMesh( std::size_t surface_id, std::vector<std::double> &points, std::vector<std::bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
 {
     if ( model_.pimpl_->container_.empty() )
     {

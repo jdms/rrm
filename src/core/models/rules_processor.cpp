@@ -532,7 +532,7 @@ std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
     return ColorMapWrapper::getRegionsColor(numColors);
 }
 
-bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<std::size_t> &points, std::vector<std::size_t> &valid_points, std::size_t &num_width, std::size_t &num_length )
+bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<std::double> &points, std::vector<std::bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
 {
     SUtilitiesWrapper u(modeller_);
     bool status = u.getQuadMesh(surface_id, points, valid_points, num_width, num_length);
