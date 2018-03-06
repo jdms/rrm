@@ -345,8 +345,8 @@ void SketchScene::setImageToCrossSection( const QString& file_ )
     QPixmap image1;
     image1.load( file_ );
 
-    float x_ = image1.width();
-    float y_ = image1.height();
+    float x_ = static_cast< float >( image1.width() );
+    float y_ = static_cast< float >( image1.height() );
 
     setImageToCrossSection( file_, 0.0, 0.0, x_, y_ );
 
