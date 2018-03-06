@@ -126,7 +126,17 @@ std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, doub
 
         if( zmax_ >= height1 )
         {
-            camera.setOrthographicMatrix( -0.5*V, 0.5*V, -0.5,0.5, 0.1f, 100.f );
+            camera.setOrthographicMatrix( -0.5*(width_/width()), 0.5*(width_/width()), -0.5/(zmax_/height1),0.5/(zmax_/height1), 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5/(zmax_/height1), 0.5/(zmax_/height1), -0.5*V,0.5*V, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5/(zmax_/height1), 0.5/(zmax_/height1), -0.5,0.5, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5*(zmax_/height1), 0.5*(zmax_/height1), -0.5,0.5, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5/V, 0.5/V, -0.5*V,0.5*V, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5, 0.5, -0.5,0.5, 0.1f/V, 100.f/V );
+//            camera.setOrthographicMatrix( -0.5, 0.5, -0.5,0.5, 0.1f*V, 100.f*V );
+//            camera.setOrthographicMatrix( -0.5, 0.5, -0.5/V,0.5/V, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5, 0.5, -0.5*V,0.5*V, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5/V, 0.5/V, -0.5,0.5, 0.1f, 100.f );
+//            camera.setOrthographicMatrix( -0.5*V, 0.5*V, -0.5,0.5, 0.1f, 100.f );
             std::cout << "A: height greater than depth" << std::flush << std::endl;
         }
         else
@@ -163,16 +173,16 @@ std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, doub
 
 
 
-//    canvas_width = width();
-//    canvas_height = height();
+    canvas_width = width();
+    canvas_height = height();
 
-//    camera.reset();
-//    glViewport( 0 , 0 , (float) width() , (float)height() );
-//    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
-//    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
+    camera.reset();
+    glViewport( 0 , 0 , (float) width() , (float)height() );
+    camera.setViewport( Eigen::Vector2f( width(), (float)height() ) );
+    camera.setPerspectiveMatrix( camera.getFovy(), (float) width()/(float)height(), 0.1f , 100.0f );
 
-//    scene3d->updateObjects();
-//    update();
+    scene3d->updateObjects();
+    update();
 
 
     return path_;

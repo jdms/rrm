@@ -1324,13 +1324,13 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
         Volume::Color color_;
-//        color_.r = colors_[ 3*i ];
-//        color_.g = colors_[ 3*i + 1 ];
-//        color_.b = colors_[ 3*i + 2 ];
+        color_.r = colors_[ 3*i ];
+        color_.g = colors_[ 3*i + 1 ];
+        color_.b = colors_[ 3*i + 2 ];
 
-        color_.r = distr( eng );
-        color_.g = distr( eng );
-        color_.b = distr( eng );
+//        color_.r = distr( eng );
+//        color_.g = distr( eng );
+//        color_.b = distr( eng );
 
 
         Regions* region_ = new Regions();
@@ -1690,3 +1690,140 @@ bool Controller::isPreviewEnabled() const
 {
     return preview_enabled;
 }
+
+//void Controller::exportToIrapGrid( const std::string& filename )
+//{
+
+
+//    QString surface_filename;
+//    std::vector< double > points;
+
+//    for( auto k = 0; k < number_surfaces; ++k )
+//    {
+//        std::vector< double > points_list;
+//        std::vector< bool > valid_points;
+//        std::size_t nu;
+//        std::size_t nv;
+
+//        rules_processor.getQuadMesh( k, points_list, valid_points, nu, nv );
+
+//        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
+//        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
+//        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
+
+//        std::size_t number_elements = nu*nv;
+
+//        for( auto i = 0; i < number_elements; ++i )
+//        {
+
+//            double x = points_list[ 3*i + 0 ];
+//            double y = points_list[ 3*i + 1 ];
+//            double z = points_list[ 3*i + 2 ];
+
+//            if( x >= xmax ) xmax = x;
+//            else if( x < xmin ) xmin = x;
+
+//            if( y >= ymax ) ymax = y;
+//            else if( y < ymin ) ymin = y;
+
+
+//            if( z >= zmax ) zmax = z;
+//            else if( z < zmin ) zmin = z;
+
+//            points.push_back( z );
+
+//        }
+
+//        float dx = (float)( xmax - xmin )/nu;
+//        float dy = (float)( ymax - ymin )/nv;
+
+//        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+//        exporter.setVectorValues( points );
+//        exporter.setSize( (int) nu,  (int) nv );
+//        exporter.setSpacing( dx, dy );
+
+//        if( number_surfaces > 1 )
+//            surface_filename.replace( QString(".IRAPG"), QString("%1.IRAPG").arg( k ) );
+
+//        exporter.writeGridData( surface_filename.toStdString() );
+//        exporter.clearData();
+
+//        points.clear();
+//        surface_filename.clear();
+//    }
+
+//        /*
+
+//    std::vector<double> points_list;
+//    std::vector<size_t> nu_list;
+//    std::vector<size_t> nv_list; // surfaces number: or height
+//    size_t num_extrusion_steps = 5;
+
+
+//    IrapGridExporter exporter;
+
+//    size_t number_surfaces = nu_list.size();
+//    std::vector<float> points;
+
+//    size_t id = 0;
+
+//    QString surface_filename;
+
+//    for( auto k = 0; k < number_surfaces; ++k )
+//    {
+//        size_t nu = nu_list[ k ];
+//        size_t nv = nv_list[ k ];
+//        size_t number_elements = nu*nv;
+
+//        double xmax = points_list[ 3*id + 0 ], xmin = points_list[ 3*id + 0 ];
+//        double ymax = points_list[ 3*id + 1 ], ymin = points_list[ 3*id + 1 ];
+//        double zmax = points_list[ 3*id + 2 ], zmin = points_list[ 3*id + 2 ];
+
+
+//        for( auto i = 0; i < number_elements; ++i )
+//        {
+
+//            double x = points_list[ 3*( id + i ) + 0 ];
+//            double y = points_list[ 3*( id + i ) + 1 ];
+//            double z = points_list[ 3*( id + i ) + 2 ];
+
+//            if( x > xmax ) xmax = x;
+//            if( x < xmin ) xmin = x;
+
+//            if( y > ymax ) ymax = y;
+//            if( y < ymin ) ymin = y;
+
+
+//            if( z > zmax ) zmax = z;
+//            if( z < zmin ) zmin = z;
+
+//            points.push_back( (float) z );
+
+//        }
+
+//        id += number_elements;
+
+
+//        float dx = (float)( xmax - xmin )/nu;
+//        float dy = (float)( ymax - ymin )/nv;
+
+//        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+//        exporter.setVectorValues( points );
+//        exporter.setSize( (int) nu,  (int) nv );
+//        exporter.setSpacing( dx, dy );
+
+//        surface_filename = QString( filename.c_str() );
+
+//        if( number_surfaces > 1 )
+//            surface_filename.replace( QString(".IRAPG"), QString("%1.IRAPG").arg( k ) );
+
+//        exporter.writeGridData( surface_filename.toStdString() );
+//        exporter.clearData();
+
+//        points.clear();
+//        surface_filename.clear();
+
+
+//    }
+//*/
+//}
