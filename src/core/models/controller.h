@@ -14,10 +14,12 @@
 #include "./core/definitions/constants.hpp"
 #include "./core/models/container.h"
 #include "./core/widgets/objecttree.h"
+#include "./core/models/irap_grid_exporter.hpp"
 #include "./apps/3dview/scene3d.h"
 #include "crosssection.h"
 #include "regions.h"
 #include "rules_processor.hpp"
+
 
 
 class Volume;
@@ -233,6 +235,8 @@ class Controller
 
         void setPreviewEnabled( bool status_ );
         bool isPreviewEnabled() const;
+
+        void exportToIrapGrid();
 
     protected:
 
