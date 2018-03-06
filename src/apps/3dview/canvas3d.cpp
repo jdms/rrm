@@ -126,7 +126,7 @@ std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, doub
 
         if( zmax_ >= height1 )
         {
-            camera.setOrthographicMatrix( -0.5/V, 0.5/V, -0.5,0.5, 0.1f, 100.f );
+            camera.setOrthographicMatrix( -0.5*V, 0.5*V, -0.5,0.5, 0.1f, 100.f );
             std::cout << "A: height greater than depth" << std::flush << std::endl;
         }
         else
