@@ -97,7 +97,7 @@ inline cppmat::matrix<int> interp(const cppmat::matrix<int> &data , size_t N)
   cppmat::matrix<int> out({N,data.shape(1)});
   std::vector<float> x,xi,c(n),ci;
 
-  x  = linspace(0.0,1.0,n);
+  x  = linspace(0.0,1.0,n-1);
   xi = linspace(0.0,1.0,N);
 
   for ( size_t j = 0 ; j < data.shape(1) ; j++ )

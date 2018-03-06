@@ -1319,7 +1319,7 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
 
 
     std::size_t number_of_regions = regions_.size();
-//    std::vector< int > colors_ = rules_processor.getRegionsColor( 2 );
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
 
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
