@@ -257,26 +257,35 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
     if( mesh_type == TYPE::TRIANGLES )
     {
 
-        shader->bind();
+        //shader->bind();
 
-        shader->setUniform( "ModelMatrix" , M );
-        shader->setUniform( "ViewMatrix" , V );
-        shader->setUniform( "ProjectionMatrix" , P );
-        shader->setUniform( "WIN_SCALE" , (float) width , (float) height );
-
-
-        glEnable( GL_DEPTH_TEST );
+        //shader->setUniform( "ModelMatrix" , M );
+        //shader->setUniform( "ViewMatrix" , V );
+        //shader->setUniform( "ProjectionMatrix" , P );
+        //shader->setUniform( "WIN_SCALE" , (float) width , (float) height );
 
 
-
-            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-            glEnable( GL_POLYGON_OFFSET_FILL );
-            glPolygonOffset( 2.0f, 1.0f );
+        //glEnable( GL_DEPTH_TEST );
 
 
-            shader->setUniform( "solid" , true );
-            shader->setUniform( "testing" , false );
 
+        //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        //    glEnable( GL_POLYGON_OFFSET_FILL );
+        //    glPolygonOffset( 2.0f, 1.0f );
+
+
+        //    shader->setUniform( "solid" , true );
+        //    shader->setUniform( "testing" , false );
+
+
+		shader_mesh->bind();
+
+		shader_mesh->setUniform("WIN_SCALE", width, height);
+
+		shader_mesh->setUniform("ModelMatrix", Eigen::Affine3f::Identity().data(), 4, GL_FALSE, 1);
+		shader_mesh->setUniform("ViewMatrix", V.data(), 4, GL_FALSE, 1);
+		shader_mesh->setUniform("ProjectionMatrix", P.data(), 4, GL_FALSE, 1);
+		shader_mesh->setUniform("isClip", GL_FALSE);
 
             glBindVertexArray( entities_.at("Sketchies").vertexArray_ );
 
@@ -285,27 +294,27 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
             glBindVertexArray ( 0 );
 
+		shader_mesh->unbind();
+        //glDisable(GL_POLYGON_OFFSET_FILL);
 
-        glDisable(GL_POLYGON_OFFSET_FILL);
 
 
+        //glEnable( GL_DEPTH_TEST );
+        //glDepthFunc( GL_LEQUAL );
+        //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-        glEnable( GL_DEPTH_TEST );
-        glDepthFunc( GL_LEQUAL );
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        //shader->setUniform( "solid" , false );
 
-        shader->setUniform( "solid" , false );
+        //glBindVertexArray( entities_.at("Sketchies").vertexArray_ );
 
-        glBindVertexArray( entities_.at("Sketchies").vertexArray_ );
+        //    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_elemets_ );
+        //    glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, entities_.at("Sketchies").vertexBuffer_elemets_ );
-            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+        //glBindVertexArray ( 0 );
 
-        glBindVertexArray ( 0 );
+        //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
-        shader->unbind();
+        //shader->unbind();
 
 
     }
