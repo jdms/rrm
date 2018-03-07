@@ -122,9 +122,9 @@ void ObjectTree::hideInputVolume()
 
 void ObjectTree::hideOutputVolume()
 {
-//    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
-//    vol_->setHidden( true );
-//    setVolumeVisible( 1, false );
+    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
+    vol_->setHidden( true );
+    setVolumeVisible( 1, false );
 
 //    int nchildren = vol_->childCount();
 //    for( int j = 0; j < nchildren; ++j )
@@ -137,7 +137,7 @@ void ObjectTree::hideOutputVolume()
 //        std::cout << " Region to be off: " << obj_->getIndex() << std::endl << std::flush;
 //    }
 
-//    update();
+    update();
 
 }
 

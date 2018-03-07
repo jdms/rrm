@@ -52,6 +52,7 @@ class Scene3d: public QObject, public Scene
         void addRegion( Regions* const& raw_ );
         void updateRegion( std::size_t index_ );
         void updateRegions();
+        void removeRegions();
 //        void clearRegion();
 
         void addMainCrossSection( CrossSection* const& raw_ );

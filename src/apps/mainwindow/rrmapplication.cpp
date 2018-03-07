@@ -488,7 +488,19 @@ void RRMApplication::save( const std::string& filename_ )
 void RRMApplication::load( const std::string& filename_ )
 {
     clear();
-    mainwindow->controller->loadFile( filename_ );
+
+    Controller::MeshResolution resol_;
+
+    mainwindow->controller->loadFile( filename_, resol_ );
+
+    if ( resol_ == Controller::MeshResolution::LOW )
+        mainwindow->object_properties->checkLowResolution();
+    else if ( resol_ == Controller::MeshResolution::MEDIUM )
+        mainwindow->object_properties->checkMediumResolution();
+    else if ( resol_ == Controller::MeshResolution::HIGH )
+        mainwindow->object_properties->checkHighResolution();
+
+    getVolumeDimensionsFromController();
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
     checkUndoRedo();
     checkSketchStatus();
@@ -678,6 +690,9 @@ void RRMApplication::removeImageFromTopView()
 
 void RRMApplication::startFlowDiagnostics()
 {
+    mainwindow->ac_undo->setEnabled( false );
+    mainwindow->ac_redo->setEnabled( false );
+
     mainwindow->dw_sketchwindow->setVisible( false );
     mainwindow->dw_topview_window->setVisible( false );
     mainwindow->dw_flow_window->setVisible( true );
@@ -709,7 +724,9 @@ void RRMApplication::startFlowDiagnostics()
 
 void RRMApplication::closeFlowDiagnostics()
 {
-//    if( mainwindow->ac_output_volume->isChecked() == false ) return;
+
+    mainwindow->ac_undo->setEnabled( true );
+    mainwindow->ac_redo->setEnabled( true );
 
     mainwindow->updateSketchingWindowGeometry();
     mainwindow->dw_sketchwindow->setVisible( true );
@@ -805,16 +822,19 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 void RRMApplication::setLowResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::LOW );
+    getVolumeDimensionsFromController();
 }
 
 void RRMApplication::setMediumResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::MEDIUM );
+    getVolumeDimensionsFromController();
 }
 
 void RRMApplication::setHighResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::HIGH );
+    getVolumeDimensionsFromController();
 }
 
 

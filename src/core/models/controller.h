@@ -184,8 +184,8 @@ class Controller
 
 
         void saveFile( const std::string& filename );
-        void loadFile( const std::string& filename );
-        void loadObjects( const std::string& filename );
+        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
+        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
 
 
         bool undo();
