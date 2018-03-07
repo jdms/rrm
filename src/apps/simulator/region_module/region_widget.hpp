@@ -90,6 +90,11 @@ namespace RRM
                         QLabel* gradient_permeability_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_permeability_;
                         QDoubleSpinBox* doubleSpinbBox_high_permeability_;
+						double low_permeability_;
+						double high_permeability_;
+						double default_low_permeability_;
+						double default_high_permeability_;
+
 
                         std::map< int, std::pair<double,double> > permeability_gradient_values_;
                         std::tuple<int, int, int, int> permeability_position_;
@@ -99,6 +104,10 @@ namespace RRM
                         QLabel* gradient_porosity_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_porosity_;
                         QDoubleSpinBox* doubleSpinbBox_high_porosity_;
+						double low_porosity_;
+						double high_porosity_;
+						double default_low_porosity_;
+						double defaul_high_porosity_;
 
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
