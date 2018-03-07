@@ -62,16 +62,22 @@ namespace RRM
             this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 8);
             this->porosity_position_ = std::make_tuple<int, int, int, int>(1, 1, 1, 8);
 
-			doubleSpinbBox_low_porosity_->setMinimum(0.01);
-			doubleSpinbBox_low_porosity_->setMaximum(0.35);
+
+			low_porosity_ = 0.01;
+			high_porosity_ = 0.99;
+			default_low_porosity_ = 0.28;
+			defaul_high_porosity_ = 0.32;
+
+			doubleSpinbBox_low_porosity_->setMinimum(low_porosity_);
+			doubleSpinbBox_low_porosity_->setMaximum(high_porosity_);
 			doubleSpinbBox_low_porosity_->setDecimals(2);
-			doubleSpinbBox_high_porosity_->setMinimum(0.01);
-			doubleSpinbBox_high_porosity_->setMaximum(0.35);
+			doubleSpinbBox_high_porosity_->setMinimum(low_porosity_);
+			doubleSpinbBox_high_porosity_->setMaximum(high_porosity_);
 			doubleSpinbBox_high_porosity_->setDecimals(2);
 
-			qxt_span_slider_porosity_->setMinimum(1);
+			qxt_span_slider_porosity_->setMinimum(0);
 			qxt_span_slider_porosity_->setMaximum(100);
-			slider_porosity_->setMinimum(1);
+			slider_porosity_->setMinimum(0);
 			slider_porosity_->setMaximum(100);
 
             /// @FIXME September  PERMEABILITY
@@ -94,6 +100,11 @@ namespace RRM
 			this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_permeability_, 3, 9);
             this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 2, 8);
             this->permeability_position_ = std::make_tuple<int, int, int, int>(3, 1, 1, 8);
+
+			low_permeability_ = 0.001;
+			high_permeability_ = 10000.0;
+			default_low_permeability_ = 150.0;
+			default_high_permeability_ = 250.0;
 
             doubleSpinbBox_low_permeability_->setMinimum(0.001);
             doubleSpinbBox_low_permeability_->setMaximum(10000.0);
@@ -264,7 +275,7 @@ namespace RRM
 
                 connect(qxt_span_slider_porosity_, &QxtSpanSlider::lowerValueChanged, this, [=]()
                 {
-                    double ex = 0.01 + (0.0034)*static_cast<double>(qxt_span_slider_porosity_->lowerValue());
+					double ex = 0.01 + ( (high_porosity_ - low_porosity_)*0.01 )*static_cast<double>(resersePorosity(this->is_reversed_porosity_, qxt_span_slider_porosity_->lowerValue()));
                     doubleSpinbBox_low_porosity_->setValue(ex);
 
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
@@ -273,7 +284,7 @@ namespace RRM
                     connect(doubleSpinbBox_low_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
                     {
                         double ex = doubleSpinbBox_low_porosity_->value();
-                        int i = static_cast<int>((ex - 0.01) / 0.0034);
+						int i = static_cast<int>((ex - 0.01) / ((high_porosity_ - low_porosity_)*0.01));
                         qxt_span_slider_porosity_->setLowerPosition(i);
 
                         ///@September
@@ -284,7 +295,7 @@ namespace RRM
 
                     connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperValueChanged, this, [=]()
                 {
-                    double ex = 0.01 + (0.0034)*static_cast<double>(qxt_span_slider_porosity_->upperValue());
+					double ex = 0.01 + ((high_porosity_ - low_porosity_)*0.01)*static_cast<double>(resersePorosity(this->is_reversed_porosity_, qxt_span_slider_porosity_->upperValue()));
                     doubleSpinbBox_high_porosity_->setValue(ex);
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
                 });
@@ -292,7 +303,7 @@ namespace RRM
                     connect(doubleSpinbBox_high_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
                     {
                         double ex = doubleSpinbBox_high_porosity_->value();
-                        int i = static_cast<int>((ex - 0.01) / 0.0034);
+						int i = static_cast<int>((ex - 0.01) / ((high_porosity_ - low_porosity_)*0.01));
                         qxt_span_slider_porosity_->setUpperPosition(i);
                         porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = doubleSpinbBox_high_porosity_->value();
                     });
@@ -468,16 +479,16 @@ namespace RRM
 					this->doubleSpinbBox_low_permeability_->setValue(tmp);
 				});
 				
-                                connect(this->inverted_porosity_, &QCheckBox::toggled, this, [=](bool _is_checked)
-                                {
-                                        this->is_reversed_porosity_ = _is_checked;
-										qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
-                                        double tmp = 0.0;
-                                        tmp = this->doubleSpinbBox_high_porosity_->value();
-                                        this->doubleSpinbBox_high_porosity_->setValue(this->doubleSpinbBox_low_porosity_->value());
-                                        this->doubleSpinbBox_low_porosity_->setValue(tmp);
+                connect(this->inverted_porosity_, &QCheckBox::toggled, this, [=](bool _is_checked)
+                {
+                        this->is_reversed_porosity_ = _is_checked;
+						qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
+                        double tmp = 0.0;
+                        tmp = this->doubleSpinbBox_high_porosity_->value();
+                        this->doubleSpinbBox_high_porosity_->setValue(this->doubleSpinbBox_low_porosity_->value());
+                        this->doubleSpinbBox_low_porosity_->setValue(tmp);
 
-                                });
+                });
 
         }
 
