@@ -95,6 +95,11 @@
 
             bool setHighResolution();
 
+            bool isLowResolution();
+
+            bool isMediumResolution();
+
+            bool isHighResolution();
 
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
 

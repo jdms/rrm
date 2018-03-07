@@ -1,16 +1,15 @@
 #ifndef __COLOR_MAP_WRAPPER_HPP__
 #define __COLOR_MAP_WRAPPER_HPP__
 
-#include <array>
-#include <map>
 #include <vector>
-#include <initializer_list>
 #include <memory>
+
+#include <cstdio>
 
 #include <QColor>
 
-#include "cppcolormap.h"
 #include "colorbrewer.h" 
+#include "nspline.h"
 
 class ColorMapWrapper
 {
@@ -41,7 +40,7 @@ class ColorMapWrapper
             // Get base colors
             // 
 
-            std::initializer_list<QColor> colors;
+            std::vector<QColor> colors;
 
             if ( num_colors < min_colors )
             {
@@ -170,6 +169,16 @@ class ColorMapWrapper
             }
 
             return y_new;
+        }
+
+        void getRGB( std::string hex_code, int &r, int &g, int &b )
+        {
+            hex_code.erase(0,1);
+
+            sscanf_s( hex_code.data(), "%02x%02x%02x", &r, &g, &b );
+            
+            std::cout << "hex = (r, g, b) >>> " << hex_code << " = (";
+            std::cout << r << ", " << g << ", " << b << ")\n" << std::flush;
         }
 
         //
