@@ -48,6 +48,7 @@ namespace RRM
             qxt_span_slider_porosity_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
             qxt_span_slider_porosity_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
 			this->is_reversed_porosity_ = false;
+			qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
 
             gradient_porosity_Label_ = new QLabel(tr("Porosity"));
             doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
@@ -457,11 +458,27 @@ namespace RRM
                 });
 
 				/// FIXME January 2018
-				connect(this->ui_->checkBox_Inverted_, &QCheckBox::toggled, this, [=](bool _is_checked)
+				connect(this->inverted_permeability_, &QCheckBox::toggled, this, [=](bool _is_checked)
 				{
 					this->is_reversed_permeability_ = _is_checked;
+					qxt_span_slider_permeability_->setInvertedAppearance(this->is_reversed_permeability_);
+					double tmp = 0.0;
+					tmp = this->doubleSpinbBox_high_permeability_->value();
+					this->doubleSpinbBox_high_permeability_->setValue(this->doubleSpinbBox_low_permeability_->value());
+					this->doubleSpinbBox_low_permeability_->setValue(tmp);
 				});
 				
+                                connect(this->inverted_porosity_, &QCheckBox::toggled, this, [=](bool _is_checked)
+                                {
+                                        this->is_reversed_porosity_ = _is_checked;
+										qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
+                                        double tmp = 0.0;
+                                        tmp = this->doubleSpinbBox_high_porosity_->value();
+                                        this->doubleSpinbBox_high_porosity_->setValue(this->doubleSpinbBox_low_porosity_->value());
+                                        this->doubleSpinbBox_low_porosity_->setValue(tmp);
+
+                                });
+
         }
 
         /// @FIXME There is a region ZERO that is represented as 1 ....

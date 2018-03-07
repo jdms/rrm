@@ -625,7 +625,8 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	NODE node_;
 	FACET facet_;
 	int cc = 0;
-	int minsid, maxsid;
+	int minsid = 0;
+	int maxsid = 0;
 	double minz = 100000000;
 	double maxz = -100000000;
 	for (int isur = 0; isur < triangle_meshes.size(); isur++){

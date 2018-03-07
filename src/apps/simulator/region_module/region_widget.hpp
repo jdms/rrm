@@ -10,6 +10,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QCheckBox>
 #include <QPixmap>
 #include <Eigen/Dense>
 
