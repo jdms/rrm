@@ -1201,8 +1201,10 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
             scene3d->updateObject( id );
             object_tree->updateObjectColor( id, r_, g_, b_ );
+            object_tree->updateObjectName( id, getObjectName( id ) );
 
         }
+
     }
 }
 
