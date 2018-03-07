@@ -22,11 +22,10 @@ class PolyCurve
         {
             if( data.vertices.empty() == true )
                 return true;
-            else if( data.vertices.size() < 15 )
+            else if( data.vertices.size() < 7 )
                 return true;
 
             return false;
-//            return data.vertices.empty();
         }
 
 

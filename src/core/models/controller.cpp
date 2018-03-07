@@ -454,9 +454,6 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
     obj_->setEditable( true );
     obj_->setVisible( true );
 
-    object_tree->setObjectVisibility( current_object, true );
-
-
 
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
     cs_->addObject( obj_->getIndex(), &curve_ );
@@ -592,6 +589,7 @@ bool Controller::createPreviewSurface()
     std::vector< double > normals_;
     rules_processor.getNormals( current_object, normals_ );
 
+    object_tree->setObjectVisibility( current_object, true );
 
     Surface surface;
     surface.setVertices( vertices_ );
@@ -651,7 +649,8 @@ bool Controller::createObjectSurface()
     }
 
 
-    if( surface_created == false ) return false;
+    if( surface_created == false )
+        return false;
 
     obj_->removeCrossSectionCurves();
     obj_->removeTrajectory();
