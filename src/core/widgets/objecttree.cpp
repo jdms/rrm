@@ -250,6 +250,17 @@ void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, in
 }
 
 
+void ObjectTree::updateObjectName( std::size_t index_, const std::string& name_ )
+{
+    if( items.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* obj_ = items.getElement( index_ );
+    obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
+    update();
+
+}
+
+
 void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 {
     if( items.findElement( index_ ) == false ) return;
