@@ -458,9 +458,6 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
 
 
-//    bool status_ = main_csection->addObject( obj_->getIndex(), &curve_ );
-
-
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
     cs_->addObject( obj_->getIndex(), &curve_ );
 
@@ -574,6 +571,7 @@ bool Controller::createPreviewSurface()
     }
 
 
+    applyStratigraphicRule();
     bool surface_created = rules_processor.testSurface( current_object, curves_ );
     if( surface_created == false )
     {
@@ -674,6 +672,8 @@ void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
     rules_processor.truncate();
+    setMeshResolution( Controller::MeshResolution::LOW );
+
 }
 
 
@@ -686,8 +686,6 @@ void Controller::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
-//    rules_processor.setMediumResolution();
-    setMeshResolution( Controller::MeshResolution::LOW );
 }
 
 
@@ -883,8 +881,6 @@ void Controller::applyStratigraphicRule()
 
 bool Controller::enableCreateAbove( bool status_ )
 {
-//    setObjectsAsSelectable( selectable_upper, false );
-
     if( status_ == false )
     {
         stopCreateAbove();
@@ -934,8 +930,6 @@ bool Controller::requestCreateAbove()
 bool Controller::enableCreateBelow( bool status_ )
 {
 
-
-//    setObjectsAsSelectable( selectable_bottom, false );
 
     if( status_ == false )
     {
@@ -1087,14 +1081,14 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 }
 
 
-void Controller::loadFile( const std::string& filename )
+void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
 {
     rules_processor.loadFile( filename );
-    loadObjects( filename );
+    loadObjects( filename, resol_ );
 }
 
 
-void Controller::loadObjects( const std::string& filename )
+void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
     if( volume == nullptr ) return;
 
@@ -1106,7 +1100,18 @@ void Controller::loadObjects( const std::string& filename )
     rules_processor.getLenght( width, height, depth );
     setVolumeDimensions( width, height, depth );
 
-
+    if ( rules_processor.isLowResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::LOW;
+    }
+    else if ( rules_processor.isMediumResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::MEDIUM;
+    }
+    else if ( rules_processor.isHighResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::HIGH;
+    }
     if( objects.findElement( current_object ) == true )
     {
         objects.removeElement( current_object );
@@ -1132,6 +1137,7 @@ void Controller::loadObjects( const std::string& filename )
     updateModel();
 
 }
+
 
 void Controller::loadObjectNoMetaDatas()
 {
@@ -1308,9 +1314,6 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     vol1_->setGeometry( w, h, l );
     scene3d->addOutputVolume( vol1_ );
     object_tree->addOutputVolume();
-
-
-
 
 
     std::random_device rd;
@@ -1544,9 +1547,6 @@ bool Controller::removeFixedCrossSection( double depth_ )
 
     fixed_csections.removeElement( depth_ );
     return true;
-
-//    setCurrentCrossSection( main_csection->getDepth() );
-//    scene3d->removeCrossSection( cs_ );
 
 }
 

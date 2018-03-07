@@ -94,6 +94,8 @@ void Scene3d::clearOutputVolume()
     if( output_volume != nullptr )
         delete output_volume;
     output_volume = nullptr;
+
+    removeRegions();
 }
 
 
@@ -131,6 +133,24 @@ void Scene3d::updateRegions()
 
         region_->update();
     }
+    emit updateCanvas();
+}
+
+
+void Scene3d::removeRegions()
+{
+    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+
+        RegionShader* region_ = regions.getElement( it->first );
+        if( region_ == nullptr ) continue;
+
+        region_->clear();
+        delete region_;
+        region_ = nullptr;
+    }
+    regions.clear();
+
     emit updateCanvas();
 }
 
