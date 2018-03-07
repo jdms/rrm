@@ -715,7 +715,7 @@ void RRMApplication::closeFlowDiagnostics()
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
-//    mainwindow->ac_output_volume->setChecked( false );
+    mainwindow->ac_output_volume->setChecked( false );
 
     mainwindow->controller->hideRegions();
 }
@@ -822,4 +822,9 @@ void RRMApplication::enablePreview( bool status_ )
 {
     mainwindow->controller->setPreviewEnabled( status_ );
     updateSketchingCanvas();
+}
+
+void RRMApplication::exportToIRAP()
+{
+    mainwindow->controller->exportToIrapGrid();
 }
