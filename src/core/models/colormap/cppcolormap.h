@@ -6,24 +6,30 @@
 #include <string>
 #include <cfloat>
 #include <math.h>
+
 #include "cppmat/matrix.h"
+#include "nspline.h"
 
 namespace cppcolormap {
 
 // =================================================================================================
 
 template<typename T>
-inline std::vector<float> linspace(T start_in, T end_in, size_t num_in)
+inline std::vector<double> linspace(T start_in, T end_in, size_t num_in)
 {
-  float start = static_cast<float>(start_in);
-  float end   = static_cast<float>(end_in);
-  float num   = static_cast<float>(num_in);
-  float delta = (end-start)/(num-1);
+  double start = static_cast<double>(start_in);
+  double end   = static_cast<double>(end_in);
+  double num   = static_cast<double>(num_in);
+  double delta = (end-start)/(num-1);
 
-  std::vector<float> out;
+  std::vector<double> out;
 
-  for( size_t i = 0 ; i < num ; ++i )
-    out.push_back(start+delta*i);
+  if ( num_in >= 2 )
+  { 
+      //auto counter = num_in -1;
+      for( size_t i = 0 ; i < num_in ; ++i )
+          out.push_back(start+delta*i);
+  }
 
   out.push_back(end);
 
@@ -32,14 +38,14 @@ inline std::vector<float> linspace(T start_in, T end_in, size_t num_in)
 
 // =================================================================================================
 
-inline size_t findNearestNeighbourIndex(float value, const std::vector<float> &x)
+inline size_t findNearestNeighbourIndex(double value, const std::vector<double> &x)
 {
-  float  dist = FLT_MAX;
+  double  dist = FLT_MAX;
   size_t idx  = 0;
 
   for ( size_t i = 0 ; i<x.size() ; ++i )
   {
-    float newDist = value-x[i];
+    double newDist = value-x[i];
     if ( (newDist > 0) && (newDist < dist) )
     {
       dist = newDist;
@@ -52,10 +58,10 @@ inline size_t findNearestNeighbourIndex(float value, const std::vector<float> &x
 
 // =================================================================================================
 
-inline std::vector<float> interp1(const std::vector<float> &x, const std::vector<float> &y,
-  const std::vector<float> &x_new)
+inline std::vector<double> interp1(const std::vector<double> &x, const std::vector<double> &y,
+  const std::vector<double> &x_new)
 {
-  std::vector<float> y_new,dx,dy,slope,intercept;
+  std::vector<double> y_new,dx,dy,slope,intercept;
 
   y_new    .reserve( x_new.size() );
   dx       .reserve( x    .size() );
@@ -88,6 +94,22 @@ inline std::vector<float> interp1(const std::vector<float> &x, const std::vector
   return y_new;
 }
 
+inline std::vector<double> interp2(const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &x_new )
+{
+    std::vector<double> y_new( x_new.size() ); 
+
+    NSpline spline;
+
+    spline.init(x, y);
+
+    for ( size_t i = 0; i < x_new.size(); ++i )
+    {
+        y_new[i] = spline.eval( x_new[i] );
+    }
+
+    return y_new;
+}
+
 // =================================================================================================
 
 inline cppmat::matrix<int> interp(const cppmat::matrix<int> &data , size_t N)
@@ -95,19 +117,21 @@ inline cppmat::matrix<int> interp(const cppmat::matrix<int> &data , size_t N)
   size_t n = data.size()/3;
 
   cppmat::matrix<int> out({N,data.shape(1)});
-  std::vector<float> x,xi,c(n),ci;
+  std::vector<double> x,xi,c,ci;
 
-  x  = linspace(0.0,1.0,n-1);
+  c  = linspace(0.0,1.0,n);
+  x  = linspace(0.0,1.0,n);
   xi = linspace(0.0,1.0,N);
 
   for ( size_t j = 0 ; j < data.shape(1) ; j++ )
   {
 
-    for ( size_t i = 0 ; i < n ; i++ ) c[i] = static_cast<float>(data(i,j));
+    for ( size_t i = 0 ; i < n ; i++ ) c[i] = static_cast<double>(data(i,j))/255.0;
 
-    ci = interp1(x,c,xi);
+    /* ci = interp1(x,c,xi); */
+    ci = interp2(x,c,xi);
 
-    for ( size_t i = 0 ; i < N ; i++ ) out(i,j) = static_cast<int>(ci[i]);
+    for ( size_t i = 0 ; i < N ; i++ ) out(i,j) = static_cast<int>(ci[i]*255.0);
   }
 
   return out;
