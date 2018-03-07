@@ -529,7 +529,9 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
 
 std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
 {
-    return ColorMapWrapper::getRegionsColor(numColors);
+    ColorMapWrapper cm;
+
+    return cm.getSpectral(numColors);
 }
 
 bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
