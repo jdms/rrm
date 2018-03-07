@@ -1319,18 +1319,18 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
 
 
     std::size_t number_of_regions = regions_.size();
-//    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
 
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
         Volume::Color color_;
-//        color_.r = colors_[ 3*i ];
-//        color_.g = colors_[ 3*i + 1 ];
-//        color_.b = colors_[ 3*i + 2 ];
+        color_.r = colors_[ 3*i ];
+        color_.g = colors_[ 3*i + 1 ];
+        color_.b = colors_[ 3*i + 2 ];
 
-        color_.r = distr( eng );
-        color_.g = distr( eng );
-        color_.b = distr( eng );
+//        color_.r = distr( eng );
+//        color_.g = distr( eng );
+//        color_.b = distr( eng );
 
 
         Regions* region_ = new Regions();

@@ -115,6 +115,49 @@ bool RulesProcessor::setHighResolution()
     return status;
 }
 
+bool RulesProcessor::isLowResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 16) && (num_depth == 16) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool RulesProcessor::isMediumResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 32) && (num_depth == 32) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool RulesProcessor::isHighResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 64) && (num_depth == 64) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool isMediumResolution();
+
+bool isHighResolution();
+
 
 void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_z )
 {
@@ -471,7 +514,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
     getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
 
-    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
+    for ( size_t i = 0; i < lb_vertex_lists.size(); ++i )
     {
         CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
