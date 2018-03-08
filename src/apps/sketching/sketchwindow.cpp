@@ -119,7 +119,6 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
 
     connect( ac_commit, &QAction::triggered, [=](){ if( main_scene == nullptr) return; emit main_scene->commit(); } );
 
-//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( main_scene == nullptr) return; main_scene->edit( status_ ); } );
 
