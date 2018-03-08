@@ -42,6 +42,11 @@
         <file>icons/surfacesfromfile.png</file>
         <file>icons/surfacesfromsketch.png</file>
         <file>icons/userinput.png</file>
+        <file>icons/axes2.png</file>
+        <file>icons/axes3.png</file>
+        <file>icons/axes4.png</file>
+        <file>icons/axes6.png</file>
+        <file>icons/flow.png</file>
     </qresource>
     <qresource prefix="/logos">
         <file>about/sponsors.png</file>
