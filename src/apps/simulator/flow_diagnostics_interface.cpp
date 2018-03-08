@@ -362,7 +362,6 @@ void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells
         cells.push_back((unsigned int)tet.node(2));
         cells.push_back((unsigned int)tet.node(3));
     }
-
 }
 
 void FlowDiagnosticsInterface::setTetrahedralMeshRegions( const std::vector<int> &regions )
