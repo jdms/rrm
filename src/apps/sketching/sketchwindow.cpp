@@ -22,21 +22,31 @@ void SketchWindow::createToolBar()
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit defineColorCurrent( color_ ); } );
 
     ac_discard = new QAction( "Discard", this );
+    ac_discard->setIcon(QIcon(":/images/icons/denyCurve.png"));
+
     ac_commit = new QAction( "Commit", this );
+    ac_commit->setIcon(QIcon(":/images/icons/add_curve2.png"));
+
     ac_create = new QAction( "Create", this );
+    ac_create->setIcon(QIcon(":/images/icons/accept.png"));
     connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
+
     ac_edit_boundary = new QAction( "Edit Boundary", this );
+    ac_edit_boundary->setIcon(QIcon(":/images/icons/newBoundary.png"));
     ac_edit_boundary->setCheckable( true );
 
     ac_edit_scene = new QAction( "Edit Scene", this );
+    ac_edit_scene->setIcon(QIcon(":/images/icons/select_curve.png"));
     ac_edit_scene->setCheckable( true );
 
     ac_screenshot = new QAction( "Screenshot", this );
+    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
 
     ac_axes = new QAction( "Axes", this );
+    ac_axes->setIcon(QIcon(":/images/icons/axes6.png"));
     ac_axes->setCheckable( true );
     ac_axes->setChecked( true );
 
@@ -65,11 +75,11 @@ void SketchWindow::createToolBar()
     tb_actions->addAction( ac_edit_boundary );
     tb_actions->addAction( ac_edit_scene );
     tb_actions->addSeparator();
-    tb_actions->addAction( ac_screenshot );
+    tb_actions->addAction( ac_enable_preview );
     tb_actions->addAction( ac_fixed_csections );
     tb_actions->addAction( ac_axes );
-    tb_actions->addAction( ac_height_map );
-    tb_actions->addAction( ac_enable_preview );
+//    tb_actions->addAction( ac_height_map );
+    tb_actions->addAction( ac_screenshot );
 
 
     addToolBar( tb_actions );
