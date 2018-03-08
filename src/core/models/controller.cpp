@@ -440,7 +440,12 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
     if( curve_.isEmpty() == true ) return false;
 
+
+
     Object* const& obj_ = objects.getElement( current_object );
+    if( obj_ == nullptr ) return false;
+
+
     if( obj_->hasCurve( depth_ ) == false )
     {
         bool status_ = obj_->addCurve( depth_, curve_ );
@@ -504,9 +509,9 @@ bool Controller::addObjectTrajectory( PolyCurve curve_ )
         return false;
 
     Object* const& obj_ = objects.getElement( current_object );
+    if( obj_ == nullptr ) return false;
+
     bool status_ = obj_->addTrajectory( curve_ );
-
-
     if( status_ == false ) return false;
 
     obj_->setEditable( true );

@@ -105,6 +105,8 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
 
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
+
 }
 
 
