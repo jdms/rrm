@@ -25,6 +25,13 @@
 CoordinateAxes::CoordinateAxes()
 {
 
+	shader_axes = nullptr; // create a shader to shader_axis, since there will be shaders only to axes
+
+	vertex_array_coneaxes		= 0;
+	vertex_buffer_faces_indices = 0;
+	vertex_buffer_vertices		= 0;
+	vertex_buffer_normals		= 0;
+	vertex_buffer_colors		= 0;
 }
 
 
@@ -74,7 +81,7 @@ void CoordinateAxes::initShader( std::string directory )
 
 void CoordinateAxes::reloadShader()
 {
-	if (shader_axes)
+	if (shader_axes != nullptr)
 	{
 		shader_axes->reloadShaders();
 	}
@@ -223,7 +230,7 @@ void CoordinateAxes::draw( const Eigen::Quaternion<float>& _orientation, const E
 void CoordinateAxes::resetBuffers()
 {
 	/// Delete Shaders
-	if (shader_axes)
+	if (shader_axes != nullptr)
 	{
 		shader_axes->deleteShaders();
 		shader_axes = nullptr;

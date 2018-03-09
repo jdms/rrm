@@ -65,8 +65,8 @@ void FlowVisualizationCanvas::initializeGL()
     mesh.initializeShader(current_directory);
     crosssection.initShader(current_directory);
 
-    /*axes.initShader(current_directory);
-    axes.load();*/
+    axes.initShader(current_directory);
+    axes.load();
 
     initializeShader();
 
@@ -106,7 +106,7 @@ void FlowVisualizationCanvas::paintGL()
 
     if (true)
     {
-        //axes.draw(camera.getRotation(), camera.getViewport());
+        axes.draw(camera.getRotation(), camera.getViewport());
     }
 
 }
@@ -421,7 +421,7 @@ void FlowVisualizationCanvas::setController( FlowVisualizationController *c )
 void FlowVisualizationCanvas::reloadShader()
 {
     mesh.reloadShader();
-    //axes.reloadShader();
+    axes.reloadShader();
 
     glFinish();
     update();
@@ -639,7 +639,7 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 {
     mesh.resetBuffers();
     crosssection.resetBuffers();
-    //axes.resetBuffers();
+    axes.resetBuffers();
 
 }
 /// Get the current boundingobx depth in the extrusion framework
