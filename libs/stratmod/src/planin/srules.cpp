@@ -397,6 +397,7 @@ bool SRules::getIntersectionList( const PlanarSurface::Ptr &sptr, std::vector<st
         if ( s->surfaceIsSet() == true ) 
             if ( s->getID() != sptr->getID() ) 
                 if ( s->weakIntersectionCheck(sptr) == true ) 
+                /* if ( s->weakCompleteIntersectionCheck(sptr) == true ) */ 
                 { 
                     getSurfaceIndex( s->getID(), intersected_surface_index ); 
                     intersection_list.push_back( intersected_surface_index ); 
@@ -594,6 +595,7 @@ bool SRules::removeAboveIntersection( PlanarSurface::Ptr sptr )
 
                     // Check if the valid part of surface s intersects surface seed
                     else if ( s->weakIntersectionCheck(seed) ) 
+                    /* else if ( s->weakCompleteIntersectionCheck(seed) ) */ 
                     { 
                         status |= boundaryAwareRemoveAbove(sptr, s); 
                         intersection_seeds.push_back(s); 
@@ -691,6 +693,7 @@ bool SRules::removeBelowIntersection( PlanarSurface::Ptr sptr )
 
                     // Check if the valid part of surface s intersects surface seed
                     else if ( s->weakIntersectionCheck(seed) ) 
+                    /* else if ( s->weakCompleteIntersectionCheck(seed) ) */ 
                     { 
                         status |= boundaryAwareRemoveBelow(sptr, s); 
                         intersection_seeds.push_back(s); 
@@ -825,27 +828,25 @@ bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
     double height, lb_height, ub_height;
     Point2 p2 = {{{ p.x, p.y }}};
 
-    if ( defineAboveIsActive() )
+    ub_height = origin.z + lenght.z;
+    if ( defineBelowIsActive() )
     {
-        auto sptr = upper_bound_.lock();
-        sptr->getHeight(p2, ub_height);
-        /* std::cout << "Upper boundary height: " << ub_height << std::endl << std::flush; */
-    }
-    else
-    {
-        ub_height = origin.z + lenght.z;
+        if ( auto sptr = upper_bound_.lock() )
+        {
+            sptr->getHeight(p2, ub_height);
+            /* std::cout << "Upper boundary height: " << ub_height << std::endl << std::flush; */
+        }
         /* std::cout << "Upper boundary (bbox) height: " << ub_height << std::endl << std::flush; */
     }
 
-    if ( defineBelowIsActive() )
+    lb_height = origin.z;
+    if ( defineAboveIsActive() )
     {
-        auto sptr = lower_bound_.lock();
-        sptr->getHeight(p2, lb_height);
-        /* std::cout << "Lower boundary height: " << lb_height << std::endl << std::flush; */
-    }
-    else
-    {
-        lb_height = origin.z;
+        if( auto sptr = lower_bound_.lock() )
+        {
+            sptr->getHeight(p2, lb_height);
+            /* std::cout << "Lower boundary height: " << lb_height << std::endl << std::flush; */
+        }
         /* std::cout << "Lower boundary (bbox) height: " << lb_height << std::endl << std::flush; */
     }
 
@@ -1123,24 +1124,22 @@ std::vector<size_t> SRules::getActiveSurfacesBelowPoint( const Point3 &p )
     double height, lb_height, ub_height;
     Point2 p2 = {{{ p.x, p.y }}};
 
-    if ( defineAboveIsActive() )
-    {
-        auto sptr = upper_bound_.lock();
-        sptr->getHeight(p2, ub_height);
-    }
-    else
-    {
-        ub_height = origin.z + lenght.z;
-    }
-
+    ub_height = origin.z + lenght.z;
     if ( defineBelowIsActive() )
     {
-        auto sptr = lower_bound_.lock();
-        sptr->getHeight(p2, lb_height);
+        if ( auto sptr = upper_bound_.lock() )
+        {
+            sptr->getHeight(p2, ub_height);
+        }
     }
-    else
+
+    lb_height = origin.z;
+    if ( defineAboveIsActive() )
     {
-        lb_height = origin.z;
+        if ( auto sptr = lower_bound_.lock() )
+        {
+            sptr->getHeight(p2, lb_height);
+        }
     }
 
     for ( size_t i = 0; i < size(); ++i )
@@ -1234,24 +1233,22 @@ std::vector<size_t> SRules::getActiveSurfacesAbovePoint( const Point3 &p )
     double height, lb_height, ub_height;
     Point2 p2 = {{{ p.x, p.y }}};
 
-    if ( defineAboveIsActive() )
-    {
-        auto sptr = upper_bound_.lock();
-        sptr->getHeight(p2, ub_height);
-    }
-    else
-    {
-        ub_height = origin.z + lenght.z;
-    }
-
+    ub_height = origin.z + lenght.z;
     if ( defineBelowIsActive() )
     {
-        auto sptr = lower_bound_.lock();
-        sptr->getHeight(p2, lb_height);
+        if ( auto sptr = upper_bound_.lock() )
+        {
+            sptr->getHeight(p2, ub_height);
+        }
     }
-    else
+
+    lb_height = origin.z;
+    if ( defineAboveIsActive() )
     {
-        lb_height = origin.z;
+        if ( auto sptr = lower_bound_.lock() )
+        {
+            sptr->getHeight(p2, lb_height);
+        }
     }
 
 

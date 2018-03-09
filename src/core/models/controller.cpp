@@ -440,7 +440,12 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
     if( curve_.isEmpty() == true ) return false;
 
+
+
     Object* const& obj_ = objects.getElement( current_object );
+    if( obj_ == nullptr ) return false;
+
+
     if( obj_->hasCurve( depth_ ) == false )
     {
         bool status_ = obj_->addCurve( depth_, curve_ );
@@ -453,12 +458,6 @@ bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
 
     obj_->setEditable( true );
     obj_->setVisible( true );
-
-    object_tree->setObjectVisibility( current_object, true );
-
-
-
-//    bool status_ = main_csection->addObject( obj_->getIndex(), &curve_ );
 
 
     CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
@@ -510,9 +509,9 @@ bool Controller::addObjectTrajectory( PolyCurve curve_ )
         return false;
 
     Object* const& obj_ = objects.getElement( current_object );
+    if( obj_ == nullptr ) return false;
+
     bool status_ = obj_->addTrajectory( curve_ );
-
-
     if( status_ == false ) return false;
 
     obj_->setEditable( true );
@@ -574,6 +573,7 @@ bool Controller::createPreviewSurface()
     }
 
 
+    applyStratigraphicRule();
     bool surface_created = rules_processor.testSurface( current_object, curves_ );
     if( surface_created == false )
     {
@@ -594,6 +594,7 @@ bool Controller::createPreviewSurface()
     std::vector< double > normals_;
     rules_processor.getNormals( current_object, normals_ );
 
+    object_tree->setObjectVisibility( current_object, true );
 
     Surface surface;
     surface.setVertices( vertices_ );
@@ -653,7 +654,8 @@ bool Controller::createObjectSurface()
     }
 
 
-    if( surface_created == false ) return false;
+    if( surface_created == false )
+        return false;
 
     obj_->removeCrossSectionCurves();
     obj_->removeTrajectory();
@@ -674,6 +676,8 @@ void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
     rules_processor.truncate();
+    setMeshResolution( Controller::MeshResolution::LOW );
+
 }
 
 
@@ -686,8 +690,6 @@ void Controller::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
-//    rules_processor.setMediumResolution();
-    setMeshResolution( Controller::MeshResolution::LOW );
 }
 
 
@@ -883,8 +885,6 @@ void Controller::applyStratigraphicRule()
 
 bool Controller::enableCreateAbove( bool status_ )
 {
-//    setObjectsAsSelectable( selectable_upper, false );
-
     if( status_ == false )
     {
         stopCreateAbove();
@@ -934,8 +934,6 @@ bool Controller::requestCreateAbove()
 bool Controller::enableCreateBelow( bool status_ )
 {
 
-
-//    setObjectsAsSelectable( selectable_bottom, false );
 
     if( status_ == false )
     {
@@ -1087,14 +1085,14 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 }
 
 
-void Controller::loadFile( const std::string& filename )
+void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
 {
     rules_processor.loadFile( filename );
-    loadObjects( filename );
+    loadObjects( filename, resol_ );
 }
 
 
-void Controller::loadObjects( const std::string& filename )
+void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
     if( volume == nullptr ) return;
 
@@ -1106,7 +1104,18 @@ void Controller::loadObjects( const std::string& filename )
     rules_processor.getLenght( width, height, depth );
     setVolumeDimensions( width, height, depth );
 
-
+    if ( rules_processor.isLowResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::LOW;
+    }
+    else if ( rules_processor.isMediumResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::MEDIUM;
+    }
+    else if ( rules_processor.isHighResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::HIGH;
+    }
     if( objects.findElement( current_object ) == true )
     {
         objects.removeElement( current_object );
@@ -1132,6 +1141,7 @@ void Controller::loadObjects( const std::string& filename )
     updateModel();
 
 }
+
 
 void Controller::loadObjectNoMetaDatas()
 {
@@ -1196,8 +1206,10 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
             scene3d->updateObject( id );
             object_tree->updateObjectColor( id, r_, g_, b_ );
+            object_tree->updateObjectName( id, getObjectName( id ) );
 
         }
+
     }
 }
 
@@ -1310,20 +1322,24 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     object_tree->addOutputVolume();
 
 
-
-
     std::random_device rd;
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
 
     std::size_t number_of_regions = regions_.size();
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
+
     for( std::size_t i = 0; i < number_of_regions; ++i )
     {
         Volume::Color color_;
-        color_.r = distr( eng );
-        color_.g = distr( eng );
-        color_.b = distr( eng );
+        color_.r = colors_[ 3*i ];
+        color_.g = colors_[ 3*i + 1 ];
+        color_.b = colors_[ 3*i + 2 ];
+
+//        color_.r = distr( eng );
+//        color_.g = distr( eng );
+//        color_.b = distr( eng );
 
 
         Regions* region_ = new Regions();
@@ -1538,9 +1554,6 @@ bool Controller::removeFixedCrossSection( double depth_ )
     fixed_csections.removeElement( depth_ );
     return true;
 
-//    setCurrentCrossSection( main_csection->getDepth() );
-//    scene3d->removeCrossSection( cs_ );
-
 }
 
 
@@ -1657,17 +1670,14 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
     if( resolution_ == Controller::MeshResolution::LOW )
     {
         rules_processor.setLowResolution();
-        std::cout << "Changing to Regular resolution" << std::endl << std::flush;
     }
     else if( resolution_ == Controller::MeshResolution::MEDIUM )
     {
         rules_processor.setMediumResolution();
-        std::cout << "Changing to Good resolution" << std::endl << std::flush;
     }
     else if( resolution_ == Controller::MeshResolution::HIGH )
     {
         rules_processor.setHighResolution();
-        std::cout << "Changing to Better resolution" << std::endl << std::flush;
     }
 }
 
@@ -1685,4 +1695,71 @@ void Controller::setPreviewEnabled( bool status_ )
 bool Controller::isPreviewEnabled() const
 {
     return preview_enabled;
+}
+
+void Controller::exportToIrapGrid()
+{
+
+    IrapGridExporter exporter;
+    std::vector< float > points;
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    for ( std::size_t id_: actives_ )
+    {
+        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+
+        std::vector< double > points_list;
+        std::vector< bool > valid_points;
+        std::size_t nu;
+        std::size_t nv;
+
+        rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
+
+        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
+        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
+        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
+
+        std::size_t number_elements = nu*nv;
+
+        for( std::size_t i = 0; i < number_elements; ++i )
+        {
+
+            double x = points_list[ 3*i + 0 ];
+            double y = points_list[ 3*i + 1 ];
+            double z = points_list[ 3*i + 2 ];
+
+            if( x >= xmax ) xmax = x;
+            else if( x < xmin ) xmin = x;
+
+            if( y >= ymax ) ymax = y;
+            else if( y < ymin ) ymin = y;
+
+
+            if( z >= zmax ) zmax = z;
+            else if( z < zmin ) zmin = z;
+
+            points.push_back( static_cast<float>( z ) );
+
+        }
+
+        float dx = (float)( xmax - xmin )/nu;
+        float dy = (float)( ymax - ymin )/nv;
+
+        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+        exporter.setVectorValues( points );
+        exporter.setSize( (int) nu,  (int) nv );
+        exporter.setSpacing( dx, dy );
+
+        std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
+        if( name_.empty() == true )
+            exporter.writeGridData( surface_filename.toStdString() );
+        else
+            exporter.writeGridData( name_ );
+
+        exporter.clearData();
+
+        points.clear();
+        surface_filename.clear();
+    }
+
 }

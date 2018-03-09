@@ -74,7 +74,7 @@ namespace Settings {
 
     const double CrossSection::INITIAL_CSECTIONX_POSITION = Volume::VOLUME_ORIGINX;
     const double CrossSection::INITIAL_CSECTIONY_POSITION = Volume::VOLUME_HEIGHT;
-    const double CrossSection::INITIAL_CSECTIONZ_POSITION = Volume::VOLUME_ORIGINZ;
+    const double CrossSection::INITIAL_CSECTIONZ_POSITION = Volume::VOLUME_LENGTH;
 
     const std::size_t CrossSection::CSECTION_DISCRETIZATION = 10;
     const std::string CrossSection::DEFAULT_CSECTION_NAME = "CrossSection ";

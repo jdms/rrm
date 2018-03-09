@@ -110,6 +110,15 @@ option(PLANIN_BUILD_DAISY_EXAMPLE_5B "" OFF)
 
 
 ###############################################
+# Auxiliary config files. 
+###############################################
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include_directories("./")
+
+
+###############################################
 # Compiler flags (we support Clang (3.7+), 
 # Gcc (4.8+) and VS2013 (revision 5+)). 
 ###############################################
@@ -131,13 +140,23 @@ if(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE)
 
 endif()
 
+
+# Finally a way to use OpenMP with AppleClang!  (It's still a hack, though...)
+# Let's keep the old hack commented out in case this breaks.  
+
+#if(PLANIN_BUILD_USING_OPENMP)
+#    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+#    find_package(OpenMP REQUIRED)
+#endif()
+
+
 if(PLANIN_BUILD_USING_OPENMP)
     if (MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
 
     else()
         if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libiomp5")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
         else()
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
@@ -145,16 +164,6 @@ if(PLANIN_BUILD_USING_OPENMP)
         endif()
     endif()
 endif()
-
-
-
-###############################################
-# Auxiliary config files. 
-###############################################
-
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include_directories("./")
 
 
 ###############################################
@@ -196,7 +205,7 @@ else()
         EXCLUDE_FROM_ALL TRUE
         )
 
-    include_directories(${EIGEN3_SOURCE})
+    include_directories(SYSTEM ${EIGEN3_SOURCE})
     set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
 
 endif() 
@@ -218,6 +227,7 @@ if(PLANIN_BUILD_USING_CEREAL)
 
     #    include_directories(${CEREAL_SOURCE}/include)
 
+    include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/cereal)
     add_definitions(-DBUILD_WITH_SERIALIZATION)
 endif()
 
@@ -254,7 +264,8 @@ set(PLANIN_LIB_SOURCES
     ) 
 
 add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})  
-target_link_libraries(planin ${})
+# target_link_libraries(planin OpenMP::OpenMP_CXX ${})
+target_link_libraries(planin) # valid for cmake >= 3.10
 
 if(LOCAL_EIGEN3_INSTALL)
     add_dependencies(planin Eigen3-build)

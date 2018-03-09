@@ -105,6 +105,8 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
 
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
+
 }
 
 
@@ -488,7 +490,19 @@ void RRMApplication::save( const std::string& filename_ )
 void RRMApplication::load( const std::string& filename_ )
 {
     clear();
-    mainwindow->controller->loadFile( filename_ );
+
+    Controller::MeshResolution resol_;
+
+    mainwindow->controller->loadFile( filename_, resol_ );
+
+    if ( resol_ == Controller::MeshResolution::LOW )
+        mainwindow->object_properties->checkLowResolution();
+    else if ( resol_ == Controller::MeshResolution::MEDIUM )
+        mainwindow->object_properties->checkMediumResolution();
+    else if ( resol_ == Controller::MeshResolution::HIGH )
+        mainwindow->object_properties->checkHighResolution();
+
+    getVolumeDimensionsFromController();
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
     checkUndoRedo();
     checkSketchStatus();
@@ -643,6 +657,7 @@ void RRMApplication::getHeightMapTopView()
     double w_, h_, l_;
     mainwindow->controller->getVolumeDimensions( w_, h_, l_ );
 
+    double max_ = ( l_ > h_ ? l_:h_ );
     std::string image_ = mainwindow->canvas3d->sendImage( oy_, oy_ + h_, w_, l_ );
     mainwindow->sketch_topview_window->setTopViewImage( image_ );
 
@@ -677,6 +692,9 @@ void RRMApplication::removeImageFromTopView()
 
 void RRMApplication::startFlowDiagnostics()
 {
+    mainwindow->ac_undo->setEnabled( false );
+    mainwindow->ac_redo->setEnabled( false );
+
     mainwindow->dw_sketchwindow->setVisible( false );
     mainwindow->dw_topview_window->setVisible( false );
     mainwindow->dw_flow_window->setVisible( true );
@@ -708,13 +726,15 @@ void RRMApplication::startFlowDiagnostics()
 
 void RRMApplication::closeFlowDiagnostics()
 {
-//    if( mainwindow->ac_output_volume->isChecked() == false ) return;
+
+    mainwindow->ac_undo->setEnabled( true );
+    mainwindow->ac_redo->setEnabled( true );
 
     mainwindow->updateSketchingWindowGeometry();
     mainwindow->dw_sketchwindow->setVisible( true );
     mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
-//    mainwindow->ac_output_volume->setChecked( false );
+    mainwindow->ac_output_volume->setChecked( false );
 
     mainwindow->controller->hideRegions();
 }
@@ -804,16 +824,19 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 void RRMApplication::setLowResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::LOW );
+    getVolumeDimensionsFromController();
 }
 
 void RRMApplication::setMediumResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::MEDIUM );
+    getVolumeDimensionsFromController();
 }
 
 void RRMApplication::setHighResolution()
 {
     mainwindow->controller->setMeshResolution( Controller::MeshResolution::HIGH );
+    getVolumeDimensionsFromController();
 }
 
 
@@ -821,4 +844,9 @@ void RRMApplication::enablePreview( bool status_ )
 {
     mainwindow->controller->setPreviewEnabled( status_ );
     updateSketchingCanvas();
+}
+
+void RRMApplication::exportToIRAP()
+{
+    mainwindow->controller->exportToIrapGrid();
 }
