@@ -825,7 +825,7 @@ bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
     Point3 origin = container[0]->getOrigin();
     Point3 lenght = container[0]->getLenght();
 
-    double height, lb_height, ub_height;
+    double lb_height, ub_height;
     Point2 p2 = {{{ p.x, p.y }}};
 
     ub_height = origin.z + lenght.z;
