@@ -106,11 +106,11 @@ namespace RRM
 			default_low_permeability_ = 150.0;
 			default_high_permeability_ = 250.0;
 
-            doubleSpinbBox_low_permeability_->setMinimum(0.001);
-            doubleSpinbBox_low_permeability_->setMaximum(10000.0);
+			doubleSpinbBox_low_permeability_->setMinimum(low_permeability_);
+			doubleSpinbBox_low_permeability_->setMaximum(high_permeability_);
             doubleSpinbBox_low_permeability_->setDecimals(3);
-            doubleSpinbBox_high_permeability_->setMinimum(0.001);
-            doubleSpinbBox_high_permeability_->setMaximum(10000.0);
+			doubleSpinbBox_high_permeability_->setMinimum(low_permeability_);
+			doubleSpinbBox_high_permeability_->setMaximum(high_permeability_);
             doubleSpinbBox_high_permeability_->setDecimals(3);
 
             qxt_span_slider_permeability_->setMinimum(1);
@@ -130,10 +130,17 @@ namespace RRM
 			
 			water_saturation_position_ = std::make_tuple<int, int, int, int>(4, 2, 1, 8);
 
+			// Values in the GUI
+			low_water_saturation_  = 0.0;
+			high_water_saturation_ = 1.0;
+			// Initial values in the GUI
+			defaul_low_water_saturation_  = 0.0;
+			defaul_high_water_saturation_ = 1.0;
+
 			slider_Water_Saturation_->setMinimum(0);
 			slider_Water_Saturation_->setMaximum(100);
-			doubleSpinBox_Region_Water_Saturation_->setMinimum(0);
-            doubleSpinBox_Region_Water_Saturation_->setMaximum(1);
+			doubleSpinBox_Region_Water_Saturation_->setMinimum(low_water_saturation_);
+			doubleSpinBox_Region_Water_Saturation_->setMaximum(high_water_saturation_);
 
 			slider_Water_Saturation_->setEnabled(false);
 			label_Water_Saturation_->setEnabled(false);
