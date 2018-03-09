@@ -34,6 +34,16 @@ Mesh::Mesh()
     float depth_ = 0.0f;
 
     apply_crosssection_clipping = false;
+
+
+	/// FIXME January
+	shader_mesh				= nullptr;
+	shader_mesh_cornerpoint = nullptr;;
+	shader					= nullptr;
+	quad_phong_				= nullptr;
+	shader_bbox				= nullptr;
+	well_shader				= nullptr;
+
 }
 
 void Mesh::setMeshType( Mesh::TYPE t )
@@ -557,24 +567,24 @@ void Mesh::resetBuffers()
 void Mesh::deleteShaders()
 {
 
-    if (shader_mesh)
+	if (shader_mesh != nullptr)
     {
         delete (shader_mesh);
         shader_mesh = nullptr;
     }
-    if (shader_mesh_cornerpoint)
+	if (shader_mesh_cornerpoint != nullptr)
     {
         delete (shader_mesh_cornerpoint);
         shader_mesh = nullptr;
     }
 
-    if (shader_bbox)
+	if (shader_bbox != nullptr)
     {
         delete(shader_bbox);
         shader_bbox = nullptr;
     }
 
-    if (well_shader)
+	if (well_shader != nullptr)
     {
         delete(well_shader);
         well_shader = nullptr;

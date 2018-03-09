@@ -96,17 +96,19 @@ void FlowWindow::createToolBar()
 
     qreloadSurface = new QAction(tr("Get Extruded Surface"), qtoolbarFlow);
 //    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+	qreloadSurface->setVisible(false);
 
     qreloadSurface1 = new QAction(tr("Get General Surface"), qtoolbarFlow);
 //    qreloadSurface1->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
+	qreloadSurface1->setVisible(false);
 
     qoopenfilesDialog = new QAction(tr("Surface from File"), qtoolbarFlow);
     qoopenfilesDialog->setIcon(QIcon(":/images/icons/surfacesfromfile.png"));
-
+	qoopenfilesDialog->setVisible(false);
 
     qflowparametersDialog = new QAction(tr("User Input"), qtoolbarFlow);
     qflowparametersDialog->setIcon(QIcon(":/images/icons/userinput.png"));
-
+	qflowparametersDialog->setVisible(false);
 
 
     qbuildCornerPoint = new QAction(tr("Corner Point"), qtoolbarFlow);

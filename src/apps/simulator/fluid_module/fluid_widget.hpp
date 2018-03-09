@@ -33,6 +33,7 @@ namespace RRM
             void setFluidData(const std::vector<double>& _viscosity_values, const std::vector<double>& _bo_values);
 
             void clear();
+			void reset();
 
             public slots:
 
@@ -56,6 +57,20 @@ namespace RRM
             std::vector<double> viscosity_values_;
             std::vector<double> bo_values_;
             std::vector<double> oildensity_values_;
+			/// since its a linear slider, it doesnt need low and high values
+
+			double default_viscosity_value_;
+			double deafaul_bo_value_;
+			double default_oildensity_value_;
+
+			double low_viscosity_value_;
+			double high_viscosity_value_;
+
+			double low_bo_value_;
+			double high_bo_value_;
+
+			double low_oildensity_value_;
+			double high_oildensity_value_;
 
             /// @FIXME September
             //// 1 for single phase
