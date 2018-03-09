@@ -42,6 +42,7 @@ namespace RRM
                 public slots:
                         void updateWellPosition(const std::map< int, Eigen::Vector4d >& _positions);
                         void clear(){};
+						void reset(){};
                 signals:
                         void numberOfWells(int _number_of_wells);
                         void wellPositionsHasChanged();

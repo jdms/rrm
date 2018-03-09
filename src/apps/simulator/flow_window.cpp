@@ -217,8 +217,15 @@ void FlowWindow::createToolBar()
 
     action_showregions->setEnabled(false);
 
+	/// @FiXME January 2018
+
     qclear = new QAction(tr("Clear"), qtoolbarFlow);
     qclear->setIcon(QIcon(":/images/icons/clear.png"));
+	qclear->setEnabled(false);
+
+	action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
+	action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
+	action_clearComputedQuantities_->setEnabled(true);
 
     /// ToolBar setUp
 
@@ -244,13 +251,13 @@ void FlowWindow::createToolBar()
     qtoolbarFlow->addWidget(tbn_colormaps);
     qtoolbarFlow->addWidget(tbn_export);
     /// FIXME June
-    //qtoolbarFlow->addAction(qclear);
-
+	qtoolbarFlow->addSeparator();
+    qtoolbarFlow->addAction(qclear);
+	qtoolbarFlow->addSeparator();
+	qtoolbarFlow->addAction(action_clearComputedQuantities_);
     qtoolbarFlow->addSeparator();
 
-    action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
-    action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
-    action_clearComputedQuantities_->setEnabled(false);
+
     action_upscalledPermeability_ = new QAction(tr("Get Upscaled Permeability"), qtoolbarFlow);
     action_upscalledPermeability_->setEnabled(false);
     action_oilinPlace_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
@@ -261,11 +268,9 @@ void FlowWindow::createToolBar()
 //	action_oil_in_place_->setEnabled(false);
 
     flowModule_diagnostic_->addAction(action_upscalledPermeability_);
-
     flowModule_diagnostic_->addAction(action_oilinPlace_);
 
-    //qtoolbarFlow->addAction(action_exportDerivedQuantities_);
-    qtoolbarFlow->addAction(action_clearComputedQuantities_);
+    //qtoolbarFlow->addAction(action_exportDerivedQuantities_);    
     //qtoolbarFlow->addAction(action_upscalledPermeability_);
 
     addToolBar(qtoolbarFlow);
@@ -401,35 +406,35 @@ void FlowWindow::createActions()
     });
     /// FIXME JUNE 2017
     /// Clear Reload
-    connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
-    {
-        qclear->trigger();
-        this->loadSurfacesfromSketch();
-        this->buildUnstructured();
-        //controller->computeFlowProperties();
+    //connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
+    //{
+        //qclear->trigger();
+        //this->loadSurfacesfromSketch();
+        //this->buildUnstructured();
+        ////controller->computeFlowProperties();
 
 
-            //controller->loadPropertiesTetrahedron();
-            this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-            //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
-            //updateModelColors(current_property_);
-            action_showregions->setEnabled(false);
-            //controller->getPoreVolume();
-            action_clearComputedQuantities_->setEnabled(true);
-            action_upscalledPermeability_->setEnabled(false);
+        //    //controller->loadPropertiesTetrahedron();
+        //    this->updatePropertyAction(controller->getPtrTetrahedralMesh());
+        //    //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
+        //    //updateModelColors(current_property_);
+        //    action_showregions->setEnabled(false);
+        //    //controller->getPoreVolume();
+        //    action_clearComputedQuantities_->setEnabled(true);
+        //    action_upscalledPermeability_->setEnabled(false);
 
-        /// Set Default ColorMap
-        action_cool_to_warm->setChecked(true);
-        controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+        ///// Set Default ColorMap
+        //action_cool_to_warm->setChecked(true);
+        //controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
 
-        qcomputeFlowProperties->setEnabled(true);
-        tbn_export->setEnabled(false);
-        tbn_coloringbyvertex->setEnabled(false);
-        tbn_coloringbyface->setEnabled(false);
-        action_clearComputedQuantities_->setEnabled(true);
+        //qcomputeFlowProperties->setEnabled(true);
+        //tbn_export->setEnabled(false);
+        //tbn_coloringbyvertex->setEnabled(false);
+        //tbn_coloringbyface->setEnabled(false);
+        //action_clearComputedQuantities_->setEnabled(true);
 
 
-    });
+    //});
     /// Region ID
     connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
     {
@@ -447,6 +452,8 @@ void FlowWindow::createActions()
     connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
     {
         controller->clearComputedQuantities();
+		region_parameters_->reset();
+		qcomputeFlowProperties->setEnabled(true);
         canvas->setDefaultColor();
     });
     connect(action_upscalledPermeability_, &QAction::triggered, [=]()
