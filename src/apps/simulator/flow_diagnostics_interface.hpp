@@ -263,6 +263,7 @@ public:
 
     void exportResultstoVTK(const std::string& filename);
 
+	void exportMeshtoMSH(const std::string& filename);
 
 
     /// \brief Please, clean all the data -- required by the gui

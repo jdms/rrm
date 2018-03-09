@@ -95,6 +95,11 @@
 
             bool setHighResolution();
 
+            bool isLowResolution();
+
+            bool isMediumResolution();
+
+            bool isHighResolution();
 
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
 
@@ -227,6 +232,10 @@
                                     );
 
             bool getRegionsForSimulationTetrahedralMesh( const std::vector<double> &vertex_coordinates, const std::vector<std::size_t> &element_list, std::vector<int> &regions );
+
+            std::vector<int> getRegionsColor( std::size_t numColors );
+
+            bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
 
         private:
             SModellerWrapper modeller_;
@@ -390,8 +399,9 @@
         if ( testing_surface_insertion_ == true )
         {
             modeller_.undo();
+			// testing_surface_insertion_ = false;
         }
-
+		
         std::vector<size_t> lbounds, ubounds;
         std::vector<size_t> intersected_surfaces;
 

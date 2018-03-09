@@ -122,22 +122,11 @@ void ObjectTree::hideInputVolume()
 
 void ObjectTree::hideOutputVolume()
 {
-//    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
-//    vol_->setHidden( true );
-//    setVolumeVisible( 1, false );
+    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
+    vol_->setHidden( true );
+    setVolumeVisible( 1, false );
 
-//    int nchildren = vol_->childCount();
-//    for( int j = 0; j < nchildren; ++j )
-//    {
-
-//        ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol_->child( j ) );
-////        obj_->setHidden( true );
-////        setRegionVisibility( obj_->getIndex(), false );
-
-//        std::cout << " Region to be off: " << obj_->getIndex() << std::endl << std::flush;
-//    }
-
-//    update();
+    update();
 
 }
 
@@ -145,7 +134,7 @@ void ObjectTree::hideOutputVolume()
 void ObjectTree::addOutputVolume()
 {
     ObjectTreeItem* vol_ = new ObjectTreeItem();
-    vol_->setText( COLUMN_NAME, "OUTPUT VOLUME" );
+    vol_->setText( COLUMN_NAME, "REGIONS" );
     vol_->setType( Settings::Objects::ObjectType::VOLUME );
     vol_->setIndex( 1 );
     vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
@@ -261,6 +250,17 @@ void ObjectTree::updateObjectColor( std::size_t index_, int red_, int green_, in
 }
 
 
+void ObjectTree::updateObjectName( std::size_t index_, const std::string& name_ )
+{
+    if( items.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* obj_ = items.getElement( index_ );
+    obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
+    update();
+
+}
+
+
 void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 {
     if( items.findElement( index_ ) == false ) return;
@@ -291,7 +291,6 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setRegionColor( index_, color_ ); } );
 
     setItemWidget( region_, COLUMN_COLOR, colorpicker_ );
-    setColumnWidth( COLUMN_NAME, COLUMN_NAME_WIDTH );
     regions.addElement( index_, region_ );
 
     connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
@@ -326,8 +325,6 @@ void ObjectTree::updateRegionColor( std::size_t index_, int red_, int green_, in
 void ObjectTree::setRegionVisibility( std::size_t index_, bool status_ )
 {
     if( regions.findElement( index_ ) == false ) return;
-
-    std::cout << "Found region " << index_ <<std::endl << std::flush;
 
     ObjectTreeItem* region_ = regions.getElement( index_ );
     region_->setHidden( !status_ );

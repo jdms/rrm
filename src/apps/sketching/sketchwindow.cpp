@@ -22,21 +22,31 @@ void SketchWindow::createToolBar()
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit defineColorCurrent( color_ ); } );
 
     ac_discard = new QAction( "Discard", this );
+    ac_discard->setIcon(QIcon(":/images/icons/denyCurve.png"));
+
     ac_commit = new QAction( "Commit", this );
+    ac_commit->setIcon(QIcon(":/images/icons/add_curve2.png"));
+
     ac_create = new QAction( "Create", this );
+    ac_create->setIcon(QIcon(":/images/icons/accept.png"));
     connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
+
     ac_edit_boundary = new QAction( "Edit Boundary", this );
+    ac_edit_boundary->setIcon(QIcon(":/images/icons/newBoundary.png"));
     ac_edit_boundary->setCheckable( true );
 
     ac_edit_scene = new QAction( "Edit Scene", this );
+    ac_edit_scene->setIcon(QIcon(":/images/icons/select_curve.png"));
     ac_edit_scene->setCheckable( true );
 
     ac_screenshot = new QAction( "Screenshot", this );
+    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
 
     ac_axes = new QAction( "Axes", this );
+    ac_axes->setIcon(QIcon(":/images/icons/axes6.png"));
     ac_axes->setCheckable( true );
     ac_axes->setChecked( true );
 
@@ -65,11 +75,11 @@ void SketchWindow::createToolBar()
     tb_actions->addAction( ac_edit_boundary );
     tb_actions->addAction( ac_edit_scene );
     tb_actions->addSeparator();
-    tb_actions->addAction( ac_screenshot );
+    tb_actions->addAction( ac_enable_preview );
     tb_actions->addAction( ac_fixed_csections );
     tb_actions->addAction( ac_axes );
-    tb_actions->addAction( ac_height_map );
-    tb_actions->addAction( ac_enable_preview );
+//    tb_actions->addAction( ac_height_map );
+    tb_actions->addAction( ac_screenshot );
 
 
     addToolBar( tb_actions );
@@ -110,9 +120,6 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
     main->scale( 1, -1 );
     main->setScene( main_scene );
 
-    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-
     ////// teste
 
     QColor color_ = cp_color->currentColor();
@@ -122,7 +129,6 @@ void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
 
     connect( ac_commit, &QAction::triggered, [=](){ if( main_scene == nullptr) return; emit main_scene->commit(); } );
 
-//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
 
     connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( main_scene == nullptr) return; main_scene->edit( status_ ); } );
 
@@ -176,8 +182,6 @@ void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
 
     tv_main = new QGraphicsView();
     tv_main->setScene( tv_scene );
-    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
 
     ////// teste
 
@@ -238,7 +242,6 @@ void SketchWindow::updateCanvas()
         {
             main_scene->updateVolume();
             main_scene->updateCrossSection();
-            main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
         }
 
     }
@@ -250,7 +253,6 @@ void SketchWindow::updateCanvas()
         {
             tv_scene->updateVolume();
             tv_scene->updateCrossSection();
-            tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
         }
 
     }
@@ -261,7 +263,6 @@ void SketchWindow::updateCanvas()
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateVolume();
         sc_->updateCrossSection();
-        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 
 }
@@ -288,14 +289,12 @@ void SketchWindow::addObject( Object* const& obj_ )
     if( main_scene == nullptr) return;
 
     main_scene->addObject( obj_ );
-    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
     {
         QGraphicsView* gview_ = cs->getElement( it->first );
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->addObject( obj_ );
-        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 
 }
@@ -308,7 +307,6 @@ void SketchWindow::updateObject( const std::size_t& index_ )
     if( main_scene == nullptr) return;
 
     main_scene->updateObject( index_ );
-    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
 
     for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
@@ -316,7 +314,6 @@ void SketchWindow::updateObject( const std::size_t& index_ )
         QGraphicsView* gview_ = cs->getElement( it->first );
         SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
         sc_->updateObject( index_ );
-        gview_->fitInView( sc_->itemsBoundingRect(), Qt::KeepAspectRatio);
     }
 }
 
@@ -328,7 +325,6 @@ void SketchWindow::addTrajectory( Object* const& obj_ )
 
     if( tv_scene == nullptr ) return;
     tv_scene->addTrajectory( obj_ );
-    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -336,7 +332,6 @@ void SketchWindow::updateTrajectory( const std::size_t& index_ )
 {
     if( tv_scene == nullptr ) return;
     tv_scene->updateTrajectory( index_ );
-    tv_main->fitInView( tv_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -489,11 +484,6 @@ void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor 
     cs->addElement( cs_->getDepth(), gv_ );
 
 
-
-    gv_->fitInView( scene_->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-
-
     connect( ac_discard, &QAction::triggered, [=](){ if( scenes[ cs_->getDepth() ] == nullptr) return; emit scenes[ cs_->getDepth() ]->discard(); } );
 
     connect( ac_commit, &QAction::triggered, [=](){ if( scenes[ cs_->getDepth() ] == nullptr) return; emit scenes[ cs_->getDepth() ]->commit(); } );
@@ -593,7 +583,6 @@ void SketchWindow::setCrossSectionImage( double depth_, const QString& file_, do
 
     if( main_scene == nullptr ) return;
     main_scene->updateCrossSection();
-    main->fitInView( main_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 

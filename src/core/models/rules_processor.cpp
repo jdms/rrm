@@ -20,6 +20,8 @@
  */
 
 #include "rules_processor.hpp"
+
+#include "colormap/color_map_wrapper.hpp"
 //namespace RRM
 //{}
 
@@ -112,6 +114,49 @@ bool RulesProcessor::setHighResolution()
 
     return status;
 }
+
+bool RulesProcessor::isLowResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 16) && (num_depth == 16) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool RulesProcessor::isMediumResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 32) && (num_depth == 32) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool RulesProcessor::isHighResolution()
+{
+    size_t num_width = getWidthResolution();
+    size_t num_depth = getDepthResolution();
+
+    if ( (num_width == 64) && (num_depth == 64) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool isMediumResolution();
+
+bool isHighResolution();
 
 
 void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_z )
@@ -272,21 +317,40 @@ void RulesProcessor::truncate()
 
 bool RulesProcessor::canUndo()
 {
+	if ( testing_surface_insertion_ )
+	{
+		return false;
+	}
+
     return modeller_.canUndo();
 }
 
 bool RulesProcessor::undo()
 {
+	if ( !canUndo() )
+	{
+		return false;
+	}
+
     return modeller_.undo();
 }
 
 bool RulesProcessor::canRedo()
 {
+	if ( testing_surface_insertion_ )
+	{
+		return false;
+	}
+
     return modeller_.canRedo();
 }
 
 bool RulesProcessor::redo()
 {
+	if ( !canRedo() )
+	{
+		return false;
+	}
     return modeller_.redo();
 }
 
@@ -450,7 +514,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists);
     getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists);
 
-    for ( int i = 0; i < lb_vertex_lists.size(); ++i )
+    for ( size_t i = 0; i < lb_vertex_lists.size(); ++i )
     {
         CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
@@ -502,6 +566,21 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
 {
     SUtilitiesWrapper u(modeller_);
     bool status = u.getTetrahedralMeshRegions( vertex_coordinates, element_list, regions);
+
+    return status;
+}
+
+std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
+{
+    ColorMapWrapper cm;
+
+    return cm.getSpectral(numColors);
+}
+
+bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
+{
+    SUtilitiesWrapper u(modeller_);
+    bool status = u.getQuadMesh(surface_id, points, valid_points, num_width, num_length);
 
     return status;
 }
