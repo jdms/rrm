@@ -168,7 +168,7 @@ namespace RRM
 
         void RegionWidget::clear()
         {
-
+			this->reset();
         }
 
 		void RegionWidget::reset()
@@ -178,7 +178,7 @@ namespace RRM
 			saturation_values.clear();
 
 			permeability_values.clear();
-			porosity_values.clear();	
+			porosity_values.clear();
 
 			this->createRegions(this->region_colors_);
 		}
@@ -236,7 +236,8 @@ namespace RRM
         {
             ui_->spinBox_Number_of_Regions_->setValue( region_colors.size() );
 			this->region_colors_ = region_colors;
-			createRegions(this->region_colors_/*_number_of_region, colors_*/);
+			//createRegions(this->region_colors_/*_number_of_region, colors_*/);
+			this->reset();
         }
 
 

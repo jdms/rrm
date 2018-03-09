@@ -28,20 +28,10 @@ namespace RRM
 
         this->setupWidget();
         this->createConnections();
-  //      ui_->radioButton_Singlephase_->setChecked(true);
 
 		this->default_viscosity_value_  = 1.0;
-		//ui_->doubleSpinBox_Region_Viscosity_->setValue(default_viscosity_value_);		
-
 		this->deafaul_bo_value_		  = 1.0;
-		//ui_->doubleSpinBox_Fluid_Bo_->setValue(this->deafaul_bo_value_);
-
 		this->default_oildensity_value_ = 10.0;
-		//ui_->doubleSpinBox_Fluid_OilDensity_->setValue(this->default_oildensity_value_);
-
-  //      viscosity_values_[0] = ui_->doubleSpinBox_Region_Viscosity_->value();
-  //      bo_values_[0] = ui_->doubleSpinBox_Fluid_Bo_->value();
-  //      oildensity_values_[0] = ui_->doubleSpinBox_Fluid_OilDensity_->value();
 
 		this->reset();
 
@@ -62,16 +52,7 @@ namespace RRM
 
     void FluidWidget::clear()
     {
-		ui_->radioButton_Singlephase_->setChecked(true);
 		
-		ui_->doubleSpinBox_Region_Viscosity_->setValue(default_viscosity_value_);			
-		ui_->doubleSpinBox_Fluid_Bo_->setValue(this->deafaul_bo_value_);	
-		ui_->doubleSpinBox_Fluid_OilDensity_->setValue(this->default_oildensity_value_);
-
-		viscosity_values_[0] = ui_->doubleSpinBox_Region_Viscosity_->value();
-		bo_values_[0] = ui_->doubleSpinBox_Fluid_Bo_->value();
-		oildensity_values_[0] = ui_->doubleSpinBox_Fluid_OilDensity_->value();
-
     }
 
     void FluidWidget::setupWidget()
