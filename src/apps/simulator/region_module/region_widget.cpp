@@ -164,6 +164,19 @@ namespace RRM
 
         }
 
+		void RegionWidget::reset()
+		{
+			permeability_gradient_values_.clear();
+			porosity_gradient_values_.clear();
+			saturation_values.clear();
+
+			permeability_values.clear();
+			porosity_values.clear();	
+
+			this->createRegions(this->region_colors_);
+		}
+
+
         void RegionWidget::getRegionData(int& _number_of_regions,
                                          std::vector<double>& _positions,
                                          std::vector<double>& _permeability_values,
@@ -215,7 +228,8 @@ namespace RRM
         void RegionWidget::setRegionData( const std::map< int,  std::vector< int > >& region_colors )
         {
             ui_->spinBox_Number_of_Regions_->setValue( region_colors.size() );
-            createRegions( region_colors/*_number_of_region, colors_*/ );
+			this->region_colors_ = region_colors;
+			createRegions(this->region_colors_/*_number_of_region, colors_*/);
         }
 
 
@@ -459,7 +473,7 @@ namespace RRM
                 //// @FIXME September Permeability
 				connect(slider_porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
-                    double ex = 0.01 + (0.0034)*static_cast<double>(slider_porosity_->value());
+					double ex = 0.01 + ((high_porosity_ - low_porosity_)*0.01)*static_cast<double>(slider_porosity_->value());
                     doubleSpinbBox_low_porosity_->setValue(ex);
 
 					//std::cout << "Step CONSTANT " << slider_porosity_->value() << ex << std::endl;
@@ -545,7 +559,7 @@ namespace RRM
                     regions_colors[ index_ ] =  QColor( r, g, b );
 
 
-                    if (permeability_values.count(index_) == 0)
+					if (permeability_gradient_values_.count(index_) == 0)
                     {
 
                         positions_values[index_].x() = 0.0;
