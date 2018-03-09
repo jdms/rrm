@@ -382,6 +382,40 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_
     return weakBoundedEntireSurfaceCheck(lptr, uptr); 
 }
 
+// The following has a conceptual error in which one can't use the vertices
+// compare whether a weak intersection happened or not, the triangles must be
+// used instead
+/* bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp ) */ 
+/* { */
+/*     if ( surfaceIsSet() == false ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     if ( ( sp == nullptr ) || ( sp->surfaceIsSet() == false ) ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     bool lies_above = false; */ 
+/*     bool lies_below = false; */ 
+
+/*     updateDiscretization(); */ 
+/*     double height, s_height; */ 
+
+/*     auto num_vertices_omp = num_vertices_; */ 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+/*     #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(||: lies_above, lies_below) */ 
+/*     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) */ 
+/*     { */
+/*         if ( getHeight(i, height) && sp->getHeight(i, s_height) ) { */  
+/*             lies_above = lies_above || (height >= s_height); */ 
+/*             lies_below = lies_below || (height <= s_height); */ 
+/*         } */
+/*     } */
+
+/*     return lies_above && lies_below; */ 
+/* } */
+
 bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp ) 
 {
     if ( surfaceIsSet() == false ) { 
@@ -396,23 +430,46 @@ bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp )
     bool lies_below = false; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    TriangleHeights theights, sp_theights;
 
-    auto num_vertices_omp = num_vertices_; 
+    size_t num_blocks = discretization_X*discretization_Y;
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(||: lies_above, lies_below) 
-    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    #pragma omp parallel for shared(sp) firstprivate(num_blocks) private(theights, sp_theights) default(none) reduction(||: lies_above, lies_below) 
+    for ( long int b = 0; b < static_cast<long int>(num_blocks); ++b ) 
     {
-        if ( getHeight(i, height) && sp->getHeight(i, s_height) ) {  
-            lies_above = lies_above || (height >= s_height); 
-            lies_below = lies_below || (height <= s_height); 
+        for ( size_t tpos = 0; tpos < 8; ++tpos)
+        {
+            /* std::cout << "Processing triangle " << tpos << " in block " << b << ": "; */
+            theights = getTriangleHeightsFromPositionInBlock(tpos, b);
+            sp_theights = sp->getTriangleHeightsFromPositionInBlock(tpos, b);
+
+            if ( theights.isValid() && sp_theights.isValid() )
+            {
+                lies_above = lies_above || (theights >= sp_theights);
+                /* if ( theights >= sp_theights ) */
+                    /* std::cout << "t lies above sp_t"; */
+
+                lies_below = lies_below || (theights <= sp_theights);
+                /* if ( theights <= sp_theights ) */
+                    /* std::cout << "t lies below sp_t"; */
+            }
+            /* else */
+            /* { */
+                /* std::cout << "at least one triangle was not valid"; */
+            /* } */
+
+            /* std::cout << std::endl << std::flush; */
+
+            /* if ( getHeight(b, height) && sp->getHeight(b, s_height) ) { */  
+            /*     lies_above = lies_above || (height >= s_height); */ 
+            /*     lies_below = lies_below || (height <= s_height); */ 
+            /* } */
         }
     }
 
     return lies_above && lies_below; 
 }
-
 bool PlanarSurface::weakIntersectionCheck( PlanarSurface::WeakPtr s ) 
 {
     PlanarSurface::Ptr sp = s.lock(); 
@@ -1133,7 +1190,8 @@ bool PlanarSurface::rangeCheck( Natural i, Natural j ) {
     return ( (i <= nX_) && (j <= nY_) ); 
 }
 
-PlanarSurface::Natural PlanarSurface::getVertexIndex( Natural i, Natural j ) { 
+// PlanarSurface and TetrahedralMeshBuilder disagree on the ordering of the vertices
+PlanarSurface::Natural PlanarSurface::getVertexIndex( Natural i, Natural j ) const { 
     return ( j + i*nY_ ); 
 }
 
@@ -1146,6 +1204,106 @@ bool PlanarSurface::getVertexIndices( Natural v, IndicesType &indices ) {
     indices[0] = ( v - indices[1] )/nY_;  
 
     return true; 
+}
+
+size_t PlanarSurface::getBlockIndex( size_t i, size_t j ) const
+{
+    return i + j*discretization_X;
+}
+
+PlanarSurface::IndicesType PlanarSurface::getBlockIndices( size_t b ) const
+{
+    IndicesType indices;
+
+    indices[0] = b % discretization_X;
+    indices[1] = (b - indices[0])/discretization_X;
+
+    return indices;
+};
+
+size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const
+{
+    IndicesType indices = getBlockIndices(bindex);;
+
+    size_t i = vpos % 3;
+    size_t j = (vpos - i)/3;
+
+    size_t iv = 2*indices[0] + i;
+    size_t jv = 2*indices[1] + j;
+
+    return getVertexIndex(iv, jv);
+}
+
+#include "mesh/polyhedra.hpp"
+
+TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
+{
+    // Range check?
+    
+    auto setTriangle = [&] ( size_t i0_pos, size_t i1_pos, size_t i2_pos,  TriangleHeights &t ) -> void 
+    {
+        bool b0, b1, b2;
+        size_t i0, i1, i2;
+        double h0, h1, h2;
+        /* Point3 v0, v1, v2; */
+
+        i0 = getVertexIndexFromPositionInBlock(i0_pos, bindex);
+        i1 = getVertexIndexFromPositionInBlock(i1_pos, bindex);
+        i2 = getVertexIndexFromPositionInBlock(i2_pos, bindex);
+
+        b0 = getHeight(i0, h0);
+        b1 = getHeight(i1, h1);
+        b2 = getHeight(i2, h2);
+
+        /* t.setVertex(0, v0, i0, b0); */
+        /* t.setVertex(1, v1, i1, b1); */
+        /* t.setVertex(2, v2, i2, b2); */
+        t.setVertex(0, h0, b0);
+        t.setVertex(1, h1, b1);
+        t.setVertex(2, h2, b2);
+    };
+
+    TriangleHeights t;
+    
+    switch( tpos )
+    {
+        case 0:
+            setTriangle(0, 1, 4, t);
+            break;
+
+        case 1:
+            setTriangle(0, 4, 3, t);
+            break;
+
+        case 2:
+            setTriangle(1, 2, 4, t);
+            break;
+
+        case 3:
+            setTriangle(2, 5, 4, t);
+            break;
+
+        case 4:
+            setTriangle(3, 4, 6, t);
+            break;
+
+        case 5:
+            setTriangle(4, 7, 6, t);
+            break;
+
+        case 6:
+            setTriangle(4, 5, 8, t);
+            break;
+
+        case 7:
+            setTriangle(4, 8, 7, t);
+            break;
+
+        default:
+            break;
+    }
+    
+    return t;
 }
 
 bool PlanarSurface::isExtrudedSurface() 
