@@ -676,7 +676,7 @@ void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
     rules_processor.truncate();
-    setMeshResolution( Controller::MeshResolution::LOW );
+    setMeshResolution( Controller::MeshResolution::MEDIUM );
 
 }
 
