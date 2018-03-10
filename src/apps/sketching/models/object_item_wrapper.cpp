@@ -195,7 +195,9 @@ QPainterPath ObjectItemWrapper::polycurveToQPainterPath( const PolyCurve& pol_ )
         path_.addPolygon( ObjectItemWrapper::vectorToQPolygonF( vertices_ ) );
 
     else
+    {
         path_ = ObjectItemWrapper::vectorToPainterPath( vertices_, edges_ );
+    }
 
 
     return path_;
@@ -222,8 +224,16 @@ QPainterPath ObjectItemWrapper::vectorToPainterPath( const std::vector< double >
                                                 const std::vector< std::size_t >& edges_ )
 {
 
+
+
     std::size_t number_of_edges_ = edges_.size()/2;
     std::size_t last_id_ = UINT_MAX;
+
+//    for( auto id: edges_ )
+//        std::cout << id << " " << std::flush;
+
+//    std::cout << std::flush << std::endl;
+
 
     QPainterPath path_;
     for( std::size_t i = 0; i < number_of_edges_; ++i )
@@ -232,12 +242,32 @@ QPainterPath ObjectItemWrapper::vectorToPainterPath( const std::vector< double >
         std::size_t id0_ = edges_[ 2*i ];
         std::size_t id1_ = edges_[ 2*i + 1 ];
 
+
+        double x0 = vertices_[ 2*id0_ ];
+        double y0 = vertices_[ 2*id0_ + 1 ];
+        double x1 = vertices_[ 2*id1_ ];
+        double y1 = vertices_[ 2*id1_ + 1 ];
+
+
+
+//        std::cout << "Edge: "<< id0_ << " to " << id1_ << std::flush;
+//        std::cout << "... p0: ( " << x0 << ", " << y0 <<
+//                     "), p1: ( " << x1 << ", " << y1 << " )" << std::flush << std::endl;
+
+
         if( last_id_ != id0_ )
-            path_.moveTo( QPointF( vertices_[ 2*id0_ ],
-                                   vertices_[ 2*id0_ + 1 ] ) );
+        {
+//            std::cout << "movi para  " << id0_ << std::flush << std::endl;
+            path_.moveTo( QPointF( x0, y0 ) );
+        }
         else
-            path_.lineTo( QPointF( vertices_[ 2*id1_ ],
-                                   vertices_[ 2*id1_ + 1 ] ) );
+        {
+//            std::cout << "linha para " << id0_ << std::flush << std::endl;
+            path_.lineTo( QPointF( x0, y0 ) );
+        }
+
+//        std::cout << "linha para id1 " << id1_ << std::flush << std::endl;
+        path_.lineTo( QPointF( x1, y1 ) );
 
         last_id_ = id1_;
 
