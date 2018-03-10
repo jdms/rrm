@@ -97,17 +97,7 @@
         <item>
          <widget class="QRadioButton" name="rb_lowresolution">
           <property name="text">
-           <string>Regular</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="rb_mdresolution">
-          <property name="text">
-           <string>Good</string>
+           <string>Low</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -115,9 +105,19 @@
          </widget>
         </item>
         <item>
+         <widget class="QRadioButton" name="rb_mdresolution">
+          <property name="text">
+           <string>Medium</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QRadioButton" name="rb_hgresolution">
           <property name="text">
-           <string>Better</string>
+           <string>Good</string>
           </property>
          </widget>
         </item>
