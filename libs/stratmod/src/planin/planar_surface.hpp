@@ -265,6 +265,8 @@ class PlanarSurface {
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
 
+        friend class SRules;
+
         // Cereal provides an easy way to serialize objects
         friend class cereal::access;
 
