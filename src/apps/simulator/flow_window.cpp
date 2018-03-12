@@ -31,12 +31,12 @@ FlowWindow::FlowWindow(QWidget *parent) : QMainWindow(parent)
     getCurrentDirectory();
 
     reset();
-    are_regionsdefined = false;
-    is_cornerpoint = false;
+    this->are_regionsdefined = false;
+    this->is_cornerpoint = false;
 
 
     /// FIXME June 2017. It tells when a new model is build. Used to keep well position
-    bounding_box_changed_ = true;
+    this->bounding_box_changed_ = true;
 }
 
 void FlowWindow::createWindow()
@@ -388,7 +388,7 @@ void FlowWindow::createActions()
         {
             controller->loadPropertiesTetrahedron();
             this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-            current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
+			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure (bar)", "VProp", "", "double");
             updateModelColors(current_property_);
             action_showregions->setEnabled(true);
             controller->getPoreVolume();
@@ -399,7 +399,7 @@ void FlowWindow::createActions()
         {
             controller->loadPropertiesHexahedron();
             this->updatePropertyAction(controller->getPtrHexahedralMesh());
-            current_property_ = RRM::PropertyProfile("Hexahedron","Pressure","CProp","","double");
+			current_property_ = RRM::PropertyProfile("Hexahedron", "Pressure (bar)", "CProp", "", "double");
             updateModelColors(current_property_);
             action_showregions->setEnabled(false);
         }
@@ -455,6 +455,7 @@ void FlowWindow::createActions()
     {
         controller->clearComputedQuantities();
 		region_parameters_->reset();
+		fluid_parameters_->reset();
 		qcomputeFlowProperties->setEnabled(true);
         canvas->setDefaultColor();
     });
@@ -701,8 +702,7 @@ void FlowWindow::loadSurfacesfromSketch1()
     canvas->updateTriangleMesh( vertices, faces );
 
     /////// Changed here -- Clarissa
-
-
+	
     Tucano::BoundingBox3<double> bbox;
     std::vector<Eigen::Vector3d> v;
 
