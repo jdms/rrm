@@ -114,6 +114,7 @@ void FlowWindow::createToolBar()
     qbuildCornerPoint = new QAction(tr("Corner Point"), qtoolbarFlow);
     qbuildCornerPoint->setIcon(QIcon(":/images/icons/cpgridmesh.png"));
     qbuildCornerPoint->setEnabled(false);
+	qbuildCornerPoint->setVisible(false);
     //qbuildCornerPoint->setToolTip("<h5><b><font color='red'>Warnning !</font></b></h5>"
     //							  "<h5><b><font color='black'>Corner Point can be only from simple geometry.</font></b></h5>");
 
