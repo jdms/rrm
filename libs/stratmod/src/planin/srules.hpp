@@ -216,6 +216,10 @@ class SRules
 
         std::vector<size_t> getActiveSurfacesAbovePoint( Point3 &&p );
 
+        std::vector<size_t> getLowerBound( std::vector<size_t> surface_ids );
+
+        std::vector<size_t> getUpperBound( std::vector<size_t> surface_ids );
+
         bool saveBinary( const std::string &filename );
 
         bool loadBinary( const std::string &filename );
