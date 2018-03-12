@@ -105,7 +105,7 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
 
-//    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
 
 }
 
@@ -142,7 +142,7 @@ void RRMApplication::getVolumeDimensionsFromController() const
     mainwindow->object_properties->changeVolumeSize( ox_ + width_, oy_ + height_, oz_ + length_ );
     mainwindow->sl_depth_csection->setDiscretization( static_cast< int > ( disc_ ) );
     mainwindow->sl_depth_csection->setRange( oz_,  oz_ + length_ );
-
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
 
 
 }
@@ -174,6 +174,7 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
         mainwindow->controller->setupCrossSectionDiscretization( disc_, step_ );
         mainwindow->sl_depth_csection->setDiscretization( static_cast< int > ( disc_ ) );
         mainwindow->sl_depth_csection->setRange( oz_,  oz_ + value_ );
+        mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
     }
 
 }
