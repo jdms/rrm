@@ -45,10 +45,10 @@ void VolumeShader::createVolumeMesh()
     Eigen::Vector3f minimum = Shader::normalize( min_real, max_real, min_real );
     Eigen::Vector3f maximum = Shader::normalize( max_real, max_real, min_real );
 
-    std::cout << "Box max: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z() <<
-                 std::flush << std::endl;
-    std::cout << "Box min: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z() <<
-                 std::flush << std::endl;
+//    std::cout << "Box max: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z() <<
+//                 std::flush << std::endl;
+//    std::cout << "Box min: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z() <<
+//                 std::flush << std::endl;
 
     Eigen::Vector3f A( minimum.x(), minimum.y(), maximum.z() );
     Eigen::Vector3f B( maximum.x(), minimum.y(), maximum.z() );
