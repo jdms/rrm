@@ -577,6 +577,9 @@ namespace RRM
         {
                 QStringList stringList;
 
+				inverted_permeability_->setChecked(false);
+				inverted_porosity_->setChecked(false);
+
                 this->number_of_regions_ = static_cast< int >( region_colors.size() );
 
                 for( auto it: region_colors )
