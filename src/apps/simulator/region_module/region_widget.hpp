@@ -136,9 +136,9 @@ namespace RRM
 
 						/// FIXME January 2018
 						bool is_reversed_permeability_;
-						QCheckBox*      inverted_permeability_;
+						QPushButton*      inverted_permeability_;
 						bool is_reversed_porosity_;
-						QCheckBox*      inverted_porosity_;
+						QPushButton*      inverted_porosity_;
 
 						std::map< int, std::vector< int > > region_colors_;
 
