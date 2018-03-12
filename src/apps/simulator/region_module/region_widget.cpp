@@ -55,7 +55,8 @@ namespace RRM
             gradient_porosity_Label_ = new QLabel(tr("Porosity"));
             doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
             doubleSpinbBox_high_porosity_ = new QDoubleSpinBox();
-			inverted_porosity_ = new QCheckBox();
+			inverted_porosity_ = new QPushButton("Inverted");
+			inverted_porosity_->setCheckable(true);
 
             this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, 0, 0);
             this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 0, 1);
@@ -93,7 +94,8 @@ namespace RRM
             gradient_permeability_Label_ = new QLabel(tr("Permeability"));
             doubleSpinbBox_low_permeability_ = new QDoubleSpinBox();
             doubleSpinbBox_high_permeability_ = new QDoubleSpinBox();
-			inverted_permeability_ = new QCheckBox();
+			inverted_permeability_ = new QPushButton("Inverted");
+			inverted_permeability_->setCheckable(true);
 
             this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, 2, 0);
             this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 2, 1);
@@ -493,7 +495,7 @@ namespace RRM
                 });
 
 				/// FIXME January 2018
-				connect(this->inverted_permeability_, &QCheckBox::toggled, this, [=](bool _is_checked)
+				connect(this->inverted_permeability_, &QPushButton::toggled, this, [=](bool _is_checked)
 				{
 					this->is_reversed_permeability_ = _is_checked;
 					qxt_span_slider_permeability_->setInvertedAppearance(this->is_reversed_permeability_);
@@ -517,7 +519,7 @@ namespace RRM
 					}
 				});
 				
-                connect(this->inverted_porosity_, &QCheckBox::toggled, this, [=](bool _is_checked)
+				connect(this->inverted_porosity_, &QPushButton::toggled, this, [=](bool _is_checked)
                 {
                         this->is_reversed_porosity_ = _is_checked;
 						qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
