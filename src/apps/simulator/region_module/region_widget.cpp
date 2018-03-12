@@ -502,6 +502,11 @@ namespace RRM
 					this->doubleSpinbBox_high_permeability_->setValue(this->doubleSpinbBox_low_permeability_->value());
 					this->doubleSpinbBox_low_permeability_->setValue(tmp);
 
+
+					permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = this->doubleSpinbBox_low_permeability_->value();
+					permeability_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = this->doubleSpinbBox_high_permeability_->value();
+
+
 					if (_is_checked)
 					{
 						this->inverted_permeability_->setToolTip("Check it to increase values bottom up");
@@ -520,6 +525,9 @@ namespace RRM
                         tmp = this->doubleSpinbBox_high_porosity_->value();
                         this->doubleSpinbBox_high_porosity_->setValue(this->doubleSpinbBox_low_porosity_->value());
                         this->doubleSpinbBox_low_porosity_->setValue(tmp);
+
+						porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = this->doubleSpinbBox_low_porosity_->value();
+						porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = this->doubleSpinbBox_high_porosity_->value();
 
 						if (_is_checked)
 						{
