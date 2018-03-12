@@ -216,7 +216,7 @@ namespace RRM
 
                     }
 
-                    emit updatedWellsPosition(region_points);
+                   
                 }
                 else
                 {
@@ -229,6 +229,7 @@ namespace RRM
                     }
                 }
 
+				emit updatedWellsPosition(region_points);
                 update();
         }
 

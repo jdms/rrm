@@ -34,6 +34,8 @@ namespace RRM
                 ui_->spinBox_Number_of_Regions_->setVisible( false );
                 ui_->pushButton->setVisible( false );
 
+				this->inverted_permeability_->setToolTip("Check it to increase values bottom up");
+				this->inverted_porosity_->setToolTip("Check it to increase values top down");
 
         }
 
@@ -499,6 +501,15 @@ namespace RRM
 					tmp = this->doubleSpinbBox_high_permeability_->value();
 					this->doubleSpinbBox_high_permeability_->setValue(this->doubleSpinbBox_low_permeability_->value());
 					this->doubleSpinbBox_low_permeability_->setValue(tmp);
+
+					if (_is_checked)
+					{
+						this->inverted_permeability_->setToolTip("Check it to increase values bottom up");
+					}
+					else
+					{
+						this->inverted_permeability_->setToolTip("Check it to increase values top down");
+					}
 				});
 				
                 connect(this->inverted_porosity_, &QCheckBox::toggled, this, [=](bool _is_checked)
@@ -509,6 +520,15 @@ namespace RRM
                         tmp = this->doubleSpinbBox_high_porosity_->value();
                         this->doubleSpinbBox_high_porosity_->setValue(this->doubleSpinbBox_low_porosity_->value());
                         this->doubleSpinbBox_low_porosity_->setValue(tmp);
+
+						if (_is_checked)
+						{
+							this->inverted_porosity_->setToolTip("Check it to increase values bottom up");
+						}
+						else
+						{
+							this->inverted_porosity_->setToolTip("Check it to increase values top down");
+						}
 
                 });
 

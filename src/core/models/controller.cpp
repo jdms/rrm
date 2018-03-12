@@ -280,7 +280,7 @@ void Controller::setCurrentCrossSection( double depth_ )
     updateCurrentCrossSection();
     scene3d->updateMainCrossSection();
 
-    std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
+//    std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
 
 }
 
@@ -676,7 +676,7 @@ void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
     rules_processor.truncate();
-    setMeshResolution( Controller::MeshResolution::LOW );
+    setMeshResolution( Controller::MeshResolution::MEDIUM );
 
 }
 
@@ -1372,7 +1372,7 @@ void Controller::setRegionName( std::size_t index_, const std::string& name_ )
         return;
 
     Regions* const& region_ = regions.getElement( index_ );
-//    region_->setName( name_ );
+    region_->setName( name_ );
 }
 
 
@@ -1420,9 +1420,6 @@ void Controller::hideRegions()
 
     object_tree->hideOutputVolume();
     scene3d->updateRegions();
-
-
-
 
 }
 
@@ -1565,75 +1562,6 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
                                     std::vector< CurveMesh >& back_curves )
 {
     rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
-
-/*     std::vector< std::size_t > actives = rules_processor.getSurfaces(); */
-
-/*     for( auto it: actives ) */
-/*     { */
-
-/*         if( objects.findElement( it ) == false ) continue; */
-
-/*         TriangleMesh t; */
-/*         /1* std::vector< double > surface_vertices; *1/ */
-/*         /1* std::vector< std::size_t > surface_faces; *1/ */
-
-
-/*         /1* bool has_surface = rules_processor.getMesh( it, surface_vertices, surface_faces ); *1/ */
-/*         bool has_surface = rules_processor.getMesh( it, t.vertex_list, t.face_list ); */
-
-/*         if( has_surface  == false ) continue; */
-
-
-/*         /1* t.face_list = surface_faces; *1/ */
-/*         /1* t.vertex_list = surface_vertices; *1/ */
-
-/*         // */
-/*         // This loop changes the y-z coordinates of the vertices as RRM */
-/*         // understands the y coordinate as height and the z coordinate as */
-/*         // length, but Zhao's convention is the opposite. */
-/*         // */
-/*         double y, z; */
-/*         for ( size_t i = 0; i < t.vertex_list.size()/3; ++i ) */
-/*         { */
-/*             y = t.vertex_list[3*i + 1]; */
-/*             z = t.vertex_list[3*i + 2]; */
-
-/*             t.vertex_list[3*i + 1] = z; */
-/*             t.vertex_list[3*i + 2] = y; */
-/*         } */
-
-/*         triangles_meshes.push_back( t ); */
-/*     } */
-
-/*     std::vector< std::vector<double> > lb_vertex_lists, rb_vertex_lists, fb_vertex_lists, bb_vertex_lists; */
-/*     std::vector< std::vector<std::size_t> >lb_edge_lists, rb_edge_lists, fb_edge_lists, bb_edge_lists; */
-
-/*     rules_processor.getLeftBoundaryCrossSectionCurve(lb_vertex_lists, lb_edge_lists); */
-/*     rules_processor.getRightBoundaryCrossSectionCurve(rb_vertex_lists, rb_edge_lists); */
-/*     rules_processor.getFrontBoundaryCrossSectionCurve(fb_vertex_lists, fb_edge_lists); */
-/*     rules_processor.getBackBoundaryCrossSectionCurve(bb_vertex_lists, bb_edge_lists); */
-
-/*     for ( int i = 0; i < lb_vertex_lists.size(); ++i ) */
-/*     { */
-/*         CurveMesh cm_lb, cm_rb, cm_fb, cm_bb; */
-
-/*         std::copy( lb_vertex_lists[i].begin(), lb_vertex_lists[i].end(), std::back_inserter(cm_lb.vertex_list) ); */
-/*         std::copy( lb_edge_lists[i].begin(), lb_edge_lists[i].end(), std::back_inserter(cm_lb.edge_list) ); */
-
-/*         std::copy( rb_vertex_lists[i].begin(), rb_vertex_lists[i].end(), std::back_inserter(cm_rb.vertex_list) ); */
-/*         std::copy( rb_edge_lists[i].begin(), rb_edge_lists[i].end(), std::back_inserter(cm_rb.edge_list) ); */
-
-/*         std::copy( fb_vertex_lists[i].begin(), fb_vertex_lists[i].end(), std::back_inserter(cm_fb.vertex_list) ); */
-/*         std::copy( fb_edge_lists[i].begin(), fb_edge_lists[i].end(), std::back_inserter(cm_fb.edge_list) ); */
-
-/*         std::copy( bb_vertex_lists[i].begin(), bb_vertex_lists[i].end(), std::back_inserter(cm_bb.vertex_list) ); */
-/*         std::copy( bb_edge_lists[i].begin(), bb_edge_lists[i].end(), std::back_inserter(cm_bb.edge_list) ); */
-
-/*         left_curves.push_back( cm_lb ); */
-/*         right_curves.push_back( cm_rb ); */
-/*         front_curves.push_back( cm_fb ); */
-/*         back_curves.push_back( cm_bb ); */
-/*     } */
 }
 
 
@@ -1742,8 +1670,8 @@ void Controller::exportToIrapGrid()
 
         }
 
-        float dx = (float)( xmax - xmin )/nu;
-        float dy = (float)( ymax - ymin )/nv;
+        float dx = (float)( xmax - xmin )/( nu - 1 );
+        float dy = (float)( ymax - ymin )/( nv - 1 );
 
         exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
         exporter.setVectorValues( points );
