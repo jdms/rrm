@@ -18,11 +18,21 @@ struct TriangleHeights
     TriangleHeights() = default;
     ~TriangleHeights() = default;
     TriangleHeights( const TriangleHeights & ) = default;
+
     TriangleHeights& operator=( const TriangleHeights &rhs ) 
     {
         vertex_height = rhs.vertex_height;
         vertex_status = rhs.vertex_status;
         tolerance = rhs.tolerance;
+
+        return *this;
+    }
+
+    TriangleHeights& operator-()
+    {
+        vertex_height[0] = -vertex_height[0];
+        vertex_height[1] = -vertex_height[1];
+        vertex_height[2] = -vertex_height[2];
 
         return *this;
     }
@@ -100,7 +110,7 @@ struct TriangleHeights
         return rhs.operator>=(*this);
     }
 
-    bool operator=( const TriangleHeights &rhs ) const
+    bool operator==( const TriangleHeights &rhs ) const
     {
         return !( operator<(rhs) ) && !( rhs.operator<(*this) );
     }
