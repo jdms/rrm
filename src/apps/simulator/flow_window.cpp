@@ -225,10 +225,12 @@ void FlowWindow::createToolBar()
     qclear = new QAction(tr("Clear"), qtoolbarFlow);
     qclear->setIcon(QIcon(":/images/icons/clear.png"));
 	qclear->setEnabled(false);
+	qclear->setVisible(false);
 
 	action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
 	action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
 	action_clearComputedQuantities_->setEnabled(true);
+	action_clearComputedQuantities_->setVisible(false);
 
     /// ToolBar setUp
 
@@ -289,194 +291,195 @@ void FlowWindow::resizeEvent(QResizeEvent *event)
 void FlowWindow::createActions()
 {
 
-    /// FlowWindo ToolBar
-    //connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
-    /// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
-    connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
-    {
-        /// Clear Scene
-        qclear->trigger();
-        this->loadSurfacesfromFile();
-        if (are_regionsdefined == true)
-        {
-            qbuildCornerPoint->setEnabled(true);
-            qbuildUnstructured->setEnabled(true);
-        }
-    });
-    /// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
-    connect(qreloadSurface, &QAction::triggered, this, [=]()
-    {
-        /// Clear Scene
-        qclear->trigger();
-        this->loadSurfacesfromSketch();
-        /// Now we can build the volumetric mesh
+	/// FlowWindo ToolBar
+	//connect(qflowparametersDialog, &QAction::triggered, qdockparametersBar, &QDockWidget::show);
+	/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
+	connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
+	{
+		/// Clear Scene
+		qclear->trigger();
+		this->loadSurfacesfromFile();
+		if (are_regionsdefined == true)
+		{
+			qbuildCornerPoint->setEnabled(true);
+			qbuildUnstructured->setEnabled(true);
+		}
+	});
+	/// Load Surface. Clear the scene before. @todo, asks to the user to save current scene section
+	connect(qreloadSurface, &QAction::triggered, this, [=]()
+	{
+		/// Clear Scene
+		qclear->trigger();
+		this->loadSurfacesfromSketch();
+		/// Now we can build the volumetric mesh
 
-        if (are_regionsdefined == true)
-        {
-            qbuildCornerPoint->setEnabled(true);
-            qbuildUnstructured->setEnabled(true);
-        }
-    });
+		if (are_regionsdefined == true)
+		{
+			qbuildCornerPoint->setEnabled(true);
+			qbuildUnstructured->setEnabled(true);
+		}
+	});
 
 
-    connect( qreloadSurface1, &QAction::triggered, this, [=](){
+	connect(qreloadSurface1, &QAction::triggered, this, [=](){
 
-        qclear->trigger();
-        this->loadSurfacesfromSketch1();
-        if (are_regionsdefined == true)
-        {
-            qbuildCornerPoint->setEnabled(true);
-            qbuildUnstructured->setEnabled(true);
-        }
+		qclear->trigger();
+		this->loadSurfacesfromSketch1();
+		if (are_regionsdefined == true)
+		{
+			qbuildCornerPoint->setEnabled(true);
+			qbuildUnstructured->setEnabled(true);
+		}
 
-    });
+	});
 
-    connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
-    {
+	connect(qbuildCornerPoint, &QAction::triggered, this, [=]()
+	{
 
-        //QMessageBox::StandardButton reply;
-        //reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
+		//QMessageBox::StandardButton reply;
+		//reply = QMessageBox::information(this, "Corner Point Meshing", "Corner-point grids can only be created for simple geometries with non-intersecting surfaces, do you want to continue ?", QMessageBox::Yes | QMessageBox::No);
 
-        ///@FIXME June 2017
-        if (true) //if (reply == QMessageBox::Yes)
-        {
-            //				qDebug() << "Yes was clicked";
-            /// Now we can Compute
-            /// @FIXME catch execption from HWU mesh generator
-            this->buildCornerPoint();
-            qcomputeFlowProperties->setEnabled(false);
-            qbuildCornerPoint->setEnabled(false);
-            qbuildUnstructured->setEnabled(false);
+		///@FIXME June 2017
+		if (true) //if (reply == QMessageBox::Yes)
+		{
+			//				qDebug() << "Yes was clicked";
+			/// Now we can Compute
+			/// @FIXME catch execption from HWU mesh generator
+			this->buildCornerPoint();
+			qcomputeFlowProperties->setEnabled(false);
+			qbuildCornerPoint->setEnabled(false);
+			qbuildUnstructured->setEnabled(false);
 
-        }
-        else {
-            qDebug() << "Yes was *not* clicked";
-        }
+		}
+		else {
+			qDebug() << "Yes was *not* clicked";
+		}
 
-        is_cornerpoint = true;
-    });
+		is_cornerpoint = true;
+	});
 
-    connect(qbuildUnstructured, &QAction::triggered, this, [=]()
-    {
-        /// Now we can Compute and see region Identifications
-        /// @FIXME catch execption from HWU mesh generator
-        this->buildUnstructured();
-        qcomputeFlowProperties->setEnabled(true);
-        action_showregions->setEnabled(false);
-        qbuildCornerPoint->setEnabled(false);
-        qbuildUnstructured->setEnabled(false);
-        action_upscalledPermeability_->setEnabled(true);
-        is_cornerpoint = false;
+	connect(qbuildUnstructured, &QAction::triggered, this, [=]()
+	{
+		/// Now we can Compute and see region Identifications
+		/// @FIXME catch execption from HWU mesh generator
+		this->buildUnstructured();
+		qcomputeFlowProperties->setEnabled(true);
+		action_showregions->setEnabled(false);
+		qbuildCornerPoint->setEnabled(false);
+		qbuildUnstructured->setEnabled(false);
+		action_upscalledPermeability_->setEnabled(true);
+		is_cornerpoint = false;
 
-    });
+	});
 
-    connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
-    {
-        /// Now we can visualize the properties and export
-        /// @FIXME catch execption from HWU mesh generator
-        controller->computeFlowProperties();
-        qcomputeFlowProperties->setEnabled(false);
-        tbn_export->setEnabled(true);
-        tbn_coloringbyvertex->setEnabled(true);
-        tbn_coloringbyface->setEnabled(true);
-        /// Set Default ColorMap
-        action_cool_to_warm->setChecked(true);
-        controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
-        action_upscalledPermeability_->setEnabled(false);
-        action_oilinPlace_->setEnabled( true );
+	connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
+	{
+		/// Now we can visualize the properties and export
+		/// @FIXME catch execption from HWU mesh generator
+		controller->computeFlowProperties();
+		qcomputeFlowProperties->setEnabled(false);
+		tbn_export->setEnabled(true);
+		tbn_coloringbyvertex->setEnabled(true);
+		tbn_coloringbyface->setEnabled(true);
+		/// Set Default ColorMap
+		action_cool_to_warm->setChecked(true);
+		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+		action_upscalledPermeability_->setEnabled(false);
+		action_oilinPlace_->setEnabled(true);
 
-        if (is_cornerpoint == false)
-        {
-            controller->loadPropertiesTetrahedron();
-            this->updatePropertyAction(controller->getPtrTetrahedralMesh());
+		if (is_cornerpoint == false)
+		{
+			controller->loadPropertiesTetrahedron();
+			this->updatePropertyAction(controller->getPtrTetrahedralMesh());
 			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure (bar)", "VProp", "", "double");
-            updateModelColors(current_property_);
-            action_showregions->setEnabled(true);
-            controller->getPoreVolume();
-            action_clearComputedQuantities_->setEnabled(true);
+			updateModelColors(current_property_);
+			action_showregions->setEnabled(true);
+			controller->getPoreVolume();
+			action_clearComputedQuantities_->setEnabled(true);
 
-        }
-        else
-        {
-            controller->loadPropertiesHexahedron();
-            this->updatePropertyAction(controller->getPtrHexahedralMesh());
+		}
+		else
+		{
+			controller->loadPropertiesHexahedron();
+			this->updatePropertyAction(controller->getPtrHexahedralMesh());
 			current_property_ = RRM::PropertyProfile("Hexahedron", "Pressure (bar)", "CProp", "", "double");
-            updateModelColors(current_property_);
-            action_showregions->setEnabled(false);
-        }
+			updateModelColors(current_property_);
+			action_showregions->setEnabled(false);
+		}
 
 
-    });
-    /// FIXME JUNE 2017
-    /// Clear Reload
-    //connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
-    //{
-        //qclear->trigger();
-        //this->loadSurfacesfromSketch();
-        //this->buildUnstructured();
-        ////controller->computeFlowProperties();
+	});
+	/// FIXME JUNE 2017
+	/// Clear Reload
+	//connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
+	//{
+	//qclear->trigger();
+	//this->loadSurfacesfromSketch();
+	//this->buildUnstructured();
+	////controller->computeFlowProperties();
 
 
-        //    //controller->loadPropertiesTetrahedron();
-        //    this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-        //    //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
-        //    //updateModelColors(current_property_);
-        //    action_showregions->setEnabled(false);
-        //    //controller->getPoreVolume();
-        //    action_clearComputedQuantities_->setEnabled(true);
-        //    action_upscalledPermeability_->setEnabled(false);
+	//    //controller->loadPropertiesTetrahedron();
+	//    this->updatePropertyAction(controller->getPtrTetrahedralMesh());
+	//    //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
+	//    //updateModelColors(current_property_);
+	//    action_showregions->setEnabled(false);
+	//    //controller->getPoreVolume();
+	//    action_clearComputedQuantities_->setEnabled(true);
+	//    action_upscalledPermeability_->setEnabled(false);
 
-        ///// Set Default ColorMap
-        //action_cool_to_warm->setChecked(true);
-        //controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
+	///// Set Default ColorMap
+	//action_cool_to_warm->setChecked(true);
+	//controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
 
-        //qcomputeFlowProperties->setEnabled(true);
-        //tbn_export->setEnabled(false);
-        //tbn_coloringbyvertex->setEnabled(false);
-        //tbn_coloringbyface->setEnabled(false);
-        //action_clearComputedQuantities_->setEnabled(true);
+	//qcomputeFlowProperties->setEnabled(true);
+	//tbn_export->setEnabled(false);
+	//tbn_coloringbyvertex->setEnabled(false);
+	//tbn_coloringbyface->setEnabled(false);
+	//action_clearComputedQuantities_->setEnabled(true);
 
 
-    //});
-    /// Region ID
-    connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
-    {
-        if (is_toggled)
-        {
-            current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
-            updateModelColors(current_property_);
-            canvas->showRegions();
-        }
+	//});
+	/// Region ID
+	connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
+	{
+		if (is_toggled)
+		{
+			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
+			updateModelColors(current_property_);
+			canvas->showRegions();
+		}
 
-    });
-    /// Exporters
-    /// @TODO June 2017
-    connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
-    connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
-    {
-        controller->clearComputedQuantities();
+	});
+	/// Exporters
+	/// @TODO June 2017
+	connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
+	connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
+	{
+		controller->clearComputedQuantities();
 		region_parameters_->reset();
 		fluid_parameters_->reset();
 		qcomputeFlowProperties->setEnabled(true);
-        canvas->setDefaultColor();
-    });
-    connect(action_upscalledPermeability_, &QAction::triggered, [=]()
-    {
-        std::string result;
-        action_upscalledPermeability_->setEnabled(false);
-        qcomputeFlowProperties->setEnabled(false);
-        controller->getUpscalledPermeability(result);
-        up_scaled_.setText(QString::fromStdString(result));
-        up_scaled_.show();
-    }
-    );
+		canvas->setDefaultColor();
+	});
+	connect(action_upscalledPermeability_, &QAction::triggered, [=]()
+	{
+		std::string result;
+		action_upscalledPermeability_->setEnabled(false);
+		qcomputeFlowProperties->setEnabled(false);
+		controller->getUpscalledPermeability(result);
+		up_scaled_.setText(QString::fromStdString(result));
+		up_scaled_.show();
+	}
+	);
 
 
 
-    connect(action_oilinPlace_, &QAction::triggered, [=]()
-    {
-        std::string result;
+	connect(action_oilinPlace_, &QAction::triggered, [=]()
+	{
+		std::string result;
         controller->getOilInPlace(result);
+		result = result + " stb ";
         up_scaled_.setText(QString::fromStdString(result));
         up_scaled_.show();
     }
