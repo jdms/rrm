@@ -324,6 +324,13 @@ void FlowWindow::createActions()
 	connect(qreloadSurface1, &QAction::triggered, this, [=](){
 
 		qclear->trigger();
+
+		qcomputeFlowProperties->setEnabled(false);
+		action_showregions->setEnabled(false);
+		action_upscalledPermeability_->setEnabled(false);
+		tbn_coloringbyvertex->setEnabled(false);
+		tbn_coloringbyface->setEnabled(false);
+
 		this->loadSurfacesfromSketch1();
 		if (are_regionsdefined == true)
 		{
@@ -662,6 +669,14 @@ void FlowWindow::loadSurfacesfromSketch()
 
 void FlowWindow::loadSurfacesfromSketch1()
 {
+
+	qcomputeFlowProperties->setEnabled(false);
+	action_showregions->setEnabled(false);
+	action_upscalledPermeability_->setEnabled(false);
+	action_oilinPlace_->setEnabled(false);
+	tbn_coloringbyvertex->setEnabled(false);
+	tbn_coloringbyface->setEnabled(false);
+
     controller->clear();
     canvas->clear();
 
