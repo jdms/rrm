@@ -77,6 +77,7 @@ void MainWindow::createMainInterface()
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
+    sl_depth_csection->setValue( 500 );
 
 
 
@@ -187,6 +188,7 @@ void MainWindow::createToolbar()
     ac_sketch_below->setCheckable( true );
 
     ac_truncate = new QAction( "T", this );
+    ac_truncate->setIcon(QIcon(":/images/icons/truncate.png"));
     ac_truncate->setCheckable( true );
 
 
@@ -525,7 +527,7 @@ void MainWindow::createFlowWindow()
 
 
     ac_output_volume = new QAction( "Diagnostics", this );
-    ac_output_volume->setIcon(QIcon(":/images/icons/flow.png"));
+    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
     ac_output_volume->setCheckable( true );
 
     connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
