@@ -46,7 +46,7 @@ void SketchWindow::createToolBar()
 
 
     ac_axes = new QAction( "Axes", this );
-    ac_axes->setIcon(QIcon(":/images/icons/axes6.png"));
+    ac_axes->setIcon(QIcon(":/images/icons/axes.png"));
     ac_axes->setCheckable( true );
     ac_axes->setChecked( true );
 
@@ -55,11 +55,13 @@ void SketchWindow::createToolBar()
                                                                                               emit getHeightMap(); } );
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
+    ac_fixed_csections->setIcon(QIcon(":/images/icons/fixedcsections.png"));
     ac_fixed_csections->setCheckable( true );
     connect( ac_fixed_csections, &QAction::toggled, cs, &QDockWidget::setVisible );
 
 
     ac_enable_preview = new QAction( "Enable Preview", this );
+    ac_enable_preview->setIcon(QIcon(":/images/icons/preview.png"));
     ac_enable_preview->setCheckable( true );
     ac_enable_preview->setChecked( true );
 
