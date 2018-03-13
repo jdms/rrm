@@ -100,6 +100,7 @@ namespace RRM
 
 
                         std::map< int, std::pair<double,double> > permeability_gradient_values_;
+						std::map< int, bool> is_inverted_permeability_gradient_values_;
                         std::tuple<int, int, int, int> permeability_position_;
 
                         QxtSpanSlider* qxt_span_slider_porosity_;
@@ -115,6 +116,7 @@ namespace RRM
 						double defaul_high_porosity_;
 
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
+						std::map< int, bool> is_inverted_porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
 		
 						// Water Saturation
