@@ -702,6 +702,7 @@ void RRMApplication::startFlowDiagnostics()
 
     std::map< std::size_t, Volume::Color > regions_map_ ;
     mainwindow->controller->getOutputVolume( regions_map_ );
+    if( regions_map_.empty() == true ) return;
 
     std::map< int, std::vector< int > > color_regions_ ;
     for( auto it: regions_map_ )
