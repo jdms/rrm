@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopServices>
+#include <QResizeEvent>
 
 
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
@@ -165,47 +166,47 @@ void MainWindow::createToolbar()
 {
 
     ac_save = new QAction( "Save", this );
-    ac_save->setIcon(QIcon(":/images/icons/save.png"));
+//    ac_save->setIcon(QIcon(":/images/icons/save.png"));
 
     ac_load = new QAction( "Load", this );
-    ac_load->setIcon(QIcon(":/images/icons/load.png"));
+//    ac_load->setIcon(QIcon(":/images/icons/load.png"));
 
     ac_clear = new QAction( "New", this );
-    ac_clear->setIcon(QIcon(":/images/icons/new.png"));
+//    ac_clear->setIcon(QIcon(":/images/icons/new.png"));
 
     ac_undo = new QAction( "Undo", this );
-    ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
+//    ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
 
     ac_redo = new QAction( "Redo", this );
-    ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
+//    ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
 
     ac_sketch_above = new QAction( "PA", this ); // create above!
-    ac_sketch_above->setIcon(QIcon(":/images/icons/sketchabove.png"));
+//    ac_sketch_above->setIcon(QIcon(":/images/icons/sketchabove.png"));
     ac_sketch_above->setCheckable( true );
 
     ac_sketch_below = new QAction( "PB", this ); // create below!
-    ac_sketch_below->setIcon(QIcon(":/images/icons/sketchbelow.png"));
+//    ac_sketch_below->setIcon(QIcon(":/images/icons/sketchbelow.png"));
     ac_sketch_below->setCheckable( true );
 
     ac_truncate = new QAction( "T", this );
-    ac_truncate->setIcon(QIcon(":/images/icons/truncate.png"));
+//    ac_truncate->setIcon(QIcon(":/images/icons/truncate.png"));
     ac_truncate->setCheckable( true );
 
 
     ac_remove_above = new QAction( "RA", this );
-    ac_remove_above->setIcon(QIcon(":/images/icons/removeabove.png"));
+//    ac_remove_above->setIcon(QIcon(":/images/icons/removeabove.png"));
     ac_remove_above->setCheckable( true );
 
     ac_remove_above_int = new QAction( "RAI", this );
-    ac_remove_above_int->setIcon(QIcon(":/images/icons/removeaboveintersecion.png"));
+//    ac_remove_above_int->setIcon(QIcon(":/images/icons/removeaboveintersecion.png"));
     ac_remove_above_int->setCheckable( true );
 
     ac_remove_below = new QAction( "RB", this );
-    ac_remove_below->setIcon(QIcon(":/images/icons/removebelow.png"));
+//    ac_remove_below->setIcon(QIcon(":/images/icons/removebelow.png"));
     ac_remove_below->setCheckable( true );
 
     ac_remove_below_int = new QAction( "RBI", this );
-    ac_remove_below_int->setIcon(QIcon(":/images/icons/removebelowintersecion.png"));
+//    ac_remove_below_int->setIcon(QIcon(":/images/icons/removebelowintersecion.png"));
     ac_remove_below_int->setCheckable( true );
 
 
@@ -220,7 +221,7 @@ void MainWindow::createToolbar()
 
 
     ac_screenshot = new QAction( "Screenshot", this );
-    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
+//    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
@@ -527,7 +528,7 @@ void MainWindow::createFlowWindow()
 
 
     ac_output_volume = new QAction( "Diagnostics", this );
-    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
+//    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
     ac_output_volume->setCheckable( true );
 
     connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
@@ -541,7 +542,7 @@ void MainWindow::createFlowWindow()
             app->closeFlowDiagnostics();
             std::cout << "Stop flow diagnostics" << std::endl << std::flush;
         }
-//             else
+        //             else
     } );
 
     tb_mainwindow->addAction( ac_output_volume );
@@ -589,4 +590,15 @@ void MainWindow::load()
 }
 
 
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+//    std::cout << "Resizing window" << std::endl << std::flush;
+
+//    QRect rect = QGuiApplication::primaryScreen()->geometry();
+
+//    app_width  = static_cast< int > (  event->size().width() /** 0.8f*/ );
+//    app_height = static_cast< int > ( event->size().height() /** 0.8f*/ );
+
+//    resize( app_width, app_height );
+}
 
