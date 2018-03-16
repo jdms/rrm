@@ -450,6 +450,18 @@ void FlowVisualizationController::exportResultstoVTK()
      code_interface.exportResultstoVTK( filename.toStdString() );
 }
 
+void FlowVisualizationController::exportMeshtoMSH()
+{
+
+	QString selected_format = "";
+	QString filename = QFileDialog::getSaveFileName(this, tr("Export File"), "./exported/results/",
+		".Mesh files (*.msh)", &selected_format);
+	if (filename.isEmpty() == true) return;
+
+
+	code_interface.exportMeshtoMSH(filename.toStdString());
+}
+
 void FlowVisualizationController::clear()
 {
     is_surface_loaded = false;
