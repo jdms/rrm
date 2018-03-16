@@ -395,12 +395,19 @@ bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double>
 
 bool RulesProcessor::saveFile( std::string filename )
 {
-    return modeller_.saveBinary(filename);
+    return modeller_.saveJSON(filename);
 }
 
 bool RulesProcessor::loadFile( std::string filename )
 {
-    return modeller_.loadBinary(filename);
+    bool status = modeller_.loadBinary(filename);
+
+    if ( status == false )
+    {
+        status = modeller_.loadJSON(filename);
+    }
+
+    return status;
 }
 
 size_t RulesProcessor::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
