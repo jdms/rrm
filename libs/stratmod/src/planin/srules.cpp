@@ -361,6 +361,9 @@ bool SRules::addSurface(
         }
     }
 
+    remove_above_surfaces = getLowerBound(remove_above_surfaces);
+    remove_below_surfaces = getUpperBound(remove_below_surfaces);
+
     if ( !remove_above_surfaces.empty() ) {
         for ( auto &i : remove_above_surfaces ) { 
             sptr->removeAbove( container[i] ); 
@@ -825,7 +828,7 @@ bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
     Point3 origin = container[0]->getOrigin();
     Point3 lenght = container[0]->getLenght();
 
-    double height, lb_height, ub_height;
+    double lb_height, ub_height;
     Point2 p2 = {{{ p.x, p.y }}};
 
     ub_height = origin.z + lenght.z;
@@ -1276,5 +1279,126 @@ std::vector<size_t> SRules::getActiveSurfacesAbovePoint( const Point3 &p )
 std::vector<size_t> SRules::getActiveSurfacesAbovePoint( Point3 &&p )
 {
     return getActiveSurfacesAbovePoint(p);
+}
+
+std::vector<size_t> SRules::getLowerBound( std::vector<size_t> surface_ids )
+{
+    std::vector<size_t> lbound;
+
+    for ( auto &s : surface_ids )
+    {
+        if ( s >= size() )
+        {
+            return lbound;
+        }
+    }
+
+    if ( surface_ids.size() <= 1 )
+    {
+        lbound = surface_ids;
+        return lbound;
+    }
+
+    // TODO: change for parallelization
+    std::set<size_t> lbound_set;
+
+    std::vector<size_t> ordered_ids;
+    std::multimap<TriangleHeights, size_t> dictionary;
+    TriangleHeights th;
+    size_t numBlocks = PlanarSurface::getDiscretizationX() * PlanarSurface::getDiscretizationY();
+    size_t numTriangPerBlock = 8;
+
+    for ( size_t bindex = 0; bindex < numBlocks; ++bindex )
+    {
+        for ( size_t tpos = 0; tpos < numTriangPerBlock; ++tpos )
+        {
+            ordered_ids.clear();
+            dictionary.clear();
+
+            for ( auto s : surface_ids )
+            {
+                th = -container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
+                dictionary.insert(std::make_pair(th, s));
+            }
+
+            for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
+            {
+                ordered_ids.push_back( iter->second );
+            }
+
+            if ( !ordered_ids.empty() )
+            {
+                lbound_set.insert( ordered_ids.back() );
+            }
+        }
+    }
+
+    for ( size_t e : lbound_set )
+    {
+        lbound.push_back(e);
+    }
+
+    return lbound;
+}
+
+std::vector<size_t> SRules::getUpperBound( std::vector<size_t> surface_ids )
+{
+    std::vector<size_t> ubound;
+
+    for ( auto &s : surface_ids )
+    {
+        if ( s >= size() )
+        {
+            return ubound;
+        }
+    }
+
+    if ( surface_ids.size() <= 1 )
+    {
+        ubound = surface_ids;
+        return ubound;
+    }
+
+
+    // TODO: change for parallelization
+    std::set<size_t> ubound_set;
+
+    std::vector<size_t> ordered_ids;
+    std::multimap<TriangleHeights, size_t> dictionary;
+    TriangleHeights th;
+    size_t numBlocks = PlanarSurface::getDiscretizationX() * PlanarSurface::getDiscretizationY();
+    size_t numTriangPerBlock = 8;
+
+    for ( size_t bindex = 0; bindex < numBlocks; ++bindex )
+    {
+        for ( size_t tpos = 0; tpos < numTriangPerBlock; ++tpos )
+        {
+            ordered_ids.clear();
+            dictionary.clear();
+
+            for ( auto s : surface_ids )
+            {
+                th = container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
+                dictionary.insert(std::make_pair(th, s));
+            }
+
+            for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
+            {
+                ordered_ids.push_back( iter->second );
+            }
+
+            if ( !ordered_ids.empty() )
+            {
+                ubound_set.insert( ordered_ids.back() );
+            }
+        }
+    }
+
+    for ( size_t e : ubound_set )
+    {
+        ubound.push_back(e);
+    }
+
+    return ubound;
 }
 

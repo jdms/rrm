@@ -450,6 +450,18 @@ void FlowVisualizationController::exportResultstoVTK()
      code_interface.exportResultstoVTK( filename.toStdString() );
 }
 
+void FlowVisualizationController::exportMeshtoMSH()
+{
+
+	QString selected_format = "";
+	QString filename = QFileDialog::getSaveFileName(this, tr("Export File"), "./exported/results/",
+		".Mesh files (*.msh)", &selected_format);
+	if (filename.isEmpty() == true) return;
+
+
+	code_interface.exportMeshtoMSH(filename.toStdString());
+}
+
 void FlowVisualizationController::clear()
 {
     is_surface_loaded = false;
@@ -487,7 +499,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         int i = 0;
         code_interface.getPressure(values);
 
-        OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure");
+        OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure (bar)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -501,7 +513,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getForwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Forward TOF");
+        ph = ptr_mesh->request_vertex_property<double>("Forward TOF (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -515,7 +527,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getFowardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Forward TOF Log10");
+        ph = ptr_mesh->request_vertex_property<double>("Forward TOF Log10 (Log10(day)) ");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -529,7 +541,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Backward TOF");
+        ph = ptr_mesh->request_vertex_property<double>("Backward TOF (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -543,7 +555,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Backward TOF Log10");
+        ph = ptr_mesh->request_vertex_property<double>("Backward TOF Log10 (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -558,7 +570,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF");
+        ph = ptr_mesh->request_vertex_property<double>("Total TOF (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -572,7 +584,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF Log10");
+        ph = ptr_mesh->request_vertex_property<double>("Total TOF Log10 (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -635,7 +647,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getPermeabilitybyCells(values);
 
-        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability");
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability (mD)");
         ptr_mesh->set_persistent(ch);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
@@ -680,7 +692,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocitybyCells(values);
 
-        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity");
+        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity (m/s)");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
@@ -699,7 +711,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocityMagnitudebyCells_log10(values);
 
-        chv = ptr_mesh->request_cell_property<double>("Velocity Log10");
+        chv = ptr_mesh->request_cell_property<double>("Velocity Log10 (log10(m/s))");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)

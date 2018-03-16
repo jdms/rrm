@@ -42,6 +42,7 @@ namespace RRM
                 public slots:
                         void updateWellPosition(const std::map< int, Eigen::Vector4d >& _positions);
                         void clear(){};
+						void reset(){};
                 signals:
                         void numberOfWells(int _number_of_wells);
                         void wellPositionsHasChanged();
@@ -67,6 +68,11 @@ namespace RRM
                         Eigen::Vector3d dim_max_;
                         Eigen::Vector3d dim_min_;
 
+						/// FIXME January 2018
+
+						double default_injector_pressure_;
+						double default_producer_pressure_;
+						
 
                         /// FIXME
 
