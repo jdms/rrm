@@ -67,6 +67,9 @@ class MainWindow: public QMainWindow
         void load();
 
 
+    protected:
+
+        void resizeEvent(QResizeEvent *event);
 
 
     private:

@@ -283,15 +283,18 @@ bool SModellerImplementation::insertSurface( const std::vector<double> &point_da
 
     sptr->generateSurface(); 
 
-    if ( undoed_surfaces_stack_.empty() == false )
+    /* Execute selected Geologic Rule */
+    status = commitSurface(sptr, surface_id, lbounds, ubounds); 
+
+    if ( ( status == true ) && ( undoed_surfaces_stack_.empty() == false ) )
     {
         undoed_surfaces_stack_.clear();
         undoed_surfaces_indices_.clear();
         undoed_states_.clear(); 
     }
 
-    /* Execute selected Geologic Rule */
-    return commitSurface(sptr, surface_id, lbounds, ubounds); 
+    return status;
+
 }
 
 bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id, 
@@ -357,15 +360,17 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
 
     sptr->generateSurface(); 
 
-    if ( undoed_surfaces_stack_.empty() == false )
+    /* Execute selected Geologic Rule */
+    status = commitSurface(sptr, surface_id, lbounds, ubounds); 
+
+    if ( ( status == true ) && ( undoed_surfaces_stack_.empty() == false ) )
     {
         undoed_surfaces_stack_.clear();
         undoed_surfaces_indices_.clear();
         undoed_states_.clear(); 
     }
 
-    /* Execute selected Geologic Rule */
-    return commitSurface(sptr, surface_id, lbounds, ubounds); 
+    return status;
 } 
         
 bool SModellerImplementation::commitSurface( 
@@ -377,6 +382,13 @@ bool SModellerImplementation::commitSurface(
 {
     size_t index;
     bool status; 
+
+    auto iter = dictionary_.find(given_index);
+    if ( iter != dictionary_.end() )
+    {
+        std::cout << "Tried to insert surface with duplicated index.\n";
+        return false;
+    }
 
     if ( current_.state_ == State::SKETCHING )
     {

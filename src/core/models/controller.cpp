@@ -1312,7 +1312,8 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
 
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
-    rules_processor.getTetrahedralMesh( vertices_, regions_ );
+    bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
+    if( status_ == false ) return;
 
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );

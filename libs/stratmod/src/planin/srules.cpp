@@ -1283,8 +1283,15 @@ std::vector<size_t> SRules::getActiveSurfacesAbovePoint( Point3 &&p )
 
 std::vector<size_t> SRules::getLowerBound( std::vector<size_t> surface_ids )
 {
-    // TODO: check if surface_ids are validstd::set
     std::vector<size_t> lbound;
+
+    for ( auto &s : surface_ids )
+    {
+        if ( s >= size() )
+        {
+            return lbound;
+        }
+    }
 
     if ( surface_ids.size() <= 1 )
     {
@@ -1310,21 +1317,18 @@ std::vector<size_t> SRules::getLowerBound( std::vector<size_t> surface_ids )
 
             for ( auto s : surface_ids )
             {
-                th = container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
+                th = -container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
                 dictionary.insert(std::make_pair(th, s));
             }
 
             for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
             {
-                // if ( iter->first.isValid() )
-                {
-                    ordered_ids.push_back( iter->second );
-                }
+                ordered_ids.push_back( iter->second );
             }
 
             if ( !ordered_ids.empty() )
             {
-                lbound_set.insert( ordered_ids.front() );
+                lbound_set.insert( ordered_ids.back() );
             }
         }
     }
@@ -1339,8 +1343,15 @@ std::vector<size_t> SRules::getLowerBound( std::vector<size_t> surface_ids )
 
 std::vector<size_t> SRules::getUpperBound( std::vector<size_t> surface_ids )
 {
-    // TODO: check if surface_ids are validstd::set
     std::vector<size_t> ubound;
+
+    for ( auto &s : surface_ids )
+    {
+        if ( s >= size() )
+        {
+            return ubound;
+        }
+    }
 
     if ( surface_ids.size() <= 1 )
     {
@@ -1373,10 +1384,7 @@ std::vector<size_t> SRules::getUpperBound( std::vector<size_t> surface_ids )
 
             for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
             {
-                // if ( iter->first.isValid() )
-                {
-                    ordered_ids.push_back( iter->second );
-                }
+                ordered_ids.push_back( iter->second );
             }
 
             if ( !ordered_ids.empty() )
