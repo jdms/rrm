@@ -149,6 +149,7 @@ class FlowWindow : public  QMainWindow
         QAction *qexportcornerpointVTK;
         QAction *qexportcornerpointGRDECL;
         QAction* qexportresults;
+		QAction* qexportMesh;
 
 
         QAction* action_cornerpoint;

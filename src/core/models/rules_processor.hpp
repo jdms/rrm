@@ -537,10 +537,19 @@
         }
 
         testing_surface_insertion_ = false;
+        
+        if ( status == true )
+        {
+            std::vector<double> dummy_vertices;
+            std::vector<size_t> dummy_edges;
+            status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
 
-		//std::vector<double> dummy_vertices;
-		//std::vector<size_t> dummy_edges;
-		//status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+            if ( status == false )
+            {
+                std::cout << "Inserted surface is vacuous, undoing...\n" << std::flush;
+                modeller_.undo();
+            }
+        }
         
 		return status;
     }

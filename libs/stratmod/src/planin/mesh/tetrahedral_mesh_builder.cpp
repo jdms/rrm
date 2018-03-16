@@ -1,63 +1,10 @@
 #include <array>
-#include <numeric>
 
 #include <fstream>
 #include <iostream>
 
 #include "tetrahedral_mesh_builder.hpp"
 
-struct TetrahedralMeshBuilder::TriangleHeights
-{
-    // BUG: VS2013 does not support empty initializer lists
-    std::array<double, 3> vertex_height; //= {};
-    std::array<bool, 3> vertex_status; //= {};
-    double tolerance = 1E-13;
-
-    bool status() const
-    {
-        return vertex_status[0] || vertex_status[1] || vertex_status[2];
-    }
-
-    bool operator<( const TriangleHeights &rhs ) const
-    {
-        if ( vertex_height[0] - tolerance > rhs.vertex_height[0] )
-        {
-            return false;
-        }
-
-        if ( vertex_height[1] - tolerance > rhs.vertex_height[1] )
-        {
-            return false;
-        }
-
-        if ( vertex_height[2] - tolerance > rhs.vertex_height[2] )
-        {
-            return false;
-        }
-
-        bool equal_v0 = std::fabs( vertex_height[0] - rhs.vertex_height[0] ) < tolerance;
-        bool equal_v1 = std::fabs( vertex_height[1] - rhs.vertex_height[1] ) < tolerance;
-        bool equal_v2 = std::fabs( vertex_height[2] - rhs.vertex_height[2] ) < tolerance;
-
-        // Given equal heights a valid triangle can't be < than an invalid triangle
-        // Also, enforce that x < x is false
-        //
-        if ( equal_v0 && equal_v1 && equal_v2 )
-        {
-            if ( rhs.status() == false )
-            {
-                return false;
-            }
-
-            if ( status() && rhs.status() )
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-};
 
 
 bool TetrahedralMeshBuilder::exportToTetgen( std::string filename )
@@ -277,7 +224,7 @@ bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
             size_t proc_surfaces = 0;
             for ( auto &it : list_of_triangle_heights )
             {
-                ordered_surfaces[proc_surfaces] = std::make_pair(it.first.status(), it.second);
+                ordered_surfaces[proc_surfaces] = std::make_pair(it.first.isValid(), it.second);
                 ++proc_surfaces;
             }
 
@@ -330,7 +277,7 @@ void TetrahedralMeshBuilder::getDiscretization()
     numSurfaces = container_.size();
 }
 
-TetrahedralMeshBuilder::TriangleHeights TetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos, size_t bindex, size_t surface_id ) const
+TriangleHeights TetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos, size_t bindex, size_t surface_id ) const
 {
     TriangleHeights theights;
 

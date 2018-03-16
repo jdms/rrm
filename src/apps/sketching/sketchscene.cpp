@@ -317,7 +317,8 @@ void SketchScene::createTopViewScene( Volume* const& vol_ )
     axes.setAxisXLenght( vol_->getWidth() );
     axes.setAxisYLenght( vol_->getHeight() );
 
-    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), 0 );
+//    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), 0 );
+    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getLenght() );
     main_csection->setCurrent( true );
     addItem( main_csection );
 

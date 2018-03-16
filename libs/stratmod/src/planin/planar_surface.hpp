@@ -37,6 +37,8 @@
 #include "interpolated_graph.hpp"
 #include "triangle_soup_wrapper.hpp" 
 
+#include "mesh/polyhedra.hpp"
+
 /* Class PlanarSurface is not reentrant. */ 
 
 /* template<typename CoordinatesListType = std::vector<float>, typename Natural = unsigned long int> */ 
@@ -153,7 +155,7 @@ class PlanarSurface {
         std::size_t getNumX(); 
         std::size_t getNumY(); 
         std::size_t getNumVertices(); 
-        Natural getVertexIndex( Natural i, Natural j );
+        Natural getVertexIndex( Natural i, Natural j ) const;
 
         template<typename CoordinatesList>
         bool getRawHeightMap( CoordinatesList &vertices );
@@ -254,7 +256,16 @@ class PlanarSurface {
         bool rangeCheck( Natural i, Natural j );
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
+        size_t getBlockIndex( size_t i, size_t j ) const;
+        IndicesType getBlockIndices( size_t b ) const;
+
+        size_t getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const;
+
+        TriangleHeights getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex );
+
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
+
+        friend class SRules;
 
         // Cereal provides an easy way to serialize objects
         friend class cereal::access;

@@ -87,7 +87,7 @@ void RRMApplication::setDefaultSiderBarValues()
 {
     mainwindow->object_properties->clear();
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
-    mainwindow->object_properties->checkLowResolution();
+    mainwindow->object_properties->checkMediumResolution();
 }
 
 
@@ -104,6 +104,8 @@ void RRMApplication::setRRMDefaultValuesOnInterface()
 
     setVolumeOriginToController( Settings::Volume::VOLUME_ORIGINX, Settings::Volume::VOLUME_ORIGINY, Settings::Volume::VOLUME_ORIGINZ );
     setVolumeDimensionsToController( Settings::Volume::VOLUME_WIDTH, Settings::Volume::VOLUME_HEIGHT, Settings::Volume::VOLUME_LENGTH );
+
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
 
 }
 
@@ -140,7 +142,7 @@ void RRMApplication::getVolumeDimensionsFromController() const
     mainwindow->object_properties->changeVolumeSize( ox_ + width_, oy_ + height_, oz_ + length_ );
     mainwindow->sl_depth_csection->setDiscretization( static_cast< int > ( disc_ ) );
     mainwindow->sl_depth_csection->setRange( oz_,  oz_ + length_ );
-
+    mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
 
 
 }
@@ -172,6 +174,7 @@ void RRMApplication::changeVolumeDimension( const Settings::CrossSection::CrossS
         mainwindow->controller->setupCrossSectionDiscretization( disc_, step_ );
         mainwindow->sl_depth_csection->setDiscretization( static_cast< int > ( disc_ ) );
         mainwindow->sl_depth_csection->setRange( oz_,  oz_ + value_ );
+        mainwindow->sl_depth_csection->setValue( Settings::Volume::VOLUME_LENGTH );
     }
 
 }
@@ -699,6 +702,7 @@ void RRMApplication::startFlowDiagnostics()
 
     std::map< std::size_t, Volume::Color > regions_map_ ;
     mainwindow->controller->getOutputVolume( regions_map_ );
+    if( regions_map_.empty() == true ) return;
 
     std::map< int, std::vector< int > > color_regions_ ;
     for( auto it: regions_map_ )

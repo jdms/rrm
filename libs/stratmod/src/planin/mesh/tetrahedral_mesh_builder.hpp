@@ -81,8 +81,6 @@ class TetrahedralMeshBuilder
 
         using IndicesType = std::array<size_t, 2>;
 
-        struct TriangleHeights;
-
 
         // Methods
         bool buildPrismMesh( std::vector<Prism> &prism_list );

@@ -10,6 +10,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QCheckBox>
 #include <QPixmap>
 #include <Eigen/Dense>
 
@@ -52,10 +53,11 @@ namespace RRM
 						int reversePermeability(bool _is_reversed,int _value);
 						int resersePorosity(bool _is_reversed, int _value) ;
 
-                        void clear();
-
                 public slots:
                         void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
+
+						void clear();
+						void reset();
 
                 signals:
                         void numberOfRegions(int _number_of_regions);
@@ -89,8 +91,16 @@ namespace RRM
                         QLabel* gradient_permeability_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_permeability_;
                         QDoubleSpinBox* doubleSpinbBox_high_permeability_;
+						// Values in the GUI
+						double low_permeability_;
+						double high_permeability_;
+						// Initial values in the GUI
+						double default_low_permeability_;
+						double default_high_permeability_;
+
 
                         std::map< int, std::pair<double,double> > permeability_gradient_values_;
+						std::map< int, bool> is_inverted_permeability_gradient_values_;
                         std::tuple<int, int, int, int> permeability_position_;
 
                         QxtSpanSlider* qxt_span_slider_porosity_;
@@ -98,14 +108,28 @@ namespace RRM
                         QLabel* gradient_porosity_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_porosity_;
                         QDoubleSpinBox* doubleSpinbBox_high_porosity_;
+						// Values in the GUI
+						double low_porosity_;
+						double high_porosity_;
+						// Initial values in the GUI
+						double default_low_porosity_;
+						double defaul_high_porosity_;
 
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
+						std::map< int, bool> is_inverted_porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
 		
 						// Water Saturation
 						QSlider*        slider_Water_Saturation_;
 						QLabel*			label_Water_Saturation_;
 						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
+						// Values in the GUI
+						double low_water_saturation_;
+						double high_water_saturation_;
+						// Initial values in the GUI
+						double defaul_low_water_saturation_;
+						double defaul_high_water_saturation_;
+						
 
 						std::tuple<int, int, int, int> water_saturation_position_;
 
@@ -114,9 +138,11 @@ namespace RRM
 
 						/// FIXME January 2018
 						bool is_reversed_permeability_;
-						QCheckBox*      inverted_permeability_;
+						QPushButton*      inverted_permeability_;
 						bool is_reversed_porosity_;
-						QCheckBox*      inverted_porosity_;
+						QPushButton*      inverted_porosity_;
+
+						std::map< int, std::vector< int > > region_colors_;
 
         };
 
