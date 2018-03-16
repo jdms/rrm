@@ -142,6 +142,7 @@ void FlowWindow::createToolBar()
     qexportcornerpointVTK = new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
     qexportcornerpointGRDECL = new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
     qexportresults = new QAction(tr("Results to VTK"), qtoolbarFlow);
+	qexportMesh = new QAction(tr("Mesh *.msh"), qtoolbarFlow);
 
     mn_export = new QMenu(tr("Export"), this);
     mn_export->addAction(qexportsurface);
@@ -150,6 +151,7 @@ void FlowWindow::createToolBar()
     mn_export->addAction(qexportcornerpointGRDECL);
     mn_export->addAction(qexportresults);
     mn_export->addAction(action_exportDerivedQuantities_);
+	mn_export->addAction(qexportMesh);
 
     tbn_export = new QToolButton();
     tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
@@ -229,8 +231,8 @@ void FlowWindow::createToolBar()
 
 	action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
 	action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
-	action_clearComputedQuantities_->setEnabled(true);
-	action_clearComputedQuantities_->setVisible(false);
+	action_clearComputedQuantities_->setEnabled(false);
+	action_clearComputedQuantities_->setVisible(true);
 
     /// ToolBar setUp
 
@@ -461,6 +463,7 @@ void FlowWindow::createActions()
 	/// Exporters
 	/// @TODO June 2017
 	connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
+
 	connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
 	{
 		controller->clearComputedQuantities();
@@ -496,7 +499,9 @@ void FlowWindow::createActions()
     connect(qexportvolume, SIGNAL(triggered(bool)), controller, SLOT(exportVolumetoVTK()));
     connect(qexportcornerpointVTK, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoVTK()));
     connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
-    connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+    //connect(qexportcornerpointGRDECL, SIGNAL(triggered(bool)), controller, SLOT(exportCornerPointtoGRDECL()));
+	/// January 2018
+	connect(qexportMesh, SIGNAL(triggered(bool)), controller, SLOT(exportMeshtoMSH()));
     connect(qexportresults, SIGNAL(triggered(bool)), controller, SLOT(exportResultstoVTK()));
     // CrossSection
     connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
