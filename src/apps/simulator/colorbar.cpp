@@ -115,11 +115,11 @@ void ColorBar::paintEvent( QPaintEvent *event )
 
         for (auto i = 0; i < this->label_step; i++)
         {
-            number = QString::number(max - i*label_valeu);
-            if (number.size() > 4)
-            {
+            //number = QString::number(max - i*label_valeu);
+            //if (number.size() > 4)
+            //{
                 number = QString::number(max - i*label_valeu,'e',2);
-            }
+            //}
 
             painter.drawText(left, rect.top() + i*text_step + fm.height(), number);
         }
