@@ -620,6 +620,7 @@ bool Controller::createObjectSurface()
 
     Object* const& obj_ = objects.getElement( current_object );
     Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+    if( cs_.empty() == true ) return false;
 
     std::vector< std::tuple< Curve2D, double > > curves_;
     for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
@@ -635,6 +636,10 @@ bool Controller::createObjectSurface()
         curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
     }
 
+   if( curves_.empty() == true ) return false;
+
+
+
     applyStratigraphicRule();
 
 
@@ -642,8 +647,12 @@ bool Controller::createObjectSurface()
     if( obj_->hasTrajectory() == true )
     {
         Curve2D curve_ = std::get<0>( curves_[ 0 ] );
-        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
+        if( curve_.isEmpty() == true ) return false;
+
         double depth_ = std::get<1>( curves_[ 0 ] );
+
+        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
+        if( traj_.isEmpty() == true ) return false;
 
         surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
     }
@@ -1633,9 +1642,10 @@ void Controller::exportToIrapGrid()
     std::vector< float > points;
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    std::size_t index_suf_ = 0;
     for ( std::size_t id_: actives_ )
     {
-        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+        QString surface_filename = QString( "%1_Surface_%1.IRAPG").arg( index_suf_ ).arg( id_ );
 
         std::vector< double > points_list;
         std::vector< bool > valid_points;
@@ -1689,6 +1699,8 @@ void Controller::exportToIrapGrid()
 
         points.clear();
         surface_filename.clear();
+
+        index_suf_++;
     }
 
 }
