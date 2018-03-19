@@ -166,19 +166,19 @@ void MainWindow::createToolbar()
 {
 
     ac_save = new QAction( "Save", this );
-//    ac_save->setIcon(QIcon(":/images/icons/save.png"));
+    ac_save->setIcon(QIcon(":/images/icons/save.png"));
 
     ac_load = new QAction( "Load", this );
-//    ac_load->setIcon(QIcon(":/images/icons/load.png"));
+    ac_load->setIcon(QIcon(":/images/icons/load.png"));
 
     ac_clear = new QAction( "New", this );
-//    ac_clear->setIcon(QIcon(":/images/icons/new.png"));
+    ac_clear->setIcon(QIcon(":/images/icons/new.png"));
 
     ac_undo = new QAction( "Undo", this );
-//    ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
+    ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
 
     ac_redo = new QAction( "Redo", this );
-//    ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
+    ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
 
     ac_sketch_above = new QAction( "PA", this ); // create above!
 //    ac_sketch_above->setIcon(QIcon(":/images/icons/sketchabove.png"));
@@ -221,7 +221,7 @@ void MainWindow::createToolbar()
 
 
     ac_screenshot = new QAction( "Screenshot", this );
-//    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
+    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
