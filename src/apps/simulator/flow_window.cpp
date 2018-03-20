@@ -396,7 +396,6 @@ void FlowWindow::createActions()
 		/// Set Default ColorMap
 		action_cool_to_warm->setChecked(true);
 		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
-		action_upscalledPermeability_->setEnabled(false);
 		action_oilinPlace_->setEnabled(true);
 
 		if (is_cornerpoint == false)
@@ -475,14 +474,16 @@ void FlowWindow::createActions()
 		tbn_export->setEnabled(false);
 		tbn_coloringbyvertex->setEnabled(false);
 		tbn_coloringbyface->setEnabled(false);
+		action_showregions->setEnabled(false);
 		qcomputeFlowProperties->setEnabled(true);
 		canvas->setDefaultColor();
 	});
 	connect(action_upscalledPermeability_, &QAction::triggered, [=]()
 	{
 		std::string result;
-		action_upscalledPermeability_->setEnabled(false);
-		qcomputeFlowProperties->setEnabled(false);
+
+		/// @TODO Fixed Janurary
+		setParametersBeforeSimulation();
 		controller->getUpscalledPermeability(result);
 		up_scaled_.setText(QString::fromStdString(result));
 		up_scaled_.show();
