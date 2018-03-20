@@ -198,10 +198,10 @@ void FlowVisualizationController::setVolumeDimensions(double width_, double heig
 void FlowVisualizationController::computeFlowProperties()
 {
 
-    if (is_volumetric_built == false || is_surface_loaded == false)
-    {
-        return;
-    }
+    //if (is_volumetric_built == false || is_surface_loaded == false)
+    //{
+    //    return;
+    //}
 
     code_interface.init();
     code_interface.computeProperties();
