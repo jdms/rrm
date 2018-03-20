@@ -89,6 +89,7 @@ void FlowDiagnosticsInterface::clearWells(){
 
 void FlowDiagnosticsInterface::init(){
     if (region.meshinfo_type() == 1 && region.numberofphases() == 1){ //unstructured
+		region.clear_computedproperties();
 		//region.writevolumemesh("volumetetmesh.vtk");
         region.tetrahedralmesh_postprocessCVFE();
         region.properties_cvfe_sf(); //kvratio_=0.1
@@ -100,6 +101,7 @@ void FlowDiagnosticsInterface::init(){
 
     }
     else if (region.meshinfo_type() == 1 && region.numberofphases() == 2){ //unstructured
+		region.clear_computedproperties();
         region.tetrahedralmesh_postprocessCVFE();
         region.properties_cvfe_mf();
         if (region.saturationflag() == 1){
@@ -559,6 +561,7 @@ void FlowDiagnosticsInterface::clear(){
 
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
+	region.clear_computedproperties();
 	if (region.numberofphases() == 1){
 		std::vector<double> kk;
 		kk = region.flowbasedupscaling_sf();
