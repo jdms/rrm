@@ -383,6 +383,9 @@ void FlowWindow::createActions()
 
 	connect(qcomputeFlowProperties, &QAction::triggered, controller, [=]()
 	{
+
+		/// @TODO Fixed Janurary
+		setParametersBeforeSimulation();
 		/// Now we can visualize the properties and export
 		/// @FIXME catch execption from HWU mesh generator
 		controller->computeFlowProperties();
@@ -467,8 +470,11 @@ void FlowWindow::createActions()
 	connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
 	{
 		controller->clearComputedQuantities();
-		region_parameters_->reset();
-		fluid_parameters_->reset();
+
+		// No results to show
+		tbn_export->setEnabled(false);
+		tbn_coloringbyvertex->setEnabled(false);
+		tbn_coloringbyface->setEnabled(false);
 		qcomputeFlowProperties->setEnabled(true);
 		canvas->setDefaultColor();
 	});
@@ -821,35 +827,36 @@ void FlowWindow::updateParameterFields()
 
 }
 
-void FlowWindow::acceptUserParameters()
+
+void FlowWindow::setParametersBeforeSimulation()
 {
-    /// Region parameters
-    int np = 0;
-    std::vector< double > positions;
-    std::vector< double > permeability;
-    std::vector< double > porosity;
-    std::vector< double > saturation;
-    std::vector< int > permeability_curves;
+	/// Region parameters
+	int np = 0;
+	std::vector< double > positions;
+	std::vector< double > permeability;
+	std::vector< double > porosity;
+	std::vector< double > saturation;
+	std::vector< int > permeability_curves;
 
-    std::map<int, std::pair<double, double> > permeability_gradients;
-    std::map<int, std::pair<double, double> > porosity_gradients;
+	std::map<int, std::pair<double, double> > permeability_gradients;
+	std::map<int, std::pair<double, double> > porosity_gradients;
 
-    /// Region Module
-    ///@FIXME September
-	region_parameters_->getRegionData(np, 
-									  positions, 
-									  permeability, 
-									  porosity, 
-									  saturation, 
-									  porosity_gradients, 
-									  permeability_gradients);
+	/// Region Module
+	///@FIXME September
+	region_parameters_->getRegionData(np,
+		positions,
+		permeability,
+		porosity,
+		saturation,
+		porosity_gradients,
+		permeability_gradients);
 
-    /// Feeding HWU Flow Diagnostic
-    controller->setPropertyArea(np, 
-								positions, 						
-								saturation, 								
-								permeability_gradients, 
-								porosity_gradients);
+	/// Feeding HWU Flow Diagnostic
+	controller->setPropertyArea(np,
+		positions,
+		saturation,
+		permeability_gradients,
+		porosity_gradients);
 
 
 	for (int i = 0; i < np; i++)
@@ -861,37 +868,109 @@ void FlowWindow::acceptUserParameters()
 		std::cout << " saturation   " << saturation[i] << std::endl;
 	}
 
-    /// Fluid parameters
-    std::vector< double > bo;
-    std::vector< double > viscosity;
-    std::vector< double > oildensity;
-    std::pair< int, int>  phase_method;
+	/// Fluid parameters
+	std::vector< double > bo;
+	std::vector< double > viscosity;
+	std::vector< double > oildensity;
+	std::pair< int, int>  phase_method;
 
-    /// Fluid Module
-    fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
-	   
+	/// Fluid Module
+	fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
 
-    controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
 
-    
-    int nw = 0;
-    std::vector< unsigned int > type;
-    std::vector< double > values;
-    std::vector< int > sign;
-
-    /// Well Module
-    std::vector< Eigen::Vector4d> wells_position;
-    std::vector< Eigen::Vector2d> wells_range;
-
-    well_parameters_->getWellData(nw, type, values, sign, wells_position, wells_range);
-
-    controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
-
-	
-    /// FIXME Septembe 2017
-    /// Set Fluid Property
+	controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
 
 }
+
+void FlowWindow::setParametersBeforeMehsing()
+{
+	///setParametersBeforeSimulation();
+
+	int nw = 0;
+	std::vector< unsigned int > type;
+	std::vector< double > values;
+	std::vector< int > sign;
+
+	/// Well Module
+	std::vector< Eigen::Vector4d> wells_position;
+	std::vector< Eigen::Vector2d> wells_range;
+
+	well_parameters_->getWellData(nw, type, values, sign, wells_position, wells_range);
+
+	controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
+}
+
+//void FlowWindow::acceptUserParameters()
+//{
+//    /// Region parameters
+//    int np = 0;
+//    std::vector< double > positions;
+//    std::vector< double > permeability;
+//    std::vector< double > porosity;
+//    std::vector< double > saturation;
+//    std::vector< int > permeability_curves;
+//
+//    std::map<int, std::pair<double, double> > permeability_gradients;
+//    std::map<int, std::pair<double, double> > porosity_gradients;
+//
+//    /// Region Module
+//    ///@FIXME September
+//	region_parameters_->getRegionData(np, 
+//									  positions, 
+//									  permeability, 
+//									  porosity, 
+//									  saturation, 
+//									  porosity_gradients, 
+//									  permeability_gradients);
+//
+//    /// Feeding HWU Flow Diagnostic
+//    controller->setPropertyArea(np, 
+//								positions, 						
+//								saturation, 								
+//								permeability_gradients, 
+//								porosity_gradients);
+//
+//
+//	for (int i = 0; i < np; i++)
+//	{
+//		std::cout << " permeability " << permeability_gradients.at(i).first << std::endl;
+//		std::cout << " permeability " << permeability_gradients.at(i).second << std::endl;
+//		std::cout << " porosity     " << porosity_gradients.at(i).first << std::endl;
+//		std::cout << " porosity     " << porosity_gradients.at(i).second << std::endl;
+//		std::cout << " saturation   " << saturation[i] << std::endl;
+//	}
+//
+//    /// Fluid parameters
+//    std::vector< double > bo;
+//    std::vector< double > viscosity;
+//    std::vector< double > oildensity;
+//    std::pair< int, int>  phase_method;
+//
+//    /// Fluid Module
+//    fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
+//	   
+//
+//    controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
+//
+//    
+//    int nw = 0;
+//    std::vector< unsigned int > type;
+//    std::vector< double > values;
+//    std::vector< int > sign;
+//
+//    /// Well Module
+//    std::vector< Eigen::Vector4d> wells_position;
+//    std::vector< Eigen::Vector2d> wells_range;
+//
+//    well_parameters_->getWellData(nw, type, values, sign, wells_position, wells_range);
+//
+//    controller->setWellsValues(nw, type, values, sign, wells_position, wells_range);
+//
+//	
+//    /// FIXME Septembe 2017
+//    /// Set Fluid Property
+//
+//}
 
 void FlowWindow::buildCornerPoint()
 {
@@ -899,7 +978,9 @@ void FlowWindow::buildCornerPoint()
 
     if (controller->isUserInputOk() == false)
     {
-        acceptUserParameters();
+        //acceptUserParameters();
+		// @TODO January 2018
+		setParametersBeforeMehsing();
     }
 
     controller->generateCornerPoint();
@@ -914,7 +995,8 @@ void FlowWindow::buildUnstructured()
 
     if (controller->isUserInputOk() == false)
     {
-        acceptUserParameters();
+        //acceptUserParameters();
+		setParametersBeforeMehsing();
     }
 
     std::vector< float > raw_vertices, normalized_vertices;
