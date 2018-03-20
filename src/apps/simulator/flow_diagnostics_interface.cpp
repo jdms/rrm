@@ -538,7 +538,6 @@ void FlowDiagnosticsInterface::clear(){
 
 //bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 //{
-//	std::cout << " getUpscalledPermeability " << std::endl;
 //	region.clear_computedproperties();
 //	region.modelpreparation_upscale();
 //	region.upscalebsurface(1);
