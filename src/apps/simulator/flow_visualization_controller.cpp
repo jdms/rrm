@@ -102,10 +102,10 @@ void FlowVisualizationController::generateCornerPoint()
 
 void FlowVisualizationController::generateUnstructured()
 {
-    if (is_surface_loaded == false || user_input_ok == false)
-    {
-        return;
-    }
+    //if (is_surface_loaded == false || user_input_ok == false)
+    //{
+    //    return;
+    //}
 
     code_interface.buildVolumetricMesh();
     is_volumetric_built = true;
@@ -464,10 +464,10 @@ void FlowVisualizationController::exportMeshtoMSH()
 
 void FlowVisualizationController::clear()
 {
-    is_surface_loaded = false;
-    user_input_ok = false;
-    is_volumetric_built = false;
-    are_properties_computed = false;
+    //is_surface_loaded = false;
+    //user_input_ok = false;
+    //is_volumetric_built = false;
+    //are_properties_computed = false;
     code_interface.clear();
 }
 
@@ -654,7 +654,11 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         {
         //	// Set property value
             ch[*c_it] = values[i++];
+
+			
         }
+		/// Stilll getting the same values
+		std::cout << "getPermeabilitybyCells :" << values[i-2] << std::endl;
 
         //Porosity
         values.clear();

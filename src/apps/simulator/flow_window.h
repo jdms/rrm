@@ -98,7 +98,12 @@ class FlowWindow : public  QMainWindow
         void buildUnstructured();
         void buildCornerPoint();
 
-        void acceptUserParameters();
+        //void acceptUserParameters();
+		/// @TODO Accept Parameters
+		/// For Meshing
+		/// For Simulation
+		void setParametersBeforeSimulation();
+		void setParametersBeforeMehsing();
         void clear();
 
         void setRegions( const std::map< int,  std::vector< int > >& region_colors /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_*/ );
