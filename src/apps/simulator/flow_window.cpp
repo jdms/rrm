@@ -224,10 +224,10 @@ void FlowWindow::createToolBar()
 
 	/// @FiXME January 2018
 
-    qclear = new QAction(tr("Clear"), qtoolbarFlow);
-    qclear->setIcon(QIcon(":/images/icons/clear.png"));
-	qclear->setEnabled(false);
-	qclear->setVisible(false);
+	action_clear_ = new QAction(tr("Clear"), qtoolbarFlow);
+	action_clear_->setIcon(QIcon(":/images/icons/clear.png"));
+	action_clear_->setEnabled(true);
+	action_clear_->setVisible(true);
 
 	action_clearComputedQuantities_ = new QAction(tr("Clear Computed Quantities"), qtoolbarFlow);
 	action_clearComputedQuantities_->setIcon(QIcon(":/images/icons/refresh.png"));
@@ -259,7 +259,7 @@ void FlowWindow::createToolBar()
     qtoolbarFlow->addWidget(tbn_export);
     /// FIXME June
 	qtoolbarFlow->addSeparator();
-    qtoolbarFlow->addAction(qclear);
+	qtoolbarFlow->addAction(action_clear_);
 	qtoolbarFlow->addSeparator();
 	qtoolbarFlow->addAction(action_clearComputedQuantities_);
     qtoolbarFlow->addSeparator();
@@ -299,7 +299,7 @@ void FlowWindow::createActions()
 	connect(qoopenfilesDialog, &QAction::triggered, this, [=]()
 	{
 		/// Clear Scene
-		qclear->trigger();
+		action_clear_->trigger();
 		this->loadSurfacesfromFile();
 		if (are_regionsdefined == true)
 		{
@@ -311,7 +311,7 @@ void FlowWindow::createActions()
 	connect(qreloadSurface, &QAction::triggered, this, [=]()
 	{
 		/// Clear Scene
-		qclear->trigger();
+		action_clear_->trigger();
 		this->loadSurfacesfromSketch();
 		/// Now we can build the volumetric mesh
 
@@ -323,10 +323,8 @@ void FlowWindow::createActions()
 	});
 
 
-	connect(qreloadSurface1, &QAction::triggered, this, [=](){
-
-		qclear->trigger();
-
+	connect(qreloadSurface1, &QAction::triggered, this, [=]()
+	{
 		qcomputeFlowProperties->setEnabled(false);
 		action_showregions->setEnabled(false);
 		action_upscalledPermeability_->setEnabled(false);
@@ -420,38 +418,7 @@ void FlowWindow::createActions()
 
 
 	});
-	/// FIXME JUNE 2017
-	/// Clear Reload
-	//connect(action_clearComputedQuantities_, &QAction::triggered, this, [=]()
-	//{
-	//qclear->trigger();
-	//this->loadSurfacesfromSketch();
-	//this->buildUnstructured();
-	////controller->computeFlowProperties();
 
-
-	//    //controller->loadPropertiesTetrahedron();
-	//    this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-	//    //current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure", "VProp", "", "double");
-	//    //updateModelColors(current_property_);
-	//    action_showregions->setEnabled(false);
-	//    //controller->getPoreVolume();
-	//    action_clearComputedQuantities_->setEnabled(true);
-	//    action_upscalledPermeability_->setEnabled(false);
-
-	///// Set Default ColorMap
-	//action_cool_to_warm->setChecked(true);
-	//controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
-
-	//qcomputeFlowProperties->setEnabled(true);
-	//tbn_export->setEnabled(false);
-	//tbn_coloringbyvertex->setEnabled(false);
-	//tbn_coloringbyface->setEnabled(false);
-	//action_clearComputedQuantities_->setEnabled(true);
-
-
-	//});
-	/// Region ID
 	connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
 	{
 		if (is_toggled)
@@ -465,6 +432,18 @@ void FlowWindow::createActions()
 	/// Exporters
 	/// @TODO June 2017
 	connect(action_exportDerivedQuantities_, SIGNAL(triggered(bool)), controller, SLOT(exportDerivedQuantities()));
+
+	connect(action_clear_, &QAction::triggered, [=]()
+	{
+		this->region_parameters_->reset();
+		this->fluid_parameters_->reset();
+		this->well_parameters_->reset();
+
+		loadSurfacesfromSketch1();
+
+		qbuildUnstructured->setEnabled(true);
+	});
+
 
 	connect(action_clearComputedQuantities_, &QAction::triggered, [=]()
 	{
@@ -514,8 +493,7 @@ void FlowWindow::createActions()
     connect(qshowMovingCrossSection, &QAction::toggled, qdockcrosssectionnormalBar, &QDockWidget::setVisible);
     connect(qshowMovingCrossSection, &QAction::toggled, canvas, &FlowVisualizationCanvas::disableCrossSection);
     /// ColorMap
-    connect(action_constant, &QAction::triggered, this, [=](){
-        controller->setCurrentColormap(ColorMap::COLORMAP::CONSTANT);
+    connect(action_constant, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::CONSTANT);
     });
     connect(action_cool_to_warm, &QAction::triggered, this, [=](){ controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
         updateModelColors(current_property_);

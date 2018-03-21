@@ -144,7 +144,7 @@ class FlowWindow : public  QMainWindow
         QAction *qshowMovingCrossSection;
         QAction* qreloadSurface;
         QAction* qreloadSurface1;
-        QAction *qclear;
+        QAction *action_clear_;
 
         QAction* qbuildCornerPoint;
         QAction* qbuildUnstructured;
