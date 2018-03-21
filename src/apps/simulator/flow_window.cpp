@@ -972,11 +972,8 @@ void FlowWindow::buildUnstructured()
 
     controller->setCurrentMethod(FlowVisualizationController::MESHING_METHOD::UNSTRUCTURED);
 
-    if (controller->isUserInputOk() == false)
-    {
-        //acceptUserParameters();
-		setParametersBeforeMehsing();
-    }
+    setParametersBeforeMehsing();
+  
 
     std::vector< float > raw_vertices, normalized_vertices;
     std::vector< unsigned int > edges;
