@@ -60,6 +60,28 @@ namespace RRM
                         void numberOfRegions(int _number_of_regions);
                         void getRegions();
                 private:
+
+						struct Permeability_GUI
+						{
+							QxtSpanSlider* qxt_span_slider_;
+							QSlider*     slider_;
+							QLabel* gradient_Label_;
+							QDoubleSpinBox* doubleSpinbBox_low_;
+							QLabel* label_top_;
+							QDoubleSpinBox* doubleSpinbBox_high_;
+							QLabel* label_bottom_;
+							// Values in the GUI
+							double low_value_;
+							double high_value;
+							// Initial values in the GUI
+							double default_low_value_;
+							double default_high_value_;
+
+							std::map< int, std::pair<double, double> > gradient_values_;
+							std::map< int, bool> is_inverted_;
+							std::tuple<int, int, int, int> position_;
+						};
+
                         // Designer form
                         Ui::RegionWidgetForm * ui_;
 
@@ -86,10 +108,15 @@ namespace RRM
 						double default_low_permeability_;
 						double default_high_permeability_;
 
-
                         std::map< int, std::pair<double,double> > permeability_gradient_values_;
 						std::map< int, bool> is_inverted_permeability_gradient_values_;
                         std::tuple<int, int, int, int> permeability_position_;
+
+						///@FIXME January 2018 --------------------------------
+						///----------------------------------------------------
+						/// Alternative approach	
+						std::vector<Permeability_GUI> permeability_;
+						///----------------------------------------------------
 
                         QxtSpanSlider* qxt_span_slider_porosity_;
                         QSlider*     slider_porosity_;
