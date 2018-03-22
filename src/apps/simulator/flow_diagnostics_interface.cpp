@@ -1051,7 +1051,7 @@ void FlowDiagnosticsInterface::getAvailablePermeabilityCurves(std::vector<int> &
 
 void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z,
     double min_perm, double max_perm,
-    double min_poros, double max_poros) //the one used
+    double min_poros, double max_poros) //the one NOT used
 {
 
 
@@ -1088,8 +1088,8 @@ void FlowDiagnosticsInterface::setRegionSinglePhase(unsigned int id, double Kxlo
 	return;
 }
 
-void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
-	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
+void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow_, double Kxhigh_, double Kylow_, double Kyhigh_,
+	double Kzlow_, double Kzhigh_, double porolow_, double porohigh_,
 	double Pct_, double Si_, double lambda_, double Sw_) //the one used
 {
 	PROPERTYAREA p;
