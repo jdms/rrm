@@ -230,14 +230,14 @@ void FlowVisualizationController::setPropertyArea(const int np,
        
 
 		code_interface.setRegionMultiphase(i,
-			_permeability_x_.at(i).first,   /// KxHigh 
-			_permeability_x_.at(i).second,  /// KxLow
-			_permeability_y_.at(i).first,   /// KyHigh
-			_permeability_y_.at(i).second,  /// KyLow
-			_permeability_z_.at(i).first,   /// KzHigh
-			_permeability_z_.at(i).second,  /// KzLow
-			_porosity_values_.at(i).first,       /// PoroHigh
-			_porosity_values_.at(i).second,      /// PoroLow
+			_permeability_x_.at(i).first,   /// KxLow
+			_permeability_x_.at(i).second,  /// KxHigh
+			_permeability_y_.at(i).first,   /// Kylow
+			_permeability_y_.at(i).second,  /// KyHigh
+			_permeability_z_.at(i).first,   /// KzLow
+			_permeability_z_.at(i).second,  /// KzHigh
+			_porosity_values_.at(i).first,       /// PoroLow
+			_porosity_values_.at(i).second,      /// PoroHigh
 			_pct[i],  /// PcT
 			_siw[i],  /// Si
 			_sort_factor[i],   /// Sort Factor Lambda
