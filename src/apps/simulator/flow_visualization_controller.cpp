@@ -240,10 +240,9 @@ void FlowVisualizationController::setPropertyArea(const int np,
 			_porosity_values_.at(i).second,      /// PoroLow
 			_pct[i],  /// PcT
 			_siw[i],  /// Si
-			_sort_factor[i]   /// Sort Factor Lambda
+			_sort_factor[i],   /// Sort Factor Lambda
+			_saturations[i]    /// Water Saturation
 			);
-
-        code_interface.setWaterSaturation(i,_saturations[i]);
         
     }
 }
@@ -652,12 +651,12 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
 
         // Cell Properties --------------------------------------------------->
 
-        //Permeability
+        //Permeability X
         values.clear();
         i = 0;
-        code_interface.getPermeabilitybyCells(values);
+        code_interface.getPermeabilityXbyCells(values);
 
-        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability (mD)");
+        OpenVolumeMesh::CellPropertyT<double> ch = ptr_mesh->request_cell_property<double>("Permeability X (mD)");
         ptr_mesh->set_persistent(ch);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
@@ -667,8 +666,40 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
 
 			
         }
-		/// Stilll getting the same values
-		std::cout << "getPermeabilitybyCells :" << values[i-2] << std::endl;
+
+
+		//Permeability Y
+		values.clear();
+		i = 0;
+		code_interface.getPermeabilityYbyCells(values);
+
+		ch = ptr_mesh->request_cell_property<double>("Permeability Y (mD)");
+		ptr_mesh->set_persistent(ch);
+
+		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+		{
+			//	// Set property value
+			ch[*c_it] = values[i++];
+
+
+		}
+
+
+		//Permeability Z
+		values.clear();
+		i = 0;
+		code_interface.getPermeabilityZbyCells(values);
+
+		ch = ptr_mesh->request_cell_property<double>("Permeability Z (mD)");
+		ptr_mesh->set_persistent(ch);
+
+		for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
+		{
+			//	// Set property value
+			ch[*c_it] = values[i++];
+
+
+		}
 
         //Porosity
         values.clear();
