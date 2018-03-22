@@ -523,7 +523,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getForwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Forward TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -537,7 +537,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getFowardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Forward TOF Log10 (Log10(day)) ");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (Log10(day)) ");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -551,7 +551,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Backward TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -565,7 +565,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Backward TOF Log10 (Log10(day))");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -580,7 +580,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -594,7 +594,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF Log10 (Log10(day))");
+        ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -609,7 +609,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getMaxForwardTracer(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("MaxForwardTracer");
+        ph = ptr_mesh->request_vertex_property<double>("Injectors Tracer Partitioning");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -623,7 +623,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getMaxBackwardTracer(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("MaxBackwardTracer");
+        ph = ptr_mesh->request_vertex_property<double>("Producers Tracer Partitioning");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -706,7 +706,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocitybyCells(values);
 
-        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity (m/s)");
+        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity Magnitude (m/s)");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
@@ -725,7 +725,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocityMagnitudebyCells_log10(values);
 
-        chv = ptr_mesh->request_cell_property<double>("Velocity Log10 (log10(m/s))");
+        chv = ptr_mesh->request_cell_property<double>("Velocity Magnitude (log10(m/s))");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
