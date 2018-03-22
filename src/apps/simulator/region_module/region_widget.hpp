@@ -70,19 +70,34 @@ namespace RRM
 							QLabel* label_top_;
 							QDoubleSpinBox* doubleSpinbBox_high_;
 							QLabel* label_bottom_;
+							std::tuple<int, int, int, int> position_in_the_grid_;
 							/// FIXME January 2018
-							bool is_reversed_;
 							QPushButton*      inverted_;
 							// Values in the GUI
-							double low_value_;
-							double high_value_;
+							double range_low_value_;
+							double range_high_value_;
 							// Initial values in the GUI
 							double default_low_value_;
 							double default_high_value_;
-
+							/// Data
 							std::map< int, std::pair<double, double> > gradient_values_;
-							std::map< int, bool> is_inverted_;
-							std::tuple<int, int, int, int> position_;
+							std::map< int, bool> is_inverted_;							
+						};
+
+						struct singleDoubleInput
+						{
+							// Water Saturation
+							QSlider*        slider_;
+							QLabel*			label_;
+							QDoubleSpinBox* doubleSpinBox_;
+							std::map< int, double > values_;
+							// Values in the GUI
+							double range_low_value_;
+							double range_high_value_;
+							// Initial values in the GUI
+							double default_value_;
+
+							std::tuple<int, int, int, int> position_in_the_grid_;
 						};
 
                         // Designer form
@@ -108,8 +123,8 @@ namespace RRM
 							bool is_reversed_permeability_;
 							QPushButton*      inverted_permeability_;
 						// Values in the GUI
-						double low_permeability_;
-						double high_permeability_;
+						double range_low_permeability_;
+						double range_high_permeability_;
 						// Initial values in the GUI
 						double default_low_permeability_;
 						double default_high_permeability_;
@@ -132,11 +147,11 @@ namespace RRM
                         QDoubleSpinBox* doubleSpinbBox_high_porosity_;
 							QLabel*	label_top_porosity_;
 						// Values in the GUI
-						double low_porosity_;
-						double high_porosity_;
+						double range_low_porosity_;
+						double range_high_porosity_;
 						// Initial values in the GUI
 						double default_low_porosity_;
-						double defaul_high_porosity_;
+						double default_high_porosity_;
 
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
 						std::map< int, bool> is_inverted_porosity_gradient_values_;
@@ -151,8 +166,8 @@ namespace RRM
 						double low_water_saturation_;
 						double high_water_saturation_;
 						// Initial values in the GUI
-						double defaul_low_water_saturation_;
-						double defaul_high_water_saturation_;						
+						double default_water_saturation_;
+				
 
 						std::tuple<int, int, int, int> water_saturation_position_;
 

@@ -76,16 +76,16 @@ namespace RRM
 
 			this->permeability_position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
 
-			low_permeability_ = 0.001;
-			high_permeability_ = 10000.0;
+			range_low_permeability_ = 0.001;
+			range_high_permeability_ = 10000.0;
 			default_low_permeability_ = 150.0;
 			default_high_permeability_ = 250.0;
 
-			doubleSpinbBox_low_permeability_->setMinimum(low_permeability_);
-			doubleSpinbBox_low_permeability_->setMaximum(high_permeability_);
+			doubleSpinbBox_low_permeability_->setMinimum(range_low_permeability_);
+			doubleSpinbBox_low_permeability_->setMaximum(range_high_permeability_);
             doubleSpinbBox_low_permeability_->setDecimals(3);
-			doubleSpinbBox_high_permeability_->setMinimum(low_permeability_);
-			doubleSpinbBox_high_permeability_->setMaximum(high_permeability_);
+			doubleSpinbBox_high_permeability_->setMinimum(range_low_permeability_);
+			doubleSpinbBox_high_permeability_->setMaximum(range_high_permeability_);
             doubleSpinbBox_high_permeability_->setDecimals(3);
 
             qxt_span_slider_permeability_->setMinimum(1);
@@ -124,17 +124,17 @@ namespace RRM
 			this->porosity_position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
 
 			/// Accepted Range Values
-			low_porosity_ = 0.01;
-			high_porosity_ = 0.99;
+			range_low_porosity_ = 0.01;
+			range_high_porosity_ = 0.99;
 			/// Default Values
 			default_low_porosity_ = 0.28;
-			defaul_high_porosity_ = 0.32;
+			default_high_porosity_ = 0.32;
 
-			doubleSpinbBox_low_porosity_->setMinimum(low_porosity_);
-			doubleSpinbBox_low_porosity_->setMaximum(high_porosity_);
+			doubleSpinbBox_low_porosity_->setMinimum(range_low_porosity_);
+			doubleSpinbBox_low_porosity_->setMaximum(range_high_porosity_);
 			doubleSpinbBox_low_porosity_->setDecimals(2);
-			doubleSpinbBox_high_porosity_->setMinimum(low_porosity_);
-			doubleSpinbBox_high_porosity_->setMaximum(high_porosity_);
+			doubleSpinbBox_high_porosity_->setMinimum(range_low_porosity_);
+			doubleSpinbBox_high_porosity_->setMaximum(range_high_porosity_);
 			doubleSpinbBox_high_porosity_->setDecimals(2);
 
 			qxt_span_slider_porosity_->setMinimum(0);
@@ -175,18 +175,18 @@ namespace RRM
 				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_low_, i, j + 8);
 				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_bottom_, i, j + 9);
 
-				permeability_GUI_[index].position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
+				permeability_GUI_[index].position_in_the_grid_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
 
-				permeability_GUI_[index].low_value_ = 0.001;
-				permeability_GUI_[index].high_value_ = 10000.0;
+				permeability_GUI_[index].range_low_value_ = 0.001;
+				permeability_GUI_[index].range_high_value_ = 10000.0;
 				permeability_GUI_[index].default_low_value_ = 150.0;
 				permeability_GUI_[index].default_high_value_ = 250.0;
 
-				permeability_GUI_[index].doubleSpinbBox_low_->setMinimum(low_permeability_);
-				permeability_GUI_[index].doubleSpinbBox_low_->setMaximum(high_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setMinimum(permeability_GUI_[index].range_low_value_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setMaximum(permeability_GUI_[index].range_high_value_);
 				permeability_GUI_[index].doubleSpinbBox_low_->setDecimals(3);
-				permeability_GUI_[index].doubleSpinbBox_high_->setMinimum(low_permeability_);
-				permeability_GUI_[index].doubleSpinbBox_high_->setMaximum(high_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMinimum(permeability_GUI_[index].range_low_value_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMaximum(permeability_GUI_[index].range_high_value_);
 				permeability_GUI_[index].doubleSpinbBox_high_->setDecimals(3);
 
 				permeability_GUI_[index].qxt_span_slider_->setMinimum(1);
@@ -212,8 +212,8 @@ namespace RRM
 			low_water_saturation_  = 0.0;
 			high_water_saturation_ = 1.0;
 			// Initial values in the GUI
-			defaul_low_water_saturation_  = 0.0;
-			defaul_high_water_saturation_ = 1.0;
+			default_water_saturation_  = 0.0;
+
 
 			slider_Water_Saturation_->setMinimum(0);
 			slider_Water_Saturation_->setMaximum(100);
@@ -254,6 +254,14 @@ namespace RRM
 			permeability_gradient_values_.clear();
 			porosity_gradient_values_.clear();
 			saturation_values.clear();
+
+			//// @FIXME January 2018
+			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+			{
+				permeability_GUI_[index].gradient_values_.clear();
+				permeability_GUI_[index].is_inverted_.clear();
+			}
+
 
 			this->createRegions(this->region_colors_);
 		}
@@ -366,7 +374,7 @@ namespace RRM
 
                 connect(qxt_span_slider_porosity_, &QxtSpanSlider::lowerValueChanged, this, [=]()
                 {
-					double ex = 0.01 + ((high_porosity_ - low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->lowerValue()));
+					double ex = 0.01 + ((range_high_porosity_ - range_low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->lowerValue()));
                     doubleSpinbBox_low_porosity_->setValue(ex);
 
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
@@ -377,7 +385,7 @@ namespace RRM
 
 
                         double ex = doubleSpinbBox_low_porosity_->value();
-						int i = static_cast<int>((ex - 0.01) / ((high_porosity_ - low_porosity_)*0.01));
+						int i = static_cast<int>((ex - 0.01) / ((range_high_porosity_ - range_low_porosity_)*0.01));
 
 						qxt_span_slider_porosity_->blockSignals(true);
 						qxt_span_slider_porosity_->setLowerPosition(i);
@@ -394,7 +402,7 @@ namespace RRM
 
                     connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperValueChanged, this, [=]()
                 {
-					double ex = 0.01 + ((high_porosity_ - low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->upperValue()));
+					double ex = 0.01 + ((range_high_porosity_ - range_low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->upperValue()));
                     doubleSpinbBox_high_porosity_->setValue(ex);
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
                 });
@@ -404,7 +412,7 @@ namespace RRM
 
 
                         double ex = doubleSpinbBox_high_porosity_->value();
-						int i = static_cast<int>((ex - 0.01) / ((high_porosity_ - low_porosity_)*0.01));
+						int i = static_cast<int>((ex - 0.01) / ((range_high_porosity_ - range_low_porosity_)*0.01));
 
 
 						qxt_span_slider_porosity_->blockSignals(true);
@@ -503,10 +511,10 @@ namespace RRM
 							/// Exchange the QSlider and QxtSpanSlider - Permeability
 							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].qxt_span_slider_);
 							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].slider_, 
-								std::get<0>(permeability_GUI_[index].position_), 
-								std::get<1>(permeability_GUI_[index].position_), 
-								std::get<2>(permeability_GUI_[index].position_), 
-								std::get<3>(permeability_GUI_[index].position_));
+								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
 							permeability_GUI_[index].slider_->setVisible(true);
 							permeability_GUI_[index].qxt_span_slider_->setVisible(false);
 
@@ -539,10 +547,10 @@ namespace RRM
 							/// Exchange the QSlider and QxtSpanSlider - Permeability
 							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].slider_);
 							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, 
-								std::get<0>(permeability_GUI_[index].position_),
-								std::get<1>(permeability_GUI_[index].position_),
-								std::get<2>(permeability_GUI_[index].position_),
-								std::get<3>(permeability_GUI_[index].position_));
+								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
 							permeability_GUI_[index].slider_->setVisible(false);
 							permeability_GUI_[index].qxt_span_slider_->setVisible(true);
 
@@ -569,7 +577,7 @@ namespace RRM
                 //// @FIXME September Permeability
 				connect(slider_porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
-					double ex = 0.01 + ((high_porosity_ - low_porosity_)*0.01)*static_cast<double>(slider_porosity_->value());
+					double ex = 0.01 + ((range_high_porosity_ - range_low_porosity_)*0.01)*static_cast<double>(slider_porosity_->value());
                     doubleSpinbBox_low_porosity_->setValue(ex);
 
 					//std::cout << "Step CONSTANT " << slider_porosity_->value() << ex << std::endl;
@@ -631,7 +639,65 @@ namespace RRM
 				//// @FIXME January 2018
 				for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
 				{
-					//// @FIXME September Permeability
+
+					//// @FIXME January XYZ Permeability
+					connect(permeability_GUI_[index].qxt_span_slider_, &QxtSpanSlider::lowerValueChanged, this, [=]()
+					{
+						double ex = -3.0 + (0.07)*static_cast<double>(reversePermeability(permeability_GUI_[index].is_inverted_[ui_->comboBox_Region_->currentIndex()], permeability_GUI_[index].qxt_span_slider_->lowerValue()));
+						ex = std::pow(10, ex);
+						//std::cout << "Step LINEAR" << qxt_span_slider_permeability_->lowerValue() << std::endl;
+
+						permeability_GUI_[index].doubleSpinbBox_low_->setValue(ex);
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
+					});
+
+					connect(permeability_GUI_[index].doubleSpinbBox_low_, &QDoubleSpinBox::editingFinished, this, [=]()
+					{
+						double p = permeability_GUI_[index].doubleSpinbBox_low_->value();
+						double ex = std::log10(p);
+						int i = static_cast<int>((ex + 3.0) / 0.07);
+
+						/// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+
+						permeability_GUI_[index].qxt_span_slider_->blockSignals(true);
+						permeability_GUI_[index].qxt_span_slider_->setLowerPosition(i);
+						permeability_GUI_[index].qxt_span_slider_->blockSignals(false);
+						///@September
+						/// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+						permeability_GUI_[index].slider_->blockSignals(true);
+						permeability_GUI_[index].slider_->setValue(i);
+						permeability_GUI_[index].slider_->blockSignals(false);
+
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].first = permeability_GUI_[index].doubleSpinbBox_low_->value();
+					});
+
+					connect(permeability_GUI_[index].qxt_span_slider_, &QxtSpanSlider::upperValueChanged, this, [=]()
+					{
+						double ex = -3.0 + (0.07)*static_cast<double>(reversePermeability(permeability_GUI_[index].is_inverted_[ui_->comboBox_Region_->currentIndex()], permeability_GUI_[index].qxt_span_slider_->upperValue()));
+						ex = std::pow(10, ex);
+						//std::cout << "Step upper" << qxt_span_slider_permeability_->upperValue() << std::endl;
+
+						permeability_GUI_[index].doubleSpinbBox_high_->setValue(ex);
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
+					});
+
+					connect(permeability_GUI_[index].doubleSpinbBox_high_, &QDoubleSpinBox::editingFinished, this, [=]()
+					{
+
+						double p = permeability_GUI_[index].doubleSpinbBox_high_->value();
+						double ex = std::log10(p);
+						int i = static_cast<int>((ex + 3.0) / 0.07);
+
+						/// @see https://stackoverflow.com/questions/4146140/qslider-value-changed-signal
+						permeability_GUI_[index].qxt_span_slider_->blockSignals(true);
+						permeability_GUI_[index].qxt_span_slider_->setUpperPosition(i);
+						permeability_GUI_[index].qxt_span_slider_->blockSignals(false);
+
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].second = permeability_GUI_[index].doubleSpinbBox_high_->value();
+
+					});
+
+					//// @FIXME January XYZ Permeability
 					connect(permeability_GUI_[index].slider_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
 					{
 						double ex = -3.0 + (0.07)*static_cast<double>(permeability_GUI_[index].slider_->value());
@@ -645,7 +711,6 @@ namespace RRM
 
 					connect(permeability_GUI_[index].inverted_, &QPushButton::toggled, this, [=](bool _is_checked)
 					{
-						permeability_GUI_[index].is_reversed_ = _is_checked;
 						permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(this->is_reversed_permeability_);
 						double tmp = 0.0;
 						tmp = permeability_GUI_[index].doubleSpinbBox_high_->value();
@@ -703,6 +768,19 @@ namespace RRM
 			doubleSpinBox_Region_Water_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
 			emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
 
+			//// @FIXME January 2018
+			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+			{
+				permeability_GUI_[index].inverted_->blockSignals(true);
+				permeability_GUI_[index].inverted_->setChecked(permeability_GUI_[index].is_inverted_[ui_->comboBox_Region_->currentIndex()]);
+				permeability_GUI_[index].inverted_->blockSignals(false);
+				permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(permeability_GUI_[index].is_inverted_[ui_->comboBox_Region_->currentIndex()]);
+
+				permeability_GUI_[index].doubleSpinbBox_low_->setValue(permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].first);
+				emit permeability_GUI_[index].doubleSpinbBox_low_->editingFinished();
+				permeability_GUI_[index].doubleSpinbBox_high_->setValue(permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].second);
+				emit permeability_GUI_[index].doubleSpinbBox_high_->editingFinished();
+			}
 
             QPixmap pixmap_ = QPixmap( 15, 15 );
             pixmap_.fill( regions_colors[ _index ] );
@@ -742,27 +820,40 @@ namespace RRM
 					if (permeability_gradient_values_.count(index_) == 0)
                     {
                         /// @FIXME Me September
-                        doubleSpinbBox_low_porosity_->setValue(0.28);
+                        doubleSpinbBox_low_porosity_->setValue(this->default_low_porosity_);
                         emit doubleSpinbBox_low_porosity_->editingFinished();
-                        doubleSpinbBox_high_porosity_->setValue(0.32);
+                        doubleSpinbBox_high_porosity_->setValue(this->default_high_porosity_);
                         emit doubleSpinbBox_high_porosity_->editingFinished();
 
-                        porosity_gradient_values_[index_].first = 0.28;
-                        porosity_gradient_values_[index_].second = 0.32;
+                        porosity_gradient_values_[index_].first = default_low_porosity_;
+                        porosity_gradient_values_[index_].second = default_high_porosity_;
 						is_inverted_porosity_gradient_values_[index_] = false;
 
-                        doubleSpinbBox_low_permeability_->setValue(150.0);
+                        doubleSpinbBox_low_permeability_->setValue(this->default_low_permeability_);
                         emit doubleSpinbBox_low_permeability_->editingFinished();
-                        doubleSpinbBox_high_permeability_->setValue(250.0);
+                        doubleSpinbBox_high_permeability_->setValue(this->default_high_permeability_);
                         emit doubleSpinbBox_high_permeability_->editingFinished();
 
-                        permeability_gradient_values_[index_].first = 150.0;
-                        permeability_gradient_values_[index_].second = 250.0;
+                        permeability_gradient_values_[index_].first = this->default_low_permeability_;
+                        permeability_gradient_values_[index_].second = this->default_high_permeability_;
 						is_inverted_permeability_gradient_values_[index_] = false;
 
-                        saturation_values[index_] = 0.0;
-                        doubleSpinBox_Region_Water_Saturation_->setValue(0.0);
+						saturation_values[index_] = this->default_water_saturation_;
+						doubleSpinBox_Region_Water_Saturation_->setValue(this->default_water_saturation_);
 						emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+						{
+							permeability_GUI_[index].doubleSpinbBox_low_->setValue(permeability_GUI_[index].default_low_value_);
+							emit permeability_GUI_[index].doubleSpinbBox_low_->editingFinished();
+							permeability_GUI_[index].doubleSpinbBox_high_->setValue(permeability_GUI_[index].default_high_value_);
+							emit permeability_GUI_[index].doubleSpinbBox_high_->editingFinished();
+
+							permeability_GUI_[index].gradient_values_[index_].first = permeability_GUI_[index].default_low_value_;
+							permeability_GUI_[index].gradient_values_[index_].second = permeability_GUI_[index].default_high_value_;
+							permeability_GUI_[index].is_inverted_[index_] = false;
+						}
 
                     }
 
