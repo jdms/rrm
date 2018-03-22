@@ -43,6 +43,11 @@ namespace RRM
         {
             this->number_of_regions_ = 0;
 
+			/// Grid positions at the double slider inputs
+			int i = 0;
+			int j = 0;
+			int next = 1;
+
             /// @FIXME September   POROSITY
             slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
             slider_porosity_->setVisible(false);
@@ -59,18 +64,18 @@ namespace RRM
 			inverted_porosity_ = new QPushButton("Inverted");
 			inverted_porosity_->setCheckable(true);
 
-            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, 0, 0);
+            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, i, j);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 1);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_porosity_, 0, 2);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, i, j+1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_porosity_, i, j+2);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, 1, 2, 1, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, 1, 9);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, i+next, j+2, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, i+next, j+9);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 0, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_porosity_, 0, 9);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, i, j+8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_porosity_, i, j+9);
 
-            this->porosity_position_ = std::make_tuple<int, int, int, int>(1, 1, 1, 8);
+            this->porosity_position_ = std::make_tuple<int, int, int, int>(i+1, j+1, 1, 8);
 
 			/// Accepted Range Values
 			low_porosity_ = 0.01;
