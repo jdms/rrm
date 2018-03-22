@@ -371,7 +371,6 @@ public:
     //For September 2017 start*********************************************************
 
     void getOilInPlace(double &oil_in_place);
-    void setWaterSaturation(unsigned int region_id, double Sw);
 
     void setNumberOfPhases(int);//1 or 2; init() updated; setviscosity is oil viscosity.
 	int  getNumberOfPhases();//1 or 2; init() updated; setviscosity is oil viscosity.
@@ -424,7 +423,7 @@ public:
 
 	void setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
-		double Pct_, double Si_, double lambda_);
+		double Pct_, double Si_, double lambda_, double Sw_);
 
 	//either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
 	void setViscosity(double visc);//oil viscosity
