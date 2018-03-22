@@ -513,7 +513,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getForwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Forward TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("TOF from Injectors (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -541,7 +541,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Backward TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("TOF to Producers (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -599,7 +599,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getMaxForwardTracer(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("MaxForwardTracer");
+        ph = ptr_mesh->request_vertex_property<double>("Injectors Tracer Partitioning");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -613,7 +613,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getMaxBackwardTracer(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("MaxBackwardTracer");
+        ph = ptr_mesh->request_vertex_property<double>("Producers Tracer Partitioning");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
