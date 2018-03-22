@@ -1062,7 +1062,7 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     return;
 }
 
-void FlowDiagnosticsInterface::setRegion_sf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+void FlowDiagnosticsInterface::setRegionSinglePhase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_) //the one NOT used
 {
 	PROPERTYAREA p;
@@ -1079,7 +1079,7 @@ void FlowDiagnosticsInterface::setRegion_sf(unsigned int id, double Kxlow_, doub
 	return;
 }
 
-void FlowDiagnosticsInterface::setRegion_multiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
 	double Pct_, double Si_, double lambda_) //the one used
 {
