@@ -212,33 +212,40 @@ void FlowVisualizationController::computeFlowProperties()
 
 }
 
+
 void FlowVisualizationController::setPropertyArea(const int np,
-                                                  const std::vector< double >& values,
-                                                  const std::vector<double>& _saturations,
-                                                  const std::map<int,std::pair<double, double> >& _permeability_gradients,
-                                                  const std::map<int,std::pair<double, double> >& _porosity_gradients)
+	const std::vector<double>& _saturations,/// Water Saturation
+	const std::vector<double>& _siw,  /// Connate Water Saturation
+	const std::vector<double>& _sort_factor,  /// Lambda
+	const std::vector<double>& _pct,  /// Threshold Pressure
+	const std::map<int, std::pair<double, double> >& _permeability_x_,
+	const std::map<int, std::pair<double, double> >& _permeability_y_,
+	const std::map<int, std::pair<double, double> >& _permeability_z_,
+	const std::map<int, std::pair<double, double> >& _porosity_values_)
 {
     code_interface.setNumberofRegions(np);
     for( int i = 0; i < np; ++i )
     {
-        /// @FIXME September
-        
-        code_interface.setRegion(i,
-                                values[3 * i],
-                                values[3 * i + 1],
-                                values[3 * i + 2],
-                                _permeability_gradients.at(i).first,
-                                _permeability_gradients.at(i).second,
-                                _porosity_gradients.at(i).first,
-                                _porosity_gradients.at(i).second
-                                );
+        /// @FIXME January 2018
+       
+
+		code_interface.setRegionMultiphase(i,
+			_permeability_x_.at(i).first,   /// KxHigh 
+			_permeability_x_.at(i).second,  /// KxLow
+			_permeability_y_.at(i).first,   /// KyHigh
+			_permeability_y_.at(i).second,  /// KyLow
+			_permeability_z_.at(i).first,   /// KzHigh
+			_permeability_z_.at(i).second,  /// KzLow
+			_porosity_values_.at(i).first,       /// PoroHigh
+			_porosity_values_.at(i).second,      /// PoroLow
+			_pct[i],  /// PcT
+			_siw[i],  /// Si
+			_sort_factor[i]   /// Sort Factor Lambda
+			);
 
         code_interface.setWaterSaturation(i,_saturations[i]);
         
     }
-
-    user_input_ok = true;
-
 }
 
 
