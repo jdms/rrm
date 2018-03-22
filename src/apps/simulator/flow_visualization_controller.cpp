@@ -699,7 +699,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocitybyCells(values);
 
-        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity (m/s)");
+        OpenVolumeMesh::CellPropertyT<double> chv = ptr_mesh->request_cell_property<double>("Velocity Magnitude (m/s)");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
@@ -718,7 +718,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getVelocityMagnitudebyCells_log10(values);
 
-        chv = ptr_mesh->request_cell_property<double>("Velocity Log10 (log10(m/s))");
+        chv = ptr_mesh->request_cell_property<double>("Velocity Magnitude (log10(m/s))");
         ptr_mesh->set_persistent(chv);
 
         for (OpenVolumeMesh::CellIter c_it = ptr_mesh->cells_begin(); c_it != ptr_mesh->cells_end(); ++c_it)
