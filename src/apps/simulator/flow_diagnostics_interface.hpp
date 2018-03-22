@@ -171,6 +171,10 @@ public:
     ///        and required by Zhao's document ( output Permeability ).
     void getPermeabilitybyCells(std::vector< double >& values);
 
+	void getPermeabilityXbyCells(std::vector< double >& values);
+	void getPermeabilityYbyCells(std::vector< double >& values);
+	void getPermeabilityZbyCells(std::vector< double >& values);
+
 
     /// \brief Get max forward tracer by cell (only) -- refers to: new code (from writeresult_unstructured),
     ///        and required by Zhao's document ( output Permeability ).

@@ -219,7 +219,19 @@ void FlowDiagnosticsInterface::getMaxForwardTracer(std::vector< double >& values
 
 
 void FlowDiagnosticsInterface::getPermeabilitybyCells(std::vector< double >& values) {
-    values = region.getpermeability_elements();
+    values = region.getpermx_elements();
+}
+
+void FlowDiagnosticsInterface::getPermeabilityXbyCells(std::vector< double >& values) {
+	values = region.getpermx_elements();
+}
+
+void FlowDiagnosticsInterface::getPermeabilityYbyCells(std::vector< double >& values) {
+	values = region.getpermy_elements();
+}
+
+void FlowDiagnosticsInterface::getPermeabilityZbyCells(std::vector< double >& values) {
+	values = region.getpermz_elements();
 }
 
 void FlowDiagnosticsInterface::getVelocitybyVertices(std::vector< double >& values)
