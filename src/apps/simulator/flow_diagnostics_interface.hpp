@@ -421,8 +421,8 @@ public:
 	void setRegionSinglePhase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_);
 
-	void setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
-		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
+	void setRegionMultiphase(unsigned int id, double Kxlow_, double Kxhigh_, double Kylow_, double Kyhigh_,
+		double Kzlow_, double Kzhigh_, double porolow_, double porohigh_,
 		double Pct_, double Si_, double lambda_, double Sw_);
 
 	//either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
