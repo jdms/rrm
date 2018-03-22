@@ -46,36 +46,82 @@ namespace RRM
 			/// Grid positions at the double slider inputs
 			int i = 0;
 			int j = 0;
-			int next = 1;
 
-            /// @FIXME September   POROSITY
-            slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
-            slider_porosity_->setVisible(false);
-            qxt_span_slider_porosity_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
-            qxt_span_slider_porosity_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
+            /// @FIXME September  PERMEABILITY			
+            slider_permeability_ = new QSlider(Qt::Orientation::Horizontal);
+            slider_permeability_->setVisible(false);
+            qxt_span_slider_permeability_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
+            qxt_span_slider_permeability_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
+			this->is_reversed_permeability_ = false;
+			qxt_span_slider_permeability_->setInvertedAppearance(this->is_reversed_permeability_);
+
+            gradient_permeability_Label_ = new QLabel(tr("Permeability"));
+            doubleSpinbBox_low_permeability_ = new QDoubleSpinBox();
+				label_bottom_pearmeability_ = new QLabel(tr("Bottom"));
+            doubleSpinbBox_high_permeability_ = new QDoubleSpinBox();
+				label_top_pearmeability_ = new QLabel(tr("Top"));
+			inverted_permeability_ = new QPushButton("Inverted");
+			inverted_permeability_->setCheckable(true);
+
+			this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, i, j);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, i, j + 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_pearmeability_, i, j + 2);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, i + 1, j + 2, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_permeability_, i + 1, j + 9);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, i, j + 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_pearmeability_, i, j + 9);
+
+			this->permeability_position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
+
+			low_permeability_ = 0.001;
+			high_permeability_ = 10000.0;
+			default_low_permeability_ = 150.0;
+			default_high_permeability_ = 250.0;
+
+			doubleSpinbBox_low_permeability_->setMinimum(low_permeability_);
+			doubleSpinbBox_low_permeability_->setMaximum(high_permeability_);
+            doubleSpinbBox_low_permeability_->setDecimals(3);
+			doubleSpinbBox_high_permeability_->setMinimum(low_permeability_);
+			doubleSpinbBox_high_permeability_->setMaximum(high_permeability_);
+            doubleSpinbBox_high_permeability_->setDecimals(3);
+
+            qxt_span_slider_permeability_->setMinimum(1);
+            qxt_span_slider_permeability_->setMaximum(100);
+            slider_permeability_->setMinimum(1);
+            slider_permeability_->setMaximum(100);
+
+			/// @FIXME September   POROSITY
+			i += 2;
+			slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
+			slider_porosity_->setVisible(false);
+			qxt_span_slider_porosity_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
+			qxt_span_slider_porosity_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
 			this->is_reversed_porosity_ = false;
 			qxt_span_slider_porosity_->setInvertedAppearance(this->is_reversed_porosity_);
 
-            gradient_porosity_Label_ = new QLabel(tr("Porosity"));
-            doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
-				label_bottom_porosity_ = new QLabel(tr("Bottom"));
-            doubleSpinbBox_high_porosity_ = new QDoubleSpinBox();
-				label_top_porosity_ = new QLabel(tr("Top"));
+			gradient_porosity_Label_ = new QLabel(tr("Porosity"));
+			doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
+			label_bottom_porosity_ = new QLabel(tr("Bottom"));
+			doubleSpinbBox_high_porosity_ = new QDoubleSpinBox();
+			label_top_porosity_ = new QLabel(tr("Top"));
 			inverted_porosity_ = new QPushButton("Inverted");
 			inverted_porosity_->setCheckable(true);
 
-            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, i, j);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, i, j);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, i, j+1);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_porosity_, i, j+2);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, i, j + 1);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_porosity_, i, j + 2);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, i+next, j+2, 1, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, i+next, j+9);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, i + 1, j + 2, 1, 8);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, i + 1, j + 9);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, i, j+8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_porosity_, i, j+9);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, i, j + 8);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_porosity_, i, j + 9);
 
-            this->porosity_position_ = std::make_tuple<int, int, int, int>(i+1, j+1, 1, 8);
+			this->porosity_position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
 
 			/// Accepted Range Values
 			low_porosity_ = 0.01;
@@ -95,64 +141,72 @@ namespace RRM
 			qxt_span_slider_porosity_->setMaximum(100);
 			slider_porosity_->setMinimum(0);
 			slider_porosity_->setMaximum(100);
+			/// @FIXME January 2018 -- @TODO Create functors to the slider values
 
-            /// @FIXME September  PERMEABILITY
-            slider_permeability_ = new QSlider(Qt::Orientation::Horizontal);
-            slider_permeability_->setVisible(false);
-            qxt_span_slider_permeability_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
-            qxt_span_slider_permeability_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
-			this->is_reversed_permeability_ = false;
-			qxt_span_slider_permeability_->setInvertedAppearance(this->is_reversed_permeability_);
+			permeability_GUI_.resize(3);
+			std::vector<QString> labels = { "Permeability X", "Permeability Y", "Permeability Z" };
 
-            gradient_permeability_Label_ = new QLabel(tr("Permeability"));
-            doubleSpinbBox_low_permeability_ = new QDoubleSpinBox();
-				label_bottom_pearmeability_ = new QLabel(tr("Bottom"));
-            doubleSpinbBox_high_permeability_ = new QDoubleSpinBox();
-				label_top_pearmeability_ = new QLabel(tr("Top"));
-			inverted_permeability_ = new QPushButton("Inverted");
-			inverted_permeability_->setCheckable(true);
+			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+			{
+				i += 2;
+				/// @FIXME September  PERMEABILITY			
+				permeability_GUI_[index].slider_ = new QSlider(Qt::Orientation::Horizontal);
+				permeability_GUI_[index].slider_->setVisible(false);
+				permeability_GUI_[index].qxt_span_slider_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
+				permeability_GUI_[index].qxt_span_slider_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
+				permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(this->is_reversed_permeability_);
 
-            this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, 2, 0);
+				permeability_GUI_[index].gradient_Label_ = new QLabel(tr(labels[index].toStdString().c_str()));
+				permeability_GUI_[index].doubleSpinbBox_low_ = new QDoubleSpinBox();
+				permeability_GUI_[index].label_bottom_ = new QLabel(tr("Bottom"));
+				permeability_GUI_[index].doubleSpinbBox_high_ = new QDoubleSpinBox();
+				permeability_GUI_[index].label_top_ = new QLabel(tr("Top"));
+				permeability_GUI_[index].inverted_ = new QPushButton("Inverted");
+				permeability_GUI_[index].inverted_->setCheckable(true);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 2, 1);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_pearmeability_, 2, 2);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].gradient_Label_, i, j);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 3, 1, 1, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_permeability_, 3, 9);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_high_, i, j + 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_top_, i, j + 2);
 
-				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 2, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_pearmeability_, 2, 9);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, i + 1, j + 2, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].inverted_, i + 1, j + 9);
 
-            this->permeability_position_ = std::make_tuple<int, int, int, int>(3, 1, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_low_, i, j + 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_bottom_, i, j + 9);
 
-			low_permeability_ = 0.001;
-			high_permeability_ = 10000.0;
-			default_low_permeability_ = 150.0;
-			default_high_permeability_ = 250.0;
+				permeability_GUI_[index].position_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
 
-			doubleSpinbBox_low_permeability_->setMinimum(low_permeability_);
-			doubleSpinbBox_low_permeability_->setMaximum(high_permeability_);
-            doubleSpinbBox_low_permeability_->setDecimals(3);
-			doubleSpinbBox_high_permeability_->setMinimum(low_permeability_);
-			doubleSpinbBox_high_permeability_->setMaximum(high_permeability_);
-            doubleSpinbBox_high_permeability_->setDecimals(3);
+				permeability_GUI_[index].low_value_ = 0.001;
+				permeability_GUI_[index].high_value_ = 10000.0;
+				permeability_GUI_[index].default_low_value_ = 150.0;
+				permeability_GUI_[index].default_high_value_ = 250.0;
 
-            qxt_span_slider_permeability_->setMinimum(1);
-            qxt_span_slider_permeability_->setMaximum(100);
-            slider_permeability_->setMinimum(1);
-            slider_permeability_->setMaximum(100);
-			/// @FIXME January 2018
+				permeability_GUI_[index].doubleSpinbBox_low_->setMinimum(low_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setMaximum(high_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setDecimals(3);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMinimum(low_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMaximum(high_permeability_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setDecimals(3);
+
+				permeability_GUI_[index].qxt_span_slider_->setMinimum(1);
+				permeability_GUI_[index].qxt_span_slider_->setMaximum(100);
+				permeability_GUI_[index].slider_->setMinimum(1);
+				permeability_GUI_[index].slider_->setMaximum(100);
+			}
+
 
 			/// @FIXME September	 Water Saturation
+			i += 2;
 			slider_Water_Saturation_ = new QSlider(Qt::Orientation::Horizontal);
 			label_Water_Saturation_ = new QLabel(tr("Water Saturation"));
 			doubleSpinBox_Region_Water_Saturation_ = new QDoubleSpinBox();
 			
-			this->ui_->gridLayout_Region_Attributes_->addWidget(label_Water_Saturation_, 4, 0);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinBox_Region_Water_Saturation_, 4, 1);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(slider_Water_Saturation_, 4, 2, 1, 8);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(label_Water_Saturation_, i, 0);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinBox_Region_Water_Saturation_, i, j+1);
+			this->ui_->gridLayout_Region_Attributes_->addWidget(slider_Water_Saturation_, i, j+2, 1, 8);
 			
-			water_saturation_position_ = std::make_tuple<int, int, int, int>(4, 2, 1, 8);
+			water_saturation_position_ = std::make_tuple<int, int, int, int>(i + 0, j + 2, 1, 8);
 
 			// Values in the GUI
 			low_water_saturation_  = 0.0;
@@ -442,6 +496,23 @@ namespace RRM
 
                         this->doubleSpinbBox_high_permeability_->setEnabled(false);
 
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+						{
+							/// Exchange the QSlider and QxtSpanSlider - Permeability
+							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].qxt_span_slider_);
+							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].slider_, 
+								std::get<0>(permeability_GUI_[index].position_), 
+								std::get<1>(permeability_GUI_[index].position_), 
+								std::get<2>(permeability_GUI_[index].position_), 
+								std::get<3>(permeability_GUI_[index].position_));
+							permeability_GUI_[index].slider_->setVisible(true);
+							permeability_GUI_[index].qxt_span_slider_->setVisible(false);
+
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(false);
+
+						}
                     }
                     else
                     {
@@ -461,6 +532,22 @@ namespace RRM
                         qxt_span_slider_permeability_->setVisible(true);
 
                         this->doubleSpinbBox_high_permeability_->setEnabled(true);
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+						{
+							/// Exchange the QSlider and QxtSpanSlider - Permeability
+							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].slider_);
+							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, 
+								std::get<0>(permeability_GUI_[index].position_),
+								std::get<1>(permeability_GUI_[index].position_),
+								std::get<2>(permeability_GUI_[index].position_),
+								std::get<3>(permeability_GUI_[index].position_));
+							permeability_GUI_[index].slider_->setVisible(false);
+							permeability_GUI_[index].qxt_span_slider_->setVisible(true);
+
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(true);
+						}
                     }
                 });
 
@@ -539,6 +626,48 @@ namespace RRM
 						}
 
                 });
+
+
+				//// @FIXME January 2018
+				for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+				{
+					//// @FIXME September Permeability
+					connect(permeability_GUI_[index].slider_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
+					{
+						double ex = -3.0 + (0.07)*static_cast<double>(permeability_GUI_[index].slider_->value());
+						ex = std::pow(10, ex);
+
+						permeability_GUI_[index].doubleSpinbBox_low_->setValue(ex);
+
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
+					});
+
+					connect(permeability_GUI_[index].inverted_, &QPushButton::toggled, this, [=](bool _is_checked)
+					{
+						permeability_GUI_[index].is_reversed_ = _is_checked;
+						permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(this->is_reversed_permeability_);
+						double tmp = 0.0;
+						tmp = permeability_GUI_[index].doubleSpinbBox_high_->value();
+						permeability_GUI_[index].doubleSpinbBox_high_->setValue(permeability_GUI_[index].doubleSpinbBox_low_->value());
+						permeability_GUI_[index].doubleSpinbBox_low_->setValue(tmp);
+
+
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].first = permeability_GUI_[index].doubleSpinbBox_low_->value();
+						permeability_GUI_[index].gradient_values_[ui_->comboBox_Region_->currentIndex()].second = permeability_GUI_[index].doubleSpinbBox_high_->value();
+						permeability_GUI_[index].is_inverted_[ui_->comboBox_Region_->currentIndex()] = _is_checked;
+
+						if (_is_checked)
+						{
+							permeability_GUI_[index].inverted_->setToolTip("Check it to increase values bottom up");
+						}
+						else
+						{
+							permeability_GUI_[index].inverted_->setToolTip("Check it to increase values top down");
+						}
+					});
+				}
+
 
         }
 

@@ -70,9 +70,12 @@ namespace RRM
 							QLabel* label_top_;
 							QDoubleSpinBox* doubleSpinbBox_high_;
 							QLabel* label_bottom_;
+							/// FIXME January 2018
+							bool is_reversed_;
+							QPushButton*      inverted_;
 							// Values in the GUI
 							double low_value_;
-							double high_value;
+							double high_value_;
 							// Initial values in the GUI
 							double default_low_value_;
 							double default_high_value_;
@@ -101,6 +104,9 @@ namespace RRM
 							QLabel* label_top_pearmeability_;
                         QDoubleSpinBox* doubleSpinbBox_high_permeability_;
 							QLabel* label_bottom_pearmeability_;
+							/// FIXME January 2018
+							bool is_reversed_permeability_;
+							QPushButton*      inverted_permeability_;
 						// Values in the GUI
 						double low_permeability_;
 						double high_permeability_;
@@ -115,7 +121,7 @@ namespace RRM
 						///@FIXME January 2018 --------------------------------
 						///----------------------------------------------------
 						/// Alternative approach	
-						std::vector<Permeability_GUI> permeability_;
+						std::vector<Permeability_GUI> permeability_GUI_;
 						///----------------------------------------------------
 
                         QxtSpanSlider* qxt_span_slider_porosity_;
@@ -153,9 +159,7 @@ namespace RRM
                         QLabel* lb_region_color;
                         std::map< int, QColor > regions_colors;
 
-						/// FIXME January 2018
-						bool is_reversed_permeability_;
-						QPushButton*      inverted_permeability_;
+
 						bool is_reversed_porosity_;
 						QPushButton*      inverted_porosity_;
 
