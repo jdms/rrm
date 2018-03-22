@@ -1029,10 +1029,7 @@ void FlowDiagnosticsInterface::getOilInPlace(double &oil_in_place)
     oil_in_place = region.oilinplace();
 }
 
-void FlowDiagnosticsInterface::setWaterSaturation(unsigned int region_id, double Sw)// need to link to region
-{
-	region.setWaterSaturation(region_id, Sw);
-}
+
 void FlowDiagnosticsInterface::setSaturationMethod(int i){
     region.saturationflag(i);
 }
@@ -1093,7 +1090,7 @@ void FlowDiagnosticsInterface::setRegionSinglePhase(unsigned int id, double Kxlo
 
 void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 	double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
-	double Pct_, double Si_, double lambda_) //the one used
+	double Pct_, double Si_, double lambda_, double Sw_) //the one used
 {
 	PROPERTYAREA p;
 	p.Kxlow(Kxlow_*0.987e-15);
@@ -1107,6 +1104,7 @@ void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow
 	p.Pct(Pct_);
 	p.Siw(Si_);
 	p.lamda(lambda_);
+	p.Sw(Sw_);
 	region.modifypropertyarea(id, p);
 
 	return;
