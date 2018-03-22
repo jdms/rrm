@@ -267,22 +267,19 @@ namespace RRM
 		}
 
 
-        void RegionWidget::getRegionData(int& _number_of_regions,
-                                         std::vector<double>& _positions,
-                                         std::vector<double>& _permeability_values,
-                                         std::vector<double>& _porosity_values,
-                                         std::vector<double >& _staturation_values,
-                                         std::map<int, std::pair<double, double> >& _porosity_gratdients,
-                                         std::map<int, std::pair<double, double> >& _permeability_gratdients
-                                         )
+		void RegionWidget::getRegionData(int& _number_of_regions,
+			std::map<int, std::pair<double, double> >& _x_permeability_values,
+			std::map<int, std::pair<double, double> >& _y_permeability_values,
+			std::map<int, std::pair<double, double> >& _z_permeability_values,
+			std::map<int, std::pair<double, double> >& _porosity_values,
+			std::vector<double >& _pct,
+			std::vector<double >& _siw,
+			std::vector<double >& _sort_factor,
+			std::vector<double >& _staturation_values)
         {
             /// Ensure number of regions
-            _number_of_regions = this->number_of_regions_;
+            _number_of_regions = this->number_of_regions_;         
 
-            _positions.resize(3 * this->number_of_regions_);
-
-            _permeability_values.resize(this->number_of_regions_);
-            _porosity_values.resize(this->number_of_regions_);
             _staturation_values.resize(this->number_of_regions_);
 
             for (int it = 0; it < this->number_of_regions_; it++)
@@ -291,16 +288,22 @@ namespace RRM
 
 				if (ui_->radioButton_Linear_->isChecked())
 				{
-					_porosity_gratdients[it].first = this->porosity_gradient_values_.at(it).first;
-					_porosity_gratdients[it].second = this->porosity_gradient_values_.at(it).first;
+					_porosity_values[it].first = this->porosity_gradient_values_.at(it).first;
+					_porosity_values[it].second = this->porosity_gradient_values_.at(it).first;
 
-					_permeability_gratdients[it].first = this->permeability_gradient_values_.at(it).first;
-					_permeability_gratdients[it].second = this->permeability_gradient_values_.at(it).first;
+					_x_permeability_values[it].first	= permeability_GUI_[0].gradient_values_.at(it).first;
+					_x_permeability_values[it].second	= permeability_GUI_[0].gradient_values_.at(it).first;
+					_y_permeability_values[it].first	= permeability_GUI_[1].gradient_values_.at(it).first;
+					_y_permeability_values[it].second	= permeability_GUI_[1].gradient_values_.at(it).first;
+					_z_permeability_values[it].first	= permeability_GUI_[2].gradient_values_.at(it).first;
+					_z_permeability_values[it].second	= permeability_GUI_[2].gradient_values_.at(it).first;
 				}
 				else
 				{
-					_porosity_gratdients[it] = this->porosity_gradient_values_.at(it);
-					_permeability_gratdients[it] = this->permeability_gradient_values_.at(it);
+					_porosity_values[it] = this->porosity_gradient_values_.at(it);
+					_x_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
+					_y_permeability_values[it] = permeability_GUI_[1].gradient_values_.at(it);
+					_z_permeability_values[it] = permeability_GUI_[2].gradient_values_.at(it);
 				}
 
             }

@@ -94,11 +94,15 @@ class FlowVisualizationController: public QWidget
 
         void computeFlowProperties();
 
-        void setPropertyArea(const int np,
-                             const std::vector< double >& values,                         
-                             const std::vector<double>& _saturations,                           
-                             const std::map<int, std::pair<double, double> >& _permeability_gradients,
-                             const std::map<int, std::pair<double, double> >& _porosity_gradiets);
+        void setPropertyArea(const int np,                    
+                             const std::vector<double>& _saturations,/// Water Saturation
+							 const std::vector<double>& _siw,  /// Connate Water Saturation
+							 const std::vector<double>& _sort_factor,  /// Lambda
+							 const std::vector<double>& _pct,  /// Threshold Pressure
+                             const std::map<int, std::pair<double, double> >& _permeability_x_,
+							 const std::map<int, std::pair<double, double> >& _permeability_y_,
+							 const std::map<int, std::pair<double, double> >& _permeability_z_,
+                             const std::map<int, std::pair<double, double> >& _porosity_values_);
 
         void getPropertyArea( int& np, std::vector< double >& values , std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc );
 

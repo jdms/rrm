@@ -33,13 +33,14 @@ namespace RRM
                         virtual ~RegionWidget ( ) = default;
 
                         void getRegionData(int& _number_of_regions,
-                                           std::vector<double>& _positions,
-                                           std::vector<double>& _permeability_values,
-                                           std::vector<double>& _porosity_values,
-                                           std::vector<double >& _staturation_values,
-                                           std::map<int, std::pair<double,double> >& _porosity_gratdients,
-                                           std::map<int, std::pair<double, double> >& _permeability_gratdients
-                                           );
+							std::map<int, std::pair<double, double> >& _x_permeability_values,	
+							std::map<int, std::pair<double, double> >& _y_permeability_values,
+							std::map<int, std::pair<double, double> >& _z_permeability_values,
+							std::map<int, std::pair<double, double> >& _porosity_values,
+							std::vector<double >& _pct,
+							std::vector<double >& _siw,
+							std::vector<double >& _sort_factor,
+                            std::vector<double >& _staturation_values);
 
                         void setRegionData( const std::map< int,  std::vector< int > >& region_colors );
                         void updateRegionColor( int _index, int red, int green, int blue );

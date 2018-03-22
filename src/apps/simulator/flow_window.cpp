@@ -811,39 +811,55 @@ void FlowWindow::setParametersBeforeSimulation()
 {
 	/// Region parameters
 	int np = 0;
-	std::vector< double > positions;
-	std::vector< double > permeability;
-	std::vector< double > porosity;
 	std::vector< double > saturation;
-	std::vector< int > permeability_curves;
+	/// January 2018
+	std::vector< double > siw;
+	std::vector< double > sort_factor;
+	std::vector< double > pct;
 
-	std::map<int, std::pair<double, double> > permeability_gradients;
-	std::map<int, std::pair<double, double> > porosity_gradients;
+	std::map<int, std::pair<double, double> > x_permeability_values;
+	std::map<int, std::pair<double, double> > y_permeability_values;
+	std::map<int, std::pair<double, double> > z_permeability_values;
+	std::map<int, std::pair<double, double> > porosity_values;
 
 	/// Region Module
 	///@FIXME September
 	region_parameters_->getRegionData(np,
-		positions,
-		permeability,
-		porosity,
-		saturation,
-		porosity_gradients,
-		permeability_gradients);
+		x_permeability_values,
+		y_permeability_values,
+		z_permeability_values,
+		porosity_values,
+		pct,
+		siw,
+		sort_factor,
+		saturation);
+
+	siw.resize(np, 0.0);
+	sort_factor.resize(np, 2.0);
+	pct.resize(np, 0.0);
 
 	/// Feeding HWU Flow Diagnostic
 	controller->setPropertyArea(np,
-		positions,
-		saturation,
-		permeability_gradients,
-		porosity_gradients);
+		saturation,   /// Water Saturation
+		siw,	      /// Connate Water Saturation
+		sort_factor,  /// Lambda
+		pct,          /// Threshold Pressure
+		x_permeability_values,
+		y_permeability_values,
+		z_permeability_values,
+		porosity_values);
 
 
 	for (int i = 0; i < np; i++)
 	{
-		std::cout << " permeability " << permeability_gradients.at(i).first << std::endl;
-		std::cout << " permeability " << permeability_gradients.at(i).second << std::endl;
-		std::cout << " porosity     " << porosity_gradients.at(i).first << std::endl;
-		std::cout << " porosity     " << porosity_gradients.at(i).second << std::endl;
+		std::cout << " x_permeability_values " << x_permeability_values.at(i).first << std::endl;
+		std::cout << " x_permeability_values " << x_permeability_values.at(i).second << std::endl;
+		std::cout << " y_permeability_values " << x_permeability_values.at(i).first << std::endl;
+		std::cout << " y_permeability_values " << x_permeability_values.at(i).second << std::endl;
+		std::cout << " z_permeability_values " << x_permeability_values.at(i).first << std::endl;
+		std::cout << " z_permeability_values " << x_permeability_values.at(i).second << std::endl;
+		std::cout << " porosity     " << porosity_values.at(i).first << std::endl;
+		std::cout << " porosity     " << porosity_values.at(i).second << std::endl;
 		std::cout << " saturation   " << saturation[i] << std::endl;
 	}
 
