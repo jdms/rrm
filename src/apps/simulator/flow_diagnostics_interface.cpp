@@ -1046,13 +1046,13 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
 {
 
 
-   /* min_perm = min_perm > 0 ? min_perm : 0;
-    min_poros = min_poros > 0 ? min_poros : 0;*/
+    min_perm = min_perm > 0 ? min_perm : 0;
+    min_poros = min_poros > 0 ? min_poros : 0;
 
      PROPERTYAREA p;
-    /*p.x(x);
+    p.x(x);
     p.y(y);
-    p.z(z);*/
+    p.z(z);
     p.permlow(min_perm*0.987e-15);
     p.permhigh(max_perm*0.987e-15);
     p.porolow(min_poros);

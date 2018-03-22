@@ -107,7 +107,7 @@ class FlowWindow : public  QMainWindow
         void clear();
 
         void setRegions( const std::map< int,  std::vector< int > >& region_colors /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_*/ );
-        void regionPoints(const std::map<int, Eigen::Vector3f>& region_points);
+
         /// Will emit a signal sendNumberOfRegions
         int getNumberOfRegions();
 
