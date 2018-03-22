@@ -625,7 +625,7 @@ void FlowWindow::loadSurfacesfromSketch()
 
     /// @TODO
     /// Used to get the right Region depth in 3D
-    this->region_parameters_->setRegionDepth(canvas->getDepth());
+    ///this->region_parameters_->setRegionDepth(canvas->getDepth());
 
     std::vector< double > vertices;
     std::vector< unsigned int > faces;
@@ -1064,18 +1064,18 @@ void FlowWindow::reset()
     type_of_file.clear();
 }
 /// Flow Parameters Widget
-void FlowWindow::regionPoints(const std::map<int, Eigen::Vector3f>& region_points)
-{
-    // Z is fixed
-    //this->parametersBar.setRegionPoints(region_points);
-
-    this->region_parameters_->updateRegionPosition(region_points);
-
-    are_regionsdefined = true;
-
-    qbuildCornerPoint->setEnabled(true);
-    qbuildUnstructured->setEnabled(true);
-}
+//void FlowWindow::regionPoints(const std::map<int, Eigen::Vector3f>& region_points)
+//{
+//    // Z is fixed
+//    //this->parametersBar.setRegionPoints(region_points);
+//
+//    this->region_parameters_->updateRegionPosition(region_points);
+//
+//    are_regionsdefined = true;
+//
+//    qbuildCornerPoint->setEnabled(true);
+//    qbuildUnstructured->setEnabled(true);
+//}
 
 int FlowWindow::getNumberOfRegions()
 {
@@ -1335,11 +1335,7 @@ void FlowWindow::createRegionModule()
 
     connect(this->dockRegionContainer_, &QDockWidget::visibilityChanged, this->view_region_module_, &QAction::setChecked);
     connect(this->view_region_module_, &QAction::triggered, this->dockRegionContainer_, &QDockWidget::setVisible);
-    connect( this->region_parameters_, &RRM::RegionWidget::getRegions, [=](){
-        std::map<int, Eigen::Vector3f> region_points;
-        emit requestRegionsPosition( region_points );
-        regionPoints( region_points );
-    } );
+
 
     flowModule_view_->addAction(view_region_module_);
 

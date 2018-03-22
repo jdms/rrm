@@ -46,16 +46,13 @@ namespace RRM
 
                         int getNumberOfRegion() const;
 
-                        void setRegionDepth(float _depth);
-
 						void setByRegionSaturation(bool option);
     
 						int reversePermeability(bool _is_reversed,int _value);
 						int resersePorosity(bool _is_reversed, int _value) ;
 
                 public slots:
-                        void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
-
+                       
 						void clear();
 						void reset();
 
@@ -72,25 +69,16 @@ namespace RRM
                         void updateRegionsWidget(int _index);
                         void createRegions( const std::map< int,  std::vector< int > >& region_colors  );
 
-                        int number_of_regions_;
-
-                        /// @Deprecated soon ...
-                        float depth_;
-
-                        std::map< int, Eigen::Vector3f > positions_values;
-
-                        /// Region Attributes
-                        std::map< int, double > permeability_values;
-                        std::map< int, double > porosity_values;
-                        std::map< int, double > saturation_values;
-
+                        int number_of_regions_;             
                         
                         ///@FIXME September 2017
                         QxtSpanSlider* qxt_span_slider_permeability_;
                         QSlider*     slider_permeability_;
-                        QLabel* gradient_permeability_Label_;
+							QLabel* gradient_permeability_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_permeability_;
+							QLabel* label_top_pearmeability_;
                         QDoubleSpinBox* doubleSpinbBox_high_permeability_;
+							QLabel* label_bottom_pearmeability_;
 						// Values in the GUI
 						double low_permeability_;
 						double high_permeability_;
@@ -105,9 +93,11 @@ namespace RRM
 
                         QxtSpanSlider* qxt_span_slider_porosity_;
                         QSlider*     slider_porosity_;
-                        QLabel* gradient_porosity_Label_;
+							QLabel* gradient_porosity_Label_;
                         QDoubleSpinBox* doubleSpinbBox_low_porosity_;
+							QLabel*	label_bottom_porosity_;
                         QDoubleSpinBox* doubleSpinbBox_high_porosity_;
+							QLabel*	label_top_porosity_;
 						// Values in the GUI
 						double low_porosity_;
 						double high_porosity_;
@@ -121,15 +111,15 @@ namespace RRM
 		
 						// Water Saturation
 						QSlider*        slider_Water_Saturation_;
-						QLabel*			label_Water_Saturation_;
+							QLabel*			label_Water_Saturation_;
 						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
+						std::map< int, double > saturation_values;
 						// Values in the GUI
 						double low_water_saturation_;
 						double high_water_saturation_;
 						// Initial values in the GUI
 						double defaul_low_water_saturation_;
-						double defaul_high_water_saturation_;
-						
+						double defaul_high_water_saturation_;						
 
 						std::tuple<int, int, int, int> water_saturation_position_;
 
