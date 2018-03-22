@@ -516,7 +516,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getForwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("TOF from Injectors (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -530,7 +530,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getFowardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("TOF from Injectors (Log10(day)) ");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (Log10(day)) ");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -544,7 +544,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("TOF to Producers (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -558,7 +558,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getBackwardTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("TOF to Producers (Log10(day))");
+        ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -573,7 +573,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF (day)");
+        ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (day)");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
@@ -587,7 +587,7 @@ void FlowVisualizationController::loadPropertiesTetrahedron()
         i = 0;
         code_interface.getTotalTOF_log10(values);
 
-        ph = ptr_mesh->request_vertex_property<double>("Total TOF (Log10(day))");
+        ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (Log10(day))");
         ptr_mesh->set_persistent(ph);
 
         for (OpenVolumeMesh::VertexIter v_it = ptr_mesh->vertices_begin(); v_it != ptr_mesh->vertices_end(); ++v_it)
