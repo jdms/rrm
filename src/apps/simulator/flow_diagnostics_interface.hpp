@@ -415,10 +415,10 @@ public:
     }*/
 	
 
-	void setRegion_sf(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+	void setRegionSinglePhase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_);
 
-	void setRegion_multiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
+	void setRegionMultiphase(unsigned int id, double Kxlow_, double Kylow_, double Kzlow_, double Kxhigh_,
 		double Kyhigh_, double Kzhigh_, double porolow_, double porohigh_,
 		double Pct_, double Si_, double lambda_);
 

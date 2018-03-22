@@ -375,10 +375,13 @@ void FlowVisualizationController::getUpscalledPermeability( std::string& _result
 void FlowVisualizationController::getOilInPlace( std::string& _result)
 {
     //std::string up;
-    double value;
+    double value  = 0.0;
+	int integer_value = 0;
     code_interface.getOilInPlace( value );
+	/// FIXME January 2018
+	integer_value = static_cast<int>(value);
     _result.clear();
-    _result = std::to_string( value );
+	_result = std::to_string(integer_value);
 
 };
 

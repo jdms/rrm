@@ -43,7 +43,6 @@ namespace RRM
         {
             this->number_of_regions_ = 0;
 
-
             /// @FIXME September   POROSITY
             slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
             slider_porosity_->setVisible(false);
@@ -54,20 +53,29 @@ namespace RRM
 
             gradient_porosity_Label_ = new QLabel(tr("Porosity"));
             doubleSpinbBox_low_porosity_ = new QDoubleSpinBox();
+				label_bottom_porosity_ = new QLabel(tr("Bottom"));
             doubleSpinbBox_high_porosity_ = new QDoubleSpinBox();
+				label_top_porosity_ = new QLabel(tr("Top"));
 			inverted_porosity_ = new QPushButton("Inverted");
 			inverted_porosity_->setCheckable(true);
 
             this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_porosity_Label_, 0, 0);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 0, 1);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, 1, 2, 1, 8);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, 1, 9);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 8);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_porosity_, 0, 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_porosity_, 0, 2);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, 1, 2, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_porosity_, 1, 9);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_porosity_, 0, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_porosity_, 0, 9);
+
             this->porosity_position_ = std::make_tuple<int, int, int, int>(1, 1, 1, 8);
 
-
+			/// Accepted Range Values
 			low_porosity_ = 0.01;
 			high_porosity_ = 0.99;
+			/// Default Values
 			default_low_porosity_ = 0.28;
 			defaul_high_porosity_ = 0.32;
 
@@ -93,16 +101,23 @@ namespace RRM
 
             gradient_permeability_Label_ = new QLabel(tr("Permeability"));
             doubleSpinbBox_low_permeability_ = new QDoubleSpinBox();
+				label_bottom_pearmeability_ = new QLabel(tr("Bottom"));
             doubleSpinbBox_high_permeability_ = new QDoubleSpinBox();
+				label_top_pearmeability_ = new QLabel(tr("Top"));
 			inverted_permeability_ = new QPushButton("Inverted");
 			inverted_permeability_->setCheckable(true);
 
             this->ui_->gridLayout_Region_Attributes_->addWidget(gradient_permeability_Label_, 2, 0);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 2, 1);
-            //this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 1, 2, 1, 5);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 3, 1, 1, 8);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_permeability_, 3, 9);
-            this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 2, 8);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_high_permeability_, 2, 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_top_pearmeability_, 2, 2);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_permeability_, 3, 1, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(inverted_permeability_, 3, 9);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinbBox_low_permeability_, 2, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(label_bottom_pearmeability_, 2, 9);
+
             this->permeability_position_ = std::make_tuple<int, int, int, int>(3, 1, 1, 8);
 
 			low_permeability_ = 0.001;
@@ -181,9 +196,6 @@ namespace RRM
 			porosity_gradient_values_.clear();
 			saturation_values.clear();
 
-			permeability_values.clear();
-			porosity_values.clear();
-
 			this->createRegions(this->region_colors_);
 		}
 
@@ -208,12 +220,6 @@ namespace RRM
 
             for (int it = 0; it < this->number_of_regions_; it++)
             {
-                _positions[it * 3 + 0] = positions_values[it].x();
-                _positions[it * 3 + 1] = positions_values[it].y();
-                _positions[it * 3 + 2] = positions_values[it].z();
-
-                _permeability_values[it]	= permeability_values[it];
-                _porosity_values[it]		= porosity_values[it];
                 _staturation_values[it]     = saturation_values[it];
 
 				if (ui_->radioButton_Linear_->isChecked())
@@ -601,11 +607,6 @@ namespace RRM
 
 					if (permeability_gradient_values_.count(index_) == 0)
                     {
-
-                        positions_values[index_].x() = 0.0;
-                        positions_values[index_].y() = 0.0;
-                        positions_values[index_].z() = 0.0;
-
                         /// @FIXME Me September
                         doubleSpinbBox_low_porosity_->setValue(0.28);
                         emit doubleSpinbBox_low_porosity_->editingFinished();
@@ -643,43 +644,6 @@ namespace RRM
 
                 emit numberOfRegions(this->number_of_regions_);
         }
-
-        void RegionWidget::setRegionDepth(float _depth)
-        {
-            /// Coordinate System for FlowDiagnostic is  <x, z, y>
-            /// @FIXEME Be Careful about the coordinate system
-
-            this->depth_ = _depth;
-
-            for (auto index : positions_values)
-            {
-                positions_values[index.first][1] = this->depth_;
-            }
-
-            this->updateRegionsWidget(ui_->comboBox_Region_->currentIndex());
-        }
-
-        void RegionWidget::updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions)
-        {
-                /// Coordinate System for FlowDiagnostic is  <x, z, y>
-                /// @FIXEME Be Careful about the coordinate system
-                for (auto index : _positions)
-                {
-                    //
-                    positions_values[index.first][0] = index.second.x();
-                    // Z
-                    positions_values[index.first][2] = index.second.y();
-                    // Y
-                    positions_values[index.first][1] = index.second.z()/*this->depth_*/;
-
-                    std::cout << "region " << index.first << ": " << index.second.x() << ", "
-                              << index.second.y() << ", " << index.second.z() << std::endl << std::flush;
-
-                }
-
-                this->updateRegionsWidget(ui_->comboBox_Region_->currentIndex());
-        }
-
 
 		void RegionWidget::setByRegionSaturation(bool _option)
 		{
