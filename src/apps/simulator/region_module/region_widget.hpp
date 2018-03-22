@@ -111,28 +111,6 @@ namespace RRM
                         void createRegions( const std::map< int,  std::vector< int > >& region_colors  );
 
                         int number_of_regions_;             
-                        
-                        ///@FIXME September 2017
-                        QxtSpanSlider* qxt_span_slider_permeability_;
-                        QSlider*     slider_permeability_;
-							QLabel* gradient_permeability_Label_;
-                        QDoubleSpinBox* doubleSpinbBox_low_permeability_;
-							QLabel* label_top_pearmeability_;
-                        QDoubleSpinBox* doubleSpinbBox_high_permeability_;
-							QLabel* label_bottom_pearmeability_;
-							/// FIXME January 2018
-							bool is_reversed_permeability_;
-							QPushButton*      inverted_permeability_;
-						// Values in the GUI
-						double range_low_permeability_;
-						double range_high_permeability_;
-						// Initial values in the GUI
-						double default_low_permeability_;
-						double default_high_permeability_;
-
-                        std::map< int, std::pair<double,double> > permeability_gradient_values_;
-						std::map< int, bool> is_inverted_permeability_gradient_values_;
-                        std::tuple<int, int, int, int> permeability_position_;
 
 						///@FIXME January 2018 --------------------------------
 						///----------------------------------------------------
