@@ -645,22 +645,6 @@ namespace RRM
                 emit numberOfRegions(this->number_of_regions_);
         }
 
-        void RegionWidget::setRegionDepth(float _depth)
-        {
-            /// Coordinate System for FlowDiagnostic is  <x, z, y>
-            /// @FIXEME Be Careful about the coordinate system
-
-            this->updateRegionsWidget(ui_->comboBox_Region_->currentIndex());
-        }
-
-        void RegionWidget::updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions)
-        {
-
-
-                this->updateRegionsWidget(ui_->comboBox_Region_->currentIndex());
-        }
-
-
 		void RegionWidget::setByRegionSaturation(bool _option)
 		{
 			slider_Water_Saturation_->setEnabled(_option);

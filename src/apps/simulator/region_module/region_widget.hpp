@@ -46,16 +46,13 @@ namespace RRM
 
                         int getNumberOfRegion() const;
 
-                        void setRegionDepth(float _depth);
-
 						void setByRegionSaturation(bool option);
     
 						int reversePermeability(bool _is_reversed,int _value);
 						int resersePorosity(bool _is_reversed, int _value) ;
 
                 public slots:
-                        void updateRegionPosition(const std::map< int, Eigen::Vector3f >& _positions);
-
+                       
 						void clear();
 						void reset();
 
