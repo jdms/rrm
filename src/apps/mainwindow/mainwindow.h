@@ -40,7 +40,7 @@ class MainWindow: public QMainWindow
    public:
 
         explicit MainWindow( QWidget *parent = 0 );
-        void updateSketchingWindowGeometry();
+        void updateSketchingWindowGeometry( int width, int height );
 
 
 
@@ -156,7 +156,6 @@ class MainWindow: public QMainWindow
 
         QAction* ac_screenshot;
         QAction* ac_output_volume;
-        QAction* ac_topview;
 
         QMenu *mn_file;
         QMenu *mn_help;
