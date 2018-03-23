@@ -426,15 +426,17 @@ public:
 		double Pct_, double Si_, double lambda_, double Sw_);
 
 	//either set water saturation (setsaturationmethod=1) or oil gravity (setsaturationmethod=2)
-	void setViscosity(double visc);//oil viscosity
-	void setViscosity_water(double visc);
-	void setdensity_water(double den_w);
-	void setdensity_oil(double den_w);
-	void setOilGravity(double); //same as setdensity_oil
-    void setfreewaterlevel(double);
-	void setBo(double Bo_);
-	void setBw(double Bw_);
+	void setOilViscosity(double _oil_viscosity);//oil viscosity
+	void setOilDensity(double _oil_density);
+	void setBo(double _bo);
 
+	void setWaterViscosity(double _water_viscosity);
+	void setWaterDensity(double _water_density);
+	void setBw(double _bw);
+
+    void setFreeWaterLevel(double _fwl);
+
+	
 private:
 
     REGION region;

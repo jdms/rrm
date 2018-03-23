@@ -241,27 +241,28 @@ namespace RRM
 			std::map<int, std::pair<double, double> >& _y_permeability_values,
 			std::map<int, std::pair<double, double> >& _z_permeability_values,
 			std::map<int, std::pair<double, double> >& _porosity_values,
-			std::vector<double >& _pct,
-			std::vector<double >& _siw,
-			std::vector<double >& _sort_factor,
-			std::vector<double >& _staturation_values)
+			std::vector<double>& _saturations_values, /// Water Saturation
+			std::vector<double>& _pct_values,		  /// Threshold Pressure
+			std::vector<double>& _sort_factor_values, /// Lambda
+			std::vector<double>& _siw_values		  /// Connate Water Saturation 
+			)
         {
             /// Ensure number of regions
             _number_of_regions = this->number_of_regions_;         
 			/// Ensure the size of the vectors
-			_pct.resize(_number_of_regions);
-			_siw.resize(_number_of_regions);
-			_sort_factor.resize(_number_of_regions);
-			_staturation_values.resize(_number_of_regions);
+			_pct_values.resize(_number_of_regions);
+			_siw_values.resize(_number_of_regions);
+			_sort_factor_values.resize(_number_of_regions);
+			_saturations_values.resize(_number_of_regions);
 
             for (int it = 0; it < this->number_of_regions_; it++)
             {
 				/// @FIXME January HArd coded names
 				/// { "Water Saturation", "Threshold Pressure", "Sort Factor","Connate Water Saturation" };
-				_pct[it]			    = single_double_input_GUI_[1].values_[it];
-				_siw[it]			    = single_double_input_GUI_[3].values_[it];
-				_sort_factor[it]		= single_double_input_GUI_[2].values_[it];
-				_staturation_values[it] = single_double_input_GUI_[0].values_[it];
+				_pct_values[it] = single_double_input_GUI_[1].values_[it];
+				_siw_values[it] = single_double_input_GUI_[3].values_[it];
+				_sort_factor_values[it] = single_double_input_GUI_[2].values_[it];
+				_saturations_values[it] = single_double_input_GUI_[0].values_[it];
 
 				if (ui_->radioButton_Linear_->isChecked())
 				{

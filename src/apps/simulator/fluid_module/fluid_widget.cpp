@@ -50,7 +50,7 @@ namespace RRM
 		/// Alternative Approach
 		/// @FIXME January 2018 -- @TODO Create functors to update slider values:  std::function ?
 		single_double_input_GUI_fluid_.resize(7);
-		std::vector<QString> single_double_input_labels				= { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FwL" };
+		std::vector<QString> single_double_input_labels				= { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
 		std::vector<QString> single_double_input_units				= { " (cP)", " (kg/m3)", " (--)", " (cP)", " (kg/m3)", " (--)", " (m)" };
 		std::vector<double>  single_double_input_low_values		    = { 0.01,  10.0,    1.0, 0.01,  10.0,   1.0, 0.0};
 		std::vector<double>  single_double_input_high_values		= { 100.0, 20000.0, 5.0, 100.0, 2000.0, 5.0, 1000.0};
@@ -132,9 +132,19 @@ namespace RRM
 		double& _water_viscosity,
 		double& _water_density,
 		double& _bw,
-		double& fwl,
+		double& _fwl,
 		std::pair<int, int>& _phase_method)
     {		        
+		//{ "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FwL" };
+
+		_oil_viscosity		= single_double_input_GUI_fluid_[0].value_;
+		_oil_density		= single_double_input_GUI_fluid_[1].value_;
+		_bo					= single_double_input_GUI_fluid_[2].value_;
+		_water_viscosity    = single_double_input_GUI_fluid_[3].value_;
+		_water_density		= single_double_input_GUI_fluid_[4].value_;
+		_bw					= single_double_input_GUI_fluid_[5].value_;
+		_fwl				= single_double_input_GUI_fluid_[6].value_;
+
         _phase_method = this->phase_method_;
     }
 
