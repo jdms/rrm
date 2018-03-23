@@ -153,11 +153,13 @@ void FlowWindow::createToolBar()
     mn_export->addAction(action_exportDerivedQuantities_);
 	mn_export->addAction(qexportMesh);
 
-    tbn_export = new QToolButton();
-    tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
-    tbn_export->setMenu(mn_export);
-    tbn_export->setPopupMode(QToolButton::InstantPopup);
-    tbn_export->setEnabled(false);
+
+
+    //tbn_export = new QToolButton();
+    //tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
+    //tbn_export->setMenu(mn_export);
+    //tbn_export->setPopupMode(QToolButton::InstantPopup);
+    //tbn_export->setEnabled(false);
 
     /// Properties
 
