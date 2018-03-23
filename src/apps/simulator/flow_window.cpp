@@ -256,10 +256,10 @@ void FlowWindow::createToolBar()
 	qexportMesh						= new QAction(tr("Mesh *.msh"), qtoolbarFlow);
 
 	menu_export_ = new QMenu(tr("Export"), this);
-	menu_export_->addAction(qexportsurface);
-	menu_export_->addAction(qexportvolume);
-	menu_export_->addAction(qexportcornerpointVTK);
-	menu_export_->addAction(qexportcornerpointGRDECL);
+	//menu_export_->addAction(qexportsurface);
+	//menu_export_->addAction(qexportvolume);
+	//menu_export_->addAction(qexportcornerpointVTK);
+	//menu_export_->addAction(qexportcornerpointGRDECL);
 	menu_export_->addAction(qexportresults);
 	menu_export_->addAction(action_exportDerivedQuantities_);
 	menu_export_->addAction(qexportMesh);
