@@ -703,7 +703,7 @@ void Mesh::buildBoundingBox(const std::vector<float>& _vertices)
     //   |   *  |
     //   0*-->-*1
 
-    std::vector<Eigen::Vector3f> v =
+    std::vector<Eigen::Vector3f> vertices =
     {
         /// Top Face
         Eigen::Vector3f(boundingbox_.Max().x(), boundingbox_.Max().y(), boundingbox_.Max().z()), // v0
@@ -745,17 +745,21 @@ void Mesh::buildBoundingBox(const std::vector<float>& _vertices)
 
     };
 
+	for (auto& v : vertices)
+	{
+		v = Eigen::Vector3f(v.x(), v.z(), v.y());
+	}
 
-    entities_.at("BoundingBox").number_of_elements_ = v.size();
+	entities_.at("BoundingBox").number_of_elements_ = vertices.size();
     /// Load by Arrays
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_vertices_);
-    glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f),v.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Eigen::Vector3f), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_normals_);
-    glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f), v.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Eigen::Vector3f), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("BoundingBox").vertexBuffer_colors_);
-    glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(Eigen::Vector3f), v.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Eigen::Vector3f), vertices.data(), GL_STATIC_DRAW);
 
 }
 
@@ -920,6 +924,8 @@ void Mesh::setTriangleSkeletonGeometry(const std::vector < unsigned int >& _face
     for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
     {
         normalized_vertices[it] = this->model_matrix_ * normalized_vertices[it];
+
+		normalized_vertices[it] = Eigen::Vector3f(normalized_vertices[it].x(), normalized_vertices[it].z(), normalized_vertices[it].y());
     }
 
 
@@ -1064,6 +1070,19 @@ void Mesh::loadWellPosition(int _number_of_wells, const std::map<int, Eigen::Vec
     entities_.at("WellPoints").number_of_elements_ = wells_tip.size();
     entities_.at("WellLines").number_of_elements_ = wells_base.size();
     entities_.at("WellSegments").number_of_elements_ = wells_segments.size();
+
+	for (auto& v : wells_tip)
+	{
+		v = Eigen::Vector3f(v.x(), v.z(), v.y());
+	}
+	for (auto& v : wells_base)
+	{
+		v = Eigen::Vector3f(v.x(), v.z(), v.y());
+	}
+	for (auto& v : wells_segments)
+	{
+		v = Eigen::Vector3f(v.x(), v.z(), v.y());
+	}
 
     //v[0] = (model_matrix_ * Eigen::Vector4f(dim_max.x(), dim_max.y(), dim_max.z(), 1.0f)).head<3>();
     //v[1] = (model_matrix_ * Eigen::Vector4f(dim_min.x(), dim_min.y(), dim_min.z(), 1.0f)).head<3>();
