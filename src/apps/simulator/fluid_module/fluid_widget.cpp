@@ -53,7 +53,7 @@ namespace RRM
 		std::vector<QString> single_double_input_labels				= { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
 		std::vector<QString> single_double_input_units				= { " (cP)", " (kg/m3)", " (--)", " (cP)", " (kg/m3)", " (--)", " (m)" };
 		std::vector<double>  single_double_input_low_values		    = { 0.01,  10.0,    1.0, 0.01,  10.0,   1.0, 0.0};
-		std::vector<double>  single_double_input_high_values		= { 100.0, 20000.0, 5.0, 100.0, 2000.0, 5.0, 1000.0};
+		std::vector<double>  single_double_input_high_values		= { 100.0, 2000.0,  5.0, 100.0, 2000.0, 5.0, 1000.0};
 		std::vector<double>  single_double_input_default_values		= { 1.0,   1000.0,  1.0, 1.0,   1000.0, 1.0, 0.0};
 
 		for (std::size_t index = 0; index < single_double_input_GUI_fluid_.size(); index++)
@@ -74,6 +74,8 @@ namespace RRM
 			single_double_input_GUI_fluid_[index].range_size_ = single_double_input_high_values[index] - single_double_input_low_values[index];
 			// Initial values in the GUI
 			single_double_input_GUI_fluid_[index].default_value_ = single_double_input_default_values[index];
+			single_double_input_GUI_fluid_[index].doubleSpinBox_->setValue(single_double_input_GUI_fluid_[index].default_value_);
+			emit single_double_input_GUI_fluid_[index].doubleSpinBox_->editingFinished();
 
 
 			single_double_input_GUI_fluid_[index].slider_->setMinimum(0);
