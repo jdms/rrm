@@ -832,8 +832,7 @@ void FlowWindow::setParametersBeforeSimulation()
 		pct,
 		siw,
 		sort_factor,
-		saturation);
-
+		saturation);	
 
 	/// Feeding HWU Flow Diagnostic
 	controller->setPropertyArea(np,
