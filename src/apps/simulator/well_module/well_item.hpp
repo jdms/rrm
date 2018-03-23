@@ -79,6 +79,7 @@ namespace RRM
             int id_;
             QPainterPath ellipse_;
             QColor color_;
+			int scale_factor;
 
     };
 

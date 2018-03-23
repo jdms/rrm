@@ -205,7 +205,6 @@ namespace RRM
 
         }
 
-
         int RegionWidget::getNumberOfRegion() const
         {
             return this->number_of_regions_;
@@ -236,7 +235,6 @@ namespace RRM
 
 			this->createRegions(this->region_colors_);
 		}
-
 
 		void RegionWidget::getRegionData(int& _number_of_regions,
 			std::map<int, std::pair<double, double> >& _x_permeability_values,
@@ -297,8 +295,6 @@ namespace RRM
 			this->reset();
         }
 
-
-
         void RegionWidget::updateRegionColor( int _index, int red, int green, int blue )
         {
             regions_colors[ _index ] =  QColor( red, green, blue );
@@ -307,8 +303,6 @@ namespace RRM
             lb_region_color->setPixmap( pixmap_ );
             lb_region_color->update();
         }
-
-
         /// Create Qt Signal-Slot connection
         void RegionWidget::createConnections()
         {
@@ -732,7 +726,6 @@ namespace RRM
 			//doubleSpinBox_Region_Water_Saturation_->setEnabled(_option);
 		}
 
-
 		int RegionWidget::reversePermeability(bool _is_reversed, int _value)
 		{
 			int result = _value;
@@ -748,6 +741,7 @@ namespace RRM
 
 			return result;
 		}
+
 		int RegionWidget::resersePorosity(bool _is_reversed, int _value)
 		{
 			int result = _value;
