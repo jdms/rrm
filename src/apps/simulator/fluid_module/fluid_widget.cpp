@@ -23,16 +23,23 @@ namespace RRM
 
         this->setupWidget();
         this->createConnections();
-
 		this->reset();
+
+
     }
 
 	void FluidWidget::reset()
 	{
+		for (std::size_t index = 0; index < single_double_input_GUI_fluid_.size(); index++)
+		{
+			single_double_input_GUI_fluid_[index].doubleSpinBox_->setValue(single_double_input_GUI_fluid_[index].default_value_);
+			emit single_double_input_GUI_fluid_[index].doubleSpinBox_->editingFinished();
+		}
 	}
 
     void FluidWidget::clear()
     {		
+
     }
 
     void FluidWidget::setupWidget()
@@ -74,9 +81,6 @@ namespace RRM
 			single_double_input_GUI_fluid_[index].range_size_ = single_double_input_high_values[index] - single_double_input_low_values[index];
 			// Initial values in the GUI
 			single_double_input_GUI_fluid_[index].default_value_ = single_double_input_default_values[index];
-			single_double_input_GUI_fluid_[index].doubleSpinBox_->setValue(single_double_input_GUI_fluid_[index].default_value_);
-			emit single_double_input_GUI_fluid_[index].doubleSpinBox_->editingFinished();
-
 
 			single_double_input_GUI_fluid_[index].slider_->setMinimum(0);
 			single_double_input_GUI_fluid_[index].slider_->setMaximum(102);
@@ -125,6 +129,52 @@ namespace RRM
 					single_double_input_GUI_fluid_[index].value_ = ex;
 				});
 		}
+
+
+		/// @FIXME September
+		connect(ui_->radioButton_Singlephase_, &QRadioButton::toggled, [=](bool status_)
+		{
+			ui_->comboBox_PhaseMethods_->setEnabled(false);
+
+			emit setSinglePhase();
+
+			phase_method_.first = 1;
+
+		});
+
+		connect(ui_->radioButton_Multiphase_, &QRadioButton::clicked, this, [=](bool status_)
+		{
+			ui_->comboBox_PhaseMethods_->setEnabled(true);
+
+			emit ui_->comboBox_PhaseMethods_->currentIndexChanged(phase_methods_names_[ui_->comboBox_PhaseMethods_->currentIndex()]);
+
+			emit setMultiPhase();
+
+			phase_method_.first = 2;
+
+		});
+
+		connect(ui_->comboBox_PhaseMethods_, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+			[=](const QString &text){
+
+			/// @FIXME September
+			//"By Water Saturation per Region"
+			if (text.compare(phase_methods_names_[0]) == 0)
+			{
+				//std::cout << "By Water Saturation per Region" << std::endl;
+				emit setSaturationPerRegion();
+				phase_method_.second = 1;
+			}
+			/// By API Grabity
+			else
+			{
+				//std::cout << "By API Gravity" << std::endl;
+				emit setAPIGravity();
+				phase_method_.second = 2;
+			}
+		});
+
+
 	}
 
     void FluidWidget::getFluidData(
