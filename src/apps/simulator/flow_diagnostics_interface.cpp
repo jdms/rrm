@@ -51,7 +51,7 @@ void FlowDiagnosticsInterface::setOilViscosity(double _oil_viscosity){
 }
 
 void FlowDiagnosticsInterface::setOilDensity(double _oil_density){
-	region.oildensity(_oil_density*0.001); //cp to si
+	region.oildensity(_oil_density); //cp to si
 }
 
 void FlowDiagnosticsInterface::setBo(double _bo){
