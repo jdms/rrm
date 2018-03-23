@@ -24,7 +24,7 @@ namespace RRM
                 this->doubleSpinbBox_low_porosity_->setSuffix(" (--)");
                 this->doubleSpinbBox_high_porosity_->setSuffix(" (--)");
 
-				doubleSpinBox_Region_Water_Saturation_->setSuffix(" (--)");
+				//doubleSpinBox_Region_Water_Saturation_->setSuffix(" (--)");
 
                 ///@September
                 emit this->ui_->radioButton_Linear_->toggled(true);
@@ -45,8 +45,61 @@ namespace RRM
 			int i = 0;
 			int j = 0;
 
+			/// @FIXME January 2018 -- @TODO Create functors to the slider values
+			permeability_GUI_.resize(3);
+			std::vector<QString> permeability_labels = { "Permeability X", "Permeability Y", "Permeability Z" };
+
+			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+			{
+				/// @FIXME September  PERMEABILITY			
+				permeability_GUI_[index].slider_ = new QSlider(Qt::Orientation::Horizontal);
+				permeability_GUI_[index].slider_->setVisible(false);
+				permeability_GUI_[index].qxt_span_slider_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
+				permeability_GUI_[index].qxt_span_slider_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
+				permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(false);
+
+				permeability_GUI_[index].gradient_Label_ = new QLabel(tr(permeability_labels[index].toStdString().c_str()));
+				permeability_GUI_[index].doubleSpinbBox_low_ = new QDoubleSpinBox();
+				permeability_GUI_[index].label_bottom_ = new QLabel(tr("Bottom"));
+				permeability_GUI_[index].doubleSpinbBox_high_ = new QDoubleSpinBox();
+				permeability_GUI_[index].label_top_ = new QLabel(tr("Top"));
+				permeability_GUI_[index].inverted_ = new QPushButton("Inverted");
+				permeability_GUI_[index].inverted_->setCheckable(true);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].gradient_Label_, i, j);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_high_, i, j + 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_top_, i, j + 2);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, i + 1, j + 2, 1, 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].inverted_, i + 1, j + 9);
+
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_low_, i, j + 8);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_bottom_, i, j + 9);
+
+				permeability_GUI_[index].position_in_the_grid_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
+
+				permeability_GUI_[index].range_low_value_ = 0.001;
+				permeability_GUI_[index].range_high_value_ = 10000.0;
+				permeability_GUI_[index].default_low_value_ = 150.0;
+				permeability_GUI_[index].default_high_value_ = 250.0;
+
+				permeability_GUI_[index].doubleSpinbBox_low_->setMinimum(permeability_GUI_[index].range_low_value_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setMaximum(permeability_GUI_[index].range_high_value_);
+				permeability_GUI_[index].doubleSpinbBox_low_->setDecimals(3);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMinimum(permeability_GUI_[index].range_low_value_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setMaximum(permeability_GUI_[index].range_high_value_);
+				permeability_GUI_[index].doubleSpinbBox_high_->setDecimals(3);
+
+				permeability_GUI_[index].qxt_span_slider_->setMinimum(1);
+				permeability_GUI_[index].qxt_span_slider_->setMaximum(100);
+				permeability_GUI_[index].slider_->setMinimum(1);
+				permeability_GUI_[index].slider_->setMaximum(100);
+				/// Next Position in the Grid
+				i += 2;
+			}
+
 			/// @FIXME September   POROSITY
-			i += 2;
 			slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
 			slider_porosity_->setVisible(false);
 			qxt_span_slider_porosity_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
@@ -93,88 +146,50 @@ namespace RRM
 			qxt_span_slider_porosity_->setMaximum(100);
 			slider_porosity_->setMinimum(0);
 			slider_porosity_->setMaximum(100);
+
 			/// @FIXME January 2018 -- @TODO Create functors to the slider values
+			single_double_input_GUI_.resize(4);
+			std::vector<QString> single_double_input_labels = { "Water Saturation", "Threshold Pressure", "Sort Factor","Connate Water Saturation" };
+			std::vector<double>  single_double_input_low_values = { 0.0, 0.0, 0.1, 0.0 };
+			std::vector<double>  single_double_input_high_values = { 1.0, 100.0, 10.0, 1.0 };
+			std::vector<double>  single_double_input_default_values = { 0.0, 0.0, 2.0, 0.0 };
 
-			permeability_GUI_.resize(3);
-			std::vector<QString> labels = { "Permeability X", "Permeability Y", "Permeability Z" };
-
-			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
-			{
-				i += 2;
-				/// @FIXME September  PERMEABILITY			
-				permeability_GUI_[index].slider_ = new QSlider(Qt::Orientation::Horizontal);
-				permeability_GUI_[index].slider_->setVisible(false);
-				permeability_GUI_[index].qxt_span_slider_ = new QxtSpanSlider(Qt::Orientation::Horizontal);
-				permeability_GUI_[index].qxt_span_slider_->setHandleMovementMode(QxtSpanSlider::HandleMovementMode::NoCrossing);
-				permeability_GUI_[index].qxt_span_slider_->setInvertedAppearance(false);
-
-				permeability_GUI_[index].gradient_Label_ = new QLabel(tr(labels[index].toStdString().c_str()));
-				permeability_GUI_[index].doubleSpinbBox_low_ = new QDoubleSpinBox();
-				permeability_GUI_[index].label_bottom_ = new QLabel(tr("Bottom"));
-				permeability_GUI_[index].doubleSpinbBox_high_ = new QDoubleSpinBox();
-				permeability_GUI_[index].label_top_ = new QLabel(tr("Top"));
-				permeability_GUI_[index].inverted_ = new QPushButton("Inverted");
-				permeability_GUI_[index].inverted_->setCheckable(true);
-
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].gradient_Label_, i, j);
-
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_high_, i, j + 1);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_top_, i, j + 2);
-
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, i + 1, j + 2, 1, 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].inverted_, i + 1, j + 9);
-
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].doubleSpinbBox_low_, i, j + 8);
-				this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].label_bottom_, i, j + 9);
-
-				permeability_GUI_[index].position_in_the_grid_ = std::make_tuple<int, int, int, int>(i + 1, j + 1, 1, 8);
-
-				permeability_GUI_[index].range_low_value_ = 0.001;
-				permeability_GUI_[index].range_high_value_ = 10000.0;
-				permeability_GUI_[index].default_low_value_ = 150.0;
-				permeability_GUI_[index].default_high_value_ = 250.0;
-
-				permeability_GUI_[index].doubleSpinbBox_low_->setMinimum(permeability_GUI_[index].range_low_value_);
-				permeability_GUI_[index].doubleSpinbBox_low_->setMaximum(permeability_GUI_[index].range_high_value_);
-				permeability_GUI_[index].doubleSpinbBox_low_->setDecimals(3);
-				permeability_GUI_[index].doubleSpinbBox_high_->setMinimum(permeability_GUI_[index].range_low_value_);
-				permeability_GUI_[index].doubleSpinbBox_high_->setMaximum(permeability_GUI_[index].range_high_value_);
-				permeability_GUI_[index].doubleSpinbBox_high_->setDecimals(3);
-
-				permeability_GUI_[index].qxt_span_slider_->setMinimum(1);
-				permeability_GUI_[index].qxt_span_slider_->setMaximum(100);
-				permeability_GUI_[index].slider_->setMinimum(1);
-				permeability_GUI_[index].slider_->setMaximum(100);
-			}
-
-
-			/// @FIXME September	 Water Saturation
+			/// Next Position in the Grid
 			i += 2;
-			slider_Water_Saturation_ = new QSlider(Qt::Orientation::Horizontal);
-			label_Water_Saturation_ = new QLabel(tr("Water Saturation"));
-			doubleSpinBox_Region_Water_Saturation_ = new QDoubleSpinBox();
-			
-			this->ui_->gridLayout_Region_Attributes_->addWidget(label_Water_Saturation_, i, 0);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(doubleSpinBox_Region_Water_Saturation_, i, j+1);
-			this->ui_->gridLayout_Region_Attributes_->addWidget(slider_Water_Saturation_, i, j+2, 1, 8);
-			
-			water_saturation_position_ = std::make_tuple<int, int, int, int>(i + 0, j + 2, 1, 8);
 
-			// Values in the GUI
-			low_water_saturation_  = 0.0;
-			high_water_saturation_ = 1.0;
-			// Initial values in the GUI
-			default_water_saturation_  = 0.0;
+			for (std::size_t index = 0; index < single_double_input_GUI_.size(); index++)
+			{				
+				single_double_input_GUI_[index].label_		   = new QLabel(tr(single_double_input_labels[index].toStdString().c_str()));
+				single_double_input_GUI_[index].doubleSpinBox_ = new QDoubleSpinBox();
+				single_double_input_GUI_[index].slider_		   = new QSlider(Qt::Orientation::Horizontal);
+				
+				this->ui_->gridLayout_Region_Attributes_->addWidget(single_double_input_GUI_[index].label_, i, 0);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(single_double_input_GUI_[index].doubleSpinBox_, i, j + 1);
+				this->ui_->gridLayout_Region_Attributes_->addWidget(single_double_input_GUI_[index].slider_, i, j + 2, 1, 8);
+
+				single_double_input_GUI_[index].position_in_the_grid_ = std::make_tuple<int, int, int, int>(i + 0, j + 2, 1, 8);
+
+				// Values in the GUI
+				single_double_input_GUI_[index].range_low_value_  = single_double_input_low_values[index];
+				single_double_input_GUI_[index].range_high_value_ = single_double_input_high_values[index];
+				single_double_input_GUI_[index].range_size_		  = single_double_input_high_values[index] - single_double_input_low_values[index];
+				// Initial values in the GUI
+				single_double_input_GUI_[index].default_value_	  = single_double_input_default_values[index];
 
 
-			slider_Water_Saturation_->setMinimum(0);
-			slider_Water_Saturation_->setMaximum(100);
-			doubleSpinBox_Region_Water_Saturation_->setMinimum(low_water_saturation_);
-			doubleSpinBox_Region_Water_Saturation_->setMaximum(high_water_saturation_);
+				single_double_input_GUI_[index].slider_->setMinimum(0);
+				single_double_input_GUI_[index].slider_->setMaximum(101);
+				single_double_input_GUI_[index].doubleSpinBox_->setMinimum(single_double_input_low_values[index]);
+				single_double_input_GUI_[index].doubleSpinBox_->setMaximum(single_double_input_high_values[index]);
 
-			slider_Water_Saturation_->setEnabled(false);
-			label_Water_Saturation_->setEnabled(false);
-            doubleSpinBox_Region_Water_Saturation_->setEnabled(false);
+				bool is_enable = true;
+
+				single_double_input_GUI_[index].slider_->setEnabled(is_enable);
+				single_double_input_GUI_[index].label_->setEnabled(is_enable);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(is_enable);
+
+				i += 1;
+			}
 
             lb_region_color = new QLabel();
             lb_region_color->setMaximumSize( 16, 16 );
@@ -205,7 +220,11 @@ namespace RRM
 		{
 		
 			porosity_gradient_values_.clear();
-			saturation_values.clear();
+
+			for (std::size_t index = 0; index < single_double_input_GUI_.size(); index++)
+			{
+				single_double_input_GUI_[index].values_.clear();
+			}
 
 			//// @FIXME January 2018
 			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
@@ -231,12 +250,20 @@ namespace RRM
         {
             /// Ensure number of regions
             _number_of_regions = this->number_of_regions_;         
-
-            _staturation_values.resize(this->number_of_regions_);
+			/// Ensure the size of the vectors
+			_pct.resize(_number_of_regions);
+			_siw.resize(_number_of_regions);
+			_sort_factor.resize(_number_of_regions);
+			_staturation_values.resize(_number_of_regions);
 
             for (int it = 0; it < this->number_of_regions_; it++)
             {
-                _staturation_values[it]     = saturation_values[it];
+				/// @FIXME January HArd coded names
+				/// { "Water Saturation", "Threshold Pressure", "Sort Factor","Connate Water Saturation" };
+				_pct[it]			    = single_double_input_GUI_[1].values_[it];
+				_siw[it]			    = single_double_input_GUI_[3].values_[it];
+				_sort_factor[it]		= single_double_input_GUI_[2].values_[it];
+				_staturation_values[it] = single_double_input_GUI_[0].values_[it];
 
 				if (ui_->radioButton_Linear_->isChecked())
 				{
@@ -259,8 +286,6 @@ namespace RRM
 				}
 
             }
-
-
 
         }
 
@@ -296,33 +321,39 @@ namespace RRM
 
                 connect( ui_->pushButton, &QPushButton::clicked, this, [=](){ emit getRegions(); } );
 
-                //@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
-                /// 0 to 10101
-                /// Saturation
-				connect(slider_Water_Saturation_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
-                {
+				//// @FIXME January 2018
+				for (std::size_t index = 0; index < single_double_input_GUI_.size(); index++)
+				{
+					//@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
+					/// 0 to 10101
+					/// Saturation
+					connect(single_double_input_GUI_[index].slider_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
+					{
+						/// All slider have range into the range:  0-100
+						double ex = static_cast<double>( (0.01 * single_double_input_GUI_[index].slider_->value())	* single_double_input_GUI_[index].range_size_);
 
-                    double ex = static_cast<double>(0.01*slider_Water_Saturation_->value());
+						single_double_input_GUI_[index].doubleSpinBox_->setValue(ex);
 
-					doubleSpinBox_Region_Water_Saturation_->setValue(ex);
+						single_double_input_GUI_[index].values_[ui_->comboBox_Region_->currentIndex()] = ex;
 
-                    saturation_values[ui_->comboBox_Region_->currentIndex()] = ex;
+					});
 
-                });
+					/// FIXME September
+					connect(single_double_input_GUI_[index].doubleSpinBox_, &QDoubleSpinBox::editingFinished, this, [=]()
+					{
 
-                /// FIXME September
-				connect(doubleSpinBox_Region_Water_Saturation_, &QDoubleSpinBox::editingFinished, this, [=]()
-                {
+						double ex = single_double_input_GUI_[index].doubleSpinBox_->value();
 
-                    double ex = doubleSpinBox_Region_Water_Saturation_->value();
+						int i = static_cast<int>(100.0*(ex/single_double_input_GUI_[index].range_size_));
 
-                    int i = static_cast<int>( 100.0*ex);
+						single_double_input_GUI_[index].slider_->blockSignals(true);
+						single_double_input_GUI_[index].slider_->setValue(i);
+						single_double_input_GUI_[index].slider_->blockSignals(false);
 
-					slider_Water_Saturation_->setValue(i);
+						single_double_input_GUI_[index].values_[ui_->comboBox_Region_->currentIndex()] = ex;
 
-                    saturation_values[ui_->comboBox_Region_->currentIndex()] = ex;
-
-                });
+					});
+				}
 
 
                 //// @FIXME September Porosity
@@ -593,8 +624,13 @@ namespace RRM
             emit doubleSpinbBox_high_porosity_->editingFinished();
 
 			/// @FIXME Me September
-			doubleSpinBox_Region_Water_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
-			emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
+			//doubleSpinBox_Region_Water_Saturation_->setValue(saturation_values[ui_->comboBox_Region_->currentIndex()]);
+			//emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
+			for (std::size_t index = 0; index < single_double_input_GUI_.size(); index++)
+			{
+				single_double_input_GUI_[index].doubleSpinBox_->setValue(single_double_input_GUI_[index].values_[ui_->comboBox_Region_->currentIndex()]);
+				emit single_double_input_GUI_[index].doubleSpinBox_->editingFinished();
+			}
 
 			//// @FIXME January 2018
 			for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
@@ -628,16 +664,16 @@ namespace RRM
 
                 for( auto it: region_colors )
                 {
-                    int index_ = it.first;
-                    stringList.push_back("Region " + QString::number( index_ ) );
+                    int region_index_ = it.first;
+					stringList.push_back("Region " + QString::number(region_index_));
 
                     int r = it.second[ 0 ];
                     int g = it.second[ 1 ];
                     int b = it.second[ 2 ];
 
-                    regions_colors[ index_ ] =  QColor( r, g, b );
+					regions_colors[region_index_] = QColor(r, g, b);
 
-					if (porosity_gradient_values_.count(index_) == 0)
+					if (porosity_gradient_values_.count(region_index_) == 0)
                     {
                         /// @FIXME Me September
                         doubleSpinbBox_low_porosity_->setValue(this->default_low_porosity_);
@@ -645,13 +681,21 @@ namespace RRM
                         doubleSpinbBox_high_porosity_->setValue(this->default_high_porosity_);
                         emit doubleSpinbBox_high_porosity_->editingFinished();
 
-                        porosity_gradient_values_[index_].first = default_low_porosity_;
-                        porosity_gradient_values_[index_].second = default_high_porosity_;
-						is_inverted_porosity_gradient_values_[index_] = false;
+						porosity_gradient_values_[region_index_].first = default_low_porosity_;
+						porosity_gradient_values_[region_index_].second = default_high_porosity_;
+						is_inverted_porosity_gradient_values_[region_index_] = false;
 
-						saturation_values[index_] = this->default_water_saturation_;
-						doubleSpinBox_Region_Water_Saturation_->setValue(this->default_water_saturation_);
-						emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
+						//saturation_values[index_] = this->default_water_saturation_;
+						//doubleSpinBox_Region_Water_Saturation_->setValue(this->default_water_saturation_);
+						//emit doubleSpinBox_Region_Water_Saturation_->editingFinished();
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < single_double_input_GUI_.size(); index++)
+						{
+							single_double_input_GUI_[index].values_[region_index_] = single_double_input_GUI_[index].default_value_;
+							single_double_input_GUI_[index].doubleSpinBox_->setValue(single_double_input_GUI_[index].values_[region_index_]);
+							emit single_double_input_GUI_[index].doubleSpinBox_->editingFinished();
+						}
 
 						//// @FIXME January 2018
 						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
@@ -661,9 +705,9 @@ namespace RRM
 							permeability_GUI_[index].doubleSpinbBox_high_->setValue(permeability_GUI_[index].default_high_value_);
 							emit permeability_GUI_[index].doubleSpinbBox_high_->editingFinished();
 
-							permeability_GUI_[index].gradient_values_[index_].first = permeability_GUI_[index].default_low_value_;
-							permeability_GUI_[index].gradient_values_[index_].second = permeability_GUI_[index].default_high_value_;
-							permeability_GUI_[index].is_inverted_[index_] = false;
+							permeability_GUI_[index].gradient_values_[region_index_].first = permeability_GUI_[index].default_low_value_;
+							permeability_GUI_[index].gradient_values_[region_index_].second = permeability_GUI_[index].default_high_value_;
+							permeability_GUI_[index].is_inverted_[region_index_] = false;
 						}
 
                     }
@@ -683,9 +727,9 @@ namespace RRM
 
 		void RegionWidget::setByRegionSaturation(bool _option)
 		{
-			slider_Water_Saturation_->setEnabled(_option);
-			label_Water_Saturation_->setEnabled(_option);
-			doubleSpinBox_Region_Water_Saturation_->setEnabled(_option);
+			//slider_Water_Saturation_->setEnabled(_option);
+			//label_Water_Saturation_->setEnabled(_option);
+			//doubleSpinBox_Region_Water_Saturation_->setEnabled(_option);
 		}
 
 
