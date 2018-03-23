@@ -93,7 +93,6 @@ void FlowWindow::createToolBar()
 
     qtoolbarFlow = new QToolBar();
 
-
     qreloadSurface = new QAction(tr("Get Extruded Surface"), qtoolbarFlow);
 //    qreloadSurface->setIcon(QIcon(":/images/icons/surfacesfromsketch.png"));
 	qreloadSurface->setVisible(false);
@@ -133,33 +132,6 @@ void FlowWindow::createToolBar()
     qshowMovingCrossSection->setIcon(QIcon(":/images/icons/cross.png"));
     qshowMovingCrossSection->setCheckable(true);
 
-    /// Exporters
-    // @FIXME June 2017
-    action_exportDerivedQuantities_ = new QAction(tr("Export Derived Quantities"), qtoolbarFlow);
-
-    qexportsurface = new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
-    qexportvolume = new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
-    qexportcornerpointVTK = new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
-    qexportcornerpointGRDECL = new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
-    qexportresults = new QAction(tr("Results to VTK"), qtoolbarFlow);
-	qexportMesh = new QAction(tr("Mesh *.msh"), qtoolbarFlow);
-
-    mn_export = new QMenu(tr("Export"), this);
-    mn_export->addAction(qexportsurface);
-    mn_export->addAction(qexportvolume);
-    mn_export->addAction(qexportcornerpointVTK);
-    mn_export->addAction(qexportcornerpointGRDECL);
-    mn_export->addAction(qexportresults);
-    mn_export->addAction(action_exportDerivedQuantities_);
-	mn_export->addAction(qexportMesh);
-
-
-
-    //tbn_export = new QToolButton();
-    //tbn_export->setIcon(QIcon(":/images/icons/document_export.png"));
-    //tbn_export->setMenu(mn_export);
-    //tbn_export->setPopupMode(QToolButton::InstantPopup);
-    //tbn_export->setEnabled(false);
 
     /// Properties
 
@@ -258,7 +230,6 @@ void FlowWindow::createToolBar()
 
     qtoolbarFlow->addSeparator();
     qtoolbarFlow->addWidget(tbn_colormaps);
-    //qtoolbarFlow->addWidget(tbn_export);
     /// FIXME June
 	qtoolbarFlow->addSeparator();
 	qtoolbarFlow->addAction(action_clear_);
@@ -266,21 +237,38 @@ void FlowWindow::createToolBar()
 	qtoolbarFlow->addAction(action_clearComputedQuantities_);
     qtoolbarFlow->addSeparator();
 
+	/// Menu - Flow Diagnostic
 
-    action_upscalledPermeability_ = new QAction(tr("Get Upscaled Permeability"), qtoolbarFlow);
-    action_upscalledPermeability_->setEnabled(false);
-    action_oilinPlace_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
-    action_oilinPlace_->setEnabled(false);
+	/// Exporters
+	// @FIXME June 2017
 
+	action_upscalledPermeability_ = new QAction(tr("Get Upscaled Permeability"), qtoolbarFlow);
+	action_upscalledPermeability_->setEnabled(false);
+	action_oilinPlace_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
+	action_oilinPlace_->setEnabled(false);
 
-//	action_oil_in_place_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
-//	action_oil_in_place_->setEnabled(false);
+	action_exportDerivedQuantities_ = new QAction(tr("Export Derived Quantities"), qtoolbarFlow);
+	qexportsurface					= new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
+	qexportvolume					= new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
+	qexportcornerpointVTK			= new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
+	qexportcornerpointGRDECL		= new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
+	qexportresults					= new QAction(tr("Results to VTK"), qtoolbarFlow);
+	qexportMesh						= new QAction(tr("Mesh *.msh"), qtoolbarFlow);
+
+	menu_export_ = new QMenu(tr("Export"), this);
+	menu_export_->addAction(qexportsurface);
+	menu_export_->addAction(qexportvolume);
+	menu_export_->addAction(qexportcornerpointVTK);
+	menu_export_->addAction(qexportcornerpointGRDECL);
+	menu_export_->addAction(qexportresults);
+	menu_export_->addAction(action_exportDerivedQuantities_);
+	menu_export_->addAction(qexportMesh);
 
     flowModule_diagnostic_->addAction(action_upscalledPermeability_);
     flowModule_diagnostic_->addAction(action_oilinPlace_);
+	flowModule_diagnostic_->addMenu(menu_export_);
 
-    //qtoolbarFlow->addAction(action_exportDerivedQuantities_);    
-    //qtoolbarFlow->addAction(action_upscalledPermeability_);
+
 
     addToolBar(qtoolbarFlow);
     qtoolbarFlow->setVisible(true);
@@ -390,9 +378,10 @@ void FlowWindow::createActions()
 		/// @FIXME catch execption from HWU mesh generator
 		controller->computeFlowProperties();
 		qcomputeFlowProperties->setEnabled(false);
-		tbn_export->setEnabled(true);
 		tbn_coloringbyvertex->setEnabled(true);
 		tbn_coloringbyface->setEnabled(true);
+		/// Export Properties
+		menu_export_->setEnabled(true);
 		/// Set Default ColorMap
 		action_cool_to_warm->setChecked(true);
 		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
@@ -452,7 +441,7 @@ void FlowWindow::createActions()
 		controller->clearComputedQuantities();
 
 		// No results to show
-		tbn_export->setEnabled(false);
+		menu_export_->setEnabled(false);
 		tbn_coloringbyvertex->setEnabled(false);
 		tbn_coloringbyface->setEnabled(false);
 		action_showregions->setEnabled(false);

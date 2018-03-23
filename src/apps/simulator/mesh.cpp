@@ -229,6 +229,20 @@ void Mesh::load()
 void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale , const float width, const float height )
 {
 
+
+	//Eigen::Matrix3f mat;
+	//mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX())
+	//	* Eigen::AngleAxisf(0.0, Eigen::Vector3f::UnitY())
+	//	* Eigen::AngleAxisf(0.0, Eigen::Vector3f::UnitZ());
+	//Eigen::Quaternionf q(mat);
+
+	//glViewport(0, 0, width(), height());
+
+
+	//camera.reset();
+	//camera.setViewport(Eigen::Vector2f(width(), height()));
+	//camera.rotate(q);
+
     Eigen::Affine3f M;
     M.setIdentity();
 
