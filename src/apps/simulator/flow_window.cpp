@@ -834,9 +834,9 @@ void FlowWindow::setParametersBeforeSimulation()
 		sort_factor,
 		saturation);
 
-	siw.resize(np, 0.0);
+	/*siw.resize(np, 0.0);
 	sort_factor.resize(np, 2.0);
-	pct.resize(np, 0.0);
+	pct.resize(np, 0.0);*/
 
 	/// Feeding HWU Flow Diagnostic
 	controller->setPropertyArea(np,
