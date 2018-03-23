@@ -258,7 +258,7 @@ void FlowWindow::createToolBar()
 
     qtoolbarFlow->addSeparator();
     qtoolbarFlow->addWidget(tbn_colormaps);
-    qtoolbarFlow->addWidget(tbn_export);
+    //qtoolbarFlow->addWidget(tbn_export);
     /// FIXME June
 	qtoolbarFlow->addSeparator();
 	qtoolbarFlow->addAction(action_clear_);
