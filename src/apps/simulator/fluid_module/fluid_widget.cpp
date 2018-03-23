@@ -25,6 +25,8 @@ namespace RRM
         this->createConnections();
 		this->reset();
 
+		ui_->radioButton_Singlephase_->setChecked(true);
+
 
     }
 
