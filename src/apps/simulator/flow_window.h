@@ -160,8 +160,7 @@ class FlowWindow : public  QMainWindow
         QAction* action_cornerpoint;
         QAction* action_unstructured;
 
-        QMenu *mn_export;
-        QToolButton* tbn_export;
+        QMenu *menu_export_;
 
         FlowVisualizationCanvas *canvas;
         FlowVisualizationController *controller;
