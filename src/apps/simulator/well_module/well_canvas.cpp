@@ -22,7 +22,10 @@ namespace RRM
                 setRenderHint ( QPainter::Antialiasing );
                 setTransformationAnchor ( AnchorUnderMouse );
                 // XXX The QGraphicsView Orientation =(
-                this->transformation_matrix_.scale ( 1 , -1 );
+                //this->transformation_matrix_.scale ( 1 , -1 );
+				/// @XXX @FIXME , Ensure the right Orientation:wq
+
+				this->transformation_matrix_.scale ( 1 , 1 );
                 this->setTransform ( this->transformation_matrix_ );
 
                 setMinimumSize ( 300 , 200 );
