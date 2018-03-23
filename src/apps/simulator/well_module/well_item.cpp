@@ -94,7 +94,7 @@ namespace RRM
                 painter->setRenderHints ( QPainter::SmoothPixmapTransform | QPainter::Antialiasing , true );
                 painter->setRenderHints ( QPainter::TextAntialiasing , true );
                 //@XXX Revert QGraphicsView Scale to the default coordinate System.
-                painter->scale ( 1 , -1 );
+                //painter->scale ( 1 , -1 );
 
                 QRadialGradient gradient ( -3 , -3 , 10 );
                 if ( option->state & QStyle::State_Sunken )

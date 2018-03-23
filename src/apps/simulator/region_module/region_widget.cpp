@@ -32,8 +32,10 @@ namespace RRM
                 ui_->spinBox_Number_of_Regions_->setVisible( false );
                 ui_->pushButton->setVisible( false );
 
-
 				this->inverted_porosity_->setToolTip("Check it to increase values top down");
+
+				this->is_isotropic_permeability_ = true;
+				ui_->checkBox_Isotropic_Permeability_->setChecked(this->is_isotropic_permeability_);
 
         }
 
@@ -201,8 +203,6 @@ namespace RRM
             ui_->spinBox_Number_of_Regions_->setVisible( false );
             ui_->pushButton->setVisible( false );
 
-
-
         }
 
         int RegionWidget::getNumberOfRegion() const
@@ -308,7 +308,6 @@ namespace RRM
         void RegionWidget::createConnections()
         {
                 //@see http://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
-
                 /// New GUI ---->
                 //// REGION
 //                connect(ui_->spinBox_Number_of_Regions_, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &RegionWidget::createRegions);
@@ -405,6 +404,8 @@ namespace RRM
 
                 connect(this->ui_->radioButton_Linear_, &QRadioButton::toggled, this, [=](bool _checked)
                 {
+					this->is_constant_ = _checked;
+
                     if (_checked == true)
                     {
                         ///@September
@@ -457,9 +458,9 @@ namespace RRM
 							permeability_GUI_[index].slider_->setVisible(false);
 							permeability_GUI_[index].qxt_span_slider_->setVisible(true);
 
-							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(true);
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(true && !is_isotropic_permeability_);
 						}
-                    }
+                    }		
                 });
 
 
@@ -599,6 +600,63 @@ namespace RRM
 					});
 				}
 
+
+				/// Last Feature from January 2018 release
+				connect(ui_->checkBox_Isotropic_Permeability_, &QCheckBox::toggled, this, [=](bool _is_checked)
+				{
+					/// I like to write code very clear in the names and actions
+					is_isotropic_permeability_ = _is_checked;
+					if (is_isotropic_permeability_ == true)
+					{
+						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty XYZ"));
+						permeability_GUI_[0].doubleSpinbBox_high_->setEnabled(!is_constant_);
+
+						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
+						{
+							/// @FIXME September  PERMEABILITY			
+							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+
+							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].label_bottom_->setEnabled(!is_isotropic_permeability_);
+
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!is_isotropic_permeability_  && !is_constant_);
+
+							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
+						}
+
+
+					}
+					else
+					{
+						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty X"));
+
+						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
+						{
+							/// @FIXME September  PERMEABILITY			
+							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+
+							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].label_bottom_->setEnabled(!is_isotropic_permeability_);
+
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!is_isotropic_permeability_ && !is_constant_);
+
+							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
+						}
+					}
+
+				});
 
         }
 

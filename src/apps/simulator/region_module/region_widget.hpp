@@ -136,6 +136,9 @@ namespace RRM
                         std::map< int, std::pair<double, double> > porosity_gradient_values_;
 						std::map< int, bool> is_inverted_porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
+
+						bool is_reversed_porosity_;
+						QPushButton*      inverted_porosity_;
 		
 						///@FIXME January 2018 --------------------------------
 						///----------------------------------------------------
@@ -146,11 +149,11 @@ namespace RRM
                         QLabel* lb_region_color;
                         std::map< int, QColor > regions_colors;
 
-
-						bool is_reversed_porosity_;
-						QPushButton*      inverted_porosity_;
-
 						std::map< int, std::vector< int > > region_colors_;
+
+						/// @FIXEME Janudary 2018
+						bool is_isotropic_permeability_;
+						bool is_constant_;
 
         };
 
