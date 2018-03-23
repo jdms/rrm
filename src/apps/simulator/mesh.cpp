@@ -228,21 +228,6 @@ void Mesh::load()
 
 void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float& scale , const float width, const float height )
 {
-
-
-	//Eigen::Matrix3f mat;
-	//mat = Eigen::AngleAxisf(Math::Constants::HalfPi, Eigen::Vector3f::UnitX())
-	//	* Eigen::AngleAxisf(0.0, Eigen::Vector3f::UnitY())
-	//	* Eigen::AngleAxisf(0.0, Eigen::Vector3f::UnitZ());
-	//Eigen::Quaternionf q(mat);
-
-	//glViewport(0, 0, width(), height());
-
-
-	//camera.reset();
-	//camera.setViewport(Eigen::Vector2f(width(), height()));
-	//camera.rotate(q);
-
     Eigen::Affine3f M;
     M.setIdentity();
 
@@ -626,12 +611,21 @@ void Mesh::setTetrahedronGeometry(const std::vector < unsigned int >& _faces_arr
 
     entities_.at("Tetrahedron").number_of_elements_ = _vertices_array.size();
 
+	std::vector<float> vertices(_vertices_array.size());
+
+	for (std::size_t i = 0; i < _vertices_array.size(); i+=3)
+	{
+		vertices[i]     = _vertices_array[i];
+		vertices[i+1]   = _vertices_array[i + 2];
+		vertices[i + 2] = _vertices_array[i + 1];
+	}
+
     /// Load by Arrays
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_vertices_);
-    glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_normals_);
-    glBufferData(GL_ARRAY_BUFFER, _vertices_array.size() * sizeof(_vertices_array[0]), _vertices_array.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, entities_.at("Tetrahedron").vertexBuffer_colors_);
     glBufferData(GL_ARRAY_BUFFER, colors_array_.size() * sizeof(colors_array_[0]), colors_array_.data(), GL_STATIC_DRAW);

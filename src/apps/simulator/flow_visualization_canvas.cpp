@@ -79,10 +79,12 @@ void FlowVisualizationCanvas::paintGL()
 
     loadBackGround();
 
-    Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
-    Eigen::Affine3f M;
-    M.setIdentity();
-    M.rotate(q);
+    //Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
+    //Eigen::Affine3f M;
+    //M.setIdentity();
+    //M.rotate(q);
+	Eigen::Affine3f M;
+	M.setIdentity();
 
     Eigen::Affine3f V = camera.getViewMatrix();
     Eigen::Matrix4f P = camera.getProjectionMatrix();
