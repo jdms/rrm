@@ -247,12 +247,12 @@ void FlowWindow::createToolBar()
 	action_oilinPlace_ = new QAction(tr("Get Oil in Place"), qtoolbarFlow);
 	action_oilinPlace_->setEnabled(false);
 
-	action_exportDerivedQuantities_ = new QAction(tr("Export Derived Quantities"), qtoolbarFlow);
+	action_exportDerivedQuantities_ = new QAction(tr("Flow Diagnostics Quantities"), qtoolbarFlow);
 	qexportsurface					= new QAction(tr("Unstructured Surface Mesh to VTK"), qtoolbarFlow);
 	qexportvolume					= new QAction(tr("Unstructured Volume Mesh to VTK"), qtoolbarFlow);
 	qexportcornerpointVTK			= new QAction(tr("Corner-Point Grid to VTK"), qtoolbarFlow);
 	qexportcornerpointGRDECL		= new QAction(tr("Corner-Point Grid to GRDECL"), qtoolbarFlow);
-	qexportresults					= new QAction(tr("Results to VTK"), qtoolbarFlow);
+	qexportresults					= new QAction(tr("Results *.vtk"), qtoolbarFlow);
 	qexportMesh						= new QAction(tr("Mesh *.msh"), qtoolbarFlow);
 
 	menu_export_ = new QMenu(tr("Export"), this);
