@@ -48,7 +48,7 @@ namespace RRM
     {
         phase_methods_names_.resize(2);
         phase_methods_names_[0] = "By Water Saturation per Region";
-        phase_methods_names_[1] = "By Oil Density";
+        phase_methods_names_[1] = "By Density";
 
         ui_->comboBox_PhaseMethods_->addItem(phase_methods_names_[0]);
         ui_->comboBox_PhaseMethods_->addItem(phase_methods_names_[1]);
