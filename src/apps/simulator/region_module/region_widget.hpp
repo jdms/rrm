@@ -87,10 +87,9 @@ namespace RRM
 
 						struct singleDoubleInput_GUI
 						{
-							// Water Saturation
-							QSlider*        slider_;
 							QLabel*			label_;
 							QDoubleSpinBox* doubleSpinBox_;
+							QSlider*        slider_;
 							std::map< int, double > values_;
 							// Values in the GUI
 							double range_low_value_;

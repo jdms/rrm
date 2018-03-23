@@ -60,16 +60,17 @@ namespace RRM
                 setZValue ( 1 );
                 /// Region setup
                 this->id_ = -1;
+				scale_factor = 3;
         }
 
         QRectF WellItem::boundingRect ( ) const
         {
                 QPolygon poly;
 
-                poly << QPoint ( 0 , -30 );
-                poly << QPoint ( 15 , 0 );
-                poly << QPoint ( 0 , 30 );
-                poly << QPoint ( -15 , 0 );
+				poly << QPoint(0, -30 * scale_factor);
+				poly << QPoint(15 * scale_factor, 0);
+				poly << QPoint(0, 30 * scale_factor);
+				poly << QPoint(-15 * scale_factor, 0);
 
                 return poly.boundingRect ( );
         }
@@ -79,10 +80,10 @@ namespace RRM
                 QPainterPath path;
 
                 QPolygon poly;
-                poly << QPoint ( 0 , -12 );
-                poly << QPoint ( 10 , 0 );
-                poly << QPoint ( 0 , 12 );
-                poly << QPoint ( -10 , 0 );
+				poly << QPoint(0, -12 * scale_factor);
+				poly << QPoint(10 * scale_factor, 0);
+				poly << QPoint(0, 12 * scale_factor);
+				poly << QPoint(-10 * scale_factor, 0);
 
                 path.addPolygon ( poly );
                 return path;
@@ -113,13 +114,14 @@ namespace RRM
                 painter->setPen ( QPen ( Qt::black , 2 , Qt::SolidLine , Qt::RoundCap , Qt::RoundJoin ) );
 
                 QPolygon poly;
-                poly << QPoint ( 0 , -12 );
-                poly << QPoint ( 10 , 0 );
-                poly << QPoint ( 0 , 12 );
-                poly << QPoint ( -10 , 0 );
+				poly << QPoint(0, -12 * scale_factor);
+				poly << QPoint(10 * scale_factor, 0);
+				poly << QPoint(0, 12 * scale_factor);
+				poly << QPoint(-10 * scale_factor, 0);
 
+				int factor = 3;
                 //painter->drawPolygon ( poly );
-                painter->drawEllipse(-6,-6,12,12);
+				painter->drawEllipse(-6 * scale_factor, -6 * scale_factor, 12 * scale_factor, 12 * scale_factor);
 
                 /// FIMEX maybe be useful in the future
                 //painter->drawEllipse(QPoint(0, -18), 3, 3);

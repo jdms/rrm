@@ -834,9 +834,6 @@ void FlowWindow::setParametersBeforeSimulation()
 		sort_factor,
 		saturation);
 
-	siw.resize(np, 0.0);
-	sort_factor.resize(np, 2.0);
-	pct.resize(np, 0.0);
 
 	/// Feeding HWU Flow Diagnostic
 	controller->setPropertyArea(np,
@@ -849,31 +846,20 @@ void FlowWindow::setParametersBeforeSimulation()
 		z_permeability_values,
 		porosity_values);
 
-
-	for (int i = 0; i < np; i++)
-	{
-		std::cout << " x_permeability_values " << x_permeability_values.at(i).first << std::endl;
-		std::cout << " x_permeability_values " << x_permeability_values.at(i).second << std::endl;
-		std::cout << " y_permeability_values " << x_permeability_values.at(i).first << std::endl;
-		std::cout << " y_permeability_values " << x_permeability_values.at(i).second << std::endl;
-		std::cout << " z_permeability_values " << x_permeability_values.at(i).first << std::endl;
-		std::cout << " z_permeability_values " << x_permeability_values.at(i).second << std::endl;
-		std::cout << " porosity     " << porosity_values.at(i).first << std::endl;
-		std::cout << " porosity     " << porosity_values.at(i).second << std::endl;
-		std::cout << " saturation   " << saturation[i] << std::endl;
-	}
-
 	/// Fluid parameters
-	std::vector< double > bo;
-	std::vector< double > viscosity;
-	std::vector< double > oildensity;
-	std::pair< int, int>  phase_method;
+		double oil_viscosity   = 0.0;
+		double oil_density	   = 0.0;
+		double bo			   = 0.0;
+		double water_viscosity = 0.0;
+		double water_density   = 0.0;
+		double bw              = 0.0; 
+		double fwl             = 0.0; 
+		std::pair<int, int> phase_method;
 
-	/// Fluid Module
-	fluid_parameters_->getFluidData(viscosity, bo, oildensity, phase_method);
+	    /// Fluid Module
+		fluid_parameters_->getFluidData(oil_viscosity, oil_density, bo, water_viscosity, water_density, bw, fwl, phase_method);
 
-
-	controller->setFluidProperty(viscosity[0], bo[0], oildensity[0], phase_method);
+		controller->setFluidProperty(oil_viscosity, oil_density, bo, water_viscosity, water_density, bw, fwl, phase_method);
 
 }
 

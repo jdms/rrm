@@ -116,7 +116,17 @@ class FlowVisualizationController: public QWidget
 
 
         /// @FIXEME September
-        void setFluidProperty(double _viscosity, double _bo, const double& _oildensity, const std::pair<int, int>& _phase_method);
+		/// @FIXEME January 2018 as in the spreadsheet:
+		/// https://docs.google.com/spreadsheets/d/1z6rmsu_2ruVyM9qjEFfWeH6kiu33lBI-XltAuMoPd30/edit#gid=0
+		void setFluidProperty(
+			double _oil_viscosity,
+			double _oil_density,
+			double _bo,
+			double _water_viscosity,
+			double _water_density,
+			double _bw,
+			double fwl,
+			const std::pair<int, int>& _phase_method);
 
 
         bool isVolumetricBuilt() const;

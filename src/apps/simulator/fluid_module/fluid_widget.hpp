@@ -9,6 +9,9 @@
 #define _FLUIDNWIDGET_HPP_
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QSlider>
 #include <Eigen/Dense>
 
 #include "ui_fluid_widget_form.h"
@@ -25,12 +28,22 @@ namespace RRM
             FluidWidget(QWidget * parent);
             virtual ~FluidWidget() = default;
 
-            void getFluidData ( std::vector<double>& _viscosity_values,
-                                std::vector< double >& _bo_values,
-                                std::vector< double >& _oildensity_values,
-                                std::pair<int, int>& _phase_method);
+			/// @FIXEME September
+			/// @FIXEME January 2018 as in the spreadsheet:
+			/// https://docs.google.com/spreadsheets/d/1z6rmsu_2ruVyM9qjEFfWeH6kiu33lBI-XltAuMoPd30/edit#gid=0
+
+            void getFluidData (         		
+				double& _oil_viscosity,
+				double& _oil_density,
+				double& _bo,
+				double& _water_viscosity,
+				double& _water_density,
+				double& _bw,
+				double& fwl,
+				std::pair<int, int>& _phase_method);
+
             /// Userless for now
-            void setFluidData(const std::vector<double>& _viscosity_values, const std::vector<double>& _bo_values);
+            void setFluidData();
 
             void clear();
 			void reset();
@@ -44,6 +57,27 @@ namespace RRM
 				void setMultiPhase();
 
             private:
+
+			struct singleDoubleInput_GUI_Fluid
+			{
+				QLabel*			label_;
+				QDoubleSpinBox* doubleSpinBox_;
+				QSlider*        slider_;			
+			
+				std::map< int, double > values_;
+				double value_;
+				// Values in the GUI
+				double range_low_value_;
+				double range_high_value_;
+				double range_size_;
+				// Initial values in the GUI
+				double default_value_;
+
+				std::tuple<int, int, int, int> position_in_the_grid_;
+			};
+
+			/// Alternative approach	
+			std::vector<singleDoubleInput_GUI_Fluid> single_double_input_GUI_fluid_;
             // Designer form
             Ui::FluidWidgetForm * ui_;
 
@@ -53,24 +87,6 @@ namespace RRM
 
             void setupWidget();
             void createConnections();
-
-            std::vector<double> viscosity_values_;
-            std::vector<double> bo_values_;
-            std::vector<double> oildensity_values_;
-			/// since its a linear slider, it doesnt need low and high values
-
-			double default_viscosity_value_;
-			double deafaul_bo_value_;
-			double default_oildensity_value_;
-
-			double low_viscosity_value_;
-			double high_viscosity_value_;
-
-			double low_bo_value_;
-			double high_bo_value_;
-
-			double low_oildensity_value_;
-			double high_oildensity_value_;
 
             /// @FIXME September
             //// 1 for single phase
