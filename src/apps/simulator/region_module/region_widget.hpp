@@ -85,7 +85,7 @@ namespace RRM
 							std::map< int, bool> is_inverted_;							
 						};
 
-						struct singleDoubleInput
+						struct singleDoubleInput_GUI
 						{
 							// Water Saturation
 							QSlider*        slider_;
@@ -95,6 +95,7 @@ namespace RRM
 							// Values in the GUI
 							double range_low_value_;
 							double range_high_value_;
+							double range_size_;
 							// Initial values in the GUI
 							double default_value_;
 
@@ -136,19 +137,11 @@ namespace RRM
 						std::map< int, bool> is_inverted_porosity_gradient_values_;
                         std::tuple<int, int, int, int> porosity_position_;
 		
-						// Water Saturation
-						QSlider*        slider_Water_Saturation_;
-							QLabel*			label_Water_Saturation_;
-						QDoubleSpinBox* doubleSpinBox_Region_Water_Saturation_;
-						std::map< int, double > saturation_values;
-						// Values in the GUI
-						double low_water_saturation_;
-						double high_water_saturation_;
-						// Initial values in the GUI
-						double default_water_saturation_;
-				
-
-						std::tuple<int, int, int, int> water_saturation_position_;
+						///@FIXME January 2018 --------------------------------
+						///----------------------------------------------------
+						/// Alternative approach	
+						std::vector<singleDoubleInput_GUI> single_double_input_GUI_;
+						///----------------------------------------------------
 
                         QLabel* lb_region_color;
                         std::map< int, QColor > regions_colors;
