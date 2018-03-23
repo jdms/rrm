@@ -88,6 +88,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_Isotropic_Permeability_">
+          <property name="text">
+           <string>Isotropic Permeability</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
