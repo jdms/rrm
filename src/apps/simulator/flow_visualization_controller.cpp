@@ -213,35 +213,37 @@ void FlowVisualizationController::computeFlowProperties()
 }
 
 
-void FlowVisualizationController::setPropertyArea(const int np,
-	const std::vector<double>& _saturations,/// Water Saturation
-	const std::vector<double>& _siw,  /// Connate Water Saturation
-	const std::vector<double>& _sort_factor,  /// Lambda
-	const std::vector<double>& _pct,  /// Threshold Pressure
-	const std::map<int, std::pair<double, double> >& _permeability_x_,
-	const std::map<int, std::pair<double, double> >& _permeability_y_,
-	const std::map<int, std::pair<double, double> >& _permeability_z_,
-	const std::map<int, std::pair<double, double> >& _porosity_values_)
+void FlowVisualizationController::setPropertyArea(const int _number_of_regions,
+	const std::map<int, std::pair<double, double> >& _x_permeability_values,
+	const std::map<int, std::pair<double, double> >& _y_permeability_values,
+	const std::map<int, std::pair<double, double> >& _z_permeability_values,
+	const std::map<int, std::pair<double, double> >& _porosity_values_,
+	const std::vector<double>& _saturations_values, /// Water Saturation
+	const std::vector<double>& _pct_values,		    /// Threshold Pressure
+	const std::vector<double>& _sort_factor_values, /// Lambda
+	const std::vector<double>& _siw_values		    /// Connate Water Saturation 
+	
+	)
 {
-    code_interface.setNumberofRegions(np);
-    for( int i = 0; i < np; ++i )
+	code_interface.setNumberofRegions(_number_of_regions);
+	for (int i = 0; i < _number_of_regions; ++i)
     {
         /// @FIXME January 2018
        
 
 		code_interface.setRegionMultiphase(i,
-			_permeability_x_.at(i).first,   /// KxLow
-			_permeability_x_.at(i).second,  /// KxHigh
-			_permeability_y_.at(i).first,   /// Kylow
-			_permeability_y_.at(i).second,  /// KyHigh
-			_permeability_z_.at(i).first,   /// KzLow
-			_permeability_z_.at(i).second,  /// KzHigh
-			_porosity_values_.at(i).first,       /// PoroLow
-			_porosity_values_.at(i).second,      /// PoroHigh
-			_pct[i],  /// PcT
-			_siw[i],  /// Si
-			_sort_factor[i],   /// Sort Factor Lambda
-			_saturations[i]    /// Water Saturation
+			_x_permeability_values.at(i).first,   /// KxLow
+			_x_permeability_values.at(i).second,  /// KxHigh
+			_y_permeability_values.at(i).first,   /// Kylow
+			_y_permeability_values.at(i).second,  /// KyHigh
+			_z_permeability_values.at(i).first,   /// KzLow
+			_z_permeability_values.at(i).second,  /// KzHigh
+			_porosity_values_.at(i).first,  /// PoroLow
+			_porosity_values_.at(i).second, /// PoroHigh
+			_pct_values[i],  /// PcT
+			_siw_values[i],  /// Si
+			_sort_factor_values[i],   /// Sort Factor Lambda
+			_saturations_values[i]    /// Water Saturation
 			);
         
     }
@@ -276,7 +278,7 @@ void FlowVisualizationController::setFluidProperty(
 	double _water_viscosity,
 	double _water_density,
 	double _bw,
-	double fwl,
+	double _fwl,
 	const std::pair<int, int>& _phase_method)
 {
     // Tells the FlowDiagnosticsInterface whether we want
@@ -289,8 +291,13 @@ void FlowVisualizationController::setFluidProperty(
     // This should only be set if "multi-phase" diagnostics was selected
     this->code_interface.setSaturationMethod( _phase_method.second );
 
-
-    
+	code_interface.setOilViscosity(_oil_viscosity);
+	code_interface.setOilDensity(_oil_density);
+	code_interface.setBo(_bo);
+	code_interface.setWaterViscosity(_water_viscosity);
+	code_interface.setWaterDensity(_water_density);
+	code_interface.setBw( _bw);
+	code_interface.setFreeWaterLevel(_fwl);  
 }
 
 /* /1* Suggestion *1/ */

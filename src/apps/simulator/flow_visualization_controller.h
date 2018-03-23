@@ -94,15 +94,17 @@ class FlowVisualizationController: public QWidget
 
         void computeFlowProperties();
 
-        void setPropertyArea(const int np,                    
-                             const std::vector<double>& _saturations,/// Water Saturation
-							 const std::vector<double>& _siw,  /// Connate Water Saturation
-							 const std::vector<double>& _sort_factor,  /// Lambda
-							 const std::vector<double>& _pct,  /// Threshold Pressure
-                             const std::map<int, std::pair<double, double> >& _permeability_x_,
-							 const std::map<int, std::pair<double, double> >& _permeability_y_,
-							 const std::map<int, std::pair<double, double> >& _permeability_z_,
-                             const std::map<int, std::pair<double, double> >& _porosity_values_);
+		void setPropertyArea( const int _number_of_regions,
+			const std::map<int, std::pair<double, double> >& _x_permeability_values,
+			const std::map<int, std::pair<double, double> >& _y_permeability_values,
+			const std::map<int, std::pair<double, double> >& _z_permeability_values,
+			const std::map<int, std::pair<double, double> >& _porosity_values_,
+			const std::vector<double>& _saturations_values, /// Water Saturation
+			const std::vector<double>& _pct_values,		    /// Threshold Pressure
+			const std::vector<double>& _sort_factor_values, /// Lambda
+			const std::vector<double>& _siw_values		    /// Connate Water Saturation 
+			);
+
 
         void getPropertyArea( int& np, std::vector< double >& values , std::vector< double >& perm, std::vector< double >& poros, std::vector< double >& visc );
 
@@ -125,7 +127,7 @@ class FlowVisualizationController: public QWidget
 			double _water_viscosity,
 			double _water_density,
 			double _bw,
-			double fwl,
+			double _fwl,
 			const std::pair<int, int>& _phase_method);
 
 

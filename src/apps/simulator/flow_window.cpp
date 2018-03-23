@@ -810,12 +810,11 @@ void FlowWindow::updateParameterFields()
 void FlowWindow::setParametersBeforeSimulation()
 {
 	/// Region parameters
-	int np = 0;
-	std::vector< double > saturation;
-	/// January 2018
-	std::vector< double > siw;
-	std::vector< double > sort_factor;
-	std::vector< double > pct;
+	int number_of_regions = 0;
+	std::vector< double > saturation_values;
+	std::vector< double > pct_values;
+	std::vector< double > sort_factor_values;
+	std::vector< double > siw_values;
 
 	std::map<int, std::pair<double, double> > x_permeability_values;
 	std::map<int, std::pair<double, double> > y_permeability_values;
@@ -824,26 +823,28 @@ void FlowWindow::setParametersBeforeSimulation()
 
 	/// Region Module
 	///@FIXME September
-	region_parameters_->getRegionData(np,
+	region_parameters_->getRegionData(number_of_regions,
 		x_permeability_values,
 		y_permeability_values,
 		z_permeability_values,
 		porosity_values,
-		pct,
-		siw,
-		sort_factor,
-		saturation);	
+		saturation_values,   /// Water Saturation
+		pct_values,			 /// Threshold Pressure
+		sort_factor_values,  /// Lambda
+		siw_values			 /// Connate Water Saturation
+		);
 
 	/// Feeding HWU Flow Diagnostic
-	controller->setPropertyArea(np,
-		saturation,   /// Water Saturation
-		siw,	      /// Connate Water Saturation
-		sort_factor,  /// Lambda
-		pct,          /// Threshold Pressure
+	controller->setPropertyArea(number_of_regions,
 		x_permeability_values,
 		y_permeability_values,
 		z_permeability_values,
-		porosity_values);
+		porosity_values,
+		saturation_values,   /// Water Saturation
+		pct_values,			 /// Threshold Pressure
+		sort_factor_values,  /// Lambda
+		siw_values			 /// Connate Water Saturation
+		);
 
 	/// Fluid parameters
 		double oil_viscosity   = 0.0;

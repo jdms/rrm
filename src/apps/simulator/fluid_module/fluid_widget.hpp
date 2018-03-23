@@ -39,7 +39,7 @@ namespace RRM
 				double& _water_viscosity,
 				double& _water_density,
 				double& _bw,
-				double& fwl,
+				double& _fwl,
 				std::pair<int, int>& _phase_method);
 
             /// Userless for now

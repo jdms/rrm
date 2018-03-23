@@ -46,29 +46,34 @@ unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
 }
 
 
-void FlowDiagnosticsInterface::setViscosity(double visc){
-    region.oilviscosity(visc*0.001); //cp to si
+void FlowDiagnosticsInterface::setOilViscosity(double _oil_viscosity){
+	region.oilviscosity(_oil_viscosity*0.001); //cp to si
 }
 
-void FlowDiagnosticsInterface::setViscosity_water(double visc){
-	region.waterviscosity(visc*0.001); //cp to si
+void FlowDiagnosticsInterface::setOilDensity(double _oil_density){
+	region.oildensity(_oil_density*0.001); //cp to si
 }
 
-void FlowDiagnosticsInterface::setdensity_water(double den_w){
-	region.waterdensity(den_w); //cp to si
+void FlowDiagnosticsInterface::setBo(double _bo){
+	region.setBo(_bo);
 }
 
-void FlowDiagnosticsInterface::setdensity_oil(double den_o){
-	region.oildensity(den_o*0.001); //cp to si
+void FlowDiagnosticsInterface::setWaterViscosity(double _water_viscosity){
+	region.waterviscosity(_water_viscosity*0.001); //cp to si
 }
 
-void FlowDiagnosticsInterface::setBo(double Bo_){
-	region.setBo(Bo_);
+void FlowDiagnosticsInterface::setWaterDensity(double _water_density){
+	region.waterdensity(_water_density); //cp to si
 }
 
-void FlowDiagnosticsInterface::setBw(double Bw_){
-	region.setBw(Bw_);
+void FlowDiagnosticsInterface::setBw(double _bw){
+	region.setBw(_bw);
 }
+
+void FlowDiagnosticsInterface::setFreeWaterLevel(double _fwl){
+	region.setfreewaterlevel(_fwl);
+}
+
 
 void FlowDiagnosticsInterface::clearRegions(){
     region.clearpropertyareas();
@@ -1110,29 +1115,6 @@ void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow
 	return;
 }
 
-//void FlowDiagnosticsInterface::setRegion(unsigned int id,
-//	double min_perm, double max_perm,
-//	double min_poros, double max_poros) 
-//{
-//
-//	min_perm = min_perm > 0 ? min_perm : 0;
-//	min_poros = min_poros > 0 ? min_poros : 0;
-//
-//	PROPERTYAREA p;
-//	p.permlow(min_perm*0.987e-15);
-//	p.permhigh(max_perm*0.987e-15);
-//	p.porolow(min_poros);
-//	p.porohigh(max_poros);
-//	region.modifypropertyarea(id, p);
-//
-//	return;
-//}
-
-
-void FlowDiagnosticsInterface::setOilGravity(double g){
-    region.oildensity(g);
-}
-
 void FlowDiagnosticsInterface::setNumberOfPhases(int i){
     if ( i == 1 )
     {
@@ -1220,11 +1202,6 @@ void FlowDiagnosticsInterface::getWell(unsigned int id, unsigned int& type, doub
 	value = region.well(id).value();
 	sign = region.well(id).sign();
 }
-
-void FlowDiagnosticsInterface::setfreewaterlevel(double d){//not in gui yet
-	region.setfreewaterlevel(d);
-}
-
 
 void FlowDiagnosticsInterface::setSkeletonData(unsigned int surfaces_number, const std::vector< unsigned int >& nu,
 	const std::vector< unsigned int >& nv, const std::vector< double >& positions){
@@ -1336,23 +1313,6 @@ bool FlowDiagnosticsInterface::setWell(unsigned int id, WellType t, double press
 	region.setverticalwellgeometry(id, qt_x, qt_y, 0, 0 + well_depth);
 	return true;
 }
-
-
-
-//void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, double z, double perm,
-//	double poros){
-//	//not being used
-//	PROPERTYAREA p;
-//	p.x(x);
-//	p.y(y);
-//	p.z(z);
-//	p.permlow(perm*0.987e-15);
-//	p.permhigh(perm*0.987e-15);
-//
-//	p.porolow(poros);
-//	p.porohigh(poros);
-//	region.modifypropertyarea(id, p);
-//}
 
 void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
 	double &poros, double& visc, double &porevolume) { //not being used
