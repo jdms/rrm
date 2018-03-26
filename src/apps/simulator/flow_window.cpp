@@ -221,6 +221,9 @@ void FlowWindow::createToolBar()
 
     qtoolbarFlow->addSeparator();
     qtoolbarFlow->addAction(qcomputeFlowProperties);
+	qtoolbarFlow->addSeparator();
+	qtoolbarFlow->addAction(action_clearComputedQuantities_);
+	qtoolbarFlow->addSeparator();
     qtoolbarFlow->addWidget(tbn_coloringbyvertex);
     qtoolbarFlow->addWidget(tbn_coloringbyface);
     qtoolbarFlow->addAction(action_showregions);
@@ -233,9 +236,9 @@ void FlowWindow::createToolBar()
     /// FIXME June
 	qtoolbarFlow->addSeparator();
 	qtoolbarFlow->addAction(action_clear_);
-	qtoolbarFlow->addSeparator();
-	qtoolbarFlow->addAction(action_clearComputedQuantities_);
-    qtoolbarFlow->addSeparator();
+	//qtoolbarFlow->addSeparator();
+	//qtoolbarFlow->addAction(action_clearComputedQuantities_);
+ //   qtoolbarFlow->addSeparator();
 
 	/// Menu - Flow Diagnostic
 
@@ -263,6 +266,7 @@ void FlowWindow::createToolBar()
 	menu_export_->addAction(qexportresults);
 	menu_export_->addAction(action_exportDerivedQuantities_);
 	menu_export_->addAction(qexportMesh);
+	menu_export_->setEnabled(false);
 
     flowModule_diagnostic_->addAction(action_upscalledPermeability_);
     flowModule_diagnostic_->addAction(action_oilinPlace_);
@@ -537,30 +541,27 @@ void FlowWindow::createActions()
     connect(region_parameters_, &RRM::RegionWidget::numberOfRegions, this, [=](int _number_of_regions){ emit sendNumberOfRegions(_number_of_regions); });
 
 
-
     connect( fluid_parameters_, &RRM::FluidWidget::setSinglePhase, this, [=]( )
     {
 		controller->setSinglePhase( );
-        region_parameters_->setByRegionSaturation( false );
-    } );
-
+		region_parameters_->setSinglePhase();
+	});
 
 	connect(fluid_parameters_, &RRM::FluidWidget::setMultiPhase, this, [=]()
 	{
-		//controller->setMultiPhase(FlowVisualizationController::SaturationMethod::PERREGION);
-		//region_parameters_->setByRegionSaturation(true);
+		///  Not used
 	});
 
     connect( fluid_parameters_, &RRM::FluidWidget::setSaturationPerRegion, this, [=]()
     {
         controller->setSaturationMethod( FlowVisualizationController::SaturationMethod::PERREGION );
-        region_parameters_->setByRegionSaturation( true );
+		region_parameters_->setMultiPhaseByRegionSaturation();
     } );
 
     connect( fluid_parameters_, &RRM::FluidWidget::setAPIGravity, this, [=]()
     {
         controller->setSaturationMethod( FlowVisualizationController::SaturationMethod::APIGRAVITY );
-        region_parameters_->setByRegionSaturation( false );
+		region_parameters_->setMultiPhaseByDensity();
     } );
 
 

@@ -48,7 +48,9 @@ namespace RRM
 
                         int getNumberOfRegion() const;
 
-						void setByRegionSaturation(bool option);
+						void setMultiPhaseByRegionSaturation();
+						void setSinglePhase();
+						void setMultiPhaseByDensity();
     
 						int reversePermeability(bool _is_reversed,int _value);
 						int resersePorosity(bool _is_reversed, int _value) ;

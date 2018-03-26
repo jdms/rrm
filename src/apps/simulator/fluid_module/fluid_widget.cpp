@@ -142,6 +142,18 @@ namespace RRM
 
 			phase_method_.first = 1;
 
+			/// { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
+			single_double_input_GUI_fluid_[1].label_->setEnabled(false);
+			single_double_input_GUI_fluid_[1].doubleSpinBox_->setEnabled(false);
+			single_double_input_GUI_fluid_[1].slider_->setEnabled(false);
+
+			for (std::size_t index = 3; index < single_double_input_GUI_fluid_.size(); index++)
+			{
+				single_double_input_GUI_fluid_[index].label_->setEnabled(false);
+				single_double_input_GUI_fluid_[index].doubleSpinBox_->setEnabled(false);
+				single_double_input_GUI_fluid_[index].slider_->setEnabled(false);
+			}
+
 		});
 
 		connect(ui_->radioButton_Multiphase_, &QRadioButton::clicked, this, [=](bool status_)
@@ -166,13 +178,44 @@ namespace RRM
 				//std::cout << "By Water Saturation per Region" << std::endl;
 				emit setSaturationPerRegion();
 				phase_method_.second = 1;
+
+				/// { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
+				////                0,             1,    2,                 3,               4,    5,    6 
+				std::vector<std::size_t> indices = { 1, 4, 6 };
+				
+				for (std::size_t index = 0; index < single_double_input_GUI_fluid_.size(); index++)
+				{
+					single_double_input_GUI_fluid_[index].label_->setEnabled(true);
+					single_double_input_GUI_fluid_[index].doubleSpinBox_->setEnabled(true);
+					single_double_input_GUI_fluid_[index].slider_->setEnabled(true);
+				}
+
+				for (auto index : indices)
+				{
+					single_double_input_GUI_fluid_[index].label_->setEnabled(false);
+					single_double_input_GUI_fluid_[index].doubleSpinBox_->setEnabled(false);
+					single_double_input_GUI_fluid_[index].slider_->setEnabled(false);
+				}
+
+
 			}
 			/// By API Grabity
 			else
 			{
-				//std::cout << "By API Gravity" << std::endl;
+				//std::cout << "By Density" << std::endl;
 				emit setAPIGravity();
 				phase_method_.second = 2;
+
+				/// { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
+				////                0,             1,    2,                 3,               4,    5,    6 
+
+				for (std::size_t index = 0; index < single_double_input_GUI_fluid_.size(); index++)
+				{
+					single_double_input_GUI_fluid_[index].label_->setEnabled(true);
+					single_double_input_GUI_fluid_[index].doubleSpinBox_->setEnabled(true);
+					single_double_input_GUI_fluid_[index].slider_->setEnabled(true);
+				}
+
 			}
 		});
 
