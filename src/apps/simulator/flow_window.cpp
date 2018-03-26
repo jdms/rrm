@@ -32,8 +32,11 @@ FlowWindow::FlowWindow(QWidget *parent) : QMainWindow(parent)
 
     reset();
     this->are_regionsdefined = false;
-    this->is_cornerpoint = false;
+    this->is_cornerpoint = false;  
 
+	/// Initinal stage
+	emit fluid_parameters_->setSinglePhase();
+	
 
     /// FIXME June 2017. It tells when a new model is build. Used to keep well position
     this->bounding_box_changed_ = true;
