@@ -74,7 +74,7 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
-//    canvas3d->show();
+//    canvas3d->show();`
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
@@ -400,16 +400,10 @@ void MainWindow::createSketchingWindow()
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
 
-    ac_topview = new QAction( "Top-View", this);
-    ac_topview->setCheckable( true );
-    ac_topview->setChecked( true );
-
-
-
 }
 
 
-void MainWindow::updateSketchingWindowGeometry()
+void MainWindow::updateSketchingWindowGeometry(  int width, int height )
 {
     dw_sketchwindow->setMaximumSize( app_width*0.6, app_height*0.5 );
     dw_topview_window->setMaximumSize( app_width*0.6, app_height*0.5 );
@@ -428,9 +422,6 @@ void MainWindow::createSketchingActions()
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
 
-
-
-    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
     connect( sketch_window, &SketchWindow::updateVolume, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ )
@@ -476,9 +467,6 @@ void MainWindow::createSketchingActions()
                                                             {  app->updateSketchingCanvas(); } );
 
 
-
-
-    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_topview_window, &SketchWindow::setCurrentCrossSection );

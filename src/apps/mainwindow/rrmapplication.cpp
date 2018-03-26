@@ -732,13 +732,13 @@ void RRMApplication::closeFlowDiagnostics()
     mainwindow->ac_undo->setEnabled( true );
     mainwindow->ac_redo->setEnabled( true );
 
-    mainwindow->updateSketchingWindowGeometry();
-    mainwindow->dw_sketchwindow->setVisible( true );
-    mainwindow->dw_topview_window->setVisible( true );
     mainwindow->dw_flow_window->setVisible( false );
     mainwindow->ac_output_volume->setChecked( false );
+    mainwindow->dw_sketchwindow->setVisible( true );
+    mainwindow->dw_topview_window->setVisible( true );
 
     mainwindow->controller->hideRegions();
+
 }
 
 
@@ -770,7 +770,7 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
         triangles_meshes.push_back( t );
     }
 
-    for ( int i = 0; i < lcurves.size(); ++i )
+    for ( std::size_t i = 0; i < lcurves.size(); ++i )
     {
         FlowWindow::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
