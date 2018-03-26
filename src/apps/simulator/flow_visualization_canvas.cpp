@@ -144,7 +144,7 @@ void FlowVisualizationCanvas::mouseMoveEvent(QMouseEvent *event)
     else if (event->buttons() & Qt::RightButton)
     {
 
-        float x = 2 * event->screenPos().x() / width() - 1.0f;
+       /* float x = 2 * event->screenPos().x() / width() - 1.0f;
         float y = -2 * event->screenPos().y() / height() + 1.0f;
         float z = 1 - x*x - y*y;
 
@@ -165,7 +165,7 @@ void FlowVisualizationCanvas::mouseMoveEvent(QMouseEvent *event)
 
         float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
         crosssection.getPlaneEquation(a, b, c, d);
-        mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());
+        mesh.setCrossSectionClippingEquation(a, b, c, d, Eigen::Vector3f().UnitX());*/
 
     }
 

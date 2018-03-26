@@ -367,9 +367,12 @@ void FlowCrossSection::load()
     std::vector< float > vertices_coordinates;
     for( unsigned int i = 0; i < number_of_vertices; ++i )
     {
-        vertices_coordinates.push_back( vertices[ i ].x() );
-        vertices_coordinates.push_back( vertices[ i ].y() );
-        vertices_coordinates.push_back( vertices[ i ].z() );
+        //vertices_coordinates.push_back( vertices[ i ].x() );
+        //vertices_coordinates.push_back( vertices[ i ].y() );
+        //vertices_coordinates.push_back( vertices[ i ].z() );
+		vertices_coordinates.push_back( vertices[ i ].x() );
+		vertices_coordinates.push_back( vertices[ i ].z() );
+		vertices_coordinates.push_back( vertices[ i ].y() );
 
     }
 

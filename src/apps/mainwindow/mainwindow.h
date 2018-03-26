@@ -65,6 +65,8 @@ class MainWindow: public QMainWindow
 
         void save();
         void load();
+		/// Create By Felipe on March 26th using the following solution. @see https://forum.qt.io/topic/18776/solved-open-a-file-with-the-default-application-in-qt/2
+		void showHelp();
 
 
     protected:

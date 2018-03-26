@@ -8,6 +8,8 @@
 #include <QFileInfo>
 #include <QDesktopServices>
 #include <QResizeEvent>
+///@ http://doc.qt.io/qt-5/qdesktopservices.html
+#include <QtGui/QDesktopServices>
 
 
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
@@ -102,7 +104,7 @@ void MainWindow::createMenuBar()
     QAction* ac_about = new QAction( tr ( "&About" ) , this );
 
 //    connect( ac_about, &QAction::triggered, aboutRRM, &AboutWidget::show );
-//    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
+    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
     connect( ac_exit, &QAction::triggered , this, &MainWindow::close );
 
 
@@ -575,6 +577,12 @@ void MainWindow::load()
     if( filename_.isEmpty() == true ) return;
     app->load( filename_.toStdString() );
 
+}
+
+
+void MainWindow::showHelp()
+{
+	QDesktopServices::openUrl(QUrl::fromLocalFile("manual/rrm-manual.pdf"));
 }
 
 
