@@ -265,23 +265,47 @@ namespace RRM
 				_saturations_values[it] = single_double_input_GUI_[0].values_[it];
 
 				if (ui_->radioButton_Linear_->isChecked())
-				{
+				{				
 					_porosity_values[it].first = this->porosity_gradient_values_.at(it).first;
 					_porosity_values[it].second = this->porosity_gradient_values_.at(it).first;
 
-					_x_permeability_values[it].first	= permeability_GUI_[0].gradient_values_.at(it).first;
-					_x_permeability_values[it].second	= permeability_GUI_[0].gradient_values_.at(it).first;
-					_y_permeability_values[it].first	= permeability_GUI_[1].gradient_values_.at(it).first;
-					_y_permeability_values[it].second	= permeability_GUI_[1].gradient_values_.at(it).first;
-					_z_permeability_values[it].first	= permeability_GUI_[2].gradient_values_.at(it).first;
-					_z_permeability_values[it].second	= permeability_GUI_[2].gradient_values_.at(it).first;
+					if (this->is_isotropic_permeability_ == true)
+					{
+						_x_permeability_values[it].first = permeability_GUI_[0].gradient_values_.at(it).first;
+						_x_permeability_values[it].second = permeability_GUI_[0].gradient_values_.at(it).first;
+						_y_permeability_values[it].first = permeability_GUI_[0].gradient_values_.at(it).first;
+						_y_permeability_values[it].second = permeability_GUI_[0].gradient_values_.at(it).first;
+						_z_permeability_values[it].first = permeability_GUI_[0].gradient_values_.at(it).first;
+						_z_permeability_values[it].second = permeability_GUI_[0].gradient_values_.at(it).first;
+					}
+					else
+					{
+						_x_permeability_values[it].first = permeability_GUI_[0].gradient_values_.at(it).first;
+						_x_permeability_values[it].second = permeability_GUI_[0].gradient_values_.at(it).first;
+						_y_permeability_values[it].first = permeability_GUI_[1].gradient_values_.at(it).first;
+						_y_permeability_values[it].second = permeability_GUI_[1].gradient_values_.at(it).first;
+						_z_permeability_values[it].first = permeability_GUI_[2].gradient_values_.at(it).first;
+						_z_permeability_values[it].second = permeability_GUI_[2].gradient_values_.at(it).first;
+					}
+
 				}
 				else
 				{
 					_porosity_values[it] = this->porosity_gradient_values_.at(it);
-					_x_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
-					_y_permeability_values[it] = permeability_GUI_[1].gradient_values_.at(it);
-					_z_permeability_values[it] = permeability_GUI_[2].gradient_values_.at(it);
+
+					if (this->is_isotropic_permeability_ == true)
+					{
+						_x_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
+						_y_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
+						_z_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
+					}
+					else
+					{
+						_x_permeability_values[it] = permeability_GUI_[0].gradient_values_.at(it);
+						_y_permeability_values[it] = permeability_GUI_[1].gradient_values_.at(it);
+						_z_permeability_values[it] = permeability_GUI_[2].gradient_values_.at(it);
+					}
+
 				}
 
             }
@@ -351,7 +375,6 @@ namespace RRM
 
 
                 //// @FIXME September Porosity
-
                 connect(qxt_span_slider_porosity_, &QxtSpanSlider::lowerValueChanged, this, [=]()
                 {
 					double ex = 0.01 + ((range_high_porosity_ - range_low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->lowerValue()));
@@ -360,7 +383,7 @@ namespace RRM
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
                 });
 
-                    connect(doubleSpinbBox_low_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
+                connect(doubleSpinbBox_low_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
                     {
 
 
@@ -380,14 +403,14 @@ namespace RRM
                         porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = doubleSpinbBox_low_porosity_->value();
                     });
 
-                    connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperValueChanged, this, [=]()
+                connect(qxt_span_slider_porosity_, &QxtSpanSlider::upperValueChanged, this, [=]()
                 {
 					double ex = 0.01 + ((range_high_porosity_ - range_low_porosity_)*0.01)*static_cast<double>(resersePorosity(is_inverted_porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()], qxt_span_slider_porosity_->upperValue()));
                     doubleSpinbBox_high_porosity_->setValue(ex);
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
                 });
 
-                    connect(doubleSpinbBox_high_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
+                connect(doubleSpinbBox_high_porosity_, &QDoubleSpinBox::editingFinished, this, [=]()
                     {
 
 
@@ -400,70 +423,7 @@ namespace RRM
 						qxt_span_slider_porosity_->blockSignals(false);
                   
                         porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = doubleSpinbBox_high_porosity_->value();
-                    });
-
-                connect(this->ui_->radioButton_Linear_, &QRadioButton::toggled, this, [=](bool _checked)
-                {
-					this->is_constant_ = _checked;
-
-                    if (_checked == true)
-                    {
-                        ///@September
-                        /// Exchange the QSlider and QxtSpanSlider - Porosity
-                        this->ui_->gridLayout_Region_Attributes_->removeWidget(qxt_span_slider_porosity_);
-                        this->ui_->gridLayout_Region_Attributes_->addWidget(slider_porosity_, std::get<0>(porosity_position_), std::get<1>(porosity_position_), std::get<2>(porosity_position_), std::get<3>(porosity_position_));
-                        slider_porosity_->setVisible(true);
-                        qxt_span_slider_porosity_->setVisible(false);
-
-                        this->doubleSpinbBox_high_porosity_->setEnabled(false);
-
-						//// @FIXME January 2018
-						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
-						{
-							/// Exchange the QSlider and QxtSpanSlider - Permeability
-							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].qxt_span_slider_);
-							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].slider_, 
-								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
-							permeability_GUI_[index].slider_->setVisible(true);
-							permeability_GUI_[index].qxt_span_slider_->setVisible(false);
-
-							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(false);
-
-						}
-                    }
-                    else
-                    {
-                        ///@September
-                        /// Exchange the QSlider and QxtSpanSlider
-                        this->ui_->gridLayout_Region_Attributes_->removeWidget(slider_porosity_);
-                        this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, std::get<0>(porosity_position_), std::get<1>(porosity_position_), std::get<2>(porosity_position_), std::get<3>(porosity_position_));
-                        slider_porosity_->setVisible(false);
-                        qxt_span_slider_porosity_->setVisible(true);
-
-                        this->doubleSpinbBox_high_porosity_->setEnabled(true);
-
-						//// @FIXME January 2018
-						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
-						{
-							/// Exchange the QSlider and QxtSpanSlider - Permeability
-							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].slider_);
-							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_, 
-								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
-								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
-							permeability_GUI_[index].slider_->setVisible(false);
-							permeability_GUI_[index].qxt_span_slider_->setVisible(true);
-
-							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(true && !is_isotropic_permeability_);
-						}
-                    }		
-                });
-
-
+                    });               
                 //// @FIXME September Permeability
 				connect(slider_porosity_, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this, [=]()
                 {
@@ -475,9 +435,7 @@ namespace RRM
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].first = ex;
                     porosity_gradient_values_[ui_->comboBox_Region_->currentIndex()].second = ex;
                 });
-
-				/// FIXME January 2018
-				
+				/// FIXME January 2018				
 				connect(this->inverted_porosity_, &QPushButton::toggled, this, [=](bool _is_checked)
                 {
                         this->is_reversed_porosity_ = _is_checked;
@@ -501,7 +459,6 @@ namespace RRM
 						}
 
                 });
-
 
 				//// @FIXME January 2018
 				for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
@@ -606,57 +563,142 @@ namespace RRM
 				{
 					/// I like to write code very clear in the names and actions
 					is_isotropic_permeability_ = _is_checked;
+
 					if (is_isotropic_permeability_ == true)
 					{
+						/// Special field. It is used when the isotropic permeability is checked to feed all the permeabilities inputs
 						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty XYZ"));
 						permeability_GUI_[0].doubleSpinbBox_high_->setEnabled(!is_constant_);
 
 						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
 						{
 							/// @FIXME September  PERMEABILITY			
+							/// The slider only depends on whether is isotropic or not.
 							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
-
 							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].label_bottom_->setEnabled(!is_isotropic_permeability_);
-
-							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!is_isotropic_permeability_  && !is_constant_);
-
-							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
+
+							/// Depends on whether is linear or constant.
+							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!is_isotropic_permeability_ && !is_constant_);
+							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_ && !is_constant_);
+
+
 						}
-
-
 					}
 					else
 					{
-						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty X"));
+						/// Special field. It is used when the isotropic permeability is checked to feed all the permeabilities inputs
+						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty XYZ"));
+						permeability_GUI_[0].doubleSpinbBox_high_->setEnabled(!is_constant_);
 
 						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
 						{
 							/// @FIXME September  PERMEABILITY			
+							/// The slider only depends on whether is isotropic or not.
 							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
-
 							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].label_bottom_->setEnabled(!is_isotropic_permeability_);
+							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
 
+							/// Depends on whether is linear or constant.
 							permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!is_isotropic_permeability_ && !is_constant_);
+							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_ && !is_constant_);
+						
 
-							permeability_GUI_[index].label_top_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].inverted_->setEnabled(!is_isotropic_permeability_);
 						}
+
 					}
 
 				});
+
+				connect(this->ui_->radioButton_Linear_, &QRadioButton::toggled, this, [=](bool _checked)
+				{
+					this->is_constant_ = _checked;
+
+					if (_checked == true)
+					{
+						///@September
+						/// It makes QSlider available - Porosity
+						this->ui_->gridLayout_Region_Attributes_->removeWidget(qxt_span_slider_porosity_);
+						this->ui_->gridLayout_Region_Attributes_->addWidget(slider_porosity_, std::get<0>(porosity_position_), std::get<1>(porosity_position_), std::get<2>(porosity_position_), std::get<3>(porosity_position_));
+						slider_porosity_->setVisible(true);
+						slider_porosity_->setEnabled(true);
+						/// It is not affected by the isotropic logic.
+						qxt_span_slider_porosity_->setVisible(false);
+						doubleSpinbBox_high_porosity_->setEnabled(!this->is_constant_);
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+						{
+							/// It makes QSlider available - Permeability
+							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].qxt_span_slider_);
+							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].slider_,
+								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
+							/// It is  affected by the isotropic logic.
+							permeability_GUI_[index].slider_->setVisible(true);
+							permeability_GUI_[index].slider_->setEnabled(!this->is_isotropic_permeability_);
+							permeability_GUI_[index].qxt_span_slider_->setVisible(false);
+
+							if ( index == 0 )
+							{ 
+								permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!this->is_constant_);
+							}
+							else
+							{
+								permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!this->is_isotropic_permeability_ && !this->is_constant_);
+							}
+
+						}
+					}
+					else
+					{
+						///@September
+						/// It makes QxtSpanSlider available - Porosity
+						this->ui_->gridLayout_Region_Attributes_->removeWidget(slider_porosity_);
+						this->ui_->gridLayout_Region_Attributes_->addWidget(qxt_span_slider_porosity_, std::get<0>(porosity_position_), std::get<1>(porosity_position_), std::get<2>(porosity_position_), std::get<3>(porosity_position_));
+						/// It is not affected by the isotropic logic.
+						slider_porosity_->setVisible(false);
+						qxt_span_slider_porosity_->setVisible(true);
+						this->doubleSpinbBox_high_porosity_->setEnabled(!this->is_constant_);
+
+						//// @FIXME January 2018
+						for (std::size_t index = 0; index < permeability_GUI_.size(); index++)
+						{
+							/// It makes QxtSpanSlider available - Permeability
+							this->ui_->gridLayout_Region_Attributes_->removeWidget(permeability_GUI_[index].slider_);
+							this->ui_->gridLayout_Region_Attributes_->addWidget(permeability_GUI_[index].qxt_span_slider_,
+								std::get<0>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<1>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<2>(permeability_GUI_[index].position_in_the_grid_),
+								std::get<3>(permeability_GUI_[index].position_in_the_grid_));
+							/// It is  affected by the isotropic logic.
+							permeability_GUI_[index].slider_->setVisible(false);
+							permeability_GUI_[index].qxt_span_slider_->setVisible(true);
+							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
+							if (index == 0)
+							{
+								permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!this->is_constant_);
+							}
+							else
+							{
+								permeability_GUI_[index].doubleSpinbBox_high_->setEnabled(!this->is_isotropic_permeability_ && !this->is_constant_);
+							}
+						}
+					}
+				});
+
 
         }
 
@@ -778,12 +820,63 @@ namespace RRM
                 emit numberOfRegions(this->number_of_regions_);
         }
 
-		void RegionWidget::setByRegionSaturation(bool _option)
+
+		void RegionWidget::setSinglePhase()
 		{
-			//slider_Water_Saturation_->setEnabled(_option);
-			//label_Water_Saturation_->setEnabled(_option);
-			//doubleSpinBox_Region_Water_Saturation_->setEnabled(_option);
+			/// @FIXME January 2018 -- @TODO Create functors to the slider values
+			/// { "Water Saturation", "Threshold Pressure", "Sort Factor", "Connate Water Saturation" };
+			///                    0,                    1,             2,                         3
+			std::vector<std::size_t> indices  = { 0, 1, 2, 3 };
+			for (const auto index : indices)
+			{
+				single_double_input_GUI_[index].slider_->setEnabled(false);
+				single_double_input_GUI_[index].label_->setEnabled(false);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(false);
+			}
 		}
+		void RegionWidget::setMultiPhaseByRegionSaturation()
+		{
+
+			/// @FIXME January 2018 -- @TODO Create functors to the slider values
+			/// { "Water Saturation", "Threshold Pressure", "Sort Factor", "Connate Water Saturation" };
+			///                    0,                    1,             2,                         3
+			std::vector<std::size_t> indices = { 0, 1, 2, 3 };
+			for (const auto index : indices)
+			{
+				single_double_input_GUI_[index].slider_->setEnabled(true);
+				single_double_input_GUI_[index].label_->setEnabled(true);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(true);
+			}
+			indices = { 1 };
+			for (const auto index : indices)
+			{
+				single_double_input_GUI_[index].slider_->setEnabled(false);
+				single_double_input_GUI_[index].label_->setEnabled(false);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(false);
+			}
+
+		}
+		void RegionWidget::setMultiPhaseByDensity()
+		{
+			/// @FIXME January 2018 -- @TODO Create functors to the slider values
+			/// { "Water Saturation", "Threshold Pressure", "Sort Factor", "Connate Water Saturation" };
+			///                    0,                    1,             2,                         3
+			std::vector<std::size_t> indices = { 0, 1, 2, 3 };
+			for (const auto index : indices)
+			{
+				single_double_input_GUI_[index].slider_->setEnabled(true);
+				single_double_input_GUI_[index].label_->setEnabled(true);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(true);
+			}
+			indices = { 0 };
+			for (const auto index : indices)
+			{
+				single_double_input_GUI_[index].slider_->setEnabled(false);
+				single_double_input_GUI_[index].label_->setEnabled(false);
+				single_double_input_GUI_[index].doubleSpinBox_->setEnabled(false);
+			}
+		}
+
 
 		int RegionWidget::reversePermeability(bool _is_reversed, int _value)
 		{
