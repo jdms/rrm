@@ -232,6 +232,7 @@ class FlowWindow : public  QMainWindow
 
         ///@FIXME 2017
         QMenu * flowModule_view_;
+		QMenu * flowModule_file_;
         QMenu * flowModule_diagnostic_;
 
         void createWellModule();
@@ -257,8 +258,10 @@ class FlowWindow : public  QMainWindow
 
         QTextEdit up_scaled_;
 
+		/// @FIXME 2018 Save and Load
 
-
+		QAction * save_;
+		QAction * open_;
 
 
 };

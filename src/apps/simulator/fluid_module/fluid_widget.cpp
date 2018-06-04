@@ -25,9 +25,6 @@ namespace RRM
         this->createConnections();
 		this->reset();
 
-		ui_->radioButton_Singlephase_->setChecked(true);
-
-
     }
 
 	void FluidWidget::reset()
@@ -37,12 +34,90 @@ namespace RRM
 			single_double_input_GUI_fluid_[index].doubleSpinBox_->setValue(single_double_input_GUI_fluid_[index].default_value_);
 			emit single_double_input_GUI_fluid_[index].doubleSpinBox_->editingFinished();
 		}
+	
+		phase_method_.first = 1;
+		phase_method_.second = 1;
+
+		fluid_phase_type_ = FluidPhaseType::SinglePhase;
+		multi_phase_type_ = MultiPhaseType::WaterSaturation;
+
+		ui_->radioButton_Singlephase_->setChecked(true);
+		ui_->comboBox_PhaseMethods_->setCurrentIndex(int(multi_phase_type_));
+				
+	}
+
+	bool FluidWidget::read(const QJsonObject& fluid_data)
+	{
+		if (fluid_data.contains("fluid_phase_type_") && fluid_data["fluid_phase_type_"].isDouble())
+		{
+			fluid_phase_type_ = FluidPhaseType(int(fluid_data["fluid_phase_type_"].toDouble()));	
+		}
+
+		if (fluid_data.contains("multi_phase_type_") && fluid_data["multi_phase_type_"].isDouble())
+		{
+			multi_phase_type_ = MultiPhaseType(int(fluid_data["multi_phase_type_"].toDouble()));
+		}
+		
+		QVector<QString> attributes = { "oil_viscosity", "oil_density", "bo", "water_viscosity", "water_density", "bw", "fwl" };
+
+		for (std::size_t i = 0; i < attributes.size(); i++)
+		{
+			if (fluid_data.contains(attributes[i]) && fluid_data[attributes[i]].isDouble())
+			{
+				single_double_input_GUI_fluid_[i].value_ = fluid_data[attributes[i]].toDouble();
+			}
+			else
+			{
+				qWarning("No Data");
+			}
+		}
+
+		if (fluid_phase_type_ == FluidPhaseType::SinglePhase)
+		{
+			ui_->radioButton_Singlephase_->setChecked(true);	
+		}
+		else
+		{
+			ui_->radioButton_Multiphase_->setChecked(true);
+		}
+
+		updateWidgetData();
+
+		return true;
+	}
+
+	bool FluidWidget::write(QJsonObject& fluid_data)
+	{
+		fluid_data["fluid_phase_type_"] = fluid_phase_type_;
+		fluid_data["multi_phase_type_"] = multi_phase_type_;
+
+		fluid_data["oil_viscosity"]   = single_double_input_GUI_fluid_[0].value_;
+		fluid_data["oil_density"]     = single_double_input_GUI_fluid_[1].value_;
+		fluid_data["bo"]			  = single_double_input_GUI_fluid_[2].value_;
+		fluid_data["water_viscosity"] = single_double_input_GUI_fluid_[3].value_;
+		fluid_data["water_density"]   = single_double_input_GUI_fluid_[4].value_;
+		fluid_data["bw"]			  = single_double_input_GUI_fluid_[5].value_;
+		fluid_data["fwl"]			  = single_double_input_GUI_fluid_[6].value_;
+
+		return true;
 	}
 
     void FluidWidget::clear()
     {		
 
     }
+
+	void FluidWidget::updateWidgetData()
+	{
+		for (std::size_t index = 0; index < single_double_input_GUI_fluid_.size(); index++)
+		{
+			std::cout << single_double_input_GUI_fluid_[index].value_ << std::endl;
+			single_double_input_GUI_fluid_[index].doubleSpinBox_->setValue(single_double_input_GUI_fluid_[index].value_);		
+			emit single_double_input_GUI_fluid_[index].doubleSpinBox_->editingFinished();
+		}
+		
+	}
+	
 
     void FluidWidget::setupWidget()
     {
@@ -138,6 +213,8 @@ namespace RRM
 		{
 			ui_->comboBox_PhaseMethods_->setEnabled(false);
 
+			fluid_phase_type_ = FluidPhaseType::SinglePhase;
+
 			emit setSinglePhase();
 
 			phase_method_.first = 1;
@@ -156,27 +233,33 @@ namespace RRM
 
 		});
 
-		connect(ui_->radioButton_Multiphase_, &QRadioButton::clicked, this, [=](bool status_)
+		connect(ui_->radioButton_Multiphase_, &QRadioButton::toggled, this, [=](bool status_)
 		{
 			ui_->comboBox_PhaseMethods_->setEnabled(true);
 
-			emit ui_->comboBox_PhaseMethods_->currentIndexChanged(phase_methods_names_[ui_->comboBox_PhaseMethods_->currentIndex()]);
+			fluid_phase_type_ = FluidPhaseType::MultiPhase;					
 
+			emit ui_->comboBox_PhaseMethods_->currentIndexChanged(int(multi_phase_type_));
+		
 			emit setMultiPhase();
 
 			phase_method_.first = 2;
 
 		});
-
-		connect(ui_->comboBox_PhaseMethods_, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-			[=](const QString &text){
-
+		
+		connect(ui_->comboBox_PhaseMethods_, QOverload<int>::of(&QComboBox::currentIndexChanged),[this](int index)
+		{
+			multi_phase_type_ = MultiPhaseType(index);
+			/// still dont know why I need to implicit set current index
+			ui_->comboBox_PhaseMethods_->setCurrentIndex(index);
+			
 			/// @FIXME September
 			//"By Water Saturation per Region"
-			if (text.compare(phase_methods_names_[0]) == 0)
+			if (multi_phase_type_ == MultiPhaseType::WaterSaturation)
 			{
 				//std::cout << "By Water Saturation per Region" << std::endl;
-				emit setSaturationPerRegion();
+				emit setSaturationPerRegion();		
+
 				phase_method_.second = 1;
 
 				/// { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
@@ -203,7 +286,8 @@ namespace RRM
 			else
 			{
 				//std::cout << "By Density" << std::endl;
-				emit setAPIGravity();
+				emit setAPIGravity();							
+
 				phase_method_.second = 2;
 
 				/// { "Oil Viscosity", "Oil Density", "Bo", "Water Viscosity", "Water Density", "Bw", "FWL" };
