@@ -44,6 +44,7 @@ FlowWindow::FlowWindow(QWidget *parent) : QMainWindow(parent)
 
 void FlowWindow::createWindow()
 {
+	flowModule_file_ = this->menuBar()->addMenu(tr("&File"));
     flowModule_view_ = this->menuBar()->addMenu(tr("&View"));
     flowModule_diagnostic_  = this->menuBar()->addMenu(tr("&Flow Diagnostic"));
 
@@ -72,6 +73,12 @@ void FlowWindow::createWindow()
     createWellModule();
     createRegionModule();
     createFluidModule();
+
+	save_ = new QAction(tr("&Save"));
+	open_ = new QAction(tr("&Open"));
+
+	flowModule_file_->addAction(save_);
+	flowModule_file_->addAction(open_);
 
     flow_tab_widget_ = new QTabWidget(this);
     flow_tab_widget_->addTab(canvas, "3D Visualization");
@@ -567,6 +574,90 @@ void FlowWindow::createActions()
 		region_parameters_->setMultiPhaseByDensity();
     } );
 
+	connect(save_, &QAction::triggered, this, [=]()
+	{
+		QString fileName = QFileDialog::getSaveFileName(this, tr("Open JSON file"), "", tr("JSON file (*.txt *.rrm)"));
+		
+		QFile saveFile(fileName);
+
+		if (!saveFile.open(QIODevice::WriteOnly))
+		{
+			qWarning("Couldn't open save file.");
+			
+		}
+
+		QJsonObject flowDiagnosticData;
+		/// Save Petrophysic Data
+		QJsonObject petrophysicObject;
+		region_parameters_->write(petrophysicObject);
+		flowDiagnosticData["petrophysicData"] = petrophysicObject;
+
+		/// Save Fluid Data
+		/// Save Petrophysic Data	
+		QJsonObject fluidObject;
+		fluid_parameters_->write(fluidObject);
+		flowDiagnosticData["fluidData"] = fluidObject;
+		/// Save Well  Data
+
+
+		QJsonDocument saveDocument(flowDiagnosticData);
+		saveFile.write(saveDocument.toJson());
+	});
+
+	connect(open_, &QAction::triggered, this, [=]()
+	{
+		QString fileName = QFileDialog::getOpenFileName(this, tr("Open JSON file"), "", tr("JSON file (*.txt *.rrm)"));
+
+		QFile loadFile(fileName);
+
+		if (!loadFile.open(QIODevice::ReadOnly))
+		{
+			qWarning("Couldn't open save file.");		
+		}
+
+		QByteArray saveData = loadFile.readAll();
+
+		QJsonDocument loadDocument(QJsonDocument::fromJson(saveData));
+
+		/// @see http://erickveil.github.io/2016/04/06/How-To-Manipulate-JSON-With-C++-and-Qt.html
+		if (!loadDocument.isObject())
+		{
+			qDebug() << "JSON is not an object.";
+	
+		}
+
+		/// Read Petrophysics data
+		if (loadDocument.object().contains("petrophysicData"))
+		{
+			region_parameters_->read(loadDocument.object()["petrophysicData"].toObject());
+		}
+		else
+		{
+			qWarning("No Petrophysic Data.");
+		}
+
+		/// Read Fluid module
+		if (loadDocument.object().contains("fluidData"))
+		{
+			fluid_parameters_->read(loadDocument.object()["fluidData"].toObject());
+		}
+		else
+		{
+			qWarning("No Fluid Data.");
+		}
+		
+		/// Read Well module
+		if (loadDocument.object().contains("WellData"))
+		{
+
+		}
+		else
+		{
+			qWarning("No Well Data.");
+		}
+		
+		
+	});
 
 }
 
@@ -1338,7 +1429,6 @@ void FlowWindow::createRegionModule()
 
 }
 
-
 void FlowWindow::createFluidModule()
 {
         this->dockFluidContainer_ = new QDockWidget(QString("Fluid Module"), this);
@@ -1387,7 +1477,7 @@ void FlowWindow::updateModelColors( const RRM::PropertyProfile& _profile)
 void FlowWindow::setRegions( const std::map< int,  std::vector< int > >& region_colors  /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_ */)
 {
     region_parameters_->setRegionData( region_colors );
-
+	
     qbuildCornerPoint->setEnabled(true);
     qbuildUnstructured->setEnabled(true);
 }

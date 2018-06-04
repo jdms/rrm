@@ -11,8 +11,13 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QCheckBox>
-#include <QPixmap>
+#include <QtGui/QPixmap>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
+
 #include <Eigen/Dense>
+
 
 
 #include "ui_region_widget_form.h"
@@ -51,9 +56,9 @@ namespace RRM
 						void setMultiPhaseByRegionSaturation();
 						void setSinglePhase();
 						void setMultiPhaseByDensity();
-    
-						int reversePermeability(bool _is_reversed,int _value);
-						int resersePorosity(bool _is_reversed, int _value) ;
+
+						bool read(const QJsonObject& region_data);
+						bool write(QJsonObject& region_data);
 
                 public slots:
                        
@@ -64,6 +69,9 @@ namespace RRM
                         void numberOfRegions(int _number_of_regions);
                         void getRegions();
                 private:
+
+						int reversePermeability(bool _is_reversed, int _value);
+						int resersePorosity(bool _is_reversed, int _value);
 
 						struct Permeability_GUI
 						{
@@ -84,6 +92,7 @@ namespace RRM
 							double default_low_value_;
 							double default_high_value_;
 							/// Data
+							//// First = min / Second = max
 							std::map< int, std::pair<double, double> > gradient_values_;
 							std::map< int, bool> is_inverted_;							
 						};
@@ -150,7 +159,7 @@ namespace RRM
 
                         QLabel* lb_region_color;
                         std::map< int, QColor > regions_colors;
-
+						//// it is really necessary
 						std::map< int, std::vector< int > > region_colors_;
 
 						/// @FIXEME Janudary 2018

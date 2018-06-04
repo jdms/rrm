@@ -12,6 +12,13 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QSlider>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
+#include <QtCore/QMetaEnum>
+#include <QtCore/QDebug>
+#include <QtGlobal>
+
 #include <Eigen/Dense>
 
 #include "ui_fluid_widget_form.h"
@@ -24,6 +31,19 @@ namespace RRM
             Q_OBJECT
 
         public:
+
+			enum FluidPhaseType
+			{
+				SinglePhase = 0, MultiPhase
+			};
+			Q_ENUM(FluidPhaseType)
+
+
+			enum MultiPhaseType
+			{
+				WaterSaturation = 0, OilDensity
+			};
+			Q_ENUM(MultiPhaseType)
 
             FluidWidget(QWidget * parent);
             virtual ~FluidWidget() = default;
@@ -48,6 +68,9 @@ namespace RRM
             void clear();
 			void reset();
 
+			bool read(const QJsonObject& fluid_data);
+			bool write(QJsonObject& fluid_data);
+
             public slots:
 
             signals:
@@ -58,42 +81,47 @@ namespace RRM
 
             private:
 
-			struct singleDoubleInput_GUI_Fluid
-			{
-				QLabel*			label_;
-				QDoubleSpinBox* doubleSpinBox_;
-				QSlider*        slider_;			
+				void updateWidgetData();
+
+				struct singleDoubleInput_GUI_Fluid
+				{
+					QLabel*			label_;
+					QDoubleSpinBox* doubleSpinBox_;
+					QSlider*        slider_;			
 			
-				std::map< int, double > values_;
-				double value_;
-				// Values in the GUI
-				double range_low_value_;
-				double range_high_value_;
-				double range_size_;
-				// Initial values in the GUI
-				double default_value_;
+					std::map< int, double > values_;
+					double value_;
+					// Values in the GUI
+					double range_low_value_;
+					double range_high_value_;
+					double range_size_;
+					// Initial values in the GUI
+					double default_value_;
 
-				std::tuple<int, int, int, int> position_in_the_grid_;
-			};
+					std::tuple<int, int, int, int> position_in_the_grid_;
+				};
 
-			/// Alternative approach	
-			std::vector<singleDoubleInput_GUI_Fluid> single_double_input_GUI_fluid_;
-            // Designer form
-            Ui::FluidWidgetForm * ui_;
+				/// Alternative approach	
+				std::vector<singleDoubleInput_GUI_Fluid> single_double_input_GUI_fluid_;
+				// Designer form
+				Ui::FluidWidgetForm * ui_;
 
-            // Create  the default widget stage
+				// Create  the default widget stage
 
-            std::vector<QString> phase_methods_names_;
+				std::vector<QString> phase_methods_names_;
 
-            void setupWidget();
-            void createConnections();
+				void setupWidget();
+				void createConnections();
 
-            /// @FIXME September
-            //// 1 for single phase
-            //// 2 for multiphase
-            ///        1 for water saturation per region
-            ///        2 API gravity
-            std::pair<int, int> phase_method_;
+				/// @FIXME September
+				//// 1 for single phase
+				//// 2 for multiphase
+				///        1 for water saturation per region
+				///        2 API gravity
+				std::pair<int, int> phase_method_;
+
+				FluidPhaseType fluid_phase_type_;
+				MultiPhaseType multi_phase_type_;
     };
 
 } /* namespace RRM */
