@@ -42,8 +42,8 @@ namespace RRM
             bool createTetrahedonMesh(const std::vector<float> &_vertices, const std::vector<unsigned int>& _cells);
             bool createHexahedonMesh(const std::vector<float> &_vertices, const std::vector<unsigned int>& _cells);
 
-            void FlowModel::loadMesh(std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> _ptr_mesh);
-            void FlowModel::loadMesh(std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> _ptr_mesh);
+            void loadMesh(std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> _ptr_mesh);
+            void loadMesh(std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> _ptr_mesh);
 
 
             /// OpenVolumeMesh Integration
@@ -69,6 +69,10 @@ namespace RRM
 
             /// @TODO Later, move this fucntions to FlowvizualizationController
             Eigen::Affine3d getModelMatrix() const;
+
+			////@FIXEME June 2018 A short solution to avoid contructing the mesh from scratch.
+			void uploadTetrahedron(const std::vector<float>&  _vertices,      const std::vector<unsigned int>& _cells,        /// From Flow Diagnostic code 
+				                   std::vector<float>&       vertices_array_, std::vector < unsigned int >&    faces_array );  /// To OpenGL buffers
 
 
     private:
