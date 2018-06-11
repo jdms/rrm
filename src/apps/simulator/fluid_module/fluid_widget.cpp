@@ -58,7 +58,7 @@ namespace RRM
 			multi_phase_type_ = MultiPhaseType(int(fluid_data["multi_phase_type_"].toDouble()));
 		}
 		
-		QVector<QString> attributes = { "oil_viscosity", "oil_density", "bo", "water_viscosity", "water_density", "bw", "fwl" };
+		QVector<QString> attributes({ "oil_viscosity", "oil_density", "bo", "water_viscosity", "water_density", "bw", "fwl" });
 
 		for (std::size_t i = 0; i < attributes.size(); i++)
 		{
