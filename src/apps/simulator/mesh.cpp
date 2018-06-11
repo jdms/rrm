@@ -26,10 +26,10 @@
 
 Mesh::Mesh()
 {
-    show_vertices = true;
-    show_edges = true;
-    show_faces = true;
-    show_bbox = false;
+    //show_vertices = true;
+    //show_edges = true;
+    //show_faces = true;
+    //show_bbox = false;
     this->centre_ = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
     float depth_ = 0.0f;
 
@@ -74,51 +74,51 @@ void Mesh::disableCrossSection()
 }
 
 /// Dimension in Qt Space
-float Mesh::getDepth() const
-{
-    return this->depth_;
-}
+//float Mesh::getDepth() const
+//{
+//    return this->depth_;
+//}
 
 std::tuple<Eigen::Vector3f, Eigen::Vector3f> Mesh::getBoudingBoxDimension() const
 {
     return std::make_tuple(dim_min, dim_max);
 }
 
-void Mesh::showVertices( bool status )
-{
-    show_vertices = status;
-}
-
-void Mesh::showEdges( bool status )
-{
-    show_edges = status;
-}
-
-void Mesh::showFaces( bool status )
-{
-    show_faces = status;
-}
-
-bool Mesh::showVertices() const
-{
-    return show_vertices;
-}
-
-bool Mesh::showEdges() const
-{
-    return show_edges;
-}
-
-bool Mesh::showFaces() const
-{
-    return show_faces;
-}
-
+//void Mesh::showVertices( bool status )
+//{
+//    show_vertices = status;
+//}
+//
+//void Mesh::showEdges( bool status )
+//{
+//    show_edges = status;
+//}
+//
+//void Mesh::showFaces( bool status )
+//{
+//    show_faces = status;
+//}
+//
+//bool Mesh::showVertices() const
+//{
+//    return show_vertices;
+//}
+//
+//bool Mesh::showEdges() const
+//{
+//    return show_edges;
+//}
+//
+//bool Mesh::showFaces() const
+//{
+//    return show_faces;
+//}
+//
 void Mesh::showBoundingBox( bool status )
 {
     show_bbox = status;
 }
-
+//
 bool Mesh::showBoundingBox() const
 {
     return show_bbox;
@@ -252,11 +252,11 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
         }
 
-        if( show_faces == true )
-        {
+        //if( show_faces == true )
+        //{
 
             glDrawArrays(GL_LINES_ADJACENCY, 0, entities_.at("Sketchies").number_of_elements_);
-        }
+        //}
 
         glBindVertexArray( 0 );
 
@@ -348,13 +348,13 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
         }
 
-        if (show_faces == true)
-        {
+        //if (show_faces == true)
+       // {
 
             //glDrawArrays ( GL_LINES_ADJACENCY , 0 , vector_triangles_size );
             glDrawArrays(GL_LINES_ADJACENCY, 0, entities_.at("Hexahedron").number_of_elements_);
 
-        }
+        //}
 
         glBindVertexArray(0);
 
@@ -384,13 +384,13 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
         }
 
-        if( show_faces == true )
-        {
+        //if( show_faces == true )
+        //{
 
              //glDrawArrays( GL_TRIANGLES, 0, vector_triangles_size );
             glDrawArrays(GL_TRIANGLES, 0, entities_.at("Tetrahedron").number_of_elements_);
 
-        }
+        //}
 
         glBindVertexArray( 0 );
         shader_mesh->unbind();
@@ -505,10 +505,11 @@ void Mesh::clear()
     min[ 2 ] = 0.0f;
 
 
-    show_vertices = true;
-    show_edges = false;
-    show_faces = true;
-    show_bbox = false;
+    //show_vertices = true;
+    //show_edges = false;
+    //show_faces = true;
+    //show_bbox = false;
+
 
     apply_crosssection_clipping = false;
 
@@ -670,7 +671,7 @@ void Mesh::buildBoundingBox(const std::vector<float>& _vertices)
 
     std::cout << (boundingbox_.Min().z()) + (boundingbox_.Max().z() - boundingbox_.Min().z())*0.5f << std::endl;
 
-    this->depth_ = (boundingbox_.Min().y()) + ((boundingbox_.Max().y() - boundingbox_.Min().y())*0.5f);
+    //this->depth_ = (boundingbox_.Min().y()) + ((boundingbox_.Max().y() - boundingbox_.Min().y())*0.5f);
 
 
     for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
@@ -796,10 +797,10 @@ void Mesh::setSkeletonGeometry(const std::vector < unsigned int >& _faces_array,
     this->model_matrix_.setIdentity();
     this->model_matrix_ = s * t;
 
-    std::cout << "(bbox_mesh) on MESH" << std::endl;
-    std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
-    std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
-    std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
+    //std::cout << "(bbox_mesh) on MESH" << std::endl;
+    //std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
+    //std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
+    //std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
 
     dim_max.x() = (bb.Max().x());
     dim_max.y() = (bb.Max().y());
@@ -810,10 +811,10 @@ void Mesh::setSkeletonGeometry(const std::vector < unsigned int >& _faces_array,
     dim_min.y() = (bb.Min().y());
     dim_min.z() = (bb.Min().z());
 
-    std::cout << "(bbox_mesh) on Max/Min" << std::endl;
-    std::cout << bb.Max() << std::endl;
-    std::cout << bb.Min() << std::endl;
-    std::cout << bb.center() << std::endl;
+    //std::cout << "(bbox_mesh) on Max/Min" << std::endl;
+    //std::cout << bb.Max() << std::endl;
+    //std::cout << bb.Min() << std::endl;
+    //std::cout << bb.center() << std::endl;
 
 
 
@@ -894,10 +895,10 @@ void Mesh::setTriangleSkeletonGeometry(const std::vector < unsigned int >& _face
     this->model_matrix_.setIdentity();
     this->model_matrix_ = s * t;
 
-    std::cout << "(bbox_mesh) on MESH" << std::endl;
-    std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
-    std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
-    std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
+    //std::cout << "(bbox_mesh) on MESH" << std::endl;
+    //std::cout << (bb.Max().y()) - (bb.Min().y()) << std::endl;
+    //std::cout << (bb.Max().x()) - (bb.Min().x()) << std::endl;
+    //std::cout << (bb.Max().z()) - (bb.Min().z()) << std::endl;
 
     dim_max.x() = (bb.Max().x());
     dim_max.y() = (bb.Max().y());
@@ -908,10 +909,10 @@ void Mesh::setTriangleSkeletonGeometry(const std::vector < unsigned int >& _face
     dim_min.y() = (bb.Min().y());
     dim_min.z() = (bb.Min().z());
 
-    std::cout << "(bbox_mesh) on Max/Min" << std::endl;
-    std::cout << bb.Max() << std::endl;
-    std::cout << bb.Min() << std::endl;
-    std::cout << bb.center() << std::endl;
+    //std::cout << "(bbox_mesh) on Max/Min" << std::endl;
+    //std::cout << bb.Max() << std::endl;
+    //std::cout << bb.Min() << std::endl;
+    //std::cout << bb.center() << std::endl;
 
 
 
