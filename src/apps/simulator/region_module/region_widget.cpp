@@ -115,6 +115,7 @@ namespace RRM
 				/// Next Position in the Grid
 				i += 2;
 			}
+			
 
 			/// @FIXME September   POROSITY
 			slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
@@ -867,16 +868,16 @@ namespace RRM
 					else
 					{
 						/// Special field. It is used when the isotropic permeability is checked to feed all the permeabilities inputs
-						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty XYZ"));
+						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty X"));
 						permeability_GUI_[0].doubleSpinbBox_high_->setEnabled(!is_constant_);
+						permeability_GUI_[0].qxt_span_slider_->setEnabled(true);
+						permeability_GUI_[0].slider_->setEnabled(true);
 
 						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
 						{
 							/// @FIXME September  PERMEABILITY			
 							/// The slider only depends on whether is isotropic or not.
 							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
