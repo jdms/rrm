@@ -105,7 +105,7 @@ class Mesh
         std::tuple<Eigen::Vector3f, Eigen::Vector3f>  getBoudingBoxDimension() const;
 
         /// OpenVolumeMesh Integration
-        void setTetrahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
+		void setTetrahedronGeometry(const std::vector<float>& _vertices_array, const std::vector < unsigned int >& _faces_array);
         void setHexahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setTriangleSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);

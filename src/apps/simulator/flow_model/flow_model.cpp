@@ -174,13 +174,13 @@ namespace RRM
         }
     }
 
-    void FlowModel::updateGeometry(std::vector < unsigned int >& faces_array, std::vector<float>& vertices_array_)
+	void FlowModel::updateGeometry(std::vector<float>& vertices_array_, std::vector < unsigned int >& faces_array)
     {
         switch (this->mesh_type)
         {
         case TYPE::TETRAHEDRAL:
         {
-            this->uploadTetrahedron(faces_array, vertices_array_);
+			this->uploadTetrahedron(vertices_array_, faces_array);
             break;
         }
 
@@ -202,7 +202,7 @@ namespace RRM
     }
     //// Tetrahedron related funtion
     ///  Return the vertices normalized with the centre of the bounding box in (0,0,0)
-    void FlowModel::uploadTetrahedron(std::vector < unsigned int >& faces_array, std::vector<float>& vertices_array_)
+	void FlowModel::uploadTetrahedron(std::vector<float>& vertices_array_, std::vector < unsigned int >& faces_array)
     {
         std::vector<OpenVolumeMesh::Vec3d> vd;
 
@@ -712,8 +712,12 @@ namespace RRM
         return this->model_matrix_;
     }
 
-	void FlowModel::uploadTetrahedron(const std::vector<float>& _vertices, const std::vector<unsigned int>&       _cells,       /// From Flow Diagnostic code 
-								      std::vector<float>&       vertices_array_, std::vector < unsigned int >&    faces_array)  /// To OpenGL buffers
+	void FlowModel::uploadTetrahedron(const std::vector<float>&         _vertices,       /// Lisf of all vertices of the tetrahedon mesh
+		                              const std::vector<unsigned int>&  _cells,			 /// List of all cells of the tetrahedron mesh. List of cells as a vertice list:
+																						 /// Each four elements as indices to the list of vertices
+								      std::vector<float>&               vertices_array_, /// To OpenGL buffers
+									  std::vector < unsigned int >&     faces_array_	 /// To OpenGL buffers
+									  )  
 	{
 
 		/// The 3D Tetrahedron Mesh come from Tetget.
@@ -748,10 +752,160 @@ namespace RRM
 		//           3 /_________\/_________\ 3
 		//            *          2           *
 
+		/// From Flow Diagnostic Interface
 
-		/// For each Cell
-		/// For each Face 
-		/// [v0,v1,v2]   ...
+		/// Each Cell has four vertices, {v0, v1, v2, v3 } and 4 Faces.
+		/// Each Face has 3 vertice as listed bellow:
+		/// [v0,v1,v2], 
+		//  [v0,v2,v3], 
+		/// [v2,v1,v3], 
+		/// [v0,v3,v1]
+		/// The vertices geometry are:
+		/// [v0.x,v0.y,v0.z; v1.x,v1.y,v1.z; v2.x,v2.y,v2.z]  9 floats
+		/// [v0.x,v0.y,v0.z; v2.x,v2.y,v2.z; v3.x,v3.y,v3.z]  9 floats
+		/// [v2.x,v2.y,v2.z; v1.x,v1.y,v1.z; v3.x,v3.y,v3.z]  9 floats
+		/// [v0.x,v0.y,v0.z; v3.x,v3.y,v3.z; v1.x,v1.y,v1.z]  9 floats
+
+
+		/// Construct a bounding box from the geomtry and use it to
+		/// bring the model origin to the (0,0,0) and scale to 0-1.
+		/// @TODO  transform this procedure into a function
+		std::vector< Eigen::Vector4d > normalized_vertices;
+
+		bounding_box_.reset();
+
+		for (unsigned int it = 0; it < _vertices.size(); it += 3)
+		{
+			normalized_vertices.push_back(Eigen::Vector4d(_vertices[it + 0], _vertices[it + 1], _vertices[it + 2], 1.0));
+		}
+
+		bounding_box_.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+		double scale = 1.0 / (bounding_box_.diagonal()*0.25);
+
+		Eigen::Affine3d t;
+		Eigen::Affine3d s;
+
+		t.setIdentity();
+		s.setIdentity();
+
+		t.translation() = -bounding_box_.center();
+		s.scale(Eigen::Vector3d(scale, scale, scale));
+
+		model_matrix_ = s * t;
+
+		for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
+		{
+			normalized_vertices[it] = model_matrix_ * normalized_vertices[it];
+		}
+
+		//bounding_box_.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
+
+		/// Swap back the transformed vertices
+		std::vector<float> normalized;
+		normalized.resize(_vertices.size());
+		for (std::size_t it = 0; it < normalized_vertices.size(); it++)
+		{
+			normalized[3 * it + 0] = normalized_vertices[it].x();
+			normalized[3 * it + 1] = normalized_vertices[it].y();
+			normalized[3 * it + 2] = normalized_vertices[it].z();
+		}
+
+
+		std::size_t  number_of_cells = static_cast<int>( _cells.size() / 4.0f);
+
+		faces_array_.clear();
+		/// The number of faces  = 4 * cells
+		//faces_array_.resize(number_of_cells * 12);
+		/// The number of veritces  =  12 * number of cells 
+		vertices_array_.clear();
+		//vertices_array_.resize(number_of_cells * 36);
+
+		std::size_t face_index = 0;
+
+		/// Looping over the cells. Each cell 4 faces: Eeach Face 3 vertices
+		for (std::size_t index = 0; index < _cells.size(); index += 4)
+		{
+			/// [v0,v1,v2] = 9 floats			
+			/// Face 1			
+			// v0
+			vertices_array_.push_back(normalized_vertices[_cells[index+0]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index+0]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index+0]].z());
+			faces_array_.push_back(index + 0);
+			
+			// v1
+			vertices_array_.push_back(normalized_vertices[_cells[index+1]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index+1]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index+1]].z());
+			faces_array_.push_back(index + 1);
+			
+			// v2
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].z());
+			faces_array_.push_back(index + 2);
+
+			/// [v0,v2,v3] 
+			/// Face 2			
+			// v0
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].z());
+			faces_array_.push_back(index + 0);
+
+			// v2
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].z());
+			faces_array_.push_back(index + 2);
+
+			// v3
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].z());
+			faces_array_.push_back(index + 3);
+
+			/// [v2,v1,v3] 
+			/// Face 3
+			// v2
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 2]].z());
+			faces_array_.push_back(index + 2);
+
+			// v1
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].z());
+			faces_array_.push_back(index + 1);
+
+			// v2
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].z());
+			faces_array_.push_back(index + 3);
+
+			/// [v0,v3,v1]
+			/// Face 4			
+			// v0
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 0]].z());
+			faces_array_.push_back(index + 0);
+
+			// v1
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 3]].z());
+			faces_array_.push_back(index + 3);
+
+			// v2
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].x());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].y());
+			vertices_array_.push_back(normalized_vertices[_cells[index + 1]].z());
+			faces_array_.push_back(index + 1);
+		}
 
 	}
 

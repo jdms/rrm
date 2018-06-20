@@ -1063,14 +1063,15 @@ void FlowWindow::buildUnstructured()
     setParametersBeforeMehsing();
   
 
-    std::vector< float > raw_vertices, normalized_vertices;
+	std::vector< float > vertices;
     std::vector< unsigned int > edges;
-    std::vector< unsigned int > raw_faces, modified_faces;
+    std::vector< unsigned int > faces;
 
     controller->generateUnstructured();
-    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces );
+    controller->updateVolumetricMesh( vertices, faces );
+	
 
-    emit sendSimplifiedMesh( raw_vertices, edges, raw_faces );
+    emit sendSimplifiedMesh( vertices, edges, faces );
 
 }
 
