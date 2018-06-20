@@ -213,9 +213,8 @@ class FlowWindow : public  QMainWindow
         QAction* action_oilinPlace_;
 
         /// OpenVolume Mesh Integration ---------------------------------------------->
-        void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> _ptr_mesh);
-        void FlowWindow::updatePropertyAction(std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> _ptr_mesh);
-
+        void updatePropertyAction();
+        
         std::vector<std::tuple<QAction*, QMetaObject::Connection, RRM::PropertyProfile> >  action_vertex_properties;
         std::vector<std::tuple<QAction*, QMetaObject::Connection, RRM::PropertyProfile> >  action_cell_properties;
         RRM::PropertyProfile current_property_;

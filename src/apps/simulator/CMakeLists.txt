@@ -168,5 +168,5 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets RRMModel ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader  )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets RRMModel ${HYPRE} TinyObjLoader  )
 

@@ -25,8 +25,6 @@
 
 //#include "Model/CrossSection.hpp"
 
-// OpenVolume Mesh
-#include "core/models/openvolumemesh_defines.hpp"
 
 // Flow Model
 #include "flow_model/flow_model.hpp"
@@ -144,16 +142,12 @@ class FlowVisualizationController: public QWidget
 
         /// OpenVolumeMesh Interface	 ----- ---------------------------------------->>
         void loadPropertiesTetrahedron();
-        void loadPropertiesHexahedron();
-
+        
         void updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max);
-        void updateHexahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max);
-
-        std::shared_ptr<OpenVolumeMesh::HexahedralMesh3d> getPtrHexahedralMesh();
-        std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> getPtrTetrahedralMesh();
-
+     
+        
         /// @TODO Later, move this fucntions to FlowvizualizationController
-        Eigen::Affine3d FlowVisualizationController::getModelMatrix() const;
+        Eigen::Affine3d getModelMatrix() const;
 
         void setSinglePhase(  );
 		void setMultiPhase( SaturationMethod _method);
