@@ -494,6 +494,9 @@ void Mesh::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const float
 
 void Mesh::clear()
 {
+
+
+	///
     mesh_type = TYPE::TRIANGLES;
 
     max[ 0 ] = 0.0f;
@@ -606,7 +609,7 @@ void Mesh::setMeshColor(const std::vector<float>& _colors)
     glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(_colors[0]), _colors.data(), GL_STATIC_DRAW);
 }
 
-void Mesh::setTetrahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array)
+void Mesh::setTetrahedronGeometry(const std::vector<float>& _vertices_array, const std::vector < unsigned int >& _faces_array)
 {
     std::vector<float> colors_array_ = std::vector<float>(_vertices_array.size(), 0.5f);
 

@@ -62,13 +62,13 @@ namespace RRM
 
 
             /// OpenVolumeMesh Integration
-            void updateGeometry(std::vector < unsigned int >& faces_array, std::vector<float>& vertices_array_);
+			void updateGeometry(std::vector<float>& vertices_array_, std::vector < unsigned int >& faces_array);
 
             void updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector< double >& _values);
             void updateHexahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector< double >& _values);
 
             void uploadHexahedron(std::vector < unsigned int >& faces_array, std::vector<float>& vertices_array_);
-            void uploadTetrahedron(std::vector < unsigned int >& faces_array, std::vector<float>& vertices_array_);
+			void uploadTetrahedron(std::vector<float>& vertices_array_, std::vector < unsigned int >& faces_array);
 
 
             void updateTetrahedronVertexScalarProperty(const std::string& _property_name, std::vector< double >& _values);
@@ -85,9 +85,13 @@ namespace RRM
             /// @TODO Later, move this fucntions to FlowvizualizationController
             Eigen::Affine3d getModelMatrix() const;
 
-			////@FIXEME June 2018 A short solution to avoid contructing the mesh from scratch.
-			void uploadTetrahedron(const std::vector<float>&  _vertices,      const std::vector<unsigned int>& _cells,        /// From Flow Diagnostic code 
-				                   std::vector<float>&       vertices_array_, std::vector < unsigned int >&    faces_array );  /// To OpenGL buffers
+			////@FIXEME June 2018 A short solution to avoid constructing the mesh from scratch.
+			void FlowModel::uploadTetrahedron(const std::vector<float>&         _vertices,       /// Lisf of all vertices of the tetrahedon mesh
+										      const std::vector<unsigned int>&  _cells,			 /// List of all cells of the tetrahedron mesh. List of cells as a vertice list:
+																								 /// Each four elements as indices to the list of vertices
+											  std::vector<float>&               vertices_array_, /// To OpenGL buffers
+											  std::vector < unsigned int >&     faces_array_	 /// To OpenGL buffers
+				);
 
 
     private:

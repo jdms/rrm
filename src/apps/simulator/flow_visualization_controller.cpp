@@ -124,23 +124,24 @@ void FlowVisualizationController::updateCornerPoint(std::vector< float >& vertic
      is_volumetric_built = true;
 }
 
-void FlowVisualizationController::updateVolumetricMesh(std::vector< float >& raw_vertices, std::vector<float>& normalized_vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& raw_faces, std::vector< unsigned int >& modified_faces)
+void FlowVisualizationController::updateVolumetricMesh(std::vector< float >& vertices_, std::vector< unsigned int >& faces_)
 {
 
 
-    code_interface.getVolumeVertices( raw_vertices );
-    normalized_vertices = raw_vertices;
+	std::vector < float  > vertices;
+	std::vector < unsigned int  > faces;
 
-    code_interface.getVolumeEdges( edges );
-    code_interface.getVolumeCells( raw_faces );
-    modified_faces = raw_faces;
+	code_interface.getVolumeVertices(vertices);
+	code_interface.getVolumeCells(faces);
+    	   
 
-    std::cout << " FlowVisualizationController vertices " << normalized_vertices.size() << std::endl;
+	flow_model_.createTetrahedonMesh(vertices, faces);
+	//flow_model_.uploadTetrahedron(vertices_, faces_);
+		
 
-    flow_model_.createTetrahedonMesh(normalized_vertices, modified_faces);
+	flow_model_.uploadTetrahedron(vertices, faces, vertices_, faces_);
 
-    flow_model_.uploadTetrahedron(modified_faces, normalized_vertices);
-    //ptr_mesh = std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d>(flow_model_.getPtrTetrahedralMesh());
+	std::cout << "updateVolumetricMesh " << vertices_.size() << " Cells " << faces_.size();
 
     is_volumetric_built = true;
 

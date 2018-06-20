@@ -602,12 +602,11 @@ void FlowVisualizationCanvas::updateCornerPoint( )
 void FlowVisualizationCanvas::updateVolumetricMesh()
 {
 
-    std::vector< float > raw_vertices, normalized_vertices;
-    std::vector< unsigned int > edges;
-    std::vector< unsigned int > raw_faces, modified_faces;
+    std::vector< float >  vertices;
+    std::vector< unsigned int > faces;
 
 
-    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces);
+	controller->updateVolumetricMesh(vertices, faces);
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
@@ -618,7 +617,7 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
 	// which differs from the vertices' indices provided by the simulator in vector 'raw_faces'.
 	//
 
-    mesh.setTetrahedronGeometry(modified_faces, normalized_vertices);
+	mesh.setTetrahedronGeometry(vertices, faces);
 
     update();
 
