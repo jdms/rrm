@@ -1063,15 +1063,15 @@ void FlowWindow::buildUnstructured()
     setParametersBeforeMehsing();
   
 
-	std::vector< float > vertices;
+	std::vector< float > vertices, raw_vertices;
     std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces;
+    std::vector< unsigned int > faces, raw_cells;
 
     controller->generateUnstructured();
-    controller->updateVolumetricMesh( vertices, faces );
+    controller->updateVolumetricMesh( raw_vertices, raw_cells, vertices, faces );
 	
 
-    emit sendSimplifiedMesh( vertices, edges, faces );
+    emit sendSimplifiedMesh( raw_vertices, edges, raw_cells );
 
 }
 
@@ -1422,8 +1422,8 @@ void FlowWindow::setRegions( const std::map< int,  std::vector< int > >& region_
 void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ )//const std::vector< float >& colors_ )
 {
 
-    //std::vector<double> values_for_visualization_;
-    //controller->updateTetrahedonRegions( regions_, values_for_visualization_ );
+    std::vector<double> values_for_visualization_;
+    controller->updateTetrahedonRegions( regions_, values_for_visualization_ );
 
     //std::vector< float > colors_ov_mesh_;
     //colors_ov_mesh_.resize( values_for_visualization_.size()*3 );
