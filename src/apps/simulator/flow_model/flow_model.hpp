@@ -28,10 +28,8 @@
 
 
 #include "Tucano/BoundingBox3.hpp"
-
-
 #include "./libs/Tucano/BoundingBox3.hpp"
-
+#include "property_profile.hpp"
 
 
 
@@ -41,8 +39,7 @@ namespace RRM
     class FlowModel
     {
         public:
-
-            enum class TYPE{ TRIANGLES, QUADRILATERAL, TETRAHEDRAL, HEXAHEDRAL };
+          
 
             FlowModel();
             ~FlowModel() = default ;
@@ -65,8 +62,9 @@ namespace RRM
 
 
     private:
-
-        TYPE mesh_type;
+        
+		std::vector<RRM::PropertyProfile> vertex_properties_;
+		std::vector<RRM::PropertyProfile> cell_properties_;
 
         /// @TODO Later, move this fucntions to FlowvizualizationController
         /// Bring model from Model coodinates to OpenGL coordiates

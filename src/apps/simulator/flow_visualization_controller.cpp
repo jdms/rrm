@@ -496,6 +496,15 @@ ColorMap::COLORMAP FlowVisualizationController::getCurrentColormap() const
 void FlowVisualizationController::loadPropertiesTetrahedron()
 {
 
+	/// Vertex Properties --->
+
+	std::vector<RRM::PropertyProfile> vertex_properties;
+
+	
+	// vertex_properties.push_back(RRM::PropertyProfile("Tetrahedron", (*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
+
+	vertex_properties.push_back(RRM::PropertyProfile());
+
   //  std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh = flow_model_.getPtrTetrahedralMesh();
 
   //  if (ptr_mesh)
