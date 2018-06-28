@@ -591,7 +591,7 @@ void FlowVisualizationCanvas::updateCornerPoint( )
     std::vector< float > vertices;
     vertices.assign( vertices_double.begin(), vertices_double.end() );
 
-    mesh.setMeshType( Mesh::TYPE::HEXAHEDRAL );
+    //mesh.setMeshType( Mesh::TYPE::HEXAHEDRAL );
     mesh.setHexahedronGeometry(faces, vertices);
 
 

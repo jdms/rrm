@@ -38,7 +38,6 @@
 #include <QColor>
 #include <QFileDialog>
 
-#include "mesh.h"
 #include "flow_diagnostics_interface.hpp"
 #include "colormap.h"
 #include <Eigen/Dense>
