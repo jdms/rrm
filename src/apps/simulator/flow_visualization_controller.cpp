@@ -974,3 +974,102 @@ void FlowVisualizationController::updateTetrahedonRegions( const std::vector< in
     //    flow_model_.updateTetrahedronCellScalarProperty("Regions", values_for_visualization_);
     //}
 }
+
+/// New Interface -- Retriving data from Flow Diagnostic Module
+
+std::vector<RRM::PropertyProfile>  FlowVisualizationController::getListOfComputedProperites( )
+{
+        std::vector<RRM::PropertyProfile> properties;
+
+
+		return properties;
+
+        //properties.emplace_back(RRM::PropertyProfile() )
+
+
+        // Vertex Properties ------------------------------------------------->
+         //      std::vector<double> values;
+         //      bool status = false;
+         //      // Pressure
+         //      values.clear();
+         //      int i = 0;
+         //      code_interface.getPressure(values);
+
+         //      OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure (bar)");
+
+
+         //      // Foward TOF
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getForwardTOF(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (day)");
+
+         //      // Foward TOF Log 10
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getFowardTOF_log10(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (Log10(day)) ");
+
+
+         //      // BackWard TOF
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getBackwardTOF(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (day)");
+
+         //      // BackWard TOF Log 10
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getBackwardTOF_log10(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (Log10(day))");
+
+
+         //      // Total TOF
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getTotalTOF(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (day)");
+
+
+         //      // Total TOF Log 10
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getTotalTOF_log10(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (Log10(day))");
+
+
+
+         //      //Maximum Tracer
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getMaxForwardTracer(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Injectors Tracer Partitioning");
+
+
+         //      //Max BackTracer
+         //      values.clear();
+         //      i = 0;
+         //      code_interface.getMaxBackwardTracer(values);
+
+         //      ph = ptr_mesh->request_vertex_property<double>("Producers Tracer Partitioning");
+
+
+
+         //      //Capillary Pressure
+         //      values.clear();
+         //      i = 0;
+         //      status = code_interface.getCapillaryPressure(values);
+
+         //      if ( status)
+         //      {
+         //          ph = ptr_mesh->request_vertex_property<double>("Capillary Pressure");
+
+         //      }
+}
