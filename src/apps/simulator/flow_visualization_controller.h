@@ -28,6 +28,7 @@
 
 // Flow Model
 #include "flow_model/flow_model.hpp"
+#include "flow_model/property_profile.hpp"
 
 #include <vector>
 #include <random>
@@ -155,6 +156,10 @@ class FlowVisualizationController: public QWidget
 		void setMultiPhase( SaturationMethod _method);
 
         void updateTetrahedonRegions( const std::vector< int >& regions_ , std::vector<double> &values_for_visualization_ );
+
+        /// New Interface -- Retriving data from Flow Diagnostic Module
+
+        std::vector<RRM::PropertyProfile>  getListOfComputedProperites( );
 
     public slots:
 
