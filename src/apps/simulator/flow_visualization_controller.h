@@ -81,12 +81,6 @@ class FlowVisualizationController: public QWidget
         void generateUnstructured();
 
         void updateCornerPoint(std::vector< float >& vertices, std::vector< unsigned int >& edges, std::vector< unsigned int >& faces);
-        void updateVolumetricMesh(
-                std::vector< float >& raw_vertices_,                 
-                std::vector< unsigned int >& raw_cells_,
-                std::vector< float >& vertices_,                 
-                std::vector< unsigned int >& cells_
-                );
 
         void getSurfacesFromCrossSection();
 
@@ -146,20 +140,32 @@ class FlowVisualizationController: public QWidget
         /// OpenVolumeMesh Interface	 ----- ---------------------------------------->>
         void loadPropertiesTetrahedron();
         
-        void updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max);
-     
-        
-        /// @TODO Later, move this fucntions to FlowvizualizationController
-        Eigen::Affine3d getModelMatrix() const;
+        void updateTetrahedronColors(const RRM::PropertyProfile & _property_name, std::vector<float>& _colors, double& _min, double& _max);
+    
 
         void setSinglePhase(  );
 		void setMultiPhase( SaturationMethod _method);
 
         void updateTetrahedonRegions( const std::vector< int >& regions_ , std::vector<double> &values_for_visualization_ );
 
+		/// @FIXME 2018
         /// New Interface -- Retriving data from Flow Diagnostic Module
 
-        std::vector<RRM::PropertyProfile>  getListOfComputedProperites( );
+		/// Mesh Geometry
+		std::vector<float>		  getVertices();
+		std::vector<unsigned int> getCells();
+
+		void getTetrahedeonMeshGeometry( std::vector< float >& raw_vertices_,
+										 std::vector< unsigned int >& raw_cells_,
+										 std::vector< float >& vertices_,
+								         std::vector< unsigned int >& cells_
+										);
+
+		/// Get a list of properties colors based on the Entity
+		std::vector<double> getComputedProperitesValues(const RRM::PropertyProfile& _property);
+        std::vector<RRM::PropertyProfile> getListOfComputedProperites( );
+		
+		Eigen::Affine3d getModelMatrix() const;
 
     public slots:
 
@@ -167,12 +173,13 @@ class FlowVisualizationController: public QWidget
         inline void setCurrentMethod( const FlowVisualizationController::MESHING_METHOD& t ){ current_method = t; }
         inline  FlowVisualizationController::MESHING_METHOD setCurrentMethod(){ return current_method; }
 
-        /// @TODO June 2017
-        void exportDerivedQuantities();
-        void clearComputedQuantities();
-        void getUpscalledPermeability(std::string& _result);
-        void getPoreVolume();
+        /// June 2017
+		void clearComputedQuantities();
 
+		void getUpscalledPermeability(std::string& _result);
+		void getPoreVolume();
+
+		void exportDerivedQuantities();
         void exportSurfacetoVTK();
         void exportVolumetoVTK();
         void exportCornerPointtoVTK();
@@ -219,7 +226,11 @@ class FlowVisualizationController: public QWidget
         ColorMap colormap;
         ColorMap::COLORMAP current_colormap_;
 
-        RRM::FlowModel flow_model_;
+
+		/// Data Formartter to the 3D View
+		/// @TODO will hold o Scenario releated Stage.
+		/// @TODO will be a model to the 2D Forms
+        RRM::FlowModel flow_model_;  
 
 };
 

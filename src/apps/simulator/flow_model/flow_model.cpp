@@ -32,9 +32,9 @@ namespace RRM
         bounding_box_.reset();
     }
   
-    /// Update Tetrahedon Mesh Colours
-    void FlowModel::updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector< double >& _values)
-    {
+    ///// Update Tetrahedon Mesh Colours
+    //void FlowModel::updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector< double >& _values)
+    //{
 
         //if (this->ptr_tetrahedron_mesh_)
         //{
@@ -78,7 +78,7 @@ namespace RRM
         //{
         //    std::cout << "Tetrahedron Mesh not valid " << _property_name << std::endl;
         //}
-    }
+    //}
 
     /// @TODO Later, move this fucntions to FlowvizualizationController
     Eigen::Affine3d FlowModel::getModelMatrix() const
@@ -166,27 +166,12 @@ namespace RRM
 		t.translation() = -bounding_box_.center();
 		s.scale(Eigen::Vector3d(scale, scale, scale));
 
-		model_matrix_ = s * t;
+		this->model_matrix_ = s * t;
 
 		for (unsigned int it = 0; it < normalized_vertices.size(); ++it)
 		{
-			normalized_vertices[it] = model_matrix_ * normalized_vertices[it];
+			normalized_vertices[it] = this->model_matrix_ * normalized_vertices[it];
 		}
-
-		//bounding_box_.fromPointCloud(normalized_vertices.begin(), normalized_vertices.end());
-
-		/// Swap back the transformed vertices
-		std::vector<float> normalized;
-		normalized.resize(_vertices.size());
-		for (std::size_t it = 0; it < normalized_vertices.size(); it++)
-		{
-			normalized[3 * it + 0] = normalized_vertices[it].x();
-			normalized[3 * it + 1] = normalized_vertices[it].y();
-			normalized[3 * it + 2] = normalized_vertices[it].z();
-		}
-
-
-		std::size_t  number_of_cells = static_cast<int>( _cells.size() / 4.0f);
 
 		faces_array_.clear();
 		/// The number of faces  = 4 * cells
@@ -194,8 +179,6 @@ namespace RRM
 		/// The number of veritces  =  12 * number of cells 
 		vertices_array_.clear();
 		//vertices_array_.resize(number_of_cells * 36);
-
-		std::size_t face_index = 0;
 
 		/// Looping over the cells. Each cell 4 faces: Eeach Face 3 vertices
 		for (std::size_t index = 0; index < _cells.size(); index += 4)
@@ -283,6 +266,121 @@ namespace RRM
 
 	}
 
+
+	std::vector< double > FlowModel::updateTetrahedronColors(const RRM::PropertyProfile& _property, const std::vector<unsigned int>&  _cells, const std::vector<double>& _property_values)
+	{
+		std::vector<double> values;
+
+		std::cout << "Updating Color for " << _property.name() << "  " << _property.entity() << std::endl;
+
+		if (_property.entity() == "Vertex")
+		{
+			/// Looping over the cells. Each cell 4 faces: Eeach Face 3 vertices
+			for (std::size_t index = 0; index < _cells.size(); index += 4)
+			{
+				/// [v0,v1,v2] = 9 floats			
+				/// Face 1			
+				// v0
+				values.push_back(_property_values[_cells[index + 0]]);
+
+				// v1
+				values.push_back(_property_values[_cells[index + 1]]);
+
+				// v2
+				values.push_back(_property_values[_cells[index + 2]]);
+
+				/// [v0,v2,v3] 
+				/// Face 2			
+				// v0
+				values.push_back(_property_values[_cells[index + 0]]);
+
+				// v2
+				values.push_back(_property_values[_cells[index + 2]]);
+
+				// v3
+				values.push_back(_property_values[_cells[index + 3]]);
+
+				/// [v2,v1,v3] 
+				/// Face 3
+				// v2
+				values.push_back(_property_values[_cells[index + 2]]);
+
+				// v1
+				values.push_back(_property_values[_cells[index + 1]]);
+
+				// v2
+				values.push_back(_property_values[_cells[index + 3]]);
+
+				/// [v0,v3,v1]
+				/// Face 4			
+				// v0
+				values.push_back(_property_values[_cells[index + 0]]);
+
+				// v1
+				values.push_back(_property_values[_cells[index + 3]]);
+
+				// v2
+				values.push_back(_property_values[_cells[index + 1]]);
+			}
+
+		}
+		else if (_property.entity() == "Cell")
+		{
+			/// Looping over the cells. Each cell 4 faces: Eeach Face 3 vertices
+			for (std::size_t index = 0, next_index = 0; index < _cells.size(); index += 4, next_index+= 1)
+			{	
+				/// [v0,v1,v2] = 9 floats			
+				/// Face 1			
+				// v0
+				values.push_back(_property_values[next_index]);
+
+				// v1
+				values.push_back(_property_values[next_index]);
+
+				// v2
+				values.push_back(_property_values[next_index]);
+
+				/// [v0,v2,v3] 
+				/// Face 2			
+				// v0
+				values.push_back(_property_values[next_index]);
+
+				// v2
+				values.push_back(_property_values[next_index]);
+
+				// v3
+				values.push_back(_property_values[next_index]);
+
+				/// [v2,v1,v3] 
+				/// Face 3
+				// v2
+				values.push_back(_property_values[next_index]);
+
+				// v1
+				values.push_back(_property_values[next_index]);
+
+				// v2
+				values.push_back(_property_values[next_index]);
+
+				/// [v0,v3,v1]
+				/// Face 4			
+				// v0
+				values.push_back(_property_values[next_index]);
+
+				// v1
+				values.push_back(_property_values[next_index]);
+
+				// v2
+				values.push_back(_property_values[next_index]);
+			}
+		}
+		else
+		{
+			std::cerr << "Entity not Difined" << std::endl;
+		}
+
+		return values;
+	}
 
 } /* namespace RRM */
 

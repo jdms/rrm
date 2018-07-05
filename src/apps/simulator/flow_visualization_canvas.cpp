@@ -577,28 +577,6 @@ void FlowVisualizationCanvas::updateTriangleMesh( const std::vector< double >& v
 }
 
 
-void FlowVisualizationCanvas::updateCornerPoint( )
-{
-
-
-    std::vector< float > vertices_double;
-    std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces ;
-
-    controller->updateCornerPoint( vertices_double, edges, faces );
-
-
-    std::vector< float > vertices;
-    vertices.assign( vertices_double.begin(), vertices_double.end() );
-
-    //mesh.setMeshType( Mesh::TYPE::HEXAHEDRAL );
-    mesh.setHexahedronGeometry(faces, vertices);
-
-
-    update();
-
-}
-
 void FlowVisualizationCanvas::updateVolumetricMesh()
 {
 
@@ -606,7 +584,7 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
     std::vector< unsigned int > faces, raw_cells;
 
 
-	controller->updateVolumetricMesh(raw_vertices, raw_cells, vertices, faces);
+	controller->getTetrahedeonMeshGeometry(raw_vertices, raw_cells, vertices, faces);
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
