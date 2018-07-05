@@ -31,8 +31,6 @@
 #include "./libs/Tucano/BoundingBox3.hpp"
 #include "property_profile.hpp"
 
-
-
 namespace RRM
 {
 
@@ -44,22 +42,20 @@ namespace RRM
             FlowModel();
             ~FlowModel() = default ;
 
-            /// OpenVolumeMesh Integration
-			void updateGeometry(std::vector<float>& vertices_array_, std::vector < unsigned int >& faces_array);
-
-            void updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector< double >& _values);
-
             /// @TODO Later, move this fucntions to FlowvizualizationController
             Eigen::Affine3d getModelMatrix() const;
 
 			////@FIXEME June 2018 A short solution to avoid constructing the mesh from scratch.
-			void FlowModel::uploadTetrahedron(const std::vector<float>&         _vertices,       /// Lisf of all vertices of the tetrahedon mesh
-										      const std::vector<unsigned int>&  _cells,			 /// List of all cells of the tetrahedron mesh. List of cells as a vertice list:
-																								 /// Each four elements as indices to the list of vertices
-											  std::vector<float>&               vertices_array_, /// To OpenGL buffers
-											  std::vector < unsigned int >&     faces_array_	 /// To OpenGL buffers
-				);
+			void uploadTetrahedron(const std::vector<float>&         _vertices,        /// Lisf of all vertices of the tetrahedon mesh
+				   				   const std::vector<unsigned int>&  _cells,		   /// List of all cells of the tetrahedron mesh. List of cells as a vertice list:
+																					   /// Each four elements as indices to the list of vertices
+									std::vector<float>&               vertices_array_, /// To OpenGL buffers
+									std::vector < unsigned int >&     faces_array_	   /// To OpenGL buffers 
+								   );
 
+			/// Update Tetrahedon Mesh Colours Based on Entity
+			/// To OpenGL buffers
+			std::vector< double > updateTetrahedronColors(const RRM::PropertyProfile& _property, const std::vector<unsigned int>&  _cells, const std::vector<double>& _values);
 
     private:
         

@@ -60,8 +60,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
     public slots:
 
         void updateMesh();
-        void updateVolumetricMesh();
-        void updateCornerPoint();
+        void updateVolumetricMesh();       
 
         void showBoundingBox( bool status );
 

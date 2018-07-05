@@ -117,7 +117,7 @@ void FlowVisualizationController::updateCornerPoint(std::vector< float >& vertic
      is_volumetric_built = true;
 }
 
-void FlowVisualizationController::updateVolumetricMesh(
+void FlowVisualizationController::getTetrahedeonMeshGeometry(
         std::vector< float >& raw_vertices_, 
         std::vector< unsigned int >& raw_cells_,
         std::vector< float >& vertices_, 
@@ -870,12 +870,16 @@ void FlowVisualizationController::getPoreVolume()
 
 
 
-void FlowVisualizationController::updateTetrahedronColors(const std::string& _property_name, const std::string& _entity_name, const std::string& _dimension, std::vector<float>& _colors, double& _min, double& _max)
+void FlowVisualizationController::updateTetrahedronColors(const RRM::PropertyProfile & _property, std::vector<float>& _colors, double& _min, double& _max)
 {
 
     std::vector<double> values;
+	std::vector<unsigned int> cells;
+	code_interface.getVolumeCells(cells);
+	
 
-    flow_model_.updateTetrahedronColors(_property_name, _entity_name, _dimension, values);
+	values = flow_model_.updateTetrahedronColors(_property, cells, this->getComputedProperitesValues(_property));
+	
 
     // Get the property by the interator
     auto min_max = std::minmax_element(values.begin(), values.end());
@@ -889,15 +893,14 @@ void FlowVisualizationController::updateTetrahedronColors(const std::string& _pr
     _min = *min_max.first;
     _max = *min_max.second;
 
-    for (unsigned int i = 0; i < values.size(); ++i)
+    for (std::size_t i = 0; i < values.size(); ++i)
     {
         QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
         _colors[i * 3 + 0] = static_cast<float>(c[0]);
         _colors[i * 3 + 1] = static_cast<float>(c[1]);
         _colors[i * 3 + 2] = static_cast<float>(c[2]);
     }
-
-
+		
 }
 
 
@@ -975,101 +978,157 @@ void FlowVisualizationController::updateTetrahedonRegions( const std::vector< in
     //}
 }
 
+/// @FIXME June 2018
 /// New Interface -- Retriving data from Flow Diagnostic Module
+
+
+/// Mesh Geometry
+std::vector<float>		  FlowVisualizationController::getVertices() 
+{
+	std::vector<float> vertices;
+	code_interface.getVolumeVertices(vertices);
+	return vertices;
+
+}
+std::vector<unsigned int> FlowVisualizationController::getCells() 
+{
+	std::vector<unsigned int> cells;
+	code_interface.getVolumeCells(cells);
+	return cells;
+}
 
 std::vector<RRM::PropertyProfile>  FlowVisualizationController::getListOfComputedProperites( )
 {
         std::vector<RRM::PropertyProfile> properties;
+		std::vector<double> values;
+		bool status = false;
 
+		/// Vertex Properties
+		properties.emplace_back(RRM::PropertyProfile("Pressure (bar)", "Vertex", "Bar", "Scalar"));											/// code_interface.getPressure(values);
+		properties.emplace_back(RRM::PropertyProfile("Time - of - Flight from Injectors (day)", "Vertex", "Day", "Scalar"));				/// code_interface.getForwardTOF(values)
+		properties.emplace_back(RRM::PropertyProfile("Time - of - Flight from Injectors (Log10(day))", "Vertex,", "Log10(day)", "Scalar")); /// code_interface.getFowardTOF_log10(values);
+		properties.emplace_back(RRM::PropertyProfile("Time - of - Flight to Producers (day)", "Vertex", "Day", "Scalar"));					/// code_interface.getBackwardTOF(values);
+		properties.emplace_back(RRM::PropertyProfile("Time - of - Flight to Producers (Log10(day))", "Vertex", "(Log10(day))", "Scalar"));	/// code_interface.getBackwardTOF_log10(values);
+		properties.emplace_back(RRM::PropertyProfile("Total Time-of-Flight (day)", "Vertex", "Day", "Scalar"));								/// code_interface.getTotalTOF(values);
+		properties.emplace_back(RRM::PropertyProfile("Total Time-of-Flight (Log10(day))", "Vertex", "(Log10(day))", "Scalar"));				/// code_interface.getTotalTOF_log10(values);
+		properties.emplace_back(RRM::PropertyProfile("Injectors Tracer Partitioning", "Vertex", "", "Scalar"));								/// code_interface.getMaxForwardTracer(values);
+		properties.emplace_back(RRM::PropertyProfile("Producers Tracer Partitioning", "Vertex", "", "Scalar"));								/// code_interface.getMaxBackwardTracer(values);
+
+		//Capillary Pressure
+		values.clear();
+		status = code_interface.getCapillaryPressure(values);
+		if ( status)
+	    {
+			properties.emplace_back(RRM::PropertyProfile("Capillary Pressure", "Vertex", "", "Scalar"));								    /// code_interface.getCapillaryPressure(values);
+		}
+
+		//// Cell Properties
+		properties.emplace_back(RRM::PropertyProfile("Permeability", "Cell", "", "Scalar"));								               /// code_interface.getPermeabilitybyCells(values);
+		properties.emplace_back(RRM::PropertyProfile("Porosity", "Cell", "", "Scalar"));								                   /// code_interface.getPorosity(values);
+		properties.emplace_back(RRM::PropertyProfile("Velocity", "Cell", "", "Vector"));								                   /// code_interface.getVelocitybyCells(values);
+		properties.emplace_back(RRM::PropertyProfile("Velocity Log10", "Cell", "", "Vector"));								               /// code_interface.getVelocityMagnitudebyCells_log10(values);
+		
+		values.clear();
+		status = code_interface.getWaterSaturationByCells(values);
+		if (status)
+		{
+			properties.emplace_back(RRM::PropertyProfile("Water Saturation", "Cell", "", "Scalar"));									   /// code_interface.getWaterSaturationByCells(values);
+		}
+
+		values.clear();
+		status = code_interface.getKroByCells(values);
+		if (status)
+		{
+			properties.emplace_back(RRM::PropertyProfile("Oil Relative Permeability", "Cell", "", "Scalar"));							   /// code_interface.getKroByCells(values);
+		}
+
+		values.clear();
+		status = code_interface.getKrwByCells(values);
+		if (status)
+		{
+			properties.emplace_back(RRM::PropertyProfile("Water Relative Permeability", "Cell", "", "Scalar"));							  /// code_interface.getKrwByCells(values);
+		}
 
 		return properties;
-
-        //properties.emplace_back(RRM::PropertyProfile() )
-
-
-        // Vertex Properties ------------------------------------------------->
-         //      std::vector<double> values;
-         //      bool status = false;
-         //      // Pressure
-         //      values.clear();
-         //      int i = 0;
-         //      code_interface.getPressure(values);
-
-         //      OpenVolumeMesh::VertexPropertyT<double> ph = ptr_mesh->request_vertex_property<double>("Pressure (bar)");
+}
 
 
-         //      // Foward TOF
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getForwardTOF(values);
+std::vector<double> FlowVisualizationController::getComputedProperitesValues(const RRM::PropertyProfile& _property)
+{
+	std::vector<double> values;
+	
+	/// Vertex Properties
+	if (_property.name() == "Pressure (bar)")
+	{
+		code_interface.getPressure(values);
+	}
+	else if (_property.name() == "Time - of - Flight from Injectors (day)")
+	{		
+		code_interface.getForwardTOF(values);
+	}
+	else if (_property.name() == "Time - of - Flight from Injectors (Log10(day))")
+	{
+		code_interface.getFowardTOF_log10(values);
+	}
+	else if (_property.name() == "Time - of - Flight to Producers (day)")
+	{
+		code_interface.getBackwardTOF(values);
+	}
+	else if (_property.name() == "Time - of - Flight to Producers (Log10(day)))")
+	{
+		code_interface.getBackwardTOF_log10(values);
+	}
+	else if (_property.name() == "Total Time-of-Flight (day)")
+	{
+		code_interface.getTotalTOF(values);
+	}
+	else if (_property.name() == "Total Time-of-Flight (Log10(day))")
+	{
+		code_interface.getTotalTOF_log10(values);
+	}
+	else if (_property.name() == "Injectors Tracer Partitioning")
+	{
+		code_interface.getMaxForwardTracer(values);
+	}
+	else if (_property.name() == "Producers Tracer Partitioning")
+	{
+		code_interface.getMaxBackwardTracer(values);
+	}
+	else if (_property.name() == "Capillary Pressure")
+	{
+		code_interface.getCapillaryPressure(values);
+	}
+	/// Cells Properties
+	else if (_property.name() == "Permeability")
+	{
+		code_interface.getPermeabilitybyCells(values);
+	}
+	else if (_property.name() == "Porosity")
+	{
+		code_interface.getPorosity(values);
+	}
 
-         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (day)");
+	/// All velocity is read as its magnitute ?
+	else if (_property.name() == "Velocity")
+	{
+		code_interface.getVelocitybyCells(values);
+	}
+	else if (_property.name() == "Velocity Log10")
+	{
+		code_interface.getVelocityMagnitudebyCells_log10(values); 
+	}
+	else if (_property.name() == "Water Saturation")
+	{
+		code_interface.getWaterSaturationByCells(values);
+	}
+	else if (_property.name() == "Oil Relative Permeability")
+	{
+		code_interface.getKroByCells(values);
+	}
+	else if (_property.name() == "Water Relative Permeability")
+	{
+		code_interface.getKrwByCells(values);
+	}
 
-         //      // Foward TOF Log 10
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getFowardTOF_log10(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight from Injectors (Log10(day)) ");
-
-
-         //      // BackWard TOF
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getBackwardTOF(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (day)");
-
-         //      // BackWard TOF Log 10
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getBackwardTOF_log10(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Time-of-Flight to Producers (Log10(day))");
-
-
-         //      // Total TOF
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getTotalTOF(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (day)");
-
-
-         //      // Total TOF Log 10
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getTotalTOF_log10(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Total Time-of-Flight (Log10(day))");
-
-
-
-         //      //Maximum Tracer
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getMaxForwardTracer(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Injectors Tracer Partitioning");
-
-
-         //      //Max BackTracer
-         //      values.clear();
-         //      i = 0;
-         //      code_interface.getMaxBackwardTracer(values);
-
-         //      ph = ptr_mesh->request_vertex_property<double>("Producers Tracer Partitioning");
-
-
-
-         //      //Capillary Pressure
-         //      values.clear();
-         //      i = 0;
-         //      status = code_interface.getCapillaryPressure(values);
-
-         //      if ( status)
-         //      {
-         //          ph = ptr_mesh->request_vertex_property<double>("Capillary Pressure");
-
-         //      }
+	return values;
 }

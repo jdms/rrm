@@ -401,34 +401,19 @@ void FlowWindow::createActions()
 		controller->setCurrentColormap(ColorMap::COLORMAP::COOL_TO_WARM);
 		action_oilinPlace_->setEnabled(true);
 
-		if (is_cornerpoint == false)
-		{
-			//controller->loadPropertiesTetrahedron();
-			//this->updatePropertyAction(controller->getPtrTetrahedralMesh());
-			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pressure (bar)", "VProp", "", "double");
+			this->updatePropertyAction();
+			current_property_ = RRM::PropertyProfile("Pressure (bar)", "Vertex","", "Scalar");
 			updateModelColors(current_property_);
 			action_showregions->setEnabled(true);
 			controller->getPoreVolume();
 			action_clearComputedQuantities_->setEnabled(true);
-
-		}
-		else
-		{
-			//controller->loadPropertiesHexahedron();
-			//this->updatePropertyAction(controller->getPtrHexahedralMesh());
-			current_property_ = RRM::PropertyProfile("Hexahedron", "Pressure (bar)", "CProp", "", "double");
-			updateModelColors(current_property_);
-			action_showregions->setEnabled(false);
-		}
-
-
 	});
 
 	connect(action_showregions, &QAction::toggled, [=](bool is_toggled)
 	{
 		if (is_toggled)
 		{
-			current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
+			//current_property_ = RRM::PropertyProfile("Tetrahedron", "Pore Volume", "CProp", "", "double");
 			updateModelColors(current_property_);
 			canvas->showRegions();
 		}
@@ -1051,7 +1036,7 @@ void FlowWindow::buildCornerPoint()
     }
 
     controller->generateCornerPoint();
-    canvas->updateCornerPoint();
+    
 
 }
 
@@ -1068,7 +1053,11 @@ void FlowWindow::buildUnstructured()
     std::vector< unsigned int > faces, raw_cells;
 
     controller->generateUnstructured();
-    controller->updateVolumetricMesh( raw_vertices, raw_cells, vertices, faces );
+
+	raw_vertices = controller->getVertices();
+	raw_cells = controller->getCells();
+
+	//controller->getTetrahedeonMeshGeometry(raw_vertices, raw_cells, vertices, faces);
 	
 
     emit sendSimplifiedMesh( raw_vertices, edges, raw_cells );
@@ -1175,69 +1164,50 @@ int FlowWindow::getNumberOfRegions()
 void FlowWindow::updatePropertyAction()
 {
 
+	std::vector<RRM::PropertyProfile> properties = controller->getListOfComputedProperites();
 
-    //std::vector<RRM::PropertyProfile> vertex_properties;
-    //std::vector<RRM::PropertyProfile> cell_properties;
+	clearVertexPropertiesActions();
+	clearCellPropertiesActions();
 
-    //if (_ptr_mesh)
-    //{
-    //    /// Entity Vertex
+	for (const auto& property : properties)
+	{
+		if (property.entity() == "Vertex")
+		{
+			/// Get the action pointer
+			QAction * action = menu_vertex_properties->addAction(QString::fromStdString(property.name()));
 
-    //    for (OpenVolumeMesh::ResourceManager::Properties::const_iterator vp_it = _ptr_mesh->vertex_props_begin(); vp_it != _ptr_mesh->vertex_props_end(); vp_it++)
-    //    {
-    //        std::cout << (*vp_it)->name() << " Type = " << (*vp_it)->entityType() << " Data name = " << (*vp_it)->typeNameWrapper() << std::endl;
+			/// The connection object in order to proper delete the action later.
+			QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+			{
+				current_property_ = property;
+				updateModelColors(current_property_);
+			});
 
-    //        vertex_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*vp_it)->name(), (*vp_it)->entityType(), "", (*vp_it)->typeNameWrapper()));
-    //    }
+			/// Action Container
+			action_vertex_properties.push_back(std::make_tuple(action, connection, property));
+			
+		}
+		else if (property.entity() == "Cell")
+		{
+			/// Get the action pointer
+			QAction * action = menu_cell_properties->addAction(QString::fromStdString(property.name()));
 
-    //    /// Entity Cells
+			/// The connection object in order to proper delete the action later.
+			QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
+			{
+				current_property_ = property;
+			    updateModelColors(current_property_);
+			});
 
-    //    for (OpenVolumeMesh::ResourceManager::Properties::const_iterator cp_it = _ptr_mesh->cell_props_begin(); cp_it != _ptr_mesh->cell_props_end(); cp_it++)
-    //    {
-    //        std::cout << (*cp_it)->name() << " Type = " << (*cp_it)->entityType() << " Data name = " << (*cp_it)->typeNameWrapper() << std::endl;
+			/// Action Container
+			action_cell_properties.push_back(std::make_tuple(action, connection, property));
+		}
+		else
+		{
 
-    //        cell_properties.push_back(RRM::PropertyProfile("Tetrahedron",(*cp_it)->name(), (*cp_it)->entityType(), "", (*cp_it)->typeNameWrapper()));
-    //    }
+		}
 
-    //}
-
-    //clearVertexPropertiesActions();
-
-    //for (const auto vp : vertex_properties)
-    //{
-    //    /// Get the action pointer
-    //    QAction * action = menu_vertex_properties->addAction(QString::fromStdString(vp.name()));
-
-    //    /// The connection object in order to proper delete the action later.
-    //    QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-    //    {
-    //        current_property_ = vp;
-    //        updateModelColors(current_property_);
-    //    });
-
-    //    /// Action Container
-    //    action_vertex_properties.push_back(std::make_tuple(action, connection, vp));
-    //}
-
-
-    //clearCellPropertiesActions();
-
-    //for (const auto cp : cell_properties)
-    //{
-    //    /// Get the action pointer
-    //    QAction * action = menu_cell_properties->addAction(QString::fromStdString(cp.name()));
-
-    //    /// The connection object in order to proper delete the action later.
-    //    QMetaObject::Connection connection = connect(action, &QAction::triggered, [=]()
-    //    {
-    //        current_property_ = cp;
-    //        updateModelColors(current_property_);
-    //    });
-
-    //    /// Action Container
-    //    action_cell_properties.push_back(std::make_tuple(action, connection, cp));
-    //}
-
+	}
 }
 
 void FlowWindow::clearVertexPropertiesActions()
@@ -1390,7 +1360,12 @@ void FlowWindow::updateModelColors( const RRM::PropertyProfile& _profile)
     unsigned int nc = 0;
 
 	///@
-
+	controller->updateTetrahedronColors(_profile, colors, min, max);
+	colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
+	canvas->setColors(colors);
+	//    colorbar.updateColorMap(colormap.getColors(controller->getCurrentColormap(), nc), min, max);
+	//    canvas->setColors(colors);
+	
     //if (_profile.elementType() == "Tetrahedron")
     //{
     //    controller->updateTetrahedronColors(_profile.name(), _profile.entity(), _profile.dimension(), colors, min, max);
