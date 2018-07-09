@@ -58,7 +58,8 @@ void SurfaceShader::loadBuffers()
 
 
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
-    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+//    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+    raw->getBoundingBox( minx_, maxx_, miny_, maxy_, minz_, maxz_ );
 
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );

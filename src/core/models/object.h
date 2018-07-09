@@ -47,6 +47,13 @@ class Object
 
 
         Object();
+        Object( const Object& obj_ );
+        Object& operator=( const Object & obj_ );
+
+        void setLog(const std::string& log_);
+        std::string getLog() const;
+
+        ///======================================================================
 
 
         void setIndex( const std::size_t id_ );
@@ -56,33 +63,48 @@ class Object
         void setName( const std::string& name_ );
         std::string getName() const;
 
+        void setColor(int r_, int g_, int b_);
+        void getColor(int& r_, int& g_, int& b_) const;
+
+        void setBoundingBox( double xmin_, double xmax_, double ymin_, double ymax_,
+                             double zmin_, double zmax_ );
+        void getBoundingBox( double& xmin_, double& xmax_, double& ymin_, double& ymax_,
+                             double& zmin_, double& zmax_ );
+
+        void setMaximumBounding( double xmax_, double ymax_, double zmax_ );
+        void setMinimumBounding( double xmin_, double ymin_, double zmin_ );
+
+
+        void setEditable( bool status_ );
+        bool isEditable() const;
+
+        void setSelectable( bool status_ );
+        bool isSelectable() const;
+
+        void setSelected( bool status_ );
+        bool isSelected() const;
+
+        void setVisible( bool status_ );
+        bool isVisible() const;
+
+        void setActive( bool status_ );
+        bool isActive() const;
+
+
+
+        ///======================================================================
+
+
+
+
+
 
         void setType( const Settings::Objects::ObjectType& type_ );
         Settings::Objects::ObjectType getType() const;
 
 
-        void setColor( int r, int g, int b );
-        void getColor( int& r, int& g, int& b ) const ;
 
 
-        void setEditable( const bool status_ );
-        bool isEditable() const;
-
-
-        void setSelectable( const bool status_ );
-        bool isSelectable() const;
-
-
-        void setSelected( const bool status_ );
-        bool isSelected() const;
-
-
-        void setVisible( const bool status_ );
-        bool isVisible() const;
-
-
-        void setActive( const bool status_ );
-        bool isActive() const;
 
 
         void setDone( const bool status_ );
@@ -126,10 +148,10 @@ class Object
         void removeSurface();
 
 
-        void setMaxMin( double maxx_, double maxy_, double maxz_,
-                        double minx_, double miny_, double minz_ );
-        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
-                        double& minx_, double& miny_, double& minz_ ) const;
+//        void setMaxMin( double maxx_, double maxy_, double maxz_,
+//                        double minx_, double miny_, double minz_ );
+//        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+//                        double& minx_, double& miny_, double& minz_ ) const;
 
 
         void clear();
@@ -148,9 +170,9 @@ class Object
             json[ "is_visible" ] = is_visible;
             json[ "is_active" ] = is_active;
             json[ "is_done" ] = is_active;
-            json[ "red" ] = color.r;
-            json[ "green" ] = color.g;
-            json[ "blue" ] = color.b;
+            json[ "red" ] = color.red;
+            json[ "green" ] = color.green;
+            json[ "blue" ] = color.blue;
 
         }
 
@@ -184,13 +206,13 @@ class Object
                 is_done = json["is_done"].toBool();
 
             if (json.contains("red") && json["red"].isDouble())
-                color.r = json["red"].toInt();
+                color.red = json["red"].toInt();
 
             if (json.contains("green") && json["green"].isDouble())
-                color.g = json["green"].toInt();
+                color.green = json["green"].toInt();
 
             if (json.contains("blue") && json["blue"].isDouble())
-                color.b = json["blue"].toInt();
+                color.blue = json["blue"].toInt();
 
         }
 
@@ -204,10 +226,39 @@ class Object
 
     private:
 
-        static std::size_t number_of_objects;
 
-        std::size_t index;
+        struct Color {
+            int red = 255;
+            int green = 0;
+            int blue = 0;
+        };
+
+        struct Point
+        {
+            double x = 0.0;
+            double y = 0.0;
+            double z = 0.0;
+        };
+
+        std::size_t index = 0;
+
         std::string name;
+        std::string log;
+
+        Color color;
+        Point min, max;
+
+        bool editable = true;
+        bool selectable = false;
+        bool selected = false;
+        bool visible = true;
+        bool active = true;
+
+
+
+        ///==========================================
+
+        static std::size_t number_of_objects;
 
         Settings::Objects::ObjectType type;
 
@@ -225,19 +276,19 @@ class Object
         PolyCurve trajectory;
 
 
-        struct Color
-        {
-            int r = 255;
-            int g = 0;
-            int b = 0;
-        } color;
+//        struct Color
+//        {
+//            int r = 255;
+//            int g = 0;
+//            int b = 0;
+//        } color;
 
-        struct Point
-        {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-        } max, min;
+//        struct Point
+//        {
+//            double x = 0;
+//            double y = 0;
+//            double z = 0;
+//        } max, min;
 
 
         const std::size_t CHANNEL_MAX_CSECTIONS = 2;
