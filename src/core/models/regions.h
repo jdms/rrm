@@ -28,17 +28,36 @@
 #include <string>
 #include <vector>
 
+#include "object.h"
 #include "./core/definitions/constants.hpp"
 
 
-class Regions
+class Regions: public Object
 {
     public:
 
         Regions();
+        Regions( const Regions& reg_ );
+        Regions& operator=(const Regions& reg_);
+        ~Regions();
+
+
+        void getTriangleCells( std::vector< std::size_t >& cells_ ) const;
+
+        ///====================================================================
 
         void setIndex( const std::size_t id_ );
         std::size_t getIndex() const;
+
+        void setTetrahedralCells( const std::vector< std::size_t >& cells_ );
+        void getTetrahedralCells( std::vector< std::size_t >& cells_ ) const;
+        void clearCells();
+
+        void setVertices( const std::vector< double >& vertices_  );
+        void getVertices( std::vector< double >& vertices_  ) const;
+
+        ///====================================================================
+
 
         void setPoint( double x_, double y_, double z_ );
         void getPoint( double& x_, double& y_, double& z_ ) const;
@@ -49,12 +68,8 @@ class Regions
         void setVisible( const bool status_ );
         bool isVisible() const;
 
-        void setTetrahedralCells( const std::vector< std::size_t >& cells_ );
-        void getTetrahedralCells( std::vector< std::size_t >& cells_ ) const;
-        void clearCells();
 
-        void setVertices( const std::vector< double >& vertices_  );
-        void getVertices( std::vector< double >& vertices_  ) const;
+
         void clearVertices();
 
         void setMaxMin( double maxx_, double maxy_, double maxz_,
@@ -89,8 +104,10 @@ class Regions
 
         bool is_visible;
         std::string name;
+
         std::vector< std::size_t > index_cells;
         std::vector< double > vertices;
+
         Color color;
 };
 

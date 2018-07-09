@@ -23,10 +23,39 @@
 
 #include "regions.h"
 
+
 Regions::Regions()
 {
+    std::cout << "REGION CREATED" << std::endl << std::flush;
     initialize();
 }
+
+Regions::Regions(const Regions & reg_)
+{
+
+    std::cout << "REGION CREATED" << std::endl << std::flush;
+
+    this->index_cells = reg_.index_cells;
+    this->vertices = reg_.vertices;
+
+}
+
+
+Regions::~Regions()
+{
+}
+
+Regions & Regions::operator=(const Regions & reg_)
+{
+    this->index_cells = reg_.index_cells;
+    this->vertices = reg_.vertices;
+
+    return *this;
+}
+
+
+///====================================================================
+
 
 void Regions::setIndex( const std::size_t id_ )
 {
@@ -38,6 +67,82 @@ std::size_t Regions::getIndex() const
 {
     return index;
 }
+
+void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
+{
+
+    index_cells.clear();
+    index_cells.assign( faces_.begin(), faces_.end() );
+
+}
+
+
+void Regions::getTriangleCells( std::vector< std::size_t >& cells_ ) const
+{
+    cells_.clear();
+
+
+    std::size_t number_of_tetrahedrals = index_cells.size()/4;
+    std::cout << "Number of tetrahedrals: " << number_of_tetrahedrals << std::endl
+              << std::flush;
+
+
+    for( std::size_t i = 0; i < number_of_tetrahedrals; ++i )
+    {
+        std::size_t v0 = index_cells[ 4*i + 0 ];
+        std::size_t v1 = index_cells[ 4*i + 1 ];
+        std::size_t v2 = index_cells[ 4*i + 2 ];
+        std::size_t v3 = index_cells[ 4*i + 3 ];
+
+        cells_.push_back( v0 );
+        cells_.push_back( v1 );
+        cells_.push_back( v2 );
+
+        cells_.push_back( v0 );
+        cells_.push_back( v2 );
+        cells_.push_back( v3 );
+
+        cells_.push_back( v0 );
+        cells_.push_back( v3 );
+        cells_.push_back( v1 );
+
+        cells_.push_back( v1 );
+        cells_.push_back( v3 );
+        cells_.push_back( v2 );
+
+    }
+
+}
+
+void Regions::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
+{
+    cells_.clear();
+    cells_.assign( index_cells.begin(), index_cells.end() );
+}
+
+
+void Regions::clearCells()
+{
+    index_cells.clear();
+}
+
+
+void Regions::setVertices( const std::vector< double >& vertices_  )
+{
+    vertices.clear();
+    vertices.assign( vertices_.begin(), vertices_.end() );
+}
+
+
+void Regions::getVertices( std::vector< double >& vertices_  ) const
+{
+    vertices_.clear();
+    vertices_.assign( vertices.begin(), vertices.end() );
+}
+
+
+///====================================================================
+
 
 
 void Regions::setPoint( double x_, double y_, double z_ )
@@ -79,69 +184,51 @@ bool Regions::isVisible() const
 }
 
 
-void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
-{
+//void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
+//{
 
-    clearCells();
+//    clearCells();
 
-    std::size_t number_of_tetrahedrals = faces_.size()/4;
-    std::cout << "Number of tetrahedrals: " << number_of_tetrahedrals << std::endl
-              << std::flush;
-
-
-    for( std::size_t i = 0; i < number_of_tetrahedrals; ++i )
-    {
-        std::size_t v0 = faces_[ 4*i + 0 ];
-        std::size_t v1 = faces_[ 4*i + 1 ];
-        std::size_t v2 = faces_[ 4*i + 2 ];
-        std::size_t v3 = faces_[ 4*i + 3 ];
-
-        index_cells.push_back( v0 );
-        index_cells.push_back( v1 );
-        index_cells.push_back( v2 );
-
-        index_cells.push_back( v0 );
-        index_cells.push_back( v2 );
-        index_cells.push_back( v3 );
-
-        index_cells.push_back( v0 );
-        index_cells.push_back( v3 );
-        index_cells.push_back( v1 );
-
-        index_cells.push_back( v1 );
-        index_cells.push_back( v3 );
-        index_cells.push_back( v2 );
-
-    }
-
-}
+//    std::size_t number_of_tetrahedrals = faces_.size()/4;
+//    std::cout << "Number of tetrahedrals: " << number_of_tetrahedrals << std::endl
+//              << std::flush;
 
 
-void Regions::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
-{
-    cells_.clear();
-    cells_.assign( index_cells.begin(), index_cells.end() );
-}
+//    for( std::size_t i = 0; i < number_of_tetrahedrals; ++i )
+//    {
+//        std::size_t v0 = faces_[ 4*i + 0 ];
+//        std::size_t v1 = faces_[ 4*i + 1 ];
+//        std::size_t v2 = faces_[ 4*i + 2 ];
+//        std::size_t v3 = faces_[ 4*i + 3 ];
+
+//        index_cells.push_back( v0 );
+//        index_cells.push_back( v1 );
+//        index_cells.push_back( v2 );
+
+//        index_cells.push_back( v0 );
+//        index_cells.push_back( v2 );
+//        index_cells.push_back( v3 );
+
+//        index_cells.push_back( v0 );
+//        index_cells.push_back( v3 );
+//        index_cells.push_back( v1 );
+
+//        index_cells.push_back( v1 );
+//        index_cells.push_back( v3 );
+//        index_cells.push_back( v2 );
+
+//    }
+
+//}
 
 
-void Regions::clearCells()
-{
-    index_cells.clear();
-}
+//void Regions::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
+//{
+//    cells_.clear();
+//    cells_.assign( index_cells.begin(), index_cells.end() );
+//}
 
 
-void Regions::setVertices( const std::vector< double >& vertices_  )
-{
-    vertices.clear();
-    vertices.assign( vertices_.begin(), vertices_.end() );
-}
-
-
-void Regions::getVertices( std::vector< double >& vertices_  ) const
-{
-    vertices_.clear();
-    vertices_.assign( vertices.begin(), vertices.end() );
-}
 
 
 void Regions::clearVertices()

@@ -63,7 +63,8 @@ void RegionShader::loadBuffers()
 
 
     std::vector< std::size_t > faces_size_t_;
-    raw->getTetrahedralCells( faces_size_t_ );
+//    raw->getTetrahedralCells( faces_size_t_ );
+    raw->getTriangleCells( faces_size_t_ );
 
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
     std::vector< GLfloat > normals_;
