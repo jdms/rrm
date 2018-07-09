@@ -72,6 +72,11 @@ std::string Object::getLog() const
     return log;
 }
 
+Object::~Object()
+{
+    std::cout << "Deleting object" << std::endl << std::flush;
+}
+
 
 ///======================================================================
 
@@ -215,6 +220,7 @@ bool Object::isActive() const
 
 ///======================================================================
 
+// to be updated or removed
 
 
 
@@ -464,3 +470,4 @@ void Object::clearPreviewCurves()
         removeCurve( id_ );
 
 }
+

@@ -37,7 +37,7 @@
 #include "crosssection.h"
 
 
-class Volume
+class Volume: public Object
 {
 
 
@@ -55,31 +55,31 @@ class Volume
 
 
         Volume();
+        Volume(const Volume & volume_);
+        Volume & operator=(const Volume & volume_);
+        ~Volume();
 
+
+        void setGeometry( double ox_, double oy_, double oz_, double w_, double h_, double l_ );
+        void getGeometry( double& ox_, double& oy_, double& oz_, double& w_, double& h_, double& l_ ) const;
+
+
+        ///=================================================================
 
         void setOrigin( double ox_, double oy_, double oz_ );
         void getOrigin( double& ox_, double& oy_, double& oz_ ) const;
 
-
-        void setGeometry( double w_, double h_, double l_ );
-        void getGeometry( double& w_, double& h_, double& l_ ) const;
-
+        void setDimensions( double w_, double h_, double l_ );
+        void getDimensions( double& w_, double& h_, double& l_ ) const;
 
         void setWidth( double w_ );
         double getWidth() const;
 
-
         void setHeight( double h_  );
         double getHeight() const;
 
-
         void setLenght( double l_ );
         double getLenght() const;
-
-
-        void setName( const std::string name_ );
-        const std::string& getName() const;
-
 
         void getFrontFace( std::vector< double >& vertices_ ) const;
         void getRightFace( std::vector< double >& vertices_ ) const;
@@ -87,6 +87,15 @@ class Volume
         void getLeftFace( std::vector< double >& vertices_ ) const;
         void getTopFace( std::vector< double >& vertices_ ) const;
         void getBottomFace( std::vector< double >& vertices_ ) const;
+
+        ///=================================================================
+
+
+
+
+        void setName( const std::string name_ );
+        const std::string& getName() const;
+
 
 
 
@@ -134,15 +143,35 @@ class Volume
     private:
 
 
+
+protected:
+
+    const double DEFAULT_ORIGIN_X = 0.0;
+    const double DEFAULT_ORIGIN_Y = 0.0;
+    const double DEFAULT_ORIGIN_Z = 0.0;
+    double originx = DEFAULT_ORIGIN_X;
+    double originy = DEFAULT_ORIGIN_Y;
+    double originz = DEFAULT_ORIGIN_Z;
+
+    const double DEFAULT_WIDTH = 500.;
+    const double DEFAULT_HEIGHT = 500.;
+    const double DEFAULT_LENGHT = 500.;
+    double width = DEFAULT_WIDTH;
+    double height = DEFAULT_HEIGHT;
+    double lenght = DEFAULT_LENGHT;
+
+    ///=================================================================
+
+
         std::string name = "VOLUME";
 
-        double origin_x;
-        double origin_y;
-        double origin_z;
+//        double originx;
+//        double originy;
+//        double originz;
 
-        double width;
-        double height;
-        double lenght;
+//        double width;
+//        double height;
+//        double lenght;
 
         bool is_visible;
         bool is_resizable;
