@@ -645,10 +645,10 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 
 }
 /// Get the current boundingobx depth in the extrusion framework
-float FlowVisualizationCanvas::getDepth() const
-{
-    return mesh.getDepth();
-}
+//float FlowVisualizationCanvas::getDepth() const
+//{
+//    return mesh.getDepth();
+//}
 
 
 void FlowVisualizationCanvas::setDefaultColor()

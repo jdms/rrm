@@ -60,19 +60,19 @@ namespace RRM
             //  The first four nodes are the corner vertices.If - o2 switch is used, the remaining six nodes are generated on the midpoints of the edges of the tetrahedron.
             //  Figure 20 shows how these corners and the second - order nodes are locally numbered.Second order nodes are output only.They are omitted by the mesh reconstruction(the - r switch).
 
-            //                       4
+            //                       3
             //                       /\
             //                      /  \
             //                     /    \
             //                    /      \
             //                   /        \
-            //                1 /__________\ 2
+            //                0 /__________\ 1
             //                 / \        / \
             //                /   \      /   \
             //               /     \    /     \
             //              /       \  /       \
-            //           4 /_________\/_________\ 4
-            //            *          3           *
+            //           3 /_________\/_________\ 3
+            //            *          2           *
 
 
         if (this->ptr_tetrahedron_mesh_)
@@ -712,4 +712,51 @@ namespace RRM
         return this->model_matrix_;
     }
 
+	void FlowModel::uploadTetrahedron(const std::vector<float>& _vertices, const std::vector<unsigned int>&       _cells,       /// From Flow Diagnostic code 
+								      std::vector<float>&       vertices_array_, std::vector < unsigned int >&    faces_array)  /// To OpenGL buffers
+	{
+
+		/// The 3D Tetrahedron Mesh come from Tetget.
+
+		// @see  TETGEN DOCUMENTATION at http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html
+		// 5.2.4  .ele files
+
+
+		// An.ele file contains a list of tetrahedra.
+
+		//	First line : <# of tetrahedra> <nodes per tet. (4 or 10)>
+		//	<region attribute(0 or 1)>
+		//	Remaining lines list # of tetrahedra :
+		//  <tetrahedron #> <node> <node> ... <node>[attribute]
+		//	...
+		//	Each tetrahedron has four corners(or ten corners if the - o2 switch is used).
+		//  Nodes are indices into the corresponding.node file.
+		//  The first four nodes are the corner vertices.If - o2 switch is used, the remaining six nodes are generated on the midpoints of the edges of the tetrahedron.
+		//  Figure 20 shows how these corners and the second - order nodes are locally numbered.Second order nodes are output only.They are omitted by the mesh reconstruction(the - r switch).
+		//
+		//                       3
+		//                       /\
+		//                      /  \
+		//                     /    \
+		//                    /      \
+		//                   /        \
+		//                0 /__________\ 1
+		//                 / \        / \
+		//                /   \      /   \
+		//               /     \    /     \
+		//              /       \  /       \
+		//           3 /_________\/_________\ 3
+		//            *          2           *
+
+
+		/// For each Cell
+		/// For each Face 
+		/// [v0,v1,v2]   ...
+
+	}
+
+
 } /* namespace RRM */
+
+
+

@@ -196,7 +196,7 @@ else()
 
     ExternalProject_Add(
         Eigen3
-        GIT_REPOSITORY https://github.com/RLovelett/eigen 
+        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
         SOURCE_DIR ${EIGEN3_SOURCE}
         STEP_TARGETS build
         CONFIGURE_COMMAND ""
