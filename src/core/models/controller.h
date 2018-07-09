@@ -27,6 +27,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 #include <map>
 
 #include <QFile>
@@ -49,22 +50,15 @@ class Volume;
 class Object;
 
 
+using VolumePtr = std::shared_ptr< Volume >;
+using CrossSectionPtr = std::shared_ptr< CrossSection >;
+using ObjectPtr = std::shared_ptr< Object >;
+using RegionsPtr = std::shared_ptr< Regions >;
+
 
 class Controller
 {
     public:
-
-        /* struct TriangleMesh */
-        /* { */
-        /*     std::vector<double> vertex_list; */
-        /*     std::vector<std::size_t> face_list; */
-        /* }; */
-
-        /* struct CurveMesh */
-        /* { */
-        /*     std::vector<double> vertex_list; */
-        /*     std::vector<std::size_t> edge_list; */
-        /* }; */
 
         using TriangleMesh = RulesProcessor::TriangleMesh;
         using CurveMesh = RulesProcessor::CurveMesh;
@@ -73,18 +67,22 @@ class Controller
         enum class MeshResolution{ LOW, MEDIUM, HIGH };
 
 
-        Controller() = default;
+        Controller();
+        Controller(const Controller & cont_);
+        Controller & operator=(const Controller & cont_);
+        ~Controller();
 
+
+        ///=========================================================
+
+
+        void init();
 
         void setScene3d( Scene3d* const& sc_ );
         void setObjectTree( ObjectTree* const& ot_ );
 
         void setCurrentColor( int r, int g, int b );
         void getCurrentColor( int& r, int& g, int& b ) const ;
-
-
-        void init();
-
 
         void addVolume();
 
@@ -262,6 +260,7 @@ class Controller
         void exportToIrapGrid();
 
     protected:
+
 
 
         Scene3d* scene3d = nullptr;

@@ -27,26 +27,67 @@ Object::Object()
 {
     defineIndex();
     initialize();
+
+    std::cout << "Creating object " << this << std::endl << std::flush;
 }
 
-
-void Object::defineIndex()
+Object::Object( const Object & obj_ )
 {
-    index = number_of_objects;
-    number_of_objects++;
+    this->index = obj_.index;
+    this->name = obj_.name;
+    this->log = obj_.log;
+    this->color = obj_.color;
+    this->min = obj_.min;
+    this->max = obj_.max;
+    this->editable = obj_.editable;
+    this->selectable = obj_.selectable;
+    this->selected = obj_.selected;
+    this->visible = obj_.visible;
+    this->active = obj_.active;
 }
+
+Object& Object::operator=( const Object & obj_ )
+{
+    this->index = obj_.index;
+    this->name = obj_.name;
+    this->log = obj_.log;
+    this->color = obj_.color;
+    this->min = obj_.min;
+    this->max = obj_.max;
+    this->editable = obj_.editable;
+    this->selectable = obj_.selectable;
+    this->selected = obj_.selected;
+    this->visible = obj_.visible;
+    this->active = obj_.active;
+    return *this;
+}
+
+void Object::setLog(const std::string& log_)
+{
+    log = log_;
+}
+
+std::string Object::getLog() const
+{
+    return log;
+}
+
+
+///======================================================================
+
 
 void Object::setIndex( const size_t id_ )
 {
     index = id_;
     number_of_objects = id_ + 1;
+
+    // index =  id_
 }
 
 std::size_t Object::getIndex() const
 {
     return index;
 }
-
 
 
 void Object::setName( const std::string& name_ )
@@ -60,6 +101,129 @@ std::string Object::getName() const
 }
 
 
+void Object::setColor(int r_, int g_, int b_)
+{
+    color.red = r_;
+    color.green = g_;
+    color.blue = b_;
+
+}
+void Object::getColor(int& r_, int& g_, int& b_) const
+{
+    r_ = color.red;
+    g_ = color.green;
+    b_ = color.blue;
+}
+
+void Object::setBoundingBox( double xmin_, double xmax_, double ymin_, double ymax_, double zmin_, double zmax_ )
+{
+    min.x = xmin_;
+    max.x = xmax_;
+
+    min.y = ymin_;
+    max.y = ymax_;
+
+    min.z = zmin_;
+    max.z = zmax_;
+
+}
+
+void Object::getBoundingBox( double & xmin_, double & xmax_, double & ymin_, double & ymax_, double & zmin_, double & zmax_ )
+{
+    xmin_ = min.x;
+    xmax_ = max.x;
+
+    ymin_ = min.y;
+    ymax_ = max.y;
+
+    zmin_ = min.z;
+    zmax_ = max.z;
+}
+
+void Object::setMaximumBounding( double xmax_, double ymax_, double zmax_ )
+{
+    max.x = xmax_;
+    max.y = ymax_;
+    max.z = zmax_;
+}
+
+void Object::setMinimumBounding( double xmin_, double ymin_, double zmin_ )
+{
+    min.x = xmin_;
+    min.y = ymin_;
+    min.z = zmin_;
+}
+
+
+
+void Object::setEditable( bool status_ )
+{
+    editable = status_;
+}
+
+bool Object::isEditable() const
+{
+    return editable;
+}
+
+void Object::setSelectable( bool status_ )
+{
+    selectable = status_;
+}
+
+bool Object::isSelectable() const
+{
+    return selectable;
+}
+
+
+void Object::setSelected( bool status_ )
+{
+    selected = status_;
+}
+
+
+bool Object::isSelected() const
+{
+    return selected;
+}
+
+
+
+void Object::setVisible( bool status_ )
+{
+    visible = status_;
+}
+
+bool Object::isVisible() const
+{
+    return visible;
+}
+
+
+
+void Object::setActive( bool status_ )
+{
+    active = status_;
+}
+
+bool Object::isActive() const
+{
+    return active;
+}
+
+
+///======================================================================
+
+
+
+
+void Object::defineIndex()
+{
+    index = number_of_objects;
+    number_of_objects++;
+}
+
 
 void Object::setType( const Settings::Objects::ObjectType &type_ )
 {
@@ -70,87 +234,6 @@ Settings::Objects::ObjectType Object::getType() const
 {
     return type;
 }
-
-
-
-void Object::setColor( int r, int g, int b )
-{
-    color.r = r;
-    color.g = g;
-    color.b = b;
-
-}
-
-
-void Object::getColor( int& r, int& g, int& b ) const
-{
-    r = color.r;
-    g = color.g;
-    b = color.b;
-}
-
-
-
-void Object::setEditable( const bool status_ )
-{
-    is_editable = status_;
-}
-
-bool Object::isEditable() const
-{
-    return is_editable;
-}
-
-
-
-void Object::setSelectable( const bool status_ )
-{
-    is_selectable = status_;
-}
-
-bool Object::isSelectable() const
-{
-    return is_selectable;
-}
-
-
-
-void Object::setSelected( const bool status_ )
-{
-//    if( isSelectable() == false ) return;
-    is_selected = status_;
-}
-
-
-bool Object::isSelected() const
-{
-    return is_selected;
-}
-
-
-
-void Object::setVisible( const bool status_ )
-{
-    is_visible = status_;
-}
-
-bool Object::isVisible() const
-{
-    return is_visible;
-}
-
-
-
-void Object::setActive( const bool status_ )
-{
-    is_active = status_;
-}
-
-bool Object::isActive() const
-{
-    return is_active;
-}
-
 
 
 void Object::setDone( const bool status_ )
@@ -318,39 +401,6 @@ bool Object::isTrajectoryAdmissible()
 }
 
 
-
-
-void Object::setMaxMin( double maxx_, double maxy_, double maxz_,
-                        double minx_, double miny_, double minz_ )
-{
-    max.x = maxx_;
-    max.y = maxy_;
-    max.z = maxz_;
-
-    min.x = minx_;
-    min.y = miny_;
-    min.z = minz_;
-
-
-}
-
-
-void Object::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
-                        double& minx_, double& miny_, double& minz_ ) const
-{
-
-    maxx_ = max.x;
-    maxy_ = max.y;
-    maxz_ = max.z;
-
-    minx_ = min.x;
-    miny_ = min.y;
-    minz_ = min.z;
-
-}
-
-
-
 void Object::clear()
 {
 
@@ -376,9 +426,9 @@ void Object::initialize()
     is_active = true;
     is_done = false;
 
-    color.r = 255;
-    color.g = 0;
-    color.b = 0;
+    color.red = 255;
+    color.green = 0;
+    color.blue = 0;
 
     max.x = 0;
     max.y = 0;

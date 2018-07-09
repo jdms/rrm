@@ -30,6 +30,44 @@
 #include "object.h"
 
 
+Controller::Controller()
+{
+}
+
+Controller::Controller(const Controller & cont_)
+{
+//    this->app = cont_.app;
+//    this->csection = cont_.csection;
+//    this->model = cont_.model;
+
+//    object_defined = false;
+
+}
+
+Controller& Controller::operator=(const Controller & cont_)
+{
+//    this->app = cont_.app;
+//    this->csection = cont_.csection;
+//    this->model = cont_.model;
+//    object_defined = false;
+
+    return *this;
+}
+
+Controller::~Controller()
+{
+}
+
+
+///=========================================================
+
+void Controller::init()
+{
+    addVolume();
+    addObject();
+}
+
+
 
 void Controller::setScene3d( Scene3d* const& sc_ )
 {
@@ -61,12 +99,6 @@ void Controller::getCurrentColor( int& r, int& g, int& b ) const
     b = current_color.b;
 }
 
-
-void Controller::init()
-{
-    addVolume();
-    addObject();
-}
 
 
 
@@ -121,7 +153,8 @@ void Controller::setVolumeDimensions( const double& width_, const double& height
         volume->getOrigin( ox_, oy_, oz_ );
         volume->getGeometry( w, h, l );
 
-        item_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+        item_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
+//        item_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
     }
 
     updateBoundingBoxRulesProcessor();
@@ -135,11 +168,11 @@ void Controller::getVolumeDimensions( double& width_, double& height_, double& l
 }
 
 
+
 void Controller::setVolumeName( const std::string& name_ )
 {
     volume->setName( name_ );
 }
-
 
 const std::string& Controller::getVolumeName() const
 {
@@ -374,7 +407,8 @@ bool Controller::addObject( std::size_t index_ )
     volume->getGeometry( w, h, l );
 
 
-    obj_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+    obj_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
+//    obj_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
     obj_->setColor( current_color.r, current_color.g, current_color.b );
 
     bool status_ = objects.addElement( current_object, obj_ );
