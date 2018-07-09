@@ -53,6 +53,9 @@ class Object
         void setLog(const std::string& log_);
         std::string getLog() const;
 
+        ~Object();
+
+
         ///======================================================================
 
 

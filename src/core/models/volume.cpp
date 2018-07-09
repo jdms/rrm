@@ -26,34 +26,85 @@
 
 Volume::Volume()
 {
+    std::cout << "VOLUME CREATED" << std::endl << std::flush;
     initialize();
 }
+
+Volume::Volume(const Volume& volume_)
+{
+
+    this->originx = volume_.originx;
+    this->originy = volume_.originy;
+    this->originz = volume_.originz;
+
+    this->width = volume_.width;
+    this->height = volume_.height;
+    this->lenght = volume_.lenght;
+
+    std::cout << "VOLUME CREATED" << std::endl << std::flush;
+
+}
+
+
+Volume& Volume::operator=(const Volume& volume_)
+{
+    this->originx = volume_.originx;
+    this->originy = volume_.originy;
+    this->originz = volume_.originz;
+
+    this->width = volume_.width;
+    this->height = volume_.height;
+    this->lenght = volume_.lenght;
+
+    return *this;
+}
+
+Volume::~Volume()
+{
+
+}
+
+
+void Volume::setGeometry( double ox_, double oy_, double oz_, double w_, double h_, double l_ )
+{
+    setOrigin( ox_, oy_, oz_ );
+    setDimensions( w_, h_, l_ );
+}
+
+void Volume::getGeometry( double & ox_, double & oy_, double & oz_, double & w_, double & h_, double & l_ ) const
+{
+    getOrigin( ox_, oy_, oz_ );
+    getDimensions( w_, h_, l_ );
+}
+
+
+///=================================================================
 
 
 void Volume::setOrigin( double ox_, double oy_, double oz_ )
 {
-    origin_x = ox_;
-    origin_y = oy_;
-    origin_z = oz_;
+    originx = ox_;
+    originy = oy_;
+    originz = oz_;
 }
 
 void Volume::getOrigin( double& ox_, double& oy_, double& oz_ ) const
 {
-    ox_ = origin_x;
-    oy_ = origin_y;
-    oz_ = origin_z;
+    ox_ = originx;
+    oy_ = originy;
+    oz_ = originz;
 }
 
-void Volume::setGeometry( double w_, double h_, double l_ )
+void Volume::setDimensions( double w_, double h_, double l_ )
 {
     width = w_;
     height = h_;
     lenght = l_;
 }
 
-void Volume::getGeometry( double& w_, double& h_, double& l_ ) const
+void Volume::getDimensions( double & w_, double & h_, double & l_ ) const
 {
-    w_ = width ;
+    w_ = width;
     h_ = height;
     l_ = lenght;
 }
@@ -68,7 +119,6 @@ double Volume::getWidth() const
 {
     return width;
 }
-
 
 void Volume::setHeight( double h_  )
 {
@@ -92,6 +142,133 @@ double Volume::getLenght() const
 }
 
 
+void Volume::getFrontFace( std::vector< double >& vertices_ ) const
+{
+    vertices_.push_back( originx );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+}
+
+void Volume::getRightFace( std::vector< double >& vertices_ ) const
+{
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz  );
+}
+
+void Volume::getBackFace( std::vector< double >& vertices_ ) const
+{
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz );
+}
+
+void Volume::getLeftFace( std::vector< double >& vertices_ ) const
+{
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz );
+}
+
+void Volume::getTopFace( std::vector< double >& vertices_ ) const
+{
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy + height );
+    vertices_.push_back( originz + lenght );
+}
+
+void Volume::getBottomFace( std::vector< double >& vertices_ ) const
+{
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz );
+
+    vertices_.push_back( originx + width );
+    vertices_.push_back( originy );
+    vertices_.push_back( originz + lenght );
+
+    vertices_.push_back( originx );
+    vertices_.push_back( originy  );
+    vertices_.push_back( originz + lenght );
+}
+
+
+///=================================================================
+
+
+
+
+
 
 void Volume::setName( const std::string name_ )
 {
@@ -105,126 +282,6 @@ const std::string& Volume::getName() const
     return name;
 }
 
-
-void Volume::getFrontFace( std::vector< double >& vertices_ ) const
-{
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-}
-
-void Volume::getRightFace( std::vector< double >& vertices_ ) const
-{
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z  );
-}
-
-void Volume::getBackFace( std::vector< double >& vertices_ ) const
-{
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z );
-}
-
-void Volume::getLeftFace( std::vector< double >& vertices_ ) const
-{
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z );
-}
-
-void Volume::getTopFace( std::vector< double >& vertices_ ) const
-{
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y + height );
-    vertices_.push_back( origin_z + lenght );
-}
-
-void Volume::getBottomFace( std::vector< double >& vertices_ ) const
-{
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z );
-
-    vertices_.push_back( origin_x + width );
-    vertices_.push_back( origin_y );
-    vertices_.push_back( origin_z + lenght );
-
-    vertices_.push_back( origin_x );
-    vertices_.push_back( origin_y  );
-    vertices_.push_back( origin_z + lenght );
-}
 
 
 bool Volume::addObject( std::size_t id_, Object* const& obj_ )
@@ -371,7 +428,7 @@ void Volume::updateDimensions()
     std::cout << "New maxs: " << maxx_ << ", " << maxy_ << ", " << maxz_ << std::endl << std::flush;
 
 //    setOrigin( minx_, miny_, minz_ );
-    setGeometry( std::fabs( maxx_ - minx_ ), std::fabs( maxy_ - miny_ ), std::fabs( maxz_ - minz_ ) );
+    setDimensions( std::fabs( maxx_ - minx_ ), std::fabs( maxy_ - miny_ ), std::fabs( maxz_ - minz_ ) );
 
 //    setWidth( std::fabs( maxx_ - minx_ ) );
 //    setHeight( std::fabs( maxy_ - miny_ ) );
@@ -459,7 +516,8 @@ void Volume::clear()
 void Volume::initialize()
 {
     setOrigin( 0.0, 0.0, 0.0 );
-    setGeometry( 500, 500, 500 );
+    setDimensions( 500, 500, 500 );
     setVisible( true );
     setResizable( false );
 }
+

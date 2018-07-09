@@ -147,7 +147,7 @@ void CrossSection::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
     double w = 0, h = 0,  l = 0;
 
     volume->getOrigin( minx_, miny_, minz_ );
-    volume->getGeometry( w, h, l );
+    volume->getDimensions( w, h, l );
 
     maxx_ = minx_ + w;
     maxy_ = miny_ + h;

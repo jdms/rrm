@@ -138,7 +138,7 @@ void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
 void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
 {
 
-    volume->setGeometry( width_, height_, length_ );
+    volume->setDimensions( width_, height_, length_ );
     scene3d->updateVolume();
 
 
@@ -151,7 +151,7 @@ void Controller::setVolumeDimensions( const double& width_, const double& height
         double ox_ = 0, oy_ = 0, oz_ = 0;
 
         volume->getOrigin( ox_, oy_, oz_ );
-        volume->getGeometry( w, h, l );
+        volume->getDimensions( w, h, l );
 
         item_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
 //        item_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
@@ -164,7 +164,7 @@ void Controller::setVolumeDimensions( const double& width_, const double& height
 
 void Controller::getVolumeDimensions( double& width_, double& height_, double& length_ ) const
 {
-    volume->getGeometry( width_, height_, length_ );
+    volume->getDimensions( width_, height_, length_ );
 }
 
 
@@ -404,7 +404,7 @@ bool Controller::addObject( std::size_t index_ )
     double ox_ = 0, oy_ = 0, oz_ = 0;
 
     volume->getOrigin( ox_, oy_, oz_ );
-    volume->getGeometry( w, h, l );
+    volume->getDimensions( w, h, l );
 
 
     obj_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
@@ -1373,7 +1373,7 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     double ox_ = 0, oy_ = 0, oz_ = 0;
 
     volume->getOrigin( ox_, oy_, oz_ );
-    volume->getGeometry( w, h, l );
+    volume->getDimensions( w, h, l );
 
 
     std::vector< double > vertices_;
@@ -1384,7 +1384,7 @@ void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& region
     Volume* vol1_ = new Volume();
     vol1_->setVertices( vertices_ );
     vol1_->setOrigin( ox_, oy_, oz_ );
-    vol1_->setGeometry( w, h, l );
+    vol1_->setDimensions( w, h, l );
     scene3d->addOutputVolume( vol1_ );
     object_tree->addOutputVolume();
 
