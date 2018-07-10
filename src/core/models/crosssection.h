@@ -29,6 +29,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 #include "./core/definitions/constants.hpp"
 #include "container.h"
@@ -49,10 +50,14 @@ class CrossSection: public Object
 
 
         CrossSection();
-        CrossSection( const Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
+        CrossSection( Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
         CrossSection( const CrossSection & csection_ );
         CrossSection & operator=( const CrossSection & csection_ );
         ~CrossSection();
+
+
+        void updateDimensions();
+
 
 ///========================================================================
 
@@ -60,8 +65,15 @@ class CrossSection: public Object
         std::size_t getIndex() const;
 
 
-        void setVolume( const Volume* raw_ );
+        void setVolume( Volume* volume_ );
         const Volume* getVolume() const;
+
+        void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+        Settings::CrossSection::CrossSectionDirections getDirection() const;
+
+        void setDepth( double depth_ );
+        double getDepth() const;
+
 
 ///========================================================================
 
@@ -83,12 +95,6 @@ class CrossSection: public Object
                         double& minx_, double& miny_, double& minz_ ) const;
 
 
-        void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
-        Settings::CrossSection::CrossSectionDirections getDirection() const;
-
-
-        void setDepth( double depth_ );
-        double getDepth() const;
 
 
         void setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ );
@@ -118,6 +124,15 @@ class CrossSection: public Object
 
     private:
 
+        std::shared_ptr< Volume > volume;
+
+        double width = 0.0;
+        double height = 0.0;
+        double depth = 0.0;
+        Settings::CrossSection::CrossSectionDirections direction;
+
+
+
         struct Point
         {
             double x;
@@ -127,16 +142,8 @@ class CrossSection: public Object
         std::size_t index;
         static std::size_t number_of_csections;
 
-        double width = 0.0;
-        double height = 0.0;
-        double depth = 0.0;
-        Settings::CrossSection::CrossSectionDirections direction;
-
         bool is_visible;
-
-
         ObjectsContainer objects;
-        const Volume* volume;
 
         std::string image_path;
         Point image_origin;
