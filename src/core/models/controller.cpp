@@ -225,7 +225,329 @@ void Controller::removeCrossSection( const Settings::CrossSection::CrossSectionD
     {
         model.csectionsZ.erase( depth_ );
     }
+
+
 }
+
+bool Controller::addObject( std::size_t index_ )
+{
+
+    ObjectPtr obj_ = std::shared_ptr< Object >();
+
+
+    if( index_ != UNDEFINED_INDEX )
+        obj_->setIndex( index_ );
+
+    current_object = obj_->getIndex();
+    model.objects[ current_object ] = obj_;
+
+    object_defined = true;
+
+
+//    Object* obj_ = new Object();
+
+//    if( index_ != 9999 )
+//    {
+//        obj_->setIndex( index_ );
+//        current_object = index_;
+//    }
+//    else
+//        current_object = obj_->getIndex();
+
+
+//    double w = 0, h = 0,  l = 0;
+//    double ox_ = 0, oy_ = 0, oz_ = 0;
+
+//    volume->getOrigin( ox_, oy_, oz_ );
+//    volume->getDimensions( w, h, l );
+
+
+//    obj_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
+////    obj_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+//    obj_->setColor( current_color.r, current_color.g, current_color.b );
+
+//    bool status_ = objects.addElement( current_object, obj_ );
+//    if( status_ == false ) return false;
+
+//    volume->addObject( current_object, obj_ );
+
+//    object_tree->addObject( current_object, Settings::Objects::ObjectType::STRATIGRAPHY,
+//                            obj_->getName(), current_color.r, current_color.g, current_color.b );
+//    object_tree->setObjectVisibility( current_object, false );
+//    scene3d->addObject( obj_ );
+
+    return true;
+}
+
+const ObjectPtr& Controller::getObject( std::size_t index_ ) const
+{
+    if ( model.objects.find( index_ ) == model.objects.end() ) return nullptr;
+    return model.objects.at( index_ );
+
+//    if( objects.findElement( index_) == false )
+//        return nullptr;
+//    return objects.getElement( index_ );
+}
+
+const ObjectPtr& Controller::getCurrentObject() const
+{
+    return getObject( current_object );
+}
+
+
+void Controller::setObjectName( std::size_t index_, const std::string& name_ )
+{
+    if ( model.objects.find( index_ ) == model.objects.end() ) return;
+    model.objects[ index_ ]->setName( name_ );
+
+//    if( objects.findElement( index_) == false )
+//        return;
+
+//    Object* const& obj_ = objects.getElement( index_ );
+//    obj_->setName( name_ );
+}
+
+std::string Controller::getObjectName( std::size_t index_) const
+{
+    if ( model.objects.find( index_ ) == model.objects.end() ) return std::string();
+    return model.objects.at( index_ )->getName();
+
+    /*
+    if( objects.findElement( index_) == false )
+        return std::string("");
+    Object* const& obj_ = objects.getElement( index_ );
+    return obj_->getName();*/
+}
+
+
+void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
+{
+    if ( model.objects.find( index_ ) == model.objects.end() ) return;
+    model.objects[ index_ ]->setVisible( status_ );
+
+//    if( objects.findElement( index_ ) == false )
+//        return;
+
+//    Object* const& obj_ = objects.getElement( index_ );
+//    obj_->setVisible( status_ );
+//    scene3d->updateObject( index_ );
+
+}
+
+void Controller::setObjectsVisibility( bool status_ )
+{
+    for (auto it : model.objects)
+    {
+        setObjectVisibility( it.first, status_ );
+    }
+}
+
+
+void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
+{
+
+    if ( model.objects.find( index_ ) == model.objects.end() ) return;
+    model.objects[ index_ ]->setColor( r_, g_, b_ );
+
+
+//    if( objects.findElement( index_) == false )
+//        return;
+
+//    Object* const& obj_ = objects.getElement( index_ );
+//    obj_->setColor( r_, g_, b_ );
+
+//    scene3d->updateObject( index_ );
+//    object_tree->updateObjectColor( index_, r_, g_, b_ );
+}
+
+
+void Controller::setObjectsActive( bool status_ )
+{
+    for ( auto it : model.objects )
+    {
+        setObjectActive( it.first, status_ );
+    }
+}
+
+void Controller::setObjectActive(std::size_t index_, bool status_)
+{
+    if ( model.objects.find(index_) == model.objects.end() ) return;
+    model.objects[ index_ ]->setActive(status_);
+}
+
+bool Controller::isObjectActive(std::size_t index_) const
+{
+    if (model.objects.find(index_) == model.objects.end()) return false;
+    return model.objects.at(index_)->isActive();
+}
+
+
+void Controller::setObjectSelectable(std::size_t index_, bool status_)
+{
+    if (model.objects.find(index_) == model.objects.end()) return;
+    model.objects[index_]->setSelectable(status_);
+}
+
+bool Controller::isObjectSelectable(std::size_t index_) const
+{
+    if (model.objects.find(index_) == model.objects.end()) return false;
+    return model.objects.at(index_)->isSelectable();
+}
+
+
+void Controller::setObjectSelected(std::size_t index_, bool status_)
+{
+    if (model.objects.find(index_) == model.objects.end()) return;
+    model.objects[index_]->setSelected(status_);
+}
+
+bool Controller::isObjectSelected(std::size_t index_) const
+{
+    if (model.objects.find(index_) == model.objects.end()) return false;
+    return model.objects.at(index_)->isSelected();
+}
+
+
+bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ )
+{
+
+    if ( object_defined == false )
+    {
+        addObject();
+    }
+    else
+    {
+        //structural
+    }
+
+    bool added_curve_ = object->addCurve( depth_, curve_ );
+    if ( added_curve_ == false ) return false;
+
+    // added the cross-section into the list, if its not there yet
+    CrossSectionPtr csection_;
+    bool status_ = getCrossSection( dir_, depth_, csection_ );
+    if (status_ == false)
+    {
+        addCrossSection(dir_, depth_);
+    }
+
+//    updatePreviewSurface();
+    return true;
+
+    /*
+    if( objects.findElement( current_object ) == false )
+        return false;
+
+    if( curve_.isEmpty() == true ) return false;
+
+
+
+    Object* const& obj_ = objects.getElement( current_object );
+    if( obj_ == nullptr ) return false;
+
+
+    if( obj_->hasCurve( depth_ ) == false )
+    {
+        bool status_ = obj_->addCurve( depth_, curve_ );
+        if( status_ == false )
+            return false;
+    }
+    else
+        obj_->updateCurve( depth_, curve_ );
+
+
+    obj_->setEditable( true );
+    obj_->setVisible( true );
+
+
+    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
+    cs_->addObject( obj_->getIndex(), &curve_ );
+
+    volume->addCrossSection( cs_->getIndex(), cs_ );
+
+    if( all_csections.findElement( depth_ ) == false )
+        all_csections.addElement( depth_, cs_ );
+
+
+    createPreviewSurface();
+
+
+    return true;
+*/
+
+}
+
+
+bool Controller::removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ )
+{
+    if ( object_defined == false ) return false;
+
+    object->removeCurve( depth_ );
+
+    CrossSectionPtr csection_;
+    bool status_ = getCrossSection( dir_, depth_, csection_ );
+    if (status_ == false)
+    {
+        return false;
+    }
+
+    //TODO: check this if. Remove cross-section only of vector of used csections, not from the opened fixed csections
+//    if ( csection_->isEmpty() == true )
+//        removeCrossSection( dir_, depth_ );
+
+    return true;
+
+}
+
+
+void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
+{
+    if ( object_defined == false )
+    {
+        addObject();
+    }
+    else
+    {
+        //structural
+    }
+
+    object->addTrajectory(curve_);
+
+
+
+//    if( objects.findElement( current_object ) == false )
+//        return false;
+
+//    Object* const& obj_ = objects.getElement( current_object );
+//    if( obj_ == nullptr ) return false;
+
+//    bool status_ = obj_->addTrajectory( curve_ );
+//    if( status_ == false ) return false;
+
+//    obj_->setEditable( true );
+//    obj_->setVisible( true );
+//    object_tree->setObjectVisibility( current_object, true );
+
+//    return true;
+
+}
+
+void Controller::removeTrajectoryFromObject()
+{
+    if ( object_defined == false ) return;
+    object->removeTrajectory();
+
+
+//    if( objects.findElement( current_object ) == false )
+//        return;
+
+//    Object* const& obj_ = objects.getElement( current_object );
+//    obj_->removeTrajectory();
+
+}
+
+
+
 
 ///==========================================================================
 
@@ -259,9 +581,6 @@ void Controller::getCurrentColor( int& r, int& g, int& b ) const
     g = current_color.g;
     b = current_color.b;
 }
-
-
-
 
 
 void Controller::addVolume()
@@ -336,15 +655,10 @@ const std::string& Controller::getVolumeName() const
 }
 
 
-
-
 bool Controller::getVolumeVisibility() const
 {
     return volume->isVisible();
 }
-
-
-
 
 
 void Controller::setupCrossSectionDiscretization( std::size_t& disc_, double& step_ )
@@ -535,90 +849,6 @@ CrossSection* Controller::getCurrentCrossSection() const
 
 
 
-
-bool Controller::addObject( std::size_t index_ )
-{
-
-    Object* obj_ = new Object();
-
-    if( index_ != 9999 )
-    {
-        obj_->setIndex( index_ );
-        current_object = index_;
-    }
-    else
-        current_object = obj_->getIndex();
-
-
-    double w = 0, h = 0,  l = 0;
-    double ox_ = 0, oy_ = 0, oz_ = 0;
-
-    volume->getOrigin( ox_, oy_, oz_ );
-    volume->getDimensions( w, h, l );
-
-
-    obj_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
-//    obj_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
-    obj_->setColor( current_color.r, current_color.g, current_color.b );
-
-    bool status_ = objects.addElement( current_object, obj_ );
-    if( status_ == false ) return false;
-
-    volume->addObject( current_object, obj_ );
-
-    object_tree->addObject( current_object, Settings::Objects::ObjectType::STRATIGRAPHY,
-                            obj_->getName(), current_color.r, current_color.g, current_color.b );
-    object_tree->setObjectVisibility( current_object, false );
-    scene3d->addObject( obj_ );
-
-    return true;
-}
-
-
-void Controller::setObjectName( std::size_t index_, const std::string& name_ )
-{
-    if( objects.findElement( index_) == false )
-        return;
-
-    Object* const& obj_ = objects.getElement( index_ );
-    obj_->setName( name_ );
-}
-
-
-std::string Controller::getObjectName( std::size_t index_) const
-{
-    if( objects.findElement( index_) == false )
-        return std::string("");
-    Object* const& obj_ = objects.getElement( index_ );
-    return obj_->getName();
-}
-
-
-void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
-{
-    if( objects.findElement( index_ ) == false )
-        return;
-
-    Object* const& obj_ = objects.getElement( index_ );
-    obj_->setVisible( status_ );
-    scene3d->updateObject( index_ );
-
-}
-
-
-void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
-{
-    if( objects.findElement( index_) == false )
-        return;
-
-    Object* const& obj_ = objects.getElement( index_ );
-    obj_->setColor( r_, g_, b_ );
-
-    scene3d->updateObject( index_ );
-    object_tree->updateObjectColor( index_, r_, g_, b_ );
-}
-
-
 void Controller::saveObjectInformation( std::size_t index_, const std::string & text_ )
 {
     if( objects.findElement( index_ ) == false )
@@ -639,49 +869,7 @@ const std::string& Controller::getObjectInformation( std::size_t index_ ) const
 }
 
 
-bool Controller::addObjectCurve( PolyCurve curve_, double depth_ )
-{
 
-    if( objects.findElement( current_object ) == false )
-        return false;
-
-    if( curve_.isEmpty() == true ) return false;
-
-
-
-    Object* const& obj_ = objects.getElement( current_object );
-    if( obj_ == nullptr ) return false;
-
-
-    if( obj_->hasCurve( depth_ ) == false )
-    {
-        bool status_ = obj_->addCurve( depth_, curve_ );
-        if( status_ == false )
-            return false;
-    }
-    else
-        obj_->updateCurve( depth_, curve_ );
-
-
-    obj_->setEditable( true );
-    obj_->setVisible( true );
-
-
-    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
-    cs_->addObject( obj_->getIndex(), &curve_ );
-
-    volume->addCrossSection( cs_->getIndex(), cs_ );
-
-    if( all_csections.findElement( depth_ ) == false )
-        all_csections.addElement( depth_, cs_ );
-
-
-    createPreviewSurface();
-
-
-    return true;
-
-}
 
 
 bool Controller::removeObjectCurve( std::size_t index_, double depth_ )
@@ -709,53 +897,6 @@ bool Controller::removeObjectCurve( double depth_ )
 }
 
 
-bool Controller::addObjectTrajectory( PolyCurve curve_ )
-{
-
-    if( objects.findElement( current_object ) == false )
-        return false;
-
-    Object* const& obj_ = objects.getElement( current_object );
-    if( obj_ == nullptr ) return false;
-
-    bool status_ = obj_->addTrajectory( curve_ );
-    if( status_ == false ) return false;
-
-    obj_->setEditable( true );
-    obj_->setVisible( true );
-    object_tree->setObjectVisibility( current_object, true );
-
-    return true;
-
-}
-
-
-void Controller::removeObjectTrajectory()
-{
-
-    if( objects.findElement( current_object ) == false )
-        return;
-
-    Object* const& obj_ = objects.getElement( current_object );
-    obj_->removeTrajectory();
-
-}
-
-
-
-
-Object* Controller::getCurrentObject() const
-{
-    return getObject( current_object );
-}
-
-
-Object* Controller::getObject( std::size_t index_ ) const
-{
-    if( objects.findElement( index_) == false )
-        return nullptr;
-    return objects.getElement( index_ );
-}
 
 
 
@@ -1832,7 +1973,7 @@ void Controller::setPreviewEnabled( bool status_ )
     preview_enabled = status_;
     if( preview_enabled == true ) return;
 
-    Object* obj_ = getCurrentObject();
+    Object* obj_ = getCurrentObject().get();
     obj_->clearPreviewCurves();
 
 }

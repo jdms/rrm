@@ -376,8 +376,8 @@ void RRMApplication::createObjectSurface()
     mainwindow->controller->addObject();
     mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
 
-    mainwindow->sketch_window->addObject( mainwindow->controller->getCurrentObject() );
-    mainwindow->sketch_topview_window->addTrajectory( mainwindow->controller->getCurrentObject() );
+    mainwindow->sketch_window->addObject( mainwindow->controller->getCurrentObject().get() );
+    mainwindow->sketch_topview_window->addTrajectory( mainwindow->controller->getCurrentObject().get() );
 
     updateSketchingCanvas();
     defineRandomColor();
