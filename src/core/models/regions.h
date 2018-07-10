@@ -32,6 +32,12 @@
 #include "./core/definitions/constants.hpp"
 
 
+struct Domain
+{
+    std::set< std::size_t > regions_set;
+};
+
+
 class Regions: public Object
 {
     public:
