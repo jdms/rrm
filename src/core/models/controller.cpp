@@ -39,19 +39,19 @@ Controller::Controller()
 Controller::Controller(const Controller & cont_)
 {
     this->app = cont_.app;
-//    this->csection = cont_.csection;
+    this->csection = cont_.csection;
     this->model = cont_.model;
-
-//    object_defined = false;
+    this->object_defined = cont_.object_defined;
 
 }
 
 Controller& Controller::operator=(const Controller & cont_)
 {
+
     this->app = cont_.app;
-//    this->csection = cont_.csection;
+    this->csection = cont_.csection;
     this->model = cont_.model;
-//    object_defined = false;
+    this->object_defined = cont_.object_defined;
 
     return *this;
 }
@@ -86,6 +86,11 @@ void Controller::init()
 //    addObject();
 }
 
+
+///
+/// Volumes Methods
+///
+
 void Controller::resizeVolume(double width_, double height_, double depth_)
 {
     model.volume->setDimensions( width_, height_, depth_ );
@@ -100,6 +105,7 @@ void Controller::setVolumeName( const std::string& name_ )
 //    volume->setName( name_ );
 }
 
+
 void Controller::setVolumeVisibility( bool status_ )
 {
     model.volume->setVisible(status_);
@@ -111,6 +117,10 @@ void Controller::setVolumeVisibility( bool status_ )
 }
 
 
+///
+/// Cross-Sections Methods
+///
+
 
 void Controller::createMainCrossSection()
 {
@@ -118,9 +128,8 @@ void Controller::createMainCrossSection()
     csection->setVolume( model.volume.get() );
     csection->setDirection( Settings::CrossSection::CrossSectionDirections::Z );
     csection->setDepth( model.volume->getLenght() );
-
-
 }
+
 
 void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
@@ -144,16 +153,19 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
 //    csection->print();
 }
 
+
 void Controller::moveMainCrossSection( double depth_ )
 {
     csection->setDepth( depth_ );
 //	csection->print();
 }
 
+
 const CrossSectionPtr& Controller::getMainCrossSection() const
 {
     return csection;
 }
+
 
 
 void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
@@ -229,6 +241,13 @@ void Controller::removeCrossSection( const Settings::CrossSection::CrossSectionD
 
 }
 
+
+
+///
+/// Objects Methods
+///
+
+
 bool Controller::addObject( std::size_t index_ )
 {
 
@@ -279,6 +298,7 @@ bool Controller::addObject( std::size_t index_ )
     return true;
 }
 
+
 const ObjectPtr& Controller::getObject( std::size_t index_ ) const
 {
     if ( model.objects.find( index_ ) == model.objects.end() ) return nullptr;
@@ -289,9 +309,16 @@ const ObjectPtr& Controller::getObject( std::size_t index_ ) const
 //    return objects.getElement( index_ );
 }
 
+
 const ObjectPtr& Controller::getCurrentObject() const
 {
     return getObject( current_object );
+}
+
+
+const std::map< std::size_t, ObjectPtr >& Controller::getObjects()
+{
+    return model.objects;
 }
 
 
@@ -306,6 +333,7 @@ void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 //    Object* const& obj_ = objects.getElement( index_ );
 //    obj_->setName( name_ );
 }
+
 
 std::string Controller::getObjectName( std::size_t index_) const
 {
@@ -333,6 +361,7 @@ void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
 //    scene3d->updateObject( index_ );
 
 }
+
 
 void Controller::setObjectsVisibility( bool status_ )
 {
@@ -369,11 +398,13 @@ void Controller::setObjectsActive( bool status_ )
     }
 }
 
+
 void Controller::setObjectActive(std::size_t index_, bool status_)
 {
     if ( model.objects.find(index_) == model.objects.end() ) return;
     model.objects[ index_ ]->setActive(status_);
 }
+
 
 bool Controller::isObjectActive(std::size_t index_) const
 {
@@ -388,6 +419,7 @@ void Controller::setObjectSelectable(std::size_t index_, bool status_)
     model.objects[index_]->setSelectable(status_);
 }
 
+
 bool Controller::isObjectSelectable(std::size_t index_) const
 {
     if (model.objects.find(index_) == model.objects.end()) return false;
@@ -400,6 +432,7 @@ void Controller::setObjectSelected(std::size_t index_, bool status_)
     if (model.objects.find(index_) == model.objects.end()) return;
     model.objects[index_]->setSelected(status_);
 }
+
 
 bool Controller::isObjectSelected(std::size_t index_) const
 {
@@ -514,7 +547,6 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     object->addTrajectory(curve_);
 
 
-
 //    if( objects.findElement( current_object ) == false )
 //        return false;
 
@@ -532,6 +564,7 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 
 }
 
+
 void Controller::removeTrajectoryFromObject()
 {
     if ( object_defined == false ) return;
@@ -545,6 +578,598 @@ void Controller::removeTrajectoryFromObject()
 //    obj_->removeTrajectory();
 
 }
+
+
+
+///
+/// Updating Models Methods
+///
+
+
+
+void Controller::updateModel()
+{
+    setObjectsActive( false );
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    int number_of_actives_ = actives_.size();
+
+    for ( std::size_t j = 0; j < number_of_actives_; ++j )
+    {
+        int id_ = actives_.at( j );
+        if ( id_ == current_object ) continue;
+
+        setObjectActive( id_, true );
+        updateObjectSurface( id_ );
+        updateObjectCurves( id_ );
+    }
+
+
+//     get actives to update
+//     std::vector<int> v1 = actives
+//     std::vector<int> v2{ current_object };
+//    std::vector<int> diff;
+//    std::set_difference(v1.begin(), v1.end(), v2.begin(), v2.end(),
+//        std::inserter(diff, diff.begin()));
+
+//    srand(time(NULL));
+//    int number_of_actives_ = rand() % static_cast<int>(model.objects.size());
+
+//    for (auto j = 0; j < number_of_actives_; ++j)
+//    {
+//        int id_ = rand() % static_cast<int>(model.objects.size());
+//        if (id_ == current_object) continue;
+
+//        setObjectActive(id_, true);
+//        updateObjectSurface(id_);
+//        updateObjectCurves(id_);
+//    }
+
+
+//	for (auto obj_ : model.objects)
+//	{
+//		std::cout << "Object " << obj_.second->getId() << " is active: " <<
+//			obj_.second->isActive() << std::endl << std::endl << std::flush;
+//	}
+
+
+//============================================
+
+
+//    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
+//    setActiveAllObjects( false );
+
+//    for ( std::size_t id_: actives_ )
+//    {
+//        updateObjectSurfaces( id_ );
+//        updateObjectCurveFromCrossSection( id_, current_csection );
+//        updateObjectInFixedCrossSections( id_ );
+//    }
+
+}
+
+
+void Controller::updateObjectSurface( const std::size_t& id_ )
+{
+    // not needed to check its existence, since the id already came from the list
+    ObjectPtr obj_ = model.objects[ id_ ];
+
+    // get the surface from rules_processor
+    // get the trajectory from rules_processor
+
+
+
+    /*
+
+    Object* obj_ = objects.getElement( object_id_ );
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > faces_;
+
+    bool has_surface = rules_processor.getMesh( object_id_, vertices_, faces_ );
+    if( has_surface  == false ) return;
+
+    std::vector< double > normals_;
+    rules_processor.getNormals( object_id_, normals_ );
+
+
+    Surface surface;
+    surface.setVertices( vertices_ );
+    surface.setFaces( faces_ );
+    surface.setNormals( normals_ );
+
+
+    std::vector< double > path_;
+    bool has_path = rules_processor.getExtrusionPath( object_id_, path_ );
+    if( has_path == true )
+    {
+        obj_->removeTrajectory();
+        obj_->addTrajectory( PolyCurve( path_ ) );
+    }
+
+    obj_->setActive( true );
+    obj_->setSurface( surface );
+    obj_->setVisible( true );
+    obj_->setDone( true );
+    object_tree->setObjectVisibility( object_id_, true );
+
+    scene3d->updateObject( object_id_ );
+    */
+
+}
+
+
+void Controller::updateObjectCurves( const std::size_t& id_ )
+{
+    // not needed to check its existence, since the id already came from the list
+    ObjectPtr obj_ = model.objects[id_];
+//    obj_->removeCurves();
+
+    Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        for( auto it: model.csectionsX )
+        {
+            // we need the depth of the csections to pass to rules processor
+        }
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        for( auto it: model.csectionsY )
+        {
+            // we need the depth of the csections to pass to rules processor
+        }
+
+    }
+
+
+    /*
+    Object* obj_ = objects.getElement( object_id_ );
+    if( obj_->isDone() == true )
+    {
+
+        obj_->removeCurve( csection_depth_ );
+        if( all_csections.findElement( csection_depth_ ) == true )
+        {
+            CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+            csection_->removeObjectCurve( object_id_ );
+        }
+
+        getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+    }
+    else
+        updatePreviewCurves( obj_, csection_depth_ );
+
+
+      */
+}
+
+
+void Controller::updatePreviewSurface()
+{
+    // not needed to check its existence, since the id already came from the list
+    ObjectPtr obj_ = model.objects[current_object];
+
+    // update the curves for all cross-sections
+
+
+
+
+
+    /*
+
+    Object* const& obj_ = objects.getElement( current_object );
+    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+
+    std::vector< std::tuple< Curve2D, double > > curves_;
+    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+    {
+        double csection_id_ = it->first;
+        PolyCurve sketch_ = it->second;
+
+        if( all_csections.findElement( csection_id_ ) == false )
+            continue;
+
+        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+    }
+
+
+    applyStratigraphicRule();
+    bool surface_created = rules_processor.testSurface( current_object, curves_ );
+    if( surface_created == false )
+    {
+        obj_->removeSurface();
+        obj_->setVisible( false );
+        scene3d->updateObject( current_object );
+        updateObjectInFixedCrossSections( current_object );
+        return false;
+    }
+
+    std::vector< double > vertices_;
+    std::vector< std::size_t > faces_;
+
+    bool has_surface = rules_processor.getMesh( current_object, vertices_, faces_ );
+    if( has_surface  == false ) return false;
+
+
+    std::vector< double > normals_;
+    rules_processor.getNormals( current_object, normals_ );
+
+    object_tree->setObjectVisibility( current_object, true );
+
+    Surface surface;
+    surface.setVertices( vertices_ );
+    surface.setFaces( faces_ );
+    surface.setNormals( normals_ );
+
+    obj_->setActive( true );
+    obj_->setSurface( surface );
+    obj_->setVisible( true );
+
+    scene3d->updateObject( current_object );
+    updatePreviewCurves( obj_, current_csection );
+    updateObjectInFixedCrossSections( current_object );
+
+
+    return true;
+*/
+
+}
+
+
+void Controller::updatePreviewCurves()
+{
+    // not needed to check its existence, since the id already came from the list
+    ObjectPtr obj_ = model.objects[current_object];
+
+    // update the curves for all cross-sections
+    // if there is already a curve in the cross-section skip to get another from rules_processor.
+
+
+    /*
+void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
+{
+
+    bool has_user_curve = obj_->hasCurve( csection_depth_ );
+    has_user_curve &= all_csections.findElement( csection_depth_ );
+
+    if( ( has_user_curve == true  ) || ( preview_enabled == false ) ) return;
+
+    getCurveFromRulesProcessor( obj_, csection_depth_ );
+
+}
+*/
+
+}
+
+
+///
+/// Regions Methods
+///
+
+
+void Controller::defineRegions()
+{
+    model.regions.clear();
+
+    // get tetrahedral mesh of the regions
+
+    unsigned int number_of_regions_ = 5;
+
+    for ( unsigned int i = 0; i < number_of_regions_; ++i)
+    {
+        RegionsPtr region_ = std::make_shared< Regions >();
+        region_->setColor(255, 0, 0);
+
+        model.regions[region_->getIndex()] = region_;
+    }
+
+
+    /*
+
+
+    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
+    {
+        Regions* item_ = regions.getElement( it->first );
+        if( item_ == nullptr ) continue;
+
+        item_->clear();
+        delete item_;
+        item_ = nullptr;
+    }
+    regions.clear();
+
+    scene3d->clearOutputVolume();
+    object_tree->removeOutputVolume();
+
+
+    double w = 0, h = 0,  l = 0;
+    double ox_ = 0, oy_ = 0, oz_ = 0;
+
+    volume->getOrigin( ox_, oy_, oz_ );
+    volume->getDimensions( w, h, l );
+
+
+    std::vector< double > vertices_;
+    std::vector< std::vector< std::size_t > > regions_;
+    bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
+    if( status_ == false ) return;
+
+    Volume* vol1_ = new Volume();
+    vol1_->setVertices( vertices_ );
+    vol1_->setOrigin( ox_, oy_, oz_ );
+    vol1_->setDimensions( w, h, l );
+    scene3d->addOutputVolume( vol1_ );
+    object_tree->addOutputVolume();
+
+
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+
+    std::size_t number_of_regions = regions_.size();
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
+
+    for( std::size_t i = 0; i < number_of_regions; ++i )
+    {
+        Volume::Color color_;
+        color_.r = colors_[ 3*i ];
+        color_.g = colors_[ 3*i + 1 ];
+        color_.b = colors_[ 3*i + 2 ];
+
+//        color_.r = distr( eng );
+//        color_.g = distr( eng );
+//        color_.b = distr( eng );
+
+
+        Regions* region_ = new Regions();
+
+        region_->setIndex( i );
+        region_->setVertices( vertices_ );
+        region_->setTetrahedralCells( regions_[ i ] );
+        region_->setColor( color_.r, color_.g, color_.b );
+        region_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+
+        regions.addElement( i, region_ );
+        scene3d->addRegion( region_ );
+        object_tree->addRegion( i, region_->getName(), color_.r, color_.g, color_.b );
+
+        vol1_->addRegion( i, regions_[ i ], color_ );
+
+        regions_map_[ i ] = color_;
+    }
+
+
+*/
+
+
+}
+
+
+void Controller::setRegionsVisible(bool status_)
+{
+    for (auto it : model.regions)
+    {
+        it.second->setVisible(status_);
+    }
+
+}
+
+
+void Controller::setRegionVisible(std::size_t index_, bool status_)
+{
+    if ( model.regions.find( index_ ) == model.regions.end() ) return;
+    model.regions[ index_ ]->setVisible(status_);
+
+
+    //    if( regions.findElement( index_ ) == false )
+    //        return;
+
+    //    Regions* const& region_ = regions.getElement( index_ );
+    //    region_->setVisible( status_ );
+    //    scene3d->updateRegion( index_ );
+}
+
+
+bool Controller::isRegionVisible( std::size_t index_ ) const
+{
+    if (model.regions.find(index_) == model.regions.end()) return false;
+    return model.regions.at(index_)->isVisible();
+}
+
+
+void Controller::setRegionColor(std::size_t index_, int r_, int g_, int b_ )
+{
+    if (model.regions.find(index_) == model.regions.end()) return;
+    model.regions[index_]->setColor( r_, g_, b_ );
+
+    /*
+    if( regions.findElement( index_ ) == false )
+        return;
+
+    Regions* const& region_ = regions.getElement( index_ );
+    region_->setColor( r_, g_, b_ );
+    scene3d->updateRegion( index_ );
+*/
+}
+
+
+void Controller::getRegionColor(std::size_t index_, int& r_, int& g_, int& b_)
+const
+{
+    if (model.regions.find(index_) == model.regions.end()) return;
+    model.regions.at(index_)->getColor(r_, g_, b_);
+
+    /*
+    if( regions.findElement( index_ ) == false )
+        return;
+
+    Regions* const& region_ = regions.getElement( index_ );
+    region_->getColor( r_, g_, b_ );
+*/
+}
+
+
+void Controller::setRegionsActive(bool status_)
+{
+    for (auto it : model.regions)
+    {
+        it.second->setActive(status_);
+    }
+}
+
+
+void Controller::setRegionActive(std::size_t index_, bool status_)
+{
+    if (model.regions.find(index_) == model.regions.end()) return;
+    model.regions[index_]->setActive(status_);
+}
+
+
+bool Controller::isRegionActive(std::size_t index_) const
+{
+    if (model.regions.find(index_) == model.regions.end()) return false;
+    return model.regions.at(index_)->isActive();
+}
+
+
+void Controller::setRegionSelectable(std::size_t index_, bool status_)
+{
+    if (model.regions.find(index_) == model.regions.end()) return;
+    model.regions[index_]->setSelectable(status_);
+}
+
+
+bool Controller::isRegionSelectable(std::size_t index_) const
+{
+    if (model.regions.find(index_) == model.regions.end()) return false;
+    return model.regions.at(index_)->isSelectable();
+}
+
+
+void Controller::setRegionSelected(std::size_t index_, bool status_)
+{
+    if (model.regions.find(index_) == model.regions.end()) return;
+    model.regions[index_]->setSelected(status_);
+}
+
+
+bool Controller::isRegionSelected(std::size_t index_) const
+{
+    if (model.regions.find(index_) == model.regions.end()) return false;
+    return model.regions.at(index_)->isSelected();
+}
+
+
+void Controller::createDomain( std::set< std::size_t > indexes_ )
+{
+    std::size_t id_ = model.domains.size();
+    model.domains[id_].regions_set = indexes_;
+}
+
+
+void Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return;
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    model.domains[domain_id_].regions_set.insert(region_id_);
+}
+
+
+void Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return;
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    model.domains[domain_id_].regions_set.erase(region_id_);
+}
+
+
+std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
+    return model.domains.at(domain_id_).regions_set;
+}
+
+
+
+///
+/// Rules-Processor Methods
+///
+
+
+void Controller::initRulesProcessor()
+{
+    updateBoundingBoxRulesProcessor();
+    rules_processor.truncate();
+    setMeshResolution( Controller::MeshResolution::MEDIUM );
+
+}
+
+
+void Controller::updateBoundingBoxRulesProcessor()
+{
+    if( volume == nullptr ) return;
+
+    double ox = 0.0, oy = 0.0, oz = 0.0;
+    volume->getOrigin( ox, oy, oz );
+
+    rules_processor.setOrigin( ox, oy, oz );
+    rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
+}
+
+
+
+///
+/// Activing Rules Methods
+///
+
+
+void Controller::setRemoveAbove()
+{
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
+}
+
+
+void Controller::setRemoveAboveIntersection()
+{
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
+}
+
+
+void Controller::setRemoveBelow()
+{
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW;
+}
+
+
+void Controller::setRemoveBelowIntersection()
+{
+    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION;
+}
+
+
+
+void Controller::applyStratigraphicRule()
+{
+    if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
+        rules_processor.removeAbove();
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
+        rules_processor.removeAboveIntersection();
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
+        rules_processor.removeBelow();
+    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
+        rules_processor.removeBelowIntersection();
+//    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
+//        rules_processor.truncate();
+}
+
 
 
 
@@ -897,72 +1522,6 @@ bool Controller::removeObjectCurve( double depth_ )
 }
 
 
-
-
-
-
-
-bool Controller::createPreviewSurface()
-{
-    Object* const& obj_ = objects.getElement( current_object );
-    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
-
-    std::vector< std::tuple< Curve2D, double > > curves_;
-    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
-    {
-        double csection_id_ = it->first;
-        PolyCurve sketch_ = it->second;
-
-        if( all_csections.findElement( csection_id_ ) == false )
-            continue;
-
-        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
-        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
-    }
-
-
-    applyStratigraphicRule();
-    bool surface_created = rules_processor.testSurface( current_object, curves_ );
-    if( surface_created == false )
-    {
-        obj_->removeSurface();
-        obj_->setVisible( false );
-        scene3d->updateObject( current_object );
-        updateObjectInFixedCrossSections( current_object );
-        return false;
-    }
-
-    std::vector< double > vertices_;
-    std::vector< std::size_t > faces_;
-
-    bool has_surface = rules_processor.getMesh( current_object, vertices_, faces_ );
-    if( has_surface  == false ) return false;
-
-
-    std::vector< double > normals_;
-    rules_processor.getNormals( current_object, normals_ );
-
-    object_tree->setObjectVisibility( current_object, true );
-
-    Surface surface;
-    surface.setVertices( vertices_ );
-    surface.setFaces( faces_ );
-    surface.setNormals( normals_ );
-
-    obj_->setActive( true );
-    obj_->setSurface( surface );
-    obj_->setVisible( true );
-
-    scene3d->updateObject( current_object );
-    updatePreviewCurves( obj_, current_csection );
-    updateObjectInFixedCrossSections( current_object );
-
-
-    return true;
-
-}
-
-
 bool Controller::createObjectSurface()
 {
 
@@ -1029,25 +1588,8 @@ bool Controller::createObjectSurface()
 
 
 
-void Controller::initRulesProcessor()
-{
-    updateBoundingBoxRulesProcessor();
-    rules_processor.truncate();
-    setMeshResolution( Controller::MeshResolution::MEDIUM );
-
-}
 
 
-void Controller::updateBoundingBoxRulesProcessor()
-{
-    if( volume == nullptr ) return;
-
-    double ox = 0.0, oy = 0.0, oz = 0.0;
-    volume->getOrigin( ox, oy, oz );
-
-    rules_processor.setOrigin( ox, oy, oz );
-    rules_processor.setLenght( volume->getWidth(), volume->getHeight(), volume->getLenght() );
-}
 
 
 void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
@@ -1076,81 +1618,6 @@ void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth
 
 
 
-
-
-void Controller::updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ )
-{
-    Object* obj_ = objects.getElement( object_id_ );
-    if( obj_->isDone() == true )
-    {
-
-        obj_->removeCurve( csection_depth_ );
-        if( all_csections.findElement( csection_depth_ ) == true )
-        {
-            CrossSection* csection_ = all_csections.getElement( csection_depth_ );
-            csection_->removeObjectCurve( object_id_ );
-        }
-
-        getCurveFromRulesProcessor( obj_, csection_depth_ );
-
-    }
-    else
-        updatePreviewCurves( obj_, csection_depth_ );
-}
-
-
-void Controller::updatePreviewCurves( Object* obj_, double csection_depth_ )
-{
-
-    bool has_user_curve = obj_->hasCurve( csection_depth_ );
-    has_user_curve &= all_csections.findElement( csection_depth_ );
-
-    if( ( has_user_curve == true  ) || ( preview_enabled == false ) ) return;
-
-    getCurveFromRulesProcessor( obj_, csection_depth_ );
-
-}
-
-
-void Controller::updateObjectSurfaces( std::size_t object_id_ )
-{
-
-    Object* obj_ = objects.getElement( object_id_ );
-
-    std::vector< double > vertices_;
-    std::vector< std::size_t > faces_;
-
-    bool has_surface = rules_processor.getMesh( object_id_, vertices_, faces_ );
-    if( has_surface  == false ) return;
-
-    std::vector< double > normals_;
-    rules_processor.getNormals( object_id_, normals_ );
-
-
-    Surface surface;
-    surface.setVertices( vertices_ );
-    surface.setFaces( faces_ );
-    surface.setNormals( normals_ );
-
-
-    std::vector< double > path_;
-    bool has_path = rules_processor.getExtrusionPath( object_id_, path_ );
-    if( has_path == true )
-    {
-        obj_->removeTrajectory();
-        obj_->addTrajectory( PolyCurve( path_ ) );
-    }
-
-    obj_->setActive( true );
-    obj_->setSurface( surface );
-    obj_->setVisible( true );
-    obj_->setDone( true );
-    object_tree->setObjectVisibility( object_id_, true );
-
-    scene3d->updateObject( object_id_ );
-}
-
-
 void Controller::updateObjectInFixedCrossSections( std::size_t id_ )
 {
     for ( Container< double, CrossSection* >::Iterator cs_it =  fixed_csections.begin(); cs_it != fixed_csections.end(); ++cs_it )
@@ -1162,21 +1629,6 @@ void Controller::updateObjectInFixedCrossSections( std::size_t id_ )
 }
 
 
-void Controller::updateModel()
-{
-
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-
-    setActiveAllObjects( false );
-
-    for ( std::size_t id_: actives_ )
-    {
-        updateObjectSurfaces( id_ );
-        updateObjectCurveFromCrossSection( id_, current_csection );
-        updateObjectInFixedCrossSections( id_ );
-    }
-
-}
 
 
 void Controller::setActiveAllObjects( bool status_ )
@@ -1194,49 +1646,12 @@ void Controller::setActiveAllObjects( bool status_ )
 
 
 
-void Controller::setRemoveAbove()
-{
-    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE;
-}
 
-
-void Controller::setRemoveAboveIntersection()
-{
-    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION;
-}
-
-
-void Controller::setRemoveBelow()
-{
-    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW;
-}
-
-
-void Controller::setRemoveBelowIntersection()
-{
-    current_rule = Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION;
-}
 
 void Controller::setTruncate()
 {
     current_rule = Settings::Stratigraphy::StratigraphicRules::TRUNCATE;
 }
-
-
-void Controller::applyStratigraphicRule()
-{
-    if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
-        rules_processor.removeAbove();
-    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION )
-        rules_processor.removeAboveIntersection();
-    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW )
-        rules_processor.removeBelow();
-    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
-        rules_processor.removeBelowIntersection();
-    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
-        rules_processor.truncate();
-}
-
 
 
 
@@ -1645,78 +2060,6 @@ bool Controller::isDefineBelowActive()
 void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_  )
 {
 
-    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
-        Regions* item_ = regions.getElement( it->first );
-        if( item_ == nullptr ) continue;
-
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    regions.clear();
-
-    scene3d->clearOutputVolume();
-    object_tree->removeOutputVolume();
-
-
-    double w = 0, h = 0,  l = 0;
-    double ox_ = 0, oy_ = 0, oz_ = 0;
-
-    volume->getOrigin( ox_, oy_, oz_ );
-    volume->getDimensions( w, h, l );
-
-
-    std::vector< double > vertices_;
-    std::vector< std::vector< std::size_t > > regions_;
-    bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
-    if( status_ == false ) return;
-
-    Volume* vol1_ = new Volume();
-    vol1_->setVertices( vertices_ );
-    vol1_->setOrigin( ox_, oy_, oz_ );
-    vol1_->setDimensions( w, h, l );
-    scene3d->addOutputVolume( vol1_ );
-    object_tree->addOutputVolume();
-
-
-    std::random_device rd;
-    std::mt19937 eng( rd() );
-    std::uniform_int_distribution< size_t > distr( 0, 255 );
-
-
-    std::size_t number_of_regions = regions_.size();
-    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
-
-    for( std::size_t i = 0; i < number_of_regions; ++i )
-    {
-        Volume::Color color_;
-        color_.r = colors_[ 3*i ];
-        color_.g = colors_[ 3*i + 1 ];
-        color_.b = colors_[ 3*i + 2 ];
-
-//        color_.r = distr( eng );
-//        color_.g = distr( eng );
-//        color_.b = distr( eng );
-
-
-        Regions* region_ = new Regions();
-
-        region_->setIndex( i );
-        region_->setVertices( vertices_ );
-        region_->setTetrahedralCells( regions_[ i ] );
-        region_->setColor( color_.r, color_.g, color_.b );
-        region_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
-
-        regions.addElement( i, region_ );
-        scene3d->addRegion( region_ );
-        object_tree->addRegion( i, region_->getName(), color_.r, color_.g, color_.b );
-
-        vol1_->addRegion( i, regions_[ i ], color_ );
-
-        regions_map_[ i ] = color_;
-    }
-
 
 
 
@@ -1736,38 +2079,8 @@ void Controller::setRegionName( std::size_t index_, const std::string& name_ )
 
 void Controller::setRegionVisibility( std::size_t index_, bool status_ )
 {
-    if( regions.findElement( index_ ) == false )
-        return;
 
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->setVisible( status_ );
-    scene3d->updateRegion( index_ );
 }
-
-
-void Controller::setRegionColor( std::size_t index_, int r_, int g_, int b_ )
-{
-
-    if( regions.findElement( index_ ) == false )
-        return;
-
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->setColor( r_, g_, b_ );
-    scene3d->updateRegion( index_ );
-}
-
-
-
-void Controller::getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ )
-{
-
-    if( regions.findElement( index_ ) == false )
-        return;
-
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->getColor( r_, g_, b_ );
-}
-
 
 void Controller::hideRegions()
 {

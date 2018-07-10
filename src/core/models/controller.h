@@ -45,7 +45,6 @@
 #include "rules_processor.hpp"
 
 
-
 class Volume;
 class Object;
 class RRMApplication;
@@ -95,6 +94,8 @@ class Controller
         bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
 
+        //TODO: addObject should be protected
+        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
 
         const ObjectPtr& getObject( std::size_t index_ ) const;
         const ObjectPtr& getCurrentObject() const;
@@ -125,6 +126,54 @@ class Controller
 
         void addTrajectoryToObject( const PolyCurve& curve_ );
         void removeTrajectoryFromObject();
+
+
+        void updateModel();
+        void updateObjectSurface( const std::size_t& id_ );
+        void updateObjectCurves( const std::size_t& id_ );
+
+        void updatePreviewSurface();
+        void updatePreviewCurves();
+
+
+        void defineRegions();
+
+        void setRegionsVisible(bool status_);
+        void setRegionVisible(std::size_t index_, bool status_);
+        bool isRegionVisible(std::size_t index_) const;
+
+        void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
+        void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ ) const ;
+
+        void setRegionsActive(bool status_);
+        void setRegionActive(std::size_t index_, bool status_);
+        bool isRegionActive(std::size_t index_) const;
+
+        void setRegionSelectable(std::size_t index_, bool status_);
+        bool isRegionSelectable(std::size_t index_) const;
+
+        void setRegionSelected(std::size_t index_, bool status_);
+        bool isRegionSelected(std::size_t index_) const;
+
+
+        void createDomain(std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
+        void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
+        std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
+
+
+        void initRulesProcessor();
+        void updateBoundingBoxRulesProcessor();
+
+
+
+        void setRemoveAbove();
+        void setRemoveAboveIntersection();
+        void setRemoveBelow();
+        void setRemoveBelowIntersection();
+        void applyStratigraphicRule();
+
+
 
         ///==========================================================================
 
@@ -203,7 +252,7 @@ class Controller
         void removeObjectTrajectory(){}
 
 
-        bool createPreviewSurface();
+        bool createPreviewSurface(){ return false; }
         bool createObjectSurface();
 
 
@@ -212,28 +261,18 @@ class Controller
 
         void setRegionName( std::size_t index_, const std::string& name_ );
         void setRegionVisibility( std::size_t index_, bool status_ );
-        void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
-        void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ );
 
-
-        void initRulesProcessor();
-        void updateBoundingBoxRulesProcessor();
         void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
 
 
-        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
-        void updatePreviewCurves( Object* obj_, double csection_depth_ );
-        void updateObjectSurfaces( std::size_t object_id_ );
+        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ ){}
+        void updatePreviewCurves( Object* obj_, double csection_depth_ ){}
+        void updateObjectSurfaces( std::size_t object_id_ ){}
         void updateObjectInFixedCrossSections( std::size_t id_ );
-        void updateModel();
 
 
-        void setRemoveAbove();
-        void setRemoveAboveIntersection();
-        void setRemoveBelow();
-        void setRemoveBelowIntersection();
+
         void setTruncate();
-        void applyStratigraphicRule();
 
 
 
@@ -316,7 +355,7 @@ class Controller
     protected:
 
 
-        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
+
 
 
     protected:
@@ -335,9 +374,12 @@ class Controller
             std::map< double, CrossSectionPtr > csectionsZ;
 
             std::map< std::size_t, ObjectPtr > objects;
+            std::map< std::size_t, RegionsPtr > regions;
+            std::map< std::size_t, Domain > domains;
 
         } model;
 
+        RulesProcessor rules_processor;
 
         std::size_t current_object = 0;
         bool object_defined = false;
@@ -372,7 +414,6 @@ class Controller
         Container< double, CrossSection* > all_csections;
 
 
-        RulesProcessor rules_processor;
         double csection_step = 1.0;
 
         Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
