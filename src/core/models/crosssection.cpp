@@ -27,35 +27,131 @@
 #include "polycurve.h"
 
 
+
+
 CrossSection::CrossSection()
 {
-    defineIndex();
-    initialize();
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
 }
 
-
-CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
+CrossSection::CrossSection( const Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ ): volume( volume_ )
 {
+//    volume = std::make_shared< Volume >( volume_ );
+
+
     defineIndex();
     initialize();
 
-    setDirection( dir_ );
+    setDirection( direction_ );
     setDepth( depth_ );
+
+
+
+//    updateDimensions();
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
 }
 
 
-CrossSection& CrossSection::operator=( const CrossSection& other_ )
+CrossSection::CrossSection( const CrossSection& csection_ )
 {
-    volume = other_.volume;
-    objects = other_.objects;
-    direction = other_.direction;
-    depth = other_.depth;
-    image_path = other_.image_path;
-    is_visible = other_.is_visible;
-    index = other_.index;
+    this->direction = csection_.direction;
+    this->volume = csection_.volume;
+    this->width = csection_.width;
+    this->height = csection_.height;
+    this->depth = csection_.depth;
+
+    objects = csection_.objects;
+    image_path = csection_.image_path;
+    is_visible = csection_.is_visible;
+    index = csection_.index;
+
+//    updateDimensions();
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
+}
+
+
+CrossSection& CrossSection::operator=( const CrossSection& csection_ )
+{
+    this->direction = csection_.direction;
+    this->volume = csection_.volume;
+    this->width = csection_.width;
+    this->height = csection_.height;
+    this->depth = csection_.depth;
+
+    objects = csection_.objects;
+    image_path = csection_.image_path;
+    is_visible = csection_.is_visible;
+    index = csection_.index;
+
+
+//    updateDimensions();
+
 
     return *this;
 }
+
+
+CrossSection::~CrossSection()
+{
+    std::cout << "CROSS-SECTION DELETED" << std::endl << std::flush;
+
+    if( objects.empty() == false )
+        clear();
+    if( volume != nullptr )
+    volume = nullptr;
+}
+
+
+///========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//CrossSection::CrossSection()
+//{
+//    defineIndex();
+//    initialize();
+//}
+
+
+//CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
+//{
+//    defineIndex();
+//    initialize();
+
+//    setDirection( dir_ );
+//    setDepth( depth_ );
+//}
+
+
+//CrossSection& CrossSection::operator=( const CrossSection& other_ )
+//{
+//    volume = other_.volume;
+//    objects = other_.objects;
+//    direction = other_.direction;
+//    depth = other_.depth;
+//    image_path = other_.image_path;
+//    is_visible = other_.is_visible;
+//    index = other_.index;
+
+//    return *this;
+//}
 
 
 void CrossSection::defineIndex()
@@ -296,13 +392,6 @@ void CrossSection::initialize()
 }
 
 
-CrossSection::~CrossSection()
-{
-    if( objects.empty() == false )
-        clear();
-    if( volume != nullptr )
-    volume = nullptr;
-}
 
 
 void CrossSection::resetAllCrossSections()

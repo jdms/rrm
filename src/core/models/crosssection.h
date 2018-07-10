@@ -32,12 +32,13 @@
 
 #include "./core/definitions/constants.hpp"
 #include "container.h"
+#include "object.h"
 
 
 class Volume;
 class PolyCurve;
 
-class CrossSection
+class CrossSection: public Object
 {
     public:
 
@@ -46,10 +47,19 @@ class CrossSection
         using ObjectsContainer = Container< Object, PolyCurve* >;
 
 
-        CrossSection();
-        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-        CrossSection& operator=( const CrossSection& other_ );
+        CrossSection();
+        CrossSection( const Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
+        CrossSection( const CrossSection & csection_ );
+        CrossSection & operator=( const CrossSection & csection_ );
+        ~CrossSection();
+
+///========================================================================
+
+//        CrossSection();
+//        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+//        CrossSection& operator=( const CrossSection& other_ );
 
         void defineIndex();
 
@@ -98,7 +108,7 @@ class CrossSection
 
         static void resetAllCrossSections();
 
-        ~CrossSection();
+//        ~CrossSection();
 
     private:
 
@@ -111,7 +121,9 @@ class CrossSection
         std::size_t index;
         static std::size_t number_of_csections;
 
-        double depth;
+        double width = 0.0;
+        double height = 0.0;
+        double depth = 0.0;
         Settings::CrossSection::CrossSectionDirections direction;
 
         bool is_visible;
