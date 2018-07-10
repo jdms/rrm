@@ -41,15 +41,15 @@ RRMApplication::RRMApplication(MainWindow *mw_ ): mainwindow( mw_ )
 void RRMApplication::init()
 {
 
-    Scene3d* scene3d = mainwindow->canvas3d->getScene();
-    mainwindow->controller->setScene3d( scene3d );
-    mainwindow->controller->setObjectTree( mainwindow->object_tree );
+//    Scene3d* scene3d = mainwindow->canvas3d->getScene();
+//    mainwindow->controller->setScene3d( scene3d );
+//    mainwindow->controller->setObjectTree( mainwindow->object_tree );
     mainwindow->controller->init();
 
-    setRRMDefaultValuesOnInterface();
+//    setRRMDefaultValuesOnInterface();
 
-    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
-    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
+//    mainwindow->controller->addMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION, Settings::CrossSection::INITIAL_CSECTIONZ_POSITION );
+//    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
 }
 

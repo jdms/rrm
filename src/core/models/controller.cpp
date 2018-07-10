@@ -24,7 +24,9 @@
 #include <algorithm>
 #include <random>
 
+
 #include "controller.h"
+#include "./apps/mainwindow/rrmapplication.h"
 
 #include "volume.h"
 #include "object.h"
@@ -36,9 +38,9 @@ Controller::Controller()
 
 Controller::Controller(const Controller & cont_)
 {
-//    this->app = cont_.app;
+    this->app = cont_.app;
 //    this->csection = cont_.csection;
-//    this->model = cont_.model;
+    this->model = cont_.model;
 
 //    object_defined = false;
 
@@ -46,9 +48,9 @@ Controller::Controller(const Controller & cont_)
 
 Controller& Controller::operator=(const Controller & cont_)
 {
-//    this->app = cont_.app;
+    this->app = cont_.app;
 //    this->csection = cont_.csection;
-//    this->model = cont_.model;
+    this->model = cont_.model;
 //    object_defined = false;
 
     return *this;
@@ -59,14 +61,173 @@ Controller::~Controller()
 }
 
 
-///=========================================================
+///==========================================================================
+
+void Controller::setApplication( RRMApplication* const& app_)
+{
+    app = app_;
+}
+
 
 void Controller::init()
 {
-    addVolume();
-    addObject();
+
+    model.volume = std::make_shared<Volume>();
+    resizeVolume(500., 500., 500.);
+
+    createMainCrossSection();
+
+
+
+//    app->addVolumeToScene(model.volume);
+
+
+//    addVolume();
+//    addObject();
 }
 
+void Controller::resizeVolume(double width_, double height_, double depth_)
+{
+    model.volume->setDimensions( width_, height_, depth_ );
+//    app->updateVolume();
+}
+
+
+void Controller::setVolumeName( const std::string& name_ )
+{
+    model.volume->setName(name_);
+
+//    volume->setName( name_ );
+}
+
+void Controller::setVolumeVisibility( bool status_ )
+{
+    model.volume->setVisible(status_);
+//    app->updateVolume();
+
+//    volume->setVisible( status_ );
+//    main_csection->setVisible( status_ );
+//    scene3d->updateVolume();
+}
+
+
+
+void Controller::createMainCrossSection()
+{
+    csection = std::make_shared<CrossSection>();
+    csection->setVolume( model.volume.get() );
+    csection->setDirection( Settings::CrossSection::CrossSectionDirections::Z );
+    csection->setDepth( model.volume->getLenght() );
+
+
+}
+
+void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    csection->setDirection( dir_ );
+
+    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        csection->setDepth( model.volume->getWidth() );
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        csection->setDepth( model.volume->getHeight() );
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        csection->setDepth( model.volume->getLenght() );
+    }
+
+//    csection->print();
+}
+
+void Controller::moveMainCrossSection( double depth_ )
+{
+    csection->setDepth( depth_ );
+//	csection->print();
+}
+
+const CrossSectionPtr& Controller::getMainCrossSection() const
+{
+    return csection;
+}
+
+
+void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    CrossSectionPtr csection_ = std::make_shared< CrossSection >();
+    csection_->setVolume( model.volume.get() );
+    csection_->setDirection( dir_ );
+    csection_->setDepth( depth_ );
+
+    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        model.csectionsX[ depth_ ] = csection_;
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        model.csectionsY[ depth_ ] = csection_;
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        model.csectionsZ[ depth_ ] = csection_;
+    }
+
+
+}
+
+
+bool Controller::getCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, CrossSectionPtr& csection_ )
+{
+    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        if ( model.csectionsX.find( depth_ ) == model.csectionsX.end() ) return false;
+        csection_ = model.csectionsX.at( depth_ );
+        return true;
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        if ( model.csectionsY.find( depth_ ) == model.csectionsY.end() ) return false;
+        csection_ = model.csectionsY.at( depth_ );
+        return true;
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        if ( model.csectionsZ.find( depth_ ) == model.csectionsZ.end() ) return false;
+        csection_ = model.csectionsZ.at( depth_ );
+        return true;
+    }
+
+    return false;
+}
+
+
+void Controller::removeCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        model.csectionsX.erase( depth_ );
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        model.csectionsY.erase( depth_ );
+    }
+
+    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        model.csectionsZ.erase( depth_ );
+    }
+}
+
+///==========================================================================
 
 
 void Controller::setScene3d( Scene3d* const& sc_ )
@@ -169,23 +330,12 @@ void Controller::getVolumeDimensions( double& width_, double& height_, double& l
 
 
 
-void Controller::setVolumeName( const std::string& name_ )
-{
-    volume->setName( name_ );
-}
-
 const std::string& Controller::getVolumeName() const
 {
     return volume->getName();
 }
 
 
-void Controller::setVolumeVisibility( bool status_ )
-{
-    volume->setVisible( status_ );
-    main_csection->setVisible( status_ );
-    scene3d->updateVolume();
-}
 
 
 bool Controller::getVolumeVisibility() const

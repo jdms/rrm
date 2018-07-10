@@ -36,9 +36,9 @@
 #include <QObject>
 
 
-#include "3dview/canvas3d.h"
-#include "sketching/sketchwindow.h"
-#include "simulator/flow_window.h"
+#include "./apps/3dview/canvas3d.h"
+#include "./apps/sketching/sketchwindow.h"
+#include "./apps/simulator/flow_window.h"
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
 #include "./core/widgets/objecttree.h"
