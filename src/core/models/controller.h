@@ -48,6 +48,7 @@
 
 class Volume;
 class Object;
+class RRMApplication;
 
 
 using VolumePtr = std::shared_ptr< Volume >;
@@ -72,11 +73,33 @@ class Controller
         Controller & operator=(const Controller & cont_);
         ~Controller();
 
+        void setApplication( RRMApplication* const& app_ );
 
-        ///=========================================================
+       ///==========================================================================
+
 
 
         void init();
+        void resizeVolume( double width_, double height_, double depth_ );
+
+        void setVolumeName( const std::string& name_ );
+        void setVolumeVisibility( bool status_ );
+
+        void createMainCrossSection();
+        void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void moveMainCrossSection( double depth_ );
+        const CrossSectionPtr& getMainCrossSection() const;
+
+
+        void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
+        void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
+
+        ///==========================================================================
+
+
+
+
 
         void setScene3d( Scene3d* const& sc_ );
         void setObjectTree( ObjectTree* const& ot_ );
@@ -92,12 +115,12 @@ class Controller
         void setVolumeDimensions( const double& width_, const double& height_, const double& length_ );
         void getVolumeDimensions( double& width_, double& height_, double& length_ ) const;
 
-        void setVolumeName( const std::string& name_ );
+
         const std::string& getVolumeName() const ;
 
         bool isVolumeResizable() const;
 
-        void setVolumeVisibility( bool status_ );
+
         bool getVolumeVisibility() const;
         void setupCrossSectionDiscretization( std::size_t& disc_, double& step_ );
 
@@ -262,6 +285,23 @@ class Controller
     protected:
 
 
+        CrossSectionPtr csection;
+
+        struct Model
+        {
+            VolumePtr volume;
+            std::map< double, CrossSectionPtr > csectionsX;
+            std::map< double, CrossSectionPtr > csectionsY;
+            std::map< double, CrossSectionPtr > csectionsZ;
+
+        } model;
+
+
+
+
+        ///=========================================================
+
+        RRMApplication* app = nullptr;
 
         Scene3d* scene3d = nullptr;
         ObjectTree* object_tree = nullptr;
