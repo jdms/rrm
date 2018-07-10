@@ -37,9 +37,9 @@ CrossSection::CrossSection()
     initialize();
 }
 
-CrossSection::CrossSection( const Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ ): volume( volume_ )
+CrossSection::CrossSection( Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ )//: volume( volume_ )
 {
-//    volume = std::make_shared< Volume >( volume_ );
+    volume = std::shared_ptr< Volume >( volume_ );
 
 
     defineIndex();
@@ -105,6 +105,33 @@ CrossSection::~CrossSection()
 }
 
 
+void CrossSection::updateDimensions()
+{
+    if ( volume == nullptr ) return;
+
+
+    if ( direction == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        width = volume->getLenght();
+        height = volume->getHeight();
+    }
+    else if ( direction == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        width = volume->getWidth();
+        height = volume->getLenght();
+    }
+    else if ( direction == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        width = volume->getWidth();
+        height = volume->getHeight();
+    }
+
+    std::cout << "Csection width = " << volume->getWidth() << std::endl << std::flush;
+
+}
+
+
+
 ///========================================================================
 
 
@@ -120,20 +147,35 @@ std::size_t CrossSection::getIndex() const
 }
 
 
-void CrossSection::setVolume( const Volume* raw_ )
+void CrossSection::setVolume( Volume* volume_ )
 {
-//    volume = raw_;
+    volume = std::shared_ptr< Volume >( volume_ );
 }
 
 const Volume* CrossSection::getVolume() const
 {
-    return volume;
+    return volume.get();
 }
 
+void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    direction = dir_;
+}
 
+Settings::CrossSection::CrossSectionDirections CrossSection::getDirection() const
+{
+    return direction;
+}
 
+void CrossSection::setDepth( double depth_ )
+{
+    depth = depth_;
+}
 
-
+double CrossSection::getDepth() const
+{
+    return depth;
+}
 
 ///========================================================================
 
@@ -253,25 +295,7 @@ void CrossSection::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
-{
-    direction = dir_;
-}
 
-Settings::CrossSection::CrossSectionDirections CrossSection::getDirection() const
-{
-    return direction;
-}
-
-void CrossSection::setDepth( double depth_ )
-{
-    depth = depth_;
-}
-
-double CrossSection::getDepth() const
-{
-    return depth;
-}
 
 void CrossSection::setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ )
 {
