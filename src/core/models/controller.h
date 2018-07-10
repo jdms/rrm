@@ -80,6 +80,8 @@ class Controller
 
 
         void init();
+
+        void createVolume();
         void resizeVolume( double width_, double height_, double depth_ );
 
         void setVolumeName( const std::string& name_ );
@@ -129,10 +131,10 @@ class Controller
 
 
         void updateModel();
-        void updateObjectSurface( const std::size_t& id_ );
-        void updateObjectCurves( const std::size_t& id_ );
+        void updateObjectSurface( const std::size_t& index_ );
+        void updateObjectCurves( const std::size_t& index_ );
 
-        void updatePreviewSurface();
+          void updatePreviewSurface();
         void updatePreviewCurves();
 
 
@@ -355,6 +357,8 @@ class Controller
     protected:
 
 
+        void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_ );
+        void getCurvesFromRulesProcessorDirectionY( const std::size_t& index_ );
 
 
 
