@@ -56,6 +56,7 @@ using CrossSectionPtr = std::shared_ptr< CrossSection >;
 using ObjectPtr = std::shared_ptr< Object >;
 using RegionsPtr = std::shared_ptr< Regions >;
 
+const std::size_t UNDEFINED_INDEX = 9999;
 
 class Controller
 {
@@ -90,10 +91,40 @@ class Controller
         void moveMainCrossSection( double depth_ );
         const CrossSectionPtr& getMainCrossSection() const;
 
-
         void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
+
+
+        const ObjectPtr& getObject( std::size_t index_ ) const;
+        const ObjectPtr& getCurrentObject() const;
+        const std::map< std::size_t, ObjectPtr >& getObjects();
+
+
+        void setObjectName( std::size_t index_, const std::string& name_ );
+        std::string getObjectName( std::size_t index_) const;
+
+        void setObjectVisibility( std::size_t index_, bool status_ );
+        void setObjectsVisibility( bool status_ );
+
+        void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
+
+        void setObjectsActive( bool status_ );
+        void setObjectActive( std::size_t index_, bool status_ );
+        bool isObjectActive( std::size_t index_ ) const;
+
+        void setObjectSelectable( std::size_t index_, bool status_ );
+        bool isObjectSelectable( std::size_t index_ ) const;
+
+        void setObjectSelected( std::size_t index_, bool status_ );
+        bool isObjectSelected( std::size_t index_ ) const;
+
+
+        bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
+        bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
+
+        void addTrajectoryToObject( const PolyCurve& curve_ );
+        void removeTrajectoryFromObject();
 
         ///==========================================================================
 
@@ -151,26 +182,25 @@ class Controller
 
 
 
-        bool addObject( std::size_t index_ = 9999 );
-        Object* getObject( std::size_t index_ ) const;
-        Object* getCurrentObject() const;
+//        bool addObject( std::size_t index_ = 9999 );
+//        Object* getObject( std::size_t index_ ) const;
+//        Object* getCurrentObject() const;
 
-        void setObjectName( std::size_t index_, const std::string& name_ );
-        std::string getObjectName( std::size_t index_) const;
 
-        void setObjectVisibility( std::size_t index_, bool status_ );
-        void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
+
+
+
 
         void saveObjectInformation( std::size_t index_, const std::string & text_ );
         const std::string& getObjectInformation( std::size_t index_ ) const;
 
 
-        bool addObjectCurve( PolyCurve curve_, double depth_ );
+        bool addObjectCurve( PolyCurve curve_, double depth_ ){ return false; }
         bool removeObjectCurve( std::size_t index_, double depth_ );
         bool removeObjectCurve( double depth_ );
 
-        bool addObjectTrajectory( PolyCurve curve_ );
-        void removeObjectTrajectory();
+        bool addObjectTrajectory( PolyCurve curve_ ){ return false; }
+        void removeObjectTrajectory(){}
 
 
         bool createPreviewSurface();
@@ -282,29 +312,43 @@ class Controller
 
         void exportToIrapGrid();
 
+
     protected:
 
 
+        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
+
+
+    protected:
+
+
+        RRMApplication* app = nullptr;
         CrossSectionPtr csection;
+        ObjectPtr object;
 
         struct Model
         {
             VolumePtr volume;
+
             std::map< double, CrossSectionPtr > csectionsX;
             std::map< double, CrossSectionPtr > csectionsY;
             std::map< double, CrossSectionPtr > csectionsZ;
 
+            std::map< std::size_t, ObjectPtr > objects;
+
         } model;
 
 
+        std::size_t current_object = 0;
+        bool object_defined = false;
 
 
         ///=========================================================
 
-        RRMApplication* app = nullptr;
 
         Scene3d* scene3d = nullptr;
         ObjectTree* object_tree = nullptr;
+
 
 
         Volume* volume = nullptr;
@@ -317,7 +361,6 @@ class Controller
             int b = 0;
         } current_color;
 
-        std::size_t current_object = 0;
         Container< std::size_t, Object* > objects;
         Container< std::size_t, Regions* > regions;
 
