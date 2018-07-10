@@ -32,6 +32,9 @@
 CrossSection::CrossSection()
 {
     std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
+    defineIndex();
+    initialize();
 }
 
 CrossSection::CrossSection( const Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ ): volume( volume_ )
@@ -44,8 +47,6 @@ CrossSection::CrossSection( const Volume* volume_, const Settings::CrossSection:
 
     setDirection( direction_ );
     setDepth( depth_ );
-
-
 
 //    updateDimensions();
     std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
@@ -107,15 +108,34 @@ CrossSection::~CrossSection()
 ///========================================================================
 
 
+void CrossSection::setIndex( const std::size_t id_ )
+{
+    index = id_;
+    number_of_csections = id_ + 1;
+}
+
+std::size_t CrossSection::getIndex() const
+{
+    return index;
+}
+
+
+void CrossSection::setVolume( const Volume* raw_ )
+{
+//    volume = raw_;
+}
+
+const Volume* CrossSection::getVolume() const
+{
+    return volume;
+}
 
 
 
 
 
 
-
-
-
+///========================================================================
 
 
 
@@ -160,27 +180,8 @@ void CrossSection::defineIndex()
     number_of_csections++;
 }
 
-void CrossSection::setIndex( const std::size_t id_ )
-{
-    index = id_;
-    number_of_csections = id_ + 1;
-}
-
-std::size_t CrossSection::getIndex() const
-{
-    return index;
-}
 
 
-void CrossSection::setVolume( const Volume* raw_ )
-{
-//    volume = raw_;
-}
-
-const Volume* CrossSection::getVolume() const
-{
-    return volume;
-}
 
 
 void CrossSection::getCoordinates( std::vector< double >& vertices_ )

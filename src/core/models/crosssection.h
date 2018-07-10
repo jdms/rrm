@@ -56,6 +56,16 @@ class CrossSection: public Object
 
 ///========================================================================
 
+        void setIndex( const std::size_t id_ );
+        std::size_t getIndex() const;
+
+
+        void setVolume( const Volume* raw_ );
+        const Volume* getVolume() const;
+
+///========================================================================
+
+
 //        CrossSection();
 //        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
@@ -63,12 +73,10 @@ class CrossSection: public Object
 
         void defineIndex();
 
-        void setIndex( const std::size_t id_ );
-        std::size_t getIndex() const;
 
 
-        void setVolume( const Volume* raw_ );
-        const Volume* getVolume() const;
+
+
 
         void getCoordinates( std::vector< double >& vertices_ );
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
@@ -99,7 +107,6 @@ class CrossSection: public Object
 
         ObjectsContainer getObjects() const;
         void removeObjects();
-
         bool hasObjects() const;
 
 
@@ -108,7 +115,6 @@ class CrossSection: public Object
 
         static void resetAllCrossSections();
 
-//        ~CrossSection();
 
     private:
 
