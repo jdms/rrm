@@ -81,7 +81,7 @@ Object::~Object()
 ///======================================================================
 
 
-void Object::setIndex( const size_t id_ )
+void Object::setIndex( std::size_t id_ )
 {
     index = id_;
     number_of_objects = id_ + 1;
@@ -373,7 +373,7 @@ void Object::setSurface( const Surface& surface_ )
     surface = surface_;
 }
 
-Surface Object::getSurface() const
+const Surface& Object::getSurface() const
 {
     return surface;
 }

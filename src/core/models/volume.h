@@ -33,8 +33,8 @@
 
 #include "./core/definitions/constants.hpp"
 #include "./core/models/container.h"
-#include "object.h"
-#include "crosssection.h"
+#include "./core/models/object.h"
+#include "./core/models/crosssection.h"
 
 
 class Volume: public Object
@@ -43,15 +43,15 @@ class Volume: public Object
 
     public:
 
-        struct Color
-        {
-            int r = 255;
-            int g = 0;
-            int b = 0;
-        };
+//        struct Color
+//        {
+//            int r = 255;
+//            int g = 0;
+//            int b = 0;
+//        };
 
-        using ObjectsContainer = Container< std::size_t, Object* >;
-        using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
+//        using ObjectsContainer = Container< std::size_t, Object* >;
+//        using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
 
 
         Volume();
@@ -93,51 +93,51 @@ class Volume: public Object
 
 
 
-        void setName( const std::string name_ );
-        const std::string& getName() const;
+//        void setName( const std::string name_ );
+//        const std::string& getName() const;
 
 
 
 
-        bool addObject( std::size_t id_, Object* const& obj_ );
-        bool removeObject( std::size_t id_ );
-        Volume::ObjectsContainer getObjects() const;
-        void removeAllObjects();
+//        bool addObject( std::size_t id_, Object* const& obj_ );
+//        bool removeObject( std::size_t id_ );
+//        Volume::ObjectsContainer getObjects() const;
+//        void removeAllObjects();
 
 
 
-        void addTetrahedralFaces( const std::vector< std::size_t >& faces_ );
-        void getFaces( std::vector< std::size_t >& faces_ ) const ;
-        void setVertices( const std::vector< double >& vertices_  );
-        void getVertices( std::vector< double >& vertices_  ) const;
+//        void addTetrahedralFaces( const std::vector< std::size_t >& faces_ );
+//        void getFaces( std::vector< std::size_t >& faces_ ) const ;
+//        void setVertices( const std::vector< double >& vertices_  );
+//        void getVertices( std::vector< double >& vertices_  ) const;
 
 
-        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_, const Volume::Color& c_ );
-        void removeRegion( std::size_t index_ );
-        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_, Volume::Color& c_ ) const;
-        void removeAllRegions();
+//        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_, const Volume::Color& c_ );
+//        void removeRegion( std::size_t index_ );
+//        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_, Volume::Color& c_ ) const;
+//        void removeAllRegions();
 
 
-        bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
-        bool removeCrossSection( std::size_t id_ );
-        Volume::CrossSectionsContainer getCrossSections() const;
-        void removeAllCrossSections();
+//        bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
+//        bool removeCrossSection( std::size_t id_ );
+//        Volume::CrossSectionsContainer getCrossSections() const;
+//        void removeAllCrossSections();
 
 
-        void setVisible( bool status_ );
-        bool isVisible() const;
+//        void setVisible( bool status_ );
+//        bool isVisible() const;
 
 
-        void setResizable( bool status_ );
-        bool isResizable();
+//        void setResizable( bool status_ );
+//        bool isResizable();
 
 
-        bool isEmpty() const;
+//        bool isEmpty() const;
 
-        void clear();
-        void initialize();
+//        void clear();
+//        void initialize();
 
-        void updateDimensions();
+//        void updateDimensions();
 
 
     private:
@@ -163,27 +163,27 @@ protected:
     ///=================================================================
 
 
-        std::string name = "VOLUME";
+//        std::string name = "VOLUME";
 
-//        double originx;
-//        double originy;
-//        double originz;
+////        double originx;
+////        double originy;
+////        double originz;
 
-//        double width;
-//        double height;
-//        double lenght;
+////        double width;
+////        double height;
+////        double lenght;
 
-        bool is_visible;
-        bool is_resizable;
+//        bool is_visible;
+//        bool is_resizable;
 
 
-        ObjectsContainer objects;
-        CrossSectionsContainer csections;
+////        ObjectsContainer objects;
+////        CrossSectionsContainer csections;
 
-        std::vector< double > vertices;
-        std::vector< std::size_t > faces;
-        std::map< std::size_t, std::vector< std::size_t > > regions;
-        std::map< std::size_t, Color > regions_colors;
+//        std::vector< double > vertices;
+//        std::vector< std::size_t > faces;
+//        std::map< std::size_t, std::vector< std::size_t > > regions;
+//        std::map< std::size_t, Color > regions_colors;
 
 
 };

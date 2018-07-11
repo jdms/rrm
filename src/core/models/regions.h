@@ -52,7 +52,7 @@ class Regions: public Object
 
         ///====================================================================
 
-        void setIndex( const std::size_t id_ );
+        void setIndex( std::size_t id_ );
         std::size_t getIndex() const;
 
         void setTetrahedralCells( const std::vector< std::size_t >& cells_ );

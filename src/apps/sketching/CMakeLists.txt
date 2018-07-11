@@ -10,6 +10,15 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 
 set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
+                            sketchingcanvas.h
+                            models/qtgeometries/curveitem.h
+                            models/qtgeometries/lineitem.h
+                            models/qtgeometries/planeitem.h
+                            models/qtgeometries/polygonitem.h
+                            models/crosssectionitem.h
+                            models/regionitem.h
+                            models/stratigraphyitem.h
+                            models/volumeitem.h
                             models/inputsketch.h
                             models/volume_item_wrapper.h
                             models/object_item_wrapper.h
@@ -24,6 +33,15 @@ set( SKETCHING_MOC_HEADERS  sketchwindow.h
 
 set( SKETCHING_SOURCES      sketchwindow.cpp
                             sketchscene.cpp
+                            sketchingcanvas.cpp
+                            models/qtgeometries/curveitem.cpp
+                            models/qtgeometries/lineitem.cpp
+                            models/qtgeometries/planeitem.cpp
+                            models/qtgeometries/polygonitem.cpp
+                            models/crosssectionitem.cpp
+                            models/regionitem.cpp
+                            models/stratigraphyitem.cpp
+                            models/volumeitem.cpp
                             models/inputsketch.cpp
                             models/volume_item_wrapper.cpp
                             models/object_item_wrapper.cpp

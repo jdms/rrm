@@ -59,7 +59,7 @@ class Object
         ///======================================================================
 
 
-        void setIndex( const std::size_t id_ );
+        virtual void setIndex( std::size_t id_ );
         std::size_t getIndex() const;
 
 
@@ -94,6 +94,27 @@ class Object
         bool isActive() const;
 
 
+        // remove after creating structural, or another structure representing obj geologicals as surfaces
+
+        const PolyCurve&  getCurve( double csection_ ) const { return PolyCurve();  }
+
+        std::map< double, PolyCurve > getCurves() const { return std::map< double, PolyCurve >(); }
+        void removeCurves() {}
+
+        bool getTrajectory( PolyCurve& traj_ ) const { return false; }
+
+        void surfaceDone() {}
+
+
+
+        bool addCurve( double csection_id_, const PolyCurve& curve_ );
+        bool removeCurve( double csection_id_ );
+
+        bool addTrajectory( const PolyCurve& traj_ );
+        void removeTrajectory();
+
+        void setSurface( const Surface& surface_ );
+        const Surface& getSurface() const;
 
         ///======================================================================
 
@@ -122,10 +143,11 @@ class Object
         bool isEmpty() const;
 
 
-        bool addCurve( double csection_id_, const PolyCurve& curve_ );
+
+
         bool hasCurve( double csection_id_ ) const;
         PolyCurve getCurve( double csection_id_ );
-        bool removeCurve( double csection_id_ );
+
         void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
 
@@ -133,9 +155,9 @@ class Object
         void removeCrossSectionCurves();
 
 
-        bool addTrajectory( const PolyCurve& traj_ );
+
         PolyCurve getTrajectory();
-        void removeTrajectory();
+
         bool hasTrajectory() const;
 
 
@@ -146,8 +168,7 @@ class Object
         bool isTrajectoryAdmissible();
 
 
-        void setSurface( const Surface& surface_ );
-        Surface getSurface() const;
+
         void removeSurface();
 
 
@@ -226,6 +247,7 @@ class Object
         void defineIndex();
 
 
+    std::size_t index = 0;
 
     private:
 
@@ -243,7 +265,7 @@ class Object
             double z = 0.0;
         };
 
-        std::size_t index = 0;
+
 
         std::string name;
         std::string log;

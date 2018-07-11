@@ -61,7 +61,7 @@ class CrossSection: public Object
 
 ///========================================================================
 
-        void setIndex( const std::size_t id_ );
+        void setIndex( std::size_t id_ );
         std::size_t getIndex() const;
 
 
@@ -85,17 +85,9 @@ class CrossSection: public Object
 
         void defineIndex();
 
-
-
-
-
-
         void getCoordinates( std::vector< double >& vertices_ );
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
                         double& minx_, double& miny_, double& minz_ ) const;
-
-
-
 
         void setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ );
         void getImage( std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
