@@ -28,7 +28,7 @@ set( MODELS_HEADERS     container.h
                         crosssection.h
                         scene.h
                         shader.h
-                        well.h
+                        stratigraphy.h
                         rules_processor.hpp
                         stratmod_wrapper.hpp
                         mesh_generator.hpp
@@ -41,7 +41,7 @@ set( MODELS_SOURCES     controller.cpp
                         regions.cpp
                         volume.cpp
                         crosssection.cpp
-                        well.cpp
+                        stratigraphy.cpp
                         rules_processor.cpp
                         mesh_generator.cpp
                         irap_grid_exporter.cpp

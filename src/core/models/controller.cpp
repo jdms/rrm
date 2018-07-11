@@ -1276,411 +1276,411 @@ void Controller::applyStratigraphicRule()
 ///==========================================================================
 
 
-void Controller::setScene3d( Scene3d* const& sc_ )
-{
-    scene3d = sc_;
-}
+//void Controller::setScene3d( Scene3d* const& sc_ )
+//{
+//    scene3d = sc_;
+//}
 
 
-void Controller::setObjectTree( ObjectTree* const& ot_ )
-{
-    object_tree = ot_;
-}
+//void Controller::setObjectTree( ObjectTree* const& ot_ )
+//{
+//    object_tree = ot_;
+//}
 
 
-void Controller::setCurrentColor( int r, int g, int b )
-{
-    current_color.r = r;
-    current_color.g = g;
-    current_color.b = b;
+//void Controller::setCurrentColor( int r, int g, int b )
+//{
+//    current_color.r = r;
+//    current_color.g = g;
+//    current_color.b = b;
 
-    setObjectColor( current_object, r, g, b );
+//    setObjectColor( current_object, r, g, b );
 
-}
+//}
 
 
-void Controller::getCurrentColor( int& r, int& g, int& b ) const
-{
-    r = current_color.r;
-    g = current_color.g;
-    b = current_color.b;
-}
+//void Controller::getCurrentColor( int& r, int& g, int& b ) const
+//{
+//    r = current_color.r;
+//    g = current_color.g;
+//    b = current_color.b;
+//}
 
 
-void Controller::addVolume()
-{
-    volume = new Volume();
+//void Controller::addVolume()
+//{
+//    volume = new Volume();
 
-    scene3d->addVolume( volume );
-    object_tree->addInputVolume();
+//    scene3d->addVolume( volume );
+//    object_tree->addInputVolume();
 
-    initRulesProcessor();
+//    initRulesProcessor();
 
-}
+//}
 
 
-bool Controller::isVolumeResizable() const
-{
-    if( volume == nullptr ) return false;
-    return volume->isResizable();
+//bool Controller::isVolumeResizable() const
+//{
+//    if( volume == nullptr ) return false;
+//    return volume->isResizable();
 
-}
+//}
 
 
-void Controller::setVolumeOrigin( double ox_, double oy_, double oz_ )
-{
-    volume->setOrigin( ox_, oy_, oz_ );
-}
+//void Controller::setVolumeOrigin( double ox_, double oy_, double oz_ )
+//{
+//    volume->setOrigin( ox_, oy_, oz_ );
+//}
 
 
-void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
-{
-    volume->getOrigin( ox_, oy_, oz_ );
-}
+//void Controller::getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const
+//{
+//    volume->getOrigin( ox_, oy_, oz_ );
+//}
 
 
-void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
-{
+//void Controller::setVolumeDimensions( const double& width_, const double& height_, const double& length_ )
+//{
 
-    volume->setDimensions( width_, height_, length_ );
-    scene3d->updateVolume();
+//    volume->setDimensions( width_, height_, length_ );
+//    scene3d->updateVolume();
 
 
-    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        Object* item_ = objects.getElement( it->first );
-        if( item_ == nullptr ) continue;
+//    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+//    {
+//        Object* item_ = objects.getElement( it->first );
+//        if( item_ == nullptr ) continue;
 
-        double w = 0, h = 0,  l = 0;
-        double ox_ = 0, oy_ = 0, oz_ = 0;
+//        double w = 0, h = 0,  l = 0;
+//        double ox_ = 0, oy_ = 0, oz_ = 0;
 
-        volume->getOrigin( ox_, oy_, oz_ );
-        volume->getDimensions( w, h, l );
+//        volume->getOrigin( ox_, oy_, oz_ );
+//        volume->getDimensions( w, h, l );
 
-        item_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
-        //        item_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
-    }
+//        item_->setBoundingBox( ox_, ox_ + w, oy_, oy_ + h, oz_, oz_ + l );
+//        //        item_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+//    }
 
-    updateBoundingBoxRulesProcessor();
+//    updateBoundingBoxRulesProcessor();
 
-}
+//}
 
 
-void Controller::getVolumeDimensions( double& width_, double& height_, double& length_ ) const
-{
-    volume->getDimensions( width_, height_, length_ );
-}
+//void Controller::getVolumeDimensions( double& width_, double& height_, double& length_ ) const
+//{
+//    volume->getDimensions( width_, height_, length_ );
+//}
 
 
 
-const std::string& Controller::getVolumeName() const
-{
-    return volume->getName();
-}
+//const std::string& Controller::getVolumeName() const
+//{
+//    return volume->getName();
+//}
 
 
-bool Controller::getVolumeVisibility() const
-{
-    return volume->isVisible();
-}
+//bool Controller::getVolumeVisibility() const
+//{
+//    return volume->isVisible();
+//}
 
 
-void Controller::setupCrossSectionDiscretization( std::size_t& disc_, double& step_ )
-{
-    if( volume == nullptr ) return;
+//void Controller::setupCrossSectionDiscretization( std::size_t& disc_, double& step_ )
+//{
+//    if( volume == nullptr ) return;
 
-    disc_ = rules_processor.getDepthResolution();
-    step_ = static_cast< double >( volume->getLenght()/disc_ );
-    csection_step = step_;
-}
+//    disc_ = rules_processor.getDepthResolution();
+//    step_ = static_cast< double >( volume->getLenght()/disc_ );
+//    csection_step = step_;
+//}
 
 
-void Controller::addMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
-{
-    main_csection = new CrossSection( volume, dir_, depth_ );
-    scene3d->addMainCrossSection( main_csection );
+//void Controller::addMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+//{
+//    main_csection = new CrossSection( volume, dir_, depth_ );
+//    scene3d->addMainCrossSection( main_csection );
 
-    setCurrentCrossSection( depth_ );
-}
+//    setCurrentCrossSection( depth_ );
+//}
 
 
-CrossSection* Controller::getMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_ ) const
-{
-    return main_csection;
-}
+//CrossSection* Controller::getMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_ ) const
+//{
+//    return main_csection;
+//}
 
 
-void Controller::addTopViewCrossSection( double depth_ )
-{
-    topview_csection = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Y, depth_ );
-    //    scene3d->addCrossSection( main_csection );
+//void Controller::addTopViewCrossSection( double depth_ )
+//{
+//    topview_csection = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Y, depth_ );
+//    //    scene3d->addCrossSection( main_csection );
 
-}
+//}
 
 
-CrossSection* Controller::getTopViewCrossSection() const
-{
-    return topview_csection;
-}
+//CrossSection* Controller::getTopViewCrossSection() const
+//{
+//    return topview_csection;
+//}
 
 
-void Controller::setTopViewImage( std::string file_, double ox_, double oy_, double x_, double y_ )
-{
-    topview_csection->setImage( file_, ox_, oy_, x_, y_ );
-}
+//void Controller::setTopViewImage( std::string file_, double ox_, double oy_, double x_, double y_ )
+//{
+//    topview_csection->setImage( file_, ox_, oy_, x_, y_ );
+//}
 
 
 
-void Controller::removeTopViewImage()
-{
-    topview_csection->clearImage();
-}
+//void Controller::removeTopViewImage()
+//{
+//    topview_csection->clearImage();
+//}
 
 
 
-void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double x_, double y_ )
-{
+//void Controller::setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double x_, double y_ )
+//{
 
-    ImageData image_data;
-    image_data.file = path_;
-    image_data.ox = ox_;
-    image_data.oy = oy_;
-    image_data.x = x_;
-    image_data.y = y_;
+//    ImageData image_data;
+//    image_data.file = path_;
+//    image_data.ox = ox_;
+//    image_data.oy = oy_;
+//    image_data.x = x_;
+//    image_data.y = y_;
 
-    csections_background[ depth_ ] = image_data;
+//    csections_background[ depth_ ] = image_data;
 
-    CrossSection* csection_ = getCrossSection( depth_ );
-    if( csection_ != nullptr )
-    {
-        csection_->setImage( path_, ox_, oy_, x_, y_ );
-    }
-    if( main_csection->getDepth() == depth_ )
-    {
-        main_csection->setImage( path_, ox_, oy_, x_, y_ );
-    }
+//    CrossSection* csection_ = getCrossSection( depth_ );
+//    if( csection_ != nullptr )
+//    {
+//        csection_->setImage( path_, ox_, oy_, x_, y_ );
+//    }
+//    if( main_csection->getDepth() == depth_ )
+//    {
+//        main_csection->setImage( path_, ox_, oy_, x_, y_ );
+//    }
 
-}
+//}
 
 
 
-bool Controller::hasImageCrossSection( double depth_ )
-{
-    if( csections_background.find( depth_ ) == csections_background.end() )
-        return false;
-    return true;
-}
+//bool Controller::hasImageCrossSection( double depth_ )
+//{
+//    if( csections_background.find( depth_ ) == csections_background.end() )
+//        return false;
+//    return true;
+//}
 
 
-bool Controller::clearImageCrossSection( double depth_ )
-{
+//bool Controller::clearImageCrossSection( double depth_ )
+//{
 
-    if( csections_background.find( depth_ ) == csections_background.end() )
-        return false;
+//    if( csections_background.find( depth_ ) == csections_background.end() )
+//        return false;
 
 
-    CrossSection* csection_ = getCrossSection( depth_ );
-    if( csection_ != nullptr )
-    {
-        csection_->clearImage();
-    }
-    if( main_csection->getDepth() == depth_ )
-    {
-        main_csection->clearImage();
-    }
+//    CrossSection* csection_ = getCrossSection( depth_ );
+//    if( csection_ != nullptr )
+//    {
+//        csection_->clearImage();
+//    }
+//    if( main_csection->getDepth() == depth_ )
+//    {
+//        main_csection->clearImage();
+//    }
 
 
-    csections_background.erase( depth_ );
-    return true;
+//    csections_background.erase( depth_ );
+//    return true;
 
 
-}
+//}
 
 
-bool Controller::getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& x_, double& y_ )
-{
+//bool Controller::getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& x_, double& y_ )
+//{
 
-    if( hasImageCrossSection( depth_ ) == false ) return false;
+//    if( hasImageCrossSection( depth_ ) == false ) return false;
 
-    ImageData image_data = csections_background[ depth_ ];
-    path_  = image_data.file ;
-    ox_    = image_data.ox;
-    oy_    = image_data.oy;
-    x_ = image_data.x;
-    y_ = image_data.y;
+//    ImageData image_data = csections_background[ depth_ ];
+//    path_  = image_data.file ;
+//    ox_    = image_data.ox;
+//    oy_    = image_data.oy;
+//    x_ = image_data.x;
+//    y_ = image_data.y;
 
-    return true;
-}
+//    return true;
+//}
 
 
 
-void Controller::setCurrentCrossSection( double depth_ )
-{
+//void Controller::setCurrentCrossSection( double depth_ )
+//{
 
-    current_csection = depth_;
-    if( main_csection == nullptr ) return;
-    main_csection->setDepth( depth_ );
+//    current_csection = depth_;
+//    if( main_csection == nullptr ) return;
+//    main_csection->setDepth( depth_ );
 
-    updateCurrentCrossSection();
-    scene3d->updateMainCrossSection();
+//    updateCurrentCrossSection();
+//    scene3d->updateMainCrossSection();
 
-    //    std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
+//    //    std::cout << "Current cross-section: " << depth_ << std::endl << std::flush;
 
-}
+//}
 
 
-void Controller::updateCurrentCrossSection()
-{
-    std::string path_;
-    double ox_ = 0.0;
-    double oy_ = 0.0;
-    double x_ = 100.0;
-    double y_ = 100.0;
+//void Controller::updateCurrentCrossSection()
+//{
+//    std::string path_;
+//    double ox_ = 0.0;
+//    double oy_ = 0.0;
+//    double x_ = 100.0;
+//    double y_ = 100.0;
 
-    if( getImageCrossSection( current_csection, path_, ox_, oy_, x_, y_ ) == true )
-    {
-        main_csection->setImage( path_, ox_, oy_, x_, y_ );
-    }
-    else
-    {
-        main_csection->clearImage();
-    }
+//    if( getImageCrossSection( current_csection, path_, ox_, oy_, x_, y_ ) == true )
+//    {
+//        main_csection->setImage( path_, ox_, oy_, x_, y_ );
+//    }
+//    else
+//    {
+//        main_csection->clearImage();
+//    }
 
 
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-    for ( std::size_t id_: actives_ )
-    {
-        updateObjectCurveFromCrossSection( id_, current_csection );
-    }
-}
+//    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+//    for ( std::size_t id_: actives_ )
+//    {
+//        updateObjectCurveFromCrossSection( id_, current_csection );
+//    }
+//}
 
 
-CrossSection* Controller::getCrossSection( const double& depth_ ) const
-{
-    if( all_csections.findElement( depth_ ) == true )
-        return all_csections.getElement( depth_ );
-    else if( fixed_csections.findElement( depth_ ) == true )
-        return fixed_csections.getElement( depth_ );
-    else
-        return nullptr;
-}
+//CrossSection* Controller::getCrossSection( const double& depth_ ) const
+//{
+//    if( all_csections.findElement( depth_ ) == true )
+//        return all_csections.getElement( depth_ );
+//    else if( fixed_csections.findElement( depth_ ) == true )
+//        return fixed_csections.getElement( depth_ );
+//    else
+//        return nullptr;
+//}
 
 
-CrossSection* Controller::getCurrentCrossSection() const
-{
-    return getCrossSection( current_csection );
-}
+//CrossSection* Controller::getCurrentCrossSection() const
+//{
+//    return getCrossSection( current_csection );
+//}
 
 
 
-void Controller::saveObjectInformation( std::size_t index_, const std::string & text_ )
-{
-    if( objects.findElement( index_ ) == false )
-        return;
+//void Controller::saveObjectInformation( std::size_t index_, const std::string & text_ )
+//{
+//    if( objects.findElement( index_ ) == false )
+//        return;
 
-    Object* const& obj_ = objects.getElement( index_ );
-    obj_->saveInformation( text_ );
-}
+//    Object* const& obj_ = objects.getElement( index_ );
+//    obj_->saveInformation( text_ );
+//}
 
 
-const std::string& Controller::getObjectInformation( std::size_t index_ ) const
-{
-    if( objects.findElement( index_ ) == false )
-        return "";
+//const std::string& Controller::getObjectInformation( std::size_t index_ ) const
+//{
+//    if( objects.findElement( index_ ) == false )
+//        return "";
 
-    Object* const& obj_ = objects.getElement( index_ );
-    return obj_->getInformation();
-}
+//    Object* const& obj_ = objects.getElement( index_ );
+//    return obj_->getInformation();
+//}
 
 
 
 
 
-bool Controller::removeObjectCurve( std::size_t index_, double depth_ )
-{
-    if( objects.findElement( index_ ) == false )
-        return false;
+//bool Controller::removeObjectCurve( std::size_t index_, double depth_ )
+//{
+//    if( objects.findElement( index_ ) == false )
+//        return false;
 
-    Object* const& obj_ = objects.getElement( index_ );
-    obj_->removeCurve( depth_ );
+//    Object* const& obj_ = objects.getElement( index_ );
+//    obj_->removeCurve( depth_ );
 
-    CrossSection* csection_ = getCurrentCrossSection();
-    if( csection_ == nullptr ) return true;
+//    CrossSection* csection_ = getCurrentCrossSection();
+//    if( csection_ == nullptr ) return true;
 
-    csection_->removeObjectCurve( index_ );
-    createPreviewSurface();
+//    csection_->removeObjectCurve( index_ );
+//    createPreviewSurface();
 
-    return true;
+//    return true;
 
-}
+//}
 
 
-bool Controller::removeObjectCurve( double depth_ )
-{
-    return removeObjectCurve( current_object, depth_ );
-}
+//bool Controller::removeObjectCurve( double depth_ )
+//{
+//    return removeObjectCurve( current_object, depth_ );
+//}
 
 
-bool Controller::createObjectSurface()
-{
+//bool Controller::createObjectSurface()
+//{
 
-    Object* const& obj_ = objects.getElement( current_object );
-    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
-    if( cs_.empty() == true ) return false;
+//    Object* const& obj_ = objects.getElement( current_object );
+//    Object::CrossSectionsContainer cs_ = obj_->getCrossSectionCurves();
+//    if( cs_.empty() == true ) return false;
 
-    std::vector< std::tuple< Curve2D, double > > curves_;
-    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
-    {
-        double csection_id_ = it->first;
-        PolyCurve sketch_ = it->second;
+//    std::vector< std::tuple< Curve2D, double > > curves_;
+//    for ( Object::CrossSectionsContainer::Iterator it =  cs_.begin(); it != cs_.end(); ++it )
+//    {
+//        double csection_id_ = it->first;
+//        PolyCurve sketch_ = it->second;
 
-        if( all_csections.findElement( csection_id_ )  == false ) continue;
+//        if( all_csections.findElement( csection_id_ )  == false ) continue;
 
-        CrossSection* csection_ = all_csections.getElement( csection_id_ );
-        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
+//        CrossSection* csection_ = all_csections.getElement( csection_id_ );
+//        Curve2D curve_ = vectorToCurve2D( sketch_.getVertices() );
 
-        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
-    }
+//        curves_.push_back( std::make_tuple( curve_, csection_id_ ) );
+//    }
 
-    if( curves_.empty() == true ) return false;
+//    if( curves_.empty() == true ) return false;
 
 
 
-    applyStratigraphicRule();
+//    applyStratigraphicRule();
 
 
-    bool surface_created = false;
-    if( obj_->hasTrajectory() == true )
-    {
-        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
-        if( curve_.isEmpty() == true ) return false;
+//    bool surface_created = false;
+//    if( obj_->hasTrajectory() == true )
+//    {
+//        Curve2D curve_ = std::get<0>( curves_[ 0 ] );
+//        if( curve_.isEmpty() == true ) return false;
 
-        double depth_ = std::get<1>( curves_[ 0 ] );
+//        double depth_ = std::get<1>( curves_[ 0 ] );
 
-        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
-        if( traj_.isEmpty() == true ) return false;
+//        Curve2D traj_ = vectorToCurve2D( obj_->getTrajectory().getVertices() );
+//        if( traj_.isEmpty() == true ) return false;
 
-        surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
-    }
+//        surface_created = rules_processor.extrudeAlongPath( current_object, curve_, depth_, traj_ );
+//    }
 
-    else
-    {
-        surface_created = rules_processor.createSurface( current_object, curves_ );
-    }
+//    else
+//    {
+//        surface_created = rules_processor.createSurface( current_object, curves_ );
+//    }
 
 
-    if( surface_created == false )
-        return false;
+//    if( surface_created == false )
+//        return false;
 
-    obj_->removeCrossSectionCurves();
-    obj_->removeTrajectory();
-    obj_->setEditable( false );
+//    obj_->removeCrossSectionCurves();
+//    obj_->removeTrajectory();
+//    obj_->setEditable( false );
 
-    updateModel();
+//    updateModel();
 
-    return true;
+//    return true;
 
-}
+//}
 
 
 
@@ -1691,55 +1691,55 @@ bool Controller::createObjectSurface()
 
 
 
-void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
-{
+//void Controller::getCurveFromRulesProcessor( Object* obj_, double csection_depth_ )
+//{
 
-    std::size_t object_id_ = obj_->getIndex();
+//    std::size_t object_id_ = obj_->getIndex();
 
 
-    std::vector< double > vertices_;
-    std::vector< std::size_t > edges_;
-    bool has_curve = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_depth_ ), vertices_, edges_ );
-    if( has_curve == false ) return;
+//    std::vector< double > vertices_;
+//    std::vector< std::size_t > edges_;
+//    bool has_curve = rules_processor.getCrossSection( object_id_, indexCrossSection( csection_depth_ ), vertices_, edges_ );
+//    if( has_curve == false ) return;
 
 
-    PolyCurve curve_ = PolyCurve( vertices_, edges_ );
-    obj_->updateCurve( csection_depth_, curve_ );
+//    PolyCurve curve_ = PolyCurve( vertices_, edges_ );
+//    obj_->updateCurve( csection_depth_, curve_ );
 
 
-    if( all_csections.findElement( csection_depth_ ) == true )
-    {
-        CrossSection* csection_ = all_csections.getElement( csection_depth_ );
-        csection_->addObject( object_id_, &curve_ );
-    }
+//    if( all_csections.findElement( csection_depth_ ) == true )
+//    {
+//        CrossSection* csection_ = all_csections.getElement( csection_depth_ );
+//        csection_->addObject( object_id_, &curve_ );
+//    }
 
-}
+//}
 
 
 
-void Controller::updateObjectInFixedCrossSections( std::size_t id_ )
-{
-    for ( Container< double, CrossSection* >::Iterator cs_it =  fixed_csections.begin(); cs_it != fixed_csections.end(); ++cs_it )
-    {
-        if( cs_it->first == current_csection ) continue;
-        updateObjectCurveFromCrossSection( id_, cs_it->first );
-    }
+//void Controller::updateObjectInFixedCrossSections( std::size_t id_ )
+//{
+//    for ( Container< double, CrossSection* >::Iterator cs_it =  fixed_csections.begin(); cs_it != fixed_csections.end(); ++cs_it )
+//    {
+//        if( cs_it->first == current_csection ) continue;
+//        updateObjectCurveFromCrossSection( id_, cs_it->first );
+//    }
 
-}
+//}
 
 
 
 
-void Controller::setActiveAllObjects( bool status_ )
-{
-    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        Object* obj_ = (it->second);
-        obj_->setActive( status_ );
-        object_tree->setObjectVisibility( it->first, status_ );
-        scene3d->updateObject( it->first );
-    }
-}
+//void Controller::setActiveAllObjects( bool status_ )
+//{
+//    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+//    {
+//        Object* obj_ = (it->second);
+//        obj_->setActive( status_ );
+//        object_tree->setObjectVisibility( it->first, status_ );
+//        scene3d->updateObject( it->first );
+//    }
+//}
 
 
 
@@ -1747,592 +1747,592 @@ void Controller::setActiveAllObjects( bool status_ )
 
 
 
-void Controller::setTruncate()
-{
-    current_rule = Settings::Stratigraphy::StratigraphicRules::TRUNCATE;
-}
+//void Controller::setTruncate()
+//{
+//    current_rule = Settings::Stratigraphy::StratigraphicRules::TRUNCATE;
+//}
 
 
 
-bool Controller::enableCreateAbove( bool status_ )
-{
-    if( status_ == false )
-    {
-        stopCreateAbove();
-        return false;
-    }
+//bool Controller::enableCreateAbove( bool status_ )
+//{
+//    if( status_ == false )
+//    {
+//        stopCreateAbove();
+//        return false;
+//    }
 
-    return requestCreateAbove();
+//    return requestCreateAbove();
 
-}
+//}
 
 
-void Controller::stopCreateAbove()
-{
-    std::cout << "Stop create above accepted" << std::endl << std::flush;
-    rules_processor.stopDefineAbove();
-    setObjectsAsSelectable( selectable_upper, false );
-    setObjectAsSelected( index_upper_boundary, false );
-}
+//void Controller::stopCreateAbove()
+//{
+//    std::cout << "Stop create above accepted" << std::endl << std::flush;
+//    rules_processor.stopDefineAbove();
+//    setObjectsAsSelectable( selectable_upper, false );
+//    setObjectAsSelected( index_upper_boundary, false );
+//}
 
 
-bool Controller::requestCreateAbove()
-{
+//bool Controller::requestCreateAbove()
+//{
 
-    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
+//    bool request_ = rules_processor.requestCreateAbove( selectable_upper );
 
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
+//    if( request_ == true )
+//    {
+//        std::cout << "Request create accepted" << std::endl << std::flush;
 
-        setObjectsAsSelectable( selectable_bottom, false );
-        setObjectsAsSelectable( selectable_upper, true );
+//        setObjectsAsSelectable( selectable_bottom, false );
+//        setObjectsAsSelectable( selectable_upper, true );
 
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+//        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
 
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
+//    }
+//    else
+//        std::cout << "Request create denied" << std::endl << std::flush;
 
-    return request_ ;
+//    return request_ ;
 
-}
+//}
 
 
 
 
 
-bool Controller::enableCreateBelow( bool status_ )
-{
+//bool Controller::enableCreateBelow( bool status_ )
+//{
 
 
-    if( status_ == false )
-    {
-        stopCreateBelow();
-        return false;
-    }
+//    if( status_ == false )
+//    {
+//        stopCreateBelow();
+//        return false;
+//    }
 
-    return requestCreateBelow();
+//    return requestCreateBelow();
 
-}
+//}
 
 
-void Controller::stopCreateBelow()
-{
-    std::cout << "Stop create below accepted" << std::endl << std::flush;
-    rules_processor.stopDefineBelow();
-    setObjectsAsSelectable( selectable_bottom, false );
-    setObjectAsSelected( index_bottom_boundary, false );
+//void Controller::stopCreateBelow()
+//{
+//    std::cout << "Stop create below accepted" << std::endl << std::flush;
+//    rules_processor.stopDefineBelow();
+//    setObjectsAsSelectable( selectable_bottom, false );
+//    setObjectAsSelected( index_bottom_boundary, false );
 
-}
+//}
 
 
-bool Controller::requestCreateBelow()
-{
+//bool Controller::requestCreateBelow()
+//{
 
-    bool request_ = rules_processor.requestCreateBelow( selectable_bottom );
+//    bool request_ = rules_processor.requestCreateBelow( selectable_bottom );
 
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
+//    if( request_ == true )
+//    {
+//        std::cout << "Request create accepted" << std::endl << std::flush;
 
-        setObjectsAsSelectable( selectable_upper, false );
-        setObjectsAsSelectable( selectable_bottom, true );
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+//        setObjectsAsSelectable( selectable_upper, false );
+//        setObjectsAsSelectable( selectable_bottom, true );
+//        boundering_region = Settings::Objects::BounderingRegion::BELOW;
 
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
+//    }
+//    else
+//        std::cout << "Request create denied" << std::endl << std::flush;
 
-    return request_ ;
+//    return request_ ;
 
-}
+//}
 
 
 
 
-bool Controller::isDefineAboveObjectSelected()
-{
+//bool Controller::isDefineAboveObjectSelected()
+//{
 
-    return selectable_upper.empty();
-}
+//    return selectable_upper.empty();
+//}
 
 
-bool Controller::isDefineBelowObjectSelected()
-{
-    return selectable_bottom.empty();
-}
+//bool Controller::isDefineBelowObjectSelected()
+//{
+//    return selectable_bottom.empty();
+//}
 
 
 
-void Controller::setObjectAsBoundering( std::size_t index_ )
-{
+//void Controller::setObjectAsBoundering( std::size_t index_ )
+//{
 
-    if( objects.findElement( index_ ) == false ) return;
+//    if( objects.findElement( index_ ) == false ) return;
 
 
-    setObjectAsSelected( index_, true );
+//    setObjectAsSelected( index_, true );
 
-    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
-    {
-        index_upper_boundary = index_;
-        rules_processor.defineAbove( index_ );
-        setObjectsAsSelectable( selectable_upper, false );
-    }
-    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
-    {
-        index_bottom_boundary = index_;
-        rules_processor.defineBelow( index_ );
-        setObjectsAsSelectable( selectable_bottom, false );
-    }
+//    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+//    {
+//        index_upper_boundary = index_;
+//        rules_processor.defineAbove( index_ );
+//        setObjectsAsSelectable( selectable_upper, false );
+//    }
+//    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+//    {
+//        index_bottom_boundary = index_;
+//        rules_processor.defineBelow( index_ );
+//        setObjectsAsSelectable( selectable_bottom, false );
+//    }
 
-}
+//}
 
 
-void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes_,
-                                         bool status_ )
-{
+//void Controller::setObjectsAsSelectable( std::vector< std::size_t >& indexes_,
+//                                         bool status_ )
+//{
 
-    for( std::size_t id_: indexes_ )
-    {
-        if( objects.findElement( id_ ) == false ) continue;
+//    for( std::size_t id_: indexes_ )
+//    {
+//        if( objects.findElement( id_ ) == false ) continue;
 
-        Object* obj_ = objects.getElement( id_ );
-        obj_->setSelectable( status_ );
-    }
+//        Object* obj_ = objects.getElement( id_ );
+//        obj_->setSelectable( status_ );
+//    }
 
-    if( status_ == false )
-        indexes_.clear();
-}
+//    if( status_ == false )
+//        indexes_.clear();
+//}
 
 
-void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
-{
+//void Controller::setObjectAsSelected( std::size_t index_, bool status_ )
+//{
 
-    if( objects.findElement( index_ ) == false ) return;
+//    if( objects.findElement( index_ ) == false ) return;
 
-    Object* obj_ = objects.getElement( index_ );
-    obj_->setSelected( status_ );
-}
+//    Object* obj_ = objects.getElement( index_ );
+//    obj_->setSelected( status_ );
+//}
 
 
 
 
-void Controller::saveFile( const std::string& filename )
-{
-    rules_processor.saveFile( filename );
-    saveObjectsMetaData( filename );
-}
+//void Controller::saveFile( const std::string& filename )
+//{
+//    rules_processor.saveFile( filename );
+//    saveObjectsMetaData( filename );
+//}
 
 
-bool Controller::saveObjectsMetaData( const std::string& filename )
-{
+//bool Controller::saveObjectsMetaData( const std::string& filename )
+//{
 
-    std::string complete_filename = filename + ".json";
-    QFile save_file( QString( complete_filename.c_str() ) );
+//    std::string complete_filename = filename + ".json";
+//    QFile save_file( QString( complete_filename.c_str() ) );
 
-    if ( !save_file.open( QIODevice::WriteOnly ) ) {
-        qWarning("Couldn't open save file.");
-        return false;
-    }
+//    if ( !save_file.open( QIODevice::WriteOnly ) ) {
+//        qWarning("Couldn't open save file.");
+//        return false;
+//    }
 
-    QJsonObject metadatas;
+//    QJsonObject metadatas;
 
-    QJsonArray objects_array_;
-    for( auto it: objects )
-    {
-        const Object* obj_ = it.second;
-        QJsonObject object_;
-        obj_->write( object_ );
-        objects_array_.append( object_ );
-    }
-    metadatas["objects"] = objects_array_;
+//    QJsonArray objects_array_;
+//    for( auto it: objects )
+//    {
+//        const Object* obj_ = it.second;
+//        QJsonObject object_;
+//        obj_->write( object_ );
+//        objects_array_.append( object_ );
+//    }
+//    metadatas["objects"] = objects_array_;
 
 
-    QJsonDocument save_doc( metadatas );
-    save_file.write( save_doc.toJson() );
+//    QJsonDocument save_doc( metadatas );
+//    save_file.write( save_doc.toJson() );
 
-    return true;
-}
+//    return true;
+//}
 
 
-void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
-{
-    rules_processor.loadFile( filename );
-    loadObjects( filename, resol_ );
-}
+//void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
+//{
+//    rules_processor.loadFile( filename );
+//    loadObjects( filename, resol_ );
+//}
 
 
-void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
-{
-    if( volume == nullptr ) return;
+//void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
+//{
+//    if( volume == nullptr ) return;
 
-    double ox, oy, oz;
-    rules_processor.getOrigin( ox, oy, oz );
-    volume->setOrigin( ox, oy, oz );
+//    double ox, oy, oz;
+//    rules_processor.getOrigin( ox, oy, oz );
+//    volume->setOrigin( ox, oy, oz );
 
-    double width, height, depth;
-    rules_processor.getLenght( width, height, depth );
-    setVolumeDimensions( width, height, depth );
+//    double width, height, depth;
+//    rules_processor.getLenght( width, height, depth );
+//    setVolumeDimensions( width, height, depth );
 
-    if ( rules_processor.isLowResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::LOW;
-    }
-    else if ( rules_processor.isMediumResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::MEDIUM;
-    }
-    else if ( rules_processor.isHighResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::HIGH;
-    }
-    if( objects.findElement( current_object ) == true )
-    {
-        objects.removeElement( current_object );
-        volume->removeObject( current_object );
-        object_tree->removeObject( current_object );
-        scene3d->removeObject( current_object );
+//    if ( rules_processor.isLowResolution() == true )
+//    {
+//        resol_ = Controller::MeshResolution::LOW;
+//    }
+//    else if ( rules_processor.isMediumResolution() == true )
+//    {
+//        resol_ = Controller::MeshResolution::MEDIUM;
+//    }
+//    else if ( rules_processor.isHighResolution() == true )
+//    {
+//        resol_ = Controller::MeshResolution::HIGH;
+//    }
+//    if( objects.findElement( current_object ) == true )
+//    {
+//        objects.removeElement( current_object );
+//        volume->removeObject( current_object );
+//        object_tree->removeObject( current_object );
+//        scene3d->removeObject( current_object );
 
-        Object::resetAllObjects();
-        CrossSection::resetAllCrossSections();
-    }
+//        Object::resetAllObjects();
+//        CrossSection::resetAllCrossSections();
+//    }
 
 
-    std::string complete_filename = filename + ".json";
+//    std::string complete_filename = filename + ".json";
 
-    QFile load_file( QString( complete_filename.c_str() ) );
-    if ( !load_file.open( QIODevice::ReadOnly ) ) {
-        loadObjectNoMetaDatas();
-    }
-    else
-        loadObjectMetaDatas( load_file );
+//    QFile load_file( QString( complete_filename.c_str() ) );
+//    if ( !load_file.open( QIODevice::ReadOnly ) ) {
+//        loadObjectNoMetaDatas();
+//    }
+//    else
+//        loadObjectMetaDatas( load_file );
 
-    addObject();
-    updateModel();
+//    addObject();
+//    updateModel();
 
-}
+//}
 
 
-void Controller::loadObjectNoMetaDatas()
-{
-    std::random_device rd;
-    std::mt19937 eng( rd() );
-    std::uniform_int_distribution< size_t > distr( 0, 255 );
+//void Controller::loadObjectNoMetaDatas()
+//{
+//    std::random_device rd;
+//    std::mt19937 eng( rd() );
+//    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    std::vector< std::size_t > actives = rules_processor.getSurfaces();
-    for( auto id: actives )
-    {
-        int r_ = distr( eng );
-        int g_ = distr( eng );
-        int b_ = distr( eng );
+//    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+//    for( auto id: actives )
+//    {
+//        int r_ = distr( eng );
+//        int g_ = distr( eng );
+//        int b_ = distr( eng );
 
-        addObject( id );
-        setObjectColor( id, r_, g_, b_ );
-    }
+//        addObject( id );
+//        setObjectColor( id, r_, g_, b_ );
+//    }
 
-}
+//}
 
 
-void Controller::loadObjectMetaDatas( QFile& load_file )
-{
+//void Controller::loadObjectMetaDatas( QFile& load_file )
+//{
 
-    std::random_device rd;
-    std::mt19937 eng( rd() );
-    std::uniform_int_distribution< size_t > distr( 0, 255 );
+//    std::random_device rd;
+//    std::mt19937 eng( rd() );
+//    std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    QByteArray save_data = load_file.readAll();
-    QJsonDocument load_doc( QJsonDocument::fromJson(save_data) );
-    const QJsonObject &json = load_doc.object();
+//    QByteArray save_data = load_file.readAll();
+//    QJsonDocument load_doc( QJsonDocument::fromJson(save_data) );
+//    const QJsonObject &json = load_doc.object();
 
-    if ( json.contains("objects") && json["objects"].isArray() )
-    {
-        QJsonArray objects_array_ = json["objects"].toArray();
+//    if ( json.contains("objects") && json["objects"].isArray() )
+//    {
+//        QJsonArray objects_array_ = json["objects"].toArray();
 
-        std::vector< std::size_t > actives = rules_processor.getSurfaces();
+//        std::vector< std::size_t > actives = rules_processor.getSurfaces();
 
-        int obj_id_ = 0;
-        for( auto id: actives )
-        {
-            int r_= distr( eng );
-            int g_= distr( eng );
-            int b_= distr( eng );
+//        int obj_id_ = 0;
+//        for( auto id: actives )
+//        {
+//            int r_= distr( eng );
+//            int g_= distr( eng );
+//            int b_= distr( eng );
 
-            addObject( id );
+//            addObject( id );
 
-            if( obj_id_ < objects_array_.size() )
-            {
-                QJsonObject object_ = objects_array_[obj_id_].toObject();
+//            if( obj_id_ < objects_array_.size() )
+//            {
+//                QJsonObject object_ = objects_array_[obj_id_].toObject();
 
-                Object* obj_ = objects.getElement( id );
-                obj_->read( object_ );
-                obj_->getColor( r_, g_, b_ );
+//                Object* obj_ = objects.getElement( id );
+//                obj_->read( object_ );
+//                obj_->getColor( r_, g_, b_ );
 
-                obj_id_++;
-            }
-            else
-            {
-                setObjectColor( id, r_, g_, b_ );
-            }
+//                obj_id_++;
+//            }
+//            else
+//            {
+//                setObjectColor( id, r_, g_, b_ );
+//            }
 
-            scene3d->updateObject( id );
-            object_tree->updateObjectColor( id, r_, g_, b_ );
-            object_tree->updateObjectName( id, getObjectName( id ) );
+//            scene3d->updateObject( id );
+//            object_tree->updateObjectColor( id, r_, g_, b_ );
+//            object_tree->updateObjectName( id, getObjectName( id ) );
 
-        }
+//        }
 
-    }
-}
+//    }
+//}
 
 
-bool Controller::undo()
-{
-    bool undo_done = rules_processor.undo();
-    if( undo_done == false ) return false;
+//bool Controller::undo()
+//{
+//    bool undo_done = rules_processor.undo();
+//    if( undo_done == false ) return false;
 
-    updateModel();
-    return true;
-}
+//    updateModel();
+//    return true;
+//}
 
 
-bool Controller::redo()
-{
-    bool redo_done = rules_processor.redo();
-    if( redo_done == false ) return false;
+//bool Controller::redo()
+//{
+//    bool redo_done = rules_processor.redo();
+//    if( redo_done == false ) return false;
 
-    updateModel();
-    return true;
-}
+//    updateModel();
+//    return true;
+//}
 
 
-bool Controller::canUndo()
-{
-    return rules_processor.canUndo();
-}
+//bool Controller::canUndo()
+//{
+//    return rules_processor.canUndo();
+//}
 
 
-bool Controller::canRedo()
-{
-    return rules_processor.canRedo();
-}
+//bool Controller::canRedo()
+//{
+//    return rules_processor.canRedo();
+//}
 
 
 
 
-bool Controller::isDefineAboveActive()
-{
-    std::size_t index_;
+//bool Controller::isDefineAboveActive()
+//{
+//    std::size_t index_;
 
-    bool status_ = rules_processor.defineAboveIsActive( index_ );
-    if( status_ == false )
-    {
-        setObjectAsSelected( index_upper_boundary, false );
-        return false;
-    }
+//    bool status_ = rules_processor.defineAboveIsActive( index_ );
+//    if( status_ == false )
+//    {
+//        setObjectAsSelected( index_upper_boundary, false );
+//        return false;
+//    }
 
-    boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-    setObjectAsBoundering( index_ );
-    return true;
+//    boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+//    setObjectAsBoundering( index_ );
+//    return true;
 
-}
+//}
 
 
-bool Controller::isDefineBelowActive()
-{
-    std::size_t index_;
+//bool Controller::isDefineBelowActive()
+//{
+//    std::size_t index_;
 
-    bool status_ = rules_processor.defineBelowIsActive( index_ );
-    if( status_ == false )
-    {
-        setObjectAsSelected( index_bottom_boundary, false );
-        return false;
-    }
+//    bool status_ = rules_processor.defineBelowIsActive( index_ );
+//    if( status_ == false )
+//    {
+//        setObjectAsSelected( index_bottom_boundary, false );
+//        return false;
+//    }
 
-    boundering_region = Settings::Objects::BounderingRegion::BELOW;
-    setObjectAsBoundering( index_ );
-    return true;
-}
+//    boundering_region = Settings::Objects::BounderingRegion::BELOW;
+//    setObjectAsBoundering( index_ );
+//    return true;
+//}
 
 
 
 
-void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_  )
-{
+//void Controller::getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_  )
+//{
 
 
 
 
 
-}
+//}
 
 
-void Controller::setRegionName( std::size_t index_, const std::string& name_ )
-{
-    if( regions.findElement( index_) == false )
-        return;
+//void Controller::setRegionName( std::size_t index_, const std::string& name_ )
+//{
+//    if( regions.findElement( index_) == false )
+//        return;
 
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->setName( name_ );
-}
+//    Regions* const& region_ = regions.getElement( index_ );
+//    region_->setName( name_ );
+//}
 
 
-void Controller::setRegionVisibility( std::size_t index_, bool status_ )
-{
+//void Controller::setRegionVisibility( std::size_t index_, bool status_ )
+//{
 
-}
+//}
 
-void Controller::hideRegions()
-{
-    if( regions.empty() == true ) return;
+//void Controller::hideRegions()
+//{
+//    if( regions.empty() == true ) return;
 
-    for( auto id: regions )
-        setRegionVisibility( id.first, false );
+//    for( auto id: regions )
+//        setRegionVisibility( id.first, false );
 
-    object_tree->hideOutputVolume();
-    scene3d->updateRegions();
+//    object_tree->hideOutputVolume();
+//    scene3d->updateRegions();
 
-}
+//}
 
 
-void Controller::clear()
-{
+//void Controller::clear()
+//{
 
-    if( scene3d != nullptr )
-    {
-        scene3d->clear();
-    }
+//    if( scene3d != nullptr )
+//    {
+//        scene3d->clear();
+//    }
 
 
-    if( object_tree != nullptr )
-        object_tree->clear();
+//    if( object_tree != nullptr )
+//        object_tree->clear();
 
 
-    if( volume != nullptr )
-    {
-        volume->clear();
-        delete volume;
-        volume = nullptr;
-    }
+//    if( volume != nullptr )
+//    {
+//        volume->clear();
+//        delete volume;
+//        volume = nullptr;
+//    }
 
 
-    if( main_csection != nullptr )
-    {
-        main_csection->clear();
-        delete main_csection;
-        main_csection = nullptr;
-    }
+//    if( main_csection != nullptr )
+//    {
+//        main_csection->clear();
+//        delete main_csection;
+//        main_csection = nullptr;
+//    }
 
-    if( topview_csection != nullptr )
-    {
-        topview_csection->clear();
-        delete topview_csection;
-        topview_csection = nullptr;
-    }
+//    if( topview_csection != nullptr )
+//    {
+//        topview_csection->clear();
+//        delete topview_csection;
+//        topview_csection = nullptr;
+//    }
 
 
-    csections_background.clear();
+//    csections_background.clear();
 
 
-    for ( Container< double, CrossSection* > ::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
-    {
-        CrossSection* item_ = all_csections.getElement( it->first );
-        if( item_ == nullptr ) continue;
+//    for ( Container< double, CrossSection* > ::Iterator it =  all_csections.begin(); it != all_csections.end(); ++it )
+//    {
+//        CrossSection* item_ = all_csections.getElement( it->first );
+//        if( item_ == nullptr ) continue;
 
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    all_csections.clear();
+//        item_->clear();
+//        delete item_;
+//        item_ = nullptr;
+//    }
+//    all_csections.clear();
 
 
-    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        Object* item_ = objects.getElement( it->first );
-        if( item_ == nullptr ) continue;
+//    for ( Container< std::size_t, Object* >::Iterator it =  objects.begin(); it != objects.end(); ++it )
+//    {
+//        Object* item_ = objects.getElement( it->first );
+//        if( item_ == nullptr ) continue;
 
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    objects.clear();
+//        item_->clear();
+//        delete item_;
+//        item_ = nullptr;
+//    }
+//    objects.clear();
 
 
-    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
-        Regions* item_ = regions.getElement( it->first );
-        if( item_ == nullptr ) continue;
+//    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
+//    {
+//        Regions* item_ = regions.getElement( it->first );
+//        if( item_ == nullptr ) continue;
 
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    regions.clear();
+//        item_->clear();
+//        delete item_;
+//        item_ = nullptr;
+//    }
+//    regions.clear();
 
 
-    Object::resetAllObjects();
-    CrossSection::resetAllCrossSections();
+//    Object::resetAllObjects();
+//    CrossSection::resetAllCrossSections();
 
-    selectable_upper.clear();
-    selectable_bottom.clear();
+//    selectable_upper.clear();
+//    selectable_bottom.clear();
 
-    rules_processor.clear();
+//    rules_processor.clear();
 
-    current_color.r = 255;
-    current_color.g = 0;
-    current_color.b = 0;
+//    current_color.r = 255;
+//    current_color.g = 0;
+//    current_color.b = 0;
 
-    current_object = 0;
-    current_csection = 500.0;
-    csection_step = 1.0;
+//    current_object = 0;
+//    current_csection = 500.0;
+//    csection_step = 1.0;
 
-    index_upper_boundary = 0;
-    index_bottom_boundary = 0;
+//    index_upper_boundary = 0;
+//    index_bottom_boundary = 0;
 
-    boundering_region = Settings::Objects::BounderingRegion::NONE;
+//    boundering_region = Settings::Objects::BounderingRegion::NONE;
 
-}
+//}
 
 
-bool Controller::addFixedCrossSection( double depth_ )
-{
-    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
-    bool status_ = fixed_csections.addElement( depth_, cs_ );
-    if( status_ == false ) return false;
+//bool Controller::addFixedCrossSection( double depth_ )
+//{
+//    CrossSection* cs_ = new CrossSection( volume, Settings::CrossSection::CrossSectionDirections::Z, depth_ );
+//    bool status_ = fixed_csections.addElement( depth_, cs_ );
+//    if( status_ == false ) return false;
 
-    setCurrentCrossSection( depth_ );
-    scene3d->addCrossSection( cs_ );
-    return true;
-}
+//    setCurrentCrossSection( depth_ );
+//    scene3d->addCrossSection( cs_ );
+//    return true;
+//}
 
 
 
-bool Controller::removeFixedCrossSection( double depth_ )
-{
-    if( fixed_csections.findElement( depth_ ) == false ) return false;
+//bool Controller::removeFixedCrossSection( double depth_ )
+//{
+//    if( fixed_csections.findElement( depth_ ) == false ) return false;
 
-    CrossSection* cs_ = fixed_csections.getElement( depth_ );
-    scene3d->removeCrossSection( cs_ );
+//    CrossSection* cs_ = fixed_csections.getElement( depth_ );
+//    scene3d->removeCrossSection( cs_ );
 
 
-    cs_->clear();
-    delete cs_;
-    cs_ = nullptr;
+//    cs_->clear();
+//    delete cs_;
+//    cs_ = nullptr;
 
-    fixed_csections.removeElement( depth_ );
-    return true;
+//    fixed_csections.removeElement( depth_ );
+//    return true;
 
-}
+//}
 
 
 
-void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
-                                    std::vector< CurveMesh >& left_curves,
-                                    std::vector< CurveMesh >& right_curves,
-                                    std::vector< CurveMesh > & front_curves,
-                                    std::vector< CurveMesh >& back_curves )
-{
-    rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
-}
+//void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+//                                    std::vector< CurveMesh >& left_curves,
+//                                    std::vector< CurveMesh >& right_curves,
+//                                    std::vector< CurveMesh > & front_curves,
+//                                    std::vector< CurveMesh >& back_curves )
+//{
+//    rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
+//}
 
 
 
@@ -2347,21 +2347,21 @@ double Controller::depthCrossSection( std::size_t index_ ) const
     return static_cast< double > ( index_*csection_step );
 }
 
-std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
-{
+//std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+//{
 
-    std::vector< double > points;
-    for( auto v: vertices )
-        points.push_back( static_cast< double >( v ) );
+//    std::vector< double > points;
+//    for( auto v: vertices )
+//        points.push_back( static_cast< double >( v ) );
 
-    std::vector< std::size_t > elements_;
-    for( auto e: faces )
-        elements_.push_back( static_cast< std::size_t >( e ) );
+//    std::vector< std::size_t > elements_;
+//    for( auto e: faces )
+//        elements_.push_back( static_cast< std::size_t >( e ) );
 
-    std::vector<int> regions_;
-    rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
-    return regions_;
-}
+//    std::vector<int> regions_;
+//    rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
+//    return regions_;
+//}
 
 void Controller::setMeshResolution( const Controller::MeshResolution& resolution_ )
 {
@@ -2380,87 +2380,87 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
 }
 
 
-void Controller::setPreviewEnabled( bool status_ )
-{
-    preview_enabled = status_;
-    if( preview_enabled == true ) return;
+//void Controller::setPreviewEnabled( bool status_ )
+//{
+//    preview_enabled = status_;
+//    if( preview_enabled == true ) return;
 
-    Object* obj_ = getCurrentObject().get();
-    obj_->clearPreviewCurves();
+//    Object* obj_ = getCurrentObject().get();
+//    obj_->clearPreviewCurves();
 
-}
+//}
 
-bool Controller::isPreviewEnabled() const
-{
-    return preview_enabled;
-}
+//bool Controller::isPreviewEnabled() const
+//{
+//    return preview_enabled;
+//}
 
-void Controller::exportToIrapGrid()
-{
+//void Controller::exportToIrapGrid()
+//{
 
-    IrapGridExporter exporter;
-    std::vector< float > points;
+//    IrapGridExporter exporter;
+//    std::vector< float > points;
 
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-    std::size_t index_suf_ = 0;
-    for ( std::size_t id_: actives_ )
-    {
-        QString surface_filename = QString( "%1_Surface_%1.IRAPG").arg( index_suf_ ).arg( id_ );
+//    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+//    std::size_t index_suf_ = 0;
+//    for ( std::size_t id_: actives_ )
+//    {
+//        QString surface_filename = QString( "%1_Surface_%1.IRAPG").arg( index_suf_ ).arg( id_ );
 
-        std::vector< double > points_list;
-        std::vector< bool > valid_points;
-        std::size_t nu;
-        std::size_t nv;
+//        std::vector< double > points_list;
+//        std::vector< bool > valid_points;
+//        std::size_t nu;
+//        std::size_t nv;
 
-        rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
+//        rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
 
-        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
-        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
-        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
+//        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
+//        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
+//        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
 
-        std::size_t number_elements = nu*nv;
+//        std::size_t number_elements = nu*nv;
 
-        for( std::size_t i = 0; i < number_elements; ++i )
-        {
+//        for( std::size_t i = 0; i < number_elements; ++i )
+//        {
 
-            double x = points_list[ 3*i + 0 ];
-            double y = points_list[ 3*i + 1 ];
-            double z = points_list[ 3*i + 2 ];
+//            double x = points_list[ 3*i + 0 ];
+//            double y = points_list[ 3*i + 1 ];
+//            double z = points_list[ 3*i + 2 ];
 
-            if( x >= xmax ) xmax = x;
-            else if( x < xmin ) xmin = x;
+//            if( x >= xmax ) xmax = x;
+//            else if( x < xmin ) xmin = x;
 
-            if( y >= ymax ) ymax = y;
-            else if( y < ymin ) ymin = y;
+//            if( y >= ymax ) ymax = y;
+//            else if( y < ymin ) ymin = y;
 
 
-            if( z >= zmax ) zmax = z;
-            else if( z < zmin ) zmin = z;
+//            if( z >= zmax ) zmax = z;
+//            else if( z < zmin ) zmin = z;
 
-            points.push_back( static_cast<float>( z ) );
+//            points.push_back( static_cast<float>( z ) );
 
-        }
+//        }
 
-        float dx = (float)( xmax - xmin )/( nu - 1 );
-        float dy = (float)( ymax - ymin )/( nv - 1 );
+//        float dx = (float)( xmax - xmin )/( nu - 1 );
+//        float dy = (float)( ymax - ymin )/( nv - 1 );
 
-        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
-        exporter.setVectorValues( points );
-        exporter.setSize( (int) nu,  (int) nv );
-        exporter.setSpacing( dx, dy );
+//        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+//        exporter.setVectorValues( points );
+//        exporter.setSize( (int) nu,  (int) nv );
+//        exporter.setSpacing( dx, dy );
 
-        std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
-        if( name_.empty() == true )
-            exporter.writeGridData( surface_filename.toStdString() );
-        else
-            exporter.writeGridData( name_ );
+//        std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
+//        if( name_.empty() == true )
+//            exporter.writeGridData( surface_filename.toStdString() );
+//        else
+//            exporter.writeGridData( name_ );
 
-        exporter.clearData();
+//        exporter.clearData();
 
-        points.clear();
-        surface_filename.clear();
+//        points.clear();
+//        surface_filename.clear();
 
-        index_suf_++;
-    }
+//        index_suf_++;
+//    }
 
-}
+//}
