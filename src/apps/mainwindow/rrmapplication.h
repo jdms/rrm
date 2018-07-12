@@ -46,7 +46,10 @@
 
 
 
-class MainWindow;
+
+//class MainWindow;
+class Controller;
+class SketchingController;
 
 
 class RRMApplication
@@ -57,11 +60,30 @@ class RRMApplication
 
 
         RRMApplication() = default;
-        RRMApplication( MainWindow* mw_ );
+        RRMApplication(const RRMApplication & app_);
+        RRMApplication & operator=(const RRMApplication & app_);
         ~RRMApplication(){}
 
 
+
+        void setController( Controller* const& controller_ );
+        void setSketchingController( SketchingController* const& scontroller_ );
+
+
         void init();
+        void initSketchingApp();
+
+
+        void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+///================================================================================
+
+
+//        RRMApplication() = default;
+//        RRMApplication( MainWindow* mw_ );
+//        ~RRMApplication(){}
+
+
 
 
 //        void setSiderBarVisibility( bool status_ );
@@ -108,7 +130,7 @@ class RRMApplication
 //        void setObjectAsBoundering( std::size_t index_ );
 
 
-//        void initSketchingApp();
+//
 //        void updateSketchingCanvas();
 
 //        void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
@@ -177,9 +199,14 @@ class RRMApplication
     protected:
 
 
+        Controller* controller;
+        SketchingController* scontroller;
+
+        ///================================================================================
 
 
-        MainWindow* mainwindow = nullptr;
+
+//        MainWindow* mainwindow = nullptr;
 
 
 //        const double VOLUME_WIDTH = 500;

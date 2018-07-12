@@ -66,7 +66,7 @@ class CrossSection: public Object
 
 
         void setVolume( Volume* volume_ );
-        const Volume* getVolume() const;
+        const std::shared_ptr< Volume >& getVolume() const;
 
         void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
         Settings::CrossSection::CrossSectionDirections getDirection() const;

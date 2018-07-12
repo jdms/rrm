@@ -33,6 +33,7 @@
 #include <QtGui/QDesktopServices>
 
 
+
 MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 {
     controller = nullptr;
@@ -43,6 +44,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
     show();
 
     run_app();
+    run_app_sketch();
 }
 
 
@@ -415,13 +417,13 @@ void MainWindow::createSketchingWindow()
     dw_sketchwindow->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
 
+    scontroller = new SketchingController();
 
     sketch_topview_window = new SketchWindow();
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
-
 
 }
 
@@ -435,6 +437,10 @@ void MainWindow::updateSketchingWindowGeometry(  int width, int height )
 
 void MainWindow::createSketchingActions()
 {
+
+    connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ app->addCurveToObject( curve_, dir_, depth_ ); } );
+
+
 
 
 //    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )
@@ -568,12 +574,28 @@ void MainWindow::createFlowWindow()
 void MainWindow::run_app()
 {
 
-    app = new RRMApplication( this );
+    controller = new Controller();
+
+    app = new RRMApplication();
+    app->setController( controller );
     app->init();
-//    app->initSketchingApp();
+
+//    app = new RRMApplication( this );
+//    app->init();
+
 
 }
 
+
+
+void MainWindow::run_app_sketch()
+{
+    scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
+    scontroller->setController( std::shared_ptr< Controller > ( controller ) );
+    app->setSketchingController( scontroller );
+    app->initSketchingApp();
+
+}
 
 
 void MainWindow::save()

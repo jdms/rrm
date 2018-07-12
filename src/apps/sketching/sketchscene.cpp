@@ -227,8 +227,32 @@ void SketchScene::submitSketch()
 
     if( sketch == nullptr ) return;
 
+
+    emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
+
+
     sketch->clear();
     emit ensureObjectsVisibility();
+
+
+    /*
+if( user_input == nullptr ) return;
+//    if( user_input->isEmpty() == true ) return;
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//        emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+//        emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//        emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
+
+
+//    clearSketch();
+
+//    update();
+*/
+
+
     update();
 }
 

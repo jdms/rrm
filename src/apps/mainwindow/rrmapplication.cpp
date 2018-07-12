@@ -22,7 +22,10 @@
 
 
 #include "rrmapplication.h"
-#include "mainwindow.h"
+//#include "mainwindow.h"
+
+#include "./core/models/controller.h"
+#include "./sketching/sketchingcontroller.h"
 
 
 
@@ -31,20 +34,52 @@ std::size_t CrossSection::number_of_csections = 0;
 
 
 
-RRMApplication::RRMApplication(MainWindow *mw_ ): mainwindow( mw_ )
+RRMApplication::RRMApplication(const RRMApplication & app_)
 {
-    mainwindow->controller = new Controller();
+    this->controller = app_.controller;
 
 }
+
+
+RRMApplication& RRMApplication::operator=(const RRMApplication & app_)
+{
+    this->controller = app_.controller;
+    return *this;
+}
+
+
+void RRMApplication::setController( Controller* const& controller_ )
+{
+    controller = controller_;
+}
+
+
+void RRMApplication::setSketchingController( SketchingController* const& scontroller_ )
+{
+    scontroller = scontroller_;
+}
+
+
+///================================================================================
 
 
 void RRMApplication::init()
 {
 
+    controller->init();
+
+    // with sketch app
+
+
+
+
+
+
+
 //    Scene3d* scene3d = mainwindow->canvas3d->getScene();
 //    mainwindow->controller->setScene3d( scene3d );
 //    mainwindow->controller->setObjectTree( mainwindow->object_tree );
-    mainwindow->controller->init();
+//    mainwindow->controller->init();
 
 //    setRRMDefaultValuesOnInterface();
 
@@ -52,6 +87,38 @@ void RRMApplication::init()
 //    mainwindow->controller->addTopViewCrossSection( Settings::CrossSection::INITIAL_CSECTIONY_POSITION  );
 
 }
+
+
+void RRMApplication::initSketchingApp()
+{
+
+    scontroller->createMainCrossSection();
+
+
+//    mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
+//    mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
+
+//    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection() );
+//    mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
+}
+
+void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    controller->addCurveToObject( dir_, depth_, curve_ );
+}
+
+///================================================================================
+
+
+
+
+
+//RRMApplication::RRMApplication(MainWindow *mw_ ): mainwindow( mw_ )
+//{
+//    mainwindow->controller = new Controller();
+
+//}
+
 
 
 //void RRMApplication::setSiderBarVisibility( bool status_ )
@@ -325,14 +392,6 @@ void RRMApplication::init()
 
 
 
-//void RRMApplication::initSketchingApp()
-//{
-//    mainwindow->sketch_window->addMainCanvas( mainwindow->controller->getMainCrossSection( Settings::CrossSection::DEFAULT_CSECTION_DIRECTION )/*csection_*/ );
-//    mainwindow->dw_sketchwindow->setVisible( Settings::Application::DEFAULT_CSECTION_VISIBILITY );
-
-//    mainwindow->sketch_topview_window->addTopViewCanvas( mainwindow->controller->getTopViewCrossSection() );
-//    mainwindow->dw_topview_window->setVisible( Settings::Application::DEFAULT_TOPVIEW_VISIBILITY );
-//}
 
 
 
