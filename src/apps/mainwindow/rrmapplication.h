@@ -65,6 +65,7 @@ class RRMApplication
         ~RRMApplication(){}
 
 
+        void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
 
         void setController( Controller* const& controller_ );
         void setSketchingController( SketchingController* const& scontroller_ );

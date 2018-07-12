@@ -12,6 +12,8 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
 
     csection_depth = depth_;
     csection_direction = dir_;
+
+    updateCurve();
 }
 
 const std::shared_ptr< Stratigraphy >& StratigraphyItem::getRawStratigraphy() const
@@ -22,8 +24,19 @@ const std::shared_ptr< Stratigraphy >& StratigraphyItem::getRawStratigraphy() co
 
 void StratigraphyItem::update()
 {
+
+    updateCurve();
 }
 
+
+void StratigraphyItem::updateCurve()
+{
+    if( raw->isEmpty() == true || raw->isActive() == false ) return;
+
+    prepareGeometryChange();
+    setCurve( raw->getCurve( csection_depth ) );
+    QGraphicsPathItem::update();
+}
 
 void StratigraphyItem::clear()
 {

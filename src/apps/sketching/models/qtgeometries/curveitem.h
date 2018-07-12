@@ -95,8 +95,11 @@ class CurveItem : public QGraphicsPathItem
         void resetToDefaultColor();
         void resetToDefaultWidth();
 
-        PolyCurve getCurve();
+        void setCurve( const PolyCurve& curve_ );
+        PolyCurve getCurve() const;
 
+
+        virtual void update(){}
 
     protected:
 
@@ -107,7 +110,8 @@ class CurveItem : public QGraphicsPathItem
 
         bool hasSubpaths();
 
-    private:
+
+    protected:
 
 
         struct Color{ int red = 255, green = 0, blue = 0; };

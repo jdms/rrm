@@ -140,6 +140,11 @@ public:
         }
     }
 
+    std::size_t getNumberOfSegments() const
+    {
+        return curve.size();
+    }
+
 protected:
 
     std::size_t CURVE_MIN_LENGHT = 3;

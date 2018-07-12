@@ -441,6 +441,7 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ app->addCurveToObject( curve_, dir_, depth_ ); } );
 
 
+    connect( ac_load, &QAction::triggered, [=]{ app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X ); } );
 
 
 //    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )

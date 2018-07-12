@@ -91,8 +91,23 @@ bool CurveItem::isDone() const
     return is_done;
 }
 
+void CurveItem::setCurve( const PolyCurve& curve_ )
+{
+    curve = QPainterPath();
 
-PolyCurve CurveItem::getCurve()
+    std::size_t number_of_segments = curve_.getNumberOfSegments();
+    for( std::size_t i = 0; i < number_of_segments; ++i )
+    {
+        QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+        curve.addPolygon( pol_ );
+    }
+
+    setDone();
+
+}
+
+
+PolyCurve CurveItem::getCurve() const
 {
     if( curve.isEmpty() == true ) return PolyCurve();
     Curve2D curve_ = SketchLibraryWrapper::fromQtToCurve2D( curve.toSubpathPolygons()[0] );

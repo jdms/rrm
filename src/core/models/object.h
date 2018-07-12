@@ -116,6 +116,8 @@ class Object
         void setSurface( const Surface& surface_ );
         const Surface& getSurface() const;
 
+        void removed();
+
         ///======================================================================
 
 
@@ -280,6 +282,7 @@ class Object
         bool active = true;
 
 
+        std::vector< double > used_depth;
 
         ///==========================================
 
