@@ -383,6 +383,26 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vec
     return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
 
+bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist ) 
+{
+    return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist);
+}
+
+bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist ) 
+{
+    return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist);
+}
+
+bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
+}
+
+bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist ) 
+{
+    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
+}
+
 bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double> &path)
 {
     SUtilitiesWrapper util(modeller_);
