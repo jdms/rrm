@@ -98,7 +98,7 @@ public:
 
     std::vector< QVector3D > vertices;
 
-    Tucano::Shader* shader_plane;
+    Tucano::Shader* shader_plane = nullptr;
 
     GLuint va_plane;
     GLuint bf_vertices_plane;

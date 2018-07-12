@@ -10,7 +10,7 @@ class Stratigraphy : public Object
 {
 	public:
 
-		static unsigned int number_of_stratigraphies;
+        unsigned int number_of_stratigraphies;
 
 		Stratigraphy();
 		Stratigraphy(const Stratigraphy & strat_);
@@ -20,21 +20,21 @@ class Stratigraphy : public Object
 
         void setIndex(std::size_t id_ ) override;
 
-        void setSurface( const Surface& surface_) ;
-        const Surface& getSurface() const ;
+//        void setSurface( const Surface& surface_) ;
+//        const Surface& getSurface() const ;
 
-        bool addCurve( double csection_, const PolyCurve& curve_ ) ;
-        const PolyCurve& getCurve( double csection_ ) const ;
-        void removeCurve( double csection_ );
+//        bool addCurve( double csection_, const PolyCurve& curve_ ) ;
+//        const PolyCurve& getCurve( double csection_ ) const ;
+//        void removeCurve( double csection_ );
 
-        std::map< double, PolyCurve > getCurves() const ;
-        void removeCurves() ;
+//        std::map< double, PolyCurve > getCurves() const ;
+//        void removeCurves() ;
 
-        void addTrajectory(const PolyCurve& traj_) ;
-        void removeTrajectory() ;
-        bool getTrajectory( PolyCurve& traj_ ) const ;
+//        void addTrajectory(const PolyCurve& traj_) ;
+//        void removeTrajectory() ;
+//        bool getTrajectory( PolyCurve& traj_ ) const ;
 
-        void surfaceDone() ;
+//        void surfaceDone() ;
 
 
 	protected:
@@ -45,9 +45,9 @@ class Stratigraphy : public Object
 
 		
 
-        Surface surface;
-        std::map< double, PolyCurve > curves;
-        PolyCurve trajectory;
+//        Surface surface;
+//        std::map< double, PolyCurve > curves;
+//        PolyCurve trajectory;
 
 };
 

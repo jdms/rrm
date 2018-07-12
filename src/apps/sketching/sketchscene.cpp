@@ -42,54 +42,7 @@ SketchScene::SketchScene()
 
     ///================================================================================
 
-//    image = new ImageItemWrapper();
-//    addItem( image );
 
-////    user_input = nullptr;
-
-//    user_input = new InputSketch();
-//    addItem( user_input );
-
-//    csection_image = new QGraphicsPixmapItem();
-//    addItem( csection_image );
-
-
-//    QFont font_;
-//    font_.setPixelSize(20);
-//    font_.setBold(false);
-//    font_.setFamily("Calibri");
-
-//    csection_label = new QGraphicsTextItem();
-//    csection_label->setTransform( QTransform::fromScale(1, -1), true );
-//    csection_label->setFont( font_ );
-//    addItem( csection_label );
-
-//    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
-//    addItem( csection_color );
-
-
-
-//    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-//    resize_marker->setBrush( QColor( Qt::red ) );
-//    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-//    resize_marker->setVisible( false );
-//    addItem( resize_marker );
-
-//    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-//    move_marker->setBrush( QColor( Qt::blue ) );
-//    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-//    move_marker->setVisible( false );
-//    addItem( move_marker );
-
-//    move_marker->setVisible( false );
-//    resize_marker->setVisible( false );
-
-//    axes.setVisible( true );
-//    addItem( &axes );
-
-
-
-//    volume = nullptr;
 }
 
 
@@ -131,18 +84,6 @@ void SketchScene::updateVolume()
     emit ensureObjectsVisibility();
     update();
 
-
-
-//    volume->updateItem();
-
-//    axes.setAxisXLenght( volume->getWidth() );
-//    axes.setAxisYLenght( volume->getHeight() );
-
-//    if( views().empty() == true ) return;
-//    if( volume == nullptr ) return;
-
-//    setSceneRect( volume->boundingRect() );
-//    update();
 }
 
 
@@ -177,18 +118,6 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 
     emit ensureObjectsVisibility();
 }
-
-
-//void SketchScene::addWell( const std::shared_ptr< Well >& well_ )
-//{
-
-//    std::size_t id_ = well_->getIndex();
-//    wells[ id_ ] = new WellItem();
-//    wells[ id_ ]->setRawWell( well_, csection_direction, csection_depth );
-//    addItem( wells[ id_ ] );
-
-//    emit ensureObjectsVisibility();
-//}
 
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
@@ -677,6 +606,20 @@ void SketchScene::keyPressEvent( QKeyEvent *event )
     };
 }
 
+
+//void SketchScene::addWell( const std::shared_ptr< Well >& well_ )
+//{
+
+//    std::size_t id_ = well_->getIndex();
+//    wells[ id_ ] = new WellItem();
+//    wells[ id_ ]->setRawWell( well_, csection_direction, csection_depth );
+//    addItem( wells[ id_ ] );
+
+//    emit ensureObjectsVisibility();
+//}
+
+
+///========================================================
 
 
 //void SketchScene::clear()

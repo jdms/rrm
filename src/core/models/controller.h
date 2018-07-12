@@ -54,7 +54,6 @@ using VolumePtr = std::shared_ptr< Volume >;
 using CrossSectionPtr = std::shared_ptr< CrossSection >;
 using ObjectPtr = std::shared_ptr< Object >;
 using RegionsPtr = std::shared_ptr< Regions >;
-
 const std::size_t UNDEFINED_INDEX = 9999;
 
 class Controller
@@ -86,6 +85,7 @@ class Controller
 
         void setVolumeName( const std::string& name_ );
         void setVolumeVisibility( bool status_ );
+        void getVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ );
 
         void createMainCrossSection();
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
@@ -134,8 +134,14 @@ class Controller
         void updateObjectSurface( const std::size_t& index_ );
         void updateObjectCurves( const std::size_t& index_ );
 
-          void updatePreviewSurface();
+        void updateObjectsInCrossSectionX( double depth_ );
+        void updateObjectsInCrossSectionY( double depth_ );
+
+
+        void updatePreviewSurface();
         void updatePreviewCurves();
+
+        bool getCurveFromCrossSection( std::size_t index_, double depth_, PolyCurve& curve_ );
 
 
         void defineRegions();
@@ -355,8 +361,8 @@ class Controller
     protected:
 
 
-        void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_ );
-        void getCurvesFromRulesProcessorDirectionY( const std::size_t& index_ );
+        void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_, bool is_preview_ = false );
+        void getCurvesFromRulesProcessorDirectionY( const std::size_t& index_, bool is_preview_ = false );
 
 
 
@@ -365,7 +371,6 @@ class Controller
 
         RRMApplication* app = nullptr;
         CrossSectionPtr csection;
-        ObjectPtr object;
 
         struct Model
         {
@@ -374,6 +379,10 @@ class Controller
             std::map< double, CrossSectionPtr > csectionsX;
             std::map< double, CrossSectionPtr > csectionsY;
             std::map< double, CrossSectionPtr > csectionsZ;
+
+            std::vector< double > used_csectionsX;
+            std::vector< double > used_csectionsY;
+            std::vector< double > used_csectionsZ;
 
             std::map< std::size_t, ObjectPtr > objects;
             std::map< std::size_t, RegionsPtr > regions;

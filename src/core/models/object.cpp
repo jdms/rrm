@@ -218,6 +218,16 @@ bool Object::isActive() const
 }
 
 
+void Object::removed()
+{
+    removeCrossSectionCurves();
+    removeTrajectory();
+    removeSurface();
+
+    setVisible( false );
+
+}
+
 ///======================================================================
 
 // to be updated or removed

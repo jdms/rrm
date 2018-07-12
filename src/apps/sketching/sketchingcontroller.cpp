@@ -9,6 +9,7 @@ SketchingController::SketchingController()
 }
 
 
+
 void SketchingController::setMainWindow( const std::shared_ptr< SketchWindow >& window_)
 {
     window = window_;
@@ -18,6 +19,7 @@ void SketchingController::setController( const std::shared_ptr< Controller >& co
 {
     controller = controller_;
 }
+
 
 
 void SketchingController::createMainCrossSection()
@@ -33,7 +35,6 @@ void SketchingController::updateMainCrossSection()
     CrossSectionPtr csection_ = controller->getMainCrossSection();
     updateObjectsToScene( csection_, main_scene );
 }
-
 
 
 
@@ -60,6 +61,7 @@ void SketchingController::viewCrossSection( const Settings::CrossSection::CrossS
 
 }
 
+
 void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ )
 {
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
@@ -70,8 +72,8 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
     std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
     for( auto it: objects_ )
     {
-        ObjectPtr obj_ = it.second;
-        scene_->addStratigraphy( std::dynamic_pointer_cast< Stratigraphy >( obj_ ) );
+        ObjectPtr& obj_ = it.second;
+        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
     // the same for regions and wells
@@ -97,33 +99,52 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
 
 
+void SketchingController::updateObjects()
+{
+
+    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
+    for( auto it: objects_ )
+    {
+        updateStratigraphy( it.first );
+    }
+
+
+    // the same for regions and wells
+
+}
+
+
+
+
 void SketchingController::addStratigraphy( const std::size_t& index_ )
 {
     for( auto it: scenesX )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
         ObjectPtr obj_ = controller->getObject( index_ );
-        scene_->addStratigraphy( std::dynamic_pointer_cast< Stratigraphy >( obj_ ) );
+        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
     for( auto it: scenesY )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
         ObjectPtr obj_ = controller->getObject( index_ );
-        scene_->addStratigraphy( std::dynamic_pointer_cast< Stratigraphy >( obj_ ) );
+        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
     for( auto it: scenesZ )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
         ObjectPtr obj_ = controller->getObject( index_ );
-        scene_->addStratigraphy( std::dynamic_pointer_cast< Stratigraphy >( obj_ ) );
+        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 }
 
 
 void SketchingController::updateStratigraphy( const std::size_t& index_ )
 {
+    main_scene->updateStratigraphy( index_ );
+
     for( auto it: scenesX )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
@@ -142,6 +163,8 @@ void SketchingController::updateStratigraphy( const std::size_t& index_ )
         scene_->updateStratigraphy( index_ );
     }
 }
+
+
 
 
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
