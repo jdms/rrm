@@ -11,6 +11,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
                             sketchingcanvas.h
+                            sketchingcontroller.h
                             models/qtgeometries/curveitem.h
                             models/qtgeometries/lineitem.h
                             models/qtgeometries/planeitem.h
@@ -34,6 +35,7 @@ set( SKETCHING_MOC_HEADERS  sketchwindow.h
 set( SKETCHING_SOURCES      sketchwindow.cpp
                             sketchscene.cpp
                             sketchingcanvas.cpp
+                            sketchingcontroller.cpp
                             models/qtgeometries/curveitem.cpp
                             models/qtgeometries/lineitem.cpp
                             models/qtgeometries/planeitem.cpp

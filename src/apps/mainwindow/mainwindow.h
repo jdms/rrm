@@ -38,7 +38,8 @@ class QSlider;
 
 
 //#include "3dview/canvas3d.h"
-//#include "sketching/sketchwindow.h"
+#include "sketching/sketchingcontroller.h"
+#include "sketching/sketchwindow.h"
 //#include "simulator/flow_window.h"
 //#include "./core/widgets/realfeaturedslider.h"
 //#include "./core/widgets/objecttree.h"
@@ -119,6 +120,7 @@ class MainWindow: public QMainWindow
         void createFlowWindow();
 
         void run_app();
+        void run_app_sketch();
 
 
 
@@ -150,6 +152,7 @@ class MainWindow: public QMainWindow
 
         SketchWindow* sketch_window;
         QDockWidget* dw_sketchwindow;
+        SketchingController* scontroller;
 
 
         SketchWindow* sketch_topview_window;

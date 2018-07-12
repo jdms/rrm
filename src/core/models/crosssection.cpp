@@ -152,9 +152,9 @@ void CrossSection::setVolume( Volume* volume_ )
     volume = std::shared_ptr< Volume >( volume_ );
 }
 
-const Volume* CrossSection::getVolume() const
+const std::shared_ptr< Volume >& CrossSection::getVolume() const
 {
-    return volume.get();
+    return volume;
 }
 
 void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
