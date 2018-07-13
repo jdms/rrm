@@ -38,7 +38,7 @@
 
 #include "./apps/3dview/canvas3d.h"
 #include "./apps/sketching/sketchwindow.h"
-#include "./apps/simulator/flow_window.h"
+//#include "./apps/simulator/flow_window.h"
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
 #include "./core/widgets/objecttree.h"
@@ -64,15 +64,18 @@ class RRMApplication
         RRMApplication & operator=(const RRMApplication & app_);
         ~RRMApplication(){}
 
-
-        void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
-
         void setController( Controller* const& controller_ );
         void setSketchingController( SketchingController* const& scontroller_ );
 
 
         void init();
         void initSketchingApp();
+
+
+
+        void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
+
+        void moveMainCrossSection( double depth_ );
 
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );

@@ -83,14 +83,18 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
 
 void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ )
 {
+
+    std::cout << "Updating cross-section to depth: " << csection_->getDepth()
+              << ", in direction: Z " << std::flush << std::endl;
+
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
-    scene_->updateVolume();
-    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
-    for( auto it: objects_ )
-    {
-        scene_->updateStratigraphy( it.first );
-    }
+//    scene_->updateVolume();
+//    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
+//    for( auto it: objects_ )
+//    {
+//        scene_->updateStratigraphy( it.first );
+//    }
 
 
     // the same for regions and wells

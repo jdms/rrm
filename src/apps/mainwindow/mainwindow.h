@@ -158,8 +158,8 @@ class MainWindow: public QMainWindow
         SketchWindow* sketch_topview_window;
         QDockWidget* dw_topview_window;
 
-        FlowWindow* flow_window;
-        QDockWidget* dw_flow_window;
+//        FlowWindow* flow_window;
+//        QDockWidget* dw_flow_window;
 
 
         QToolBar* tb_mainwindow;

@@ -67,6 +67,10 @@ void RRMApplication::init()
 {
 
     controller->init();
+
+    std::size_t discX, discZ;
+    controller->setVolumeDiscretization( discX, discZ );
+
 }
 
 
@@ -75,6 +79,15 @@ void RRMApplication::initSketchingApp()
 
     scontroller->createMainCrossSection();
 
+}
+
+
+
+void RRMApplication::moveMainCrossSection( double depth_ )
+{
+    double current_depth_ = controller->getMainCrossSection()->getDepth() - depth_;
+    controller->moveMainCrossSection( current_depth_ );
+    scontroller->updateMainCrossSection();
 }
 
 
