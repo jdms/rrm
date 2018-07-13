@@ -15,6 +15,9 @@ class StratigraphyItem: public CurveItem
         void setRawStratigraphy( const std::shared_ptr< Stratigraphy >& raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  );
         const std::shared_ptr< Stratigraphy >& getRawStratigraphy() const;
 
+        void setCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+
         void update() override;
 
         void clear();

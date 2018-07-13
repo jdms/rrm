@@ -84,7 +84,7 @@ void MainWindow::createWindow()
 
     createSketchingWindow();
     createSketchingActions();
-    createFlowWindow();
+//    createFlowWindow();
 
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_screenshot );
@@ -441,7 +441,10 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ app->addCurveToObject( curve_, dir_, depth_ ); } );
 
 
-    connect( ac_load, &QAction::triggered, [=]{ app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X ); } );
+    connect( ac_save, &QAction::triggered, [=]{ app->moveMainCrossSection( 10. ); } );
+    connect( ac_load, &QAction::triggered, [=]{ app->moveMainCrossSection( -10. ); } );
+
+    connect( ac_undo, &QAction::triggered, [=]{ app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X ); } );
 
 
 //    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )
@@ -523,47 +526,47 @@ void MainWindow::createSketchingActions()
 
 void MainWindow::createFlowWindow()
 {
-    flow_window = new FlowWindow();
-    dw_flow_window = new QDockWidget( "Flow Diagnostics" );
-    dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_flow_window->setWidget( flow_window );
-    dw_flow_window->setVisible( false );
-    addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
+//    flow_window = new FlowWindow();
+//    dw_flow_window = new QDockWidget( "Flow Diagnostics" );
+//    dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+//    dw_flow_window->setWidget( flow_window );
+//    dw_flow_window->setVisible( false );
+//    addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
 
-//    connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
-//                                                                   std::vector<size_t> &nv, size_t num_extrusion_steps ){
-//                                                                    app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
+////    connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
+////                                                                   std::vector<size_t> &nv, size_t num_extrusion_steps ){
+////                                                                    app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
 
-//    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
-//                                                std::vector< FlowWindow::CurveMesh>& left_curves,
-//                                                std::vector< FlowWindow::CurveMesh >& right_curves,
-//                                                std::vector< FlowWindow::CurveMesh > & front_curves,
-//                                                std::vector< FlowWindow::CurveMesh >& back_curves ) {
-//                                                app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
+////    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
+////                                                std::vector< FlowWindow::CurveMesh>& left_curves,
+////                                                std::vector< FlowWindow::CurveMesh >& right_curves,
+////                                                std::vector< FlowWindow::CurveMesh > & front_curves,
+////                                                std::vector< FlowWindow::CurveMesh >& back_curves ) {
+////                                                app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
 
-//    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces ){
-//                                                app->getTetrahedronsRegions( vertices, edges, faces ); } );
+////    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces ){
+////                                                app->getTetrahedronsRegions( vertices, edges, faces ); } );
 
 
-    ac_output_volume = new QAction( "Diagnostics", this );
-//    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
-    ac_output_volume->setCheckable( true );
+//    ac_output_volume = new QAction( "Diagnostics", this );
+////    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
+//    ac_output_volume->setCheckable( true );
 
-//    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
-//    {  if( status_ == true )
-//        {
-//            app->startFlowDiagnostics();
-//            std::cout << "Start flow diagnostics" << std::endl << std::flush;
-//        }
-//        else
-//        {
-//            app->closeFlowDiagnostics();
-//            std::cout << "Stop flow diagnostics" << std::endl << std::flush;
-//        }
-//        //             else
-//    } );
+////    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
+////    {  if( status_ == true )
+////        {
+////            app->startFlowDiagnostics();
+////            std::cout << "Start flow diagnostics" << std::endl << std::flush;
+////        }
+////        else
+////        {
+////            app->closeFlowDiagnostics();
+////            std::cout << "Stop flow diagnostics" << std::endl << std::flush;
+////        }
+////        //             else
+////    } );
 
-    tb_mainwindow->addAction( ac_output_volume );
+//    tb_mainwindow->addAction( ac_output_volume );
 
 
 

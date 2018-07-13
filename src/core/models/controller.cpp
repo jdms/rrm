@@ -41,7 +41,6 @@ Controller::Controller(const Controller & cont_)
     this->app = cont_.app;
     this->csection = cont_.csection;
     this->model = cont_.model;
-    this->object_defined = cont_.object_defined;
 
 }
 
@@ -51,7 +50,6 @@ Controller& Controller::operator=(const Controller & cont_)
     this->app = cont_.app;
     this->csection = cont_.csection;
     this->model = cont_.model;
-    this->object_defined = cont_.object_defined;
 
     return *this;
 }
@@ -91,6 +89,7 @@ void Controller::createVolume()
     initRulesProcessor();
 }
 
+
 void Controller::resizeVolume(double width_, double height_, double depth_)
 {
     model.volume->setDimensions( width_, height_, depth_ );
@@ -117,12 +116,6 @@ void Controller::setVolumeVisibility( bool status_ )
     //    scene3d->updateVolume();
 }
 
-
-void Controller::getVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ )
-{
-    width_disc_ = 10;//rules_processor.getWidthResolution();
-    lenght_disc_ = 10;//rules_processor.getLengthResolution();
-}
 
 
 ///
@@ -172,9 +165,9 @@ void Controller::moveMainCrossSection( double depth_ )
     {
         updateObjectsInCrossSectionX( depth_ );
     }
-    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        updateObjectsInCrossSectionY( depth_ );
+        updateObjectsInCrossSectionZ( depth_ );
     }
 
 
@@ -518,38 +511,14 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->addTrajectory(curve_);
 
-
-    //    if( objects.findElement( current_object ) == false )
-    //        return false;
-
-    //    Object* const& obj_ = objects.getElement( current_object );
-    //    if( obj_ == nullptr ) return false;
-
-    //    bool status_ = obj_->addTrajectory( curve_ );
-    //    if( status_ == false ) return false;
-
-    //    obj_->setEditable( true );
-    //    obj_->setVisible( true );
-    //    object_tree->setObjectVisibility( current_object, true );
-
-    //    return true;
-
 }
 
 
 void Controller::removeTrajectoryFromObject()
 {
-    if ( object_defined == false ) return;
 
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->removeTrajectory();
-
-
-    //    if( objects.findElement( current_object ) == false )
-    //        return;
-
-    //    Object* const& obj_ = objects.getElement( current_object );
-    //    obj_->removeTrajectory();
 
 }
 
@@ -624,9 +593,9 @@ void Controller::updateObjectCurves( const std::size_t& index_ )
     {
         getCurvesFromRulesProcessorDirectionX( index_ );
     }
-    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        getCurvesFromRulesProcessorDirectionY( index_ );
+        getCurvesFromRulesProcessorDirectionZ( index_ );
     }
 
 
@@ -660,7 +629,7 @@ void Controller::updateObjectsInCrossSectionX( double depth_ )
     {
 
         PolyCurve curve_;
-        bool status_ = getCurveFromCrossSection( id_, depth_, curve_ );
+        bool status_ = getCurveFromCrossSectionX( id_, depth_, curve_ );
         if( status_ == false ) continue;
 
         ObjectPtr obj_ = model.objects[ id_ ];
@@ -670,14 +639,14 @@ void Controller::updateObjectsInCrossSectionX( double depth_ )
 }
 
 
-void Controller::updateObjectsInCrossSectionY( double depth_ )
+void Controller::updateObjectsInCrossSectionZ( double depth_ )
 {
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
     for ( std::size_t id_: actives_ )
     {
 
         PolyCurve curve_;
-        bool status_ = getCurveFromCrossSection( id_, depth_, curve_ );
+        bool status_ = getCurveFromCrossSectionZ( id_, depth_, curve_ );
         if( status_ == false ) continue;
 
         ObjectPtr obj_ = model.objects[ id_ ];
@@ -688,6 +657,7 @@ void Controller::updateObjectsInCrossSectionY( double depth_ )
 
 
 void Controller::getCurvesFromRulesProcessorDirectionX( const std::size_t& index_, bool is_preview_ )
+//updateObjectInCrossSectionsX
 {
     ObjectPtr obj_ = model.objects[ index_ ];
 
@@ -703,20 +673,10 @@ void Controller::getCurvesFromRulesProcessorDirectionX( const std::size_t& index
         obj_->removeCurve( depth_ );
 
         PolyCurve curve_;
-        bool status_ = getCurveFromCrossSection( index_, depth_, curve_ );
+        bool status_ = getCurveFromCrossSectionX( index_, depth_, curve_ );
         if( status_ == false ) continue;
 
         obj_->updateCurve( depth_, curve_ );
-
-
-
-//        std::vector< double > vertices_;
-//        std::vector< std::size_t > edges_;
-//        bool has_curve = rules_processor.getCrossSection( index_, indexCrossSection( depth_ ),
-//                                                          vertices_, edges_ );
-//        if( has_curve == false ) continue;
-
-//        obj_->updateCurve( depth_, PolyCurve( vertices_, edges_ ) );
 
     }
 
@@ -744,13 +704,14 @@ void Controller::getCurvesFromRulesProcessorDirectionX( const std::size_t& index
 }
 
 
-void Controller::getCurvesFromRulesProcessorDirectionY( const std::size_t& index_, bool is_preview_ )
+void Controller::getCurvesFromRulesProcessorDirectionZ( const std::size_t& index_, bool is_preview_ )
+//updateObjectInCrossSectionsZ
 {
 
     ObjectPtr obj_ = model.objects[index_];
 
 
-    for( auto it: model.csectionsY )
+    for( auto it: model.csectionsZ )
     {
         // we need the depth of the csections to pass to rules processor
 
@@ -764,20 +725,10 @@ void Controller::getCurvesFromRulesProcessorDirectionY( const std::size_t& index
         obj_->removeCurve( depth_ );
 
         PolyCurve curve_;
-        bool status_ = getCurveFromCrossSection( index_, depth_, curve_ );
+        bool status_ = getCurveFromCrossSectionZ( index_, depth_, curve_ );
         if( status_ == false ) continue;
 
         obj_->updateCurve( depth_, curve_ );
-
-
-//        std::vector< double > vertices_;
-//        std::vector< std::size_t > edges_;
-//        //TODO: update rules_processor method
-//        bool has_curve = rules_processor.getCrossSection( index_, indexCrossSection( depth_ ),
-//                                                          vertices_, edges_ );
-//        if( has_curve == false ) continue;
-
-//        obj_->updateCurve( depth_, PolyCurve( vertices_, edges_ ) );
 
 
     }
@@ -785,16 +736,26 @@ void Controller::getCurvesFromRulesProcessorDirectionY( const std::size_t& index
 }
 
 
-bool Controller::getCurveFromCrossSection( std::size_t index_, double depth_, PolyCurve& curve_ )
+bool Controller::getCurveFromCrossSectionX( std::size_t index_, double depth_, PolyCurve& curve_ )
 {
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
-    bool has_curve = rules_processor.getCrossSection( index_, indexCrossSection( depth_ ),
+    bool has_curve = rules_processor.getCrossSection( index_, indexCrossSectionX( depth_ ),
                                                       vertices_, edges_ );
     curve_ = PolyCurve( vertices_, edges_ );
     return has_curve;
 }
 
+
+bool Controller::getCurveFromCrossSectionZ( std::size_t index_, double depth_, PolyCurve& curve_ )
+{
+    std::vector< double > vertices_;
+    std::vector< std::size_t > edges_;
+    bool has_curve = rules_processor.getCrossSection( index_, indexCrossSectionZ( depth_ ),
+                                                      vertices_, edges_ );
+    curve_ = PolyCurve( vertices_, edges_ );
+    return has_curve;
+}
 
 
 void Controller::updatePreviewSurface()
@@ -820,10 +781,6 @@ void Controller::updatePreviewSurface()
     }
 
 
-
-
-
-
     bool surface_created_ = rules_processor.testSurface( current_object, curves_ );
     if( surface_created_ == false )
     {
@@ -845,9 +802,9 @@ void Controller::updatePreviewCurves()
     {
         getCurvesFromRulesProcessorDirectionX( current_object, true );
     }
-    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        getCurvesFromRulesProcessorDirectionY( current_object, true );
+        getCurvesFromRulesProcessorDirectionZ( current_object, true );
     }
 
 }
@@ -1133,6 +1090,28 @@ void Controller::updateBoundingBoxRulesProcessor()
     rules_processor.setLenght( width_, height_, lenght_ );
 }
 
+
+
+void Controller::setVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ )
+{
+    width_disc_ = 10;//rules_processor.getWidthResolution();
+    lenght_disc_ = 10;//rules_processor.getLengthResolution();
+
+    csection_stepx = static_cast< double >( model.volume->getWidth()/width_disc_ );
+    csection_stepz = static_cast< double >( model.volume->getLenght()/lenght_disc_ );
+}
+
+
+std::size_t Controller::indexCrossSectionX( double value_ ) const
+{
+    return static_cast< std::size_t > ( value_/csection_stepx );
+}
+
+
+std::size_t Controller::indexCrossSectionZ( double value_ ) const
+{
+    return static_cast< std::size_t > ( value_/csection_stepz );
+}
 
 
 ///
@@ -2244,18 +2223,6 @@ void Controller::applyStratigraphicRule()
 //    rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
 //}
 
-
-
-std::size_t Controller::indexCrossSection( double value_ ) const
-{
-    return static_cast< std::size_t > ( value_/csection_step );
-}
-
-
-double Controller::depthCrossSection( std::size_t index_ ) const
-{
-    return static_cast< double > ( index_*csection_step );
-}
 
 //std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
 //{

@@ -61,6 +61,13 @@ void SketchScene::setCrossSectionInformation( const Settings::CrossSection::Cros
 {
     csection_direction = dir_;
     csection_depth = depth_;
+
+    for( auto it: stratigraphies )
+    {
+        (it.second)->setCrossSection( csection_direction, csection_depth );
+
+    }
+
 }
 
 

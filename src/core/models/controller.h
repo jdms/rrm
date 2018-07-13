@@ -85,7 +85,6 @@ class Controller
 
         void setVolumeName( const std::string& name_ );
         void setVolumeVisibility( bool status_ );
-        void getVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ );
 
         void createMainCrossSection();
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
@@ -135,13 +134,16 @@ class Controller
         void updateObjectCurves( const std::size_t& index_ );
 
         void updateObjectsInCrossSectionX( double depth_ );
-        void updateObjectsInCrossSectionY( double depth_ );
+        void updateObjectsInCrossSectionZ( double depth_ );
+
+        bool getCurveFromCrossSectionX( std::size_t index_, double depth_, PolyCurve& curve_ );
+        bool getCurveFromCrossSectionZ( std::size_t index_, double depth_, PolyCurve& curve_ );
 
 
         void updatePreviewSurface();
         void updatePreviewCurves();
 
-        bool getCurveFromCrossSection( std::size_t index_, double depth_, PolyCurve& curve_ );
+
 
 
         void defineRegions();
@@ -172,6 +174,9 @@ class Controller
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
+        void setVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ );
+        std::size_t indexCrossSectionX( double value_ ) const;
+        std::size_t indexCrossSectionZ( double value_ ) const;
 
         void setRemoveAbove();
         void setRemoveAboveIntersection();
@@ -338,8 +343,7 @@ class Controller
 //        }
 
 
-        std::size_t indexCrossSection( double value_ ) const;
-        double depthCrossSection( std::size_t index_ ) const;
+
 
 //        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
@@ -362,7 +366,7 @@ class Controller
 
 
         void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_, bool is_preview_ = false );
-        void getCurvesFromRulesProcessorDirectionY( const std::size_t& index_, bool is_preview_ = false );
+        void getCurvesFromRulesProcessorDirectionZ( const std::size_t& index_, bool is_preview_ = false );
 
 
 
@@ -397,7 +401,8 @@ class Controller
 
         Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
 
-        double csection_step = 1.0;
+        double csection_stepx = 1.0;
+        double csection_stepz = 1.0;
 
         ///=========================================================
 

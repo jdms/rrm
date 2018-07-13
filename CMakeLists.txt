@@ -59,8 +59,8 @@ ENDIF()
 ################################################
 
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
-include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
-include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include)
+#include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
+#include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include)
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
 
 include_directories( ${CMAKE_SOURCE_DIR}/libs )

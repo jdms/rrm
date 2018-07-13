@@ -303,8 +303,9 @@ bool Object::hasCurve( double csection_id_ ) const
 {
     if( csection_curves.findElement( csection_id_ ) == false )
         return false;
-
-    return ( csection_curves.getElement( csection_id_ ).isEmpty() == false );
+\
+    return !( user_entered.find( csection_id_ ) == user_entered.end() );
+//    return ( csection_curves.getElement( csection_id_ ).isEmpty() == false );
 
 }
 
@@ -347,7 +348,7 @@ void Object::removeCrossSectionCurves()
     }
     csection_curves.clear();
 
-    user_entered.clear();
+//    user_entered.clear();
 }
 
 

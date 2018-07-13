@@ -32,8 +32,8 @@ add_subdirectory( ../sketching ${CMAKE_BINARY_DIR}/sketching )
 include_directories( ${SKETCHING_HEADERS} )
 
 
-add_subdirectory( ../simulator ${CMAKE_BINARY_DIR}/simulator )
-include_directories( ${SIMULATOR_HEADERS} )
+#add_subdirectory( ../simulator ${CMAKE_BINARY_DIR}/simulator )
+#include_directories( ${SIMULATOR_HEADERS} )
 
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
@@ -57,4 +57,4 @@ include_directories (${PROJECT_BINARY_DIR})
 add_library( ${PROJECT_NAME} STATIC ${MAINWINDOW_HEADERS} ${MAINWINDOW_MOC_SOURCES} ${MAINWINDOW_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
                                        ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} RRMBase RRMModel RRMWidgets 3dViewApp
-                                       Sketching FlowDiagnosticsApp ${STRATMODLIB}  ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader )
+                                       Sketching ${STRATMODLIB}  ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader )

@@ -10,9 +10,9 @@ include_directories ( ${CMAKE_CURRENT_SOURCE_DIR}
                       ${CMAKE_CURRENT_BINARY_DIR} )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
 ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 
