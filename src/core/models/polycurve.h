@@ -35,9 +35,11 @@ public:
 
     PolyCurve() = default;
 
+
     PolyCurve( const std::vector< Curve2D >& curve_ ){
         curve = curve_;
       }
+
 
     PolyCurve( const Curve2D& curve_ ){
         curve.clear();
@@ -60,6 +62,7 @@ public:
         return curve.at( index_ );
     }
 
+
     bool isEmpty() const{
         if( curve.empty() == true ) return true;
 
@@ -75,6 +78,7 @@ public:
         return false;
     }
 
+
     void clear(){
         for( auto c_: curve )
         {
@@ -82,6 +86,7 @@ public:
         }
         curve.clear();
     }
+
 
     void fromVector( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
 
@@ -182,6 +187,7 @@ public:
 
     }
 
+
     void toVector( std::vector< double >& vs_, std::vector< std::size_t >& es_ ) const{
         int index_ = 0;
         for( auto c_: curve )
@@ -206,86 +212,54 @@ public:
         }
     }
 
+
     std::size_t getNumberOfSegments() const
     {
         return curve.size();
     }
+
+
+    const std::vector< Curve2D >& getCurves2D() const { return curve; }
+
+
+    std::vector< double > getPoints() const
+    {
+        std::vector< double > points_;
+
+        for( Curve2D c_: curve )
+        {
+            int number_of_points_ = c_.size();
+            for( int i = 0; i < number_of_points_; ++i )
+            {
+                points_.push_back( c_[i].x() );
+                points_.push_back( c_[i].y() );
+            }
+
+        }
+
+        return points_;
+    }
+
+
+    std::vector< double > getPointsSwapped() const
+    {
+        std::vector< double > points_ = getPoints();
+
+        std::size_t number_ = points_.size()/2;
+        for( std::size_t i = 0; i < number_; ++i )
+        {
+            std::swap( points_[ 2*i ], points_[ 2*i + 1 ]);
+        }
+        return points_;
+
+    }
+
 
 protected:
 
     std::size_t CURVE_MIN_LENGHT = 3;
     std::vector< Curve2D > curve;
 
-//    public:
-
-//        PolyCurve(){}
-
-//        PolyCurve( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ =
-//                std::vector< std::size_t >() )
-//        {
-//            setVertices( vs_ );
-//            setEdges( es_ );
-//        }
-
-
-//        bool isEmpty() const
-//        {
-//            if( data.vertices.empty() == true )
-//                return true;
-//            else if( data.vertices.size() < 7 )
-//                return true;
-
-//            return false;
-//        }
-
-
-//        void setVertices( const std::vector< double >& vs_ )
-//        {
-//             data.vertices.clear();
-//             data.vertices.assign( vs_.begin(), vs_.end() );
-//        }
-
-//        std::vector< double > getVertices() const
-//        {
-//            return data.vertices;
-//        }
-
-
-//        void setEdges( const std::vector< std::size_t >& es_ )
-//        {
-//             data.edges.clear();
-//             data.edges.assign( es_.begin(), es_.end() );
-//        }
-
-//        std::vector< std::size_t > getEdges() const
-//        {
-//             return data.edges;
-//        }
-
-
-//        void clear()
-//        {
-//            if( data.vertices.empty() == true ) return;
-//            data.vertices.clear();
-//            data.edges.clear();
-//        }
-
-//        ~PolyCurve()
-//        {
-
-//        }
-
-//    private:
-
-
-
-//        struct PolyCurveData
-//        {
-//            std::vector< double > vertices;
-//            std::vector< std::size_t > edges;
-//        };
-
-//        PolyCurveData data;
 
 };
 

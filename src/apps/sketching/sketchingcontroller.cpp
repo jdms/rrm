@@ -84,8 +84,16 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
 void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ )
 {
 
+    std::string direction_( "Z" );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        direction_.clear();
+        direction_ = std::string( "X" );
+    }
+
     std::cout << "Updating cross-section to depth: " << csection_->getDepth()
-              << ", in direction: Z " << std::flush << std::endl;
+              << ", in direction: " << direction_.c_str() << std::flush << std::endl;
 
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
