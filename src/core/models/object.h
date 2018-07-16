@@ -98,7 +98,8 @@ class Object
 
         const PolyCurve&  getCurve( double csection_ ) const { return PolyCurve();  }
 
-        std::map< double, PolyCurve > getCurves() const { return std::map< double, PolyCurve >(); }
+        std::map< double, PolyCurve > getCurves() ;
+
         void removeCurves() {}
 
         bool getTrajectory( PolyCurve& traj_ ) const { return false; }

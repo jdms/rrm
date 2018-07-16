@@ -293,7 +293,7 @@ bool Object::isEmpty() const
 
 bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 {
-    if( isCurveAdmissible() == false ) return false;
+//    if( isCurveAdmissible() == false ) return false;
     csection_curves.addElement( csection_id_, curve_ );
     user_entered.insert( csection_id_ );
     return true;
@@ -331,7 +331,21 @@ void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
     csection_curves.setElement( csection_id_, curve_ );
 }
 
-\
+std::map< double, PolyCurve > Object::getCurves()
+{
+   std::map< double, PolyCurve > curves_;
+
+
+   for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+   {
+       curves_[ it-> first ] = it->second;
+   }
+
+//   for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+//
+   return curves_;
+}
+
 
 Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 {
