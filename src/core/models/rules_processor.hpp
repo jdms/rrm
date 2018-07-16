@@ -114,7 +114,12 @@
 
             std::size_t getWidthResolution();
 
+            // DEPRECATED
             std::size_t getDepthResolution();
+            
+            // USE THIS INSTEAD:
+            std::size_t getLengthResolution() {}
+            // END: use this instead
 
 
             /* Clean up */
@@ -128,7 +133,12 @@
             // brief:
             // Define new input region above surface which index is `surface_index`.
             //
+            // DEPRECATED
             bool defineAbove( size_t surface_index );
+            
+            // USE THIS INSTEAD
+            bool defineAbove( std::vector<size_t> surface_indices ) {}
+            // END: use this instead
 
 
             //
@@ -142,7 +152,12 @@
             // brief:
             // Define new input region below surface which index is `surface_index`.
             //
+            // DEPRECATED
             bool defineBelow( size_t surface_index );
+            
+            // USE THIS INSTEAD
+            bool defineBelow( std::vector<size_t> surface_indices ) {}
+            // END: use this instead
 
             //
             // brief:
@@ -158,8 +173,14 @@
             bool defineAboveIsActive();
             bool defineBelowIsActive();
 
+            // DEPRECATED
             bool defineAboveIsActive( size_t &boundary_index );
             bool defineBelowIsActive( size_t &boundary_index );
+
+            // USE THIS INSTEAD
+            bool defineAboveIsActive( std::vector<size_t> &boundary_indices ) {}
+            bool defineBelowIsActive( std::vector<size_t> &boundary_indices ) {}
+            // END: use this instead
 
             void removeAbove();
             void removeAboveIntersection();
@@ -167,23 +188,42 @@
             void removeBelow();
             void removeBelowIntersection();
 
+            // DEPRECATED
             void truncate();
 
 
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
 
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool testSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
 
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth,
                     const CurveType &path
                     /* size_t num_extrusion_steps = 32 */
                     );
+
+            // SUGGESTED NEW SIGNATURES:
+            bool createLengthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data,
+                    const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
+                    const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                    ) {}
+
+            bool createLengthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+                    const std::vector<double> &path_curve_point_data, 
+                    const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
+                    const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                    ) {}
+            // END SUGGESTED NEW SIGNATURES
 
             bool canUndo();
             bool undo();
@@ -198,20 +238,33 @@
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
             bool getNormals( size_t surface_id, std::vector<double> &nlist );
 
+            // DEPRECATED? We have to discuss the meaning of the 'path' object
             bool getExtrusionPath( size_t surface_index, std::vector<double> &path);
 
 
             /* template<typename VertexList, typename FaceList> */
             /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */
 
+            // DEPRECATED
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist );
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist );
             /* template<typename VertexList, typename EdgeList> */
             /* bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ); */
 
+            // USE THIS INSTEAD
+            bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist );
+            bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist );
+
+            bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<float> &vlist, std::vector<size_t> &elist );
+            bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<double> &vlist, std::vector<size_t> &elist );
+            // END: use this instead
+
+
 
             bool saveFile( std::string filename );
             bool loadFile( std::string filename );
+
+            // DEPRECATED?
             size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
             /* End methods to interface with GUI */
 
