@@ -300,7 +300,7 @@
 
         private:
             SModellerWrapper modeller_;
-            struct { double x, y, z; } origin_, lenght_;
+            struct { double x, y, z; } origin_, length_;
 
             enum ModelResolution { LOW, MEDIUM, HIGH };
             ModelResolution current_resolution_;
