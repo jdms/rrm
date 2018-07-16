@@ -132,18 +132,14 @@ class Controller
         void updateModel();
         void updateObjectSurface( const std::size_t& index_ );
         void updateObjectCurves( const std::size_t& index_ );
-
-        void updateObjectsInCrossSectionX( double depth_ );
-        void updateObjectsInCrossSectionZ( double depth_ );
-
-        bool getCurveFromCrossSectionX( std::size_t index_, double depth_, PolyCurve& curve_ );
-        bool getCurveFromCrossSectionZ( std::size_t index_, double depth_, PolyCurve& curve_ );
-
-
         void updatePreviewSurface();
-        void updatePreviewCurves();
 
 
+        void updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ );
+        void updateObjectsCurvesInCrossSection( double depth_ );
+        void updateCrossSectionsX();
+        void updateCrossSectionsZ();
+        void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
 
 
         void defineRegions();
