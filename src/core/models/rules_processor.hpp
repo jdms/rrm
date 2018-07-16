@@ -196,11 +196,19 @@
             template<typename CurveType>
             bool createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            bool createSurface( size_t surface_index, std::vector<double> &points );
+
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool testSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            bool testSurface( size_t surface_index, std::vector<double> &points );
+
+            void testSurfaceInsertion();
+            void finishTestSurfaceInsertion();
+
+            bool processSurfaceCreationStatus( bool success );
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
@@ -298,6 +306,7 @@
             ModelResolution current_resolution_;
 
             bool testing_surface_insertion_ = false;
+            bool last_surface_inserted_is_a_test_ = false;
             bool truncate_surface_ = false;
 
             /* template<typename CurveType, typename T = std::vector<size_t>> */
