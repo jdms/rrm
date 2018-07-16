@@ -612,5 +612,82 @@ bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &p
     return status;
 }
 
-//{} // namespace RRM
+void RulesProcessor::testSurfaceInsertion()
+{
+    testing_surface_insertion_ = true;
 
+    if ( last_surface_inserted_is_a_test_ == true )
+    {
+        modeller_.undo();
+        last_surface_inserted_is_a_test_ = false;
+    }
+}
+
+bool RulesProcessor::processSurfaceCreationStatus( bool success )
+{
+    return true;
+}
+
+void RulesProcessor::finishTestSurfaceInsertion()
+{
+    /* testing_surface_insertion_ = false; */
+
+    /* if ( last_surface_inserted_is_a_test_ == true ) */
+    /* { */
+    /*     modeller_.undo(); */
+    /*     last_surface_inserted_is_a_test_ = false; */
+    /* } */
+}
+
+bool RulesProcessor::testSurface( size_t surface_index, std::vector<double> &points )
+{
+    modeller_.disableGeologicRules();
+    bool success = createSurface(surface_index, points);
+
+    if ( success )
+    {
+        testing_surface_insertion_ = true;
+    }
+
+    return success;
+}
+
+bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &points )
+{
+    if ( testing_surface_insertion_ == true )
+    {
+        modeller_.undo();
+        testing_surface_insertion_ = false;
+    }
+
+    /* std::vector<size_t> lbounds, ubounds; */
+    /* std::vector<size_t> intersected_surfaces; */
+
+    std::vector<double> surface = points;
+
+    size_t first_index, second_index;
+
+    bool status = false;
+
+    status = modeller_.createSurface( surface_index, surface );
+
+    testing_surface_insertion_ = false;
+
+    if ( status == true )
+    {
+        std::vector<double> dummy_vertices;
+        std::vector<size_t> dummy_edges;
+        status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+
+        if ( status == false )
+        {
+            modeller_.undo();
+        }
+    }
+
+    return status;
+}
+
+
+
+//{} // namespace RRM
