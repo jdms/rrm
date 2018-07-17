@@ -74,11 +74,11 @@ class RRMApplication
 
 
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
-
         void moveMainCrossSection( double depth_ );
 
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void createObjectSurface();
 
 ///================================================================================
 
@@ -140,7 +140,7 @@ class RRMApplication
 //        void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
 //        void removeCurveFromObject(  double depth_, std::size_t index_ );
 //        void acceptSketchingTrajectory( const PolyCurve& curve_ );
-//        void createObjectSurface();
+//
 
 
 //        void setModeSelecting();

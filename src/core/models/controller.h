@@ -102,7 +102,6 @@ class Controller
         const ObjectPtr& getCurrentObject() const;
         const std::map< std::size_t, ObjectPtr >& getObjects();
 
-
         void setObjectName( std::size_t index_, const std::string& name_ );
         std::string getObjectName( std::size_t index_) const;
 
@@ -121,12 +120,15 @@ class Controller
         void setObjectSelected( std::size_t index_, bool status_ );
         bool isObjectSelected( std::size_t index_ ) const;
 
-
         bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
         bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 
         void addTrajectoryToObject( const PolyCurve& curve_ );
         void removeTrajectoryFromObject();
+
+        void createObjectSurface();
+        bool createObjectSurfaceDirectionX();
+        bool createObjectSurfaceDirectionZ();
 
 
         void updateModel();
