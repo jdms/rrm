@@ -49,21 +49,11 @@ class FlowVisualizationController: public QWidget
 
     public:
 
-
-        struct Color
-        {
-            int r = 255;
-            int g = 0;
-            int b = 0;
-        };
-
-
         enum class  MESHING_METHOD{ CORNERPOINT, UNSTRUCTURED };
         enum class SaturationMethod{ PERREGION, APIGRAVITY };
 
         using TriangleMesh = FlowDiagnosticsInterface::TriangleMesh;
         using CurveMesh = FlowDiagnosticsInterface::CurveMesh;
-
 
         FlowVisualizationController( QWidget* parent = 0 );
 

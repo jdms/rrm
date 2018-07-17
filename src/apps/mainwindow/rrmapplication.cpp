@@ -744,7 +744,7 @@ void RRMApplication::startFlowDiagnostics()
     }
 
 
-    mainwindow->flow_window->loadSurfacesfromSketch1();
+    mainwindow->flow_window->loadSurfacesfromSketch();
     mainwindow->flow_window->setRegions( color_regions_ );
 }
 
