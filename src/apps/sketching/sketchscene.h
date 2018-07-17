@@ -181,7 +181,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void ensureObjectsVisibility();
 
         void sketchDone( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
-
+        void createObject();
 
         ///=================================================================
 

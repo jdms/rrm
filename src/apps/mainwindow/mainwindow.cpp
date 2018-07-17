@@ -99,7 +99,7 @@ void MainWindow::createMainInterface()
 {
 
     canvas3d = new Canvas3d();
-//    canvas3d->show();`
+    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
@@ -108,7 +108,7 @@ void MainWindow::createMainInterface()
 
 
     hb_central_widget = new QHBoxLayout();
-    hb_central_widget->addWidget( canvas3d );
+//    hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
 
@@ -439,6 +439,7 @@ void MainWindow::createSketchingActions()
 {
 
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ app->addCurveToObject( curve_, dir_, depth_ ); } );
+    connect( sketch_window, &SketchWindow::createObject, [=](){ app->createObjectSurface(); } );
 
 
     connect( ac_redo, &QAction::triggered, [=]{ app->moveMainCrossSection( 10. ); } );

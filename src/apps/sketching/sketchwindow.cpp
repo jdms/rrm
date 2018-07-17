@@ -167,6 +167,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
+    connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 
     return scene_;
 }

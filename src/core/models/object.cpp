@@ -303,7 +303,7 @@ bool Object::hasCurve( double csection_id_ ) const
 {
     if( csection_curves.findElement( csection_id_ ) == false )
         return false;
-\
+
     return !( user_entered.find( csection_id_ ) == user_entered.end() );
 //    return ( csection_curves.getElement( csection_id_ ).isEmpty() == false );
 
@@ -335,14 +335,19 @@ std::map< double, PolyCurve > Object::getCurves()
 {
    std::map< double, PolyCurve > curves_;
 
-
-   for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+   for ( auto d_: user_entered )
    {
-       curves_[ it-> first ] = it->second;
+       if( csection_curves.findElement( d_ ) == false ) continue;
+       curves_[ d_ ] = csection_curves.getElement( d_ );
    }
 
 //   for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
-//
+//   {
+//       double depth_ = it->first;
+//       if( user_entered.find( depth_ ) == user_entered.end() ) continue;
+//       curves_[ depth_ ] = it->second;
+//   }
+
    return curves_;
 }
 

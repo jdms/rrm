@@ -100,16 +100,12 @@ void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_
     stratigraphies[ id_ ] = new StratigraphyItem();
     stratigraphies[ id_ ]->setRawStratigraphy( strat_, csection_direction, csection_depth );
     addItem( stratigraphies[ id_ ] );
-
-    emit ensureObjectsVisibility();
-
     update();
 }
 
 void SketchScene::updateStratigraphy( const std::size_t& id_ )
 {
     stratigraphies[ id_ ]->update();
-    emit ensureObjectsVisibility();
     update();
 }
 
@@ -122,8 +118,6 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     regions[ id_ ]->setBorderColor( 0, 0, 0 );
     regions[ id_ ]->setFillColor( 255, 255, 255 );
     addItem( regions[ id_ ] );
-
-    emit ensureObjectsVisibility();
 }
 
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
@@ -132,8 +126,6 @@ void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csecti
     cross_sections1[ id_ ] = new CrossSectionItem();
     cross_sections1[ id_ ]->setRawCrossSection( csection_ );
     addItem( cross_sections1[ id_ ] );
-
-    emit ensureObjectsVisibility();
 }
 
 void SketchScene::enableSketch( bool status_ )
@@ -163,31 +155,8 @@ void SketchScene::submitSketch()
 
     if( sketch == nullptr ) return;
 
-
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
-
-
     sketch->clear();
-    emit ensureObjectsVisibility();
-
-
-    /*
-if( user_input == nullptr ) return;
-//    if( user_input->isEmpty() == true ) return;
-
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//        emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-//        emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//        emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
-
-
-//    clearSketch();
-
-//    update();
-*/
-
 
     update();
 }
@@ -208,9 +177,10 @@ void SketchScene::endObject()
     std::cout << "Ending object..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
-
     sketch->setDone();
-    emit ensureObjectsVisibility();
+
+    emit createObject();
+
     update();
 }
 
