@@ -60,19 +60,15 @@ class FlowWindow : public  QMainWindow
 
     public:
 
-
         using TriangleMesh = FlowVisualizationController::TriangleMesh;
         using CurveMesh = FlowVisualizationController::CurveMesh;
-
-
 
         explicit FlowWindow( QWidget *parent = 0 );
 
         void createWindow();
         void createToolBar();
         void createActions();
-
-        void updateParameterFields();
+       
         QString getCurrentDirectory();
 
         void keyPressEvent( QKeyEvent *event );
@@ -83,28 +79,18 @@ class FlowWindow : public  QMainWindow
 
     public slots:
 
-
-        void loadSurfacesfromFile();
         void loadSurfacesfromSketch();
-        void loadSurfacesfromSketch1();
-
-        void readUserInputFile( const std::string& input_file );
-
-        void startProgressBar( const unsigned int& min, const unsigned int& max );
-        void updateProgressBar( const unsigned int& value );
 
         void clearPropertiesMenu();
 
         void buildUnstructured();
-        void buildCornerPoint();
-
-        //void acceptUserParameters();
-		/// @TODO Accept Parameters
+        
+        
+		/// @TODO Set user parameters
 		/// For Meshing
-		/// For Simulation
 		void setParametersBeforeSimulation();
-		void setParametersBeforeMehsing();
-        void clear();
+		/// For Simulation		
+		void setParametersBeforeMehsing();        
 
         void setRegions( const std::map< int,  std::vector< int > >& region_colors /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_*/ );
 
@@ -122,6 +108,8 @@ class FlowWindow : public  QMainWindow
         void setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ );//const std::vector< float >& colors_ );
         void updateRegionColor( int index_, int r_, int g_, int b_ );
 
+		void clear();
+
     signals:
 
         void getSurfaceCrossSection();
@@ -137,69 +125,65 @@ class FlowWindow : public  QMainWindow
 
     private:
 
-        QToolBar *qtoolbarFlow;
-        QAction *qoopenfilesDialog;
-        QAction *qflowparametersDialog;
-        QAction *qcomputeFlowProperties;
-        QAction *qshowMovingCrossSection;
-        QAction* qreloadSurface;
-        QAction* qreloadSurface1;
-        QAction *action_clear_;
+        QToolBar *toolBar_flowDiagnostic;
+        QAction *action_openFilesDialog;
+        QAction *action_flowParametersDialog;
+        QAction *action_computeFlowProperties;
+        QAction *action_showMovingCrossSection;
+        QAction* action_reloadSurface;
+        QAction* action_reloadSurface1;
+        QAction *action_clear;
 
-        QAction* qbuildCornerPoint;
-        QAction* qbuildUnstructured;
+        QAction* action_buildCornerPoint;
+        QAction* action_buildUnstructured;
 
-        QAction *qexportsurface;
-        QAction *qexportvolume;
-        QAction *qexportcornerpointVTK;
-        QAction *qexportcornerpointGRDECL;
-        QAction* qexportresults;
-		QAction* qexportMesh;
+        QAction *action_exportSurface;
+        QAction *action_exportVolume;
+        QAction *action_exportCornerpointVTK;
+        QAction *action_exportCornerpointGRDECL;
+        QAction* action_exportResults;
+		QAction* action_exportMesh;
 
 
         QAction* action_cornerpoint;
         QAction* action_unstructured;
 
-        QMenu *menu_export_;
+        QMenu *menu_export;
 
+		/// VIEW - 3D View
         FlowVisualizationCanvas *canvas;
+		/// CONTROLLER - Hold HWU Flow Diagnostic Model
         FlowVisualizationController *controller;
 
-        QDockWidget * qdockcrosssectionnormalBar;
-        NormalMovableCrossSectionFlow crosssectionnormalBar;
+			QDockWidget * dockWidget_CrosssectioNormal;
+			NormalMovableCrossSectionFlow * crosssectionNormalWidget;
 
+			QStatusBar* statusbar;
 
-        QStatusBar* sb_statusbar;
-        QProgressBar* pb_processprogress;
+			QToolButton* toolButton_coloringByVertex;
+			QToolButton* toolButton_coloringByFace;
 
-        std::string file_of_parameters;
-        std::string file_of_mesh;
-        std::string type_of_file;
+        QHBoxLayout *horizontalLayout_mainwindow;
 
-
-        QToolButton* tbn_coloringbyvertex;
-        QToolButton* tbn_coloringbyface;
-
-
-        QHBoxLayout *hb_mainwindow;
+		/// VIEW - Color map 
         ColorBar colorbar;
-        ColorMap colormap;
-        QToolButton* tbn_colormaps;
-        QMenu* mn_colormaps;
+			ColorMap colormap;
+			QToolButton* toolButton_colormaps;
+			QMenu* menu_colormaps;
 
-        QAction* action_constant;
-        QAction* action_cool_to_warm;
-        QAction* action_hot;
-        QAction* action_cool;
-        QAction* action_parula;
-        QAction* action_spring;
-        QAction* action_summer;
-        QAction* action_copper;
-        QAction* action_polar;
-        QAction* action_winter;
-        QAction* action_jet;
+			QAction* action_constant;
+			QAction* action_cool_to_warm;
+			QAction* action_hot;
+			QAction* action_cool;
+			QAction* action_parula;
+			QAction* action_spring;
+			QAction* action_summer;
+			QAction* action_copper;
+			QAction* action_polar;
+			QAction* action_winter;
+			QAction* action_jet;
 
-        QAction* action_showregions;
+        QAction* action_showRegions;
 
         bool are_regionsdefined;
         bool is_cornerpoint;
@@ -210,7 +194,7 @@ class FlowWindow : public  QMainWindow
         QAction* action_exportDerivedQuantities_;
         QAction* action_clearComputedQuantities_;
         QAction* action_upscalledPermeability_;
-        QAction* action_oilinPlace_;
+        QAction* action_oilInPlace_;
 
         /// OpenVolume Mesh Integration ---------------------------------------------->
         void updatePropertyAction();
@@ -266,3 +250,11 @@ class FlowWindow : public  QMainWindow
 };
 
 #endif // FLOWWINDOW_H
+
+
+
+/// @TODO removing old interface 	
+//void loadSurfacesfromFile();
+//void loadSurfacesfromSketch();
+//void acceptUserParameters();
+//void buildCornerPoint();

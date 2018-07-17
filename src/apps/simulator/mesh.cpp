@@ -975,8 +975,8 @@ void Mesh::loadWellPosition(int _number_of_wells, const std::map<int, Eigen::Vec
 
     /// Load by Arrays
 
-    std::cout << "Range X " << _range.at(0).x() << std::endl;
-    std::cout << "Range Y " << _range.at(0).y() << std::endl;
+    //std::cout << "Range X " << _range.at(0).x() << std::endl;
+    //std::cout << "Range Y " << _range.at(0).y() << std::endl;
 
     std::vector<Eigen::Vector3f> wells_tip;
     std::vector<Eigen::Vector3f> wells_tip_colors;
@@ -1060,8 +1060,8 @@ void Mesh::loadWellPosition(int _number_of_wells, const std::map<int, Eigen::Vec
         wells_segments.push_back(v + well_direction * well_size * (_range.at(p.first).x() / 100.0f));
         wells_segments.push_back(v + well_direction * well_size * (_range.at(p.first).y() / 100.0f));
 
-        std::cout << "_range.at(p.first).x() " << _range.at(p.first).x() << std::endl;
-        std::cout << "_range.at(p.first).y() " << _range.at(p.first).y() << std::endl;
+        //std::cout << "_range.at(p.first).x() " << _range.at(p.first).x() << std::endl;
+        //std::cout << "_range.at(p.first).y() " << _range.at(p.first).y() << std::endl;
 
     }
 

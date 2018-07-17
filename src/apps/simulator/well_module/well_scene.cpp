@@ -188,7 +188,7 @@ namespace RRM
 
         void WellScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent* event )
         {
-                std::map<int, Eigen::Vector4d> region_points;
+                std::map<int, Eigen::Vector2d> well_positions;
 
 
 
@@ -196,18 +196,17 @@ namespace RRM
                 {
                     /// @TODO , still confused
 
-                    region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
-
+					well_positions[index.first] = Eigen::Vector2d(index.second->pos().x(), index.second->pos().y());
                 }
 
-                emit updatedWellsPosition(region_points);
+				emit updatedWellsPosition(well_positions);
 
                 QGraphicsScene::mouseReleaseEvent ( event );
         }
 
-        void WellScene::setDimension ( const Eigen::Vector2f& _dim, bool _bounding_box_changed  )
+        void WellScene::setDimension ( const Eigen::Vector2d& _dim, bool _bounding_box_changed  )
         {
-                std::map<int, Eigen::Vector4d> region_points;
+				std::map<int, Eigen::Vector2d> well_positions;
 
                 this->createBoard(_dim.x(), _dim.y());
 
@@ -215,7 +214,7 @@ namespace RRM
                 {
 
                     //int index = 0;
-                    wells_item_[0]->setPos(0, 0);
+                    wells_item_[0]->setPos(0.0, 0.0);
                     //index = 1;
                     wells_item_[1]->setPos(board_->boundingRect().width(), board_->boundingRect().height());
 
@@ -228,7 +227,7 @@ namespace RRM
                         }
 
                         /// @TODO , still confused
-                        region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
+						well_positions[index.first] = Eigen::Vector2d(index.second->pos().x(), index.second->pos().y());
 
                     }
 
@@ -240,18 +239,87 @@ namespace RRM
                     {
 
                         /// @TODO , still confused
-                        region_points[index.first] = Eigen::Vector4d(wells_item_[index.first]->pos().x(), wells_item_[index.first]->pos().y(), 0.0, 0.0);
+						well_positions[index.first] = Eigen::Vector2d(wells_item_[index.first]->pos().x(), wells_item_[index.first]->pos().y());
 
                     }
                 }
 
-				emit updatedWellsPosition(region_points);
+				emit updatedWellsPosition(well_positions);
                 update();
         }
 
+
+		void WellScene::loadWells(int _number_of_wells, const std::map<int, int>& _types, const Eigen::Vector2d& _dim, const std::map<int, Eigen::Vector2d>& _wells_position)
+		{
+			number_of_well_items_ = _number_of_wells;
+
+			wellItemVisibility(false);
+
+			for (auto index : _types)
+			{
+				if (!wells_item_.count(index.first))
+				{
+					wells_item_[index.first] = new RRM::WellItem(board_, index.first + 1);
+					//this->addItem(wells_item_[index.first]);
+					wells_item_[index.first]->setPos(_wells_position.at(index.first).x(), _wells_position.at(index.first).y());
+
+					/// FIXME June 2017
+					if (index.second == -1) /// injector
+					{
+						wells_item_[index.first]->setColor(Qt::red);
+					}
+					else if (index.second == 1) /// producer
+					{
+						wells_item_[index.first]->setColor(Qt::blue);
+					}
+					else
+					{
+
+					}
+
+				}
+				else
+				{
+					wells_item_[index.first]->setPos(_wells_position.at(index.first).x(), _wells_position.at(index.first).y());
+					/// FIXME June 2017
+					if (index.second == -1) /// injector
+					{
+						wells_item_[index.first]->setColor(Qt::red);
+					}
+					else if (index.second == 1) /// producer
+					{
+						wells_item_[index.first]->setColor(Qt::blue);
+					}
+					else
+					{
+
+					}
+
+					wells_item_[index.first]->setVisible(true);
+				}
+			}
+
+
+			setDimension(_dim, false);
+
+			std::map<int, Eigen::Vector2d> wells_positions;
+
+			for (auto index : wells_item_)
+			{
+				/// @TODO , still confused
+				wells_positions[index.first] = Eigen::Vector2d(index.second->pos().x(), index.second->pos().y());
+			}
+
+			emit updatedWellsPosition(wells_positions);
+
+			wellItemVisibility(true);
+
+			this->update();
+		}
+
         void WellScene::createWells(int _number_of_wells, const std::map<int, int>& _types)
         {
-                std::cout << " _number_of_Wells " << _types.size() << std::endl;
+                //std::cout << " _number_of_Wells " << _types.size() << std::endl;
 
                 number_of_well_items_ = _number_of_wells;
 
@@ -300,15 +368,15 @@ namespace RRM
                         }
                 }
 
-                std::map<int, Eigen::Vector4d> region_points;
+                std::map<int, Eigen::Vector2d> wells_positions;
 
                 for (auto index : wells_item_)
                 {
                     /// @TODO , still confused
-                    region_points[index.first] = Eigen::Vector4d(index.second->pos().x(), index.second->pos().y(), 0.0, 0.0);
+					wells_positions[index.first] = Eigen::Vector2d(index.second->pos().x(), index.second->pos().y());
                 }
 
-                emit updatedWellsPosition(region_points);
+				emit updatedWellsPosition(wells_positions);
 
                 wellItemVisibility(true);
 
@@ -331,7 +399,7 @@ namespace RRM
                 }
             }
 
-            for (auto index = 0; index < number_of_well_items_; index++)
+            for (std::size_t index = 0; index < number_of_well_items_; index++)
             {
                 if (wells_item_.count(index))
                 {

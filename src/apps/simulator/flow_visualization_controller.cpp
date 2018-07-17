@@ -873,33 +873,32 @@ void FlowVisualizationController::getPoreVolume()
 void FlowVisualizationController::updateTetrahedronColors(const RRM::PropertyProfile & _property, std::vector<float>& _colors, double& _min, double& _max)
 {
 
-    std::vector<double> values;
+    std::vector<double> propertiues_values;
 	std::vector<unsigned int> cells;
+
 	code_interface.getVolumeCells(cells);
 	
-
-	values = flow_model_.updateTetrahedronColors(_property, cells, this->getComputedProperitesValues(_property));
+	propertiues_values = flow_model_.updateTetrahedronColors(_property, cells, this->getComputedProperitesValues(_property));
 	
+	if (propertiues_values.size() > 0)
+	{
+		// Get the property by the interator
+		auto min_max = std::minmax_element(propertiues_values.begin(), propertiues_values.end());
 
-    // Get the property by the interator
-    auto min_max = std::minmax_element(values.begin(), values.end());
+		_colors.clear();
+		_colors.resize(propertiues_values.size() * 3);
 
-    std::cout << "min element at: " << (min_max.first - values.begin()) << " " << *min_max.first << std::endl;
-    std::cout << "max element at: " << (min_max.second - values.begin()) << " " << *min_max.second << std::endl;
+		_min = *(min_max.first);
+		_max = *(min_max.second);
 
-    _colors.clear();
-    _colors.resize(values.size() * 3);
-
-    _min = *min_max.first;
-    _max = *min_max.second;
-
-    for (std::size_t i = 0; i < values.size(); ++i)
-    {
-        QVector3D c = colormap.getColor(current_colormap_, values[i], *min_max.first, *min_max.second);
-        _colors[i * 3 + 0] = static_cast<float>(c[0]);
-        _colors[i * 3 + 1] = static_cast<float>(c[1]);
-        _colors[i * 3 + 2] = static_cast<float>(c[2]);
-    }
+		for (std::size_t i = 0; i < propertiues_values.size(); ++i)
+		{
+			QVector3D rgb = colormap.getColor(current_colormap_, propertiues_values[i], *min_max.first, *min_max.second);
+			_colors[i * 3 + 0] = static_cast<float>(rgb[0]);
+			_colors[i * 3 + 1] = static_cast<float>(rgb[1]);
+			_colors[i * 3 + 2] = static_cast<float>(rgb[2]);
+		}
+	}
 		
 }
 
