@@ -78,6 +78,7 @@ void RRMApplication::initSketchingApp()
 {
 
     scontroller->createMainCrossSection();
+    scontroller->createTopViewCrossSection();
 
 }
 
@@ -104,6 +105,15 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
     scontroller->updateObjects();
 
 }
+
+
+void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
+{
+    controller->addTrajectoryToObject( curve_ );
+    scontroller->updateObjects();
+
+}
+
 
 void RRMApplication::createObjectSurface()
 {

@@ -48,8 +48,6 @@ class Canvas3d: public QOpenGLWidget
         std::string sendImage( double zmin_, double zmax_, double width_, double height_  );
 
 
-
-
     public slots:
 
         void screenshot();

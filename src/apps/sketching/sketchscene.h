@@ -82,63 +82,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         bool isSketchEnabled() const;
 
 
-        ///=================================================================
-
-
-//        using ObjectsContainer = Container< std::size_t, ObjectItemWrapper* >;
-//        using TrajectoriesContainer = Container< std::size_t, TrajectoryItemWrapper* >;
-//        using CrossSectionsContainer = Container< std::size_t, CrossSectionItemWrapper* >;
-
-
-
-//        SketchScene( CrossSection* const& raw_ );
-
-//        QPixmap addLabel( double depth_, QColor color_);
-
-
-//        void readCrossSection( CrossSection* const& raw_ );
-
-
-//        void addVolume( Volume* const& raw_, Settings::CrossSection::CrossSectionDirections dir_ );
-//        virtual void addVolume( Volume* const& raw_ ){}
-////        virtual void updateVolume();
-//        virtual void clearVolume();
-
-
-//        void addCrossSection( CrossSection* const& raw_ );
-//        void removeCrossSection( CrossSection* const& raw_ ){}
-//        void updateCrossSection();
-
-
-//        virtual void addObject( Object* const& raw_ );
-//        virtual void addObject( Object* const& raw_, double depth_ );
-//        virtual void updateObject(  const std::size_t& index_ );
-
-
-
-//        virtual void addTrajectory( Object* const& raw_ );
-//        virtual void updateTrajectory(  const std::size_t& index_ );
-//        void updateTrajectories();
-
-//        void moveCurrentCrossSection( double depth_ );
-
-
-//        void setCurrent( bool status_ );
-//        bool isCurrent() const;
-
-
-//        virtual void setCurrentColor( int r, int g, int b );
-//        virtual void getCurrentColor( int& r, int& g, int& b );
-
-//        void editItem();
-//        void removeItem();
-
-
-//        void savetoVectorImage( const QString& filename );
-//        void savetoRasterImage( const QString& filename );
-
-
-
     public slots:
 
         void cancelSketch();
@@ -153,25 +96,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSelectingRegionsMode( bool status_ );
 //        void setSelectingWellsMode( bool status_ );
 
-        ///================================================================================
-
-
-
-//        void edit( bool status_ );
-
-//        void setImageToCrossSection( const QString& file );
-//        void setImageToCrossSection( const QString& file, double ox_, double oy_, double x_, double y_);
-//        void updateImageCrossSection();
-
-//        void setModeSketching();
-//        void setModeEditingBoundary();
-//        void setModeEditingScene();
-//        void setModeSelecting();
-//        void selectObjectAsBounderingRegion();
-
-//        void setAxesVisible( bool status_ );
-
-//        void clear();
 
 
 
@@ -180,32 +104,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void ensureObjectsVisibility();
 
-        void sketchDone( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void sketchDone( const PolyCurve& curve_,
+                         const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Y, double depth_ = 0 );
         void createObject();
-
-        ///=================================================================
-
-
-
-//        void acceptVolumeDimensions( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ );
-//        void acceptCurve( const PolyCurve& curve_, double depth_ );
-
-//        void discard();
-//        void commit();
-//        void create();
-
-//        void setAsCurrent( double depth_, QGraphicsView* gview_ );
-//        void objectSelected( std::size_t index_ );
-
-//        void commitObject();
-//        void removeCurveFromObject( double depth_, std::size_t index_ );
-
-
-//        void isTopViewScene();
-//        void isCrossSectionScene();
-
-//        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
-//        void removeImageFromCrossSection( double depth_ );
 
 
 
@@ -222,26 +123,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         virtual void dragMoveEvent( QGraphicsSceneDragDropEvent* event_ );
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event_ );
         virtual void keyPressEvent( QKeyEvent *event );
-
-
-
-        ///================================================================================
-
-
-
-//        void initialize();
-
-//        void startSketch( const QPointF& p );
-//        void clearSketch();
-//        void finishSketch();
-
-
-//        void createCrossSectionScene( Volume* const& vol_ );
-//        void createTopViewScene( Volume* const& vol_ );
-
-//        void updateCrossSectionScene();
-//        void updateTopViewScene();
-
 
 
     protected:
@@ -270,41 +151,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         int nwells = 0;
         // temporary
 
-        ///================================================================================
-
-//        struct Color
-//        {
-//            int red = 255;
-//            int green = 0;
-//            int blue = 0;
-//        } current_color;
-
-
-//        UserInteraction current_interaction = UserInteraction::SKETCHING;
-//        InputSketch* user_input;
-
-//        CrossSection* csection;
-//        CrossSectionItemWrapper* main_csection;
-//        QGraphicsPixmapItem* csection_image;
-
-//        VolumeItemWrapper* volume;
-//        ObjectsContainer objects;
-//        CrossSectionsContainer cross_sections;
-//        TrajectoriesContainer trajectories;
-
-//        const double ZOOM_SCALE = 1.1;
-//        bool is_current = false;
-
-//        CoordinateAxes2d axes;
-
-//        QGraphicsEllipseItem* resize_marker;
-//        QGraphicsEllipseItem* move_marker;
-//        ImageItemWrapper* image;
-
-//        QGraphicsTextItem* csection_label;
-//        QGraphicsEllipseItem* csection_color;
-
-//        bool allow_sketching = true;
 
 
 };

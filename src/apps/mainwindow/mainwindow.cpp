@@ -441,86 +441,17 @@ void MainWindow::createSketchingActions()
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ app->addCurveToObject( curve_, dir_, depth_ ); } );
     connect( sketch_window, &SketchWindow::createObject, [=](){ app->createObjectSurface(); } );
 
+    connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ ){ app->addTrajectoryToObject( curve_ ); } );
+    connect( sketch_topview_window, &SketchWindow::createObject, [=](){ app->createObjectSurface(); } );
+
+
 
     connect( ac_redo, &QAction::triggered, [=]{ app->moveMainCrossSection( 10. ); } );
     connect( ac_undo, &QAction::triggered, [=]{ app->moveMainCrossSection( -10. ); } );
 
     connect( ac_load, &QAction::triggered, [=]{ app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X ); } );
-
     connect( ac_save, &QAction::triggered, [=]{ app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z ); } );
 
-
-//    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& v, QColor c_ )
-//                                                         { app->addCrossSectionCanvas( v, c_ );  } );
-
-//    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( double v ){ app->removeCrossSectionCanvas( v ); } );
-
-
-//    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_window, &SketchWindow::setCurrentCrossSection );
-
-
-
-//    connect( sketch_window, &SketchWindow::updateVolume, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ )
-//                                                         { app->changeVolumeDimensions( dir_, w_, h_ ); } );
-
-//    connect( sketch_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_, double depth_ )
-//                                                         { app->acceptSketchingCurve( curve_, depth_ ); } );
-
-//    connect( sketch_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
-
-
-//    connect( sketch_window, &SketchWindow::objectSelected, [=]( std::size_t index_ ){ app->setObjectAsBoundering( index_ ); } );
-
-
-//    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( const QColor& color_ )
-//                                                          { app->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
-
-
-//    connect( sketch_window, &SketchWindow::setImageCrossSection, [=](  double depth_, const QString& file, double ox_, double oy_, double x_, double y_ )
-//                                                           { app->setImageToCrossSection( depth_, file.toStdString(), ox_, oy_, x_, y_ ); } );
-
-//    connect( sketch_window, &SketchWindow::removeCurveFromObject, [=](  double depth_, std::size_t index_ )
-//                                                           { app->removeCurveFromObject( depth_, index_ ); } );
-
-//    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=](  double depth_ )
-//                                                           { app->removeImageFromCrossSection( depth_ ); } );
-
-//    connect( sketch_window, &SketchWindow::addFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::addMarker );
-
-//    connect( sketch_window, &SketchWindow::removeFixedCrossSection, sl_depth_csection, &RealFeaturedSlider::removeMarker );
-
-
-//    connect( sketch_window, &SketchWindow::enablePreview, [=]( bool status_ ){ app->enablePreview( status_ ); } );
-
-
-//    connect( object_properties, &PagesStack::widthVolumeChanged, [=]()
-//                                                           { app->updateSketchingCanvas(); } );
-
-//    connect( object_properties, &PagesStack::heightVolumeChanged, [=]()
-//                                                           {  app->updateSketchingCanvas(); } );
-
-//    connect( object_properties, &PagesStack::depthVolumeChanged, [=]()
-//                                                            {  app->updateSketchingCanvas(); } );
-
-
-
-
-//    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, sketch_topview_window, &SketchWindow::setCurrentCrossSection );
-
-
-//    connect( sketch_topview_window, &SketchWindow::acceptCurve, [=]( const PolyCurve& curve_ )
-//                                                        { app->acceptSketchingTrajectory( curve_ ); } );
-
-//    connect( sketch_topview_window, &SketchWindow::commitObject, [=](){ app->createObjectSurface(); } );
-
-
-//    connect( sketch_topview_window, &SketchWindow::getHeightMap, [=](){ app->getHeightMapTopView(); } );
-
-
-//    connect( sketch_topview_window, &SketchWindow::setImageToTopView, [=]( const QString& file_, double ox_, double oy_, double x_, double y_ )
-//                                                            { app->setImageToTopView( file_.toStdString(), ox_, oy_, x_, y_ ); } );
-
-//    connect( sketch_topview_window, &SketchWindow::removeImageFromTopView, [=](){ app->removeImageFromTopView(); } );
 
 
 }
@@ -529,49 +460,6 @@ void MainWindow::createSketchingActions()
 
 void MainWindow::createFlowWindow()
 {
-//    flow_window = new FlowWindow();
-//    dw_flow_window = new QDockWidget( "Flow Diagnostics" );
-//    dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-//    dw_flow_window->setWidget( flow_window );
-//    dw_flow_window->setVisible( false );
-//    addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
-
-////    connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
-////                                                                   std::vector<size_t> &nv, size_t num_extrusion_steps ){
-////                                                                    app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
-
-////    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
-////                                                std::vector< FlowWindow::CurveMesh>& left_curves,
-////                                                std::vector< FlowWindow::CurveMesh >& right_curves,
-////                                                std::vector< FlowWindow::CurveMesh > & front_curves,
-////                                                std::vector< FlowWindow::CurveMesh >& back_curves ) {
-////                                                app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
-
-////    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces ){
-////                                                app->getTetrahedronsRegions( vertices, edges, faces ); } );
-
-
-//    ac_output_volume = new QAction( "Diagnostics", this );
-////    ac_output_volume->setIcon(QIcon(":/images/icons/image71.png"));
-//    ac_output_volume->setCheckable( true );
-
-////    connect( ac_output_volume, &QAction::toggled, [=]( bool status_ )
-////    {  if( status_ == true )
-////        {
-////            app->startFlowDiagnostics();
-////            std::cout << "Start flow diagnostics" << std::endl << std::flush;
-////        }
-////        else
-////        {
-////            app->closeFlowDiagnostics();
-////            std::cout << "Stop flow diagnostics" << std::endl << std::flush;
-////        }
-////        //             else
-////    } );
-
-//    tb_mainwindow->addAction( ac_output_volume );
-
-
 
 
 }
@@ -586,11 +474,6 @@ void MainWindow::run_app()
     app = new RRMApplication();
     app->setController( controller );
     app->init();
-
-//    app = new RRMApplication( this );
-//    app->init();
-
-
 }
 
 
@@ -598,6 +481,7 @@ void MainWindow::run_app()
 void MainWindow::run_app_sketch()
 {
     scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
+    scontroller->setTopViewWindow( std::shared_ptr< SketchWindow > ( sketch_topview_window ) );
     scontroller->setController( std::shared_ptr< Controller > ( controller ) );
     app->setSketchingController( scontroller );
     app->initSketchingApp();
