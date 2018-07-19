@@ -78,6 +78,7 @@ class RRMApplication
 
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void addTrajectoryToObject( const PolyCurve& curve_ );
         void createObjectSurface();
 
 ///================================================================================

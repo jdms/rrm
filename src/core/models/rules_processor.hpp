@@ -223,14 +223,14 @@
                     const std::vector<double> &cross_section_curve_point_data,
                     const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
                     const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
-                    ) {}
+                    ) { return false; }
 
             bool createLengthwiseExtrudedSurface( size_t surface_id, 
                     const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
                     const std::vector<double> &path_curve_point_data, 
                     const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
                     const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
-                    ) {}
+                    ) { return false; }
             // END SUGGESTED NEW SIGNATURES
 
             bool canUndo();

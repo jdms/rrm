@@ -40,7 +40,10 @@ void StratigraphyItem::updateCurve()
     if( raw->isEmpty() == true || raw->isActive() == false ) return;
 
     prepareGeometryChange();
-    setCurve( raw->getCurve( csection_depth ) );
+    if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
+        setCurve( raw->getTrajectory() );
+    else
+        setCurve( raw->getCurve( csection_depth ) );
     QGraphicsPathItem::update();
 }
 

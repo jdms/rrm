@@ -15,6 +15,11 @@ void SketchingController::setMainWindow( const std::shared_ptr< SketchWindow >& 
     window = window_;
 }
 
+void SketchingController::setTopViewWindow( const std::shared_ptr< SketchWindow >& window_)
+{
+    topview_window = window_;
+}
+
 void SketchingController::setController( const std::shared_ptr< Controller >& controller_ )
 {
     controller = controller_;
@@ -35,6 +40,22 @@ void SketchingController::updateMainCrossSection()
     CrossSectionPtr csection_ = controller->getMainCrossSection();
     updateObjectsToScene( csection_, main_scene );
 }
+
+
+void SketchingController::createTopViewCrossSection()
+{
+    topview_scene = topview_window->createTopViewCanvas();
+    CrossSectionPtr csection_ = controller->getTopViewCrossSection();
+    setObjectsToScene( csection_, topview_scene );
+}
+
+
+void SketchingController::updateTopViewCrossSection()
+{
+    CrossSectionPtr csection_ = controller->getTopViewCrossSection();
+    updateObjectsToScene( csection_, topview_scene );
+}
+
 
 
 
@@ -97,12 +118,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
-//    scene_->updateVolume();
-//    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
-//    for( auto it: objects_ )
-//    {
-//        scene_->updateStratigraphy( it.first );
-//    }
 
 
     // the same for regions and wells
@@ -111,8 +126,10 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
 
 
+
 void SketchingController::updateObjects()
 {
+
 
     std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
     for( auto it: objects_ )
@@ -156,6 +173,7 @@ void SketchingController::addStratigraphy( const std::size_t& index_ )
 void SketchingController::updateStratigraphy( const std::size_t& index_ )
 {
     main_scene->updateStratigraphy( index_ );
+    topview_scene->updateStratigraphy( index_ );
 
     for( auto it: scenesX )
     {

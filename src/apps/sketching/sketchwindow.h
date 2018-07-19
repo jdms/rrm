@@ -58,86 +58,14 @@ class SketchWindow: public QMainWindow
         std::shared_ptr< SketchScene > addCanvas( double depth_ = 0 );
         void removeCanvas( double depth_ );
 
-
-        ///================================================================================
-
-
-//    public slots:
-
-
-//        void addMainCanvas( CrossSection* const& cs_ );
-//        void addTopViewCanvas( CrossSection* const& cs_ );
-//        void updateCanvas();
-
-
-//        void addCrossSection( CrossSection* const& cs_ );
-
-
-
-//        void addObject( Object* const& obj_ );
-//        void updateObject( const std::size_t& index_ );
-
-
-//        void addTrajectory( Object* const& obj_ );
-//        void updateTrajectory( const std::size_t& index_ );
-
-
-//        void setModeSelecting();
-//        void setModeSketching();
-
-
-//        void setCurrentColor( int r_, int g_, int b_ );
-
-
-//        void clear();
-
-
-//        void addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ );
-//        bool removeFixedCrossSectionCanvas( double depth_ );
-//        void setFixedCrossSectionsVisible( bool status_ );
-
-
-//        void setCurrentCrossSection( double depth_ );
-
-//        void setTopViewImage( const std::string& image_ );
-//        void setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
-
-//        void screenshot();
-
+        std::shared_ptr< SketchScene > createTopViewCanvas();
 
 
     signals:
 
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void addTrajectory( const PolyCurve& curve_ );
         void createObject();
-
-
-//        void updateVolume( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ );
-//        void acceptCurve( const PolyCurve& curve_, double depth_ );
-//        void defineColorCurrent( const QColor& color_ );
-//        void setAsCurrent( double depth_ );
-
-//        void objectSelected( std::size_t index_ );
-//        void commitObject();
-//        void removeCurveFromObject( double depth_, std::size_t index_ );
-
-//        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
-//        void removeImageFromCrossSection( double depth_ );
-
-//        void setImageToTopView( const QString& file_, double ox_, double oy_, double x_, double y_ );
-//        void removeImageFromTopView();
-
-
-//        void addFixedCrossSection( double depth_ );
-//        void removeFixedCrossSection( double depth_ );
-
-//        void getHeightMap();
-//        void enablePreview( bool status_ );
-
-
-
-
-
 
 
 
@@ -155,6 +83,8 @@ class SketchWindow: public QMainWindow
 
         SketchingCanvas* sketchingcanvas = nullptr;
         CanvasStack* fixed_csections_canvas = nullptr;
+
+        SketchingCanvas* topviewcanvas = nullptr;
 
         QToolBar* tb_sketch = nullptr;
         QAction* ac_sketch_color = nullptr;

@@ -72,6 +72,7 @@ void Controller::init()
 
     createVolume();
     createMainCrossSection();
+    createTopViewCrossSection();
     addObject();
 
 }
@@ -167,6 +168,26 @@ const CrossSectionPtr& Controller::getMainCrossSection() const
     return csection;
 }
 
+
+void Controller::createTopViewCrossSection()
+{
+    topview = std::make_shared<CrossSection>();
+    topview->setVolume( model.volume.get() );
+    topview->setDirection( Settings::CrossSection::CrossSectionDirections::Y );
+    topview->setDepth( model.volume->getHeight() );
+}
+
+
+const CrossSectionPtr& Controller::getTopViewCrossSection() const
+{
+    return topview;
+}
+
+void Controller::moveTopViewCrossSection( double depth_ )
+{
+    topview->setDepth( depth_ );
+    updateObjectsCurvesInCrossSection( depth_ );
+}
 
 
 void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
@@ -521,14 +542,24 @@ bool Controller::createObjectSurfaceDirectionX()
     std::cout <<  std::endl;
 
     bool status_ = false;
-    if( curves_.size() < 2 )
+    if( curves_.size() == 1 )
     {
-
+        if( obj_->hasTrajectory() == true )
+        {
+            PolyCurve path_;
+            obj_->getTrajectory( path_ );
+            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
+                                                                       curves_.begin()->first, path_.getPoints() );
+        }
+        else
+            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
+                                                                    points3d_ );
         //extrusion
         // can be simple
         // or general
         return status_;
     }
+
 
     status_ = rules_processor.createSurface( current_object, points3d_ );
     return status_;
@@ -565,9 +596,18 @@ bool Controller::createObjectSurfaceDirectionZ()
     std::cout <<  std::endl;
 
     bool status_ = false;
-    if( curves_.size() < 2 )
+    if( curves_.size() == 1 )
     {
-
+        if( obj_->hasTrajectory() == true )
+        {
+            PolyCurve path_;
+            obj_->getTrajectory( path_ );
+            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
+                                                                       curves_.begin()->first, path_.getPoints() );
+        }
+        else
+            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
+                                                                    points3d_ );
         //extrusion
         // can be simple
         // or general
@@ -605,6 +645,7 @@ void Controller::updateModel()
     }
 
 }
+
 
 void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ )
 {
@@ -732,51 +773,6 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 void Controller::updatePreviewSurface()
 {
     ObjectPtr obj_ = model.objects[ current_object ];
-
-//    applyStratigraphicRule();
-
-//    std::map< double, PolyCurve > curves_ = obj_->getCurves();
-//    std::vector< double > points3d_;
-
-//    std::cout << "Passing n = " << curves_.size() << " curves to rules_processor." << std::endl << std::flush;
-//    for( auto it_: curves_ )
-//    {
-//        double depth_ = it_.first;
-//        std::cout <<  depth_ << " " << std::flush;
-
-//        PolyCurve curve_ = it_.second;
-//        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//        {
-//            std::vector< double > points_ = curve_.getPointsSwapped();
-//            std::size_t number_ = points_.size()/2;
-
-//            for( auto i = 0; i < number_; ++i )
-//            {
-//                points3d_.push_back( depth_ );
-//                points3d_.push_back( points_[ 2*i ] );
-//                points3d_.push_back( points_[ 2*i + 1 ] );
-//            }
-//        }
-//        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//        {
-//            std::vector< double > points_ = curve_.getPoints();
-//            std::size_t number_ = points_.size()/2;
-
-//            for( auto i = 0; i < number_; ++i )
-//            {
-//                points3d_.push_back( points_[ 2*i ] );
-//                points3d_.push_back( points_[ 2*i + 1 ] );
-//                points3d_.push_back( depth_ );
-//            }
-
-//        }
-
-//    }
-
-//    std::cout <<  std::endl;
-
-
-    applyStratigraphicRule();
 
     std::map< double, PolyCurve > curves_ = obj_->getCurves();
     std::cout << "Passing n = " << curves_.size() << " curves to rules_processor." << std::endl << std::flush;
