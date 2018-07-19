@@ -38,8 +38,13 @@ class QSlider;
 
 
 //#include "3dview/canvas3d.h"
+#include "3dview/view3dcontroller.h"
+
 #include "sketching/sketchingcontroller.h"
 #include "sketching/sketchwindow.h"
+
+
+
 //#include "simulator/flow_window.h"
 //#include "./core/widgets/realfeaturedslider.h"
 //#include "./core/widgets/objecttree.h"
@@ -121,6 +126,7 @@ class MainWindow: public QMainWindow
 
         void run_app();
         void run_app_sketch();
+        void run_app_3d();
 
 
 
@@ -135,6 +141,9 @@ class MainWindow: public QMainWindow
 
 
         Controller* controller;
+
+
+        View3dController* controller3d;
         Canvas3d* canvas3d;
         RealFeaturedSlider* sl_depth_csection;
 
@@ -146,7 +155,7 @@ class MainWindow: public QMainWindow
         QDockWidget* dw_object_tree;
 
 
-        PagesStack* object_properties;
+//        PagesStack* object_properties;
         QDockWidget* dw_object_properties;
 
 

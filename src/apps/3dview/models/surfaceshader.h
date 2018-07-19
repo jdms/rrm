@@ -24,12 +24,13 @@
 #ifndef SURFACESHADER_H
 #define SURFACESHADER_H
 
+#include <memory>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "./core/models/shader.h"
-#include "./core/models/object.h"
+#include "./core/models/stratigraphy.h"
 
 class SurfaceShader: public Shader
 {
@@ -37,10 +38,10 @@ class SurfaceShader: public Shader
     public:
 
         SurfaceShader();
-        SurfaceShader( Object* const& raw_ );
+        SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ );
 
 
-        void setObject( Object* const& raw_ );
+        void setObject( const std::shared_ptr< Stratigraphy >& raw_ );
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -78,10 +79,6 @@ class SurfaceShader: public Shader
 
 
 
-
-
-
-
     private:
 
         GLuint va_surface;
@@ -95,7 +92,7 @@ class SurfaceShader: public Shader
 
         bool draw_edge = true;
 
-        Object* raw;
+        std::shared_ptr< Stratigraphy > raw;
 
 };
 

@@ -45,6 +45,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 
     run_app();
     run_app_sketch();
+    run_app_3d();
 }
 
 
@@ -98,8 +99,10 @@ void MainWindow::createWindow()
 void MainWindow::createMainInterface()
 {
 
+    controller3d = new View3dController();
+
     canvas3d = new Canvas3d();
-    canvas3d->show();
+//    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
     sl_depth_csection->setDiscretization( 500 );
     sl_depth_csection->setRange( 0, 500 );
@@ -108,7 +111,7 @@ void MainWindow::createMainInterface()
 
 
     hb_central_widget = new QHBoxLayout();
-//    hb_central_widget->addWidget( canvas3d );
+    hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
 
@@ -277,11 +280,11 @@ void MainWindow::createSidebar()
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
 
-    object_properties = new PagesStack();
-    dw_object_properties = new QDockWidget( "" );
-    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
-    dw_object_properties->setWidget( object_properties );
-    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
+//    object_properties = new PagesStack();
+//    dw_object_properties = new QDockWidget( "" );
+//    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+//    dw_object_properties->setWidget( object_properties );
+//    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
 
 }
 
@@ -411,13 +414,13 @@ void MainWindow::createSidebarActions()
 void MainWindow::createSketchingWindow()
 {
 
+    scontroller = new SketchingController();
+
     sketch_window = new SketchWindow();
     dw_sketchwindow = new QDockWidget( "Cross-Section" );
     dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketchwindow->setWidget( sketch_window );
     addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
-
-    scontroller = new SketchingController();
 
     sketch_topview_window = new SketchWindow();
     dw_topview_window = new QDockWidget( "Top-View" );
@@ -471,11 +474,12 @@ void MainWindow::run_app()
 
     controller = new Controller();
 
+
     app = new RRMApplication();
     app->setController( controller );
     app->init();
-}
 
+}
 
 
 void MainWindow::run_app_sketch()
@@ -483,8 +487,22 @@ void MainWindow::run_app_sketch()
     scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
     scontroller->setTopViewWindow( std::shared_ptr< SketchWindow > ( sketch_topview_window ) );
     scontroller->setController( std::shared_ptr< Controller > ( controller ) );
+
+
     app->setSketchingController( scontroller );
     app->initSketchingApp();
+
+}
+
+
+void MainWindow::run_app_3d()
+{
+
+    controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
+    controller3d->setController( std::shared_ptr< Controller > ( controller ) );
+
+    app->setController3d( controller3d );
+    app->init3dView();
 
 }
 

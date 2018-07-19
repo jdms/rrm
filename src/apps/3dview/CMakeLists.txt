@@ -11,6 +11,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
 
 set( 3DVIEW_HEADERS      canvas3d.h
                          scene3d.h
+                         view3dcontroller.h
                          models/planeshader.h
                          models/surfaceshader.h
                          models/volumeshader.h
@@ -22,6 +23,7 @@ set( 3DVIEW_MOC_HEADERS  canvas3d.h
 
 set( 3DVIEW_SOURCES      canvas3d.cpp
                          scene3d.cpp
+                         view3dcontroller.cpp
                          models/planeshader.cpp
                          models/surfaceshader.cpp
                          models/volumeshader.cpp

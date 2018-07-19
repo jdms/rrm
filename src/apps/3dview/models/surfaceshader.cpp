@@ -29,7 +29,7 @@ SurfaceShader::SurfaceShader()
 }
 
 
-SurfaceShader::SurfaceShader( Object* const& raw_ )
+SurfaceShader::SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     setDefaultValues();
     init();
@@ -38,7 +38,7 @@ SurfaceShader::SurfaceShader( Object* const& raw_ )
 
 
 
-void SurfaceShader::setObject( Object* const& raw_ )
+void SurfaceShader::setObject( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     raw = raw_;
     loadBuffers();
@@ -58,7 +58,6 @@ void SurfaceShader::loadBuffers()
 
 
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
-//    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
     raw->getBoundingBox( minx_, maxx_, miny_, maxy_, minz_, maxz_ );
 
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );

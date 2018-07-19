@@ -275,6 +275,12 @@ bool Controller::addObject( std::size_t index_ )
 
     ObjectPtr obj_ = std::make_shared< Object >();
 
+    double ox_ = 0.0, oy_ = 0.0, oz_ = 0.0;
+    double w_ = 0.0, h_ = 0.0, d_ = 0.0;
+
+    model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
+    obj_->setBoundingBox( ox_, ox_ + w_, oy_, oy_ + h_, oz_, oz_ + d_ );
+
     if( index_ != UNDEFINED_INDEX )
         obj_->setIndex( index_ );
 

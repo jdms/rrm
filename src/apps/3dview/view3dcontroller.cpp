@@ -18,36 +18,31 @@ void View3dController::setController( const std::shared_ptr< Controller >& contr
     controller = controller_;
 }
 
-//void View3dController::setupScene()
-//{
-//    scene = window->getScene();
+void View3dController::setupScene()
+{
+    scene = window->getScene();
 
-//    VolumePtr volume_ = controller->getVolume();
-//    scene->addVolume( volume_ );
+    VolumePtr volume_ = controller->getMainCrossSection()->getVolume();
+    scene->addVolume( volume_ );
 
-//    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
-//    for( auto it: objects_ )
-//    {
-//        ObjectPtr& obj_ = it.second;
-//        scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
-//    }
+    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
+    for( auto it: objects_ )
+    {
+        ObjectPtr& obj_ = it.second;
+        scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
+    }
 
-//}
+}
 
+void View3dController::updateScene()
+{
+    scene->updateVolume();
 
+    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
+    for( auto it: objects_ )
+    {
+        ObjectPtr& obj_ = it.second;
+        scene->updateStratigraphy( it.first );
+    }
 
-//void View3dController::updateScene()
-//{
-//    scene = window->getScene();
-
-//    VolumePtr volume_ = controller->getVolume();
-//    scene->addVolume( volume_ );
-
-//    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
-//    for( auto it: objects_ )
-//    {
-//        ObjectPtr& obj_ = it.second;
-//        scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
-//    }
-
-//}
+}
