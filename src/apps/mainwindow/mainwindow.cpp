@@ -280,11 +280,11 @@ void MainWindow::createSidebar()
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
 
-//    object_properties = new PagesStack();
-//    dw_object_properties = new QDockWidget( "" );
-//    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
-//    dw_object_properties->setWidget( object_properties );
-//    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
+    object_properties = new PagesStack();
+    dw_object_properties = new QDockWidget( "" );
+    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_properties->setWidget( object_properties );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
 
 }
 

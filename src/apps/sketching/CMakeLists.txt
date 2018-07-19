@@ -1,11 +1,9 @@
 cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
 
-
 project( Sketching VERSION 3.1 LANGUAGES CXX )
 
+find_package (Qt5Widgets)
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${CMAKE_CURRENT_BINARY_DIR} )
 
 
 set( SKETCHING_HEADERS      sketchwindow.h
@@ -19,17 +17,13 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             models/crosssectionitem.h
                             models/regionitem.h
                             models/stratigraphyitem.h
-                            models/volumeitem.h
-                            models/inputsketch.h
-                            models/volume_item_wrapper.h
-                            models/object_item_wrapper.h
-                            models/crosssection_item_wrapper.h
-                            models/trajectoryitemwrapper.h
-                            models/coordinate_axes_2d.h
-                            models/image_item_wrapper.h )
+                            models/volumeitem.h  )
+
+
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
                             sketchscene.h )
+
 
 
 set( SKETCHING_SOURCES      sketchwindow.cpp
@@ -43,28 +37,26 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             models/crosssectionitem.cpp
                             models/regionitem.cpp
                             models/stratigraphyitem.cpp
-                            models/volumeitem.cpp
-                            models/inputsketch.cpp
-                            models/volume_item_wrapper.cpp
-                            models/object_item_wrapper.cpp
-                            models/crosssection_item_wrapper.cpp
-                            models/trajectoryitemwrapper.cpp
-                            models/coordinate_axes_2d.cpp
-                            models/image_item_wrapper.cpp )
+                            models/volumeitem.cpp  )
 
 
-#QT5_WRAP_CPP( SKETCHING_MOC_SOURCES ${SKETCHING_MOC_HEADERS} )
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+qt5_wrap_cpp( SKETCHING_MOC_SRCS ${SKETCHING_MOC_HEADERS})
+
 
 include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
+
 
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
 
-add_library( ${PROJECT_NAME} STATIC ${SKETCHING_SOURCES} ${SKETCHING_HEADERS} )
 
-#add_library( ${PROJECT_NAME} STATIC ${SKETCHING_HEADERS} ${SKETCHING_MOC_SOURCES} ${SKETCHING_SOURCES} )
+add_library( ${PROJECT_NAME} STATIC ${SKETCHING_SOURCES} ${SKETCHING_MOC_SRCS} ${SKETCHING_HEADERS} )
+
+
+
+
+
 

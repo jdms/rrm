@@ -155,7 +155,7 @@ class MainWindow: public QMainWindow
         QDockWidget* dw_object_tree;
 
 
-//        PagesStack* object_properties;
+        PagesStack* object_properties;
         QDockWidget* dw_object_properties;
 
 
