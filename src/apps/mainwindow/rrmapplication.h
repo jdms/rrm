@@ -42,7 +42,7 @@
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
 #include "./core/widgets/objecttree.h"
-//#include "./core/widgets/pages_stack.h"
+#include "./core/widgets/pages_stack.h"
 
 
 
