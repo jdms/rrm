@@ -26,6 +26,7 @@
 
 #include "./core/models/controller.h"
 #include "./sketching/sketchingcontroller.h"
+#include "./3dview/view3dcontroller.h"
 
 
 
@@ -60,6 +61,12 @@ void RRMApplication::setSketchingController( SketchingController* const& scontro
 }
 
 
+void RRMApplication::setController3d( View3dController* const& controller_ )
+{
+    controller3d = controller_;
+}
+
+
 ///================================================================================
 
 
@@ -79,6 +86,14 @@ void RRMApplication::initSketchingApp()
 
     scontroller->createMainCrossSection();
     scontroller->createTopViewCrossSection();
+
+}
+
+
+void RRMApplication::init3dView()
+{
+
+    controller3d->setupScene();
 
 }
 
@@ -103,6 +118,7 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 {
     controller->addCurveToObject( dir_, depth_, curve_ );
     scontroller->updateObjects();
+    controller3d->updateScene();
 
 }
 

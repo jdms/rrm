@@ -15,7 +15,6 @@ set( WIDGETS_HEADERS realfeaturedslider.h
                      objecttree.h
                      objecttreeitem.h
                      color_picker.h
-                     pages_stack.h
                      canvasstack.h
                      slider.h )
 
@@ -23,7 +22,6 @@ set( WIDGETS_HEADERS realfeaturedslider.h
 set( WIDGETS_MOC_HEADERS realfeaturedslider.h
                          objecttree.h
                          color_picker.h
-                         pages_stack.h
                          canvasstack.h
                          slider.h )
 

@@ -42,7 +42,7 @@
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
 #include "./core/widgets/objecttree.h"
-#include "./core/widgets/pages_stack.h"
+//#include "./core/widgets/pages_stack.h"
 
 
 
@@ -50,6 +50,7 @@
 //class MainWindow;
 class Controller;
 class SketchingController;
+class View3dController;
 
 
 class RRMApplication
@@ -66,10 +67,12 @@ class RRMApplication
 
         void setController( Controller* const& controller_ );
         void setSketchingController( SketchingController* const& scontroller_ );
+        void setController3d( View3dController* const& controller_ );
 
 
         void init();
         void initSketchingApp();
+        void init3dView();
 
 
 
@@ -206,6 +209,7 @@ class RRMApplication
 
         Controller* controller;
         SketchingController* scontroller;
+        View3dController* controller3d;
 
         ///================================================================================
 
