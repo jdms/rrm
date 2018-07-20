@@ -7,6 +7,7 @@
 Stratigraphy::Stratigraphy()
 {
 	defineId();
+    setVisible( false );
 	std::cout << "STRATIGRAPHY CREATED" << std::endl << std::flush;
 }
 

@@ -304,22 +304,6 @@ class Object
         Surface surface;
         PolyCurve trajectory;
 
-
-//        struct Color
-//        {
-//            int r = 255;
-//            int g = 0;
-//            int b = 0;
-//        } color;
-
-//        struct Point
-//        {
-//            double x = 0;
-//            double y = 0;
-//            double z = 0;
-//        } max, min;
-
-
         const std::size_t CHANNEL_MAX_CSECTIONS = 2;
         std::set< double > user_entered;
 

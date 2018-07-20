@@ -59,9 +59,6 @@ void Canvas3d::initializeGL()
     glEnable( GL_MULTISAMPLE );
 
     camera.setPerspectiveMatrix ( 60.0 , (float) width()/(float)height(), 0.1f , 100.0f );
-
-
-
     shareOpenGLContext();
 }
 
@@ -265,24 +262,24 @@ void Canvas3d::shareOpenGLContext()
 
 void Canvas3d::mousePressEvent( QMouseEvent *event )
 {
-//    makeCurrent();
+    makeCurrent();
 
-//    Eigen::Vector2f screen_pos( event->x(), event->y() );
+    Eigen::Vector2f screen_pos( event->x(), event->y() );
 
-//    if ( event->modifiers() & Qt::ShiftModifier )
-//    {
-//        if ( event->button() == Qt::LeftButton )
-//        {
-//            camera.translateCamera( screen_pos );
-//        }
-//    }
-//    else
-//    {
-//        if ( event->button() == Qt::LeftButton )
-//        {
-//            camera.rotateCamera( screen_pos );
-//        }
-//    }
+    if ( event->modifiers() & Qt::ShiftModifier )
+    {
+        if ( event->button() == Qt::LeftButton )
+        {
+            camera.translateCamera( screen_pos );
+        }
+    }
+    else
+    {
+        if ( event->button() == Qt::LeftButton )
+        {
+            camera.rotateCamera( screen_pos );
+        }
+    }
 
     QOpenGLWidget::mousePressEvent( event );
     update();
@@ -293,27 +290,27 @@ void Canvas3d::mousePressEvent( QMouseEvent *event )
 void Canvas3d::mouseMoveEvent( QMouseEvent *event )
 {
 
-//    makeCurrent();
+    makeCurrent();
 
-//    Eigen::Vector2f screen_pos( event->x() , event->y() );
+    Eigen::Vector2f screen_pos( event->x() , event->y() );
 
 
-//    if ( ( event->modifiers() & Qt::ShiftModifier )  )
-//    {
-//        if ( event->buttons() & Qt::LeftButton )
-//        {
-//            camera.translateCamera( screen_pos );
-//        }
+    if ( ( event->modifiers() & Qt::ShiftModifier )  )
+    {
+        if ( event->buttons() & Qt::LeftButton )
+        {
+            camera.translateCamera( screen_pos );
+        }
 
-//    }
-//    else
-//    {
-//        if ( event->buttons() & Qt::LeftButton )
-//        {
-//            camera.rotateCamera( screen_pos );
-//        }
+    }
+    else
+    {
+        if ( event->buttons() & Qt::LeftButton )
+        {
+            camera.rotateCamera( screen_pos );
+        }
 
-//    }
+    }
 
     QOpenGLWidget::mouseMoveEvent( event );
     update();
@@ -323,13 +320,13 @@ void Canvas3d::mouseMoveEvent( QMouseEvent *event )
 void Canvas3d::mouseReleaseEvent( QMouseEvent *event )
 {
 
-//    makeCurrent();
+    makeCurrent();
 
-//    if ( event->button ( ) == Qt::LeftButton )
-//    {
-//        camera.endTranslation();
-//        camera.endRotation();
-//    }
+    if ( event->button ( ) == Qt::LeftButton )
+    {
+        camera.endTranslation();
+        camera.endRotation();
+    }
 
     QOpenGLWidget::mouseReleaseEvent( event );
     update();
@@ -340,33 +337,33 @@ void Canvas3d::mouseReleaseEvent( QMouseEvent *event )
 void Canvas3d::wheelEvent( QWheelEvent *event )
 {
 
-//    float pos = event->delta()/float( WHEEL_STEP );
+    float pos = event->delta()/float( WHEEL_STEP );
 
 
-//    if( event->modifiers() & Qt::ControlModifier )
-//    {
-//        if ( pos > 0 )
-//        {
-//            emit decreaseSlider();
-//        }
+    if( event->modifiers() & Qt::ControlModifier )
+    {
+        if ( pos > 0 )
+        {
+            emit decreaseSlider();
+        }
 
-//        else if ( pos < 0 )
-//        {
-//            emit increaseSlider();
-//        }
-//    }
-//    else
-//    {
-//        if ( pos > 0 )
-//        {
-//            camera.increaseZoom ( 1.05f );
-//        }
+        else if ( pos < 0 )
+        {
+            emit increaseSlider();
+        }
+    }
+    else
+    {
+        if ( pos > 0 )
+        {
+            camera.increaseZoom ( 1.05f );
+        }
 
-//        else if( pos < 0 )
-//        {
-//            camera.increaseZoom ( 1.0f/1.05f );
-//        }
-//    }
+        else if( pos < 0 )
+        {
+            camera.increaseZoom ( 1.0f/1.05f );
+        }
+    }
 
     QOpenGLWidget::wheelEvent( event );
     update();

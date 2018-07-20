@@ -86,6 +86,7 @@ class Controller
         void setVolumeName( const std::string& name_ );
         void setVolumeVisibility( bool status_ );
 
+
         void createMainCrossSection();
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
         void moveMainCrossSection( double depth_ );
@@ -98,6 +99,7 @@ class Controller
         void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
+
 
         //TODO: addObject should be protected
         bool addObject( std::size_t index_ = UNDEFINED_INDEX );
@@ -130,9 +132,11 @@ class Controller
         void addTrajectoryToObject( const PolyCurve& curve_ );
         void removeTrajectoryFromObject();
 
-        void createObjectSurface();
+        bool createObjectSurface();
         bool createObjectSurfaceDirectionX();
         bool createObjectSurfaceDirectionZ();
+
+
 
 
         void updateModel();
@@ -176,7 +180,10 @@ class Controller
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
-        void setVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ );
+        void setVolumeDiscretization();
+        std::size_t getCurrentDiscretization() const;
+        void getCurrentRange( double& min_, double& max_ ) const;
+
         std::size_t indexCrossSectionX( double value_ ) const;
         std::size_t indexCrossSectionZ( double value_ ) const;
 

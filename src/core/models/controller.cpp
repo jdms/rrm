@@ -69,12 +69,13 @@ void Controller::setApplication( RRMApplication* const& app_)
 
 void Controller::init()
 {
-
     createVolume();
+    setVolumeDiscretization();
+
     createMainCrossSection();
     createTopViewCrossSection();
-    addObject();
 
+    addObject();
 }
 
 
@@ -318,12 +319,6 @@ void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 {
     if ( model.objects.find( index_ ) == model.objects.end() ) return;
     model.objects[ index_ ]->setName( name_ );
-
-    //    if( objects.findElement( index_) == false )
-    //        return;
-
-    //    Object* const& obj_ = objects.getElement( index_ );
-    //    obj_->setName( name_ );
 }
 
 
@@ -331,12 +326,6 @@ std::string Controller::getObjectName( std::size_t index_) const
 {
     if ( model.objects.find( index_ ) == model.objects.end() ) return std::string();
     return model.objects.at( index_ )->getName();
-
-    /*
-    if( objects.findElement( index_) == false )
-        return std::string("");
-    Object* const& obj_ = objects.getElement( index_ );
-    return obj_->getName();*/
 }
 
 
@@ -344,14 +333,6 @@ void  Controller::setObjectVisibility( std::size_t index_, bool status_ )
 {
     if ( model.objects.find( index_ ) == model.objects.end() ) return;
     model.objects[ index_ ]->setVisible( status_ );
-
-    //    if( objects.findElement( index_ ) == false )
-    //        return;
-
-    //    Object* const& obj_ = objects.getElement( index_ );
-    //    obj_->setVisible( status_ );
-    //    scene3d->updateObject( index_ );
-
 }
 
 
@@ -369,16 +350,6 @@ void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
 
     if ( model.objects.find( index_ ) == model.objects.end() ) return;
     model.objects[ index_ ]->setColor( r_, g_, b_ );
-
-
-    //    if( objects.findElement( index_) == false )
-    //        return;
-
-    //    Object* const& obj_ = objects.getElement( index_ );
-    //    obj_->setColor( r_, g_, b_ );
-
-    //    scene3d->updateObject( index_ );
-    //    object_tree->updateObjectColor( index_, r_, g_, b_ );
 }
 
 
@@ -489,7 +460,7 @@ void Controller::removeTrajectoryFromObject()
 }
 
 
-void Controller::createObjectSurface()
+bool Controller::createObjectSurface()
 {
 
     applyStratigraphicRule();
@@ -498,7 +469,7 @@ void Controller::createObjectSurface()
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-       surface_created_ = createObjectSurfaceDirectionX();
+        surface_created_ = createObjectSurfaceDirectionX();
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
@@ -509,10 +480,13 @@ void Controller::createObjectSurface()
 
     if( surface_created_ == false )
     {
-        return;
+        return false;
     }
 
+
     updateModel();
+    addObject();
+    return true;
 
 }
 
@@ -559,7 +533,7 @@ bool Controller::createObjectSurfaceDirectionX()
         }
         else
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
-                                                                    points3d_ );
+                                                                       points3d_ );
         //extrusion
         // can be simple
         // or general
@@ -613,7 +587,7 @@ bool Controller::createObjectSurfaceDirectionZ()
         }
         else
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
-                                                                    points3d_ );
+                                                                       points3d_ );
         //extrusion
         // can be simple
         // or general
@@ -1111,23 +1085,59 @@ void Controller::updateBoundingBoxRulesProcessor()
     if( model.volume == nullptr ) return;
 
     double ox = 0.0, oy = 0.0, oz = 0.0;
-    model.volume->getOrigin( ox, oy, oz );
-
     double width_ = 0.0, height_ = 0.0, lenght_ = 0.0;
-    model.volume->getDimensions( width_, height_, lenght_ );
+
+    model.volume->getGeometry( ox, oy, oz, width_, height_, lenght_ );
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( width_, height_, lenght_ );
 }
 
 
-void Controller::setVolumeDiscretization( std::size_t& width_disc_, std::size_t& lenght_disc_ )
+
+
+
+void Controller::setVolumeDiscretization()
 {
-    width_disc_ = 10;//rules_processor.getWidthResolution();
-    lenght_disc_ = 10;//rules_processor.getLengthResolution();
+    std::size_t width_disc_ = 10;//rules_processor.getWidthResolution();
+    std::size_t lenght_disc_ = 10;//rules_processor.getLengthResolution();
 
     csection_stepx = static_cast< double >( model.volume->getWidth()/width_disc_ );
     csection_stepz = static_cast< double >( model.volume->getLenght()/lenght_disc_ );
+}
+
+
+std::size_t Controller::getCurrentDiscretization() const
+{
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        return 10;//rules_processor.getWidthResolution();
+    else
+        return 10;//rules_processor.getLengthResolution();
+
+}
+
+
+void Controller::getCurrentRange( double& min_, double& max_ ) const
+{
+    double ox_ = 0.0, oy_ = 0.0, oz_ = 0.0;
+    double width_ = 0.0, height_ = 0.0, lenght_ = 0.0;
+
+    model.volume->getGeometry( ox_, oy_, oz_, width_, height_, lenght_ );
+
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        min_ = ox_;
+        max_ = ox_ + width_;
+    }
+
+    else
+    {
+        min_ = oz_;
+        max_ = oz_ + lenght_;
+
+    }
+
 }
 
 

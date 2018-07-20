@@ -105,6 +105,7 @@ void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_
 
 void SketchScene::updateStratigraphy( const std::size_t& id_ )
 {
+    if( stratigraphies[ id_ ]->isVisible() == false ) return;
     stratigraphies[ id_ ]->update();
     update();
 }

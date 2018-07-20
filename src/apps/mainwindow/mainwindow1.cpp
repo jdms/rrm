@@ -6,6 +6,7 @@ MainWindow1::MainWindow1( QWidget* parent_ ): QMainWindow( parent_ )
     setWindowProperties();
     createWindow();
 
+    run();
 
 }
 
@@ -33,7 +34,7 @@ void MainWindow1::createWindow()
     createToolbar();
     createController();
 
-    plug3dInterface();
+    plug3dInterface();    
     plugSketchInterface();
 
 }
@@ -56,19 +57,17 @@ void MainWindow1::createActions()
     ac_manual = new QAction( tr ( "RRM Manual" ), this );
     ac_about = new QAction( tr ( "&About" ) , this );
 
-
     ac_undo = new QAction( "Undo", this );
     ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
 
     ac_redo = new QAction( "Redo", this );
     ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
 
-    ac_sketch_above = new QAction( "PA", this ); // create above!
+    ac_sketch_above = new QAction( "PA", this ); // preserve above!
     ac_sketch_above->setCheckable( true );
 
-    ac_sketch_below = new QAction( "PB", this ); // create below!
+    ac_sketch_below = new QAction( "PB", this ); // preserve below!
     ac_sketch_below->setCheckable( true );
-
 
     ac_remove_above = new QAction( "RA", this );
     ac_remove_above->setCheckable( true );
@@ -85,6 +84,44 @@ void MainWindow1::createActions()
     ac_screenshot = new QAction( "Screenshot", this );
     ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
+    ac_direction_x = new QAction( "X", this );
+    ac_direction_x->setCheckable( false );
+
+    ac_direction_y = new QAction( "Y", this );
+    ac_direction_y->setCheckable( false );
+
+    ac_direction_z = new QAction( "Z", this );
+    ac_direction_z->setCheckable( true );
+
+
+
+//    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
+
+
+//    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
+
+
+    connect( ac_remove_above, &QAction::triggered, [=]()
+    { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
+
+    connect( ac_remove_above_int, &QAction::triggered, [=]()
+    { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE_INTERSECTION ); } );
+
+    connect( ac_remove_below, &QAction::triggered, [=]()
+    { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW ); } );
+
+    connect( ac_remove_below_int, &QAction::triggered, [=]()
+    { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
+
+
+    connect( ac_direction_x, &QAction::triggered, [=]()
+    { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X );} );
+
+    connect( ac_direction_y, &QAction::triggered, [=]()
+    { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Y );} );
+
+    connect( ac_direction_z, &QAction::triggered, [=]()
+    { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z );} );
 
 }
 
@@ -114,13 +151,19 @@ void MainWindow1::createMenuBar()
 void MainWindow1::createToolbar()
 {
 
-
     QActionGroup* ag_rules = new QActionGroup( this );
     ag_rules->setExclusive( true );
     ag_rules->addAction( ac_remove_above );
     ag_rules->addAction( ac_remove_above_int );
     ag_rules->addAction( ac_remove_below );
     ag_rules->addAction( ac_remove_below_int );
+
+
+    QActionGroup* ag_directions = new QActionGroup( this );
+    ag_directions->setExclusive( true );
+    ag_directions->addAction( ac_direction_x );
+    ag_directions->addAction( ac_direction_y );
+    ag_directions->addAction( ac_direction_z );
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
@@ -135,6 +178,8 @@ void MainWindow1::createToolbar()
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
     tb_mainwindow->addSeparator();
+    tb_mainwindow->addActions( ag_directions->actions() );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_screenshot );
 
 
@@ -146,7 +191,7 @@ void MainWindow1::createController()
     controller = new Controller();
     app = new RRMApplication();
     app->setController( controller );
-    app->init();
+
 }
 
 
@@ -154,7 +199,7 @@ void MainWindow1::plugSketchInterface()
 {
     sketchapp = std::make_shared< SketchInterface >( this );
     sketchapp->createInterface();
-    sketchapp->init();
+
 }
 
 
@@ -162,5 +207,15 @@ void MainWindow1::plug3dInterface()
 {
     view3dapp = std::make_shared< View3dInterface >( this );
     view3dapp->createInterface();
-    view3dapp->init();
+
 }
+
+void MainWindow1::run()
+{
+    app->init();
+    sketchapp->init();
+    view3dapp->init();
+
+    app->setDiscretization();
+}
+

@@ -296,6 +296,8 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 //    if( isCurveAdmissible() == false ) return false;
     csection_curves.addElement( csection_id_, curve_ );
     user_entered.insert( csection_id_ );
+
+    setVisible( true );
     return true;
 }
 
@@ -323,6 +325,9 @@ bool Object::removeCurve( double csection_id_ )
         return false;
 
     csection_curves.removeElement( csection_id_ );
+
+    if( csection_curves.empty() == true )
+        setVisible( false );
     return true;
 }
 

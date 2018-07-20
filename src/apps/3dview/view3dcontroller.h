@@ -11,24 +11,28 @@ class Canvas3d;
 
 class View3dController
 {
-public:
 
-    View3dController();
+    public:
 
-    void setMainWindow( const std::shared_ptr< Canvas3d >& window_);
-    void setController( const std::shared_ptr< Controller >& controller_ );
+        View3dController();
 
-    void init();
+        void setMainWindow( const std::shared_ptr< Canvas3d >& window_);
+        void setController( const std::shared_ptr< Controller >& controller_ );
 
-    void setupScene();
-    void updateScene();
+        void init();
+        void setupScene();
+
+        void updateVolume(){}
+        void updateObjects();
+        void updateScene();
 
 
-protected:
+    protected:
 
-    std::shared_ptr< Scene3d > scene;
-    std::shared_ptr< Canvas3d > window;
-    std::shared_ptr< Controller > controller;
+        std::shared_ptr< Scene3d > scene;
+        std::shared_ptr< Canvas3d > window;
+        std::shared_ptr< Controller > controller;
+
 };
 
 #endif // VIEW3DCONTROLLER_H
