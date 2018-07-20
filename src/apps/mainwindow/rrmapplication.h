@@ -49,13 +49,11 @@
 
 //class MainWindow;
 class Controller;
-class SketchingController;
-class View3dController;
 
 
-class RRMApplication
+class RRMApplication: public QObject
 {
-
+    Q_OBJECT
 
     public:
 
@@ -66,15 +64,11 @@ class RRMApplication
         ~RRMApplication(){}
 
         void setController( Controller* const& controller_ );
-        void setSketchingController( SketchingController* const& scontroller_ );
-        void setController3d( View3dController* const& controller_ );
-
-
         void init();
-        void initSketchingApp();
-        void init3dView();
 
 
+
+    public slots:
 
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
         void moveMainCrossSection( double depth_ );
@@ -83,6 +77,15 @@ class RRMApplication
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectoryToObject( const PolyCurve& curve_ );
         void createObjectSurface();
+
+
+    signals:
+
+        void updateVolume();
+        void updateObjects();
+        void updateMainCrossSection();
+        void updateTopViewCrossSection();
+
 
 ///================================================================================
 
@@ -208,8 +211,6 @@ class RRMApplication
 
 
         Controller* controller;
-        SketchingController* scontroller;
-        View3dController* controller3d;
 
         ///================================================================================
 

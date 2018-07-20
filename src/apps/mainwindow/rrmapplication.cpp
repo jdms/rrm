@@ -55,18 +55,6 @@ void RRMApplication::setController( Controller* const& controller_ )
 }
 
 
-void RRMApplication::setSketchingController( SketchingController* const& scontroller_ )
-{
-    scontroller = scontroller_;
-}
-
-
-void RRMApplication::setController3d( View3dController* const& controller_ )
-{
-    controller3d = controller_;
-}
-
-
 ///================================================================================
 
 
@@ -78,24 +66,10 @@ void RRMApplication::init()
     std::size_t discX, discZ;
     controller->setVolumeDiscretization( discX, discZ );
 
-}
-
-
-void RRMApplication::initSketchingApp()
-{
-
-    scontroller->createMainCrossSection();
-    scontroller->createTopViewCrossSection();
+    emit updateVolume();
 
 }
 
-
-void RRMApplication::init3dView()
-{
-
-    controller3d->setupScene();
-
-}
 
 
 
@@ -103,22 +77,23 @@ void RRMApplication::moveMainCrossSection( double depth_ )
 {
     double current_depth_ = controller->getMainCrossSection()->getDepth() - depth_;
     controller->moveMainCrossSection( current_depth_ );
-    scontroller->updateMainCrossSection();
+
+    emit updateMainCrossSection();
+
 }
 
 
 void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ )
 {
     controller->changeMainCrossSectionDirection( dir_ );
-    scontroller->updateMainCrossSection();
+    emit updateMainCrossSection();
 }
 
 
 void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     controller->addCurveToObject( dir_, depth_, curve_ );
-    scontroller->updateObjects();
-    controller3d->updateScene();
+    emit updateObjects();
 
 }
 
@@ -126,7 +101,8 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 {
     controller->addTrajectoryToObject( curve_ );
-    scontroller->updateObjects();
+    emit updateObjects();
+//    scontroller->updateObjects();
 
 }
 
@@ -135,6 +111,7 @@ void RRMApplication::createObjectSurface()
 {
 
     controller->createObjectSurface();
+    emit updateObjects();
 
 //    controller->update();
 

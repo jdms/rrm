@@ -15,7 +15,10 @@ set( MAINWINDOW_HEADERS      mainwindow.h
 
 
 set( MAINWINDOW_MOC_HEADERS  mainwindow.h
-                             mainwindow1.h )
+                             mainwindow1.h
+                             rrmapplication.h
+                             sketchinterface.h
+                             view3dinterface.h )
 
 
 

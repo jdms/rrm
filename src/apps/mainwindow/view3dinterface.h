@@ -11,8 +11,9 @@
 
 class MainWindow1;
 
-class View3dInterface
+class View3dInterface: public QObject
 {
+    Q_OBJECT
 
   public:
 

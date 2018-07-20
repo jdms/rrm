@@ -489,8 +489,8 @@ void MainWindow::run_app_sketch()
     scontroller->setController( std::shared_ptr< Controller > ( controller ) );
 
 
-    app->setSketchingController( scontroller );
-    app->initSketchingApp();
+//    app->setSketchingController( scontroller );
+//    app->initSketchingApp();
 
 }
 
@@ -501,8 +501,8 @@ void MainWindow::run_app_3d()
     controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
     controller3d->setController( std::shared_ptr< Controller > ( controller ) );
 
-    app->setController3d( controller3d );
-    app->init3dView();
+//    app->setController3d( controller3d );
+//    app->init3dView();
 
 }
 
