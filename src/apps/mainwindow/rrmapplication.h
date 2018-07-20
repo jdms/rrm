@@ -67,6 +67,8 @@ class RRMApplication: public QObject
         void init();
 
 
+        void setDiscretization();
+
 
     public slots:
 
@@ -78,13 +80,20 @@ class RRMApplication: public QObject
         void addTrajectoryToObject( const PolyCurve& curve_ );
         void createObjectSurface();
 
+        void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
+
 
     signals:
+
+        void addObject( const std::size_t& index_ );
 
         void updateVolume();
         void updateObjects();
         void updateMainCrossSection();
         void updateTopViewCrossSection();
+
+        void updateDiscretization( const std::size_t& disc_ );
+        void updateRange( double min_, double max_ );
 
 
 ///================================================================================

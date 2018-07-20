@@ -13,13 +13,16 @@ void View3dController::setMainWindow( const std::shared_ptr< Canvas3d >& window_
     window = window_;
 }
 
+
 void View3dController::setController( const std::shared_ptr< Controller >& controller_ )
 {
     controller = controller_;
 }
 
+
 void View3dController::init()
 {
+
     setupScene();
 }
 
@@ -40,15 +43,21 @@ void View3dController::setupScene()
 
 }
 
+
 void View3dController::updateScene()
 {
     scene->updateVolume();
+    updateObjects();
 
+}
+
+
+void View3dController::updateObjects()
+{
     std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
     for( auto it: objects_ )
     {
         ObjectPtr& obj_ = it.second;
         scene->updateStratigraphy( it.first );
     }
-
 }

@@ -21,6 +21,7 @@ class MainWindow1: public QMainWindow
   public:
 
     MainWindow1( QWidget* parent_ = 0 );
+    void run();
 
   protected:
 
@@ -65,6 +66,10 @@ class MainWindow1: public QMainWindow
     QAction* ac_remove_below = nullptr;
     QAction* ac_remove_below_int = nullptr;
     QAction* ac_screenshot = nullptr;
+
+    QAction* ac_direction_x = nullptr;
+    QAction* ac_direction_y = nullptr;
+    QAction* ac_direction_z = nullptr;
 
     QMenu* mn_file = nullptr;
     QMenu* mn_windows = nullptr;

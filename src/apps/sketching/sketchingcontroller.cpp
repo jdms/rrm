@@ -124,8 +124,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
-
-
     // the same for regions and wells
 
 }

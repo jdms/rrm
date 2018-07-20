@@ -38,8 +38,6 @@
 Scene3d::Scene3d()
 {
     volume = nullptr;
-//    output_volume = nullptr;
-//    main_csection = nullptr;
 }
 
 
