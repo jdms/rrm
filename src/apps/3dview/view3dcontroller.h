@@ -18,6 +18,8 @@ public:
     void setMainWindow( const std::shared_ptr< Canvas3d >& window_);
     void setController( const std::shared_ptr< Controller >& controller_ );
 
+    void init();
+
     void setupScene();
     void updateScene();
 

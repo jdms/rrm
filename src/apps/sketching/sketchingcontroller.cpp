@@ -26,6 +26,12 @@ void SketchingController::setController( const std::shared_ptr< Controller >& co
 }
 
 
+void SketchingController::init()
+{
+    createMainCrossSection();
+    createTopViewCrossSection();
+}
+
 
 void SketchingController::createMainCrossSection()
 {
