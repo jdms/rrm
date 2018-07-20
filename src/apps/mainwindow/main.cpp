@@ -60,8 +60,8 @@ int main( int argc, char *argv[] )
     QSurfaceFormat::setDefaultFormat( format );
 
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
 
 
     MainWindow1 w1;

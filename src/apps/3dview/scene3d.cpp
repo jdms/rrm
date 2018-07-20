@@ -60,6 +60,7 @@ void Scene3d::updateVolume()
     volume->update();
 }
 
+
 void Scene3d::addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     context->makeCurrent( surface );
