@@ -22,6 +22,10 @@ class SketchingController
         void setTopViewWindow( const std::shared_ptr< SketchWindow >& window_ );
         void setController( const std::shared_ptr< Controller >& controller_ );
 
+
+        void init();
+
+
         void createMainCrossSection();
         void updateMainCrossSection();
 

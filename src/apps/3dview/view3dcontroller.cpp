@@ -18,6 +18,12 @@ void View3dController::setController( const std::shared_ptr< Controller >& contr
     controller = controller_;
 }
 
+void View3dController::init()
+{
+    setupScene();
+}
+
+
 void View3dController::setupScene()
 {
     scene = window->getScene();
