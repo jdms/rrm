@@ -9,8 +9,9 @@
 
 class MainWindow1;
 
-class SketchInterface
+class SketchInterface: public QObject
 {
+    Q_OBJECT
 
 public:
 

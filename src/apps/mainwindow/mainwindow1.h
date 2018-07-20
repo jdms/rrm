@@ -13,7 +13,6 @@
 
 
 
-
 class MainWindow1: public QMainWindow
 {
   Q_OBJECT
@@ -46,8 +45,8 @@ class MainWindow1: public QMainWindow
     std::shared_ptr< SketchInterface > sketchapp;
     std::shared_ptr< View3dInterface > view3dapp;
 
-    Controller* controller;
-    RRMApplication* app;
+    Controller* controller = nullptr;
+    RRMApplication* app = nullptr;
 
     QAction* ac_save = nullptr;
     QAction* ac_load = nullptr;
@@ -71,7 +70,7 @@ class MainWindow1: public QMainWindow
     QMenu* mn_windows = nullptr;
     QMenu* mn_help = nullptr;
 
-    QToolBar* tb_mainwindow;
+    QToolBar* tb_mainwindow = nullptr;
 
 
 
