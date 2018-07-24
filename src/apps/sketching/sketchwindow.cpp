@@ -29,7 +29,6 @@
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-//    createWindow();
     createToolBar();
 }
 
