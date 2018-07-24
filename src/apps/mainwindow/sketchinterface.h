@@ -7,7 +7,7 @@
 #include "sketching/sketchingcontroller.h"
 
 
-class MainWindow1;
+class MainWindow;
 
 class SketchInterface: public QObject
 {
@@ -15,7 +15,7 @@ class SketchInterface: public QObject
 
 public:
 
-  SketchInterface( MainWindow1* const& window_ );
+  SketchInterface( MainWindow* const& window_ );
 
   void createInterface();
   void init();
@@ -29,7 +29,7 @@ protected:
 
 protected:
 
-    MainWindow1* window = nullptr;
+    MainWindow* window = nullptr;
 
     SketchingController* scontroller = nullptr;
 

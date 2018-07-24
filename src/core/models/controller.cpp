@@ -184,6 +184,7 @@ const CrossSectionPtr& Controller::getTopViewCrossSection() const
     return topview;
 }
 
+
 void Controller::moveTopViewCrossSection( double depth_ )
 {
     topview->setDepth( depth_ );
@@ -610,6 +611,7 @@ bool Controller::createObjectSurfaceDirectionZ()
 void Controller::updateModel()
 {
     setObjectsActive( false );
+    setObjectActive( current_object, true );
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
     std::size_t number_of_actives_ = actives_.size();
@@ -623,6 +625,7 @@ void Controller::updateModel()
         updateObjectSurface( id_ );
         updateObjectCurves( id_ );
     }
+
 
 }
 
@@ -755,7 +758,9 @@ void Controller::updatePreviewSurface()
     ObjectPtr obj_ = model.objects[ current_object ];
 
     std::map< double, PolyCurve > curves_ = obj_->getCurves();
-    std::cout << "Passing n = " << curves_.size() << " curves to rules_processor." << std::endl << std::flush;
+
+    std::cout << "Preview surface from object: " << current_object << std::endl << std::flush;
+    std::cout << "\tIt has n = " << curves_.size() << " curves -- " << std::flush;
 
     std::vector< double > points3d_;
 
@@ -800,6 +805,7 @@ void Controller::updatePreviewSurface()
         }
     }
 
+    std::cout << std::endl << std::flush;
 
     bool surface_created_ = rules_processor.testSurface( current_object, points3d_ );
     if( surface_created_ == false )
@@ -955,14 +961,6 @@ void Controller::setRegionColor(std::size_t index_, int r_, int g_, int b_ )
     if (model.regions.find(index_) == model.regions.end()) return;
     model.regions[index_]->setColor( r_, g_, b_ );
 
-    /*
-    if( regions.findElement( index_ ) == false )
-        return;
-
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->setColor( r_, g_, b_ );
-    scene3d->updateRegion( index_ );
-*/
 }
 
 
@@ -971,14 +969,6 @@ const
 {
     if (model.regions.find(index_) == model.regions.end()) return;
     model.regions.at(index_)->getColor(r_, g_, b_);
-
-    /*
-    if( regions.findElement( index_ ) == false )
-        return;
-
-    Regions* const& region_ = regions.getElement( index_ );
-    region_->getColor( r_, g_, b_ );
-*/
 }
 
 
@@ -1193,8 +1183,7 @@ void Controller::applyStratigraphicRule()
         rules_processor.removeBelow();
     else if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION )
         rules_processor.removeBelowIntersection();
-    //    else if( current_rule == Settings::Stratigraphy::StratigraphicRules::TRUNCATE )
-    //        rules_processor.truncate();
+
 }
 
 

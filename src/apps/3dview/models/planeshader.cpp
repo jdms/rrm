@@ -30,7 +30,7 @@ PlaneShader::PlaneShader()
 }
 
 
-PlaneShader::PlaneShader( CrossSection* const& raw_ )
+PlaneShader::PlaneShader( const std::shared_ptr< CrossSection>& raw_ )
 {
     setDefaultValues();
     init();
@@ -38,7 +38,7 @@ PlaneShader::PlaneShader( CrossSection* const& raw_ )
 }
 
 
-void PlaneShader::setCrossSection( CrossSection* const& raw_ )
+void PlaneShader::setCrossSection( const std::shared_ptr< CrossSection>& raw_ )
 {
     csection = raw_;
     createPlane();
@@ -212,7 +212,7 @@ void PlaneShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, cons
             shader->setUniform( "ViewMatrix",  V );
             shader->setUniform( "ProjectionMatrix", P );
             shader->setUniform( "WIN_SCALE", (float) w, (float) h );
-            shader->setUniform ( "color_plane" , 0.5f, 0.5f, 0.5f, 0.2f );
+            shader->setUniform ( "color_plane" , 1.0f, 0.5f, 0.5f, 0.2f );
 
             glBindVertexArray( va_plane );
                 glDrawArrays( GL_LINES_ADJACENCY , 0 , number_of_vertices );

@@ -71,12 +71,21 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void createVolume( const std::shared_ptr< Volume >& volume_ );
         void updateVolume();
 
+        void addCrossSection( const std::shared_ptr< CrossSection >& csection_ );
+        void updateCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void removeCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void updateCrossSections();
+
+
         void addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ );
         void updateStratigraphy( const std::size_t& id_ );
+        void updateStratigraphies();
 
         void addRegion( const std::shared_ptr< Regions >& region_ );
+        void updateRegion( const std::size_t& id_ );
+        void updateRegions();
+
 //        void addWell( const std::shared_ptr< Well >& well_ );
-        void addCrossSection( const std::shared_ptr< CrossSection >& csection_ );
 
         void enableSketch( bool status_ );
         bool isSketchEnabled() const;
@@ -138,18 +147,13 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
 
         VolumeItem* volume1 = nullptr;
-
+        std::map< std::size_t, CrossSectionItem* > cross_sections1;
         std::map< std::size_t, StratigraphyItem* > stratigraphies;
         std::map< std::size_t, RegionItem* > regions;
         //        std::map< std::size_t, WellItem* > wells;
-        std::map< std::size_t, CrossSectionItem* > cross_sections1;
+
 
         bool sketch_enabled = true;
-
-        // temporary
-        int nregions = 0;
-        int nwells = 0;
-        // temporary
 
 
 

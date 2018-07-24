@@ -1,8 +1,8 @@
 #include "sketchinterface.h"
 
-#include "mainwindow1.h"
+#include "mainwindow.h"
 
-SketchInterface::SketchInterface( MainWindow1* const& window_ )
+SketchInterface::SketchInterface( MainWindow* const& window_ )
 {
     window = window_;
 }
@@ -66,6 +66,7 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::updateMainCrossSection, [=](){ scontroller->updateMainCrossSection(); } );
     connect( window->app, &RRMApplication::updateTopViewCrossSection, [=](){ scontroller->updateTopViewCrossSection(); } );
+    connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ ){ scontroller->addStratigraphy( obj_ ); } );
     connect( window->app, &RRMApplication::updateObjects, [=](){ scontroller->updateObjects(); } );
 
 

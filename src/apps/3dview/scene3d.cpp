@@ -59,6 +59,78 @@ void Scene3d::updateVolume()
 }
 
 
+
+
+
+void Scene3d::addMainCrossSection( const std::shared_ptr< CrossSection>& raw_ )
+{
+    context->makeCurrent( surface );
+    main_csection = std::make_shared< PlaneShader >( raw_ );
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateMainCrossSection()
+{
+     main_csection->update();
+     emit updateCanvas();
+}
+
+
+void Scene3d::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
+{
+    context->makeCurrent( surface );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        cross_sectionsX[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+        cross_sectionsY[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+        cross_sectionsZ[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        if( cross_sectionsX.find( depth_ ) == cross_sectionsX.end() ) return;
+        cross_sectionsX[ depth_ ]->update();
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        if( cross_sectionsY.find( depth_ ) == cross_sectionsY.end() ) return;
+        cross_sectionsY[ depth_ ]->update();
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        if( cross_sectionsZ.find( depth_ ) == cross_sectionsZ.end() ) return;
+        cross_sectionsZ[ depth_ ]->update();
+    }
+    emit updateCanvas();
+}
+
+
+
+void Scene3d::updateCrossSections()
+{
+    for( auto it: cross_sectionsX )
+        (it.second)->update();
+    for( auto it: cross_sectionsY )
+        (it.second)->update();
+    for( auto it: cross_sectionsZ )
+        (it.second)->update();
+
+    emit updateCanvas();
+}
+
+
 void Scene3d::addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     context->makeCurrent( surface );
@@ -72,10 +144,50 @@ void Scene3d::addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ )
 void Scene3d::updateStratigraphy( const std::size_t& index_ )
 {
     context->makeCurrent( surface );
+    if( stratigraphies.find( index_ ) == stratigraphies.end() )
     stratigraphies[ index_ ]->update();
 
     emit updateCanvas();
 
+}
+
+void Scene3d::updateStratigraphies()
+{
+    context->makeCurrent( surface );
+    for( auto it: stratigraphies )
+        (it.second)->update();
+
+    emit updateCanvas();
+
+}
+
+
+void Scene3d::addRegion( const std::shared_ptr< Regions >& region_ )
+{
+    context->makeCurrent( surface );
+    regions[ region_->getIndex() ] = std::make_shared< RegionShader >( region_ );
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateRegion( const std::size_t& index_ )
+{
+    context->makeCurrent( surface );
+    if( regions.find( index_ ) == regions.end() )
+    regions[ index_ ]->update();
+
+    emit updateCanvas();
+
+}
+
+
+void Scene3d::updateRegions()
+{
+    context->makeCurrent( surface );
+    for( auto it: regions )
+        (it.second)->update();
+
+    emit updateCanvas();
 }
 
 
@@ -86,6 +198,9 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     if( volume != nullptr )
         volume->draw( V, P, w, h );
 
+    if( main_csection != nullptr )
+        main_csection->draw( V, P, w, h );
+
     for ( auto it: stratigraphies )
     {
         std::shared_ptr < SurfaceShader > surface_ = it.second;
@@ -93,6 +208,7 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     }
 
 }
+
 
 void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 {

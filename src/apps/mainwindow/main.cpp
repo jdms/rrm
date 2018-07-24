@@ -31,7 +31,6 @@
 #include <QtGui/QIcon>
 
 
-#include "mainwindow1.h"
 #include "mainwindow.h"
 #include "./core/models/object.h"
 
@@ -58,7 +57,7 @@ int main( int argc, char *argv[] )
 
     QSurfaceFormat::setDefaultFormat( format );
 
-    MainWindow1 w1;
+    MainWindow w1;
     w1.show();
 
     return app.exec();

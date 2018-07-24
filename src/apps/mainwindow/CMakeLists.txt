@@ -7,7 +7,6 @@ find_package (Qt5Widgets)
 
 
 set( MAINWINDOW_HEADERS      mainwindow.h
-                             mainwindow1.h
                              sketchinterface.h
                              view3dinterface.h
                              rrmapplication.h  )
@@ -15,7 +14,6 @@ set( MAINWINDOW_HEADERS      mainwindow.h
 
 
 set( MAINWINDOW_MOC_HEADERS  mainwindow.h
-                             mainwindow1.h
                              rrmapplication.h
                              sketchinterface.h
                              view3dinterface.h )
@@ -24,7 +22,6 @@ set( MAINWINDOW_MOC_HEADERS  mainwindow.h
 
 set( MAINWINDOW_SOURCES      main.cpp
                              mainwindow.cpp
-                             mainwindow1.cpp
                              sketchinterface.cpp
                              view3dinterface.cpp
                              rrmapplication.cpp  )

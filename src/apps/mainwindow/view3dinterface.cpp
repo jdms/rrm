@@ -1,8 +1,8 @@
 #include "view3dinterface.h"
 
-#include "mainwindow1.h"
+#include "mainwindow.h"
 
-View3dInterface::View3dInterface( MainWindow1* const& window_ )
+View3dInterface::View3dInterface( MainWindow* const& window_ )
 {
     window = window_;
 }
@@ -61,8 +61,14 @@ void View3dInterface::createView3dActions()
     { sl_depth_csection->setDiscretization( disc_ ); } );
 
 
+    connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
+    { controller3d->addStratigraphy( obj_ ); } );
+
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { controller3d->updateObjects(); } );
+
+    connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
+    { controller3d->updateMainCrossSection(); } );
 
 }
 

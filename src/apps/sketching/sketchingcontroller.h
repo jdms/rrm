@@ -36,7 +36,7 @@ class SketchingController
         void viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, bool fixed_ = false*/ );
 
 
-        void addStratigraphy( const std::size_t& index_ );
+        void addStratigraphy( const ObjectPtr& obj_ );
         void updateStratigraphy( const std::size_t& index_ );
 
 
