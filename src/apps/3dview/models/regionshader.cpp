@@ -29,7 +29,7 @@ RegionShader::RegionShader()
 }
 
 
-RegionShader::RegionShader( Regions* const& raw_ )
+RegionShader::RegionShader( const std::shared_ptr< Regions >& raw_ )
 {
     setDefaultValues();
     init();
@@ -38,7 +38,7 @@ RegionShader::RegionShader( Regions* const& raw_ )
 
 
 
-void RegionShader::setRegion( Regions* const& raw_ )
+void RegionShader::setRegion( const std::shared_ptr< Regions >& raw_ )
 {
     raw = raw_;
     loadBuffers();

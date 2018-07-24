@@ -78,6 +78,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     fixed_csections_canvas->setVisible( false );
 
     sketchingcanvas = new SketchingCanvas();
+    sketchingcanvas->scale( 1, -1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
     setCentralWidget( sketchingcanvas );
 

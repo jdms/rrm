@@ -42,6 +42,7 @@ class RegionShader;
 
 
 #include "./core/models/scene.h"
+#include "./core/models/crosssection.h"
 #include "./core/models/stratigraphy.h"
 
 
@@ -54,62 +55,34 @@ class Scene3d: public QObject
 
 
         Scene3d();
+        ~Scene3d(){}
 
 
         void addVolume( const std::shared_ptr< Volume >& raw_ );
         void updateVolume();
 
+        void addMainCrossSection( const std::shared_ptr< CrossSection>& csection_ );
+        void updateMainCrossSection();
+
+        void addCrossSection( const std::shared_ptr< CrossSection >& csection_ );
+        void updateCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void removeCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){}
+        void updateCrossSections();
+
+
         void addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ );
         void updateStratigraphy( const std::size_t& index_ );
+        void updateStratigraphies();
+
+        void addRegion( const std::shared_ptr< Regions >& region_ );
+        void updateRegion( const std::size_t& index_ );
+        void updateRegions();
+
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
 
         void setOpenGLContext( QOpenGLContext* ctxt );
 
-
-//        void clearVolume();
-
-
-
-//        void addOutputVolume( const std::shared_ptr< Volume >& raw_ );
-//        void updateOutputVolume();
-//        void clearOutputVolume();
-
-
-//        void addRegion( Regions* const& raw_ );
-//        void updateRegion( std::size_t index_ );
-//        void updateRegions();
-//        void removeRegions();
-////        void clearRegion();
-
-//        void addMainCrossSection( CrossSection* const& raw_ );
-//        void updateMainCrossSection();
-
-//        void addCrossSection( CrossSection* const& raw_ );
-//        void updateCrossSection( CrossSection* const& raw_ );
-//        void updateCrossSections();
-//        void removeCrossSection( CrossSection* const& raw_ );
-
-
-//        void addObject(  Object* const& raw_ );
-//        void updateObject(  const std::size_t& index_ );
-//        void updateObjects();
-//        void removeObject(  const std::size_t& index_ );
-
-
-//
-
-
-//        void clear();
-//        void clearData();
-
-//        void setCurrentDirectory( const QString& dir );
-
-//        void setCurrentColor( int r, int g, int b ){}
-//        void getCurrentColor( int& r, int& g, int& b ){}
-
-
-//        void setHeightMap( double zmin_, double zmax_ );
 
 
     signals:
@@ -128,17 +101,16 @@ class Scene3d: public QObject
         QSurface* surface;
 
         std::shared_ptr < VolumeShader > volume;
+        std::shared_ptr< PlaneShader > main_csection;
+
+        std::map< std::size_t, std::shared_ptr< PlaneShader > > cross_sectionsX;
+        std::map< std::size_t, std::shared_ptr< PlaneShader > > cross_sectionsY;
+        std::map< std::size_t, std::shared_ptr< PlaneShader > > cross_sectionsZ;
+
         std::map< std::size_t, std::shared_ptr< SurfaceShader > > stratigraphies;
+        std::map< std::size_t, std::shared_ptr< RegionShader > > regions;
 
 
-
-//        VolumeShader* output_volume;
-
-//        PlaneShader* main_csection;
-
-//        CrossSectionsContainer csections;
-//        ObjectsContainer objects;
-//        RegionsContainer regions;
 
 
 };

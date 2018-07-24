@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "./core/models/shader.h"
 
@@ -38,9 +39,9 @@ class PlaneShader: public Shader
     public:
 
         PlaneShader();
-        PlaneShader( CrossSection* const& raw_ );
+        PlaneShader( const std::shared_ptr< CrossSection>& raw_ );
 
-        void setCrossSection( CrossSection* const& raw_ );
+        void setCrossSection( const std::shared_ptr< CrossSection>& raw_ );
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                 const int& h );
@@ -78,7 +79,7 @@ class PlaneShader: public Shader
 
         GLuint number_of_vertices;
 
-        CrossSection* csection;
+        std::shared_ptr< CrossSection> csection;
 };
 
 #endif // PLANESHADER_H

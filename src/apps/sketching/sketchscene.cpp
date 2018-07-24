@@ -85,6 +85,7 @@ void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
     update();
 }
 
+
 void SketchScene::updateVolume()
 {
     volume1->update();
@@ -92,6 +93,16 @@ void SketchScene::updateVolume()
     update();
 
 }
+
+
+void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
+{
+    std::size_t id_ = csection_->getIndex();
+    cross_sections1[ id_ ] = new CrossSectionItem();
+    cross_sections1[ id_ ]->setRawCrossSection( csection_ );
+    addItem( cross_sections1[ id_ ] );
+}
+
 
 
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
@@ -105,8 +116,20 @@ void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_
 
 void SketchScene::updateStratigraphy( const std::size_t& id_ )
 {
+    if( stratigraphies.find( id_ ) == stratigraphies.end() ) return;
     if( stratigraphies[ id_ ]->isVisible() == false ) return;
     stratigraphies[ id_ ]->update();
+    update();
+}
+
+
+void SketchScene::updateStratigraphies()
+{
+
+    for( auto it: stratigraphies )
+    {
+        (it.second)->update();
+    }
     update();
 }
 
@@ -121,13 +144,22 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     addItem( regions[ id_ ] );
 }
 
-void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
+
+void SketchScene::updateRegion( const std::size_t& id_ )
 {
-    std::size_t id_ = csection_->getIndex();
-    cross_sections1[ id_ ] = new CrossSectionItem();
-    cross_sections1[ id_ ]->setRawCrossSection( csection_ );
-    addItem( cross_sections1[ id_ ] );
+    if( regions.find( id_ ) == regions.end() ) return;
+    regions[ id_ ]->update();
+    update();
 }
+
+
+void SketchScene::updateRegions()
+{
+    for( auto it: regions )
+        it.second->update();
+    update();
+}
+
 
 void SketchScene::enableSketch( bool status_ )
 {
@@ -309,55 +341,13 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 
     else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::CREATE_REGION )  )
     {
-        regions[ nregions ] ->addPoint( p_ );
+//        regions[ nregions ] ->addPoint( p_ );
     }
 
 
     QGraphicsScene::mousePressEvent( event_ );
     update();
 
-
-
-//    if( is_current == false ) return;
-
-
-//    if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::SKETCHING ) )
-//    {
-//        user_input->create( event->scenePos() );
-//    }
-
-//    else if( ( event->buttons() & Qt::RightButton ) &&
-//        ( current_interaction == UserInteraction::SKETCHING ) )
-//    {
-//        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//            emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-//        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-//            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-//        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//            emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
-
-
-//        user_input->clear();
-//    }
-
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
-//    {
-//        volume->startPoint( event->scenePos() );
-//    }
-
-//    else if(( event->buttons() & Qt::LeftButton ) &&
-//             ( current_interaction == UserInteraction::EDITING_SCENE ||
-//               current_interaction == UserInteraction::MOVING_IMAGE  ||
-//               current_interaction == UserInteraction::RESIZING_IMAGE ) )
-//    {
-//        editItem();
-//    }
-
-
-//    QGraphicsScene::mousePressEvent( event );
-//    update();
 }
 
 
@@ -366,19 +356,6 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
     update();
-
-//    if( event->modifiers() & Qt::ControlModifier )
-//    {
-//        if( csection == nullptr ) return;
-//        if( views().empty() == true ) return;
-//        emit setAsCurrent( csection->getDepth(), views()[ 0 ] );
-//    }
-
-//    else if( current_interaction == UserInteraction::SKETCHING )
-//    {
-//         emit commitObject();
-//        user_input->clear();
-//    }
 
 }
 
@@ -398,39 +375,6 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 
     QGraphicsScene::mouseMoveEvent( event_ );
     update();
-
-
-//    if( is_current == false ) return;
-
-//    if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::SKETCHING ) /*&& ( user_input != nullptr )*/ )
-//    {
-//        user_input->add(  event->scenePos() );
-//    }
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
-//    {
-//        volume->resize( event->scenePos() );
-//    }
-
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
-//    {
-//        image->resizeRectangle( event->scenePos() );
-//        updateImageCrossSection();
-//    }
-
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
-//   {
-//        image->moveRectangle( event->scenePos() );
-//        updateImageCrossSection();
-//    }
-
-
-
-//    QGraphicsScene::mouseMoveEvent( event );
-//    update();
 
 }
 
@@ -456,54 +400,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     update();
 
 
-//    if( is_current == false ) return;
-
-//    if( ( current_interaction == UserInteraction::SKETCHING ) /*&& ( user_input != nullptr )*/ )
-//    {
-//        user_input->process();
-//    }
-
-//    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
-//    {
-//        emit acceptVolumeDimensions( csection->getDirection(), static_cast< double >( volume->boundingRect().width() ),
-//                                     static_cast< double >( volume->boundingRect().height() ) );
-//    }
-
-//    else if( current_interaction == UserInteraction::SELECTING )
-//    {
-//        selectObjectAsBounderingRegion();
-//    }
-
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
-//    {
-//        image->resizeRectangle( event->scenePos() );
-//        updateImageCrossSection();
-//    }
-
-//    else if( ( event->buttons() & Qt::LeftButton ) &&
-//        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
-//    {
-
-//        image->moveRectangle( event->scenePos() );
-//        updateImageCrossSection();
-//    }
-
-//    else if( ( current_interaction == UserInteraction::EDITING_SCENE ||
-//               current_interaction == UserInteraction::MOVING_IMAGE  ||
-//               current_interaction == UserInteraction::RESIZING_IMAGE ) )
-//    {
-//        current_interaction = UserInteraction::EDITING_SCENE;
-
-//        resize_marker->setSelected( false );
-//        move_marker->setSelected( false );
-//        editItem();
-
-//    }
-
-
-
-
     QGraphicsScene::mouseReleaseEvent( event_ );
     update();
 }
@@ -512,28 +408,19 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 
 void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event_ )
 {
-//    if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
-//    {
-//        event->acceptProposedAction();
-//    }
+
 
 }
 
 
 void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event_ )
 {
-//    const QMimeData *mime_data = event->mimeData();
-//    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
-//    url_file = QDir::toNativeSeparators( url_file );
-
-//    setImageToCrossSection( url_file );
 
 }
 
 
 void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event_ )
 {
-//    event->accept();
 }
 
 
@@ -555,19 +442,6 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
     QGraphicsScene::wheelEvent( event_ );
     update();
 
-
-//    if( views().isEmpty() == true ) return;
-
-//    QGraphicsView* gv_ = views()[ 0 ];
-
-//    if( event->delta() > 0 )
-//        gv_->scale( ZOOM_SCALE, ZOOM_SCALE );
-//    else
-//        gv_->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
-
-
-//    QGraphicsScene::wheelEvent( event );
-//    update();
 }
 
 

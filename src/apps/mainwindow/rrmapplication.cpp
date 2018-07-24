@@ -114,22 +114,9 @@ void RRMApplication::createObjectSurface()
     bool status_ = controller->createObjectSurface();
     if( status_ == false ) return;
 
-    emit addObject( controller->getCurrentObject()->getIndex() );
     emit updateObjects();
+    emit addObject( controller->getCurrentObject() );
 
-//    controller->update();
-
-//    if( status_ == false ) return;
-
-//    mainwindow->controller->addObject();
-//    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
-
-//    mainwindow->sketch_window->addObject( mainwindow->controller->getCurrentObject().get() );
-//    mainwindow->sketch_topview_window->addTrajectory( mainwindow->controller->getCurrentObject().get() );
-
-//    updateSketchingCanvas();
-//    defineRandomColor();
-//    checkUndoRedo();
 }
 
 

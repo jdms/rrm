@@ -100,7 +100,7 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
     for( auto it: objects_ )
     {
         ObjectPtr& obj_ = it.second;
-        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
+        addStratigraphy( obj_ );
     }
 
     // the same for regions and wells
@@ -110,21 +110,8 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
 
 void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ )
 {
-
-    std::string direction_( "Z" );
-
-    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-    {
-        direction_.clear();
-        direction_ = std::string( "X" );
-    }
-
-    std::cout << "Updating cross-section to depth: " << csection_->getDepth()
-              << ", in direction: " << direction_.c_str() << std::flush << std::endl;
-
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
-    // the same for regions and wells
 
 }
 
@@ -135,13 +122,29 @@ void SketchingController::updateObjects()
 {
 
 
-    std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
-    for( auto it: objects_ )
+    if( main_scene != nullptr )
+        main_scene->updateStratigraphies();
+
+    if( topview_scene != nullptr )
+        topview_scene->updateStratigraphies();
+
+    for( auto it: scenesX )
     {
-        updateStratigraphy( it.first );
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
     }
 
+    for( auto it: scenesY )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
+    }
 
+    for( auto it: scenesZ )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
+    }
     // the same for regions and wells
 
 }
@@ -149,26 +152,28 @@ void SketchingController::updateObjects()
 
 
 
-void SketchingController::addStratigraphy( const std::size_t& index_ )
+void SketchingController::addStratigraphy( const ObjectPtr& obj_ )
 {
+    if( main_scene != nullptr )
+        main_scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
+    if( topview_scene != nullptr )
+        topview_scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
+
     for( auto it: scenesX )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
-        ObjectPtr obj_ = controller->getObject( index_ );
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
     for( auto it: scenesY )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
-        ObjectPtr obj_ = controller->getObject( index_ );
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
     for( auto it: scenesZ )
     {
         std::shared_ptr< SketchScene > scene_ = it.second;
-        ObjectPtr obj_ = controller->getObject( index_ );
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 }
@@ -176,8 +181,12 @@ void SketchingController::addStratigraphy( const std::size_t& index_ )
 
 void SketchingController::updateStratigraphy( const std::size_t& index_ )
 {
-    main_scene->updateStratigraphy( index_ );
-    topview_scene->updateStratigraphy( index_ );
+
+    if( main_scene != nullptr )
+        main_scene->updateStratigraphy( index_ );
+
+    if( topview_scene != nullptr )
+        topview_scene->updateStratigraphy( index_ );
 
     for( auto it: scenesX )
     {

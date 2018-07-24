@@ -85,7 +85,7 @@ class RRMApplication: public QObject
 
     signals:
 
-        void addObject( const std::size_t& index_ );
+        void addObject( const std::shared_ptr<Object>& obj_ );
 
         void updateVolume();
         void updateObjects();

@@ -9,7 +9,7 @@
 #include "./core/widgets/realfeaturedslider.h"
 
 
-class MainWindow1;
+class MainWindow;
 
 class View3dInterface: public QObject
 {
@@ -17,7 +17,7 @@ class View3dInterface: public QObject
 
   public:
 
-    View3dInterface( MainWindow1* const& window_ );
+    View3dInterface( MainWindow* const& window_ );
     void createInterface();
     void init();
 
@@ -29,7 +29,7 @@ class View3dInterface: public QObject
 
   protected:
 
-    MainWindow1* window = nullptr;
+    MainWindow* window = nullptr;
 
     View3dController* controller3d = nullptr;
     Canvas3d* canvas3d = nullptr;
