@@ -542,7 +542,10 @@ bool Controller::createObjectSurfaceDirectionX()
     }
 
 
+
     status_ = rules_processor.createSurface( current_object, points3d_ );
+    obj_->setDone( status_ );
+
     return status_;
 }
 
@@ -596,6 +599,7 @@ bool Controller::createObjectSurfaceDirectionZ()
     }
 
     status_ = rules_processor.createSurface( current_object, points3d_ );
+    obj_->setDone( status_ );
     return status_;
 
 }
