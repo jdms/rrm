@@ -27,18 +27,6 @@
 #include <vector>
 #include <map>
 
-//<<<<<<< HEAD:src/apps/mainwindow/rules_processor.hpp
-////#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
-//#include "PolygonalCurve/CurveN.hpp"
-//#include "stratmod/stratigraphy_modeller.hpp"
-//#include "stratmod/stratigraphy_utilities.hpp"
-//=======
-/* #include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp" */
-/* #include "stratmod_wraper.hpp" */
-/* #include "smodeller.hpp" */
-/* #include "sutilities.hpp" */
-//>>>>>>> origin/feature-stratmod_ref:src/Apps/MainWindow/rules_processor.hpp
-
 #include "./libs/PolygonalCurve/CurveN.hpp"
 #include "stratmod_wrapper.hpp"
 #include "truncate_helper.hpp"
@@ -112,13 +100,13 @@
             /* Begin methods to interface with GUI */
 
 
-            std::size_t getWidthResolution();
+            std::size_t getWidthResolution() const;
 
             // DEPRECATED
             std::size_t getDepthResolution();
             
             // USE THIS INSTEAD:
-            std::size_t getLengthResolution() {}
+            std::size_t getLengthResolution() const;
             // END: use this instead
 
 
@@ -137,7 +125,7 @@
             bool defineAbove( size_t surface_index );
             
             // USE THIS INSTEAD
-            bool defineAbove( std::vector<size_t> surface_indices ) {}
+            bool defineAbove( std::vector<size_t> &surface_indices );
             // END: use this instead
 
 
@@ -156,7 +144,7 @@
             bool defineBelow( size_t surface_index );
             
             // USE THIS INSTEAD
-            bool defineBelow( std::vector<size_t> surface_indices ) {}
+            bool defineBelow( std::vector<size_t> surface_indices );
             // END: use this instead
 
             //
@@ -178,8 +166,8 @@
             bool defineBelowIsActive( size_t &boundary_index );
 
             // USE THIS INSTEAD
-            bool defineAboveIsActive( std::vector<size_t> &boundary_indices ) {}
-            bool defineBelowIsActive( std::vector<size_t> &boundary_indices ) {}
+            bool defineAboveIsActive( std::vector<size_t> &boundary_indices );
+            bool defineBelowIsActive( std::vector<size_t> &boundary_indices );
             // END: use this instead
 
             void removeAbove();
@@ -196,6 +184,7 @@
             template<typename CurveType>
             bool createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            // SUGGESTED NEW 
             bool createSurface( size_t surface_index, std::vector<double> &points );
 
 
@@ -203,12 +192,12 @@
             template<typename CurveType>
             bool testSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            // NEW BUT ALREADY DEPRECATED
             bool testSurface( size_t surface_index, std::vector<double> &points );
 
+            // SUGGESTED NEW 
             void testSurfaceInsertion();
-            void finishTestSurfaceInsertion();
-
-            bool processSurfaceCreationStatus( bool success );
+            void stopTestSurfaceInsertion();
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
@@ -220,17 +209,23 @@
 
             // SUGGESTED NEW SIGNATURES:
             bool createLengthwiseExtrudedSurface( size_t surface_id, 
-                    const std::vector<double> &cross_section_curve_point_data,
-                    const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
-                    const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
-                    ) { return false; }
+                    const std::vector<double> &cross_section_curve_point_data
+                    );
 
             bool createLengthwiseExtrudedSurface( size_t surface_id, 
                     const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
-                    const std::vector<double> &path_curve_point_data, 
-                    const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
-                    const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
-                    ) { return false; }
+                    const std::vector<double> &path_curve_point_data 
+                    );
+
+            bool createWidthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data
+                    );
+
+            bool createWidthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+                    const std::vector<double> &path_curve_point_data 
+                    );
+
             // END SUGGESTED NEW SIGNATURES
 
             bool canUndo();
@@ -300,18 +295,23 @@
 
         private:
             SModellerWrapper modeller_;
-            struct { double x, y, z; } origin_, lenght_;
+            struct { double x, y, z; } origin_, length_;
 
             enum ModelResolution { LOW, MEDIUM, HIGH };
             ModelResolution current_resolution_;
 
             bool testing_surface_insertion_ = false;
             bool last_surface_inserted_is_a_test_ = false;
-            bool truncate_surface_ = false;
+
+            // DEPRECATED
+            bool truncate_surface_ = false; 
 
             /* template<typename CurveType, typename T = std::vector<size_t>> */
             /* bool getFirstRegionCurveIntersects( const std::tuple<CurveType, double> &curve_tuple, std::vector<size_t> &lbounds, std::vector<size_t> &ubounds, T &&crossings = {} ); */
 
+            template<typename FunctionType, typename... Args>
+            bool processSurfaceCreation( FunctionType &&surfaceCreator, size_t surface_index, Args&&... args );
+            
             template<typename CurveType>
             bool getFirstRegionCurveIntersects( 
                         const std::tuple<CurveType, double> &curve_tuple, 
@@ -604,7 +604,8 @@
         {
             std::vector<double> dummy_vertices;
             std::vector<size_t> dummy_edges;
-            status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+            /* status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0); */
+            status &= getMesh(surface_index, dummy_vertices, dummy_edges);
 
             if ( status == false )
             {
