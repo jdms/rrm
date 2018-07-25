@@ -137,8 +137,6 @@ class Controller
         bool createObjectSurfaceDirectionZ();
 
 
-
-
         void updateModel();
         void updateObjectSurface( const std::size_t& index_ );
         void updateObjectCurves( const std::size_t& index_ );
@@ -195,6 +193,7 @@ class Controller
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
+        void clear();
 
 
     protected:

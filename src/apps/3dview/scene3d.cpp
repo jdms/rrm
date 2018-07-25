@@ -215,3 +215,31 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
     context = ctxt;
     surface = ctxt->surface();
 }
+
+void Scene3d::clearScene()
+{
+    volume.reset();
+    main_csection.reset();
+
+    for( auto it: cross_sectionsX )
+        (it.second)->reset();
+    cross_sectionsX.clear();
+
+    for( auto it: cross_sectionsY )
+        (it.second)->reset();
+    cross_sectionsY.clear();
+
+    for( auto it: cross_sectionsZ )
+        (it.second)->reset();
+    cross_sectionsZ.clear();
+
+    for( auto it: stratigraphies )
+        (it.second)->reset();
+    stratigraphies.clear();
+
+    for( auto it: regions )
+        (it.second)->reset();
+    regions.clear();
+
+    emit updateCanvas();
+}

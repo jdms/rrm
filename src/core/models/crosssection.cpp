@@ -98,10 +98,14 @@ CrossSection::~CrossSection()
 {
     std::cout << "CROSS-SECTION DELETED" << std::endl << std::flush;
 
+    if( volume != nullptr )
+        volume.reset();
+    volume = nullptr;
+
     if( objects.empty() == false )
         clear();
-    if( volume != nullptr )
-    volume = nullptr;
+
+//    Object::clear();
 }
 
 

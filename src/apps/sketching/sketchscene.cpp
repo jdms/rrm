@@ -50,8 +50,8 @@ void SketchScene::init()
 {
     if( sketch == nullptr )
     {
-        sketch = new CurveItem();
-        addItem( sketch );
+        sketch = std::make_shared< CurveItem >();
+        addItem( sketch.get() );
     }
     setSketchingMode();
 }
@@ -74,10 +74,10 @@ void SketchScene::setCrossSectionInformation( const Settings::CrossSection::Cros
 void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
 {
 
-    volume1 = new VolumeItem();
+    volume1 = std::make_shared< VolumeItem >(); //new VolumeItem();
     volume1->setRawVolume( volume_, csection_direction, csection_depth );
 
-    addItem( volume1 );
+    addItem( volume1.get() );
     setSceneRect( volume1->boundingRect() );
 
     emit ensureObjectsVisibility();
@@ -98,9 +98,10 @@ void SketchScene::updateVolume()
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
     std::size_t id_ = csection_->getIndex();
-    cross_sections1[ id_ ] = new CrossSectionItem();
+//    cross_sections1[ id_ ] = new CrossSectionItem();
+    cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
     cross_sections1[ id_ ]->setRawCrossSection( csection_ );
-    addItem( cross_sections1[ id_ ] );
+    addItem( cross_sections1[ id_ ].get() );
 }
 
 
@@ -108,9 +109,9 @@ void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csecti
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
 {
     std::size_t id_ = strat_->getIndex();
-    stratigraphies[ id_ ] = new StratigraphyItem();
+    stratigraphies[ id_ ] = std::make_shared< StratigraphyItem>();//new StratigraphyItem();
     stratigraphies[ id_ ]->setRawStratigraphy( strat_, csection_direction, csection_depth );
-    addItem( stratigraphies[ id_ ] );
+    addItem( stratigraphies[ id_ ].get() );
     update();
 }
 
@@ -137,11 +138,11 @@ void SketchScene::updateStratigraphies()
 void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 {
     std::size_t id_ = region_->getIndex();
-    regions[ id_ ] = new RegionItem();
+    regions[ id_ ] = std::make_shared< RegionItem >();//new RegionItem();
     regions[ id_ ]->setRawRegion( region_ );
     regions[ id_ ]->setBorderColor( 0, 0, 0 );
     regions[ id_ ]->setFillColor( 255, 255, 255 );
-    addItem( regions[ id_ ] );
+    addItem( regions[ id_ ].get() );
 }
 
 
@@ -224,8 +225,9 @@ void SketchScene::setSketchingMode()
     sketch_enabled = true;
 
     if ( sketch != nullptr ) return;
-    sketch = new CurveItem();
-    addItem( sketch );
+    sketch = std::make_shared< CurveItem >();
+//            new CurveItem();
+    addItem( sketch.get() );
 }
 
 
@@ -399,9 +401,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     QGraphicsScene::mouseReleaseEvent( event_ );
     update();
 
-
-    QGraphicsScene::mouseReleaseEvent( event_ );
-    update();
 }
 
 
@@ -471,3 +470,47 @@ void SketchScene::keyPressEvent( QKeyEvent *event )
 //}
 
 
+void SketchScene::clearScene()
+{
+    for( auto &it: items() )
+        QGraphicsScene::removeItem( it );
+
+    if( volume1 != nullptr )
+        volume1.reset();
+    volume1 = nullptr;
+
+//    for( auto it: cross_sections1 )
+//        (it.second).reset();
+//    cross_sections1.clear();
+
+}
+
+SketchScene::~SketchScene()
+{
+
+    clearScene();
+
+
+//    volume1.reset();
+//    main_csection.reset();
+
+//    for( auto it: cross_sectionsX )
+//        (it.second)->reset();
+//    cross_sectionsX.clear();
+
+//    for( auto it: cross_sectionsY )
+//        (it.second)->reset();
+//    cross_sectionsY.clear();
+
+//    for( auto it: cross_sectionsZ )
+//        (it.second)->reset();
+//    cross_sectionsZ.clear();
+
+//    for( auto it: stratigraphies )
+//        (it.second)->reset();
+//    stratigraphies.clear();
+
+//    for( auto it: regions )
+//        (it.second)->reset();
+//    regions.clear();
+}

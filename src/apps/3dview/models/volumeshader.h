@@ -42,7 +42,7 @@ class VolumeShader: public Shader
 
         VolumeShader();
         VolumeShader( const std::shared_ptr< Volume >& raw_ );
-
+        ~VolumeShader();
 
         void setVolume( const std::shared_ptr< Volume >& raw_ );
 

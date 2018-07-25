@@ -43,17 +43,6 @@ class Volume: public Object
 
     public:
 
-//        struct Color
-//        {
-//            int r = 255;
-//            int g = 0;
-//            int b = 0;
-//        };
-
-//        using ObjectsContainer = Container< std::size_t, Object* >;
-//        using CrossSectionsContainer = Container< std::size_t, CrossSection* >;
-
-
         Volume();
         Volume(const Volume & volume_);
         Volume & operator=(const Volume & volume_);
@@ -88,56 +77,8 @@ class Volume: public Object
         void getTopFace( std::vector< double >& vertices_ ) const;
         void getBottomFace( std::vector< double >& vertices_ ) const;
 
-        ///=================================================================
+        void clear() override;
 
-
-
-
-//        void setName( const std::string name_ );
-//        const std::string& getName() const;
-
-
-
-
-//        bool addObject( std::size_t id_, Object* const& obj_ );
-//        bool removeObject( std::size_t id_ );
-//        Volume::ObjectsContainer getObjects() const;
-//        void removeAllObjects();
-
-
-
-//        void addTetrahedralFaces( const std::vector< std::size_t >& faces_ );
-//        void getFaces( std::vector< std::size_t >& faces_ ) const ;
-//        void setVertices( const std::vector< double >& vertices_  );
-//        void getVertices( std::vector< double >& vertices_  ) const;
-
-
-//        void addRegion( std::size_t index_, const std::vector< std::size_t >& faces_, const Volume::Color& c_ );
-//        void removeRegion( std::size_t index_ );
-//        void getRegion( std::size_t index_, std::vector< std::size_t >& faces_, Volume::Color& c_ ) const;
-//        void removeAllRegions();
-
-
-//        bool addCrossSection( std::size_t id_, CrossSection* const& csection_ );
-//        bool removeCrossSection( std::size_t id_ );
-//        Volume::CrossSectionsContainer getCrossSections() const;
-//        void removeAllCrossSections();
-
-
-//        void setVisible( bool status_ );
-//        bool isVisible() const;
-
-
-//        void setResizable( bool status_ );
-//        bool isResizable();
-
-
-//        bool isEmpty() const;
-
-//        void clear();
-//        void initialize();
-
-//        void updateDimensions();
 
 
     private:
@@ -159,32 +100,6 @@ protected:
     double width = DEFAULT_WIDTH;
     double height = DEFAULT_HEIGHT;
     double lenght = DEFAULT_LENGHT;
-
-    ///=================================================================
-
-
-//        std::string name = "VOLUME";
-
-////        double originx;
-////        double originy;
-////        double originz;
-
-////        double width;
-////        double height;
-////        double lenght;
-
-//        bool is_visible;
-//        bool is_resizable;
-
-
-////        ObjectsContainer objects;
-////        CrossSectionsContainer csections;
-
-//        std::vector< double > vertices;
-//        std::vector< std::size_t > faces;
-//        std::map< std::size_t, std::vector< std::size_t > > regions;
-//        std::map< std::size_t, Color > regions_colors;
-
 
 };
 

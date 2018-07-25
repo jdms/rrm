@@ -58,17 +58,32 @@ void SketchInterface::createSketchingActions()
 
 
 
-    connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->addCurveToObject( curve_, dir_, depth_ ); } );
-    connect( sketch_window, &SketchWindow::createObject, [=](){ window->app->createObjectSurface(); } );
+    connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
 
-    connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ ){ window->app->addTrajectoryToObject( curve_ ); } );
-    connect( sketch_topview_window, &SketchWindow::createObject, [=](){ window->app->createObjectSurface(); } );
+    connect( sketch_window, &SketchWindow::createObject, [=]()
+    { window->app->createObjectSurface(); } );
 
-    connect( window->app, &RRMApplication::updateMainCrossSection, [=](){ scontroller->updateMainCrossSection(); } );
-    connect( window->app, &RRMApplication::updateTopViewCrossSection, [=](){ scontroller->updateTopViewCrossSection(); } );
-    connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ ){ scontroller->addStratigraphy( obj_ ); } );
-    connect( window->app, &RRMApplication::updateObjects, [=](){ scontroller->updateObjects(); } );
+    connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ )
+    { window->app->addTrajectoryToObject( curve_ ); } );
 
+    connect( sketch_topview_window, &SketchWindow::createObject, [=]()
+    { window->app->createObjectSurface(); } );
+
+    connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
+    { scontroller->updateMainCrossSection(); } );
+
+    connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
+    { scontroller->updateTopViewCrossSection(); } );
+
+    connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
+    { scontroller->addStratigraphy( obj_ ); } );
+
+    connect( window->app, &RRMApplication::updateObjects, [=]()
+    { scontroller->updateObjects(); } );
+
+    connect( window->app, &RRMApplication::startApplication, [=]()
+    { scontroller->clear(); } );
 
 }
 

@@ -44,6 +44,10 @@ void Stratigraphy::defineId()
 	++number_of_stratigraphies;
 }
 
+void Stratigraphy::clear()
+{
+}
+
 
 //void Stratigraphy::setSurface( const Surface& surface_)
 //{
@@ -134,5 +138,7 @@ Stratigraphy::~Stratigraphy()
 {
 //    removeCurves();
 //    removeTrajectory();
+
 	std::cout << "STATIGRAPHY DELETED" << std::endl << std::flush;
+    clear();
 }

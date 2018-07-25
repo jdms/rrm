@@ -43,6 +43,7 @@ Regions::Regions(const Regions & reg_)
 
 Regions::~Regions()
 {
+    clear();
 }
 
 Regions & Regions::operator=(const Regions & reg_)

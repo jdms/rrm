@@ -24,10 +24,11 @@ void View3dInterface::createView3dWindow()
     controller3d = new View3dController();
 
     canvas3d = new Canvas3d();
+    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout();
-    hb_central_widget->addWidget( canvas3d );
+//    hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
     QWidget* central_widget = new QWidget();
@@ -45,21 +46,14 @@ void View3dInterface::createView3dActions()
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double depth_ )
     { window->app->moveMainCrossSection( depth_ ); } );
 
-
     connect( window->app, &RRMApplication::updateVolume, [=]()
-    {
-    } );
-
+    { controller3d->updateVolume(); } );
 
     connect( window->app, &RRMApplication::updateRange, [=]( double min_, double max_ )
-    {
-        sl_depth_csection->setRange( min_, max_ );
-    } );
-
+    { sl_depth_csection->setRange( min_, max_ ); } );
 
     connect( window->app, &RRMApplication::updateDiscretization, [=]( const std::size_t& disc_ )
     { sl_depth_csection->setDiscretization( disc_ ); } );
-
 
     connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
     { controller3d->addStratigraphy( obj_ ); } );
@@ -69,6 +63,10 @@ void View3dInterface::createView3dActions()
 
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
     { controller3d->updateMainCrossSection(); } );
+
+    connect( window->app, &RRMApplication::startApplication, [=]()
+    { controller3d->clear(); } );
+
 
 }
 

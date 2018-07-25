@@ -74,3 +74,9 @@ void View3dController::updateObjects()
 {
     scene->updateStratigraphies();
 }
+
+void View3dController::clear()
+{
+    scene->clearScene();
+//    window->clear();
+}

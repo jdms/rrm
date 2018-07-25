@@ -88,7 +88,7 @@ class Regions: public Object
         void getColor( int& r_, int& g_, int& b_ ) const;
 
 
-        void clear();
+        void clear() override;
         void initialize();
 
 

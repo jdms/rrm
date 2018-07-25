@@ -40,7 +40,7 @@ class RegionShader: public Shader
 
         RegionShader();
         RegionShader( const std::shared_ptr< Regions >& raw_ );
-
+        ~RegionShader();
 
         void setRegion( const std::shared_ptr< Regions >& raw_ );
 

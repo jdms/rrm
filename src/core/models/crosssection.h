@@ -77,12 +77,6 @@ class CrossSection: public Object
 
 ///========================================================================
 
-
-//        CrossSection();
-//        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
-
-//        CrossSection& operator=( const CrossSection& other_ );
-
         void defineIndex();
 
         void getCoordinates( std::vector< double >& vertices_ );
@@ -108,7 +102,7 @@ class CrossSection: public Object
         bool hasObjects() const;
 
 
-        void clear();
+        void clear() override;
         void initialize();
 
         static void resetAllCrossSections();
@@ -116,7 +110,7 @@ class CrossSection: public Object
 
     private:
 
-        std::shared_ptr< Volume > volume;
+        std::shared_ptr< Volume > volume = nullptr;
 
         double width = 0.0;
         double height = 0.0;

@@ -36,6 +36,8 @@ class Stratigraphy : public Object
 
 //        void surfaceDone() ;
 
+        void clear() override;
+
 
 	protected:
 

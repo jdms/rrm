@@ -315,7 +315,7 @@ void SurfaceShader::setDefaultValues()
     number_of_faces = 0;
     number_of_vertices = 0;
 
-    raw = nullptr;
+    raw.reset();
     draw_edge = true;
 
 }
@@ -343,4 +343,9 @@ void SurfaceShader::setHeightMap(double zmin_, double zmax_)
 void SurfaceShader::enableDrawingEdges()
 {
     draw_edge = true;
+}
+
+SurfaceShader::~SurfaceShader()
+{
+    clear();
 }
