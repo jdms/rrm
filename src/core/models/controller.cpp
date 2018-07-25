@@ -112,10 +112,6 @@ void Controller::setVolumeVisibility( bool status_ )
 {
     model.volume->setVisible(status_);
     //    app->updateVolume();
-
-    //    volume->setVisible( status_ );
-    //    main_csection->setVisible( status_ );
-    //    scene3d->updateVolume();
 }
 
 
@@ -1191,6 +1187,49 @@ void Controller::applyStratigraphicRule()
 }
 
 
+
+
+void Controller::clear()
+{
+    if( csection == nullptr )
+        csection.reset();
+
+    if( topview == nullptr )
+        topview.reset();
+
+    if( model.volume == nullptr )
+        model.volume.reset();
+
+    for( auto it: model.csectionsX )
+        (it.second).reset();
+    model.csectionsX.clear();
+
+    for( auto it: model.csectionsY )
+        (it.second).reset();
+    model.csectionsY.clear();
+
+    for( auto it: model.csectionsZ )
+        (it.second).reset();
+    model.csectionsZ.clear();
+
+    for( auto it: model.objects )
+        (it.second).reset();
+    model.objects.clear();
+
+    for( auto it: model.regions )
+        (it.second).reset();
+    model.regions.clear();
+
+    for( auto it: model.domains )
+        (it.second).regions_set.clear();
+    model.domains.clear();
+
+    current_object = 0;
+    object_defined = false;
+    current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
+    csection_stepx = 1.0;
+    csection_stepz = 1.0;
+}
 
 
 

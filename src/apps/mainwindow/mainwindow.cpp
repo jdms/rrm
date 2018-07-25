@@ -101,6 +101,9 @@ void MainWindow::createActions()
 //    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
 
 
+    connect( ac_clear, &QAction::triggered, [=]()
+    { app->reset(); } );
+
     connect( ac_remove_above, &QAction::triggered, [=]()
     { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
 

@@ -114,8 +114,8 @@ void RRMApplication::createObjectSurface()
     bool status_ = controller->createObjectSurface();
     if( status_ == false ) return;
 
-    emit updateObjects();
     emit addObject( controller->getCurrentObject() );
+    emit updateObjects();
 
 }
 
@@ -135,6 +135,13 @@ void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::Stratig
 }
 
 
+void RRMApplication::reset()
+{
+
+    emit startApplication();
+    controller->clear();
+
+}
 
 ///================================================================================
 

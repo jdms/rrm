@@ -245,5 +245,10 @@ void PlaneShader::setDefaultValues()
     vb_normals = 0;
 
     number_of_vertices = 0;
-    csection = nullptr;
+    csection.reset();
+}
+
+PlaneShader::~PlaneShader()
+{
+    clear();
 }

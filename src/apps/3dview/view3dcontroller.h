@@ -30,6 +30,7 @@ class View3dController
         void updateObjects();
         void updateScene();
 
+        void clear();
 
     protected:
 

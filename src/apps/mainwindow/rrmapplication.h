@@ -67,10 +67,11 @@ class RRMApplication: public QObject
         void init();
 
 
-        void setDiscretization();
 
 
     public slots:
+
+        void setDiscretization();
 
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
         void moveMainCrossSection( double depth_ );
@@ -81,6 +82,9 @@ class RRMApplication: public QObject
         void createObjectSurface();
 
         void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
+
+        void reset();
+
 
 
     signals:
@@ -94,6 +98,8 @@ class RRMApplication: public QObject
 
         void updateDiscretization( const std::size_t& disc_ );
         void updateRange( double min_, double max_ );
+
+        void startApplication();
 
 
 ///================================================================================

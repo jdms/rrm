@@ -80,9 +80,9 @@ class Scene3d: public QObject
 
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
-
         void setOpenGLContext( QOpenGLContext* ctxt );
 
+        void clearScene();
 
 
     signals:
@@ -91,9 +91,6 @@ class Scene3d: public QObject
 
 
     private:
-
-
-
 
         QString shader_directory;
         QColor current_color;

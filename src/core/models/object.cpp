@@ -74,7 +74,9 @@ std::string Object::getLog() const
 
 Object::~Object()
 {
+    clear();
     std::cout << "Deleting object" << std::endl << std::flush;
+
 }
 
 
@@ -286,7 +288,7 @@ void Object::clearInformation()
 bool Object::isEmpty() const
 {
 
-    return ( csection_curves.empty() && trajectory.isEmpty() );
+    return ( csection_curves1.empty() && trajectory.isEmpty() );
 }
 
 
@@ -294,7 +296,11 @@ bool Object::isEmpty() const
 bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 {
 //    if( isCurveAdmissible() == false ) return false;
-    csection_curves.addElement( csection_id_, curve_ );
+
+    if( user_entered.find( csection_id_ ) != user_entered.end() )
+        return false;
+
+    csection_curves1[ csection_id_ ] = curve_;
     user_entered.insert( csection_id_ );
 
     setVisible( true );
@@ -303,7 +309,7 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 
 bool Object::hasCurve( double csection_id_ ) const
 {
-    if( csection_curves.findElement( csection_id_ ) == false )
+    if( csection_curves1.find( csection_id_ ) == csection_curves1.end() )
         return false;
 
     return !( user_entered.find( csection_id_ ) == user_entered.end() );
@@ -313,27 +319,27 @@ bool Object::hasCurve( double csection_id_ ) const
 
 PolyCurve Object::getCurve( double csection_id_ )
 {
-    if( csection_curves.findElement( csection_id_ ) == false )
+    if( csection_curves1.find( csection_id_ ) == csection_curves1.end() )
         return PolyCurve();
 
-    return csection_curves.getElement( csection_id_ );
+    return csection_curves1[ csection_id_ ];
 }
 
 bool Object::removeCurve( double csection_id_ )
 {
-    if( csection_curves.findElement( csection_id_ ) == false )
+    if( csection_curves1.find( csection_id_ ) == csection_curves1.end() )
         return false;
 
-    csection_curves.removeElement( csection_id_ );
+    csection_curves1.erase( csection_id_ );
 
-    if( csection_curves.empty() == true )
+    if( csection_curves1.empty() == true )
         setVisible( false );
     return true;
 }
 
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
-    csection_curves.setElement( csection_id_, curve_ );
+    csection_curves1[ csection_id_]  = curve_;
 }
 
 std::map< double, PolyCurve > Object::getCurves()
@@ -342,16 +348,10 @@ std::map< double, PolyCurve > Object::getCurves()
 
    for ( auto d_: user_entered )
    {
-       if( csection_curves.findElement( d_ ) == false ) continue;
-       curves_[ d_ ] = csection_curves.getElement( d_ );
+       if( csection_curves1.find( d_ ) == csection_curves1.end() ) continue;
+       curves_[ d_ ] = csection_curves1[ d_ ];
    }
 
-//   for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
-//   {
-//       double depth_ = it->first;
-//       if( user_entered.find( depth_ ) == user_entered.end() ) continue;
-//       curves_[ depth_ ] = it->second;
-//   }
 
    return curves_;
 }
@@ -365,12 +365,20 @@ Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 void Object::removeCrossSectionCurves()
 {
 
-    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+    for ( auto it: csection_curves1 )
     {
-        if( ( it->second ).isEmpty() == true ) continue;
-        ( it->second ).clear();
+        if( ( it.second ).isEmpty() == true ) continue;
+        ( it.second ).clear();
     }
-    csection_curves.clear();
+    csection_curves1.clear();
+
+
+//    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+//    {
+//        if( ( it->second ).isEmpty() == true ) continue;
+//        ( it->second ).clear();
+//    }
+//    csection_curves.clear();
 
 //    user_entered.clear();
 }
@@ -426,7 +434,7 @@ bool Object::isCurveAdmissible()
     if( hasTrajectory() == false )
         return true;
 
-    bool has_enoughcurves = ( csection_curves.size() < CHANNEL_MAX_CSECTIONS )? true:false;
+    bool has_enoughcurves = ( csection_curves1.size() < CHANNEL_MAX_CSECTIONS )? true:false;
     return has_enoughcurves;
 }
 
@@ -492,14 +500,22 @@ void Object::clearPreviewCurves()
     CrossSectionsContainer::Iterator it =  csection_curves.begin();
     std::vector< double > previews_;
 
-
-    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+    for ( auto it: csection_curves1 )
     {
-        double id_ = it->first;
+        double id_ = it.first;
 
         if( user_entered.find( id_ ) != user_entered.end() ) continue;
         previews_.push_back( id_ );
     }
+
+
+//    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
+//    {
+//        double id_ = it->first;
+
+//        if( user_entered.find( id_ ) != user_entered.end() ) continue;
+//        previews_.push_back( id_ );
+//    }
 
     for( auto id_: previews_ )
         removeCurve( id_ );

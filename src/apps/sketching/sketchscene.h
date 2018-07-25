@@ -62,7 +62,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
 
         SketchScene();
-        ~SketchScene(){}
+        ~SketchScene();
 
         void init();
 
@@ -89,6 +89,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void enableSketch( bool status_ );
         bool isSketchEnabled() const;
+
+        void clearScene();
 
 
     public slots:
@@ -139,17 +141,18 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
 
-        CurveItem* sketch = nullptr;
+//        CurveItem* sketch = nullptr;
+        std::shared_ptr< CurveItem > sketch = nullptr;
 
         Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
 
         double csection_depth = 0.0;
 
 
-        VolumeItem* volume1 = nullptr;
-        std::map< std::size_t, CrossSectionItem* > cross_sections1;
-        std::map< std::size_t, StratigraphyItem* > stratigraphies;
-        std::map< std::size_t, RegionItem* > regions;
+        std::shared_ptr< VolumeItem > volume1 = nullptr;
+        std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections1;
+        std::map< std::size_t, std::shared_ptr< StratigraphyItem > > stratigraphies;
+        std::map< std::size_t, std::shared_ptr< RegionItem > > regions;
         //        std::map< std::size_t, WellItem* > wells;
 
 

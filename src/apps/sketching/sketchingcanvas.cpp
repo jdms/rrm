@@ -26,6 +26,6 @@ const std::shared_ptr< SketchScene >& SketchingCanvas::getScene() const
 SketchingCanvas::~SketchingCanvas()
 {
 
-    scene.reset();
-    scene = nullptr;
+//    scene.reset();
+//    scene = nullptr;
 }

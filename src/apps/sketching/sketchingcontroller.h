@@ -48,6 +48,7 @@ class SketchingController
         void removeWindowsDirectionY();
         void removeWindowsDirectionZ();
 
+        void clear();
 
 
     protected:

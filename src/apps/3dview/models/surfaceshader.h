@@ -39,7 +39,7 @@ class SurfaceShader: public Shader
 
         SurfaceShader();
         SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ );
-
+        ~SurfaceShader();
 
         void setObject( const std::shared_ptr< Stratigraphy >& raw_ );
 

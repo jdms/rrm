@@ -40,6 +40,7 @@ class PlaneShader: public Shader
 
         PlaneShader();
         PlaneShader( const std::shared_ptr< CrossSection>& raw_ );
+        ~PlaneShader();
 
         void setCrossSection( const std::shared_ptr< CrossSection>& raw_ );
 

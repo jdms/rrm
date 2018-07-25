@@ -129,63 +129,37 @@ class Object
         void setType( const Settings::Objects::ObjectType& type_ );
         Settings::Objects::ObjectType getType() const;
 
-
-
-
-
-
         void setDone( const bool status_ );
         bool isDone() const;
-
 
         void saveInformation( const std::string& text_ );
         const std::string& getInformation();
         void clearInformation();
 
-
         bool isEmpty() const;
-
-
-
 
         bool hasCurve( double csection_id_ ) const;
         PolyCurve getCurve( double csection_id_ );
 
         void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
-
         Object::CrossSectionsContainer getCrossSectionCurves() const;
         void removeCrossSectionCurves();
 
-
-
         PolyCurve getTrajectory();
-
         bool hasTrajectory() const;
 
-
         void clearPreviewCurves();
-
 
         bool isCurveAdmissible();
         bool isTrajectoryAdmissible();
 
-
-
         void removeSurface();
 
-
-//        void setMaxMin( double maxx_, double maxy_, double maxz_,
-//                        double minx_, double miny_, double minz_ );
-//        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
-//                        double& minx_, double& miny_, double& minz_ ) const;
-
-
-        void clear();
+        virtual void clear();
         void initialize();
 
         static void resetAllObjects();
-
 
         inline void write( QJsonObject &json ) const
         {
@@ -269,7 +243,6 @@ class Object
         };
 
 
-
         std::string name;
         std::string log;
 
@@ -284,6 +257,8 @@ class Object
 
 
         std::vector< double > used_depth;
+        std::map< double, PolyCurve > csection_curves1;
+
 
         ///==========================================
 

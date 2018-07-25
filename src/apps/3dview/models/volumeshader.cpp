@@ -325,3 +325,8 @@ void VolumeShader::update()
 {
     createVolumeMesh();
 }
+
+VolumeShader::~VolumeShader()
+{
+    clear();
+}

@@ -272,7 +272,21 @@ void SketchingController::removeWindowsDirectionZ()
 }
 
 
+void SketchingController::clear()
+{
 
+    main_scene->clearScene();
+
+//    main_scene.reset();
+//    topview_scene.reset();
+////    window->clear();
+////    topview_window->clear();
+
+//    removeWindowsDirectionX();
+//    removeWindowsDirectionY();
+//    removeWindowsDirectionZ();
+
+}
 
 
 

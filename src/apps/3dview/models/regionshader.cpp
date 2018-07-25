@@ -305,6 +305,11 @@ void RegionShader::setDefaultValues()
     number_of_faces = 0;
     number_of_vertices = 0;
 
-    raw = nullptr;
+    raw.reset();
 
+}
+
+RegionShader::~RegionShader()
+{
+    clear();
 }
