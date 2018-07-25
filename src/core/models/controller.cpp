@@ -1100,9 +1100,15 @@ void Controller::setVolumeDiscretization()
 std::size_t Controller::getCurrentDiscretization() const
 {
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        return 10;//rules_processor.getWidthResolution();
+    {
+        /* return 10;//rules_processor.getWidthResolution(); */
+        return rules_processor.getWidthResolution();
+    }
     else
-        return 10;//rules_processor.getLengthResolution();
+    {
+        /* return 10;//rules_processor.getLengthResolution(); */
+        return rules_processor.getLengthResolution();
+    }
 
 }
 
