@@ -19,6 +19,34 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QWidget>
+#include <QMessageBox>
+
+void deprecationNotice( std::string deprecated_method, std::string new_method, bool &check )
+{
+    std::string header, info;
+
+    header = "Deprecation notice:";
+    info   = "The following method is deprecated: \n >>> RulesProcessor::" + deprecated_method + "\n\n";
+    info  += "Please, use method: \n >>> RulesProcessor::" + new_method + "\n\n";
+    info  += "This message appears only once per run.";
+
+    if ( !check )
+    {
+        class Widget : public QWidget {
+            public:
+                Widget(std::string &header, std::string &info) {
+                    QMessageBox::information( 
+                            this, 
+                            tr(header.c_str()),
+                            tr(info.c_str()) ); 
+                }
+        } w(header, info);
+    }
+
+    check = true;
+}
+
 #include "rules_processor.hpp"
 
 #include "colormap/color_map_wrapper.hpp"
@@ -43,7 +71,13 @@ std::size_t RulesProcessor::getWidthResolution()
 }
 
 
+// DEPRECATED
 std::size_t RulesProcessor::getDepthResolution()
+{
+    return modeller_.getLengthDiscretization();
+}
+
+std::size_t RulesProcessor::getLengthResolution()
 {
     return modeller_.getLengthDiscretization();
 }
@@ -214,11 +248,22 @@ void RulesProcessor::clear()
 // brief:
 // Define new input region above surface which index is `surface_index`.
 //
+// DEPRECATED
 bool RulesProcessor::defineAbove( size_t surface_index )
 {
     return modeller_.createAbove(surface_index);
 }
 
+bool RulesProcessor::defineAbove( std::vector<size_t> &surface_indices )
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    size_t surface_index = surface_indices.front();
+    return modeller_.createAbove(surface_index);
+}
 
 //
 // brief:
@@ -234,11 +279,22 @@ void RulesProcessor::stopDefineAbove()
 // brief:
 // Define new input region below surface which index is `surface_index`.
 //
+//DEPRECATED
 bool RulesProcessor::defineBelow( size_t surface_index )
 {
     return modeller_.createBelow(surface_index);
 }
 
+bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices ) 
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    size_t surface_index = surface_indices.front();
+    return modeller_.createBelow(surface_index);
+}
 //
 // brief:
 // Clear any previous `defineBelow()` call.
@@ -258,7 +314,6 @@ void RulesProcessor::stopDefineBelow()
 //bool RulesProcessor::defineBelowIsActive( std::size_t& index )
 //{
 //    return modeller_.createBelowIsActive();
-//=======
 bool RulesProcessor::defineAboveIsActive()
 {
     size_t dummy_index;
@@ -271,17 +326,37 @@ bool RulesProcessor::defineBelowIsActive()
     return modeller_.createBelowIsActive(dummy_index);
 }
 
+// DEPRECATED
 bool RulesProcessor::defineAboveIsActive( size_t &boundary_index )
 {
     return modeller_.createAboveIsActive(boundary_index);
 }
 
+// DEPRECATED
 bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
 {
     return modeller_.createBelowIsActive(boundary_index);
-//>>>>>>> a8073a9921ca7e86e80e6ce7d8d7085f52de6471
 }
 
+bool RulesProcessor::defineAboveIsActive( std::vector<size_t> &boundary_indices )
+{
+    if ( boundary_indices.empty() )
+    {
+        return false;
+    }
+
+    return modeller_.createAboveIsActive(boundary_indices.front());
+}
+
+bool RulesProcessor::defineBelowIsActive( std::vector<size_t> &boundary_indices )
+{
+    if ( boundary_indices.empty() )
+    {
+        return false;
+    }
+
+    return modeller_.createBelowIsActive(boundary_indices.front());
+}
 
 void RulesProcessor::removeAbove()
 {
@@ -354,8 +429,26 @@ bool RulesProcessor::redo()
     return modeller_.redo();
 }
 
+
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    class Widget : public QWidget {
+        public:
+            Widget() {
+                QMessageBox::information( 
+                        this, 
+                        tr("Application Name"), 
+                        tr("An information message.") );
+            }
+    } w;
+
+    /* QMessageBox::information( */
+    /*         this, */
+    /*         tr("This method is deprecated") ); */
+    /* QMessageBox w; */
+    /* w.setInformativeText("This method is deprecated"); */
+    /* int ret = w.exec(); */
+
     return modeller_.getMesh(surface_id, vlist, flist);
 }
 
@@ -615,28 +708,17 @@ bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &p
 void RulesProcessor::testSurfaceInsertion()
 {
     testing_surface_insertion_ = true;
+}
+
+void RulesProcessor::stopTestSurfaceInsertion()
+{
+    testing_surface_insertion_ = false;
 
     if ( last_surface_inserted_is_a_test_ == true )
     {
         modeller_.undo();
         last_surface_inserted_is_a_test_ = false;
     }
-}
-
-bool RulesProcessor::processSurfaceCreationStatus( bool success )
-{
-    return true;
-}
-
-void RulesProcessor::finishTestSurfaceInsertion()
-{
-    /* testing_surface_insertion_ = false; */
-
-    /* if ( last_surface_inserted_is_a_test_ == true ) */
-    /* { */
-    /*     modeller_.undo(); */
-    /*     last_surface_inserted_is_a_test_ = false; */
-    /* } */
 }
 
 bool RulesProcessor::testSurface( size_t surface_index, std::vector<double> &points )
@@ -652,40 +734,135 @@ bool RulesProcessor::testSurface( size_t surface_index, std::vector<double> &poi
     return success;
 }
 
-bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &points )
+template<typename FunctionType, typename... Args>
+bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size_t surface_index, Args&&... args )
 {
-    if ( testing_surface_insertion_ == true )
+    if ( last_surface_inserted_is_a_test_ == true )
     {
         modeller_.undo();
-        testing_surface_insertion_ = false;
+        last_surface_inserted_is_a_test_ = false;
     }
 
-    /* std::vector<size_t> lbounds, ubounds; */
-    /* std::vector<size_t> intersected_surfaces; */
-
-    std::vector<double> surface = points;
-
-    size_t first_index, second_index;
-
-    bool status = false;
-
-    status = modeller_.createSurface( surface_index, surface );
-
-    testing_surface_insertion_ = false;
-
-    if ( status == true )
+    if ( testing_surface_insertion_ = true )
+    {
+        modeller_.disableGeologicRules();
+    }
+    
+    bool success = surfaceCreator( surface_index, std::forward<Args>(args)... );
+    
+    // Without truncate there is no reson to expect a surface won't be correctly created
+    // but we test for vacuous surfaces regardless
+    if ( success )
     {
         std::vector<double> dummy_vertices;
         std::vector<size_t> dummy_edges;
-        status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+        success &= getMesh(surface_index, dummy_vertices, dummy_edges);
 
-        if ( status == false )
+        if ( success == false )
         {
             modeller_.undo();
         }
     }
 
-    return status;
+    if ( success )
+    {
+        if ( testing_surface_insertion_ )
+        {
+            last_surface_inserted_is_a_test_ = true;
+            /* testing_surface_insertion_ = false; */
+        }
+    }
+
+    return success; 
+}
+
+bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &points )
+{
+    /* if ( testing_surface_insertion_ == true ) */
+    /* { */
+    /*     modeller_.undo(); */
+    /*     testing_surface_insertion_ = false; */
+    /* } */
+
+    /* std::vector<size_t> lbounds, ubounds; */
+    /* std::vector<size_t> intersected_surfaces; */
+
+    /* std::vector<double> surface = points; */
+
+    /* size_t first_index, second_index; */
+
+    /* bool status = false; */
+
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
+    {
+        return this->modeller_.createSurface(s_id, pts);
+    };
+
+    bool success = processSurfaceCreation(surfaceCreator, surface_index, points);
+    /* success = surfaceCreator(surface_index, surface);//modeller_.createSurface( surface_index, surface ); */
+
+    /* testing_surface_insertion_ = false; */
+
+    /* if ( success == true ) */
+    /* { */
+    /*     std::vector<double> dummy_vertices; */
+    /*     std::vector<size_t> dummy_edges; */
+    /*     success &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0); */
+
+    /*     if ( success == false ) */
+    /*     { */
+    /*         modeller_.undo(); */
+    /*     } */
+    /* } */
+
+    return success;
+}
+
+bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data
+        )
+{
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
+    {
+        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts);
+    };
+
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data);
+
+    return success;
+}
+
+bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data 
+        )
+{
+    auto surfaceCreator = [this]( 
+            size_t s_id, const std::vector<double> &cross_sec_pts, 
+            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    {
+        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts);
+    };
+
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+            cross_section_depth, path_curve_point_data);
+
+    return success;
+}
+
+bool createWidthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data
+        )
+{
+    return false;
+}
+
+bool createWidthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data 
+        )
+{
+    return false;
 }
 
 
