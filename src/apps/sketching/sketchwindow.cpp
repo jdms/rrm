@@ -66,6 +66,13 @@ void SketchWindow::createToolBar()
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
     tb_well->addAction( ac_select_wells );
 
+    tb_trajectory = addToolBar( "Trajectory" );
+    ac_use_last_trajectory = new QAction( "Last trajectory" );
+    ac_use_last_trajectory->setCheckable( true );
+    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
+    tb_trajectory->addAction( ac_use_last_trajectory );
+
+
 
 }
 
@@ -81,6 +88,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
     setCentralWidget( sketchingcanvas );
 
+    tb_trajectory->setVisible( false );
 
     connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
@@ -105,17 +113,27 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
     const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
     setCentralWidget( topviewcanvas );
 
+    tb_trajectory->setVisible( true );
 
     connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
+
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
+
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
+
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
+
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-//    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+
+    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+
+    connect( ac_use_last_trajectory, &QAction::toggled, [=]()
+    { emit useLastTrajectory(); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
+
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 
     return scene_;

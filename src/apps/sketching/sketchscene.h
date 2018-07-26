@@ -139,15 +139,12 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     protected:
 
 
-        UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
 
-//        CurveItem* sketch = nullptr;
+        bool sketch_enabled = true;
         std::shared_ptr< CurveItem > sketch = nullptr;
 
-        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
-
         double csection_depth = 0.0;
-
+        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
 
         std::shared_ptr< VolumeItem > volume1 = nullptr;
         std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections1;
@@ -156,9 +153,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         //        std::map< std::size_t, WellItem* > wells;
 
 
-        bool sketch_enabled = true;
-
-
+        UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
 
 };
 

@@ -444,6 +444,11 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 
 }
 
+void Controller::addLastTrajectoryToObject()
+{
+    addTrajectoryToObject( last_trajectory );
+}
+
 
 void Controller::removeTrajectoryFromObject()
 {
@@ -524,6 +529,11 @@ bool Controller::createObjectSurfaceDirectionX()
             obj_->getTrajectory( path_ );
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
                                                                        curves_.begin()->first, path_.getPoints() );
+            if( status_ == true )
+            {
+                last_trajectory =  path_;
+            }
+
         }
         else
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
@@ -581,6 +591,11 @@ bool Controller::createObjectSurfaceDirectionZ()
             obj_->getTrajectory( path_ );
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
                                                                        curves_.begin()->first, path_.getPoints() );
+            if( status_ == true )
+            {
+                last_trajectory =  path_;
+            }
+
         }
         else
             status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
@@ -1079,8 +1094,8 @@ void Controller::updateBoundingBoxRulesProcessor()
 
 void Controller::setVolumeDiscretization()
 {
-    std::size_t width_disc_ = 10;//rules_processor.getWidthResolution();
-    std::size_t lenght_disc_ = 10;//rules_processor.getLengthResolution();
+    std::size_t width_disc_ = rules_processor.getWidthResolution();
+    std::size_t lenght_disc_ = rules_processor.getLengthResolution();
 
     csection_stepx = static_cast< double >( model.volume->getWidth()/width_disc_ );
     csection_stepz = static_cast< double >( model.volume->getLenght()/lenght_disc_ );
@@ -1219,10 +1234,11 @@ void Controller::clear()
     model.domains.clear();
 
     current_object = 0;
-    object_defined = false;
     current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
     csection_stepx = 1.0;
     csection_stepz = 1.0;
+
+    last_trajectory.clear();
 }
 
 

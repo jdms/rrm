@@ -67,6 +67,8 @@ class SketchWindow: public QMainWindow
         void addTrajectory( const PolyCurve& curve_ );
         void createObject();
 
+        void useLastTrajectory();
+
 
 
     protected:
@@ -103,6 +105,10 @@ class SketchWindow: public QMainWindow
         QToolBar* tb_well = nullptr;
         QAction* ac_select_wells = nullptr;
         const bool SELECT_WELLS_DEFAULT_STATUS = false;
+
+        QToolBar* tb_trajectory = nullptr;
+        QAction* ac_use_last_trajectory = nullptr;
+        const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
         ///================================================================================
 

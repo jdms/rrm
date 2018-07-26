@@ -149,6 +149,15 @@ void RRMApplication::reset()
 
 }
 
+
+void RRMApplication::previewLastTrajectory()
+{
+    controller->addLastTrajectoryToObject();
+    emit updateObjects();
+}
+
+
+
 ///================================================================================
 
 
