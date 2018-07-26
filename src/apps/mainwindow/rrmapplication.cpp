@@ -62,6 +62,9 @@ void RRMApplication::init()
 {
 
     controller->init();
+    emit startApplication();
+
+    setDiscretization();
 
 }
 
@@ -138,8 +141,11 @@ void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::Stratig
 void RRMApplication::reset()
 {
 
-    emit startApplication();
+    emit resetApplication();
     controller->clear();
+
+    init();
+
 
 }
 

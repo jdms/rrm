@@ -50,7 +50,7 @@ class CrossSection: public Object
 
 
         CrossSection();
-        CrossSection( Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
+        CrossSection( const std::shared_ptr< Volume >& volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
         CrossSection( const CrossSection & csection_ );
         CrossSection & operator=( const CrossSection & csection_ );
         ~CrossSection();
@@ -65,7 +65,7 @@ class CrossSection: public Object
         std::size_t getIndex() const;
 
 
-        void setVolume( Volume* volume_ );
+        void setVolume( const std::shared_ptr< Volume >& volume_ );
         const std::shared_ptr< Volume >& getVolume() const;
 
         void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );

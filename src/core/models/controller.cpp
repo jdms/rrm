@@ -124,7 +124,7 @@ void Controller::setVolumeVisibility( bool status_ )
 void Controller::createMainCrossSection()
 {
     csection = std::make_shared<CrossSection>();
-    csection->setVolume( model.volume.get() );
+    csection->setVolume( model.volume );
     csection->setDirection( Settings::CrossSection::CrossSectionDirections::Z );
     csection->setDepth( model.volume->getLenght() );
 }
@@ -169,7 +169,7 @@ const CrossSectionPtr& Controller::getMainCrossSection() const
 void Controller::createTopViewCrossSection()
 {
     topview = std::make_shared<CrossSection>();
-    topview->setVolume( model.volume.get() );
+    topview->setVolume( model.volume );
     topview->setDirection( Settings::CrossSection::CrossSectionDirections::Y );
     topview->setDepth( model.volume->getHeight() );
 }
@@ -191,7 +191,7 @@ void Controller::moveTopViewCrossSection( double depth_ )
 void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     CrossSectionPtr csection_ = std::make_shared< CrossSection >();
-    csection_->setVolume( model.volume.get() );
+    csection_->setVolume( model.volume );
     csection_->setDirection( dir_ );
     csection_->setDepth( depth_ );
 

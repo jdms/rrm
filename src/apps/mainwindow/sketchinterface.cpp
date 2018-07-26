@@ -36,6 +36,11 @@ void SketchInterface::createSketchingWindow()
 
     window->addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
 
+
+    scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
+    scontroller->setTopViewWindow( std::shared_ptr< SketchWindow > ( sketch_topview_window ) );
+    scontroller->setController( std::shared_ptr< Controller > ( window->controller ) );
+
 }
 
 
@@ -82,16 +87,16 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { scontroller->updateObjects(); } );
 
-    connect( window->app, &RRMApplication::startApplication, [=]()
+    connect( window->app, &RRMApplication::resetApplication, [=]()
     { scontroller->clear(); } );
+
+    connect( window->app, &RRMApplication::startApplication, this, &SketchInterface::init );
+
 
 }
 
 
 void SketchInterface::init()
 {
-    scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
-    scontroller->setTopViewWindow( std::shared_ptr< SketchWindow > ( sketch_topview_window ) );
-    scontroller->setController( std::shared_ptr< Controller > ( window->controller ) );
     scontroller->init();
 }

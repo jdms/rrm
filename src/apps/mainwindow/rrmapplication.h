@@ -100,6 +100,7 @@ class RRMApplication: public QObject
         void updateRange( double min_, double max_ );
 
         void startApplication();
+        void resetApplication();
 
 
 ///================================================================================

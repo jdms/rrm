@@ -475,13 +475,31 @@ void SketchScene::clearScene()
     for( auto &it: items() )
         QGraphicsScene::removeItem( it );
 
+
+    if( sketch != nullptr )
+        sketch.reset();
+    sketch = nullptr;
+
     if( volume1 != nullptr )
         volume1.reset();
     volume1 = nullptr;
 
-//    for( auto it: cross_sections1 )
-//        (it.second).reset();
-//    cross_sections1.clear();
+    for( auto it: cross_sections1 )
+        (it.second).reset();
+    cross_sections1.clear();
+
+    for( auto it: stratigraphies )
+        (it.second).reset();
+    stratigraphies.clear();
+
+    for( auto it: regions )
+        (it.second).reset();
+    regions.clear();
+
+
+
+    //init();
+
 
 }
 
