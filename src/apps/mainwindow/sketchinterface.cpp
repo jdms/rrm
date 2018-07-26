@@ -63,6 +63,12 @@ void SketchInterface::createSketchingActions()
 
 
 
+    connect( ac_csection, &QAction::toggled, dw_sketchwindow, &QDockWidget::setVisible );
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
+
+
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
 
@@ -71,6 +77,10 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ )
     { window->app->addTrajectoryToObject( curve_ ); } );
+
+    connect( sketch_topview_window, &SketchWindow::useLastTrajectory, [=]()
+    { window->app->previewLastTrajectory(); } );
+
 
     connect( sketch_topview_window, &SketchWindow::createObject, [=]()
     { window->app->createObjectSurface(); } );

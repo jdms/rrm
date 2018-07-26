@@ -79,9 +79,14 @@ class RRMApplication: public QObject
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectoryToObject( const PolyCurve& curve_ );
+        void previewLastTrajectory();
+
         void createObjectSurface();
 
         void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
+
+
+
 
         void reset();
 

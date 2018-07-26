@@ -130,6 +130,7 @@ class Controller
         bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 
         void addTrajectoryToObject( const PolyCurve& curve_ );
+        void addLastTrajectoryToObject();
         void removeTrajectoryFromObject();
 
         bool createObjectSurface();
@@ -206,14 +207,24 @@ class Controller
 
     protected:
 
+        double csection_stepx = 1.0;
+        double csection_stepz = 1.0;
+
+        std::size_t current_object = 0;
 
         RRMApplication* app = nullptr;
-        CrossSectionPtr csection;
-        CrossSectionPtr topview;
+        CrossSectionPtr csection = nullptr;
+        CrossSectionPtr topview = nullptr;
+
+        RulesProcessor rules_processor;
+
+        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
+
+        PolyCurve last_trajectory;
 
         struct Model
         {
-            VolumePtr volume;
+            VolumePtr volume = nullptr;
 
             std::map< double, CrossSectionPtr > csectionsX;
             std::map< double, CrossSectionPtr > csectionsY;
@@ -225,15 +236,6 @@ class Controller
 
         } model;
 
-        RulesProcessor rules_processor;
-
-        std::size_t current_object = 0;
-        bool object_defined = false;
-
-        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
-
-        double csection_stepx = 1.0;
-        double csection_stepz = 1.0;
 
 
 };
