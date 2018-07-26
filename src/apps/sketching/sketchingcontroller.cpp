@@ -13,11 +13,15 @@ SketchingController::SketchingController()
 void SketchingController::setMainWindow( const std::shared_ptr< SketchWindow >& window_)
 {
     window = window_;
+    main_scene = window->createMainCanvas();
+
 }
 
 void SketchingController::setTopViewWindow( const std::shared_ptr< SketchWindow >& window_)
 {
     topview_window = window_;
+    topview_scene = topview_window->createTopViewCanvas();
+
 }
 
 void SketchingController::setController( const std::shared_ptr< Controller >& controller_ )
@@ -35,9 +39,9 @@ void SketchingController::init()
 
 void SketchingController::createMainCrossSection()
 {
-    main_scene = window->createMainCanvas();
     CrossSectionPtr csection_ = controller->getMainCrossSection();
     setObjectsToScene( csection_, main_scene );
+    main_scene->init();
 }
 
 
@@ -50,7 +54,6 @@ void SketchingController::updateMainCrossSection()
 
 void SketchingController::createTopViewCrossSection()
 {
-    topview_scene = topview_window->createTopViewCanvas();
     CrossSectionPtr csection_ = controller->getTopViewCrossSection();
     setObjectsToScene( csection_, topview_scene );
 }
@@ -217,16 +220,19 @@ void SketchingController::removeWindow( const Settings::CrossSection::CrossSecti
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
+        scenesX[ depth_ ]->clearScene();
         scenesX[ depth_ ].reset();
         scenesX.erase( depth_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
+        scenesY[ depth_ ]->clearScene();
         scenesY[ depth_ ].reset();
         scenesY.erase( depth_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
+        scenesZ[ depth_ ]->clearScene();
         scenesZ[ depth_ ].reset();
         scenesZ.erase( depth_ );
     }
@@ -276,15 +282,18 @@ void SketchingController::clear()
 {
 
     main_scene->clearScene();
+    topview_scene->clearScene();
 
 //    main_scene.reset();
 //    topview_scene.reset();
+
+
 ////    window->clear();
 ////    topview_window->clear();
 
-//    removeWindowsDirectionX();
-//    removeWindowsDirectionY();
-//    removeWindowsDirectionZ();
+    removeWindowsDirectionX();
+    removeWindowsDirectionY();
+    removeWindowsDirectionZ();
 
 }
 

@@ -11,6 +11,7 @@ View3dController::View3dController()
 void View3dController::setMainWindow( const std::shared_ptr< Canvas3d >& window_)
 {
     window = window_;
+    scene = window->getScene();
 }
 
 
@@ -28,7 +29,6 @@ void View3dController::init()
 
 void View3dController::setupScene()
 {
-    scene = window->getScene();
 
     const CrossSectionPtr& csection_ = controller->getMainCrossSection();
 

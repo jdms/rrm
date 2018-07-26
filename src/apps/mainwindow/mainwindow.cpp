@@ -217,9 +217,9 @@ void MainWindow::plug3dInterface()
 void MainWindow::run()
 {
     app->init();
-    sketchapp->init();
-    view3dapp->init();
+//    sketchapp->init();
+//    view3dapp->init();
 
-    app->setDiscretization();
+//    app->setDiscretization();
 }
 

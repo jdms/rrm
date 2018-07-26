@@ -37,9 +37,9 @@ CrossSection::CrossSection()
     initialize();
 }
 
-CrossSection::CrossSection( Volume* volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ )//: volume( volume_ )
+CrossSection::CrossSection( const std::shared_ptr< Volume >& volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ )
 {
-    volume = std::shared_ptr< Volume >( volume_ );
+    volume = volume_;
 
 
     defineIndex();
@@ -151,7 +151,7 @@ std::size_t CrossSection::getIndex() const
 }
 
 
-void CrossSection::setVolume( Volume* volume_ )
+void CrossSection::setVolume( const std::shared_ptr< Volume >& volume_ )
 {
     volume = std::shared_ptr< Volume >( volume_ );
 }

@@ -15,26 +15,30 @@ class View3dInterface: public QObject
 {
     Q_OBJECT
 
-  public:
+    public:
 
-    View3dInterface( MainWindow* const& window_ );
-    void createInterface();
-    void init();
-
-  protected:
-
-    void createView3dWindow();
-    void createView3dActions();
+        View3dInterface( MainWindow* const& window_ );
+        void createInterface();
 
 
-  protected:
+    public slots:
 
-    MainWindow* window = nullptr;
+        void init();
 
-    View3dController* controller3d = nullptr;
-    Canvas3d* canvas3d = nullptr;
+    protected:
 
-    RealFeaturedSlider* sl_depth_csection = nullptr;
+        void createView3dWindow();
+        void createView3dActions();
+
+
+    protected:
+
+        MainWindow* window = nullptr;
+
+        View3dController* controller3d = nullptr;
+        Canvas3d* canvas3d = nullptr;
+
+        RealFeaturedSlider* sl_depth_csection = nullptr;
 
 };
 

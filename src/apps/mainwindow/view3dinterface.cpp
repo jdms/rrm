@@ -24,11 +24,11 @@ void View3dInterface::createView3dWindow()
     controller3d = new View3dController();
 
     canvas3d = new Canvas3d();
-    canvas3d->show();
+//    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout();
-//    hb_central_widget->addWidget( canvas3d );
+    hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
     QWidget* central_widget = new QWidget();
@@ -36,6 +36,10 @@ void View3dInterface::createView3dWindow()
 
     window->setCentralWidget( central_widget );
     window->show();
+
+
+    controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
+    controller3d->setController( std::shared_ptr< Controller > ( window->controller ) );
 
 }
 
@@ -64,16 +68,16 @@ void View3dInterface::createView3dActions()
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
     { controller3d->updateMainCrossSection(); } );
 
-    connect( window->app, &RRMApplication::startApplication, [=]()
+    connect( window->app, &RRMApplication::resetApplication, [=]()
     { controller3d->clear(); } );
 
+    connect( window->app, &RRMApplication::startApplication, [=]{ controller3d->init(); } );
 
 }
 
 
 void View3dInterface::init()
 {
-    controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
-    controller3d->setController( std::shared_ptr< Controller > ( window->controller ) );
+
     controller3d->init();
 }
