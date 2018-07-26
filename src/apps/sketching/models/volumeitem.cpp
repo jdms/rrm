@@ -25,8 +25,9 @@ void VolumeItem::update()
 
 void VolumeItem::clear()
 {
-    raw.reset();
-    PlaneItem::clear();
+    if( raw != nullptr )
+        raw.reset();
+//    PlaneItem::clear();
 }
 
 
