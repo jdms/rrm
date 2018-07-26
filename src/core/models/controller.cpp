@@ -294,9 +294,6 @@ const ObjectPtr& Controller::getObject( std::size_t index_ ) const
     if ( model.objects.find( index_ ) == model.objects.end() ) return nullptr;
     return model.objects.at( index_ );
 
-    //    if( objects.findElement( index_) == false )
-    //        return nullptr;
-    //    return objects.getElement( index_ );
 }
 
 
@@ -611,7 +608,6 @@ bool Controller::createObjectSurfaceDirectionZ()
 void Controller::updateModel()
 {
     setObjectsActive( false );
-    setObjectActive( current_object, true );
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
     std::size_t number_of_actives_ = actives_.size();
@@ -626,6 +622,7 @@ void Controller::updateModel()
         updateObjectCurves( id_ );
     }
 
+    setObjectActive( current_object, true );
 
 }
 
@@ -807,6 +804,7 @@ void Controller::updatePreviewSurface()
 
     std::cout << std::endl << std::flush;
 
+    applyStratigraphicRule();
     bool surface_created_ = rules_processor.testSurface( current_object, points3d_ );
     if( surface_created_ == false )
     {
@@ -938,14 +936,6 @@ void Controller::setRegionVisible(std::size_t index_, bool status_)
 {
     if ( model.regions.find( index_ ) == model.regions.end() ) return;
     model.regions[ index_ ]->setVisible(status_);
-
-
-    //    if( regions.findElement( index_ ) == false )
-    //        return;
-
-    //    Regions* const& region_ = regions.getElement( index_ );
-    //    region_->setVisible( status_ );
-    //    scene3d->updateRegion( index_ );
 }
 
 
@@ -1101,12 +1091,10 @@ std::size_t Controller::getCurrentDiscretization() const
 {
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        /* return 10;//rules_processor.getWidthResolution(); */
         return rules_processor.getWidthResolution();
     }
     else
     {
-        /* return 10;//rules_processor.getLengthResolution(); */
         return rules_processor.getLengthResolution();
     }
 
