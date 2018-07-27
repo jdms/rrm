@@ -47,7 +47,7 @@
 
 
 
-//class MainWindow;
+class MainWindow;
 class Controller;
 
 
@@ -63,7 +63,8 @@ class RRMApplication: public QObject
         RRMApplication & operator=(const RRMApplication & app_);
         ~RRMApplication(){}
 
-        void setController( Controller* const& controller_ );
+        void setMainWindow( MainWindow* const& window_ );
+        void setController(/* Controller* const& controller_ */);
         void init();
 
 
@@ -85,8 +86,10 @@ class RRMApplication: public QObject
 
         void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
-
-
+        void undo();
+        void redo();
+        void checkUndoRedo();
+        void checkPreserveStatus();
 
         void reset();
 
@@ -231,6 +234,7 @@ class RRMApplication: public QObject
     protected:
 
 
+        MainWindow* window;
         Controller* controller;
 
         ///================================================================================

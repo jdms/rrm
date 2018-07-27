@@ -92,14 +92,18 @@ class CurveItem : public QGraphicsPathItem
         void setWidth( int width_ );
         int getWidth() const;
 
+        void setStyle( const Qt::PenStyle& style_ );
+        Qt::PenStyle getStyle() const;
+
         void resetToDefaultColor();
         void resetToDefaultWidth();
+        void resetToDefaultStyle();
 
         void setCurve( const PolyCurve& curve_ );
         PolyCurve getCurve() const;
 
-
         virtual void update(){}
+
 
     protected:
 
@@ -123,6 +127,9 @@ class CurveItem : public QGraphicsPathItem
 
         const int DEFAULT_LINE_WIDTH = 2;
         int line_width = DEFAULT_LINE_WIDTH;
+
+        const Qt::PenStyle DEFAULT_LINE_STYLE = Qt::SolidLine;
+        Qt::PenStyle line_style = DEFAULT_LINE_STYLE;
 
         bool is_done = true;
 

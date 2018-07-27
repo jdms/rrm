@@ -149,7 +149,6 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
         csection->setDepth( model.volume->getLenght() );
     }
 
-    //    csection->print();
 }
 
 
@@ -1196,6 +1195,39 @@ void Controller::applyStratigraphicRule()
 }
 
 
+bool Controller::undo()
+{
+    bool undo_done = rules_processor.undo();
+    if( undo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+bool Controller::redo()
+{
+    bool redo_done = rules_processor.redo();
+    if( redo_done == false ) return false;
+
+    updateModel();
+    return true;
+}
+
+
+bool Controller::canUndo()
+{
+    return rules_processor.canUndo();
+}
+
+
+bool Controller::canRedo()
+{
+    return rules_processor.canRedo();
+}
+
+
+
+
 
 
 void Controller::clear()
@@ -1240,8 +1272,6 @@ void Controller::clear()
 
     last_trajectory.clear();
 }
-
-
 
 ///==========================================================================
 

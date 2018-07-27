@@ -22,7 +22,7 @@
 
 
 #include "rrmapplication.h"
-//#include "mainwindow.h"
+#include "mainwindow.h"
 
 #include "./core/models/controller.h"
 #include "./sketching/sketchingcontroller.h"
@@ -49,9 +49,16 @@ RRMApplication& RRMApplication::operator=(const RRMApplication & app_)
 }
 
 
-void RRMApplication::setController( Controller* const& controller_ )
+
+void RRMApplication::setMainWindow( MainWindow* const& window_ )
 {
-    controller = controller_;
+    window = window_;
+    setController();
+}
+
+void RRMApplication::setController(/* Controller* const& controller_ */)
+{
+    controller = window->controller;
 }
 
 
@@ -120,6 +127,8 @@ void RRMApplication::createObjectSurface()
     emit addObject( controller->getCurrentObject() );
     emit updateObjects();
 
+    checkUndoRedo();
+
 }
 
 
@@ -156,7 +165,50 @@ void RRMApplication::previewLastTrajectory()
     emit updateObjects();
 }
 
+void RRMApplication::undo()
+{
+    bool status_ = controller->undo();
+    if( status_ == false ) return;
 
+    emit updateObjects();
+
+    checkUndoRedo();
+    checkPreserveStatus();
+
+}
+
+
+void RRMApplication::redo()
+{
+    bool status_ = controller->redo();
+    if( status_ == false ) return;
+
+    emit updateObjects();
+
+    checkUndoRedo();
+    checkPreserveStatus();
+}
+
+
+void RRMApplication::checkUndoRedo()
+{
+    bool undo_ = controller->canUndo();
+    bool redo_ = controller->canRedo();
+
+    window->ac_undo->setEnabled( undo_ );
+    window->ac_redo->setEnabled( redo_ );
+}
+
+
+void RRMApplication::checkPreserveStatus()
+{
+     bool above_ = true;//controller->isDefineAboveActive();
+     bool below_ = true;//controller->isDefineBelowActive();
+
+     window->ac_sketch_above->setChecked( above_ );
+     window->ac_sketch_below->setChecked( below_ );
+
+}
 
 ///================================================================================
 

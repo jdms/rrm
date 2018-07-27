@@ -74,7 +74,7 @@ void SketchScene::setCrossSectionInformation( const Settings::CrossSection::Cros
 void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
 {
 
-    volume1 = std::make_shared< VolumeItem >(); //new VolumeItem();
+    volume1 = std::make_shared< VolumeItem >();
     volume1->setRawVolume( volume_, csection_direction, csection_depth );
 
     addItem( volume1.get() );
@@ -98,7 +98,6 @@ void SketchScene::updateVolume()
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
     std::size_t id_ = csection_->getIndex();
-//    cross_sections1[ id_ ] = new CrossSectionItem();
     cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
     cross_sections1[ id_ ]->setRawCrossSection( csection_ );
     addItem( cross_sections1[ id_ ].get() );
@@ -109,7 +108,7 @@ void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csecti
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
 {
     std::size_t id_ = strat_->getIndex();
-    stratigraphies[ id_ ] = std::make_shared< StratigraphyItem>();//new StratigraphyItem();
+    stratigraphies[ id_ ] = std::make_shared< StratigraphyItem>();
     stratigraphies[ id_ ]->setRawStratigraphy( strat_, csection_direction, csection_depth );
     addItem( stratigraphies[ id_ ].get() );
     update();
@@ -138,7 +137,7 @@ void SketchScene::updateStratigraphies()
 void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 {
     std::size_t id_ = region_->getIndex();
-    regions[ id_ ] = std::make_shared< RegionItem >();//new RegionItem();
+    regions[ id_ ] = std::make_shared< RegionItem >();
     regions[ id_ ]->setRawRegion( region_ );
     regions[ id_ ]->setBorderColor( 0, 0, 0 );
     regions[ id_ ]->setFillColor( 255, 255, 255 );
@@ -195,6 +194,7 @@ void SketchScene::submitSketch()
     update();
 }
 
+
 void SketchScene::setSketchColor()
 {
     std::cout << "Changing sketch color..." << std::endl << std::flush;
@@ -226,7 +226,6 @@ void SketchScene::setSketchingMode()
 
     if ( sketch != nullptr ) return;
     sketch = std::make_shared< CurveItem >();
-//            new CurveItem();
     addItem( sketch.get() );
 }
 
