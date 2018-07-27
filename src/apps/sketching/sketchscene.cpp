@@ -38,11 +38,6 @@ SketchScene::SketchScene()
 {
 
     init();
-
-
-    ///================================================================================
-
-
 }
 
 
@@ -114,6 +109,7 @@ void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_
     update();
 }
 
+
 void SketchScene::updateStratigraphy( const std::size_t& id_ )
 {
     if( stratigraphies.find( id_ ) == stratigraphies.end() ) return;
@@ -132,6 +128,7 @@ void SketchScene::updateStratigraphies()
     }
     update();
 }
+
 
 void SketchScene::updateStratigraphiesTrajectories()
 {
@@ -183,6 +180,7 @@ bool SketchScene::isSketchEnabled() const
     return sketch_enabled;
 }
 
+
 void SketchScene::cancelSketch()
 {
     std::cout << "Canceling sketch..." << std::endl << std::flush;
@@ -191,6 +189,7 @@ void SketchScene::cancelSketch()
     sketch->clear();
     update();
 }
+
 
 void SketchScene::submitSketch()
 {

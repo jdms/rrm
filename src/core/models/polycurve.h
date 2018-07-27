@@ -255,6 +255,69 @@ public:
     }
 
 
+    std::vector< double > addXCoordinate( double depth_, bool swap_ = false ) const
+    {
+        std::vector< double > points_;
+        if( swap_ == true )
+            points_ = getPointsSwapped();
+        else
+            points_ = getPoints();
+
+        std::vector< double > points3d_;
+
+        std::size_t number_ = points_.size()/2;
+        for( auto i = 0; i < number_; ++i )
+        {
+            points3d_.push_back( depth_ );
+            points3d_.push_back( points_[ 2*i ] );
+            points3d_.push_back( points_[ 2*i + 1 ] );
+        }
+        return points3d_;
+    }
+
+    std::vector< double > addYCoordinate( double depth_, bool swap_ = false ) const
+    {
+        std::vector< double > points3d_;
+        std::vector< double > points_;
+        if( swap_ == true )
+            points_ = getPointsSwapped();
+        else
+            points_ = getPoints();
+
+        std::size_t number_ = points_.size()/2;
+        for( auto i = 0; i < number_; ++i )
+        {
+            points3d_.push_back( points_[ 2*i ] );
+            points3d_.push_back( depth_ );
+            points3d_.push_back( points_[ 2*i + 1 ] );
+        }
+
+        return points3d_;
+
+    }
+
+    std::vector< double > addZCoordinate( double depth_, bool swap_ = false ) const
+    {
+        std::vector< double > points3d_;
+        std::vector< double > points_;
+
+        if( swap_ == true )
+            points_ = getPointsSwapped();
+        else
+            points_ = getPoints();
+
+        std::size_t number_ = points_.size()/2;
+        for( auto i = 0; i < number_; ++i )
+        {
+            points3d_.push_back( points_[ 2*i ] );
+            points3d_.push_back( points_[ 2*i + 1 ] );
+            points3d_.push_back( depth_ );
+
+        }
+
+        return points3d_;
+    }
+
 protected:
 
     std::size_t CURVE_MIN_LENGHT = 3;

@@ -134,6 +134,10 @@ class Controller
         void removeTrajectoryFromObject();
 
         bool createObjectSurface();
+        bool createGeneralSurface();
+        bool createExtrudedSurface();
+        bool createLinearExtrudedSurface();
+
         bool createObjectSurfaceDirectionX();
         bool createObjectSurfaceDirectionY();
         bool createObjectSurfaceDirectionZ();

@@ -296,6 +296,8 @@ bool Controller::addObject( std::size_t index_ )
     current_object = obj_->getIndex();
     model.objects[ current_object ] = std::move( obj_ );
 
+    rules_processor.testSurfaceInsertion();
+
     return true;
 }
 
@@ -422,6 +424,7 @@ bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirection
 {
 
     ObjectPtr& obj_ = model.objects[ current_object ];
+    obj_->setCrossSectionDirection( dir_ );
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
         depth_ = topview->getDepth();
@@ -486,39 +489,143 @@ void Controller::removeTrajectoryFromObject()
 bool Controller::createObjectSurface()
 {
 
+    rules_processor.stopTestSurfaceInsertion();
+
     applyStratigraphicRule();
 
+
+    ObjectPtr obj_ = model.objects[ current_object ];
     bool surface_created_ = false;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( obj_->getNumberOfCrossSections() < 2 )
     {
-        surface_created_ = createObjectSurfaceDirectionX();
+        if( obj_->hasTrajectory() == false )
+            surface_created_ = createExtrudedSurface();
+        else
+            surface_created_ = createLinearExtrudedSurface();
     }
-
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-    {
-        surface_created_ = createObjectSurfaceDirectionY();
-    }
-
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
-        surface_created_ = createObjectSurfaceDirectionZ();
-    }
+    else
+        surface_created_ = createGeneralSurface();
 
 
     if( surface_created_ == false )
     {
+        rules_processor.testSurfaceInsertion();
         return false;
     }
 
+
+    obj_->setDone( true );
 
     updateModel();
     addObject();
     return true;
 
+
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        surface_created_ = createObjectSurfaceDirectionX();
+//    }
+
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+//    {
+//        surface_created_ = createObjectSurfaceDirectionY();
+//    }
+
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        surface_created_ = createObjectSurfaceDirectionZ();
+//    }
+
+
+//    if( surface_created_ == false )
+//    {
+//        return false;
+//    }
+
+
+//    updateModel();
+//    addObject();
+//    return true;
+
 }
 
 
+bool Controller::createGeneralSurface()
+{
+
+    ObjectPtr obj_ = model.objects[ current_object ];
+
+    std::vector< double > curves_ = obj_->getCurves3D();
+
+    bool surface_created_ = rules_processor.createSurface( current_object, curves_ );
+
+    return surface_created_;
+
+}
+
+
+bool Controller::createExtrudedSurface()
+{
+
+    ObjectPtr obj_ = model.objects[ current_object ];
+    if( obj_->hasTrajectory() == false ) return false;
+
+    std::vector< double > curves_ = obj_->getCurves2D();
+    bool surface_created_ = false;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_ );
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_ );
+    }
+
+    return surface_created_;
+
+}
+
+
+bool Controller::createLinearExtrudedSurface()
+{
+
+    ObjectPtr obj_ = model.objects[ current_object ];
+    if( obj_->hasTrajectory() == false ) return false;
+
+    std::vector< double > curves_ = obj_->getCurves2D();
+
+    std::map< double, PolyCurve > curves_map_ = obj_->getCurves();
+    double depth_ = curves_map_.begin()->first;
+    PolyCurve& path_ = obj_->getTrajectory();
+
+    bool surface_created_ = false;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+    }
+
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+    }
+
+    if( surface_created_ == true )
+    {
+        last_trajectory =  path_;
+    }
+
+    return surface_created_;
+
+}
+
+
+//deprecated
 bool Controller::createObjectSurfaceDirectionX()
 {
 
@@ -647,6 +754,9 @@ bool Controller::createObjectSurfaceDirectionZ()
     return status_;
 
 }
+
+//end-deprecated
+
 
 
 ///==========================================================================
@@ -886,6 +996,7 @@ void Controller::updatePreviewSurface()
     }
 
     std::cout << std::endl << std::flush;
+
 
     applyStratigraphicRule();
     bool surface_created_ = rules_processor.testSurface( current_object, points3d_ );

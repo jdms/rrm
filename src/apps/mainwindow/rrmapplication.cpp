@@ -126,8 +126,13 @@ void RRMApplication::removeFixedCrossSection( double depth_ )
 
 void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
-    controller->addCurveToObject( dir_, depth_, curve_ );
+    bool status_ = controller->addCurveToObject( dir_, depth_, curve_ );
+    if( status_ == false ) return;
+
     emit updateObjects();
+
+    if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
+        emit addCrossSection( dir_, depth_ );
 
 }
 
