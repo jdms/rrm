@@ -15,67 +15,75 @@
 
 class MainWindow: public QMainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 
 
-  public:
+    public:
 
-    MainWindow( QWidget* parent_ = 0 );
-    void run();
+        MainWindow( QWidget* parent_ = 0 );
+        void run();
 
-  protected:
+//    public slots:
 
-    void setWindowProperties();
+//        void undo();
+//        void redo();
 
-    void createWindow();
-    void createActions();
-    void createMenuBar();
-    void createToolbar();
+    protected:
 
-    void createController();
+        void setWindowProperties();
 
-    void plugSketchInterface();
-    void plug3dInterface();
+        void createWindow();
+        void createActions();
+        void createMenuBar();
+        void createToolbar();
 
-  protected:
+        void createController();
 
-    friend class SketchInterface;
-    friend class View3dInterface;
-    friend class RRMApplication;
+        void plugSketchInterface();
+        void plug3dInterface();
 
-    std::shared_ptr< SketchInterface > sketchapp;
-    std::shared_ptr< View3dInterface > view3dapp;
+        void checkButtonsStatus();
 
-    Controller* controller = nullptr;
-    RRMApplication* app = nullptr;
 
-    QAction* ac_save = nullptr;
-    QAction* ac_load = nullptr;
-    QAction* ac_clear = nullptr;
-    QAction *ac_export = nullptr;
-    QAction* ac_exit = nullptr;
-    QAction* ac_manual = nullptr;
-    QAction* ac_about = nullptr;
+    protected:
 
-    QAction* ac_undo = nullptr;
-    QAction* ac_redo = nullptr;
-    QAction* ac_sketch_above = nullptr;
-    QAction* ac_sketch_below = nullptr;
-    QAction* ac_remove_above = nullptr;
-    QAction* ac_remove_above_int = nullptr;
-    QAction* ac_remove_below = nullptr;
-    QAction* ac_remove_below_int = nullptr;
-    QAction* ac_screenshot = nullptr;
+        friend class SketchInterface;
+        friend class View3dInterface;
+        friend class RRMApplication;
 
-    QAction* ac_direction_x = nullptr;
-    QAction* ac_direction_y = nullptr;
-    QAction* ac_direction_z = nullptr;
+        std::shared_ptr< SketchInterface > sketchapp = nullptr;
+        std::shared_ptr< View3dInterface > view3dapp = nullptr;
 
-    QMenu* mn_file = nullptr;
-    QMenu* mn_windows = nullptr;
-    QMenu* mn_help = nullptr;
+        Controller* controller = nullptr;
+        RRMApplication* app = nullptr;
 
-    QToolBar* tb_mainwindow = nullptr;
+        QAction* ac_save = nullptr;
+        QAction* ac_load = nullptr;
+        QAction* ac_clear = nullptr;
+        QAction *ac_export = nullptr;
+        QAction* ac_exit = nullptr;
+        QAction* ac_manual = nullptr;
+        QAction* ac_about = nullptr;
+
+        QAction* ac_undo = nullptr;
+        QAction* ac_redo = nullptr;
+        QAction* ac_sketch_above = nullptr;
+        QAction* ac_sketch_below = nullptr;
+        QAction* ac_remove_above = nullptr;
+        QAction* ac_remove_above_int = nullptr;
+        QAction* ac_remove_below = nullptr;
+        QAction* ac_remove_below_int = nullptr;
+        QAction* ac_screenshot = nullptr;
+
+        QAction* ac_direction_x = nullptr;
+        QAction* ac_direction_y = nullptr;
+        QAction* ac_direction_z = nullptr;
+
+        QMenu* mn_file = nullptr;
+        QMenu* mn_windows = nullptr;
+        QMenu* mn_help = nullptr;
+
+        QToolBar* tb_mainwindow = nullptr;
 
 
 

@@ -104,6 +104,10 @@ void MainWindow::createActions()
     connect( ac_clear, &QAction::triggered, [=]()
     { app->reset(); } );
 
+    connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
+
+    connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
+
     connect( ac_remove_above, &QAction::triggered, [=]()
     { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
 
@@ -193,7 +197,7 @@ void MainWindow::createController()
 {
     controller = new Controller();
     app = new RRMApplication();
-    app->setController( controller );
+    app->setMainWindow( this );
 
 }
 
@@ -222,4 +226,3 @@ void MainWindow::run()
 
 //    app->setDiscretization();
 }
-

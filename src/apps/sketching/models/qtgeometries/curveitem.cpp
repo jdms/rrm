@@ -26,7 +26,9 @@ void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * opt
     QPen pen_;
     pen_.setColor( getColor() );
     pen_.setWidth( getWidth() );
+    pen_.setStyle( getStyle() );
     pen_.setCosmetic( true );
+
 
     if( isSelected() == true )
     {
@@ -82,6 +84,7 @@ void CurveItem::connect()
 
 void CurveItem::setDone()
 {
+//    resetToDefaultStyle();
     setPath( curve );
     is_done = true;
 }
@@ -173,18 +176,30 @@ int CurveItem::getWidth() const
 }
 
 
+void CurveItem::setStyle( const Qt::PenStyle& style_ )
+{
+    line_style = style_;
+}
+
+Qt::PenStyle CurveItem::getStyle() const
+{
+    return line_style;
+}
+
 void CurveItem::resetToDefaultColor()
 {
     line_color = DEFAULT_LINE_COLOR;
-    update();
 }
 
 void CurveItem::resetToDefaultWidth()
 {
     line_width = DEFAULT_LINE_WIDTH;
-    update();
 }
 
+void CurveItem::resetToDefaultStyle()
+{
+    line_style = DEFAULT_LINE_STYLE;
+}
 
 
 CurveItem::~CurveItem()

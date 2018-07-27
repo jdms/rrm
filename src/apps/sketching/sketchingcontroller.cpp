@@ -103,7 +103,8 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
     for( auto it: objects_ )
     {
         ObjectPtr& obj_ = it.second;
-        addStratigraphy( obj_ );
+        scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
+//        addStratigraphy( obj_ );
     }
 
     // the same for regions and wells

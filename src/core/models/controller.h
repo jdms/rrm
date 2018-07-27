@@ -196,6 +196,13 @@ class Controller
 
         void clear();
 
+        bool undo();
+        bool redo();
+
+        bool canUndo();
+        bool canRedo();
+
+
 
     protected:
 
