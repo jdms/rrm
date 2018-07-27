@@ -91,6 +91,12 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
     { scontroller->updateTopViewCrossSection(); } );
 
+    connect( window->app, &RRMApplication::addFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
+    { scontroller->viewCrossSection( dir_, depth_ ); } );
+
+    connect( window->app, &RRMApplication::removeFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
+    { scontroller->removeWindow( dir_, depth_ ); } );
+
     connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
     { scontroller->addStratigraphy( obj_ ); } );
 

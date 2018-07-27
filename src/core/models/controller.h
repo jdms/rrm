@@ -216,6 +216,7 @@ class Controller
 
         double csection_stepx = 1.0;
         double csection_stepz = 1.0;
+        double csection_stepy = 1.0;
 
         std::size_t current_object = 0;
 

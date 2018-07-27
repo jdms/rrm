@@ -11,7 +11,6 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
     raw = raw_;
     setCrossSection( dir_, depth_ );
     setStyle( Qt::PenStyle::DotLine );
-
 }
 
 
@@ -49,8 +48,6 @@ void StratigraphyItem::updateCurve()
         setCurve( raw->getTrajectory() );
     else
         setCurve( raw->getCurve( csection_depth ) );
-
-
 
     QGraphicsPathItem::update();
 }

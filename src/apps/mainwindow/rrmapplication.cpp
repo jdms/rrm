@@ -56,7 +56,7 @@ void RRMApplication::setMainWindow( MainWindow* const& window_ )
     setController();
 }
 
-void RRMApplication::setController(/* Controller* const& controller_ */)
+void RRMApplication::setController()
 {
     controller = window->controller;
 }
@@ -100,6 +100,21 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
     setDiscretization();
     emit updateMainCrossSection();
 }
+
+
+void RRMApplication::addFixedCrossSection( double depth_, QColor color_ )
+{
+    controller->addCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
+    emit addFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
+}
+
+
+void RRMApplication::removeFixedCrossSection( double depth_ )
+{
+    controller->removeCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
+    emit removeFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
+}
+
 
 
 void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
