@@ -19,6 +19,7 @@ class StratigraphyItem: public CurveItem
 
 
         void update() override;
+        void updateTrajectory();
 
         void clear();
 

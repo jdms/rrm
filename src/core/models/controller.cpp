@@ -423,6 +423,9 @@ bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirection
 
     ObjectPtr& obj_ = model.objects[ current_object ];
 
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+        depth_ = topview->getDepth();
+
     bool added_curve_ = obj_->addCurve( depth_, curve_ );
     if ( added_curve_ == false ) return false;
 
@@ -490,6 +493,11 @@ bool Controller::createObjectSurface()
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         surface_created_ = createObjectSurfaceDirectionX();
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        surface_created_ = createObjectSurfaceDirectionY();
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
@@ -571,6 +579,13 @@ bool Controller::createObjectSurfaceDirectionX()
     obj_->setDone( status_ );
 
     return status_;
+}
+
+
+bool Controller::createObjectSurfaceDirectionY()
+{
+    // put some code
+    return false;
 }
 
 
@@ -675,7 +690,7 @@ void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, dou
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        //faz alguma coisa
+        //put some code?
     }
 
     else
@@ -698,6 +713,16 @@ void Controller::updateCrossSectionsX()
 {
 
     for( auto it_: model.csectionsX )
+    {
+        updateObjectsCurvesInCrossSection( it_.first );
+    }
+
+}
+
+
+void Controller::updateCrossSectionsY()
+{
+    for( auto it_: model.csectionsY )
     {
         updateObjectsCurvesInCrossSection( it_.first );
     }
@@ -752,6 +777,11 @@ void Controller::updateObjectCurves( const std::size_t& index_ )
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         for( auto it_: model.csectionsX )
+            updateObjectCurveInCrossSection( index_, it_.first );
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        for( auto it_: model.csectionsY )
             updateObjectCurveInCrossSection( index_, it_.first );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -827,6 +857,12 @@ void Controller::updatePreviewSurface()
             }
 
         }
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        // code here
+        return;
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )

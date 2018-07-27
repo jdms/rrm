@@ -313,7 +313,6 @@ bool Object::hasCurve( double csection_id_ ) const
         return false;
 
     return !( user_entered.find( csection_id_ ) == user_entered.end() );
-//    return ( csection_curves.getElement( csection_id_ ).isEmpty() == false );
 
 }
 
@@ -372,15 +371,6 @@ void Object::removeCrossSectionCurves()
     }
     csection_curves1.clear();
 
-
-//    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
-//    {
-//        if( ( it->second ).isEmpty() == true ) continue;
-//        ( it->second ).clear();
-//    }
-//    csection_curves.clear();
-
-//    user_entered.clear();
 }
 
 
@@ -507,15 +497,6 @@ void Object::clearPreviewCurves()
         if( user_entered.find( id_ ) != user_entered.end() ) continue;
         previews_.push_back( id_ );
     }
-
-
-//    for ( CrossSectionsContainer::Iterator it =  csection_curves.begin(); it != csection_curves.end(); ++it )
-//    {
-//        double id_ = it->first;
-
-//        if( user_entered.find( id_ ) != user_entered.end() ) continue;
-//        previews_.push_back( id_ );
-//    }
 
     for( auto id_: previews_ )
         removeCurve( id_ );

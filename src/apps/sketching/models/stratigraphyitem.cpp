@@ -44,13 +44,24 @@ void StratigraphyItem::updateCurve()
         resetToDefaultStyle();
 
     prepareGeometryChange();
-    if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
-        setCurve( raw->getTrajectory() );
-    else
-        setCurve( raw->getCurve( csection_depth ) );
+
+    setCurve( raw->getCurve( csection_depth ) );
 
     QGraphicsPathItem::update();
 }
+
+void StratigraphyItem::updateTrajectory()
+{
+    if( raw == nullptr ) return;
+    if( raw->isEmpty() == true || raw->isActive() == false ) return;
+
+    if( raw->isDone() )
+        resetToDefaultStyle();
+
+    prepareGeometryChange();
+    setCurve( raw->getTrajectory() );
+}
+
 
 void StratigraphyItem::clear()
 {

@@ -80,6 +80,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ );
         void updateStratigraphy( const std::size_t& id_ );
         void updateStratigraphies();
+        void updateStratigraphiesTrajectories();
 
         void addRegion( const std::shared_ptr< Regions >& region_ );
         void updateRegion( const std::size_t& id_ );
