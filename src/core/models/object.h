@@ -96,9 +96,21 @@ class Object
 
         // remove after creating structural, or another structure representing obj geologicals as surfaces
 
+
+        void setCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        Settings::CrossSection::CrossSectionDirections getCrossSectionDirection() const;
+
         const PolyCurve&  getCurve( double csection_ ) const { return PolyCurve();  }
 
         std::map< double, PolyCurve > getCurves() ;
+
+
+        std::vector< double > getCurves2D( bool swap_ = false );
+        std::vector< double > getCurves3D();
+        std::vector< double > getCurves3DX();
+        std::vector< double > getCurves3DY();
+        std::vector< double > getCurves3DZ();
 
         void removeCurves() {}
 
@@ -107,9 +119,10 @@ class Object
         void surfaceDone() {}
 
 
-
         bool addCurve( double csection_id_, const PolyCurve& curve_ );
         bool removeCurve( double csection_id_ );
+
+        std::size_t getNumberOfCrossSections() const;
 
         bool addTrajectory( const PolyCurve& traj_ );
         void removeTrajectory();
@@ -258,6 +271,8 @@ class Object
 
         std::vector< double > used_depth;
         std::map< double, PolyCurve > csection_curves1;
+        Settings::CrossSection::CrossSectionDirections direction;
+
 
 
         ///==========================================

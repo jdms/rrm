@@ -356,10 +356,133 @@ std::map< double, PolyCurve > Object::getCurves()
 }
 
 
+std::vector< double > Object::getCurves2D( bool swap_)
+{
+    std::vector< double > points2D_;
+
+    for( auto it_: csection_curves1 )
+    {
+        double depth_ = it_.first;
+        PolyCurve curve_ = it_.second;
+
+        std::vector< double > points_;
+
+        if( swap_ == true )
+            points_ = curve_.getPointsSwapped();
+        else
+            points_ = curve_.getPoints();
+
+
+        points2D_.insert(std::end(points2D_), std::begin(points_), std::end(points_));
+
+    }
+
+
+    return points2D_;
+
+}
+
+
+std::vector< double > Object::getCurves3D()
+{
+    std::vector< double > points_;
+
+    if( direction == Settings::CrossSection::CrossSectionDirections::X )
+        points_ = getCurves3DX();
+
+    else if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+        points_ = getCurves3DY();
+
+    else
+        points_ = getCurves3DZ();
+
+    return points_;
+
+}
+
+
+std::vector< double > Object::getCurves3DX()
+{
+
+    std::vector< double > points3d_;
+
+    for( auto it_: csection_curves1 )
+    {
+        double depth_ = it_.first;
+        PolyCurve curve_ = it_.second;
+
+        std::vector< double > points_ = curve_.addXCoordinate( depth_, true );
+
+        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
+
+    }
+
+    return points3d_;
+}
+
+
+std::vector< double > Object::getCurves3DY()
+{
+
+    std::vector< double > points3d_;
+
+    for( auto it_: csection_curves1 )
+    {
+        double depth_ = it_.first;
+        PolyCurve curve_ = it_.second;
+
+        std::vector< double > points_ = curve_.addYCoordinate( depth_, false );
+        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
+
+    }
+
+    return points3d_;
+
+}
+
+
+std::vector< double > Object::getCurves3DZ()
+{
+
+    std::vector< double > points3d_;
+
+    for( auto it_: csection_curves1 )
+    {
+        double depth_ = it_.first;
+        PolyCurve curve_ = it_.second;
+
+        std::vector< double > points_ = curve_.addZCoordinate( depth_, false );
+        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
+    }
+
+    return points3d_;
+
+}
+
+
+std::size_t Object::getNumberOfCrossSections() const
+{
+    return csection_curves1.size();
+}
+
+
 Object::CrossSectionsContainer Object::getCrossSectionCurves() const
 {
     return csection_curves;
 }
+
+
+
+void Object::setCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    direction = dir_;
+}
+
+Settings::CrossSection::CrossSectionDirections Object::getCrossSectionDirection() const
+{
+    return direction;
+}
+
 
 void Object::removeCrossSectionCurves()
 {
