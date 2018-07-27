@@ -77,6 +77,8 @@ class RRMApplication: public QObject
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
         void moveMainCrossSection( double depth_ );
 
+        void addFixedCrossSection( double depth_, QColor color_ );
+        void removeFixedCrossSection( double depth_ );
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectoryToObject( const PolyCurve& curve_ );
@@ -101,8 +103,12 @@ class RRMApplication: public QObject
 
         void updateVolume();
         void updateObjects();
+
         void updateMainCrossSection();
         void updateTopViewCrossSection();
+
+        void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
+        void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
 
         void updateDiscretization( const std::size_t& disc_ );
         void updateRange( double min_, double max_ );

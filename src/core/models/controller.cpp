@@ -36,6 +36,7 @@ Controller::Controller()
 {
 }
 
+
 Controller::Controller(const Controller & cont_)
 {
     this->app = cont_.app;
@@ -43,6 +44,7 @@ Controller::Controller(const Controller & cont_)
     this->model = cont_.model;
 
 }
+
 
 Controller& Controller::operator=(const Controller & cont_)
 {
@@ -54,12 +56,14 @@ Controller& Controller::operator=(const Controller & cont_)
     return *this;
 }
 
+
 Controller::~Controller()
 {
 }
 
 
 ///==========================================================================
+
 
 void Controller::setApplication( RRMApplication* const& app_)
 {
@@ -78,6 +82,9 @@ void Controller::init()
     addObject();
 }
 
+
+
+///==========================================================================
 
 ///
 /// Volumes Methods
@@ -114,6 +121,9 @@ void Controller::setVolumeVisibility( bool status_ )
     //    app->updateVolume();
 }
 
+
+
+///==========================================================================
 
 
 ///
@@ -262,6 +272,8 @@ void Controller::removeCrossSection( const Settings::CrossSection::CrossSectionD
 
 
 
+///==========================================================================
+
 ///
 /// Objects Methods
 ///
@@ -397,6 +409,15 @@ bool Controller::isObjectSelected(std::size_t index_) const
 }
 
 
+
+///==========================================================================
+
+///
+/// Creating Curves and Surfaces of Objects
+///
+
+
+
 bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ )
 {
 
@@ -442,6 +463,7 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     obj_->addTrajectory(curve_);
 
 }
+
 
 void Controller::addLastTrajectoryToObject()
 {
@@ -612,11 +634,11 @@ bool Controller::createObjectSurfaceDirectionZ()
 }
 
 
+///==========================================================================
 
 ///
 /// Updating Models Methods
 ///
-
 
 
 void Controller::updateModel()
@@ -651,7 +673,13 @@ void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, dou
         if( has_curve_ == true ) return;
     }
 
-    clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , depth_ );
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        //faz alguma coisa
+    }
+
+    else
+        clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , depth_ );
 
 }
 
@@ -695,9 +723,14 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
     std::vector< std::size_t > edges_;
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
         has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
+    }
+
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
         has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
+    }
 
     if( has_curve_ == false ) return;
 
@@ -831,6 +864,7 @@ void Controller::updatePreviewSurface()
 
 
 
+///==========================================================================
 
 ///
 /// Regions Methods
@@ -1060,6 +1094,8 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
 
 
 
+///==========================================================================
+
 ///
 /// Rules-Processor Methods
 ///
@@ -1089,14 +1125,21 @@ void Controller::updateBoundingBoxRulesProcessor()
 
 
 
+///==========================================================================
+
+///
+/// Discretization Methods
+///
 
 
 void Controller::setVolumeDiscretization()
 {
     std::size_t width_disc_ = rules_processor.getWidthResolution();
     std::size_t lenght_disc_ = rules_processor.getLengthResolution();
+    std::size_t height_disc_ = 100;
 
     csection_stepx = static_cast< double >( model.volume->getWidth()/width_disc_ );
+    csection_stepy = static_cast< double >( model.volume->getHeight()/height_disc_ );
     csection_stepz = static_cast< double >( model.volume->getLenght()/lenght_disc_ );
 }
 
@@ -1106,6 +1149,10 @@ std::size_t Controller::getCurrentDiscretization() const
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         return rules_processor.getWidthResolution();
+    }
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        return 100;
     }
     else
     {
@@ -1127,6 +1174,11 @@ void Controller::getCurrentRange( double& min_, double& max_ ) const
     {
         min_ = ox_;
         max_ = ox_ + width_;
+    }
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        min_ = oy_;
+        max_ = oy_ + height_;
     }
 
     else
@@ -1150,6 +1202,9 @@ std::size_t Controller::indexCrossSectionZ( double value_ ) const
     return static_cast< std::size_t > ( value_/csection_stepz );
 }
 
+
+
+///==========================================================================
 
 ///
 /// Activing Rules Methods
@@ -1180,7 +1235,6 @@ void Controller::setRemoveBelowIntersection()
 }
 
 
-
 void Controller::applyStratigraphicRule()
 {
     if( current_rule == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
@@ -1193,6 +1247,14 @@ void Controller::applyStratigraphicRule()
         rules_processor.removeBelowIntersection();
 
 }
+
+
+
+///==========================================================================
+
+///
+/// Application Methods
+///
 
 
 bool Controller::undo()
@@ -1224,9 +1286,6 @@ bool Controller::canRedo()
 {
     return rules_processor.canRedo();
 }
-
-
-
 
 
 
@@ -1272,6 +1331,7 @@ void Controller::clear()
 
     last_trajectory.clear();
 }
+
 
 ///==========================================================================
 

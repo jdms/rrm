@@ -50,6 +50,12 @@ void View3dInterface::createView3dActions()
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double depth_ )
     { window->app->moveMainCrossSection( depth_ ); } );
 
+    connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& depth_, QColor color_ )
+    { window->app->addFixedCrossSection( depth_, color_ );  } );
+
+    connect( sl_depth_csection, &RealFeaturedSlider::unmarkValue, [=]( const double& depth_ )
+    { window->app->removeFixedCrossSection( depth_ );  } );
+
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { controller3d->updateVolume(); } );
 
