@@ -103,6 +103,9 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { scontroller->updateObjects(); } );
 
+    connect( window->app, &RRMApplication::updateTrajectories, [=]()
+    { scontroller->updateObjectsTrajectories(); } );
+
     connect( window->app, &RRMApplication::resetApplication, [=]()
     { scontroller->clear(); } );
 

@@ -125,7 +125,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 void SketchingController::updateObjects()
 {
 
-
     if( main_scene != nullptr )
         main_scene->updateStratigraphies();
 
@@ -152,6 +151,16 @@ void SketchingController::updateObjects()
     // the same for regions and wells
 
 }
+
+
+void SketchingController::updateObjectsTrajectories()
+{
+
+    if( topview_scene != nullptr )
+        topview_scene->updateStratigraphiesTrajectories();
+
+}
+
 
 
 

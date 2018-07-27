@@ -41,6 +41,7 @@ class SketchingController
 
 
         void updateObjects();
+        void updateObjectsTrajectories();
 
 
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );

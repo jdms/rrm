@@ -103,6 +103,7 @@ class RRMApplication: public QObject
 
         void updateVolume();
         void updateObjects();
+        void updateTrajectories();
 
         void updateMainCrossSection();
         void updateTopViewCrossSection();

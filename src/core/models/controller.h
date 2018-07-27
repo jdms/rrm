@@ -135,6 +135,7 @@ class Controller
 
         bool createObjectSurface();
         bool createObjectSurfaceDirectionX();
+        bool createObjectSurfaceDirectionY();
         bool createObjectSurfaceDirectionZ();
 
 
@@ -147,6 +148,7 @@ class Controller
         void updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ );
         void updateObjectsCurvesInCrossSection( double depth_ );
         void updateCrossSectionsX();
+        void updateCrossSectionsY();
         void updateCrossSectionsZ();
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
 

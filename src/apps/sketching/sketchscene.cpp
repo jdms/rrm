@@ -133,6 +133,16 @@ void SketchScene::updateStratigraphies()
     update();
 }
 
+void SketchScene::updateStratigraphiesTrajectories()
+{
+
+    for( auto it: stratigraphies )
+    {
+        (it.second)->updateTrajectory();
+    }
+    update();
+}
+
 
 void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 {

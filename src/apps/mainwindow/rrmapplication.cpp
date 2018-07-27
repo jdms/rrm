@@ -88,6 +88,13 @@ void RRMApplication::setDiscretization()
 
 void RRMApplication::moveMainCrossSection( double depth_ )
 {
+    if( controller->getMainCrossSection()->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        controller->moveTopViewCrossSection( depth_ );
+        emit updateTopViewCrossSection();
+        return;
+    }
+
     controller->moveMainCrossSection( depth_ );
     emit updateMainCrossSection();
 
@@ -127,8 +134,17 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
 void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 {
+    if( controller->getMainCrossSection()->getDirection() ==
+            Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        controller->addCurveToObject( Settings::CrossSection::CrossSectionDirections::Y, 0.0, curve_ );
+        emit updateObjects();
+        return;
+    }
+
     controller->addTrajectoryToObject( curve_ );
-    emit updateObjects();
+    emit updateTrajectories();
+
 
 }
 
