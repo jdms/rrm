@@ -850,14 +850,14 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
     return success;
 }
 
-bool createWidthwiseExtrudedSurface( size_t surface_id, 
+bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data
         )
 {
     return false;
 }
 
-bool createWidthwiseExtrudedSurface( size_t surface_id, 
+bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data 
         )
