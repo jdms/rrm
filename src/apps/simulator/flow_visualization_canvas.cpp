@@ -76,7 +76,7 @@ void FlowVisualizationCanvas::paintGL()
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
     loadBackGround();
 
     //Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
