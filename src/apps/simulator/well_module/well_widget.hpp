@@ -60,7 +60,7 @@ namespace RRM
                         void setBoundingBoxDimension(const Eigen::Vector3d& _box_min, const Eigen::Vector3d& _box_max);
 
                 public slots:
-                        void updateWellPosition(const std::map< int, Eigen::Vector2d >& _positions);
+                        void updateWellPosition(const std::map< int, Eigen::Vector2d >& _positions);						
 						bool write(QJsonObject& wells_data);
 						bool read(const QJsonObject& wells_data);
                         void clear(){};
@@ -80,6 +80,7 @@ namespace RRM
                         void createConnections();
                         void updateWellsWidget(int _index);
                         void createWells( int _number_of_well);
+						void loadWells();
 
 						/// Current Well Model - Metadata
                         int								 number_of_wells_;

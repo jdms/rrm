@@ -226,6 +226,29 @@ namespace RRM
 		emit numberOfWells(this->number_of_wells_);
 	}
 
+	void WellWidget::loadWells()
+	{
+			QStringList l;			
+
+			for (auto i = 0; i < this->number_of_wells_; i++)
+			{
+				l.push_back("Well " + QString::number(i + 1));
+			}
+
+			this->ui_->spinBox_Number_of_Wells_->blockSignals(true);
+			this->ui_->spinBox_Number_of_Wells_->setValue(this->number_of_wells_);
+			this->ui_->spinBox_Number_of_Wells_->blockSignals(false);
+
+			this->ui_->comboBox_Well_->clear();
+			this->ui_->comboBox_Well_->insertItems(0, l);
+
+			// Set the Current position to the last one added
+			this->ui_->comboBox_Well_->setCurrentIndex(this->ui_->comboBox_Well_->count() - 1);
+
+			this->updateWellsWidget(this->ui_->comboBox_Well_->currentIndex());
+		
+	}
+
 	void WellWidget::updateWellPosition(const std::map< int, Eigen::Vector2d >& _positions)
 	{
 		for (int i = 0; i < this->number_of_wells_; i++)
@@ -274,7 +297,8 @@ namespace RRM
 
 	/// Read and Write the currrent Well Data Model
 	bool WellWidget::write(QJsonObject& wells_data)
-	{
+	{			
+		/// Geometry Releated Attributes
 		wells_data["model_bounding_box_min_x"] = this->dim_min_.x();
 		wells_data["model_bounding_box_min_y"] = this->dim_min_.y();
 		wells_data["model_bounding_box_min_z"] = this->dim_min_.z();
@@ -311,6 +335,9 @@ namespace RRM
 	bool WellWidget::read(const QJsonObject& wells_data)
 	{
 
+
+		/// Attributes
+
 		//// min Dim
 		if (wells_data.contains("model_bounding_box_min_x") && wells_data["model_bounding_box_min_x"].isDouble())
 		{
@@ -345,6 +372,7 @@ namespace RRM
 		}
 
 		this->wells_type_.clear();
+		this->wells_sign_.clear();
 		this->wells_pressure_.clear();
 		this->wells_range_.clear();
 		this->wells_position_in_2D_.clear();
@@ -368,6 +396,8 @@ namespace RRM
 				this->wells_position_in_2D_[id].y() = object["position_2d_y"].toDouble();
 			}
 		}
+
+		loadWells();
 
 		return false;
 	}
