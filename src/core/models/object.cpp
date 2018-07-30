@@ -25,7 +25,7 @@
 
 Object::Object()
 {
-    defineIndex();
+//    defineIndex();
     initialize();
 
     std::cout << "Creating object " << this << std::endl << std::flush;
@@ -236,11 +236,11 @@ void Object::removed()
 
 
 
-void Object::defineIndex()
-{
-    index = number_of_objects;
-    number_of_objects++;
-}
+//void Object::defineIndex()
+//{
+//    index = number_of_objects;
+//    number_of_objects++;
+//}
 
 
 void Object::setType( const Settings::Objects::ObjectType &type_ )
@@ -257,6 +257,13 @@ Settings::Objects::ObjectType Object::getType() const
 void Object::setDone( const bool status_ )
 {
     is_done = status_;
+
+    if( is_done == false ) return;
+
+    removeCrossSectionCurves();
+    removeTrajectory();
+    removeSurface();
+    user_entered.clear();
 }
 
 
@@ -309,8 +316,6 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 
 bool Object::hasCurve( double csection_id_ ) const
 {
-    if( csection_curves1.find( csection_id_ ) == csection_curves1.end() )
-        return false;
 
     return !( user_entered.find( csection_id_ ) == user_entered.end() );
 
@@ -341,6 +346,7 @@ void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
     csection_curves1[ csection_id_]  = curve_;
 }
 
+
 std::map< double, PolyCurve > Object::getCurves()
 {
    std::map< double, PolyCurve > curves_;
@@ -360,10 +366,10 @@ std::vector< double > Object::getCurves2D( bool swap_)
 {
     std::vector< double > points2D_;
 
-    for( auto it_: csection_curves1 )
+
+    for ( auto d_: user_entered )
     {
-        double depth_ = it_.first;
-        PolyCurve curve_ = it_.second;
+        PolyCurve curve_ = csection_curves1[ d_ ];
 
         std::vector< double > points_;
 
@@ -373,10 +379,8 @@ std::vector< double > Object::getCurves2D( bool swap_)
             points_ = curve_.getPoints();
 
 
-        points2D_.insert(std::end(points2D_), std::begin(points_), std::end(points_));
-
+        points2D_.insert(points2D_.end(), points_.begin(), points_.end());
     }
-
 
     return points2D_;
 
@@ -406,15 +410,12 @@ std::vector< double > Object::getCurves3DX()
 
     std::vector< double > points3d_;
 
-    for( auto it_: csection_curves1 )
+    for ( auto d_: user_entered )
     {
-        double depth_ = it_.first;
-        PolyCurve curve_ = it_.second;
+        PolyCurve& curve_ = csection_curves1[ d_ ];
 
-        std::vector< double > points_ = curve_.addXCoordinate( depth_, true );
-
-        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
-
+        std::vector< double > points_ = curve_.addXCoordinate( d_, true );
+        points3d_.insert( points3d_.end(), points_.begin(), points_.end() );
     }
 
     return points3d_;
@@ -426,14 +427,12 @@ std::vector< double > Object::getCurves3DY()
 
     std::vector< double > points3d_;
 
-    for( auto it_: csection_curves1 )
+    for ( auto d_: user_entered )
     {
-        double depth_ = it_.first;
-        PolyCurve curve_ = it_.second;
+        PolyCurve& curve_ = csection_curves1[ d_ ];
 
-        std::vector< double > points_ = curve_.addYCoordinate( depth_, false );
-        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
-
+        std::vector< double > points_ = curve_.addYCoordinate( d_, true );
+        points3d_.insert( points3d_.end(), points_.begin(), points_.end() );
     }
 
     return points3d_;
@@ -444,15 +443,15 @@ std::vector< double > Object::getCurves3DY()
 std::vector< double > Object::getCurves3DZ()
 {
 
+
     std::vector< double > points3d_;
 
-    for( auto it_: csection_curves1 )
+    for ( auto d_: user_entered )
     {
-        double depth_ = it_.first;
-        PolyCurve curve_ = it_.second;
+        PolyCurve& curve_ = csection_curves1[ d_ ];
 
-        std::vector< double > points_ = curve_.addZCoordinate( depth_, false );
-        points3d_.insert(std::end(points_), std::begin(points_), std::end(points_));
+        std::vector< double > points_ = curve_.addZCoordinate( d_, false );
+        points3d_.insert( points3d_.end(), points_.begin(), points_.end() );
     }
 
     return points3d_;

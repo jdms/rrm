@@ -9,7 +9,7 @@ StratigraphyItem::StratigraphyItem( QGraphicsItem *parent_): CurveItem( parent_ 
 void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >& raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     raw = raw_;
-    setCrossSection( dir_, depth_ );
+    csection_direction = dir_;
     setStyle( Qt::PenStyle::DotLine );
 }
 
@@ -45,10 +45,36 @@ void StratigraphyItem::updateCurve()
 
     prepareGeometryChange();
 
-    setCurve( raw->getCurve( csection_depth ) );
+    changeDirection();
 
     QGraphicsPathItem::update();
 }
+
+
+void StratigraphyItem::changeDirection()
+{
+    Settings::CrossSection::CrossSectionDirections dir_ = raw->getCrossSectionDirection();
+
+
+    if( csection_direction == dir_ )
+        setCurve( raw->getCurve( csection_depth ) );
+    else
+    {
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+        {
+            updateTrajectory();
+        }
+
+        else if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y  )
+        {
+            return;
+        }
+
+        else
+            setCurve( raw->getCurve( csection_depth ) );
+    }
+}
+
 
 void StratigraphyItem::updateTrajectory()
 {
