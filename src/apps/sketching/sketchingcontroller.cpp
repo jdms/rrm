@@ -56,6 +56,7 @@ void SketchingController::createTopViewCrossSection()
 {
     CrossSectionPtr csection_ = controller->getTopViewCrossSection();
     setObjectsToScene( csection_, topview_scene );
+    topview_scene->init();
 }
 
 
@@ -104,7 +105,6 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
     {
         ObjectPtr& obj_ = it.second;
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
-//        addStratigraphy( obj_ );
     }
 
     // the same for regions and wells

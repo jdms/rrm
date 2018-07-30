@@ -85,13 +85,14 @@ void MainWindow::createActions()
     ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
     ac_direction_x = new QAction( "X", this );
-    ac_direction_x->setCheckable( false );
+    ac_direction_x->setCheckable( true );
 
     ac_direction_y = new QAction( "Y", this );
-    ac_direction_y->setCheckable( false );
+    ac_direction_y->setCheckable( true );
 
     ac_direction_z = new QAction( "Z", this );
     ac_direction_z->setCheckable( true );
+    ac_direction_z->setChecked( true );
 
 
 
@@ -221,8 +222,4 @@ void MainWindow::plug3dInterface()
 void MainWindow::run()
 {
     app->init();
-//    sketchapp->init();
-//    view3dapp->init();
-
-//    app->setDiscretization();
 }

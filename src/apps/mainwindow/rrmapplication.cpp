@@ -157,7 +157,7 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 void RRMApplication::createObjectSurface()
 {
 
-    bool status_ = controller->createObjectSurface();
+    bool status_ = controller->commitObjectSurface();
     if( status_ == false ) return;
 
     emit addObject( controller->getCurrentObject() );

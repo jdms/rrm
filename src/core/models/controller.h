@@ -133,14 +133,11 @@ class Controller
         void addLastTrajectoryToObject();
         void removeTrajectoryFromObject();
 
+        bool commitObjectSurface();
         bool createObjectSurface();
         bool createGeneralSurface();
         bool createExtrudedSurface();
         bool createLinearExtrudedSurface();
-
-        bool createObjectSurfaceDirectionX();
-        bool createObjectSurfaceDirectionY();
-        bool createObjectSurfaceDirectionZ();
 
 
         void updateModel();

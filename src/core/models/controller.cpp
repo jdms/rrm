@@ -159,6 +159,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
         csection->setDepth( model.volume->getLenght() );
     }
 
+    updateModel();
 }
 
 
@@ -296,7 +297,6 @@ bool Controller::addObject( std::size_t index_ )
     current_object = obj_->getIndex();
     model.objects[ current_object ] = std::move( obj_ );
 
-    rules_processor.testSurfaceInsertion();
 
     return true;
 }
@@ -486,13 +486,34 @@ void Controller::removeTrajectoryFromObject()
 }
 
 
-bool Controller::createObjectSurface()
+bool Controller::commitObjectSurface()
 {
 
     rules_processor.stopTestSurfaceInsertion();
 
     applyStratigraphicRule();
 
+    bool status_ = createObjectSurface();
+
+    if( status_ == false )
+    {
+        rules_processor.testSurfaceInsertion();
+        return false;
+    }
+
+    ObjectPtr obj_ = model.objects[ current_object ];
+    obj_->setDone( true );
+
+
+    updateModel();
+    addObject();
+    return true;
+
+}
+
+
+bool Controller::createObjectSurface()
+{
 
     ObjectPtr obj_ = model.objects[ current_object ];
     bool surface_created_ = false;
@@ -500,54 +521,15 @@ bool Controller::createObjectSurface()
     if( obj_->getNumberOfCrossSections() < 2 )
     {
         if( obj_->hasTrajectory() == false )
-            surface_created_ = createExtrudedSurface();
-        else
             surface_created_ = createLinearExtrudedSurface();
+        else
+            surface_created_ = createExtrudedSurface();
     }
     else
         surface_created_ = createGeneralSurface();
 
 
-    if( surface_created_ == false )
-    {
-        rules_processor.testSurfaceInsertion();
-        return false;
-    }
-
-
-    obj_->setDone( true );
-
-    updateModel();
-    addObject();
-    return true;
-
-
-
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        surface_created_ = createObjectSurfaceDirectionX();
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-//    {
-//        surface_created_ = createObjectSurfaceDirectionY();
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        surface_created_ = createObjectSurfaceDirectionZ();
-//    }
-
-
-//    if( surface_created_ == false )
-//    {
-//        return false;
-//    }
-
-
-//    updateModel();
-//    addObject();
-//    return true;
+    return surface_created_;
 
 }
 
@@ -560,7 +542,6 @@ bool Controller::createGeneralSurface()
     std::vector< double > curves_ = obj_->getCurves3D();
 
     bool surface_created_ = rules_processor.createSurface( current_object, curves_ );
-
     return surface_created_;
 
 }
@@ -568,31 +549,6 @@ bool Controller::createGeneralSurface()
 
 bool Controller::createExtrudedSurface()
 {
-
-    ObjectPtr obj_ = model.objects[ current_object ];
-    if( obj_->hasTrajectory() == false ) return false;
-
-    std::vector< double > curves_ = obj_->getCurves2D();
-    bool surface_created_ = false;
-
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-    {
-        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_ );
-    }
-
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
-        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_ );
-    }
-
-    return surface_created_;
-
-}
-
-
-bool Controller::createLinearExtrudedSurface()
-{
-
     ObjectPtr obj_ = model.objects[ current_object ];
     if( obj_->hasTrajectory() == false ) return false;
 
@@ -604,15 +560,15 @@ bool Controller::createLinearExtrudedSurface()
 
     bool surface_created_ = false;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
     }
 
 
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+       surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
     }
 
     if( surface_created_ == true )
@@ -625,138 +581,28 @@ bool Controller::createLinearExtrudedSurface()
 }
 
 
-//deprecated
-bool Controller::createObjectSurfaceDirectionX()
+bool Controller::createLinearExtrudedSurface()
 {
 
     ObjectPtr obj_ = model.objects[ current_object ];
 
-    std::map< double, PolyCurve > curves_ = obj_->getCurves();
-    std::cout << "Passing n = " << curves_.size() << " curves to rules_processor." << std::endl << std::flush;
+    std::vector< double > curves_ = obj_->getCurves2D();
+    bool surface_created_ = false;
 
-    std::vector< double > points3d_;
-
-    for( auto it_: curves_ )
+    if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        double depth_ = it_.first;
-        std::cout <<  depth_ << " " << std::flush;
+        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_ );
+    }
 
-        PolyCurve curve_ = it_.second;
-        std::vector< double > points_ = curve_.getPointsSwapped();
-        std::size_t number_ = points_.size()/2;
-
-        for( auto i = 0; i < number_; ++i )
-        {
-            points3d_.push_back( depth_ );
-            points3d_.push_back( points_[ 2*i ] );
-            points3d_.push_back( points_[ 2*i + 1 ] );
-        }
+    else if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_ );
 
     }
 
-    std::cout <<  std::endl;
-
-    bool status_ = false;
-    if( curves_.size() == 1 )
-    {
-        if( obj_->hasTrajectory() == true )
-        {
-            PolyCurve path_;
-            obj_->getTrajectory( path_ );
-            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
-                                                                       curves_.begin()->first, path_.getPoints() );
-            if( status_ == true )
-            {
-                last_trajectory =  path_;
-            }
-
-        }
-        else
-            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
-                                                                       points3d_ );
-        //extrusion
-        // can be simple
-        // or general
-        return status_;
-    }
-
-
-
-    status_ = rules_processor.createSurface( current_object, points3d_ );
-    obj_->setDone( status_ );
-
-    return status_;
-}
-
-
-bool Controller::createObjectSurfaceDirectionY()
-{
-    // put some code
-    return false;
-}
-
-
-bool Controller::createObjectSurfaceDirectionZ()
-{
-
-    ObjectPtr obj_ = model.objects[ current_object ];
-
-    std::map< double, PolyCurve > curves_ = obj_->getCurves();
-    std::cout << "Passing n = " << curves_.size() << " curves to rules_processor." << std::endl << std::flush;
-
-    std::vector< double > points3d_;
-
-    for( auto it_: curves_ )
-    {
-        double depth_ = it_.first;
-        std::cout <<  depth_ << " " << std::flush;
-
-        PolyCurve curve_ = it_.second;
-        std::vector< double > points_ = curve_.getPoints();
-        std::size_t number_ = points_.size()/2;
-
-        for( auto i = 0; i < number_; ++i )
-        {
-            points3d_.push_back( points_[ 2*i ] );
-            points3d_.push_back( points_[ 2*i + 1 ] );
-            points3d_.push_back( depth_ );
-        }
-    }
-
-    std::cout <<  std::endl;
-
-    bool status_ = false;
-    if( curves_.size() == 1 )
-    {
-        if( obj_->hasTrajectory() == true )
-        {
-            PolyCurve path_;
-            obj_->getTrajectory( path_ );
-            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object, points3d_,
-                                                                       curves_.begin()->first, path_.getPoints() );
-            if( status_ == true )
-            {
-                last_trajectory =  path_;
-            }
-
-        }
-        else
-            status_ = rules_processor.createLengthwiseExtrudedSurface( current_object,
-                                                                       points3d_ );
-        //extrusion
-        // can be simple
-        // or general
-        return status_;
-    }
-
-    status_ = rules_processor.createSurface( current_object, points3d_ );
-    obj_->setDone( status_ );
-    return status_;
+    return surface_created_;
 
 }
-
-//end-deprecated
-
 
 
 ///==========================================================================
@@ -776,14 +622,13 @@ void Controller::updateModel()
     for ( std::size_t j = 0; j < number_of_actives_; ++j )
     {
         std::size_t id_ = actives_.at( j );
-        if ( id_ == current_object ) continue;
+//        if ( id_ == current_object ) continue;
 
         setObjectActive( id_, true );
         updateObjectSurface( id_ );
         updateObjectCurves( id_ );
     }
 
-    setObjectActive( current_object, true );
 
 }
 
@@ -798,23 +643,27 @@ void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, dou
         if( has_curve_ == true ) return;
     }
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-    {
-        //put some code?
-    }
-
-    else
-        clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , depth_ );
+    clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , depth_ );
 
 }
 
 
 void Controller::updateObjectsCurvesInCrossSection( double depth_ )
 {
+
     for( auto it_: model.objects )
     {
         updateObjectCurveInCrossSection( it_.first, depth_ );
     }
+
+
+//    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+//    std::size_t number_of_actives_ = actives_.size();
+
+//    for ( std::size_t j = 0; j < number_of_actives_; ++j )
+//    {
+//        updateObjectCurveInCrossSection( actives_[ j ], depth_ );
+//    }
 
 }
 
@@ -867,7 +716,11 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
         has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
     }
 
-    if( has_curve_ == false ) return;
+    if( has_curve_ == false )
+    {
+        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
+        return;
+    }
 
     PolyCurve curve_( vertices_, edges_ );
     ObjectPtr& obj_ = model.objects[ index_ ];
@@ -883,6 +736,8 @@ void Controller::updateObjectCurves( const std::size_t& index_ )
 {
 
     Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
+
+    updateObjectCurveInCrossSection( index_, csection->getDepth() );
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -905,13 +760,16 @@ void Controller::updateObjectCurves( const std::size_t& index_ )
 
 void Controller::updateObjectSurface( const std::size_t& index_ )
 {
-    // not needed to check its existence, since the id already came from the list of objects
-
     std::vector< double > vertices_;
     std::vector< std::size_t > faces_;
 
+    ObjectPtr obj_ = model.objects[ index_ ];
+
     bool has_surface_ = rules_processor.getMesh( index_, vertices_, faces_ );
-    if( has_surface_  == false ) return;
+    if( has_surface_  == false )
+    {
+        obj_->removeSurface();
+    }
 
     std::vector< double > normals_;
     rules_processor.getNormals( index_, normals_ );
@@ -920,8 +778,6 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     surface_.setVertices( vertices_ );
     surface_.setFaces( faces_ );
     surface_.setNormals( normals_ );
-
-    ObjectPtr obj_ = model.objects[ index_ ];
     obj_->setSurface( surface_ );
 
 
@@ -939,72 +795,11 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
 void Controller::updatePreviewSurface()
 {
-    ObjectPtr obj_ = model.objects[ current_object ];
+    rules_processor.testSurfaceInsertion();
 
-    std::map< double, PolyCurve > curves_ = obj_->getCurves();
-
-    std::cout << "Preview surface from object: " << current_object << std::endl << std::flush;
-    std::cout << "\tIt has n = " << curves_.size() << " curves -- " << std::flush;
-
-    std::vector< double > points3d_;
-
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-    {
-        for( auto it_: curves_ )
-        {
-            double depth_ = it_.first;
-            std::cout <<  depth_ << " " << std::flush;
-
-            PolyCurve curve_ = it_.second;
-            std::vector< double > points_ = curve_.getPointsSwapped();
-            std::size_t number_ = points_.size()/2;
-
-            for( auto i = 0; i < number_; ++i )
-            {
-                points3d_.push_back( depth_ );
-                points3d_.push_back( points_[ 2*i ] );
-                points3d_.push_back( points_[ 2*i + 1 ] );
-            }
-
-        }
-    }
-
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-    {
-        // code here
-        return;
-    }
-
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
-        for( auto it_: curves_ )
-        {
-            double depth_ = it_.first;
-            std::cout <<  depth_ << " " << std::flush;
-
-            PolyCurve curve_ = it_.second;
-            std::vector< double > points_ = curve_.getPoints();
-            std::size_t number_ = points_.size()/2;
-
-            for( auto i = 0; i < number_; ++i )
-            {
-                points3d_.push_back( points_[ 2*i ] );
-                points3d_.push_back( points_[ 2*i + 1 ] );
-                points3d_.push_back( depth_ );
-            }
-        }
-    }
-
-    std::cout << std::endl << std::flush;
-
-
-    applyStratigraphicRule();
-    bool surface_created_ = rules_processor.testSurface( current_object, points3d_ );
+    bool surface_created_ = createObjectSurface();
     if( surface_created_ == false )
-    {
-        obj_->removed();
         return;
-    }
 
     updateObjectSurface( current_object );
 }
@@ -1251,7 +1046,7 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
 void Controller::initRulesProcessor()
 {
     updateBoundingBoxRulesProcessor();
-    rules_processor.truncate();
+    rules_processor.removeAboveIntersection();
     setMeshResolution( Controller::MeshResolution::MEDIUM );
 
 }
