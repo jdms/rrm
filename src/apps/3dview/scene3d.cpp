@@ -155,8 +155,9 @@ void Scene3d::updateStratigraphies()
 {
     context->makeCurrent( surface );
     for( auto it: stratigraphies )
+    {
         (it.second)->update();
-
+    }
     emit updateCanvas();
 
 }

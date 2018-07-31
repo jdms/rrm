@@ -743,7 +743,7 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
         last_surface_inserted_is_a_test_ = false;
     }
 
-    if ( testing_surface_insertion_ = true )
+    if ( testing_surface_insertion_ == true )
     {
         modeller_.disableGeologicRules();
     }

@@ -25,7 +25,7 @@
 
 Object::Object()
 {
-//    defineIndex();
+    defineIndex();
     initialize();
 
     std::cout << "Creating object " << this << std::endl << std::flush;
@@ -236,11 +236,11 @@ void Object::removed()
 
 
 
-//void Object::defineIndex()
-//{
-//    index = number_of_objects;
-//    number_of_objects++;
-//}
+void Object::defineIndex()
+{
+    index = number_of_objects;
+    number_of_objects++;
+}
 
 
 void Object::setType( const Settings::Objects::ObjectType &type_ )
@@ -311,6 +311,7 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
     user_entered.insert( csection_id_ );
 
     setVisible( true );
+    setActive( true );
     return true;
 }
 
@@ -343,6 +344,9 @@ bool Object::removeCurve( double csection_id_ )
 
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
+    if( csection_curves1.empty() == true )
+        setVisible( true );
+
     csection_curves1[ csection_id_]  = curve_;
 }
 
