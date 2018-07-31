@@ -10,6 +10,7 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
 {
     raw = raw_;
     csection_direction = dir_;
+    csection_depth = depth_;
     setStyle( Qt::PenStyle::DotLine );
 }
 

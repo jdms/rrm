@@ -159,6 +159,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
         csection->setDepth( model.volume->getLenght() );
     }
 
+
     updateModel();
 }
 
@@ -497,7 +498,7 @@ bool Controller::commitObjectSurface()
 
     if( status_ == false )
     {
-        rules_processor.testSurfaceInsertion();
+//        rules_processor.testSurfaceInsertion();
         return false;
     }
 
@@ -518,15 +519,33 @@ bool Controller::createObjectSurface()
     ObjectPtr obj_ = model.objects[ current_object ];
     bool surface_created_ = false;
 
-    if( obj_->getNumberOfCrossSections() < 2 )
+    if( obj_->getNumberOfCrossSections() == 0 ) return false;
+
+    bool single_csection_ = ( obj_->getNumberOfCrossSections() == 1 );
+    bool is_level_curves_ = ( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y );
+    bool is_general_surface_ = ( !single_csection_ || is_level_curves_ );
+
+
+    if( is_general_surface_ == true )
+        surface_created_ = createGeneralSurface();
+    else
     {
         if( obj_->hasTrajectory() == false )
             surface_created_ = createLinearExtrudedSurface();
         else
             surface_created_ = createExtrudedSurface();
     }
-    else
-        surface_created_ = createGeneralSurface();
+
+
+//    if( obj_->getNumberOfCrossSections() < 2 )
+//    {
+//        if( obj_->hasTrajectory() == false )
+//            surface_created_ = createLinearExtrudedSurface();
+//        else
+//            surface_created_ = createExtrudedSurface();
+//    }
+//    else
+//        surface_created_ = createGeneralSurface();
 
 
     return surface_created_;
@@ -564,7 +583,6 @@ bool Controller::createExtrudedSurface()
     {
          surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
     }
-
 
     else if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
@@ -614,10 +632,13 @@ bool Controller::createLinearExtrudedSurface()
 
 void Controller::updateModel()
 {
-    setObjectsActive( false );
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
     std::size_t number_of_actives_ = actives_.size();
+    if( number_of_actives_ == 0 ) return;
+
+
+    setObjectsActive( false );
 
     for ( std::size_t j = 0; j < number_of_actives_; ++j )
     {

@@ -24,11 +24,11 @@ void View3dInterface::createView3dWindow()
     controller3d = new View3dController();
 
     canvas3d = new Canvas3d();
-//    canvas3d->show();
+    canvas3d->show();
     sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
 
     QHBoxLayout* hb_central_widget = new QHBoxLayout();
-    hb_central_widget->addWidget( canvas3d );
+//    hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
     QWidget* central_widget = new QWidget();
