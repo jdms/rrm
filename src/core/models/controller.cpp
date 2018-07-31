@@ -1293,6 +1293,7 @@ void Controller::clear()
     csection_stepz = 1.0;
 
     last_trajectory.clear();
+    rules_processor.clear();
 }
 
 
