@@ -30,14 +30,11 @@
 #include <QGraphicsView>
 
 #include "./src/core/widgets/canvasstack.h"
-#include "sketchscene.h"
-
-//TODO: remove dependence from mainwindow
 #include "./core/definitions/constants.hpp"
 #include "./src/core/widgets/color_picker.h"
 
 #include "sketchingcanvas.h"
-
+#include "sketchscene.h"
 
 //class QGraphicsView;
 class QWheelEvent;
@@ -61,6 +58,12 @@ class SketchWindow: public QMainWindow
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
 
+
+    public slots:
+
+        void updateColorWidget( int red_, int green_, int blue_ );
+
+
     signals:
 
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
@@ -68,6 +71,8 @@ class SketchWindow: public QMainWindow
         void createObject();
 
         void useLastTrajectory();
+
+        void defineColorCurrent( int red_, int green_, int blue_ );
 
 
 
@@ -87,6 +92,8 @@ class SketchWindow: public QMainWindow
         CanvasStack* fixed_csections_canvas = nullptr;
 
         SketchingCanvas* topviewcanvas = nullptr;
+
+        ColorPicker *cp_color = nullptr;
 
         QToolBar* tb_sketch = nullptr;
         QAction* ac_sketch_color = nullptr;
@@ -122,7 +129,7 @@ class SketchWindow: public QMainWindow
 //        QGraphicsView* tv_main = nullptr;
 
 
-//        ColorPicker *cp_color;
+//
 
 //        QAction* ac_discard;
 //        QAction* ac_commit;

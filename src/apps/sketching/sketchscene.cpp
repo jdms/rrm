@@ -205,13 +205,14 @@ void SketchScene::submitSketch()
 }
 
 
-void SketchScene::setSketchColor()
+void SketchScene::setSketchColor( const QColor& color_ )
 {
     std::cout << "Changing sketch color..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
+    sketch->setColor( color_ );
 
-    sketch->setColor( 255, 0, 0 );
+//    emit defineCurrentColor( color_.red(), color_.green(), color_.blue() );
     update();
 }
 

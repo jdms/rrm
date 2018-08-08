@@ -11,7 +11,13 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
     raw = raw_;
     csection_direction = dir_;
     csection_depth = depth_;
+
+    int r_, g_, b_;
+    raw->getColor( r_, g_, b_ );
+
+    setColor( r_, g_, b_ );
     setStyle( Qt::PenStyle::DotLine );
+
 }
 
 
@@ -29,7 +35,6 @@ void StratigraphyItem::setCrossSection( const Settings::CrossSection::CrossSecti
 }
 
 
-
 void StratigraphyItem::update()
 {
     updateCurve();
@@ -43,6 +48,10 @@ void StratigraphyItem::updateCurve()
 
     if( raw->isDone() )
         resetToDefaultStyle();
+
+    int r_, g_, b_;
+    raw->getColor( r_, g_, b_ );
+    setColor( r_, g_, b_ );
 
     prepareGeometryChange();
 

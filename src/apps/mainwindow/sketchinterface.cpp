@@ -69,6 +69,21 @@ void SketchInterface::createSketchingActions()
 
 
 
+    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
+    {
+        window->app->defineCurrentColor( red_, green_, blue_ );
+        if( sketch_topview_window == nullptr) return;
+        sketch_topview_window->updateColorWidget( red_, green_, blue_ );
+    } );
+
+    connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
+    {
+        window->app->defineCurrentColor( red_, green_, blue_ );
+        if( sketch_window == nullptr) return;
+        sketch_window->updateColorWidget( red_, green_, blue_ );
+    } );
+
+
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
 

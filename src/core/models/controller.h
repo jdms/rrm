@@ -197,6 +197,9 @@ class Controller
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
+
+        void setCurrentColor( int red_, int green_, int blue_ );
+
         void clear();
 
         bool undo();
@@ -246,6 +249,16 @@ class Controller
             std::map< std::size_t, Domain > domains;
 
         } model;
+
+
+        struct Color
+        {
+
+            int red = 255;
+            int green = 0;
+            int blue = 0;
+
+        } current_color;
 
 
 

@@ -98,7 +98,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void cancelSketch();
         void submitSketch();
-        void setSketchColor();
+        void setSketchColor( const QColor& color_ );
         void endObject();
 
         void setSketchingMode();
@@ -119,9 +119,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void sketchDone( const PolyCurve& curve_,
                          const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Y, double depth_ = 0 );
         void createObject();
-
-
-
 
 
     protected:
