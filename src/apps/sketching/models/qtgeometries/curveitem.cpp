@@ -15,6 +15,7 @@ QRectF CurveItem::boundingRect() const
     return curve.boundingRect();
 }
 
+
 void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ )
 {
     QPainterPathStroker stroker_;
@@ -62,10 +63,12 @@ bool CurveItem::add( const QPointF& p_ )
     return true;
 }
 
+
 bool CurveItem::hasSubpaths()
 {
     return ( curve.toSubpathPolygons().size() > 1/*MIN_SUBPATHS_OVERSKETCH*/ );
 }
+
 
 void CurveItem::connect()
 {
@@ -79,8 +82,9 @@ void CurveItem::connect()
     prepareGeometryChange();
     QList< QPolygonF > subpaths_ = curve.toSubpathPolygons();
     curve = SketchLibraryWrapper::overSketchQt( subpaths_.at( 0 ), subpaths_.at( 1 ) );
-    update();
+    QGraphicsPathItem::update();
 }
+
 
 void CurveItem::setDone()
 {
@@ -88,10 +92,12 @@ void CurveItem::setDone()
     is_done = true;
 }
 
+
 bool CurveItem::isDone() const
 {
     return is_done;
 }
+
 
 void CurveItem::setCurve( const PolyCurve& curve_ )
 {
@@ -150,8 +156,9 @@ void CurveItem::clear()
     setPath( curve );
 
     is_done = true;
-    update();
+    QGraphicsPathItem::update();
 }
+
 
 bool CurveItem::isEmpty() const
 {
@@ -164,8 +171,9 @@ void CurveItem::setColor( int r_, int g_, int b_ )
     line_color.red = r_;
     line_color.green = g_;
     line_color.blue = b_;
-    update();
+    QGraphicsPathItem::update();
 }
+
 
 void CurveItem::getColor( int& r_, int& g_, int& b_ )
 {
@@ -180,8 +188,9 @@ void CurveItem::setColor( const QColor& color_ )
     line_color.red = color_.red();
     line_color.green = color_.green();
     line_color.blue = color_.blue();
-    update();
+    QGraphicsPathItem::update();
 }
+
 
 QColor CurveItem::getColor() const
 {
@@ -195,6 +204,7 @@ void CurveItem::setWidth( int width_ )
     update();
 }
 
+
 int CurveItem::getWidth() const
 {
     return line_width;
@@ -204,22 +214,27 @@ int CurveItem::getWidth() const
 void CurveItem::setStyle( const Qt::PenStyle& style_ )
 {
     line_style = style_;
+    QGraphicsPathItem::update();
 }
+
 
 Qt::PenStyle CurveItem::getStyle() const
 {
     return line_style;
 }
 
+
 void CurveItem::resetToDefaultColor()
 {
     line_color = DEFAULT_LINE_COLOR;
 }
 
+
 void CurveItem::resetToDefaultWidth()
 {
     line_width = DEFAULT_LINE_WIDTH;
 }
+
 
 void CurveItem::resetToDefaultStyle()
 {

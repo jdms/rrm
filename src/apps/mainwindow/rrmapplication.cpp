@@ -201,6 +201,13 @@ void RRMApplication::previewLastTrajectory()
     emit updateObjects();
 }
 
+
+void RRMApplication::defineCurrentColor( int red_, int green_, int blue_ )
+{
+    controller->setCurrentColor( red_, green_, blue_ );
+    emit updateObjects();
+}
+
 void RRMApplication::undo()
 {
     bool status_ = controller->undo();

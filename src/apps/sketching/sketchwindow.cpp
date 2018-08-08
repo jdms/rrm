@@ -35,6 +35,8 @@ SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 
 void SketchWindow::createToolBar()
 {
+    cp_color = new ColorPicker( this );
+
 
     tb_sketch = addToolBar( "Edit Sketch" );
 
@@ -43,7 +45,8 @@ void SketchWindow::createToolBar()
     ac_submit_sketch = new QAction( "Submit", this );
     ac_end_object = new QAction( "End", this );
 
-    tb_sketch->addAction( ac_sketch_color );
+    tb_sketch->addWidget( cp_color );
+//    tb_sketch->addAction( ac_sketch_color );
     tb_sketch->addAction( ac_cancel_sketch );
     tb_sketch->addAction( ac_submit_sketch );
     tb_sketch->addAction( ac_end_object );
@@ -90,7 +93,14 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     tb_trajectory->setVisible( false );
 
-    connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
+
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
+    {
+        scene_->setSketchColor( color_ );
+        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
+    } );
+
+
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
@@ -99,7 +109,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
-    connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
+    connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    { emit addCurve( curve_, dir_, depth_ ); }  );
+
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 
     return scene_;
@@ -115,7 +127,12 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     tb_trajectory->setVisible( true );
 
-    connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
+
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
+    {   scene_->setSketchColor( color_ );
+        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
+    } );
+
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
@@ -147,7 +164,16 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_ )
     fixed_csections_canvas->addElement( depth_, canvas_ );
     fixed_csections_canvas->setVisible( true );
 
-    connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
+
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
+    {   scene_->setSketchColor( color_ );
+        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() ); } );
+
+
+
+//    connect( cp_color, &ColorPicker::colorSelected, scene_.get(), &SketchScene::setSketchColor );
+////    connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
+
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
@@ -170,8 +196,19 @@ void SketchWindow::removeCanvas( double depth_ )
 }
 
 
+void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
+{
+    if( cp_color == nullptr ) return;
+    cp_color->setColor( QColor( red_, green_, blue_ ) );
+}
+
+
 SketchWindow::~SketchWindow()
 {
+
+    delete cp_color;
+    cp_color = nullptr;
+
     delete fixed_csections_canvas;
     fixed_csections_canvas = nullptr;
 

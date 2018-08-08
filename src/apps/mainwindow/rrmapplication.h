@@ -88,6 +88,9 @@ class RRMApplication: public QObject
 
         void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
+
+        void defineCurrentColor( int red_, int green_, int blue_ );
+
         void undo();
         void redo();
         void checkUndoRedo();

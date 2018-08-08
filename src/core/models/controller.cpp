@@ -1215,6 +1215,17 @@ void Controller::applyStratigraphicRule()
 /// Application Methods
 ///
 
+void Controller::setCurrentColor( int red_, int green_, int blue_ )
+{
+    current_color.red = red_;
+    current_color.green = green_;
+    current_color.blue = blue_;
+
+    ObjectPtr& obj_ = model.objects[ current_object ];
+    obj_->setColor( red_, green_, blue_ );
+
+}
+
 
 bool Controller::undo()
 {
