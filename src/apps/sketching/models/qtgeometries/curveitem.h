@@ -102,6 +102,9 @@ class CurveItem : public QGraphicsPathItem
         void setCurve( const PolyCurve& curve_ );
         PolyCurve getCurve() const;
 
+        void getMonotonicX();
+        void getMonotonicY();
+
         virtual void update(){}
 
 

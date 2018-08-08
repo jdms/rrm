@@ -197,6 +197,7 @@ void SketchScene::submitSketch()
 
     if( sketch == nullptr ) return;
 
+//    processSketch();
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
 
@@ -212,6 +213,22 @@ void SketchScene::setSketchColor()
 
     sketch->setColor( 255, 0, 0 );
     update();
+}
+
+
+void SketchScene::processSketch()
+{
+    if( sketch->isEmpty() == true ) return;
+
+
+    if( ( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
+            )
+        sketch->getMonotonicY();
+
+    else
+        sketch->getMonotonicX();
+
+
 }
 
 

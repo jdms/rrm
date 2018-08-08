@@ -103,22 +103,18 @@ void Controller::resizeVolume(double width_, double height_, double depth_)
 {
     model.volume->setDimensions( width_, height_, depth_ );
     updateBoundingBoxRulesProcessor();
-    //    app->updateVolume();
 }
 
 
 void Controller::setVolumeName( const std::string& name_ )
 {
     model.volume->setName(name_);
-
-    //    volume->setName( name_ );
 }
 
 
 void Controller::setVolumeVisibility( bool status_ )
 {
     model.volume->setVisible(status_);
-    //    app->updateVolume();
 }
 
 
@@ -427,10 +423,17 @@ bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirection
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->setCrossSectionDirection( dir_ );
 
+    Curve2D curve_proc_ = curve_.getCurves2D()[0];
+
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
         depth_ = topview->getDepth();
+    else
+        curve_proc_= SketchLibrary1::monotonicInX( curve_proc_ );
 
-    bool added_curve_ = obj_->addCurve( depth_, curve_ );
+
+    curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
+
+    bool added_curve_ = obj_->addCurve( depth_, PolyCurve( curve_proc_ ) );
     if ( added_curve_ == false ) return false;
 
     updatePreviewSurface();
@@ -467,7 +470,11 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 {
 
     ObjectPtr& obj_ = model.objects[ current_object ];
-    obj_->addTrajectory(curve_);
+
+    Curve2D curve_proc_= SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
+    curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
+
+    obj_->addTrajectory( PolyCurve( curve_proc_ ) );
 
 }
 
@@ -535,17 +542,6 @@ bool Controller::createObjectSurface()
         else
             surface_created_ = createExtrudedSurface();
     }
-
-
-//    if( obj_->getNumberOfCrossSections() < 2 )
-//    {
-//        if( obj_->hasTrajectory() == false )
-//            surface_created_ = createLinearExtrudedSurface();
-//        else
-//            surface_created_ = createExtrudedSurface();
-//    }
-//    else
-//        surface_created_ = createGeneralSurface();
 
 
     return surface_created_;

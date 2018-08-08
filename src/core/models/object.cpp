@@ -88,7 +88,6 @@ void Object::setIndex( std::size_t id_ )
     index = id_;
     number_of_objects = id_ + 1;
 
-    // index =  id_
 }
 
 std::size_t Object::getIndex() const
