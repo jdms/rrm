@@ -84,7 +84,6 @@ void CurveItem::connect()
 
 void CurveItem::setDone()
 {
-//    resetToDefaultStyle();
     setPath( curve );
     is_done = true;
 }
@@ -116,6 +115,32 @@ PolyCurve CurveItem::getCurve() const
     Curve2D curve_ = SketchLibraryWrapper::fromQtToCurve2D( curve.toSubpathPolygons()[0] );
     return PolyCurve( curve_ );
 }
+
+
+void CurveItem::getMonotonicX()
+{
+    if( isEmpty() == true ) return;
+
+    Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
+    curve_ = SketchLibrary1::monotonicInX( curve_ );
+    curve_ = SketchLibrary1::smooth( curve_ );
+    setCurve( PolyCurve( curve_ ) );
+
+}
+
+
+void CurveItem::getMonotonicY()
+{
+
+    if( isEmpty() == true ) return;
+
+    Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
+    curve_ = SketchLibrary1::monotonicInY( curve_ );
+    curve_ = SketchLibrary1::smooth( curve_ );
+    setCurve( PolyCurve( curve_ ) );
+
+}
+
 
 void CurveItem::clear()
 {

@@ -126,6 +126,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
     protected:
 
+        void processSketch();
+
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event_ );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ );
         virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent* event_ );
