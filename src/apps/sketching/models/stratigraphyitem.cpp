@@ -44,7 +44,7 @@ void StratigraphyItem::update()
 void StratigraphyItem::updateCurve()
 {
     if( raw == nullptr ) return;
-    if( raw->isEmpty() == true || raw->isActive() == false ) return;
+//    if( raw->isEmpty() == true || raw->isActive() == false ) return;
 
     if( raw->isDone() )
         resetToDefaultStyle();

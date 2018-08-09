@@ -211,6 +211,12 @@ bool Object::isVisible() const
 void Object::setActive( bool status_ )
 {
     active = status_;
+
+    if( ( status_ == false ) && ( isDone() == true ) )
+    {
+        removed();
+    }
+
 }
 
 bool Object::isActive() const
@@ -499,7 +505,6 @@ void Object::removeCrossSectionCurves()
 }
 
 
-
 bool Object::addTrajectory( const PolyCurve& traj_ )
 {
     if( isTrajectoryAdmissible() == false ) return false;
@@ -524,6 +529,12 @@ bool Object::hasTrajectory() const
     return !trajectory.isEmpty();
 }
 
+
+void Object::removeCurves()
+{
+    removeCrossSectionCurves();
+    removeTrajectory();
+}
 
 
 void Object::setSurface( const Surface& surface_ )
