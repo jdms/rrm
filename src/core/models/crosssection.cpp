@@ -238,6 +238,8 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
 
     getMaxMin( maxx, maxy, maxz, minx, miny, minz );
 
+    std::cout << "Updating main cross-section in Y direction: " << depth << std::endl;
+
     if( direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         if( depth > maxz )
@@ -253,6 +255,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
     }
     else if( direction == Settings::CrossSection::CrossSectionDirections::Y )
     {
+
 
         if( depth > maxy )
             depth = maxy;

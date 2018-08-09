@@ -67,7 +67,14 @@ void StratigraphyItem::changeDirection()
 
 
     if( csection_direction == dir_ )
-        setCurve( raw->getCurve( csection_depth ) );
+    {
+        if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
+        {
+            setCurves( raw->getCurves() );
+        }
+        else
+            setCurve( raw->getCurve( csection_depth ) );
+    }
     else
     {
         if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )

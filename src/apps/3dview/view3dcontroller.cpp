@@ -61,6 +61,20 @@ void View3dController::updateMainCrossSection()
 }
 
 
+void View3dController::setMainViewCrossSection()
+{
+    const CrossSectionPtr& csection_ = controller->getMainCrossSection();
+    scene->changeCrossSectionDirection( csection_ );
+}
+
+
+void View3dController::setTopViewCrossSection()
+{
+    const CrossSectionPtr& csection_ = controller->getTopViewCrossSection();
+    scene->changeCrossSectionDirection( csection_ );
+}
+
+
 
 void View3dController::addStratigraphy( const ObjectPtr& obj_ )
 {

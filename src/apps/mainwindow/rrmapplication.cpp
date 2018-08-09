@@ -56,6 +56,7 @@ void RRMApplication::setMainWindow( MainWindow* const& window_ )
     setController();
 }
 
+
 void RRMApplication::setController()
 {
     controller = window->controller;
@@ -71,17 +72,19 @@ void RRMApplication::init()
     controller->init();
     emit startApplication();
 
-    setDiscretization();
+    setDiscretization( Settings::CrossSection::CrossSectionDirections::Z );
 
 }
 
 
-void RRMApplication::setDiscretization()
+void RRMApplication::setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
+    bool inverted_ = ( dir_ == Settings::CrossSection::CrossSectionDirections::Y? true:false );
+
     emit updateDiscretization( controller->getCurrentDiscretization() );
     double min_ = 0.0, max_ = 0.0;
     controller->getCurrentRange( min_, max_ );
-    emit updateRange( min_, max_ );
+    emit updateRange( min_, max_, inverted_ );
 }
 
 
@@ -104,8 +107,14 @@ void RRMApplication::moveMainCrossSection( double depth_ )
 void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ )
 {
     controller->changeMainCrossSectionDirection( dir_ );
-    setDiscretization();
-    emit updateMainCrossSection();
+    setDiscretization( dir_ );
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+        emit changeToTopViewDirection();
+    else
+        emit changeToCrossSectionDirection();
+
+//    emit updateMainCrossSection();
 }
 
 
@@ -207,6 +216,7 @@ void RRMApplication::defineCurrentColor( int red_, int green_, int blue_ )
     controller->setCurrentColor( red_, green_, blue_ );
     emit updateObjects();
 }
+
 
 void RRMApplication::undo()
 {

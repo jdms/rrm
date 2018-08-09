@@ -62,6 +62,7 @@ class Scene3d: public QObject
         void updateVolume();
 
         void addMainCrossSection( const std::shared_ptr< CrossSection>& csection_ );
+        void changeCrossSectionDirection( const std::shared_ptr< CrossSection>& raw_ );
         void updateMainCrossSection();
 
         void addCrossSection( const std::shared_ptr< CrossSection >& csection_ );

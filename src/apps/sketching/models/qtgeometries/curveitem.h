@@ -100,6 +100,7 @@ class CurveItem : public QGraphicsPathItem
         void resetToDefaultStyle();
 
         void setCurve( const PolyCurve& curve_ );
+        void setCurves( const std::map< double, PolyCurve >& curves_ );
         PolyCurve getCurve() const;
 
         void getMonotonicX();
