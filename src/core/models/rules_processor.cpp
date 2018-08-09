@@ -854,7 +854,14 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data
         )
 {
-    return false;
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
+    {
+        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts);
+    };
+
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data);
+
+    return success;
 }
 
 bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
@@ -862,7 +869,17 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &path_curve_point_data 
         )
 {
-    return false;
+    auto surfaceCreator = [this]( 
+            size_t s_id, const std::vector<double> &cross_sec_pts, 
+            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    {
+        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts);
+    };
+
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+            cross_section_depth, path_curve_point_data);
+
+    return success;
 }
 
 

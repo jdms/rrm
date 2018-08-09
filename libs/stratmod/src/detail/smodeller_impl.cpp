@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 #include "smodeller_impl.hpp"
 
@@ -33,10 +33,9 @@ bool SModellerImplementation::init()
             static_cast<PlanarSurface::Natural>( discWidth_ ), 
             static_cast<PlanarSurface::Natural>( discLenght_ ) );
 
-    PlanarSurface::setOutputCoordinatesOrdering( 
-            PlanarSurface::Coordinate::WIDTH,
-            PlanarSurface::Coordinate::DEPTH, 
-            PlanarSurface::Coordinate::HEIGHT); 
+    /*         PlanarSurface::Coordinate::WIDTH, */
+    /*         PlanarSurface::Coordinate::DEPTH, */ 
+    /*         PlanarSurface::Coordinate::HEIGHT); */ 
 
     initialized_ = true; 
 
@@ -236,7 +235,7 @@ bool SModellerImplementation::isInitialized()
 
 bool SModellerImplementation::insertSurface( const std::vector<double> &point_data, size_t surface_id, 
         const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
-        bool extruded_surface )
+        bool extruded_surface, bool orthogonally_oriented  )
 {
     INFO( "Got into pimpl_->insertSurface(...)" );
 
@@ -262,7 +261,7 @@ bool SModellerImplementation::insertSurface( const std::vector<double> &point_da
     }
 
     /* Create a surface */
-    PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(extruded_surface);
+    PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(extruded_surface, orthogonally_oriented);
 
     sptr->setOrigin(origin_); 
     sptr->setLenght(lenght_); 
@@ -300,7 +299,8 @@ bool SModellerImplementation::insertSurface( const std::vector<double> &point_da
 bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id, 
             const std::vector<double> &cross_section_curve, double cross_section_depth,
             const std::vector<double> &path_curve,
-            const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+            const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
+            bool orthogonally_oriented )
 {
     INFO( "Got into pimpl_->insertSurface(...)" );
 
@@ -334,7 +334,7 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
 
     /* Create a surface */
     bool extruded_surface = true;
-    PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(extruded_surface);
+    PlanarSurface::Ptr sptr = std::make_shared<PlanarSurface>(extruded_surface, orthogonally_oriented);
 
     sptr->setOrigin(origin_); 
     sptr->setLenght(lenght_); 
@@ -394,17 +394,17 @@ bool SModellerImplementation::commitSurface(
     {
         /* std::cout << "Inserting surface " << given_index << "\n"; */
         /* std::cout << "Ubounds: "; */
-        for ( auto s : ubounds )
-        {
+        /* for ( auto s : ubounds ) */
+        /* { */
             /* std::cout << s << ", "; */
-        }
+        /* } */
         /* std::cout << "\n"; */
 
         /* std::cout << "Lbounds: "; */
-        for ( auto s : lbounds )
-        {
+        /* for ( auto s : lbounds ) */
+        /* { */
             /* std::cout << s << ", "; */
-        }
+        /* } */
         /* std::cout << "\n"; */
 
         status = container_.addSurface(sptr, index, ubounds, lbounds);

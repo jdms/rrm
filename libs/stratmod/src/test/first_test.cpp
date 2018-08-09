@@ -7,7 +7,7 @@
 #include "sutilities.hpp"
 
 #define TESTING
-#include "testing_definitions.hpp" 
+#include "detail/testing_definitions.hpp" 
 #include "smodeller.cpp" 
 #include "sutilities.cpp"
 
@@ -78,7 +78,7 @@ TEST_CASE( "class StratigraphyModeller first use", "[modeller]" )
     /* Create modeller and apply geologic rules.    */
     /************************************************/
 
-    StratigraphyModeller modeller; 
+    SModeller modeller; 
 
     /* A call to the tryChangeDiscretization(...) method will only return true if
      * the model is empty.
@@ -100,7 +100,7 @@ TEST_CASE( "class StratigraphyModeller first use", "[modeller]" )
     modeller.useDefaultCoordinateSystem();
 
     modeller.setOrigin(0., 0., 0.);
-    modeller.setLenght(1., 1., 1.);
+    modeller.setSize(1., 1., 1.);
 
 
     /* We begin the creation of the model by creating what should be the
@@ -168,7 +168,7 @@ TEST_CASE( "class StratigraphyModeller first use", "[modeller]" )
     /************************************************/
 
     size_t numX, numY; 
-    StratigraphyUtilities modeller_util(modeller);
+    SUtilities modeller_util(modeller);
 
     numX = modeller_util.getNumVerticesWidth();
     numY = modeller_util.getNumVerticesDepth();

@@ -78,6 +78,8 @@ struct Point2 {
     NaturalType size() const { return ::size(data); } 
 }; 
 
+using Vector2 = Point2;
+
 struct Point4 { 
     union { 
         RealType data[4];
@@ -90,6 +92,9 @@ struct Point4 {
         struct {
             RealType u, v, w, s;
         }; 
+        struct {
+            RealType m11, m12, m21, m22;
+        };
         struct { 
             RealType width, height, depth, time; 
         }; 
@@ -98,10 +103,17 @@ struct Point4 {
     RealType& operator[]( NaturalType i ) { return data[i]; }; 
     RealType  operator[]( NaturalType i ) const { return data[i]; }; 
     NaturalType size() const { return ::size(data); } 
+    /* friend RealType operator()( NaturalType i, NaturalType j) ; */
 };
 
 using Point3 = Point4; 
 
+class Matrix22 : public Point4 {
+    RealType operator()( NaturalType i, NaturalType j )
+    {
+        return data[i + 2*j];
+    }
+};
 
 template<typename Archive>
 void serialize( Archive &ar, Point2 &p, const std::int32_t version )

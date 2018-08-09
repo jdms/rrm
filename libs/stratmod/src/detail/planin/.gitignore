@@ -31,6 +31,7 @@ argh/
 [Rr]elease/
 [Rr]eleases/
 [Bb]uild*/
+*build/
 
 
 ############

@@ -3,7 +3,7 @@
 
 #include "smodeller.hpp"
 #include "sutilities.hpp"
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 bool exportVTKFile( std::string filename, std::vector<double> &, std::vector<size_t> &, std::vector<int> &);
 

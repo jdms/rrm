@@ -24,7 +24,7 @@
 # Preliminaries  
 #####################################################################
 
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 project(PlanInLib CXX)
 
@@ -144,26 +144,26 @@ endif()
 # Finally a way to use OpenMP with AppleClang!  (It's still a hack, though...)
 # Let's keep the old hack commented out in case this breaks.  
 
-#if(PLANIN_BUILD_USING_OPENMP)
-#    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
-#    find_package(OpenMP REQUIRED)
-#endif()
-
-
 if(PLANIN_BUILD_USING_OPENMP)
-    if (MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
-
-    else()
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-
-        endif()
-    endif()
+    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+    find_package(OpenMP REQUIRED)
 endif()
+
+
+#if(PLANIN_BUILD_USING_OPENMP)
+#    if (MSVC)
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+#
+#    else()
+#        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+#
+#        else()
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+#
+#        endif()
+#    endif()
+#endif()
 
 
 ###############################################
@@ -264,8 +264,11 @@ set(PLANIN_LIB_SOURCES
     ) 
 
 add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})  
-# target_link_libraries(planin OpenMP::OpenMP_CXX ${})
-target_link_libraries(planin) # valid for cmake >= 3.10
+if( ${PLANIN_BUILD_USING_OPENMP} )
+    target_link_libraries(planin OpenMP::OpenMP_CXX ${})
+else()
+    target_link_libraries(planin)
+endif()
 
 if(LOCAL_EIGEN3_INSTALL)
     add_dependencies(planin Eigen3-build)

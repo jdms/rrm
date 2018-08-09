@@ -55,7 +55,7 @@ class PlanarSurface {
 
         using IndicesType = std::array<Natural, 2>; 
 
-        PlanarSurface( bool extruded_surface = false ); 
+        PlanarSurface( bool extruded_surface = false, bool orthogonally_oriented = false ); 
 
         PlanarSurface( const PlanarSurface & ); 
         PlanarSurface& operator=( const PlanarSurface & ) = delete; 
@@ -210,6 +210,7 @@ class PlanarSurface {
         /* Misc */ 
         bool isExtrudedSurface(); 
         bool isPathExtrudedSurface();
+        bool isOrthogonallyOrientedSurface();
 
     private:
         /* Members 'discretization_X' and 'discretization_Y' are supposed to 

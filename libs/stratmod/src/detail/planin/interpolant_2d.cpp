@@ -198,7 +198,7 @@ bool Interpolant2D::interpolate()
         local_fevals.push_back(0.0);
     }
 
-    const double eigenvalues_lower_bound = 1E-9; 
+    const double eigenvalues_lower_bound = 0.01; 
     double aij = 0; 
     Point2 pi, pj; 
     Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); 

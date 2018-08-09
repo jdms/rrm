@@ -33,7 +33,7 @@
 #include <memory>
 #include <cstdint>
 
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 #include "smodeller.hpp"
 
@@ -200,12 +200,13 @@ struct SModellerImplementation
 
     bool insertSurface( const std::vector<double> &point_data, size_t surface_id, 
             const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
-            bool extruded_surface = false );
+            bool extruded_surface = false, bool orthogonally_oriented = false );
     
     bool insertExtrusionAlongPath( size_t surface_id, 
             const std::vector<double> &cross_section_curve, double cross_section_depth,
             const std::vector<double> &path_curve,
-            const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids ); 
+            const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids,
+            bool orthogonally_oriented = false ); 
         
     bool commitSurface( PlanarSurface::Ptr &sptr, size_t given_index, 
             std::vector<size_t> lbounds, std::vector<size_t> ubounds );
