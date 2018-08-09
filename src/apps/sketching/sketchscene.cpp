@@ -197,7 +197,6 @@ void SketchScene::submitSketch()
 
     if( sketch == nullptr ) return;
 
-//    processSketch();
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
 
@@ -211,8 +210,6 @@ void SketchScene::setSketchColor( const QColor& color_ )
 
     if( sketch == nullptr ) return;
     sketch->setColor( color_ );
-
-//    emit defineCurrentColor( color_.red(), color_.green(), color_.blue() );
     update();
 }
 

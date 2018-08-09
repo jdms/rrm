@@ -112,7 +112,7 @@ class Object
         std::vector< double > getCurves3DY();
         std::vector< double > getCurves3DZ();
 
-        void removeCurves() {}
+        void removeCurves();
 
         bool getTrajectory( PolyCurve& traj_ ) const { return false; }
 

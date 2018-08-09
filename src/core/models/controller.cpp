@@ -629,12 +629,12 @@ bool Controller::createLinearExtrudedSurface()
 void Controller::updateModel()
 {
 
+    setObjectsActive( false );
+
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+
     std::size_t number_of_actives_ = actives_.size();
     if( number_of_actives_ == 0 ) return;
-
-
-    setObjectsActive( false );
 
     for ( std::size_t j = 0; j < number_of_actives_; ++j )
     {
@@ -786,6 +786,7 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     if( has_surface_  == false )
     {
         obj_->removeSurface();
+        return;
     }
 
     std::vector< double > normals_;

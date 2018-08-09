@@ -211,12 +211,13 @@ void RRMApplication::defineCurrentColor( int red_, int green_, int blue_ )
 void RRMApplication::undo()
 {
     bool status_ = controller->undo();
-    if( status_ == false ) return;
-
-    emit updateObjects();
 
     checkUndoRedo();
     checkPreserveStatus();
+
+    if( status_ == false ) return;
+    emit updateObjects();
+    emit updateTrajectories();
 
 }
 
@@ -224,12 +225,13 @@ void RRMApplication::undo()
 void RRMApplication::redo()
 {
     bool status_ = controller->redo();
-    if( status_ == false ) return;
-
-    emit updateObjects();
 
     checkUndoRedo();
     checkPreserveStatus();
+
+    if( status_ == false ) return;
+    emit updateObjects();
+
 }
 
 
@@ -245,8 +247,8 @@ void RRMApplication::checkUndoRedo()
 
 void RRMApplication::checkPreserveStatus()
 {
-     bool above_ = true;//controller->isDefineAboveActive();
-     bool below_ = true;//controller->isDefineBelowActive();
+     bool above_ = false;//controller->isDefineAboveActive();
+     bool below_ = false;//controller->isDefineBelowActive();
 
      window->ac_sketch_above->setChecked( above_ );
      window->ac_sketch_below->setChecked( below_ );
