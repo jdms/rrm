@@ -116,7 +116,7 @@ PlanarSurface::Natural PlanarSurface::getDiscretizationY()
     return discretization_Y;
 }
 
-PlanarSurface::PlanarSurface( bool extruded_surface ) : id_(num_instances_) { 
+PlanarSurface::PlanarSurface( bool extruded_surface, bool orthogonally_oriented ) : id_(num_instances_) { 
     /* std::cout << "My id: " << id_ << std::endl; */ 
     ++num_instances_; 
 
@@ -125,7 +125,7 @@ PlanarSurface::PlanarSurface( bool extruded_surface ) : id_(num_instances_) {
 
     /* If Visual Studio 2013 complains with the following line yielding "error C2783" be advised that IT IS A BUG IN VS2013's COMPILER. */ 
     /* The "Visual Studio 2013 update 5" for VS2013 is known to have a fix to the problem. */ 
-    f = std::make_shared<InterpolatedGraph>( extruded_surface );
+    f = std::make_shared<InterpolatedGraph>( extruded_surface, orthogonally_oriented );
     extruded_surface_ = extruded_surface; 
 
     /* If updating VS2013 is not possible, change the "make_shared" call to an explicit call to operator "new". */ 
@@ -1192,7 +1192,8 @@ bool PlanarSurface::rangeCheck( Natural i, Natural j ) {
 
 // PlanarSurface and TetrahedralMeshBuilder disagree on the ordering of the vertices
 PlanarSurface::Natural PlanarSurface::getVertexIndex( Natural i, Natural j ) const { 
-    return ( j + i*nY_ ); 
+    /* return ( j + i*nY_ ); */ 
+    return ( i + j*nX_ ); 
 }
 
 bool PlanarSurface::getVertexIndices( Natural v, IndicesType &indices ) { 
@@ -1200,8 +1201,8 @@ bool PlanarSurface::getVertexIndices( Natural v, IndicesType &indices ) {
         return false; 
     }
 
-    indices[1] = v % nY_; 
-    indices[0] = ( v - indices[1] )/nY_;  
+    indices[0] = v % nX_; 
+    indices[1] = ( v - indices[0] )/nX_;  
 
     return true; 
 }
@@ -1308,12 +1309,17 @@ TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpo
 
 bool PlanarSurface::isExtrudedSurface() 
 { 
-    return extruded_surface_; 
+    return f->isExtrudedSurface(); 
 } 
 
 bool PlanarSurface::isPathExtrudedSurface()
 {
     return f->isPathExtrudedSurface();
+}
+
+bool PlanarSurface::isOrthogonallyOrientedSurface()
+{
+    return f->isOrthogonallyOrientedSurface();
 }
 
 bool PlanarSurface::compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const

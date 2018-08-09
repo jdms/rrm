@@ -26,7 +26,7 @@
 
 unsigned long int InterpolatedGraph::num_instances_ = 0; 
 
-InterpolatedGraph::InterpolatedGraph( bool extruded_surface ) : 
+InterpolatedGraph::InterpolatedGraph( bool extruded_surface, bool orthogonally_oriented ) : 
     id_(num_instances_), 
     f( Kernel(), (extruded_surface == true ? 2 : 3) ),
     path( Kernel(), (extruded_surface == true ? 2 : 3) )
@@ -34,6 +34,7 @@ InterpolatedGraph::InterpolatedGraph( bool extruded_surface ) :
     ++num_instances_;
     dependency_list_.insert(id_); 
     extruded_surface_ = extruded_surface; 
+    orthogonally_oriented_ = orthogonally_oriented;
 
     path_origin = {{{ 0., 0. }}};
 }
@@ -56,6 +57,7 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
     dependency_list_.insert(id_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
+    orthogonally_oriented_ = rhs.orthogonally_oriented_; 
 
     path_origin = rhs.path_origin;
 }
@@ -73,6 +75,7 @@ InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_)
     dependency_list_ = std::move(rhs.dependency_list_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
+    orthogonally_oriented_ = rhs.orthogonally_oriented_; 
 
     path_origin = rhs.path_origin;
 }
@@ -108,20 +111,35 @@ bool InterpolatedGraph::getRawHeight( const Point2 &p, double &height )
         return false; 
     }
 
-    if ( isExtrudedSurface() == true ) 
+    if ( isExtrudedSurface() == true )  
     { 
-        if ( path_is_set_ )
+        if ( !orthogonally_oriented_ ) // i.e. surfaces are extruded along the y direction
         {
-            double origin = path(path_origin.x, 0) - path_origin.y;
-            height = f(p.x - (path(p.y, 0) - origin), 0);
-        }
+            if ( path_is_set_ )
+            {
+                double origin = path(path_origin.x, 0) - path_origin.y;
+                height = f(p.x - (path(p.y, 0) - origin), 0);
+            }
 
-        else
+            else
+            {
+                height = f(p.x, 0.0); 
+            }
+        }
+        else // if ( orthogonally_oriented_ ) // i.e. surfaces are extruded along the x direction
         {
-            height = f(p.x, 0.0); 
+            if ( path_is_set_ )
+            {
+                double origin = path(path_origin.x, 0) - path_origin.y;
+                height = f(p.y - (path(p.x, 0) - origin), 0);
+            }
+
+            else
+            {
+                height = f(p.y, 0.0); 
+            }
         }
     }
-
     else 
     { 
         height = f(p.x, p.y);  
@@ -619,6 +637,11 @@ bool InterpolatedGraph::isExtrudedSurface()
 bool InterpolatedGraph::isPathExtrudedSurface()
 {
     return path_is_set_;
+}
+
+bool InterpolatedGraph::isOrthogonallyOrientedSurface()
+{
+    return orthogonally_oriented_;
 }
 
 bool InterpolatedGraph::compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const

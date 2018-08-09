@@ -3,7 +3,7 @@
 
 #include "smodeller.hpp"
 #include "sutilities.hpp"
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 
 enum callerCodes { 
