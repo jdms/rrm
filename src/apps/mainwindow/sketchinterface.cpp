@@ -109,6 +109,14 @@ void SketchInterface::createSketchingActions()
 //    /*connect( window->app, &RRMApplication::addCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 //    { scontroller->addCrossSe*/(); } );
 
+
+    connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
+    { scontroller->updateMainCrossSection(); } );
+
+    connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
+    { scontroller->updateTopViewCrossSection(); } );
+
+
     connect( window->app, &RRMApplication::addFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
     { scontroller->viewCrossSection( dir_, depth_ ); } );
 

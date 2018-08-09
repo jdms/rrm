@@ -112,6 +112,47 @@ void CurveItem::setCurve( const PolyCurve& curve_ )
 
     setDone();
 
+
+//    curve = QPainterPath();
+//    QPolygonF pol_;
+//    std::size_t number_of_segments = curve_.getNumberOfSegments();
+//    for( std::size_t i = 0; i < number_of_segments; ++i )
+//    {
+//        pol_.united( SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) ) );
+
+//    }
+
+//    curve.addPolygon( pol_ );
+
+//    setDone();
+
+
+}
+
+
+void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_ )
+{
+//    curve = QPainterPath();
+
+
+//    for( auto it_: curves_ )
+//    {
+//        PolyCurve& curve_ = it_.second;
+
+//        std::size_t number_of_segments = curve_.getNumberOfSegments();
+//        for( std::size_t i = 0; i < number_of_segments; ++i )
+//        {
+//            QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+//            curve.addPolygon( pol_ );
+//        }
+
+//    }
+
+
+
+
+//    setDone();
+
 }
 
 

@@ -22,8 +22,13 @@ class View3dController
         void init();
         void setupScene();
 
+        void setMainViewCrossSection();
+        void setTopViewCrossSection();
+
+
         void updateVolume(){}
         void updateMainCrossSection();
+        void updateTopViewCrossSection();
 
         void addStratigraphy( const ObjectPtr& obj_ );
 

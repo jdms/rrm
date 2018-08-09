@@ -72,7 +72,7 @@ class RRMApplication: public QObject
 
     public slots:
 
-        void setDiscretization();
+        void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
         void moveMainCrossSection( double depth_ );
@@ -111,13 +111,17 @@ class RRMApplication: public QObject
         void updateMainCrossSection();
         void updateTopViewCrossSection();
 
+       void changeToTopViewDirection();
+       void changeToCrossSectionDirection();
+
+
         void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
         void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
         void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
 
         void updateDiscretization( const std::size_t& disc_ );
-        void updateRange( double min_, double max_ );
+        void updateRange( double min_, double max_, bool inverted_ = true );
 
         void startApplication();
         void resetApplication();

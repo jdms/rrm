@@ -59,8 +59,12 @@ void View3dInterface::createView3dActions()
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { controller3d->updateVolume(); } );
 
-    connect( window->app, &RRMApplication::updateRange, [=]( double min_, double max_ )
-    { sl_depth_csection->setRange( min_, max_ ); } );
+    connect( window->app, &RRMApplication::updateRange, [=]( double min_, double max_, bool inverted_  )
+    {
+        sl_depth_csection->setRange( min_, max_ );
+        sl_depth_csection->setInvertedControls( !inverted_ );
+        sl_depth_csection->setInvertedAppearance( !inverted_ );
+    } );
 
     connect( window->app, &RRMApplication::updateDiscretization, [=]( const std::size_t& disc_ )
     { sl_depth_csection->setDiscretization( disc_ ); } );
@@ -71,8 +75,21 @@ void View3dInterface::createView3dActions()
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { controller3d->updateObjects(); } );
 
+
+    connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
+    { controller3d->setTopViewCrossSection(); } );
+
+
+    connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
+    { controller3d->setMainViewCrossSection(); } );
+
+
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
     { controller3d->updateMainCrossSection(); } );
+
+    connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
+    { controller3d->updateMainCrossSection(); } );
+
 
     connect( window->app, &RRMApplication::resetApplication, [=]()
     { controller3d->clear(); } );
