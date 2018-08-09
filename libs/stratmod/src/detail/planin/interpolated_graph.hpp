@@ -46,7 +46,7 @@ class InterpolatedGraph
         using Ptr = std::shared_ptr<InterpolatedGraph>; 
         using WeakPtr = std::weak_ptr<InterpolatedGraph>; 
 
-        InterpolatedGraph( bool extruded_surface = false ); 
+        InterpolatedGraph( bool extruded_surface = false, bool orthogonally_oriented = false ); 
 
         InterpolatedGraph( const InterpolatedGraph& ); 
         InterpolatedGraph& operator=( const InterpolatedGraph& ) = delete; 
@@ -132,6 +132,7 @@ class InterpolatedGraph
 
         bool isExtrudedSurface(); 
         bool isPathExtrudedSurface();
+        bool isOrthogonallyOrientedSurface();
 
     private: 
         static unsigned long int num_instances_; 
@@ -150,6 +151,7 @@ class InterpolatedGraph
         std::set<unsigned long int> dependency_list_; 
 
         bool extruded_surface_ = false; 
+        bool orthogonally_oriented_ = false;
 
         bool compareSurfaceWptr( const InterpolatedGraph::WeakPtr &left, const InterpolatedGraph::WeakPtr &right ) const;
 
@@ -203,26 +205,45 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
     double height, DxF, DyF, normDF;  
     bool status; 
 
-    status = getHeight(p, height); 
+    status = getRawHeight(p, height); 
 
     if ( isExtrudedSurface() )
     {
-        if ( path_is_set_ )
+        if ( !orthogonally_oriented_ ) // i.e. surfaces are extruded along the y direction
         {
-            double origin = path(path_origin.x, 0) - path_origin.y;
-            /* height = f(p.x - (path(p.y, 0) - origin), 0); */
+            if ( path_is_set_ )
+            {
+                double origin = path(path_origin.x, 0) - path_origin.y;
+                /* height = f(p.x - (path(p.y, 0) - origin), 0); */
 
-            DxF = f.Dx(p.x - (path(p.y,0) - origin), 0);
-            DyF = f.Dx(p.x - (path(p.y,0) - origin), 0) * path.Dx(p.y,0);
+                DxF = f.Dx(p.x - (path(p.y,0) - origin), 0);
+                DyF = f.Dx(p.x - (path(p.y,0) - origin), 0) * path.Dx(p.y,0);
+            }
+
+            else
+            {
+                DxF = f.Dx(p.x, 0); 
+                DyF = 0; 
+            }
         }
-
-        else
+        else // if ( orthogonally_oriented_ ) // i.e. surfaces are extruded along the x direction
         {
-            DxF = f.Dx(p.x, 0); 
-            DyF = 0; 
+            if ( path_is_set_ )
+            {
+                double origin = path(path_origin.x, 0) - path_origin.y;
+                /* height = f(p.x - (path(p.y, 0) - origin), 0); */
+
+                DxF = f.Dx(p.y - (path(p.x,0) - origin), 0) * path.Dx(p.x,0);
+                DyF = f.Dx(p.y - (path(p.x,0) - origin), 0);
+            }
+
+            else
+            {
+                DxF = 0; 
+                DyF = f.Dx(p.y, 0); 
+            }
         }
     }
-
     else
     {
         DxF = f.Dx(p.x, p.y); 
@@ -362,8 +383,16 @@ void InterpolatedGraph::getLowerBoundList( T &list ) const
             dependency_list_, 
             extruded_surface_
           );
+
+        if ( version > 1 )
+        {
+            ar(
+                orthogonally_oriented_
+              );
+        }
     }
 
+    // TODO: boost version to 2 once new release ship to all in August
     CEREAL_CLASS_VERSION(InterpolatedGraph, 1);
 
 #else
