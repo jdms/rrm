@@ -24,9 +24,9 @@
 
 #include "sutilities.hpp"
 
-#include "smodeller_impl.hpp"
+#include "detail/smodeller_impl.hpp"
 
-#include "planin/interpolated_graph.hpp"
+#include "detail/planin/interpolated_graph.hpp"
 
 
 

@@ -28,13 +28,13 @@
 #include <memory>
 #include <fstream>
 
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 #include "smodeller.hpp"
-#include "smodeller_impl.hpp"
-#include "serialization_definitions.hpp"
+#include "detail/smodeller_impl.hpp"
+#include "detail/serialization_definitions.hpp"
 
-#include "testing_definitions.hpp"
+#include "detail/testing_definitions.hpp"
 
 
 /*****************************/
@@ -178,10 +178,10 @@ bool SModeller::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
         /* Change the model's properties */
 bool SModeller::useDefaultCoordinateSystem()
 {
-    if ( pimpl_->container_.size() > 0 )
-    {
-        return false;
-    }
+    /* if ( pimpl_->container_.size() > 0 ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
     PlanarSurface::setOutputCoordinatesOrdering( 
             PlanarSurface::Coordinate::WIDTH,
@@ -196,10 +196,10 @@ bool SModeller::useDefaultCoordinateSystem()
 
 bool SModeller::useOpenGLCoordinateSystem()
 {
-    if ( pimpl_->container_.size() > 0 )
-    {
-        return false;
-    }
+    /* if ( pimpl_->container_.size() > 0 ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
     PlanarSurface::setOutputCoordinatesOrdering( 
             PlanarSurface::Coordinate::WIDTH,
@@ -326,6 +326,8 @@ void SModeller::clear()
 
     pimpl_->got_origin_ = false; 
     pimpl_->got_lenght_ = false; 
+
+    pimpl_->init();
 }
 
 
@@ -435,13 +437,14 @@ bool SModeller::createSurface( size_t surface_id, const std::vector<double> &poi
 bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
                 const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
 {
+    bool orthogonally_oriented = false; 
     size_t cross_section_depth = 0;
     std::vector<double> empty_path = std::vector<double>();
 
     return pimpl_->insertExtrusionAlongPath(surface_id, 
             point_data, cross_section_depth, 
             empty_path, 
-            lower_bound_ids, upper_bound_ids); 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
 }
 
 
@@ -453,8 +456,37 @@ bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id,
         const std::vector<size_t> upper_bound_ids
         )
 {
-    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+    bool orthogonally_oriented = false; 
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
 }
+
+
+bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
+                const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+{
+    bool orthogonally_oriented = true; 
+    size_t cross_section_depth = 0;
+    std::vector<double> empty_path = std::vector<double>();
+
+    return pimpl_->insertExtrusionAlongPath(surface_id, 
+            point_data, cross_section_depth, 
+            empty_path, 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
+}
+
+
+bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data, 
+
+        const std::vector<size_t> lower_bound_ids,
+        const std::vector<size_t> upper_bound_ids
+        )
+{
+    bool orthogonally_oriented = true; 
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
+}
+
 
 bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
@@ -465,6 +497,33 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
         )
 {
     bool status = createLengthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
+
+    if ( ! intersected_surfaces.empty() )
+    {
+        pimpl_->popLastSurface();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data, 
+
+        const std::vector<size_t> lower_bound_ids,
+        const std::vector<size_t> upper_bound_ids
+        )
+{
+    bool status = createWidthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
 
     if ( status == false )
     {
@@ -534,6 +593,34 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
     bool status = createLengthwiseExtrudedSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
+
+    /* pimpl_->current_.state_ = current; */ 
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
+
+    if ( ! intersected_surfaces.empty() )
+    {
+        pimpl_->popLastSurface();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        const std::vector<double> &point_data,
+        const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+{
+    /* State current = pimpl_->current_.state_; */
+    /* pimpl_->current_.state_ = State::SKETCHING; */
+
+    bool status = createWidthwiseExtrudedSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
 
@@ -795,12 +882,14 @@ bool SModeller::loadBinary( std::string filename )
 
         unsigned int version;
 
+        std::cout << "Trying to load binary file: " + filename + " >> ";
         try
         {
             iarchive( version, *pimpl_ );
         }
         catch( const std::exception &e )
         {
+            std::cout << "failure\n";
             std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
             clear();
 
@@ -808,10 +897,12 @@ bool SModeller::loadBinary( std::string filename )
         }
         catch(...)
         {
+            std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
 
             return false;
         }
+        std::cout << "success\n" << std::flush;
 
 
         return true;
@@ -831,12 +922,14 @@ bool SModeller::loadJSON( std::string filename )
 
         unsigned int version;
 
+        std::cout << "Trying to load JSON file: " + filename + " >> ";
         try
         {
             iarchive( version, *pimpl_ );
         }
         catch( const std::exception &e )
         {
+            std::cout << "failure\n";
             std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
             clear();
 
@@ -844,10 +937,12 @@ bool SModeller::loadJSON( std::string filename )
         }
         catch(...)
         {
+            std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush;
 
             return false;
         }
+        std::cout << "success\n" << std::flush;
 
 
         return true;

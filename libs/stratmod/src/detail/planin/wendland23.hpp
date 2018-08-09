@@ -74,6 +74,66 @@ class Wendland23 : public BasisFunction2D
 
         }
 
+/* if (i==j), */
+/*     val = -(1/delta)^2 * (352.0*r.^2 + 154.0*r + 22) .* (1-r).^7 + (1/delta)^2 * (3168*r + 528) .* (xi/delta).^2 .* (1-r).^6; */
+/* else */
+    /* val = (1/delta)^2 * (3168*r + 528) .* (xi/delta) .* (xj/delta) .* (1-r).^6; */
+/* end */
+        double Dxx( double x, double y ) const
+        {
+            double r = sqrt( x*x + y*y )/support_size; 
+            if ( r >= 1 ) { 
+                return 0; 
+            }
+
+            double supp_sq = support_size * support_size;
+            double one_minus_r_6 = pow(1-r,6);
+            double one_minus_r_7 = one_minus_r_6 * (1-r);
+
+            double val = -(1/supp_sq) * (352.0*r*r + 154.0*r + 22) * one_minus_r_7 + (1/supp_sq) * (3168*r + 528) * (x*x/supp_sq) * one_minus_r_6;
+            /* double val = -(1/support_size)^2 * (352.0*r.^2 + 154.0*r + 22) .* (1-r).^7 + (1/support_size)^2 * (3168*r + 528) .* (x/support_size).^2 .* (1-r).^6; */
+
+            return val;
+        }
+
+        double Dxy( double x, double y ) const
+        {
+            double r = sqrt( x*x + y*y )/support_size; 
+            if ( r >= 1 ) { 
+                return 0; 
+            }
+
+            double supp_sq = support_size * support_size;
+            double one_minus_r_6 = pow(1-r,6);
+
+            double val = (1/supp_sq) * (3168*r + 528) * (x/support_size) * (y/support_size) * one_minus_r_6;
+            /* double val = (1/support_size)^2 * (3168*r + 528) .* (x/support_size) .* (y/support_size) .* (1-r).^6; */
+
+            return val;
+        }
+
+        double Dyx( double x, double y ) const
+        {
+            return Dxy(x, y);
+        }
+
+        double Dyy( double x, double y ) const
+        {
+            double r = sqrt( x*x + y*y )/support_size; 
+            if ( r >= 1 ) { 
+                return 0; 
+            }
+
+            double supp_sq = support_size * support_size;
+            double one_minus_r_6 = pow(1-r,6);
+            double one_minus_r_7 = one_minus_r_6 * (1-r);
+
+            double val = -(1/supp_sq) * (352.0*r*r + 154.0*r + 22) * one_minus_r_7 + (1/supp_sq) * (3168*r + 528) * (y*y/supp_sq) * one_minus_r_6;
+            /* double val = -(1/support_size)^2 * (352.0*r.^2 + 154.0*r + 22) .* (1-r).^7 + (1/support_size)^2 * (3168*r + 528) .* (y/support_size).^2 .* (1-r).^6; */
+
+            return val;
+        }
+
         int isSmooth() const
         {
             return smoothness; 
