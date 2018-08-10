@@ -56,6 +56,7 @@ void Scene3d::updateVolume()
 {
     if( volume == nullptr ) return;
     volume->update();
+    emit updateCanvas();
 }
 
 

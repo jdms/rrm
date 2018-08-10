@@ -106,6 +106,26 @@ void Controller::resizeVolume(double width_, double height_, double depth_)
 }
 
 
+void Controller::setVolumeWidth( double width_ )
+{
+    model.volume->setWidth( width_ );
+    updateBoundingBoxRulesProcessor();
+}
+
+void Controller::setVolumeHeight( double height_ )
+{
+    model.volume->setHeight( height_ );
+    updateBoundingBoxRulesProcessor();
+}
+
+void Controller::setVolumeLenght( double lenght_ )
+{
+    model.volume->setLenght( lenght_ );
+    updateBoundingBoxRulesProcessor();
+}
+
+
+
 void Controller::setVolumeName( const std::string& name_ )
 {
     model.volume->setName(name_);
@@ -316,6 +336,26 @@ const ObjectPtr& Controller::getCurrentObject() const
 const std::map< std::size_t, ObjectPtr >& Controller::getObjects()
 {
     return model.objects;
+}
+
+
+void  Controller::setCurrentObjectType( const Settings::Objects::ObjectType& type_ )
+{
+    ObjectPtr& obj_ = model.objects[ current_object ];
+    obj_->setType( type_ );
+
+}
+
+Settings::Objects::ObjectType  Controller::getCurrentObjectType() const
+{
+    return getObjectType( current_object );
+}
+
+Settings::Objects::ObjectType  Controller::getObjectType( const std::size_t& index_ ) const
+{
+    if ( model.objects.find( index_ ) == model.objects.end() ) return Settings::Objects::ObjectType::NONE;
+    return model.objects.at( index_ )->getType();
+
 }
 
 

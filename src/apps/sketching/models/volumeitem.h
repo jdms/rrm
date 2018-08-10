@@ -15,7 +15,8 @@ class VolumeItem: public PlaneItem
         void setRawVolume( const std::shared_ptr< Volume >& raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         const std::shared_ptr< Volume >& getRawVolume() const;
 
-        void update();
+        void updateDimensions( const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void update( const Settings::CrossSection::CrossSectionDirections& dir_ );
         void clear();
 
     private:

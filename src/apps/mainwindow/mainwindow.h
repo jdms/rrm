@@ -6,10 +6,13 @@
 #include <QMainWindow>
 #include <QToolBar>
 
-#include "./core/models/controller.h"
+
 #include "rrmapplication.h"
 #include "sketchinterface.h"
 #include "view3dinterface.h"
+
+#include "./core/models/controller.h"
+#include "./core/widgets/objecttree.h"
 
 
 
@@ -21,12 +24,10 @@ class MainWindow: public QMainWindow
     public:
 
         MainWindow( QWidget* parent_ = 0 );
+        ~MainWindow();
         void run();
 
-//    public slots:
 
-//        void undo();
-//        void redo();
 
     protected:
 
@@ -38,6 +39,7 @@ class MainWindow: public QMainWindow
         void createToolbar();
 
         void createController();
+        void createObjectTree();
 
         void plugSketchInterface();
         void plug3dInterface();
@@ -53,6 +55,9 @@ class MainWindow: public QMainWindow
 
         std::shared_ptr< SketchInterface > sketchapp = nullptr;
         std::shared_ptr< View3dInterface > view3dapp = nullptr;
+
+        ObjectTree* object_tree = nullptr;
+        QDockWidget* dw_object_tree = nullptr;
 
         Controller* controller = nullptr;
         RRMApplication* app = nullptr;
@@ -78,6 +83,9 @@ class MainWindow: public QMainWindow
         QAction* ac_direction_x = nullptr;
         QAction* ac_direction_y = nullptr;
         QAction* ac_direction_z = nullptr;
+
+        QAction* ac_stratigraphy = nullptr;
+        QAction* ac_structural = nullptr;
 
         QMenu* mn_file = nullptr;
         QMenu* mn_windows = nullptr;

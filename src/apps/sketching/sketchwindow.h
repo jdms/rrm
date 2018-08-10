@@ -66,6 +66,8 @@ class SketchWindow: public QMainWindow
 
     signals:
 
+        void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
+
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectory( const PolyCurve& curve_ );
         void createObject();

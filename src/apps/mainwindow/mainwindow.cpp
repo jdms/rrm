@@ -34,6 +34,8 @@ void MainWindow::createWindow()
     createToolbar();
     createController();
 
+    createObjectTree();
+
     plug3dInterface();    
     plugSketchInterface();
 
@@ -95,6 +97,12 @@ void MainWindow::createActions()
     ac_direction_z->setChecked( true );
 
 
+    ac_stratigraphy = new QAction( "Stratigraphy", this );
+    ac_stratigraphy->setCheckable( true );
+
+    ac_structural = new QAction( "Structural", this );
+    ac_structural->setCheckable( true );
+
 
 //    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
 
@@ -130,6 +138,10 @@ void MainWindow::createActions()
 
     connect( ac_direction_z, &QAction::triggered, [=]()
     { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z );} );
+
+    connect( ac_stratigraphy, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRATIGRAPHY ); } );
+
+    connect( ac_structural, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
 
 }
 
@@ -173,6 +185,11 @@ void MainWindow::createToolbar()
     ag_directions->addAction( ac_direction_y );
     ag_directions->addAction( ac_direction_z );
 
+    QActionGroup* ag_objects = new QActionGroup( this );
+    ag_objects->setExclusive( true );
+    ag_objects->addAction( ac_stratigraphy );
+    ag_objects->addAction( ac_structural );
+
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
     tb_mainwindow->addAction( ac_save );
@@ -188,6 +205,8 @@ void MainWindow::createToolbar()
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_directions->actions() );
     tb_mainwindow->addSeparator();
+    tb_mainwindow->addActions( ag_objects->actions() );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_screenshot );
 
 
@@ -199,6 +218,18 @@ void MainWindow::createController()
     controller = new Controller();
     app = new RRMApplication();
     app->setMainWindow( this );
+
+}
+
+
+void MainWindow::createObjectTree()
+{
+    object_tree = new ObjectTree( this );
+    dw_object_tree = new QDockWidget( "" );
+    dw_object_tree->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_tree->setWidget( object_tree );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
+
 
 }
 
@@ -222,4 +253,31 @@ void MainWindow::plug3dInterface()
 void MainWindow::run()
 {
     app->init();
+}
+
+
+MainWindow::~MainWindow()
+{
+
+    if( object_tree != nullptr )
+        delete object_tree;
+
+    if( dw_object_tree != nullptr )
+        delete dw_object_tree;
+
+
+    if( controller != nullptr )
+        delete controller;
+
+    if( app != nullptr )
+        delete app;
+
+
+    object_tree = nullptr;
+    dw_object_tree = nullptr;
+
+    controller = nullptr;
+    app = nullptr;
+
+
 }

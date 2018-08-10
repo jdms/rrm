@@ -83,6 +83,10 @@ class Controller
         void createVolume();
         void resizeVolume( double width_, double height_, double depth_ );
 
+        void setVolumeWidth( double width_ );
+        void setVolumeHeight( double height_ );
+        void setVolumeLenght( double lenght_ );
+
         void setVolumeName( const std::string& name_ );
         void setVolumeVisibility( bool status_ );
 
@@ -110,6 +114,11 @@ class Controller
 
         void setObjectName( std::size_t index_, const std::string& name_ );
         std::string getObjectName( std::size_t index_) const;
+
+        void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
+        Settings::Objects::ObjectType getCurrentObjectType() const;
+        Settings::Objects::ObjectType getObjectType( const std::size_t& index_ ) const;
+
 
         void setObjectVisibility( std::size_t index_, bool status_ );
         void setObjectsVisibility( bool status_ );

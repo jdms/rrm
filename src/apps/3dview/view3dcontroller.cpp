@@ -46,6 +46,12 @@ void View3dController::setupScene()
 
 }
 
+void View3dController::updateVolume()
+{
+    scene->updateVolume();
+    scene->updateMainCrossSection();
+}
+
 
 void View3dController::updateScene()
 {

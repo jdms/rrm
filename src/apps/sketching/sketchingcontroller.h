@@ -26,6 +26,8 @@ class SketchingController
         void init();
 
 
+        void updateVolume();
+
         void createMainCrossSection();
         void updateMainCrossSection();
 

@@ -30,7 +30,6 @@
 #include "./core/models/container.h"
 
 
-
 class ObjectTree: public QTreeWidget
 {
     Q_OBJECT
@@ -39,6 +38,7 @@ class ObjectTree: public QTreeWidget
     public:
 
         ObjectTree( QWidget* parent = 0 );
+
 
         void addInputVolume();
         void addOutputVolume();
@@ -104,9 +104,14 @@ class ObjectTree: public QTreeWidget
         int COLUMN_NAME_WIDTH = 30;
 
 
+        QTreeWidgetItem* label_stratigraphy;
+        QTreeWidgetItem* label_structural;
+
+        Container< std::size_t, ObjectTreeItem* > stratigraphies;
+        Container< std::size_t, ObjectTreeItem* > structurals;
+
         Container< std::size_t, ObjectTreeItem* > items;
         Container< std::size_t, ObjectTreeItem* > regions;
-
 
 };
 
