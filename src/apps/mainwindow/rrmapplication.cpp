@@ -72,8 +72,31 @@ void RRMApplication::init()
     controller->init();
     emit startApplication();
 
+    window->object_tree->addInputVolume();
     setDiscretization( Settings::CrossSection::CrossSectionDirections::Z );
 
+}
+
+
+void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+{
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        controller->setVolumeLenght( width_ );
+        controller->setVolumeHeight( height_ );
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        controller->setVolumeWidth( width_ );
+        controller->setVolumeLenght( height_ );
+    }
+    else
+    {
+        controller->setVolumeWidth( width_ );
+        controller->setVolumeHeight( height_ );
+    }
+
+    emit updateVolume();
 }
 
 
@@ -133,12 +156,31 @@ void RRMApplication::removeFixedCrossSection( double depth_ )
 
 
 
+void RRMApplication::setCurrentObjectType( const Settings::Objects::ObjectType& type_ )
+{
+    controller->setObjectType( type_ );
+}
+
 void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+
+    bool new_obj_ = controller->getCurrentObject()->isEmpty();
+
     bool status_ = controller->addCurveToObject( dir_, depth_, curve_ );
     if( status_ == false ) return;
 
     emit updateObjects();
+
+    if( new_obj_ == true )
+    {
+        const ObjectPtr& obj_ = controller->getCurrentObject();
+
+        int r_, g_, b_;
+        obj_->getColor( r_, g_, b_ );
+
+        window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
+    }
+
 
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         emit addCrossSection( dir_, depth_ );

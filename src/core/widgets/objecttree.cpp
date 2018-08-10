@@ -25,7 +25,7 @@
 #include <QCheckBox>
 
 #include "objecttree.h"
-#include "./core/widgets/color_picker.h"
+#include "core/widgets/color_picker.h"
 
 
 ObjectTree::ObjectTree( QWidget *parent )
@@ -33,6 +33,15 @@ ObjectTree::ObjectTree( QWidget *parent )
     setHeaderHidden( true );
     setColumnCount( COLUMNS_NUMBER );
     connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
+
+    label_stratigraphy = new QTreeWidgetItem();
+    label_stratigraphy->setText( COLUMN_NAME, "STRATIGRAPHY" );
+
+
+    label_structural = new QTreeWidgetItem();
+    label_structural->setText( COLUMN_NAME, "STRUCTURAL" );
+
+
 
 }
 
@@ -110,7 +119,6 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 
 
 
-
 void ObjectTree::addInputVolume()
 {
     ObjectTreeItem* vol_ = new ObjectTreeItem();
@@ -119,6 +127,11 @@ void ObjectTree::addInputVolume()
     vol_->setIndex( 0 );
     vol_->setCheckState( COLUMN_STATUS, Qt::Checked );
     addTopLevelItem( vol_ );
+
+    vol_->addChild( label_stratigraphy );
+    label_stratigraphy->setHidden( true );
+    vol_->addChild( label_structural );
+    label_structural->setHidden( true );
 
 }
 
@@ -198,46 +211,112 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
                             const std::string& name_,  const int& red_,
                             const int& green_,  const int& blue_ )
 {
+
+    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+    if( vol_ == nullptr ) return;
+
+
     ObjectTreeItem* obj_ = new ObjectTreeItem();
     obj_->setIndex( index_ );
     obj_->setType( type_ );
     obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     obj_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
-
-    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-    if( vol_ == nullptr ) return;
-
-
-
     ColorPicker* colorpicker_ = new ColorPicker( this );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
     connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-                                                        { emit setObjectColor( index_, color_ ); } );
+    { emit setObjectColor( index_, color_ ); } );
 
 
 
-    vol_->addChild( obj_ );
+
+
+
+
+    //    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+    //    {   if( indexv_ != 0 ) return;
+
+    //        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+    //        if( vol1_ == nullptr ) return;
+
+    //        int nchildren = vol1_->childCount();
+    //        for( int j = 0; j < nchildren; ++j )
+    //        {
+
+    //            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
+    //            if( obj_ == nullptr ) continue;
+    //            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
+    //        }
+    //    } );
+
+
+
+    if( type_ == Settings::Objects::ObjectType::STRATIGRAPHY )
+    {
+        if( stratigraphies.empty() == true )
+        {
+            label_stratigraphy->setHidden( false );
+        }
+
+        label_stratigraphy->addChild( obj_ );
+        stratigraphies.addElement( index_, obj_ );
+
+    }
+    else if( type_ == Settings::Objects::ObjectType::STRUCTURAL )
+    {
+        if( structurals.empty() == true )
+        {
+            label_structural->setHidden( false );
+        }
+
+        label_structural->addChild( obj_ );
+        structurals.addElement( index_, obj_ );
+
+    }
 
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
-    items.addElement( index_, obj_ );
 
 
-    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
-    {   if( indexv_ != 0 ) return;
+//    ObjectTreeItem* obj_ = new ObjectTreeItem();
+//    obj_->setIndex( index_ );
+//    obj_->setType( type_ );
+//    obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
+//    obj_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
-        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-        if( vol1_ == nullptr ) return;
 
-        int nchildren = vol1_->childCount();
-        for( int j = 0; j < nchildren; ++j )
-        {
+//    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+//    if( vol_ == nullptr ) return;
 
-            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
-            if( obj_ == nullptr ) continue;
-            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
-        }
-    } );
+
+
+//    ColorPicker* colorpicker_ = new ColorPicker( this );
+//    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
+//    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ )
+//                                                        { emit setObjectColor( index_, color_ ); } );
+
+
+
+//    vol_->addChild( obj_ );
+
+//    setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
+//    items.addElement( index_, obj_ );
+
+
+//    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
+//    {   if( indexv_ != 0 ) return;
+
+//        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+//        if( vol1_ == nullptr ) return;
+
+//        int nchildren = vol1_->childCount();
+//        for( int j = 0; j < nchildren; ++j )
+//        {
+
+//            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
+//            if( obj_ == nullptr ) continue;
+//            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
+//        }
+//    } );
 }
 
 

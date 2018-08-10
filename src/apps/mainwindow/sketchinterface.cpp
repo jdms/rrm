@@ -100,6 +100,21 @@ void SketchInterface::createSketchingActions()
     connect( sketch_topview_window, &SketchWindow::createObject, [=]()
     { window->app->createObjectSurface(); } );
 
+
+
+    connect( sketch_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
+    {
+        window->app->setVolumeDimensions( dir_, width_, height_ );
+    } );
+
+    connect( sketch_topview_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
+    {
+        window->app->setVolumeDimensions( dir_, width_, height_ );
+    } );
+
+    connect( window->app, &RRMApplication::updateVolume, [=]()
+    { scontroller->updateVolume(); } );
+
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
     { scontroller->updateMainCrossSection(); } );
 

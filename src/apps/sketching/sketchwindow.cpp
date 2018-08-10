@@ -109,6 +109,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
+    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+    { emit updateVolumeDimensions( dir_, width_, height_ ); } );
+
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { emit addCurve( curve_, dir_, depth_ ); }  );
 
@@ -149,6 +152,10 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
     connect( ac_use_last_trajectory, &QAction::toggled, [=]()
     { emit useLastTrajectory(); } );
 
+
+    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+    { emit updateVolumeDimensions( dir_, width_, height_ ); } );
+
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
 
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
@@ -181,6 +188,10 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_ )
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+
+
+    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+    { emit updateVolumeDimensions( dir_, width_, height_ ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
 

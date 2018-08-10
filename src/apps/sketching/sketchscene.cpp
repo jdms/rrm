@@ -48,6 +48,8 @@ void SketchScene::init()
         sketch = std::make_shared< CurveItem >();
         addItem( sketch.get() );
     }
+
+
     setSketchingMode();
 }
 
@@ -75,6 +77,10 @@ void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
     addItem( volume1.get() );
     setSceneRect( volume1->boundingRect() );
 
+    QPainterPath area_;
+    area_.addRect( volume1->boundingRect() );
+    setSelectionArea( area_, Qt::AddToSelection );
+
     emit ensureObjectsVisibility();
 
     update();
@@ -83,7 +89,13 @@ void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
 
 void SketchScene::updateVolume()
 {
-    volume1->update();
+    volume1->update( csection_direction );
+    setSceneRect( volume1->boundingRect() );
+
+    QPainterPath area_;
+    area_.addRect( volume1->boundingRect() );
+    setSelectionArea( area_, Qt::AddToSelection );
+
     emit ensureObjectsVisibility();
     update();
 
@@ -138,6 +150,15 @@ void SketchScene::updateStratigraphiesTrajectories()
         (it.second)->updateTrajectory();
     }
     update();
+}
+
+
+void SketchScene::getSelectedStratigraphies()
+{
+    QList< QGraphicsItem* > items_ = selectedItems();
+    if( items_.empty() == true ) return;
+
+    std::cout << "There are " << items_.size() << " curves selected" << std::endl << std::flush;
 }
 
 
@@ -272,7 +293,7 @@ void SketchScene::setCreateRegionMode()
 }
 //temporary
 
-void SketchScene::setSelectingStratigraphyMode( bool status_ )
+void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
 {
 
     clearSelection();
@@ -280,6 +301,31 @@ void SketchScene::setSelectingStratigraphyMode( bool status_ )
     sketch->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
     sketch->setFlag( QGraphicsItem::ItemIsMovable, status_ );
 
+    for( auto it: stratigraphies )
+    {
+        (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
+        (it.second)->setFlag( QGraphicsItem::ItemIsMovable, status_ );
+    }
+
+    if( status_ == true )
+    {
+        current_interaction1 = UserInteraction1::SELECTING_STRATIGRAPHY_OLD;
+    }
+    else
+    {
+        setSketchingMode();
+    }
+
+    update();
+
+
+}
+
+
+void SketchScene::setSelectingStratigraphyMode( bool status_ )
+{
+
+    clearSelection();
 
     if( status_ == true )
     {
@@ -294,6 +340,8 @@ void SketchScene::setSelectingStratigraphyMode( bool status_ )
 
 
 }
+
+
 
 
 void SketchScene::setSelectingRegionsMode( bool status_ )
@@ -341,6 +389,37 @@ void SketchScene::setSelectingRegionsMode( bool status_ )
 
 
 
+void SketchScene::addToSketchesOfSelection()
+{
+
+    if( sketch == nullptr ) return;
+
+    std::shared_ptr< CurveItem > sketch_ = std::make_shared< CurveItem >();
+    sketch_->setCurve( sketch->getCurve() );
+
+    std::size_t id_ = sketches_of_selection.size();
+    sketches_of_selection.push_back( sketch_ );
+    addItem( sketches_of_selection[ id_ ].get() );
+
+
+    sketch->clear();
+
+}
+
+void SketchScene::removeSketchesOfSelection()
+{
+
+    for( auto sk_: sketches_of_selection )
+    {
+        removeItem( sk_.get() );
+        sk_->clear();
+        sk_.reset();
+    }
+    sketches_of_selection.clear();
+
+}
+
+
 ///================================================================================
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
@@ -367,6 +446,12 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::CREATE_REGION )  )
     {
 //        regions[ nregions ] ->addPoint( p_ );
+    }
+
+
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    {
+        sketch->create( p_ );
     }
 
 
@@ -398,6 +483,11 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
         volume1->setEndPoint( p_ );
     }
 
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    {
+        sketch->add(  p_ );
+    }
+
     QGraphicsScene::mouseMoveEvent( event_ );
     update();
 
@@ -407,18 +497,30 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 {
 
-
     QPointF p_ = event_->scenePos();
 
     if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
     {
         sketch->connect();
     }
+
     else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
     {
         volume1->setEndPoint( p_ );
         setSceneRect( volume1->boundingRect() );
-        emit ensureObjectsVisibility();
+
+        emit resizeVolumeDimensions( csection_direction, static_cast< double >( volume1->boundingRect().width() ), static_cast< double >( volume1->boundingRect().height() ) );
+//        emit ensureObjectsVisibility();
+    }
+
+    if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )  )
+    {
+        getSelectedStratigraphies();
+    }
+
+    if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    {
+        addToSketchesOfSelection();
     }
 
     QGraphicsScene::mouseReleaseEvent( event_ );
@@ -475,6 +577,10 @@ void SketchScene::keyPressEvent( QKeyEvent *event )
             std::cout << "Remove item" << std::endl << std::flush;
 //            removeItem();
             break;
+    case Qt::Key_S:
+            setSelectingStratigraphyMode( true );
+//            removeItem();
+        break;
         default:
             break;
     };

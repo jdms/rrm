@@ -38,13 +38,13 @@
 
 #include "./apps/3dview/canvas3d.h"
 #include "./apps/sketching/sketchwindow.h"
-//#include "./apps/simulator/flow_window.h"
+
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
-#include "./core/widgets/objecttree.h"
-#include "./core/widgets/pages_stack.h"
 
-
+//#include "./core/widgets/pages_stack.h"
+//#include "./apps/simulator/flow_window.h"
+//#include "./core/widgets/objecttree.h"
 
 
 class MainWindow;
@@ -72,6 +72,8 @@ class RRMApplication: public QObject
 
     public slots:
 
+        void setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
+
         void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
@@ -79,6 +81,8 @@ class RRMApplication: public QObject
 
         void addFixedCrossSection( double depth_, QColor color_ );
         void removeFixedCrossSection( double depth_ );
+
+        void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
 
         void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectoryToObject( const PolyCurve& curve_ );
@@ -103,6 +107,7 @@ class RRMApplication: public QObject
     signals:
 
         void addObject( const std::shared_ptr<Object>& obj_ );
+        void addObjectinObjectTree( const std::shared_ptr<Object>& obj_ );
 
         void updateVolume();
         void updateObjects();

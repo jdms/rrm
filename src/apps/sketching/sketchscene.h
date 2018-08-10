@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, CREATE_REGION, SELECTING_STRATIGRAPHY, SELECTING_REGIONS, SELECTING_WELLS };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGIONS, SELECTING_WELLS };
 
     ///================================================================================
 
@@ -82,6 +82,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void updateStratigraphies();
         void updateStratigraphiesTrajectories();
 
+        void getSelectedStratigraphies();
+
         void addRegion( const std::shared_ptr< Regions >& region_ );
         void updateRegion( const std::size_t& id_ );
         void updateRegions();
@@ -104,6 +106,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSketchingMode();
         void setResizingBoundaryMode( bool status_ );
         void setCreateRegionMode();
+        void setOldSelectingStratigraphyMode( bool status_ );
         void setSelectingStratigraphyMode( bool status_ );
         void setSelectingRegionsMode( bool status_ );
 //        void setSelectingWellsMode( bool status_ );
@@ -113,6 +116,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
    signals:
 
+
+        void resizeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
         void ensureObjectsVisibility();
 
@@ -124,6 +129,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     protected:
 
         void processSketch();
+        void addToSketchesOfSelection();
+        void removeSketchesOfSelection();
+
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event_ );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ );
@@ -152,6 +160,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         std::map< std::size_t, std::shared_ptr< RegionItem > > regions;
         //        std::map< std::size_t, WellItem* > wells;
 
+
+        std::vector< std::shared_ptr< CurveItem > > sketches_of_selection;
 
         UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
 

@@ -26,7 +26,7 @@ class View3dController
         void setTopViewCrossSection();
 
 
-        void updateVolume(){}
+        void updateVolume();
         void updateMainCrossSection();
         void updateTopViewCrossSection();
 

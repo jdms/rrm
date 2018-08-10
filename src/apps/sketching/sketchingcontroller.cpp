@@ -37,6 +37,20 @@ void SketchingController::init()
 }
 
 
+void SketchingController::updateVolume()
+{
+    if( main_scene != nullptr )
+    {
+        main_scene->updateVolume();
+    }
+    if( topview_scene != nullptr )
+    {
+        topview_scene->updateVolume();
+    }
+
+}
+
+
 void SketchingController::createMainCrossSection()
 {
     CrossSectionPtr csection_ = controller->getMainCrossSection();
