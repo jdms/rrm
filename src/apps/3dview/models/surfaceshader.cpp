@@ -77,7 +77,6 @@ void SurfaceShader::loadBuffers()
 }
 
 
-
 void SurfaceShader::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/mesh.vert" ),
@@ -86,6 +85,7 @@ void SurfaceShader::initShaders()
 
     shader->initialize();
 }
+
 
 void SurfaceShader::initBuffers()
 {
@@ -132,6 +132,7 @@ void SurfaceShader::resetShaders()
     shader = nullptr;
 }
 
+
 void SurfaceShader::resetBuffers()
 {
 
@@ -163,7 +164,6 @@ void SurfaceShader::resetBuffers()
 }
 
 
-
 void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                            const std::vector< GLfloat >& normals_,
                                            const std::vector< GLuint >& faces_ )
@@ -185,6 +185,7 @@ void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertice
                    GL_STATIC_DRAW );
     glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
+
 
 void SurfaceShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
 {
@@ -209,7 +210,6 @@ void SurfaceShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, 
 
     updateColorBuffers( color_ );
 }
-
 
 
 void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,

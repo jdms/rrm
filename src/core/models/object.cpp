@@ -216,6 +216,10 @@ void Object::setActive( bool status_ )
     {
         removed();
     }
+    else if( status_ == true )
+    {
+        setVisible( true );
+    }
 
 }
 
