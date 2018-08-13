@@ -209,6 +209,14 @@ class Controller
 
         void setCurrentColor( int red_, int green_, int blue_ );
 
+        void saveFile( const std::string& filename );
+        bool saveObjectsMetaData( const std::string& filename );
+
+        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
+        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
+        void loadObjectMetaDatas( QFile& load_file/*const std::string& filename*/ );
+        void loadObjectNoMetaDatas();
+
         void clear();
 
         bool undo();

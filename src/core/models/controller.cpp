@@ -1314,6 +1314,177 @@ bool Controller::canRedo()
 
 
 
+
+
+void Controller::saveFile( const std::string& filename )
+{
+    rules_processor.saveFile( filename );
+    saveObjectsMetaData( filename );
+}
+
+
+bool Controller::saveObjectsMetaData( const std::string& filename )
+{
+
+    std::string complete_filename = filename + ".json";
+    QFile save_file( QString( complete_filename.c_str() ) );
+
+    if ( !save_file.open( QIODevice::WriteOnly ) ) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QJsonObject metadatas;
+
+    QJsonArray objects_array_;
+    for( auto it: model.objects )
+    {
+        const ObjectPtr& obj_ = it.second;
+        QJsonObject object_;
+        obj_->write( object_ );
+        objects_array_.append( object_ );
+    }
+    metadatas["objects"] = objects_array_;
+
+
+    QJsonDocument save_doc( metadatas );
+    save_file.write( save_doc.toJson() );
+
+    return true;
+}
+
+void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
+{
+    rules_processor.loadFile( filename );
+    loadObjects( filename, resol_ );
+}
+
+
+
+void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
+{
+    if( model.volume == nullptr ) return;
+
+    double ox, oy, oz;
+    double width, height, depth;
+
+    rules_processor.getOrigin( ox, oy, oz );
+    rules_processor.getLenght( width, height, depth );
+    model.volume->setGeometry( ox, oy, oz, width, height, depth );
+
+
+    if ( rules_processor.isLowResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::LOW;
+    }
+    else if ( rules_processor.isMediumResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::MEDIUM;
+    }
+    else if ( rules_processor.isHighResolution() == true )
+    {
+        resol_ = Controller::MeshResolution::HIGH;
+    }
+
+    if( model.objects.find( current_object ) != model.objects.end() )
+    {
+        model.objects.erase( current_object );
+//        object_tree->removeObject( current_object );
+//        scene3d->removeObject( current_object );
+
+        Object::resetAllObjects();
+        CrossSection::resetAllCrossSections();
+    }
+
+
+    std::string complete_filename = filename + ".json";
+
+    QFile load_file( QString( complete_filename.c_str() ) );
+    if ( !load_file.open( QIODevice::ReadOnly ) ) {
+        loadObjectNoMetaDatas();
+    }
+    else
+        loadObjectMetaDatas( load_file );
+
+    addObject();
+    updateModel();
+
+}
+
+
+void Controller::loadObjectNoMetaDatas()
+{
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    for( auto id: actives )
+    {
+        int r_ = distr( eng );
+        int g_ = distr( eng );
+        int b_ = distr( eng );
+
+        addObject( id );
+        setObjectColor( id, r_, g_, b_ );
+    }
+
+}
+
+
+void Controller::loadObjectMetaDatas( QFile& load_file )
+{
+
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    QByteArray save_data = load_file.readAll();
+    QJsonDocument load_doc( QJsonDocument::fromJson(save_data) );
+    const QJsonObject &json = load_doc.object();
+
+    if ( json.contains("objects") && json["objects"].isArray() )
+    {
+        QJsonArray objects_array_ = json["objects"].toArray();
+
+        std::vector< std::size_t > actives = rules_processor.getSurfaces();
+
+        int obj_id_ = 0;
+        for( auto id: actives )
+        {
+            int r_= distr( eng );
+            int g_= distr( eng );
+            int b_= distr( eng );
+
+            addObject( id );
+
+            if( obj_id_ < objects_array_.size() )
+            {
+                QJsonObject object_ = objects_array_[obj_id_].toObject();
+
+                const ObjectPtr& obj_ = model.objects[ id ];
+                obj_->read( object_ );
+                obj_->getColor( r_, g_, b_ );
+
+                obj_id_++;
+            }
+            else
+            {
+                setObjectColor( id, r_, g_, b_ );
+            }
+
+//            scene3d->updateObject( id );
+//            object_tree->updateObjectColor( id, r_, g_, b_ );
+//            object_tree->updateObjectName( id, getObjectName( id ) );
+
+        }
+
+    }
+}
+
+
+
+
 void Controller::clear()
 {
     if( csection == nullptr )

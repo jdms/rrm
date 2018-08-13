@@ -116,6 +116,11 @@ void MainWindow::createActions()
 
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
 
+    connect( ac_save, &QAction::triggered, [=](){ save(); } );
+
+    connect( ac_load, &QAction::triggered, [=](){ load(); } );
+
+
     connect( ac_remove_above, &QAction::triggered, [=]()
     { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE ); } );
 
@@ -280,6 +285,31 @@ void MainWindow::plug3dInterface()
 void MainWindow::run()
 {
     app->init();
+}
+
+
+void MainWindow::save()
+{
+    QString selected_format = "";
+    QString filename_ = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+
+    if( filename_.isEmpty() == true ) return;
+    app->save( filename_.toStdString() );
+}
+
+
+void MainWindow::load()
+{
+
+    QString selected_format = "";
+    QString filename_ = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
+                                                             "rrm files (*.rrm)", &selected_format );
+
+    if( filename_.isEmpty() == true ) return;
+    app->load( filename_.toStdString() );
+
 }
 
 

@@ -111,6 +111,10 @@ class RRMApplication: public QObject
         void checkUndoRedo();
         void checkPreserveStatus();
 
+        void save( const std::string& filename_ );
+        void load( const std::string& filename_ );
+
+
         void reset();
 
 

@@ -20,6 +20,7 @@
  */
 
 
+#include <QFileDialog>
 
 #include "rrmapplication.h"
 #include "mainwindow.h"
@@ -343,6 +344,40 @@ void RRMApplication::checkPreserveStatus()
      window->ac_sketch_below->setChecked( below_ );
 
 }
+
+
+void RRMApplication::save( const std::string& filename_ )
+{
+    controller->saveFile( filename_ );
+}
+
+
+void RRMApplication::load( const std::string& filename_ )
+{
+    Controller::MeshResolution resol_;
+    controller->loadFile( filename_, resol_ );
+
+//    clear();
+
+//    Controller::MeshResolution resol_;
+
+//    mainwindow->controller->loadFile( filename_, resol_ );
+
+//    if ( resol_ == Controller::MeshResolution::LOW )
+//        mainwindow->object_properties->checkLowResolution();
+//    else if ( resol_ == Controller::MeshResolution::MEDIUM )
+//        mainwindow->object_properties->checkMediumResolution();
+//    else if ( resol_ == Controller::MeshResolution::HIGH )
+//        mainwindow->object_properties->checkHighResolution();
+
+//    getVolumeDimensionsFromController();
+//    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
+//    checkUndoRedo();
+//    checkSketchStatus();
+//    initSketchingApp();
+}
+
+
 
 ///================================================================================
 
