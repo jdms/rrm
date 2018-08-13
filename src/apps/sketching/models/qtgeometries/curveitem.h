@@ -106,6 +106,9 @@ class CurveItem : public QGraphicsPathItem
         void getMonotonicX();
         void getMonotonicY();
 
+
+        virtual bool isVisible() const { return QGraphicsPathItem::isVisible(); }
+
         virtual void update(){}
 
 

@@ -78,6 +78,20 @@ void RRMApplication::init()
 }
 
 
+
+
+void RRMApplication::setVolumeName( const std::string& name_ )
+{
+    controller->setVolumeName( name_ );
+}
+
+void RRMApplication::setVolumeVisible( bool status_ )
+{
+    controller->setVolumeVisibility( status_ );
+    emit updateVolume();
+}
+
+
 void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
 {
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
@@ -156,10 +170,32 @@ void RRMApplication::removeFixedCrossSection( double depth_ )
 
 
 
+
+void RRMApplication::setObjectVisible( std::size_t index_, bool status_ )
+{
+    controller->setObjectVisibility( index_, status_ );
+    emit updateObjects();
+}
+
+
+void RRMApplication::setObjectName( std::size_t index_, const std::string& name_ )
+{
+    controller->setObjectName( index_, name_ );
+}
+
+
+void RRMApplication::setObjectColor( std::size_t index_, int red_, int green_, int blue_ )
+{
+    controller->setObjectColor( index_, red_, green_, blue_ );
+    emit updateObjects();
+}
+
+
 void RRMApplication::setCurrentObjectType( const Settings::Objects::ObjectType& type_ )
 {
-    controller->setObjectType( type_ );
+    controller->setCurrentObjectType( type_ );
 }
+
 
 void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {

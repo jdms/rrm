@@ -18,6 +18,13 @@ QRectF CurveItem::boundingRect() const
 
 void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ )
 {
+
+    if( isVisible() == false )
+    {
+        return;
+    }
+
+
     QPainterPathStroker stroker_;
     stroker_.setCurveThreshold( 0.4 );
     stroker_.setCapStyle( Qt::RoundCap );

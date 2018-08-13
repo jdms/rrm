@@ -35,6 +35,13 @@ void StratigraphyItem::setCrossSection( const Settings::CrossSection::CrossSecti
 }
 
 
+bool StratigraphyItem::isVisible() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isVisible();
+}
+
+
 void StratigraphyItem::update()
 {
     updateCurve();
@@ -44,8 +51,6 @@ void StratigraphyItem::update()
 void StratigraphyItem::updateCurve()
 {
     if( raw == nullptr ) return;
-//    if( raw->isEmpty() == true || raw->isActive() == false ) return;
-
     if( raw->isDone() )
         resetToDefaultStyle();
 
