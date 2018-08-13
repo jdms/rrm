@@ -102,28 +102,42 @@ void Controller::createVolume()
 void Controller::resizeVolume(double width_, double height_, double depth_)
 {
     model.volume->setDimensions( width_, height_, depth_ );
-    updateBoundingBoxRulesProcessor();
+    updateBoundingBoxInModel();
 }
 
 
 void Controller::setVolumeWidth( double width_ )
 {
     model.volume->setWidth( width_ );
-    updateBoundingBoxRulesProcessor();
+    updateBoundingBoxInModel();
 }
 
 void Controller::setVolumeHeight( double height_ )
 {
     model.volume->setHeight( height_ );
-    updateBoundingBoxRulesProcessor();
+    updateBoundingBoxInModel();
 }
 
 void Controller::setVolumeLenght( double lenght_ )
 {
     model.volume->setLenght( lenght_ );
-    updateBoundingBoxRulesProcessor();
+    updateBoundingBoxInModel();
 }
 
+
+void Controller::updateBoundingBoxInModel()
+{
+    double ox_ = 0.0, oy_ = 0.0, oz_ = 0.0;
+    double w_ = 0.0, h_ = 0.0, d_ = 0.0;
+
+    model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
+    for( auto it: model.objects )
+    {
+        (it.second)->setBoundingBox( ox_, ox_ + w_, oy_, oy_ + h_, oz_, oz_ + d_ );
+    }
+
+    updateBoundingBoxRulesProcessor();
+}
 
 
 void Controller::setVolumeName( const std::string& name_ )

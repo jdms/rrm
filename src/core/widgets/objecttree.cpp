@@ -19,8 +19,6 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include <iostream>
 #include <QCheckBox>
 
@@ -43,9 +41,6 @@ ObjectTree::ObjectTree( QWidget *parent )
     label_structural->setText( COLUMN_NAME, "STRUCTURAL" );
     label_structural->setCheckState( COLUMN_STATUS, Qt::Checked );
 
-
-
-
 }
 
 
@@ -66,11 +61,12 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
     {
         if( column_ == COLUMN_STATUS )
         {
-            bool status_ = false;
-            if( obj_->checkState( COLUMN_STATUS ) == Qt::Checked )
-                status_ = true;
+//            bool status_ = false;
+//            if( obj_->checkState( COLUMN_STATUS ) == Qt::Checked )
+//                status_ = true;
 
-            emit setVolumeVisible( obj_->getIndex(), status_ );
+            setVolumeVisibility( obj_->checkState( COLUMN_STATUS ) );
+//            emit setVolumeVisible( obj_->getIndex(), status_ );
         }
         else if( column_ == COLUMN_NAME )
         {
@@ -338,16 +334,31 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 }
 
 
+void ObjectTree::setVolumeVisibility( const Qt::CheckState& status_ )
+{
+
+    bool is_visible_ = ( status_ == Qt::Checked? true:false );
+    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+
+    setVolumeVisible( 0, is_visible_ );
+    label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
+    label_structural->setCheckState( COLUMN_STATUS, status_ );
+
+    emit setVolumeVisible( vol_->getIndex(), is_visible_ );
+    update();
+
+}
+
+
+
 
 void ObjectTree::setStratigraphiesVisible( const Qt::CheckState& status_  )
 {
     int nchildren_ = label_stratigraphy->childCount();
-    bool is_visible_ = ( status_ == Qt::Checked? true: false );
-
     for( int i = 0; i < nchildren_; ++i )
     {
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( i ) );
-        emit setObjectVisible( obj_->getIndex(), is_visible_ );
+        obj_->setCheckState( COLUMN_STATUS, status_ );
     }
 
 }
@@ -356,19 +367,16 @@ void ObjectTree::setStratigraphiesVisible( const Qt::CheckState& status_  )
 void ObjectTree::setStructuralsVisible( const Qt::CheckState& status_ )
 {
     int nchildren_ = label_structural->childCount();
-    bool is_visible_ = ( status_ == Qt::Checked? true: false );
-
     for( int i = 0; i < nchildren_; ++i )
     {
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( label_structural->child( i ) );
-        emit setObjectVisible( obj_->getIndex(), is_visible_ );
+        obj_->setCheckState( COLUMN_STATUS, status_ );
     }
 
 }
 
 
-void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_,
-                const int& green_,  const int& blue_ )
+void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_ )
 {
     ObjectTreeItem* region_ = new ObjectTreeItem();
     region_->setIndex( index_ );

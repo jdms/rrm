@@ -43,6 +43,8 @@ class PolygonItem: public QGraphicsPolygonItem
         void resetToDefaultFillColor();
         void resetToDefaultBorderWidth();
 
+        virtual bool isVisible() const { return QGraphicsPolygonItem::isVisible(); }
+
 
     protected:
 

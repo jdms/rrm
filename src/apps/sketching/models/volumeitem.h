@@ -17,6 +17,9 @@ class VolumeItem: public PlaneItem
 
         void updateDimensions( const Settings::CrossSection::CrossSectionDirections& dir_ );
         void update( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        virtual bool isVisible() const override ;
+
         void clear();
 
     private:

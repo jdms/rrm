@@ -26,6 +26,7 @@ class LineItem: public QGraphicsLineItem
 
         void resetToDefaultLineColor();
 
+        virtual bool isVisible() const { return QGraphicsLineItem::isVisible(); }
 
     protected:
 

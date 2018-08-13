@@ -44,6 +44,8 @@ class ObjectTree: public QTreeWidget
         void addOutputVolume();
         void removeOutputVolume();
 
+        void setVolumeVisibility(  const Qt::CheckState& status_ );
+
         void hideInputVolume();
         void hideOutputVolume();
 

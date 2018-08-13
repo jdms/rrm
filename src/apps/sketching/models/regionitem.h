@@ -16,6 +16,8 @@ class RegionItem: public PolygonItem
         void setRawRegion( const std::shared_ptr< Regions >& raw_ );
         const std::shared_ptr< Regions >& getRawRegion() const;
 
+        bool isVisible() const override;
+
         void clear();
 
     private:

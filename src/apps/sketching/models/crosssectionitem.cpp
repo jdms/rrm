@@ -16,6 +16,12 @@ const std::shared_ptr< CrossSection >& CrossSectionItem::getRawCrossSection() co
     return raw;
 }
 
+bool CrossSectionItem::isVisible() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isVisible();
+}
+
 void CrossSectionItem::clear()
 {
     raw.reset();

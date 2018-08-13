@@ -346,6 +346,7 @@ void CrossSection::setVisible( const bool status_ )
 
 bool CrossSection::isVisible() const
 {
+    if( volume->isVisible() == false ) return false;
     return is_visible;
 }
 

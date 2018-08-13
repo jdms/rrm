@@ -16,6 +16,13 @@ const std::shared_ptr< Regions >& RegionItem::getRawRegion() const
     return raw;
 }
 
+
+bool RegionItem::isVisible() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isVisible();
+}
+
 void RegionItem::clear()
 {
     raw.reset();
