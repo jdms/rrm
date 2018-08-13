@@ -231,6 +231,32 @@ void MainWindow::createObjectTree()
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_tree );
 
 
+    connect( object_tree, &ObjectTree::setObjectVisible, [=]( std::size_t index_, bool status_ )
+    {
+        app->setObjectVisible( index_, status_ );
+    } );
+
+    connect( object_tree, &ObjectTree::setObjectName, [=]( std::size_t index_, const std::string& name_ )
+    {
+        app->setObjectName( index_, name_ );
+    } );
+
+    connect( object_tree, &ObjectTree::setObjectColor, [=]( std::size_t index_, const QColor& color_ )
+    {
+        app->setObjectColor( index_, color_.red(), color_.green(), color_.blue() );
+    } );
+
+    connect( object_tree, &ObjectTree::setVolumeName, [=]( std::size_t index_, const std::string& name_ )
+    {
+        app->setVolumeName( name_ );
+    } );
+
+    connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ )
+    {
+        app->setVolumeVisible( status_ );
+    } );
+
+
 }
 
 

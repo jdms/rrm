@@ -18,6 +18,8 @@ class StratigraphyItem: public CurveItem
         void setCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void changeDirection();
 
+        bool isVisible() const override;
+
         void update() override;
         void updateTrajectory();
 

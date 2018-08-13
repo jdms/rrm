@@ -72,6 +72,11 @@ class RRMApplication: public QObject
 
     public slots:
 
+
+        void setVolumeName( const std::string& name_ );
+        void setVolumeVisible( bool status_ );
+
+
         void setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
         void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
@@ -81,6 +86,12 @@ class RRMApplication: public QObject
 
         void addFixedCrossSection( double depth_, QColor color_ );
         void removeFixedCrossSection( double depth_ );
+
+
+        void setObjectVisible( std::size_t index_, bool status_ );
+        void setObjectName( std::size_t index_, const std::string& name_ );
+        void setObjectColor( std::size_t index_, int red_, int green_, int blue_ );
+
 
         void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
 

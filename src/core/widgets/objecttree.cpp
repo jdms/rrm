@@ -36,10 +36,13 @@ ObjectTree::ObjectTree( QWidget *parent )
 
     label_stratigraphy = new QTreeWidgetItem();
     label_stratigraphy->setText( COLUMN_NAME, "STRATIGRAPHY" );
+    label_stratigraphy->setCheckState( COLUMN_STATUS, Qt::Checked );
 
 
     label_structural = new QTreeWidgetItem();
     label_structural->setText( COLUMN_NAME, "STRUCTURAL" );
+    label_structural->setCheckState( COLUMN_STATUS, Qt::Checked );
+
 
 
 
@@ -51,7 +54,15 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 {
     ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
 
-    if( obj_->getType() == Settings::Objects::ObjectType::VOLUME )
+    if( item_ == label_stratigraphy && column_ == COLUMN_STATUS )
+        setStratigraphiesVisible( item_->checkState( COLUMN_STATUS ) );
+
+
+    else if( item_ == label_structural && column_ == COLUMN_STATUS )
+        setStructuralsVisible( item_->checkState( COLUMN_STATUS ) );
+
+
+    else if( obj_->getType() == Settings::Objects::ObjectType::VOLUME )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -68,6 +79,23 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
     }
 
     else if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY )
+    {
+        if( column_ == COLUMN_STATUS )
+        {
+            bool status_ = false;
+            if( obj_->checkState( COLUMN_STATUS ) == Qt::Checked )
+                status_ = true;
+
+            emit setObjectVisible( obj_->getIndex(), status_ );
+        }
+        else if( column_ == COLUMN_NAME )
+        {
+            emit setObjectName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
+        }
+
+    }
+
+    else if( obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
     {
         if( column_ == COLUMN_STATUS )
         {
@@ -115,6 +143,7 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
             emit setRegionName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
     }
+
 }
 
 
@@ -228,29 +257,6 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
     { emit setObjectColor( index_, color_ ); } );
 
 
-
-
-
-
-
-    //    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
-    //    {   if( indexv_ != 0 ) return;
-
-    //        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-    //        if( vol1_ == nullptr ) return;
-
-    //        int nchildren = vol1_->childCount();
-    //        for( int j = 0; j < nchildren; ++j )
-    //        {
-
-    //            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
-    //            if( obj_ == nullptr ) continue;
-    //            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
-    //        }
-    //    } );
-
-
-
     if( type_ == Settings::Objects::ObjectType::STRATIGRAPHY )
     {
         if( stratigraphies.empty() == true )
@@ -277,46 +283,6 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
 
 
-//    ObjectTreeItem* obj_ = new ObjectTreeItem();
-//    obj_->setIndex( index_ );
-//    obj_->setType( type_ );
-//    obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
-//    obj_->setCheckState( COLUMN_STATUS, Qt::Checked );
-
-
-//    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-//    if( vol_ == nullptr ) return;
-
-
-
-//    ColorPicker* colorpicker_ = new ColorPicker( this );
-//    colorpicker_->setColor( QColor( red_, green_, blue_ ) );
-//    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-//                                                        { emit setObjectColor( index_, color_ ); } );
-
-
-
-//    vol_->addChild( obj_ );
-
-//    setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
-//    items.addElement( index_, obj_ );
-
-
-//    connect( this, &ObjectTree::setVolumeVisible, [=]( std::size_t indexv_, bool status_ )
-//    {   if( indexv_ != 0 ) return;
-
-//        ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-//        if( vol1_ == nullptr ) return;
-
-//        int nchildren = vol1_->childCount();
-//        for( int j = 0; j < nchildren; ++j )
-//        {
-
-//            ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol1_->child( j ) );
-//            if( obj_ == nullptr ) continue;
-//            obj_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
-//        }
-//    } );
 }
 
 
@@ -371,6 +337,34 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
     obj_->setHidden( !status_ );
 }
 
+
+
+void ObjectTree::setStratigraphiesVisible( const Qt::CheckState& status_  )
+{
+    int nchildren_ = label_stratigraphy->childCount();
+    bool is_visible_ = ( status_ == Qt::Checked? true: false );
+
+    for( int i = 0; i < nchildren_; ++i )
+    {
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( i ) );
+        emit setObjectVisible( obj_->getIndex(), is_visible_ );
+    }
+
+}
+
+
+void ObjectTree::setStructuralsVisible( const Qt::CheckState& status_ )
+{
+    int nchildren_ = label_structural->childCount();
+    bool is_visible_ = ( status_ == Qt::Checked? true: false );
+
+    for( int i = 0; i < nchildren_; ++i )
+    {
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( label_structural->child( i ) );
+        emit setObjectVisible( obj_->getIndex(), is_visible_ );
+    }
+
+}
 
 
 void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_,

@@ -60,6 +60,11 @@ class ObjectTree: public QTreeWidget
         void setObjectVisibility( std::size_t index_, bool status_ );
 
 
+
+        void setStratigraphiesVisible( const Qt::CheckState& status_ );
+        void setStructuralsVisible( const Qt::CheckState& status_ );
+
+
         void addRegion( std::size_t index_, const std::string& name_,  const int& red_,
                         const int& green_,  const int& blue_ );
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
