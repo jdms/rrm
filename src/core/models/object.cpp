@@ -44,6 +44,7 @@ Object::Object( const Object & obj_ )
     this->selected = obj_.selected;
     this->visible = obj_.visible;
     this->active = obj_.active;
+    this->is_done = obj_.is_done;
 }
 
 Object& Object::operator=( const Object & obj_ )
@@ -59,6 +60,7 @@ Object& Object::operator=( const Object & obj_ )
     this->selected = obj_.selected;
     this->visible = obj_.visible;
     this->active = obj_.active;
+    this->is_done = obj_.is_done;
     return *this;
 }
 
@@ -598,11 +600,11 @@ void Object::initialize()
     type = Settings::Objects::ObjectType::STRATIGRAPHY;
     name = "Surface " + std::to_string( index );
 
-    is_editable = true;
-    is_selectable = false;
-    is_selected = false;
-    is_visible = false;
-    is_active = true;
+    editable = true;
+    selectable = false;
+    selected = false;
+    visible = true;
+    active = true;
     is_done = false;
 
     color.red = 255;

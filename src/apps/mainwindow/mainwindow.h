@@ -5,7 +5,9 @@
 
 #include <QMainWindow>
 #include <QToolBar>
-
+#include <QFileDialog>
+#include <QDir>
+#include <QFileInfo>
 
 #include "rrmapplication.h"
 #include "sketchinterface.h"
@@ -27,6 +29,10 @@ class MainWindow: public QMainWindow
         ~MainWindow();
         void run();
 
+    public slots:
+
+        void save();
+        void load();
 
 
     protected:

@@ -178,12 +178,12 @@ class Object
         {
             json[ "name" ] = QString( name.c_str() );
             json[ "text_information" ] = QString( text_information.c_str() );
-            json[ "is_editable" ] = is_editable;
-            json[ "is_selectable" ] = is_selectable;
-            json[ "is_selected" ] = is_selected;
-            json[ "is_visible" ] = is_visible;
-            json[ "is_active" ] = is_active;
-            json[ "is_done" ] = is_active;
+            json[ "is_editable" ] = editable;
+            json[ "is_selectable" ] = selectable;
+            json[ "is_selected" ] = selected;
+            json[ "is_visible" ] = visible;
+            json[ "is_active" ] = active;
+            json[ "is_done" ] = is_done;
             json[ "red" ] = color.red;
             json[ "green" ] = color.green;
             json[ "blue" ] = color.blue;
@@ -202,19 +202,19 @@ class Object
                 text_information = json["text_information"].toString().toStdString();
 
             if (json.contains("is_editable") && json["is_editable"].isBool())
-                is_editable =json["is_editable"].toBool();
+                editable =json["is_editable"].toBool();
 
             if (json.contains("is_selectable") && json["is_selectable"].isBool())
-                is_selectable = json["is_selectable"].toBool();
+                selectable = json["is_selectable"].toBool();
 
             if (json.contains("is_selected") && json["is_selected"].isBool())
-                is_selected = json["is_selected"].toBool();
+                selected = json["is_selected"].toBool();
 
             if (json.contains("is_visible") && json["is_visible"].isBool())
-                is_visible = json["is_visible"].toBool();
+                visible = json["is_visible"].toBool();
 
             if (json.contains("is_active") && json["is_active"].isBool())
-                is_active = json["is_active"].toBool();
+                active = json["is_active"].toBool();
 
             if (json.contains("is_done") && json["is_done"].isBool())
                 is_done = json["is_done"].toBool();
