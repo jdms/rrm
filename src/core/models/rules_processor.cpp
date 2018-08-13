@@ -214,7 +214,7 @@ bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_
     length_.y = opengl_y;
     length_.z = opengl_z;
 
-//    std::cout << "updated " << std::endl << std::flush;
+    std::cout << "updated " << std::endl << std::flush;
 
     return true;
 }

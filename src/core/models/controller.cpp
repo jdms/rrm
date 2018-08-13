@@ -1349,6 +1349,7 @@ void Controller::clear()
         (it.second).regions_set.clear();
     model.domains.clear();
 
+
     current_object = 0;
     current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
     csection_stepx = 1.0;
