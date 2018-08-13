@@ -110,8 +110,7 @@ void MainWindow::createActions()
 //    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
 
 
-    connect( ac_clear, &QAction::triggered, [=]()
-    { app->reset(); } );
+    connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
 
@@ -256,6 +255,8 @@ void MainWindow::createObjectTree()
         app->setVolumeVisible( status_ );
     } );
 
+
+    connect( app, &RRMApplication::resetApplication, object_tree, &ObjectTree::clear );
 
 }
 

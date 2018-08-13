@@ -438,54 +438,40 @@ void ObjectTree::setRegionVisibility( std::size_t index_, bool status_ )
 void ObjectTree::clear()
 {
 
-    std::vector< std::size_t > diff_objs;
     std::vector< std::size_t > diff_regs;
 
 
     if( topLevelItemCount() != 0 )
     {
 
-        int nchildren = topLevelItem( 0 )->childCount();
-        for( int j = 0; j < nchildren; ++j )
-        {
-            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 0 )->child( j ) );
+        removeStratigraphies();
+        removeStructurals();
 
-            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
-            removeItemWidget( obj_, COLUMN_COLOR );
-            delete colorpicker_;
-
-            if( items.findElement( obj_->getIndex() ) == true )
-            {
-                diff_objs.push_back( obj_->getIndex() );
-                continue;
-            }
-
-            delete obj_;
-            obj_ = nullptr;
-        }
-
-        for( auto d: diff_objs )
-        {
-            ObjectTreeItem* obj_ = items.getElement( d );
-
-            delete obj_;
-            obj_ = nullptr;
-        }
-
-
+        label_stratigraphy->setHidden( true );
+        label_structural->setHidden( true );
 
         if( topLevelItemCount() < 2 )
         {
             ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
             if( vol0_ != nullptr )
             {
+                vol0_->removeChild( label_stratigraphy );
+                vol0_->removeChild( label_structural );
                 delete vol0_;
                 vol0_ = nullptr;
             }
+
+            QTreeWidget::clear();
+            items.clear();
+            regions.clear();
+            stratigraphies.clear();
+            structurals.clear();
             return;
         }
 
-        nchildren = topLevelItem( 1 )->childCount();
+
+
+        int nchildren = topLevelItem( 1 )->childCount();
         for( int j = 0; j < nchildren; ++j )
         {
             ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 1 )->child( j ) );
@@ -516,6 +502,8 @@ void ObjectTree::clear()
         ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
         if( vol0_ != nullptr )
         {
+            vol0_->removeChild( label_stratigraphy );
+            vol0_->removeChild( label_structural );
             delete vol0_;
             vol0_ = nullptr;
         }
@@ -530,10 +518,185 @@ void ObjectTree::clear()
     }
 
 
+
+
     QTreeWidget::clear();
     items.clear();
     regions.clear();
+    stratigraphies.clear();
+    structurals.clear();
+
+
+/*
+
+//    std::vector< std::size_t > diff_objs;
+//    std::vector< std::size_t > diff_regs;
+
+
+//    if( topLevelItemCount() != 0 )
+//    {
+
+//        int nchildren = topLevelItem( 0 )->childCount();
+//        for( int j = 0; j < nchildren; ++j )
+//        {
+//            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 0 )->child( j ) );
+//            if( obj_ == nullptr ) continue;
+
+//            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+//            removeItemWidget( obj_, COLUMN_COLOR );
+//            delete colorpicker_;
+
+//            if( items.findElement( obj_->getIndex() ) == true )
+//            {
+//                diff_objs.push_back( obj_->getIndex() );
+//                continue;
+//            }
+
+//            delete obj_;
+//            obj_ = nullptr;
+//        }
+
+//        for( auto d: diff_objs )
+//        {
+//            ObjectTreeItem* obj_ = items.getElement( d );
+
+//            delete obj_;
+//            obj_ = nullptr;
+//        }
 
 
 
+//        if( topLevelItemCount() < 2 )
+//        {
+//            ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+//            if( vol0_ != nullptr )
+//            {
+//                delete vol0_;
+//                vol0_ = nullptr;
+//            }
+//            return;
+//        }
+
+//        nchildren = topLevelItem( 1 )->childCount();
+//        for( int j = 0; j < nchildren; ++j )
+//        {
+//            ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 1 )->child( j ) );
+
+//            ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+//            removeItemWidget( obj_, COLUMN_COLOR );
+//            delete colorpicker_;
+
+//            if( regions.findElement( obj_->getIndex() ) == true )
+//            {
+//                diff_regs.push_back( obj_->getIndex() );
+//                continue;
+//            }
+
+//            delete obj_;
+//            obj_ = nullptr;
+//        }
+
+//        for( auto d: diff_regs )
+//        {
+//            ObjectTreeItem* obj_ = regions.getElement( d );
+
+//            delete obj_;
+//            obj_ = nullptr;
+//        }
+
+
+//        ObjectTreeItem* vol0_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+//        if( vol0_ != nullptr )
+//        {
+//            delete vol0_;
+//            vol0_ = nullptr;
+//        }
+
+//         ObjectTreeItem* vol1_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
+//         if( vol1_ != nullptr )
+//         {
+//             delete vol1_;
+//             vol1_ = nullptr;
+//        }
+
+//    }
+
+
+//    QTreeWidget::clear();
+//    items.clear();
+//    regions.clear();
+
+*/
+
+}
+
+
+void ObjectTree::removeStratigraphies()
+{
+    std::vector< std::size_t > diff_objs;
+
+    int nchildren_ = label_stratigraphy->childCount();
+    for( int i = 0; i < nchildren_; ++i )
+    {
+        ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( i ) );
+
+        ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+        removeItemWidget( obj_, COLUMN_COLOR );
+        delete colorpicker_;
+
+        if( stratigraphies.findElement( obj_->getIndex() ) == true )
+        {
+            diff_objs.push_back( obj_->getIndex() );
+            continue;
+        }
+
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+    for( auto d: diff_objs )
+    {
+        ObjectTreeItem* obj_ = stratigraphies.getElement( d );
+
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+    stratigraphies.clear();
+}
+
+
+void ObjectTree::removeStructurals()
+{
+    std::vector< std::size_t > diff_objs;
+
+    int nchildren_ = label_structural->childCount();
+    for( int i = 0; i < nchildren_; ++i )
+    {
+        ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* >( label_structural->child( i ) );
+
+        ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+        removeItemWidget( obj_, COLUMN_COLOR );
+        delete colorpicker_;
+
+        if( structurals.findElement( obj_->getIndex() ) == true )
+        {
+            diff_objs.push_back( obj_->getIndex() );
+            continue;
+        }
+
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+    for( auto d: diff_objs )
+    {
+        ObjectTreeItem* obj_ = structurals.getElement( d );
+
+        delete obj_;
+        obj_ = nullptr;
+    }
+
+
+    structurals.clear();
 }
