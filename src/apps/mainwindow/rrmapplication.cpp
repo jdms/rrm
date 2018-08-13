@@ -354,6 +354,8 @@ void RRMApplication::save( const std::string& filename_ )
 
 void RRMApplication::load( const std::string& filename_ )
 {
+    reset();
+
     Controller::MeshResolution resol_;
     controller->loadFile( filename_, resol_ );
 
