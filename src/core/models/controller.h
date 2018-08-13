@@ -194,6 +194,7 @@ class Controller
         void setVolumeDiscretization();
         std::size_t getCurrentDiscretization() const;
         void getCurrentRange( double& min_, double& max_ ) const;
+        void updateBoundingBoxInModel();
 
         std::size_t indexCrossSectionX( double value_ ) const;
         std::size_t indexCrossSectionZ( double value_ ) const;
@@ -205,7 +206,6 @@ class Controller
         void applyStratigraphicRule();
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
-
 
         void setCurrentColor( int red_, int green_, int blue_ );
 

@@ -111,6 +111,7 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     }
 
     emit updateVolume();
+
 }
 
 

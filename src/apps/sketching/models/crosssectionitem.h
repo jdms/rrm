@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "./core/models/cross_section.h"
+#include "./core/models/crosssection.h"
 #include "./qtgeometries/lineitem.h"
 
 class CrossSectionItem: public LineItem
@@ -15,6 +15,8 @@ class CrossSectionItem: public LineItem
 
         void setRawCrossSection( const std::shared_ptr< CrossSection >& raw_ );
         const std::shared_ptr< CrossSection >& getRawCrossSection() const;
+
+        bool isVisible() const override;
 
         void clear();
 

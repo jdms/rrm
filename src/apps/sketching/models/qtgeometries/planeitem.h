@@ -40,6 +40,10 @@ class PlaneItem: public QGraphicsRectItem
         void resetToDefaultFillColor();
         void resetToDefaultBorderWidth();
 
+        virtual bool isVisible() const { return QGraphicsRectItem::isVisible(); }
+
+
+
 
     protected:
 

@@ -44,6 +44,13 @@ void VolumeItem::update( const Settings::CrossSection::CrossSectionDirections& d
 }
 
 
+bool VolumeItem::isVisible() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isVisible();
+}
+
+
 void VolumeItem::clear()
 {
     if( raw != nullptr )
