@@ -1363,6 +1363,8 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
 void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
 {
+    clear();
+
     bool status_ = rules_processor.loadFile( filename );
 
     if( status_ == false )
@@ -1377,7 +1379,7 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
 
 void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
-    clear();
+
     init();
 
     double ox, oy, oz;
