@@ -361,6 +361,7 @@ void RRMApplication::load( const std::string& filename_ )
     controller->loadFile( filename_, resol_ );
 
     emit startApplication();
+    emit updateObjects();
 
 //    clear();
 
