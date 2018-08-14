@@ -27,14 +27,14 @@ void SketchInterface::createSketchingWindow()
     dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketchwindow->setWidget( sketch_window );
 
-    window->addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+    window->addDockWidget( Qt::TopDockWidgetArea, dw_sketchwindow );
 
     sketch_topview_window = new SketchWindow();
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
 
-    window->addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+    window->addDockWidget( Qt::RightDockWidgetArea, dw_topview_window );
 
 
     scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
@@ -151,6 +151,15 @@ void SketchInterface::createSketchingActions()
     { scontroller->clear(); } );
 
     connect( window->app, &RRMApplication::startApplication, this, &SketchInterface::init );
+
+    connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_window->disableResizeVolume( true ); } );
+
+    connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_window->disableResizeVolume( false ); } );
+
+
+    connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( true ); } );
+
+    connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
 
 
 }

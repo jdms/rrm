@@ -31,8 +31,18 @@ void View3dInterface::createView3dWindow()
     hb_central_widget->addWidget( canvas3d );
     hb_central_widget->addWidget( sl_depth_csection );
 
+
+    QFrame* frame = new QFrame();
+    frame->setFrameStyle(QFrame::Box | QFrame::Raised );
+    frame->setLineWidth( 0 );
+    frame->setMidLineWidth( 1 );
+    frame->setLayout( hb_central_widget );
+
+    QHBoxLayout* hb_layout = new QHBoxLayout();
+    hb_layout->addWidget( frame );
+
     QWidget* central_widget = new QWidget();
-    central_widget->setLayout( hb_central_widget );
+    central_widget->setLayout( hb_layout );
 
     window->setCentralWidget( central_widget );
     window->show();
@@ -40,6 +50,49 @@ void View3dInterface::createView3dWindow()
 
     controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
     controller3d->setController( std::shared_ptr< Controller > ( window->controller ) );
+
+//    controller3d = new View3dController();
+
+//    canvas3d = new Canvas3d();
+////    canvas3d->show();
+//    sl_depth_csection = new RealFeaturedSlider( Qt::Vertical );
+
+//    QHBoxLayout* hb_central_widget = new QHBoxLayout();
+//    hb_central_widget->addWidget( canvas3d );
+//    hb_central_widget->addWidget( sl_depth_csection );
+
+//    QWidget* central_widget = new QWidget();
+//    central_widget->setLayout( hb_central_widget );
+
+//    window->setCentralWidget( central_widget );
+//    window->show();
+
+
+//    controller3d->setMainWindow( std::shared_ptr< Canvas3d > ( canvas3d ) );
+//    controller3d->setController( std::shared_ptr< Controller > ( window->controller ) );
+
+
+
+    /*
+    hb_central_widget = new QHBoxLayout();
+    hb_central_widget->addWidget( canvas3d );
+    hb_central_widget->addWidget( sl_depth_csection );
+
+    QFrame* frame = new QFrame();
+    frame->setFrameStyle(QFrame::Box | QFrame::Raised );
+    frame->setLineWidth( 0 );
+    frame->setMidLineWidth( 1 );
+    frame->setLayout( hb_central_widget );
+
+    QHBoxLayout* hb_layout = new QHBoxLayout();
+    hb_layout->addWidget( frame );
+
+
+    central_widget = new QWidget();
+    central_widget->setLayout( hb_layout );
+    setCentralWidget( central_widget );
+*/
+
 
 }
 

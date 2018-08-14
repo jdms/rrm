@@ -34,6 +34,8 @@ class MainWindow: public QMainWindow
         void save();
         void load();
 
+        void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
 
     protected:
 

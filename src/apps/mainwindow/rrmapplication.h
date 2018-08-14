@@ -114,6 +114,8 @@ class RRMApplication: public QObject
         void save( const std::string& filename_ );
         void load( const std::string& filename_ );
 
+         void loadObjectTree();
+
 
         void reset();
 
@@ -145,6 +147,13 @@ class RRMApplication: public QObject
 
         void startApplication();
         void resetApplication();
+
+        void disableVolumeResizing();
+        void enableVolumeResizing();
+
+        void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        void unlockDirections();
 
 
 ///================================================================================
