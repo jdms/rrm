@@ -86,6 +86,7 @@ void RRMApplication::setVolumeName( const std::string& name_ )
     controller->setVolumeName( name_ );
 }
 
+
 void RRMApplication::setVolumeVisible( bool status_ )
 {
     controller->setVolumeVisibility( status_ );
@@ -369,27 +370,6 @@ void RRMApplication::load( const std::string& filename_ )
 
     loadObjectTree();
 
-
-    /*
-//    clear();
-
-//    Controller::MeshResolution resol_;
-
-//    mainwindow->controller->loadFile( filename_, resol_ );
-
-//    if ( resol_ == Controller::MeshResolution::LOW )
-//        mainwindow->object_properties->checkLowResolution();
-//    else if ( resol_ == Controller::MeshResolution::MEDIUM )
-//        mainwindow->object_properties->checkMediumResolution();
-//    else if ( resol_ == Controller::MeshResolution::HIGH )
-//        mainwindow->object_properties->checkHighResolution();
-
-//    getVolumeDimensionsFromController();
-//    mainwindow->object_properties->setEnabledVolumeResize( mainwindow->controller->isVolumeResizable() );
-//    checkUndoRedo();
-//    checkSketchStatus();
-//    initSketchingApp();
-*/
 }
 
 void RRMApplication::loadObjectTree()
