@@ -62,6 +62,7 @@ class SketchWindow: public QMainWindow
     public slots:
 
         void updateColorWidget( int red_, int green_, int blue_ );
+        void disableResizeVolume( bool status_ );
 
 
     signals:

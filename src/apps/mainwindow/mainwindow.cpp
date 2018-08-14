@@ -223,6 +223,15 @@ void MainWindow::createController()
     app = new RRMApplication();
     app->setMainWindow( this );
 
+    connect( app, &RRMApplication::lockDirection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_ ) { lockDirection( dir_ );} );
+    connect( app, &RRMApplication::unlockDirections, [=]()
+    {
+        ac_direction_x->setEnabled( true );
+        ac_direction_y->setEnabled( true );
+        ac_direction_z->setEnabled( true );
+    });
+
+
 }
 
 
@@ -312,6 +321,39 @@ void MainWindow::load()
 
 }
 
+
+void MainWindow::lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    switch( dir_)
+    {
+
+        case Settings::CrossSection::CrossSectionDirections::X:
+        {
+            ac_direction_y->setEnabled( false );
+            ac_direction_z->setEnabled( false );
+        }
+        break;
+
+        case Settings::CrossSection::CrossSectionDirections::Y:
+        {
+            ac_direction_x->setEnabled( false );
+            ac_direction_z->setEnabled( false );
+        }
+        break;
+
+        case Settings::CrossSection::CrossSectionDirections::Z:
+        {
+            ac_direction_x->setEnabled( false );
+            ac_direction_y->setEnabled( false );
+        }
+        break;
+
+    default:
+        break;
+
+    };
+
+}
 
 MainWindow::~MainWindow()
 {

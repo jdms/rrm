@@ -188,6 +188,31 @@ class Object
             json[ "green" ] = color.green;
             json[ "blue" ] = color.blue;
 
+            double object_type_ = 0;
+            if( type == Settings::Objects::ObjectType::VOLUME )
+                object_type_ = 1;
+            else if( type == Settings::Objects::ObjectType::CROSS_SECTION )
+                object_type_ = 2;
+            else if( type == Settings::Objects::ObjectType::STRATIGRAPHY )
+                object_type_ = 3;
+            else if( type == Settings::Objects::ObjectType::STRUCTURAL )
+                object_type_ = 4;
+            else if( type == Settings::Objects::ObjectType::REGION )
+                object_type_ = 5;
+            else if( type == Settings::Objects::ObjectType::WELL )
+                object_type_ = 6;
+
+            json[ "type" ] = object_type_;
+
+
+            double object_direction_ = 0;
+            if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+                object_direction_ = 1;
+            else if( direction == Settings::CrossSection::CrossSectionDirections::Z )
+                object_direction_ = 2;
+
+            json[ "direction" ] = object_direction_;
+
         }
 
 
@@ -228,7 +253,41 @@ class Object
             if (json.contains("blue") && json["blue"].isDouble())
                 color.blue = json["blue"].toInt();
 
+            if (json.contains("type") && json["type"].isDouble() )
+            {
+                Settings::Objects::ObjectType object_type_ = Settings::Objects::ObjectType::NONE;
+
+                if( json["type"] == 1 )
+                    object_type_ = Settings::Objects::ObjectType::VOLUME;
+                else if( json["type"] == 2 )
+                    object_type_ = Settings::Objects::ObjectType::CROSS_SECTION;
+                else if( json["type"] == 3 )
+                    object_type_ = Settings::Objects::ObjectType::STRATIGRAPHY;
+                else if( json["type"] == 4 )
+                    object_type_ = Settings::Objects::ObjectType::STRUCTURAL;
+                else if( json["type"] == 5 )
+                    object_type_ = Settings::Objects::ObjectType::REGION;
+                else if( json["type"] == 6 )
+                    object_type_ = Settings::Objects::ObjectType::WELL;
+
+                type = object_type_;
+            }
+
+
+            if (json.contains("direction") && json["direction"].isDouble() )
+            {
+                Settings::CrossSection::CrossSectionDirections object_direction_ = Settings::CrossSection::CrossSectionDirections::X;
+
+                if( json["type"] == 1 )
+                    object_direction_ = Settings::CrossSection::CrossSectionDirections::Y;
+                else if( json["type"] == 2 )
+                    object_direction_ = Settings::CrossSection::CrossSectionDirections::Z;
+
+                direction = object_direction_;
+            }
+
         }
+
 
 
 
