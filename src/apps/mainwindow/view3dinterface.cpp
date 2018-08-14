@@ -101,6 +101,5 @@ void View3dInterface::createView3dActions()
 
 void View3dInterface::init()
 {
-
     controller3d->init();
 }
