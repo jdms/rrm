@@ -484,7 +484,7 @@ std::vector< double > Object::getCurves3DY()
     {
         PolyCurve& curve_ = level_curves1[ d_ ];
 
-        std::vector< double > points_ = curve_.addYCoordinate( d_, true );
+        std::vector< double > points_ = curve_.addYCoordinate( d_, false );
         points3d_.insert( points3d_.end(), points_.begin(), points_.end() );
     }
 
