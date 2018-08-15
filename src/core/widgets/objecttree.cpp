@@ -264,6 +264,7 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
         stratigraphies.addElement( index_, obj_ );
 
     }
+
     else if( type_ == Settings::Objects::ObjectType::STRUCTURAL )
     {
         if( structurals.empty() == true )

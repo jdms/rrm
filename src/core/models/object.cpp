@@ -233,11 +233,15 @@ bool Object::isActive() const
 
 void Object::removed()
 {
+    setVisible( false );
+
+    if( direction == Settings::CrossSection::CrossSectionDirections::Y ) return;
+
     removeCrossSectionCurves();
     removeTrajectory();
     removeSurface();
 
-    setVisible( false );
+
 
 }
 
@@ -270,9 +274,11 @@ void Object::setDone( const bool status_ )
     is_done = status_;
 
     if( is_done == false ) return;
+    if( direction == Settings::CrossSection::CrossSectionDirections::Y ) return;
 
     removeCrossSectionCurves();
     removeTrajectory();
+    removeLevelCurves();
     removeSurface();
     user_entered.clear();
 }
@@ -305,7 +311,10 @@ void Object::clearInformation()
 
 bool Object::isEmpty() const
 {
-
+    if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        return level_curves1.empty();
+    }
     return ( csection_curves1.empty() && trajectory.isEmpty() );
 }
 
@@ -318,7 +327,11 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
     if( user_entered.find( csection_id_ ) != user_entered.end() )
         return false;
 
-    csection_curves1[ csection_id_ ] = curve_;
+    if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+        level_curves1[ csection_id_ ] = curve_;
+    else
+        csection_curves1[ csection_id_ ] = curve_;
+
     user_entered.insert( csection_id_ );
 
     setVisible( true );
@@ -353,6 +366,17 @@ bool Object::removeCurve( double csection_id_ )
     return true;
 }
 
+void Object::removeLevelCurves()
+{
+    for ( auto it: level_curves1 )
+    {
+        if( ( it.second ).isEmpty() == true ) continue;
+        ( it.second ).clear();
+    }
+    level_curves1.clear();
+}
+
+
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
     if( csection_curves1.empty() == true )
@@ -366,10 +390,23 @@ std::map< double, PolyCurve > Object::getCurves()
 {
    std::map< double, PolyCurve > curves_;
 
-   for ( auto d_: user_entered )
+
+   if( direction == Settings::CrossSection::CrossSectionDirections::Y )
    {
-       if( csection_curves1.find( d_ ) == csection_curves1.end() ) continue;
-       curves_[ d_ ] = csection_curves1[ d_ ];
+       for ( auto d_: user_entered )
+       {
+           if( level_curves1.find( d_ ) == level_curves1.end() ) continue;
+           curves_[ d_ ] = level_curves1[ d_ ];
+       }
+
+   }
+   else
+   {
+       for ( auto d_: user_entered )
+       {
+           if( csection_curves1.find( d_ ) == csection_curves1.end() ) continue;
+           curves_[ d_ ] = csection_curves1[ d_ ];
+       }
    }
 
 
@@ -442,9 +479,10 @@ std::vector< double > Object::getCurves3DY()
 
     std::vector< double > points3d_;
 
+
     for ( auto d_: user_entered )
     {
-        PolyCurve& curve_ = csection_curves1[ d_ ];
+        PolyCurve& curve_ = level_curves1[ d_ ];
 
         std::vector< double > points_ = curve_.addYCoordinate( d_, true );
         points3d_.insert( points3d_.end(), points_.begin(), points_.end() );
@@ -476,7 +514,7 @@ std::vector< double > Object::getCurves3DZ()
 
 std::size_t Object::getNumberOfCrossSections() const
 {
-    return csection_curves1.size();
+    return user_entered.size();
 }
 
 
@@ -539,6 +577,7 @@ bool Object::hasTrajectory() const
 void Object::removeCurves()
 {
     removeCrossSectionCurves();
+    removeLevelCurves();
     removeTrajectory();
 }
 
@@ -590,6 +629,7 @@ void Object::clear()
 
     removeCrossSectionCurves();
     removeTrajectory();
+    removeLevelCurves();
     removeSurface();
 
     initialize();

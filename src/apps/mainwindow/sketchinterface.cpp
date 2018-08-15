@@ -20,6 +20,28 @@ void SketchInterface::createInterface()
 void SketchInterface::createSketchingWindow()
 {
 
+    /*
+     *  sketch_window = new SketchWindow();
+    dw_sketchwindow = new QDockWidget( "Cross-Section" );
+    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_sketchwindow->setWidget( sketch_window );
+    addDockWidget( Qt::TopDockWidgetArea, dw_sketchwindow );
+
+
+    sketch_topview_window = new SketchWindow();
+    dw_topview_window = new QDockWidget( "Top-View" );
+    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
+    dw_topview_window->setWidget( sketch_topview_window );
+    addDockWidget( Qt::TopDockWidgetArea, dw_topview_window );
+
+
+    ac_topview = new QAction( "Top-View", this);
+    ac_topview->setCheckable( true );
+    ac_topview->setChecked( true );
+
+*/
+
+
     scontroller = new SketchingController();
 
     sketch_window = new SketchWindow();
@@ -27,14 +49,14 @@ void SketchInterface::createSketchingWindow()
     dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketchwindow->setWidget( sketch_window );
 
-    window->addDockWidget( Qt::BottomDockWidgetArea, dw_sketchwindow );
+    window->addDockWidget( Qt::TopDockWidgetArea, dw_sketchwindow );
 
     sketch_topview_window = new SketchWindow();
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );
 
-    window->addDockWidget( Qt::BottomDockWidgetArea, dw_topview_window );
+    window->addDockWidget( Qt::RightDockWidgetArea, dw_topview_window );
 
 
     scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
@@ -121,9 +143,6 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
     { scontroller->updateTopViewCrossSection(); } );
 
-//    /*connect( window->app, &RRMApplication::addCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
-//    { scontroller->addCrossSe*/(); } );
-
 
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
     { scontroller->updateMainCrossSection(); } );
@@ -152,11 +171,27 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::startApplication, this, &SketchInterface::init );
 
+    connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_window->disableResizeVolume( true ); } );
+
+    connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_window->disableResizeVolume( false ); } );
+
+
+    connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( true ); } );
+
+    connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
+
 
 }
 
 
 void SketchInterface::init()
 {
+
+
+    if( sketch_window != nullptr )
+        sketch_window->disableResizeVolume( false );
+    if( sketch_topview_window != nullptr )
+        sketch_topview_window->disableResizeVolume( false );
+
     scontroller->init();
 }

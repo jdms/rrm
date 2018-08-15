@@ -151,10 +151,11 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
         emit changeToTopViewDirection();
-    else
-        emit changeToCrossSectionDirection();
+//    else
+//        emit changeToCrossSectionDirection();
 
-//    emit updateMainCrossSection();
+    emit updateObjects();
+    emit updateTrajectories();
 }
 
 
@@ -218,11 +219,17 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
         obj_->getColor( r_, g_, b_ );
 
         window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
+
+        emit disableVolumeResizing();
+        emit lockDirection( dir_ );
     }
 
 
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         emit addCrossSection( dir_, depth_ );
+
+
+
 
 }
 
@@ -254,6 +261,8 @@ void RRMApplication::createObjectSurface()
     emit updateObjects();
 
     checkUndoRedo();
+
+    emit unlockDirections();
 
 }
 
@@ -363,6 +372,9 @@ void RRMApplication::load( const std::string& filename_ )
     emit startApplication();
     emit updateObjects();
 
+    loadObjectTree();
+
+    /*
 //    clear();
 
 //    Controller::MeshResolution resol_;
@@ -381,6 +393,24 @@ void RRMApplication::load( const std::string& filename_ )
 //    checkUndoRedo();
 //    checkSketchStatus();
 //    initSketchingApp();
+*/
 }
 
 
+void RRMApplication::loadObjectTree()
+{
+    window->object_tree->addInputVolume();
+
+    const std::map< std::size_t, ObjectPtr >& objects_ = controller->getObjects();
+
+    for( auto it: objects_ )
+    {
+        const ObjectPtr& obj_ = it.second;
+        if( obj_->getIndex() == controller->getCurrentObject()->getIndex() ) continue;
+
+        int r_, g_, b_;
+        obj_->getColor( r_, g_, b_ );
+
+        window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
+    }
+}

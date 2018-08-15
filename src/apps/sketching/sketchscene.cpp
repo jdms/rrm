@@ -147,6 +147,7 @@ void SketchScene::updateStratigraphiesTrajectories()
 
     for( auto it: stratigraphies )
     {
+        (it.second)->updateLevelCurves();
         (it.second)->updateTrajectory();
     }
     update();
@@ -299,12 +300,10 @@ void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
     clearSelection();
 
     sketch->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
-    sketch->setFlag( QGraphicsItem::ItemIsMovable, status_ );
 
     for( auto it: stratigraphies )
     {
         (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
-        (it.second)->setFlag( QGraphicsItem::ItemIsMovable, status_ );
     }
 
     if( status_ == true )
@@ -351,7 +350,6 @@ void SketchScene::setSelectingRegionsMode( bool status_ )
     for( auto it: regions )
     {
         it.second->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
-        it.second->setFlag( QGraphicsItem::ItemIsMovable, status_ );
         it.second->update();
     }
 
@@ -373,7 +371,6 @@ void SketchScene::setSelectingRegionsMode( bool status_ )
 //    for( auto it: wells )
 //    {
 //        it.second->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
-//        it.second->setFlag( QGraphicsItem::ItemIsMovable, status_ );
 //        it.second->update();
 //    }
 
@@ -405,6 +402,7 @@ void SketchScene::addToSketchesOfSelection()
     sketch->clear();
 
 }
+
 
 void SketchScene::removeSketchesOfSelection()
 {
@@ -529,7 +527,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 }
 
 
-
 void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event_ )
 {
 
@@ -546,7 +543,6 @@ void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event_ )
 void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event_ )
 {
 }
-
 
 
 void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
@@ -631,6 +627,7 @@ void SketchScene::clearScene()
 
 
 }
+
 
 SketchScene::~SketchScene()
 {

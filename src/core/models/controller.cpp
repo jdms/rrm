@@ -476,6 +476,8 @@ bool Controller::isObjectSelected(std::size_t index_) const
 bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ )
 {
 
+    if( curve_.isEmpty() == true ) return false;
+
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->setCrossSectionDirection( dir_ );
 
@@ -524,6 +526,8 @@ bool Controller::removeCurveFromObject( Settings::CrossSection::CrossSectionDire
 
 void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 {
+
+    if( curve_.isEmpty() == true ) return;
 
     ObjectPtr& obj_ = model.objects[ current_object ];
 
@@ -695,7 +699,6 @@ void Controller::updateModel()
     for ( std::size_t j = 0; j < number_of_actives_; ++j )
     {
         std::size_t id_ = actives_.at( j );
-//        if ( id_ == current_object ) continue;
 
         setObjectActive( id_, true );
         updateObjectSurface( id_ );
@@ -774,6 +777,11 @@ void Controller::updateCrossSectionsZ()
 
 void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, double depth_ )
 {
+    ObjectPtr& obj_ = model.objects[ index_ ];
+
+//    if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
+
+
     bool has_curve_ = false;
 
     std::vector< double > vertices_;
@@ -796,7 +804,7 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
     }
 
     PolyCurve curve_( vertices_, edges_ );
-    ObjectPtr& obj_ = model.objects[ index_ ];
+
     obj_->removeCurve( depth_ );
     obj_->updateCurve( depth_, curve_ );
 
@@ -859,8 +867,17 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     bool has_trajectory_ = rules_processor.getExtrusionPath( index_, trajectory_ );
     if( has_trajectory_ == true )
     {
+        PolyCurve traj_ = PolyCurve( trajectory_ );
+
+        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
+        {
+            if( csection->getDirection() != obj_->getCrossSectionDirection() )
+                traj_ = PolyCurve( traj_.getPointsSwapped() );
+        }
+
         obj_->removeTrajectory();
-        obj_->addTrajectory( PolyCurve( trajectory_ ) );
+        obj_->addTrajectory( traj_ );
+
     }
 
 
@@ -1363,6 +1380,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
 void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
 {
+
     clear();
 
     bool status_ = rules_processor.loadFile( filename );
