@@ -31,7 +31,7 @@ void StratigraphyItem::setCrossSection( const Settings::CrossSection::CrossSecti
 {
     csection_depth = depth_;
     csection_direction = dir_;
-    updateCurve();
+//    updateCurve();
 }
 
 
@@ -60,7 +60,8 @@ void StratigraphyItem::updateCurve()
 
     prepareGeometryChange();
 
-    changeDirection();
+    setCurve( raw->getCurve( csection_depth ) );
+
 
     QGraphicsPathItem::update();
 }
@@ -68,45 +69,49 @@ void StratigraphyItem::updateCurve()
 
 void StratigraphyItem::changeDirection()
 {
-    Settings::CrossSection::CrossSectionDirections dir_ = raw->getCrossSectionDirection();
 
 
-    if( csection_direction == dir_ )
-    {
-        if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
-        {
-            setCurves( raw->getCurves() );
-        }
-        else
-            setCurve( raw->getCurve( csection_depth ) );
-    }
+}
+
+
+void StratigraphyItem::updateLevelCurves()
+{
+
+    if( raw == nullptr ) return;
+    if( raw->isDone() )
+        resetToDefaultStyle();
+
+    int r_, g_, b_;
+    raw->getColor( r_, g_, b_ );
+    setColor( r_, g_, b_ );
+
+
+    prepareGeometryChange();
+    if( raw->getCrossSectionDirection() != Settings::CrossSection::CrossSectionDirections::Y ) return;
+
+    if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
+        setCurves( raw->getCurves(), true );
     else
-    {
-        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
-        {
-            updateTrajectory();
-        }
+        setCurves( raw->getCurves() );
 
-        else if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y  )
-        {
-            return;
-        }
 
-        else
-            setCurve( raw->getCurve( csection_depth ) );
-    }
 }
 
 
 void StratigraphyItem::updateTrajectory()
 {
     if( raw == nullptr ) return;
-    if( raw->isEmpty() == true || raw->isActive() == false ) return;
-
     if( raw->isDone() )
         resetToDefaultStyle();
 
+    int r_, g_, b_;
+    raw->getColor( r_, g_, b_ );
+    setColor( r_, g_, b_ );
+
+
+    if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
     prepareGeometryChange();
+
     setCurve( raw->getTrajectory() );
 }
 

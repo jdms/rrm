@@ -122,24 +122,45 @@ void CurveItem::setCurve( const PolyCurve& curve_ )
 }
 
 
-void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_ )
+void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool swapped_ )
 {
     curve = QPainterPath();
 
-
-    for( auto it_: curves_ )
+    if( swapped_ == true )
     {
-        PolyCurve& curve_ = it_.second;
 
-        std::size_t number_of_segments = curve_.getNumberOfSegments();
-        for( std::size_t i = 0; i < number_of_segments; ++i )
+        for( auto it_: curves_ )
         {
-            QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
-            curve.addPolygon( pol_ );
+            PolyCurve curve_ = PolyCurve( ( it_.second ).getPointsSwapped() );
+
+            std::size_t number_of_segments = curve_.getNumberOfSegments();
+            for( std::size_t i = 0; i < number_of_segments; ++i )
+            {
+                QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+                curve.addPolygon( pol_ );
+            }
+
         }
+        setDone();
 
     }
-    setDone();
+
+    else
+    {
+        for( auto it_: curves_ )
+        {
+            PolyCurve& curve_ = it_.second;
+
+            std::size_t number_of_segments = curve_.getNumberOfSegments();
+            for( std::size_t i = 0; i < number_of_segments; ++i )
+            {
+                QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+                curve.addPolygon( pol_ );
+            }
+
+        }
+        setDone();
+    }
 
 }
 

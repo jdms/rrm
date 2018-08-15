@@ -22,6 +22,7 @@ class StratigraphyItem: public CurveItem
 
         void update() override;
         void updateTrajectory();
+        void updateLevelCurves();
 
         void clear();
 
@@ -29,6 +30,7 @@ class StratigraphyItem: public CurveItem
     protected:
 
         void updateCurve();
+
 
 
 

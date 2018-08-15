@@ -122,6 +122,8 @@ class Object
         bool addCurve( double csection_id_, const PolyCurve& curve_ );
         bool removeCurve( double csection_id_ );
 
+        void removeLevelCurves();
+
         std::size_t getNumberOfCrossSections() const;
 
         bool addTrajectory( const PolyCurve& traj_ );
@@ -331,6 +333,7 @@ class Object
 
         std::vector< double > used_depth;
         std::map< double, PolyCurve > csection_curves1;
+        std::map< double, PolyCurve > level_curves1;
         Settings::CrossSection::CrossSectionDirections direction;
 
 

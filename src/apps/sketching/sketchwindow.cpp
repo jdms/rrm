@@ -214,6 +214,13 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
 }
 
 
+void SketchWindow::disableResizeVolume( bool status_ )
+{
+    if( ac_resize_boundary == nullptr ) return;
+    ac_resize_boundary->setDisabled( status_ );
+}
+
+
 SketchWindow::~SketchWindow()
 {
 
