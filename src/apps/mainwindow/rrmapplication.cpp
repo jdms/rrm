@@ -151,11 +151,11 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
         emit changeToTopViewDirection();
-//    else
-//        emit changeToCrossSectionDirection();
+    else
+        emit changeToCrossSectionDirection();
 
-    emit updateObjects();
-    emit updateTrajectories();
+//    emit updateObjects();
+//    emit updateTrajectories();
 }
 
 
@@ -210,6 +210,8 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
     if( status_ == false ) return;
 
     emit updateObjects();
+    emit updateMainCrossSection();
+    emit updateTopViewCrossSection();
 
     if( new_obj_ == true )
     {
@@ -239,8 +241,9 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
     if( controller->getMainCrossSection()->getDirection() ==
             Settings::CrossSection::CrossSectionDirections::Y )
     {
-        controller->addCurveToObject( Settings::CrossSection::CrossSectionDirections::Y, 0.0, curve_ );
-        emit updateObjects();
+        addCurveToObject( curve_, Settings::CrossSection::CrossSectionDirections::Y, 0.0 );
+//        controller->addCurveToObject( Settings::CrossSection::CrossSectionDirections::Y, 0.0, curve_ );
+//        emit updateObjects();
         return;
     }
 

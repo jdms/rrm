@@ -81,8 +81,6 @@ void SketchingController::updateTopViewCrossSection()
 }
 
 
-
-
 void SketchingController::viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     CrossSectionPtr csection_;
@@ -136,7 +134,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
     }
     else if( scene_ == topview_scene )
     {
-//        topview_scene->
         topview_scene->updateStratigraphiesTrajectories();
     }
 

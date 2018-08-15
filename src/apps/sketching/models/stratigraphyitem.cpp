@@ -31,7 +31,6 @@ void StratigraphyItem::setCrossSection( const Settings::CrossSection::CrossSecti
 {
     csection_depth = depth_;
     csection_direction = dir_;
-//    updateCurve();
 }
 
 
@@ -59,9 +58,7 @@ void StratigraphyItem::updateCurve()
     setColor( r_, g_, b_ );
 
     prepareGeometryChange();
-
     setCurve( raw->getCurve( csection_depth ) );
-
 
     QGraphicsPathItem::update();
 }
