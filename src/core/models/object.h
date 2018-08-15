@@ -217,6 +217,31 @@ class Object
 
             json[ "direction" ] = object_direction_;
 
+            double object_type_ = 0;
+            if( type == Settings::Objects::ObjectType::VOLUME )
+                object_type_ = 1;
+            else if( type == Settings::Objects::ObjectType::CROSS_SECTION )
+                object_type_ = 2;
+            else if( type == Settings::Objects::ObjectType::STRATIGRAPHY )
+                object_type_ = 3;
+            else if( type == Settings::Objects::ObjectType::STRUCTURAL )
+                object_type_ = 4;
+            else if( type == Settings::Objects::ObjectType::REGION )
+                object_type_ = 5;
+            else if( type == Settings::Objects::ObjectType::WELL )
+                object_type_ = 6;
+
+            json[ "type" ] = object_type_;
+
+
+            double object_direction_ = 0;
+            if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+                object_direction_ = 1;
+            else if( direction == Settings::CrossSection::CrossSectionDirections::Z )
+                object_direction_ = 2;
+
+            json[ "direction" ] = object_direction_;
+
         }
 
 
@@ -291,6 +316,7 @@ class Object
             }
 
         }
+
 
 
 
