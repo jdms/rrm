@@ -475,6 +475,7 @@ bool Controller::isObjectSelected(std::size_t index_) const
 
 bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ )
 {
+    if( curve_.isEmpty() == true ) return false;
 
     if( curve_.isEmpty() == true ) return false;
 

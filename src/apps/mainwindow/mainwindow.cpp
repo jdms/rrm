@@ -223,7 +223,7 @@ void MainWindow::createController()
     app = new RRMApplication();
     app->setMainWindow( this );
 
-     connect( app, &RRMApplication::lockDirection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_ ) { lockDirection( dir_ );} );
+    connect( app, &RRMApplication::lockDirection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_ ) { lockDirection( dir_ );} );
      connect( app, &RRMApplication::unlockDirections, [=]()
      {
          ac_direction_x->setEnabled( true );
