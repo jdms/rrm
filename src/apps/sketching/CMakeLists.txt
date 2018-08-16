@@ -14,6 +14,7 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             models/qtgeometries/lineitem.h
                             models/qtgeometries/planeitem.h
                             models/qtgeometries/polygonitem.h
+                            models/image_item_wrapper.h
                             models/crosssectionitem.h
                             models/regionitem.h
                             models/stratigraphyitem.h
@@ -34,6 +35,7 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             models/qtgeometries/lineitem.cpp
                             models/qtgeometries/planeitem.cpp
                             models/qtgeometries/polygonitem.cpp
+                            models/image_item_wrapper.cpp
                             models/crosssectionitem.cpp
                             models/regionitem.cpp
                             models/stratigraphyitem.cpp

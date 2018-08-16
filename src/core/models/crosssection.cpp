@@ -153,7 +153,7 @@ std::size_t CrossSection::getIndex() const
 
 void CrossSection::setVolume( const std::shared_ptr< Volume >& volume_ )
 {
-    volume = std::shared_ptr< Volume >( volume_ );
+    volume = volume_;
 }
 
 const std::shared_ptr< Volume >& CrossSection::getVolume() const
@@ -237,8 +237,6 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
     double minx , miny, minz;
 
     getMaxMin( maxx, maxy, maxz, minx, miny, minz );
-
-    std::cout << "Updating main cross-section in Y direction: " << depth << std::endl;
 
     if( direction == Settings::CrossSection::CrossSectionDirections::Z )
     {

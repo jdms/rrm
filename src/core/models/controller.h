@@ -104,6 +104,12 @@ class Controller
         bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
 
+        void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ );
+        void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+        void updateImageInMainCrossSection();
+        void updateImageInTopViewCrossSection();
+
 
         //TODO: addObject should be protected
         bool addObject( std::size_t index_ = UNDEFINED_INDEX );
@@ -253,6 +259,8 @@ class Controller
 
         PolyCurve last_trajectory;
 
+
+
         struct Model
         {
             VolumePtr volume = nullptr;
@@ -260,6 +268,7 @@ class Controller
             std::map< double, CrossSectionPtr > csectionsX;
             std::map< double, CrossSectionPtr > csectionsY;
             std::map< double, CrossSectionPtr > csectionsZ;
+
 
             std::map< std::size_t, ObjectPtr > objects;
             std::map< std::size_t, RegionsPtr > regions;
@@ -278,6 +287,18 @@ class Controller
         } current_color;
 
 
+        struct ImageData
+        {
+            std::string file;
+            double ox;
+            double oy;
+            double w;
+            double h;
+        };
+
+        std::map< double, ImageData > images_csectionsX;
+        std::map< double, ImageData > images_csectionsY;
+        std::map< double, ImageData > images_csectionsZ;
 
 };
 

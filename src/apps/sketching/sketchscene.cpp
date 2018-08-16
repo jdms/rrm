@@ -30,6 +30,7 @@
 #include <QMimeData>
 #include <QKeyEvent>
 #include <QtSvg/QSvgGenerator>
+
 #include "sketchscene.h"
 
 
@@ -51,6 +52,22 @@ void SketchScene::init()
 
 
     setSketchingMode();
+
+    image = new ImageItemWrapper();
+    image->setVisible( false );
+    addItem( image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setVisible( false );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setVisible( false );
+    addItem( move_marker );
 }
 
 
@@ -110,6 +127,50 @@ void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csecti
     addItem( cross_sections1[ id_ ].get() );
 }
 
+
+void SketchScene::addImageToCrossSection( const QString& file_ )
+{
+    QPixmap image1;
+    image1.load( file_ );
+
+    if( image1.isNull() == true ) return;
+
+    double ox_ = 0.0;
+    double oy_ = 0.0;
+    double w_ = static_cast< double >( image1.width() );
+    double h_ = static_cast< double >( image1.height() );
+
+    updateImageToCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
+
+    emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, ox_, oy_, w_, h_ );
+
+}
+
+
+void SketchScene::updateImageToCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ )
+{
+    QPixmap image1;
+    image1.load( QString( file_.c_str() ) );
+
+    if( image1.isNull() == true ) return;
+
+    QTransform myTransform;
+    myTransform.scale( 1, -1 );
+    image1 = image1.transformed( myTransform );
+
+    image->setImagePath( QString( file_.c_str() )  );
+    image->setImage( image1, QPointF( ox_, oy_ ), QPointF( w_, y_ ) );
+    image->setVisible( true );
+    image->update();
+
+}
+
+
+void SketchScene::removeImageInCrossSection()
+{
+    image->setVisible( false );
+    emit removeImageFromCrossSection( csection_direction, csection_depth );
+}
 
 
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
@@ -341,6 +402,20 @@ void SketchScene::setSelectingStratigraphyMode( bool status_ )
 }
 
 
+void SketchScene::setResizingImageMode( bool status_ )
+{
+    move_marker->setVisible( status_ );
+    resize_marker->setVisible( status_ );
+
+    if( status_ == true )
+    {
+        current_interaction1 = UserInteraction1::RESIZING_IMAGE;
+    }
+    else
+    {
+        setSketchingMode();
+    }
+}
 
 
 void SketchScene::setSelectingRegionsMode( bool status_ )
@@ -486,6 +561,14 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
         sketch->add(  p_ );
     }
 
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
+    {
+        if( resize_marker->isSelected() )
+            scaleImage( resize_marker->pos() );
+        else if( resize_marker->isSelected() )
+            moveImage( move_marker->pos() );
+    }
+
     QGraphicsScene::mouseMoveEvent( event_ );
     update();
 
@@ -530,18 +613,27 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event_ )
 {
 
+    if( ( event_->mimeData()->hasUrls() == true ) && ( event_->mimeData()->hasImage() ) )
+    {
+        event_->acceptProposedAction();
+    }
 
 }
 
 
 void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event_ )
 {
+    const QMimeData *mime_data = event_->mimeData();
+    QString url_file = mime_data->urls().at( 0 ).toLocalFile();
+    url_file = QDir::toNativeSeparators( url_file );
 
+    addImageToCrossSection( url_file );
 }
 
 
 void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event_ )
 {
+    event_->accept();
 }
 
 

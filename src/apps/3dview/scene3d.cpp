@@ -76,7 +76,6 @@ void Scene3d::addMainCrossSection( const std::shared_ptr< CrossSection>& raw_ )
 
 void Scene3d::updateMainCrossSection()
 {
-    std::cout << "Updating main cross-section in 3d!!! " << std::endl;
     main_csection->update();
     emit updateCanvas();
 }

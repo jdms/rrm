@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "./core/models/well.h"
-#include "./core/models/cross_section.h"
+#include "./core/models/crosssection.h"
 #include "./qtgeometries/curveitem.h"
 #include "./qtgeometries/polygonitem.h"
 

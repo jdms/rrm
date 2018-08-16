@@ -87,6 +87,10 @@ class RRMApplication: public QObject
         void addFixedCrossSection( double depth_, QColor color_ );
         void removeFixedCrossSection( double depth_ );
 
+        void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  );
+
+        void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
 
         void setObjectVisible( std::size_t index_, bool status_ );
         void setObjectName( std::size_t index_, const std::string& name_ );

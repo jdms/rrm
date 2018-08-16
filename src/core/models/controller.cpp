@@ -197,7 +197,9 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
 void Controller::moveMainCrossSection( double depth_ )
 {
     csection->setDepth( depth_ );
+
     updateObjectsCurvesInCrossSection( depth_ );
+    updateImageInMainCrossSection();
 }
 
 
@@ -226,6 +228,7 @@ void Controller::moveTopViewCrossSection( double depth_ )
 {
     topview->setDepth( depth_ );
     updateObjectsCurvesInCrossSection( depth_ );
+    updateImageInTopViewCrossSection();
 }
 
 
@@ -302,6 +305,106 @@ void Controller::removeCrossSection( const Settings::CrossSection::CrossSectionD
 
 }
 
+
+void Controller::setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ )
+{
+    ImageData image_;
+    image_.file = file_;
+    image_.ox = ox_;
+    image_.oy = oy_;
+    image_.w = w_;
+    image_.h = h_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        images_csectionsX[ depth_ ] = std::move( image_ );
+//        csection->setImage( file_, ox_, oy_, w_, h_ );
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        images_csectionsY[ depth_ ] = std::move( image_ );
+//        topview->setImage( file_, ox_, oy_, w_, h_ );
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        images_csectionsZ[ depth_ ] = std::move( image_ );
+//        csection->setImage( file_, ox_, oy_, w_, h_ );
+    }
+
+}
+
+void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        images_csectionsX.erase( depth_ );
+        updateImageInMainCrossSection();
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        images_csectionsY.erase( depth_ );
+        updateImageInTopViewCrossSection();
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        images_csectionsZ.erase( depth_ );
+        updateImageInMainCrossSection();
+    }
+
+}
+
+void Controller::updateImageInMainCrossSection()
+{
+    const Settings::CrossSection::CrossSectionDirections& dir_ = csection->getDirection();
+    double depth_ = csection->getDepth();
+
+    bool has_image_ = false;
+    ImageData image_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        if( images_csectionsX.find( depth_ ) != images_csectionsX.end() )
+        {
+            image_ = images_csectionsX[ depth_ ];
+            has_image_ = true;
+        }
+    }
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        if( images_csectionsZ.find( depth_ ) != images_csectionsZ.end() )
+        {
+            image_ = images_csectionsZ[ depth_ ];
+            has_image_ = true;
+        }
+    }
+
+    if( has_image_ == true )
+        csection->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+    else
+        csection->clearImage();
+
+}
+
+void Controller::updateImageInTopViewCrossSection()
+{
+    const Settings::CrossSection::CrossSectionDirections& dir_ = topview->getDirection();
+    double depth_ = topview->getDepth();
+
+
+    if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
+        return;
+
+    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
+    {
+        topview->clearImage();
+        return;
+    }
+
+    ImageData image_= images_csectionsY[ depth_ ];
+    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+
+}
 
 
 ///==========================================================================
@@ -780,9 +883,6 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 {
     ObjectPtr& obj_ = model.objects[ index_ ];
 
-//    if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
-
-
     bool has_curve_ = false;
 
     std::vector< double > vertices_;
@@ -800,7 +900,7 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 
     if( has_curve_ == false )
     {
-        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
+//        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
         return;
     }
 

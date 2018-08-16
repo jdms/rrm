@@ -30,11 +30,11 @@
 #include <QGraphicsScene>
 
 #include "./models/inputsketch.h"
-#include "./models/volume_item_wrapper.h"
-#include "./models/object_item_wrapper.h"
-#include "./models/crosssection_item_wrapper.h"
-#include "./models/trajectoryitemwrapper.h"
-#include "./models/coordinate_axes_2d.h"
+//#include "./models/volume_item_wrapper.h"
+//#include "./models/object_item_wrapper.h"
+//#include "./models/crosssection_item_wrapper.h"
+//#include "./models/trajectoryitemwrapper.h"
+//#include "./models/coordinate_axes_2d.h"
 #include "./models/image_item_wrapper.h"
 #include "./core/models/scene.h"
 
@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGIONS, SELECTING_WELLS };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGIONS, SELECTING_WELLS };
 
     ///================================================================================
 
@@ -109,7 +109,12 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setOldSelectingStratigraphyMode( bool status_ );
         void setSelectingStratigraphyMode( bool status_ );
         void setSelectingRegionsMode( bool status_ );
-//        void setSelectingWellsMode( bool status_ );
+        void setResizingImageMode( bool status_ );
+        //        void setSelectingWellsMode( bool status_ );
+
+        void addImageToCrossSection( const QString& file_ );
+        void updateImageToCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
+        void removeImageInCrossSection();
 
 
 
@@ -124,6 +129,10 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void sketchDone( const PolyCurve& curve_,
                          const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Y, double depth_ = 0 );
         void createObject();
+
+        void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
+
+        void removeImageFromCrossSection(  const Settings::CrossSection::CrossSectionDirections&, double );
 
 
     protected:
@@ -151,6 +160,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         bool sketch_enabled = true;
         std::shared_ptr< CurveItem > sketch = nullptr;
 
+        ImageItemWrapper* image = nullptr;
+
         double csection_depth = 0.0;
         Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
 
@@ -165,6 +176,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
 
+
+        QGraphicsEllipseItem* resize_marker = nullptr;
+        QGraphicsEllipseItem* move_marker = nullptr;
 };
 
 #endif // SKETCHSCENE_H
