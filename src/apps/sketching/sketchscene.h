@@ -141,6 +141,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void addToSketchesOfSelection();
         void removeSketchesOfSelection();
 
+        void scaleImage( const QPointF point_ );
+        void moveImage( const QPointF point_ );
+
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event_ );
         virtual void mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ );
