@@ -173,6 +173,11 @@ void SketchScene::removeImageInCrossSection()
 }
 
 
+void SketchScene::scaleImage( const QPointF point_ ){}
+
+void SketchScene::moveImage( const QPointF point_ ){}
+
+
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
 {
     std::size_t id_ = strat_->getIndex();
