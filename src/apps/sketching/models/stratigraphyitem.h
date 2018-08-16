@@ -2,7 +2,7 @@
 #define STRATIGRAPHYITEM_H
 
 #include "./core/models/stratigraphy.h"
-#include "./core/models/cross_section.h"
+#include "./core/models/crosssection.h"
 #include "./qtgeometries/curveitem.h"
 
 class StratigraphyItem: public CurveItem

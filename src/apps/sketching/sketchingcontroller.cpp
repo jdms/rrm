@@ -131,12 +131,26 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
     if( scene_ == main_scene )
     {
         main_scene->updateStratigraphies();
+
     }
     else if( scene_ == topview_scene )
     {
         topview_scene->updateStratigraphiesTrajectories();
     }
 
+    if( csection_->hasImage() == false )
+    {
+        std::cout << "Has no image!" << std::endl << std::flush;
+        scene_->removeImageInCrossSection();
+    }
+    else
+    {
+        std::cout << "Has image!" << std::endl << std::flush;
+        std::string file_;
+        double ox_, oy_, w_, h_;
+        csection_->getImage( file_, ox_, oy_, w_, h_ );
+        scene_->updateImageToCrossSection( file_, ox_, oy_, w_, h_ );
+    }
 }
 
 

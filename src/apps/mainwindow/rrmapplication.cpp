@@ -173,6 +173,17 @@ void RRMApplication::removeFixedCrossSection( double depth_ )
 }
 
 
+void RRMApplication::setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
+{
+    controller->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
+}
+
+
+void RRMApplication::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    controller->clearImageInCrossSection( dir_, depth_ );
+}
+
 
 
 void RRMApplication::setObjectVisible( std::size_t index_, bool status_ )

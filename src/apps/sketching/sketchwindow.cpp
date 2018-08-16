@@ -57,6 +57,14 @@ void SketchWindow::createToolBar()
     ac_resize_boundary->setChecked( RESIZE_BOUNDARY_DEFAULT_STATUS );
     tb_boundary->addAction( ac_resize_boundary );
 
+    tb_image = addToolBar( "Image" );
+    ac_resize_image = new QAction( "Resize image", this );
+    ac_resize_image->setCheckable( true );
+    ac_remove_image = new QAction( "Remove image", this );
+    tb_image->addAction( ac_resize_image );
+    tb_image->addAction( ac_remove_image );
+
+
     tb_region = addToolBar( "Region" );
     ac_select_regions = new QAction( "Select Regions", this );
     ac_select_regions->setCheckable( true );
@@ -105,8 +113,14 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
+    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSection );
+
+    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
+
+
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
+
 //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
@@ -117,6 +131,14 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     { emit addCurve( curve_, dir_, depth_ ); }  );
 
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
+
+    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+
+    connect( scene_.get(), &SketchScene::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    {
+      emit removeImageFromCrossSection( dir_, depth_ );
+    } );
+
 
     return scene_;
 }
@@ -161,6 +183,8 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 
+        connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+
     return scene_;
 }
 
@@ -195,6 +219,8 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_ )
     { emit updateVolumeDimensions( dir_, width_, height_ ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
+
+    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
 
 
     return scene_;

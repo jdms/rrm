@@ -67,6 +67,11 @@ class SketchWindow: public QMainWindow
 
     signals:
 
+
+        void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
+
+        void removeImageFromCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
         void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
@@ -107,6 +112,10 @@ class SketchWindow: public QMainWindow
         QToolBar* tb_boundary = nullptr;
         QAction* ac_resize_boundary = nullptr;
         const bool RESIZE_BOUNDARY_DEFAULT_STATUS = false;
+
+        QToolBar* tb_image = nullptr;
+        QAction* ac_resize_image = nullptr;
+        QAction* ac_remove_image = nullptr;
 
         QToolBar* tb_region = nullptr;
         QAction* ac_select_regions = nullptr;

@@ -134,6 +134,16 @@ void SketchInterface::createSketchingActions()
         window->app->setVolumeDimensions( dir_, width_, height_ );
     } );
 
+
+    connect( sketch_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
+    {
+        window->app->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
+    } );
+
+    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
+
+    connect( sketch_topview_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
+
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); } );
 
@@ -179,6 +189,8 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( true ); } );
 
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
+
+
 
 
 }

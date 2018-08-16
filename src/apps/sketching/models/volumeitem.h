@@ -2,7 +2,7 @@
 #define VOLUMEITEM_H
 
 #include "./core/models/volume.h"
-#include "./core/models/cross_section.h"
+#include "./core/models/crosssection.h"
 #include "./qtgeometries/planeitem.h"
 
 class VolumeItem: public PlaneItem
