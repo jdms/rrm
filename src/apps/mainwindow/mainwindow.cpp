@@ -131,6 +131,12 @@ void MainWindow::createActions()
     { app->setStratigraphicRule( Settings::Stratigraphy::StratigraphicRules::REMOVE_BELOW_INTERSECTION ); } );
 
 
+    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ );
+    } );
+
+    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ );
+    } );
+
     connect( ac_direction_x, &QAction::triggered, [=]()
     { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::X );} );
 
@@ -221,13 +227,21 @@ void MainWindow::createController()
     app = new RRMApplication();
     app->setMainWindow( this );
 
-    connect( app, &RRMApplication::lockDirection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_ ) { lockDirection( dir_ );} );
-     connect( app, &RRMApplication::unlockDirections, [=]()
-     {
-         ac_direction_x->setEnabled( true );
-         ac_direction_y->setEnabled( true );
-         ac_direction_z->setEnabled( true );
-     });
+    connect( app, &RRMApplication::lockDirection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_ )
+    { lockDirection( dir_ );} );
+
+    connect( app, &RRMApplication::unlockDirections, [=]()
+    {
+        ac_direction_x->setEnabled( true );
+        ac_direction_y->setEnabled( true );
+        ac_direction_z->setEnabled( true );
+    });
+
+
+    connect( app, &RRMApplication::selectEnabled, [=]( const std::string option_ )
+    {
+        lockPreserve( option_ );
+    } );
 
 }
 
@@ -354,6 +368,32 @@ void MainWindow::lockDirection( const Settings::CrossSection::CrossSectionDirect
 
     };
 
+}
+
+
+void MainWindow::lockPreserve( const std::string& option_ )
+{
+    if( option_.compare( "ABOVE" ) == 0 )
+    {
+        ac_sketch_below->setEnabled( false );
+        ac_sketch_region->setEnabled( false );
+    }
+    else if( option_.compare( "REGION" ) == 0 )
+    {
+        ac_sketch_below->setEnabled( false );
+        ac_sketch_above->setEnabled( false );
+    }
+    else if( option_.compare( "BELOW" ) == 0 )
+    {
+        ac_sketch_above->setEnabled( false );
+        ac_sketch_region->setEnabled( false );
+    }
+    else
+    {
+        ac_sketch_above->setEnabled( true );
+        ac_sketch_region->setEnabled( true );
+        ac_sketch_below->setEnabled( true );
+    }
 }
 
 

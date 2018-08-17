@@ -41,6 +41,14 @@ bool StratigraphyItem::isVisible() const
 }
 
 
+bool StratigraphyItem::isSelected() const
+{
+    if( raw == nullptr ) return false;
+    return raw->isSelected();
+}
+
+
+
 void StratigraphyItem::update()
 {
     updateCurve();
@@ -53,10 +61,14 @@ void StratigraphyItem::updateCurve()
     if( raw->isDone() )
         resetToDefaultStyle();
 
-    int r_, g_, b_;
-    raw->getColor( r_, g_, b_ );
-    setColor( r_, g_, b_ );
-
+    if( raw->isSelectable() == true )
+        setColor( 255, 255, 0 );
+    else
+    {
+        int r_, g_, b_;
+        raw->getColor( r_, g_, b_ );
+        setColor( r_, g_, b_ );
+    }
     prepareGeometryChange();
     setCurve( raw->getCurve( csection_depth ) );
 
@@ -64,12 +76,10 @@ void StratigraphyItem::updateCurve()
 }
 
 
-void StratigraphyItem::changeDirection()
+std::size_t StratigraphyItem::getIndex() const
 {
-
-
+    return raw->getIndex();
 }
-
 
 void StratigraphyItem::updateLevelCurves()
 {

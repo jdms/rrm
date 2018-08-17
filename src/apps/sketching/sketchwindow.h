@@ -64,6 +64,8 @@ class SketchWindow: public QMainWindow
         void updateColorWidget( int red_, int green_, int blue_ );
         void disableResizeVolume( bool status_ );
 
+        void setModeSelecting( bool status_ );
+
 
     signals:
 
@@ -81,6 +83,8 @@ class SketchWindow: public QMainWindow
         void useLastTrajectory();
 
         void defineColorCurrent( int red_, int green_, int blue_ );
+
+        void objectSelected( const std::size_t& id_ );
 
 
 

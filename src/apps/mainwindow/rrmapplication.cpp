@@ -206,6 +206,15 @@ void RRMApplication::setObjectColor( std::size_t index_, int red_, int green_, i
 }
 
 
+void RRMApplication::setObjectSelectedAsBoundering( const std::size_t& index_ )
+{
+    controller->setObjectSelectedAsBoundering( index_ );
+    emit selectEnabled( "NONE" );
+}
+
+
+
+
 void RRMApplication::setCurrentObjectType( const Settings::Objects::ObjectType& type_ )
 {
     controller->setCurrentObjectType( type_ );
@@ -280,6 +289,49 @@ void RRMApplication::createObjectSurface()
 
 }
 
+
+void RRMApplication::setSketchAbove( bool status_ )
+{
+
+    if( status_ == true )
+    {
+        bool enabled_ = controller->requestCreateAbove();
+        if( enabled_ )
+            emit selectEnabled( "ABOVE" );
+        else
+            emit selectEnabled( "NONE" );
+    }
+    else
+    {
+        controller->stopCreateAbove();
+        emit selectEnabled( "NONE" );
+    }
+
+    emit updateObjects();
+
+}
+
+
+void RRMApplication::setSketchBelow( bool status_ )
+{
+
+    if( status_ == true )
+    {
+        bool enabled_ = controller->requestCreateBelow();
+        if( enabled_ )
+            emit selectEnabled( "BELOW" );
+        else
+            emit selectEnabled( "NONE" );
+    }
+    else
+    {
+        controller->stopCreateBelow();
+        emit selectEnabled( "NONE" );
+    }
+
+    emit updateObjects();
+
+}
 
 
 void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ )
@@ -389,6 +441,7 @@ void RRMApplication::load( const std::string& filename_ )
     loadObjectTree();
 
 }
+
 
 void RRMApplication::loadObjectTree()
 {

@@ -1383,6 +1383,136 @@ void Controller::applyStratigraphicRule()
 }
 
 
+///==========================================================================
+
+///
+/// Preserve Methods
+///
+
+bool Controller::enableCreateAbove()
+{
+    return requestCreateAbove();
+
+}
+
+
+void Controller::stopCreateAbove()
+{
+    std::cout << "Stop create above accepted" << std::endl << std::flush;
+    rules_processor.stopDefineAbove();
+
+    for( std::size_t id_: selectable_objects )
+    {
+        ObjectPtr& obj_ = model.objects[ id_ ];
+        obj_->setSelectable( false );
+    }
+    selectable_objects.clear();
+
+}
+
+
+bool Controller::requestCreateAbove()
+{
+
+    bool request_ = rules_processor.requestCreateAbove( selectable_objects );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+
+        for( std::size_t id_: selectable_objects )
+        {
+            ObjectPtr& obj_ = model.objects[ id_ ];
+            obj_->setSelectable( true );
+        }
+
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+}
+
+
+void Controller::stopCreateBelow()
+{
+    std::cout << "Stop create below accepted" << std::endl << std::flush;
+    rules_processor.stopDefineBelow();
+
+    for( std::size_t id_: selectable_objects )
+    {
+        ObjectPtr& obj_ = model.objects[ id_ ];
+        obj_->setSelectable( false );
+    }
+    selectable_objects.clear();
+
+}
+
+
+bool Controller::requestCreateBelow()
+{
+
+    bool request_ = rules_processor.requestCreateBelow( selectable_objects );
+
+    if( request_ == true )
+    {
+        std::cout << "Request create accepted" << std::endl << std::flush;
+
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+
+        for( std::size_t id_: selectable_objects )
+        {
+            ObjectPtr& obj_ = model.objects[ id_ ];
+            obj_->setSelectable( true );
+        }
+
+    }
+    else
+        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+
+}
+
+
+void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
+{
+
+    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    {
+        if( model.objects.find( index_ ) == model.objects.end() ) return;
+
+        rules_processor.defineAbove( index_ );
+        model.objects[ index_ ] ->setSelected( true );
+
+        for( std::size_t id_: selectable_objects )
+        {
+            ObjectPtr& obj_ = model.objects[ id_ ];
+            obj_->setSelectable( false );
+        }
+        selectable_objects.clear();
+
+    }
+
+    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    {
+        if( model.objects.find( index_ ) == model.objects.end() ) return;
+
+        rules_processor.defineBelow( index_ );
+        model.objects[ index_ ] ->setSelected( true );
+
+        for( std::size_t id_: selectable_objects )
+        {
+            ObjectPtr& obj_ = model.objects[ id_ ];
+            obj_->setSelectable( false );
+        }
+        selectable_objects.clear();
+
+    }
+}
 
 ///==========================================================================
 

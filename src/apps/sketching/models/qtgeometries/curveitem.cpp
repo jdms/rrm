@@ -43,6 +43,7 @@ void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * opt
         pen_.setColor( Qt::blue );
     }
 
+
     painter_->setRenderHint( QPainter::Antialiasing );
     painter_->setPen( pen_ );
     painter_->drawPath( curve );
