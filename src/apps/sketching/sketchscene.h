@@ -113,7 +113,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         //        void setSelectingWellsMode( bool status_ );
 
         void addImageToCrossSection( const QString& file_ );
-        void updateImageToCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
+        void setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
         void removeImageInCrossSection();
 
 
@@ -141,8 +141,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void addToSketchesOfSelection();
         void removeSketchesOfSelection();
 
-        void scaleImage( const QPointF point_ );
-        void moveImage( const QPointF point_ );
+        void updateImageinCrossSection();
 
 
         virtual void mousePressEvent( QGraphicsSceneMouseEvent *event_ );

@@ -149,7 +149,7 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
         std::string file_;
         double ox_, oy_, w_, h_;
         csection_->getImage( file_, ox_, oy_, w_, h_ );
-        scene_->updateImageToCrossSection( file_, ox_, oy_, w_, h_ );
+        scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
     }
 }
 

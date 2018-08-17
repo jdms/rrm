@@ -68,6 +68,9 @@ void MainWindow::createActions()
     ac_sketch_above = new QAction( "PA", this ); // preserve above!
     ac_sketch_above->setCheckable( true );
 
+    ac_sketch_region = new QAction( "PR", this ); // preserve region!
+    ac_sketch_region->setCheckable( true );
+
     ac_sketch_below = new QAction( "PB", this ); // preserve below!
     ac_sketch_below->setCheckable( true );
 
@@ -102,12 +105,6 @@ void MainWindow::createActions()
 
     ac_structural = new QAction( "Structural", this );
     ac_structural->setCheckable( true );
-
-
-//    connect( ac_sketch_above, &QAction::triggered, [=]( bool status_ ){ app->setSketchAbove( status_ ); } );
-
-
-//    connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ ); } );
 
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
@@ -203,6 +200,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addAction( ac_redo );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_sketch_above );
+    tb_mainwindow->addAction( ac_sketch_region );
     tb_mainwindow->addAction( ac_sketch_below );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );

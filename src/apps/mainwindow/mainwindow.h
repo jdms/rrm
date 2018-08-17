@@ -81,6 +81,7 @@ class MainWindow: public QMainWindow
         QAction* ac_undo = nullptr;
         QAction* ac_redo = nullptr;
         QAction* ac_sketch_above = nullptr;
+        QAction* ac_sketch_region = nullptr;
         QAction* ac_sketch_below = nullptr;
         QAction* ac_remove_above = nullptr;
         QAction* ac_remove_above_int = nullptr;
