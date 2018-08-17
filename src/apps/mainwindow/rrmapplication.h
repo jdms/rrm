@@ -107,6 +107,10 @@ class RRMApplication: public QObject
 
         void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
+        void setSketchAbove( bool status_ );
+        void setSketchBelow( bool status_ );
+        void setSketchRegion( bool status_ ){}
+
 
         void defineCurrentColor( int red_, int green_, int blue_ );
 
@@ -121,6 +125,8 @@ class RRMApplication: public QObject
          void loadObjectTree();
         void reset();
 
+
+        void setObjectSelectedAsBoundering( const std::size_t& index_ );
 
 
     signals:
@@ -156,6 +162,8 @@ class RRMApplication: public QObject
         void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void unlockDirections();
+
+        void selectEnabled( const std::string& status_ );
 
 ///================================================================================
 

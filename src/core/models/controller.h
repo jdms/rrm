@@ -211,6 +211,15 @@ class Controller
         void setRemoveBelowIntersection();
         void applyStratigraphicRule();
 
+        bool enableCreateAbove();
+        void stopCreateAbove();
+        bool requestCreateAbove();
+        void stopCreateBelow();
+        bool requestCreateBelow();
+
+        void setObjectSelectedAsBoundering( const std::size_t& index_ );
+
+
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
         void setCurrentColor( int red_, int green_, int blue_ );
@@ -258,6 +267,9 @@ class Controller
         Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
 
         PolyCurve last_trajectory;
+
+        std::vector< std::size_t > selectable_objects;
+        Settings::Objects::BounderingRegion boundering_region;
 
 
 

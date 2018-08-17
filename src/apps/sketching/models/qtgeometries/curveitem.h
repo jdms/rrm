@@ -108,6 +108,7 @@ class CurveItem : public QGraphicsPathItem
 
 
         virtual bool isVisible() const { return QGraphicsPathItem::isVisible(); }
+        virtual bool isSelected() const { return QGraphicsPathItem::isSelected(); }
 
         virtual void update(){}
 

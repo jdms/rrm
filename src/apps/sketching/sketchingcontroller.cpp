@@ -140,12 +140,10 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     if( csection_->hasImage() == false )
     {
-        std::cout << "Has no image!" << std::endl << std::flush;
         scene_->removeImageInCrossSection();
     }
     else
     {
-        std::cout << "Has image!" << std::endl << std::flush;
         std::string file_;
         double ox_, oy_, w_, h_;
         csection_->getImage( file_, ox_, oy_, w_, h_ );
@@ -159,30 +157,31 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 void SketchingController::updateObjects()
 {
 
-//    if( main_scene != nullptr )
-//        main_scene->updateStratigraphies();
+    if( main_scene != nullptr )
+        main_scene->updateStratigraphies();
 
-//    if( topview_scene != nullptr )
-//        topview_scene->updateStratigraphies();
+    if( topview_scene != nullptr )
+        topview_scene->updateStratigraphiesTrajectories();
 
-//    for( auto it: scenesX )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphies();
-//    }
 
-//    for( auto it: scenesY )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphies();
-//    }
+    for( auto it: scenesX )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
+    }
 
-//    for( auto it: scenesZ )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphies();
-//    }
-    // the same for regions and wells
+    for( auto it: scenesY )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
+    }
+
+    for( auto it: scenesZ )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateStratigraphies();
+    }
+//     the same for regions and wells
 
 }
 

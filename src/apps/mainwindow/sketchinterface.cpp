@@ -58,9 +58,9 @@ void SketchInterface::createSketchingWindow()
 
     window->addDockWidget( Qt::RightDockWidgetArea, dw_topview_window );
 
-
     scontroller->setMainWindow( std::shared_ptr< SketchWindow > ( sketch_window ) );
     scontroller->setTopViewWindow( std::shared_ptr< SketchWindow > ( sketch_topview_window ) );
+
     scontroller->setController( std::shared_ptr< Controller > ( window->controller ) );
 
 }
@@ -98,19 +98,40 @@ void SketchInterface::createSketchingActions()
         sketch_topview_window->updateColorWidget( red_, green_, blue_ );
     } );
 
-    connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
-    {
-        window->app->defineCurrentColor( red_, green_, blue_ );
-        if( sketch_window == nullptr) return;
-        sketch_window->updateColorWidget( red_, green_, blue_ );
-    } );
-
 
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
 
     connect( sketch_window, &SketchWindow::createObject, [=]()
     { window->app->createObjectSurface(); } );
+
+    connect( sketch_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
+    {
+        window->app->setVolumeDimensions( dir_, width_, height_ );
+    } );
+
+    connect( sketch_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
+    {
+        window->app->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
+    } );
+
+    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
+
+
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+
+
+
+
+
+
+
+    connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
+    {
+        window->app->defineCurrentColor( red_, green_, blue_ );
+        if( sketch_window == nullptr) return;
+        sketch_window->updateColorWidget( red_, green_, blue_ );
+    } );
 
     connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ )
     { window->app->addTrajectoryToObject( curve_ ); } );
@@ -123,26 +144,23 @@ void SketchInterface::createSketchingActions()
     { window->app->createObjectSurface(); } );
 
 
-
-    connect( sketch_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
-    {
-        window->app->setVolumeDimensions( dir_, width_, height_ );
-    } );
-
     connect( sketch_topview_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
     {
         window->app->setVolumeDimensions( dir_, width_, height_ );
     } );
 
 
-    connect( sketch_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
+    connect( sketch_topview_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
     {
         window->app->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
     } );
 
-    connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
-
     connect( sketch_topview_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
+
+
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+
+
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); } );
@@ -191,15 +209,30 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
 
 
+    connect( window->app, &RRMApplication::selectEnabled, [=]( const std::string& option_ )
+    {
+        if( option_.compare( "NONE") != 0 )
+        {
+            sketch_window->setModeSelecting( true );
+            sketch_topview_window->setModeSelecting( true );
+        }
+        else
+        {
+            sketch_window->setModeSelecting( false );
+            sketch_topview_window->setModeSelecting( false );
+        }
+    } );
+
+
 
 
 }
 
 
+
+
 void SketchInterface::init()
 {
-
-
     if( sketch_window != nullptr )
         sketch_window->disableResizeVolume( false );
     if( sketch_topview_window != nullptr )

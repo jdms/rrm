@@ -134,6 +134,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void removeImageFromCrossSection(  const Settings::CrossSection::CrossSectionDirections&, double );
 
+        void objectSelected( const std::size_t id_ );
+
 
     protected:
 

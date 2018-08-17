@@ -139,6 +139,8 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
       emit removeImageFromCrossSection( dir_, depth_ );
     } );
 
+    connect( scene_.get(), &SketchScene::objectSelected, [=]( const std::size_t& id_ ) { emit objectSelected( id_ ); } );
+
 
     return scene_;
 }
@@ -245,6 +247,21 @@ void SketchWindow::disableResizeVolume( bool status_ )
 {
     if( ac_resize_boundary == nullptr ) return;
     ac_resize_boundary->setDisabled( status_ );
+}
+
+
+void SketchWindow::setModeSelecting( bool status_ )
+{
+    if( sketchingcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setOldSelectingStratigraphyMode( status_ );
+    }
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setOldSelectingStratigraphyMode( status_ );
+    }
 }
 
 

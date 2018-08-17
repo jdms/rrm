@@ -235,6 +235,12 @@ void SketchScene::getSelectedStratigraphies()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
+    StratigraphyItem* const& obj_ = dynamic_cast< StratigraphyItem* >( items_[ 0 ] );
+    std::size_t id_ = obj_->getIndex();
+
+    emit objectSelected( id_ );
+
+
     std::cout << "There are " << items_.size() << " curves selected" << std::endl << std::flush;
 }
 
@@ -544,6 +550,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
         sketch->create( p_ );
     }
 
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
+    {
+        getSelectedStratigraphies();
+    }
+
 
     QGraphicsScene::mousePressEvent( event_ );
     update();
@@ -553,6 +564,18 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 {
+
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    {
+        std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
+//        emit
+    }
+
+    else if( current_interaction1 == UserInteraction1::SKETCHING )
+    {
+         endObject();
+    }
+
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
     update();
@@ -617,12 +640,12 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 //        emit ensureObjectsVisibility();
     }
 
-    else if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )  )
+    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )
     {
         getSelectedStratigraphies();
     }
 
-    else if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
     }
