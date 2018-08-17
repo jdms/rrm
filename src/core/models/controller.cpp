@@ -318,20 +318,18 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         images_csectionsX[ depth_ ] = std::move( image_ );
-//        csection->setImage( file_, ox_, oy_, w_, h_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         images_csectionsY[ depth_ ] = std::move( image_ );
-//        topview->setImage( file_, ox_, oy_, w_, h_ );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         images_csectionsZ[ depth_ ] = std::move( image_ );
-//        csection->setImage( file_, ox_, oy_, w_, h_ );
     }
 
 }
+
 
 void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
@@ -353,6 +351,7 @@ void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSe
     }
 
 }
+
 
 void Controller::updateImageInMainCrossSection()
 {
@@ -385,6 +384,7 @@ void Controller::updateImageInMainCrossSection()
         csection->clearImage();
 
 }
+
 
 void Controller::updateImageInTopViewCrossSection()
 {

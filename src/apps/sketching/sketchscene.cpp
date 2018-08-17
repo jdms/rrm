@@ -60,12 +60,14 @@ void SketchScene::init()
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
     resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
     move_marker->setVisible( false );
     addItem( move_marker );
 }
@@ -140,14 +142,14 @@ void SketchScene::addImageToCrossSection( const QString& file_ )
     double w_ = static_cast< double >( image1.width() );
     double h_ = static_cast< double >( image1.height() );
 
-    updateImageToCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
+    setImageInCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
 
     emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, ox_, oy_, w_, h_ );
 
 }
 
 
-void SketchScene::updateImageToCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ )
+void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ )
 {
     QPixmap image1;
     image1.load( QString( file_.c_str() ) );
@@ -173,9 +175,17 @@ void SketchScene::removeImageInCrossSection()
 }
 
 
-void SketchScene::scaleImage( const QPointF point_ ){}
+void SketchScene::updateImageinCrossSection()
+{
 
-void SketchScene::moveImage( const QPointF point_ ){}
+    QString file_ = image->getImagePath();
+    QPointF origin_ = image->getOrigin();
+    QPointF topright_ = image->getTopRight();
+
+    emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, origin_.x(), origin_.y(), topright_.x(), topright_.y() );
+     QGraphicsScene::update();
+
+}
 
 
 void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
@@ -415,6 +425,8 @@ void SketchScene::setResizingImageMode( bool status_ )
     if( status_ == true )
     {
         current_interaction1 = UserInteraction1::RESIZING_IMAGE;
+        resize_marker->setPos( image->getTopRight() );
+        move_marker->setPos( image->getOrigin() );
     }
     else
     {
@@ -569,9 +581,15 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
     if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
     {
         if( resize_marker->isSelected() )
-            scaleImage( resize_marker->pos() );
-        else if( resize_marker->isSelected() )
-            moveImage( move_marker->pos() );
+        {
+            image->resizeRectangle( p_ );
+            move_marker->setPos( image->getOrigin() );
+        }
+        else if( move_marker->isSelected() )
+        {
+            image->moveRectangle( p_ );
+            resize_marker->setPos( image->getTopRight() );
+        }
     }
 
     QGraphicsScene::mouseMoveEvent( event_ );
@@ -599,14 +617,20 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 //        emit ensureObjectsVisibility();
     }
 
-    if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )  )
+    else if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )  )
     {
         getSelectedStratigraphies();
     }
 
-    if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    else if( ( event_->button() == Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
     {
         addToSketchesOfSelection();
+    }
+
+
+    else if(  current_interaction1 == UserInteraction1::RESIZING_IMAGE )
+    {
+        updateImageinCrossSection();
     }
 
     QGraphicsScene::mouseReleaseEvent( event_ );
