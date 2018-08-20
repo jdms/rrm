@@ -169,6 +169,7 @@ class Object
         bool isCurveAdmissible();
         bool isTrajectoryAdmissible();
 
+        bool hasSurface(){ return !surface.isEmpty(); }
         void removeSurface();
 
         virtual void clear();
@@ -347,11 +348,6 @@ class Object
 
         std::string text_information;
 
-        bool is_editable;
-        bool is_selectable;
-        bool is_selected;
-        bool is_visible;
-        bool is_active;
         bool is_done;
 
         CrossSectionsContainer csection_curves;

@@ -436,6 +436,7 @@ bool Controller::addObject( std::size_t index_ )
         obj_->setIndex( index_ );
 
     current_object = obj_->getIndex();
+    obj_->setType( current_object_type );
     model.objects[ current_object ] = std::move( obj_ );
 
 
@@ -468,12 +469,14 @@ void  Controller::setCurrentObjectType( const Settings::Objects::ObjectType& typ
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->setType( type_ );
 
+    current_object_type = type_;
+
 }
 
 
 Settings::Objects::ObjectType  Controller::getCurrentObjectType() const
 {
-    return getObjectType( current_object );
+    return current_object_type;
 }
 
 
@@ -1486,6 +1489,49 @@ bool Controller::requestCreateBelow()
 }
 
 
+void Controller::stopCreateRegion()
+{
+
+    std::cout << "Stop create region accepted" << std::endl << std::flush;
+//    rules_processor.stopDefineRegion();
+
+    for( std::size_t id_: selectable_objects )
+    {
+        ObjectPtr& obj_ = model.objects[ id_ ];
+        obj_->setSelectable( false );
+    }
+//    setObjectSelected( bottom_index, false );
+//    selectable_objects.clear();
+
+
+}
+
+bool Controller::requestCreateRegion()
+{
+    bool request_;
+//    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
+
+//    if( request_ == true )
+//    {
+//        std::cout << "Request create accepted" << std::endl << std::flush;
+
+//        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+
+//        for( std::size_t id_: selectable_objects )
+//        {
+//            ObjectPtr& obj_ = model.objects[ id_ ];
+//            obj_->setSelectable( true );
+//        }
+
+//    }
+//    else
+//        std::cout << "Request create denied" << std::endl << std::flush;
+
+    return request_ ;
+}
+
+
+
 void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 {
 
@@ -1525,7 +1571,13 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
-bool  Controller::isDefineAboveActive()
+void Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+
+}
+
+
+bool Controller::isDefineAboveActive()
 {
     std::size_t index_ = 0;
 
@@ -1540,7 +1592,7 @@ bool  Controller::isDefineAboveActive()
 
 }
 
-bool  Controller::isDefineBelowActive()
+bool Controller::isDefineBelowActive()
 {
      std::size_t index_ = 0;
 
@@ -1854,4 +1906,6 @@ void Controller::clear()
 
     last_trajectory.clear();
     rules_processor.clear();
+
+    current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
 }

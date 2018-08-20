@@ -65,6 +65,7 @@ class SketchWindow: public QMainWindow
         void disableResizeVolume( bool status_ );
 
         void setModeSelecting( bool status_ );
+        void setModeRegionSelecting( bool status_ );
 
 
     signals:
@@ -85,6 +86,8 @@ class SketchWindow: public QMainWindow
         void defineColorCurrent( int red_, int green_, int blue_ );
 
         void objectSelected( const std::size_t& id_ );
+
+        void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
 

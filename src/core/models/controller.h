@@ -216,11 +216,15 @@ class Controller
         bool requestCreateAbove();
         void stopCreateBelow();
         bool requestCreateBelow();
+        void stopCreateRegion();
+        bool requestCreateRegion();
 
         bool isDefineAboveActive();
         bool isDefineBelowActive();
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
+
+        void setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
@@ -260,6 +264,7 @@ class Controller
         double csection_stepy = 1.0;
 
         std::size_t current_object = 0;
+        Settings::Objects::ObjectType current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
 
         RRMApplication* app = nullptr;
         CrossSectionPtr csection = nullptr;
