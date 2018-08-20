@@ -1407,6 +1407,7 @@ void Controller::stopCreateAbove()
         obj_->setSelectable( false );
     }
     selectable_objects.clear();
+    setObjectSelected( upper_index, false );
 
 }
 
@@ -1447,6 +1448,7 @@ void Controller::stopCreateBelow()
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
+    setObjectSelected( bottom_index, false );
     selectable_objects.clear();
 
 }
@@ -1485,6 +1487,7 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
+        upper_index = index_;
         rules_processor.defineAbove( index_ );
         model.objects[ index_ ] ->setSelected( true );
 
@@ -1501,6 +1504,7 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
+        bottom_index = index_;
         rules_processor.defineBelow( index_ );
         model.objects[ index_ ] ->setSelected( true );
 
@@ -1513,6 +1517,37 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 
     }
 }
+
+
+bool  Controller::isDefineAboveActive()
+{
+    std::size_t index_ = 0;
+
+    bool status_ = rules_processor.defineAboveIsActive( index_ );
+    if( status_ == true )
+    {
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+        setObjectSelectedAsBoundering( index_ );
+        return true;
+    }
+    return false;
+
+}
+
+bool  Controller::isDefineBelowActive()
+{
+     std::size_t index_ = 0;
+
+    bool status_ = rules_processor.defineBelowIsActive( index_ );
+    if( status_ == true )
+    {
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+        setObjectSelectedAsBoundering( index_ );
+        return true;
+    }
+    return false;
+}
+
 
 ///==========================================================================
 

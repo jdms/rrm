@@ -413,8 +413,8 @@ void RRMApplication::checkUndoRedo()
 
 void RRMApplication::checkPreserveStatus()
 {
-     bool above_ = false;//controller->isDefineAboveActive();
-     bool below_ = false;//controller->isDefineBelowActive();
+     bool above_ = controller->isDefineAboveActive();
+     bool below_ = controller->isDefineBelowActive();
 
      window->ac_sketch_above->setChecked( above_ );
      window->ac_sketch_below->setChecked( below_ );
@@ -439,6 +439,9 @@ void RRMApplication::load( const std::string& filename_ )
     emit updateObjects();
 
     loadObjectTree();
+
+    checkUndoRedo();
+    checkPreserveStatus();
 
 }
 

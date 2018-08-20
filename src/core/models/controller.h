@@ -217,6 +217,9 @@ class Controller
         void stopCreateBelow();
         bool requestCreateBelow();
 
+        bool isDefineAboveActive();
+        bool isDefineBelowActive();
+
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
 
 
@@ -269,7 +272,9 @@ class Controller
         PolyCurve last_trajectory;
 
         std::vector< std::size_t > selectable_objects;
-        Settings::Objects::BounderingRegion boundering_region;
+        Settings::Objects::BounderingRegion boundering_region = Settings::Objects::BounderingRegion::NONE ;
+        std::size_t upper_index;
+        std::size_t bottom_index;
 
 
 
