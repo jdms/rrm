@@ -472,6 +472,24 @@ void SketchScene::setSelectingRegionsMode( bool status_ )
 }
 
 
+void SketchScene::setSelectingRegionMode( bool status_ )
+{
+    clearSelection();
+
+
+    if( status_ == true )
+        current_interaction1 = UserInteraction1::SELECTING_REGION;
+    else
+    {
+        setSketchingMode();
+    }
+
+    update();
+}
+
+
+
+
 //void SketchScene::setSelectingWellsMode( bool status_ )
 //{
 //    clearSelection();
@@ -563,6 +581,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
     {
         getSelectedStratigraphies();
+    }
+
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_REGION ) )
+    {
+        emit getRegionByPoint( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
 

@@ -185,7 +185,11 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 
-        connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+
+
+
+    connect( scene_.get(), &SketchScene::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){ emit getRegionByPoint( px_, py_, depth_, dir_ ); }  );
 
     return scene_;
 }
@@ -240,6 +244,17 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
 {
     if( cp_color == nullptr ) return;
     cp_color->setColor( QColor( red_, green_, blue_ ) );
+
+    if( sketchingcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+    }
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+       scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+    }
 }
 
 
@@ -261,6 +276,22 @@ void SketchWindow::setModeSelecting( bool status_ )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
         scene_->setOldSelectingStratigraphyMode( status_ );
+    }
+}
+
+
+
+void SketchWindow::setModeRegionSelecting( bool status_ )
+{
+    if( sketchingcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSelectingRegionMode( status_ );
+    }
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setSelectingRegionMode( status_ );
     }
 }
 

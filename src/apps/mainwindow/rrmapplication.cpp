@@ -280,10 +280,16 @@ void RRMApplication::createObjectSurface()
     bool status_ = controller->commitObjectSurface();
     if( status_ == false ) return;
 
+
+
     emit addObject( controller->getCurrentObject() );
     emit updateObjects();
 
     checkUndoRedo();
+
+
+//    updateObjectTree();
+    defineRandomColor();
 
     emit unlockDirections();
 
@@ -334,6 +340,36 @@ void RRMApplication::setSketchBelow( bool status_ )
 }
 
 
+void RRMApplication::setSketchRegion( bool status_ )
+{
+
+//    if( status_ == true )
+//    {
+//        bool enabled_ = controller->requestCreateRegion();
+//        if( enabled_ )
+//            emit selectEnabled( "REGION" );
+//        else
+//            emit selectEnabled( "NONE" );
+//    }
+//    else
+//    {
+//        controller->stopCreateRegion();
+//        emit selectEnabled( "NONE" );
+//    }
+
+//    emit updateObjects();
+
+}
+
+
+void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+//    controller->
+}
+
+
+
+
 void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ )
 {
     if( rules_ == Settings::Stratigraphy::StratigraphicRules::REMOVE_ABOVE )
@@ -370,6 +406,7 @@ void RRMApplication::previewLastTrajectory()
 void RRMApplication::defineCurrentColor( int red_, int green_, int blue_ )
 {
     controller->setCurrentColor( red_, green_, blue_ );
+    emit setCurrentColor( red_, green_, blue_ );
     emit updateObjects();
 }
 
@@ -382,8 +419,11 @@ void RRMApplication::undo()
     checkPreserveStatus();
 
     if( status_ == false ) return;
+
     emit updateObjects();
     emit updateTrajectories();
+
+    updateObjectTree();
 
 }
 
@@ -397,6 +437,8 @@ void RRMApplication::redo()
 
     if( status_ == false ) return;
     emit updateObjects();
+
+    updateObjectTree();
 
 }
 
@@ -459,7 +501,40 @@ void RRMApplication::loadObjectTree()
 
         int r_, g_, b_;
         obj_->getColor( r_, g_, b_ );
-
         window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
     }
+}
+
+
+void RRMApplication::updateObjectTree()
+{
+
+    const std::map< std::size_t, ObjectPtr >& objects_ = controller->getObjects();
+
+    for( auto it: objects_ )
+    {
+        const ObjectPtr& obj_ = it.second;
+        if( obj_->getIndex() == controller->getCurrentObject()->getIndex() ) continue;
+
+        if( obj_->isActive() == false )
+            window->object_tree->setObjectVisibility( obj_->getIndex(), false );
+        else
+            window->object_tree->setObjectVisibility( obj_->getIndex(), true );
+
+    }
+}
+
+
+void RRMApplication::defineRandomColor()
+{
+    std::random_device rd;
+    std::mt19937 eng( rd() );
+    std::uniform_int_distribution< size_t > distr( 0, 255 );
+
+    int r_ = distr( eng );
+    int g_ = distr( eng );
+    int b_ = distr( eng );
+
+   defineCurrentColor( r_, g_, b_ );
+
 }

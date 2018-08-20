@@ -120,6 +120,11 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
 
+    connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+
+
+     connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+
 
 
 
@@ -216,12 +221,22 @@ void SketchInterface::createSketchingActions()
             sketch_window->setModeSelecting( true );
             sketch_topview_window->setModeSelecting( true );
         }
+        else if( option_.compare( "REGION") == 0 )
+        {
+            sketch_window->setModeRegionSelecting( true );
+            sketch_topview_window->setModeRegionSelecting( true );
+        }
         else
         {
             sketch_window->setModeSelecting( false );
             sketch_topview_window->setModeSelecting( false );
         }
     } );
+
+
+    connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_window->updateColorWidget( red_, green_, blue_ ); } );
+
+    connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_topview_window->updateColorWidget( red_, green_, blue_ ); } );
 
 
 

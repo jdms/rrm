@@ -89,13 +89,13 @@ void MainWindow::createActions()
     ac_screenshot = new QAction( "Screenshot", this );
     ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
-    ac_direction_x = new QAction( "X", this );
+    ac_direction_x = new QAction( "Width", this );
     ac_direction_x->setCheckable( true );
 
-    ac_direction_y = new QAction( "Y", this );
+    ac_direction_y = new QAction( "Height", this );
     ac_direction_y->setCheckable( true );
 
-    ac_direction_z = new QAction( "Z", this );
+    ac_direction_z = new QAction( "Lenght", this );
     ac_direction_z->setCheckable( true );
     ac_direction_z->setChecked( true );
 
@@ -135,6 +135,9 @@ void MainWindow::createActions()
     } );
 
     connect( ac_sketch_below, &QAction::triggered, [=]( bool status_ ){ app->setSketchBelow( status_ );
+    } );
+
+    connect( ac_sketch_region, &QAction::triggered, [=]( bool status_ ){ app->setSketchRegion( status_ );
     } );
 
     connect( ac_direction_x, &QAction::triggered, [=]()
@@ -189,8 +192,8 @@ void MainWindow::createToolbar()
     QActionGroup* ag_directions = new QActionGroup( this );
     ag_directions->setExclusive( true );
     ag_directions->addAction( ac_direction_x );
-    ag_directions->addAction( ac_direction_y );
     ag_directions->addAction( ac_direction_z );
+    ag_directions->addAction( ac_direction_y );
 
     QActionGroup* ag_objects = new QActionGroup( this );
     ag_objects->setExclusive( true );

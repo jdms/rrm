@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGIONS, SELECTING_WELLS };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS };
 
     ///================================================================================
 
@@ -110,6 +110,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSelectingStratigraphyMode( bool status_ );
         void setSelectingRegionsMode( bool status_ );
         void setResizingImageMode( bool status_ );
+        void setSelectingRegionMode( bool status_ );
         //        void setSelectingWellsMode( bool status_ );
 
         void addImageToCrossSection( const QString& file_ );
@@ -136,6 +137,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void removeImageFromCrossSection(  const Settings::CrossSection::CrossSectionDirections&, double );
 
         void objectSelected( const std::size_t id_ );
+
+        void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
     protected:
