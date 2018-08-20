@@ -233,7 +233,7 @@ namespace Settings {
     class Objects
     {
         public:
-            enum class BounderingRegion { NONE, ABOVE, BELOW };
+            enum class BounderingRegion { NONE, ABOVE, BELOW, REGION };
 
             enum class ObjectType { NONE, VOLUME, CROSS_SECTION, STRATIGRAPHY, STRUCTURAL, REGION, WELL };
 
