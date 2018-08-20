@@ -113,7 +113,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
-    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSection );
+    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 

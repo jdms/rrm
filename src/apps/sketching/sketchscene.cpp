@@ -171,7 +171,15 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
 void SketchScene::removeImageInCrossSection()
 {
     image->setVisible( false );
+//    emit removeImageFromCrossSection( csection_direction, csection_depth );
+    update();
+}
+
+void SketchScene::removeImageInCrossSectionAndUpdate()
+{
+    image->setVisible( false );
     emit removeImageFromCrossSection( csection_direction, csection_depth );
+    update();
 }
 
 
@@ -304,7 +312,9 @@ void SketchScene::submitSketch()
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
 
-    update();
+    std::cout << "Image is visible: " << image->isVisible() << std::endl;
+
+//    update();
 }
 
 
