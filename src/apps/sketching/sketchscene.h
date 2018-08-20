@@ -115,6 +115,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void addImageToCrossSection( const QString& file_ );
         void setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
         void removeImageInCrossSection();
+        void removeImageInCrossSectionAndUpdate();
 
 
 

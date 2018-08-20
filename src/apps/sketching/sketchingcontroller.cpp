@@ -61,7 +61,7 @@ void SketchingController::createMainCrossSection()
 
 void SketchingController::updateMainCrossSection()
 {
-    CrossSectionPtr csection_ = controller->getMainCrossSection();
+    const CrossSectionPtr& csection_ = controller->getMainCrossSection();
     updateObjectsToScene( csection_, main_scene );
 }
 
@@ -76,7 +76,7 @@ void SketchingController::createTopViewCrossSection()
 
 void SketchingController::updateTopViewCrossSection()
 {
-    CrossSectionPtr csection_ = controller->getTopViewCrossSection();
+    const CrossSectionPtr& csection_ = controller->getTopViewCrossSection();
     updateObjectsToScene( csection_, topview_scene );
 }
 
@@ -140,6 +140,7 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     if( csection_->hasImage() == false )
     {
+        std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
         scene_->removeImageInCrossSection();
     }
     else

@@ -328,11 +328,18 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
         images_csectionsZ[ depth_ ] = std::move( image_ );
     }
 
+    if( csection->getCrossSectionDirection() == dir_ && csection->getDepth() == depth_ )
+        csection->setImage( file_, ox_, oy_, w_, h_ );
+
+    if( topview->getCrossSectionDirection() == dir_ && topview->getDepth() == depth_ )
+        topview->setImage( file_, ox_, oy_, w_, h_ );
+
 }
 
 
 void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+    std::cout <<" Entering in clearImageInCrossSection method" << std::endl << std::flush;
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -580,7 +587,6 @@ bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirection
 {
     if( curve_.isEmpty() == true ) return false;
 
-    if( curve_.isEmpty() == true ) return false;
 
     ObjectPtr& obj_ = model.objects[ current_object ];
     obj_->setCrossSectionDirection( dir_ );
@@ -1831,6 +1837,15 @@ void Controller::clear()
         (it.second).regions_set.clear();
     model.domains.clear();
 
+
+    selectable_objects.clear();
+    boundering_region = Settings::Objects::BounderingRegion::NONE ;
+    upper_index = 0;
+    bottom_index = 0;
+
+    images_csectionsX.clear();
+    images_csectionsY.clear();
+    images_csectionsZ.clear();
 
     current_object = 0;
     current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
