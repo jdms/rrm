@@ -1023,94 +1023,38 @@ void Controller::defineRegions()
 
     // get tetrahedral mesh of the regions
 
-    unsigned int number_of_regions_ = 5;
-
-    for ( unsigned int i = 0; i < number_of_regions_; ++i)
-    {
-        RegionsPtr region_ = std::make_shared< Regions >();
-        region_->setColor(255, 0, 0);
-
-        model.regions[region_->getIndex()] = region_;
-    }
-
-
-    /*
-
-
-    for ( Container< std::size_t, Regions* >::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
-        Regions* item_ = regions.getElement( it->first );
-        if( item_ == nullptr ) continue;
-
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    regions.clear();
-
-    scene3d->clearOutputVolume();
-    object_tree->removeOutputVolume();
-
-
-    double w = 0, h = 0,  l = 0;
-    double ox_ = 0, oy_ = 0, oz_ = 0;
-
-    volume->getOrigin( ox_, oy_, oz_ );
-    volume->getDimensions( w, h, l );
-
-
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
     if( status_ == false ) return;
 
-    Volume* vol1_ = new Volume();
-    vol1_->setVertices( vertices_ );
-    vol1_->setOrigin( ox_, oy_, oz_ );
-    vol1_->setDimensions( w, h, l );
-    scene3d->addOutputVolume( vol1_ );
-    object_tree->addOutputVolume();
+    double w_ = 0, h_ = 0,  l_ = 0;
+    double ox_ = 0, oy_ = 0, oz_ = 0;
 
+    model.volume->getGeometry( ox_, oy_, oz_, w_, h_, l_ );
 
-    std::random_device rd;
-    std::mt19937 eng( rd() );
-    std::uniform_int_distribution< size_t > distr( 0, 255 );
+    std::size_t number_of_regions_ = regions_.size();
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions_ );
 
-
-    std::size_t number_of_regions = regions_.size();
-    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions );
-
-    for( std::size_t i = 0; i < number_of_regions; ++i )
+    for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
-        Volume::Color color_;
-        color_.r = colors_[ 3*i ];
-        color_.g = colors_[ 3*i + 1 ];
-        color_.b = colors_[ 3*i + 2 ];
 
-//        color_.r = distr( eng );
-//        color_.g = distr( eng );
-//        color_.b = distr( eng );
+        Color color_;
+        color_.red = colors_[ 3*i ];
+        color_.green = colors_[ 3*i + 1 ];
+        color_.blue = colors_[ 3*i + 2 ];
 
-
-        Regions* region_ = new Regions();
+        RegionsPtr region_ = std::make_shared< Regions >();
 
         region_->setIndex( i );
         region_->setVertices( vertices_ );
         region_->setTetrahedralCells( regions_[ i ] );
-        region_->setColor( color_.r, color_.g, color_.b );
-        region_->setMaxMin( ox_ + w, oy_ + h, oz_ + l, ox_, oy_, oz_ );
+        region_->setColor( color_.red, color_.green, color_.blue );
+        region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
 
-        regions.addElement( i, region_ );
-        scene3d->addRegion( region_ );
-        object_tree->addRegion( i, region_->getName(), color_.r, color_.g, color_.b );
 
-        vol1_->addRegion( i, regions_[ i ], color_ );
-
-        regions_map_[ i ] = color_;
+        model.regions[region_->getIndex()] = region_;
     }
-
-
-*/
 
 
 }
@@ -1204,6 +1148,13 @@ bool Controller::isRegionSelected(std::size_t index_) const
 {
     if (model.regions.find(index_) == model.regions.end()) return false;
     return model.regions.at(index_)->isSelected();
+}
+
+
+
+const std::map< std::size_t, RegionsPtr >& Controller::getRegions() const
+{
+    return model.regions;
 }
 
 

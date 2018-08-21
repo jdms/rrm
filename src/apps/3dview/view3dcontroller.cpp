@@ -96,6 +96,32 @@ void View3dController::updateObjects()
     scene->updateStratigraphies();
 }
 
+
+void View3dController::addRegions()
+{
+
+    std::map< std::size_t, RegionsPtr > regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr& reg_ = it.second;
+        scene->addRegion( reg_ );
+    }
+}
+
+
+void View3dController::updateRegions()
+{
+    scene->updateRegions();
+    //    std::map< std::size_t, RegionsPtr > regions_ = controller->getRegions();
+    //    for( auto it: regions_ )
+    //    {
+    //        RegionsPtr& reg_ = it.second;
+    //        scene->addRegion( reg_ );
+    //    }
+}
+
+
+
 void View3dController::clear()
 {
     scene->clearScene();

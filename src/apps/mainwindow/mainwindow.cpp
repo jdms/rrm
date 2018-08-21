@@ -109,6 +109,9 @@ void MainWindow::createActions()
     ac_structural = new QAction( "Structural", this );
     ac_structural->setCheckable( true );
 
+    ac_regions = new QAction( "Regions", this );
+    ac_regions->setCheckable( true );
+    ac_regions->setChecked( false );
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
@@ -155,6 +158,9 @@ void MainWindow::createActions()
     connect( ac_stratigraphy, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRATIGRAPHY ); } );
 
     connect( ac_structural, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
+
+
+     connect( ac_regions, &QAction::triggered, [=](){ app->getRegions(); } );
 
 }
 
@@ -220,6 +226,8 @@ void MainWindow::createToolbar()
     tb_mainwindow->addActions( ag_directions->actions() );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_objects->actions() );
+    tb_mainwindow->addSeparator();
+    tb_mainwindow->addAction( ac_regions );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_screenshot );
 
@@ -291,6 +299,16 @@ void MainWindow::createObjectTree()
 
 
 
+
+    connect( object_tree, &ObjectTree::setRegionVisible, [=]( std::size_t index_, bool status_ )
+    {
+        app->setRegionVisible( index_, status_ );
+    } );
+
+    connect( object_tree, &ObjectTree::setRegionColor, [=]( std::size_t index_, const QColor& c_ )
+    {
+        app->setRegionColor( index_, c_.red(), c_.green(), c_.blue() );
+    } );
 
 
 }

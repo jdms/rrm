@@ -219,6 +219,12 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
         surface_->draw( V, P, w, h );
     }
 
+    for ( auto it: regions )
+    {
+        std::shared_ptr < RegionShader > region_ = it.second;
+        region_->draw( V, P, w, h );
+    }
+
 }
 
 

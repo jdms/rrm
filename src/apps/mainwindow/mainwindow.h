@@ -99,6 +99,8 @@ class MainWindow: public QMainWindow
         QAction* ac_stratigraphy = nullptr;
         QAction* ac_structural = nullptr;
 
+        QAction* ac_regions = nullptr;
+
         QMenu* mn_file = nullptr;
         QMenu* mn_windows = nullptr;
         QMenu* mn_help = nullptr;

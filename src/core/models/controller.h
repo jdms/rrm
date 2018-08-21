@@ -188,6 +188,8 @@ class Controller
         void setRegionSelected(std::size_t index_, bool status_);
         bool isRegionSelected(std::size_t index_) const;
 
+        const std::map< std::size_t, RegionsPtr >& getRegions() const;
+
 
         void createDomain(std::set<std::size_t> indexes_ = std::set< std::size_t >() );
         void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);

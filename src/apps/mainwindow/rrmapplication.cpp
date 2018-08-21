@@ -296,6 +296,46 @@ void RRMApplication::createObjectSurface()
 }
 
 
+void RRMApplication::getRegions()
+{
+    controller->defineRegions();
+
+    window->object_tree->addOutputVolume();
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        reg_->getColor( r_, g_, b_ );
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+    }
+
+    emit addRegions();
+}
+
+void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
+{
+    controller->setRegionVisible( index_, status_ );
+    emit updateRegions();
+}
+
+
+void RRMApplication::setRegionName( std::size_t index_, const std::string& name_ )
+{
+//    controller->setRegionName( index_, name_ );
+    emit updateRegions();
+}
+
+
+void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, int blue_ )
+{
+    controller->setRegionColor( index_, red_, green_, blue_ );
+    emit updateRegions();
+}
+
+
+
 void RRMApplication::setSketchAbove( bool status_ )
 {
 
