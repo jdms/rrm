@@ -61,7 +61,22 @@ RulesProcessor::RulesProcessor()
 
 std::vector<std::size_t> RulesProcessor::getSurfaces()
 {
-    return modeller_.getSurfacesIndices();
+    std::vector<size_t> active_surfaces = {};
+    auto surfaces = modeller_.getSurfacesIndices();
+
+    std::vector<float> dummy_vlist;
+    std::vector<size_t> dummy_flist;
+
+    for ( auto &sid : surfaces )
+    {
+        getMesh(sid, dummy_vlist, dummy_flist);
+        if ( dummy_flist.size() > 0 )
+        {
+            active_surfaces.push_back(sid);
+        }
+    }
+
+    return active_surfaces;
 }
 
 
