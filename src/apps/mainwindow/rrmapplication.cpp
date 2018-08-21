@@ -288,7 +288,7 @@ void RRMApplication::createObjectSurface()
     checkUndoRedo();
 
 
-//    updateObjectTree();
+    updateObjectTree();
     defineRandomColor();
 
     emit unlockDirections();

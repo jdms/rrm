@@ -802,7 +802,7 @@ bool Controller::createLinearExtrudedSurface()
 void Controller::updateModel()
 {
 
-    setObjectsActive( false );
+//    setObjectsActive( false );
 
     std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
 
@@ -813,7 +813,7 @@ void Controller::updateModel()
     {
         std::size_t id_ = actives_.at( j );
 
-        setObjectActive( id_, true );
+//        setObjectActive( id_, true );
         updateObjectSurface( id_ );
         updateObjectCurves( id_ );
     }
@@ -960,6 +960,7 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     if( has_surface_  == false )
     {
         obj_->removeSurface();
+        obj_->setActive( false );
         return;
     }
 
@@ -970,7 +971,9 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     surface_.setVertices( vertices_ );
     surface_.setFaces( faces_ );
     surface_.setNormals( normals_ );
+
     obj_->setSurface( surface_ );
+    obj_->setActive( true );
 
 
     std::vector< double > trajectory_;

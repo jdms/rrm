@@ -70,6 +70,7 @@ void MainWindow::createActions()
 
     ac_sketch_region = new QAction( "PR", this ); // preserve region!
     ac_sketch_region->setCheckable( true );
+    ac_sketch_region->setVisible( false );
 
     ac_sketch_below = new QAction( "PB", this ); // preserve below!
     ac_sketch_below->setCheckable( true );
@@ -79,6 +80,7 @@ void MainWindow::createActions()
 
     ac_remove_above_int = new QAction( "RAI", this );
     ac_remove_above_int->setCheckable( true );
+    ac_remove_above_int->setChecked( true );
 
     ac_remove_below = new QAction( "RB", this );
     ac_remove_below->setCheckable( true );
@@ -102,6 +104,7 @@ void MainWindow::createActions()
 
     ac_stratigraphy = new QAction( "Stratigraphy", this );
     ac_stratigraphy->setCheckable( true );
+    ac_stratigraphy->setChecked( true );
 
     ac_structural = new QAction( "Structural", this );
     ac_structural->setCheckable( true );

@@ -277,6 +277,7 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
 
     }
 
+    items.addElement( index_, obj_ );
     setItemWidget( obj_, COLUMN_COLOR, colorpicker_ );
 
 
