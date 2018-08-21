@@ -138,6 +138,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void objectSelected( const std::size_t id_ );
 
+        void sendSketchOfSelection( const PolyCurve& curve_ );
+        void stopSketchesOfSelection();
+
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 

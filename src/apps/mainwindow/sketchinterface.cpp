@@ -123,11 +123,13 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
 
 
+    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_ ){ window->app->selectBounderingBySketch( curve_ ); } );
+
+    connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ window->app->definedBounderingBySketch(); } );
+
+
+
      connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
-
-
-
-
 
 
 
@@ -216,21 +218,22 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::selectEnabled, [=]( const std::string& option_ )
     {
-        if( option_.compare( "NONE") != 0 )
-        {
-            sketch_window->setModeSelecting( true );
-            sketch_topview_window->setModeSelecting( true );
-        }
-        else if( option_.compare( "REGION") == 0 )
+        if( option_.compare( "REGION") == 0 )
         {
             sketch_window->setModeRegionSelecting( true );
             sketch_topview_window->setModeRegionSelecting( true );
         }
-        else
+        else if( option_.compare( "NONE") == 0 )
         {
             sketch_window->setModeSelecting( false );
             sketch_topview_window->setModeSelecting( false );
         }
+        else
+        {
+            sketch_window->setModeSelecting( true );
+            sketch_topview_window->setModeSelecting( true );
+        }
+
     } );
 
 

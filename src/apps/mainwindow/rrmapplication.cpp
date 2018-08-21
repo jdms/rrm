@@ -364,10 +364,23 @@ void RRMApplication::setSketchRegion( bool status_ )
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
-//    controller->
+    controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
 }
 
 
+
+void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_ )
+{
+    controller->setRegionBySketchAsBoundering( curve_ );
+    emit updateObjects();
+}
+
+
+void RRMApplication::definedBounderingBySketch()
+{
+    controller->definedRegionBounderingBySketch();
+    emit updateObjects();
+}
 
 
 void RRMApplication::setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ )

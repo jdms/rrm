@@ -1574,6 +1574,52 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
+void Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_ )
+{
+
+    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    {
+//        if( model.objects.find( index_ ) == model.objects.end() ) return;
+
+//        upper_index = index_;
+//        rules_processor.defineAbove( index_ );
+//        model.objects[ index_ ] ->setSelected( true );
+
+//        for( std::size_t id_: selectable_objects )
+//        {
+//            ObjectPtr& obj_ = model.objects[ id_ ];
+//            obj_->setSelectable( false );
+//        }
+//        selectable_objects.clear();
+
+        // get curves selected from rules_processor
+
+
+    }
+
+    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    {
+//        if( model.objects.find( index_ ) == model.objects.end() ) return;
+
+//        bottom_index = index_;
+//        rules_processor.defineBelow( index_ );
+//        model.objects[ index_ ] ->setSelected( true );
+
+//        for( std::size_t id_: selectable_objects )
+//        {
+//            ObjectPtr& obj_ = model.objects[ id_ ];
+//            obj_->setSelectable( false );
+//        }
+//        selectable_objects.clear();
+
+    }
+}
+
+void Controller::definedRegionBounderingBySketch()
+{
+// stop the iterative method to define region using sketches
+}
+
 void Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
 
