@@ -35,6 +35,10 @@ class View3dController
         void updateObjects();
         void updateScene();
 
+
+        void addRegions();
+        void updateRegions();
+
         void clear();
 
     protected:

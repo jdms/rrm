@@ -105,6 +105,14 @@ public slots:
 
     void createObjectSurface();
 
+    void getRegions();
+
+    void setRegionVisible( std::size_t index_, bool status_ );
+    void setRegionName( std::size_t index_, const std::string& name_ );
+    void setRegionColor( std::size_t index_, int red_, int green_, int blue_ );
+
+
+
     void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
     void setSketchAbove( bool status_ );
@@ -158,6 +166,11 @@ signals:
 
     void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
     void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
+
+
+    void addRegions();
+    void updateRegions();
+
 
     void updateDiscretization( const std::size_t& disc_ );
     void updateRange( double min_, double max_, bool inverted_ = true );
