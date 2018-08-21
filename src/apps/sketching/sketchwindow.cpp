@@ -141,6 +141,8 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::objectSelected, [=]( const std::size_t& id_ ) { emit objectSelected( id_ ); } );
 
+        connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_ ) { emit sendSketchOfSelection( curve_ ); } );
+
 
     return scene_;
 }
@@ -187,9 +189,11 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
 
-
-
     connect( scene_.get(), &SketchScene::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){ emit getRegionByPoint( px_, py_, depth_, dir_ ); }  );
+
+    connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_ ) { emit sendSketchOfSelection( curve_ ); } );
+
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
     return scene_;
 }
@@ -270,12 +274,14 @@ void SketchWindow::setModeSelecting( bool status_ )
     if( sketchingcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-        scene_->setOldSelectingStratigraphyMode( status_ );
+        scene_->setSelectingStratigraphyMode( status_ );
+//        scene_->setOldSelectingStratigraphyMode( status_ );
     }
     if( topviewcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-        scene_->setOldSelectingStratigraphyMode( status_ );
+        scene_->setSelectingStratigraphyMode( status_ );
+//        scene_->setOldSelectingStratigraphyMode( status_ );
     }
 }
 

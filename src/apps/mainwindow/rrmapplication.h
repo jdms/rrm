@@ -130,6 +130,8 @@ public slots:
 
 
     void setObjectSelectedAsBoundering( const std::size_t& index_ );
+    void selectBounderingBySketch( const PolyCurve& curve_ );
+    void definedBounderingBySketch();
     void getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 

@@ -37,6 +37,8 @@ class MainWindow: public QMainWindow
         void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
         void lockPreserve( const std::string& option_ );
 
+        void initializeInterface();
+
 
     protected:
 

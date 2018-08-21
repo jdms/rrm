@@ -403,6 +403,29 @@ void MainWindow::lockPreserve( const std::string& option_ )
 }
 
 
+
+void MainWindow::initializeInterface()
+{
+//    app->s
+//    ac_undo = nullptr;
+//    ac_redo = nullptr;
+//    ac_sketch_above = nullptr;
+//    ac_sketch_region = nullptr;
+//    ac_sketch_below = nullptr;
+//    ac_remove_above = nullptr;
+//    ac_remove_above_int = nullptr;
+//    ac_remove_below = nullptr;
+//    ac_remove_below_int = nullptr;
+
+//    ac_direction_x = nullptr;
+//    ac_direction_y = nullptr;
+//    ac_direction_z = nullptr;
+
+//    ac_stratigraphy = nullptr;
+//    ac_structural = nullptr;
+}
+
+
 MainWindow::~MainWindow()
 {
 

@@ -524,6 +524,7 @@ void SketchScene::addToSketchesOfSelection()
     sketches_of_selection.push_back( sketch_ );
     addItem( sketches_of_selection[ id_ ].get() );
 
+    emit sendSketchOfSelection( sketch->getCurve() );
 
     sketch->clear();
 
@@ -541,6 +542,8 @@ void SketchScene::removeSketchesOfSelection()
     }
     sketches_of_selection.clear();
 
+    emit stopSketchesOfSelection();
+    setSelectingStratigraphyMode( false );
 }
 
 
@@ -607,6 +610,11 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
     else if( current_interaction1 == UserInteraction1::SKETCHING )
     {
          endObject();
+    }
+
+    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    {
+         removeSketchesOfSelection();
     }
 
 

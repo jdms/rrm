@@ -89,6 +89,8 @@ class SketchWindow: public QMainWindow
 
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+        void sendSketchOfSelection( const PolyCurve& curve_ );
+        void stopSketchesOfSelection();
 
 
     protected:
