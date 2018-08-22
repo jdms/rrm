@@ -313,6 +313,8 @@ bool SRules::addSurface( PlanarSurface::Ptr &sptr, size_t &surface_index )
     dictionary[ sptr->getID() ] = surface_index; 
     container.push_back(sptr); 
 
+    sptr->updateCache();
+
     return true; 
 }
 
@@ -914,6 +916,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
+                /* to_remove_surface->updateCache(); */
                 to_remove_surface->removeAbove(base_surface); 
                 status |= true;
             }
@@ -921,6 +924,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     else if ( defineAboveIsActive() ) 
     {
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
+            /* to_remove_surface->updateCache(); */
             to_remove_surface->removeAbove(base_surface); 
             status |= true;
         }
@@ -928,14 +932,21 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
+            /* to_remove_surface->updateCache(); */
             to_remove_surface->removeAbove(base_surface); 
             status |= true; 
         }
     }
     else 
     { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
+        /* to_remove_surface->updateCache(); */
         to_remove_surface->removeAbove(base_surface); 
         status |= true; 
+    }
+
+    if ( status == true )
+    {
+        to_remove_surface->updateCache();
     }
 
     return status; 
@@ -949,6 +960,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
+                /* to_remove_surface->updateCache(); */
                 to_remove_surface->removeBelow(base_surface); 
                 status |= true;
             }
@@ -957,6 +969,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     else if ( defineAboveIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
+            /* to_remove_surface->updateCache(); */
             to_remove_surface->removeBelow(base_surface); 
             status |= true;
         }
@@ -965,6 +978,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
+            /* to_remove_surface->updateCache(); */
             to_remove_surface->removeBelow(base_surface); 
             status |= true; 
         }
@@ -972,8 +986,14 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 
     else 
     { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
+        /* to_remove_surface->updateCache(); */
         to_remove_surface->removeBelow(base_surface); 
         status |= true; 
+    }
+
+    if ( status == true )
+    {
+        to_remove_surface->updateCache();
     }
 
     return status; 
@@ -997,7 +1017,7 @@ std::vector<size_t> SRules::getSurfacesBelowPoint( const Point3 &p )
         return descriptor;
     }
 
-    bool lies_above_all_surfaces = true;
+    /* bool lies_above_all_surfaces = true; */
 
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -1005,10 +1025,10 @@ std::vector<size_t> SRules::getSurfacesBelowPoint( const Point3 &p )
         {
             descriptor.push_back(i);
         }
-        else
-        {
-            lies_above_all_surfaces = false;
-        }
+        /* else */
+        /* { */
+        /*     lies_above_all_surfaces = false; */
+        /* } */
     }
 
     /* if ( lies_above_all_surfaces ) */
@@ -1073,7 +1093,7 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
         return descriptor;
     }
 
-    bool lies_below_all_surfaces = true;
+    /* bool lies_below_all_surfaces = true; */
 
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -1081,10 +1101,10 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
         {
             descriptor.push_back(i);
         }
-        else
-        {
-            lies_below_all_surfaces = false;
-        }
+        /* else */
+        /* { */
+        /*     lies_below_all_surfaces = false; */
+        /* } */
     }
 
     /* if ( lies_below_all_surfaces ) */
@@ -1400,5 +1420,13 @@ std::vector<size_t> SRules::getUpperBound( std::vector<size_t> surface_ids )
     }
 
     return ubound;
+}
+
+void SRules::updateCache()
+{
+        for ( auto &s : container )
+        {
+            s->updateCache();
+        }
 }
 

@@ -213,29 +213,48 @@ bool SModeller::useOpenGLCoordinateSystem()
 }
 
 
-bool SModeller::tryChangeDiscretization( size_t width, size_t lenght )
+bool SModeller::tryChangeDiscretization( size_t width, size_t length )
 {
     if ( pimpl_->container_.size() > 0 )
     {
         return false;
     }
 
-    return changeDiscretization(width, lenght);
+    pimpl_->discWidth_ = width; 
+    pimpl_->discLenght_ = length; 
+
+    PlanarSurface::requestChangeDiscretization(width, length);
+
+    return true;
 }
 
-bool SModeller::changeDiscretization( size_t width, size_t lenght )
+bool SModeller::changeDiscretization( size_t width, size_t length )
 {
-    if ( (width == 0) || (lenght == 0) )
+    if ( (width == 0) || (length == 0) )
     {
         return false;
     }
 
+    while ( canUndo() )
+    {
+        undo();
+    }
+
+    PlanarSurface::requestChangeDiscretization(width, length);
+
     pimpl_->discWidth_ = width; 
-    pimpl_->discLenght_ = lenght; 
+    pimpl_->discLenght_ = length; 
+
+    while ( canRedo() )
+    {
+        redo();
+    }
 
     /* TODO: review use and conversion of types */
-    /* PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discWidth_), PlanarSurface::Natural(pimpl_->discLenght_)); */
-    return pimpl_->container_.changeDiscretization(width, lenght);
+    /* /1* PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discWidth_), PlanarSurface::Natural(pimpl_->discLenght_)); *1/ */
+    /* return pimpl_->container_.changeDiscretization(width, length); */
+
+    return true;
 }
 
 
@@ -680,6 +699,8 @@ bool SModeller::undo()
     auto iter = pimpl_->dictionary_.find(last_surface_index); 
     pimpl_->dictionary_.erase(iter); 
 
+    pimpl_->container_.updateCache();
+
     return true;
 }
 
@@ -724,6 +745,8 @@ bool SModeller::redo()
 
     /* pimpl_->current_ = state_before_redo_; */
     /* pimpl_->enforceDefineRegion(); */
+
+    pimpl_->container_.updateCache();
 
     return status;
 }
@@ -785,6 +808,25 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
 
 
     num_elements = mb.getTetrahedronList(element_list);
+
+    return num_elements;
+}
+
+std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list )
+{
+    TetrahedralMeshBuilder mb(pimpl_->container_);
+
+    bool status = true;
+    size_t num_elements;
+
+    status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+
+    if ( status == false )
+    {
+        return 0;
+    }
+
+    num_elements = mb.getTetrahedronList(element_list, attribute_list);
 
     return num_elements;
 }
