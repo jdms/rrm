@@ -258,6 +258,7 @@ class SRules
 
         bool liesBetweenBoundarySurfaces( Point3 &&p );
 
+        void updateCache();
 
     private: 
         ContainerType container; 
@@ -284,7 +285,13 @@ class SRules
         friend class cereal::access;
 
         template<typename Archive>
-        void serialize( Archive &ar, const std::uint32_t version );
+        void save( Archive &ar, const std::uint32_t version ) const;
+
+        template<typename Archive>
+        void load( Archive &ar, const std::uint32_t version );
+
+        /* template<typename Archive> */
+        /* void serialize( Archive &ar, const std::uint32_t version ); */
 }; 
 
 
@@ -293,7 +300,7 @@ class SRules
     #include "cereal/types/unordered_map.hpp"
 
     template<typename Archive>
-    void SRules::serialize( Archive &ar, const std::uint32_t version )
+    void SRules::save( Archive &ar, const std::uint32_t version ) const
     {
         (void)(version);
         ar(
@@ -304,6 +311,22 @@ class SRules
             upper_bound_, 
             define_below_
           );
+    }
+
+    template<typename Archive>
+    void SRules::load( Archive &ar, const std::uint32_t version )
+    {
+        (void)(version);
+        ar(
+            container, 
+            dictionary,
+            lower_bound_, 
+            define_above_, 
+            upper_bound_, 
+            define_below_
+          );
+
+        updateCache();
     }
 
     CEREAL_CLASS_VERSION(SRules, 1);

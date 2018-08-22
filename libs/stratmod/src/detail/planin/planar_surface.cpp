@@ -62,7 +62,7 @@ void PlanarSurface::updateDiscretization()
     /* if ( this_discretization_state_ < global_discretization_state_ ) */ 
     if ( surfaceIsSet() == true ) 
     { 
-        updateCache(); 
+        updateRawCache(); 
     }
     
     this_discretization_state_ = global_discretization_state_; 
@@ -174,6 +174,13 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
 
     extruded_surface_ = rhs.extruded_surface_; 
 
+    cached_heights_ = rhs.cached_heights_;
+    cached_valid_heights_ = rhs.cached_valid_heights_;
+    cache_is_fresh_ = rhs.cache_is_fresh_;
+
+    /* unprocessed_upper_bound_ = rhs.unprocessed_upper_bound_; */
+    /* unprocessed_lower_bound_ = rhs.unprocessed_lower_bound_; */
+
     /* std::cout << "My dependency_list_: "; */ 
     /* for ( auto i : dependency_list_ ) { */ 
     /*     std::cout << i << " "; */ 
@@ -204,6 +211,14 @@ PlanarSurface::PlanarSurface( PlanarSurface &&rhs ) : id_( rhs.id_ )
     dependency_list_ = std::move(rhs.dependency_list_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
+
+    cached_heights_ = std::move(rhs.cached_heights_);
+    cached_valid_heights_ = std::move(rhs.cached_valid_heights_);
+    cache_is_fresh_ = rhs.cache_is_fresh_;
+
+    /* unprocessed_upper_bound_ = std::move(rhs.unprocessed_upper_bound_); */
+    /* unprocessed_lower_bound_ = std::move(rhs.unprocessed_lower_bound_); */
+
 }
 
 void PlanarSurface::setOrigin( const Point3 &o ) 
@@ -269,16 +284,17 @@ bool PlanarSurface::weakEntireSurfaceCheck()
 
     updateDiscretization(); 
 
-    double height; 
+    double height{}; 
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub) private(height, status) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for firstprivate(num_vertices_omp, lb, ub, height) private(status) default(none) reduction(&&: isEntireSurface) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* status = getCachedHeight(i, height); */ 
         status = getHeight(i, height); 
         if ( status == false )
         { 
@@ -320,7 +336,7 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
     bool status, lstatus, ustatus; 
 
     updateDiscretization(); 
-    double height, lheight, uheight; ; 
+    double height{}, lheight{}, uheight{};
 
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
@@ -328,9 +344,10 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(lower_surface, upper_surface) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for shared(lower_surface, upper_surface) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary, height, lheight, uheight) private(status, lstatus, ustatus) default(none) reduction(&&: isEntireSurface) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* status = getCachedHeight(i, height); */ 
         status = getHeight(i, height); 
 
         if ( status == false )
@@ -348,6 +365,7 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
         { 
             if ( has_lower_boundary ) 
             { 
+                /* lstatus = lower_surface->getCachedHeight(i, lheight); */ 
                 lstatus = lower_surface->getHeight(i, lheight); 
                 /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
                 if ( lstatus && ( std::fabs(lheight - height) <= tolerance ) ) {
@@ -359,6 +377,7 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
             }
             if ( has_upper_boundary ) 
             {
+                /* ustatus = upper_surface->getCachedHeight(i, uheight); */ 
                 ustatus = upper_surface->getHeight(i, uheight); 
                 if ( ustatus && ( std::fabs(height - uheight) <= tolerance ) ) { 
                     status |= true; 
@@ -491,15 +510,17 @@ bool PlanarSurface::weakCompleteIntersectionCheck( PlanarSurface::Ptr &sp )
     bool lies_below = false; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    double height{}, s_height{}; 
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(||: lies_above, lies_below) 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, height, s_height) default(none) reduction(||: lies_above, lies_below) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* getCachedHeight(i, height); */ 
         getHeight(i, height); 
+        /* sp->getCachedHeight(i, s_height); */ 
         sp->getHeight(i, s_height); 
 
         lies_above = lies_above || (height >= s_height); 
@@ -529,15 +550,17 @@ bool PlanarSurface::weakLiesAboveCheck( PlanarSurface::Ptr &sp )
     bool lies_above = true; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    double height{}, s_height{}; 
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(&&: lies_above) 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, height, s_height) default(none) reduction(&&: lies_above) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* getCachedHeight(i, height); */ 
         getHeight(i, height); 
+        /* sp->getCachedHeight(i, s_height); */ 
         sp->getHeight(i, s_height); 
 
         lies_above = lies_above && (height > s_height); 
@@ -566,15 +589,17 @@ bool PlanarSurface::weakLiesBelowCheck( PlanarSurface::Ptr &sp )
     bool lies_below = true; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    double height{}, s_height{}; 
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(&&: lies_below) 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, height, s_height) default(none) reduction(&&: lies_below) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* getCachedHeight(i, height); */ 
         getHeight(i, height); 
+        /* sp->getCachedHeight(i, s_height); */ 
         sp->getHeight(i, s_height); 
 
         lies_below = lies_below && (height < s_height); 
@@ -603,16 +628,18 @@ bool PlanarSurface::weakLiesAboveOrEqualsCheck( PlanarSurface::Ptr &sp )
     bool lies_above = true; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    double height{}, s_height{}; 
     double tolerance = getTolerance(); 
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance) private(height, s_height) default(none) reduction(&&: lies_above) 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance, height, s_height) default(none) reduction(&&: lies_above) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* getCachedHeight(i, height); */ 
         getHeight(i, height); 
+        /* sp->getCachedHeight(i, s_height); */ 
         sp->getHeight(i, s_height); 
 
         lies_above = lies_above && (height > s_height - tolerance); 
@@ -641,16 +668,18 @@ bool PlanarSurface::weakLiesBelowOrEqualsCheck( PlanarSurface::Ptr &sp )
     bool lies_below = true; 
 
     updateDiscretization(); 
-    double height, s_height; 
+    double height{}, s_height{}; 
     double tolerance = getTolerance(); 
 
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance) private(height, s_height) default(none) reduction(&&: lies_below) 
+    #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp, tolerance, height, s_height) default(none) reduction(&&: lies_below) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
+        /* getCachedHeight(i, height); */ 
         getHeight(i, height); 
+        /* sp->getCachedHeight(i, s_height); */ 
         sp->getHeight(i, s_height); 
 
         lies_below = lies_below && (height < s_height + tolerance ); 
@@ -696,6 +725,7 @@ bool PlanarSurface::getVertex3D( Natural index, Point3 &v ) {
 
     v.x = p2.x; 
     v.y = p2.y; 
+    /* bool valid_vertex = getCachedHeight(index, v.z); */ 
     bool valid_vertex = getHeight(index, v.z); 
     /* std::cout << "Problem!\n\n"; */ 
 
@@ -716,6 +746,7 @@ bool PlanarSurface::getMappedVertex3D( Natural index, Point3 &v ) {
 
     w.x = p2.x; 
     w.y = p2.y; 
+    /* bool valid_vertex = getCachedHeight(index, w.z); */ 
     bool valid_vertex = getHeight(index, w.z); 
     /* std::cout << "Problem!\n\n"; */ 
 
@@ -779,15 +810,31 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
 }
 
 bool PlanarSurface::getHeight( Natural vertex_index, double &height ) { 
+    return getHeight(vertex_index, height, heights, upper_bound_, lower_bound_);
+}
+
+// getRelativeHeight
+bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector<double> &base_heights, std::list<std::weak_ptr<PlanarSurface>> &ub_list,std::list<std::weak_ptr<PlanarSurface>> &lb_list )
+{
     if ( interpolant_is_set_ == false ) { 
         return false; 
     }
 
     updateDiscretization(); 
-    height = heights[vertex_index];  
+
+    bool status = true; 
+    if ( cache_is_fresh_ )
+    {
+        height = cached_heights_[vertex_index];
+        status = cached_valid_heights_[vertex_index];
+
+        return status;
+    }
+
+    /* height = heights[vertex_index]; */  
+    height = base_heights[vertex_index];  
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
-    bool status = true; 
     
     if ( height > ub ) { 
         height = ub; 
@@ -803,7 +850,8 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
 
     /* std::cout << "I'm here! \n\n"; */ 
 
-    for ( auto &p_upper_bound_ : upper_bound_ )
+    /* for ( auto &p_upper_bound_ : upper_bound_ ) */
+    for ( auto &p_upper_bound_ : ub_list )
         if ( auto upper_surface = p_upper_bound_.lock() ) { 
             /* if ( upper_surface->getHeight(vertex_index, ub) ) */
             if ( upper_surface->surfaceIsSet() ) { 
@@ -818,7 +866,8 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
             }
         }
 
-    for ( auto &p_lower_bound_ : lower_bound_ )
+    /* for ( auto &p_lower_bound_ : lower_bound_ ) */
+    for ( auto &p_lower_bound_ : lb_list )
         if ( auto lower_surface = p_lower_bound_.lock() ) { 
             /* if ( lower_surface->getHeight(vertex_index, lb) ) */  
             if ( lower_surface->surfaceIsSet() ) { 
@@ -842,6 +891,67 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height ) {
 bool PlanarSurface::getHeight( Natural i, Natural j, double &height )
 {
     return getHeight( getVertexIndex(i, j), height );
+}
+
+bool PlanarSurface::getCachedHeight( Natural vertex_index, double &height )
+{
+    if ( interpolant_is_set_ == false ) { 
+        return false; 
+    }
+
+    if ( vertex_index >= num_vertices_ )
+    {
+        return false;
+    }
+
+    bool valid_vertex;
+    /* auto has_unprocessed_bounds = []( std::list<PlanarSurface::WeakPtr> &unprocessed_list ) -> bool */ 
+    /* { */
+    /*     bool is_empty = unprocessed_list.empty(); */
+
+    /*     if ( !is_empty ) */
+    /*     { */
+    /*         is_empty = true; */
+    /*         for ( auto &wprt : unprocessed_list ) */
+    /*         { */
+    /*             if ( auto sptr = wprt.lock() ) */
+    /*             { */
+    /*                 is_empty = false; */
+    /*             } */
+    /*         } */
+    /*     } */
+
+    /*     return is_empty; */
+    /* }; */
+
+    if ( cache_is_fresh_ )
+    {
+        height = cached_heights_[vertex_index];
+        valid_vertex = cached_valid_heights_[vertex_index];
+    }
+    else
+    {
+        /* // this may create a logical inconsistency if surfaces are created with a different logic than */ 
+        /* // what is expected from SRules: i.e. new surfaces that modify the model don't have any dependencies, */ 
+        /* // or new surfaces that were modified by the model do not modify other surfaces */
+        /* if ( has_unprocessed_bounds(unprocessed_lower_bound_) || has_unprocessed_bounds(unprocessed_upper_bound_) ) */
+        /* { */
+        /*     valid_vertex = getHeight(vertex_index, height, cached_heights_, unprocessed_upper_bound_, unprocessed_lower_bound_); */
+        /* } */
+        /* else */
+        /* { */
+        /*     valid_vertex = getHeight(vertex_index, height); */
+        /* } */
+
+        valid_vertex = getHeight(vertex_index, height);
+    }
+
+    return valid_vertex;
+}
+
+bool PlanarSurface::getCachedHeight( Natural i, Natural j, double &height )
+{
+    return getCachedHeight( getVertexIndex(i, j), height );
 }
 
 std::size_t PlanarSurface::getNumX()
@@ -899,12 +1009,12 @@ bool PlanarSurface::generateSurface() {
     interpolant_is_set_ = true; 
     /* std::cout << "Got interpolant!\n\n"; */ 
 
-    updateCache(); 
+    updateRawCache();
 
     return true; 
 }
 
-bool PlanarSurface::updateCache() 
+bool PlanarSurface::updateRawCache() 
 {
     if ( surfaceIsSet() == false ) { 
         return false; 
@@ -917,6 +1027,7 @@ bool PlanarSurface::updateCache()
     }
 
     heights.resize(num_vertices_); 
+
     Point2 v {};  
     Point3 n {};
 
@@ -975,13 +1086,82 @@ bool PlanarSurface::updateCache()
         }
     }
     /* std::cout << "Got a mesh!\n\n"; */ 
+
+    /* cached_heights_.resize(heights.size()); */
+    cached_heights_.clear();
+    /* cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } ); */
+    cached_valid_heights_.resize( heights.size(), true );
+    std::copy( heights.begin(), heights.end(), std::back_inserter(cached_heights_) );
+    cache_is_fresh_ = false;
+
     mesh_is_set_ = true; 
+
+    std::cout << "Raw cache is built for surface: " << id_ << std::endl << std::flush;
 
     return true; 
 }
 
 /* bool getMesh( BoundBox bbox, MeshType *mesh ); */ 
 /* bool getMesh( std::vector<BoundBox> &bboxes, MeshType *mesh ); */ 
+
+bool PlanarSurface::updateCache() 
+{
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    if ( cache_is_fresh_ )
+    {
+        return true;
+    }
+
+    std::cout << "Processing cache for surface: " << id_ << std::endl << std::flush;
+
+    for ( auto &wptr: upper_bound_ )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            sptr->updateCache();
+        }
+    }
+
+    for ( auto &wptr: lower_bound_ )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            sptr->updateCache();
+        }
+    }
+
+    double height{};
+    bool valid_vertex{};
+
+    for ( size_t i = 0; i < num_vertices_; ++i )
+    {
+        /* if ( !unprocessed_lower_bound_.empty() || !unprocessed_upper_bound_.empty() ) */
+        /* { */
+        /*     valid_vertex = getHeight(i, height, cached_heights_, unprocessed_upper_bound_, unprocessed_lower_bound_); */
+        /* } */
+        /* else */
+        /* { */
+        /*     valid_vertex = getCachedHeight(i, height); */
+        /* } */
+
+        /* valid_vertex = getCachedHeight(i, height); */
+        valid_vertex = getHeight(i, height);
+
+        cached_heights_[i] = height;
+        cached_valid_heights_[i] = valid_vertex;
+    }
+
+    /* unprocessed_lower_bound_.clear(); */
+    /* unprocessed_upper_bound_.clear(); */
+
+    cache_is_fresh_ = true;
+    std::cout << "Cache is built for surface: " << id_ << std::endl << std::flush;
+
+    return true;
+}
 
 bool PlanarSurface::liesAbove( const Point3 &p ) { 
     return f->liesAbove(p);
@@ -1040,6 +1220,8 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     /* } */
 
     upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+    /* unprocessed_upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
+    cache_is_fresh_ = false;
 
     pruneBoundingLists();
 
@@ -1059,6 +1241,7 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
         if ( new_bound )
         {
             lower_bound_.push_back(lb);
+            /* unprocessed_lower_bound_.push_back(lb); */
         }
 
     }
@@ -1105,6 +1288,8 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     // s->getUpperBoundList(upper_bound_); 
 
     lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+    /* unprocessed_lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
+    cache_is_fresh_ = false;
 
     pruneBoundingLists();
 
@@ -1124,6 +1309,7 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
         if (new_bound)
         {
             upper_bound_.push_back(ub);
+            /* unprocessed_upper_bound_.push_back(ub); */
         }
 
     }
@@ -1153,6 +1339,8 @@ void PlanarSurface::pruneBoundingLists()
         if ( itu->expired() ) 
         {
             itu = upper_bound_.erase(itu);
+            cache_is_fresh_ = false;
+            std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush;
         }
         else
         {
@@ -1166,12 +1354,50 @@ void PlanarSurface::pruneBoundingLists()
         if ( itl->expired() ) 
         {
             itl = lower_bound_.erase(itl);
+            cache_is_fresh_ = false;
+            std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush;
         }
         else
         {
             ++itl;
         }
     }
+
+    /* // now for unprocessed surfaces, whenever something is not found all must be cleared */
+    /* bool unprocessed_list_is_clean = true; */
+    /* itu = unprocessed_upper_bound_.begin(); */
+    /* while ( itu != unprocessed_upper_bound_.end() ) */
+    /* { */
+    /*     if ( itu->expired() ) */ 
+    /*     { */
+    /*         /1* itu = upper_bound_.erase(itu); *1/ */
+    /*         unprocessed_list_is_clean = false; */
+    /*     } */
+    /*     else */
+    /*     { */
+    /*         ++itu; */
+    /*     } */
+    /* } */
+
+    /* itl = unprocessed_lower_bound_.begin(); */
+    /* while ( itl != unprocessed_lower_bound_.end() ) */
+    /* { */
+    /*     if ( itl->expired() ) */ 
+    /*     { */
+    /*         /1* itl = unprocessed_lower_bound_.erase(itl); *1/ */
+    /*         unprocessed_list_is_clean = false; */
+    /*     } */
+    /*     else */
+    /*     { */
+    /*         ++itl; */
+    /*     } */
+    /* } */
+
+    /* if ( unprocessed_list_is_clean == false ) */
+    /* { */
+    /*     unprocessed_lower_bound_.clear(); */
+    /*     unprocessed_upper_bound_.clear(); */
+    /* } */
 
     f->pruneBoundingLists(); 
 }
@@ -1252,8 +1478,11 @@ TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpo
         i1 = getVertexIndexFromPositionInBlock(i1_pos, bindex);
         i2 = getVertexIndexFromPositionInBlock(i2_pos, bindex);
 
+        /* b0 = getCachedHeight(i0, h0); */
         b0 = getHeight(i0, h0);
+        /* b1 = getCachedHeight(i1, h1); */
         b1 = getHeight(i1, h1);
+        /* b2 = getCachedHeight(i2, h2); */
         b2 = getHeight(i2, h2);
 
         /* t.setVertex(0, v0, i0, b0); */

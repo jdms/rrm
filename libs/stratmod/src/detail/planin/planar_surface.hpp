@@ -88,7 +88,8 @@ class PlanarSurface {
 
         /* Create surface. */ 
         bool generateSurface(); 
-        bool updateCache(); 
+        bool updateRawCache(); 
+        bool updateCache();
 
         void updateDiscretization(); 
         static bool requestChangeDiscretization( Natural numX, Natural numY ); 
@@ -151,6 +152,9 @@ class PlanarSurface {
 
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
+
+        bool getCachedHeight( Natural vertex_index, double &height );
+        bool getCachedHeight( Natural i, Natural j, double &height );
 
         std::size_t getNumX(); 
         std::size_t getNumY(); 
@@ -249,11 +253,25 @@ class PlanarSurface {
 
         std::list< std::weak_ptr<PlanarSurface> > upper_bound_; 
         std::list< std::weak_ptr<PlanarSurface> > lower_bound_; 
+        /* std::list< std::weak_ptr<PlanarSurface> > unprocessed_upper_bound_; */ 
+        /* std::list< std::weak_ptr<PlanarSurface> > unprocessed_lower_bound_; */ 
         std::set< unsigned long int> dependency_list_; 
 
         bool extruded_surface_ = false; 
 
+        /* Cache the results of applying rules as well as original surface heights */ 
+        /* bool raw_cache_is_fresh_ = false; */
+        bool cache_is_fresh_ = false;
+        std::vector<double> cached_heights_;
+        std::vector<bool> cached_valid_heights_;
+
         /* Methods */ 
+        bool getHeight( Natural vertex_index, double &height, 
+                std::vector<double> &base_heights,
+                std::list<std::weak_ptr<PlanarSurface>> &ub_list,
+                std::list<std::weak_ptr<PlanarSurface>> &lb_list
+                );
+
         bool rangeCheck( Natural i, Natural j );
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
@@ -695,7 +713,7 @@ void PlanarSurface::getLowerBoundList( T &list ) const
            extruded_surface_
           );
 
-        updateCache();
+        updateRawCache();
     }
 
     CEREAL_CLASS_VERSION(PlanarSurface, 1);
