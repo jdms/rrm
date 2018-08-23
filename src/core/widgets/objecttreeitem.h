@@ -47,7 +47,7 @@ class ObjectTreeItem: public QTreeWidgetItem
         void setTreeIndex( const std::size_t index_ );
         std::size_t getTreeIndex() const;
 
-
+        ObjectTreeItem* cloneItem() const;
 
     protected:
 
