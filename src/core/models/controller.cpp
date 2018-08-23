@@ -1462,7 +1462,9 @@ void Controller::stopCreateRegion()
 
 bool Controller::requestCreateRegion()
 {
-    bool request_;
+//    bool request_ = rules_processor.requestPreserveRegion()
+
+
 //    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
 
 //    if( request_ == true )
@@ -1481,7 +1483,7 @@ bool Controller::requestCreateRegion()
 //    else
 //        std::cout << "Request create denied" << std::endl << std::flush;
 
-    return request_ ;
+    return false;
 }
 
 
@@ -1571,8 +1573,41 @@ void Controller::definedRegionBounderingBySketch()
 // stop the iterative method to define region using sketches
 }
 
-void Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+bool Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
+    std::vector< double > point_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        point_.push_back( depth_ );
+        point_.push_back( py_ );
+        point_.push_back( px_ );
+
+
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        point_.push_back( px_ );
+        point_.push_back( depth_ );
+        point_.push_back( py_ );
+
+
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        point_.push_back( px_ );
+        point_.push_back( py_ );
+        point_.push_back( depth_ );
+
+    }
+
+    bool request_ = rules_processor.requestPreserveRegion( point_ );
+
+    // get items to be selected
+
+    return request_;
 
 }
 

@@ -227,7 +227,7 @@ class Controller
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
         void setRegionBySketchAsBoundering( const PolyCurve& curve_ );
         void definedRegionBounderingBySketch();
-        void setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
