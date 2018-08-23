@@ -489,6 +489,86 @@ bool SModellerImplementation::popLastSurface()
     return true;
 }
 
+bool SModellerImplementation::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+{
+    ContainerSurfaceIndex index;
+    std::vector<ContainerSurfaceIndex> surface_ids;
+
+    for ( auto &surface_index : bounding_surfaces_list )
+    {
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false;
+        }
+        surface_ids.push_back(index);
+    }
+
+    current_.bounded_below_ = container_.defineAbove(surface_ids);
+    if ( current_.bounded_below_ )
+    {
+        current_.upper_boundary_list_ = bounding_surfaces_list;
+    }
+
+    return current_.bounded_below_;
+}
+
+bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+{
+    ContainerSurfaceIndex index;
+    std::vector<ContainerSurfaceIndex> surface_ids;
+
+    for ( auto &surface_index : bounding_surfaces_list )
+    {
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false;
+        }
+        surface_ids.push_back(index);
+    }
+
+    current_.bounded_above_ = container_.defineBelow(surface_ids);
+    if ( current_.bounded_above_ )
+    {
+        current_.lower_boundary_list_ = bounding_surfaces_list;
+    }
+
+    return current_.bounded_above_;
+}
+
+void SModellerImplementation::stopPreserveAbove()
+{
+    container_.stopDefineAbove();
+}
+
+void SModellerImplementation::stopPreserveBelow()
+{
+    container_.stopDefineBelow();
+}
+
+bool SModellerImplementation::preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    if ( current_.bounded_below_ == false )
+    {
+        return false;
+    }
+
+    bounding_surfaces_list = current_.lower_boundary_list_;
+
+    return true;
+}
+
+bool SModellerImplementation::preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    if ( current_.bounded_above_ == false )
+    {
+        return false;
+    }
+
+    bounding_surfaces_list = current_.upper_boundary_list_;
+
+    return true;
+}
+
 bool SModellerImplementation::createAboveIsActive()
 {
     return current_.bounded_below_;

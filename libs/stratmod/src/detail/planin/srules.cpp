@@ -229,10 +229,11 @@ bool SRules::defineAboveIsActive()
 {
     if ( define_above_ == true )
     {
-        if ( lower_bound_.expired() == true )
+        define_above_ = false;
+        for ( auto &lower_bound : lower_bound_ )
+        if ( lower_bound.expired() == false )
         {
-            lower_bound_ = PlanarSurface::WeakPtr();
-            define_above_ = false;
+            define_above_ = true;
         }
     }
 
@@ -243,10 +244,11 @@ bool SRules::defineBelowIsActive()
 {
     if ( define_below_ == true )
     {
-        if ( upper_bound_.expired() == true )
+        define_below_ = false;
+        for ( auto &upper_bound : upper_bound_ )
+        if ( upper_bound.expired() == false )
         {
-            upper_bound_ = PlanarSurface::WeakPtr();
-            define_below_ = false;
+            define_below_ = true;
         }
     }
 
@@ -301,12 +303,14 @@ bool SRules::addSurface( PlanarSurface::Ptr &sptr, size_t &surface_index )
 
     if ( defineAboveIsActive() == true ) {
         /* cout << "Someone was defined above!\n"; */ 
-        sptr->removeBelow(lower_bound_); 
+        for ( auto &lower_bound : lower_bound_ )
+        sptr->removeBelow(lower_bound); 
     }
 
     if ( defineBelowIsActive() == true ) { 
         /* cout << "Someone was defined below!\n"; */ 
-        sptr->removeAbove(upper_bound_); 
+        for ( auto &upper_bound : upper_bound_ )
+        sptr->removeAbove(upper_bound); 
     }
 
     surface_index = container.size(); 
@@ -363,8 +367,8 @@ bool SRules::addSurface(
         }
     }
 
-    remove_above_surfaces = getLowerBound(remove_above_surfaces);
-    remove_below_surfaces = getUpperBound(remove_below_surfaces);
+    /* remove_above_surfaces = getLowerBound(remove_above_surfaces); */
+    /* remove_below_surfaces = getUpperBound(remove_below_surfaces); */
 
     if ( !remove_above_surfaces.empty() ) {
         for ( auto &i : remove_above_surfaces ) { 
@@ -461,7 +465,7 @@ bool SRules::defineAbove()
 }
 
 void SRules::stopDefineAbove() { 
-    lower_bound_ = PlanarSurface::WeakPtr(); 
+    lower_bound_ = std::vector<PlanarSurface::WeakPtr>(); 
     define_above_ = false; 
 }
 
@@ -475,7 +479,7 @@ bool SRules::defineBelow()
 }
 
 void SRules::stopDefineBelow() { 
-    upper_bound_ = PlanarSurface::WeakPtr();
+    upper_bound_ = std::vector<PlanarSurface::WeakPtr>();
     define_below_ = false; 
 }
 
@@ -724,24 +728,80 @@ bool SRules::defineAbove( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    lower_bound_ = PlanarSurface::WeakPtr(sptr); 
+    lower_bound_ = { PlanarSurface::WeakPtr(sptr) }; 
+    define_above_ = true; 
+    return true; 
+}
+
+bool SRules::defineAbove( std::vector<PlanarSurface::Ptr> &bounding_surfaces ) 
+{ 
+    std::vector<PlanarSurface::WeakPtr> wptr_surfaces;
+    bool has_bounding_surfaces = false;
+
+    for ( auto &sptr : bounding_surfaces )
+        if ( isValidSurface(sptr) ) { 
+            has_bounding_surfaces = true;
+            wptr_surfaces.push_back( PlanarSurface::WeakPtr( sptr ) );
+        }
+
+    if ( has_bounding_surfaces == false )
+    {
+        stopDefineAbove();
+        return false;
+    }
+
+    if ( weakEntireSurfaceListCheck(bounding_surfaces) == false ) { 
+        stopDefineAbove(); 
+        return false; 
+    }
+
+    lower_bound_ = wptr_surfaces; 
     define_above_ = true; 
     return true; 
 }
 
 bool SRules::defineBelow( PlanarSurface::Ptr sptr ) 
 { 
-    if ( isValidSurface(sptr) == false ) { 
+    if ( isValidSurface(sptr) == false ) 
+    { 
         stopDefineBelow(); 
         return false; 
     }
 
-    if ( weakEntireSurfaceCheck(sptr) == false ) { 
+    if ( weakEntireSurfaceCheck(sptr) == false ) 
+    { 
         stopDefineBelow(); 
         return false; 
     }
 
-    upper_bound_ = PlanarSurface::WeakPtr(sptr); 
+    upper_bound_ = { PlanarSurface::WeakPtr(sptr) }; 
+    define_below_ = true; 
+    return true; 
+}
+
+bool SRules::defineBelow( std::vector<PlanarSurface::Ptr> &bounding_surfaces ) 
+{ 
+    std::vector<PlanarSurface::WeakPtr> wptr_surfaces;
+    bool has_bounding_surfaces = false;
+
+    for ( auto &sptr : bounding_surfaces )
+        if ( isValidSurface(sptr) ) { 
+            has_bounding_surfaces = true;
+            wptr_surfaces.push_back( PlanarSurface::WeakPtr( sptr ) );
+        }
+
+    if ( has_bounding_surfaces == false )
+    {
+        stopDefineBelow();
+        return false;
+    }
+
+    if ( weakEntireSurfaceListCheck(bounding_surfaces) == false ) { 
+        stopDefineAbove(); 
+        return false; 
+    }
+
+    upper_bound_ = wptr_surfaces; 
     define_below_ = true; 
     return true; 
 }
@@ -806,6 +866,40 @@ bool SRules::defineBelow( std::size_t surface_index )
     return defineBelow( container[surface_index] );
 }
 
+bool SRules::defineAbove( std::vector<size_t> surface_indices )
+{
+    std::vector<PlanarSurface::Ptr> surfaces;
+
+    for ( auto &sid : surface_indices )
+    {
+        if ( sid >= size() )
+        {
+            return false;
+        }
+
+        surfaces.push_back(container[sid]);
+    }
+
+    return defineAbove(surfaces);
+}
+
+bool SRules::defineBelow( std::vector<size_t> surface_indices )
+{
+    std::vector<PlanarSurface::Ptr> surfaces;
+
+    for ( auto &sid : surface_indices )
+    {
+        if ( sid >= size() )
+        {
+            return false;
+        }
+
+        surfaces.push_back(container[sid]);
+    }
+
+    return defineBelow(surfaces);
+}
+
 bool SRules::liesInsideBoundingBox( const Point3 &p )
 {
     Point3 origin = container[0]->getOrigin();
@@ -836,7 +930,8 @@ bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
     ub_height = origin.z + lenght.z;
     if ( defineBelowIsActive() )
     {
-        if ( auto sptr = upper_bound_.lock() )
+        for ( auto &ub_wptr : upper_bound_ )
+        if ( auto sptr = ub_wptr.lock() )
         {
             sptr->getHeight(p2, ub_height);
             /* std::cout << "Upper boundary height: " << ub_height << std::endl << std::flush; */
@@ -847,7 +942,8 @@ bool SRules::liesBetweenBoundarySurfaces( const Point3 &p )
     lb_height = origin.z;
     if ( defineAboveIsActive() )
     {
-        if( auto sptr = lower_bound_.lock() )
+        for ( auto &lb_wptr : lower_bound_ )
+        if( auto sptr = lb_wptr.lock() )
         {
             sptr->getHeight(p2, lb_height);
             /* std::cout << "Lower boundary height: " << lb_height << std::endl << std::flush; */
@@ -892,12 +988,14 @@ bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s )
     }
     else if ( defineAboveIsActive() ) 
     {
-        status |= s->weakBoundedEntireSurfaceCheck( lower_bound_, PlanarSurface::WeakPtr() ); 
+        auto upper_bound = std::vector<PlanarSurface::WeakPtr>();
+        status |= s->weakBoundedEntireSurfaceCheck( lower_bound_, upper_bound ); 
         /* cout << " defined above: " << status << endl; */ 
     }
     else if ( defineBelowIsActive() ) 
     {
-        status |= s->weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr(), upper_bound_ ); 
+        auto lower_bound = std::vector<PlanarSurface::WeakPtr>();
+        status |= s->weakBoundedEntireSurfaceCheck( lower_bound, upper_bound_ ); 
         /* cout << " defined below: " << status << endl; */ 
     }
     else 
@@ -908,6 +1006,126 @@ bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s )
     return status; 
 }
 
+bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
+{ 
+    if ( surfaces.empty() )
+    {
+        return false;
+    }
+
+    std::vector<PlanarSurface::Ptr> lower_bound;
+    bool has_lower_boundary = false;
+    if ( define_above_ )
+    {
+        for ( auto &wptr : lower_bound_ )
+        {
+            if ( auto sptr = wptr.lock() )
+                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
+                {
+                    lower_bound.push_back(sptr);
+                    has_lower_boundary = true;
+                }
+        }
+    }
+
+    std::vector<PlanarSurface::Ptr> upper_bound;
+    bool has_upper_boundary = false; 
+    if ( define_below_ )
+    {
+        for ( auto &wptr : upper_bound_ )
+        {
+            if ( auto sptr = wptr.lock() )
+                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
+                {
+                    upper_bound.push_back(sptr);
+                    has_upper_boundary = true;
+                }
+        }
+    }
+
+    bool isEntireSurface = true; 
+    bool point_status, status, lstatus, ustatus; 
+
+    // bug
+    auto origin = surfaces.front()->PlanarSurface::getOrigin();
+    auto lenght = surfaces.front()->PlanarSurface::getLenght();
+
+    const double lb = origin.z;  
+    const double ub = origin.z + lenght.z;  
+
+    double height, lheight, uheight; ; 
+    double min_height = origin.z + lenght.z;
+    double max_height = origin.z;
+
+    auto num_vertices_omp = surfaces.front()->getNumVertices(); 
+    auto tolerance = surfaces.front()->getTolerance();
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    /* #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) */ 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        status = false;
+        point_status = false;
+
+        for ( auto &sptr : surfaces )
+        {
+            point_status = sptr->getHeight(i, height); 
+            if ( point_status == false )
+            { 
+                if ( std::fabs(lb - height) <= tolerance ) {
+                    point_status = true; 
+                }
+
+                else if ( std::fabs(height - ub) <= tolerance ) { 
+                    point_status = true; 
+                }
+            }
+
+            if ( max_height < height )
+                max_height = height;
+
+            if ( min_height > height )
+                min_height = height;
+        }
+
+        status |= point_status;
+
+        if ( status == false ) 
+        { 
+            if ( has_lower_boundary ) 
+            { 
+                for ( auto &lower_surface : lower_bound )
+                {
+                    lstatus = lower_surface->getHeight(i, lheight); 
+                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
+                    // which height to compare?
+                    if ( lstatus && ( std::fabs(lheight - min_height) <= tolerance ) ) {
+                        status |= true; 
+                    }
+                    else { 
+                        /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
+                    }
+                }
+            }
+            if ( has_upper_boundary ) 
+            {
+                for ( auto &upper_surface : upper_bound )
+                {
+                    ustatus = upper_surface->getHeight(i, uheight); 
+                    // which height to compare?
+                    if ( ustatus && ( std::fabs(max_height - uheight) <= tolerance ) ) { 
+                        status |= true; 
+                    }
+                }
+            }
+        }
+
+        isEntireSurface = isEntireSurface && status; 
+    }
+
+    return isEntireSurface; 
+} 
+
 bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface )  
 {
     bool status = false; 
@@ -916,7 +1134,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
-                /* to_remove_surface->updateCache(); */
+                to_remove_surface->updateCache();
                 to_remove_surface->removeAbove(base_surface); 
                 status |= true;
             }
@@ -924,7 +1142,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     else if ( defineAboveIsActive() ) 
     {
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
-            /* to_remove_surface->updateCache(); */
+            to_remove_surface->updateCache();
             to_remove_surface->removeAbove(base_surface); 
             status |= true;
         }
@@ -932,21 +1150,16 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
-            /* to_remove_surface->updateCache(); */
+            to_remove_surface->updateCache();
             to_remove_surface->removeAbove(base_surface); 
             status |= true; 
         }
     }
     else 
     { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
-        /* to_remove_surface->updateCache(); */
+        to_remove_surface->updateCache();
         to_remove_surface->removeAbove(base_surface); 
         status |= true; 
-    }
-
-    if ( status == true )
-    {
-        to_remove_surface->updateCache();
     }
 
     return status; 
@@ -960,7 +1173,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
-                /* to_remove_surface->updateCache(); */
+                to_remove_surface->updateCache();
                 to_remove_surface->removeBelow(base_surface); 
                 status |= true;
             }
@@ -969,7 +1182,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     else if ( defineAboveIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
-            /* to_remove_surface->updateCache(); */
+            to_remove_surface->updateCache();
             to_remove_surface->removeBelow(base_surface); 
             status |= true;
         }
@@ -978,7 +1191,7 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
     else if ( defineBelowIsActive() ) 
     { 
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
-            /* to_remove_surface->updateCache(); */
+            to_remove_surface->updateCache();
             to_remove_surface->removeBelow(base_surface); 
             status |= true; 
         }
@@ -986,14 +1199,9 @@ bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, P
 
     else 
     { // if ( !defineAboveIsActive() && !defineBelowIsActive() ) { 
-        /* to_remove_surface->updateCache(); */
+        to_remove_surface->updateCache();
         to_remove_surface->removeBelow(base_surface); 
         status |= true; 
-    }
-
-    if ( status == true )
-    {
-        to_remove_surface->updateCache();
     }
 
     return status; 
@@ -1010,6 +1218,7 @@ std::vector<size_t> SRules::getSurfacesBelowPoint( const Point3 &p )
 
     descriptor.reserve( size() );
 
+    // TODO (BUG): this method is not supposed to check whether point lies inside domain or not
     bool out_of_boundaries = !liesInsideBoundingBox(p);
 
     if ( out_of_boundaries )
@@ -1085,6 +1294,7 @@ std::vector<size_t> SRules::getSurfacesAbovePoint( const Point3 &p )
 
     descriptor.reserve( size() );
 
+    // TODO (BUG): this method is not supposed to check whether point lies inside domain or not
     bool out_of_boundaries = !liesInsideBoundingBox(p);
 
     if ( out_of_boundaries )
@@ -1150,18 +1360,26 @@ std::vector<size_t> SRules::getActiveSurfacesBelowPoint( const Point3 &p )
     ub_height = origin.z + lenght.z;
     if ( defineBelowIsActive() )
     {
-        if ( auto sptr = upper_bound_.lock() )
+        for ( auto &upper_bound : upper_bound_ )
+        if ( auto sptr = upper_bound.lock() )
         {
-            sptr->getHeight(p2, ub_height);
+            double height;
+            sptr->getHeight(p2, height);
+            if ( height < ub_height )
+                ub_height = height;
         }
     }
 
     lb_height = origin.z;
     if ( defineAboveIsActive() )
     {
-        if ( auto sptr = lower_bound_.lock() )
+        for ( auto &lower_bound : lower_bound_ )
+        if ( auto sptr = lower_bound.lock() )
         {
-            sptr->getHeight(p2, lb_height);
+            double height;
+            sptr->getHeight(p2, height);
+            if ( height > lb_height )
+                lb_height = height;
         }
     }
 
@@ -1259,21 +1477,28 @@ std::vector<size_t> SRules::getActiveSurfacesAbovePoint( const Point3 &p )
     ub_height = origin.z + lenght.z;
     if ( defineBelowIsActive() )
     {
-        if ( auto sptr = upper_bound_.lock() )
+        for ( auto &upper_bound : upper_bound_ )
+        if ( auto sptr = upper_bound.lock() )
         {
-            sptr->getHeight(p2, ub_height);
+            double height;
+            sptr->getHeight(p2, height);
+            if ( height < ub_height )
+                ub_height = height;
         }
     }
 
     lb_height = origin.z;
     if ( defineAboveIsActive() )
     {
-        if ( auto sptr = lower_bound_.lock() )
+        for ( auto &lower_bound : lower_bound_ )
+        if ( auto sptr = lower_bound.lock() )
         {
-            sptr->getHeight(p2, lb_height);
+            double height;
+            sptr->getHeight(p2, height);
+            if ( height > lb_height )
+                lb_height = height;
         }
     }
-
 
     for ( size_t i = 0; i < size(); ++i )
     {

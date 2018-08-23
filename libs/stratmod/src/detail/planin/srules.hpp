@@ -208,17 +208,27 @@ class SRules
 
         std::vector<size_t> getSurfacesAbovePoint( Point3 &&p );
 
+        // return empty descriptor if outside Bounding Box
         std::vector<size_t> getActiveSurfacesBelowPoint( const Point3 &p );
 
+        // return empty descriptor if outside Bounding Box
         std::vector<size_t> getActiveSurfacesBelowPoint( Point3 &&p );
 
+        // return empty descriptor if outside Bounding Box
         std::vector<size_t> getActiveSurfacesAbovePoint( const Point3 &p );
 
+        // return empty descriptor if outside Bounding Box
         std::vector<size_t> getActiveSurfacesAbovePoint( Point3 &&p );
 
         std::vector<size_t> getLowerBound( std::vector<size_t> surface_ids );
 
         std::vector<size_t> getUpperBound( std::vector<size_t> surface_ids );
+
+        template<typename VertexList, typename FaceList>
+        bool getLowerBoundary( const std::vector<VertexList> &vlists, const std::vector<FaceList> &flists, VertexList &boundary_vlist, FaceList &boundary_flist );
+
+        template<typename VertexList, typename FaceList>
+        bool getUpperBoundary( const std::vector<VertexList> &vlists, const std::vector<FaceList> &flists, VertexList &boundary_vlist, FaceList &boundary_flist );
 
         bool saveBinary( const std::string &filename );
 
@@ -239,6 +249,9 @@ class SRules
         bool defineAbove( PlanarSurface::Ptr sptr ); 
         bool defineBelow( PlanarSurface::Ptr sptr ); 
 
+        bool defineAbove( std::vector<PlanarSurface::Ptr> &bounding_surfaces ); 
+        bool defineBelow( std::vector<PlanarSurface::Ptr> &bounding_surfaces ); 
+
         bool removeAbove( std::size_t surface_index ); 
         bool removeAboveIntersection( std::size_t surface_index ); 
 
@@ -247,6 +260,9 @@ class SRules
 
         bool defineAbove( std::size_t surface_index ); 
         bool defineBelow( std::size_t surface_index ); 
+
+        bool defineAbove( std::vector<size_t> surface_indices );
+        bool defineBelow( std::vector<size_t> surface_indices );
 
         bool weakEntireSurfaceCheck( std::size_t surface_index ); 
 
@@ -264,10 +280,10 @@ class SRules
         ContainerType container; 
         MapType dictionary; 
 
-        PlanarSurface::WeakPtr lower_bound_; 
+        std::vector<PlanarSurface::WeakPtr> lower_bound_; 
         bool define_above_ = false; 
 
-        PlanarSurface::WeakPtr upper_bound_; 
+        std::vector<PlanarSurface::WeakPtr> upper_bound_; 
         bool define_below_ = false; 
 
         bool defineAboveIsActive();
@@ -275,6 +291,7 @@ class SRules
 
         bool isValidSurface( const PlanarSurface::Ptr &sptr ); 
         bool weakEntireSurfaceCheck( const PlanarSurface::Ptr &sptr ); 
+        bool weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
 
         bool isValidSurfaceForInsertion( const PlanarSurface::Ptr &sptr, std::size_t &surface_index ); 
 
@@ -293,6 +310,62 @@ class SRules
         /* template<typename Archive> */
         /* void serialize( Archive &ar, const std::uint32_t version ); */
 }; 
+
+template<typename VertexList, typename FaceList>
+bool SRules::getLowerBoundary( const std::vector<VertexList> &vlists, const std::vector<FaceList> &flists, VertexList &boundary_vlist, FaceList &boundary_flist )
+{
+    if ( vlists.size() != flists.size() )
+    {
+        return false;
+    }
+
+    size_t num_elements = vlists[0].size();
+    for ( size_t i = 1; i < vlists.size(); ++i )
+        if ( vlists[i].size() != num_elements )
+            return false;
+
+    boundary_vlist = vlists[0];
+    for ( size_t i = 1; i < vlists.size(); ++i )
+    {
+        for ( size_t j = 0; j < num_elements; ++j )
+        {
+            if ( boundary_vlist[j] > vlists[i][j] )
+            {
+                boundary_vlist[j] = vlists[i][j];
+            }
+        }
+    }
+
+    return container[0]->mergeFaceLists(flists, boundary_flist);
+}
+
+template<typename VertexList, typename FaceList>
+bool SRules::getUpperBoundary( const std::vector<VertexList> &vlists, const std::vector<FaceList> &flists, VertexList &boundary_vlist, FaceList &boundary_flist )
+{
+    if ( vlists.size() != flists.size() )
+    {
+        return false;
+    }
+
+    size_t num_elements = vlists[0].size();
+    for ( size_t i = 1; i < vlists.size(); ++i )
+        if ( vlists[i].size() != num_elements )
+            return false;
+
+    boundary_vlist = vlists[0];
+    for ( size_t i = 1; i < vlists.size(); ++i )
+    {
+        for ( size_t j = 0; j < num_elements; ++j )
+        {
+            if ( boundary_vlist[j] < vlists[i][j] )
+            {
+                boundary_vlist[j] = vlists[i][j];
+            }
+        }
+    }
+
+    return container[0]->mergeFaceLists(flists, boundary_flist);
+}
 
 
 #if defined( BUILD_WITH_SERIALIZATION )
