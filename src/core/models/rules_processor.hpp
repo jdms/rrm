@@ -199,11 +199,11 @@
             bool requestPreserveAbove( std::vector<double> &curve_points );
             bool requestPreserveBelow( std::vector<double> &curve_points );
 
-            bool preserveAbove( std::vector<std::size_t> &lower_model );
-            bool preserveBelow( std::vector<std::size_t> &upper_model );
+            bool preserveAbove( std::vector<std::size_t> &surface_indices_list );
+            bool preserveBelow( std::vector<std::size_t> &surface_indices_list );
 
-            bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &upper_model );
-            bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &lower_model );
+            bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
+            bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
 
             bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
