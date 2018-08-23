@@ -125,6 +125,10 @@ class PlanarSurface {
         bool weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_surface, PlanarSurface::Ptr &upper_surface ); 
         bool weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_surface, PlanarSurface::WeakPtr upper_surface ); 
 
+        bool weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Ptr> &lower_surfaces, std::vector<PlanarSurface::Ptr> &upper_surfaces ); 
+        bool weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::WeakPtr> &lower_surfaces, std::vector<PlanarSurface::WeakPtr> &upper_surfaces ); 
+        bool weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::WeakPtr> &&lower_surfaces, std::vector<PlanarSurface::WeakPtr> &&upper_surfaces ); 
+
         bool weakIntersectionCheck( PlanarSurface::Ptr &s );
         bool weakIntersectionCheck( PlanarSurface::WeakPtr s ); 
 
@@ -140,8 +144,14 @@ class PlanarSurface {
         bool weakLiesAboveOrEqualsCheck( PlanarSurface::Ptr &s ); 
         bool weakLiesAboveOrEqualsCheck( PlanarSurface::WeakPtr s ); 
 
+        bool weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::Ptr> &surfaces ); 
+        bool weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::WeakPtr> &surfaces ); 
+
         bool weakLiesBelowOrEqualsCheck( PlanarSurface::Ptr &s ); 
         bool weakLiesBelowOrEqualsCheck( PlanarSurface::WeakPtr s ); 
+
+        bool weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::Ptr> &surfaces ); 
+        bool weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::WeakPtr> &surfaces ); 
 
         bool getVertex2D( Natural index, Point2 &v );
         bool getVertex3D( Natural index, Point3 &v );
@@ -216,6 +226,9 @@ class PlanarSurface {
         bool isPathExtrudedSurface();
         bool isOrthogonallyOrientedSurface();
 
+        template<typename FList = std::vector<size_t>>
+        size_t mergeFaceLists( const std::vector<FList> &flists, FList &merged_flist );
+
     private:
         /* Members 'discretization_X' and 'discretization_Y' are supposed to 
          * be specified. Everything else should be kept as is. 
@@ -281,6 +294,12 @@ class PlanarSurface {
         size_t getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const;
 
         TriangleHeights getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex );
+
+        size_t getTriangleIndexFromPositionInBlock( size_t tpos, size_t bindex ) const;
+
+        std::vector<size_t> getTriangleConnectivityFromIndex(size_t tindex ) const;
+
+        size_t getTriangleIndexFromConnectivity( std::vector<size_t> t_connectivity );
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
 
@@ -649,6 +668,63 @@ void PlanarSurface::getLowerBoundList( T &list ) const
             } 
         ); 
 }
+
+template<typename FList>
+size_t PlanarSurface::mergeFaceLists( const std::vector<FList> &flists, FList &merged_flist )
+{
+    size_t num_triangles = 0;
+
+    if ( flists.empty() )
+    {
+        return 0;
+    }
+
+    size_t numBlocks = discretization_X * discretization_Y;
+    size_t numTrianglesPerBlock = 8;
+    size_t numTriangles = numTrianglesPerBlock * numBlocks;
+
+    std::vector<bool> triangle_is_present(numTriangles, false);
+    size_t v0, v1, v2, tindex;
+    std::vector<size_t> triangle;
+
+    for ( size_t i = 0; i < flists.size(); ++i )
+    {
+        auto &triangle_list = flists[i];
+
+        num_triangles = triangle_list.size()/3;
+
+        if ( num_triangles > numTriangles )
+        {
+            return 0;
+        }
+
+        for ( size_t j = 0; j < num_triangles; ++j )
+        {
+            v0 = triangle_list[ 3*j + 0 ];
+            v1 = triangle_list[ 3*j + 1 ];
+            v2 = triangle_list[ 3*j + 2 ];
+
+            tindex = getTriangleIndexFromConnectivity( {v0, v1, v2} );
+            triangle_is_present[tindex] = true;
+        }
+    }
+
+    num_triangles = 0;
+    merged_flist.clear();
+
+    for ( size_t t = 0; t < numTriangles; ++t )
+    {
+        if ( triangle_is_present[t] )
+        {
+            triangle = getTriangleConnectivityFromIndex(t);
+            std::copy( triangle.begin(), triangle.end(), std::back_inserter(merged_flist) );
+            ++num_triangles;
+        }
+    }
+
+    return num_triangles;
+}
+
 
 #if defined( BUILD_WITH_SERIALIZATION )
     #include "cereal/types/array.hpp"

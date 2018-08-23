@@ -389,8 +389,6 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
     }
 
     return isEntireSurface; 
-    
-    return false;
 }
 
 bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_surface, PlanarSurface::WeakPtr upper_surface ) 
@@ -434,6 +432,117 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_
 
 /*     return lies_above && lies_below; */ 
 /* } */
+
+bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Ptr> &lower_surfaces, std::vector<PlanarSurface::Ptr> &upper_surfaces )
+{ 
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    bool has_lower_boundary = false; 
+    bool has_upper_boundary = false; 
+
+    for ( auto &lower_surface : lower_surfaces )
+    if ( ( lower_surface != nullptr ) && lower_surface->surfaceIsSet() ) { 
+        has_lower_boundary = true; 
+        /* std::cout << "Lower boundary got here!\n"; */ 
+    }
+
+    for ( auto &upper_surface : upper_surfaces )
+    if ( ( upper_surface != nullptr ) && upper_surface->surfaceIsSet() ) { 
+        has_upper_boundary = true; 
+        /* std::cout << "Upper boundary got here!\n"; */ 
+    }
+
+    bool isEntireSurface = true; 
+    bool status, lstatus, ustatus; 
+
+    updateDiscretization(); 
+    double height, lheight, uheight; ; 
+
+    double lb = origin.z;  
+    double ub = origin.z + lenght.z;  
+
+    auto num_vertices_omp = num_vertices_; 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        status = getHeight(i, height); 
+
+        if ( status == false )
+        { 
+            if ( std::fabs(lb - height) <= tolerance ) {
+                status |= true; 
+            }
+
+            else if ( std::fabs(height - ub) <= tolerance ) { 
+                status |= true; 
+            }
+        }
+
+        if ( status == false ) 
+        { 
+            if ( has_lower_boundary ) 
+            { 
+                for ( auto &lower_surface : lower_surfaces )
+                {
+                    lstatus = lower_surface->getHeight(i, lheight); 
+                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
+                    if ( lstatus && ( std::fabs(lheight - height) <= tolerance ) ) {
+                        status |= true; 
+                    }
+                    else { 
+                        /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
+                    }
+                }
+            }
+            if ( has_upper_boundary ) 
+            {
+                for ( auto &upper_surface : upper_surfaces )
+                {
+                    ustatus = upper_surface->getHeight(i, uheight); 
+                    if ( ustatus && ( std::fabs(height - uheight) <= tolerance ) ) { 
+                        status |= true; 
+                    }
+                }
+            }
+        }
+
+        isEntireSurface = isEntireSurface && status; 
+    }
+
+    return isEntireSurface; 
+}
+
+bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::WeakPtr> &wptr_lower_surfaces, std::vector<PlanarSurface::WeakPtr> &wptr_upper_surfaces )
+{
+    std::vector<PlanarSurface::Ptr> sptr_lower_surfaces, sptr_upper_surfaces;
+
+    for ( auto wptr : wptr_lower_surfaces )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            sptr_lower_surfaces.push_back(sptr);
+        }
+    }
+
+    for ( auto wptr : wptr_upper_surfaces )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            sptr_upper_surfaces.push_back(sptr);
+        }
+    }
+
+    return weakBoundedEntireSurfaceCheck(sptr_lower_surfaces, sptr_upper_surfaces);
+}
+
+bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::WeakPtr> &&wptr_lower_surfaces, std::vector<PlanarSurface::WeakPtr> &&wptr_upper_surfaces )
+{
+    return weakBoundedEntireSurfaceCheck(wptr_lower_surfaces, wptr_upper_surfaces);
+}
 
 bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp ) 
 {
@@ -655,6 +764,64 @@ bool PlanarSurface::weakLiesAboveOrEqualsCheck( PlanarSurface::WeakPtr s )
     return weakLiesAboveOrEqualsCheck(sp); 
 }
 
+bool PlanarSurface::weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::Ptr> &surfaces )
+{
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    bool has_bounding_surfaces = false;
+
+    for ( auto &sptr : surfaces )
+    if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
+        has_bounding_surfaces = true;
+    }
+
+    if ( has_bounding_surfaces == false )
+    {
+        return false;
+    }
+
+    bool lies_above = true; 
+
+    updateDiscretization(); 
+    double height, tmp_height, s_height, lb_height = origin.z; 
+    double tolerance = getTolerance(); 
+
+    auto num_vertices_omp = num_vertices_; 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    #pragma omp parallel for shared(surfaces) firstprivate(num_vertices_omp, tolerance, lb_height) private(height, tmp_height, s_height ) default(none) reduction(&&: lies_above) 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        getHeight(i, height); 
+
+        s_height = lb_height;
+        for ( auto &sptr : surfaces )
+        {
+            sptr->getHeight(i, tmp_height); 
+            if ( tmp_height > s_height )
+                s_height = tmp_height;
+        }
+
+        lies_above = lies_above && (height > s_height - tolerance); 
+    }
+
+    return lies_above; 
+}
+
+bool PlanarSurface::weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::WeakPtr> &wptr_surfaces )
+{
+    std::vector<PlanarSurface::Ptr> sptr_surfaces;
+    for ( auto &wptr : wptr_surfaces )
+    {
+        if ( auto sptr = wptr.lock() )
+            sptr_surfaces.push_back( sptr );
+    }
+
+    return weakLiesAboveOrEqualsCheck(sptr_surfaces);
+} 
+
 bool PlanarSurface::weakLiesBelowOrEqualsCheck( PlanarSurface::Ptr &sp ) 
 {
     if ( surfaceIsSet() == false ) { 
@@ -694,6 +861,64 @@ bool PlanarSurface::weakLiesBelowOrEqualsCheck( PlanarSurface::WeakPtr s )
 
     return weakLiesBelowOrEqualsCheck(sp); 
 }
+
+bool PlanarSurface::weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::Ptr> &surfaces )
+{
+    if ( surfaceIsSet() == false ) { 
+        return false; 
+    }
+
+    bool has_bounding_surfaces = false;
+
+    for ( auto &sptr : surfaces )
+    if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
+        has_bounding_surfaces = true;
+    }
+
+    if ( has_bounding_surfaces == false )
+    {
+        return false;
+    }
+
+    bool lies_below = true; 
+
+    updateDiscretization(); 
+    double height, tmp_height, s_height, ub_height = origin.z + lenght.z; 
+    double tolerance = getTolerance(); 
+
+    auto num_vertices_omp = num_vertices_; 
+
+    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+    #pragma omp parallel for shared(surfaces) firstprivate(num_vertices_omp, tolerance, ub_height) private(height, tmp_height, s_height) default(none) reduction(&&: lies_below) 
+    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
+    {
+        getHeight(i, height); 
+
+        s_height = ub_height;
+        for ( auto &sptr : surfaces )
+        {
+            sptr->getHeight(i, tmp_height); 
+            if ( tmp_height < s_height )
+                s_height = tmp_height;
+        }
+
+        lies_below = lies_below && (height < s_height + tolerance ); 
+    }
+
+    return lies_below; 
+}
+
+bool PlanarSurface::weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::WeakPtr> &wptr_surfaces )
+{
+    std::vector<PlanarSurface::Ptr> sptr_surfaces;
+    for ( auto &wptr : wptr_surfaces )
+    {
+        if ( auto sptr = wptr.lock() )
+            sptr_surfaces.push_back( sptr );
+    }
+
+    return weakLiesBelowOrEqualsCheck(sptr_surfaces);
+} 
 
 bool PlanarSurface::getVertex2D( Natural index, Point2 &v ) { 
     if ( rangeCheck(index) == false ) { 
@@ -1089,8 +1314,7 @@ bool PlanarSurface::updateRawCache()
 
     /* cached_heights_.resize(heights.size()); */
     cached_heights_.clear();
-    /* cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } ); */
-    cached_valid_heights_.resize( heights.size(), true );
+    cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } );
     std::copy( heights.begin(), heights.end(), std::back_inserter(cached_heights_) );
     cache_is_fresh_ = false;
 
@@ -1534,6 +1758,198 @@ TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpo
     }
     
     return t;
+}
+
+size_t PlanarSurface::getTriangleIndexFromPositionInBlock( size_t tpos, size_t bindex ) const
+{
+    size_t numBlocks = PlanarSurface::discretization_X * PlanarSurface::discretization_Y;
+    size_t numTrianglesPerBlock = 8;
+    size_t numTriangles = numTrianglesPerBlock * numBlocks;
+
+    if ( (tpos > numTriangles) || (bindex > numBlocks) )
+        return numTriangles;
+
+    return tpos + bindex * numTrianglesPerBlock;
+}
+
+std::vector<size_t> PlanarSurface::getTriangleConnectivityFromIndex(size_t tindex ) const
+{
+    size_t numTrianglesPerBlock = 8;
+    size_t numBlocks = discretization_X * discretization_Y;
+    size_t numTriangles = numTrianglesPerBlock * numBlocks;
+
+    std::vector<size_t> triangle;
+    if ( tindex >= numTriangles )
+    {
+        return triangle;
+    }
+
+    size_t tpos = tindex % numTrianglesPerBlock;
+    size_t bindex = (tindex - tpos) / numTrianglesPerBlock;
+
+    auto getTriangle = [&] ( size_t v0_pos, size_t v1_pos, size_t v2_pos ) -> std::vector<size_t> 
+    {
+        std::vector<size_t> triangle;
+        size_t v0, v1, v2;
+
+        v0 = getVertexIndexFromPositionInBlock(v0_pos, bindex);
+        v1 = getVertexIndexFromPositionInBlock(v1_pos, bindex);
+        v2 = getVertexIndexFromPositionInBlock(v2_pos, bindex);
+
+        triangle = {v0, v1, v2};
+
+        return triangle;
+    };
+
+    switch( tpos )
+    {
+        case 0:
+            triangle = getTriangle(0, 1, 4);
+            break;
+
+        case 1:
+            triangle = getTriangle(0, 4, 3);
+            break;
+
+        case 2:
+            triangle = getTriangle(1, 2, 4);
+            break;
+
+        case 3:
+            triangle = getTriangle(2, 5, 4);
+            break;
+
+        case 4:
+            triangle = getTriangle(3, 4, 6);
+            break;
+
+        case 5:
+            triangle = getTriangle(4, 7, 6);
+            break;
+
+        case 6:
+            triangle = getTriangle(4, 5, 8);
+            break;
+
+        case 7:
+            triangle = getTriangle(4, 8, 7);
+            break;
+
+        default:
+            break;
+    }
+
+    return triangle;
+}
+
+size_t PlanarSurface::getTriangleIndexFromConnectivity( std::vector<size_t> t_connectivity )
+{
+    auto baseConnectivity = [] ( size_t tpos ) -> std::vector<size_t> 
+    {
+        std::vector<size_t> triangle; 
+
+        switch( tpos )
+        {
+            case 0:
+                triangle = {0, 1, 4};
+                break;
+
+            case 1:
+                triangle = {0, 4, 3};
+                break;
+
+            case 2:
+                triangle = {1, 2, 4};
+                break;
+
+            case 3:
+                triangle = {2, 5, 4};
+                break;
+
+            case 4:
+                triangle = {3, 4, 6};
+                break;
+
+            case 5:
+                triangle = {4, 7, 6};
+                break;
+
+            case 6:
+                triangle = {4, 5, 8};
+                break;
+
+            case 7:
+                triangle = {4, 8, 7};
+                break;
+
+            default:
+                break;
+        }
+
+        return triangle;
+    };
+
+/* size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const */
+/* { */
+/*     IndicesType indices = getBlockIndices(bindex);; */
+
+/*     size_t i = vpos % 3; */
+/*     size_t j = (vpos - i)/3; */
+
+/*     size_t iv = 2*indices[0] + i; */
+/*     size_t jv = 2*indices[1] + j; */
+
+/*     return getVertexIndex(iv, jv); */
+/* } */
+
+    size_t numBlocks = PlanarSurface::discretization_X * PlanarSurface::discretization_Y;
+    
+    auto bindexFromVindexAndVpos = [&] ( size_t vindex, size_t vpos ) -> size_t
+    {
+        size_t ib, jb;
+        IndicesType vindices; 
+
+        bool success = getVertexIndices(vindex, vindices);
+        if ( !success )
+            return numBlocks;
+
+        ib = (vindices[0] - vpos % 3);
+        jb = (vindices[1] - ( vpos - (vpos%3) ));
+
+        if ( ( (ib % 2) != 0 ) || ( (jb % 2) != 0 ) )
+            return numBlocks;
+
+        return getBlockIndex(ib/2, jb/2);
+    };
+
+    //
+    // Given tpos get bindex
+    //
+    size_t numTrianglesPerBlock = 8;
+
+    size_t b0, b1, b2;
+    size_t tpos = numTrianglesPerBlock;
+    size_t bindex = numBlocks;
+    std::vector<size_t> base_connectivity;
+
+    for ( size_t i = 0; i < numTrianglesPerBlock; ++i )
+    {
+        base_connectivity = baseConnectivity(i);
+
+        b0 = bindexFromVindexAndVpos(t_connectivity[0], base_connectivity[0]);
+        b1 = bindexFromVindexAndVpos(t_connectivity[1], base_connectivity[1]);
+        b2 = bindexFromVindexAndVpos(t_connectivity[2], base_connectivity[2]);
+
+        if ( (b0 == b1) && (b1 == b2) && (b0 < numBlocks) )
+        {
+            bindex = b0;
+            tpos = i;
+            break;
+        }
+    }
+    
+    // Get tindex from tpos & bindex
+    return getTriangleIndexFromPositionInBlock(bindex, tpos);
 }
 
 bool PlanarSurface::isExtrudedSurface() 

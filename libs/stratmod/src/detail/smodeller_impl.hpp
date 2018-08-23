@@ -77,28 +77,60 @@ using ContainerSurfaceIndex = size_t;
 struct StateDescriptor
 {
     State state_ = State::UNDEFINED;
+
     bool bounded_above_ = false;
     ControllerSurfaceIndex upper_boundary_ = 0;
+    std::vector<ControllerSurfaceIndex> upper_boundary_list_ = {};
+
     bool bounded_below_ = false;
     ControllerSurfaceIndex lower_boundary_ = 0;
+    std::vector<ControllerSurfaceIndex> lower_boundary_list_ = {};
+
     std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ = std::vector<ControllerSurfaceIndex>();
     std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ = std::vector<ControllerSurfaceIndex>();
 
     template<typename Archive>
-    void serialize( Archive &ar, const std::uint32_t version )
+    void save( Archive &ar, const std::uint32_t version ) const
     {
         (void)(version);
+
         ar( state_,
-            bounded_above_, upper_boundary_, 
-            bounded_below_, lower_boundary_,
+            bounded_above_, upper_boundary_list_, 
+            bounded_below_, lower_boundary_list_,
             truncate_lower_boundary_, 
             truncate_upper_boundary_
           );
     }
 
+    template<typename Archive>
+    void load( Archive &ar, const std::uint32_t version )
+    {
+        if ( version == 1 )
+        {
+            ar( state_,
+                bounded_above_, upper_boundary_, 
+                bounded_below_, lower_boundary_,
+                truncate_lower_boundary_, 
+                truncate_upper_boundary_
+              );
+
+            upper_boundary_list_ = { upper_boundary_ };
+            lower_boundary_list_ = { lower_boundary_ };
+        }
+        else
+        {
+            ar( state_,
+                bounded_above_, upper_boundary_list_, 
+                bounded_below_, lower_boundary_list_,
+                truncate_lower_boundary_, 
+                truncate_upper_boundary_
+              );
+        }
+    }
+
 };
 
-CEREAL_CLASS_VERSION(StateDescriptor, 1);
+CEREAL_CLASS_VERSION(StateDescriptor, 2);
 
 
 /************************************************/
@@ -212,6 +244,15 @@ struct SModellerImplementation
             std::vector<size_t> lbounds, std::vector<size_t> ubounds );
 
     bool popLastSurface();
+
+    bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
+    bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+
+    void stopPreserveAbove();
+    void stopPreserveBelow();
+
+    bool preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+    bool preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list );
 
     bool createAboveIsActive();
 

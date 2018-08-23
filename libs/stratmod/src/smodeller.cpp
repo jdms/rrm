@@ -220,9 +220,6 @@ bool SModeller::tryChangeDiscretization( size_t width, size_t length )
         return false;
     }
 
-    pimpl_->discWidth_ = width; 
-    pimpl_->discLenght_ = length; 
-
     PlanarSurface::requestChangeDiscretization(width, length);
 
     return true;
@@ -403,6 +400,36 @@ bool SModeller::createAboveIsActive( size_t &boundary_index )
 bool SModeller::createBelowIsActive( size_t &boundary_index )  
 {
     return pimpl_->createBelowIsActive(boundary_index);
+}
+
+bool SModeller::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveAbove(bounding_surfaces_list);
+}
+
+bool SModeller::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveAbove(bounding_surfaces_list);
+}
+
+void SModeller::stopPreserveAbove()
+{
+    return pimpl_->stopPreserveAbove();
+}
+
+void SModeller::stopPreserveBelow()
+{
+    return pimpl_->stopPreserveBelow();
+}
+
+bool SModeller::preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveAboveIsActive(bounding_surfaces_list);
+}
+
+bool SModeller::preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveBelowIsActive(bounding_surfaces_list);
 }
 
 void SModeller::disableGeologicRules()
