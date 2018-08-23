@@ -59,3 +59,15 @@ std::size_t ObjectTreeItem::getTreeIndex() const
 {
     return tree_index;
 }
+
+
+ObjectTreeItem* ObjectTreeItem::cloneItem() const
+{
+    ObjectTreeItem* item_ = static_cast< ObjectTreeItem* >( this->clone() );
+    item_->setIndex( index );
+    item_->setTreeIndex( tree_index );
+    item_->setType( type );
+
+
+    return item_;
+}

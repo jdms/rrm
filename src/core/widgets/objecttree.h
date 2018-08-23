@@ -25,6 +25,7 @@
 #define OBJECTTREE_H
 
 #include <QTreeWidget>
+#include <QMenu>
 
 #include "objecttreeitem.h"
 #include "./core/models/container.h"
@@ -83,12 +84,24 @@ class ObjectTree: public QTreeWidget
     public slots:
 
         void clear();
+        void createMenu();
 
+        void createDomain( std::size_t index_ = 0 );
+        void seeDomains(){}
+        void hideDomains(){}
+        void removeDomains();
+        void addToDomain( std::size_t index_ );
 
 
     protected slots:
 
         void filterAction( QTreeWidgetItem* item_, std::size_t column_ );
+        void showMenu( const QPoint& pos_ );
+
+        void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
+        void removeInputVolume();
+
+        void removeRegions();
 
 
     signals:
@@ -122,12 +135,22 @@ class ObjectTree: public QTreeWidget
 
         QTreeWidgetItem* label_stratigraphy;
         QTreeWidgetItem* label_structural;
+        QTreeWidgetItem* label_domains;
 
         Container< std::size_t, ObjectTreeItem* > stratigraphies;
         Container< std::size_t, ObjectTreeItem* > structurals;
 
         Container< std::size_t, ObjectTreeItem* > items;
         Container< std::size_t, ObjectTreeItem* > regions;
+        Container< std::size_t, ObjectTreeItem* > domains;
+
+
+        QMenu* mn_menu = nullptr;
+        QAction* ac_create_domain = nullptr;
+        QAction* ac_visible_domain = nullptr;
+        QAction* ac_hidden_domain = nullptr;
+        QAction* ac_remove_domain = nullptr;
+
 
 };
 

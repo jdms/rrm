@@ -274,14 +274,14 @@ void SketchWindow::setModeSelecting( bool status_ )
     if( sketchingcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-        scene_->setSelectingStratigraphyMode( status_ );
-//        scene_->setOldSelectingStratigraphyMode( status_ );
+//        scene_->setSelectingStratigraphyMode( status_ );
+        scene_->setOldSelectingStratigraphyMode( status_ );
     }
     if( topviewcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-        scene_->setSelectingStratigraphyMode( status_ );
-//        scene_->setOldSelectingStratigraphyMode( status_ );
+//        scene_->setSelectingStratigraphyMode( status_ );
+        scene_->setOldSelectingStratigraphyMode( status_ );
     }
 }
 
