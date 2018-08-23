@@ -39,6 +39,10 @@ class MainWindow: public QMainWindow
 
         void initializeInterface();
 
+        void activatePreserveAbove( bool status_ );
+        void activatePreserveBelow( bool status_ );
+        void activatePreserveRegion( bool status_ );
+
 
     protected:
 
@@ -55,7 +59,7 @@ class MainWindow: public QMainWindow
         void plugSketchInterface();
         void plug3dInterface();
 
-        void checkButtonsStatus();
+//        void checkButtonsStatus();
 
 
     protected:
