@@ -80,11 +80,11 @@ struct StateDescriptor
 
     bool bounded_above_ = false;
     ControllerSurfaceIndex upper_boundary_ = 0;
-    std::vector<ControllerSurfaceIndex> upper_boundary_list_ = {};
+    std::vector<ControllerSurfaceIndex> upper_boundary_list_ = std::vector<ControllerSurfaceIndex>();
 
     bool bounded_below_ = false;
     ControllerSurfaceIndex lower_boundary_ = 0;
-    std::vector<ControllerSurfaceIndex> lower_boundary_list_ = {};
+    std::vector<ControllerSurfaceIndex> lower_boundary_list_ = std::vector<ControllerSurfaceIndex>();
 
     std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ = std::vector<ControllerSurfaceIndex>();
     std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ = std::vector<ControllerSurfaceIndex>();
