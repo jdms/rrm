@@ -1314,7 +1314,9 @@ bool PlanarSurface::updateRawCache()
 
     /* cached_heights_.resize(heights.size()); */
     cached_heights_.clear();
-    cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } );
+    // VS2013 cannot understand the following lambda:
+    /* cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } ); */
+    cached_valid_heights_.resize( heights.size(), true );
     std::copy( heights.begin(), heights.end(), std::back_inserter(cached_heights_) );
     cache_is_fresh_ = false;
 
