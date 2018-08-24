@@ -102,6 +102,13 @@ class CrossSection: public Object
         bool hasObjects() const;
 
 
+        void setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
+        void getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_ ) const;
+        void clearBounderingArea();
+        bool hasBounderingArea() const;
+
+
+
         void clear() override;
         void initialize();
 
@@ -124,6 +131,17 @@ class CrossSection: public Object
             double x;
             double y;
         };
+
+
+        struct BounderingArea
+        {
+            std::vector<float> vertices_upper;
+            std::vector<size_t> edges_upper;
+            std::vector<float> vertices_lower;
+            std::vector<size_t> edges_lower;
+            bool empty = false;
+
+        } boundering;
 
         std::size_t index;
         static std::size_t number_of_csections;

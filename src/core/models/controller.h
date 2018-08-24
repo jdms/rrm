@@ -228,6 +228,7 @@ class Controller
         void setRegionBySketchAsBoundering( const PolyCurve& curve_ );
         void definedRegionBounderingBySketch();
         bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void getRegionByPointAsBoundering();
 
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
