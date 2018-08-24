@@ -414,9 +414,16 @@ void RRMApplication::setSketchRegion( bool status_ )
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     bool status_ = controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
+
     window->activatePreserveAbove( status_ );
     window->activatePreserveBelow( status_ );
 
+    if( status_ == true )
+    {
+        controller->getRegionByPointAsBoundering();
+    }
+
+    emit selectEnabled( "NONE" );
 }
 
 

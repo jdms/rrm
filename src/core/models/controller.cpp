@@ -1568,10 +1568,12 @@ void Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_ )
     }
 }
 
+
 void Controller::definedRegionBounderingBySketch()
 {
 // stop the iterative method to define region using sketches
 }
+
 
 bool Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
@@ -1608,6 +1610,39 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
     // get items to be selected
 
     return request_;
+
+}
+
+
+void Controller::getRegionByPointAsBoundering()
+{
+
+    std::vector<float> vertices_upper_;
+    std::vector<size_t> edges_upper_;
+    std::vector<float> vertices_lower_;
+    std::vector<size_t> edges_lower_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getUpperBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+
+
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        std::vector<float> vertices_upper_;
+        std::vector<size_t> edges_upper_;
+        std::vector<float> vertices_lower_;
+        std::vector<size_t> edges_lower_;
+
+        rules_processor.getUpperBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+
+    }
+
+    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
