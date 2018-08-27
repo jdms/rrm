@@ -87,8 +87,8 @@ class ObjectTree: public QTreeWidget
         void createMenu();
 
         void createDomain( std::size_t index_ = 0 );
-        void seeDomains(){}
-        void hideDomains(){}
+        void deleteDomain( std::size_t index_ = 0 );
+        void removeFromDomain();
         void removeDomains();
         void addToDomain( std::size_t index_ );
 
@@ -102,6 +102,7 @@ class ObjectTree: public QTreeWidget
         void removeInputVolume();
 
         void removeRegions();
+
 
 
     signals:
@@ -144,13 +145,15 @@ class ObjectTree: public QTreeWidget
         Container< std::size_t, ObjectTreeItem* > regions;
         Container< std::size_t, ObjectTreeItem* > domains;
 
+        std::map< std::size_t, QAction* > domain_actions_;
+
 
         QMenu* mn_menu = nullptr;
+        QMenu* mn_submenu = nullptr;
         QAction* ac_create_domain = nullptr;
-        QAction* ac_visible_domain = nullptr;
-        QAction* ac_hidden_domain = nullptr;
         QAction* ac_remove_domain = nullptr;
-
+        QAction* ac_removefrom_domain = nullptr;
+        QAction* ac_addto_domain = nullptr;
 
 };
 
