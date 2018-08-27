@@ -35,6 +35,7 @@ void MainWindow::createWindow()
     createController();
 
     createObjectTree();
+    createSideBar();
 
     plug3dInterface();    
     plugSketchInterface();
@@ -234,6 +235,42 @@ void MainWindow::createToolbar()
 
 }
 
+void MainWindow::createSideBar()
+{
+    ps_objectdata = new PagesStack();
+    dw_object_properties = new QDockWidget( "" );
+    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_properties->setWidget( ps_objectdata );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
+
+
+    connect( ps_objectdata, &PagesStack::setHighResolution, [=]()
+    { app->setMeshResolution( "HIGH" ); } );
+
+    connect( ps_objectdata, &PagesStack::setMediumResolution, [=]()
+    { app->setMeshResolution( "MEDIUM" ); } );
+
+    connect( ps_objectdata, &PagesStack::setLowResolution, [=]()
+    { app->setMeshResolution( "LOW" ); } );
+
+
+    connect( object_tree, &ObjectTree::objectSelected, ps_objectdata, &PagesStack::selectObjectPage );
+
+    connect( app, &RRMApplication::defineVolumeGeometry, ps_objectdata, &PagesStack::changeVolumeSize );
+
+    connect( app, &RRMApplication::disableVolumeResizing, [=]
+    {
+        ps_objectdata->setEnabledVolumeResize( false );
+    } );
+
+    connect( app, &RRMApplication::enableVolumeResizing, [=]
+    {
+        ps_objectdata->setEnabledVolumeResize( true );
+    } );
+
+}
+
+
 
 void MainWindow::createController()
 {
@@ -256,6 +293,7 @@ void MainWindow::createController()
     {
         lockPreserve( option_ );
     } );
+
 
 }
 
@@ -309,6 +347,8 @@ void MainWindow::createObjectTree()
     {
         app->setRegionColor( index_, c_.red(), c_.green(), c_.blue() );
     } );
+
+
 
 
 }

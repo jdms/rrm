@@ -122,6 +122,8 @@ class ObjectTree: public QTreeWidget
         void setRegionName( std::size_t index_, const std::string& name_ );
         void setRegionColor( std::size_t index_, const QColor& color_ );
 
+        void objectSelected( const Settings::Objects::ObjectType& type_ );
+
 
 
     private:

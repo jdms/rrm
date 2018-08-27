@@ -114,6 +114,11 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
 
     emit updateVolume();
 
+    double ox_, oy, oz, w_, h_, d_;
+    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+
+
 }
 
 
@@ -313,6 +318,7 @@ void RRMApplication::getRegions()
 
     emit addRegions();
 }
+
 
 void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 {
@@ -589,5 +595,19 @@ void RRMApplication::defineRandomColor()
     int b_ = distr( eng );
 
    defineCurrentColor( r_, g_, b_ );
+
+}
+
+
+void RRMApplication::setMeshResolution( const std::string& resolution_ )
+{
+    if( resolution_.compare( "HIGH" ) == 0 )
+        controller->setMeshResolution( Controller::MeshResolution::HIGH );
+    else if( resolution_.compare( "MEDIUM" ) == 0 )
+        controller->setMeshResolution( Controller::MeshResolution::MEDIUM );
+    else if( resolution_.compare( "LOW" ) == 0 )
+        controller->setMeshResolution( Controller::MeshResolution::LOW );
+
+    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 
 }

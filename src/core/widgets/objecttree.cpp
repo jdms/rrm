@@ -51,6 +51,12 @@ ObjectTree::ObjectTree( QWidget *parent )
     label_domains->setCheckState( COLUMN_STATUS, Qt::Checked );
     label_domains->setHidden( true );
 
+    connect( this, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_ )
+    {
+        ObjectTreeItem* obj_item_ = static_cast< ObjectTreeItem* >( item_ );
+        emit objectSelected( obj_item_->getType() );
+    } );
+
 
 }
 

@@ -15,6 +15,7 @@
 
 #include "./core/models/controller.h"
 #include "./core/widgets/objecttree.h"
+#include "./core/widgets/pages_stack.h"
 
 
 
@@ -48,6 +49,7 @@ class MainWindow: public QMainWindow
         void createActions();
         void createMenuBar();
         void createToolbar();
+        void createSideBar();
 
         void createController();
         void createObjectTree();
@@ -107,6 +109,8 @@ class MainWindow: public QMainWindow
 
         QToolBar* tb_mainwindow = nullptr;
 
+        PagesStack* ps_objectdata = nullptr;
+        QDockWidget* dw_object_properties = nullptr;
 
 
 };
