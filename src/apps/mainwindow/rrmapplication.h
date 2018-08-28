@@ -79,6 +79,10 @@ public slots:
 
     void setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
+    void setVolumeWidth( double width_ );
+    void setVolumeHeight( double height_ );
+    void setVolumeDepth( double lenght_ );
+
     void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
     void setMeshResolution( const std::string& resolution_ );
 
@@ -146,9 +150,6 @@ public slots:
 
     void defineRandomColor();
 
-    void setVolumeWidth( double width_ );
-    void setVolumeHeight( double height_ );
-    void setVolumeDepth( double lenght_ );
 
 
 signals:
