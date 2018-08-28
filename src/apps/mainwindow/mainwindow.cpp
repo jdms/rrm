@@ -244,6 +244,22 @@ void MainWindow::createSideBar()
     addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
 
 
+    connect( ps_objectdata, &PagesStack::widthVolumeChanged, [=]( int width_ )
+    {
+       app->setVolumeWidth( static_cast< double >( width_ ) );
+    });
+
+    connect( ps_objectdata, &PagesStack::heightVolumeChanged, [=]( int height_ )
+    {
+       app->setVolumeHeight( static_cast< double >( height_ ) );
+    });
+
+    connect( ps_objectdata, &PagesStack::depthVolumeChanged, [=]( int depth_ )
+    {
+       app->setVolumeDepth( static_cast< double >( depth_ ) );
+    });
+
+
     connect( ps_objectdata, &PagesStack::setHighResolution, [=]()
     { app->setMeshResolution( "HIGH" ); } );
 
@@ -256,16 +272,21 @@ void MainWindow::createSideBar()
 
     connect( object_tree, &ObjectTree::objectSelected, ps_objectdata, &PagesStack::selectObjectPage );
 
-    connect( app, &RRMApplication::defineVolumeGeometry, ps_objectdata, &PagesStack::changeVolumeSize );
+    connect( app, &RRMApplication::defineVolumeGeometry, [=]( double ox_, double oy_, double oz_, double w_, double h_, double d_ )
+    {
+        ps_objectdata->changeRangeSize( 2* ( ox_ + w_ ), 2* ( oy_ + h_ ), 2* ( oz_ + d_ ) );
+        ps_objectdata->changeVolumeSize( ( ox_ + w_ ), ( oy_ + h_ ), ( oz_ + d_ ) ); } );
 
     connect( app, &RRMApplication::disableVolumeResizing, [=]
     {
         ps_objectdata->setEnabledVolumeResize( false );
+        dw_object_properties->setVisible( false );
     } );
 
     connect( app, &RRMApplication::enableVolumeResizing, [=]
     {
         ps_objectdata->setEnabledVolumeResize( true );
+        dw_object_properties->setVisible( true );
     } );
 
 }

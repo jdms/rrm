@@ -122,6 +122,27 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
 }
 
 
+void RRMApplication::setVolumeWidth( double width_ )
+{
+    controller->setVolumeWidth( width_ );
+    emit updateVolume();
+}
+
+void RRMApplication::setVolumeHeight( double height_ )
+{
+    controller->setVolumeHeight( height_ );
+    emit updateVolume();
+}
+
+void RRMApplication::setVolumeDepth( double lenght_ )
+{
+    controller->setVolumeLenght( lenght_ );
+    emit updateVolume();
+}
+
+
+
+
 void RRMApplication::setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     bool inverted_ = ( dir_ == Settings::CrossSection::CrossSectionDirections::Y? true:false );

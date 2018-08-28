@@ -146,6 +146,10 @@ public slots:
 
     void defineRandomColor();
 
+    void setVolumeWidth( double width_ );
+    void setVolumeHeight( double height_ );
+    void setVolumeDepth( double lenght_ );
+
 
 signals:
 
@@ -189,6 +193,8 @@ signals:
 
     void selectEnabled( const std::string& status_ );
     void setCurrentColor( int r_, int g_, int b_ );
+
+
 
 
 
