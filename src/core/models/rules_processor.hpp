@@ -56,6 +56,7 @@
             ~RulesProcessor() = default;
 
             std::vector<std::size_t> getSurfaces();
+            std::vector<std::size_t> getActiveSurfaces();
 
             //
             // brief:
