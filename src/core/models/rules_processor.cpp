@@ -59,7 +59,7 @@ RulesProcessor::RulesProcessor()
     setMediumResolution();
 }
 
-std::vector<std::size_t> RulesProcessor::getSurfaces()
+std::vector<std::size_t> RulesProcessor::getActiveSurfaces()
 {
     std::vector<size_t> active_surfaces = {};
     auto surfaces = modeller_.getSurfacesIndices();
@@ -77,6 +77,13 @@ std::vector<std::size_t> RulesProcessor::getSurfaces()
     }
 
     return active_surfaces;
+}
+
+std::vector<std::size_t> RulesProcessor::getSurfaces()
+{
+    auto surfaces = modeller_.getSurfacesIndices();
+
+    return surfaces;
 }
 
 
