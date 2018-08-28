@@ -106,6 +106,12 @@ void Controller::resizeVolume(double width_, double height_, double depth_)
 }
 
 
+void Controller::getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const
+{
+    model.volume->getGeometry( ox_, oy, oz, w_, h_, d_ );
+}
+
+
 void Controller::setVolumeWidth( double width_ )
 {
     model.volume->setWidth( width_ );
@@ -1920,6 +1926,8 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
     {
         rules_processor.setHighResolution();
     }
+
+    setVolumeDiscretization();
 }
 
 

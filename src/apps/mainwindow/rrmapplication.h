@@ -80,6 +80,7 @@ public slots:
     void setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
     void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
+    void setMeshResolution( const std::string& resolution_ );
 
     void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
     void moveMainCrossSection( double depth_ );
@@ -145,6 +146,10 @@ public slots:
 
     void defineRandomColor();
 
+    void setVolumeWidth( double width_ );
+    void setVolumeHeight( double height_ );
+    void setVolumeDepth( double lenght_ );
+
 
 signals:
 
@@ -152,6 +157,8 @@ signals:
     void addObjectinObjectTree( const std::shared_ptr<Object>& obj_ );
 
     void updateVolume();
+    void defineVolumeGeometry( double ox_, double oy, double oz, double w_, double h_, double d_ );
+
     void updateObjects();
     void updateTrajectories();
 
@@ -186,6 +193,8 @@ signals:
 
     void selectEnabled( const std::string& status_ );
     void setCurrentColor( int r_, int g_, int b_ );
+
+
 
 
 

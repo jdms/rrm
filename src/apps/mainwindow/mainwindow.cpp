@@ -35,6 +35,7 @@ void MainWindow::createWindow()
     createController();
 
     createObjectTree();
+    createSideBar();
 
     plug3dInterface();    
     plugSketchInterface();
@@ -234,6 +235,63 @@ void MainWindow::createToolbar()
 
 }
 
+void MainWindow::createSideBar()
+{
+    ps_objectdata = new PagesStack();
+    dw_object_properties = new QDockWidget( "" );
+    dw_object_properties->setAllowedAreas( Qt::LeftDockWidgetArea );
+    dw_object_properties->setWidget( ps_objectdata );
+    addDockWidget( Qt::LeftDockWidgetArea, dw_object_properties );
+
+
+    connect( ps_objectdata, &PagesStack::widthVolumeChanged, [=]( int width_ )
+    {
+       app->setVolumeWidth( static_cast< double >( width_ ) );
+    });
+
+    connect( ps_objectdata, &PagesStack::heightVolumeChanged, [=]( int height_ )
+    {
+       app->setVolumeHeight( static_cast< double >( height_ ) );
+    });
+
+    connect( ps_objectdata, &PagesStack::depthVolumeChanged, [=]( int depth_ )
+    {
+       app->setVolumeDepth( static_cast< double >( depth_ ) );
+    });
+
+
+    connect( ps_objectdata, &PagesStack::setHighResolution, [=]()
+    { app->setMeshResolution( "HIGH" ); } );
+
+    connect( ps_objectdata, &PagesStack::setMediumResolution, [=]()
+    { app->setMeshResolution( "MEDIUM" ); } );
+
+    connect( ps_objectdata, &PagesStack::setLowResolution, [=]()
+    { app->setMeshResolution( "LOW" ); } );
+
+
+    connect( object_tree, &ObjectTree::objectSelected, ps_objectdata, &PagesStack::selectObjectPage );
+
+    connect( app, &RRMApplication::defineVolumeGeometry, [=]( double ox_, double oy_, double oz_, double w_, double h_, double d_ )
+    {
+        ps_objectdata->changeRangeSize( 2* ( ox_ + w_ ), 2* ( oy_ + h_ ), 2* ( oz_ + d_ ) );
+        ps_objectdata->changeVolumeSize( ( ox_ + w_ ), ( oy_ + h_ ), ( oz_ + d_ ) ); } );
+
+    connect( app, &RRMApplication::disableVolumeResizing, [=]
+    {
+        ps_objectdata->setEnabledVolumeResize( false );
+        dw_object_properties->setVisible( false );
+    } );
+
+    connect( app, &RRMApplication::enableVolumeResizing, [=]
+    {
+        ps_objectdata->setEnabledVolumeResize( true );
+        dw_object_properties->setVisible( true );
+    } );
+
+}
+
+
 
 void MainWindow::createController()
 {
@@ -256,6 +314,7 @@ void MainWindow::createController()
     {
         lockPreserve( option_ );
     } );
+
 
 }
 
@@ -309,6 +368,8 @@ void MainWindow::createObjectTree()
     {
         app->setRegionColor( index_, c_.red(), c_.green(), c_.blue() );
     } );
+
+
 
 
 }

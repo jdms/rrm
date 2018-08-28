@@ -82,6 +82,7 @@ class Controller
 
         void createVolume();
         void resizeVolume( double width_, double height_, double depth_ );
+        void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
 
         void setVolumeWidth( double width_ );
         void setVolumeHeight( double height_ );
