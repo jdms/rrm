@@ -293,6 +293,9 @@ class SRules
         bool weakEntireSurfaceCheck( const PlanarSurface::Ptr &sptr ); 
         bool weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
 
+        bool weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
+        bool weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
+
         bool isValidSurfaceForInsertion( const PlanarSurface::Ptr &sptr, std::size_t &surface_index ); 
 
         bool boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface ); 

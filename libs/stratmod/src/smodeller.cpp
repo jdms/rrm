@@ -409,7 +409,7 @@ bool SModeller::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
 
 bool SModeller::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
 {
-    return pimpl_->preserveAbove(bounding_surfaces_list);
+    return pimpl_->preserveBelow(bounding_surfaces_list);
 }
 
 void SModeller::stopPreserveAbove()
@@ -713,9 +713,11 @@ bool SModeller::undo()
     StateDescriptor last = pimpl_->past_states_.back();
     pimpl_->past_states_.pop_back();
 
-    pimpl_->current_.bounded_above_ = last.bounded_above_;
-    pimpl_->current_.bounded_below_ = last.bounded_below_;
-    /* current_ = last; */ 
+    // pimpl_->current_.bounded_above_ = last.bounded_above_;
+    // // pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_;
+    // pimpl_->current_.bounded_below_ = last.bounded_below_;
+    // // pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_;
+    pimpl_->current_ = last; 
     pimpl_->enforceDefineRegion();
 
     pimpl_->undoed_surfaces_stack_.push_back(last_sptr); 

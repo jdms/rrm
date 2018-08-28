@@ -152,7 +152,7 @@
             // DEPRECATED
             bool defineBelow( size_t surface_index );
             
-            // USE THIS INSTEAD
+            // DEPRECATED
             bool defineBelow( std::vector<size_t> surface_indices );
             // END: use this instead
 
@@ -174,7 +174,7 @@
             bool defineAboveIsActive( size_t &boundary_index );
             bool defineBelowIsActive( size_t &boundary_index );
 
-            // USE THIS INSTEAD
+            // DEPRECATED
             bool defineAboveIsActive( std::vector<size_t> &boundary_indices );
             bool defineBelowIsActive( std::vector<size_t> &boundary_indices );
             // END: use this instead
@@ -191,9 +191,9 @@
             void stopPreserveBelow();
             void stopPreserveRegion();
 
-            void preserveAboveIsActive();
-            void preserveBelowIsActive();
-            void preserveRegionIsActive();
+            bool preserveAboveIsActive();
+            bool preserveBelowIsActive();
+            /* bool preserveRegionIsActive(); */
 
             bool requestPreserveRegion( std::vector<double> &point );
             bool requestPreserveAbove( std::vector<double> &curve_points );
