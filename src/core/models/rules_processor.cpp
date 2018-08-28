@@ -28,7 +28,7 @@ void deprecationNotice( std::string deprecated_method, std::string new_method, b
 
     header = "Deprecation notice:";
     info   = "The following method is deprecated: \n >>> RulesProcessor::" + deprecated_method + "\n\n";
-    info  += "Please, use method: \n >>> RulesProcessor::" + new_method + "\n\n";
+    info  += "Please, use method: \n >>> RulesProcessor::" + new_method + " instead.\n\n";
     info  += "This message appears only once per run.";
 
     if ( !check )
@@ -121,31 +121,48 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 void RulesProcessor::stopPreserveAbove()
 {
+    modeller_.stopPreserveAbove();
 }
 
 void RulesProcessor::stopPreserveBelow()
 {
+    modeller_.stopPreserveBelow();
 }
 
 void RulesProcessor::stopPreserveRegion()
 {
+    modeller_.stopPreserveAbove();
+    modeller_.stopPreserveBelow();
 }
 
-void RulesProcessor::preserveAboveIsActive()
+bool RulesProcessor::preserveAboveIsActive()
 {
+    std::vector<size_t> unused_variable;
+    return modeller_.preserveAboveIsActive(unused_variable);
 }
 
-void RulesProcessor::preserveBelowIsActive()
+bool RulesProcessor::preserveBelowIsActive()
 {
+    std::vector<size_t> unused_variable;
+    return modeller_.preserveBelowIsActive(unused_variable);
 }
 
-void RulesProcessor::preserveRegionIsActive()
-{
-}
+/* bool RulesProcessor::preserveRegionIsActive() */
+/* { */
+/*     return false; */
+/* } */
 
 bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
 {
-    return false;
+    std::cout << "\n" << point[0] << ", " << point[1] << ", " << point[2] << "\n\n" << std::flush;
+	SUtilitiesWrapper u(modeller_);
+	auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
+	auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
+	
+	bool success = preserveBelow(upper_model);
+	success &= preserveAbove(lower_model);
+	
+	return success;
 }
 
 bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
@@ -160,12 +177,12 @@ bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
 
 bool RulesProcessor::preserveAbove( std::vector<std::size_t> &lower_model )
 {
-    return false;
+    return modeller_.preserveAbove(lower_model);
 }
 
 bool RulesProcessor::preserveBelow( std::vector<std::size_t> &upper_model )
 {
-    return false;
+    return modeller_.preserveBelow(upper_model);
 }
 
 bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &upper_model )

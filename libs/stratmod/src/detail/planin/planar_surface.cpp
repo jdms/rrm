@@ -43,8 +43,8 @@ auto getCoordinate( PlanarSurface::Coordinate c ) -> std::underlying_type<Planar
 
 std::array<PlanarSurface::Natural, 3> PlanarSurface::coordinates_map_ = {{ 
     getCoordinate(PlanarSurface::Coordinate::WIDTH), 
-    getCoordinate(PlanarSurface::Coordinate::HEIGHT), 
-    getCoordinate(PlanarSurface::Coordinate::DEPTH) 
+        getCoordinate(PlanarSurface::Coordinate::HEIGHT), 
+        getCoordinate(PlanarSurface::Coordinate::DEPTH) 
 }}; 
 
 void PlanarSurface::updateDiscretization() 
@@ -64,7 +64,7 @@ void PlanarSurface::updateDiscretization()
     { 
         updateRawCache(); 
     }
-    
+
     this_discretization_state_ = global_discretization_state_; 
 }
 
@@ -93,7 +93,7 @@ bool PlanarSurface::setOutputCoordinatesOrdering(
         PlanarSurface::Coordinate first, 
         PlanarSurface::Coordinate second, 
         PlanarSurface::Coordinate third 
-    ) 
+        ) 
 {
     if ( (first == second) || (first == third) || (second == third) ) { 
         return false; 
@@ -301,9 +301,9 @@ bool PlanarSurface::weakEntireSurfaceCheck()
             if ( std::fabs(lb - height) <= tolerance ) {
                 status |= true; 
             }
-            
+
             else if ( std::fabs(height - ub) <= tolerance ) {
-                    status |= true; 
+                status |= true; 
             }
         }
 
@@ -355,9 +355,9 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_sur
             if ( std::fabs(lb - height) <= tolerance ) {
                 status |= true; 
             }
-            
+
             else if ( std::fabs(height - ub) <= tolerance ) { 
-                    status |= true; 
+                status |= true; 
             }
         }
 
@@ -420,7 +420,7 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_
 
 /*     auto num_vertices_omp = num_vertices_; */ 
 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
+/* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
 /*     #pragma omp parallel for shared(sp) firstprivate(num_vertices_omp) private(height, s_height) default(none) reduction(||: lies_above, lies_below) */ 
 /*     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) */ 
 /*     { */
@@ -443,16 +443,16 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Pt
     bool has_upper_boundary = false; 
 
     for ( auto &lower_surface : lower_surfaces )
-    if ( ( lower_surface != nullptr ) && lower_surface->surfaceIsSet() ) { 
-        has_lower_boundary = true; 
-        /* std::cout << "Lower boundary got here!\n"; */ 
-    }
+        if ( ( lower_surface != nullptr ) && lower_surface->surfaceIsSet() ) { 
+            has_lower_boundary = true; 
+            /* std::cout << "Lower boundary got here!\n"; */ 
+        }
 
     for ( auto &upper_surface : upper_surfaces )
-    if ( ( upper_surface != nullptr ) && upper_surface->surfaceIsSet() ) { 
-        has_upper_boundary = true; 
-        /* std::cout << "Upper boundary got here!\n"; */ 
-    }
+        if ( ( upper_surface != nullptr ) && upper_surface->surfaceIsSet() ) { 
+            has_upper_boundary = true; 
+            /* std::cout << "Upper boundary got here!\n"; */ 
+        }
 
     bool isEntireSurface = true; 
     bool status, lstatus, ustatus; 
@@ -576,15 +576,15 @@ bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp )
             {
                 lies_above = lies_above || (theights >= sp_theights);
                 /* if ( theights >= sp_theights ) */
-                    /* std::cout << "t lies above sp_t"; */
+                /* std::cout << "t lies above sp_t"; */
 
                 lies_below = lies_below || (theights <= sp_theights);
                 /* if ( theights <= sp_theights ) */
-                    /* std::cout << "t lies below sp_t"; */
+                /* std::cout << "t lies below sp_t"; */
             }
             /* else */
             /* { */
-                /* std::cout << "at least one triangle was not valid"; */
+            /* std::cout << "at least one triangle was not valid"; */
             /* } */
 
             /* std::cout << std::endl << std::flush; */
@@ -773,9 +773,9 @@ bool PlanarSurface::weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::Ptr> 
     bool has_bounding_surfaces = false;
 
     for ( auto &sptr : surfaces )
-    if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
-        has_bounding_surfaces = true;
-    }
+        if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
+            has_bounding_surfaces = true;
+        }
 
     if ( has_bounding_surfaces == false )
     {
@@ -871,9 +871,9 @@ bool PlanarSurface::weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::Ptr> 
     bool has_bounding_surfaces = false;
 
     for ( auto &sptr : surfaces )
-    if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
-        has_bounding_surfaces = true;
-    }
+        if ( ( sptr != nullptr ) && ( sptr->surfaceIsSet() ) ) { 
+            has_bounding_surfaces = true;
+        }
 
     if ( has_bounding_surfaces == false )
     {
@@ -1013,10 +1013,10 @@ bool PlanarSurface::checkIfDependsOn( unsigned long int surface_id ) {
 }
 
 bool PlanarSurface::getHeight( const Point2 &p, double &height ) { 
-    
+
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
-    
+
     bool status = f->getBoundedHeight(p, height, ub, lb); 
     if ( status == false ) { 
         return false; 
@@ -1060,7 +1060,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
     height = base_heights[vertex_index];  
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
-    
+
     if ( height > ub ) { 
         height = ub; 
         /* status &= false; */ 
@@ -1293,7 +1293,7 @@ bool PlanarSurface::updateRawCache()
         auto nY = nY_; 
         long int index = 0; 
         double height = 0; 
-        
+
         // The following loops do not use the cache optimally. 
 
         /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
@@ -1446,6 +1446,18 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     /* } */
 
     upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+    auto itl = lower_bound_.begin();
+    while (itl != lower_bound_.end())
+    {
+        if (compareSurfaceWptr(*itl, std::weak_ptr<PlanarSurface>(s)) == true)
+        {
+            itl = lower_bound_.erase(itl);
+        }
+        else
+        {
+            ++itl;
+        }
+    }
     /* unprocessed_upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
     cache_is_fresh_ = false;
 
@@ -1459,6 +1471,11 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     for ( auto &lb : lbound )
     {
         new_bound = true;
+
+        for (auto this_lb : lower_bound_)
+            if (compareSurfaceWptr(lb, this_lb) == true)
+                new_bound &= false;
+
         for ( auto &ub : upper_bound_ )
         {
             new_bound &= (compareSurfaceWptr(lb, ub) == false);
@@ -1514,6 +1531,18 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     // s->getUpperBoundList(upper_bound_); 
 
     lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+    auto itu = upper_bound_.begin();
+    while (itu != upper_bound_.end())
+    {
+        if (compareSurfaceWptr(*itu, std::weak_ptr<PlanarSurface>(s)) == true)
+        {
+            itu = upper_bound_.erase(itu);
+        }
+        else
+        {
+            ++itu;
+        }
+    }
     /* unprocessed_lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
     cache_is_fresh_ = false;
 
@@ -1527,6 +1556,11 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     for (auto &ub : ubound)
     {
         new_bound = true;
+
+        for (auto this_ub: upper_bound_)
+            if (compareSurfaceWptr(ub, this_ub) == true)
+                new_bound &= false;
+
         for (auto &lb : lower_bound_)
         {
             new_bound &= (compareSurfaceWptr(ub, lb) == false);
@@ -1692,7 +1726,7 @@ size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bi
 TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
 {
     // Range check?
-    
+
     auto setTriangle = [&] ( size_t i0_pos, size_t i1_pos, size_t i2_pos,  TriangleHeights &t ) -> void 
     {
         bool b0, b1, b2;
@@ -1720,7 +1754,7 @@ TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpo
     };
 
     TriangleHeights t;
-    
+
     switch( tpos )
     {
         case 0:
@@ -1758,7 +1792,7 @@ TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpo
         default:
             break;
     }
-    
+
     return t;
 }
 
@@ -1891,21 +1925,21 @@ size_t PlanarSurface::getTriangleIndexFromConnectivity( std::vector<size_t> t_co
         return triangle;
     };
 
-/* size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const */
-/* { */
-/*     IndicesType indices = getBlockIndices(bindex);; */
+    /* size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const */
+    /* { */
+    /*     IndicesType indices = getBlockIndices(bindex);; */
 
-/*     size_t i = vpos % 3; */
-/*     size_t j = (vpos - i)/3; */
+    /*     size_t i = vpos % 3; */
+    /*     size_t j = (vpos - i)/3; */
 
-/*     size_t iv = 2*indices[0] + i; */
-/*     size_t jv = 2*indices[1] + j; */
+    /*     size_t iv = 2*indices[0] + i; */
+    /*     size_t jv = 2*indices[1] + j; */
 
-/*     return getVertexIndex(iv, jv); */
-/* } */
+    /*     return getVertexIndex(iv, jv); */
+    /* } */
 
     size_t numBlocks = PlanarSurface::discretization_X * PlanarSurface::discretization_Y;
-    
+
     auto bindexFromVindexAndVpos = [&] ( size_t vindex, size_t vpos ) -> size_t
     {
         size_t ib, jb;
@@ -1949,7 +1983,7 @@ size_t PlanarSurface::getTriangleIndexFromConnectivity( std::vector<size_t> t_co
             break;
         }
     }
-    
+
     // Get tindex from tpos & bindex
     return getTriangleIndexFromPositionInBlock(bindex, tpos);
 }
