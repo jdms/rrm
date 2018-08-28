@@ -810,7 +810,7 @@ void Controller::updateModel()
 
     setObjectsActive( false );
 
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    std::vector< std::size_t > actives_ = rules_processor.getActiveSurfaces();
 
     std::size_t number_of_actives_ = actives_.size();
     if( number_of_actives_ == 0 ) return;
@@ -1851,6 +1851,14 @@ void Controller::loadObjectNoMetaDatas()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
+    int counter_ = 0;
+    while( rules_processor.canRedo() )
+    {
+        rules_processor.redo();
+        counter_++;
+    }
+
+
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     for( auto id: actives )
     {
@@ -1860,6 +1868,11 @@ void Controller::loadObjectNoMetaDatas()
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
+    }
+
+    for( int i = 0; i < counter_; ++i )
+    {
+        rules_processor.undo();
     }
 
 }
@@ -1878,6 +1891,15 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
     if ( json.contains("objects") && json["objects"].isArray() )
     {
+
+
+        int counter_ = 0;
+        while( rules_processor.canRedo() )
+        {
+            rules_processor.redo();
+            counter_++;
+        }
+
         QJsonArray objects_array_ = json["objects"].toArray();
 
         std::vector< std::size_t > actives = rules_processor.getSurfaces();
@@ -1907,6 +1929,13 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             }
 
         }
+
+
+        for( int i = 0; i < counter_; ++i )
+        {
+            rules_processor.undo();
+        }
+
 
     }
 }
