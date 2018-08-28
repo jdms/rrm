@@ -419,19 +419,7 @@ void RRMApplication::setSketchRegion( bool status_ )
         emit selectEnabled( "NONE" );
     }
 
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->requestCreateRegion();
-//        if( enabled_ )
-//            emit selectEnabled( "REGION" );
-//        else
-//            emit selectEnabled( "NONE" );
-//    }
-//    else
-//    {
-//        controller->stopCreateRegion();
-//        emit selectEnabled( "NONE" );
-//    }
+
 
     emit updateObjects();
 
@@ -535,8 +523,8 @@ void RRMApplication::redo()
     checkPreserveStatus();
 
     if( status_ == false ) return;
-    emit updateObjects();
 
+    emit updateObjects();
     updateObjectTree();
 
 }
