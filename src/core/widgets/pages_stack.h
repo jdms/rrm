@@ -29,6 +29,7 @@
 
 #include "ui_volume_resize_widget.h"
 #include "ui_object_properties.h"
+#include "./core/definitions/constants.hpp"
 
 class PagesStack: public QStackedWidget
 {
@@ -57,6 +58,7 @@ class PagesStack: public QStackedWidget
         void setVolumeHeight( double h );
         void setVolumeDepth( double d );
 
+        void selectObjectPage( const Settings::Objects::ObjectType& type_ );
         void loadObjectInformation( const std::string& name_, const std::string& text_ );
 
         void checkLowResolution();
