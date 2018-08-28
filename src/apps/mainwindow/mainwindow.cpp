@@ -114,6 +114,7 @@ void MainWindow::createActions()
     ac_regions->setCheckable( true );
     ac_regions->setChecked( false );
 
+
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
@@ -123,6 +124,8 @@ void MainWindow::createActions()
     connect( ac_save, &QAction::triggered, [=](){ save(); } );
 
     connect( ac_load, &QAction::triggered, [=](){ load(); } );
+
+    connect( ac_exit, &QAction::triggered, this, &MainWindow::close );
 
 
     connect( ac_remove_above, &QAction::triggered, [=]()
