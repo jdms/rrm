@@ -22,7 +22,21 @@
 #include <QWidget>
 #include <QMessageBox>
 
-void deprecationNotice( std::string deprecated_method, std::string new_method, bool &check )
+template<typename BOOL = bool>
+void displayNotice( std::string header, std::string info )
+{
+    class Widget : public QWidget {
+        public:
+            Widget(std::string &header, std::string &info) {
+                QMessageBox::information( 
+                        this, 
+                        tr(header.c_str()),
+                        tr(info.c_str()) ); 
+            }
+    } w(header, info);
+}
+
+void deprecationNotice( std::string deprecated_method, std::string new_method, bool &popup_is_enabled )
 {
     std::string header, info;
 
@@ -31,20 +45,27 @@ void deprecationNotice( std::string deprecated_method, std::string new_method, b
     info  += "Please, use method: \n >>> RulesProcessor::" + new_method + " instead.\n\n";
     info  += "This message appears only once per run.";
 
-    if ( !check )
+    if ( popup_is_enabled )
     {
-        class Widget : public QWidget {
-            public:
-                Widget(std::string &header, std::string &info) {
-                    QMessageBox::information( 
-                            this, 
-                            tr(header.c_str()),
-                            tr(info.c_str()) ); 
-                }
-        } w(header, info);
+        displayNotice(header, info);
     }
 
-    check = true;
+    popup_is_enabled = false;
+
+    /* if ( !enable_popup ) */
+    /* { */
+    /*     class Widget : public QWidget { */
+    /*         public: */
+    /*             Widget(std::string &header, std::string &info) { */
+    /*                 QMessageBox::information( */ 
+    /*                         this, */ 
+    /*                         tr(header.c_str()), */
+    /*                         tr(info.c_str()) ); */ 
+    /*             } */
+    /*     } w(header, info); */
+    /* } */
+
+    /* enable_popup = true; */
 }
 
 #include "rules_processor.hpp"
@@ -174,12 +195,26 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
 
 bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
 {
-    return false;
+    std::vector<size_t> surfaces_indices;
+
+    if ( getModelAboveSurface(curve_points, surfaces_indices) == false )
+    {
+        return false;
+    }
+
+    return preserveAbove(surfaces_indices);
 }
 
 bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
 {
-    return false;
+    std::vector<size_t> surfaces_indices;
+
+    if ( getModelBelowSurface(curve_points, surfaces_indices) == false )
+    {
+        return false;
+    }
+
+    return preserveBelow(surfaces_indices);
 }
 
 bool RulesProcessor::preserveAbove( std::vector<std::size_t> &lower_model )
@@ -194,12 +229,120 @@ bool RulesProcessor::preserveBelow( std::vector<std::size_t> &upper_model )
 
 bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &upper_model )
 {
-    return false;
+    struct Point { double x, y, z; } p;
+
+    auto getPoint = []( size_t i, std::vector<double> &v, Point &p ) -> bool
+    {
+        if ( i >= v.size()/3 )
+        {
+            return false;
+        }
+
+
+        p.x = v[3*i + 0];
+        p.y = v[3*i + 1];
+        p.z = v[3*i + 2];
+
+        return true;
+    };
+
+    std::vector<size_t> lower_boundary_ = {};
+    std::vector<size_t> upper_boundary_ = {};
+
+    if ( curve_points.size() < 3*2 )
+    {
+        return false;
+    }
+
+
+    std::vector<size_t> cur_region, region, cur_lbounds, cur_ubounds;
+    //bool first_cross_ = false, second_cross_ = false;
+
+    SUtilitiesWrapper u(modeller_);
+
+    getPoint(0, curve_points, p);
+    lower_boundary_ = u.getSurfacesIndicesBelowPoint(p.x, p.y, p.z);
+    upper_boundary_ = u.getSurfacesIndicesAbovePoint(p.x, p.y, p.z);
+
+    for ( size_t i = 1; i < curve_points.size()/3; ++i )
+    {
+        std::cout << "Trying point: " << i << " of " << curve_points.size()/3 << std::endl << std::flush;
+        getPoint(i, curve_points, p);
+
+        cur_lbounds = u.getSurfacesIndicesBelowPoint(p.x, p.y, p.z);
+        cur_ubounds = u.getSurfacesIndicesAbovePoint(p.x, p.y, p.z);
+
+        if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
+        {
+            std::sort(upper_boundary_.begin(), upper_boundary_.end());
+            std::sort(lower_boundary_.begin(), upper_boundary_.end());
+
+            std::set_union(upper_boundary_.begin(), upper_boundary_.end(),
+                    cur_ubounds.begin(), cur_ubounds.end(), 
+                    std::back_inserter(upper_model));
+        }
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &lower_model )
 {
-    return false;
+    struct Point { double x, y, z; } p;
+
+    auto getPoint = []( size_t i, std::vector<double> &v, Point &p ) -> bool
+    {
+        if ( i >= v.size()/3 )
+        {
+            return false;
+        }
+
+
+        p.x = v[3*i + 0];
+        p.y = v[3*i + 1];
+        p.z = v[3*i + 2];
+
+        return true;
+    };
+
+    std::vector<size_t> lower_boundary_ = {};
+    std::vector<size_t> upper_boundary_ = {};
+
+    if ( curve_points.size() < 3*2 )
+    {
+        return false;
+    }
+
+
+    std::vector<size_t> cur_region, region, cur_lbounds, cur_ubounds;
+    //bool first_cross_ = false, second_cross_ = false;
+
+    SUtilitiesWrapper u(modeller_);
+
+    getPoint(0, curve_points, p);
+    lower_boundary_ = u.getSurfacesIndicesBelowPoint(p.x, p.y, p.z);
+    upper_boundary_ = u.getSurfacesIndicesAbovePoint(p.x, p.y, p.z);
+
+    for ( size_t i = 1; i < curve_points.size()/3; ++i )
+    {
+        std::cout << "Trying point: " << i << " of " << curve_points.size()/3 << std::endl << std::flush;
+        getPoint(i, curve_points, p);
+
+        cur_lbounds = u.getSurfacesIndicesBelowPoint(p.x, p.y, p.z);
+        cur_ubounds = u.getSurfacesIndicesAbovePoint(p.x, p.y, p.z);
+
+        if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
+        {
+            std::sort(upper_boundary_.begin(), upper_boundary_.end());
+            std::sort(lower_boundary_.begin(), upper_boundary_.end());
+
+            std::set_union(lower_boundary_.begin(), lower_boundary_.end(),
+                    cur_lbounds.begin(), cur_lbounds.end(), 
+                    std::back_inserter(lower_model));
+        }
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist )
@@ -214,22 +357,134 @@ bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vecto
 
 bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    return false;
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
+    auto tmp_vlist = vlist;
+    for ( auto &sid : surface_indices )
+    {
+        if ( getLengthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] < tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    flist.clear();
+    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    {
+        flist.push_back(i);
+        flist.push_back(i+1);
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    return false;
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
+    auto tmp_vlist = vlist;
+    for ( auto &sid : surface_indices )
+    {
+        if ( getWidthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] < tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    flist.clear();
+    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    {
+        flist.push_back(i);
+        flist.push_back(i+1);
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    return false;
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
+    auto tmp_vlist = vlist;
+    for ( auto &sid : surface_indices )
+    {
+        if ( getLengthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] > tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    flist.clear();
+    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    {
+        flist.push_back(i);
+        flist.push_back(i+1);
+    }
+
+    return true;
 }
 
 bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    return false;
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
+    auto tmp_vlist = vlist;
+    for ( auto &sid : surface_indices )
+    {
+        if ( getWidthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] > tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    flist.clear();
+    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    {
+        flist.push_back(i);
+        flist.push_back(i+1);
+    }
+
+    return true;
 }
 
 
@@ -253,7 +508,7 @@ bool RulesProcessor::setLowResolution()
 
 bool RulesProcessor::setMediumResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(32, 32);
+    bool status = modeller_.tryChangeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
@@ -295,7 +550,7 @@ bool RulesProcessor::isMediumResolution()
     size_t num_width = getWidthResolution();
     size_t num_depth = getDepthResolution();
 
-    if ( (num_width == 32) && (num_depth == 32) )
+    if ( (num_width == 64) && (num_depth == 64) )
     {
         return true;
     }
@@ -621,6 +876,7 @@ bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t lengt
 
 bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist ) 
 {
+    /* return getUpperBoundaryLengthwiseCrossSection(length, vlist, elist); */
     return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
 
