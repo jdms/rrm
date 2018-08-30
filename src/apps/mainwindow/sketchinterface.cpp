@@ -123,7 +123,7 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_ ){ window->app->selectBounderingBySketch( curve_ ); } );
+    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
 
     connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ window->app->definedBounderingBySketch(); } );
 

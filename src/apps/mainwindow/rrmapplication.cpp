@@ -436,10 +436,21 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
 
 
 
-void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_ )
+void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
 {
-    controller->setRegionBySketchAsBoundering( curve_ );
-    emit updateObjects();
+    PolyCurve upper_, bottom_;
+
+    bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, upper_, bottom_ );
+
+    if( status_ == true )
+    {
+//        emit
+    }
+    else
+    {
+
+    }
+
 }
 
 

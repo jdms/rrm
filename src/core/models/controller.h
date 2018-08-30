@@ -226,7 +226,7 @@ class Controller
         bool isDefineBelowActive();
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
-        void setRegionBySketchAsBoundering( const PolyCurve& curve_ );
+        bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &upper_, PolyCurve &bottom_ );
         void definedRegionBounderingBySketch();
         void setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
