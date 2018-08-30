@@ -1531,45 +1531,39 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
-void Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_ )
+bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& upper_, PolyCurve& bottom_ )
 {
+
+    std::vector< double > curve3d_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+        curve3d_ = curve_.addXCoordinate( depth_, true );
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+        curve3d_ = curve_.addYCoordinate( depth_, false );
+
+    else
+        curve3d_ = curve_.addZCoordinate( depth_, false );
+
+
 
     if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
     {
-//        if( model.objects.find( index_ ) == model.objects.end() ) return;
 
-//        upper_index = index_;
-//        rules_processor.defineAbove( index_ );
-//        model.objects[ index_ ] ->setSelected( true );
-
-//        for( std::size_t id_: selectable_objects )
-//        {
-//            ObjectPtr& obj_ = model.objects[ id_ ];
-//            obj_->setSelectable( false );
-//        }
-//        selectable_objects.clear();
-
-        // get curves selected from rules_processor
+//        rules_processor.
+        // pass curve to rules_processor and get the region
 
 
     }
 
     else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
     {
-//        if( model.objects.find( index_ ) == model.objects.end() ) return;
 
-//        bottom_index = index_;
-//        rules_processor.defineBelow( index_ );
-//        model.objects[ index_ ] ->setSelected( true );
-
-//        for( std::size_t id_: selectable_objects )
-//        {
-//            ObjectPtr& obj_ = model.objects[ id_ ];
-//            obj_->setSelectable( false );
-//        }
-//        selectable_objects.clear();
 
     }
+
+    return true;
+
 }
 
 void Controller::definedRegionBounderingBySketch()
