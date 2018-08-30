@@ -524,7 +524,7 @@ void SketchScene::addToSketchesOfSelection()
     sketches_of_selection.push_back( sketch_ );
     addItem( sketches_of_selection[ id_ ].get() );
 
-    emit sendSketchOfSelection( sketch->getCurve() );
+    emit sendSketchOfSelection( sketch->getCurve(), csection_direction, csection_depth );
 
     sketch->clear();
 
