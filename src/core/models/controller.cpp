@@ -810,7 +810,7 @@ void Controller::updateModel()
 
     setObjectsActive( false );
 
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    std::vector< std::size_t > actives_ = rules_processor.getActiveSurfaces();
 
     std::size_t number_of_actives_ = actives_.size();
     if( number_of_actives_ == 0 ) return;
@@ -1468,7 +1468,9 @@ void Controller::stopCreateRegion()
 
 bool Controller::requestCreateRegion()
 {
-    bool request_;
+//    bool request_ = rules_processor.requestPreserveRegion()
+
+
 //    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
 
 //    if( request_ == true )
@@ -1487,7 +1489,7 @@ bool Controller::requestCreateRegion()
 //    else
 //        std::cout << "Request create denied" << std::endl << std::flush;
 
-    return request_ ;
+    return false;
 }
 
 
@@ -1566,13 +1568,81 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 
 }
 
+
 void Controller::definedRegionBounderingBySketch()
 {
 // stop the iterative method to define region using sketches
 }
 
-void Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+
+bool Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
+    std::vector< double > point_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        point_.push_back( depth_ );
+        point_.push_back( py_ );
+        point_.push_back( px_ );
+
+
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        point_.push_back( px_ );
+        point_.push_back( depth_ );
+        point_.push_back( py_ );
+
+
+    }
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        point_.push_back( px_ );
+        point_.push_back( py_ );
+        point_.push_back( depth_ );
+
+    }
+
+    bool request_ = rules_processor.requestPreserveRegion( point_ );
+
+    // get items to be selected
+
+    return request_;
+
+}
+
+
+void Controller::getRegionByPointAsBoundering()
+{
+
+    std::vector<float> vertices_upper_;
+    std::vector<size_t> edges_upper_;
+    std::vector<float> vertices_lower_;
+    std::vector<size_t> edges_lower_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getUpperBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+
+
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        std::vector<float> vertices_upper_;
+        std::vector<size_t> edges_upper_;
+        std::vector<float> vertices_lower_;
+        std::vector<size_t> edges_lower_;
+
+        rules_processor.getUpperBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+
+    }
+
+    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
@@ -1775,6 +1845,14 @@ void Controller::loadObjectNoMetaDatas()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
+    int counter_ = 0;
+    while( rules_processor.canRedo() )
+    {
+        rules_processor.redo();
+        counter_++;
+    }
+
+
     std::vector< std::size_t > actives = rules_processor.getSurfaces();
     for( auto id: actives )
     {
@@ -1784,6 +1862,11 @@ void Controller::loadObjectNoMetaDatas()
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
+    }
+
+    for( int i = 0; i < counter_; ++i )
+    {
+        rules_processor.undo();
     }
 
 }
@@ -1802,6 +1885,15 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
     if ( json.contains("objects") && json["objects"].isArray() )
     {
+
+
+        int counter_ = 0;
+        while( rules_processor.canRedo() )
+        {
+            rules_processor.redo();
+            counter_++;
+        }
+
         QJsonArray objects_array_ = json["objects"].toArray();
 
         std::vector< std::size_t > actives = rules_processor.getSurfaces();
@@ -1831,6 +1923,13 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             }
 
         }
+
+
+        for( int i = 0; i < counter_; ++i )
+        {
+            rules_processor.undo();
+        }
+
 
     }
 }

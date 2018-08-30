@@ -77,28 +77,60 @@ using ContainerSurfaceIndex = size_t;
 struct StateDescriptor
 {
     State state_ = State::UNDEFINED;
+
     bool bounded_above_ = false;
     ControllerSurfaceIndex upper_boundary_ = 0;
+    std::vector<ControllerSurfaceIndex> upper_boundary_list_ = std::vector<ControllerSurfaceIndex>();
+
     bool bounded_below_ = false;
     ControllerSurfaceIndex lower_boundary_ = 0;
+    std::vector<ControllerSurfaceIndex> lower_boundary_list_ = std::vector<ControllerSurfaceIndex>();
+
     std::vector<ControllerSurfaceIndex> truncate_lower_boundary_ = std::vector<ControllerSurfaceIndex>();
     std::vector<ControllerSurfaceIndex> truncate_upper_boundary_ = std::vector<ControllerSurfaceIndex>();
 
     template<typename Archive>
-    void serialize( Archive &ar, const std::uint32_t version )
+    void save( Archive &ar, const std::uint32_t version ) const
     {
         (void)(version);
+
         ar( state_,
-            bounded_above_, upper_boundary_, 
-            bounded_below_, lower_boundary_,
+            bounded_above_, upper_boundary_list_, 
+            bounded_below_, lower_boundary_list_,
             truncate_lower_boundary_, 
             truncate_upper_boundary_
           );
     }
 
+    template<typename Archive>
+    void load( Archive &ar, const std::uint32_t version )
+    {
+        if ( version == 1 )
+        {
+            ar( state_,
+                bounded_above_, upper_boundary_, 
+                bounded_below_, lower_boundary_,
+                truncate_lower_boundary_, 
+                truncate_upper_boundary_
+              );
+
+            upper_boundary_list_ = { upper_boundary_ };
+            lower_boundary_list_ = { lower_boundary_ };
+        }
+        else
+        {
+            ar( state_,
+                bounded_above_, upper_boundary_list_, 
+                bounded_below_, lower_boundary_list_,
+                truncate_lower_boundary_, 
+                truncate_upper_boundary_
+              );
+        }
+    }
+
 };
 
-CEREAL_CLASS_VERSION(StateDescriptor, 1);
+CEREAL_CLASS_VERSION(StateDescriptor, 2);
 
 
 /************************************************/
@@ -213,6 +245,15 @@ struct SModellerImplementation
 
     bool popLastSurface();
 
+    bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
+    bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+
+    void stopPreserveAbove();
+    void stopPreserveBelow();
+
+    bool preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+    bool preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+
     bool createAboveIsActive();
 
     bool createAboveIsActive( size_t &boundary_index );
@@ -241,7 +282,7 @@ struct SModellerImplementation
     bool getCrossSectionWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width );
 
     template<typename VertexList, typename EdgeList>
-    bool getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t depth );
+    bool getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length );
 };
 
 
@@ -304,18 +345,21 @@ bool SModellerImplementation::getCrossSectionWidth( size_t surface_id, VertexLis
     using OutRealType = typename VertexList::value_type;
     using OutNaturalType = typename EdgeList::value_type;
 
+    /* sptr->getCachedHeight( Nwidth, 0, height ); */
     sptr->getHeight( Nwidth, 0, height );
-    vlist[0] = static_cast<OutRealType>( origin_.x );
+    vlist[0] = static_cast<OutRealType>( origin_.y );
     vlist[1] = static_cast<OutRealType>( height );
 
     bool has_curve = false;
 
     for ( PlanarSurface::Natural i = 1; i < sptr->getNumY(); ++i )
     {
+        /* status          = sptr->getCachedHeight(Nwidth,     i, height); */
         status          = sptr->getHeight(Nwidth,     i, height);
+        /* previous_status = sptr->getCachedHeight(Nwidth, i - 1, previous_height); */
         previous_status = sptr->getHeight(Nwidth, i - 1, previous_height);
 
-        vlist[2*i + 0] = static_cast<OutRealType>( origin_.x + (double)(i) * lenght_.x / ( (double)(sptr->getNumY() - 1) ) );
+        vlist[2*i + 0] = static_cast<OutRealType>( origin_.y + (double)(i) * lenght_.y / ( (double)(sptr->getNumY() - 1) ) );
         vlist[2*i + 1] = static_cast<OutRealType>( height );
 
         if ( status || previous_status )
@@ -330,7 +374,7 @@ bool SModellerImplementation::getCrossSectionWidth( size_t surface_id, VertexLis
 }
 
 template<typename VertexList, typename EdgeList>
-bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t depth )
+bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length )
 {
     size_t index; 
     if ( getSurfaceIndex(surface_id, index) == false )
@@ -340,7 +384,7 @@ bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexLis
 
     PlanarSurface::Ptr sptr( container_[index] ); 
 
-    PlanarSurface::Natural Ndepth = 2 * static_cast<PlanarSurface::Natural>(depth);
+    PlanarSurface::Natural Ndepth = 2 * static_cast<PlanarSurface::Natural>(length);
 
     if ( Ndepth >= sptr->getNumY() )
     {
@@ -357,6 +401,7 @@ bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexLis
     using OutRealType = typename VertexList::value_type;
     using OutNaturalType = typename EdgeList::value_type;
 
+    /* sptr->getCachedHeight(0, Ndepth, height); */
     sptr->getHeight(0, Ndepth, height);
     vlist[0] = static_cast<OutRealType>( origin_.x );
     vlist[1] = static_cast<OutRealType>( height );
@@ -365,7 +410,9 @@ bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexLis
 
     for ( PlanarSurface::Natural i = 1; i < sptr->getNumX(); ++i )
     {
+        /* status          = sptr->getCachedHeight(    i, Ndepth, height); */
         status          = sptr->getHeight(    i, Ndepth, height);
+        /* previous_status = sptr->getCachedHeight(i - 1, Ndepth, previous_height); */
         previous_status = sptr->getHeight(i - 1, Ndepth, previous_height);
 
         vlist[2*i + 0] = static_cast<OutRealType>( origin_.x + (double)(i) * lenght_.x / ( (double)(sptr->getNumX() - 1) ) );

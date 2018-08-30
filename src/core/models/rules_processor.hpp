@@ -56,6 +56,7 @@
             ~RulesProcessor() = default;
 
             std::vector<std::size_t> getSurfaces();
+            std::vector<std::size_t> getActiveSurfaces();
 
             //
             // brief:
@@ -117,6 +118,15 @@
             /* Query or modify the automatum state */
 
 
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            //  All old define[Above,Below] methods have become deprecated as 
+            //  we move to allow structural rules on models.  
+            //
+            //  Refer to new preserve[Above, Below] methods
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+
             //
             // brief:
             // Define new input region above surface which index is `surface_index`.
@@ -143,7 +153,7 @@
             // DEPRECATED
             bool defineBelow( size_t surface_index );
             
-            // USE THIS INSTEAD
+            // DEPRECATED
             bool defineBelow( std::vector<size_t> surface_indices );
             // END: use this instead
 
@@ -165,10 +175,50 @@
             bool defineAboveIsActive( size_t &boundary_index );
             bool defineBelowIsActive( size_t &boundary_index );
 
-            // USE THIS INSTEAD
+            // DEPRECATED
             bool defineAboveIsActive( std::vector<size_t> &boundary_indices );
             bool defineBelowIsActive( std::vector<size_t> &boundary_indices );
             // END: use this instead
+
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // New structure aware preserve[Above, Below]
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            void stopPreserveAbove();
+            void stopPreserveBelow();
+            void stopPreserveRegion();
+
+            bool preserveAboveIsActive();
+            bool preserveBelowIsActive();
+            /* bool preserveRegionIsActive(); */
+
+            bool requestPreserveRegion( std::vector<double> &point );
+            bool requestPreserveAbove( std::vector<double> &curve_points );
+            bool requestPreserveBelow( std::vector<double> &curve_points );
+
+            bool preserveAbove( std::vector<std::size_t> &surface_indices_list );
+            bool preserveBelow( std::vector<std::size_t> &surface_indices_list );
+
+            bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
+            bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
+
+            bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+
+            bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+
+            bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+
+            /////////////////////////////////////////////////////////////////////////////
+
+
+
 
             void removeAbove();
             void removeAboveIntersection();

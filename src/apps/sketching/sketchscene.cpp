@@ -70,6 +70,12 @@ void SketchScene::init()
     move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
     move_marker->setVisible( false );
     addItem( move_marker );
+
+    boudering_area = new PolygonItem();
+    boudering_area->setVisible( false );
+    addItem( boudering_area );
+
+
 }
 
 
@@ -544,6 +550,22 @@ void SketchScene::removeSketchesOfSelection()
 
     emit stopSketchesOfSelection();
     setSelectingStratigraphyMode( false );
+}
+
+
+void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
+{
+
+
+//    PolyCurve upper_( vupper_, edupper_ );
+//    PolyCurve lower_( vlower_, edlower_ );
+
+//    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
+//    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
+
+//    QPolygonF pol_ = pol_lower_.united( pol_lower_ );
+//    boudering_area->setPolygon( pol_ );
+
 }
 
 

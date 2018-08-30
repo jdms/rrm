@@ -297,10 +297,10 @@ bool SModellerImplementation::insertSurface( const std::vector<double> &point_da
 }
 
 bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id, 
-            const std::vector<double> &cross_section_curve, double cross_section_depth,
-            const std::vector<double> &path_curve,
-            const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
-            bool orthogonally_oriented )
+        const std::vector<double> &cross_section_curve, double cross_section_depth,
+        const std::vector<double> &path_curve,
+        const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
+        bool orthogonally_oriented )
 {
     INFO( "Got into pimpl_->insertSurface(...)" );
 
@@ -372,7 +372,7 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
 
     return status;
 } 
-        
+
 bool SModellerImplementation::commitSurface( 
         PlanarSurface::Ptr &sptr, 
         size_t given_index, 
@@ -396,14 +396,14 @@ bool SModellerImplementation::commitSurface(
         /* std::cout << "Ubounds: "; */
         /* for ( auto s : ubounds ) */
         /* { */
-            /* std::cout << s << ", "; */
+        /* std::cout << s << ", "; */
         /* } */
         /* std::cout << "\n"; */
 
         /* std::cout << "Lbounds: "; */
         /* for ( auto s : lbounds ) */
         /* { */
-            /* std::cout << s << ", "; */
+        /* std::cout << s << ", "; */
         /* } */
         /* std::cout << "\n"; */
 
@@ -473,9 +473,11 @@ bool SModellerImplementation::popLastSurface()
     StateDescriptor last = past_states_.back();
     past_states_.pop_back();
 
-    current_.bounded_above_ = last.bounded_above_;
-    current_.bounded_below_ = last.bounded_below_;
-    /* current_ = last; */ 
+    // current_.bounded_above_ = last.bounded_above_;
+    // // current_.upper_boundary_list_ = last.upper_boundary_list_;
+    // current_.bounded_below_ = last.bounded_below_;
+    // // current_.lower_boundary_list_ = last.lower_boundary_list_;
+    current_ = last;
     enforceDefineRegion();
 
     /* pimpl_->undoed_surfaces_stack_.push_back(last_sptr); */ 
@@ -485,6 +487,86 @@ bool SModellerImplementation::popLastSurface()
 
     auto iter = dictionary_.find(last_surface_index); 
     dictionary_.erase(iter); 
+
+    return true;
+}
+
+bool SModellerImplementation::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+{
+    ContainerSurfaceIndex index;
+    std::vector<ContainerSurfaceIndex> surface_ids;
+
+    for ( auto &surface_index : bounding_surfaces_list )
+    {
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false;
+        }
+        surface_ids.push_back(index);
+    }
+
+    current_.bounded_below_ = container_.defineAbove(surface_ids);
+    if ( current_.bounded_below_ )
+    {
+        current_.lower_boundary_list_ = bounding_surfaces_list;
+    }
+
+    return current_.bounded_below_;
+}
+
+bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+{
+    ContainerSurfaceIndex index;
+    std::vector<ContainerSurfaceIndex> surface_ids;
+
+    for ( auto &surface_index : bounding_surfaces_list )
+    {
+        if ( getSurfaceIndex(surface_index, index) == false )
+        {
+            return false;
+        }
+        surface_ids.push_back(index);
+    }
+
+    current_.bounded_above_ = container_.defineBelow(surface_ids);
+    if ( current_.bounded_above_ )
+    {
+        current_.upper_boundary_list_ = bounding_surfaces_list;
+    }
+
+    return current_.bounded_above_;
+}
+
+void SModellerImplementation::stopPreserveAbove()
+{
+    container_.stopDefineAbove();
+}
+
+void SModellerImplementation::stopPreserveBelow()
+{
+    container_.stopDefineBelow();
+}
+
+bool SModellerImplementation::preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    if ( current_.bounded_below_ == false )
+    {
+        return false;
+    }
+
+    bounding_surfaces_list = current_.lower_boundary_list_;
+
+    return true;
+}
+
+bool SModellerImplementation::preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    if ( current_.bounded_above_ == false )
+    {
+        return false;
+    }
+
+    bounding_surfaces_list = current_.upper_boundary_list_;
 
     return true;
 }
@@ -595,20 +677,20 @@ bool SModellerImplementation::enforceDefineRegion()
 
     if ( current_.bounded_above_ )
     {
-        status &= createBelow(current_.upper_boundary_);
+        status &= preserveBelow(current_.upper_boundary_list_);
     }
     else
     {
-        stopCreateBelow();
+        stopPreserveBelow();
     }
 
     if ( current_.bounded_below_)
     {
-        status &= createAbove(current_.lower_boundary_);
+        status &= preserveAbove(current_.lower_boundary_list_);
     }
     else
     {
-        stopCreateAbove();
+        stopPreserveAbove();
     }
 
     return status; 
