@@ -410,28 +410,35 @@ void RRMApplication::setSketchBelow( bool status_ )
 void RRMApplication::setSketchRegion( bool status_ )
 {
 
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->requestCreateRegion();
-//        if( enabled_ )
-//            emit selectEnabled( "REGION" );
-//        else
-//            emit selectEnabled( "NONE" );
-//    }
-//    else
-//    {
-//        controller->stopCreateRegion();
-//        emit selectEnabled( "NONE" );
-//    }
+    if( status_ == true )
+    {
+        emit selectEnabled( "REGION" );
+    }
+    else
+    {
+        emit selectEnabled( "NONE" );
+    }
 
-//    emit updateObjects();
+
+
+    emit updateObjects();
 
 }
 
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
-    controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
+    bool status_ = controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
+
+    window->activatePreserveAbove( status_ );
+    window->activatePreserveBelow( status_ );
+
+    if( status_ == true )
+    {
+        controller->getRegionByPointAsBoundering();
+    }
+
+    emit selectEnabled( "NONE" );
 }
 
 
@@ -527,8 +534,8 @@ void RRMApplication::redo()
     checkPreserveStatus();
 
     if( status_ == false ) return;
-    emit updateObjects();
 
+    emit updateObjects();
     updateObjectTree();
 
 }

@@ -71,7 +71,7 @@ void MainWindow::createActions()
 
     ac_sketch_region = new QAction( "PR", this ); // preserve region!
     ac_sketch_region->setCheckable( true );
-    ac_sketch_region->setVisible( false );
+    ac_sketch_region->setVisible( true );
 
     ac_sketch_below = new QAction( "PB", this ); // preserve below!
     ac_sketch_below->setCheckable( true );
@@ -221,8 +221,8 @@ void MainWindow::createToolbar()
     tb_mainwindow->addAction( ac_undo );
     tb_mainwindow->addAction( ac_redo );
     tb_mainwindow->addSeparator();
-    tb_mainwindow->addAction( ac_sketch_above );
     tb_mainwindow->addAction( ac_sketch_region );
+    tb_mainwindow->addAction( ac_sketch_above );
     tb_mainwindow->addAction( ac_sketch_below );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addActions( ag_rules->actions() );
@@ -464,17 +464,17 @@ void MainWindow::lockPreserve( const std::string& option_ )
     if( option_.compare( "ABOVE" ) == 0 )
     {
         ac_sketch_below->setEnabled( false );
-        ac_sketch_region->setEnabled( false );
+//        ac_sketch_region->setEnabled( false );
     }
     else if( option_.compare( "REGION" ) == 0 )
     {
-        ac_sketch_below->setEnabled( false );
-        ac_sketch_above->setEnabled( false );
+//        ac_sketch_below->setEnabled( false );
+//        ac_sketch_above->setEnabled( false );
     }
     else if( option_.compare( "BELOW" ) == 0 )
     {
         ac_sketch_above->setEnabled( false );
-        ac_sketch_region->setEnabled( false );
+//        ac_sketch_region->setEnabled( false );
     }
     else
     {
@@ -485,6 +485,22 @@ void MainWindow::lockPreserve( const std::string& option_ )
 }
 
 
+void  MainWindow::activatePreserveAbove( bool status_ )
+{
+    ac_sketch_above->setEnabled( true );
+    ac_sketch_above->setChecked( status_ );
+}
+
+void  MainWindow::activatePreserveBelow( bool status_ )
+{
+    ac_sketch_below->setEnabled( true );
+    ac_sketch_below->setChecked( status_ );
+}
+
+void  MainWindow::activatePreserveRegion( bool status_ )
+{
+    ac_sketch_region->setChecked( status_ );
+}
 
 void MainWindow::initializeInterface()
 {

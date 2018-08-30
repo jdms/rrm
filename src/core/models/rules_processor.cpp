@@ -28,7 +28,7 @@ void deprecationNotice( std::string deprecated_method, std::string new_method, b
 
     header = "Deprecation notice:";
     info   = "The following method is deprecated: \n >>> RulesProcessor::" + deprecated_method + "\n\n";
-    info  += "Please, use method: \n >>> RulesProcessor::" + new_method + "\n\n";
+    info  += "Please, use method: \n >>> RulesProcessor::" + new_method + " instead.\n\n";
     info  += "This message appears only once per run.";
 
     if ( !check )
@@ -59,7 +59,7 @@ RulesProcessor::RulesProcessor()
     setMediumResolution();
 }
 
-std::vector<std::size_t> RulesProcessor::getSurfaces()
+std::vector<std::size_t> RulesProcessor::getActiveSurfaces()
 {
     std::vector<size_t> active_surfaces = {};
     auto surfaces = modeller_.getSurfacesIndices();
@@ -77,6 +77,13 @@ std::vector<std::size_t> RulesProcessor::getSurfaces()
     }
 
     return active_surfaces;
+}
+
+std::vector<std::size_t> RulesProcessor::getSurfaces()
+{
+    auto surfaces = modeller_.getSurfacesIndices();
+
+    return surfaces;
 }
 
 
@@ -118,6 +125,112 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
     return modeller_.requestCreateBelow(eligible_surfaces);
 }
 
+
+void RulesProcessor::stopPreserveAbove()
+{
+    modeller_.stopPreserveAbove();
+}
+
+void RulesProcessor::stopPreserveBelow()
+{
+    modeller_.stopPreserveBelow();
+}
+
+void RulesProcessor::stopPreserveRegion()
+{
+    modeller_.stopPreserveAbove();
+    modeller_.stopPreserveBelow();
+}
+
+bool RulesProcessor::preserveAboveIsActive()
+{
+    std::vector<size_t> unused_variable;
+    return modeller_.preserveAboveIsActive(unused_variable);
+}
+
+bool RulesProcessor::preserveBelowIsActive()
+{
+    std::vector<size_t> unused_variable;
+    return modeller_.preserveBelowIsActive(unused_variable);
+}
+
+/* bool RulesProcessor::preserveRegionIsActive() */
+/* { */
+/*     return false; */
+/* } */
+
+bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
+{
+    std::cout << "\n" << point[0] << ", " << point[1] << ", " << point[2] << "\n\n" << std::flush;
+	SUtilitiesWrapper u(modeller_);
+	auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
+	auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
+	
+	bool success = preserveBelow(upper_model);
+	success &= preserveAbove(lower_model);
+	
+	return success;
+}
+
+bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
+{
+    return false;
+}
+
+bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
+{
+    return false;
+}
+
+bool RulesProcessor::preserveAbove( std::vector<std::size_t> &lower_model )
+{
+    return modeller_.preserveAbove(lower_model);
+}
+
+bool RulesProcessor::preserveBelow( std::vector<std::size_t> &upper_model )
+{
+    return modeller_.preserveBelow(upper_model);
+}
+
+bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &upper_model )
+{
+    return false;
+}
+
+bool RulesProcessor::getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &lower_model )
+{
+    return false;
+}
+
+bool RulesProcessor::getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
+bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
+bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
+bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
+bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
+bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
 
 
 
@@ -407,40 +520,40 @@ void RulesProcessor::truncate()
 
 bool RulesProcessor::canUndo()
 {
-	if ( testing_surface_insertion_ )
-	{
-		return false;
-	}
+    if ( testing_surface_insertion_ )
+    {
+        return false;
+    }
 
     return modeller_.canUndo();
 }
 
 bool RulesProcessor::undo()
 {
-	if ( !canUndo() )
-	{
-		return false;
-	}
+    if ( !canUndo() )
+    {
+        return false;
+    }
 
     return modeller_.undo();
 }
 
 bool RulesProcessor::canRedo()
 {
-	if ( testing_surface_insertion_ )
-	{
-		return false;
-	}
+    if ( testing_surface_insertion_ )
+    {
+        return false;
+    }
 
     return modeller_.canRedo();
 }
 
 bool RulesProcessor::redo()
 {
-	if ( !canRedo() )
-	{
-		return false;
-	}
+    if ( !canRedo() )
+    {
+        return false;
+    }
     return modeller_.redo();
 }
 
@@ -486,7 +599,7 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vec
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
-//    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n" << std::flush;
+    //    std::cout << "Getting cross section: " << surface_id << ":" << depth << "\n" << std::flush;
 
     return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
@@ -597,7 +710,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
 
     // Change the following line to force a change in the models' discretization, also, see line above
     /* modeller_.changeDiscretization(16, 16); */
-    
+
     // 
     // Get the PLC
     //
@@ -678,21 +791,21 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
 
     /* switch( current_resolution_ ) */
     /* { */
-	/* case LOW: */
+    /* case LOW: */
     /*         modeller_.changeDiscretization(32, 32); */
     /*         break; */
 
-	/* case MEDIUM: */
+    /* case MEDIUM: */
     /*         modeller_.changeDiscretization(64, 64); */
     /*         break; */
 
-	/* case HIGH: */
+    /* case HIGH: */
     /*         modeller_.changeDiscretization(128, 128); */
     /*         break; */
     /* } */
 
     // Use the following to force a different discretization on the modeller
-	/* modeller_.changeDiscretization(64, 64); */
+    /* modeller_.changeDiscretization(64, 64); */
 
     return true;
 }
@@ -749,7 +862,7 @@ bool RulesProcessor::testSurface( size_t surface_index, std::vector<double> &poi
     return success;
 }
 
-template<typename FunctionType, typename... Args>
+    template<typename FunctionType, typename... Args>
 bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size_t surface_index, Args&&... args )
 {
     if ( last_surface_inserted_is_a_test_ == true )
@@ -762,9 +875,9 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
     {
         modeller_.disableGeologicRules();
     }
-    
+
     bool success = surfaceCreator( surface_index, std::forward<Args>(args)... );
-    
+
     // Without truncate there is no reson to expect a surface won't be correctly created
     // but we test for vacuous surfaces regardless
     if ( success )

@@ -127,6 +127,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         /* Query or modify the automatum state */
 
+        // create[Above,Below] is DEPRECATED
         //
         // brief:
         // Verifies whether ir is possible to define a new 'drawing' region,
@@ -168,6 +169,21 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         bool createAboveIsActive( std::size_t &boundary_index );
         bool createBelowIsActive( std::size_t &boundary_index );
+
+        ///////////////////////////////////////////////////////
+        // New structure aware preserve methods
+        ///////////////////////////////////////////////////////
+
+        bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
+        bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+
+        void stopPreserveAbove();
+        void stopPreserveBelow();
+
+        bool preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+        bool preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+
+        ///////////////////////////////////////////////////////
 
         void disableGeologicRules();
 
@@ -282,6 +298,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool getLengthCrossSectionCurve( std::size_t surface_id, std::size_t lenght, std::vector<double> &vlist, std::vector<std::size_t> &elist );
 
         std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::vector<std::size_t>> &element_list );
+        std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list );
 
 
         /* Change the model's properties */
