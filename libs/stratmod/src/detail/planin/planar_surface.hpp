@@ -277,6 +277,7 @@ class PlanarSurface {
         bool cache_is_fresh_ = false;
         std::vector<double> cached_heights_;
         std::vector<bool> cached_valid_heights_;
+        bool surface_is_empty_ = false;
 
         /* Methods */ 
         bool getHeight( Natural vertex_index, double &height, 
@@ -423,7 +424,12 @@ template<typename FList>
 unsigned int PlanarSurface::getFaceList( FList &flist ) 
 {
     if ( surfaceIsSet() == false ) {
-        return false; 
+        return 0; 
+    }
+
+    if ( cache_is_fresh_ && surface_is_empty_ )
+    {
+        return 0;
     }
 
     updateDiscretization(); 

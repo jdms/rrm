@@ -313,7 +313,14 @@ bool SModellerImplementation::getMesh( size_t surface_id, VertexList &vlist, Fac
         return false; 
     }
 
-    return ( container_[index]->getMesh(vlist, flist) > 0 ); 
+    /* return ( container_[index]->getMesh(vlist, flist) > 0 ); */ 
+    bool success = (container_[index]->getFaceList(flist) > 0);
+    if ( success )
+    {
+        success &= container_[index]->getVertexList(vlist);
+    }
+
+    return success;
 }
 
 
