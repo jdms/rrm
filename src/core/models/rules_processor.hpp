@@ -90,6 +90,10 @@
 
             bool isHighResolution();
 
+            bool setModellingResolution( std::size_t width = 64, std::size_t length = 64 );
+
+            bool setDiagnosticsResolution( std::size_t width = 16, std::size_t length = 16);
+
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
 
             bool setLenght( double opengl_x, double opengl_y, double opengl_z );
@@ -349,6 +353,11 @@
 
             enum ModelResolution { LOW, MEDIUM, HIGH };
             ModelResolution current_resolution_;
+            std::size_t modelling_length_discretization_ = 64;
+            std::size_t modelling_width_discretization_ = 64;
+
+            std::size_t diagnostics_length_discretization_ = 32;
+            std::size_t diagnostics_width_discretization_ = 32;
 
             bool testing_surface_insertion_ = false;
             bool last_surface_inserted_is_a_test_ = false;
