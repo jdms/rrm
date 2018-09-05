@@ -1361,6 +1361,8 @@ bool PlanarSurface::updateCache()
 
     double height{};
     bool valid_vertex{};
+    
+    surface_is_empty_ = true;
 
     for ( size_t i = 0; i < num_vertices_; ++i )
     {
@@ -1378,6 +1380,8 @@ bool PlanarSurface::updateCache()
 
         cached_heights_[i] = height;
         cached_valid_heights_[i] = valid_vertex;
+
+        surface_is_empty_ &= !valid_vertex;
     }
 
     /* unprocessed_lower_bound_.clear(); */

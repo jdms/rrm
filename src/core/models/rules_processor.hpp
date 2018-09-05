@@ -90,6 +90,10 @@
 
             bool isHighResolution();
 
+            bool setModellingResolution( std::size_t width = 64, std::size_t length = 64 );
+
+            bool setDiagnosticsResolution( std::size_t width = 16, std::size_t length = 16);
+
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
 
             bool setLenght( double opengl_x, double opengl_y, double opengl_z );
@@ -207,13 +211,24 @@
             bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
 
             bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
 
             bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
 
             bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
             /////////////////////////////////////////////////////////////////////////////
 
@@ -349,6 +364,11 @@
 
             enum ModelResolution { LOW, MEDIUM, HIGH };
             ModelResolution current_resolution_;
+            std::size_t modelling_length_discretization_ = 64;
+            std::size_t modelling_width_discretization_ = 64;
+
+            std::size_t diagnostics_length_discretization_ = 32;
+            std::size_t diagnostics_width_discretization_ = 32;
 
             bool testing_surface_insertion_ = false;
             bool last_surface_inserted_is_a_test_ = false;
