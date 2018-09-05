@@ -1166,7 +1166,7 @@ bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
     auto tolerance = surfaces.front()->getTolerance();
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    /* #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) */ 
+    #pragma omp parallel for shared(lower_bound, surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, tolerance, min_height, max_height) private(status, lstatus, point_status, height, lheight) default(none) reduction(&&: isEntireSurface) 
     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
     {
         status = false;
@@ -1260,7 +1260,7 @@ bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
     auto tolerance = surfaces.front()->getTolerance();
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    /* #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) */ 
+    #pragma omp parallel for shared(surfaces, upper_bound) firstprivate(ub, lb, num_vertices_omp, has_upper_boundary, tolerance, min_height, max_height) private(status, point_status, ustatus, height, uheight) default(none) reduction(&&: isEntireSurface) 
     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
     {
         status = false;
@@ -1347,8 +1347,9 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
         status |= true; 
     }
 
+    to_remove_surface->updateCache();
     return status; 
-    }
+}
 
     bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface )  
     {
@@ -1389,6 +1390,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             status |= true; 
         }
 
+        to_remove_surface->updateCache();
         return status; 
         }
 

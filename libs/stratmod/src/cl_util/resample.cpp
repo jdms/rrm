@@ -23,8 +23,8 @@ class SModellerWrap : public SModeller {
 int main( int argc, char **argv )
 {
 
-    size_t numX = 16;
-    size_t numY = 16;
+    size_t numX = 128;
+    size_t numY = 128;
 
     std::string file_sufix = "_" + std::to_string(numX) + "x"  + std::to_string(numY) + ".rrm";
 
@@ -50,7 +50,7 @@ int main( int argc, char **argv )
     }
 
     SModellerWrap model;
-    bool status = model.loadBinary(input);
+    bool status = model.loadBinary(input) || model.loadJSON(input);
     if ( !status )
     {
         std::cout << "Failed to load input file\n";
