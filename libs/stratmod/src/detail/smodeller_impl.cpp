@@ -510,6 +510,10 @@ bool SModellerImplementation::preserveAbove( std::vector<size_t> &bounding_surfa
     {
         current_.lower_boundary_list_ = bounding_surfaces_list;
     }
+    else
+    {
+        current_.lower_boundary_list_ = {};
+    }
 
     return current_.bounded_below_;
 }
@@ -532,6 +536,10 @@ bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfa
     if ( current_.bounded_above_ )
     {
         current_.upper_boundary_list_ = bounding_surfaces_list;
+    }
+    else
+    {
+        current_.upper_boundary_list_ = {};
     }
 
     return current_.bounded_above_;
