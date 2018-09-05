@@ -367,7 +367,7 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     auto tmp_vlist = vlist;
     for ( auto &sid : surface_indices )
     {
-        if ( getLengthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        if ( getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -386,6 +386,11 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     }
 
     return true;
+}
+
+bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    return false;
 }
 
 bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
@@ -400,7 +405,7 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     auto tmp_vlist = vlist;
     for ( auto &sid : surface_indices )
     {
-        if ( getWidthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        if ( getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -421,6 +426,11 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     return true;
 }
 
+bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
+
 bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
     std::vector<size_t> surface_indices;
@@ -433,7 +443,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     auto tmp_vlist = vlist;
     for ( auto &sid : surface_indices )
     {
-        if ( getLengthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        if ( getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -452,6 +462,11 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     }
 
     return true;
+}
+
+bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    return false;
 }
 
 bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
@@ -466,7 +481,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     auto tmp_vlist = vlist;
     for ( auto &sid : surface_indices )
     {
-        if ( getWidthCrossSectionCurve(surface_indices[sid], cross_sec, tmp_vlist, flist) )
+        if ( getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -487,6 +502,10 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     return true;
 }
 
+bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    return false;
+}
 
 
 /* Change the model's properties */
@@ -925,12 +944,12 @@ bool RulesProcessor::saveFile( std::string filename )
 
 bool RulesProcessor::loadFile( std::string filename )
 {
-    bool status = false;//modeller_.loadBinary(filename);
+    bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
 
-    if ( status == false )
-    {
-        status = modeller_.loadJSON(filename);
-    }
+    /* if ( status == false ) */
+    /* { */
+    /*     status = modeller_.loadJSON(filename); */
+    /* } */
 
     return status;
 }

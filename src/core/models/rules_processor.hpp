@@ -211,13 +211,24 @@
             bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
 
             bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
 
             bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
 
             bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
             /////////////////////////////////////////////////////////////////////////////
 
