@@ -575,6 +575,34 @@ bool isMediumResolution();
 
 bool isHighResolution();
 
+bool RulesProcessor::setModellingResolution( std::size_t width, std::size_t length )
+{
+    bool status = modeller_.tryChangeDiscretization(width, length);
+    if ( status == false )
+    {
+        return false;
+    }
+
+    std::size_t modelling_width_discretization_ = width;
+    std::size_t modelling_length_discretization_ = length;
+
+    return status;
+}
+
+bool RulesProcessor::setDiagnosticsResolution( std::size_t width, std::size_t length)
+{
+    bool status = modeller_.tryChangeDiscretization(width, length);
+    if ( status == false )
+    {
+        return false;
+    }
+
+    std::size_t diagnostics_width_discretization_ = width;
+    std::size_t diagnostics_length_discretization_ = length;
+
+    return status;
+}
+
 
 void RulesProcessor::setOrigin( double opengl_x, double opengl_y, double opengl_z )
 {
@@ -962,10 +990,50 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     // Reduce resolution for simulation
     //
 
-    /* modeller_.changeDiscretization(length_discretization, width_discretization); */
+    //
+    // Zhao: the following two lines control the base discretization that will be used
+    // to create the piecewise linear complex.  Notice that every "block" is comprised of 
+    // 8 triangles, so that the output triangulation satisfies both the 4-8 and the Delaunay 
+    // (for uniformilly sampled vertices) mesh criterions.  
+    //
+    // Example: 
+    // 
+    // o*******o*******o*******o*******o  -
+    // *\v6    |v7    /*v8             *  |
+    // * \  t5 | t7  / *               *  |
+    // *  \    |    /  *               *  |
+    // *   \   |   /   *               *  |
+    // * t4 \  |  / t6 *               *  |
+    // *     \ | /     *               *  |
+    // *      \|/      *               *  |
+    // o-------o-------o       o       o  | length_discretization = 1
+    // *v3    /|\v4    *v5             *  |
+    // *     / | \     *               *  |
+    // * t1 /  |  \ t3 *               *  |
+    // *   /   |   \   *               *  |
+    // *  /    |    \  *               *  |
+    // * /  t0 | t2  \ *               *  |
+    // */      |      \*               *  |
+    // o*******o*******o*******o*******o  -
+    //  v0      v1      v2
+    //
+    // |-------------------------------|
+    //    width_discretization = 2
+    //
+    // Legend: 
+    //      blocks' boundaries are market with: '*'
+    //      triangles' boundaries are marked with: '|', '\', '/', '-'
+    //      vertices are marked with: 'o'
+    // 
+    // You can have any number here, but I would strongly suggest to keep these 
+    // greater than 16 x 16 and to only pick numbers that are powers of 2.  
+    //
+    
+    diagnostics_width_discretization_ = 16; 
+    diagnostics_length_discretization_ = 16; 
 
-    // Change the following line to force a change in the models' discretization, also, see line above
-    /* modeller_.changeDiscretization(16, 16); */
+    modeller_.changeDiscretization(diagnostics_width_discretization_, diagnostics_length_discretization_);
+
 
     // 
     // Get the PLC
@@ -1060,8 +1128,9 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     /*         break; */
     /* } */
 
-    // Use the following to force a different discretization on the modeller
-    /* modeller_.changeDiscretization(64, 64); */
+    // Use the following to return to the modeller original discretization
+
+    modeller_.changeDiscretization(modelling_width_discretization_, modelling_length_discretization_);
 
     return true;
 }
