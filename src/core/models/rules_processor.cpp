@@ -275,7 +275,7 @@ bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, st
         if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
         {
             std::sort(upper_boundary_.begin(), upper_boundary_.end());
-            std::sort(lower_boundary_.begin(), upper_boundary_.end());
+            std::sort(lower_boundary_.begin(), lower_boundary_.end());
 
             std::set_union(upper_boundary_.begin(), upper_boundary_.end(),
                     cur_ubounds.begin(), cur_ubounds.end(), 

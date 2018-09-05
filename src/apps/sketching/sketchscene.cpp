@@ -563,9 +563,59 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
 //    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
 //    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
 
-//    QPolygonF pol_ = pol_lower_.united( pol_lower_ );
+//    QPolygonF pol_ = pol_upper_.united( pol_lower_ );
 //    boudering_area->setPolygon( pol_ );
 
+}
+
+void SketchScene::defineBounderingArea()
+{
+
+    if( ( lower.isEmpty() == false ) && ( upper.isEmpty() == false ) )
+    {
+        QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
+        QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
+
+        QPolygonF pol_ = pol_upper_.united( pol_lower_ );
+        boudering_area->setPolygon( pol_ );
+    }
+
+    else if( lower.isEmpty() == false )
+    {
+        QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
+        boudering_area->setPolygon( pol_ );
+    }
+    else
+    {
+        QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
+        boudering_area->setPolygon( pol_ );
+
+    }
+
+    boudering_area->setBorderColor( 0, 0, 0 );
+    boudering_area->setVisible( true );
+    update();
+}
+
+
+
+void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
+{
+    upper = boundary_;
+    defineBounderingArea();
+}
+
+void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
+{
+    lower = boundary_;
+    defineBounderingArea();
+}
+
+void SketchScene::clearBoundaryCurve()
+{
+
+    boudering_area->clear();
+    update();
 }
 
 

@@ -196,7 +196,7 @@ signals:
     void setCurrentColor( int r_, int g_, int b_ );
 
 
-
+        void setCurveAsBoundering( const PolyCurve& boundary_ );
 
 
 

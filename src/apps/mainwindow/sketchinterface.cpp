@@ -243,6 +243,9 @@ void SketchInterface::createSketchingActions()
 
 
 
+    connect( window->app, &RRMApplication::setCurveAsBoundering, [=]( const PolyCurve& boundary_ ){ scontroller->setCurveAsBoundering( boundary_ ); } );
+
+
 
 }
 

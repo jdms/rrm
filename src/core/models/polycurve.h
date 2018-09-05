@@ -143,50 +143,65 @@ public:
         }
 
 
-
-
-
-
-
-
-//        std::size_t id_ = 0;
-//        curve.push_back( Curve2D() );
-
-
-//        Curve2D& c_ = curve[ id_ ];
-
-//        for( std::size_t i = 0; i < number_of_edges_; ++i )
-//        {
-
-//            std::size_t id0_ = es_[ 2*i ];
-//            std::size_t id1_ = es_[ 2*i + 1 ];
-
-//            double x0 = vs_[ 2*id0_ ];
-//            double y0 = vs_[ 2*id0_ + 1 ];
-//            double x1 = vs_[ 2*id1_ ];
-//            double y1 = vs_[ 2*id1_ + 1 ];
-
-//            c_.add( Point2D( x0, y0 ) );
-
-
-
-//            if( last_id_ != id0_ )
-//            {
-//                curve.push_back( Curve2D() );
-//                id_++;
-//                c_ = curve[ id_ ];
-////                curve.push_back( c_ );
-////                c_ = Curve2D();
-//            }
-
-
-
-//            last_id_ = id1_;
-
-//        }
-
     }
 
+
+    void fromVector( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
+
+        std::size_t number_of_edges_ = es_.size()/2;
+        std::size_t last_id_ = UINT_MAX;
+
+
+        bool status_ = ( vs_.empty() || ( vs_.size() < 2 ) );
+
+
+        if( status_ == true ) return;
+
+        if( es_.empty() == true )
+        {
+            curve.push_back( Curve2D() );
+            std::size_t number_of_points_ = vs_.size()/2;
+            for( std::size_t i = 0; i < number_of_points_; ++i )
+            {
+                double x0_ = static_cast< double >( vs_[ 2*i ] );
+                double y0_ = static_cast< double >( vs_[ 2*i + 1 ] );
+
+                curve[ 0 ].add( Point2D( x0_, y0_ ) );
+            }
+
+            return;
+        }
+
+
+        int id_ = -1;
+//        curve.push_back( Curve2D() );
+
+        for( std::size_t i = 0; i < number_of_edges_; ++i )
+        {
+
+            std::size_t id0_ = es_[ 2*i ];
+            std::size_t id1_ = es_[ 2*i + 1 ];
+
+            double x0 = static_cast< double >( vs_[ 2*id0_ ] );
+            double y0 = static_cast< double >( vs_[ 2*id0_ + 1 ] );
+            double x1 = static_cast< double >( vs_[ 2*id1_ ] );
+            double y1 = static_cast< double >( vs_[ 2*id1_ + 1 ] );
+
+            if( last_id_ != id0_ )
+            {
+                curve.push_back( Curve2D() );
+                id_++;
+            }
+
+            curve[ id_ ].add( Point2D( x0, y0 ) );
+            curve[ id_ ].add( Point2D( x1, y1 ) );
+
+            last_id_ = id1_;
+
+        }
+
+
+    }
 
     void toVector( std::vector< double >& vs_, std::vector< std::size_t >& es_ ) const{
         int index_ = 0;
