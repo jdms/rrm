@@ -120,7 +120,12 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
 
+        void defineBounderingArea();
 
+        void defineLowerBoundaryCurve( const PolyCurve& boundary_ );
+        void defineUpperBoundaryCurve( const PolyCurve& boundary_ );
+
+        void clearBoundaryCurve();
 
 
    signals:
@@ -194,6 +199,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         QGraphicsEllipseItem* move_marker = nullptr;
 
         PolygonItem* boudering_area = nullptr;
+
+        PolyCurve lower;
+        PolyCurve upper;
 };
 
 #endif // SKETCHSCENE_H

@@ -222,11 +222,13 @@ class Controller
         void stopCreateRegion();
         bool requestCreateRegion();
 
+        Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
+
         bool isDefineAboveActive();
         bool isDefineBelowActive();
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
-        bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &upper_, PolyCurve &bottom_ );
+        bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
         void definedRegionBounderingBySketch();
         bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
         void getRegionByPointAsBoundering();

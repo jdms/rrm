@@ -445,13 +445,13 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
 
 void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
 {
-    PolyCurve upper_, bottom_;
+    PolyCurve boundary_;
 
-    bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, upper_, bottom_ );
+    bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, boundary_ );
 
     if( status_ == true )
     {
-//        emit
+        emit setCurveAsBoundering( boundary_ );
     }
     else
     {

@@ -1358,6 +1358,14 @@ void Controller::applyStratigraphicRule()
 /// Preserve Methods
 ///
 
+
+
+Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
+{
+    return boundering_region;
+}
+
+
 bool Controller::enableCreateAbove()
 {
     return requestCreateAbove();
@@ -1384,6 +1392,12 @@ void Controller::stopCreateAbove()
 bool Controller::requestCreateAbove()
 {
 
+    boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+    return true;
+
+
+/*
+
     bool request_ = rules_processor.requestCreateAbove( selectable_objects );
 
     if( request_ == true )
@@ -1403,7 +1417,7 @@ bool Controller::requestCreateAbove()
         std::cout << "Request create denied" << std::endl << std::flush;
 
     return request_ ;
-
+*/
 }
 
 
@@ -1426,6 +1440,12 @@ void Controller::stopCreateBelow()
 bool Controller::requestCreateBelow()
 {
 
+    boundering_region = Settings::Objects::BounderingRegion::BELOW;
+    return true;
+
+
+    /*
+
     bool request_ = rules_processor.requestCreateBelow( selectable_objects );
 
     if( request_ == true )
@@ -1445,6 +1465,8 @@ bool Controller::requestCreateBelow()
         std::cout << "Request create denied" << std::endl << std::flush;
 
     return request_ ;
+
+    */
 
 }
 
@@ -1466,6 +1488,7 @@ void Controller::stopCreateRegion()
 
 }
 
+// deprecated
 bool Controller::requestCreateRegion()
 {
 //    bool request_ = rules_processor.requestPreserveRegion()
@@ -1533,37 +1556,75 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
-bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& upper_, PolyCurve& bottom_ )
+bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& boundary_ )
 {
 
     std::vector< double > curve3d_;
-
-    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
-        curve3d_ = curve_.addXCoordinate( depth_, true );
-
-    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
-        curve3d_ = curve_.addYCoordinate( depth_, false );
-
-    else
-        curve3d_ = curve_.addZCoordinate( depth_, false );
-
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
 
 
     if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
     {
-
-//        rules_processor.
         // pass curve to rules_processor and get the region
+
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+        {
+            curve3d_ = curve_.addXCoordinate( depth_, true );
+            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+        }
+        else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+        {
+            curve3d_ = curve_.addZCoordinate( depth_, false );
+            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+        }
 
 
     }
 
     else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
     {
+        // pass curve to rules_processor and get the region
 
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+        {
+            curve3d_ = curve_.addXCoordinate( depth_, true );
+            bool status_ = rules_processor.requestPreserveBelow( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+        }
+        else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+        {
+            curve3d_ = curve_.addZCoordinate( depth_, false );
+            bool status_ = rules_processor.requestPreserveBelow( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+
+        }
 
     }
 
+    boundary_.fromVector( vertices_, edges_ );
     return true;
 
 }
@@ -1661,6 +1722,7 @@ bool Controller::isDefineAboveActive()
     return false;
 
 }
+
 
 bool Controller::isDefineBelowActive()
 {

@@ -46,6 +46,9 @@ class SketchingController
         void updateObjectsTrajectories();
 
 
+        void setCurveAsBoundering( const PolyCurve& boundary_ );
+        void clearCurveAsBoundering();
+
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void removeWindowsDirectionX();
         void removeWindowsDirectionY();

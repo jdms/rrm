@@ -266,6 +266,18 @@ void SketchingController::updateStratigraphy( const std::size_t& index_ )
 }
 
 
+void SketchingController::setCurveAsBoundering( const PolyCurve& boundary_ )
+{
+    if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::ABOVE )
+        main_scene->defineLowerBoundaryCurve( boundary_ );
+    else if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::BELOW )
+        main_scene->defineUpperBoundaryCurve( boundary_ );
+}
+
+void SketchingController::clearCurveAsBoundering()
+{
+    main_scene->clearBoundaryCurve();
+}
 
 
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
