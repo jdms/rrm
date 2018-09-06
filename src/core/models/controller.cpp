@@ -1164,9 +1164,9 @@ const std::map< std::size_t, RegionsPtr >& Controller::getRegions() const
 }
 
 
-void Controller::createDomain( std::set< std::size_t > indexes_ )
+void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )
 {
-    std::size_t id_ = model.domains.size();
+    std::size_t id_ = index_;
     model.domains[id_].regions_set = indexes_;
 }
 
@@ -1693,10 +1693,6 @@ void Controller::getRegionByPointAsBoundering()
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-//        std::vector<float> vertices_upper_;
-//        std::vector<size_t> edges_upper_;
-//        std::vector<float> vertices_lower_;
-//        std::vector<size_t> edges_lower_;
 
         rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_upper_, edges_upper_ );
         rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_lower_, edges_lower_ );
