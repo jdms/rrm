@@ -280,6 +280,8 @@ bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, st
             std::set_union(upper_boundary_.begin(), upper_boundary_.end(),
                     cur_ubounds.begin(), cur_ubounds.end(), 
                     std::back_inserter(upper_model));
+
+            break;
         }
     }
 
@@ -334,11 +336,13 @@ bool RulesProcessor::getModelBelowSurface( std::vector<double> &curve_points, st
         if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
         {
             std::sort(upper_boundary_.begin(), upper_boundary_.end());
-            std::sort(lower_boundary_.begin(), upper_boundary_.end());
+            std::sort(lower_boundary_.begin(), lower_boundary_.end());
 
             std::set_union(lower_boundary_.begin(), lower_boundary_.end(),
                     cur_lbounds.begin(), cur_lbounds.end(), 
                     std::back_inserter(lower_model));
+
+            break;
         }
     }
 
@@ -357,18 +361,47 @@ bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vecto
 
 bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    std::cout << "\n\n\nInside getUpperBoundaryLengthwise...\n\n" << std::flush;
+
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; 
+        return false;
+    }
+
+    bool success = false;
+    size_t i = 0;
+    for ( i = 0; i < surface_indices.size(); ++i )
+    {
+        if ( getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
+        {
+            std::cout << "Got a first bounding curve at index: " << i 
+                << " of " << surface_indices.size() << "\n" << std::flush;
+            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
+
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
     {
         return false;
     }
 
-    getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
     auto tmp_vlist = vlist;
-    for ( auto &sid : surface_indices )
+    size_t sid;
+    for ( ; i < surface_indices.size(); ++i )
     {
+        std::cout << "Processing surface: " << i 
+            << " of " << surface_indices.size() -1 << "\n" << std::flush;
+        sid = surface_indices[i];
+        std::cout << "sid == " << sid << "\n" << std::flush;
+
         if ( getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
+            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
                 if ( vlist[i] < tmp_vlist[i] )
@@ -379,12 +412,16 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     }
 
     flist.clear();
-    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
     {
         flist.push_back(i);
         flist.push_back(i+1);
     }
 
+    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
+    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+
+    std::cout << "Got upper boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
@@ -395,32 +432,51 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
 bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n\n\n" << std::flush;
+
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveBelowIsActive(surface_indices) == false )
     {
         return false;
     }
 
-    getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist);
-    auto tmp_vlist = vlist;
-    for ( auto &sid : surface_indices )
+    bool success = false;
+    size_t i = 0;
+    for ( i = 0; i < surface_indices.size(); ++i )
     {
+        if ( getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
+        {
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    auto tmp_vlist = vlist;
+    size_t sid;
+    for ( ; i < surface_indices.size(); ++i )
+    {
+        sid = surface_indices[i];
         if ( getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
         {
-            for ( size_t i = 0; i < vlist.size(); ++i )
+            for ( size_t j = 0; j < vlist.size(); ++j )
             {
-                if ( vlist[i] < tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
+                if ( vlist[j] < tmp_vlist[j] )
+                    vlist[j] = tmp_vlist[j];
             }
         }
 
     }
 
     flist.clear();
-    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    for ( size_t j = 0; j < vlist.size()/2 - 1; ++j )
     {
-        flist.push_back(i);
-        flist.push_back(i+1);
+        flist.push_back(j);
+        flist.push_back(j+1);
     }
 
     return true;
@@ -433,6 +489,8 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
 bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    return false; 
+
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveAboveIsActive(surface_indices) == false )
     {
@@ -455,7 +513,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     }
 
     flist.clear();
-    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    for ( size_t i = 0; i < vlist.size()/2 - 1; ++i )
     {
         flist.push_back(i);
         flist.push_back(i+1);
@@ -471,6 +529,8 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
 bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    return false; 
+
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveAboveIsActive(surface_indices) == false )
     {
@@ -493,7 +553,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     }
 
     flist.clear();
-    for ( size_t i = 0; i < vlist.size() - 1; ++i )
+    for ( size_t i = 0; i < vlist.size()/2 - 1; ++i )
     {
         flist.push_back(i);
         flist.push_back(i+1);
