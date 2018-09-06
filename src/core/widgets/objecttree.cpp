@@ -572,6 +572,18 @@ void ObjectTree::createDomain( std::size_t index_ )
         addTopLevelItem( label_domains );
         label_domains->setHidden( false );
     }
+    else
+    {
+        std::size_t id_ = 0;
+        for( auto it_: domains )
+            id_ = it_.first;
+
+        id_ += 1;
+        index_ = id_;
+    }
+
+    emit createDomainOfRegions( index_ );
+
 
     ObjectTreeItem* domain_ = new ObjectTreeItem();
     domain_->setIndex( index_ );
@@ -582,13 +594,14 @@ void ObjectTree::createDomain( std::size_t index_ )
     label_domains->addChild( domain_ );
     domains.addElement( index_, domain_ );
 
+
     addToDomain( index_ );
 
     domain_actions_[ index_ ] = new QAction( domain_->text( COLUMN_NAME ), this );
     mn_submenu->addAction( domain_actions_[ index_ ] );
     connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
 
-//    emit createDomainUsingRegions( index_,  )
+
 
 
 }
@@ -615,7 +628,11 @@ void ObjectTree::addToDomain( std::size_t index_ )
         reg_->setText( COLUMN_NAME, QString( obj_->text( COLUMN_NAME) ) );
         reg_->setType( Settings::Objects::ObjectType::REGION );
         reg_->setIndex( obj_->getIndex() );
+        reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
         domain_->addChild( reg_ );
+
+        emit addRegionToDomain( obj_->getIndex(), index_ );
+
 
         connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
         {
@@ -649,7 +666,14 @@ void ObjectTree::removeFromDomain()
         ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* >( it );
         if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
 
-        QTreeWidgetItem* domain_ = obj_->parent();
+
+//        QTreeWidgetItem* domain_ = obj_->parent();
+
+        ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( obj_->parent() );
+
+        emit removeRegionFromDomain( obj_->getIndex(), domain_->getIndex() );
+
+
         if( domain_ != nullptr )
         {
             domain_->removeChild( obj_ );
@@ -679,11 +703,16 @@ void ObjectTree::deleteDomain( std::size_t index_ )
         ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( it );
         if( domain_->getType() != Settings::Objects::ObjectType::DOMAINS ) continue;
 
+        emit removeDomain( domain_->getIndex() );
+
+
         QList<QTreeWidgetItem *> children_domains_ = domain_->takeChildren();
         while( children_domains_.isEmpty() == false )
         {
             ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( children_domains_.first() );
             if( reg_ == nullptr ) continue;
+
+            emit removeRegionFromDomain( reg_->getIndex(), domain_->getIndex() );
 
             domain_->removeChild( reg_ );
             reg_ = nullptr;

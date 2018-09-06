@@ -238,6 +238,7 @@ void MainWindow::createToolbar()
 
 }
 
+
 void MainWindow::createSideBar()
 {
     ps_objectdata = new PagesStack();
@@ -293,7 +294,6 @@ void MainWindow::createSideBar()
     } );
 
 }
-
 
 
 void MainWindow::createController()
@@ -360,8 +360,6 @@ void MainWindow::createObjectTree()
     connect( app, &RRMApplication::resetApplication, object_tree, &ObjectTree::clear );
 
 
-
-
     connect( object_tree, &ObjectTree::setRegionVisible, [=]( std::size_t index_, bool status_ )
     {
         app->setRegionVisible( index_, status_ );
@@ -374,7 +372,25 @@ void MainWindow::createObjectTree()
 
 
 
+    connect( object_tree, &ObjectTree::createDomainOfRegions, [=]( std::size_t index_ )
+    {
+        app->createDomain( index_ );
+    } );
 
+    connect( object_tree, &ObjectTree::addRegionToDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )
+    {
+        app->addRegionToDomain( reg_id_, domain_id_ );
+    } );
+
+    connect( object_tree, &ObjectTree::removeRegionFromDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )
+    {
+        app->removeRegionFromDomain( reg_id_, domain_id_ );
+    } );
+
+    connect( object_tree, &ObjectTree::removeDomain, [=]( std::size_t index_ )
+    {
+        app->removeDomain( index_ );
+    } );
 }
 
 
@@ -491,16 +507,19 @@ void  MainWindow::activatePreserveAbove( bool status_ )
     ac_sketch_above->setChecked( status_ );
 }
 
+
 void  MainWindow::activatePreserveBelow( bool status_ )
 {
     ac_sketch_below->setEnabled( true );
     ac_sketch_below->setChecked( status_ );
 }
 
+
 void  MainWindow::activatePreserveRegion( bool status_ )
 {
     ac_sketch_region->setChecked( status_ );
 }
+
 
 void MainWindow::initializeInterface()
 {

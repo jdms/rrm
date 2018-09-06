@@ -192,7 +192,7 @@ class Controller
         const std::map< std::size_t, RegionsPtr >& getRegions() const;
 
 
-        void createDomain(std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
         void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
         void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
         std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
