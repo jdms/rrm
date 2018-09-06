@@ -436,6 +436,7 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
     if( status_ == true )
     {
         controller->getRegionByPointAsBoundering();
+        emit updateMainCrossSection();
     }
 
     emit selectEnabled( "NONE" );

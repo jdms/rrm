@@ -427,21 +427,46 @@ void CrossSection::initialize()
 void CrossSection::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
 {
 
-    boundering.vertices_upper = vupper_;
-    boundering.edges_upper = edupper_;
-    boundering.vertices_lower = vlower_;
-    boundering.edges_lower = edlower_;
     boundering.empty = false;
+
+    boundering.vertices_upper.clear();
+    boundering.vertices_upper.assign( vupper_.begin(), vupper_.end() );
+
+    boundering.edges_upper.clear();
+    boundering.edges_upper.assign( edupper_.begin(), edupper_.end() );
+
+
+    boundering.edges_lower.clear();
+    boundering.edges_lower.assign( vlower_.begin(), vlower_.end() );
+
+    boundering.edges_lower.clear();
+    boundering.edges_lower.assign( edlower_.begin(), edlower_.end() );
+
 
 }
 
 void CrossSection::getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
 {
 
-    vupper_ = boundering.vertices_upper;
-    edupper_ = boundering.edges_upper;
-    vlower_ = boundering.vertices_lower;
-    edlower_ = boundering.edges_lower;
+
+
+    vupper_.clear();
+    vupper_.assign( boundering.vertices_upper.begin(), boundering.vertices_upper.end() );
+
+    edupper_.clear();
+    edupper_.assign( boundering.edges_upper.begin(), boundering.edges_upper.end() );
+
+
+    vlower_.clear();
+    vlower_.assign( boundering.vertices_lower.begin(), boundering.vertices_lower.end() );
+
+    edlower_.clear();
+    edlower_.assign( boundering.edges_lower.begin(), boundering.edges_lower.end() );
+
+//    vupper_ = boundering.vertices_upper;
+//    edupper_ = boundering.edges_upper;
+//    vlower_ = boundering.vertices_lower;
+//    edlower_ = boundering.edges_lower;
 }
 
 

@@ -1685,21 +1685,21 @@ void Controller::getRegionByPointAsBoundering()
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        rules_processor.getUpperBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
-        rules_processor.getLowerBoundaryWidthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_lower_, edges_lower_ );
 
 
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        std::vector<float> vertices_upper_;
-        std::vector<size_t> edges_upper_;
-        std::vector<float> vertices_lower_;
-        std::vector<size_t> edges_lower_;
+//        std::vector<float> vertices_upper_;
+//        std::vector<size_t> edges_upper_;
+//        std::vector<float> vertices_lower_;
+//        std::vector<size_t> edges_lower_;
 
-        rules_processor.getUpperBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_upper_, edges_upper_ );
-        rules_processor.getLowerBoundaryLengthwiseCrossSection( csection->getDepth(),vertices_lower_, edges_lower_ );
+        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_upper_, edges_upper_ );
+        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_lower_, edges_lower_ );
 
     }
 
