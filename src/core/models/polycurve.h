@@ -51,6 +51,10 @@ public:
         fromVector( vs_, es_ );
     }
 
+    PolyCurve( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
+        fromVector( vs_, es_ );
+    }
+
 
     Curve2D getSubcurve( std::size_t index_ ) const{
         bool valid_ = !curve.empty();
