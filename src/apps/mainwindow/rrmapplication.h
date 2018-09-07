@@ -210,6 +210,7 @@ signals:
     void setCurveAsBoundering( const PolyCurve& boundary_ );
     void clearBounderingArea();
 
+    bool addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_, const PolyCurve& upper_, const PolyCurve& lower_ );
 
 
 protected:

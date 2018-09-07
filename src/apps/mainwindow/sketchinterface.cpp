@@ -266,6 +266,8 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
 
+    connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_, const PolyCurve& upper_, const PolyCurve& lower_ ){  } );
+
 }
 
 

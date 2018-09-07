@@ -335,6 +335,11 @@ void RRMApplication::getRegions()
         int r_, g_, b_;
         reg_->getColor( r_, g_, b_ );
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+
+        PolyCurve upper_, lower_;
+        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex(), upper_, lower_ );
+        if( status_ == true )
+            emit addRegionCrossSectionBoundary( reg_, upper_, lower_ );
     }
 
     emit addRegions();

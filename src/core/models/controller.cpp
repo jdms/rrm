@@ -1066,6 +1066,12 @@ void Controller::defineRegions()
 }
 
 
+bool Controller::getRegionCrossSectionBoundary( std::size_t index_ , const PolyCurve& upper_, const PolyCurve& lower_ )
+{
+    return false;
+}
+
+
 void Controller::setRegionsVisible(bool status_)
 {
     for (auto it : model.regions)
