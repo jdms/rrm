@@ -562,8 +562,8 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
     QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
     QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
 
-//    QPolygonF pol_ = pol_upper_.united( pol_lower_ );
-    boudering_area->setPolygon( pol_upper_ );
+    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
+    boudering_area->setPolygon( pol_ );
 
     boudering_area->setBorderColor( 0, 0, 0 );
     boudering_area->setVisible( true );
@@ -579,7 +579,7 @@ void SketchScene::defineBounderingArea()
         QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
         QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
 
-        QPolygonF pol_ = pol_upper_.united( pol_lower_ );
+        QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
         boudering_area->setPolygon( pol_ );
     }
 
