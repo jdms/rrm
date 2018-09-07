@@ -765,3 +765,51 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
     return true;
 }
 
+bool TetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
+{
+    std::vector<Prism> prism_list;
+    bool status = buildPrismMesh(prism_list);
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    auto attributes_map = computeAttributeMap(prism_list);
+
+    auto it = attributes_map.begin();
+    size_t index;
+
+    for ( index = 0; (index <= attribute) && (it != attributes_map.end()); ++index )
+    {
+        ++it;
+    }
+
+    if ( (it == attributes_map.end()) || (index != attribute) || (index != it->second) )
+    {
+        return false;
+    }
+
+    lower_bound.clear();
+    upper_bound.clear();
+
+    auto attrib = it->first;
+    index = 0;
+
+    for ( auto sid_is_present : attrib )
+    {
+        if ( sid_is_present )
+        {
+            lower_bound.push_back(index);
+        }
+        else
+        {
+            upper_bound.push_back(index);
+        }
+
+        ++index;
+    }
+
+    return true;
+}
+

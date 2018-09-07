@@ -59,6 +59,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool exportToTetgen( std::string filename );
         bool exportToVTK( std::string filename );
 
+        bool getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound);
+
         bool getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions);
 
         bool liesBetweenBoundarySurfaces(double x, double y, double z);

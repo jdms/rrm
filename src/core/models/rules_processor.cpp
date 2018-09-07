@@ -359,22 +359,228 @@ bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vecto
     return false;
 }
 
+bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+        std::vector<double> &vlist, std::vector<std::size_t> &elist )
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    bool success = false;
+    size_t index;
+    for ( index = 0; index < surface_indices.size(); ++index )
+    {
+        if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) )
+        {
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    auto tmp_vlist = vlist;
+    size_t sid;
+    for ( ++index; index < surface_indices.size(); ++index )
+    {
+        sid = surface_indices[index];
+
+        if ( getLengthCrossSectionCurve(sid, length, tmp_vlist, elist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] > tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    elist.clear();
+    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
+    {
+        elist.push_back(i);
+        elist.push_back(i+1);
+    }
+
+    return true;
+
+}
+
+bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+        std::vector<double> &vlist, std::vector<std::size_t> &elist )
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    bool success = false;
+    size_t index;
+    for ( index = 0; index < surface_indices.size(); ++index )
+    {
+        if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) )
+        {
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    auto tmp_vlist = vlist;
+    size_t sid;
+    for ( ++index; index < surface_indices.size(); ++index )
+    {
+        sid = surface_indices[index];
+
+        if ( getLengthCrossSectionCurve(sid, length, tmp_vlist, elist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] < tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    elist.clear();
+    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
+    {
+        elist.push_back(i);
+        elist.push_back(i+1);
+    }
+
+    return true;
+}
+
+bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+        std::vector<double> &vlist, std::vector<std::size_t> &elist )
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    bool success = false;
+    size_t index;
+    for ( index = 0; index < surface_indices.size(); ++index )
+    {
+        if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) )
+        {
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    auto tmp_vlist = vlist;
+    size_t sid;
+    for ( ++index; index < surface_indices.size(); ++index )
+    {
+        sid = surface_indices[index];
+
+        if ( getWidthCrossSectionCurve(sid, width, tmp_vlist, elist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] > tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    elist.clear();
+    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
+    {
+        elist.push_back(i);
+        elist.push_back(i+1);
+    }
+
+    return true;
+
+}
+
+bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+        std::vector<double> &vlist, std::vector<std::size_t> &elist )
+{
+    if ( surface_indices.empty() )
+    {
+        return false;
+    }
+
+    bool success = false;
+    size_t index;
+    for ( index = 0; index < surface_indices.size(); ++index )
+    {
+        if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) )
+        {
+            success = true;
+            break;
+        }
+    }
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    auto tmp_vlist = vlist;
+    size_t sid;
+    for ( ++index; index < surface_indices.size(); ++index )
+    {
+        sid = surface_indices[index];
+
+        if ( getWidthCrossSectionCurve(sid, width, tmp_vlist, elist) )
+        {
+            for ( size_t i = 0; i < vlist.size(); ++i )
+            {
+                if ( vlist[i] < tmp_vlist[i] )
+                    vlist[i] = tmp_vlist[i];
+            }
+        }
+
+    }
+
+    elist.clear();
+    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
+    {
+        elist.push_back(i);
+        elist.push_back(i+1);
+    }
+
+    return true;
+}
+
 template<typename T>
-void fromUpperBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, double min_height )
+void convertEntireCurveToBox( std::vector<T> &vlist, std::vector<size_t> &flist, double box_boundary_height )
 {
     size_t last_vertex_id = flist.back();
 
     // from last vertex to right lower bbox
     double last_abscissa = vlist[ 2*last_vertex_id ];
     vlist.push_back(last_abscissa);
-    vlist.push_back(min_height);
+    vlist.push_back(box_boundary_height);
     flist.push_back(last_vertex_id);
     flist.push_back(last_vertex_id+1);
 
     // from right lower bbox to left lower bbox
     double first_abscissa = vlist[ 0 ];
     vlist.push_back(first_abscissa);
-    vlist.push_back(min_height);
+    vlist.push_back(box_boundary_height);
     flist.push_back(last_vertex_id+1);
     flist.push_back(last_vertex_id+2);
 
@@ -382,9 +588,8 @@ void fromUpperBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, 
     flist.push_back(last_vertex_id+2);
     flist.push_back(0);
 
-
     // see what is going on
-    std::cout << "\n\nPB Box: \n" 
+    std::cout << "\n\nBox' extremal points: \n" 
         << "(" << vlist[0] << ", " << vlist[1] << ") -- "
         << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << "); \n"
 
@@ -398,42 +603,171 @@ void fromUpperBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, 
         << "(" << vlist[ 0 ] << ", " << vlist[ 1 ] << "); \n\n" << std::flush;
 }
 
-template<typename T>
-void fromLowerBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, double max_height )
+bool RulesProcessor::getPreserveAboveCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    size_t last_vertex_id = flist.back();
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
+    {
+        return false;
+    }
 
-    // from last vertex to right lower bbox
-    double last_abscissa = vlist[ 2*last_vertex_id ];
-    vlist.push_back(last_abscissa);
-    vlist.push_back(max_height);
-    flist.push_back(last_vertex_id);
-    flist.push_back(last_vertex_id+1);
+    bool success = getModelSupCurveAtLength(surface_indices, length, vlist, flist);
 
-    // from right lower bbox to left lower bbox
-    double first_abscissa = vlist[ 0 ];
-    vlist.push_back(first_abscissa);
-    vlist.push_back(max_height);
-    flist.push_back(last_vertex_id+1);
-    flist.push_back(last_vertex_id+2);
+    if ( !success )
+    {
+        return false;
+    }
 
-    // from left lower bbox to first vertex
-    flist.push_back(last_vertex_id+2);
-    flist.push_back(0);
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
 
-    // see what is going on
-    std::cout << "\n\nPA Box: \n" 
-        << "(" << vlist[0] << ", " << vlist[1] << ") -- "
-        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << "); \n"
+    return true;
+}
 
-        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << ") -- "
-        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << "); \n"
+bool RulesProcessor::getPreserveBelowCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        return false;
+    }
 
-        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << ") -- "
-        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << "); \n"
+    bool success = getModelInfCurveAtLength(surface_indices, length, vlist, flist);
 
-        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << ") -- \n"
-        << "(" << vlist[ 0 ] << ", " << vlist[ 1 ] << "); \n\n" << std::flush;
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(vlist, flist, origin_.y);
+
+    return true;
+}
+
+bool RulesProcessor::getPreserveAboveCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    
+    bool success = getModelSupCurveAtWidth(surface_indices, width, vlist, flist);
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
+
+    return true;
+}
+
+bool RulesProcessor::getPreserveBelowCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    bool success = getModelInfCurveAtWidth(surface_indices, width, vlist, flist);
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(vlist, flist, origin_.y);
+
+    return true;
+}
+
+bool RulesProcessor::getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length, 
+        std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+        std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
+{
+    SUtilities u(modeller_);
+
+    std::vector<size_t> lower_bound, upper_bound; 
+
+    bool success = u.getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
+    if ( !success )
+    {
+        return false;
+    }
+
+    success = getModelSupCurveAtLength(lower_bound, length, lower_bound_box_vlist, lower_bound_box_elist);
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(lower_bound_box_vlist, lower_bound_box_elist, origin_.y + length_.y);
+
+    success = getModelInfCurveAtLength(upper_bound, length, upper_bound_box_vlist, upper_bound_box_elist);
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(upper_bound_box_vlist, upper_bound_box_elist, origin_.y);
+
+    return success;
+}
+
+bool RulesProcessor::getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width, 
+        std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+        std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
+{
+    SUtilities u(modeller_);
+
+    std::vector<size_t> lower_bound, upper_bound; 
+
+    bool success = u.getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
+    if ( !success )
+    {
+        return false;
+    }
+
+    success = getModelSupCurveAtWidth(lower_bound, width, lower_bound_box_vlist, lower_bound_box_elist);
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(lower_bound_box_vlist, lower_bound_box_elist, origin_.y + length_.y);
+
+    success = getModelInfCurveAtWidth(upper_bound, width, upper_bound_box_vlist, upper_bound_box_elist);
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(upper_bound_box_vlist, upper_bound_box_elist, origin_.y);
+
+    return success;
+}
+
+bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+{
+    std::vector<size_t> surface_indices;
+    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    {
+        return false;
+    }
+
+    bool success = getModelInfCurveAtLength(surface_indices, cross_sec, vlist, flist);
+
+    if ( !success )
+    {
+        return false;
+    }
+
+    convertEntireCurveToBox(vlist, flist, origin_.y);
+
+    return true;
 }
 
 bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
@@ -498,77 +832,29 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
-    fromUpperBoundarytoBox(vlist, flist, origin_.y);
+    convertEntireCurveToBox(vlist, flist, origin_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
-bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getUpperBoundaryLengthwise...\n\n" << std::flush;
-
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveBelowIsActive(surface_indices) == false )
     {
-        std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; 
         return false;
     }
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
-
-            success = true;
-            break;
-        }
-    }
+    bool success = getModelInfCurveAtWidth(surface_indices, cross_sec, vlist, flist);
 
     if ( !success )
     {
         return false;
     }
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    convertEntireCurveToBox(vlist, flist, origin_.y);
 
-        if ( getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] > tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
-
-    }
-
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
-
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
-
-    fromUpperBoundarytoBox(vlist, flist, origin_.y);
-
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
@@ -634,77 +920,29 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
-    fromUpperBoundarytoBox(vlist, flist, origin_.y);
+    convertEntireCurveToBox(vlist, flist, origin_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
-bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush;
-
     std::vector<size_t> surface_indices;
-    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
     {
-        std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; 
         return false;
     }
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
-
-            success = true;
-            break;
-        }
-    }
+    bool success = getModelSupCurveAtLength(surface_indices, cross_sec, vlist, flist);
 
     if ( !success )
     {
         return false;
     }
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
 
-        if ( getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] > tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
-
-    }
-
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
-
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
-
-    fromUpperBoundarytoBox(vlist, flist, origin_.y);
-
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
@@ -770,77 +1008,30 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
-    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
-bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
+bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getLowerBoundaryLengthwise...\n\n" << std::flush;
-
     std::vector<size_t> surface_indices;
     if ( modeller_.preserveAboveIsActive(surface_indices) == false )
     {
-        std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; 
         return false;
     }
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
-
-            success = true;
-            break;
-        }
-    }
+    
+    bool success = getModelSupCurveAtWidth(surface_indices, cross_sec, vlist, flist);
 
     if ( !success )
     {
         return false;
     }
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
 
-        if ( getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] < tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
-
-    }
-
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
-
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
-
-    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
-
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
 
@@ -906,75 +1097,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
-    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
-
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
-    return true;
-}
-
-bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
-{
-    std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush;
-
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
-    {
-        std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; 
-        return false;
-    }
-
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
-
-            success = true;
-            break;
-        }
-    }
-
-    if ( !success )
-    {
-        return false;
-    }
-
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
-
-        if ( getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] < tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
-
-    }
-
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
-
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
-
-    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
+    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;

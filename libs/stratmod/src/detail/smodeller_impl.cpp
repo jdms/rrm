@@ -124,6 +124,34 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
     return surfaces_ids;
 }
 
+bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound_surfaces, std::vector<size_t> &upper_bound_surfaces)
+{
+    TetrahedralMeshBuilder mb(container_);
+    std::vector<size_t> lbound, ubound;
+
+    bool success = mb.mapAttributeToBoundingSurfaces(region_id, lbound, ubound);
+    if ( !success )
+    {
+        return false;
+    }
+
+    size_t cid;
+    for ( size_t i = 0; i < lower_bound_surfaces.size(); ++i )
+    {
+        getControllerIndex(lower_bound_surfaces[i], cid);
+        lower_bound_surfaces[i] = cid;
+    }
+
+    for ( size_t i = 0; i < upper_bound_surfaces.size(); ++i )
+    {
+        getControllerIndex(upper_bound_surfaces[i], cid);
+        upper_bound_surfaces[i] = cid;
+    }
+
+    return true;
+}
+
+
 #include <iostream>
 
 bool SModellerImplementation::lastInsertedSurfaceIntersects( std::vector<ControllerSurfaceIndex> &intersected_surfaces )
@@ -547,11 +575,15 @@ bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfa
 
 void SModellerImplementation::stopPreserveAbove()
 {
+    current_.bounded_below_ = false;
+    current_.lower_boundary_list_ = {};
     container_.stopDefineAbove();
 }
 
 void SModellerImplementation::stopPreserveBelow()
 {
+    current_.bounded_above_ = false;
+    current_.upper_boundary_list_ = {};
     container_.stopDefineBelow();
 }
 
