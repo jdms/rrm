@@ -48,7 +48,12 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
         border_.setColor( Qt::blue );
     }
     painter_->setRenderHint( QPainter::Antialiasing );
-    painter_->setPen( border_ );
+
+    if( has_border == true )
+        painter_->setPen( border_ );
+    else
+        painter_->setPen( Qt::NoPen );
+
     painter_->setBrush( fill_ );
     painter_->drawPolygon( plane );
 }
@@ -122,6 +127,19 @@ int PolygonItem::getBorderWidth() const
 {
     return border_width;
 }
+
+
+void PolygonItem::setBorderVisible( bool status_ )
+{
+    has_border = status_;
+    update();
+}
+
+bool PolygonItem::isBorderVisible() const
+{
+    return has_border;
+}
+
 
 void PolygonItem::setFillColor( int r_, int g_, int b_ )
 {

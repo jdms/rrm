@@ -151,11 +151,13 @@ public slots:
 
     void setObjectSelectedAsBoundering( const std::size_t& index_ );
     void selectBounderingBySketch( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  );
-    void definedBounderingBySketch();
     void getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
     void defineRandomColor();
+
+    void updateRegionBoundary();
+
 
 
 
@@ -199,11 +201,14 @@ signals:
     void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
     void unlockDirections();
 
-    void selectEnabled( const std::string& status_ );
+    void selectEnabled( const std::string& option_, bool status_ = true );
+
+    void enablePreserve( const std::string& option_, bool status_ = true );
+
     void setCurrentColor( int r_, int g_, int b_ );
 
-
-        void setCurveAsBoundering( const PolyCurve& boundary_ );
+    void setCurveAsBoundering( const PolyCurve& boundary_ );
+    void clearBounderingArea();
 
 
 

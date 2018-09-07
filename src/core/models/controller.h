@@ -215,7 +215,12 @@ class Controller
         void setRemoveBelowIntersection();
         void applyStratigraphicRule();
 
-        bool enableCreateAbove();
+
+        // Enable Preserve Above/Below -- new methods
+        void enablePreserveAbove( bool status_ );
+        void enablePreserveBelow( bool status_ );
+
+
         void stopCreateAbove();
         bool requestCreateAbove();
         void stopCreateBelow();
@@ -230,7 +235,7 @@ class Controller
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
         bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
-        void definedRegionBounderingBySketch();
+
         bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
         void getRegionByPointAsBoundering();
 
@@ -255,6 +260,8 @@ class Controller
         bool canUndo();
         bool canRedo();
 
+        bool updateRegionBoundary( PolyCurve& boundary_ );
+        void clearBounderingArea();
 
 
     protected:

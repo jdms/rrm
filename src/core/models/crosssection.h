@@ -139,7 +139,7 @@ class CrossSection: public Object
             std::vector<size_t> edges_upper;
             std::vector<float> vertices_lower;
             std::vector<size_t> edges_lower;
-            bool empty = false;
+            bool empty = true;
 
         } boundering;
 
