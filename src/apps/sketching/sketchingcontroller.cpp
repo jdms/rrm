@@ -161,6 +161,8 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
         csection_->getBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
         scene_->setBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
     }
+    else
+        scene_->clearBoundaryCurve();
 }
 
 

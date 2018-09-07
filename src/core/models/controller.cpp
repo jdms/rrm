@@ -1375,37 +1375,37 @@ Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
 }
 
 
-bool Controller::enableCreateAbove()
+// Enable/Stop Preserve Above -- new methods
+
+void Controller::enablePreserveAbove( bool status_ )
 {
-    return requestCreateAbove();
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+    else
+        rules_processor.stopPreserveAbove();
 
 }
 
 
-void Controller::stopCreateAbove()
-{
-    std::cout << "Stop create above accepted" << std::endl << std::flush;
-    rules_processor.stopDefineAbove();
 
-    for( std::size_t id_: selectable_objects )
-    {
-        ObjectPtr& obj_ = model.objects[ id_ ];
-        obj_->setSelectable( false );
-    }
-    selectable_objects.clear();
-    setObjectSelected( upper_index, false );
+
+// Enable/Stop Preserve Below -- new methods
+
+void Controller::enablePreserveBelow( bool status_ )
+{
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+    else
+        rules_processor.stopPreserveBelow();
 
 }
 
+
+
+// Request/Stop Create Above -- old methods
 
 bool Controller::requestCreateAbove()
 {
-
-    boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-    return true;
-
-
-/*
 
     bool request_ = rules_processor.requestCreateAbove( selectable_objects );
 
@@ -1426,25 +1426,27 @@ bool Controller::requestCreateAbove()
         std::cout << "Request create denied" << std::endl << std::flush;
 
     return request_ ;
-*/
+
 }
 
 
-void Controller::stopCreateBelow()
+void Controller::stopCreateAbove()
 {
-    std::cout << "Stop create below accepted" << std::endl << std::flush;
-    rules_processor.stopDefineBelow();
+    std::cout << "Stop create above accepted" << std::endl << std::flush;
+    rules_processor.stopDefineAbove();
 
     for( std::size_t id_: selectable_objects )
     {
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
-    setObjectSelected( bottom_index, false );
     selectable_objects.clear();
+    setObjectSelected( upper_index, false );
 
 }
 
+
+// Request/Stop Create Below -- old methods
 
 bool Controller::requestCreateBelow()
 {
@@ -1480,22 +1482,22 @@ bool Controller::requestCreateBelow()
 }
 
 
-void Controller::stopCreateRegion()
+void Controller::stopCreateBelow()
 {
-
-    std::cout << "Stop create region accepted" << std::endl << std::flush;
-//    rules_processor.stopDefineRegion();
+    std::cout << "Stop create below accepted" << std::endl << std::flush;
+    rules_processor.stopDefineBelow();
 
     for( std::size_t id_: selectable_objects )
     {
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
-//    setObjectSelected( bottom_index, false );
-//    selectable_objects.clear();
-
+    setObjectSelected( bottom_index, false );
+    selectable_objects.clear();
 
 }
+
+
 
 // deprecated
 bool Controller::requestCreateRegion()
@@ -1523,6 +1525,25 @@ bool Controller::requestCreateRegion()
 
     return false;
 }
+
+
+void Controller::stopCreateRegion()
+{
+
+    std::cout << "Stop create region accepted" << std::endl << std::flush;
+//    rules_processor.stopDefineRegion();
+
+    for( std::size_t id_: selectable_objects )
+    {
+        ObjectPtr& obj_ = model.objects[ id_ ];
+        obj_->setSelectable( false );
+    }
+//    setObjectSelected( bottom_index, false );
+//    selectable_objects.clear();
+
+
+}
+
 
 
 
@@ -1639,9 +1660,49 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 }
 
 
-void Controller::definedRegionBounderingBySketch()
+bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 {
-// stop the iterative method to define region using sketches
+
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
+
+    bool status_ = false;
+
+
+    if( rules_processor.preserveAboveIsActive() == true )
+    {
+
+        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        {
+            rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+        }
+        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+        {
+            rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+        }
+
+        status_ = true;
+    }
+
+    else if( rules_processor.preserveBelowIsActive() == true )
+    {
+
+        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        {
+            rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+        }
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+            rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+
+        }
+
+        status_ = true;
+
+    }
+
+    boundary_.fromVector( vertices_, edges_ );
+    return status_;
 }
 
 
@@ -1710,6 +1771,12 @@ void Controller::getRegionByPointAsBoundering()
 
     csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
+}
+
+
+void Controller::clearBounderingArea()
+{
+    csection->clearBounderingArea();
 }
 
 
