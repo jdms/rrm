@@ -15,7 +15,7 @@ When adding or updating an entry, please provide all the aforementioned
 information and update this document's header with the modification date.  
 
 
-## Libraries currently in use in RRM
+## Libraries currently in use
 
 #. [Qt 5.11](https://www.qt.io/)
     + Retrieved: August 15, 2018
@@ -70,13 +70,6 @@ information and update this document's header with the modification date.
     + Description: Tiny but powerful single file wavefront obj loader written
       in C++. No dependency except for C++ STL. It can parse over 10M polygons
       with moderate memory and time.
-
-#. [GLM](https://glm.g-truc.net/0.9.9/index.html) 
-    + Retrieved: August 15, 2018
-    + Licenses: [MIT], [Happy Bunny License (GLM Modified MIT)]
-    + Description: OpenGL Mathematics (GLM) is a header only C++ mathematics
-      library for graphics software based on the OpenGL Shading Language (GLSL)
-      specifications.
 
 #. [cereal](https://github.com/USCiLab/cereal) 
     + Retrieved: August 15, 2018
@@ -153,7 +146,8 @@ information and update this document's header with the modification date.
       generated with no small or large angles, and are thus suitable for finite
       element analysis. 
 
-## Unused libraries still present in the main RRM repository
+
+## Unused libraries still present in the main repository
 
 #. [OpenVolumeMesh](https://www.openvolumemesh.org)
     + Retrieved: August 15, 2018
@@ -175,6 +169,5 @@ information and update this document's header with the modification date.
 [Glew Modified BSD]: http://glew.sourceforge.net/glew.txt
 [MESA 3-D]: http://glew.sourceforge.net/mesa.txt
 [KHRONOS]: http://glew.sourceforge.net/khronos.txt
-[Happy Bunny License (GLM Modified MIT)]: http://glm.g-truc.net/copying.txt
 [Shewchuck's license]: https://www.cs.cmu.edu/~quake/triangle.html
 
