@@ -359,6 +359,83 @@ bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vecto
     return false;
 }
 
+template<typename T>
+void fromUpperBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, double min_height )
+{
+    size_t last_vertex_id = flist.back();
+
+    // from last vertex to right lower bbox
+    double last_abscissa = vlist[ 2*last_vertex_id ];
+    vlist.push_back(last_abscissa);
+    vlist.push_back(min_height);
+    flist.push_back(last_vertex_id);
+    flist.push_back(last_vertex_id+1);
+
+    // from right lower bbox to left lower bbox
+    double first_abscissa = vlist[ 0 ];
+    vlist.push_back(first_abscissa);
+    vlist.push_back(min_height);
+    flist.push_back(last_vertex_id+1);
+    flist.push_back(last_vertex_id+2);
+
+    // from left lower bbox to first vertex
+    flist.push_back(last_vertex_id+2);
+    flist.push_back(0);
+
+
+    // see what is going on
+    std::cout << "\n\nPB Box: \n" 
+        << "(" << vlist[0] << ", " << vlist[1] << ") -- "
+        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << "); \n"
+
+        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << ") -- "
+        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << "); \n"
+
+        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << ") -- "
+        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << "); \n"
+
+        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << ") -- \n"
+        << "(" << vlist[ 0 ] << ", " << vlist[ 1 ] << "); \n\n" << std::flush;
+}
+
+template<typename T>
+void fromLowerBoundarytoBox( std::vector<T> &vlist, std::vector<size_t> &flist, double max_height )
+{
+    size_t last_vertex_id = flist.back();
+
+    // from last vertex to right lower bbox
+    double last_abscissa = vlist[ 2*last_vertex_id ];
+    vlist.push_back(last_abscissa);
+    vlist.push_back(max_height);
+    flist.push_back(last_vertex_id);
+    flist.push_back(last_vertex_id+1);
+
+    // from right lower bbox to left lower bbox
+    double first_abscissa = vlist[ 0 ];
+    vlist.push_back(first_abscissa);
+    vlist.push_back(max_height);
+    flist.push_back(last_vertex_id+1);
+    flist.push_back(last_vertex_id+2);
+
+    // from left lower bbox to first vertex
+    flist.push_back(last_vertex_id+2);
+    flist.push_back(0);
+
+    // see what is going on
+    std::cout << "\n\nPA Box: \n" 
+        << "(" << vlist[0] << ", " << vlist[1] << ") -- "
+        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << "); \n"
+
+        << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << ") -- "
+        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << "); \n"
+
+        << "(" << vlist[ 2*(last_vertex_id+1) ] << ", " << vlist[ 2*(last_vertex_id+1) +1 ] << ") -- "
+        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << "); \n"
+
+        << "(" << vlist[ 2*(last_vertex_id+2) ] << ", " << vlist[ 2*(last_vertex_id+2) +1 ] << ") -- \n"
+        << "(" << vlist[ 0 ] << ", " << vlist[ 1 ] << "); \n\n" << std::flush;
+}
+
 bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
     std::cout << "\n\n\nInside getUpperBoundaryLengthwise...\n\n" << std::flush;
@@ -420,6 +497,8 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+
+    fromUpperBoundarytoBox(vlist, flist, origin_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
@@ -487,6 +566,8 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
+    fromUpperBoundarytoBox(vlist, flist, origin_.y);
+
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
@@ -552,6 +633,8 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+
+    fromUpperBoundarytoBox(vlist, flist, origin_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
@@ -619,6 +702,8 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
+    fromUpperBoundarytoBox(vlist, flist, origin_.y);
+
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
@@ -684,6 +769,8 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+
+    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
@@ -751,6 +838,8 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
+    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
+
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
@@ -817,6 +906,8 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
 
+    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
+
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
 }
@@ -882,6 +973,8 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
     std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
     std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+
+    fromLowerBoundarytoBox(vlist, flist, origin_.y+length_.y);
 
     std::cout << "Got boundary curve\n\n\n" << std::flush; 
     return true;
@@ -1297,11 +1390,11 @@ bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width,
     /* std::cout << "\n\nInside getWidthCrossSectionCurve() [double]\n\n" << std::flush; */
     /* if ( (width % 2) == 0 ) */
     /* { */
-        /* return getUpperBoundaryLengthwiseCrossSection(width, vlist, elist); */
+    /*     return getUpperBoundaryLengthwiseCrossSection(width, vlist, elist); */
     /* } */
     /* else */
     /* { */
-        /* return getLowerBoundaryLengthwiseCrossSection(width, vlist, elist); */
+    /*     return getLowerBoundaryLengthwiseCrossSection(width, vlist, elist); */
     /* } */
 
     return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist);
