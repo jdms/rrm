@@ -207,6 +207,7 @@
             bool preserveAbove( std::vector<std::size_t> &surface_indices_list );
             bool preserveBelow( std::vector<std::size_t> &surface_indices_list );
 
+            // DEPRECATED
             bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
             bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
 
@@ -229,6 +230,37 @@
 
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+            // END DEPRECATED
+
+            // KK: please, use these instead of get[Lower,Upper]Boundary...
+            bool getPreserveAboveCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getPreserveAboveCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            // KK: these allow you to paint the 2D cross-sections with a region color
+            bool getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+            bool getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+
+            // KK: these are internal methods, for my own use
+            bool getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
 
             /////////////////////////////////////////////////////////////////////////////
 
