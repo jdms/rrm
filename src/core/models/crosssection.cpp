@@ -436,8 +436,8 @@ void CrossSection::setBounderingArea( const std::vector< float >& vupper_,  cons
     boundering.edges_upper.assign( edupper_.begin(), edupper_.end() );
 
 
-    boundering.edges_lower.clear();
-    boundering.edges_lower.assign( vlower_.begin(), vlower_.end() );
+    boundering.vertices_lower.clear();
+    boundering.vertices_lower.assign( vlower_.begin(), vlower_.end() );
 
     boundering.edges_lower.clear();
     boundering.edges_lower.assign( edlower_.begin(), edlower_.end() );

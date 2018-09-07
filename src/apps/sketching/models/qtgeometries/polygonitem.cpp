@@ -24,6 +24,12 @@ QPainterPath PolygonItem::shape() const
     return path;
 }
 
+void PolygonItem::setPolygon( const QPolygonF& pol_ )
+{
+    plane = pol_;
+    update();
+}
+
 void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ )
 {
 
@@ -41,9 +47,6 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
     {
         border_.setColor( Qt::blue );
     }
-
-
-
     painter_->setRenderHint( QPainter::Antialiasing );
     painter_->setPen( border_ );
     painter_->setBrush( fill_ );

@@ -363,6 +363,29 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 
 
 
+void RRMApplication::createDomain( std::size_t index_ )
+{
+    controller->createDomain( index_ );
+}
+
+void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
+{
+    controller->addRegionToDomain( reg_id_, domain_id_ );
+}
+
+void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
+{
+    controller->removeRegionFromDomain( reg_id_, domain_id_ );
+}
+
+void RRMApplication::removeDomain( std::size_t index_ )
+{
+//    controller->
+}
+
+
+
+
 void RRMApplication::setSketchAbove( bool status_ )
 {
 
