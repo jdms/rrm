@@ -575,11 +575,15 @@ bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfa
 
 void SModellerImplementation::stopPreserveAbove()
 {
+    current_.bounded_below_ = false;
+    current_.lower_boundary_list_ = {};
     container_.stopDefineAbove();
 }
 
 void SModellerImplementation::stopPreserveBelow()
 {
+    current_.bounded_above_ = false;
+    current_.upper_boundary_list_ = {};
     container_.stopDefineBelow();
 }
 
