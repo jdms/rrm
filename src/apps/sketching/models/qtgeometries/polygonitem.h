@@ -45,6 +45,8 @@ class PolygonItem: public QGraphicsPolygonItem
 
         virtual bool isVisible() const { return QGraphicsPolygonItem::isVisible(); }
 
+        void setPolygon( const QPolygonF& pol_ );
+
 
     protected:
 
