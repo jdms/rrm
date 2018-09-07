@@ -796,7 +796,7 @@ bool TetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, s
     auto attrib = it->first;
     index = 0;
 
-    for ( auto &sid_is_present : attrib )
+    for ( auto sid_is_present : attrib )
     {
         if ( sid_is_present )
         {
