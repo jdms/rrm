@@ -1196,6 +1196,15 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
 }
 
 
+void Controller::removeDomain(std::size_t domain_id_)
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    for( auto it_: model.domains )
+        removeRegionFromDomain( it_.first, domain_id_ );
+
+    model.domains.erase( domain_id_ );
+}
 
 ///==========================================================================
 
