@@ -380,7 +380,7 @@ void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t do
 
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-//    controller->
+    controller->removeDomain( index_ );
 }
 
 
