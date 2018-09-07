@@ -230,6 +230,33 @@
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
+            bool getPreserveAboveCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getPreserveAboveCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+
+            bool getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+            bool getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+            bool getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
             /////////////////////////////////////////////////////////////////////////////
 
 

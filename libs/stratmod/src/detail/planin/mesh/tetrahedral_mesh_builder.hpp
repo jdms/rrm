@@ -60,6 +60,8 @@ class TetrahedralMeshBuilder
 
         bool mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list );
 
+        bool mapAttributeToBoundingSurfaces( std::size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound );
+
 
     private:
         SRules &container_;

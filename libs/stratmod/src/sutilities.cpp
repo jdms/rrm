@@ -651,6 +651,11 @@ bool SUtilities::liesBetweenBoundarySurfaces(double x, double y, double z)
     return model_.pimpl_->container_.liesBetweenBoundarySurfaces(p);
 }
 
+bool SUtilities::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound)
+{
+    return model_.pimpl_->getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
+}
+
 std::vector<size_t> SUtilities::getSurfacesIndicesBelowPoint(double x, double y, double z)
 {
     return model_.pimpl_->getSurfacesIndicesBelowPoint(x, y, z);
