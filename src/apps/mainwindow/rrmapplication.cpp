@@ -336,10 +336,9 @@ void RRMApplication::getRegions()
         reg_->getColor( r_, g_, b_ );
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
 
-        PolyCurve upper_, lower_;
-        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex(), upper_, lower_ );
+        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex() );
         if( status_ == true )
-            emit addRegionCrossSectionBoundary( reg_, upper_, lower_ );
+            emit addRegionCrossSectionBoundary( reg_ );
     }
 
     emit addRegions();
@@ -493,12 +492,13 @@ void RRMApplication::setSketchRegion( bool status_ )
 
 void RRMApplication::updateRegionBoundary()
 {
+    emit clearBounderingArea();
+
     PolyCurve boundary_;
     bool status_ = controller->updateRegionBoundary( boundary_ );
 
-    if( status_ == false )
-        emit clearBounderingArea();
-    else
+
+    if( status_ == true )
         emit setCurveAsBoundering( boundary_ );
 }
 

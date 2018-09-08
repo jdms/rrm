@@ -1066,10 +1066,30 @@ void Controller::defineRegions()
 }
 
 
-bool Controller::getRegionCrossSectionBoundary( std::size_t index_ , const PolyCurve& upper_, const PolyCurve& lower_ )
+bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {
-    return false;
+    if( model.regions.find( index_ ) == model.regions.end() )
+        return false;
+
+    RegionsPtr region_ = model.regions[ index_ ];
+
+    std::vector<double> vertices_upper_;
+    std::vector<size_t> edges_upper_;
+    std::vector<double> vertices_lower_;
+    std::vector<size_t> edges_lower_;
+
+    rules_processor.getRegionCurveBoxesAtLength( index_, csection->getDepth(), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+
+    PolyCurve lower_, upper_;
+    lower_.fromVector( vertices_lower_, edges_lower_ );
+    upper_.fromVector( vertices_upper_, edges_upper_ );
+
+    region_->setLowerBound( lower_ );
+    region_->setUpperBound( upper_ );
+
+    return true;
 }
+
 
 
 void Controller::setRegionsVisible(bool status_)
@@ -1674,6 +1694,7 @@ bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 
     bool status_ = false;
 
+    boundary_.clear();
 
     if( rules_processor.preserveAboveIsActive() == true )
     {

@@ -581,6 +581,7 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
 void SketchScene::defineBounderingArea()
 {
 
+
     if( ( lower.isEmpty() == false ) && ( upper.isEmpty() == false ) )
     {
         QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
@@ -625,6 +626,7 @@ void SketchScene::clearBoundaryCurve()
 {
     boudering_area->clear();
     boudering_area->setVisible( false );
+
     update();
 }
 

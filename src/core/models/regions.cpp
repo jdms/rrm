@@ -144,6 +144,30 @@ void Regions::getVertices( std::vector< double >& vertices_  ) const
 }
 
 
+
+void Regions::setLowerBound( const PolyCurve& lower_ )
+{
+    lower = lower_;
+}
+
+void Regions::setUpperBound( const PolyCurve& upper_ )
+{
+    upper = upper_;
+}
+
+const PolyCurve& Regions::getLowerBound() const
+{
+    return lower;
+}
+
+const PolyCurve& Regions::getUpperBound() const
+{
+    return upper;
+}
+
+
+
+
 ///====================================================================
 
 

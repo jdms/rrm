@@ -76,6 +76,11 @@ class Regions: public Object
 
 
 
+        void setLowerBound( const PolyCurve& lower_ );
+        void setUpperBound( const PolyCurve& upper_ );
+        const PolyCurve& getLowerBound() const;
+        const PolyCurve& getUpperBound() const;
+
         void clearVertices();
 
         void setMaxMin( double maxx_, double maxy_, double maxz_,
@@ -113,6 +118,9 @@ class Regions: public Object
 
         std::vector< std::size_t > index_cells;
         std::vector< double > vertices;
+
+        PolyCurve lower;
+        PolyCurve upper;
 
         Color color;
 };
