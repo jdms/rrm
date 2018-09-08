@@ -263,7 +263,7 @@ class Controller
         bool updateRegionBoundary( PolyCurve& boundary_ );
         void clearBounderingArea();
 
-        bool getRegionCrossSectionBoundary( std::size_t index_ , const PolyCurve& upper_, const PolyCurve& lower_ );
+        bool getRegionCrossSectionBoundary( std::size_t index_ );
 
 
     protected:

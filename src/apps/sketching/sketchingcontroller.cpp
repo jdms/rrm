@@ -282,6 +282,12 @@ void SketchingController::clearCurveAsBoundering()
 }
 
 
+void SketchingController::addRegion( const RegionsPtr& reg_  )
+{
+    main_scene->addRegion( reg_ );
+}
+
+
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
 
