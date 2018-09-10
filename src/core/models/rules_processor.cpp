@@ -1619,7 +1619,25 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    return (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+    bool success = (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+
+    if ( success )
+    {
+        std::vector<double> volumes;
+        SUtilitiesWrapper u(modeller_);
+        u.getRegionVolumeList(volumes);
+        
+        double total = 0;
+        std::cout << "\n\n\nRegions' volumes: \n\n";
+        for ( size_t i = 0; i < volumes.size(); ++i )
+        {
+            std::cout << "Volume(" << i << ") = " << volumes[i] << " m3\n";
+            total += volumes[i];
+        }
+        std::cout << "\nTotal = " << total << " m3\n\n\n" <<std::flush;
+    }
+
+    return success;
 }
 
 #include <iterator>
