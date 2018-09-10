@@ -335,6 +335,10 @@ void RRMApplication::getRegions()
         int r_, g_, b_;
         reg_->getColor( r_, g_, b_ );
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+
+        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex() );
+        if( status_ == true )
+            emit addRegionCrossSectionBoundary( reg_ );
     }
 
     emit addRegions();
@@ -380,7 +384,7 @@ void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t do
 
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-//    controller->
+    controller->removeDomain( index_ );
 }
 
 
@@ -389,43 +393,63 @@ void RRMApplication::removeDomain( std::size_t index_ )
 void RRMApplication::setSketchAbove( bool status_ )
 {
 
-    if( status_ == true )
-    {
-        bool enabled_ = controller->requestCreateAbove();
-        if( enabled_ )
-            emit selectEnabled( "ABOVE" );
-        else
-            emit selectEnabled( "NONE" );
-    }
-    else
-    {
-        controller->stopCreateAbove();
-        emit selectEnabled( "NONE" );
-    }
+    controller->enablePreserveAbove( status_ );
 
+    if( status_ == false )
+        updateRegionBoundary();
+
+    emit enablePreserve( "ABOVE ", status_ );
     emit updateObjects();
+
+
+
+
+//    if( status_ == true )
+//    {
+//        bool enabled_ = controller->enablePreserveAbove();
+//        if( enabled_ )
+//            emit selectEnabled( "ABOVE", true );
+//        else
+//            emit selectEnabled( "ABOVE", false );
+//    }
+//    else
+//    {
+//        controller->stopCreateAbove();
+//        emit selectEnabled( "NONE" );
+//    }
+
+//    emit updateObjects();
 
 }
 
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
+    controller->enablePreserveBelow( status_ );
 
-    if( status_ == true )
-    {
-        bool enabled_ = controller->requestCreateBelow();
-        if( enabled_ )
-            emit selectEnabled( "BELOW" );
-        else
-            emit selectEnabled( "NONE" );
-    }
-    else
-    {
-        controller->stopCreateBelow();
-        emit selectEnabled( "NONE" );
-    }
+    if( status_ == false )
+        updateRegionBoundary();
 
+    emit enablePreserve( "BELOW ", status_ );
     emit updateObjects();
+
+
+
+//    if( status_ == true )
+//    {
+//        bool enabled_ = controller->requestCreateBelow();
+//        if( enabled_ )
+//            emit selectEnabled( "BELOW", status_ );
+//        else
+//            emit selectEnabled( "BELOW", false );
+//    }
+//    else
+//    {
+//        controller->stopCreateBelow();
+//        emit selectEnabled( "NONE" );
+//    }
+
+//    emit updateObjects();
 
 }
 
@@ -433,19 +457,49 @@ void RRMApplication::setSketchBelow( bool status_ )
 void RRMApplication::setSketchRegion( bool status_ )
 {
 
-    if( status_ == true )
-    {
-        emit selectEnabled( "REGION" );
-    }
-    else
-    {
-        emit selectEnabled( "NONE" );
-    }
+
+    emit enablePreserve( "REGION", status_ );
 
 
+    if( status_ == false )
+    {
+        controller->clearBounderingArea();
+        window->activatePreserveAbove( false );
+        window->activatePreserveBelow( false );
+    }
 
     emit updateObjects();
+    emit updateMainCrossSection();
 
+
+//    if( status_ == true )
+//    {
+//        emit selectEnabled( "REGION", status_ );
+//    }
+//    else
+//    {
+//        emit selectEnabled( "NONE" );
+
+//        window->activatePreserveAbove( false );
+//        window->activatePreserveBelow( false );
+
+//    }
+
+//    emit updateObjects();
+
+}
+
+
+void RRMApplication::updateRegionBoundary()
+{
+    emit clearBounderingArea();
+
+    PolyCurve boundary_;
+    bool status_ = controller->updateRegionBoundary( boundary_ );
+
+
+    if( status_ == true )
+        emit setCurveAsBoundering( boundary_ );
 }
 
 
@@ -482,13 +536,6 @@ void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const S
 
     }
 
-}
-
-
-void RRMApplication::definedBounderingBySketch()
-{
-    controller->definedRegionBounderingBySketch();
-    emit updateObjects();
 }
 
 

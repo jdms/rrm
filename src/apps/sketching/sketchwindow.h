@@ -65,6 +65,7 @@ class SketchWindow: public QMainWindow
         void disableResizeVolume( bool status_ );
 
         void setModeSelecting( bool status_ );
+        void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
 
 

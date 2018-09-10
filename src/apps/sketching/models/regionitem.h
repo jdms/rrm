@@ -5,6 +5,8 @@
 
 #include "./core/models/regions.h"
 #include "./qtgeometries/polygonitem.h"
+#include "./qtgeometries/curveitem.h"
+
 
 class RegionItem: public PolygonItem
 {
