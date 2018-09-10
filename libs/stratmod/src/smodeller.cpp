@@ -67,7 +67,8 @@ std::vector<std::size_t> SModeller::getOrderedSurfacesIndices()
         return surfaces_indices;
     }
 
-    pimpl_->mesh_->getOrderedSurfaceList(surfaces_indices);
+    // BUG: surfaces_indices must be translated into the controller's indices
+    pimpl_->mesh_->getOrderedSurfaceIndicesList(surfaces_indices);
 
     return surfaces_indices;
 }
