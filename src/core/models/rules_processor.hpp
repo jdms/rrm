@@ -405,6 +405,9 @@
             bool testing_surface_insertion_ = false;
             bool last_surface_inserted_is_a_test_ = false;
 
+            std::vector<size_t> lower_model_ = std::vector<size_t>();
+            std::vector<size_t> upper_model_ = std::vector<size_t>();
+
             // DEPRECATED
             bool truncate_surface_ = false; 
 

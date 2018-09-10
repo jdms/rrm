@@ -149,10 +149,157 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
     return true;
 }
 
+#include <algorithm>
+
+bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> &ordered_surface_indices )
+{
+    /* std::vector<size_t> ordered_surface_indices = {}; */
+
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    std::cout << "\n\n\nTrying to order the surfaces.\n\n";
+
+    auto set_minus = [] ( std::vector<size_t> minuend, std::vector<size_t> subtrahend ) -> std::vector<size_t>
+    {
+        std::vector<size_t> result;
+
+        std::sort(minuend.begin(), minuend.end());
+        std::sort(subtrahend.begin(), subtrahend.end());
+
+        std::set_difference(minuend.begin(), minuend.end(), subtrahend.begin(), subtrahend.end(), std::back_inserter(result));
+
+        return result;
+    };
+
+    std::vector<size_t> lower_bound, upper_bound, current;
+    size_t attribute;
+    bool success;
+
+    ordered_surface_indices.clear();
+
+    for ( auto it = attributes_map.begin(); it != attributes_map.end(); ++it )
+    {
+        attribute = it->second;
+        success = mapAttributeToBoundingSurfaces(attribute, lower_bound, upper_bound);
+        if ( !success )
+        {
+            std::cout << "\nFailed to get lower and upper bounds\n" << std::flush;
+            return false;
+        }
+
+        if ( it == attributes_map.begin() )
+        {
+            std::cout << "Initial step:\n    lower_bound --> ";
+            for ( auto &i : lower_bound )
+            {
+                std::cout << i << " ";
+            }
+
+            if ( lower_bound.size() > 1 )
+            {
+                std::cout << "\nInitial step: lower_bound.size() =" << lower_bound.size() << "\n" << std::flush;
+                return false;
+            }
+
+            ordered_surface_indices.push_back( lower_bound.front() );
+
+            std::cout << "\n    ordered_surface_indices --> ";
+            for ( auto &i : ordered_surface_indices )
+            {
+                std::cout << i << " ";
+            }
+            std::cout << "\n" << std::flush;
+        }
+        else
+        {
+            current = set_minus(lower_bound, ordered_surface_indices);
+
+            std::cout << "Intermediate step:\n    lower_bound --> ";
+            for ( auto &i : lower_bound )
+            {
+                std::cout << i << " ";
+            }
+            std::cout << "\n    current --> ";
+            for ( auto &i : current )
+            {
+                std::cout << i << " ";
+            }
+
+            if ( current.size() > 1 )
+            {
+                std::cout << "\nIntermediate step: current.size() =" << current.size() << "\n" << std::flush;
+                return false;
+            }
+
+            ordered_surface_indices.push_back( current.front() );
+
+            std::cout << "\n    ordered_surface_indices --> ";
+            for ( auto &i : ordered_surface_indices )
+            {
+                std::cout << i << " ";
+            }
+            std::cout << "\n" << std::flush;
+        }
+    }
+
+    std::cout << "Final step:\n    upper_bound --> ";
+    for ( auto &i : upper_bound )
+    {
+        std::cout << i << " ";
+    }
+
+    if ( upper_bound.size() > 1 )
+    {
+        std::cout << "\nFinal step: upper_bound.size() =" << upper_bound.size() << "\n" << std::flush;
+        return false;
+    }
+    
+    ordered_surface_indices.push_back( upper_bound.front() );
+    
+    std::cout << "\n    ordered_surface_indices --> ";
+    for ( auto &i : ordered_surface_indices )
+    {
+        std::cout << i << " ";
+    }
+    std::cout << "\n" << std::flush;
+
+    //
+    // O0 = empty;
+    //
+    // Step 1: #( L(R1) ) = 1; #( R(R1) ) > 1;
+    //          O1 = L(R1)
+    //
+    // Step k: #( L(Rk) \ O{k-1} ) = 1; #( R(Rk) ) > 1;
+    //          Sk = L(Rk) \ O{k-1}
+    //          Ok = { O{k-1} < Sk } 
+    //
+    // Step n: n = num_regions = num_surfaces - 1; #( L(Rn) \ O{n-1} ) = 1; #( R(Rn) ) = 1;
+    //          Sn = L(Rn) \ O{n-1}
+    //          On = { O{n-1} < Sn < R(Rn) }
+    //
+
+    return true;
+}
+
 size_t TetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &tetrahedron_list )
 {
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    /* bool status = buildPrismMesh(prism_list); */
+
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
@@ -259,6 +406,9 @@ bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
     {
         return false;
     }
+
+    attributes_map = computeAttributeMap(prism_list);
+    mesh_is_built = true;
 
     return true;
 }
@@ -665,7 +815,7 @@ size_t TetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  
 
 std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuilder::computeAttributeMap( const std::vector<Prism> &prism_list )
 {
-    std::map< AttributeType, size_t > attributes_map;
+    std::map< AttributeType, size_t > __attributes_map;
 
     //
     // Process attributes
@@ -677,18 +827,18 @@ std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuil
     for ( size_t p = 0; p < prism_list.size(); ++p )
     {
         pre_processed_attributes[p] = prism_list[p].getAttribute();
-        attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
+        __attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
     }
 
     size_t i = 0;
 
-    for ( auto &att : attributes_map )
+    for ( auto &att : __attributes_map )
     {
         att.second = i;
         ++i;
     }
 
-    return attributes_map;
+    return __attributes_map;
 }
 
 bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
@@ -698,15 +848,19 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
         return false;
     }
 
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
         return false;
     }
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     size_t size_att = TetrahedralMeshBuilder::numSurfaces;
 
@@ -767,20 +921,24 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
 
 bool TetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
 {
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
         return false;
     }
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     auto it = attributes_map.begin();
     size_t index;
 
-    for ( index = 0; (index <= attribute) && (it != attributes_map.end()); ++index )
+    for ( index = 0; (index < attribute) && (it != attributes_map.end()); ++index )
     {
         ++it;
     }

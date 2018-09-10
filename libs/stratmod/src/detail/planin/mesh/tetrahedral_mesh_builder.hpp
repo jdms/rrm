@@ -37,6 +37,8 @@ class TetrahedralMeshBuilder
         /* template<typename VertexList, typename ElementList, typename VolumeList> */
         /* size_t tetrahedralize( VertexList &, std::vector<ElementList> &, VolumeList & ); */
 
+        bool getOrderedSurfaceList ( std::vector<size_t> & );
+
         template<typename VertexList>
         size_t getRawVertexCoordinates( VertexList & );
 
@@ -48,6 +50,9 @@ class TetrahedralMeshBuilder
 
         template<typename ElementList>
         size_t getTetrahedronList( std::vector<ElementList> & );
+
+        template<typename VolumeList>
+        bool getRegionVolumeList( VolumeList & );
 
         template<typename VertexList, typename ElementList, typename VolumeList>
         static bool computeVolumes( const VertexList &, const ElementList &, VolumeList & );
@@ -65,6 +70,10 @@ class TetrahedralMeshBuilder
 
     private:
         SRules &container_;
+
+        std::vector<Prism> prism_list;
+        std::map< AttributeType, size_t > attributes_map;
+        bool mesh_is_built = false;
 
         // BUG: VS2013 does not support constexpr
         /* static constexpr size_t numPrismsPerBlock = 8; */
@@ -223,8 +232,12 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Tetrahedron> &t
 template<typename ElementList, typename AttributeList>
 size_t TetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, AttributeList &alist )
 {
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
@@ -239,8 +252,12 @@ size_t TetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, Attribute
 template<typename ElementList>
 size_t TetrahedralMeshBuilder::getTetrahedronList( std::vector<ElementList> &elist )
 {
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
@@ -251,6 +268,45 @@ size_t TetrahedralMeshBuilder::getTetrahedronList( std::vector<ElementList> &eli
     size_t num_tetrahedra = getElementList(prism_list, elist);
 
     return num_tetrahedra; 
+}
+
+template<typename VolumeList>
+bool TetrahedralMeshBuilder::getRegionVolumeList( VolumeList &vlist )
+{
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
+
+    if ( status == false )
+    {
+        /* std::cout << "Failed to build prism mesh\n"; */
+        return 0;
+    }
+
+    std::vector<Tetrahedron> tetrahedra;
+
+    auto it = attributes_map.begin();
+    size_t attribute;
+
+    vlist.clear();
+    vlist.resize( attributes_map.size(), 0 );
+
+    for ( size_t p = 0; p < prism_list.size(); ++p )
+    {
+        tetrahedra = prism_list[p].tetrahedralize();
+
+        for ( size_t t = 0; t < tetrahedra.size(); ++t )
+        {
+            it = attributes_map.find( tetrahedra[t].getAttribute() );
+            attribute = it->second;
+
+            vlist[attribute] += tetrahedra[t].getVolume();
+        }
+    }
+
+    return true;
 }
 
 template<typename ElementList, typename AttributeList>
@@ -280,7 +336,7 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
     /*     ++i; */
     /* } */
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     //
     // Get tetrahedra
@@ -342,7 +398,7 @@ size_t TetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_l
     /*     ++i; */
     /* } */
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     //
     // Get tetrahedra

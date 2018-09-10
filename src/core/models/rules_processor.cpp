@@ -149,11 +149,13 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 
 void RulesProcessor::stopPreserveAbove()
 {
+    lower_model_ = {};
     modeller_.stopPreserveAbove();
 }
 
 void RulesProcessor::stopPreserveBelow()
 {
+    upper_model_ = {};
     modeller_.stopPreserveBelow();
 }
 
@@ -183,38 +185,57 @@ bool RulesProcessor::preserveBelowIsActive()
 bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
 {
     std::cout << "\n" << point[0] << ", " << point[1] << ", " << point[2] << "\n\n" << std::flush;
-	SUtilitiesWrapper u(modeller_);
-	auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
-	auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
-	
-	bool success = preserveBelow(upper_model);
-	success &= preserveAbove(lower_model);
-	
-	return success;
+    SUtilitiesWrapper u(modeller_);
+    auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
+    auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
+
+    stopPreserveBelow();
+    stopPreserveAbove();
+
+    bool success = preserveBelow(upper_model);
+    success &= preserveAbove(lower_model);
+
+    return success;
 }
 
 bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
 {
-    std::vector<size_t> surfaces_indices;
+    std::vector<size_t> surfaces_indices, tmp;
 
     if ( getModelBelowSurface(curve_points, surfaces_indices) == false )
     {
         return false;
     }
 
-    return preserveAbove(surfaces_indices);
+    std::sort(surfaces_indices.begin(), surfaces_indices.end());
+    std::sort(lower_model_.begin(), lower_model_.end());
+
+    std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
+            lower_model_.begin(), lower_model_.end(), 
+            std::back_inserter(tmp));
+
+    lower_model_ = tmp;
+    return preserveAbove(lower_model_);
 }
 
 bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
 {
-    std::vector<size_t> surfaces_indices;
+    std::vector<size_t> surfaces_indices, tmp;
 
     if ( getModelAboveSurface(curve_points, surfaces_indices) == false )
     {
         return false;
     }
 
-    return preserveBelow(surfaces_indices);
+    std::sort(surfaces_indices.begin(), surfaces_indices.end());
+    std::sort(upper_model_.begin(), upper_model_.end());
+
+    std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
+            upper_model_.begin(), upper_model_.end(), 
+            std::back_inserter(tmp));
+
+    upper_model_ = tmp;
+    return preserveAbove(upper_model_);
 }
 
 bool RulesProcessor::preserveAbove( std::vector<std::size_t> &lower_model )
@@ -275,7 +296,7 @@ bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, st
         if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
         {
             std::sort(upper_boundary_.begin(), upper_boundary_.end());
-			std::sort(cur_ubounds.begin(), cur_ubounds.end());
+            std::sort(cur_ubounds.begin(), cur_ubounds.end());
 
             std::set_union(upper_boundary_.begin(), upper_boundary_.end(),
                     cur_ubounds.begin(), cur_ubounds.end(), 
@@ -1598,7 +1619,25 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    return (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+    bool success = (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+
+    if ( success )
+    {
+        std::vector<double> volumes;
+        SUtilitiesWrapper u(modeller_);
+        u.getRegionVolumeList(volumes);
+        
+        double total = 0;
+        std::cout << "\n\n\nRegions' volumes: \n\n";
+        for ( size_t i = 0; i < volumes.size(); ++i )
+        {
+            std::cout << "Volume(" << i << ") = " << volumes[i] << " m3\n";
+            total += volumes[i];
+        }
+        std::cout << "\nTotal = " << total << " m3\n\n\n" <<std::flush;
+    }
+
+    return success;
 }
 
 #include <iterator>

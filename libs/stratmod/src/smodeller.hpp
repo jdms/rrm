@@ -205,6 +205,8 @@ class STRATMODLIB_DLL_HANDLER SModeller
         //
 
         std::vector<std::size_t> getSurfacesIndices();
+
+        std::vector<std::size_t> getOrderedSurfacesIndices();
         
         /* bool createSurface( std::size_t surface_id, const std::vector<double> &point_data ); */
 
