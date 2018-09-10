@@ -149,9 +149,14 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
     return true;
 }
 
+bool TetrahedralMeshBuilder::getOrderedSurfaceList ( std::vector<size_t> & )
+{
+    return true;
+}
+
 size_t TetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &tetrahedron_list )
 {
-    std::vector<Prism> prism_list;
+    /* std::vector<Prism> prism_list; */
     bool status = buildPrismMesh(prism_list);
 
     if ( status == false )
@@ -259,6 +264,9 @@ bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
     {
         return false;
     }
+
+    attributes_map = computeAttributeMap(prism_list);
+    mesh_is_built = true;
 
     return true;
 }
@@ -665,7 +673,7 @@ size_t TetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  
 
 std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuilder::computeAttributeMap( const std::vector<Prism> &prism_list )
 {
-    std::map< AttributeType, size_t > attributes_map;
+    std::map< AttributeType, size_t > __attributes_map;
 
     //
     // Process attributes
@@ -677,18 +685,18 @@ std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuil
     for ( size_t p = 0; p < prism_list.size(); ++p )
     {
         pre_processed_attributes[p] = prism_list[p].getAttribute();
-        attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
+        __attributes_map.insert( std::make_pair(pre_processed_attributes[p], 0) );
     }
 
     size_t i = 0;
 
-    for ( auto &att : attributes_map )
+    for ( auto &att : __attributes_map )
     {
         att.second = i;
         ++i;
     }
 
-    return attributes_map;
+    return __attributes_map;
 }
 
 bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
@@ -698,15 +706,19 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
         return false;
     }
 
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
         return false;
     }
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     size_t size_att = TetrahedralMeshBuilder::numSurfaces;
 
@@ -767,15 +779,19 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
 
 bool TetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
 {
-    std::vector<Prism> prism_list;
-    bool status = buildPrismMesh(prism_list);
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
     if ( status == false )
     {
         return false;
     }
 
-    auto attributes_map = computeAttributeMap(prism_list);
+    /* auto attributes_map = computeAttributeMap(prism_list); */
 
     auto it = attributes_map.begin();
     size_t index;

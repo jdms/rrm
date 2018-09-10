@@ -58,6 +58,19 @@ std::vector<size_t> SModeller::getSurfacesIndices()
     return pimpl_->inserted_surfaces_indices_; 
 }
 
+std::vector<std::size_t> SModeller::getOrderedSurfacesIndices()
+{
+    std::vector<size_t> surfaces_indices;
+
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return surfaces_indices;
+    }
+
+    pimpl_->mesh_->getOrderedSurfaceList(surfaces_indices);
+
+    return surfaces_indices;
+}
 
 bool SModeller::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
 {
@@ -342,6 +355,8 @@ void SModeller::clear()
 
     pimpl_->got_origin_ = false; 
     pimpl_->got_lenght_ = false; 
+
+    pimpl_->mesh_ = nullptr;
 
     pimpl_->init();
 }
@@ -730,6 +745,8 @@ bool SModeller::undo()
 
     pimpl_->container_.updateCache();
 
+    pimpl_->mesh_ = nullptr;
+
     return true;
 }
 
@@ -823,12 +840,16 @@ bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, st
 
 std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    TetrahedralMeshBuilder mb(pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
 
     bool status = true; 
     size_t num_elements;
 
-    status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+    status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
 
     if ( status == false )
     {
@@ -836,26 +857,30 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
     }
 
 
-    num_elements = mb.getTetrahedronList(element_list);
+    num_elements = pimpl_->mesh_->getTetrahedronList(element_list);
 
     return num_elements;
 }
 
 std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list )
 {
-    TetrahedralMeshBuilder mb(pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
 
     bool status = true;
     size_t num_elements;
 
-    status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+    status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
 
     if ( status == false )
     {
         return 0;
     }
 
-    num_elements = mb.getTetrahedronList(element_list, attribute_list);
+    num_elements = pimpl_->mesh_->getTetrahedronList(element_list, attribute_list);
 
     return num_elements;
 }
@@ -885,7 +910,7 @@ bool SModeller::saveBinary( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
 
             return false;
         }
@@ -923,7 +948,7 @@ bool SModeller::saveJSON( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
 
             return false;
         }
@@ -939,6 +964,8 @@ bool SModeller::saveJSON( std::string filename )
 
 bool SModeller::loadBinary( std::string filename )
 {
+        clear();
+
         std::ifstream ifs(filename, std::ios::binary);
         /* std::ifstream ifs(filename); */
 
@@ -970,6 +997,7 @@ bool SModeller::loadBinary( std::string filename )
         {
             std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
+            clear();
 
             return false;
         }
@@ -981,6 +1009,8 @@ bool SModeller::loadBinary( std::string filename )
 
 bool SModeller::loadJSON( std::string filename )
 {
+        clear();
+
         std::ifstream ifs(filename);
 
         if ( !ifs.good() )
@@ -1010,6 +1040,7 @@ bool SModeller::loadJSON( std::string filename )
         {
             std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush;
+            clear();
 
             return false;
         }
