@@ -142,60 +142,62 @@ struct SModellerImplementation
     /************************************************/
     /* Internal Data                                */
     /************************************************/
-        class SRules container_;
+    class SRules container_;
 
-        // The history
-        std::map<ControllerSurfaceIndex, ContainerSurfaceIndex> dictionary_;
-        std::vector<ControllerSurfaceIndex> inserted_surfaces_indices_; 
+    // The history
+    std::map<ControllerSurfaceIndex, ContainerSurfaceIndex> dictionary_;
+    std::vector<ControllerSurfaceIndex> inserted_surfaces_indices_; 
 
-        // Model properties
-        Point3 origin_, lenght_; 
+    // Model properties
+    Point3 origin_, lenght_; 
 
-        size_t discWidth_ = 64, discLenght_ = 64; 
-        size_t numI_, numJ_; 
-        size_t max_discretization_level_; 
-        size_t level_I_, level_J_;
+    size_t discWidth_ = 64, discLenght_ = 64; 
+    size_t numI_, numJ_; 
+    size_t max_discretization_level_; 
+    size_t level_I_, level_J_;
 
-        bool default_coordinate_system_ = true;
+    bool default_coordinate_system_ = true;
 
-        // Class status
-        bool initialized_ = false;
-        bool got_origin_ = false; 
-        bool got_lenght_ = false;
+    // Class status
+    bool initialized_ = false;
+    bool got_origin_ = false; 
+    bool got_lenght_ = false;
 
-        StateDescriptor current_;
+    StateDescriptor current_;
 
-        // Undo stack
-        std::vector<PlanarSurface::Ptr> undoed_surfaces_stack_; 
-        std::vector<size_t> undoed_surfaces_indices_;
-        std::vector<StateDescriptor> undoed_states_;
-        std::vector<StateDescriptor> past_states_;
+    // Undo stack
+    std::vector<PlanarSurface::Ptr> undoed_surfaces_stack_; 
+    std::vector<size_t> undoed_surfaces_indices_;
+    std::vector<StateDescriptor> undoed_states_;
+    std::vector<StateDescriptor> past_states_;
 
+    // Volumetric information
+    std::shared_ptr<TetrahedralMeshBuilder> mesh_;
 
 
     template<typename Archive>
-    void serialize( Archive &ar, const std::uint32_t version )
-    {
-        (void)(version);
+        void serialize( Archive &ar, const std::uint32_t version )
+        {
+            (void)(version);
 
-        ar( container_,
-            dictionary_,
-            inserted_surfaces_indices_,
-            origin_, lenght_,
-            discWidth_, discLenght_,
-            numI_, numJ_,
-            max_discretization_level_,
-            level_I_, level_J_,
-            default_coordinate_system_,
-            initialized_,
-            got_origin_, got_lenght_,
-            current_,
-            undoed_surfaces_stack_,
-            undoed_surfaces_indices_,
-            undoed_states_,
-            past_states_
-          );
-    }
+            ar( container_,
+                    dictionary_,
+                    inserted_surfaces_indices_,
+                    origin_, lenght_,
+                    discWidth_, discLenght_,
+                    numI_, numJ_,
+                    max_discretization_level_,
+                    level_I_, level_J_,
+                    default_coordinate_system_,
+                    initialized_,
+                    got_origin_, got_lenght_,
+                    current_,
+                    undoed_surfaces_stack_,
+                    undoed_surfaces_indices_,
+                    undoed_states_,
+                    past_states_
+              );
+        }
 
     /************************************************/
     /* Methods                                      */
@@ -235,13 +237,13 @@ struct SModellerImplementation
     bool insertSurface( const std::vector<double> &point_data, size_t surface_id, 
             const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
             bool extruded_surface = false, bool orthogonally_oriented = false );
-    
+
     bool insertExtrusionAlongPath( size_t surface_id, 
             const std::vector<double> &cross_section_curve, double cross_section_depth,
             const std::vector<double> &path_curve,
             const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids,
             bool orthogonally_oriented = false ); 
-        
+
     bool commitSurface( PlanarSurface::Ptr &sptr, size_t given_index, 
             std::vector<size_t> lbounds, std::vector<size_t> ubounds );
 
@@ -274,17 +276,19 @@ struct SModellerImplementation
 
     bool enforceDefineRegion();
 
+    bool buildTetrahedralMesh();
+
     template<typename VertexList>
-    bool getVertexList( size_t surface_id, VertexList &vlist);
+        bool getVertexList( size_t surface_id, VertexList &vlist);
 
     template<typename VertexList, typename FaceList>
-    bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist );
+        bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist );
 
     template<typename VertexList, typename EdgeList>
-    bool getCrossSectionWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width );
+        bool getCrossSectionWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width );
 
     template<typename VertexList, typename EdgeList>
-    bool getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length );
+        bool getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length );
 };
 
 
