@@ -26,6 +26,8 @@ QPainterPath PolygonItem::shape() const
 
 void PolygonItem::setPolygon( const QPolygonF& pol_ )
 {
+    prepareGeometryChange();
+    plane.clear();
     plane = pol_;
     update();
 }
@@ -175,6 +177,8 @@ void PolygonItem::clear()
 {
     prepareGeometryChange();
     plane.clear();
+
+    std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
 }
 

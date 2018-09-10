@@ -1078,7 +1078,7 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     std::vector<double> vertices_lower_;
     std::vector<size_t> edges_lower_;
 
-    rules_processor.getRegionCurveBoxesAtLength( index_, csection->getDepth(), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+    rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
 
     PolyCurve lower_, upper_;
     lower_.fromVector( vertices_lower_, edges_lower_ );
