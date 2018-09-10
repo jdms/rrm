@@ -134,9 +134,7 @@ bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t regio
         return 0;
     }
     
-    std::vector<size_t> lbound, ubound;
-
-    bool success = mesh_->mapAttributeToBoundingSurfaces(region_id, lbound, ubound);
+    bool success = mesh_->mapAttributeToBoundingSurfaces(region_id, lower_bound_surfaces, upper_bound_surfaces);
     if ( !success )
     {
         return false;
