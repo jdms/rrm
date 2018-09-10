@@ -125,7 +125,7 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
 
-    connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ window->app->definedBounderingBySketch(); } );
+//    connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ window->app->definedBounderingBySketch(); } );
 
 
 
@@ -216,12 +216,12 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
 
 
-    connect( window->app, &RRMApplication::selectEnabled, [=]( const std::string& option_ )
+    connect( window->app, &RRMApplication::selectEnabled, [=]( const std::string& option_, bool status_ )
     {
         if( option_.compare( "REGION") == 0 )
         {
-            sketch_window->setModeRegionSelecting( true );
-            sketch_topview_window->setModeRegionSelecting( true );
+            sketch_window->setModeRegionSelecting( status_ );
+            sketch_topview_window->setModeRegionSelecting( status_ );
         }
         else if( option_.compare( "NONE") == 0 )
         {
@@ -230,9 +230,27 @@ void SketchInterface::createSketchingActions()
         }
         else
         {
-            sketch_window->setModeSelecting( true );
-            sketch_topview_window->setModeSelecting( true );
+            sketch_window->setModeSelecting( status_ );
+            sketch_topview_window->setModeSelecting( status_ );
         }
+
+    } );
+
+
+    connect( window->app, &RRMApplication::enablePreserve, [=]( const std::string& option_, bool status_ )
+    {
+        if( option_.compare( "REGION") == 0 )
+        {
+            sketch_window->setModeRegionSelecting( status_ );
+            sketch_topview_window->setModeRegionSelecting( status_ );
+        }
+        else
+        {
+            sketch_window->setModeSelectingStratigraphies( status_ );
+            sketch_topview_window->setModeSelectingStratigraphies( status_ );
+        }
+
+
 
     } );
 
@@ -246,6 +264,9 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::setCurveAsBoundering, [=]( const PolyCurve& boundary_ ){ scontroller->setCurveAsBoundering( boundary_ ); } );
 
 
+    connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
+
+    connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
 }
 

@@ -26,6 +26,8 @@ QPainterPath PolygonItem::shape() const
 
 void PolygonItem::setPolygon( const QPolygonF& pol_ )
 {
+    prepareGeometryChange();
+    plane.clear();
     plane = pol_;
     update();
 }
@@ -48,7 +50,12 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
         border_.setColor( Qt::blue );
     }
     painter_->setRenderHint( QPainter::Antialiasing );
-    painter_->setPen( border_ );
+
+    if( has_border == true )
+        painter_->setPen( border_ );
+    else
+        painter_->setPen( Qt::NoPen );
+
     painter_->setBrush( fill_ );
     painter_->drawPolygon( plane );
 }
@@ -123,6 +130,19 @@ int PolygonItem::getBorderWidth() const
     return border_width;
 }
 
+
+void PolygonItem::setBorderVisible( bool status_ )
+{
+    has_border = status_;
+    update();
+}
+
+bool PolygonItem::isBorderVisible() const
+{
+    return has_border;
+}
+
+
 void PolygonItem::setFillColor( int r_, int g_, int b_ )
 {
     setFillColor( QColor( r_, g_, b_ ) );
@@ -157,6 +177,8 @@ void PolygonItem::clear()
 {
     prepareGeometryChange();
     plane.clear();
+
+    std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
 }
 

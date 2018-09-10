@@ -161,6 +161,8 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
         csection_->getBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
         scene_->setBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
     }
+    else
+        scene_->clearBoundaryCurve();
 }
 
 
@@ -277,6 +279,12 @@ void SketchingController::setCurveAsBoundering( const PolyCurve& boundary_ )
 void SketchingController::clearCurveAsBoundering()
 {
     main_scene->clearBoundaryCurve();
+}
+
+
+void SketchingController::addRegion( const RegionsPtr& reg_  )
+{
+    main_scene->addRegion( reg_ );
 }
 
 

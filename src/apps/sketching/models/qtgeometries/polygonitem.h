@@ -33,6 +33,9 @@ class PolygonItem: public QGraphicsPolygonItem
         void setBorderWidth( int width_ );
         int getBorderWidth() const;
 
+        void setBorderVisible( bool status_ );
+        bool isBorderVisible() const ;
+
         void setFillColor( int r_, int g_, int b_ );
         void getFillColor( int& r_, int& g_, int& b_ ) const;
 
@@ -71,6 +74,7 @@ class PolygonItem: public QGraphicsPolygonItem
         Color fill_color = DEFAULT_FILL_COLOR;
 
         bool is_done = true;
+        bool has_border = true;
 
 };
 

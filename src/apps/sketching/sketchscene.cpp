@@ -72,6 +72,7 @@ void SketchScene::init()
     addItem( move_marker );
 
     boudering_area = new PolygonItem();
+    boudering_area->setBorderVisible( false );
     boudering_area->setVisible( false );
     addItem( boudering_area );
 
@@ -208,7 +209,8 @@ void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_
     stratigraphies[ id_ ] = std::make_shared< StratigraphyItem>();
     stratigraphies[ id_ ]->setRawStratigraphy( strat_, csection_direction, csection_depth );
     addItem( stratigraphies[ id_ ].get() );
-    update();
+    QGraphicsScene::update();
+
 }
 
 
@@ -217,7 +219,7 @@ void SketchScene::updateStratigraphy( const std::size_t& id_ )
     if( stratigraphies.find( id_ ) == stratigraphies.end() ) return;
     if( stratigraphies[ id_ ]->isVisible() == false ) return;
     stratigraphies[ id_ ]->update();
-    update();
+   QGraphicsScene::update();
 }
 
 
@@ -228,7 +230,7 @@ void SketchScene::updateStratigraphies()
     {
         (it.second)->update();
     }
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -240,7 +242,7 @@ void SketchScene::updateStratigraphiesTrajectories()
         (it.second)->updateLevelCurves();
         (it.second)->updateTrajectory();
     }
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -265,7 +267,8 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     regions[ id_ ] = std::make_shared< RegionItem >();
     regions[ id_ ]->setRawRegion( region_ );
     regions[ id_ ]->setBorderColor( 0, 0, 0 );
-    regions[ id_ ]->setFillColor( 255, 255, 255 );
+    regions[ id_ ]->setFillColor( 0, 0, 0 );
+    regions[ id_ ]->setVisible( true );
     addItem( regions[ id_ ].get() );
 }
 
@@ -274,7 +277,7 @@ void SketchScene::updateRegion( const std::size_t& id_ )
 {
     if( regions.find( id_ ) == regions.end() ) return;
     regions[ id_ ]->update();
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -282,7 +285,7 @@ void SketchScene::updateRegions()
 {
     for( auto it: regions )
         it.second->update();
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -305,7 +308,7 @@ void SketchScene::cancelSketch()
 
     if( sketch == nullptr ) return;
     sketch->clear();
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -318,8 +321,13 @@ void SketchScene::submitSketch()
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
 
+    std::cout << "Boundering area is visible = " << boudering_area->isVisible() << std::endl << std::flush;
+
+    std::cout << "Boundering area is empty = " << boudering_area->isEmpty() << std::endl << std::flush;
+
     std::cout << "Image is visible: " << image->isVisible() << std::endl;
 
+    QGraphicsScene::update();
 //    update();
 }
 
@@ -330,7 +338,7 @@ void SketchScene::setSketchColor( const QColor& color_ )
 
     if( sketch == nullptr ) return;
     sketch->setColor( color_ );
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -359,7 +367,7 @@ void SketchScene::endObject()
 
     emit createObject();
 
-    update();
+    QGraphicsScene::update();
 }
 
 
@@ -413,7 +421,7 @@ void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
         setSketchingMode();
     }
 
-    update();
+    QGraphicsScene::update();
 
 
 }
@@ -433,7 +441,7 @@ void SketchScene::setSelectingStratigraphyMode( bool status_ )
         setSketchingMode();
     }
 
-    update();
+    QGraphicsScene::update();
 
 
 }
@@ -482,9 +490,10 @@ void SketchScene::setSelectingRegionMode( bool status_ )
 {
     clearSelection();
 
-
     if( status_ == true )
+    {
         current_interaction1 = UserInteraction1::SELECTING_REGION;
+    }
     else
     {
         setSketchingMode();
@@ -549,7 +558,7 @@ void SketchScene::removeSketchesOfSelection()
     sketches_of_selection.clear();
 
     emit stopSketchesOfSelection();
-    setSelectingStratigraphyMode( false );
+    setSketchingMode();
 }
 
 
@@ -565,7 +574,6 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
     QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
     boudering_area->setPolygon( pol_ );
 
-    boudering_area->setBorderColor( 0, 0, 0 );
     boudering_area->setVisible( true );
     boudering_area->update();
     update();
@@ -573,6 +581,7 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
 
 void SketchScene::defineBounderingArea()
 {
+
 
     if( ( lower.isEmpty() == false ) && ( upper.isEmpty() == false ) )
     {
@@ -595,8 +604,8 @@ void SketchScene::defineBounderingArea()
 
     }
 
-    boudering_area->setBorderColor( 0, 0, 0 );
     boudering_area->setVisible( true );
+    boudering_area->update();
     update();
 }
 
@@ -616,8 +625,9 @@ void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
 
 void SketchScene::clearBoundaryCurve()
 {
-
     boudering_area->clear();
+    boudering_area->setVisible( false );
+
     update();
 }
 

@@ -41,6 +41,8 @@ class SketchingController
         void addStratigraphy( const ObjectPtr& obj_ );
         void updateStratigraphy( const std::size_t& index_ );
 
+        void addRegion( const RegionsPtr& reg_  );
+
 
         void updateObjects();
         void updateObjectsTrajectories();
@@ -48,6 +50,9 @@ class SketchingController
 
         void setCurveAsBoundering( const PolyCurve& boundary_ );
         void clearCurveAsBoundering();
+
+
+
 
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void removeWindowsDirectionX();

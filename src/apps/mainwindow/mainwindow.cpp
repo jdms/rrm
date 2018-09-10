@@ -159,12 +159,15 @@ void MainWindow::createActions()
     connect( ac_direction_z, &QAction::triggered, [=]()
     { app->changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z );} );
 
-    connect( ac_stratigraphy, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRATIGRAPHY ); } );
+    connect( ac_stratigraphy, &QAction::triggered, [=]()
+    { app->setCurrentObjectType( Settings::Objects::ObjectType::STRATIGRAPHY ); } );
 
-    connect( ac_structural, &QAction::triggered, [=](){ app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
+    connect( ac_structural, &QAction::triggered, [=]()
+    { app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
 
 
-     connect( ac_regions, &QAction::triggered, [=](){ app->getRegions(); } );
+    connect( ac_regions, &QAction::triggered, [=]()
+    { app->getRegions(); } );
 
 }
 
@@ -313,7 +316,7 @@ void MainWindow::createController()
     });
 
 
-    connect( app, &RRMApplication::selectEnabled, [=]( const std::string option_ )
+    connect( app, &RRMApplication::selectEnabled, [=]( const std::string& option_, bool status_ )
     {
         lockPreserve( option_ );
     } );
