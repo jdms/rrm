@@ -37,7 +37,7 @@ class TetrahedralMeshBuilder
         /* template<typename VertexList, typename ElementList, typename VolumeList> */
         /* size_t tetrahedralize( VertexList &, std::vector<ElementList> &, VolumeList & ); */
 
-        bool getOrderedSurfaceList ( std::vector<size_t> & );
+        bool getOrderedSurfaceIndicesList ( std::vector<size_t> & );
 
         template<typename VertexList>
         size_t getRawVertexCoordinates( VertexList & );
