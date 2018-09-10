@@ -264,10 +264,14 @@ void SketchScene::getSelectedStratigraphies()
 void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 {
     std::size_t id_ = region_->getIndex();
+
+    int r_, g_, b_;
+    region_->getColor( r_, g_, b_ );
+
     regions[ id_ ] = std::make_shared< RegionItem >();
     regions[ id_ ]->setRawRegion( region_ );
     regions[ id_ ]->setBorderColor( 0, 0, 0 );
-    regions[ id_ ]->setFillColor( 0, 0, 0 );
+    regions[ id_ ]->setFillColor( r_, g_, b_ );
     regions[ id_ ]->setVisible( true );
     addItem( regions[ id_ ].get() );
 }
