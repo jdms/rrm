@@ -126,6 +126,27 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
     return surfaces_ids;
 }
 
+std::vector<std::size_t> SModellerImplementation::getOrderedSurfacesIndices()
+{
+    std::vector<size_t> surfaces_ids;
+
+    if ( buildTetrahedralMesh() == false )
+    {
+        return surfaces_ids;
+    }
+
+    mesh_->getOrderedSurfaceIndicesList(surfaces_ids);
+    size_t cid;
+
+    for ( size_t i = 0; i < surfaces_ids.size(); ++i )
+    {
+        getControllerIndex(surfaces_ids[i], cid);
+        surfaces_ids[i] = cid;
+    }
+
+    return surfaces_ids;
+}
+
 bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound_surfaces, std::vector<size_t> &upper_bound_surfaces)
 {
     /* TetrahedralMeshBuilder mb(container_); */

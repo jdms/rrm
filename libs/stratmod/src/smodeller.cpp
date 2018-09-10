@@ -60,17 +60,7 @@ std::vector<size_t> SModeller::getSurfacesIndices()
 
 std::vector<std::size_t> SModeller::getOrderedSurfacesIndices()
 {
-    std::vector<size_t> surfaces_indices;
-
-    if ( pimpl_->buildTetrahedralMesh() == false )
-    {
-        return surfaces_indices;
-    }
-
-    // BUG: surfaces_indices must be translated into the controller's indices
-    pimpl_->mesh_->getOrderedSurfaceIndicesList(surfaces_indices);
-
-    return surfaces_indices;
+    return pimpl_->getOrderedSurfacesIndices();
 }
 
 bool SModeller::requestCreateAbove( std::vector<size_t> &eligible_surfaces )

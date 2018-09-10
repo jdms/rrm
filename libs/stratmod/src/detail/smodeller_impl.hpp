@@ -220,6 +220,8 @@ struct SModellerImplementation
 
     std::vector<size_t> getSurfacesIndicesAbovePoint( double x, double y, double z );
 
+    std::vector<std::size_t> getOrderedSurfacesIndices();
+
     bool getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound);
 
     bool lastInsertedSurfaceIntersects( std::vector<ControllerSurfaceIndex> &intersected_surfaces_ids );
