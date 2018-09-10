@@ -347,7 +347,8 @@ class Tetrahedron
                 a32 = vertices_[1].z - vertices_[3].z;
                 a33 = vertices_[2].z - vertices_[3].z;
 
-                vol = (a11*a22*a33 + a12*a23*a31 + a13*a21*a32) -
+                // TODO: Had to multiply vol by -1, check tet orientation
+                vol = -(a11*a22*a33 + a12*a23*a31 + a13*a21*a32) +
                     (a31*a22*a13 + a32*a23*a11 + a33*a21*a12);
 
                 vol /= 6;

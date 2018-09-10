@@ -1405,13 +1405,13 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
             descriptor.reserve( size() );
 
-            // TODO (BUG): this method is not supposed to check whether point lies inside domain or not
-            bool out_of_boundaries = !liesInsideBoundingBox(p);
+            /* // TODO (BUG): this method is not supposed to check whether point lies inside domain or not */
+            /* bool out_of_boundaries = !liesInsideBoundingBox(p); */
 
-            if ( out_of_boundaries )
-            {
-                return descriptor;
-            }
+            /* if ( out_of_boundaries ) */
+            /* { */
+            /*     return descriptor; */
+            /* } */
 
             /* bool lies_above_all_surfaces = true; */
 
@@ -1481,14 +1481,14 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
             descriptor.reserve( size() );
 
-            // TODO (BUG): this method is not supposed to check whether point lies inside domain or not
-            bool out_of_boundaries = !liesInsideBoundingBox(p);
+            /* // TODO (BUG): this method is not supposed to check whether point lies inside domain or not */
+            /* bool out_of_boundaries = !liesInsideBoundingBox(p); */
 
-            if ( out_of_boundaries )
-            {
-                /* std::cout << "Point is out of boundaries.\n"; */
-                return descriptor;
-            }
+            /* if ( out_of_boundaries ) */
+            /* { */
+            /*     /1* std::cout << "Point is out of boundaries.\n"; *1/ */
+            /*     return descriptor; */
+            /* } */
 
             /* bool lies_below_all_surfaces = true; */
 

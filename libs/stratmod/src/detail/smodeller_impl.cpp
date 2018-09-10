@@ -37,6 +37,8 @@ bool SModellerImplementation::init()
     /*         PlanarSurface::Coordinate::DEPTH, */ 
     /*         PlanarSurface::Coordinate::HEIGHT); */ 
 
+    mesh_ = nullptr;
+
     initialized_ = true; 
 
     return true;
@@ -95,7 +97,7 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesBelowPoint( doubl
     std::vector<size_t> surfaces_ids = {};
     Point3 p = point3(x, y, z);
 
-    surfaces_ids = container_.getActiveSurfacesBelowPoint(p);
+    surfaces_ids = container_.getSurfacesBelowPoint(p);
     size_t cid;
     /* std::cout << "getSurfacesIndicesBelowPoint\n"; */
     for ( auto &i : surfaces_ids )
@@ -112,7 +114,7 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
     std::vector<size_t> surfaces_ids = {};
     Point3 p = point3(x, y, z);
 
-    surfaces_ids = container_.getActiveSurfacesAbovePoint(p);
+    surfaces_ids = container_.getSurfacesAbovePoint(p);
     size_t cid;
     /* std::cout << "getSurfacesIndicesAbovePoint\n"; */
     for ( size_t i = 0; i < surfaces_ids.size(); ++i )
@@ -126,10 +128,15 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
 
 bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound_surfaces, std::vector<size_t> &upper_bound_surfaces)
 {
-    TetrahedralMeshBuilder mb(container_);
+    /* TetrahedralMeshBuilder mb(container_); */
+    if ( buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
+    
     std::vector<size_t> lbound, ubound;
 
-    bool success = mb.mapAttributeToBoundingSurfaces(region_id, lbound, ubound);
+    bool success = mesh_->mapAttributeToBoundingSurfaces(region_id, lbound, ubound);
     if ( !success )
     {
         return false;
@@ -478,6 +485,8 @@ bool SModellerImplementation::commitSurface(
         /* std::cout << "Surface " << given_index << " was commited.\n"; */
 
         past_states_.push_back(current_);
+
+        mesh_ = nullptr;
     }
 
     INFO( "Inside commitSurface(...) " ); 
@@ -736,3 +745,12 @@ bool SModellerImplementation::enforceDefineRegion()
     return status; 
 }
 
+bool SModellerImplementation::buildTetrahedralMesh()
+{
+    if ( mesh_ == nullptr )
+    {
+        mesh_ = std::make_shared<TetrahedralMeshBuilder>(container_);
+    }
+
+    return true;
+}
