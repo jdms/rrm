@@ -34,6 +34,9 @@ void PolygonItem::setPolygon( const QPolygonF& pol_ )
 
 void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ )
 {
+    if( isVisible() == false )
+        return;
+
 
     QPen border_;
     border_.setColor( getBorderColor() );

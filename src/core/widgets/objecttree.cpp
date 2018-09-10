@@ -912,36 +912,36 @@ void ObjectTree::clear()
 }
 
 
-void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
-{
+//void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
+//{
 
-    event->acceptProposedAction();
+//    event->acceptProposedAction();
 
-}
+//}
 
-void ObjectTree::dragMoveEvent( QDragMoveEvent* event )
-{
-    event->accept();
-}
+//void ObjectTree::dragMoveEvent( QDragMoveEvent* event )
+//{
+//    event->accept();
+//}
 
-void ObjectTree::dropEvent( QDropEvent *event )
-{
-    std::cout << "Testing the drop method" << std::endl << std::flush;
+//void ObjectTree::dropEvent( QDropEvent *event )
+//{
+//    std::cout << "Testing the drop method" << std::endl << std::flush;
 
-}
+//}
 
-void ObjectTree::mouseMoveEvent( QMouseEvent *event )
-{
-    std::cout << "Testing the mouse move method" << std::endl << std::flush;
-}
+//void ObjectTree::mouseMoveEvent( QMouseEvent *event )
+//{
+//    std::cout << "Testing the mouse move method" << std::endl << std::flush;
+//}
 
-void ObjectTree::mouseReleaseEvent( QMouseEvent *event )
-{
-    std::cout << "Testing the release method" << std::endl << std::flush;
+//void ObjectTree::mouseReleaseEvent( QMouseEvent *event )
+//{
+//    std::cout << "Testing the release method" << std::endl << std::flush;
 
-    QModelIndex index = indexAt( event->pos() );
-    QTreeWidgetItem* item = itemFromIndex(index);
-    std::cout << "drop on item" << item->text(COLUMN_NAME).toStdString() << std::endl << std::flush;
+//    QModelIndex index = indexAt( event->pos() );
+//    QTreeWidgetItem* item = itemFromIndex(index);
+//    std::cout << "drop on item" << item->text(COLUMN_NAME).toStdString() << std::endl << std::flush;
 
 
-}
+//}

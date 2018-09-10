@@ -268,6 +268,9 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
+
+    connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
+
 }
 
 

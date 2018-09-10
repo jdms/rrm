@@ -200,6 +200,7 @@ void SketchingController::updateObjects()
 }
 
 
+
 void SketchingController::updateObjectsTrajectories()
 {
 
@@ -285,6 +286,38 @@ void SketchingController::clearCurveAsBoundering()
 void SketchingController::addRegion( const RegionsPtr& reg_  )
 {
     main_scene->addRegion( reg_ );
+}
+
+
+void SketchingController::updateRegions()
+{
+
+    if( main_scene != nullptr )
+        main_scene->updateRegions();
+
+    if( topview_scene != nullptr )
+        topview_scene->updateRegions();
+
+
+    for( auto it: scenesX )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateRegions();
+    }
+
+    for( auto it: scenesY )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateRegions();
+    }
+
+    for( auto it: scenesZ )
+    {
+        std::shared_ptr< SketchScene > scene_ = it.second;
+        scene_->updateRegions();
+    }
+//     the same for regions and wells
+
 }
 
 
