@@ -1158,19 +1158,19 @@ bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
     const double lb = origin.z;  
     const double ub = origin.z + lenght.z;  
 
-    double height, lheight; 
-    double min_height = origin.z + lenght.z;
-    double max_height = origin.z;
+    double height, lheight, min_height, max_height;
 
     auto num_vertices_omp = surfaces.front()->getNumVertices(); 
     auto tolerance = surfaces.front()->getTolerance();
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(lower_bound, surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, tolerance, min_height, max_height) private(status, lstatus, point_status, height, lheight) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for shared(lower_bound, surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, tolerance, origin, lenght) private(status, lstatus, point_status, height, lheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) 
     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
     {
         status = false;
         point_status = false;
+        min_height = origin.z + lenght.z;
+        max_height = origin.z;
 
         for (auto &sptr : surfaces)
         {
@@ -1252,19 +1252,19 @@ bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
     const double lb = origin.z;  
     const double ub = origin.z + lenght.z;  
 
-    double height, uheight; ; 
-    double min_height = origin.z + lenght.z;
-    double max_height = origin.z;
+    double height, uheight, min_height, max_height;
 
     auto num_vertices_omp = surfaces.front()->getNumVertices(); 
     auto tolerance = surfaces.front()->getTolerance();
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(surfaces, upper_bound) firstprivate(ub, lb, num_vertices_omp, has_upper_boundary, tolerance, min_height, max_height) private(status, point_status, ustatus, height, uheight) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for shared(surfaces, upper_bound) firstprivate(ub, lb, num_vertices_omp, has_upper_boundary, tolerance, origin, lenght) private(status, point_status, ustatus, height, uheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) 
     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
     {
         status = false;
         point_status = false;
+        min_height = origin.z + lenght.z;
+        max_height = origin.z;
 
         for (auto &sptr : surfaces)
         {

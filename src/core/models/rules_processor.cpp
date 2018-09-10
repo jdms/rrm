@@ -189,11 +189,22 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
     auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
     auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
 
+    bool success; 
+
     stopPreserveBelow();
     stopPreserveAbove();
 
-    bool success = preserveBelow(upper_model);
+    success = preserveBelow(upper_model);
     success &= preserveAbove(lower_model);
+
+    if ( !success )
+    {
+        stopPreserveBelow();
+        stopPreserveAbove();
+
+        success = preserveAbove(lower_model);
+        success &= preserveBelow(upper_model);
+    }
 
     return success;
 }
@@ -1636,6 +1647,8 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
         }
         std::cout << "\nTotal = " << total << " m3\n\n\n" <<std::flush;
     }
+
+    modeller_.getOrderedSurfacesIndices();
 
     return success;
 }
