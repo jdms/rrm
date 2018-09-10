@@ -1014,13 +1014,13 @@ bool PlanarSurface::checkIfDependsOn( unsigned long int surface_id ) {
 
 bool PlanarSurface::getHeight( const Point2 &p, double &height ) { 
 
-    double lb = origin.z;  
-    double ub = origin.z + lenght.z;  
+    /* double lb = origin.z; */  
+    /* double ub = origin.z + lenght.z; */  
 
-    bool status = f->getBoundedHeight(p, height, ub, lb); 
-    if ( status == false ) { 
-        return false; 
-    }
+    /* bool status = f->getBoundedHeight(p, height, ub, lb); */ 
+    /* if ( status == false ) { */ 
+        /* return false; */ 
+    /* } */
 
     /* if ( height > ub ) { */ 
     /*     height = ub; */ 
@@ -1030,6 +1030,66 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
     /*     height = lb; */ 
     /*     /1* status &= false; *1/ */ 
     /* } */
+
+    /* return status; */ 
+
+    bool status = f->getRawHeight(p, height);  
+
+    if ( status == false ) { 
+        return false; 
+    }
+
+    double lb = origin.z;  
+    double ub = origin.z + lenght.z;  
+
+    if ( height > ub ) { 
+        height = ub; 
+        /* status &= false; */ 
+    }
+    else if ( height < lb ) { 
+        height = lb; 
+        /* status &= false; */ 
+    }
+
+    /* #pragma omp critical */
+    /* std::cout << "Trying: " << vertex_index << "... "; */  
+
+    /* std::cout << "I'm here! \n\n"; */ 
+
+    for ( auto &p_upper_bound_ : upper_bound_ )
+    /* for ( auto &p_upper_bound_ : ub_list ) */
+        if ( auto upper_surface = p_upper_bound_.lock() ) { 
+            /* if ( upper_surface->getHeight(p, ub) ) */
+            if ( upper_surface->surfaceIsSet() ) { 
+                upper_surface->getHeight(p, ub); 
+                if ( height >= ub ) { 
+                    /* #pragma omp critical */
+                    /* std::cout << "failed above! \n"; */ 
+                    height = ub; 
+                    status &= false; 
+                    /* return false; */ 
+                }
+            }
+        }
+
+    for ( auto &p_lower_bound_ : lower_bound_ )
+    /* for ( auto &p_lower_bound_ : lb_list ) */
+        if ( auto lower_surface = p_lower_bound_.lock() ) { 
+            /* if ( lower_surface->getHeight(p, lb) ) */  
+            if ( lower_surface->surfaceIsSet() ) { 
+                lower_surface->getHeight(p, lb); 
+                if ( height <= lb ) { 
+                    /* #pragma omp critical */
+                    /* std::cout << "failed below! \n"; */ 
+                    height = lb; 
+                    status &= false; 
+                    /* return false; */ 
+                }
+            }
+        }
+
+    /* #pragma omp critical */
+    /* std::cout << "worked! \n"; */  
 
     return status; 
 }
@@ -1200,7 +1260,7 @@ std::size_t PlanarSurface::getNumVertices()
 }
 
 bool PlanarSurface::getHeight( Point2 &&p, double &height ) { 
-    return f->getHeight(p, height);
+    return getHeight(p, height);
 }
 
 bool PlanarSurface::addPoint( const Point3 &p ) { 
@@ -1393,20 +1453,47 @@ bool PlanarSurface::updateCache()
     return true;
 }
 
-bool PlanarSurface::liesAbove( const Point3 &p ) { 
-    return f->liesAbove(p);
+bool PlanarSurface::liesAbove( const Point3 &p ) 
+{ 
+ 
+    Point2 p2; 
+    p2.x = p.x; 
+    p2.y = p.y; 
+    double height; 
+
+    getHeight(p2, height );
+
+    if ( p.z < height ) { 
+        return false; 
+    }
+
+    return true; 
 }
 
-bool PlanarSurface::liesAbove( Point3 &&p ) { 
-    return f->liesAbove(p); 
+bool PlanarSurface::liesAbove( Point3 &&p ) 
+{ 
+    return liesAbove(p); 
 }
 
-bool PlanarSurface::liesBelow( const Point3 &p ) { 
-    return f->liesBelow(p); 
+bool PlanarSurface::liesBelow( const Point3 &p ) 
+{ 
+    Point2 p2; 
+    p2.x = p.x; 
+    p2.y = p.y; 
+    double height; 
+
+    getHeight(p2, height );
+
+    if ( p.z > height ) { 
+        return false; 
+    }
+
+    return true; 
 }
 
-bool PlanarSurface::liesBelow( Point3 &&p ) { 
-    return f->liesBelow(p); 
+bool PlanarSurface::liesBelow( Point3 &&p ) 
+{ 
+    return liesBelow(p); 
 }
 
 bool PlanarSurface::liesAboveRawSurface( const Point3 &p ) { 
@@ -1592,7 +1679,15 @@ bool PlanarSurface::removeBelow( PlanarSurface::WeakPtr s )
 }
 
 bool PlanarSurface::project( Point3 &p ) { 
-    return f->project(p); 
+    Point2 p2; 
+    p2.x = p.x; 
+    p2.y = p.y; 
+
+    if ( getHeight(p2, p.z) == false ) { 
+        return false; 
+    }
+
+    return true; 
 }
 
 void PlanarSurface::pruneBoundingLists() 
