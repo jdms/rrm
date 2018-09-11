@@ -150,31 +150,33 @@ bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces 
 void RulesProcessor::stopPreserveAbove()
 {
     lower_model_ = {};
+    pa_is_active_ = false;
     modeller_.stopPreserveAbove();
 }
 
 void RulesProcessor::stopPreserveBelow()
 {
     upper_model_ = {};
+    pb_is_active_ = false;
     modeller_.stopPreserveBelow();
 }
 
 void RulesProcessor::stopPreserveRegion()
 {
-    modeller_.stopPreserveAbove();
-    modeller_.stopPreserveBelow();
+    stopPreserveAbove();
+    stopPreserveBelow();
 }
 
 bool RulesProcessor::preserveAboveIsActive()
 {
-    std::vector<size_t> unused_variable;
-    return modeller_.preserveAboveIsActive(unused_variable);
+    /* return modeller_.preserveAboveIsActive(lower_model_); */
+    return pa_is_active_;
 }
 
 bool RulesProcessor::preserveBelowIsActive()
 {
-    std::vector<size_t> unused_variable;
-    return modeller_.preserveBelowIsActive(unused_variable);
+    /* return modeller_.preserveBelowIsActive(upper_model_); */
+    return pb_is_active_;
 }
 
 /* bool RulesProcessor::preserveRegionIsActive() */
@@ -191,16 +193,16 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
 
     bool success; 
 
-    stopPreserveBelow();
-    stopPreserveAbove();
+    /* stopPreserveBelow(); */
+    /* stopPreserveAbove(); */
 
     success = preserveBelow(upper_model);
     success &= preserveAbove(lower_model);
 
     if ( !success )
     {
-        stopPreserveBelow();
-        stopPreserveAbove();
+        /* stopPreserveBelow(); */
+        /* stopPreserveAbove(); */
 
         success = preserveAbove(lower_model);
         success &= preserveBelow(upper_model);
@@ -217,16 +219,23 @@ bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
     {
         return false;
     }
+    
+        std::sort(surfaces_indices.begin(), surfaces_indices.end());
+        std::sort(lower_model_.begin(), lower_model_.end());
 
-    std::sort(surfaces_indices.begin(), surfaces_indices.end());
-    std::sort(lower_model_.begin(), lower_model_.end());
-
-    std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
-            lower_model_.begin(), lower_model_.end(), 
+        std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
+            lower_model_.begin(), lower_model_.end(),
             std::back_inserter(tmp));
 
-    lower_model_ = tmp;
-    return preserveAbove(lower_model_);
+
+    bool success = preserveAbove(tmp);
+
+    if (!success)
+    {
+        lower_model_ = {};
+    }
+
+    return success; 
 }
 
 bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
@@ -245,18 +254,41 @@ bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
             upper_model_.begin(), upper_model_.end(), 
             std::back_inserter(tmp));
 
-    upper_model_ = tmp;
-    return preserveAbove(upper_model_);
+    bool success = preserveBelow(tmp);
+
+    return success;
 }
 
 bool RulesProcessor::preserveAbove( std::vector<std::size_t> &lower_model )
 {
-    return modeller_.preserveAbove(lower_model);
+    pa_is_active_ = modeller_.preserveAbove(lower_model);
+
+    if (pa_is_active_)
+    {
+        lower_model_ = lower_model;
+    }
+    else
+    {
+        lower_model_ = {};
+    }
+
+    return pa_is_active_;
 }
 
 bool RulesProcessor::preserveBelow( std::vector<std::size_t> &upper_model )
 {
-    return modeller_.preserveBelow(upper_model);
+    pb_is_active_ = modeller_.preserveBelow(upper_model);
+
+    if (pb_is_active_)
+    {
+        upper_model_ = upper_model;
+    }
+    else
+    {
+        upper_model_ = {};
+    }
+
+    return pb_is_active_;
 }
 
 bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &upper_model )
@@ -367,7 +399,7 @@ bool RulesProcessor::getModelBelowSurface( std::vector<double> &curve_points, st
 
         if ( (cur_lbounds != lower_boundary_) || (cur_ubounds != upper_boundary_) )
         {
-			std::sort(cur_lbounds.begin(), cur_lbounds.end());
+            std::sort(cur_lbounds.begin(), cur_lbounds.end());
             std::sort(lower_boundary_.begin(), lower_boundary_.end());
 
             std::set_union(lower_boundary_.begin(), lower_boundary_.end(),
@@ -637,13 +669,12 @@ void convertEntireCurveToBox( std::vector<T> &vlist, std::vector<size_t> &flist,
 
 bool RulesProcessor::getPreserveAboveCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
+    if ( preserveAboveIsActive() == false )
     {
         return false;
     }
 
-    bool success = getModelSupCurveAtLength(surface_indices, length, vlist, flist);
+    bool success = getModelSupCurveAtLength(lower_model_, length, vlist, flist);
 
     if ( !success )
     {
@@ -657,13 +688,12 @@ bool RulesProcessor::getPreserveAboveCurveBoxAtLength( size_t length, std::vecto
 
 bool RulesProcessor::getPreserveBelowCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
+    if ( preserveBelowIsActive() == false )
     {
         return false;
     }
 
-    bool success = getModelInfCurveAtLength(surface_indices, length, vlist, flist);
+    bool success = getModelInfCurveAtLength(upper_model_, length, vlist, flist);
 
     if ( !success )
     {
@@ -1296,6 +1326,19 @@ void RulesProcessor::getLenght( double &opengl_x, double &opengl_y, double &open
 void RulesProcessor::clear()
 {
     modeller_.clear();
+
+    upper_model_ = {};
+    pb_is_active_ = false;
+    lower_model_ = {};
+    pa_is_active_ = false;
+    modelling_length_discretization_ = 64;
+    modelling_width_discretization_ = 64;
+
+    diagnostics_length_discretization_ = 32;
+    diagnostics_width_discretization_ = 32;
+
+    testing_surface_insertion_ = false;
+    last_surface_inserted_is_a_test_ = false;
 }
 
 
@@ -1309,11 +1352,15 @@ void RulesProcessor::clear()
 // DEPRECATED
 bool RulesProcessor::defineAbove( size_t surface_index )
 {
+    displayNotice("Warning", "Inside defineAbove( size_t )");
+    return false;
     return modeller_.createAbove(surface_index);
 }
 
 bool RulesProcessor::defineAbove( std::vector<size_t> &surface_indices )
 {
+    displayNotice("Warning", "Inside defineAbove( vector<size_t> & )");
+    return false;
     if ( surface_indices.empty() )
     {
         return false;
@@ -1330,6 +1377,8 @@ bool RulesProcessor::defineAbove( std::vector<size_t> &surface_indices )
 //
 void RulesProcessor::stopDefineAbove()
 {
+    displayNotice("Warning", "Inside stopDefineAbove()");
+    return;
     return modeller_.stopCreateAbove();
 }
 
@@ -1340,11 +1389,15 @@ void RulesProcessor::stopDefineAbove()
 //DEPRECATED
 bool RulesProcessor::defineBelow( size_t surface_index )
 {
+    displayNotice("Warning", "Inside defineBelow( size_t )");
+    return false;
     return modeller_.createBelow(surface_index);
 }
 
 bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices ) 
 {
+    displayNotice("Warning", "Inside defineBelow( vector<size_t> & )");
+    return false;
     if ( surface_indices.empty() )
     {
         return false;
@@ -1360,6 +1413,8 @@ bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices )
 //
 void RulesProcessor::stopDefineBelow()
 {
+    displayNotice("Warning", "Inside stopDefineBelow()");
+    return;
     modeller_.stopCreateBelow();
 }
 
@@ -1374,12 +1429,16 @@ void RulesProcessor::stopDefineBelow()
 //    return modeller_.createBelowIsActive();
 bool RulesProcessor::defineAboveIsActive()
 {
+    displayNotice("Warning", "Inside defineAboveIsActive()");
+    return false;
     size_t dummy_index;
     return modeller_.createAboveIsActive(dummy_index);
 }
 
 bool RulesProcessor::defineBelowIsActive()
 {
+    displayNotice("Warning", "Inside defineBelowIsActive()");
+    return false;
     size_t dummy_index;
     return modeller_.createBelowIsActive(dummy_index);
 }
@@ -1387,17 +1446,23 @@ bool RulesProcessor::defineBelowIsActive()
 // DEPRECATED
 bool RulesProcessor::defineAboveIsActive( size_t &boundary_index )
 {
+    displayNotice("Warning", "Inside defineAboveIsActive(size_t &)");
+    return false;
     return modeller_.createAboveIsActive(boundary_index);
 }
 
 // DEPRECATED
 bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
 {
+    displayNotice("Warning", "Inside defineBelowIsActive(size_t &)");
+    return false;
     return modeller_.createBelowIsActive(boundary_index);
 }
 
 bool RulesProcessor::defineAboveIsActive( std::vector<size_t> &boundary_indices )
 {
+    displayNotice("Warning", "Inside defineAboveIsActive(vector<size_t> &)");
+    return false;
     if ( boundary_indices.empty() )
     {
         return false;
@@ -1408,6 +1473,8 @@ bool RulesProcessor::defineAboveIsActive( std::vector<size_t> &boundary_indices 
 
 bool RulesProcessor::defineBelowIsActive( std::vector<size_t> &boundary_indices )
 {
+    displayNotice("Warning", "Inside defineBelowIsActive(vector<size_t> &)");
+    return false;
     if ( boundary_indices.empty() )
     {
         return false;
@@ -1465,7 +1532,11 @@ bool RulesProcessor::undo()
         return false;
     }
 
-    return modeller_.undo();
+    bool status = modeller_.undo();
+
+    enforcePreserveRegion();
+
+    return status;
 }
 
 bool RulesProcessor::canRedo()
@@ -1484,7 +1555,12 @@ bool RulesProcessor::redo()
     {
         return false;
     }
-    return modeller_.redo();
+
+    bool status = modeller_.redo();
+
+    enforcePreserveRegion();
+
+    return status;
 }
 
 
@@ -1585,6 +1661,12 @@ bool RulesProcessor::loadFile( std::string filename )
 {
     bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
 
+    if ( status )
+    {
+		pa_is_active_ = modeller_.preserveAboveIsActive(lower_model_);
+		pb_is_active_ = modeller_.preserveBelowIsActive(upper_model_);
+        // enforcePreserveRegion();
+    }
     /* if ( status == false ) */
     /* { */
     /*     status = modeller_.loadJSON(filename); */
@@ -1648,7 +1730,13 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
         std::cout << "\nTotal = " << total << " m3\n\n\n" <<std::flush;
     }
 
-    modeller_.getOrderedSurfacesIndices();
+    /* auto sids = modeller_.getOrderedSurfacesIndices(); */
+    /* std::cout << "\n Ordered surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : sids ) */
+    /* { */
+    /*     std::cout << sid << " "; */
+    /* } */
+    std::cout << "\n\n\n" << std::flush;
 
     return success;
 }
@@ -1879,6 +1967,7 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
         modeller_.disableGeologicRules();
     }
 
+    enforcePreserveRegion();
     bool success = surfaceCreator( surface_index, std::forward<Args>(args)... );
 
     // Without truncate there is no reson to expect a surface won't be correctly created
@@ -2013,6 +2102,23 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
     return success;
 }
 
+void RulesProcessor::enforcePreserveRegion()
+{
+    /* std::cout << "\nenforcePreserveRegion(): "; */
+    if ( pa_is_active_ )
+    {
+        /* std::cout << "\n     --> pa_is_active_ -- lower_model_.size() == " << lower_model_.size(); */
+        preserveAbove(lower_model_);
+    }
+
+    if ( pb_is_active_ )
+    {
+        /* std::cout << "\n     --> pb_is_active_ -- upper_model_.size() == " << upper_model_.size(); */
+        preserveBelow(upper_model_);
+    }
+
+    std::cout << "\n\n" << std::flush;
+}
 
 
 //{} // namespace RRM
