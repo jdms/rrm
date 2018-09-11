@@ -47,6 +47,7 @@ class PolygonItem: public QGraphicsPolygonItem
         void resetToDefaultBorderWidth();
 
         virtual bool isVisible() const { return QGraphicsPolygonItem::isVisible(); }
+        virtual bool isSelected() const { return QGraphicsPolygonItem::isSelected(); }
 
         void setPolygon( const QPolygonF& pol_ );
 

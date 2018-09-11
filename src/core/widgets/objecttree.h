@@ -26,6 +26,10 @@
 
 #include <QTreeWidget>
 #include <QMenu>
+#include<QDragEnterEvent>
+#include<QDragMoveEvent>
+#include <QDropEvent>
+#include <QMouseEvent>
 
 #include "objecttreeitem.h"
 #include "./core/models/container.h"
@@ -79,6 +83,14 @@ class ObjectTree: public QTreeWidget
 
 
 
+//    private:
+
+//        void dragEnterEvent( QDragEnterEvent* event );
+//        void dragMoveEvent( QDragMoveEvent* event );
+//        void dropEvent( QDropEvent *event );
+//        void mouseReleaseEvent( QMouseEvent *event );
+//        void mouseMoveEvent( QMouseEvent *event );
+
 
 
     public slots:
@@ -129,6 +141,8 @@ class ObjectTree: public QTreeWidget
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeDomain( std::size_t index_ );
+
+
 
     private:
 
