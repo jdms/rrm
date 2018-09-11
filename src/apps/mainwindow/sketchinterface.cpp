@@ -168,6 +168,11 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
 
 
+    connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
+
+
+
+
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); } );

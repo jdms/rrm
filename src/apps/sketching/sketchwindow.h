@@ -93,6 +93,7 @@ class SketchWindow: public QMainWindow
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void stopSketchesOfSelection();
 
+        void regionSelected( const std::size_t& id_, bool status_ );
 
     protected:
 

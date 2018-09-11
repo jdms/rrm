@@ -158,6 +158,8 @@ public slots:
 
     void updateRegionBoundary();
 
+    void setRegionSelected( const std::size_t& id_, bool status_ );
+
 
 
 

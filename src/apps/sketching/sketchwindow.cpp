@@ -146,6 +146,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
 
+    connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
+
+
     return scene_;
 }
 

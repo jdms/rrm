@@ -721,3 +721,10 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
     setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 
 }
+
+
+void RRMApplication::setRegionSelected( const std::size_t& id_, bool status_ )
+{
+    controller->setRegionSelected( id_, status_ );
+    emit updateRegions();
+}

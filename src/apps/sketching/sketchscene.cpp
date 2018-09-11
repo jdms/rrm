@@ -298,11 +298,6 @@ void SketchScene::getSelectedRegions()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
-
-
-//    emit objectSelected( id_ );
-
-
     std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
 
     for( auto it: items_ )
@@ -310,6 +305,8 @@ void SketchScene::getSelectedRegions()
         RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
         std::size_t id_ = reg_->getIndex();
         std::cout << id_ << " " << std::flush;
+
+        emit regionSelected( id_, true );
     }
     std::cout << "\n\n" << std::flush;
 }
@@ -728,7 +725,10 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
     {
          removeSketchesOfSelection();
     }
-
+    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
+    {
+        getSelectedRegions();
+    }
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
     update();
@@ -809,10 +809,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
         updateImageinCrossSection();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
-    {
-        getSelectedRegions();
-    }
 
 
     QGraphicsScene::mouseReleaseEvent( event_ );
