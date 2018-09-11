@@ -29,6 +29,9 @@ bool SModellerImplementation::init()
     /*     requestChangeDiscretizationLevel( getMaxDiscretizationLevel(), getMaxDiscretizationLevel() ); */ 
     /* } */
 
+    discWidth_ = 64;
+    discLenght_ = 64;
+
     PlanarSurface::requestChangeDiscretization(
             static_cast<PlanarSurface::Natural>( discWidth_ ), 
             static_cast<PlanarSurface::Natural>( discLenght_ ) );
@@ -42,6 +45,34 @@ bool SModellerImplementation::init()
     initialized_ = true; 
 
     return true;
+}
+
+void SModellerImplementation::clear()
+{
+    /* size_t discWidth_ = 64, discLenght_ = 64; */ 
+    /* size_t numI_, numJ_; */ 
+    /* size_t max_discretization_level_; */ 
+    /* size_t level_I_, level_J_; */
+
+    /* bool default_coordinate_system_ = true; */
+
+    container_.clear(); 
+    dictionary_.clear(); 
+    inserted_surfaces_indices_.clear();
+
+    current_ = StateDescriptor(); 
+
+    undoed_surfaces_stack_.clear();
+    undoed_surfaces_indices_.clear();
+    undoed_states_.clear(); 
+    past_states_.clear();
+
+    got_origin_ = false; 
+    got_lenght_ = false; 
+
+    mesh_ = nullptr;
+
+    init();
 }
 
 Point3 SModellerImplementation::point3( double x, double y, double z )
@@ -117,6 +148,27 @@ std::vector<size_t> SModellerImplementation::getSurfacesIndicesAbovePoint( doubl
     surfaces_ids = container_.getSurfacesAbovePoint(p);
     size_t cid;
     /* std::cout << "getSurfacesIndicesAbovePoint\n"; */
+    for ( size_t i = 0; i < surfaces_ids.size(); ++i )
+    {
+        getControllerIndex(surfaces_ids[i], cid);
+        surfaces_ids[i] = cid;
+    }
+
+    return surfaces_ids;
+}
+
+std::vector<std::size_t> SModellerImplementation::getOrderedSurfacesIndices()
+{
+    std::vector<size_t> surfaces_ids;
+
+    if ( buildTetrahedralMesh() == false )
+    {
+        return surfaces_ids;
+    }
+
+    mesh_->getOrderedSurfaceIndicesList(surfaces_ids);
+    size_t cid;
+
     for ( size_t i = 0; i < surfaces_ids.size(); ++i )
     {
         getControllerIndex(surfaces_ids[i], cid);
@@ -454,22 +506,22 @@ bool SModellerImplementation::commitSurface(
 
         case State::RA_SKETCHING: 
             if ( status == true )
-                container_.removeAbove();
+                status = container_.removeAbove();
             break; 
 
         case State::RAI_SKETCHING:
             if ( status == true )
-                container_.removeAboveIntersection(); 
+                status = container_.removeAboveIntersection(); 
             break;
 
         case State::RB_SKETCHING:
             if ( status == true )
-                container_.removeBelow(); 
+                status = container_.removeBelow(); 
             break;
 
         case State::RBI_SKETCHING:
             if ( status == true )
-                container_.removeBelowIntersection(); 
+                status = container_.removeBelowIntersection(); 
             break;
 
         default:
@@ -486,6 +538,10 @@ bool SModellerImplementation::commitSurface(
 
         mesh_ = nullptr;
     }
+	else
+	{
+		container_.popLastSurface(sptr);
+	}
 
     INFO( "Inside commitSurface(...) " ); 
     REQUIRE( status == true );
@@ -526,10 +582,11 @@ bool SModellerImplementation::popLastSurface()
     return true;
 }
 
-bool SModellerImplementation::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+bool SModellerImplementation::preserveAbove( std::vector<size_t> bounding_surfaces_list )
 {
     ContainerSurfaceIndex index;
     std::vector<ContainerSurfaceIndex> surface_ids;
+    stopPreserveAbove();
 
     for ( auto &surface_index : bounding_surfaces_list )
     {
@@ -553,10 +610,11 @@ bool SModellerImplementation::preserveAbove( std::vector<size_t> &bounding_surfa
     return current_.bounded_below_;
 }
 
-bool SModellerImplementation::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+bool SModellerImplementation::preserveBelow( std::vector<size_t> bounding_surfaces_list )
 {
     ContainerSurfaceIndex index;
     std::vector<ContainerSurfaceIndex> surface_ids;
+    stopPreserveBelow();
 
     for ( auto &surface_index : bounding_surfaces_list )
     {
