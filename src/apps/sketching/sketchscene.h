@@ -146,13 +146,15 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void removeImageFromCrossSection(  const Settings::CrossSection::CrossSectionDirections&, double );
 
-        void objectSelected( const std::size_t id_ );
+        void objectSelected( const std::size_t& id_ );
 
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void stopSketchesOfSelection();
 
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+
+        void regionSelected( const std::size_t& id_, bool status_ );
 
     protected:
 
