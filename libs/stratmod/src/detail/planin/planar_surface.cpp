@@ -314,82 +314,89 @@ bool PlanarSurface::weakEntireSurfaceCheck()
 }
 
 bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::Ptr &lower_surface, PlanarSurface::Ptr &upper_surface ) 
-{ 
-    if ( surfaceIsSet() == false ) { 
-        return false; 
-    }
+{
+    std::vector<PlanarSurface::Ptr> lsurfaces, usurfaces;
+    lsurfaces.push_back(lower_surface);
+    usurfaces.push_back(upper_surface);
 
-    bool has_lower_boundary = false; 
-    bool has_upper_boundary = false; 
-
-    if ( ( lower_surface != nullptr ) && lower_surface->surfaceIsSet() ) { 
-        has_lower_boundary = true; 
-        /* std::cout << "Lower boundary got here!\n"; */ 
-    }
-
-    if ( ( upper_surface != nullptr ) && upper_surface->surfaceIsSet() ) { 
-        has_upper_boundary = true; 
-        /* std::cout << "Upper boundary got here!\n"; */ 
-    }
-
-    bool isEntireSurface = true; 
-    bool status, lstatus, ustatus; 
-
-    updateDiscretization(); 
-    double height{}, lheight{}, uheight{};
-
-    double lb = origin.z;  
-    double ub = origin.z + lenght.z;  
-
-    auto num_vertices_omp = num_vertices_; 
-
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(lower_surface, upper_surface) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary, height, lheight, uheight) private(status, lstatus, ustatus) default(none) reduction(&&: isEntireSurface) 
-    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
-    {
-        /* status = getCachedHeight(i, height); */ 
-        status = getHeight(i, height); 
-
-        if ( status == false )
-        { 
-            if ( std::fabs(lb - height) <= tolerance ) {
-                status |= true; 
-            }
-
-            else if ( std::fabs(height - ub) <= tolerance ) { 
-                status |= true; 
-            }
-        }
-
-        if ( status == false ) 
-        { 
-            if ( has_lower_boundary ) 
-            { 
-                /* lstatus = lower_surface->getCachedHeight(i, lheight); */ 
-                lstatus = lower_surface->getHeight(i, lheight); 
-                /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
-                if ( lstatus && ( std::fabs(lheight - height) <= tolerance ) ) {
-                    status |= true; 
-                }
-                else { 
-                    /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
-                }
-            }
-            if ( has_upper_boundary ) 
-            {
-                /* ustatus = upper_surface->getCachedHeight(i, uheight); */ 
-                ustatus = upper_surface->getHeight(i, uheight); 
-                if ( ustatus && ( std::fabs(height - uheight) <= tolerance ) ) { 
-                    status |= true; 
-                }
-            }
-        }
-
-        isEntireSurface = isEntireSurface && status; 
-    }
-
-    return isEntireSurface; 
+    return weakBoundedEntireSurfaceCheck(lsurfaces, usurfaces);
 }
+/* { */ 
+/*     if ( surfaceIsSet() == false ) { */ 
+/*         return false; */ 
+/*     } */
+
+/*     bool has_lower_boundary = false; */ 
+/*     bool has_upper_boundary = false; */ 
+
+/*     if ( ( lower_surface != nullptr ) && lower_surface->surfaceIsSet() ) { */ 
+/*         has_lower_boundary = true; */ 
+/*         /1* std::cout << "Lower boundary got here!\n"; *1/ */ 
+/*     } */
+
+/*     if ( ( upper_surface != nullptr ) && upper_surface->surfaceIsSet() ) { */ 
+/*         has_upper_boundary = true; */ 
+/*         /1* std::cout << "Upper boundary got here!\n"; *1/ */ 
+/*     } */
+
+/*     bool isEntireSurface = true; */ 
+/*     bool status, lstatus, ustatus; */ 
+
+/*     updateDiscretization(); */ 
+/*     double height{}, lheight{}, uheight{}; */
+
+/*     double lb = origin.z; */  
+/*     double ub = origin.z + lenght.z; */  
+
+/*     auto num_vertices_omp = num_vertices_; */ 
+
+    /* /1* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*1/ */ 
+/*     #pragma omp parallel for shared(lower_surface, upper_surface) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary, height, lheight, uheight) private(status, lstatus, ustatus) default(none) reduction(&&: isEntireSurface) */ 
+/*     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) */ 
+/*     { */
+/*         /1* status = getCachedHeight(i, height); *1/ */ 
+/*         status = getHeight(i, height); */ 
+
+/*         if ( status == false ) */
+/*         { */ 
+/*             if ( std::fabs(lb - height) <= tolerance ) { */
+/*                 status |= true; */ 
+/*             } */
+
+/*             else if ( std::fabs(height - ub) <= tolerance ) { */ 
+/*                 status |= true; */ 
+/*             } */
+/*         } */
+
+/*         if ( status == false ) */ 
+/*         { */ 
+/*             if ( has_lower_boundary ) */ 
+/*             { */ 
+/*                 /1* lstatus = lower_surface->getCachedHeight(i, lheight); *1/ */ 
+/*                 lstatus = lower_surface->getHeight(i, lheight); */ 
+/*                 /1* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; *1/ */ 
+/*                 if ( lstatus && ( std::fabs(lheight - height) <= tolerance ) ) { */
+/*                     status |= true; */ 
+/*                 } */
+/*                 else { */ 
+/*                     /1* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; *1/ */ 
+/*                 } */
+/*             } */
+/*             if ( has_upper_boundary ) */ 
+/*             { */
+/*                 /1* ustatus = upper_surface->getCachedHeight(i, uheight); *1/ */ 
+/*                 ustatus = upper_surface->getHeight(i, uheight); */ 
+/*                 if ( ustatus && ( std::fabs(height - uheight) <= tolerance ) ) { */ 
+/*                     status |= true; */ 
+/*                 } */
+/*             } */
+/*         } */
+
+/*         isEntireSurface = isEntireSurface && status; */ 
+/*     } */
+
+/*     return isEntireSurface; */ 
+/* } */
 
 bool PlanarSurface::weakBoundedEntireSurfaceCheck( PlanarSurface::WeakPtr lower_surface, PlanarSurface::WeakPtr upper_surface ) 
 { 
@@ -458,7 +465,7 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Pt
     bool status, lstatus, ustatus; 
 
     updateDiscretization(); 
-    double height, lheight, uheight; ; 
+    double height, lheight, uheight, inf_ubound, sup_lbound; 
 
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
@@ -466,10 +473,14 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Pt
     auto num_vertices_omp = num_vertices_; 
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) 
+    #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight, inf_ubound, sup_lbound) default(none) reduction(&&: isEntireSurface) 
     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
     {
-        status = getHeight(i, height); 
+        status = getHeight(i, height);
+        inf_ubound = ub;
+        sup_lbound = lb;
+        lstatus = false;
+        ustatus = false;
 
         if ( status == false )
         { 
@@ -482,30 +493,43 @@ bool PlanarSurface::weakBoundedEntireSurfaceCheck( std::vector<PlanarSurface::Pt
             }
         }
 
+        // Intentional BUG: this code allows truncated boundaries to modify surfaces 
         if ( status == false ) 
         { 
             if ( has_lower_boundary ) 
             { 
-                for ( auto &lower_surface : lower_surfaces )
+                for (auto &lower_surface : lower_surfaces)
                 {
-                    lstatus = lower_surface->getHeight(i, lheight); 
-                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
-                    if ( lstatus && ( std::fabs(lheight - height) <= tolerance ) ) {
-                        status |= true; 
-                    }
-                    else { 
-                        /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
-                    }
+                    lstatus |= lower_surface->getHeight(i, lheight);
+                    if (sup_lbound < lheight)
+                        sup_lbound = lheight;
+                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */
+                }
+
+                lstatus = true;
+                if ( lstatus && ( std::fabs(sup_lbound - height) <= tolerance ) ) 
+                {
+                    status |= true; 
+                }
+                else 
+                { 
+                    /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
                 }
             }
+
             if ( has_upper_boundary ) 
             {
-                for ( auto &upper_surface : upper_surfaces )
+                for (auto &upper_surface : upper_surfaces)
                 {
-                    ustatus = upper_surface->getHeight(i, uheight); 
-                    if ( ustatus && ( std::fabs(height - uheight) <= tolerance ) ) { 
-                        status |= true; 
-                    }
+                    ustatus |= upper_surface->getHeight(i, uheight);
+                    if (inf_ubound > uheight)
+                        inf_ubound = uheight;
+                }
+
+                ustatus = true;
+                if ( ustatus && ( std::fabs(height - inf_ubound) <= tolerance ) ) 
+                { 
+                    status |= true; 
                 }
             }
         }

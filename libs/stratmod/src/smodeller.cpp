@@ -224,6 +224,9 @@ bool SModeller::tryChangeDiscretization( size_t width, size_t length )
         return false;
     }
 
+    pimpl_->discWidth_ = width; 
+    pimpl_->discLenght_ = length; 
+
     PlanarSurface::requestChangeDiscretization(width, length);
 
     return true;
@@ -334,22 +337,24 @@ void SModeller::getSize( double &x, double &y, double &z )
 
 void SModeller::clear()
 {
-    pimpl_->container_.clear(); 
-    pimpl_->dictionary_.clear(); 
-    pimpl_->inserted_surfaces_indices_.clear();
+    pimpl_->clear();
 
-    pimpl_->current_ = StateDescriptor(); 
+    /* pimpl_->container_.clear(); */ 
+    /* pimpl_->dictionary_.clear(); */ 
+    /* pimpl_->inserted_surfaces_indices_.clear(); */
 
-    pimpl_->undoed_surfaces_stack_.clear();
-    pimpl_->undoed_states_.clear(); 
-    pimpl_->past_states_.clear();
+    /* pimpl_->current_ = StateDescriptor(); */ 
 
-    pimpl_->got_origin_ = false; 
-    pimpl_->got_lenght_ = false; 
+    /* pimpl_->undoed_surfaces_stack_.clear(); */
+    /* pimpl_->undoed_states_.clear(); */ 
+    /* pimpl_->past_states_.clear(); */
 
-    pimpl_->mesh_ = nullptr;
+    /* pimpl_->got_origin_ = false; */ 
+    /* pimpl_->got_lenght_ = false; */ 
 
-    pimpl_->init();
+    /* pimpl_->mesh_ = nullptr; */
+
+    /* pimpl_->init(); */
 }
 
 
@@ -719,11 +724,11 @@ bool SModeller::undo()
     StateDescriptor last = pimpl_->past_states_.back();
     pimpl_->past_states_.pop_back();
 
-    // pimpl_->current_.bounded_above_ = last.bounded_above_;
-    // // pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_;
-    // pimpl_->current_.bounded_below_ = last.bounded_below_;
-    // // pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_;
-    pimpl_->current_ = last; 
+    pimpl_->current_.bounded_above_ = last.bounded_above_;
+    pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_;
+    pimpl_->current_.bounded_below_ = last.bounded_below_;
+    pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_;
+    // pimpl_->current_ = last; 
     pimpl_->enforceDefineRegion();
 
     pimpl_->undoed_surfaces_stack_.push_back(last_sptr); 
