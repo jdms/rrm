@@ -202,16 +202,16 @@ std::string Regions::getName() const
 }
 
 
-void Regions::setVisible( const bool status_ )
-{
-    is_visible = status_;
-}
+//void Regions::setVisible( const bool status_ )
+//{
+//    is_visible = status_;
+//}
 
 
-bool Regions::isVisible() const
-{
-    return is_visible;
-}
+//bool Regions::isVisible() const
+//{
+//    return is_visible;
+//}
 
 
 

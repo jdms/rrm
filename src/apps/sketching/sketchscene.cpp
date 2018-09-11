@@ -264,10 +264,14 @@ void SketchScene::getSelectedStratigraphies()
 void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 {
     std::size_t id_ = region_->getIndex();
+
+    int r_, g_, b_;
+    region_->getColor( r_, g_, b_ );
+
     regions[ id_ ] = std::make_shared< RegionItem >();
     regions[ id_ ]->setRawRegion( region_ );
-    regions[ id_ ]->setBorderColor( 0, 0, 0 );
-    regions[ id_ ]->setFillColor( 0, 0, 0 );
+    regions[ id_ ]->setBorderVisible( false );
+    regions[ id_ ]->setFillColor( r_, g_, b_ );
     regions[ id_ ]->setVisible( true );
     addItem( regions[ id_ ].get() );
 }
@@ -286,6 +290,28 @@ void SketchScene::updateRegions()
     for( auto it: regions )
         it.second->update();
     QGraphicsScene::update();
+}
+
+
+void SketchScene::getSelectedRegions()
+{
+    QList< QGraphicsItem* > items_ = selectedItems();
+    if( items_.empty() == true ) return;
+
+
+
+//    emit objectSelected( id_ );
+
+
+    std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
+
+    for( auto it: items_ )
+    {
+        RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
+        std::size_t id_ = reg_->getIndex();
+        std::cout << id_ << " " << std::flush;
+    }
+    std::cout << "\n\n" << std::flush;
 }
 
 
@@ -677,6 +703,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
 
+
     QGraphicsScene::mousePressEvent( event_ );
     update();
 
@@ -782,6 +809,12 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
         updateImageinCrossSection();
     }
 
+    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
+    {
+        getSelectedRegions();
+    }
+
+
     QGraphicsScene::mouseReleaseEvent( event_ );
     update();
 
@@ -839,13 +872,11 @@ void SketchScene::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {
-        case Qt::Key_Delete:
-            std::cout << "Remove item" << std::endl << std::flush;
-//            removeItem();
-            break;
-    case Qt::Key_S:
-            setSelectingStratigraphyMode( true );
-//            removeItem();
+        case Qt::Key_S:
+            for( auto it: regions )
+            {
+                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            }
         break;
         default:
             break;

@@ -71,8 +71,8 @@ class Regions: public Object
         void setName( const std::string& name_ );
         std::string getName() const;
 
-        void setVisible( const bool status_ );
-        bool isVisible() const;
+//        void setVisible( const bool status_ );
+//        bool isVisible() const;
 
 
 

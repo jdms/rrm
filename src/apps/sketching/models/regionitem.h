@@ -18,7 +18,12 @@ class RegionItem: public PolygonItem
         void setRawRegion( const std::shared_ptr< Regions >& raw_ );
         const std::shared_ptr< Regions >& getRawRegion() const;
 
-        bool isVisible() const override;
+        std::size_t getIndex() const;
+
+        virtual void paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ ) override;
+
+        virtual bool isVisible() const override;
+        virtual bool isSelected() const override;
 
         void clear();
 
