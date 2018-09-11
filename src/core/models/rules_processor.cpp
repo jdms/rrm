@@ -219,14 +219,20 @@ bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
     {
         return false;
     }
-    
-        std::sort(surfaces_indices.begin(), surfaces_indices.end());
-        std::sort(lower_model_.begin(), lower_model_.end());
 
-        std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
-            lower_model_.begin(), lower_model_.end(),
-            std::back_inserter(tmp));
+    if ( !pa_is_active_ )
+    {
+        lower_model_ = getSurfaces();
+    }
 
+    /* std::sort(surfaces_indices.begin(), surfaces_indices.end()); */
+    /* std::sort(lower_model_.begin(), lower_model_.end()); */
+
+    /* std::set_intersection(surfaces_indices.begin(), surfaces_indices.end(), */
+    /*         lower_model_.begin(), lower_model_.end(), */
+    /*         std::back_inserter(tmp)); */
+
+    tmp = surfaces_indices;
 
     bool success = preserveAbove(tmp);
 
@@ -247,12 +253,19 @@ bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
         return false;
     }
 
-    std::sort(surfaces_indices.begin(), surfaces_indices.end());
-    std::sort(upper_model_.begin(), upper_model_.end());
+    if ( !pb_is_active_ )
+    {
+        upper_model_ = getSurfaces();
+    }
 
-    std::set_union(surfaces_indices.begin(), surfaces_indices.end(),
-            upper_model_.begin(), upper_model_.end(), 
-            std::back_inserter(tmp));
+    /* std::sort(surfaces_indices.begin(), surfaces_indices.end()); */
+    /* std::sort(upper_model_.begin(), upper_model_.end()); */
+
+    /* std::set_intersection(surfaces_indices.begin(), surfaces_indices.end(), */
+    /*         upper_model_.begin(), upper_model_.end(), */ 
+    /*         std::back_inserter(tmp)); */
+
+    tmp = surfaces_indices;
 
     bool success = preserveBelow(tmp);
 
