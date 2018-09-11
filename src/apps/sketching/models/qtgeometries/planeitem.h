@@ -41,6 +41,8 @@ class PlaneItem: public QGraphicsRectItem
         void resetToDefaultBorderWidth();
 
         virtual bool isVisible() const { return QGraphicsRectItem::isVisible(); }
+        virtual bool isSelected() const { return QGraphicsRectItem::isSelected(); }
+
 
 
 

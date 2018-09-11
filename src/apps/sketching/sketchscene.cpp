@@ -293,6 +293,28 @@ void SketchScene::updateRegions()
 }
 
 
+void SketchScene::getSelectedRegions()
+{
+    QList< QGraphicsItem* > items_ = selectedItems();
+    if( items_.empty() == true ) return;
+
+
+
+//    emit objectSelected( id_ );
+
+
+    std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
+
+    for( auto it: items_ )
+    {
+        RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
+        std::size_t id_ = reg_->getIndex();
+        std::cout << id_ << " " << std::flush;
+    }
+    std::cout << "\n\n" << std::flush;
+}
+
+
 void SketchScene::enableSketch( bool status_ )
 {
     sketch_enabled = status_;
@@ -681,6 +703,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
 
+
     QGraphicsScene::mousePressEvent( event_ );
     update();
 
@@ -786,6 +809,12 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
         updateImageinCrossSection();
     }
 
+    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
+    {
+        getSelectedRegions();
+    }
+
+
     QGraphicsScene::mouseReleaseEvent( event_ );
     update();
 
@@ -843,13 +872,11 @@ void SketchScene::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {
-        case Qt::Key_Delete:
-            std::cout << "Remove item" << std::endl << std::flush;
-//            removeItem();
-            break;
-    case Qt::Key_S:
-            setSelectingStratigraphyMode( true );
-//            removeItem();
+        case Qt::Key_S:
+            for( auto it: regions )
+            {
+                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+            }
         break;
         default:
             break;

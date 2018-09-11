@@ -38,7 +38,7 @@ void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * opt
     pen_.setCosmetic( true );
 
 
-    if( isSelected() == true )
+    if( this->isSelected() == true )
     {
         pen_.setColor( Qt::blue );
     }

@@ -84,9 +84,12 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void getSelectedStratigraphies();
 
+
         void addRegion( const std::shared_ptr< Regions >& region_ );
         void updateRegion( const std::size_t& id_ );
         void updateRegions();
+
+        void getSelectedRegions();
 
 //        void addWell( const std::shared_ptr< Well >& well_ );
 
