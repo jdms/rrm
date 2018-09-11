@@ -405,6 +405,9 @@
             bool testing_surface_insertion_ = false;
             bool last_surface_inserted_is_a_test_ = false;
 
+            bool pa_is_active_ = false;
+            bool pb_is_active_ = false;
+
             std::vector<size_t> lower_model_ = std::vector<size_t>();
             std::vector<size_t> upper_model_ = std::vector<size_t>();
 
@@ -413,6 +416,7 @@
 
             /* template<typename CurveType, typename T = std::vector<size_t>> */
             /* bool getFirstRegionCurveIntersects( const std::tuple<CurveType, double> &curve_tuple, std::vector<size_t> &lbounds, std::vector<size_t> &ubounds, T &&crossings = {} ); */
+            void enforcePreserveRegion();
 
             template<typename FunctionType, typename... Args>
             bool processSurfaceCreation( FunctionType &&surfaceCreator, size_t surface_index, Args&&... args );

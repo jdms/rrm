@@ -530,7 +530,7 @@ bool SRules::removeAbove( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    bool status = false; 
+    bool status = true; 
     for ( auto s : container ) 
     {
         if ( s->surfaceIsSet() == true  ) 
@@ -574,7 +574,7 @@ bool SRules::removeAboveIntersection( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    bool status = false; 
+    bool status = true; 
     ContainerType intersection_seeds {sptr}; 
     std::set<PlanarSurface::SurfaceId> intersected_surfaces {sptr->getID()}; 
     PlanarSurface::Ptr seed; 
@@ -628,7 +628,7 @@ bool SRules::removeBelow( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    bool status = false; 
+    bool status = true; 
     for ( auto s : container ) 
     {
         if ( s->surfaceIsSet() == true ) 
@@ -672,7 +672,7 @@ bool SRules::removeBelowIntersection( PlanarSurface::Ptr sptr )
         return false; 
     }
 
-    bool status = false; 
+    bool status = true; 
     ContainerType intersection_seeds {sptr}; 
     std::set<PlanarSurface::SurfaceId> intersected_surfaces {sptr->getID()}; 
     PlanarSurface::Ptr seed; 
