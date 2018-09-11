@@ -205,6 +205,8 @@ struct SModellerImplementation
 
     bool init();
 
+    void clear();
+
     /** Converts (x, y, z) triplet to PlanIn's Point3 accordingly to current coordinate system
      *
      *  If coordinate system is default, output will be Point3 {x, y, z}. 
@@ -251,8 +253,8 @@ struct SModellerImplementation
 
     bool popLastSurface();
 
-    bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
-    bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+    bool preserveAbove( std::vector<size_t> bounding_surfaces_list );
+    bool preserveBelow( std::vector<size_t> bounding_surfaces_list );
 
     void stopPreserveAbove();
     void stopPreserveBelow();
