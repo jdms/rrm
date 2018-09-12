@@ -450,21 +450,18 @@ void RRMApplication::setSketchBelow( bool status_ )
 void RRMApplication::setSketchRegion( bool status_ )
 {
     emit enablePreserve( "REGION", status_ );
+
+    if( status_ == false )
+    {
+        controller->clearBounderingArea();
+        controller->enablePreserveAbove( false );
+        controller->enablePreserveBelow( false );
+        window->activatePreserveAbove( false );
+        window->activatePreserveBelow( false );
+    }
+
     emit updateBoundary();
 
-
-
-//    if( status_ == false )
-//    {
-//        controller->clearBounderingArea();
-//        controller->enablePreserveAbove( false );
-//        controller->enablePreserveBelow( false );
-//        window->activatePreserveAbove( false );
-//        window->activatePreserveBelow( false );
-//    }
-
-//    emit updateObjects();
-//    emit updateMainCrossSection();
 }
 
 
