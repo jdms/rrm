@@ -276,6 +276,9 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
 
+
+    connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
+
 }
 
 

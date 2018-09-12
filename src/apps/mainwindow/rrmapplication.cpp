@@ -165,6 +165,9 @@ void RRMApplication::moveMainCrossSection( double depth_ )
     }
 
     controller->moveMainCrossSection( depth_ );
+
+    emit updateBoundary();
+
     emit updateMainCrossSection();
 
 }
@@ -345,6 +348,12 @@ void RRMApplication::getRegions()
 }
 
 
+void RRMApplication::setRegionsVisible( bool status_ )
+{
+    controller->setRegionsVisible( status_ );
+    updateRegions();
+}
+
 void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 {
     controller->setRegionVisible( index_, status_ );
@@ -395,29 +404,13 @@ void RRMApplication::setSketchAbove( bool status_ )
 
     controller->enablePreserveAbove( status_ );
 
-    if( status_ == false )
-        updateRegionBoundary();
-
     emit enablePreserve( "ABOVE ", status_ );
-    emit updateObjects();
+    emit updateBoundary();
 
+//    if( status_ == false )
+//        emit updateBoundary();
 
-
-
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->enablePreserveAbove();
-//        if( enabled_ )
-//            emit selectEnabled( "ABOVE", true );
-//        else
-//            emit selectEnabled( "ABOVE", false );
-//    }
-//    else
-//    {
-//        controller->stopCreateAbove();
-//        emit selectEnabled( "NONE" );
-//    }
-
+//    emit enablePreserve( "ABOVE ", status_ );
 //    emit updateObjects();
 
 }
@@ -425,13 +418,21 @@ void RRMApplication::setSketchAbove( bool status_ )
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
+
+
     controller->enablePreserveBelow( status_ );
-
-    if( status_ == false )
-        updateRegionBoundary();
-
     emit enablePreserve( "BELOW ", status_ );
-    emit updateObjects();
+    emit updateBoundary();
+
+
+//    controller->enablePreserveBelow( status_ );
+
+//    if( status_ == false )
+//        emit updateBoundary();
+////        updateRegionBoundary();
+
+//    emit enablePreserve( "BELOW ", status_ );
+//    emit updateObjects();
 
 
 
@@ -456,51 +457,62 @@ void RRMApplication::setSketchBelow( bool status_ )
 
 void RRMApplication::setSketchRegion( bool status_ )
 {
+//    emit enablePreserve( "REGION", status_ );
 
 
-    emit enablePreserve( "REGION", status_ );
-
-
-    if( status_ == false )
-    {
-        controller->clearBounderingArea();
-        window->activatePreserveAbove( false );
-        window->activatePreserveBelow( false );
-    }
-
-    emit updateObjects();
-    emit updateMainCrossSection();
-
-
-//    if( status_ == true )
+//    if( status_ == false )
 //    {
-//        emit selectEnabled( "REGION", status_ );
-//    }
-//    else
-//    {
-//        emit selectEnabled( "NONE" );
-
+//        controller->clearBounderingArea();
+//        controller->enablePreserveAbove( false );
+//        controller->enablePreserveBelow( false );
 //        window->activatePreserveAbove( false );
 //        window->activatePreserveBelow( false );
-
 //    }
 
 //    emit updateObjects();
-
+//    emit updateMainCrossSection();
 }
 
 
 void RRMApplication::updateRegionBoundary()
 {
-    emit clearBounderingArea();
+//    emit clearBounderingArea();
 
-    PolyCurve boundary_;
-    bool status_ = controller->updateRegionBoundary( boundary_ );
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
 
 
-    if( status_ == true )
-        emit setCurveAsBoundering( boundary_ );
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
 }
+
+
+void RRMApplication::updateUpperBoundary()
+{
+//    emit clearBounderingArea();
+
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
+
+
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
+}
+
+
+void RRMApplication::updateLowerBoundary()
+{
+//    emit clearBounderingArea();
+
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
+
+
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
+}
+
+
 
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
@@ -526,16 +538,7 @@ void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const S
     PolyCurve boundary_;
 
     bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, boundary_ );
-
-    if( status_ == true )
-    {
-        emit setCurveAsBoundering( boundary_ );
-    }
-    else
-    {
-
-    }
-
+    emit updateBoundary();
 }
 
 
@@ -624,11 +627,15 @@ void RRMApplication::checkUndoRedo()
 
 void RRMApplication::checkPreserveStatus()
 {
-     bool above_ = controller->isDefineAboveActive();
-     bool below_ = controller->isDefineBelowActive();
+    PolyCurve lboundary_, uboundary_;
+
+     bool above_ = controller->isDefineAboveActive( lboundary_ );
+     bool below_ = controller->isDefineBelowActive( uboundary_ );
 
      window->ac_sketch_above->setChecked( above_ );
      window->ac_sketch_below->setChecked( below_ );
+
+     emit updateBoundary();
 
 }
 

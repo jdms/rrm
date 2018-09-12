@@ -588,18 +588,18 @@ void SketchScene::removeSketchesOfSelection()
 void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
 {
 
-    PolyCurve upper_( vupper_, edupper_ );
-    PolyCurve lower_( vlower_, edlower_ );
+//    PolyCurve upper_( vupper_, edupper_ );
+//    PolyCurve lower_( vlower_, edlower_ );
 
-    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
-    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
+//    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
+//    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
 
-    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-    boudering_area->setPolygon( pol_ );
+//    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
+//    boudering_area->setPolygon( pol_ );
 
-    boudering_area->setVisible( true );
-    boudering_area->update();
-    update();
+//    boudering_area->setVisible( true );
+//    boudering_area->update();
+//    update();
 }
 
 void SketchScene::defineBounderingArea()
@@ -620,11 +620,15 @@ void SketchScene::defineBounderingArea()
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
         boudering_area->setPolygon( pol_ );
     }
-    else
+    else if( upper.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
         boudering_area->setPolygon( pol_ );
 
+    }
+    else
+    {
+        boudering_area->clear();
     }
 
     boudering_area->setVisible( true );
@@ -636,22 +640,37 @@ void SketchScene::defineBounderingArea()
 
 void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
 {
-    upper = boundary_;
+    lower = boundary_;
     defineBounderingArea();
 }
 
 void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
 {
-    lower = boundary_;
+    upper = boundary_;
     defineBounderingArea();
 }
 
+void SketchScene::clearLowerBoundaryCurve()
+{
+    lower.clear();
+    defineBounderingArea();
+}
+
+void SketchScene::clearUpperBoundaryCurve()
+{
+    upper.clear();
+    defineBounderingArea();
+}
+
+
 void SketchScene::clearBoundaryCurve()
 {
-    boudering_area->clear();
-    boudering_area->setVisible( false );
+//    lower.clear();
+//    upper.clear();
+//    boudering_area->clear();
+//    boudering_area->setVisible( false );
 
-    update();
+//    update();
 }
 
 
@@ -710,10 +729,10 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 {
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
-//        emit
+        removeSketchesOfSelection();
     }
 
     else if( current_interaction1 == UserInteraction1::SKETCHING )
@@ -721,10 +740,6 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
          endObject();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
-    {
-         removeSketchesOfSelection();
-    }
     else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
     {
         getSelectedRegions();

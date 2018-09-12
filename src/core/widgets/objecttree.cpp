@@ -119,12 +119,15 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
     else if( item_ == label_structural && column_ == COLUMN_STATUS )
         setStructuralsVisible( item_->checkState( COLUMN_STATUS ) );
 
+    else if( item_ == label_domains && column_ == COLUMN_STATUS )
+        setDomainsVisible( item_->checkState( COLUMN_STATUS ) );
+
 
     else if( obj_->getType() == Settings::Objects::ObjectType::VOLUME )
     {
         if( column_ == COLUMN_STATUS )
         {
-            setVolumeVisibility( obj_->checkState( COLUMN_STATUS ) );
+            setVolumeVisibility( obj_->getIndex(), obj_->checkState( COLUMN_STATUS ) );
         }
         else if( column_ == COLUMN_NAME )
         {
@@ -198,8 +201,60 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         }
     }
 
+    else if( obj_->getType() == Settings::Objects::ObjectType::DOMAINS )
+    {
+        if( column_ == COLUMN_STATUS )
+        {
+            bool status_ = false;
+            if( obj_->checkState( COLUMN_STATUS ) == Qt::Checked )
+                status_ = true;
+
+            setDomainsVisibility( obj_->getIndex(), status_ );
+
+//            emit setDomainsVisible( obj_->getIndex(), status_ );
+        }
+        else if( column_ == COLUMN_NAME )
+        {
+//            emit setRegionName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
+        }
+    }
+
 }
 
+
+
+
+void ObjectTree::setDomainsVisible( const Qt::CheckState& state_ )
+{
+    int nchildren = label_domains->childCount();
+    bool status_ = ( state_ == Qt::Checked )? true:false;
+
+    for( int j = 0; j < nchildren; ++j )
+    {
+        ObjectTreeItem* obj_ = (ObjectTreeItem* )( label_domains->child( j ) );
+        setDomainsVisibility( obj_->getIndex(), status_ );
+    }
+
+}
+
+void ObjectTree::setDomainsVisibility( std::size_t index_, bool status_ )
+{
+
+    if( domains.findElement( index_ ) == false ) return;
+
+    ObjectTreeItem* domain_ = domains.getElement( index_ );
+
+    Qt::CheckState state_ = ( status_ == true )? Qt::Checked:Qt::Unchecked;
+
+    int nchildren = domain_->childCount();
+    for( int j = 0; j < nchildren; ++j )
+    {
+        ObjectTreeItem* obj_ = (ObjectTreeItem* )( domain_->child( j ) );
+        obj_->setCheckState( COLUMN_STATUS, state_ );
+//        setRegionVisible( obj_->getIndex(), status_ );
+    }
+
+}
 
 
 void ObjectTree::addInputVolume()
@@ -394,17 +449,18 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 }
 
 
-void ObjectTree::setVolumeVisibility( const Qt::CheckState& status_ )
+void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& status_ )
 {
 
     bool is_visible_ = ( status_ == Qt::Checked? true:false );
-    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
+    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( index_ ) );
 
-    setVolumeVisible( 0, is_visible_ );
-    label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
-    label_structural->setCheckState( COLUMN_STATUS, status_ );
-
-    emit setVolumeVisible( vol_->getIndex(), is_visible_ );
+    if( index_ == 0 )
+    {
+        label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
+        label_structural->setCheckState( COLUMN_STATUS, status_ );
+    }
+    emit setVolumeVisible( index_, is_visible_ );
     update();
 
 }
@@ -888,6 +944,20 @@ void ObjectTree::removeDomains()
 }
 
 
+void ObjectTree::clearSubMenu()
+{
+    while( domain_actions_.empty() == false )
+    {
+        QAction* tmp_ = std::move( domain_actions_.begin()->second );
+        if( tmp_ == nullptr ) continue;
+
+        mn_submenu->removeAction( tmp_ );
+        delete tmp_;
+
+        domain_actions_.erase( domain_actions_.begin()->first );
+    }
+    domain_actions_.clear();
+}
 
 
 void ObjectTree::clear()
@@ -905,6 +975,10 @@ void ObjectTree::clear()
     }
 
     removeInputVolume();
+
+    clearSubMenu();
+
+    label_domains->setHidden( true );
 
     items.clear();
     QTreeWidget::clear();

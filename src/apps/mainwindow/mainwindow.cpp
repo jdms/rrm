@@ -356,7 +356,10 @@ void MainWindow::createObjectTree()
 
     connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ )
     {
-        app->setVolumeVisible( status_ );
+        if( index_ == 0 )
+            app->setVolumeVisible( status_ );
+        else
+            app->setRegionsVisible( status_ );
     } );
 
 
