@@ -445,28 +445,31 @@ bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface
     }
 
     bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) )
-        {
-            success = true;
-            break;
-        }
-    }
+    size_t index = 0;
+    
+    getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) ) */
+    /*     { */
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    if ( !success )
-    {
-        return false;
-    }
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-    auto tmp_vlist = vlist;
+    std::vector<double> tmp_vlist;
     size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
+    for ( index = 1; index < surface_indices.size(); ++index )
     {
         sid = surface_indices[index];
 
-        if ( getLengthCrossSectionCurve(sid, length, tmp_vlist, elist) )
+        getLengthCrossSectionCurve(sid, length, tmp_vlist, elist);
+        if ( true )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -497,28 +500,31 @@ bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface
     }
 
     bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) )
-        {
-            success = true;
-            break;
-        }
-    }
+    size_t index = 0;
 
-    if ( !success )
-    {
-        return false;
-    }
+    getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) ) */
+    /*     { */
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    std::vector<double> tmp_vlist;
     size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
+    for ( index = 1; index < surface_indices.size(); ++index )
     {
         sid = surface_indices[index];
 
-        if ( getLengthCrossSectionCurve(sid, length, tmp_vlist, elist) )
+        getLengthCrossSectionCurve(sid, length, tmp_vlist, elist);
+        if ( true )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -548,28 +554,31 @@ bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_
     }
 
     bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) )
-        {
-            success = true;
-            break;
-        }
-    }
+    size_t index = 0;
 
-    if ( !success )
-    {
-        return false;
-    }
+    getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) ) */
+    /*     { */
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    std::vector<double> tmp_vlist;
     size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
+    for ( index = 1; index < surface_indices.size(); ++index )
     {
         sid = surface_indices[index];
 
-        if ( getWidthCrossSectionCurve(sid, width, tmp_vlist, elist) )
+        getWidthCrossSectionCurve(sid, width, tmp_vlist, elist);
+        if ( true )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
@@ -600,28 +609,31 @@ bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_
     }
 
     bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) )
-        {
-            success = true;
-            break;
-        }
-    }
+    size_t index = 0;
 
-    if ( !success )
-    {
-        return false;
-    }
+    getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) ) */
+    /*     { */
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    std::vector<double> tmp_vlist;
     size_t sid;
     for ( ++index; index < surface_indices.size(); ++index )
     {
         sid = surface_indices[index];
 
-        if ( getWidthCrossSectionCurve(sid, width, tmp_vlist, elist) )
+        getWidthCrossSectionCurve(sid, width, tmp_vlist, elist);
+        if (true )
         {
             for ( size_t i = 0; i < vlist.size(); ++i )
             {
