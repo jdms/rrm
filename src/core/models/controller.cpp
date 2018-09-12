@@ -1772,14 +1772,14 @@ void Controller::getRegionByPointAsBoundering()
 
     }
 
-    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
+//    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
 
 void Controller::clearBounderingArea()
 {
-    csection->clearBounderingArea();
+//    csection->clearBounderingArea();
 }
 
 
@@ -1793,32 +1793,12 @@ bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 
     getLowerBoundering( boundary_ );
     return true;
-
-//    bool status_ = rules_processor.defineAboveIsActive( index_ );
-//    if( status_ == true )
-//    {
-//        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-//        setObjectSelectedAsBoundering( index_ );
-//        return true;
-//    }
-
-//    return false;
-
 }
 
 
 bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 {
      std::size_t index_ = 0;
-
-//    bool status_ = rules_processor.defineBelowIsActive( index_ );
-//    if( status_ == true )
-//    {
-//        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-//        setObjectSelectedAsBoundering( index_ );
-//        return true;
-//    }
-//    return false;
 
      bool status_ = rules_processor.preserveBelowIsActive();
      if( status_ == false ) return false;
