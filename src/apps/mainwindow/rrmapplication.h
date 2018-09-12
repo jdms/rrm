@@ -110,7 +110,7 @@ public slots:
 
     void createObjectSurface();
 
-    void getRegions();
+    void getRegions(bool status_);
 
     void setRegionsVisible( bool status_ );
     void setRegionVisible( std::size_t index_, bool status_ );
@@ -191,6 +191,7 @@ signals:
 
     void addRegions();
     void updateRegions();
+    void clearRegions();
 
 
     void updateDiscretization( const std::size_t& disc_ );
@@ -217,6 +218,7 @@ signals:
     void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
 
     void updateBoundary();
+
 
 
 

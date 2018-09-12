@@ -42,6 +42,7 @@ class SketchingController
         void updateStratigraphy( const std::size_t& index_ );
 
         void addRegion( const RegionsPtr& reg_  );
+        void clearRegions();
         void updateRegions();
 
 

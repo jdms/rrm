@@ -114,6 +114,8 @@ void View3dInterface::createView3dActions()
 
     connect( window->app, &RRMApplication::updateRegions, [=]{ controller3d->updateRegions(); } );
 
+    connect( window->app, &RRMApplication::clearRegions, [=]{ controller3d->clearRegions(); } );
+
 }
 
 

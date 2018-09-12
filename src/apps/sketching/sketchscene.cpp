@@ -280,7 +280,7 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 void SketchScene::updateRegion( const std::size_t& id_ )
 {
     if( regions.find( id_ ) == regions.end() ) return;
-    regions[ id_ ]->update();
+    regions[ id_ ]->updateBoundary();
     QGraphicsScene::update();
 }
 
@@ -288,7 +288,19 @@ void SketchScene::updateRegion( const std::size_t& id_ )
 void SketchScene::updateRegions()
 {
     for( auto it: regions )
-        it.second->update();
+        it.second->updateBoundary();
+    QGraphicsScene::update();
+}
+
+void SketchScene::clearRegions()
+{
+    for( auto it: regions )
+    {
+        RegionItem* reg_ = dynamic_cast< RegionItem* >( (it.second).get() );
+        removeItem( reg_ );
+        (it.second).reset();
+    }
+    regions.clear();
     QGraphicsScene::update();
 }
 
@@ -816,6 +828,8 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
+//        removeSketchesOfSelection();
+
     }
 
 

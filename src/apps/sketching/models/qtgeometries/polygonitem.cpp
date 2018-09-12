@@ -128,7 +128,7 @@ void PolygonItem::setBorderWidth( int width_ )
 {
     prepareGeometryChange();
     border_width = width_;
-    update();
+   update();
 }
 
 int PolygonItem::getBorderWidth() const
