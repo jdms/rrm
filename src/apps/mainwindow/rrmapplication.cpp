@@ -354,6 +354,7 @@ void RRMApplication::setRegionsVisible( bool status_ )
     updateRegions();
 }
 
+
 void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 {
     controller->setRegionVisible( index_, status_ );
@@ -381,10 +382,12 @@ void RRMApplication::createDomain( std::size_t index_ )
     controller->createDomain( index_ );
 }
 
+
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->addRegionToDomain( reg_id_, domain_id_ );
 }
+
 
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
@@ -425,17 +428,6 @@ void RRMApplication::setSketchBelow( bool status_ )
     emit updateBoundary();
 
 
-//    controller->enablePreserveBelow( status_ );
-
-//    if( status_ == false )
-//        emit updateBoundary();
-////        updateRegionBoundary();
-
-//    emit enablePreserve( "BELOW ", status_ );
-//    emit updateObjects();
-
-
-
 //    if( status_ == true )
 //    {
 //        bool enabled_ = controller->requestCreateBelow();
@@ -457,7 +449,9 @@ void RRMApplication::setSketchBelow( bool status_ )
 
 void RRMApplication::setSketchRegion( bool status_ )
 {
-//    emit enablePreserve( "REGION", status_ );
+    emit enablePreserve( "REGION", status_ );
+    emit updateBoundary();
+
 
 
 //    if( status_ == false )
@@ -525,7 +519,7 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
     if( status_ == true )
     {
         controller->getRegionByPointAsBoundering();
-        emit updateMainCrossSection();
+        emit updateBoundary();
     }
 
     emit selectEnabled( "NONE" );
