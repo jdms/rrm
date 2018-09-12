@@ -1401,32 +1401,6 @@ Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
 }
 
 
-// Enable/Stop Preserve Above -- new methods
-
-void Controller::enablePreserveAbove( bool status_ )
-{
-    if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-    else
-        rules_processor.stopPreserveAbove();
-
-
-}
-
-
-
-
-// Enable/Stop Preserve Below -- new methods
-
-void Controller::enablePreserveBelow( bool status_ )
-{
-    if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-    else
-        rules_processor.stopPreserveBelow();
-
-}
-
 
 
 // Request/Stop Create Above -- old methods
@@ -1572,6 +1546,30 @@ void Controller::stopCreateRegion()
 }
 
 
+// Enable/Stop Preserve Above -- new methods
+
+void Controller::enablePreserveAbove( bool status_ )
+{
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+    else
+        rules_processor.stopPreserveAbove();
+}
+
+
+// Enable/Stop Preserve Below -- new methods
+
+void Controller::enablePreserveBelow( bool status_ )
+{
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+    else
+        rules_processor.stopPreserveBelow();
+
+}
+
+
+
 
 
 void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
@@ -1690,46 +1688,23 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 {
 
-    std::vector< float > vertices_;
-    std::vector< std::size_t > edges_;
-
     bool status_ = false;
 
     boundary_.clear();
 
     if( rules_processor.preserveAboveIsActive() == true )
     {
-
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        {
-            rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-        }
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        {
-            rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-        }
-
+        getLowerBoundering( boundary_ );
         status_ = true;
     }
 
     else if( rules_processor.preserveBelowIsActive() == true )
     {
 
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        {
-            rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-        }
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
-            rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-
-        }
-
+        getUpperBoundering( boundary_ );
         status_ = true;
-
     }
 
-    boundary_.fromVector( vertices_, edges_ );
     return status_;
 }
 
@@ -1808,34 +1783,89 @@ void Controller::clearBounderingArea()
 }
 
 
-bool Controller::isDefineAboveActive()
+
+bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 {
     std::size_t index_ = 0;
 
-    bool status_ = rules_processor.defineAboveIsActive( index_ );
-    if( status_ == true )
-    {
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-        setObjectSelectedAsBoundering( index_ );
-        return true;
-    }
-    return false;
+    bool status_ = rules_processor.preserveAboveIsActive();
+    if( status_ == false ) return false;
+
+    getLowerBoundering( boundary_ );
+    return true;
+
+//    bool status_ = rules_processor.defineAboveIsActive( index_ );
+//    if( status_ == true )
+//    {
+//        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+//        setObjectSelectedAsBoundering( index_ );
+//        return true;
+//    }
+
+//    return false;
 
 }
 
 
-bool Controller::isDefineBelowActive()
+bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 {
      std::size_t index_ = 0;
 
-    bool status_ = rules_processor.defineBelowIsActive( index_ );
-    if( status_ == true )
+//    bool status_ = rules_processor.defineBelowIsActive( index_ );
+//    if( status_ == true )
+//    {
+//        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+//        setObjectSelectedAsBoundering( index_ );
+//        return true;
+//    }
+//    return false;
+
+     bool status_ = rules_processor.preserveBelowIsActive();
+     if( status_ == false ) return false;
+
+     getUpperBoundering( boundary_ );
+     return true;
+
+}
+
+
+void Controller::getLowerBoundering( PolyCurve& boundary_ )
+{
+
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-        setObjectSelectedAsBoundering( index_ );
-        return true;
+        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
-    return false;
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+    }
+
+    boundary_.fromVector( vertices_, edges_ );
+}
+
+
+void Controller::getUpperBoundering( PolyCurve& boundary_ )
+{
+
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+{
+        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+
+    }
+
+    boundary_.fromVector( vertices_, edges_ );
 }
 
 
@@ -2119,14 +2149,18 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
 
 void Controller::clear()
 {
-    if( csection == nullptr )
+
+    if( csection != nullptr )
         csection.reset();
+    csection = nullptr;
 
-    if( topview == nullptr )
+    if( topview != nullptr )
         topview.reset();
+    topview = nullptr;
 
-    if( model.volume == nullptr )
+    if( model.volume != nullptr )
         model.volume.reset();
+    model.volume = nullptr;
 
     for( auto it: model.csectionsX )
         (it.second).reset();
@@ -2163,12 +2197,18 @@ void Controller::clear()
     images_csectionsZ.clear();
 
     current_object = 0;
+    current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
+
     current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
     csection_stepx = 1.0;
     csection_stepz = 1.0;
+    csection_stepy = 1.0;
 
     last_trajectory.clear();
     rules_processor.clear();
 
-    current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
+    current_color.red = 255;
+    current_color.green = 0;
+    current_color.blue = 0;
+
 }

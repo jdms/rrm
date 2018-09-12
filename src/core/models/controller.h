@@ -230,8 +230,11 @@ class Controller
 
         Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
 
-        bool isDefineAboveActive();
-        bool isDefineBelowActive();
+        bool isDefineAboveActive( PolyCurve& boundary_ );
+        bool isDefineBelowActive( PolyCurve& boundary_ );
+
+        void getLowerBoundering( PolyCurve& boundary_ );
+        void getUpperBoundering( PolyCurve& boundary_ );
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
         bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );

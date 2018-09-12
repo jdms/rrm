@@ -127,6 +127,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void defineLowerBoundaryCurve( const PolyCurve& boundary_ );
         void defineUpperBoundaryCurve( const PolyCurve& boundary_ );
+        void clearLowerBoundaryCurve();
+        void clearUpperBoundaryCurve();
 
         void clearBoundaryCurve();
 

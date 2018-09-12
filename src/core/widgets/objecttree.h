@@ -49,7 +49,7 @@ class ObjectTree: public QTreeWidget
         void addOutputVolume();
         void removeOutputVolume();
 
-        void setVolumeVisibility(  const Qt::CheckState& status_ );
+        void setVolumeVisibility(  std::size_t index_, const Qt::CheckState& status_ );
 
         void hideInputVolume();
         void hideOutputVolume();
@@ -70,6 +70,7 @@ class ObjectTree: public QTreeWidget
 
         void setStratigraphiesVisible( const Qt::CheckState& status_ );
         void setStructuralsVisible( const Qt::CheckState& status_ );
+        void setDomainsVisible( const Qt::CheckState& state_ );
 
 
         void removeStratigraphies();
@@ -80,6 +81,8 @@ class ObjectTree: public QTreeWidget
                         const int& green_,  const int& blue_ );
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
         void setRegionVisibility( std::size_t index_, bool status_ );
+
+        void setDomainsVisibility( std::size_t index_, bool status_ );
 
 
 
@@ -97,6 +100,7 @@ class ObjectTree: public QTreeWidget
 
         void clear();
         void createMenu();
+        void clearSubMenu();
 
         void createDomain( std::size_t index_ = 0 );
         void deleteDomain( std::size_t index_ = 0 );

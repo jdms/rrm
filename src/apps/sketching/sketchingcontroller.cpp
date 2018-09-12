@@ -151,18 +151,21 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
         scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
     }
 
-    if( csection_->hasBounderingArea() == true )
-    {
-        std::vector< float > vupper_;
-        std::vector< std::size_t > edupper_;
-        std::vector< float > vlower_;
-        std::vector< std::size_t > edlower_;
+    updateBoundering();
 
-        csection_->getBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
-        scene_->setBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
-    }
-    else
-        scene_->clearBoundaryCurve();
+//    if( csection_->hasBounderingArea() == true )
+//    {
+////        std::vector< float > vupper_;
+////        std::vector< std::size_t > edupper_;
+////        std::vector< float > vlower_;
+////        std::vector< std::size_t > edlower_;
+
+////        csection_->getBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
+////        scene_->setBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
+
+//    }
+//    else
+//        scene_->clearBoundaryCurve();
 }
 
 
@@ -200,7 +203,6 @@ void SketchingController::updateObjects()
 }
 
 
-
 void SketchingController::updateObjectsTrajectories()
 {
 
@@ -208,8 +210,6 @@ void SketchingController::updateObjectsTrajectories()
         topview_scene->updateStratigraphiesTrajectories();
 
 }
-
-
 
 
 
@@ -269,17 +269,53 @@ void SketchingController::updateStratigraphy( const std::size_t& index_ )
 }
 
 
+
 void SketchingController::setCurveAsBoundering( const PolyCurve& boundary_ )
 {
-    if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::ABOVE )
-        main_scene->defineLowerBoundaryCurve( boundary_ );
-    else if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::BELOW )
-        main_scene->defineUpperBoundaryCurve( boundary_ );
+//    if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::ABOVE )
+//        main_scene->defineLowerBoundaryCurve( boundary_ );
+//    else if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::BELOW )
+//        main_scene->defineUpperBoundaryCurve( boundary_ );
 }
+
+
+void SketchingController::updateBoundering()
+{
+    PolyCurve lboundary_, uboundary_;
+
+    bool status_ = false;
+
+    if( controller->isDefineAboveActive( lboundary_ ) == false )
+    {
+       main_scene->clearLowerBoundaryCurve();
+    }
+    else
+    {
+        main_scene->defineLowerBoundaryCurve( lboundary_ );
+        status_ = true;
+    }
+
+
+    if( controller->isDefineBelowActive( uboundary_ ) == false )
+    {
+        main_scene->clearUpperBoundaryCurve();
+    }
+    else
+    {
+        main_scene->defineUpperBoundaryCurve( uboundary_ );
+        status_ = true;
+    }
+
+//    if( status_ == false )
+//        clearCurveAsBoundering();
+
+}
+
 
 void SketchingController::clearCurveAsBoundering()
 {
-    main_scene->clearBoundaryCurve();
+//    std::cout << " limpa tudo" << std::endl << std::flush;
+//    main_scene->clearBoundaryCurve();
 }
 
 

@@ -51,7 +51,7 @@ class SketchingController
 
         void setCurveAsBoundering( const PolyCurve& boundary_ );
         void clearCurveAsBoundering();
-
+        void updateBoundering();
 
 
 

@@ -112,6 +112,7 @@ public slots:
 
     void getRegions();
 
+    void setRegionsVisible( bool status_ );
     void setRegionVisible( std::size_t index_, bool status_ );
     void setRegionName( std::size_t index_, const std::string& name_ );
     void setRegionColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -160,7 +161,8 @@ public slots:
 
     void setRegionSelected( const std::size_t& id_, bool status_ );
 
-
+    void updateUpperBoundary();
+    void updateLowerBoundary();
 
 
 signals:
@@ -213,6 +215,9 @@ signals:
     void clearBounderingArea();
 
     void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
+
+    void updateBoundary();
+
 
 
 protected:
