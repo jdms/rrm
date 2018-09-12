@@ -166,8 +166,8 @@ void MainWindow::createActions()
     { app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
 
 
-    connect( ac_regions, &QAction::triggered, [=]()
-    { app->getRegions(); } );
+    connect( ac_regions, &QAction::triggered, [=]( bool status_ )
+    { app->getRegions( status_ ); } );
 
 }
 

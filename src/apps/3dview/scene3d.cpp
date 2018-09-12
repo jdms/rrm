@@ -203,6 +203,18 @@ void Scene3d::updateRegions()
 }
 
 
+void Scene3d::clearRegions()
+{
+    context->makeCurrent( surface );
+
+    for( auto it: regions )
+        (it.second)->reset();
+    regions.clear();
+
+    emit updateCanvas();
+}
+
+
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {

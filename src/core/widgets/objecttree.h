@@ -108,6 +108,7 @@ class ObjectTree: public QTreeWidget
         void removeDomains();
         void addToDomain( std::size_t index_ );
 
+        void removeRegions();
 
     protected slots:
 
@@ -117,7 +118,7 @@ class ObjectTree: public QTreeWidget
         void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
         void removeInputVolume();
 
-        void removeRegions();
+
 
 
 

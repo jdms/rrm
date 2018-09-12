@@ -206,6 +206,7 @@ void Controller::moveMainCrossSection( double depth_ )
 
     updateObjectsCurvesInCrossSection( depth_ );
     updateImageInMainCrossSection();
+    updateRegions();
 }
 
 
@@ -1044,7 +1045,6 @@ void Controller::defineRegions()
 
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
-
         Color color_;
         color_.red = colors_[ 3*i ];
         color_.green = colors_[ 3*i + 1 ];
@@ -1058,8 +1058,8 @@ void Controller::defineRegions()
         region_->setColor( color_.red, color_.green, color_.blue );
         region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
 
-
         model.regions[region_->getIndex()] = region_;
+        getRegionCrossSectionBoundary( i );
     }
 
 
@@ -1068,8 +1068,8 @@ void Controller::defineRegions()
 
 bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {
-    if( model.regions.find( index_ ) == model.regions.end() )
-        return false;
+//    if( model.regions.find( index_ ) == model.regions.end() )
+//        return false;
 
     RegionsPtr region_ = model.regions[ index_ ];
 
@@ -1090,6 +1090,13 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     return true;
 }
 
+
+
+void Controller::updateRegions()
+{
+    for( auto it_: model.regions )
+        getRegionCrossSectionBoundary( it_.first );
+}
 
 
 void Controller::setRegionsVisible(bool status_)
@@ -1188,6 +1195,19 @@ const std::map< std::size_t, RegionsPtr >& Controller::getRegions() const
 {
     return model.regions;
 }
+
+
+void Controller::removeRegions()
+{
+    for( auto it: model.regions )
+        (it.second).reset();
+    model.regions.clear();
+
+    for( auto it: model.domains )
+        (it.second).regions_set.clear();
+    model.domains.clear();
+}
+
 
 
 void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )

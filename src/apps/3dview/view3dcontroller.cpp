@@ -121,6 +121,12 @@ void View3dController::updateRegions()
 }
 
 
+void View3dController::clearRegions()
+{
+    scene->clearRegions();
+}
+
+
 
 void View3dController::clear()
 {

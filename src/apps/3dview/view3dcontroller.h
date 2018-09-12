@@ -38,6 +38,7 @@ class View3dController
 
         void addRegions();
         void updateRegions();
+        void clearRegions();
 
         void clear();
 

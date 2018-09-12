@@ -167,7 +167,7 @@ void RRMApplication::moveMainCrossSection( double depth_ )
     controller->moveMainCrossSection( depth_ );
 
     emit updateBoundary();
-
+    emit updateRegions();
     emit updateMainCrossSection();
 
 }
@@ -325,8 +325,17 @@ void RRMApplication::createObjectSurface()
 }
 
 
-void RRMApplication::getRegions()
+void RRMApplication::getRegions( bool status_ )
 {
+    if( status_ == false )
+    {
+        controller->removeRegions();
+        window->object_tree->removeDomains();
+        window->object_tree->removeRegions();
+        emit clearRegions();
+        return;
+    }
+
     controller->defineRegions();
 
     window->object_tree->addOutputVolume();
@@ -339,9 +348,7 @@ void RRMApplication::getRegions()
         reg_->getColor( r_, g_, b_ );
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
 
-        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex() );
-        if( status_ == true )
-            emit addRegionCrossSectionBoundary( reg_ );
+        emit addRegionCrossSectionBoundary( reg_ );
     }
 
     emit addRegions();
@@ -404,46 +411,17 @@ void RRMApplication::removeDomain( std::size_t index_ )
 
 void RRMApplication::setSketchAbove( bool status_ )
 {
-
     controller->enablePreserveAbove( status_ );
-
     emit enablePreserve( "ABOVE ", status_ );
     emit updateBoundary();
-
-//    if( status_ == false )
-//        emit updateBoundary();
-
-//    emit enablePreserve( "ABOVE ", status_ );
-//    emit updateObjects();
-
 }
 
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
-
-
     controller->enablePreserveBelow( status_ );
     emit enablePreserve( "BELOW ", status_ );
     emit updateBoundary();
-
-
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->requestCreateBelow();
-//        if( enabled_ )
-//            emit selectEnabled( "BELOW", status_ );
-//        else
-//            emit selectEnabled( "BELOW", false );
-//    }
-//    else
-//    {
-//        controller->stopCreateBelow();
-//        emit selectEnabled( "NONE" );
-//    }
-
-//    emit updateObjects();
-
 }
 
 

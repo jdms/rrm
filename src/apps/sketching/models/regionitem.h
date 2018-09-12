@@ -25,6 +25,8 @@ class RegionItem: public PolygonItem
         virtual bool isVisible() const override;
         virtual bool isSelected() const override;
 
+        void updateBoundary();
+
         void clear();
 
     private:
