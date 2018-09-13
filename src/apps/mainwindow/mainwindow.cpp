@@ -388,6 +388,8 @@ void MainWindow::createObjectTree()
         app->addRegionToDomain( reg_id_, domain_id_ );
     } );
 
+
+
     connect( object_tree, &ObjectTree::removeRegionFromDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )
     {
         app->removeRegionFromDomain( reg_id_, domain_id_ );
@@ -397,6 +399,21 @@ void MainWindow::createObjectTree()
     {
         app->removeDomain( index_ );
     } );
+
+
+
+
+    connect( object_tree, &ObjectTree::addRegionsToDomain, [=]( std::size_t domain_id_, std::vector< std::size_t > regions_ )
+    {
+        app->addRegionsToDomain( domain_id_, regions_ );
+    } );
+
+    connect( object_tree, &ObjectTree::removeRegionsFromTheirDomains, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+    {
+        app->removeRegionsFromDomains( regions_, domains_ );
+    } );
+
+
 }
 
 

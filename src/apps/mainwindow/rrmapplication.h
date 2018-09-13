@@ -126,6 +126,10 @@ public slots:
     void removeDomain( std::size_t index_ );
 
 
+    void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
+    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+
+
     void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
     void setSketchAbove( bool status_ );

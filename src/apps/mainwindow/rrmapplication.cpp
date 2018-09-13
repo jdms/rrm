@@ -327,12 +327,14 @@ void RRMApplication::createObjectSurface()
 
 void RRMApplication::getRegions( bool status_ )
 {
+    controller->removeRegions();
+    window->object_tree->removeDomains();
+    window->object_tree->removeRegions();
+
+    emit clearRegions();
+
     if( status_ == false )
     {
-        controller->removeRegions();
-        window->object_tree->removeDomains();
-        window->object_tree->removeRegions();
-        emit clearRegions();
         return;
     }
 
@@ -386,7 +388,9 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 
 void RRMApplication::createDomain( std::size_t index_ )
 {
-    controller->createDomain( index_ );
+//    controller->createDomain( index_ );
+    std::size_t id_ = controller->createDomain1();
+    window->object_tree->createDomain1( id_ );
 }
 
 
@@ -396,15 +400,59 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 }
 
 
+
+
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->removeRegionFromDomain( reg_id_, domain_id_ );
 }
 
+
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-    controller->removeDomain( index_ );
+//    controller->removeDomain( index_ );
+    controller->removeDomain1( index_ );
+    window->object_tree->deleteDomain1( index_ );
 }
+
+
+
+void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ )
+{
+
+    std::vector< std::size_t > regions_added_;
+    for( auto id_: regions_ )
+    {
+        bool status_ = controller->addRegionToDomain1( id_, domain_id_ );
+        if( status_ == true )
+            regions_added_.push_back( id_ );
+    }
+
+    window->object_tree->addRegionsInDomain( domain_id_, regions_added_ );
+}
+
+
+void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+{
+    std::size_t nregions_ = regions_.size();
+
+    std::vector< std::size_t > regions_removed_;
+    std::vector< std::size_t > domains_removed_;
+
+    for( std::size_t i = 0; i < nregions_; ++i )
+    {
+        bool status_ = controller->removeRegionFromDomain1(  regions_[ i ], domains_[ i ] );
+        if( status_ == true )
+        {
+            regions_removed_.push_back( regions_[ i ] );
+            domains_removed_.push_back( domains_[ i ] );
+        }
+    }
+
+    window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+
+}
+
 
 
 
@@ -558,6 +606,7 @@ void RRMApplication::undo()
 
     checkUndoRedo();
     checkPreserveStatus();
+    emit updateBoundary();
 
     if( status_ == false ) return;
 
@@ -575,10 +624,13 @@ void RRMApplication::redo()
 
     checkUndoRedo();
     checkPreserveStatus();
+    emit updateBoundary();
 
     if( status_ == false ) return;
 
     emit updateObjects();
+    emit updateTrajectories();
+
     updateObjectTree();
 
 }
@@ -591,6 +643,8 @@ void RRMApplication::checkUndoRedo()
 
     window->ac_undo->setEnabled( undo_ );
     window->ac_redo->setEnabled( redo_ );
+
+    emit updateBoundary();
 }
 
 
