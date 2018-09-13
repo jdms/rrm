@@ -194,6 +194,14 @@ class Controller
         void removeRegions();
 
 
+        std::size_t createDomain1( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        bool addRegionToDomain1(std::size_t region_id_, std::size_t domain_id_);
+        bool removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_);
+        std::set<std::size_t> getRegionsFromDomain1(std::size_t domain_id_) const;
+        void removeDomain1(std::size_t domain_id_);
+
+
+
         void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
         void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
         void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
@@ -343,6 +351,8 @@ class Controller
         std::map< double, ImageData > images_csectionsX;
         std::map< double, ImageData > images_csectionsY;
         std::map< double, ImageData > images_csectionsZ;
+
+        std::set< std::size_t > regions_in_domains;
 
 };
 

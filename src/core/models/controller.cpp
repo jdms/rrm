@@ -1210,6 +1210,85 @@ void Controller::removeRegions()
 
 
 
+
+///==========================================================================
+
+///
+/// Domains Methods
+///
+
+
+std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
+{
+    std::size_t id_ = 0;
+
+    if( model.domains.empty() == false )
+    {
+        for( auto it_: model.domains )
+        {
+            id_ = it_.first;
+        }
+
+        ++id_;
+    }
+
+
+    model.domains[ id_ ].regions_set =  std::set< std::size_t >();
+    for( auto it_: indexes_ )
+        addRegionToDomain1( it_, id_ );
+
+    return id_;
+
+}
+
+
+bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_id_ )
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
+
+    model.domains[domain_id_].regions_set.insert(region_id_);
+    regions_in_domains.insert( region_id_ );
+    return true;
+}
+
+
+bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_)
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
+
+    model.domains[domain_id_].regions_set.erase(region_id_);
+    regions_in_domains.erase( region_id_ );
+
+    return true;
+}
+
+
+std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_) const
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
+    return model.domains.at(domain_id_).regions_set;
+}
+
+
+void Controller::removeDomain1(std::size_t domain_id_)
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    for( auto it_: model.domains )
+        removeRegionFromDomain1( it_.first, domain_id_ );
+
+    model.domains.erase( domain_id_ );
+}
+
+
+
+//=== old methods
+
+
 void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )
 {
     std::size_t id_ = index_;
