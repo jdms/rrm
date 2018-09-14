@@ -197,6 +197,9 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
     /* stopPreserveAbove(); */
 
     success = preserveBelow(upper_model);
+    if ( lower_model.empty() )
+        return true;
+
     success &= preserveAbove(lower_model);
 
     if ( !success )
@@ -205,6 +208,9 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
         /* stopPreserveAbove(); */
 
         success = preserveAbove(lower_model);
+        if ( upper_model.empty() )
+            return true;
+
         success &= preserveBelow(upper_model);
     }
 
