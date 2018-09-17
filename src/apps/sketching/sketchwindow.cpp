@@ -79,8 +79,7 @@ void SketchWindow::createToolBar()
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
-    ac_use_last_trajectory->setCheckable( true );
-    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
+//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     tb_trajectory->addAction( ac_use_last_trajectory );
 
 
@@ -110,6 +109,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
+
+    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
+
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
@@ -148,6 +150,8 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
 
+    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
+
 
     return scene_;
 }
@@ -181,7 +185,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
-    connect( ac_use_last_trajectory, &QAction::toggled, [=]()
+    connect( ac_use_last_trajectory, &QAction::triggered, [=]()
     { emit useLastTrajectory(); } );
 
 
@@ -322,6 +326,15 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
     }
 }
 
+
+
+void SketchWindow::reset()
+{
+    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+    ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
+//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
+    cp_color->setColor( QColor( 255, 0, 0 ) );
+}
 
 SketchWindow::~SketchWindow()
 {

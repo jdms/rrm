@@ -89,8 +89,6 @@ void SketchInterface::createSketchingActions()
 
     connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
-
-
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
     {
         window->app->defineCurrentColor( red_, green_, blue_ );
@@ -101,6 +99,11 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
+
+    connect( sketch_window, &SketchWindow::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    { window->app->removeLastCurve( dir_, depth_ ); } );
+
+
 
     connect( sketch_window, &SketchWindow::createObject, [=]()
     { window->app->createObjectSurface(); } );
@@ -125,11 +128,12 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
 
-//    connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ window->app->definedBounderingBySketch(); } );
+
+    connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
 
 
 
-     connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+    connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
 
 
 
@@ -169,9 +173,6 @@ void SketchInterface::createSketchingActions()
 
 
     connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
-
-
-
 
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
@@ -277,7 +278,7 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
 
 
-        connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
+    connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
 
     connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
 
