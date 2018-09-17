@@ -408,6 +408,7 @@ void SketchScene::endObject()
 }
 
 
+
 void SketchScene::setSketchingMode()
 {
     current_interaction1 = UserInteraction1::SKETCHING;
@@ -423,6 +424,17 @@ void SketchScene::setResizingBoundaryMode( bool status_ )
 {
     if( status_ == true )
         current_interaction1 = UserInteraction1::RESIZING_BOUNDARY;
+    else
+    {
+        setSketchingMode();
+    }
+}
+
+
+void SketchScene::setGuidedExtrusionMode( bool status_ )
+{
+    if( status_ == true )
+        current_interaction1 = UserInteraction1::GUIDED_EXTRUSION;
     else
     {
         setSketchingMode();
@@ -616,6 +628,7 @@ void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const
 //    update();
 }
 
+
 void SketchScene::defineBounderingArea()
 {
 
@@ -737,6 +750,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
 
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    {
+        emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
 
     QGraphicsScene::mousePressEvent( event_ );
     update();
@@ -778,6 +796,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 {
     QPointF p_ = event_->scenePos();
+//    std::cout << "mx: " << p_.x() << ", my: " << p_.y() << std::endl << std::flush;
 
     if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
     {
@@ -905,20 +924,22 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
 }
 
 
-void SketchScene::keyPressEvent( QKeyEvent *event )
-{
-    switch( event->key() )
-    {
-        case Qt::Key_S:
-            for( auto it: regions )
-            {
-                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
-            }
-        break;
-        default:
-            break;
-    };
-}
+//void SketchScene::keyPressEvent( QKeyEvent *event )
+//{
+//    switch( event->key() )
+//    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+//    case Qt::Key_1:
+//        views()[ 0 ]->setVerticalExaggeration();
+//        default:
+//            break;
+//    };
+//}
 
 
 //void SketchScene::addWell( const std::shared_ptr< Well >& well_ )

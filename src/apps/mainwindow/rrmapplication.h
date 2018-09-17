@@ -170,6 +170,8 @@ public slots:
     void updateUpperBoundary();
     void updateLowerBoundary();
 
+    void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
 
 signals:
 

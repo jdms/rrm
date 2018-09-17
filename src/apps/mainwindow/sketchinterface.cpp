@@ -131,6 +131,9 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
 
+     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+     { window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
+
 
 
     connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
@@ -281,6 +284,7 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
 
     connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
+
 
 }
 

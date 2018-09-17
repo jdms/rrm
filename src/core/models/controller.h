@@ -252,6 +252,7 @@ class Controller
         bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
         void getRegionByPointAsBoundering();
 
+        void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 

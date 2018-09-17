@@ -23,9 +23,10 @@
 
 #include <QToolBar>
 #include <QFileDialog>
+#include <cmath>
 
 #include "sketchwindow.h"
-
+#define PI 3.14159265
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
@@ -95,6 +96,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     sketchingcanvas = new SketchingCanvas();
     sketchingcanvas->scale( 1, -1 );
+    sketchingcanvas->setVerticalExaggeration( 1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
     setCentralWidget( sketchingcanvas );
 
@@ -149,6 +151,8 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
 
     connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
+
+    connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
@@ -327,6 +331,12 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 }
 
 
+void SketchWindow::setDipAngle( double angle_ )
+{
+    double v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    double param_ = v_exag_*tan( angle_*PI/180 );
+    double beta_ = atan(param_) * 180 / PI;
+}
 
 void SketchWindow::reset()
 {
@@ -335,6 +345,7 @@ void SketchWindow::reset()
 //    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
 }
+
 
 SketchWindow::~SketchWindow()
 {
