@@ -767,9 +767,6 @@ void ObjectTree::removeRegionsOfTheirDomains1( const std::vector< std::size_t >&
 
             if( domain_->childCount() == 0 )
             {
-//                label_domains->removeChild( domain_ );
-//                delete domain_;
-//                domain_ = nullptr;
                 deleteDomain1( domain_->getIndex() );
             }
 
@@ -1063,11 +1060,10 @@ void ObjectTree::removeInputVolume()
 
         obj_ = nullptr;
         children_.removeFirst();
-
     }
+
     stratigraphies.clear();
     label_stratigraphy->setHidden( true );
-
 
 
 
@@ -1159,8 +1155,6 @@ void ObjectTree::removeDomains()
             domain_->removeChild( reg_ );
             reg_ = nullptr;
 
-            //            delete reg_;
-
            children_domains_.removeFirst();
 
         }
@@ -1172,6 +1166,8 @@ void ObjectTree::removeDomains()
 
     }
     domains.clear();
+
+    takeTopLevelItem( 2 );
     label_domains->setHidden( true );
 
 
@@ -1191,6 +1187,7 @@ void ObjectTree::clearSubMenu()
         domain_actions_.erase( domain_actions_.begin()->first );
     }
     domain_actions_.clear();
+
 }
 
 
@@ -1208,11 +1205,9 @@ void ObjectTree::clear()
         removeRegions();
     }
 
+    clearSubMenu();
     removeInputVolume();
 
-    clearSubMenu();
-
-    label_domains->setHidden( true );
 
     items.clear();
     QTreeWidget::clear();

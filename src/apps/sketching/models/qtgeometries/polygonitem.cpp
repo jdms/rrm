@@ -184,6 +184,13 @@ void PolygonItem::clear()
     prepareGeometryChange();
     plane.clear();
 
+    is_done = true;
+    has_border = true;
+
+    resetToDefaultBorderColor();
+    resetToDefaultFillColor();
+    resetToDefaultBorderWidth();
+
     std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
 }
