@@ -182,6 +182,7 @@ void SketchScene::removeImageInCrossSection()
     update();
 }
 
+
 void SketchScene::removeImageInCrossSectionAndUpdate()
 {
     image->setVisible( false );
@@ -292,6 +293,7 @@ void SketchScene::updateRegions()
     QGraphicsScene::update();
 }
 
+
 void SketchScene::clearRegions()
 {
     for( auto it: regions )
@@ -343,6 +345,10 @@ void SketchScene::cancelSketch()
 
     if( sketch == nullptr ) return;
     sketch->clear();
+
+    emit removeLastCurve( csection_direction, csection_depth );
+
+
     QGraphicsScene::update();
 }
 
@@ -355,10 +361,6 @@ void SketchScene::submitSketch()
 
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
-
-    std::cout << "Boundering area is visible = " << boudering_area->isVisible() << std::endl << std::flush;
-
-    std::cout << "Boundering area is empty = " << boudering_area->isEmpty() << std::endl << std::flush;
 
     std::cout << "Image is visible: " << image->isVisible() << std::endl;
 
@@ -645,6 +647,7 @@ void SketchScene::defineBounderingArea()
 
     boudering_area->setVisible( true );
     boudering_area->update();
+
     update();
 }
 
@@ -656,17 +659,20 @@ void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
     defineBounderingArea();
 }
 
+
 void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
 {
     upper = boundary_;
     defineBounderingArea();
 }
 
+
 void SketchScene::clearLowerBoundaryCurve()
 {
     lower.clear();
     defineBounderingArea();
 }
+
 
 void SketchScene::clearUpperBoundaryCurve()
 {
@@ -756,6 +762,12 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
     {
         getSelectedRegions();
     }
+
+//    else if( current_interaction1 == UserInteraction1::SELECTING_REGION )
+//    {
+//        emit setAreaChoosed();
+//    }
+
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
     update();
@@ -935,6 +947,24 @@ void SketchScene::clearScene()
         volume1.reset();
     volume1 = nullptr;
 
+    if( image != nullptr )
+        delete image;
+    image = nullptr;
+
+    if( resize_marker != nullptr )
+        delete resize_marker;
+    resize_marker = nullptr;
+
+    if( move_marker != nullptr )
+        delete move_marker;
+    move_marker = nullptr;
+
+    if( boudering_area != nullptr )
+    {   boudering_area->clear();
+        delete boudering_area;
+    }
+    boudering_area = nullptr;
+
     for( auto it: cross_sections1 )
         (it.second).reset();
     cross_sections1.clear();
@@ -947,9 +977,59 @@ void SketchScene::clearScene()
         (it.second).reset();
     regions.clear();
 
+    for( auto sk_: sketches_of_selection )
+    {
+        sk_->clear();
+        sk_.reset();
+    }
+    sketches_of_selection.clear();
+
+    csection_depth = 0.0;
+    sketch_enabled = true;
+
+    lower.clear();
+    upper.clear();
+
+    csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
+    current_interaction1 = UserInteraction1::SKETCHING;
+
+
+
+
+
+
 
 
     //init();
+
+    /*
+
+    setSketchingMode();
+
+    image = new ImageItemWrapper();
+    image->setVisible( false );
+    addItem( image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    resize_marker->setVisible( false );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    move_marker->setVisible( false );
+    addItem( move_marker );
+
+    boudering_area = new PolygonItem();
+    boudering_area->setBorderVisible( false );
+    boudering_area->setVisible( false );
+    addItem( boudering_area );
+
+*/
 
 
 }

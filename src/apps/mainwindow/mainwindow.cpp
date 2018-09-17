@@ -546,23 +546,26 @@ void  MainWindow::activatePreserveRegion( bool status_ )
 
 void MainWindow::initializeInterface()
 {
-//    app->s
-//    ac_undo = nullptr;
-//    ac_redo = nullptr;
-//    ac_sketch_above = nullptr;
-//    ac_sketch_region = nullptr;
-//    ac_sketch_below = nullptr;
-//    ac_remove_above = nullptr;
-//    ac_remove_above_int = nullptr;
-//    ac_remove_below = nullptr;
-//    ac_remove_below_int = nullptr;
+    ac_undo->setEnabled( false );
+    ac_redo->setEnabled( false );
 
-//    ac_direction_x = nullptr;
-//    ac_direction_y = nullptr;
-//    ac_direction_z = nullptr;
+    ac_sketch_region = nullptr;
+    ac_sketch_above->setChecked( false );
+    ac_sketch_below->setChecked( false );
+    ac_remove_above->setChecked( false );
+    ac_remove_above_int->setChecked( false );
+    ac_remove_below->setChecked( false );
+    ac_remove_below_int->setChecked( false );
 
-//    ac_stratigraphy = nullptr;
-//    ac_structural = nullptr;
+
+    ac_direction_x->setChecked( false );
+    ac_direction_y->setChecked( false );
+    ac_direction_z->setChecked( true );
+
+    ac_stratigraphy->setChecked( true );
+    ac_structural->setChecked( false );
+
+    ac_regions->setChecked( false );
 }
 
 

@@ -56,6 +56,11 @@ public:
     }
 
 
+    void addSubcurve( const Curve2D& curve_ )
+    {
+        curve.push_back( curve_ );
+    }
+
     Curve2D getSubcurve( std::size_t index_ ) const{
         bool valid_ = !curve.empty();
         valid_ &= ( ( index_ < curve.size() ) && ( index_ >= 0 ) );
@@ -207,6 +212,7 @@ public:
 
     }
 
+
     void toVector( std::vector< double >& vs_, std::vector< std::size_t >& es_ ) const{
         int index_ = 0;
         for( auto c_: curve )
@@ -294,6 +300,7 @@ public:
         return points3d_;
     }
 
+
     std::vector< double > addYCoordinate( double depth_, bool swap_ = false ) const
     {
         std::vector< double > points3d_;
@@ -314,6 +321,7 @@ public:
         return points3d_;
 
     }
+
 
     std::vector< double > addZCoordinate( double depth_, bool swap_ = false ) const
     {
@@ -336,6 +344,7 @@ public:
 
         return points3d_;
     }
+
 
 protected:
 

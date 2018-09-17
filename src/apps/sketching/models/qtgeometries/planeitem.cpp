@@ -149,6 +149,10 @@ void PlaneItem::clear()
     plane = QRectF();
     setRect( plane );
 
+    resetToDefaultBorderColor();
+    resetToDefaultFillColor();
+    resetToDefaultBorderWidth();
+
     update();
 }
 

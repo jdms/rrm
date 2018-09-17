@@ -55,6 +55,10 @@ void VolumeItem::clear()
 {
     if( raw != nullptr )
         raw.reset();
+
+    csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
+    csection_depth = 0.0;
+
 //    PlaneItem::clear();
 }
 

@@ -153,19 +153,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     updateBoundering();
 
-//    if( csection_->hasBounderingArea() == true )
-//    {
-////        std::vector< float > vupper_;
-////        std::vector< std::size_t > edupper_;
-////        std::vector< float > vlower_;
-////        std::vector< std::size_t > edlower_;
-
-////        csection_->getBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
-////        scene_->setBounderingArea( vupper_,  edupper_, vlower_,  edlower_ );
-
-//    }
-//    else
-//        scene_->clearBoundaryCurve();
 }
 
 
@@ -435,17 +422,13 @@ void SketchingController::clear()
     main_scene->clearScene();
     topview_scene->clearScene();
 
-//    main_scene.reset();
-//    topview_scene.reset();
-
-
-////    window->clear();
-////    topview_window->clear();
-
     removeWindowsDirectionX();
     removeWindowsDirectionY();
     removeWindowsDirectionZ();
 
+
+    window->reset();
+    topview_window->reset();
 
 }
 

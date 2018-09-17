@@ -248,8 +248,7 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 
 void Scene3d::clearScene()
 {
-    volume.reset();
-    main_csection.reset();
+
 
     for( auto it: cross_sectionsX )
         (it.second)->reset();
@@ -271,5 +270,10 @@ void Scene3d::clearScene()
         (it.second)->reset();
     regions.clear();
 
+    volume.reset();
+    main_csection.reset();
+
+
+    current_color = QColor( 255, 0, 0 );
     emit updateCanvas();
 }

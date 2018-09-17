@@ -303,23 +303,41 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 }
 
 
+void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    controller->removeCurveFromObject( dir_, depth_ );
+    emit updateObjects();
+}
+
 void RRMApplication::createObjectSurface()
 {
 
-    bool status_ = controller->commitObjectSurface();
-    if( status_ == false ) return;
+//    bool status_ = controller->commitObjectSurface();
+//    if( status_ == false ) return;
 
+//    emit addObject( controller->getCurrentObject() );
+//    emit updateObjects();
+
+//    checkUndoRedo();
+
+
+//    updateObjectTree();
+//    defineRandomColor();
+
+//    emit unlockDirections();
+
+    bool status_ = controller->commitObjectSurface();
+
+    emit updateObjects();
+
+
+    if( status_ == false ) return;
+    checkUndoRedo();
+    updateObjectTree();
 
 
     emit addObject( controller->getCurrentObject() );
-    emit updateObjects();
-
-    checkUndoRedo();
-
-
-    updateObjectTree();
     defineRandomColor();
-
     emit unlockDirections();
 
 }
@@ -484,6 +502,7 @@ void RRMApplication::setSketchRegion( bool status_ )
         controller->enablePreserveBelow( false );
         window->activatePreserveAbove( false );
         window->activatePreserveBelow( false );
+        window->activatePreserveRegion( false );
     }
 
     emit updateBoundary();
@@ -543,9 +562,13 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
     {
         controller->getRegionByPointAsBoundering();
         emit updateBoundary();
+
     }
+    else
+        setSketchRegion( false );
 
     emit selectEnabled( "NONE" );
+
 }
 
 
@@ -577,6 +600,7 @@ void RRMApplication::reset()
 {
 
     emit resetApplication();
+    window->initializeInterface();
     controller->clear();
 
     init();

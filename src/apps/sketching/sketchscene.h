@@ -160,6 +160,10 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void regionSelected( const std::size_t& id_, bool status_ );
 
+        void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+        void setAreaChoosed();
+
     protected:
 
         void processSketch();
@@ -190,7 +194,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         ImageItemWrapper* image = nullptr;
 
         double csection_depth = 0.0;
-        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
+        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
 
         std::shared_ptr< VolumeItem > volume1 = nullptr;
         std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections1;

@@ -405,14 +405,23 @@ void CrossSection::clear()
     if( image_path.empty() == false )
         image_path.clear();
 
+
+    boundering.vertices_upper.clear();
+    boundering.edges_upper.clear();
+    boundering.vertices_lower.clear();
+    boundering.edges_lower.clear();
+    boundering.empty = true;
+
     removeObjects();
     initialize();
 }
 
 void CrossSection::initialize()
 {
-    depth = 0.0;
-    direction = Settings::CrossSection::CrossSectionDirections::Z;
+    width = 0.0;
+    height = 0.0;
+    depth = 0.0;;
+    direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
     is_visible = true;
     number_of_csections = 0;
     image_origin.x = 0;

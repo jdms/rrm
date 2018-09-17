@@ -683,13 +683,12 @@ bool Controller::commitObjectSurface()
 
     bool status_ = createObjectSurface();
 
+    ObjectPtr obj_ = model.objects[ current_object ];
     if( status_ == false )
     {
-//        rules_processor.testSurfaceInsertion();
         return false;
     }
 
-    ObjectPtr obj_ = model.objects[ current_object ];
     obj_->setDone( true );
 
 
@@ -1078,7 +1077,18 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     std::vector<double> vertices_lower_;
     std::vector<size_t> edges_lower_;
 
-    rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+         rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+    }
+
+
 
     PolyCurve lower_, upper_;
     lower_.fromVector( vertices_lower_, edges_lower_ );
@@ -2264,6 +2274,7 @@ void Controller::clear()
     for( auto it: model.domains )
         (it.second).regions_set.clear();
     model.domains.clear();
+    regions_in_domains.clear();
 
 
     selectable_objects.clear();

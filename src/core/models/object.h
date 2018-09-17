@@ -320,8 +320,10 @@ class Object
         };
 
 
+
         std::string name;
         std::string log;
+        Settings::Objects::ObjectType type;
 
         Color color;
         Point min, max;
@@ -331,9 +333,9 @@ class Object
         bool selected = false;
         bool visible = true;
         bool active = true;
+        bool is_done = false;
 
-
-        std::vector< double > used_depth;
+        std::set< double > user_entered;
         std::map< double, PolyCurve > csection_curves1;
         std::map< double, PolyCurve > level_curves1;
         Settings::CrossSection::CrossSectionDirections direction;
@@ -344,18 +346,17 @@ class Object
 
         static std::size_t number_of_objects;
 
-        Settings::Objects::ObjectType type;
 
         std::string text_information;
 
-        bool is_done;
+        std::vector< double > used_depth;
 
         CrossSectionsContainer csection_curves;
         Surface surface;
         PolyCurve trajectory;
 
         const std::size_t CHANNEL_MAX_CSECTIONS = 2;
-        std::set< double > user_entered;
+
 
 };
 
