@@ -67,6 +67,7 @@ class SketchWindow: public QMainWindow
         void setModeSelecting( bool status_ );
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
+        void setDipAngle( double angle_ );
 
         void reset();
 
@@ -98,6 +99,8 @@ class SketchWindow: public QMainWindow
         void stopSketchesOfSelection();
 
         void regionSelected( const std::size_t& id_, bool status_ );
+
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void setAreaChoosed();
 

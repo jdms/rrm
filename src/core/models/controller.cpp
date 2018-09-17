@@ -1958,6 +1958,10 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
 }
 
 
+void Controller::setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+}
+
 ///==========================================================================
 
 ///

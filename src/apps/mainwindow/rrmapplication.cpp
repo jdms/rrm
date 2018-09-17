@@ -782,3 +782,10 @@ void RRMApplication::setRegionSelected( const std::size_t& id_, bool status_ )
     controller->setRegionSelected( id_, status_ );
     emit updateRegions();
 }
+
+
+void RRMApplication::setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+
+    controller->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+}

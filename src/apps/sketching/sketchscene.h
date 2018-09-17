@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION };
 
     ///================================================================================
 
@@ -116,6 +116,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSelectingRegionsMode( bool status_ );
         void setResizingImageMode( bool status_ );
         void setSelectingRegionMode( bool status_ );
+        void setGuidedExtrusionMode( bool status_ );
         //        void setSelectingWellsMode( bool status_ );
 
         void addImageToCrossSection( const QString& file_ );
@@ -164,6 +165,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void setAreaChoosed();
 
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
     protected:
 
         void processSketch();
@@ -181,7 +184,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         virtual void dropEvent( QGraphicsSceneDragDropEvent* event_ );
         virtual void dragMoveEvent( QGraphicsSceneDragDropEvent* event_ );
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event_ );
-        virtual void keyPressEvent( QKeyEvent *event );
+//        virtual void keyPressEvent( QKeyEvent *event );
 
 
     protected:

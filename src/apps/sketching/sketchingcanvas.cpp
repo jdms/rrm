@@ -23,6 +23,42 @@ const std::shared_ptr< SketchScene >& SketchingCanvas::getScene() const
     return scene;
 }
 
+
+
+void SketchingCanvas::setVerticalExaggeration( double scale_ )
+{
+    v_exag = scale_;
+    QMatrix matrix_;
+    matrix_.scale( 1.0, -1*scale_ );
+    setMatrix( matrix_ );
+
+}
+
+
+double SketchingCanvas::getVerticalExaggeration() const
+{
+   return v_exag;
+}
+
+
+void SketchingCanvas::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+    case Qt::Key_1:
+        setVerticalExaggeration( 10 );
+        default:
+            break;
+    };
+}
+
+
 SketchingCanvas::~SketchingCanvas()
 {
 
