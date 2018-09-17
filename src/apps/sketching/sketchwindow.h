@@ -68,6 +68,8 @@ class SketchWindow: public QMainWindow
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
 
+        void reset();
+
 
     signals:
 
@@ -80,6 +82,8 @@ class SketchWindow: public QMainWindow
 
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectory( const PolyCurve& curve_ );
+        void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
         void createObject();
 
         void useLastTrajectory();
@@ -94,6 +98,8 @@ class SketchWindow: public QMainWindow
         void stopSketchesOfSelection();
 
         void regionSelected( const std::size_t& id_, bool status_ );
+
+        void setAreaChoosed();
 
     protected:
 
