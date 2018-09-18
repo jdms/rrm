@@ -137,6 +137,8 @@ void Controller::updateBoundingBoxInModel()
     double w_ = 0.0, h_ = 0.0, d_ = 0.0;
 
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
+
+
     for( auto it: model.objects )
     {
         (it.second)->setBoundingBox( ox_, ox_ + w_, oy_, oy_ + h_, oz_, oz_ + d_ );
@@ -1368,6 +1370,7 @@ void Controller::updateBoundingBoxRulesProcessor()
 
     rules_processor.setOrigin( ox, oy, oz );
     rules_processor.setLenght( width_, height_, lenght_ );
+
 }
 
 
@@ -2061,6 +2064,7 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
 {
 
     clear();
+    init();
 
     bool status_ = rules_processor.loadFile( filename );
 
@@ -2077,7 +2081,7 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
 void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
 
-    init();
+//    init();
 
     double ox, oy, oz;
     double width, height, depth;
@@ -2085,7 +2089,6 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     rules_processor.getOrigin( ox, oy, oz );
     rules_processor.getLenght( width, height, depth );
     model.volume->setGeometry( ox, oy, oz, width, height, depth );
-
 
     if ( rules_processor.isLowResolution() == true )
     {
