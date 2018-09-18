@@ -220,7 +220,7 @@ void Object::setActive( bool status_ )
     }
     else if( status_ == true )
     {
-        setVisible( true );
+//        setVisible( true );
     }
 
 }
@@ -233,7 +233,7 @@ bool Object::isActive() const
 
 void Object::removed()
 {
-    setVisible( false );
+//    setVisible( false );
 
     if( direction == Settings::CrossSection::CrossSectionDirections::Y ) return;
 
@@ -332,8 +332,8 @@ bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 
     user_entered.insert( csection_id_ );
 
-    setVisible( true );
-    setActive( true );
+//    setVisible( true );
+//    setActive( true );
     return true;
 }
 
@@ -362,8 +362,8 @@ bool Object::removeCurve( double csection_id_ )
     if( user_entered.find( csection_id_ ) != user_entered.end() )
         user_entered.erase( csection_id_ );
 
-    if( csection_curves1.empty() == true )
-        setVisible( false );
+//    if( csection_curves1.empty() == true )
+//        setVisible( false );
     return true;
 }
 
@@ -380,8 +380,8 @@ void Object::removeLevelCurves()
 
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
-    if( csection_curves1.empty() == true )
-        setVisible( true );
+//    if( csection_curves1.empty() == true )
+//        setVisible( true );
 
     csection_curves1[ csection_id_]  = curve_;
 }
