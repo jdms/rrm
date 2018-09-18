@@ -190,6 +190,16 @@ class Controller
         bool isRegionSelected(std::size_t index_) const;
 
         const std::map< std::size_t, RegionsPtr >& getRegions() const;
+        void updateRegions();
+        void removeRegions();
+
+
+        std::size_t createDomain1( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        bool addRegionToDomain1(std::size_t region_id_, std::size_t domain_id_);
+        bool removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_);
+        std::set<std::size_t> getRegionsFromDomain1(std::size_t domain_id_) const;
+        void removeDomain1(std::size_t domain_id_);
+
 
 
         void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
@@ -230,8 +240,11 @@ class Controller
 
         Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
 
-        bool isDefineAboveActive();
-        bool isDefineBelowActive();
+        bool isDefineAboveActive( PolyCurve& boundary_ );
+        bool isDefineBelowActive( PolyCurve& boundary_ );
+
+        void getLowerBoundering( PolyCurve& boundary_ );
+        void getUpperBoundering( PolyCurve& boundary_ );
 
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
         bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
@@ -239,6 +252,7 @@ class Controller
         bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
         void getRegionByPointAsBoundering();
 
+        void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
@@ -264,6 +278,8 @@ class Controller
         void clearBounderingArea();
 
         bool getRegionCrossSectionBoundary( std::size_t index_ );
+
+        void exportToIrapGrid();
 
 
     protected:
@@ -338,6 +354,8 @@ class Controller
         std::map< double, ImageData > images_csectionsX;
         std::map< double, ImageData > images_csectionsY;
         std::map< double, ImageData > images_csectionsZ;
+
+        std::set< std::size_t > regions_in_domains;
 
 };
 

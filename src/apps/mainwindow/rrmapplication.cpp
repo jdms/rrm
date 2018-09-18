@@ -165,6 +165,9 @@ void RRMApplication::moveMainCrossSection( double depth_ )
     }
 
     controller->moveMainCrossSection( depth_ );
+
+    emit updateBoundary();
+    emit updateRegions();
     emit updateMainCrossSection();
 
 }
@@ -300,30 +303,59 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 }
 
 
+void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    controller->removeCurveFromObject( dir_, depth_ );
+    emit updateObjects();
+}
+
 void RRMApplication::createObjectSurface()
 {
 
-    bool status_ = controller->commitObjectSurface();
-    if( status_ == false ) return;
+//    bool status_ = controller->commitObjectSurface();
+//    if( status_ == false ) return;
 
+//    emit addObject( controller->getCurrentObject() );
+//    emit updateObjects();
+
+//    checkUndoRedo();
+
+
+//    updateObjectTree();
+//    defineRandomColor();
+
+//    emit unlockDirections();
+
+    bool status_ = controller->commitObjectSurface();
+
+    emit updateObjects();
+
+
+    if( status_ == false ) return;
+    checkUndoRedo();
+    updateObjectTree();
 
 
     emit addObject( controller->getCurrentObject() );
-    emit updateObjects();
-
-    checkUndoRedo();
-
-
-    updateObjectTree();
     defineRandomColor();
-
     emit unlockDirections();
 
 }
 
 
-void RRMApplication::getRegions()
+void RRMApplication::getRegions( bool status_ )
 {
+    controller->removeRegions();
+    window->object_tree->removeDomains();
+    window->object_tree->removeRegions();
+
+    emit clearRegions();
+
+    if( status_ == false )
+    {
+        return;
+    }
+
     controller->defineRegions();
 
     window->object_tree->addOutputVolume();
@@ -336,12 +368,17 @@ void RRMApplication::getRegions()
         reg_->getColor( r_, g_, b_ );
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
 
-        bool status_ = controller->getRegionCrossSectionBoundary( reg_->getIndex() );
-        if( status_ == true )
-            emit addRegionCrossSectionBoundary( reg_ );
+        emit addRegionCrossSectionBoundary( reg_ );
     }
 
     emit addRegions();
+}
+
+
+void RRMApplication::setRegionsVisible( bool status_ )
+{
+    controller->setRegionsVisible( status_ );
+    updateRegions();
 }
 
 
@@ -369,138 +406,149 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 
 void RRMApplication::createDomain( std::size_t index_ )
 {
-    controller->createDomain( index_ );
+//    controller->createDomain( index_ );
+    std::size_t id_ = controller->createDomain1();
+    window->object_tree->createDomain1( id_ );
 }
+
 
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->addRegionToDomain( reg_id_, domain_id_ );
 }
 
+
+
+
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->removeRegionFromDomain( reg_id_, domain_id_ );
 }
 
+
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-    controller->removeDomain( index_ );
+//    controller->removeDomain( index_ );
+    controller->removeDomain1( index_ );
+    window->object_tree->deleteDomain1( index_ );
 }
+
+
+
+void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ )
+{
+
+    std::vector< std::size_t > regions_added_;
+    for( auto id_: regions_ )
+    {
+        bool status_ = controller->addRegionToDomain1( id_, domain_id_ );
+        if( status_ == true )
+            regions_added_.push_back( id_ );
+    }
+
+    window->object_tree->addRegionsInDomain( domain_id_, regions_added_ );
+}
+
+
+void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+{
+    std::size_t nregions_ = regions_.size();
+
+    std::vector< std::size_t > regions_removed_;
+    std::vector< std::size_t > domains_removed_;
+
+    for( std::size_t i = 0; i < nregions_; ++i )
+    {
+        bool status_ = controller->removeRegionFromDomain1(  regions_[ i ], domains_[ i ] );
+        if( status_ == true )
+        {
+            regions_removed_.push_back( regions_[ i ] );
+            domains_removed_.push_back( domains_[ i ] );
+        }
+    }
+
+    window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+
+}
+
 
 
 
 
 void RRMApplication::setSketchAbove( bool status_ )
 {
-
     controller->enablePreserveAbove( status_ );
-
-    if( status_ == false )
-        updateRegionBoundary();
-
     emit enablePreserve( "ABOVE ", status_ );
-    emit updateObjects();
-
-
-
-
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->enablePreserveAbove();
-//        if( enabled_ )
-//            emit selectEnabled( "ABOVE", true );
-//        else
-//            emit selectEnabled( "ABOVE", false );
-//    }
-//    else
-//    {
-//        controller->stopCreateAbove();
-//        emit selectEnabled( "NONE" );
-//    }
-
-//    emit updateObjects();
-
+    emit updateBoundary();
 }
 
 
 void RRMApplication::setSketchBelow( bool status_ )
 {
     controller->enablePreserveBelow( status_ );
-
-    if( status_ == false )
-        updateRegionBoundary();
-
     emit enablePreserve( "BELOW ", status_ );
-    emit updateObjects();
-
-
-
-//    if( status_ == true )
-//    {
-//        bool enabled_ = controller->requestCreateBelow();
-//        if( enabled_ )
-//            emit selectEnabled( "BELOW", status_ );
-//        else
-//            emit selectEnabled( "BELOW", false );
-//    }
-//    else
-//    {
-//        controller->stopCreateBelow();
-//        emit selectEnabled( "NONE" );
-//    }
-
-//    emit updateObjects();
-
+    emit updateBoundary();
 }
 
 
 void RRMApplication::setSketchRegion( bool status_ )
 {
-
-
     emit enablePreserve( "REGION", status_ );
-
 
     if( status_ == false )
     {
         controller->clearBounderingArea();
+        controller->enablePreserveAbove( false );
+        controller->enablePreserveBelow( false );
         window->activatePreserveAbove( false );
         window->activatePreserveBelow( false );
+        window->activatePreserveRegion( false );
     }
 
-    emit updateObjects();
-    emit updateMainCrossSection();
-
-
-//    if( status_ == true )
-//    {
-//        emit selectEnabled( "REGION", status_ );
-//    }
-//    else
-//    {
-//        emit selectEnabled( "NONE" );
-
-//        window->activatePreserveAbove( false );
-//        window->activatePreserveBelow( false );
-
-//    }
-
-//    emit updateObjects();
+    emit updateBoundary();
 
 }
 
 
 void RRMApplication::updateRegionBoundary()
 {
-    emit clearBounderingArea();
+//    emit clearBounderingArea();
 
-    PolyCurve boundary_;
-    bool status_ = controller->updateRegionBoundary( boundary_ );
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
 
 
-    if( status_ == true )
-        emit setCurveAsBoundering( boundary_ );
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
 }
+
+
+void RRMApplication::updateUpperBoundary()
+{
+//    emit clearBounderingArea();
+
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
+
+
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
+}
+
+
+void RRMApplication::updateLowerBoundary()
+{
+//    emit clearBounderingArea();
+
+//    PolyCurve boundary_;
+//    bool status_ = controller->updateRegionBoundary( boundary_ );
+
+
+//    if( status_ == true )
+//        emit setCurveAsBoundering( boundary_ );
+}
+
+
 
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
@@ -513,10 +561,14 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
     if( status_ == true )
     {
         controller->getRegionByPointAsBoundering();
-        emit updateMainCrossSection();
+        emit updateBoundary();
+
     }
+    else
+        setSketchRegion( false );
 
     emit selectEnabled( "NONE" );
+
 }
 
 
@@ -526,16 +578,7 @@ void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const S
     PolyCurve boundary_;
 
     bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, boundary_ );
-
-    if( status_ == true )
-    {
-        emit setCurveAsBoundering( boundary_ );
-    }
-    else
-    {
-
-    }
-
+    emit updateBoundary();
 }
 
 
@@ -557,6 +600,7 @@ void RRMApplication::reset()
 {
 
     emit resetApplication();
+    window->initializeInterface();
     controller->clear();
 
     init();
@@ -586,6 +630,7 @@ void RRMApplication::undo()
 
     checkUndoRedo();
     checkPreserveStatus();
+    emit updateBoundary();
 
     if( status_ == false ) return;
 
@@ -603,10 +648,13 @@ void RRMApplication::redo()
 
     checkUndoRedo();
     checkPreserveStatus();
+    emit updateBoundary();
 
     if( status_ == false ) return;
 
     emit updateObjects();
+    emit updateTrajectories();
+
     updateObjectTree();
 
 }
@@ -619,16 +667,22 @@ void RRMApplication::checkUndoRedo()
 
     window->ac_undo->setEnabled( undo_ );
     window->ac_redo->setEnabled( redo_ );
+
+    emit updateBoundary();
 }
 
 
 void RRMApplication::checkPreserveStatus()
 {
-     bool above_ = controller->isDefineAboveActive();
-     bool below_ = controller->isDefineBelowActive();
+    PolyCurve lboundary_, uboundary_;
+
+     bool above_ = controller->isDefineAboveActive( lboundary_ );
+     bool below_ = controller->isDefineBelowActive( uboundary_ );
 
      window->ac_sketch_above->setChecked( above_ );
      window->ac_sketch_below->setChecked( below_ );
+
+     emit updateBoundary();
 
 }
 
@@ -721,3 +775,30 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
     setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 
 }
+
+
+void RRMApplication::setRegionSelected( const std::size_t& id_, bool status_ )
+{
+    controller->setRegionSelected( id_, status_ );
+    emit updateRegions();
+}
+
+
+void RRMApplication::setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+
+    controller->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+}
+
+
+void RRMApplication::exportToIRAP()
+{
+    controller->exportToIrapGrid();
+}
+
+
+void RRMApplication::setVerticalExaggeration( double scale_ )
+{
+    emit setVerticalExaggerationScale( scale_ );
+}
+

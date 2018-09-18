@@ -45,7 +45,7 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
 
     QBrush fill_;
     QColor color_ = getFillColor();
-    fill_.setColor(  QColor( color_.red(), color_.green(), color_.blue(), 75 ) );
+    fill_.setColor(  QColor( color_.red(), color_.green(), color_.blue() ) );
     fill_.setStyle( Qt::SolidPattern );
 
 
@@ -56,10 +56,9 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
     else
         painter_->setPen( Qt::NoPen );
 
-    if( this->isSelected() == true )
+    if( QGraphicsPolygonItem::isSelected() == true )
     {
-        border_.setColor( Qt::blue );
-        painter_->setPen( border_ );
+        fill_.setStyle( Qt::Dense3Pattern);
         std::cout << "it was selected" << std::endl << std::flush;
     }
 
@@ -129,7 +128,7 @@ void PolygonItem::setBorderWidth( int width_ )
 {
     prepareGeometryChange();
     border_width = width_;
-    update();
+   update();
 }
 
 int PolygonItem::getBorderWidth() const
@@ -184,6 +183,13 @@ void PolygonItem::clear()
 {
     prepareGeometryChange();
     plane.clear();
+
+    is_done = true;
+    has_border = true;
+
+    resetToDefaultBorderColor();
+    resetToDefaultFillColor();
+    resetToDefaultBorderWidth();
 
     std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();

@@ -206,6 +206,7 @@ void Controller::moveMainCrossSection( double depth_ )
 
     updateObjectsCurvesInCrossSection( depth_ );
     updateImageInMainCrossSection();
+    updateRegions();
 }
 
 
@@ -682,13 +683,12 @@ bool Controller::commitObjectSurface()
 
     bool status_ = createObjectSurface();
 
+    ObjectPtr obj_ = model.objects[ current_object ];
     if( status_ == false )
     {
-//        rules_processor.testSurfaceInsertion();
         return false;
     }
 
-    ObjectPtr obj_ = model.objects[ current_object ];
     obj_->setDone( true );
 
 
@@ -1044,7 +1044,6 @@ void Controller::defineRegions()
 
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
-
         Color color_;
         color_.red = colors_[ 3*i ];
         color_.green = colors_[ 3*i + 1 ];
@@ -1058,8 +1057,8 @@ void Controller::defineRegions()
         region_->setColor( color_.red, color_.green, color_.blue );
         region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
 
-
         model.regions[region_->getIndex()] = region_;
+        getRegionCrossSectionBoundary( i );
     }
 
 
@@ -1068,8 +1067,8 @@ void Controller::defineRegions()
 
 bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {
-    if( model.regions.find( index_ ) == model.regions.end() )
-        return false;
+//    if( model.regions.find( index_ ) == model.regions.end() )
+//        return false;
 
     RegionsPtr region_ = model.regions[ index_ ];
 
@@ -1078,7 +1077,18 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     std::vector<double> vertices_lower_;
     std::vector<size_t> edges_lower_;
 
-    rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+         rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+    }
+
+
 
     PolyCurve lower_, upper_;
     lower_.fromVector( vertices_lower_, edges_lower_ );
@@ -1090,6 +1100,13 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     return true;
 }
 
+
+
+void Controller::updateRegions()
+{
+    for( auto it_: model.regions )
+        getRegionCrossSectionBoundary( it_.first );
+}
 
 
 void Controller::setRegionsVisible(bool status_)
@@ -1188,6 +1205,98 @@ const std::map< std::size_t, RegionsPtr >& Controller::getRegions() const
 {
     return model.regions;
 }
+
+
+void Controller::removeRegions()
+{
+    for( auto it: model.regions )
+        (it.second).reset();
+    model.regions.clear();
+
+    for( auto it: model.domains )
+        (it.second).regions_set.clear();
+    model.domains.clear();
+}
+
+
+
+
+///==========================================================================
+
+///
+/// Domains Methods
+///
+
+
+std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
+{
+    std::size_t id_ = 0;
+
+    if( model.domains.empty() == false )
+    {
+        for( auto it_: model.domains )
+        {
+            id_ = it_.first;
+        }
+
+        ++id_;
+    }
+
+
+    model.domains[ id_ ].regions_set =  std::set< std::size_t >();
+    for( auto it_: indexes_ )
+        addRegionToDomain1( it_, id_ );
+
+    return id_;
+
+}
+
+
+bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_id_ )
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
+
+    model.domains[domain_id_].regions_set.insert(region_id_);
+    regions_in_domains.insert( region_id_ );
+    return true;
+}
+
+
+bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_)
+{
+    if (model.regions.find(region_id_) == model.regions.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
+
+    model.domains[domain_id_].regions_set.erase(region_id_);
+    regions_in_domains.erase( region_id_ );
+
+    return true;
+}
+
+
+std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_) const
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
+    return model.domains.at(domain_id_).regions_set;
+}
+
+
+void Controller::removeDomain1(std::size_t domain_id_)
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    for( auto it_: model.domains )
+        removeRegionFromDomain1( it_.first, domain_id_ );
+
+    model.domains.erase( domain_id_ );
+}
+
+
+
+//=== old methods
 
 
 void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )
@@ -1401,32 +1510,6 @@ Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
 }
 
 
-// Enable/Stop Preserve Above -- new methods
-
-void Controller::enablePreserveAbove( bool status_ )
-{
-    if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-    else
-        rules_processor.stopPreserveAbove();
-
-
-}
-
-
-
-
-// Enable/Stop Preserve Below -- new methods
-
-void Controller::enablePreserveBelow( bool status_ )
-{
-    if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-    else
-        rules_processor.stopPreserveBelow();
-
-}
-
 
 
 // Request/Stop Create Above -- old methods
@@ -1572,6 +1655,30 @@ void Controller::stopCreateRegion()
 }
 
 
+// Enable/Stop Preserve Above -- new methods
+
+void Controller::enablePreserveAbove( bool status_ )
+{
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+    else
+        rules_processor.stopPreserveAbove();
+}
+
+
+// Enable/Stop Preserve Below -- new methods
+
+void Controller::enablePreserveBelow( bool status_ )
+{
+    if( status_ == true )
+        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+    else
+        rules_processor.stopPreserveBelow();
+
+}
+
+
+
 
 
 void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
@@ -1690,46 +1797,23 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 {
 
-    std::vector< float > vertices_;
-    std::vector< std::size_t > edges_;
-
     bool status_ = false;
 
     boundary_.clear();
 
     if( rules_processor.preserveAboveIsActive() == true )
     {
-
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        {
-            rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-        }
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        {
-            rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-        }
-
+        getLowerBoundering( boundary_ );
         status_ = true;
     }
 
     else if( rules_processor.preserveBelowIsActive() == true )
     {
 
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        {
-            rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-        }
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
-            rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-
-        }
-
+        getUpperBoundering( boundary_ );
         status_ = true;
-
     }
 
-    boundary_.fromVector( vertices_, edges_ );
     return status_;
 }
 
@@ -1797,47 +1881,86 @@ void Controller::getRegionByPointAsBoundering()
 
     }
 
-    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
+//    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
 
 void Controller::clearBounderingArea()
 {
-    csection->clearBounderingArea();
+//    csection->clearBounderingArea();
 }
 
 
-bool Controller::isDefineAboveActive()
+
+bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 {
     std::size_t index_ = 0;
 
-    bool status_ = rules_processor.defineAboveIsActive( index_ );
-    if( status_ == true )
-    {
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-        setObjectSelectedAsBoundering( index_ );
-        return true;
-    }
-    return false;
+    bool status_ = rules_processor.preserveAboveIsActive();
+    if( status_ == false ) return false;
 
+    getLowerBoundering( boundary_ );
+    return true;
 }
 
 
-bool Controller::isDefineBelowActive()
+bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 {
      std::size_t index_ = 0;
 
-    bool status_ = rules_processor.defineBelowIsActive( index_ );
-    if( status_ == true )
-    {
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-        setObjectSelectedAsBoundering( index_ );
-        return true;
-    }
-    return false;
+     bool status_ = rules_processor.preserveBelowIsActive();
+     if( status_ == false ) return false;
+
+     getUpperBoundering( boundary_ );
+     return true;
+
 }
 
+
+void Controller::getLowerBoundering( PolyCurve& boundary_ )
+{
+
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+    }
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+    }
+
+    boundary_.fromVector( vertices_, edges_ );
+}
+
+
+void Controller::getUpperBoundering( PolyCurve& boundary_ )
+{
+
+    std::vector< float > vertices_;
+    std::vector< std::size_t > edges_;
+
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+    }
+
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+{
+        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+
+    }
+
+    boundary_.fromVector( vertices_, edges_ );
+}
+
+
+void Controller::setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+}
 
 ///==========================================================================
 
@@ -2116,17 +2239,88 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
 }
 
 
+void Controller::exportToIrapGrid()
+{
+
+    IrapGridExporter exporter;
+    std::vector< float > points;
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    for ( std::size_t id_: actives_ )
+    {
+        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+
+        std::vector< double > points_list;
+        std::vector< bool > valid_points;
+        std::size_t nu;
+        std::size_t nv;
+
+        rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
+
+        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
+        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
+        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
+
+        std::size_t number_elements = nu*nv;
+
+        for( std::size_t i = 0; i < number_elements; ++i )
+        {
+
+            double x = points_list[ 3*i + 0 ];
+            double y = points_list[ 3*i + 1 ];
+            double z = points_list[ 3*i + 2 ];
+
+            if( x >= xmax ) xmax = x;
+            else if( x < xmin ) xmin = x;
+
+            if( y >= ymax ) ymax = y;
+            else if( y < ymin ) ymin = y;
+
+
+            if( z >= zmax ) zmax = z;
+            else if( z < zmin ) zmin = z;
+
+            points.push_back( static_cast<float>( z ) );
+
+        }
+
+        float dx = (float)( xmax - xmin )/( nu - 1 );
+        float dy = (float)( ymax - ymin )/( nv - 1 );
+
+        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+        exporter.setVectorValues( points );
+        exporter.setSize( (int) nu,  (int) nv );
+        exporter.setSpacing( dx, dy );
+
+        std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
+        if( name_.empty() == true )
+            exporter.writeGridData( surface_filename.toStdString() );
+        else
+            exporter.writeGridData( name_ );
+
+        exporter.clearData();
+
+        points.clear();
+        surface_filename.clear();
+    }
+
+}
+
 
 void Controller::clear()
 {
-    if( csection == nullptr )
+
+    if( csection != nullptr )
         csection.reset();
+    csection = nullptr;
 
-    if( topview == nullptr )
+    if( topview != nullptr )
         topview.reset();
+    topview = nullptr;
 
-    if( model.volume == nullptr )
+    if( model.volume != nullptr )
         model.volume.reset();
+    model.volume = nullptr;
 
     for( auto it: model.csectionsX )
         (it.second).reset();
@@ -2151,6 +2345,7 @@ void Controller::clear()
     for( auto it: model.domains )
         (it.second).regions_set.clear();
     model.domains.clear();
+    regions_in_domains.clear();
 
 
     selectable_objects.clear();
@@ -2163,12 +2358,18 @@ void Controller::clear()
     images_csectionsZ.clear();
 
     current_object = 0;
+    current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
+
     current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
     csection_stepx = 1.0;
     csection_stepz = 1.0;
+    csection_stepy = 1.0;
 
     last_trajectory.clear();
     rules_processor.clear();
 
-    current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
+    current_color.red = 255;
+    current_color.green = 0;
+    current_color.blue = 0;
+
 }

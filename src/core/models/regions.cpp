@@ -269,6 +269,10 @@ void Regions::getColor( int& r_, int& g_, int& b_ ) const
 
 void Regions::clear()
 {
+    lower.clear();
+    upper.clear();
+    name.clear();
+
     clearCells();
     clearVertices();
     initialize();
@@ -288,4 +292,13 @@ void Regions::initialize()
     color.r = 255;
     color.g = 0;
     color.b = 0;
+
+
+    max.x = 0;
+    max.y = 0;
+    max.z = 0;
+
+    min.x = 0;
+    min.y = 0;
+    min.z = 0;
 }

@@ -206,6 +206,10 @@ void CurveItem::clear()
     curve = QPainterPath();
     setPath( curve );
 
+    resetToDefaultColor();
+    resetToDefaultWidth();
+    resetToDefaultStyle();
+
     is_done = true;
     QGraphicsPathItem::update();
 }

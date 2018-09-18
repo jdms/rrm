@@ -70,6 +70,7 @@ void Canvas3d::resizeGL( int width, int height )
     camera.setViewport( Eigen::Vector2f( width, (float)height ) );
     camera.setPerspectiveMatrix( camera.getFovy(), (float) width/(float)height, 0.1f , 100.0f );
 
+
 }
 
 
