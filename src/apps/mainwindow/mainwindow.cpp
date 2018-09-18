@@ -117,6 +117,9 @@ void MainWindow::createActions()
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
+    connect( ac_export, &QAction::triggered, [=](){ app->exportToIRAP(); } );
+
+
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
 
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );

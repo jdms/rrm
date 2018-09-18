@@ -2239,6 +2239,73 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
 }
 
 
+void Controller::exportToIrapGrid()
+{
+
+    IrapGridExporter exporter;
+    std::vector< float > points;
+
+    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    for ( std::size_t id_: actives_ )
+    {
+        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+
+        std::vector< double > points_list;
+        std::vector< bool > valid_points;
+        std::size_t nu;
+        std::size_t nv;
+
+        rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
+
+        double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
+        double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
+        double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
+
+        std::size_t number_elements = nu*nv;
+
+        for( std::size_t i = 0; i < number_elements; ++i )
+        {
+
+            double x = points_list[ 3*i + 0 ];
+            double y = points_list[ 3*i + 1 ];
+            double z = points_list[ 3*i + 2 ];
+
+            if( x >= xmax ) xmax = x;
+            else if( x < xmin ) xmin = x;
+
+            if( y >= ymax ) ymax = y;
+            else if( y < ymin ) ymin = y;
+
+
+            if( z >= zmax ) zmax = z;
+            else if( z < zmin ) zmin = z;
+
+            points.push_back( static_cast<float>( z ) );
+
+        }
+
+        float dx = (float)( xmax - xmin )/( nu - 1 );
+        float dy = (float)( ymax - ymin )/( nv - 1 );
+
+        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+        exporter.setVectorValues( points );
+        exporter.setSize( (int) nu,  (int) nv );
+        exporter.setSpacing( dx, dy );
+
+        std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
+        if( name_.empty() == true )
+            exporter.writeGridData( surface_filename.toStdString() );
+        else
+            exporter.writeGridData( name_ );
+
+        exporter.clearData();
+
+        points.clear();
+        surface_filename.clear();
+    }
+
+}
+
 
 void Controller::clear()
 {

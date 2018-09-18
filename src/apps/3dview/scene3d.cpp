@@ -219,22 +219,26 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
                                const int& h )
 {
 
+
+    Eigen::Affine3f V_ =  V*Eigen::Scaling( Eigen::Vector3f ( 1., v_exag, 1.) );
+
+
     if( volume != nullptr )
-        volume->draw( V, P, w, h );
+        volume->draw( V_, P, w, h );
 
     if( main_csection != nullptr )
-        main_csection->draw( V, P, w, h );
+        main_csection->draw( V_, P, w, h );
 
     for ( auto it: stratigraphies )
     {
         std::shared_ptr < SurfaceShader > surface_ = it.second;
-        surface_->draw( V, P, w, h );
+        surface_->draw( V_, P, w, h );
     }
 
     for ( auto it: regions )
     {
         std::shared_ptr < RegionShader > region_ = it.second;
-        region_->draw( V, P, w, h );
+        region_->draw( V_, P, w, h );
     }
 
 }
@@ -245,6 +249,16 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
     context = ctxt;
     surface = ctxt->surface();
 }
+
+
+
+void Scene3d::setVerticalExaggeration( double scale_ )
+{
+    v_exag = scale_;
+    emit updateCanvas();
+
+}
+
 
 void Scene3d::clearScene()
 {

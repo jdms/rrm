@@ -42,6 +42,8 @@ class View3dController
 
         void clear();
 
+        void setVerticalExaggeration( double scale_ );
+
     protected:
 
         std::shared_ptr< Scene3d > scene;

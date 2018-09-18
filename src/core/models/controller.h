@@ -279,6 +279,8 @@ class Controller
 
         bool getRegionCrossSectionBoundary( std::size_t index_ );
 
+        void exportToIrapGrid();
+
 
     protected:
 

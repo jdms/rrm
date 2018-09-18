@@ -38,7 +38,7 @@ set( MODELS_SOURCES       controller.cpp
                           crosssection.cpp
                           stratigraphy.cpp
                           rules_processor.cpp
-                          irap_grid_exporter.hpp )
+                          irap_grid_exporter.cpp )
 
 
 include_directories (${PROJECT_SOURCE_DIR})

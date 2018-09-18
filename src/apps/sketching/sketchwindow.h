@@ -57,6 +57,8 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
+        void usingVerticalExaggeration();
+
 
 
     public slots:
@@ -103,6 +105,8 @@ class SketchWindow: public QMainWindow
         void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void setAreaChoosed();
+
+        void setVerticalExaggeration( double );
 
     protected:
 

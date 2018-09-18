@@ -116,6 +116,8 @@ void View3dInterface::createView3dActions()
 
     connect( window->app, &RRMApplication::clearRegions, [=]{ controller3d->clearRegions(); } );
 
+    connect( window->app, &RRMApplication::setVerticalExaggerationScale, [=]( double scale_ ){ controller3d->setVerticalExaggeration( scale_ ); } );
+
 }
 
 
