@@ -789,3 +789,16 @@ void RRMApplication::setPointGuidedExtrusion( float px_, float py_, double depth
 
     controller->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
 }
+
+
+void RRMApplication::exportToIRAP()
+{
+    controller->exportToIrapGrid();
+}
+
+
+void RRMApplication::setVerticalExaggeration( double scale_ )
+{
+    emit setVerticalExaggerationScale( scale_ );
+}
+

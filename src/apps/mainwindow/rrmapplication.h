@@ -172,6 +172,9 @@ public slots:
 
     void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+    void exportToIRAP();
+
+    void setVerticalExaggeration( double scale_ );
 
 signals:
 
@@ -226,7 +229,7 @@ signals:
     void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
 
     void updateBoundary();
-
+    void setVerticalExaggerationScale( double scale_ );
 
 
 

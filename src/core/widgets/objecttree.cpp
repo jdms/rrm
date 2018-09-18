@@ -370,6 +370,7 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
     ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
     if( vol_ == nullptr ) return;
 
+    if( items.findElement( index_ ) == true ) return;
 
     ObjectTreeItem* obj_ = new ObjectTreeItem();
     obj_->setIndex( index_ );

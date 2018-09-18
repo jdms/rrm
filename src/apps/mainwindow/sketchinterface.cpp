@@ -177,6 +177,8 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
 
+        connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
+
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); } );

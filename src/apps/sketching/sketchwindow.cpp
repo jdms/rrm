@@ -331,12 +331,26 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 }
 
 
+
+void SketchWindow::usingVerticalExaggeration()
+{
+    if( sketchingcanvas == nullptr ) return;
+
+//    sketchingcanvas->setVerticalExaggeration( );
+
+    double v_exagg_ = 1.0;
+    emit setVerticalExaggeration( v_exagg_ );
+
+}
+
+
 void SketchWindow::setDipAngle( double angle_ )
 {
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
     double param_ = v_exag_*tan( angle_*PI/180 );
     double beta_ = atan(param_) * 180 / PI;
 }
+
 
 void SketchWindow::reset()
 {
