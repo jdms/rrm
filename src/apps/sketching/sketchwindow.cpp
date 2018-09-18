@@ -358,6 +358,10 @@ void SketchWindow::reset()
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
 //    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
+
+    if( sketchingcanvas != nullptr )
+        sketchingcanvas->setVerticalExaggeration( 1 );
+    emit setVerticalExaggeration( 1.0 );
 }
 
 
