@@ -700,8 +700,11 @@ void RRMApplication::load( const std::string& filename_ )
     Controller::MeshResolution resol_;
     controller->loadFile( filename_, resol_ );
 
+
     emit startApplication();
+    emit updateVolume();
     emit updateObjects();
+
 
     loadObjectTree();
 
