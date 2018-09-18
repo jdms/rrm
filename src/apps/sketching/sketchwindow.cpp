@@ -336,9 +336,9 @@ void SketchWindow::usingVerticalExaggeration()
 {
     if( sketchingcanvas == nullptr ) return;
 
-//    sketchingcanvas->setVerticalExaggeration( );
+    double v_exagg_ = 10.0;
+    sketchingcanvas->setVerticalExaggeration( v_exagg_ );
 
-    double v_exagg_ = 1.0;
     emit setVerticalExaggeration( v_exagg_ );
 
 }
@@ -358,6 +358,27 @@ void SketchWindow::reset()
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
 //    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
+}
+
+
+
+
+void SketchWindow::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+    case Qt::Key_1:
+        usingVerticalExaggeration();
+//        setVerticalExaggeration( 10 );
+        default:
+            break;
+    };
 }
 
 

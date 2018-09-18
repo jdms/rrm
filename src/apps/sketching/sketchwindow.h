@@ -28,6 +28,7 @@
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QGraphicsView>
+#include <QKeyEvent>
 
 #include "./src/core/widgets/canvasstack.h"
 #include "./core/definitions/constants.hpp"
@@ -58,6 +59,8 @@ class SketchWindow: public QMainWindow
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
         void usingVerticalExaggeration();
+
+        void keyPressEvent( QKeyEvent *event );
 
 
 

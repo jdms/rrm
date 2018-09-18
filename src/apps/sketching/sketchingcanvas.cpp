@@ -41,23 +41,6 @@ double SketchingCanvas::getVerticalExaggeration() const
 }
 
 
-void SketchingCanvas::keyPressEvent( QKeyEvent *event )
-{
-    switch( event->key() )
-    {
-//        case Qt::Key_S:
-//            for( auto it: regions )
-//            {
-//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
-//            }
-//        break;
-    case Qt::Key_1:
-        setVerticalExaggeration( 10 );
-        default:
-            break;
-    };
-}
-
 
 SketchingCanvas::~SketchingCanvas()
 {

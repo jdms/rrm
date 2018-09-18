@@ -21,7 +21,7 @@ class SketchingCanvas: public QGraphicsView
     protected:
 
         void setupScene();
-        virtual void keyPressEvent( QKeyEvent *event );
+//        virtual void keyPressEvent( QKeyEvent *event );
 
 
 
