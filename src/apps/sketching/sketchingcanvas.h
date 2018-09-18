@@ -28,7 +28,7 @@ class SketchingCanvas: public QGraphicsView
     private:
 
         std::shared_ptr< SketchScene > scene = nullptr;
-        double v_exag;
+        double v_exag = 1.0;
 };
 
 #endif // SKETCHINGCANVAS_H
