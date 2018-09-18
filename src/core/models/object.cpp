@@ -220,7 +220,7 @@ void Object::setActive( bool status_ )
     }
     else if( status_ == true )
     {
-        setVisible( true );
+//        setVisible( true );
     }
 
 }
@@ -233,7 +233,7 @@ bool Object::isActive() const
 
 void Object::removed()
 {
-    setVisible( false );
+//    setVisible( false );
 
     if( direction == Settings::CrossSection::CrossSectionDirections::Y ) return;
 
@@ -322,20 +322,18 @@ bool Object::isEmpty() const
 
 bool Object::addCurve( double csection_id_, const PolyCurve& curve_ )
 {
-//    if( isCurveAdmissible() == false ) return false;
 
-    if( user_entered.find( csection_id_ ) != user_entered.end() )
-        return false;
+    if( curve_.isEmpty() == true ) return false;
 
     if( direction == Settings::CrossSection::CrossSectionDirections::Y )
-        level_curves1[ csection_id_ ] = curve_;
+        level_curves1[ csection_id_ ].addSubcurve( curve_.getSubcurve( 0 ) );
     else
         csection_curves1[ csection_id_ ] = curve_;
 
     user_entered.insert( csection_id_ );
 
-    setVisible( true );
-    setActive( true );
+//    setVisible( true );
+//    setActive( true );
     return true;
 }
 
@@ -361,8 +359,11 @@ bool Object::removeCurve( double csection_id_ )
 
     csection_curves1.erase( csection_id_ );
 
-    if( csection_curves1.empty() == true )
-        setVisible( false );
+    if( user_entered.find( csection_id_ ) != user_entered.end() )
+        user_entered.erase( csection_id_ );
+
+//    if( csection_curves1.empty() == true )
+//        setVisible( false );
     return true;
 }
 
@@ -379,8 +380,8 @@ void Object::removeLevelCurves()
 
 void Object::updateCurve( double csection_id_, const PolyCurve& curve_ )
 {
-    if( csection_curves1.empty() == true )
-        setVisible( true );
+//    if( csection_curves1.empty() == true )
+//        setVisible( true );
 
     csection_curves1[ csection_id_]  = curve_;
 }
@@ -625,11 +626,10 @@ void Object::clear()
 {
 
     name.clear();
+    user_entered.clear();
     clearInformation();
 
-    removeCrossSectionCurves();
-    removeTrajectory();
-    removeLevelCurves();
+    removeCurves();
     removeSurface();
 
     initialize();
@@ -639,6 +639,7 @@ void Object::initialize()
 {
     type = Settings::Objects::ObjectType::STRATIGRAPHY;
     name = "Surface " + std::to_string( index );
+    direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
 
     editable = true;
     selectable = false;

@@ -28,6 +28,7 @@
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QGraphicsView>
+#include <QKeyEvent>
 
 #include "./src/core/widgets/canvasstack.h"
 #include "./core/definitions/constants.hpp"
@@ -57,6 +58,10 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
+        void usingVerticalExaggeration();
+
+        void keyPressEvent( QKeyEvent *event );
+
 
 
     public slots:
@@ -67,6 +72,9 @@ class SketchWindow: public QMainWindow
         void setModeSelecting( bool status_ );
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
+        void setDipAngle( double angle_ );
+
+        void reset();
 
 
     signals:
@@ -80,6 +88,8 @@ class SketchWindow: public QMainWindow
 
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void addTrajectory( const PolyCurve& curve_ );
+        void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
         void createObject();
 
         void useLastTrajectory();
@@ -93,6 +103,13 @@ class SketchWindow: public QMainWindow
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void stopSketchesOfSelection();
 
+        void regionSelected( const std::size_t& id_, bool status_ );
+
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        void setAreaChoosed();
+
+        void setVerticalExaggeration( double );
 
     protected:
 

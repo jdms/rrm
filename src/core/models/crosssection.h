@@ -113,6 +113,7 @@ class CrossSection: public Object
         void initialize();
 
         static void resetAllCrossSections();
+        void updateRegions();
 
 
     private:

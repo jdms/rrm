@@ -106,12 +106,15 @@ public slots:
 
     void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
     void addTrajectoryToObject( const PolyCurve& curve_ );
+    void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
     void previewLastTrajectory();
 
     void createObjectSurface();
 
-    void getRegions();
+    void getRegions(bool status_);
 
+    void setRegionsVisible( bool status_ );
     void setRegionVisible( std::size_t index_, bool status_ );
     void setRegionName( std::size_t index_, const std::string& name_ );
     void setRegionColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -123,6 +126,10 @@ public slots:
     void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
     void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
     void removeDomain( std::size_t index_ );
+
+
+    void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
+    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
 
     void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
@@ -158,8 +165,16 @@ public slots:
 
     void updateRegionBoundary();
 
+    void setRegionSelected( const std::size_t& id_, bool status_ );
 
+    void updateUpperBoundary();
+    void updateLowerBoundary();
 
+    void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+    void exportToIRAP();
+
+    void setVerticalExaggeration( double scale_ );
 
 signals:
 
@@ -187,6 +202,7 @@ signals:
 
     void addRegions();
     void updateRegions();
+    void clearRegions();
 
 
     void updateDiscretization( const std::size_t& disc_ );
@@ -211,6 +227,10 @@ signals:
     void clearBounderingArea();
 
     void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
+
+    void updateBoundary();
+    void setVerticalExaggerationScale( double scale_ );
+
 
 
 protected:

@@ -125,6 +125,9 @@ void StratigraphyItem::updateTrajectory()
 
 void StratigraphyItem::clear()
 {
+    csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
+    csection_depth = 0.0;
+
     raw.reset();
     CurveItem::clear();
 }

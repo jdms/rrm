@@ -38,8 +38,11 @@ class View3dController
 
         void addRegions();
         void updateRegions();
+        void clearRegions();
 
         void clear();
+
+        void setVerticalExaggeration( double scale_ );
 
     protected:
 

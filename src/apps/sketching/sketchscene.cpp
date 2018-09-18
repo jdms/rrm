@@ -182,6 +182,7 @@ void SketchScene::removeImageInCrossSection()
     update();
 }
 
+
 void SketchScene::removeImageInCrossSectionAndUpdate()
 {
     image->setVisible( false );
@@ -280,7 +281,7 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
 void SketchScene::updateRegion( const std::size_t& id_ )
 {
     if( regions.find( id_ ) == regions.end() ) return;
-    regions[ id_ ]->update();
+    regions[ id_ ]->updateBoundary();
     QGraphicsScene::update();
 }
 
@@ -288,7 +289,20 @@ void SketchScene::updateRegion( const std::size_t& id_ )
 void SketchScene::updateRegions()
 {
     for( auto it: regions )
-        it.second->update();
+        it.second->updateBoundary();
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::clearRegions()
+{
+    for( auto it: regions )
+    {
+        RegionItem* reg_ = dynamic_cast< RegionItem* >( (it.second).get() );
+        removeItem( reg_ );
+        (it.second).reset();
+    }
+    regions.clear();
     QGraphicsScene::update();
 }
 
@@ -298,11 +312,6 @@ void SketchScene::getSelectedRegions()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
-
-
-//    emit objectSelected( id_ );
-
-
     std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
 
     for( auto it: items_ )
@@ -310,6 +319,8 @@ void SketchScene::getSelectedRegions()
         RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
         std::size_t id_ = reg_->getIndex();
         std::cout << id_ << " " << std::flush;
+
+        emit regionSelected( id_, true );
     }
     std::cout << "\n\n" << std::flush;
 }
@@ -334,6 +345,10 @@ void SketchScene::cancelSketch()
 
     if( sketch == nullptr ) return;
     sketch->clear();
+
+    emit removeLastCurve( csection_direction, csection_depth );
+
+
     QGraphicsScene::update();
 }
 
@@ -346,10 +361,6 @@ void SketchScene::submitSketch()
 
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
     sketch->clear();
-
-    std::cout << "Boundering area is visible = " << boudering_area->isVisible() << std::endl << std::flush;
-
-    std::cout << "Boundering area is empty = " << boudering_area->isEmpty() << std::endl << std::flush;
 
     std::cout << "Image is visible: " << image->isVisible() << std::endl;
 
@@ -397,6 +408,7 @@ void SketchScene::endObject()
 }
 
 
+
 void SketchScene::setSketchingMode()
 {
     current_interaction1 = UserInteraction1::SKETCHING;
@@ -412,6 +424,17 @@ void SketchScene::setResizingBoundaryMode( bool status_ )
 {
     if( status_ == true )
         current_interaction1 = UserInteraction1::RESIZING_BOUNDARY;
+    else
+    {
+        setSketchingMode();
+    }
+}
+
+
+void SketchScene::setGuidedExtrusionMode( bool status_ )
+{
+    if( status_ == true )
+        current_interaction1 = UserInteraction1::GUIDED_EXTRUSION;
     else
     {
         setSketchingMode();
@@ -591,19 +614,20 @@ void SketchScene::removeSketchesOfSelection()
 void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
 {
 
-    PolyCurve upper_( vupper_, edupper_ );
-    PolyCurve lower_( vlower_, edlower_ );
+//    PolyCurve upper_( vupper_, edupper_ );
+//    PolyCurve lower_( vlower_, edlower_ );
 
-    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
-    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
+//    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
+//    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
 
-    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-    boudering_area->setPolygon( pol_ );
+//    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
+//    boudering_area->setPolygon( pol_ );
 
-    boudering_area->setVisible( true );
-    boudering_area->update();
-    update();
+//    boudering_area->setVisible( true );
+//    boudering_area->update();
+//    update();
 }
+
 
 void SketchScene::defineBounderingArea()
 {
@@ -623,15 +647,20 @@ void SketchScene::defineBounderingArea()
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
         boudering_area->setPolygon( pol_ );
     }
-    else
+    else if( upper.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
         boudering_area->setPolygon( pol_ );
 
     }
+    else
+    {
+        boudering_area->clear();
+    }
 
     boudering_area->setVisible( true );
     boudering_area->update();
+
     update();
 }
 
@@ -639,22 +668,40 @@ void SketchScene::defineBounderingArea()
 
 void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
 {
-    upper = boundary_;
-    defineBounderingArea();
-}
-
-void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
-{
     lower = boundary_;
     defineBounderingArea();
 }
 
+
+void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
+{
+    upper = boundary_;
+    defineBounderingArea();
+}
+
+
+void SketchScene::clearLowerBoundaryCurve()
+{
+    lower.clear();
+    defineBounderingArea();
+}
+
+
+void SketchScene::clearUpperBoundaryCurve()
+{
+    upper.clear();
+    defineBounderingArea();
+}
+
+
 void SketchScene::clearBoundaryCurve()
 {
-    boudering_area->clear();
-    boudering_area->setVisible( false );
+//    lower.clear();
+//    upper.clear();
+//    boudering_area->clear();
+//    boudering_area->setVisible( false );
 
-    update();
+//    update();
 }
 
 
@@ -703,6 +750,11 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
 
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    {
+        emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
 
     QGraphicsScene::mousePressEvent( event_ );
     update();
@@ -713,10 +765,10 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 {
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
-//        emit
+        removeSketchesOfSelection();
     }
 
     else if( current_interaction1 == UserInteraction1::SKETCHING )
@@ -724,10 +776,15 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
          endObject();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
     {
-         removeSketchesOfSelection();
+        getSelectedRegions();
     }
+
+//    else if( current_interaction1 == UserInteraction1::SELECTING_REGION )
+//    {
+//        emit setAreaChoosed();
+//    }
 
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
@@ -739,6 +796,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 {
     QPointF p_ = event_->scenePos();
+//    std::cout << "mx: " << p_.x() << ", my: " << p_.y() << std::endl << std::flush;
 
     if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
     {
@@ -801,6 +859,8 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
+//        removeSketchesOfSelection();
+
     }
 
 
@@ -809,10 +869,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
         updateImageinCrossSection();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
-    {
-        getSelectedRegions();
-    }
 
 
     QGraphicsScene::mouseReleaseEvent( event_ );
@@ -868,20 +924,22 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
 }
 
 
-void SketchScene::keyPressEvent( QKeyEvent *event )
-{
-    switch( event->key() )
-    {
-        case Qt::Key_S:
-            for( auto it: regions )
-            {
-                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
-            }
-        break;
-        default:
-            break;
-    };
-}
+//void SketchScene::keyPressEvent( QKeyEvent *event )
+//{
+//    switch( event->key() )
+//    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+//    case Qt::Key_1:
+//        views()[ 0 ]->setVerticalExaggeration();
+//        default:
+//            break;
+//    };
+//}
 
 
 //void SketchScene::addWell( const std::shared_ptr< Well >& well_ )
@@ -910,6 +968,24 @@ void SketchScene::clearScene()
         volume1.reset();
     volume1 = nullptr;
 
+    if( image != nullptr )
+        delete image;
+    image = nullptr;
+
+    if( resize_marker != nullptr )
+        delete resize_marker;
+    resize_marker = nullptr;
+
+    if( move_marker != nullptr )
+        delete move_marker;
+    move_marker = nullptr;
+
+    if( boudering_area != nullptr )
+    {   boudering_area->clear();
+        delete boudering_area;
+    }
+    boudering_area = nullptr;
+
     for( auto it: cross_sections1 )
         (it.second).reset();
     cross_sections1.clear();
@@ -922,9 +998,59 @@ void SketchScene::clearScene()
         (it.second).reset();
     regions.clear();
 
+    for( auto sk_: sketches_of_selection )
+    {
+        sk_->clear();
+        sk_.reset();
+    }
+    sketches_of_selection.clear();
+
+    csection_depth = 0.0;
+    sketch_enabled = true;
+
+    lower.clear();
+    upper.clear();
+
+    csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
+    current_interaction1 = UserInteraction1::SKETCHING;
+
+
+
+
+
+
 
 
     //init();
+
+    /*
+
+    setSketchingMode();
+
+    image = new ImageItemWrapper();
+    image->setVisible( false );
+    addItem( image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    resize_marker->setVisible( false );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    move_marker->setVisible( false );
+    addItem( move_marker );
+
+    boudering_area = new PolygonItem();
+    boudering_area->setBorderVisible( false );
+    boudering_area->setVisible( false );
+    addItem( boudering_area );
+
+*/
 
 
 }

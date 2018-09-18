@@ -293,10 +293,6 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
 void SurfaceShader::update()
 {
-    std::cout << "Surface " << raw->getIndex() << " is visible: " <<
-            raw->isVisible() << " and active: " << raw->isActive() <<
-            std::endl << std::flush;
-
     loadBuffers();
 }
 

@@ -40,7 +40,7 @@ class StratigraphyItem: public CurveItem
 
         std::shared_ptr< Stratigraphy > raw;
 
-        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
+        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
         double csection_depth = 0.0;
 
 };

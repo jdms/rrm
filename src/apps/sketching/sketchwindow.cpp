@@ -23,9 +23,10 @@
 
 #include <QToolBar>
 #include <QFileDialog>
+#include <cmath>
 
 #include "sketchwindow.h"
-
+#define PI 3.14159265
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
@@ -79,8 +80,7 @@ void SketchWindow::createToolBar()
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
-    ac_use_last_trajectory->setCheckable( true );
-    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
+//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     tb_trajectory->addAction( ac_use_last_trajectory );
 
 
@@ -96,6 +96,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     sketchingcanvas = new SketchingCanvas();
     sketchingcanvas->scale( 1, -1 );
+    sketchingcanvas->setVerticalExaggeration( 1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
     setCentralWidget( sketchingcanvas );
 
@@ -110,6 +111,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
+
+    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
+
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
@@ -146,6 +150,13 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
 
+    connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
+
+    connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
+
+    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
+
+
     return scene_;
 }
 
@@ -178,7 +189,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
-    connect( ac_use_last_trajectory, &QAction::toggled, [=]()
+    connect( ac_use_last_trajectory, &QAction::triggered, [=]()
     { emit useLastTrajectory(); } );
 
 
@@ -317,6 +328,61 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
         scene_->setSelectingRegionMode( status_ );
     }
+}
+
+
+
+void SketchWindow::usingVerticalExaggeration()
+{
+    if( sketchingcanvas == nullptr ) return;
+
+    double v_exagg_ = 10.0;
+    sketchingcanvas->setVerticalExaggeration( v_exagg_ );
+
+    emit setVerticalExaggeration( v_exagg_ );
+
+}
+
+
+void SketchWindow::setDipAngle( double angle_ )
+{
+    double v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    double param_ = v_exag_*tan( angle_*PI/180 );
+    double beta_ = atan(param_) * 180 / PI;
+}
+
+
+void SketchWindow::reset()
+{
+    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+    ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
+//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
+    cp_color->setColor( QColor( 255, 0, 0 ) );
+
+    if( sketchingcanvas != nullptr )
+        sketchingcanvas->setVerticalExaggeration( 1 );
+    emit setVerticalExaggeration( 1.0 );
+}
+
+
+
+
+void SketchWindow::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+    case Qt::Key_1:
+        usingVerticalExaggeration();
+//        setVerticalExaggeration( 10 );
+        default:
+            break;
+    };
 }
 
 

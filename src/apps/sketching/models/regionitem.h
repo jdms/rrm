@@ -20,10 +20,11 @@ class RegionItem: public PolygonItem
 
         std::size_t getIndex() const;
 
-        virtual void paint( QPainter * painter_, const QStyleOptionGraphicsItem * option_, QWidget * widget_ ) override;
 
         virtual bool isVisible() const override;
         virtual bool isSelected() const override;
+
+        void updateBoundary();
 
         void clear();
 

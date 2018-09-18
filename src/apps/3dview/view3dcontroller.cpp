@@ -112,12 +112,18 @@ void View3dController::addRegions()
 void View3dController::updateRegions()
 {
     scene->updateRegions();
-    //    std::map< std::size_t, RegionsPtr > regions_ = controller->getRegions();
-    //    for( auto it: regions_ )
-    //    {
-    //        RegionsPtr& reg_ = it.second;
-    //        scene->addRegion( reg_ );
-    //    }
+}
+
+
+void View3dController::clearRegions()
+{
+    scene->clearRegions();
+}
+
+
+void View3dController::setVerticalExaggeration( double scale_ )
+{
+    scene->setVerticalExaggeration( scale_ );
 }
 
 

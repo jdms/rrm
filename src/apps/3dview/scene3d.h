@@ -78,12 +78,15 @@ class Scene3d: public QObject
         void addRegion( const std::shared_ptr< Regions >& region_ );
         void updateRegion( const std::size_t& index_ );
         void updateRegions();
+        void clearRegions();
 
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w, const int& h );
         void setOpenGLContext( QOpenGLContext* ctxt );
 
         void clearScene();
+
+        void setVerticalExaggeration( double scale_ );
 
 
     signals:
@@ -97,6 +100,9 @@ class Scene3d: public QObject
         QColor current_color;
         QOpenGLContext* context;
         QSurface* surface;
+
+
+        double v_exag = 1.0;
 
         std::shared_ptr < VolumeShader > volume;
         std::shared_ptr< PlaneShader > main_csection;

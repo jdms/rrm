@@ -117,6 +117,9 @@ void MainWindow::createActions()
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
+    connect( ac_export, &QAction::triggered, [=](){ app->exportToIRAP(); } );
+
+
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
 
     connect( ac_redo, &QAction::triggered, [=](){ app->redo(); } );
@@ -166,8 +169,8 @@ void MainWindow::createActions()
     { app->setCurrentObjectType( Settings::Objects::ObjectType::STRUCTURAL ); } );
 
 
-    connect( ac_regions, &QAction::triggered, [=]()
-    { app->getRegions(); } );
+    connect( ac_regions, &QAction::triggered, [=]( bool status_ )
+    { app->getRegions( status_ ); } );
 
 }
 
@@ -356,7 +359,10 @@ void MainWindow::createObjectTree()
 
     connect( object_tree, &ObjectTree::setVolumeVisible, [=]( std::size_t index_, bool status_ )
     {
-        app->setVolumeVisible( status_ );
+        if( index_ == 0 )
+            app->setVolumeVisible( status_ );
+        else
+            app->setRegionsVisible( status_ );
     } );
 
 
@@ -385,6 +391,8 @@ void MainWindow::createObjectTree()
         app->addRegionToDomain( reg_id_, domain_id_ );
     } );
 
+
+
     connect( object_tree, &ObjectTree::removeRegionFromDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )
     {
         app->removeRegionFromDomain( reg_id_, domain_id_ );
@@ -394,6 +402,21 @@ void MainWindow::createObjectTree()
     {
         app->removeDomain( index_ );
     } );
+
+
+
+
+    connect( object_tree, &ObjectTree::addRegionsToDomain, [=]( std::size_t domain_id_, std::vector< std::size_t > regions_ )
+    {
+        app->addRegionsToDomain( domain_id_, regions_ );
+    } );
+
+    connect( object_tree, &ObjectTree::removeRegionsFromTheirDomains, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+    {
+        app->removeRegionsFromDomains( regions_, domains_ );
+    } );
+
+
 }
 
 
@@ -526,23 +549,26 @@ void  MainWindow::activatePreserveRegion( bool status_ )
 
 void MainWindow::initializeInterface()
 {
-//    app->s
-//    ac_undo = nullptr;
-//    ac_redo = nullptr;
-//    ac_sketch_above = nullptr;
-//    ac_sketch_region = nullptr;
-//    ac_sketch_below = nullptr;
-//    ac_remove_above = nullptr;
-//    ac_remove_above_int = nullptr;
-//    ac_remove_below = nullptr;
-//    ac_remove_below_int = nullptr;
+    ac_undo->setEnabled( false );
+    ac_redo->setEnabled( false );
 
-//    ac_direction_x = nullptr;
-//    ac_direction_y = nullptr;
-//    ac_direction_z = nullptr;
+    ac_sketch_region = nullptr;
+    ac_sketch_above->setChecked( false );
+    ac_sketch_below->setChecked( false );
+    ac_remove_above->setChecked( false );
+    ac_remove_above_int->setChecked( false );
+    ac_remove_below->setChecked( false );
+    ac_remove_below_int->setChecked( false );
 
-//    ac_stratigraphy = nullptr;
-//    ac_structural = nullptr;
+
+    ac_direction_x->setChecked( false );
+    ac_direction_y->setChecked( false );
+    ac_direction_z->setChecked( true );
+
+    ac_stratigraphy->setChecked( true );
+    ac_structural->setChecked( false );
+
+    ac_regions->setChecked( false );
 }
 
 

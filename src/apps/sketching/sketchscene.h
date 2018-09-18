@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION };
 
     ///================================================================================
 
@@ -88,6 +88,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void addRegion( const std::shared_ptr< Regions >& region_ );
         void updateRegion( const std::size_t& id_ );
         void updateRegions();
+        void clearRegions();
+
 
         void getSelectedRegions();
 
@@ -114,6 +116,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSelectingRegionsMode( bool status_ );
         void setResizingImageMode( bool status_ );
         void setSelectingRegionMode( bool status_ );
+        void setGuidedExtrusionMode( bool status_ );
         //        void setSelectingWellsMode( bool status_ );
 
         void addImageToCrossSection( const QString& file_ );
@@ -127,6 +130,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void defineLowerBoundaryCurve( const PolyCurve& boundary_ );
         void defineUpperBoundaryCurve( const PolyCurve& boundary_ );
+        void clearLowerBoundaryCurve();
+        void clearUpperBoundaryCurve();
 
         void clearBoundaryCurve();
 
@@ -146,13 +151,21 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void removeImageFromCrossSection(  const Settings::CrossSection::CrossSectionDirections&, double );
 
-        void objectSelected( const std::size_t id_ );
+        void objectSelected( const std::size_t& id_ );
 
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void stopSketchesOfSelection();
 
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+
+        void regionSelected( const std::size_t& id_, bool status_ );
+
+        void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+        void setAreaChoosed();
+
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
     protected:
 
@@ -171,7 +184,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         virtual void dropEvent( QGraphicsSceneDragDropEvent* event_ );
         virtual void dragMoveEvent( QGraphicsSceneDragDropEvent* event_ );
         virtual void wheelEvent( QGraphicsSceneWheelEvent *event_ );
-        virtual void keyPressEvent( QKeyEvent *event );
+//        virtual void keyPressEvent( QKeyEvent *event );
 
 
     protected:
@@ -184,7 +197,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         ImageItemWrapper* image = nullptr;
 
         double csection_depth = 0.0;
-        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::CrossSectionDirections::Z;
+        Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
 
         std::shared_ptr< VolumeItem > volume1 = nullptr;
         std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections1;

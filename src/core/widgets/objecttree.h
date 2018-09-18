@@ -49,7 +49,7 @@ class ObjectTree: public QTreeWidget
         void addOutputVolume();
         void removeOutputVolume();
 
-        void setVolumeVisibility(  const Qt::CheckState& status_ );
+        void setVolumeVisibility(  std::size_t index_, const Qt::CheckState& status_ );
 
         void hideInputVolume();
         void hideOutputVolume();
@@ -70,6 +70,7 @@ class ObjectTree: public QTreeWidget
 
         void setStratigraphiesVisible( const Qt::CheckState& status_ );
         void setStructuralsVisible( const Qt::CheckState& status_ );
+        void setDomainsVisible( const Qt::CheckState& state_ );
 
 
         void removeStratigraphies();
@@ -80,6 +81,8 @@ class ObjectTree: public QTreeWidget
                         const int& green_,  const int& blue_ );
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
         void setRegionVisibility( std::size_t index_, bool status_ );
+
+        void setDomainsVisibility( std::size_t index_, bool status_ );
 
 
 
@@ -97,12 +100,27 @@ class ObjectTree: public QTreeWidget
 
         void clear();
         void createMenu();
+        void clearSubMenu();
 
         void createDomain( std::size_t index_ = 0 );
         void deleteDomain( std::size_t index_ = 0 );
         void removeFromDomain();
         void removeDomains();
         void addToDomain( std::size_t index_ );
+
+        void removeRegions();
+
+
+        void createDomain1( std::size_t index_ );
+        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ = std::vector< std::size_t >() );
+        void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
+        void addToDomain1( std::size_t index_ );
+        void removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
+                                           const std::vector< std::size_t >& parents_ );
+
+        void removeFromDomain1();
+        void deleteDomain1( std::size_t index_ );
+        void deleteDomains1();
 
 
     protected slots:
@@ -113,7 +131,8 @@ class ObjectTree: public QTreeWidget
         void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
         void removeInputVolume();
 
-        void removeRegions();
+
+
 
 
 
@@ -141,6 +160,11 @@ class ObjectTree: public QTreeWidget
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeDomain( std::size_t index_ );
+
+
+        void addRegionsToDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
+        void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+
 
 
 
