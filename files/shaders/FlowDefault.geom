@@ -99,7 +99,12 @@ void main(void)
 
     float area = abs(v1.x*v2.y - v1.y * v2.x);
 
-    VertexOut.normal   = VertexIn[0].normal;
+
+    vec3 face_normal = normalize (
+               cross (VertexIn[1].vertice.xyz - VertexIn[0].vertice.xyz,
+                      VertexIn[2].vertice.xyz - VertexIn[0].vertice.xyz));
+
+    VertexOut.normal   = -face_normal;
     VertexOut.color    = VertexIn[0].color;
 
     bool clipped = false;
