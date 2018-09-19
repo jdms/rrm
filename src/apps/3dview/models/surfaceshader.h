@@ -31,6 +31,8 @@
 #include "./core/models/shader.h"
 #include "./core/models/object.h"
 
+#include "TriMesh.h"
+
 class SurfaceShader: public Shader
 {
 
