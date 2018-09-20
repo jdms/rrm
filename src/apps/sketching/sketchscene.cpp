@@ -73,6 +73,7 @@ void SketchScene::init()
 
     boudering_area = new PolygonItem();
     boudering_area->setBorderVisible( false );
+    boudering_area->setTransparency( true );
     boudering_area->setVisible( false );
     addItem( boudering_area );
 
