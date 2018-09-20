@@ -1727,7 +1727,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 {
 
     std::vector< double > curve3d_;
-    std::vector< float > vertices_;
+    std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
 
@@ -1735,6 +1735,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
     {
         // pass curve to rules_processor and get the region
 
+        /*
         if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
         {
             curve3d_ = curve_.addXCoordinate( depth_, true );
@@ -1758,6 +1759,31 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
                 return false;
         }
 
+        */
+
+
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+        {
+            curve3d_ = curve_.addXCoordinate( depth_, true );
+            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+        }
+        else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+        {
+            curve3d_ = curve_.addZCoordinate( depth_, false );
+            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
+            if( status_ == true )
+            {
+                rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( depth_ ), vertices_, edges_ );
+            }
+            else
+                return false;
+        }
 
     }
 
@@ -1771,7 +1797,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
             bool status_ = rules_processor.requestPreserveBelow( curve3d_ );
             if( status_ == true )
             {
-                rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( depth_ ), vertices_, edges_ );
+                rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionX( depth_ ), vertices_, edges_ );
             }
             else
                 return false;
@@ -1782,7 +1808,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
             bool status_ = rules_processor.requestPreserveBelow( curve3d_ );
             if( status_ == true )
             {
-                rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( depth_ ), vertices_, edges_ );
+                rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionZ( depth_ ), vertices_, edges_ );
             }
             else
                 return false;
@@ -1863,28 +1889,28 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
 void Controller::getRegionByPointAsBoundering()
 {
 
-    std::vector<float> vertices_upper_;
-    std::vector<size_t> edges_upper_;
-    std::vector<float> vertices_lower_;
-    std::vector<size_t> edges_lower_;
+//    std::vector<float> vertices_upper_;
+//    std::vector<size_t> edges_upper_;
+//    std::vector<float> vertices_lower_;
+//    std::vector<size_t> edges_lower_;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-    {
-        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_upper_, edges_upper_ );
-        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_lower_, edges_lower_ );
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_upper_, edges_upper_ );
+//        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_lower_, edges_lower_ );
 
 
-    }
+//    }
 
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-    {
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
 
-        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_upper_, edges_upper_ );
-        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_lower_, edges_lower_ );
+//        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_upper_, edges_upper_ );
+//        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_lower_, edges_lower_ );
 
-    }
+//    }
 
-//    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
+////    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
@@ -1924,16 +1950,18 @@ bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 void Controller::getLowerBoundering( PolyCurve& boundary_ )
 {
 
-    std::vector< float > vertices_;
+    std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+        rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+//        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+        rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+//        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
     }
 
     boundary_.fromVector( vertices_, edges_ );
@@ -1943,17 +1971,19 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
 void Controller::getUpperBoundering( PolyCurve& boundary_ )
 {
 
-    std::vector< float > vertices_;
+    std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+        rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+//        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
 {
-        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+        rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+//        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
 
     }
 
@@ -2066,6 +2096,8 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
     clear();
     init();
 
+
+
     bool status_ = rules_processor.loadFile( filename );
 
     if( status_ == false )
@@ -2089,6 +2121,7 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     rules_processor.getOrigin( ox, oy, oz );
     rules_processor.getLenght( width, height, depth );
     model.volume->setGeometry( ox, oy, oz, width, height, depth );
+    setVolumeDiscretization();
 
     if ( rules_processor.isLowResolution() == true )
     {
@@ -2107,7 +2140,7 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     {
         model.objects[ current_object ]->clear();
         model.objects[ current_object ].reset();
-        model.objects[ current_object ] == nullptr;
+        model.objects[ current_object ] = nullptr;
         model.objects.clear();
     }
 
