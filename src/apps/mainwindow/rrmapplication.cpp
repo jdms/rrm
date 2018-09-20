@@ -165,10 +165,9 @@ void RRMApplication::moveMainCrossSection( double depth_ )
     }
 
     controller->moveMainCrossSection( depth_ );
-
-    emit updateBoundary();
-    emit updateRegions();
     emit updateMainCrossSection();
+
+
 
 }
 
@@ -183,6 +182,7 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
     else
         emit changeToCrossSectionDirection();
 
+    emit updateVolume();
 //    emit updateObjects();
 //    emit updateTrajectories();
 }
@@ -512,6 +512,12 @@ void RRMApplication::setSketchRegion( bool status_ )
 
 void RRMApplication::updateRegionBoundary()
 {
+
+    if( window->isRegionEnabled() == false ) return;
+
+    emit updateRegions();
+
+
 //    emit clearBounderingArea();
 
 //    PolyCurve boundary_;
