@@ -22,6 +22,7 @@
 
 
 #include "surfaceshader.h"
+#include "TriMesh.h"
 
 SurfaceShader::SurfaceShader()
 {
@@ -63,9 +64,57 @@ void SurfaceShader::loadBuffers()
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
-
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( surface_.getFaces() );
     std::vector< GLfloat > normals_ = Shader::convertToFloat( surface_.getNormals() );
+
+    /// Trimesh Normals
+
+    std::vector<trimesh::point>  trimesh_points;
+    trimesh::TriMesh  local_mesh;
+
+    for ( std::size_t index = 0; index < vertices_.size(); index += 3)
+    {
+            trimesh_points.push_back(trimesh::point( static_cast<float>(vertices_[index+0]),
+                                                                                 static_cast<float>(vertices_[index+1]),
+                                                                                 static_cast<float>(vertices_[index+2])));
+    }
+
+    local_mesh.vertices = trimesh_points;
+
+    for (std::size_t it = 0; it <faces_.size(); it+= 3)
+    {
+        int f1 = faces_[it+0];
+        int f2 = faces_[it+1];
+        int f3 = faces_[it+2];
+
+        local_mesh.faces.push_back(trimesh::TriMesh::Face(f1,f2,f3));
+    }
+
+    local_mesh.need_normals(true);
+
+    vertices_.clear();
+    normals_.clear();
+    faces_.clear();
+
+    for ( std::size_t index = 0; index < local_mesh.vertices.size(); index++)
+    {
+            vertices_.push_back(local_mesh.vertices[index][0]);
+            vertices_.push_back(local_mesh.vertices[index][1]);
+            vertices_.push_back(local_mesh.vertices[index][2]);
+
+            normals_.push_back(-local_mesh.normals[index][0]);
+            normals_.push_back(-local_mesh.normals[index][1]);
+            normals_.push_back(-local_mesh.normals[index][2]);
+    }
+
+    for ( auto index : local_mesh.faces )
+    {
+            faces_.push_back ( static_cast<GLuint> ( index[0] ) );
+            faces_.push_back ( static_cast<GLuint> ( index[1] ) );
+            faces_.push_back ( static_cast<GLuint> ( index[2] ) );
+    }
+
+    /// End Trimesh
 
     int r, g, b;
     raw->getColor( r, g, b );
@@ -85,6 +134,14 @@ void SurfaceShader::initShaders()
                                             "", "", "" );
 
     shader->initialize();
+
+    shader_new = new Tucano::Shader( "Surface New", ( shader_directory + "shaders/SurfaceDefault.vert" ),
+                                                                                   ( shader_directory + "shaders/SurfaceDefault.frag" ),
+                                                                                   ( shader_directory + "shaders/SurfaceDefault.geom" ),
+                                                                                   "", "" );
+
+    shader_new->initialize();
+
 }
 
 void SurfaceShader::initBuffers()
@@ -225,67 +282,87 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     Eigen::Affine3f M;
     M.setIdentity();
 
-    shader->bind();
-
-        shader->setUniform( "ModelMatrix" , M );
-        shader->setUniform( "ViewMatrix" , V );
-        shader->setUniform( "ProjectionMatrix" , P );
-        shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
-        shader->setUniform( "has_shading" , true );
-
-        glEnable( GL_DEPTH_TEST );
+	glEnable(GL_DEPTH_TEST);
 
 
-        if( is_preview_ == true )
-        {
-            glEnable( GL_BLEND );
-            glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+	shader_new->bind();
 
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	shader_new->setUniform("ModelMatrix", M);
+	shader_new->setUniform("ViewMatrix", V);
+	shader_new->setUniform("ProjectionMatrix", P);
+	shader_new->setUniform("WIN_SCALE", static_cast<float>(w), static_cast<float>(h));
+	shader_new->setUniform("isClip", 0);
 
-        glEnable( GL_POLYGON_OFFSET_FILL );
-        glPolygonOffset( 2.0f, 1.0f );
+	        glBindVertexArray( va_surface );
 
+	            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+	            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
 
-            glBindVertexArray( va_surface );
+	        glBindVertexArray ( 0 );
 
-                shader->setUniform( "is_face" , true );
-                shader->setUniform( "is_preview" , is_preview_ );
+	shader_new->unbind();
 
-                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+    //shader->bind();
 
-            glBindVertexArray ( 0 );
+    //    shader->setUniform( "ModelMatrix" , M );
+    //    shader->setUniform( "ViewMatrix" , V );
+    //    shader->setUniform( "ProjectionMatrix" , P );
+    //    shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
+    //    shader->setUniform( "has_shading" , true );
 
-
-        glDisable(GL_POLYGON_OFFSET_FILL);
-
-
-
-
-        glDepthFunc( GL_LEQUAL );
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-        if( draw_edge == true )
-        {
-            glBindVertexArray( va_surface );
-
-                shader->setUniform( "is_face" , false );
-                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-
-            glBindVertexArray ( 0 );
-        }
-        if( is_preview_ == true )
-            glDisable( GL_BLEND );
-
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    //    glEnable( GL_DEPTH_TEST );
 
 
-    glDisable( GL_DEPTH_TEST );
+    //    if( is_preview_ == true )
+    //    {
+    //        glEnable( GL_BLEND );
+    //        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //    }
 
-    shader->unbind();
+    //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+    //    glEnable( GL_POLYGON_OFFSET_FILL );
+    //    glPolygonOffset( 2.0f, 1.0f );
+
+
+    //        glBindVertexArray( va_surface );
+
+    //            shader->setUniform( "is_face" , true );
+    //            shader->setUniform( "is_preview" , is_preview_ );
+
+    //            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+    //            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+    //        glBindVertexArray ( 0 );
+
+
+    //    glDisable(GL_POLYGON_OFFSET_FILL);
+
+
+
+
+    //    glDepthFunc( GL_LEQUAL );
+    //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+    //    if( draw_edge == true )
+    //    {
+    //        glBindVertexArray( va_surface );
+
+    //            shader->setUniform( "is_face" , false );
+    //            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
+    //            glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
+
+    //        glBindVertexArray ( 0 );
+    //    }
+    //    if( is_preview_ == true )
+    //        glDisable( GL_BLEND );
+
+    //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+
+    //glDisable( GL_DEPTH_TEST );
+
+    //shader->unbind();
 
 }
 
