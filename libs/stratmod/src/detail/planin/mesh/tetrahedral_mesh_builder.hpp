@@ -54,14 +54,17 @@ class TetrahedralMeshBuilder
         template<typename VolumeList>
         bool getRegionVolumeList( VolumeList & );
 
+        template<typename TriangleList, typename BoundaryAttributes = int, typename VolumeAttributes = size_t>
+        bool getSimplicialComplex( TriangleList &, BoundaryAttributes &, VolumeAttributes & );
+
         template<typename VertexList, typename ElementList, typename VolumeList>
-        static bool computeVolumes( const VertexList &, const ElementList &, VolumeList & );
+        static bool computeVolumes( VertexList &, ElementList &, VolumeList & );
 
         template<typename VertexList, typename ElementList, typename EdgeList>
-        static bool computeBoundingCurves( const VertexList &, const ElementList &, EdgeList & );
+        static bool computeBoundingCurves( VertexList &, ElementList &, EdgeList & );
 
         template<typename VertexList, typename ElementList, typename TriangleList>
-        static bool computeBoundaryMesh( const VertexList &, const ElementList &, TriangleList & );
+        static bool computeBoundaryMesh( VertexList &, ElementList &, TriangleList & );
 
         bool mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list );
 
@@ -95,6 +98,9 @@ class TetrahedralMeshBuilder
 
         // Methods
         bool buildPrismMesh( std::vector<Prism> &prism_list );
+
+        bool buildTriangleMesh( const std::vector<std::vector<double>> &curves, const std::vector<std::vector<bool>> &curves_vertices_status, 
+                std::vector<size_t> &triangle_list, std::vector<size_t> &triangle_attributes, bool positively_oriented = true );
 
         void getDiscretization();
 
@@ -622,6 +628,23 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename, const VertexList
         vtkfs << attribute_list[i] << "\n";
     }
     vtkfs << "\n";
+
+    return true;
+}
+
+template<typename TriangleList, typename BoundaryAttributes, typename VolumeAttributes>
+bool TetrahedralMeshBuilder::getSimplicialComplex( TriangleList &, BoundaryAttributes &, VolumeAttributes & )
+{
+
+    // Get Left, Right, Front and Back Boundaries, then get all surfaces
+    //
+    // BoundaryAttributes: surface ids for triangles pertaining to a surface,
+    // volume attribute for triangles in the bounding box
+    //
+    // VolumeAttributes: for volumes from 1 to (last-1) its lower bounding
+    // surface is marked with the volume attribute, both surfaces from the
+    // topmost volume are marked with its attribute
+    //
 
     return true;
 }

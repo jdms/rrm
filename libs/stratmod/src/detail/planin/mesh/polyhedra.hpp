@@ -8,6 +8,107 @@
 #include <numeric>
 
 
+struct EdgeHeights
+{
+    // BUG: VS2013 does not support empty initializer lists
+    std::array<double, 2> vertex_height; //= {};
+    std::array<bool, 2> vertex_status; //= {};
+    double tolerance = 1E-13;
+
+    EdgeHeights() = default;
+    ~EdgeHeights() = default;
+    EdgeHeights( const EdgeHeights & ) = default;
+
+    EdgeHeights& operator=( const EdgeHeights &rhs ) 
+    {
+        vertex_height = rhs.vertex_height;
+        vertex_status = rhs.vertex_status;
+        tolerance = rhs.tolerance;
+
+        return *this;
+    }
+
+    EdgeHeights& operator-()
+    {
+        vertex_height[0] = -vertex_height[0];
+        vertex_height[1] = -vertex_height[1];
+
+        return *this;
+    }
+
+    bool isValid() const
+    {
+        return vertex_status[0] || vertex_status[1];
+    }
+
+    bool setVertex( size_t position, double vheight, bool vstatus )
+    {
+        if ( position > 1 )
+        {
+            return false;
+        }
+
+        vertex_height[position] = vheight;
+        vertex_status[position] = vstatus;
+
+        return true;
+    }
+
+    bool operator<( const EdgeHeights &rhs ) const
+    {
+        if ( vertex_height[0] - tolerance > rhs.vertex_height[0] )
+        {
+            return false;
+        }
+
+        if ( vertex_height[1] - tolerance > rhs.vertex_height[1] )
+        {
+            return false;
+        }
+
+        bool equal_v0 = std::fabs( vertex_height[0] - rhs.vertex_height[0] ) < tolerance;
+        bool equal_v1 = std::fabs( vertex_height[1] - rhs.vertex_height[1] ) < tolerance;
+
+        // Given equal heights a valid triangle can't be < than an invalid triangle
+        // Also, enforce that x < x is false
+        //
+        if ( equal_v0 && equal_v1 )
+        {
+            if ( rhs.isValid() == false )
+            {
+                return false;
+            }
+
+            if ( isValid() && rhs.isValid() )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool operator>( const EdgeHeights &rhs ) const
+    {
+        return rhs.operator<(*this);
+    }
+
+    bool operator>=( const EdgeHeights &rhs ) const
+    {
+        return !( operator<(rhs) );
+    }
+
+    bool operator<=( const EdgeHeights &rhs ) const
+    {
+        return rhs.operator>=(*this);
+    }
+
+    bool operator==( const EdgeHeights &rhs ) const
+    {
+        return !( operator<(rhs) ) && !( rhs.operator<(*this) );
+    }
+};
+
 struct TriangleHeights
 {
     // BUG: VS2013 does not support empty initializer lists

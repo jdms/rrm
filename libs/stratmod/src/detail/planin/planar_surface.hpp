@@ -160,6 +160,8 @@ class PlanarSurface {
         bool getHeight( Natural vertex_index, double &height );
         bool getHeight( Natural i, Natural j, double &height ); 
 
+        bool getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id );
+
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
 
@@ -170,6 +172,8 @@ class PlanarSurface {
         std::size_t getNumY(); 
         std::size_t getNumVertices(); 
         Natural getVertexIndex( Natural i, Natural j ) const;
+
+        bool getCachedBoundingSurfacesIDs( std::vector<SurfaceId> &bounding_surface_ids );
 
         template<typename CoordinatesList>
         bool getRawHeightMap( CoordinatesList &vertices );
@@ -277,13 +281,15 @@ class PlanarSurface {
         bool cache_is_fresh_ = false;
         std::vector<double> cached_heights_;
         std::vector<bool> cached_valid_heights_;
+        std::vector<SurfaceId> cached_bounding_surface_ids_;
         bool surface_is_empty_ = false;
 
         /* Methods */ 
         bool getHeight( Natural vertex_index, double &height, 
                 std::vector<double> &base_heights,
                 std::list<std::weak_ptr<PlanarSurface>> &ub_list,
-                std::list<std::weak_ptr<PlanarSurface>> &lb_list
+                std::list<std::weak_ptr<PlanarSurface>> &lb_list,
+                SurfaceId &bounding_surface_id
                 );
 
         bool rangeCheck( Natural i, Natural j );
@@ -637,6 +643,15 @@ bool PlanarSurface::getNormal( const Point2 &p, T& normal )
     }
 
     return f->getNormal(p, normal); 
+
+    /* T n; */
+    /* bool success = f->getNormal(p, n); */ 
+
+    /* normal[0] = n[ coordinates_map_[0] ]; */
+    /* normal[1] = n[ coordinates_map_[1] ]; */
+    /* normal[2] = n[ coordinates_map_[2] ]; */
+
+    /* return success; */
 }
 
 template<typename T>

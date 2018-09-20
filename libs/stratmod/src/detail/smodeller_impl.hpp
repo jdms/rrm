@@ -234,6 +234,8 @@ struct SModellerImplementation
 
     bool getPlanarSurfaceId( const size_t controller_index, PlanarSurface::SurfaceId &surface_id );
 
+    bool getControllerIndexFromPlanarSurfaceId( const PlanarSurface::SurfaceId surface_id, ControllerSurfaceIndex &controller_index );
+
     bool parseTruncateSurfaces( std::vector<size_t> &lbounds, std::vector<size_t> &ubounds );
 
     bool isInitialized();

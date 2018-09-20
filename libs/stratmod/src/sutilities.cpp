@@ -82,6 +82,30 @@ bool SUtilities::getRegionVolumeList( std::vector<double> &vlist )
     return model_.pimpl_->mesh_->getRegionVolumeList(vlist);
 }
 
+bool SUtilities::getIntersectingSurfaceIndices( size_t controller_id, std::vector<size_t> &intersecting_surfaces_indices )
+{
+    std::vector<PlanarSurface::SurfaceId> sids;
+    size_t index;
+
+    if ( model_.pimpl_->getSurfaceIndex(controller_id, index) == false )
+    {
+        return false;
+    }
+
+    model_.pimpl_->container_[index]->getCachedBoundingSurfacesIDs(sids);
+    intersecting_surfaces_indices.resize( sids.size() );
+    ControllerSurfaceIndex cid;
+
+    for ( size_t i = 0; i < sids.size(); ++i )
+    {
+        model_.pimpl_->getControllerIndexFromPlanarSurfaceId(sids[i], cid);
+        /* model_.pimpl_->container_.getSurfaceIndex(sids[i], cid); */
+        intersecting_surfaces_indices[i] = cid;
+    }
+
+    return true;
+}
+
 bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t,  std::size_t, std::vector< std::vector<double> > )
 {
     return false;

@@ -345,8 +345,12 @@ if(${STRATMOD_BUILD_UTILITIES})
     add_executable(json2binary ${SOURCES} ${HEADERS})
     target_link_libraries(json2binary stratmod)
 
-    set(SOURCES src/cl_util/change_resolution.cpp)
+    set(SOURCES src/cl_util/resample.cpp)
     add_executable(resample ${SOURCES} ${HEADERS})
     target_link_libraries(resample stratmod)
+
+    set(SOURCES src/cl_util/export2VTK.cpp)
+    add_executable(export2VTK ${SOURCES} ${HEADERS})
+    target_link_libraries(export2VTK stratmod)
 endif()
 

@@ -413,6 +413,193 @@ bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
     return true;
 }
 
+bool TetrahedralMeshBuilder::buildTriangleMesh( const std::vector<std::vector<double>> &curves_vertices, const std::vector<std::vector<bool>> &curves_vertices_status, 
+        std::vector<size_t> &triangle_list, std::vector<size_t> &triangle_attributes, bool positively_oriented )
+{
+    if ( numSurfaces <= 1 )
+    {
+        return false;
+    }
+
+    if ( curves_vertices.empty() || curves_vertices_status.empty() )
+    {
+        return false;
+    }
+
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    // TODO: check whether all curves_vertices have the same number of vertices
+    size_t numCurves = curves_vertices.size();
+    size_t numCurveVertices = curves_vertices.front().size()/3;
+    size_t numCurveBlocks = numCurveVertices - 1;
+
+    auto getEdgeHeight = []( size_t block, const std::vector<double> &curve_vlist, const std::vector<bool> &curve_valid_vertices ) -> EdgeHeights 
+    {
+        // curve_vlist = { v0x, v0y, v0z, v1x, v1y, v1z, ... }
+
+        EdgeHeights eheights;
+
+        eheights.vertex_status[0] = curve_valid_vertices[block + 0];
+        eheights.vertex_height[0] = curve_vlist[ 3*(block + 0) + 2 ];
+
+        eheights.vertex_status[0] = curve_valid_vertices[block + 1];
+        eheights.vertex_height[1] = curve_vlist[ 3*(block + 1) + 2];
+
+        return eheights;
+    };
+
+    auto getFirstVertexInBlockForCurve = [&]( size_t block, size_t curve_id ) -> size_t
+    {
+        return block + curve_id * numCurveVertices;
+    };
+
+    auto getTriangle = [&]( size_t block, size_t base_id, size_t top_id ) -> std::vector<size_t>
+    {
+        std::vector<size_t> triangles;
+
+        /* positively_oriented == true */
+        /*                             */
+        /* v2         v3 */
+        /* *----------* */
+        /* |         /| */
+        /* |        / | */
+        /* |  t1   /  | */
+        /* |      /   | */
+        /* |     /    | */
+        /* |    /     | */
+        /* |   /      | */
+        /* |  /  t0   | */
+        /* | /        | */
+        /* |/         | */
+        /* *----------* */
+        /* v0         v1 */
+        /*                              */
+        /* t0 = { v0, v1, v3 } */
+        /* t1 = { v0, v3, v2 } */
+
+        size_t v0, v1, v2, v3;
+
+        v0 = getFirstVertexInBlockForCurve(block, base_id);
+        v1 = getFirstVertexInBlockForCurve(block, base_id) + 1;
+        v2 = getFirstVertexInBlockForCurve(block, top_id);
+        v3 = getFirstVertexInBlockForCurve(block, top_id) + 1;
+
+        if ( positively_oriented )
+        {
+            triangles = { v0, v1, v3, v0, v3, v2 }; 
+        }
+        else
+        {
+            triangles = { v0, v3, v1, v0, v2, v3 };
+        }
+
+        return triangles;
+    };
+
+    auto getAttribute = [&]( std::vector<bool> &attribute ) -> size_t 
+    {
+        auto it = attributes_map.find(attribute);
+
+        return it->second;
+    };
+
+    triangle_list.clear();
+    triangle_attributes.clear();
+
+    // ordered_surfaces if firstprivate along the for loop
+    std::vector< std::pair<bool, size_t> > ordered_curves(numCurves);
+
+    // these are private along the for loop
+    std::multimap< EdgeHeights, size_t > list_of_edge_heights;
+    EdgeHeights edge_heights;
+    std::vector<size_t> valid_curves;
+    std::vector<bool> cur_attribute;
+    std::vector<std::vector<bool>> attribute_list;
+
+    std::vector<size_t> cur_triangles;
+
+    // Paralelize this loop?
+    for ( size_t block = 0; block < numCurveBlocks; ++block )
+    {
+        // For every triangle in the block, we'll get all surfaces' values and 
+        // their correpondent prisms.  
+        //
+        // This loop: 
+        //     1. Gets the surfaces' heights for every triangle
+        //     2. Sort surfaces accordingly to their height (also, invalid surfaces come first).
+        //     3. Use the sorting in (2) to compute attributes (i.e., the region that a prism belongs to).
+        //     4. Build prisms from the valid surfaces with the attribute computed in (3).
+        //
+
+        //     1. Gets the surfaces' heights for every triangle
+        /* for ( size_t prism = 0; prism < numPrismsPerBlock; ++prism ) */
+        {
+            list_of_edge_heights.clear();
+
+            for ( size_t curve_id = 0; curve_id < numCurves; ++curve_id )
+            {
+                edge_heights = getEdgeHeight(block, curves_vertices[curve_id], curves_vertices_status[curve_id]);
+
+                list_of_edge_heights.insert( std::make_pair(edge_heights, curve_id) );
+            }
+
+            //     2. Sort surfaces accordingly to their height (also, invalid surfaces come first).
+            size_t proc_curves = 0;
+            for ( auto &it : list_of_edge_heights )
+            {
+                ordered_curves[proc_curves] = std::make_pair(it.first.isValid(), it.second);
+                ++proc_curves;
+            }
+
+            //     3. Use the sorting in (2) to compute attributes (i.e., the region that a prism belongs to).
+            valid_curves.clear();
+            attribute_list.clear();
+            cur_attribute = std::vector<bool>(numSurfaces, false);
+
+            for ( size_t s = 0; s < proc_curves; ++s )
+            {
+                cur_attribute[ ordered_curves[s].second ] = true;
+
+                if ( ordered_curves[s].first == true )
+                {
+                    valid_curves.push_back(ordered_curves[s].second);
+                    attribute_list.push_back(cur_attribute);
+                }
+            }
+
+
+            //     4. Build prisms from the valid surfaces with the attribute computed in (3).
+            for ( size_t s = 0; s < valid_curves.size() - 1; ++s )
+            {
+                cur_triangles = getTriangle(block, valid_curves[s], valid_curves[s+1]);
+                std::copy( cur_triangles.begin(), cur_triangles.end(), std::back_inserter(triangle_list) );
+
+                triangle_attributes.push_back( getAttribute(attribute_list[s]) );
+
+            }
+        }
+    }
+
+    if ( prism_list.empty() )
+    {
+        return false;
+    }
+
+    attributes_map = computeAttributeMap(prism_list);
+    mesh_is_built = true;
+
+    return true;
+}
+
 
 void TetrahedralMeshBuilder::getDiscretization()
 {
