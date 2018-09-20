@@ -99,12 +99,15 @@ void main(void)
 
     float area = abs(v1.x*v2.y - v1.y * v2.x);
 
+	vec4 vertices0 = ViewMatrix * VertexIn[0].vertice;
+	vec4 vertices1 = ViewMatrix * VertexIn[1].vertice;
+	vec4 vertices2 = ViewMatrix * VertexIn[2].vertice;
 
     vec3 face_normal = normalize (
-               cross (VertexIn[1].vertice.xyz - VertexIn[0].vertice.xyz,
-                      VertexIn[2].vertice.xyz - VertexIn[0].vertice.xyz));
+               cross (vertices1.xyz - vertices0.xyz,
+                      vertices2.xyz - vertices0.xyz));
 
-    VertexOut.normal   = -face_normal;
+    //VertexOut.normal   = -face_normal;
     VertexOut.color    = VertexIn[0].color;
 
     bool clipped = false;
@@ -136,6 +139,7 @@ void main(void)
         gl_Position = vec4(0.0,0.0,0.0,1.0);
     }else
     {
+		VertexOut.normal   = VertexIn[0].normal;
         gl_Position = gl_in[0].gl_Position;
     }
 
@@ -153,6 +157,7 @@ void main(void)
         gl_Position = vec4(0.0,0.0,0.0,1.0);
     }else
     {
+		VertexOut.normal   = VertexIn[1].normal;
         gl_Position = gl_in[1].gl_Position;
     }
 
@@ -170,6 +175,7 @@ void main(void)
         gl_Position = vec4(0.0,0.0,0.0,1.0);
     }else
     {
+		VertexOut.normal   = VertexIn[2].normal;
         gl_Position = gl_in[2].gl_Position;
     }
 
