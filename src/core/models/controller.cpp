@@ -1889,35 +1889,14 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
 void Controller::getRegionByPointAsBoundering()
 {
 
-//    std::vector<float> vertices_upper_;
-//    std::vector<size_t> edges_upper_;
-//    std::vector<float> vertices_lower_;
-//    std::vector<size_t> edges_lower_;
 
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_upper_, edges_upper_ );
-//        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ),vertices_lower_, edges_lower_ );
-
-
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-
-//        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_upper_, edges_upper_ );
-//        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ),vertices_lower_, edges_lower_ );
-
-//    }
-
-////    csection->setBounderingArea( vertices_upper_, edges_upper_, vertices_lower_, edges_lower_ );
 
 }
 
 
 void Controller::clearBounderingArea()
 {
-//    csection->clearBounderingArea();
+
 }
 
 
@@ -1956,12 +1935,10 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-//        rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-//        rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
     }
 
     boundary_.fromVector( vertices_, edges_ );
@@ -1977,13 +1954,12 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-//        rules_processor.getUpperBoundaryWidthwiseCrossSection( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
 {
         rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-//        rules_processor.getUpperBoundaryLengthwiseCrossSection( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
 
     }
 

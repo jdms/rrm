@@ -36,6 +36,9 @@ class PolygonItem: public QGraphicsPolygonItem
         void setBorderVisible( bool status_ );
         bool isBorderVisible() const ;
 
+        void setTransparency( bool status_ );
+        bool hasTransparency() const ;
+
         void setFillColor( int r_, int g_, int b_ );
         void getFillColor( int& r_, int& g_, int& b_ ) const;
 
@@ -76,6 +79,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         bool is_done = true;
         bool has_border = true;
+        bool is_transparent = false;
 
 };
 
