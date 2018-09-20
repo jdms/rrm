@@ -44,6 +44,8 @@ class MainWindow: public QMainWindow
         void activatePreserveBelow( bool status_ );
         void activatePreserveRegion( bool status_ );
 
+        bool isRegionEnabled() const;
+
 
     protected:
 
