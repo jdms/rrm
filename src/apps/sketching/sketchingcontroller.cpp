@@ -350,6 +350,19 @@ void SketchingController::updateRegions()
 
 }
 
+void SketchingController::setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    if( topview_scene == nullptr ) return;
+    if( main_scene == nullptr ) return;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+        topview_scene->updatePointGuidedExtrusion( QPointF( depth_, px_ ) );
+
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+        topview_scene->updatePointGuidedExtrusion( QPointF( px_, depth_ ) );
+
+}
+
 
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {

@@ -23,6 +23,7 @@ class SketchInterface: public QObject
     public slots:
 
         void init();
+        void setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){}
 
 
     protected:

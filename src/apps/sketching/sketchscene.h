@@ -51,7 +51,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION };
+    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
 
     ///================================================================================
 
@@ -135,6 +135,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void clearBoundaryCurve();
 
+        void updatePointGuidedExtrusion( const QPointF& p_ );
+        void stopPointGuidedExtrusion();
 
    signals:
 
@@ -213,6 +215,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         QGraphicsEllipseItem* resize_marker = nullptr;
         QGraphicsEllipseItem* move_marker = nullptr;
+        QGraphicsEllipseItem* trajectory_point = nullptr;
 
         PolygonItem* boudering_area = nullptr;
 

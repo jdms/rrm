@@ -132,7 +132,17 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
 
      connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
-     { window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
+     {
+//         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
+     } );
+
+
+//     connect( sketch_window, &SketchWindow::updatePointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+//     {
+//         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+//         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
+//     } );
 
 
 
@@ -217,6 +227,7 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::startApplication, this, &SketchInterface::init );
 
+
     connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_window->disableResizeVolume( true ); } );
 
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_window->disableResizeVolume( false ); } );
@@ -281,7 +292,6 @@ void SketchInterface::createSketchingActions()
 
 
     connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
-
 
     connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
 
