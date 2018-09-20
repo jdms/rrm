@@ -239,9 +239,11 @@ bool SModeller::changeDiscretization( size_t width, size_t length )
         return false;
     }
 
+    int counter = 0;
     while ( canUndo() )
     {
         undo();
+        ++counter;
     }
 
     PlanarSurface::requestChangeDiscretization(width, length);
@@ -249,9 +251,10 @@ bool SModeller::changeDiscretization( size_t width, size_t length )
     pimpl_->discWidth_ = width; 
     pimpl_->discLenght_ = length; 
 
-    while ( canRedo() )
+    while ( counter > 0 )
     {
         redo();
+        --counter;
     }
 
     /* TODO: review use and conversion of types */

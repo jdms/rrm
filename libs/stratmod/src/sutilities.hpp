@@ -53,6 +53,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
         bool getRegionVolumeList( std::vector<double> &vlist );
 
+        bool getIntersectingSurfaceIndices( size_t surface_id, std::vector<size_t> &intersecting_surfaces_indices );
+
         bool getFrontBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getBackBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);

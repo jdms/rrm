@@ -1118,12 +1118,15 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
     return status; 
 }
 
-bool PlanarSurface::getHeight( Natural vertex_index, double &height ) { 
-    return getHeight(vertex_index, height, heights, upper_bound_, lower_bound_);
+bool PlanarSurface::getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id ) 
+{ 
+    return getHeight(vertex_index, height, heights, upper_bound_, lower_bound_, bounding_surface_id);
 }
 
 // getRelativeHeight
-bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector<double> &base_heights, std::list<std::weak_ptr<PlanarSurface>> &ub_list,std::list<std::weak_ptr<PlanarSurface>> &lb_list )
+bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector<double> &base_heights, 
+        std::list<std::weak_ptr<PlanarSurface>> &ub_list,std::list<std::weak_ptr<PlanarSurface>> &lb_list, 
+        SurfaceId &bounding_surface_id  )
 {
     if ( interpolant_is_set_ == false ) { 
         return false; 
@@ -1136,6 +1139,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
     {
         height = cached_heights_[vertex_index];
         status = cached_valid_heights_[vertex_index];
+        bounding_surface_id = cached_bounding_surface_ids_[vertex_index];
 
         return status;
     }
@@ -1144,6 +1148,11 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
     height = base_heights[vertex_index];  
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
+
+    bool ustatus, lstatus;
+    SurfaceId ubounding_surface_id = id_;
+    SurfaceId lbounding_surface_id = id_;
+    bounding_surface_id = std::numeric_limits<SurfaceId>::max();
 
     if ( height > ub ) { 
         height = ub; 
@@ -1164,11 +1173,14 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
         if ( auto upper_surface = p_upper_bound_.lock() ) { 
             /* if ( upper_surface->getHeight(vertex_index, ub) ) */
             if ( upper_surface->surfaceIsSet() ) { 
-                upper_surface->getHeight(vertex_index, ub); 
+                ustatus = upper_surface->getHeight(vertex_index, ub, ubounding_surface_id); 
                 if ( height >= ub ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed above! \n"; */ 
                     height = ub; 
+                    if ( ustatus )
+                        /* ubounding_surface_id = upper_surface->getID(); */
+                        bounding_surface_id = ubounding_surface_id;
                     status &= false; 
                     /* return false; */ 
                 }
@@ -1180,17 +1192,40 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
         if ( auto lower_surface = p_lower_bound_.lock() ) { 
             /* if ( lower_surface->getHeight(vertex_index, lb) ) */  
             if ( lower_surface->surfaceIsSet() ) { 
-                lower_surface->getHeight(vertex_index, lb); 
+                lstatus = lower_surface->getHeight(vertex_index, lb, lbounding_surface_id); 
                 if ( height <= lb ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed below! \n"; */ 
                     height = lb; 
+                    if ( lstatus )
+                        /* lbounding_surface_id = lower_surface->getID(); */
+                        bounding_surface_id = lbounding_surface_id;
                     status &= false; 
                     /* return false; */ 
                 }
             }
         }
 
+    if ( status )
+    {
+        bounding_surface_id = id_;
+    }
+    else 
+    {
+        /* auto error = std::numeric_limits<SurfaceId>::max(); */
+        /* if ( (lbounding_surface_id != id_) && (ubounding_surface_id != id_) ) */
+        /* { */
+        /*     bounding_surface_id = error; */
+        /* } */
+        /* else if ( lbounding_surface_id != id_ ) */
+        /* { */
+        /*     bounding_surface_id = lbounding_surface_id; */
+        /* } */
+        /* else if ( ubounding_surface_id != id_ ) */
+        /* { */
+        /*     bounding_surface_id = ubounding_surface_id; */
+        /* } */
+    }
     /* #pragma omp critical */
     /* std::cout << "worked! \n"; */  
 
@@ -1200,6 +1235,12 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
 bool PlanarSurface::getHeight( Natural i, Natural j, double &height )
 {
     return getHeight( getVertexIndex(i, j), height );
+}
+
+bool PlanarSurface::getHeight( Natural vertex_index, double &height )
+{
+    SurfaceId dummy_var;
+    return getHeight(vertex_index, height, dummy_var);
 }
 
 bool PlanarSurface::getCachedHeight( Natural vertex_index, double &height )
@@ -1237,6 +1278,7 @@ bool PlanarSurface::getCachedHeight( Natural vertex_index, double &height )
     {
         height = cached_heights_[vertex_index];
         valid_vertex = cached_valid_heights_[vertex_index];
+        /* bounding_surface_id = cached_bounding_surface_ids_[vertex_index]; */
     }
     else
     {
@@ -1261,6 +1303,17 @@ bool PlanarSurface::getCachedHeight( Natural vertex_index, double &height )
 bool PlanarSurface::getCachedHeight( Natural i, Natural j, double &height )
 {
     return getCachedHeight( getVertexIndex(i, j), height );
+}
+
+bool PlanarSurface::getCachedBoundingSurfacesIDs( std::vector<SurfaceId> &bounding_surface_ids )
+{
+    if ( cache_is_fresh_ == false )
+    {
+        return false;
+    }
+
+    bounding_surface_ids = cached_bounding_surface_ids_;
+    return true;
 }
 
 std::size_t PlanarSurface::getNumX()
@@ -1401,7 +1454,12 @@ bool PlanarSurface::updateRawCache()
     // VS2013 cannot understand the following lambda:
     /* cached_valid_heights_.resize( heights.size(), []() -> bool { return true; } ); */
     cached_valid_heights_.resize( heights.size(), true );
+
     std::copy( heights.begin(), heights.end(), std::back_inserter(cached_heights_) );
+
+    cached_bounding_surface_ids_.clear();
+    cached_bounding_surface_ids_.resize( heights.size(), id_ );
+
     cache_is_fresh_ = false;
 
     mesh_is_set_ = true; 
@@ -1445,6 +1503,7 @@ bool PlanarSurface::updateCache()
 
     double height{};
     bool valid_vertex{};
+    PlanarSurface::SurfaceId bounding_surface_id;
     
     surface_is_empty_ = true;
 
@@ -1460,10 +1519,11 @@ bool PlanarSurface::updateCache()
         /* } */
 
         /* valid_vertex = getCachedHeight(i, height); */
-        valid_vertex = getHeight(i, height);
+        valid_vertex = getHeight(i, height, bounding_surface_id);
 
         cached_heights_[i] = height;
         cached_valid_heights_[i] = valid_vertex;
+        cached_bounding_surface_ids_[i] = bounding_surface_id;
 
         surface_is_empty_ &= !valid_vertex;
     }

@@ -392,20 +392,37 @@ bool SRules::getUpperBoundary( const std::vector<VertexList> &vlists, const std:
     template<typename Archive>
     void SRules::load( Archive &ar, const std::uint32_t version )
     {
-        (void)(version);
-        ar(
-            container, 
-            dictionary,
-            lower_bound_, 
-            define_above_, 
-            upper_bound_, 
-            define_below_
+        if ( version == 1 )
+        {
+            PlanarSurface::WeakPtr lbound, ubound;
+
+            ar(
+                container, 
+                dictionary,
+                lbound, 
+                define_above_, 
+                ubound, 
+                define_below_
           );
+                lower_bound_ = { lbound };
+                upper_bound_ = { ubound };
+        }
+        else
+        {
+            ar(
+                container, 
+                dictionary,
+                lower_bound_, 
+                define_above_, 
+                upper_bound_, 
+                define_below_
+            );
+        }
 
         updateCache();
     }
 
-    CEREAL_CLASS_VERSION(SRules, 1);
+    CEREAL_CLASS_VERSION(SRules, 2);
 
 #else
     template<typename Archive>
