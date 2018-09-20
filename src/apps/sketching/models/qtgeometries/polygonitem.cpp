@@ -45,7 +45,12 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
 
     QBrush fill_;
     QColor color_ = getFillColor();
-    fill_.setColor(  QColor( color_.red(), color_.green(), color_.blue() ) );
+
+    if( is_transparent == true )
+        fill_.setColor(  QColor( color_.red(), color_.green(), color_.blue(), 75 ) );
+    else
+        fill_.setColor(  QColor( color_.red(), color_.green(), color_.blue() ) );
+
     fill_.setStyle( Qt::SolidPattern );
 
 
@@ -149,6 +154,18 @@ bool PolygonItem::isBorderVisible() const
 }
 
 
+void PolygonItem::setTransparency( bool status_ )
+{
+    is_transparent = status_;
+    update();
+}
+
+
+bool PolygonItem::hasTransparency() const
+{
+    return is_transparent;
+}
+
 void PolygonItem::setFillColor( int r_, int g_, int b_ )
 {
     setFillColor( QColor( r_, g_, b_ ) );
@@ -184,12 +201,12 @@ void PolygonItem::clear()
     prepareGeometryChange();
     plane.clear();
 
-    is_done = true;
-    has_border = true;
+//    is_done = true;
+//    has_border = true;
 
-    resetToDefaultBorderColor();
-    resetToDefaultFillColor();
-    resetToDefaultBorderWidth();
+//    resetToDefaultBorderColor();
+//    resetToDefaultFillColor();
+//    resetToDefaultBorderWidth();
 
     std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
