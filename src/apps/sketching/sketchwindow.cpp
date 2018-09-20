@@ -227,10 +227,6 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_ )
         emit defineColorCurrent( color_.red(), color_.green(), color_.blue() ); } );
 
 
-
-//    connect( cp_color, &ColorPicker::colorSelected, scene_.get(), &SketchScene::setSketchColor );
-////    connect( ac_sketch_color, &QAction::triggered, scene_.get(), &SketchScene::setSketchColor );
-
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
@@ -373,12 +369,33 @@ void SketchWindow::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {
+        case Qt::Key_G:
+        {
+            if( sketchingcanvas == nullptr ) return;
+            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+            scene_->setGuidedExtrusionMode( true );
+
+        }
+        break;
+
+        case Qt::Key_D:
+        {
+            if( sketchingcanvas == nullptr ) return;
+            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+            scene_->setGuidedExtrusionMode( false );
+
+        }
+        break;
+
+
 //        case Qt::Key_S:
 //            for( auto it: regions )
 //            {
 //                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
 //            }
 //        break;
+
+
     case Qt::Key_1:
         usingVerticalExaggeration();
 //        setVerticalExaggeration( 10 );

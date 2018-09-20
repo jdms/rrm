@@ -111,6 +111,8 @@ class SketchWindow: public QMainWindow
 
         void setVerticalExaggeration( double );
 
+        void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
     protected:
 
 //        void createWindow();

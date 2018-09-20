@@ -78,6 +78,13 @@ void SketchScene::init()
     addItem( boudering_area );
 
 
+    trajectory_point = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    trajectory_point->setBrush( QColor( Qt::red ) );
+    trajectory_point->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    trajectory_point->setFlag( QGraphicsItem::ItemIsMovable, true );
+    trajectory_point->setVisible( false );
+    addItem( trajectory_point );
+
 }
 
 
@@ -435,10 +442,13 @@ void SketchScene::setResizingBoundaryMode( bool status_ )
 void SketchScene::setGuidedExtrusionMode( bool status_ )
 {
     if( status_ == true )
+    {
         current_interaction1 = UserInteraction1::GUIDED_EXTRUSION;
+        updatePointGuidedExtrusion( QPointF( 0, 0 ) );
+    }
     else
     {
-        setSketchingMode();
+        stopPointGuidedExtrusion();
     }
 }
 
@@ -706,6 +716,22 @@ void SketchScene::clearBoundaryCurve()
 }
 
 
+void SketchScene::updatePointGuidedExtrusion( const QPointF& p_ )
+{
+    trajectory_point->setVisible( true );
+    trajectory_point->setPos( p_ );
+    update();
+}
+
+
+void SketchScene::stopPointGuidedExtrusion()
+{
+    trajectory_point->setVisible( false );
+    setSketchingMode();
+    update();
+}
+
+
 ///================================================================================
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
@@ -735,27 +761,36 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
     {
         sketch->create( p_ );
     }
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
     {
         getSelectedStratigraphies();
     }
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_REGION ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_REGION ) )
     {
         emit getRegionByPoint( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
     {
         emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->create( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED )  )
+    {
+//       submitSketch();
+    }
 
     QGraphicsScene::mousePressEvent( event_ );
     update();
@@ -782,9 +817,9 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
         getSelectedRegions();
     }
 
-//    else if( current_interaction1 == UserInteraction1::SELECTING_REGION )
+//    else if( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION )
 //    {
-//        emit setAreaChoosed();
+
 //    }
 
 
@@ -808,12 +843,12 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
         volume1->setEndPoint( p_ );
     }
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
     {
         sketch->add(  p_ );
     }
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
     {
         if( resize_marker->isSelected() )
         {
@@ -826,6 +861,17 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
             resize_marker->setPos( image->getTopRight() );
         }
     }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    {
+        emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->add(  p_ );
+    }
+
 
     QGraphicsScene::mouseMoveEvent( event_ );
     update();
@@ -870,6 +916,11 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
         updateImageinCrossSection();
     }
 
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->connect();
+    }
 
 
     QGraphicsScene::mouseReleaseEvent( event_ );

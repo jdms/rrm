@@ -5,6 +5,8 @@
 #include <map>
 
 
+#include <QPointF>
+
 #include "./core/models/controller.h"
 #include "./models/volumeitem.h"
 
@@ -55,6 +57,7 @@ class SketchingController
         void updateBoundering();
 
 
+        void setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void removeWindowsDirectionX();
