@@ -77,6 +77,8 @@ void SketchWindow::createToolBar()
     ac_select_wells->setCheckable( true );
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
     tb_well->addAction( ac_select_wells );
+    tb_well->setVisible( false );
+
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );

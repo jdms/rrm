@@ -547,12 +547,18 @@ void  MainWindow::activatePreserveRegion( bool status_ )
 }
 
 
+bool MainWindow::isRegionEnabled() const
+{
+    return ac_regions->isChecked();
+}
+
+
 void MainWindow::initializeInterface()
 {
     ac_undo->setEnabled( false );
     ac_redo->setEnabled( false );
 
-    ac_sketch_region = nullptr;
+    ac_sketch_region->setChecked( false );
     ac_sketch_above->setChecked( false );
     ac_sketch_below->setChecked( false );
     ac_remove_above->setChecked( false );
