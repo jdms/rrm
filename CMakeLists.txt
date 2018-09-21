@@ -15,7 +15,7 @@ set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 # Options
 ###############################################
 
-set(RRM_BUILD_TYPE "Debug" CACHE STRING
+set(RRM_BUILD_TYPE "Release" CACHE STRING
     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
@@ -77,9 +77,11 @@ OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 if( RRM_DIRECTORY_LIBRARIES )
 
     set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+    #set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
     set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
     set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
     set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
+    #set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64/glew32.lib )
 
 endif()
 
