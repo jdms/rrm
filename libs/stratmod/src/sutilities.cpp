@@ -50,7 +50,7 @@ bool SUtilities::getExtrusionPath( size_t surface_id, std::vector<double> &path_
         return false; 
     }
 
-    return model_.pimpl_->container_[index]->getPathVertexList(path_vertex_list);
+    return model_.pimpl_->container_[index]->getRawPathVertexList(path_vertex_list);
 
     return true;
 }

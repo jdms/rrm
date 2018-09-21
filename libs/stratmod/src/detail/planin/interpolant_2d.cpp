@@ -245,4 +245,16 @@ void Interpolant2D::clear()
     interpolant_is_set_ = false; 
 }
 
+bool Interpolant2D::getRawData( std::vector<Point2> &points, std::vector<double> &fevals )
+{
+    if ( points_.size() != fevals_.size() )
+    {
+        return false;
+    }
+
+    points = points_;
+    fevals = fevals_;
+
+    return true;
+}
 
