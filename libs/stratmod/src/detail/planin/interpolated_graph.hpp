@@ -134,6 +134,9 @@ class InterpolatedGraph
         bool isPathExtrudedSurface();
         bool isOrthogonallyOrientedSurface();
 
+        bool getRawData( std::vector<Point2> &points, std::vector<double> &fevals );
+        bool getRawPathData( std::vector<double> &abscissas, std::vector<double> &ordinates );
+
     private: 
         static unsigned long int num_instances_; 
         unsigned long int id_; 

@@ -2202,3 +2202,8 @@ bool PlanarSurface::compareSurfaceWptr( const PlanarSurface::WeakPtr &left, cons
     return false; 
 }
 
+bool PlanarSurface::getRawData( std::vector<Point2> &points, std::vector<double> &fevals )
+{
+    return f->getRawData(points, fevals);
+}
+

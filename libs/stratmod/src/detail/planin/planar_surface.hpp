@@ -112,6 +112,9 @@ class PlanarSurface {
         bool getNormalList( NList &normal_list ); 
 
         template<typename VList>
+        bool getRawPathVertexList( VList &path_vertex_list );
+
+        template<typename VList>
         bool getPathVertexList( VList &path_vertex_list );
 
         /* Basic methods. */ 
@@ -230,6 +233,8 @@ class PlanarSurface {
         bool isPathExtrudedSurface();
         bool isOrthogonallyOrientedSurface();
 
+        bool getRawData( std::vector<Point2> &points, std::vector<double> &fevals );
+
         template<typename FList = std::vector<size_t>>
         size_t mergeFaceLists( const std::vector<FList> &flists, FList &merged_flist );
 
@@ -335,6 +340,48 @@ bool PlanarSurface::addPoints( const std::vector<Point3Type> &points)
 }
 
 template<typename VList>
+bool PlanarSurface::getRawPathVertexList( VList &pvlist )
+{
+    if ( surfaceIsSet() == false ) {
+        return false; 
+    }
+
+    if ( f->isPathExtrudedSurface() == false )
+    {
+        return false;
+    }
+
+    std::vector<double> abscissas;
+    std::vector<double> ordinates;
+
+    if ( f->getRawPathData(abscissas, ordinates) == false )
+    {
+        return false;
+    }
+
+    pvlist.resize( 2*abscissas.size() );
+
+    std::cout << "\nPath list: ";
+    for ( size_t i = 0; i < abscissas.size(); ++i )
+    {
+        if ( isOrthogonallyOrientedSurface() )
+        {
+            pvlist[ 2*i + 0 ] = abscissas[i];
+            pvlist[ 2*i + 1 ] = ordinates[i];
+        }
+        else
+        {
+            pvlist[ 2*i + 1 ] = abscissas[i];
+            pvlist[ 2*i + 0 ] = ordinates[i];
+        }
+        std::cout << "(" << pvlist[2*i+0] << ", " << pvlist[2*i+1] << "), ";
+    }
+    std::cout << std::endl << std::flush;
+
+    return true;
+}
+
+template<typename VList>
 bool PlanarSurface::getPathVertexList( VList &pvlist )
 {
     if ( surfaceIsSet() == false ) {
@@ -352,8 +399,17 @@ bool PlanarSurface::getPathVertexList( VList &pvlist )
     for ( long int j = 0; j < static_cast<long int>( nY_ ); ++j )
     {
         getVertex2D( getVertexIndex(0, j), v );
-        pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
-        pvlist[ 2*j + 1 ] = v.y;
+        if ( isOrthogonallyOrientedsurface() )
+        {
+            pvlist[ 2*j + 0 ] = v.x; ;
+            pvlist[ 2*j + 1 ] = f->getPathOrdinate(v.x);
+        }
+        else
+        {
+            pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
+            pvlist[ 2*j + 1 ] = v.y;
+        }
+        
     }
 
     return true;
