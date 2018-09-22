@@ -19,11 +19,14 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#include <cmath>
 
 #include <QToolBar>
 #include <QFileDialog>
-#include <cmath>
+#include <QSlider>
+#include <QStatusBar>
+#include <QDial>
+
 
 #include "sketchwindow.h"
 #define PI 3.14159265
@@ -102,6 +105,19 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
     setCentralWidget( sketchingcanvas );
 
+    QSlider* sl_vertical_exagg_ = new QSlider( Qt::Horizontal );
+    sl_vertical_exagg_->setRange( 10, 100 );
+    sl_vertical_exagg_->setSingleStep( 1 );
+    sl_vertical_exagg_->setValue( 10 );
+
+    QDial* dl_input_angle_ = new QDial();
+    dl_input_angle_->setMaximumSize( 20, 20 );
+    dl_input_angle_->setRange( 0, 180 );
+    dl_input_angle_->setSingleStep( 15 );
+
+    statusBar()->addWidget( sl_vertical_exagg_ );
+    statusBar()->addWidget( dl_input_angle_ );
+
     tb_trajectory->setVisible( false );
 
 
@@ -158,6 +174,11 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
+    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
+
+    connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
+
+
 
     return scene_;
 }
@@ -209,6 +230,8 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
     connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_ , const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
 
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+    connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
     return scene_;
 }
@@ -330,14 +353,14 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 
 
-void SketchWindow::usingVerticalExaggeration()
+void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
     if( sketchingcanvas == nullptr ) return;
 
-    double v_exagg_ = 10.0;
-    sketchingcanvas->setVerticalExaggeration( v_exagg_ );
+    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.05 );
+    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 
-    emit setVerticalExaggeration( v_exagg_ );
+    emit setVerticalExaggeration( v_exagg_db_ );
 
 }
 
@@ -347,6 +370,8 @@ void SketchWindow::setDipAngle( double angle_ )
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
     double param_ = v_exag_*tan( angle_*PI/180 );
     double beta_ = atan(param_) * 180 / PI;
+
+    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
 }
 
 
@@ -397,7 +422,7 @@ void SketchWindow::keyPressEvent( QKeyEvent *event )
 
 
     case Qt::Key_1:
-        usingVerticalExaggeration();
+//        usingVerticalExaggeration();
 //        setVerticalExaggeration( 10 );
         default:
             break;

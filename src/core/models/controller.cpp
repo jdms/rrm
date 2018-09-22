@@ -2319,6 +2319,12 @@ void Controller::exportToIrapGrid()
 }
 
 
+void Controller::setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ )
+{
+
+}
+
+
 void Controller::clear()
 {
 

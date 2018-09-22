@@ -137,6 +137,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void updatePointGuidedExtrusion( const QPointF& p_ );
         void stopPointGuidedExtrusion();
+        void submitSketchGuidedExtrusion();
 
    signals:
 
@@ -168,6 +169,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setAreaChoosed();
 
         void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
     protected:
 

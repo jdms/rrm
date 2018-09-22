@@ -58,6 +58,7 @@ class SketchingController
 
 
         void setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void getGuidedExtrusionPoint( float& px_, float& py_, float& pz_ );
 
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
         void removeWindowsDirectionX();
@@ -86,6 +87,14 @@ class SketchingController
         std::map< double, std::shared_ptr< SketchScene > > scenesY;
         std::map< double, std::shared_ptr< SketchScene > > scenesZ;
         std::shared_ptr< Controller > controller;
+
+        struct GuidedExtrusionPoint
+        {
+            float px;
+            float py;
+            double depth;
+            Settings::CrossSection::CrossSectionDirections dir;
+        } guided_point;
 
 
 
