@@ -811,3 +811,8 @@ void RRMApplication::setVerticalExaggeration( double scale_ )
     emit setVerticalExaggerationScale( scale_ );
 }
 
+
+void RRMApplication::setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ )
+{
+    controller->setGuidedExtrusion( px_, py_, pz_, curve_ );
+}

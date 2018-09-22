@@ -732,6 +732,16 @@ void SketchScene::stopPointGuidedExtrusion()
 }
 
 
+void SketchScene::submitSketchGuidedExtrusion()
+{
+    if( sketch == nullptr ) return;
+
+    emit sketchDoneGuidedExtrusion( sketch->getCurve() );
+    sketch->clear();
+
+    QGraphicsScene::update();
+}
+
 ///================================================================================
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
@@ -789,6 +799,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 
     else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED )  )
     {
+        submitSketchGuidedExtrusion();
 //       submitSketch();
     }
 

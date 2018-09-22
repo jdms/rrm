@@ -58,7 +58,7 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
-        void usingVerticalExaggeration();
+        void usingVerticalExaggeration(int v_exagg_);
 
         void keyPressEvent( QKeyEvent *event );
 
@@ -112,6 +112,8 @@ class SketchWindow: public QMainWindow
         void setVerticalExaggeration( double );
 
         void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
     protected:
 

@@ -230,39 +230,14 @@ void SketchingController::addStratigraphy( const ObjectPtr& obj_ )
 void SketchingController::updateStratigraphy( const std::size_t& index_ )
 {
 
-//    if( main_scene != nullptr )
-//        main_scene->updateStratigraphy( index_ );
 
-//    if( topview_scene != nullptr )
-//        topview_scene->updateStratigraphy( index_ );
-
-//    for( auto it: scenesX )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphy( index_ );
-//    }
-
-//    for( auto it: scenesY )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphy( index_ );
-//    }
-
-//    for( auto it: scenesZ )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateStratigraphy( index_ );
-//    }
 }
 
 
 
 void SketchingController::setCurveAsBoundering( const PolyCurve& boundary_ )
 {
-//    if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::ABOVE )
-//        main_scene->defineLowerBoundaryCurve( boundary_ );
-//    else if( controller->getCurrentBoundaryRegion() == Settings::Objects::BounderingRegion::BELOW )
-//        main_scene->defineUpperBoundaryCurve( boundary_ );
+
 }
 
 
@@ -355,6 +330,13 @@ void SketchingController::setPointGuidedExtrusionInPath( float px_, float py_, d
     if( topview_scene == nullptr ) return;
     if( main_scene == nullptr ) return;
 
+
+    guided_point.px = px_;
+    guided_point.py = py_;
+    guided_point.depth = depth_;
+    guided_point.dir = dir_;
+
+
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
         topview_scene->updatePointGuidedExtrusion( QPointF( depth_, px_ ) );
 
@@ -363,6 +345,26 @@ void SketchingController::setPointGuidedExtrusionInPath( float px_, float py_, d
 
 }
 
+
+void SketchingController::getGuidedExtrusionPoint( float& px_, float& py_, float& pz_ )
+{
+    if( topview_scene == nullptr ) return;
+    if( main_scene == nullptr ) return;
+
+    py_ = guided_point.py;
+
+    if( guided_point.dir == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        px_ = guided_point.depth;
+        pz_ = guided_point.px;
+    }
+    else if( guided_point.dir == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        px_ = guided_point.px;
+        pz_ = guided_point.depth;
+    }
+
+}
 
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {

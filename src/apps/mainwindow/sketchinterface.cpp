@@ -181,6 +181,13 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_topview_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
 
+    connect( sketch_topview_window, &SketchWindow::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_  )
+    {
+        float px_, py_, pz_;
+        scontroller->getGuidedExtrusionPoint( px_, py_, pz_ );
+//        window->app->setGuidedExtrusion( px_, py_, pz_, curve_ );
+    } );
+
 
     connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
 

@@ -175,6 +175,7 @@ public slots:
     void exportToIRAP();
 
     void setVerticalExaggeration( double scale_ );
+    void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
 
 signals:
 
