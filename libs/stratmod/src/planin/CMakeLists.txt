@@ -183,32 +183,36 @@ include(ExternalProject)
 
 
 # Eigen is mainly used as a wrapper for Lapack. 
-find_package(Eigen3) 
-if(Eigen3_FOUND)
-    set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
-endif()
 
-if(GLOBAL_EIGEN3_INSTALL) 
-    include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+set(EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/eigen3)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-else()
-    set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/eigen3)
+#find_package(Eigen3) 
+#if(Eigen3_FOUND)
+#    set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
+#endif()
 
-    ExternalProject_Add(
-        Eigen3
-        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
-        SOURCE_DIR ${EIGEN3_SOURCE}
-        STEP_TARGETS build
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        EXCLUDE_FROM_ALL TRUE
-        )
+#if(GLOBAL_EIGEN3_INSTALL) 
+	#    include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-    include_directories(SYSTEM ${EIGEN3_SOURCE})
-    set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
+	#else()
+	#set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/eigen3)
 
-endif() 
+	#    ExternalProject_Add(
+	#Eigen3
+	# GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
+	#SOURCE_DIR ${EIGEN3_SOURCE}
+	#STEP_TARGETS build
+	#CONFIGURE_COMMAND ""
+	#BUILD_COMMAND ""
+	#INSTALL_COMMAND ""
+	#EXCLUDE_FROM_ALL TRUE
+	#)
+
+	#include_directories(SYSTEM ${EIGEN3_SOURCE})
+	#set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
+
+	#endif() 
 
 
 # Cereal is used to serialize objects

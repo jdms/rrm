@@ -5,8 +5,8 @@ project( 3dViewApp VERSION 3.1 LANGUAGES CXX )
 
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${CMAKE_CURRENT_BINARY_DIR}
-                     ${TRIMESH2_INCLUDE_DIR} )
+  ${CMAKE_CURRENT_BINARY_DIR} )
+#                     ${TRIMESH2_INCLUDE_DIR} )
 
 
 
@@ -44,7 +44,8 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${3DVIEW_HEADERS} ${3DVIEW_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${TRIMESH2_LIB})
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+  #${TRIMESH2_LIB})
 
 #add_library( ${PROJECT_NAME} STATIC ${3DVIEW_HEADERS} ${3DVIEW_MOC_SOURCES} ${3DVIEW_SOURCES} )
 #target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${TRIMESH2_LIB})
