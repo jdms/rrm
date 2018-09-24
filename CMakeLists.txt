@@ -160,12 +160,12 @@ include_directories(${STRATMOD_SOURCE}/stratmod/include)
 
 #message(WARNING stratmod)
 
-###############################################
-# Trimesh2
-###############################################
-# For Libraies without find*.cmake
-set (  TRIMESH2_INCLUDE_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/include/")
-set (  TRIMESH2_LIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/lib/trimesh2.lib")
+################################################
+## Trimesh2
+################################################
+## For Libraies without find*.cmake
+#set (  TRIMESH2_INCLUDE_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/include/")
+#set (  TRIMESH2_LIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/lib/trimesh2.lib")
 
 ###############################################
 # Main source
