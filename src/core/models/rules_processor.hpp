@@ -27,18 +27,6 @@
 #include <vector>
 #include <map>
 
-//<<<<<<< HEAD:src/apps/mainwindow/rules_processor.hpp
-////#include "core/geometry/PolygonalCurve/polygonal_curve_2d.hpp"
-//#include "PolygonalCurve/CurveN.hpp"
-//#include "stratmod/stratigraphy_modeller.hpp"
-//#include "stratmod/stratigraphy_utilities.hpp"
-//=======
-/* #include "Core/Geometry/PolygonalCurve/polygonal_curve_2d.hpp" */
-/* #include "stratmod_wraper.hpp" */
-/* #include "smodeller.hpp" */
-/* #include "sutilities.hpp" */
-//>>>>>>> origin/feature-stratmod_ref:src/Apps/MainWindow/rules_processor.hpp
-
 #include "./libs/PolygonalCurve/CurveN.hpp"
 #include "stratmod_wrapper.hpp"
 #include "truncate_helper.hpp"
@@ -68,6 +56,7 @@
             ~RulesProcessor() = default;
 
             std::vector<std::size_t> getSurfaces();
+            std::vector<std::size_t> getActiveSurfaces();
 
             //
             // brief:
@@ -101,6 +90,10 @@
 
             bool isHighResolution();
 
+            bool setModellingResolution( std::size_t width = 64, std::size_t length = 64 );
+
+            bool setDiagnosticsResolution( std::size_t width = 16, std::size_t length = 16);
+
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
 
             bool setLenght( double opengl_x, double opengl_y, double opengl_z );
@@ -112,9 +105,14 @@
             /* Begin methods to interface with GUI */
 
 
-            std::size_t getWidthResolution();
+            std::size_t getWidthResolution() const;
 
+            // DEPRECATED
             std::size_t getDepthResolution();
+            
+            // USE THIS INSTEAD:
+            std::size_t getLengthResolution() const;
+            // END: use this instead
 
 
             /* Clean up */
@@ -124,11 +122,25 @@
             /* Query or modify the automatum state */
 
 
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            //  All old define[Above,Below] methods have become deprecated as 
+            //  we move to allow structural rules on models.  
+            //
+            //  Refer to new preserve[Above, Below] methods
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+
             //
             // brief:
             // Define new input region above surface which index is `surface_index`.
             //
+            // DEPRECATED
             bool defineAbove( size_t surface_index );
+            
+            // USE THIS INSTEAD
+            bool defineAbove( std::vector<size_t> &surface_indices );
+            // END: use this instead
 
 
             //
@@ -142,7 +154,12 @@
             // brief:
             // Define new input region below surface which index is `surface_index`.
             //
+            // DEPRECATED
             bool defineBelow( size_t surface_index );
+            
+            // DEPRECATED
+            bool defineBelow( std::vector<size_t> surface_indices );
+            // END: use this instead
 
             //
             // brief:
@@ -158,8 +175,97 @@
             bool defineAboveIsActive();
             bool defineBelowIsActive();
 
+            // DEPRECATED
             bool defineAboveIsActive( size_t &boundary_index );
             bool defineBelowIsActive( size_t &boundary_index );
+
+            // DEPRECATED
+            bool defineAboveIsActive( std::vector<size_t> &boundary_indices );
+            bool defineBelowIsActive( std::vector<size_t> &boundary_indices );
+            // END: use this instead
+
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // New structure aware preserve[Above, Below]
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            void stopPreserveAbove();
+            void stopPreserveBelow();
+            void stopPreserveRegion();
+
+            bool preserveAboveIsActive();
+            bool preserveBelowIsActive();
+            /* bool preserveRegionIsActive(); */
+
+            bool requestPreserveRegion( std::vector<double> &point );
+            bool requestPreserveAbove( std::vector<double> &curve_points );
+            bool requestPreserveBelow( std::vector<double> &curve_points );
+
+            bool preserveAbove( std::vector<std::size_t> &surface_indices_list );
+            bool preserveBelow( std::vector<std::size_t> &surface_indices_list );
+
+            // DEPRECATED
+            bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
+            bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
+
+            bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
+
+
+            bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+
+            bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
+            bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
+            // END DEPRECATED
+
+            // KK: please, use these instead of get[Lower,Upper]Boundary...
+            bool getPreserveAboveCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtLength( size_t length, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            bool getPreserveAboveCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+            bool getPreserveBelowCurveBoxAtWidth( size_t width, std::vector<double> &vlist, std::vector<size_t> &flist );
+
+            // KK: these allow you to paint the 2D cross-sections with a region color
+            bool getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+            bool getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width, 
+                    std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
+                    std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist );
+
+
+            // KK: these are internal methods, for my own use
+            bool getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            bool getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+                    std::vector<double> &vlist, std::vector<std::size_t> &elist );
+
+            /////////////////////////////////////////////////////////////////////////////
+
+
+
 
             void removeAbove();
             void removeAboveIntersection();
@@ -167,23 +273,57 @@
             void removeBelow();
             void removeBelowIntersection();
 
+            // DEPRECATED
             void truncate();
 
 
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            // SUGGESTED NEW 
+            bool createSurface( size_t surface_index, std::vector<double> &points );
 
+
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool testSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
+            // NEW BUT ALREADY DEPRECATED
+            bool testSurface( size_t surface_index, std::vector<double> &points );
 
+            // SUGGESTED NEW 
+            void testSurfaceInsertion();
+            void stopTestSurfaceInsertion();
+
+            // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth,
                     const CurveType &path
                     /* size_t num_extrusion_steps = 32 */
                     );
+
+            // SUGGESTED NEW SIGNATURES:
+            bool createLengthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data
+                    );
+
+            bool createLengthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+                    const std::vector<double> &path_curve_point_data 
+                    );
+
+            bool createWidthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data
+                    );
+
+            bool createWidthwiseExtrudedSurface( size_t surface_id, 
+                    const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+                    const std::vector<double> &path_curve_point_data 
+                    );
+
+            // END SUGGESTED NEW SIGNATURES
 
             bool canUndo();
             bool undo();
@@ -198,20 +338,33 @@
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
             bool getNormals( size_t surface_id, std::vector<double> &nlist );
 
+            // DEPRECATED? We have to discuss the meaning of the 'path' object
             bool getExtrusionPath( size_t surface_index, std::vector<double> &path);
 
 
             /* template<typename VertexList, typename FaceList> */
             /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */
 
+            // DEPRECATED
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist );
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist );
             /* template<typename VertexList, typename EdgeList> */
             /* bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ); */
 
+            // USE THIS INSTEAD
+            bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist );
+            bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist );
+
+            bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<float> &vlist, std::vector<size_t> &elist );
+            bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<double> &vlist, std::vector<size_t> &elist );
+            // END: use this instead
+
+
 
             bool saveFile( std::string filename );
             bool loadFile( std::string filename );
+
+            // DEPRECATED?
             size_t getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
             /* End methods to interface with GUI */
 
@@ -239,17 +392,35 @@
 
         private:
             SModellerWrapper modeller_;
-            struct { double x, y, z; } origin_, lenght_;
+            struct { double x, y, z; } origin_, length_;
 
             enum ModelResolution { LOW, MEDIUM, HIGH };
             ModelResolution current_resolution_;
+            std::size_t modelling_length_discretization_ = 64;
+            std::size_t modelling_width_discretization_ = 64;
+
+            std::size_t diagnostics_length_discretization_ = 32;
+            std::size_t diagnostics_width_discretization_ = 32;
 
             bool testing_surface_insertion_ = false;
-            bool truncate_surface_ = false;
+            bool last_surface_inserted_is_a_test_ = false;
+
+            bool pa_is_active_ = false;
+            bool pb_is_active_ = false;
+
+            std::vector<size_t> lower_model_ = std::vector<size_t>();
+            std::vector<size_t> upper_model_ = std::vector<size_t>();
+
+            // DEPRECATED
+            bool truncate_surface_ = false; 
 
             /* template<typename CurveType, typename T = std::vector<size_t>> */
             /* bool getFirstRegionCurveIntersects( const std::tuple<CurveType, double> &curve_tuple, std::vector<size_t> &lbounds, std::vector<size_t> &ubounds, T &&crossings = {} ); */
+            void enforcePreserveRegion();
 
+            template<typename FunctionType, typename... Args>
+            bool processSurfaceCreation( FunctionType &&surfaceCreator, size_t surface_index, Args&&... args );
+            
             template<typename CurveType>
             bool getFirstRegionCurveIntersects( 
                         const std::tuple<CurveType, double> &curve_tuple, 
@@ -542,7 +713,8 @@
         {
             std::vector<double> dummy_vertices;
             std::vector<size_t> dummy_edges;
-            status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0);
+            /* status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0); */
+            status &= getMesh(surface_index, dummy_vertices, dummy_edges);
 
             if ( status == false )
             {

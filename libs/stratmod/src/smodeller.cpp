@@ -28,13 +28,13 @@
 #include <memory>
 #include <fstream>
 
-#include "planin/planin.hpp"
+#include "detail/planin/planin.hpp"
 
 #include "smodeller.hpp"
-#include "smodeller_impl.hpp"
-#include "serialization_definitions.hpp"
+#include "detail/smodeller_impl.hpp"
+#include "detail/serialization_definitions.hpp"
 
-#include "testing_definitions.hpp"
+#include "detail/testing_definitions.hpp"
 
 
 /*****************************/
@@ -58,6 +58,10 @@ std::vector<size_t> SModeller::getSurfacesIndices()
     return pimpl_->inserted_surfaces_indices_; 
 }
 
+std::vector<std::size_t> SModeller::getOrderedSurfacesIndices()
+{
+    return pimpl_->getOrderedSurfacesIndices();
+}
 
 bool SModeller::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
 {
@@ -178,10 +182,10 @@ bool SModeller::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
         /* Change the model's properties */
 bool SModeller::useDefaultCoordinateSystem()
 {
-    if ( pimpl_->container_.size() > 0 )
-    {
-        return false;
-    }
+    /* if ( pimpl_->container_.size() > 0 ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
     PlanarSurface::setOutputCoordinatesOrdering( 
             PlanarSurface::Coordinate::WIDTH,
@@ -196,10 +200,10 @@ bool SModeller::useDefaultCoordinateSystem()
 
 bool SModeller::useOpenGLCoordinateSystem()
 {
-    if ( pimpl_->container_.size() > 0 )
-    {
-        return false;
-    }
+    /* if ( pimpl_->container_.size() > 0 ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
     PlanarSurface::setOutputCoordinatesOrdering( 
             PlanarSurface::Coordinate::WIDTH,
@@ -213,29 +217,48 @@ bool SModeller::useOpenGLCoordinateSystem()
 }
 
 
-bool SModeller::tryChangeDiscretization( size_t width, size_t lenght )
+bool SModeller::tryChangeDiscretization( size_t width, size_t length )
 {
     if ( pimpl_->container_.size() > 0 )
     {
         return false;
     }
 
-    return changeDiscretization(width, lenght);
+    pimpl_->discWidth_ = width; 
+    pimpl_->discLenght_ = length; 
+
+    PlanarSurface::requestChangeDiscretization(width, length);
+
+    return true;
 }
 
-bool SModeller::changeDiscretization( size_t width, size_t lenght )
+bool SModeller::changeDiscretization( size_t width, size_t length )
 {
-    if ( (width == 0) || (lenght == 0) )
+    if ( (width == 0) || (length == 0) )
     {
         return false;
     }
 
+    while ( canUndo() )
+    {
+        undo();
+    }
+
+    PlanarSurface::requestChangeDiscretization(width, length);
+
     pimpl_->discWidth_ = width; 
-    pimpl_->discLenght_ = lenght; 
+    pimpl_->discLenght_ = length; 
+
+    while ( canRedo() )
+    {
+        redo();
+    }
 
     /* TODO: review use and conversion of types */
-    /* PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discWidth_), PlanarSurface::Natural(pimpl_->discLenght_)); */
-    return pimpl_->container_.changeDiscretization(width, lenght);
+    /* /1* PlanarSurface::requestChangeDiscretization((PlanarSurface::Natural)(pimpl_->discWidth_), PlanarSurface::Natural(pimpl_->discLenght_)); *1/ */
+    /* return pimpl_->container_.changeDiscretization(width, length); */
+
+    return true;
 }
 
 
@@ -314,18 +337,24 @@ void SModeller::getSize( double &x, double &y, double &z )
 
 void SModeller::clear()
 {
-    pimpl_->container_.clear(); 
-    pimpl_->dictionary_.clear(); 
-    pimpl_->inserted_surfaces_indices_.clear();
+    pimpl_->clear();
 
-    pimpl_->current_ = StateDescriptor(); 
+    /* pimpl_->container_.clear(); */ 
+    /* pimpl_->dictionary_.clear(); */ 
+    /* pimpl_->inserted_surfaces_indices_.clear(); */
 
-    pimpl_->undoed_surfaces_stack_.clear();
-    pimpl_->undoed_states_.clear(); 
-    pimpl_->past_states_.clear();
+    /* pimpl_->current_ = StateDescriptor(); */ 
 
-    pimpl_->got_origin_ = false; 
-    pimpl_->got_lenght_ = false; 
+    /* pimpl_->undoed_surfaces_stack_.clear(); */
+    /* pimpl_->undoed_states_.clear(); */ 
+    /* pimpl_->past_states_.clear(); */
+
+    /* pimpl_->got_origin_ = false; */ 
+    /* pimpl_->got_lenght_ = false; */ 
+
+    /* pimpl_->mesh_ = nullptr; */
+
+    /* pimpl_->init(); */
 }
 
 
@@ -384,6 +413,36 @@ bool SModeller::createBelowIsActive( size_t &boundary_index )
     return pimpl_->createBelowIsActive(boundary_index);
 }
 
+bool SModeller::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveAbove(bounding_surfaces_list);
+}
+
+bool SModeller::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveBelow(bounding_surfaces_list);
+}
+
+void SModeller::stopPreserveAbove()
+{
+    return pimpl_->stopPreserveAbove();
+}
+
+void SModeller::stopPreserveBelow()
+{
+    return pimpl_->stopPreserveBelow();
+}
+
+bool SModeller::preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveAboveIsActive(bounding_surfaces_list);
+}
+
+bool SModeller::preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list )
+{
+    return pimpl_->preserveBelowIsActive(bounding_surfaces_list);
+}
+
 void SModeller::disableGeologicRules()
 {
     pimpl_->current_.state_ = State::SKETCHING;
@@ -435,13 +494,14 @@ bool SModeller::createSurface( size_t surface_id, const std::vector<double> &poi
 bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
                 const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
 {
+    bool orthogonally_oriented = false; 
     size_t cross_section_depth = 0;
     std::vector<double> empty_path = std::vector<double>();
 
     return pimpl_->insertExtrusionAlongPath(surface_id, 
             point_data, cross_section_depth, 
             empty_path, 
-            lower_bound_ids, upper_bound_ids); 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
 }
 
 
@@ -453,8 +513,37 @@ bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id,
         const std::vector<size_t> upper_bound_ids
         )
 {
-    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+    bool orthogonally_oriented = false; 
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
 }
+
+
+bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
+                const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+{
+    bool orthogonally_oriented = true; 
+    size_t cross_section_depth = 0;
+    std::vector<double> empty_path = std::vector<double>();
+
+    return pimpl_->insertExtrusionAlongPath(surface_id, 
+            point_data, cross_section_depth, 
+            empty_path, 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
+}
+
+
+bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data, 
+
+        const std::vector<size_t> lower_bound_ids,
+        const std::vector<size_t> upper_bound_ids
+        )
+{
+    bool orthogonally_oriented = true; 
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
+}
+
 
 bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
@@ -465,6 +554,33 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
         )
 {
     bool status = createLengthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
+
+    if ( ! intersected_surfaces.empty() )
+    {
+        pimpl_->popLastSurface();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        const std::vector<double> &path_curve_point_data, 
+
+        const std::vector<size_t> lower_bound_ids,
+        const std::vector<size_t> upper_bound_ids
+        )
+{
+    bool status = createWidthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
 
     if ( status == false )
     {
@@ -554,6 +670,34 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
     return true;
 }
 
+bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        const std::vector<double> &point_data,
+        const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+{
+    /* State current = pimpl_->current_.state_; */
+    /* pimpl_->current_.state_ = State::SKETCHING; */
+
+    bool status = createWidthwiseExtrudedSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
+
+    /* pimpl_->current_.state_ = current; */ 
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    pimpl_->lastInsertedSurfaceIntersects(intersected_surfaces);
+
+    if ( ! intersected_surfaces.empty() )
+    {
+        pimpl_->popLastSurface();
+
+        return false;
+    }
+
+    return true;
+}
+
 bool SModeller::canUndo()
 {
     if ( pimpl_->container_.size() > 0 )
@@ -581,8 +725,10 @@ bool SModeller::undo()
     pimpl_->past_states_.pop_back();
 
     pimpl_->current_.bounded_above_ = last.bounded_above_;
+    pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_;
     pimpl_->current_.bounded_below_ = last.bounded_below_;
-    /* current_ = last; */ 
+    pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_;
+    // pimpl_->current_ = last; 
     pimpl_->enforceDefineRegion();
 
     pimpl_->undoed_surfaces_stack_.push_back(last_sptr); 
@@ -592,6 +738,10 @@ bool SModeller::undo()
 
     auto iter = pimpl_->dictionary_.find(last_surface_index); 
     pimpl_->dictionary_.erase(iter); 
+
+    pimpl_->container_.updateCache();
+
+    pimpl_->mesh_ = nullptr;
 
     return true;
 }
@@ -637,6 +787,8 @@ bool SModeller::redo()
 
     /* pimpl_->current_ = state_before_redo_; */
     /* pimpl_->enforceDefineRegion(); */
+
+    pimpl_->container_.updateCache();
 
     return status;
 }
@@ -684,12 +836,16 @@ bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, st
 
 std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    TetrahedralMeshBuilder mb(pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
 
     bool status = true; 
     size_t num_elements;
 
-    status &= (mb.getVertexCoordinates(vertex_coordinates) > 0);
+    status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
 
     if ( status == false )
     {
@@ -697,7 +853,30 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
     }
 
 
-    num_elements = mb.getTetrahedronList(element_list);
+    num_elements = pimpl_->mesh_->getTetrahedronList(element_list);
+
+    return num_elements;
+}
+
+std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list )
+{
+    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
+
+    bool status = true;
+    size_t num_elements;
+
+    status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
+
+    if ( status == false )
+    {
+        return 0;
+    }
+
+    num_elements = pimpl_->mesh_->getTetrahedronList(element_list, attribute_list);
 
     return num_elements;
 }
@@ -727,7 +906,7 @@ bool SModeller::saveBinary( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
 
             return false;
         }
@@ -765,7 +944,7 @@ bool SModeller::saveJSON( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
 
             return false;
         }
@@ -781,6 +960,8 @@ bool SModeller::saveJSON( std::string filename )
 
 bool SModeller::loadBinary( std::string filename )
 {
+        clear();
+
         std::ifstream ifs(filename, std::ios::binary);
         /* std::ifstream ifs(filename); */
 
@@ -795,12 +976,14 @@ bool SModeller::loadBinary( std::string filename )
 
         unsigned int version;
 
+        std::cout << "Trying to load binary file: " + filename + " >> ";
         try
         {
             iarchive( version, *pimpl_ );
         }
         catch( const std::exception &e )
         {
+            std::cout << "failure\n";
             std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
             clear();
 
@@ -808,10 +991,13 @@ bool SModeller::loadBinary( std::string filename )
         }
         catch(...)
         {
+            std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
+            clear();
 
             return false;
         }
+        std::cout << "success\n" << std::flush;
 
 
         return true;
@@ -819,6 +1005,8 @@ bool SModeller::loadBinary( std::string filename )
 
 bool SModeller::loadJSON( std::string filename )
 {
+        clear();
+
         std::ifstream ifs(filename);
 
         if ( !ifs.good() )
@@ -831,12 +1019,14 @@ bool SModeller::loadJSON( std::string filename )
 
         unsigned int version;
 
+        std::cout << "Trying to load JSON file: " + filename + " >> ";
         try
         {
             iarchive( version, *pimpl_ );
         }
         catch( const std::exception &e )
         {
+            std::cout << "failure\n";
             std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
             clear();
 
@@ -844,10 +1034,13 @@ bool SModeller::loadJSON( std::string filename )
         }
         catch(...)
         {
+            std::cout << "failure\n";
             std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush;
+            clear();
 
             return false;
         }
+        std::cout << "success\n" << std::flush;
 
 
         return true;

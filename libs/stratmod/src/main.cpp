@@ -69,7 +69,7 @@ int main()
     /* Create modeller and apply geologic rules.    */
     /************************************************/
 
-    StratigraphyModeller modeller; 
+    SModeller modeller; 
 
     /* A call to the tryChangeDiscretization(...) method will only return true if
      * the model is empty.
@@ -82,16 +82,16 @@ int main()
      *        |
      *        |
      *        |
-     *        o-----> y "width"
+     *        o-----> y "length"
      *       /
      *      /
      *     /
-     *    x "depth"
+     *    x "width"
      */
     modeller.useDefaultCoordinateSystem();
 
     modeller.setOrigin(0., 0., 0.);
-    modeller.setLenght(1., 1., 1.);
+    modeller.setSize(1., 1., 1.);
 
 
     /* We begin the creation of the model by creating what should be the
@@ -137,7 +137,7 @@ int main()
 
     if ( status == false )
     {
-        std::cerr << ( "\nError using class StratigraphyModeller\n\n" );
+        std::cerr << ( "\nError using class SModeller\n\n" );
         return 2;
     }
 
@@ -148,7 +148,7 @@ int main()
     /************************************************/
 
     size_t numX, numY; 
-    StratigraphyUtilities modeller_util(modeller);
+    SUtilities modeller_util(modeller);
 
     numX = modeller_util.getNumVerticesWidth();
     numY = modeller_util.getNumVerticesDepth();

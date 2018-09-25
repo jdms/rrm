@@ -29,15 +29,17 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 #include "./core/definitions/constants.hpp"
 #include "container.h"
+#include "object.h"
 
 
 class Volume;
 class PolyCurve;
 
-class CrossSection
+class CrossSection: public Object
 {
     public:
 
@@ -46,32 +48,40 @@ class CrossSection
         using ObjectsContainer = Container< Object, PolyCurve* >;
 
 
+
         CrossSection();
-        CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        CrossSection( const std::shared_ptr< Volume >& volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
+        CrossSection( const CrossSection & csection_ );
+        CrossSection & operator=( const CrossSection & csection_ );
+        ~CrossSection();
 
-        CrossSection& operator=( const CrossSection& other_ );
 
-        void defineIndex();
+        void updateDimensions();
 
-        void setIndex( const std::size_t id_ );
+
+///========================================================================
+
+        void setIndex( std::size_t id_ );
         std::size_t getIndex() const;
 
 
-        void setVolume( const Volume* raw_ );
-        const Volume* getVolume() const;
-
-        void getCoordinates( std::vector< double >& vertices_ );
-        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
-                        double& minx_, double& miny_, double& minz_ ) const;
-
+        void setVolume( const std::shared_ptr< Volume >& volume_ );
+        const std::shared_ptr< Volume >& getVolume() const;
 
         void setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
         Settings::CrossSection::CrossSectionDirections getDirection() const;
 
-
         void setDepth( double depth_ );
         double getDepth() const;
 
+
+///========================================================================
+
+        void defineIndex();
+
+        void getCoordinates( std::vector< double >& vertices_ );
+        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
+                        double& minx_, double& miny_, double& minz_ ) const;
 
         void setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ );
         void getImage( std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
@@ -89,18 +99,33 @@ class CrossSection
 
         ObjectsContainer getObjects() const;
         void removeObjects();
-
         bool hasObjects() const;
 
 
-        void clear();
+        void setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
+        void getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_ ) const;
+        void clearBounderingArea();
+        bool hasBounderingArea() const;
+
+
+
+        void clear() override;
         void initialize();
 
         static void resetAllCrossSections();
+        void updateRegions();
 
-        ~CrossSection();
 
     private:
+
+        std::shared_ptr< Volume > volume = nullptr;
+
+        double width = 0.0;
+        double height = 0.0;
+        double depth = 0.0;
+        Settings::CrossSection::CrossSectionDirections direction;
+
+
 
         struct Point
         {
@@ -108,17 +133,22 @@ class CrossSection
             double y;
         };
 
+
+        struct BounderingArea
+        {
+            std::vector<float> vertices_upper;
+            std::vector<size_t> edges_upper;
+            std::vector<float> vertices_lower;
+            std::vector<size_t> edges_lower;
+            bool empty = true;
+
+        } boundering;
+
         std::size_t index;
         static std::size_t number_of_csections;
 
-        double depth;
-        Settings::CrossSection::CrossSectionDirections direction;
-
         bool is_visible;
-
-
         ObjectsContainer objects;
-        const Volume* volume;
 
         std::string image_path;
         Point image_origin;

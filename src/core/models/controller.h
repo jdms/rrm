@@ -27,6 +27,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 #include <map>
 
 #include <QFile>
@@ -44,27 +45,20 @@
 #include "rules_processor.hpp"
 
 
-
 class Volume;
 class Object;
+class RRMApplication;
 
 
+using VolumePtr = std::shared_ptr< Volume >;
+using CrossSectionPtr = std::shared_ptr< CrossSection >;
+using ObjectPtr = std::shared_ptr< Object >;
+using RegionsPtr = std::shared_ptr< Regions >;
+const std::size_t UNDEFINED_INDEX = 9999;
 
 class Controller
 {
     public:
-
-        /* struct TriangleMesh */
-        /* { */
-        /*     std::vector<double> vertex_list; */
-        /*     std::vector<std::size_t> face_list; */
-        /* }; */
-
-        /* struct CurveMesh */
-        /* { */
-        /*     std::vector<double> vertex_list; */
-        /*     std::vector<std::size_t> edge_list; */
-        /* }; */
 
         using TriangleMesh = RulesProcessor::TriangleMesh;
         using CurveMesh = RulesProcessor::CurveMesh;
@@ -73,246 +67,297 @@ class Controller
         enum class MeshResolution{ LOW, MEDIUM, HIGH };
 
 
-        Controller() = default;
+        Controller();
+        Controller(const Controller & cont_);
+        Controller & operator=(const Controller & cont_);
+        ~Controller();
 
+        void setApplication( RRMApplication* const& app_ );
 
-        void setScene3d( Scene3d* const& sc_ );
-        void setObjectTree( ObjectTree* const& ot_ );
+       ///==========================================================================
 
-        void setCurrentColor( int r, int g, int b );
-        void getCurrentColor( int& r, int& g, int& b ) const ;
 
 
         void init();
 
+        void createVolume();
+        void resizeVolume( double width_, double height_, double depth_ );
+        void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
 
-        void addVolume();
-
-        void setVolumeOrigin( double ox_, double oy_, double oz_ );
-        void getVolumeOrigin( double& ox_, double& oy_, double& oz_ ) const;
-
-        void setVolumeDimensions( const double& width_, const double& height_, const double& length_ );
-        void getVolumeDimensions( double& width_, double& height_, double& length_ ) const;
+        void setVolumeWidth( double width_ );
+        void setVolumeHeight( double height_ );
+        void setVolumeLenght( double lenght_ );
 
         void setVolumeName( const std::string& name_ );
-        const std::string& getVolumeName() const ;
-
-        bool isVolumeResizable() const;
-
         void setVolumeVisibility( bool status_ );
-        bool getVolumeVisibility() const;
-        void setupCrossSectionDiscretization( std::size_t& disc_, double& step_ );
 
 
-        void addMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
-        CrossSection* getMainCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_ ) const;
+        void createMainCrossSection();
+        void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void moveMainCrossSection( double depth_ );
+        const CrossSectionPtr& getMainCrossSection() const;
 
-        void addTopViewCrossSection( double depth_ );
-        CrossSection* getTopViewCrossSection() const;
+        void createTopViewCrossSection();
+        const CrossSectionPtr& getTopViewCrossSection() const;
+        void moveTopViewCrossSection( double depth_ );
 
+        void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
+        void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
 
-        void setCurrentCrossSection( double depth_ );
-        void updateCurrentCrossSection();
+        void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ );
+        void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-
-        void setImageCrossSection( double depth_, const std::string& path_, double ox_, double oy_, double x_, double y_ );
-        bool hasImageCrossSection( double depth_ );
-        bool clearImageCrossSection( double depth_ );
-        bool getImageCrossSection( double depth_, std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
-
-
-        void setTopViewImage( std::string file_, double ox_, double oy_, double x_, double y_ );
-        void removeTopViewImage();
-
-
-        CrossSection* getCrossSection( const double& depth_ ) const;
-        CrossSection* getCurrentCrossSection() const;
+        void updateImageInMainCrossSection();
+        void updateImageInTopViewCrossSection();
 
 
+        //TODO: addObject should be protected
+        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
 
-        bool addObject( std::size_t index_ = 9999 );
-        Object* getObject( std::size_t index_ ) const;
-        Object* getCurrentObject() const;
+        const ObjectPtr& getObject( std::size_t index_ ) const;
+        const ObjectPtr& getCurrentObject() const;
+        const std::map< std::size_t, ObjectPtr >& getObjects();
 
         void setObjectName( std::size_t index_, const std::string& name_ );
         std::string getObjectName( std::size_t index_) const;
 
+        void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
+        Settings::Objects::ObjectType getCurrentObjectType() const;
+        Settings::Objects::ObjectType getObjectType( const std::size_t& index_ ) const;
+
+
         void setObjectVisibility( std::size_t index_, bool status_ );
+        void setObjectsVisibility( bool status_ );
+
         void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
 
-        void saveObjectInformation( std::size_t index_, const std::string & text_ );
-        const std::string& getObjectInformation( std::size_t index_ ) const;
+        void setObjectsActive( bool status_ );
+        void setObjectActive( std::size_t index_, bool status_ );
+        bool isObjectActive( std::size_t index_ ) const;
 
+        void setObjectSelectable( std::size_t index_, bool status_ );
+        bool isObjectSelectable( std::size_t index_ ) const;
 
-        bool addObjectCurve( PolyCurve curve_, double depth_ );
-        bool removeObjectCurve( std::size_t index_, double depth_ );
-        bool removeObjectCurve( double depth_ );
+        void setObjectSelected( std::size_t index_, bool status_ );
+        bool isObjectSelected( std::size_t index_ ) const;
 
-        bool addObjectTrajectory( PolyCurve curve_ );
-        void removeObjectTrajectory();
+        bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
+        bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 
+        void addTrajectoryToObject( const PolyCurve& curve_ );
+        void addLastTrajectoryToObject();
+        void removeTrajectoryFromObject();
 
-        bool createPreviewSurface();
+        bool commitObjectSurface();
         bool createObjectSurface();
+        bool createGeneralSurface();
+        bool createExtrudedSurface();
+        bool createLinearExtrudedSurface();
 
 
-        void setActiveAllObjects( bool status_ );
+        void updateModel();
+        void updateObjectSurface( const std::size_t& index_ );
+        void updateObjectCurves( const std::size_t& index_ );
+        void updatePreviewSurface();
 
 
-        void setRegionName( std::size_t index_, const std::string& name_ );
-        void setRegionVisibility( std::size_t index_, bool status_ );
+        void updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ );
+        void updateObjectsCurvesInCrossSection( double depth_ );
+        void updateCrossSectionsX();
+        void updateCrossSectionsY();
+        void updateCrossSectionsZ();
+        void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
+
+
+        void defineRegions();
+
+        void setRegionsVisible(bool status_);
+        void setRegionVisible(std::size_t index_, bool status_);
+        bool isRegionVisible(std::size_t index_) const;
+
         void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
-        void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ );
+        void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ ) const ;
+
+        void setRegionsActive(bool status_);
+        void setRegionActive(std::size_t index_, bool status_);
+        bool isRegionActive(std::size_t index_) const;
+
+        void setRegionSelectable(std::size_t index_, bool status_);
+        bool isRegionSelectable(std::size_t index_) const;
+
+        void setRegionSelected(std::size_t index_, bool status_);
+        bool isRegionSelected(std::size_t index_) const;
+
+        const std::map< std::size_t, RegionsPtr >& getRegions() const;
+        void updateRegions();
+        void removeRegions();
+
+
+        std::size_t createDomain1( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        bool addRegionToDomain1(std::size_t region_id_, std::size_t domain_id_);
+        bool removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_);
+        std::set<std::size_t> getRegionsFromDomain1(std::size_t domain_id_) const;
+        void removeDomain1(std::size_t domain_id_);
+
+
+
+        void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
+        void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
+        std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
+        void removeDomain(std::size_t domain_id_);
 
 
         void initRulesProcessor();
         void updateBoundingBoxRulesProcessor();
-        void getCurveFromRulesProcessor( Object* obj_, double csection_depth_ );
+        void setVolumeDiscretization();
+        std::size_t getCurrentDiscretization() const;
+        void getCurrentRange( double& min_, double& max_ ) const;
+        void updateBoundingBoxInModel();
 
-
-        void updateObjectCurveFromCrossSection( std::size_t object_id_, double csection_depth_ );
-        void updatePreviewCurves( Object* obj_, double csection_depth_ );
-        void updateObjectSurfaces( std::size_t object_id_ );
-        void updateObjectInFixedCrossSections( std::size_t id_ );
-        void updateModel();
-
+        std::size_t indexCrossSectionX( double value_ ) const;
+        std::size_t indexCrossSectionZ( double value_ ) const;
 
         void setRemoveAbove();
         void setRemoveAboveIntersection();
         void setRemoveBelow();
         void setRemoveBelowIntersection();
-        void setTruncate();
         void applyStratigraphicRule();
 
 
+        // Enable Preserve Above/Below -- new methods
+        void enablePreserveAbove( bool status_ );
+        void enablePreserveBelow( bool status_ );
 
-        bool enableCreateAbove( bool status_ );
+
         void stopCreateAbove();
         bool requestCreateAbove();
-        bool isDefineAboveActive();
-
-        bool enableCreateBelow( bool status_ );
         void stopCreateBelow();
         bool requestCreateBelow();
-        bool isDefineBelowActive();
+        void stopCreateRegion();
+        bool requestCreateRegion();
 
+        Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
 
-        bool isDefineAboveObjectSelected();
-        bool isDefineBelowObjectSelected();
+        bool isDefineAboveActive( PolyCurve& boundary_ );
+        bool isDefineBelowActive( PolyCurve& boundary_ );
 
+        void getLowerBoundering( PolyCurve& boundary_ );
+        void getUpperBoundering( PolyCurve& boundary_ );
 
-        void setObjectAsBoundering( std::size_t index_ );
-        void setObjectsAsSelectable( std::vector< std::size_t >& indexes_, bool status_ );
-        void setObjectAsSelected( std::size_t index_, bool status_ );
+        void setObjectSelectedAsBoundering( const std::size_t& index_ );
+        bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
 
+        bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void getRegionByPointAsBoundering();
 
-        void saveFile( const std::string& filename );
-        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
-        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
-
-
-        bool undo();
-        bool canUndo();
-
-        bool redo();
-        bool canRedo();
-
-
-        void getOutputVolume( std::map< std::size_t, Volume::Color >& regions_map_ );
-
-
-        void clear();
-
-
-        bool addFixedCrossSection( double depth_ );
-        bool removeFixedCrossSection( double depth_ );
-
-
-        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes, std::vector< CurveMesh >& left_curves, std::vector< CurveMesh >& right_curves,
-                                std::vector< CurveMesh > & front_curves, std::vector< CurveMesh >& back_curves );
-
-        inline void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
-        {
-            rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
-        }
-
-        inline void getVolumeDimension(double& width, double& height, double&  depth)
-        {
-            rules_processor.getLenght( width, height, depth );
-        }
-
-
-        std::size_t indexCrossSection( double value_ ) const;
-        double depthCrossSection( std::size_t index_ ) const;
-
-        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
-
-
-        void hideRegions();
-
-        bool saveObjectsMetaData( const std::string& filename );
-        void loadObjectMetaDatas( QFile& load_file/*const std::string& filename*/ );
-        void loadObjectNoMetaDatas();
+        void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
-        void setPreviewEnabled( bool status_ );
-        bool isPreviewEnabled() const;
+        void setCurrentColor( int red_, int green_, int blue_ );
+
+        void saveFile( const std::string& filename );
+        bool saveObjectsMetaData( const std::string& filename );
+
+        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
+        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
+        void loadObjectMetaDatas( QFile& load_file/*const std::string& filename*/ );
+        void loadObjectNoMetaDatas();
+
+        void clear();
+
+        bool undo();
+        bool redo();
+
+        bool canUndo();
+        bool canRedo();
+
+        bool updateRegionBoundary( PolyCurve& boundary_ );
+        void clearBounderingArea();
+
+        bool getRegionCrossSectionBoundary( std::size_t index_ );
 
         void exportToIrapGrid();
+
 
     protected:
 
 
-        Scene3d* scene3d = nullptr;
-        ObjectTree* object_tree = nullptr;
+        void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_, bool is_preview_ = false );
+        void getCurvesFromRulesProcessorDirectionZ( const std::size_t& index_, bool is_preview_ = false );
 
 
-        Volume* volume = nullptr;
+
+    protected:
+
+        double csection_stepx = 1.0;
+        double csection_stepz = 1.0;
+        double csection_stepy = 1.0;
+
+        std::size_t current_object = 0;
+        Settings::Objects::ObjectType current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
+
+        RRMApplication* app = nullptr;
+        CrossSectionPtr csection = nullptr;
+        CrossSectionPtr topview = nullptr;
+
+        RulesProcessor rules_processor;
+
+        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
+
+        PolyCurve last_trajectory;
+
+        std::vector< std::size_t > selectable_objects;
+        Settings::Objects::BounderingRegion boundering_region = Settings::Objects::BounderingRegion::NONE ;
+        std::size_t upper_index;
+        std::size_t bottom_index;
+
+
+
+        struct Model
+        {
+            VolumePtr volume = nullptr;
+
+            std::map< double, CrossSectionPtr > csectionsX;
+            std::map< double, CrossSectionPtr > csectionsY;
+            std::map< double, CrossSectionPtr > csectionsZ;
+
+
+            std::map< std::size_t, ObjectPtr > objects;
+            std::map< std::size_t, RegionsPtr > regions;
+            std::map< std::size_t, Domain > domains;
+
+        } model;
 
 
         struct Color
         {
-            int r = 255;
-            int g = 0;
-            int b = 0;
+
+            int red = 255;
+            int green = 0;
+            int blue = 0;
+
         } current_color;
 
-        std::size_t current_object = 0;
-        Container< std::size_t, Object* > objects;
-        Container< std::size_t, Regions* > regions;
-
-
-        double current_csection = 500.0;
-        CrossSection* main_csection = nullptr;
-        CrossSection* topview_csection = nullptr;
-        Container< double, CrossSection* > fixed_csections;
-        Container< double, CrossSection* > all_csections;
-
-
-        RulesProcessor rules_processor;
-        double csection_step = 1.0;
-
-        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
-        std::vector< std::size_t > selectable_upper;
-        std::vector< std::size_t > selectable_bottom;
-
-        Settings::Objects::BounderingRegion boundering_region;
-        std::size_t index_upper_boundary;
-        std::size_t index_bottom_boundary;
 
         struct ImageData
         {
             std::string file;
             double ox;
             double oy;
-            double x;
-            double y;
+            double w;
+            double h;
         };
 
+        std::map< double, ImageData > images_csectionsX;
+        std::map< double, ImageData > images_csectionsY;
+        std::map< double, ImageData > images_csectionsZ;
 
-        std::map< double, ImageData > csections_background;
-        bool preview_enabled = true;
+        std::set< std::size_t > regions_in_domains;
+
 };
 
 #endif // CONTROLLER_H

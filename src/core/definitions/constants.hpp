@@ -233,9 +233,9 @@ namespace Settings {
     class Objects
     {
         public:
-            enum class BounderingRegion { NONE, ABOVE, BELOW };
+            enum class BounderingRegion { NONE, ABOVE, BELOW, REGION };
 
-            enum class ObjectType { VOLUME, CROSS_SECTION, STRATIGRAPHY, REGION, WELL };
+            enum class ObjectType { NONE, VOLUME, CROSS_SECTION, STRATIGRAPHY, STRUCTURAL, REGION, DOMAINS, WELL };
 
             enum class ObjectProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE };
 

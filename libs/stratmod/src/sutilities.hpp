@@ -51,6 +51,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
         bool getNormalList( std::size_t surface_id, std::vector<double> &normals );
 
+        bool getRegionVolumeList( std::vector<double> &vlist );
+
         bool getFrontBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getBackBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         bool getLeftBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
@@ -58,6 +60,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         
         bool exportToTetgen( std::string filename );
         bool exportToVTK( std::string filename );
+
+        bool getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound);
 
         bool getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions);
 

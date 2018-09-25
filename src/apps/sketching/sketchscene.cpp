@@ -30,359 +30,144 @@
 #include <QMimeData>
 #include <QKeyEvent>
 #include <QtSvg/QSvgGenerator>
+
 #include "sketchscene.h"
 
 
 
 SketchScene::SketchScene()
 {
-    image = new ImageItemWrapper();
-    addItem( image );
 
-//    user_input = nullptr;
-
-    user_input = new InputSketch();
-    addItem( user_input );
-
-    csection_image = new QGraphicsPixmapItem();
-    addItem( csection_image );
-
-
-    QFont font_;
-    font_.setPixelSize(20);
-    font_.setBold(false);
-    font_.setFamily("Calibri");
-
-    csection_label = new QGraphicsTextItem();
-    csection_label->setTransform( QTransform::fromScale(1, -1), true );
-    csection_label->setFont( font_ );
-    addItem( csection_label );
-
-    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
-    addItem( csection_color );
-
-
-
-    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-    resize_marker->setBrush( QColor( Qt::red ) );
-    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-    resize_marker->setVisible( false );
-    addItem( resize_marker );
-
-    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-    move_marker->setBrush( QColor( Qt::blue ) );
-    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-    move_marker->setVisible( false );
-    addItem( move_marker );
-
-    move_marker->setVisible( false );
-    resize_marker->setVisible( false );
-
-    axes.setVisible( true );
-    addItem( &axes );
-
-
-
-    volume = nullptr;
+    init();
 }
 
 
-SketchScene::SketchScene( CrossSection* const& raw_ ):csection( raw_ ), volume( nullptr )
+void SketchScene::init()
 {
+    if( sketch == nullptr )
+    {
+        sketch = std::make_shared< CurveItem >();
+        addItem( sketch.get() );
+    }
 
+
+    setSketchingMode();
 
     image = new ImageItemWrapper();
     image->setVisible( false );
     addItem( image );
 
-//    user_input = nullptr;
-    user_input = new InputSketch();
-    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
-    addItem( user_input );
-
-    csection_image = new QGraphicsPixmapItem();
-    csection_image->setVisible( false );
-    addItem( csection_image );
-
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
     resize_marker->setVisible( false );
     addItem( resize_marker );
 
     move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     move_marker->setBrush( QColor( Qt::blue ) );
     move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
     move_marker->setVisible( false );
     addItem( move_marker );
 
-    QFont font_;
-    font_.setPixelSize(20);
-    font_.setBold(false);
-    font_.setFamily("Calibri");
-
-    csection_label = new QGraphicsTextItem();
-    csection_label->setTransform( QTransform::fromScale(1, -1), true );
-    csection_label->setFont( font_ );
-    addItem( csection_label );
-
-    csection_color  = new QGraphicsEllipseItem( 0, 0, 15, 15 );
-    csection_color->setVisible( false );
-    addItem( csection_color );
+    boudering_area = new PolygonItem();
+    boudering_area->setBorderVisible( false );
+    boudering_area->setTransparency( true );
+    boudering_area->setVisible( false );
+    addItem( boudering_area );
 
 
-
-    axes.setVisible( true );
-    addItem( &axes );
-
-    readCrossSection( raw_ );
-
-    move_marker->setVisible( false );
-    resize_marker->setVisible( false );
-
-    InputSketch::Direction dir_;
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        dir_ = InputSketch::Direction::Z;
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-        dir_ = InputSketch::Direction::Y;
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        dir_ = InputSketch::Direction::X;
-
-
-    connect( this, &SketchScene::discard, [=](){if( user_input == nullptr )  return; user_input->clear(); update(); } );
-    connect( this, &SketchScene::commit, [=](){ if( user_input == nullptr )  return; emit acceptCurve( user_input->done( dir_ ), csection->getDepth() ); } );
-    connect( this, &SketchScene::create, [=](){ emit commitObject(); } );
-}
-
-
-
-void SketchScene::edit( bool status_ )
-{
-
-    if( status_ == false )
-        setModeSketching();
-    else
-        setModeEditingScene();
-
-
-
-    update();
+    trajectory_point = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    trajectory_point->setBrush( QColor( Qt::red ) );
+    trajectory_point->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    trajectory_point->setFlag( QGraphicsItem::ItemIsMovable, true );
+    trajectory_point->setVisible( false );
+    addItem( trajectory_point );
 
 }
 
 
-void SketchScene::editItem()
+void SketchScene::setCrossSectionInformation( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+    csection_direction = dir_;
+    csection_depth = depth_;
 
-
-    bool move_selected = move_marker->isUnderMouse();
-    bool resize_selected = resize_marker->isUnderMouse();
-
-    if( move_selected == true )
+    for( auto it: stratigraphies )
     {
-        current_interaction = UserInteraction::MOVING_IMAGE;
-    }
-    else if( resize_selected == true )
-    {
-        current_interaction = UserInteraction::RESIZING_IMAGE;
+        (it.second)->setCrossSection( csection_direction, csection_depth );
+
     }
 
-    update();
 }
 
 
-
-void SketchScene::removeItem()
-{
-    if(  current_interaction != UserInteraction::EDITING_SCENE ) return;
-
-
-    QList< QGraphicsItem* > items = selectedItems();
-    if( items.empty() == true ) return;
-
-    if( items.size() > 1 )
-        items.removeFirst();
-
-    QGraphicsItem* item_ = items[ 0 ];
-    if( item_->type() == QGraphicsPixmapItem::Type )
-    {
-        emit removeImageFromCrossSection( csection->getDepth() );
-    }
-    else if( item_->type() == QGraphicsPathItem::Type )
-    {
-        ObjectItemWrapper* obj_ = static_cast< ObjectItemWrapper* >( item_ );
-        emit removeCurveFromObject( csection->getDepth(), obj_->getIndex() );
-    }
-
-    update();
-
-}
-
-
-
-void SketchScene::setAxesVisible( bool status_ )
-{
-    axes.setVisible( status_ );
-    update();
-}
-
-
-QPixmap SketchScene::addLabel( double depth_, QColor color_ )
+void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
 {
 
-    csection_color->setVisible( true );
-    csection_color->setPos( volume->boundingRect().bottomLeft().x(), volume->boundingRect().bottomLeft().y() + 40 );
-    csection_label->setPos( volume->boundingRect().bottomLeft().x() + 20, volume->boundingRect().bottomLeft().y() + 65 );
+    volume1 = std::make_shared< VolumeItem >();
+    volume1->setRawVolume( volume_, csection_direction, csection_depth );
 
-    QString label_( " Cross-Section %1" );
-    csection_label->setPlainText( label_.arg( depth_ ) );
-    csection_color->setPen( QPen( color_ ) );
-    csection_color->setBrush( QBrush( color_ ) );
-    csection_color->update();
+    addItem( volume1.get() );
+    setSceneRect( volume1->boundingRect() );
 
-    QPixmap px( 30, 30 );
-//    px.fill( color_ );/*
-//    QPainter p(&px);
-//    p.setPen(Qt::blue);
-//    p.drawEllipse(0, 0, 20, 20);
-//    p.end();*/
+    QPainterPath area_;
+    area_.addRect( volume1->boundingRect() );
+    setSelectionArea( area_, Qt::AddToSelection );
 
-//    addPixmap( px );
-    return px;
-}
-
-
-void SketchScene::startSketch( const QPointF& p )
-{
-
-    if( user_input != nullptr ) return;
-
-    user_input = new InputSketch();
-    user_input->setCurrentColor( QColor( current_color.red, current_color.green, current_color.blue ) );
-    user_input->create( p );
-    addItem( user_input );
+    emit ensureObjectsVisibility();
 
     update();
 }
 
 
-void SketchScene::clearSketch()
+void SketchScene::updateVolume()
 {
-    if( user_input == nullptr ) return;
+    volume1->update( csection_direction );
+    setSceneRect( volume1->boundingRect() );
 
-    QGraphicsScene::removeItem( user_input );
-    delete user_input;
-    user_input = nullptr;
+    QPainterPath area_;
+    area_.addRect( volume1->boundingRect() );
+    setSelectionArea( area_, Qt::AddToSelection );
 
+    emit ensureObjectsVisibility();
     update();
-}
-
-
-void SketchScene::finishSketch()
-{
-
-    if( user_input == nullptr ) return;
-    if( user_input->isEmpty() == true ) return;
-
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-        emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-        emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
-
-
-    clearSketch();
-
-    update();
-}
-
-
-void SketchScene::readCrossSection( CrossSection* const& raw_ )
-{
-    if( raw_ == nullptr ) return;
-
-    csection = raw_;
-
-    Volume* vol_ = const_cast< Volume* >( raw_->getVolume() );
-
-
-    if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        createCrossSectionScene( vol_ );
-
-    else if( raw_->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-        createTopViewScene( vol_ );
-
-
 
 }
 
 
-void SketchScene::createCrossSectionScene( Volume* const& vol_ )
+void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
-    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Z );
-
-    axes.setPlane( CoordinateAxes2d::Plane::XY );
-    axes.setAxisXLenght( vol_->getWidth() );
-    axes.setAxisYLenght( vol_->getHeight() );
-
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
-    for( auto o: objs_ )
-        addObject( o.second );
+    std::size_t id_ = csection_->getIndex();
+    cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
+    cross_sections1[ id_ ]->setRawCrossSection( csection_ );
+    addItem( cross_sections1[ id_ ].get() );
 }
 
 
-void SketchScene::createTopViewScene( Volume* const& vol_ )
+void SketchScene::addImageToCrossSection( const QString& file_ )
 {
-    addVolume( vol_, Settings::CrossSection::CrossSectionDirections::Y );
-
-    axes.setPlane( CoordinateAxes2d::Plane::XZ );
-    axes.setAxisXLenght( vol_->getWidth() );
-    axes.setAxisYLenght( vol_->getHeight() );
-
-//    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), 0 );
-    main_csection = new CrossSectionItemWrapper( vol_->getWidth(), vol_->getLenght() );
-    main_csection->setCurrent( true );
-    addItem( main_csection );
-
-
-    Volume::CrossSectionsContainer csections_ = vol_->getCrossSections();
-    for( auto c: csections_ )
-    {
-        addCrossSection( c.second );
-    }
-
-
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
-    for( auto o: objs_ )
-        addTrajectory( o.second );
-
-
-
-}
-
-
-
-void SketchScene::setImageToCrossSection( const QString& file_ )
-{
-
     QPixmap image1;
     image1.load( file_ );
 
-    float x_ = static_cast< float >( image1.width() );
-    float y_ = static_cast< float >( image1.height() );
+    if( image1.isNull() == true ) return;
 
-    setImageToCrossSection( file_, 0.0, 0.0, x_, y_ );
+    double ox_ = 0.0;
+    double oy_ = 0.0;
+    double w_ = static_cast< double >( image1.width() );
+    double h_ = static_cast< double >( image1.height() );
 
-    emit setImageCrossSection( csection->getDepth(), file_, 0.0, 0.0, x_, y_ );
+    setImageInCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
+
+    emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, ox_, oy_, w_, h_ );
+
 }
 
 
-void SketchScene::setImageToCrossSection( const QString& file_, double ox_, double oy_, double x_, double y_ )
+void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ )
 {
-
     QPixmap image1;
-    image1.load( file_ );
+    image1.load( QString( file_.c_str() ) );
 
     if( image1.isNull() == true ) return;
 
@@ -390,738 +175,954 @@ void SketchScene::setImageToCrossSection( const QString& file_, double ox_, doub
     myTransform.scale( 1, -1 );
     image1 = image1.transformed( myTransform );
 
-    image->setImagePath( file_ );
-    image->setImage( image1, QPointF( ox_, oy_ ), QPointF( x_, y_ ) );
+    image->setImagePath( QString( file_.c_str() )  );
+    image->setImage( image1, QPointF( ox_, oy_ ), QPointF( w_, y_ ) );
     image->setVisible( true );
     image->update();
 
+}
+
+
+void SketchScene::removeImageInCrossSection()
+{
+    image->setVisible( false );
+//    emit removeImageFromCrossSection( csection_direction, csection_depth );
     update();
 }
 
 
-
-void SketchScene::updateImageCrossSection()
+void SketchScene::removeImageInCrossSectionAndUpdate()
 {
+    image->setVisible( false );
+    emit removeImageFromCrossSection( csection_direction, csection_depth );
+    update();
+}
+
+
+void SketchScene::updateImageinCrossSection()
+{
+
     QString file_ = image->getImagePath();
     QPointF origin_ = image->getOrigin();
     QPointF topright_ = image->getTopRight();
 
-    QPointF p_move;
-    p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
-    p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
-
-    move_marker->setPos( p_move );
-    move_marker->setVisible( true );
-    move_marker->update();
-
-    QPointF p_resize;
-    p_resize.setX( topright_.x() - resize_marker->boundingRect().width()*0.5f );
-    p_resize.setY( topright_.y() - resize_marker->boundingRect().height()*0.5f );
-
-    resize_marker->setPos( p_resize );
-//    resize_marker->setPos( topright_.x(), topright_.y() );
-    resize_marker->setVisible( true );
-    resize_marker->update();
-
-
-    emit setImageCrossSection( csection->getDepth(), file_, origin_.x(), origin_.y(),
-                               topright_.x(), topright_.y() );
+    emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, origin_.x(), origin_.y(), topright_.x(), topright_.y() );
+     QGraphicsScene::update();
 
 }
 
 
-void SketchScene::updateCrossSection()
+void SketchScene::addStratigraphy( const std::shared_ptr< Stratigraphy >& strat_ )
 {
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-        updateCrossSectionScene();
-
-    else if( csection->getDirection() ==Settings::CrossSection::CrossSectionDirections::Y )
-        updateTopViewScene();
+    std::size_t id_ = strat_->getIndex();
+    stratigraphies[ id_ ] = std::make_shared< StratigraphyItem>();
+    stratigraphies[ id_ ]->setRawStratigraphy( strat_, csection_direction, csection_depth );
+    addItem( stratigraphies[ id_ ].get() );
+    QGraphicsScene::update();
 
 }
 
 
+void SketchScene::updateStratigraphy( const std::size_t& id_ )
+{
+    if( stratigraphies.find( id_ ) == stratigraphies.end() ) return;
+    if( stratigraphies[ id_ ]->isVisible() == false ) return;
+    stratigraphies[ id_ ]->update();
+   QGraphicsScene::update();
+}
 
-void SketchScene::updateCrossSectionScene()
+
+void SketchScene::updateStratigraphies()
 {
 
-    if( csection->hasImage() == true )
+    for( auto it: stratigraphies )
     {
-        std::string path_;
-        double ox_;
-        double oy_;
-        double x_;
-        double y_;
-        csection->getImage( path_, ox_, oy_, x_, y_ );
-        setImageToCrossSection( QString( path_.c_str() ), ox_, oy_, x_, y_ );
+        (it.second)->update();
+    }
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::updateStratigraphiesTrajectories()
+{
+
+    for( auto it: stratigraphies )
+    {
+        (it.second)->updateLevelCurves();
+        (it.second)->updateTrajectory();
+    }
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::getSelectedStratigraphies()
+{
+    QList< QGraphicsItem* > items_ = selectedItems();
+    if( items_.empty() == true ) return;
+
+    StratigraphyItem* const& obj_ = dynamic_cast< StratigraphyItem* >( items_[ 0 ] );
+    std::size_t id_ = obj_->getIndex();
+
+    emit objectSelected( id_ );
+
+
+    std::cout << "There are " << items_.size() << " curves selected" << std::endl << std::flush;
+}
+
+
+void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
+{
+    std::size_t id_ = region_->getIndex();
+
+    int r_, g_, b_;
+    region_->getColor( r_, g_, b_ );
+
+    regions[ id_ ] = std::make_shared< RegionItem >();
+    regions[ id_ ]->setRawRegion( region_ );
+    regions[ id_ ]->setBorderVisible( false );
+    regions[ id_ ]->setFillColor( r_, g_, b_ );
+    regions[ id_ ]->setVisible( true );
+    addItem( regions[ id_ ].get() );
+}
+
+
+void SketchScene::updateRegion( const std::size_t& id_ )
+{
+    if( regions.find( id_ ) == regions.end() ) return;
+    regions[ id_ ]->updateBoundary();
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::updateRegions()
+{
+    for( auto it: regions )
+        it.second->updateBoundary();
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::clearRegions()
+{
+    for( auto it: regions )
+    {
+        RegionItem* reg_ = dynamic_cast< RegionItem* >( (it.second).get() );
+        removeItem( reg_ );
+        (it.second).reset();
+    }
+    regions.clear();
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::getSelectedRegions()
+{
+    QList< QGraphicsItem* > items_ = selectedItems();
+    if( items_.empty() == true ) return;
+
+    std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
+
+    for( auto it: items_ )
+    {
+        RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
+        std::size_t id_ = reg_->getIndex();
+        std::cout << id_ << " " << std::flush;
+
+        emit regionSelected( id_, true );
+    }
+    std::cout << "\n\n" << std::flush;
+}
+
+
+void SketchScene::enableSketch( bool status_ )
+{
+    sketch_enabled = status_;
+}
+
+
+bool SketchScene::isSketchEnabled() const
+{
+    if( sketch == nullptr ) return false;
+    return sketch_enabled;
+}
+
+
+void SketchScene::cancelSketch()
+{
+    std::cout << "Canceling sketch..." << std::endl << std::flush;
+
+    if( sketch == nullptr ) return;
+    sketch->clear();
+
+    emit removeLastCurve( csection_direction, csection_depth );
+
+
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::submitSketch()
+{
+    std::cout << "Submitting sketch..." << std::endl << std::flush;
+
+    if( sketch == nullptr ) return;
+
+    emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
+    sketch->clear();
+
+    std::cout << "Image is visible: " << image->isVisible() << std::endl;
+
+    QGraphicsScene::update();
+//    update();
+}
+
+
+void SketchScene::setSketchColor( const QColor& color_ )
+{
+    std::cout << "Changing sketch color..." << std::endl << std::flush;
+
+    if( sketch == nullptr ) return;
+    sketch->setColor( color_ );
+    QGraphicsScene::update();
+}
+
+
+void SketchScene::processSketch()
+{
+    if( sketch->isEmpty() == true ) return;
+
+
+    if( ( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
+            )
+        sketch->getMonotonicY();
+
+    else
+        sketch->getMonotonicX();
+
+
+}
+
+
+void SketchScene::endObject()
+{
+    std::cout << "Ending object..." << std::endl << std::flush;
+
+    if( sketch == nullptr ) return;
+    sketch->setDone();
+
+    emit createObject();
+
+    QGraphicsScene::update();
+}
+
+
+
+void SketchScene::setSketchingMode()
+{
+    current_interaction1 = UserInteraction1::SKETCHING;
+    sketch_enabled = true;
+
+    if ( sketch != nullptr ) return;
+    sketch = std::make_shared< CurveItem >();
+    addItem( sketch.get() );
+}
+
+
+void SketchScene::setResizingBoundaryMode( bool status_ )
+{
+    if( status_ == true )
+        current_interaction1 = UserInteraction1::RESIZING_BOUNDARY;
+    else
+    {
+        setSketchingMode();
+    }
+}
+
+
+void SketchScene::setGuidedExtrusionMode( bool status_ )
+{
+    if( status_ == true )
+    {
+        current_interaction1 = UserInteraction1::GUIDED_EXTRUSION;
+        updatePointGuidedExtrusion( QPointF( 0, 0 ) );
     }
     else
     {
-        image->setVisible( false );
-        move_marker->setVisible( false );
-        resize_marker->setVisible( false );
-        move_marker->update();
-        resize_marker->update();
-        image->update();
+        stopPointGuidedExtrusion();
     }
-
-    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
-
-    for( auto o: objs_ )
-        updateObject( o.first );
-
-
-    update();
 }
 
 
-void SketchScene::updateTopViewScene()
+//temporary
+void SketchScene::setCreateRegionMode()
+{
+    current_interaction1 = UserInteraction1::CREATE_REGION;
+}
+//temporary
+
+void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
 {
 
-    Volume* const& vol_ = const_cast< Volume* >( csection->getVolume() );
-    Volume::ObjectsContainer objs_ = vol_->getObjects();
+    clearSelection();
 
+    sketch->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
 
-    if( main_csection != nullptr )
+    for( auto it: stratigraphies )
     {
-        main_csection->setWidth( vol_->getWidth() );
-        main_csection->setVisible( volume->isVisible() );
-        main_csection->update();
+        (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
     }
 
-
-    for( auto o: objs_ )
-        updateTrajectory( o.first );
-
-}
-
-
-
-void SketchScene::moveCurrentCrossSection( double depth_ )
-{
-
-    main_csection->setDepth( depth_ );
-    update();
-
-}
-
-
-
-void SketchScene::addVolume( Volume* const &raw_, Settings::CrossSection::CrossSectionDirections dir_ )
-{
-    clearVolume();
-
-    volume = new VolumeItemWrapper( raw_, dir_ );
-    addItem( volume );
-
-
-    setSceneRect( volume->boundingRect() );
-    update();
-}
-
-
-void SketchScene::updateVolume()
-{
-
-    volume->updateItem();
-
-    axes.setAxisXLenght( volume->getWidth() );
-    axes.setAxisYLenght( volume->getHeight() );
-
-    if( views().empty() == true ) return;
-    if( volume == nullptr ) return;
-
-    setSceneRect( volume->boundingRect() );
-    update();
-}
-
-
-void SketchScene::clearVolume()
-{
-    if( volume != nullptr )
-        delete volume;
-    volume = nullptr;
-}
-
-
-
-
-void SketchScene::addObject( Object* const& raw_ )
-{
-    addObject( raw_, csection->getDepth() );
-}
-
-
-void SketchScene::addObject( Object* const& raw_, double depth_ )
-{
-
-    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
-
-    std::size_t index_ = raw_->getIndex();
-
-    ObjectItemWrapper* obj_ = new ObjectItemWrapper( raw_, depth_ );
-    objects.addElement( index_, obj_ );
-
-    addItem( obj_ );
-
-    if( image != nullptr )
-        image->update();
-
-}
-
-
-void SketchScene::updateObject(  const std::size_t& index_ )
-{
-    if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Z ) return;
-
-    ObjectItemWrapper* obj_ = objects.getElement( index_ );
-
-    obj_->updateDepth( csection->getDepth() );
-    obj_->updateObject();
-
-    if( image != nullptr )
-        if( image->isVisible() == true )
-            image->show();
-
-    update();
-}
-
-
-void SketchScene::selectObjectAsBounderingRegion()
-{
-    QList< QGraphicsItem* > items = selectedItems();
-    if( items.empty() == true ) return;
-
-
-    ObjectItemWrapper* const& obj = ( ObjectItemWrapper* )items[ 0 ];
-    std::size_t id = obj->getIndex();
-
-    emit objectSelected( id );
-
-}
-
-
-
-void SketchScene::addTrajectory( Object* const& raw_ )
-{
-
-    std::size_t index_ = raw_->getIndex();
-
-    TrajectoryItemWrapper* traj_ = new TrajectoryItemWrapper( raw_ );
-    trajectories.addElement( index_, traj_ );
-
-    addItem( traj_ );
-
-}
-
-
-void SketchScene::updateTrajectory(  const std::size_t& index_ )
-{
-    TrajectoryItemWrapper* traj_ = trajectories.getElement( index_ );
-    traj_->updateTrajectory();
-
-    update();
-}
-
-
-void SketchScene::updateTrajectories()
-{
-    for ( TrajectoriesContainer::Iterator it =  trajectories.begin(); it != trajectories.end(); ++it )
+    if( status_ == true )
     {
-        TrajectoryItemWrapper* item_ = trajectories.getElement( it->first );
-        if( item_ == nullptr ) continue;
-        item_->updateTrajectory();
-    }
-    update();
-}
-
-
-void SketchScene::addCrossSection( CrossSection * const &raw_ )
-{
-
-    Volume* const& vol_ = const_cast< Volume* >( raw_->getVolume() );
-
-    CrossSectionItemWrapper* csection_ = new CrossSectionItemWrapper( vol_->getWidth(), raw_->getDepth() );
-    cross_sections.addElement( raw_->getIndex(), csection_ );
-
-    addItem( csection_ );
-}
-
-
-
-void SketchScene::setCurrent( bool status_ )
-{
-    is_current = status_;
-}
-
-
-bool SketchScene::isCurrent() const
-{
-    return is_current;
-}
-
-
-
-void SketchScene::setCurrentColor( int r, int g, int b )
-{
-    if( user_input == nullptr ) return;
-
-    user_input->setCurrentColor( QColor( r, g, b ) );
-    current_color.red   = r;
-    current_color.green = g;
-    current_color.blue  = b;
-
-}
-
-
-void SketchScene::getCurrentColor( int& r, int& g, int& b )
-{
-    if( user_input == nullptr ) return;
-    r = current_color.red;
-    g = current_color.green;
-    b = current_color.blue;
-}
-
-
-
-void SketchScene::savetoRasterImage( const QString& filename )
-{
-    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
-
-    QString filename_csection;
-    if( name_and_extension.size() > 1 ){
-        filename_csection = name_and_extension[ 0 ].append( "_csection." );
-        filename_csection.append( name_and_extension[1] );
+        current_interaction1 = UserInteraction1::SELECTING_STRATIGRAPHY_OLD;
     }
     else
-        filename_csection = filename;
+    {
+        setSketchingMode();
+    }
 
+    QGraphicsScene::update();
 
-    QImage image( sceneRect().size().toSize(), QImage::Format_ARGB32 );
-    image.fill( Qt::transparent );
-
-    QPainter painter( &image );
-    render( &painter );
-    painter.end();
-
-    image = image.mirrored( false, true );
-    image.save( filename_csection );
 
 }
 
 
-void SketchScene::savetoVectorImage( const QString& filename )
+void SketchScene::setSelectingStratigraphyMode( bool status_ )
 {
-    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
 
-    QString filename_csection;
-    if( name_and_extension.size() > 1 ){
-        filename_csection = name_and_extension[ 0 ].append( "_csection." );
-        filename_csection.append( name_and_extension[1] );
+    clearSelection();
+
+    if( status_ == true )
+    {
+        current_interaction1 = UserInteraction1::SELECTING_STRATIGRAPHY;
     }
     else
-        filename_csection = filename;
-
-
-
-    QSvgGenerator svgGen;
-
-    svgGen.setFileName( filename_csection );
-    svgGen.setSize( QSize( width(), height() ) );
-
-    svgGen.setViewBox( sceneRect() );
-    svgGen.setTitle( tr( "Rapid Reservoir Modelling - SVG generated by Qt5" ) );
-    svgGen.setDescription( tr( "SVG output of Rapid Reservoir Modelling Software" ) );
-
-    QPainter painter( &svgGen );
-    painter.scale( 1.0, -1.0 );
-    painter.translate( QPointF( 0.0, -height() ) );
-
-    render( &painter );
-    painter.end();
-}
-
-
-void SketchScene::setModeSketching()
-{
-//    if( user_input == nullptr )  return;
-//    user_input->clear();
-    current_interaction = UserInteraction::SKETCHING;
-    image->setFlag( QGraphicsItem::ItemIsSelectable, false );
-    resize_marker->setVisible( false );
-    move_marker->setVisible( false );
-
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
     {
-        ObjectItemWrapper* obj_ = ( it->second );
-        obj_->setFlag( QGraphicsItem::ItemIsSelectable, false );
+        setSketchingMode();
     }
 
-}
-
-
-void SketchScene::setModeEditingBoundary()
-{
-    current_interaction = UserInteraction::EDITING_BOUNDARY;
-}
-
-
-void SketchScene::setModeEditingScene()
-{
-    current_interaction = UserInteraction::EDITING_SCENE;
-    image->setFlag( QGraphicsItem::ItemIsSelectable, true );
-
-    if( image->isVisible() == true )
-    {
-
-        QPointF origin_ = image->getOrigin();
-        QPointF topright_ = image->getTopRight();
-
-        QPointF p_move;
-        p_move.setX( origin_.x() - move_marker->boundingRect().width()*0.5f );
-        p_move.setY( origin_.y() - move_marker->boundingRect().height()*0.5f );
-
-        QPointF p_resize;
-        p_resize.setX( topright_.x() - resize_marker->boundingRect().width()*0.5f );
-        p_resize.setY( topright_.y() - resize_marker->boundingRect().height()*0.5f );
-
-
-        move_marker->setPos( p_move );
-        resize_marker->setPos( p_resize );
-        move_marker->setVisible( true );
-        resize_marker->setVisible( true );
-    }
-    move_marker->update();
-    resize_marker->update();
-    image->update();
-
-
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        ObjectItemWrapper* obj_ = ( it->second );
-        obj_->setFlag( QGraphicsItem::ItemIsSelectable, obj_->isEditable() );
-    }
+    QGraphicsScene::update();
 
 
 }
 
 
-void SketchScene::setModeSelecting()
+void SketchScene::setResizingImageMode( bool status_ )
 {
-    current_interaction = UserInteraction::SELECTING;
+    move_marker->setVisible( status_ );
+    resize_marker->setVisible( status_ );
 
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    if( status_ == true )
     {
-        ObjectItemWrapper* obj_ = ( it->second );
-        obj_->setFlag( QGraphicsItem::ItemIsSelectable, obj_->isSelectable() );
+        current_interaction1 = UserInteraction1::RESIZING_IMAGE;
+        resize_marker->setPos( image->getTopRight() );
+        move_marker->setPos( image->getOrigin() );
+    }
+    else
+    {
+        setSketchingMode();
     }
 }
 
 
-
-void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event )
+void SketchScene::setSelectingRegionsMode( bool status_ )
 {
+    clearSelection();
 
-    if( is_current == false ) return;
-
-
-    if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::SKETCHING ) )
+    for( auto it: regions )
     {
-        user_input->create( event->scenePos() );
+        it.second->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
+        it.second->update();
     }
 
-    else if( ( event->buttons() & Qt::RightButton ) &&
-        ( current_interaction == UserInteraction::SKETCHING ) )
+    if( status_ == true )
+        current_interaction1 = UserInteraction1::SELECTING_REGIONS;
+    else
     {
-        if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Z ), csection->getDepth() );
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-            emit acceptCurve( user_input->done( InputSketch::Direction::Y  ), csection->getDepth() );
-        else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-            emit acceptCurve( user_input->done( InputSketch::Direction::X  ), csection->getDepth() );
-
-
-        user_input->clear();
+        setSketchingMode();
     }
 
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
-    {
-        volume->startPoint( event->scenePos() );
-    }
-
-    else if(( event->buttons() & Qt::LeftButton ) &&
-             ( current_interaction == UserInteraction::EDITING_SCENE ||
-               current_interaction == UserInteraction::MOVING_IMAGE  ||
-               current_interaction == UserInteraction::RESIZING_IMAGE ) )
-    {
-        editItem();
-    }
-
-
-    QGraphicsScene::mousePressEvent( event );
     update();
 }
 
 
-void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event )
+void SketchScene::setSelectingRegionMode( bool status_ )
 {
+    clearSelection();
 
-    if( event->modifiers() & Qt::ControlModifier )
+    if( status_ == true )
     {
-        if( csection == nullptr ) return;
-        if( views().empty() == true ) return;
-        emit setAsCurrent( csection->getDepth(), views()[ 0 ] );
+        current_interaction1 = UserInteraction1::SELECTING_REGION;
     }
-
-    else if( current_interaction == UserInteraction::SKETCHING )
+    else
     {
-         emit commitObject();
-        user_input->clear();
+        setSketchingMode();
     }
 
-}
-
-
-void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
-{
-
-    if( is_current == false ) return;
-
-    if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::SKETCHING ) /*&& ( user_input != nullptr )*/ )
-    {
-        user_input->add(  event->scenePos() );
-    }
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::EDITING_BOUNDARY ) )
-    {
-        volume->resize( event->scenePos() );
-    }
-
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
-    {
-        image->resizeRectangle( event->scenePos() );
-        updateImageCrossSection();
-    }
-
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
-   {
-        image->moveRectangle( event->scenePos() );
-        updateImageCrossSection();
-    }
-
-
-
-    QGraphicsScene::mouseMoveEvent( event );
-    update();
-
-}
-
-
-void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event )
-{
-
-    if( is_current == false ) return;
-
-    if( ( current_interaction == UserInteraction::SKETCHING ) /*&& ( user_input != nullptr )*/ )
-    {
-        user_input->process();
-    }
-
-    else if( current_interaction == UserInteraction::EDITING_BOUNDARY )
-    {
-        emit acceptVolumeDimensions( csection->getDirection(), static_cast< double >( volume->boundingRect().width() ),
-                                     static_cast< double >( volume->boundingRect().height() ) );
-    }
-
-    else if( current_interaction == UserInteraction::SELECTING )
-    {
-        selectObjectAsBounderingRegion();
-    }
-
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::RESIZING_IMAGE ) )
-    {
-        image->resizeRectangle( event->scenePos() );
-        updateImageCrossSection();
-    }
-
-    else if( ( event->buttons() & Qt::LeftButton ) &&
-        ( current_interaction == UserInteraction::MOVING_IMAGE ) )
-    {
-
-        image->moveRectangle( event->scenePos() );
-        updateImageCrossSection();
-    }
-
-    else if( ( current_interaction == UserInteraction::EDITING_SCENE ||
-               current_interaction == UserInteraction::MOVING_IMAGE  ||
-               current_interaction == UserInteraction::RESIZING_IMAGE ) )
-    {
-        current_interaction = UserInteraction::EDITING_SCENE;
-
-        resize_marker->setSelected( false );
-        move_marker->setSelected( false );
-        editItem();
-
-    }
-
-
-
-
-    QGraphicsScene::mouseReleaseEvent( event );
     update();
 }
 
 
 
-void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event )
+
+//void SketchScene::setSelectingWellsMode( bool status_ )
+//{
+//    clearSelection();
+
+//    for( auto it: wells )
+//    {
+//        it.second->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
+//        it.second->update();
+//    }
+
+//    if( status_ == true )
+//        current_interaction1 = UserInteraction1::SELECTING_WELLS;
+//    else
+//    {
+//        setSketchingMode();
+//    }
+
+//    update();
+//}
+
+
+
+void SketchScene::addToSketchesOfSelection()
 {
-    if( ( event->mimeData()->hasUrls() == true ) && ( event->mimeData()->hasImage() ) )
+
+    if( sketch == nullptr ) return;
+
+    std::shared_ptr< CurveItem > sketch_ = std::make_shared< CurveItem >();
+    sketch_->setCurve( sketch->getCurve() );
+
+    std::size_t id_ = sketches_of_selection.size();
+    sketches_of_selection.push_back( sketch_ );
+    addItem( sketches_of_selection[ id_ ].get() );
+
+    emit sendSketchOfSelection( sketch->getCurve(), csection_direction, csection_depth );
+
+    sketch->clear();
+
+}
+
+
+void SketchScene::removeSketchesOfSelection()
+{
+
+    for( auto sk_: sketches_of_selection )
     {
-        event->acceptProposedAction();
+        removeItem( sk_.get() );
+        sk_->clear();
+        sk_.reset();
+    }
+    sketches_of_selection.clear();
+
+    emit stopSketchesOfSelection();
+    setSketchingMode();
+}
+
+
+void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
+{
+
+//    PolyCurve upper_( vupper_, edupper_ );
+//    PolyCurve lower_( vlower_, edlower_ );
+
+//    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
+//    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
+
+//    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
+//    boudering_area->setPolygon( pol_ );
+
+//    boudering_area->setVisible( true );
+//    boudering_area->update();
+//    update();
+}
+
+
+void SketchScene::defineBounderingArea()
+{
+
+
+    if( ( lower.isEmpty() == false ) && ( upper.isEmpty() == false ) )
+    {
+        QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
+        QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
+
+        QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
+        boudering_area->setPolygon( pol_ );
+    }
+
+    else if( lower.isEmpty() == false )
+    {
+        QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
+        boudering_area->setPolygon( pol_ );
+    }
+    else if( upper.isEmpty() == false )
+    {
+        QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
+        boudering_area->setPolygon( pol_ );
+
+    }
+    else
+    {
+        boudering_area->clear();
+    }
+
+    boudering_area->setVisible( true );
+    boudering_area->update();
+
+    update();
+}
+
+
+
+void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
+{
+    lower = boundary_;
+    defineBounderingArea();
+}
+
+
+void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
+{
+    upper = boundary_;
+    defineBounderingArea();
+}
+
+
+void SketchScene::clearLowerBoundaryCurve()
+{
+    lower.clear();
+    defineBounderingArea();
+}
+
+
+void SketchScene::clearUpperBoundaryCurve()
+{
+    upper.clear();
+    defineBounderingArea();
+}
+
+
+void SketchScene::clearBoundaryCurve()
+{
+//    lower.clear();
+//    upper.clear();
+//    boudering_area->clear();
+//    boudering_area->setVisible( false );
+
+//    update();
+}
+
+
+void SketchScene::updatePointGuidedExtrusion( const QPointF& p_ )
+{
+    trajectory_point->setVisible( true );
+    trajectory_point->setPos( p_ );
+    update();
+}
+
+
+void SketchScene::stopPointGuidedExtrusion()
+{
+    trajectory_point->setVisible( false );
+    setSketchingMode();
+    update();
+}
+
+
+void SketchScene::submitSketchGuidedExtrusion()
+{
+    if( sketch == nullptr ) return;
+
+    emit sketchDoneGuidedExtrusion( sketch->getCurve() );
+    sketch->clear();
+
+    QGraphicsScene::update();
+}
+
+///================================================================================
+
+void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
+{
+
+    QPointF p_ = event_->scenePos();
+
+
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING ) )
+    {
+        sketch->create( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    {
+       submitSketch();
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    {
+        volume1->setStartPoint( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::CREATE_REGION )  )
+    {
+//        regions[ nregions ] ->addPoint( p_ );
+    }
+
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    {
+        sketch->create( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
+    {
+        getSelectedStratigraphies();
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_REGION ) )
+    {
+        emit getRegionByPoint( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    {
+        emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->create( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED )  )
+    {
+        submitSketchGuidedExtrusion();
+//       submitSketch();
+    }
+
+    QGraphicsScene::mousePressEvent( event_ );
+    update();
+
+}
+
+
+void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
+{
+
+    if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    {
+        std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
+        removeSketchesOfSelection();
+    }
+
+    else if( current_interaction1 == UserInteraction1::SKETCHING )
+    {
+         endObject();
+    }
+
+    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
+    {
+        getSelectedRegions();
+    }
+
+//    else if( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION )
+//    {
+
+//    }
+
+
+    QGraphicsScene::mouseDoubleClickEvent( event_ );
+    update();
+
+}
+
+
+void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
+{
+    QPointF p_ = event_->scenePos();
+//    std::cout << "mx: " << p_.x() << ", my: " << p_.y() << std::endl << std::flush;
+
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    {
+        sketch->add(  p_ );
+    }
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    {
+        volume1->setEndPoint( p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    {
+        sketch->add(  p_ );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
+    {
+        if( resize_marker->isSelected() )
+        {
+            image->resizeRectangle( p_ );
+            move_marker->setPos( image->getOrigin() );
+        }
+        else if( move_marker->isSelected() )
+        {
+            image->moveRectangle( p_ );
+            resize_marker->setPos( image->getTopRight() );
+        }
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    {
+        emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
+    }
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->add(  p_ );
+    }
+
+
+    QGraphicsScene::mouseMoveEvent( event_ );
+    update();
+
+}
+
+
+void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
+{
+
+    QPointF p_ = event_->scenePos();
+
+    if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    {
+        sketch->connect();
+    }
+
+    else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    {
+        volume1->setEndPoint( p_ );
+        setSceneRect( volume1->boundingRect() );
+
+        emit resizeVolumeDimensions( csection_direction, static_cast< double >( volume1->boundingRect().width() ), static_cast< double >( volume1->boundingRect().height() ) );
+//        emit ensureObjectsVisibility();
+    }
+
+    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )
+    {
+        getSelectedStratigraphies();
+    }
+
+    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    {
+        addToSketchesOfSelection();
+//        removeSketchesOfSelection();
+
+    }
+
+
+    else if(  current_interaction1 == UserInteraction1::RESIZING_IMAGE )
+    {
+        updateImageinCrossSection();
+    }
+
+
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    {
+        sketch->connect();
+    }
+
+
+    QGraphicsScene::mouseReleaseEvent( event_ );
+    update();
+
+}
+
+
+void SketchScene::dragEnterEvent( QGraphicsSceneDragDropEvent* event_ )
+{
+
+    if( ( event_->mimeData()->hasUrls() == true ) && ( event_->mimeData()->hasImage() ) )
+    {
+        event_->acceptProposedAction();
     }
 
 }
 
 
-void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event )
+void SketchScene::dropEvent( QGraphicsSceneDragDropEvent* event_ )
 {
-    const QMimeData *mime_data = event->mimeData();
+    const QMimeData *mime_data = event_->mimeData();
     QString url_file = mime_data->urls().at( 0 ).toLocalFile();
     url_file = QDir::toNativeSeparators( url_file );
 
-    setImageToCrossSection( url_file );
-
+    addImageToCrossSection( url_file );
 }
 
 
-void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event )
+void SketchScene::dragMoveEvent( QGraphicsSceneDragDropEvent* event_ )
 {
-    event->accept();
+    event_->accept();
 }
 
 
-
-void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event )
+void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
 {
+    const double ZOOM_SCALE = 1.1;
 
     if( views().isEmpty() == true ) return;
 
     QGraphicsView* gv_ = views()[ 0 ];
 
-    if( event->delta() > 0 )
+    if( event_->delta() > 0 )
         gv_->scale( ZOOM_SCALE, ZOOM_SCALE );
     else
         gv_->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
 
 
-    QGraphicsScene::wheelEvent( event );
+    QGraphicsScene::wheelEvent( event_ );
     update();
+
 }
 
 
-void SketchScene::keyPressEvent( QKeyEvent *event )
+//void SketchScene::keyPressEvent( QKeyEvent *event )
+//{
+//    switch( event->key() )
+//    {
+//        case Qt::Key_S:
+//            for( auto it: regions )
+//            {
+//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
+//            }
+//        break;
+//    case Qt::Key_1:
+//        views()[ 0 ]->setVerticalExaggeration();
+//        default:
+//            break;
+//    };
+//}
+
+
+//void SketchScene::addWell( const std::shared_ptr< Well >& well_ )
+//{
+
+//    std::size_t id_ = well_->getIndex();
+//    wells[ id_ ] = new WellItem();
+//    wells[ id_ ]->setRawWell( well_, csection_direction, csection_depth );
+//    addItem( wells[ id_ ] );
+
+//    emit ensureObjectsVisibility();
+//}
+
+
+void SketchScene::clearScene()
 {
-    switch( event->key() )
-    {
-        case Qt::Key_Delete:
-            std::cout << "Remove item" << std::endl << std::flush;
-            removeItem();
-            break;
-        default:
-            break;
-    };
-}
-
-
-
-void SketchScene::clear()
-{
-
     for( auto &it: items() )
         QGraphicsScene::removeItem( it );
 
 
-    if( user_input != nullptr )
-    {
-        user_input->clear();
-        delete user_input;
-        user_input = nullptr;
-    }
+    if( sketch != nullptr )
+        sketch.reset();
+    sketch = nullptr;
 
+    if( volume1 != nullptr )
+        volume1.reset();
+    volume1 = nullptr;
 
-    if( csection != nullptr )
-    {
-        csection = nullptr;
-    }
-
-
-    if( volume != nullptr )
-    {
-        volume->clear();
-        delete volume;
-        volume = nullptr;
-    }
-
-
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        ObjectItemWrapper* item_ = objects.getElement( it->first );
-        if( item_ == nullptr ) continue;
-
-
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    objects.clear();
-
-
-    for ( CrossSectionsContainer::Iterator it =  cross_sections.begin(); it != cross_sections.end(); ++it )
-    {
-        CrossSectionItemWrapper* item_ = cross_sections.getElement( it->first );
-        if( item_ == nullptr ) continue;
-
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    cross_sections.clear();
-
-
-    for ( TrajectoriesContainer::Iterator it =  trajectories.begin(); it != trajectories.end(); ++it )
-    {
-        TrajectoryItemWrapper* item_ = trajectories.getElement( it->first );
-        if( item_ == nullptr ) continue;
-
-        item_->clear();
-        delete item_;
-        item_ = nullptr;
-    }
-    trajectories.clear();
-
-    initialize();
-}
-
-
-void SketchScene::initialize()
-{
-    current_color.red = 255;
-    current_color.green = 0;
-    current_color.blue = 0;
-    current_interaction = UserInteraction::SKETCHING;
-    user_input = nullptr;
-    csection = nullptr;
-    volume = nullptr;
-    is_current = false;
+    if( image != nullptr )
+        delete image;
     image = nullptr;
 
+    if( resize_marker != nullptr )
+        delete resize_marker;
+    resize_marker = nullptr;
+
+    if( move_marker != nullptr )
+        delete move_marker;
+    move_marker = nullptr;
+
+    if( boudering_area != nullptr )
+    {   boudering_area->clear();
+        delete boudering_area;
+    }
+    boudering_area = nullptr;
+
+    for( auto it: cross_sections1 )
+        (it.second).reset();
+    cross_sections1.clear();
+
+    for( auto it: stratigraphies )
+        (it.second).reset();
+    stratigraphies.clear();
+
+    for( auto it: regions )
+        (it.second).reset();
+    regions.clear();
+
+    for( auto sk_: sketches_of_selection )
+    {
+        sk_->clear();
+        sk_.reset();
+    }
+    sketches_of_selection.clear();
+
+    csection_depth = 0.0;
+    sketch_enabled = true;
+
+    lower.clear();
+    upper.clear();
+
+    csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
+    current_interaction1 = UserInteraction1::SKETCHING;
+
+
+
+
+
+
+
+
+    //init();
+
+    /*
+
+    setSketchingMode();
+
+    image = new ImageItemWrapper();
+    image->setVisible( false );
+    addItem( image );
+
+    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    resize_marker->setBrush( QColor( Qt::red ) );
+    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    resize_marker->setVisible( false );
+    addItem( resize_marker );
+
+    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
+    move_marker->setBrush( QColor( Qt::blue ) );
+    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
+    move_marker->setVisible( false );
+    addItem( move_marker );
+
+    boudering_area = new PolygonItem();
+    boudering_area->setBorderVisible( false );
+    boudering_area->setVisible( false );
+    addItem( boudering_area );
+
+*/
+
 
 }
 
+
+SketchScene::~SketchScene()
+{
+
+    clearScene();
+
+
+}

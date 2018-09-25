@@ -31,14 +31,14 @@ VolumeShader::VolumeShader()
 
 
 
-VolumeShader::VolumeShader( Volume* const& raw_ )
+VolumeShader::VolumeShader( const std::shared_ptr< Volume >& raw_ )
 {
     setDefaultValues();
     init();
     setVolume( raw_ );
 }
 
-void VolumeShader::setVolume( Volume* const& raw_ )
+void VolumeShader::setVolume( const std::shared_ptr< Volume >& raw_ )
 {
     raw = raw_;
     if( raw->isEmpty() == true)
@@ -318,10 +318,15 @@ void VolumeShader::setDefaultValues()
     vb_normals = 0;
 
     number_of_vertices = 0;
-    raw = nullptr;
+    raw.reset();
 }
 
 void VolumeShader::update()
 {
     createVolumeMesh();
+}
+
+VolumeShader::~VolumeShader()
+{
+    clear();
 }

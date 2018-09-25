@@ -39,6 +39,28 @@ PagesStack::PagesStack()
 }
 
 
+void PagesStack::selectObjectPage( const Settings::Objects::ObjectType& type_ )
+{
+    switch ( type_ ) {
+
+        case Settings::Objects::ObjectType::VOLUME:
+            setCurrentIndex( 0 );
+            break;
+        case Settings::Objects::ObjectType::STRATIGRAPHY:
+            setCurrentIndex( 1 );
+            break;
+        case Settings::Objects::ObjectType::STRUCTURAL:
+            setCurrentIndex( 1 );
+            break;
+        default:
+            break;
+    }
+
+
+
+}
+
+
 void PagesStack::createVolumePropertiesPage()
 {
     QWidget* wd_volume_page = new QWidget( this );

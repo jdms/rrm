@@ -38,19 +38,15 @@
 Scene3d::Scene3d()
 {
     volume = nullptr;
-    output_volume = nullptr;
-    main_csection = nullptr;
 }
 
 
 
-void Scene3d::addVolume( Volume* const& raw_ )
+void Scene3d::addVolume( const std::shared_ptr< Volume >& raw_ )
 {
     context->makeCurrent( surface );
 
-    clearVolume();
-    volume = new VolumeShader( raw_ );
-
+    volume = std::make_shared< VolumeShader >( raw_ );
     emit updateCanvas();
 
 }
@@ -59,291 +55,192 @@ void Scene3d::addVolume( Volume* const& raw_ )
 void Scene3d::updateVolume()
 {
     if( volume == nullptr ) return;
-
     volume->update();
-    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+
+
+
+    emit updateCanvas();
+}
+
+
+
+
+
+void Scene3d::addMainCrossSection( const std::shared_ptr< CrossSection>& raw_ )
+{
+    context->makeCurrent( surface );
+    main_csection = std::make_shared< PlaneShader >( raw_ );
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateMainCrossSection()
+{
+    main_csection->update();
+    emit updateCanvas();
+}
+
+
+void Scene3d::changeCrossSectionDirection( const std::shared_ptr< CrossSection>& raw_ )
+{
+    main_csection->setCrossSection( raw_ );
+    emit updateCanvas();
+}
+
+
+void Scene3d::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
+{
+    context->makeCurrent( surface );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+        cross_sectionsX[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+        cross_sectionsY[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    if( csection_->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+        cross_sectionsZ[ csection_->getDepth() ] = std::make_shared< PlaneShader >( csection_ );
+
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+{
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-        (it->second)->update();
+        if( cross_sectionsX.find( depth_ ) == cross_sectionsX.end() ) return;
+        cross_sectionsX[ depth_ ]->update();
     }
 
-    if( main_csection != nullptr )
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        main_csection->update();
+        if( cross_sectionsY.find( depth_ ) == cross_sectionsY.end() ) return;
+        cross_sectionsY[ depth_ ]->update();
     }
 
+    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        if( cross_sectionsZ.find( depth_ ) == cross_sectionsZ.end() ) return;
+        cross_sectionsZ[ depth_ ]->update();
+    }
+    emit updateCanvas();
+}
+
+
+
+void Scene3d::updateCrossSections()
+{
+    for( auto it: cross_sectionsX )
+        (it.second)->update();
+    for( auto it: cross_sectionsY )
+        (it.second)->update();
+    for( auto it: cross_sectionsZ )
+        (it.second)->update();
 
     emit updateCanvas();
-
 }
 
 
-void Scene3d::clearVolume()
-{
-    if( volume != nullptr )
-        delete volume;
-    volume = nullptr;
-}
-
-
-
-
-
-void Scene3d::addOutputVolume( Volume* const& raw_ )
+void Scene3d::addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     context->makeCurrent( surface );
-
-    clearOutputVolume();
-    output_volume = new VolumeShader( raw_ );
+    stratigraphies[ raw_->getIndex() ] = std::make_shared< SurfaceShader >( raw_ );
 
     emit updateCanvas();
 
 }
 
 
-void Scene3d::updateOutputVolume()
-{
-    if( output_volume == nullptr ) return;
-
-    output_volume->update();
-
-    emit updateCanvas();
-
-}
-
-
-void Scene3d::clearOutputVolume()
-{
-    if( output_volume != nullptr )
-        delete output_volume;
-    output_volume = nullptr;
-
-    removeRegions();
-}
-
-
-void Scene3d::addRegion( Regions* const& raw_ )
+void Scene3d::updateStratigraphy( const std::size_t& index_ )
 {
     context->makeCurrent( surface );
-
-    std::size_t index_ = raw_->getIndex();
-    regions.addElement( index_, new RegionShader( raw_ ) );
+    if( stratigraphies.find( index_ ) == stratigraphies.end() )
+    stratigraphies[ index_ ]->update();
 
     emit updateCanvas();
 
 }
 
-
-void Scene3d::updateRegion( std::size_t index_ )
+void Scene3d::updateStratigraphies()
 {
     context->makeCurrent( surface );
+    for( auto it: stratigraphies )
+    {
+        (it.second)->update();
+    }
+    emit updateCanvas();
 
-    if( regions.findElement( index_ ) == false ) return;
-    RegionShader* region_ = regions.getElement( index_ );
-    region_->update();
+}
+
+
+void Scene3d::addRegion( const std::shared_ptr< Regions >& region_ )
+{
+    context->makeCurrent( surface );
+    regions[ region_->getIndex() ] = std::make_shared< RegionShader >( region_ );
+    emit updateCanvas();
+}
+
+
+void Scene3d::updateRegion( const std::size_t& index_ )
+{
+    context->makeCurrent( surface );
+    if( regions.find( index_ ) == regions.end() )
+    regions[ index_ ]->update();
 
     emit updateCanvas();
 
 }
+
 
 void Scene3d::updateRegions()
 {
-    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
+    context->makeCurrent( surface );
+    for( auto it: regions )
+        (it.second)->update();
 
-        RegionShader* region_ = regions.getElement( it->first );
-        if( region_ == nullptr ) continue;
-
-        region_->update();
-    }
     emit updateCanvas();
 }
 
 
-void Scene3d::removeRegions()
+void Scene3d::clearRegions()
 {
-    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
+    context->makeCurrent( surface );
 
-        RegionShader* region_ = regions.getElement( it->first );
-        if( region_ == nullptr ) continue;
-
-        region_->clear();
-        delete region_;
-        region_ = nullptr;
-    }
+    for( auto it: regions )
+        (it.second)->reset();
     regions.clear();
 
     emit updateCanvas();
 }
 
 
-void Scene3d::addMainCrossSection( CrossSection* const& raw_ )
-{
-    context->makeCurrent( surface );
-
-    main_csection = new PlaneShader( raw_ );
-    emit updateCanvas();
-}
-
-
-
-void Scene3d::addCrossSection( CrossSection* const& raw_ )
-{
-    context->makeCurrent( surface );
-
-    csections.addElement( raw_->getDepth(), new PlaneShader( raw_ ) );
-
-    emit updateCanvas();
-}
-
-
-void Scene3d::updateCrossSection( CrossSection* const& raw_ )
-{
-    context->makeCurrent( surface );
-
-    if( csections.findElement( raw_->getDepth() ) == false  ) return;
-    PlaneShader* csection_ = csections.getElement( raw_->getDepth() );
-    csection_->update();
-
-    emit updateCanvas();
-}
-
-
-void Scene3d::updateCrossSections()
-{
-    context->makeCurrent( surface );
-
-    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
-    {
-        PlaneShader* csection_ = csections.getElement( it->first );
-        if( csection_ == nullptr ) continue;
-
-        csection_->update();
-    }
-
-    emit updateCanvas();
-
-}
-
-
-void Scene3d::updateMainCrossSection()
-{
-    context->makeCurrent( surface );
-
-    if( main_csection == nullptr ) return;
-    main_csection->update();
-
-    emit updateCanvas();
-}
-
-
-void Scene3d::removeCrossSection( CrossSection* const& raw_ )
-{
-    context->makeCurrent( surface );
-
-    if( csections.findElement( raw_->getDepth() ) == false  ) return;
-    csections.removeElement( raw_->getDepth() );
-    emit updateCanvas();
-}
-
-
-void Scene3d::addObject(  Object* const& raw_ )
-{
-    context->makeCurrent( surface );
-
-    objects.addElement( raw_->getIndex(), new SurfaceShader( raw_ ) );
-    emit updateCanvas();
-
-}
-
-void Scene3d::updateObject( const std::size_t &index_ )
-{
-
-    SurfaceShader* obj_ = objects.getElement( index_ );
-    obj_->update();
-
-    emit updateCanvas();
-}
-
-void Scene3d::updateObjects()
-{
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        SurfaceShader* obj_ = objects.getElement( it->first );
-        if( obj_ == nullptr ) continue;
-        obj_->enableDrawingEdges();
-        obj_->update();
-    }
-
-}
-
-void Scene3d::removeObject( const std::size_t &index_ )
-{
-
-    if( objects.findElement( index_ ) == false ) return;
-
-    SurfaceShader* obj_ = objects.getElement( index_ );
-    obj_->clear();
-    delete obj_;
-    obj_ = nullptr;
-
-    objects.removeElement( index_ );
-
-    emit updateCanvas();
-}
-
-
-
-void Scene3d::setHeightMap( double zmin_, double zmax_ )
-{
-
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
-        SurfaceShader* obj_ = objects.getElement( it->first );
-        if( obj_ == nullptr ) continue;
-
-        obj_->setHeightMap( zmin_, zmax_);
-
-    }
-
-}
-
-
-
 void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                const int& h )
 {
 
+
+    Eigen::Affine3f V_ =  V*Eigen::Scaling( Eigen::Vector3f ( 1., v_exag, 1.) );
+
+
     if( volume != nullptr )
-        volume->draw( V, P, w, h );
+        volume->draw( V_, P, w, h );
 
     if( main_csection != nullptr )
-        main_csection->draw( V, P, w, h );
+        main_csection->draw( V_, P, w, h );
 
-
-    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
+    for ( auto it: stratigraphies )
     {
-        (it->second)->draw( V, P, w, h );
+        std::shared_ptr < SurfaceShader > surface_ = it.second;
+        surface_->draw( V_, P, w, h );
     }
 
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
+    for ( auto it: regions )
     {
-        (it->second)->draw( V, P, w, h );
+        std::shared_ptr < RegionShader > region_ = it.second;
+        region_->draw( V_, P, w, h );
     }
 
-    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
-        (it->second)->draw( V, P, w, h );
-    }
-
-}
-
-
-
-
-void Scene3d::setCurrentDirectory( const QString& dir )
-{
-    shader_directory = dir;
 }
 
 
@@ -355,79 +252,42 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 
 
 
-void Scene3d::clear()
+void Scene3d::setVerticalExaggeration( double scale_ )
+{
+    v_exag = scale_;
+    emit updateCanvas();
+
+}
+
+
+void Scene3d::clearScene()
 {
 
-    for ( CrossSectionsContainer::Iterator it =  csections.begin(); it != csections.end(); ++it )
-    {
-        PlaneShader* csection_ = csections.getElement( it->first );
-        if( csection_ == nullptr ) continue;
 
-        csection_->clear();
-        delete csection_;
-        csection_ = nullptr;
-    }
-    csections.clear();
+    for( auto it: cross_sectionsX )
+        (it.second)->reset();
+    cross_sectionsX.clear();
 
-    for ( ObjectsContainer::Iterator it =  objects.begin(); it != objects.end(); ++it )
-    {
+    for( auto it: cross_sectionsY )
+        (it.second)->reset();
+    cross_sectionsY.clear();
 
-        SurfaceShader* obj_ = objects.getElement( it->first );
-        if( obj_ == nullptr ) continue;
+    for( auto it: cross_sectionsZ )
+        (it.second)->reset();
+    cross_sectionsZ.clear();
 
-        obj_->clear();
-        delete obj_;
-        obj_ = nullptr;
-    }
-    objects.clear();
+    for( auto it: stratigraphies )
+        (it.second)->reset();
+    stratigraphies.clear();
 
-
-    for ( RegionsContainer::Iterator it =  regions.begin(); it != regions.end(); ++it )
-    {
-
-        RegionShader* region_ = regions.getElement( it->first );
-        if( region_ == nullptr ) continue;
-
-        region_->clear();
-        delete region_;
-        region_ = nullptr;
-    }
+    for( auto it: regions )
+        (it.second)->reset();
     regions.clear();
 
+    volume.reset();
+    main_csection.reset();
 
-    if( volume != nullptr )
-    {
-        volume->clear();
-        delete volume;
-        volume = nullptr;
-    }
 
-    if( output_volume != nullptr )
-    {
-        output_volume->clear();
-        delete output_volume;
-        output_volume = nullptr;
-    }
-
-    if( main_csection != nullptr )
-    {
-        main_csection->clear();
-        delete main_csection;
-        main_csection = nullptr;
-    }
-
-    clearData();
+    current_color = QColor( 255, 0, 0 );
     emit updateCanvas();
 }
-
-
-void Scene3d::clearData()
-{
-    volume = nullptr;
-    output_volume = nullptr;
-    main_csection = nullptr;
-    current_color = Qt::red;
-    shader_directory.clear();
-
-}
-

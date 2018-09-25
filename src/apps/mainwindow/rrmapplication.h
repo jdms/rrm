@@ -36,211 +36,209 @@
 #include <QObject>
 
 
-#include "3dview/canvas3d.h"
-#include "sketching/sketchwindow.h"
-#include "simulator/flow_window.h"
+#include "./apps/3dview/canvas3d.h"
+#include "./apps/sketching/sketchwindow.h"
+
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
-#include "./core/widgets/objecttree.h"
-#include "./core/widgets/pages_stack.h"
 
-
-enum class AppsCommands{ NEW, SAVE, LOAD, UNDO, REDO };
-enum class CommonCommands{ ADD, REMOVE, SET, GET };
-enum class CommonProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE};
-enum class CommonObjects{ VOLUME, STRATIGRAPHY, CROSS_SECTION, REGION };
-
-
-
-struct Color
-{
-    int r = 255;
-    int b = 0;
-    int g = 0;
-};
-
-
-template < typename TI, typename TO = void > struct FunctionType
-{
-    using method = std::function< TO( TI args ) >;
-    using method_objs = std::function< TO( CommonObjects obj_, TI args ) >;
-};
-
-
-template < typename TI, typename TI1, typename TO = void > struct FunctionType1
-{
-    using method = std::function< void( TI args, TI1 args1 ) >;
-    using method_objs = std::function< void( CommonObjects obj_, TI args, TI1 args1 ) >;
-
-};
-
-
-using simple_method = std::function< void(void) >;
-using singleparams_sizet = FunctionType< std::size_t >::method_objs;
-using singleparams_double = FunctionType< double >::method_objs;
-
-using inputs_string = FunctionType1< std::size_t, std::string >::method_objs;
-using inputs_bool = FunctionType1< std::size_t, bool >::method_objs;
-using inputs_color = FunctionType1< std::size_t, Color >::method_objs;
-
-using output_string = FunctionType< std::size_t, std::string >::method_objs;
-using output_bool = FunctionType< std::size_t, bool >::method_objs;
-using output_color = FunctionType< std::size_t, Color >::method_objs;
-
+//#include "./core/widgets/pages_stack.h"
+//#include "./apps/simulator/flow_window.h"
+//#include "./core/widgets/objecttree.h"
 
 
 class MainWindow;
+class Controller;
 
 
-class RRMApplication
+class RRMApplication: public QObject
 {
+    Q_OBJECT
 
+public:
 
-    public:
 
+    RRMApplication() = default;
+    RRMApplication(const RRMApplication & app_);
+    RRMApplication & operator=(const RRMApplication & app_);
+    ~RRMApplication(){}
 
-        RRMApplication() = default;
-        RRMApplication( MainWindow* mw_ );
-        ~RRMApplication(){}
+    void setMainWindow( MainWindow* const& window_ );
+    void setController(/* Controller* const& controller_ */);
+    void init();
 
 
-        void init();
 
 
-        void setSiderBarVisibility( bool status_ );
-        void setDefaultRule( Settings::Stratigraphy::StratigraphicRules rule_ );
-        void setDefaultSketchingRegion( Settings::Objects::BounderingRegion sketching_region_ );
-        void setDefaultSiderBarValues();
-        void setRRMDefaultValuesOnInterface();
+public slots:
 
 
-        void changeVolumeDimension( const Settings::CrossSection::CrossSectionDirections& dir_, double value_ );
-        void changeVolumeDimensions( const Settings::CrossSection::CrossSectionDirections& dir_, double dim1_, double dim2_ );
+    void setVolumeName( const std::string& name_ );
+    void setVolumeVisible( bool status_ );
 
-        void setVolumeOriginToController( double ox_, double oy_, double oz_ );
-        void setVolumeDimensionsToController(  double width_, double height_, double length_ );
-        void getVolumeDimensionsFromController() const;
 
+    void setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
-        void setVolumeName( std::size_t index_, const std::string& name_ );
-        void setVolumeVisible( std::size_t index_, bool status_ );
+    void setVolumeWidth( double width_ );
+    void setVolumeHeight( double height_ );
+    void setVolumeDepth( double lenght_ );
 
+    void setDiscretization( const Settings::CrossSection::CrossSectionDirections& dir_ );
+    void setMeshResolution( const std::string& resolution_ );
 
+    void changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections dir_ );
+    void moveMainCrossSection( double depth_ );
 
-        void setCurrentCrossSection( double depth_ );
+    void addFixedCrossSection( double depth_, QColor color_ );
+    void removeFixedCrossSection( double depth_ );
 
+    void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  );
 
+    void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-        void setObjectName( std::size_t index_, const std::string& name_ );
-        void setObjectVisible( std::size_t index_, bool status_ );
-        void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
 
-        void saveObjectInformation( const std::string & text_ );
-        void getObjectInformation( QTreeWidgetItem* const& item_ ) const;
+    void setObjectVisible( std::size_t index_, bool status_ );
+    void setObjectName( std::size_t index_, const std::string& name_ );
+    void setObjectColor( std::size_t index_, int red_, int green_, int blue_ );
 
 
-        void setRegionName( std::size_t index_, const std::string& name_ );
-        void setRegionVisible( std::size_t index_, bool status_ );
-        void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
+    void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
 
+    void addCurveToObject( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+    void addTrajectoryToObject( const PolyCurve& curve_ );
+    void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+    void previewLastTrajectory();
 
-        void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
-        void setSketchAbove( bool status_ );
-        void setSketchBelow( bool status_ );
-        void setObjectAsBoundering( std::size_t index_ );
+    void createObjectSurface();
 
+    void getRegions(bool status_);
 
-        void initSketchingApp();
-        void updateSketchingCanvas();
+    void setRegionsVisible( bool status_ );
+    void setRegionVisible( std::size_t index_, bool status_ );
+    void setRegionName( std::size_t index_, const std::string& name_ );
+    void setRegionColor( std::size_t index_, int red_, int green_, int blue_ );
 
-        void acceptSketchingCurve( const PolyCurve& curve_, double depth_ );
-        void removeCurveFromObject(  double depth_, std::size_t index_ );
-        void acceptSketchingTrajectory( const PolyCurve& curve_ );
-        void createObjectSurface();
 
 
-        void setModeSelecting();
-        void setModeSketching();
+    void createDomain( std::size_t index_ );
 
+    void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
+    void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
+    void removeDomain( std::size_t index_ );
 
-        void save( const std::string& filename_ );
-        void load( const std::string& filename_ );
 
+    void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
+    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
-        void undo();
-        void redo();
-        void checkUndoRedo();
-        void checkSketchStatus();
 
+    void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
-        void setCurrentColor( int r_, int g_, int b_ );
-        void defineRandomColor();
+    void setSketchAbove( bool status_ );
+    void setSketchBelow( bool status_ );
+    void setSketchRegion( bool status_ );
 
-        void screenshot();
 
-        void clearInterface();
-        void clear();
-        void restart();
+    void defineCurrentColor( int red_, int green_, int blue_ );
 
+    void undo();
+    void redo();
+    void checkUndoRedo();
+    void checkPreserveStatus();
 
-        void addCrossSectionCanvas( double depth_, QColor color_ );
-        void removeCrossSectionCanvas( double depth_ );
+    void save( const std::string& filename_ );
+    void load( const std::string& filename_ );
 
+    void loadObjectTree();
+    void updateObjectTree();
 
-        void setImageToCrossSection( double depth_, std::string file_, double ox_, double oy_, double x_, double y_ );
-        void removeImageFromCrossSection( double depth_ );
 
+    void reset();
 
-        void setImageToTopView( std::string file_, double ox_, double oy_, double x_, double y_ );
-        void removeImageFromTopView();
-        void getHeightMapTopView();
 
-        void startFlowDiagnostics();
-        void closeFlowDiagnostics();
+    void setObjectSelectedAsBoundering( const std::size_t& index_ );
+    void selectBounderingBySketch( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  );
+    void getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
-        void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
-        void getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, std::vector< FlowWindow::CurveMesh>& left_curves,
-                                std::vector< FlowWindow::CurveMesh >& right_curves, std::vector< FlowWindow::CurveMesh > & front_curves,
-                                std::vector< FlowWindow::CurveMesh >& back_curves );
 
+    void defineRandomColor();
 
-        void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+    void updateRegionBoundary();
 
-        void setLowResolution();
-        void setMediumResolution();
-        void setHighResolution();
+    void setRegionSelected( const std::size_t& id_, bool status_ );
 
-        void enablePreview( bool status_ );
+    void updateUpperBoundary();
+    void updateLowerBoundary();
 
-        void exportToIRAP();
+    void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+    void exportToIRAP();
 
+    void setVerticalExaggeration( double scale_ );
+    void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
 
-    protected:
+signals:
 
+    void addObject( const std::shared_ptr<Object>& obj_ );
+    void addObjectinObjectTree( const std::shared_ptr<Object>& obj_ );
 
-        std::unordered_map< AppsCommands, simple_method > runs;
-        std::unordered_map< CommonObjects, singleparams_sizet > adds, remove;
-        std::unordered_map< CommonObjects, singleparams_double > adds_double, remove_double;
+    void updateVolume();
+    void defineVolumeGeometry( double ox_, double oy, double oz, double w_, double h_, double d_ );
 
-        std::unordered_map< CommonProperties, output_string > getters_string;
-        std::unordered_map< CommonProperties, output_bool > getters_bool;
-        std::unordered_map< CommonProperties, output_color > getters_color;
+    void updateObjects();
+    void updateTrajectories();
 
+    void updateMainCrossSection();
+    void updateTopViewCrossSection();
 
-        MainWindow* mainwindow = nullptr;
+    void changeToTopViewDirection();
+    void changeToCrossSectionDirection();
 
 
-        const double VOLUME_WIDTH = 500;
-        const double VOLUME_HEIGHT = 500;
-        const double VOLUME_LENGTH = 500;
+    void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+    void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
+    void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
 
-        std::size_t discretization = 1;
-        double step_csection = 1.0;
 
+    void addRegions();
+    void updateRegions();
+    void clearRegions();
 
+
+    void updateDiscretization( const std::size_t& disc_ );
+    void updateRange( double min_, double max_, bool inverted_ = true );
+
+    void startApplication();
+    void resetApplication();
+
+    void disableVolumeResizing();
+    void enableVolumeResizing();
+
+    void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+    void unlockDirections();
+
+    void selectEnabled( const std::string& option_, bool status_ = true );
+
+    void enablePreserve( const std::string& option_, bool status_ = true );
+
+    void setCurrentColor( int r_, int g_, int b_ );
+
+    void setCurveAsBoundering( const PolyCurve& boundary_ );
+    void clearBounderingArea();
+
+    void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
+
+    void updateBoundary();
+    void setVerticalExaggerationScale( double scale_ );
+
+
+
+protected:
+
+
+    MainWindow* window;
+    Controller* controller;
 
 };
 

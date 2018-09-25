@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "./core/models/shader.h"
 #include "./core/models/regions.h"
@@ -38,10 +39,10 @@ class RegionShader: public Shader
     public:
 
         RegionShader();
-        RegionShader( Regions* const& raw_ );
+        RegionShader( const std::shared_ptr< Regions >& raw_ );
+        ~RegionShader();
 
-
-        void setRegion( Regions* const& raw_ );
+        void setRegion( const std::shared_ptr< Regions >& raw_ );
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -87,7 +88,7 @@ class RegionShader: public Shader
         GLuint number_of_vertices;
         GLuint number_of_faces;
 
-        Regions* raw;
+        std::shared_ptr< Regions > raw;
 
 };
 

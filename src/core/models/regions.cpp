@@ -23,10 +23,40 @@
 
 #include "regions.h"
 
+
 Regions::Regions()
 {
+    std::cout << "REGION CREATED" << std::endl << std::flush;
     initialize();
 }
+
+Regions::Regions(const Regions & reg_)
+{
+
+    std::cout << "REGION CREATED" << std::endl << std::flush;
+
+    this->index_cells = reg_.index_cells;
+    this->vertices = reg_.vertices;
+
+}
+
+
+Regions::~Regions()
+{
+    clear();
+}
+
+Regions & Regions::operator=(const Regions & reg_)
+{
+    this->index_cells = reg_.index_cells;
+    this->vertices = reg_.vertices;
+
+    return *this;
+}
+
+
+///====================================================================
+
 
 void Regions::setIndex( const std::size_t id_ )
 {
@@ -40,77 +70,47 @@ std::size_t Regions::getIndex() const
 }
 
 
-void Regions::setPoint( double x_, double y_, double z_ )
-{
-    center.x = x_;
-    center.y = y_;
-    center.z = z_;
-}
-
-void Regions::getPoint( double& x_, double& y_, double& z_ ) const
-{
-    x_ = center.x;
-    y_ = center.y;
-    z_ = center.z;
-}
-
-
-void Regions::setName( const std::string& name_ )
-{
-    name.clear();
-    name = name_;
-}
-
-
-std::string Regions::getName() const
-{
-    return name;
-}
-
-
-void Regions::setVisible( const bool status_ )
-{
-    is_visible = status_;
-}
-
-bool Regions::isVisible() const
-{
-    return is_visible;
-}
-
-
 void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
 {
 
-    clearCells();
+    index_cells.clear();
+    index_cells.assign( faces_.begin(), faces_.end() );
 
-    std::size_t number_of_tetrahedrals = faces_.size()/4;
+}
+
+
+void Regions::getTriangleCells( std::vector< std::size_t >& cells_ ) const
+{
+    cells_.clear();
+
+
+    std::size_t number_of_tetrahedrals = index_cells.size()/4;
     std::cout << "Number of tetrahedrals: " << number_of_tetrahedrals << std::endl
               << std::flush;
 
 
     for( std::size_t i = 0; i < number_of_tetrahedrals; ++i )
     {
-        std::size_t v0 = faces_[ 4*i + 0 ];
-        std::size_t v1 = faces_[ 4*i + 1 ];
-        std::size_t v2 = faces_[ 4*i + 2 ];
-        std::size_t v3 = faces_[ 4*i + 3 ];
+        std::size_t v0 = index_cells[ 4*i + 0 ];
+        std::size_t v1 = index_cells[ 4*i + 1 ];
+        std::size_t v2 = index_cells[ 4*i + 2 ];
+        std::size_t v3 = index_cells[ 4*i + 3 ];
 
-        index_cells.push_back( v0 );
-        index_cells.push_back( v1 );
-        index_cells.push_back( v2 );
+        cells_.push_back( v0 );
+        cells_.push_back( v1 );
+        cells_.push_back( v2 );
 
-        index_cells.push_back( v0 );
-        index_cells.push_back( v2 );
-        index_cells.push_back( v3 );
+        cells_.push_back( v0 );
+        cells_.push_back( v2 );
+        cells_.push_back( v3 );
 
-        index_cells.push_back( v0 );
-        index_cells.push_back( v3 );
-        index_cells.push_back( v1 );
+        cells_.push_back( v0 );
+        cells_.push_back( v3 );
+        cells_.push_back( v1 );
 
-        index_cells.push_back( v1 );
-        index_cells.push_back( v3 );
-        index_cells.push_back( v2 );
+        cells_.push_back( v1 );
+        cells_.push_back( v3 );
+        cells_.push_back( v2 );
 
     }
 
@@ -142,6 +142,77 @@ void Regions::getVertices( std::vector< double >& vertices_  ) const
     vertices_.clear();
     vertices_.assign( vertices.begin(), vertices.end() );
 }
+
+
+
+void Regions::setLowerBound( const PolyCurve& lower_ )
+{
+    lower.clear();
+    lower = PolyCurve( lower_ );
+}
+
+void Regions::setUpperBound( const PolyCurve& upper_ )
+{
+    upper.clear();
+    upper = PolyCurve( upper_ );
+}
+
+const PolyCurve& Regions::getLowerBound() const
+{
+    return lower;
+}
+
+const PolyCurve& Regions::getUpperBound() const
+{
+    return upper;
+}
+
+
+
+
+///====================================================================
+
+
+
+void Regions::setPoint( double x_, double y_, double z_ )
+{
+    center.x = x_;
+    center.y = y_;
+    center.z = z_;
+}
+
+void Regions::getPoint( double& x_, double& y_, double& z_ ) const
+{
+    x_ = center.x;
+    y_ = center.y;
+    z_ = center.z;
+}
+
+
+void Regions::setName( const std::string& name_ )
+{
+    name.clear();
+    name = name_;
+}
+
+
+std::string Regions::getName() const
+{
+    return name;
+}
+
+
+//void Regions::setVisible( const bool status_ )
+//{
+//    is_visible = status_;
+//}
+
+
+//bool Regions::isVisible() const
+//{
+//    return is_visible;
+//}
+
 
 
 void Regions::clearVertices()
@@ -198,10 +269,15 @@ void Regions::getColor( int& r_, int& g_, int& b_ ) const
 
 void Regions::clear()
 {
+    lower.clear();
+    upper.clear();
+    name.clear();
+
     clearCells();
     clearVertices();
     initialize();
 }
+
 
 void Regions::initialize()
 {
@@ -216,4 +292,13 @@ void Regions::initialize()
     color.r = 255;
     color.g = 0;
     color.b = 0;
+
+
+    max.x = 0;
+    max.y = 0;
+    max.z = 0;
+
+    min.x = 0;
+    min.y = 0;
+    min.z = 0;
 }

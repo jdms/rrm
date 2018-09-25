@@ -25,10 +25,14 @@
 #define OBJECTTREE_H
 
 #include <QTreeWidget>
+#include <QMenu>
+#include<QDragEnterEvent>
+#include<QDragMoveEvent>
+#include <QDropEvent>
+#include <QMouseEvent>
 
 #include "objecttreeitem.h"
 #include "./core/models/container.h"
-
 
 
 class ObjectTree: public QTreeWidget
@@ -40,9 +44,12 @@ class ObjectTree: public QTreeWidget
 
         ObjectTree( QWidget* parent = 0 );
 
+
         void addInputVolume();
         void addOutputVolume();
         void removeOutputVolume();
+
+        void setVolumeVisibility(  std::size_t index_, const Qt::CheckState& status_ );
 
         void hideInputVolume();
         void hideOutputVolume();
@@ -60,19 +67,73 @@ class ObjectTree: public QTreeWidget
         void setObjectVisibility( std::size_t index_, bool status_ );
 
 
+
+        void setStratigraphiesVisible( const Qt::CheckState& status_ );
+        void setStructuralsVisible( const Qt::CheckState& status_ );
+        void setDomainsVisible( const Qt::CheckState& state_ );
+
+
+        void removeStratigraphies();
+        void removeStructurals();
+
+
         void addRegion( std::size_t index_, const std::string& name_,  const int& red_,
                         const int& green_,  const int& blue_ );
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
         void setRegionVisibility( std::size_t index_, bool status_ );
 
+        void setDomainsVisibility( std::size_t index_, bool status_ );
+
+
+
+//    private:
+
+//        void dragEnterEvent( QDragEnterEvent* event );
+//        void dragMoveEvent( QDragMoveEvent* event );
+//        void dropEvent( QDropEvent *event );
+//        void mouseReleaseEvent( QMouseEvent *event );
+//        void mouseMoveEvent( QMouseEvent *event );
+
+
+
+    public slots:
 
         void clear();
+        void createMenu();
+        void clearSubMenu();
 
+        void createDomain( std::size_t index_ = 0 );
+        void deleteDomain( std::size_t index_ = 0 );
+        void removeFromDomain();
+        void removeDomains();
+        void addToDomain( std::size_t index_ );
+
+        void removeRegions();
+
+
+        void createDomain1( std::size_t index_ );
+        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ = std::vector< std::size_t >() );
+        void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
+        void addToDomain1( std::size_t index_ );
+        void removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
+                                           const std::vector< std::size_t >& parents_ );
+
+        void removeFromDomain1();
+        void deleteDomain1( std::size_t index_ );
+        void deleteDomains1();
 
 
     protected slots:
 
         void filterAction( QTreeWidgetItem* item_, std::size_t column_ );
+        void showMenu( const QPoint& pos_ );
+
+        void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
+        void removeInputVolume();
+
+
+
+
 
 
     signals:
@@ -92,6 +153,19 @@ class ObjectTree: public QTreeWidget
         void setRegionName( std::size_t index_, const std::string& name_ );
         void setRegionColor( std::size_t index_, const QColor& color_ );
 
+        void objectSelected( const Settings::Objects::ObjectType& type_ );
+
+
+        void createDomainOfRegions( std::size_t index_ );
+        void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
+        void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
+        void removeDomain( std::size_t index_ );
+
+
+        void addRegionsToDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
+        void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+
+
 
 
     private:
@@ -104,9 +178,26 @@ class ObjectTree: public QTreeWidget
         int COLUMN_NAME_WIDTH = 30;
 
 
+        QTreeWidgetItem* label_stratigraphy;
+        QTreeWidgetItem* label_structural;
+        QTreeWidgetItem* label_domains;
+
+        Container< std::size_t, ObjectTreeItem* > stratigraphies;
+        Container< std::size_t, ObjectTreeItem* > structurals;
+
         Container< std::size_t, ObjectTreeItem* > items;
         Container< std::size_t, ObjectTreeItem* > regions;
+        Container< std::size_t, ObjectTreeItem* > domains;
 
+        std::map< std::size_t, QAction* > domain_actions_;
+
+
+        QMenu* mn_menu = nullptr;
+        QMenu* mn_submenu = nullptr;
+        QAction* ac_create_domain = nullptr;
+        QAction* ac_remove_domain = nullptr;
+        QAction* ac_removefrom_domain = nullptr;
+        QAction* ac_addto_domain = nullptr;
 
 };
 

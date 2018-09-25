@@ -47,110 +47,176 @@ class Object
 
 
         Object();
+        Object( const Object& obj_ );
+        Object& operator=( const Object & obj_ );
+
+        void setLog(const std::string& log_);
+        std::string getLog() const;
+
+        ~Object();
 
 
-        void setIndex( const std::size_t id_ );
+        ///======================================================================
+
+
+        virtual void setIndex( std::size_t id_ );
         std::size_t getIndex() const;
 
 
         void setName( const std::string& name_ );
         std::string getName() const;
 
+        void setColor(int r_, int g_, int b_);
+        void getColor(int& r_, int& g_, int& b_) const;
+
+        void setBoundingBox( double xmin_, double xmax_, double ymin_, double ymax_,
+                             double zmin_, double zmax_ );
+        void getBoundingBox( double& xmin_, double& xmax_, double& ymin_, double& ymax_,
+                             double& zmin_, double& zmax_ );
+
+        void setMaximumBounding( double xmax_, double ymax_, double zmax_ );
+        void setMinimumBounding( double xmin_, double ymin_, double zmin_ );
+
+
+        void setEditable( bool status_ );
+        bool isEditable() const;
+
+        void setSelectable( bool status_ );
+        bool isSelectable() const;
+
+        void setSelected( bool status_ );
+        bool isSelected() const;
+
+        void setVisible( bool status_ );
+        bool isVisible() const;
+
+        void setActive( bool status_ );
+        bool isActive() const;
+
+
+        // remove after creating structural, or another structure representing obj geologicals as surfaces
+
+
+        void setCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        Settings::CrossSection::CrossSectionDirections getCrossSectionDirection() const;
+
+        const PolyCurve&  getCurve( double csection_ ) const { return PolyCurve();  }
+
+        std::map< double, PolyCurve > getCurves() ;
+
+
+        std::vector< double > getCurves2D( bool swap_ = false );
+        std::vector< double > getCurves3D();
+        std::vector< double > getCurves3DX();
+        std::vector< double > getCurves3DY();
+        std::vector< double > getCurves3DZ();
+
+        void removeCurves();
+
+        bool getTrajectory( PolyCurve& traj_ ) const { return false; }
+
+        void surfaceDone() {}
+
+
+        bool addCurve( double csection_id_, const PolyCurve& curve_ );
+        bool removeCurve( double csection_id_ );
+
+        void removeLevelCurves();
+
+        std::size_t getNumberOfCrossSections() const;
+
+        bool addTrajectory( const PolyCurve& traj_ );
+        void removeTrajectory();
+
+        void setSurface( const Surface& surface_ );
+        const Surface& getSurface() const;
+
+        void removed();
+
+        ///======================================================================
+
+
+
+
+
 
         void setType( const Settings::Objects::ObjectType& type_ );
         Settings::Objects::ObjectType getType() const;
 
-
-        void setColor( int r, int g, int b );
-        void getColor( int& r, int& g, int& b ) const ;
-
-
-        void setEditable( const bool status_ );
-        bool isEditable() const;
-
-
-        void setSelectable( const bool status_ );
-        bool isSelectable() const;
-
-
-        void setSelected( const bool status_ );
-        bool isSelected() const;
-
-
-        void setVisible( const bool status_ );
-        bool isVisible() const;
-
-
-        void setActive( const bool status_ );
-        bool isActive() const;
-
-
         void setDone( const bool status_ );
         bool isDone() const;
-
 
         void saveInformation( const std::string& text_ );
         const std::string& getInformation();
         void clearInformation();
 
-
         bool isEmpty() const;
 
-
-        bool addCurve( double csection_id_, const PolyCurve& curve_ );
         bool hasCurve( double csection_id_ ) const;
         PolyCurve getCurve( double csection_id_ );
-        bool removeCurve( double csection_id_ );
-        void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
+        void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
         Object::CrossSectionsContainer getCrossSectionCurves() const;
         void removeCrossSectionCurves();
 
-
-        bool addTrajectory( const PolyCurve& traj_ );
         PolyCurve getTrajectory();
-        void removeTrajectory();
         bool hasTrajectory() const;
 
-
         void clearPreviewCurves();
-
 
         bool isCurveAdmissible();
         bool isTrajectoryAdmissible();
 
-
-        void setSurface( const Surface& surface_ );
-        Surface getSurface() const;
+        bool hasSurface(){ return !surface.isEmpty(); }
         void removeSurface();
 
-
-        void setMaxMin( double maxx_, double maxy_, double maxz_,
-                        double minx_, double miny_, double minz_ );
-        void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
-                        double& minx_, double& miny_, double& minz_ ) const;
-
-
-        void clear();
+        virtual void clear();
         void initialize();
 
         static void resetAllObjects();
-
 
         inline void write( QJsonObject &json ) const
         {
             json[ "name" ] = QString( name.c_str() );
             json[ "text_information" ] = QString( text_information.c_str() );
-            json[ "is_editable" ] = is_editable;
-            json[ "is_selectable" ] = is_selectable;
-            json[ "is_selected" ] = is_selected;
-            json[ "is_visible" ] = is_visible;
-            json[ "is_active" ] = is_active;
-            json[ "is_done" ] = is_active;
-            json[ "red" ] = color.r;
-            json[ "green" ] = color.g;
-            json[ "blue" ] = color.b;
+            json[ "is_editable" ] = editable;
+            json[ "is_selectable" ] = selectable;
+            json[ "is_selected" ] = selected;
+            json[ "is_visible" ] = visible;
+            json[ "is_active" ] = active;
+            json[ "is_done" ] = is_done;
+            json[ "red" ] = color.red;
+            json[ "green" ] = color.green;
+            json[ "blue" ] = color.blue;
+            json[ "blue" ] = color.blue;
+
+
+            double object_type_ = 0;
+            if( type == Settings::Objects::ObjectType::VOLUME )
+                object_type_ = 1;
+            else if( type == Settings::Objects::ObjectType::CROSS_SECTION )
+                object_type_ = 2;
+            else if( type == Settings::Objects::ObjectType::STRATIGRAPHY )
+                object_type_ = 3;
+            else if( type == Settings::Objects::ObjectType::STRUCTURAL )
+                object_type_ = 4;
+            else if( type == Settings::Objects::ObjectType::REGION )
+                object_type_ = 5;
+            else if( type == Settings::Objects::ObjectType::WELL )
+                object_type_ = 6;
+
+            json[ "type" ] = object_type_;
+
+
+            double object_direction_ = 0;
+            if( direction == Settings::CrossSection::CrossSectionDirections::Y )
+                object_direction_ = 1;
+            else if( direction == Settings::CrossSection::CrossSectionDirections::Z )
+                object_direction_ = 2;
+
+            json[ "direction" ] = object_direction_;
 
         }
 
@@ -166,33 +232,67 @@ class Object
                 text_information = json["text_information"].toString().toStdString();
 
             if (json.contains("is_editable") && json["is_editable"].isBool())
-                is_editable =json["is_editable"].toBool();
+                editable =json["is_editable"].toBool();
 
             if (json.contains("is_selectable") && json["is_selectable"].isBool())
-                is_selectable = json["is_selectable"].toBool();
+                selectable = json["is_selectable"].toBool();
 
             if (json.contains("is_selected") && json["is_selected"].isBool())
-                is_selected = json["is_selected"].toBool();
+                selected = json["is_selected"].toBool();
 
             if (json.contains("is_visible") && json["is_visible"].isBool())
-                is_visible = json["is_visible"].toBool();
+                visible = json["is_visible"].toBool();
 
             if (json.contains("is_active") && json["is_active"].isBool())
-                is_active = json["is_active"].toBool();
+                active = json["is_active"].toBool();
 
             if (json.contains("is_done") && json["is_done"].isBool())
                 is_done = json["is_done"].toBool();
 
             if (json.contains("red") && json["red"].isDouble())
-                color.r = json["red"].toInt();
+                color.red = json["red"].toInt();
 
             if (json.contains("green") && json["green"].isDouble())
-                color.g = json["green"].toInt();
+                color.green = json["green"].toInt();
 
             if (json.contains("blue") && json["blue"].isDouble())
-                color.b = json["blue"].toInt();
+                color.blue = json["blue"].toInt();
+
+            if (json.contains("type") && json["type"].isDouble() )
+            {
+                Settings::Objects::ObjectType object_type_ = Settings::Objects::ObjectType::NONE;
+
+                if( json["type"] == 1 )
+                    object_type_ = Settings::Objects::ObjectType::VOLUME;
+                else if( json["type"] == 2 )
+                    object_type_ = Settings::Objects::ObjectType::CROSS_SECTION;
+                else if( json["type"] == 3 )
+                    object_type_ = Settings::Objects::ObjectType::STRATIGRAPHY;
+                else if( json["type"] == 4 )
+                    object_type_ = Settings::Objects::ObjectType::STRUCTURAL;
+                else if( json["type"] == 5 )
+                    object_type_ = Settings::Objects::ObjectType::REGION;
+                else if( json["type"] == 6 )
+                    object_type_ = Settings::Objects::ObjectType::WELL;
+
+                type = object_type_;
+            }
+
+
+            if (json.contains("direction") && json["direction"].isDouble() )
+            {
+                Settings::CrossSection::CrossSectionDirections object_direction_ = Settings::CrossSection::CrossSectionDirections::X;
+
+                if( json["type"] == 1 )
+                    object_direction_ = Settings::CrossSection::CrossSectionDirections::Y;
+                else if( json["type"] == 2 )
+                    object_direction_ = Settings::CrossSection::CrossSectionDirections::Z;
+
+                direction = object_direction_;
+            }
 
         }
+
 
 
 
@@ -201,47 +301,62 @@ class Object
         void defineIndex();
 
 
+    std::size_t index = 0;
 
     private:
 
+
+        struct Color {
+            int red = 255;
+            int green = 0;
+            int blue = 0;
+        };
+
+        struct Point
+        {
+            double x = 0.0;
+            double y = 0.0;
+            double z = 0.0;
+        };
+
+
+
+        std::string name;
+        std::string log;
+        Settings::Objects::ObjectType type;
+
+        Color color;
+        Point min, max;
+
+        bool editable = true;
+        bool selectable = false;
+        bool selected = false;
+        bool visible = true;
+        bool active = true;
+        bool is_done = false;
+
+        std::set< double > user_entered;
+        std::map< double, PolyCurve > csection_curves1;
+        std::map< double, PolyCurve > level_curves1;
+        Settings::CrossSection::CrossSectionDirections direction;
+
+
+
+        ///==========================================
+
         static std::size_t number_of_objects;
 
-        std::size_t index;
-        std::string name;
-
-        Settings::Objects::ObjectType type;
 
         std::string text_information;
 
-        bool is_editable;
-        bool is_selectable;
-        bool is_selected;
-        bool is_visible;
-        bool is_active;
-        bool is_done;
+        std::vector< double > used_depth;
 
         CrossSectionsContainer csection_curves;
         Surface surface;
         PolyCurve trajectory;
 
-
-        struct Color
-        {
-            int r = 255;
-            int g = 0;
-            int b = 0;
-        } color;
-
-        struct Point
-        {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-        } max, min;
-
-
         const std::size_t CHANNEL_MAX_CSECTIONS = 2;
-        std::set< double > user_entered;
+
 
 };
 

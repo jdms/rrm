@@ -211,16 +211,16 @@ QPainterPath ObjectItemWrapper::polycurveToQPainterPath( const PolyCurve& pol_ )
 
     QPainterPath path_;
 
-    std::vector< double > vertices_ = pol_.getVertices();
-    std::vector< std::size_t > edges_ = pol_.getEdges();
+//    std::vector< double > vertices_ = pol_.getVertices();
+//    std::vector< std::size_t > edges_ = pol_.getEdges();
 
-    if( edges_.empty() == true )
-        path_.addPolygon( ObjectItemWrapper::vectorToQPolygonF( vertices_ ) );
+//    if( edges_.empty() == true )
+//        path_.addPolygon( ObjectItemWrapper::vectorToQPolygonF( vertices_ ) );
 
-    else
-    {
-        path_ = ObjectItemWrapper::vectorToPainterPath( vertices_, edges_ );
-    }
+//    else
+//    {
+//        path_ = ObjectItemWrapper::vectorToPainterPath( vertices_, edges_ );
+//    }
 
 
     return path_;
