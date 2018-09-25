@@ -49,7 +49,7 @@ set(CMAKE_BUILD_TYPE "${STRATMOD_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
 
 option(STRATMOD_BUILD_SHARED_LIBRARY "Build a shared library instead of static library" ON)
-option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   ON)
+option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   OFF)
 option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"             ON)
 option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
 option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
@@ -162,6 +162,9 @@ endif(STRATMOD_BUILD_DOCS)
 #     include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
 # endif(Eigen3_FOUND) 
 
+if(STRATMOD_EIGEN3_INCLUDE_DIR)
+    message(STATUS "Using eigen3 include dir: ${STRATMOD_EIGEN3_INCLUDE_DIR}")
+endif()
 
 
 ###############################################
@@ -179,6 +182,7 @@ include(ExternalProject)
 set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
 
 set(PLANIN_CMAKE_ARGS 
+    -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
     -DPLANIN_BUILD_DOCS=OFF 
     -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
     -DPLANIN_BUILD_USING_OPENMP=${STRATMOD_BUILD_USING_OPENMP}
@@ -188,6 +192,7 @@ set(PLANIN_CMAKE_ARGS
 
 if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
     set(PLANIN_CMAKE_ARGS 
+        -DPLANIN_EIGEN_INCLUDE_DIR=${STRATMOD_EIGEN_INCLUDE_DIR}
         -DPLANIN_BUILD_DOCS=OFF 
         -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
         -DPLANIN_BUILD_USING_OPENMP=ON 
