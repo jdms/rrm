@@ -555,7 +555,10 @@ void RRMApplication::updateLowerBoundary()
 }
 
 
-
+std::vector< std::size_t > RRMApplication::getDomains() const
+{
+    return controller->getDomains();
+}
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
@@ -815,4 +818,85 @@ void RRMApplication::setVerticalExaggeration( double scale_ )
 void RRMApplication::setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ )
 {
     controller->setGuidedExtrusion( px_, py_, pz_, curve_ );
+}
+
+
+void RRMApplication::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+{
+     controller->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ;
+}
+
+
+void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
+                                        std::vector< FlowWindow::CurveMesh>& left_curves,
+                                        std::vector< FlowWindow::CurveMesh >& right_curves,
+                                        std::vector< FlowWindow::CurveMesh > & front_curves,
+                                        std::vector< FlowWindow::CurveMesh >& back_curves )
+{
+    std::vector< Controller::TriangleMesh > meshes;
+    std::vector< Controller::CurveMesh > lcurves;
+    std::vector< Controller::CurveMesh > rcurves;
+    std::vector< Controller::CurveMesh > fcurves;
+    std::vector< Controller::CurveMesh > bcurves;
+
+    controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves );
+
+    for( std::size_t i = 0; i < meshes.size(); ++i )
+    {
+        FlowWindow::TriangleMesh t;
+        t.vertex_list = meshes[i].vertex_list;
+        t.face_list = meshes[i].face_list;
+        triangles_meshes.push_back( t );
+    }
+
+    for ( std::size_t i = 0; i < lcurves.size(); ++i )
+    {
+        FlowWindow::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+
+        std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) );
+        std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) );
+
+        std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) );
+        std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) );
+
+
+        std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) );
+        std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) );
+
+
+        std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) );
+        std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) );
+
+
+        left_curves.push_back( cm_lb );
+        right_curves.push_back( cm_rb );
+        front_curves.push_back( cm_fb );
+        back_curves.push_back( cm_bb );
+    }
+}
+
+
+std::map< int, std::vector< float > > RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+{
+    std::vector< int > regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
+
+    std::map< int, std::vector< float > > colors_;
+    for( auto it: regions_ )
+    {
+        int r = 255, g = 0, b = 0;
+        controller->getRegionColor( it, r, g, b );
+
+        std::vector< float > color_;
+        color_.resize( 3 );
+
+        color_[ 0 ]= static_cast< float >( r/255.f );
+        color_[ 1 ]= static_cast< float >( g/255.f );
+        color_[ 2 ]= static_cast< float >( b/255.f );
+
+        colors_[ it ] = color_;
+
+    }
+
+    return colors_;
+
 }

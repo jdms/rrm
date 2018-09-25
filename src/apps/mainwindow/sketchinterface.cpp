@@ -20,28 +20,6 @@ void SketchInterface::createInterface()
 void SketchInterface::createSketchingWindow()
 {
 
-    /*
-     *  sketch_window = new SketchWindow();
-    dw_sketchwindow = new QDockWidget( "Cross-Section" );
-    dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_sketchwindow->setWidget( sketch_window );
-    addDockWidget( Qt::TopDockWidgetArea, dw_sketchwindow );
-
-
-    sketch_topview_window = new SketchWindow();
-    dw_topview_window = new QDockWidget( "Top-View" );
-    dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_topview_window->setWidget( sketch_topview_window );
-    addDockWidget( Qt::TopDockWidgetArea, dw_topview_window );
-
-
-    ac_topview = new QAction( "Top-View", this);
-    ac_topview->setCheckable( true );
-    ac_topview->setChecked( true );
-
-*/
-
-
     scontroller = new SketchingController();
 
     sketch_window = new SketchWindow();
@@ -83,6 +61,7 @@ void SketchInterface::createSketchingActions()
 
     ////
 
+    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
 
 
     connect( ac_csection, &QAction::toggled, dw_sketchwindow, &QDockWidget::setVisible );
@@ -318,4 +297,18 @@ void SketchInterface::init()
         sketch_topview_window->disableResizeVolume( false );
 
     scontroller->init();
+}
+
+
+void SketchInterface::showOnlyMainCanvas()
+{
+
+    sketch_window->setVisible( false );
+    sketch_topview_window->setVisible( false );
+}
+
+void SketchInterface::showFullCanvas()
+{
+    sketch_window->setVisible( true );
+    sketch_topview_window->setVisible( true );
 }

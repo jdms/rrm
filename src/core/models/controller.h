@@ -207,6 +207,7 @@ class Controller
         void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
         std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
         void removeDomain(std::size_t domain_id_);
+        std::vector< std::size_t > getDomains() const ;
 
 
         void initRulesProcessor();
@@ -282,6 +283,15 @@ class Controller
 
         void exportToIrapGrid();
 
+        void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
+        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+                                            std::vector< CurveMesh >& left_curves,
+                                            std::vector< CurveMesh >& right_curves,
+                                            std::vector< CurveMesh > & front_curves,
+                                            std::vector< CurveMesh >& back_curves );
+
+        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
     protected:
 

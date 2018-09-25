@@ -1297,6 +1297,19 @@ void Controller::removeDomain1(std::size_t domain_id_)
 }
 
 
+std::vector< std::size_t > Controller::getDomains() const
+{
+    std::vector< std::size_t > indexes_;
+
+    for( auto it_: model.domains )
+    {
+        indexes_.push_back( it_.first );
+    }
+
+    return indexes_;
+
+
+}
 
 //=== old methods
 
@@ -2324,6 +2337,38 @@ void Controller::setGuidedExtrusion( float px_, float py_, float pz_, const Poly
 
 }
 
+
+void Controller::getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps )
+{
+    rules_processor.getLegacyMeshes( points, nu, nv, num_extrusion_steps );
+}
+
+
+void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+                                    std::vector< CurveMesh >& left_curves,
+                                    std::vector< CurveMesh >& right_curves,
+                                    std::vector< CurveMesh > & front_curves,
+                                    std::vector< CurveMesh >& back_curves )
+{
+    rules_processor.setPLCForSimulation(triangles_meshes, left_curves, right_curves, front_curves, back_curves);
+}
+
+
+std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+{
+
+    std::vector< double > points;
+    for( auto v: vertices )
+        points.push_back( static_cast< double >( v ) );
+
+    std::vector< std::size_t > elements_;
+    for( auto e: faces )
+        elements_.push_back( static_cast< std::size_t >( e ) );
+
+    std::vector<int> regions_;
+    rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
+    return regions_;
+}
 
 void Controller::clear()
 {

@@ -39,6 +39,7 @@ void MainWindow::createWindow()
 
     plug3dInterface();    
     plugSketchInterface();
+    plug3dDiagnosticsInterface();
 
 }
 
@@ -170,7 +171,7 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); } );
+    { app->getRegions( status_ ); emit runDiagnostics(); } );
 
 }
 
@@ -435,6 +436,12 @@ void MainWindow::plug3dInterface()
 
 }
 
+void MainWindow::plug3dDiagnosticsInterface()
+{
+    diagapp = std::make_shared< DiagnosticsInterface >( this );
+    diagapp->createInterface();
+}
+
 
 void MainWindow::run()
 {
@@ -526,6 +533,11 @@ void MainWindow::lockPreserve( const std::string& option_ )
     }
 }
 
+void MainWindow::lockUndoRedo( bool status_ )
+{
+    ac_undo->setDisabled( status_ );
+    ac_redo->setDisabled( status_ );
+}
 
 void  MainWindow::activatePreserveAbove( bool status_ )
 {
