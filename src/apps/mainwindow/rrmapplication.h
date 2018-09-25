@@ -38,6 +38,7 @@
 
 #include "./apps/3dview/canvas3d.h"
 #include "./apps/sketching/sketchwindow.h"
+#include "./apps/simulator/flow_window.h"
 
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
@@ -49,6 +50,7 @@
 
 class MainWindow;
 class Controller;
+//class FlowWindow;
 
 
 class RRMApplication: public QObject
@@ -131,6 +133,8 @@ public slots:
     void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
     void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
+    std::vector< std::size_t > getDomains() const ;
+
 
     void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
 
@@ -176,6 +180,18 @@ public slots:
 
     void setVerticalExaggeration( double scale_ );
     void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
+
+    void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
+    void getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
+                                            std::vector< FlowWindow::CurveMesh>& left_curves,
+                                            std::vector< FlowWindow::CurveMesh >& right_curves,
+                                            std::vector< FlowWindow::CurveMesh > & front_curves,
+                                            std::vector< FlowWindow::CurveMesh >& back_curves );
+
+
+    std::map< int, std::vector< float > > getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+
 
 signals:
 

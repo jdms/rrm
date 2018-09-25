@@ -12,6 +12,7 @@
 #include "rrmapplication.h"
 #include "sketchinterface.h"
 #include "view3dinterface.h"
+#include "diagnosticsinterface.h"
 
 #include "./core/models/controller.h"
 #include "./core/widgets/objecttree.h"
@@ -37,6 +38,7 @@ class MainWindow: public QMainWindow
 
         void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
         void lockPreserve( const std::string& option_ );
+        void lockUndoRedo( bool status_ );
 
         void initializeInterface();
 
@@ -46,6 +48,10 @@ class MainWindow: public QMainWindow
 
         bool isRegionEnabled() const;
 
+
+    signals:
+
+        void runDiagnostics();
 
     protected:
 
@@ -62,6 +68,7 @@ class MainWindow: public QMainWindow
 
         void plugSketchInterface();
         void plug3dInterface();
+        void plug3dDiagnosticsInterface();
 
 //        void checkButtonsStatus();
 
@@ -70,10 +77,12 @@ class MainWindow: public QMainWindow
 
         friend class SketchInterface;
         friend class View3dInterface;
+        friend class DiagnosticsInterface;
         friend class RRMApplication;
 
         std::shared_ptr< SketchInterface > sketchapp = nullptr;
         std::shared_ptr< View3dInterface > view3dapp = nullptr;
+        std::shared_ptr< DiagnosticsInterface > diagapp = nullptr;
 
         ObjectTree* object_tree = nullptr;
         QDockWidget* dw_object_tree = nullptr;
