@@ -36,7 +36,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
     public:
 
         /** 
-         * \brief Default construction.  
+         * \brief Default constructor.  
          * 
          * It's declararion is required because of the 
          * std::unique_ptr in the implementation.
@@ -47,23 +47,71 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /**
          * \brief Default destructor.
          *
+         * It's declararion is required because of the 
+         * std::unique_ptr in the implementation.
+         *
          **/
         ~SModeller(); 
 
+        /** 
+         * \brief Default copy constructor is deleted.  
+         * 
+         * It is unclear whether there is use for copy constructors. 
+         *
+         **/
         SModeller( const SModeller &m ) = delete;
+
+        /** 
+         * \brief Default move constructor.  
+         * 
+         * It's declararion is required because of the 
+         * std::unique_ptr in the implementation.
+         *
+         **/
         SModeller( SModeller &&m ); 
 
+        /** 
+         * \brief Default assignment (copy) constructor is deleted.  
+         * 
+         * It is unclear whether there is use for copy constructors. 
+         *
+         **/
         SModeller& operator=( const SModeller &m ) = delete;
+
+        /** 
+         * \brief Default assignment (move) constructor.  
+         * 
+         * It's declararion is required because of the 
+         * std::unique_ptr in the implementation.
+         *
+         **/
         SModeller& operator=( SModeller &&m ); 
 
 
-        // TODO: check whether name is correct
-        size_t getWidthDiscretization() const;
+        /** 
+         * \brief Get number of pieces in which the width direction is discretized.
+         *
+         *
+         * \return discretization number
+         **/
+        std::size_t getWidthDiscretization() const;
 
-        // TODO: check whether name is correct
-        size_t getLengthDiscretization() const;
+        /** 
+         * \brief Get number of pieces in which the length direction is discretized.
+         *
+         * \return discretization number
+         **/
+        std::size_t getLengthDiscretization() const;
 
-        bool tryChangeDiscretization( size_t width_discretization = 64, size_t depth_discretization = 64 );
+         /**
+          * \brief Change models discretization if model is empty
+          *
+          * \param width_discretization - discretization in the width direction
+          * \param length_discretization - discretization in the length direction
+          *
+          * \return true if discretization was changed
+          */
+        bool tryChangeDiscretization( std::size_t width_discretization = 64, std::size_t depth_discretization = 64 );
 
         void setOrigin( double x, double y, double z );
 
@@ -79,6 +127,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         /* Query or modify the automatum state */
 
+        // create[Above,Below] is DEPRECATED
         //
         // brief:
         // Verifies whether ir is possible to define a new 'drawing' region,
@@ -87,15 +136,15 @@ class STRATMODLIB_DLL_HANDLER SModeller
         // be used as input either for an `defineAbove()` or a `defineBelow()`.
         // Return: true if at least one elegible surface was found.
         //
-        bool requestCreateAbove( std::vector<size_t> &eligible_surfaces );
+        bool requestCreateAbove( std::vector<std::size_t> &eligible_surfaces );
 
-        bool requestCreateBelow( std::vector<size_t> &eligible_surfaces );
+        bool requestCreateBelow( std::vector<std::size_t> &eligible_surfaces );
 
         //
         // brief:
         // Define new input region above surface which index is `surface_index`.
         //
-        bool createAbove( size_t surface_index );
+        bool createAbove( std::size_t surface_index );
 
 
         //
@@ -109,7 +158,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         // brief:
         // Define new input region below surface which index is `surface_index`.
         //
-        bool createBelow( size_t surface_index );
+        bool createBelow( std::size_t surface_index );
 
         //
         // brief:
@@ -118,8 +167,23 @@ class STRATMODLIB_DLL_HANDLER SModeller
         //
         void stopCreateBelow();
 
-        bool createAboveIsActive( size_t &boundary_index );
-        bool createBelowIsActive( size_t &boundary_index );
+        bool createAboveIsActive( std::size_t &boundary_index );
+        bool createBelowIsActive( std::size_t &boundary_index );
+
+        ///////////////////////////////////////////////////////
+        // New structure aware preserve methods
+        ///////////////////////////////////////////////////////
+
+        bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
+        bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+
+        void stopPreserveAbove();
+        void stopPreserveBelow();
+
+        bool preserveAboveIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+        bool preserveBelowIsActive( std::vector<std::size_t> &bounding_surfaces_list );
+
+        ///////////////////////////////////////////////////////
 
         void disableGeologicRules();
 
@@ -140,74 +204,103 @@ class STRATMODLIB_DLL_HANDLER SModeller
         // Input & output 
         //
 
-        std::vector<size_t> getSurfacesIndices();
-        
-        /* bool createSurface( size_t surface_id, const std::vector<double> &point_data ); */
+        std::vector<std::size_t> getSurfacesIndices();
 
-        bool createSurface( size_t surface_id, 
+        std::vector<std::size_t> getOrderedSurfacesIndices();
+        
+        /* bool createSurface( std::size_t surface_id, const std::vector<double> &point_data ); */
+
+        bool createSurface( std::size_t surface_id, 
                 const std::vector<double> &point_data,
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(), 
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>() 
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>() 
                 );
 
-        /* bool createExtrudedSurface( size_t surface_id, const std::vector<double> &point_data ); */
+        /* bool createExtrudedSurface( std::size_t surface_id, const std::vector<double> &point_data ); */
 
         // TODO: createExtrudedSurfaceAlongLenght ?
         // TODO: createLenghtwiseExtrudedSurface ?
-        bool createLengthwiseExtrudedSurface( size_t surface_id, 
+        bool createLengthwiseExtrudedSurface( std::size_t surface_id, 
                 const std::vector<double> &cross_section_curve_point_data,
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
-        bool createLengthwiseExtrudedSurface( size_t surface_id, 
-                const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        bool createLengthwiseExtrudedSurface( std::size_t surface_id, 
+                const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
-        /* bool tryCreateSurface( size_t surface_id, const std::vector<double> &point_data, std::vector<size_t> &intersected_surfaces ); */
+        bool createWidthwiseExtrudedSurface( std::size_t surface_id, 
+                const std::vector<double> &cross_section_curve_point_data,
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
+                );
 
-        bool tryCreateSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        bool createWidthwiseExtrudedSurface( std::size_t surface_id, 
+                const std::vector<double> &cross_section_curve_point_data, double cross_section, 
+                const std::vector<double> &path_curve_point_data, 
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
+                );
+
+        /* bool tryCreateSurface( std::size_t surface_id, const std::vector<double> &point_data, std::vector<std::size_t> &intersected_surfaces ); */
+
+        bool tryCreateSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &point_data,
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(), 
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>() 
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>() 
                 );
 
-        /* bool tryCreateExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, std::vector<size_t> &intersected_surfaces ); */
+        /* bool tryCreateExtrudedSurface( std::size_t surface_id, const std::vector<double> &point_data, std::vector<std::size_t> &intersected_surfaces ); */
 
-        bool tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
+        bool tryCreateLengthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &cross_section_curve_point_data,
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(), 
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
-        bool tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
-                const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
+        bool tryCreateLengthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
+                const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
-                const std::vector<size_t> lower_bound_ids = std::vector<size_t>(),
-                const std::vector<size_t> upper_bound_ids = std::vector<size_t>()
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
+                );
+
+        bool tryCreateWidthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
+                const std::vector<double> &cross_section_curve_point_data,
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
+                );
+
+        bool tryCreateWidthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
+                const std::vector<double> &cross_section_curve_point_data, double cross_section, 
+                const std::vector<double> &path_curve_point_data, 
+                const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
+                const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
         /* Get mesh, pcl and curves for visualization */
         /* For all combinations of int32_t, int64_t, float, and double */
 
-        bool getVertexList( size_t surface_id, std::vector<float> &vlist );
-        bool getVertexList( size_t surface_id, std::vector<double> &vlist );
+        bool getVertexList( std::size_t surface_id, std::vector<float> &vlist );
+        bool getVertexList( std::size_t surface_id, std::vector<double> &vlist );
 
-        bool getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist );
-        bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
+        bool getMesh( std::size_t surface_id, std::vector<float> &vlist, std::vector<std::size_t> &flist );
+        bool getMesh( std::size_t surface_id, std::vector<double> &vlist, std::vector<std::size_t> &flist );
 
         
-        bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist );
-        bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist );
+        bool getWidthCrossSectionCurve( std::size_t surface_id, std::size_t width, std::vector<float> &vlist, std::vector<std::size_t> &elist );
+        bool getWidthCrossSectionCurve( std::size_t surface_id, std::size_t width, std::vector<double> &vlist, std::vector<std::size_t> &elist );
 
         // TODO: change Depth to Lenght
-        bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<float> &vlist, std::vector<size_t> &elist );
-        bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<double> &vlist, std::vector<size_t> &elist );
+        bool getLengthCrossSectionCurve( std::size_t surface_id, std::size_t lenght, std::vector<float> &vlist, std::vector<std::size_t> &elist );
+        bool getLengthCrossSectionCurve( std::size_t surface_id, std::size_t lenght, std::vector<double> &vlist, std::vector<std::size_t> &elist );
 
         std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::vector<std::size_t>> &element_list );
+        std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list );
 
 
         /* Change the model's properties */
@@ -225,7 +318,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         bool loadJSON( std::string filename );
 
-        bool changeDiscretization( size_t width_discretization = 64, size_t depth_discretization = 64 );
+        bool changeDiscretization( std::size_t width_discretization = 64, std::size_t depth_discretization = 64 );
 
     protected:
 

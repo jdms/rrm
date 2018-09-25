@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "./core/models/shader.h"
 #include "./core/models/volume.h"
@@ -40,10 +41,10 @@ class VolumeShader: public Shader
 
 
         VolumeShader();
-        VolumeShader( Volume* const& raw_ );
+        VolumeShader( const std::shared_ptr< Volume >& raw_ );
+        ~VolumeShader();
 
-
-        void setVolume( Volume* const& raw_ );
+        void setVolume( const std::shared_ptr< Volume >& raw_ );
 
 
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
@@ -80,7 +81,7 @@ class VolumeShader: public Shader
 
         GLuint number_of_vertices;
 
-        Volume* raw;
+        std::shared_ptr< Volume > raw;
 
 };
 

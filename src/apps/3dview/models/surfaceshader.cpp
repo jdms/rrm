@@ -30,7 +30,7 @@ SurfaceShader::SurfaceShader()
 }
 
 
-SurfaceShader::SurfaceShader( Object* const& raw_ )
+SurfaceShader::SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     setDefaultValues();
     init();
@@ -39,7 +39,7 @@ SurfaceShader::SurfaceShader( Object* const& raw_ )
 
 
 
-void SurfaceShader::setObject( Object* const& raw_ )
+void SurfaceShader::setObject( const std::shared_ptr< Stratigraphy >& raw_ )
 {
     raw = raw_;
     loadBuffers();
@@ -59,7 +59,7 @@ void SurfaceShader::loadBuffers()
 
 
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
-    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+    raw->getBoundingBox( minx_, maxx_, miny_, maxy_, minz_, maxz_ );
 
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
@@ -126,7 +126,6 @@ void SurfaceShader::loadBuffers()
 }
 
 
-
 void SurfaceShader::initShaders()
 {
     shader = new Tucano::Shader( "Surface", ( shader_directory + "shaders/mesh.vert" ),
@@ -143,6 +142,7 @@ void SurfaceShader::initShaders()
     shader_new->initialize();
 
 }
+
 
 void SurfaceShader::initBuffers()
 {
@@ -189,6 +189,7 @@ void SurfaceShader::resetShaders()
     shader = nullptr;
 }
 
+
 void SurfaceShader::resetBuffers()
 {
 
@@ -220,7 +221,6 @@ void SurfaceShader::resetBuffers()
 }
 
 
-
 void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                            const std::vector< GLfloat >& normals_,
                                            const std::vector< GLuint >& faces_ )
@@ -242,6 +242,7 @@ void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertice
                    GL_STATIC_DRAW );
     glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
+
 
 void SurfaceShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
 {
@@ -266,7 +267,6 @@ void SurfaceShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, 
 
     updateColorBuffers( color_ );
 }
-
 
 
 void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
@@ -392,7 +392,7 @@ void SurfaceShader::setDefaultValues()
     number_of_faces = 0;
     number_of_vertices = 0;
 
-    raw = nullptr;
+    raw.reset();
     draw_edge = true;
 
 }
@@ -420,4 +420,9 @@ void SurfaceShader::setHeightMap(double zmin_, double zmax_)
 void SurfaceShader::enableDrawingEdges()
 {
     draw_edge = true;
+}
+
+SurfaceShader::~SurfaceShader()
+{
+    clear();
 }

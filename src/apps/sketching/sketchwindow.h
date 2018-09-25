@@ -27,15 +27,15 @@
 
 #include <QMainWindow>
 #include <QDockWidget>
-#include <QGraphicsView>D
+#include <QGraphicsView>
+#include <QKeyEvent>
 
 #include "./src/core/widgets/canvasstack.h"
-#include "sketchscene.h"
-
-//TODO: remove dependence from mainwindow
 #include "./core/definitions/constants.hpp"
 #include "./src/core/widgets/color_picker.h"
 
+#include "sketchingcanvas.h"
+#include "sketchscene.h"
 
 //class QGraphicsView;
 class QWheelEvent;
@@ -49,89 +49,75 @@ class SketchWindow: public QMainWindow
 
     public:
 
-        SketchWindow( QWidget* parent = 0 );
+        SketchWindow( QWidget* parent = nullptr );
+        ~SketchWindow();
+
+        std::shared_ptr< SketchScene > createMainCanvas();
+        std::shared_ptr< SketchScene > addCanvas( double depth_ = 0 );
+        void removeCanvas( double depth_ );
+
+        std::shared_ptr< SketchScene > createTopViewCanvas();
+
+        void usingVerticalExaggeration(int v_exagg_);
+
+        void keyPressEvent( QKeyEvent *event );
 
 
 
     public slots:
 
+        void updateColorWidget( int red_, int green_, int blue_ );
+        void disableResizeVolume( bool status_ );
 
-        void addMainCanvas( CrossSection* const& cs_ );
-        void addTopViewCanvas( CrossSection* const& cs_ );
-        void updateCanvas();
+        void setModeSelecting( bool status_ );
+        void setModeSelectingStratigraphies( bool status_ );
+        void setModeRegionSelecting( bool status_ );
+        void setDipAngle( double angle_ );
 
-
-        void addCrossSection( CrossSection* const& cs_ );
-
-
-
-        void addObject( Object* const& obj_ );
-        void updateObject( const std::size_t& index_ );
-
-
-        void addTrajectory( Object* const& obj_ );
-        void updateTrajectory( const std::size_t& index_ );
-
-
-        void setModeSelecting();
-        void setModeSketching();
-
-
-        void setCurrentColor( int r_, int g_, int b_ );
-
-
-        void clear();
-
-
-        void addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ );
-        bool removeFixedCrossSectionCanvas( double depth_ );
-        void setFixedCrossSectionsVisible( bool status_ );
-
-
-        void setCurrentCrossSection( double depth_ );
-
-        void setTopViewImage( const std::string& image_ );
-        void setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
-
-        void screenshot();
-
+        void reset();
 
 
     signals:
 
 
-        void updateVolume( Settings::CrossSection::CrossSectionDirections dir_, double w_, double h_ );
-        void acceptCurve( const PolyCurve& curve_, double depth_ );
-        void defineColorCurrent( const QColor& color_ );
-        void setAsCurrent( double depth_ );
+        void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
 
-        void objectSelected( std::size_t index_ );
-        void commitObject();
-        void removeCurveFromObject( double depth_, std::size_t index_ );
+        void removeImageFromCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-        void setImageCrossSection( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ );
-        void removeImageFromCrossSection( double depth_ );
+        void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
 
-        void setImageToTopView( const QString& file_, double ox_, double oy_, double x_, double y_ );
-        void removeImageFromTopView();
+        void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void addTrajectory( const PolyCurve& curve_ );
+        void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+        void createObject();
 
-        void addFixedCrossSection( double depth_ );
-        void removeFixedCrossSection( double depth_ );
+        void useLastTrajectory();
 
-        void getHeightMap();
-        void enablePreview( bool status_ );
+        void defineColorCurrent( int red_, int green_, int blue_ );
 
+        void objectSelected( const std::size_t& id_ );
 
+        void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+        void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void stopSketchesOfSelection();
 
+        void regionSelected( const std::size_t& id_, bool status_ );
 
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+        void setAreaChoosed();
 
+        void setVerticalExaggeration( double );
+
+        void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+        void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
     protected:
 
-        void createWindow();
+//        void createWindow();
         void createToolBar();
 
 
@@ -139,35 +125,73 @@ class SketchWindow: public QMainWindow
 
     private:
 
-        QHBoxLayout* hb_central_widget;
+        ///================================================================================
 
-        QDockWidget* dw_canvas_stack = nullptr;
-        CanvasStack* cs = nullptr;
+        SketchingCanvas* sketchingcanvas = nullptr;
+        CanvasStack* fixed_csections_canvas = nullptr;
 
-        QGraphicsView* main = nullptr;
-        QGraphicsView* tv_main = nullptr;
+        SketchingCanvas* topviewcanvas = nullptr;
+
+        ColorPicker *cp_color = nullptr;
+
+        QToolBar* tb_sketch = nullptr;
+        QAction* ac_sketch_color = nullptr;
+        QAction* ac_cancel_sketch = nullptr;
+        QAction* ac_submit_sketch = nullptr;
+        QAction* ac_end_object = nullptr;
+
+        QToolBar* tb_boundary = nullptr;
+        QAction* ac_resize_boundary = nullptr;
+        const bool RESIZE_BOUNDARY_DEFAULT_STATUS = false;
+
+        QToolBar* tb_image = nullptr;
+        QAction* ac_resize_image = nullptr;
+        QAction* ac_remove_image = nullptr;
+
+        QToolBar* tb_region = nullptr;
+        QAction* ac_select_regions = nullptr;
+        const bool SELECT_REGION_DEFAULT_STATUS = false;
+
+        QToolBar* tb_well = nullptr;
+        QAction* ac_select_wells = nullptr;
+        const bool SELECT_WELLS_DEFAULT_STATUS = false;
+
+        QToolBar* tb_trajectory = nullptr;
+        QAction* ac_use_last_trajectory = nullptr;
+        const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
+
+        ///================================================================================
 
 
-        ColorPicker *cp_color;
+//        QHBoxLayout* hb_central_widget;
 
-        QAction* ac_discard;
-        QAction* ac_commit;
-        QAction* ac_create;
-        QAction* ac_edit_boundary;
-        QAction* ac_edit_scene;
-        QAction* ac_screenshot;
-        QAction* ac_axes;
-        QAction* ac_height_map;
-        QAction* ac_fixed_csections;
-        QAction* ac_enable_preview;
+//        QDockWidget* dw_canvas_stack = nullptr;
+//        CanvasStack* cs = nullptr;
 
-        SketchScene* main_scene = nullptr;
-        SketchScene* tv_scene = nullptr;
+//        QGraphicsView* main = nullptr;
+//        QGraphicsView* tv_main = nullptr;
 
-        std::map< double, SketchScene* > scenes;
 
-        const int WIDTH_APP = 450;
-        const int HEIGHT_APP = 320;
+//
+
+//        QAction* ac_discard;
+//        QAction* ac_commit;
+//        QAction* ac_create;
+//        QAction* ac_edit_boundary;
+//        QAction* ac_edit_scene;
+//        QAction* ac_screenshot;
+//        QAction* ac_axes;
+//        QAction* ac_height_map;
+//        QAction* ac_fixed_csections;
+//        QAction* ac_enable_preview;
+
+//        SketchScene* main_scene = nullptr;
+//        SketchScene* tv_scene = nullptr;
+
+//        std::map< double, SketchScene* > scenes;
+
+//        const int WIDTH_APP = 450;
+//        const int HEIGHT_APP = 320;
 
 };
 

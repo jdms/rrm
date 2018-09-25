@@ -27,42 +27,117 @@
 #include "polycurve.h"
 
 
+
+
 CrossSection::CrossSection()
 {
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
     defineIndex();
     initialize();
 }
 
-
-CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
+CrossSection::CrossSection( const std::shared_ptr< Volume >& volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ )
 {
+    volume = volume_;
+
+
     defineIndex();
     initialize();
 
-    setDirection( dir_ );
+    setDirection( direction_ );
     setDepth( depth_ );
+
+//    updateDimensions();
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
 }
 
 
-CrossSection& CrossSection::operator=( const CrossSection& other_ )
+CrossSection::CrossSection( const CrossSection& csection_ )
 {
-    volume = other_.volume;
-    objects = other_.objects;
-    direction = other_.direction;
-    depth = other_.depth;
-    image_path = other_.image_path;
-    is_visible = other_.is_visible;
-    index = other_.index;
+    this->direction = csection_.direction;
+    this->volume = csection_.volume;
+    this->width = csection_.width;
+    this->height = csection_.height;
+    this->depth = csection_.depth;
+
+    objects = csection_.objects;
+    image_path = csection_.image_path;
+    is_visible = csection_.is_visible;
+    index = csection_.index;
+
+//    updateDimensions();
+    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
+
+}
+
+
+CrossSection& CrossSection::operator=( const CrossSection& csection_ )
+{
+    this->direction = csection_.direction;
+    this->volume = csection_.volume;
+    this->width = csection_.width;
+    this->height = csection_.height;
+    this->depth = csection_.depth;
+
+    objects = csection_.objects;
+    image_path = csection_.image_path;
+    is_visible = csection_.is_visible;
+    index = csection_.index;
+
+
+//    updateDimensions();
+
 
     return *this;
 }
 
 
-void CrossSection::defineIndex()
+CrossSection::~CrossSection()
 {
-    index = number_of_csections;
-    number_of_csections++;
+    std::cout << "CROSS-SECTION DELETED" << std::endl << std::flush;
+
+    if( volume != nullptr )
+        volume.reset();
+    volume = nullptr;
+
+    if( objects.empty() == false )
+        clear();
+
+//    Object::clear();
 }
+
+
+void CrossSection::updateDimensions()
+{
+    if ( volume == nullptr ) return;
+
+
+    if ( direction == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        width = volume->getLenght();
+        height = volume->getHeight();
+    }
+    else if ( direction == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        width = volume->getWidth();
+        height = volume->getLenght();
+    }
+    else if ( direction == Settings::CrossSection::CrossSectionDirections::Z )
+    {
+        width = volume->getWidth();
+        height = volume->getHeight();
+    }
+
+    std::cout << "Csection width = " << volume->getWidth() << std::endl << std::flush;
+
+}
+
+
+
+///========================================================================
+
 
 void CrossSection::setIndex( const std::size_t id_ )
 {
@@ -76,15 +151,83 @@ std::size_t CrossSection::getIndex() const
 }
 
 
-void CrossSection::setVolume( const Volume* raw_ )
+void CrossSection::setVolume( const std::shared_ptr< Volume >& volume_ )
 {
-//    volume = raw_;
+    volume = volume_;
 }
 
-const Volume* CrossSection::getVolume() const
+const std::shared_ptr< Volume >& CrossSection::getVolume() const
 {
     return volume;
 }
+
+void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
+{
+    direction = dir_;
+}
+
+Settings::CrossSection::CrossSectionDirections CrossSection::getDirection() const
+{
+    return direction;
+}
+
+void CrossSection::setDepth( double depth_ )
+{
+    depth = depth_;
+}
+
+double CrossSection::getDepth() const
+{
+    return depth;
+}
+
+///========================================================================
+
+
+
+
+
+
+
+//CrossSection::CrossSection()
+//{
+//    defineIndex();
+//    initialize();
+//}
+
+
+//CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
+//{
+//    defineIndex();
+//    initialize();
+
+//    setDirection( dir_ );
+//    setDepth( depth_ );
+//}
+
+
+//CrossSection& CrossSection::operator=( const CrossSection& other_ )
+//{
+//    volume = other_.volume;
+//    objects = other_.objects;
+//    direction = other_.direction;
+//    depth = other_.depth;
+//    image_path = other_.image_path;
+//    is_visible = other_.is_visible;
+//    index = other_.index;
+
+//    return *this;
+//}
+
+
+void CrossSection::defineIndex()
+{
+    index = number_of_csections;
+    number_of_csections++;
+}
+
+
+
 
 
 void CrossSection::getCoordinates( std::vector< double >& vertices_ )
@@ -110,6 +253,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
     }
     else if( direction == Settings::CrossSection::CrossSectionDirections::Y )
     {
+
 
         if( depth > maxy )
             depth = maxy;
@@ -147,7 +291,7 @@ void CrossSection::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
     double w = 0, h = 0,  l = 0;
 
     volume->getOrigin( minx_, miny_, minz_ );
-    volume->getGeometry( w, h, l );
+    volume->getDimensions( w, h, l );
 
     maxx_ = minx_ + w;
     maxy_ = miny_ + h;
@@ -156,25 +300,7 @@ void CrossSection::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-void CrossSection::setDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
-{
-    direction = dir_;
-}
 
-Settings::CrossSection::CrossSectionDirections CrossSection::getDirection() const
-{
-    return direction;
-}
-
-void CrossSection::setDepth( double depth_ )
-{
-    depth = depth_;
-}
-
-double CrossSection::getDepth() const
-{
-    return depth;
-}
 
 void CrossSection::setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ )
 {
@@ -218,6 +344,7 @@ void CrossSection::setVisible( const bool status_ )
 
 bool CrossSection::isVisible() const
 {
+    if( volume->isVisible() == false ) return false;
     return is_visible;
 }
 
@@ -278,14 +405,23 @@ void CrossSection::clear()
     if( image_path.empty() == false )
         image_path.clear();
 
+
+    boundering.vertices_upper.clear();
+    boundering.edges_upper.clear();
+    boundering.vertices_lower.clear();
+    boundering.edges_lower.clear();
+    boundering.empty = true;
+
     removeObjects();
     initialize();
 }
 
 void CrossSection::initialize()
 {
-    depth = 0.0;
-    direction = Settings::CrossSection::CrossSectionDirections::Z;
+    width = 0.0;
+    height = 0.0;
+    depth = 0.0;;
+    direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
     is_visible = true;
     number_of_csections = 0;
     image_origin.x = 0;
@@ -296,13 +432,60 @@ void CrossSection::initialize()
 }
 
 
-CrossSection::~CrossSection()
+
+void CrossSection::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
 {
-    if( objects.empty() == false )
-        clear();
-    if( volume != nullptr )
-    volume = nullptr;
+
+    boundering.empty = false;
+
+    boundering.vertices_upper.clear();
+    boundering.vertices_upper.assign( vupper_.begin(), vupper_.end() );
+
+    boundering.edges_upper.clear();
+    boundering.edges_upper.assign( edupper_.begin(), edupper_.end() );
+
+
+    boundering.vertices_lower.clear();
+    boundering.vertices_lower.assign( vlower_.begin(), vlower_.end() );
+
+    boundering.edges_lower.clear();
+    boundering.edges_lower.assign( edlower_.begin(), edlower_.end() );
+
+
 }
+
+void CrossSection::getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
+{
+
+    vupper_.clear();
+    vupper_.assign( boundering.vertices_upper.begin(), boundering.vertices_upper.end() );
+
+    edupper_.clear();
+    edupper_.assign( boundering.edges_upper.begin(), boundering.edges_upper.end() );
+
+    vlower_.clear();
+    vlower_.assign( boundering.vertices_lower.begin(), boundering.vertices_lower.end() );
+
+    edlower_.clear();
+    edlower_.assign( boundering.edges_lower.begin(), boundering.edges_lower.end() );
+
+}
+
+
+void CrossSection::clearBounderingArea()
+{
+    boundering.vertices_upper.clear();
+    boundering.edges_upper.clear();
+    boundering.vertices_lower.clear();
+    boundering.edges_lower.clear();
+    boundering.empty = true;
+}
+
+bool CrossSection::hasBounderingArea() const
+{
+    return !(boundering.empty);
+}
+
 
 
 void CrossSection::resetAllCrossSections()

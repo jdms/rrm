@@ -152,7 +152,7 @@ if(MSVC)
     set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
 else()
     set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
+    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstr  atmod.a)
 endif()
 
 

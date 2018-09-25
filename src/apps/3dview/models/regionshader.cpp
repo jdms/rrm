@@ -29,7 +29,7 @@ RegionShader::RegionShader()
 }
 
 
-RegionShader::RegionShader( Regions* const& raw_ )
+RegionShader::RegionShader( const std::shared_ptr< Regions >& raw_ )
 {
     setDefaultValues();
     init();
@@ -38,7 +38,7 @@ RegionShader::RegionShader( Regions* const& raw_ )
 
 
 
-void RegionShader::setRegion( Regions* const& raw_ )
+void RegionShader::setRegion( const std::shared_ptr< Regions >& raw_ )
 {
     raw = raw_;
     loadBuffers();
@@ -63,7 +63,8 @@ void RegionShader::loadBuffers()
 
 
     std::vector< std::size_t > faces_size_t_;
-    raw->getTetrahedralCells( faces_size_t_ );
+//    raw->getTetrahedralCells( faces_size_t_ );
+    raw->getTriangleCells( faces_size_t_ );
 
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
     std::vector< GLfloat > normals_;
@@ -304,6 +305,11 @@ void RegionShader::setDefaultValues()
     number_of_faces = 0;
     number_of_vertices = 0;
 
-    raw = nullptr;
+    raw.reset();
 
+}
+
+RegionShader::~RegionShader()
+{
+    clear();
 }

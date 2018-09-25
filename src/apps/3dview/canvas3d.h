@@ -44,10 +44,8 @@ class Canvas3d: public QOpenGLWidget
 
         Canvas3d();
 
-        Scene3d* getScene() const;
+        std::shared_ptr< Scene3d > getScene() const;
         std::string sendImage( double zmin_, double zmax_, double width_, double height_  );
-
-
 
 
     public slots:
@@ -83,7 +81,7 @@ class Canvas3d: public QOpenGLWidget
     private:
 
 
-        Scene3d* scene3d;
+        std::shared_ptr< Scene3d > scene3d;
 
         Tucano::Trackball camera;
         const int WHEEL_STEP = 120;

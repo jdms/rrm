@@ -1,44 +1,39 @@
-cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
 
-project( RRMWidgets )
+project( RRMWidgets VERSION 3.1 LANGUAGES CXX )
 
-
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${CMAKE_CURRENT_BINARY_DIR} )
+find_package (Qt5Widgets)
 
 
-#####################################################################
-# Options
-#####################################################################
+set( WIDGETS_HEADERS        realfeaturedslider.h
+                            objecttree.h
+                            objecttreeitem.h
+                            color_picker.h
+                            canvasstack.h
+                            pages_stack.h
+                            slider.h )
 
-set( WIDGETS_HEADERS realfeaturedslider.h
-                     objecttree.h
-                     objecttreeitem.h
-                     color_picker.h
-                     pages_stack.h
-                     canvasstack.h
-                     slider.h )
-
-
-set( WIDGETS_MOC_HEADERS realfeaturedslider.h
-                         objecttree.h
-                         color_picker.h
-                         pages_stack.h
-                         canvasstack.h
-                         slider.h )
+set( WIDGETS_MOC_HEADERS    realfeaturedslider.h
+                            objecttree.h
+                            objecttreeitem.h
+                            color_picker.h
+                            canvasstack.h
+                            pages_stack.h
+                            slider.h )
 
 
-set( WIDGETS_UI_SOURCES  volume_resize_widget.ui
-                         object_properties.ui )
+set( WIDGETS_UI_SOURCES     volume_resize_widget.ui
+                            object_properties.ui )
 
 
-set( WIDGETS_SOURCES realfeaturedslider.cpp
-                     objecttree.cpp
-                     objecttreeitem.cpp
-                     color_picker.cpp
-                     pages_stack.cpp
-                     canvasstack.cpp
-                     slider.cpp )
+set( WIDGETS_SOURCES        realfeaturedslider.cpp
+                            objecttree.cpp
+                            objecttreeitem.cpp
+                            color_picker.cpp
+                            pages_stack.cpp
+                            canvasstack.cpp
+                            slider.cpp )
+
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -50,4 +45,24 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
 
 add_library( ${PROJECT_NAME} STATIC ${WIDGETS_HEADERS} ${WIDGETS_UI_SOURCES} ${WIDGETS_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+
+#qt5_wrap_cpp( WIDGETS_MOC_SRCS ${WIDGETS_MOC_HEADERS} )
+#qt5_wrap_ui ( WIDGETS_UI_HDRS ${WIDGETS_UI_SOURCES} )
+
+
+#include_directories (${PROJECT_SOURCE_DIR})
+#include_directories (${PROJECT_BINARY_DIR})
+
+
+################################################
+## ADD TO LIBRARY AND LINK
+################################################
+
+
+#add_library( ${PROJECT_NAME} STATIC ${WIDGETS_SOURCES} ${WIDGETS_MOC_SRCS} ${WIDGETS_UI_HDRS} ${WIDGETS_HEADERS} )
+
+
+
+
+
 

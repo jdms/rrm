@@ -38,7 +38,6 @@
 int main( int argc, char *argv[] )
 {
 
-
 	QApplication app(argc, argv);
     app.setAttribute( Qt::AA_UseDesktopOpenGL );
     app.setAttribute( Qt::AA_ShareOpenGLContexts );
@@ -58,11 +57,8 @@ int main( int argc, char *argv[] )
 
     QSurfaceFormat::setDefaultFormat( format );
 
-
-    MainWindow w;
-    w.show();
-
-
+    MainWindow w1;
+    w1.show();
 
     return app.exec();
 }
