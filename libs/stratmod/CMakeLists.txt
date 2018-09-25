@@ -49,7 +49,7 @@ set(CMAKE_BUILD_TYPE "${STRATMOD_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
 
 option(STRATMOD_BUILD_SHARED_LIBRARY "Build a shared library instead of static library" ON)
-option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   OFF)
+option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   ON)
 option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"             ON)
 option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
 option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
