@@ -300,15 +300,10 @@ void SketchInterface::init()
 }
 
 
-void SketchInterface::showOnlyMainCanvas()
+void SketchInterface::showOnlyMainCanvas( bool status_ )
 {
 
-    sketch_window->setVisible( false );
-    sketch_topview_window->setVisible( false );
+    dw_sketchwindow->setVisible( !status_ );
+    dw_topview_window->setVisible( !status_ );
 }
 
-void SketchInterface::showFullCanvas()
-{
-    sketch_window->setVisible( true );
-    sketch_topview_window->setVisible( true );
-}

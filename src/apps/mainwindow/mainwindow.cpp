@@ -171,7 +171,7 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); emit runDiagnostics(); } );
+    { app->getRegions( status_ ); emit runDiagnostics( status_ ); } );
 
 }
 

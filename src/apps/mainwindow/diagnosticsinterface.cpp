@@ -64,10 +64,12 @@ void DiagnosticsInterface::createDiagnosticsActions()
 }
 
 
-void DiagnosticsInterface::init()
+void DiagnosticsInterface::init( bool status_ )
 {
-    window->lockUndoRedo( true );
-    dw_flow_window->setVisible( true );
+    window->lockUndoRedo( status_ );
+    dw_flow_window->setVisible( status_ );
+
+    if( status_  == false ) return;
 
     std::vector< std::size_t > domain_indexes_ = window->app->getDomains();
     flow_window->loadSurfacesfromSketch();

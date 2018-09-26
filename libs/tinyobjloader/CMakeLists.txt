@@ -11,4 +11,4 @@ file(
   )
 
 add_library( ${PROJECT_NAME} STATIC ${TINYOBJLOADER_HEADERS} ${TINYOBJLOADER_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} RRMBase  )
+#target_link_libraries( ${PROJECT_NAME} RRMBase  )

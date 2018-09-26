@@ -1,8 +1,8 @@
-cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 project( MainApp VERSION 3.1 LANGUAGES CXX )
 
-find_package (Qt5Widgets)
+find_package( Qt5Widgets REQUIRED )
 
 
 
@@ -48,11 +48,13 @@ include_directories( ${SIMULATOR_HEADERS} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
 
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 

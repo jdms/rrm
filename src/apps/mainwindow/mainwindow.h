@@ -51,7 +51,7 @@ class MainWindow: public QMainWindow
 
     signals:
 
-        void runDiagnostics();
+        void runDiagnostics( bool status_ );
 
     protected:
 
