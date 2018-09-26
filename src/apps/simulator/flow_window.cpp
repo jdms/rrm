@@ -746,7 +746,6 @@ void FlowWindow::setParametersBeforeSimulation()
 
 }
 
-
 void FlowWindow::setParametersBeforeMehsing()
 {
 	///setParametersBeforeSimulation();
