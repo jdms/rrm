@@ -50,4 +50,4 @@ include_directories (${PROJECT_BINARY_DIR})
 ###############################################
 
 add_library( ${PROJECT_NAME} STATIC ${MODELS_HEADERS} ${MODELS_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets  )
+#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets  )

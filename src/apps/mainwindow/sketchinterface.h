@@ -25,8 +25,7 @@ class SketchInterface: public QObject
         void init();
         void setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){}
 
-        void showOnlyMainCanvas();
-        void showFullCanvas();
+        void showOnlyMainCanvas( bool status_ );
 
 
 

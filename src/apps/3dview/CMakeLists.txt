@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 project( 3dViewApp VERSION 3.1 LANGUAGES CXX )
 
@@ -6,7 +6,7 @@ project( 3dViewApp VERSION 3.1 LANGUAGES CXX )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR} )
 
-find_package (Qt5Widgets)
+find_package( Qt5Widgets REQUIRED )
 
 
 set( 3DVIEW_HEADERS         canvas3d.h
@@ -30,7 +30,10 @@ set( 3DVIEW_SOURCES         canvas3d.cpp
 
 
 #qt5_wrap_cpp( 3DVIEW_MOC_SRCS ${3DVIEW_MOC_HEADERS})
+
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories (${PROJECT_SOURCE_DIR})

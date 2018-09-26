@@ -1,10 +1,11 @@
-cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 project( Sketching VERSION 3.1 LANGUAGES CXX )
 
-find_package (Qt5Widgets)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
+                     ${CMAKE_CURRENT_BINARY_DIR} )
 
-
+find_package( Qt5Widgets REQUIRED )
 
 set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
@@ -48,7 +49,10 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
 
 include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
+
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ###############################################

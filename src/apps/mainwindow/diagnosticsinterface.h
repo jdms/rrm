@@ -22,7 +22,7 @@ public:
 
 public slots:
 
-    void init();
+    void init( bool status_ );
 
 protected:
 
