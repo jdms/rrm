@@ -115,6 +115,10 @@ void MainWindow::createActions()
     ac_regions->setCheckable( true );
     ac_regions->setChecked( false );
 
+    ac_diagnostics = new QAction( "Diagnostics", this );
+    ac_diagnostics->setCheckable( true );
+    ac_diagnostics->setChecked( false );
+
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
@@ -171,7 +175,10 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); emit runDiagnostics( status_ ); } );
+    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ ); } );
+
+    connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
+    { emit runDiagnostics( status_ ); } );
 
 }
 
@@ -239,6 +246,7 @@ void MainWindow::createToolbar()
     tb_mainwindow->addActions( ag_objects->actions() );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_regions );
+    tb_mainwindow->addAction( ac_diagnostics );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_screenshot );
 
@@ -513,17 +521,13 @@ void MainWindow::lockPreserve( const std::string& option_ )
     if( option_.compare( "ABOVE" ) == 0 )
     {
         ac_sketch_below->setEnabled( false );
-//        ac_sketch_region->setEnabled( false );
     }
     else if( option_.compare( "REGION" ) == 0 )
     {
-//        ac_sketch_below->setEnabled( false );
-//        ac_sketch_above->setEnabled( false );
     }
     else if( option_.compare( "BELOW" ) == 0 )
     {
         ac_sketch_above->setEnabled( false );
-//        ac_sketch_region->setEnabled( false );
     }
     else
     {
@@ -587,6 +591,7 @@ void MainWindow::initializeInterface()
     ac_structural->setChecked( false );
 
     ac_regions->setChecked( false );
+    ac_diagnostics->setChecked( false );
 }
 
 

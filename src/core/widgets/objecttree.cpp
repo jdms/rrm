@@ -642,14 +642,15 @@ void ObjectTree::removeStructurals()
 
 
 
-void ObjectTree::createDomain1( std::size_t index_ )
+bool ObjectTree::createDomain1( std::size_t index_ )
 {
+    if( domains.findElement( index_ )  == true ) return false;
+
     if( domains.empty() == true )
     {
         addTopLevelItem( label_domains );
         label_domains->setHidden( false );
     }
-
 
     ObjectTreeItem* domain_ = new ObjectTreeItem();
     domain_->setIndex( index_ );
@@ -669,6 +670,9 @@ void ObjectTree::createDomain1( std::size_t index_ )
     bool status_ = getSelectedRegionsList( regions_ );
     if( status_ == true )
         emit addRegionsToDomain( index_, regions_ );
+
+
+    return true;
 }
 
 
@@ -731,6 +735,42 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
     }
 }
 
+
+void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ )
+{
+
+    for( auto it: regions_ )
+    {
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( regions.getElement( it ) );
+        if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
+
+        ObjectTreeItem* reg_ = new ObjectTreeItem();
+        reg_->setText( COLUMN_NAME, QString( obj_->text( COLUMN_NAME) ) );
+        reg_->setType( Settings::Objects::ObjectType::REGION );
+        reg_->setIndex( obj_->getIndex() );
+        reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
+
+        ObjectTreeItem* domain_ = domains.getElement( index_ );
+        domain_->addChild( reg_ );
+
+
+        connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
+        {
+            if( item_ == reg_ )
+            {
+                obj_->setCheckState( COLUMN_STATUS, reg_->checkState( COLUMN_STATUS ) );
+                obj_->setText( COLUMN_NAME, reg_->text( COLUMN_NAME ) );
+            }
+            else if( item_ == obj_ )
+            {
+                reg_->setCheckState( COLUMN_STATUS, obj_->checkState( COLUMN_STATUS ) );
+                reg_->setText( COLUMN_NAME, obj_->text( COLUMN_NAME ) );
+            }
+
+        } );
+
+    }
+}
 
 void ObjectTree::addToDomain1( std::size_t index_ )
 {

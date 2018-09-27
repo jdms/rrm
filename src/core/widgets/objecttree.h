@@ -24,6 +24,8 @@
 #ifndef OBJECTTREE_H
 #define OBJECTTREE_H
 
+#include <set>
+
 #include <QTreeWidget>
 #include <QMenu>
 #include<QDragEnterEvent>
@@ -111,9 +113,10 @@ class ObjectTree: public QTreeWidget
         void removeRegions();
 
 
-        void createDomain1( std::size_t index_ );
+        bool createDomain1( std::size_t index_ );
         bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ = std::vector< std::size_t >() );
         void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
+        void addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ );
         void addToDomain1( std::size_t index_ );
         void removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
                                            const std::vector< std::size_t >& parents_ );

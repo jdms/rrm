@@ -117,6 +117,7 @@ class MainWindow: public QMainWindow
         QAction* ac_structural = nullptr;
 
         QAction* ac_regions = nullptr;
+        QAction* ac_diagnostics = nullptr;
 
         QMenu* mn_file = nullptr;
         QMenu* mn_windows = nullptr;
