@@ -876,11 +876,12 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 }
 
 
-std::map< int, std::vector< float > > RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
+                                             std::vector< int >& regions_, std::map< int, std::vector< float > >& colors_ )
 {
-    std::vector< int > regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
+    regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
 
-    std::map< int, std::vector< float > > colors_;
+//    std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )
     {
         int r = 255, g = 0, b = 0;
@@ -897,6 +898,6 @@ std::map< int, std::vector< float > > RRMApplication::getTetrahedronsRegions( co
 
     }
 
-    return colors_;
+//    return colors_;
 
 }

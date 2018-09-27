@@ -190,7 +190,8 @@ public slots:
                                             std::vector< FlowWindow::CurveMesh >& back_curves );
 
 
-    std::map< int, std::vector< float > > getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+    void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
+                                 std::vector< int >& regions, std::map< int, std::vector< float > >& colors_ );
 
 
 signals:

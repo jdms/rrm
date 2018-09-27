@@ -99,7 +99,7 @@ void MainWindow::createActions()
     ac_direction_y = new QAction( "Height", this );
     ac_direction_y->setCheckable( true );
 
-    ac_direction_z = new QAction( "Lenght", this );
+    ac_direction_z = new QAction( "Length", this );
     ac_direction_z->setCheckable( true );
     ac_direction_z->setChecked( true );
 
@@ -574,7 +574,7 @@ void MainWindow::initializeInterface()
     ac_sketch_above->setChecked( false );
     ac_sketch_below->setChecked( false );
     ac_remove_above->setChecked( false );
-    ac_remove_above_int->setChecked( false );
+    ac_remove_above_int->setChecked( true );
     ac_remove_below->setChecked( false );
     ac_remove_below_int->setChecked( false );
 

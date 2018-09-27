@@ -49,14 +49,16 @@ void DiagnosticsInterface::createDiagnosticsActions()
 
   connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
   {
-    std::map< int, std::vector< float > > colors_ = window->app->getTetrahedronsRegions( vertices, edges, faces );
+      std::vector< int > regions_;
+    std::map< int, std::vector< float > > colors_;
+    window->app->getTetrahedronsRegions( vertices, edges, faces, regions_, colors_ );
 
-    std::vector< int > regions_;
 
-    for( auto it: colors_ )
-    {
-        regions_.push_back( it.first );
-    }
+
+//    for( auto it: colors_ )
+//    {
+//        regions_.push_back( it.first );
+//    }
 
     flow_window->setTetrahedronRegions( regions_, colors_ ); } );
 
@@ -72,7 +74,11 @@ void DiagnosticsInterface::init( bool status_ )
     if( status_  == false ) return;
 
     std::vector< std::size_t > domain_indexes_ = window->app->getDomains();
+    std::vector< int > domains_;
+    for( auto it: domain_indexes_ )
+        domains_.push_back( static_cast< int >( it ) );
+
     flow_window->loadSurfacesfromSketch();
-//    flow_window->setDomainIndexes( domain_indexes_ );
+    flow_window->setDomains( domains_ );
 
 }

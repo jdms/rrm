@@ -207,7 +207,7 @@ class Controller
         void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
         std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
         void removeDomain(std::size_t domain_id_);
-        std::vector< std::size_t > getDomains() const ;
+        std::vector< std::size_t > getDomains();
 
 
         void initRulesProcessor();

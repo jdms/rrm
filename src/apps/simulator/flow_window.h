@@ -93,6 +93,8 @@ class FlowWindow : public  QMainWindow
 		void setParametersBeforeMehsing();        
 
         void setRegions( const std::map< int,  std::vector< int > >& region_colors /*std::size_t number_of_regions_, std::vector<std::size_t > regions_, std::vector<float> colors_*/ );
+        void setDomains( const std::vector< int >& domain_indexes );
+
 
         /// Will emit a signal sendNumberOfRegions
         int getNumberOfRegions();
