@@ -557,7 +557,19 @@ void RRMApplication::updateLowerBoundary()
 
 std::vector< std::size_t > RRMApplication::getDomains() const
 {
-    return controller->getDomains();
+
+    std::vector< std::size_t > domains_ = controller->getDomains();
+    for( auto it_: domains_ )
+    {
+        bool status_ = window->object_tree->createDomain1( it_ );
+        if( status_ == false ) continue;
+
+        std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
+        window->object_tree->addRegionsInDomain( it_, regions_ );
+
+    }
+
+    return domains_;
 }
 
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
