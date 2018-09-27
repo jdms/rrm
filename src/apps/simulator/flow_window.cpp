@@ -1068,6 +1068,20 @@ void FlowWindow::setRegions( const std::map< int,  std::vector< int > >& region_
 }
 
 
+void FlowWindow::setDomains( const std::vector< int >& domain_indexes )
+{
+
+    std::map< int,  std::vector< int > > domains_;
+
+    for( auto it: domain_indexes )
+    {
+        std::vector< int > color{ 255, 255, 255 };
+        domains_[ it ] = color;
+    }
+
+    setRegions( domains_ );
+}
+
 void FlowWindow::setTetrahedronRegions( const std::vector< int >& regions_, std::map< int, std::vector< float > > colors_ )//const std::vector< float >& colors_ )
 {
 

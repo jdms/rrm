@@ -1297,9 +1297,18 @@ void Controller::removeDomain1(std::size_t domain_id_)
 }
 
 
-std::vector< std::size_t > Controller::getDomains() const
+std::vector< std::size_t > Controller::getDomains()
 {
     std::vector< std::size_t > indexes_;
+    std::vector<int> diff_;
+
+    for( auto it_: model.regions )
+    {
+        std::size_t id_ = it_.first;
+        if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
+        std::size_t domain_id_ = createDomain1();
+        addRegionToDomain1( id_, domain_id_ );
+    }
 
     for( auto it_: model.domains )
     {
@@ -1307,8 +1316,6 @@ std::vector< std::size_t > Controller::getDomains() const
     }
 
     return indexes_;
-
-
 }
 
 //=== old methods
