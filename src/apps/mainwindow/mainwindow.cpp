@@ -443,6 +443,7 @@ void MainWindow::plug3dInterface()
 
 }
 
+
 void MainWindow::plug3dDiagnosticsInterface()
 {
     diagapp = std::make_shared< DiagnosticsInterface >( this );
@@ -536,11 +537,13 @@ void MainWindow::lockPreserve( const std::string& option_ )
     }
 }
 
+
 void MainWindow::lockUndoRedo( bool status_ )
 {
     ac_undo->setDisabled( status_ );
     ac_redo->setDisabled( status_ );
 }
+
 
 void  MainWindow::activatePreserveAbove( bool status_ )
 {

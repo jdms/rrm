@@ -28,6 +28,10 @@
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QGraphicsView>
+#include <QSlider>
+#include <QStatusBar>
+#include <QDial>
+#include <QLabel>
 #include <QKeyEvent>
 
 #include "./src/core/widgets/canvasstack.h"
@@ -55,6 +59,8 @@ class SketchWindow: public QMainWindow
         std::shared_ptr< SketchScene > createMainCanvas();
         std::shared_ptr< SketchScene > addCanvas( double depth_ = 0 );
         void removeCanvas( double depth_ );
+
+        void createLateralBar();
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
@@ -159,6 +165,18 @@ class SketchWindow: public QMainWindow
         QToolBar* tb_trajectory = nullptr;
         QAction* ac_use_last_trajectory = nullptr;
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
+
+        QWidget* bar_ = nullptr;
+        QSlider* sl_vertical_exagg_ = nullptr;
+        QDial* dl_input_angle_ = nullptr;
+        QDial* dl_output_angle_ = nullptr;
+        QHBoxLayout* vb_angles = nullptr;
+        QVBoxLayout* hb_central = nullptr;
+        QHBoxLayout* hb_central1 = nullptr;
+        QLabel* lb_input_angle_  = nullptr;
+        QLabel* lb_output_angle_ = nullptr;
+        QLabel* lb_exagger_value_ = nullptr;
+
 
         ///================================================================================
 
