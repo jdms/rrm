@@ -177,7 +177,7 @@ class Object
 
         static void resetAllObjects();
 
-        inline void write( QJsonObject &json ) const
+        inline virtual void write( QJsonObject &json ) const
         {
             json[ "name" ] = QString( name.c_str() );
             json[ "text_information" ] = QString( text_information.c_str() );
@@ -221,7 +221,7 @@ class Object
         }
 
 
-        inline void read( const QJsonObject &json )
+        inline virtual void read( const QJsonObject &json )
         {
 
 

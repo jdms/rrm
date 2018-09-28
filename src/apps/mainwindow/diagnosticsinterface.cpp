@@ -35,33 +35,38 @@ void DiagnosticsInterface::createDiagnosticsActions()
 
     connect( window, &MainWindow::runDiagnostics, this, &DiagnosticsInterface::init );
 
-  connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
-           std::vector<size_t> &nv, size_t num_extrusion_steps ){
-    window->app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
+    connect( flow_window, &FlowWindow::getLegacyMeshes, this, [=]( std::vector<double> &points, std::vector<size_t> &nu,
+             std::vector<size_t> &nv, size_t num_extrusion_steps ){
+        window->app->getLegacyMeshes( points, nu, nv, num_extrusion_steps ) ; } );
 
 
-  connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
-           std::vector< FlowWindow::CurveMesh>& left_curves,
-           std::vector< FlowWindow::CurveMesh >& right_curves,
-           std::vector< FlowWindow::CurveMesh > & front_curves,
-           std::vector< FlowWindow::CurveMesh >& back_curves ) {
-    window->app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
+    connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
+             std::vector< FlowWindow::CurveMesh>& left_curves,
+             std::vector< FlowWindow::CurveMesh >& right_curves,
+             std::vector< FlowWindow::CurveMesh > & front_curves,
+             std::vector< FlowWindow::CurveMesh >& back_curves ) {
+        window->app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
 
-  connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
-  {
-      std::vector< int > regions_;
-    std::map< int, std::vector< float > > colors_;
-    window->app->getTetrahedronsRegions( vertices, edges, faces, regions_, colors_ );
+    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+    {
+        std::vector< int > regions_;
+        std::map< int, std::vector< float > > colors_;
+        window->app->getTetrahedronsRegions( vertices, edges, faces, regions_, colors_ );
 
 
 
-//    for( auto it: colors_ )
-//    {
-//        regions_.push_back( it.first );
-//    }
+        //    for( auto it: colors_ )
+        //    {
+        //        regions_.push_back( it.first );
+        //    }
 
-    flow_window->setTetrahedronRegions( regions_, colors_ ); } );
+        flow_window->setTetrahedronRegions( regions_, colors_ ); } );
 
+
+    connect( window->app, &RRMApplication::resetApplication, [=]()
+    {
+        flow_window->clear();
+    } );
 
 }
 

@@ -128,11 +128,13 @@ void RRMApplication::setVolumeWidth( double width_ )
     emit updateVolume();
 }
 
+
 void RRMApplication::setVolumeHeight( double height_ )
 {
     controller->setVolumeHeight( height_ );
     emit updateVolume();
 }
+
 
 void RRMApplication::setVolumeDepth( double lenght_ )
 {
@@ -308,6 +310,7 @@ void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSection
     controller->removeCurveFromObject( dir_, depth_ );
     emit updateObjects();
 }
+
 
 void RRMApplication::createObjectSurface()
 {
@@ -572,6 +575,7 @@ std::vector< std::size_t > RRMApplication::getDomains() const
     return domains_;
 }
 
+
 void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     bool status_ = controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
@@ -726,12 +730,33 @@ void RRMApplication::load( const std::string& filename_ )
     emit updateVolume();
     emit updateObjects();
 
-
     loadObjectTree();
+    loadRegions();
 
     checkUndoRedo();
     checkPreserveStatus();
 
+
+}
+
+
+void RRMApplication::loadRegions()
+{
+    window->object_tree->addOutputVolume();
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        reg_->getColor( r_, g_, b_ );
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+
+        emit addRegionCrossSectionBoundary( reg_ );
+    }
+
+    emit addRegions();
+    getDomains();
 }
 
 
