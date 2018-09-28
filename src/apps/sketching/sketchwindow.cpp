@@ -23,10 +23,7 @@
 
 #include <QToolBar>
 #include <QFileDialog>
-#include <QSlider>
-#include <QStatusBar>
-#include <QDial>
-
+#include <QGroupBox>
 
 #include "sketchwindow.h"
 #define PI 3.14159265
@@ -85,7 +82,6 @@ void SketchWindow::createToolBar()
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
-//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     tb_trajectory->addAction( ac_use_last_trajectory );
 
 
@@ -103,20 +99,17 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     sketchingcanvas->scale( 1, -1 );
     sketchingcanvas->setVerticalExaggeration( 1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-    setCentralWidget( sketchingcanvas );
 
-    QSlider* sl_vertical_exagg_ = new QSlider( Qt::Horizontal );
-    sl_vertical_exagg_->setRange( 10, 100 );
-    sl_vertical_exagg_->setSingleStep( 1 );
-    sl_vertical_exagg_->setValue( 10 );
+    createLateralBar();
 
-    QDial* dl_input_angle_ = new QDial();
-    dl_input_angle_->setMaximumSize( 20, 20 );
-    dl_input_angle_->setRange( 0, 180 );
-    dl_input_angle_->setSingleStep( 15 );
+    hb_central1 = new QHBoxLayout( this );
+    hb_central1->addWidget( sketchingcanvas );
+    hb_central1->addWidget( bar_ );
 
-    statusBar()->addWidget( sl_vertical_exagg_ );
-    statusBar()->addWidget( dl_input_angle_ );
+
+    QWidget* central_ = new QWidget();
+    central_->setLayout( hb_central1 );
+    setCentralWidget( central_ );
 
     tb_trajectory->setVisible( false );
 
@@ -174,13 +167,79 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
-    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
-
-    connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
 
 
 
     return scene_;
+}
+
+
+void SketchWindow::createLateralBar()
+{
+
+    sl_vertical_exagg_ = new QSlider( Qt::Vertical );
+    sl_vertical_exagg_->setRange( 10, 100 );
+    sl_vertical_exagg_->setSingleStep( 1 );
+    sl_vertical_exagg_->setValue( 10 );
+
+    lb_exagger_value_ = new QLabel( "Value: " );
+    QVBoxLayout* vb_exagg_ = new QVBoxLayout;
+    vb_exagg_->addStretch();
+    vb_exagg_->addWidget( lb_exagger_value_ );
+
+    QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
+    hb_exaggerattion_->addWidget( sl_vertical_exagg_ );
+    hb_exaggerattion_->addSpacing( 30 );
+    hb_exaggerattion_->addLayout( vb_exagg_ );
+
+    QGroupBox* gb_exagger_ = new QGroupBox( "Vert. Exaggeration: " );
+    gb_exagger_->setLayout( hb_exaggerattion_ );
+
+
+    dl_input_angle_ = new QDial();
+    dl_input_angle_->setMaximumSize( 40, 40 );
+    dl_input_angle_->setRange( 0, 180 );
+    dl_input_angle_->setSingleStep( 15 );
+
+    dl_output_angle_ = new QDial();
+    dl_output_angle_->setMaximumSize( 40, 40 );
+    dl_output_angle_->setRange( 0, 180 );
+    dl_output_angle_->setSingleStep( 15 );
+
+
+    lb_input_angle_ = new QLabel( "Input: " );
+    lb_output_angle_ = new QLabel( "Output: " );
+
+    QVBoxLayout* vb_input_angle_ = new QVBoxLayout;
+    vb_input_angle_->addWidget( dl_input_angle_ );
+    vb_input_angle_->addWidget( lb_input_angle_ );
+
+    QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
+    vb_output_angle_->addWidget( dl_output_angle_ );
+    vb_output_angle_->addWidget( lb_output_angle_ );
+
+    vb_angles = new QHBoxLayout();
+    vb_angles->addLayout( vb_input_angle_ );
+    vb_angles->addSpacing( 10 );
+    vb_angles->addLayout( vb_output_angle_ );
+
+
+    QGroupBox* gb_dip_angle_ = new QGroupBox( "Dip Angle: " );
+    gb_dip_angle_->setLayout( vb_angles );
+
+    hb_central = new QVBoxLayout();
+    hb_central->addWidget( gb_exagger_ );
+    hb_central->addWidget( gb_dip_angle_ );
+
+
+    bar_ = new QWidget();
+    bar_->setMinimumWidth( 170 );
+    bar_->setLayout( hb_central );
+
+    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
+
+    connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
+
 }
 
 
@@ -360,6 +419,9 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
     double v_exagg_db_ = static_cast< double > ( v_exagg_*0.05 );
     sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 
+    lb_exagger_value_->setText( QString( "Value: %1" ).arg( v_exagg_db_ ) );
+
+
     emit setVerticalExaggeration( v_exagg_db_ );
 
 }
@@ -371,6 +433,10 @@ void SketchWindow::setDipAngle( double angle_ )
     double param_ = v_exag_*tan( angle_*PI/180 );
     double beta_ = atan(param_) * 180 / PI;
 
+    lb_input_angle_ ->setText( QString( "Input: %1" ).arg( angle_ ) );
+    lb_output_angle_->setText( QString( "Output: %2" ).arg( beta_ ) );
+
+    dl_output_angle_->setValue( static_cast< int >( beta_ ) );
     std::cout << "Beta value: " << beta_ << std::endl << std::flush;
 }
 
@@ -379,7 +445,6 @@ void SketchWindow::reset()
 {
     ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
-//    ac_use_last_trajectory->setChecked( USE_TRAJECTORY_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
 
     if( sketchingcanvas != nullptr )

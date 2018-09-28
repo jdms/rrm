@@ -2078,6 +2078,34 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     }
     metadatas["objects"] = objects_array_;
 
+    QJsonArray regions_array_;
+    for( auto it: model.regions )
+    {
+        const RegionsPtr& reg_ = it.second;
+        QJsonObject region_;
+        reg_->write( region_ );
+        regions_array_.append( region_ );
+    }
+    metadatas["regions"] = regions_array_;
+
+
+    QJsonArray domains_array_;
+    for( auto it_: model.domains )
+    {
+        const Domain& dom_ = it_.second;
+
+        QJsonArray regions_set_array_;
+        for( auto itd_: dom_.regions_set )
+            regions_set_array_.push_back( static_cast< int >( itd_ ) );
+
+        QJsonObject domain_;
+        domain_[ "index" ] = static_cast< int >( it_.first );
+        domain_[ "regions" ] = regions_set_array_;
+
+
+        domains_array_.append( domain_ );
+    }
+    metadatas["domains"] = domains_array_;
 
     QJsonDocument save_doc( metadatas );
     save_file.write( save_doc.toJson() );
@@ -2203,7 +2231,6 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
     if ( json.contains("objects") && json["objects"].isArray() )
     {
 
-
         int counter_ = 0;
         while( rules_processor.canRedo() )
         {
@@ -2249,6 +2276,52 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
 
     }
+
+    if( json.contains("regions") && json["regions"].isArray() )
+    {
+        defineRegions();
+
+        QJsonArray regions_array_ = json["regions"].toArray();
+        int nregions_ = regions_array_.size();
+        for( int i = 0; i < nregions_; ++i )
+        {
+            QJsonObject region_ = regions_array_[ i ].toObject();
+            if( region_.contains( "index" ) == false ) return;
+
+            std::size_t id_ = static_cast< std::size_t>( json["index"].toInt() );
+            if( model.regions.find( id_ ) == model.regions.end() ) return;
+
+            RegionsPtr reg_ = model.regions[ id_ ];
+            reg_->read( region_ );
+
+        }
+    }
+
+    if( json.contains("domains") && json["domains"].isArray() )
+    {
+
+        QJsonArray domains_array_ = json["domains"].toArray();
+        int ndomains_ = domains_array_.size();
+        for( int i = 0; i < ndomains_; ++i )
+        {
+            QJsonObject domain_ = domains_array_[ i ].toObject();
+            if( domain_.contains( "index" ) == false ) return;
+
+
+            std::size_t id_ = static_cast< std::size_t>( domain_["index"].toInt() );
+            if( ( domain_.contains( "regions" ) == false ) ||
+                ( domain_["regions"].isArray()  == false ) ) return;
+
+            std::size_t index_ = createDomain1();
+
+            QJsonArray regions_set_array_ = domain_["regions"].toArray();
+            for( auto it_: regions_set_array_ )
+                addRegionToDomain1( static_cast< std::size_t >( it_.toInt() ), index_ );
+
+        }
+    }
+
+
 }
 
 
