@@ -156,6 +156,7 @@ public slots:
     void loadObjectTree();
     void updateObjectTree();
 
+    void loadRegions();
 
     void reset();
 

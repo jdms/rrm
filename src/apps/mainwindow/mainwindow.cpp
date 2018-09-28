@@ -28,7 +28,6 @@ void MainWindow::setWindowProperties()
 
 void MainWindow::createWindow()
 {
-
     createActions();
     createMenuBar();
     createToolbar();

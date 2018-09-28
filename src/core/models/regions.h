@@ -92,6 +92,18 @@ class Regions: public Object
         void clear() override;
         void initialize();
 
+        inline virtual void write( QJsonObject& json_ ) const override
+        {
+            json_[ "index" ] = static_cast< int >( index );
+            Object::write( json_ );
+        }
+
+
+        inline virtual void read( const QJsonObject& json_ ) override
+        {
+            Object::read( json_ );
+        }
+
 
 
     private:

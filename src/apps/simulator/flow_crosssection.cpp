@@ -509,7 +509,7 @@ void FlowCrossSection::resetBuffers()
 void FlowCrossSection::deleteShaders()
 {
 
-    if (shader_plane)
+    if (shader_plane !=  nullptr )
     {
         delete (shader_plane);
         shader_plane = nullptr;
