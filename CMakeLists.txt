@@ -76,10 +76,13 @@ OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
 if( RRM_DIRECTORY_LIBRARIES )
 
-    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+
+    set( Qt5_DIR "C:/Qt/5.8/msvc2017_64/lib/cmake/Qt5" )
+#    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
     set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
     set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
+    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64/glew32.lib )
+#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
 
 endif()
 
@@ -109,7 +112,7 @@ include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
-set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
+set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
 include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
 find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
