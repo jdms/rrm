@@ -2245,9 +2245,9 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
         int obj_id_ = 0;
         for( auto id: actives )
         {
-            int r_= distr( eng );
-            int g_= distr( eng );
-            int b_= distr( eng );
+            int r_= static_cast< int >( distr( eng ) );
+            int g_= static_cast< int >( distr( eng ) );
+            int b_= static_cast< int >( distr( eng ) );
 
             addObject( id );
 

@@ -41,6 +41,8 @@
 #include "sketchingcanvas.h"
 #include "sketchscene.h"
 
+#include "models/anglepicture.h "
+
 //class QGraphicsView;
 class QWheelEvent;
 
@@ -176,6 +178,9 @@ class SketchWindow: public QMainWindow
         QLabel* lb_input_angle_  = nullptr;
         QLabel* lb_output_angle_ = nullptr;
         QLabel* lb_exagger_value_ = nullptr;
+
+        AnglePicture* lb_input_dpangle;
+        AnglePicture* lb_output_dpangle;
 
 
         ///================================================================================
