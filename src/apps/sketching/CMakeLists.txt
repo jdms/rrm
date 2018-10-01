@@ -19,7 +19,8 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             models/crosssectionitem.h
                             models/regionitem.h
                             models/stratigraphyitem.h
-                            models/volumeitem.h  )
+                            models/volumeitem.h
+                            models/anglepicture.h )
 
 
 
@@ -40,7 +41,8 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             models/crosssectionitem.cpp
                             models/regionitem.cpp
                             models/stratigraphyitem.cpp
-                            models/volumeitem.cpp  )
+                            models/volumeitem.cpp
+                            models/anglepicture.cpp )
 
 
 
