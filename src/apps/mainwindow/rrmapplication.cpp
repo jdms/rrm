@@ -625,6 +625,7 @@ void RRMApplication::reset()
 {
 
     emit resetApplication();
+    emit enableVolumeResizing();
     window->initializeInterface();
     controller->clear();
 
