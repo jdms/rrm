@@ -32,7 +32,9 @@
 #include <QStatusBar>
 #include <QDial>
 #include <QLabel>
+#include <QLCDNumber>
 #include <QKeyEvent>
+#include <QPushButton>
 
 #include "./src/core/widgets/canvasstack.h"
 #include "./core/definitions/constants.hpp"
@@ -171,16 +173,17 @@ class SketchWindow: public QMainWindow
         QWidget* bar_ = nullptr;
         QSlider* sl_vertical_exagg_ = nullptr;
         QDial* dl_input_angle_ = nullptr;
-        QDial* dl_output_angle_ = nullptr;
         QHBoxLayout* vb_angles = nullptr;
         QVBoxLayout* hb_central = nullptr;
         QHBoxLayout* hb_central1 = nullptr;
-        QLabel* lb_input_angle_  = nullptr;
-        QLabel* lb_output_angle_ = nullptr;
+        QLCDNumber* lb_input_angle_  = nullptr;
+        QLCDNumber* lb_output_angle_ = nullptr;
         QLabel* lb_exagger_value_ = nullptr;
 
-        AnglePicture* lb_input_dpangle;
-        AnglePicture* lb_output_dpangle;
+        AnglePicture* lb_input_dpangle = nullptr;
+        AnglePicture* lb_output_dpangle = nullptr;
+
+        QPushButton* btn_show_oangle  = nullptr;
 
 
         ///================================================================================

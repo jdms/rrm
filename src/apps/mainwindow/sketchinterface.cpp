@@ -296,14 +296,19 @@ void SketchInterface::init()
     if( sketch_topview_window != nullptr )
         sketch_topview_window->disableResizeVolume( false );
 
+
     scontroller->init();
+    showOnlyMainCanvas( false );
+
 }
 
 
 void SketchInterface::showOnlyMainCanvas( bool status_ )
 {
+    if( dw_sketchwindow != nullptr )
+        dw_sketchwindow->setVisible( !status_ );
 
-    dw_sketchwindow->setVisible( !status_ );
-    dw_topview_window->setVisible( !status_ );
+    if( dw_topview_window != nullptr )
+        dw_topview_window->setVisible( !status_ );
 }
 

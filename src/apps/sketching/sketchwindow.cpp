@@ -182,54 +182,65 @@ void SketchWindow::createLateralBar()
     sl_vertical_exagg_->setSingleStep( 1 );
     sl_vertical_exagg_->setValue( 10 );
 
-    lb_exagger_value_ = new QLabel( "Value: " );
-    QVBoxLayout* vb_exagg_ = new QVBoxLayout;
-    vb_exagg_->addStretch();
-    vb_exagg_->addWidget( lb_exagger_value_ );
+//    lb_exagger_value_ = new QLabel( "Value: " );
+//    QVBoxLayout* vb_exagg_ = new QVBoxLayout;
+//    vb_exagg_->addStretch();
+//    vb_exagg_->addWidget( lb_exagger_value_ );
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
     hb_exaggerattion_->addWidget( sl_vertical_exagg_ );
-    hb_exaggerattion_->addSpacing( 30 );
-    hb_exaggerattion_->addLayout( vb_exagg_ );
 
     QGroupBox* gb_exagger_ = new QGroupBox( "Vert. Exaggeration: " );
     gb_exagger_->setLayout( hb_exaggerattion_ );
 
 
     dl_input_angle_ = new QDial();
-    dl_input_angle_->setMaximumSize( 40, 40 );
-    dl_input_angle_->setRange( 0, 180 );
-    dl_input_angle_->setSingleStep( 15 );
+    dl_input_angle_->setMaximumSize( 70, 70 );
+    dl_input_angle_->setInvertedAppearance( true );
+    dl_input_angle_->setNotchesVisible( true );
+    dl_input_angle_->setRange( 0, 90 );
+    dl_input_angle_->setSingleStep( 10 );
 
-    dl_output_angle_ = new QDial();
-    dl_output_angle_->setMaximumSize( 40, 40 );
-    dl_output_angle_->setRange( 0, 180 );
-    dl_output_angle_->setSingleStep( 15 );
-
-
-    lb_input_angle_ = new QLabel( "Input: " );
-    lb_output_angle_ = new QLabel( "Output: " );
-
-    QVBoxLayout* vb_input_angle_ = new QVBoxLayout;
-    vb_input_angle_->addWidget( dl_input_angle_ );
-    vb_input_angle_->addWidget( lb_input_angle_ );
-
-    QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
-    vb_output_angle_->addWidget( dl_output_angle_ );
-    vb_output_angle_->addWidget( lb_output_angle_ );
+    btn_show_oangle = new QPushButton( "Show" );
+    QVBoxLayout* vb_input_angle = new QVBoxLayout();
+    vb_input_angle->addWidget( dl_input_angle_ );
+    vb_input_angle->addWidget( btn_show_oangle );
 
 
     lb_input_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
+    lb_input_angle_ = new QLCDNumber();
+    lb_input_angle_->setDecMode();
+    lb_input_angle_->setFrameShape( QFrame::NoFrame );
+    lb_input_angle_->setSegmentStyle(QLCDNumber::Flat);
+
+    QVBoxLayout* vb_input_angle_ = new QVBoxLayout;
+    vb_input_angle_->addWidget( lb_input_dpangle );
+    vb_input_angle_->addWidget( lb_input_angle_ );
+
+
     lb_output_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
+    lb_output_angle_ = new QLCDNumber();
+    lb_output_angle_->setDecMode();
+    lb_output_angle_->setFrameShape( QFrame::NoFrame );
+    lb_output_angle_->setSegmentStyle(QLCDNumber::Flat);
+    lb_output_angle_->setSmallDecimalPoint( true );
+    lb_output_angle_->setDigitCount( 3 );
+
+
+    QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
+    vb_output_angle_->addWidget( lb_output_dpangle );
+    vb_output_angle_->addWidget( lb_output_angle_ );
+
 
 
     vb_angles = new QHBoxLayout();
-    vb_angles->addLayout( vb_input_angle_ );
-//    vb_angles->addSpacing( 10 );
-    vb_angles->addWidget( lb_input_dpangle );
+//    vb_angles->addWidget(  dl_input_angle_ );
+    vb_angles->addLayout( vb_input_angle );
     vb_angles->addSpacing( 10 );
-    vb_angles->addWidget( lb_output_dpangle );
-//    vb_angles->addLayout( vb_output_angle_ );
+
+    vb_angles->addLayout( vb_input_angle_ );
+    vb_angles->addSpacing( 10 );
+    vb_angles->addLayout( vb_output_angle_ );
 
 
     QGroupBox* gb_dip_angle_ = new QGroupBox( "Dip Angle: " );
@@ -250,45 +261,6 @@ void SketchWindow::createLateralBar()
 
 }
 
-
-
-//QPixmap SketchWindow::drawDipAngles( double angle_ )
-//{
-//    int value = 80;
-//    QPixmap pix( value, value );
-//    QPainter painter(&pix);
-//    QLinearGradient gradient(0,0, 0, value);
-//    gradient.setColorAt(0.0, QColor(250, 250, 250));
-//    gradient.setColorAt(1.0, QColor(234, 234, 234));
-//    QBrush brush(gradient);
-
-//    painter.setPen(QColor(0, 0, 255, 64));
-//    qreal xAxis = value/2;
-//    qreal yAxis = value/2;
-//    painter.drawLine(0, xAxis, value,  xAxis);
-//    painter.drawLine(yAxis, 0, yAxis, value);
-
-//    QPointF center = QPointF(yAxis, xAxis);
-
-//    QLineF angleline;
-//    angleline.setP1( center);
-//    angleline.setAngle( angle_ );
-//    angleline.setLength(value);
-//    painter.drawLine(angleline);
-
-//    QPainterPath myPath;
-//    myPath.moveTo(center);
-//    myPath.arcTo( pix.rect() , 0, angle_ );
-//    painter.setBrush( QBrush( Qt::yellow ) );
-//    painter.drawPath(myPath);
-
-//    painter.setRenderHint(QPainter::Antialiasing, true );
-//    return pix;
-
-////    QLabel* teste = new QLabel();
-////    teste->setPixmap( pix );
-
-//}
 
 std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 {
@@ -466,7 +438,7 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
     double v_exagg_db_ = static_cast< double > ( v_exagg_*0.05 );
     sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 
-    lb_exagger_value_->setText( QString( "Value: %1" ).arg( v_exagg_db_ ) );
+//    lb_exagger_value_->setText( QString( "Value: %1" ).arg( v_exagg_db_ ) );
 
 
     emit setVerticalExaggeration( v_exagg_db_ );
@@ -477,18 +449,18 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 void SketchWindow::setDipAngle( double angle_ )
 {
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
-    double param_ = v_exag_*tan( angle_*PI/180 );
+    double param_ = v_exag_*tan( angle_*PI / 180 );
     double beta_ = atan(param_) * 180 / PI;
 
-    lb_input_angle_ ->setText( QString( "Input: %1" ).arg( angle_ ) );
-    lb_output_angle_->setText( QString( "Output: %2" ).arg( beta_ ) );
-
+    lb_input_angle_ ->display( QString( "%1" ).arg( angle_ ) );
     lb_input_dpangle->updateAngle( angle_ );
 
-    dl_output_angle_->setValue( static_cast< int >( beta_ ) );
+
+    lb_output_angle_->display( QString( "%2" ).arg( beta_ ) );
     lb_output_dpangle->updateAngle( beta_ );
 
     std::cout << "Beta value: " << beta_ << std::endl << std::flush;
+
 }
 
 

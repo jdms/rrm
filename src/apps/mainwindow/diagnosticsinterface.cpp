@@ -65,7 +65,8 @@ void DiagnosticsInterface::createDiagnosticsActions()
 
     connect( window->app, &RRMApplication::resetApplication, [=]()
     {
-        flow_window->clear();
+        flow_window->clear(); this->init( false );
+
     } );
 
 }

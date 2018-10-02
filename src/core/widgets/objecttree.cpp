@@ -120,7 +120,7 @@ void ObjectTree::createMenu()
 
 void ObjectTree::showMenu( const QPoint& pos_ )
 {
-    mn_menu->exec( pos_ );
+    mn_menu->exec( mapToGlobal( pos_ ) );
 }
 
 
