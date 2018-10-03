@@ -164,12 +164,16 @@ class PlanarSurface {
         bool getHeight( Natural i, Natural j, double &height ); 
 
         bool getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id );
+        bool getHeight( Natural i, Natural j, double &height, SurfaceId &bounding_surface_id );
 
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
 
         bool getCachedHeight( Natural vertex_index, double &height );
         bool getCachedHeight( Natural i, Natural j, double &height );
+
+        bool getRawHeight( Natural vertex_index, double &height );
+        bool getRawHeight( Natural i, Natural j, double &height );
 
         std::size_t getNumX(); 
         std::size_t getNumY(); 

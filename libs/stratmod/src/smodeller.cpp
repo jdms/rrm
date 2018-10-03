@@ -818,22 +818,26 @@ bool SModeller::getMesh( size_t surface_id, std::vector<double> &vlist, std::vec
 
 bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width);
+    /* return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width); */
+    return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
 }
 
 bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
-    return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width);
+    /* return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width); */
+    return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
 }
 
 bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length);
+    /* return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length); */
+    return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
 }
 
 bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
-    return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length);
+    /* return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length); */
+    return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
 }
 
 

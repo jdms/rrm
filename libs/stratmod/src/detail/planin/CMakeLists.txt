@@ -259,6 +259,7 @@ set(HEADERS
   srules.hpp
   mesh/polyhedra.hpp
   mesh/tetrahedral_mesh_builder.hpp
+  mesh/linear_complexes.hpp
   )
 
 set(PLANIN_LIB_SOURCES 
@@ -268,6 +269,7 @@ set(PLANIN_LIB_SOURCES
     srules.cpp
     triangle_soup_wrapper.cpp
     mesh/tetrahedral_mesh_builder.cpp
+    mesh/linear_complexes.cpp
     ) 
 
 add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})  
