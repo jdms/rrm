@@ -34,6 +34,7 @@
 #include <cstdint>
 
 #include "detail/planin/planin.hpp"
+#include "mesh/linear_complexes.hpp"
 
 #include "smodeller.hpp"
 
@@ -294,7 +295,13 @@ struct SModellerImplementation
         bool getCrossSectionWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width );
 
     template<typename VertexList, typename EdgeList>
+        bool getAdaptedCrossSectionAtConstantWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width );
+
+    template<typename VertexList, typename EdgeList>
         bool getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length );
+
+    template<typename VertexList, typename EdgeList>
+        bool getAdaptedCrossSectionAtConstantLength( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length );
 };
 
 
@@ -392,6 +399,7 @@ bool SModellerImplementation::getCrossSectionWidth( size_t surface_id, VertexLis
     return has_curve;
 }
 
+
 template<typename VertexList, typename EdgeList>
 bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length )
 {
@@ -443,6 +451,262 @@ bool SModellerImplementation::getCrossSectionDepth( size_t surface_id, VertexLis
             elist.push_back( static_cast<OutNaturalType>( i ) );
             has_curve |= true;
         }
+    }
+
+    return has_curve;
+}
+
+template<typename VertexList, typename EdgeList>
+bool SModellerImplementation::getAdaptedCrossSectionAtConstantWidth( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t width )
+{
+    size_t index; 
+    if ( getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    PlanarSurface::Ptr sptr( container_[index] ); 
+
+    PlanarSurface::Natural Nwidth = 2 * static_cast<PlanarSurface::Natural>(width);
+
+    if ( Nwidth >= sptr->getNumX() )
+    {
+        return false;
+    }
+
+    if ( sptr->getNumY() <= 0 )
+    {
+        return false;
+    }
+
+    vlist.resize( 2 * sptr->getNumY() );
+    elist.clear(); 
+
+    double t, height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
+    bool status, previous_status; 
+    PlanarSurface::SurfaceId bsid, pbsid;
+    size_t bindex;
+
+    /* TODO: have a look at those types and their conversions */
+    using OutRealType = typename VertexList::value_type;
+    /* using OutNaturalType = typename EdgeList::value_type; */
+
+    /* auto computeIntersection = [&]( PlanarSurface intersected, std::vector<double> &intersected_vlist, PlanarSurface base, &base_vlist) -> void */ 
+    /* { */
+    /*     std::vector<double> vertices = {}; */
+
+    /*     double sa_0_abs, sa_1_abs, sb_0_abs, sb_1_abs; */
+    /*     double sa_0_ord, sa_1_ord, sb_0_ord, sb_1_ord; */
+
+    /*     size_t i; */
+    /*     sptr->getRawHeight(Nwidth, i, sa_0_abs); */
+    /*     sptr->getRawHeight(Nwidth, i-1, sa_1_abs); */
+
+    /*     sptr->getRawHeight(Nwidth, i, sa_0_ord); */
+    /*     sptr->getRawHeight(Nwidth, i-1, sa_1_ord); */
+    /* }; */
+
+    /* sptr->getCachedHeight( Nwidth, 0, height ); */
+    bool has_curve = false;
+    size_t num_segments = 0;
+
+    EdgeList current;
+
+    VertexList intersectec_vlist;
+    intersectec_vlist.resize(4);
+
+    /* std::vector<double> intersected_vlist = {0., 0., 0., 0., 0., 0.}; */ 
+    /* std::vector<double> base_vlist = {0., 0., 0., 0., 0., 0.}; */
+
+    size_t source = 0;
+    size_t sink = 1;
+    for ( PlanarSurface::Natural i = 1; i < sptr->getNumY(); i += 1 )
+    {
+        source = i-1;
+        sink = i;
+
+        previous_status = sptr->getHeight( Nwidth, source, previous_height, pbsid );
+        sptr->getRawHeight( Nwidth, source, previous_height );
+        previous_abscissa = static_cast<OutRealType>( origin_.y + (double)(i-1) * lenght_.y / ( (double)(sptr->getNumY() - 1) ) );
+        previous_ordinate = static_cast<OutRealType>( previous_height );
+        vlist[2*source + 0] = previous_abscissa;
+        vlist[2*source + 1] = previous_ordinate;
+
+        status = sptr->getHeight( Nwidth, sink, height, bsid );
+        sptr->getRawHeight( Nwidth, sink, height );
+        abscissa = static_cast<OutRealType>( origin_.y + (double)(i) * lenght_.y / ( (double)(sptr->getNumY() - 1) ) );
+        ordinate = static_cast<OutRealType>( height );
+        vlist[2*sink + 0] = abscissa;
+        vlist[2*sink + 1] = ordinate;
+
+        Segment<VertexList, 2> segment(vlist, source, sink, previous_status, status);
+
+        if ( !previous_status != !status )
+        {
+            if ( !previous_status && status )
+            {
+                container_.getSurfaceIndex(pbsid, bindex);
+            }
+            else if ( previous_status && !status )
+            {
+                container_.getSurfaceIndex(bsid, bindex);
+            }
+
+            container_[bindex]->getRawHeight(Nwidth, source, previous_height);
+            intersectec_vlist[0] = previous_abscissa;
+            intersectec_vlist[1] = previous_height;
+
+            container_[bindex]->getRawHeight(Nwidth, sink, height);
+            intersectec_vlist[2] = abscissa;
+            intersectec_vlist[3] = height;
+
+            Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
+            t = computeVerticalIntersection<Segment<VertexList, 2>>( segment, intersected );
+        }
+
+        num_segments = segment.getConnectivity(current);
+        if ( num_segments > 0 )
+            std::copy( current.begin(), current.end(), std::back_inserter(elist) );
+
+        has_curve |= (num_segments > 0);
+        /* status          = sptr->getHeight(Nwidth,     i, height, bsid); */
+        /* sptr->getRawHeight(Nwidth, i, height); */
+
+        /* previous_status = sptr->getHeight(Nwidth, i - 1, previous_height, pbsid); */
+    }
+
+    return has_curve;
+}
+
+template<typename VertexList, typename EdgeList>
+bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t surface_id, VertexList &vlist, EdgeList &elist, size_t length )
+{
+    size_t index; 
+    if ( getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    PlanarSurface::Ptr sptr( container_[index] ); 
+
+    PlanarSurface::Natural Nlength = 2 * static_cast<PlanarSurface::Natural>(length);
+
+    if ( Nlength >= sptr->getNumY() )
+    {
+        return false;
+    }
+
+    if ( sptr->getNumX() <= 0 )
+    {
+        return false;
+    }
+
+    vlist.resize( 2 * sptr->getNumX() );
+    elist.clear(); 
+
+    double t, height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
+    bool status, previous_status; 
+    PlanarSurface::SurfaceId bsid, pbsid;
+    size_t bindex;
+
+    /* TODO: have a look at those types and their conversions */
+    using OutRealType = typename VertexList::value_type;
+    /* using OutNaturalType = typename EdgeList::value_type; */
+
+    /* auto computeIntersection = [&]( PlanarSurface intersected, std::vector<double> &intersected_vlist, PlanarSurface base, &base_vlist) -> void */ 
+    /* { */
+    /*     std::vector<double> vertices = {}; */
+
+    /*     double sa_0_abs, sa_1_abs, sb_0_abs, sb_1_abs; */
+    /*     double sa_0_ord, sa_1_ord, sb_0_ord, sb_1_ord; */
+
+    /*     size_t i; */
+    /*     sptr->getRawHeight(Nlength, i, sa_0_abs); */
+    /*     sptr->getRawHeight(Nlength, i-1, sa_1_abs); */
+
+    /*     sptr->getRawHeight(Nlength, i, sa_0_ord); */
+    /*     sptr->getRawHeight(Nlength, i-1, sa_1_ord); */
+    /* }; */
+
+    /* sptr->getCachedHeight( Nlength, 0, height ); */
+    bool has_curve = false;
+    size_t num_segments = 0;
+
+    EdgeList current;
+
+    VertexList intersectec_vlist;
+    intersectec_vlist.resize(4);
+
+    /* std::vector<double> intersected_vlist = {0., 0., 0., 0., 0., 0.}; */ 
+    /* std::vector<double> base_vlist = {0., 0., 0., 0., 0., 0.}; */
+
+    size_t source = 0;
+    size_t sink = 1;
+    for ( PlanarSurface::Natural i = 1; i < sptr->getNumX(); i += 1 )
+    {
+        source = i-1;
+        sink = i;
+
+        previous_status = sptr->getHeight( source, Nlength, previous_height, pbsid );
+        sptr->getRawHeight( source, Nlength, previous_height );
+        previous_abscissa = static_cast<OutRealType>( origin_.x + (double)(i-1) * lenght_.x / ( (double)(sptr->getNumX() - 1) ) );
+        previous_ordinate = static_cast<OutRealType>( previous_height );
+        vlist[2*source + 0] = previous_abscissa;
+        vlist[2*source + 1] = previous_ordinate;
+
+        status = sptr->getHeight( sink, Nlength, height, bsid );
+        sptr->getRawHeight( sink, Nlength, height );
+        abscissa = static_cast<OutRealType>( origin_.x + (double)(i) * lenght_.x / ( (double)(sptr->getNumX() - 1) ) );
+        ordinate = static_cast<OutRealType>( height );
+        vlist[2*sink + 0] = abscissa;
+        vlist[2*sink + 1] = ordinate;
+
+        /* std::cout << "\nSegment " << i-1 */ 
+        /*     << ": [( " << previous_abscissa << ", " << previous_ordinate << "), " */
+        /*     << "( " << abscissa << ", " << ordinate << ")] "; */
+
+
+        Segment<VertexList, 2> segment(vlist, source, sink, previous_status, status);
+
+        // != is equivalent to xor in c++
+        if ( !previous_status != !status )
+        {
+            /* std::cout << "-- truncated segment: "; */
+            if ( !previous_status && status )
+            {
+                container_.getSurfaceIndex(pbsid, bindex);
+                /* std::cout << "first point is invalid"; */
+            }
+            else if ( previous_status && !status )
+            {
+                container_.getSurfaceIndex(bsid, bindex);
+                /* std::cout << "second point is invalid"; */
+            }
+
+            container_[bindex]->getRawHeight(source, Nlength, previous_height);
+            intersectec_vlist[0] = previous_abscissa;
+            intersectec_vlist[1] = previous_height;
+
+            container_[bindex]->getRawHeight(sink, Nlength, height);
+            intersectec_vlist[2] = abscissa;
+            intersectec_vlist[3] = height;
+
+            Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
+            t = computeVerticalIntersection<Segment<VertexList, 2>>( segment, intersected );
+        }
+
+        num_segments = segment.getConnectivity(current);
+        if ( num_segments > 0 )
+            std::copy( current.begin(), current.end(), std::back_inserter(elist) );
+
+        /* std::cout << "\n     num_segments: " << num_segments << ", connectivity: (" << current[0] << ", " << current[1] << ") \n"; */
+
+        has_curve |= (num_segments > 0);
+
+        /* status          = sptr->getHeight(Nlength,     i, height, bsid); */
+        /* sptr->getRawHeight(Nlength, i, height); */
+
+        /* previous_status = sptr->getHeight(Nlength, i - 1, previous_height, pbsid); */
     }
 
     return has_curve;

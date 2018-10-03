@@ -56,7 +56,7 @@ void PlanarSurface::updateDiscretization()
     nX_ = 2*discretization_X + 1; 
     nY_ = 2*discretization_Y + 1; 
     num_vertices_ = nX_ * nY_; 
-    tolerance = 0.9 * std::max( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
+    tolerance = 0.00002 * std::max( 1.0/static_cast<double>(nX_), 1.0/static_cast<double>(nY_) ); 
     /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "\n --> tolerance: " << tolerance << std::endl; */ 
 
     /* if ( this_discretization_state_ < global_discretization_state_ ) */ 
@@ -1123,6 +1123,30 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, SurfaceId &
     return getHeight(vertex_index, height, heights, upper_bound_, lower_bound_, bounding_surface_id);
 }
 
+bool PlanarSurface::getHeight( Natural i, Natural j, double &height, SurfaceId &bounding_surface_id ) 
+{
+    return getHeight( getVertexIndex(i, j), height, bounding_surface_id );
+}
+
+bool PlanarSurface::getRawHeight( Natural vertex_index, double &height )
+{
+    if ( interpolant_is_set_ == false ) { 
+        return false; 
+    }
+
+    updateDiscretization(); 
+
+    height = heights[vertex_index];
+
+    return true;
+}
+
+bool PlanarSurface::getRawHeight( Natural i, Natural j, double &height )
+{
+    return getRawHeight( getVertexIndex(i,j), height);
+}
+
+
 // getRelativeHeight
 bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector<double> &base_heights, 
         std::list<std::weak_ptr<PlanarSurface>> &ub_list,std::list<std::weak_ptr<PlanarSurface>> &lb_list, 
@@ -1149,10 +1173,14 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
     double lb = origin.z;  
     double ub = origin.z + lenght.z;  
 
+    double sup_lbound = lb;
+    double inf_ubound = ub;
+    /* bool sup_lbound_status, inf_ubound_status; */
+
     bool ustatus, lstatus;
     SurfaceId ubounding_surface_id = id_;
     SurfaceId lbounding_surface_id = id_;
-    bounding_surface_id = std::numeric_limits<SurfaceId>::max();
+    bounding_surface_id = id_; //std::numeric_limits<SurfaceId>::max();
 
     if ( height > ub ) { 
         height = ub; 
@@ -1168,50 +1196,106 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
 
     /* std::cout << "I'm here! \n\n"; */ 
 
-    /* for ( auto &p_upper_bound_ : upper_bound_ ) */
     for ( auto &p_upper_bound_ : ub_list )
-        if ( auto upper_surface = p_upper_bound_.lock() ) { 
-            /* if ( upper_surface->getHeight(vertex_index, ub) ) */
-            if ( upper_surface->surfaceIsSet() ) { 
-                ustatus = upper_surface->getHeight(vertex_index, ub, ubounding_surface_id); 
-                if ( height >= ub ) { 
-                    /* #pragma omp critical */
-                    /* std::cout << "failed above! \n"; */ 
-                    height = ub; 
-                    if ( ustatus )
-                        /* ubounding_surface_id = upper_surface->getID(); */
-                        bounding_surface_id = ubounding_surface_id;
-                    status &= false; 
-                    /* return false; */ 
-                }
-            }
-        }
-
-    /* for ( auto &p_lower_bound_ : lower_bound_ ) */
-    for ( auto &p_lower_bound_ : lb_list )
-        if ( auto lower_surface = p_lower_bound_.lock() ) { 
-            /* if ( lower_surface->getHeight(vertex_index, lb) ) */  
-            if ( lower_surface->surfaceIsSet() ) { 
-                lstatus = lower_surface->getHeight(vertex_index, lb, lbounding_surface_id); 
-                if ( height <= lb ) { 
-                    /* #pragma omp critical */
-                    /* std::cout << "failed below! \n"; */ 
-                    height = lb; 
-                    if ( lstatus )
-                        /* lbounding_surface_id = lower_surface->getID(); */
-                        bounding_surface_id = lbounding_surface_id;
-                    status &= false; 
-                    /* return false; */ 
-                }
-            }
-        }
-
-    if ( status )
     {
-        bounding_surface_id = id_;
+        if ( auto upper_surface = p_upper_bound_.lock() )
+        {
+            if ( upper_surface->surfaceIsSet() )
+            {
+                ustatus = upper_surface->getHeight(vertex_index, ub);
+                if ( ub < inf_ubound )
+                {
+                    inf_ubound = ub;
+                    ubounding_surface_id = upper_surface->getID();
+                }
+                else if ( (abs(ub - inf_ubound) < tolerance) && ustatus )
+                {
+                    inf_ubound = ub;
+                    ubounding_surface_id = upper_surface->getID();
+                }
+            }
+        }
     }
-    else 
+
+    for ( auto &p_lower_bound_ : lb_list )
     {
+        if ( auto lower_surface = p_lower_bound_.lock() )
+        {
+            lstatus = lower_surface ->getHeight(vertex_index, lb);
+            if ( lb > sup_lbound )
+            {
+                sup_lbound = lb;
+                lbounding_surface_id = lower_surface->getID();
+            }
+            else if ( (abs(lb - sup_lbound) < tolerance) && lstatus )
+            {
+                sup_lbound = lb;
+                lbounding_surface_id = lower_surface->getID();
+            }
+
+        }
+    }
+
+    if ( height > inf_ubound )
+    {
+        height = inf_ubound;
+        bounding_surface_id = ubounding_surface_id;
+        status = false;
+    }
+    
+    if ( height < sup_lbound )
+    {
+        height = sup_lbound;
+        bounding_surface_id = lbounding_surface_id;
+        status = false;
+    }
+
+    /* std::cout << "Surface: " << getID() << ", bid: " << bounding_surface_id << ", height: " << height << ", inf_ubound: " << inf_ubound << ", sup_lbound: " << sup_lbound << std::endl << std::flush; */
+
+    /* /1* for ( auto &p_upper_bound_ : upper_bound_ ) *1/ */
+    /* for ( auto &p_upper_bound_ : ub_list ) */
+    /*     if ( auto upper_surface = p_upper_bound_.lock() ) { */ 
+    /*         /1* if ( upper_surface->getHeight(vertex_index, ub) ) *1/ */
+    /*         if ( upper_surface->surfaceIsSet() ) { */ 
+    /*             ustatus = upper_surface->getHeight(vertex_index, ub, ubounding_surface_id); */ 
+    /*             if ( height >= ub ) { */ 
+    /*                 /1* #pragma omp critical *1/ */
+    /*                 /1* std::cout << "failed above! \n"; *1/ */ 
+    /*                 height = ub; */ 
+    /*                 if ( ustatus ) */
+    /*                     /1* ubounding_surface_id = upper_surface->getID(); *1/ */
+    /*                     bounding_surface_id = ubounding_surface_id; */
+    /*                 status &= false; */ 
+    /*                 /1* return false; *1/ */ 
+    /*             } */
+    /*         } */
+    /*     } */
+
+    /* /1* for ( auto &p_lower_bound_ : lower_bound_ ) *1/ */
+    /* for ( auto &p_lower_bound_ : lb_list ) */
+    /*     if ( auto lower_surface = p_lower_bound_.lock() ) { */ 
+    /*         /1* if ( lower_surface->getHeight(vertex_index, lb) ) *1/ */  
+    /*         if ( lower_surface->surfaceIsSet() ) { */ 
+    /*             lstatus = lower_surface->getHeight(vertex_index, lb, lbounding_surface_id); */ 
+    /*             if ( height <= lb ) { */ 
+    /*                 /1* #pragma omp critical *1/ */
+    /*                 /1* std::cout << "failed below! \n"; *1/ */ 
+    /*                 height = lb; */ 
+    /*                 if ( lstatus ) */
+    /*                     /1* lbounding_surface_id = lower_surface->getID(); *1/ */
+    /*                     bounding_surface_id = lbounding_surface_id; */
+    /*                 status &= false; */ 
+    /*                 /1* return false; *1/ */ 
+    /*             } */
+    /*         } */
+    /*     } */
+
+    /* if ( status ) */
+    /* { */
+    /*     bounding_surface_id = id_; */
+    /* } */
+    /* else */ 
+    /* { */
         /* auto error = std::numeric_limits<SurfaceId>::max(); */
         /* if ( (lbounding_surface_id != id_) && (ubounding_surface_id != id_) ) */
         /* { */
@@ -1225,7 +1309,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
         /* { */
         /*     bounding_surface_id = ubounding_surface_id; */
         /* } */
-    }
+    /* } */
     /* #pragma omp critical */
     /* std::cout << "worked! \n"; */  
 
