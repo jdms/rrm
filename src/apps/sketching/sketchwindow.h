@@ -70,7 +70,7 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
-        void usingVerticalExaggeration(int v_exagg_);
+        void usingVerticalExaggeration( double v_exagg_);
 
         void keyPressEvent( QKeyEvent *event );
 
@@ -173,10 +173,10 @@ class SketchWindow: public QMainWindow
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
         QWidget* bar_ = nullptr;
-        QSlider* sl_vertical_exagg_ = nullptr;
+        RealFeaturedSlider* sl_vertical_exagg_ = nullptr;
         int nsteps_exagg = 100;
         double min_exagg = -1;
-        double max_exagg = 3;
+        double max_exagg = 4;
         double steps_exagg = 0;
 
 
