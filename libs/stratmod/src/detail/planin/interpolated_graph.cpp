@@ -59,6 +59,7 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
     extruded_surface_ = rhs.extruded_surface_; 
     orthogonally_oriented_ = rhs.orthogonally_oriented_; 
 
+    path_is_set_ = rhs.path_is_set_;
     path_origin = rhs.path_origin;
 }
 
@@ -77,6 +78,7 @@ InterpolatedGraph::InterpolatedGraph( InterpolatedGraph &&rhs ) : id_(rhs.id_)
     extruded_surface_ = rhs.extruded_surface_; 
     orthogonally_oriented_ = rhs.orthogonally_oriented_; 
 
+    path_is_set_ = rhs.path_is_set_;
     path_origin = rhs.path_origin;
 }
 
