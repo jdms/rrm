@@ -1745,6 +1745,8 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
     return u.getBackBoundary3DCurves(vertices, edges);
 }
 
+#include <fstream>
+
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
     bool success = (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
@@ -1756,13 +1758,17 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
         u.getRegionVolumeList(volumes);
         
         double total = 0;
+        std::ofstream ofs( "current_model_volumes.txt" );
         std::cout << "\n\n\nRegions' volumes: \n\n";
+        ofs << "Regions' volumes: \n\n";
         for ( size_t i = 0; i < volumes.size(); ++i )
         {
-            std::cout << "Volume(" << i << ") = " << volumes[i] << " m3\n";
+            std::cout << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
+            ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
             total += volumes[i];
         }
-        std::cout << "\nTotal = " << total << " m3\n\n\n" <<std::flush;
+        std::cout << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
+        ofs << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
     }
 
     /* auto sids = modeller_.getOrderedSurfacesIndices(); */
