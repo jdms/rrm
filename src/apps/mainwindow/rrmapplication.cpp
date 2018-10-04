@@ -73,6 +73,10 @@ void RRMApplication::init()
     controller->init();
     emit startApplication();
 
+    double ox_, oy, oz, w_, h_, d_;
+    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+
     window->object_tree->addInputVolume();
     setDiscretization( Settings::CrossSection::CrossSectionDirections::Z );
 
@@ -185,8 +189,7 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
         emit changeToCrossSectionDirection();
 
     emit updateVolume();
-//    emit updateObjects();
-//    emit updateTrajectories();
+
 }
 
 

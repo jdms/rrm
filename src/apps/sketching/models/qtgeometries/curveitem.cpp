@@ -180,7 +180,7 @@ void CurveItem::getMonotonicX()
 
     Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
     curve_ = SketchLibrary1::monotonicInX( curve_ );
-    curve_ = SketchLibrary1::smooth( curve_ );
+//    curve_ = SketchLibrary1::smooth( curve_ );
     setCurve( PolyCurve( curve_ ) );
 
 }
@@ -193,7 +193,7 @@ void CurveItem::getMonotonicY()
 
     Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
     curve_ = SketchLibrary1::monotonicInY( curve_ );
-    curve_ = SketchLibrary1::smooth( curve_ );
+//    curve_ = SketchLibrary1::smooth( curve_ );
     setCurve( PolyCurve( curve_ ) );
 
 }

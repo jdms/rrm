@@ -118,11 +118,13 @@ void Controller::setVolumeWidth( double width_ )
     updateBoundingBoxInModel();
 }
 
+
 void Controller::setVolumeHeight( double height_ )
 {
     model.volume->setHeight( height_ );
     updateBoundingBoxInModel();
 }
+
 
 void Controller::setVolumeLenght( double lenght_ )
 {
@@ -653,7 +655,16 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 
     ObjectPtr& obj_ = model.objects[ current_object ];
 
-    Curve2D curve_proc_= SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
+    Curve2D curve_proc_;
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    {
+        curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] );
+//        curve_proc_
+    }
+    else {
+        curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
+    }
+
 //    curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
 
     obj_->addTrajectory( PolyCurve( curve_proc_ ) );
@@ -752,13 +763,13 @@ bool Controller::createExtrudedSurface()
 
     std::map< double, PolyCurve > curves_map_ = obj_->getCurves();
     double depth_ = curves_map_.begin()->first;
-    PolyCurve& path_ = obj_->getTrajectory();
+    const PolyCurve& path_ = obj_->getTrajectory();
 
     bool surface_created_ = false;
 
     if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPointsSwapped() );
     }
 
     else if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Z )
@@ -815,8 +826,6 @@ void Controller::updateModel()
     std::vector< std::size_t > actives_ = rules_processor.getActiveSurfaces();
 
     std::size_t number_of_actives_ = actives_.size();
-    if( number_of_actives_ == 0 ) return;
-
     for ( std::size_t j = 0; j < number_of_actives_; ++j )
     {
         std::size_t id_ = actives_.at( j );
@@ -825,6 +834,10 @@ void Controller::updateModel()
         updateObjectSurface( id_ );
         updateObjectCurves( id_ );
     }
+
+    setObjectActive( current_object, true );
+
+
 
 
 }
@@ -984,6 +997,7 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 //    obj_->setActive( true );
 
 
+
     std::vector< double > trajectory_;
     bool has_trajectory_ = rules_processor.getExtrusionPath( index_, trajectory_ );
     if( has_trajectory_ == true )
@@ -992,14 +1006,39 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
         if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
         {
-            if( csection->getDirection() != obj_->getCrossSectionDirection() )
-                traj_ = PolyCurve( traj_.getPointsSwapped() );
+//            if( csection->getDirection() != obj_->getCrossSectionDirection() )
+//                traj_ = PolyCurve( traj_.getPointsSwapped() );
         }
 
         obj_->removeTrajectory();
         obj_->addTrajectory( traj_ );
 
     }
+
+
+
+//    std::vector< double > trajectory_;
+//    bool has_trajectory_ = rules_processor.getExtrusionPath( index_, trajectory_ );
+//    if( has_trajectory_ == true )
+//    {
+//        PolyCurve traj_ = PolyCurve( trajectory_ );
+
+////        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
+////        {
+////            if( csection->getDirection() != obj_->getCrossSectionDirection() )
+////                traj_ = PolyCurve( traj_/*.getPointsSwapped()*/ );
+////        }
+
+//        if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//        {
+//            traj_ = PolyCurve( traj_.getPointsSwapped() );
+//        }
+
+
+//        obj_->removeTrajectory();
+//        obj_->addTrajectory( traj_ );
+
+//    }
 
 
 }

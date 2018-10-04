@@ -66,6 +66,8 @@ void PagesStack::createVolumePropertiesPage()
     QWidget* wd_volume_page = new QWidget( this );
     wd_volume_resize.setupUi( wd_volume_page );
     addWidget( wd_volume_page );
+
+    wd_volume_resize.groupBox->setVisible( false );
 }
 
 

@@ -39,11 +39,13 @@
 #include "./src/core/widgets/canvasstack.h"
 #include "./core/definitions/constants.hpp"
 #include "./src/core/widgets/color_picker.h"
+#include "./src/core/widgets/realfeaturedslider.h"
 
 #include "sketchingcanvas.h"
 #include "sketchscene.h"
 
 #include "models/anglepicture.h "
+
 
 //class QGraphicsView;
 class QWheelEvent;
@@ -172,6 +174,12 @@ class SketchWindow: public QMainWindow
 
         QWidget* bar_ = nullptr;
         QSlider* sl_vertical_exagg_ = nullptr;
+        int nsteps_exagg = 100;
+        double min_exagg = -1;
+        double max_exagg = 3;
+        double steps_exagg = 0;
+
+
         QDial* dl_input_angle_ = nullptr;
         QHBoxLayout* vb_angles = nullptr;
         QVBoxLayout* hb_central = nullptr;
@@ -184,6 +192,12 @@ class SketchWindow: public QMainWindow
         AnglePicture* lb_output_dpangle = nullptr;
 
         QPushButton* btn_show_oangle  = nullptr;
+
+
+        QToolBar* tb_lateral_bar = nullptr;
+        QAction* ac_show_bar = nullptr;
+        const bool SHOW_VERTICAL_EXAGGERATION = false;
+
 
 
         ///================================================================================
