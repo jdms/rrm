@@ -239,9 +239,18 @@ bool SModeller::changeDiscretization( size_t width, size_t length )
         return false;
     }
 
+    // WEIRD: without the following (superfluous) test, changeDiscretization()
+    // was crashing if width and length were equal to the model's discretization
+    if ( (width == pimpl_->discWidth_) && (length == pimpl_->discLenght_) )
+    {
+        return true;
+    }
+
+    int counter = 0;
     while ( canUndo() )
     {
         undo();
+        ++counter;
     }
 
     PlanarSurface::requestChangeDiscretization(width, length);
@@ -249,9 +258,10 @@ bool SModeller::changeDiscretization( size_t width, size_t length )
     pimpl_->discWidth_ = width; 
     pimpl_->discLenght_ = length; 
 
-    while ( canRedo() )
+    while ( counter > 0 )
     {
         redo();
+        --counter;
     }
 
     /* TODO: review use and conversion of types */
@@ -816,21 +826,25 @@ bool SModeller::getMesh( size_t surface_id, std::vector<double> &vlist, std::vec
 bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
     return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width);
+    /* return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width); */
 }
 
 bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
     return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width);
+    /* return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width); */
 }
 
 bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
     return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length);
+    /* return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length); */
 }
 
 bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
     return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length);
+    /* return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length); */
 }
 
 

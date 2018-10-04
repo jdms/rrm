@@ -156,11 +156,11 @@ class PointWrapper {
     private:
         Container &c; 
         const NaturalType index; 
-        const NaturalType dim; 
+        const long int dim; 
 
     public: 
-        PointWrapper(Container &c, NaturalType index = 0 ) : 
-            c(c), index(index), 
+        PointWrapper(Container &c_, NaturalType index_ = 0 ) : 
+            c(c_), index(k*index_), 
             dim( (c.size() - index) >= k ? k : (c.size() - index) ) {} 
         
         auto operator[]( NaturalType i ) -> decltype( c[index + i] ) 
@@ -178,11 +178,11 @@ class PointWrapper {
         template<typename Point>
         bool set( Point &&p ) 
         {
-            if ( p.size() > dim ) { 
+            if ( static_cast<long int>( p.size() ) > dim ) { 
                 return false; 
             }
 
-            for ( NaturalType i = 0; i < dim; ++i ) { 
+            for ( long int i = 0; i < dim; ++i ) { 
                 c[index + i] = p[i]; 
             }
 
@@ -192,11 +192,11 @@ class PointWrapper {
         template<typename Point>
         bool get( Point &p ) const
         {
-            if ( p.size() > dim ) { 
+            if ( static_cast<long int>( p.size() ) < dim ) { 
                 return false; 
             }
 
-            for ( NaturalType i = 0; i < dim; ++i ) { 
+            for ( long int i = 0; i < dim; ++i ) { 
                 p[i] = c[index + i]; 
             }
 

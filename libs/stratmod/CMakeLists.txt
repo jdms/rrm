@@ -162,6 +162,9 @@ endif(STRATMOD_BUILD_DOCS)
 #     include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
 # endif(Eigen3_FOUND) 
 
+if(STRATMOD_EIGEN3_INCLUDE_DIR)
+    message(STATUS "Using eigen3 include dir: ${STRATMOD_EIGEN3_INCLUDE_DIR}")
+endif()
 
 
 ###############################################
@@ -179,6 +182,7 @@ include(ExternalProject)
 set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
 
 set(PLANIN_CMAKE_ARGS 
+    -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
     -DPLANIN_BUILD_DOCS=OFF 
     -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
     -DPLANIN_BUILD_USING_OPENMP=${STRATMOD_BUILD_USING_OPENMP}
@@ -188,6 +192,7 @@ set(PLANIN_CMAKE_ARGS
 
 if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
     set(PLANIN_CMAKE_ARGS 
+        -DPLANIN_EIGEN_INCLUDE_DIR=${STRATMOD_EIGEN_INCLUDE_DIR}
         -DPLANIN_BUILD_DOCS=OFF 
         -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
         -DPLANIN_BUILD_USING_OPENMP=ON 
@@ -345,8 +350,12 @@ if(${STRATMOD_BUILD_UTILITIES})
     add_executable(json2binary ${SOURCES} ${HEADERS})
     target_link_libraries(json2binary stratmod)
 
-    set(SOURCES src/cl_util/change_resolution.cpp)
+    set(SOURCES src/cl_util/resample.cpp)
     add_executable(resample ${SOURCES} ${HEADERS})
     target_link_libraries(resample stratmod)
+
+    set(SOURCES src/cl_util/export2VTK.cpp)
+    add_executable(export2VTK ${SOURCES} ${HEADERS})
+    target_link_libraries(export2VTK stratmod)
 endif()
 
