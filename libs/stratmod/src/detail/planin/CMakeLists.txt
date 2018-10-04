@@ -183,36 +183,39 @@ include(ExternalProject)
 
 
 # Eigen is mainly used as a wrapper for Lapack. 
+if (PLANIN_EIGEN3_INCLUDE_DIR)
+    message(STATUS "Using customized eigen3 include dir: ${PLANIN_EIGEN3_INCLUDE_DIR}")
+    include_directories(SYSTEM ${PLANIN_EIGEN3_INCLUDE_DIR})
 
-set(EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/eigen3)
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+else()
+    find_package(Eigen3) 
 
-#find_package(Eigen3) 
-#if(Eigen3_FOUND)
-#    set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
-#endif()
+    if(Eigen3_FOUND)
+        set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
+    endif()
 
-#if(GLOBAL_EIGEN3_INSTALL) 
-	#    include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+    if(GLOBAL_EIGEN3_INSTALL) 
+        include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-	#else()
-	#set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/eigen3)
+    else()
+        set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/eigen3)
 
-	#    ExternalProject_Add(
-	#Eigen3
-	# GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
-	#SOURCE_DIR ${EIGEN3_SOURCE}
-	#STEP_TARGETS build
-	#CONFIGURE_COMMAND ""
-	#BUILD_COMMAND ""
-	#INSTALL_COMMAND ""
-	#EXCLUDE_FROM_ALL TRUE
-	#)
+        ExternalProject_Add(
+            Eigen3
+            GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
+            SOURCE_DIR ${EIGEN3_SOURCE}
+            STEP_TARGETS build
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+            EXCLUDE_FROM_ALL TRUE
+            )
 
-	#include_directories(SYSTEM ${EIGEN3_SOURCE})
-	#set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
+        include_directories(SYSTEM ${EIGEN3_SOURCE})
+        set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
 
-	#endif() 
+    endif() 
+endif()
 
 
 # Cereal is used to serialize objects
@@ -256,6 +259,7 @@ set(HEADERS
   srules.hpp
   mesh/polyhedra.hpp
   mesh/tetrahedral_mesh_builder.hpp
+  mesh/linear_complexes.hpp
   )
 
 set(PLANIN_LIB_SOURCES 
@@ -265,6 +269,7 @@ set(PLANIN_LIB_SOURCES
     srules.cpp
     triangle_soup_wrapper.cpp
     mesh/tetrahedral_mesh_builder.cpp
+    mesh/linear_complexes.cpp
     ) 
 
 add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})  
