@@ -79,9 +79,16 @@ void SketchWindow::createToolBar()
     tb_well->addAction( ac_select_wells );
     tb_well->setVisible( false );
 
+    tb_lateral_bar = addToolBar( "Lateral Bar" );
+    ac_show_bar = new QAction( "Vertical Exaggeration", this );
+    ac_show_bar->setCheckable( true);
+    ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
+    tb_lateral_bar->addAction( ac_show_bar );
+
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
+
     tb_trajectory->addAction( ac_use_last_trajectory );
 
 
@@ -134,7 +141,11 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
 
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
+
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
+
+
+    connect( ac_show_bar, &QAction::triggered, bar_, &QWidget::setVisible );
 
     //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
@@ -178,14 +189,11 @@ void SketchWindow::createLateralBar()
 {
 
     sl_vertical_exagg_ = new QSlider( Qt::Vertical );
-    sl_vertical_exagg_->setRange( 10, 100 );
+    sl_vertical_exagg_->setRange( 1, 100 );
     sl_vertical_exagg_->setSingleStep( 1 );
     sl_vertical_exagg_->setValue( 10 );
 
-//    lb_exagger_value_ = new QLabel( "Value: " );
-//    QVBoxLayout* vb_exagg_ = new QVBoxLayout;
-//    vb_exagg_->addStretch();
-//    vb_exagg_->addWidget( lb_exagger_value_ );
+    steps_exagg = (max_exagg - min_exagg)/nsteps_exagg;
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
     hb_exaggerattion_->addWidget( sl_vertical_exagg_ );
@@ -234,7 +242,6 @@ void SketchWindow::createLateralBar()
 
 
     vb_angles = new QHBoxLayout();
-//    vb_angles->addWidget(  dl_input_angle_ );
     vb_angles->addLayout( vb_input_angle );
     vb_angles->addSpacing( 10 );
 
@@ -254,6 +261,7 @@ void SketchWindow::createLateralBar()
     bar_ = new QWidget();
     bar_->setMinimumWidth( 170 );
     bar_->setLayout( hb_central );
+    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
 
     connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
 
@@ -386,13 +394,11 @@ void SketchWindow::setModeSelecting( bool status_ )
     if( sketchingcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-//        scene_->setSelectingStratigraphyMode( status_ );
         scene_->setSelectingStratigraphyMode( false );
     }
     if( topviewcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-//        scene_->setSelectingStratigraphyMode( status_ );
         scene_->setSelectingStratigraphyMode( false );
     }
 }
@@ -433,13 +439,13 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
-    if( sketchingcanvas == nullptr ) return;
 
-    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.05 );
-    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
+//    double value_ = min_exagg + v_exagg_* steps_exagg;
+//    double v_exagg_db_ = static_cast< double > ( log10( value_ ) );
 
-//    lb_exagger_value_->setText( QString( "Value: %1" ).arg( v_exagg_db_ ) );
-
+    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.1 );
+    if( sketchingcanvas != nullptr )
+        sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 
     emit setVerticalExaggeration( v_exagg_db_ );
 
@@ -448,15 +454,18 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 
 void SketchWindow::setDipAngle( double angle_ )
 {
-    double v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    double v_exag_ = 1.0;
+
+    if( sketchingcanvas != nullptr )
+        v_exag_ = sketchingcanvas->getVerticalExaggeration();
+
     double param_ = v_exag_*tan( angle_*PI / 180 );
     double beta_ = atan(param_) * 180 / PI;
 
-    lb_input_angle_ ->display( QString( "%1" ).arg( angle_ ) );
+    lb_input_angle_ ->display( QObject::tr( "%1'" ).arg( angle_ ) );
     lb_input_dpangle->updateAngle( angle_ );
 
-
-    lb_output_angle_->display( QString( "%2" ).arg( beta_ ) );
+    lb_output_angle_->display( QObject::tr( "%2'" ).arg( beta_ ) );
     lb_output_dpangle->updateAngle( beta_ );
 
     std::cout << "Beta value: " << beta_ << std::endl << std::flush;
@@ -470,9 +479,8 @@ void SketchWindow::reset()
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
 
-    if( sketchingcanvas != nullptr )
-        sketchingcanvas->setVerticalExaggeration( 1 );
-    emit setVerticalExaggeration( 1.0 );
+    if( dl_input_angle_ != nullptr )
+        dl_input_angle_->setValue( 0 );
 }
 
 
@@ -559,6 +567,39 @@ SketchWindow::~SketchWindow()
 
     delete ac_select_wells;
     ac_select_wells = nullptr;
+
+    delete bar_;
+    bar_ = nullptr;
+
+    delete sl_vertical_exagg_;
+    sl_vertical_exagg_ = nullptr;
+
+    delete dl_input_angle_;
+    dl_input_angle_ = nullptr;
+
+    delete vb_angles;
+    vb_angles = nullptr;
+
+    delete hb_central;
+    hb_central = nullptr;
+
+    delete hb_central1;
+    hb_central1 = nullptr;
+
+    delete lb_input_angle_;
+    lb_input_angle_  = nullptr;
+
+    delete lb_output_angle_;
+    lb_output_angle_ = nullptr;
+
+    delete lb_input_dpangle;
+    lb_input_dpangle = nullptr;
+
+    delete lb_output_dpangle;
+    lb_output_dpangle = nullptr;
+
+    delete btn_show_oangle;
+    btn_show_oangle  = nullptr;
 }
 
 

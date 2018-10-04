@@ -21,10 +21,10 @@ void AnglePicture::paintEvent(QPaintEvent * e)
 
     QPixmap pix( size );
     QPainter painter( &pix );
-    QLinearGradient gradient(0,0, 0, value);
-    gradient.setColorAt(0.0, QColor(250, 250, 250));
-    gradient.setColorAt(1.0, QColor(234, 234, 234));
-    QBrush brush(gradient);
+//    QLinearGradient gradient(0,0, 0, value);
+//    gradient.setColorAt(0.0, QColor(250, 250, 250));
+//    gradient.setColorAt(1.0, QColor(234, 234, 234));
+    QBrush brush(Qt::lightGray);
 
 
     qreal xAxis = value/2;

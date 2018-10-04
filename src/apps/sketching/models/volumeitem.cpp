@@ -23,6 +23,7 @@ void VolumeItem::updateDimensions( const Settings::CrossSection::CrossSectionDir
 {
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
+//        PlaneItem::resize( raw->getWidth(), raw->getLenght() );
         PlaneItem::resize( raw->getLenght(), raw->getHeight() );
     }
 

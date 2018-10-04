@@ -292,9 +292,15 @@ void SketchInterface::createSketchingActions()
 void SketchInterface::init()
 {
     if( sketch_window != nullptr )
+    {
         sketch_window->disableResizeVolume( false );
+        sketch_window->usingVerticalExaggeration( 10.0 );
+        sketch_window->setDipAngle( 0.0 );
+    }
+
     if( sketch_topview_window != nullptr )
         sketch_topview_window->disableResizeVolume( false );
+
 
 
     scontroller->init();
