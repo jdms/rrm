@@ -324,38 +324,37 @@ size_t SRules::getAdaptedMesh( size_t surface_id, VertexList &vlist, FaceList &f
     UNUSED(vlist);
     UNUSED(flist);
     UNUSED(nlist);
-    return 0;
-    /* if ( surface_id >= this->size() ) */
-    /* { */
-    /*     return false; */
-    /* } */
 
-    /* Point3 v0, v1, v2, v3, v4, v5, v6, v7, v8; */ 
-    /* bool b0, b1, b2, b3, b4, b5, b6, b7, b8; */ 
-    /* PlanarSurface::Natural i0, i1, i2, i3, i4, i5, i6, i7, i8; */
+    if ( surface_id >= this->size() )
+    {
+        return false;
+    }
 
-    /* flist.clear(); */ 
+    size_t face_count = 0;
 
-    /* /1* std::cout << "Getting face list: \n"; *1/ */ 
+    container[surface_id]->getVertexList(vlist);
+    flist.clear(); 
 
-    /* // For all triangles in discretization */
-    /* //     Consider: */
-    /* //         a) triangle is empty: */
-    /* //             return null; */
-    /* //         b) triangle is valid: */
-    /* //             return triangle; */
-    /* //         c) triangle has one invalid vertex: */
-    /* //             return case 1; */
-    /* //         d) triangle has two invalid vertices, truncated by the same surface: */
-    /* //             return case 2; */
-    /* //         e) triangle has two invalid vertices, truncated by different surfaces: */
-    /* //             return triangle; (?, try something different for visualization?) */
-    /* // */
-    /* //      If got triangles from "case 1" or case 2" update vertex list and normal list */
-    /* // */
-    /* //      function getTriangles( triangle data[in], face list[out], vertex list[out], normal list[out] ) -> num triangles(integer) */
-    /* // */
-    /* //      function computeIntersection( segment1, segment2) -> parameter(real) */
+    /* std::cout << "Getting face list: \n"; */ 
+
+    // For all triangles in discretization
+    //     Consider:
+    //         a) triangle is empty:
+    //             return null;
+    //         b) triangle is valid:
+    //             return triangle;
+    //         c) triangle has one invalid vertex:
+    //             return case 1;
+    //         d) triangle has two invalid vertices, truncated by the same surface:
+    //             return case 2;
+    //         e) triangle has two invalid vertices, truncated by different surfaces:
+    //             return triangle; (?, try something different for visualization?)
+    //
+    //      If got triangles from "case 1" or case 2" update vertex list and normal list
+    //
+    //      function getTriangles( triangle data[in], face list[out], vertex list[out], normal list[out] ) -> num triangles(integer)
+    //
+    //      function computeIntersection( segment1, segment2) -> parameter(real)
 
 
     /* unsigned int face_count = 0; 0 */
@@ -364,7 +363,7 @@ size_t SRules::getAdaptedMesh( size_t surface_id, VertexList &vlist, FaceList &f
     /*     } */
     /* } */
 
-    /* return face_count; */ 
+    return face_count; 
 }
 
 template<typename VertexList, typename FaceList>

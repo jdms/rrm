@@ -482,10 +482,10 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantWidth( size_t surf
     vlist.resize( 2 * sptr->getNumY() );
     elist.clear(); 
 
-    double t, height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
+    double height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
     bool status, previous_status; 
     PlanarSurface::SurfaceId bsid, pbsid;
-    size_t bindex;
+    size_t bindex, intersection_point_index;
 
     /* TODO: have a look at those types and their conversions */
     using OutRealType = typename VertexList::value_type;
@@ -561,13 +561,15 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantWidth( size_t surf
             intersectec_vlist[3] = height;
 
             Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
-            t = computeVerticalIntersection<Segment<VertexList, 2>>( segment, intersected );
+            intersection_point_index = segment.computeVerticalIntersection( intersected );
         }
 
         num_segments = segment.getConnectivity(current);
         if ( num_segments > 0 )
+        {
             std::copy( current.begin(), current.end(), std::back_inserter(elist) );
-
+        }
+        
         has_curve |= (num_segments > 0);
         /* status          = sptr->getHeight(Nwidth,     i, height, bsid); */
         /* sptr->getRawHeight(Nwidth, i, height); */
@@ -604,10 +606,10 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
     vlist.resize( 2 * sptr->getNumX() );
     elist.clear(); 
 
-    double t, height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
+    double height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
     bool status, previous_status; 
     PlanarSurface::SurfaceId bsid, pbsid;
-    size_t bindex;
+    size_t bindex, intersection_point_index;
 
     /* TODO: have a look at those types and their conversions */
     using OutRealType = typename VertexList::value_type;
@@ -669,17 +671,24 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
         Segment<VertexList, 2> segment(vlist, source, sink, previous_status, status);
 
         // != is equivalent to xor in c++
+        size_t cid;
         if ( !previous_status != !status )
         {
             /* std::cout << "-- truncated segment: "; */
             if ( !previous_status && status )
             {
                 container_.getSurfaceIndex(pbsid, bindex);
+                getControllerIndex(bindex, cid);
+                /* std::cout << "\n<-- Surface " << surface_id << " was intersected by surface: " */ 
+                    /* << "cid: " << cid << ", index: " << bindex << ", sID: " << pbsid << "\n"; */
                 /* std::cout << "first point is invalid"; */
             }
             else if ( previous_status && !status )
             {
                 container_.getSurfaceIndex(bsid, bindex);
+                getControllerIndex(bindex, cid);
+                /* std::cout << "\n--> Surface " << surface_id << " was intersected by surface: " */ 
+                    /* << "cid: " << cid << ", index: " << bindex << ", sID: " << bsid << "\n"; */
                 /* std::cout << "second point is invalid"; */
             }
 
@@ -692,12 +701,14 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
             intersectec_vlist[3] = height;
 
             Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
-            t = computeVerticalIntersection<Segment<VertexList, 2>>( segment, intersected );
+            intersection_point_index = segment.computeVerticalIntersection( intersected );
         }
 
         num_segments = segment.getConnectivity(current);
         if ( num_segments > 0 )
+        {
             std::copy( current.begin(), current.end(), std::back_inserter(elist) );
+        }
 
         /* std::cout << "\n     num_segments: " << num_segments << ", connectivity: (" << current[0] << ", " << current[1] << ") \n"; */
 

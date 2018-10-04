@@ -106,6 +106,28 @@ bool SUtilities::getIntersectingSurfaceIndices( size_t controller_id, std::vecto
     return true;
 }
 
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
+
 bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t,  std::size_t, std::vector< std::vector<double> > )
 {
     return false;
