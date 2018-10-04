@@ -660,3 +660,36 @@ bool InterpolatedGraph::compareSurfaceWptr( const InterpolatedGraph::WeakPtr &le
     return false; 
 }
 
+bool InterpolatedGraph::getRawData( std::vector<Point2> &points, std::vector<double> &fevals )
+{
+    return f.getRawData(points, fevals);
+}
+
+bool InterpolatedGraph::getRawPathData( std::vector<double> &abscissas, std::vector<double> &ordinates )
+{
+    if ( !path_is_set_ )
+    {
+        return false;
+    }
+
+    std::vector<Point2> points;
+    std::vector<double> fevals;
+
+    if ( !path.getRawData(points, fevals) )
+    {
+        return false;
+    }
+
+    size_t num_points = points.size();
+
+    abscissas.resize(num_points);
+    ordinates.resize(num_points);
+
+    for ( size_t i = 0; i < num_points; ++i )
+    {
+        abscissas[i] = points[i].x;
+        ordinates[i] = fevals[i];
+    }
+
+    return true;
+}

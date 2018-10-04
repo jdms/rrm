@@ -66,6 +66,8 @@ class Interpolant2D
 
         void clear(); 
 
+        bool getRawData( std::vector<Point2> &points, std::vector<double> &fevals );
+
     private:
         Kernel k_; 
         unsigned int dim_; 

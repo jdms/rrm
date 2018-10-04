@@ -41,7 +41,34 @@ class ThinPlateSpline22 : public BasisFunction2D
                 return -r2/2; 
             }
 
-            return ( r2*log( sqrt(r2) ) ); 
+            /* return ( r2*log( sqrt(r2) ) ); */ 
+            return ( r2*log( r2 )/2 ); 
+        }
+
+        double Dx( double x1, double x2 ) const
+        {
+            double r2 = x1*x1 + x2*x2; 
+
+            if ( r2 < epsilon )
+            {
+                return -2*x1*x1*x1/r2 + x1;
+            }
+
+            /* return x1 * ( 2*log( sqrt(r2) ) + 1 ); */
+            return x1 * ( log(r2) + 1 );
+        }
+
+        double Dy( double x1, double x2 ) const
+        {
+            double r2 = x1*x1 + x2*x2; 
+
+            if ( r2 < epsilon )
+            {
+                return -2*x2*x2*x2/r2 + x2;
+            }
+
+            /* return x2 * ( 2*log( sqrt(r2) ) + 1 ); */
+            return x2 * ( log(r2) + 1 );
         }
 
         int isSmooth() const

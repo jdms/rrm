@@ -112,6 +112,9 @@ class PlanarSurface {
         bool getNormalList( NList &normal_list ); 
 
         template<typename VList>
+        bool getRawPathVertexList( VList &path_vertex_list );
+
+        template<typename VList>
         bool getPathVertexList( VList &path_vertex_list );
 
         /* Basic methods. */ 
@@ -160,16 +163,24 @@ class PlanarSurface {
         bool getHeight( Natural vertex_index, double &height );
         bool getHeight( Natural i, Natural j, double &height ); 
 
+        bool getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id );
+        bool getHeight( Natural i, Natural j, double &height, SurfaceId &bounding_surface_id );
+
         bool getHeight( const Point2 &p, double &height );
         bool getHeight( Point2 &&p, double &height );
 
         bool getCachedHeight( Natural vertex_index, double &height );
         bool getCachedHeight( Natural i, Natural j, double &height );
 
+        bool getRawHeight( Natural vertex_index, double &height );
+        bool getRawHeight( Natural i, Natural j, double &height );
+
         std::size_t getNumX(); 
         std::size_t getNumY(); 
         std::size_t getNumVertices(); 
         Natural getVertexIndex( Natural i, Natural j ) const;
+
+        bool getCachedBoundingSurfacesIDs( std::vector<SurfaceId> &bounding_surface_ids );
 
         template<typename CoordinatesList>
         bool getRawHeightMap( CoordinatesList &vertices );
@@ -226,6 +237,8 @@ class PlanarSurface {
         bool isPathExtrudedSurface();
         bool isOrthogonallyOrientedSurface();
 
+        bool getRawData( std::vector<Point2> &points, std::vector<double> &fevals );
+
         template<typename FList = std::vector<size_t>>
         size_t mergeFaceLists( const std::vector<FList> &flists, FList &merged_flist );
 
@@ -277,13 +290,15 @@ class PlanarSurface {
         bool cache_is_fresh_ = false;
         std::vector<double> cached_heights_;
         std::vector<bool> cached_valid_heights_;
+        std::vector<SurfaceId> cached_bounding_surface_ids_;
         bool surface_is_empty_ = false;
 
         /* Methods */ 
         bool getHeight( Natural vertex_index, double &height, 
                 std::vector<double> &base_heights,
                 std::list<std::weak_ptr<PlanarSurface>> &ub_list,
-                std::list<std::weak_ptr<PlanarSurface>> &lb_list
+                std::list<std::weak_ptr<PlanarSurface>> &lb_list,
+                SurfaceId &bounding_surface_id
                 );
 
         bool rangeCheck( Natural i, Natural j );
@@ -329,6 +344,48 @@ bool PlanarSurface::addPoints( const std::vector<Point3Type> &points)
 }
 
 template<typename VList>
+bool PlanarSurface::getRawPathVertexList( VList &pvlist )
+{
+    if ( surfaceIsSet() == false ) {
+        return false; 
+    }
+
+    if ( f->isPathExtrudedSurface() == false )
+    {
+        return false;
+    }
+
+    std::vector<double> abscissas;
+    std::vector<double> ordinates;
+
+    if ( f->getRawPathData(abscissas, ordinates) == false )
+    {
+        return false;
+    }
+
+    pvlist.resize( 2*abscissas.size() );
+
+    std::cout << "\nPath list: ";
+    for ( size_t i = 0; i < abscissas.size(); ++i )
+    {
+        if ( isOrthogonallyOrientedSurface() )
+        {
+            pvlist[ 2*i + 0 ] = abscissas[i];
+            pvlist[ 2*i + 1 ] = ordinates[i];
+        }
+        else
+        {
+            pvlist[ 2*i + 1 ] = abscissas[i];
+            pvlist[ 2*i + 0 ] = ordinates[i];
+        }
+        std::cout << "(" << pvlist[2*i+0] << ", " << pvlist[2*i+1] << "), ";
+    }
+    std::cout << std::endl << std::flush;
+
+    return true;
+}
+
+template<typename VList>
 bool PlanarSurface::getPathVertexList( VList &pvlist )
 {
     if ( surfaceIsSet() == false ) {
@@ -346,8 +403,17 @@ bool PlanarSurface::getPathVertexList( VList &pvlist )
     for ( long int j = 0; j < static_cast<long int>( nY_ ); ++j )
     {
         getVertex2D( getVertexIndex(0, j), v );
-        pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
-        pvlist[ 2*j + 1 ] = v.y;
+        if ( isOrthogonallyOrientedSurface() )
+        {
+            pvlist[ 2*j + 0 ] = v.x; ;
+            pvlist[ 2*j + 1 ] = f->getPathOrdinate(v.x);
+        }
+        else
+        {
+            pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
+            pvlist[ 2*j + 1 ] = v.y;
+        }
+        
     }
 
     return true;
@@ -637,6 +703,15 @@ bool PlanarSurface::getNormal( const Point2 &p, T& normal )
     }
 
     return f->getNormal(p, normal); 
+
+    /* T n; */
+    /* bool success = f->getNormal(p, n); */ 
+
+    /* normal[0] = n[ coordinates_map_[0] ]; */
+    /* normal[1] = n[ coordinates_map_[1] ]; */
+    /* normal[2] = n[ coordinates_map_[2] ]; */
+
+    /* return success; */
 }
 
 template<typename T>

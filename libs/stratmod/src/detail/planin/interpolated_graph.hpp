@@ -134,6 +134,9 @@ class InterpolatedGraph
         bool isPathExtrudedSurface();
         bool isOrthogonallyOrientedSurface();
 
+        bool getRawData( std::vector<Point2> &points, std::vector<double> &fevals );
+        bool getRawPathData( std::vector<double> &abscissas, std::vector<double> &ordinates );
+
     private: 
         static unsigned long int num_instances_; 
         unsigned long int id_; 
@@ -202,10 +205,13 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
         return false; 
     }
 
-    double height, DxF, DyF, normDF;  
+    /* double height; */ 
+    double DxF = 0, DyF = 0, normDF;  
     bool status; 
 
-    status = getRawHeight(p, height); 
+    /* status = getRawHeight(p, height); */ 
+    status = true;
+    /* std::cout << "Attempting to get normal for point (" << p.x << ", " << p.y << "), got: ("; */
 
     if ( isExtrudedSurface() )
     {
@@ -249,12 +255,14 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
         DxF = f.Dx(p.x, p.y); 
         DyF = f.Dy(p.x, p.y); 
     }
-    normDF = DxF*DxF + DyF*DyF + 1; 
+    normDF = sqrt(DxF*DxF + DyF*DyF + 1); 
 
     normal[0] = -DxF/normDF; 
     normal[1] = -DyF/normDF; 
     normal[2] = 1/normDF; 
 
+    /* std::cout << normal[0] << ", " << normal[1] << ", " << normal[2] << ") -- size: " */ 
+    /*     << normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2] << " \n" << std::flush; */
     return status;
 }
 
