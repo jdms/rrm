@@ -188,12 +188,13 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 void SketchWindow::createLateralBar()
 {
 
-    sl_vertical_exagg_ = new QSlider( Qt::Vertical );
-    sl_vertical_exagg_->setRange( 1, 100 );
-    sl_vertical_exagg_->setSingleStep( 1 );
-    sl_vertical_exagg_->setValue( 10 );
+    sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
+    sl_vertical_exagg_->setDiscretization( 100 );
+    sl_vertical_exagg_->setRange( 0, 1 );
+    sl_vertical_exagg_->setValue( 0.2 );
+    sl_vertical_exagg_->setInvertedAppearance( false );
 
-    steps_exagg = (max_exagg - min_exagg)/nsteps_exagg;
+    steps_exagg = (max_exagg - min_exagg);
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
     hb_exaggerattion_->addWidget( sl_vertical_exagg_ );
@@ -263,7 +264,7 @@ void SketchWindow::createLateralBar()
     bar_->setLayout( hb_central );
     bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
 
-    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
+    connect( sl_vertical_exagg_, &RealFeaturedSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
 
     connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
 
@@ -437,15 +438,16 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 
 
-void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
+void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
 {
+    std::cout << "slider value: " << v_exagg_ << std::endl << std::flush;
 
-//    double value_ = min_exagg + v_exagg_* steps_exagg;
-//    double v_exagg_db_ = static_cast< double > ( log10( value_ ) );
+    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
+    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
-//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
+    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
-    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.1 );
+//    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.1 );
     if( sketchingcanvas != nullptr )
         sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 

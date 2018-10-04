@@ -294,7 +294,7 @@ void SketchInterface::init()
     if( sketch_window != nullptr )
     {
         sketch_window->disableResizeVolume( false );
-        sketch_window->usingVerticalExaggeration( 10.0 );
+        sketch_window->usingVerticalExaggeration( 0.2 );
         sketch_window->setDipAngle( 0.0 );
     }
 
