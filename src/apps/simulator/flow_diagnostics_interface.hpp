@@ -25,11 +25,14 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 /* #include "region.h" // Undo change 1 */ 
 
 //// It includes the Window.h  ... OpenVolumMesh defines min/max in its own 
-#include "flow_computation/region.h"
+
+// #include "flow_computation/region.h"
+class REGION;
 
 class FlowDiagnosticsInterface
 {
@@ -41,6 +44,7 @@ public:
 
 
     FlowDiagnosticsInterface();
+    ~FlowDiagnosticsInterface();
 
     /// \brief Load default values -- refers to: ( Zhao's document ) Please include a Function to load default values for user inputs
     void loadDefaultValues(int);
@@ -439,7 +443,7 @@ public:
 	
 private:
 
-    REGION region;
+    std::unique_ptr<REGION> region;
 
     // This code is a stub to allow changing the Flow Diagnostics GUI
 

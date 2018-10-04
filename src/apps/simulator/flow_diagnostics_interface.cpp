@@ -21,222 +21,226 @@
 
 #include "flow_diagnostics_interface.hpp"
 
+#include "flow_computation/region.h"
 
-FlowDiagnosticsInterface::FlowDiagnosticsInterface(){}
+
+FlowDiagnosticsInterface::FlowDiagnosticsInterface() : region( new REGION() ) {}
+
+FlowDiagnosticsInterface::~FlowDiagnosticsInterface() = default;
 
 
 void FlowDiagnosticsInterface::loadDefaultValues(int i)// 1 for unstructured 2 for cpg
 {
     if (i == 1){
-        region.RRMdefaultvalues_unstructured();
+        region->RRMdefaultvalues_unstructured();
     }
     else if (i == 2){
-        region.RRMdefaultvalues_cpg();
+        region->RRMdefaultvalues_cpg();
     }
 }
 
 
 void FlowDiagnosticsInterface::setNumberofRegions(unsigned int regions_number){
-    region.setnumberofpropertyareas(regions_number);
+    region->setnumberofpropertyareas(regions_number);
 }
 
 
 unsigned int FlowDiagnosticsInterface::getNumberofRegions() const {
-    return region.numberofpropertyareas();
+    return region->numberofpropertyareas();
 }
 
 
 void FlowDiagnosticsInterface::setOilViscosity(double _oil_viscosity){
-	region.oilviscosity(_oil_viscosity*0.001); //cp to si
+	region->oilviscosity(_oil_viscosity*0.001); //cp to si
 }
 
 void FlowDiagnosticsInterface::setOilDensity(double _oil_density){
-	region.oildensity(_oil_density); //cp to si
+	region->oildensity(_oil_density); //cp to si
 }
 
 void FlowDiagnosticsInterface::setBo(double _bo){
-	region.setBo(_bo);
+	region->setBo(_bo);
 }
 
 void FlowDiagnosticsInterface::setWaterViscosity(double _water_viscosity){
-	region.waterviscosity(_water_viscosity*0.001); //cp to si
+	region->waterviscosity(_water_viscosity*0.001); //cp to si
 }
 
 void FlowDiagnosticsInterface::setWaterDensity(double _water_density){
-	region.waterdensity(_water_density); //cp to si
+	region->waterdensity(_water_density); //cp to si
 }
 
 void FlowDiagnosticsInterface::setBw(double _bw){
-	region.setBw(_bw);
+	region->setBw(_bw);
 }
 
 void FlowDiagnosticsInterface::setFreeWaterLevel(double _fwl){
-	region.setfreewaterlevel(_fwl);
+	region->setfreewaterlevel(_fwl);
 }
 
 
 void FlowDiagnosticsInterface::clearRegions(){
-    region.clearpropertyareas();
+    region->clearpropertyareas();
 }
 
 void FlowDiagnosticsInterface::setNumberofWells(unsigned int wells_number){
-    region.setnumberofwells(wells_number);
+    region->setnumberofwells(wells_number);
 }
 
 
-unsigned int FlowDiagnosticsInterface::getNumberofWells() const { return region.numberofwells(); }
+unsigned int FlowDiagnosticsInterface::getNumberofWells() const { return region->numberofwells(); }
 
 
 void FlowDiagnosticsInterface::clearWells(){
-    region.clearwells();
+    region->clearwells();
 }
 
 
 void FlowDiagnosticsInterface::init(){
-    if (region.meshinfo_type() == 1 && region.numberofphases() == 1){ //unstructured
-		region.clear_computedproperties();
-		//region.writevolumemesh("volumetetmesh.vtk");
-        region.tetrahedralmesh_postprocessCVFE();
-        region.properties_cvfe_sf(); //kvratio_=0.1
-        region.computemobility_cvfe_sf();
-        region.boundarycondition();
-        region.markwellnodes_verticaltopbot();
-        region.wellcondition();
-        region.oilinplace();
+    if (region->meshinfo_type() == 1 && region->numberofphases() == 1){ //unstructured
+		region->clear_computedproperties();
+		//region->writevolumemesh("volumetetmesh.vtk");
+        region->tetrahedralmesh_postprocessCVFE();
+        region->properties_cvfe_sf(); //kvratio_=0.1
+        region->computemobility_cvfe_sf();
+        region->boundarycondition();
+        region->markwellnodes_verticaltopbot();
+        region->wellcondition();
+        region->oilinplace();
 
     }
-    else if (region.meshinfo_type() == 1 && region.numberofphases() == 2){ //unstructured
-		region.clear_computedproperties();
-        region.tetrahedralmesh_postprocessCVFE();
-        region.properties_cvfe_mf();
-        if (region.saturationflag() == 1){
-            region.setelesaturationbyregion();
+    else if (region->meshinfo_type() == 1 && region->numberofphases() == 2){ //unstructured
+		region->clear_computedproperties();
+        region->tetrahedralmesh_postprocessCVFE();
+        region->properties_cvfe_mf();
+        if (region->saturationflag() == 1){
+            region->setelesaturationbyregion();
         }
-        if (region.saturationflag() == 2){
-            region.computecapillarypressure();
-            region.computesaturation();
+        if (region->saturationflag() == 2){
+            region->computecapillarypressure();
+            region->computesaturation();
         }
-        region.computerelativepermeabilities();
-        region.computemobility_cvfe_mf();
-        region.boundarycondition();
-		region.markwellnodes_verticaltopbot();
-        region.wellcondition(); //well boundary condition overwrite surface boundary condition
-        region.oilinplace();
+        region->computerelativepermeabilities();
+        region->computemobility_cvfe_mf();
+        region->boundarycondition();
+		region->markwellnodes_verticaltopbot();
+        region->wellcondition(); //well boundary condition overwrite surface boundary condition
+        region->oilinplace();
     }
-    else if (region.meshinfo_type() == 2){ //CPG
-        region.properties_cpgfv();
-        region.wellcondition_cpgfv();
-        region.transmatrix_cpgfv();
+    else if (region->meshinfo_type() == 2){ //CPG
+        region->properties_cpgfv();
+        region->wellcondition_cpgfv();
+        region->transmatrix_cpgfv();
     }
 }
 
 
 void FlowDiagnosticsInterface::setVolumeDimensions(double width, double height, double depth)
 {
-    region.setvolumedimension(width, height, depth);
+    region->setvolumedimension(width, height, depth);
 }
 
 
 
 void FlowDiagnosticsInterface::buildVolumetricMesh(){
-	if (region.sketchflag() == 0){//linear extrusion
-		region.RRMdefaultvalues_unstructured();
-		region.paramodel();
-		region.surfacemeshmax();
-		//region.inputstraightwells();
-		region.inputverticalwells();
-		region.unstructuredsurfacemesh();
-		region.calltetgen_in2mid(); //must: already read in poly or created in
-		region.wellgeonodes2addin(); //wellgeonodes -> wellnodes->addin
-		region.calltetgenrefine_mid2out();
-		region.tetgen2region();
-		region.meshdimension_max();
+	if (region->sketchflag() == 0){//linear extrusion
+		region->RRMdefaultvalues_unstructured();
+		region->paramodel();
+		region->surfacemeshmax();
+		//region->inputstraightwells();
+		region->inputverticalwells();
+		region->unstructuredsurfacemesh();
+		region->calltetgen_in2mid(); //must: already read in poly or created in
+		region->wellgeonodes2addin(); //wellgeonodes -> wellnodes->addin
+		region->calltetgenrefine_mid2out();
+		region->tetgen2region();
+		region->meshdimension_max();
 	}
-	else if (region.sketchflag() == 1){
-		region.RRMdefaultvalues_unstructured();
-		region.surfacemeshmax();
-		region.inputverticalwells();
-		region.buildsurfacemesh();
-		region.calltetgen_in2mid(); //must: already read in poly or created in
-		region.wellgeonodes2addin(); //wellgeonodes -> wellnodes->addin
-		region.calltetgenrefine_mid2out();
-		//region.calltetgen_in2out();
-		region.tetgen2region();
-		region.meshdimension_max();
+	else if (region->sketchflag() == 1){
+		region->RRMdefaultvalues_unstructured();
+		region->surfacemeshmax();
+		region->inputverticalwells();
+		region->buildsurfacemesh();
+		region->calltetgen_in2mid(); //must: already read in poly or created in
+		region->wellgeonodes2addin(); //wellgeonodes -> wellnodes->addin
+		region->calltetgenrefine_mid2out();
+		//region->calltetgen_in2out();
+		region->tetgen2region();
+		region->meshdimension_max();
 	}
 }
 
 
 void FlowDiagnosticsInterface::buildCPGVolumetricMesh(){
-	if (region.sketchflag() == 0){//linear extrusion only
-		region.RRMdefaultvalues_cpg();
-		region.paramodel();
-		region.buildcpg_ordering();
-		region.inputverticalwells();
+	if (region->sketchflag() == 0){//linear extrusion only
+		region->RRMdefaultvalues_cpg();
+		region->paramodel();
+		region->buildcpg_ordering();
+		region->inputverticalwells();
 	}
 }
 
 void FlowDiagnosticsInterface::getPressure(std::vector< double >& values) {
-    values = region.getpressure();
+    values = region->getpressure();
 }
 
 void FlowDiagnosticsInterface::getVelocitybyCells(std::vector< double >& values) {
-    values = region.getvelocity_elements();
+    values = region->getvelocity_elements();
 }
 
 void FlowDiagnosticsInterface::getBackwardTOF(std::vector< double >& values) {
-	values = region.getbackwardtof();
+	values = region->getbackwardtof();
 }
 void FlowDiagnosticsInterface::getVelocityMagnitudebyCells_log10(std::vector< double >& values) {
-    values = region.getvelocitymagnitude_elements_log10();
+    values = region->getvelocitymagnitude_elements_log10();
 }
 
 
 
 void FlowDiagnosticsInterface::getBackwardTOF_log10(std::vector< double >& values) {
-    values = region.getbackwardtof_log10();
+    values = region->getbackwardtof_log10();
 }
 
 
 void FlowDiagnosticsInterface::getForwardTOF(std::vector< double >& values) {
-    values = region.getforwardtof();
+    values = region->getforwardtof();
 }
 
 void FlowDiagnosticsInterface::getFowardTOF_log10(std::vector< double >& values) {
-    values = region.getforwardtof_log10();
+    values = region->getforwardtof_log10();
 }
 
 void FlowDiagnosticsInterface::getTotalTOF(std::vector< double >& values) {
-    values = region.gettotaltof();
+    values = region->gettotaltof();
 }
 void FlowDiagnosticsInterface::getTotalTOF_log10(std::vector< double >& values) {
-    values = region.gettotaltof_log10();
+    values = region->gettotaltof_log10();
 }
 
 void FlowDiagnosticsInterface::getMaxBackwardTracer(std::vector< double >& values) {
-    values = region.getmaxbackwardtracer();
+    values = region->getmaxbackwardtracer();
 }
 
 
 void FlowDiagnosticsInterface::getMaxForwardTracer(std::vector< double >& values) {
-    values = region.getmaxforwardtracer();
+    values = region->getmaxforwardtracer();
 }
 
 
 void FlowDiagnosticsInterface::getPermeabilitybyCells(std::vector< double >& values) {
-    values = region.getpermx_elements();
+    values = region->getpermx_elements();
 }
 
 void FlowDiagnosticsInterface::getPermeabilityXbyCells(std::vector< double >& values) {
-	values = region.getpermx_elements();
+	values = region->getpermx_elements();
 }
 
 void FlowDiagnosticsInterface::getPermeabilityYbyCells(std::vector< double >& values) {
-	values = region.getpermy_elements();
+	values = region->getpermy_elements();
 }
 
 void FlowDiagnosticsInterface::getPermeabilityZbyCells(std::vector< double >& values) {
-	values = region.getpermz_elements();
+	values = region->getpermz_elements();
 }
 
 void FlowDiagnosticsInterface::getVelocitybyVertices(std::vector< double >& values)
@@ -248,66 +252,66 @@ void FlowDiagnosticsInterface::getVelocitybyVertices(std::vector< double >& valu
 void FlowDiagnosticsInterface::getPermeabilitybyVertices(std::vector< double >& values)
 {
     (void)(values);
-    /* values = region.getpermeability_nodes(); */
+    /* values = region->getpermeability_nodes(); */
     return;
 }
 
 void FlowDiagnosticsInterface::getPorosity(std::vector< double >& values)
 {
-    values = region.getporosity_elements();
+    values = region->getporosity_elements();
 }
 
 
 void FlowDiagnosticsInterface::getPoreVolumebyRegion(std::vector< double >& values)
 {
-    values = region.getporevolume();
+    values = region->getporevolume();
 }
 
 
 
 void FlowDiagnosticsInterface::getRegionId(std::vector< int >& regions_id) {
-    regions_id = region.getregionid();
+    regions_id = region->getregionid();
 }
 
 
 
 void FlowDiagnosticsInterface::getCPGPressure(std::vector< double >& values) {
-    values = region.getpressure_cpg();
+    values = region->getpressure_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGTOF(std::vector< double >& values) {
-    values = region.getforwardtof_cpg();
+    values = region->getforwardtof_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGBackwardTOF(std::vector< double >& values) {
-    values = region.getbackwardtof_cpg();
+    values = region->getbackwardtof_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGTotalTOF(std::vector< double >& values) {
-    values = region.gettotaltof_cpg();
+    values = region->gettotaltof_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGMaxForwardTracer(std::vector< double >& values) {
-    values = region.getmaxforwardtracer_cpg();
+    values = region->getmaxforwardtracer_cpg();
 }
 
 void FlowDiagnosticsInterface::getCPGMaxBackwardTracer(std::vector< double >& values) {
-    values = region.getmaxbackwardtracer_cpg();
+    values = region->getmaxbackwardtracer_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGPermeability(std::vector< double >& values) {
-    values = region.getpermeability_elements_cpg();
+    values = region->getpermeability_elements_cpg();
 }
 
 
 void FlowDiagnosticsInterface::getCPGPorosity(std::vector< double >& values)
 {
-    values = region.getporosity_elements_cpg();
+    values = region->getporosity_elements_cpg();
 }
 
 void FlowDiagnosticsInterface::getCPGVelocity(std::vector< double >& values)
@@ -319,7 +323,7 @@ void FlowDiagnosticsInterface::getCPGVelocity(std::vector< double >& values)
 void FlowDiagnosticsInterface::getVolumeVertices(std::vector< float >& vertices)
 {
     std::vector<NODE> nodelist;
-    nodelist = region.getnodelist();
+    nodelist = region->getnodelist();
     int number_of_points = (int)nodelist.size();
 
     for (int i = 0; i < number_of_points; ++i)
@@ -333,7 +337,7 @@ void FlowDiagnosticsInterface::getVolumeVertices(std::vector< float >& vertices)
 
 void FlowDiagnosticsInterface::getVolumeEdges(std::vector< unsigned int >& edges)
 {
-    std::vector<TETRAHEDRON> elementlist = region.getelementlist();
+    std::vector<TETRAHEDRON> elementlist = region->getelementlist();
     int number_of_cells = (int)elementlist.size();
 
     for (int i = 0; i < number_of_cells; ++i)
@@ -368,7 +372,7 @@ void FlowDiagnosticsInterface::getVolumeEdges(std::vector< unsigned int >& edges
 
 void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells)//, std::shared_ptr<OpenVolumeMesh::TetrahedralMeshV3d> ptr_mesh)
 {
-    std::vector<TETRAHEDRON> elementlist = region.getelementlist();
+    std::vector<TETRAHEDRON> elementlist = region->getelementlist();
     int number_of_cells = (int)elementlist.size();
 
 
@@ -385,13 +389,13 @@ void FlowDiagnosticsInterface::getVolumeCells(std::vector< unsigned int >& cells
 
 void FlowDiagnosticsInterface::setTetrahedralMeshRegions( const std::vector<int> &regions )
 {
-	region.setregionids_tet(regions);
+	region->setregionids_tet(regions);
 }
 
 void FlowDiagnosticsInterface::getCPGVolumeVertices(std::vector< float >& vertices)
 {
 
-    std::vector<NODE> nodelist = region.getcpgnodelist();
+    std::vector<NODE> nodelist = region->getcpgnodelist();
     for (int i = 0; i < nodelist.size(); i++){
         vertices.push_back((float)nodelist[i].x());
         vertices.push_back((float)nodelist[i].y());
@@ -406,7 +410,7 @@ void FlowDiagnosticsInterface::getCPGVolumeVertices(std::vector< float >& vertic
 
 void FlowDiagnosticsInterface::getCPGVolumeEdges(std::vector< unsigned int >& edges)
 {
-    std::vector<CPGELEMENT> cpgelementlist = region.getcpgelementlist();
+    std::vector<CPGELEMENT> cpgelementlist = region->getcpgelementlist();
     for (int i = 0; i < cpgelementlist.size(); i++){
         unsigned int id0 = (unsigned int)cpgelementlist[i].node(0);
         unsigned int id1 = (unsigned int)cpgelementlist[i].node(1);
@@ -466,7 +470,7 @@ void FlowDiagnosticsInterface::getCPGVolumeEdges(std::vector< unsigned int >& ed
 void FlowDiagnosticsInterface::getCPGVolumeCells(std::vector< unsigned int >& cells)
 {
 
-    std::vector<CPGELEMENT> cpgelementlist = region.getcpgelementlist();
+    std::vector<CPGELEMENT> cpgelementlist = region->getcpgelementlist();
 
     for (int i = 0; i < cpgelementlist.size(); i++){
 
@@ -527,60 +531,60 @@ void FlowDiagnosticsInterface::getCPGVolumeCells(std::vector< unsigned int >& ce
 
 
 void FlowDiagnosticsInterface::exportSurfacetoVTK(const std::string& filename){
-    region.writesurfacemeshVTK(const_cast<char *>(filename.c_str()));
+    region->writesurfacemeshVTK(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportCornerPointtoVTK(const std::string& filename){
-    region.writecornerpointgridVTK(const_cast<char *>(filename.c_str()));
+    region->writecornerpointgridVTK(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportCornerPointtoGRDECL(const std::string& filename){
-    region.writecornerpointgridGRDECL(const_cast<char *>(filename.c_str()));
+    region->writecornerpointgridGRDECL(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportResultstoVTK(const std::string& filename){
-    region.writeresult(const_cast<char *>(filename.c_str()));
+    region->writeresult(const_cast<char *>(filename.c_str()));
 }
 
 void FlowDiagnosticsInterface::exportMeshtoMSH(const std::string& filename){
-	region.writevolumemeshMSH(const_cast<char *>(filename.c_str()));
+	region->writevolumemeshMSH(const_cast<char *>(filename.c_str()));
 }
 
 
 void FlowDiagnosticsInterface::clear(){
-    region.clearregion();
+    region->clearregion();
 }
 
 
 
 //bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 //{
-//	region.clear_computedproperties();
-//	region.modelpreparation_upscale();
-//	region.upscalebsurface(1);
-//	region.boundarycondition();
-//	region.steadystateflowsolver();
-//	region.upscaling(1, result);
-//	region.clearnodesbc();
-//	region.upscalebsurface(2);
-//	region.boundarycondition();
-//	region.steadystateflowsolver();
-//	region.upscaling(2, result);
-//	region.clearnodesbc();
-//	region.upscalebsurface(3);
-//	region.boundarycondition();
-//	region.steadystateflowsolver();
-//	region.upscaling(3, result);
+//	region->clear_computedproperties();
+//	region->modelpreparation_upscale();
+//	region->upscalebsurface(1);
+//	region->boundarycondition();
+//	region->steadystateflowsolver();
+//	region->upscaling(1, result);
+//	region->clearnodesbc();
+//	region->upscalebsurface(2);
+//	region->boundarycondition();
+//	region->steadystateflowsolver();
+//	region->upscaling(2, result);
+//	region->clearnodesbc();
+//	region->upscalebsurface(3);
+//	region->boundarycondition();
+//	region->steadystateflowsolver();
+//	region->upscaling(3, result);
 //
 //	return true;
 //}
 
 bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 {
-	region.clear_computedproperties();
-	if (region.numberofphases() == 1){
+	region->clear_computedproperties();
+	if (region->numberofphases() == 1){
 		std::vector<double> kk;
-		kk = region.flowbasedupscaling_sf();
+		kk = region->flowbasedupscaling_sf();
 		result.append("Kx= ");
 		result.append(std::to_string(kk[0]));
 		result.append(" mD ");
@@ -596,8 +600,8 @@ bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 		result.append(" mD ");
 		result.append("\n");
 	}
-	else if (region.numberofphases() == 2){
-		region.flowbasedupscaling_mf();
+	else if (region->numberofphases() == 2){
+		region->flowbasedupscaling_mf();
 		result.append("upscaled absolute and relative permeability curves exported to upscaledrelativeperm.txt in bin folder");
 	}
 
@@ -612,7 +616,7 @@ bool FlowDiagnosticsInterface::getUpscalledPermeability(std::string &result)
 
 bool FlowDiagnosticsInterface::exportDerivedQuantities(const std::string &filename)
 {
-    region.writeflowdiagnostics(filename);
+    region->writeflowdiagnostics(filename);
     return true;
 }
 
@@ -644,7 +648,7 @@ bool FlowDiagnosticsInterface::setBoundaryConditions(Boundary b, int type_, doub
 
 void FlowDiagnosticsInterface::clearComputedQuantities()
 {
-    region.clear_computedproperties();
+    region->clear_computedproperties();
     std::cout << " clearComputedQuantities " << std::endl;
     return;
 }
@@ -669,7 +673,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 	const std::vector<CurveMesh> &back_boundary_curves
 	)
 {
-	region.sketchflag(1);//mark sketch 3D
+	region->sketchflag(1);//mark sketch 3D
 	std::vector<NODE> surfacenodelist;
 	std::vector<FACET> facetlist;
 	NODE node_;
@@ -706,18 +710,18 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		}
 		cc = cc + triangle_meshes[isur].vertex_list.size() / 3;
 	}
-	region.readinsurfacenodes(surfacenodelist);
-	region.readinfacets(facetlist);
-	region.numberofsurfaces(triangle_meshes.size());
+	region->readinsurfacenodes(surfacenodelist);
+	region->readinfacets(facetlist);
+	region->numberofsurfaces(triangle_meshes.size());
 	//for all surfaces (sketched and vertical), remember boundary and internal for surface bc
-	region.setoutbsurfaceid(minsid, maxsid, triangle_meshes.size(), triangle_meshes.size() + 1, triangle_meshes.size() + 2, triangle_meshes.size() + 3);//order same in region.buildsurfacemesh()
-	region.createbsurfacelist(triangle_meshes.size() + 4);
-	region.setnoflowbsurface(minsid);
-	region.setnoflowbsurface(maxsid);
-	region.setnoflowbsurface(triangle_meshes.size());
-	region.setnoflowbsurface(triangle_meshes.size() + 1);
-	region.setnoflowbsurface(triangle_meshes.size() + 2);
-	region.setnoflowbsurface(triangle_meshes.size() + 3);
+	region->setoutbsurfaceid(minsid, maxsid, triangle_meshes.size(), triangle_meshes.size() + 1, triangle_meshes.size() + 2, triangle_meshes.size() + 3);//order same in region->buildsurfacemesh()
+	region->createbsurfacelist(triangle_meshes.size() + 4);
+	region->setnoflowbsurface(minsid);
+	region->setnoflowbsurface(maxsid);
+	region->setnoflowbsurface(triangle_meshes.size());
+	region->setnoflowbsurface(triangle_meshes.size() + 1);
+	region->setnoflowbsurface(triangle_meshes.size() + 2);
+	region->setnoflowbsurface(triangle_meshes.size() + 3);
 
 	std::vector<NODE> curvenodelist, curvenodelist2;
 	std::vector<SEGMENT> segmentlist, segmentlist2;
@@ -798,7 +802,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segmentlist2.push_back(segment_);
 	}
 
-	region.readincurves_front(curvenodelist2, segmentlist2); //f-b-l-r
+	region->readincurves_front(curvenodelist2, segmentlist2); //f-b-l-r
 
 	//for back boundary 
 	segmentlist.clear();
@@ -872,7 +876,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segmentlist2.push_back(segment_);
 	}
 
-	region.readincurves_back(curvenodelist2, segmentlist2); //f-b-l-r
+	region->readincurves_back(curvenodelist2, segmentlist2); //f-b-l-r
 
 
 	//for left boundary
@@ -947,7 +951,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segmentlist2.push_back(segment_);
 	}
 
-	region.readincurves_left(curvenodelist2, segmentlist2); //f-b-l-r
+	region->readincurves_left(curvenodelist2, segmentlist2); //f-b-l-r
 
 
 	//for right boundary 
@@ -1023,7 +1027,7 @@ bool FlowDiagnosticsInterface::setSkeleton(
 		segmentlist2.push_back(segment_);
 	}
 
-	region.readincurves_right(curvenodelist2, segmentlist2); //f-b-l-r
+	region->readincurves_right(curvenodelist2, segmentlist2); //f-b-l-r
 
 	return true;
 }
@@ -1031,12 +1035,12 @@ bool FlowDiagnosticsInterface::setSkeleton(
 
 void FlowDiagnosticsInterface::getOilInPlace(double &oil_in_place)
 {
-    oil_in_place = region.oilinplace();
+    oil_in_place = region->oilinplace();
 }
 
 
 void FlowDiagnosticsInterface::setSaturationMethod(int i){
-    region.saturationflag(i);
+    region->saturationflag(i);
 }
 void FlowDiagnosticsInterface::setPermeabilityCurve(unsigned int region_id, int pcurve_id)
 {
@@ -1071,7 +1075,7 @@ void FlowDiagnosticsInterface::setRegion(unsigned int id, double x, double y, do
     p.permhigh(max_perm*0.987e-15);
     p.porolow(min_poros);
     p.porohigh(max_poros);
-    region.modifypropertyarea(id, p);
+    region->modifypropertyarea(id, p);
 
     return;
 }
@@ -1088,7 +1092,7 @@ void FlowDiagnosticsInterface::setRegionSinglePhase(unsigned int id, double Kxlo
 	p.Kzhigh(Kzhigh_*0.987e-15);
 	p.porolow(porolow_);
 	p.porohigh(porohigh_);
-	region.modifypropertyarea(id, p);
+	region->modifypropertyarea(id, p);
 
 	return;
 }
@@ -1110,7 +1114,7 @@ void FlowDiagnosticsInterface::setRegionMultiphase(unsigned int id, double Kxlow
 	p.Siw(Si_);
 	p.lamda(lambda_);
 	p.Sw(Sw_);
-	region.modifypropertyarea(id, p);
+	region->modifypropertyarea(id, p);
 
 	return;
 }
@@ -1125,12 +1129,12 @@ void FlowDiagnosticsInterface::setNumberOfPhases(int i){
         multi_phase_flow = true;
     }
 
-    region.numberofphases(i);
+    region->numberofphases(i);
 }
 
 int FlowDiagnosticsInterface::getNumberOfPhases()
 {
-	return region.numberofphases();
+	return region->numberofphases();
 }
 
 
@@ -1142,7 +1146,7 @@ bool FlowDiagnosticsInterface::getCapillaryPressure(std::vector< double >& value
         return false;
     }
 
-    values = region.getpc();
+    values = region->getpc();
 
     return true;
 }
@@ -1153,7 +1157,7 @@ bool FlowDiagnosticsInterface::getWaterSaturationByCells(std::vector< double >& 
         return false;
     }
 
-    values = region.getwatersaturation_elements();
+    values = region->getwatersaturation_elements();
 
     return true;
 }
@@ -1164,7 +1168,7 @@ bool FlowDiagnosticsInterface::getKroByCells(std::vector< double >& values) {
         return false;
     }
 
-    values = region.getkro_elements();
+    values = region->getkro_elements();
 
     return true;
 }
@@ -1175,7 +1179,7 @@ bool FlowDiagnosticsInterface::getKrwByCells(std::vector< double >& values) {
         return false;
     }
 
-    values = region.getkrw_elements();
+    values = region->getkrw_elements();
 
     return true;
 }
@@ -1190,22 +1194,22 @@ void FlowDiagnosticsInterface::setWell(unsigned int id, unsigned int type, doubl
 	w.type(type);
 	w.sign(sign);
 	w.value(value);
-	region.modifywell(id, w);
+	region->modifywell(id, w);
 }
 
 void FlowDiagnosticsInterface::loadWellsGeometry(char* file){
-	region.readwellgeometry(file);
+	region->readwellgeometry(file);
 }
 
 void FlowDiagnosticsInterface::getWell(unsigned int id, unsigned int& type, double& value, int& sign){
-	type = region.well(id).type();
-	value = region.well(id).value();
-	sign = region.well(id).sign();
+	type = region->well(id).type();
+	value = region->well(id).value();
+	sign = region->well(id).sign();
 }
 
 void FlowDiagnosticsInterface::setSkeletonData(unsigned int surfaces_number, const std::vector< unsigned int >& nu,
 	const std::vector< unsigned int >& nv, const std::vector< double >& positions){
-	region.setskeletondata(surfaces_number, nu, nv, positions);
+	region->setskeletondata(surfaces_number, nu, nv, positions);
 }
 
 
@@ -1213,7 +1217,7 @@ void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number,
 	std::vector< unsigned int >& nv, std::vector< double >& positions) const
 {
 	std::vector<PARASURFACE> parasurfacelist;
-	parasurfacelist = region.getparasurfacelist();
+	parasurfacelist = region->getparasurfacelist();
 	surfaces_number = parasurfacelist.size();
 
 	PARASURFACE parasurface_;
@@ -1254,12 +1258,12 @@ void FlowDiagnosticsInterface::getSurfaceSkeleton(unsigned int& surfaces_number,
 }
 
 void FlowDiagnosticsInterface::computeProperties(){
-	if (region.meshinfo_type() == 1){
-		region.steadystateflowsolver();
-		region.flowdiagnostics_tracing();
-		//region.writeresult_cvfe_sf_log2t("result.vtk");
-		region.derivedquantities_both();
-		//region.writeflowdiagnostics("flowdiagnostics.txt");
+	if (region->meshinfo_type() == 1){
+		region->steadystateflowsolver();
+		region->flowdiagnostics_tracing();
+		//region->writeresult_cvfe_sf_log2t("result.vtk");
+		region->derivedquantities_both();
+		//region->writeflowdiagnostics("flowdiagnostics.txt");
 	}
 }
 
@@ -1285,7 +1289,7 @@ bool FlowDiagnosticsInterface::setVerticalWell(unsigned int id, WellType t, doub
 	default:
 		break;
 	}
-	region.setverticalwellgeometry(id, qt_x, qt_y, topd_, botd_);
+	region->setverticalwellgeometry(id, qt_x, qt_y, topd_, botd_);
 	return true;
 }
 
@@ -1310,28 +1314,28 @@ bool FlowDiagnosticsInterface::setWell(unsigned int id, WellType t, double press
 		break;
 	}
 
-	region.setverticalwellgeometry(id, qt_x, qt_y, 0, 0 + well_depth);
+	region->setverticalwellgeometry(id, qt_x, qt_y, 0, 0 + well_depth);
 	return true;
 }
 
 void FlowDiagnosticsInterface::getRegion(unsigned int id, double& x, double& y, double& z, double& perm,
 	double &poros, double& visc, double &porevolume) { //not being used
-	x = region.propertyarea(id).x();
-	y = region.propertyarea(id).y();
-	z = region.propertyarea(id).z();
-	perm = region.propertyarea(id).permlow() / 0.987e-15;
+	x = region->propertyarea(id).x();
+	y = region->propertyarea(id).y();
+	z = region->propertyarea(id).z();
+	perm = region->propertyarea(id).permlow() / 0.987e-15;
 
 	// The method: propertyarea(int).potosity() is not available anymore
-	//poros = region.propertyarea(id).porosity();
-	poros = region.propertyarea(id).porolow();//if porolow and porohigh are both needed then get both
+	//poros = region->propertyarea(id).porosity();
+	poros = region->propertyarea(id).porolow();//if porolow and porohigh are both needed then get both
 
-	visc = region.oilviscosity();
-	porevolume = region.propertyarea(id).porevolume();
+	visc = region->oilviscosity();
+	porevolume = region->propertyarea(id).porevolume();
 }
 
 
 void FlowDiagnosticsInterface::readSkeletonFile(const std::string& skeleton_file){//not being used
-	region.readskeleton(skeleton_file.c_str());
+	region->readskeleton(skeleton_file.c_str());
 }
 
 void FlowDiagnosticsInterface::getSurfaceVertices(std::vector< float >& vertices) const {}//not being used

@@ -50,7 +50,7 @@ bool SUtilities::getExtrusionPath( size_t surface_id, std::vector<double> &path_
         return false; 
     }
 
-    return model_.pimpl_->container_[index]->getPathVertexList(path_vertex_list);
+    return model_.pimpl_->container_[index]->getRawPathVertexList(path_vertex_list);
 
     return true;
 }
@@ -81,6 +81,52 @@ bool SUtilities::getRegionVolumeList( std::vector<double> &vlist )
 
     return model_.pimpl_->mesh_->getRegionVolumeList(vlist);
 }
+
+bool SUtilities::getIntersectingSurfaceIndices( size_t controller_id, std::vector<size_t> &intersecting_surfaces_indices )
+{
+    std::vector<PlanarSurface::SurfaceId> sids;
+    size_t index;
+
+    if ( model_.pimpl_->getSurfaceIndex(controller_id, index) == false )
+    {
+        return false;
+    }
+
+    model_.pimpl_->container_[index]->getCachedBoundingSurfacesIDs(sids);
+    intersecting_surfaces_indices.resize( sids.size() );
+    ControllerSurfaceIndex cid;
+
+    for ( size_t i = 0; i < sids.size(); ++i )
+    {
+        model_.pimpl_->getControllerIndexFromPlanarSurfaceId(sids[i], cid);
+        /* model_.pimpl_->container_.getSurfaceIndex(sids[i], cid); */
+        intersecting_surfaces_indices[i] = cid;
+    }
+
+    return true;
+}
+
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
 
 bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t,  std::size_t, std::vector< std::vector<double> > )
 {
