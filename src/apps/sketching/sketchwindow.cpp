@@ -443,6 +443,8 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 //    double value_ = min_exagg + v_exagg_* steps_exagg;
 //    double v_exagg_db_ = static_cast< double > ( log10( value_ ) );
 
+//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
+
     double v_exagg_db_ = static_cast< double > ( v_exagg_*0.1 );
     if( sketchingcanvas != nullptr )
         sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );

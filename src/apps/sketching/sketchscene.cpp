@@ -392,10 +392,8 @@ void SketchScene::processSketch()
     if( sketch->isEmpty() == true ) return;
 
 
-    if( ( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
-            )
+    if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
         sketch->getMonotonicY();
-
     else
         sketch->getMonotonicX();
 
@@ -1076,44 +1074,6 @@ void SketchScene::clearScene()
 
     csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
     current_interaction1 = UserInteraction1::SKETCHING;
-
-
-
-
-
-
-
-
-    //init();
-
-    /*
-
-    setSketchingMode();
-
-    image = new ImageItemWrapper();
-    image->setVisible( false );
-    addItem( image );
-
-    resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-    resize_marker->setBrush( QColor( Qt::red ) );
-    resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-    resize_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
-    resize_marker->setVisible( false );
-    addItem( resize_marker );
-
-    move_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
-    move_marker->setBrush( QColor( Qt::blue ) );
-    move_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
-    move_marker->setFlag( QGraphicsItem::ItemIsMovable, true );
-    move_marker->setVisible( false );
-    addItem( move_marker );
-
-    boudering_area = new PolygonItem();
-    boudering_area->setBorderVisible( false );
-    boudering_area->setVisible( false );
-    addItem( boudering_area );
-
-*/
 
 
 }
