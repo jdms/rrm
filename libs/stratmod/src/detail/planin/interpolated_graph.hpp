@@ -400,8 +400,7 @@ void InterpolatedGraph::getLowerBoundList( T &list ) const
         }
     }
 
-    // TODO: boost version to 2 once new release ship to all in August
-    CEREAL_CLASS_VERSION(InterpolatedGraph, 1);
+    CEREAL_CLASS_VERSION(InterpolatedGraph, 2);
 
 #else
     template<typename Archive>
