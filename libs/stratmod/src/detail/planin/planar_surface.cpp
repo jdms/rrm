@@ -1136,7 +1136,19 @@ bool PlanarSurface::getRawHeight( Natural vertex_index, double &height )
 
     updateDiscretization(); 
 
+    double lb = origin.z;  
+    double ub = origin.z + lenght.z;  
+
     height = heights[vertex_index];
+
+    if ( height > ub ) { 
+        height = ub; 
+        /* status &= false; */ 
+    }
+    else if ( height < lb ) { 
+        height = lb; 
+        /* status &= false; */ 
+    }
 
     return true;
 }

@@ -41,13 +41,13 @@ class Segment
         std::map<double, std::pair<size_t, bool>> points_dictionary;
         double tolerance = 1E-6;
 
-        long int insertPointInVlist( double t, bool point_is_valid = true )
+        size_t insertPointInVlist( double t, bool point_is_valid = true )
         {
             long int pindex = vlist.size()/dim;
 
             if ( insertPointInVlist(t, pindex, point_is_valid) == false )
             {
-                return -1;
+                return std::numeric_limits<size_t>::max();
             }
 
             return pindex;
@@ -97,12 +97,12 @@ class Segment
         PointWrapper<VertexList, dim> p0;
         PointWrapper<VertexList, dim> p1;
 
-        double p0Height()
+        double p0Height() const
         {
             return p0[dim-1];
         }
 
-        double p1Height()
+        double p1Height() const
         {
             return p1[dim-1];
         }
@@ -118,7 +118,7 @@ class Segment
         }
 
         template<typename ElementType>
-        size_t getConnectivity( ElementType &connectivity )
+        size_t getConnectivity( ElementType &connectivity ) const
         {
             using OutNaturalType = typename ElementType::value_type;
             size_t num_segments = 0;
@@ -148,7 +148,7 @@ class Segment
             return num_segments;
         }
 
-        size_t getVertices( VertexList &new_vlist )
+        size_t getVertices( VertexList &new_vlist ) const
         {
             size_t num_new_vertices = points_dictionary.size();
 
@@ -176,13 +176,13 @@ class Segment
             return num_new_vertices;
         }
 
-        double getTolerance()
+        double getTolerance() const
         {
             return tolerance;
         }
 
         template<typename Point>
-        Point getPoint( double t )
+        Point getPoint( double t ) const
         {
             Point p;
             if ( p.size() < dim )
@@ -199,6 +199,46 @@ class Segment
             }
 
             return p;
+        }
+
+        size_t computeVerticalIntersection( const Segment &to_intersect )
+        {
+            // check if 2D base points are equal
+            double tol = getTolerance();
+            size_t pindex = std::numeric_limits<size_t>::max();
+
+            // compute intersection
+
+            /* std::cout << "\n Computing intersection: "; */
+            // sa.p0[2] + t ( sa.p1[2] - sa.p0[2] ) = sb.p0[2] + t ( sb.p1[2] - sb.p0[2] ) 
+            double num = to_intersect.p0Height() - p0Height(); 
+            double den = (p1Height() - p0Height()) - (to_intersect.p1Height() - to_intersect.p0Height());
+
+            /* std::cout << "num = " << num << ", " << "den = " << den; */ 
+            if ( std::abs(den) < tol )
+            {
+                /* std::cout << ", error |den| < tol\n\n" << std::flush; */
+                return pindex;
+            }
+
+            double t = num/den;
+            /* std::cout << ", t = " << t; */
+
+
+            // TODO: the code that verifies the admissibility of a new point can only work properly for the first intersection
+            // point_is_valid is true is it's two neighbours are valid
+            // I problably want to have the last valid point in segment marked as true instead of false, though
+            bool point_is_valid = source_is_valid && sink_is_valid;
+            pindex = insertPointInVlist(t, point_is_valid);
+
+            /* if ( (t >= 0) || (t <= 1) ) */
+            /* { */
+            /*     pindex = insertPointInVlist(t, point_is_valid); */
+                /* std::cout << ", inserting in sa(" << pindex << ", " << (point_is_valid ? "true" : "false" ) << ")"; */
+            /* } */
+            /* std::cout << "\n\n" << std::flush; */
+
+            return pindex;
         }
 };
 
@@ -247,7 +287,7 @@ double computeVerticalIntersection( SegmentType &sa, SegmentType &sb )
             sb.insertPointInDictionary(t, pindex, point_is_valid_in_sb);
         }
     }
-    std::cout << "\n\n" << std::flush;
+    /* std::cout << "\n\n" << std::flush; */
 
     return t;
 }
