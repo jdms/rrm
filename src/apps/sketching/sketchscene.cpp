@@ -85,6 +85,10 @@ void SketchScene::init()
     trajectory_point->setVisible( false );
     addItem( trajectory_point );
 
+    dipangle = new DipAnglePicture();
+    dipangle->setVisible( false );
+    addItem( dipangle );
+
 }
 
 
@@ -739,6 +743,40 @@ void SketchScene::submitSketchGuidedExtrusion()
 
     QGraphicsScene::update();
 }
+
+
+void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
+{
+    if( status_ == false )
+    {
+        setSketchingMode();
+        dipangle->setVisible( false );
+        return;
+    }
+
+    current_interaction1 =  UserInteraction1::NONE;
+    dipangle->setImage( pix_ );
+    dipangle->setVisible( true );
+
+}
+
+
+
+void SketchScene::updateDipAnglePicture( const QPixmap& pix_ )
+{
+    dipangle->setImage( pix_ );
+}
+
+void SketchScene::setDipAnglePictureMovable( bool status_ )
+{
+    dipangle->setMovable( status_ );
+
+    if( status_  == false )
+        setSketchingMode();
+    else
+        current_interaction1 =  UserInteraction1::NONE;
+}
+
 
 ///================================================================================
 
