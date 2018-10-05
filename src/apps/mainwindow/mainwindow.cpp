@@ -46,75 +46,101 @@ void MainWindow::createWindow()
 void MainWindow::createActions()
 {
     ac_save = new QAction( "Save", this );
+    ac_save->setToolTip( "Save" );
     ac_save->setIcon(QIcon(":/images/icons/save.png"));
 
     ac_load = new QAction( "Load", this );
+    ac_load->setToolTip( "Open" );
     ac_load->setIcon(QIcon(":/images/icons/load.png"));
 
     ac_clear = new QAction( "New", this );
+    ac_clear ->setToolTip( "New" );
     ac_clear->setIcon(QIcon(":/images/icons/new.png"));
 
     ac_export = new QAction( "Export", this );
+    ac_export->setToolTip( "Export to" );
+
     ac_exit = new QAction( tr ( "E&xit" ) , this );
+    ac_exit->setToolTip("Exit");
 
     ac_manual = new QAction( tr ( "RRM Manual" ), this );
+    ac_manual->setToolTip( "Manual" );
+
     ac_about = new QAction( tr ( "&About" ) , this );
+    ac_about->setToolTip( "About" );
 
     ac_undo = new QAction( "Undo", this );
+    ac_undo->setToolTip( "Undo" );
     ac_undo->setIcon(QIcon(":/images/icons/undo.png"));
 
     ac_redo = new QAction( "Redo", this );
+    ac_redo->setToolTip( "Redo" );
     ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
 
     ac_sketch_above = new QAction( "PA", this ); // preserve above!
+    ac_sketch_above->setToolTip( "Preserve Above" );
     ac_sketch_above->setCheckable( true );
 
     ac_sketch_region = new QAction( "PR", this ); // preserve region!
+    ac_sketch_region->setToolTip( "Preserve Region" );
     ac_sketch_region->setCheckable( true );
     ac_sketch_region->setVisible( true );
 
     ac_sketch_below = new QAction( "PB", this ); // preserve below!
+    ac_sketch_below->setToolTip( "Preserve Below" );
     ac_sketch_below->setCheckable( true );
 
     ac_remove_above = new QAction( "RA", this );
+    ac_remove_above->setToolTip( "Remove Above" );
     ac_remove_above->setCheckable( true );
 
     ac_remove_above_int = new QAction( "RAI", this );
+    ac_remove_above_int->setToolTip( "Remove Above Intersection" );
     ac_remove_above_int->setCheckable( true );
     ac_remove_above_int->setChecked( true );
 
     ac_remove_below = new QAction( "RB", this );
+    ac_remove_below->setToolTip( "Remove Below" );
     ac_remove_below->setCheckable( true );
 
     ac_remove_below_int = new QAction( "RBI", this );
+    ac_remove_below_int->setToolTip( "Remove Below Intersection" );
     ac_remove_below_int->setCheckable( true );
 
     ac_screenshot = new QAction( "Screenshot", this );
+    ac_screenshot->setToolTip( "Screenshot" );
     ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
 
     ac_direction_x = new QAction( "Width", this );
+    ac_direction_x->setToolTip( "Widthwise Direction" );
     ac_direction_x->setCheckable( true );
 
     ac_direction_y = new QAction( "Height", this );
+    ac_direction_y->setToolTip( "Heightwise Direction" );
     ac_direction_y->setCheckable( true );
 
     ac_direction_z = new QAction( "Length", this );
+    ac_direction_z->setToolTip( "Lenghtwise Direction" );
     ac_direction_z->setCheckable( true );
     ac_direction_z->setChecked( true );
 
 
     ac_stratigraphy = new QAction( "Stratigraphy", this );
+    ac_stratigraphy->setToolTip( "Stratigraphy" );
     ac_stratigraphy->setCheckable( true );
     ac_stratigraphy->setChecked( true );
 
     ac_structural = new QAction( "Structural", this );
+    ac_structural->setToolTip( "Structural" );
     ac_structural->setCheckable( true );
 
     ac_regions = new QAction( "Regions", this );
+    ac_regions->setToolTip( "Show Regions" );
     ac_regions->setCheckable( true );
     ac_regions->setChecked( false );
 
     ac_diagnostics = new QAction( "Diagnostics", this );
+    ac_diagnostics->setToolTip( "Run Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
 

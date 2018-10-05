@@ -23,6 +23,8 @@ void SketchInterface::createSketchingWindow()
     scontroller = new SketchingController();
 
     sketch_window = new SketchWindow();
+    sketch_window->setToolTip( "Cross-Section Canvas" );
+
     dw_sketchwindow = new QDockWidget( "Cross-Section" );
     dw_sketchwindow->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_sketchwindow->setWidget( sketch_window );
@@ -30,6 +32,7 @@ void SketchInterface::createSketchingWindow()
     window->addDockWidget( Qt::TopDockWidgetArea, dw_sketchwindow );
 
     sketch_topview_window = new SketchWindow();
+    sketch_topview_window->setToolTip( "Top-View Canvas" );
     dw_topview_window = new QDockWidget( "Top-View" );
     dw_topview_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_topview_window->setWidget( sketch_topview_window );

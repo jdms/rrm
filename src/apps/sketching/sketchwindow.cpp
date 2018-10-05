@@ -37,43 +37,54 @@ SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 void SketchWindow::createToolBar()
 {
     cp_color = new ColorPicker( this );
+    cp_color->setToolTip( "Sketch Color" );
 
+
+    ac_cancel_sketch = new QAction( "Cancel", this );
+    ac_cancel_sketch->setToolTip( "Cancel Sketch" );
+
+    ac_submit_sketch = new QAction( "Submit", this );
+    ac_submit_sketch->setToolTip( "Submit Sketch" );
+
+    ac_end_object = new QAction( "End", this );
+    ac_end_object->setToolTip( "Create Surface" );
 
     tb_sketch = addToolBar( "Edit Sketch" );
-
-    ac_sketch_color = new QAction( "Color", this );
-    ac_cancel_sketch = new QAction( "Cancel", this );
-    ac_submit_sketch = new QAction( "Submit", this );
-    ac_end_object = new QAction( "End", this );
-
     tb_sketch->addWidget( cp_color );
-//    tb_sketch->addAction( ac_sketch_color );
     tb_sketch->addAction( ac_cancel_sketch );
     tb_sketch->addAction( ac_submit_sketch );
     tb_sketch->addAction( ac_end_object );
 
-    tb_boundary = addToolBar( "Boundary" );
     ac_resize_boundary = new QAction( "Resize boundary", this );
+    ac_resize_boundary->setToolTip( "Resize Boundary" );
     ac_resize_boundary->setCheckable( true );
     ac_resize_boundary->setChecked( RESIZE_BOUNDARY_DEFAULT_STATUS );
+    tb_boundary = addToolBar( "Boundary" );
     tb_boundary->addAction( ac_resize_boundary );
 
-    tb_image = addToolBar( "Image" );
     ac_resize_image = new QAction( "Resize image", this );
+    ac_resize_image->setToolTip( "Resize Image" );
     ac_resize_image->setCheckable( true );
+
     ac_remove_image = new QAction( "Remove image", this );
+    ac_remove_image->setToolTip( "Remove Image" );
+
+    tb_image = addToolBar( "Image" );
     tb_image->addAction( ac_resize_image );
     tb_image->addAction( ac_remove_image );
 
 
-    tb_region = addToolBar( "Region" );
     ac_select_regions = new QAction( "Select Regions", this );
+    ac_select_regions->setToolTip( "Select Regions" );
     ac_select_regions->setCheckable( true );
     ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    tb_region = addToolBar( "Region" );
     tb_region->addAction( ac_select_regions );
 
     tb_well = addToolBar( "Well" );
     ac_select_wells = new QAction( "Select Well", this );
+    ac_select_wells->setToolTip( "Select Wells" );
     ac_select_wells->setCheckable( true );
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
     tb_well->addAction( ac_select_wells );
@@ -81,6 +92,7 @@ void SketchWindow::createToolBar()
 
     tb_lateral_bar = addToolBar( "Lateral Bar" );
     ac_show_bar = new QAction( "Vertical Exaggeration", this );
+    ac_show_bar->setToolTip( "Show Vertical Exaggeration and Dip Angle Bar" );
     ac_show_bar->setCheckable( true);
     ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
     tb_lateral_bar->addAction( ac_show_bar );
@@ -88,6 +100,7 @@ void SketchWindow::createToolBar()
 
     tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
+    ac_use_last_trajectory->setToolTip( "Reuse Last Trajectory" );
 
     tb_trajectory->addAction( ac_use_last_trajectory );
 
@@ -189,6 +202,7 @@ void SketchWindow::createLateralBar()
 {
 
     sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
+    sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
     sl_vertical_exagg_->setDiscretization( 100 );
     sl_vertical_exagg_->setRange( 0, 1 );
     sl_vertical_exagg_->setValue( 0.2 );
@@ -204,6 +218,7 @@ void SketchWindow::createLateralBar()
 
 
     dl_input_angle_ = new QDial();
+    dl_input_angle_->setToolTip( "Input Dip Angle" );
     dl_input_angle_->setMaximumSize( 70, 70 );
     dl_input_angle_->setInvertedAppearance( true );
     dl_input_angle_->setNotchesVisible( true );
@@ -217,6 +232,7 @@ void SketchWindow::createLateralBar()
 
 
     lb_input_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
+    lb_input_dpangle->setToolTip( "Input Dip Angle" );
     lb_input_angle_ = new QLCDNumber();
     lb_input_angle_->setDecMode();
     lb_input_angle_->setFrameShape( QFrame::NoFrame );
@@ -228,6 +244,7 @@ void SketchWindow::createLateralBar()
 
 
     lb_output_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
+    lb_output_dpangle->setToolTip( "Output Dip Angle" );
     lb_output_angle_ = new QLCDNumber();
     lb_output_angle_->setDecMode();
     lb_output_angle_->setFrameShape( QFrame::NoFrame );
@@ -541,9 +558,6 @@ SketchWindow::~SketchWindow()
 
     delete sketchingcanvas;
     sketchingcanvas = nullptr;
-
-    delete ac_sketch_color;
-    ac_sketch_color = nullptr;
 
     delete ac_cancel_sketch;
     ac_cancel_sketch = nullptr;
