@@ -44,6 +44,7 @@
 #include "./models/stratigraphyitem.h"
 #include "./models/regionitem.h"
 #include "./models/crosssectionitem.h"
+#include "./models/dipanglepicture.h"
 
 
 class SketchScene: public QGraphicsScene/*, public Scene*/
@@ -51,7 +52,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
     Q_OBJECT
 
 
-    enum class UserInteraction1 { SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
+    enum class UserInteraction1 { NONE, SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
 
     ///================================================================================
 
@@ -139,6 +140,10 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void stopPointGuidedExtrusion();
         void submitSketchGuidedExtrusion();
 
+        void showDipAnglePicture( bool status_, const QPixmap& pix_ );
+        void updateDipAnglePicture( const QPixmap& pix_ );
+        void setDipAnglePictureMovable( bool status_ );
+
    signals:
 
 
@@ -200,6 +205,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         std::shared_ptr< CurveItem > sketch = nullptr;
 
         ImageItemWrapper* image = nullptr;
+        DipAnglePicture* dipangle = nullptr;
 
         double csection_depth = 0.0;
         Settings::CrossSection::CrossSectionDirections csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;

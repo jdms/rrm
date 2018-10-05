@@ -85,6 +85,9 @@ class SketchWindow: public QMainWindow
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
         void setDipAngle( double angle_ );
+        void setDipAnglePictureMovable( bool status_ );
+
+        void showDipAngle( bool status_ );
 
         void reset();
 
@@ -126,6 +129,8 @@ class SketchWindow: public QMainWindow
         void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
+
+        void showDipAnglePicture( bool status_ );
 
     protected:
 
@@ -191,6 +196,7 @@ class SketchWindow: public QMainWindow
         AnglePicture* lb_output_dpangle = nullptr;
 
         QPushButton* btn_show_oangle  = nullptr;
+        QPushButton* btn_move_oangle = nullptr;
 
 
         QToolBar* tb_lateral_bar = nullptr;

@@ -18,29 +18,24 @@ void AnglePicture::paintEvent(QPaintEvent * e)
     QLabel::paintEvent(e);
 
     int value = size.width();
-
-    QPixmap pix( size );
-    QPainter painter( &pix );
-//    QLinearGradient gradient(0,0, 0, value);
-//    gradient.setColorAt(0.0, QColor(250, 250, 250));
-//    gradient.setColorAt(1.0, QColor(234, 234, 234));
-    QBrush brush(Qt::lightGray);
-
-
     qreal xAxis = value/2;
     qreal yAxis = value/2;
+
+    QPixmap pix( size );
+    pix.fill( Qt::transparent );
+
+    QPainter painter( &pix );
+
 
     QPen axes_pen_;
     axes_pen_.setWidth( 2 );
     axes_pen_.setColor( Qt::blue );
     painter.setPen( axes_pen_ );
     painter.drawLine(0, xAxis, value,  xAxis);
-    //    painter.setPen( /*QColor(0, 0, 255, 64)*/);
 
     axes_pen_.setColor( Qt::red );
     painter.setPen( axes_pen_ );
     painter.drawLine(yAxis, 0, yAxis, value);
-    //    painter.setPen(Qt::red/*QColor(0, 0, 255, 64)*/);
 
     QPointF center = QPointF(yAxis, xAxis);
 

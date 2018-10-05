@@ -24,6 +24,7 @@
 #include <QToolBar>
 #include <QFileDialog>
 #include <QGroupBox>
+#include <QPushButton>
 
 #include "sketchwindow.h"
 #define PI 3.14159265
@@ -226,9 +227,17 @@ void SketchWindow::createLateralBar()
     dl_input_angle_->setSingleStep( 10 );
 
     btn_show_oangle = new QPushButton( "Show" );
+    btn_show_oangle->setToolTip( "Show Dip Angle inside Canvas" );
+    btn_show_oangle->setCheckable( true );
+
+    btn_move_oangle = new QPushButton( "Move" );
+    btn_move_oangle->setToolTip( "Move Dip Angle Picture" );
+    btn_move_oangle->setCheckable( true );
+
     QVBoxLayout* vb_input_angle = new QVBoxLayout();
     vb_input_angle->addWidget( dl_input_angle_ );
     vb_input_angle->addWidget( btn_show_oangle );
+    vb_input_angle->addWidget( btn_move_oangle );
 
 
     lb_input_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
@@ -285,6 +294,9 @@ void SketchWindow::createLateralBar()
 
     connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
 
+    connect( btn_show_oangle, SIGNAL( toggled( bool ) ), this, SLOT( showDipAngle( bool ) ) );
+
+    connect( btn_move_oangle, SIGNAL( toggled( bool ) ), this, SLOT( setDipAnglePictureMovable( bool ) ) );
 }
 
 
@@ -464,7 +476,6 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
 
     std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
-//    double v_exagg_db_ = static_cast< double > ( v_exagg_*0.1 );
     if( sketchingcanvas != nullptr )
         sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
 
@@ -491,7 +502,39 @@ void SketchWindow::setDipAngle( double angle_ )
 
     std::cout << "Beta value: " << beta_ << std::endl << std::flush;
 
+
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+    const QPixmap* pix_ = lb_output_dpangle->pixmap();
+    if( pix_ == nullptr ) return;
+
+    scene_->updateDipAnglePicture( *pix_ );
+
+
+
 }
+
+
+void SketchWindow::showDipAngle( bool status_ )
+{
+    if( sketchingcanvas == nullptr ) return;
+
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+
+    const QPixmap* pix_ = lb_output_dpangle->pixmap();
+    if( pix_ == nullptr ) return;
+
+    scene_->showDipAnglePicture( status_, *pix_ );
+
+}
+
+void SketchWindow::setDipAnglePictureMovable( bool status_ )
+{
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+    scene_->setDipAnglePictureMovable( status_ );
+}
+
 
 
 void SketchWindow::reset()
@@ -500,8 +543,17 @@ void SketchWindow::reset()
     ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
     cp_color->setColor( QColor( 255, 0, 0 ) );
 
+    if( btn_show_oangle != nullptr )
+        btn_show_oangle->setChecked( false );
+
+    if( btn_move_oangle != nullptr )
+        btn_move_oangle->setChecked( false );
+
     if( dl_input_angle_ != nullptr )
         dl_input_angle_->setValue( 0 );
+
+
+
 }
 
 
