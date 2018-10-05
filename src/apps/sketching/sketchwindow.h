@@ -147,7 +147,6 @@ class SketchWindow: public QMainWindow
         ColorPicker *cp_color = nullptr;
 
         QToolBar* tb_sketch = nullptr;
-        QAction* ac_sketch_color = nullptr;
         QAction* ac_cancel_sketch = nullptr;
         QAction* ac_submit_sketch = nullptr;
         QAction* ac_end_object = nullptr;
