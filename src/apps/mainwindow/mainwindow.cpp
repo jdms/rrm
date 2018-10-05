@@ -614,6 +614,9 @@ void MainWindow::initializeInterface()
     ac_remove_below->setChecked( false );
     ac_remove_below_int->setChecked( false );
 
+    ac_direction_x->setEnabled( true );
+    ac_direction_y->setEnabled( true );
+    ac_direction_z->setEnabled( true );
 
     ac_direction_x->setChecked( false );
     ac_direction_y->setChecked( false );
@@ -622,6 +625,9 @@ void MainWindow::initializeInterface()
     ac_stratigraphy->setChecked( true );
     ac_structural->setChecked( false );
 
+
+    ac_regions->setEnabled( true );
+    ac_diagnostics->setEnabled( false );
     ac_regions->setChecked( false );
     ac_diagnostics->setChecked( false );
 }
