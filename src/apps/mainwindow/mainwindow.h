@@ -52,6 +52,7 @@ class MainWindow: public QMainWindow
     signals:
 
         void runDiagnostics( bool status_ );
+        void takeScreenshot();
 
     protected:
 

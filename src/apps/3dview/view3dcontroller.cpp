@@ -127,7 +127,6 @@ void View3dController::setVerticalExaggeration( double scale_ )
 }
 
 
-
 void View3dController::clear()
 {
     scene->clearScene();

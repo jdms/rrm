@@ -89,6 +89,7 @@ class SketchWindow: public QMainWindow
 
         void showDipAngle( bool status_ );
 
+        void screenshot();
         void reset();
 
 
@@ -201,8 +202,11 @@ class SketchWindow: public QMainWindow
 
         QToolBar* tb_lateral_bar = nullptr;
         QAction* ac_show_bar = nullptr;
+        QAction* ac_axes = nullptr;
         const bool SHOW_VERTICAL_EXAGGERATION = false;
 
+        QToolBar* tb_misc = nullptr;
+        QAction* ac_screenshot = nullptr;
 
 
         ///================================================================================

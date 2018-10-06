@@ -124,6 +124,8 @@ void View3dInterface::createView3dActions()
 
     connect( window->app, &RRMApplication::setVerticalExaggerationScale, [=]( double scale_ ){ controller3d->setVerticalExaggeration( scale_ ); } );
 
+    connect( window, &MainWindow::takeScreenshot, [=](){ canvas3d->screenshot(); } );
+
 }
 
 

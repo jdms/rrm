@@ -105,6 +105,19 @@ void SketchWindow::createToolBar()
 
     tb_trajectory->addAction( ac_use_last_trajectory );
 
+    ac_axes = new QAction( "Axes", this );
+    ac_axes->setToolTip( "Show axes" );
+    ac_axes->setIcon(QIcon(":/images/icons/axes.png"));
+    ac_axes->setCheckable( true );
+    ac_axes->setChecked( true );
+
+    ac_screenshot = new QAction( "Screenshot", this );
+    ac_screenshot->setToolTip( "Screenshot" );
+    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
+    tb_misc = addToolBar( "Misc" );
+    tb_misc->addAction( ac_screenshot );
+    tb_misc->addAction( ac_axes );
+
 
 
 }
@@ -161,6 +174,12 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_show_bar, &QAction::triggered, bar_, &QWidget::setVisible );
 
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
+
+    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
+
+
+
     //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
@@ -191,6 +210,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
+
 
 
 
@@ -330,6 +350,9 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_use_last_trajectory, &QAction::triggered, [=]()
     { emit useLastTrajectory(); } );
+
+    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
+
 
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
@@ -533,6 +556,41 @@ void SketchWindow::setDipAnglePictureMovable( bool status_ )
     if( sketchingcanvas == nullptr ) return;
     std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
     scene_->setDipAnglePictureMovable( status_ );
+}
+
+
+void SketchWindow::screenshot()
+{
+    QString selectedFilter;
+    QString name_of_file_ = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
+    if( sketchingcanvas != nullptr )
+    {
+        std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+        if( selectedFilter == "PNG (*.png)" )
+        {
+            scene_->savetoRasterImage( name_of_file_ );
+        }
+        else if ( selectedFilter == "SVG (*.svg)" )
+        {
+            scene_->savetoVectorImage( name_of_file_ );
+        }
+    }
+
+    if( topviewcanvas != nullptr )
+    {
+        std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+        if( selectedFilter == "PNG (*.png)" )
+        {
+            scene_->savetoRasterImage( name_of_file_ );
+        }
+        else if ( selectedFilter == "SVG (*.svg)" )
+        {
+            scene_->savetoVectorImage( name_of_file_ );
+        }
+    }
+
 }
 
 

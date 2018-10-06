@@ -34,7 +34,7 @@
 //#include "./models/object_item_wrapper.h"
 //#include "./models/crosssection_item_wrapper.h"
 //#include "./models/trajectoryitemwrapper.h"
-//#include "./models/coordinate_axes_2d.h"
+#include "./models/coordinateaxes_2d.h"
 #include "./models/image_item_wrapper.h"
 #include "./core/models/scene.h"
 
@@ -144,6 +144,13 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void updateDipAnglePicture( const QPixmap& pix_ );
         void setDipAnglePictureMovable( bool status_ );
 
+        void setAxesVisible( bool status_ );
+
+
+        void savetoRasterImage( const QString& filename );
+        void savetoVectorImage( const QString& filename );
+
+
    signals:
 
 
@@ -176,6 +183,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
         void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
+
 
     protected:
 
@@ -230,6 +238,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         PolyCurve lower;
         PolyCurve upper;
+
+        CoordinateAxes2d axes;
 };
 
 #endif // SKETCHSCENE_H

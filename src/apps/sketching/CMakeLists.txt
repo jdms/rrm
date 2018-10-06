@@ -15,6 +15,7 @@ set( SKETCHING_HEADERS      sketchwindow.h
                             models/qtgeometries/lineitem.h
                             models/qtgeometries/planeitem.h
                             models/qtgeometries/polygonitem.h
+                            models/coordinateaxes_2d.h
                             models/image_item_wrapper.h
                             models/dipanglepicture.h
                             models/crosssectionitem.h
@@ -38,6 +39,7 @@ set( SKETCHING_SOURCES      sketchwindow.cpp
                             models/qtgeometries/lineitem.cpp
                             models/qtgeometries/planeitem.cpp
                             models/qtgeometries/polygonitem.cpp
+                            models/coordinateaxes_2d.cpp
                             models/image_item_wrapper.cpp
                             models/dipanglepicture.cpp
                             models/crosssectionitem.cpp

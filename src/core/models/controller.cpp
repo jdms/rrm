@@ -2217,8 +2217,8 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     else
         loadObjectMetaDatas( load_file );
 
-    addObject();
-    updateModel();
+//    addObject();
+//    updateModel();
 
 }
 
@@ -2252,6 +2252,9 @@ void Controller::loadObjectNoMetaDatas()
     {
         rules_processor.undo();
     }
+
+    addObject();
+    updateModel();
 
 }
 
@@ -2313,6 +2316,8 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             rules_processor.undo();
         }
 
+        addObject();
+        updateModel();
 
     }
 

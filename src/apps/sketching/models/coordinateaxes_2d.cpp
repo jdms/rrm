@@ -27,7 +27,7 @@
 #include <QPen>
 #include <QGraphicsScene>
 
-#include "coordinate_axes_2d.h"
+#include "coordinateaxes_2d.h"
 
 #define PI 3.14159265
 
