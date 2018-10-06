@@ -211,44 +211,44 @@ std::string Canvas3d::sendImage( double zmin_, double zmax_, double width_, doub
 
 void Canvas3d::screenshot()
 {
-//    QString selectedFilter;
-//    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
-//                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
-//                                                         &selectedFilter );
+    QString selectedFilter;
+    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                         &selectedFilter );
 
-//    if( selectedFilter == "PNG (*.png)" )
-//    {
-//        savetoRasterImage( name_of_file );
-//    }
-//    else if ( selectedFilter == "SVG (*.svg)" )
-//    {
-//        savetoVectorImage( name_of_file );
-//    }
+    if( selectedFilter == "PNG (*.png)" )
+    {
+        savetoRasterImage( name_of_file );
+    }
+    else if ( selectedFilter == "SVG (*.svg)" )
+    {
+        savetoVectorImage( name_of_file );
+    }
 }
 
 
 
 void Canvas3d::savetoRasterImage( const QString& filename )
 {
-//    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
+    QStringList name_and_extension = filename.split('.', QString::SkipEmptyParts );
 
-//    QString filename_csection;
+    QString filename_csection;
 
-//    if( name_and_extension.size() > 1 ){
-//        filename_csection = name_and_extension[ 0 ].append( "_model." );
-//        filename_csection.append( name_and_extension[1] );
-//    }
-//    else
-//        filename_csection = filename;
+    if( name_and_extension.size() > 1 ){
+        filename_csection = name_and_extension[ 0 ].append( "_model." );
+        filename_csection.append( name_and_extension[1] );
+    }
+    else
+        filename_csection = filename;
 
 
-//    QImage image = grabFramebuffer();
-//    image.save( filename_csection );
+    QImage image = grabFramebuffer();
+    image.save( filename_csection );
 }
 
 void Canvas3d::savetoVectorImage( const QString& filename )
 {
-//    std::cout << "Not implemented yet to 3dview\n" << std::flush;
+    std::cout << "Not implemented yet to 3dview\n" << std::flush;
 }
 
 

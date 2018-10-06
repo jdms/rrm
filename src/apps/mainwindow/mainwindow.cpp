@@ -205,6 +205,9 @@ void MainWindow::createActions()
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
     { emit runDiagnostics( status_ ); } );
 
+    connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
+
+
 }
 
 
@@ -470,6 +473,8 @@ void MainWindow::plug3dInterface()
 {
     view3dapp = std::make_shared< View3dInterface >( this );
     view3dapp->createInterface();
+
+
 
 }
 

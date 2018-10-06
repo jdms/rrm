@@ -730,7 +730,16 @@ void RRMApplication::load( const std::string& filename_ )
     controller->loadFile( filename_, resol_ );
 
 
+
     emit startApplication();
+
+    double ox_, oy, oz, w_, h_, d_;
+    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+    emit disableVolumeResizing();
+
+    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+
     emit updateVolume();
     emit updateObjects();
 
@@ -739,6 +748,7 @@ void RRMApplication::load( const std::string& filename_ )
 
     checkUndoRedo();
     checkPreserveStatus();
+
 
 
 }

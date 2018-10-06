@@ -32,7 +32,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
 {
     public:
 
-        enum class Plane{ XY, XZ };
+        enum class Plane{ XY, XZ, YZ };
 
 
         CoordinateAxes2d( const Plane& pl = Plane::XY );
