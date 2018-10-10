@@ -37,14 +37,15 @@
 // 5. Products derived from this software may not be called "ColorBrewer", nor
 // may "ColorBrewer" appear in their name, without prior written permission of
 // Cynthia Brewer.
+
 #ifndef COLORBREWER_H
 #define COLORBREWER_H
 
 #include <string>
-#include <initializer_list>
+#include <vector>
 
 template <typename T>
-inline std::initializer_list<T> brew(const std::string& colorName, size_t colorCount)
+inline std::vector<T> brew(const std::string& colorName, size_t colorCount)
 {
     if (colorName == "YlGn") {
         switch (colorCount) {
