@@ -289,5 +289,8 @@ void Scene3d::clearScene()
 
 
     current_color = QColor( 255, 0, 0 );
+
+    v_exag = 1.0;
+
     emit updateCanvas();
 }

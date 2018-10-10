@@ -209,38 +209,6 @@ class SketchWindow: public QMainWindow
         QAction* ac_screenshot = nullptr;
 
 
-        ///================================================================================
-
-
-//        QHBoxLayout* hb_central_widget;
-
-//        QDockWidget* dw_canvas_stack = nullptr;
-//        CanvasStack* cs = nullptr;
-
-//        QGraphicsView* main = nullptr;
-//        QGraphicsView* tv_main = nullptr;
-
-
-//
-
-//        QAction* ac_discard;
-//        QAction* ac_commit;
-//        QAction* ac_create;
-//        QAction* ac_edit_boundary;
-//        QAction* ac_edit_scene;
-//        QAction* ac_screenshot;
-//        QAction* ac_axes;
-//        QAction* ac_height_map;
-//        QAction* ac_fixed_csections;
-//        QAction* ac_enable_preview;
-
-//        SketchScene* main_scene = nullptr;
-//        SketchScene* tv_scene = nullptr;
-
-//        std::map< double, SketchScene* > scenes;
-
-//        const int WIDTH_APP = 450;
-//        const int HEIGHT_APP = 320;
 
 };
 
