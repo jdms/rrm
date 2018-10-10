@@ -69,7 +69,9 @@ void SketchInterface::createSketchingActions()
 
     connect( ac_csection, &QAction::toggled, dw_sketchwindow, &QDockWidget::setVisible );
 
+
     connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
 
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
     {
@@ -82,6 +84,7 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->addCurveToObject( curve_, dir_, depth_ ); } );
 
+
     connect( sketch_window, &SketchWindow::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
     { window->app->removeLastCurve( dir_, depth_ ); } );
 
@@ -90,20 +93,24 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::createObject, [=]()
     { window->app->createObjectSurface(); } );
 
+
     connect( sketch_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
     {
         window->app->setVolumeDimensions( dir_, width_, height_ );
     } );
+
 
     connect( sketch_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
     {
         window->app->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
     } );
 
+
     connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
 
 
     connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+
 
     connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
 
@@ -112,6 +119,7 @@ void SketchInterface::createSketchingActions()
 
 
     connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
+
 
      connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
      {
@@ -182,8 +190,10 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); } );
 
+
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
     { scontroller->updateMainCrossSection(); } );
+
 
     connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
     { scontroller->updateTopViewCrossSection(); } );
@@ -192,6 +202,7 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
     { scontroller->updateMainCrossSection(); scontroller->updateTopViewCrossSection();} );
 
+
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
     { scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection();} );
 
@@ -199,30 +210,38 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::addFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
     { scontroller->viewCrossSection( dir_, depth_ ); } );
 
+
     connect( window->app, &RRMApplication::removeFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
     { scontroller->removeWindow( dir_, depth_ ); } );
+
 
     connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
     { scontroller->addStratigraphy( obj_ ); } );
 
+
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { scontroller->updateObjects(); } );
+
 
     connect( window->app, &RRMApplication::updateTrajectories, [=]()
     { scontroller->updateObjectsTrajectories(); } );
 
+
     connect( window->app, &RRMApplication::resetApplication, [=]()
     { scontroller->clear(); } );
+
 
     connect( window->app, &RRMApplication::startApplication, this, &SketchInterface::init );
 
 
     connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_window->disableResizeVolume( true ); } );
 
+
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_window->disableResizeVolume( false ); } );
 
 
     connect( window->app, &RRMApplication::disableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( true ); } );
+
 
     connect( window->app, &RRMApplication::enableVolumeResizing, [=](){ sketch_topview_window->disableResizeVolume( false ); } );
 
@@ -268,6 +287,7 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_window->updateColorWidget( red_, green_, blue_ ); } );
 
+
     connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_topview_window->updateColorWidget( red_, green_, blue_ ); } );
 
 
@@ -277,12 +297,15 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
 
+
     connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
 
     connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
 
+
     connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
+
 
     connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
 
