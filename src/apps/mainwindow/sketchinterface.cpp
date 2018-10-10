@@ -320,7 +320,8 @@ void SketchInterface::init()
     if( sketch_window != nullptr )
     {
         sketch_window->disableResizeVolume( false );
-        sketch_window->usingVerticalExaggeration( 0.2 );
+//        sketch_window->usingVerticalExaggeration( 0.2 );
+        sketch_window->resetVerticalExaggeration();
         sketch_window->setDipAngle( 0.0 );
     }
 

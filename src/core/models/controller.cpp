@@ -103,6 +103,8 @@ void Controller::resizeVolume(double width_, double height_, double depth_)
 {
     model.volume->setDimensions( width_, height_, depth_ );
     updateBoundingBoxInModel();
+    setVolumeDiscretization();
+
 }
 
 
@@ -116,6 +118,8 @@ void Controller::setVolumeWidth( double width_ )
 {
     model.volume->setWidth( width_ );
     updateBoundingBoxInModel();
+    setVolumeDiscretization();
+
 }
 
 
@@ -123,6 +127,8 @@ void Controller::setVolumeHeight( double height_ )
 {
     model.volume->setHeight( height_ );
     updateBoundingBoxInModel();
+    setVolumeDiscretization();
+
 }
 
 
@@ -130,6 +136,8 @@ void Controller::setVolumeLenght( double lenght_ )
 {
     model.volume->setLenght( lenght_ );
     updateBoundingBoxInModel();
+    setVolumeDiscretization();
+
 }
 
 
@@ -137,6 +145,7 @@ void Controller::updateBoundingBoxInModel()
 {
     double ox_ = 0.0, oy_ = 0.0, oz_ = 0.0;
     double w_ = 0.0, h_ = 0.0, d_ = 0.0;
+
 
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
 

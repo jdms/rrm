@@ -133,11 +133,11 @@ void RRMApplication::setVolumeWidth( double width_ )
     controller->setVolumeWidth( width_ );
     emit updateVolume();
 
-    double ox_, oy, oz, w_, h_, d_;
-    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
-    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    double ox_, oy, oz, w_, h_, d_;
+//    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 }
 
 
@@ -146,11 +146,11 @@ void RRMApplication::setVolumeHeight( double height_ )
     controller->setVolumeHeight( height_ );
     emit updateVolume();
 
-    double ox_, oy, oz, w_, h_, d_;
-    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
-    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    double ox_, oy, oz, w_, h_, d_;
+//    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 }
 
 
@@ -159,11 +159,11 @@ void RRMApplication::setVolumeDepth( double lenght_ )
     controller->setVolumeLenght( lenght_ );
     emit updateVolume();
 
-    double ox_, oy, oz, w_, h_, d_;
-    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
-    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    double ox_, oy, oz, w_, h_, d_;
+//    controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
+//    emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
 }
 
 

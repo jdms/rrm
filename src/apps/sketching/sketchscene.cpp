@@ -92,6 +92,8 @@ void SketchScene::init()
     axes.setVisible( true );
     addItem( &axes );
 
+    emit ensureObjectsVisibility();
+
 }
 
 
@@ -224,7 +226,7 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
     if( image1.isNull() == true ) return;
 
     QTransform myTransform;
-    myTransform.scale( 1, -1 );
+    myTransform.scale( 1, -1*factor );
     image1 = image1.transformed( myTransform );
 
     image->setImagePath( QString( file_.c_str() )  );
@@ -1212,6 +1214,7 @@ void SketchScene::clearScene()
 
     csection_depth = 0.0;
     sketch_enabled = true;
+    factor = 1;
 
     lower.clear();
     upper.clear();

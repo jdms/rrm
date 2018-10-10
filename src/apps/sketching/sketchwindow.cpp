@@ -82,6 +82,7 @@ void SketchWindow::createToolBar()
 
     tb_region = addToolBar( "Region" );
     tb_region->addAction( ac_select_regions );
+    tb_region->setVisible( false );
 
     tb_well = addToolBar( "Well" );
     ac_select_wells = new QAction( "Select Well", this );
@@ -160,6 +161,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
+
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
     connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
@@ -224,18 +226,32 @@ void SketchWindow::createLateralBar()
 
     sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
     sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
+    sl_vertical_exagg_->setInvertedAppearance( false );
     sl_vertical_exagg_->setDiscretization( 100 );
     sl_vertical_exagg_->setRange( 0, 1 );
-    sl_vertical_exagg_->setValue( 0.2 );
-    sl_vertical_exagg_->setInvertedAppearance( false );
+    resetVerticalExaggeration();
+
+    btn_reset_exaggeration = new QPushButton( "Reset" );
+    btn_reset_exaggeration->setMaximumWidth( 45 );
+    connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
+
+    lb_exagger_value_ = new QLabel( "Value: " );
+
 
     steps_exagg = (max_exagg - min_exagg);
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
-    hb_exaggerattion_->addWidget( sl_vertical_exagg_ );
+    hb_exaggerattion_->addWidget( btn_reset_exaggeration );
+    hb_exaggerattion_->addWidget( lb_exagger_value_ );
+
+
+    QVBoxLayout* vb_layout_exag_ = new QVBoxLayout;
+    vb_layout_exag_->addWidget( sl_vertical_exagg_ );
+    vb_layout_exag_->addLayout( hb_exaggerattion_ );
+
 
     QGroupBox* gb_exagger_ = new QGroupBox( "Vert. Exaggeration: " );
-    gb_exagger_->setLayout( hb_exaggerattion_ );
+    gb_exagger_->setLayout( vb_layout_exag_ );
 
 
     dl_input_angle_ = new QDial();
@@ -325,6 +341,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     topviewcanvas = new SketchingCanvas();
     const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+    scene_->invertImage( true );
     setCentralWidget( topviewcanvas );
 
     tb_trajectory->setVisible( true );
@@ -353,6 +370,9 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
+    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
+
+    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
@@ -499,6 +519,8 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
     double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
+    lb_exagger_value_->setText( QString("Value: %1").arg( v_exagg_db_ ) );
+
     std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
     if( sketchingcanvas != nullptr )
@@ -506,6 +528,15 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
 
     emit setVerticalExaggeration( v_exagg_db_ );
 
+}
+
+
+void SketchWindow::resetVerticalExaggeration()
+{
+
+    sl_vertical_exagg_->setValue( 0.2 );
+//    double value_ = ( 1 - min_exagg )/(max_exagg - min_exagg);
+//    usingVerticalExaggeration( 0.2 );
 }
 
 
@@ -552,6 +583,7 @@ void SketchWindow::showDipAngle( bool status_ )
     scene_->showDipAnglePicture( status_, *pix_ );
 
 }
+
 
 void SketchWindow::setDipAnglePictureMovable( bool status_ )
 {
