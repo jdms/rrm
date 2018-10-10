@@ -208,7 +208,7 @@ void PolygonItem::clear()
 //    resetToDefaultFillColor();
 //    resetToDefaultBorderWidth();
 
-    std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
+//    std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
 }
 

@@ -206,6 +206,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
 
 void Controller::moveMainCrossSection( double depth_ )
 {
+    std::cout << "csection depth: " << depth_ << std::endl << std::flush;
     csection->setDepth( depth_ );
 
     updateObjectsCurvesInCrossSection( depth_ );
@@ -930,7 +931,7 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 
     if( has_curve_ == false )
     {
-//        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
+        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
         return;
     }
 
