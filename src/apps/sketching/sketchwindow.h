@@ -72,6 +72,7 @@ class SketchWindow: public QMainWindow
 
         void usingVerticalExaggeration( double v_exagg_);
 
+
         void keyPressEvent( QKeyEvent *event );
 
 
@@ -88,6 +89,7 @@ class SketchWindow: public QMainWindow
         void setDipAnglePictureMovable( bool status_ );
 
         void showDipAngle( bool status_ );
+        void resetVerticalExaggeration();
 
         void screenshot();
         void reset();
@@ -192,6 +194,7 @@ class SketchWindow: public QMainWindow
         QLCDNumber* lb_input_angle_  = nullptr;
         QLCDNumber* lb_output_angle_ = nullptr;
         QLabel* lb_exagger_value_ = nullptr;
+        QPushButton* btn_reset_exaggeration = nullptr;
 
         AnglePicture* lb_input_dpangle = nullptr;
         AnglePicture* lb_output_dpangle = nullptr;

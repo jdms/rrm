@@ -150,6 +150,9 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void savetoRasterImage( const QString& filename );
         void savetoVectorImage( const QString& filename );
 
+        inline void invertImage( bool status_ ) {
+            if(status_ == true ) factor = -1;
+            else factor = 1; }
 
    signals:
 
@@ -240,6 +243,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         PolyCurve upper;
 
         CoordinateAxes2d axes;
+        int factor = 1;
 };
 
 #endif // SKETCHSCENE_H
