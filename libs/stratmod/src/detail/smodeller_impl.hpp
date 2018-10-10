@@ -485,7 +485,7 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantWidth( size_t surf
     double height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
     bool status, previous_status; 
     PlanarSurface::SurfaceId bsid, pbsid;
-    size_t bindex, intersection_point_index;
+    size_t bindex; //, intersection_point_index;
 
     /* TODO: have a look at those types and their conversions */
     using OutRealType = typename VertexList::value_type;
@@ -561,7 +561,8 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantWidth( size_t surf
             intersectec_vlist[3] = height;
 
             Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
-            intersection_point_index = segment.computeVerticalIntersection( intersected );
+            //intersection_point_index = segment.computeVerticalIntersection( intersected );
+            segment.computeVerticalIntersection( intersected );
         }
 
         num_segments = segment.getConnectivity(current);
@@ -609,7 +610,7 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
     double height, previous_height, abscissa, ordinate, previous_abscissa, previous_ordinate; 
     bool status, previous_status; 
     PlanarSurface::SurfaceId bsid, pbsid;
-    size_t bindex, intersection_point_index;
+    size_t bindex; //, intersection_point_index;
 
     /* TODO: have a look at those types and their conversions */
     using OutRealType = typename VertexList::value_type;
@@ -701,7 +702,8 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
             intersectec_vlist[3] = height;
 
             Segment<VertexList, 2> intersected(intersectec_vlist, 0, 1);
-            intersection_point_index = segment.computeVerticalIntersection( intersected );
+            /* intersection_point_index = segment.computeVerticalIntersection( intersected ); */
+            segment.computeVerticalIntersection( intersected );
         }
 
         num_segments = segment.getConnectivity(current);
