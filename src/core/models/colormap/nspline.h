@@ -1,19 +1,20 @@
-#ifndef NSPLINE_H
-#define NSPLINE_H
+#ifndef __NSPLINE_H__
+#define __NSPLINE_H__
 
-#include <cmath> // just because of the function 'pow' 
-#include "Eigen/Dense"
-
+/* #include <cmath> // just because of the function 'pow' */ 
 #include <vector>
+
+#include <Eigen/Dense>
+
 
 using namespace Eigen;
 using namespace std;
 
-inline double __identity_map( double x ) { return x; }
-inline double __D_identity_map( double x ) { (void) x; return 1; }
-inline double __D2_identity_map( double x ) { (void) x; return 0; }
 
-/* class NSpline; */
+inline double __identity_map( double x ) { return x; }
+inline double __D_identity_map( double ) { return 1; }
+inline double __D2_identity_map( double ) { return 0; }
+
 
 class NSpline {
 
@@ -71,16 +72,16 @@ class NSpline {
 
             assert( C.size() == F.size() );
 
-            int m = C.size();
+            size_t m = C.size();
             _C.resize(m);
 
-            for ( int i = 0; i < m; ++i ) {
+            for ( size_t i = 0; i < m; ++i ) {
                 _C(i) = _H( C.at(i) );
             }
 
             VectorXd _F(m+2);
             /* VectorXd _F(m); */
-            for ( int i = 0; i < m; ++i ) {
+            for ( size_t i = 0; i < m; ++i ) {
                 _F(i) = F.at(i);
             }
 
@@ -109,6 +110,21 @@ class NSpline {
             /* _alpha = invAF - invAP * _beta; */
 
             is_initialized = true;
+        }
+
+        double operator()( double x )
+        {
+            return eval(x);
+        }
+
+        double D( double x )
+        {
+            return evalD(x);
+        }
+
+        double D2( double x )
+        {
+            return evalD2(x);
         }
 
         double eval( double x ) {
@@ -146,7 +162,8 @@ class NSpline {
             double d2y = 0;
 
             for ( int i = 0; i < _C.size(); ++i ) {
-                d2y += _alpha(i) * d2phi( _H(x) - _C(i) ) * pow(_DH(x), 2) + _alpha(i) * dphi( _H(x) - _C(i) ) * _D2H(x); 
+                /* d2y += _alpha(i) * d2phi( _H(x) - _C(i) ) * pow(_DH(x), 2) + _alpha(i) * dphi( _H(x) - _C(i) ) * _D2H(x); */ 
+                d2y += _alpha(i) * d2phi( _H(x) - _C(i) ) * _DH(x)*_DH(x) + _alpha(i) * dphi( _H(x) - _C(i) ) * _D2H(x); 
             }
             d2y += _beta(1) * _D2H(x); 
             
@@ -167,19 +184,25 @@ class NSpline {
         VectorXd _alpha; // cubic spline coeficients 
         VectorXd _beta;  // linear part coeficients 
 
+        inline double abs( double x ) 
+        {
+            return ( x >= 0 ? x : -x );
+        }
+
         double phi( double x ) { 
 
-            return pow( abs(x), 3 );
+            /* return pow( abs(x), 3 ); */
+            return x*x*abs(x);
         }
 
         double dphi( double x ) { 
 
-            return 3 * abs(x) * x; 
+            return 3*abs(x) * x; 
         }
         
         double d2phi( double x ) { 
 
-            return 6 * abs(x); 
+            return 6*abs(x); 
         }
 
         MatrixXd buildA() {
