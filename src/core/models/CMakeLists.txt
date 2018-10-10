@@ -29,7 +29,7 @@ set( MODELS_HEADERS       controller.h
                           rules_processor.hpp
                           stratmod_wrapper.hpp
                           irap_grid_exporter.hpp
-                          colormap/color_map_wrapper.hpp )
+                          colormap/colormap.hpp )
 
 set( MODELS_SOURCES       controller.cpp
                           object.cpp
