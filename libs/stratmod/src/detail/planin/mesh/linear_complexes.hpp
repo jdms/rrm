@@ -24,6 +24,8 @@
 #ifndef __LINEAR_COMPLEXES__
 #define __LINEAR_COMPLEXES__
 
+#include <limits>
+#include <cmath>
 #include <set>
 #include <map>
 
