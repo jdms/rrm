@@ -176,6 +176,7 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
 
     cached_heights_ = rhs.cached_heights_;
     cached_valid_heights_ = rhs.cached_valid_heights_;
+    cached_bounding_surface_ids_ = rhs.cached_bounding_surface_ids_;
     cache_is_fresh_ = rhs.cache_is_fresh_;
 
     /* unprocessed_upper_bound_ = rhs.unprocessed_upper_bound_; */
@@ -214,6 +215,7 @@ PlanarSurface::PlanarSurface( PlanarSurface &&rhs ) : id_( rhs.id_ )
 
     cached_heights_ = std::move(rhs.cached_heights_);
     cached_valid_heights_ = std::move(rhs.cached_valid_heights_);
+    cached_bounding_surface_ids_ = std::move(rhs.cached_bounding_surface_ids_);
     cache_is_fresh_ = rhs.cache_is_fresh_;
 
     /* unprocessed_upper_bound_ = std::move(rhs.unprocessed_upper_bound_); */
