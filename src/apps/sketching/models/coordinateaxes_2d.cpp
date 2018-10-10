@@ -46,11 +46,19 @@ void CoordinateAxes2d::setPlane( const Plane& pl )
     if( pl == Plane::XY )
     {
         current_y = height_color;
+        current_x = width_color;
+        scale = -1;
+    }
+    else if( pl == Plane::YZ )
+    {
+        current_x = depth_color;
+        current_y = height_color;
         scale = -1;
     }
     else
     {
         scale = 1;
+        current_x = width_color;
         current_y = depth_color;
     }
 }
@@ -93,7 +101,7 @@ QRectF CoordinateAxes2d::boundingRect() const
 
      QPen pen;
      pen.setWidth( 1 );
-     pen.setColor( width_color );
+     pen.setColor( current_x );
 
      p->setPen( pen );
      p->drawLine( tail.x(), tail.y(), axisx_length, tail.y() );

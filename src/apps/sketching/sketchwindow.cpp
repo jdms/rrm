@@ -172,7 +172,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 
 
-    connect( ac_show_bar, &QAction::triggered, bar_, &QWidget::setVisible );
+    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
 
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
@@ -494,6 +494,8 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
 {
     std::cout << "slider value: " << v_exagg_ << std::endl << std::flush;
 
+    if( sl_vertical_exagg_ == nullptr ) return;
+
     double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
@@ -597,9 +599,23 @@ void SketchWindow::screenshot()
 
 void SketchWindow::reset()
 {
-    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
-    ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
+    disableResizeVolume( false );
+
+    if( ac_resize_image != nullptr )
+        ac_resize_image->setChecked( false );
+
+    if( ac_select_regions != nullptr )
+        ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    if( ac_select_wells != nullptr )
+        ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
+
+
     cp_color->setColor( QColor( 255, 0, 0 ) );
+
+
+    if( ac_show_bar != nullptr )
+        ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
 
     if( btn_show_oangle != nullptr )
         btn_show_oangle->setChecked( false );
@@ -610,6 +626,8 @@ void SketchWindow::reset()
     if( dl_input_angle_ != nullptr )
         dl_input_angle_->setValue( 0 );
 
+    if( ac_axes != nullptr )
+        ac_axes->setChecked( true );
 
 
 }
@@ -639,18 +657,6 @@ void SketchWindow::keyPressEvent( QKeyEvent *event )
         }
         break;
 
-
-//        case Qt::Key_S:
-//            for( auto it: regions )
-//            {
-//                (it.second)->setFlag( QGraphicsItem::ItemIsSelectable, true );
-//            }
-//        break;
-
-
-    case Qt::Key_1:
-//        usingVerticalExaggeration();
-//        setVerticalExaggeration( 10 );
         default:
             break;
     };
@@ -660,74 +666,99 @@ void SketchWindow::keyPressEvent( QKeyEvent *event )
 SketchWindow::~SketchWindow()
 {
 
-    delete cp_color;
+    if( cp_color!= nullptr )
+        delete cp_color;
     cp_color = nullptr;
 
-    delete fixed_csections_canvas;
+    if( fixed_csections_canvas!= nullptr )
+        delete fixed_csections_canvas;
     fixed_csections_canvas = nullptr;
 
-    delete sketchingcanvas;
+    if( sketchingcanvas!= nullptr )
+        delete sketchingcanvas;
     sketchingcanvas = nullptr;
 
-    delete ac_cancel_sketch;
+    if( ac_cancel_sketch!= nullptr )
+        delete ac_cancel_sketch;
     ac_cancel_sketch = nullptr;
 
-    delete ac_submit_sketch;
+    if( ac_submit_sketch!= nullptr )
+        delete ac_submit_sketch;
     ac_submit_sketch = nullptr;
 
-    delete ac_end_object;
+    if( ac_end_object!= nullptr )
+        delete ac_end_object;
     ac_end_object = nullptr;
 
-    delete tb_boundary;
+    if( tb_boundary!= nullptr )
+        delete tb_boundary;
     tb_boundary = nullptr;
 
-    delete ac_resize_boundary;
+    if( ac_resize_boundary!= nullptr )
+        delete ac_resize_boundary;
     ac_resize_boundary = nullptr;
 
-    delete tb_region;
+    if( tb_region!= nullptr )
+        delete tb_region;
     tb_region = nullptr;
 
-    delete ac_select_regions;
+    if( ac_select_regions!= nullptr )
+        delete ac_select_regions;
     ac_select_regions = nullptr;
 
-    delete tb_well;
+    if( tb_well!= nullptr )
+        delete tb_well;
     tb_well = nullptr;
 
-    delete ac_select_wells;
+    if( ac_select_wells!= nullptr )
+        delete ac_select_wells;
     ac_select_wells = nullptr;
 
-    delete bar_;
-    bar_ = nullptr;
 
-    delete sl_vertical_exagg_;
+    if( sl_vertical_exagg_!= nullptr )
+        delete sl_vertical_exagg_;
     sl_vertical_exagg_ = nullptr;
 
-    delete dl_input_angle_;
+    if( dl_input_angle_!= nullptr )
+        delete dl_input_angle_;
     dl_input_angle_ = nullptr;
 
-    delete vb_angles;
+    if( vb_angles!= nullptr )
+        delete vb_angles;
     vb_angles = nullptr;
 
-    delete hb_central;
+    if( hb_central!= nullptr )
+        delete hb_central;
     hb_central = nullptr;
 
-    delete hb_central1;
+    if( hb_central1!= nullptr )
+        delete hb_central1;
     hb_central1 = nullptr;
 
-    delete lb_input_angle_;
+    if( lb_input_angle_!= nullptr )
+        delete lb_input_angle_;
     lb_input_angle_  = nullptr;
 
-    delete lb_output_angle_;
+    if( lb_output_angle_!= nullptr )
+        delete lb_output_angle_;
     lb_output_angle_ = nullptr;
 
-    delete lb_input_dpangle;
+    if( lb_input_dpangle!= nullptr )
+        delete lb_input_dpangle;
     lb_input_dpangle = nullptr;
 
-    delete lb_output_dpangle;
+    if( lb_output_dpangle!= nullptr )
+        delete lb_output_dpangle;
     lb_output_dpangle = nullptr;
 
-    delete btn_show_oangle;
+    if( btn_show_oangle!= nullptr )
+        delete btn_show_oangle;
     btn_show_oangle  = nullptr;
+
+    if( bar_!= nullptr )
+        delete bar_;
+    bar_ = nullptr;
+
 }
 
 

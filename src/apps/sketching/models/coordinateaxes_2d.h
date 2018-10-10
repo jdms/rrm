@@ -57,10 +57,11 @@ class CoordinateAxes2d: public QGraphicsLineItem
         QString text_axisx;
         QString text_axisy;
 
-        const QColor width_color = QColor( 255, 0, 0 );
-        const QColor height_color = QColor( 0, 255, 0 );
-        const QColor depth_color = QColor( 0, 0, 255 );
+        const QColor width_color = Qt::red;
+        const QColor height_color = Qt::green;//QColor( 0, 255, 0 );
+        const QColor depth_color = Qt::blue;//QColor( 0, 0, 255 );
 
+        QColor current_x;
         QColor current_y;
         Plane plane;
         int scale;

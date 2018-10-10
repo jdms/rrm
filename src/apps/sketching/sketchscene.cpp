@@ -795,6 +795,8 @@ void SketchScene::submitSketchGuidedExtrusion()
 
 void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
 {
+    if( dipangle == nullptr ) return;
+
     if( status_ == false )
     {
         setSketchingMode();
@@ -812,11 +814,13 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
 
 void SketchScene::updateDipAnglePicture( const QPixmap& pix_ )
 {
+    if( dipangle == nullptr ) return;
     dipangle->setImage( pix_ );
 }
 
 void SketchScene::setDipAnglePictureMovable( bool status_ )
 {
+    if( dipangle == nullptr ) return;
     dipangle->setMovable( status_ );
 
     if( status_  == false )
@@ -1148,9 +1152,9 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
 
 void SketchScene::clearScene()
 {
+
     for( auto &it: items() )
         QGraphicsScene::removeItem( it );
-
 
     if( sketch != nullptr )
         sketch.reset();
@@ -1177,6 +1181,15 @@ void SketchScene::clearScene()
         delete boudering_area;
     }
     boudering_area = nullptr;
+
+    if( dipangle  != nullptr )
+        delete dipangle;
+    dipangle = nullptr;
+
+
+    if( trajectory_point != nullptr )
+        delete trajectory_point;
+    trajectory_point = nullptr;
 
     for( auto it: cross_sections1 )
         (it.second).reset();
@@ -1205,7 +1218,7 @@ void SketchScene::clearScene()
 
     csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
     current_interaction1 = UserInteraction1::SKETCHING;
-
+    sketch_enabled = true;
 
 }
 
