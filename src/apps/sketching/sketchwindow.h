@@ -94,6 +94,7 @@ class SketchWindow: public QMainWindow
         void screenshot();
         void reset();
 
+        void updateDipAngle();
 
     signals:
 

@@ -68,6 +68,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void init();
 
         void setCrossSectionInformation( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+        void getCrossSectionInformation( Settings::CrossSection::CrossSectionDirections& dir_, double& depth_ );
 
         void createVolume( const std::shared_ptr< Volume >& volume_ );
         void updateVolume();

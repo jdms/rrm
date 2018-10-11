@@ -237,7 +237,6 @@ void SketchWindow::createLateralBar()
 
     lb_exagger_value_ = new QLabel( "Value: " );
 
-
     steps_exagg = (max_exagg - min_exagg);
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
@@ -303,7 +302,6 @@ void SketchWindow::createLateralBar()
     vb_output_angle_->addWidget( lb_output_angle_ );
 
 
-
     vb_angles = new QHBoxLayout();
     vb_angles->addLayout( vb_input_angle );
     vb_angles->addSpacing( 10 );
@@ -325,6 +323,7 @@ void SketchWindow::createLateralBar()
     bar_->setMinimumWidth( 170 );
     bar_->setLayout( hb_central );
     bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
+
 
     connect( sl_vertical_exagg_, &RealFeaturedSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
 
@@ -520,13 +519,21 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
     lb_exagger_value_->setText( QString("Value: %1").arg( v_exagg_db_ ) );
-
     std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
-    if( sketchingcanvas != nullptr )
-        sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
+    if( sketchingcanvas == nullptr ) return;
 
+    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+    Settings::CrossSection::CrossSectionDirections dir_;
+    double depth_;
+
+    scene_->getCrossSectionInformation( dir_, depth_ );
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
+
+    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
     emit setVerticalExaggeration( v_exagg_db_ );
+
+    updateDipAngle();
 
 }
 
@@ -535,8 +542,7 @@ void SketchWindow::resetVerticalExaggeration()
 {
 
     sl_vertical_exagg_->setValue( 0.2 );
-//    double value_ = ( 1 - min_exagg )/(max_exagg - min_exagg);
-//    usingVerticalExaggeration( 0.2 );
+
 }
 
 
@@ -568,6 +574,12 @@ void SketchWindow::setDipAngle( double angle_ )
 
 
 
+}
+
+void SketchWindow::updateDipAngle()
+{
+    double angle_ = static_cast< double >( dl_input_angle_->value() );
+    setDipAngle( angle_ );
 }
 
 
