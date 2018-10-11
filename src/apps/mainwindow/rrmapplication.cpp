@@ -955,8 +955,11 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 //    std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )
     {
-        int r = 255, g = 0, b = 0;
-        controller->getDomainColor( static_cast< std::size_t >(it), r, g, b );
+        int r = 192, g = 192, b = 192;
+		if (it >= 0)
+		{
+			controller->getDomainColor(static_cast<std::size_t>(it), r, g, b);
+		}
 
         std::vector< float > color_;
         color_.resize( 3 );

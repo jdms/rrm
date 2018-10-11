@@ -1311,6 +1311,10 @@ bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_
 
     model.domains[domain_id_].regions_set.insert(region_id_);
     regions_in_domains.insert( region_id_ );
+
+	RegionsPtr reg_ = model.regions[region_id_];
+	reg_->setDomain(domain_id_);
+	
     return true;
 }
 
@@ -1323,6 +1327,9 @@ bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t dom
 
     model.domains[domain_id_].regions_set.erase(region_id_);
     regions_in_domains.erase( region_id_ );
+
+	RegionsPtr reg_ = model.regions[region_id_];
+	reg_->removeFromDomain();
 
     return true;
 }
@@ -2524,18 +2531,31 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     std::vector<int> regions_;
     rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
 
-    std::set<int> domains_set_;
-    for( auto it: regions_ )
+    //std::set<int> domains_set_;
+	std::vector< int > domains_( regions_.size() );
+	std::size_t id_;
+    
+	//for( auto it: regions_ ) 
+	for ( std::size_t i = 0; i < regions_.size(); ++i )
     {
-        std::size_t id_;
-        RegionsPtr reg_ = model.regions[ it ];
-        if( reg_->getDomain( id_ ) == false ) continue;
-        domains_set_.insert( id_ );
+        //std::size_t id_; // every time a variable is created space must be allocated in the stack, 
+						   // move all vars to outside loops if possible for efficiency
+
+        RegionsPtr reg_ = model.regions[ regions_[i] ];
+		if (reg_->getDomain(id_) == false)
+		{
+			domains_[i] = -1;
+		}
+		else
+		{
+			//domains_set_.insert( id_ );
+			domains_[i] = id_;
+		}
     }
 
-    std::vector< int > domains_;
-    std::copy(domains_set_.begin(), domains_set_.end(),
-                  std::back_inserter(domains_));
+    //std::vector< int > domains_;
+    //std::copy(domains_set_.begin(), domains_set_.end(),
+    //              std::back_inserter(domains_));
     return domains_;
 }
 
