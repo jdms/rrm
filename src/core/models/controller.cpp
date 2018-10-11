@@ -1374,6 +1374,12 @@ void Controller::createDomain( std::size_t index_, std::set< std::size_t > index
 {
     std::size_t id_ = index_;
     model.domains[id_].regions_set = indexes_;
+
+    for( auto it: indexes_ )
+    {
+        RegionsPtr reg_ = model.regions[ it ];
+        reg_->setDomain( index_ );
+    }
 }
 
 
@@ -1383,6 +1389,8 @@ void Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_i
     if (model.domains.find(domain_id_) == model.domains.end()) return;
 
     model.domains[domain_id_].regions_set.insert(region_id_);
+    RegionsPtr reg_ = model.regions[ region_id_ ];
+    reg_->setDomain( domain_id_ );
 }
 
 
@@ -1392,6 +1400,8 @@ void Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t doma
     if (model.domains.find(domain_id_) == model.domains.end()) return;
 
     model.domains[domain_id_].regions_set.erase(region_id_);
+    RegionsPtr reg_ = model.regions[ region_id_ ];
+    reg_->removeFromDomain();
 }
 
 
@@ -1401,6 +1411,18 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
     return model.domains.at(domain_id_).regions_set;
 }
 
+
+void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ )
+{
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
+    if( model.domains[domain_id_].regions_set.empty() == true ) return;
+
+    std::size_t reg_id_ = *model.domains[domain_id_].regions_set.begin();
+
+    RegionsPtr reg_ = model.regions[ reg_id_ ];
+    reg_->getColor( red_, green_, blue_ );
+
+}
 
 void Controller::removeDomain(std::size_t domain_id_)
 {
@@ -2501,7 +2523,20 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
 
     std::vector<int> regions_;
     rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
-    return regions_;
+
+    std::set<int> domains_set_;
+    for( auto it: regions_ )
+    {
+        std::size_t id_;
+        RegionsPtr reg_ = model.regions[ it ];
+        if( reg_->getDomain( id_ ) == false ) continue;
+        domains_set_.insert( id_ );
+    }
+
+    std::vector< int > domains_;
+    std::copy(domains_set_.begin(), domains_set_.end(),
+                  std::back_inserter(domains_));
+    return domains_;
 }
 
 void Controller::clear()

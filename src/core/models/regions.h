@@ -92,6 +92,11 @@ class Regions: public Object
         void clear() override;
         void initialize();
 
+        inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; }
+        inline void removeFromDomain(){ indomain = false; }
+        inline bool getDomain( std::size_t& id_ ) const { id_ = domain_index; return indomain; }
+
+
         inline virtual void write( QJsonObject& json_ ) const override
         {
             json_[ "index" ] = static_cast< int >( index );
@@ -129,6 +134,9 @@ class Regions: public Object
 
         PolyCurve lower;
         PolyCurve upper;
+
+        std::size_t domain_index;
+        bool indomain = false;
 
         Color color;
 };
