@@ -288,6 +288,7 @@ void Regions::initialize()
     center.z = 0.0;
 
     is_visible = true;
+    indomain = false;
 
     color.r = 255;
     color.g = 0;
