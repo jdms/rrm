@@ -28,7 +28,6 @@
 #include "ui_normal_movable_crosssection_flow.h"
 
 
-
 class NormalMovableCrossSectionFlow : public QWidget
 {
     Q_OBJECT

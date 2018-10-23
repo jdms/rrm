@@ -510,13 +510,15 @@ void ObjectTree::setStructuralsVisible( const Qt::CheckState& status_ )
 }
 
 
-void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_ )
+void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_,
+                            double volume_ )
 {
     ObjectTreeItem* region_ = new ObjectTreeItem();
     region_->setIndex( index_ );
     region_->setType( Settings::Objects::ObjectType::REGION );
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
+//    region_->setText( COLUMN_DETAILS, QString( "%1" ).arg( volume_ ) );
 
 
     ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );

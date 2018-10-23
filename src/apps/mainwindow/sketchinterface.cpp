@@ -196,15 +196,17 @@ void SketchInterface::createSketchingActions()
 
 
     connect( window->app, &RRMApplication::updateTopViewCrossSection, [=]()
-    { scontroller->updateTopViewCrossSection(); } );
+    {  scontroller->updateObjects();  scontroller->updateTopViewCrossSection(); } );
 
 
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
-    { scontroller->updateMainCrossSection(); scontroller->updateTopViewCrossSection();} );
+    {   sketch_window->removeAllCanvas();
+        scontroller->updateObjects(); scontroller->updateMainCrossSection(); scontroller->updateTopViewCrossSection();} );
 
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
-    { scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection();} );
+    { sketch_window->removeAllCanvas();
+        scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection();} );
 
 
     connect( window->app, &RRMApplication::addFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ )
@@ -308,6 +310,10 @@ void SketchInterface::createSketchingActions()
 
 
     connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
+
+
+    connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()
+    { scontroller->updateImageInScene(); } );
 
 
 }

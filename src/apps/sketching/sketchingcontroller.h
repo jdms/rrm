@@ -67,6 +67,8 @@ class SketchingController
 
         void clear();
 
+        void updateImageInScene();
+
 
     protected:
 

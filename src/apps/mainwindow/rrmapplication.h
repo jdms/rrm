@@ -250,6 +250,8 @@ signals:
     void updateBoundary();
     void setVerticalExaggerationScale( double scale_ );
 
+    void updateImageInCrossSection();
+
 
 
 protected:

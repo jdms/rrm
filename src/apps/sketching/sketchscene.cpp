@@ -963,7 +963,7 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     }
 
     QGraphicsScene::mousePressEvent( event_ );
-    update();
+//    update();
 
 }
 

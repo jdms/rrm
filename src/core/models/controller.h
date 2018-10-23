@@ -336,7 +336,6 @@ class Controller
             std::map< double, CrossSectionPtr > csectionsY;
             std::map< double, CrossSectionPtr > csectionsZ;
 
-
             std::map< std::size_t, ObjectPtr > objects;
             std::map< std::size_t, RegionsPtr > regions;
             std::map< std::size_t, Domain > domains;
