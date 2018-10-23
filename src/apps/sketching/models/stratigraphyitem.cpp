@@ -17,6 +17,7 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
 
     setColor( r_, g_, b_ );
     setStyle( Qt::PenStyle::DotLine );
+    updateCurve();
 
 }
 

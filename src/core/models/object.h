@@ -137,10 +137,6 @@ class Object
         ///======================================================================
 
 
-
-
-
-
         void setType( const Settings::Objects::ObjectType& type_ );
         Settings::Objects::ObjectType getType() const;
 

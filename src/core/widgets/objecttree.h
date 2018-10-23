@@ -80,7 +80,7 @@ class ObjectTree: public QTreeWidget
 
 
         void addRegion( std::size_t index_, const std::string& name_,  const int& red_,
-                        const int& green_,  const int& blue_ );
+                        const int& green_,  const int& blue_, double volume_ );
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
         void setRegionVisibility( std::size_t index_, bool status_ );
 
@@ -173,10 +173,11 @@ class ObjectTree: public QTreeWidget
 
     private:
 
-        const int COLUMNS_NUMBER = 3;
+        const int COLUMNS_NUMBER = 4;
         const int COLUMN_STATUS = 0;
         const int COLUMN_NAME = 1;
         const int COLUMN_COLOR = 2;
+        const int COLUMN_DETAILS = 3;
 
         int COLUMN_NAME_WIDTH = 30;
 

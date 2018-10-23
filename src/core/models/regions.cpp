@@ -266,6 +266,16 @@ void Regions::getColor( int& r_, int& g_, int& b_ ) const
     b_ = color.b;
 }
 
+void Regions::setVolume( double volume_ )
+{
+    volume = volume_;
+}
+
+
+double Regions::getVolume() const
+{
+    return volume;
+}
 
 void Regions::clear()
 {
@@ -302,4 +312,6 @@ void Regions::initialize()
     min.x = 0;
     min.y = 0;
     min.z = 0;
+
+    volume = 0;
 }

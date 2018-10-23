@@ -85,6 +85,9 @@ class Regions: public Object
                                 double& minx_, double& miny_, double& minz_ ) const;
 
 
+        void setVolume( double volume_ );
+        double getVolume() const;
+
         void setColor( int r_, int g_, int b_ );
         void getColor( int& r_, int& g_, int& b_ ) const;
 
@@ -138,6 +141,8 @@ class Regions: public Object
         std::size_t domain_index;
         bool indomain = false;
 
+
+        double volume = 0;
         Color color;
 };
 

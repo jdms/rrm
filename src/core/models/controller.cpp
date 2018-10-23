@@ -208,6 +208,12 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
         csection->setDepth( model.volume->getLenght() );
     }
 
+    for( auto it_: model.objects )
+    {
+        ObjectPtr obj_ = it_.second;
+        if( obj_->isDone() == true )
+            obj_->removeCrossSectionCurves();
+    }
 
     updateModel();
 }
@@ -275,6 +281,9 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
         model.csectionsZ[ depth_ ] = csection_;
     }
 
+    updateObjectsCurvesInCrossSection( depth_ );
+
+
 
 }
 
@@ -339,14 +348,30 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         images_csectionsX[ depth_ ] = std::move( image_ );
+        if ( model.csectionsX.find( depth_ ) != model.csectionsX.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsX[ depth_ ];
+            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+        }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         images_csectionsY[ depth_ ] = std::move( image_ );
+        if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
+            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+        }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         images_csectionsZ[ depth_ ] = std::move( image_ );
+        if ( model.csectionsZ.find( depth_ ) != model.csectionsZ.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsZ[ depth_ ];
+            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+        }
+
     }
 
     if( csection->getCrossSectionDirection() == dir_ && csection->getDepth() == depth_ )
@@ -366,16 +391,31 @@ void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSe
     {
         images_csectionsX.erase( depth_ );
         updateImageInMainCrossSection();
+        if ( model.csectionsX.find( depth_ ) != model.csectionsX.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsX[ depth_ ];
+            csection1_->clearImage();
+        }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         images_csectionsY.erase( depth_ );
         updateImageInTopViewCrossSection();
+        if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
+            csection1_->clearImage();
+        }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
         images_csectionsZ.erase( depth_ );
         updateImageInMainCrossSection();
+        if ( model.csectionsZ.find( depth_ ) != model.csectionsZ.end() )
+        {
+            CrossSectionPtr csection1_ = model.csectionsZ[ depth_ ];
+            csection1_->clearImage();
+        }
     }
 
 }
@@ -396,6 +436,7 @@ void Controller::updateImageInMainCrossSection()
             image_ = images_csectionsX[ depth_ ];
             has_image_ = true;
         }
+
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
@@ -847,9 +888,6 @@ void Controller::updateModel()
 
     setObjectActive( current_object, true );
 
-
-
-
 }
 
 
@@ -1027,30 +1065,6 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
 
 
-//    std::vector< double > trajectory_;
-//    bool has_trajectory_ = rules_processor.getExtrusionPath( index_, trajectory_ );
-//    if( has_trajectory_ == true )
-//    {
-//        PolyCurve traj_ = PolyCurve( trajectory_ );
-
-////        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
-////        {
-////            if( csection->getDirection() != obj_->getCrossSectionDirection() )
-////                traj_ = PolyCurve( traj_/*.getPointsSwapped()*/ );
-////        }
-
-//        if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//        {
-//            traj_ = PolyCurve( traj_.getPointsSwapped() );
-//        }
-
-
-//        obj_->removeTrajectory();
-//        obj_->addTrajectory( traj_ );
-
-//    }
-
-
 }
 
 
@@ -1092,6 +1106,8 @@ void Controller::defineRegions()
 
     std::size_t number_of_regions_ = regions_.size();
     std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions_ );
+    std::vector< double > volumes_;
+    rules_processor.getRegionVolumeList( volumes_ );
 
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
@@ -1106,7 +1122,9 @@ void Controller::defineRegions()
         region_->setVertices( vertices_ );
         region_->setTetrahedralCells( regions_[ i ] );
         region_->setColor( color_.red, color_.green, color_.blue );
+        region_->setVolume( volumes_[ i ] );
         region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
+
 
         model.regions[region_->getIndex()] = region_;
         getRegionCrossSectionBoundary( i );

@@ -375,6 +375,8 @@
 
             bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
 
+            void getRegionVolumeList( std::vector<double>& volumes );
+
             bool setPLCForSimulation( std::vector< TriangleMesh >& triangle_meshes,
                                     std::vector< CurveMesh >& left_curves,
                                     std::vector< CurveMesh >& right_curves,

@@ -88,17 +88,17 @@ void SketchingController::viewCrossSection( const Settings::CrossSection::CrossS
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-        scenesX[ depth_ ] = window->addCanvas( depth_ );
+        scenesX[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::X );
         setObjectsToScene( csection_, scenesX[ depth_ ] );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        scenesY[ depth_ ] = window->addCanvas( depth_ );
+        scenesY[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Y );
         setObjectsToScene( csection_, scenesY[ depth_ ] );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        scenesZ[ depth_ ] = window->addCanvas( depth_ );
+        scenesZ[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Z );
         setObjectsToScene( csection_, scenesZ[ depth_ ] );
     }
 
@@ -154,6 +154,107 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
     updateBoundering();
 
 }
+
+
+void SketchingController::updateImageInScene()
+{
+     CrossSectionPtr csection_ = controller->getMainCrossSection();
+     if( csection_->hasImage() == false )
+     {
+         std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+         main_scene->removeImageInCrossSection();
+     }
+     else
+     {
+         std::string file_;
+         double ox_, oy_, w_, h_;
+         csection_->getImage( file_, ox_, oy_, w_, h_ );
+         main_scene->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+     }
+
+
+     for( auto it: scenesX )
+     {
+         double depth_;
+         Settings::CrossSection::CrossSectionDirections dir_;
+
+         std::shared_ptr< SketchScene > scene_ = it.second;
+         scene_->getCrossSectionInformation( dir_, depth_ );
+
+         CrossSectionPtr csection1_;
+         controller->getCrossSection( dir_, depth_, csection1_ );
+
+
+         if( csection1_->hasImage() == false )
+         {
+             std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+             scene_->removeImageInCrossSection();
+         }
+         else
+         {
+             std::string file_;
+             double ox_, oy_, w_, h_;
+             csection1_->getImage( file_, ox_, oy_, w_, h_ );
+             scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+         }
+
+     }
+
+     for( auto it: scenesY )
+     {
+         double depth_;
+         Settings::CrossSection::CrossSectionDirections dir_;
+
+         std::shared_ptr< SketchScene > scene_ = it.second;
+         scene_->getCrossSectionInformation( dir_, depth_ );
+
+         CrossSectionPtr csection1_;
+         controller->getCrossSection( dir_, depth_, csection1_ );
+
+
+         if( csection1_->hasImage() == false )
+         {
+             std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+             scene_->removeImageInCrossSection();
+         }
+         else
+         {
+             std::string file_;
+             double ox_, oy_, w_, h_;
+             csection1_->getImage( file_, ox_, oy_, w_, h_ );
+             scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+         }
+     }
+
+     for( auto it: scenesZ )
+     {
+         double depth_;
+         Settings::CrossSection::CrossSectionDirections dir_;
+
+         std::shared_ptr< SketchScene > scene_ = it.second;
+         scene_->getCrossSectionInformation( dir_, depth_ );
+
+         CrossSectionPtr csection1_;
+         controller->getCrossSection( dir_, depth_, csection1_ );
+
+
+         if( csection1_->hasImage() == false )
+         {
+             std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+             scene_->removeImageInCrossSection();
+         }
+         else
+         {
+             std::string file_;
+             double ox_, oy_, w_, h_;
+             csection1_->getImage( file_, ox_, oy_, w_, h_ );
+             scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+         }
+     }
+
+
+}
+
 
 
 
@@ -435,9 +536,9 @@ void SketchingController::clear()
 {
 
 
-    removeWindowsDirectionX();
-    removeWindowsDirectionY();
-    removeWindowsDirectionZ();
+//    removeWindowsDirectionX();
+//    removeWindowsDirectionY();
+//    removeWindowsDirectionZ();
 
 
 

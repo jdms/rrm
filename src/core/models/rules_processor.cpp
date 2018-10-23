@@ -1782,6 +1782,12 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
     return success;
 }
 
+void RulesProcessor::getRegionVolumeList( std::vector<double>& volumes )
+{
+    SUtilitiesWrapper u(modeller_);
+    u.getRegionVolumeList(volumes);
+}
+
 #include <iterator>
 
 bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_meshes,

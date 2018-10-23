@@ -230,12 +230,14 @@ void RRMApplication::removeFixedCrossSection( double depth_ )
 void RRMApplication::setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
 {
     controller->setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_ );
+    emit updateImageInCrossSection();
 }
 
 
 void RRMApplication::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
     controller->clearImageInCrossSection( dir_, depth_ );
+    emit updateImageInCrossSection();
 }
 
 
@@ -391,8 +393,10 @@ void RRMApplication::getRegions( bool status_ )
         RegionsPtr & reg_ = (it.second);
 
         int r_, g_, b_;
+        double volume_;
         reg_->getColor( r_, g_, b_ );
-        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+        volume_  = reg_->getVolume();
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_ );
 
         emit addRegionCrossSectionBoundary( reg_ );
     }
@@ -784,7 +788,7 @@ void RRMApplication::loadRegions()
 
         int r_, g_, b_;
         reg_->getColor( r_, g_, b_ );
-        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_ );
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, reg_->getVolume() );
 
         emit addRegionCrossSectionBoundary( reg_ );
     }
