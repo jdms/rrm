@@ -321,7 +321,7 @@ void MainWindow::createSideBar()
 
     connect( app, &RRMApplication::defineVolumeGeometry, [=]( double ox_, double oy_, double oz_, double w_, double h_, double d_ )
     {
-        ps_objectdata->changeRangeSize( 2* ( ox_ + w_ ), 2* ( oy_ + h_ ), 2* ( oz_ + d_ ) );
+        ps_objectdata->changeRangeSize( 20* ( ox_ + w_ ), 20* ( oy_ + h_ ), 20* ( oz_ + d_ ) );
         ps_objectdata->changeVolumeSize( ( ox_ + w_ ), ( oy_ + h_ ), ( oz_ + d_ ) );
     } );
 

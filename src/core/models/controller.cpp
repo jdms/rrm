@@ -716,7 +716,7 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
         curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
     }
 
-//    curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
+    curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
 
     obj_->addTrajectory( PolyCurve( curve_proc_ ) );
 
