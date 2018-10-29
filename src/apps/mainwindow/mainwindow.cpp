@@ -40,6 +40,9 @@ void MainWindow::createWindow()
     plugSketchInterface();
     plug3dDiagnosticsInterface();
 
+
+
+
 }
 
 

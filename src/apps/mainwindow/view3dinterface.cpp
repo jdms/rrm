@@ -1,3 +1,5 @@
+#include <QDir>
+
 #include "view3dinterface.h"
 
 #include "mainwindow.h"
@@ -14,6 +16,21 @@ void View3dInterface::createInterface()
 
     createView3dWindow();
     createView3dActions();
+
+
+
+//    QString arg_( QDir::separator() );
+//    QString path_ = QDir::currentPath().append( arg_ ).append( "shaders" );
+//    std::cout << "Binary dir: " << path_.toStdString().c_str() << std::endl << std::flush;
+
+//    QDir dir_;
+//    bool status_ = dir_.cd( path_ );
+//    if( status_ == true )
+//        std::cout << "Path exists " << std::endl << std::flush;
+
+//    else
+//        std::cout << "Path not exists " << std::endl << std::flush;
+
 
 }
 

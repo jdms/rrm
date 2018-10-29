@@ -47,6 +47,7 @@ class RegionShader;
 
 
 
+
 class Scene3d: public QObject
 {
     Q_OBJECT
@@ -113,9 +114,6 @@ class Scene3d: public QObject
 
         std::map< std::size_t, std::shared_ptr< SurfaceShader > > stratigraphies;
         std::map< std::size_t, std::shared_ptr< RegionShader > > regions;
-
-
-
 
 };
 
