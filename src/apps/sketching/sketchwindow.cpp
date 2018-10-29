@@ -289,8 +289,6 @@ void SketchWindow::createLateralBar()
     lb_output_angle_->setDecMode();
     lb_output_angle_->setFrameShape( QFrame::NoFrame );
     lb_output_angle_->setSegmentStyle(QLCDNumber::Flat);
-    lb_output_angle_->setSmallDecimalPoint( true );
-    lb_output_angle_->setDigitCount( 3 );
 
 
     QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
@@ -336,7 +334,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     topviewcanvas = new SketchingCanvas();
     const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-    scene_->invertImage( true );
+//    scene_->invertImage( true );
     setCentralWidget( topviewcanvas );
 
     tb_trajectory->setVisible( true );
@@ -491,6 +489,7 @@ void SketchWindow::removeAllCanvas()
 
 }
 
+
 void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
 {
     if( cp_color == nullptr ) return;
@@ -573,7 +572,8 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
     double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
-    lb_exagger_value_->setText( QString("Value: %1").arg( v_exagg_db_ ) );
+    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
+    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
     std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
     if( sketchingcanvas == nullptr ) return;
@@ -611,10 +611,12 @@ void SketchWindow::setDipAngle( double angle_ )
     double param_ = v_exag_*tan( angle_*PI / 180 );
     double beta_ = atan(param_) * 180 / PI;
 
-    lb_input_angle_ ->display( QObject::tr( "%1'" ).arg( angle_ ) );
+    QString arg_ = QString::number( angle_, 'f', 1 );
+    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
     lb_input_dpangle->updateAngle( angle_ );
 
-    lb_output_angle_->display( QObject::tr( "%2'" ).arg( beta_ ) );
+    QString arg1_ = QString::number( beta_, 'f', 1 );
+    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
     lb_output_dpangle->updateAngle( beta_ );
 
     std::cout << "Beta value: " << beta_ << std::endl << std::flush;

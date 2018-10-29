@@ -102,6 +102,9 @@ void SketchScene::setCrossSectionInformation( const Settings::CrossSection::Cros
     csection_direction = dir_;
     csection_depth = depth_;
 
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+        invertImage( true );
+
     for( auto it: stratigraphies )
     {
         (it.second)->setCrossSection( csection_direction, csection_depth );
@@ -162,9 +165,9 @@ void SketchScene::updateVolume()
     volume1->update( csection_direction );
     setSceneRect( volume1->boundingRect() );
 
-    QPainterPath area_;
-    area_.addRect( volume1->boundingRect() );
-    setSelectionArea( area_, Qt::AddToSelection );
+//    QPainterPath area_;
+//    area_.addRect( volume1->boundingRect() );
+//    setSelectionArea( area_, Qt::AddToSelection );
 
 
     const std::shared_ptr< Volume >& volume_ = volume1->getRawVolume();
@@ -1062,7 +1065,7 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
     {
         volume1->setEndPoint( p_ );
-        setSceneRect( volume1->boundingRect() );
+//        setSceneRect( volume1->boundingRect() );
 
         emit resizeVolumeDimensions( csection_direction, static_cast< double >( volume1->boundingRect().width() ), static_cast< double >( volume1->boundingRect().height() ) );
 //        emit ensureObjectsVisibility();
