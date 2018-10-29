@@ -3,10 +3,8 @@
 
 #include <QDockWidget>
 
-#include "simulator/flow_window.h"
-#include "simulator/flow_visualization_controller.h"
-
 class MainWindow;
+class FlowWindow;
 
 
 class DiagnosticsInterface: public QObject

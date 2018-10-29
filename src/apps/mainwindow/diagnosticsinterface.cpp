@@ -1,5 +1,8 @@
 #include "diagnosticsinterface.h"
 
+#include "simulator/flow_window.h"
+#include "simulator/flow_visualization_controller.h"
+
 #include "mainwindow.h"
 
 
