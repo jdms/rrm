@@ -37,7 +37,6 @@
 
 SketchScene::SketchScene()
 {
-
     init();
 }
 
@@ -119,6 +118,7 @@ void SketchScene::getCrossSectionInformation( Settings::CrossSection::CrossSecti
     dir_ = csection_direction;
     depth_ = csection_depth;
 }
+
 
 void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
 {

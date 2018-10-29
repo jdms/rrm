@@ -81,6 +81,10 @@ void Canvas3d::paintGL()
     if( scene3d != nullptr )
         scene3d->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
 
+    if( axes != nullptr )
+        axes->draw( camera.getViewMatrix(), camera.getProjectionMatrix(), width(), height() );
+
+
 }
 
 
@@ -256,6 +260,51 @@ void Canvas3d::savetoVectorImage( const QString& filename )
 void Canvas3d::shareOpenGLContext()
 {
     scene3d->setOpenGLContext( context() );
+
+
+
+    QString arg_( QDir::separator() );
+    QString path_ = QDir::currentPath();
+
+    QString shaders_path_( path_ );
+    shaders_path_.append( arg_ ).append( "shaders" ).append( arg_ );
+    QString models_path_( path_ );
+    models_path_.append( arg_ ).append( "models" ).append( arg_ );
+
+    std::cout << "Shaders dir: " << shaders_path_.toStdString().c_str() << std::endl << std::flush;
+    std::cout << "Models dir: " << models_path_.toStdString().c_str() << std::endl << std::flush;
+
+    QDir dir_;
+    bool status_ = dir_.cd( shaders_path_ );
+    if( status_ == true )
+        std::cout << "Shader Path exists " << std::endl << std::flush;
+
+    else
+    {
+        std::cout << "Shader Path not exists " << std::endl << std::flush;
+        return;
+    }
+
+    dir_.cdUp();
+
+    std::cout << "Current folder: " << dir_.currentPath().toStdString() << std::endl << std::flush;
+
+    status_ = dir_.cd( models_path_ );
+    if( status_ == true )
+        std::cout << "Model Path exists " << std::endl << std::flush;
+
+    else
+    {
+        std::cout << "Model Path not exists " << std::endl << std::flush;
+        return;
+    }
+
+
+    axes = new CoordinateAxes3d();
+    axes->initShader( shaders_path_.toStdString() );
+    axes->load( models_path_.toStdString() );
+    axes->setNonCentered();
+
 }
 
 

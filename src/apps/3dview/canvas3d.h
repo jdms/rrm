@@ -32,6 +32,9 @@
 
 #include <QOpenGLWidget>
 
+
+#include "coordinate_axes_3d.h"
+
 class QMouseEvent;
 class QWheelEvent;
 
@@ -88,6 +91,9 @@ class Canvas3d: public QOpenGLWidget
 
         int canvas_width;
         int canvas_height;
+
+        CoordinateAxes3d* axes = nullptr;
+
 
 };
 
