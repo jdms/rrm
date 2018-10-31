@@ -123,6 +123,11 @@ find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
 
+set(COLORWRAP_BUILD_SHARED OFF) 
+set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/colorwrap EXCLUDE_FROM_ALL )
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
+
 ###############################################
 # Preliminary support for stratmod library
 ###############################################
