@@ -43,7 +43,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 add_executable(${PROJECT_NAME} WIN32 ${RCC_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} )
+    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} colorwrap )
 
 
 ######################################################

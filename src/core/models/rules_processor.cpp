@@ -70,7 +70,7 @@ void deprecationNotice( std::string deprecated_method, std::string new_method, b
 
 #include "rules_processor.hpp"
 
-#include "colormap/colormap.hpp"
+#include "colorwrap.hpp"
 //namespace RRM
 //{}
 
@@ -1958,7 +1958,7 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
 
 std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
 {
-    return Colormap::Spectral(numColors);
+    return Colorwrap::Spectral(numColors);
 }
 
 bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
