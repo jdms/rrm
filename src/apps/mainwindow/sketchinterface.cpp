@@ -166,7 +166,8 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_topview_window, &SketchWindow::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_  )
     {
-        window->app->setImageToCrossSection( file_, Settings::CrossSection::CrossSectionDirections::Y, depth_, ox_, oy_, w_, h_ );
+        Settings::CrossSection::CrossSectionDirections dir1_ = Settings::CrossSection::CrossSectionDirections::Y;
+        window->app->setImageToCrossSection( file_, dir1_, depth_, ox_, oy_, w_, h_ );
     } );
 
     connect( sketch_topview_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );

@@ -238,6 +238,7 @@ void Object::removed()
     if( direction == Settings::CrossSection::CrossSectionDirections::Y ) return;
 
     removeCrossSectionCurves();
+//    removeLevelCurves();
     removeTrajectory();
     removeSurface();
 
@@ -278,7 +279,6 @@ void Object::setDone( const bool status_ )
 
     removeCrossSectionCurves();
     removeTrajectory();
-    removeLevelCurves();
     removeSurface();
     user_entered.clear();
 }
@@ -394,6 +394,8 @@ std::map< double, PolyCurve > Object::getCurves()
 
    if( direction == Settings::CrossSection::CrossSectionDirections::Y )
    {
+       if( isActive() == false ) return curves_;
+
        for ( auto d_: user_entered )
        {
            if( level_curves1.find( d_ ) == level_curves1.end() ) continue;

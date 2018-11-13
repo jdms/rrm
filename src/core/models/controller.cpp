@@ -374,10 +374,14 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
 
     }
 
-    if( csection->getCrossSectionDirection() == dir_ && csection->getDepth() == depth_ )
+    if( csection->getDirection() == dir_ && csection->getDepth() == depth_ )
         csection->setImage( file_, ox_, oy_, w_, h_ );
 
-    if( topview->getCrossSectionDirection() == dir_ && topview->getDepth() == depth_ )
+    Settings::CrossSection::CrossSectionDirections dir1_ = topview->getDirection();
+    double depth1_ = topview->getDepth();
+
+
+    if(  dir1_ == dir_ &&  depth1_ == depth_ )
         topview->setImage( file_, ox_, oy_, w_, h_ );
 
 }
