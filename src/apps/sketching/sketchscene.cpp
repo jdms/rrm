@@ -243,6 +243,9 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
     image->setVisible( true );
     image->update();
 
+    if( dipangle->isVisible() == true )
+        dipangle->setZValue( image->zValue() + 1 );
+
 }
 
 

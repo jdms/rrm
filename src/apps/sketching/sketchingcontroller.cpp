@@ -173,6 +173,21 @@ void SketchingController::updateImageInScene()
      }
 
 
+     CrossSectionPtr csection_tv_ = controller->getTopViewCrossSection();
+     if( csection_tv_->hasImage() == false )
+     {
+         std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+         topview_scene->removeImageInCrossSection();
+     }
+     else
+     {
+         std::string file_;
+         double ox_, oy_, w_, h_;
+         csection_tv_->getImage( file_, ox_, oy_, w_, h_ );
+         topview_scene->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+     }
+
+
      for( auto it: scenesX )
      {
          double depth_;

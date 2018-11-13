@@ -223,8 +223,9 @@ void SketchWindow::createLateralBar()
     sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
     sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
     sl_vertical_exagg_->setInvertedAppearance( false );
-    sl_vertical_exagg_->setDiscretization( 100 );
-    sl_vertical_exagg_->setRange( 0, 1 );
+//    sl_vertical_exagg_->setDiscretization( 100 );
+    sl_vertical_exagg_->setRange( 0, 100 );
+    sl_vertical_exagg_->setSingleStep( 1 );
     resetVerticalExaggeration();
 
     btn_reset_exaggeration = new QPushButton( "Reset" );
@@ -232,12 +233,16 @@ void SketchWindow::createLateralBar()
     connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
 
     lb_exagger_value_ = new QLabel( "Value: " );
+    sp_exagger_value = new QDoubleSpinBox();
+    sp_exagger_value->setRange( 0.1, 10000. );
+    sp_exagger_value->setSingleStep( 0.1 );
 
     steps_exagg = (max_exagg - min_exagg);
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
     hb_exaggerattion_->addWidget( btn_reset_exaggeration );
     hb_exaggerattion_->addWidget( lb_exagger_value_ );
+    hb_exaggerattion_->addWidget( sp_exagger_value );
 
 
     QVBoxLayout* vb_layout_exag_ = new QVBoxLayout;
@@ -319,7 +324,10 @@ void SketchWindow::createLateralBar()
     bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
 
 
-    connect( sl_vertical_exagg_, &RealFeaturedSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
+    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
+
+    QObject::connect<void(QDoubleSpinBox::*)(double)>(sp_exagger_value, &QDoubleSpinBox::valueChanged,
+                                             this,  &SketchWindow::usingVerticalExaggerationSpinBox);
 
     connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
 
@@ -563,17 +571,20 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 
 
-void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
+void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
-    std::cout << "slider value: " << v_exagg_ << std::endl << std::flush;
+    std::cout << "ENTREIIIIII: " << v_exagg_ << std::endl << std::flush;
+
+    count++;
 
     if( sl_vertical_exagg_ == nullptr ) return;
 
-    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
+    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
     QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
     lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
+    sp_exagger_value->setValue( v_exagg_db_ );
     std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
 
     if( sketchingcanvas == nullptr ) return;
@@ -585,10 +596,43 @@ void SketchWindow::usingVerticalExaggeration( double v_exagg_ )
     scene_->getCrossSectionInformation( dir_, depth_ );
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
 
+    if( count < 2 )
+        sp_exagger_value->setValue( v_exagg_db_ );
+    else
+        count = 0;
+
     sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
     emit setVerticalExaggeration( v_exagg_db_ );
 
     updateDipAngle();
+
+}
+
+
+void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
+{
+    count++;
+
+    double lg = log10( v_exagg_ );
+    std::cout << " log10: "  << lg << std::endl << std::flush;
+
+    double value = 100*(lg - min_exagg)/(max_exagg - min_exagg);
+    std::cout << " divisao: "  << value << std::endl << std::flush;
+
+
+
+    if( count < 2 )
+        sl_vertical_exagg_->setValue( static_cast< int >( value ) );
+    else
+        count = 0;
+
+//    sketchingcanvas->setVerticalExaggeration( value );
+
+//    emit setVerticalExaggeration( value );
+
+//    updateDipAngle();
+
+//    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
 
 }
 
