@@ -22,6 +22,7 @@ void SketchingCanvas::setupScene()
         scene->setSceneRect( rect_.x() - 50, rect_.y() - 50, rect_.width() + 100, rect_.height() + 100 );
         scene->update();
         this->ensureVisible( scene->sceneRect() );
+
     } );
 
 }
