@@ -35,6 +35,7 @@
 #include <QLCDNumber>
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QDoubleSpinBox>
 
 #include "./src/core/widgets/canvasstack.h"
 #include "./core/definitions/constants.hpp"
@@ -70,7 +71,7 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
-        void usingVerticalExaggeration( double v_exagg_);
+        void usingVerticalExaggeration( int v_exagg_);
 
 
         void keyPressEvent( QKeyEvent *event );
@@ -96,6 +97,8 @@ class SketchWindow: public QMainWindow
 
         void updateDipAngle();
         void removeAllCanvas();
+
+        void usingVerticalExaggerationSpinBox( double v_exagg_ );
 
     signals:
 
@@ -182,7 +185,7 @@ class SketchWindow: public QMainWindow
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
         QWidget* bar_ = nullptr;
-        RealFeaturedSlider* sl_vertical_exagg_ = nullptr;
+        QSlider/*RealFeaturedSlider*/* sl_vertical_exagg_ = nullptr;
         int nsteps_exagg = 100;
         double min_exagg = -1;
         double max_exagg = 4;
@@ -196,6 +199,7 @@ class SketchWindow: public QMainWindow
         QLCDNumber* lb_input_angle_  = nullptr;
         QLCDNumber* lb_output_angle_ = nullptr;
         QLabel* lb_exagger_value_ = nullptr;
+        QDoubleSpinBox* sp_exagger_value = nullptr;
         QPushButton* btn_reset_exaggeration = nullptr;
 
         AnglePicture* lb_input_dpangle = nullptr;
@@ -213,7 +217,7 @@ class SketchWindow: public QMainWindow
         QToolBar* tb_misc = nullptr;
         QAction* ac_screenshot = nullptr;
 
-
+        int count = 0;
 
 };
 
