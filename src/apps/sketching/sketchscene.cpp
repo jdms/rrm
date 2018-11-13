@@ -1146,6 +1146,8 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
         gv_->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
 
 
+    gv_->centerOn( sceneRect().center() );
+
     QGraphicsScene::wheelEvent( event_ );
     update();
 
