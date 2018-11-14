@@ -32,7 +32,7 @@
 #include <Eigen/Dense>
 #include "ui_well_widget_form.h"
 
-#include "../widgets/spanslider/qxtspanslider.h"
+#include "../widgets/SpanSlider/qxtspanslider.h"
 
 namespace RRM
 {

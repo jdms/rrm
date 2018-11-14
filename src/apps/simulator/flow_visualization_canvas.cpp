@@ -77,7 +77,7 @@ void FlowVisualizationCanvas::paintGL()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-    loadBackGround();
+    loadBackGround(); //BUG: why is this segfaulting in linux
 
     //Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
     //Eigen::Affine3f M;
@@ -97,7 +97,7 @@ void FlowVisualizationCanvas::paintGL()
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         scale = 1.0f;
-        crosssection.draw(V, P, scale);
+        crosssection.draw(V, P, scale); //BUG: why is this segfaulting in linux
 
         glDisable(GL_BLEND);
 

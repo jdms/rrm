@@ -26,7 +26,7 @@
 
 #include <vector>
 
-#include "./polygonalcurve/CurveN.hpp"
+#include "./PolygonalCurve/CurveN.hpp"
 
 class PolyCurve
 {

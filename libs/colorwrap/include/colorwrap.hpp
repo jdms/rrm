@@ -17,41 +17,58 @@
 #define __COLORWRAP_HPP__
 
 #include <vector>
+#include <string>
 
-#include "colorwrap_win_dll_export_handler.hpp"
+#include "colorwrap_win_dll_export_handler.h"
 
 
 class COLORWRAPLIB_DLL_HANDLER Colorwrap
 {
     public:
 
+        ///////////////////////////////////////////////////////////////
+        // Sequential colormaps
+        ///////////////////////////////////////////////////////////////
+
+        static std::vector<int> Blues   ( std::size_t num_colors =  9 );
+        static std::vector<int> BuGn    ( std::size_t num_colors =  9 );
+        static std::vector<int> BuPu    ( std::size_t num_colors =  9 );
+        static std::vector<int> GnBu    ( std::size_t num_colors =  9 );
+        static std::vector<int> Greens  ( std::size_t num_colors =  9 );
+        static std::vector<int> Greys   ( std::size_t num_colors =  9 );
+        static std::vector<int> Oranges ( std::size_t num_colors =  9 );
+        static std::vector<int> OrRd    ( std::size_t num_colors =  9 );
+        static std::vector<int> PuBu    ( std::size_t num_colors =  9 );
+        static std::vector<int> PuBuGn  ( std::size_t num_colors =  9 );
+        static std::vector<int> PuRd    ( std::size_t num_colors =  9 );
+        static std::vector<int> Purples ( std::size_t num_colors =  9 );
+        static std::vector<int> RdPu    ( std::size_t num_colors =  9 );
+        static std::vector<int> Reds    ( std::size_t num_colors =  9 );
         static std::vector<int> YlGn    ( std::size_t num_colors =  9 );
         static std::vector<int> YlGnBu  ( std::size_t num_colors =  9 );
-        static std::vector<int> GnBu    ( std::size_t num_colors =  9 );
-        static std::vector<int> BuGn    ( std::size_t num_colors =  9 );
-        static std::vector<int> PuBuGn  ( std::size_t num_colors =  9 );
-        static std::vector<int> PuBu    ( std::size_t num_colors =  9 );
-        static std::vector<int> BuPu    ( std::size_t num_colors =  9 );
-        static std::vector<int> RdPu    ( std::size_t num_colors =  9 );
-        static std::vector<int> PuRd    ( std::size_t num_colors =  9 );
-        static std::vector<int> OrRd    ( std::size_t num_colors =  9 );
-        static std::vector<int> YlOrRd  ( std::size_t num_colors =  9 );
         static std::vector<int> YlOrBr  ( std::size_t num_colors =  9 );
-        static std::vector<int> Purples ( std::size_t num_colors =  9 );
-        static std::vector<int> Blues   ( std::size_t num_colors =  9 );
-        static std::vector<int> Greens  ( std::size_t num_colors =  9 );
-        static std::vector<int> Oranges ( std::size_t num_colors =  9 );
-        static std::vector<int> Reds    ( std::size_t num_colors =  9 );
-        static std::vector<int> Greys   ( std::size_t num_colors =  9 );
-        static std::vector<int> PuOr    ( std::size_t num_colors = 11 );
+        static std::vector<int> YlOrRd  ( std::size_t num_colors =  9 );
+
+
+        ///////////////////////////////////////////////////////////////
+        // Diverging colormaps
+        ///////////////////////////////////////////////////////////////
+
         static std::vector<int> BrBG    ( std::size_t num_colors = 11 );
-        static std::vector<int> PRGn    ( std::size_t num_colors = 11 );
         static std::vector<int> PiYG    ( std::size_t num_colors = 11 );
+        static std::vector<int> PRGn    ( std::size_t num_colors = 11 );
+        static std::vector<int> PuOr    ( std::size_t num_colors = 11 );
         static std::vector<int> RdBu    ( std::size_t num_colors = 11 );
         static std::vector<int> RdGy    ( std::size_t num_colors = 11 );
         static std::vector<int> RdYlBu  ( std::size_t num_colors = 11 );
+        static std::vector<int> RdYlGn  ( std::size_t num_colors = 11 );
         static std::vector<int> Spectral( std::size_t num_colors = 11 );
-        static std::vector<int> RdYlGn ( std::size_t num_colors = 11 );
+
+
+        ///////////////////////////////////////////////////////////////
+        // Qualitative colormaps
+        ///////////////////////////////////////////////////////////////
+
         static std::vector<int> Accent  ( std::size_t num_colors =  8 );
         static std::vector<int> Dark2   ( std::size_t num_colors =  8 );
         static std::vector<int> Paired  ( std::size_t num_colors = 12 );
@@ -60,6 +77,7 @@ class COLORWRAPLIB_DLL_HANDLER Colorwrap
         static std::vector<int> Set1    ( std::size_t num_colors =  9 );
         static std::vector<int> Set2    ( std::size_t num_colors =  8 );
         static std::vector<int> Set3    ( std::size_t num_colors = 12 );
+
 
     protected:
         static std::vector<int> get_cbrewer( std::string cmap_name, std::size_t min_colors, std::size_t max_colors, std::size_t num_colors );

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "./polygonalcurve/CurveN.hpp"
+#include "./PolygonalCurve/CurveN.hpp"
 #include "./core/models/polycurve.h"
 
 class SketchLibrary1

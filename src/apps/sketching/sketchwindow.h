@@ -45,7 +45,7 @@
 #include "sketchingcanvas.h"
 #include "sketchscene.h"
 
-#include "models/anglepicture.h "
+#include "models/anglepicture.h"
 
 
 //class QGraphicsView;
