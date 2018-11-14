@@ -40,7 +40,7 @@
 #include "colormap.h"
 #include "coordinate_axes.h"
 #include "flow_crosssection.h"
-#include "Mesh.h"
+#include "mesh.h"
 
 
 class FlowVisualizationCanvas: public QOpenGLWidget

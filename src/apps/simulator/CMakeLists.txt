@@ -95,8 +95,8 @@ set( SIMULATOR_HEADERS
                  well_module/well_widget.hpp
                  region_module/region_widget.hpp
                  fluid_module/fluid_widget.hpp
-                 widgets/spanslider/qxtspanslider.h
-                 widgets/spanslider/qxtspanslider_p.h)
+                 widgets/SpanSlider/qxtspanslider.h
+                 widgets/SpanSlider/qxtspanslider_p.h)
 
 set ( SIMULATOR_MOC_HEADERS
                 flow_visualization_canvas.h
@@ -110,8 +110,8 @@ set ( SIMULATOR_MOC_HEADERS
                 well_module/well_widget.hpp
                 region_module/region_widget.hpp
                 fluid_module/fluid_widget.hpp
-                widgets/spanslider/qxtspanslider.h
-                widgets/spanslider/qxtspanslider_p.h)
+                widgets/SpanSlider/qxtspanslider.h
+                widgets/SpanSlider/qxtspanslider_p.h)
 
 set ( SIMULATOR_UI_SOURCES
                 normal_movable_crosssection_flow.ui
@@ -172,7 +172,7 @@ set( SIMULATOR_SOURCES
                well_module/well_widget.cpp
                region_module/region_widget.cpp
                fluid_module/fluid_widget.cpp
-                widgets/spanslider/qxtspanslider.cpp )
+                widgets/SpanSlider/qxtspanslider.cpp )
 
 
 set(CMAKE_AUTOMOC ON)
@@ -189,5 +189,9 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
+target_link_libraries( ${PROJECT_NAME} ${HYPRE} )
+target_link_libraries( ${PROJECT_NAME} OpenMP::OpenMP_CXX )
 #target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${HYPRE} )
 

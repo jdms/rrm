@@ -48,6 +48,8 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${3DVIEW_MOC_SRCS} ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} )
+target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
+target_link_libraries( ${PROJECT_NAME} OpenGL::GL )
 
 
 

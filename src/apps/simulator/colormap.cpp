@@ -19,6 +19,7 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 
 #include "colormap.h"
 

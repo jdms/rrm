@@ -678,6 +678,12 @@ bool ObjectTree::createDomain1( std::size_t index_ )
 }
 
 
+bool ObjectTree::getSelectedRegionsList( std::vector< std::size_t >& regions_ )
+{
+    std::vector<std::size_t> parents;
+    return getSelectedRegionsList(regions_, parents);
+}
+
 bool ObjectTree::getSelectedRegionsList( std::vector< std::size_t >& regions_,
                                          std::vector< std::size_t >& parents_ )
 {

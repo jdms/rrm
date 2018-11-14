@@ -41,9 +41,12 @@ include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
 
 
-add_executable(${PROJECT_NAME} WIN32 ${RCC_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} colorwrap )
+add_executable(${PROJECT_NAME} ${RCC_SOURCES} )
+target_link_libraries( ${PROJECT_NAME} MainApp ${STRATMODLIB} OpenMP::OpenMP_CXX colorwrap )
+# target_link_libraries( ${PROJECT_NAME} ${STRATMODLIB} colorwrap )
+# target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg )
+# target_link_libraries( ${PROJECT_NAME} OpenGL::GL )
+# target_link_libraries( ${PROJECT_NAME} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} )
 
 
 ######################################################
@@ -62,6 +65,7 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/models )
 
+if(WIN32)
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy
     ${CMAKE_SOURCE_DIR}/libs/stratmod/stratmod/lib/stratmod.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
@@ -71,3 +75,4 @@ if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
         ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
 endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
+endif(WIN32)

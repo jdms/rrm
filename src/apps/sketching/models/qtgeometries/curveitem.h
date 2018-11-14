@@ -4,7 +4,11 @@
 #include <limits>
 #include <QGraphicsPathItem>
 
-#include "./libs/sketchlibrary.h"
+// BUG: it is necessary to use the relative path in the following include
+// because this file is included from the build of the rrm application, to
+// which the Sketching app structure of include dirs is not known
+
+#include "../../libs/sketchlibrary.h"
 
 
 class SketchLibraryWrapper

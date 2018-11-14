@@ -31,6 +31,7 @@
 #include <vector>
 #include <queue>
 #include <cassert>
+#include <climits>
 #include <limits>
 
 #include "CatmullRom.hpp"

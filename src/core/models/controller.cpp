@@ -2550,25 +2550,33 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
 
     //std::set<int> domains_set_;
-	std::vector< int > domains_( regions_.size() );
-	std::size_t id_;
+    std::vector< int > domains_( regions_.size() );
+    std::size_t id_;
     
-	//for( auto it: regions_ ) 
-	for ( std::size_t i = 0; i < regions_.size(); ++i )
+    //for( auto it: regions_ ) 
+    for ( std::size_t i = 0; i < regions_.size(); ++i )
     {
         //std::size_t id_; // every time a variable is created space must be allocated in the stack, 
-						   // move all vars to outside loops if possible for efficiency
+                           // move all vars to outside loops if possible for efficiency
 
-        RegionsPtr reg_ = model.regions[ regions_[i] ];
-		if (reg_->getDomain(id_) == false)
-		{
-			domains_[i] = -1;
-		}
-		else
-		{
-			//domains_set_.insert( id_ );
-			domains_[i] = id_;
-		}
+        // BUG: if regions_[i] < 0, what happens with pointer reg_?
+        if ( regions_[i] >= 0 )
+        {
+            RegionsPtr reg_ = model.regions[ regions_[i] ];
+            if (reg_->getDomain(id_) == false)
+            {
+                domains_[i] = -1;
+            }
+            else
+            {
+                //domains_set_.insert( id_ );
+                domains_[i] = id_;
+            }
+        }
+        else
+        {
+            domains_[i] = -1;
+        }
     }
 
     //std::vector< int > domains_;
