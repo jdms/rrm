@@ -13,8 +13,8 @@
 /* limitations under the License. */
 
 
-#ifndef __COLORWRAP_WIN_DLL_EXPORT_HANDLER_HPP__
-#define __COLORWRAP_WIN_DLL_EXPORT_HANDLER_HPP__
+#ifndef __COLORWRAP_WIN_DLL_EXPORT_HANDLER_H__
+#define __COLORWRAP_WIN_DLL_EXPORT_HANDLER_H__
 
 
 // #if defined(_WIN32) || defined(_WIN64)
@@ -80,5 +80,5 @@
 // NOTICE THAT DIFFERENT DLLS MUST HAVE DIFFERENT EXPORT MACROS. 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#endif //__WIN_DLL_EXPORT_HANDLER_HPP__
+#endif //__WIN_DLL_EXPORT_HANDLER_H__
 
