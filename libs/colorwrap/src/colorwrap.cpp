@@ -19,27 +19,7 @@
 #include "colorwrap.hpp"
 
 #include "colorbrewer.h" 
-
-
-#if defined(COLORWRAP_INTERPOLATE_COLORS)
-    // Use natural splines to interpolate colours in RGB space -- requires Eigen3
-    #include "nspline.h"
-#else 
-    // Define a stub
-    class NSpline 
-    {
-        public: 
-            bool init( std::vector<double> /* = centers */, std::vector<double> /* = function evaluations */  ) 
-            { 
-                return false; 
-            }
-
-            double eval( double ) 
-            { 
-                return 0;
-            }
-    };
-#endif
+#include "nspline.h"
 
 
 
@@ -422,12 +402,6 @@ std::vector<int> Colorwrap::get_cbrewer( std::string cmap_name, std::size_t min_
             //
             // Return RGB colors
             //
-
-            #if not defined(COLORWRAP_INTERPOLATE_COLORS)
-            // if can't interpolate colours we can only return whatever is hard coded in colormap
-                if ( num_colors > max_colors )
-                    num_colors = max_colors;
-            #endif
 
             return interpolate_color_list(colors, num_colors);
 }
