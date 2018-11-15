@@ -189,9 +189,11 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
-target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
-target_link_libraries( ${PROJECT_NAME} ${HYPRE} )
-target_link_libraries( ${PROJECT_NAME} OpenMP::OpenMP_CXX )
-#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${HYPRE} )
-
+if(WIN32)
+    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${HYPRE} )
+else()
+    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+    target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
+    target_link_libraries( ${PROJECT_NAME} ${HYPRE} )
+    target_link_libraries( ${PROJECT_NAME} OpenMP::OpenMP_CXX )
+endif()
