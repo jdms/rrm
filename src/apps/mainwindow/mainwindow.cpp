@@ -146,6 +146,7 @@ void MainWindow::createActions()
     ac_diagnostics->setToolTip( "Run Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
+    ac_diagnostics->setEnabled( false );
 
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
@@ -203,10 +204,12 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ ); } );
+    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ ); lockUndoRedo( status_ ); } );
 
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
-    { emit runDiagnostics( status_ ); } );
+    {  if(status_ == true ) app->getRegions( true );
+        emit runDiagnostics( status_ );
+    } );
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
 
@@ -633,11 +636,11 @@ void MainWindow::initializeInterface()
     ac_stratigraphy->setChecked( true );
     ac_structural->setChecked( false );
 
-
-    ac_regions->setEnabled( true );
-    ac_diagnostics->setEnabled( false );
     ac_regions->setChecked( false );
+    ac_regions->setEnabled( true );
+
     ac_diagnostics->setChecked( false );
+    ac_diagnostics->setEnabled( false );
 }
 
 
