@@ -124,7 +124,7 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
 
 }
@@ -135,7 +135,7 @@ void RRMApplication::setVolumeWidth( double width_ )
     controller->setVolumeWidth( width_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -144,7 +144,7 @@ void RRMApplication::setVolumeHeight( double height_ )
     controller->setVolumeHeight( height_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -153,7 +153,7 @@ void RRMApplication::setVolumeDepth( double lenght_ )
     controller->setVolumeLenght( lenght_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -752,7 +752,7 @@ void RRMApplication::load( const std::string& filename_ )
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit disableVolumeResizing();
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
     emit updateVolume();
     emit updateObjects();
@@ -849,7 +849,7 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
     else if( resolution_.compare( "LOW" ) == 0 )
         controller->setMeshResolution( Controller::MeshResolution::LOW );
 
-    setDiscretization( controller->getMainCrossSection()->getCrossSectionDirection() );
+    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
 }
 

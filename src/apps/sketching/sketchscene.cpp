@@ -832,6 +832,7 @@ void SketchScene::updateDipAnglePicture( const QPixmap& pix_ )
     dipangle->setImage( pix_ );
 }
 
+
 void SketchScene::setDipAnglePictureMovable( bool status_ )
 {
     if( dipangle == nullptr ) return;
@@ -905,6 +906,18 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
     render( &painter );
     painter.end();
+}
+
+
+void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
+{
+    QMatrix m_;
+    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
+
+
+    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+    axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
+    update();
 }
 
 ///================================================================================
@@ -1145,6 +1158,8 @@ void SketchScene::wheelEvent( QGraphicsSceneWheelEvent *event_ )
     else
         gv_->scale( 1.0/ZOOM_SCALE, 1.0/ZOOM_SCALE );
 
+
+    gv_->centerOn( sceneRect().center() );
 
     QGraphicsScene::wheelEvent( event_ );
     update();

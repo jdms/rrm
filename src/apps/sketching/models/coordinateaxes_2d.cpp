@@ -85,7 +85,11 @@ QRectF CoordinateAxes2d::boundingRect() const
  void CoordinateAxes2d::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
  {
      drawAxisX( painter );
-     drawAxisY( painter );
+
+     if( scale_on == false )
+        drawAxisY( painter );
+     else
+         drawAxisYWithScale( painter );
  }
 
 
@@ -156,4 +160,64 @@ QRectF CoordinateAxes2d::boundingRect() const
          p->rotate( scale*90 );
      }
 
+ }
+
+
+
+ void CoordinateAxes2d::drawAxisYWithScale( QPainter* p )
+ {
+
+     QPointF tail = QPointF( -15, -15 );
+
+     int discY = 10;
+
+     if( axisy_length < 150 )
+         discY = 1;
+
+     else if( axisy_length < 300 )
+         discY = 3;
+
+     else if( axisy_length < 500 )
+         discY = 7;
+
+     else if( axisy_length > 700 )
+         discY += static_cast< int >(discY*0.7 );
+
+
+
+     double stepY = static_cast< double >( axisy_length/ discY );
+
+     QPen pen;
+     pen.setWidth( 1 );
+     pen.setColor( current_y );
+     p->setPen( pen );
+     p->drawLine( tail.x(), tail.y(), tail.x(), axisy_length );
+
+     for( int i = 0; i < discY + 1; ++i )
+     {
+         double value = i*stepY;
+         double dez = 0;
+
+         if( value > 0 )
+            dez = log10( value );
+         p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
+
+
+         QString value1_ = QString::number( i*( height/discY), 'f', 1);
+         p->rotate( -scale*90 );
+         p->scale( 1, scale );
+         p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), value1_ );
+         p->scale( 1, scale );
+         p->rotate( scale*90 );
+     }
+
+ }
+
+ void CoordinateAxes2d::updateVerticalExaggeration( double scale_, double height_ )
+ {
+
+     height = height_;
+     axisy_length = scale_*height_;
+     scale_on = true;
+     update();
  }
