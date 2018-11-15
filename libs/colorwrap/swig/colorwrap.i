@@ -1,27 +1,19 @@
-/* Copyright (c) 2018 Julio Daniel Machado Silva */
+%module colorwrap
+%{
+#include "../include/colorwrap.hpp"
+%}
 
-/* Licensed under the Apache License, Version 2.0 (the "License"); */
-/* you may not use this file except in compliance with the License. */
-/* You may obtain a copy of the License at */
+%ignore COLORWRAPLIB_DLL_HANDLER;
 
-/* http://www.apache.org/licenses/LICENSE-2.0 */
+%include "std_vector.i"
 
-/* Unless required by applicable law or agreed to in writing, software */
-/* distributed under the License is distributed on an "AS IS" BASIS, */
-/* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. */
-/* See the License for the specific language governing permissions and */
-/* limitations under the License. */
+namespace std {
+    %template(IntVector) vector<int>;
+}
 
+/* %include "../include/colorwrap.hpp" */
 
-#ifndef __COLORWRAP_HPP__
-#define __COLORWRAP_HPP__
-
-#include <vector>
-
-#include "colorwrap_win_dll_export_handler.h"
-
-
-class COLORWRAPLIB_DLL_HANDLER Colorwrap
+class Colorwrap
 {
     public:
 
@@ -87,4 +79,3 @@ class COLORWRAPLIB_DLL_HANDLER Colorwrap
         static std::vector<double> interpolate_coord( const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &x_new );
 };
 
-#endif
