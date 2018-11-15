@@ -22,6 +22,7 @@ void SketchingCanvas::setupScene()
         scene->setSceneRect( rect_.x() - 50, rect_.y() - 50, rect_.width() + 100, rect_.height() + 100 );
         scene->update();
         this->ensureVisible( scene->sceneRect() );
+
     } );
 
 }
@@ -36,10 +37,16 @@ const std::shared_ptr< SketchScene >& SketchingCanvas::getScene() const
 
 void SketchingCanvas::setVerticalExaggeration( double scale_ )
 {
+     QMatrix old_matrix_ = matrix();
+
     v_exag = scale_;
     QMatrix matrix_;
     matrix_.scale( 1.0, -1*scale_ );
     setMatrix( matrix_ );
+
+    if( scale_ == 1 ) return;
+
+    scene->resetVerticalExaggerationInAxes( matrix_, scale_ );
 
 }
 

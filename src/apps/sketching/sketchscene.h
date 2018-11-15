@@ -155,6 +155,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
             if(status_ == true ) factor = -1;
             else factor = 1; }
 
+        void resetVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
+
    signals:
 
 

@@ -81,6 +81,7 @@ void RealFeaturedSlider::setValue( double value_ )
     int value_int = getIndex( value_ );
     QSlider::setValue( value_int );
     emit sliderMoved( value_ );
+//    emit valueChanged( value_ );
 }
 
 

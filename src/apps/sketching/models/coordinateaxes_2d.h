@@ -43,11 +43,15 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
         QRectF boundingRect() const;
 
+        void updateVerticalExaggeration( double scale_, double height_ );
+
+
     protected:
 
          void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
          void drawAxisX( QPainter* p );
          void drawAxisY( QPainter* p );
+         void drawAxisYWithScale( QPainter* p );
 
     protected:
 
@@ -66,6 +70,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
         Plane plane;
         int scale;
 
+        bool scale_on = false;
+        double height = 0.0;
 };
 
 #endif // COORDINATEAXES2D_H
