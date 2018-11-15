@@ -19,6 +19,8 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iomanip>
+
 #include <QWidget>
 #include <QMessageBox>
 
@@ -1758,17 +1760,40 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
         u.getRegionVolumeList(volumes);
         
         double total = 0;
-        std::ofstream ofs( "current_model_volumes.txt" );
-        std::cout << "\n\n\nRegions' volumes: \n\n";
-        ofs << "Regions' volumes: \n\n";
         for ( size_t i = 0; i < volumes.size(); ++i )
         {
-            std::cout << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
-            ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
             total += volumes[i];
         }
-        std::cout << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
-        ofs << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
+
+        std::ofstream ofs( "current_model_volumes.txt" );
+        ofs << "Gross rock volumes: \n\n";
+
+        std::cout << "\n\n\nGross rock volumes: \n\n";
+
+        for ( int i = static_cast<int>(volumes.size()) -1; i >=0; --i )
+        {
+            /* std::cout.unsetf(std::ios_base::floatfield); */ 
+            std::cout << "Volume(" << std::setw(3) << i << ") = " 
+                << std::scientific << std::setprecision(2) << std::setw(9) 
+                << volumes[i] << " m^3" 
+                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
+                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
+            
+            /* ofs.unsetf(std::ios_base::floatfield); */ 
+            ofs << "Volume(" << std::setw(3) << i << ") = " 
+                << std::scientific << std::setprecision(2) << std::setw(9) 
+                << volumes[i] << " m^3" 
+                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
+                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
+
+            /* ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n"; */
+            /* total += volumes[i]; */
+        }
+        std::cout.unsetf(std::ios_base::floatfield); 
+        std::cout << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
+        
+        ofs.unsetf(std::ios_base::floatfield); 
+        ofs << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
     }
 
     /* auto sids = modeller_.getOrderedSurfacesIndices(); */
@@ -2022,6 +2047,8 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
 std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
 {
     return Colorwrap::Spectral(numColors);
+    // TODO: fix crash when using PuBuGn
+    /* return Colorwrap::PuBuGn(numColors); */
 }
 
 bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
