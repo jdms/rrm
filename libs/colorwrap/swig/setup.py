@@ -9,7 +9,7 @@ from distutils.core import setup, Extension
 
 colorwrap_module = Extension('_colorwrap',
                            sources=['colorwrap_wrap.cxx', '../src/colorwrap.cpp'],
-                           extra_compile_args=['-std=c++11'],
+                           extra_compile_args=['-std=c++11', '-DCOLORWRAP_INTERPOLATE_COLORS'],
                            include_dirs = ['../include', '../src', '/usr/local/include/eigen3']
                            )
 

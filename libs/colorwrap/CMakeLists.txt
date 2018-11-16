@@ -35,13 +35,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set default build type (debug, release, etc.)
 
-# set(COLORWRAP_BUILD_TYPE "Release" CACHE STRING
-#     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
-# set(CMAKE_BUILD_TYPE "${COLORWRAP_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+set(COLORWRAP_BUILD_TYPE "" CACHE STRING
+    "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 
-option(COLORWRAP_BUILD_SHARED         "Build a shared library instead of a static library" ON)
-option(COLORWRAP_BUILD_DOCS           "Build documentation with Doxygen"                   OFF)
-option(COLORWRAP_BUILD_TESTS          "Build a test binary"                                OFF)
+if(COLORWRAP_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${COLORWRAP_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+endif()
+
+option(COLORWRAP_BUILD_SHARED         "Build a shared library instead of a static library"          ON)
+option(COLORWRAP_INTERPOLATE_COLORS   "Allow interpolating colours in RGB space -- requires Eigen3" ON)
+option(COLORWRAP_BUILD_DOCS           "Build documentation with Doxygen"                            OFF)
+option(COLORWRAP_BUILD_TESTS          "Build a test binary"                                         OFF)
 
 # regarding testing, see also: https://cmake.org/Wiki/CMake/Testing_With_CTest
 
@@ -99,40 +103,45 @@ endif(COLORWRAP_BUILD_DOCS)
 #  Eigen is mainly used as a wrapper for Lapack. 
 #
 
-if(COLORWRAP_EIGEN3_INCLUDE_DIR)
-    message(STATUS "Using eigen3 include dir: ${COLORWRAP_EIGEN3_INCLUDE_DIR}")
-    include_directories(SYSTEM ${COLORWRAP_EIGEN3_INCLUDE_DIR})
-
-else()
-    find_package(Eigen3) 
-
-    if(Eigen3_FOUND)
-        set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
-    endif()
-
-    if(GLOBAL_EIGEN3_INSTALL) 
-        include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+if(COLORWRAP_INTERPOLATE_COLORS)
+    if(COLORWRAP_EIGEN3_INCLUDE_DIR)
+        message(STATUS "Using Eigen3 include dir: ${COLORWRAP_EIGEN3_INCLUDE_DIR}")
+        include_directories(SYSTEM ${COLORWRAP_EIGEN3_INCLUDE_DIR})
 
     else()
-        set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/src/eigen3)
-        include(ExternalProject)
+        find_package(Eigen3) 
 
-        ExternalProject_Add(
-            Eigen3
-            GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
-            SOURCE_DIR ${EIGEN3_SOURCE}
-            STEP_TARGETS build
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ""
-            INSTALL_COMMAND ""
-            EXCLUDE_FROM_ALL TRUE
-            )
+        if(Eigen3_FOUND)
+            set(GLOBAL_EIGEN3_INSTALL true CACHE BOOL "")
+        endif()
 
-        include_directories(SYSTEM ${EIGEN3_SOURCE})
-        set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
+        if(GLOBAL_EIGEN3_INSTALL) 
+            include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-    endif() 
-endif()
+        else()
+            set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/src/eigen3)
+            include(ExternalProject)
+
+            ExternalProject_Add(
+                Eigen3
+                GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror
+                SOURCE_DIR ${EIGEN3_SOURCE}
+                STEP_TARGETS build
+                CONFIGURE_COMMAND ""
+                BUILD_COMMAND ""
+                INSTALL_COMMAND ""
+                EXCLUDE_FROM_ALL TRUE
+                )
+
+            include_directories(SYSTEM ${EIGEN3_SOURCE})
+            set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
+
+        endif() 
+
+    endif() #if(COLORWRAP_EIGEN3_INCLUDE_DIR)
+endif() #if(COLORWRAP_INTERPOLATE_COLORS)
+
+    
 
 
 ###############################################
@@ -176,8 +185,12 @@ if(NOT MSVC)
     target_compile_options(colorwrap PRIVATE -Wall) 
 endif()
 
-if(LOCAL_EIGEN3_INSTALL)
-    add_dependencies(colorwrap Eigen3-build)
+if(COLORWRAP_INTERPOLATE_COLORS)
+    target_compile_options(colorwrap PRIVATE -DCOLORWRAP_INTERPOLATE_COLORS)
+
+    if(LOCAL_EIGEN3_INSTALL)
+        add_dependencies(colorwrap Eigen3-build)
+    endif()
 endif()
 
 if(COLORWRAP_BUILD_SHARED)
