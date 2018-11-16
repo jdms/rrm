@@ -139,22 +139,21 @@ endif()
 # Main library
 ###############################################
 
-# include_directories(${CMAKE_SOURCE_DIR}/detail)
-
 set(HEADERS 
+    include/colorwrap_c.h
     include/colorwrap.hpp
-    include/colorwrap_win_dll_export_handler.hpp
-)
+    include/colorwrap_win_dll_export_handler.h
+    )
 
 set(COLORWRAP_DETAIL_HEADERS
     src/nspline.h
     src/cbrewer.h
-)
+    )
 
 set(COLORWRAP_SOURCES 
+    src/colorwrap_c_exports.cpp
     src/colorwrap.cpp
-) 
-
+    ) 
 
 add_library(colorwrap ${LIB_TYPE} ${COLORWRAP_SOURCES})  
 
@@ -166,14 +165,15 @@ target_include_directories(colorwrap
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_compile_features(colorwrap PRIVATE cxx_std_11)
+target_compile_features(colorwrap PUBLIC cxx_std_11)
 
 # MSVC (as recently as version 19.15.26729) throws hundreds of warnings from
 # it's own implementation of the STL -- CMake's SYSTEM directive seems
-# ineffective to prevent this behavior.  Using -Wall in MSVC is, unfortunately,
-# not possible.  
-if(NOT MSVC)
-    target_compile_options(colorwrap PRIVATE -Wall)
+# ineffective to prevent this behaviour.  Thus, using -Wall in MSVC is,
+# unfortunately, not possible.  
+
+if(NOT MSVC) 
+    target_compile_options(colorwrap PRIVATE -Wall) 
 endif()
 
 if(LOCAL_EIGEN3_INSTALL)
