@@ -15,7 +15,7 @@ set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 # Options
 ###############################################
 
-set(RRM_BUILD_TYPE "Debug" CACHE STRING
+set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
     "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
@@ -80,14 +80,15 @@ include_directories( "./" )
 OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
 if( RRM_DIRECTORY_LIBRARIES )
+    if(WIN32)
+        set( Qt5_DIR "C:/Qt/5.8/msvc2017_64/lib/cmake/Qt5" )
+        # set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
+        # set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+    else()
+        set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
+    endif()
 
-
-    set( Qt5_DIR "/opt/Qt/5.12.2/gcc_64/lib/cmake/Qt5" )
-    #set( Qt5_DIR "C:/Qt/5.8/msvc2017_64/lib/cmake/Qt5" )
-    #set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
-#    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
     set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-
 endif()
 
 
