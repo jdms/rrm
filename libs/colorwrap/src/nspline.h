@@ -53,7 +53,7 @@ class NSpline {
             _DH = Df;
             _D2H = D2f;
 
-            is_initialized = false; 
+            initialized = false; 
         }
         
         NSpline( vector<double> C /* = centers */, vector<double> F /* = function evaluations */ ) {
@@ -73,14 +73,14 @@ class NSpline {
         /*     _DH = [this] ( double x ) -> double { return _s->evalD(x); }; */ 
         /*     _D2H = [this] ( double x ) -> double { return _s->evalD2(x); }; */ 
 
-        /*     is_initialized = false; */             
+        /*     initialized = false; */             
         /* } */
 
         /* NSpline operator=( NSpline &s ) */ 
         /* { */
         /*     NSpline _s_out; */ 
             
-        /*     _s_out.is_initialized = s.is_initialized; */
+        /*     _s_out.initialized = s.initialized; */
         /*     _s_out._H = s._H; */
         /*     _s_out._DH = s._DH; */
         /*     _s_out._D2H = s._D2H; */ 
@@ -95,9 +95,19 @@ class NSpline {
 
         /* ~NSpline() {} */
 
-        void init( vector<double> C /* = centers */, vector<double> F /* = function evaluations */  ) {
+        bool init( vector<double> C /* = centers */, vector<double> F /* = function evaluations */  ) {
 
-            assert( C.size() == F.size() );
+            /* assert( C.size() == F.size() ); */
+
+            if ( C.size() != F.size() )
+            {
+                return false;
+            }
+
+            if ( C.empty() )
+            {
+                return false;
+            }
 
             size_t m = C.size();
             _C.resize(m);
@@ -136,7 +146,8 @@ class NSpline {
             /* _beta = B.ldlt().solve( P.transpose() * invAF ); */
             /* _alpha = invAF - invAP * _beta; */
 
-            is_initialized = true;
+            initialized = true;
+            return true;
         }
 
         double operator()( double x )
@@ -156,7 +167,11 @@ class NSpline {
 
         double eval( double x ) {
 
-            assert( is_initialized );
+            /* assert( initialized ); */
+            if ( !initialized )
+            {
+                return 0;
+            }
 
             double y = 0;
             
@@ -170,7 +185,11 @@ class NSpline {
 
         double evalD( double x ) { 
 
-            assert( is_initialized );
+            /* assert( initialized ); */
+            if ( !initialized )
+            {
+                return 0;
+            }
 
             double dy = 0;
 
@@ -184,7 +203,11 @@ class NSpline {
 
         double evalD2( double x ) { 
 
-            assert( is_initialized );
+            /* assert( initialized ); */
+            if ( !initialized )
+            {
+                return 0;
+            }
 
             double d2y = 0;
 
@@ -198,7 +221,7 @@ class NSpline {
         }
 
     private: 
-        bool is_initialized; 
+        bool initialized; 
 
         std::function<double(double)> _H; // _H is a chnage of coordinates  
         std::function<double(double)> _DH; // Derivative of _H  
@@ -211,23 +234,23 @@ class NSpline {
         VectorXd _alpha; // cubic spline coeficients 
         VectorXd _beta;  // linear part coeficients 
 
-        inline double abs( double x ) 
+        inline static double abs( double x ) 
         {
             return ( x >= 0 ? x : -x );
         }
 
-        double phi( double x ) { 
+        inline static double phi( double x ) { 
 
             /* return pow( abs(x), 3 ); */
             return x*x*abs(x);
         }
 
-        double dphi( double x ) { 
+        inline static double dphi( double x ) { 
 
             return 3*abs(x) * x; 
         }
         
-        double d2phi( double x ) { 
+        inline static double d2phi( double x ) { 
 
             return 6*abs(x); 
         }
@@ -235,7 +258,7 @@ class NSpline {
         MatrixXd buildA() {
             
             int m = static_cast<int>(_C.size());
-            assert ( m > 0 );
+            /* assert ( m > 0 ); */
             MatrixXd A(m,m);
 
             for ( int i = 0; i < m; ++i ) {
@@ -256,7 +279,7 @@ class NSpline {
         MatrixXd buildP() {
 
             int m = static_cast<int>(_C.size());
-            assert( m > 0 );
+            /* assert( m > 0 ); */
             MatrixXd P(m, 2);
 
             // P.block<1,m>(0,0) == P.block(0,0,1,m);

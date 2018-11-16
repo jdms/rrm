@@ -19,6 +19,8 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iomanip>
+
 #include <QWidget>
 #include <QMessageBox>
 
@@ -1758,17 +1760,40 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
         u.getRegionVolumeList(volumes);
         
         double total = 0;
-        std::ofstream ofs( "current_model_volumes.txt" );
-        std::cout << "\n\n\nRegions' volumes: \n\n";
-        ofs << "Regions' volumes: \n\n";
         for ( size_t i = 0; i < volumes.size(); ++i )
         {
-            std::cout << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
-            ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n";
             total += volumes[i];
         }
-        std::cout << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
-        ofs << "\nTotal = " << total << " m^3\n\n\n" <<std::flush;
+
+        std::ofstream ofs( "current_model_volumes.txt" );
+        ofs << "Gross rock volumes: \n\n";
+
+        std::cout << "\n\n\nGross rock volumes: \n\n";
+
+        for ( int i = static_cast<int>(volumes.size()) -1; i >=0; --i )
+        {
+            /* std::cout.unsetf(std::ios_base::floatfield); */ 
+            std::cout << "Volume(" << std::setw(3) << i << ") = " 
+                << std::scientific << std::setprecision(2) << std::setw(9) 
+                << volumes[i] << " m^3" 
+                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
+                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
+            
+            /* ofs.unsetf(std::ios_base::floatfield); */ 
+            ofs << "Volume(" << std::setw(3) << i << ") = " 
+                << std::scientific << std::setprecision(2) << std::setw(9) 
+                << volumes[i] << " m^3" 
+                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
+                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
+
+            /* ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n"; */
+            /* total += volumes[i]; */
+        }
+        std::cout.unsetf(std::ios_base::floatfield); 
+        std::cout << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
+        
+        ofs.unsetf(std::ios_base::floatfield); 
+        ofs << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
     }
 
     /* auto sids = modeller_.getOrderedSurfacesIndices(); */
@@ -1804,10 +1829,17 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //
 
     //
-    // Zhao: the following two lines control the base discretization that will be used
-    // to create the piecewise linear complex.  Notice that every "block" is comprised of 
-    // 8 triangles, so that the output triangulation satisfies both the 4-8 and the Delaunay 
-    // (for uniformilly sampled vertices) mesh criterions.  
+    // Zhao: function "adaptDiscretization" below controls the base
+    // discretization that will be used to create the piecewise linear complex.
+    // Notice that every "block" is comprised of 8 triangles.
+    //
+    // "adaptDiscretization" will use the suggested value "max_width_disc"
+    // ("max_length_disc") to discretize the model's width (length) if the
+    // model's width size is bigger than its length size (and vice-versa for
+    // length).  The other dimension will be discretized with blocks as close
+    // to a square as possible.  
+    //
+
     //
     // Example: 
     // 
@@ -1838,12 +1870,68 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //      triangles' boundaries are marked with: '|', '\', '/', '-'
     //      vertices are marked with: 'o'
     // 
-    // You can have any number here, but I would strongly suggest to keep these 
-    // greater than 16 x 16 and to only pick numbers that are powers of 2.  
     //
     
-    diagnostics_width_discretization_ = 16; 
-    diagnostics_length_discretization_ = 16; 
+    /* diagnostics_width_discretization_ = 16; */ 
+    /* diagnostics_length_discretization_ = 16; */ 
+
+    // I would suggest to not reduce the values of max_width_disc and max_length_disc
+    auto adaptDiscretization = [] ( 
+            double model_width, double model_length, 
+            size_t &output_width_disc, size_t &output_length_disc, 
+            size_t max_width_disc = 16, size_t max_length_disc = 16 ) -> bool 
+    {
+
+
+        if ( model_width >= model_length )
+        {
+            // will have "max_width_disc" blocks in width
+            output_width_disc = max_width_disc;
+            auto block_size = model_width/static_cast<double>(output_width_disc); 
+
+            // how many blocks fit in the length dimension of the model
+            auto num_blocks = model_length/block_size;
+
+            if ( num_blocks < 1 )
+            {
+                output_length_disc = 1;
+            }
+            else
+            {
+                output_length_disc = std::round(num_blocks);
+            }
+        }
+        else
+        {
+            // will have "max_length_disc" blocks in length
+            output_length_disc = max_length_disc;
+            auto block_size = model_length/static_cast<double>(output_length_disc);
+
+            // how many blocks fit in the width dimension of the model
+            auto num_blocks = model_width/block_size;
+
+            if ( num_blocks < 1 )
+            {
+                output_width_disc = 1;
+            }
+            else
+            {
+                output_width_disc = std::round(num_blocks);
+            }
+        }
+
+        return true;
+
+    };
+
+    double model_width, model_length, height;
+    getLenght(model_width, height, model_length );
+
+    size_t max_width_disc = 16, max_length_disc = 16;
+
+    adaptDiscretization(model_width, model_length,
+            diagnostics_width_discretization_, diagnostics_length_discretization_, 
+            max_width_disc, max_length_disc);
 
     modeller_.changeDiscretization(diagnostics_width_discretization_, diagnostics_length_discretization_);
 
@@ -1959,6 +2047,8 @@ bool RulesProcessor::getRegionsForSimulationTetrahedralMesh( const std::vector<d
 std::vector<int> RulesProcessor::getRegionsColor( std::size_t numColors )
 {
     return Colorwrap::Spectral(numColors);
+    // TODO: fix crash when using PuBuGn
+    /* return Colorwrap::PuBuGn(numColors); */
 }
 
 bool RulesProcessor::getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length )
