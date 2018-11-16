@@ -17,6 +17,7 @@
 #define __COLORWRAP_HPP__
 
 #include <vector>
+#include <string>
 
 #include "colorwrap_win_dll_export_handler.h"
 
