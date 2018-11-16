@@ -13,6 +13,7 @@
 /* limitations under the License. */
 
 #include <cstring>
+#include <string>
 
 #include "colorwrap_c.h"
 #include "colorwrap.hpp"
