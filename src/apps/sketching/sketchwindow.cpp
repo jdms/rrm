@@ -578,6 +578,9 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
     count++;
 
     if( sl_vertical_exagg_ == nullptr ) return;
+    if( lb_exagger_value_ == nullptr ) return;
+    if( sp_exagger_value == nullptr ) return;
+    if( sketchingcanvas == nullptr ) return;
 
     double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
@@ -640,7 +643,12 @@ void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
 void SketchWindow::resetVerticalExaggeration()
 {
 
-    sl_vertical_exagg_->setValue( 0.2 );
+//    sl_vertical_exagg_->setValue( 2 );
+
+    if( sketchingcanvas == nullptr ) return;
+    sl_vertical_exagg_->setValue( 20 );
+    sketchingcanvas->stopVerticalExaggeration();
+
 
 }
 
