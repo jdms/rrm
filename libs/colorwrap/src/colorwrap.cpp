@@ -92,7 +92,7 @@ std::vector<int> Colorwrap::BuGn( std::size_t num_colors )
 std::vector<int> Colorwrap::PuBuGn( std::size_t num_colors )
 {
     size_t min_colours = 3;
-    size_t max_colours = 11;
+    size_t max_colours = 9;
     std::string cmap_name = "PuBuGn";
 
     return get_cbrewer(cmap_name, min_colours, max_colours, num_colors);
