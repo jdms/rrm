@@ -44,10 +44,27 @@ void SketchingCanvas::setVerticalExaggeration( double scale_ )
     matrix_.scale( 1.0, -1*scale_ );
     setMatrix( matrix_ );
 
-    if( scale_ == 1 ) return;
+    if( scale_ == 1 )
+    {
+        scene->resetVerticalExaggerationInAxes( matrix_ );
+        return;
+    }
 
-    scene->resetVerticalExaggerationInAxes( matrix_, scale_ );
+    scene->revertVerticalExaggerationInAxes( matrix_, scale_ );
 
+}
+
+
+void SketchingCanvas::stopVerticalExaggeration()
+{
+
+    QMatrix matrix_ = matrix();
+    setVerticalExaggeration( 1.0 );
+
+
+    setMatrix( matrix_ );
+
+    scene->resetVerticalExaggerationInAxes( matrix_ );
 }
 
 

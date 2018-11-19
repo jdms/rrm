@@ -180,6 +180,30 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
         return result;
     };
 
+    /* auto set_union = [] ( std::vector<size_t> lhs, std::vector<size_t> rhs ) -> std::vector<size_t> */
+    /* { */
+    /*     std::vector<size_t> result; */
+
+    /*     std::sort(lhs.begin(), lhs.end()); */
+    /*     std::sort(rhs.begin(), rhs.end()); */
+
+    /*     std::set_union(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::back_inserter(result)); */
+
+    /*     return result; */
+    /* }; */
+
+    auto cat_in_place = [] ( std::vector<size_t> &lhs, std::vector<size_t> rhs ) -> void 
+    {
+        if ( rhs.empty() )
+        {
+            return;
+        }
+
+        std::copy(rhs.begin(), rhs.end(), std::back_inserter(lhs));
+
+        return;
+    };
+
     std::vector<size_t> lower_bound, upper_bound, current;
     size_t attribute;
     bool success;
@@ -207,10 +231,11 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
             if ( lower_bound.size() > 1 )
             {
                 std::cout << "\nInitial step: lower_bound.size() =" << lower_bound.size() << "\n" << std::flush;
-                return false;
+                /* return false; */
             }
 
-            ordered_surface_indices.push_back( lower_bound.front() );
+            /* ordered_surface_indices.push_back( lower_bound.back() ); */
+            cat_in_place(ordered_surface_indices, lower_bound);
 
             std::cout << "\n    ordered_surface_indices --> ";
             for ( auto &i : ordered_surface_indices )
@@ -237,10 +262,11 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
             if ( current.size() > 1 )
             {
                 std::cout << "\nIntermediate step: current.size() =" << current.size() << "\n" << std::flush;
-                return false;
+                /* return false; */
             }
 
-            ordered_surface_indices.push_back( current.front() );
+            /* ordered_surface_indices.push_back( current.back() ); */
+            cat_in_place(ordered_surface_indices, current);
 
             std::cout << "\n    ordered_surface_indices --> ";
             for ( auto &i : ordered_surface_indices )
@@ -260,10 +286,11 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
     if ( upper_bound.size() > 1 )
     {
         std::cout << "\nFinal step: upper_bound.size() =" << upper_bound.size() << "\n" << std::flush;
-        return false;
+        /* return false; */
     }
     
-    ordered_surface_indices.push_back( upper_bound.front() );
+    /* ordered_surface_indices.push_back( upper_bound.back() ); */
+    cat_in_place(ordered_surface_indices, upper_bound);
     
     std::cout << "\n    ordered_surface_indices --> ";
     for ( auto &i : ordered_surface_indices )
