@@ -18,6 +18,8 @@ class SketchingCanvas: public QGraphicsView
         void setVerticalExaggeration( double scale_ );
         double getVerticalExaggeration() const;
 
+        void stopVerticalExaggeration();
+
     protected:
 
         void setupScene();

@@ -44,6 +44,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         QRectF boundingRect() const;
 
         void updateVerticalExaggeration( double scale_, double height_ );
+        void stopVerticalExaggeration(  double height_ );
 
 
     protected:

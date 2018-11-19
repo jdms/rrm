@@ -80,17 +80,17 @@ void MainWindow::createActions()
     ac_redo->setToolTip( "Redo" );
     ac_redo->setIcon(QIcon(":/images/icons/redo.png"));
 
-    ac_sketch_above = new QAction( "PA", this ); // preserve above!
-    ac_sketch_above->setToolTip( "Preserve Above" );
+    ac_sketch_above = new QAction( "SA", this ); // preserve above!
+    ac_sketch_above->setToolTip( "Sketch Above" );
     ac_sketch_above->setCheckable( true );
 
-    ac_sketch_region = new QAction( "PR", this ); // preserve region!
-    ac_sketch_region->setToolTip( "Preserve Region" );
+    ac_sketch_region = new QAction( "SR", this ); // preserve region!
+    ac_sketch_region->setToolTip( "Sketch Region" );
     ac_sketch_region->setCheckable( true );
     ac_sketch_region->setVisible( true );
 
-    ac_sketch_below = new QAction( "PB", this ); // preserve below!
-    ac_sketch_below->setToolTip( "Preserve Below" );
+    ac_sketch_below = new QAction( "SB", this ); // preserve below!
+    ac_sketch_below->setToolTip( "Sketch Below" );
     ac_sketch_below->setCheckable( true );
 
     ac_remove_above = new QAction( "RA", this );
@@ -222,8 +222,9 @@ void MainWindow::createMenuBar()
 
     mn_file = menuBar()->addMenu ( tr ( "&File" ) );
     mn_file->addAction ( ac_clear );
-    mn_file->addAction ( ac_save );
+    mn_file->addSeparator();
     mn_file->addAction ( ac_load );
+    mn_file->addAction ( ac_save );
     mn_file->addSeparator();
     mn_file->addAction( ac_export );
     mn_file->addAction ( ac_exit );
@@ -263,8 +264,9 @@ void MainWindow::createToolbar()
 
     tb_mainwindow = addToolBar( "");
     tb_mainwindow->addAction( ac_clear );
-    tb_mainwindow->addAction( ac_save );
+    tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_load );
+    tb_mainwindow->addAction( ac_save );
     tb_mainwindow->addSeparator();
     tb_mainwindow->addAction( ac_undo );
     tb_mainwindow->addAction( ac_redo );

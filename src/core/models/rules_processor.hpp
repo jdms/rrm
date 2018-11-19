@@ -58,6 +58,9 @@
             std::vector<std::size_t> getSurfaces();
             std::vector<std::size_t> getActiveSurfaces();
 
+            std::vector<std::size_t> getOrderedSurfaces();
+            std::vector<std::size_t> getOrderedActiveSurfaces();
+
             //
             // brief:
             // Verifies whether ir is possible to define a new 'drawing' region,
@@ -418,6 +421,9 @@
 
             /* template<typename CurveType, typename T = std::vector<size_t>> */
             /* bool getFirstRegionCurveIntersects( const std::tuple<CurveType, double> &curve_tuple, std::vector<size_t> &lbounds, std::vector<size_t> &ubounds, T &&crossings = {} ); */
+
+            std::vector<std::size_t> filterActiveSurfaces( std::vector<std::size_t> &surface_ids );
+
             void enforcePreserveRegion();
 
             template<typename FunctionType, typename... Args>
