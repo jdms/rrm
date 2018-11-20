@@ -226,12 +226,10 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
                 status_ = true;
 
             setDomainsVisibility( obj_->getIndex(), status_ );
-
-//            emit setDomainsVisible( obj_->getIndex(), status_ );
         }
         else if( column_ == COLUMN_NAME )
         {
-//            emit setRegionName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
+            emit setDomainName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
     }
 
@@ -717,6 +715,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
         ObjectTreeItem* domain_ = domains.getElement( index_ );
         domain_->addChild( reg_ );
+//        domain_->insertChild( obj_->getIndex(), reg_ );
 
 
         connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
@@ -754,6 +753,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
 
         ObjectTreeItem* domain_ = domains.getElement( index_ );
         domain_->addChild( reg_ );
+//        domain_->insertChild( obj_->getIndex(), reg_ );
 
 
         connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
@@ -773,6 +773,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
 
     }
 }
+
 
 void ObjectTree::addToDomain1( std::size_t index_ )
 {
@@ -805,7 +806,9 @@ void ObjectTree::removeRegionsOfTheirDomains1( const std::vector< std::size_t >&
                 ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( domain_->child( j ) );
                 if( reg_->getIndex() != it_ ) continue;
                 domain_->removeChild( reg_ );
+                delete reg_;
                 reg_ = nullptr;
+                break;
             }
 
             if( domain_->childCount() == 0 )
@@ -966,6 +969,7 @@ void ObjectTree::addToDomain( std::size_t index_ )
         reg_->setIndex( obj_->getIndex() );
         reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
         domain_->addChild( reg_ );
+//        domain_->insertChild( obj_->getIndex(), reg_ );
 
         emit addRegionToDomain( obj_->getIndex(), index_ );
 

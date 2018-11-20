@@ -32,7 +32,7 @@
 #include "./core/definitions/constants.hpp"
 
 
-struct Domain
+struct Domains
 {
     std::set< std::size_t > regions_set;
 };

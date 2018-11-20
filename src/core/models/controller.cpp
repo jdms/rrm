@@ -714,7 +714,7 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] );
-//        curve_proc_
+        //        curve_proc_
     }
     else {
         curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
@@ -824,12 +824,12 @@ bool Controller::createExtrudedSurface()
 
     if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
-         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPointsSwapped() );
+        surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPointsSwapped() );
     }
 
     else if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-       surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
+        surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
     }
 
     if( surface_created_ == true )
@@ -919,13 +919,13 @@ void Controller::updateObjectsCurvesInCrossSection( double depth_ )
     }
 
 
-//    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-//    std::size_t number_of_actives_ = actives_.size();
+    //    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    //    std::size_t number_of_actives_ = actives_.size();
 
-//    for ( std::size_t j = 0; j < number_of_actives_; ++j )
-//    {
-//        updateObjectCurveInCrossSection( actives_[ j ], depth_ );
-//    }
+    //    for ( std::size_t j = 0; j < number_of_actives_; ++j )
+    //    {
+    //        updateObjectCurveInCrossSection( actives_[ j ], depth_ );
+    //    }
 
 }
 
@@ -1033,7 +1033,7 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     if( has_surface_  == false )
     {
         obj_->removeSurface();
-//        obj_->setActive( false );
+        //        obj_->setActive( false );
         return;
     }
 
@@ -1046,7 +1046,7 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     surface_.setNormals( normals_ );
 
     obj_->setSurface( surface_ );
-//    obj_->setActive( true );
+    //    obj_->setActive( true );
 
 
 
@@ -1058,8 +1058,8 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
         if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
         {
-//            if( csection->getDirection() != obj_->getCrossSectionDirection() )
-//                traj_ = PolyCurve( traj_.getPointsSwapped() );
+            //            if( csection->getDirection() != obj_->getCrossSectionDirection() )
+            //                traj_ = PolyCurve( traj_.getPointsSwapped() );
         }
 
         obj_->removeTrajectory();
@@ -1140,8 +1140,8 @@ void Controller::defineRegions()
 
 bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {
-//    if( model.regions.find( index_ ) == model.regions.end() )
-//        return false;
+    //    if( model.regions.find( index_ ) == model.regions.end() )
+    //        return false;
 
     RegionsPtr region_ = model.regions[ index_ ];
 
@@ -1158,7 +1158,7 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
-         rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+        rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
     }
 
 
@@ -1305,9 +1305,9 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
 {
     std::size_t id_ = 0;
 
-    if( model.domains.empty() == false )
+    if( model.domains1.empty() == false )
     {
-        for( auto it_: model.domains )
+        for( auto it_: model.domains1 )
         {
             id_ = it_.first;
         }
@@ -1316,7 +1316,10 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
     }
 
 
-    model.domains[ id_ ].regions_set =  std::set< std::size_t >();
+
+    //    model.domains[ id_ ].regions_set =  std::set< std::size_t >();
+
+    model.domains1[ id_ ] = Domain();
     for( auto it_: indexes_ )
         addRegionToDomain1( it_, id_ );
 
@@ -1325,18 +1328,32 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
 }
 
 
+void Controller::setDomainName( std::size_t index_, const std::string& name_ )
+{
+    if (model.domains1.find(index_) == model.domains1.end()) return;
+    model.domains1[ index_ ].setName( name_ );
+}
+
+void Controller::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
+{
+    if (model.domains1.find(index_) == model.domains1.end()) return;
+    model.domains1[ index_ ].setColor( red_, green_, blue_ );
+}
+
+
 bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_id_ )
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
     if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
 
-    model.domains[domain_id_].regions_set.insert(region_id_);
+    model.domains1[ domain_id_ ].addRegion( region_id_ );
+    //    model.domains[domain_id_].regions_set.insert(region_id_);
     regions_in_domains.insert( region_id_ );
 
-	RegionsPtr reg_ = model.regions[region_id_];
-	reg_->setDomain(domain_id_);
-	
+    RegionsPtr reg_ = model.regions[region_id_];
+    reg_->setDomain(domain_id_);
+
     return true;
 }
 
@@ -1344,14 +1361,15 @@ bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_
 bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_)
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains.find(domain_id_) == model.domains.end()) return false;
+    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
     if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
 
-    model.domains[domain_id_].regions_set.erase(region_id_);
+    model.domains1[domain_id_].removeRegion( region_id_ );
+    //    model.domains[domain_id_].regions_set.erase(region_id_);
     regions_in_domains.erase( region_id_ );
 
-	RegionsPtr reg_ = model.regions[region_id_];
-	reg_->removeFromDomain();
+    RegionsPtr reg_ = model.regions[region_id_];
+    reg_->removeFromDomain();
 
     return true;
 }
@@ -1359,24 +1377,39 @@ bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t dom
 
 std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_) const
 {
-    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
-    return model.domains.at(domain_id_).regions_set;
+    if (model.domains1.find(domain_id_) == model.domains1.end()) return std::set< std::size_t>();
+
+    const Domain& domain_ = model.domains1.at( domain_id_ );
+    return domain_.getRegions();
+
+    //    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
+    //    return model.domains.at(domain_id_).regions_set;
 }
 
 
 void Controller::removeDomain1(std::size_t domain_id_)
 {
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
 
-    for( auto it_: model.domains )
-        removeRegionFromDomain1( it_.first, domain_id_ );
+    if (model.domains1.find(domain_id_) == model.domains1.end()) return;
 
-    model.domains.erase( domain_id_ );
+    Domain& domain_ = model.domains1[ domain_id_ ];
+    domain_.clear();
+
+    model.domains1.erase( domain_id_ );
+
+
+    //    if (model.domains.find(domain_id_) == model.domains.end()) return;
+
+    //    for( auto it_: model.domains )
+    //        removeRegionFromDomain1( it_.first, domain_id_ );
+
+    //    model.domains.erase( domain_id_ );
 }
 
 
 std::vector< std::size_t > Controller::getDomains()
 {
+
     std::vector< std::size_t > indexes_;
     std::vector<int> diff_;
 
@@ -1388,12 +1421,31 @@ std::vector< std::size_t > Controller::getDomains()
         addRegionToDomain1( id_, domain_id_ );
     }
 
-    for( auto it_: model.domains )
+    for( auto it_: model.domains1 )
     {
         indexes_.push_back( it_.first );
     }
 
     return indexes_;
+
+
+    //    std::vector< std::size_t > indexes_;
+    //    std::vector<int> diff_;
+
+    //    for( auto it_: model.regions )
+    //    {
+    //        std::size_t id_ = it_.first;
+    //        if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
+    //        std::size_t domain_id_ = createDomain1();
+    //        addRegionToDomain1( id_, domain_id_ );
+    //    }
+
+    //    for( auto it_: model.domains )
+    //    {
+    //        indexes_.push_back( it_.first );
+    //    }
+
+    //    return indexes_;
 }
 
 //=== old methods
@@ -1452,6 +1504,7 @@ void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_,
     reg_->getColor( red_, green_, blue_ );
 
 }
+
 
 void Controller::removeDomain(std::size_t domain_id_)
 {
@@ -1735,26 +1788,26 @@ void Controller::stopCreateBelow()
 // deprecated
 bool Controller::requestCreateRegion()
 {
-//    bool request_ = rules_processor.requestPreserveRegion()
+    //    bool request_ = rules_processor.requestPreserveRegion()
 
 
-//    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
+    //    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
 
-//    if( request_ == true )
-//    {
-//        std::cout << "Request create accepted" << std::endl << std::flush;
+    //    if( request_ == true )
+    //    {
+    //        std::cout << "Request create accepted" << std::endl << std::flush;
 
-//        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+    //        boundering_region = Settings::Objects::BounderingRegion::BELOW;
 
-//        for( std::size_t id_: selectable_objects )
-//        {
-//            ObjectPtr& obj_ = model.objects[ id_ ];
-//            obj_->setSelectable( true );
-//        }
+    //        for( std::size_t id_: selectable_objects )
+    //        {
+    //            ObjectPtr& obj_ = model.objects[ id_ ];
+    //            obj_->setSelectable( true );
+    //        }
 
-//    }
-//    else
-//        std::cout << "Request create denied" << std::endl << std::flush;
+    //    }
+    //    else
+    //        std::cout << "Request create denied" << std::endl << std::flush;
 
     return false;
 }
@@ -1764,15 +1817,15 @@ void Controller::stopCreateRegion()
 {
 
     std::cout << "Stop create region accepted" << std::endl << std::flush;
-//    rules_processor.stopDefineRegion();
+    //    rules_processor.stopDefineRegion();
 
     for( std::size_t id_: selectable_objects )
     {
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
-//    setObjectSelected( bottom_index, false );
-//    selectable_objects.clear();
+    //    setObjectSelected( bottom_index, false );
+    //    selectable_objects.clear();
 
 
 }
@@ -2035,13 +2088,13 @@ bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 
 bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 {
-     std::size_t index_ = 0;
+    std::size_t index_ = 0;
 
-     bool status_ = rules_processor.preserveBelowIsActive();
-     if( status_ == false ) return false;
+    bool status_ = rules_processor.preserveBelowIsActive();
+    if( status_ == false ) return false;
 
-     getUpperBoundering( boundary_ );
-     return true;
+    getUpperBoundering( boundary_ );
+    return true;
 
 }
 
@@ -2078,7 +2131,7 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
     }
 
     else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-{
+    {
         rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
 
     }
@@ -2192,7 +2245,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     QJsonArray domains_array_;
     for( auto it_: model.domains )
     {
-        const Domain& dom_ = it_.second;
+        const Domains& dom_ = it_.second;
 
         QJsonArray regions_set_array_;
         for( auto itd_: dom_.regions_set )
@@ -2221,7 +2274,6 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
     init();
 
 
-
     bool status_ = rules_processor.loadFile( filename );
 
     if( status_ == false )
@@ -2237,7 +2289,7 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
 void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
 
-//    init();
+    //    init();
 
     double ox, oy, oz;
     double width, height, depth;
@@ -2278,8 +2330,8 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     else
         loadObjectMetaDatas( load_file );
 
-//    addObject();
-//    updateModel();
+    //    addObject();
+    //    updateModel();
 
 }
 
@@ -2415,7 +2467,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
             std::size_t id_ = static_cast< std::size_t>( domain_["index"].toInt() );
             if( ( domain_.contains( "regions" ) == false ) ||
-                ( domain_["regions"].isArray()  == false ) ) return;
+                    ( domain_["regions"].isArray()  == false ) ) return;
 
             std::size_t index_ = createDomain1();
 
@@ -2554,25 +2606,25 @@ std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >&
     rules_processor.getRegionsForSimulationTetrahedralMesh( points, elements_, regions_ );
 
     //std::set<int> domains_set_;
-	std::vector< int > domains_( regions_.size() );
-	std::size_t id_;
+    std::vector< int > domains_( regions_.size() );
+    std::size_t id_;
     
-	//for( auto it: regions_ ) 
-	for ( std::size_t i = 0; i < regions_.size(); ++i )
+    //for( auto it: regions_ )
+    for ( std::size_t i = 0; i < regions_.size(); ++i )
     {
-        //std::size_t id_; // every time a variable is created space must be allocated in the stack, 
-						   // move all vars to outside loops if possible for efficiency
+        //std::size_t id_; // every time a variable is created space must be allocated in the stack,
+        // move all vars to outside loops if possible for efficiency
 
         RegionsPtr reg_ = model.regions[ regions_[i] ];
-		if (reg_->getDomain(id_) == false)
-		{
-			domains_[i] = -1;
-		}
-		else
-		{
-			//domains_set_.insert( id_ );
-			domains_[i] = id_;
-		}
+        if (reg_->getDomain(id_) == false)
+        {
+            domains_[i] = -1;
+        }
+        else
+        {
+            //domains_set_.insert( id_ );
+            domains_[i] = id_;
+        }
     }
 
     //std::vector< int > domains_;
