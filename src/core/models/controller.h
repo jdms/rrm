@@ -42,6 +42,7 @@
 #include "./apps/3dview/scene3d.h"
 #include "crosssection.h"
 #include "regions.h"
+#include "domain.h"
 #include "rules_processor.hpp"
 
 
@@ -203,6 +204,11 @@ class Controller
 
 
         void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+
+        void setDomainName( std::size_t index_, const std::string& name_ );
+        void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
+
+
         void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
         void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
         std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
@@ -338,7 +344,8 @@ class Controller
 
             std::map< std::size_t, ObjectPtr > objects;
             std::map< std::size_t, RegionsPtr > regions;
-            std::map< std::size_t, Domain > domains;
+            std::map< std::size_t, Domains > domains;
+            std::map< std::size_t, Domain > domains1;
 
         } model;
 

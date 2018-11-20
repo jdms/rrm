@@ -42,6 +42,7 @@ void SketchingController::updateVolume()
     if( main_scene != nullptr )
     {
         main_scene->updateVolume();
+        main_scene->updateAxes();
     }
     if( topview_scene != nullptr )
     {

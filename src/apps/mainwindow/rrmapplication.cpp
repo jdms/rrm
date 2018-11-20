@@ -432,9 +432,20 @@ void RRMApplication::createDomain( std::size_t index_ )
 }
 
 
+void RRMApplication::setDomainName( std::size_t index_, const std::string& name_ )
+{
+    controller->setDomainName( index_, name_ );
+}
+
+void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
+{
+    controller->setDomainColor( index_, red_, green_, blue_ );
+}
+
+
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->addRegionToDomain( reg_id_, domain_id_ );
+    controller->addRegionToDomain1( reg_id_, domain_id_ );
 }
 
 

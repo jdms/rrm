@@ -82,16 +82,16 @@ RulesProcessor::RulesProcessor()
     setMediumResolution();
 }
 
-std::vector<size_t> RulesProcessor::filterActiveSurfaces( std::vector<std::size_t> &surface_ids )
+std::vector<std::size_t> RulesProcessor::getActiveSurfaces()
 {
     std::vector<size_t> active_surfaces = {};
+    auto surfaces = modeller_.getSurfacesIndices();
 
     std::vector<float> dummy_vlist;
     std::vector<size_t> dummy_flist;
 
-    for ( auto &sid : surface_ids )
+    for ( auto &sid : surfaces )
     {
-        dummy_flist.clear();
         getMesh(sid, dummy_vlist, dummy_flist);
         if ( dummy_flist.size() > 0 )
         {
@@ -102,12 +102,6 @@ std::vector<size_t> RulesProcessor::filterActiveSurfaces( std::vector<std::size_
     return active_surfaces;
 }
 
-std::vector<std::size_t> RulesProcessor::getActiveSurfaces()
-{
-    auto surface_ids = modeller_.getSurfacesIndices();
-
-    return filterActiveSurfaces(surface_ids);
-}
 std::vector<std::size_t> RulesProcessor::getSurfaces()
 {
     auto surfaces = modeller_.getSurfacesIndices();
@@ -115,17 +109,6 @@ std::vector<std::size_t> RulesProcessor::getSurfaces()
     return surfaces;
 }
 
-std::vector<std::size_t> RulesProcessor::getOrderedSurfaces()
-{
-    return modeller_.getOrderedSurfacesIndices();
-}
-
-std::vector<std::size_t> RulesProcessor::getOrderedActiveSurfaces()
-{
-    auto surfaces_ids = modeller_.getOrderedSurfacesIndices();
-
-    return filterActiveSurfaces(surfaces_ids);
-}
 
 std::size_t RulesProcessor::getWidthResolution() const
 {
@@ -1814,21 +1797,11 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
     }
 
     /* auto sids = modeller_.getOrderedSurfacesIndices(); */
-    auto sids = getOrderedSurfaces();
-    std::cout << "\n Ordered surfaces' ids in RulesProcessor: ";
-    for ( auto sid : sids )
-    {
-        std::cout << sid << " ";
-    }
-    std::cout << "\n\n" << std::flush;
-
-    /* auto active_sids = filterActiveSurfaces(sids); */
-    auto active_sids = getOrderedActiveSurfaces();
-    std::cout << "\n Ordered active surfaces' ids in RulesProcessor: ";
-    for ( auto sid : active_sids )
-    {
-        std::cout << sid << " ";
-    }
+    /* std::cout << "\n Ordered surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : sids ) */
+    /* { */
+    /*     std::cout << sid << " "; */
+    /* } */
     std::cout << "\n\n\n" << std::flush;
 
     return success;
@@ -1902,10 +1875,11 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     /* diagnostics_width_discretization_ = 16; */ 
     /* diagnostics_length_discretization_ = 16; */ 
 
+    // I would suggest to not reduce the values of max_width_disc and max_length_disc
     auto adaptDiscretization = [] ( 
             double model_width, double model_length, 
             size_t &output_width_disc, size_t &output_length_disc, 
-            size_t max_width_disc /*= 16*/, size_t max_length_disc /*= 16*/ ) -> bool 
+            size_t max_width_disc = 16, size_t max_length_disc = 16 ) -> bool 
     {
 
 
@@ -1953,7 +1927,6 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     double model_width, model_length, height;
     getLenght(model_width, height, model_length );
 
-    // I would suggest to not reduce the values of max_width_disc and max_length_disc
     size_t max_width_disc = 16, max_length_disc = 16;
 
     adaptDiscretization(model_width, model_length,

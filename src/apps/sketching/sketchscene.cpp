@@ -933,6 +933,14 @@ void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
     update();
 }
 
+void SketchScene::updateAxes()
+{
+    if( volume1 == nullptr ) return;
+    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+    axes.updateVerticalExaggeration( 1.0, volume_->getHeight() );
+    update();
+}
+
 ///================================================================================
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
