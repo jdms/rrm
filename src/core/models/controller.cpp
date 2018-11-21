@@ -184,23 +184,28 @@ void Controller::createMainCrossSection()
 {
     csection = std::make_shared<CrossSection>();
     csection->setVolume( model.volume );
-    csection->setDirection( Settings::CrossSection::CrossSectionDirections::Z );
+    csection->setDirection(     Settings::CrossSection::CrossSectionDirections::Z );
     csection->setDepth( model.volume->getLenght() );
 }
 
 
 void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
+    current_direction = dir_;
+
+    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+    {
+        moveTopViewCrossSection( model.volume->getHeight() );
+//        topview->setDepth( model.volume->getHeight() );
+        return;
+    }
+
+
     csection->setDirection( dir_ );
 
     if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         csection->setDepth( model.volume->getWidth() );
-    }
-
-    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
-    {
-        csection->setDepth( model.volume->getHeight() );
     }
 
     else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -216,6 +221,33 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
     }
 
     updateModel();
+
+
+//    csection->setDirection( dir_ );
+
+//    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        csection->setDepth( model.volume->getWidth() );
+//    }
+
+//    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
+//    {
+//        csection->setDepth( model.volume->getHeight() );
+//    }
+
+//    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        csection->setDepth( model.volume->getLenght() );
+//    }
+
+//    for( auto it_: model.objects )
+//    {
+//        ObjectPtr obj_ = it_.second;
+//        if( obj_->isDone() == true )
+//            obj_->removeCrossSectionCurves();
+//    }
+
+//    updateModel();
 }
 
 
@@ -711,7 +743,8 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     ObjectPtr& obj_ = model.objects[ current_object ];
 
     Curve2D curve_proc_;
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] );
         //        curve_proc_
@@ -970,15 +1003,26 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
     }
 
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
     }
+
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
+//    }
+
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
+//    }
 
     if( has_curve_ == false )
     {
@@ -999,7 +1043,8 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 void Controller::updateObjectCurves( const std::size_t& index_ )
 {
 
-    Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
+//    Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
+    Settings::CrossSection::CrossSectionDirections dir_ = current_direction;
 
     updateObjectCurveInCrossSection( index_, csection->getDepth() );
 
@@ -1056,7 +1101,8 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     {
         PolyCurve traj_ = PolyCurve( trajectory_ );
 
-        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
+//        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
+        if( current_direction != Settings::CrossSection::CrossSectionDirections::Y )
         {
             //            if( csection->getDirection() != obj_->getCrossSectionDirection() )
             //                traj_ = PolyCurve( traj_.getPointsSwapped() );
@@ -1151,15 +1197,27 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     std::vector<size_t> edges_lower_;
 
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
     }
 
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
     }
+
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+//    }
+
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
+//    }
 
 
 
@@ -1569,11 +1627,17 @@ void Controller::setVolumeDiscretization()
 
 std::size_t Controller::getCurrentDiscretization() const
 {
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         return rules_processor.getWidthResolution();
     }
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Y )
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        return rules_processor.getWidthResolution();
+//    }
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
         return 100;
     }
@@ -1592,17 +1656,27 @@ void Controller::getCurrentRange( double& min_, double& max_ ) const
 
     model.volume->getGeometry( ox_, oy_, oz_, width_, height_, lenght_ );
 
-
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         min_ = ox_;
         max_ = ox_ + width_;
     }
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Y )
     {
         min_ = oy_;
         max_ = oy_ + height_;
     }
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        min_ = ox_;
+//        max_ = ox_ + width_;
+//    }
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+//    {
+//        min_ = oy_;
+//        max_ = oy_ + height_;
+//    }
 
     else
     {
@@ -2105,14 +2179,23 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
     }
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+//    }
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+//    }
 
     boundary_.fromVector( vertices_, edges_ );
 }
@@ -2124,17 +2207,30 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
-    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
 
     }
 
-    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
 
     }
+
+
+//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+//    {
+//        rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
+
+//    }
+
+//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
+//    {
+//        rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
+
+//    }
 
     boundary_.fromVector( vertices_, edges_ );
 }

@@ -300,6 +300,9 @@ class Controller
 
         std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
 
+        inline Settings::CrossSection::CrossSectionDirections getCurrentDirection() const
+        { return current_direction; }
+
     protected:
 
 
@@ -333,6 +336,7 @@ class Controller
         std::size_t bottom_index;
 
 
+        Settings::CrossSection::CrossSectionDirections current_direction = Settings::CrossSection::CrossSectionDirections::Z;
 
         struct Model
         {
