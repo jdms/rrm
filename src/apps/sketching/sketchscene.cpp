@@ -933,6 +933,7 @@ void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
     update();
 }
 
+
 void SketchScene::updateAxes()
 {
     if( volume1 == nullptr ) return;
