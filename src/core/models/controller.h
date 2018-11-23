@@ -169,6 +169,7 @@ class Controller
         void updateCrossSectionsY();
         void updateCrossSectionsZ();
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
+        void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
         void defineRegions();

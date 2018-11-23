@@ -11,14 +11,14 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
     raw = raw_;
     csection_direction = dir_;
     csection_depth = depth_;
-
+    
     int r_, g_, b_;
     raw->getColor( r_, g_, b_ );
-
+    
     setColor( r_, g_, b_ );
     setStyle( Qt::PenStyle::DotLine );
     updateCurve();
-
+    
 }
 
 
@@ -61,7 +61,7 @@ void StratigraphyItem::updateCurve()
     if( raw == nullptr ) return;
     if( raw->isDone() )
         resetToDefaultStyle();
-
+    
     if( raw->isSelectable() == true )
         setColor( 255, 255, 0 );
     else
@@ -70,7 +70,13 @@ void StratigraphyItem::updateCurve()
         raw->getColor( r_, g_, b_ );
         setColor( r_, g_, b_ );
     }
+
     prepareGeometryChange();
+    curve = QPainterPath();
+
+    if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+        if( raw->isActive() == false ) return;
+
     setCurve( raw->getCurve( csection_depth ) );
 
     QGraphicsPathItem::update();
@@ -84,25 +90,29 @@ std::size_t StratigraphyItem::getIndex() const
 
 void StratigraphyItem::updateLevelCurves()
 {
-
+    
     if( raw == nullptr ) return;
     if( raw->isDone() )
         resetToDefaultStyle();
-
+    
     int r_, g_, b_;
     raw->getColor( r_, g_, b_ );
     setColor( r_, g_, b_ );
-
-
+    
+    
     prepareGeometryChange();
     if( raw->getCrossSectionDirection() != Settings::CrossSection::CrossSectionDirections::Y ) return;
+
+    //    curve = QPainterPath();
+
+    //    if( raw->isActive() == false ) return;
 
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
         setCurves( raw->getCurves(), true );
     else
         setCurves( raw->getCurves() );
-
-
+    
+    
 }
 
 
@@ -111,15 +121,15 @@ void StratigraphyItem::updateTrajectory()
     if( raw == nullptr ) return;
     if( raw->isDone() )
         resetToDefaultStyle();
-
+    
     int r_, g_, b_;
     raw->getColor( r_, g_, b_ );
     setColor( r_, g_, b_ );
-
-
+    
+    
     if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
     prepareGeometryChange();
-
+    
     setCurve( raw->getTrajectory() );
 }
 
@@ -128,7 +138,7 @@ void StratigraphyItem::clear()
 {
     csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
     csection_depth = 0.0;
-
+    
     raw.reset();
     CurveItem::clear();
 }
