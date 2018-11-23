@@ -17,6 +17,7 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 
 
 set( MODELS_HEADERS       controller.h
+                          domain.h
                           object.h
                           regions.h
                           volume.h
@@ -33,6 +34,7 @@ set( MODELS_HEADERS       controller.h
                           )
 
 set( MODELS_SOURCES       controller.cpp
+                          domain.cpp
                           object.cpp
                           regions.cpp
                           volume.cpp

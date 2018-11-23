@@ -100,6 +100,19 @@ QRectF CoordinateAxes2d::boundingRect() const
      QPointF tail = QPointF( -15, -15 );
 
      int discX = 10;
+
+     if( axisx_length < 150 )
+         discX = 1;
+
+     else if( axisx_length < 300 )
+         discX = 3;
+
+     else if( axisx_length < 500 )
+         discX = 7;
+
+     else if( axisx_length > 700 )
+         discX += static_cast< int >(discX*0.7 );
+
      double stepX = static_cast< double >( axisx_length/ discX );
 
 
@@ -119,9 +132,10 @@ QRectF CoordinateAxes2d::boundingRect() const
          if( value > 0 )
             dez = log10( value );
 
+         QString value1_ = QString::number( value, 'f', 1);
          p->drawLine( value , tail.y() - 3, value , tail.y() + 3 );
          p->scale( 1, scale );
-         p->drawText( QPointF( value - dez*0.1*stepX, scale*tail.y() - scale*18 ), QString( "%1" ).arg( value ) );
+         p->drawText( QPointF( value - dez*0.1*stepX, scale*tail.y() - scale*18 ), QString( "%1" ).arg( value1_ ) );
          p->scale( 1, scale );
     }
 
@@ -134,6 +148,20 @@ QRectF CoordinateAxes2d::boundingRect() const
      QPointF tail = QPointF( -15, -15 );
 
      int discY = 10;
+
+     if( axisy_length < 150 )
+         discY = 1;
+
+     else if( axisy_length < 300 )
+         discY = 3;
+
+     else if( axisy_length < 500 )
+         discY = 7;
+
+     else if( axisy_length > 700 )
+         discY += static_cast< int >(discY*0.7 );
+
+
      double stepY = static_cast< double >( axisy_length/ discY );
 
 
@@ -152,10 +180,11 @@ QRectF CoordinateAxes2d::boundingRect() const
             dez = log10( value );
          p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
 
+         QString value1_ = QString::number( value, 'f', 1);
 
          p->rotate( -scale*90 );
          p->scale( 1, scale );
-         p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), QString( "%1" ).arg( value ) );
+         p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), QString( "%1" ).arg( value1_ ) );
          p->scale( 1, scale );
          p->rotate( scale*90 );
      }

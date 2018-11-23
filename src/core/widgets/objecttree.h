@@ -171,6 +171,8 @@ class ObjectTree: public QTreeWidget
         void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
 
+        void setDomainName( std::size_t index_, const std::string& name_ );
+        void setDomainColor( std::size_t index_, const QColor& color_ );
 
 
     private:

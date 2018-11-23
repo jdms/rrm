@@ -125,10 +125,12 @@ public slots:
 
     void createDomain( std::size_t index_ );
 
+    void setDomainName( std::size_t index_, const std::string& name_ );
+    void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
+
     void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
     void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
     void removeDomain( std::size_t index_ );
-
 
     void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
     void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );

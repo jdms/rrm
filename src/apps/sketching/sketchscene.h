@@ -103,6 +103,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void clearScene();
 
 
+
     public slots:
 
         void cancelSketch();
@@ -157,6 +158,8 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
         void resetVerticalExaggerationInAxes( QMatrix matrix_ );
+
+        void updateAxes();
 
    signals:
 

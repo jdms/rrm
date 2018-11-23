@@ -428,7 +428,10 @@ void MainWindow::createObjectTree()
         app->setRegionColor( index_, c_.red(), c_.green(), c_.blue() );
     } );
 
-
+    connect( object_tree, &ObjectTree::setDomainName, [=]( std::size_t index_, const std::string& name_ )
+    {
+        app->setDomainName( index_, name_ );
+    } );
 
     connect( object_tree, &ObjectTree::createDomainOfRegions, [=]( std::size_t index_ )
     {

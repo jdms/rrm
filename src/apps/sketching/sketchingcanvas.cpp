@@ -37,8 +37,6 @@ const std::shared_ptr< SketchScene >& SketchingCanvas::getScene() const
 
 void SketchingCanvas::setVerticalExaggeration( double scale_ )
 {
-     QMatrix old_matrix_ = matrix();
-
     v_exag = scale_;
     QMatrix matrix_;
     matrix_.scale( 1.0, -1*scale_ );
@@ -60,10 +58,7 @@ void SketchingCanvas::stopVerticalExaggeration()
 
     QMatrix matrix_ = matrix();
     setVerticalExaggeration( 1.0 );
-
-
     setMatrix( matrix_ );
-
     scene->resetVerticalExaggerationInAxes( matrix_ );
 }
 
