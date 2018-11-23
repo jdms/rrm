@@ -368,6 +368,7 @@ void RRMApplication::createObjectSurface()
     emit addObject( controller->getCurrentObject() );
     defineRandomColor();
     emit unlockDirections();
+    emit updateMainCrossSection();
 
 }
 
