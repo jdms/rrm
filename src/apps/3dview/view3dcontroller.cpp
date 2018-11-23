@@ -30,6 +30,7 @@ void View3dController::init()
 void View3dController::setupScene()
 {
 
+    //TODO: probably y-plane is not showing. Fix that!
     const CrossSectionPtr& csection_ = controller->getMainCrossSection();
 
     VolumePtr volume_ = csection_->getVolume();

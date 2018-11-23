@@ -124,8 +124,9 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
+    setDiscretization( controller->getCurrentDirection() );
 
 }
 
@@ -135,7 +136,8 @@ void RRMApplication::setVolumeWidth( double width_ )
     controller->setVolumeWidth( width_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+    setDiscretization( controller->getCurrentDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -144,7 +146,8 @@ void RRMApplication::setVolumeHeight( double height_ )
     controller->setVolumeHeight( height_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+    setDiscretization( controller->getCurrentDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -153,7 +156,8 @@ void RRMApplication::setVolumeDepth( double lenght_ )
     controller->setVolumeLenght( lenght_ );
     emit updateVolume();
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+    setDiscretization( controller->getCurrentDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -173,7 +177,8 @@ void RRMApplication::setDiscretization( const Settings::CrossSection::CrossSecti
 
 void RRMApplication::moveMainCrossSection( double depth_ )
 {
-    if( controller->getMainCrossSection()->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+//    if( controller->getMainCrossSection()->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
+    if( controller->getCurrentDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
         controller->moveTopViewCrossSection( depth_ );
         emit updateTopViewCrossSection();
@@ -205,15 +210,19 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
 
 void RRMApplication::addFixedCrossSection( double depth_, QColor color_ )
 {
-    controller->addCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
-    emit addFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
+//    controller->addCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
+    controller->addCrossSection( controller->getCurrentDirection(), depth_ );
+    emit addFixedCrossSectionWindow( controller->getCurrentDirection(), depth_/*, color_*/ );
+//    emit addFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
 }
 
 
 void RRMApplication::removeFixedCrossSection( double depth_ )
 {
-    controller->removeCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
-    emit removeFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
+    controller->removeCrossSection( controller->getCurrentDirection(), depth_ );
+//    controller->removeCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
+    emit removeFixedCrossSectionWindow( controller->getCurrentDirection(), depth_/*, color_*/ );
+//    emit removeFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
 }
 
 
@@ -304,7 +313,9 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
 void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 {
-    if( controller->getMainCrossSection()->getDirection() ==
+//    if( controller->getMainCrossSection()->getDirection() ==
+//            Settings::CrossSection::CrossSectionDirections::Y )
+    if( controller->getCurrentDirection() ==
             Settings::CrossSection::CrossSectionDirections::Y )
     {
         addCurveToObject( curve_, Settings::CrossSection::CrossSectionDirections::Y, 0.0 );
@@ -357,6 +368,7 @@ void RRMApplication::createObjectSurface()
     emit addObject( controller->getCurrentObject() );
     defineRandomColor();
     emit unlockDirections();
+    emit updateMainCrossSection();
 
 }
 
@@ -432,9 +444,20 @@ void RRMApplication::createDomain( std::size_t index_ )
 }
 
 
+void RRMApplication::setDomainName( std::size_t index_, const std::string& name_ )
+{
+    controller->setDomainName( index_, name_ );
+}
+
+void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
+{
+    controller->setDomainColor( index_, red_, green_, blue_ );
+}
+
+
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->addRegionToDomain( reg_id_, domain_id_ );
+    controller->addRegionToDomain1( reg_id_, domain_id_ );
 }
 
 
@@ -752,7 +775,8 @@ void RRMApplication::load( const std::string& filename_ )
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit disableVolumeResizing();
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+    setDiscretization( controller->getCurrentDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
     emit updateVolume();
     emit updateObjects();
@@ -849,7 +873,8 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
     else if( resolution_.compare( "LOW" ) == 0 )
         controller->setMeshResolution( Controller::MeshResolution::LOW );
 
-    setDiscretization( controller->getMainCrossSection()->getDirection() );
+    setDiscretization( controller->getCurrentDirection() );
+//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
 }
 

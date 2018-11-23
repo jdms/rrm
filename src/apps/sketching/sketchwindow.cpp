@@ -754,6 +754,7 @@ void SketchWindow::screenshot()
 void SketchWindow::reset()
 {
 
+    resetVerticalExaggeration();
     removeAllCanvas();
     disableResizeVolume( false );
 
