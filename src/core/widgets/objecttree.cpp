@@ -36,6 +36,8 @@ ObjectTree::ObjectTree( QWidget *parent )
     setAcceptDrops( true );
     setMouseTracking( true );
 
+    setColumnHidden( COLUMNS_NUMBER, true );
+
 
     createMenu();
 
@@ -740,6 +742,8 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ )
 {
 
+    ObjectTreeItem* domain_ = domains.getElement( index_ );
+
     for( auto it: regions_ )
     {
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( regions.getElement( it ) );
@@ -751,9 +755,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
         reg_->setIndex( obj_->getIndex() );
         reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
-        ObjectTreeItem* domain_ = domains.getElement( index_ );
         domain_->addChild( reg_ );
-//        domain_->insertChild( obj_->getIndex(), reg_ );
 
 
         connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
@@ -772,6 +774,14 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
         } );
 
     }
+
+
+
+    int ind_ = label_domains->indexOfChild( domain_ );
+    ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
+    domain_tree_->setText( COLUMN_DETAILS , QString( "xxx%1" ).arg(  *(regions_.begin() ) ));
+
+    label_domains->sortChildren( COLUMN_DETAILS, Qt::AscendingOrder );
 }
 
 
@@ -1219,6 +1229,38 @@ void ObjectTree::removeDomains()
 
 
 }
+
+
+void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
+{
+
+    int nstratigraphies_ = label_stratigraphy->childCount();
+    if( nstratigraphies_ != indexes_.size() ) return;
+
+    for( int i = 0; i < nstratigraphies_; ++i )
+    {
+        std::size_t index_ = indexes_[ i ];
+        ObjectTreeItem*& obj_ = stratigraphies.getElement( index_ );
+        if( obj_ == nullptr ) continue;
+
+        int ind_ = label_stratigraphy->indexOfChild( obj_ );
+        std::cout << "Tree Index: " << ind_ << std::endl << std::flush;
+
+        ObjectTreeItem* obj_tree_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( ind_ ) );
+        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i ) );
+
+    }
+
+    label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::AscendingOrder );
+
+
+}
+
+
+//void ObjectTree::sortRegions()
+//{
+
+//}
 
 
 void ObjectTree::clearSubMenu()
