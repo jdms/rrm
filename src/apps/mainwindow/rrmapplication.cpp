@@ -386,7 +386,8 @@ void RRMApplication::getRegions( bool status_ )
         return;
     }
 
-    controller->defineRegions();
+    std::vector< std::size_t > surfaces_indexes_ = controller->defineRegions();
+    window->object_tree->sortStratigraphies( surfaces_indexes_ );
 
     window->object_tree->addOutputVolume();
     const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();

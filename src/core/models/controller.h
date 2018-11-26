@@ -172,7 +172,7 @@ class Controller
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
-        void defineRegions();
+        std::vector<std::size_t > defineRegions();
 
         void setRegionsVisible(bool status_);
         void setRegionVisible(std::size_t index_, bool status_);
