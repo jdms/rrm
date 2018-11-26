@@ -386,10 +386,16 @@ void RRMApplication::getRegions( bool status_ )
         return;
     }
 
-    std::vector< std::size_t > surfaces_indexes_ = controller->defineRegions();
-    window->object_tree->sortStratigraphies( surfaces_indexes_ );
 
+    std::vector< std::size_t > surfaces_indexes_ = controller->defineRegions();
+
+    window->object_tree->sortStratigraphies( surfaces_indexes_ );
     window->object_tree->addOutputVolume();
+
+    double total_volume_ = controller->getTotalVolume();
+    window->object_tree->setTotalVolume( total_volume_ );
+
+
     const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
     for( auto it: regions_ )
     {
@@ -397,9 +403,15 @@ void RRMApplication::getRegions( bool status_ )
 
         int r_, g_, b_;
         double volume_;
+        double perc_;
+
         reg_->getColor( r_, g_, b_ );
         volume_  = reg_->getVolume();
-        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_ );
+
+        if( total_volume_ != 0 )
+            perc_ = 100*volume_/total_volume_;
+
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_, perc_ );
 
         emit addRegionCrossSectionBoundary( reg_ );
     }
@@ -797,13 +809,25 @@ void RRMApplication::loadRegions()
 {
     window->object_tree->addOutputVolume();
     const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+
+    double total_volume_ = controller->getTotalVolume();
+    window->object_tree->setTotalVolume( total_volume_ );
+
     for( auto it: regions_ )
     {
         RegionsPtr & reg_ = (it.second);
 
         int r_, g_, b_;
         reg_->getColor( r_, g_, b_ );
-        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, reg_->getVolume() );
+
+        double volume_ = reg_->getVolume();
+        double perc_;
+
+        if( total_volume_ != 0 )
+            perc_ = 100*volume_/total_volume_;
+
+
+        window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_, perc_ );
 
         emit addRegionCrossSectionBoundary( reg_ );
     }

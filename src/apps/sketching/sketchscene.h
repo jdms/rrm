@@ -111,7 +111,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setSketchColor( const QColor& color_ );
         void endObject();
 
-        void setSketchingMode();
+        void setSketchingMode( bool status_ = true );
         void setResizingBoundaryMode( bool status_ );
         void setCreateRegionMode();
         void setOldSelectingStratigraphyMode( bool status_ );

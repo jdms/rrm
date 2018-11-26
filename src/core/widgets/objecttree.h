@@ -57,6 +57,8 @@ class ObjectTree: public QTreeWidget
         void hideInputVolume();
         void hideOutputVolume();
 
+        void setTotalVolume( double volume_ );
+
 
         void addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,
                         const std::string& name_,  const int& red_,
@@ -80,8 +82,8 @@ class ObjectTree: public QTreeWidget
         void removeStructurals();
 
 
-        void addRegion( std::size_t index_, const std::string& name_,  const int& red_,
-                        const int& green_,  const int& blue_, double volume_ );
+        void addRegion(std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_, double volume_ , double perc_ );
+
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
         void setRegionVisibility( std::size_t index_, bool status_ );
 
@@ -129,10 +131,14 @@ class ObjectTree: public QTreeWidget
 
         void sortStratigraphies( std::vector< std::size_t > indexes_ );
 
+        void sortDomains();
+
 
     protected slots:
 
         void filterAction( QTreeWidgetItem* item_, std::size_t column_ );
+        void clickAction( QTreeWidgetItem* item_, std::size_t column_ );
+
         void showMenu( const QPoint& pos_ );
 
         void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
@@ -201,6 +207,8 @@ class ObjectTree: public QTreeWidget
 
         std::map< std::size_t, QAction* > domain_actions_;
 
+        std::map< std::size_t, double > volume_regions;
+
 
         QMenu* mn_menu = nullptr;
         QMenu* mn_submenu = nullptr;
@@ -209,6 +217,7 @@ class ObjectTree: public QTreeWidget
         QAction* ac_removefrom_domain = nullptr;
         QAction* ac_addto_domain = nullptr;
 
+        bool is_perc = false;
 };
 
 #endif // OBJECTTREE_H

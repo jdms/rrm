@@ -481,8 +481,14 @@ void SketchScene::endObject()
 
 
 
-void SketchScene::setSketchingMode()
+void SketchScene::setSketchingMode( bool status_ )
 {
+    if( status_ == false )
+    {
+        current_interaction1 = UserInteraction1::NONE;
+        return;
+    }
+
     current_interaction1 = UserInteraction1::SKETCHING;
     sketch_enabled = true;
 

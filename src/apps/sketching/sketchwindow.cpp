@@ -346,6 +346,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
     setCentralWidget( topviewcanvas );
 
     tb_trajectory->setVisible( true );
+    tb_lateral_bar->setVisible( false );
 
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
