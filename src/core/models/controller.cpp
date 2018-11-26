@@ -1219,6 +1219,7 @@ std::vector<std::size_t > Controller::defineRegions()
     std::vector< double > volumes_;
     rules_processor.getRegionVolumeList( volumes_ );
 
+    double volume_sum_ = 0.0;
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
         Color color_;
@@ -1235,10 +1236,13 @@ std::vector<std::size_t > Controller::defineRegions()
         region_->setVolume( volumes_[ i ] );
         region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
 
+        volume_sum_ += volumes_[ i ];
 
         model.regions[region_->getIndex()] = region_;
         getRegionCrossSectionBoundary( i );
     }
+
+     model.volume->setVolume( volume_sum_ );
 
     std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
     return surfaces_indexes_;
