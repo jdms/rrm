@@ -127,6 +127,8 @@ class ObjectTree: public QTreeWidget
         void deleteDomain1( std::size_t index_ );
         void deleteDomains1();
 
+        void sortStratigraphies( std::vector< std::size_t > indexes_ );
+
 
     protected slots:
 
@@ -177,7 +179,7 @@ class ObjectTree: public QTreeWidget
 
     private:
 
-        const int COLUMNS_NUMBER = 4;
+        const int COLUMNS_NUMBER = 5;
         const int COLUMN_STATUS = 0;
         const int COLUMN_NAME = 1;
         const int COLUMN_COLOR = 2;

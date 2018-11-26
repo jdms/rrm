@@ -1198,7 +1198,7 @@ void Controller::updatePreviewSurface()
 ///
 
 
-void Controller::defineRegions()
+std::vector<std::size_t > Controller::defineRegions()
 {
     model.regions.clear();
 
@@ -1207,7 +1207,7 @@ void Controller::defineRegions()
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
-    if( status_ == false ) return;
+    if( status_ == false ) return std::vector<std::size_t >();
 
     double w_ = 0, h_ = 0,  l_ = 0;
     double ox_ = 0, oy_ = 0, oz_ = 0;
@@ -1240,7 +1240,8 @@ void Controller::defineRegions()
         getRegionCrossSectionBoundary( i );
     }
 
-
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
+    return surfaces_indexes_;
 }
 
 
