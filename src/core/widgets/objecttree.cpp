@@ -704,6 +704,8 @@ bool ObjectTree::getSelectedRegionsList( std::vector< std::size_t >& regions_,
 void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ )
 {
 
+    ObjectTreeItem* domain_ = domains.getElement( index_ );
+
     for( auto it: regions_ )
     {
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( regions.getElement( it ) );
@@ -715,7 +717,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
         reg_->setIndex( obj_->getIndex() );
         reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
-        ObjectTreeItem* domain_ = domains.getElement( index_ );
+
         domain_->addChild( reg_ );
 //        domain_->insertChild( obj_->getIndex(), reg_ );
 
@@ -736,6 +738,12 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
         } );
 
     }
+
+    int ind_ = label_domains->indexOfChild( domain_ );
+    ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
+    domain_tree_->setText( COLUMN_DETAILS , QString( "%1" ).arg(  *(regions_.begin() ) ));
+
+    label_domains->sortChildren( COLUMN_DETAILS, Qt::AscendingOrder );
 }
 
 
@@ -779,7 +787,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
 
     int ind_ = label_domains->indexOfChild( domain_ );
     ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-    domain_tree_->setText( COLUMN_DETAILS , QString( "xxx%1" ).arg(  *(regions_.begin() ) ));
+    domain_tree_->setText( COLUMN_DETAILS , QString( "%1" ).arg(  *(regions_.begin() ) ));
 
     label_domains->sortChildren( COLUMN_DETAILS, Qt::AscendingOrder );
 }
