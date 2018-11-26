@@ -26,6 +26,7 @@ class SketchingController
 
 
         void init();
+        void enableSketching( bool status_ );
 
 
         void updateVolume();
