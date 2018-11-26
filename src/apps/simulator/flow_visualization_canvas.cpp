@@ -393,9 +393,9 @@ void FlowVisualizationCanvas::keyPressEvent(QKeyEvent *event)
 
 void FlowVisualizationCanvas::initializeShader()
 {
-    background = new Tucano::Shader("BackGround", (current_directory + "Shaders/DummyQuad.vert"),
-        (current_directory + "Shaders/DummyQuad.frag"),
-        (current_directory + "Shaders/DummyQuad.geom"), "", "");
+    background = new Tucano::Shader("BackGround", (current_directory + "shaders/DummyQuad.vert"),
+        (current_directory + "shaders/DummyQuad.frag"),
+        (current_directory + "shaders/DummyQuad.geom"), "", "");
     background->initialize();
 
 
