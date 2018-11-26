@@ -301,13 +301,15 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
 
 
+    connect( window->app, &RRMApplication::addRegions, [=](){ scontroller->enableSketching( false );  } );
+
     connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
 
     connect( window->app, &RRMApplication::updateRegions, [=](){ scontroller->updateRegions();  } );
 
 
-    connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions();  } );
+    connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions(); scontroller->enableSketching( true ); } );
 
 
     connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );

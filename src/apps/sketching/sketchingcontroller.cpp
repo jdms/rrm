@@ -37,6 +37,12 @@ void SketchingController::init()
 }
 
 
+void SketchingController::enableSketching( bool status_ )
+{
+    main_scene->setSketchingMode( status_ );
+    topview_scene->setSketchingMode( status_ );
+}
+
 void SketchingController::updateVolume()
 {
     if( main_scene != nullptr )
@@ -409,7 +415,10 @@ void SketchingController::clearRegions()
 
     if( main_scene != nullptr )
         main_scene->clearRegions();
+
+
 }
+
 
 void SketchingController::updateRegions()
 {
@@ -441,6 +450,7 @@ void SketchingController::updateRegions()
 ////     the same for regions and wells
 
 }
+
 
 void SketchingController::setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
@@ -482,6 +492,7 @@ void SketchingController::getGuidedExtrusionPoint( float& px_, float& py_, float
     }
 
 }
+
 
 void SketchingController::removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {

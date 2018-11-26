@@ -77,6 +77,10 @@ class Volume: public Object
         void getTopFace( std::vector< double >& vertices_ ) const;
         void getBottomFace( std::vector< double >& vertices_ ) const;
 
+        inline void setVolume( double volume_ ) { volume = volume_; }
+        inline double getVolume() const { return volume; }
+
+
         void clear() override;
 
 
@@ -100,6 +104,8 @@ protected:
     double width = DEFAULT_WIDTH;
     double height = DEFAULT_HEIGHT;
     double lenght = DEFAULT_LENGHT;
+
+    double volume = 0.0;
 
 };
 

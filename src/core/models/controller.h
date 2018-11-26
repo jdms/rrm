@@ -92,6 +92,8 @@ class Controller
         void setVolumeName( const std::string& name_ );
         void setVolumeVisibility( bool status_ );
 
+        inline double getTotalVolume() const { return model.volume->getVolume(); }
+
 
         void createMainCrossSection();
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
