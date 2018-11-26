@@ -2392,34 +2392,44 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     }
     metadatas["objects"] = objects_array_;
 
-    QJsonArray regions_array_;
-    for( auto it: model.regions )
+
+    if( model.regions.empty() != false )
     {
-        const RegionsPtr& reg_ = it.second;
-        QJsonObject region_;
-        reg_->write( region_ );
-        regions_array_.append( region_ );
+        QJsonArray regions_array_;
+        for( auto it: model.regions )
+        {
+            const RegionsPtr& reg_ = it.second;
+            QJsonObject region_;
+            reg_->write( region_ );
+            regions_array_.append( region_ );
+        }
+        metadatas["regions"] = regions_array_;
+
+
     }
-    metadatas["regions"] = regions_array_;
 
-
-    QJsonArray domains_array_;
-    for( auto it_: model.domains )
+    if( model.domains.empty() != false )
     {
-        const Domains& dom_ = it_.second;
 
-        QJsonArray regions_set_array_;
-        for( auto itd_: dom_.regions_set )
-            regions_set_array_.push_back( static_cast< int >( itd_ ) );
+        QJsonArray domains_array_;
+        for( auto it_: model.domains )
+        {
+            const Domains& dom_ = it_.second;
 
-        QJsonObject domain_;
-        domain_[ "index" ] = static_cast< int >( it_.first );
-        domain_[ "regions" ] = regions_set_array_;
+            QJsonArray regions_set_array_;
+            for( auto itd_: dom_.regions_set )
+                regions_set_array_.push_back( static_cast< int >( itd_ ) );
+
+            QJsonObject domain_;
+            domain_[ "index" ] = static_cast< int >( it_.first );
+            domain_[ "regions" ] = regions_set_array_;
 
 
-        domains_array_.append( domain_ );
+            domains_array_.append( domain_ );
+        }
+        metadatas["domains"] = domains_array_;
+
     }
-    metadatas["domains"] = domains_array_;
 
     QJsonDocument save_doc( metadatas );
     save_file.write( save_doc.toJson() );
@@ -2490,9 +2500,6 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     }
     else
         loadObjectMetaDatas( load_file );
-
-    //    addObject();
-    //    updateModel();
 
 }
 

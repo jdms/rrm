@@ -129,6 +129,8 @@ class ObjectTree: public QTreeWidget
 
         void sortStratigraphies( std::vector< std::size_t > indexes_ );
 
+        void sortDomains();
+
 
     protected slots:
 
