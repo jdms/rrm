@@ -42,6 +42,7 @@ ObjectTree::ObjectTree( QWidget *parent )
     createMenu();
 
     connect( this, &ObjectTree::itemChanged, this, &ObjectTree::filterAction );
+    connect( this, &ObjectTree::itemClicked, this, &ObjectTree::clickAction );
 
     label_stratigraphy = new QTreeWidgetItem();
     label_stratigraphy->setText( COLUMN_NAME, "STRATIGRAPHY" );
@@ -217,6 +218,8 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         {
             emit setRegionName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
+
+
     }
 
     else if( obj_->getType() == Settings::Objects::ObjectType::DOMAINS )
@@ -233,6 +236,68 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         {
             emit setDomainName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
+    }
+
+}
+
+
+void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
+{
+    ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
+    if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+    {
+        if( column_ == COLUMN_DETAILS )
+        {
+            is_perc = !is_perc;
+            double volume_ = volume_regions[ obj_->getIndex() ];
+
+            ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+            if( vol_ == nullptr ) return;
+
+            ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
+            if( vol1_ == nullptr ) return;
+
+            double total_ = 0.0;
+            for( auto it: volume_regions )
+            {
+                total_ += it.second;
+            }
+
+            if( total_ == 0 ) return;
+
+            int nchild_ = vol1_->childCount();
+
+            if( is_perc == false )
+            {
+                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'f', 1 ) );
+
+                for( int i = 0; i < nchild_; ++i )
+                {
+                    ObjectTreeItem* obj1_ = ( ObjectTreeItem* ) vol1_->child( i );
+                    if( obj1_ == nullptr ) continue;
+
+                    double volume1_ = volume_regions[ obj1_->getIndex() ];
+                    obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ) );
+                }
+            }
+            else
+            {
+                vol_->setText( COLUMN_DETAILS, QString( "100%" ) );
+
+                for( int i = 0; i < nchild_; ++i )
+                {
+                    ObjectTreeItem* obj1_ = ( ObjectTreeItem* ) vol1_->child( i );
+                    if( obj1_ == nullptr ) continue;
+
+                    double volume1_ = obj1_->text( COLUMN_DETAILS ).toDouble();
+                    double perc1_ = 100*( volume1_/total_ );
+                    obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                }
+
+            }
+
+        }
+
     }
 
 }
@@ -362,6 +427,32 @@ void ObjectTree::removeOutputVolume()
 }
 
 
+void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& status_ )
+{
+
+    bool is_visible_ = ( status_ == Qt::Checked? true:false );
+    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( index_ ) );
+
+    if( index_ == 0 )
+    {
+        label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
+        label_structural->setCheckState( COLUMN_STATUS, status_ );
+    }
+    emit setVolumeVisible( index_, is_visible_ );
+    update();
+
+}
+
+
+void ObjectTree::setTotalVolume( double volume_ )
+{
+    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+    vol_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ) );
+    update();
+}
+
+
+
 void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,
                             const std::string& name_,  const int& red_,
                             const int& green_,  const int& blue_ )
@@ -467,22 +558,6 @@ void ObjectTree::setObjectVisibility( std::size_t index_, bool status_ )
 }
 
 
-void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& status_ )
-{
-
-    bool is_visible_ = ( status_ == Qt::Checked? true:false );
-    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( index_ ) );
-
-    if( index_ == 0 )
-    {
-        label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
-        label_structural->setCheckState( COLUMN_STATUS, status_ );
-    }
-    emit setVolumeVisible( index_, is_visible_ );
-    update();
-
-}
-
 
 
 
@@ -511,18 +586,20 @@ void ObjectTree::setStructuralsVisible( const Qt::CheckState& status_ )
 
 
 void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_,
-                            double volume_ )
+                            double volume_, double perc_ )
 {
     ObjectTreeItem* region_ = new ObjectTreeItem();
     region_->setIndex( index_ );
     region_->setType( Settings::Objects::ObjectType::REGION );
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
-//    region_->setText( COLUMN_DETAILS, QString( "%1" ).arg( volume_ ) );
+    region_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ) );
 
 
     ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
     if( vol1_ == nullptr ) return;
+
+    volume_regions[ index_ ] = volume_;
 
     vol1_->addChild( region_ );
 
@@ -547,6 +624,34 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
             region1_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
         }
     } );
+
+
+//    connect( this, &ObjectTree::itemClicked, [=]( QTreeWidgetItem* item_, int column_ )
+//    {
+//        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
+//        if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+//        {
+//            if( column_ == COLUMN_DETAILS )
+//            {
+//                is_perc = !is_perc;
+//                double volume_ = volume_regions[ obj_->getIndex() ];
+
+//                if( is_perc == false )
+//                    obj_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ) );
+
+//                else
+//                {
+//                    ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
+//                    double total_ = vol_->text( COLUMN_DETAILS ).toDouble();
+//                    if( total_ == 0 ) return;
+//                    double perc_ = 100*( volume_/total_ );
+//                    obj_->setText( COLUMN_DETAILS, QString::number( perc_, 'f', 1 ) );
+//                }
+
+//            }
+
+//        }
+//     } );
 
 }
 
@@ -719,7 +824,6 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
 
         domain_->addChild( reg_ );
-//        domain_->insertChild( obj_->getIndex(), reg_ );
 
 
         connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
