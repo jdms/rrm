@@ -298,18 +298,38 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
     csection_->setDirection( dir_ );
     csection_->setDepth( depth_ );
 
+    ImageData image_;
+
     if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
+
+
+        if( images_csectionsX.find( depth_ ) != images_csectionsX.end() )
+        {
+            image_ = images_csectionsX[ depth_ ];
+            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+        }
+
         model.csectionsX[ depth_ ] = csection_;
     }
 
     else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
+        if( images_csectionsY.find( depth_ ) != images_csectionsY.end() )
+        {
+            image_ = images_csectionsY[ depth_ ];
+            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+        }
         model.csectionsY[ depth_ ] = csection_;
     }
 
     else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
+        if( images_csectionsZ.find( depth_ ) != images_csectionsZ.end() )
+        {
+            image_ = images_csectionsZ[ depth_ ];
+            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+        }
         model.csectionsZ[ depth_ ] = csection_;
     }
 
