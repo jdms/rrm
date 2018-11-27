@@ -229,6 +229,9 @@ void SketchScene::addImageToCrossSection( const QString& file_ )
 
 void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ )
 {
+
+    if( image == nullptr ) return;
+
     QPixmap image1;
     image1.load( QString( file_.c_str() ) );
 
@@ -243,6 +246,9 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
     image->setVisible( true );
     image->update();
 
+    if( volume1 != nullptr )
+        image->setZValue( volume1->zValue() + 1 );
+
     if( dipangle->isVisible() == true )
         dipangle->setZValue( image->zValue() + 1 );
 
@@ -251,6 +257,7 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
 
 void SketchScene::removeImageInCrossSection()
 {
+    if( image == nullptr ) return;
     image->setVisible( false );
 //    emit removeImageFromCrossSection( csection_direction, csection_depth );
     update();
@@ -259,6 +266,7 @@ void SketchScene::removeImageInCrossSection()
 
 void SketchScene::removeImageInCrossSectionAndUpdate()
 {
+    if( image == nullptr ) return;
     image->setVisible( false );
     emit removeImageFromCrossSection( csection_direction, csection_depth );
     update();
@@ -267,6 +275,7 @@ void SketchScene::removeImageInCrossSectionAndUpdate()
 
 void SketchScene::updateImageinCrossSection()
 {
+    if( image == nullptr ) return;
 
     QString file_ = image->getImagePath();
     QPointF origin_ = image->getOrigin();
