@@ -782,6 +782,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 {
 
     ObjectTreeItem* domain_ = domains.getElement( index_ );
+    int minor_ = domain_->text( COLUMNS_NUMBER ).toInt();
 
     for( auto it: regions_ )
     {
@@ -797,9 +798,14 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
         domain_->addChild( reg_ );
 
+        if( obj_->getIndex() <= minor_ )
+            minor_ = obj_->getIndex();
 
-        connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
+
+        connect( this, &ObjectTree::itemChanged, [=, &reg_]( QTreeWidgetItem* item_, int column_ )
         {
+
+            if( column_ != COLUMN_STATUS || column_ != COLUMN_NAME ) return;
             if( item_ == reg_ )
             {
                 obj_->setCheckState( COLUMN_STATUS, reg_->checkState( COLUMN_STATUS ) );
@@ -817,9 +823,9 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
     int ind_ = label_domains->indexOfChild( domain_ );
     ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-    domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  *(regions_.begin() ) ));
+    domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_ ) );
 
-    label_domains->sortChildren( COLUMNS_NUMBER, Qt::AscendingOrder );
+    label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 }
 
 
@@ -868,7 +874,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
     domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  minor_ ) );
 
 
-    label_domains->sortChildren( COLUMNS_NUMBER, Qt::AscendingOrder );
+    label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 }
 
 
@@ -964,17 +970,19 @@ void ObjectTree::deleteDomain1( std::size_t index_ )
     QList<QTreeWidgetItem *> items_ = selectedItems();
     if( items_.empty() == true ) return;
 
-    std::vector< std::size_t > regions_;
-    std::vector< std::size_t > parents_;
+
 
 
     for( auto it: items_ )
     {
+
         ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( it );
         if( domain_->getType() != Settings::Objects::ObjectType::DOMAINS ) continue;
 
-
         QList<QTreeWidgetItem *> children_domains_ = domain_->takeChildren();
+        std::vector< std::size_t > regions_;
+        std::vector< std::size_t > parents_;
+
         for( int i = 0; i < children_domains_.size(); ++i )
         {
             ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( children_domains_.first() );
@@ -983,7 +991,10 @@ void ObjectTree::deleteDomain1( std::size_t index_ )
             regions_.push_back( reg_->getIndex() );
             parents_.push_back( domain_->getIndex() );
 
+
         }
+
+        removeRegionsFromTheirDomains( regions_, parents_ );
 
 
         label_domains->removeChild( domain_ );
@@ -1001,9 +1012,10 @@ void ObjectTree::deleteDomain1( std::size_t index_ )
         delete domain_;
         domain_ = nullptr;
 
+
+
     }
 
-    removeRegionsFromTheirDomains( regions_, parents_ );
 
 
     if( label_domains->childCount() == 0 )
@@ -1040,7 +1052,7 @@ void ObjectTree::sortDomains()
 
     }
 
-    label_domains->sortChildren( COLUMNS_NUMBER, Qt::AscendingOrder );
+    label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 
 }
 
@@ -1378,7 +1390,7 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 
     }
 
-    label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::AscendingOrder );
+    label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
 
 
 }
