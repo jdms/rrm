@@ -25,6 +25,8 @@ class Domain: public Object
         void setRegions( const std::set< std::size_t >& regions_ );
         std::set< std::size_t > getRegions() const;
 
+        virtual void clear() override;
+
 
     protected:
 

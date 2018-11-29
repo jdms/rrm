@@ -26,6 +26,7 @@
 
 #include <vector>
 #include <set>
+#include <numeric>
 
 #include <QTreeWidget>
 #include <QMenu>
@@ -124,9 +125,12 @@ class ObjectTree: public QTreeWidget
         void addToDomain1( std::size_t index_ );
         void removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
                                            const std::vector< std::size_t >& parents_ );
+        void removeRegionsOfTheirDomainsNoDelete( const std::vector< std::size_t >& regions_,
+                                           const std::vector< std::size_t >& parents_ );
+
 
         void removeFromDomain1();
-        void deleteDomain1( std::size_t index_ );
+        void deleteDomain1( std::size_t index_ = std::numeric_limits<std::size_t>::max() );
         void deleteDomains1();
 
         void sortStratigraphies( std::vector< std::size_t > indexes_ );
@@ -169,7 +173,7 @@ class ObjectTree: public QTreeWidget
         void objectSelected( const Settings::Objects::ObjectType& type_ );
 
 
-        void createDomainOfRegions( std::size_t index_ );
+        void createDomainOfRegions();
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeDomain( std::size_t index_ );
@@ -177,6 +181,7 @@ class ObjectTree: public QTreeWidget
 
         void addRegionsToDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
         void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+        void removeRegionsFromTheirDomainsNoDelete( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
 
         void setDomainName( std::size_t index_, const std::string& name_ );
