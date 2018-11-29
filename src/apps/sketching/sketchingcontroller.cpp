@@ -61,8 +61,9 @@ void SketchingController::updateVolume()
 void SketchingController::createMainCrossSection()
 {
     CrossSectionPtr csection_ = controller->getMainCrossSection();
-    setObjectsToScene( csection_, main_scene );
     main_scene->init();
+    setObjectsToScene( csection_, main_scene );
+
 }
 
 
@@ -76,8 +77,9 @@ void SketchingController::updateMainCrossSection()
 void SketchingController::createTopViewCrossSection()
 {
     CrossSectionPtr csection_ = controller->getTopViewCrossSection();
-    setObjectsToScene( csection_, topview_scene );
     topview_scene->init();
+    setObjectsToScene( csection_, topview_scene );
+
 }
 
 
@@ -119,6 +121,21 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
     VolumePtr volume_ = csection_->getVolume();
     scene_->createVolume( volume_ );
 
+
+    if( csection_->hasImage() == false )
+    {
+        std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
+        scene_->removeImageInCrossSection();
+    }
+    else
+    {
+        std::string file_;
+        double ox_, oy_, w_, h_;
+        csection_->getImage( file_, ox_, oy_, w_, h_ );
+        scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
+    }
+
+
     std::map< std::size_t, ObjectPtr > objects_ = controller->getObjects();
     for( auto it: objects_ )
     {
@@ -126,6 +143,7 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
+    updateBoundering();
     // the same for regions and wells
 
 }

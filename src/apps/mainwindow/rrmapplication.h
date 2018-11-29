@@ -123,7 +123,7 @@ public slots:
 
 
 
-    void createDomain( std::size_t index_ );
+    void createDomain();
 
     void setDomainName( std::size_t index_, const std::string& name_ );
     void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -133,7 +133,7 @@ public slots:
     void removeDomain( std::size_t index_ );
 
     void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
-    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_ = true );
 
     std::vector< std::size_t > getDomains() const ;
 

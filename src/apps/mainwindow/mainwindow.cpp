@@ -433,9 +433,9 @@ void MainWindow::createObjectTree()
         app->setDomainName( index_, name_ );
     } );
 
-    connect( object_tree, &ObjectTree::createDomainOfRegions, [=]( std::size_t index_ )
+    connect( object_tree, &ObjectTree::createDomainOfRegions, [=]()
     {
-        app->createDomain( index_ );
+        app->createDomain();
     } );
 
     connect( object_tree, &ObjectTree::addRegionToDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )
@@ -465,8 +465,15 @@ void MainWindow::createObjectTree()
 
     connect( object_tree, &ObjectTree::removeRegionsFromTheirDomains, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
     {
-        app->removeRegionsFromDomains( regions_, domains_ );
+        app->removeRegionsFromDomains( regions_, domains_, true );
     } );
+
+
+
+    connect( object_tree, &ObjectTree::removeRegionsFromTheirDomainsNoDelete, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+        {
+            app->removeRegionsFromDomains( regions_, domains_, false );
+        } );
 
 
 }
