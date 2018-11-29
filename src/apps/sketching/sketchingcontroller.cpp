@@ -165,7 +165,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     if( csection_->hasImage() == false )
     {
-        std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
         scene_->removeImageInCrossSection();
     }
     else

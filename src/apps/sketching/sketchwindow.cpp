@@ -213,6 +213,11 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
 
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+
+
+
     return scene_;
 }
 
@@ -394,6 +399,8 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
+
+
     return scene_;
 }
 
@@ -471,6 +478,9 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+
     return scene_;
 }
 
@@ -513,6 +523,16 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+    }
+
+    if( fixed_csections_canvas == nullptr ) return;
+    CanvasContainer::Iterator it =  fixed_csections_canvas->begin();
+    while( it != fixed_csections_canvas->end() )
+    {
+        SketchingCanvas* canvas_ = static_cast< SketchingCanvas* >( fixed_csections_canvas->getElement( it->first ) );
+        const std::shared_ptr< SketchScene >&scene_ = canvas_->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+        ++it;
     }
 }
 
@@ -574,7 +594,6 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
-    std::cout << "ENTREIIIIII: " << v_exagg_ << std::endl << std::flush;
 
     count++;
 

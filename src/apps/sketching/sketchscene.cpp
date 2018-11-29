@@ -836,6 +836,7 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
     current_interaction1 =  UserInteraction1::NONE;
     dipangle->setImage( pix_ );
     dipangle->setVisible( true );
+    dipangle->setZValue( image->zValue() + 1 );
 
 }
 
@@ -1132,7 +1133,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
-//        removeSketchesOfSelection();
 
     }
 
