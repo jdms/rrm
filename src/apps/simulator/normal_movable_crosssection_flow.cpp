@@ -60,3 +60,8 @@ void NormalMovableCrossSectionFlow::clear()
     ui->edt_normalCoordY->clear();
     ui->edt_normalCoordZ->clear();
 }
+
+/* https://stackoverflow.com/questions/19866424/cmake-and-qt5-automoc-error */
+/* https://stackoverflow.com/questions/16472543/errors-in-generated-moc-files-for-qt5-from-cmake/16481750#16481750 */  
+/* https://cmake.org/cmake/help/v3.12/prop_tgt/AUTOMOC.html?highlight=automoc */
+#include "moc_normal_movable_crosssection_flow.cpp"
