@@ -36,6 +36,9 @@
       </item>
       <item row="0" column="2">
        <widget class="QSpinBox" name="sb_width_volume">
+        <property name="suffix">
+         <string> m</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -57,6 +60,9 @@
       </item>
       <item row="1" column="2">
        <widget class="QSpinBox" name="sb_height_volume">
+        <property name="suffix">
+         <string> m</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -78,6 +84,9 @@
       </item>
       <item row="2" column="2">
        <widget class="QSpinBox" name="sb_depth_volume">
+        <property name="suffix">
+         <string> m</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>

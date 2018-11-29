@@ -60,6 +60,10 @@ void RegionItem::updateBoundary()
     QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
     setPolygon( pol_ );
 
+    int r_, g_, b_;
+    raw->getColor( r_, g_, b_ );
+    setFillColor( r_, g_, b_ );
+
 }
 
 

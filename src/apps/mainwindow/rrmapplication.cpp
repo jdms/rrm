@@ -210,19 +210,15 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
 
 void RRMApplication::addFixedCrossSection( double depth_, QColor color_ )
 {
-//    controller->addCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
     controller->addCrossSection( controller->getCurrentDirection(), depth_ );
     emit addFixedCrossSectionWindow( controller->getCurrentDirection(), depth_/*, color_*/ );
-//    emit addFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
 }
 
 
 void RRMApplication::removeFixedCrossSection( double depth_ )
 {
     controller->removeCrossSection( controller->getCurrentDirection(), depth_ );
-//    controller->removeCrossSection( controller->getMainCrossSection()->getDirection(), depth_ );
     emit removeFixedCrossSectionWindow( controller->getCurrentDirection(), depth_/*, color_*/ );
-//    emit removeFixedCrossSectionWindow( controller->getMainCrossSection()->getDirection(), depth_/*, color_*/ );
 }
 
 

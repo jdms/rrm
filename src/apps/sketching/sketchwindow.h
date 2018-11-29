@@ -185,7 +185,7 @@ class SketchWindow: public QMainWindow
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
         QWidget* bar_ = nullptr;
-        QSlider/*RealFeaturedSlider*/* sl_vertical_exagg_ = nullptr;
+        QSlider* sl_vertical_exagg_ = nullptr;
         int nsteps_exagg = 100;
         double min_exagg = -1;
         double max_exagg = 4;

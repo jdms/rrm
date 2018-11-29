@@ -127,6 +127,7 @@ void SketchInterface::createSketchingActions()
          scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
      } );
 
+     connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
 
 //     connect( sketch_window, &SketchWindow::updatePointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 //     {
@@ -179,6 +180,8 @@ void SketchInterface::createSketchingActions()
 //        window->app->setGuidedExtrusion( px_, py_, pz_, curve_ );
     } );
 
+    connect( sketch_topview_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
+
 
     connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
 
@@ -206,7 +209,7 @@ void SketchInterface::createSketchingActions()
 
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
-    { sketch_window->removeAllCanvas();
+    {   sketch_window->removeAllCanvas();
         scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection();} );
 
 
