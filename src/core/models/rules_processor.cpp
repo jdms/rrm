@@ -1713,7 +1713,8 @@ bool RulesProcessor::saveFile( std::string filename )
 
 bool RulesProcessor::loadFile( std::string filename )
 {
-    bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
+//    bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
+bool status = modeller_.loadJSON(filename);
 
     if ( status )
     {

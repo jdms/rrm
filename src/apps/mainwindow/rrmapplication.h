@@ -133,7 +133,7 @@ public slots:
     void removeDomain( std::size_t index_ );
 
     void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
-    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+    void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_ = true );
 
     std::vector< std::size_t > getDomains() const ;
 

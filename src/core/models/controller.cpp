@@ -1429,9 +1429,9 @@ void Controller::removeRegions()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains )
-        (it.second).regions_set.clear();
-    model.domains.clear();
+    for( auto it: model.domains1 )
+        (it.second).clear();
+    model.domains1.clear();
     regions_in_domains.clear();
 }
 
@@ -1458,10 +1458,6 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
 
         ++id_;
     }
-
-
-
-    //    model.domains[ id_ ].regions_set =  std::set< std::size_t >();
 
     model.domains1[ id_ ] = Domain();
     for( auto it_: indexes_ )
@@ -1492,7 +1488,6 @@ bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_
     if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
 
     model.domains1[ domain_id_ ].addRegion( region_id_ );
-    //    model.domains[domain_id_].regions_set.insert(region_id_);
     regions_in_domains.insert( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
@@ -1509,7 +1504,6 @@ bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t dom
     if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
 
     model.domains1[domain_id_].removeRegion( region_id_ );
-    //    model.domains[domain_id_].regions_set.erase(region_id_);
     regions_in_domains.erase( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
@@ -1526,8 +1520,6 @@ std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_)
     const Domain& domain_ = model.domains1.at( domain_id_ );
     return domain_.getRegions();
 
-    //    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
-    //    return model.domains.at(domain_id_).regions_set;
 }
 
 
@@ -1540,14 +1532,6 @@ void Controller::removeDomain1(std::size_t domain_id_)
     domain_.clear();
 
     model.domains1.erase( domain_id_ );
-
-
-    //    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    //    for( auto it_: model.domains )
-    //        removeRegionFromDomain1( it_.first, domain_id_ );
-
-    //    model.domains.erase( domain_id_ );
 }
 
 
@@ -2429,16 +2413,17 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     }
 
-    if( model.domains.empty() != false )
+    if( model.domains1.empty() != false )
     {
 
         QJsonArray domains_array_;
-        for( auto it_: model.domains )
+        for( auto it_: model.domains1 )
         {
-            const Domains& dom_ = it_.second;
+            const Domain& dom_ = it_.second;
 
             QJsonArray regions_set_array_;
-            for( auto itd_: dom_.regions_set )
+            std::set< std::size_t > regions_ = dom_.getRegions();
+            for( auto itd_: regions_ )
                 regions_set_array_.push_back( static_cast< int >( itd_ ) );
 
             QJsonObject domain_;
@@ -2857,9 +2842,11 @@ void Controller::clear()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains )
-        (it.second).regions_set.clear();
-    model.domains.clear();
+    for( auto it: model.domains1 )
+    {
+        (it.second).clear();
+    }
+    model.domains1.clear();
     regions_in_domains.clear();
 
 

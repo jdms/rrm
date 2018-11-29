@@ -465,8 +465,15 @@ void MainWindow::createObjectTree()
 
     connect( object_tree, &ObjectTree::removeRegionsFromTheirDomains, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
     {
-        app->removeRegionsFromDomains( regions_, domains_ );
+        app->removeRegionsFromDomains( regions_, domains_, true );
     } );
+
+
+
+    connect( object_tree, &ObjectTree::removeRegionsFromTheirDomainsNoDelete, [=]( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+        {
+            app->removeRegionsFromDomains( regions_, domains_, false );
+        } );
 
 
 }

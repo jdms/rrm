@@ -505,7 +505,7 @@ void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< st
 }
 
 
-void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ )
+void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_  )
 {
     std::size_t nregions_ = regions_.size();
 
@@ -522,7 +522,10 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
         }
     }
 
-    window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+    if( delete_ == true )
+        window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+    else
+        window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
 
 }
 
