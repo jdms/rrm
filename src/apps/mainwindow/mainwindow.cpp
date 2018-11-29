@@ -433,9 +433,9 @@ void MainWindow::createObjectTree()
         app->setDomainName( index_, name_ );
     } );
 
-    connect( object_tree, &ObjectTree::createDomainOfRegions, [=]( std::size_t index_ )
+    connect( object_tree, &ObjectTree::createDomainOfRegions, [=]()
     {
-        app->createDomain( index_ );
+        app->createDomain();
     } );
 
     connect( object_tree, &ObjectTree::addRegionToDomain, [=]( std::size_t reg_id_, std::size_t domain_id_ )

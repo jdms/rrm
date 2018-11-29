@@ -123,7 +123,7 @@ public slots:
 
 
 
-    void createDomain( std::size_t index_ );
+    void createDomain();
 
     void setDomainName( std::size_t index_, const std::string& name_ );
     void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
