@@ -449,9 +449,8 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 
 
 
-void RRMApplication::createDomain( std::size_t index_ )
+void RRMApplication::createDomain()
 {
-//    controller->createDomain( index_ );
     std::size_t id_ = controller->createDomain1();
     window->object_tree->createDomain1( id_ );
 }
@@ -478,7 +477,7 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->removeRegionFromDomain( reg_id_, domain_id_ );
+    controller->removeRegionFromDomain1( reg_id_, domain_id_ );
 }
 
 
@@ -611,6 +610,7 @@ void RRMApplication::updateLowerBoundary()
 }
 
 
+// set domains when using flow diagnostics
 std::vector< std::size_t > RRMApplication::getDomains() const
 {
 

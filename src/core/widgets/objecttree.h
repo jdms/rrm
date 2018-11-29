@@ -25,6 +25,7 @@
 #define OBJECTTREE_H
 
 #include <set>
+#include <numeric>
 
 #include <QTreeWidget>
 #include <QMenu>
@@ -124,7 +125,7 @@ class ObjectTree: public QTreeWidget
                                            const std::vector< std::size_t >& parents_ );
 
         void removeFromDomain1();
-        void deleteDomain1( std::size_t index_ );
+        void deleteDomain1( std::size_t index_ = std::numeric_limits<std::size_t>::max() );
         void deleteDomains1();
 
         void sortStratigraphies( std::vector< std::size_t > indexes_ );
@@ -167,7 +168,7 @@ class ObjectTree: public QTreeWidget
         void objectSelected( const Settings::Objects::ObjectType& type_ );
 
 
-        void createDomainOfRegions( std::size_t index_ );
+        void createDomainOfRegions();
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
         void removeDomain( std::size_t index_ );

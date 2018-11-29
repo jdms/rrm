@@ -1432,6 +1432,7 @@ void Controller::removeRegions()
     for( auto it: model.domains )
         (it.second).regions_set.clear();
     model.domains.clear();
+    regions_in_domains.clear();
 }
 
 
