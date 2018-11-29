@@ -1112,6 +1112,7 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
     std::vector<bool> attrib;
     int num_attrib;
 
+    #pragma omp parallel for shared(attrib_list, points, attributes_map) private(attrib, num_attrib)
     for ( size_t i = 0; i < points.size(); ++i )
     {
         attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) );
