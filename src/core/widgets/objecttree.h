@@ -123,6 +123,9 @@ class ObjectTree: public QTreeWidget
         void addToDomain1( std::size_t index_ );
         void removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
                                            const std::vector< std::size_t >& parents_ );
+        void removeRegionsOfTheirDomainsNoDelete( const std::vector< std::size_t >& regions_,
+                                           const std::vector< std::size_t >& parents_ );
+
 
         void removeFromDomain1();
         void deleteDomain1( std::size_t index_ = std::numeric_limits<std::size_t>::max() );
@@ -176,6 +179,7 @@ class ObjectTree: public QTreeWidget
 
         void addRegionsToDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
         void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
+        void removeRegionsFromTheirDomainsNoDelete( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
 
 
         void setDomainName( std::size_t index_, const std::string& name_ );

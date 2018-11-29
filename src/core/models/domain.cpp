@@ -74,3 +74,9 @@ void Domain::initialize()
     setVisible( true );
     setColor( 255, 0, 0 );
 }
+
+void Domain::clear()
+{
+    index_regions.clear();
+    Object::clear();
+}
