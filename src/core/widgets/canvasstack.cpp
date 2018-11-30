@@ -25,6 +25,7 @@
 #include <QDockWidget>
 #include <QBitmap>
 #include <QStyleOptionDockWidget>
+#include <QLabel>
 #include <QAction>
 
 CanvasStack::CanvasStack( QWidget* parent ): QWidget( parent )
@@ -53,10 +54,9 @@ void CanvasStack::initialize()
 void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 {
 
-    DockWidget* dc = new DockWidget( this );
+    DockWidget* dc = new DockWidget( QString( "Canvas ").append( QString::number( id_, 'f', 1 ) ), this );
     dc->setAllowedAreas(Qt::AllDockWidgetAreas);
     dc->setGeometry( 100, 100, canvas_->rect().width(), canvas_->rect().height() );
-    dc->setWindowTitle( canvas_->windowTitle() );
     dc->setWidget( canvas_ );
     dc->updateGeometry();
 
@@ -65,8 +65,8 @@ void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 
     hb_mainlayout->addWidget( dc );
 
+    QDockWidget* teste = new QDockWidget();
     connect( dc, &DockWidget::closeDockWidget, [=]() { emit closeSubWindow( id_ ); } );
-
 
 
 }
@@ -126,6 +126,7 @@ QGraphicsView* CanvasStack::getCurrent()
     return (QGraphicsView*)(Container::data[ current ]->widget());
 }
 
+
 void CanvasStack::clear()
 {
 
@@ -137,17 +138,20 @@ void CanvasStack::clear()
 
 }
 
+
 void CanvasStack::mousePressEvent(QMouseEvent *event)
 {
 
     QWidget::mousePressEvent( event );
 }
 
+
 void CanvasStack::mouseReleaseEvent(QMouseEvent *event)
 {
 
     QWidget::mouseReleaseEvent( event );
 }
+
 
 void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
 {

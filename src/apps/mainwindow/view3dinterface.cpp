@@ -139,7 +139,7 @@ void View3dInterface::createView3dActions()
 
     connect( window->app, &RRMApplication::clearRegions, [=]{ controller3d->clearRegions(); } );
 
-    connect( window->app, &RRMApplication::setVerticalExaggerationScale, [=]( double scale_ ){ controller3d->setVerticalExaggeration( scale_ ); } );
+    connect( window->app, &RRMApplication::setVerticalExaggerationScale, [=]( double scale_ ){ /*controller3d->setVerticalExaggeration( scale_ );*/ } );
 
     connect( window->app, &RRMApplication::removeMarker, [=]( double id_ ){ sl_depth_csection->removeMarker( id_ ); } );
 

@@ -927,35 +927,35 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
 {
-    QMatrix m_;
-    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
+//    QMatrix m_;
+//    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
-    if( volume1 == nullptr ) return;
+//    if( volume1 == nullptr ) return;
 
-    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
-    axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
-    update();
+//    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+//    axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
+//    update();
 }
 
 
 void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
 {
-    QMatrix m_;
-    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
+//    QMatrix m_;
+//    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
-    if( volume1 == nullptr ) return;
-    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
-    axes.stopVerticalExaggeration( volume_->getHeight() );
-    update();
+//    if( volume1 == nullptr ) return;
+//    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+//    axes.stopVerticalExaggeration( volume_->getHeight() );
+//    update();
 }
 
 
 void SketchScene::updateAxes()
 {
-    if( volume1 == nullptr ) return;
-    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
-    axes.updateVerticalExaggeration( 1.0, volume_->getHeight() );
-    update();
+//    if( volume1 == nullptr ) return;
+//    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+//    axes.updateVerticalExaggeration( 1.0, volume_->getHeight() );
+//    update();
 }
 
 ///================================================================================

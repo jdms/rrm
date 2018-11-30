@@ -47,9 +47,9 @@ class DockWidget: public QDockWidget
 
     public:
 
-        DockWidget( QWidget* parent = nullptr ): QDockWidget( parent )
+        DockWidget( const QString &title, QWidget* parent = nullptr ): QDockWidget( title, parent )
         {
-
+            setWindowTitle( title );
         }
 
         inline void closeEvent( QCloseEvent *event )
