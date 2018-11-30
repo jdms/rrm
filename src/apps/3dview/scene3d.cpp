@@ -254,8 +254,8 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 
 void Scene3d::setVerticalExaggeration( double scale_ )
 {
-//    v_exag = scale_;
-//    emit updateCanvas();
+    v_exag = scale_;
+    emit updateCanvas();
 
 }
 

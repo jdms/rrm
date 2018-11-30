@@ -192,7 +192,7 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
 
-        connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ /*window->app->setVerticalExaggeration( scale_ );*/ } );
+        connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
 
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
@@ -335,10 +335,10 @@ void SketchInterface::init()
 {
     if( sketch_window != nullptr )
     {
-//        sketch_window->disableResizeVolume( false );
-////        sketch_window->usingVerticalExaggeration( 0.2 );
-//        sketch_window->resetVerticalExaggeration();
-//        sketch_window->setDipAngle( 0.0 );
+        sketch_window->disableResizeVolume( false );
+//        sketch_window->usingVerticalExaggeration( 0.2 );
+        sketch_window->resetVerticalExaggeration();
+        sketch_window->setDipAngle( 0.0 );
     }
 
     if( sketch_topview_window != nullptr )
