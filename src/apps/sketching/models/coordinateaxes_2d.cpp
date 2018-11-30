@@ -245,15 +245,22 @@ QRectF CoordinateAxes2d::boundingRect() const
  void CoordinateAxes2d::updateVerticalExaggeration( double scale_, double height_ )
  {
 
-//     height = height_;
-//     axisy_length = scale_*height_;
-//     scale_on = true;
-//     update();
+     height = height_;
+     axisy_length = scale_*height_;
+     scale_on = true;
+     update();
  }
 
  void CoordinateAxes2d::stopVerticalExaggeration(  double height_ )
  {
-//     axisy_length = height_;
-//     scale_on = false;
-//     update();
+     axisy_length = height_;
+     scale_on = false;
+     update();
  }
+
+ void CoordinateAxes2d::resetVerticalExaggeration()
+ {
+     axisy_length = height;
+     scale_on = false;
+     update();
+}

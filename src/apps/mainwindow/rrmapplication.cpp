@@ -925,7 +925,7 @@ void RRMApplication::exportToIRAP()
 
 void RRMApplication::setVerticalExaggeration( double scale_ )
 {
-//    emit setVerticalExaggerationScale( scale_ );
+    emit setVerticalExaggerationScale( scale_ );
 }
 
 
