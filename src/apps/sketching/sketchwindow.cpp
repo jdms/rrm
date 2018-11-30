@@ -148,6 +148,10 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     tb_trajectory->setVisible( false );
 
+    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
+    {
+        emit removeMarkerFromSlider( id_ );
+    } );
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {

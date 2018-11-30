@@ -110,8 +110,10 @@ void Slider::updateMarkerPositions()
 void Slider::saveMarkerPosition( int value, int slider_length, int slider_min, int slider_max )
 {
 
-    int pos = QStyle::sliderPositionFromValue( minimum(), maximum(), maximum() - value, slider_max - slider_min,
-                                                    true ) + slider_length/2.0;
+    int pos = 0;
+    bool inverted_ = invertedControls();
+    pos = QStyle::sliderPositionFromValue( minimum(), maximum(), maximum() - value, slider_max - slider_min,
+                                                    inverted_ ) + slider_length/2.0;
 
     markers[ value ] = pos;
 
