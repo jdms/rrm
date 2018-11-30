@@ -48,6 +48,7 @@ class Slider: public QSlider
         void addMarker( int value );
         void removeMarker( int value );
 
+        inline void clearMarkers(){  markers.clear(); color_markers.clear(); }
 
     signals:
 

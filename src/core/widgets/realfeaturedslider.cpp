@@ -184,7 +184,7 @@ void RealFeaturedSlider::setDefaultValues()
 
 void RealFeaturedSlider::clear()
 {
-    markers.clear();
+    clearMarkers();
 
 //    setDefaultValues();
 }

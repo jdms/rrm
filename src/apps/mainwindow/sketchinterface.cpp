@@ -73,6 +73,10 @@ void SketchInterface::createSketchingActions()
     connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
+    connect( sketch_window, &SketchWindow::removeMarkerFromSlider, [=]( double id_ )
+    {  window->app->removeMarkerFromSlider( id_ ); } );
+
+
     connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
     {
         window->app->defineCurrentColor( red_, green_, blue_ );

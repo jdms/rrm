@@ -102,6 +102,7 @@ class SketchWindow: public QMainWindow
 
     signals:
 
+        void removeMarkerFromSlider( double id_ );
 
         void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
 

@@ -112,11 +112,11 @@ void View3dInterface::createView3dActions()
 
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
-    { controller3d->setTopViewCrossSection(); } );
+    { sl_depth_csection->clear(); controller3d->setTopViewCrossSection(); } );
 
 
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
-    { controller3d->setMainViewCrossSection(); } );
+    { sl_depth_csection->clear(); controller3d->setMainViewCrossSection(); } );
 
 
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()
@@ -127,7 +127,7 @@ void View3dInterface::createView3dActions()
 
 
     connect( window->app, &RRMApplication::resetApplication, [=]()
-    { controller3d->clear(); } );
+    { controller3d->clear(); sl_depth_csection->clear(); } );
 
     connect( window->app, &RRMApplication::startApplication, [=]{ controller3d->init(); }
     );
@@ -140,6 +140,8 @@ void View3dInterface::createView3dActions()
     connect( window->app, &RRMApplication::clearRegions, [=]{ controller3d->clearRegions(); } );
 
     connect( window->app, &RRMApplication::setVerticalExaggerationScale, [=]( double scale_ ){ controller3d->setVerticalExaggeration( scale_ ); } );
+
+    connect( window->app, &RRMApplication::removeMarker, [=]( double id_ ){ sl_depth_csection->removeMarker( id_ ); } );
 
     connect( window, &MainWindow::takeScreenshot, [=](){ canvas3d->screenshot(); } );
 
