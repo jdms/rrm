@@ -219,8 +219,8 @@ signals:
 
     void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-    void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
-    void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
+    void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ );
+    void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
     void addRegions();

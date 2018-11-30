@@ -64,7 +64,7 @@ class SketchWindow: public QMainWindow
         ~SketchWindow();
 
         std::shared_ptr< SketchScene > createMainCanvas();
-        std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z );
+        std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z , QColor color_ = Qt::red );
         void removeCanvas( double depth_ );
 
         void createLateralBar();
