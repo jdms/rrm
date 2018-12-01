@@ -132,7 +132,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     sketchingcanvas = new SketchingCanvas();
     sketchingcanvas->scale( 1, -1 );
-    sketchingcanvas->setVerticalExaggeration( 1 );
+//    sketchingcanvas->setVerticalExaggeration( 1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
 
     createLateralBar();
@@ -148,6 +148,10 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     tb_trajectory->setVisible( false );
 
+    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
+    {
+        emit removeMarkerFromSlider( id_ );
+    } );
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {
@@ -213,6 +217,11 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
 
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+
+
+
     return scene_;
 }
 
@@ -226,7 +235,7 @@ void SketchWindow::createLateralBar()
 //    sl_vertical_exagg_->setDiscretization( 100 );
     sl_vertical_exagg_->setRange( 0, 100 );
     sl_vertical_exagg_->setSingleStep( 1 );
-    resetVerticalExaggeration();
+//    resetVerticalExaggeration();
 
     btn_reset_exaggeration = new QPushButton( "Reset" );
     btn_reset_exaggeration->setMaximumWidth( 45 );
@@ -394,11 +403,13 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
+
+
     return scene_;
 }
 
 
-std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Settings::CrossSection::CrossSectionDirections& dir_, QColor color_ )
 {
     SketchingCanvas* canvas_ = new SketchingCanvas();
     const std::shared_ptr< SketchScene >&scene_ = canvas_->getScene();
@@ -409,9 +420,11 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
         canvas_->scale( 1, -1 );
 
 
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-    {   scene_->setSketchColor( color_ );
-        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() ); } );
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color1_ )
+    {
+        scene_->setSketchColor( color1_ );
+        emit defineColorCurrent( color1_.red(), color1_.green(), color1_.blue() );
+    } );
 
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
@@ -471,6 +484,9 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
 
     connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+
     return scene_;
 }
 
@@ -513,6 +529,16 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+    }
+
+    if( fixed_csections_canvas == nullptr ) return;
+    CanvasContainer::Iterator it =  fixed_csections_canvas->begin();
+    while( it != fixed_csections_canvas->end() )
+    {
+        SketchingCanvas* canvas_ = static_cast< SketchingCanvas* >( fixed_csections_canvas->getElement( it->first ) );
+        const std::shared_ptr< SketchScene >&scene_ = canvas_->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+        ++it;
     }
 }
 
@@ -574,8 +600,13 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 
 void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
-    std::cout << "ENTREIIIIII: " << v_exagg_ << std::endl << std::flush;
 
+//    if( sketchingcanvas == nullptr ) return;
+
+//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
+//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
+
+//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
     count++;
 
     if( sl_vertical_exagg_ == nullptr ) return;
@@ -610,6 +641,41 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 
     updateDipAngle();
 
+
+//    count++;
+
+//    if( sl_vertical_exagg_ == nullptr ) return;
+//    if( lb_exagger_value_ == nullptr ) return;
+//    if( sp_exagger_value == nullptr ) return;
+//    if( sketchingcanvas == nullptr ) return;
+
+//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
+//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
+
+//    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
+//    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
+//    sp_exagger_value->setValue( v_exagg_db_ );
+//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
+
+//    if( sketchingcanvas == nullptr ) return;
+
+//    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+//    Settings::CrossSection::CrossSectionDirections dir_;
+//    double depth_;
+
+//    scene_->getCrossSectionInformation( dir_, depth_ );
+//    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
+
+//    if( count < 2 )
+//        sp_exagger_value->setValue( v_exagg_db_ );
+//    else
+//        count = 0;
+
+//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
+//    emit setVerticalExaggeration( v_exagg_db_ );
+
+//    updateDipAngle();
+
 }
 
 
@@ -630,13 +696,13 @@ void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
     else
         count = 0;
 
-//    sketchingcanvas->setVerticalExaggeration( value );
+////    sketchingcanvas->setVerticalExaggeration( value );
 
-//    emit setVerticalExaggeration( value );
+////    emit setVerticalExaggeration( value );
 
-//    updateDipAngle();
+////    updateDipAngle();
 
-//    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
+////    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
 
 }
 
@@ -644,11 +710,14 @@ void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
 void SketchWindow::resetVerticalExaggeration()
 {
 
-//    sl_vertical_exagg_->setValue( 2 );
-
     if( sketchingcanvas == nullptr ) return;
-    sl_vertical_exagg_->setValue( 20 );
     sketchingcanvas->stopVerticalExaggeration();
+
+////    sl_vertical_exagg_->setValue( 2 );
+
+//    if( sketchingcanvas == nullptr ) return;
+//    sl_vertical_exagg_->setValue( 20 );
+//    sketchingcanvas->stopVerticalExaggeration();
 
 
 }
@@ -656,31 +725,31 @@ void SketchWindow::resetVerticalExaggeration()
 
 void SketchWindow::setDipAngle( double angle_ )
 {
-    double v_exag_ = 1.0;
+//    double v_exag_ = 1.0;
 
-    if( sketchingcanvas != nullptr )
-        v_exag_ = sketchingcanvas->getVerticalExaggeration();
+//    if( sketchingcanvas != nullptr )
+//        v_exag_ = sketchingcanvas->getVerticalExaggeration();
 
-    double param_ = v_exag_*tan( angle_*PI / 180 );
-    double beta_ = atan(param_) * 180 / PI;
+//    double param_ = v_exag_*tan( angle_*PI / 180 );
+//    double beta_ = atan(param_) * 180 / PI;
 
-    QString arg_ = QString::number( angle_, 'f', 1 );
-    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
-    lb_input_dpangle->updateAngle( angle_ );
+//    QString arg_ = QString::number( angle_, 'f', 1 );
+//    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
+//    lb_input_dpangle->updateAngle( angle_ );
 
-    QString arg1_ = QString::number( beta_, 'f', 1 );
-    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
-    lb_output_dpangle->updateAngle( beta_ );
+//    QString arg1_ = QString::number( beta_, 'f', 1 );
+//    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
+//    lb_output_dpangle->updateAngle( beta_ );
 
-    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
+//    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
 
 
-    if( sketchingcanvas == nullptr ) return;
-    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
-    const QPixmap* pix_ = lb_output_dpangle->pixmap();
-    if( pix_ == nullptr ) return;
+//    if( sketchingcanvas == nullptr ) return;
+//    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+//    const QPixmap* pix_ = lb_output_dpangle->pixmap();
+//    if( pix_ == nullptr ) return;
 
-    scene_->updateDipAnglePicture( *pix_ );
+//    scene_->updateDipAnglePicture( *pix_ );
 
 
 
@@ -689,8 +758,8 @@ void SketchWindow::setDipAngle( double angle_ )
 
 void SketchWindow::updateDipAngle()
 {
-    double angle_ = static_cast< double >( dl_input_angle_->value() );
-    setDipAngle( angle_ );
+//    double angle_ = static_cast< double >( dl_input_angle_->value() );
+//    setDipAngle( angle_ );
 }
 
 
@@ -756,6 +825,7 @@ void SketchWindow::reset()
 {
 
     resetVerticalExaggeration();
+//    resetVerticalExaggeration();
     removeAllCanvas();
     disableResizeVolume( false );
 

@@ -45,6 +45,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
         void updateVerticalExaggeration( double scale_, double height_ );
         void stopVerticalExaggeration(  double height_ );
+        void resetVerticalExaggeration();
 
 
     protected:

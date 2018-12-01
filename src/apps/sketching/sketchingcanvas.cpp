@@ -38,28 +38,40 @@ const std::shared_ptr< SketchScene >& SketchingCanvas::getScene() const
 void SketchingCanvas::setVerticalExaggeration( double scale_ )
 {
     v_exag = scale_;
+
     QMatrix matrix_;
     matrix_.scale( 1.0, -1*scale_ );
     setMatrix( matrix_ );
-
-    if( scale_ == 1 )
-    {
-        scene->resetVerticalExaggerationInAxes( matrix_ );
-        return;
-    }
-
     scene->revertVerticalExaggerationInAxes( matrix_, scale_ );
+    scene->updateAxes();
+
+
+//    v_exag = scale_;
+//    QMatrix matrix_;
+//    matrix_.scale( 1.0, -1*scale_ );
+//    setMatrix( matrix_ );
+
+//    if( scale_ == 1 )
+//    {
+//        scene->resetVerticalExaggerationInAxes( matrix_ );
+//        return;
+//    }
+
+//    scene->revertVerticalExaggerationInAxes( matrix_, scale_ );
 
 }
 
 
 void SketchingCanvas::stopVerticalExaggeration()
 {
-
-    QMatrix matrix_ = matrix();
-    setVerticalExaggeration( 1.0 );
-    setMatrix( matrix_ );
+    QMatrix matrix_ = matrix().inverted().scale( 1, -1 );
+    setMatrix( matrix_, true);
     scene->resetVerticalExaggerationInAxes( matrix_ );
+
+//    QMatrix matrix_ = matrix();
+//    setVerticalExaggeration( 1.0 );
+//    setMatrix( matrix_ );
+//    scene->resetVerticalExaggerationInAxes( matrix_ );
 }
 
 

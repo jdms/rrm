@@ -38,7 +38,7 @@ class SketchingController
         void updateTopViewCrossSection();
 
 
-        void viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, bool fixed_ = false*/ );
+        void viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_/*, bool fixed_ = false*/ );
 
 
         void addStratigraphy( const ObjectPtr& obj_ );

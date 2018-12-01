@@ -196,7 +196,6 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         moveTopViewCrossSection( model.volume->getHeight() );
-//        topview->setDepth( model.volume->getHeight() );
         return;
     }
 
@@ -971,15 +970,6 @@ void Controller::updateObjectsCurvesInCrossSection( double depth_ )
     {
         updateObjectCurveInCrossSection( it_.first, depth_ );
     }
-
-
-    //    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
-    //    std::size_t number_of_actives_ = actives_.size();
-
-    //    for ( std::size_t j = 0; j < number_of_actives_; ++j )
-    //    {
-    //        updateObjectCurveInCrossSection( actives_[ j ], depth_ );
-    //    }
 
 }
 
@@ -2050,33 +2040,6 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 
     if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
     {
-        // pass curve to rules_processor and get the region
-
-        /*
-        if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
-        {
-            curve3d_ = curve_.addXCoordinate( depth_, true );
-            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
-            if( status_ == true )
-            {
-                rules_processor.getLowerBoundaryWidthwiseCrossSection( indexCrossSectionX( depth_ ), vertices_, edges_ );
-            }
-            else
-                return false;
-        }
-        else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
-        {
-            curve3d_ = curve_.addZCoordinate( depth_, false );
-            bool status_ = rules_processor.requestPreserveAbove( curve3d_ );
-            if( status_ == true )
-            {
-                rules_processor.getLowerBoundaryLengthwiseCrossSection( indexCrossSectionZ( depth_ ), vertices_, edges_ );
-            }
-            else
-                return false;
-        }
-
-        */
 
 
         if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
@@ -2249,11 +2212,11 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
-    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
+    if(  csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
     }
-    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
     }
@@ -2277,13 +2240,13 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
-    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
+    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
 
     }
 
-    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
+    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
     {
         rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
 
@@ -2681,7 +2644,7 @@ void Controller::exportToIrapGrid()
     IrapGridExporter exporter;
     std::vector< float > points;
 
-    std::vector< std::size_t > actives_ = rules_processor.getSurfaces();
+    std::vector< std::size_t > actives_ = rules_processor.getOrderedActiveSurfaces();
     for ( std::size_t id_: actives_ )
     {
         QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );

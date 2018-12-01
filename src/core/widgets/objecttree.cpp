@@ -269,7 +269,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
 
             if( is_perc == false )
             {
-                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'f', 1 ) );
+                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'f', 1 ).append( " m3" ) );
 
                 for( int i = 0; i < nchild_; ++i )
                 {
@@ -277,7 +277,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                     if( obj1_ == nullptr ) continue;
 
                     double volume1_ = volume_regions[ obj1_->getIndex() ];
-                    obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ) );
+                    obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ).append( " m3" ) );
                 }
             }
             else
@@ -447,7 +447,7 @@ void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& 
 void ObjectTree::setTotalVolume( double volume_ )
 {
     ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-    vol_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ) );
+    vol_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
     update();
 }
 
@@ -593,7 +593,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     region_->setType( Settings::Objects::ObjectType::REGION );
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
-    region_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ) );
+    region_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
 
 
     ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
@@ -1456,25 +1456,39 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 {
 
     int nstratigraphies_ = label_stratigraphy->childCount();
-    if( nstratigraphies_ != indexes_.size() ) return;
+    int nstructurals_ = label_structural->childCount();
 
-    for( int i = 0; i < nstratigraphies_; ++i )
+    int ntotal_ = nstratigraphies_ + nstructurals_ ;
+    if( ntotal_ != indexes_.size() ) return;
+
+    for( int i = 0; i < ntotal_; ++i )
     {
         std::size_t index_ = indexes_[ i ];
-        ObjectTreeItem*& obj_ = stratigraphies.getElement( index_ );
-        if( obj_ == nullptr ) continue;
+        ObjectTreeItem* obj_;
+        ObjectTreeItem* obj_tree_;
+        int ind_ = 0;
 
-        int ind_ = label_stratigraphy->indexOfChild( obj_ );
-        if( ind_ < 0 ) continue;
+        if( stratigraphies.findElement( index_ ) == true )
+        {
+            obj_ = stratigraphies.getElement( index_ );
+            ind_ = label_stratigraphy->indexOfChild( obj_ );
+            obj_tree_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( ind_ ) );
+        }
+        else if( structurals.findElement( index_ ) == true )
+        {
+            obj_ = structurals.getElement( index_ );
+            ind_ = label_structural->indexOfChild( obj_ );
+            obj_tree_ = static_cast< ObjectTreeItem* >( label_structural->child( ind_ ) );
+        }
 
-        std::cout << "Tree Index: " << ind_ << std::endl << std::flush;
+        if( ( obj_ == nullptr ) || ( ind_ < 0 ) ) continue;
 
-        ObjectTreeItem* obj_tree_ = static_cast< ObjectTreeItem* >( label_stratigraphy->child( ind_ ) );
         obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i ) );
 
     }
 
     label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
+    label_structural->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
 
 
 }
@@ -1522,37 +1536,3 @@ void ObjectTree::clear()
 
 }
 
-
-//void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
-//{
-
-//    event->acceptProposedAction();
-
-//}
-
-//void ObjectTree::dragMoveEvent( QDragMoveEvent* event )
-//{
-//    event->accept();
-//}
-
-//void ObjectTree::dropEvent( QDropEvent *event )
-//{
-//    std::cout << "Testing the drop method" << std::endl << std::flush;
-
-//}
-
-//void ObjectTree::mouseMoveEvent( QMouseEvent *event )
-//{
-//    std::cout << "Testing the mouse move method" << std::endl << std::flush;
-//}
-
-//void ObjectTree::mouseReleaseEvent( QMouseEvent *event )
-//{
-//    std::cout << "Testing the release method" << std::endl << std::flush;
-
-//    QModelIndex index = indexAt( event->pos() );
-//    QTreeWidgetItem* item = itemFromIndex(index);
-//    std::cout << "drop on item" << item->text(COLUMN_NAME).toStdString() << std::endl << std::flush;
-
-
-//}

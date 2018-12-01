@@ -90,24 +90,24 @@ void SketchingController::updateTopViewCrossSection()
 }
 
 
-void SketchingController::viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+void SketchingController::viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ )
 {
     CrossSectionPtr csection_;
     controller->getCrossSection( dir_, depth_, csection_ );
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-        scenesX[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::X );
+        scenesX[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::X, color_ );
         setObjectsToScene( csection_, scenesX[ depth_ ] );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        scenesY[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Y );
+        scenesY[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Y, color_ );
         setObjectsToScene( csection_, scenesY[ depth_ ] );
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        scenesZ[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Z );
+        scenesZ[ depth_ ] = window->addCanvas( depth_, Settings::CrossSection::CrossSectionDirections::Z, color_ );
         setObjectsToScene( csection_, scenesZ[ depth_ ] );
     }
 
@@ -165,7 +165,6 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
 
     if( csection_->hasImage() == false )
     {
-        std::cout << "Csections doesnt have image!!!" << std::endl << std::flush;
         scene_->removeImageInCrossSection();
     }
     else

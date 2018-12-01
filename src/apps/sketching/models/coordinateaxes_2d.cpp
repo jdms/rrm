@@ -257,3 +257,10 @@ QRectF CoordinateAxes2d::boundingRect() const
      scale_on = false;
      update();
  }
+
+ void CoordinateAxes2d::resetVerticalExaggeration()
+ {
+     axisy_length = height;
+     scale_on = false;
+     update();
+}
