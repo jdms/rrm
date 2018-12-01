@@ -836,6 +836,7 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
     current_interaction1 =  UserInteraction1::NONE;
     dipangle->setImage( pix_ );
     dipangle->setVisible( true );
+    dipangle->setZValue( image->zValue() + 1 );
 
 }
 
@@ -926,11 +927,12 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
 {
+
+
     QMatrix m_;
     axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
     if( volume1 == nullptr ) return;
-
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
     update();
@@ -940,21 +942,23 @@ void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scal
 void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
 {
     QMatrix m_;
-    axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
+    axes.setMatrix( m_, false );
+    axes.resetVerticalExaggeration();
 
     if( volume1 == nullptr ) return;
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.stopVerticalExaggeration( volume_->getHeight() );
+    std::cout << "HEIGHT: " << volume_->getHeight() << std::endl << std::flush;
     update();
 }
 
 
 void SketchScene::updateAxes()
 {
-    if( volume1 == nullptr ) return;
-    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
-    axes.updateVerticalExaggeration( 1.0, volume_->getHeight() );
-    update();
+//    if( volume1 == nullptr ) return;
+//    std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
+//    axes.updateVerticalExaggeration( 1.0, volume_->getHeight() );
+//    update();
 }
 
 ///================================================================================
@@ -1132,7 +1136,6 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
-//        removeSketchesOfSelection();
 
     }
 

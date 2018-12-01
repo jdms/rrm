@@ -197,6 +197,8 @@ public slots:
                                  std::vector< int >& regions, std::map< int, std::vector< float > >& colors_ );
 
 
+    inline void removeMarkerFromSlider( double id_ ){ emit removeMarker( id_ ); }
+
 signals:
 
     void addObject( const std::shared_ptr<Object>& obj_ );
@@ -217,8 +219,8 @@ signals:
 
     void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-    void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
-    void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_/*, QColor color_*/ );
+    void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ );
+    void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
     void addRegions();
@@ -254,7 +256,7 @@ signals:
 
     void updateImageInCrossSection();
 
-
+    void removeMarker( double id_ );
 
 protected:
 

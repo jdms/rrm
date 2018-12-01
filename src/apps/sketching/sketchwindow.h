@@ -64,7 +64,7 @@ class SketchWindow: public QMainWindow
         ~SketchWindow();
 
         std::shared_ptr< SketchScene > createMainCanvas();
-        std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z );
+        std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z , QColor color_ = Qt::red );
         void removeCanvas( double depth_ );
 
         void createLateralBar();
@@ -102,6 +102,7 @@ class SketchWindow: public QMainWindow
 
     signals:
 
+        void removeMarkerFromSlider( double id_ );
 
         void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
 
@@ -185,7 +186,7 @@ class SketchWindow: public QMainWindow
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
         QWidget* bar_ = nullptr;
-        QSlider/*RealFeaturedSlider*/* sl_vertical_exagg_ = nullptr;
+        QSlider* sl_vertical_exagg_ = nullptr;
         int nsteps_exagg = 100;
         double min_exagg = -1;
         double max_exagg = 4;

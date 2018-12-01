@@ -156,6 +156,14 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
             if(status_ == true ) factor = -1;
             else factor = 1; }
 
+        inline void axesInScene( bool status_ )
+        {
+            if( status_ == false )
+                removeItem( &axes );
+            else
+                addItem( &axes );
+            update();
+        }
         void revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
         void resetVerticalExaggerationInAxes( QMatrix matrix_ );
 
