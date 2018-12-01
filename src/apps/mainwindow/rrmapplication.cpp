@@ -449,6 +449,8 @@ void RRMApplication::createDomain()
 {
     std::size_t id_ = controller->createDomain1();
     window->object_tree->createDomain1( id_ );
+    double volume_ = controller->getDomainVolume( id_ );
+    window->object_tree->updateVolumeDomain( id_, volume_ );
 }
 
 
@@ -466,6 +468,8 @@ void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, i
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->addRegionToDomain1( reg_id_, domain_id_ );
+    double volume_ = controller->getDomainVolume( domain_id_ );
+    window->object_tree->updateVolumeDomain( domain_id_, volume_ );
 }
 
 
@@ -474,6 +478,8 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
     controller->removeRegionFromDomain1( reg_id_, domain_id_ );
+    double volume_ = controller->getDomainVolume( domain_id_ );
+    window->object_tree->updateVolumeDomain( domain_id_, volume_ );
 }
 
 
@@ -493,11 +499,13 @@ void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< st
     for( auto id_: regions_ )
     {
         bool status_ = controller->addRegionToDomain1( id_, domain_id_ );
-        if( status_ == true )
-            regions_added_.push_back( id_ );
+        if( status_ == false ) continue;
+        regions_added_.push_back( id_ );
     }
 
     window->object_tree->addRegionsInDomain( domain_id_, regions_added_ );
+    double volume_ = controller->getDomainVolume( domain_id_ );
+    window->object_tree->updateVolumeDomain( domain_id_, volume_ );
 }
 
 
@@ -516,12 +524,16 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
             regions_removed_.push_back( regions_[ i ] );
             domains_removed_.push_back( domains_[ i ] );
         }
+
+        double volume_ = controller->getDomainVolume( domains_[ i ] );
+        window->object_tree->updateVolumeDomain( domains_[ i ], volume_ );
     }
 
     if( delete_ == true )
         window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
     else
         window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
+
 
 }
 

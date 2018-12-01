@@ -204,6 +204,19 @@ class Controller
         std::set<std::size_t> getRegionsFromDomain1(std::size_t domain_id_) const;
         void removeDomain1(std::size_t domain_id_);
 
+        inline double getDomainVolume( std::size_t id_ )
+        {
+            if( model.domains1.find( id_ ) == model.domains1.end() ) return 0;
+            return model.domains1[ id_].getDomainVolume();
+        }
+
+        inline double getRegionVolume( std::size_t id_ )
+        {
+            if( model.regions.find( id_ ) == model.regions.end() ) return 0;
+            return model.regions[ id_]->getVolume();
+        }
+
+
 
 
         void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
