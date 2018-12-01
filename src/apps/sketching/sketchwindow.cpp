@@ -74,6 +74,9 @@ void SketchWindow::createToolBar()
     tb_image->addAction( ac_resize_image );
     tb_image->addAction( ac_remove_image );
 
+    ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
+    ac_fixed_csections->setIcon(QIcon(":/images/icons/fixedcsections.png"));
+    ac_fixed_csections->setCheckable( true );
 
     ac_select_regions = new QAction( "Select Regions", this );
     ac_select_regions->setToolTip( "Select Regions" );
@@ -116,6 +119,7 @@ void SketchWindow::createToolBar()
     ac_screenshot->setToolTip( "Screenshot" );
     ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
     tb_misc = addToolBar( "Misc" );
+    tb_misc->addAction( ac_fixed_csections );
     tb_misc->addAction( ac_screenshot );
     tb_misc->addAction( ac_axes );
 
@@ -177,6 +181,8 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 
+
+    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
 
     connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
 
@@ -711,6 +717,7 @@ void SketchWindow::resetVerticalExaggeration()
 {
 
     if( sketchingcanvas == nullptr ) return;
+    sl_vertical_exagg_->setValue( 20 );
     sketchingcanvas->stopVerticalExaggeration();
 
 ////    sl_vertical_exagg_->setValue( 2 );

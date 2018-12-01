@@ -77,6 +77,7 @@ void Domain::initialize()
 
 void Domain::clear()
 {
+    volume = 0;
     index_regions.clear();
     Object::clear();
 }

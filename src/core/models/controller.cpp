@@ -1483,6 +1483,10 @@ bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->setDomain(domain_id_);
 
+    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    volume_ += model.regions[region_id_]->getVolume();
+
+    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
     return true;
 }
 
@@ -1498,6 +1502,10 @@ bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t dom
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->removeFromDomain();
+
+    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    volume_ -= model.regions[region_id_]->getVolume();
+    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
 
     return true;
 }
@@ -1590,6 +1598,8 @@ void Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_i
     model.domains[domain_id_].regions_set.insert(region_id_);
     RegionsPtr reg_ = model.regions[ region_id_ ];
     reg_->setDomain( domain_id_ );
+
+
 }
 
 
