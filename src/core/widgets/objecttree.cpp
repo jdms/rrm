@@ -279,6 +279,17 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                     double volume1_ = volume_regions[ obj1_->getIndex() ];
                     obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ).append( " m3" ) );
                 }
+                if( label_domains->childCount() > 0 )
+                {
+                    int nchildd_ = label_domains->childCount();
+                    for( int i = 0; i < nchildd_; ++i )
+                    {
+                        ObjectTreeItem* domain_ = ( ObjectTreeItem* ) label_domains->child( i );
+                        if( domain_ == nullptr ) continue;
+                        double volume1_ = volume_domains[ domain_->getIndex() ];
+                        domain_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ).append( " m3" ) );
+                    }
+                }
             }
             else
             {
@@ -289,11 +300,23 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                     ObjectTreeItem* obj1_ = ( ObjectTreeItem* ) vol1_->child( i );
                     if( obj1_ == nullptr ) continue;
 
-                    double volume1_ = obj1_->text( COLUMN_DETAILS ).toDouble();
+                    double volume1_ = volume_regions[ obj1_->getIndex() ];
                     double perc1_ = 100*( volume1_/total_ );
                     obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
                 }
 
+                if( label_domains->childCount() > 0 )
+                {
+                    int nchildd_ = label_domains->childCount();
+                    for( int i = 0; i < nchildd_; ++i )
+                    {
+                        ObjectTreeItem* domain_ = ( ObjectTreeItem* ) label_domains->child( i );
+                        if( domain_ == nullptr ) continue;
+                        double volume1_ = volume_domains[ domain_->getIndex() ];
+                        double perc1_ = 100*( volume1_/total_ );
+                        domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                    }
+                }
             }
 
         }
@@ -1530,6 +1553,7 @@ void ObjectTree::clear()
 
 
     volume_regions.clear();
+    volume_domains.clear();
     is_perc = false;
     items.clear();
     QTreeWidget::clear();
