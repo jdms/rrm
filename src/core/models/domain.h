@@ -27,6 +27,13 @@ class Domain: public Object
 
         virtual void clear() override;
 
+        inline void setDomainVolume( double volume_ )
+        {
+            volume = volume_;
+        }
+        inline double getDomainVolume()
+        { return volume; }
+
 
     protected:
 
@@ -35,6 +42,7 @@ class Domain: public Object
     private:
 
         std::set< std::size_t > index_regions;
+        double volume = 0;
 
 };
 

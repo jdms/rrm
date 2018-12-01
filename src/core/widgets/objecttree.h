@@ -89,6 +89,13 @@ class ObjectTree: public QTreeWidget
 
         void setDomainsVisibility( std::size_t index_, bool status_ );
 
+        inline void updateVolumeDomain( std::size_t index_, double volume_ )
+        {
+            ObjectTreeItem* domain_ = domains.getElement( index_ );
+            domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
+            volume_domains[ index_ ] = volume_;
+        }
+
 
 
 //    private:
@@ -211,6 +218,7 @@ class ObjectTree: public QTreeWidget
         std::map< std::size_t, QAction* > domain_actions_;
 
         std::map< std::size_t, double > volume_regions;
+        std::map< std::size_t, double > volume_domains;
 
 
         QMenu* mn_menu = nullptr;

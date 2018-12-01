@@ -185,6 +185,8 @@ class SketchWindow: public QMainWindow
         QAction* ac_use_last_trajectory = nullptr;
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;
 
+        QAction* ac_fixed_csections = nullptr;
+
         QWidget* bar_ = nullptr;
         QSlider* sl_vertical_exagg_ = nullptr;
         int nsteps_exagg = 100;
