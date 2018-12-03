@@ -124,7 +124,8 @@ class ObjectTree: public QTreeWidget
 
 
         bool createDomain1( std::size_t index_ );
-        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ = std::vector< std::size_t >() );
+        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ );
+        bool getSelectedRegionsList( std::vector< std::size_t >& regions_ );
         void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
         void addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ );
         void addToDomain1( std::size_t index_ );
