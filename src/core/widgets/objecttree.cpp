@@ -618,7 +618,16 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
     region_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
-    region_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( index_ ) );
+
+    // We need to pad index_ with zeros because Qt orders the tree itens using
+    // the lexicographical ordering on strings
+    // https://stackoverflow.com/questions/2618414/convert-an-int-to-a-qstring-with-zero-padding-leading-zeroes
+
+    // QString().arg( index_ == number, 
+    //                    10 == digits to pad, 
+    //                    10 == print as decimal number (i.e. use base 10), 
+    //            QChar('0') == char to use as padding );
+    region_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( index_, 10, 10, QChar('0') ) );
 
 
     ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
@@ -858,7 +867,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
     if( ind_ > 0 )
     {
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) );
     }
 
     label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
@@ -911,7 +920,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
     if( ind_ > 0 )
     {
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0')) );
     }
 
     label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
@@ -1149,7 +1158,7 @@ void ObjectTree::sortDomains()
 
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
         if( domain_tree_ == nullptr ) continue;
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) );
 
     }
 
@@ -1517,7 +1526,7 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 
         if( ( obj_ == nullptr ) || ( ind_ < 0 ) ) continue;
 
-        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i ) );
+        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i, 10, 10, QChar('0') ) );
 
     }
 
