@@ -136,7 +136,6 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     sketchingcanvas = new SketchingCanvas();
     sketchingcanvas->scale( 1, -1 );
-//    sketchingcanvas->setVerticalExaggeration( 1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
 
     createLateralBar();
@@ -607,12 +606,6 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 {
 
-//    if( sketchingcanvas == nullptr ) return;
-
-//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
-//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
-
-//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
     count++;
 
     if( sl_vertical_exagg_ == nullptr ) return;
@@ -732,31 +725,31 @@ void SketchWindow::resetVerticalExaggeration()
 
 void SketchWindow::setDipAngle( double angle_ )
 {
-//    double v_exag_ = 1.0;
+    double v_exag_ = 1.0;
 
-//    if( sketchingcanvas != nullptr )
-//        v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    if( sketchingcanvas != nullptr )
+        v_exag_ = sketchingcanvas->getVerticalExaggeration();
 
-//    double param_ = v_exag_*tan( angle_*PI / 180 );
-//    double beta_ = atan(param_) * 180 / PI;
+    double param_ = v_exag_*tan( angle_*PI / 180 );
+    double beta_ = atan(param_) * 180 / PI;
 
-//    QString arg_ = QString::number( angle_, 'f', 1 );
-//    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
-//    lb_input_dpangle->updateAngle( angle_ );
+    QString arg_ = QString::number( angle_, 'f', 1 );
+    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
+    lb_input_dpangle->updateAngle( angle_ );
 
-//    QString arg1_ = QString::number( beta_, 'f', 1 );
-//    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
-//    lb_output_dpangle->updateAngle( beta_ );
+    QString arg1_ = QString::number( beta_, 'f', 1 );
+    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
+    lb_output_dpangle->updateAngle( beta_ );
 
-//    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
+    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
 
 
-//    if( sketchingcanvas == nullptr ) return;
-//    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
-//    const QPixmap* pix_ = lb_output_dpangle->pixmap();
-//    if( pix_ == nullptr ) return;
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+    const QPixmap* pix_ = lb_output_dpangle->pixmap();
+    if( pix_ == nullptr ) return;
 
-//    scene_->updateDipAnglePicture( *pix_ );
+    scene_->updateDipAnglePicture( *pix_ );
 
 
 
@@ -765,8 +758,8 @@ void SketchWindow::setDipAngle( double angle_ )
 
 void SketchWindow::updateDipAngle()
 {
-//    double angle_ = static_cast< double >( dl_input_angle_->value() );
-//    setDipAngle( angle_ );
+    double angle_ = static_cast< double >( dl_input_angle_->value() );
+    setDipAngle( angle_ );
 }
 
 
@@ -832,7 +825,6 @@ void SketchWindow::reset()
 {
 
     resetVerticalExaggeration();
-//    resetVerticalExaggeration();
     removeAllCanvas();
     disableResizeVolume( false );
 
