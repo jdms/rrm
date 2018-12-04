@@ -93,7 +93,7 @@ class ObjectTree: public QTreeWidget
         inline void updateVolumeDomain( std::size_t index_, double volume_ )
         {
             ObjectTreeItem* domain_ = domains.getElement( index_ );
-            domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
+            domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
             volume_domains[ index_ ] = volume_;
         }
 
@@ -125,8 +125,8 @@ class ObjectTree: public QTreeWidget
 
 
         bool createDomain1( std::size_t index_ );
+        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ );
         bool getSelectedRegionsList( std::vector< std::size_t >& regions_ );
-        bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t > &parents_ /* = std::vector< std::size_t >() */ );
         void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
         void addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ );
         void addToDomain1( std::size_t index_ );

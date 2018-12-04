@@ -83,10 +83,9 @@ void AnglePicture::paintEvent(QPaintEvent * e)
     double h_ = 2*value/6;
 
 
-
     myPath.arcTo( x_, y_, w_, h_, 0, angle );
-    myPath1.arcTo( x_, y_, w_, h_, 0, 180 - angle );
-    myPath2.arcTo( x_, y_, w_, h_, 0, 180 + angle );
+    myPath1.arcTo( x_, y_, w_, h_, 180, -angle );
+    myPath2.arcTo( x_, y_, w_, h_, 180, angle );
     myPath3.arcTo( x_, y_, w_, h_, 0, -angle );
 //    myPath.arcTo( pix.rect() , 0, angle );
     painter.setPen( Qt::black );
