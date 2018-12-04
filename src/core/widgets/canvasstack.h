@@ -90,6 +90,7 @@ class CanvasStack: public QWidget, public CanvasContainer
     signals:
 
         void closeSubWindow( double id_ );
+        void canvasClosed();
 
 
     protected:
@@ -97,6 +98,8 @@ class CanvasStack: public QWidget, public CanvasContainer
         void mousePressEvent(QMouseEvent *event);
         void mouseReleaseEvent(QMouseEvent *event);
         void mouseDoubleClickEvent(QMouseEvent *event);
+
+        void closeEvent(QCloseEvent *event);
 
     protected:
 

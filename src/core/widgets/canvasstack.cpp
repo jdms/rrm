@@ -158,3 +158,9 @@ void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
 
     QWidget::mouseDoubleClickEvent( event );
 }
+
+void CanvasStack::closeEvent(QCloseEvent *event)
+{
+      emit canvasClosed();
+      event->accept();
+}

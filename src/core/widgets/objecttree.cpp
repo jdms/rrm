@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <memory>
+#include <limits>
 #include <QCheckBox>
 
 #include "objecttree.h"
@@ -36,7 +37,7 @@ ObjectTree::ObjectTree( QWidget *parent )
     setAcceptDrops( true );
     setMouseTracking( true );
 
-    setColumnHidden( COLUMNS_NUMBER, false );
+    setColumnHidden( COLUMNS_NUMBER, true );
 
 
     createMenu();
@@ -269,7 +270,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
 
             if( is_perc == false )
             {
-                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'f', 1 ).append( " m3" ) );
+                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'g', 3 ).append( " m3" ) );
 
                 for( int i = 0; i < nchild_; ++i )
                 {
@@ -277,7 +278,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                     if( obj1_ == nullptr ) continue;
 
                     double volume1_ = volume_regions[ obj1_->getIndex() ];
-                    obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ).append( " m3" ) );
+                    obj1_->setText( COLUMN_DETAILS, QString::number( volume1_, 'g', 3 ).append( " m3" ) );
                 }
                 if( label_domains->childCount() > 0 )
                 {
@@ -287,7 +288,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                         ObjectTreeItem* domain_ = ( ObjectTreeItem* ) label_domains->child( i );
                         if( domain_ == nullptr ) continue;
                         double volume1_ = volume_domains[ domain_->getIndex() ];
-                        domain_->setText( COLUMN_DETAILS, QString::number( volume1_, 'f', 1 ).append( " m3" ) );
+                        domain_->setText( COLUMN_DETAILS, QString::number( volume1_, 'g', 3 ).append( " m3" ) );
                     }
                 }
             }
@@ -470,7 +471,7 @@ void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& 
 void ObjectTree::setTotalVolume( double volume_ )
 {
     ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
-    vol_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
+    vol_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
     update();
 }
 
@@ -616,7 +617,17 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     region_->setType( Settings::Objects::ObjectType::REGION );
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
-    region_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
+    region_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
+
+    // We need to pad index_ with zeros because Qt orders the tree itens using
+    // the lexicographical ordering on strings
+    // https://stackoverflow.com/questions/2618414/convert-an-int-to-a-qstring-with-zero-padding-leading-zeroes
+
+    // QString().arg( index_ == number, 
+    //                    10 == digits to pad, 
+    //                    10 == print as decimal number (i.e. use base 10), 
+    //            QChar('0') == char to use as padding );
+    region_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( index_, 10, 10, QChar('0') ) );
 
 
     ObjectTreeItem* vol1_ = ( ObjectTreeItem* ) topLevelItem( 1 );
@@ -625,6 +636,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     volume_regions[ index_ ] = volume_;
 
     vol1_->addChild( region_ );
+    vol1_->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 
     ColorPicker* colorpicker_ = new ColorPicker( this );
     colorpicker_->setColor( QColor( red_, green_, blue_ ) );
@@ -647,7 +659,6 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
             region1_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
         }
     } );
-
 }
 
 
@@ -773,6 +784,7 @@ bool ObjectTree::createDomain1( std::size_t index_ )
     if( status_ == true )
         emit addRegionsToDomain( index_, regions_ );
 
+    sortDomains();
 
     return true;
 }
@@ -855,10 +867,12 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
     if( ind_ > 0 )
     {
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) );
     }
 
     label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
+
+    sortDomains();
 }
 
 // used for flow diagnostics
@@ -906,10 +920,12 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
     if( ind_ > 0 )
     {
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0')) );
     }
 
     label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
+
+    sortDomains();
 }
 
 
@@ -923,6 +939,8 @@ void ObjectTree::addToDomain1( std::size_t index_ )
     bool status_ = getSelectedRegionsList( regions_ );
     if( status_ == true )
         emit addRegionsToDomain( index_, regions_ );
+
+    sortDomains();
 }
 
 
@@ -1019,6 +1037,7 @@ void ObjectTree::removeFromDomain1()
 
     emit removeRegionsFromTheirDomains( regions_, parents_ );
 
+    sortDomains();
 }
 
 
@@ -1059,6 +1078,7 @@ void ObjectTree::deleteDomains1()
         label_domains->setHidden( true );
 
 
+    sortDomains();
 }
 
 
@@ -1108,6 +1128,7 @@ void ObjectTree::deleteDomain1( std::size_t index_ )
     domain_ = nullptr;
 
 
+    sortDomains();
 }
 
 
@@ -1120,7 +1141,7 @@ void ObjectTree::sortDomains()
         if( domain_ == nullptr ) continue;
 
         int nchild_ = domain_->childCount();
-        int minor_ = -1;
+        int minor_ = std::numeric_limits<int>::max();
 
         for( int j = 0; j < nchild_; ++j )
         {
@@ -1132,13 +1153,12 @@ void ObjectTree::sortDomains()
 
         }
 
-
         int ind_ = label_domains->indexOfChild( domain_ );
         if( ind_ < 0 ) continue;
 
         ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
         if( domain_tree_ == nullptr ) continue;
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg(  minor_ ) );
+        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) );
 
     }
 
@@ -1506,7 +1526,7 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 
         if( ( obj_ == nullptr ) || ( ind_ < 0 ) ) continue;
 
-        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i ) );
+        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i, 10, 10, QChar('0') ) );
 
     }
 
