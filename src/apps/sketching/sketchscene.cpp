@@ -107,7 +107,6 @@ void SketchScene::setCrossSectionInformation( const Settings::CrossSection::Cros
     for( auto it: stratigraphies )
     {
         (it.second)->setCrossSection( csection_direction, csection_depth );
-
     }
 
 }
@@ -749,6 +748,7 @@ void SketchScene::defineBounderingArea()
     }
 
     boudering_area->setVisible( true );
+    boudering_area->setZValue( image->zValue() + 1 );
     boudering_area->update();
 
     update();
@@ -927,19 +927,17 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
 {
-
-
-    QMatrix m_;
     axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
     if( volume1 == nullptr ) return;
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
+    emit ensureObjectsVisibility();
     update();
 }
 
 
-void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
+void SketchScene::resetVerticalExaggerationInAxes()
 {
     QMatrix m_;
     axes.setMatrix( m_, false );
@@ -948,7 +946,8 @@ void SketchScene::resetVerticalExaggerationInAxes( QMatrix matrix_ )
     if( volume1 == nullptr ) return;
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.stopVerticalExaggeration( volume_->getHeight() );
-    std::cout << "HEIGHT: " << volume_->getHeight() << std::endl << std::flush;
+    emit ensureObjectsVisibility();
+
     update();
 }
 
