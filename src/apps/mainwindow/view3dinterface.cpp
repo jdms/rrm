@@ -112,11 +112,11 @@ void View3dInterface::createView3dActions()
 
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
-    { sl_depth_csection->clear(); controller3d->setTopViewCrossSection(); } );
+    { sl_depth_csection->clear(); controller3d->setTopViewCrossSection(); controller3d->updateVolume(); } );
 
 
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
-    { sl_depth_csection->clear(); controller3d->setMainViewCrossSection(); } );
+    { sl_depth_csection->clear(); controller3d->setMainViewCrossSection(); controller3d->updateVolume(); } );
 
 
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()

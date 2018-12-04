@@ -43,12 +43,12 @@ void SketchingController::enableSketching( bool status_ )
     topview_scene->setSketchingMode( status_ );
 }
 
+
 void SketchingController::updateVolume()
 {
     if( main_scene != nullptr )
     {
         main_scene->updateVolume();
-        main_scene->updateAxes();
     }
     if( topview_scene != nullptr )
     {
@@ -293,9 +293,6 @@ void SketchingController::updateImageInScene()
 
 
 }
-
-
-
 
 
 void SketchingController::updateObjects()

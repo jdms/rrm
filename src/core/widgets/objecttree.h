@@ -92,7 +92,7 @@ class ObjectTree: public QTreeWidget
         inline void updateVolumeDomain( std::size_t index_, double volume_ )
         {
             ObjectTreeItem* domain_ = domains.getElement( index_ );
-            domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'f', 1 ).append( " m3" ) );
+            domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
             volume_domains[ index_ ] = volume_;
         }
 
