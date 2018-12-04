@@ -203,7 +203,7 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
     else
         emit changeToCrossSectionDirection();
 
-    emit updateVolume();
+//    emit updateVolume();
 
 }
 
@@ -584,14 +584,6 @@ void RRMApplication::updateRegionBoundary()
     emit updateRegions();
 
 
-//    emit clearBounderingArea();
-
-//    PolyCurve boundary_;
-//    bool status_ = controller->updateRegionBoundary( boundary_ );
-
-
-//    if( status_ == true )
-//        emit setCurveAsBoundering( boundary_ );
 }
 
 
@@ -610,14 +602,7 @@ void RRMApplication::updateUpperBoundary()
 
 void RRMApplication::updateLowerBoundary()
 {
-//    emit clearBounderingArea();
 
-//    PolyCurve boundary_;
-//    bool status_ = controller->updateRegionBoundary( boundary_ );
-
-
-//    if( status_ == true )
-//        emit setCurveAsBoundering( boundary_ );
 }
 
 
@@ -633,7 +618,8 @@ std::vector< std::size_t > RRMApplication::getDomains() const
 
         std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
         window->object_tree->addRegionsInDomain( it_, regions_ );
-
+        double volume_ = controller->getDomainVolume( it_ );
+        window->object_tree->updateVolumeDomain( it_, volume_ );
     }
 
     return domains_;
@@ -844,7 +830,7 @@ void RRMApplication::loadRegions()
     }
 
     emit addRegions();
-    getDomains();
+//    getDomains();
 }
 
 

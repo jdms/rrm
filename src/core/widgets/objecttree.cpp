@@ -37,7 +37,7 @@ ObjectTree::ObjectTree( QWidget *parent )
     setAcceptDrops( true );
     setMouseTracking( true );
 
-    setColumnHidden( COLUMNS_NUMBER, false );
+    setColumnHidden( COLUMNS_NUMBER, true );
 
 
     createMenu();

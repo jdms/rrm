@@ -72,6 +72,7 @@ class SketchWindow: public QMainWindow
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
         void usingVerticalExaggeration( int v_exagg_);
+        void applyVerticalExaggeration();
 
 
         void keyPressEvent( QKeyEvent *event );

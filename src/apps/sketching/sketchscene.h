@@ -165,7 +165,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
             update();
         }
         void revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
-        void resetVerticalExaggerationInAxes( QMatrix matrix_ );
+        void resetVerticalExaggerationInAxes();
 
         void updateAxes();
 

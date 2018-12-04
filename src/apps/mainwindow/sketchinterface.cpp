@@ -125,19 +125,19 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
 
 
-     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
-     {
-//         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
-         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
-     } );
+    connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+    {
+        //         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+        scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
+    } );
 
-     connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
+    connect( sketch_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
 
-//     connect( sketch_window, &SketchWindow::updatePointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
-//     {
-//         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
-//         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
-//     } );
+    //     connect( sketch_window, &SketchWindow::updatePointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+    //     {
+    //         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
+    //         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
+    //     } );
 
 
 
@@ -181,7 +181,7 @@ void SketchInterface::createSketchingActions()
     {
         float px_, py_, pz_;
         scontroller->getGuidedExtrusionPoint( px_, py_, pz_ );
-//        window->app->setGuidedExtrusion( px_, py_, pz_, curve_ );
+        //        window->app->setGuidedExtrusion( px_, py_, pz_, curve_ );
     } );
 
     connect( sketch_topview_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
@@ -192,7 +192,7 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
 
-        connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
+    connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
 
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
@@ -209,12 +209,12 @@ void SketchInterface::createSketchingActions()
 
     connect( window->app, &RRMApplication::changeToCrossSectionDirection, [=]()
     {   sketch_window->removeAllCanvas();
-        scontroller->updateObjects(); scontroller->updateMainCrossSection(); scontroller->updateTopViewCrossSection();} );
+        scontroller->updateObjects(); scontroller->updateMainCrossSection(); scontroller->updateTopViewCrossSection(); scontroller->updateVolume(); sketch_window->applyVerticalExaggeration(); } );
 
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
     {   sketch_window->removeAllCanvas();
-        scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection();} );
+        scontroller->updateTopViewCrossSection(); scontroller->updateMainCrossSection(); scontroller->updateVolume(); sketch_window->applyVerticalExaggeration(); } );
 
 
     connect( window->app, &RRMApplication::addFixedCrossSectionWindow, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ )
@@ -336,7 +336,6 @@ void SketchInterface::init()
     if( sketch_window != nullptr )
     {
         sketch_window->disableResizeVolume( false );
-//        sketch_window->usingVerticalExaggeration( 0.2 );
         sketch_window->resetVerticalExaggeration();
         sketch_window->setDipAngle( 0.0 );
     }
