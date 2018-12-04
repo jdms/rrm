@@ -207,8 +207,7 @@ void MainWindow::createActions()
     { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ ); lockUndoRedo( status_ ); } );
 
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
-    {  if(status_ == true ) app->getRegions( true );
-        emit runDiagnostics( status_ );
+    {  emit runDiagnostics( status_ );
     } );
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
