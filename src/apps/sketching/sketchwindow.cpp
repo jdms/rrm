@@ -165,7 +165,6 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
-    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
 
@@ -189,8 +188,12 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
+    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+
 
     //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+
+    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
     { emit updateVolumeDimensions( dir_, width_, height_ );
@@ -695,14 +698,6 @@ void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
     else
         count = 0;
 
-////    sketchingcanvas->setVerticalExaggeration( value );
-
-////    emit setVerticalExaggeration( value );
-
-////    updateDipAngle();
-
-////    double value_ = min_exagg + v_exagg_* (max_exagg - min_exagg);
-
 }
 
 
@@ -712,16 +707,21 @@ void SketchWindow::resetVerticalExaggeration()
     if( sketchingcanvas == nullptr ) return;
     sl_vertical_exagg_->setValue( 20 );
     sketchingcanvas->stopVerticalExaggeration();
+}
 
-////    sl_vertical_exagg_->setValue( 2 );
 
-//    if( sketchingcanvas == nullptr ) return;
-//    sl_vertical_exagg_->setValue( 20 );
-//    sketchingcanvas->stopVerticalExaggeration();
+void SketchWindow::applyVerticalExaggeration()
+{
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+
+    QMatrix m_ = sketchingcanvas->matrix();
+    double v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    scene_->resetVerticalExaggerationInAxes();
+    scene_->revertVerticalExaggerationInAxes( m_, v_exag_ );
 
 
 }
-
 
 void SketchWindow::setDipAngle( double angle_ )
 {

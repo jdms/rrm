@@ -82,185 +82,184 @@ QRectF CoordinateAxes2d::boundingRect() const
 }
 
 
- void CoordinateAxes2d::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
- {
-     drawAxisX( painter );
+void CoordinateAxes2d::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    drawAxisX( painter );
 
-     if( scale_on == false )
+    if( scale_on == false )
         drawAxisY( painter );
-     else
-         drawAxisYWithScale( painter );
- }
+    else
+        drawAxisYWithScale( painter );
+}
 
 
- void CoordinateAxes2d::drawAxisX( QPainter* p )
- {
+void CoordinateAxes2d::drawAxisX( QPainter* p )
+{
 
 
-     QPointF tail = QPointF( -15, -15 );
+    QPointF tail = QPointF( -15, -15 );
 
-     int discX = 10;
+    int discX = 10;
 
-     if( axisx_length < 150 )
-         discX = 1;
+    if( axisx_length < 150 )
+        discX = 1;
 
-     else if( axisx_length < 300 )
-         discX = 3;
+    else if( axisx_length < 300 )
+        discX = 3;
 
-     else if( axisx_length < 500 )
-         discX = 7;
+    else if( axisx_length < 500 )
+        discX = 7;
 
-     else if( axisx_length > 700 )
-         discX += static_cast< int >(discX*0.7 );
+    else if( axisx_length > 700 )
+        discX += static_cast< int >(discX*0.7 );
 
-     double stepX = static_cast< double >( axisx_length/ discX );
-
-
-     QPen pen;
-     pen.setWidth( 1 );
-     pen.setColor( current_x );
-
-     p->setPen( pen );
-     p->drawLine( tail.x(), tail.y(), axisx_length, tail.y() );
+    double stepX = static_cast< double >( axisx_length/ discX );
 
 
-     for( int i = 0; i < discX + 1; ++i )
-     {
-         double value = i*stepX;
-         double dez = 0;
+    QPen pen;
+    pen.setWidth( 1 );
+    pen.setColor( current_x );
 
-         if( value > 0 )
+    p->setPen( pen );
+    p->drawLine( tail.x(), tail.y(), axisx_length, tail.y() );
+
+
+    for( int i = 0; i < discX + 1; ++i )
+    {
+        double value = i*stepX;
+        double dez = 0;
+
+        if( value > 0 )
             dez = log10( value );
 
-         QString value1_ = QString::number( value, 'f', 1);
-         p->drawLine( value , tail.y() - 3, value , tail.y() + 3 );
-         p->scale( 1, scale );
-         p->drawText( QPointF( value - dez*0.1*stepX, scale*tail.y() - scale*18 ), QString( "%1" ).arg( value1_ ) );
-         p->scale( 1, scale );
+        QString value1_ = QString::number( value, 'f', 1);
+        p->drawLine( value , tail.y() - 3, value , tail.y() + 3 );
+        p->scale( 1, scale );
+        p->drawText( QPointF( value - dez*0.1*stepX, scale*tail.y() - scale*18 ), QString( "%1" ).arg( value1_ ) );
+        p->scale( 1, scale );
     }
 
 
- }
+}
 
- void CoordinateAxes2d::drawAxisY( QPainter* p )
- {
+void CoordinateAxes2d::drawAxisY( QPainter* p )
+{
 
-     QPointF tail = QPointF( -15, -15 );
+    QPointF tail = QPointF( -15, -15 );
 
-     int discY = 10;
+    int discY = 10;
 
-     if( axisy_length < 150 )
-         discY = 1;
+    if( axisy_length < 150 )
+        discY = 1;
 
-     else if( axisy_length < 300 )
-         discY = 3;
+    else if( axisy_length < 300 )
+        discY = 3;
 
-     else if( axisy_length < 500 )
-         discY = 7;
+    else if( axisy_length < 500 )
+        discY = 7;
 
-     else if( axisy_length > 700 )
-         discY += static_cast< int >(discY*0.7 );
-
-
-     double stepY = static_cast< double >( axisy_length/ discY );
+    else if( axisy_length > 700 )
+        discY += static_cast< int >(discY*0.7 );
 
 
-     QPen pen;
-     pen.setWidth( 1 );
-     pen.setColor( current_y );
-     p->setPen( pen );
-     p->drawLine( tail.x(), tail.y(), tail.x(), axisy_length );
+    double stepY = static_cast< double >( axisy_length/ discY );
 
-     for( int i = 0; i < discY + 1; ++i )
-     {
-         double value = i*stepY;
-         double dez = 0;
 
-         if( value > 0 )
+    QPen pen;
+    pen.setWidth( 1 );
+    pen.setColor( current_y );
+    p->setPen( pen );
+    p->drawLine( tail.x(), tail.y(), tail.x(), axisy_length );
+
+    for( int i = 0; i < discY + 1; ++i )
+    {
+        double value = i*stepY;
+        double dez = 0;
+
+        if( value > 0 )
             dez = log10( value );
-         p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
+        p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
 
-         QString value1_ = QString::number( value, 'f', 1);
+        QString value1_ = QString::number( value, 'f', 1);
 
-         p->rotate( -scale*90 );
-         p->scale( 1, scale );
-         p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), QString( "%1" ).arg( value1_ ) );
-         p->scale( 1, scale );
-         p->rotate( scale*90 );
-     }
+        p->rotate( -scale*90 );
+        p->scale( 1, scale );
+        p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), QString( "%1" ).arg( value1_ ) );
+        p->scale( 1, scale );
+        p->rotate( scale*90 );
+    }
 
- }
-
-
-
- void CoordinateAxes2d::drawAxisYWithScale( QPainter* p )
- {
-
-     QPointF tail = QPointF( -15, -15 );
-
-     int discY = 10;
-
-     if( axisy_length < 150 )
-         discY = 1;
-
-     else if( axisy_length < 300 )
-         discY = 3;
-
-     else if( axisy_length < 500 )
-         discY = 7;
-
-     else if( axisy_length > 700 )
-         discY += static_cast< int >(discY*0.7 );
+}
 
 
 
-     double stepY = static_cast< double >( axisy_length/ discY );
+void CoordinateAxes2d::drawAxisYWithScale( QPainter* p )
+{
 
-     QPen pen;
-     pen.setWidth( 1 );
-     pen.setColor( current_y );
-     p->setPen( pen );
-     p->drawLine( tail.x(), tail.y(), tail.x(), axisy_length );
+    QPointF tail = QPointF( -15, -15 );
 
-     for( int i = 0; i < discY + 1; ++i )
-     {
-         double value = i*stepY;
-         double dez = 0;
+    int discY = 10;
 
-         if( value > 0 )
+    if( axisy_length < 150 )
+        discY = 1;
+
+    else if( axisy_length < 300 )
+        discY = 3;
+
+    else if( axisy_length < 500 )
+        discY = 7;
+
+    else if( axisy_length > 700 )
+        discY += static_cast< int >(discY*0.7 );
+
+    double stepY = static_cast< double >( axisy_length/ discY );
+
+
+    QPen pen;
+    pen.setWidth( 1 );
+    pen.setColor( current_y );
+    p->setPen( pen );
+    p->drawLine( tail.x(), tail.y(), tail.x(), axisy_length );
+
+    for( int i = 0; i < discY + 1; ++i )
+    {
+        double value = i*stepY;
+        double dez = 0;
+
+        if( value > 0 )
             dez = log10( value );
-         p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
+        p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
 
 
-         QString value1_ = QString::number( i*( height/discY), 'f', 1);
-         p->rotate( -scale*90 );
-         p->scale( 1, scale );
-         p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), value1_ );
-         p->scale( 1, scale );
-         p->rotate( scale*90 );
-     }
+        QString value1_ = QString::number( i*( height/discY), 'f', 1);
+        p->rotate( -scale*90 );
+        p->scale( 1, scale );
+        p->drawText( QPointF( -scale*value - dez*0.1*stepY, tail.x() - 10 ), value1_ );
+        p->scale( 1, scale );
+        p->rotate( scale*90 );
+    }
 
- }
+}
 
- void CoordinateAxes2d::updateVerticalExaggeration( double scale_, double height_ )
- {
+void CoordinateAxes2d::updateVerticalExaggeration( double scale_, double height_ )
+{
 
-     height = height_;
-     axisy_length = scale_*height_;
-     scale_on = true;
-     update();
- }
+    height = height_;
+    axisy_length = scale_*height_;
+    scale_on = true;
+    update();
+}
 
- void CoordinateAxes2d::stopVerticalExaggeration(  double height_ )
- {
-     axisy_length = height_;
-     scale_on = false;
-     update();
- }
+void CoordinateAxes2d::stopVerticalExaggeration(  double height_ )
+{
+    axisy_length = height_;
+    scale_on = false;
+    update();
+}
 
- void CoordinateAxes2d::resetVerticalExaggeration()
- {
-     axisy_length = height;
-     scale_on = false;
-     update();
+void CoordinateAxes2d::resetVerticalExaggeration()
+{
+    axisy_length = height;
+    scale_on = false;
+    update();
 }

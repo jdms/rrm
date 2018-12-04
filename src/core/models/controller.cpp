@@ -2371,7 +2371,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     metadatas["objects"] = objects_array_;
 
 
-    if( model.regions.empty() != false )
+    if( model.regions.empty() == false )
     {
         QJsonArray regions_array_;
         for( auto it: model.regions )
@@ -2386,7 +2386,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     }
 
-    if( model.domains1.empty() != false )
+    if( model.domains1.empty() == false )
     {
 
         QJsonArray domains_array_;

@@ -47,6 +47,7 @@ void CanvasStack::initialize()
 
     setLayout( hb_main );
 
+    connect( this, &QWidget::
     current = 0.0;
 }
 
@@ -157,4 +158,10 @@ void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
 {
 
     QWidget::mouseDoubleClickEvent( event );
+}
+
+void CanvasStack::closeEvent(QCloseEvent *event)
+{
+      emit canvasClosed();
+      event->accept();
 }
