@@ -47,7 +47,6 @@ void CanvasStack::initialize()
 
     setLayout( hb_main );
 
-    connect( this, &QWidget::
     current = 0.0;
 }
 
