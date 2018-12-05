@@ -51,7 +51,8 @@ class ThinPlateSpline22 : public BasisFunction2D
 
             if ( r2 < epsilon )
             {
-                return -2*x1*x1*x1/r2 + x1;
+                /* return -2*x1*x1*x1/r2 + x1; */
+                return -x1;
             }
 
             /* return x1 * ( 2*log( sqrt(r2) ) + 1 ); */
@@ -64,7 +65,8 @@ class ThinPlateSpline22 : public BasisFunction2D
 
             if ( r2 < epsilon )
             {
-                return -2*x2*x2*x2/r2 + x2;
+                /* return -2*x2*x2*x2/r2 + x2; */
+                return -x2;
             }
 
             /* return x2 * ( 2*log( sqrt(r2) ) + 1 ); */
