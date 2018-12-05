@@ -1111,13 +1111,15 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
 
     std::vector<bool> attrib;
     int num_attrib;
+    auto &attributes_map_omp = attributes_map;
 
-    for ( size_t i = 0; i < points.size(); ++i )
+    #pragma omp parallel for shared(attrib_list, points, getAttribute, attributes_map_omp) private(attrib, num_attrib)
+    for ( long int i = 0; i < static_cast<long int>( points.size() ); ++i )
     {
         attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) );
 
-        auto iter = attributes_map.find(attrib);
-        if ( iter != attributes_map.end() )
+        auto iter = attributes_map_omp.find(attrib);
+        if ( iter != attributes_map_omp.end() )
         {
             num_attrib = iter->second;
         }

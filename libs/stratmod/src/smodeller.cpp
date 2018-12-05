@@ -766,6 +766,20 @@ bool SModeller::canRedo()
     return false;
 }
 
+bool SModeller::popUndoStack()
+{
+    if ( canRedo() == false )
+    {
+        return false;
+    }
+
+    pimpl_->undoed_surfaces_stack_.pop_back(); 
+    pimpl_->undoed_surfaces_indices_.pop_back();
+    pimpl_->undoed_states_.pop_back();
+
+    return true;
+}
+
 bool SModeller::redo()
 {
     if ( canRedo() == false )
