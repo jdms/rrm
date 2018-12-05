@@ -51,6 +51,8 @@ class SurfaceShader: public Shader
 
         void setHeightMap( double zmin_, double zmax_ );
 
+        inline bool isEmpty(){ return raw->getSurface().isEmpty(); }
+
         void enableDrawingEdges();
 
 
