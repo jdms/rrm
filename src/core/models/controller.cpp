@@ -2506,6 +2506,9 @@ void Controller::loadObjectNoMetaDatas()
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
+
+        model.objects[ id ]->setDone( true );
+
     }
 
     for( int i = 0; i < counter_; ++i )
