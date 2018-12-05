@@ -232,7 +232,8 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     for ( auto it: stratigraphies )
     {
         std::shared_ptr < SurfaceShader > surface_ = it.second;
-        surface_->draw( V_, P, w, h );
+        if( surface_->isEmpty() == false )
+            surface_->draw( V_, P, w, h );
     }
 
     for ( auto it: regions )
@@ -262,7 +263,6 @@ void Scene3d::setVerticalExaggeration( double scale_ )
 
 void Scene3d::clearScene()
 {
-
 
     for( auto it: cross_sectionsX )
         (it.second)->reset();

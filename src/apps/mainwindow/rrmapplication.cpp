@@ -309,20 +309,31 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
 void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 {
-//    if( controller->getMainCrossSection()->getDirection() ==
-//            Settings::CrossSection::CrossSectionDirections::Y )
     if( controller->getCurrentDirection() ==
             Settings::CrossSection::CrossSectionDirections::Y )
     {
         addCurveToObject( curve_, Settings::CrossSection::CrossSectionDirections::Y, 0.0 );
-//        controller->addCurveToObject( Settings::CrossSection::CrossSectionDirections::Y, 0.0, curve_ );
-//        emit updateObjects();
         return;
     }
+
+    bool new_obj_ = controller->getCurrentObject()->isEmpty();
 
     controller->addTrajectoryToObject( curve_ );
     emit updateTrajectories();
 
+    if( new_obj_ == true )
+    {
+        const ObjectPtr& obj_ = controller->getCurrentObject();
+        Settings::CrossSection::CrossSectionDirections dir_ = obj_->getCrossSectionDirection();
+
+        int r_, g_, b_;
+        obj_->getColor( r_, g_, b_ );
+
+        window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
+
+        emit disableVolumeResizing();
+        emit lockDirection( dir_ );
+    }
 
 }
 
@@ -337,19 +348,6 @@ void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSection
 void RRMApplication::createObjectSurface()
 {
 
-//    bool status_ = controller->commitObjectSurface();
-//    if( status_ == false ) return;
-
-//    emit addObject( controller->getCurrentObject() );
-//    emit updateObjects();
-
-//    checkUndoRedo();
-
-
-//    updateObjectTree();
-//    defineRandomColor();
-
-//    emit unlockDirections();
 
     bool status_ = controller->commitObjectSurface();
 

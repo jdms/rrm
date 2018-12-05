@@ -110,6 +110,8 @@ void View3dInterface::createView3dActions()
     connect( window->app, &RRMApplication::updateObjects, [=]()
     { controller3d->updateObjects(); } );
 
+    connect( window->app, &RRMApplication::updateTrajectories, [=]()
+    { controller3d->updateObjects(); } );
 
     connect( window->app, &RRMApplication::changeToTopViewDirection, [=]()
     { sl_depth_csection->clear(); controller3d->setTopViewCrossSection(); controller3d->updateVolume(); } );
