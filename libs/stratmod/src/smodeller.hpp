@@ -199,6 +199,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         bool canRedo();
         bool redo();
+        bool popUndoStack();
 
 
         // Input & output 
