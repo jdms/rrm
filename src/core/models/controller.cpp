@@ -2497,7 +2497,7 @@ void Controller::loadObjectNoMetaDatas()
     }
 
 
-    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
     for( auto id: actives )
     {
         int r_ = distr( eng );
@@ -2506,6 +2506,9 @@ void Controller::loadObjectNoMetaDatas()
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
+
+        model.objects[ id ]->setDone( true );
+
     }
 
     for( int i = 0; i < counter_; ++i )
@@ -2542,7 +2545,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
         QJsonArray objects_array_ = json["objects"].toArray();
 
-        std::vector< std::size_t > actives = rules_processor.getSurfaces();
+        std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
 
         int obj_id_ = 0;
         for( auto id: actives )
