@@ -776,8 +776,6 @@ void RRMApplication::load( const std::string& filename_ )
     Controller::MeshResolution resol_;
     controller->loadFile( filename_, resol_ );
 
-
-
     emit startApplication();
 
     double ox_, oy, oz, w_, h_, d_;
@@ -786,7 +784,6 @@ void RRMApplication::load( const std::string& filename_ )
     emit disableVolumeResizing();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
     emit updateVolume();
     emit updateObjects();
@@ -818,9 +815,9 @@ void RRMApplication::loadRegions()
         reg_->getColor( r_, g_, b_ );
 
         double volume_ = reg_->getVolume();
-        double perc_;
+        double perc_ = 0.0;
 
-        if( total_volume_ != 0 )
+        if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
 
@@ -829,8 +826,8 @@ void RRMApplication::loadRegions()
         emit addRegionCrossSectionBoundary( reg_ );
     }
 
-    emit addRegions();
-//    getDomains();
+    if( regions_.empty() == false )
+        emit addRegions();
 }
 
 

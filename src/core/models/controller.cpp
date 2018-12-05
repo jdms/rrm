@@ -2363,6 +2363,8 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     QJsonArray objects_array_;
     for( auto it: model.objects )
     {
+        if( it.first == current_object ) continue;
+
         const ObjectPtr& obj_ = it.second;
         QJsonObject object_;
         obj_->write( object_ );

@@ -213,6 +213,8 @@ void MainWindow::createActions()
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
 
 
+
+
 }
 
 
@@ -372,6 +374,10 @@ void MainWindow::createController()
         lockPreserve( option_ );
     } );
 
+    connect( app, &RRMApplication::addRegions, [=]()
+    {
+        ac_regions->setChecked( true );
+    } );
 
 }
 
