@@ -377,6 +377,7 @@ void MainWindow::createController()
     connect( app, &RRMApplication::addRegions, [=]()
     {
         ac_regions->setChecked( true );
+        ac_diagnostics->setEnabled( true );
     } );
 
 }

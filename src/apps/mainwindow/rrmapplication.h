@@ -135,7 +135,7 @@ public slots:
     void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
     void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_ = true );
 
-    std::vector< std::size_t > getDomains() const ;
+    std::vector< std::size_t > getDomainsToFlowDiagnostics() const ;
 
 
     void setStratigraphicRule( const Settings::Stratigraphy::StratigraphicRules& rules_ );
@@ -159,6 +159,7 @@ public slots:
     void updateObjectTree();
 
     void loadRegions();
+    void loadDomains();
 
     void reset();
 
