@@ -604,11 +604,30 @@ void RRMApplication::updateLowerBoundary()
 }
 
 
+// set domains for objecttree
+void RRMApplication::loadDomains()
+{
+    std::vector< std::size_t > domains_ = controller->getDomains();
+    for( auto it_: domains_ )
+    {
+        bool status_ = window->object_tree->createDomain1( it_ );
+        if( status_ == false ) continue;
+
+        std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
+        window->object_tree->addRegionsInDomain( it_, regions_ );
+        double volume_ = controller->getDomainVolume( it_ );
+        window->object_tree->updateVolumeDomain( it_, volume_ );
+    }
+
+//    return domains_;
+}
+
+
 // set domains when using flow diagnostics
-std::vector< std::size_t > RRMApplication::getDomains() const
+std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
 {
 
-    std::vector< std::size_t > domains_ = controller->getDomains();
+    std::vector< std::size_t > domains_ = controller->getDomainsToFlowDiagnostics();
     for( auto it_: domains_ )
     {
         bool status_ = window->object_tree->createDomain1( it_ );
@@ -788,6 +807,7 @@ void RRMApplication::load( const std::string& filename_ )
 
     loadObjectTree();
     loadRegions();
+    loadDomains();
 
     checkUndoRedo();
     checkPreserveStatus();

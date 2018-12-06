@@ -1537,6 +1537,23 @@ std::vector< std::size_t > Controller::getDomains()
 {
 
     std::vector< std::size_t > indexes_;
+
+    for( auto it_: model.domains1 )
+    {
+        indexes_.push_back( it_.first );
+    }
+
+    return indexes_;
+
+
+}
+
+
+
+std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
+{
+
+    std::vector< std::size_t > indexes_;
     std::vector<int> diff_;
 
     for( auto it_: model.regions )
@@ -1555,23 +1572,6 @@ std::vector< std::size_t > Controller::getDomains()
     return indexes_;
 
 
-    //    std::vector< std::size_t > indexes_;
-    //    std::vector<int> diff_;
-
-    //    for( auto it_: model.regions )
-    //    {
-    //        std::size_t id_ = it_.first;
-    //        if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
-    //        std::size_t domain_id_ = createDomain1();
-    //        addRegionToDomain1( id_, domain_id_ );
-    //    }
-
-    //    for( auto it_: model.domains )
-    //    {
-    //        indexes_.push_back( it_.first );
-    //    }
-
-    //    return indexes_;
 }
 
 //=== old methods
