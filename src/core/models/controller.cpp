@@ -2660,9 +2660,14 @@ void Controller::exportToIrapGrid()
     std::vector< float > points;
 
     std::vector< std::size_t > actives_ = rules_processor.getOrderedActiveSurfaces();
-    for ( std::size_t id_: actives_ )
+    int num_digits = std::floor( std::log( actives_.size() ) );
+    num_digits = ( num_digits > 0 ? num_digits : 1 );
+
+    for ( size_t i = 0; i < actives_.size(); ++i )
     {
-        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+        size_t id_ = actives_[i];
+        QString prefix_ = QString( "%1" ).arg( i, num_digits, 10, QChar('0') ).append("_"); 
+        QString surface_filename = QString( "Surface_%1.IRAPG").arg( id_ ).prepend(prefix_);
 
         std::vector< double > points_list;
         std::vector< bool > valid_points;
@@ -2710,7 +2715,7 @@ void Controller::exportToIrapGrid()
         if( name_.empty() == true )
             exporter.writeGridData( surface_filename.toStdString() );
         else
-            exporter.writeGridData( name_ );
+            exporter.writeGridData( prefix_.toStdString().append(name_) );
 
         exporter.clearData();
 
