@@ -211,7 +211,7 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
 
     /* status = getRawHeight(p, height); */ 
     status = true;
-    /* std::cout << "Attempting to get normal for point (" << p.x << ", " << p.y << "), got: ("; */
+    /* std::cout << "Attempting to get normal for point (" << p.x << ", " << p.y << ") --\n"; */
 
     if ( isExtrudedSurface() )
     {
@@ -219,41 +219,52 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
         {
             if ( path_is_set_ )
             {
+                /* std::cout << "Case: !orthogonally_oriented_ && path_is_set\n"; */
                 double origin = path(path_origin.x, 0) - path_origin.y;
                 /* height = f(p.x - (path(p.y, 0) - origin), 0); */
 
                 DxF = f.Dx(p.x - (path(p.y,0) - origin), 0);
                 DyF = f.Dx(p.x - (path(p.y,0) - origin), 0) * path.Dx(p.y,0);
+
+                /* std::cout << "origin = " << origin << ", DxF = " << DxF << ", DyF = " << DyF << "\n"; */
             }
 
             else
             {
+                /* std::cout << "Case: !orthogonally_oriented_ && !path_is_set\n"; */
                 DxF = f.Dx(p.x, 0); 
                 DyF = 0; 
+                /* std::cout << "DxF = " << DxF << ", DyF = " << DyF << "\n"; */
             }
         }
         else // if ( orthogonally_oriented_ ) // i.e. surfaces are extruded along the x direction
         {
             if ( path_is_set_ )
             {
+                /* std::cout << "Case: orthogonally_oriented_ && path_is_set\n"; */
                 double origin = path(path_origin.x, 0) - path_origin.y;
                 /* height = f(p.x - (path(p.y, 0) - origin), 0); */
 
                 DxF = f.Dx(p.y - (path(p.x,0) - origin), 0) * path.Dx(p.x,0);
                 DyF = f.Dx(p.y - (path(p.x,0) - origin), 0);
+                /* std::cout << "origin = " << origin << ", DxF = " << DxF << ", DyF = " << DyF << "\n"; */
             }
 
             else
             {
+                /* std::cout << "Case: !orthogonally_oriented_ && !path_is_set\n"; */
                 DxF = 0; 
                 DyF = f.Dx(p.y, 0); 
+                /* std::cout << "DxF = " << DxF << ", DyF = " << DyF << "\n"; */
             }
         }
     }
     else
     {
+        /* std::cout << "Case: general surface\n"; */
         DxF = f.Dx(p.x, p.y); 
         DyF = f.Dy(p.x, p.y); 
+        /* std::cout << "DxF = " << DxF << ", DyF = " << DyF << "\n"; */
     }
     normDF = sqrt(DxF*DxF + DyF*DyF + 1); 
 
@@ -261,8 +272,10 @@ bool InterpolatedGraph::getNormal( const Point2 &p, T& normal )
     normal[1] = -DyF/normDF; 
     normal[2] = 1/normDF; 
 
-    /* std::cout << normal[0] << ", " << normal[1] << ", " << normal[2] << ") -- size: " */ 
-    /*     << normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2] << " \n" << std::flush; */
+    /* std::cout << "\nGot: (" << normal[0] << ", " << normal[1] << ", " << normal[2] << ") -- size: " */ 
+        /* << normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2] << " \n" << std::flush; */
+    /* std::cout << std::flush; */
+
     return status;
 }
 

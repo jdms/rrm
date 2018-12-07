@@ -230,6 +230,7 @@ class Controller
         std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
         void removeDomain(std::size_t domain_id_);
         void getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ );
+        std::vector< std::size_t > getDomainsToFlowDiagnostics();
         std::vector< std::size_t > getDomains();
 
 

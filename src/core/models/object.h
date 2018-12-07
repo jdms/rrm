@@ -186,7 +186,6 @@ class Object
             json[ "red" ] = color.red;
             json[ "green" ] = color.green;
             json[ "blue" ] = color.blue;
-            json[ "blue" ] = color.blue;
 
 
             double object_type_ = 0;

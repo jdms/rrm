@@ -1661,7 +1661,40 @@ bool RulesProcessor::getExtrusionPath( size_t surface_index, std::vector<double>
 
 bool RulesProcessor::saveFile( std::string filename )
 {
-    return modeller_.saveJSON(filename);
+    bool redo_last_surface = false;
+    /* std::cout << "\n\nLast surface inserted is a test? "; */
+    if ( last_surface_inserted_is_a_test_ )
+    {
+        /* std::cout << "yes"; */
+        if ( modeller_.canUndo() )
+        {
+            /* std::cout << " -- undo!"; */
+            modeller_.undo();
+            modeller_.popUndoStack();
+            last_surface_inserted_is_a_test_ = false;
+            redo_last_surface = true;
+        }
+        else
+        {
+            /* std::cout << " -- ops, can't undo?"; */
+        }
+    }
+    else 
+    {
+        /* std::cout << "no."; */
+    }
+
+    bool success = modeller_.saveJSON(filename);
+
+    if ( redo_last_surface )
+    {
+        /* std::cout << " What to do?"; */
+        /* std::cout << " Redoing..."; */
+        /* modeller_.redo(); */
+    }
+    /* std::cout << "\n\n\n" << std::flush; */
+
+    return success;
 }
 
 bool RulesProcessor::loadFile( std::string filename )

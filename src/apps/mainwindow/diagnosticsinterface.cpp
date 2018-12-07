@@ -82,7 +82,7 @@ void DiagnosticsInterface::init( bool status_ )
 
     if( status_  == false ) return;
 
-    std::vector< std::size_t > domain_indexes_ = window->app->getDomains();
+    std::vector< std::size_t > domain_indexes_ = window->app->getDomainsToFlowDiagnostics();
     std::vector< int > domains_;
     for( auto it: domain_indexes_ )
         domains_.push_back( static_cast< int >( it ) );
