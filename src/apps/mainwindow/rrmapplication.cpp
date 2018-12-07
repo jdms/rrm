@@ -309,20 +309,31 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
 void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 {
-//    if( controller->getMainCrossSection()->getDirection() ==
-//            Settings::CrossSection::CrossSectionDirections::Y )
     if( controller->getCurrentDirection() ==
             Settings::CrossSection::CrossSectionDirections::Y )
     {
         addCurveToObject( curve_, Settings::CrossSection::CrossSectionDirections::Y, 0.0 );
-//        controller->addCurveToObject( Settings::CrossSection::CrossSectionDirections::Y, 0.0, curve_ );
-//        emit updateObjects();
         return;
     }
+
+    bool new_obj_ = controller->getCurrentObject()->isEmpty();
 
     controller->addTrajectoryToObject( curve_ );
     emit updateTrajectories();
 
+    if( new_obj_ == true )
+    {
+        const ObjectPtr& obj_ = controller->getCurrentObject();
+        Settings::CrossSection::CrossSectionDirections dir_ = obj_->getCrossSectionDirection();
+
+        int r_, g_, b_;
+        obj_->getColor( r_, g_, b_ );
+
+        window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
+
+        emit disableVolumeResizing();
+        emit lockDirection( dir_ );
+    }
 
 }
 
@@ -337,19 +348,6 @@ void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSection
 void RRMApplication::createObjectSurface()
 {
 
-//    bool status_ = controller->commitObjectSurface();
-//    if( status_ == false ) return;
-
-//    emit addObject( controller->getCurrentObject() );
-//    emit updateObjects();
-
-//    checkUndoRedo();
-
-
-//    updateObjectTree();
-//    defineRandomColor();
-
-//    emit unlockDirections();
 
     bool status_ = controller->commitObjectSurface();
 
@@ -606,11 +604,30 @@ void RRMApplication::updateLowerBoundary()
 }
 
 
+// set domains for objecttree
+void RRMApplication::loadDomains()
+{
+    std::vector< std::size_t > domains_ = controller->getDomains();
+    for( auto it_: domains_ )
+    {
+        bool status_ = window->object_tree->createDomain1( it_ );
+        if( status_ == false ) continue;
+
+        std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
+        window->object_tree->addRegionsInDomain( it_, regions_ );
+        double volume_ = controller->getDomainVolume( it_ );
+        window->object_tree->updateVolumeDomain( it_, volume_ );
+    }
+
+//    return domains_;
+}
+
+
 // set domains when using flow diagnostics
-std::vector< std::size_t > RRMApplication::getDomains() const
+std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
 {
 
-    std::vector< std::size_t > domains_ = controller->getDomains();
+    std::vector< std::size_t > domains_ = controller->getDomainsToFlowDiagnostics();
     for( auto it_: domains_ )
     {
         bool status_ = window->object_tree->createDomain1( it_ );
@@ -776,8 +793,6 @@ void RRMApplication::load( const std::string& filename_ )
     Controller::MeshResolution resol_;
     controller->loadFile( filename_, resol_ );
 
-
-
     emit startApplication();
 
     double ox_, oy, oz, w_, h_, d_;
@@ -786,13 +801,13 @@ void RRMApplication::load( const std::string& filename_ )
     emit disableVolumeResizing();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
     emit updateVolume();
     emit updateObjects();
 
     loadObjectTree();
     loadRegions();
+    loadDomains();
 
     checkUndoRedo();
     checkPreserveStatus();
@@ -818,9 +833,9 @@ void RRMApplication::loadRegions()
         reg_->getColor( r_, g_, b_ );
 
         double volume_ = reg_->getVolume();
-        double perc_;
+        double perc_ = 0.0;
 
-        if( total_volume_ != 0 )
+        if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
 
@@ -829,8 +844,8 @@ void RRMApplication::loadRegions()
         emit addRegionCrossSectionBoundary( reg_ );
     }
 
-    emit addRegions();
-//    getDomains();
+    if( regions_.empty() == false )
+        emit addRegions();
 }
 
 

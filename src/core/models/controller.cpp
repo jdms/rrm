@@ -1537,6 +1537,23 @@ std::vector< std::size_t > Controller::getDomains()
 {
 
     std::vector< std::size_t > indexes_;
+
+    for( auto it_: model.domains1 )
+    {
+        indexes_.push_back( it_.first );
+    }
+
+    return indexes_;
+
+
+}
+
+
+
+std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
+{
+
+    std::vector< std::size_t > indexes_;
     std::vector<int> diff_;
 
     for( auto it_: model.regions )
@@ -1555,23 +1572,6 @@ std::vector< std::size_t > Controller::getDomains()
     return indexes_;
 
 
-    //    std::vector< std::size_t > indexes_;
-    //    std::vector<int> diff_;
-
-    //    for( auto it_: model.regions )
-    //    {
-    //        std::size_t id_ = it_.first;
-    //        if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
-    //        std::size_t domain_id_ = createDomain1();
-    //        addRegionToDomain1( id_, domain_id_ );
-    //    }
-
-    //    for( auto it_: model.domains )
-    //    {
-    //        indexes_.push_back( it_.first );
-    //    }
-
-    //    return indexes_;
 }
 
 //=== old methods
@@ -2363,6 +2363,8 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     QJsonArray objects_array_;
     for( auto it: model.objects )
     {
+        if( it.first == current_object ) continue;
+
         const ObjectPtr& obj_ = it.second;
         QJsonObject object_;
         obj_->write( object_ );
@@ -2497,7 +2499,7 @@ void Controller::loadObjectNoMetaDatas()
     }
 
 
-    std::vector< std::size_t > actives = rules_processor.getSurfaces();
+    std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
     for( auto id: actives )
     {
         int r_ = distr( eng );
@@ -2506,6 +2508,9 @@ void Controller::loadObjectNoMetaDatas()
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
+
+        model.objects[ id ]->setDone( true );
+
     }
 
     for( int i = 0; i < counter_; ++i )
@@ -2542,7 +2547,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
         QJsonArray objects_array_ = json["objects"].toArray();
 
-        std::vector< std::size_t > actives = rules_processor.getSurfaces();
+        std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
 
         int obj_id_ = 0;
         for( auto id: actives )
@@ -2655,9 +2660,14 @@ void Controller::exportToIrapGrid()
     std::vector< float > points;
 
     std::vector< std::size_t > actives_ = rules_processor.getOrderedActiveSurfaces();
-    for ( std::size_t id_: actives_ )
+    int num_digits = std::floor( std::log( actives_.size() ) );
+    num_digits = ( num_digits > 0 ? num_digits : 1 );
+
+    for ( size_t i = 0; i < actives_.size(); ++i )
     {
-        QString surface_filename = QString( "Surface %1.IRAPG").arg( id_ );
+        size_t id_ = actives_[i];
+        QString prefix_ = QString( "%1" ).arg( i, num_digits, 10, QChar('0') ).append("_"); 
+        QString surface_filename = QString( "Surface_%1.IRAPG").arg( id_ ).prepend(prefix_);
 
         std::vector< double > points_list;
         std::vector< bool > valid_points;
@@ -2705,7 +2715,7 @@ void Controller::exportToIrapGrid()
         if( name_.empty() == true )
             exporter.writeGridData( surface_filename.toStdString() );
         else
-            exporter.writeGridData( name_ );
+            exporter.writeGridData( prefix_.toStdString().append(name_) );
 
         exporter.clearData();
 
