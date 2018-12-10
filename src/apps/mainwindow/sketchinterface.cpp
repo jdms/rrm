@@ -101,6 +101,7 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
     {
         window->app->setVolumeDimensions( dir_, width_, height_ );
+        sketch_window->applyVerticalExaggeration();
     } );
 
 
@@ -166,6 +167,7 @@ void SketchInterface::createSketchingActions()
     connect( sketch_topview_window, &SketchWindow::updateVolumeDimensions, [=]( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_  )
     {
         window->app->setVolumeDimensions( dir_, width_, height_ );
+        sketch_window->applyVerticalExaggeration();
     } );
 
 
@@ -196,7 +198,7 @@ void SketchInterface::createSketchingActions()
 
 
     connect( window->app, &RRMApplication::updateVolume, [=]()
-    { scontroller->updateVolume(); } );
+    { scontroller->updateVolume(); sketch_window->applyVerticalExaggeration(); } );
 
 
     connect( window->app, &RRMApplication::updateMainCrossSection, [=]()

@@ -393,9 +393,11 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
+//emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
+//        ac_resize_boundary->setChecked( false );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ );   ac_resize_boundary->setChecked( false ); } );
+    { emit updateVolumeDimensions( dir_, width_, height_ );  applyVerticalExaggeration(); ac_resize_boundary->setChecked( false ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
 
@@ -723,6 +725,7 @@ void SketchWindow::applyVerticalExaggeration()
 
 
 }
+
 
 void SketchWindow::setDipAngle( double angle_ )
 {
