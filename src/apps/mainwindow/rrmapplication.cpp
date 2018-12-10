@@ -257,6 +257,18 @@ void RRMApplication::setObjectColor( std::size_t index_, int red_, int green_, i
 }
 
 
+void RRMApplication::setObjectLog( std::size_t index_, const QString& log_ )
+{
+    controller->setObjectLog( index_, log_ );
+}
+
+
+void RRMApplication::getObjectLog( std::size_t index_, QString& log_ )
+{
+    log_ = controller->getObjectLog( index_ );
+}
+
+
 void RRMApplication::setObjectSelectedAsBoundering( const std::size_t& index_ )
 {
     controller->setObjectSelectedAsBoundering( index_ );
