@@ -669,6 +669,9 @@ void MainWindow::initializeInterface()
 
     ac_diagnostics->setChecked( false );
     ac_diagnostics->setEnabled( false );
+
+    if( ps_objectdata == nullptr ) return;
+    ps_objectdata->selectObjectPage( Settings::Objects::ObjectType::VOLUME );
 }
 
 
