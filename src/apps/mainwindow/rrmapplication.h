@@ -102,6 +102,8 @@ public slots:
     void setObjectVisible( std::size_t index_, bool status_ );
     void setObjectName( std::size_t index_, const std::string& name_ );
     void setObjectColor( std::size_t index_, int red_, int green_, int blue_ );
+    void setObjectLog( std::size_t index_, const QString& log_ );
+    void getObjectLog( std::size_t index_, QString& log_ );
 
 
     void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );

@@ -145,6 +145,10 @@ class Controller
         void setObjectSelected( std::size_t index_, bool status_ );
         bool isObjectSelected( std::size_t index_ ) const;
 
+        void setObjectLog( std::size_t index_, const QString& status_ );
+        QString getObjectLog( std::size_t index_ ) const;
+
+
         bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
         bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 

@@ -481,6 +481,16 @@ void MainWindow::createObjectTree()
             app->removeRegionsFromDomains( regions_, domains_, false );
         } );
 
+    connect( object_tree, &ObjectTree::saveSurfaceLog, [=]( int id_, const QString& log_ )
+    {
+        app->setObjectLog( static_cast< int >( id_ ), log_ );
+    } );
+
+
+        connect( object_tree, &ObjectTree::getSurfaceLog, [=]( int id_, QString& log_ )
+    {
+        app->getObjectLog( static_cast< int >( id_ ), log_ );
+    } );
 
 }
 

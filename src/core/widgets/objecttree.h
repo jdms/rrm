@@ -33,6 +33,7 @@
 #include<QDragMoveEvent>
 #include <QDropEvent>
 #include <QMouseEvent>
+#include <QInputDialog>
 
 #include "objecttreeitem.h"
 #include "./core/models/container.h"
@@ -143,6 +144,8 @@ class ObjectTree: public QTreeWidget
 
         void sortDomains();
 
+        void sendSurfaceLog();
+
 
     protected slots:
 
@@ -193,6 +196,9 @@ class ObjectTree: public QTreeWidget
         void setDomainName( std::size_t index_, const std::string& name_ );
         void setDomainColor( std::size_t index_, const QColor& color_ );
 
+        void saveSurfaceLog( int index_, const QString& log_ );
+        void getSurfaceLog( int index_, QString& log_ );
+
 
     private:
 
@@ -228,6 +234,9 @@ class ObjectTree: public QTreeWidget
         QAction* ac_remove_domain = nullptr;
         QAction* ac_removefrom_domain = nullptr;
         QAction* ac_addto_domain = nullptr;
+
+        QInputDialog* wg_log_ = nullptr;
+        int surface_selected_ = -1;
 
         bool is_perc = false;
 };

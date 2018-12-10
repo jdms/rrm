@@ -694,6 +694,19 @@ bool Controller::isObjectSelected(std::size_t index_) const
 }
 
 
+void Controller::setObjectLog( std::size_t index_, const QString& log_ )
+{
+    if (model.objects.find(index_) == model.objects.end()) return;
+    model.objects.at(index_)->saveInformation( log_.toStdString() );
+}
+
+
+QString Controller::getObjectLog( std::size_t index_ ) const
+{
+    if (model.objects.find(index_) == model.objects.end()) return QString();
+    return QString( model.objects.at(index_)->getInformation().c_str() );
+}
+
 
 ///==========================================================================
 
