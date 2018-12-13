@@ -50,6 +50,7 @@ void SketchScene::init()
     }
 
 
+
     setSketchingMode();
 
     image = new ImageItemWrapper();

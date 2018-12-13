@@ -398,7 +398,11 @@ class Controller
         std::map< double, ImageData > images_csectionsY;
         std::map< double, ImageData > images_csectionsZ;
 
+        ImageData image_topview;
+
         std::set< std::size_t > regions_in_domains;
+
+
 
 };
 

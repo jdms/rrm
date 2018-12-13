@@ -469,6 +469,7 @@ void RRMApplication::setDomainName( std::size_t index_, const std::string& name_
     controller->setDomainName( index_, name_ );
 }
 
+
 void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
     controller->setDomainColor( index_, red_, green_, blue_ );
