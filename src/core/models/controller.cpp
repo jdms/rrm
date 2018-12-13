@@ -316,10 +316,15 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
     {
         if( images_csectionsY.find( depth_ ) != images_csectionsY.end() )
         {
-            image_ = images_csectionsY[ depth_ ];
-            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+//            image_ = images_csectionsY[ depth_ ];
+//            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+
+            csection_->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
         }
         model.csectionsY[ depth_ ] = csection_;
+
+
+
     }
 
     else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -407,12 +412,25 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        images_csectionsY[ depth_ ] = std::move( image_ );
+//        images_csectionsY[ depth_ ] = std::move( image_ );
+//        if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
+//        {
+//            CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
+//            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+//        }
+
+        image_topview.file = image_.file;
+        image_topview.ox = image_.ox;
+        image_topview.oy = image_.oy;
+        image_topview.w = image_.w;
+        image_topview.h = image_.h;
+
         if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
         {
             CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
-            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+            csection1_->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
         }
+
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
@@ -454,12 +472,19 @@ void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSe
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        images_csectionsY.erase( depth_ );
+//        images_csectionsY.erase( depth_ );
+        image_topview.file.clear();
+        image_topview.ox = 0.0;
+        image_topview.oy = 0.0;
+        image_topview.w = 0.0;
+        image_topview.h = 0.0;
+
         updateImageInTopViewCrossSection();
         if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
         {
             CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
             csection1_->clearImage();
+
         }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -519,14 +544,21 @@ void Controller::updateImageInTopViewCrossSection()
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         return;
 
-    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
+//    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
+//    {
+//        topview->clearImage();
+//        return;
+//    }
+
+    if( image_topview.file.empty() == true )
     {
         topview->clearImage();
         return;
     }
 
-    ImageData image_= images_csectionsY[ depth_ ];
-    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+//    ImageData image_= images_csectionsY[ depth_ ];
+//    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+    topview->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
 
 }
 
@@ -2854,6 +2886,13 @@ void Controller::clear()
     images_csectionsX.clear();
     images_csectionsY.clear();
     images_csectionsZ.clear();
+
+    image_topview.file.clear();
+    image_topview.ox = 0.0;
+    image_topview.oy = 0.0;
+    image_topview.w = 0.0;
+    image_topview.h = 0.0;
+
 
     current_object = 0;
     current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
