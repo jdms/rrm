@@ -1303,6 +1303,18 @@ std::vector<std::size_t > Controller::defineRegions()
     return surfaces_indexes_;
 }
 
+std::vector<std::size_t > Controller::getOrderedSurfacesIndices()
+{
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedSurfaces();
+    return surfaces_indexes_;
+}
+
+std::vector<std::size_t > Controller::getOrderedActiveSurfacesIndices()
+{
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
+    return surfaces_indexes_;
+}
+
 
 bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {

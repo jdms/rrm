@@ -124,7 +124,15 @@ std::vector<std::size_t> RulesProcessor::getOrderedActiveSurfaces()
 {
     auto surfaces_ids = modeller_.getOrderedSurfacesIndices();
 
-    return filterActiveSurfaces(surfaces_ids);
+    auto ordered_surfaces_ids = filterActiveSurfaces(surfaces_ids);
+    /* std::cout << "\n\n Ordered active surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : ordered_surfaces_ids ) */
+    /* { */
+    /*     std::cout << sid << " "; */
+    /* } */
+    /* std::cout << "\n\n\n" << std::flush; */
+
+    return ordered_surfaces_ids; 
 }
 
 std::size_t RulesProcessor::getWidthResolution() const
