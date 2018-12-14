@@ -241,16 +241,23 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     Eigen::Affine3f M;
     M.setIdentity();
 
-    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glEnable( GL_BLEND );
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-    shader_new->bind();
-
-    shader_new->setUniform("ModelMatrix", M);
-    shader_new->setUniform("ViewMatrix", V);
-    shader_new->setUniform("ProjectionMatrix", P);
-    shader_new->setUniform("WIN_SCALE", static_cast<float>(w), static_cast<float>(h));
-    shader_new->setUniform("isClip", 0);
+	shader_new->bind();
+	shader_new->setUniform("ModelMatrix", M);
+	shader_new->setUniform("ViewMatrix", V);
+	shader_new->setUniform("ProjectionMatrix", P);
+	shader_new->setUniform("viewportSize", static_cast<float>(w), static_cast<float>(h));
+	
+	if (is_preview_)
+	{
+		shader_new->setUniform("alfa",0.5f);
+	}else
+	{
+		shader_new->setUniform("alfa", 1.0f);
+	}
 
     glBindVertexArray( va_surface );
 
@@ -261,8 +268,10 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
     shader_new->unbind();
 
-    //    shader->bind();
+	glDisable(GL_BLEND);
 
+    //shader->bind();
+    //    shader->bind();
     //        shader->setUniform( "ModelMatrix" , M );
     //        shader->setUniform( "ViewMatrix" , V );
     //        shader->setUniform( "ProjectionMatrix" , P );
