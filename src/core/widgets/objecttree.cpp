@@ -141,7 +141,75 @@ void ObjectTree::sendSurfaceLog()
 
 void ObjectTree::showMenu( const QPoint& pos_ )
 {
+    QList< QTreeWidgetItem* > selected_ =  selectedItems();
+   if( selected_.empty() == true ) return;
 
+   bool region_ = false;
+   bool surface_ = false;
+   bool domain_ = false;
+
+   QString label_name_;
+
+   for( auto it_: selected_ )
+   {
+
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it_ );
+        if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY ||  obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
+        {
+            surface_ = true;
+            label_name_ = obj_->text( COLUMN_NAME ).append( QString( ": " ) );
+            surface_selected_ = static_cast< int >( obj_->getIndex() );
+        }
+        else if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+        {
+            region_ = true;
+        }
+        else if( obj_->getType() == Settings::Objects::ObjectType::DOMAINS )
+        {
+            domain_ = true;
+        }
+
+   }
+
+
+
+    if( surface_ == true )
+    {
+        clearSelection();
+
+        if( region_ == true || domain_ == true )
+        {
+            return;
+        }
+
+        region_ = false;
+
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( selected_.back() );
+        obj_->setSelected( true );
+
+        QString log_;
+        wg_log_->setLabelText( label_name_ );
+        emit getSurfaceLog( surface_selected_, log_ );
+
+        wg_log_->setTextValue( log_ );
+        wg_log_->show();
+        return;
+    }
+
+    if( domain_ == true && region_ == true )
+    {
+        clearSelection();
+        return;
+    }
+
+    ac_create_domain->setEnabled( region_ );
+    ac_removefrom_domain->setEnabled( region_ );
+    ac_remove_domain->setEnabled( domain_ );
+    mn_submenu->setEnabled( region_ );
+    mn_menu->exec( mapToGlobal( pos_ ) );
+
+
+/*
     QList< QTreeWidgetItem* > selected_ =  selectedItems();
     bool enabled_ = false;
     bool surface_ = false;
@@ -188,7 +256,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
     ac_removefrom_domain->setEnabled( enabled_ );
     ac_remove_domain->setEnabled( enabled_ );
     mn_submenu->setEnabled( enabled_ );
-    mn_menu->exec( mapToGlobal( pos_ ) );
+    mn_menu->exec( mapToGlobal( pos_ ) );*/
 
 }
 

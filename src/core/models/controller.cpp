@@ -1055,45 +1055,6 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 
     clearAndSetCurveinCrossSectionFromRulesProcessor( index_, current_direction, depth_ );
 
-//    ObjectPtr& obj_ = model.objects[ index_ ];
-
-//    bool has_curve_ = false;
-
-//    std::vector< double > vertices_;
-//    std::vector< std::size_t > edges_;
-
-//    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
-//    }
-
-//    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
-//    }
-
-
-////    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-////    {
-////        has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
-////    }
-
-////    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-////    {
-////        has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
-////    }
-
-//    if( has_curve_ == false )
-//    {
-//        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
-//        return;
-//    }
-
-//    PolyCurve curve_( vertices_, edges_ );
-
-//    obj_->removeCurve( depth_ );
-//    obj_->updateCurve( depth_, curve_ );
-
 }
 
 
@@ -1206,8 +1167,6 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     surface_.setNormals( normals_ );
 
     obj_->setSurface( surface_ );
-    //    obj_->setActive( true );
-
 
 
     std::vector< double > trajectory_;
