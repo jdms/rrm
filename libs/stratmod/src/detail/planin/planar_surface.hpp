@@ -402,14 +402,15 @@ bool PlanarSurface::getPathVertexList( VList &pvlist )
 
     for ( long int j = 0; j < static_cast<long int>( nY_ ); ++j )
     {
-        getVertex2D( getVertexIndex(0, j), v );
         if ( isOrthogonallyOrientedSurface() )
         {
+            getVertex2D( getVertexIndex(j, 0), v );
             pvlist[ 2*j + 0 ] = v.x; ;
             pvlist[ 2*j + 1 ] = f->getPathOrdinate(v.x);
         }
         else
         {
+            getVertex2D( getVertexIndex(0, j), v );
             pvlist[ 2*j + 0 ] = f->getPathOrdinate(v.y);
             pvlist[ 2*j + 1 ] = v.y;
         }
