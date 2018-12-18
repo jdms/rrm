@@ -355,8 +355,11 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     regions[ id_ ] = std::make_shared< RegionItem >();
     regions[ id_ ]->setRawRegion( region_ );
     regions[ id_ ]->setBorderVisible( false );
-    regions[ id_ ]->setFillColor( r_, g_, b_ );
+    regions[ id_ ]->setFillColor( QColor( r_, g_, b_ ) );
+    regions[ id_ ]->setOpacity( 0.7 );
     regions[ id_ ]->setVisible( true );
+    if( image != nullptr )
+        regions[ id_ ]->setZValue( image->zValue() );
     addItem( regions[ id_ ].get() );
 }
 
