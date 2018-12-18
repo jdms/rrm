@@ -179,6 +179,8 @@ class Controller
 
 
         std::vector<std::size_t > defineRegions();
+        std::vector<std::size_t > getOrderedSurfacesIndices();
+        std::vector<std::size_t > getOrderedActiveSurfacesIndices();
 
         void setRegionsVisible(bool status_);
         void setRegionVisible(std::size_t index_, bool status_);
