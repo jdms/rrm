@@ -10,7 +10,8 @@ set( MAINWINDOW_HEADERS      mainwindow.h
                              sketchinterface.h
                              view3dinterface.h
                              diagnosticsinterface.h
-                             rrmapplication.h  )
+                             rrmapplication.h
+                             about/about_widget.hpp  )
 
 
 
@@ -20,6 +21,7 @@ set( MAINWINDOW_MOC_HEADERS  mainwindow.h
                              diagnosticsinterface.h
                              view3dinterface.h )
 
+set( MAINWINDOW_SOURCES     about/about_widget.ui )
 
 
 set( MAINWINDOW_SOURCES      main.cpp
@@ -27,7 +29,8 @@ set( MAINWINDOW_SOURCES      main.cpp
                              sketchinterface.cpp
                              view3dinterface.cpp
                              diagnosticsinterface.cpp
-                             rrmapplication.cpp  )
+                             rrmapplication.cpp
+                             about/about_widget.cpp  )
 
 
 

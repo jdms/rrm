@@ -1,3 +1,5 @@
+#include <QDesktopServices>
+
 #include "mainwindow.h"
 
 MainWindow::MainWindow( QWidget* parent_ ): QMainWindow( parent_ )
@@ -22,6 +24,8 @@ void MainWindow::setWindowProperties()
     setDockNestingEnabled( true );
 
     setWindowTitle( "Rapid Reservoir Modelling" );
+
+    about_rrm = new AboutWidget( this );
 
 }
 
@@ -212,7 +216,9 @@ void MainWindow::createActions()
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
 
+    connect( ac_about, &QAction::triggered, about_rrm, &AboutWidget::show );
 
+    connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
 
 
 }
@@ -674,6 +680,13 @@ void MainWindow::initializeInterface()
     ps_objectdata->selectObjectPage( Settings::Objects::ObjectType::VOLUME );
 }
 
+
+void MainWindow::showHelp()
+{
+    QDir dir;
+    QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
+    QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
+}
 
 MainWindow::~MainWindow()
 {
