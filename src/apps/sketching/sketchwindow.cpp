@@ -140,13 +140,13 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     createLateralBar();
 
-    hb_central1 = new QHBoxLayout( this );
-    hb_central1->addWidget( sketchingcanvas );
-    hb_central1->addWidget( bar_ );
+    hb_central = new QHBoxLayout( this );
+    hb_central->addWidget( sketchingcanvas );
+    hb_central->addWidget( bar_ );
 
 
     QWidget* central_ = new QWidget();
-    central_->setLayout( hb_central1 );
+    central_->setLayout( hb_central );
     setCentralWidget( central_ );
 
     tb_trajectory->setVisible( false );
@@ -240,10 +240,8 @@ void SketchWindow::createLateralBar()
     sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
     sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
     sl_vertical_exagg_->setInvertedAppearance( false );
-//    sl_vertical_exagg_->setDiscretization( 100 );
     sl_vertical_exagg_->setRange( 0, 100 );
     sl_vertical_exagg_->setSingleStep( 1 );
-//    resetVerticalExaggeration();
 
     btn_reset_exaggeration = new QPushButton( "Reset" );
     btn_reset_exaggeration->setMaximumWidth( 45 );
@@ -330,21 +328,27 @@ void SketchWindow::createLateralBar()
     QGroupBox* gb_dip_angle_ = new QGroupBox( "Dip Angle: " );
     gb_dip_angle_->setLayout( vb_angles );
 
-    hb_central = new QVBoxLayout();
-    hb_central->addWidget( gb_exagger_ );
-    hb_central->addWidget( gb_dip_angle_ );
+
+    hb_lateral_bar = new QVBoxLayout();
+//    hb_lateral_bar->addWidget( gb_exagger_ );
+//    hb_lateral_bar->addWidget( gb_dip_angle_ );
+
+
+    LateralBar* latBar = new LateralBar();
+    hb_lateral_bar->addWidget( latBar );
+
 
 
     bar_ = new QWidget();
     bar_->setMinimumWidth( 170 );
-    bar_->setLayout( hb_central );
+    bar_->setLayout( hb_lateral_bar );
     bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
 
 
     connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
 
     QObject::connect<void(QDoubleSpinBox::*)(double)>(sp_exagger_value, &QDoubleSpinBox::valueChanged,
-                                             this,  &SketchWindow::usingVerticalExaggerationSpinBox);
+                                                      this,  &SketchWindow::usingVerticalExaggerationSpinBox);
 
     connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
 
@@ -359,7 +363,7 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     topviewcanvas = new SketchingCanvas();
     const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-//    scene_->invertImage( true );
+    //    scene_->invertImage( true );
     setCentralWidget( topviewcanvas );
 
     tb_trajectory->setVisible( true );
@@ -393,8 +397,8 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
-//emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
-//        ac_resize_boundary->setChecked( false );
+    //emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
+    //        ac_resize_boundary->setChecked( false );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
     { emit updateVolumeDimensions( dir_, width_, height_ );  applyVerticalExaggeration(); ac_resize_boundary->setChecked( false ); } );
@@ -454,7 +458,7 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
     connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
 
 
-   connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
+    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
     connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
 
@@ -538,7 +542,7 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
     if( topviewcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-       scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
     }
 
     if( fixed_csections_canvas == nullptr ) return;
@@ -645,40 +649,6 @@ void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
 
     updateDipAngle();
 
-
-//    count++;
-
-//    if( sl_vertical_exagg_ == nullptr ) return;
-//    if( lb_exagger_value_ == nullptr ) return;
-//    if( sp_exagger_value == nullptr ) return;
-//    if( sketchingcanvas == nullptr ) return;
-
-//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
-//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
-
-//    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
-//    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
-//    sp_exagger_value->setValue( v_exagg_db_ );
-//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
-
-//    if( sketchingcanvas == nullptr ) return;
-
-//    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-//    Settings::CrossSection::CrossSectionDirections dir_;
-//    double depth_;
-
-//    scene_->getCrossSectionInformation( dir_, depth_ );
-//    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
-
-//    if( count < 2 )
-//        sp_exagger_value->setValue( v_exagg_db_ );
-//    else
-//        count = 0;
-
-//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
-//    emit setVerticalExaggeration( v_exagg_db_ );
-
-//    updateDipAngle();
 
 }
 
@@ -793,8 +763,8 @@ void SketchWindow::screenshot()
 {
     QString selectedFilter;
     QString name_of_file_ = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
-                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
-                                                         &selectedFilter );
+                                                          tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                          &selectedFilter );
     if( sketchingcanvas != nullptr )
     {
         std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
@@ -870,26 +840,26 @@ void SketchWindow::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {
-        case Qt::Key_G:
-        {
-            if( sketchingcanvas == nullptr ) return;
-            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
-            scene_->setGuidedExtrusionMode( true );
+    case Qt::Key_G:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( true );
 
-        }
+    }
         break;
 
-        case Qt::Key_D:
-        {
-            if( sketchingcanvas == nullptr ) return;
-            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
-            scene_->setGuidedExtrusionMode( false );
+    case Qt::Key_D:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( false );
 
-        }
+    }
         break;
 
-        default:
-            break;
+    default:
+        break;
     };
 }
 
@@ -958,13 +928,13 @@ SketchWindow::~SketchWindow()
         delete vb_angles;
     vb_angles = nullptr;
 
+    if( hb_lateral_bar!= nullptr )
+        delete hb_lateral_bar;
+    hb_lateral_bar = nullptr;
+
     if( hb_central!= nullptr )
         delete hb_central;
     hb_central = nullptr;
-
-    if( hb_central1!= nullptr )
-        delete hb_central1;
-    hb_central1 = nullptr;
 
     if( lb_input_angle_!= nullptr )
         delete lb_input_angle_;
