@@ -21,6 +21,12 @@ class LateralBar: public QWidget
 
         LateralBar();
 
+
+    public slots:
+
+        void changeVerticalExaggeration( int v_exagg_ );
+
+
     protected:
 
         void createInterface();
@@ -45,7 +51,12 @@ class LateralBar: public QWidget
         QPushButton* btn_show_output_dipangle;
         QPushButton* btn_move_output_dipangle;
 
+        int nsteps_exagg = 100;
+        double min_exagg = -1;
+        double max_exagg = 4;
+        double steps_exagg = 0;
 
+        int count = 0;
 };
 
 #endif // LATERALBAR_H
