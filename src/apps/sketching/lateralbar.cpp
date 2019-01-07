@@ -7,6 +7,7 @@
 LateralBar::LateralBar()
 {
     createInterface();
+    createActions();
 }
 
 void LateralBar::createInterface()
@@ -30,6 +31,7 @@ void LateralBar::createInterface()
     hb_exaggerattion_->addWidget( btn_reset_exaggeration );
     hb_exaggerattion_->addWidget( lb_exagger_value );
     hb_exaggerattion_->addWidget( sp_exagger_value );
+    hb_exaggerattion_->addStretch();
 
 
     QVBoxLayout* vb_layout_exag_ = new QVBoxLayout;
@@ -113,6 +115,10 @@ void LateralBar::createInterface()
 
 void LateralBar::createActions()
 {
+
+    connect( sl_vertical_exagg, &QSlider::sliderMoved, this, &LateralBar::changeVerticalExaggeration );
+
+
 //    connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
 
 //    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
@@ -125,4 +131,17 @@ void LateralBar::createActions()
 //    connect( btn_show_output_dipangle, SIGNAL( toggled( bool ) ), this, SLOT( showDipAngle( bool ) ) );
 
 //    connect( btn_move_oangle, SIGNAL( toggled( bool ) ), this, SLOT( setDipAnglePictureMovable( bool ) ) );
+}
+
+
+void LateralBar::changeVerticalExaggeration( int v_exagg_ )
+{
+    count++;
+
+    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
+    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
+
+//    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
+//    lb_exagger_value->setText( QString("Value: ").append( arg_ ) );
+    sp_exagger_value->setValue( v_exagg_db_ );
 }
