@@ -15,15 +15,14 @@ class SketchingCanvas: public QGraphicsView
 
         const std::shared_ptr< SketchScene >& getScene() const;
 
-        void setVerticalExaggeration( double scale_ );
-        double getVerticalExaggeration() const;
 
+        void setVerticalExaggeration( double scale_ );
         void stopVerticalExaggeration();
+        double getVerticalExaggeration() const;
 
     protected:
 
         void setupScene();
-//        virtual void keyPressEvent( QKeyEvent *event );
 
 
 
