@@ -65,6 +65,7 @@ class SketchWindow: public QMainWindow
 
     public:
 
+
        /**
        * Constructor.
        */
@@ -75,22 +76,61 @@ class SketchWindow: public QMainWindow
        */
         ~SketchWindow();
 
+
+       /**
+       * Method to create the canvas associated to the main cross-section, i. e., it exhibts the width and depth directions.
+       * The creation of the lateral bar only is called here since, it is available only to main cross-sections.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the main cross-section.
+       */
         std::shared_ptr< SketchScene > createMainCanvas();
+
+
+       /**
+       * Method to add fixed cross-sections. Fixed cross-sections should have the same direction per time.
+       * @param depth_ The depth of the cross-section in the direction dir_ ( WIDTH, LENGHT or DEPTH ) to be visualized.
+       * @param dir_ The direction of the cross-section ( WIDTH, LENGHT or DEPTH ) to be visualized.
+       * @param color_ The color of the marker that was used in the depth slider ( see slider in the 3d widget ).
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the cross-section added.
+       */
         std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z , QColor color_ = Qt::red );
+
+
+       /**
+       * Method to remove a fixed cross-section.
+       * @param depth_ The depth of the cross-section to be removed.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void removeCanvas( double depth_ );
 
 
+       /**
+       * Method to create the canvas associated to the top view cross-section, i. e., it exhibts only the height direction.
+       * The creation of the lateral bar not is called here, since, it is available only to main cross-sections.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the top view cross-section.
+       */
         std::shared_ptr< SketchScene > createTopViewCanvas();
-
-//        void usingVerticalExaggeration( int v_exagg_);
-        void applyVerticalExaggeration();
-
-
-
 
 
 
     public slots:
+
+
 
         void updateColorWidget( int red_, int green_, int blue_ );
         void disableResizeVolume( bool status_ );
@@ -98,19 +138,19 @@ class SketchWindow: public QMainWindow
         void setModeSelecting( bool status_ );
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
-//        void setDipAngle( double angle_ );
-        void setDipAnglePictureMovable( bool status_ );
+
+        void applyVerticalExaggeration();
+        void resetVerticalExaggeration();
+
 
         void showDipAngle( bool status_ );
-        void resetVerticalExaggeration();
+        void setDipAnglePictureMovable( bool status_ );
 
         void screenshot();
         void reset();
 
-//        void updateDipAngle();
         void removeAllCanvas();
 
-//        void usingVerticalExaggerationSpinBox( double v_exagg_ );
 
     signals:
 
@@ -219,7 +259,15 @@ class SketchWindow: public QMainWindow
 
     protected:
 
-       /**
+        /**
+       * Protected method responsibles for the interface creation. It calls the createToolbar and creates the fixed cross-sections container.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createInterface();
+
+        /**
        * Protected method responsibles for the toolbar creation.
        * @see testMeToo()
        * @see publicVar()
@@ -228,7 +276,7 @@ class SketchWindow: public QMainWindow
         void createToolBar();
 
 
-       /**
+        /**
        * Protected method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
        * @see testMeToo()
        * @see publicVar()
@@ -237,8 +285,8 @@ class SketchWindow: public QMainWindow
         void createLateralBar();
 
 
-       /**
-       * Protected method to handle the keyboard interaction.
+        /**
+       * Protected method to handle the keyboard events.
        * @param event Corresponds to the mouse event.
        * @see check QKeyEvent on Qt manual for more details.
        * @return Void
@@ -249,6 +297,7 @@ class SketchWindow: public QMainWindow
 
 
         SketchingCanvas* sketchingcanvas = nullptr;                 /**< Canvas to draw the sketches, exhibiting the main cross-section. It inherits from QGraphicsView. */
+
         SketchingCanvas* topviewcanvas = nullptr;                   /**< Canvas to draw the sketches, exhibiting the top-view cross-section. It inherits from QGraphicsView. */
 
         CanvasStack* fixed_csections_canvas = nullptr;              /**< Container of canvas. Stores the fixed canvas. */
@@ -268,10 +317,6 @@ class SketchWindow: public QMainWindow
         QAction* ac_resize_image = nullptr;                         /**< Action to resize image. It is a selectable action. */
         QAction* ac_remove_image = nullptr;                         /**< Action to remove image from scene. */
 
-        QToolBar* tb_region = nullptr;
-        QAction* ac_select_regions = nullptr;
-        const bool SELECT_REGION_DEFAULT_STATUS = false;
-
 
         // only in top-view cross-section
         QToolBar* tb_trajectory = nullptr;                          /**< Toolbar with trajectory related actions. */
@@ -287,42 +332,19 @@ class SketchWindow: public QMainWindow
 
         // only in main cross-section
         QToolBar* tb_lateral_bar = nullptr;                         /**< Toolbar with dip angle and vertical exaggeration related actions. */
+
         QAction* ac_show_bar = nullptr;                             /**< Action to show/hide the lateral bar. It is a selectable action. Lateral bar contains dip angle and vertical exaggeration widgets. */
+
         LateralBar* latBar = nullptr;
+
+        QWidget* bar_ = nullptr;                                    /**< Dip angle and vertical exaggeration widget. To be moved to a new class. */
+
         const bool SHOW_VERTICAL_EXAGGERATION = false;              /**< Default status to the show lateral bar action. True means the action is selected, otherwise, unselected. */
 
 
-        QWidget* bar_ = nullptr;                                    /**< Dip angle and vertical exaggeration widget. To be moved to a new class. */
-        QSlider* sl_vertical_exagg_ = nullptr;
-        int nsteps_exagg = 100;
-        double min_exagg = -1;
-        double max_exagg = 4;
-        double steps_exagg = 0;
-
-
-        QDial* dl_input_angle_ = nullptr;
-        QHBoxLayout* vb_angles = nullptr;
-        QVBoxLayout* hb_lateral_bar = nullptr;
-        QHBoxLayout* hb_central = nullptr;
-        QLCDNumber* lb_input_angle_  = nullptr;
-        QLCDNumber* lb_output_angle_ = nullptr;
-        QLabel* lb_exagger_value_ = nullptr;
-        QDoubleSpinBox* sp_exagger_value = nullptr;
-        QPushButton* btn_reset_exaggeration = nullptr;
-
-        AnglePicture* lb_input_dpangle = nullptr;
-        AnglePicture* lb_output_dpangle = nullptr;
-
-        QPushButton* btn_show_oangle  = nullptr;
-        QPushButton* btn_move_oangle = nullptr;
-
-        QToolBar* tb_well = nullptr;                      // not being used
-        QAction* ac_select_wells = nullptr;               // not being used
-        const bool SELECT_WELLS_DEFAULT_STATUS = false;   // not being used
-
-
-
-        int count = 0;
+        QToolBar* tb_region = nullptr;
+        QAction* ac_select_regions = nullptr;
+        const bool SELECT_REGION_DEFAULT_STATUS = false;
 
 };
 

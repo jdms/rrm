@@ -31,7 +31,8 @@
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-    createToolBar();
+
+    createInterface();
 }
 
 
@@ -87,14 +88,6 @@ void SketchWindow::createToolBar()
     tb_region->addAction( ac_select_regions );
     tb_region->setVisible( false );
 
-    tb_well = addToolBar( "Well" );
-    ac_select_wells = new QAction( "Select Well", this );
-    ac_select_wells->setToolTip( "Select Wells" );
-    ac_select_wells->setCheckable( true );
-    ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
-    tb_well->addAction( ac_select_wells );
-    tb_well->setVisible( false );
-
     tb_lateral_bar = addToolBar( "Lateral Bar" );
     ac_show_bar = new QAction( "Vertical Exaggeration", this );
     ac_show_bar->setToolTip( "Show Vertical Exaggeration and Dip Angle Bar" );
@@ -128,11 +121,17 @@ void SketchWindow::createToolBar()
 }
 
 
-std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
+void SketchWindow::createInterface()
 {
+    createToolBar();
+
     fixed_csections_canvas = new CanvasStack();
     fixed_csections_canvas->setWindowTitle( "Fixed Cross-Sections" );
     fixed_csections_canvas->setVisible( false );
+}
+
+std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
+{
 
     sketchingcanvas = new SketchingCanvas();
     sketchingcanvas->scale( 1, -1 );
@@ -140,7 +139,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     createLateralBar();
 
-    hb_central = new QHBoxLayout( this );
+    QHBoxLayout* hb_central = new QHBoxLayout( this );
     hb_central->addWidget( sketchingcanvas );
     hb_central->addWidget( bar_ );
 
@@ -237,104 +236,9 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 void SketchWindow::createLateralBar()
 {
 
-    sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
-    sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
-    sl_vertical_exagg_->setInvertedAppearance( false );
-    sl_vertical_exagg_->setRange( 0, 100 );
-    sl_vertical_exagg_->setSingleStep( 1 );
-
-    btn_reset_exaggeration = new QPushButton( "Reset" );
-    btn_reset_exaggeration->setMaximumWidth( 45 );
-//    connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
-
-    lb_exagger_value_ = new QLabel( "Value: " );
-    sp_exagger_value = new QDoubleSpinBox();
-    sp_exagger_value->setRange( 0.1, 10000. );
-    sp_exagger_value->setSingleStep( 0.1 );
-
-    steps_exagg = (max_exagg - min_exagg);
-
-    QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
-    hb_exaggerattion_->addWidget( btn_reset_exaggeration );
-    hb_exaggerattion_->addWidget( lb_exagger_value_ );
-    hb_exaggerattion_->addWidget( sp_exagger_value );
-
-
-    QVBoxLayout* vb_layout_exag_ = new QVBoxLayout;
-    vb_layout_exag_->addWidget( sl_vertical_exagg_ );
-    vb_layout_exag_->addLayout( hb_exaggerattion_ );
-
-
-    QGroupBox* gb_exagger_ = new QGroupBox( "Vert. Exaggeration: " );
-    gb_exagger_->setLayout( vb_layout_exag_ );
-
-
-    dl_input_angle_ = new QDial();
-    dl_input_angle_->setToolTip( "Input Dip Angle" );
-    dl_input_angle_->setMaximumSize( 70, 70 );
-    dl_input_angle_->setInvertedAppearance( true );
-    dl_input_angle_->setNotchesVisible( true );
-    dl_input_angle_->setRange( 0, 90 );
-    dl_input_angle_->setSingleStep( 10 );
-
-    btn_show_oangle = new QPushButton( "Show" );
-    btn_show_oangle->setToolTip( "Show Dip Angle inside Canvas" );
-    btn_show_oangle->setCheckable( true );
-
-    btn_move_oangle = new QPushButton( "Move" );
-    btn_move_oangle->setToolTip( "Move Dip Angle Picture" );
-    btn_move_oangle->setCheckable( true );
-
-    QVBoxLayout* vb_input_angle = new QVBoxLayout();
-    vb_input_angle->addWidget( dl_input_angle_ );
-    vb_input_angle->addWidget( btn_show_oangle );
-    vb_input_angle->addWidget( btn_move_oangle );
-
-
-    lb_input_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
-    lb_input_dpangle->setToolTip( "Input Dip Angle" );
-    lb_input_angle_ = new QLCDNumber();
-    lb_input_angle_->setDecMode();
-    lb_input_angle_->setFrameShape( QFrame::NoFrame );
-    lb_input_angle_->setSegmentStyle(QLCDNumber::Flat);
-
-    QVBoxLayout* vb_input_angle_ = new QVBoxLayout;
-    vb_input_angle_->addWidget( lb_input_dpangle );
-    vb_input_angle_->addWidget( lb_input_angle_ );
-
-
-    lb_output_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
-    lb_output_dpangle->setToolTip( "Output Dip Angle" );
-    lb_output_angle_ = new QLCDNumber();
-    lb_output_angle_->setDecMode();
-    lb_output_angle_->setFrameShape( QFrame::NoFrame );
-    lb_output_angle_->setSegmentStyle(QLCDNumber::Flat);
-
-
-    QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
-    vb_output_angle_->addWidget( lb_output_dpangle );
-    vb_output_angle_->addWidget( lb_output_angle_ );
-
-
-    vb_angles = new QHBoxLayout();
-    vb_angles->addLayout( vb_input_angle );
-    vb_angles->addSpacing( 10 );
-
-    vb_angles->addLayout( vb_input_angle_ );
-    vb_angles->addSpacing( 10 );
-    vb_angles->addLayout( vb_output_angle_ );
-
-
-    QGroupBox* gb_dip_angle_ = new QGroupBox( "Dip Angle: " );
-    gb_dip_angle_->setLayout( vb_angles );
-
-
-    hb_lateral_bar = new QVBoxLayout();
-//    hb_lateral_bar->addWidget( gb_exagger_ );
-//    hb_lateral_bar->addWidget( gb_dip_angle_ );
-
-
     latBar = new LateralBar();
+
+    QVBoxLayout* hb_lateral_bar = new QVBoxLayout();
     hb_lateral_bar->addWidget( latBar );
 
     connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
@@ -365,17 +269,6 @@ void SketchWindow::createLateralBar()
     bar_->setLayout( hb_lateral_bar );
     bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
 
-
-//    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
-
-//    QObject::connect<void(QDoubleSpinBox::*)(double)>(sp_exagger_value, &QDoubleSpinBox::valueChanged,
-//                                                      this,  &SketchWindow::usingVerticalExaggerationSpinBox);
-
-//    connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
-
-//    connect( btn_show_oangle, SIGNAL( toggled( bool ) ), this, SLOT( showDipAngle( bool ) ) );
-
-//    connect( btn_move_oangle, SIGNAL( toggled( bool ) ), this, SLOT( setDipAnglePictureMovable( bool ) ) );
 }
 
 
@@ -604,7 +497,6 @@ void SketchWindow::setModeSelecting( bool status_ )
 }
 
 
-
 void SketchWindow::setModeSelectingStratigraphies( bool status_ )
 {
     if( sketchingcanvas != nullptr )
@@ -620,7 +512,6 @@ void SketchWindow::setModeSelectingStratigraphies( bool status_ )
 }
 
 
-
 void SketchWindow::setModeRegionSelecting( bool status_ )
 {
     if( sketchingcanvas != nullptr )
@@ -634,68 +525,6 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
         scene_->setSelectingRegionMode( status_ );
     }
 }
-
-
-
-//void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
-//{
-
-//    count++;
-
-//    if( sl_vertical_exagg_ == nullptr ) return;
-//    if( lb_exagger_value_ == nullptr ) return;
-//    if( sp_exagger_value == nullptr ) return;
-//    if( sketchingcanvas == nullptr ) return;
-
-//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
-//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
-
-//    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
-//    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
-//    sp_exagger_value->setValue( v_exagg_db_ );
-//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
-
-//    if( sketchingcanvas == nullptr ) return;
-
-//    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-//    Settings::CrossSection::CrossSectionDirections dir_;
-//    double depth_;
-
-//    scene_->getCrossSectionInformation( dir_, depth_ );
-//    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
-
-//    if( count < 2 )
-//        sp_exagger_value->setValue( v_exagg_db_ );
-//    else
-//        count = 0;
-
-//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
-//    emit setVerticalExaggeration( v_exagg_db_ );
-
-//    updateDipAngle();
-
-
-//}
-
-
-//void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
-//{
-//    count++;
-
-//    double lg = log10( v_exagg_ );
-//    std::cout << " log10: "  << lg << std::endl << std::flush;
-
-//    double value = 100*(lg - min_exagg)/(max_exagg - min_exagg);
-//    std::cout << " divisao: "  << value << std::endl << std::flush;
-
-
-
-//    if( count < 2 )
-//        sl_vertical_exagg_->setValue( static_cast< int >( value ) );
-//    else
-//        count = 0;
-
-//}
 
 
 void SketchWindow::resetVerticalExaggeration()
@@ -724,8 +553,6 @@ void SketchWindow::applyVerticalExaggeration()
 
 
 }
-
-
 
 
 void SketchWindow::showDipAngle( bool status_ )
@@ -784,7 +611,6 @@ void SketchWindow::screenshot()
 }
 
 
-
 void SketchWindow::reset()
 {
 
@@ -802,34 +628,17 @@ void SketchWindow::reset()
     if( ac_select_regions != nullptr )
         ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
 
-    if( ac_select_wells != nullptr )
-        ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
-
-
     cp_color->setColor( QColor( 255, 0, 0 ) );
 
 
     if( ac_show_bar != nullptr )
         ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
 
-
-
-    if( btn_show_oangle != nullptr )
-        btn_show_oangle->setChecked( false );
-
-    if( btn_move_oangle != nullptr )
-        btn_move_oangle->setChecked( false );
-
-    if( dl_input_angle_ != nullptr )
-        dl_input_angle_->setValue( 0 );
-
     if( ac_axes != nullptr )
         ac_axes->setChecked( true );
 
 
 }
-
-
 
 
 void SketchWindow::keyPressEvent( QKeyEvent *event )
@@ -902,55 +711,6 @@ SketchWindow::~SketchWindow()
     if( ac_select_regions!= nullptr )
         delete ac_select_regions;
     ac_select_regions = nullptr;
-
-    if( tb_well!= nullptr )
-        delete tb_well;
-    tb_well = nullptr;
-
-    if( ac_select_wells!= nullptr )
-        delete ac_select_wells;
-    ac_select_wells = nullptr;
-
-
-    if( sl_vertical_exagg_!= nullptr )
-        delete sl_vertical_exagg_;
-    sl_vertical_exagg_ = nullptr;
-
-    if( dl_input_angle_!= nullptr )
-        delete dl_input_angle_;
-    dl_input_angle_ = nullptr;
-
-    if( vb_angles!= nullptr )
-        delete vb_angles;
-    vb_angles = nullptr;
-
-    if( hb_lateral_bar!= nullptr )
-        delete hb_lateral_bar;
-    hb_lateral_bar = nullptr;
-
-    if( hb_central!= nullptr )
-        delete hb_central;
-    hb_central = nullptr;
-
-    if( lb_input_angle_!= nullptr )
-        delete lb_input_angle_;
-    lb_input_angle_  = nullptr;
-
-    if( lb_output_angle_!= nullptr )
-        delete lb_output_angle_;
-    lb_output_angle_ = nullptr;
-
-    if( lb_input_dpangle!= nullptr )
-        delete lb_input_dpangle;
-    lb_input_dpangle = nullptr;
-
-    if( lb_output_dpangle!= nullptr )
-        delete lb_output_dpangle;
-    lb_output_dpangle = nullptr;
-
-    if( btn_show_oangle!= nullptr )
-        delete btn_show_oangle;
-    btn_show_oangle  = nullptr;
 
     if( bar_!= nullptr )
         delete bar_;

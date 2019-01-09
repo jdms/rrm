@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QLabel>
 #include <QLCDNumber>
 #include <QDoubleSpinBox>
 #include <QSlider>
@@ -11,7 +10,6 @@
 #include <QPixmap>
 
 #include "models/anglepicture.h"
-//#include "./core/widgets/realfeaturedslider.h"
 
 /**
  *   Container to Dip Angle and Vertical Exaggeration widgets.
@@ -29,41 +27,170 @@ class LateralBar: public QWidget
         LateralBar();
 
         /**
-        * Destructor. Delete all elements created in the window.
+        * Destructor. Delete all elements created in the widget.
         */
         ~LateralBar();
 
 
+        /**
+       * Method to get the output dip angle picture. The picture is used in the scene in order to facilitate the user knows which angle he/she should drawn the sketch.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return const QPixmap* A const pointer to QPixmap, which contains the output dip angle.
+       */
         const QPixmap* getDipAnglePicture() const;
 
 
     public slots:
 
+       /**
+       * Method (slot) called as using the vertical exaggeration slider.
+       * It updates the dip angle value.
+       * @param v_exagg_ Corresponds to the vertical exaggeration slider position (integer).
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void changeVerticalExaggeration( int v_exagg_ );
+
+
+       /**
+       * Method (slot) called as using the vertical exaggeration double spinbox.
+       * It updates the dip angle value.
+       * @param v_exagg_ Corresponds to the vertical exaggeration slider value (double).
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void changeVerticalExaggerationBySpinbox( double v_exagg_ );
+
+
+       /**
+       * Method (slot) to reset the value of the vertical exaggeration to 1.0. It is also called by the QPushButton btn_reset_exaggeration.
+       * It updates the dip angle value.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void resetVerticalExaggeration();
+
+
+        /**
+       * Method (slot) to change the value of the input dip angle value (double).
+       * @param angle_ Corresponds to the the input dip angle value (double).
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void changeDipAngle( double angle_ );
+
+
+        /**
+       * Method (slot) to update the value of the output dip angle value (double) using the value of the current dl_input_dipangle value.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void updateDipAngle();
+
+
+       /**
+       * Method (slot) to clear all the widgets related to the dip angle and vertical exaggeration, including the pictures.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void clear();
 
 
     signals:
 
+       /**
+       * Signal to send the vertical exaggeration value to the 2d and 3d scenes.
+       * @ param double Corresponds to the current vertical exaggeration value.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void sgn_updateVerticalExaggeration( double );
+
+
+       /**
+       * Signal emitted to warn the 2d and 3d scenes to reset the vertical exaggeration images.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void sgn_resetVerticalExaggeration();
+
+       /**
+       * Signal emitted to warn the 2d scene to exhibit or not the dip angle picture.
+       * If the bool is true, the scene should show the output dip angle picture. The scene is able to get the picture using the public method getDipAnglePicture.
+       * @param bool Value can be true if the scene should show the output dip angle picture, and false, otherwise.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void sgn_sendDipAnglePicture( bool );
+
+       /**
+       * Signal emitted to warn the 2d scene to allow the user moves or not the dip angle picture.
+       * @param bool Value can be true if the user is able to move the output dip angle picture, and false, otherwise.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void sgn_setDipAnglePictureMovable( bool );
 
 
     protected:
 
+       /**
+       * Protected method responsible for initializing and exhibiting the widgets.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void createInterface();
+
+       /**
+       * Protected method responsible for defining and initializing the connects related to the actions of the widgets.
+       * @see Javadoc_Test()
+       * @see ~Javadoc_Test()
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void createActions();
 
 
     protected:
 
-        QSlider* sl_vertical_exagg = nullptr;            /**< Integer slider to represent the user input vertical exaggeration value. */
+        QSlider* sl_vertical_exagg = nullptr;                       /**< Integer slider to represent the user input vertical exaggeration value. */
         QPushButton* btn_reset_exaggeration = nullptr;              /**< Button to reset the vertical exaggeration value. */
         QDoubleSpinBox* sp_exagger_value = nullptr;                 /**< Spinbox with doubles values to represent the user input vertical exaggeration value. */
 
@@ -77,8 +204,10 @@ class LateralBar: public QWidget
         QPushButton* btn_show_output_dipangle = nullptr;            /**< Button to display the current image related to output angle.  */
         QPushButton* btn_move_output_dipangle = nullptr;            /**< Button to allow the user to move the current image related to output angle.  */
 
-        double min_exagg = -1;                                      /**< Minimum value to the vertical exxageration slider.  */
-        double max_exagg = 4;                                       /**< Maximum value to the vertical exxageration slider.  */
+
+        //TODO fix the comment
+        double min_exagg = -1;                                      /**< Minimum value to the vertical exaggeration slider.  */
+        double max_exagg = 4;                                       /**< Maximum value to the vertical exaggeration slider.  */
 
         int count = 0;
 };
