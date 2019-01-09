@@ -82,7 +82,7 @@ class SketchWindow: public QMainWindow
 
         std::shared_ptr< SketchScene > createTopViewCanvas();
 
-        void usingVerticalExaggeration( int v_exagg_);
+//        void usingVerticalExaggeration( int v_exagg_);
         void applyVerticalExaggeration();
 
 
@@ -98,7 +98,7 @@ class SketchWindow: public QMainWindow
         void setModeSelecting( bool status_ );
         void setModeSelectingStratigraphies( bool status_ );
         void setModeRegionSelecting( bool status_ );
-        void setDipAngle( double angle_ );
+//        void setDipAngle( double angle_ );
         void setDipAnglePictureMovable( bool status_ );
 
         void showDipAngle( bool status_ );
@@ -107,10 +107,10 @@ class SketchWindow: public QMainWindow
         void screenshot();
         void reset();
 
-        void updateDipAngle();
+//        void updateDipAngle();
         void removeAllCanvas();
 
-        void usingVerticalExaggerationSpinBox( double v_exagg_ );
+//        void usingVerticalExaggerationSpinBox( double v_exagg_ );
 
     signals:
 
@@ -216,11 +216,11 @@ class SketchWindow: public QMainWindow
 
         void showDipAnglePicture( bool status_ );
 
+
     protected:
 
-
        /**
-       * Private method responsibles for the toolbar creation.
+       * Protected method responsibles for the toolbar creation.
        * @see testMeToo()
        * @see publicVar()
        * @return Void
@@ -229,7 +229,7 @@ class SketchWindow: public QMainWindow
 
 
        /**
-       * Private method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
+       * Protected method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
        * @see testMeToo()
        * @see publicVar()
        * @return Void
@@ -238,7 +238,7 @@ class SketchWindow: public QMainWindow
 
 
        /**
-       * Method to handle the keyboard interaction.
+       * Protected method to handle the keyboard interaction.
        * @param event Corresponds to the mouse event.
        * @see check QKeyEvent on Qt manual for more details.
        * @return Void
@@ -288,6 +288,7 @@ class SketchWindow: public QMainWindow
         // only in main cross-section
         QToolBar* tb_lateral_bar = nullptr;                         /**< Toolbar with dip angle and vertical exaggeration related actions. */
         QAction* ac_show_bar = nullptr;                             /**< Action to show/hide the lateral bar. It is a selectable action. Lateral bar contains dip angle and vertical exaggeration widgets. */
+        LateralBar* latBar = nullptr;
         const bool SHOW_VERTICAL_EXAGGERATION = false;              /**< Default status to the show lateral bar action. True means the action is selected, otherwise, unselected. */
 
 
