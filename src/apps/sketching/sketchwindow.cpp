@@ -133,7 +133,11 @@ void SketchWindow::createInterface()
 std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 {
 
+    // hidding actions not associated to the main cross-sections
+    tb_trajectory->setVisible( false );
+
     sketchingcanvas = new SketchingCanvas();
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
     sketchingcanvas->scale( 1, -1 );
     const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
 
@@ -148,12 +152,22 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     central_->setLayout( hb_central );
     setCentralWidget( central_ );
 
-    tb_trajectory->setVisible( false );
+    //TODO: create method to encapsulated these actions
+
+    // connects related to the fixed cross-sections widget
 
     connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
     {
         emit removeMarkerFromSlider( id_ );
     } );
+
+    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
+
+    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+
+
+
+    // connects related to scene: from actions
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {
@@ -164,7 +178,6 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
-
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
 
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
@@ -173,24 +186,14 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
-
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
 
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 
-
-    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
-
-    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
-
-    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
-
     connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
-    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
 
-
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+    // connects related to scene: from scene
 
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
@@ -226,6 +229,16 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
+
+
+    // connects related to lateral bar
+
+    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
+
+
+    // connects related to the own window
+
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
 
 
@@ -275,14 +288,18 @@ void SketchWindow::createLateralBar()
 std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 {
 
-    topviewcanvas = new SketchingCanvas();
-    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-    //    scene_->invertImage( true );
-    setCentralWidget( topviewcanvas );
-
+    // hidding actions not associated to the top view cross-sections
     tb_trajectory->setVisible( true );
     tb_lateral_bar->setVisible( false );
 
+    topviewcanvas = new SketchingCanvas();
+    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+    setCentralWidget( topviewcanvas );
+
+
+    //TODO: create method to encapsulated these actions
+
+    // connects related to scene: from actions
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {   scene_->setSketchColor( color_ );
@@ -300,10 +317,6 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
-
-    connect( ac_use_last_trajectory, &QAction::triggered, [=]()
-    { emit useLastTrajectory(); } );
 
     connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
@@ -311,8 +324,8 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
-    //emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
-    //        ac_resize_boundary->setChecked( false );
+
+    // connects related to scene: from scene
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
     {
@@ -336,6 +349,10 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
     connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
 
+    // connects related to the own window
+
+    connect( ac_use_last_trajectory, &QAction::triggered, [=](){ emit useLastTrajectory(); } );
+
 
     return scene_;
 }
@@ -348,9 +365,15 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
     fixed_csections_canvas->addElement( depth_, canvas_ );
     fixed_csections_canvas->setVisible( true );
 
+
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         canvas_->scale( 1, -1 );
 
+
+    //TODO: create method to encapsulated these actions
+
+    // connects related to scene: from actions
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color1_ )
     {
@@ -360,11 +383,29 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
 
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
+
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
+
     connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
 
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
+
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
+
+    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
+
+    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
+
+    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
+
+    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
+
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
+
+    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
+
+
+    // connects related to scene: from scene
 
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
@@ -375,26 +416,7 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
 
     connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
 
-
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
-
-    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
-
-    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
-
-
-    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
-
-    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-
-
-    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
-
-    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
-
-
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
-
 
     connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
 

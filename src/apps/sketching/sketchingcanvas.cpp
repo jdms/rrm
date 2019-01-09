@@ -43,7 +43,6 @@ void SketchingCanvas::setVerticalExaggeration( double scale_ )
     matrix_.scale( 1.0, -1*scale_ );
     setMatrix( matrix_ );
     scene->revertVerticalExaggerationInAxes( matrix_, scale_ );
-//    scene->updateAxes();
 }
 
 

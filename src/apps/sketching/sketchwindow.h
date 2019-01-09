@@ -131,24 +131,107 @@ class SketchWindow: public QMainWindow
     public slots:
 
 
-
+       /**
+       * Method called to update the color selected in the picker color and also, update the current color in the cross-sections being used.
+       * @param red red component of the new color.
+       * @param green green component of the new color.
+       * @param blue blue component of the new color.
+       * @see publicVar()
+       * @return Void
+       */
         void updateColorWidget( int red_, int green_, int blue_ );
+
+       /**
+       * Method called to enable/disable the action "Resize boundary".
+       * @param status_ boolean. It is true if the action "Resize boundary" should be enabled, or false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
         void disableResizeVolume( bool status_ );
 
+
+        //TODO: this method needs to be revisited
+       /**
+       * Method called to change the interaction mode of the user to selection. This mode disable the curves selection.
+       * @param status_ boolean. It is true if the selection interaction should be enabled, or false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
         void setModeSelecting( bool status_ );
+
+
+       /**
+       * Method called to change the interaction mode of the user to selection of curves.
+       * @param status_ boolean. It is true if the curves selection interaction should be enabled, or false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
         void setModeSelectingStratigraphies( bool status_ );
+
+       /**
+       * Method called to change the interaction mode of the user to selection of regions.
+       * @param status_ boolean. It is true if the regions selection interaction should be enabled, or false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
         void setModeRegionSelecting( bool status_ );
 
+
+       /**
+       * Method called to reapply the vertical exaggeration after a volume dimensions change.
+       * @see publicVar()
+       * @return Void
+       */
         void applyVerticalExaggeration();
+
+
+        /**
+       * Method called to reset the vertical exaggeration.
+       * @see publicVar()
+       * @return Void
+       */
         void resetVerticalExaggeration();
 
 
+        /**
+       * Method called to show or hide the output dip angle picture in the scene.
+       * @param status_ boolean. It is true if the output dip angle picture should be shown, or false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
         void showDipAngle( bool status_ );
+
+
+         /**
+       * Method called to enable/disable to move the output dip angle picture in the scene.
+       * @param status_ boolean. It is true if the output dip angle picture is allowed to be moved, otherwise the value is false.
+       * @see publicVar()
+       * @return Void
+       */
         void setDipAnglePictureMovable( bool status_ );
 
+
+       /**
+       * Method called to take a screenshot of the scene.
+       * @see publicVar()
+       * @return Void
+       */
         void screenshot();
+
+
+       /**
+       * Method called to clear the scene.
+       * @see publicVar()
+       * @return Void
+       */
         void reset();
 
+
+        /**
+       * Method called to remove all the fixed cross-sections canvas.
+       * @see publicVar()
+       * @return Void
+       */
         void removeAllCanvas();
 
 
@@ -217,44 +300,226 @@ class SketchWindow: public QMainWindow
 
 
 
+       /**
+       * When a fixed cross-section is closed this signal is emitted to warn the depth slider (see 3d window) to remove the associated marker.
+       * @param id_ A double value corresponding the depth of the cross-section removed.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void removeMarkerFromSlider( double id_ );
 
+
+       /**
+       * Signal to ask the controller to save the image in the cross-section specified.
+       * @param const std::string& path of the image
+       * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
+       * @param double depth of the cross-section
+       * @param double x coordinate of the origin of the image
+       * @param double y coordinate of the origin of the image
+       * @param double width of the image
+       * @param double height of the image
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
 
-        void removeImageFromCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
-        void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ );
+       /**
+       * Signal to ask the controller to remove the image of the cross-section specified.
+       * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
+       * @param double depth of the cross-section
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void removeImageFromCrossSection( const Settings::CrossSection::CrossSectionDirections& , double );
 
+       /**
+       * Signal to update the current image dimensions.
+       * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
+       * @param double width of the image
+       * @param double height of the image
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& , double , double );
+
+       /**
+       * Signal to send the sketch and add it as a curve of the current object
+       * @param curve_ the sketch drawn by the user (Polycurve)
+       * @param dir_ the direction of the cross-section which was drawn the sketch
+       * @param depth_ the depth of the cross-section which was drawn the sketch
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+       /**
+       * Signal to send the sketch and add it as a trajectory of the current object. Currently, a trajectory only is drawn in the cross-section of the height direction.
+       * @param curve_ the sketch drawn by the user (Polycurve)
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void addTrajectory( const PolyCurve& curve_ );
+
+
+       /**
+       * Signal to send to controller so that it removes the last curve inserted in the cross-section of direction dir_ and depth depth_.
+       * @param dir_ direction of the cross-section which the curve was drawn.
+       * @param depth_ depth_ of the cross-section which the curve was drawn.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+
+       /**
+       * Signal to send to controller so that it creates the surface with the curves of the current object.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void createObject();
 
+
+       /**
+       * Signal to send to controller so that it retrieves the last trajectory to be used in the current object.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void useLastTrajectory();
 
+
+       /**
+       * Signal emitted when the user select a new color in the color picker.
+       * @param red red component of the new color.
+       * @param green green component of the new color.
+       * @param blue blue component of the new color.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void defineColorCurrent( int red_, int green_, int blue_ );
 
+
+        /**
+       * Signal emitted when the user select a curve.
+       * @param id_ the id_ of the object which has the curve selected.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void objectSelected( const std::size_t& id_ );
 
+
+       /**
+       * Signal emitted when the user pick a point inside a region.
+       * @param px_ x coordinate of the point.
+       * @param py_ y coordinate of the point.
+       * @param depth_ depth of the cross-section in which the point was picked.
+       * @param dir_ direction of the cross-section in which the point was picked.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+        /**
+       * Signal emitted when the user drawn a sketch to select a curve.
+       * @param curve_ sketch drawn used to select a curve
+       * @param dir_ direction of the cross-section in which the sketch was done.
+       * @param depth_ depth of the cross-section in which the sketch was done.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+
+        /**
+       * This signal is emitted when the user is satisfied with the regions selected using the sketches of selection. This stop the process cycle and the region selected is considerate the final.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
         void stopSketchesOfSelection();
 
-        void regionSelected( const std::size_t& id_, bool status_ );
 
-        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
-
-        void setAreaChoosed();
-
+        /**
+       * Signal emitted to update the vertical exaggeration in the scene 2d and 3d.
+       * @param double the current vertical exaggeration
+       * @see publicVar()
+       * @return Void
+       */
         void setVerticalExaggeration( double );
 
+
+        /**
+       * Signal emitted to show or hide the output dip angle picture in the scene. It is associated to the button "Show" in the LateralBar.
+       * @param status_ boolean. True if the scene should show the output dip angle picture, and false otherwise.
+       * @see publicVar()
+       * @return Void
+       */
+        void showDipAnglePicture( bool status_ );
+
+
+        /**
+       * Signal emitted when the user select a region clicking in the object region. Currently this method is bot being used properly.
+       * @param id_ index of the region
+       * @param status_ status of selection of the object region. If true the region is selected, false otherwise.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void regionSelected( const std::size_t& id_, bool status_ );
+
+
+        //TODO: fix all comments about guided extrusion
+
+        /**
+       * Signal emitted when the user select a point to be used in the guided extrusion. Currently this method is bot being used.
+       * @param px_ x coordinate of the point.
+       * @param py_ y coordinate of the point.
+       * @param depth_ depth of the cross-section in which the point was picked.
+       * @param dir_ direction of the cross-section in which the point was picked.
+       * @see publicVar()
+       * @return Void
+       */
+        void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+
+       /**
+       * Signal emitted to update point to be used in the guided extrusion. Currently this method is bot being used.
+       * @param px_ x coordinate of the point.
+       * @param py_ y coordinate of the point.
+       * @param depth_ depth of the cross-section in which the point was picked.
+       * @param dir_ direction of the cross-section in which the point was picked.
+       * @see publicVar()
+       * @return Void
+       */
         void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+
+       /**
+       * This signal is emitted to send the sketch done in the guided extrusion.
+       * @param curve_ sketch done by the user for the guided extrusion.
+       * @see publicVar()
+       * @return Void
+       */
         void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
-        void showDipAnglePicture( bool status_ );
+
+        //TODO: remove all methods set as "not being used"
+        // not being used
+        void setAreaChoosed();
+
 
 
     protected:
