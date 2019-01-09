@@ -30,10 +30,6 @@
 #include <QGraphicsScene>
 
 #include "./models/inputsketch.h"
-//#include "./models/volume_item_wrapper.h"
-//#include "./models/object_item_wrapper.h"
-//#include "./models/crosssection_item_wrapper.h"
-//#include "./models/trajectoryitemwrapper.h"
 #include "./models/coordinateaxes_2d.h"
 #include "./models/image_item_wrapper.h"
 #include "./core/models/scene.h"
@@ -47,28 +43,66 @@
 #include "./models/dipanglepicture.h"
 
 
-class SketchScene: public QGraphicsScene/*, public Scene*/
+class SketchScene: public QGraphicsScene
 {
     Q_OBJECT
 
 
-    enum class UserInteraction1 { NONE, SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
+     /**
+     * Enum to represent the set of interactions modes.
+     */
+    enum class UserInteraction { NONE, SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
 
     ///================================================================================
 
-    enum class UserInteraction { SKETCHING, EDITING_BOUNDARY, EDITING_SCENE, SELECTING, MOVING_IMAGE, RESIZING_IMAGE };
 
 
     public:
 
-
+        /**
+       * Constructor.
+       */
         SketchScene();
+
+
+        /**
+       * Destructor.
+       */
         ~SketchScene();
 
+
+       /**
+       * Method to initialize the scene.
+       * This method creates and adds all the auxiliary items to the scene, for example, the input sketch and items to handle images.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void.
+       */
         void init();
 
+
+       /**
+       * Method to define cross-section information.
+       * This method sets the direction and depth of the cross-section to be viewed in the scene. It is used to allow or restrict some interactions.
+       * @param dir_ direction of the cross-section to be viewed in this scene.
+       * @param depth_ depth of the cross-section to be viewed in this scene.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void.
+       */
         void setCrossSectionInformation( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+
+       /**
+       * Method to get the cross-section information.
+       * @param dir_ reference to the direction of the cross-section to be viewed in this scene.
+       * @param depth_ reference to the depth of the cross-section to be viewed in this scene.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void.
+       */
         void getCrossSectionInformation( Settings::CrossSection::CrossSectionDirections& dir_, double& depth_ );
+
 
         void createVolume( const std::shared_ptr< Volume >& volume_ );
         void updateVolume();
@@ -95,7 +129,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         void getSelectedRegions();
 
-//        void addWell( const std::shared_ptr< Well >& well_ );
 
         void enableSketch( bool status_ );
         bool isSketchEnabled() const;
@@ -120,7 +153,6 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
         void setResizingImageMode( bool status_ );
         void setSelectingRegionMode( bool status_ );
         void setGuidedExtrusionMode( bool status_ );
-        //        void setSelectingWellsMode( bool status_ );
 
         void addImageToCrossSection( const QString& file_ );
         void setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
@@ -245,7 +277,7 @@ class SketchScene: public QGraphicsScene/*, public Scene*/
 
         std::vector< std::shared_ptr< CurveItem > > sketches_of_selection;
 
-        UserInteraction1 current_interaction1 = UserInteraction1::SKETCHING;
+        UserInteraction current_interaction = UserInteraction::SKETCHING;
 
 
         QGraphicsEllipseItem* resize_marker = nullptr;
