@@ -834,6 +834,7 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
     {
         setSketchingMode();
         dipangle->setVisible( false );
+        QGraphicsScene::update();
         return;
     }
 
@@ -842,6 +843,7 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
     dipangle->setVisible( true );
     dipangle->setZValue( image->zValue() + 1 );
 
+    QGraphicsScene::update();
 }
 
 
