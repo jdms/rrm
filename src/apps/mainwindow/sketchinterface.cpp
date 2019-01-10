@@ -123,9 +123,6 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
 
 
-    connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
-
-
     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
     {
         //         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );

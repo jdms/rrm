@@ -224,9 +224,6 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
 
-    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
-
-
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
 
@@ -435,8 +432,6 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
     connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
 
     connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
-
-    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
 
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
