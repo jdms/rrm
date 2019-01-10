@@ -516,12 +516,6 @@ class SketchWindow: public QMainWindow
         void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
 
-        //TODO: remove all methods set as "not being used"
-        // not being used
-        void setAreaChoosed();
-
-
-
     protected:
 
         /**

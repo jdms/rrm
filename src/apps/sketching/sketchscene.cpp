@@ -203,8 +203,6 @@ void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csecti
     cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
     cross_sections1[ id_ ]->setRawCrossSection( csection_ );
     addItem( cross_sections1[ id_ ].get() );
-
-
 }
 
 
@@ -535,13 +533,6 @@ void SketchScene::setGuidedExtrusionMode( bool status_ )
 }
 
 
-//temporary
-void SketchScene::setCreateRegionMode()
-{
-    current_interaction = UserInteraction::CREATE_REGION;
-}
-//temporary
-
 void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
 {
 
@@ -681,24 +672,6 @@ void SketchScene::removeSketchesOfSelection()
 }
 
 
-void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
-{
-
-    //    PolyCurve upper_( vupper_, edupper_ );
-    //    PolyCurve lower_( vlower_, edlower_ );
-
-    //    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
-    //    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
-
-    //    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-    //    boudering_area->setPolygon( pol_ );
-
-    //    boudering_area->setVisible( true );
-    //    boudering_area->update();
-    //    update();
-}
-
-
 void SketchScene::defineBounderingArea()
 {
 
@@ -764,16 +737,6 @@ void SketchScene::clearUpperBoundaryCurve()
     defineBounderingArea();
 }
 
-
-void SketchScene::clearBoundaryCurve()
-{
-    //    lower.clear();
-    //    upper.clear();
-    //    boudering_area->clear();
-    //    boudering_area->setVisible( false );
-
-    //    update();
-}
 
 
 void SketchScene::updatePointGuidedExtrusion( const QPointF& p_ )
