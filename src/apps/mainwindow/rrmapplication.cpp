@@ -257,6 +257,18 @@ void RRMApplication::setObjectColor( std::size_t index_, int red_, int green_, i
 }
 
 
+void RRMApplication::setObjectLog( std::size_t index_, const QString& log_ )
+{
+    controller->setObjectLog( index_, log_ );
+}
+
+
+void RRMApplication::getObjectLog( std::size_t index_, QString& log_ )
+{
+    log_ = controller->getObjectLog( index_ );
+}
+
+
 void RRMApplication::setObjectSelectedAsBoundering( const std::size_t& index_ )
 {
     controller->setObjectSelectedAsBoundering( index_ );
@@ -380,8 +392,20 @@ void RRMApplication::getRegions( bool status_ )
         return;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    // Changed for release:
+    //
+    /* It was like this before: */
+    /* std::vector< std::size_t > surfaces_indexes_ = controller->defineRegions(); */
 
-    std::vector< std::size_t > surfaces_indexes_ = controller->defineRegions();
+    /* Changed to: */
+    controller->defineRegions();
+
+    std::vector< std::size_t > surfaces_indexes_ = controller->getOrderedSurfacesIndices();
+    // This surfaces_indexes_ is later used in the object tree in a way that
+    // all surfaces (both active and empty) are counted together to order
+    // stratigraphies and structurals
+    ///////////////////////////////////////////////////////////////////////////////////////
 
     window->object_tree->sortStratigraphies( surfaces_indexes_ );
     window->object_tree->addOutputVolume();
@@ -456,6 +480,7 @@ void RRMApplication::setDomainName( std::size_t index_, const std::string& name_
 {
     controller->setDomainName( index_, name_ );
 }
+
 
 void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {

@@ -70,6 +70,13 @@ ObjectTree::ObjectTree( QWidget *parent )
 
 void ObjectTree::createMenu()
 {
+
+
+    wg_log_ = new QInputDialog();
+    wg_log_->setInputMode( QInputDialog::TextInput );
+    wg_log_->setOption( QInputDialog::UsePlainTextEditForTextInput, true );
+
+
     ac_create_domain = new QAction( "Create domain", this );
     ac_addto_domain = new QAction( "Add to domain", this );
     ac_removefrom_domain = new QAction( "Remove from domain", this );
@@ -119,12 +126,138 @@ void ObjectTree::createMenu()
     } );
 
 
+    connect( wg_log_, &QInputDialog::accepted, [=](){ sendSurfaceLog(); } );
+
+
 }
+
+
+void ObjectTree::sendSurfaceLog()
+{
+    emit saveSurfaceLog( surface_selected_, wg_log_->textValue() );
+}
+
 
 
 void ObjectTree::showMenu( const QPoint& pos_ )
 {
+    QList< QTreeWidgetItem* > selected_ =  selectedItems();
+   if( selected_.empty() == true ) return;
+
+   bool region_ = false;
+   bool surface_ = false;
+   bool domain_ = false;
+
+   QString label_name_;
+
+   for( auto it_: selected_ )
+   {
+
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it_ );
+        if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY ||  obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
+        {
+            surface_ = true;
+            label_name_ = obj_->text( COLUMN_NAME ).append( QString( ": " ) );
+            surface_selected_ = static_cast< int >( obj_->getIndex() );
+        }
+        else if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+        {
+            region_ = true;
+        }
+        else if( obj_->getType() == Settings::Objects::ObjectType::DOMAINS )
+        {
+            domain_ = true;
+        }
+
+   }
+
+
+
+    if( surface_ == true )
+    {
+        clearSelection();
+
+        if( region_ == true || domain_ == true )
+        {
+            return;
+        }
+
+        region_ = false;
+
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( selected_.back() );
+        obj_->setSelected( true );
+
+        QString log_;
+        wg_log_->setLabelText( label_name_ );
+        emit getSurfaceLog( surface_selected_, log_ );
+
+        wg_log_->setTextValue( log_ );
+        wg_log_->show();
+        return;
+    }
+
+    if( domain_ == true && region_ == true )
+    {
+        clearSelection();
+        return;
+    }
+
+    ac_create_domain->setEnabled( region_ );
+    ac_removefrom_domain->setEnabled( region_ );
+    ac_remove_domain->setEnabled( domain_ );
+    mn_submenu->setEnabled( region_ );
     mn_menu->exec( mapToGlobal( pos_ ) );
+
+
+/*
+    QList< QTreeWidgetItem* > selected_ =  selectedItems();
+    bool enabled_ = false;
+    bool surface_ = false;
+
+    QString label_name_;
+
+    for( auto it_: selected_ )
+    {
+
+        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it_ );
+        if( obj_ != selected_.last() )
+        {
+            obj_->setSelected( false );
+        }
+
+        if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+        {
+            enabled_ = true;
+            surface_ = false;
+        }
+
+        if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY ||  obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
+        {
+            surface_ = true;
+            enabled_ = false;
+            label_name_ = obj_->text( COLUMN_NAME ).append( QString( ": " ) );
+            surface_selected_ = static_cast< int >( obj_->getIndex() );
+        }
+
+
+    }
+
+    if( surface_ == true )
+    {
+        QString log_;
+        wg_log_->setLabelText( label_name_ );
+        emit getSurfaceLog( surface_selected_, log_ );
+
+        wg_log_->setTextValue( log_ );
+        wg_log_->show();
+    }
+
+    ac_create_domain->setEnabled( enabled_ );
+    ac_removefrom_domain->setEnabled( enabled_ );
+    ac_remove_domain->setEnabled( enabled_ );
+    mn_submenu->setEnabled( enabled_ );
+    mn_menu->exec( mapToGlobal( pos_ ) );*/
+
 }
 
 
@@ -659,6 +792,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
             region1_->setCheckState( COLUMN_STATUS, ( status_? Qt::Checked:Qt::Unchecked ) );
         }
     } );
+
 }
 
 
