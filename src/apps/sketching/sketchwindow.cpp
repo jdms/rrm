@@ -196,7 +196,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ );
+    { emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
         ac_resize_boundary->setChecked( false ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
@@ -393,9 +393,11 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
+//emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
+//        ac_resize_boundary->setChecked( false );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ ); ac_resize_boundary->setChecked( false ); } );
+    { emit updateVolumeDimensions( dir_, width_, height_ );  applyVerticalExaggeration(); ac_resize_boundary->setChecked( false ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
 
@@ -444,7 +446,7 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
 
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ );
+    { emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
         ac_resize_boundary->setChecked( false ); } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
@@ -715,13 +717,15 @@ void SketchWindow::applyVerticalExaggeration()
     if( sketchingcanvas == nullptr ) return;
     std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
 
-    QMatrix m_ = sketchingcanvas->matrix();
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
-    scene_->resetVerticalExaggerationInAxes();
-    scene_->revertVerticalExaggerationInAxes( m_, v_exag_ );
+    if( v_exag_ == 1 ) return;
+
+    sketchingcanvas->stopVerticalExaggeration();
+    sketchingcanvas->setVerticalExaggeration( v_exag_ );
 
 
 }
+
 
 void SketchWindow::setDipAngle( double angle_ )
 {

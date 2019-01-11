@@ -145,6 +145,10 @@ class Controller
         void setObjectSelected( std::size_t index_, bool status_ );
         bool isObjectSelected( std::size_t index_ ) const;
 
+        void setObjectLog( std::size_t index_, const QString& status_ );
+        QString getObjectLog( std::size_t index_ ) const;
+
+
         bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
         bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 
@@ -175,6 +179,8 @@ class Controller
 
 
         std::vector<std::size_t > defineRegions();
+        std::vector<std::size_t > getOrderedSurfacesIndices();
+        std::vector<std::size_t > getOrderedActiveSurfacesIndices();
 
         void setRegionsVisible(bool status_);
         void setRegionVisible(std::size_t index_, bool status_);
@@ -394,7 +400,11 @@ class Controller
         std::map< double, ImageData > images_csectionsY;
         std::map< double, ImageData > images_csectionsZ;
 
+        ImageData image_topview;
+
         std::set< std::size_t > regions_in_domains;
+
+
 
 };
 

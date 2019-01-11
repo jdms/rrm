@@ -18,6 +18,8 @@
 #include "./core/widgets/objecttree.h"
 #include "./core/widgets/pages_stack.h"
 
+#include "./about/about_widget.hpp"
+
 
 
 class MainWindow: public QMainWindow
@@ -70,6 +72,8 @@ class MainWindow: public QMainWindow
         void plugSketchInterface();
         void plug3dInterface();
         void plug3dDiagnosticsInterface();
+
+        void showHelp();
 
 //        void checkButtonsStatus();
 
@@ -128,6 +132,8 @@ class MainWindow: public QMainWindow
 
         PagesStack* ps_objectdata = nullptr;
         QDockWidget* dw_object_properties = nullptr;
+
+        AboutWidget* about_rrm = nullptr;
 
 
 };

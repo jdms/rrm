@@ -77,7 +77,15 @@ std::vector<std::size_t> RulesProcessor::getOrderedActiveSurfaces()
 {
     auto surfaces_ids = modeller_.getOrderedSurfacesIndices();
 
-    return filterActiveSurfaces(surfaces_ids);
+    auto ordered_surfaces_ids = filterActiveSurfaces(surfaces_ids);
+    /* std::cout << "\n\n Ordered active surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : ordered_surfaces_ids ) */
+    /* { */
+    /*     std::cout << sid << " "; */
+    /* } */
+    /* std::cout << "\n\n\n" << std::flush; */
+
+    return ordered_surfaces_ids; 
 }
 
 std::size_t RulesProcessor::getWidthResolution() const
@@ -1757,66 +1765,66 @@ bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates
 {
     bool success = (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
 
-    if ( success )
-    {
-        std::vector<double> volumes;
-        SUtilitiesWrapper u(modeller_);
-        u.getRegionVolumeList(volumes);
+    /* if ( success ) */
+    /* { */
+        /* std::vector<double> volumes; */
+        /* SUtilitiesWrapper u(modeller_); */
+        /* u.getRegionVolumeList(volumes); */
         
-        double total = 0;
-        for ( size_t i = 0; i < volumes.size(); ++i )
-        {
-            total += volumes[i];
-        }
-
-        std::ofstream ofs( "current_model_volumes.txt" );
-        ofs << "Gross rock volumes: \n\n";
-
-        std::cout << "\n\n\nGross rock volumes: \n\n";
-
-        for ( int i = static_cast<int>(volumes.size()) -1; i >=0; --i )
-        {
-            /* std::cout.unsetf(std::ios_base::floatfield); */ 
-            std::cout << "Volume(" << std::setw(3) << i << ") = " 
-                << std::scientific << std::setprecision(2) << std::setw(9) 
-                << volumes[i] << " m^3" 
-                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
-                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
-            
-            /* ofs.unsetf(std::ios_base::floatfield); */ 
-            ofs << "Volume(" << std::setw(3) << i << ") = " 
-                << std::scientific << std::setprecision(2) << std::setw(9) 
-                << volumes[i] << " m^3" 
-                << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) 
-                << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n";
-
-            /* ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n"; */
+        /* double total = 0; */
+        /* for ( size_t i = 0; i < volumes.size(); ++i ) */
+        /* { */
             /* total += volumes[i]; */
-        }
-        std::cout.unsetf(std::ios_base::floatfield); 
-        std::cout << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
+        /* } */
+
+        /* std::ofstream ofs( "current_model_volumes.txt" ); */
+        /* ofs << "Gross rock volumes: \n\n"; */
+
+        /* std::cout << "\n\n\nGross rock volumes: \n\n"; */
+
+        /* for ( int i = static_cast<int>(volumes.size()) -1; i >=0; --i ) */
+        /* { */
+            /* /1* std::cout.unsetf(std::ios_base::floatfield); *1/ */ 
+            /* std::cout << "Volume(" << std::setw(3) << i << ") = " */ 
+            /*     << std::scientific << std::setprecision(2) << std::setw(9) */ 
+            /*     << volumes[i] << " m^3" */ 
+            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */ 
+            /*     << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n"; */
+            
+            /* /1* ofs.unsetf(std::ios_base::floatfield); *1/ */ 
+            /* ofs << "Volume(" << std::setw(3) << i << ") = " */ 
+            /*     << std::scientific << std::setprecision(2) << std::setw(9) */ 
+            /*     << volumes[i] << " m^3" */ 
+            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */ 
+            /*     << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n"; */
+
+            /* /1* ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n"; *1/ */
+            /* /1* total += volumes[i]; *1/ */
+        /* } */
+        /* std::cout.unsetf(std::ios_base::floatfield); */ 
+        /* std::cout << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush; */
         
-        ofs.unsetf(std::ios_base::floatfield); 
-        ofs << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush;
-    }
+        /* ofs.unsetf(std::ios_base::floatfield); */ 
+        /* ofs << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush; */
+    /* } */
 
     /* auto sids = modeller_.getOrderedSurfacesIndices(); */
-    auto sids = getOrderedSurfaces();
-    std::cout << "\n Ordered surfaces' ids in RulesProcessor: ";
-    for ( auto sid : sids )
-    {
-        std::cout << sid << " ";
-    }
-    std::cout << "\n\n" << std::flush;
+    /* auto sids = getOrderedSurfaces(); */
+    /* std::cout << "\n Ordered surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : sids ) */
+    /* { */
+        /* std::cout << sid << " "; */
+    /* } */
+    /* std::cout << "\n\n" << std::flush; */
 
     /* auto active_sids = filterActiveSurfaces(sids); */
-    auto active_sids = getOrderedActiveSurfaces();
-    std::cout << "\n Ordered active surfaces' ids in RulesProcessor: ";
-    for ( auto sid : active_sids )
-    {
-        std::cout << sid << " ";
-    }
-    std::cout << "\n\n\n" << std::flush;
+    /* auto active_sids = getOrderedActiveSurfaces(); */
+    /* std::cout << "\n Ordered active surfaces' ids in RulesProcessor: "; */
+    /* for ( auto sid : active_sids ) */
+    /* { */
+        /* std::cout << sid << " "; */
+    /* } */
+    /* std::cout << "\n\n\n" << std::flush; */
 
     return success;
 }

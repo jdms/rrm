@@ -316,10 +316,15 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
     {
         if( images_csectionsY.find( depth_ ) != images_csectionsY.end() )
         {
-            image_ = images_csectionsY[ depth_ ];
-            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+//            image_ = images_csectionsY[ depth_ ];
+//            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+
+            csection_->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
         }
         model.csectionsY[ depth_ ] = csection_;
+
+
+
     }
 
     else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -407,12 +412,25 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        images_csectionsY[ depth_ ] = std::move( image_ );
+//        images_csectionsY[ depth_ ] = std::move( image_ );
+//        if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
+//        {
+//            CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
+//            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+//        }
+
+        image_topview.file = image_.file;
+        image_topview.ox = image_.ox;
+        image_topview.oy = image_.oy;
+        image_topview.w = image_.w;
+        image_topview.h = image_.h;
+
         if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
         {
             CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
-            csection1_->setImage( file_, ox_, oy_, w_, h_ );
+            csection1_->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
         }
+
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
@@ -454,12 +472,19 @@ void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSe
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        images_csectionsY.erase( depth_ );
+//        images_csectionsY.erase( depth_ );
+        image_topview.file.clear();
+        image_topview.ox = 0.0;
+        image_topview.oy = 0.0;
+        image_topview.w = 0.0;
+        image_topview.h = 0.0;
+
         updateImageInTopViewCrossSection();
         if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
         {
             CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
             csection1_->clearImage();
+
         }
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
@@ -519,14 +544,21 @@ void Controller::updateImageInTopViewCrossSection()
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         return;
 
-    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
+//    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
+//    {
+//        topview->clearImage();
+//        return;
+//    }
+
+    if( image_topview.file.empty() == true )
     {
         topview->clearImage();
         return;
     }
 
-    ImageData image_= images_csectionsY[ depth_ ];
-    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+//    ImageData image_= images_csectionsY[ depth_ ];
+//    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
+    topview->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
 
 }
 
@@ -693,6 +725,19 @@ bool Controller::isObjectSelected(std::size_t index_) const
     return model.objects.at(index_)->isSelected();
 }
 
+
+void Controller::setObjectLog( std::size_t index_, const QString& log_ )
+{
+    if (model.objects.find(index_) == model.objects.end()) return;
+    model.objects.at(index_)->saveInformation( log_.toStdString() );
+}
+
+
+QString Controller::getObjectLog( std::size_t index_ ) const
+{
+    if (model.objects.find(index_) == model.objects.end()) return QString();
+    return QString( model.objects.at(index_)->getInformation().c_str() );
+}
 
 
 ///==========================================================================
@@ -1010,45 +1055,6 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 
     clearAndSetCurveinCrossSectionFromRulesProcessor( index_, current_direction, depth_ );
 
-//    ObjectPtr& obj_ = model.objects[ index_ ];
-
-//    bool has_curve_ = false;
-
-//    std::vector< double > vertices_;
-//    std::vector< std::size_t > edges_;
-
-//    if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
-//    }
-
-//    else if( current_direction == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
-//    }
-
-
-////    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-////    {
-////        has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
-////    }
-
-////    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-////    {
-////        has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
-////    }
-
-//    if( has_curve_ == false )
-//    {
-//        std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
-//        return;
-//    }
-
-//    PolyCurve curve_( vertices_, edges_ );
-
-//    obj_->removeCurve( depth_ );
-//    obj_->updateCurve( depth_, curve_ );
-
 }
 
 
@@ -1161,8 +1167,6 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
     surface_.setNormals( normals_ );
 
     obj_->setSurface( surface_ );
-    //    obj_->setActive( true );
-
 
 
     std::vector< double > trajectory_;
@@ -1254,6 +1258,18 @@ std::vector<std::size_t > Controller::defineRegions()
 
      model.volume->setVolume( volume_sum_ );
 
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
+    return surfaces_indexes_;
+}
+
+std::vector<std::size_t > Controller::getOrderedSurfacesIndices()
+{
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedSurfaces();
+    return surfaces_indexes_;
+}
+
+std::vector<std::size_t > Controller::getOrderedActiveSurfacesIndices()
+{
     std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
     return surfaces_indexes_;
 }
@@ -2849,6 +2865,13 @@ void Controller::clear()
     images_csectionsX.clear();
     images_csectionsY.clear();
     images_csectionsZ.clear();
+
+    image_topview.file.clear();
+    image_topview.ox = 0.0;
+    image_topview.oy = 0.0;
+    image_topview.w = 0.0;
+    image_topview.h = 0.0;
+
 
     current_object = 0;
     current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
