@@ -34,54 +34,170 @@
 #include "./core/models/volume.h"
 
 
+/**
+ *  A graphical representation to the volume using opengl to the scene 3d.
+ *  It always is represent by a cube.
+ *  It inherits from the class Shader.
+ */
+
 class VolumeShader: public Shader
 {
 
     public:
 
 
+        /**
+        * Default Constructor.
+        */
         VolumeShader();
+
+
+        /**
+        * Constructor.
+        */
         VolumeShader( const std::shared_ptr< Volume >& raw_ );
+
+
+        /**
+        * Destructor.
+        */
         ~VolumeShader();
 
+
+        /**
+        * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
+        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setVolume( const std::shared_ptr< Volume >& raw_ );
 
 
+
+        //TODO: finish to document the parameters.
+        /**
+        * Method to render the volume
+        * @param V it is the view matrix
+        * @param P it is the projection matrix
+        * @param w it is the canvas width
+        * @param h it is the canvas height
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                  const int& h );
 
+
+
+        /**
+        * This method calls the method 'createVolumeMesh' in order to update the mesh.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void update();
+
+
+        /**
+        * This method calls the method setDefaultValues() and reset(). This latter is from the class Shader, and is responsible for resetting thwe shaders.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clear();
 
 
     protected:
 
 
+        /**
+        * This method reset the shared pointer of the raw volume and set the default values to the class members.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setDefaultValues();
+
+
+        /**
+        * This method is the responsible to the mesh creation.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void createVolumeMesh();
+
+
+        /**
+        * An auxialiary and transitory method to compute the normals of the volume vertices.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         std::vector< float > defineVolumeNormals() const;
 
+
+        /**
+        * This method loads the buffers with the required geometry
+        * @param vertices_ normalized vertices
+        * @param normals_  normalized normals
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                     const std::vector< GLfloat >& normals_ );
 
+
+        /**
+        * This is a virtual method to initialize the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void initShaders();
+
+
+        /**
+        * This is a virtual method to initialize the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void initBuffers();
 
+
+        /**
+        * Virtual method to reset the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void resetShaders();
+
+
+        /**
+        * Virtual method to reset the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void resetBuffers();
-
-
 
 
     private:
 
-        GLuint va_volume;
-        GLuint vb_vertices;
-        GLuint vb_normals;
+        GLuint va_volume;                                           /**< Vertex array object of volumes */
 
-        GLuint number_of_vertices;
+        GLuint vb_vertices;                                         /**< Vertex buffer array object */
 
-        std::shared_ptr< Volume > raw;
+        GLuint vb_normals;                                          /**< Normal buffer array object */
+
+        GLuint number_of_vertices;                                  /**< Number total of vertices in the volume*/
+
+        std::shared_ptr< Volume > raw;                              /**< Shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved. */
 
 };
 

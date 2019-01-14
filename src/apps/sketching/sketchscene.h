@@ -133,7 +133,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method to add cross-section in the scene.
-        * This volume will hold a const shared pointer to a cross-section data structure, so that it can retrieve the required information
+        * This cross-section will hold a const shared pointer to a cross-section data structure, so that it can retrieve the required information
         * to draw it on scene.
         * @param csection_ data structure that contains the geometry and others required information to draw it on scene.
         * @see testMeToo()
