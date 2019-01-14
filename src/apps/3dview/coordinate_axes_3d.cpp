@@ -50,8 +50,6 @@ void CoordinateAxes3d::initShader( std::string directory )
     shader_axes = new Tucano::Shader("shader_axes", (directory + "orientationAxes.vert"), (directory + "orientationAxes.frag"), (directory + "orientationAxes.geom"), "", "");
     shader_axes->initialize();
 
-    current_directory = directory;
-
 }
 
 void CoordinateAxes3d::reloadShader()

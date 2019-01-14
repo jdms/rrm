@@ -31,57 +31,160 @@
 
 #include "./libs/tinyobjloader/tiny_obj_loader.h"
 
+
+/**
+ *  An OpenGL graphical representation to the axes in the scene 3d.
+ *  The model is loaded from the file 'orientationaxes.obj'.
+ */
+
 class CoordinateAxes3d
 {
-public:
-
-    CoordinateAxes3d();
-    ~CoordinateAxes3d();
-
-    void init();
-    void load( std::string directory );
-
-    void draw(  const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ );
-
-    void reloadShader();
-
-    void initShader( std::string directory );
-
-    void resetBuffers();
-    inline void setCenter( float ox_, float oy_, float oz_ )
-    {
-        origin = Eigen::Vector3f( ox_, oy_, oz_ );
-        centered = true;
-    }
+    public:
 
 
-    inline void setNonCentered()
-    {
-        origin = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
-        centered = false;
-    }
+        /**
+        * Constructor.
+        */
+        CoordinateAxes3d();
 
-private:
 
-    void requestOpenGLResources();
-    void releaseOpenGLResources();
+        /**
+        * Destructor.
+        */
+        ~CoordinateAxes3d();
 
-    Tucano::Shader* shader_axes; // create a shader to shader_axis, since there will be shaders only to axes
-    Eigen::Affine3f viewMatrix_;
-    Eigen::Matrix4f projetionMatrix;
 
-    GLuint vertex_array_coneaxes;
-    GLuint vertex_buffer_faces_indices;
-    GLuint vertex_buffer_vertices;
-    GLuint vertex_buffer_normals;
-    GLuint vertex_buffer_colors;
+        /**
+        * Method to initialize all member data
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void init();
 
-    int indices_size_;
 
-    std::string current_directory;
+        /**
+        * Method to load the geometry of the axes
+        * @param directory the folder where the file 'orientationaxes.obj' is placed
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void load( std::string directory );
 
-    bool centered = true;
-    Eigen::Vector3f origin;
+
+        //TODO: finish to document the parameters.
+        /**
+        * Method to render the axes
+        * @param V it is the view matrix
+        * @param P it is the projection matrix
+        * @param w it is the canvas width
+        * @param h it is the canvas height
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void draw(  const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ );
+
+
+        /**
+        * Method to reload the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void reloadShader();
+
+
+        /**
+        * Method to initialize the shader
+        * @param directory path where the shaders are placed.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void initShader( std::string directory );
+
+
+        /**
+        * Method to reset the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void resetBuffers();
+
+
+        /**
+        * Inline method to change the origin of the axes
+        * @param ox_ x coordinate of the origin of the axes
+        * @param oy_ y coordinate of the origin of the axes
+        * @param oz_ z coordinate of the origin of the axes
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        inline void setCenter( float ox_, float oy_, float oz_ )
+        {
+            origin = Eigen::Vector3f( ox_, oy_, oz_ );
+            centered = true;
+        }
+
+
+        /**
+        * Inline method to change the origin of the axes to the default position
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        inline void setNonCentered()
+        {
+            origin = Eigen::Vector3f( 0.0f, 0.0f, 0.0f );
+            centered = false;
+        }
+
+
+    private:
+
+
+        /**
+        * Method to create the vertex arrays and buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void requestOpenGLResources();
+
+
+        /**
+        * Method to release the vertex arrays and buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void releaseOpenGLResources();
+
+
+        Tucano::Shader* shader_axes;                                            /**< Shader to render the axes */
+
+        Eigen::Affine3f viewMatrix_;                                            /**< View matrix */
+
+        Eigen::Matrix4f projetionMatrix;                                        /**< Projection matrix */
+
+        GLuint vertex_array_coneaxes;                                           /**< Vertex array to axes*/
+
+        GLuint vertex_buffer_faces_indices;                                     /**< Faces buffer array */
+
+        GLuint vertex_buffer_vertices;                                          /**< Vertices buffer array */
+
+        GLuint vertex_buffer_normals;                                           /**< Normals buffer array */
+
+        GLuint vertex_buffer_colors;                                            /**< Colors buffer array */
+
+        int indices_size_;                                                      /**< Total number of faces */
+
+        bool centered = true;                                                   /**< Boolean to indicate if the axes should be centered or not. Its value is true if the axes should be centered and false otherwise. */
+        Eigen::Vector3f origin;                                                 /**< Origin of the axes */
 
 };
 

@@ -287,9 +287,6 @@ void Scene3d::clearScene()
     volume.reset();
     main_csection.reset();
 
-
-    current_color = QColor( 255, 0, 0 );
-
     v_exag = 1.0;
 
     emit updateCanvas();

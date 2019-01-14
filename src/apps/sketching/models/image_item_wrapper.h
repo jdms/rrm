@@ -138,7 +138,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         //TODO: finish to document the parameters.
         /**
-        * Method to repaintthe image
+        * Method to repaint the image
         * @see testMeToo()
         * @see publicVar()
         * @return Void
