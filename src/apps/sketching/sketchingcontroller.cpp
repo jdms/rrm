@@ -372,12 +372,6 @@ void SketchingController::updateStratigraphy( const std::size_t& index_ )
 
 
 
-void SketchingController::setCurveAsBoundering( const PolyCurve& boundary_ )
-{
-
-}
-
-
 void SketchingController::updateBoundering()
 {
     PolyCurve lboundary_, uboundary_;
@@ -410,12 +404,6 @@ void SketchingController::updateBoundering()
 
 }
 
-
-void SketchingController::clearCurveAsBoundering()
-{
-//    std::cout << " limpa tudo" << std::endl << std::flush;
-//    main_scene->clearBoundaryCurve();
-}
 
 
 void SketchingController::addRegion( const RegionsPtr& reg_  )

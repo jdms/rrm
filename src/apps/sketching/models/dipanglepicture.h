@@ -30,13 +30,40 @@
 #include <QPainter>
 #include <QString>
 
+/**
+ *  Auxiliary wrapper to hold and handle operations on the output dip angle image.
+ *  It inherits from QGraphicsPixmapItem.
+ */
+
+
 class DipAnglePicture: public QGraphicsPixmapItem
 {
     public:
 
+        /**
+        * Constructor.
+        */
         DipAnglePicture();
 
-        void  setImage( const QPixmap& im );
+
+        /**
+        * Method to set the image
+        * @param im the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void setImage( const QPixmap& im );
+
+
+        /**
+        * Method to set the image movable if the image should be movable or not.
+        * @param status_ boolean to indicate if the image should be movable or not.
+        * It is true if the image is movable and false otherwise.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setMovable( bool status_ );
 
 };
