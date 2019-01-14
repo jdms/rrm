@@ -301,10 +301,8 @@ void SketchInterface::createSketchingActions()
 
 
 
-    connect( window->app, &RRMApplication::setCurveAsBoundering, [=]( const PolyCurve& boundary_ ){ scontroller->setCurveAsBoundering( boundary_ ); } );
 
 
-    connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
 
 
     connect( window->app, &RRMApplication::addRegions, [=](){ scontroller->enableSketching( false );  } );

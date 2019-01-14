@@ -43,13 +43,19 @@
 #include "./models/dipanglepicture.h"
 
 
+/**
+ *   The 2d scene.
+ *   This scene is responsible for viewing the elements present on a given cross-section.
+ */
+
 class SketchScene: public QGraphicsScene
 {
     Q_OBJECT
 
 
      /**
-     * Enum to represent the set of interactions modes.
+     * \enum UserInteraction
+     * \brief Enum to represent the set of interactions modes.
      */
     enum class UserInteraction { NONE, SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
 
@@ -59,7 +65,7 @@ class SketchScene: public QGraphicsScene
 
     public:
 
-        /**
+       /**
        * Constructor.
        */
         SketchScene();
@@ -905,7 +911,7 @@ class SketchScene: public QGraphicsScene
 
         std::shared_ptr< VolumeItem > volume1 = nullptr;                                /**< Wrapper instance used to graphically represent the volume in the 2d scene. */
 
-        std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections1;   /**< A map of wrapper instances used to graphically represent the cross-sections in the 2d scene.
+        std::map< std::size_t, std::shared_ptr< CrossSectionItem > > cross_sections;   /**< A map of wrapper instances used to graphically represent the cross-sections in the 2d scene.
                                                                                              The first map value corresponds the index of the cross-section. */
 
         std::map< std::size_t, std::shared_ptr< StratigraphyItem > > stratigraphies;    /**< A map of wrapper instances used to graphically represent the stratigraphies and structurals in the 2d scene.

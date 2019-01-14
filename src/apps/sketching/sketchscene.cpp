@@ -200,9 +200,9 @@ void SketchScene::updateVolume()
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
     std::size_t id_ = csection_->getIndex();
-    cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
-    cross_sections1[ id_ ]->setRawCrossSection( csection_ );
-    addItem( cross_sections1[ id_ ].get() );
+    cross_sections[ id_ ] = std::make_shared< CrossSectionItem >();
+    cross_sections[ id_ ]->setRawCrossSection( csection_ );
+    addItem( cross_sections[ id_ ].get() );
 }
 
 
@@ -1201,9 +1201,9 @@ void SketchScene::clearScene()
         delete trajectory_point;
     trajectory_point = nullptr;
 
-    for( auto it: cross_sections1 )
+    for( auto it: cross_sections )
         (it.second).reset();
-    cross_sections1.clear();
+    cross_sections.clear();
 
     for( auto it: stratigraphies )
         (it.second).reset();

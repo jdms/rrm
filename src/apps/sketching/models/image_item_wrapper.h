@@ -30,46 +30,132 @@
 #include <QPainter>
 #include <QString>
 
+
+/**
+ *  Auxiliary wrapper to hold and handle operations on the image, as scaling and translating.
+ *  It inherits from QGraphicsPixmapItem.
+ */
+
+
 class ImageItemWrapper: public QGraphicsPixmapItem
 {
+
+    /**
+    * \enum Interaction
+    * \brief Enum to represent the set of interactions with the image.
+    */
 
     enum class Interaction{ MOVING, RESIZING, NONE };
 
     public:
 
+
+        /**
+        * Constructor.
+        */
         ImageItemWrapper();
 
+
+        /**
+        * Method to set all the properties required to represend the image
+        * @param im_ the image
+        * @param origin_ the origin of the image
+        * @param top_right_ the point at the right-top corner of the image. It helps to compute the image dimensions.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setImage( const QPixmap& im, QPointF origin_, QPointF top_right_ );
 
+
+        /**
+        * Method to set the path of the file
+        * @param file_ image path_
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setImagePath( const QString& file_ );
+
+
+        /**
+        * Method to get the path of the image file
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QString the path of the image.
+        */
         QString getImagePath() const;
 
+
+        /**
+        * Method to get the origin of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QPointF origin of the image.
+        */
         QPointF getOrigin() const;
+
+
+        /**
+        * Method to get the top-right corner of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QPointF the top-right corner of the image.
+        */
         QPointF getTopRight() const;
 
+
+        /**
+        * Method to move the origin of the image to the new point origin_
+        * @param origin_ new origin of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void moveRectangle( QPointF origin_ );
+
+
+        /**
+        * Method to move the top-right of the image to the new point p_
+        * @param origin_ new top-right corner of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void resizeRectangle(const QPointF &p );
 
 
-        QRectF boundingRect() const;
+        /**
+        * Method to get the bounding box of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QRectF the bounding box of the image
+        */
+        QRectF boundingRect() const override;
 
 
     protected:
 
+        //TODO: finish to document the parameters.
+        /**
+        * Method to repaintthe image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
-                        QWidget* widget = 0 );
-
-
-
+                        QWidget* widget = nullptr ) override;
 
 
     private:
 
-        QRectF m_imageRect;
-        QPixmap m_image;
-        QString path;
+        QRectF m_imageRect;                                                             /**< The QRectF where the image will be drawn.  */
 
-        Interaction default_action = Interaction::NONE;
+        QPixmap m_image;                                                                /**< A QPixmap to hold the image */
+
+        QString path;                                                                   /**< A QString to define the path of the image file  */
+
+        Interaction default_action = Interaction::NONE;                                 /**< Default status of the user interaction */
 
 };
 
