@@ -276,6 +276,7 @@ class MainWindow: public QMainWindow
 
     protected:
 
+
         friend class SketchInterface;
         friend class View3dInterface;
         friend class DiagnosticsInterface;
