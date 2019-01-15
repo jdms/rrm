@@ -124,8 +124,6 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
-
     setDiscretization( controller->getCurrentDirection() );
 
 }
@@ -137,7 +135,6 @@ void RRMApplication::setVolumeWidth( double width_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -606,25 +603,6 @@ void RRMApplication::updateRegionBoundary()
 
     emit updateRegions();
 
-
-}
-
-
-void RRMApplication::updateUpperBoundary()
-{
-//    emit clearBounderingArea();
-
-//    PolyCurve boundary_;
-//    bool status_ = controller->updateRegionBoundary( boundary_ );
-
-
-//    if( status_ == true )
-//        emit setCurveAsBoundering( boundary_ );
-}
-
-
-void RRMApplication::updateLowerBoundary()
-{
 
 }
 
