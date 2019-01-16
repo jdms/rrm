@@ -780,13 +780,13 @@ public:
 
 
         /**
-        * Method (slot) to get the the surfaces meshes and their boundaries curves
+        * Method (slot) to get the surfaces meshes and their boundaries curves
         * This method is used by the Flow Diagnostics application
         * @param triangles_meshes the triangles meshes
-        * @param left_curves discretization number in the x direction (width)
-        * @param right_curves discretization number in the y direction (height)
-        * @param front_curves discretization number in the z direction (depth)
-        * @param back_curves discretization number in the z direction (depth)
+        * @param left_curves vector of the left curve of each surface boundary
+        * @param right_curves vector of the right curve of each surface boundary
+        * @param front_curves vector of the front curve of each surface boundary
+        * @param back_curves vector of the back curve of each surface boundary
         * @see publicVar()
         * @return Void.
         */
@@ -797,10 +797,25 @@ public:
                                                 std::vector< FlowWindow::CurveMesh >& back_curves );
 
 
+         /**
+        * Method (slot) to get the tetrahedrons from the regions volumes
+        * @param vertices vector of vertices coordinates of each tetrahedron
+        * @param edges vector of indexes of vertices that each edge contains
+        * @param regions vector of indexes of the domains
+        * @param colors reference to a vector of the domains colors
+        * @see publicVar()
+        * @return Void.
+        */
         void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
                                      std::vector< int >& regions, std::map< int, std::vector< float > >& colors_ );
 
 
+         /**
+        * Inline method (slot) to notify the cross-section controller to remove the marker related to a fixed cross-section removed
+        * @param id_ it corresponds to the value of the depth of the cross-section to be removed
+        * @see publicVar()
+        * @return Void.
+        */
         inline void removeMarkerFromSlider( double id_ ){ emit removeMarker( id_ ); }
 
 
@@ -814,62 +829,300 @@ public:
 
     signals:
 
+
+        /**
+        * Signal emitted to notify that a new stratigraphy/structural was added
+        * A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved, is sent
+        * @see publicVar()
+        * @return Void.
+        */
         void addObject( const std::shared_ptr<Object>& obj_ );
+
+
+        /**
+        * Signal emitted to notify that a new stratigraphy/structural should be added in the object tree
+        * A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved, is sent
+        * @see publicVar()
+        * @return Void.
+        */
         void addObjectinObjectTree( const std::shared_ptr<Object>& obj_ );
 
+
+        /**
+        * Signal emitted to notify the scenes to update the volume
+        * @see publicVar()
+        * @return Void.
+        */
         void updateVolume();
+
+
+        /**
+        * Signal emitted to notify that the volume has changed its geometry
+        * @see publicVar()
+        * @return Void.
+        */
         void defineVolumeGeometry( double ox_, double oy, double oz, double w_, double h_, double d_ );
 
+
+        /**
+        * Signal emitted to notify the scenes to update the stratigraphies and structurals
+        * @see publicVar()
+        * @return Void.
+        */
         void updateObjects();
+
+
+        /**
+        * Signal emitted to notify the scenes to update the surfaces trajectories
+        * @see publicVar()
+        * @return Void.
+        */
         void updateTrajectories();
 
+
+        /**
+        * Signal emitted to notify that the main cross-section was changed and need to be updated in the scenes
+        * @see publicVar()
+        * @return Void.
+        */
+
         void updateMainCrossSection();
+
+
+        /**
+        * Signal emitted to notify that the top view cross-section was changed and need to be updated in the scenes
+        * @see publicVar()
+        * @return Void.
+        */
         void updateTopViewCrossSection();
 
+
+        /**
+        * Signal emitted to notify that the cross-section direction was changed to top view, i.e, the direction was width or depth and was changed to height
+        * @see publicVar()
+        * @return Void.
+        */
         void changeToTopViewDirection();
+
+
+        /**
+        * Signal emitted to notify that the cross-section direction was changed to main view, i.e, the direction was height and was changed to width or depth
+        * @see publicVar()
+        * @return Void.
+        */
         void changeToCrossSectionDirection();
 
 
+        /**
+        * Signal emitted to notify the scenes to add a cross-section
+        * @param dir_ direction of the new cross-section
+        * @param depth_ depth of the new cross-section
+        * @see publicVar()
+        * @return Void.
+        */
         void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+
+        /**
+        * Signal emitted to notify the scenes to add a fixed cross-section
+        * @param dir_ direction of the new fixed cross-section
+        * @param depth_ depth of the new fixed cross-section
+        * @see publicVar()
+        * @return Void.
+        */
         void addFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ );
+
+
+        /**
+        * Signal emitted to notify the scenes to remove a fixed cross-section
+        * @param dir_ direction of the fixed cross-section
+        * @param depth_ depth of the fixed cross-section
+        * @see publicVar()
+        * @return Void.
+        */
         void removeFixedCrossSectionWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
+        /**
+        * Signal emitted to notify the scenes that regions are ready to be added
+        * @see publicVar()
+        * @return Void.
+        */
         void addRegions();
+
+
+        /**
+        * Signal emitted to notify the scenes to update the regions
+        * @see publicVar()
+        * @return Void.
+        */
         void updateRegions();
+
+
+        /**
+        * Signal emitted to notify the scenes to remove all regions
+        * @see publicVar()
+        * @return Void.
+        */
         void clearRegions();
 
 
+        /**
+        * Signal emitted to update the current discretization.
+        * This signal is emitted mainly when the user changes the cross-section direction
+        * @param disc_ the new discretization
+        * @see publicVar()
+        * @return Void.
+        */
         void updateDiscretization( const std::size_t& disc_ );
+
+
+        /**
+        * Signal emitted to update the the cross-section slider range
+        * This signal is emitted mainly when the user changes the cross-section direction
+        * @param min_ the minimum value of the range
+        * @param max_ the maximum value of the range
+        * @param inverted_ if inverted_ is true the appearance of the slider should be inverted anf false otherwise
+        * @see publicVar()
+        * @return Void.
+        */
         void updateRange( double min_, double max_, bool inverted_ = true );
 
+
+        /**
+        * Signal emitted to indicate that the application has started
+        * @see publicVar()
+        * @return Void.
+        */
         void startApplication();
+
+
+        /**
+        * Signal emitted to indicate that all the applications should be resetted
+        * @see publicVar()
+        * @return Void.
+        */
         void resetApplication();
 
+
+        /**
+        * Signal emitted when a curve (sketch) was added in the scene and therefore volume resizing is not allowed anymore
+        * @see publicVar()
+        * @return Void.
+        */
         void disableVolumeResizing();
+
+
+        /**
+        * Signal emitted to allow the user resize the volume
+        * @see publicVar()
+        * @return Void.
+        */
         void enableVolumeResizing();
 
+
+        /**
+        * Signal emmited to the main interface to disable the cross-section directions differents from dir_
+        * This method was created because a surface only can be made in one direction per time
+        * @param dir_ current cross-section diretion
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+
+        /**
+        * Signal emmited to the main interface to enable all the cross-section directions
+        * @param dir_ current cross-section diretion
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void unlockDirections();
 
+
+        /**
+        * Signal emmited to notify the scenes that a object is selected or not. The objects can be 'VOLUME', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'NONE'. This latter indicates that all selection should be clear and the mode 'SKETCHING' should be activate.
+        * @param option_ which kind of object is selected or not. They can be 'VOLUME', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'NONE'. This latter indicates that all selection should be clear and the mode 'SKETCHING' should be activate.
+        * @param status_ if status_ is true, the object should be selected and false otherwise
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void selectEnabled( const std::string& option_, bool status_ = true );
 
+
+        /**
+        * Signal emmited to notify the scenes that an option of preserve is active or not.
+        * @param option_ which kind of preserve is active or not. They can be 'ABOVE', 'BELOW', OR 'REGIONS'.
+        * @param status_ if status_ is true, the preserve is active and false otherwise
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void enablePreserve( const std::string& option_, bool status_ = true );
 
+
+        /**
+        * Signal emmited to update the current color
+        * @param r_ the red component of the color (integer)
+        * @param g_ the green component of the color (integer)
+        * @param b_ the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setCurrentColor( int r_, int g_, int b_ );
 
-        void setCurveAsBoundering( const PolyCurve& boundary_ );
-        void clearBounderingArea();
 
+        /**
+        * Signal emmited to notify the Sketch appliaction to add a region in the scene
+        * @param reg_ a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void addRegionCrossSectionBoundary( const std::shared_ptr<Regions>& reg_ );
 
+
+        /**
+        * Signal emmited to notify the Sketch appliaction to update the regions boundary
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateBoundary();
+
+
+        /**
+        * Signal emmited to notify all the applications to update the vertical exaggeration
+        * @param scale_ new value of vertical exaggeration
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setVerticalExaggerationScale( double scale_ );
 
+
+        /**
+        * Signal emmited to notify the Sketch appliaction to update the images in the cross-sections
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateImageInCrossSection();
 
+
+        /**
+        * Signal emmited to notify the cross-section slider to remover the marker associated to the fixed cross-section was removed
+        * @param id_ the value of the fixed cross-section depth, which is currently the index of the marker
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void removeMarker( double id_ );
+
 
     protected:
 
