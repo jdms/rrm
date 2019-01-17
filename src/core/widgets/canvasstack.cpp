@@ -139,26 +139,6 @@ void CanvasStack::clear()
 }
 
 
-void CanvasStack::mousePressEvent(QMouseEvent *event)
-{
-
-    QWidget::mousePressEvent( event );
-}
-
-
-void CanvasStack::mouseReleaseEvent(QMouseEvent *event)
-{
-
-    QWidget::mouseReleaseEvent( event );
-}
-
-
-void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
-{
-
-    QWidget::mouseDoubleClickEvent( event );
-}
-
 void CanvasStack::closeEvent(QCloseEvent *event)
 {
       emit canvasClosed();

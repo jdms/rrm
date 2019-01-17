@@ -89,22 +89,9 @@ void ObjectTree::createMenu()
     } );
 
 
-    connect( ac_removefrom_domain, &QAction::triggered, this, &ObjectTree::removeFromDomain1 );
-
-    connect( ac_remove_domain, &QAction::triggered, this, &ObjectTree::deleteDomains1 );
-
-
-    /*
-
-    connect( ac_create_domain, &QAction::triggered, this, &ObjectTree::createDomain );
-
-    connect( ac_addto_domain, &QAction::triggered, this, &ObjectTree::addToDomain );
-
     connect( ac_removefrom_domain, &QAction::triggered, this, &ObjectTree::removeFromDomain );
 
-    connect( ac_remove_domain, &QAction::triggered, this, &ObjectTree::deleteDomain );
-
-*/
+    connect( ac_remove_domain, &QAction::triggered, this, &ObjectTree::deleteDomains );
 
 
 
@@ -207,56 +194,6 @@ void ObjectTree::showMenu( const QPoint& pos_ )
     ac_remove_domain->setEnabled( domain_ );
     mn_submenu->setEnabled( region_ );
     mn_menu->exec( mapToGlobal( pos_ ) );
-
-
-/*
-    QList< QTreeWidgetItem* > selected_ =  selectedItems();
-    bool enabled_ = false;
-    bool surface_ = false;
-
-    QString label_name_;
-
-    for( auto it_: selected_ )
-    {
-
-        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it_ );
-        if( obj_ != selected_.last() )
-        {
-            obj_->setSelected( false );
-        }
-
-        if( obj_->getType() == Settings::Objects::ObjectType::REGION )
-        {
-            enabled_ = true;
-            surface_ = false;
-        }
-
-        if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY ||  obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
-        {
-            surface_ = true;
-            enabled_ = false;
-            label_name_ = obj_->text( COLUMN_NAME ).append( QString( ": " ) );
-            surface_selected_ = static_cast< int >( obj_->getIndex() );
-        }
-
-
-    }
-
-    if( surface_ == true )
-    {
-        QString log_;
-        wg_log_->setLabelText( label_name_ );
-        emit getSurfaceLog( surface_selected_, log_ );
-
-        wg_log_->setTextValue( log_ );
-        wg_log_->show();
-    }
-
-    ac_create_domain->setEnabled( enabled_ );
-    ac_removefrom_domain->setEnabled( enabled_ );
-    ac_remove_domain->setEnabled( enabled_ );
-    mn_submenu->setEnabled( enabled_ );
-    mn_menu->exec( mapToGlobal( pos_ ) );*/
 
 }
 
@@ -509,37 +446,6 @@ void ObjectTree::addInputVolume()
     label_stratigraphy->setHidden( true );
     vol_->addChild( label_structural );
     label_structural->setHidden( true );
-
-}
-
-
-void ObjectTree::hideInputVolume()
-{
-    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 0 ) );
-    vol_->setHidden( true );
-    setVolumeVisible( 0, false );
-
-    int nchildren = vol_->childCount();
-    for( int j = 0; j < nchildren; ++j )
-    {
-        ObjectTreeItem* obj_ = (ObjectTreeItem* )( vol_->child( j ) );
-        obj_->setHidden( true );
-        setObjectVisibility( obj_->getIndex(), false );
-
-    }
-
-    update();
-
-}
-
-
-void ObjectTree::hideOutputVolume()
-{
-    ObjectTreeItem* vol_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
-    vol_->setHidden( true );
-    setVolumeVisible( 1, false );
-
-    update();
 
 }
 
@@ -888,8 +794,16 @@ void ObjectTree::removeStructurals()
 }
 
 
+void ObjectTree::updateVolumeDomain( std::size_t index_, double volume_ )
+{
+    ObjectTreeItem* domain_ = domains.getElement( index_ );
+    domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
+    volume_domains[ index_ ] = volume_;
+}
 
-bool ObjectTree::createDomain1( std::size_t index_ )
+
+
+bool ObjectTree::createDomain( std::size_t index_ )
 {
     if( domains.findElement( index_ )  == true ) return false;
 
@@ -911,7 +825,7 @@ bool ObjectTree::createDomain1( std::size_t index_ )
 
     domain_actions_[ index_ ] = new QAction( domain_->text( COLUMN_NAME ), this );
     mn_submenu->addAction( domain_actions_[ index_ ] );
-    connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain1( index_ );} );
+    connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
 
     std::vector< std::size_t > regions_;
     bool status_ = getSelectedRegionsList( regions_ );
@@ -1064,7 +978,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
 
 
 // usd by menu
-void ObjectTree::addToDomain1( std::size_t index_ )
+void ObjectTree::addToDomain( std::size_t index_ )
 {
 
     if( domains.findElement( index_ ) == false ) return;
@@ -1078,7 +992,7 @@ void ObjectTree::addToDomain1( std::size_t index_ )
 }
 
 
-void ObjectTree::removeRegionsOfTheirDomains1( const std::vector< std::size_t >& regions_,
+void ObjectTree::removeRegionsOfTheirDomains( const std::vector< std::size_t >& regions_,
                                            const std::vector< std::size_t >& parents_ )
 {
 
@@ -1107,7 +1021,7 @@ void ObjectTree::removeRegionsOfTheirDomains1( const std::vector< std::size_t >&
 
             if( domain_->childCount() == 0 )
             {
-                deleteDomain1( domain_->getIndex() );
+                deleteDomain( domain_->getIndex() );
             }
 
          }
@@ -1160,7 +1074,7 @@ void ObjectTree::removeRegionsOfTheirDomainsNoDelete( const std::vector< std::si
 
 }
 
-void ObjectTree::removeFromDomain1()
+void ObjectTree::removeFromDomain()
 {
 
     std::vector< std::size_t > regions_;
@@ -1175,7 +1089,7 @@ void ObjectTree::removeFromDomain1()
 }
 
 
-void ObjectTree::deleteDomains1()
+void ObjectTree::deleteDomains()
 {
 
     QList<QTreeWidgetItem *> items_ = selectedItems();
@@ -1216,7 +1130,7 @@ void ObjectTree::deleteDomains1()
 }
 
 
-void ObjectTree::deleteDomain1( std::size_t index_ )
+void ObjectTree::deleteDomain( std::size_t index_ )
 {
 
     ObjectTreeItem* domain_ = domains.getElement( index_ );
@@ -1299,170 +1213,6 @@ void ObjectTree::sortDomains()
     label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 
 }
-
-
-void ObjectTree::createDomain( std::size_t index_ )
-{
-
-//    if( domains.empty() == true )
-//    {
-//        addTopLevelItem( label_domains );
-//        label_domains->setHidden( false );
-//    }
-//    else
-//    {
-//        std::size_t id_ = 0;
-//        for( auto it_: domains )
-//            id_ = it_.first;
-
-//        id_ += 1;
-//        index_ = id_;
-//    }
-
-//    emit createDomainOfRegions( index_ );
-
-
-//    ObjectTreeItem* domain_ = new ObjectTreeItem();
-//    domain_->setIndex( index_ );
-//    domain_->setType( Settings::Objects::ObjectType::DOMAINS );
-//    domain_->setText( COLUMN_NAME, QString( "DOMAIN %1" ).arg( index_ ) );
-//    domain_->setCheckState( COLUMN_STATUS, Qt::Checked );
-
-//    label_domains->addChild( domain_ );
-//    domains.addElement( index_, domain_ );
-
-
-//    addToDomain( index_ );
-
-//    domain_actions_[ index_ ] = new QAction( domain_->text( COLUMN_NAME ), this );
-//    mn_submenu->addAction( domain_actions_[ index_ ] );
-//    connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
-
-}
-
-
-void ObjectTree::addToDomain( std::size_t index_ )
-{
-
-//    if( domains.findElement( index_ ) == false ) return;
-
-//    QList<QTreeWidgetItem *> items_ = selectedItems();
-//    if( items_.empty() == true ) return;
-
-
-//    ObjectTreeItem* domain_ = domains.getElement( index_ );
-//    std::vector< std::size_t > regions_;
-
-//    for( auto it: items_ )
-//    {
-//        ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it );
-//        if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
-
-//        ObjectTreeItem* reg_ = new ObjectTreeItem();
-//        reg_->setText( COLUMN_NAME, QString( obj_->text( COLUMN_NAME) ) );
-//        reg_->setType( Settings::Objects::ObjectType::REGION );
-//        reg_->setIndex( obj_->getIndex() );
-//        reg_->setCheckState( COLUMN_STATUS, Qt::Checked );
-//        domain_->addChild( reg_ );
-
-//        emit addRegionToDomain( obj_->getIndex(), index_ );
-
-
-//        connect( this, &ObjectTree::itemChanged, [=]( QTreeWidgetItem* item_, int column_ )
-//        {
-//            if( item_ == reg_ )
-//            {
-//                obj_->setCheckState( COLUMN_STATUS, reg_->checkState( COLUMN_STATUS ) );
-//                obj_->setText( COLUMN_NAME, reg_->text( COLUMN_NAME ) );
-//            }
-//            else if( item_ == obj_ )
-//            {
-//                reg_->setCheckState( COLUMN_STATUS, obj_->checkState( COLUMN_STATUS ) );
-//                reg_->setText( COLUMN_NAME, obj_->text( COLUMN_NAME ) );
-//            }
-
-//        } );
-
-//    }
-
-
-
-}
-
-
-void ObjectTree::removeFromDomain()
-{
-//    QList<QTreeWidgetItem *> items_ = selectedItems();
-//    if( items_.empty() == true ) return;
-
-//    for( auto it: items_ )
-//    {
-//        ObjectTreeItem* obj_ = static_cast< ObjectTreeItem* >( it );
-//        if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
-
-//        ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( obj_->parent() );
-
-//        emit removeRegionFromDomain( obj_->getIndex(), domain_->getIndex() );
-
-
-//        if( domain_ != nullptr )
-//        {
-//            domain_->removeChild( obj_ );
-//            if( domain_->childCount() == 0 )
-//            {
-//                label_domains->removeChild( domain_ );
-//                delete domain_;
-//                domain_ = nullptr;
-//            }
-
-//        }
-
-//        obj_ = nullptr;
-//    }
-
-}
-
-
-void ObjectTree::deleteDomain( std::size_t index_ )
-{
-
-//    QList<QTreeWidgetItem *> items_ = selectedItems();
-//    if( items_.empty() == true ) return;
-
-//    for( auto it: items_ )
-//    {
-//        ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( it );
-//        if( domain_->getType() != Settings::Objects::ObjectType::DOMAINS ) continue;
-
-//        QList<QTreeWidgetItem *> children_domains_ = domain_->takeChildren();
-//        while( children_domains_.isEmpty() == false )
-//        {
-//            ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( children_domains_.first() );
-//            if( reg_ == nullptr ) continue;
-
-//            emit removeRegionFromDomain( reg_->getIndex(), domain_->getIndex() );
-
-//            domain_->removeChild( reg_ );
-//            reg_ = nullptr;
-
-//            children_domains_.removeFirst();
-
-//        }
-
-//        label_domains->removeChild( domain_ );
-
-//        emit removeDomain( domain_->getIndex() );
-
-//        delete domain_;
-//        domain_ = nullptr;
-
-//    }
-
-//    if( label_domains->childCount() == 0 )
-//        label_domains->setHidden( true );
-
-}
-
 
 
 
@@ -1585,38 +1335,7 @@ void ObjectTree::removeDomains()
     {
 
         ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( children_.first() );
-        deleteDomain1( domain_->getIndex() );
-
-
-
-
-//        QList<QTreeWidgetItem *> children_domains_ = domain_->takeChildren();
-
-//        while( children_domains_.isEmpty() == false )
-//        {
-//            ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( children_domains_.first() );
-//            if( reg_ == nullptr ) continue;
-
-//            domain_->removeChild( reg_ );
-//            reg_ = nullptr;
-
-//           children_domains_.removeFirst();
-
-//        }
-
-
-//        std::size_t id_ = domain_->getIndex();
-//        domains.removeElement( id_ );
-//        mn_submenu->removeAction( domain_actions_[ id_ ] );
-
-//        QAction* tmp_ = std::move( domain_actions_[ id_ ] );
-//        delete tmp_;
-//        domain_actions_[ id_ ] = nullptr;
-//        domain_actions_.erase( id_ );
-
-//        delete domain_;
-//        domain_ = nullptr;
-
+        deleteDomain( domain_->getIndex() );
         children_.removeFirst();
 
     }

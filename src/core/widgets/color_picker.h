@@ -31,47 +31,121 @@
 #include <QPixmap>
 
 
+/**
+ *  A customized QToolButton that holds a color picker
+ *  This widget was created to save space in the toolbars of the application
+ */
+
 class ColorPicker: public QToolButton
 {
     Q_OBJECT
 
     public:
 
+
+        /**
+        * Constructor.
+        */
         ColorPicker( QWidget* parent = 0 );
 
+
+        /**
+        * Method to update the color picker with a new color
+        * @param c new color
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setColor( const QColor& c );
+
+
+        /**
+        * Method to return the current color from the color picker
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QColor the current color of the color picker.
+        */
         QColor currentColor() const;
 
 
+
     public slots:
+
+
+        /**
+        * This method set the current color as a random color or the current one of the color picker.
+        * The chosen color depends on the current status of this widget
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QColor the current color.
+        */
 
         void defineRandomColor();
 
 
     protected:
 
+
+        /**
+        * Method to create the interface of the widget
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void createWidget();
+
+
+        /**
+        * Method to create and define the actions and connects of this widget
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void createActions();
 
+
+        /**
+        * Method to generate a random color.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QColor a random color.
+        */
         QColor randomColor();
 
 
     protected slots:
 
-        void colorChanged( const QColor& color_ );
 
+        /**
+        * Method called when the current color of the color picker is changed
+        * @param color_ the new color
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void colorChanged( const QColor& color_ );
 
 
     signals:
 
+
+        /**
+        * Signal emmited when a new color is selected in the color picker
+        * @param QColor the new color
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void colorSelected( const QColor& );
-        void setFixedColor( bool status, const QColor& );
+
 
     private:
 
-        QColorDialog* cd_picker_color;
-        QWidgetAction* wa_picker_color;
-        QMenu* mn_picker_color;
+        QColorDialog* cd_picker_color;                                          /**< A color picker */
+
+        QWidgetAction* wa_picker_color;                                         /**< An action that holds the color picker */
+
+        QMenu* mn_picker_color;                                                 /**< The menu that contains the action */
 
 };
 
