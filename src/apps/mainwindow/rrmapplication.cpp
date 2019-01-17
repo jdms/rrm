@@ -467,7 +467,7 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 void RRMApplication::createDomain()
 {
     std::size_t id_ = controller->createDomain1();
-    window->object_tree->createDomain1( id_ );
+    window->object_tree->createDomain( id_ );
     double volume_ = controller->getDomainVolume( id_ );
     window->object_tree->updateVolumeDomain( id_, volume_ );
 }
@@ -507,7 +507,7 @@ void RRMApplication::removeDomain( std::size_t index_ )
 {
 //    controller->removeDomain( index_ );
     controller->removeDomain1( index_ );
-    window->object_tree->deleteDomain1( index_ );
+    window->object_tree->deleteDomain( index_ );
 }
 
 
@@ -550,7 +550,7 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
     }
 
     if( delete_ == true )
-        window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+        window->object_tree->removeRegionsOfTheirDomains( regions_removed_, domains_removed_ );
     else
         window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
 
@@ -613,7 +613,7 @@ void RRMApplication::loadDomains()
     std::vector< std::size_t > domains_ = controller->getDomains();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain1( it_ );
+        bool status_ = window->object_tree->createDomain( it_ );
         if( status_ == false ) continue;
 
         std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
@@ -633,7 +633,7 @@ std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
     std::vector< std::size_t > domains_ = controller->getDomainsToFlowDiagnostics();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain1( it_ );
+        bool status_ = window->object_tree->createDomain( it_ );
         if( status_ == false ) continue;
 
         std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
