@@ -152,11 +152,6 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     wd_volume_resize.sb_height_volume->setRange( 1, h );
     wd_volume_resize.sb_depth_volume->setRange( 1, d );
 
-
-//    wd_volume_resize.hs_width_volume->setSingleStep( SINGLE_STEP );
-//    wd_volume_resize.hs_height_volume->setSingleStep( SINGLE_STEP );
-//    wd_volume_resize.hs_depth_volume->setSingleStep( SINGLE_STEP );
-
     wd_volume_resize.hs_width_volume->setTickInterval( SINGLE_STEP );
     wd_volume_resize.hs_height_volume->setTickInterval( SINGLE_STEP );
     wd_volume_resize.hs_depth_volume->setTickInterval( SINGLE_STEP );
@@ -164,7 +159,6 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     wd_volume_resize.sb_width_volume->setSingleStep( SINGLE_STEP );
     wd_volume_resize.sb_height_volume->setSingleStep( SINGLE_STEP );
     wd_volume_resize.sb_depth_volume->setSingleStep( SINGLE_STEP );
-
 
 
 }
