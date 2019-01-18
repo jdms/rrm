@@ -55,7 +55,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Constructor.
         */
-        ObjectTree( QWidget* parent = 0 );
+        ObjectTree( QWidget* parent = nullptr );
 
 
         /**

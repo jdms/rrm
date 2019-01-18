@@ -30,31 +30,67 @@
 #include "./core/definitions/constants.hpp"
 
 
+/**
+ *  An extension of QTreeWidgetItem to represent the objects presents in the RRM model scene.
+ */
+
 class ObjectTreeItem: public QTreeWidgetItem
 {
     public:
 
-
+        /**
+        * Constructor.
+        */
         ObjectTreeItem();
 
+
+        /**
+        * Method to set the type of the object
+        * @param type_ the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
+        * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setType( const Settings::Objects::ObjectType& type_ );
+
+
+        /**
+        * Method to return the type of the object
+        * @param type_
+        * @see Settings::Objects::ObjectType
+        * @return ObjectType the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
+        * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
+        */
         Settings::Objects::ObjectType getType() const;
 
 
+        /**
+        * Method to set the index of the object
+        * @param index_ index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setIndex( const std::size_t index_ );
+
+
+        /**
+        * Method to return the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return size_t index of the object
+        */
         std::size_t getIndex() const;
 
-        void setTreeIndex( const std::size_t index_ );
-        std::size_t getTreeIndex() const;
-
-        ObjectTreeItem* cloneItem() const;
 
     protected:
 
 
-        std::size_t index;
-        std::size_t tree_index;
-        Settings::Objects::ObjectType type;
+        std::size_t index;                                      /**< Index of the object */
+
+        Settings::Objects::ObjectType type;                     /**< Type of the object, it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
+        * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS' */
 
 
 };
