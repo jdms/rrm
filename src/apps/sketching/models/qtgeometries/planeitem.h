@@ -14,9 +14,7 @@ class PlaneItem: public QGraphicsRectItem
     public:
 
 
-        /**
-        * Constructor.
-        */
+
         PlaneItem( QGraphicsItem *parent_ = nullptr );
 
 

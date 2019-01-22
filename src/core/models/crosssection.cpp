@@ -349,12 +349,12 @@ bool CrossSection::isVisible() const
 }
 
 
-bool CrossSection::addObject(const Object& id_, PolyCurve* const& curve_ )
+bool CrossSection::addObject(const std::size_t& id_, PolyCurve* const& curve_ )
 {
     return objects.addElement( id_, curve_ );
 }
 
-const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
+const PolyCurve* CrossSection::getObjectCurve( const std::size_t& id_ )
 {
     if( objects.findElement( id_ ) == false )
         return nullptr;
@@ -363,7 +363,7 @@ const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
 }
 
 
-bool CrossSection::removeObjectCurve( const Object& id_ )
+bool CrossSection::removeObjectCurve( const std::size_t& id_ )
 {
     if( objects.findElement( id_ ) == false )
         return false;

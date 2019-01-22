@@ -8,48 +8,64 @@
 
 class Stratigraphy : public Object
 {
-	public:
+    public:
 
         unsigned int number_of_stratigraphies;
 
-		Stratigraphy();
-		Stratigraphy(const Stratigraphy & strat_);
-		~Stratigraphy();
+        /**
+        * Constructor.
+        */
+        Stratigraphy();
 
-		Stratigraphy & operator=(const Stratigraphy & strat_);
 
+        /**
+        * Constructor.
+        */
+        Stratigraphy(const Stratigraphy & strat_);
+
+
+        /**
+        * Constructor.
+        */
+        Stratigraphy & operator=(const Stratigraphy & strat_);
+
+
+        /**
+        * Destructor.
+        */
+        ~Stratigraphy();
+
+
+        /**
+        * Method to set a new index to the stratigraphy
+        * @param id_ a new index to the stratigraphy
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setIndex(std::size_t id_ ) override;
 
-//        void setSurface( const Surface& surface_) ;
-//        const Surface& getSurface() const ;
 
-//        bool addCurve( double csection_, const PolyCurve& curve_ ) ;
-//        const PolyCurve& getCurve( double csection_ ) const ;
-//        void removeCurve( double csection_ );
-
-//        std::map< double, PolyCurve > getCurves() const ;
-//        void removeCurves() ;
-
-//        void addTrajectory(const PolyCurve& traj_) ;
-//        void removeTrajectory() ;
-//        bool getTrajectory( PolyCurve& traj_ ) const ;
-
-//        void surfaceDone() ;
-
+        /**
+        * This method clear all metada from stratigraphy
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clear() override;
 
 
-	protected:
+    protected:
 
+
+        /**
+        * This method defines automatically the index of the stratigraphy
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void defineId();
 
-	protected:
-
-		
-
-//        Surface surface;
-//        std::map< double, PolyCurve > curves;
-//        PolyCurve trajectory;
 
 };
 

@@ -29,14 +29,25 @@
 
 #include "./core/definitions/constants.hpp"
 
+/**
+ *  A data structure to help to represent surfaces and handle its data
+ */
 
 class Surface
 {
 
     public:
 
+
+        /**
+        * Constructor.
+        */
         Surface() = default;
 
+
+        /**
+        * Constructor.
+        */
         Surface( const std::vector< double >& vs_, const std::vector< std::size_t >& fs_,
                  const std::vector< double >& ns_ = std::vector< double >() )
         {
@@ -46,18 +57,41 @@ class Surface
         }
 
 
+        /**
+        * Method to return if the surface has any data
+        * The surface is considered empty if it has no vertices
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean return true if the surface has no vertices, and false otherwise
+        */
         bool isEmpty() const
         {
             return data.vertices.empty();
         }
 
 
+        /**
+        * This method sets the vertices of the surface
+        * @param vs_ a vector with the vertices coordinates of all vertices
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setVertices( const std::vector< double >& vs_ )
         {
              data.vertices.clear();
              data.vertices.assign( vs_.begin(), vs_.end() );
         }
 
+
+
+        /**
+        * This method returns the vertices of the surface
+        * @param
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector< double > a vector with the vertices coordinates of all vertices
+        */
         std::vector< double > getVertices() const
         {
              return data.vertices;
@@ -65,32 +99,64 @@ class Surface
 
 
 
+        /**
+        * This method sets the normals of the vertices of the surface
+        * @param ns_ a vector with the coordinates of all normals
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setNormals( const std::vector< double >& ns_ )
         {
              data.normals.clear();
              data.normals.assign( ns_.begin(), ns_.end() );
         }
 
+
+        /**
+        * This method returns the normals of the vertices of the surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector< double > a vector with the coordinates of all normals
+        */
         std::vector< double > getNormals() const
         {
              return data.normals;
         }
 
 
-
+        /**
+        * This method sets the faces of the surface
+        * @param fs_ a vector with the index of each vertice that defines a face for all faces of the surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setFaces( const std::vector< std::size_t >& fs_ )
         {
              data.faces.clear();
              data.faces.assign( fs_.begin(), fs_.end() );
         }
 
+
+        /**
+        * This method returns the faces of the surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector< std::size_t > a vector with the index of each vertice that defines a face for all faces of the surface
+        */
         std::vector< std::size_t > getFaces() const
         {
              return data.faces;
         }
 
 
-
+        /**
+        * This method remove all metadata from the surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clear()
         {
             data.vertices.clear();
@@ -99,19 +165,17 @@ class Surface
         }
 
 
-
-
     private:
 
 
         struct SurfaceData
         {
-            std::vector< double > vertices;
-            std::vector< double > normals;
-            std::vector< std::size_t > faces;
+            std::vector< double > vertices;                                     /**< a vector of vertices coordinates for all vertices of the volume */
+            std::vector< double > normals;                                      /**< a vector of coordinates for all normals of the vertices of the volume */
+            std::vector< std::size_t > faces;                                   /**< a vector of indexes of the vertices that defines a face for each face of the volume */
         };
 
-        SurfaceData data;
+        SurfaceData data;                                                       /**< a data structure to hold the surface data  */
 
 };
 
