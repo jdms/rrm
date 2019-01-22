@@ -87,6 +87,12 @@ class CrossSection: public Object
         ~CrossSection();
 
 
+        /**
+        * Method to update the cross-section dimensions from the volume dimensions
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateDimensions();
 
 
