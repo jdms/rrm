@@ -34,38 +34,97 @@
 //#include "./apps/simulator/colormap.h"
 #include <Tucano/Shader.hpp>
 
+/**
+ *  A wrapper to handle shader operations
+ */
 
 class Shader
 {
+
+
     public:
 
+
+        /**
+        * Constructor.
+        */
         Shader() = default;
 
+
+        /**
+        * Method to set the path of the folder where are the shaders
+        * @param path_ the path of the folder where are the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setDirectory( const std::string& path_ )
         {
             shader_directory.clear();
             shader_directory = path_;
         }
+
+
+        /**
+        * Method to get the path of the folder where are the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::string the path of the folder where are the shaders
+        */
         std::string getDirectory() const
         {
             return shader_directory;
         }
 
+
+
+        /**
+        * Method to initialize the shaders and the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void init()
         {
             initShaders();
             initBuffers();
         }
+
+
+        /**
+        * Method to reset the shaders and the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void reset()
         {
             resetShaders();
             resetBuffers();
         }
+
+
+        /**
+        * Method to reload the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void reload()
         {
             shader->reloadShaders();
         }
 
+
+        /**
+        * Method to normalize vectors given a maximum and a minimum
+        * @param M the maximum point
+        * @param m the minimum point
+        * @param n the number of the coordinates of a point
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static std::vector< float > normalize( const std::vector< float >& points, const Eigen::Vector3f& M, const Eigen::Vector3f& m, int n )
         {
 
@@ -92,6 +151,15 @@ class Shader
         }
 
 
+        /**
+        * Method to normalize vectors given a maximum and a minimum.
+        * This method is considering a point 3d.
+        * @param M the maximum point
+        * @param m the minimum point
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static Eigen::Vector3f normalize( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
         {
 
@@ -113,6 +181,12 @@ class Shader
         }
 
 
+        /**
+        * This method convert a vector of double to a vector of float
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static std::vector< float > convertToFloat( const std::vector< double >& points_ )
         {
             std::vector< float > points;
@@ -122,6 +196,12 @@ class Shader
         }
 
 
+        /**
+        * This method convert a vector of std::size_t to a vector of unsigned int
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static std::vector< unsigned int > convertToUnsignedInt( const std::vector< std::size_t >& edges_ )
         {
             std::vector< unsigned int > edges;
@@ -131,6 +211,13 @@ class Shader
         }
 
 
+        /**
+        * This temporary and auxiliary method creates a vector of repeated normal (0, 1, 0), with size 3*number_of_vertices_
+        * @param number_of_vertices_ number of normal (0, 1, 0) repeated
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static std::vector< float > getDefaultNormals( std::size_t number_of_vertices_ )
         {
             std::size_t number_of_points = number_of_vertices_/3;
@@ -147,6 +234,16 @@ class Shader
         }
 
 
+        /**
+        * A temporary and auxiliary method to create a vector of colors depending on the height map, given a
+        * maximum, minimum and a vector of vertices
+        * @param zmin_ the minimum z value
+        * @param zmax_ the maximum z value
+        * @param values the vector of coordinates
+        * @see testMeToo()
+        * @see publicVar()
+        * @return colors a height map color given a maximum, minimum and a vector of vertices
+        */
         static std::vector< float > getHeightMapColor(  double zmin_, double zmax_, std::vector< float > values )
         {
 //            ColorMap colormap;
@@ -165,15 +262,46 @@ class Shader
 
     protected:
 
+
+        /**
+        * A pure virtual method to initialize the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void initShaders() = 0;
+
+
+        /**
+        * A pure virtual method to initialize the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void initBuffers() = 0;
 
+
+        /**
+        * A pure virtual method to reset the shaders
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void resetShaders() = 0;
+
+
+        /**
+        * A pure virtual method to reset the buffers
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         virtual void resetBuffers() = 0;
 
-        std::string shader_directory;
-        Tucano::Shader* shader;
 
+        std::string shader_directory;                               /**< The path of the folder where are the shaders */
+
+        Tucano::Shader* shader;                                     /**< An instance of the Tucano shader wrapper */
 
 
 };
