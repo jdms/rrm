@@ -1451,7 +1451,7 @@ void Controller::removeRegions()
 ///
 
 
-std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
+std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
 {
     std::size_t id_ = 0;
 
@@ -1467,7 +1467,7 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
 
     model.domains1[ id_ ] = Domain();
     for( auto it_: indexes_ )
-        addRegionToDomain1( it_, id_ );
+        addRegionToDomain( it_, id_ );
 
     return id_;
 
@@ -1487,7 +1487,7 @@ void Controller::setDomainColor( std::size_t index_, int red_, int green_, int b
 }
 
 
-bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_id_ )
+bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
     if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
@@ -1507,7 +1507,7 @@ bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_
 }
 
 
-bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_)
+bool Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
     if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
@@ -1527,7 +1527,7 @@ bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t dom
 }
 
 
-std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_) const
+std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
 {
     if (model.domains1.find(domain_id_) == model.domains1.end()) return std::set< std::size_t>();
 
@@ -1537,7 +1537,7 @@ std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_)
 }
 
 
-void Controller::removeDomain1(std::size_t domain_id_)
+void Controller::removeDomain(std::size_t domain_id_)
 {
 
     if (model.domains1.find(domain_id_) == model.domains1.end()) return;
@@ -1576,8 +1576,8 @@ std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
     {
         std::size_t id_ = it_.first;
         if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
-        std::size_t domain_id_ = createDomain1();
-        addRegionToDomain1( id_, domain_id_ );
+        std::size_t domain_id_ = createDomain();
+        addRegionToDomain( id_, domain_id_ );
     }
 
     for( auto it_: model.domains1 )
@@ -1590,51 +1590,6 @@ std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
 
 }
 
-//=== old methods
-
-
-void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )
-{
-    std::size_t id_ = index_;
-    model.domains[id_].regions_set = indexes_;
-
-    for( auto it: indexes_ )
-    {
-        RegionsPtr reg_ = model.regions[ it ];
-        reg_->setDomain( index_ );
-    }
-}
-
-
-void Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
-{
-    if (model.regions.find(region_id_) == model.regions.end()) return;
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    model.domains[domain_id_].regions_set.insert(region_id_);
-    RegionsPtr reg_ = model.regions[ region_id_ ];
-    reg_->setDomain( domain_id_ );
-
-
-}
-
-
-void Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
-{
-    if (model.regions.find(region_id_) == model.regions.end()) return;
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    model.domains[domain_id_].regions_set.erase(region_id_);
-    RegionsPtr reg_ = model.regions[ region_id_ ];
-    reg_->removeFromDomain();
-}
-
-
-std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
-{
-    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
-    return model.domains.at(domain_id_).regions_set;
-}
 
 
 void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ )
@@ -1650,15 +1605,6 @@ void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_,
 }
 
 
-void Controller::removeDomain(std::size_t domain_id_)
-{
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    for( auto it_: model.domains )
-        removeRegionFromDomain( it_.first, domain_id_ );
-
-    model.domains.erase( domain_id_ );
-}
 
 ///==========================================================================
 
@@ -1848,34 +1794,6 @@ Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
 
 
 
-// Request/Stop Create Above -- old methods
-
-bool Controller::requestCreateAbove()
-{
-
-    bool request_ = rules_processor.requestCreateAbove( selectable_objects );
-
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
-
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-
-        for( std::size_t id_: selectable_objects )
-        {
-            ObjectPtr& obj_ = model.objects[ id_ ];
-            obj_->setSelectable( true );
-        }
-
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return request_ ;
-
-}
-
-
 void Controller::stopCreateAbove()
 {
     std::cout << "Stop create above accepted" << std::endl << std::flush;
@@ -1892,40 +1810,6 @@ void Controller::stopCreateAbove()
 }
 
 
-// Request/Stop Create Below -- old methods
-
-bool Controller::requestCreateBelow()
-{
-
-    boundering_region = Settings::Objects::BounderingRegion::BELOW;
-    return true;
-
-
-    /*
-
-    bool request_ = rules_processor.requestCreateBelow( selectable_objects );
-
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
-
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-
-        for( std::size_t id_: selectable_objects )
-        {
-            ObjectPtr& obj_ = model.objects[ id_ ];
-            obj_->setSelectable( true );
-        }
-
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return request_ ;
-
-    */
-
-}
 
 
 void Controller::stopCreateBelow()
@@ -1944,33 +1828,6 @@ void Controller::stopCreateBelow()
 }
 
 
-
-// deprecated
-bool Controller::requestCreateRegion()
-{
-    //    bool request_ = rules_processor.requestPreserveRegion()
-
-
-    //    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
-
-    //    if( request_ == true )
-    //    {
-    //        std::cout << "Request create accepted" << std::endl << std::flush;
-
-    //        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-
-    //        for( std::size_t id_: selectable_objects )
-    //        {
-    //            ObjectPtr& obj_ = model.objects[ id_ ];
-    //            obj_->setSelectable( true );
-    //        }
-
-    //    }
-    //    else
-    //        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return false;
-}
 
 
 void Controller::stopCreateRegion()
@@ -2162,8 +2019,6 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
         point_.push_back( depth_ );
         point_.push_back( py_ );
         point_.push_back( px_ );
-
-
     }
 
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
@@ -2191,13 +2046,6 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
 
 }
 
-
-void Controller::getRegionByPointAsBoundering()
-{
-
-
-
-}
 
 
 void Controller::clearBounderingArea()
@@ -2637,11 +2485,11 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             if( ( domain_.contains( "regions" ) == false ) ||
                     ( domain_["regions"].isArray()  == false ) ) return;
 
-            std::size_t index_ = createDomain1();
+            std::size_t index_ = createDomain();
 
             QJsonArray regions_set_array_ = domain_["regions"].toArray();
             for( auto it_: regions_set_array_ )
-                addRegionToDomain1( static_cast< std::size_t >( it_.toInt() ), index_ );
+                addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
 
         }
     }

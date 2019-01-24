@@ -632,71 +632,333 @@ class Controller
 
 
         /**
-        * Method to remove the trajectory from the current object
+        * This method is responsible for calling the object surface creation and for managing if ir was successfull or not.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the object surface creation was successful and false otherwise
+        */
+        bool commitObjectSurface();
+
+
+        /**
+        * This method calls the object surface creation depends on the kind of surface will be created
+        * If the object has only a cross-section curve the method createExtrudedSurface() will be called,
+        * or if the object has a surface the method createLinearExtrudedSurface(), or else the method
+        * createGeneralSurface() will be called
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the object surface creation was successful and false otherwise
+        */
+        bool createObjectSurface();
+
+
+        /**
+        * This method creates the object surface with the cross-sections curves added to the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the object surface creation was successful and false otherwise
+        */
+        bool createGeneralSurface();
+
+
+        /**
+        * This method creates the object surface using a simple extrusion of the cross-section curved added
+        * to the object
+        * This method will be called if the object contains only one cross-section curve
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the object surface creation was successful and false otherwise
+        */
+        bool createExtrudedSurface();
+
+
+        /**
+        * This method creates the object surface using an extrusion aloong a path, i.e., the object
+        * trajectory
+        * This method will be called if the object contains only one cross-section curve and a trajectory
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the object surface creation was successful and false otherwise
+        */
+        bool createLinearExtrudedSurface();
+
+
+        /**
+        * This method is responsible for updating all curves and surfaces existents in the model
+        * This method is called always a change that impacts all the surfaces existents, has happened in
+        * the model, e.g., after an undo/redo, create a new surface, change the cross-section direction.
+        * Note that to add a curve in an object does not call the method, since the rules are only applied
+        * right before the surface creation
         * @see testMeToo()
         * @see publicVar()
         * @return Void
         */
-        bool commitObjectSurface();
-        bool createObjectSurface();
-        bool createGeneralSurface();
-        bool createExtrudedSurface();
-        bool createLinearExtrudedSurface();
-
-
         void updateModel();
+
+
+        /**
+        * Method to update a surface of the object, which index is index_
+        * @param index_ the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateObjectSurface( const std::size_t& index_ );
+
+
+        /**
+        * Method to update a surface of the object, which index is index_
+        * @param index_ the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateObjectCurves( const std::size_t& index_ );
+
+
+        /**
+        * Method to update the preview surface of the object, which index is index_
+        * Note that, the preview surface is always of the current object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updatePreviewSurface();
 
 
+        /**
+        * Method to update curve of an object in a certain cross-section
+        * @param index_ the index of the object
+        * @param depth_ the depth of the cross-section. Note that, it is not needed to pass the direction
+        * as parameter since the object can be done in only one direction
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ );
+
+
+        /**
+        * Method to update all object curves of in a certain cross-section
+        * @param depth_ the depth of the cross-section. Note that, the direction was not passed as parameter,
+        * then the direction considered is the current
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateObjectsCurvesInCrossSection( double depth_ );
+
+
+        /**
+        * Method to update all object curves in all X direction fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateCrossSectionsX();
+
+
+        /**
+        * Method to update all object curves in all Y direction fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateCrossSectionsY();
+
+
+        /**
+        * Method to update all object curves in all Z direction fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateCrossSectionsZ();
+
+
+        /**
+        * This method calls the method clearAndSetCurveinCrossSectionFromRulesProcessor(), using the current
+        * direction as the cross-section direction
+        * @param index_ the index of the object
+        * @param depth_ the depth of the cross-section.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
+
+
+        /**
+        * Method to clear all curves from the objects, which are already done, and retrieve the new curves
+        * from the rules processor in a given cross-section.
+        * Note that this method only works for 'WIDHT'and 'DEPTH' direction, since the curves from the
+        * height direction objects should not be removed
+        * @param index_ the index of the object
+        * @param dir_ the direction of the cross-section
+        * @param depth_ the depth of the cross-section.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
-        std::vector<std::size_t > defineRegions();
+        /**
+        * Method to get the order of all stratigraphies/structurals, actives or not
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector<std::size_t > a vector of indexes of the stratigraphies and structurals
+        * sorted  using the 'natural' order
+        */
         std::vector<std::size_t > getOrderedSurfacesIndices();
+
+
+        /**
+        * Method to get the order of all active stratigraphies/structurals
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector<std::size_t > a vector of indexes of the stratigraphies and structurals
+        * sorted  using the 'natural' order
+        */
         std::vector<std::size_t > getOrderedActiveSurfacesIndices();
 
+
+        /**
+        * Method in which the regions are defined
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector<std::size_t > a vector of the regions indexes
+        */
+        std::vector<std::size_t > defineRegions();
+
+
+        /**
+        * Method to set all regions as visible or not
+        * @param status_ if the value is true the regions are visibles and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionsVisible(bool status_);
+
+
+        /**
+        * Method to set if the region as visible or not
+        * @param index_ the index of the region
+        * @param status_ if the value is true the region is visible and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionVisible(std::size_t index_, bool status_);
+
+
+        /**
+        * Method to check if the region is visible or not
+        * @param index_ the index of the object
+        * @see publicVar()
+        * @return boolean returns true if the object is visible and false otherwise
+        */
         bool isRegionVisible(std::size_t index_) const;
 
+
+        /**
+        * Method to set the color of the region, which index is index_
+        * @param index_ the index of the region
+        * @param r_ the red component of the color (integer)
+        * @param g_ the green component of the color (integer)
+        * @param b_ the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
+
+
+        /**
+        * Method to get the color of the region, which index is index_
+        * @param index_ the index of the region
+        * @param r_ a reference to the red component of the color (integer)
+        * @param g_ a reference to the green component of the color (integer)
+        * @param b_ a reference to the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ ) const ;
 
+
+        /**
+        * Method to set all regions as active or not
+        * @param status_ if the value is true the regions are active and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionsActive(bool status_);
+
+
+        /**
+        * Method to set the region as active or not
+        * @param index_ the index of the region
+        * @param status_ if the value is true the region is active and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionActive(std::size_t index_, bool status_);
+
+
+        /**
+        * Method to check if the region is active or not
+        * @param index_ the index of the region
+        * @see publicVar()
+        * @return boolean returns true if the region is active and false otherwise
+        */
         bool isRegionActive(std::size_t index_) const;
 
+
+        /**
+        * Method to set the region as selectable or not
+        * @param index_ the index of the region
+        * @param status_ if the value is true the region is selectable and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionSelectable(std::size_t index_, bool status_);
+
+
+        /**
+        * Method to check if the region is selectable or not
+        * @param index_ the index of the region
+        * @see publicVar()
+        * @return boolean return true if the region is selectable and false otherwise
+        */
         bool isRegionSelectable(std::size_t index_) const;
 
+
+        /**
+        * Method to set the region as selected or not
+        * @param index_ the index of the region
+        * @param status_ if the value is true the region is selected and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setRegionSelected(std::size_t index_, bool status_);
+
+
+        /**
+        * Method to check if the region is selected or not
+        * @param index_ the index of the region
+        * @see publicVar()
+        * @return boolean return true if the region is selected and false otherwise
+        */
         bool isRegionSelected(std::size_t index_) const;
 
-        const std::map< std::size_t, RegionsPtr >& getRegions() const;
-        void updateRegions();
-        void removeRegions();
 
-
-        std::size_t createDomain1( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
-        bool addRegionToDomain1(std::size_t region_id_, std::size_t domain_id_);
-        bool removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_);
-        std::set<std::size_t> getRegionsFromDomain1(std::size_t domain_id_) const;
-        void removeDomain1(std::size_t domain_id_);
-
-        inline double getDomainVolume( std::size_t id_ )
-        {
-            if( model.domains1.find( id_ ) == model.domains1.end() ) return 0;
-            return model.domains1[ id_].getDomainVolume();
-        }
-
+        /**
+        * Method to return the volume of the region
+        * @param id_ the index of the region
+        * @see testMeToo()
+        * @see publicVar()
+        * @return double the volume of the region
+        */
         inline double getRegionVolume( std::size_t id_ )
         {
             if( model.regions.find( id_ ) == model.regions.end() ) return 0;
@@ -704,68 +966,438 @@ class Controller
         }
 
 
+       /**
+        * Method to return all the regions defined
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::map< std::size_t, RegionsPtr > a mapping between the regions and their indexes.
+        */
+        const std::map< std::size_t, RegionsPtr >& getRegions() const;
 
 
-        void createDomain( std::size_t index_ = 0, std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+        /**
+        * Method to update all the regions, i.e., update the area defined by the region
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void updateRegions();
 
+
+        /**
+        * Method to remove all the regions
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void removeRegions();
+
+
+        /**
+        * Method to create a domain. Also, it is possible to create a domain from a given set of regions.
+        * @param indexes_ an optional parameter to define the regions which define the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        std::size_t createDomain( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
+
+
+        /**
+        * Method to add a region into an existent domain
+        * @param region_id_ the index of the region to be added into the domain
+        * @param domain_id_ the index of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        bool addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
+
+
+        /**
+        * Method to remove a region from an existent domain
+        * @param region_id_ the index of the region to be removed from the domain
+        * @param domain_id_ the index of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        bool removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
+
+
+       /**
+        * Method to get all the regions from a specific domain
+        * @param domain_id_ the index of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::set<std::size_t> a vector of index of the regions contained in
+        * the domain
+        */
+        std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
+
+
+        /**
+        * Method to delete a domain
+        * @param domain_id_ the index of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void removeDomain(std::size_t domain_id_);
+
+
+        /**
+        * Method to return the volume of the domain, i.e, the sum of the volume of the regions contained
+        * in the domain
+        * @param id_ the index of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return double the volume of the domain
+        */
+        inline double getDomainVolume( std::size_t id_ )
+        {
+            if( model.domains1.find( id_ ) == model.domains1.end() ) return 0;
+            return model.domains1[ id_].getDomainVolume();
+        }
+
+
+        /**
+        * Method to set a name to the given domain
+        * @param index_ the index of the domain
+        * @param name_ the new name of the domain
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setDomainName( std::size_t index_, const std::string& name_ );
+
+
+        /**
+        * Method to set the color of the domain, which index is index_
+        * @param index_ the index of the domain
+        * @param r_ the red component of the color (integer)
+        * @param g_ the green component of the color (integer)
+        * @param b_ the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
 
 
-        void addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
-        void removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
-        std::set<std::size_t> getRegionsFromDomain(std::size_t domain_id_) const;
-        void removeDomain(std::size_t domain_id_);
+        /**
+        * Method to get the color of the domain, which index is index_
+        * @param index_ the index of the domain
+        * @param r_ a reference to the red component of the color (integer)
+        * @param g_ a reference to the green component of the color (integer)
+        * @param b_ a reference to the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ );
+
+
+        /**
+        * Method to send the domains to Flow Diagnostics module
+        * This method verifies if all regions belongs to a domain, if one of them no belongs to any domain,
+        * a domain is created to contain it.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector< std::size_t > a vector of indexes of the domains
+        */
         std::vector< std::size_t > getDomainsToFlowDiagnostics();
+
+
+        /**
+        * Method to get all created domains
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::vector< std::size_t > a vector of indexes of the domains
+        */
         std::vector< std::size_t > getDomains();
 
 
+        /**
+        * Method to initialize the Rules Processor and set the initial data
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void initRulesProcessor();
+
+
+        /**
+        * Method to update the volume boundary in the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateBoundingBoxRulesProcessor();
+
+
+        /**
+        * Method to define the volume discretization
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setVolumeDiscretization();
+
+
+        /**
+        * Method to get the current discretization. It depends on the current direction of the cross-secion
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         std::size_t getCurrentDiscretization() const;
+
+
+        /**
+        * Method to get the current range that the cross-section can go through. It depends on the current direction of the cross-secion
+        * @param min_ the minimum value that the depth of the cross-section can be
+        * @param max_ the maximum value that the depth of the cross-section can be
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void getCurrentRange( double& min_, double& max_ ) const;
+
+
+        /**
+        * This methods updates all objects bounding box that depends on the volume dimensions.
+        * Every time the volume dimensions changes this method is called to update all the objects bounding
+        * box
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateBoundingBoxInModel();
 
+
+        /**
+        * This is an auxiliary method to convert the depth of the cross-section in its discretization index
+        * in the direction X, i.e., 'WIDTH'
+        * @param value_ the depth of the cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::size_t the discretization index in the direction X
+        */
         std::size_t indexCrossSectionX( double value_ ) const;
+
+
+        /**
+        * This is an auxiliary method to convert the depth of the cross-section in its discretization index
+        * in the direction Z, i.e., 'LENGTH'
+        * @param value_ the depth of the cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::size_t the discretization index in the direction Z
+        */
         std::size_t indexCrossSectionZ( double value_ ) const;
 
+
+        /**
+        * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE ABOVE'
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setRemoveAbove();
+
+
+        /**
+        * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE ABOVE INTERSECTION'
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setRemoveAboveIntersection();
+
+
+        /**
+        * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE BELOW'
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setRemoveBelow();
+
+
+        /**
+        * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE BELOW INTERSECTION'
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setRemoveBelowIntersection();
+
+
+        /**
+        * Method to set the current stratigraphic rule to the Rules Processor.
+        * This method should be used right before creating the object surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void applyStratigraphicRule();
 
 
-        // Enable Preserve Above/Below -- new methods
+        /**
+        * Method to set the 'PRESERVE ABOVE' as enabled or disabled
+        * It, also, enable or disable the 'PRESERVE ABOVE' in the Rules Processor. If status_ is false,
+        * it calls the method stopCreateAbove() to disable it in the Rules Processor.
+        * @param status_ status_ is true if the 'PRESERVE ABOVE' is enabled and false otherwise
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void enablePreserveAbove( bool status_ );
+
+
+        /**
+        * Method to set the 'PRESERVE BELOW' as enabled or disabled
+        * It, also, enable or disable the 'PRESERVE BELOW' in the Rules Processor. If status_ is false,
+        * it calls the method stopCreateBelow() to disable it in the Rules Processor.
+        * @param status_ status_ is true if the 'PRESERVE BELOW' is enabled and false otherwise
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void enablePreserveBelow( bool status_ );
 
 
+        /**
+        * Method to disable the 'PRESERVE ABOVE' in the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void stopCreateAbove();
-        bool requestCreateAbove();
-        void stopCreateBelow();
-        bool requestCreateBelow();
-        void stopCreateRegion();
-        bool requestCreateRegion();
 
+
+        /**
+        * Method to disable the 'PRESERVE ABOVE' in the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void stopCreateBelow();
+
+
+        /**
+        * Method to disable the 'PRESERVE REGION' in the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void stopCreateRegion();
+
+
+        /**
+        * Method to get which the 'PRESERVE' is being used currently
+        * @see Settings::Objects::BounderingRegion
+        * @return BounderingRegion the current 'PRESERVE' enabled
+        */
         Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
 
+
+        /**
+        * Method to verify if the 'PRESERVE ABOVE' is active, and if so, which curve is being used as
+        * the lower boundary
+        * @param boundary_ the lower boundary
+        * @see Settings::Objects::BounderingRegion
+        * @return boolean returns true if the 'PRESERVE ABOVE' is active, and false otherwise
+        */
         bool isDefineAboveActive( PolyCurve& boundary_ );
+
+
+        /**
+        * Method to verify if the 'PRESERVE BELOW' is active, and if so, which curve is being used as
+        * the upper boundary
+        * @param boundary_ the upper boundary
+        * @see Settings::Objects::BounderingRegion
+        * @return boolean returns true if the 'PRESERVE BELOW' is active, and false otherwise
+        */
         bool isDefineBelowActive( PolyCurve& boundary_ );
 
+
+        /**
+        * Method to get the lower boundary, when the 'PRESERVE ABOVE' is active
+        * @param boundary_ a reference to the lower boundary
+        * @see Settings::Objects::BounderingRegion
+        * @return Void
+        */
         void getLowerBoundering( PolyCurve& boundary_ );
+
+
+        /**
+        * Method to get the upper boundary, when the 'PRESERVE BELOW' is active
+        * @param boundary_ a reference to the upper boundary
+        * @see Settings::Objects::BounderingRegion
+        * @return Void
+        */
         void getUpperBoundering( PolyCurve& boundary_ );
 
+
+        /**
+        * Method to set an object selected as a boundary
+        * @param index_ the index of the selected object
+        * @see none
+        * @return Void
+        */
         void setObjectSelectedAsBoundering( const std::size_t& index_ );
+
+
+        /**
+        * Method to select an object and its region using a selection sketch
+        * @param curve_ the sketch used to mark an object as boundary
+        * @param dir_ the direction of the cross-section current where the sketch was made
+        * @param depth_ the depth of the cross-section current where the sketch was made
+        * @param boundary_ the boundary curve resultant from the selection
+        * @see none
+        * @return boolean returns true if the operation was successful, and false otherwise
+        */
         bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
 
-        bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
-        void getRegionByPointAsBoundering();
 
+        /**
+        * Method to select a region given a point inside it
+        * @param px_ the X coordinate of the point
+        * @param py_ the Y coordinate of the point
+        * @param depth_ the depth of the cross-section current where the point was picked
+        * @param dir_ the direction of the cross-section current where the point was picked
+        * @see none
+        * @return boolean returns true if the operation was successful, and false otherwise
+        */
+        bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+
+        /**
+        * Method to set the point used to guide the extrusion in the guided extrusion
+        * @param px_ the X coordinate of the point
+        * @param py_ the Y coordinate of the point
+        * @param depth_ the depth of the cross-section current where the point was picked
+        * @param dir_ the direction of the cross-section current where the point was picked
+        * @see none
+        * @return Void
+        */
         void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+
+        /**
+        * Method to set the point used to guide the extrusion in the guided extrusion
+        * @param px_ the X coordinate of the point
+        * @param py_ the Y coordinate of the point
+        * @param depth_ the depth of the cross-section current where the point was picked
+        * @param dir_ the direction of the cross-section current where the point was picked
+        * @see setPointGuidedExtrusion
+        * @return Void
+        */
         void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
+
+
 
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
