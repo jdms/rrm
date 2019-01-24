@@ -61,101 +61,582 @@ class Controller
 {
     public:
 
+
+
+        /**
+         *  \var TriangleMesh a simplified name to point to the TriangleMesh structure in the RulesProcessor
+         */
         using TriangleMesh = RulesProcessor::TriangleMesh;
+
+
+        /**
+         *  \var CurveMesh a simplified name to point to the CurveMesh structure in the RulesProcessor
+         */
         using CurveMesh = RulesProcessor::CurveMesh;
 
 
+        /**
+        * \enum MeshResolution
+        * \brief Enum to represent the set of resolution level of the mesh
+        */
         enum class MeshResolution{ LOW, MEDIUM, HIGH };
 
 
+        /**
+        * Constructor.
+        */
         Controller();
+
+
+        /**
+        * Constructor.
+        */
         Controller(const Controller & cont_);
+
+
+        /**
+        * Constructor.
+        */
         Controller & operator=(const Controller & cont_);
+
+
+        /**
+        * Destructor.
+        */
         ~Controller();
 
+
+        /**
+        * Method to set a reference to the application.
+        * This create a brigde between the data and the interface by the controller
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setApplication( RRMApplication* const& app_ );
 
-       ///==========================================================================
 
-
-
+        /**
+        * Method to initialize the controller.
+        * This method adds the initial object and set the resolution of the mesh
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void init();
 
-        void createVolume();
-        void resizeVolume( double width_, double height_, double depth_ );
-        void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
 
+        /**
+        * Method to create a volume.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void createVolume();
+
+
+        /**
+        * Method to resize the volume dimensions
+        * @param width_ the new witdth volume
+        * @param height_ the new height volume
+        * @param depth_ the new depth volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void resizeVolume( double width_, double height_, double depth_ );
+
+
+        /**
+        * Method to set the volume width
+        * @param width_ the new witdth volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setVolumeWidth( double width_ );
+
+
+        /**
+        * Method to set the volume height
+        * @param height_ the new height volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setVolumeHeight( double height_ );
+
+
+        /**
+        * Method to set the volume depth
+        * @param depth_ the new depth volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setVolumeLenght( double lenght_ );
 
+
+        /**
+        * Method to get the volume geometry, i.e., the dimensions and the origin of the volume
+        * @param ox_ the X coordinate of the volume origin
+        * @param oy_ the Y coordinate of the volume origin
+        * @param oz_ the Z coordinate of the volume origin
+        * @param w_ the volume witdth
+        * @param h_ the volume height
+        * @param d_ the volume depth
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
+
+
+        /**
+        * Method to set a name to the volume
+        * @param id_ a new name to the volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setVolumeName( const std::string& name_ );
+
+
+        /**
+        * Method to set the volume visible or not
+        * @param status_ if the value is true the volume is visible and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setVolumeVisibility( bool status_ );
 
+
+        /**
+        * This method returns the total volume of the volume
+        * @see testMeToo()
+        * @see publicVar()
+        * @return double the total volume of the volume
+        */
         inline double getTotalVolume() const { return model.volume->getVolume(); }
 
 
+        /**
+        * Method to create the main cross-section.
+        * The main cross-section can be in the 'WIDTH' and 'DEPTH' directions
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void createMainCrossSection();
+
+
+        /**
+        * Method to set the direction of the main cross-section
+        * @param dir_ the new cross-section direction.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
+
+
+        /**
+        * Method to move the main cross-section to a new depth
+        * @param depth_ the depth to where the cross-section should be moved
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void moveMainCrossSection( double depth_ );
+
+
+        /**
+        * Method to return a shared pointer to the main cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return CrossSectionPtr a shared pointer to the main cross-section
+        */
         const CrossSectionPtr& getMainCrossSection() const;
 
+
+        /**
+        * Method to create the top view cross-section.
+        * The top view cross-section can be only in the 'HEIGHT' Sdirection
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void createTopViewCrossSection();
+
+
+        /**
+        * Method to return a shared pointer to the top view cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return CrossSectionPtr a shared pointer to the top view cross-section
+        */
         const CrossSectionPtr& getTopViewCrossSection() const;
+
+
+        /**
+        * Method to move the top view cross-section to a new depth
+        * @param depth_ the height to where the cross-section should be moved
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void moveTopViewCrossSection( double depth_ );
 
-        void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
+
+        /**
+        * Method to create a fixed cross-section.
+        * The fixed cross-section can be in the three directions, 'WIDTH', 'DEPTH' and 'HEIGHT'
+        * @param dir_ the direction of the fixed cross-section
+        * @param depth_ the depth_ of the fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
+        void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double  );
+
+
+        /**
+        * Method to get the fixed cross-section, given the direction and the depth of the cross-section, if existent
+        * @param dir_ the direction of the fixed cross-section
+        * @param depth_ the depth_ of the fixed cross-section
+        * @param csection_ a shared pointer to the fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return returns true if the cross-section exists and false otherwise.
+        */
         bool getCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_, CrossSectionPtr& csection_ );
+
+
+        /**
+        * Method to remove the a fixed cross-section.
+        * @param dir_ the direction of the fixed cross-section
+        * @param depth_ the depth_ of the fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
 
+
+        /**
+        * Method to set an image in a given cross-section
+        * @param file_ the path of the image file
+        * @param dir_ the direction of the fixed cross-section
+        * @param depth_ the depth_ of the fixed cross-section
+        * @param ox_ the X coordinate of the image origin
+        * @param oy_ the Y coordinate of the image origin
+        * @param w_ the width of the image
+        * @param h_ the height of the image
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ );
+
+
+        /**
+        * Method to remove an image from a given cross-section
+        * @param dir_ the direction of the fixed cross-section
+        * @param depth_ the depth_ of the fixed cross-section
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
+
+        /**
+        * Method to set an image in the main cross-section, if exists an image in the current depth and direction
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateImageInMainCrossSection();
+
+
+        /**
+        * Method to set an image in the top view cross-section, if exists an image in the current height
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void updateImageInTopViewCrossSection();
 
 
+
+        /**
+        * Method to add a new object, i.e., a stratigraphy or structural
+        * @param index_ an optional parameter to define a new index to the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         //TODO: addObject should be protected
         bool addObject( std::size_t index_ = UNDEFINED_INDEX );
 
+
+        /**
+        * Method to get an object, i.e., a stratigraphy or structural
+        * @param index_ the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return ObjectPtr a shared pointer to the object.
+        */
         const ObjectPtr& getObject( std::size_t index_ ) const;
+
+
+        /**
+        * Method to get the current object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return ObjectPtr a shared pointer to the object.
+        */
         const ObjectPtr& getCurrentObject() const;
+
+
+        /**
+        * Method to return all the objects already defined
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::map< std::size_t, ObjectPtr > a mapping between the objects and their indexes.
+        */
         const std::map< std::size_t, ObjectPtr >& getObjects();
 
+
+        /**
+        * Method to set a name to the given object
+        * @param index_ the index of the object
+        * @param name_ the new name of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         void setObjectName( std::size_t index_, const std::string& name_ );
+
+
+        /**
+        * Method to get the object name
+        * @param index_ the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return std::string the name of the object
+        */
         std::string getObjectName( std::size_t index_) const;
 
+
+        /**
+        * Method to set the type of the current object
+        * In this method is only allowed two types: 'STRATIGRAPHY' and 'STRUCTURAL'.
+        * @param type_ type of the current object.
+        * @see Settings::Objects::ObjectType
+        * @see publicVar()
+        * @return Void.
+        */
         void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
+
+
+        /**
+        * Method to get the type of the current object
+        * To this method, only two types are allowed: 'STRATIGRAPHY' and 'STRUCTURAL'.
+        * @see Settings::Objects::ObjectType
+        * @see publicVar()
+        * @return ObjectType type of the current object.
+        */
         Settings::Objects::ObjectType getCurrentObjectType() const;
+
+
+        /**
+        * Method to get the type of the object, which index is index_
+        * To this method, only two types are allowed: 'STRATIGRAPHY' and 'STRUCTURAL'.
+        * @param index_ the index of the object
+        * @see Settings::Objects::ObjectType
+        * @see publicVar()
+        * @return ObjectType type of the current object.
+        */
         Settings::Objects::ObjectType getObjectType( const std::size_t& index_ ) const;
 
 
+        /**
+        * Method to set if the object, i.e, a stratigraphy or structural, visible or not
+        * @param index_ the index of the object
+        * @param status_ if the value is true the object is visible and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectVisibility( std::size_t index_, bool status_ );
+
+
+        /**
+        * Method to set all objects, i.e, stratigraphies and structurals, as visible or not
+        * @param status_ if the value is true the objects are visibles and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectsVisibility( bool status_ );
 
+
+        /**
+        * Method to set the color of the object, which index is index_
+        * @param index_ the index of the object
+        * @param r_ the red component of the color (integer)
+        * @param g_ the green component of the color (integer)
+        * @param b_ the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
 
+
+
+        /**
+        * Method to set all objects, i.e, stratigraphies and structurals, as active or not
+        * @param status_ if the value is true the objects are active and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectsActive( bool status_ );
+
+
+        /**
+        * Method to set the object, i.e, a stratigraphy or structural, as active or not
+        * @param index_ the index of the object
+        * @param status_ if the value is true the object is active and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectActive( std::size_t index_, bool status_ );
+
+
+        /**
+        * Method to check if the object, i.e, a stratigraphy or structural, is active or not
+        * @param index_ the index of the object
+        * @see publicVar()
+        * @return boolean returns true if the object is active and false otherwise
+        */
         bool isObjectActive( std::size_t index_ ) const;
 
+
+        /**
+        * Method to set the object, i.e, a stratigraphy or structural, as selectable or not
+        * @param index_ the index of the object
+        * @param status_ if the value is true the object is selectable and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectSelectable( std::size_t index_, bool status_ );
+
+
+        /**
+        * Method to check if the object, i.e, a stratigraphy or structural, is selectable or not
+        * @param index_ the index of the object
+        * @see publicVar()
+        * @return boolean return true if the object is selectable and false otherwise
+        */
         bool isObjectSelectable( std::size_t index_ ) const;
 
+
+        /**
+        * Method to set the object, i.e, a stratigraphy or structural, as selected or not
+        * @param index_ the index of the object
+        * @param status_ if the value is true the object is selected and false otherwise
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectSelected( std::size_t index_, bool status_ );
+
+
+        /**
+        * Method to check if the object, i.e, a stratigraphy or structural, is selected or not
+        * @param index_ the index of the object
+        * @see publicVar()
+        * @return boolean return true if the object is selected and false otherwise
+        */
         bool isObjectSelected( std::size_t index_ ) const;
 
+
+        /**
+        * Method to set an object log information
+        * @param index_ the index of the object
+        * @param status_ an object log information
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void setObjectLog( std::size_t index_, const QString& status_ );
+
+
+        /**
+        * Method to get the object log information
+        * @param index_ the index of the object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return QString object log information
+        */
         QString getObjectLog( std::size_t index_ ) const;
 
 
+        /**
+        * Method to add a curve to the current object
+        * @param dir_ the direction of the cross-section which the curve was done
+        * @param depth_ the depth_ of the cross-section which the curve was done
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the curve was added properly and false otherwise
+        */
         bool addCurveToObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_, const PolyCurve& curve_ );
+
+
+        /**
+        * Method to remove a curve to the current object
+        * @param dir_ the direction of the cross-section which the curve was done
+        * @param depth_ the depth_ of the cross-section which the curve was done
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the curve was removed properly and false otherwise
+        */
         bool removeCurveFromObject( Settings::CrossSection::CrossSectionDirections dir_, double depth_ );
 
+
+        /**
+        * Method to add a trajectory to the current object
+        * @param curve_ the trajectory made by the user
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void addTrajectoryToObject( const PolyCurve& curve_ );
+
+
+        /**
+        * Method to add the last trajectory entered to the current object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void addLastTrajectoryToObject();
+
+
+        /**
+        * Method to remove the trajectory from the current object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         void removeTrajectoryFromObject();
 
+
+        /**
+        * Method to remove the trajectory from the current object
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         bool commitObjectSurface();
         bool createObjectSurface();
         bool createGeneralSurface();
