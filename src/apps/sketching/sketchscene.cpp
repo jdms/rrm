@@ -49,8 +49,6 @@ void SketchScene::init()
         addItem( sketch.get() );
     }
 
-
-
     setSketchingMode();
 
     image = new ImageItemWrapper();

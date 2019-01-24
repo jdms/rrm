@@ -64,15 +64,15 @@ Object& Object::operator=( const Object & obj_ )
     return *this;
 }
 
-void Object::setLog(const std::string& log_)
-{
-    log = log_;
-}
+//void Object::setLog(const std::string& log_)
+//{
+//    log = log_;
+//}
 
-std::string Object::getLog() const
-{
-    return log;
-}
+//std::string Object::getLog() const
+//{
+//    return log;
+//}
 
 Object::~Object()
 {
@@ -521,10 +521,10 @@ std::size_t Object::getNumberOfCrossSections() const
 }
 
 
-Object::CrossSectionsContainer Object::getCrossSectionCurves() const
-{
-    return csection_curves;
-}
+//Object::CrossSectionsContainer Object::getCrossSectionCurves() const
+//{
+//    return csection_curves;
+//}
 
 
 
@@ -672,7 +672,7 @@ void Object::resetAllObjects()
 
 void Object::clearPreviewCurves()
 {
-    CrossSectionsContainer::Iterator it =  csection_curves.begin();
+    CrossSectionsContainer::Iterator it =  csection_curves1.begin();
     std::vector< double > previews_;
 
     for ( auto it: csection_curves1 )

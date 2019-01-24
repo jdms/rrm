@@ -71,24 +71,6 @@ class Object
         Object& operator=( const Object & obj_ );
 
 
-//        /**
-//        * Method to set an object log information
-//        * @see testMeToo()
-//        * @see publicVar()
-//        * @return Void
-//        */
-//        void setLog(const std::string& log_);
-
-
-//        /**
-//        * Method to get the object log information
-//        * @see testMeToo()
-//        * @see publicVar()
-//        * @return object log information
-//        */
-//        std::string getLog() const;
-
-
         /**
         * Destructor.
         */
@@ -185,7 +167,6 @@ class Object
         */
         void getBoundingBox( double& xmin_, double& xmax_, double& ymin_, double& ymax_,
                              double& zmin_, double& zmax_ );
-
 
 
         /**
@@ -313,6 +294,24 @@ class Object
 
 
         /**
+        * Method to remove all cross-sections curves
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void removeCrossSectionCurves();
+
+
+        /**
+        * Method to remove all preview curves, i.e., the curves that were not added by the user
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void clearPreviewCurves();
+
+
+        /**
         * Method to get the curves that were added to the object
         * @see none
         * @return std::map< double, PolyCurve > a mapping between the cross-section depth and the curve associated
@@ -388,6 +387,34 @@ class Object
         */
         bool removeCurve( double csection_id_ );
 
+        /**
+        * Method to check if exists a curve in the given cross-section depth
+        * @see testMeToo()
+        * @see publicVar()
+        * @return bool return true if exists a curve in the given cross-section depth
+        */
+        bool hasCurve( double csection_id_ ) const;
+
+
+        /**
+        * Method to return the curve from the given cross-section depth
+        * @see testMeToo()
+        * @see publicVar()
+        * @return PolyCurve the curve existent in the given cross-section depth
+        */
+        PolyCurve getCurve( double csection_id_ );
+
+
+        /**
+        * Method to update the curve of the given cross-section depth
+        * @param csection_id_ the depth of the cross-section
+        * @param curve_ the curve to replace the old one
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void updateCurve( double csection_id_, const PolyCurve& curve_ );
+
 
         /**
         * Method to remove all the level curves from the object
@@ -453,6 +480,24 @@ class Object
         * @return the surface generate from the curves added to the object
         */
         const Surface& getSurface() const;
+
+
+        /**
+        * Method to check if the object already has a surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return bool returns true if the object already has a surface and false otherwise
+        */
+        bool hasSurface(){ return !surface.isEmpty(); }
+
+
+        /**
+        * Method to remove the object surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void removeSurface();
 
 
         /**
@@ -548,59 +593,58 @@ class Object
 
 
         /**
-        * Method to check if exists a curve in the given cross-section depth
+        * Method to check if the object still allows to add curves, i.e., the object is not done yet
         * @see testMeToo()
         * @see publicVar()
-        * @return bool return true if exists a curve in the given cross-section depth
+        * @return bool returns true if the object is not done and false otherwise
         */
-        bool hasCurve( double csection_id_ ) const;
+        bool isCurveAdmissible();
 
 
         /**
-        * Method to return the curve from the given cross-section depth
+        * Method to check if the object still allows to add trajectories, i.e., the object is not done yet
+        * The method return false if the object already has a trajectory or there are more than a cross-section curve added
         * @see testMeToo()
         * @see publicVar()
-        * @return PolyCurve the curve existent in the given cross-section depth
+        * @return bool returns true if the object still allows to add trajectories and false otherwise
         */
-        PolyCurve getCurve( double csection_id_ );
+        bool isTrajectoryAdmissible();
 
 
         /**
-        * Method to update the curve of the given cross-section depth
-        * @param csection_id_ the depth of the cross-section
-        * @param curve_ the curve to replace the old one
+        * This method removes all metadata from the structure.
         * @see testMeToo()
         * @see publicVar()
         * @return Void
         */
-        void updateCurve( double csection_id_, const PolyCurve& curve_ );
+        virtual void clear();
 
 
         /**
-        * Method to return the mapping between the cross-section depth and the curve associated
+        * This method sets the default values for the data.
         * @see testMeToo()
         * @see publicVar()
-        * @return CrossSectionsContainer the mapping between the cross-section depth and the curve associated
+        * @return Void
         */
-        Object::CrossSectionsContainer getCrossSectionCurves() const;
-        void removeCrossSectionCurves();
-
-
-
-
-        void clearPreviewCurves();
-
-        bool isCurveAdmissible();
-        bool isTrajectoryAdmissible();
-
-        bool hasSurface(){ return !surface.isEmpty(); }
-        void removeSurface();
-
-        virtual void clear();
         void initialize();
 
+
+        /**
+        * This method reset the number of cross-section to zero in all application
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
         static void resetAllObjects();
 
+
+        /**
+        * This method saves the object metadata into a file using json
+        * @param json_ a JSON object from Qt
+        * @see QJsonObject()
+        * @see publicVar()
+        * @return Void
+        */
         inline virtual void write( QJsonObject &json ) const
         {
             json[ "name" ] = QString( name.c_str() );
@@ -644,6 +688,13 @@ class Object
         }
 
 
+        /**
+        * This method reads the object metadata from a file using json
+        * @param json_ a reference to a JSON object from Qt
+        * @see QJsonObject()
+        * @see publicVar()
+        * @return Void
+        */
         inline virtual void read( const QJsonObject &json )
         {
 
@@ -718,7 +769,6 @@ class Object
 
 
 
-
     protected:
 
         void defineIndex();
@@ -729,12 +779,33 @@ class Object
     private:
 
 
+        /**
+        * @struct Color
+        * @brief It is a data structure to represent color
+        * @var red red component of a color
+        * @var green green component of a color
+        * @var blue blue component of a color
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         struct Color {
             int red = 255;
             int green = 0;
             int blue = 0;
         };
 
+
+        /**
+        * @struct Point
+        * @brief It is a data structure to represent a point
+        * @var x x coordinate of the point
+        * @var y y coordinate of the point
+        * @var z z coordinate of the point
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         struct Point
         {
             double x = 0.0;
@@ -743,43 +814,50 @@ class Object
         };
 
 
+        std::string name;                                                   /**< The name of the object */
 
-        std::string name;
         std::string log;
-        Settings::Objects::ObjectType type;
 
-        Color color;
-        Point min, max;
+        Settings::Objects::ObjectType type;                                 /**< The type of the object */
 
-        bool editable = true;
-        bool selectable = false;
-        bool selected = false;
-        bool visible = true;
-        bool active = true;
-        bool is_done = false;
+        Color color;                                                        /**< The color of the object*/
 
-        std::set< double > user_entered;
-        std::map< double, PolyCurve > csection_curves1;
-        std::map< double, PolyCurve > level_curves1;
-        Settings::CrossSection::CrossSectionDirections direction;
+        Point min;                                                          /**< The minimum point of the bounding box */
 
+        Point max;                                                          /**< The maximum point of the bounding box */
 
+        bool editable = true;                                               /**< A boolean to define if the object is editable or not */
 
-        ///==========================================
+        bool selectable = false;                                            /**< A boolean to define if the object is selectable or not */
 
-        static std::size_t number_of_objects;
+        bool selected = false;                                              /**< A boolean to define if the object is selected or not */
 
+        bool visible = true;                                                /**< A boolean to define if the object is visible or not */
 
-        std::string text_information;
+        bool active = true;                                                 /**< A boolean to define if the object is active or not */
 
-        std::vector< double > used_depth;
+        bool is_done = false;                                               /**< A boolean to define if the object is done or not */
 
-        CrossSectionsContainer csection_curves;
-        Surface surface;
-        PolyCurve trajectory;
+        std::set< double > user_entered;                                    /**< A vector of the cross-sections depth which were used by the user */
 
-        const std::size_t CHANNEL_MAX_CSECTIONS = 2;
+        std::map< double, PolyCurve > csection_curves1;                     /**< The mapping between the cross-sections depths and the curves contained in them */
 
+        std::map< double, PolyCurve > level_curves1;                        /**< The mapping between the height of the cross-sections and the curves done in them */
+
+        Settings::CrossSection::CrossSectionDirections direction;           /**< The direction which was made the object */
+
+        static std::size_t number_of_objects;                               /**< The total number of objects in the application, i.e., the number of instances of this
+                                                                                  class existents in the application */
+
+        std::string text_information;                                       /**< The log information of the object */
+
+        Surface surface;                                                    /**< The surface of the object */
+
+        PolyCurve trajectory;                                               /**< The trajectory of the object */
+
+        const std::size_t CHANNEL_MAX_CSECTIONS = 2;                        /**< The maximum number of cross-section allowed to create a channel */
+
+ //        CrossSectionsContainer csection_curves;
 
 };
 
