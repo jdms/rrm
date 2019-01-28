@@ -536,6 +536,56 @@ class SketchWindow: public QMainWindow
 
 
         /**
+       * Protected method responsibles for the actions and connects creation
+       * related to the toolbar.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createToolbarActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+
+
+        /**
+       * Protected method responsibles for the actions and connects creation
+       * related to the main cross-section scene.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createMainSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+
+
+        /**
+       * Protected method responsibles for the actions and connects creation
+       * related to the top view cross-section scene.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createTopViewSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+
+
+        /**
+       * Protected method responsibles for the actions and connects creation
+       * related to the lateral bar.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createLateralBarActions();
+
+
+        /**
+       * Protected method responsibles for the actions and connects creation
+       * related to the lateral bar.
+       * @see testMeToo()
+       * @see publicVar()
+       * @return Void
+       */
+        void createFixedCrossSectionsActions();
+
+
+        /**
        * Protected method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
        * @see testMeToo()
        * @see publicVar()
@@ -552,40 +602,51 @@ class SketchWindow: public QMainWindow
        */
         void keyPressEvent( QKeyEvent *event );
 
+
     private:
 
 
-        SketchingCanvas* sketchingcanvas = nullptr;                 /**< Canvas to draw the sketches, exhibiting the main cross-section. It inherits from QGraphicsView. */
+        std::shared_ptr< SketchingCanvas > sketchingcanvas;         /**< Canvas to draw the sketches, exhibiting the main cross-section. It inherits from QGraphicsView. */
 
-        SketchingCanvas* topviewcanvas = nullptr;                   /**< Canvas to draw the sketches, exhibiting the top-view cross-section. It inherits from QGraphicsView. */
+        std::shared_ptr< SketchingCanvas > topviewcanvas;           /**< Canvas to draw the sketches, exhibiting the top-view cross-section. It inherits from QGraphicsView. */
 
         CanvasStack* fixed_csections_canvas = nullptr;              /**< Container of canvas. Stores the fixed canvas. */
 
         ColorPicker *cp_color = nullptr;                            /**< Widget to pick a color. Stores the fixed canvas. */
 
         QToolBar* tb_sketch = nullptr;                              /**< Toolbar with sketching related actions. */
+
         QAction* ac_cancel_sketch = nullptr;                        /**< Action to cancel a sketch before submit it. */
+
         QAction* ac_submit_sketch = nullptr;                        /**< Action to submit a sketch to the current object. */
+
         QAction* ac_end_object = nullptr;                           /**< Action to create the surface from the curves submited to the current object. */
 
         QToolBar* tb_boundary = nullptr;                            /**< Toolbar with boundary related actions. */
+
         QAction* ac_resize_boundary = nullptr;                      /**< Action to resize boundary. It is a selectable action. */
+
         const bool RESIZE_BOUNDARY_DEFAULT_STATUS = false;          /**< Default status to the resize boundary action. True means the action is selected, otherwise, unselected.  */
 
         QToolBar* tb_image = nullptr;                               /**< Toolbar with image related actions. */
-        QAction* ac_resize_image = nullptr;                         /**< Action to resize image. It is a selectable action. */
-        QAction* ac_remove_image = nullptr;                         /**< Action to remove image from scene. */
 
+        QAction* ac_resize_image = nullptr;                         /**< Action to resize image. It is a selectable action. */
+
+        QAction* ac_remove_image = nullptr;                         /**< Action to remove image from scene. */
 
         // only in top-view cross-section
         QToolBar* tb_trajectory = nullptr;                          /**< Toolbar with trajectory related actions. */
+
         QAction* ac_use_last_trajectory = nullptr;                  /**< Action to reuse the last trajectory submitted. It is a selectable action. */
+
         const bool USE_TRAJECTORY_DEFAULT_STATUS = false;           /**< Default status to the resize boundary action. True means the action is selected, otherwise, unselected. */
 
         QAction* ac_fixed_csections = nullptr;                      /**< Action to show/hide the fixed cross-sections window. It is a selectable action. */
 
         QToolBar* tb_misc = nullptr;                                /**< Toolbar with other related actions. */
+
         QAction* ac_screenshot = nullptr;                           /**< Action to take a screenshot from the scene. */
+
         QAction* ac_axes = nullptr;                                 /**< Action to show/hide the axes. */
 
 

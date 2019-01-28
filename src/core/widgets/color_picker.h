@@ -43,26 +43,28 @@ class ColorPicker: public QToolButton
     public:
 
 
+        //TODO: add comments to param
+
         /**
         * Constructor.
+        * @param parent
+        * @see QWidget
         */
-        ColorPicker( QWidget* parent = 0 );
+        ColorPicker( QWidget* parent = nullptr );
 
 
         /**
         * Method to update the color picker with a new color
         * @param c new color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QColor
+        * @return void.
         */
         void setColor( const QColor& c );
 
 
         /**
         * Method to return the current color from the color picker
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor the current color of the color picker.
         */
         QColor currentColor() const;
@@ -75,9 +77,7 @@ class ColorPicker: public QToolButton
         /**
         * This method set the current color as a random color or the current one of the color picker.
         * The chosen color depends on the current status of this widget
-        * @see testMeToo()
-        * @see publicVar()
-        * @return QColor the current color.
+        * @return void.
         */
 
         void defineRandomColor();
@@ -88,26 +88,22 @@ class ColorPicker: public QToolButton
 
         /**
         * Method to create the interface of the widget
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void createWidget();
 
 
         /**
         * Method to create and define the actions and connects of this widget
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QActions
+        * @return void
         */
         void createActions();
 
 
         /**
         * Method to generate a random color.
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor a random color.
         */
         QColor randomColor();
@@ -119,9 +115,8 @@ class ColorPicker: public QToolButton
         /**
         * Method called when the current color of the color picker is changed
         * @param color_ the new color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void
         */
         void colorChanged( const QColor& color_ );
 
@@ -132,9 +127,8 @@ class ColorPicker: public QToolButton
         /**
         * Signal emmited when a new color is selected in the color picker
         * @param QColor the new color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void
         */
         void colorSelected( const QColor& );
 

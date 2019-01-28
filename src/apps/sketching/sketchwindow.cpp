@@ -27,11 +27,12 @@
 #include <QPushButton>
 
 #include "sketchwindow.h"
+
 #define PI 3.14159265
+
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-
     createInterface();
 }
 
@@ -40,7 +41,6 @@ void SketchWindow::createToolBar()
 {
     cp_color = new ColorPicker( this );
     cp_color->setToolTip( "Sketch Color" );
-
 
     ac_cancel_sketch = new QAction( "Cancel", this );
     ac_cancel_sketch->setToolTip( "Cancel Sketch" );
@@ -67,7 +67,6 @@ void SketchWindow::createToolBar()
     ac_resize_image = new QAction( "Resize image", this );
     ac_resize_image->setToolTip( "Resize Image" );
     ac_resize_image->setCheckable( true );
-
     ac_remove_image = new QAction( "Remove image", this );
     ac_remove_image->setToolTip( "Remove Image" );
 
@@ -79,27 +78,16 @@ void SketchWindow::createToolBar()
     ac_fixed_csections->setIcon(QIcon(":/images/icons/fixedcsections.png"));
     ac_fixed_csections->setCheckable( true );
 
-    ac_select_regions = new QAction( "Select Regions", this );
-    ac_select_regions->setToolTip( "Select Regions" );
-    ac_select_regions->setCheckable( true );
-    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
-
-    tb_region = addToolBar( "Region" );
-    tb_region->addAction( ac_select_regions );
-    tb_region->setVisible( false );
-
-    tb_lateral_bar = addToolBar( "Lateral Bar" );
     ac_show_bar = new QAction( "Vertical Exaggeration", this );
     ac_show_bar->setToolTip( "Show Vertical Exaggeration and Dip Angle Bar" );
     ac_show_bar->setCheckable( true);
     ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
+    tb_lateral_bar = addToolBar( "Lateral Bar" );
     tb_lateral_bar->addAction( ac_show_bar );
 
-
-    tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
     ac_use_last_trajectory->setToolTip( "Reuse Last Trajectory" );
-
+    tb_trajectory = addToolBar( "Trajectory" );
     tb_trajectory->addAction( ac_use_last_trajectory );
 
     ac_axes = new QAction( "Axes", this );
@@ -116,6 +104,15 @@ void SketchWindow::createToolBar()
     tb_misc->addAction( ac_screenshot );
     tb_misc->addAction( ac_axes );
 
+    ac_select_regions = new QAction( "Select Regions", this );
+    ac_select_regions->setToolTip( "Select Regions" );
+    ac_select_regions->setCheckable( true );
+    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    tb_region = addToolBar( "Region" );
+    tb_region->addAction( ac_select_regions );
+    tb_region->setVisible( false );
+
 
 
 }
@@ -130,51 +127,93 @@ void SketchWindow::createInterface()
     fixed_csections_canvas->setVisible( false );
 }
 
+
 std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 {
 
     // hidding actions not associated to the main cross-sections
     tb_trajectory->setVisible( false );
 
-    sketchingcanvas = new SketchingCanvas();
+    sketchingcanvas = std::make_shared< SketchingCanvas >();
     //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
     sketchingcanvas->scale( 1, -1 );
-    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
 
     createLateralBar();
 
     QHBoxLayout* hb_central = new QHBoxLayout( this );
-    hb_central->addWidget( sketchingcanvas );
+    hb_central->addWidget( sketchingcanvas.get() );
     hb_central->addWidget( bar_ );
-
 
     QWidget* central_ = new QWidget();
     central_->setLayout( hb_central );
     setCentralWidget( central_ );
 
-    //TODO: create method to encapsulated these actions
 
     // connects related to the fixed cross-sections widget
+    createFixedCrossSectionsActions();
 
-    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
-    {
-        emit removeMarkerFromSlider( id_ );
-    } );
+    // connects related to scene: from actions
+    createToolbarActions( sketchingcanvas );
 
-    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
+    // connects related to scene: from scene
+    createMainSceneActions( sketchingcanvas );
 
-    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+    return scene_;
+}
 
+
+void SketchWindow::createLateralBar()
+{
+
+    latBar = new LateralBar();
+
+    QVBoxLayout* hb_lateral_bar = new QVBoxLayout();
+    hb_lateral_bar->addWidget( latBar );
+
+    bar_ = new QWidget();
+    bar_->setMinimumWidth( 170 );
+    bar_->setLayout( hb_lateral_bar );
+    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
+
+    createLateralBarActions();
+
+}
+
+
+std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
+{
+
+    // hidding actions not associated to the top view cross-sections
+    tb_trajectory->setVisible( true );
+    tb_lateral_bar->setVisible( false );
+
+    topviewcanvas = std::make_shared< SketchingCanvas >();
+    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+    setCentralWidget( topviewcanvas.get() );
 
 
     // connects related to scene: from actions
+    createToolbarActions( topviewcanvas );
+
+    // connects related to scene: from scene
+    createTopViewSceneActions( topviewcanvas );
+
+
+    return scene_;
+}
+
+
+void SketchWindow::createToolbarActions( const std::shared_ptr< SketchingCanvas >& canvas_ )
+{
+
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {
         scene_->setSketchColor( color_ );
         emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
     } );
-
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
@@ -192,8 +231,17 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
-    // connects related to scene: from scene
+    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
+
+}
+
+
+void SketchWindow::createMainSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ )
+{
+
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
@@ -226,102 +274,14 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
-
-
-    // connects related to lateral bar
-
-    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
-
-
-    // connects related to the own window
-
-    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
-
-
-    return scene_;
 }
 
 
-void SketchWindow::createLateralBar()
+void SketchWindow::createTopViewSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ )
 {
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
-    latBar = new LateralBar();
-
-    QVBoxLayout* hb_lateral_bar = new QVBoxLayout();
-    hb_lateral_bar->addWidget( latBar );
-
-    connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
-    {
-        std::cout << "exag: " << v_ << std::endl << std::flush;
-        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-        Settings::CrossSection::CrossSectionDirections dir_;
-        double depth_;
-        scene_->getCrossSectionInformation( dir_, depth_ );
-        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
-        sketchingcanvas->setVerticalExaggeration( v_ );
-        emit setVerticalExaggeration( v_ );
-    } );
-
-
-    connect( latBar, &LateralBar::sgn_resetVerticalExaggeration, [=]()
-    {
-        sketchingcanvas->stopVerticalExaggeration();
-    } );
-
-    connect( latBar, &LateralBar::sgn_sendDipAnglePicture, this, &SketchWindow::showDipAngle );
-
-    connect( latBar, &LateralBar::sgn_setDipAnglePictureMovable, this, &SketchWindow::setDipAnglePictureMovable );
-
-
-    bar_ = new QWidget();
-    bar_->setMinimumWidth( 170 );
-    bar_->setLayout( hb_lateral_bar );
-    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
-
-}
-
-
-std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
-{
-
-    // hidding actions not associated to the top view cross-sections
-    tb_trajectory->setVisible( true );
-    tb_lateral_bar->setVisible( false );
-
-    topviewcanvas = new SketchingCanvas();
-    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-    setCentralWidget( topviewcanvas );
-
-
-    //TODO: create method to encapsulated these actions
-
-    // connects related to scene: from actions
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-    {   scene_->setSketchColor( color_ );
-        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
-    } );
-
-
-    connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
-
-    connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
-
-    connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
-
-    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
-
-    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-
-
-    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
-
-    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
-
-    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
-
-
-    // connects related to scene: from scene
+    connect( ac_use_last_trajectory, &QAction::triggered, [=](){ emit useLastTrajectory(); } );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
     {
@@ -344,13 +304,48 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
-
-    // connects related to the own window
-
-    connect( ac_use_last_trajectory, &QAction::triggered, [=](){ emit useLastTrajectory(); } );
+}
 
 
-    return scene_;
+void SketchWindow::createLateralBarActions()
+{
+
+    connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
+    {
+        std::cout << "exag: " << v_ << std::endl << std::flush;
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        Settings::CrossSection::CrossSectionDirections dir_;
+        double depth_;
+        scene_->getCrossSectionInformation( dir_, depth_ );
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
+        sketchingcanvas->setVerticalExaggeration( v_ );
+        emit setVerticalExaggeration( v_ );
+    } );
+
+
+    connect( latBar, &LateralBar::sgn_resetVerticalExaggeration, [=]()
+    {
+        sketchingcanvas->stopVerticalExaggeration();
+    } );
+
+    connect( latBar, &LateralBar::sgn_sendDipAnglePicture, this, &SketchWindow::showDipAngle );
+
+    connect( latBar, &LateralBar::sgn_setDipAnglePictureMovable, this, &SketchWindow::setDipAnglePictureMovable );
+}
+
+
+void SketchWindow::createFixedCrossSectionsActions()
+{
+
+    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
+    {
+        emit removeMarkerFromSlider( id_ );
+    } );
+
+    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
+
+    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+
 }
 
 
@@ -696,9 +691,8 @@ SketchWindow::~SketchWindow()
         delete fixed_csections_canvas;
     fixed_csections_canvas = nullptr;
 
-    if( sketchingcanvas!= nullptr )
-        delete sketchingcanvas;
-    sketchingcanvas = nullptr;
+    sketchingcanvas.reset();
+    topviewcanvas.reset();
 
     if( ac_cancel_sketch!= nullptr )
         delete ac_cancel_sketch;
