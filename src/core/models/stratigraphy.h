@@ -6,6 +6,10 @@
 #include <map>
 
 
+/**
+ *  A graphical representation to the stratigraphy to save its metadata
+ */
+
 class Stratigraphy : public Object
 {
     public:

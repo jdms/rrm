@@ -37,7 +37,7 @@
 #include "./polycurve.h"
 
 /**
- *  A graphical representation to the object to save its metada
+ *  A graphical representation to the object to save its metadata
  */
 
 

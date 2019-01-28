@@ -217,7 +217,6 @@ void MainWindow::createActions()
 
     connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
 
-
 }
 
 

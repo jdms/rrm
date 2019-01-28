@@ -57,10 +57,15 @@ using ObjectPtr = std::shared_ptr< Object >;
 using RegionsPtr = std::shared_ptr< Regions >;
 const std::size_t UNDEFINED_INDEX = 9999;
 
+
+/**
+ *  A controller to help manipulate the data and to handle the requests from the user interface
+ */
+
+
 class Controller
 {
     public:
-
 
 
         /**
@@ -241,6 +246,16 @@ class Controller
 
 
         /**
+        * Method to get the current cross-section direction
+        * @see testMeToo()
+        * @see publicVar()
+        * @return CrossSectionDirections the current cross-section direction.
+        */
+        inline Settings::CrossSection::CrossSectionDirections getCurrentDirection() const
+        { return current_direction; }
+
+
+        /**
         * Method to move the main cross-section to a new depth
         * @param depth_ the depth to where the cross-section should be moved
         * @see testMeToo()
@@ -366,7 +381,6 @@ class Controller
         * @return Void
         */
         void updateImageInTopViewCrossSection();
-
 
 
         /**
@@ -976,6 +990,16 @@ class Controller
 
 
         /**
+        * Method to get the 2d mesh of the region which index is index_
+        * @param index_ index of the region
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns truf if the region exists and false otherwise
+        */
+        bool getRegionCrossSectionBoundary( std::size_t index_ );
+
+
+        /**
         * Method to update all the regions, i.e., update the area defined by the region
         * @see testMeToo()
         * @see publicVar()
@@ -1056,8 +1080,8 @@ class Controller
         */
         inline double getDomainVolume( std::size_t id_ )
         {
-            if( model.domains1.find( id_ ) == model.domains1.end() ) return 0;
-            return model.domains1[ id_].getDomainVolume();
+            if( model.domains.find( id_ ) == model.domains.end() ) return 0;
+            return model.domains[ id_].getDomainVolume();
         }
 
 
@@ -1351,6 +1375,18 @@ class Controller
 
 
         /**
+        * Method to update the boundaries curves that delimit a region, when the 'PRESERVE' operations
+        * are actives
+        * @param boundary_ boundary_ a reference to the boundary
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if any one of the 'PRESERVE' operations are active and false
+        * otherwise
+        */
+        bool updateRegionBoundary( PolyCurve& boundary_ );
+
+
+        /**
         * Method to select an object and its region using a selection sketch
         * @param curve_ the sketch used to mark an object as boundary
         * @param dir_ the direction of the cross-section current where the sketch was made
@@ -1375,7 +1411,189 @@ class Controller
 
 
         /**
+        * Method to set the mesh resolution
+        * @param resolution_ define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
+        * @see none
+        * @return Void
+        */
+        void setMeshResolution( const Controller::MeshResolution& resolution_ );
+
+
+        /**
+        * Method to update the current color
+        * @param red_ the red component of the color (integer)
+        * @param green_ the green component of the color (integer)
+        * @param blue_ the blue component of the color (integer)
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void setCurrentColor( int red_, int green_, int blue_ );
+
+
+        /**
+        * Method to save the objects data and metadata in a file, using json
+        * This method calls saveObjectsMetaData() method
+        * @param file_ the path of the file
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void saveFile( const std::string& filename );
+
+
+        /**
+        * Method to save the objects and metadata in a file, using json
+        * @param file_ the path of the file
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the file was saved properly and false otherwise
+        */
+        bool saveObjectsMetaData( const std::string& filename );
+
+
+        /**
+        * This method is responsible for calling the method to load a file for managing if it was successfull or not.
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
+
+
+        /**
+        * Method to load objects and all data needed to start a new session.
+        * If the load file no contains metadata, this method will call loadObjectNoMetaDatas(), otherwise will call
+        * the method loadObjectMetaDatas()
+        * @param file_ the path of the file
+        * @param resol_ a reference to the mesh resolution
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
+
+
+        /**
+        * Method to load the objects metadata
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void loadObjectMetaDatas( QFile& load_file );
+
+
+        /**
+        * Method to load the objects creating new metadatas for the objects
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void loadObjectNoMetaDatas();
+
+
+        /**
+        * Method to call the undo from the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the operation was successful and false otherwise
+        */
+        bool undo();
+
+
+        /**
+        * Method to call the redo from the Rules Processor
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the operation was successful and false otherwise
+        */
+        bool redo();
+
+
+        /**
+        * Method to verify with the Rules Processor if it is possible to perform an undo operation
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the operation is allowed and false otherwise
+        */
+        bool canUndo();
+
+
+        /**
+        * Method to verify with the Rules Processor if it is possible to perform a redo operation
+        * @see testMeToo()
+        * @see publicVar()
+        * @return boolean returns true if the operation is allowed and false otherwise
+        */
+        bool canRedo();
+
+
+        /**
+        * Method to export the surfaces meshes to the file format Irap Grid
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void exportToIrapGrid();
+
+
+
+        /**
+        * Method to send the discretized surfaces meshes to the Flow Diagnostics module
+        * @param points the vertices of the meshes
+        * @param nu the number of discretization on the direction X
+        * @param nv the number of discretization on the direction Y
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
+
+
+        /**
+        * Method to send the surfaces meshes to the Flow Diagnostics module, including the boundary curves of each surface
+        * @param triangles_meshes the data structure contained the triangle meshes
+        * @param left_curves the left boundary curves of each surface
+        * @param right_curves the right boundary curves of each surface
+        * @param front_curves the front boundary curves of each surface
+        * @param back_curves the back boundary curves of each surface
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
+                                            std::vector< CurveMesh >& left_curves,
+                                            std::vector< CurveMesh >& right_curves,
+                                            std::vector< CurveMesh > & front_curves,
+                                            std::vector< CurveMesh >& back_curves );
+
+
+
+        /**
+        * Method to get the volumetric mesh of the regions
+        * @param vertices the vertices of each region mesh
+        * @param edges the edges of each region mesh
+        * @param faces the faces of each region mesh
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+
+
+        /**
+        * Method to clear all data and metadata existent
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void
+        */
+        void clear();
+
+
+        //TODO: Check if both methods do the same thing
+        /**
         * Method to set the point used to guide the extrusion in the guided extrusion
+        * This method is not being used properly
         * @param px_ the X coordinate of the point
         * @param py_ the Y coordinate of the point
         * @param depth_ the depth of the cross-section current where the point was picked
@@ -1388,6 +1606,7 @@ class Controller
 
         /**
         * Method to set the point used to guide the extrusion in the guided extrusion
+        * This method is not being used properly
         * @param px_ the X coordinate of the point
         * @param py_ the Y coordinate of the point
         * @param depth_ the depth of the cross-section current where the point was picked
@@ -1398,82 +1617,22 @@ class Controller
         void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
 
 
-
-        void setMeshResolution( const Controller::MeshResolution& resolution_ );
-
-        void setCurrentColor( int red_, int green_, int blue_ );
-
-        void saveFile( const std::string& filename );
-        bool saveObjectsMetaData( const std::string& filename );
-
-        void loadFile( const std::string& filename, Controller::MeshResolution& resol_ );
-        void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
-        void loadObjectMetaDatas( QFile& load_file/*const std::string& filename*/ );
-        void loadObjectNoMetaDatas();
-
-        void clear();
-
-        bool undo();
-        bool redo();
-
-        bool canUndo();
-        bool canRedo();
-
-        bool updateRegionBoundary( PolyCurve& boundary_ );
-        void clearBounderingArea();
-
-        bool getRegionCrossSectionBoundary( std::size_t index_ );
-
-        void exportToIrapGrid();
-
-        void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
-
-        void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
-                                            std::vector< CurveMesh >& left_curves,
-                                            std::vector< CurveMesh >& right_curves,
-                                            std::vector< CurveMesh > & front_curves,
-                                            std::vector< CurveMesh >& back_curves );
-
-        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
-
-        inline Settings::CrossSection::CrossSectionDirections getCurrentDirection() const
-        { return current_direction; }
-
     protected:
 
 
-        void getCurvesFromRulesProcessorDirectionX( const std::size_t& index_, bool is_preview_ = false );
-        void getCurvesFromRulesProcessorDirectionZ( const std::size_t& index_, bool is_preview_ = false );
-
-
-
-    protected:
-
-        double csection_stepx = 1.0;
-        double csection_stepz = 1.0;
-        double csection_stepy = 1.0;
-
-        std::size_t current_object = 0;
-        Settings::Objects::ObjectType current_object_type = Settings::Objects::ObjectType::STRATIGRAPHY;
-
-        RRMApplication* app = nullptr;
-        CrossSectionPtr csection = nullptr;
-        CrossSectionPtr topview = nullptr;
-
-        RulesProcessor rules_processor;
-
-        Settings::Stratigraphy::StratigraphicRules current_rule = Settings::Stratigraphy::DEFAULT_STRAT_RULES;
-
-        PolyCurve last_trajectory;
-
-        std::vector< std::size_t > selectable_objects;
-        Settings::Objects::BounderingRegion boundering_region = Settings::Objects::BounderingRegion::NONE ;
-        std::size_t upper_index;
-        std::size_t bottom_index;
-
-
-        Settings::CrossSection::CrossSectionDirections current_direction = Settings::CrossSection::CrossSectionDirections::Z;
-
+        /**
+        * @struct Model
+        * @brief It is a data structure to represent the whole model.
+        * @var csectionsX a mapping between the cross-sections  and its depth on the 'WIDTH'direction
+        * @var csectionsY a mapping between the cross-sections  and its depth on the 'HEIGHT'direction
+        * @var csectionsZ a mapping between the cross-sections  and its depth on the 'LENGTH'direction
+        * @var objects a mapping between the objects, i.e., stratigraphies and structurals, and its indexes
+        * @var regions a mapping between the regions and its indexes
+        * @var domains1 a mapping between the domains and its indexes
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         struct Model
         {
             VolumePtr volume = nullptr;
@@ -1484,12 +1643,21 @@ class Controller
 
             std::map< std::size_t, ObjectPtr > objects;
             std::map< std::size_t, RegionsPtr > regions;
-            std::map< std::size_t, Domains > domains;
-            std::map< std::size_t, Domain > domains1;
+            std::map< std::size_t, Domain > domains;
 
-        } model;
+        };
 
 
+        /**
+        * @struct Color
+        * @brief It is a data structure to represent color
+        * @var red red component of a color
+        * @var green green component of a color
+        * @var blue blue component of a color
+        * @see testMeToo()
+        * @see publicVar()
+        * @return Void.
+        */
         struct Color
         {
 
@@ -1497,9 +1665,19 @@ class Controller
             int green = 0;
             int blue = 0;
 
-        } current_color;
+        };
 
-
+        /**
+        * @struct ImageData
+        * @brief It is a data structure to hold all the required information to set an image over a cross-section
+        * @var file the image path file
+        * @var ox the X coordinate of the origin of the image
+        * @var oy the Y coordinate of the origin of the image
+        * @var w the width of the image
+        * @see h the heith of the image
+        * @see publicVar()
+        * @return Void.
+        */
         struct ImageData
         {
             std::string file;
@@ -1509,14 +1687,57 @@ class Controller
             double h;
         };
 
-        std::map< double, ImageData > images_csectionsX;
-        std::map< double, ImageData > images_csectionsY;
-        std::map< double, ImageData > images_csectionsZ;
 
-        ImageData image_topview;
+        Model model;                                                                        /**< An instance of the struct Model to hold all the objects on the whole model */
 
-        std::set< std::size_t > regions_in_domains;
+        double csection_stepx = 1.0;                                                        /**< The discretization interval on the direction X, i.e., 'WIDTH' */
 
+        double csection_stepz = 1.0;                                                        /**< The discretization interval on the direction Y, i.e., 'HEIGHT' */
+
+        double csection_stepy = 1.0;                                                        /**< The discretization interval on the direction Z, i.e., 'LENGTH' */
+
+        std::size_t current_object = 0;                                                     /**< The index of the current object */
+
+        Settings::Objects::ObjectType current_object_type =                                 /**< The type of the current object */
+                Settings::Objects::ObjectType::STRATIGRAPHY;
+
+        RRMApplication* app = nullptr;                                                      /**< A reference to the application, which manages the main interface */
+
+        CrossSectionPtr csection = nullptr;                                                 /**< A shared pointer to the main cross-section data structure, which holds its metadata */
+
+        CrossSectionPtr topview = nullptr;                                                  /**< A shared pointer to the top view cross-section data structure, which holds its metadata */
+
+        RulesProcessor rules_processor;                                                     /**< An instance of the library responsible for all curve, surface and rules processing */
+
+        Settings::Stratigraphy::StratigraphicRules current_rule =                           /**< The current stratigraphic rule */
+                Settings::Stratigraphy::DEFAULT_STRAT_RULES;
+
+        PolyCurve last_trajectory;                                                          /**< A copy of the last trajectory added */
+
+        std::vector< std::size_t > selectable_objects;                                      /**< A vector to hold all the objects allowed to be selected. It is used to mark the objects that
+                                                                                                 can be selected as a boundary */
+
+        Settings::Objects::BounderingRegion boundering_region =                             /**< An enum to define which 'PRESERVE' is being used */
+                Settings::Objects::BounderingRegion::NONE ;
+
+        std::size_t upper_index;                                                            /**< The index of the object selected as upper boundary */
+
+        std::size_t bottom_index;                                                           /**< The index of the object selected as lower boundary */
+
+        Settings::CrossSection::CrossSectionDirections current_direction =                  /**< The current direction of the cross-section */
+                Settings::CrossSection::CrossSectionDirections::Z;
+
+        std::map< double, ImageData > images_csectionsX;                                    /**< A mapping between the fixed cross-sections in the 'WIDTH' direction, and its images data */
+
+        std::map< double, ImageData > images_csectionsY;                                    /**< A mapping between the fixed cross-sections in the 'HEIGTH' direction, and its images data */
+
+        std::map< double, ImageData > images_csectionsZ;                                    /**< A mapping between the fixed cross-sections in the 'LENGHT' direction, and its images data */
+
+        ImageData image_topview;                                                            /**< The image on the top view */
+
+        std::set< std::size_t > regions_in_domains;                                         /**< The set of regions that belong to a domain */
+
+        Color current_color;                                                                /**< The current color  */
 
 
 };
