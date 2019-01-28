@@ -125,7 +125,6 @@ void SketchInterface::createSketchingActions()
 
     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
     {
-        //         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
     } );
 

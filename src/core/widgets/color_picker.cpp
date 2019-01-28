@@ -27,7 +27,7 @@
 #include "color_picker.h"
 
 
-ColorPicker::ColorPicker( QWidget* parent )
+ColorPicker::ColorPicker( QWidget* parent ): QToolButton ( parent )
 {
     createWidget();
     createActions();
@@ -118,9 +118,9 @@ QColor ColorPicker::randomColor()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    int r = distr( eng );
-    int b = distr( eng );
-    int g = distr( eng );
+    int r = static_cast< int >( distr( eng ) );
+    int b = static_cast< int >( distr( eng ) );
+    int g = static_cast< int >( distr( eng ) );
 
     return QColor( r, g, b );
 }
