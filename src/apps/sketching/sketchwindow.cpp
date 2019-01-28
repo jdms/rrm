@@ -238,7 +238,6 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
 
-
     return scene_;
 }
 

@@ -1300,18 +1300,6 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     }
 
 
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
-//    }
-
-
-
     PolyCurve lower_, upper_;
     lower_.fromVector( vertices_lower_, edges_lower_ );
     upper_.fromVector( vertices_upper_, edges_upper_ );
@@ -1435,9 +1423,9 @@ void Controller::removeRegions()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains1 )
+    for( auto it: model.domains )
         (it.second).clear();
-    model.domains1.clear();
+    model.domains.clear();
     regions_in_domains.clear();
 }
 
@@ -1455,9 +1443,9 @@ std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
 {
     std::size_t id_ = 0;
 
-    if( model.domains1.empty() == false )
+    if( model.domains.empty() == false )
     {
-        for( auto it_: model.domains1 )
+        for( auto it_: model.domains )
         {
             id_ = it_.first;
         }
@@ -1465,7 +1453,7 @@ std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
         ++id_;
     }
 
-    model.domains1[ id_ ] = Domain();
+    model.domains[ id_ ] = Domain();
     for( auto it_: indexes_ )
         addRegionToDomain( it_, id_ );
 
@@ -1476,33 +1464,33 @@ std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
 
 void Controller::setDomainName( std::size_t index_, const std::string& name_ )
 {
-    if (model.domains1.find(index_) == model.domains1.end()) return;
-    model.domains1[ index_ ].setName( name_ );
+    if (model.domains.find(index_) == model.domains.end()) return;
+    model.domains[ index_ ].setName( name_ );
 }
 
 void Controller::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
-    if (model.domains1.find(index_) == model.domains1.end()) return;
-    model.domains1[ index_ ].setColor( red_, green_, blue_ );
+    if (model.domains.find(index_) == model.domains.end()) return;
+    model.domains[ index_ ].setColor( red_, green_, blue_ );
 }
 
 
 bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
     if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
 
-    model.domains1[ domain_id_ ].addRegion( region_id_ );
+    model.domains[ domain_id_ ].addRegion( region_id_ );
     regions_in_domains.insert( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->setDomain(domain_id_);
 
-    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ += model.regions[region_id_]->getVolume();
 
-    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
+    model.domains[ domain_id_ ].setDomainVolume( volume_ );
     return true;
 }
 
@@ -1510,18 +1498,18 @@ bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_i
 bool Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
     if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
 
-    model.domains1[domain_id_].removeRegion( region_id_ );
+    model.domains[domain_id_].removeRegion( region_id_ );
     regions_in_domains.erase( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->removeFromDomain();
 
-    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ -= model.regions[region_id_]->getVolume();
-    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
+    model.domains[ domain_id_ ].setDomainVolume( volume_ );
 
     return true;
 }
@@ -1529,9 +1517,9 @@ bool Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t doma
 
 std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
 {
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return std::set< std::size_t>();
+    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
 
-    const Domain& domain_ = model.domains1.at( domain_id_ );
+    const Domain& domain_ = model.domains.at( domain_id_ );
     return domain_.getRegions();
 
 }
@@ -1540,12 +1528,12 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
 void Controller::removeDomain(std::size_t domain_id_)
 {
 
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return;
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
 
-    Domain& domain_ = model.domains1[ domain_id_ ];
+    Domain& domain_ = model.domains[ domain_id_ ];
     domain_.clear();
 
-    model.domains1.erase( domain_id_ );
+    model.domains.erase( domain_id_ );
 }
 
 
@@ -1554,7 +1542,7 @@ std::vector< std::size_t > Controller::getDomains()
 
     std::vector< std::size_t > indexes_;
 
-    for( auto it_: model.domains1 )
+    for( auto it_: model.domains )
     {
         indexes_.push_back( it_.first );
     }
@@ -1580,7 +1568,7 @@ std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
         addRegionToDomain( id_, domain_id_ );
     }
 
-    for( auto it_: model.domains1 )
+    for( auto it_: model.domains )
     {
         indexes_.push_back( it_.first );
     }
@@ -1595,9 +1583,9 @@ std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
 void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ )
 {
     if (model.domains.find(domain_id_) == model.domains.end()) return;
-    if( model.domains[domain_id_].regions_set.empty() == true ) return;
+//    if( model.domains[domain_id_].regions_set.empty() == true ) return;
 
-    std::size_t reg_id_ = *model.domains[domain_id_].regions_set.begin();
+    std::size_t reg_id_ = *model.domains[ domain_id_].getRegions().begin();//*model.domains[domain_id_].regions_set.begin();
 
     RegionsPtr reg_ = model.regions[ reg_id_ ];
     reg_->getColor( red_, green_, blue_ );
@@ -2048,13 +2036,6 @@ bool Controller::setRegionByPointAsBoundering( float px_, float py_, double dept
 
 
 
-void Controller::clearBounderingArea()
-{
-
-}
-
-
-
 bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 {
     std::size_t index_ = 0;
@@ -2252,11 +2233,11 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     }
 
-    if( model.domains1.empty() == false )
+    if( model.domains.empty() == false )
     {
 
         QJsonArray domains_array_;
-        for( auto it_: model.domains1 )
+        for( auto it_: model.domains )
         {
             const Domain& dom_ = it_.second;
 
@@ -2689,11 +2670,11 @@ void Controller::clear()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains1 )
+    for( auto it: model.domains )
     {
         (it.second).clear();
     }
-    model.domains1.clear();
+    model.domains.clear();
     regions_in_domains.clear();
 
 

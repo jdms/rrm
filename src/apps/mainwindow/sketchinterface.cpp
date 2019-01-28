@@ -322,7 +322,6 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()
     { scontroller->updateImageInScene(); } );
 
-
 }
 
 

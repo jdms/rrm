@@ -36,6 +36,9 @@
 
 #include <vector>
 
+/**
+ *  A wrapper to export surfaces meshes to the format Irap Grid
+ */
 
 class IrapGridExporter
 {
@@ -43,32 +46,92 @@ class IrapGridExporter
     public:
 
 
+        /**
+        * Constructor.
+        */
         IrapGridExporter();
 
-        void setBoundingBox(float xMin, float xMax, float yMin, float yMax , float zMin, float zMax );
-        void setVectorValues( const std::vector<float>& vvalues );
-        void setSize( int nlinesI, int nlinesJ );
-        void setSpacing( float dx, float dy );
-		
-        bool writeGridData( const std::string& filename ) const;
-        void clearData();
 
+        /**
+        * Method to set the bounding box of the object
+        * @param xMax the maximum value of X
+        * @param yMax the maximum value of Y
+        * @param zMax the maximum value of Z
+        * @param xMin the minimum value of X
+        * @param yMin the minimum value of Y
+        * @param zMin the minimum value of Z
+        * @see publicVar()
+        * @return Void
+        */
+        void setBoundingBox(float xMin, float xMax, float yMin, float yMax , float zMin, float zMax );
+
+
+        /**
+        * Method to set the height values of each vertice of the surface mesh
+        * @param vvalues the height values of each vertice of the surface mesh
+        * @see publicVar()
+        * @return Void
+        */
+        void setVectorValues( const std::vector<float>& vvalues );
+
+
+        /**
+        * Method to set the size of the grid, i.e., the number of discretization in both directions, 'WIDTH' and 'DEPTH'
+        * @param nlinesI the number of discretization in the direction 'WIDTH'
+        * @param nlinesJ the number of discretization in the direction 'DEPTH'
+        * @see publicVar()
+        * @return Void
+        */
+        void setSize( int nlinesI, int nlinesJ );
+
+
+        /**
+        * Method to set the discretization intervals in both directions, 'WIDTH' and 'DEPTH'
+        * @param dx the discretization interval in the direction 'WIDTH'
+        * @param dy the discretization interval in the direction 'DEPTH'
+        * @see publicVar()
+        * @return Void
+        */
+        void setSpacing( float dx, float dy );
+
+
+        /**
+        * Method to save the mesh information in a file
+        * @param filename the name of the file to be saved
+        * @see publicVar()
+        * @return boolean returns true if the file was saved with success and false otherwise
+        */
+        bool writeGridData( const std::string& filename ) const;
+
+
+        /**
+        * Method to clear all mesh information
+        * @see publicVar()
+        * @return Void
+        */
+        void clearData();
 
 
     protected:
 
-        std::string fileName;               ///< Name of the CPS3 file to be read or write.
-        static const int NCOLUMNSGRID = 6;
+        std::string fileName;                                               /**< Name of the file to be read or write. */
 
-        int             nI, nJ, nK;
+        static const int NCOLUMNSGRID = 6;                                  /**< Number of columns for each row to write the elements. */
 
-        float           dX, dY, dZ;
-        float           maximum[ 3 ], minimum[ 3 ];
+        int             nI, nJ, nK;                                         /**< Number of discretization in each direction 'WIDTH', 'HEIGHT' and 'DEPTH', respectively. */
 
-        std::string undefValueGrid;         ///< Define the used value to represent undefined values.
+        float           dX, dY, dZ;                                         /**< Interval of discretization in each direction 'WIDTH', 'HEIGHT' and 'DEPTH', respectively. */
 
-        std::vector< float > values;
-        float           angle;
+        float           maximum[ 3 ];                                       /**< The maximum point of the bounding box. */
+
+        float           minimum[ 3 ];                                       /**< The minimum point of the bounding box. */
+
+        std::string undefValueGrid;                                         /**< Define the used value to represent undefined values. */
+
+        std::vector< float > values;                                        /**< Vector with the height coordinate of each vertice */
+
+        float           angle;                                              /**< Define the angle of rotation applied to the vertices, if existent. */
+
 
 };
 

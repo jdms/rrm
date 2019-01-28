@@ -6,6 +6,12 @@
 
 #include "object.h"
 
+
+/**
+ *  A data structure to domains to save its metadata
+ */
+
+
 class Domain: public Object
 {
 

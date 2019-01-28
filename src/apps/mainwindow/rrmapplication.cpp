@@ -582,7 +582,7 @@ void RRMApplication::setSketchRegion( bool status_ )
 
     if( status_ == false )
     {
-        controller->clearBounderingArea();
+//        controller->clearBounderingArea();
         controller->enablePreserveAbove( false );
         controller->enablePreserveBelow( false );
         window->activatePreserveAbove( false );
@@ -1010,14 +1010,14 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 {
     regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
 
-//    std::map< int, std::vector< float > > colors_;
+    //    std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )
     {
         int r = 192, g = 192, b = 192;
-		if (it >= 0)
-		{
-			controller->getDomainColor(static_cast<std::size_t>(it), r, g, b);
-		}
+        if (it >= 0)
+        {
+            controller->getDomainColor(static_cast<std::size_t>(it), r, g, b);
+        }
 
         std::vector< float > color_;
         color_.resize( 3 );
