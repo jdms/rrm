@@ -54,7 +54,7 @@ class QWheelEvent;
 
 
 /**
- *   The interface of the Sketch application.
+ *   \brief The interface of the Sketch application.
  *   It contains the canvas and toolbar with the main actions related to sketch.
  */
 
@@ -67,61 +67,51 @@ class SketchWindow: public QMainWindow
 
 
        /**
-       * Constructor.
+       * \brief Constructor.
+       * @param parent
+       * @see QWidget
        */
         SketchWindow( QWidget* parent = nullptr );
 
        /**
-       * Destructor. Delete all elements created in the window.
+       * \brief Destructor.
+       * Delete all elements created in the window.
        */
         ~SketchWindow();
 
 
        /**
-       * Method to create the canvas associated to the main cross-section, i. e., it exhibts the width and depth directions.
+       * \brief Method to create the canvas associated to the main cross-section, i. e., it exhibts the width and depth directions.
        * The creation of the lateral bar only is called here since, it is available only to main cross-sections.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
+       * @see SketchScene
        * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the main cross-section.
        */
         std::shared_ptr< SketchScene > createMainCanvas();
 
 
        /**
-       * Method to add fixed cross-sections. Fixed cross-sections should have the same direction per time.
+       * \brief Method to add fixed cross-sections. Fixed cross-sections should have the same direction per time.
        * @param depth_ The depth of the cross-section in the direction dir_ ( WIDTH, LENGHT or DEPTH ) to be visualized.
        * @param dir_ The direction of the cross-section ( WIDTH, LENGHT or DEPTH ) to be visualized.
        * @param color_ The color of the marker that was used in the depth slider ( see slider in the 3d widget ).
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
+       * @see SketchScene
        * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the cross-section added.
        */
         std::shared_ptr< SketchScene > addCanvas( double depth_ = 0, const Settings::CrossSection::CrossSectionDirections& dir_ = Settings::CrossSection::CrossSectionDirections::Z , QColor color_ = Qt::red );
 
 
        /**
-       * Method to remove a fixed cross-section.
+       * \brief Method to remove a fixed cross-section.
        * @param depth_ The depth of the cross-section to be removed.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void removeCanvas( double depth_ );
 
 
        /**
-       * Method to create the canvas associated to the top view cross-section, i. e., it exhibts only the height direction.
+       * \brief Method to create the canvas associated to the top view cross-section, i. e., it exhibts only the height direction.
        * The creation of the lateral bar not is called here, since, it is available only to main cross-sections.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
+       * @see SketchScene
        * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the top view cross-section.
        */
         std::shared_ptr< SketchScene > createTopViewCanvas();
@@ -132,105 +122,94 @@ class SketchWindow: public QMainWindow
 
 
        /**
-       * Method called to update the color selected in the picker color and also, update the current color in the cross-sections being used.
+       * \brief Method called to update the color selected in the picker color and also, update the current color in the cross-sections being used.
        * @param red red component of the new color.
        * @param green green component of the new color.
        * @param blue blue component of the new color.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void updateColorWidget( int red_, int green_, int blue_ );
 
        /**
-       * Method called to enable/disable the action "Resize boundary".
+       * \brief Method called to enable/disable the action "Resize boundary".
        * @param status_ boolean. It is true if the action "Resize boundary" should be enabled, or false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void disableResizeVolume( bool status_ );
 
 
         //TODO: this method needs to be revisited
        /**
-       * Method called to change the interaction mode of the user to selection. This mode disable the curves selection.
+       * \brief Method called to change the interaction mode of the user to selection. This mode disable the curves selection.
        * @param status_ boolean. It is true if the selection interaction should be enabled, or false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void setModeSelecting( bool status_ );
 
 
        /**
-       * Method called to change the interaction mode of the user to selection of curves.
+       * \brief Method called to change the interaction mode of the user to selection of curves.
        * @param status_ boolean. It is true if the curves selection interaction should be enabled, or false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void setModeSelectingStratigraphies( bool status_ );
 
+
        /**
-       * Method called to change the interaction mode of the user to selection of regions.
+       * \brief Method called to change the interaction mode of the user to selection of regions.
        * @param status_ boolean. It is true if the regions selection interaction should be enabled, or false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void setModeRegionSelecting( bool status_ );
 
 
        /**
-       * Method called to reapply the vertical exaggeration after a volume dimensions change.
-       * @see publicVar()
-       * @return Void
+       * \brief Method called to reapply the vertical exaggeration after a volume dimensions change.
+       * @return void
        */
         void applyVerticalExaggeration();
 
 
         /**
-       * Method called to reset the vertical exaggeration.
-       * @see publicVar()
-       * @return Void
+       * \brief Method called to reset the vertical exaggeration.
+       * @return void
        */
         void resetVerticalExaggeration();
 
 
         /**
-       * Method called to show or hide the output dip angle picture in the scene.
+       * \brief Method called to show or hide the output dip angle picture in the scene.
        * @param status_ boolean. It is true if the output dip angle picture should be shown, or false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void showDipAngle( bool status_ );
 
 
          /**
-       * Method called to enable/disable to move the output dip angle picture in the scene.
+       * \brief Method called to enable/disable to move the output dip angle picture in the scene.
        * @param status_ boolean. It is true if the output dip angle picture is allowed to be moved, otherwise the value is false.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void setDipAnglePictureMovable( bool status_ );
 
 
        /**
-       * Method called to take a screenshot of the scene.
-       * @see publicVar()
-       * @return Void
+       * \brief Method called to take a screenshot of the scene.
+       * @return void
        */
         void screenshot();
 
 
        /**
-       * Method called to clear the scene.
-       * @see publicVar()
-       * @return Void
+       * \brief Method called to clear the scene.
+       * @return void
        */
         void reset();
 
 
         /**
-       * Method called to remove all the fixed cross-sections canvas.
-       * @see publicVar()
-       * @return Void
+       * \brief Method called to remove all the fixed cross-sections canvas.
+       * @return void
        */
         void removeAllCanvas();
 
@@ -241,58 +220,52 @@ class SketchWindow: public QMainWindow
         /// New signals
 
        /**
-       * A signal to change the current color, i.e., the color of the current object.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to change the current color, i.e., the color of the current object.
+       * @return void
        */
-        void sgn_change_current_color();
+        void sgn_changeCurrentColor( int, int, int );
+
+
+        /**
+        * \brief A signal to cancel the sketch as an object curve.
+        * @return void
+        */
+         void sgn_cancel_sketch();
+
 
        /**
-       * A signal to submit the sketch as an object curve.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to submit the sketch as an object curve.
+       * @return void
        */
         void sgn_submit_curve();
 
        /**
-       * A signal to resize the current boundary.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to resize the current boundary.
+       * @return void
        */
         void sgn_resize_boundary();
 
        /**
-       * A signal to resize the image on the scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to resize the image on the scene.
+       * @return void
        */
         void sgn_resize_image();
 
        /**
-       * A signal to remove the image from the scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to remove the image from the scene.
+       * @return void
        */
         void sgn_remove_image();
 
        /**
-       * A signal to take a screenshot from the scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to take a screenshot from the scene.
+       * @return void
        */
         void sgn_take_screenshot();
 
        /**
-       * A signal to show and hide the axes from the scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief A signal to show and hide the axes from the scene.
+       * @return void
        */
         void sgn_show_axes();
 
@@ -301,17 +274,16 @@ class SketchWindow: public QMainWindow
 
 
        /**
-       * When a fixed cross-section is closed this signal is emitted to warn the depth slider (see 3d window) to remove the associated marker.
+       * \brief When a fixed cross-section is closed this signal is emitted to warn the depth slider (see 3d window) to remove the associated marker.
        * @param id_ A double value corresponding the depth of the cross-section removed.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see View3dInterface::sl_depth_csection
+       * @return void
        */
         void removeMarkerFromSlider( double id_ );
 
 
        /**
-       * Signal to ask the controller to save the image in the cross-section specified.
+       * \brief Signal to ask the controller to save the image in the cross-section specified.
        * @param const std::string& path of the image
        * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
        * @param double depth of the cross-section
@@ -319,164 +291,145 @@ class SketchWindow: public QMainWindow
        * @param double y coordinate of the origin of the image
        * @param double width of the image
        * @param double height of the image
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void setImageToCrossSection( const std::string&, const Settings::CrossSection::CrossSectionDirections&, double, double, double, double, double );
 
 
        /**
-       * Signal to ask the controller to remove the image of the cross-section specified.
+       * \brief Signal to ask the controller to remove the image of the cross-section specified.
        * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
        * @param double depth of the cross-section
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void removeImageFromCrossSection( const Settings::CrossSection::CrossSectionDirections& , double );
 
+
        /**
-       * Signal to update the current image dimensions.
+       * \brief Signal to update the current image dimensions.
        * @param const Settings::CrossSection::CrossSectionDirections& direction of the cross-section
        * @param double width of the image
        * @param double height of the image
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void updateVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& , double , double );
 
+
        /**
-       * Signal to send the sketch and add it as a curve of the current object
+       * \brief Signal to send the sketch and add it as a curve of the current object
        * @param curve_ the sketch drawn by the user (Polycurve)
        * @param dir_ the direction of the cross-section which was drawn the sketch
        * @param depth_ the depth of the cross-section which was drawn the sketch
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void addCurve( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
        /**
-       * Signal to send the sketch and add it as a trajectory of the current object. Currently, a trajectory only is drawn in the cross-section of the height direction.
+       * \brief Signal to send the sketch and add it as a trajectory of the current object. Currently, a trajectory only is drawn in the cross-section of the height direction.
        * @param curve_ the sketch drawn by the user (Polycurve)
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see PolyCurve
+       * @return void
        */
         void addTrajectory( const PolyCurve& curve_ );
 
 
        /**
-       * Signal to send to controller so that it removes the last curve inserted in the cross-section of direction dir_ and depth depth_.
+       * \brief Signal to send to controller so that it removes the last curve inserted in the cross-section of direction dir_ and depth depth_.
        * @param dir_ direction of the cross-section which the curve was drawn.
        * @param depth_ depth_ of the cross-section which the curve was drawn.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
        /**
-       * Signal to send to controller so that it creates the surface with the curves of the current object.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief Signal to send to controller so that it creates the surface with the curves of the current object.
+       * @return void
        */
         void createObject();
 
 
        /**
-       * Signal to send to controller so that it retrieves the last trajectory to be used in the current object.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief Signal to send to controller so that it retrieves the last trajectory to be used in the current object.
+       * @return void
        */
         void useLastTrajectory();
 
 
        /**
-       * Signal emitted when the user select a new color in the color picker.
+       * \brief Signal emitted when the user select a new color in the color picker.
        * @param red red component of the new color.
        * @param green green component of the new color.
        * @param blue blue component of the new color.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void defineColorCurrent( int red_, int green_, int blue_ );
 
 
         /**
-       * Signal emitted when the user select a curve.
+       * \brief Signal emitted when the user select a curve.
        * @param id_ the id_ of the object which has the curve selected.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void objectSelected( const std::size_t& id_ );
 
 
        /**
-       * Signal emitted when the user pick a point inside a region.
+       * \brief Signal emitted when the user pick a point inside a region.
        * @param px_ x coordinate of the point.
        * @param py_ y coordinate of the point.
        * @param depth_ depth of the cross-section in which the point was picked.
        * @param dir_ direction of the cross-section in which the point was picked.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void getRegionByPoint( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
+
         /**
-       * Signal emitted when the user drawn a sketch to select a curve.
+       * \brief Signal emitted when the user drawn a sketch to select a curve.
        * @param curve_ sketch drawn used to select a curve
        * @param dir_ direction of the cross-section in which the sketch was done.
        * @param depth_ depth of the cross-section in which the sketch was done.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void sendSketchOfSelection( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
         /**
-       * This signal is emitted when the user is satisfied with the regions selected using the sketches of selection. This stop the process cycle and the region selected is considerate the final.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief This signal is emitted when the user is satisfied with the regions selected using the sketches of selection. This stop the process cycle and the region selected is considerate the final.
+       * @return void
        */
         void stopSketchesOfSelection();
 
 
         /**
-       * Signal emitted to update the vertical exaggeration in the scene 2d and 3d.
+       * \brief Signal emitted to update the vertical exaggeration in the scene 2d and 3d.
        * @param double the current vertical exaggeration
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void setVerticalExaggeration( double );
 
 
         /**
-       * Signal emitted to show or hide the output dip angle picture in the scene. It is associated to the button "Show" in the LateralBar.
+       * \brief Signal emitted to show or hide the output dip angle picture in the scene. It is associated to the button "Show" in the LateralBar.
        * @param status_ boolean. True if the scene should show the output dip angle picture, and false otherwise.
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void showDipAnglePicture( bool status_ );
 
 
         /**
-       * Signal emitted when the user select a region clicking in the object region. Currently this method is bot being used properly.
+       * \brief Signal emitted when the user select a region clicking in the object region. Currently this method is bot being used properly.
        * @param id_ index of the region
        * @param status_ status of selection of the object region. If true the region is selected, false otherwise.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void regionSelected( const std::size_t& id_, bool status_ );
 
@@ -484,121 +437,110 @@ class SketchWindow: public QMainWindow
         //TODO: fix all comments about guided extrusion
 
         /**
-       * Signal emitted when the user select a point to be used in the guided extrusion. Currently this method is bot being used.
+       * \brief Signal emitted when the user select a point to be used in the guided extrusion. Currently this method is bot being used.
        * @param px_ x coordinate of the point.
        * @param py_ y coordinate of the point.
        * @param depth_ depth of the cross-section in which the point was picked.
        * @param dir_ direction of the cross-section in which the point was picked.
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void sendPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
        /**
-       * Signal emitted to update point to be used in the guided extrusion. Currently this method is bot being used.
+       * \brief Signal emitted to update point to be used in the guided extrusion. Currently this method is bot being used.
        * @param px_ x coordinate of the point.
        * @param py_ y coordinate of the point.
        * @param depth_ depth of the cross-section in which the point was picked.
        * @param dir_ direction of the cross-section in which the point was picked.
-       * @see publicVar()
-       * @return Void
+       * @see Settings::CrossSection::CrossSectionDirections
+       * @return void
        */
         void updatePointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
        /**
-       * This signal is emitted to send the sketch done in the guided extrusion.
+       * \brief This signal is emitted to send the sketch done in the guided extrusion.
        * @param curve_ sketch done by the user for the guided extrusion.
-       * @see publicVar()
-       * @return Void
+       * @see PolyCurve
+       * @return void
        */
         void sketchDoneGuidedExtrusion( const PolyCurve& curve_ );
 
 
     protected:
 
+
         /**
-       * Protected method responsibles for the interface creation. It calls the createToolbar and creates the fixed cross-sections container.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief Protected method responsibles for the interface creation. It calls the createToolbar and creates the fixed cross-sections container.
+       * @return void
        */
         void createInterface();
 
+
         /**
-       * Protected method responsibles for the toolbar creation.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief Protected method responsibles for the toolbar creation.
+       * @return void
        */
         void createToolBar();
 
 
         /**
-       * Protected method responsibles for the actions and connects creation
+       * \brief Protected method responsibles for the actions and connects creation
        * related to the toolbar.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see SketchingCanvas
+       * @return void
        */
-        void createToolbarActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+        void createToolbarActions( const SketchingCanvas* canvas_ );
 
 
         /**
-       * Protected method responsibles for the actions and connects creation
+       * \brief Protected method responsibles for the actions and connects creation
        * related to the main cross-section scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see SketchingCanvas
+       * @return void
        */
-        void createMainSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+        void createMainSceneActions( const SketchingCanvas* canvas_ );
 
 
         /**
-       * Protected method responsibles for the actions and connects creation
+       * \brief Protected method responsibles for the actions and connects creation
        * related to the top view cross-section scene.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @see SketchingCanvas
+       * @return void
        */
-        void createTopViewSceneActions( const std::shared_ptr< SketchingCanvas >& canvas_ );
+        void createTopViewSceneActions( const SketchingCanvas* canvas_ );
 
 
         /**
-       * Protected method responsibles for the actions and connects creation
+       * \brief Protected method responsibles for the actions and connects creation
        * related to the lateral bar.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void createLateralBarActions();
 
 
         /**
-       * Protected method responsibles for the actions and connects creation
+       * \brief Protected method responsibles for the actions and connects creation
        * related to the lateral bar.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * @return void
        */
         void createFixedCrossSectionsActions();
 
 
         /**
-       * Protected method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
-       * @see testMeToo()
-       * @see publicVar()
-       * @return Void
+       * \brief Protected method responsibles for the lateral bar creation. The lateral bar contains the dip angle and vertical exaggeration widgets.
+       * @return void
        */
         void createLateralBar();
 
 
         /**
-       * Protected method to handle the keyboard events.
+       * \brief Protected method to handle the keyboard events.
        * @param event Corresponds to the mouse event.
-       * @see check QKeyEvent on Qt manual for more details.
-       * @return Void
+       * @see QKeyEvent
+       * @return void
        */
         void keyPressEvent( QKeyEvent *event );
 

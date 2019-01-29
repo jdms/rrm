@@ -62,27 +62,40 @@ void SketchInterface::createSketchingActions()
     window->mn_windows->addAction( ac_topview );
 
 
-    ////
+    createSketchWindowActions();
 
-    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
+    createSketchToViewWindowActions();
 
+    createMainWindowActions();
+
+}
+
+
+void SketchInterface::createSketchWindowActions()
+{
 
     connect( ac_csection, &QAction::toggled, dw_sketchwindow, &QDockWidget::setVisible );
-
-
-    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
-
 
     connect( sketch_window, &SketchWindow::removeMarkerFromSlider, [=]( double id_ )
     {  window->app->removeMarkerFromSlider( id_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
+//    connect( sketch_window, &SketchWindow::sgn_changeCurrentColor, [=]( int red_, int green_, int blue_ )
+//    {
+//        window->app->defineCurrentColor( red_, green_, blue_ );
+//        if( sketch_topview_window == nullptr) return;
+//        sketch_topview_window->updateColorWidget( red_, green_, blue_ );
+//    } );
+
+    auto change_color_ = [=]( int red_, int green_, int blue_ )
     {
-        window->app->defineCurrentColor( red_, green_, blue_ );
+        scontroller->setCurrentColor( red_, green_, blue_ );
         if( sketch_topview_window == nullptr) return;
         sketch_topview_window->updateColorWidget( red_, green_, blue_ );
-    } );
+//        emit sgn_updateCurrentColor();
+    };
+
+    connect( sketch_window, &SketchWindow::sgn_changeCurrentColor, change_color_ );
 
 
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
@@ -136,10 +149,25 @@ void SketchInterface::createSketchingActions()
     //         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
     //     } );
 
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+
+
+    connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
+
+    connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
+
+
+}
+
+
+void SketchInterface::createSketchToViewWindowActions()
+{
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
 
 
     connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
-
 
 
     connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
@@ -185,14 +213,11 @@ void SketchInterface::createSketchingActions()
     connect( sketch_topview_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
 
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+}
 
 
-    connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
-
-    connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
-
-
+void SketchInterface::createMainWindowActions()
+{
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); sketch_window->applyVerticalExaggeration(); } );
 
@@ -299,12 +324,8 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_topview_window->updateColorWidget( red_, green_, blue_ ); } );
 
 
-
-
-
-
-
     connect( window->app, &RRMApplication::addRegions, [=](){ scontroller->enableSketching( false );  } );
+
 
     connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
@@ -321,9 +342,8 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()
     { scontroller->updateImageInScene(); } );
 
+    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
 }
-
-
 
 
 void SketchInterface::init()

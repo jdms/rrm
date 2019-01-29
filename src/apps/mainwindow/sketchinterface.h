@@ -11,7 +11,7 @@ class MainWindow;
 
 
 /**
- *   Class responsible for initializing the 3d application
+ * \brief Class responsible for initializing the 3d application
  */
 
 
@@ -21,18 +21,18 @@ class SketchInterface: public QObject
 
     public:
 
+        //TODO: add comments to the param
 
         /**
-        * Constructor.
+        * \brief Constructor.
+        * @param window_
         */
         SketchInterface( MainWindow* const& window_ );
 
 
         /**
-        * Method to creates the interface of the Sketch application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * \brief Method to creates the interface of the Sketch application
+        * @return void.
         */
         void createInterface();
 
@@ -41,20 +41,16 @@ class SketchInterface: public QObject
 
 
         /**
-        * Method to initialize the controller and set initial setup.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * \brief Method to initialize the controller and set initial setup.
+        * @return void.
         */
         void init();
 
 
         /**
-        * Method to indicate if the user can see both canvas ( main and top-view canvas ) or not.
+        * \brief Method to indicate if the user can see both canvas ( main and top-view canvas ) or not.
         * @param status_ if true both windows will be hidded. If false, both windows will be visible to the user.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void showOnlyMainCanvas( bool status_ );
 
@@ -63,21 +59,40 @@ class SketchInterface: public QObject
 
 
         /**
-        * Method to create the Sketch window interface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * \brief Method to create the Sketch window interface
+        * @return void.
         */
         void createSketchingWindow();
 
 
         /**
-        * Method to initialize and create the connects related to the actions of the sketch application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * \brief Method to initialize and create the connects related to the actions of the sketch application
+        * @return void.
         */
         void createSketchingActions();
+
+
+        /**
+        * \brief Method to initialize and create the connects related to the actions of the sketch window application
+        * @see sketch_window
+        * @return Voidvoid
+        */
+        void createSketchWindowActions();
+
+
+        /**
+        * \brief Method to initialize and create the connects related to the actions of the top view sketch window application
+        * @see sketch_topview_window
+        * @return void.
+        */
+        void createSketchToViewWindowActions();
+
+
+        /**
+        * \brief Method to initialize and create the connects related to the actions of the mainwindow application
+        * @return void.
+        */
+        void createMainWindowActions();
 
 
     protected:
