@@ -311,8 +311,6 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
         emit addCrossSection( dir_, depth_ );
 
 
-
-
 }
 
 

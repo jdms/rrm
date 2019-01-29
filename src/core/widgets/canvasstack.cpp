@@ -65,7 +65,6 @@ void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 
     hb_mainlayout->addWidget( dc );
 
-    QDockWidget* teste = new QDockWidget();
     connect( dc, &DockWidget::closeDockWidget, [=]() { emit closeSubWindow( id_ ); } );
 
 

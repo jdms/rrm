@@ -331,6 +331,16 @@ class SketchScene: public QGraphicsScene
         void setSketchColor( const QColor& color_ );
 
 
+        inline void setCurrentColor( const QColor& color_ )
+        {
+            std::cout << "Changing sketch color..." << std::endl << std::flush;
+
+            if( sketch == nullptr ) return;
+            sketch->setColor( color_ );
+            QGraphicsScene::update();
+        }
+
+
         /**
         * Method(slot) to notify the controller to create the surface with the curves stored in the current object.
         * @see publicVar()

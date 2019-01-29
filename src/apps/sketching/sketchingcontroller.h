@@ -299,6 +299,10 @@ class SketchingController
         void getGuidedExtrusionPoint( float& px_, float& py_, float& pz_ );
 
 
+        inline void setCurrentColor( int red_, int green_, int blue_ )
+        {
+            controller->setCurrentColor( red_, green_, blue_ );
+        }
 
     protected:
 
