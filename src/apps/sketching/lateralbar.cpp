@@ -118,6 +118,8 @@ void LateralBar::createActions()
 
     connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
 
+    connect( btn_reset_exaggeration, &QPushButton::clicked, [=](){ emit sgn_resetVerticalExaggeration(); } );
+
     QObject::connect<void(QPushButton::*)(bool)>( btn_show_output_dipangle, &QPushButton::toggled, [=]( bool status_ ){ emit sgn_sendDipAnglePicture( status_); } );
 
     QObject::connect<void(QPushButton::*)(bool)>( btn_move_output_dipangle, &QPushButton::toggled, [=]( bool status_ ){ emit sgn_setDipAnglePictureMovable( status_ ); } );
@@ -160,11 +162,10 @@ void LateralBar::changeVerticalExaggerationBySpinbox( double v_exagg_ )
 
 void LateralBar::resetVerticalExaggeration()
 {
-    count = -1;
-//    sl_vertical_exagg->setValue( 20 );
-    sp_exagger_value->setValue( 1.0 );
+    count = 0;
+    sl_vertical_exagg->setValue( 20 );
+    changeVerticalExaggeration( 20 );
 
-    emit sgn_resetVerticalExaggeration();
 }
 
 
