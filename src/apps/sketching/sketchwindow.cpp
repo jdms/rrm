@@ -242,6 +242,7 @@ void SketchWindow::createToolbarActions( const SketchingCanvas* canvas_ )
 
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
+    if( bar_ == nullptr ) return;
     connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
 
 }
