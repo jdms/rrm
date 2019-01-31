@@ -61,18 +61,19 @@ void SurfaceShader::loadBuffers()
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
     raw->getBoundingBox( minx_, maxx_, miny_, maxy_, minz_, maxz_ );
 
+    // getting the max and min points to normalize the vertices
     Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
     Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( surface_.getFaces() );
     std::vector< GLfloat > normals_ = Shader::convertToFloat( surface_.getNormals() );
 
-
     int r, g, b;
     raw->getColor( r, g, b );
 
     std::size_t nvertices = vertices_.size()/3;
 
+    //uploading the vertices and colors buffers
     updateGeometryBuffers( vertices_, normals_, faces_ );
     updateColorBuffers( nvertices, r, g, b );
 }
@@ -182,7 +183,6 @@ void SurfaceShader::updateGeometryBuffers( const std::vector< GLfloat >& vertice
                    GL_STATIC_DRAW );
     glBindBuffer ( GL_ARRAY_BUFFER, 0 );
 
-
     glBindBuffer ( GL_ARRAY_BUFFER , vb_normals );
     glBufferData ( GL_ARRAY_BUFFER , normals_.size() * sizeof ( GLfloat ), normals_.data() ,
                    GL_STATIC_DRAW );
@@ -203,8 +203,6 @@ void SurfaceShader::updateColorBuffers( const std::vector< GLfloat >& colors_ )
     GLfloat g_ = colors_[ 1 ];
     GLfloat b_ = colors_[ 2 ];
 
-    std::cout << "r_: " << r_ << ", " << g_ << ", " << b_ << "size: " << colors_.size() << std::endl << std::flush;
-
     glBindBuffer( GL_ARRAY_BUFFER, vb_colors );
     glBufferData( GL_ARRAY_BUFFER, colors_.size() * sizeof ( GLfloat ), colors_.data(),
                   GL_STATIC_DRAW );
@@ -217,12 +215,14 @@ void SurfaceShader::updateColorBuffers( std::size_t nvertices_, int r_, int g_, 
     std::vector< GLfloat > color_;
     color_.resize( 3*nvertices_ );
 
+    // converting colors from int to GLfloat
     for( std::size_t i = 0; i < nvertices_; ++i )
     {
         color_[ 3* i ] = static_cast<GLfloat>( r_/255.0f );
         color_[ 3* i + 1 ] = static_cast<GLfloat>( g_/255.0f );
         color_[ 3* i + 2 ] = static_cast<GLfloat>( b_/255.0f );
     }
+
 
     updateColorBuffers( color_ );
 }
@@ -232,6 +232,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
                           const int& h )
 {
 
+    // if the object is not active neither visible it shouldn't be rendered
     if( raw->isActive() == false ) return;
     if( raw->isVisible() == false ) return;
 
@@ -241,23 +242,24 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
     Eigen::Affine3f M;
     M.setIdentity();
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable( GL_BLEND );
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glEnable( GL_BLEND );
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	shader_new->bind();
-	shader_new->setUniform("ModelMatrix", M);
-	shader_new->setUniform("ViewMatrix", V);
-	shader_new->setUniform("ProjectionMatrix", P);
-	shader_new->setUniform("viewportSize", static_cast<float>(w), static_cast<float>(h));
-	
-	if (is_preview_)
-	{
-		shader_new->setUniform("alfa",0.5f);
-	}else
-	{
-		shader_new->setUniform("alfa", 1.0f);
-	}
+    shader_new->bind();
+    shader_new->setUniform("ModelMatrix", M);
+    shader_new->setUniform("ViewMatrix", V);
+    shader_new->setUniform("ProjectionMatrix", P);
+    shader_new->setUniform("viewportSize", static_cast<float>(w), static_cast<float>(h));
+
+    // if the object is the current, a preview surface is created with a transparent color
+    if (is_preview_)
+    {
+        shader_new->setUniform("alfa",0.5f);
+    }else
+    {
+        shader_new->setUniform("alfa", 1.0f);
+    }
 
     glBindVertexArray( va_surface );
 
@@ -268,70 +270,7 @@ void SurfaceShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, co
 
     shader_new->unbind();
 
-	glDisable(GL_BLEND);
-
-    //shader->bind();
-    //    shader->bind();
-    //        shader->setUniform( "ModelMatrix" , M );
-    //        shader->setUniform( "ViewMatrix" , V );
-    //        shader->setUniform( "ProjectionMatrix" , P );
-    //        shader->setUniform( "WIN_SCALE" , (float) w , (float) h );
-    //        shader->setUniform( "has_shading" , true );
-
-    //        glEnable( GL_DEPTH_TEST );
-
-
-    //        if( is_preview_ == true )
-    //        {
-    //            glEnable( GL_BLEND );
-    //            glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //        }
-
-    //        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
-    //        glEnable( GL_POLYGON_OFFSET_FILL );
-    //        glPolygonOffset( 2.0f, 1.0f );
-
-
-    //            glBindVertexArray( va_surface );
-
-    //                shader->setUniform( "is_face" , true );
-    //                shader->setUniform( "is_preview" , is_preview_ );
-
-    //                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-    //                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-
-    //            glBindVertexArray ( 0 );
-
-
-    //        glDisable(GL_POLYGON_OFFSET_FILL);
-
-
-
-
-    //        glDepthFunc( GL_LEQUAL );
-    //        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-    //        if( draw_edge == true )
-    //        {
-    //            glBindVertexArray( va_surface );
-
-    //                shader->setUniform( "is_face" , false );
-    //                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-    //                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-
-    //            glBindVertexArray ( 0 );
-    //        }
-    //        if( is_preview_ == true )
-    //            glDisable( GL_BLEND );
-
-    //        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
-
-    //    glDisable( GL_DEPTH_TEST );
-
-    //    shader->unbind();
-
+    glDisable(GL_BLEND);
 }
 
 

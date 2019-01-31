@@ -28,9 +28,7 @@ class AnglePicture: public QLabel
         /**
         * Method to update the output dip angle
         * @param angle_ the output dip angle
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void..
         */
         void updateAngle( double angle_ );
 
@@ -40,9 +38,8 @@ class AnglePicture: public QLabel
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the image
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPaintEvent
+        * @return void.
         */
         void paintEvent(QPaintEvent * e);
 

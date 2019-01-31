@@ -26,6 +26,8 @@ void LateralBar::createInterface()
     btn_reset_exaggeration = new QPushButton( "Reset" );
     btn_reset_exaggeration->setMaximumWidth( 45 );
 
+
+    //TODO: comment the initial values
     sp_exagger_value = new QDoubleSpinBox();
     sp_exagger_value->setRange( 0.1, 10000. );
     sp_exagger_value->setSingleStep( 0.1 );
@@ -130,6 +132,7 @@ void LateralBar::changeVerticalExaggeration( int v_exagg_ )
 {
     count++;
 
+    // TODO: comment equation
     double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
@@ -148,6 +151,7 @@ void LateralBar::changeVerticalExaggerationBySpinbox( double v_exagg_ )
 {
     count++;
 
+     // TODO: comment equation
     double lg = log10( v_exagg_ );
     double value = 100*(lg - min_exagg)/(max_exagg - min_exagg);
 
@@ -163,6 +167,7 @@ void LateralBar::changeVerticalExaggerationBySpinbox( double v_exagg_ )
 void LateralBar::resetVerticalExaggeration()
 {
     count = 0;
+     // TODO: initial value
     sl_vertical_exagg->setValue( 20 );
     changeVerticalExaggeration( 20 );
 

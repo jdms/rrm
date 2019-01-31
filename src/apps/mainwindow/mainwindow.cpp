@@ -501,7 +501,6 @@ void MainWindow::plugSketchInterface()
 {
     sketchapp = std::make_shared< SketchInterface >( this );
     sketchapp->createInterface();
-
 }
 
 
@@ -509,9 +508,6 @@ void MainWindow::plug3dInterface()
 {
     view3dapp = std::make_shared< View3dInterface >( this );
     view3dapp->createInterface();
-
-
-
 }
 
 
@@ -683,6 +679,7 @@ void MainWindow::showHelp()
     QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
     QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
 }
+
 
 MainWindow::~MainWindow()
 {

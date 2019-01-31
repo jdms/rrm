@@ -210,19 +210,11 @@ void SketchWindow::createToolbarActions( const SketchingCanvas* canvas_ )
     const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
 
-    auto change_color_ = [=]( const QColor& color_ ){
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
+    {
         scene_->setSketchColor( color_ );
-        emit sgn_changeCurrentColor( color_.red(), color_.green(), color_.blue() );
-    };
-
-    connect( cp_color, &ColorPicker::colorSelected, change_color_ );
-
-
-//    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-//    {
-//        scene_->setSketchColor( color_ );
-//        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
-//    } );
+        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
+    } );
 
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
@@ -242,6 +234,8 @@ void SketchWindow::createToolbarActions( const SketchingCanvas* canvas_ )
 
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
+
+    // if the window is the top-view window, it does not contain the lateral bar 'bar_'
     if( bar_ == nullptr ) return;
     connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
 

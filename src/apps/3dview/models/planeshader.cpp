@@ -52,6 +52,7 @@ void PlaneShader::createPlane()
     csection->getCoordinates( verticesd_ );
     std::vector< float >  vertices_ = Shader::convertToFloat( verticesd_ );
 
+    // since the cross-section is render only as a plane, the code belows determines the normalized vertices of the plane
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
     csection->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
@@ -78,6 +79,8 @@ void PlaneShader::createPlane()
         A.x(), A.y(), A.z(), 1.0f
     };
 
+
+    // uploading the vertices buffer
     number_of_vertices = static_cast< GLuint > (plane.size()/4 );
     updateGeometryBuffers( plane, definePlaneNormals() );
 
@@ -87,6 +90,8 @@ void PlaneShader::createPlane()
 
 std::vector< float > PlaneShader::definePlaneNormals() const
 {
+    // A, B ... D are the vertices of the plane
+    // this method needs to be improve
     Eigen::Vector3f normal_A( -1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_B(  1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_C(  1.0f,  1.0f,  1.0f );

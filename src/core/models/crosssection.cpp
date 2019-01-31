@@ -406,11 +406,11 @@ void CrossSection::clear()
         image_path.clear();
 
 
-    boundering.vertices_upper.clear();
-    boundering.edges_upper.clear();
-    boundering.vertices_lower.clear();
-    boundering.edges_lower.clear();
-    boundering.empty = true;
+    boundary.vertices_upper.clear();
+    boundary.edges_upper.clear();
+    boundary.vertices_lower.clear();
+    boundary.edges_lower.clear();
+    boundary.empty = true;
 
     removeObjects();
     initialize();
@@ -433,57 +433,57 @@ void CrossSection::initialize()
 
 
 
-void CrossSection::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
+void CrossSection::setBoundaryArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
 {
 
-    boundering.empty = false;
+    boundary.empty = false;
 
-    boundering.vertices_upper.clear();
-    boundering.vertices_upper.assign( vupper_.begin(), vupper_.end() );
+    boundary.vertices_upper.clear();
+    boundary.vertices_upper.assign( vupper_.begin(), vupper_.end() );
 
-    boundering.edges_upper.clear();
-    boundering.edges_upper.assign( edupper_.begin(), edupper_.end() );
+    boundary.edges_upper.clear();
+    boundary.edges_upper.assign( edupper_.begin(), edupper_.end() );
 
 
-    boundering.vertices_lower.clear();
-    boundering.vertices_lower.assign( vlower_.begin(), vlower_.end() );
+    boundary.vertices_lower.clear();
+    boundary.vertices_lower.assign( vlower_.begin(), vlower_.end() );
 
-    boundering.edges_lower.clear();
-    boundering.edges_lower.assign( edlower_.begin(), edlower_.end() );
+    boundary.edges_lower.clear();
+    boundary.edges_lower.assign( edlower_.begin(), edlower_.end() );
 
 
 }
 
-void CrossSection::getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
+void CrossSection::getBoundaryArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
 {
 
     vupper_.clear();
-    vupper_.assign( boundering.vertices_upper.begin(), boundering.vertices_upper.end() );
+    vupper_.assign( boundary.vertices_upper.begin(), boundary.vertices_upper.end() );
 
     edupper_.clear();
-    edupper_.assign( boundering.edges_upper.begin(), boundering.edges_upper.end() );
+    edupper_.assign( boundary.edges_upper.begin(), boundary.edges_upper.end() );
 
     vlower_.clear();
-    vlower_.assign( boundering.vertices_lower.begin(), boundering.vertices_lower.end() );
+    vlower_.assign( boundary.vertices_lower.begin(), boundary.vertices_lower.end() );
 
     edlower_.clear();
-    edlower_.assign( boundering.edges_lower.begin(), boundering.edges_lower.end() );
+    edlower_.assign( boundary.edges_lower.begin(), boundary.edges_lower.end() );
 
 }
 
 
-void CrossSection::clearBounderingArea()
+void CrossSection::clearBoundaryArea()
 {
-    boundering.vertices_upper.clear();
-    boundering.edges_upper.clear();
-    boundering.vertices_lower.clear();
-    boundering.edges_lower.clear();
-    boundering.empty = true;
+    boundary.vertices_upper.clear();
+    boundary.edges_upper.clear();
+    boundary.vertices_lower.clear();
+    boundary.edges_lower.clear();
+    boundary.empty = true;
 }
 
-bool CrossSection::hasBounderingArea() const
+bool CrossSection::hasBoundaryArea() const
 {
-    return !(boundering.empty);
+    return !(boundary.empty);
 }
 
 

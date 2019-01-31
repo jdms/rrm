@@ -16,7 +16,8 @@ class PolygonItem: public QGraphicsPolygonItem
     public:
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QGraphicsPolygonItem's constructor.
+        * @param parent_ the parent item
         */
         PolygonItem( QGraphicsItem *parent_ = nullptr );
 
@@ -29,35 +30,30 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to get the bounding box of the polygon
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QRectF
         * @return QRectF the bounding box of the polygon
         */
         QRectF boundingRect() const override ;
 
 
+        //TODO: improve the comments
         /**
         * Method to define the shape of the polygon
-        * @see testMeToo()
-        * @see publicVar()
-        * @return
+        * @see QPainterPath
+        * @return QPainterPath
         */
         QPainterPath shape() const override;
 
 
         /**
         * Method to clear the polygon
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 
 
         /**
         * Method to check if the polygon is empty
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. It is true if the polygon is empty and false if it is not.
         */
         bool isEmpty() const;
@@ -66,9 +62,8 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to add a point to the polygon
         * @param p_ a point to be added to the polygon
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void addPoint( const QPointF& p_ );
 
@@ -76,26 +71,21 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to remove a point from the polygon
         * @param p_ a point to be removed from the polygon
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void removePoint( const QPointF& p_ );
 
 
         /**
         * Set the polygon as done. This not allow add any point more to the polygon.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDone( bool status_ );
 
 
         /**
         * Check if the polygon is done.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. Return true if the polygon is done, and false if not.
         */
         bool isDone() const;
@@ -106,9 +96,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderColor( int r_, int g_, int b_ );
 
@@ -118,9 +106,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getBorderColor( int& r_, int& g_, int& b_ ) const;
 
@@ -128,17 +114,15 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to set the color of the border using a QColor
         * @param color the new color of the border
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void.
         */
         void setBorderColor( const QColor& color_ );
 
 
         /**
         * Method to get the color of the border by QColor
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor
         */
         QColor getBorderColor() const;
@@ -147,17 +131,13 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to set the width of the border line
         * @param width the width of the border line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderWidth( int width_ );
 
 
         /**
         * Method to get the width of the border line
-        * @see testMeToo()
-        * @see publicVar()
         * @return int the width of the border line
         */
         int getBorderWidth() const;
@@ -166,9 +146,7 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to set the border visible or not.
         * @param status_ indicates if the border is visible or not. It is true if the border is visible and false otherwise.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderVisible( bool status_ );
 
@@ -176,8 +154,6 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to check if the border visible or not.
         * @param status_ indicates
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean Returns true if the border is visible and false otherwise.
         */
         bool isBorderVisible() const ;
@@ -186,9 +162,7 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to set if the fill color has transparency or not.
         * @param status_ indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setTransparency( bool status_ );
 
@@ -196,9 +170,7 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to check if the fill color has transparency or not.
         * @param status_ indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         bool hasTransparency() const ;
 
@@ -208,9 +180,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setFillColor( int r_, int g_, int b_ );
 
@@ -220,9 +190,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getFillColor( int& r_, int& g_, int& b_ ) const;
 
@@ -230,17 +198,15 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to fill the polygon with a given QColor
         * @param color the new color of the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void.
         */
         void setFillColor( const QColor& color_ );
 
 
         /**
         * Method to get the color of internal part of the polygon by QColor
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor
         */
         QColor getFillColor() const;
@@ -249,8 +215,7 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to reset the color of the border to default.
         * @see DEFAULT_LINE_COLOR
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultBorderColor();
 
@@ -259,7 +224,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * Method to reset the color of internal part of the polygon to default.
         * @see DEFAULT_LINE_COLOR
         * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultFillColor();
 
@@ -267,16 +232,13 @@ class PolygonItem: public QGraphicsPolygonItem
         /**
         * Method to reset the width of the border to default.
         * @see DEFAULT_LINE_WIDTH
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultBorderWidth();
 
 
         /**
         * This method checks if the polygon should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the polygon is visible, and false otherwise.
         */
         virtual bool isVisible() const { return QGraphicsPolygonItem::isVisible(); }
@@ -284,12 +246,15 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * This method checks if the polygon should be selected or not
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the polygon is selected, and false otherwise.
         */
         virtual bool isSelected() const { return QGraphicsPolygonItem::isSelected(); }
 
+
+        /**
+        * This method sets the polygon directly passing a QPolygonF as parameter
+        * @return void.
+        */
         void setPolygon( const QPolygonF& pol_ );
 
 
@@ -300,9 +265,10 @@ class PolygonItem: public QGraphicsPolygonItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
+        * @return void.
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                     QWidget* widget ) override;
@@ -314,9 +280,7 @@ class PolygonItem: public QGraphicsPolygonItem
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         struct Color{ int red = 255, green = 0, blue = 0;
                       Color( int r_, int g_, int b_ ): red( r_ ), green( g_ ),

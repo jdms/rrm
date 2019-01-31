@@ -158,18 +158,18 @@ class MainWindow: public QMainWindow
     signals:
 
 
+        //TODO: document the param
         /**
         * Signal emitted to run the Flow Diagnostics application or not
-        * @see testMeToo()
-        * @see publicVar()
+        * @param status_
+        * @return void.
         */
         void runDiagnostics( bool status_ );
 
 
         /**
         * Signal emitted to take a screenshot of the 3d canvas
-        * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void takeScreenshot();
 
@@ -179,16 +179,14 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to set default values and properties to the window
-        * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void setWindowProperties();
 
 
         /**
         * Method to call all the elements creation of the interface
-        * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createWindow();
 
@@ -196,7 +194,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to create all the actions and connects related to the toolbar
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createActions();
 
@@ -204,7 +202,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to create the menubar of the window
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createMenuBar();
 
@@ -212,7 +210,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to create the toolbar of the window
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createToolbar();
 
@@ -221,7 +219,7 @@ class MainWindow: public QMainWindow
         * Method to create the side bar.
         * It contais widgets related to the volume dimensions
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createSideBar();
 
@@ -229,7 +227,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to create the controller and the application, as well as their actions and connects
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createController();
 
@@ -237,7 +235,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to setup the object tree.
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void createObjectTree();
 
@@ -245,14 +243,14 @@ class MainWindow: public QMainWindow
         /**
         * Method to setup the sketch application and plug it into the main window.
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void plugSketchInterface();
 
         /**
         * Method to setup the 3d application and plug it into the main window.
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void plug3dInterface();
 
@@ -260,7 +258,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to setup the Flow Diagnostics application and plug it into the main window.
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void plug3dDiagnosticsInterface();
 
@@ -268,7 +266,7 @@ class MainWindow: public QMainWindow
         /**
         * Method to show the Help widget
         * @see testMeToo()
-        * @see publicVar()
+        * @return void.
         */
         void showHelp();
 

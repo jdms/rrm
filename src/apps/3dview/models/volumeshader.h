@@ -53,7 +53,8 @@ class VolumeShader: public Shader
 
 
         /**
-        * Constructor.
+        * Constructor. It builds a VolumeShader given a Volume instance.
+        * @param raw_ a shared pointer to a Volume instance
         */
         VolumeShader( const std::shared_ptr< Volume >& raw_ );
 
@@ -67,9 +68,8 @@ class VolumeShader: public Shader
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Volume
+        * @return void.
         */
         void setVolume( const std::shared_ptr< Volume >& raw_ );
 
@@ -82,9 +82,7 @@ class VolumeShader: public Shader
         * @param P it is the projection matrix
         * @param w it is the canvas width
         * @param h it is the canvas height
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
                                  const int& h );
@@ -92,19 +90,18 @@ class VolumeShader: public Shader
 
 
         /**
-        * This method calls the method 'createVolumeMesh' in order to update the mesh.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * This method calls the method createVolumeMesh() in order to update the mesh.
+        * @see createVolumeMesh()
+        * @return void.
         */
         void update();
 
 
         /**
         * This method calls the method setDefaultValues() and reset(). This latter is from the class Shader, and is responsible for resetting thwe shaders.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see setDefaultValues()
+        * @see reset()
+        * @return void.
         */
         void clear();
 
@@ -114,27 +111,21 @@ class VolumeShader: public Shader
 
         /**
         * This method reset the shared pointer of the raw volume and set the default values to the class members.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDefaultValues();
 
 
         /**
         * This method is the responsible to the mesh creation.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void createVolumeMesh();
 
 
         /**
         * An auxialiary and transitory method to compute the normals of the volume vertices.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return std::vector< float > a vector of the computed normals.
         */
         std::vector< float > defineVolumeNormals() const;
 
@@ -143,9 +134,7 @@ class VolumeShader: public Shader
         * This method loads the buffers with the required geometry
         * @param vertices_ normalized vertices
         * @param normals_  normalized normals
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                     const std::vector< GLfloat >& normals_ );
@@ -153,36 +142,28 @@ class VolumeShader: public Shader
 
         /**
         * This is a virtual method to initialize the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initShaders();
 
 
         /**
         * This is a virtual method to initialize the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initBuffers();
 
 
         /**
         * Virtual method to reset the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetShaders();
 
 
         /**
         * Virtual method to reset the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetBuffers();
 

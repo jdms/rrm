@@ -56,7 +56,8 @@ class PlaneShader: public Shader
 
 
         /**
-        * Constructor.
+        * Constructor. It builds a PlaneShader given a cross-section instance.
+        * @param a shared pointer to a CrossSection instance
         */
         PlaneShader( const std::shared_ptr< CrossSection>& raw_ );
 

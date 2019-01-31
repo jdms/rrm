@@ -57,7 +57,7 @@ class Canvas3d: public QOpenGLWidget
 
        /**
        * Method to retrieves the scene.
-       * @see publicVar()
+       * @see Scene3d
        * @return std::shared_ptr< Scene3d > A shared pointer to the scene associated to this canvas.
        */
         std::shared_ptr< Scene3d > getScene() const;
@@ -65,7 +65,6 @@ class Canvas3d: public QOpenGLWidget
 
         /**
        * Method to return the path of the image taken as height map.
-       * @see publicVar()
        * @return std::string The path pf the created image
        */
         std::string sendImage( double zmin_, double zmax_, double width_, double height_  );
@@ -76,8 +75,7 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Method(slot) to take a screenshot of the scene.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void screenshot();
 
@@ -87,16 +85,14 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Signal(slot) sent to indicate the cross-section slide should be increased.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void increaseSlider();
 
 
         /**
         * Signal(slot) sent to indicate the cross-section slide should be decreased.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void decreaseSlider();
 
@@ -106,7 +102,6 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Virtual method(slot) to initialize the OpenGL
-        * @see publicVar()
         * @return Void.
         */
         void initializeGL();
@@ -115,32 +110,29 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Method (slot) to resize and update the camera and the viewport.
         * This virtual method(slot) is automatically called when the OpenGL canvas is resized.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void resizeGL( int width, int height );
 
 
         /**
         * Method (slot) to render the OpenGL scene.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void paintGL();
 
 
         /**
         * Method (slot) to create the 3d scene.
-        * @see publicVar()
-        * @return Void.
+        * @see Scene3d
+        * @return void.
         */
         void createScene();
 
 
         /**
         * Method (slot) to share the OpenGL context with the scene.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void shareOpenGLContext();
 
@@ -148,8 +140,7 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Method(slot) to save the screenshot as a raster image.
         * @param filename name of the image file to be saved
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void savetoRasterImage( const QString& filename );
 
@@ -157,32 +148,31 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Method(slot) to save the screenshot as a vector image.
         * @param filename name of the image file to be saved
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void savetoVectorImage( const QString& filename );
 
 
         /**
         * Virtual method to handle the events when a mouse button is pressed.
-        * @see QMouseEvent()
-        * @return Void.
+        * @see QMouseEvent
+        * @return void.
         */
         void mousePressEvent( QMouseEvent *event );
 
 
         /**
         * Virtual method to handle the events when the mouse is moved.
-        * @see QMouseEvent()
-        * @return Void.
+        * @see QMouseEvent
+        * @return void.
         */
         void mouseMoveEvent( QMouseEvent *event );
 
 
         /**
         * Virtual method to handle the events when a mouse button is released.
-        * @see publicVar()
-        * @return Void.
+        * @see QMouseEvent
+        * @return void.
         */
         void mouseReleaseEvent( QMouseEvent *event );
 
@@ -190,8 +180,8 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Virtual method to handle the wheel movement of the mouse.
         * It is tipically used when a zoom is performed.
-        * @see publicVar()
-        * @return Void.
+        * @see QWheelEvent
+        * @return void.
         */
         void wheelEvent( QWheelEvent *event );
 

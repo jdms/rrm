@@ -49,7 +49,7 @@ void VolumeShader::setVolume( const std::shared_ptr< Volume >& raw_ )
 
 void VolumeShader::createVolumeMesh()
 {
-    double ox = 0.0f, oy = 0.0f, oz = 0.0f;
+    double ox = 0.0, oy = 0.0, oz = 0.0;
     raw->getOrigin( ox, oy, oz );
 
     float minx = static_cast< GLfloat > ( ox );
@@ -64,14 +64,9 @@ void VolumeShader::createVolumeMesh()
     Eigen::Vector3f min_real( minx, miny, minz );
     Eigen::Vector3f max_real( maxx, maxy, maxz );
 
-
     Eigen::Vector3f minimum = Shader::normalize( min_real, max_real, min_real );
     Eigen::Vector3f maximum = Shader::normalize( max_real, max_real, min_real );
 
-//    std::cout << "Box max: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z() <<
-//                 std::flush << std::endl;
-//    std::cout << "Box min: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z() <<
-//                 std::flush << std::endl;
 
     Eigen::Vector3f A( minimum.x(), minimum.y(), maximum.z() );
     Eigen::Vector3f B( maximum.x(), minimum.y(), maximum.z() );
@@ -82,7 +77,7 @@ void VolumeShader::createVolumeMesh()
     Eigen::Vector3f G( minimum.x(), maximum.y(), minimum.z() );
     Eigen::Vector3f H( maximum.x(), maximum.y(), minimum.z() );
 
-
+    // since the volume is render only as a box, the code belows determines the vertices of each box face
     std::vector< float > wireframe =
     {
         maximum.x(), maximum.y(), maximum.z(),1.0,
@@ -116,6 +111,7 @@ void VolumeShader::createVolumeMesh()
         minimum.x(), minimum.y(), minimum.z(),1.0
     };
 
+    // load the buffers with a temporary normal
     updateGeometryBuffers( wireframe, defineVolumeNormals() );
 }
 
@@ -125,6 +121,9 @@ void VolumeShader::createVolumeMesh()
 
 std::vector< float > VolumeShader::defineVolumeNormals() const
 {
+
+    // A, B ... H are the vertices of the box
+    // this method needs to be improve
     Eigen::Vector3f normal_A( -1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_B(  1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_C(  1.0f,  1.0f,  1.0f );

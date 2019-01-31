@@ -468,22 +468,22 @@ class SketchScene: public QGraphicsScene
         * @see publicVar()
         * @return Void.
         */
-        void defineBounderingArea();
+        void defineBoundaryArea();
 
 
         /**
-        * Method(slot) to set a curve as the lower boundary and calls the method 'defineBounderingArea' to define a region.
+        * Method(slot) to set a curve as the lower boundary and calls the method 'defineBoundaryArea' to define a region.
         * @param boundary_ curve selected to be the lower boundary.
-        * @see publicVar()
+        * @see defineBoundaryArea()
         * @return Void.
         */
         void defineLowerBoundaryCurve( const PolyCurve& boundary_ );
 
 
         /**
-        * Method(slot)to set a curve as the upper boundary and calls the method 'defineBounderingArea' to define a region.
+        * Method(slot)to set a curve as the upper boundary and calls the method 'defineBoundaryArea' to define a region.
         * @param boundary_ curve selected to be the upper boundary.
-        * @see publicVar()
+        * @see defineBoundaryArea()
         * @return Void.
         */
         void defineUpperBoundaryCurve( const PolyCurve& boundary_ );

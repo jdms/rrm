@@ -28,9 +28,8 @@ class View3dController
         /**
         * Method to save a reference to the 3d canvas and to the its scene.
         * @param window_  sketch window that holds the main cross-section scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Canvas3d
+        * @return void.
         */
         void setMainWindow( const std::shared_ptr< Canvas3d >& window_);
 
@@ -38,45 +37,37 @@ class View3dController
         /**
         * Method to save a reference to RRM controller.
         * @param a const shared pointer to the RRM controller.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Controller
+        * @return void.
         */
         void setController( const std::shared_ptr< Controller >& controller_ );
 
 
         /**
         * This method calls the setupScene()
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see setupScene()
+        * @return void.
         */
         void init();
 
 
         /**
         * Method to load the scene with all objectsin cross-sections
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setupScene();
 
 
         /**
         * This method reload the main cross-section
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setMainViewCrossSection();
 
 
         /**
         * This method reload the main cross-section as a top view cross-section
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setTopViewCrossSection();
 
@@ -84,9 +75,7 @@ class View3dController
         /**
         * Method to update the volume in the scene.
         * Beside updates the volume in the scene it also updates the cross-section, since this latter depends on the volume dimensions.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateVolume();
 
@@ -94,9 +83,7 @@ class View3dController
         /**
         * Method to update the main cross-section in the scene.
         * This update can be since updating the dimensions to its visibility.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateMainCrossSection();
 
@@ -106,18 +93,15 @@ class View3dController
         * This stratigraphy will hold a const shared pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
         * @param obj_ data structure that contains the geometry and others required information to draw it on scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see ObjectPtr
+        * @return void.
         */
         void addStratigraphy( const ObjectPtr& obj_ );
 
 
         /**
         * Method to update all stratigraphies and structurals in the scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateObjects();
 
@@ -126,54 +110,42 @@ class View3dController
         * Method to add regions in the scene.
         * This region will hold a const shared pointer to a region data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param region_ data structure that contains the geometry and others required information to draw it on scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void addRegions();
 
 
         /**
         * Method to update all regions in the scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateRegions();
 
 
         /**
         * Method to remove all regions in the scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void clearRegions();
 
 
         /**
         * Method to update all elements present on scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateScene();
 
 
         /**
         * Method to remove all elements present from the scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void clear();
 
 
         /**
         * Method to pass the vertical exaggeration to the scene.
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setVerticalExaggeration( double scale_ );
 

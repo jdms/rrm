@@ -92,6 +92,7 @@ void SketchingController::updateTopViewCrossSection()
 
 void SketchingController::viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_ )
 {
+    // this method is only to fixed cross-sections
     CrossSectionPtr csection_;
     controller->getCrossSection( dir_, depth_, csection_ );
 
@@ -116,6 +117,8 @@ void SketchingController::viewCrossSection( const Settings::CrossSection::CrossS
 
 void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ )
 {
+
+    // this method verifies any object existent on the csection to add it on the scene
     scene_->setCrossSectionInformation( csection_->getDirection(), csection_->getDepth() );
 
     VolumePtr volume_ = csection_->getVolume();
@@ -143,7 +146,7 @@ void SketchingController::setObjectsToScene( const CrossSectionPtr& csection_ , 
         scene_->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     }
 
-    updateBoundering();
+    updateBoundary();
     // the same for regions and wells
 
 }
@@ -175,7 +178,7 @@ void SketchingController::updateObjectsToScene( const CrossSectionPtr& csection_
         scene_->setImageInCrossSection( file_, ox_, oy_, w_, h_ );
     }
 
-    updateBoundering();
+    updateBoundary();
 
 }
 
@@ -339,6 +342,8 @@ void SketchingController::updateObjectsTrajectories()
 
 void SketchingController::addStratigraphy( const ObjectPtr& obj_ )
 {
+
+    // this method add a stratigraphy or structural in the main scenes and in the scenes of the fixed cross-sections
     if( main_scene != nullptr )
         main_scene->addStratigraphy( std::static_pointer_cast< Stratigraphy >( obj_ ) );
     if( topview_scene != nullptr )
@@ -372,7 +377,7 @@ void SketchingController::updateStratigraphy( const std::size_t& index_ )
 
 
 
-void SketchingController::updateBoundering()
+void SketchingController::updateBoundary()
 {
     PolyCurve lboundary_, uboundary_;
 
@@ -399,8 +404,6 @@ void SketchingController::updateBoundering()
         status_ = true;
     }
 
-//    if( status_ == false )
-//        clearCurveAsBoundering();
 
 }
 
@@ -427,29 +430,6 @@ void SketchingController::updateRegions()
 
     if( main_scene != nullptr )
         main_scene->updateRegions();
-
-//    if( topview_scene != nullptr )
-//        topview_scene->updateRegions();
-
-
-//    for( auto it: scenesX )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateRegions();
-//    }
-
-//    for( auto it: scenesY )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateRegions();
-//    }
-
-//    for( auto it: scenesZ )
-//    {
-//        std::shared_ptr< SketchScene > scene_ = it.second;
-//        scene_->updateRegions();
-//    }
-////     the same for regions and wells
 
 }
 
@@ -563,13 +543,6 @@ void SketchingController::removeWindowsDirectionZ()
 
 void SketchingController::clear()
 {
-
-
-//    removeWindowsDirectionX();
-//    removeWindowsDirectionY();
-//    removeWindowsDirectionZ();
-
-
 
     main_scene->clearScene();
     topview_scene->clearScene();

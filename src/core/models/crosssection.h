@@ -327,7 +327,7 @@ class CrossSection: public Object
         * @see publicVar()
         * @return Void
         */
-        void setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
+        void setBoundaryArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
 
 
         /**
@@ -340,7 +340,7 @@ class CrossSection: public Object
         * @see publicVar()
         * @return Void
         */
-        void getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_ ) const;
+        void getBoundaryArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_ ) const;
 
 
         /**
@@ -349,7 +349,7 @@ class CrossSection: public Object
         * @see publicVar()
         * @return Void
         */
-        void clearBounderingArea();
+        void clearBoundaryArea();
 
 
         /**
@@ -358,7 +358,7 @@ class CrossSection: public Object
         * @see publicVar()
         * @return boolean return true if there is a boundary defined in the cross-section, or false otherwise
         */
-        bool hasBounderingArea() const;
+        bool hasBoundaryArea() const;
 
 
 
@@ -411,7 +411,7 @@ class CrossSection: public Object
 
 
         /**
-        * @struct BounderingArea
+        * @struct BoundaryArea
         * @brief It is a data structure to hold a boundary region data
         * @param vertices_upper vector of the vertices of the upper curve which delimits the region
         * @param edges_upper vector of the edges that defines the upper curve
@@ -422,7 +422,7 @@ class CrossSection: public Object
         * @see publicVar()
         * @return Void.
         */
-        struct BounderingArea
+        struct BoundaryArea
         {
             std::vector<float> vertices_upper;
             std::vector<size_t> edges_upper;
@@ -430,7 +430,7 @@ class CrossSection: public Object
             std::vector<size_t> edges_lower;
             bool empty = true;
 
-        } boundering;
+        } boundary;
 
 
         std::shared_ptr< Volume > volume = nullptr;                                 /**< A shared pointer to the volume to which it belongs */

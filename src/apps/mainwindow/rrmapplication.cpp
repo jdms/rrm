@@ -266,9 +266,9 @@ void RRMApplication::getObjectLog( std::size_t index_, QString& log_ )
 }
 
 
-void RRMApplication::setObjectSelectedAsBoundering( const std::size_t& index_ )
+void RRMApplication::setObjectSelectedAsBoundary( const std::size_t& index_ )
 {
-    controller->setObjectSelectedAsBoundering( index_ );
+    controller->setObjectSelectedAsBoundary( index_ );
     emit selectEnabled( "NONE" );
 }
 
@@ -580,7 +580,6 @@ void RRMApplication::setSketchRegion( bool status_ )
 
     if( status_ == false )
     {
-//        controller->clearBounderingArea();
         controller->enablePreserveAbove( false );
         controller->enablePreserveBelow( false );
         window->activatePreserveAbove( false );
@@ -643,16 +642,16 @@ std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
 }
 
 
-void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+void RRMApplication::getRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
-    bool status_ = controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
+    bool status_ = controller->setRegionByPointAsBoundary( px_, py_, depth_, dir_ );
 
     window->activatePreserveAbove( status_ );
     window->activatePreserveBelow( status_ );
 
     if( status_ == true )
     {
-//        controller->getRegionByPointAsBoundering();
+//        controller->getRegionByPointAsBoundary();
         emit updateBoundary();
 
     }
@@ -665,11 +664,11 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
 
 
 
-void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
+void RRMApplication::selectBoundaryBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
 {
     PolyCurve boundary_;
 
-    bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, boundary_ );
+    bool status_ = controller->setRegionBySketchAsBoundary( curve_, dir_, depth_, boundary_ );
     emit updateBoundary();
 }
 

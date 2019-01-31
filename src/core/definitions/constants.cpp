@@ -100,7 +100,7 @@ namespace Settings {
 
 
     const Objects::ObjectType Objects::DEFAULT_OBJECT_TYPE = Objects::ObjectType::STRATIGRAPHY;
-    const Objects::BounderingRegion Objects::DEFAULT_BOUNDERING_REGION = Objects::BounderingRegion::NONE;
+    const Objects::BoundaryRegion Objects::DEFAULT_BOUNDARY_REGION = Objects::BoundaryRegion::NONE;
     const std::size_t Objects::MAX_CSECTION_NUMBER_FOR_CHANNEL = 1;
 
 

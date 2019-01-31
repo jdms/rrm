@@ -16,7 +16,8 @@ class LineItem: public QGraphicsLineItem
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QGraphicsLineItem's constructor.
+        * @param parent_ the parent item
         */
         LineItem( QGraphicsItem *parent_ = nullptr);
 
@@ -29,8 +30,7 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * Method to get the bounding box of the line
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QRectF
         * @return QRectF the bounding box of the line
         */
         QRectF boundingRect() const override ;
@@ -38,17 +38,13 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * This method clears the line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 
 
         /**
         * Method to check if the line is empty
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. It is true if the QLineF is empty and false if it is not.
         */
         bool isEmpty() const;
@@ -59,9 +55,7 @@ class LineItem: public QGraphicsLineItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setLineColor( int r_, int g_, int b_ );
 
@@ -71,9 +65,7 @@ class LineItem: public QGraphicsLineItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getLineColor( int& r_, int& g_, int& b_ ) const;
 
@@ -81,17 +73,15 @@ class LineItem: public QGraphicsLineItem
         /**
         * Method to set the color of the line using a QColor
         * @param color the new color of the line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void.
         */
         void setLineColor( QColor color_ );
 
 
         /**
         * Method to get the color of the line by QColor
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor
         */
         QColor getLineColor() const;
@@ -100,17 +90,13 @@ class LineItem: public QGraphicsLineItem
         /**
         * Method to set the width of the line
         * @param width the width of the line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setLineWidth( int width_ );
 
 
         /**
         * Method to get the width of the line
-        * @see testMeToo()
-        * @see publicVar()
         * @return int the width of the line
         */
         int getLineWidth() const;
@@ -118,8 +104,6 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * This method checks if the curve should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the line is visible, and false otherwise.
         */
         virtual bool isVisible() const { return QGraphicsLineItem::isVisible(); }
@@ -128,8 +112,7 @@ class LineItem: public QGraphicsLineItem
         /**
         * Method to reset the color of the line to default.
         * @see DEFAULT_LINE_COLOR
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultLineColor();
 
@@ -140,9 +123,10 @@ class LineItem: public QGraphicsLineItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
+        * @return void.
         */
         void paint( QPainter* painter_, const QStyleOptionGraphicsItem* option_,
                     QWidget* widget_ ) override;
@@ -154,9 +138,6 @@ class LineItem: public QGraphicsLineItem
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Color{ int red = 255, green = 0, blue = 0;
                       Color( int r_, int g_, int b_ ): red( r_ ), green( g_ ),

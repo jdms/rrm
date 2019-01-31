@@ -44,6 +44,8 @@ Scene3d::Scene3d()
 
 void Scene3d::addVolume( const std::shared_ptr< Volume >& raw_ )
 {
+    // since this class has not its own context, its need to make the canvas3d context as the current to
+    // call opengl methods, note that all methods adding or updating objects will contain this line below
     context->makeCurrent( surface );
 
     volume = std::make_shared< VolumeShader >( raw_ );
@@ -57,8 +59,6 @@ void Scene3d::updateVolume()
     if( volume == nullptr ) return;
     volume->update();
 
-
-
     emit updateCanvas();
 }
 
@@ -68,6 +68,7 @@ void Scene3d::updateVolume()
 
 void Scene3d::addMainCrossSection( const std::shared_ptr< CrossSection>& raw_ )
 {
+
     context->makeCurrent( surface );
     main_csection = std::make_shared< PlaneShader >( raw_ );
     emit updateCanvas();
@@ -154,6 +155,7 @@ void Scene3d::addStratigraphy( const std::shared_ptr< Stratigraphy >& raw_ )
 
 void Scene3d::updateStratigraphy( const std::size_t& index_ )
 {
+
     context->makeCurrent( surface );
     if( stratigraphies.find( index_ ) == stratigraphies.end() )
     stratigraphies[ index_ ]->update();
@@ -164,6 +166,7 @@ void Scene3d::updateStratigraphy( const std::size_t& index_ )
 
 void Scene3d::updateStratigraphies()
 {
+
     context->makeCurrent( surface );
     for( auto it: stratigraphies )
     {
@@ -176,6 +179,7 @@ void Scene3d::updateStratigraphies()
 
 void Scene3d::addRegion( const std::shared_ptr< Regions >& region_ )
 {
+
     context->makeCurrent( surface );
     regions[ region_->getIndex() ] = std::make_shared< RegionShader >( region_ );
     emit updateCanvas();
@@ -184,6 +188,7 @@ void Scene3d::addRegion( const std::shared_ptr< Regions >& region_ )
 
 void Scene3d::updateRegion( const std::size_t& index_ )
 {
+
     context->makeCurrent( surface );
     if( regions.find( index_ ) == regions.end() )
     regions[ index_ ]->update();
@@ -195,6 +200,7 @@ void Scene3d::updateRegion( const std::size_t& index_ )
 
 void Scene3d::updateRegions()
 {
+
     context->makeCurrent( surface );
     for( auto it: regions )
         (it.second)->update();
@@ -205,6 +211,7 @@ void Scene3d::updateRegions()
 
 void Scene3d::clearRegions()
 {
+
     context->makeCurrent( surface );
 
     for( auto it: regions )
@@ -219,7 +226,10 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
                                const int& h )
 {
 
+    //note that this method doesnt need to make the context current since it called inside of the canvas 3d, that has already
+    // the opengl context
 
+    //applying a scale regarding the vertical exaggeration. v_exag should be 1 if the vertical exaggeration is not applied.
     Eigen::Affine3f V_ =  V*Eigen::Scaling( Eigen::Vector3f ( 1., v_exag, 1.) );
 
 
@@ -255,6 +265,7 @@ void Scene3d::setOpenGLContext( QOpenGLContext* ctxt )
 
 void Scene3d::setVerticalExaggeration( double scale_ )
 {
+    // change the vertical exaggeration scale and render the scene again
     v_exag = scale_;
     emit updateCanvas();
 

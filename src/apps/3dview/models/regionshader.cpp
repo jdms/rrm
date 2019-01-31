@@ -54,6 +54,7 @@ void RegionShader::loadBuffers()
     std::vector< float > vertices_ = Shader::convertToFloat( vertices_double_ );
     if( vertices_.empty() == true ) return;
 
+    // getting the max and min points to normalize the vertices
     double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
     raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
@@ -62,8 +63,8 @@ void RegionShader::loadBuffers()
     vertices_ = Shader::normalize( vertices_, max, min, 3 );
 
 
+    //getting the triangles that make the tetrahedrals cells
     std::vector< std::size_t > faces_size_t_;
-//    raw->getTetrahedralCells( faces_size_t_ );
     raw->getTriangleCells( faces_size_t_ );
 
     std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
@@ -74,6 +75,7 @@ void RegionShader::loadBuffers()
 
     std::size_t nvertices = vertices_.size()/3;
 
+    //uploading the vertices and colors buffer
     updateGeometryBuffers( vertices_, normals_, faces_ );
     updateColorBuffers( nvertices, r, g, b );
 }
@@ -257,23 +259,9 @@ void RegionShader::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, con
 
         glDisable(GL_POLYGON_OFFSET_FILL);
 
-
         glDisable( GL_DEPTH_TEST );
 
-//        glDepthFunc( GL_LEQUAL );
-//        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
-//            glBindVertexArray( va_volume );
-
-//                shader->setUniform( "solid" , false );
-//                glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vb_faces );
-//                glDrawElements ( GL_TRIANGLES , number_of_faces , GL_UNSIGNED_INT , 0 );
-
-//            glBindVertexArray ( 0 );
-
-//        glDisable( GL_BLEND );
-//        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     shader->unbind();
 
