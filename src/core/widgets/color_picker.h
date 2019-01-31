@@ -43,11 +43,9 @@ class ColorPicker: public QToolButton
     public:
 
 
-        //TODO: add comments to param
-
         /**
-        * Constructor.
-        * @param parent
+        * Constructor. parent_ is passed to QToolButton's constructor.
+        * @param parent_ the parent item
         * @see QWidget
         */
         ColorPicker( QWidget* parent = nullptr );
@@ -88,7 +86,7 @@ class ColorPicker: public QToolButton
 
         /**
         * Method to create the interface of the widget
-        * @return void
+        * @return void.
         */
         void createWidget();
 
@@ -96,7 +94,7 @@ class ColorPicker: public QToolButton
         /**
         * Method to create and define the actions and connects of this widget
         * @see QActions
-        * @return void
+        * @return void.
         */
         void createActions();
 
@@ -116,7 +114,7 @@ class ColorPicker: public QToolButton
         * Method called when the current color of the color picker is changed
         * @param color_ the new color
         * @see QColor
-        * @return void
+        * @return void.
         */
         void colorChanged( const QColor& color_ );
 
@@ -128,7 +126,7 @@ class ColorPicker: public QToolButton
         * Signal emmited when a new color is selected in the color picker
         * @param QColor the new color
         * @see QColor
-        * @return void
+        * @return void.
         */
         void colorSelected( const QColor& );
 

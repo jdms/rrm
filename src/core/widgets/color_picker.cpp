@@ -47,6 +47,9 @@ void ColorPicker::createWidget()
 
     setPopupMode( QToolButton::MenuButtonPopup );
     setMenu( mn_picker_color );
+
+    //the toolbutton is checkable, since it is checked the color should be fixed, and
+    // random otherwise
     setCheckable( true );
 
     colorChanged( currentColor() );
@@ -88,6 +91,7 @@ QColor ColorPicker::currentColor() const
 void ColorPicker::colorChanged( const QColor& color_ )
 {
 
+    // this create a small icon with the color on the toolbutton
     QPixmap px( 15, 15 );
     px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
     setIcon( px );

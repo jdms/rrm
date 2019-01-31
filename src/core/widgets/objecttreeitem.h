@@ -48,16 +48,15 @@ class ObjectTreeItem: public QTreeWidgetItem
         * Method to set the type of the object
         * @param type_ the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
         * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Settings::Objects::ObjectType
+        * @return void.
         */
         void setType( const Settings::Objects::ObjectType& type_ );
 
 
         /**
         * Method to return the type of the object
-        * @param type_
+        * @param type_ the type of the object
         * @see Settings::Objects::ObjectType
         * @return ObjectType the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
         * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
@@ -68,17 +67,13 @@ class ObjectTreeItem: public QTreeWidgetItem
         /**
         * Method to set the index of the object
         * @param index_ index of the object
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setIndex( const std::size_t index_ );
 
 
         /**
         * Method to return the index of the object
-        * @see testMeToo()
-        * @see publicVar()
         * @return size_t index of the object
         */
         std::size_t getIndex() const;

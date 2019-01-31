@@ -47,7 +47,7 @@ class PolyCurve
 
 
         /**
-        * Constructor.
+        * Constructor. Creates a new Polycurve given a vector of Curve2D
         */
         PolyCurve( const std::vector< Curve2D >& curve_ )
         {
@@ -56,7 +56,7 @@ class PolyCurve
 
 
         /**
-        * Constructor.
+        * Constructor. Creates a new Polycurve given a Curve2D
         */
         PolyCurve( const Curve2D& curve_ )
         {
@@ -66,7 +66,7 @@ class PolyCurve
 
 
         /**
-        * Constructor.
+        * Constructor. Creates a new Polycurve given a vector of vertices (double) and optionally edges
         */
         PolyCurve( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() )
         {
@@ -75,7 +75,8 @@ class PolyCurve
 
 
         /**
-        * Constructor.
+        * Constructor. Creates a new Polycurve given a vector of vertices (float)
+        * and optionally edges
         */
         PolyCurve( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() )
         {
@@ -86,9 +87,8 @@ class PolyCurve
         /**
         * Method to add a new segment of curve to the curve
         * @param curve_ a segment of curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Curve2D
+        * @return void.
         */
         void addSubcurve( const Curve2D& curve_ )
         {
@@ -99,9 +99,8 @@ class PolyCurve
         /**
         * Method to return a segment of curve
         * @param index_ the index of the segment
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Curve2D
+        * @return void.
         */
         Curve2D getSubcurve( std::size_t index_ ) const
         {
@@ -117,8 +116,6 @@ class PolyCurve
 
         /**
         * Method to check if the curve is empty
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean it returns true if there is no segment or if the size of the segment is less than the minimum allowed.
         */
         bool isEmpty() const
@@ -140,9 +137,7 @@ class PolyCurve
 
         /**
         * Method to remove all the segments from the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear()
         {
@@ -158,9 +153,7 @@ class PolyCurve
         * Method to create a curve given a vector of vertices, which coordinates are represented by doubles, and edges
         * @param vs_ the vector of vertices coordinates in double
         * @param es_ the vector of edges
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void fromVector( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
 
@@ -224,9 +217,7 @@ class PolyCurve
         * Method to create a curve given a vector of vertices, which coordinates are represented by float, and edges
         * @param vs_ the vector of vertices coordinates in float
         * @param es_ the vector of edges
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void fromVector( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
 
@@ -290,9 +281,7 @@ class PolyCurve
         * Method to return a vector of coordinates (double) and edges from a Polycurve
         * @param vs_ a reference to the vector of vertices coordinates in double
         * @param es_ a reference to the vector of edges
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void toVector( std::vector< double >& vs_, std::vector< std::size_t >& es_ ) const{
             int index_ = 0;
@@ -321,8 +310,6 @@ class PolyCurve
 
         /**
         * Method to return the number of segments existent in the curve
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::size_t the number of segments existent in the curve
         */
         std::size_t getNumberOfSegments() const
@@ -333,8 +320,7 @@ class PolyCurve
 
         /**
         * Method to return the vector of segments in Curve2D
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Curve2D
         * @return std::vector< Curve2D > the vector of segments in Curve2D
         */
         const std::vector< Curve2D >& getCurves2D() const { return curve; }
@@ -342,8 +328,6 @@ class PolyCurve
 
         /**
         * Method to return the vertices vector of the curve
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > the vertices vector of the curve
         */
         std::vector< double > getPoints() const
@@ -367,8 +351,6 @@ class PolyCurve
 
         /**
         * Method to return the vertices vector of the curve, which 2d coordinates were swapped
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > the vertices vector of the curve, which 2d coordinates were swapped
         */
         std::vector< double > getPointsSwapped() const
@@ -389,8 +371,6 @@ class PolyCurve
         * Method to get a curve 3d adding a fixed X coordinate to the vertices
         * @param depth_ the fixed X coordinate
         * @param swap_ if true the coordinates should be swapped before adding the X coordinate
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > the vector of 3d coordinates adding a X coordinate to the vector of vertices existent
         */
         std::vector< double > addXCoordinate( double depth_, bool swap_ = false ) const
@@ -418,8 +398,6 @@ class PolyCurve
         * Method to get a curve 3d adding a fixed Y coordinate to the vertices
         * @param depth_ the fixed Y coordinate
         * @param swap_ if true the coordinates should be swapped before adding the Y coordinate
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > the vector of 3d coordinates adding a Y coordinate to the vector of vertices existent
         */
         std::vector< double > addYCoordinate( double depth_, bool swap_ = false ) const
@@ -448,8 +426,6 @@ class PolyCurve
         * Method to get a curve 3d adding a fixed Z coordinate to the vertices
         * @param depth_ the fixed Z coordinate
         * @param swap_ if true the coordinates should be swapped before adding the Z coordinate
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > the vector of 3d coordinates adding a Z coordinate to the vector of vertices existent
         */
         std::vector< double > addZCoordinate( double depth_, bool swap_ = false ) const

@@ -316,11 +316,12 @@ void SketchWindow::createLateralBarActions()
 
     connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
     {
-        std::cout << "exag: " << v_ << std::endl << std::flush;
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
         Settings::CrossSection::CrossSectionDirections dir_;
         double depth_;
         scene_->getCrossSectionInformation( dir_, depth_ );
+
+        // if cross-section is on the height direction, dont apply since it does not have height to be scaled
         if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
         sketchingcanvas->setVerticalExaggeration( v_ );
         emit setVerticalExaggeration( v_ );
@@ -361,6 +362,7 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
     fixed_csections_canvas->setVisible( true );
 
     //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
+    // it is necessary due to the qt coordinate system
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         canvas_->scale( 1, -1 );
 
@@ -434,6 +436,8 @@ void SketchWindow::disableResizeVolume( bool status_ )
 
 void SketchWindow::setModeSelecting( bool status_ )
 {
+    // this method is being used just to disable the select status.
+    // needs to be changed
     if( sketchingcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
@@ -485,6 +489,8 @@ void SketchWindow::resetVerticalExaggeration()
 //    sl_vertical_exagg_->setValue( 20 );
 
     if( latBar == nullptr ) return;
+
+    //resetting the widgets
     latBar->resetVerticalExaggeration();
     sketchingcanvas->stopVerticalExaggeration();
 }
@@ -498,7 +504,10 @@ void SketchWindow::applyVerticalExaggeration()
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
     if( v_exag_ == 1 ) return;
 
+    // first stop the vertical exaggeration so that the matrices be right
     sketchingcanvas->stopVerticalExaggeration();
+
+    // and apply the vertical exaggeration
     sketchingcanvas->setVerticalExaggeration( v_exag_ );
 
 

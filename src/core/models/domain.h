@@ -25,13 +25,13 @@ class Domain: public Object
 
 
         /**
-        * Constructor.
+        * Copy constructor.
         */
         Domain( const Domain& dmn_ );
 
 
         /**
-        * Constructor.
+        * Assignment Operator
         */
         Domain& operator=(const Domain& dmn_);
 
@@ -45,9 +45,7 @@ class Domain: public Object
         /**
         * Method to add a region into the domain
         * @param index_ the index of the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void addRegion( const std::size_t& index_ );
 
@@ -55,8 +53,6 @@ class Domain: public Object
         /**
         * Method to return if a region belongs to the domain
         * @param index_ the index of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean return true if the region belongs to the domain, and false otherwise
         */
         bool findRegion( const std::size_t& index_ ) const;
@@ -65,18 +61,14 @@ class Domain: public Object
         /**
         * Method to remove a region from the domain
         * @param index_ the index of the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeRegion( const std::size_t& index_ );
 
 
         /**
         * Method to remove all regions from the domain
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeRegions();
 
@@ -84,9 +76,7 @@ class Domain: public Object
         /**
         * Method to add a set of regions into the domain
         * @param regions_ a set of regions
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setRegions( const std::set< std::size_t >& regions_ );
 
@@ -94,8 +84,6 @@ class Domain: public Object
         /**
         * Method to return the regions which belongs to the domain
         * @param regions_
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::set< std::size_t > a set of regions indexes
         */
         std::set< std::size_t > getRegions() const;
@@ -103,9 +91,7 @@ class Domain: public Object
 
         /**
         * Method to clear all metadata of the domain
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void clear() override;
 
@@ -114,9 +100,7 @@ class Domain: public Object
         * Method to set the volume of the domain
         * @param volume_ the volume of the domain, i.e., the sum of the volume of the
         * regions that it contains
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void setDomainVolume( double volume_ )
         {
@@ -127,8 +111,6 @@ class Domain: public Object
         /**
         * Method to get the volume of the domain
         * @param volume_
-        * @see testMeToo()
-        * @see publicVar()
         * @return the volume of the domain, i.e., the sum of the volume of the
         * regions that it contains
         */
@@ -141,9 +123,7 @@ class Domain: public Object
 
         /**
         * This method remove all metadata from the structure and set the default values for the data.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void initialize();
 

@@ -45,6 +45,8 @@ class Volume: public Object
 {
 
 
+    //TODO: draw a cube representing the volume
+
     public:
 
 
@@ -55,13 +57,14 @@ class Volume: public Object
 
 
         /**
-        * Constructor.
+        * Copy constructor.
         */
         Volume(const Volume & volume_);
 
 
         /**
-        * Constructor.
+        * Assignment operator.
+        * @param app_ a const reference to another Volume
         */
         Volume & operator=(const Volume & volume_);
 
@@ -80,9 +83,7 @@ class Volume: public Object
         * @param w_ the volume width
         * @param h_ the volume height
         * @param l_ the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setGeometry( double ox_, double oy_, double oz_, double w_, double h_, double l_ );
 
@@ -95,9 +96,7 @@ class Volume: public Object
         * @param w_ reference to the volume width
         * @param h_ reference to the volume height
         * @param l_ reference to the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getGeometry( double& ox_, double& oy_, double& oz_, double& w_, double& h_, double& l_ ) const;
 
@@ -107,9 +106,7 @@ class Volume: public Object
         * @param ox_ the x coordinate of the origin of the volume
         * @param oy_ the y coordinate of the origin of the volume
         * @param oz_ the z coordinate of the origin of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setOrigin( double ox_, double oy_, double oz_ );
 
@@ -119,9 +116,7 @@ class Volume: public Object
         * @param ox_ reference to the x coordinate of the origin of the volume
         * @param oy_ reference to the y coordinate of the origin of the volume
         * @param oz_ reference to the z coordinate of the origin of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getOrigin( double& ox_, double& oy_, double& oz_ ) const;
 
@@ -131,9 +126,7 @@ class Volume: public Object
         * @param w_ the volume width
         * @param h_ the volume height
         * @param l_ the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDimensions( double w_, double h_, double l_ );
 
@@ -143,9 +136,7 @@ class Volume: public Object
         * @param w_ reference to the volume width
         * @param h_ reference to the volume height
         * @param l_ reference to the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getDimensions( double& w_, double& h_, double& l_ ) const;
 
@@ -153,17 +144,13 @@ class Volume: public Object
         /**
         * This method define the volume width
         * @param w_ the volume width
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setWidth( double w_ );
 
 
         /**
         * This method return the volume width
-        * @see testMeToo()
-        * @see publicVar()
         * @return double the volume width
         */
         double getWidth() const;
@@ -172,17 +159,13 @@ class Volume: public Object
         /**
         * This method define the volume height
         * @param h_ the volume height
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setHeight( double h_  );
 
 
         /**
         * This method gets the volume height
-        * @see testMeToo()
-        * @see publicVar()
         * @return double the volume height
         */
         double getHeight() const;
@@ -191,18 +174,14 @@ class Volume: public Object
         /**
         * This method define the volume lenght
         * @param l_ the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setLenght( double l_ );
 
 
         /**
         * This method gets the volume lenght
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         double getLenght() const;
 
@@ -210,9 +189,7 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the front face of the volume
         * @param vertices_ the vertices which define the front face of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getFrontFace( std::vector< double >& vertices_ ) const;
 
@@ -220,8 +197,6 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the right face of the volume
         * @param vertices_ the vertices which define the right face of the volume
-        * @see testMeToo()
-        * @see publicVar()
         * @return double the volume lenght
         */
         void getRightFace( std::vector< double >& vertices_ ) const;
@@ -230,9 +205,7 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the back face of the volume
         * @param vertices_ the vertices which define the back face of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getBackFace( std::vector< double >& vertices_ ) const;
 
@@ -240,9 +213,7 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the left face of the volume
         * @param vertices_ the vertices which define the left face of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getLeftFace( std::vector< double >& vertices_ ) const;
 
@@ -250,9 +221,7 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the top face of the volume
         * @param vertices_ the vertices which define the top face of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getTopFace( std::vector< double >& vertices_ ) const;
 
@@ -260,9 +229,7 @@ class Volume: public Object
         /**
         * This method gets the vertices which define the bottom face of the volume
         * @param vertices_ the vertices which define the bottom face of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getBottomFace( std::vector< double >& vertices_ ) const;
 
@@ -270,17 +237,13 @@ class Volume: public Object
         /**
         * This method sets the total volume of the volume
         * @param volume_ the total volume of the volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void setVolume( double volume_ ) { volume = volume_; }
 
 
         /**
         * This method returns the total volume of the volume
-        * @see testMeToo()
-        * @see publicVar()
         * @return double the total volume of the volume
         */
         inline double getVolume() const { return volume; }
@@ -288,9 +251,7 @@ class Volume: public Object
 
         /**
         * This method clear all metada from volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear() override;
 

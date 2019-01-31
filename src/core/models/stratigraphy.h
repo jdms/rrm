@@ -23,13 +23,13 @@ class Stratigraphy : public Object
 
 
         /**
-        * Constructor.
+        * Copy constructor.
         */
         Stratigraphy(const Stratigraphy & strat_);
 
 
         /**
-        * Constructor.
+        * Assignment operator.
         */
         Stratigraphy & operator=(const Stratigraphy & strat_);
 
@@ -43,18 +43,14 @@ class Stratigraphy : public Object
         /**
         * Method to set a new index to the stratigraphy
         * @param id_ a new index to the stratigraphy
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setIndex(std::size_t id_ ) override;
 
 
         /**
         * This method clear all metada from stratigraphy
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear() override;
 
@@ -64,9 +60,7 @@ class Stratigraphy : public Object
 
         /**
         * This method defines automatically the index of the stratigraphy
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void defineId();
 

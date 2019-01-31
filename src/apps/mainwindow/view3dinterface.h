@@ -27,15 +27,15 @@ class View3dInterface: public QObject
 
         /**
         * Constructor.
+        * @param window_ a const reference to the MainWindow
+        * @see MainWindow
         */
         View3dInterface( MainWindow* const& window_ );
 
 
         /**
         * Method to creates the interface of the 3d application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createInterface();
 
@@ -45,9 +45,7 @@ class View3dInterface: public QObject
 
         /**
         * Method to initialize the controller.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void init();
 
@@ -56,18 +54,14 @@ class View3dInterface: public QObject
 
         /**
         * Method to create the 3d window interface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createView3dWindow();
 
 
         /**
         * Method to initialize and create the connects related to the actions of the 3d application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createView3dActions();
 

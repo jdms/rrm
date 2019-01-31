@@ -66,11 +66,10 @@ class SketchWindow: public QMainWindow
     public:
 
 
-       /**
-       * \brief Constructor.
-       * @param parent
-       * @see QWidget
-       */
+        /**
+        * Constructor. parent_ is passed to QMainWindow's constructor.
+        * @param parent_ the parent item
+        */
         SketchWindow( QWidget* parent = nullptr );
 
        /**
