@@ -63,8 +63,8 @@ void PolygonItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * o
 
     if( QGraphicsPolygonItem::isSelected() == true )
     {
+        // change the style to fill it with a pattern if it is selected
         fill_.setStyle( Qt::Dense3Pattern);
-        std::cout << "it was selected" << std::endl << std::flush;
     }
 
     painter_->setBrush( fill_ );
@@ -201,14 +201,6 @@ void PolygonItem::clear()
     prepareGeometryChange();
     plane.clear();
 
-//    is_done = true;
-//    has_border = true;
-
-//    resetToDefaultBorderColor();
-//    resetToDefaultFillColor();
-//    resetToDefaultBorderWidth();
-
-//    std::cout << "plane is empty? " << plane.isEmpty() << std::endl;
     update();
 }
 

@@ -56,9 +56,7 @@ class CoordinateAxes3d
 
         /**
         * Method to initialize all member data
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void init();
 
@@ -66,9 +64,7 @@ class CoordinateAxes3d
         /**
         * Method to load the geometry of the axes
         * @param directory the folder where the file 'orientationaxes.obj' is placed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void load( std::string directory );
 
@@ -80,18 +76,14 @@ class CoordinateAxes3d
         * @param P it is the projection matrix
         * @param w it is the canvas width
         * @param h it is the canvas height
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void draw(  const Eigen::Affine3f& V_, const Eigen::Matrix4f& P_, const int& w_, const int& h_ );
 
 
         /**
         * Method to reload the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void reloadShader();
 
@@ -99,18 +91,14 @@ class CoordinateAxes3d
         /**
         * Method to initialize the shader
         * @param directory path where the shaders are placed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void initShader( std::string directory );
 
 
         /**
         * Method to reset the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetBuffers();
 
@@ -120,9 +108,7 @@ class CoordinateAxes3d
         * @param ox_ x coordinate of the origin of the axes
         * @param oy_ y coordinate of the origin of the axes
         * @param oz_ z coordinate of the origin of the axes
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void setCenter( float ox_, float oy_, float oz_ )
         {
@@ -133,9 +119,7 @@ class CoordinateAxes3d
 
         /**
         * Inline method to change the origin of the axes to the default position
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void setNonCentered()
         {
@@ -149,18 +133,14 @@ class CoordinateAxes3d
 
         /**
         * Method to create the vertex arrays and buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void requestOpenGLResources();
 
 
         /**
         * Method to release the vertex arrays and buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void releaseOpenGLResources();
 
@@ -184,6 +164,7 @@ class CoordinateAxes3d
         int indices_size_;                                                      /**< Total number of faces */
 
         bool centered = true;                                                   /**< Boolean to indicate if the axes should be centered or not. Its value is true if the axes should be centered and false otherwise. */
+
         Eigen::Vector3f origin;                                                 /**< Origin of the axes */
 
 };

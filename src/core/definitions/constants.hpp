@@ -233,14 +233,14 @@ namespace Settings {
     class Objects
     {
         public:
-            enum class BounderingRegion { NONE, ABOVE, BELOW, REGION };
+            enum class BoundaryRegion { NONE, ABOVE, BELOW, REGION };
 
             enum class ObjectType { NONE, VOLUME, CROSS_SECTION, STRATIGRAPHY, STRUCTURAL, REGION, DOMAINS, WELL };
 
             enum class ObjectProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE };
 
             static const ObjectType DEFAULT_OBJECT_TYPE;
-            static const BounderingRegion DEFAULT_BOUNDERING_REGION;
+            static const BoundaryRegion DEFAULT_BOUNDARY_REGION;
             static const std::size_t MAX_CSECTION_NUMBER_FOR_CHANNEL;
 
     };

@@ -61,9 +61,9 @@ class ImageItemWrapper: public QGraphicsPixmapItem
         * @param im_ the image
         * @param origin_ the origin of the image
         * @param top_right_ the point at the right-top corner of the image. It helps to compute the image dimensions.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QPixmap
+        * @see QPointF
+        * @return void.
         */
         void setImage( const QPixmap& im, QPointF origin_, QPointF top_right_ );
 
@@ -71,17 +71,15 @@ class ImageItemWrapper: public QGraphicsPixmapItem
         /**
         * Method to set the path of the file
         * @param file_ image path_
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QString
+        * @return void.
         */
         void setImagePath( const QString& file_ );
 
 
         /**
         * Method to get the path of the image file
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QString
         * @return QString the path of the image.
         */
         QString getImagePath() const;
@@ -89,8 +87,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to get the origin of the image
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPointF
         * @return QPointF origin of the image.
         */
         QPointF getOrigin() const;
@@ -98,8 +95,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to get the top-right corner of the image
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPointF
         * @return QPointF the top-right corner of the image.
         */
         QPointF getTopRight() const;
@@ -108,9 +104,8 @@ class ImageItemWrapper: public QGraphicsPixmapItem
         /**
         * Method to move the origin of the image to the new point origin_
         * @param origin_ new origin of the image
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void moveRectangle( QPointF origin_ );
 
@@ -118,17 +113,15 @@ class ImageItemWrapper: public QGraphicsPixmapItem
         /**
         * Method to move the top-right of the image to the new point p_
         * @param origin_ new top-right corner of the image
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void resizeRectangle(const QPointF &p );
 
 
         /**
         * Method to get the bounding box of the image
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPointF
         * @return QRectF the bounding box of the image
         */
         QRectF boundingRect() const override;
@@ -139,8 +132,9 @@ class ImageItemWrapper: public QGraphicsPixmapItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the image
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
         * @return Void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

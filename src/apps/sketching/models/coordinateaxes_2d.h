@@ -51,9 +51,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
         /**
         * Method to set the coordinate axes it will represent
         * @param pl indicates to which coordinate axes it will represent
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Plane
+        * @return void.
         */
         void setPlane( const Plane& pl );
 
@@ -61,9 +60,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         /**
         * Method to set the lenght of the x axes it will have
         * @param l the lenght of the x axes
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setAxisXLenght( double l );
 
@@ -71,17 +68,14 @@ class CoordinateAxes2d: public QGraphicsLineItem
         /**
         * Method to set the lenght of the y axes it will have
         * @param l the lenght of the y axes
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setAxisYLenght( double l );
 
 
         /**
         * Method to get the bounding box of the axes
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QRectF
         * @return QRectF the bounding box of the image
         */
         QRectF boundingRect() const;
@@ -93,9 +87,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         * which was causing undesired deformation on the text.
         * @param scale_ double. The scale to be applied.
         * @param height_ the real size of the y coordinate.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateVerticalExaggeration( double scale_, double height_ );
 
@@ -106,9 +98,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         * This method was created to simulate the effect of the vertical exaggeration without apply it directly,
         * which was causing undesired deformation on the text.
         * @param height_ the real size of the y coordinate.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void stopVerticalExaggeration(  double height_ );
 
@@ -117,9 +107,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         * Stop the vertical exaggeration effect turning the lenght of the y coordinate back to its real lenght, which is stored into the variable 'height
         * This method was created to simulate the effect of the vertical exaggeration without apply it directly,
         * which was causing undesired deformation on the text.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetVerticalExaggeration();
 
@@ -130,9 +118,10 @@ class CoordinateAxes2d: public QGraphicsLineItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the axes
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
+        * @return void.
         */
          void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
@@ -140,9 +129,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
         //TODO: finish to document the parameters.
          /**
          * Method to draw x coordinate
-         * @see testMeToo()
-         * @see publicVar()
-         * @return Void
+         * @see QPainter
+         * @return void.
          */
          void drawAxisX( QPainter* p );
 
@@ -150,9 +138,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
          //TODO: finish to document the parameters.
           /**
           * Method to draw y coordinate
-          * @see testMeToo()
-          * @see publicVar()
-          * @return Void
+          * @see QPainter
+          * @return void.
           */
          void drawAxisY( QPainter* p );
 
@@ -160,9 +147,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
          //TODO: finish to document the parameters.
           /**
           * Method to draw y coordinate with scale
-          * @see testMeToo()
-          * @see publicVar()
-          * @return Void
+          * @see QPainter
+          * @return void.
           */
          void drawAxisYWithScale( QPainter* p );
 

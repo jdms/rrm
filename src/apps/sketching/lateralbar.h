@@ -34,10 +34,7 @@ class LateralBar: public QWidget
 
         /**
        * Method to get the output dip angle picture. The picture is used in the scene in order to facilitate the user knows which angle he/she should drawn the sketch.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
+       * @see QPixmap
        * @return const QPixmap* A const pointer to QPixmap, which contains the output dip angle.
        */
         const QPixmap* getDipAnglePicture() const;
@@ -49,10 +46,6 @@ class LateralBar: public QWidget
        * Method (slot) called as using the vertical exaggeration slider.
        * It updates the dip angle value.
        * @param v_exagg_ Corresponds to the vertical exaggeration slider position (integer).
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void changeVerticalExaggeration( int v_exagg_ );
@@ -62,10 +55,6 @@ class LateralBar: public QWidget
        * Method (slot) called as using the vertical exaggeration double spinbox.
        * It updates the dip angle value.
        * @param v_exagg_ Corresponds to the vertical exaggeration slider value (double).
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void changeVerticalExaggerationBySpinbox( double v_exagg_ );
@@ -74,10 +63,6 @@ class LateralBar: public QWidget
        /**
        * Method (slot) to reset the value of the vertical exaggeration to 1.0. It is also called by the QPushButton btn_reset_exaggeration.
        * It updates the dip angle value.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void resetVerticalExaggeration();
@@ -86,10 +71,6 @@ class LateralBar: public QWidget
         /**
        * Method (slot) to change the value of the input dip angle value (double).
        * @param angle_ Corresponds to the the input dip angle value (double).
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void changeDipAngle( double angle_ );
@@ -108,10 +89,6 @@ class LateralBar: public QWidget
 
        /**
        * Method (slot) to clear all the widgets related to the dip angle and vertical exaggeration, including the pictures.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void clear();
@@ -121,11 +98,7 @@ class LateralBar: public QWidget
 
        /**
        * Signal to send the vertical exaggeration value to the 2d and 3d scenes.
-       * @ param double Corresponds to the current vertical exaggeration value.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
+       * @param double Corresponds to the current vertical exaggeration value.
        * @return Void
        */
         void sgn_updateVerticalExaggeration( double );
@@ -133,10 +106,6 @@ class LateralBar: public QWidget
 
        /**
        * Signal emitted to warn the 2d and 3d scenes to reset the vertical exaggeration images.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void sgn_resetVerticalExaggeration();
@@ -145,10 +114,6 @@ class LateralBar: public QWidget
        * Signal emitted to warn the 2d scene to exhibit or not the dip angle picture.
        * If the bool is true, the scene should show the output dip angle picture. The scene is able to get the picture using the public method getDipAnglePicture.
        * @param bool Value can be true if the scene should show the output dip angle picture, and false, otherwise.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void sgn_sendDipAnglePicture( bool );
@@ -156,10 +121,6 @@ class LateralBar: public QWidget
        /**
        * Signal emitted to warn the 2d scene to allow the user moves or not the dip angle picture.
        * @param bool Value can be true if the user is able to move the output dip angle picture, and false, otherwise.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void sgn_setDipAnglePictureMovable( bool );
@@ -169,20 +130,12 @@ class LateralBar: public QWidget
 
        /**
        * Protected method responsible for initializing and exhibiting the widgets.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void createInterface();
 
        /**
        * Protected method responsible for defining and initializing the connects related to the actions of the widgets.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void createActions();

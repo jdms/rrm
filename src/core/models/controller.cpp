@@ -1774,9 +1774,9 @@ void Controller::applyStratigraphicRule()
 
 
 
-Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
+Settings::Objects::BoundaryRegion Controller::getCurrentBoundaryRegion() const
 {
-    return boundering_region;
+    return boundary_region;
 }
 
 
@@ -1841,7 +1841,7 @@ void Controller::stopCreateRegion()
 void Controller::enablePreserveAbove( bool status_ )
 {
     if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+        boundary_region = Settings::Objects::BoundaryRegion::ABOVE;
     else
         rules_processor.stopPreserveAbove();
 }
@@ -1852,7 +1852,7 @@ void Controller::enablePreserveAbove( bool status_ )
 void Controller::enablePreserveBelow( bool status_ )
 {
     if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+        boundary_region = Settings::Objects::BoundaryRegion::BELOW;
     else
         rules_processor.stopPreserveBelow();
 
@@ -1862,10 +1862,10 @@ void Controller::enablePreserveBelow( bool status_ )
 
 
 
-void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
+void Controller::setObjectSelectedAsBoundary( const std::size_t& index_ )
 {
 
-    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    if( boundary_region == Settings::Objects::BoundaryRegion::ABOVE )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
@@ -1882,7 +1882,7 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 
     }
 
-    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    else if( boundary_region == Settings::Objects::BoundaryRegion::BELOW )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
@@ -1901,7 +1901,7 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
-bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& boundary_ )
+bool Controller::setRegionBySketchAsBoundary( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& boundary_ )
 {
 
     std::vector< double > curve3d_;
@@ -1909,7 +1909,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
     std::vector< std::size_t > edges_;
 
 
-    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    if( boundary_region == Settings::Objects::BoundaryRegion::ABOVE )
     {
 
 
@@ -1938,7 +1938,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 
     }
 
-    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    else if( boundary_region == Settings::Objects::BoundaryRegion::BELOW )
     {
         // pass curve to rules_processor and get the region
 
@@ -1983,14 +1983,14 @@ bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 
     if( rules_processor.preserveAboveIsActive() == true )
     {
-        getLowerBoundering( boundary_ );
+        getLowerBoundary( boundary_ );
         status_ = true;
     }
 
     else if( rules_processor.preserveBelowIsActive() == true )
     {
 
-        getUpperBoundering( boundary_ );
+        getUpperBoundary( boundary_ );
         status_ = true;
     }
 
@@ -1998,7 +1998,7 @@ bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 }
 
 
-bool Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+bool Controller::setRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     std::vector< double > point_;
 
@@ -2043,7 +2043,7 @@ bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
     bool status_ = rules_processor.preserveAboveIsActive();
     if( status_ == false ) return false;
 
-    getLowerBoundering( boundary_ );
+    getLowerBoundary( boundary_ );
     return true;
 }
 
@@ -2055,13 +2055,13 @@ bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
     bool status_ = rules_processor.preserveBelowIsActive();
     if( status_ == false ) return false;
 
-    getUpperBoundering( boundary_ );
+    getUpperBoundary( boundary_ );
     return true;
 
 }
 
 
-void Controller::getLowerBoundering( PolyCurve& boundary_ )
+void Controller::getLowerBoundary( PolyCurve& boundary_ )
 {
 
     std::vector< double > vertices_;
@@ -2089,7 +2089,7 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
 }
 
 
-void Controller::getUpperBoundering( PolyCurve& boundary_ )
+void Controller::getUpperBoundary( PolyCurve& boundary_ )
 {
 
     std::vector< double > vertices_;
@@ -2679,7 +2679,7 @@ void Controller::clear()
 
 
     selectable_objects.clear();
-    boundering_region = Settings::Objects::BounderingRegion::NONE ;
+    boundary_region = Settings::Objects::BoundaryRegion::NONE ;
     upper_index = 0;
     bottom_index = 0;
 

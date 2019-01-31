@@ -1321,17 +1321,17 @@ class Controller
 
         /**
         * Method to get which the 'PRESERVE' is being used currently
-        * @see Settings::Objects::BounderingRegion
-        * @return BounderingRegion the current 'PRESERVE' enabled
+        * @see Settings::Objects::BoundaryRegion
+        * @return BoundaryRegion the current 'PRESERVE' enabled
         */
-        Settings::Objects::BounderingRegion getCurrentBoundaryRegion() const;
+        Settings::Objects::BoundaryRegion getCurrentBoundaryRegion() const;
 
 
         /**
         * Method to verify if the 'PRESERVE ABOVE' is active, and if so, which curve is being used as
         * the lower boundary
         * @param boundary_ the lower boundary
-        * @see Settings::Objects::BounderingRegion
+        * @see Settings::Objects::BoundaryRegion
         * @return boolean returns true if the 'PRESERVE ABOVE' is active, and false otherwise
         */
         bool isDefineAboveActive( PolyCurve& boundary_ );
@@ -1341,7 +1341,7 @@ class Controller
         * Method to verify if the 'PRESERVE BELOW' is active, and if so, which curve is being used as
         * the upper boundary
         * @param boundary_ the upper boundary
-        * @see Settings::Objects::BounderingRegion
+        * @see Settings::Objects::BoundaryRegion
         * @return boolean returns true if the 'PRESERVE BELOW' is active, and false otherwise
         */
         bool isDefineBelowActive( PolyCurve& boundary_ );
@@ -1350,19 +1350,19 @@ class Controller
         /**
         * Method to get the lower boundary, when the 'PRESERVE ABOVE' is active
         * @param boundary_ a reference to the lower boundary
-        * @see Settings::Objects::BounderingRegion
+        * @see Settings::Objects::BoundaryRegion
         * @return Void
         */
-        void getLowerBoundering( PolyCurve& boundary_ );
+        void getLowerBoundary( PolyCurve& boundary_ );
 
 
         /**
         * Method to get the upper boundary, when the 'PRESERVE BELOW' is active
         * @param boundary_ a reference to the upper boundary
-        * @see Settings::Objects::BounderingRegion
+        * @see Settings::Objects::BoundaryRegion
         * @return Void
         */
-        void getUpperBoundering( PolyCurve& boundary_ );
+        void getUpperBoundary( PolyCurve& boundary_ );
 
 
         /**
@@ -1371,7 +1371,7 @@ class Controller
         * @see none
         * @return Void
         */
-        void setObjectSelectedAsBoundering( const std::size_t& index_ );
+        void setObjectSelectedAsBoundary( const std::size_t& index_ );
 
 
         /**
@@ -1395,7 +1395,7 @@ class Controller
         * @see none
         * @return boolean returns true if the operation was successful, and false otherwise
         */
-        bool setRegionBySketchAsBoundering(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
+        bool setRegionBySketchAsBoundary(const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve &boundary_ );
 
 
         /**
@@ -1407,7 +1407,7 @@ class Controller
         * @see none
         * @return boolean returns true if the operation was successful, and false otherwise
         */
-        bool setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        bool setRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
         /**
@@ -1717,8 +1717,8 @@ class Controller
         std::vector< std::size_t > selectable_objects;                                      /**< A vector to hold all the objects allowed to be selected. It is used to mark the objects that
                                                                                                  can be selected as a boundary */
 
-        Settings::Objects::BounderingRegion boundering_region =                             /**< An enum to define which 'PRESERVE' is being used */
-                Settings::Objects::BounderingRegion::NONE ;
+        Settings::Objects::BoundaryRegion boundary_region =                             /**< An enum to define which 'PRESERVE' is being used */
+                Settings::Objects::BoundaryRegion::NONE ;
 
         std::size_t upper_index;                                                            /**< The index of the object selected as upper boundary */
 

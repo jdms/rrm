@@ -17,7 +17,8 @@ class CrossSectionItem: public LineItem
     public:
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to LineItem's constructor.
+        * @param parent_ the parent item
         */
         CrossSectionItem( QGraphicsItem *parent_ = nullptr );
 
@@ -31,17 +32,15 @@ class CrossSectionItem: public LineItem
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see CrossSection
+        * @return void.
         */
         void setRawCrossSection( const std::shared_ptr< CrossSection >& raw_ );
 
 
         /**
         * Method to return the const shared point to the data structure of the cross-section
-        * @see testMeToo()
-        * @see publicVar()
+        * @see CrossSection
         * @return a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         */
         const std::shared_ptr< CrossSection >& getRawCrossSection() const;
@@ -49,8 +48,6 @@ class CrossSectionItem: public LineItem
 
         /**
         * This method checks if the cross-section should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the cross-section is visible, and false otherwise.
         */
         bool isVisible() const override;
@@ -58,11 +55,10 @@ class CrossSectionItem: public LineItem
 
         /**
         * This method reset the shared pointer to the cross-section data structure
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
+
 
     protected:
 

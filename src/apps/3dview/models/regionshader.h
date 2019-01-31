@@ -52,7 +52,8 @@ class RegionShader: public Shader
 
 
         /**
-        * Constructor.
+        * Constructor. It builds a RegionShader given a Regions instance
+        * @param a shared pointer to a Regions instance
         */
         RegionShader( const std::shared_ptr< Regions >& raw_ );
 
@@ -66,9 +67,7 @@ class RegionShader: public Shader
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setRegion( const std::shared_ptr< Regions >& raw_ );
 
@@ -80,9 +79,7 @@ class RegionShader: public Shader
         * @param P it is the projection matrix
         * @param w it is the canvas width
         * @param h it is the canvas height
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -90,18 +87,14 @@ class RegionShader: public Shader
 
         /**
         * This method calls the method 'loadBuffers' in order to update the region.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void update();
 
 
         /**
         * This method calls the method setDefaultValues() and reset(). This latter is from the class Shader, and is responsible for resetting thwe shaders.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 
@@ -111,18 +104,14 @@ class RegionShader: public Shader
 
         /**
         * This method reset the shared pointer of the raw volume and set the default values to the class members.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDefaultValues();
 
 
         /**
         * This method gets the geometry from the raw data, normalize the vertices and calls the updateGeometryBuffers() and updateColorBuffers() to load the buffers.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void loadBuffers();
 
@@ -132,9 +121,7 @@ class RegionShader: public Shader
         * @param vertices_ normalized vertices
         * @param normals_  normalized normals
         * @param faces_  surface faces
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                                    const std::vector< GLfloat >& normals_,
@@ -144,57 +131,46 @@ class RegionShader: public Shader
         /**
         * This method loads the colors buffers. This methods allows different colors to each vertex.
         * @param colors_ vector of colors. The number of colors is the same of the number of vertices.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateColorBuffers( const std::vector< GLfloat >& colors_ );
 
 
         /**
         * This method creates a vector of the color (r_, g_, b_) repeated to each vertex.
+        * @param nvertices_ number of vertices of the mesh. It will be created the same number of colors.
         * @param r_ red component of the color
         * @param green_ green component of the color
         * @param blue_ blue component of the color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );
 
 
         /**
         * This is a virtual method to initialize the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initShaders();
 
 
         /**
         * This is a virtual method to initialize the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initBuffers();
 
 
         /**
         * Virtual method to reset the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetShaders();
 
 
         /**
         * Virtual method to reset the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetBuffers();
 

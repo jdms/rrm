@@ -20,15 +20,15 @@ class DiagnosticsInterface: public QObject
 
         /**
         * Constructor.
+        * @param window_ a const reference to the MainWindow
+        * @see MainWindow
         */
         DiagnosticsInterface( MainWindow* const& window_ );
 
 
         /**
         * Method to creates the interface of the diagnostics application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createInterface();
 
@@ -39,9 +39,7 @@ class DiagnosticsInterface: public QObject
         /**
         * Method to set the inital setup for the Flow Diagnostics app.
         * @param status_ boolean to indicate if the Flow Diagnostics is active or not.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void init( bool status_ );
 
@@ -50,18 +48,14 @@ class DiagnosticsInterface: public QObject
 
         /**
         * Method to create the Flow Diagnostics interface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createDiagnosticsWindow();
 
 
         /**
         * Method to initialize and create the connects related to the actions of the Flow Diagnostics application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createDiagnosticsActions();
 

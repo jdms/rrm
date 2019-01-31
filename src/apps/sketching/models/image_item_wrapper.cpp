@@ -46,6 +46,7 @@ QRectF ImageItemWrapper::boundingRect() const
 void ImageItemWrapper::paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                 QWidget* widget )
 {
+    // fill the rectangle m_imageRect with the image
     painter->drawPixmap( m_imageRect.toRect(), m_image );
 }
 

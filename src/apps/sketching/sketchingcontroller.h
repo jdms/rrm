@@ -33,9 +33,8 @@ class SketchingController
         /**
         * Method to save a reference to the sketch window that holds the main cross-section scene, and to the its scene.
         * @param window_  sketch window that holds the main cross-section scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see SketchWindow
+        * @return void.
         */
         void setMainWindow( const std::shared_ptr< SketchWindow >& window_);
 
@@ -43,9 +42,8 @@ class SketchingController
         /**
         * Method to save a reference to the sketch window that will hold the top view cross-section scene, and to the its scene.
         * @param window_  sketch window that holds the top view cross-section scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see SketchWindow
+        * @return void.
         */
         void setTopViewWindow( const std::shared_ptr< SketchWindow >& window_ );
 
@@ -53,18 +51,17 @@ class SketchingController
         /**
         * Method to save a reference to RRM controller.
         * @param a const shared pointer to the RRM controller.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Controller
+        * @return void.
         */
         void setController( const std::shared_ptr< Controller >& controller_ );
 
 
         /**
         * This method calls the 'createMainCrossSection' and 'createTopViewCrossSection' responsible for loading the both scenes ( main scene and top view scene ) with all the elements present in their corresponding cross-sections.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see createMainCrossSection()
+        * @see createTopViewCrossSection()
+        * @return void.
         */
         void init();
 
@@ -72,18 +69,15 @@ class SketchingController
         /**
         * This method enables or disabled the sketching in both scenes ( main scene and top view scene ).
         * @param status_ boolean to set if the sketch should be enabled or disabled. It is true to enable it, and false otherwise.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void enableSketching( bool status_ );
 
 
         /**
         * This method calls the 'updateVolume' in both scenes ( main scene and top view scene ).
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see updateVolume()
+        * @return void.
         */
         void updateVolume();
 
@@ -91,18 +85,14 @@ class SketchingController
         /**
         * This method loads the main scene with all the elements present in the main cross-section.
         * It calls the init of the SketchScene before loading the scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createMainCrossSection();
 
 
         /**
         * This method updates the main scene with all the elements present in the main cross-section.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateMainCrossSection();
 
@@ -110,18 +100,14 @@ class SketchingController
         /**
         * This method loads the top view scene with all the elements present in the top view cross-section.
         * It calls the init of the SketchScene before loading the scene.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void createTopViewCrossSection();
 
 
         /**
         * This method updates the top view scene with all the elements present in the top view cross-section.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateTopViewCrossSection();
 
@@ -131,9 +117,8 @@ class SketchingController
         * @param dir_ direction of the fixed cross-section
         * @param depth_ direction of the fixed cross-section
         * @param color of the marker associated to the fixed cross-section
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Settings::CrossSection::CrossSectionDirections&
+        * @return void.
         */
         void viewCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, QColor color_/*, bool fixed_ = false*/ );
 
@@ -142,9 +127,8 @@ class SketchingController
         * This method adds a stratigraphy or structural in all scenes being viewed.
         * This graphical object will hold a const shared pointer for a data structure of Stratigraphy, so that it can know how to draw itself.
         * @param obj_ a const shared pointer for a data structure of Stratigraphy, which has all the geometry and others required information to draw it in the scene 2d.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see ObjectPtr
+        * @return void.
         */
         void addStratigraphy( const ObjectPtr& obj_ );
 
@@ -152,27 +136,21 @@ class SketchingController
         /**
         * This method updates a stratigraphy or structural in all scenes being viewed.
         * @param index_ index of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateStratigraphy( const std::size_t& index_ );
 
 
         /**
         * This method updates all stratigraphies or structurals in all scenes being viewed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateObjects();
 
 
         /**
         * This method updates all trajectories of stratigraphies and/or structurals in all scenes being viewed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateObjectsTrajectories();
 
@@ -181,18 +159,15 @@ class SketchingController
         * This method adds a region in all scenes being used.
         * This graphical object will hold a const shared pointer for a data structure of Regions, so that it can know how to draw itself.
         * @param reg_ a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see RegionsPtr
+        * @return void.
         */
         void addRegion( const RegionsPtr& reg_  );
 
 
         /**
         * This method removes all regions in all scenes being viewed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void clearRegions();
 
@@ -201,26 +176,23 @@ class SketchingController
         * This method updates all regions in all scenes being viewed.
         * @see testMeToo()
         * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateRegions();
 
 
         /**
         * This method checks if there is changes in the boundary (upper and lower) in the main scene and update them.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
-        void updateBoundering();
+        void updateBoundary();
 
 
         /**
         * This method remove a window associated to the given fixed cross-section.
         * @param dir_ direction of the fixed cross-section
         * @param depth_ direction of the fixed cross-section
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Settings::CrossSection::CrossSectionDirections
         * @return Void.
         */
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
@@ -228,45 +200,35 @@ class SketchingController
 
         /**
         * This method removes all fixed cross-section on the width direction
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void removeWindowsDirectionX();
 
 
         /**
         * This method removes all fixed cross-section on the height direction
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void removeWindowsDirectionY();
 
 
         /**
         * This method removes all fixed cross-section on the depth direction
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void removeWindowsDirectionZ();
 
 
         /**
         * This method calls a clear to the both scenes and windows ( main and top-view )
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void clear();
 
 
         /**
         * This method updates the image on scene removing or setting if needed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void updateImageInScene();
 
@@ -278,9 +240,8 @@ class SketchingController
         * @param py_ y coordinate of the point
         * @param depth_ depth of the cross-section associated to the current scene
         * @param dir_ direction of the cross-section associated to the current scene
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Settings::CrossSection::CrossSectionDirections
+        * @return void.
         */
         void setPointGuidedExtrusionInPath( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
@@ -292,17 +253,10 @@ class SketchingController
         * @param px_ x coordinate of the point
         * @param py_ y coordinate of the point
         * @param pz_ z coordinate of the point
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void getGuidedExtrusionPoint( float& px_, float& py_, float& pz_ );
 
-
-        inline void setCurrentColor( int red_, int green_, int blue_ )
-        {
-            controller->setCurrentColor( red_, green_, blue_ );
-        }
 
     protected:
 
@@ -311,9 +265,9 @@ class SketchingController
         * This method is responsible for add the objects from the cross-section to the scene and also update the cross-section information.
         * @param csection_ cross-section which holds the objects
         * @param scene_ scene to where the objects will be added
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see CrossSectionPtr
+        * @see SketchScene
+        * @return void.
         */
         void setObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ );
 
@@ -322,9 +276,9 @@ class SketchingController
         * This method is responsible for calling updates for all the objects on scene, including the image and the boundary.
         * @param csection_ cross-section which holds the objects
         * @param scene_ scene to where the objects will be updated
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see CrossSectionPtr
+        * @see SketchScene
+        * @return void.
         */
         void updateObjectsToScene( const CrossSectionPtr& csection_ , const std::shared_ptr< SketchScene >& scene_ );
 
@@ -357,9 +311,7 @@ class SketchingController
         * @var py y coordinate of the point
         * @var depth depth of the cross-section in which the guided extrusion is being used
         * @var dir direction of the cross-section in which the guided extrusion is being used
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Settings::CrossSection::CrossSectionDirections
         */
         struct GuidedExtrusionPoint
         {

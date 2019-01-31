@@ -670,7 +670,7 @@ void SketchScene::removeSketchesOfSelection()
 }
 
 
-void SketchScene::defineBounderingArea()
+void SketchScene::defineBoundaryArea()
 {
 
 
@@ -711,28 +711,28 @@ void SketchScene::defineBounderingArea()
 void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
 {
     lower = boundary_;
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
 {
     upper = boundary_;
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::clearLowerBoundaryCurve()
 {
     lower.clear();
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::clearUpperBoundaryCurve()
 {
     upper.clear();
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 

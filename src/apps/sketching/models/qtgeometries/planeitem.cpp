@@ -9,6 +9,7 @@ PlaneItem::PlaneItem( QGraphicsItem *parent_ ): QGraphicsRectItem( parent_ )
 
 QRectF PlaneItem::boundingRect() const
 {
+    // test
     QPainterPath path_;
     path_.addRect( plane );
     return path_.boundingRect();

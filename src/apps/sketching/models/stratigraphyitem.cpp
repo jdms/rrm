@@ -16,6 +16,8 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
     raw->getColor( r_, g_, b_ );
     
     setColor( r_, g_, b_ );
+
+    // initially the curve is rendered as a dot line curve, if it is done, the style turns into full
     setStyle( Qt::PenStyle::DotLine );
     updateCurve();
     
@@ -74,6 +76,7 @@ void StratigraphyItem::updateCurve()
     prepareGeometryChange();
     curve = QPainterPath();
 
+    // if the curve is on direction Y and it is not active dont update it
     if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         if( raw->isActive() == false ) return;
 
@@ -100,12 +103,10 @@ void StratigraphyItem::updateLevelCurves()
     setColor( r_, g_, b_ );
     
     
+    // this method is only to curves on the Y direction
     prepareGeometryChange();
     if( raw->getCrossSectionDirection() != Settings::CrossSection::CrossSectionDirections::Y ) return;
 
-    //    curve = QPainterPath();
-
-    //    if( raw->isActive() == false ) return;
 
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
         setCurves( raw->getCurves(), true );
@@ -126,7 +127,7 @@ void StratigraphyItem::updateTrajectory()
     raw->getColor( r_, g_, b_ );
     setColor( r_, g_, b_ );
     
-    
+    // this method is only to curves on the X and Z direction, since the curves on Y direction has no trajectory
     if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
     prepareGeometryChange();
     

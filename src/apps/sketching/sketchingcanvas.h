@@ -15,9 +15,10 @@ class SketchingCanvas: public QGraphicsView
 {
     public:
 
-       /**
-       * Constructor.
-       */
+        /**
+        * Constructor. parent_ is passed to QGraphicsView's constructor.
+        * @param parent_ the parent item
+        */
         SketchingCanvas( QWidget *parent_ = nullptr );
 
         /**
@@ -28,8 +29,7 @@ class SketchingCanvas: public QGraphicsView
 
        /**
        * Method to retrieves the scene.
-       * @param color_ The color of the marker that was used in the depth slider ( see slider in the 3d widget ).
-       * @see publicVar()
+       * @see SketchScene
        * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to this canvas.
        */
         const std::shared_ptr< SketchScene >& getScene() const;
@@ -38,7 +38,6 @@ class SketchingCanvas: public QGraphicsView
        /**
        * Method to apply the vertical exaggeration in the scene.
        * @param scale_ The vertical exaggeration value (double).
-       * @see publicVar()
        * @return Void.
        */
         void setVerticalExaggeration( double scale_ );
@@ -46,7 +45,6 @@ class SketchingCanvas: public QGraphicsView
 
        /**
        * Method to stop applying the vertical exaggeration in the axes of the scene.
-       * @see publicVar()
        * @return Void.
        */
         void stopVerticalExaggeration();
@@ -54,7 +52,6 @@ class SketchingCanvas: public QGraphicsView
 
        /**
        * Method to retrieves the vertical exaggeration value used in the scene.
-       * @see publicVar()
        * @return double return the value of v_exag (double), which corresponds to the vertical exaggeration value used in the scene.
        */
         double getVerticalExaggeration() const;
@@ -65,7 +62,6 @@ class SketchingCanvas: public QGraphicsView
 
        /**
        * Method to create the scene and its actions.
-       * @see publicVar()
        * @return Void.
        */
         void setupScene();

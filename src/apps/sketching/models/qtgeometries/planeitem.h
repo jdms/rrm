@@ -14,7 +14,10 @@ class PlaneItem: public QGraphicsRectItem
     public:
 
 
-
+        /**
+        * Constructor. parent_ is passed to QGraphicsRectItem's constructor.
+        * @param parent_ the parent item
+        */
         PlaneItem( QGraphicsItem *parent_ = nullptr );
 
 
@@ -26,8 +29,7 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to get the bounding box of the plane
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QRectF
         * @return QRectF the bounding box of the plane
         */
         QRectF boundingRect() const override ;
@@ -36,9 +38,8 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * This method set the bottom-left corner of the plane
         * @param start_ the bottom-left corner of the plane
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void setStartPoint( const QPointF& start_ );
 
@@ -47,9 +48,8 @@ class PlaneItem: public QGraphicsRectItem
         * This method set the right-top corner of the plane
         * @param end_ the right-top corner of the plane
         * This point helps to compute the plane dimensions
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF
+        * @return void.
         */
         void setEndPoint( const QPointF& end_ );
 
@@ -58,9 +58,9 @@ class PlaneItem: public QGraphicsRectItem
         * This method define new dimensions to the plane
         * @param dimensions the x coordinate represents the plane width and the second the plane height
         * @param an optional parameter representing the origin of the plane, i.e., the bottom left corner of the plane
-        * @see testMeToo()
+        * @see QPointF
         * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resize( const QPointF& dimensions_, const QPointF& origin_ = QPointF( 0.0f, 0.0f ) );
 
@@ -71,26 +71,20 @@ class PlaneItem: public QGraphicsRectItem
         * @param height_ the plane height
         * @param ox_ an optional parameter representing the x coordinate of the origin of the plane
         * @param oy_ an optional parameter representing the y coordinate of the origin of the plane
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resize( double width_, double height_, double ox_ = 0.0, double oy_ = 0.0 );
 
 
         /**
         * Method to clear the plane and reset all members to their default values
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 
 
         /**
         * Method to check if the plane is empty
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. It is true if the plane is empty and false if it is not.
         */
         bool isEmpty() const;
@@ -101,9 +95,7 @@ class PlaneItem: public QGraphicsRectItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderColor( int r_, int g_, int b_ );
 
@@ -113,9 +105,7 @@ class PlaneItem: public QGraphicsRectItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getBorderColor( int& r_, int& g_, int& b_ ) const;
 
@@ -123,17 +113,13 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to set the color of the border using a QColor
         * @param color the new color of the border
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderColor( const QColor& color_ );
 
 
         /**
         * Method to get the color of the border by QColor
-        * @see testMeToo()
-        * @see publicVar()
         * @return QColor
         */
         QColor getBorderColor() const;
@@ -142,17 +128,13 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to set the width of the border line
         * @param width the width of the border line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBorderWidth( int width_ );
 
 
         /**
         * Method to get the width of the border line
-        * @see testMeToo()
-        * @see publicVar()
         * @return int the width of the border line
         */
         int getBorderWidth() const;
@@ -163,9 +145,7 @@ class PlaneItem: public QGraphicsRectItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setFillColor( int r_, int g_, int b_ );
 
@@ -175,9 +155,7 @@ class PlaneItem: public QGraphicsRectItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getFillColor( int& r_, int& g_, int& b_ ) const;
 
@@ -185,17 +163,15 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to fill the plane with a given QColor
         * @param color the new color of the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void.
         */
         void setFillColor( const QColor& color_ );
 
 
         /**
         * Method to get the color of internal part of the plane by QColor
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return QColor
         */
         QColor getFillColor() const;
@@ -204,8 +180,7 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to reset the color of the border to default.
         * @see DEFAULT_LINE_COLOR
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultBorderColor();
 
@@ -213,8 +188,7 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to reset the color of internal part of the plane to default.
         * @see DEFAULT_LINE_COLOR
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultFillColor();
 
@@ -222,16 +196,14 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * Method to reset the width of the border to default.
         * @see DEFAULT_LINE_WIDTH
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void resetToDefaultBorderWidth();
 
 
         /**
         * This method checks if the plane should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsRectItem::isVisible()
         * @return boolean. Returns true if the plane is visible, and false otherwise.
         */
         virtual bool isVisible() const { return QGraphicsRectItem::isVisible(); }
@@ -239,13 +211,10 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * This method checks if the plane should be selected or not
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsRectItem::isSelected()
         * @return boolean. Returns true if the plane is selected, and false otherwise.
         */
         virtual bool isSelected() const { return QGraphicsRectItem::isSelected(); }
-
-
 
 
 
@@ -255,8 +224,9 @@ class PlaneItem: public QGraphicsRectItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
         * @return Void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
@@ -269,9 +239,6 @@ class PlaneItem: public QGraphicsRectItem
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Color{ int red = 255, green = 0, blue = 0;
                       Color( int r_, int g_, int b_ ): red( r_ ), green( g_ ),

@@ -673,7 +673,7 @@ public:
         * @see publicVar()
         * @return Void.
         */
-        void setObjectSelectedAsBoundering( const std::size_t& index_ );
+        void setObjectSelectedAsBoundary( const std::size_t& index_ );
 
 
         /**
@@ -683,7 +683,7 @@ public:
         * @see publicVar()
         * @return Void.
         */
-        void selectBounderingBySketch( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  );
+        void selectBoundaryBySketch( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  );
 
 
         /**
@@ -695,7 +695,7 @@ public:
         * @see publicVar()
         * @return Void.
         */
-        void getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void getRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
         /**

@@ -53,7 +53,8 @@ class SurfaceShader: public Shader
 
 
         /**
-        * Constructor.
+        * Constructor. It builds a SurfaceShader given a Stratigraphy instance.
+        * @param a shared pointer to a Stratigraphy instance
         */
         SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ );
 
@@ -67,9 +68,8 @@ class SurfaceShader: public Shader
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Stratigraphy
+        * @return void.
         */
         void setObject( const std::shared_ptr< Stratigraphy >& raw_ );
 
@@ -81,9 +81,7 @@ class SurfaceShader: public Shader
         * @param P it is the projection matrix
         * @param w it is the canvas width
         * @param h it is the canvas height
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const int& w,
               const int& h );
@@ -91,18 +89,17 @@ class SurfaceShader: public Shader
 
         /**
         * This method calls the method 'loadBuffers' in order to update the mesh.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see loadBuffers()
+        * @return void.
         */
         void update();
 
 
         /**
         * This method calls the method setDefaultValues() and reset(). This latter is from the class Shader, and is responsible for resetting thwe shaders.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see setDefaultValues()
+        * @see reset()
+        * @return void.
         */
         void clear();
 
@@ -111,27 +108,21 @@ class SurfaceShader: public Shader
         * This method updates the color surface to a height map color. The color of each vertice will be computed by an interpolation between the z minimum value and z maximum value.
         * @param zmin_ the minimum z value
         * @param zmax_ the maximum z value
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setHeightMap( double zmin_, double zmax_ );
 
 
         /**
         * Inline method to check if the surface contains any vertice.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Boolean. Returns true if there is at least on vertex and false otherwise.
+        * @return boolean Returns true if there is at least on vertex and false otherwise.
         */
         inline bool isEmpty(){ return raw->getSurface().isEmpty(); }
 
 
         /**
         * An auxialiary and transitory method to enable the edged rendering.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void enableDrawingEdges();
 
@@ -143,16 +134,14 @@ class SurfaceShader: public Shader
         * This method reset the shared pointer of the raw volume and set the default values to the class members.
         * @see testMeToo()
         * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDefaultValues();
 
 
         /**
         * This method gets the geometry from the raw data, normalize the vertices and calls the updateGeometryBuffers() and updateColorBuffers() to load the buffers.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void loadBuffers();
 
@@ -162,9 +151,7 @@ class SurfaceShader: public Shader
         * @param vertices_ normalized vertices
         * @param normals_  normalized normals
         * @param faces_  surface faces
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
                                                    const std::vector< GLfloat >& normals_,
@@ -173,9 +160,7 @@ class SurfaceShader: public Shader
         /**
         * This method loads the colors buffers. This methods allows different colors to each vertex.
         * @param colors_ vector of colors. The number of colors is the same of the number of vertices.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateColorBuffers( const std::vector< GLfloat >& colors_ );
 
@@ -185,45 +170,35 @@ class SurfaceShader: public Shader
         * @param r_ red component of the color
         * @param green_ green component of the color
         * @param blue_ blue component of the color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );
 
 
         /**
         * This is a virtual method to initialize the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initShaders();
 
 
         /**
         * This is a virtual method to initialize the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void initBuffers();
 
 
         /**
         * Virtual method to reset the shaders
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetShaders();
 
 
         /**
         * Virtual method to reset the buffers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void resetBuffers();
 

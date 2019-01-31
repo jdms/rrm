@@ -217,59 +217,59 @@ class SketchWindow: public QMainWindow
     signals:
 
 
-        /// New signals
+//        /// New signals
 
-       /**
-       * \brief A signal to change the current color, i.e., the color of the current object.
-       * @return void
-       */
-        void sgn_changeCurrentColor( int, int, int );
-
-
-        /**
-        * \brief A signal to cancel the sketch as an object curve.
-        * @return void
-        */
-         void sgn_cancel_sketch();
+//       /**
+//       * \brief A signal to change the current color, i.e., the color of the current object.
+//       * @return void
+//       */
+//        void sgn_changeCurrentColor( int, int, int );
 
 
-       /**
-       * \brief A signal to submit the sketch as an object curve.
-       * @return void
-       */
-        void sgn_submit_curve();
+//        /**
+//        * \brief A signal to cancel the sketch as an object curve.
+//        * @return void
+//        */
+//         void sgn_cancel_sketch();
 
-       /**
-       * \brief A signal to resize the current boundary.
-       * @return void
-       */
-        void sgn_resize_boundary();
 
-       /**
-       * \brief A signal to resize the image on the scene.
-       * @return void
-       */
-        void sgn_resize_image();
+//       /**
+//       * \brief A signal to submit the sketch as an object curve.
+//       * @return void
+//       */
+//        void sgn_submit_curve();
 
-       /**
-       * \brief A signal to remove the image from the scene.
-       * @return void
-       */
-        void sgn_remove_image();
+//       /**
+//       * \brief A signal to resize the current boundary.
+//       * @return void
+//       */
+//        void sgn_resize_boundary();
 
-       /**
-       * \brief A signal to take a screenshot from the scene.
-       * @return void
-       */
-        void sgn_take_screenshot();
+//       /**
+//       * \brief A signal to resize the image on the scene.
+//       * @return void
+//       */
+//        void sgn_resize_image();
 
-       /**
-       * \brief A signal to show and hide the axes from the scene.
-       * @return void
-       */
-        void sgn_show_axes();
+//       /**
+//       * \brief A signal to remove the image from the scene.
+//       * @return void
+//       */
+//        void sgn_remove_image();
 
-        /// End -- New signals
+//       /**
+//       * \brief A signal to take a screenshot from the scene.
+//       * @return void
+//       */
+//        void sgn_take_screenshot();
+
+//       /**
+//       * \brief A signal to show and hide the axes from the scene.
+//       * @return void
+//       */
+//        void sgn_show_axes();
+
+//        /// End -- New signals
 
 
 

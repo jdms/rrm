@@ -80,22 +80,12 @@ void SketchInterface::createSketchWindowActions()
     {  window->app->removeMarkerFromSlider( id_ ); } );
 
 
-//    connect( sketch_window, &SketchWindow::sgn_changeCurrentColor, [=]( int red_, int green_, int blue_ )
-//    {
-//        window->app->defineCurrentColor( red_, green_, blue_ );
-//        if( sketch_topview_window == nullptr) return;
-//        sketch_topview_window->updateColorWidget( red_, green_, blue_ );
-//    } );
-
-    auto change_color_ = [=]( int red_, int green_, int blue_ )
+    connect( sketch_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
     {
-        scontroller->setCurrentColor( red_, green_, blue_ );
+        window->app->defineCurrentColor( red_, green_, blue_ );
         if( sketch_topview_window == nullptr) return;
         sketch_topview_window->updateColorWidget( red_, green_, blue_ );
-//        emit sgn_updateCurrentColor();
-    };
-
-    connect( sketch_window, &SketchWindow::sgn_changeCurrentColor, change_color_ );
+    } );
 
 
     connect( sketch_window, &SketchWindow::addCurve, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
@@ -127,13 +117,13 @@ void SketchInterface::createSketchWindowActions()
     connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundary( id_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+    connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundary( px_, py_, depth_, dir_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
+    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBoundaryBySketch( curve_, dir_, depth_  ); } );
 
 
     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
@@ -149,7 +139,7 @@ void SketchInterface::createSketchWindowActions()
     //         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
     //     } );
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundary( id_ ); } );
 
 
     connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
@@ -164,18 +154,20 @@ void SketchInterface::createSketchToViewWindowActions()
 {
 
 
-    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
-
-
-    connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
-
-
     connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
     {
         window->app->defineCurrentColor( red_, green_, blue_ );
         if( sketch_window == nullptr) return;
         sketch_window->updateColorWidget( red_, green_, blue_ );
     } );
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
+
+    connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundary( px_, py_, depth_, dir_ ); } );
+
+
 
     connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ )
     { window->app->addTrajectoryToObject( curve_ ); } );
@@ -336,7 +328,7 @@ void SketchInterface::createMainWindowActions()
     connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions(); scontroller->enableSketching( true ); } );
 
 
-    connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
+    connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundary();  } );
 
 
     connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()

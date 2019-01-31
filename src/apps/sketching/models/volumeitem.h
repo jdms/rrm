@@ -17,7 +17,8 @@ class VolumeItem: public PlaneItem
     public:
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to PlaneItem's constructor.
+        * @param parent_ the parent item
         */
         VolumeItem( QGraphicsItem *parent_ = nullptr );
 
@@ -29,17 +30,16 @@ class VolumeItem: public PlaneItem
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see Volume
+        * @see Settings::CrossSection::CrossSectionDirections
+        * @return void.
         */
         void setRawVolume( const std::shared_ptr< Volume >& raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
 
         /**
         * Method to return the const shared point to the data structure of the volume
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Volume
         * @return a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         */
         const std::shared_ptr< Volume >& getRawVolume() const;
@@ -48,9 +48,8 @@ class VolumeItem: public PlaneItem
         /**
         * Method to update the dimensions given a new direction.
         * @param dir_ a new direction
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see Settings::CrossSection::CrossSectionDirections
+        * @return void.
         */
         void updateDimensions( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
@@ -58,17 +57,14 @@ class VolumeItem: public PlaneItem
         /**
         * This method calls the method 'updateDimensions'.
         * @param dir_ a new direction
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see Settings::CrossSection::CrossSectionDirections
+        * @return void.
         */
         void update( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
 
         /**
         * This method checks if the volume should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the volume is visible, and false otherwise.
         */
         virtual bool isVisible() const override ;
@@ -76,9 +72,7 @@ class VolumeItem: public PlaneItem
 
         /**
         * This method clears all the data of the class, including to reset the shared pointer of the Volume data structure.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 

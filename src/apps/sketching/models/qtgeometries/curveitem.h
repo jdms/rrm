@@ -21,8 +21,9 @@ class SketchLibraryWrapper
     * Static method to apply the oversketch from Qt curves.
     * @param seg0_ the first segment of curve using qt data structure
     * @param seg1_ the second segment of curve using qt data structure
-    * @see testMeToo()
-    * @see publicVar()
+    * @see QPolygonF
+    * @see QPainterPath
+    * @see SketchLibrary1::overSketch
     * @return QPainterPath the resulting curve from the oversketch.
     */
     static QPainterPath overSketchQt( const QPolygonF& seg0_, const QPolygonF& seg1_ )
@@ -42,8 +43,8 @@ class SketchLibraryWrapper
     /**
     * Static method to convert a curve from Qt to Curve2D
     * @param pol_ curve from Qt data structure
-    * @see testMeToo()
-    * @see publicVar()
+    * @see Curve2D
+    * @see QPolygonF
     * @return Curve2D
     */
     static Curve2D fromQtToCurve2D( const QPolygonF& pol_ )
@@ -63,8 +64,8 @@ class SketchLibraryWrapper
     /**
     * Static method to convert a curve from Curve2D to a curve in Qt
     * @param pol_ curve from Curve2D
-    * @see testMeToo()
-    * @see publicVar()
+    * @see Curve2D
+    * @see QPolygonF
     * @return QPolygonF
     */
     static QPolygonF fromCurve2DToQt( const Curve2D& curve_ )
@@ -85,8 +86,8 @@ class SketchLibraryWrapper
     /**
     * Static method to convert a Point2D to a point in Qt
     * @param p a point Point2D
-    * @see testMeToo()
-    * @see publicVar()
+    * @see Point2D
+    * @see QPointF
     * @return QPointF
     */
     static QPointF Point2DToQPointF( const Point2D & p )
@@ -98,8 +99,8 @@ class SketchLibraryWrapper
     /**
     * Static method to convert a point in Qt to a point Point2D
     * @param p a point QPointF
-    * @see testMeToo()
-    * @see publicVar()
+    * @see Point2D
+    * @see QPointF
     * @return Point2D
     */
     static Point2D QPointFToPoint2D( const QPointF &p )
@@ -121,7 +122,8 @@ class CurveItem : public QGraphicsPathItem
     public:
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QGraphicsPathItem's constructor.
+        * @param parent_ the parent item
         */
         CurveItem( QGraphicsItem *parent_ = nullptr );
 
@@ -134,8 +136,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to get the bounding box of the user input curve
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QRectF()
         * @return QRectF the bounding box of the curve
         */
         QRectF boundingRect() const override ;
@@ -144,9 +145,8 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to start a new segment of curve
         * @param p_ the starting point of a new segment of curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPointF()
+        * @return void.
         */
         bool create( const QPointF& p_ );
 
@@ -154,8 +154,7 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to connect the last point in the curve to the new point p_
         * @param p_ a new point to be connected to the curve
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPointF()
         * @return Boolean. Return true if the point can be added to the curve, and false otherwise
         * A point cannot be added if the curve is already done.
         */
@@ -164,26 +163,21 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to connect two segments, if there are more than one segment, of curve using oversketch.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see SketchLibraryWrapper::overSketchQt()
+        * @return void
         */
         void connect();
 
 
         /**
         * Set the curve as done. This not allow add any point more to the curve.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void setDone();
 
 
         /**
         * Check if the curve is done.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. Return true if the curve is done, and false if not.
         */
         bool isDone() const;
@@ -192,17 +186,13 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to clear the curve and set it as done.
         * Add a new point is only allowed using the 'Create' method.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void clear();
 
 
         /**
         * Method to check if the curve is empty
-        * @see testMeToo()
-        * @see publicVar()
         * @return Boolean. It is true if the curve is empty and false if there is at least a point.
         */
         bool isEmpty() const;
@@ -213,9 +203,7 @@ class CurveItem : public QGraphicsPathItem
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void setColor( int r_, int g_, int b_ );
 
@@ -225,9 +213,7 @@ class CurveItem : public QGraphicsPathItem
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void getColor( int& r_, int& g_, int& b_ );
 
@@ -235,17 +221,14 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to set the color of the curve using a QColor
         * @param color the new color of the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void setColor( const QColor& color_ );
 
 
         /**
         * Method to get the color of the curve by QColor
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor()
         * @return QColor
         */
         QColor getColor() const;
@@ -254,17 +237,13 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to set the width of the curve line
         * @param width the width of the curve line
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void setWidth( int width_ );
 
 
         /**
         * Method to get the width of the curve line
-        * @see testMeToo()
-        * @see publicVar()
         * @return int the width of the curve
         */
         int getWidth() const;
@@ -274,8 +253,7 @@ class CurveItem : public QGraphicsPathItem
         * Method to set the style of the curve line.
         * The style of the curve can be dotted, dashed, full, etc...
         * @see Qt::PenStyle
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void setStyle( const Qt::PenStyle& style_ );
 
@@ -284,7 +262,6 @@ class CurveItem : public QGraphicsPathItem
         * Method to get the style of the curve line.
         * The style of the curve can be dotted, dashed, full, etc...
         * @see Qt::PenStyle
-        * @see publicVar()
         * @return Qt::PenStyle the style of the curve
         */
         Qt::PenStyle getStyle() const;
@@ -293,8 +270,8 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to set the curve directly
         * @param curve_ the curve to be set
-        * @see publicVar()
-        * @return Void
+        * @see PolyCurve
+        * @return void
         */
         void setCurve( const PolyCurve& curve_ );
 
@@ -303,15 +280,15 @@ class CurveItem : public QGraphicsPathItem
         * Method to set many segments of curves
         * @param curves_ the curves to be set
         * @param swapped_ boolean to indicate if the coordinate of points should be swapped
-        * @see publicVar()
-        * @return Void
+        * @see PolyCurve
+        * @return void
         */
         void setCurves( const std::map< double, PolyCurve >& curves_, bool swapped_ = false );
 
 
         /**
         * Method to get the curve
-        * @see publicVar()
+        * @see PolyCurve
         * @return PolyCurve
         */
         PolyCurve getCurve() const;
@@ -320,8 +297,7 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to turn the curve in a X-monotonic curve
         * The transformed curve will replace the existent in the member curve.
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void getMonotonicX();
 
@@ -329,16 +305,14 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to turn the curve in a Y-monotonic curve
         * The transformed curve will replace the existent in the member curve.
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void getMonotonicY();
 
 
         /**
         * This method checks if the curve should be visible or not
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsPathItem::isVisible()
         * @return boolean. Returns true if the curve is visible, and false otherwise.
         */
         virtual bool isVisible() const { return QGraphicsPathItem::isVisible(); }
@@ -346,8 +320,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * This method checks if the curve should be selected or not
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsPathItem::isSelected()
         * @return boolean. Returns true if the curve is selected, and false otherwise.
         */
         virtual bool isSelected() const { return QGraphicsPathItem::isSelected(); }
@@ -355,9 +328,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * A pure virtual method to update
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         virtual void update(){}
 
@@ -365,8 +336,7 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to reset the color of the curve to default.
         * @see DEFAULT_LINE_COLOR
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void resetToDefaultColor();
 
@@ -374,7 +344,6 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to reset the width of the curve to default.
         * @see DEFAULT_LINE_WIDTH
-        * @see publicVar()
         * @return Void
         */
         void resetToDefaultWidth();
@@ -383,8 +352,7 @@ class CurveItem : public QGraphicsPathItem
         /**
         * Method to reset the style of the curve to default.
         * @see DEFAULT_LINE_STYLE
-        * @see publicVar()
-        * @return Void
+        * @return void
         */
         void resetToDefaultStyle();
 
@@ -396,9 +364,10 @@ class CurveItem : public QGraphicsPathItem
         //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPainter
+        * @see QStyleOptionGraphicsItem
+        * @see QWidget
+        * @return void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
                             QWidget* widget ) override;
@@ -407,8 +376,6 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * This method checks if the curve has more than one segment
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean. Returns true if the curve has more than one segment and false otherwise
         */
         bool hasSubpaths();
@@ -423,9 +390,6 @@ class CurveItem : public QGraphicsPathItem
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Color{ int red = 255, green = 0, blue = 0; };
 

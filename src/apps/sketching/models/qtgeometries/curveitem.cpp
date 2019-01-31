@@ -24,7 +24,7 @@ void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * opt
         return;
     }
 
-
+    // changing the curve style
     QPainterPathStroker stroker_;
     stroker_.setCurveThreshold( 0.4 );
     stroker_.setCapStyle( Qt::RoundCap );
@@ -35,6 +35,8 @@ void CurveItem::paint( QPainter * painter_, const QStyleOptionGraphicsItem * opt
     pen_.setColor( getColor() );
     pen_.setWidth( getWidth() );
     pen_.setStyle( getStyle() );
+
+    // the curve has a constant width regardless of any transformations applied to the item
     pen_.setCosmetic( true );
 
 
@@ -55,6 +57,8 @@ bool CurveItem::create( const QPointF& p_ )
 {
     if( isDone() == false ) return false;
 
+    // this notifies the item that its geometry is going to be changed. This is important to update its
+    // bounding box.
     prepareGeometryChange();
     curve.moveTo( p_ );
     is_done = false;
@@ -74,6 +78,7 @@ bool CurveItem::add( const QPointF& p_ )
 
 bool CurveItem::hasSubpaths()
 {
+    // if the curve has more than one subpath so, return true. returns false otherwise
     return ( curve.toSubpathPolygons().size() > 1/*MIN_SUBPATHS_OVERSKETCH*/ );
 }
 
@@ -82,9 +87,12 @@ void CurveItem::connect()
 {
     setDone();
 
+
     bool status_ = !isEmpty();
     status_ &= hasSubpaths();
 
+    // if the curve is not empty and has more than one segment (subpath) so this method connects the segments
+    // using oversketch
     if( status_ == false ) return;
 
     prepareGeometryChange();
@@ -109,12 +117,14 @@ bool CurveItem::isDone() const
 
 void CurveItem::setCurve( const PolyCurve& curve_ )
 {
+    // cleaning the curve
     curve = QPainterPath();
 
     std::size_t number_of_segments = curve_.getNumberOfSegments();
     for( std::size_t i = 0; i < number_of_segments; ++i )
     {
-        QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+        // get all subpaths of the curve_ and append to the curve.
+        QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
         curve.addPolygon( pol_ );
     }
 
@@ -127,8 +137,11 @@ void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool sw
 {
     curve = QPainterPath();
 
+    // if swapped is true, each coordinate should be swapped before being added to the curve
     if( swapped_ == true )
     {
+
+        // for each curve in the map append all of them in curve
 
         for( auto it_: curves_ )
         {
@@ -137,7 +150,8 @@ void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool sw
             std::size_t number_of_segments = curve_.getNumberOfSegments();
             for( std::size_t i = 0; i < number_of_segments; ++i )
             {
-                QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+                // get all subpaths of the curve_ and append to the curve.
+                QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
                 curve.addPolygon( pol_ );
             }
 
@@ -155,7 +169,7 @@ void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool sw
             std::size_t number_of_segments = curve_.getNumberOfSegments();
             for( std::size_t i = 0; i < number_of_segments; ++i )
             {
-                QPolygonF& pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
+                QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
                 curve.addPolygon( pol_ );
             }
 
@@ -179,6 +193,9 @@ void CurveItem::getMonotonicX()
     if( isEmpty() == true ) return;
 
     Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
+
+    // turning the first subpath into a monotonic curve in the X direction.
+    // it is supposed that the curve has only one subpath, i.e., this is done after any connect
     curve_ = SketchLibrary1::monotonicInX( curve_ );
 //    curve_ = SketchLibrary1::smooth( curve_ );
     setCurve( PolyCurve( curve_ ) );
@@ -191,6 +208,8 @@ void CurveItem::getMonotonicY()
 
     if( isEmpty() == true ) return;
 
+    // turning the first subpath into a monotonic curve in the Y direction.
+    // it is supposed that the curve has only one subpath, i.e., this is done after any connect
     Curve2D curve_ = getCurve().getCurves2D()[ 0 ];
     curve_ = SketchLibrary1::monotonicInY( curve_ );
 //    curve_ = SketchLibrary1::smooth( curve_ );
