@@ -26,14 +26,11 @@
 
 Regions::Regions()
 {
-    std::cout << "REGION CREATED" << std::endl << std::flush;
     initialize();
 }
 
 Regions::Regions(const Regions & reg_)
 {
-
-    std::cout << "REGION CREATED" << std::endl << std::flush;
 
     this->index_cells = reg_.index_cells;
     this->vertices = reg_.vertices;
@@ -200,18 +197,6 @@ std::string Regions::getName() const
 {
     return name;
 }
-
-
-//void Regions::setVisible( const bool status_ )
-//{
-//    is_visible = status_;
-//}
-
-
-//bool Regions::isVisible() const
-//{
-//    return is_visible;
-//}
 
 
 

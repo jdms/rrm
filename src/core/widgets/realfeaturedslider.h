@@ -43,12 +43,15 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Constructor.
+        * @param o_ the slider orientation
         */
         RealFeaturedSlider( Qt::Orientation o_ );
 
 
         /**
         * Constructor.
+        * @param o_ the slider orientation
+        * @param disc_ the slider discretization
         */
         RealFeaturedSlider( Qt::Orientation o_, int disc_ );
 
@@ -56,17 +59,13 @@ class RealFeaturedSlider: public Slider
         /**
         * Method to get the mapping between the double and the QSliders values of the markers
         * @param markers map between the double and the QSliders values of the markers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void getDoubleMarkers( std::map< double, int >& markers_ );
 
 
         /**
         * Method to return the double maximum value of the slider
-        * @see testMeToo()
-        * @see publicVar()
         * @return double double maximum value of the slider
         */
         double maximumValue() const;
@@ -74,8 +73,6 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Method to return the double minimum value of the slider
-        * @see testMeToo()
-        * @see publicVar()
         * @return double double minimum value of the slider
         */
         double minimumValue() const;
@@ -87,9 +84,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Methods (slots) called when the user uses a right-click to add a marker in some slider position
         * @param value the position where the user wants to add a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void addMarker( double value );
 
@@ -97,9 +92,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Methods (slots) called when the user uses a medium-button-click to remove a marker of some slider position
         * @param value the position where the user wants to remove a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeMarker( double value );
 
@@ -108,9 +101,7 @@ class RealFeaturedSlider: public Slider
         * Methods (slots) called when the range of the slider is changed
         * @param min_ minimum value for the slider range
         * @param max_ maximum value for the slider range
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setRange( double min_, double max_ );
 
@@ -118,9 +109,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Methods (slots) called when the discretization of the slider is changed
         * @param disc_ new discretization of the slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDiscretization( int disc_ );
 
@@ -128,17 +117,13 @@ class RealFeaturedSlider: public Slider
         /**
         * Methods (slots) called when the current value of the slider is changed
         * @param value_ current value of the slider in double
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setValue( double value_ );
 
 
         /**
         * Methods (slots) called to return the double value of the slider equivalent to the integer given
-        * @see testMeToo()
-        * @see publicVar()
         * @return double double value equivalent to the given integer
         */
         double getDoubleValue( int index_ ) const;
@@ -146,8 +131,6 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to return the current double value of the slider
-        * @see testMeToo()
-        * @see publicVar()
         * @return double current double value of the slider
         */
         double getValue() const ;
@@ -155,8 +138,6 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to return the integer value of the slider equivalent to the given double
-        * @see testMeToo()
-        * @see publicVar()
         * @return int the integer value of the slider equivalent to the given double
         */
         int getIndex( double value_ ) const ;
@@ -164,8 +145,6 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to increase the value of the double slider, i.e,  give a single step
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void
         */
         void increaseValue();
@@ -173,18 +152,14 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to decrease the value of the double slider, i.e,  return a single step
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void decreaseValue();
 
 
         /**
         * Methods (slots) called to reset the slider to default value, and remove all markers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear();
 
@@ -194,10 +169,8 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to move the slider position to the given value
-        * @param
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @param index_ the integer value
+        * @return void.
         */
         void moveInDouble( int index_ );
 
@@ -209,9 +182,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Signal emmited when the double slider has changed its current value
         * @param value_ the new double value
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void sliderMoved( const double& value_ );
 
@@ -220,9 +191,8 @@ class RealFeaturedSlider: public Slider
         * Signal emmited when a marker is added in the slider
         * @param value_ the double value where the marker was added
         * @param color_ the color of the marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QColor
+        * @return void.
         */
         void markValue( const double& value, QColor color_ );
 
@@ -230,9 +200,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Signal emmited when a marker is removed from the slider
         * @param value_ the double value where the marker was removed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void unmarkValue( double value );
 
@@ -240,9 +208,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Signal emmited when the slider is over a marker
         * @param value the double value where the marker is placed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void hightlightValue( double value );
 
@@ -253,9 +219,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Method (slots) to update the step value when the range of the slider is changed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateStep();
 
@@ -263,9 +227,7 @@ class RealFeaturedSlider: public Slider
         /**
         * Method (slots) called when the mouse button is pressed over an existent marker
         * @param pos_ the position of the marker on the slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void hightlightMarker( int pos_ );
 
@@ -273,18 +235,14 @@ class RealFeaturedSlider: public Slider
         /**
         * Method (slots) to return if a marker exists or not in a given position
         * @param pos_ a position in the slider to know if exists a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return boolean returns true if there is a marker in this value, anf false otherwise
         */
         bool isValidMarker( int value );
 
 
         /**
         * Method (slots) to update the markers positions after resizing the slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateMarkerPositions();
 
@@ -295,9 +253,7 @@ class RealFeaturedSlider: public Slider
         * @param slider_lenght the lenght of the slider
         * @param slider_min the minimum value of the slider range
         * @param slider_max the maximum value of the slider range
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void saveMarkerPosition( int value, int slider_length, int slider_min, int slider_max );
 
@@ -305,20 +261,16 @@ class RealFeaturedSlider: public Slider
         /**
         * Method (slots) auxiliary to retrieve the slider properties
         * @param slider_lenght the lenght of the slider
-        * @param slider_min the minimum value of the slider range
-        * @param slider_max the maximum value of the slider range
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @param slider_min the minimum positions of the slider range
+        * @param slider_max the maximum positions of the slider range
+        * @return void.
         */
         void getSubControlDimensions( int& slider_length, int& slider_min, int& slider_max ) const ;
 
 
         /**
         * Method (slots) to reset the slider values to the default value, and clear all markers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setDefaultValues();
 

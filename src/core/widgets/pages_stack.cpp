@@ -75,6 +75,8 @@ void PagesStack::createVolumePropertiesPage()
 void PagesStack::createVolumeActions()
 {
 
+
+    // synchronizing the slider with the spinbox
     connect( wd_volume_resize.hs_width_volume, SIGNAL( sliderMoved(int) ),
              wd_volume_resize.sb_width_volume, SLOT( setValue(int) ) );
 
@@ -241,6 +243,7 @@ void PagesStack::createObjectPropertiesPage()
 
     wd_object_properties.groupBox->setTitle( "Object Log" );
 
+    // saving automatically the text
     connect( wd_object_properties.te_object_properties, &QTextEdit::textChanged, [=]() {
             QString text_ = wd_object_properties.te_object_properties->toPlainText();
             emit saveText( text_ );

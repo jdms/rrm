@@ -60,13 +60,13 @@ class Object
 
 
         /**
-        * Constructor.
+        * Copy constructor.
         */
         Object( const Object& obj_ );
 
 
         /**
-        * Constructor.
+        * Assignment operator.
         */
         Object& operator=( const Object & obj_ );
 
@@ -80,17 +80,13 @@ class Object
         /**
         * Method to set a new index to the object
         * @param id_ a new index to the object
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void setIndex( std::size_t id_ );
 
 
         /**
         * Method to return the index of the object
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::size_t the index of the object
         */
         std::size_t getIndex() const;
@@ -99,17 +95,13 @@ class Object
         /**
         * Method to set a name to the object
         * @param id_ a new name to the object
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setName( const std::string& name_ );
 
 
         /**
         * Method to return the name of the object
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::string the name of the object
         */
         std::string getName() const;
@@ -120,9 +112,7 @@ class Object
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setColor(int r_, int g_, int b_);
 
@@ -132,9 +122,7 @@ class Object
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getColor(int& r_, int& g_, int& b_) const;
 
@@ -147,8 +135,7 @@ class Object
         * @param minx_ the minimum value of X
         * @param miny_ the minimum value of Y
         * @param minz_ the minimum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setBoundingBox( double xmin_, double xmax_, double ymin_, double ymax_,
                              double zmin_, double zmax_ );
@@ -162,8 +149,7 @@ class Object
         * @param minx_ reference to the minimum value of X
         * @param miny_ reference to the minimum value of Y
         * @param minz_ reference to the minimum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getBoundingBox( double& xmin_, double& xmax_, double& ymin_, double& ymax_,
                              double& zmin_, double& zmax_ );
@@ -174,8 +160,7 @@ class Object
         * @param maxx_ the maximum value of X
         * @param maxy_ the maximum value of Y
         * @param maxz_ the maximum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setMaximumBounding( double xmax_, double ymax_, double zmax_ );
 
@@ -185,8 +170,7 @@ class Object
         * @param minx_ reference to the minimum value of X
         * @param miny_ reference to the minimum value of Y
         * @param minz_ reference to the minimum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setMinimumBounding( double xmin_, double ymin_, double zmin_ );
 
@@ -194,15 +178,13 @@ class Object
         /**
         * Method to set the object editable or not
         * @param status_ if the value is true the object is editable and false otherwise
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setEditable( bool status_ );
 
 
         /**
         * Method to check if the object is editable or not
-        * @see publicVar()
         * @return returns true if the object is editable and false otherwise
         */
         bool isEditable() const;
@@ -211,15 +193,13 @@ class Object
         /**
         * Method to set the object selectable or not
         * @param status_ if the value is true the object is selectable and false otherwise
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setSelectable( bool status_ );
 
 
         /**
         * Method to check if the object is selectable or not
-        * @see publicVar()
         * @return returns true if the object is selectable and false otherwise
         */
         bool isSelectable() const;
@@ -228,15 +208,13 @@ class Object
         /**
         * Method to set the object selected or not
         * @param status_ if the value is true the object is selected and false otherwise
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setSelected( bool status_ );
 
 
         /**
         * Method to check if the object is selected or not
-        * @see publicVar()
         * @return returns true if the object is selected and false otherwise
         */
         bool isSelected() const;
@@ -245,15 +223,13 @@ class Object
         /**
         * Method to set the object visible or not
         * @param status_ if the value is true the object is visible and false otherwise
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setVisible( bool status_ );
 
 
         /**
         * Method to check if the object is visible or not
-        * @see publicVar()
         * @return returns true if the object is visible and false otherwise
         */
         bool isVisible() const;
@@ -262,15 +238,13 @@ class Object
         /**
         * Method to set the object active or not
         * @param status_ if the value is true the object is active and false otherwise
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setActive( bool status_ );
 
 
         /**
         * Method to check if the object is active or not
-        * @see publicVar()
         * @return returns true if the object is active and false otherwise
         */
         bool isActive() const;
@@ -280,7 +254,7 @@ class Object
         * Method to set the cross-section direction in which the object was created
         * @param dir_ the cross-section direction in which the object was created
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
         void setCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
@@ -295,25 +269,21 @@ class Object
 
         /**
         * Method to remove all cross-sections curves
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeCrossSectionCurves();
 
 
         /**
         * Method to remove all preview curves, i.e., the curves that were not added by the user
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clearPreviewCurves();
 
 
         /**
         * Method to get the curves that were added to the object
-        * @see none
+        * @see PolyCurve
         * @return std::map< double, PolyCurve > a mapping between the cross-section depth and the curve associated
         */
         std::map< double, PolyCurve > getCurves() ;
@@ -323,7 +293,6 @@ class Object
         * Method to get all the curves in a vector of double
         * This method allows swap the coordinates if desired
         * @param swap_ if swap is true the coordinates should be swapped before returning
-        * @see none
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves2D( bool swap_ = false );
@@ -331,7 +300,6 @@ class Object
 
         /**
         * Method to get the curve in coordinates 3d, considering the depth and the direction that the curve was done
-        * @see none
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves3D();
@@ -339,7 +307,6 @@ class Object
 
         /**
         * Method to get the curve in coordinates 3d, adding the depth that each curve was made in the X coordinate
-        * @see none
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves3DX();
@@ -347,7 +314,6 @@ class Object
 
         /**
         * Method to get the curve in coordinates 3d, adding the depth that each curve was made in the Y coordinate
-        * @see none
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves3DY();
@@ -355,7 +321,6 @@ class Object
 
         /**
         * Method to get the curve in coordinates 3d, adding the depth that each curve was made in the Z coordinate
-        * @see none
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves3DZ();
@@ -363,8 +328,7 @@ class Object
 
         /**
         * Method to remove all curves from the object
-        * @see none
-        * @return Void
+        * @return void.
         */
         void removeCurves();
 
@@ -373,7 +337,7 @@ class Object
         * Method to add a curve to the object
         * @param csection_id_ the cross-section depth where the curve_ was made
         * @param curve_ the curve (sketch) made by the user
-        * @see none
+        * @see PolyCurve
         * @return bool returns true if the curve was added properly and false otherwise
         */
         bool addCurve( double csection_id_, const PolyCurve& curve_ );
@@ -382,15 +346,12 @@ class Object
         /**
         * Method to remove the curve made in the cross-section csection_id_
         * @param csection_id_ the cross-section depth where the curve_ was made
-        * @see none
         * @return bool returns true if the curve was removed properly and false otherwise
         */
         bool removeCurve( double csection_id_ );
 
         /**
         * Method to check if exists a curve in the given cross-section depth
-        * @see testMeToo()
-        * @see publicVar()
         * @return bool return true if exists a curve in the given cross-section depth
         */
         bool hasCurve( double csection_id_ ) const;
@@ -398,8 +359,7 @@ class Object
 
         /**
         * Method to return the curve from the given cross-section depth
-        * @see testMeToo()
-        * @see publicVar()
+        * @see PolyCurve
         * @return PolyCurve the curve existent in the given cross-section depth
         */
         PolyCurve getCurve( double csection_id_ );
@@ -409,24 +369,21 @@ class Object
         * Method to update the curve of the given cross-section depth
         * @param csection_id_ the depth of the cross-section
         * @param curve_ the curve to replace the old one
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see PolyCurve
+        * @return void.
         */
         void updateCurve( double csection_id_, const PolyCurve& curve_ );
 
 
         /**
         * Method to remove all the level curves from the object
-        * @see none
-        * @return Void
+        * @return void.
         */
         void removeLevelCurves();
 
 
         /**
         * Method to return the number of cross-sections used, i.e., the number of curves
-        * @see none
         * @return std::size_t the number of cross-sections used, i.e., the number of curves
         */
         std::size_t getNumberOfCrossSections() const;
@@ -435,7 +392,7 @@ class Object
         /**
         * Method to add a trajectory to the object
         * @param traj_ the trajectory made by the user
-        * @see none
+        * @see PolyCurve
         * @return bool returns true if the trajectory was added properly and false otherwise
         */
         bool addTrajectory( const PolyCurve& traj_ );
@@ -443,15 +400,14 @@ class Object
 
         /**
         * Method to remove the trajectory from the object
-        * @see none
-        * @return Void
+        * @return void.
         */
         void removeTrajectory();
 
 
         /**
         * Method to return the trajectory of the object, if it exists
-        * @see Settings::CrossSection::CrossSectionDirections
+        * @see PolyCurve
         * @return PolyCurve the trajectory of the object
         */
         PolyCurve getTrajectory();
@@ -459,7 +415,6 @@ class Object
 
         /**
         * Method to check if exists a trajectory in the object
-        * @see none
         * @return bool returns true if exists a trajectory and false otherwise
         */
         bool hasTrajectory() const;
@@ -468,15 +423,13 @@ class Object
         /**
         * Method to set the surface generate from the curves added to the object
         * @param surface_ the surface generate from the curves added to the object
-        * @see none
-        * @return Void
+        * @return void.
         */
         void setSurface( const Surface& surface_ );
 
 
         /**
         * Method to return the surface generate from the curves added to the object
-        * @see none
         * @return the surface generate from the curves added to the object
         */
         const Surface& getSurface() const;
@@ -484,8 +437,6 @@ class Object
 
         /**
         * Method to check if the object already has a surface
-        * @see testMeToo()
-        * @see publicVar()
         * @return bool returns true if the object already has a surface and false otherwise
         */
         bool hasSurface(){ return !surface.isEmpty(); }
@@ -493,9 +444,7 @@ class Object
 
         /**
         * Method to remove the object surface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeSurface();
 
@@ -505,8 +454,7 @@ class Object
         * This method was implement because after a surface is created all the curves should be created automatically by
         * the rules_processor. If the object was created in the Height direction the level curves should not be removed, since
         * the rules_processor do not return the level-curves intersection.
-        * @see none
-        * @return Void
+        * @return void.
         */
         void removed();
 
@@ -517,7 +465,7 @@ class Object
         * 'DOMAINS', 'WELL'
         * @param type_ the type of the object
         * @see Settings::Objects::ObjectType
-        * @return Void
+        * @return void.
         */
         void setType( const Settings::Objects::ObjectType& type_ );
 
@@ -526,7 +474,6 @@ class Object
         * Method to return the type of the object.
         * Currently, the types available are: 'NONE', 'VOLUME', 'CROSS_SECTION', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION',
         * 'DOMAINS', 'WELL'
-        * @param type_
         * @see Settings::Objects::ObjectType
         * @return ObjectType the type of the object
         */
@@ -538,8 +485,7 @@ class Object
         * The object is considered done when the surface is created and assigned to it.
         * If the object is done, it is not allowed to add more curves to it.
         * @param status_ if status_ is true the object is done and false otherwise
-        * @see none
-        * @return Void
+        * @return void.
         */
         void setDone( const bool status_ );
 
@@ -548,7 +494,6 @@ class Object
         * Method to check if the object is done.
         * The object is considered done when the surface is created and assigned to it.
         * If the object is done, it is not allowed to add more curves to it.
-        * @see none
         * @return bool returns true if the object is done and false otherwise
         */
         bool isDone() const;
@@ -557,27 +502,21 @@ class Object
         /**
         * Method to set an object log information
         * @param text_ an object log information
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void saveInformation( const std::string& text_ );
 
 
         /**
         * Method to get the object log information
-        * @see testMeToo()
-        * @see publicVar()
-        * @return object log information
+        * @return std::string object log information
         */
         const std::string& getInformation();
 
 
         /**
         * Method to clear the object log information
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clearInformation();
 
@@ -585,8 +524,6 @@ class Object
         /**
         * Method to check if the object is empty
         * An object is empty if there is no curve or level curve added to it.
-        * @see testMeToo()
-        * @see publicVar()
         * @return bool return true if there is no curve or level curve added to it, and false otherwise
         */
         bool isEmpty() const;
@@ -594,8 +531,6 @@ class Object
 
         /**
         * Method to check if the object still allows to add curves, i.e., the object is not done yet
-        * @see testMeToo()
-        * @see publicVar()
         * @return bool returns true if the object is not done and false otherwise
         */
         bool isCurveAdmissible();
@@ -604,8 +539,6 @@ class Object
         /**
         * Method to check if the object still allows to add trajectories, i.e., the object is not done yet
         * The method return false if the object already has a trajectory or there are more than a cross-section curve added
-        * @see testMeToo()
-        * @see publicVar()
         * @return bool returns true if the object still allows to add trajectories and false otherwise
         */
         bool isTrajectoryAdmissible();
@@ -613,27 +546,21 @@ class Object
 
         /**
         * This method removes all metadata from the structure.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         virtual void clear();
 
 
         /**
         * This method sets the default values for the data.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void initialize();
 
 
         /**
         * This method reset the number of cross-section to zero in all application
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         static void resetAllObjects();
 
@@ -641,9 +568,8 @@ class Object
         /**
         * This method saves the object metadata into a file using json
         * @param json_ a JSON object from Qt
-        * @see QJsonObject()
-        * @see publicVar()
-        * @return Void
+        * @see QJsonObject
+        * @return void.
         */
         inline virtual void write( QJsonObject &json ) const
         {
@@ -691,9 +617,8 @@ class Object
         /**
         * This method reads the object metadata from a file using json
         * @param json_ a reference to a JSON object from Qt
-        * @see QJsonObject()
-        * @see publicVar()
-        * @return Void
+        * @see QJsonObject
+        * @return void.
         */
         inline virtual void read( const QJsonObject &json )
         {
@@ -771,10 +696,16 @@ class Object
 
     protected:
 
+
+        /**
+        * This method defines automatically the index of the stratigraphy
+        * @return void.
+        */
         void defineIndex();
 
 
-    std::size_t index = 0;
+        std::size_t index = 0;                                                  /**< The index of the object */
+
 
     private:
 
@@ -785,9 +716,6 @@ class Object
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Color {
             int red = 255;
@@ -802,9 +730,6 @@ class Object
         * @var x x coordinate of the point
         * @var y y coordinate of the point
         * @var z z coordinate of the point
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Point
         {

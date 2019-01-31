@@ -42,16 +42,16 @@ class Slider: public QSlider
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QSlider's constructor.
+        * @param parent_ the parent item
+        * @see QWidget
         */
         Slider( QWidget* parent = nullptr );
 
 
         /**
         * Method to return the number of markers existents on slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         int getNumberofMarkers() const;
 
@@ -59,9 +59,7 @@ class Slider: public QSlider
         /**
         * Method to get the mapping between the position of the marker and the value of the slider
         * @param markers map between the position and the QSliders values of the markers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void getMarkers( std::map< int, int >& markers_ ) const;
 
@@ -72,9 +70,7 @@ class Slider: public QSlider
         /**
         * Methods (slots) called when the user uses a right-click to add a marker in some slider position
         * @param value the position where the user wants to add a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void addMarker( int value );
 
@@ -82,18 +78,14 @@ class Slider: public QSlider
         /**
         * Methods (slots) called when the user uses a medium-button-click to remove a marker of some slider position
         * @param value the position where the user wants to remove a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void removeMarker( int value );
 
 
         /**
         * Inline method called to remove all markers
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void clearMarkers(){  markers.clear(); color_markers.clear(); }
 
@@ -105,9 +97,7 @@ class Slider: public QSlider
         * Signal emmited when a marker is added in the slider
         * @param value_ the value where the marker was added
         * @param color_ the color of the marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void markValue( int value, QColor color_ );
 
@@ -115,9 +105,7 @@ class Slider: public QSlider
         /**
         * Signal emmited when a marker is removed from the slider
         * @param value_ the value where the marker was removed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void unmarkValue( int value );
 
@@ -125,9 +113,7 @@ class Slider: public QSlider
         /**
         * Signal emmited when the slider is over a marker
         * @param value the value where the marker is placed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void hightlightValue( int value );
 
@@ -138,9 +124,7 @@ class Slider: public QSlider
         /**
         * Method called when the mouse button is pressed over an existent marker
         * @param pos_ the position of the marker on the slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void hightlightMarker( int pos_ );
 
@@ -148,18 +132,14 @@ class Slider: public QSlider
         /**
         * Method (slots) to return if a marker exists or not in a given position
         * @param pos_ a position in the slider to know if exists a marker
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         bool isValidMarker( int value );
 
 
         /**
         * Method to update the markers positions after resizing the slider
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void updateMarkerPositions();
 
@@ -170,9 +150,7 @@ class Slider: public QSlider
         * @param slider_lenght the lenght of the slider
         * @param slider_min the minimum value of the slider range
         * @param slider_max the maximum value of the slider range
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void saveMarkerPosition( int value, int slider_length, int slider_min, int slider_max );
 
@@ -182,9 +160,7 @@ class Slider: public QSlider
         * @param slider_lenght the lenght of the slider
         * @param slider_min the minimum value of the slider range
         * @param slider_max the maximum value of the slider range
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getSubControlDimensions( int& slider_length, int& slider_min, int& slider_max ) const ;
 
@@ -193,25 +169,24 @@ class Slider: public QSlider
         * Method to redraw the sliders.
         * This is an override method and was implemented to draw the markers
         * @param ev the event of repaint
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see QPaintEvent
+        * @return void.
         */
         void paintEvent( QPaintEvent *ev );
 
 
         /**
         * Virtual method to handle the events when a mouse button is pressed.
-        * @see publicVar()
-        * @return Void.
+        * @see QMouseEvent
+        * @return void.
         */
         void mousePressEvent( QMouseEvent *event );
 
 
         /**
         * Virtual method to handle the events when the slider is resized
-        * @see publicVar()
-        * @return Void.
+        * @see QResizeEvent
+        * @return void.
         */
         void resizeEvent( QResizeEvent *event );
 

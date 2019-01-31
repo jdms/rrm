@@ -59,13 +59,13 @@ class Regions: public Object
 
 
         /**
-        * Constructor.
+        * Copy constructor.
         */
         Regions( const Regions& reg_ );
 
 
         /**
-        * Constructor.
+        * Assignment operator.
         */
         Regions& operator=(const Regions& reg_);
 
@@ -79,17 +79,13 @@ class Regions: public Object
         /**
         * Method to set a new index to the region
         * @param id_ a new index to the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setIndex( std::size_t id_ );
 
 
         /**
         * Method to return the index of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::size_t the index of the region
         */
         std::size_t getIndex() const;
@@ -98,8 +94,6 @@ class Regions: public Object
         /**
         * Method to return the decompose and return the tetrahedrals into triangles
         * This method is mainly used to get the triangles to draw using opengl
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::size_t the vector of the tetrahedrals decomposed into triangles
         */
         void getTriangleCells( std::vector< std::size_t >& cells_ ) const;
@@ -107,17 +101,13 @@ class Regions: public Object
 
         /**
         * Method to set the tetrahedrals cells of the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setTetrahedralCells( const std::vector< std::size_t >& cells_ );
 
 
         /**
         * Method to return the tetrahedrals cells of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< std::size_t > a vector of the indexes that defines a cell for all cells
         */
         void getTetrahedralCells( std::vector< std::size_t >& cells_ ) const;
@@ -125,9 +115,7 @@ class Regions: public Object
 
         /**
         * Method to remove all cells from the structure
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clearCells();
 
@@ -135,17 +123,13 @@ class Regions: public Object
         /**
         * Method to set the vertices of the mesh of the region
         * @param vertices_ a vector of the vertices coordinates that belongs to the region mesh
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setVertices( const std::vector< double >& vertices_  );
 
 
         /**
         * Method to get the vertices of the mesh of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > a vector of the vertices coordinates that belongs to the region mesh
         */
         void getVertices( std::vector< double >& vertices_  ) const;
@@ -153,9 +137,7 @@ class Regions: public Object
 
         /**
         * Method to remove all the vertices from the structure
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clearVertices();
 
@@ -165,9 +147,7 @@ class Regions: public Object
         * @param x_ the X coordinate of the point
         * @param y_ the Y coordinate of the point
         * @param z_ the Z coordinate of the point
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setPoint( double x_, double y_, double z_ );
 
@@ -177,9 +157,7 @@ class Regions: public Object
         * @param x_ the reference to the X coordinate of the point
         * @param y_ the reference to the Y coordinate of the point
         * @param z_ the reference to the Z coordinate of the point
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getPoint( double& x_, double& y_, double& z_ ) const;
 
@@ -187,17 +165,13 @@ class Regions: public Object
         /**
         * Method to set a name to the region
         * @param name_ a new name to the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setName( const std::string& name_ );
 
 
         /**
         * Method to return the name of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::string the name of the region
         */
         std::string getName() const;
@@ -206,9 +180,8 @@ class Regions: public Object
         /**
         * Method to set the lower boundary of the region
         * @param lower_ the lower curve which delimits the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see PolyCurve
+        * @return void.
         */
         void setLowerBound( const PolyCurve& lower_ );
 
@@ -216,16 +189,15 @@ class Regions: public Object
         /**
         * Method to set the upper boundary of the region
         * @param upper_ the upper curve which delimits the region
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @see PolyCurve
+        * @return void.
         */
         void setUpperBound( const PolyCurve& upper_ );
 
 
         /**
         * Method to return the lower boundary of the region
-        * @see publicVar()
+        * @see PolyCurve
         * @return PolyCurve the lower curve which delimits the region
         */
         const PolyCurve& getLowerBound() const;
@@ -233,7 +205,7 @@ class Regions: public Object
 
         /**
         * Method to return the upper boundary of the region
-        * @see publicVar()
+        * @see PolyCurve
         * @return PolyCurve the upper curve which delimits the region
         */
         const PolyCurve& getUpperBound() const;
@@ -247,8 +219,7 @@ class Regions: public Object
         * @param minx_ the minimum value of X
         * @param miny_ the minimum value of Y
         * @param minz_ the minimum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setMaxMin( double maxx_, double maxy_, double maxz_,
                                 double minx_, double miny_, double minz_ );
@@ -262,8 +233,7 @@ class Regions: public Object
         * @param minx_ reference to the minimum value of X
         * @param miny_ reference to the minimum value of Y
         * @param minz_ reference to the minimum value of Z
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
                                 double& minx_, double& miny_, double& minz_ ) const;
@@ -272,16 +242,14 @@ class Regions: public Object
         /**
         * Method to set the volume of the region
         * @param volume_ volume of the region
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setVolume( double volume_ );
 
 
         /**
         * Method to get the volume of the region
-        * @see publicVar()
-        * @return the volume of the region
+        * @return double the volume of the region
         */
         double getVolume() const;
 
@@ -291,9 +259,7 @@ class Regions: public Object
         * @param red the red component of the color (integer)
         * @param green the green component of the color (integer)
         * @param blue the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setColor( int r_, int g_, int b_ );
 
@@ -303,27 +269,21 @@ class Regions: public Object
         * @param red reference to the red component of the color (integer)
         * @param green reference to the green component of the color (integer)
         * @param blue reference to the blue component of the color (integer)
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void getColor( int& r_, int& g_, int& b_ ) const;
 
 
         /**
         * This method clear all metada from volume
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear() override;
 
 
         /**
         * This method remove all metadata from the structure and set the default values for the data.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void initialize();
 
@@ -331,26 +291,20 @@ class Regions: public Object
         /**
         * This method set the domain to which the region belongs
         * @param id_ the index of the domain
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; }
 
 
         /**
         * This method clear the data domain and define that the regions does not belong to any domain
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         inline void removeFromDomain(){ indomain = false; }
 
 
         /**
         * This method gets the domain to which the region belongs
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::size_t the index of the domain
         */
         inline bool getDomain( std::size_t& id_ ) const { id_ = domain_index; return indomain; }
@@ -359,9 +313,8 @@ class Regions: public Object
         /**
         * This method saves the metadata into a file using json
         * @param json_ a JSON object from Qt
-        * @see QJsonObject()
-        * @see publicVar()
-        * @return Void
+        * @see QJsonObject
+        * @return void.
         */
         inline virtual void write( QJsonObject& json_ ) const override
         {
@@ -373,9 +326,8 @@ class Regions: public Object
         /**
         * This method reads the metadata from a file using json
         * @param json_ a reference to a JSON object from Qt
-        * @see QJsonObject()
-        * @see publicVar()
-        * @return Void
+        * @see QJsonObject
+        * @return void.
         */
 
         inline virtual void read( const QJsonObject& json_ ) override
@@ -393,9 +345,6 @@ class Regions: public Object
         * @var x x coordinate of the point
         * @var y y coordinate of the point
         * @var z z coordinate of the point
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct  Point
         {
@@ -411,9 +360,6 @@ class Regions: public Object
         * @var red red component of a color
         * @var green green component of a color
         * @var blue blue component of a color
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
         */
         struct Color
         {

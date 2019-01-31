@@ -111,7 +111,12 @@ void Slider::saveMarkerPosition( int value, int slider_length, int slider_min, i
 {
 
     int pos = 0;
+
+    // if the
     bool inverted_ = invertedControls();
+
+    // computing the position of the marker given a value on the slider
+    // see the reference http://doc.qt.io/qt-5/qstyle.html#sliderPositionFromValue
     pos = QStyle::sliderPositionFromValue( minimum(), maximum(), maximum() - value, slider_max - slider_min,
                                                     inverted_ ) + slider_length/2.0;
 
@@ -140,9 +145,20 @@ void Slider::getSubControlDimensions( int& slider_length, int& slider_min, int& 
     QRect sr = style()->subControlRect( QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this );
     QRect gr = style()->subControlRect( QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, this );
 
+    // getting the height of the slider handle
     slider_length = sr.height();
+
+
+    //groove is a special sub-control which contains the area in which the slider handle may move.
+
+    // the minimum position of the slider groove
     slider_min = gr.y();
+
+    // the maximum position of the slider grove
     slider_max = gr.bottom() - slider_length + 1;
+
+
+    // this values will be used to compute the markers position
 }
 
 

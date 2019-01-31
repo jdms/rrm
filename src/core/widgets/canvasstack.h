@@ -52,7 +52,12 @@ class DockWidget: public QDockWidget
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QTreeWidget's constructor.
+        * @param title the window title
+        * @param parent_ the parent item
+        * @see QDockWidget
+        * @see QString
+        * @see QWidget
         */
         DockWidget( const QString &title, QWidget* parent = nullptr ): QDockWidget( title, parent )
         {
@@ -63,9 +68,8 @@ class DockWidget: public QDockWidget
         /**
         * Method called when the DockWidget is closed.
         * @param event the event that happens when the DockWidget is closed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QCloseEvent
+        * @return void.
         */
         inline void closeEvent( QCloseEvent *event )
         {
@@ -77,16 +81,14 @@ class DockWidget: public QDockWidget
 
         /**
         * Signal emmited to notify others widgets that the DockWidget was closed.
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void closeDockWidget();
 };
 
 
 /**
- *  A container of DockWidget
+ *  A container of DockWidgets
  *  @see DockWidget
  *  @see Container
  */
@@ -109,16 +111,16 @@ class CanvasStack: public QWidget, public CanvasContainer
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QWidget's constructor.
+        * @param parent_ the parent item
+        * @see QWidget
         */
         CanvasStack( QWidget* parent = nullptr );
 
 
         /**
         * Method to set the inital setup
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void initialize();
 
@@ -127,9 +129,8 @@ class CanvasStack: public QWidget, public CanvasContainer
         * Method to add a canvas to the container
         * @param double the index of the canvas
         * @param canvas_ new canvas to be added
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QGraphicsView
+        * @return void.
         */
         void addElement( double, QGraphicsView* canvas_ );
 
@@ -137,8 +138,7 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Method to get a canvas from the container
         * @param double the index of the canvas
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsView
         * @return QGraphicsView* A pointer to the canvas which index is id_
         */
         QGraphicsView* getElement( double id_ );
@@ -147,9 +147,7 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Method to remove a canvas from the container
         * @param double the index of the canvas
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void removeElement( double id_ );
 
@@ -157,17 +155,14 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Method to set a canvas as the current
         * @param id_ the index of the canvas
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setCurrent( double id_ );
 
 
         /**
         * Method to return the current canvas
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QGraphicsView
         * @return QGraphicsView* A pointer to the current canvas
         */
         QGraphicsView* getCurrent();
@@ -175,9 +170,7 @@ class CanvasStack: public QWidget, public CanvasContainer
 
         /**
         * Method to remove all canvas from the container
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void clear();
 
@@ -188,9 +181,7 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Signal emmited to notify the main application that a canvas was closed.
         * @param id_ the index of the canvas
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void closeSubWindow( double id_ );
 
@@ -199,9 +190,7 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Signal emmited to notify the main application that the window was closed.
         * @param id_ the index of the canvas
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void canvasClosed();
 
@@ -212,9 +201,8 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Method called when the window is closed.
         * @param event the event that happens when the window is closed
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void.
+        * @see QCloseEvent
+        * @return void.
         */
         void closeEvent(QCloseEvent *event);
 

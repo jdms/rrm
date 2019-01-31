@@ -31,6 +31,8 @@
 ObjectTree::ObjectTree( QWidget *parent )
 {
     setHeaderHidden( true );
+
+    // allows the user select more than one item at time
     setSelectionMode( QAbstractItemView::ExtendedSelection );
     setContextMenuPolicy( Qt::CustomContextMenu );
     setColumnCount( COLUMNS_NUMBER );
@@ -71,12 +73,13 @@ ObjectTree::ObjectTree( QWidget *parent )
 void ObjectTree::createMenu()
 {
 
-
+    // an widget edit to the user input any information about the stratigraphy/structural
     wg_log_ = new QInputDialog();
     wg_log_->setInputMode( QInputDialog::TextInput );
     wg_log_->setOption( QInputDialog::UsePlainTextEditForTextInput, true );
 
 
+    // actions regarding the domains, they will be shown through a menu
     ac_create_domain = new QAction( "Create domain", this );
     ac_addto_domain = new QAction( "Add to domain", this );
     ac_removefrom_domain = new QAction( "Remove from domain", this );
@@ -139,6 +142,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
 
    for( auto it_: selected_ )
    {
+        // checking the type of the object to know which option will be shown
 
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it_ );
         if( obj_->getType() == Settings::Objects::ObjectType::STRATIGRAPHY ||  obj_->getType() == Settings::Objects::ObjectType::STRUCTURAL )
@@ -171,6 +175,9 @@ void ObjectTree::showMenu( const QPoint& pos_ )
 
         region_ = false;
 
+        // if the object is a stratigraphy or a structural, the log edit will be shown.
+        // if many objects are selected we keep the last one
+
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( selected_.back() );
         obj_->setSelected( true );
 
@@ -189,6 +196,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
         return;
     }
 
+
     ac_create_domain->setEnabled( region_ );
     ac_removefrom_domain->setEnabled( region_ );
     ac_remove_domain->setEnabled( domain_ );
@@ -200,6 +208,9 @@ void ObjectTree::showMenu( const QPoint& pos_ )
 
 void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 {
+
+    // method called when some object has been changed
+
     ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
 
     if( item_ == label_stratigraphy && column_ == COLUMN_STATUS )
@@ -314,6 +325,13 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
 
 void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
 {
+
+    // method called when some object has been clicked
+    // this was implemented so that every time the user click on the COLUMN_DETAILS
+    // the data regarding the volume will be changed from percentage to the
+    // scalar and vice versa
+    //
+
     ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
     if( obj_->getType() == Settings::Objects::ObjectType::REGION )
     {
@@ -427,7 +445,6 @@ void ObjectTree::setDomainsVisibility( std::size_t index_, bool status_ )
     {
         ObjectTreeItem* obj_ = (ObjectTreeItem* )( domain_->child( j ) );
         obj_->setCheckState( COLUMN_STATUS, state_ );
-//        setRegionVisible( obj_->getIndex(), status_ );
     }
 
 }
@@ -463,6 +480,10 @@ void ObjectTree::addOutputVolume()
 
 void ObjectTree::removeOutputVolume()
 {
+
+    // if the object tree contains regions/and domains, so there are at least 2 top
+    // level items: the input volume and the output
+
     if( topLevelItemCount() < 2 )
         return;
 
@@ -472,13 +493,17 @@ void ObjectTree::removeOutputVolume()
         ObjectTreeItem* obj_ = (ObjectTreeItem* )( topLevelItem( 1 )->child( j ) );
 
         ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( obj_, COLUMN_COLOR ) );
+
+        // first the color picker is removed from the item
         removeItemWidget( obj_, COLUMN_COLOR );
         delete colorpicker_;
 
+        // after the object is deleted
         delete obj_;
         obj_ = nullptr;
     }
 
+    //deleting the top level 'OUTPUT VOLUME'
     ObjectTreeItem* vol1_ = (ObjectTreeItem* )( topLevelItem( 1 ) );
     if( vol1_ != nullptr )
     {
@@ -498,6 +523,7 @@ void ObjectTree::setVolumeVisibility( std::size_t index_, const Qt::CheckState& 
 
     if( index_ == 0 )
     {
+        // if the volume is hidden, also will be the stratigraphies and structurals
         label_stratigraphy->setCheckState( COLUMN_STATUS, status_ );
         label_structural->setCheckState( COLUMN_STATUS, status_ );
     }
@@ -540,6 +566,7 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
 
     if( type_ == Settings::Objects::ObjectType::STRATIGRAPHY )
     {
+        // if it is the first stratigraphy to be added, set the label_stratigraphy as visible
         if( stratigraphies.empty() == true )
         {
             label_stratigraphy->setHidden( false );
@@ -552,6 +579,8 @@ void ObjectTree::addObject( std::size_t index_, const Settings::Objects::ObjectT
 
     else if( type_ == Settings::Objects::ObjectType::STRUCTURAL )
     {
+
+        // if it is the first structural to be added, set the label_structural as visible
         if( structurals.empty() == true )
         {
             label_structural->setHidden( false );
@@ -822,7 +851,8 @@ bool ObjectTree::createDomain( std::size_t index_ )
     label_domains->addChild( domain_ );
     domains.addElement( index_, domain_ );
 
-
+    // for each domain created it will exist an associated action
+    // e.g., so that the user can choose which domain he/she wants to add regions
     domain_actions_[ index_ ] = new QAction( domain_->text( COLUMN_NAME ), this );
     mn_submenu->addAction( domain_actions_[ index_ ] );
     connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
@@ -888,6 +918,9 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
         domain_->addChild( reg_ );
 
+
+        // getting the minor index of the regions to be the index of the domain in
+        // the object tree, so that after the domains could be sorted
         if( obj_->getIndex() <= minor_ )
             minor_ = obj_->getIndex();
 
@@ -923,10 +956,12 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
     sortDomains();
 }
 
+
 // used for flow diagnostics
 void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ )
 {
 
+    // when the flow diagnostics is on, the surfaces, regions and domains are sorted
     ObjectTreeItem* domain_ = domains.getElement( index_ );
     int minor_ = domain_->text( COLUMNS_NUMBER ).toInt();
 
@@ -977,7 +1012,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::set< std::si
 }
 
 
-// usd by menu
+// used by menu
 void ObjectTree::addToDomain( std::size_t index_ )
 {
 
@@ -1019,6 +1054,8 @@ void ObjectTree::removeRegionsOfTheirDomains( const std::vector< std::size_t >& 
                 break;
             }
 
+
+            // deleting the domains
             if( domain_->childCount() == 0 )
             {
                 deleteDomain( domain_->getIndex() );
@@ -1089,6 +1126,8 @@ void ObjectTree::removeFromDomain()
 }
 
 
+//TODO: methods need to be improved, since many of them has duplicated code
+
 void ObjectTree::deleteDomains()
 {
 
@@ -1106,6 +1145,7 @@ void ObjectTree::deleteDomains()
             ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( children_domains_.first() );
             if( reg_ == nullptr ) continue;
 
+            // removing all the regions from the domains before it be deleted
             emit removeRegionFromDomain( reg_->getIndex(), domain_->getIndex() );
 
             domain_->removeChild( reg_ );
@@ -1151,6 +1191,7 @@ void ObjectTree::deleteDomain( std::size_t index_ )
         parents_.push_back( domain_->getIndex() );
     }
 
+     // removing all the regions from the domains before it be deleted
     if( regions_.empty() == false )
        emit removeRegionsFromTheirDomainsNoDelete( regions_, parents_ );
 
@@ -1240,9 +1281,12 @@ void ObjectTree::removeInputVolume()
 
         std::size_t index_ = obj_->getIndex();
 
+        // removing color picker from the item
         deleteWidgetFromObject( obj_, COLUMN_COLOR );
         label_stratigraphy->removeChild( obj_ );
 
+
+        // removing all stratigraphies before delete the volume
         if( stratigraphies.findElement( index_ ) == true )
         {
             stratigraphies.deleteElement( index_ );
@@ -1269,6 +1313,7 @@ void ObjectTree::removeInputVolume()
         deleteWidgetFromObject( obj_, COLUMN_COLOR );
         label_structural->removeChild( obj_ );
 
+        // removing all structurals before delete the volume
         if( structurals.findElement( index_ ) == true )
         {
             structurals.deleteElement( index_ );
@@ -1341,6 +1386,7 @@ void ObjectTree::removeDomains()
     }
     domains.clear();
 
+    // removing the top-level item
     takeTopLevelItem( 2 );
     label_domains->setHidden( true );
 
@@ -1383,6 +1429,8 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 
     }
 
+    // ordering in descending order -- note that COLUMNS_NUMBER - 1 should be
+    // hidden, since it serves only to help sorting
     label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
     label_structural->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
 

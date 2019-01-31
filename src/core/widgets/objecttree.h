@@ -53,15 +53,15 @@ class ObjectTree: public QTreeWidget
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QTreeWidget's constructor.
+        * @param parent_ the parent item
+        * @see MainWindow
         */
         ObjectTree( QWidget* parent = nullptr );
 
 
         /**
         * Method to add a volume in the object tree.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addInputVolume();
@@ -69,8 +69,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method to add a volume derived from the volume regions
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addOutputVolume();
@@ -78,8 +76,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method to remove the volume derived from the volume regions
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeOutputVolume();
@@ -90,8 +86,7 @@ class ObjectTree: public QTreeWidget
         * @param index_ index of the volume. If index_ is 0, the volume is the input, and if
         * the value is 1 the volume is the volume derived from the volume regions
         * @param status_ if status_ is 'CHECKED' the volume is visible and 'UNCHECKED' otherwise
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Qt::CheckState
         * @return Void.
         */
         void setVolumeVisibility(  std::size_t index_, const Qt::CheckState& status_ );
@@ -100,8 +95,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to show the total volume of input volume
         * @param volume_ the total volume of the input volume, i.e., the sum of the volume of all regions
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setTotalVolume( double volume_ );
@@ -115,8 +108,7 @@ class ObjectTree: public QTreeWidget
         * @param red_ the red component of the stratigraphy/structural color
         * @param green_ the green component of the stratigraphy/structural color
         * @param blue_ the blue component of the stratigraphy/structural color
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Settings::Objects::ObjectType
         * @return Void.
         */
         void addObject( std::size_t index_, const Settings::Objects::ObjectType& type_,
@@ -127,8 +119,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to remove a stratigraphy or structural from the object tree.
         * @param index_ index of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeObject( std::size_t index_ );
@@ -140,8 +130,6 @@ class ObjectTree: public QTreeWidget
         * @param red_ the red component of the stratigraphy/structural color
         * @param green_ the green component of the stratigraphy/structural color
         * @param blue_ the blue component of the stratigraphy/structural color
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void updateObjectColor( std::size_t index_, int red_, int green_, int blue_);
@@ -151,8 +139,6 @@ class ObjectTree: public QTreeWidget
         * Method to update a stratigraphy or structural name in the object tree.
         * @param index_ index of the stratigraphy/structural
         * @param name_ the new name of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void updateObjectName( std::size_t index_, const std::string& name_ );
@@ -162,8 +148,6 @@ class ObjectTree: public QTreeWidget
         * Method to change the visibility of a stratigraphy or structural
         * @param index_ index of the stratigraphy/structural
         * @param status_ if status_ is true the stratigraphy/structural is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setObjectVisibility( std::size_t index_, bool status_ );
@@ -172,8 +156,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to change the visibility of the stratigraphies
         * @param status_ if status_ is 'CHECKED' the stratigraphies are visible and 'UNCHECKED' otherwise
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Qt::CheckState
         * @return Void.
         */
         void setStratigraphiesVisible( const Qt::CheckState& status_ );
@@ -182,8 +165,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to change the visibility of the structurals
         * @param status_ if status_ is 'CHECKED' the structurals are visible and 'UNCHECKED' otherwise
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Qt::CheckState
         * @return Void.
         */
         void setStructuralsVisible( const Qt::CheckState& status_ );
@@ -191,8 +173,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method to remove all stratigraphies from the object tree.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeStratigraphies();
@@ -200,8 +180,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method to remove all structurals from the object tree.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeStructurals();
@@ -216,8 +194,6 @@ class ObjectTree: public QTreeWidget
         * @param blue_ the blue component of the stratigraphy/structural color
         * @param volume_ the volume of the region
         * @param perc_ the percentage of the region volume compared with the total
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addRegion(std::size_t index_, const std::string& name_,  const int& red_, const int& green_,  const int& blue_, double volume_ , double perc_ );
@@ -229,8 +205,6 @@ class ObjectTree: public QTreeWidget
         * @param red_ the red component of the stratigraphy/structural color
         * @param green_ the green component of the stratigraphy/structural color
         * @param blue_ the blue component of the stratigraphy/structural color
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void updateRegionColor( std::size_t index_, int red_, int green_, int blue_);
@@ -240,8 +214,6 @@ class ObjectTree: public QTreeWidget
         * Method to change the visibility of a region
         * @param index_ index of the region
         * @param status_ if status_ is true the region is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setRegionVisibility( std::size_t index_, bool status_ );
@@ -250,8 +222,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to change the visibility of the domains
         * @param status_ if status_ is 'CHECKED' the domains are visible and 'UNCHECKED' otherwise
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Qt::CheckState
         * @return Void.
         */
         void setDomainsVisible( const Qt::CheckState& state_ );
@@ -261,8 +232,6 @@ class ObjectTree: public QTreeWidget
         * Method to change the visibility of a domain and its regions
         * @param index_ index of the domain
         * @param status_ if status_ is true' the domain is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setDomainsVisibility( std::size_t index_, bool status_ );
@@ -272,8 +241,6 @@ class ObjectTree: public QTreeWidget
         * Method to update a domain and its regions
         * @param index_ index of the domain
         * @param volume_ the volume of the domain, i.e, the sum of the regions volumes that consists the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void updateVolumeDomain( std::size_t index_, double volume_ );
@@ -285,8 +252,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to remove all elements from the object tree
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void clear();
@@ -294,8 +259,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to create the menu
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void createMenu();
@@ -303,8 +266,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to clear the submenu related to domains
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void clearSubMenu();
@@ -312,8 +273,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to remove all regions from the object tree
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegions();
@@ -322,8 +281,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method (slot) to add a domain in the object tree
         * @param index_ index of the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         bool createDomain( std::size_t index_ );
@@ -333,8 +290,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to retrieve a vector of regions selected and another vector with their domains
         * @param regions_ vector of index of the regions selected
         * @param parents_ vector with the indexes of the domains, which regions was selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         bool getSelectedRegionsList( std::vector< std::size_t >& regions_, std::vector< std::size_t >& parents_ );
@@ -343,8 +298,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method (slot) to retrieve a vector of regions selected
         * @param regions_ vector of index of regions selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         bool getSelectedRegionsList( std::vector< std::size_t >& regions_ );
@@ -354,8 +307,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to add regions into a existent domain
         * @param index_ index of the domain
         * @param regions_ vector of index of regions selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addRegionsInDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
@@ -365,8 +316,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to add regions into a existent domain
         * @param index_ index of the domain
         * @param regions_ set of index of regions selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addRegionsInDomain( std::size_t index_, const std::set< std::size_t >& regions_ );
@@ -375,8 +324,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method (slot) to add a selected region into a existent domain
         * @param index_ index of the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addToDomain( std::size_t index_ );
@@ -384,8 +331,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to remove all domains from the object tree
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeDomains();
@@ -395,8 +340,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to remove and delete a set of regions from their domains
         * @param regions_ vector of index of regions selected
         * @param parents_ vector with indexes of the domains, which regions was selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegionsOfTheirDomains( const std::vector< std::size_t >& regions_,
@@ -407,8 +350,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to remove without deleting a set of regions from their domains
         * @param regions_ vector of index of regions selected
         * @param parents_ vector with indexes of the domains, which regions was selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegionsOfTheirDomainsNoDelete( const std::vector< std::size_t >& regions_,
@@ -417,8 +358,7 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to get the selected regions and call the signal 'removeRegionsFromTheirDomains' to remove them from their domains
-        * @see testMeToo()
-        * @see publicVar()
+        * @see removeRegionsFromTheirDomains()
         * @return Void.
         */
         void removeFromDomain();
@@ -428,8 +368,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to delete a domain that was selected or which index is index_
         * @param index_ option size_t to indicate the index of the domain. If the parameter is not passed,
         * it is supposed that the domain was selected
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void deleteDomain( std::size_t index_ = std::numeric_limits<std::size_t>::max() );
@@ -437,8 +375,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to delete selected domains
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void deleteDomains();
@@ -447,8 +383,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Method (slot) to sort the stratigraphies and structurals following the 'natural' order
         * @param indexes_ indexes of the the stratigraphies and structurals previously ordered
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void sortStratigraphies( std::vector< std::size_t > indexes_ );
@@ -456,8 +390,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to sort the domains based in the regions indexes
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void sortDomains();
@@ -465,8 +397,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method (slot) to send the input log of a stratigraphy/structural to controller
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void sendSurfaceLog();
@@ -479,8 +409,7 @@ class ObjectTree: public QTreeWidget
         * Method (slot) called when a change happens in any object from the object tree
         * @param item_ the object changed
         * @param column_ the column of the object that was changed
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QTreeWidgetItem
         * @return Void.
         */
         void filterAction( QTreeWidgetItem* item_, std::size_t column_ );
@@ -490,8 +419,7 @@ class ObjectTree: public QTreeWidget
         * Method (slot) called when the user clicks over an object from the object tree
         * @param item_ the object clicked
         * @param column_ the column of the object that was clicked
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QTreeWidgetItem
         * @return Void.
         */
         void clickAction( QTreeWidgetItem* item_, std::size_t column_ );
@@ -500,8 +428,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Method (slot) to show the menu
         * @param pos_  position where the origin of the menu should be placed
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QPoint
         * @return Void.
         */
         void showMenu( const QPoint& pos_ );
@@ -511,8 +438,7 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to delete the widget that is placed in the column given of the object
         * @param obj_  the object which widget should be removed
         * @param column_ the column of the object which the widget is placed
-        * @see testMeToo()
-        * @see publicVar()
+        * @see ObjectTreeItem
         * @return Void.
         */
         void deleteWidgetFromObject( ObjectTreeItem* obj_, int column_ );
@@ -522,8 +448,6 @@ class ObjectTree: public QTreeWidget
         * Method (slot) to remove the input volume from the object tree
         * Once the volume should be removed, all the stratigraphies and structurals as its dependent,
         * should be removed as well.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeInputVolume();
@@ -537,8 +461,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the volume visibility has changed
         * @param index_ index of the volume
         * @param status_ if the value of status is true, the volume is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setVolumeVisible( std::size_t index_, bool status_ );
@@ -548,8 +470,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the volume name has changed
         * @param index_ index of the volume
         * @param name_ new name of the volume
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setVolumeName( std::size_t index_, const std::string& name_ );
@@ -559,8 +479,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the visibility of a stratigraphy or structural has changed
         * @param index_ index of the stratigraphy/structural
         * @param status_ if the value of status is true, the stratigraphy/structural is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setObjectVisible( std::size_t index_, bool status_ );
@@ -570,8 +488,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the name of a stratigraphy or structural has changed
         * @param index_ index of the stratigraphy/structural
         * @param name_ new name of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setObjectName( std::size_t index_, const std::string& name_ );
@@ -581,8 +497,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the color of a stratigraphy or structural has changed
         * @param index_ index of the stratigraphy/structural
         * @param color new color of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setObjectColor( std::size_t index_, const QColor& color_ );
@@ -592,8 +506,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the visibility of a cross-section has changed
         * @param index_ index of the cross-section
         * @param status_ if the value of status is true, the cross-section is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setCrossSectionVisible( std::size_t index_, bool status_ );
@@ -603,8 +515,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the name of a cross-section has changed
         * @param index_ index of the cross-section
         * @param name_ new name of the cross-section
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setCrossSectionName( std::size_t index_, const std::string& name_ );
@@ -614,8 +524,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the visibility of a region has changed
         * @param index_ index of the region
         * @param status_ if the value of status is true, the region is visible and false otherwise
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setRegionVisible(  std::size_t index_, bool status_ );
@@ -625,8 +533,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the name of a region has changed
         * @param index_ index of the region
         * @param name_ new name of the region
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setRegionName( std::size_t index_, const std::string& name_ );
@@ -647,8 +553,7 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that an object was selected
         * @param type_ the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
         * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Settings::Objects::ObjectType
         * @return Void.
         */
         void objectSelected( const Settings::Objects::ObjectType& type_ );
@@ -656,8 +561,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Signal emmited when the user ask to create a domain from selected regions
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void createDomainOfRegions();
@@ -665,8 +568,6 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Signal emmited when the user ask to create a domain from selected regions
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
@@ -676,8 +577,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the region which index is reg_id_ should be removed from the domain domain_id_
         * @param reg_id_ index of the region
         * @param domain_id_ index of the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
@@ -686,8 +585,6 @@ class ObjectTree: public QTreeWidget
         /**
         * Signal to notify that a domain should be removed
         * @param index_ index of the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeDomain( std::size_t index_ );
@@ -697,8 +594,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the set of regions regions_ should be added to the domain which index is index_
         * @param index_ index of the domain
         * @param regions_ set of regions to be added to the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void addRegionsToDomain( std::size_t index_, const std::vector< std::size_t >& regions_ );
@@ -708,8 +603,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the set of regions regions_ should be removed and deleted from their domains
         * @param regions_ set of indexes of regions to be deleted
         * @param domains_ set of indexes of domains which the regions belong
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegionsFromTheirDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
@@ -719,8 +612,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the set of regions regions_ should be removed, without deleting, from their domains
         * @param regions_ set of indexes of regions to be deleted
         * @param domains_ set of indexes of domains which the regions belong
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void removeRegionsFromTheirDomainsNoDelete( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_ );
@@ -730,8 +621,6 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the name of a domain was changed
         * @param index the index of the domain
         * @param name_ the new name of the domain
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void setDomainName( std::size_t index_, const std::string& name_ );
@@ -741,8 +630,7 @@ class ObjectTree: public QTreeWidget
         * Signal to notify that the color of a domain was changed
         * @param index the index of the domain
         * @param color_ the new color of the domain
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QColor
         * @return Void.
         */
         void setDomainColor( std::size_t index_, const QColor& color_ );
@@ -752,8 +640,7 @@ class ObjectTree: public QTreeWidget
         * Signal to notify the controller that the log of a stratigraphy or structural should be save
         * @param index the index of the stratigraphy/structural
         * @param log_ the data log of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QString
         * @return Void.
         */
         void saveSurfaceLog( int index_, const QString& log_ );
@@ -763,8 +650,7 @@ class ObjectTree: public QTreeWidget
         * Signal to retrieve the log of a stratigraphy or structural
         * @param index the index of the stratigraphy/structural
         * @param log_ the data log of the stratigraphy/structural
-        * @see testMeToo()
-        * @see publicVar()
+        * @see QString
         * @return Void.
         */
         void getSurfaceLog( int index_, QString& log_ );

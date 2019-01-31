@@ -62,10 +62,16 @@ void SketchInterface::createSketchingActions()
     window->mn_windows->addAction( ac_topview );
 
 
+    // connects related to the main window, i.e., the window associated to the cross-sections
+    // on the 'WIDTH' and 'DEPTH' directions
     createSketchWindowActions();
 
-    createSketchToViewWindowActions();
+    // connects related to the top-view window, i.e., the window associated to the cross-sections
+    // on the 'HEIGHT'direction
+    createSketchTopViewWindowActions();
 
+
+    // connects related to the mainwindow of the RRM application
     createMainWindowActions();
 
 }
@@ -150,7 +156,7 @@ void SketchInterface::createSketchWindowActions()
 }
 
 
-void SketchInterface::createSketchToViewWindowActions()
+void SketchInterface::createSketchTopViewWindowActions()
 {
 
 
@@ -344,7 +350,6 @@ void SketchInterface::init()
     {
         sketch_window->disableResizeVolume( false );
         sketch_window->resetVerticalExaggeration();
-//        sketch_window->setDipAngle( 0.0 );
     }
 
     if( sketch_topview_window != nullptr )

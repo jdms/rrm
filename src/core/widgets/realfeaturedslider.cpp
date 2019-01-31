@@ -81,7 +81,6 @@ void RealFeaturedSlider::setValue( double value_ )
     int value_int = getIndex( value_ );
     QSlider::setValue( value_int );
     emit sliderMoved( value_ );
-//    emit valueChanged( value_ );
 }
 
 
@@ -179,12 +178,9 @@ void RealFeaturedSlider::setDefaultValues()
     connect( this, &Slider::hightlightValue, [=]( int v ){ emit hightlightValue( getDoubleValue( v ) ); } );
 
     connect( this, &QSlider::valueChanged, this, &Slider::sliderMoved );
-//    setValue( maximum );
 }
 
 void RealFeaturedSlider::clear()
 {
     clearMarkers();
-
-//    setDefaultValues();
 }

@@ -21,11 +21,11 @@ class SketchInterface: public QObject
 
     public:
 
-        //TODO: add comments to the param
 
         /**
-        * \brief Constructor.
-        * @param window_
+        * Constructor.
+        * @param window_ a const reference to the MainWindow
+        * @see MainWindow
         */
         SketchInterface( MainWindow* const& window_ );
 
@@ -75,7 +75,7 @@ class SketchInterface: public QObject
         /**
         * \brief Method to initialize and create the connects related to the actions of the sketch window application
         * @see sketch_window
-        * @return Voidvoid
+        * @return void.
         */
         void createSketchWindowActions();
 
@@ -85,7 +85,7 @@ class SketchInterface: public QObject
         * @see sketch_topview_window
         * @return void.
         */
-        void createSketchToViewWindowActions();
+        void createSketchTopViewWindowActions();
 
 
         /**

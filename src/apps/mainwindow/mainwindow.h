@@ -35,7 +35,9 @@ class MainWindow: public QMainWindow
 
 
         /**
-        * Constructor.
+        * Constructor. parent_ is passed to QMainWindow's constructor.
+        * @param parent_ the parent item
+        * @see MainWindow
         */
         MainWindow( QWidget* parent_ = 0 );
 
@@ -58,8 +60,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to save the current session
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void save();
@@ -67,8 +67,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to open a saved session
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void load();
@@ -78,8 +76,7 @@ class MainWindow: public QMainWindow
         * Method (slots) to disable the cross-section directions differents from dir_
         * This method was created because a surface only can be made in one direction per time
         * @param dir_ current cross-section diretion
-        * @see testMeToo()
-        * @see publicVar()
+        * @see Settings::CrossSection::CrossSectionDirections
         * @return Void.
         */
         void lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
@@ -89,8 +86,6 @@ class MainWindow: public QMainWindow
         * Method (slots) to disable the others options of preserve different from the option_
         * The others options will be available again after the user submit the current option
         * @param option_ current option of preserve
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void lockPreserve( const std::string& option_ );
@@ -100,8 +95,6 @@ class MainWindow: public QMainWindow
         * Method (slots) to disable/enable the actions undo/redo
         * This is necessary mainly when the modelling is currently desactivate.
         * @param status_ boolean to indicate if the the actions should be enabled or not. If its value is true the action undo/redo should be disabled, and enable otherwise.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void lockUndoRedo( bool status_ );
@@ -109,8 +102,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to initialize all the actions to its default value.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void initializeInterface();
@@ -119,8 +110,6 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable/enable the action 'Preserve Above'
         * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Above' be enabled, and disabled otherwise.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void activatePreserveAbove( bool status_ );
@@ -129,8 +118,6 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable/enable the action 'Preserve Below'
         * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Below' be enabled, and disabled otherwise.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void activatePreserveBelow( bool status_ );
@@ -139,8 +126,6 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable/enable the action 'Preserve Region'
         * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Region' be enabled, and disabled otherwise.
-        * @see testMeToo()
-        * @see publicVar()
         * @return Void.
         */
         void activatePreserveRegion( bool status_ );
@@ -148,8 +133,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to check if the action 'Regions' is enabled
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean if its value is true the action Regions is enabled and false otherwise.
         */
         bool isRegionEnabled() const;
@@ -161,7 +144,6 @@ class MainWindow: public QMainWindow
         //TODO: document the param
         /**
         * Signal emitted to run the Flow Diagnostics application or not
-        * @param status_
         * @return void.
         */
         void runDiagnostics( bool status_ );
@@ -193,7 +175,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to create all the actions and connects related to the toolbar
-        * @see testMeToo()
         * @return void.
         */
         void createActions();
@@ -201,7 +182,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to create the menubar of the window
-        * @see testMeToo()
         * @return void.
         */
         void createMenuBar();
@@ -209,7 +189,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to create the toolbar of the window
-        * @see testMeToo()
         * @return void.
         */
         void createToolbar();
@@ -218,7 +197,6 @@ class MainWindow: public QMainWindow
         /**
         * Method to create the side bar.
         * It contais widgets related to the volume dimensions
-        * @see testMeToo()
         * @return void.
         */
         void createSideBar();
@@ -226,7 +204,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to create the controller and the application, as well as their actions and connects
-        * @see testMeToo()
         * @return void.
         */
         void createController();
@@ -234,7 +211,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to setup the object tree.
-        * @see testMeToo()
         * @return void.
         */
         void createObjectTree();
@@ -242,14 +218,13 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to setup the sketch application and plug it into the main window.
-        * @see testMeToo()
         * @return void.
         */
         void plugSketchInterface();
 
+
         /**
         * Method to setup the 3d application and plug it into the main window.
-        * @see testMeToo()
         * @return void.
         */
         void plug3dInterface();
@@ -257,7 +232,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to setup the Flow Diagnostics application and plug it into the main window.
-        * @see testMeToo()
         * @return void.
         */
         void plug3dDiagnosticsInterface();
@@ -265,7 +239,6 @@ class MainWindow: public QMainWindow
 
         /**
         * Method to show the Help widget
-        * @see testMeToo()
         * @return void.
         */
         void showHelp();

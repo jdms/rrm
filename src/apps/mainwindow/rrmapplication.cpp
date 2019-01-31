@@ -39,7 +39,6 @@ std::size_t CrossSection::number_of_csections = 0;
 RRMApplication::RRMApplication(const RRMApplication & app_)
 {
     this->controller = app_.controller;
-
 }
 
 
@@ -64,15 +63,15 @@ void RRMApplication::setController()
 }
 
 
-///================================================================================
-
 
 void RRMApplication::init()
 {
 
     controller->init();
+    // send signal so that all sub-applications start
     emit startApplication();
 
+    // getting the initial volume geometry to initialize the widgets properly
     double ox_, oy, oz, w_, h_, d_;
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
@@ -100,7 +99,6 @@ void RRMApplication::setVolumeVisible( bool status_ )
 
 void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
 {
-    std::cout << "width_: " << width_ << ", height: " << height_ << std::endl << std::flush;
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -124,6 +122,8 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
+    // once the volume dimensions has changed, the discretization information needs to be updated
+    // regarding the widgets
     setDiscretization( controller->getCurrentDirection() );
 
 }
@@ -144,7 +144,6 @@ void RRMApplication::setVolumeHeight( double height_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -154,7 +153,6 @@ void RRMApplication::setVolumeDepth( double lenght_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -174,7 +172,6 @@ void RRMApplication::setDiscretization( const Settings::CrossSection::CrossSecti
 
 void RRMApplication::moveMainCrossSection( double depth_ )
 {
-//    if( controller->getMainCrossSection()->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     if( controller->getCurrentDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
         controller->moveTopViewCrossSection( depth_ );
@@ -200,7 +197,6 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
     else
         emit changeToCrossSectionDirection();
 
-//    emit updateVolume();
 
 }
 
@@ -293,6 +289,8 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
     emit updateMainCrossSection();
     emit updateTopViewCrossSection();
 
+
+    // the code below should be perform only if is a new object
     if( new_obj_ == true )
     {
         const ObjectPtr& obj_ = controller->getCurrentObject();
@@ -302,11 +300,13 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
         window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
 
+        // once a curve was added to the model, the volume can not be resized anymore
         emit disableVolumeResizing();
         emit lockDirection( dir_ );
     }
 
 
+    // not working, but if a curve is added, show the cross-section (as a line) in the scene.
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         emit addCrossSection( dir_, depth_ );
 
@@ -328,6 +328,7 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
     controller->addTrajectoryToObject( curve_ );
     emit updateTrajectories();
 
+    // the code below should be perform only if is a new object
     if( new_obj_ == true )
     {
         const ObjectPtr& obj_ = controller->getCurrentObject();
@@ -347,6 +348,7 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 
 void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+    // it is not being used yet
     controller->removeCurveFromObject( dir_, depth_ );
     emit updateObjects();
 }
@@ -355,19 +357,23 @@ void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSection
 void RRMApplication::createObjectSurface()
 {
 
-
     bool status_ = controller->commitObjectSurface();
 
     emit updateObjects();
 
 
     if( status_ == false ) return;
+
+
+    // check if it is possible to perform an undo/redo to update the actions
     checkUndoRedo();
     updateObjectTree();
 
-
+    // add a new object on the scenes
     emit addObject( controller->getCurrentObject() );
     defineRandomColor();
+
+    // allow the user to change the cross-section direction
     emit unlockDirections();
     emit updateMainCrossSection();
 
@@ -555,9 +561,6 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
 }
 
 
-
-
-
 void RRMApplication::setSketchAbove( bool status_ )
 {
     controller->enablePreserveAbove( status_ );
@@ -618,7 +621,6 @@ void RRMApplication::loadDomains()
         window->object_tree->updateVolumeDomain( it_, volume_ );
     }
 
-//    return domains_;
 }
 
 
@@ -834,6 +836,7 @@ void RRMApplication::loadRegions()
         double volume_ = reg_->getVolume();
         double perc_ = 0.0;
 
+        // computing the percentage of the volume
         if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
@@ -910,7 +913,6 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
         controller->setMeshResolution( Controller::MeshResolution::LOW );
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
 }
 
@@ -1007,9 +1009,9 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
 {
     regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
 
-    //    std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )
     {
+        // if the region was not found properly, the color below is assigned to it.
         int r = 192, g = 192, b = 192;
         if (it >= 0)
         {
@@ -1026,7 +1028,5 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
         colors_[ it ] = color_;
 
     }
-
-//    return colors_;
 
 }

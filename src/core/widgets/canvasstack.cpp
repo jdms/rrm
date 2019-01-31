@@ -47,13 +47,14 @@ void CanvasStack::initialize()
 
     setLayout( hb_main );
 
+    // the index of the current canvas, and it is mainly used as the cross-section depth
     current = 0.0;
 }
 
 
 void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 {
-
+    // id_ corresponds to index of the canvas, and it is mainly used as the cross-section depth
     DockWidget* dc = new DockWidget( QString( "Canvas ").append( QString::number( id_, 'f', 1 ) ), this );
     dc->setAllowedAreas(Qt::AllDockWidgetAreas);
     dc->setGeometry( 100, 100, canvas_->rect().width(), canvas_->rect().height() );
@@ -112,6 +113,7 @@ void CanvasStack::setCurrent( double id_ )
         it++;
     }
 
+    // changing the canvas style when it is the current
     QGraphicsView* gv_ = (QGraphicsView*)(Container::data[ id_ ]->widget());
     gv_->setStyleSheet( "border: 2px solid navy" );
 

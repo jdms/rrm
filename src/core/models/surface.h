@@ -46,7 +46,7 @@ class Surface
 
 
         /**
-        * Constructor.
+        * Constructor. Building a new surface given the vertices, faces, and optionally normals
         */
         Surface( const std::vector< double >& vs_, const std::vector< std::size_t >& fs_,
                  const std::vector< double >& ns_ = std::vector< double >() )
@@ -60,8 +60,6 @@ class Surface
         /**
         * Method to return if the surface has any data
         * The surface is considered empty if it has no vertices
-        * @see testMeToo()
-        * @see publicVar()
         * @return boolean return true if the surface has no vertices, and false otherwise
         */
         bool isEmpty() const
@@ -73,9 +71,7 @@ class Surface
         /**
         * This method sets the vertices of the surface
         * @param vs_ a vector with the vertices coordinates of all vertices
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setVertices( const std::vector< double >& vs_ )
         {
@@ -87,9 +83,6 @@ class Surface
 
         /**
         * This method returns the vertices of the surface
-        * @param
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > a vector with the vertices coordinates of all vertices
         */
         std::vector< double > getVertices() const
@@ -102,9 +95,7 @@ class Surface
         /**
         * This method sets the normals of the vertices of the surface
         * @param ns_ a vector with the coordinates of all normals
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setNormals( const std::vector< double >& ns_ )
         {
@@ -115,8 +106,6 @@ class Surface
 
         /**
         * This method returns the normals of the vertices of the surface
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< double > a vector with the coordinates of all normals
         */
         std::vector< double > getNormals() const
@@ -128,9 +117,7 @@ class Surface
         /**
         * This method sets the faces of the surface
         * @param fs_ a vector with the index of each vertice that defines a face for all faces of the surface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void setFaces( const std::vector< std::size_t >& fs_ )
         {
@@ -141,8 +128,6 @@ class Surface
 
         /**
         * This method returns the faces of the surface
-        * @see testMeToo()
-        * @see publicVar()
         * @return std::vector< std::size_t > a vector with the index of each vertice that defines a face for all faces of the surface
         */
         std::vector< std::size_t > getFaces() const
@@ -153,9 +138,7 @@ class Surface
 
         /**
         * This method remove all metadata from the surface
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void clear()
         {

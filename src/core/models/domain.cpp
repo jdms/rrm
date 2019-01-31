@@ -2,15 +2,12 @@
 
 Domain::Domain()
 {
-    std::cout << "DOMAIN CREATED" << std::endl << std::flush;
     //  initialize();
 }
 
 
 Domain::Domain( const Domain& dmn_ )
 {
-    std::cout << "DOMAIN CREATED" << std::endl << std::flush;
-
     this->index_regions = dmn_.index_regions;
 }
 

@@ -193,7 +193,7 @@ class SketchingController
         * @param dir_ direction of the fixed cross-section
         * @param depth_ direction of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void.
+        * @return void.
         */
         void removeWindow( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 

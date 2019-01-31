@@ -43,6 +43,8 @@ SketchScene::SketchScene()
 
 void SketchScene::init()
 {
+
+    // this is what the user uses to make his/her sketch
     if( sketch == nullptr )
     {
         sketch = std::make_shared< CurveItem >();
@@ -55,6 +57,8 @@ void SketchScene::init()
     image->setVisible( false );
     addItem( image );
 
+
+    // markersto help the iser resize and move the image
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
@@ -69,11 +73,11 @@ void SketchScene::init()
     move_marker->setVisible( false );
     addItem( move_marker );
 
-    boudering_area = new PolygonItem();
-    boudering_area->setBorderVisible( false );
-    boudering_area->setTransparency( true );
-    boudering_area->setVisible( false );
-    addItem( boudering_area );
+    boundary_area = new PolygonItem();
+    boundary_area->setBorderVisible( false );
+    boundary_area->setTransparency( true );
+    boundary_area->setVisible( false );
+    addItem( boundary_area );
 
 
     trajectory_point = new QGraphicsEllipseItem( 0, 0, 10, 10 );
@@ -127,11 +131,7 @@ void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
     addItem( volume1.get() );
     setSceneRect( volume1->boundingRect() );
 
-    QPainterPath area_;
-    area_.addRect( volume1->boundingRect() );
-    setSelectionArea( area_, Qt::AddToSelection );
-
-
+    // the volume dimensions on the scene 2d depends on the current cross-section direction
 
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -162,11 +162,6 @@ void SketchScene::updateVolume()
 {
     volume1->update( csection_direction );
     setSceneRect( volume1->boundingRect() );
-
-    //    QPainterPath area_;
-    //    area_.addRect( volume1->boundingRect() );
-    //    setSelectionArea( area_, Qt::AddToSelection );
-
 
     const std::shared_ptr< Volume >& volume_ = volume1->getRawVolume();
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
@@ -216,8 +211,10 @@ void SketchScene::addImageToCrossSection( const QString& file_ )
     double w_ = static_cast< double >( image1.width() );
     double h_ = static_cast< double >( image1.height() );
 
+    // this method set the image in the scene
     setImageInCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
 
+    // this signal notify the controller to associate the path and the geometry of the image to the given cross-section
     emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, ox_, oy_, w_, h_ );
 
 }
@@ -253,15 +250,16 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
 
 void SketchScene::removeImageInCrossSection()
 {
+    // makes the image invisible but the controller does not remove the image from the cross-section
     if( image == nullptr ) return;
     image->setVisible( false );
-    //    emit removeImageFromCrossSection( csection_direction, csection_depth );
     update();
 }
 
 
 void SketchScene::removeImageInCrossSectionAndUpdate()
 {
+    // this method makes the controller removes the image from the cross-section
     if( image == nullptr ) return;
     image->setVisible( false );
     emit removeImageFromCrossSection( csection_direction, csection_depth );
@@ -331,13 +329,12 @@ void SketchScene::getSelectedStratigraphies()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
+    // select one curve at time
     StratigraphyItem* const& obj_ = dynamic_cast< StratigraphyItem* >( items_[ 0 ] );
     std::size_t id_ = obj_->getIndex();
 
     emit objectSelected( id_ );
 
-
-    std::cout << "There are " << items_.size() << " curves selected" << std::endl << std::flush;
 }
 
 
@@ -354,6 +351,8 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     regions[ id_ ]->setFillColor( QColor( r_, g_, b_ ) );
     regions[ id_ ]->setOpacity( 0.7 );
     regions[ id_ ]->setVisible( true );
+
+    // placing the regions in front of the images
     if( image != nullptr )
         regions[ id_ ]->setZValue( image->zValue() );
     addItem( regions[ id_ ].get() );
@@ -394,17 +393,13 @@ void SketchScene::getSelectedRegions()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
-    std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
-
     for( auto it: items_ )
     {
         RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
         std::size_t id_ = reg_->getIndex();
-        std::cout << id_ << " " << std::flush;
 
         emit regionSelected( id_, true );
     }
-    std::cout << "\n\n" << std::flush;
 }
 
 
@@ -423,12 +418,12 @@ bool SketchScene::isSketchEnabled() const
 
 void SketchScene::cancelSketch()
 {
-    std::cout << "Canceling sketch..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
     sketch->clear();
 
-    emit removeLastCurve( csection_direction, csection_depth );
+    // this signal was created to test undo a curve submission. It should be placed in a new method for this aim.
+//    emit removeLastCurve( csection_direction, csection_depth );
 
 
     QGraphicsScene::update();
@@ -437,23 +432,20 @@ void SketchScene::cancelSketch()
 
 void SketchScene::submitSketch()
 {
-    std::cout << "Submitting sketch..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
 
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
+
+    // after submitting a sketch it should be clear
     sketch->clear();
 
-    std::cout << "Image is visible: " << image->isVisible() << std::endl;
-
     QGraphicsScene::update();
-    //    update();
 }
 
 
 void SketchScene::setSketchColor( const QColor& color_ )
 {
-    std::cout << "Changing sketch color..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
     sketch->setColor( color_ );
@@ -477,9 +469,10 @@ void SketchScene::processSketch()
 
 void SketchScene::endObject()
 {
-    std::cout << "Ending object..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
+
+    // this makes the object does not accept curves anymore
     sketch->setDone();
 
     emit createObject();
@@ -680,28 +673,28 @@ void SketchScene::defineBoundaryArea()
         QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
 
         QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
     }
 
     else if( lower.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
     }
     else if( upper.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
 
     }
     else
     {
-        boudering_area->clear();
+        boundary_area->clear();
     }
 
-    boudering_area->setVisible( true );
-    boudering_area->setZValue( image->zValue() + 1 );
-    boudering_area->update();
+    boundary_area->setVisible( true );
+    boundary_area->setZValue( image->zValue() + 1 );
+    boundary_area->update();
 
     update();
 }
@@ -871,11 +864,19 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
 {
+
+    // first to revert the matrix scaled with the vertical exaggeration applied on the axes
     axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
     if( volume1 == nullptr ) return;
+
+    // after pass the real height of the volume and the scale applied to the method
+    // which will scale the axes, and keep the text unchanged
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
+
+
+    // after scaling the models, ensure all objects can be viewed
     emit ensureObjectsVisibility();
     update();
 }
@@ -884,10 +885,16 @@ void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scal
 void SketchScene::resetVerticalExaggerationInAxes()
 {
     QMatrix m_;
+
+    // first set an unitary matrix to the axes
     axes.setMatrix( m_, false );
+
+    // after set the axes as not scaled
     axes.resetVerticalExaggeration();
 
     if( volume1 == nullptr ) return;
+
+    // set the real volume height to the axes
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.stopVerticalExaggeration( volume_->getHeight() );
     emit ensureObjectsVisibility();
@@ -976,7 +983,7 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 
     if( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY )
     {
-        std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
+        // send the sketches to rules_processor
         removeSketchesOfSelection();
     }
 
@@ -1001,7 +1008,6 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 {
     QPointF p_ = event_->scenePos();
-    //    std::cout << "mx: " << p_.x() << ", my: " << p_.y() << std::endl << std::flush;
 
     if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SKETCHING )  )
     {
@@ -1061,10 +1067,8 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
     else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction == UserInteraction::RESIZING_BOUNDARY )  )
     {
         volume1->setEndPoint( p_ );
-        //        setSceneRect( volume1->boundingRect() );
 
         emit resizeVolumeDimensions( csection_direction, static_cast< double >( volume1->boundingRect().width() ), static_cast< double >( volume1->boundingRect().height() ) );
-        //        emit ensureObjectsVisibility();
     }
 
     else if( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY_OLD )
@@ -1184,11 +1188,11 @@ void SketchScene::clearScene()
         delete move_marker;
     move_marker = nullptr;
 
-    if( boudering_area != nullptr )
-    {   boudering_area->clear();
-        delete boudering_area;
+    if( boundary_area != nullptr )
+    {   boundary_area->clear();
+        delete boundary_area;
     }
-    boudering_area = nullptr;
+    boundary_area = nullptr;
 
     if( dipangle  != nullptr )
         delete dipangle;
