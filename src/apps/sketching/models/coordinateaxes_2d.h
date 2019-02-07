@@ -115,39 +115,35 @@ class CoordinateAxes2d: public QGraphicsLineItem
     protected:
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to repaint the axes
-        * @see QPainter
-        * @see QStyleOptionGraphicsItem
-        * @see QWidget
+        * @see QPainter performs ainting on the widget
+        * @see QStyleOptionGraphicsItem provides style options for the item
+        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void.
         */
          void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
 
-        //TODO: finish to document the parameters.
          /**
          * Method to draw x coordinate
-         * @see QPainter
+         * @see QPainter performs painting on the widget
          * @return void.
          */
          void drawAxisX( QPainter* p );
 
 
-         //TODO: finish to document the parameters.
           /**
           * Method to draw y coordinate
-          * @see QPainter
+          * @see QPainter performs painting on the widget
           * @return void.
           */
          void drawAxisY( QPainter* p );
 
 
-         //TODO: finish to document the parameters.
           /**
           * Method to draw y coordinate with scale
-          * @see QPainter
+          * @see QPainter performs ainting on the widget
           * @return void.
           */
          void drawAxisYWithScale( QPainter* p );

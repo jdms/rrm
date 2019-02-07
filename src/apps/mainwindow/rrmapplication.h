@@ -387,7 +387,7 @@ public:
         * @param name_ a string to represent the name of the region
         * @return void.
         */
-        void setRegionName( std::size_t index_, const std::string& name_ );
+        void setRegionName( std::size_t , const std::string&  );
 
 
         /**
@@ -736,7 +736,7 @@ public:
         * @param colors reference to a vector of the domains colors
         * @return void.
         */
-        void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
+        void getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces,
                                      std::vector< int >& regions, std::map< int, std::vector< float > >& colors_ );
 
 

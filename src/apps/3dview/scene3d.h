@@ -242,7 +242,6 @@ class Scene3d: public QObject
         void clearRegions();
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the whole scene
         * @param V it is the view matrix

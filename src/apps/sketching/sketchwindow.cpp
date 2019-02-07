@@ -349,7 +349,7 @@ void SketchWindow::createFixedCrossSectionsActions()
 
     connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
 
-    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+    connect( fixed_csections_canvas, &CanvasStack::windowClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
 
 }
 

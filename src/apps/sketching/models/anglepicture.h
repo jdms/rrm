@@ -35,13 +35,12 @@ class AnglePicture: public QLabel
     private slots:
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to repaint the image
-        * @see QPaintEvent
+        * @see QPaintEvent contains event parameters for paint events
         * @return void.
         */
-        void paintEvent(QPaintEvent * e);
+        void paintEvent(QPaintEvent* e);
 
 
     private:

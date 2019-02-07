@@ -186,13 +186,12 @@ class CanvasStack: public QWidget, public CanvasContainer
         void closeSubWindow( double id_ );
 
 
-        //TODO: Change the name of the signal
         /**
         * Signal emmited to notify the main application that the window was closed.
         * @param id_ the index of the canvas
         * @return void.
         */
-        void canvasClosed();
+        void windowClosed();
 
 
     protected:

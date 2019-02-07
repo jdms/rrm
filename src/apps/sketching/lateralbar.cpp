@@ -27,9 +27,8 @@ void LateralBar::createInterface()
     btn_reset_exaggeration->setMaximumWidth( 45 );
 
 
-    //TODO: comment the initial values
     sp_exagger_value = new QDoubleSpinBox();
-    sp_exagger_value->setRange( 0.1, 10000. );
+    sp_exagger_value->setRange( MIN_VALUE, MAX_VALUE );
     sp_exagger_value->setSingleStep( 0.1 );
 
     QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
@@ -132,8 +131,13 @@ void LateralBar::changeVerticalExaggeration( int v_exagg_ )
 {
     count++;
 
-    // TODO: comment equation
-    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
+    // computing the vertical exaggeration value from an integer slider: simple interpolation
+    // log10 value_ = min_log + v_exagg_*0.01* (max_log - min_log);
+
+    double value_ = min_log + v_exagg_*0.01* (max_log - min_log);
+
+
+    // after determining the log10 value_, find  the value_
     double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
 
     if( count < 2 )
@@ -151,9 +155,10 @@ void LateralBar::changeVerticalExaggerationBySpinbox( double v_exagg_ )
 {
     count++;
 
-     // TODO: comment equation
+
+    // log10 value_ = min_log + v_exagg_*0.01* (max_log - min_log);
     double lg = log10( v_exagg_ );
-    double value = 100*(lg - min_exagg)/(max_exagg - min_exagg);
+    double value = 100*(lg - min_log)/(max_log - min_log);
 
 
     if( count < 2 )
@@ -164,12 +169,13 @@ void LateralBar::changeVerticalExaggerationBySpinbox( double v_exagg_ )
 }
 
 
+
 void LateralBar::resetVerticalExaggeration()
 {
     count = 0;
-     // TODO: initial value
-    sl_vertical_exagg->setValue( 20 );
-    changeVerticalExaggeration( 20 );
+
+    sl_vertical_exagg->setValue( RESET_VEXAG );
+    changeVerticalExaggeration( RESET_VEXAG );
 
 }
 
@@ -269,8 +275,8 @@ LateralBar::~LateralBar()
     btn_move_output_dipangle = nullptr;
 
 
-    min_exagg = -1;
-    max_exagg = 4;
+    min_log = -1;
+    max_log = 4;
 
     count = 0;
 }

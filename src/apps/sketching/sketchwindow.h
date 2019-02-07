@@ -137,7 +137,7 @@ class SketchWindow: public QMainWindow
         void disableResizeVolume( bool status_ );
 
 
-        //TODO: this method needs to be revisited
+        //TODO: this method needs to be changed
        /**
        * \brief Method called to change the interaction mode of the user to selection. This mode disable the curves selection.
        * @param status_ boolean. It is true if the selection interaction should be enabled, or false otherwise.

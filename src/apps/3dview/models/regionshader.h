@@ -72,7 +72,6 @@ class RegionShader: public Shader
         void setRegion( const std::shared_ptr< Regions >& raw_ );
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the region
         * @param V it is the view matrix

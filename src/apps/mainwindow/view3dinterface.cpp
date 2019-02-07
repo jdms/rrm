@@ -86,7 +86,7 @@ void View3dInterface::createView3dActions()
     } );
 
     connect( window->app, &RRMApplication::updateDiscretization, [=]( const std::size_t& disc_ )
-    { sl_depth_csection->setDiscretization( disc_ ); } );
+    { sl_depth_csection->setDiscretization( static_cast< int >(disc_) ); } );
 
     connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
     { controller3d->addStratigraphy( obj_ ); } );

@@ -53,11 +53,11 @@ void DiagnosticsInterface::createDiagnosticsActions()
         window->app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } );
 
     // send the mesh and the color of the regions to the flow diagnostics
-    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+    connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& faces )
     {
         std::vector< int > regions_;
         std::map< int, std::vector< float > > colors_;
-        window->app->getTetrahedronsRegions( vertices, edges, faces, regions_, colors_ );
+        window->app->getTetrahedronsRegions( vertices, faces, regions_, colors_ );
         flow_window->setTetrahedronRegions( regions_, colors_ ); } );
 
 

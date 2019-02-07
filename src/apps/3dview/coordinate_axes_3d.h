@@ -69,7 +69,6 @@ class CoordinateAxes3d
         void load( std::string directory );
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the axes
         * @param V it is the view matrix

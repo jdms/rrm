@@ -115,7 +115,7 @@ class Controller
         * Method to set a reference to the application.
         * This create a brigde between the data and the interface by the controller
         * @see RRMApplication
-        * @return Void.
+        * @return void.
         */
         void setApplication( RRMApplication* const& app_ );
 
@@ -123,14 +123,14 @@ class Controller
         /**
         * Method to initialize the controller.
         * This method adds the initial object and set the resolution of the mesh
-        * @return Void.
+        * @return void.
         */
         void init();
 
 
         /**
         * Method to create a volume.
-        * @return Void.
+        * @return void.
         */
         void createVolume();
 
@@ -140,7 +140,7 @@ class Controller
         * @param width_ the new witdth volume
         * @param height_ the new height volume
         * @param depth_ the new depth volume
-        * @return Void.
+        * @return void.
         */
         void resizeVolume( double width_, double height_, double depth_ );
 
@@ -148,7 +148,7 @@ class Controller
         /**
         * Method to set the volume width
         * @param width_ the new witdth volume
-        * @return Void.
+        * @return void.
         */
         void setVolumeWidth( double width_ );
 
@@ -156,7 +156,7 @@ class Controller
         /**
         * Method to set the volume height
         * @param height_ the new height volume
-        * @return Void.
+        * @return void.
         */
         void setVolumeHeight( double height_ );
 
@@ -177,7 +177,7 @@ class Controller
         * @param w_ the volume witdth
         * @param h_ the volume height
         * @param d_ the volume depth
-        * @return Void.
+        * @return void.
         */
         void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
 
@@ -185,7 +185,7 @@ class Controller
         /**
         * Method to set a name to the volume
         * @param id_ a new name to the volume
-        * @return Void
+        * @return void.
         */
         void setVolumeName( const std::string& name_ );
 
@@ -193,7 +193,7 @@ class Controller
         /**
         * Method to set the volume visible or not
         * @param status_ if the value is true the volume is visible and false otherwise
-        * @return Void
+        * @return void.
         */
         void setVolumeVisibility( bool status_ );
 
@@ -217,7 +217,7 @@ class Controller
         * Method to set the direction of the main cross-section
         * @param dir_ the new cross-section direction.
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
         void changeMainCrossSectionDirection( const Settings::CrossSection::CrossSectionDirections& dir_ );
 
@@ -234,7 +234,7 @@ class Controller
         /**
         * Method to move the main cross-section to a new depth
         * @param depth_ the depth to where the cross-section should be moved
-        * @return Void
+        * @return void.
         */
         void moveMainCrossSection( double depth_ );
 
@@ -250,7 +250,7 @@ class Controller
         /**
         * Method to create the top view cross-section.
         * The top view cross-section can be only in the 'HEIGHT' direction
-        * @return Void.
+        * @return void.
         */
         void createTopViewCrossSection();
 
@@ -266,7 +266,7 @@ class Controller
         /**
         * Method to move the top view cross-section to a new depth
         * @param depth_ the height to where the cross-section should be moved
-        * @return Void
+        * @return void.
         */
         void moveTopViewCrossSection( double depth_ );
 
@@ -277,7 +277,7 @@ class Controller
         * @param dir_ the direction of the fixed cross-section
         * @param depth_ the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void.
+        * @return void.
         */
         void addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double  );
 
@@ -298,7 +298,7 @@ class Controller
         * @param dir_ the direction of the fixed cross-section
         * @param depth_ the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void.
+        * @return void.
         */
         void removeCrossSection( const Settings::CrossSection::CrossSectionDirections & dir_, double depth_ );
 
@@ -313,7 +313,7 @@ class Controller
         * @param w_ the width of the image
         * @param h_ the height of the image
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
         void setImageToCrossSection( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ );
 
@@ -323,7 +323,7 @@ class Controller
         * @param dir_ the direction of the fixed cross-section
         * @param depth_ the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
         void clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
@@ -337,19 +337,9 @@ class Controller
 
         /**
         * Method to set an image in the top view cross-section, if exists an image in the current height
-        * @return Void
+        * @return void.
         */
         void updateImageInTopViewCrossSection();
-
-
-        /**
-        * Method to add a new object, i.e., a stratigraphy or structural
-        * @param index_ an optional parameter to define a new index to the object
-        * @return Void.
-        */
-        //TODO: addObject should be protected
-        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
-
 
         /**
         * Method to get an object, i.e., a stratigraphy or structural
@@ -380,7 +370,7 @@ class Controller
         * Method to set a name to the given object
         * @param index_ the index of the object
         * @param name_ the new name of the object
-        * @return Void.
+        * @return void.
         */
         void setObjectName( std::size_t index_, const std::string& name_ );
 
@@ -399,7 +389,7 @@ class Controller
         * @param type_ type of the current object.
         * @see Settings::Objects::ObjectType
         * @see publicVar()
-        * @return Void.
+        * @return void.
         */
         void setCurrentObjectType( const Settings::Objects::ObjectType& type_ );
 
@@ -427,7 +417,7 @@ class Controller
         * Method to set if the object, i.e, a stratigraphy or structural, visible or not
         * @param index_ the index of the object
         * @param status_ if the value is true the object is visible and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectVisibility( std::size_t index_, bool status_ );
 
@@ -435,7 +425,7 @@ class Controller
         /**
         * Method to set all objects, i.e, stratigraphies and structurals, as visible or not
         * @param status_ if the value is true the objects are visibles and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectsVisibility( bool status_ );
 
@@ -455,7 +445,7 @@ class Controller
         /**
         * Method to set all objects, i.e, stratigraphies and structurals, as active or not
         * @param status_ if the value is true the objects are active and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectsActive( bool status_ );
 
@@ -464,7 +454,7 @@ class Controller
         * Method to set the object, i.e, a stratigraphy or structural, as active or not
         * @param index_ the index of the object
         * @param status_ if the value is true the object is active and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectActive( std::size_t index_, bool status_ );
 
@@ -481,7 +471,7 @@ class Controller
         * Method to set the object, i.e, a stratigraphy or structural, as selectable or not
         * @param index_ the index of the object
         * @param status_ if the value is true the object is selectable and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectSelectable( std::size_t index_, bool status_ );
 
@@ -498,7 +488,7 @@ class Controller
         * Method to set the object, i.e, a stratigraphy or structural, as selected or not
         * @param index_ the index of the object
         * @param status_ if the value is true the object is selected and false otherwise
-        * @return Void
+        * @return void.
         */
         void setObjectSelected( std::size_t index_, bool status_ );
 
@@ -516,7 +506,7 @@ class Controller
         * @param index_ the index of the object
         * @param status_ an object log information
         * @see QString
-        * @return Void
+        * @return void.
         */
         void setObjectLog( std::size_t index_, const QString& status_ );
 
@@ -554,21 +544,21 @@ class Controller
         * Method to add a trajectory to the current object
         * @param curve_ the trajectory made by the user
         * @see PolyCurve
-        * @return Void
+        * @return void.
         */
         void addTrajectoryToObject( const PolyCurve& curve_ );
 
 
         /**
         * Method to add the last trajectory entered to the current object
-        * @return Void
+        * @return void.
         */
         void addLastTrajectoryToObject();
 
 
         /**
         * Method to remove the trajectory from the current object
-        * @return Void
+        * @return void.
         */
         void removeTrajectoryFromObject();
 
@@ -624,7 +614,7 @@ class Controller
         * the model, e.g., after an undo/redo, create a new surface, change the cross-section direction.
         * Note that to add a curve in an object does not call the method, since the rules are only applied
         * right before the surface creation
-        * @return Void
+        * @return void.
         */
         void updateModel();
 
@@ -632,7 +622,7 @@ class Controller
         /**
         * Method to update a surface of the object, which index is index_
         * @param index_ the index of the object
-        * @return Void
+        * @return void.
         */
         void updateObjectSurface( const std::size_t& index_ );
 
@@ -640,7 +630,7 @@ class Controller
         /**
         * Method to update a surface of the object, which index is index_
         * @param index_ the index of the object
-        * @return Void
+        * @return void.
         */
         void updateObjectCurves( const std::size_t& index_ );
 
@@ -648,7 +638,7 @@ class Controller
         /**
         * Method to update the preview surface of the object, which index is index_
         * Note that, the preview surface is always of the current object
-        * @return Void
+        * @return void.
         */
         void updatePreviewSurface();
 
@@ -658,7 +648,7 @@ class Controller
         * @param index_ the index of the object
         * @param depth_ the depth of the cross-section. Note that, it is not needed to pass the direction
         * as parameter since the object can be done in only one direction
-        * @return Void
+        * @return void.
         */
         void updateObjectCurveInCrossSection( const std::size_t& index_, double depth_ );
 
@@ -667,28 +657,28 @@ class Controller
         * Method to update all object curves of in a certain cross-section
         * @param depth_ the depth of the cross-section. Note that, the direction was not passed as parameter,
         * then the direction considered is the current
-        * @return Void
+        * @return void.
         */
         void updateObjectsCurvesInCrossSection( double depth_ );
 
 
         /**
         * Method to update all object curves in all X direction fixed cross-section
-        * @return Void
+        * @return void.
         */
         void updateCrossSectionsX();
 
 
         /**
         * Method to update all object curves in all Y direction fixed cross-section
-        * @return Void
+        * @return void.
         */
         void updateCrossSectionsY();
 
 
         /**
         * Method to update all object curves in all Z direction fixed cross-section
-        * @return Void
+        * @return void.
         */
         void updateCrossSectionsZ();
 
@@ -698,7 +688,7 @@ class Controller
         * direction as the cross-section direction
         * @param index_ the index of the object
         * @param depth_ the depth of the cross-section.
-        * @return Void
+        * @return void.
         */
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
 
@@ -712,7 +702,7 @@ class Controller
         * @param dir_ the direction of the cross-section
         * @param depth_ the depth of the cross-section.
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ );
 
@@ -743,7 +733,7 @@ class Controller
         /**
         * Method to set all regions as visible or not
         * @param status_ if the value is true the regions are visibles and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionsVisible(bool status_);
 
@@ -752,7 +742,7 @@ class Controller
         * Method to set if the region as visible or not
         * @param index_ the index of the region
         * @param status_ if the value is true the region is visible and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionVisible(std::size_t index_, bool status_);
 
@@ -771,7 +761,7 @@ class Controller
         * @param r_ the red component of the color (integer)
         * @param g_ the green component of the color (integer)
         * @param b_ the blue component of the color (integer)
-        * @return Void
+        * @return void.
         */
         void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
 
@@ -782,7 +772,7 @@ class Controller
         * @param r_ a reference to the red component of the color (integer)
         * @param g_ a reference to the green component of the color (integer)
         * @param b_ a reference to the blue component of the color (integer)
-        * @return Void
+        * @return void.
         */
         void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ ) const ;
 
@@ -790,7 +780,7 @@ class Controller
         /**
         * Method to set all regions as active or not
         * @param status_ if the value is true the regions are active and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionsActive(bool status_);
 
@@ -799,7 +789,7 @@ class Controller
         * Method to set the region as active or not
         * @param index_ the index of the region
         * @param status_ if the value is true the region is active and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionActive(std::size_t index_, bool status_);
 
@@ -816,7 +806,7 @@ class Controller
         * Method to set the region as selectable or not
         * @param index_ the index of the region
         * @param status_ if the value is true the region is selectable and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionSelectable(std::size_t index_, bool status_);
 
@@ -833,7 +823,7 @@ class Controller
         * Method to set the region as selected or not
         * @param index_ the index of the region
         * @param status_ if the value is true the region is selected and false otherwise
-        * @return Void
+        * @return void.
         */
         void setRegionSelected(std::size_t index_, bool status_);
 
@@ -876,14 +866,14 @@ class Controller
 
         /**
         * Method to update all the regions, i.e., update the area defined by the region
-        * @return Void
+        * @return void.
         */
         void updateRegions();
 
 
         /**
         * Method to remove all the regions
-        * @return Void
+        * @return void.
         */
         void removeRegions();
 
@@ -891,7 +881,7 @@ class Controller
         /**
         * Method to create a domain. Also, it is possible to create a domain from a given set of regions.
         * @param indexes_ an optional parameter to define the regions which define the domain
-        * @return Void
+        * @return void.
         */
         std::size_t createDomain( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
 
@@ -900,7 +890,7 @@ class Controller
         * Method to add a region into an existent domain
         * @param region_id_ the index of the region to be added into the domain
         * @param domain_id_ the index of the domain
-        * @return Void
+        * @return void.
         */
         bool addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
 
@@ -909,7 +899,7 @@ class Controller
         * Method to remove a region from an existent domain
         * @param region_id_ the index of the region to be removed from the domain
         * @param domain_id_ the index of the domain
-        * @return Void
+        * @return void.
         */
         bool removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
 
@@ -926,7 +916,7 @@ class Controller
         /**
         * Method to delete a domain
         * @param domain_id_ the index of the domain
-        * @return Void
+        * @return void.
         */
         void removeDomain(std::size_t domain_id_);
 
@@ -948,7 +938,7 @@ class Controller
         * Method to set a name to the given domain
         * @param index_ the index of the domain
         * @param name_ the new name of the domain
-        * @return Void.
+        * @return void.
         */
         void setDomainName( std::size_t index_, const std::string& name_ );
 
@@ -959,7 +949,7 @@ class Controller
         * @param r_ the red component of the color (integer)
         * @param g_ the green component of the color (integer)
         * @param b_ the blue component of the color (integer)
-        * @return Void
+        * @return void.
         */
         void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
 
@@ -970,7 +960,7 @@ class Controller
         * @param r_ a reference to the red component of the color (integer)
         * @param g_ a reference to the green component of the color (integer)
         * @param b_ a reference to the blue component of the color (integer)
-        * @return Void
+        * @return void.
         */
         void getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ );
 
@@ -994,28 +984,28 @@ class Controller
         /**
         * Method to initialize the Rules Processor and set the initial data
         * @see RulesProcessor
-        * @return Void
+        * @return void.
         */
         void initRulesProcessor();
 
 
         /**
         * Method to update the volume boundary in the Rules Processor
-        * @return Void
+        * @return void.
         */
         void updateBoundingBoxRulesProcessor();
 
 
         /**
         * Method to define the volume discretization
-        * @return Void
+        * @return void.
         */
         void setVolumeDiscretization();
 
 
         /**
         * Method to get the current discretization. It depends on the current direction of the cross-secion
-        * @return Void
+        * @return void.
         */
         std::size_t getCurrentDiscretization() const;
 
@@ -1024,7 +1014,7 @@ class Controller
         * Method to get the current range that the cross-section can go through. It depends on the current direction of the cross-secion
         * @param min_ the minimum value that the depth of the cross-section can be
         * @param max_ the maximum value that the depth of the cross-section can be
-        * @return Void
+        * @return void.
         */
         void getCurrentRange( double& min_, double& max_ ) const;
 
@@ -1033,7 +1023,7 @@ class Controller
         * This methods updates all objects bounding box that depends on the volume dimensions.
         * Every time the volume dimensions changes this method is called to update all the objects bounding
         * box
-        * @return Void
+        * @return void.
         */
         void updateBoundingBoxInModel();
 
@@ -1058,28 +1048,28 @@ class Controller
 
         /**
         * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE ABOVE'
-        * @return Void
+        * @return void.
         */
         void setRemoveAbove();
 
 
         /**
         * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE ABOVE INTERSECTION'
-        * @return Void
+        * @return void.
         */
         void setRemoveAboveIntersection();
 
 
         /**
         * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE BELOW'
-        * @return Void
+        * @return void.
         */
         void setRemoveBelow();
 
 
         /**
         * This is an auxiliary method to set the current stratigraphic rule as 'REMOVE BELOW INTERSECTION'
-        * @return Void
+        * @return void.
         */
         void setRemoveBelowIntersection();
 
@@ -1087,7 +1077,7 @@ class Controller
         /**
         * Method to set the current stratigraphic rule to the Rules Processor.
         * This method should be used right before creating the object surface
-        * @return Void
+        * @return void.
         */
         void applyStratigraphicRule();
 
@@ -1098,7 +1088,7 @@ class Controller
         * it calls the method stopCreateAbove() to disable it in the Rules Processor.
         * @param status_ status_ is true if the 'PRESERVE ABOVE' is enabled and false otherwise
         * @see stopCreateAbove()
-        * @return Void
+        * @return void.
         */
         void enablePreserveAbove( bool status_ );
 
@@ -1109,32 +1099,28 @@ class Controller
         * it calls the method stopCreateBelow() to disable it in the Rules Processor.
         * @param status_ status_ is true if the 'PRESERVE BELOW' is enabled and false otherwise
         * @see stopCreateBelow()
-        * @return Void
+        * @return void.
         */
         void enablePreserveBelow( bool status_ );
 
 
         /**
         * Method to disable the 'PRESERVE ABOVE' in the Rules Processor
-        * @return Void
+        * @return void.
         */
         void stopCreateAbove();
 
 
         /**
         * Method to disable the 'PRESERVE ABOVE' in the Rules Processor
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void stopCreateBelow();
 
 
         /**
         * Method to disable the 'PRESERVE REGION' in the Rules Processor
-        * @see testMeToo()
-        * @see publicVar()
-        * @return Void
+        * @return void.
         */
         void stopCreateRegion();
 
@@ -1174,7 +1160,7 @@ class Controller
         * @param boundary_ a reference to the lower boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
-        * @return Void
+        * @return void.
         */
         void getLowerBoundary( PolyCurve& boundary_ );
 
@@ -1184,7 +1170,7 @@ class Controller
         * @param boundary_ a reference to the upper boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
-        * @return Void
+        * @return void.
         */
         void getUpperBoundary( PolyCurve& boundary_ );
 
@@ -1192,7 +1178,7 @@ class Controller
         /**
         * Method to set an object selected as a boundary
         * @param index_ the index of the selected object
-        * @return Void
+        * @return void.
         */
         void setObjectSelectedAsBoundary( const std::size_t& index_ );
 
@@ -1237,7 +1223,7 @@ class Controller
         * Method to set the mesh resolution
         * @param resolution_ define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
         * @see Controller::MeshResolution
-        * @return Void
+        * @return void.
         */
         void setMeshResolution( const Controller::MeshResolution& resolution_ );
 
@@ -1247,7 +1233,7 @@ class Controller
         * @param red_ the red component of the color (integer)
         * @param green_ the green component of the color (integer)
         * @param blue_ the blue component of the color (integer)
-        * @return Void
+        * @return void.
         */
         void setCurrentColor( int red_, int green_, int blue_ );
 
@@ -1256,7 +1242,7 @@ class Controller
         * Method to save the objects data and metadata in a file, using json
         * This method calls saveObjectsMetaData() method
         * @param file_ the path of the file
-        * @return Void
+        * @return void.
         */
         void saveFile( const std::string& filename );
 
@@ -1284,7 +1270,7 @@ class Controller
         * @param file_ the path of the file
         * @param resol_ a reference to the mesh resolution
         * @see Controller::MeshResolution
-        * @return Void
+        * @return void.
         */
         void loadObjects( const std::string& filename, Controller::MeshResolution& resol_ );
 
@@ -1293,14 +1279,14 @@ class Controller
         //TODO: remove Qt
         /**
         * Method to load the objects metadata
-        * @return Void
+        * @return void.
         */
         void loadObjectMetaDatas( QFile& load_file );
 
 
         /**
         * Method to load the objects creating new metadatas for the objects
-        * @return Void
+        * @return void.
         */
         void loadObjectNoMetaDatas();
 
@@ -1335,7 +1321,7 @@ class Controller
 
         /**
         * Method to export the surfaces meshes to the file format Irap Grid
-        * @return Void
+        * @return void.
         */
         void exportToIrapGrid();
 
@@ -1346,7 +1332,7 @@ class Controller
         * @param points the vertices of the meshes
         * @param nu the number of discretization on the direction X
         * @param nv the number of discretization on the direction Y
-        * @return Void
+        * @return void.
         */
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
@@ -1360,7 +1346,7 @@ class Controller
         * @param back_curves the back boundary curves of each surface
         * @see TriangleMesh
         * @see CurveMesh
-        * @return Void
+        * @return void.
         */
         void setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshes,
                                             std::vector< CurveMesh >& left_curves,
@@ -1375,14 +1361,14 @@ class Controller
         * @param vertices the vertices of each region mesh
         * @param edges the edges of each region mesh
         * @param faces the faces of each region mesh
-        * @return Void
+        * @return void.
         */
-        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+        std::vector<int> getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces );
 
 
         /**
         * Method to clear all data and metadata existent
-        * @return Void
+        * @return void.
         */
         void clear();
 
@@ -1391,31 +1377,39 @@ class Controller
         /**
         * Method to set the point used to guide the extrusion in the guided extrusion
         * This method is not being used properly
-        * @param px_ the X coordinate of the point
-        * @param py_ the Y coordinate of the point
-        * @param depth_ the depth of the cross-section current where the point was picked
-        * @param dir_ the direction of the cross-section current where the point was picked
+        * @param float the X coordinate of the point
+        * @param float the Y coordinate of the point
+        * @param double the depth of the cross-section current where the point was picked
+        * @param CrossSectionDirections the direction of the cross-section current where the point was picked
         * @see Settings::CrossSection::CrossSectionDirections
-        * @return Void
+        * @return void.
         */
-        void setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ );
+        void setPointGuidedExtrusion( float , float , double , const Settings::CrossSection::CrossSectionDirections&  );
 
 
         /**
         * Method to set the point used to guide the extrusion in the guided extrusion
         * This method is not being used properly
-        * @param px_ the X coordinate of the point
-        * @param py_ the Y coordinate of the point
-        * @param depth_ the depth of the cross-section current where the point was picked
-        * @param dir_ the direction of the cross-section current where the point was picked
+        * @param float the X coordinate of the point
+        * @param float the Y coordinate of the point
+        * @param float the depth of the cross-section current where the point was picked
+        * @param PolyCurve the curve used to guided extrusion
         * @see setPointGuidedExtrusion
         * @see PolyCurve
-        * @return Void
+        * @return void.
         */
-        void setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ );
+        void setGuidedExtrusion(float, float, float, const PolyCurve&);
 
 
     protected:
+
+
+        /**
+        * Method to add a new object, i.e., a stratigraphy or structural
+        * @param index_ an optional parameter to define a new index to the object
+        * @return void.
+        */
+        bool addObject( std::size_t index_ = UNDEFINED_INDEX );
 
 
         /**
