@@ -141,9 +141,9 @@ class MainWindow: public QMainWindow
     signals:
 
 
-        //TODO: document the param
         /**
         * Signal emitted to run the Flow Diagnostics application or not
+        * @param status_ if status_ is true starts Flow Diagnostics and stop Flow Diagnostics if false.
         * @return void.
         */
         void runDiagnostics( bool status_ );

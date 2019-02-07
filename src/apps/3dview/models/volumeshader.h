@@ -75,7 +75,6 @@ class VolumeShader: public Shader
 
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the volume
         * @param V it is the view matrix

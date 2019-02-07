@@ -142,6 +142,6 @@ void CanvasStack::clear()
 
 void CanvasStack::closeEvent(QCloseEvent *event)
 {
-      emit canvasClosed();
+      emit windowClosed();
       event->accept();
 }

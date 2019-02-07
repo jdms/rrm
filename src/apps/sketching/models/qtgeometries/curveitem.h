@@ -50,7 +50,7 @@ class SketchLibraryWrapper
     static Curve2D fromQtToCurve2D( const QPolygonF& pol_ )
     {
         Curve2D curve_;
-        std::size_t start = ( pol_.isClosed() ) ? 1 : 0 ;
+        int start = ( pol_.isClosed() ) ? 1 : 0 ;
 
         for( int i = start ; i < pol_.size() ; ++i )
             curve_.add( QPointFToPoint2D( pol_[ i ] ) );
@@ -73,7 +73,7 @@ class SketchLibraryWrapper
 
         QPolygonF pol_;
 
-        for( std::size_t i = 0 ; i < curve_.size() ; ++i )
+        for( unsigned int i = 0 ; i < curve_.size() ; ++i )
             pol_ << Point2DToQPointF( curve_[ i ] ) ;
 
         if( curve_.isClosed() && curve_.size() > 0 )
@@ -361,12 +361,11 @@ class CurveItem : public QGraphicsPathItem
     protected:
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see QPainter
-        * @see QStyleOptionGraphicsItem
-        * @see QWidget
+        * @see QPainter performs painting on the widget
+        * @see QStyleOptionGraphicsItem provides style options for the item
+        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

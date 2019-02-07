@@ -427,7 +427,7 @@ void RRMApplication::getRegions( bool status_ )
         reg_->getColor( r_, g_, b_ );
         volume_  = reg_->getVolume();
 
-        if( total_volume_ != 0 )
+        if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_, perc_ );
@@ -453,7 +453,7 @@ void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 }
 
 
-void RRMApplication::setRegionName( std::size_t index_, const std::string& name_ )
+void RRMApplication::setRegionName( std::size_t , const std::string&  )
 {
 //    controller->setRegionName( index_, name_ );
     emit updateRegions();
@@ -670,7 +670,7 @@ void RRMApplication::selectBoundaryBySketch(  const PolyCurve& curve_, const Set
 {
     PolyCurve boundary_;
 
-    bool status_ = controller->setRegionBySketchAsBoundary( curve_, dir_, depth_, boundary_ );
+    controller->setRegionBySketchAsBoundary( curve_, dir_, depth_, boundary_ );
     emit updateBoundary();
 }
 
@@ -894,9 +894,9 @@ void RRMApplication::defineRandomColor()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    int r_ = distr( eng );
-    int g_ = distr( eng );
-    int b_ = distr( eng );
+    int r_ = static_cast< int >( distr( eng ) );
+    int g_ = static_cast< int >( distr( eng ) );
+    int b_ = static_cast< int >( distr( eng ) );
 
    defineCurrentColor( r_, g_, b_ );
 
@@ -1004,10 +1004,10 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 }
 
 
-void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
+void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces,
                                              std::vector< int >& regions_, std::map< int, std::vector< float > >& colors_ )
 {
-    regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
+    regions_ = controller->getTetrahedronsRegions( vertices, faces );
 
     for( auto it: regions_ )
     {

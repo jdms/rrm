@@ -78,7 +78,6 @@ class PlaneShader: public Shader
         void setCrossSection( const std::shared_ptr< CrossSection>& raw_ );
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the volume
         * @param V it is the view matrix

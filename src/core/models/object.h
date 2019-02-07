@@ -351,7 +351,7 @@ class Object
         bool removeCurve( double csection_id_ );
 
         /**
-        * Method to check if exists a curve in the given cross-section depth
+        * Method to check if exists a curve added by the user in the given cross-section depth
         * @return bool return true if exists a curve in the given cross-section depth
         */
         bool hasCurve( double csection_id_ ) const;

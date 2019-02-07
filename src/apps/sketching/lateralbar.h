@@ -157,10 +157,22 @@ class LateralBar: public QWidget
         QPushButton* btn_show_output_dipangle = nullptr;            /**< Button to display the current image related to output angle.  */
         QPushButton* btn_move_output_dipangle = nullptr;            /**< Button to allow the user to move the current image related to output angle.  */
 
+        const double MIN_VALUE = 0.1;                               /**< Minimum value to the vertical exaggeration slider.  */
+        const double MAX_VALUE = 10000.;                            /**< Maximum value to the vertical exaggeration slider.  */
 
-        //TODO fix the comment
-        double min_exagg = -1;                                      /**< Minimum value to the vertical exaggeration slider.  */
-        double max_exagg = 4;                                       /**< Maximum value to the vertical exaggeration slider.  */
+        double min_log = -1;                                        /**< Log10 of the minimum value to the vertical exaggeration slider.  */
+        double max_log = 4;                                         /**< Log10 of the maximum value to the vertical exaggeration slider.  */
+
+
+        ///////////////////////////////////////////////////////////////////////////////
+        //                                                                           //
+        // log10 1 = min_log + v_exagg_*0.01* (max_log - min_log);                   //
+        // log10 1 = -1 + v_exagg_*0.01* (4 - (-1) );                                //
+        // 0 = -1 +  v_exagg_*0.01*5                                                 //
+        // v_exagg_ = 100/5 => v_exagg_ = 20                                         //
+        ///////////////////////////////////////////////////////////////////////////////
+
+        const int RESET_VEXAG = 20;                               /**< Slider value to reset the vertical exaggeration to 1.0  */
 
         int count = 0;
 };

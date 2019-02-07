@@ -36,11 +36,10 @@ class PolygonItem: public QGraphicsPolygonItem
         QRectF boundingRect() const override ;
 
 
-        //TODO: improve the comments
         /**
-        * Method to define the shape of the polygon
+        * Method to define the shape of the polygon in local coordinates.
         * @see QPainterPath
-        * @return QPainterPath
+        * @return QPainterPath an accurate outline of the item's as a QPainterPath
         */
         QPainterPath shape() const override;
 
@@ -261,13 +260,11 @@ class PolygonItem: public QGraphicsPolygonItem
     protected:
 
 
-
-        //TODO: finish to document the parameters.
         /**
         * Method to repaint the curve
-        * @see QPainter
-        * @see QStyleOptionGraphicsItem
-        * @see QWidget
+        * @see QPainter performs painting on the widget
+        * @see QStyleOptionGraphicsItem provides style options for the item
+        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void.
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

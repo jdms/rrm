@@ -74,7 +74,6 @@ class SurfaceShader: public Shader
         void setObject( const std::shared_ptr< Stratigraphy >& raw_ );
 
 
-        //TODO: finish to document the parameters.
         /**
         * Method to render the surface
         * @param V it is the view matrix
