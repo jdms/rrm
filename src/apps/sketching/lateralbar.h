@@ -1,3 +1,32 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file lateralbar.h
+ * @author Clarissa C. Marques
+ * @date 9 Sep 2012
+ * @brief File containing the class LateralBar
+ */
+
+
 #ifndef LATERALBAR_H
 #define LATERALBAR_H
 
@@ -78,10 +107,6 @@ class LateralBar: public QWidget
 
         /**
        * Method (slot) to update the value of the output dip angle value (double) using the value of the current dl_input_dipangle value.
-       * @see Javadoc_Test()
-       * @see ~Javadoc_Test()
-       * @see testMeToo()
-       * @see publicVar()
        * @return Void
        */
         void updateDipAngle();

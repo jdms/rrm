@@ -1,24 +1,30 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
+/**
+ * @file sketchscene.h
+ * @author Clarissa C. Marques
+ * @date 9 Sep 2012
+ * @brief File containing the class SketchScene
+ */
 
 
 #ifndef SKETCHSCENE_H
@@ -59,9 +65,6 @@ class SketchScene: public QGraphicsScene
      */
     enum class UserInteraction { NONE, SKETCHING, RESIZING_BOUNDARY, RESIZING_IMAGE, CREATE_REGION, SELECTING_STRATIGRAPHY_OLD, SELECTING_STRATIGRAPHY, SELECTING_REGION, SELECTING_REGIONS, SELECTING_WELLS, GUIDED_EXTRUSION, TRAJECTORY_GUIDED };
 
-    ///================================================================================
-
-
 
     public:
 
@@ -80,8 +83,6 @@ class SketchScene: public QGraphicsScene
        /**
        * Method to initialize the scene.
        * This method creates and adds all the auxiliary items to the scene, for example, the input sketch and items to handle images.
-       * @see testMeToo()
-       * @see publicVar()
        * @return void.
        */
         void init();
@@ -618,7 +619,6 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal to notify the view to adjust the focus so that all elements on the scene should appear.
-        * @see publicVar()
         * @return void.
         */
         void ensureObjectsVisibility();
