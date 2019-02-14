@@ -22,7 +22,6 @@
 /**
  * @file sketchscene.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SketchScene
  */
 
@@ -91,8 +90,8 @@ class SketchScene: public QGraphicsScene
        /**
        * Method to define cross-section information.
        * This method sets the direction and depth of the cross-section to be viewed in the scene. It is used to allow or restrict some interactions.
-       * @param dir_ direction of the cross-section to be viewed in this scene.
-       * @param depth_ depth of the cross-section to be viewed in this scene.
+       * @param dir direction of the cross-section to be viewed in this scene.
+       * @param depth depth of the cross-section to be viewed in this scene.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void.
        */
@@ -101,8 +100,8 @@ class SketchScene: public QGraphicsScene
 
        /**
        * Method to get the cross-section information.
-       * @param dir_ reference to the direction of the cross-section to be viewed in this scene.
-       * @param depth_ reference to the depth of the cross-section to be viewed in this scene.
+       * @param dir reference to the direction of the cross-section to be viewed in this scene.
+       * @param depth reference to the depth of the cross-section to be viewed in this scene.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void.
        */
@@ -113,7 +112,7 @@ class SketchScene: public QGraphicsScene
         * Method to create a volume in the scene.
         * This volume will hold a const shared pointer to a volume data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param volume_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param volume data structure that contains the geometry and others required information to draw it on scene.
         * @see Volume
         * @return void.
         */
@@ -131,7 +130,7 @@ class SketchScene: public QGraphicsScene
         * Method to add cross-section in the scene.
         * This cross-section will hold a const shared pointer to a cross-section data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param csection_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param csection data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return void.
         */
@@ -140,8 +139,8 @@ class SketchScene: public QGraphicsScene
         /**
         * Method to update a cross-section in the scene.
         * This update can be since updating the dimensions to its visibility.
-        * @param dir_ direction which cross-section is done.
-        * @param depth_ depth of the cross-section in that direction.
+        * @param dir direction which cross-section is done.
+        * @param depth depth of the cross-section in that direction.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -150,8 +149,8 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method to remove a cross-section in the scene.
-        * @param dir_ direction which cross-section is done.
-        * @param depth_ depth of the cross-section in that direction.
+        * @param dir direction which cross-section is done.
+        * @param depth depth of the cross-section in that direction.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -169,7 +168,7 @@ class SketchScene: public QGraphicsScene
         * Method to add stratigraphies and structurals in the scene.
         * This stratigraphy will hold a const shared pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
-        * @param strat_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param strat data structure that contains the geometry and others required information to draw it on scene.
         * @see Stratigraphy
         * @return void.
         */
@@ -179,7 +178,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method to update the stratigraphy or structural, which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id_ index of the stratigraphy to be updated.
+        * @param id index of the stratigraphy to be updated.
         * @return void.
         */
         void updateStratigraphy( const std::size_t& id_ );
@@ -209,7 +208,7 @@ class SketchScene: public QGraphicsScene
         * Method to add regions in the scene.
         * This region will hold a const shared pointer to a region data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param region_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param region data structure that contains the geometry and others required information to draw it on scene.
         * @see Regions
         * @return void.
         */
@@ -219,7 +218,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method to update the region which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id_ index of the region to be updated.
+        * @param id index of the region to be updated.
         * @return void.
         */
         void updateRegion( const std::size_t& id_ );
@@ -248,6 +247,8 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method to enable or disable the action of sketching.
+        * @param status boolean to indicate if the sketch should be enabled or disabled. Its value is true if the sketch should be enabled
+        * and false otherwise
         * @return void.
         */
         void enableSketch( bool status_ );
@@ -287,7 +288,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to change the current color of the input sketch to color_.
-        * @param color_ color to be the current one in the input sketch.
+        * @param color color to be the current one in the input sketch.
         * @see QColor
         * @return void.
         */
@@ -313,7 +314,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to set the interaction mode 'sketching' to active or desactivated.
-        * @param status_ boolean to represent the status of the 'sketching' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'sketching' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'NONE'.
         * @param UserInteraction
         * @return void.
@@ -323,7 +324,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to set the interaction mode 'resizing boundary' to active or desactivated.
-        * @param status_ boolean to represent the status of the 'resizing boundary' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'resizing boundary' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -334,7 +335,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to set the interaction mode 'old stratigraphy selection' to active or desactivated.
         * This method is used when the preserve above and below is active and the user select stratigraphies by picking the curves to be the new boundary.
-        * @param status_ boolean to represent the status of the 'old stratigraphy selection' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'old stratigraphy selection' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -345,7 +346,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to set the interaction mode 'new stratigraphy selection' to active or desactivated.
         * This method is used when the preserve above and below is active and the user select stratigraphies by making sketches to mark the curves to be the new boundary.
-        * @param status_ boolean to represent the status of the 'new stratigraphy selection' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'new stratigraphy selection' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -356,7 +357,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to set the interaction mode 'region selection' to active or inactive.
         * This method is not being used properly.
-        * @param status_ boolean to represent the status of the 'region selection' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'region selection' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -366,7 +367,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to set the interaction mode 'resize image' to active or desactivated.
-        * @param status_ boolean to represent the status of the 'resize image' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'resize image' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -377,7 +378,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to set the interaction mode 'selecting region' to activate or desactivated.
         * This method is used when the preserve region is active and the user select regions choosing a point to know which regions it belongs to.
-        * @param status_ boolean to represent the status of the 'selecting region' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'selecting region' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @param UserInteraction
         * @return void.
@@ -388,7 +389,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to add images to the cross-section associated to this scene.
         * This method emit a signal in order the controller save the image in the apropriate cross-section.
-        * @param file_ path to the image file.
+        * @param file path to the image file.
         * @see QString
         * @return void.
         */
@@ -398,10 +399,10 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to show the image to the cross-section associated to this scene.
         * @param file_ path to the image file.
-        * @param ox_ x coordinate of the origin of the image.
-        * @param oy_ y coordinate of the origin of the image.
-        * @param w_ width of the image.
-        * @param h_ height of the image.
+        * @param ox x coordinate of the origin of the image.
+        * @param oy y coordinate of the origin of the image.
+        * @param w width of the image.
+        * @param h height of the image.
         * @return void.
         */
         void setImageInCrossSection( const std::string& file_, double ox_, double oy_, double w_, double y_ );
@@ -432,7 +433,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to set a curve as the lower boundary and calls the method 'defineBoundaryArea' to define a region.
-        * @param boundary_ curve selected to be the lower boundary.
+        * @param boundary curve selected to be the lower boundary.
         * @see defineBoundaryArea()
         * @see PolyCurve
         * @return void.
@@ -442,7 +443,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot)to set a curve as the upper boundary and calls the method 'defineBoundaryArea' to define a region.
-        * @param boundary_ curve selected to be the upper boundary.
+        * @param boundary curve selected to be the upper boundary.
         * @see defineBoundaryArea()
         * @see PolyCurve
         * @return void.
@@ -466,7 +467,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to update the point used to guided extrusion.
-        * @param p_ new point to the guided extrusion
+        * @param p new point to the guided extrusion
         * @return void.
         */
         void updatePointGuidedExtrusion( const QPointF& p_ );
@@ -489,8 +490,8 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to show or hide the output dip angle picture.
-        * @param status_ a boolean to define if the output dip angle should be shown or not.
-        * If status_ is true the picture will be shown, and hidding if the value is false
+        * @param status a boolean to define if the output dip angle should be shown or not.
+        * If status is true the picture will be shown, and hidding if the value is false
         * @see QPixmap
         * @return void.
         */
@@ -499,8 +500,8 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to update the output dip angle picture for a new one.
-        * @param pix_ a new output dip angle picture
-        * If status_ is true the picture will be shown, and hidding if the value is false
+        * @param pix a new output dip angle picture
+        * If status is true the picture will be shown, and hidding if the value is false
         * @see QPixmap
         * @return void.
         */
@@ -509,7 +510,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to turn the output dip angle picture movable or not.
-        * @param status_ boolean to set if the picture will be movable or not.
+        * @param status boolean to set if the picture will be movable or not.
         * It is true if the picture shoudl be movable, and false otherwise.
         * @return void.
         */
@@ -518,7 +519,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Method(slot) to set the axes visible or not.
-        * @param status_ boolean to set if axes picture will be visible or not.
+        * @param status boolean to set if axes picture will be visible or not.
         * It is true if the axes is visible, and false otherwise.
         * @return void.
         */
@@ -545,7 +546,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Inline method(slot) to invert or not the current image in the cross-section.
-        * @param status_ boolean to indicate if the image should be inverted or not.
+        * @param status boolean to indicate if the image should be inverted or not.
         * It is true if the image should be inverted, and false otherwise.
         * @return void.
         */
@@ -557,7 +558,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Inline method(slot) to add or remove the axes from the scene.
-        * @param status_ boolean to indicate if the axes should be removed or added in the scene.
+        * @param status boolean to indicate if the axes should be removed or added in the scene.
         * It is true if the axes should be added, and false otherwise.
         * @return void.
         */
@@ -581,6 +582,8 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to undo the vertical exaggeration in the axes.
         * This method was implement as part of the solution to undo the undesired deformation in the axes resulting from the vertical exaggeration.
+        * @param matrix the canvas matrix where the vertical exaggeration was applied. It will be used to revert the transformation on the axes.
+        * @param the value of the vertical exaggeration. It will be used to apply the scale on the axes in a different way.
         * @return void.
         */
         void revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
@@ -596,7 +599,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Method(slot) to set the interaction mode 'guided extrusion' to activate or desactivated.
         * This method is not being used properly.
-        * @param status_ boolean to represent the status of the 'guided extrusion' mode. The value is true if it is active or, false otherwise.
+        * @param status boolean to represent the status of the 'guided extrusion' mode. The value is true if it is active or, false otherwise.
         * If the value is false the interaction mode changes to 'SKETCHING'.
         * @return void.
         */
@@ -608,9 +611,9 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal to notify the others parts of the system that the volume dimension was changed.
-        * @param dir_ direction of the current cross-section in which the dimensions change was done.
-        * @param width_ new width dimension. Note that, depending on which cross-section was made the change, this value can be the volume width or the depth.
-        * @param height_ new height dimension. Note that, depending on which cross-section was made the change, this value can be the volume width or the depth.
+        * @param dir direction of the current cross-section in which the dimensions change was done.
+        * @param width new width dimension. Note that, depending on which cross-section was made the change, this value can be the volume width or the depth.
+        * @param height new height dimension. Note that, depending on which cross-section was made the change, this value can be the volume width or the depth.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -626,9 +629,9 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal to send the sketch as a curve of the current object.
-        * @param curve_ sketch done by the user to be a curve of the current object.
-        * @param dir_ direction of the cross-section which was done the sketch
-        * @param depth_ depth of the cross-section which was done the sketch
+        * @param curve sketch done by the user to be a curve of the current object.
+        * @param dir direction of the cross-section which was done the sketch
+        * @param depth depth of the cross-section which was done the sketch
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -647,10 +650,10 @@ class SketchScene: public QGraphicsScene
         * @param string path to the image file.
         * @param CrossSectionDirections cross-section direction of the current scene.
         * @param double cross-section depth of the current scene.
-        * @param ox_ x coordinate of the origin of the image.
-        * @param oy_ y coordinate of the origin of the image.
-        * @param w_ width of the image.
-        * @param h_ height of the image.
+        * @param ox x coordinate of the origin of the image.
+        * @param oy y coordinate of the origin of the image.
+        * @param w width of the image.
+        * @param h height of the image.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -659,7 +662,6 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal emmited to controller removes the image data in the cross-section associated to the scene.
-        * @param string path to the image file.
         * @param CrossSectionDirections cross-section direction of the current scene.
         * @param double cross-section depth of the current scene.
         * @see Settings::CrossSection::CrossSectionDirections
@@ -670,7 +672,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal emmited to specifies which object was selected.
-        * @param id_ index of the selected object
+        * @param id index of the selected object
         * @return void.
         */
         void objectSelected( const std::size_t& id_ );
@@ -679,8 +681,9 @@ class SketchScene: public QGraphicsScene
         /**
         * Signal to send the sketch made as a selection marker.
         * This signal is used when the new method to select stratigraphies and structurals is enabled.
-        * @param dir_ direction of the cross-section associated to the current scene.
-        * @param depth_ depth of the cross-section associated to the current scene.
+        * @param curve the sketch done to select a stratigraphy/structural
+        * @param dir direction of the cross-section associated to the current scene.
+        * @param depth depth of the cross-section associated to the current scene.
         * @see PolyCurve
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
@@ -697,10 +700,10 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Signal emitted when a point in a region was selected.
-        * @param px_ x coordinate of the selected point
-        * @param py_ y coordinate of the selected point
-        * @param depth_ depth of the cross-section associated to the current scene
-        * @param dir_ direction of the cross-section associated to the current scene
+        * @param px x coordinate of the selected point
+        * @param py y coordinate of the selected point
+        * @param depth depth of the cross-section associated to the current scene
+        * @param dir direction of the cross-section associated to the current scene
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -710,8 +713,8 @@ class SketchScene: public QGraphicsScene
         /**
         * Signal emitted when a region, which index is id_, is selected or deselected.
         * This method is not being used properly.
-        * @param id_ index of the selected region.
-        * @param status_ status of selection of the region. It is true if it is selected and false otherwise.
+        * @param id index of the selected region.
+        * @param status status of selection of the region. It is true if it is selected and false otherwise.
         * @return void.
         */
         void regionSelected( const std::size_t& id_, bool status_ );
@@ -720,8 +723,8 @@ class SketchScene: public QGraphicsScene
         /**
         * Signal emitted to controller remove the last curve inserted in the current object.
         * This method is not being used properly.
-        * @param dir_ direction of the cross-section associated to this current scene.
-        * @param depth_ depth of the cross-section associated to this current scene.
+        * @param dir direction of the cross-section associated to this current scene.
+        * @param depth depth of the cross-section associated to this current scene.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -731,10 +734,10 @@ class SketchScene: public QGraphicsScene
         /**
         * Signal emitted to send the point to be used in the guided extrusion.
         * This method is not being used properly.
-        * @param px_ x coordinate of the point selected
-        * @param py_ y coordinate of the point selected
-        * @param depth_ depth of the cross-section associated to this current scene.
-        * @param dir_ direction of the cross-section associated to this current scene.
+        * @param px x coordinate of the point selected
+        * @param py y coordinate of the point selected
+        * @param depth depth of the cross-section associated to this current scene.
+        * @param dir direction of the cross-section associated to this current scene.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -744,6 +747,7 @@ class SketchScene: public QGraphicsScene
         /**
         * Signal emitted to send the sketch as the trajectory in guided extrusion process.
         * This method is not being used properly.
+        * @param curve the curve used as the trajectory to the guided extrusion
         * @see PolyCurve
         * @return void.
         */
@@ -784,6 +788,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle the events when a mouse button is pressed.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneMouseEvent
         * @return void.
         */
@@ -792,6 +797,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle the events when a mouse button is double clicked.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneMouseEvent
         * @return void.
         */
@@ -800,6 +806,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle the events when the mouse is moved.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneMouseEvent
         * @return void.
         */
@@ -808,6 +815,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle the events when a mouse button is released.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneMouseEvent
         * @return void.
         */
@@ -816,6 +824,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle when the mouse enter on the scene dragging something.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneDragDropEvent
         * @return void.
         */
@@ -824,6 +833,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle when the mouse is over the scene and drop something.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneDragDropEvent
         * @return void.
         */
@@ -832,6 +842,7 @@ class SketchScene: public QGraphicsScene
 
         /**
         * Virtual method to handle when the mouse is moving over the scene dragging something.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QGraphicsSceneDragDropEvent
         * @return void.
         */
@@ -841,6 +852,8 @@ class SketchScene: public QGraphicsScene
         /**
         * Virtual method to handle the wheel movement of the mouse.
         * It is tipically used when a zoom is performed.
+        * @param event captures the mouse event to identify which operation was performed and how much and which direction the
+        * wheel was moved
         * @see QGraphicsSceneWheelEvent
         * @return void.
         */

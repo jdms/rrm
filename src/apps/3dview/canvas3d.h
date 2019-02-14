@@ -22,8 +22,7 @@
 /**
  * @file canvas3d.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
- * @brief File containing the class Canvas3d
+ * @brief File containing the Canvas3d class
  */
 
 
@@ -71,6 +70,10 @@ class Canvas3d: public QOpenGLWidget
 
         /**
        * Method to return the path of the image taken as height map.
+       * @param zmin the the minimum value of the z coordinare to compute the height map colors
+       * @param zmax the the maximum value of the z coordinare to compute the height map colors
+       * @param width the width dimension of the image
+       * @param height the height dimension of the image
        * @return std::string The path pf the created image
        */
         std::string sendImage( double zmin_, double zmax_, double width_, double height_  );
@@ -116,6 +119,8 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Method (slot) to resize and update the camera and the viewport.
         * This virtual method(slot) is automatically called when the OpenGL canvas is resized.
+        * @param width the width of the canvas
+        * @param height the height of the canvas
         * @return void.
         */
         void resizeGL( int width, int height );
@@ -161,6 +166,7 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Virtual method to handle the events when a mouse button is pressed.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QMouseEvent
         * @return void.
         */
@@ -169,6 +175,7 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Virtual method to handle the events when the mouse is moved.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QMouseEvent
         * @return void.
         */
@@ -177,6 +184,7 @@ class Canvas3d: public QOpenGLWidget
 
         /**
         * Virtual method to handle the events when a mouse button is released.
+        * @param event captures the mouse event to identify which operation was performed and if and which button is pressed
         * @see QMouseEvent
         * @return void.
         */
@@ -186,6 +194,8 @@ class Canvas3d: public QOpenGLWidget
         /**
         * Virtual method to handle the wheel movement of the mouse.
         * It is tipically used when a zoom is performed.
+        * @param event captures the mouse event to identify which operation was performed and how much and which direction the
+        * wheel was moved
         * @see QWheelEvent
         * @return void.
         */

@@ -22,7 +22,6 @@
 /**
  * @file stratigraphyitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class StratigraphyItem
  */
 
@@ -48,7 +47,7 @@ class StratigraphyItem: public CurveItem
 
         /**
         * Constructor. parent_ is passed to QGraphicsLineItem's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         */
         StratigraphyItem( QGraphicsItem *parent_ = nullptr );
 
@@ -61,9 +60,9 @@ class StratigraphyItem: public CurveItem
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @param dir_ the direction of the cross-section that cutted the surface
-        * @param depth_ the depth of the cross-section that cutted the surface
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param dir the direction of the cross-section that cutted the surface
+        * @param depth the depth of the cross-section that cutted the surface
         * @see Stratigraphy
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
@@ -81,6 +80,8 @@ class StratigraphyItem: public CurveItem
 
         /**
         * Method to set the cross-section which cutted the surface
+        * @param dir the direction of the cross-section
+        * @param depth the depth of the cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         */

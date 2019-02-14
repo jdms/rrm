@@ -22,7 +22,6 @@
 /**
  * @file regionitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class RegionItem
  */
 
@@ -47,8 +46,8 @@ class RegionItem: public PolygonItem
     public:
 
         /**
-        * Constructor. parent_ is passed to PolygonItem's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to PolygonItem's constructor.
+        * @param parent the parent item
         */
         RegionItem( QGraphicsItem *parent_ = nullptr );
 
@@ -61,9 +60,9 @@ class RegionItem: public PolygonItem
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @param dir_ the direction of the cross-section that cutted the volume
-        * @param depth_ the depth of the cross-section that cutted the volume
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param dir the direction of the cross-section that cutted the volume
+        * @param depth the depth of the cross-section that cutted the volume
         * @see Regions
         * @return Void.
         */

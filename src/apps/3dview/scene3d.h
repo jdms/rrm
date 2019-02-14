@@ -22,7 +22,6 @@
 /**
  * @file scene3d.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Scene3d
  */
 
@@ -80,7 +79,7 @@ class Scene3d: public QObject
         * Method to create a volume in the scene.
         * This volume will hold a const shared pointer to a volume data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param volume_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @see Volume
         * @return Void.
         */
@@ -100,7 +99,7 @@ class Scene3d: public QObject
         * Method to add the main cross-section in the scene.
         * This cross-section will hold a const shared pointer to a cross-section data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param csection_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param csection data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return Void.
         */
@@ -109,7 +108,7 @@ class Scene3d: public QObject
 
         /**
         * Method to change the main cross-section direction.
-        * @param csection_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param csection data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return Void.
         */
@@ -130,7 +129,7 @@ class Scene3d: public QObject
         * Method to add a new cross-section in the scene.
         * This cross-section will hold a const shared pointer to a cross-section data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param csection_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param csection data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return Void.
         */
@@ -140,8 +139,8 @@ class Scene3d: public QObject
         /**
         * Method to update a cross-section in the scene.
         * This update can be since updating the dimensions, position to its visibility.
-        * @param dir_ direction which cross-section is done.
-        * @param depth_ depth of the cross-section in that direction.
+        * @param dir direction which cross-section is done.
+        * @param depth depth of the cross-section in that direction.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return Void.
         */
@@ -150,8 +149,8 @@ class Scene3d: public QObject
 
         /**
         * Method to remove a cross-section from the scene.
-        * @param dir_ direction which cross-section is done.
-        * @param depth_ depth of the cross-section in that direction.
+        * @param dir direction which cross-section is done.
+        * @param depth depth of the cross-section in that direction.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return Void.
         */
@@ -170,7 +169,7 @@ class Scene3d: public QObject
         * Method to add stratigraphies and structurals in the scene.
         * This stratigraphy will hold a const shared pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
-        * @param strat_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param strat data structure that contains the geometry and others required information to draw it on scene.
         * @see Stratigraphy
         * @return Void.
         */
@@ -180,7 +179,7 @@ class Scene3d: public QObject
         /**
         * Method to update the stratigraphy or structural, which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id_ index of the stratigraphy to be updated.
+        * @param id index of the stratigraphy to be updated.
         * @see Stratigraphy
         * @return Void.
         */
@@ -199,7 +198,7 @@ class Scene3d: public QObject
         * Method to add regions in the scene.
         * This region will hold a const shared pointer to a region data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param region_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param region data structure that contains the geometry and others required information to draw it on scene.
         * @see Regions
         * @return Void.
         */
@@ -209,7 +208,7 @@ class Scene3d: public QObject
         /**
         * Method to update the region which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id_ index of the region to be updated.
+        * @param id index of the region to be updated.
         * @see Regions
         * @return Void.
         */

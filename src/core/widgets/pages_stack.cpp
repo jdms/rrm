@@ -22,7 +22,6 @@
 /**
  * @file pages_stack.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class PagesStack
  */
 

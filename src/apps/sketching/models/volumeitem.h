@@ -22,7 +22,6 @@
 /**
  * @file volumeitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class VolumeItem
  */
 
@@ -47,7 +46,7 @@ class VolumeItem: public PlaneItem
 
         /**
         * Constructor. parent_ is passed to PlaneItem's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         */
         VolumeItem( QGraphicsItem *parent_ = nullptr );
 
@@ -58,7 +57,7 @@ class VolumeItem: public PlaneItem
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @see Volume
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
@@ -76,7 +75,7 @@ class VolumeItem: public PlaneItem
 
         /**
         * Method to update the dimensions given a new direction.
-        * @param dir_ a new direction
+        * @param dir a new direction
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -85,7 +84,7 @@ class VolumeItem: public PlaneItem
 
         /**
         * This method calls the method 'updateDimensions'.
-        * @param dir_ a new direction
+        * @param dir a new direction
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */

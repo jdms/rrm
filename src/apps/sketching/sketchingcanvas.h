@@ -22,7 +22,6 @@
 /**
  * @file sketchingcanvas.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SketchingCanvas
  */
 
@@ -46,7 +45,7 @@ class SketchingCanvas: public QGraphicsView
 
         /**
         * Constructor. parent_ is passed to QGraphicsView's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         */
         SketchingCanvas( QWidget *parent_ = nullptr );
 
@@ -66,7 +65,7 @@ class SketchingCanvas: public QGraphicsView
 
        /**
        * Method to apply the vertical exaggeration in the scene.
-       * @param scale_ The vertical exaggeration value (double).
+       * @param scale The vertical exaggeration value (double).
        * @return Void.
        */
         void setVerticalExaggeration( double scale_ );

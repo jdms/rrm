@@ -22,7 +22,6 @@
 /**
  * @file anglepicture.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class AnglePicture
  */
 
@@ -45,8 +44,8 @@ class AnglePicture: public QLabel
 
         /**
         * Constructor.
-        * @param size_ size of the image
-        * @param angle_ the output dip angle
+        * @param size size of the image
+        * @param angle the output dip angle
         */
         AnglePicture(  const QSize& size_, double angle_ );
 
@@ -56,7 +55,7 @@ class AnglePicture: public QLabel
 
         /**
         * Method to update the output dip angle
-        * @param angle_ the output dip angle
+        * @param angle the output dip angle
         * @return void..
         */
         void updateAngle( double angle_ );
@@ -66,7 +65,7 @@ class AnglePicture: public QLabel
 
         /**
         * Method to repaint the image
-        * @see QPaintEvent contains event parameters for paint events
+        * @see QPaintEvent contains event parameters for painting events
         * @return void.
         */
         void paintEvent(QPaintEvent* e);

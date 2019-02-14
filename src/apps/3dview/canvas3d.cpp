@@ -22,8 +22,7 @@
 /**
  * @file canvas3d.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
- * @brief File containing the class Canvas3d
+ * @brief File containing the Canvas3d class
  */
 
 

@@ -22,7 +22,6 @@
 /**
  * @file controller.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Controller
  */
 
@@ -120,6 +119,7 @@ class Controller
         /**
         * Method to set a reference to the application.
         * This create a brigde between the data and the interface by the controller
+        * @param app the interface application where the most of the events are implemented
         * @see RRMApplication
         * @return void.
         */
@@ -143,9 +143,9 @@ class Controller
 
         /**
         * Method to resize the volume dimensions
-        * @param width_ the new witdth volume
-        * @param height_ the new height volume
-        * @param depth_ the new depth volume
+        * @param width the new witdth volume
+        * @param height the new height volume
+        * @param depth the new depth volume
         * @return void.
         */
         void resizeVolume( double width_, double height_, double depth_ );
@@ -153,7 +153,7 @@ class Controller
 
         /**
         * Method to set the volume width
-        * @param width_ the new witdth volume
+        * @param width the new witdth volume
         * @return void.
         */
         void setVolumeWidth( double width_ );
@@ -161,7 +161,7 @@ class Controller
 
         /**
         * Method to set the volume height
-        * @param height_ the new height volume
+        * @param height the new height volume
         * @return void.
         */
         void setVolumeHeight( double height_ );
@@ -169,7 +169,7 @@ class Controller
 
         /**
         * Method to set the volume depth
-        * @param depth_ the new depth volume
+        * @param depth the new depth volume
         * @return Void.
         */
         void setVolumeLenght( double lenght_ );
@@ -177,12 +177,12 @@ class Controller
 
         /**
         * Method to get the volume geometry, i.e., the dimensions and the origin of the volume
-        * @param ox_ the X coordinate of the volume origin
-        * @param oy_ the Y coordinate of the volume origin
-        * @param oz_ the Z coordinate of the volume origin
-        * @param w_ the volume witdth
-        * @param h_ the volume height
-        * @param d_ the volume depth
+        * @param ox the X coordinate of the volume origin
+        * @param oy the Y coordinate of the volume origin
+        * @param oz the Z coordinate of the volume origin
+        * @param w the volume witdth
+        * @param h the volume height
+        * @param d the volume depth
         * @return void.
         */
         void getVolumeGeometry( double& ox_, double& oy, double& oz, double& w_, double& h_, double& d_ ) const;
@@ -190,7 +190,7 @@ class Controller
 
         /**
         * Method to set a name to the volume
-        * @param id_ a new name to the volume
+        * @param id a new name to the volume
         * @return void.
         */
         void setVolumeName( const std::string& name_ );
@@ -198,7 +198,7 @@ class Controller
 
         /**
         * Method to set the volume visible or not
-        * @param status_ if the value is true the volume is visible and false otherwise
+        * @param status if the value is true the volume is visible and false otherwise
         * @return void.
         */
         void setVolumeVisibility( bool status_ );
@@ -221,7 +221,7 @@ class Controller
 
         /**
         * Method to set the direction of the main cross-section
-        * @param dir_ the new cross-section direction.
+        * @param dir the new cross-section direction.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -239,7 +239,7 @@ class Controller
 
         /**
         * Method to move the main cross-section to a new depth
-        * @param depth_ the depth to where the cross-section should be moved
+        * @param depth the depth to where the cross-section should be moved
         * @return void.
         */
         void moveMainCrossSection( double depth_ );
@@ -271,7 +271,7 @@ class Controller
 
         /**
         * Method to move the top view cross-section to a new depth
-        * @param depth_ the height to where the cross-section should be moved
+        * @param depth the height to where the cross-section should be moved
         * @return void.
         */
         void moveTopViewCrossSection( double depth_ );
@@ -280,8 +280,8 @@ class Controller
         /**
         * Method to create a fixed cross-section.
         * The fixed cross-section can be in the three directions, 'WIDTH', 'DEPTH' and 'HEIGHT'
-        * @param dir_ the direction of the fixed cross-section
-        * @param depth_ the depth_ of the fixed cross-section
+        * @param dir the direction of the fixed cross-section
+        * @param depth the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -290,9 +290,9 @@ class Controller
 
         /**
         * Method to get the fixed cross-section, given the direction and the depth of the cross-section, if existent
-        * @param dir_ the direction of the fixed cross-section
-        * @param depth_ the depth_ of the fixed cross-section
-        * @param csection_ a shared pointer to the fixed cross-section
+        * @param dir the direction of the fixed cross-section
+        * @param depth the depth_ of the fixed cross-section
+        * @param csection a shared pointer to the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return returns true if the cross-section exists and false otherwise.
         */
@@ -301,8 +301,8 @@ class Controller
 
         /**
         * Method to remove the a fixed cross-section.
-        * @param dir_ the direction of the fixed cross-section
-        * @param depth_ the depth_ of the fixed cross-section
+        * @param dir the direction of the fixed cross-section
+        * @param depth the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -311,13 +311,13 @@ class Controller
 
         /**
         * Method to set an image in a given cross-section
-        * @param file_ the path of the image file
-        * @param dir_ the direction of the fixed cross-section
-        * @param depth_ the depth_ of the fixed cross-section
-        * @param ox_ the X coordinate of the image origin
-        * @param oy_ the Y coordinate of the image origin
-        * @param w_ the width of the image
-        * @param h_ the height of the image
+        * @param file the path of the image file
+        * @param dir the direction of the fixed cross-section
+        * @param depth the depth_ of the fixed cross-section
+        * @param ox the X coordinate of the image origin
+        * @param oy the Y coordinate of the image origin
+        * @param w the width of the image
+        * @param h the height of the image
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -326,8 +326,8 @@ class Controller
 
         /**
         * Method to remove an image from a given cross-section
-        * @param dir_ the direction of the fixed cross-section
-        * @param depth_ the depth_ of the fixed cross-section
+        * @param dir the direction of the fixed cross-section
+        * @param depth the depth_ of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -349,7 +349,7 @@ class Controller
 
         /**
         * Method to get an object, i.e., a stratigraphy or structural
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @see ObjectPtr
         * @return ObjectPtr a shared pointer to the object.
         */
@@ -374,8 +374,8 @@ class Controller
 
         /**
         * Method to set a name to the given object
-        * @param index_ the index of the object
-        * @param name_ the new name of the object
+        * @param index the index of the object
+        * @param name the new name of the object
         * @return void.
         */
         void setObjectName( std::size_t index_, const std::string& name_ );
@@ -383,7 +383,7 @@ class Controller
 
         /**
         * Method to get the object name
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @return std::string the name of the object
         */
         std::string getObjectName( std::size_t index_) const;
@@ -392,7 +392,7 @@ class Controller
         /**
         * Method to set the type of the current object
         * In this method is only allowed two types: 'STRATIGRAPHY' and 'STRUCTURAL'.
-        * @param type_ type of the current object.
+        * @param type type of the current object.
         * @see Settings::Objects::ObjectType
         * @return void.
         */
@@ -411,7 +411,7 @@ class Controller
         /**
         * Method to get the type of the object, which index is index_
         * To this method, only two types are allowed: 'STRATIGRAPHY' and 'STRUCTURAL'.
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @see Settings::Objects::ObjectType
         * @return ObjectType type of the current object.
         */
@@ -420,8 +420,8 @@ class Controller
 
         /**
         * Method to set if the object, i.e, a stratigraphy or structural, visible or not
-        * @param index_ the index of the object
-        * @param status_ if the value is true the object is visible and false otherwise
+        * @param index the index of the object
+        * @param status if the value is true the object is visible and false otherwise
         * @return void.
         */
         void setObjectVisibility( std::size_t index_, bool status_ );
@@ -429,7 +429,7 @@ class Controller
 
         /**
         * Method to set all objects, i.e, stratigraphies and structurals, as visible or not
-        * @param status_ if the value is true the objects are visibles and false otherwise
+        * @param status if the value is true the objects are visibles and false otherwise
         * @return void.
         */
         void setObjectsVisibility( bool status_ );
@@ -437,10 +437,10 @@ class Controller
 
         /**
         * Method to set the color of the object, which index is index_
-        * @param index_ the index of the object
-        * @param r_ the red component of the color (integer)
-        * @param g_ the green component of the color (integer)
-        * @param b_ the blue component of the color (integer)
+        * @param index the index of the object
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return Void
         */
         void setObjectColor( std::size_t index_, int r_, int g_, int b_ );
@@ -449,7 +449,7 @@ class Controller
 
         /**
         * Method to set all objects, i.e, stratigraphies and structurals, as active or not
-        * @param status_ if the value is true the objects are active and false otherwise
+        * @param status if the value is true the objects are active and false otherwise
         * @return void.
         */
         void setObjectsActive( bool status_ );
@@ -457,8 +457,8 @@ class Controller
 
         /**
         * Method to set the object, i.e, a stratigraphy or structural, as active or not
-        * @param index_ the index of the object
-        * @param status_ if the value is true the object is active and false otherwise
+        * @param index the index of the object
+        * @param status if the value is true the object is active and false otherwise
         * @return void.
         */
         void setObjectActive( std::size_t index_, bool status_ );
@@ -466,7 +466,7 @@ class Controller
 
         /**
         * Method to check if the object, i.e, a stratigraphy or structural, is active or not
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @return boolean returns true if the object is active and false otherwise
         */
         bool isObjectActive( std::size_t index_ ) const;
@@ -474,8 +474,8 @@ class Controller
 
         /**
         * Method to set the object, i.e, a stratigraphy or structural, as selectable or not
-        * @param index_ the index of the object
-        * @param status_ if the value is true the object is selectable and false otherwise
+        * @param index the index of the object
+        * @param status if the value is true the object is selectable and false otherwise
         * @return void.
         */
         void setObjectSelectable( std::size_t index_, bool status_ );
@@ -483,7 +483,7 @@ class Controller
 
         /**
         * Method to check if the object, i.e, a stratigraphy or structural, is selectable or not
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @return boolean return true if the object is selectable and false otherwise
         */
         bool isObjectSelectable( std::size_t index_ ) const;
@@ -491,8 +491,8 @@ class Controller
 
         /**
         * Method to set the object, i.e, a stratigraphy or structural, as selected or not
-        * @param index_ the index of the object
-        * @param status_ if the value is true the object is selected and false otherwise
+        * @param index the index of the object
+        * @param status if the value is true the object is selected and false otherwise
         * @return void.
         */
         void setObjectSelected( std::size_t index_, bool status_ );
@@ -500,7 +500,7 @@ class Controller
 
         /**
         * Method to check if the object, i.e, a stratigraphy or structural, is selected or not
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @return boolean return true if the object is selected and false otherwise
         */
         bool isObjectSelected( std::size_t index_ ) const;
@@ -508,8 +508,8 @@ class Controller
 
         /**
         * Method to set an object log information
-        * @param index_ the index of the object
-        * @param status_ an object log information
+        * @param index the index of the object
+        * @param status an object log information
         * @see QString
         * @return void.
         */
@@ -518,7 +518,7 @@ class Controller
 
         /**
         * Method to get the object log information
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @see QString
         * @return QString object log information
         */
@@ -527,8 +527,8 @@ class Controller
 
         /**
         * Method to add a curve to the current object
-        * @param dir_ the direction of the cross-section which the curve was done
-        * @param depth_ the depth_ of the cross-section which the curve was done
+        * @param dir the direction of the cross-section which the curve was done
+        * @param depth the depth_ of the cross-section which the curve was done
         * @see Settings::CrossSection::CrossSectionDirections
         * @return boolean returns true if the curve was added properly and false otherwise
         */
@@ -537,8 +537,8 @@ class Controller
 
         /**
         * Method to remove a curve to the current object
-        * @param dir_ the direction of the cross-section which the curve was done
-        * @param depth_ the depth_ of the cross-section which the curve was done
+        * @param dir the direction of the cross-section which the curve was done
+        * @param depth the depth_ of the cross-section which the curve was done
         * @see Settings::CrossSection::CrossSectionDirections
         * @return boolean returns true if the curve was removed properly and false otherwise
         */
@@ -547,7 +547,7 @@ class Controller
 
         /**
         * Method to add a trajectory to the current object
-        * @param curve_ the trajectory made by the user
+        * @param curve the trajectory made by the user
         * @see PolyCurve
         * @return void.
         */
@@ -625,23 +625,23 @@ class Controller
 
 
         /**
-        * Method to update a surface of the object, which index is index_
-        * @param index_ the index of the object
+        * Method to update a surface of the object, which index is index
+        * @param index the index of the object
         * @return void.
         */
         void updateObjectSurface( const std::size_t& index_ );
 
 
         /**
-        * Method to update a surface of the object, which index is index_
-        * @param index_ the index of the object
+        * Method to update a surface of the object, which index is index
+        * @param index the index of the object
         * @return void.
         */
         void updateObjectCurves( const std::size_t& index_ );
 
 
         /**
-        * Method to update the preview surface of the object, which index is index_
+        * Method to update the preview surface of the object.
         * Note that, the preview surface is always of the current object
         * @return void.
         */
@@ -650,8 +650,8 @@ class Controller
 
         /**
         * Method to update curve of an object in a certain cross-section
-        * @param index_ the index of the object
-        * @param depth_ the depth of the cross-section. Note that, it is not needed to pass the direction
+        * @param index the index of the object
+        * @param depth the depth of the cross-section. Note that, it is not needed to pass the direction
         * as parameter since the object can be done in only one direction
         * @return void.
         */
@@ -660,7 +660,7 @@ class Controller
 
         /**
         * Method to update all object curves of in a certain cross-section
-        * @param depth_ the depth of the cross-section. Note that, the direction was not passed as parameter,
+        * @param depth the depth of the cross-section. Note that, the direction was not passed as parameter,
         * then the direction considered is the current
         * @return void.
         */
@@ -691,8 +691,8 @@ class Controller
         /**
         * This method calls the method clearAndSetCurveinCrossSectionFromRulesProcessor(), using the current
         * direction as the cross-section direction
-        * @param index_ the index of the object
-        * @param depth_ the depth of the cross-section.
+        * @param index the index of the object
+        * @param depth the depth of the cross-section.
         * @return void.
         */
         void clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_ , double depth_ );
@@ -703,9 +703,9 @@ class Controller
         * from the rules processor in a given cross-section.
         * Note that this method only works for 'WIDHT'and 'DEPTH' direction, since the curves from the
         * height direction objects should not be removed
-        * @param index_ the index of the object
-        * @param dir_ the direction of the cross-section
-        * @param depth_ the depth of the cross-section.
+        * @param index the index of the object
+        * @param dir the direction of the cross-section
+        * @param depth the depth of the cross-section.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -737,7 +737,7 @@ class Controller
 
         /**
         * Method to set all regions as visible or not
-        * @param status_ if the value is true the regions are visibles and false otherwise
+        * @param status if the value is true the regions are visibles and false otherwise
         * @return void.
         */
         void setRegionsVisible(bool status_);
@@ -745,8 +745,8 @@ class Controller
 
         /**
         * Method to set if the region as visible or not
-        * @param index_ the index of the region
-        * @param status_ if the value is true the region is visible and false otherwise
+        * @param index the index of the region
+        * @param status if the value is true the region is visible and false otherwise
         * @return void.
         */
         void setRegionVisible(std::size_t index_, bool status_);
@@ -754,7 +754,7 @@ class Controller
 
         /**
         * Method to check if the region is visible or not
-        * @param index_ the index of the object
+        * @param index the index of the object
         * @return boolean returns true if the object is visible and false otherwise
         */
         bool isRegionVisible(std::size_t index_) const;
@@ -762,10 +762,10 @@ class Controller
 
         /**
         * Method to set the color of the region, which index is index_
-        * @param index_ the index of the region
-        * @param r_ the red component of the color (integer)
-        * @param g_ the green component of the color (integer)
-        * @param b_ the blue component of the color (integer)
+        * @param index the index of the region
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setRegionColor( std::size_t index_, int r_, int g_, int b_ );
@@ -773,10 +773,10 @@ class Controller
 
         /**
         * Method to get the color of the region, which index is index_
-        * @param index_ the index of the region
-        * @param r_ a reference to the red component of the color (integer)
-        * @param g_ a reference to the green component of the color (integer)
-        * @param b_ a reference to the blue component of the color (integer)
+        * @param index the index of the region
+        * @param r a reference to the red component of the color (integer)
+        * @param g a reference to the green component of the color (integer)
+        * @param b a reference to the blue component of the color (integer)
         * @return void.
         */
         void getRegionColor( std::size_t index_, int& r_, int& g_, int& b_ ) const ;
@@ -784,7 +784,7 @@ class Controller
 
         /**
         * Method to set all regions as active or not
-        * @param status_ if the value is true the regions are active and false otherwise
+        * @param status if the value is true the regions are active and false otherwise
         * @return void.
         */
         void setRegionsActive(bool status_);
@@ -792,8 +792,8 @@ class Controller
 
         /**
         * Method to set the region as active or not
-        * @param index_ the index of the region
-        * @param status_ if the value is true the region is active and false otherwise
+        * @param index the index of the region
+        * @param status if the value is true the region is active and false otherwise
         * @return void.
         */
         void setRegionActive(std::size_t index_, bool status_);
@@ -801,7 +801,7 @@ class Controller
 
         /**
         * Method to check if the region is active or not
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return boolean returns true if the region is active and false otherwise
         */
         bool isRegionActive(std::size_t index_) const;
@@ -809,8 +809,8 @@ class Controller
 
         /**
         * Method to set the region as selectable or not
-        * @param index_ the index of the region
-        * @param status_ if the value is true the region is selectable and false otherwise
+        * @param index the index of the region
+        * @param status if the value is true the region is selectable and false otherwise
         * @return void.
         */
         void setRegionSelectable(std::size_t index_, bool status_);
@@ -818,7 +818,7 @@ class Controller
 
         /**
         * Method to check if the region is selectable or not
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return boolean return true if the region is selectable and false otherwise
         */
         bool isRegionSelectable(std::size_t index_) const;
@@ -826,8 +826,8 @@ class Controller
 
         /**
         * Method to set the region as selected or not
-        * @param index_ the index of the region
-        * @param status_ if the value is true the region is selected and false otherwise
+        * @param index the index of the region
+        * @param status if the value is true the region is selected and false otherwise
         * @return void.
         */
         void setRegionSelected(std::size_t index_, bool status_);
@@ -835,7 +835,7 @@ class Controller
 
         /**
         * Method to check if the region is selected or not
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return boolean return true if the region is selected and false otherwise
         */
         bool isRegionSelected(std::size_t index_) const;
@@ -843,7 +843,7 @@ class Controller
 
         /**
         * Method to return the volume of the region
-        * @param id_ the index of the region
+        * @param id the index of the region
         * @return double the volume of the region
         */
         inline double getRegionVolume( std::size_t id_ )
@@ -863,7 +863,7 @@ class Controller
 
         /**
         * Method to get the 2d mesh of the region which index is index_
-        * @param index_ index of the region
+        * @param index index of the region
         * @return boolean returns truf if the region exists and false otherwise
         */
         bool getRegionCrossSectionBoundary( std::size_t index_ );
@@ -885,7 +885,7 @@ class Controller
 
         /**
         * Method to create a domain. Also, it is possible to create a domain from a given set of regions.
-        * @param indexes_ an optional parameter to define the regions which define the domain
+        * @param indexes an optional parameter to define the regions which define the domain
         * @return void.
         */
         std::size_t createDomain( std::set<std::size_t> indexes_ = std::set< std::size_t >() );
@@ -893,8 +893,8 @@ class Controller
 
         /**
         * Method to add a region into an existent domain
-        * @param region_id_ the index of the region to be added into the domain
-        * @param domain_id_ the index of the domain
+        * @param region_id the index of the region to be added into the domain
+        * @param domain_id the index of the domain
         * @return void.
         */
         bool addRegionToDomain(std::size_t region_id_, std::size_t domain_id_);
@@ -902,8 +902,8 @@ class Controller
 
         /**
         * Method to remove a region from an existent domain
-        * @param region_id_ the index of the region to be removed from the domain
-        * @param domain_id_ the index of the domain
+        * @param region_id the index of the region to be removed from the domain
+        * @param domain_id the index of the domain
         * @return void.
         */
         bool removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_);
@@ -911,7 +911,7 @@ class Controller
 
        /**
         * Method to get all the regions from a specific domain
-        * @param domain_id_ the index of the domain
+        * @param domain_id the index of the domain
         * @return std::set<std::size_t> a vector of index of the regions contained in
         * the domain
         */
@@ -920,7 +920,7 @@ class Controller
 
         /**
         * Method to delete a domain
-        * @param domain_id_ the index of the domain
+        * @param domain_id the index of the domain
         * @return void.
         */
         void removeDomain(std::size_t domain_id_);
@@ -929,7 +929,7 @@ class Controller
         /**
         * Method to return the volume of the domain, i.e, the sum of the volume of the regions contained
         * in the domain
-        * @param id_ the index of the domain
+        * @param id the index of the domain
         * @return double the volume of the domain
         */
         inline double getDomainVolume( std::size_t id_ )
@@ -941,8 +941,8 @@ class Controller
 
         /**
         * Method to set a name to the given domain
-        * @param index_ the index of the domain
-        * @param name_ the new name of the domain
+        * @param index the index of the domain
+        * @param name the new name of the domain
         * @return void.
         */
         void setDomainName( std::size_t index_, const std::string& name_ );
@@ -950,10 +950,10 @@ class Controller
 
         /**
         * Method to set the color of the domain, which index is index_
-        * @param index_ the index of the domain
-        * @param r_ the red component of the color (integer)
-        * @param g_ the green component of the color (integer)
-        * @param b_ the blue component of the color (integer)
+        * @param index the index of the domain
+        * @param red the red component of the color (integer)
+        * @param green the green component of the color (integer)
+        * @param bblue the blue component of the color (integer)
         * @return void.
         */
         void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -962,9 +962,9 @@ class Controller
         /**
         * Method to get the color of the domain, which index is index_
         * @param index_ the index of the domain
-        * @param r_ a reference to the red component of the color (integer)
-        * @param g_ a reference to the green component of the color (integer)
-        * @param b_ a reference to the blue component of the color (integer)
+        * @param red a reference to the red component of the color (integer)
+        * @param green a reference to the green component of the color (integer)
+        * @param blue a reference to the blue component of the color (integer)
         * @return void.
         */
         void getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ );
@@ -1017,8 +1017,8 @@ class Controller
 
         /**
         * Method to get the current range that the cross-section can go through. It depends on the current direction of the cross-secion
-        * @param min_ the minimum value that the depth of the cross-section can be
-        * @param max_ the maximum value that the depth of the cross-section can be
+        * @param min the minimum value that the depth of the cross-section can be
+        * @param max the maximum value that the depth of the cross-section can be
         * @return void.
         */
         void getCurrentRange( double& min_, double& max_ ) const;
@@ -1036,7 +1036,7 @@ class Controller
         /**
         * This is an auxiliary method to convert the depth of the cross-section in its discretization index
         * in the direction X, i.e., 'WIDTH'
-        * @param value_ the depth of the cross-section
+        * @param value the depth of the cross-section
         * @return std::size_t the discretization index in the direction X
         */
         std::size_t indexCrossSectionX( double value_ ) const;
@@ -1045,7 +1045,7 @@ class Controller
         /**
         * This is an auxiliary method to convert the depth of the cross-section in its discretization index
         * in the direction Z, i.e., 'LENGTH'
-        * @param value_ the depth of the cross-section
+        * @param value the depth of the cross-section
         * @return std::size_t the discretization index in the direction Z
         */
         std::size_t indexCrossSectionZ( double value_ ) const;
@@ -1091,7 +1091,7 @@ class Controller
         * Method to set the 'PRESERVE ABOVE' as enabled or disabled
         * It, also, enable or disable the 'PRESERVE ABOVE' in the Rules Processor. If status_ is false,
         * it calls the method stopCreateAbove() to disable it in the Rules Processor.
-        * @param status_ status_ is true if the 'PRESERVE ABOVE' is enabled and false otherwise
+        * @param status status is true if the 'PRESERVE ABOVE' is enabled and false otherwise
         * @see stopCreateAbove()
         * @return void.
         */
@@ -1102,7 +1102,7 @@ class Controller
         * Method to set the 'PRESERVE BELOW' as enabled or disabled
         * It, also, enable or disable the 'PRESERVE BELOW' in the Rules Processor. If status_ is false,
         * it calls the method stopCreateBelow() to disable it in the Rules Processor.
-        * @param status_ status_ is true if the 'PRESERVE BELOW' is enabled and false otherwise
+        * @param status status is true if the 'PRESERVE BELOW' is enabled and false otherwise
         * @see stopCreateBelow()
         * @return void.
         */
@@ -1141,7 +1141,7 @@ class Controller
         /**
         * Method to verify if the 'PRESERVE ABOVE' is active, and if so, which curve is being used as
         * the lower boundary
-        * @param boundary_ the lower boundary
+        * @param boundary the lower boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
         * @return boolean returns true if the 'PRESERVE ABOVE' is active, and false otherwise
@@ -1152,7 +1152,7 @@ class Controller
         /**
         * Method to verify if the 'PRESERVE BELOW' is active, and if so, which curve is being used as
         * the upper boundary
-        * @param boundary_ the upper boundary
+        * @param boundary the upper boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
         * @return boolean returns true if the 'PRESERVE BELOW' is active, and false otherwise
@@ -1162,7 +1162,7 @@ class Controller
 
         /**
         * Method to get the lower boundary, when the 'PRESERVE ABOVE' is active
-        * @param boundary_ a reference to the lower boundary
+        * @param boundary a reference to the lower boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
         * @return void.
@@ -1172,7 +1172,7 @@ class Controller
 
         /**
         * Method to get the upper boundary, when the 'PRESERVE BELOW' is active
-        * @param boundary_ a reference to the upper boundary
+        * @param boundary a reference to the upper boundary
         * @see Settings::Objects::BoundaryRegion
         * @see PolyCurve
         * @return void.
@@ -1182,7 +1182,7 @@ class Controller
 
         /**
         * Method to set an object selected as a boundary
-        * @param index_ the index of the selected object
+        * @param index the index of the selected object
         * @return void.
         */
         void setObjectSelectedAsBoundary( const std::size_t& index_ );
@@ -1191,7 +1191,7 @@ class Controller
         /**
         * Method to update the boundaries curves that delimit a region, when the 'PRESERVE' operations
         * are actives
-        * @param boundary_ boundary_ a reference to the boundary
+        * @param boundary a reference to the boundary
         * @see PolyCurve
         * @return boolean returns true if any one of the 'PRESERVE' operations are active and false
         * otherwise
@@ -1201,10 +1201,10 @@ class Controller
 
         /**
         * Method to select an object and its region using a selection sketch
-        * @param curve_ the sketch used to mark an object as boundary
-        * @param dir_ the direction of the cross-section current where the sketch was made
-        * @param depth_ the depth of the cross-section current where the sketch was made
-        * @param boundary_ the boundary curve resultant from the selection
+        * @param curve the sketch used to mark an object as boundary
+        * @param dir the direction of the cross-section current where the sketch was made
+        * @param depth the depth of the cross-section current where the sketch was made
+        * @param boundary the boundary curve resultant from the selection
         * @see PolyCurve
         * @see Settings::CrossSection::CrossSectionDirections
         * @return boolean returns true if the operation was successful, and false otherwise
@@ -1214,10 +1214,10 @@ class Controller
 
         /**
         * Method to select a region given a point inside it
-        * @param px_ the X coordinate of the point
-        * @param py_ the Y coordinate of the point
-        * @param depth_ the depth of the cross-section current where the point was picked
-        * @param dir_ the direction of the cross-section current where the point was picked
+        * @param px the X coordinate of the point
+        * @param py the Y coordinate of the point
+        * @param depth the depth of the cross-section current where the point was picked
+        * @param dir the direction of the cross-section current where the point was picked
         * @see Settings::CrossSection::CrossSectionDirections
         * @return boolean returns true if the operation was successful, and false otherwise
         */
@@ -1226,7 +1226,7 @@ class Controller
 
         /**
         * Method to set the mesh resolution
-        * @param resolution_ define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
+        * @param resolution define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
         * @see Controller::MeshResolution
         * @return void.
         */
@@ -1235,9 +1235,9 @@ class Controller
 
         /**
         * Method to update the current color
-        * @param red_ the red component of the color (integer)
-        * @param green_ the green component of the color (integer)
-        * @param blue_ the blue component of the color (integer)
+        * @param red the red component of the color (integer)
+        * @param green the green component of the color (integer)
+        * @param blue the blue component of the color (integer)
         * @return void.
         */
         void setCurrentColor( int red_, int green_, int blue_ );
@@ -1246,7 +1246,7 @@ class Controller
         /**
         * Method to save the objects data and metadata in a file, using json
         * This method calls saveObjectsMetaData() method
-        * @param file_ the path of the file
+        * @param filename the path of the file
         * @return void.
         */
         void saveFile( const std::string& filename );
@@ -1254,7 +1254,7 @@ class Controller
 
         /**
         * Method to save the objects and metadata in a file, using json
-        * @param file_ the path of the file
+        * @param filename the path of the file
         * @return boolean returns true if the file was saved properly and false otherwise
         */
         bool saveObjectsMetaData( const std::string& filename );
@@ -1262,6 +1262,8 @@ class Controller
 
         /**
         * This method is responsible for calling the method to load a file for managing if it was successfull or not.
+        * @param filename the path of the file
+        * @param Controller::MeshResolution a reference to the mesh resolution
         * @see Controller::MeshResolution
         * @return Void
         */
@@ -1272,8 +1274,8 @@ class Controller
         * Method to load objects and all data needed to start a new session.
         * If the load file no contains metadata, this method will call loadObjectNoMetaDatas(), otherwise will call
         * the method loadObjectMetaDatas()
-        * @param file_ the path of the file
-        * @param resol_ a reference to the mesh resolution
+        * @param filename the path of the file
+        * @param resol a reference to the mesh resolution
         * @see Controller::MeshResolution
         * @return void.
         */

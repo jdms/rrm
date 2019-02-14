@@ -22,7 +22,6 @@
 /**
  * @file curveitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the classes CurveItem and SketchLibraryWrapper
  */
 
@@ -48,8 +47,8 @@ class SketchLibraryWrapper
 
     /**
     * Static method to apply the oversketch from Qt curves.
-    * @param seg0_ the first segment of curve using qt data structure
-    * @param seg1_ the second segment of curve using qt data structure
+    * @param seg0 the first segment of curve using qt data structure
+    * @param seg1 the second segment of curve using qt data structure
     * @see QPolygonF
     * @see QPainterPath
     * @see SketchLibrary1::overSketch
@@ -71,7 +70,7 @@ class SketchLibraryWrapper
 
     /**
     * Static method to convert a curve from Qt to Curve2D
-    * @param pol_ curve from Qt data structure
+    * @param pol curve from Qt data structure
     * @see Curve2D
     * @see QPolygonF
     * @return Curve2D
@@ -92,7 +91,7 @@ class SketchLibraryWrapper
 
     /**
     * Static method to convert a curve from Curve2D to a curve in Qt
-    * @param pol_ curve from Curve2D
+    * @param pol curve from Curve2D
     * @see Curve2D
     * @see QPolygonF
     * @return QPolygonF
@@ -152,9 +151,9 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Constructor. parent_ is passed to QGraphicsPathItem's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         */
-        CurveItem( QGraphicsItem *parent_ = nullptr );
+        CurveItem( QGraphicsItem *parent = nullptr );
 
 
         /**
@@ -173,7 +172,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to start a new segment of curve
-        * @param p_ the starting point of a new segment of curve
+        * @param p the starting point of a new segment of curve
         * @see QPointF()
         * @return void.
         */
@@ -182,7 +181,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to connect the last point in the curve to the new point p_
-        * @param p_ a new point to be connected to the curve
+        * @param p a new point to be connected to the curve
         * @see QPointF()
         * @return Boolean. Return true if the point can be added to the curve, and false otherwise
         * A point cannot be added if the curve is already done.
@@ -229,9 +228,9 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to set the color of the curve
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param bl the blue component of the color (integer)
         * @return void
         */
         void setColor( int r_, int g_, int b_ );
@@ -239,9 +238,9 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to get the color of the curve
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void
         */
         void getColor( int& r_, int& g_, int& b_ );
@@ -280,7 +279,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to set the style of the curve line.
-        * The style of the curve can be dotted, dashed, full, etc...
+        * @param style the style of the curve. It can be dotted, dashed, full, etc...
         * @see Qt::PenStyle
         * @return void
         */
@@ -298,7 +297,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to set the curve directly
-        * @param curve_ the curve to be set
+        * @param curve the curve to be set
         * @see PolyCurve
         * @return void
         */
@@ -307,8 +306,8 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to set many segments of curves
-        * @param curves_ the curves to be set
-        * @param swapped_ boolean to indicate if the coordinate of points should be swapped
+        * @param curves the curves to be set
+        * @param swapped boolean to indicate if the coordinate of points should be swapped
         * @see PolyCurve
         * @return void
         */
@@ -392,9 +391,9 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to repaint the curve
-        * @see QPainter performs painting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

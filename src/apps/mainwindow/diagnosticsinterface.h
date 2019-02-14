@@ -22,7 +22,6 @@
 /**
  * @file diagnosticsinterface.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class DiagnosticsInterface
  */
 
@@ -49,7 +48,7 @@ class DiagnosticsInterface: public QObject
 
         /**
         * Constructor.
-        * @param window_ a const reference to the MainWindow
+        * @param window a const reference to the MainWindow
         * @see MainWindow
         */
         DiagnosticsInterface( MainWindow* const& window_ );
@@ -67,7 +66,7 @@ class DiagnosticsInterface: public QObject
 
         /**
         * Method to set the inital setup for the Flow Diagnostics app.
-        * @param status_ boolean to indicate if the Flow Diagnostics is active or not.
+        * @param status boolean to indicate if the Flow Diagnostics is active or not.
         * @return void.
         */
         void init( bool status_ );

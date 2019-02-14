@@ -22,7 +22,6 @@
 /**
  * @file canvasstack.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CanvasStack
  */
 
@@ -59,7 +58,7 @@ class DockWidget: public QDockWidget
         /**
         * Constructor. parent_ is passed to QTreeWidget's constructor.
         * @param title the window title
-        * @param parent_ the parent item
+        * @param parent the parent item
         * @see QDockWidget
         * @see QString
         * @see QWidget
@@ -116,8 +115,8 @@ class CanvasStack: public QWidget, public CanvasContainer
 
 
         /**
-        * Constructor. parent_ is passed to QWidget's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QWidget's constructor.
+        * @param parent the parent item
         * @see QWidget
         */
         CanvasStack( QWidget* parent = nullptr );
@@ -133,7 +132,7 @@ class CanvasStack: public QWidget, public CanvasContainer
         /**
         * Method to add a canvas to the container
         * @param double the index of the canvas
-        * @param canvas_ new canvas to be added
+        * @param canvas new canvas to be added
         * @see QGraphicsView
         * @return void.
         */
@@ -142,16 +141,16 @@ class CanvasStack: public QWidget, public CanvasContainer
 
         /**
         * Method to get a canvas from the container
-        * @param double the index of the canvas
+        * @param id the index of the canvas
         * @see QGraphicsView
-        * @return QGraphicsView* A pointer to the canvas which index is id_
+        * @return QGraphicsView* A pointer to the canvas which index is id
         */
         QGraphicsView* getElement( double id_ );
 
 
         /**
         * Method to remove a canvas from the container
-        * @param double the index of the canvas
+        * @param id the index of the canvas
         * @return void.
         */
         void removeElement( double id_ );
@@ -159,7 +158,7 @@ class CanvasStack: public QWidget, public CanvasContainer
 
         /**
         * Method to set a canvas as the current
-        * @param id_ the index of the canvas
+        * @param id the index of the canvas
         * @return void.
         */
         void setCurrent( double id_ );
@@ -185,7 +184,7 @@ class CanvasStack: public QWidget, public CanvasContainer
 
         /**
         * Signal emmited to notify the main application that a canvas was closed.
-        * @param id_ the index of the canvas
+        * @param id the index of the canvas
         * @return void.
         */
         void closeSubWindow( double id_ );
@@ -193,7 +192,6 @@ class CanvasStack: public QWidget, public CanvasContainer
 
         /**
         * Signal emmited to notify the main application that the window was closed.
-        * @param id_ the index of the canvas
         * @return void.
         */
         void windowClosed();

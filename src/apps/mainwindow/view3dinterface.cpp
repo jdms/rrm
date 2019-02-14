@@ -22,7 +22,6 @@
 /**
  * @file view3dinterface.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class View3dInterface
  */
 

@@ -22,7 +22,6 @@
 /**
  * @file crosssectionitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CrossSectionItem
  */
 
@@ -47,7 +46,7 @@ class CrossSectionItem: public LineItem
 
         /**
         * Constructor. parent_ is passed to LineItem's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         */
         CrossSectionItem( QGraphicsItem *parent_ = nullptr );
 
@@ -60,7 +59,7 @@ class CrossSectionItem: public LineItem
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @see CrossSection
         * @return void.
         */

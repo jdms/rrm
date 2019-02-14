@@ -22,7 +22,6 @@
 /**
  * @file view3dcontroller.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class View3dController
  */
 
@@ -56,7 +55,7 @@ class View3dController
 
         /**
         * Method to save a reference to the 3d canvas and to the its scene.
-        * @param window_  sketch window that holds the main cross-section scene
+        * @param window  sketch window that holds the main cross-section scene
         * @see Canvas3d
         * @return void.
         */
@@ -121,7 +120,7 @@ class View3dController
         * Method to add stratigraphies and structurals in the scene.
         * This stratigraphy will hold a const shared pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
-        * @param obj_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param obj data structure that contains the geometry and others required information to draw it on scene.
         * @see ObjectPtr
         * @return void.
         */
@@ -174,6 +173,7 @@ class View3dController
 
         /**
         * Method to pass the vertical exaggeration to the scene.
+        * @param scale the vertical exaggeration scale to be applied
         * @return void.
         */
         void setVerticalExaggeration( double scale_ );

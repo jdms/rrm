@@ -22,7 +22,6 @@
 /**
  * @file scene.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Scene
  */
 
@@ -57,7 +56,7 @@ class Scene
         * A pure virtual method to create a volume in the scene.
         * This volume will hold a pointer to a volume data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param raw_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @see Volume
         * @return Void.
         */
@@ -84,7 +83,7 @@ class Scene
         * A pure virtual method to add stratigraphies and structurals in the scene.
         * This stratigraphy will hold a pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
-        * @param raw_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @return Void.
         */
         virtual void addObject(  Object* const& raw_ ) = 0;
@@ -93,7 +92,7 @@ class Scene
         /**
         * A pure virtual method to update the stratigraphy or structural, which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id_ index of the stratigraphy to be updated.
+        * @param id index of the stratigraphy to be updated.
         * @see Object
         * @return Void.
         */
@@ -105,7 +104,7 @@ class Scene
         * A pure virtual method to add cross-section in the scene.
         * This cross-section will hold a pointer to a cross-section data structure, so that it can retrieve the required information
         * to draw it on scene.
-        * @param raw_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return Void.
         */
@@ -114,7 +113,7 @@ class Scene
 
         /**
         * A pure virtual method to remove a cross-section in the scene.
-        * @param raw_ data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @see CrossSection
         * @return Void.
         */

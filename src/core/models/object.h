@@ -22,7 +22,6 @@
 /**
  * @file object.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Object
  */
 
@@ -84,7 +83,7 @@ class Object
 
         /**
         * Method to set a new index to the object
-        * @param id_ a new index to the object
+        * @param id a new index to the object
         * @return void.
         */
         virtual void setIndex( std::size_t id_ );
@@ -99,7 +98,7 @@ class Object
 
         /**
         * Method to set a name to the object
-        * @param id_ a new name to the object
+        * @param name a new name to the object
         * @return void.
         */
         void setName( const std::string& name_ );
@@ -114,9 +113,9 @@ class Object
 
         /**
         * Method to set the color of the object
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setColor(int r_, int g_, int b_);
@@ -124,9 +123,9 @@ class Object
 
         /**
         * Method to get the color of the object
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getColor(int& r_, int& g_, int& b_) const;
@@ -134,12 +133,12 @@ class Object
 
         /**
         * Method to set the bounding box of the object
-        * @param maxx_ the maximum value of X
-        * @param maxy_ the maximum value of Y
-        * @param maxz_ the maximum value of Z
-        * @param minx_ the minimum value of X
-        * @param miny_ the minimum value of Y
-        * @param minz_ the minimum value of Z
+        * @param maxx the maximum value of X
+        * @param maxy the maximum value of Y
+        * @param maxz the maximum value of Z
+        * @param minx the minimum value of X
+        * @param miny the minimum value of Y
+        * @param minz the minimum value of Z
         * @return void.
         */
         void setBoundingBox( double xmin_, double xmax_, double ymin_, double ymax_,
@@ -148,12 +147,12 @@ class Object
 
         /**
         * Method to get the bounding box of the object
-        * @param maxx_ reference to the maximum value of X
-        * @param maxy_ reference to the maximum value of Y
-        * @param maxz_ reference to the maximum value of Z
-        * @param minx_ reference to the minimum value of X
-        * @param miny_ reference to the minimum value of Y
-        * @param minz_ reference to the minimum value of Z
+        * @param maxx reference to the maximum value of X
+        * @param maxy reference to the maximum value of Y
+        * @param maxz reference to the maximum value of Z
+        * @param minx reference to the minimum value of X
+        * @param miny reference to the minimum value of Y
+        * @param minz reference to the minimum value of Z
         * @return void.
         */
         void getBoundingBox( double& xmin_, double& xmax_, double& ymin_, double& ymax_,
@@ -162,9 +161,9 @@ class Object
 
         /**
         * Method to set the maximum point of the object bounding box
-        * @param maxx_ the maximum value of X
-        * @param maxy_ the maximum value of Y
-        * @param maxz_ the maximum value of Z
+        * @param maxx the maximum value of X
+        * @param maxy the maximum value of Y
+        * @param maxz the maximum value of Z
         * @return void.
         */
         void setMaximumBounding( double xmax_, double ymax_, double zmax_ );
@@ -172,9 +171,9 @@ class Object
 
         /**
         * Method to set the minimum point of the object bounding box
-        * @param minx_ reference to the minimum value of X
-        * @param miny_ reference to the minimum value of Y
-        * @param minz_ reference to the minimum value of Z
+        * @param minx reference to the minimum value of X
+        * @param miny reference to the minimum value of Y
+        * @param minz reference to the minimum value of Z
         * @return void.
         */
         void setMinimumBounding( double xmin_, double ymin_, double zmin_ );
@@ -182,7 +181,7 @@ class Object
 
         /**
         * Method to set the object editable or not
-        * @param status_ if the value is true the object is editable and false otherwise
+        * @param status if the value is true the object is editable and false otherwise
         * @return void.
         */
         void setEditable( bool status_ );
@@ -197,7 +196,7 @@ class Object
 
         /**
         * Method to set the object selectable or not
-        * @param status_ if the value is true the object is selectable and false otherwise
+        * @param status if the value is true the object is selectable and false otherwise
         * @return void.
         */
         void setSelectable( bool status_ );
@@ -212,7 +211,7 @@ class Object
 
         /**
         * Method to set the object selected or not
-        * @param status_ if the value is true the object is selected and false otherwise
+        * @param status if the value is true the object is selected and false otherwise
         * @return void.
         */
         void setSelected( bool status_ );
@@ -227,7 +226,7 @@ class Object
 
         /**
         * Method to set the object visible or not
-        * @param status_ if the value is true the object is visible and false otherwise
+        * @param status if the value is true the object is visible and false otherwise
         * @return void.
         */
         void setVisible( bool status_ );
@@ -242,7 +241,7 @@ class Object
 
         /**
         * Method to set the object active or not
-        * @param status_ if the value is true the object is active and false otherwise
+        * @param status if the value is true the object is active and false otherwise
         * @return void.
         */
         void setActive( bool status_ );
@@ -257,7 +256,7 @@ class Object
 
         /**
         * Method to set the cross-section direction in which the object was created
-        * @param dir_ the cross-section direction in which the object was created
+        * @param dir the cross-section direction in which the object was created
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -297,7 +296,7 @@ class Object
         /**
         * Method to get all the curves in a vector of double
         * This method allows swap the coordinates if desired
-        * @param swap_ if swap is true the coordinates should be swapped before returning
+        * @param swap if swap is true the coordinates should be swapped before returning
         * @return std::vector< double > all the curves in a vector of double
         */
         std::vector< double > getCurves2D( bool swap_ = false );
@@ -340,8 +339,8 @@ class Object
 
         /**
         * Method to add a curve to the object
-        * @param csection_id_ the cross-section depth where the curve_ was made
-        * @param curve_ the curve (sketch) made by the user
+        * @param csection_id the cross-section depth where the curve_ was made
+        * @param curve the curve (sketch) made by the user
         * @see PolyCurve
         * @return bool returns true if the curve was added properly and false otherwise
         */
@@ -350,13 +349,14 @@ class Object
 
         /**
         * Method to remove the curve made in the cross-section csection_id_
-        * @param csection_id_ the cross-section depth where the curve_ was made
+        * @param csection_id the cross-section depth where the curve_ was made
         * @return bool returns true if the curve was removed properly and false otherwise
         */
         bool removeCurve( double csection_id_ );
 
         /**
         * Method to check if exists a curve added by the user in the given cross-section depth
+        * @param csection_id the depth of the cross-section
         * @return bool return true if exists a curve in the given cross-section depth
         */
         bool hasCurve( double csection_id_ ) const;
@@ -364,6 +364,7 @@ class Object
 
         /**
         * Method to return the curve from the given cross-section depth
+        * @param csection_id the depth of the cross-section
         * @see PolyCurve
         * @return PolyCurve the curve existent in the given cross-section depth
         */
@@ -372,8 +373,8 @@ class Object
 
         /**
         * Method to update the curve of the given cross-section depth
-        * @param csection_id_ the depth of the cross-section
-        * @param curve_ the curve to replace the old one
+        * @param csection_id the depth of the cross-section
+        * @param curve the curve to replace the old one
         * @see PolyCurve
         * @return void.
         */
@@ -396,7 +397,7 @@ class Object
 
         /**
         * Method to add a trajectory to the object
-        * @param traj_ the trajectory made by the user
+        * @param traj the trajectory made by the user
         * @see PolyCurve
         * @return bool returns true if the trajectory was added properly and false otherwise
         */
@@ -427,7 +428,7 @@ class Object
 
         /**
         * Method to set the surface generate from the curves added to the object
-        * @param surface_ the surface generate from the curves added to the object
+        * @param surface the surface generate from the curves added to the object
         * @return void.
         */
         void setSurface( const Surface& surface_ );
@@ -468,7 +469,7 @@ class Object
         * Method to set the type of the object.
         * Currently, the types available are: 'NONE', 'VOLUME', 'CROSS_SECTION', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION',
         * 'DOMAINS', 'WELL'
-        * @param type_ the type of the object
+        * @param type the type of the object
         * @see Settings::Objects::ObjectType
         * @return void.
         */
@@ -489,7 +490,7 @@ class Object
         * Method to set if the object is done.
         * The object is considered done when the surface is created and assigned to it.
         * If the object is done, it is not allowed to add more curves to it.
-        * @param status_ if status_ is true the object is done and false otherwise
+        * @param status if status is true the object is done and false otherwise
         * @return void.
         */
         void setDone( const bool status_ );
@@ -506,7 +507,7 @@ class Object
 
         /**
         * Method to set an object log information
-        * @param text_ an object log information
+        * @param text an object log information
         * @return void.
         */
         void saveInformation( const std::string& text_ );

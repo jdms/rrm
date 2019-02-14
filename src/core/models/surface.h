@@ -22,7 +22,6 @@
 /**
  * @file surface.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Surface
  */
 
@@ -77,7 +76,7 @@ class Surface
 
         /**
         * This method sets the vertices of the surface
-        * @param vs_ a vector with the vertices coordinates of all vertices
+        * @param vs a vector with the vertices coordinates of all vertices
         * @return void.
         */
         void setVertices( const std::vector< double >& vs_ )
@@ -101,7 +100,7 @@ class Surface
 
         /**
         * This method sets the normals of the vertices of the surface
-        * @param ns_ a vector with the coordinates of all normals
+        * @param ns a vector with the coordinates of all normals
         * @return void.
         */
         void setNormals( const std::vector< double >& ns_ )
@@ -123,7 +122,7 @@ class Surface
 
         /**
         * This method sets the faces of the surface
-        * @param fs_ a vector with the index of each vertice that defines a face for all faces of the surface
+        * @param fs a vector with the index of each vertice that defines a face for all faces of the surface
         * @return void.
         */
         void setFaces( const std::vector< std::size_t >& fs_ )

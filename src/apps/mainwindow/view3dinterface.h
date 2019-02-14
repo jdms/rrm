@@ -22,7 +22,6 @@
 /**
  * @file view3dinterface.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class View3dInterface
  */
 
@@ -56,7 +55,7 @@ class View3dInterface: public QObject
 
         /**
         * Constructor.
-        * @param window_ a const reference to the MainWindow
+        * @param window a const reference to the MainWindow
         * @see MainWindow
         */
         View3dInterface( MainWindow* const& window_ );
