@@ -1,3 +1,32 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file planeitem.h
+ * @author Clarissa C. Marques
+ * @date 9 Sep 2012
+ * @brief File containing the class PlaneItem
+ */
+
+
 #ifndef PLANEITEM_H
 #define PLANEITEM_H
 
@@ -59,7 +88,6 @@ class PlaneItem: public QGraphicsRectItem
         * @param dimensions the x coordinate represents the plane width and the second the plane height
         * @param an optional parameter representing the origin of the plane, i.e., the bottom left corner of the plane
         * @see QPointF
-        * @see publicVar()
         * @return void.
         */
         void resize( const QPointF& dimensions_, const QPointF& origin_ = QPointF( 0.0f, 0.0f ) );

@@ -1,23 +1,31 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file irap_grid_exporter.h
+ * @author Clarissa C. Marques
+ * @date 9 Sep 2012
+ * @brief File containing the class IrapGridExporter
  */
+
 
 
 #ifndef IRAPGRIDEXPORTER_H
@@ -60,7 +68,6 @@ class IrapGridExporter
         * @param xMin the minimum value of X
         * @param yMin the minimum value of Y
         * @param zMin the minimum value of Z
-        * @see publicVar()
         * @return Void
         */
         void setBoundingBox(float xMin, float xMax, float yMin, float yMax , float zMin, float zMax );
@@ -69,7 +76,6 @@ class IrapGridExporter
         /**
         * Method to set the height values of each vertice of the surface mesh
         * @param vvalues the height values of each vertice of the surface mesh
-        * @see publicVar()
         * @return Void
         */
         void setVectorValues( const std::vector<float>& vvalues );
@@ -79,7 +85,6 @@ class IrapGridExporter
         * Method to set the size of the grid, i.e., the number of discretization in both directions, 'WIDTH' and 'DEPTH'
         * @param nlinesI the number of discretization in the direction 'WIDTH'
         * @param nlinesJ the number of discretization in the direction 'DEPTH'
-        * @see publicVar()
         * @return Void
         */
         void setSize( int nlinesI, int nlinesJ );
@@ -89,7 +94,6 @@ class IrapGridExporter
         * Method to set the discretization intervals in both directions, 'WIDTH' and 'DEPTH'
         * @param dx the discretization interval in the direction 'WIDTH'
         * @param dy the discretization interval in the direction 'DEPTH'
-        * @see publicVar()
         * @return Void
         */
         void setSpacing( float dx, float dy );
@@ -98,7 +102,6 @@ class IrapGridExporter
         /**
         * Method to save the mesh information in a file
         * @param filename the name of the file to be saved
-        * @see publicVar()
         * @return boolean returns true if the file was saved with success and false otherwise
         */
         bool writeGridData( const std::string& filename ) const;
@@ -106,7 +109,6 @@ class IrapGridExporter
 
         /**
         * Method to clear all mesh information
-        * @see publicVar()
         * @return Void
         */
         void clearData();
